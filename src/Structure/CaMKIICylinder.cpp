@@ -28,9 +28,7 @@
 using namespace mathfunc;
 
 void CaMKIICylinder::updateCoordinate(){
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     coordinate = _b1->coordinate;
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 }
 
 //Cylinder::~CaMKIICylinder() noexcept {
@@ -103,7 +101,6 @@ void CaMKIICylinder::updatePosition() {
 //void Cylinder::updateReactionRates() {
 //
 //    double force;
-//    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 //    //if no rate changer was defined, skip
 //    if(_polyChanger.empty()) return;
 //
@@ -127,7 +124,6 @@ void CaMKIICylinder::updatePosition() {
 //    }
 //
 //    //load force from back (affects minus end polymerization)
-//    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 //    if(_minusEnd) {
 //
 //        //get force of front bead

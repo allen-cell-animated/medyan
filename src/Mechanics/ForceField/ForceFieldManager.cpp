@@ -48,17 +48,13 @@ double ForceFieldManager::computeEnergy(double d, bool verbose) {
 }
 
 void ForceFieldManager::computeForces() {
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     //reset
     resetForces();
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     //recompute
     for(auto &f : _forceFields)
     {
-    	 cout <<  "CAMKII" << f->getName() << endl;
     	 f->computeForces();
     }
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     //copy to auxs
     for(auto b: Bead::getBeads())
         b->forceAux = b->forceAuxP = b->force;
@@ -97,13 +93,9 @@ void ForceFieldManager::computeLoadForces() {
 void ForceFieldManager::resetForces() {
     
     for(auto b: Bead::getBeads()) {
-        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
         b->force.assign (3, 0); //Set force to zero;
-        cout << "CAMKII "<< __LINE__ << " "<< b << __FILE__ << endl;
         std::fill(b->loadForcesP.begin(), b->loadForcesP.end(), 0.0); //Set load force to zero
-        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
         std::fill(b->loadForcesM.begin(), b->loadForcesM.end(), 0.0); //Set load force to zero
-        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     }
 }
 

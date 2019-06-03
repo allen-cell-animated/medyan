@@ -379,20 +379,15 @@ public:
 
     /// Choose a random binding site based on current state
     tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>> chooseBindingSites() {
-    	cout << "CAMKII bundling"<< " " << __LINE__ <<" "<< __FILE__ << endl;
         assert((_possibleBindings.size() != 0)
                && "Major bug: CaMKIIing manager should not have zero binding \
                   sites when called to choose a binding site.");
-        cout << "CAMKII bundling"<< " " << __LINE__ <<" "<< __FILE__ << endl;
         int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
         auto it = _possibleBindings.begin();
-        cout << "CAMKII bundling"<< " " << __LINE__ <<" "<< __FILE__ << endl;
         advance(it, randomIndex);
         auto b = tuple<CCylinder*, short>(it->second);
         auto a = it->first;
-        cout << "CAMKII bundling"<< " " << __LINE__ <<" "<< __FILE__ << endl;
         return tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>> (a,b);
-        cout << "CAMKII bundling"<< " " << __LINE__ <<" "<< __FILE__ << endl;
         //return vector<tuple<CCylinder*, short>>{it->first, it->second};
     }
 

@@ -27,14 +27,17 @@ CCaMKIIingPoint::CCaMKIIingPoint(short camkiiType, Compartment* c,
     SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesCaMKIIer(camkiiType);
     SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(
                         SysParams::Chemistry().camkiierBoundIndex[_filamentType]);
-    
+
     //mark species
     //TODO assert fails, need to check whether neighbor list update is correct (remove bound binding site from the neighbor list)
     assert(areEqual(sb1->getN(), 0) && areEqual(se1->getN(), 1) &&
            "Major bug: CaMKIIer binding to an occupied site.");
         
     sb1->up(); se1->down();
-        
+
+	assert(areEqual(sb1->getN(), 1) && areEqual(se1->getN(), 0) &&
+		   "Major bug: CaMKIIer didn't bind to the site.");
+
     //attach this camkiipoint to the species
     setFirstSpecies(sb1);
 }

@@ -66,7 +66,8 @@ public:
     T* addTrackable(Args&& ...args) {
         
         //create instance
-        T* t = new T( forward<Args>(args)...); t->addToSubSystem();
+        T* t = new T( forward<Args>(args)...);
+        t->addToSubSystem();
         
         //if movable or reactable, add
         if(t->_movable) addMovable((Movable*)t);

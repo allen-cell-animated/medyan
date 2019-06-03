@@ -45,8 +45,7 @@ BranchingManager::BranchingManager(ReactionBase* reaction,
     //find the single binding species
     RSpecies** rs = reaction->rspecies();
     string name = rs[B_RXN_INDEX]->getSpecies().getName();
-    cout << "Brancher "<< "name: "<<name<<" "<< __LINE__ << __FILE__ << endl;
-    
+
     _bindingSpecies = _compartment->findSpeciesByName(name);
 }
 
@@ -228,8 +227,7 @@ CaMKIIBindingManager::CaMKIIBindingManager(ReactionBase* reaction,
     //find the single binding species
     RSpecies** rs = reaction->rspecies();
     string name = rs[C1_RXN_INDEX]->getSpecies().getName();
-    cout << "CAMKIIBinding "<< "name: "<<name<<" "<< __LINE__ << __FILE__ << endl;
-    
+
     _bindingSpecies = _compartment->findSpeciesByName(name);
 }
 
@@ -414,9 +412,7 @@ CaMKIIBundlingManager::CaMKIIBundlingManager(ReactionBase* reaction,
 
 	//find the single binding species
     RSpecies** rs = reaction->rspecies();
-    cout << "CAMKIIBundling "<< __LINE__ <<" "<< __FILE__ << endl;
     string name = rs[C2_RXN_INDEX]->getSpecies().getName();
-    cout << "CAMKIIBundling "<< "name: "<<name<<" "<< __LINE__ << __FILE__ << endl;
 
 
     _bindingSpecies = _compartment->findSpeciesByName(name);
@@ -424,9 +420,7 @@ CaMKIIBundlingManager::CaMKIIBundlingManager(ReactionBase* reaction,
 
 void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
 
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     if(cc->getType() != _filamentType) return;
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     bool inZone = true;
     //if we change other managers copy number
     vector<CaMKIIBundlingManager*> affectedManagers;
@@ -441,18 +435,13 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite
 		//now re add valid based on CCNL
 
 		//TODO need to initialize _neighborLists
-		cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << &_neighborLists <<endl;
 		for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
-				cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 Cylinder* c = cc->getCylinder();
-                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << c << endl;
 
                 if(cn->getParent() == c->getParent()) continue;
                 if(cn->getType() != _filamentType) continue;
 
-                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 auto ccn = cn->getCCylinder();
-                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
                 //TODO it seems to be each binding site, from the CAMKII, by definition there is only one
                 for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
@@ -500,22 +489,16 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite
 
                                 m->_possibleBindings.emplace(t2,t1);
                             }
-            				cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
                         }
-        				cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
                     }
-    				cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
                 }
-				cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
             }
-		cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
         }
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
         //update affected
         for(auto m : affectedManagers) {
@@ -624,11 +607,9 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc) {
 
 void CaMKIIBundlingManager::updateAllPossibleBindings() {
 
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 	_possibleBindings.clear();
 	int camkiiFilamentType = 5000;
 
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     //The first cylinder should be a CAMKII cylinder
     for(auto c : _compartment->getCylinders()) {
 
@@ -638,32 +619,23 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
         CaMKIIingPoint *cp = nullptr;
         auto dc = dynamic_cast<CaMKIICylinder*>(c);
         if (dc) {
-        	//cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             cp = dc->getCaMKIIPointParent();
         } else {
-        	//cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
         }
-        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ <<"  it1_size"<<"      "<<SysParams::Chemistry().bindingSites[0].size()<<endl;
-        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ <<"  it1_size"<<"      "<<SysParams::Chemistry().bindingSites[camkiiFilamentType].size()<<endl;
         short it1=1;
         //for(auto it1 = SysParams::Chemistry().bindingSites[camkiiFilamentType].begin();
         //         it1 != SysParams::Chemistry().bindingSites[camkiiFilamentType].end(); it1++) {
-        	//cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ <<cp<<"  "<<cp->getCoordinationNumber()<<endl;
 
         	// skip if parent coordination number isn't between >=1 and <6 (MAX coordination number SysParams::Chemistry().maxcamkii_coord_number)
         	//now re add valid binding sites
-        	//cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
         	//TODO see if CP is defined
         	if (cp && cp->getCoordinationNumber() < _maxCoordination) {
-            	//cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 //loop through neighbors
                 // The neighbors should be the cylinders from the other filaments (obtained from the neighbor list)
             	//now re add valid based on CCNL
             	for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
-                	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                     if(cn->getParent() == c->getParent()) continue;
                     if(cn->getType() != _filamentType) continue;
-                	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                     auto ccn = cn->getCCylinder();
 
                     for(auto it2 = SysParams::Chemistry().bindingSites[_filamentType].begin();
@@ -671,7 +643,6 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
 
                         if (areEqual(ccn->getCMonomer(*it2)->speciesBound(
                             SysParams::Chemistry().camkiierBoundIndex[_filamentType])->getN(), 1.0)) {
-                        	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                             //check distances..
                             auto mp1 = (float) it1 / SysParams::Geometry().cylinderNumMon[camkiiFilamentType];
                             auto mp2 = (float)*it2 / SysParams::Geometry().cylinderNumMon[_filamentType];
@@ -680,7 +651,6 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
                             auto x2 = c->getSecondBead()->coordinate;
                             auto x3 = cn->getFirstBead()->coordinate;
                             auto x4 = cn->getSecondBead()->coordinate;
-                            cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                             auto m1 = midPointCoordinate(x1, x2, mp1);
                             auto m2 = midPointCoordinate(x3, x4, mp2);
 
@@ -699,7 +669,6 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
 
                             auto t1 = tuple<CCylinder*, short>(cc, it1);
                             auto t2 = tuple<CCylinder*, short>(ccn, *it2);
-                            cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                             //add in correct order
                             if(c->getID() > cn->getID())
                                 _possibleBindings.emplace(t1, t2);//TODO put the CAMKII point
@@ -707,9 +676,7 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
                     }
                 }
             }
-        //cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
         //}
-    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     }
     int oldN = _bindingSpecies->getN();
     int newN = numBindingSites();

@@ -575,8 +575,7 @@ public:
     SpeciesBound (const SpeciesBound &rhs)  : Species(rhs){}
     
     /// Move constructor
-    SpeciesBound (SpeciesBound &&rhs) noexcept : Species(move(rhs)){
-    }
+    SpeciesBound (SpeciesBound &&rhs) noexcept : Species(move(rhs)){}
     
     /// Regular Assignment
     SpeciesBound& operator=(const SpeciesBound& rhs)  {

@@ -31,15 +31,13 @@ using namespace mathfunc;
 void CaMKIIingPoint::updateCoordinate() {
     //The coordinate of the Brancher seems to be on the binding site.
 	//TODO The coordinate of the CAMKII needs to be on the middle of all the cylinders
-    coordinate = midPointCoordinate(get<0>(_bonds.at(0))->getFirstBead()->coordinate,
-    								get<0>(_bonds.at(0))->getSecondBead()->coordinate,
-                                    get<1>(_bonds.at(0)));
+	coordinate = midPointCoordinate(get<0>(_bonds.at(0))->getFirstBead()->coordinate,
+									get<0>(_bonds.at(0))->getSecondBead()->coordinate,
+									get<1>(_bonds.at(0)));
 }
 
-CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, short position)
-
+CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double position)
     : Trackable(true), _camkiiType(camkiiType), _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()), _coordinate(3,0.0) {
-
 
 	_filType=5000; //TODO fix it
 
@@ -74,12 +72,9 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, short posit
 
    // updatePosition();
 
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
-
     //Dummy Cylinder for CaMKII
     //choose length
     //Composite *Dummy = NULL; //TODO used for readable purposes
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
     updateCaMKIIingPointCoM();
 
@@ -93,18 +88,14 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, short posit
     //length = SysParams::Geometry().minCylinderSize[_filType];
 
 	//auto pos2 = nextPointProjection(position, length, direction);
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 	Bead* b2 = _subSystem->addTrackable<Bead>(_coordinate, nullptr, 1);
 
 	//create cylinder
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 	//Cylinder* c0 = _subSystem->addTrackable<CaMKIICylinder>(nullptr, b1, b2, _filType, 0);
 
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 	//c0->setPlusEnd(true);
 	//c0->setMinusEnd(true);
 	_camkiiCylinder = unique_ptr<CaMKIICylinder>(new CaMKIICylinder(this, b1, _filType, 0)); // init the dummy cylinder for CaMKII
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 }
 
 

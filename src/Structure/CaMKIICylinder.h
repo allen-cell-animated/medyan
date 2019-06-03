@@ -48,9 +48,7 @@ public:
 	// composte is set to NULL and we use only one bead
 	CaMKIICylinder(CaMKIIingPoint *camkiiPoint, Bead* b1, short type, int position, bool extensionFront = false, bool extensionBack  = false, bool initialization = false):
 		Cylinder(nullptr, b1, b1, type, position, extensionFront, extensionBack, initialization), _camkiiPoint(camkiiPoint){
-		cout<< "CAMKII" << __LINE__ << __FILE__ << "camkiiPoint= " << camkiiPoint<< endl;
 		_camkiiPoint = camkiiPoint;
-		cout<< "CAMKII" << __LINE__ << __FILE__ << "camkiiPoint= " << camkiiPoint<< endl;
 	};
 
 	CaMKIIingPoint* getCaMKIIPointParent() {

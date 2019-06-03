@@ -27,9 +27,7 @@
 using namespace mathfunc;
 
 void Cylinder::updateCoordinate() {
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     coordinate = midPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 }
 
 
@@ -39,14 +37,12 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     : Trackable(true, true, true, false),
       _b1(b1), _b2(b2), _type(type), _position(position), _ID(_cylinders.getID()) {
     
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 	if (parent) {
 		parent->addChild(unique_ptr<Component>(this));
 		updateCoordinate();
 	} else {
 		coordinate = _b1->coordinate;
 	}
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     //Set coordinate
 
     try {_compartment = GController::getCompartment(coordinate);}
@@ -58,18 +54,12 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
         exit(EXIT_FAILURE);
     }
                    
-   cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
    //add to compartment
    _compartment->addCylinder(this);
-   cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
           
 #ifdef MECHANICS
           //set eqLength according to cylinder size
-   	   // cout << "CAMKII "<< __LINE__ <<" "<<  << __FILE__ << endl;
-   	   cout << "CAMKII "<< __LINE__ <<" "<< b1->coordinate[0] << __FILE__ << endl;
-   	   cout << "CAMKII "<< __LINE__ <<" "<< b2 << __FILE__ << endl;
               double eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
-              cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
           if(!SysParams::RUNSTATE) //RESTARTPHASE
           {
               int nummonomers = (int) round(eqLength/ SysParams::Geometry().monomerSize[type]);
@@ -106,18 +96,14 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
           _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
           _mCylinder->setCylinder(this);
 #endif
-     cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 #ifdef CHEMISTRY
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment, this));
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     _cCylinder->setCylinder(this);
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << _cCylinder.get() <<" " << extensionFront <<" " << extensionBack << "  "<< initialization <<endl;
     //init using chem manager
     _chemManager->initializeCCylinder(_cCylinder.get(), extensionFront,
                                       extensionBack, initialization);
 #endif
 
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
         
 }
 
@@ -192,7 +178,6 @@ void Cylinder::updatePosition() {
 void Cylinder::updateReactionRates() {
     
     double force;
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     //if no rate changer was defined, skip
     if(_polyChanger.empty()) return;
     
@@ -216,9 +201,7 @@ void Cylinder::updateReactionRates() {
     }
     
     //load force from back (affects minus end polymerization)
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     if(_minusEnd) {
-    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
         //get force of front bead
         force = _b1->getLoadForcesM();
         
@@ -234,7 +217,6 @@ void Cylinder::updateReactionRates() {
             }
         }
     }
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 }
 
 bool Cylinder::isFullLength() {

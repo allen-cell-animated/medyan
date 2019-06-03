@@ -1162,8 +1162,6 @@ void ChemManager::genFilBindingReactions() {
                 vector<string> reactants = get<0>(r);
                 vector<string> products = get<1>(r);
                 
-                cout << "Branching " <<reactants.size() << " " << products.size() << endl;
-                
                 //Checks on number of reactants, products
                 if(reactants.size() != BRANCHINGREACTANTS ||
                    products.size() != BRANCHINGPRODUCTS) {
@@ -1382,7 +1380,6 @@ void ChemManager::genFilBindingReactions() {
                 double nucleationDist = get<5>(r);
                 
 
-                cout << "Branching rS_size:"<<reactantSpecies.size()<<" pS_size:" <<productSpecies.size()<<" " << __LINE__ <<" "<< __FILE__ << endl;
                 ReactionBase* rxn = new Reaction<3,0>(reactantSpecies, onRate);
                 rxn->setReactionType(ReactionType::BRANCHING);
                 
@@ -1407,8 +1404,6 @@ void ChemManager::genFilBindingReactions() {
                 
                 vector<string> reactants = get<0>(r);
                 vector<string> products =  get<1>(r);
-                
-                cout << "CaMKIIBinding " <<reactants.size() << " " << products.size() << endl;
                 
                 //Checks on number of reactants, products
                 if(reactants.size() != CAMKIIBINDINGREACTANTS ||
@@ -1557,7 +1552,6 @@ void ChemManager::genFilBindingReactions() {
                 }
                 double nucleationDist = get<5>(r);
                 
-                cout << "CAMKIIBinding rS_size:"<<reactantSpecies.size()<<" pS_size:" <<productSpecies.size()<<" " << __LINE__ <<" "<< __FILE__ << endl;
                 ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
                 rxn->setReactionType(ReactionType::CAMKIIBINDING);
                 
@@ -1582,8 +1576,6 @@ void ChemManager::genFilBindingReactions() {
 
                 vector<string> reactants = get<0>(r);
                 vector<string> products = get<1>(r);
-
-                cout << "CaMKIIBundling "<<reactants.size() << " " << products.size() << endl;
 
                 //Checks on number of reactants, products
                 if(reactants.size() != CAMKIIBUNDLINGREACTANTS ||
@@ -1693,7 +1685,6 @@ void ChemManager::genFilBindingReactions() {
 					<< endl;
 					exit(EXIT_FAILURE);
 				}
-				cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 //Create reaction
                 float onRate = get<2>(r);
                 float offRate = get<3>(r);
@@ -1707,24 +1698,18 @@ void ChemManager::genFilBindingReactions() {
                 rMax = get<5>(r);
                 int maxCoordination = get<6>(r);
 
-                cout << "CAMKIIBundling rS_size:"<<reactantSpecies.size()<<" pS_size:" <<productSpecies.size()<<" " << __LINE__ <<" "<< __FILE__ << endl;
                 ReactionBase* rxn = new Reaction<1,0>(reactantSpecies, onRate);
                 rxn->setReactionType(ReactionType::CAMKIIBUNDLING);
-                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 C->addInternalReaction(rxn);
-                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 //create manager
                 CaMKIIBundlingManager* bManager = new CaMKIIBundlingManager(rxn, C, camkiierInt, camkiierName, filType,rMax,rMin, maxCoordination);
                 C->addFilamentBindingManager(bManager);
                 bManager->setNLIndex(camkiiIndex++);
-                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
                 bManager->setMIndex(managerIndex++);
-                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 //attach callback
                 CaMKIIBundlingCallback camkiicallback(bManager, onRate, offRate, _subSystem);
                 ConnectionBlock rcb(rxn->connect(camkiicallback,false));
-                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             }
 
             for(auto &r: _chemData.linkerReactions[filType]) {
@@ -3037,23 +3022,18 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                                       bool initialization) {
     
     //get some related objects
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 	Compartment* C = cc->getCompartment();
     Cylinder* c = cc->getCylinder();
     
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     Filament* f = (Filament*)(c->getParent());
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ <<" "<< f << endl;
 	short filType ;
     if (f == nullptr){
       filType = 5000; // filType assignment for CaMKII
     } else {
 	  filType = f->getType();
     }
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ <<"" << cc -> getSize() << endl;
     //add monomers to cylinder
     for(int i = 0; i < cc->getSize(); i++) {
-    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     	CMonomer* m = new CMonomer(filType);
         initCMonomer(m, filType, C);
         cc->addCMonomer(m);
@@ -3069,14 +3049,12 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                           SysParams::CParams.brancherBoundIndex[filType]);
             ConnectionBlock rcbb(bs->connect(bcallback,false));
             
-        	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             UpdateCaMKIIerBindingCallback camkiibindingcallback(c, i);
             
             Species* cs = cc->getCMonomer(i)->speciesBound(
                           SysParams::CParams.camkiierBoundIndex[filType]);
             ConnectionBlock rcbcamkii(cs->connect(camkiibindingcallback,false));
 
-        	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             UpdateCaMKIIerBundlingCallback camkiibundlingcallback(c, i);
 
             Species* cs2 = cc->getCMonomer(i)->speciesBound(
@@ -3096,23 +3074,18 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             ConnectionBlock rcbm(ms->connect(mcallback,false));
         }
     }
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
     //get last ccylinder
     CCylinder* lastcc = nullptr;
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     //extension of front
     if(extensionFront) {
-    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
         lastcc = f->getCylinderVector().back()->getCCylinder();
         for(auto &r : _filRxnTemplates[filType]) r->addReaction(lastcc, cc);
-    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
     }
     //extension of back
     else if(extensionBack) {
-    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
         lastcc = f->getCylinderVector().front()->getCCylinder();
         for(auto &r : _filRxnTemplates[filType]) r->addReaction(cc, lastcc);
@@ -3120,11 +3093,9 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
 
     //Base case, initialization
     else if (initialization) {
-    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
         //Check if this is the first cylinder
         if(!f->getCylinderVector().empty()) {
-        	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             //remove plus end from last, add to this.
             lastcc = f->getCylinderVector().back()->getCCylinder();
             CMonomer* m1 = lastcc->getCMonomer(lastcc->getSize() - 1);
@@ -3158,7 +3129,6 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
 #endif
             }
             else{
-            cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
             m2->speciesPlusEnd(0)->up();
                 
@@ -3175,12 +3145,9 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
         }
         //this is first one
         else {
-        	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             //set back and front
             CMonomer* m1 = cc->getCMonomer(cc->getSize() - 1);
-            cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             m1->speciesPlusEnd(0)->up();
-            cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             
             if(SysParams::RUNSTATE){
                 CMonomer* m2 = cc->getCMonomer(0);
@@ -3197,7 +3164,6 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             }
             else {
 #ifdef MECHANICS
-            	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 //                std::cout<<c->getMCylinder()->getEqLength()<<" "<<SysParams::Geometry().cylinderNumMon[filType]<<endl;
                 int nummonomers = min((int) round(c->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
                 CMonomer* m1 = cc->getCMonomer(SysParams::Geometry().cylinderNumMon[filType] - nummonomers);
@@ -3210,7 +3176,6 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                         cc->getCMonomer(i)->speciesBound(j)->up();
                 }
 #else
-                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 CMonomer* m2 = cc->getCMonomer(0);
                 m2->speciesMinusEnd(0)->up();
                 //fill with default filament value
@@ -3226,10 +3191,8 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
         }
     }
     //Add all reaction templates to this cylinder
-	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     if (filType != 5000) {
     	for(auto &r : _filRxnTemplates[filType]) { r->addReaction(cc); }
-    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     }
 }
 

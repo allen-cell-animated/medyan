@@ -113,7 +113,6 @@ void CylinderCylinderNL::reset() {
 }
 
 vector<Cylinder*> CylinderCylinderNL::getNeighbors(Cylinder* cylinder) {
-	//cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << cylinder <<endl;
     return _list[cylinder];
 }
 

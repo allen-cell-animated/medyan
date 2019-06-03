@@ -599,7 +599,6 @@ struct CaMKIIBindingCallback {
         CaMKIIingPoint* b;
         float frate;
         short camkiiType = _bManager->getBoundInt();
-        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
         //choose a random binding site from manager
         auto site = _bManager->chooseBindingSite();
@@ -613,12 +612,10 @@ struct CaMKIIBindingCallback {
         //Get a position and direction of a new filament
         auto x1 = c1->getFirstBead()->coordinate;
         auto x2 = c1->getSecondBead()->coordinate;
-        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ <<" x1: "<<x1.at(0) <<" x2: "<<x2.at(0) << endl;
 
         //get original direction of cylinder
         auto p= midPointCoordinate(x1, x2, pos);
         vector<double> n = twoPointDirection(x1, x2);
-        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ <<" p: "<<p.at(0)<<" n: "<<n.at(0) << endl;
 
         //get camkii projection
 #ifdef MECHANICS
@@ -750,28 +747,22 @@ struct CaMKIIBundlingCallback {
     : _ps(ps), _bManager(bManager), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
-    	cout << "CAMKII bundling"<< __LINE__ <<" "<< __FILE__ << endl;
     	CaMKIIingPoint* cp;
     	// TODO CAMKII either find cp from NN or to get the one the reaction was on it
 //        float frate;
         short camkiiType = _bManager->getBoundInt();
-        cout << "CAMKII bundling"<< _bManager << __LINE__ <<" "<< __FILE__ << endl;
-        
+
         //choose a random binding site from manager
         //TODO Find a CAMKII with coordination number less than max number
         auto site = _bManager->chooseBindingSites();
-        cout << "CAMKII bundling"<< __FUNCTION__ << __LINE__ <<" "<< __FILE__ << endl;
 
         Cylinder*       c1  = get<0>(get<0>(site))->getCylinder();
         short           pos1 = get<1>(get<0>(site));
-        cout << "CAMKII bundling"<< __FUNCTION__ << __LINE__ <<" "<< __FILE__ << endl;
 
         Cylinder*       c2  = get<0>(get<1>(site))->getCylinder();
         short           pos2 = get<1>(get<1>(site));
 
-        cout << "CAMKII bundling"<< __FUNCTION__ << __LINE__ <<" "<< __FILE__ <<  " ddd " << cp << endl;
         cp->addBond(c2, pos2);
-        cout << "CAMKII bundling"<< __FUNCTION__ << __LINE__ <<" "<< __FILE__ << endl;
 //TODO CJY make sure isn't needed before cleaning
 #if 0
 
