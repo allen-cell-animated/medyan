@@ -40,7 +40,7 @@ FBENDINGTHETA:               0.0
 VOLUMEFFTYPE:               REPULSION
 VOLUMECUTOFF:               27.0
 
-VOLUMEK:                    1E5
+VOLUMEK:                    1E4
 
 ### MOTORS ###
 
@@ -99,9 +99,9 @@ CHEMISTRYFILE:               chemistryinput.txt
 
 CALGORITHM:                  NRM
 NUMTOTALSTEPS:		     	 
-RUNTIME:                    15.0
+RUNTIME:                    25.0
 
-SNAPSHOTTIME:                1.0
+SNAPSHOTTIME:                0.1
 
 MINIMIZATIONTIME: 	         0.0005
 NEIGHBORLISTTIME:	         0.0005
