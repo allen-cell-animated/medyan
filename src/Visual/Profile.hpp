@@ -5,14 +5,12 @@
 
 #include "Visual/Common.hpp"
 #include "Visual/Shader.hpp"
-#include "Visual/SharedData.hpp"
 
 #ifdef VISUAL
 
 namespace visual {
 
-// Each profile defines how to render a set of objects
-struct Profile {
+struct VisualElementSettings {
     bool enabled;
 
     // Shared data usage
@@ -32,12 +30,6 @@ struct Profile {
     GLenum indexType = GL_UNSIGNED_INT;
 
     Shader shader;
-
-    // Obtained after init
-    // TODO: this part should go to the renderer
-    unsigned vao;
-    unsigned vbo;
-    unsigned ebo;
 
     // Data processing and update
 
@@ -62,36 +54,10 @@ struct Profile {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     } // init()
 
-    void render() const {
-        glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
-
-        glUseProgram(shader.id);
-        glBindVertexArray(vao);
-        // Update data
-        // TODO: This is the job of the renderer
-        {
-            std::lock_guard<std::mutex> guard(shared::dataMutex);
-            if(shared::coordChanged) {
-                glBindBuffer(GL_ARRAY_BUFFER, state::vbo[0]);
-                glBufferData(GL_ARRAY_BUFFER, sizeof(float) * shared::vertexCoords.size(), &shared::vertexCoords[0], GL_DYNAMIC_DRAW);
-                shared::coordChanged = false;
-            }
-            if(shared::indexChanged) {
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo[0]);
-                glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * shared::triangleVertexIndices.size(), &shared::triangleVertexIndices[0], GL_DYNAMIC_DRAW);
-                elementCount = shared::triangleVertexIndices.size();
-                shared::indexChanged = false;
-            }
-        }
-
-        glDrawElements(eleMode, elementCount, indexType, 0);
-        glBindVertexArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-
-    } // render()
 };
+
+// Each profile is a preset
+// TODO
 
 } // namespace visual
 

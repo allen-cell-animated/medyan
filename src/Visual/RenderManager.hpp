@@ -15,22 +15,7 @@ namespace visual {
 // the rendering result.
 class RenderManager {
 
-public:
-    RenderManager() {}
-    ~RenderManager() {
-        // Deallocate resources
-        glDeleteVertexArrays(1, &_vao);
-        glDeleteBuffers(1, &_vbo);
-
-        glfwTerminate();
-
-    }
-
-private:
-    std::thread _windowThread;
-
-    unsigned int _vao;
-    unsigned int _vbo;
+// TODO
 
 };
 

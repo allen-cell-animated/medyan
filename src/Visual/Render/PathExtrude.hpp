@@ -9,6 +9,8 @@
 
 namespace visual {
 
+// This function transforms a path to GL_TRIANGLES compatible vertex coord list
+// and index list.
 template< typename Float = double >
 struct PathExtrude {
     using CoordType = mathfunc::Vec< 3, Float >;
