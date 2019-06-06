@@ -18,26 +18,30 @@ struct PathExtrude {
     Float radius; // of circumscribing circle
     std::uint_fast8_t sides;
 
+    // This function transforms a path to a mesh of tubes
+    // Parameters
+    //   - coords:  the VecArray where the coordinates of beads can be found
+    //   - indices: the bead indices on the path in the coords container
     template< typename InputFloat >
-    auto generate(const mathfunc::VecArray< 3, InputFloat >& path) const {
+    auto generate(const mathfunc::VecArray< 3, InputFloat >& coords, const std::vector< size_t >& indices) const {
         using namespace mathfunc;
         using std::size_t;
 
         constexpr CoordType a0 { 1.0, 0.0, 0.0 };
         constexpr CoordType a1 { 0.0, 1.0, 0.0 }; // Unused unless first segment is parallel to a0
 
-        const size_t numVertices = path.size();
+        const size_t numVertices = indices.size();
         const size_t numTubeVertices = sides * numVertices;
 
         // Results
         VecArray< 3, Float > vertices;
         std::vector< unsigned > triInd;
 
-        if(path.size() < 2)
+        if(indices.size() < 2)
             return std::make_tuple(vertices, triInd);
 
         // Locate first circle
-        auto seg = normalizedVector(path[1] - path[0]);
+        auto seg = normalizedVector(coords[indices[1]] - coords[indices[0]]);
         auto n0 = cross(seg, a0);
         if(magnitude2(n0) == static_cast< Float >(0.0)) n0 = cross(seg, a1);
         normalize(n0);
@@ -46,20 +50,20 @@ struct PathExtrude {
 
         for(size_t j = 0; j < sides; ++j) {
             const auto a = j * 2 * M_PI / sides;
-            const auto point = path[0] + n0 * (radius * std::cos((Float)a)) + n1 * (radius * std::sin((Float)a));
+            const auto point = coords[indices[0]] + n0 * (radius * std::cos((Float)a)) + n1 * (radius * std::sin((Float)a));
             vertices.push_back(point);
         }
 
         // Propagate circles
         for(size_t i = 1; i < numVertices; ++i) {
-            segn = normalizedVector(i == numVertices - 1 ? path[i] - path[i-1] : path[i+1] - path[i]);
+            segn = normalizedVector(i == numVertices - 1 ? coords[indices[i]] - coords[indices[i-1]] : coords[indices[i+1]] - coords[indices[i]]);
             const auto t = normalizedVector(0.5 * (seg + segn));
             for(size_t j = 0; j < sides; ++j) {
                 // Solve for p_new given:
-                //   dot(p_new - path[i], t) = 0
+                //   dot(p_new - coords[indices[i]], t) = 0
                 //   p_new = x * seg + pp
                 const auto pp = vertices[(i-1) * sides + j];
-                const auto x = dot(path[i] - pp, t) / dot(seg, t);
+                const auto x = dot(coords[indices[i]] - pp, t) / dot(seg, t);
                 vertices.push_back(x * seg + pp);
             }
 

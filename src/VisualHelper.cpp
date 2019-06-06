@@ -7,8 +7,10 @@
 #include <vector>
 
 #include "Structure/Bead.h"
+#include "Structure/Cylinder.h"
 #include "Structure/Filament.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Visual/Render/PathExtrude.hpp"
 #include "Visual/SharedData.hpp"
 #include "Visual/VisualElement.hpp"
 
@@ -28,7 +30,8 @@ struct SystemDataForVisual {
 
     BeadData copiedBeadData;
 
-    std::vector< MembraneIndex > membraneIndices; // [Membrane Idx][Triangle Idx][Bead 0, 1 or 2]
+    std::vector< MembraneIndex > membraneIndices;
+    std::vector< std::vector< size_t > > filamentIndices; // [Filament Idx][Bead position in filament]
 };
 
 SystemDataForVisual sdfv;
@@ -42,6 +45,8 @@ SystemDataForVisual sdfv;
 //     the underlying element being deleted.
 void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
     std::lock_guard< std::mutex > guard(ve->me);
+
+    if(!ve->profile.enabled) return;
 
     // Temporary values
     std::size_t curVertexStart = 0;
@@ -80,7 +85,46 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
             }
         }
         ve->state.eleMode = GL_TRIANGLES;
-    } // end target membrane
+    }
+    else if(ve->profile.flag & Profile::targetFilament) {
+        // Filament
+        if(sdfv.updated & sys_data_update::BeadPosition) {
+            ve->state.vertexAttribs.clear();
+            ve->state.attribChanged = true;
+            if(sdfv.updated & sys_data_update::BeadConnection) {
+                ve->state.vertexIndices.clear();
+                ve->state.indexChanged = true;
+            }
+
+            for(const auto& fi : sdfv.filamentIndices) {
+                mathfunc::VecArray< 3, float > genVertices;
+                std::vector< unsigned > genTriInd;
+
+                std::tie(genVertices, genTriInd) = visual::PathExtrude<float>{
+                    ve->profile.pathExtrudeRadius,
+                    ve->profile.pathExtrudeSides
+                }.generate(sdfv.copiedBeadData.coords, fi);
+
+                // Update coords
+                ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 3 * genVertices.size()); // 3 means coord(xyz)
+                for(const auto coord : genVertices) {
+                    ve->state.vertexAttribs.push_back(coord[0]);
+                    ve->state.vertexAttribs.push_back(coord[1]);
+                    ve->state.vertexAttribs.push_back(coord[2]);
+                }
+
+                if(sdfv.updated & sys_data_update::BeadConnection) {
+                    // Update indices
+                    ve->state.vertexIndices.reserve(ve->state.vertexIndices.size() + genTriInd.size());
+                    for(auto i : genTriInd) {
+                        ve->state.vertexIndices.push_back(i + curVertexStart);
+                    }
+                }
+
+                curVertexStart += genVertices.size();
+            }
+        }
+    }
 
 } // void prepareVisualElement(...)
 
@@ -106,9 +150,9 @@ void copySystemDataAndRunHelper(sys_data_update::FlagType update) {
         }
 
         if(update & (sys_data_update::BeadConnection)) {
-            sdfv.membraneIndices.clear();
 
             // Extract membrane indexing
+            sdfv.membraneIndices.clear();
             for(const Membrane* m : Membrane::getMembranes()) {
                 const auto& mesh = m->getMesh();
 
@@ -131,8 +175,18 @@ void copySystemDataAndRunHelper(sys_data_update::FlagType update) {
                 }
             }
 
-            // Copy filament data
-            // TODO
+            // Extract filament indexing
+            sdfv.filamentIndices.clear();
+            for(Filament* f : Filament::getFilaments()) {
+                sdfv.filamentIndices.emplace_back();
+                auto& fi = sdfv.filamentIndices.back();
+
+                const auto& cylinders = f->getCylinderVector(); // TODO make f const Filament*
+                fi.reserve(cylinders.size() + 1);
+                for(Cylinder* c : cylinders)
+                    fi.push_back(c->getFirstBead()->getIndex()); // TODO make c const Cylinder*
+                fi.push_back(cylinders.back()->getSecondBead()->getIndex());
+            }
 
             // Save updated
             sdfv.updated = update;

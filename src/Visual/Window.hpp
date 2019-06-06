@@ -201,6 +201,12 @@ void main() {
             ve->profile.enabled = true;
             ve->profile.flag = Profile::targetMembrane;
         }
+        {
+            shared::visualElements.emplace_back(new VisualElement);
+            auto& ve = shared::visualElements.back();
+            ve->profile.enabled = true;
+            ve->profile.flag = Profile::targetFilament;
+        }
     }
 }
 
