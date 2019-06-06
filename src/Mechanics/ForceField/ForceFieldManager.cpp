@@ -24,7 +24,7 @@
 #include "SubSystem.h"
 #include "Structure/Bead.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "Visual/SharedData.hpp"
+#include "VisualHelper.hpp"
 
 namespace {
 
@@ -37,56 +37,45 @@ void updateGeometryValueWithDerivative() {
 }
 
 void prepareForceSharedData() {
-    std::lock_guard<std::mutex> guard(visual::shared::dataMutex);
+    // TODO
+    // std::lock_guard<std::mutex> guard(visual::shared::dataMutex);
 
-    visual::shared::arrowVertexCoords.resize(2 * Bead::getDbDataConst().forces.size_raw());
-    visual::shared::lineVertexIndices.resize(2 * Bead::numBeads());
-    std::iota(visual::shared::lineVertexIndices.begin(), visual::shared::lineVertexIndices.end(), 0u);
+    // visual::shared::arrowVertexCoords.resize(2 * Bead::getDbDataConst().forces.size_raw());
+    // visual::shared::lineVertexIndices.resize(2 * Bead::numBeads());
+    // std::iota(visual::shared::lineVertexIndices.begin(), visual::shared::lineVertexIndices.end(), 0u);
 
-    visual::shared::forceChanged = true;
-    visual::shared::forceIndexChanged = true;
+    // visual::shared::forceChanged = true;
+    // visual::shared::forceIndexChanged = true;
 }
 
 void updateForceSharedData() {
-    std::lock_guard<std::mutex> guard(visual::shared::dataMutex);
+    // TODO
+    // std::lock_guard<std::mutex> guard(visual::shared::dataMutex);
 
-    constexpr float factor = 5.0f;
+    // constexpr float factor = 5.0f;
 
-    size_t numBeads = Bead::numBeads();
-    for(size_t i = 0; i < numBeads; ++i) {
-        const auto coord = Bead::getDbDataConst().coords[i];
-        const auto force = Bead::getDbDataConst().forces[i];
-        const auto endCoord = coord + factor * force;
-        visual::shared::arrowVertexCoords[6 * i] = coord[0];
-        visual::shared::arrowVertexCoords[6 * i + 1] = coord[1];
-        visual::shared::arrowVertexCoords[6 * i + 2] = coord[2];
-        visual::shared::arrowVertexCoords[6 * i + 3] = endCoord[0];
-        visual::shared::arrowVertexCoords[6 * i + 4] = endCoord[1];
-        visual::shared::arrowVertexCoords[6 * i + 5] = endCoord[2];
-    }
+    // size_t numBeads = Bead::numBeads();
+    // for(size_t i = 0; i < numBeads; ++i) {
+    //     const auto coord = Bead::getDbDataConst().coords[i];
+    //     const auto force = Bead::getDbDataConst().forces[i];
+    //     const auto endCoord = coord + factor * force;
+    //     visual::shared::arrowVertexCoords[6 * i] = coord[0];
+    //     visual::shared::arrowVertexCoords[6 * i + 1] = coord[1];
+    //     visual::shared::arrowVertexCoords[6 * i + 2] = coord[2];
+    //     visual::shared::arrowVertexCoords[6 * i + 3] = endCoord[0];
+    //     visual::shared::arrowVertexCoords[6 * i + 4] = endCoord[1];
+    //     visual::shared::arrowVertexCoords[6 * i + 5] = endCoord[2];
+    // }
 
-    visual::shared::forceChanged = true;
+    // visual::shared::forceChanged = true;
 }
 
 template< bool stretched >
 void updateMembraneSharedData() {
-    std::lock_guard<std::mutex> guard(visual::shared::dataMutex);
-
-    size_t prevNumVertices = 0;
-    for(auto m : Membrane::getMembranes()) {
-        const size_t numVertices = m->getMesh().getVertices().size();
-
-        for(size_t i = 0; i < numVertices; ++i) {
-            const auto v = m->getMesh().getVertexAttribute(i).vertex;
-            for(size_t j = 0; j < 3; ++j)
-                visual::shared::vertexCoords[prevNumVertices + 3 * i + j] =
-                    (float) (stretched ? v->coordinateStr() : v->coordinate()) [j];
-        }
-
-        prevNumVertices += numVertices;
+    // TODO stretched version
+    if(!stretched) {
+        visual::copySystemDataAndRunHelper(visual::sys_data_update::BeadPosition);
     }
-
-    visual::shared::coordChanged = true;
 }
 
 } // namespace

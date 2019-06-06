@@ -1,5 +1,5 @@
-#ifndef MEDYAN_Visual_Helper_Hpp
-#define MEDYAN_Visual_Helper_Hpp
+#ifndef MEDYAN_VisualHelper_Hpp
+#define MEDYAN_VisualHelper_Hpp
 
 #include <cstdint>
 //-----------------------------------------------------------------------------

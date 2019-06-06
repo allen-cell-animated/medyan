@@ -1,10 +1,11 @@
 #include "Visual/SharedData.hpp"
 
+#ifdef VISUAL
+
 namespace visual {
 namespace shared {
 
-std::mutex dataMutex;
-
+std::mutex veMutex;
 std::vector< std::shared_ptr< VisualElement > > visualElements;
 
 std::vector< float > vertexCoords;
@@ -21,3 +22,5 @@ std::vector< unsigned int > lineVertexIndices;
 
 } // namespace shared
 } // namespace visual
+
+#endif // VISUAL

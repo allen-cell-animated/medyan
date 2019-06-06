@@ -5,7 +5,7 @@
 #include <mutex>
 #include <vector>
 
-#include "Visual/Profile.hpp"
+#include "Visual/VisualElement.hpp"
 
 namespace visual {
 namespace shared {
