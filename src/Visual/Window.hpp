@@ -8,9 +8,9 @@
 #include "util/io/log.h"
 #include "Visual/Camera.hpp"
 #include "Visual/Common.hpp"
-#include "Visual/Profile.hpp"
 #include "Visual/Shader.hpp"
 #include "Visual/SharedData.hpp"
+#include "Visual/VisualElement.hpp"
 
 #ifdef VISUAL
 
@@ -48,12 +48,7 @@ double mouseLastY;
 
 // gl data
 GLFWwindow* window;
-unsigned int vao[2]; // 0 for coord, 1 for force
-unsigned int vbo[2];
-unsigned int ebo[2];
 Shader sd;
-unsigned int elementCount;
-unsigned int forceElementCount;
 
 } // namespace state
 
@@ -186,39 +181,42 @@ void main() {
 )";
     state::sd.init(vertexshader, fragmentshader);
 
-    // Set up vertex
-    glGenBuffers(2, state::vbo);
-    glGenVertexArrays(2, state::vao);
-    glGenBuffers(2, state::ebo);
-    glBindVertexArray(state::vao[0]); // Bind this first!
+    // // Force vertex array
+    // glBindVertexArray(state::vao);
+    // glBindBuffer(GL_ARRAY_BUFFER, state::vbo[1]);
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo[1]);
+    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // glEnableVertexAttribArray(0);
+    // glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // glBindVertexArray(0);
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    // Coord vertex array
-    glBindBuffer(GL_ARRAY_BUFFER, state::vbo[0]);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo[0]);
-    // Vertex attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    // ^^^ also register vbo as bound
-    glEnableVertexAttribArray(0);
+    {
+        // Setup profile
+        std::lock_guard< std::mutex > guard(shared::veMutex);
 
-    // temporarily retarget
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    // Force vertex array
-    glBindVertexArray(state::vao[1]);
-    glBindBuffer(GL_ARRAY_BUFFER, state::vbo[1]);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo[1]);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    // Draw wireframe
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+        {
+            shared::visualElements.emplace_back(new VisualElement);
+            auto& ve = shared::visualElements.back();
+            ve->profile.enabled = true;
+            ve->profile.flag = Profile::targetMembrane;
+        }
+    }
 }
+
+template< typename T >
+inline void replaceBuffer(GLenum target, const std::vector<T>& source) {
+    GLint prevSize;
+    glGetBufferParameteriv(target, GL_BUFFER_SIZE, &prevSize);
+
+    const std::size_t newSize = sizeof(T) * source.size();
+
+    if(newSize > prevSize) {
+        glBufferData(target, newSize, source.data(), GL_DYNAMIC_DRAW);
+    } else {
+        glBufferSubData(target, 0, newSize, source.data());
+    }
+} 
 
 // The main loop for all windows.
 // Note:
@@ -247,45 +245,34 @@ inline void mainLoop() {
         state::sd.setMat4("view", camera.view());
 
         glUseProgram(state::sd.id);
-        glBindVertexArray(state::vao[0]);
-        // Update data
+
         {
-            std::lock_guard<std::mutex> guard(shared::dataMutex);
-            if(shared::coordChanged) {
-                glBindBuffer(GL_ARRAY_BUFFER, state::vbo[0]);
-                glBufferData(GL_ARRAY_BUFFER, sizeof(float) * shared::vertexCoords.size(), &shared::vertexCoords[0], GL_DYNAMIC_DRAW);
-                shared::coordChanged = false;
-            }
-            if(shared::indexChanged) {
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo[0]);
-                glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * shared::triangleVertexIndices.size(), &shared::triangleVertexIndices[0], GL_DYNAMIC_DRAW);
-                elementCount = shared::triangleVertexIndices.size();
-                shared::indexChanged = false;
+            std::lock_guard< std::mutex > guard(shared::veMutex);
+
+            for(const auto& ve : shared::visualElements) {
+                std::lock_guard< std::mutex > guard(ve->me);
+
+                glBindVertexArray(ve->state.vao);
+
+                glPolygonMode(GL_FRONT_AND_BACK, ve->profile.polygonMode);
+
+                // Update data
+                if(ve->state.attribChanged) {
+                    glBindBuffer(GL_ARRAY_BUFFER, ve->state.vbo);
+                    replaceBuffer(GL_ARRAY_BUFFER, ve->state.vertexAttribs);
+                    ve->state.attribChanged = false;
+                }
+                if(ve->state.indexChanged) {
+                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ve->state.ebo);
+                    replaceBuffer(GL_ELEMENT_ARRAY_BUFFER, ve->state.vertexIndices);
+                    ve->state.indexChanged = false;
+                }
+
+                // Draw
+                glDrawElements(ve->state.eleMode, ve->state.vertexIndices.size(), GL_UNSIGNED_INT, (void*)0);
             }
         }
-
-        glDrawElements(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-        glBindVertexArray(state::vao[1]);
-        {
-            std::lock_guard<std::mutex> guard(shared::dataMutex);
-            if(shared::forceChanged) {
-                glBindBuffer(GL_ARRAY_BUFFER, state::vbo[1]);
-                glBufferData(GL_ARRAY_BUFFER, sizeof(float) * shared::arrowVertexCoords.size(), &shared::arrowVertexCoords[0], GL_DYNAMIC_DRAW);
-                shared::forceChanged = false;
-            }
-            if(shared::forceIndexChanged) {
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo[1]);
-                glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * shared::lineVertexIndices.size(), &shared::lineVertexIndices[0], GL_DYNAMIC_DRAW);
-                forceElementCount = shared::lineVertexIndices.size();
-                shared::forceIndexChanged = false;
-            }
-        }
-        glDrawElements(GL_LINES, forceElementCount, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0); // no need to unbind every time
 
         // check
         glfwSwapBuffers(state::window);
@@ -296,9 +283,12 @@ inline void mainLoop() {
 inline void deallocate() {
 
     // Deallocate resources
-    glDeleteVertexArrays(2, state::vao);
-    glDeleteBuffers(2, state::vbo);
-    glDeleteBuffers(2, state::ebo);
+    {
+        // Delete profiles
+        std::lock_guard< std::mutex > guard(shared::veMutex);
+
+        shared::visualElements.clear();
+    }
 
     glfwTerminate();
 

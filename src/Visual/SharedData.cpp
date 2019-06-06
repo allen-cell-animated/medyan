@@ -5,11 +5,14 @@ namespace shared {
 
 std::mutex dataMutex;
 
-bool coordChanged = true;
-bool indexChanged = true;
+std::vector< std::shared_ptr< VisualElement > > visualElements;
 
 std::vector< float > vertexCoords;
-std::vector< unsigned int > triangleVertexIndices;
+bool coordChanged = true;
+
+std::vector< unsigned int > vertexIndices;
+bool indexChanged = true;
+
 
 bool forceChanged = true;
 bool forceIndexChanged = true;

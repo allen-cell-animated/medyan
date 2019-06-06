@@ -1,27 +1,33 @@
 #ifndef MEDYAN_Visual_SharedData_Hpp
 #define MEDYAN_Visual_SharedData_Hpp
 
+#include <memory> // shared_ptr
 #include <mutex>
 #include <vector>
 
-namespace visual {
+#include "Visual/Profile.hpp"
 
+namespace visual {
 namespace shared {
 
 extern std::mutex dataMutex;
 
-extern bool coordChanged;
-extern bool indexChanged;
+extern std::mutex veMutex;
+// Must be created and deleted within a valid opengl context
+extern std::vector< std::shared_ptr< VisualElement > > visualElements;
 
 extern std::vector< float > vertexCoords;
-extern std::vector< unsigned int > triangleVertexIndices;
+extern bool coordChanged;
+
+extern std::vector< unsigned int > vertexIndices;
+extern bool indexChanged;
 
 extern bool forceChanged;
 extern bool forceIndexChanged;
 extern std::vector< float > arrowVertexCoords;
 extern std::vector< unsigned int > lineVertexIndices;
 
-}
-}
+} // namespace shared
+} // namespace visual
 
 #endif
