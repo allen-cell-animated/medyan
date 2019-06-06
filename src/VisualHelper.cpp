@@ -106,6 +106,8 @@ void copySystemDataAndRunHelper(sys_data_update::FlagType update) {
         }
 
         if(update & (sys_data_update::BeadConnection)) {
+            sdfv.membraneIndices.clear();
+
             // Extract membrane indexing
             for(const Membrane* m : Membrane::getMembranes()) {
                 const auto& mesh = m->getMesh();
@@ -131,6 +133,9 @@ void copySystemDataAndRunHelper(sys_data_update::FlagType update) {
 
             // Copy filament data
             // TODO
+
+            // Save updated
+            sdfv.updated = update;
         }
     }
 
