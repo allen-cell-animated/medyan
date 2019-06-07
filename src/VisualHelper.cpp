@@ -131,41 +131,84 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
     }
     else if(ve->profile.flag & Profile::targetFilament) {
         // Filament
-        if(sdfv.updated & sys_data_update::BeadPosition) {
-            ve->state.vertexAttribs.clear();
-            ve->state.attribChanged = true;
-            if(sdfv.updated & sys_data_update::BeadConnection) {
-                ve->state.vertexIndices.clear();
-                ve->state.indexChanged = true;
-            }
-
-            for(const auto& fi : sdfv.filamentIndices) {
-                mathfunc::VecArray< 3, float > genVertices;
-                std::vector< unsigned > genTriInd;
-
-                std::tie(genVertices, genTriInd) = visual::PathExtrude<float>{
-                    ve->profile.pathExtrudeRadius,
-                    ve->profile.pathExtrudeSides
-                }.generate(sdfv.copiedBeadData.coords, fi);
-
-                // Update coords
-                ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 3 * genVertices.size()); // 3 means coord(xyz)
-                for(const auto coord : genVertices) {
-                    ve->state.vertexAttribs.push_back(coord[0]);
-                    ve->state.vertexAttribs.push_back(coord[1]);
-                    ve->state.vertexAttribs.push_back(coord[2]);
+        if(ve->profile.flag & Profile::displayForce) {
+            //-----------------------------------------------------------------
+            // Filament Force
+            //-----------------------------------------------------------------
+            if(sdfv.updated & sys_data_update::BeadPosition) {
+                ve->state.vertexAttribs.clear();
+                ve->state.attribChanged = true;
+                if(sdfv.updated & sys_data_update::BeadConnection) {
+                    ve->state.vertexIndices.clear();
+                    ve->state.indexChanged = true;
                 }
 
-                if(sdfv.updated & sys_data_update::BeadConnection) {
-                    // Update indices
-                    ve->state.vertexIndices.reserve(ve->state.vertexIndices.size() + genTriInd.size());
-                    for(auto i : genTriInd) {
-                        ve->state.vertexIndices.push_back(i + curVertexStart);
+                for(const auto& fi : sdfv.filamentIndices) {
+                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 2 * 3 * fi.size()); // 3 means coord(xyz)
+                    for(size_t i : fi) {
+                        const auto coord = sdfv.copiedBeadData.coords[i];
+                        ve->state.vertexAttribs.push_back(coord[0]);
+                        ve->state.vertexAttribs.push_back(coord[1]);
+                        ve->state.vertexAttribs.push_back(coord[2]);
+
+                        const auto force = sdfv.copiedBeadData.forces[i];
+                        const auto forceTip = force * ve->profile.forceScale + coord;
+                        ve->state.vertexAttribs.push_back(forceTip[0]);
+                        ve->state.vertexAttribs.push_back(forceTip[1]);
+                        ve->state.vertexAttribs.push_back(forceTip[2]);
                     }
                 }
 
-                curVertexStart += genVertices.size();
+                const auto numBeads = ve->state.vertexAttribs.size() / 3; // 3 means coord(xyz);
+                if(sdfv.updated & sys_data_update::BeadConnection) {
+                    ve->state.vertexIndices.resize(numBeads);
+                    std::iota(ve->state.vertexIndices.begin(), ve->state.vertexIndices.end(), 0u);
+                }
+
             }
+            ve->state.eleMode = GL_LINES;
+
+        } else {
+            //-----------------------------------------------------------------
+            // Filament Shape
+            //-----------------------------------------------------------------
+            if(sdfv.updated & sys_data_update::BeadPosition) {
+                ve->state.vertexAttribs.clear();
+                ve->state.attribChanged = true;
+                if(sdfv.updated & sys_data_update::BeadConnection) {
+                    ve->state.vertexIndices.clear();
+                    ve->state.indexChanged = true;
+                }
+
+                for(const auto& fi : sdfv.filamentIndices) {
+                    mathfunc::VecArray< 3, float > genVertices;
+                    std::vector< unsigned > genTriInd;
+
+                    std::tie(genVertices, genTriInd) = visual::PathExtrude<float>{
+                        ve->profile.pathExtrudeRadius,
+                        ve->profile.pathExtrudeSides
+                    }.generate(sdfv.copiedBeadData.coords, fi);
+
+                    // Update coords
+                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 3 * genVertices.size()); // 3 means coord(xyz)
+                    for(const auto coord : genVertices) {
+                        ve->state.vertexAttribs.push_back(coord[0]);
+                        ve->state.vertexAttribs.push_back(coord[1]);
+                        ve->state.vertexAttribs.push_back(coord[2]);
+                    }
+
+                    if(sdfv.updated & sys_data_update::BeadConnection) {
+                        // Update indices
+                        ve->state.vertexIndices.reserve(ve->state.vertexIndices.size() + genTriInd.size());
+                        for(auto i : genTriInd) {
+                            ve->state.vertexIndices.push_back(i + curVertexStart);
+                        }
+                    }
+
+                    curVertexStart += genVertices.size();
+                }
+            }
+            ve->state.eleMode = GL_TRIANGLES;
         }
     }
 
