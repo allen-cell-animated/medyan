@@ -2,6 +2,7 @@
 
 #include <functional> // cref, reference_wrapper
 #include <mutex>
+#include <numeric> // iota
 #include <thread>
 #include <utility> // move
 #include <vector>
@@ -49,42 +50,84 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
     if(!ve->profile.enabled) return;
 
     // Temporary values
-    std::size_t curVertexStart = 0;
+    std::size_t curVertexStart = 0; // current filled vertex index in the final vertex attribute array
 
     if(ve->profile.flag & Profile::targetMembrane) {
         // Membrane
-        if(sdfv.updated & sys_data_update::BeadPosition) {
-            ve->state.vertexAttribs.clear();
-            ve->state.attribChanged = true;
-            if(sdfv.updated & sys_data_update::BeadConnection) {
-                ve->state.vertexIndices.clear();
-                ve->state.indexChanged = true;
-            }
-
-            for(const auto& mi : sdfv.membraneIndices) {
-                // Update coords
-                ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 3 * mi.vertexIndices.size()); // 3 means coord(xyz)
-                for(size_t i : mi.vertexIndices) {
-                    const auto coord = sdfv.copiedBeadData.coords[i];
-                    ve->state.vertexAttribs.push_back(coord[0]);
-                    ve->state.vertexAttribs.push_back(coord[1]);
-                    ve->state.vertexAttribs.push_back(coord[2]);
+        if(ve->profile.flag & Profile::displayForce) {
+            //-----------------------------------------------------------------
+            // Membrane Force
+            //-----------------------------------------------------------------
+            if(sdfv.updated & sys_data_update::BeadPosition) {
+                ve->state.vertexAttribs.clear();
+                ve->state.attribChanged = true;
+                if(sdfv.updated & sys_data_update::BeadConnection) {
+                    ve->state.vertexIndices.clear();
+                    ve->state.indexChanged = true;
                 }
 
-                if(sdfv.updated & sys_data_update::BeadConnection) {
-                    // update indices
-                    ve->state.vertexIndices.reserve(ve->state.vertexIndices.size() + 3 * mi.triangleVertexIndices.size());
-                    for(const auto& t : mi.triangleVertexIndices) {
-                        ve->state.vertexIndices.push_back(t[0] + curVertexStart);
-                        ve->state.vertexIndices.push_back(t[1] + curVertexStart);
-                        ve->state.vertexIndices.push_back(t[2] + curVertexStart);
+                for(const auto& mi : sdfv.membraneIndices) {
+                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 2 * 3 * mi.vertexIndices.size()); // 3 means coord(xyz)
+                    for(size_t i : mi.vertexIndices) {
+                        const auto coord = sdfv.copiedBeadData.coords[i];
+                        ve->state.vertexAttribs.push_back(coord[0]);
+                        ve->state.vertexAttribs.push_back(coord[1]);
+                        ve->state.vertexAttribs.push_back(coord[2]);
+
+                        const auto force = sdfv.copiedBeadData.forces[i];
+                        const auto forceTip = force * ve->profile.forceScale + coord;
+                        ve->state.vertexAttribs.push_back(forceTip[0]);
+                        ve->state.vertexAttribs.push_back(forceTip[1]);
+                        ve->state.vertexAttribs.push_back(forceTip[2]);
                     }
                 }
 
-                curVertexStart += mi.vertexIndices.size();
+                const auto numBeads = ve->state.vertexAttribs.size() / 3; // 3 means coord(xyz);
+                if(sdfv.updated & sys_data_update::BeadConnection) {
+                    ve->state.vertexIndices.resize(numBeads);
+                    std::iota(ve->state.vertexIndices.begin(), ve->state.vertexIndices.end(), 0u);
+                }
+
             }
+            ve->state.eleMode = GL_LINES;
+
+        } else {
+            //-----------------------------------------------------------------
+            // Membrane Shape
+            //-----------------------------------------------------------------
+            if(sdfv.updated & sys_data_update::BeadPosition) {
+                ve->state.vertexAttribs.clear();
+                ve->state.attribChanged = true;
+                if(sdfv.updated & sys_data_update::BeadConnection) {
+                    ve->state.vertexIndices.clear();
+                    ve->state.indexChanged = true;
+                }
+
+                for(const auto& mi : sdfv.membraneIndices) {
+                    // Update coords
+                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 3 * mi.vertexIndices.size()); // 3 means coord(xyz)
+                    for(size_t i : mi.vertexIndices) {
+                        const auto coord = sdfv.copiedBeadData.coords[i];
+                        ve->state.vertexAttribs.push_back(coord[0]);
+                        ve->state.vertexAttribs.push_back(coord[1]);
+                        ve->state.vertexAttribs.push_back(coord[2]);
+                    }
+
+                    if(sdfv.updated & sys_data_update::BeadConnection) {
+                        // update indices
+                        ve->state.vertexIndices.reserve(ve->state.vertexIndices.size() + 3 * mi.triangleVertexIndices.size());
+                        for(const auto& t : mi.triangleVertexIndices) {
+                            ve->state.vertexIndices.push_back(t[0] + curVertexStart);
+                            ve->state.vertexIndices.push_back(t[1] + curVertexStart);
+                            ve->state.vertexIndices.push_back(t[2] + curVertexStart);
+                        }
+                    }
+
+                    curVertexStart += mi.vertexIndices.size();
+                }
+            }
+            ve->state.eleMode = GL_TRIANGLES;
         }
-        ve->state.eleMode = GL_TRIANGLES;
     }
     else if(ve->profile.flag & Profile::targetFilament) {
         // Filament

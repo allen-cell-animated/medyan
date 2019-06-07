@@ -205,7 +205,19 @@ void main() {
             shared::visualElements.emplace_back(new VisualElement);
             auto& ve = shared::visualElements.back();
             ve->profile.enabled = true;
+            ve->profile.flag = Profile::targetMembrane | Profile::displayForce;
+        }
+        {
+            shared::visualElements.emplace_back(new VisualElement);
+            auto& ve = shared::visualElements.back();
+            ve->profile.enabled = true;
             ve->profile.flag = Profile::targetFilament;
+        }
+        {
+            shared::visualElements.emplace_back(new VisualElement);
+            auto& ve = shared::visualElements.back();
+            ve->profile.enabled = true;
+            ve->profile.flag = Profile::targetFilament | Profile::displayForce;
         }
     }
 }

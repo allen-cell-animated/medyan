@@ -23,8 +23,9 @@ struct Profile {
 
     FlagType flag = 0;
 
-    float             pathExtrudeRadius = 15.0;
+    float             pathExtrudeRadius = 10.0f;
     std::uint_fast8_t pathExtrudeSides = 12;
+    float             forceScale = 5.0f;
 
     GLenum polygonMode = GL_LINE;
 };
