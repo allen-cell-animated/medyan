@@ -37,37 +37,11 @@ void updateGeometryValueWithDerivative() {
 }
 
 void prepareForceSharedData() {
-    // TODO
-    // std::lock_guard<std::mutex> guard(visual::shared::dataMutex);
-
-    // visual::shared::arrowVertexCoords.resize(2 * Bead::getDbDataConst().forces.size_raw());
-    // visual::shared::lineVertexIndices.resize(2 * Bead::numBeads());
-    // std::iota(visual::shared::lineVertexIndices.begin(), visual::shared::lineVertexIndices.end(), 0u);
-
-    // visual::shared::forceChanged = true;
-    // visual::shared::forceIndexChanged = true;
+    visual::copySystemDataAndRunHelper(visual::sys_data_update::BeadPosition | visual::sys_data_update::BeadConnection);
 }
 
 void updateForceSharedData() {
-    // TODO
-    // std::lock_guard<std::mutex> guard(visual::shared::dataMutex);
-
-    // constexpr float factor = 5.0f;
-
-    // size_t numBeads = Bead::numBeads();
-    // for(size_t i = 0; i < numBeads; ++i) {
-    //     const auto coord = Bead::getDbDataConst().coords[i];
-    //     const auto force = Bead::getDbDataConst().forces[i];
-    //     const auto endCoord = coord + factor * force;
-    //     visual::shared::arrowVertexCoords[6 * i] = coord[0];
-    //     visual::shared::arrowVertexCoords[6 * i + 1] = coord[1];
-    //     visual::shared::arrowVertexCoords[6 * i + 2] = coord[2];
-    //     visual::shared::arrowVertexCoords[6 * i + 3] = endCoord[0];
-    //     visual::shared::arrowVertexCoords[6 * i + 4] = endCoord[1];
-    //     visual::shared::arrowVertexCoords[6 * i + 5] = endCoord[2];
-    // }
-
-    // visual::shared::forceChanged = true;
+    visual::copySystemDataAndRunHelper(visual::sys_data_update::BeadPosition);
 }
 
 template< bool stretched >

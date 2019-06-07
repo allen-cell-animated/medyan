@@ -35,6 +35,7 @@ struct SystemDataForVisual {
     std::vector< std::vector< size_t > > filamentIndices; // [Filament Idx][Bead position in filament]
 };
 
+// Shared data
 SystemDataForVisual sdfv;
 
 // This function tranforms the extracted system data to the actual gl
