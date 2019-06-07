@@ -13,21 +13,29 @@ struct Profile {
 
     using FlagType = std::uint_fast8_t;
 
+    enum class PathMode { Line, Extrude };
+
     static constexpr FlagType targetFilament      = 1 << 0;
     static constexpr FlagType targetMembrane      = 1 << 1;
     static constexpr FlagType displayForce        = 1 << 2;
     static constexpr FlagType targetConcentration = 1 << 3;
 
     // User settings
+    //-------------------------------------------------------------------------
     bool enabled = false;
 
+    // flag for choosing data
     FlagType flag = 0;
 
+    // shape settings
+    PathMode          pathMode = PathMode::Line; // TODO implement this in visual helper
     float             pathExtrudeRadius = 10.0f;
     std::uint_fast8_t pathExtrudeSides = 12;
     float             forceScale = 5.0f;
 
     GLenum polygonMode = GL_LINE;
+
+    // color settings
 };
 
 struct GlState {

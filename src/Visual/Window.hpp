@@ -9,6 +9,7 @@
 #include "Visual/Camera.hpp"
 #include "Visual/Common.hpp"
 #include "Visual/Shader.hpp"
+#include "Visual/ShaderSrc.hpp"
 #include "Visual/SharedData.hpp"
 #include "Visual/VisualElement.hpp"
 
@@ -128,7 +129,7 @@ inline void processInput(GLFWwindow* window) {
 }
 
 inline void createWindow() {
-    LOG(INFO) << "Initializing GLFW";
+    LOG(DEBUG) << "Initializing GLFW";
     glfwSetErrorCallback(&glfwError);
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -144,7 +145,7 @@ inline void createWindow() {
     }
     glfwMakeContextCurrent(state::window);
 
-    LOG(INFO) << "initializing GLAD";
+    LOG(DEBUG) << "initializing GLAD";
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         LOG(ERROR) << "Failed to initialize GLAD";
         return;
@@ -158,38 +159,7 @@ inline void createWindow() {
     glEnable(GL_DEPTH_TEST);
 
     // Shader
-    const char* const vertexshader = R"(
-#version 330 core
-layout (location = 0) in vec3 aPos;
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-
-void main() {
-    gl_Position = projection * view * model * vec4(aPos, 1.0);
-}
-)";
-
-    const char* const fragmentshader = R"(
-#version 330 core
-out vec4 FragColor;
-
-void main() {
-    FragColor = vec4(0.5f, 0.25f, 0.1f, 1.0f);
-}
-)";
-    state::sd.init(vertexshader, fragmentshader);
-
-    // // Force vertex array
-    // glBindVertexArray(state::vao);
-    // glBindBuffer(GL_ARRAY_BUFFER, state::vbo[1]);
-    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo[1]);
-    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    // glEnableVertexAttribArray(0);
-    // glBindBuffer(GL_ARRAY_BUFFER, 0);
-    // glBindVertexArray(0);
-    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    state::sd.init(shader::VertexElement, shader::FragElement);
 
     {
         // Setup profile

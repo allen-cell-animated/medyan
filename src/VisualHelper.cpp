@@ -7,6 +7,7 @@
 #include <utility> // move
 #include <vector>
 
+#include "MathFunctions.h"
 #include "Structure/Bead.h"
 #include "Structure/Cylinder.h"
 #include "Structure/Filament.h"
@@ -221,6 +222,7 @@ void helper() {
 
     for(const auto& spv : shared::visualElements) {
         // Current executed serially, but could be parallelized
+        // If parallelized, the shared_ptr must be copied to the working thread
         prepareVisualElement(spv);
     }
 } // void helper(...)
