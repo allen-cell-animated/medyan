@@ -22,11 +22,6 @@ extern bool coordChanged;
 extern std::vector< unsigned int > vertexIndices;
 extern bool indexChanged;
 
-extern bool forceChanged;
-extern bool forceIndexChanged;
-extern std::vector< float > arrowVertexCoords;
-extern std::vector< unsigned int > lineVertexIndices;
-
 } // namespace shared
 } // namespace visual
 

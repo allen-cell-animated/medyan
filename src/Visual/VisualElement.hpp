@@ -39,6 +39,12 @@ struct Profile {
 };
 
 struct GlState {
+    static constexpr unsigned int vaStride = 6;
+    static constexpr unsigned int vaPosStart = 0;
+    static constexpr unsigned int vaPosSize = 3;
+    static constexpr unsigned int vaNormalStart = 3;
+    static constexpr unsigned int vaNormalSize = 3;
+
     // vao, vbo, ebo
     GLuint vao, vbo, ebo;
 
@@ -62,8 +68,13 @@ struct GlState {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
         // Vertex attribute
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        //---------------------------------------------------------------------
+        // Position
+        glVertexAttribPointer(0, vaPosSize,    GL_FLOAT, GL_FALSE, vaStride * sizeof(float), static_cast<const char*>(0) + vaPosStart   );
         glEnableVertexAttribArray(0);
+        // Normal
+        glVertexAttribPointer(1, vaNormalSize, GL_FLOAT, GL_FALSE, vaStride * sizeof(float), static_cast<const char*>(0) + vaNormalStart);
+        glEnableVertexAttribArray(1);
 
         // temporarily retarget
         glBindBuffer(GL_ARRAY_BUFFER, 0);

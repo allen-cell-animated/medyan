@@ -47,6 +47,8 @@ SystemDataForVisual sdfv;
 //   - When called from another thread, the shared_ptr must be copied to avoid
 //     the underlying element being deleted.
 void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
+    using namespace mathfunc;
+
     std::lock_guard< std::mutex > guard(ve->me);
 
     if(!ve->profile.enabled) return;
@@ -69,22 +71,24 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 }
 
                 for(const auto& mi : sdfv.membraneIndices) {
-                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 2 * 3 * mi.vertexIndices.size()); // 3 means coord(xyz)
+                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 2 * GlState::vaStride * mi.vertexIndices.size());
                     for(size_t i : mi.vertexIndices) {
                         const auto coord = sdfv.copiedBeadData.coords[i];
                         ve->state.vertexAttribs.push_back(coord[0]);
                         ve->state.vertexAttribs.push_back(coord[1]);
                         ve->state.vertexAttribs.push_back(coord[2]);
+                        ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + GlState::vaNormalSize); // dummy normal
 
                         const auto force = sdfv.copiedBeadData.forces[i];
                         const auto forceTip = force * ve->profile.forceScale + coord;
                         ve->state.vertexAttribs.push_back(forceTip[0]);
                         ve->state.vertexAttribs.push_back(forceTip[1]);
                         ve->state.vertexAttribs.push_back(forceTip[2]);
+                        ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + GlState::vaNormalSize); // dummy normal
                     }
                 }
 
-                const auto numBeads = ve->state.vertexAttribs.size() / 3; // 3 means coord(xyz);
+                const auto numBeads = ve->state.vertexAttribs.size() / GlState::vaStride;
                 if(sdfv.updated & sys_data_update::BeadConnection) {
                     ve->state.vertexIndices.resize(numBeads);
                     std::iota(ve->state.vertexIndices.begin(), ve->state.vertexIndices.end(), 0u);
@@ -107,12 +111,13 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
 
                 for(const auto& mi : sdfv.membraneIndices) {
                     // Update coords
-                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 3 * mi.vertexIndices.size()); // 3 means coord(xyz)
+                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + GlState::vaStride * mi.vertexIndices.size());
                     for(size_t i : mi.vertexIndices) {
                         const auto coord = sdfv.copiedBeadData.coords[i];
                         ve->state.vertexAttribs.push_back(coord[0]);
                         ve->state.vertexAttribs.push_back(coord[1]);
                         ve->state.vertexAttribs.push_back(coord[2]);
+                        // TODO
                     }
 
                     if(sdfv.updated & sys_data_update::BeadConnection) {
