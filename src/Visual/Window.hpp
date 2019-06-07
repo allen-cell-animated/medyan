@@ -227,7 +227,6 @@ inline void mainLoop() {
         state::projection = glm::perspective(state::fov, (float)state::windowWidth / (float)state::windowHeight, state::nearDistance, state::farDistance);
         state::sd.setMat4("projection", state::projection);
         state::model = glm::mat4(1.0f);
-        //state::model = glm::rotate(state::model, 10.0f * (float)glfwGetTime(), glm::vec3(0.6f, 0.8f, 0.0f));
         state::sd.setMat4("model", state::model);
 
         state::sd.setMat4("view", camera.view());
@@ -250,14 +249,15 @@ inline void mainLoop() {
                     replaceBuffer(GL_ARRAY_BUFFER, ve->state.vertexAttribs);
                     ve->state.attribChanged = false;
                 }
-                if(ve->state.indexChanged) {
-                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ve->state.ebo);
-                    replaceBuffer(GL_ELEMENT_ARRAY_BUFFER, ve->state.vertexIndices);
-                    ve->state.indexChanged = false;
-                }
+                // if(ve->state.indexChanged) {
+                //     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ve->state.ebo);
+                //     replaceBuffer(GL_ELEMENT_ARRAY_BUFFER, ve->state.vertexIndices);
+                //     ve->state.indexChanged = false;
+                // }
 
                 // Draw
-                glDrawElements(ve->state.eleMode, ve->state.vertexIndices.size(), GL_UNSIGNED_INT, (void*)0);
+                glDrawArrays(ve->state.eleMode, 0, ve->state.vertexAttribs.size() / GlState::vaStride);
+                // glDrawElements(ve->state.eleMode, ve->state.vertexIndices.size(), GL_UNSIGNED_INT, (void*)0);
             }
         }
         glBindVertexArray(0);

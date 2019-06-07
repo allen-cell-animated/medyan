@@ -46,13 +46,15 @@ struct GlState {
     static constexpr unsigned int vaNormalSize = 3;
 
     // vao, vbo, ebo
-    GLuint vao, vbo, ebo;
+    GLuint vao;
+    GLuint vbo;
+    // GLuint ebo;
 
     // Element info
     std::vector< float >    vertexAttribs;
-    std::vector< unsigned > vertexIndices;
+    // std::vector< unsigned > vertexIndices;
     bool attribChanged = true;
-    bool indexChanged  = true;
+    // bool indexChanged  = true;
 
     // Set by init and helper
     GLenum eleMode = GL_TRIANGLES;
@@ -60,12 +62,12 @@ struct GlState {
     // ctor and dtor
     GlState() {
         glGenBuffers(1, &vbo);
-        glGenBuffers(1, &ebo);
+        // glGenBuffers(1, &ebo);
         glGenVertexArrays(1, &vao);
 
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
         // Vertex attribute
         //---------------------------------------------------------------------
@@ -78,14 +80,14 @@ struct GlState {
 
         // temporarily retarget
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
     }
 
     ~GlState() {
         glDeleteVertexArrays(1, &vao);
         glDeleteBuffers(1, &vbo);
-        glDeleteBuffers(1, &ebo);
+        // glDeleteBuffers(1, &ebo);
     }
 
 };

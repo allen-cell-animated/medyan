@@ -65,10 +65,10 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
             if(sdfv.updated & sys_data_update::BeadPosition) {
                 ve->state.vertexAttribs.clear();
                 ve->state.attribChanged = true;
-                if(sdfv.updated & sys_data_update::BeadConnection) {
-                    ve->state.vertexIndices.clear();
-                    ve->state.indexChanged = true;
-                }
+                // if(sdfv.updated & sys_data_update::BeadConnection) {
+                //     ve->state.vertexIndices.clear();
+                //     ve->state.indexChanged = true;
+                // }
 
                 for(const auto& mi : sdfv.membraneIndices) {
                     ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 2 * GlState::vaStride * mi.vertexIndices.size());
@@ -88,11 +88,11 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                     }
                 }
 
-                const auto numBeads = ve->state.vertexAttribs.size() / GlState::vaStride;
-                if(sdfv.updated & sys_data_update::BeadConnection) {
-                    ve->state.vertexIndices.resize(numBeads);
-                    std::iota(ve->state.vertexIndices.begin(), ve->state.vertexIndices.end(), 0u);
-                }
+                // const auto numBeads = ve->state.vertexAttribs.size() / GlState::vaStride;
+                // if(sdfv.updated & sys_data_update::BeadConnection) {
+                //     ve->state.vertexIndices.resize(numBeads);
+                //     std::iota(ve->state.vertexIndices.begin(), ve->state.vertexIndices.end(), 0u);
+                // }
 
             }
             ve->state.eleMode = GL_LINES;
@@ -104,10 +104,10 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
             if(sdfv.updated & sys_data_update::BeadPosition) {
                 ve->state.vertexAttribs.clear();
                 ve->state.attribChanged = true;
-                if(sdfv.updated & sys_data_update::BeadConnection) {
-                    ve->state.vertexIndices.clear();
-                    ve->state.indexChanged = true;
-                }
+                // if(sdfv.updated & sys_data_update::BeadConnection) {
+                //     ve->state.vertexIndices.clear();
+                //     ve->state.indexChanged = true;
+                // }
 
                 for(const auto& mi : sdfv.membraneIndices) {
                     // Update coords
@@ -145,10 +145,10 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
             if(sdfv.updated & sys_data_update::BeadPosition) {
                 ve->state.vertexAttribs.clear();
                 ve->state.attribChanged = true;
-                if(sdfv.updated & sys_data_update::BeadConnection) {
-                    ve->state.vertexIndices.clear();
-                    ve->state.indexChanged = true;
-                }
+                // if(sdfv.updated & sys_data_update::BeadConnection) {
+                //     ve->state.vertexIndices.clear();
+                //     ve->state.indexChanged = true;
+                // }
 
                 for(const auto& fi : sdfv.filamentIndices) {
                     ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 2 * 3 * fi.size()); // 3 means coord(xyz)
@@ -182,10 +182,10 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
             if(sdfv.updated & sys_data_update::BeadPosition) {
                 ve->state.vertexAttribs.clear();
                 ve->state.attribChanged = true;
-                if(sdfv.updated & sys_data_update::BeadConnection) {
-                    ve->state.vertexIndices.clear();
-                    ve->state.indexChanged = true;
-                }
+                // if(sdfv.updated & sys_data_update::BeadConnection) {
+                //     ve->state.vertexIndices.clear();
+                //     ve->state.indexChanged = true;
+                // }
 
                 for(const auto& fi : sdfv.filamentIndices) {
                     mathfunc::VecArray< 3, float > genVertices;
