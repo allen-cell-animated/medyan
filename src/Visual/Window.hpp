@@ -225,11 +225,14 @@ inline void mainLoop() {
 
         // transform
         state::projection = glm::perspective(state::fov, (float)state::windowWidth / (float)state::windowHeight, state::nearDistance, state::farDistance);
-        state::sd.setMat4("projection", state::projection);
         state::model = glm::mat4(1.0f);
-        state::sd.setMat4("model", state::model);
+        glm::mat3 modelInvTrans3(glm::transpose(glm::inverse(state::model)));
 
+        state::sd.setMat4("projection", state::projection);
+        state::sd.setMat4("model", state::model);
+        state::sd.setMat3("modelInvTrans3", modelInvTrans3);
         state::sd.setMat4("view", camera.view());
+        state::sd.setVec3("CameraPos", camera.position);
 
         glUseProgram(state::sd.id);
 

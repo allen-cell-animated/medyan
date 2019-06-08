@@ -111,26 +111,36 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
 
                 for(const auto& mi : sdfv.membraneIndices) {
                     // Update coords
-                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + GlState::vaStride * mi.vertexIndices.size());
-                    for(size_t i : mi.vertexIndices) {
-                        const auto coord = sdfv.copiedBeadData.coords[i];
-                        ve->state.vertexAttribs.push_back(coord[0]);
-                        ve->state.vertexAttribs.push_back(coord[1]);
-                        ve->state.vertexAttribs.push_back(coord[2]);
-                        // TODO
-                    }
+                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 3 * GlState::vaStride * mi.triangleVertexIndices.size());
+                    for(const auto& t : mi.triangleVertexIndices) {
+                        const decltype(sdfv.copiedBeadData.coords[0]) coord[] {
+                            sdfv.copiedBeadData.coords[mi.vertexIndices[t[0]]],
+                            sdfv.copiedBeadData.coords[mi.vertexIndices[t[1]]],
+                            sdfv.copiedBeadData.coords[mi.vertexIndices[t[2]]]
+                        };
+                        const auto un = normalizedVector(cross(coord[1] - coord[0], coord[2] - coord[0]));
 
-                    if(sdfv.updated & sys_data_update::BeadConnection) {
-                        // update indices
-                        ve->state.vertexIndices.reserve(ve->state.vertexIndices.size() + 3 * mi.triangleVertexIndices.size());
-                        for(const auto& t : mi.triangleVertexIndices) {
-                            ve->state.vertexIndices.push_back(t[0] + curVertexStart);
-                            ve->state.vertexIndices.push_back(t[1] + curVertexStart);
-                            ve->state.vertexIndices.push_back(t[2] + curVertexStart);
+                        for(size_t i = 0; i < 3; ++i) {
+                            ve->state.vertexAttribs.push_back(coord[i][0]);
+                            ve->state.vertexAttribs.push_back(coord[i][1]);
+                            ve->state.vertexAttribs.push_back(coord[i][2]);
+                            ve->state.vertexAttribs.push_back(un[0]);
+                            ve->state.vertexAttribs.push_back(un[1]);
+                            ve->state.vertexAttribs.push_back(un[2]);
                         }
                     }
 
-                    curVertexStart += mi.vertexIndices.size();
+                    // if(sdfv.updated & sys_data_update::BeadConnection) {
+                    //     // update indices
+                    //     ve->state.vertexIndices.reserve(ve->state.vertexIndices.size() + 3 * mi.triangleVertexIndices.size());
+                    //     for(const auto& t : mi.triangleVertexIndices) {
+                    //         ve->state.vertexIndices.push_back(t[0] + curVertexStart);
+                    //         ve->state.vertexIndices.push_back(t[1] + curVertexStart);
+                    //         ve->state.vertexIndices.push_back(t[2] + curVertexStart);
+                    //     }
+                    // }
+
+                    // curVertexStart += mi.vertexIndices.size();
                 }
             }
             ve->state.eleMode = GL_TRIANGLES;
@@ -151,26 +161,28 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 // }
 
                 for(const auto& fi : sdfv.filamentIndices) {
-                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 2 * 3 * fi.size()); // 3 means coord(xyz)
+                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 2 * GlState::vaStride * fi.size());
                     for(size_t i : fi) {
                         const auto coord = sdfv.copiedBeadData.coords[i];
                         ve->state.vertexAttribs.push_back(coord[0]);
                         ve->state.vertexAttribs.push_back(coord[1]);
                         ve->state.vertexAttribs.push_back(coord[2]);
+                        ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + GlState::vaNormalSize); // dummy normal
 
                         const auto force = sdfv.copiedBeadData.forces[i];
                         const auto forceTip = force * ve->profile.forceScale + coord;
                         ve->state.vertexAttribs.push_back(forceTip[0]);
                         ve->state.vertexAttribs.push_back(forceTip[1]);
                         ve->state.vertexAttribs.push_back(forceTip[2]);
+                        ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + GlState::vaNormalSize); // dummy normal
                     }
                 }
 
-                const auto numBeads = ve->state.vertexAttribs.size() / 3; // 3 means coord(xyz);
-                if(sdfv.updated & sys_data_update::BeadConnection) {
-                    ve->state.vertexIndices.resize(numBeads);
-                    std::iota(ve->state.vertexIndices.begin(), ve->state.vertexIndices.end(), 0u);
-                }
+                // const auto numBeads = ve->state.vertexAttribs.size() / 3; // 3 means coord(xyz);
+                // if(sdfv.updated & sys_data_update::BeadConnection) {
+                //     ve->state.vertexIndices.resize(numBeads);
+                //     std::iota(ve->state.vertexIndices.begin(), ve->state.vertexIndices.end(), 0u);
+                // }
 
             }
             ve->state.eleMode = GL_LINES;
@@ -197,22 +209,35 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                     }.generate(sdfv.copiedBeadData.coords, fi);
 
                     // Update coords
-                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 3 * genVertices.size()); // 3 means coord(xyz)
-                    for(const auto coord : genVertices) {
-                        ve->state.vertexAttribs.push_back(coord[0]);
-                        ve->state.vertexAttribs.push_back(coord[1]);
-                        ve->state.vertexAttribs.push_back(coord[2]);
-                    }
+                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + GlState::vaStride * genTriInd.size());
+                    const auto numTriangles = genTriInd.size() / 3;
+                    for(size_t t = 0; t < numTriangles; ++t) {
+                        const decltype(genVertices[0]) coord[] {
+                            genVertices[genTriInd[3 * t + 0]],
+                            genVertices[genTriInd[3 * t + 1]],
+                            genVertices[genTriInd[3 * t + 2]]
+                        };
+                        const auto un = normalizedVector(cross(coord[1] - coord[0], coord[2] - coord[0]));
 
-                    if(sdfv.updated & sys_data_update::BeadConnection) {
-                        // Update indices
-                        ve->state.vertexIndices.reserve(ve->state.vertexIndices.size() + genTriInd.size());
-                        for(auto i : genTriInd) {
-                            ve->state.vertexIndices.push_back(i + curVertexStart);
+                        for(size_t i = 0; i < 3; ++i) {
+                            ve->state.vertexAttribs.push_back(coord[i][0]);
+                            ve->state.vertexAttribs.push_back(coord[i][1]);
+                            ve->state.vertexAttribs.push_back(coord[i][2]);
+                            ve->state.vertexAttribs.push_back(un[0]);
+                            ve->state.vertexAttribs.push_back(un[1]);
+                            ve->state.vertexAttribs.push_back(un[2]);
                         }
                     }
 
-                    curVertexStart += genVertices.size();
+                    // if(sdfv.updated & sys_data_update::BeadConnection) {
+                    //     // Update indices
+                    //     ve->state.vertexIndices.reserve(ve->state.vertexIndices.size() + genTriInd.size());
+                    //     for(auto i : genTriInd) {
+                    //         ve->state.vertexIndices.push_back(i + curVertexStart);
+                    //     }
+                    // }
+
+                    // curVertexStart += genVertices.size();
                 }
             }
             ve->state.eleMode = GL_TRIANGLES;

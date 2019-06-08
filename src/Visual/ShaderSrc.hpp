@@ -29,6 +29,11 @@ constexpr const char* FragElement = R"(
 #version 330 core
 out vec4 FragColor;
 
+in vec3 ModelPos;
+in vec3 Normal;
+
+uniform vec3 CameraPos;
+
 void main() {
     FragColor = vec4(0.5f, 0.25f, 0.1f, 1.0f);
 }

@@ -37,7 +37,7 @@ void updateGeometryValueWithDerivative() {
 }
 
 void prepareForceSharedData() {
-    visual::copySystemDataAndRunHelper(visual::sys_data_update::BeadPosition);
+    visual::copySystemDataAndRunHelper(visual::sys_data_update::BeadPosition | visual::sys_data_update::BeadConnection);
 }
 
 void updateForceSharedData() {

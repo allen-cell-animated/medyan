@@ -48,8 +48,14 @@ struct Shader {
 
     }
 
+    void setMat3(const char* name, const glm::mat3& mat) const {
+        glUniformMatrix3fv(glGetUniformLocation(id, name), 1, GL_FALSE, glm::value_ptr(mat));
+    }
     void setMat4(const char* name, const glm::mat4& mat) const {
         glUniformMatrix4fv(glGetUniformLocation(id, name), 1, GL_FALSE, glm::value_ptr(mat));
+    }
+    void setVec3(const char* name, const glm::vec3& vec) const {
+        glUniform3fv(glGetUniformLocation(id, name), 1, glm::value_ptr(vec));
     }
 };
 
