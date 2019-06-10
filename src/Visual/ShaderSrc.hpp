@@ -35,7 +35,7 @@ in vec3 Normal;
 uniform vec3 CameraPos;
 
 void main() {
-    FragColor = vec4(0.5f, 0.25f, 0.1f, 1.0f);
+    FragColor = vec4(0.2f, 0.5f, 0.95f, 1.0f);
 }
 )";
 
