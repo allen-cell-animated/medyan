@@ -79,13 +79,13 @@ struct GlState {
         // Vertex attribute
         //---------------------------------------------------------------------
         // Position
-        glVertexAttribPointer(0, vaPosSize,    GL_FLOAT, GL_FALSE, vaStride * sizeof(float), static_cast<const char*>(0) + vaPosStart   );
+        glVertexAttribPointer(0, vaPosSize,    GL_FLOAT, GL_FALSE, vaStride * sizeof(float), static_cast<const char*>(0) + sizeof(float) * vaPosStart   );
         glEnableVertexAttribArray(0);
         // Normal
-        glVertexAttribPointer(1, vaNormalSize, GL_FLOAT, GL_FALSE, vaStride * sizeof(float), static_cast<const char*>(0) + vaNormalStart);
+        glVertexAttribPointer(1, vaNormalSize, GL_FLOAT, GL_FALSE, vaStride * sizeof(float), static_cast<const char*>(0) + sizeof(float) * vaNormalStart);
         glEnableVertexAttribArray(1);
         // Color
-        glVertexAttribPointer(2, vaColorSize,  GL_FLOAT, GL_FALSE, vaStride * sizeof(float), static_cast<const char*>(0) + vaColorStart );
+        glVertexAttribPointer(2, vaColorSize,  GL_FLOAT, GL_FALSE, vaStride * sizeof(float), static_cast<const char*>(0) + sizeof(float) * vaColorStart );
         glEnableVertexAttribArray(2);
 
         // temporarily retarget
