@@ -19,7 +19,8 @@ struct Profile {
     static constexpr FlagType targetFilament      = 1 << 0;
     static constexpr FlagType targetMembrane      = 1 << 1;
     static constexpr FlagType displayForce        = 1 << 2;
-    static constexpr FlagType targetConcentration = 1 << 3;
+    static constexpr FlagType forceUseSearchDir   = 1 << 3;
+    static constexpr FlagType targetConcentration = 1 << 4;
 
     // User settings
     //-------------------------------------------------------------------------

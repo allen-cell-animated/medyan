@@ -69,6 +69,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 //     ve->state.vertexIndices.clear();
                 //     ve->state.indexChanged = true;
                 // }
+                const auto& forces = (ve->profile.flag & Profile::forceUseSearchDir) ? sdfv.copiedBeadData.forces : sdfv.copiedBeadData.forcesAux;
 
                 for(const auto& mi : sdfv.membraneIndices) {
                     ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 2 * GlState::vaStride * mi.vertexIndices.size());
@@ -82,7 +83,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
 
-                        const auto force = sdfv.copiedBeadData.forces[i];
+                        const auto force = forces[i];
                         const auto forceTip = force * ve->profile.forceScale + coord;
                         ve->state.vertexAttribs.push_back(forceTip[0]);
                         ve->state.vertexAttribs.push_back(forceTip[1]);
@@ -168,6 +169,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 //     ve->state.vertexIndices.clear();
                 //     ve->state.indexChanged = true;
                 // }
+                const auto& forces = (ve->profile.flag & Profile::forceUseSearchDir) ? sdfv.copiedBeadData.forces : sdfv.copiedBeadData.forcesAux;
 
                 for(const auto& fi : sdfv.filamentIndices) {
                     ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 2 * GlState::vaStride * fi.size());
@@ -181,7 +183,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
 
-                        const auto force = sdfv.copiedBeadData.forces[i];
+                        const auto force = forces[i];
                         const auto forceTip = force * ve->profile.forceScale + coord;
                         ve->state.vertexAttribs.push_back(forceTip[0]);
                         ve->state.vertexAttribs.push_back(forceTip[1]);
