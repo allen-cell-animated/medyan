@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -64,6 +64,9 @@ Filament::Filament(SubSystem* s, short filamentType, vector<floatingpoint>& posi
     c0->setMinusEnd(true);
     _cylinderVector.push_back(c0);
         
+    // set cylinder's filID
+    c0->setFilID(_ID);
+
     //set plus end marker
     _plusEndPosition = 1;
 }
@@ -102,7 +105,10 @@ Filament::Filament(SubSystem* s, short filamentType, vector<vector<floatingpoint
     c0->setPlusEnd(true);
     c0->setMinusEnd(true);
     _cylinderVector.push_back(c0);
-    
+
+    // set cylinder's filID
+    c0->setFilID(_ID);
+
     for (int i = 2; i<numBeads; i++)
         extendPlusEnd(tmpBeadsCoord[i]);
         
@@ -142,13 +148,14 @@ void Filament::extendPlusEnd(vector<floatingpoint>& coordinates) {
     auto newBeadCoords=coordinates;
     //create
     Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() + 1);
-
     Cylinder* c0 = _subSystem->addTrackable<Cylinder> (this, b2, bNew, _filType,
                                                        lpf + 1, false, false, true);
-    
     c0->setPlusEnd(true);
     _cylinderVector.push_back(c0);
     
+    // set cylinder's filID
+    c0->setFilID(_ID);
+
 }
 
 //Extend back for initialization
@@ -170,9 +177,11 @@ void Filament::extendMinusEnd(vector<floatingpoint>& coordinates) {
     Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() - 1);
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, bNew, b2, _filType,
                                                   lpf - 1, false, false, true);
-    
     c0->setMinusEnd(true);
     _cylinderVector.push_front(c0);
+
+    // set cylinder's filID
+    c0->setFilID(_ID);
 
 }
 
@@ -217,6 +226,9 @@ void Filament::extendPlusEnd(short plusEnd) {
     _cylinderVector.push_back(c0);
     _cylinderVector.back()->setPlusEnd(true);
     
+    // set cylinder's filID
+    c0->setFilID(_ID);
+
 #ifdef CHEMISTRY
     //get last cylinder, mark species
     CMonomer* m = _cylinderVector.back()->getCCylinder()->getCMonomer(0);
@@ -265,6 +277,9 @@ void Filament::extendMinusEnd(short minusEnd) {
     _cylinderVector.push_front(c0);
     _cylinderVector.front()->setMinusEnd(true);
     
+    // set cylinder's filID
+    c0->setFilID(_ID);
+
 #ifdef CHEMISTRY
     //get first cylinder, mark species
     auto newCCylinder = getCylinderVector().front()->getCCylinder();
@@ -376,7 +391,6 @@ void Filament::polymerizePlusEnd() {
     //increase eq length, update
     floatingpoint newEqLen = cBack->getMCylinder()->getEqLength() +
                       SysParams::Geometry().monomerSize[_filType];
-    
     cBack->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
     
@@ -384,9 +398,9 @@ void Filament::polymerizePlusEnd() {
     //update rates of new back
     _cylinderVector.back()->updateReactionRates();
 #endif
-   
+
     _polyPlusEnd++;
-    
+
 }
 
 void Filament::polymerizeMinusEnd() {
@@ -418,17 +432,16 @@ void Filament::polymerizeMinusEnd() {
     //increase eq length, update
     floatingpoint newEqLen = cFront->getMCylinder()->getEqLength() +
                       SysParams::Geometry().monomerSize[_filType];
-
-
     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
-    #ifdef DYNAMICRATES
+
+#ifdef DYNAMICRATES
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
-    
+
     _polyMinusEnd++;
-    
+
 }
 
 void Filament::depolymerizePlusEnd() {
@@ -468,7 +481,7 @@ void Filament::depolymerizePlusEnd() {
 #endif
     
     _depolyPlusEnd++;;
-    
+
 }
 
 void Filament::depolymerizeMinusEnd() {
@@ -499,7 +512,6 @@ void Filament::depolymerizeMinusEnd() {
     //decrease eq length, update
     floatingpoint newEqLen = cFront->getMCylinder()->getEqLength() -
                       SysParams::Geometry().monomerSize[_filType];
-
     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
 
@@ -507,9 +519,8 @@ void Filament::depolymerizeMinusEnd() {
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
-    
+
     _depolyMinusEnd++;
-    
 }
 
 
@@ -536,9 +547,9 @@ void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
     //plus end
     m3->speciesPlusEnd(plusEnd)->up();
 #endif
-    
+
     _nucleationReaction++;
-    
+
 }
 
 
@@ -572,18 +583,20 @@ Filament* Filament::sever(int cylinderPosition) {
         
         Cylinder* c = _cylinderVector.front();
         _cylinderVector.pop_front();
-        
-        newFilament->addChild(unique_ptr<Component>(c));
+
         newFilament->_cylinderVector.push_back(c);
-
         
-        //Add beads to new parent
-        if(i > 1) newFilament->addChild(unique_ptr<Component>(c->getSecondBead()));
-        newFilament->addChild(unique_ptr<Component>(c->getFirstBead()));
+        //TRANSFER CHILD
+        unique_ptr<Component> &&tmp = this->getChild(c);
+        this->transferChild(std::move(tmp), (Composite*)newFilament);
 
-        //change cylinder structure
-        int cidx = c->_dcIndex;
-	    CUDAcommon::serlvars.cylindervec[cidx].filamentID = newFilament->getID();
+        //Add beads and cylinder to new parent
+        if(i == vectorPosition) {
+            unique_ptr<Component> &&tmp2 = this->getChild(c->getFirstBead());
+            this->transferChild(std::move(tmp2), (Composite*)newFilament);
+        }
+        unique_ptr<Component> &&tmp1 = this->getChild(c->getSecondBead());
+        this->transferChild(std::move(tmp1), (Composite*)newFilament);
     }
     //new front of new filament, back of old
     auto c1 = newFilament->_cylinderVector.back();
@@ -648,7 +661,7 @@ Filament* Filament::sever(int cylinderPosition) {
 #endif
     
     //Qin
-    
+
     _severingReaction++;
     _severingID.push_back(newFilament->getID());
     return newFilament;

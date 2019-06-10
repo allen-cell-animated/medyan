@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -41,8 +41,9 @@ template <unsigned short M, unsigned short N>
         /// (starting from reactants)
         /// @param rate - the rate constant for this ReactionBase
         Reaction(initializer_list<Species*> species,
-                float rate = 0.0, bool isProtoCompartment = false)
-            : ReactionBase(rate, isProtoCompartment) {
+                float rate = 0.0, bool isProtoCompartment = false, float volumeFrac = 1.0,
+                int rateVolumeDepExp = 0)
+                : ReactionBase(rate, isProtoCompartment, volumeFrac, rateVolumeDepExp) {
             initializeSpecies(species);
         }
         
@@ -52,8 +53,9 @@ template <unsigned short M, unsigned short N>
         /// @param rate - the rate constant for this ReactionBase
         template <typename InputContainer>
         Reaction(const InputContainer &species,
-                 float rate = 0.0, bool isProtoCompartment = false)
-            : ReactionBase(rate, isProtoCompartment) {
+                 float rate = 0.0, bool isProtoCompartment = false, float volumeFrac = 1.0,
+                 int rateVolumeDepExp = 0)
+                : ReactionBase(rate, isProtoCompartment, volumeFrac, rateVolumeDepExp) {
             initializeSpecies(species);
         }
         
@@ -266,13 +268,14 @@ private:
 public:
     /// The main constructor
     DiffusionReaction(initializer_list<Species*> species,
-                      float rate = 0.0, bool isProtoCompartment = false)
-    : Reaction(species, rate, isProtoCompartment) {
-    
+                      float rate = 0.0, bool isProtoCompartment = false, floatingpoint
+                      volumeFrac = 1.0)
+            : Reaction(species, rate, isProtoCompartment,volumeFrac,-1) {
+
         //set averaging
         if(dynamic_cast<RSpeciesAvg*>(_rspecies[0]))
             _averaging = true;
-        
+
         //set type
         _reactionType = ReactionType::DIFFUSION;
     }

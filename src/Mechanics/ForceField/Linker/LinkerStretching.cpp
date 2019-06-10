@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -26,6 +26,14 @@
 
 template <class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::assignforcemags() {
+
+    for(auto l:Linker::getLinkers()){
+        //Using += to ensure that the stretching forces are additive.
+        l->getMLinker()->stretchForce = stretchforce[l->_dbIndex];
+
+    }
+
+
 #ifdef CUDAACCL
     floatingpoint stretchforce[Linker::getLinkers().size()];
     CUDAcommon::handleerror(cudaMemcpy(stretchforce, gpu_Lstretchforce,
@@ -136,13 +144,10 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
 
 template<class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::deallocate() {
-//cout<<"Linker-forces";
     for(auto l:Linker::getLinkers()){
         //Using += to ensure that the stretching forces are additive.
         l->getMLinker()->stretchForce += stretchforce[l->_dbIndex];
-//        cout<<stretchforce[l->_dbIndex]<<" ";
     }
-//    cout<<endl;
     delete [] stretchforce;
     delete [] beadSet;
     delete [] kstr;

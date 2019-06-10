@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -63,7 +63,10 @@ private:
     static vector<floatingpoint> _compartmentSize; ///< Compartment size in each dimension
     static vector<floatingpoint> _centerGrid; ///< The center of the grid
     static vector<floatingpoint> _size;       ///< The size of the full grid in each dimension
-    
+	static floatingpoint         _compartmentVolume; ///< The volume of the compartment
+	static vector<floatingpoint> _compartmentArea; ///< The areas of the compartment (yOz,
+	// zOx, xOy)
+
     static CompartmentGrid* _compartmentGrid; ///< The compartment grid
     
     Boundary* _boundary;   ///< The boundary that this controls
@@ -105,6 +108,9 @@ public:
     static const vector<floatingpoint>& getSize() {return _size;}
      static const vector<floatingpoint>& getCompartmentSize() {return _compartmentSize;}
     
+    static floatingpoint getCompartmentVolume() { return _compartmentVolume; }
+    static const vector<floatingpoint>& getCompartmentArea() { return _compartmentArea; }
+
     /// Get all compartments within a given range from the specified coordinate
     /// @param ccheck - Compartment to check when initially calling this function
     /// @param compartments - List of compartments that are within range. This will be

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -471,7 +471,7 @@ Bead* CGMethod::maxBead() {
     long index = 0;
 #ifdef SERIAL
     for (int i = 0; i < N/3; i++) {
-        for (int j = 0 ;j< 3; j++) {
+        for (int j = 0 ; j < 3; j++) {
             currentF = forceAux[3*i+j] * forceAux[3*i+j];
         }
         if(currentF > maxF) {
@@ -502,6 +502,7 @@ Bead* CGMethod::maxBead() {
 //        std::cout<<N<<endl;
 //        std::cout<<"CPU and GPU codes do not point to same bead with maxF."<<endl;
 #endif
+
     return Bead::getBeads()[index];
 }
 
@@ -917,8 +918,8 @@ void CGMethod::endMinimization() {
         b->coordinate[1] = coord[index + 1];
         b->coordinate[2] = coord[index + 2];
         b->force[0] = force[index];
-        b->force[1] = force[index +1];
-        b->force[2] = force[index +2];
+        b->force[1] = force[index + 1];
+        b->force[2] = force[index + 2];
 
         i++;
     }
@@ -1542,3 +1543,38 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
         return lambda;
     }
 }
+
+/*
+ double* CGMethod::getCoords(){
+    //COPY BEAD DATA
+    N = 3 * Bead::getBeads().size();
+    //    std::cout<<3 * Bead::getBeads().size()<<endl;
+    coordDiss = new double[N];
+    
+    //coord management
+    long i = 0;
+    long index = 0;
+    for(auto b: Bead::getBeads()) {
+        
+        //set bead index
+        b->_dbIndex = i;
+        
+        //flatten indices
+        index = 3 * i;
+        coordDiss[index] = b->coordinate[0];
+        coordDiss[index + 1] = b->coordinate[1];
+        coordDiss[index + 2] = b->coordinate[2];
+        
+        b->coordinateP = b->coordinate;
+        //        force[index] = 0.0;
+        //        force[index + 1] = 0.0;
+        //        force[index + 2] = 0.0;
+        i++;
+    }
+    
+    return coordDiss;
+    
+    
+
+}
+ */

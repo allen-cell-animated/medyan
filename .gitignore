@@ -12,13 +12,22 @@ xcuserdata/
 *.xcscheme
 
 # Generated files
+## LaTeX
+docsdev/**/*.aux
+docsdev/**/*.log
+docsdev/**/*.synctex.gz
+docsdev/**/*.toc
+## C++
 build/
-*.[oa]
+*.[oad]
+src/MEDYAN
+src/medyan_test
+## Python
 *.pyc
-*.o
 
 # Backup files
 *~.nib
 
 # Traj
 *.traj
+!analysis/**/*.traj

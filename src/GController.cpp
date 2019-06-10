@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -83,16 +83,16 @@ Compartment* GController::getCompartment(const vector<size_t> &indices)
         else if(i == 1) {
             if(x >= _grid[1])
                 throw OutOfBoundsException();
-        
+
             index += x * _grid[0];
         }
         else {
             if(x >= _grid[2])
                 throw OutOfBoundsException();
-            
+
             index += x * _grid[0] * _grid[1];
         }
-        
+
         i++;
     }
     try {
@@ -111,31 +111,30 @@ Compartment* GController::getCompartment(const vector<floatingpoint> &coords)
     //Check if out of bounds
     size_t index = 0;
     size_t i = 0;
-//	cout<<"getCompartment "<<coords[0]<<" "<<coords[1]<<" "<<coords[2]<<endl;
     for(auto x: coords)
     {
         //Flatten the coordinates to 1D, get integer index
         if(i == 0) {
             if(x < 0 || x >= (_compartmentSize[0] * _grid[0]))
                 throw OutOfBoundsException();
-            
+
             index += int(x / _compartmentSize[0]);
         }
         else if(i == 1) {
             if(x < 0 || x >= (_compartmentSize[1] * _grid[1]))
                 throw OutOfBoundsException();
-            
+
             index += int(x / _compartmentSize[1]) * _grid[0];
         }
         else {
             if(x < 0 || x >= (_compartmentSize[2] * _grid[2]))
                 throw OutOfBoundsException();
-        
+
             index += int(x / _compartmentSize[2]) * _grid[0] * _grid[1];
         }
         i++;
     }
-//    cout<<"index "<<index<<endl;
+    
     try {
         return _compartmentGrid->getCompartment(index);
     }
@@ -150,9 +149,9 @@ Compartment* GController::getCompartment(const vector<floatingpoint> &coords)
 void GController::generateConnections()
 {
     for(size_t i=0U; i<_grid[0]; ++i) {
-        
+
         for(size_t j=0U; j<_grid[1]; ++j) {
-            
+
             for(size_t k=0U; k<_grid[2]; ++k)
             {
                 vector<size_t> indices{i,j,k};
@@ -192,11 +191,11 @@ void GController::generateConnections()
                                 target->adduniquepermuteNeighbour(neighbor, stencilcount -1);
 
                             if(ii != 0 && jprime == j && kprime == k)
-                                target->addNeighbour(neighbor);
+                                target->addNeighbour(neighbor, (ii < 0? 0: 1));
                             else if(jj != 0 && iprime == i && kprime == k)
-                                target->addNeighbour(neighbor);
+                                target->addNeighbour(neighbor, (jj < 0? 2: 3));
                             else if(kk != 0 && iprime == i && jprime == j)
-                                target->addNeighbour(neighbor);
+                                target->addNeighbour(neighbor, (kk < 0? 4: 5));
                         }
                     }
                 }
@@ -207,7 +206,7 @@ void GController::generateConnections()
                         continue;
                     vector<size_t> currentIndices{size_t(iprime), j, k};
                     Compartment *neighbor = getCompartment(currentIndices);
-                    target->addNeighbour(neighbor);
+                    target->addNeighbour(neighbor, (ii < 0? 0: 1));
                 }
                 for(int jj: {-1,1})
                 {
@@ -216,7 +215,7 @@ void GController::generateConnections()
                         continue;
                     vector<size_t> currentIndices{i, size_t(jprime), k};
                     Compartment *neighbor = getCompartment(currentIndices);
-                    target->addNeighbour(neighbor);
+                    target->addNeighbour(neighbor, (jj < 0? 2: 3));
                 }
                 for(int kk: {-1,1})
                 {
@@ -230,30 +229,38 @@ void GController::generateConnections()
             }
         }
     }
-    
+
 }
 
 CompartmentGrid* GController::initializeGrid() {
-    
+
     //Initial parameters of system
     _nDim = SysParams::Geometry().nDim;
-    
+
     _compartmentSize = {SysParams::Geometry().compartmentSizeX,
                         SysParams::Geometry().compartmentSizeY,
                         SysParams::Geometry().compartmentSizeZ};
-    
+
     _grid = {SysParams::Geometry().NX,
              SysParams::Geometry().NY,
              SysParams::Geometry().NZ};
-    
+
     _size = {_compartmentSize[0] * _grid[0],
              _compartmentSize[1] * _grid[1],
              _compartmentSize[2] * _grid[2]};
-    
+
     _centerGrid = {_compartmentSize[0] * _grid[0] / 2,
-                   _compartmentSize[1] * _grid[2] / 2,
+                   _compartmentSize[1] * _grid[1] / 2,
                    _compartmentSize[2] * _grid[2] / 2};
-    
+
+    _compartmentVolume = _compartmentSize[0] * _compartmentSize[1] * _compartmentSize[2];
+
+    _compartmentArea = {{
+        _compartmentSize[1] * _compartmentSize[2],
+        _compartmentSize[2] * _compartmentSize[0],
+        _compartmentSize[0] * _compartmentSize[1]
+    }};
+
     //Check that grid and compartmentSize match nDim
     if((_nDim == 3 &&
         _grid[0] != 0 && _grid[1] != 0 && _grid[2]!=0 &&
@@ -265,24 +272,24 @@ CompartmentGrid* GController::initializeGrid() {
         cout << "Grid parameters are invalid. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
-    
+
     int size = 1;
     for(auto x: _grid) {
         if(x != 0) size*=x;
     }
-    
+
     //Set the instance of this grid with given parameters
     _compartmentGrid = new CompartmentGrid(size);
-    
+
     //Create connections based on dimensionality
     generateConnections();
-    
+
     _subSystem->setCompartmentGrid(_compartmentGrid);
     return _compartmentGrid;
 }
 
 Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
-    
+
     BoundaryType type;
     vector<BoundaryMove> move;
     for(auto bm:BTypes.boundaryMove){
@@ -366,59 +373,64 @@ Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
             exit(EXIT_FAILURE);
         }
     }
-    
+
     if(BTypes.boundaryShape == "CUBIC")
         _boundary = new BoundaryCubic(_subSystem, move);
-    
+
     else if(BTypes.boundaryShape == "SPHERICAL") {
-        
-        if(move[0] != BoundaryMove::None) {
-            
-            cout << "Moving boundaries for a spherical shape "
-                 << "not yet implemented. Exiting." << endl;
-            exit(EXIT_FAILURE);
+
+        if(move.size() > 0) {
+            if(move[0] != BoundaryMove::None){
+
+                cout << "Moving boundaries for a spherical shape "
+                     << "not yet implemented. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
         }
-        
+
         _boundary = new BoundarySpherical(_subSystem,
                     SysParams::Boundaries().diameter, move);
     }
-    
+
     else if(BTypes.boundaryShape == "CAPSULE") {
-        
-        if(move[0] != BoundaryMove::None) {
-            
-            cout << "Moving boundaries for a capsule shape "
-                 << "not yet implemented. Exiting." << endl;
-            exit(EXIT_FAILURE);
+
+        if(move.size() > 0) {
+            if(move[0] != BoundaryMove::None){
+
+                cout << "Moving boundaries for a capsule shape "
+                     << "not yet implemented. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
         }
         _boundary = new BoundaryCapsule(_subSystem,
                     SysParams::Boundaries().diameter, move);
     }
 
     else if(BTypes.boundaryShape == "CYLINDER") {
-        
-        if(move[0] != BoundaryMove::None) {
-            
-            cout << "Moving boundaries for a cylinder shape "
-            << "not yet implemented. Exiting." << endl;
-            exit(EXIT_FAILURE);
+
+        if(move.size() > 0) {
+            if(move[0] != BoundaryMove::None){
+
+                cout << "Moving boundaries for a cylinder shape "
+                << "not yet implemented. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
         }
         _boundary = new BoundaryCylinder(_subSystem,
                                         SysParams::Boundaries().diameter, move);
     }
-    
+
     else{
         cout << endl << "Given boundary shape not yet implemented. Exiting." <<endl;
         exit(EXIT_FAILURE);
     }
-    
+
     _subSystem->addBoundary(_boundary);
     return _boundary;
 }
 
 void GController::setActiveCompartments() {
 
-    //mark
     //initialize all compartments equivalent to cproto
     for(auto C : _compartmentGrid->getCompartments())
         if(_boundary->within(C)) C->setAsActive();
@@ -427,19 +439,19 @@ void GController::setActiveCompartments() {
 void GController::findCompartments(const vector<floatingpoint>& coords,
                                    Compartment* ccheck, floatingpoint dist,
                                    vector<Compartment*>& compartments) {
-    
+
     //base case : if c and ccheck are not within range, return
-    if(twoPointDistance(coords, ccheck->coordinates()) > dist ) return;
-    
+    if(twoPointDistancesquared(coords, ccheck->coordinates()) > (dist * dist) ) return;
+
     //recursive case, c and ccheck are in range. call for all neighbors
     else {
         //if not already in list, add it
         auto it = find(compartments.begin(), compartments.end(), ccheck);
-        
+
         if( it == compartments.end()) {
             //add the compartment
             compartments.push_back(ccheck);
-            
+
             //recursively call for all neighbors
             for(auto &n : ccheck->getNeighbours())
                 findCompartments(coords, n, dist, compartments);
@@ -448,10 +460,10 @@ void GController::findCompartments(const vector<floatingpoint>& coords,
 }
 
 Compartment* GController::getRandomCompartment() {
-    
+
     //return a compartment that is activated
     while(true) {
-        
+
         //create a random coordinate
         vector<floatingpoint> coord =
         {_grid[0] * _compartmentSize[0] * Rand::randfloatingpoint(0,0.999),
@@ -504,9 +516,9 @@ vector<floatingpoint> GController::getRandomCoordinates() {
 
 //Qin
 vector<floatingpoint> GController::getRandomCenterCoordinates() {
-    
+
     vector<floatingpoint> coords;
-    
+
     coords.push_back(Rand::randfloatingpoint(0,1) * _grid[0] * _compartmentSize[0]);
     coords.push_back(Rand::randfloatingpoint(0,1) * _grid[1] * _compartmentSize[1]);
     coords.push_back(Rand::randfloatingpoint(0.3,0.7) * _grid[2] * _compartmentSize[2]);
@@ -520,6 +532,8 @@ vector<int>    GController::_grid = {};
 vector<floatingpoint> GController::_size = {};
 vector<floatingpoint> GController::_compartmentSize = {};
 vector<floatingpoint> GController::_centerGrid = {};
+floatingpoint         GController::_compartmentVolume = 0;
+vector<floatingpoint> GController::_compartmentArea = {};
 
 CompartmentGrid* GController::_compartmentGrid = 0;
 

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -584,7 +584,7 @@ BoundaryCylinder::BoundaryCylinder(SubSystem* s, floatingpoint diameter, vector<
 }
 
 bool BoundaryCylinder::within(Compartment* C) {
-    // mark
+
     // project compartment to a 2D cylinderical coordinate
     floatingpoint comX = GController::getCompartmentSize()[0];
     floatingpoint comY = GController::getCompartmentSize()[1];
@@ -660,8 +660,9 @@ floatingpoint BoundaryCylinder::sidedistance(const vector<floatingpoint>& coordi
 }
 
 void BoundaryCylinder::volume(){
-    cout<<" element eqn not implemented for "
-            "CylindricalXYZ. Exiting."<<endl;
-    exit(EXIT_FAILURE);
+    double radius = GController::getSize()[0];
+    double sysZ = GController::getSize()[2];
+
+    Boundary::systemvolume = radius * radius * 3.14159 * sysZ;
 }
 

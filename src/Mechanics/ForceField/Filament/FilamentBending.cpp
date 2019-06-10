@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -18,6 +18,7 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
+#include "Bubble.h"
 #include "CGMethod.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
@@ -26,8 +27,8 @@
 template <class FBendingInteractionType>
 void FilamentBending<FBendingInteractionType>::vectorize() {
 
-    int numInteractions = Bead::getBeads().size() - 2 * Filament::getFilaments().size();
-    CUDAcommon::tmin.numinteractions[1] += numInteractions;
+    int numInteractions = Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles();
+
     beadSet = new int[n * numInteractions];
     kbend = new floatingpoint[numInteractions];
     eqt = new floatingpoint[numInteractions];

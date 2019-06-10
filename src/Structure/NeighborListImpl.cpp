@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -470,10 +470,10 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
                 if(dist <= 2) continue;
             }
             //Dont add if not within range
-            floatingpoint dist = twoPointDistance(cylinder->coordinate,
+            floatingpoint distsq = twoPointDistancesquared(cylinder->coordinate,
                                            ncylinder->coordinate);
-            if(dist > _rMax || dist < _rMin) continue;
-//            std::cout<<"V "<<cylinder->_dcIndex<<" "<<ncylinder->_dcIndex<<" "<<dist<<" "<<_rMin<<" "<<_rMax<<endl;
+            if(distsq > (_rMax * _rMax) || distsq < (_rMin * _rMin)) continue;
+
             //If we got through all of this, add it!
             _list[cylinder].push_back(ncylinder);
 
@@ -582,21 +582,6 @@ void CylinderCylinderNL::reset() {
     mins = chrono::high_resolution_clock::now();
 #endif
     _list.clear();
-    tot = 0;
-    for(auto cylinder: Cylinder::getCylinders()) {
-        updateNeighbors(cylinder);
-        tot += _list[cylinder].size();
-    }
-     std::cout<<"ORIGINAL ";
-    for(auto cylinder: Cylinder::getCylinders()) {
-        std::cout<<_list4mbin[cylinder].size()<<" ";
-    }
-    std::cout<<endl;
-    std::cout<<"reset NLORIGINAL size "<<" "<<tot<<endl;
-#ifdef CUDA_TIMETRACK
-
-
-#endif
 
 #endif
 
@@ -829,7 +814,6 @@ void CylinderCylinderNL::reset() {
 }
 
 vector<Cylinder*> CylinderCylinderNL::getNeighbors(Cylinder* cylinder) {
-
     return _list[cylinder];
 }
 
@@ -998,12 +982,12 @@ void BubbleBubbleNL::updateNeighbors(Bubble* bb) {
     //loop through beads, add as neighbor
     for (auto &bbo : Bubble::getBubbles()) {
 
-        floatingpoint dist = twoPointDistance(bb->coordinate, bbo->coordinate);
+        floatingpoint distsq = twoPointDistancesquared(bb->coordinate, bbo->coordinate);
 
         if(bb->getID() <= bbo->getID()) continue;
 
         //If within range, add it
-        if(dist < _rMax) _list[bb].push_back(bbo);
+        if(distsq < (_rMax * _rMax)) _list[bb].push_back(bbo);
     }
 }
 
@@ -1056,10 +1040,10 @@ void BubbleCylinderNL::updateNeighbors(Bubble* bb) {
     //loop through beads, add as neighbor
     for (auto &c : Cylinder::getCylinders()) {
 
-        floatingpoint dist = twoPointDistance(c->coordinate, bb->coordinate);
+        floatingpoint distsq = twoPointDistancesquared(c->coordinate, bb->coordinate);
 
         //If within range, add it
-        if(dist < _rMax) _list[bb].push_back(c);
+        if(distsq < (_rMax * _rMax)) _list[bb].push_back(c);
     }
 }
 
@@ -1074,7 +1058,7 @@ void BubbleCylinderNL::addNeighbor(Neighbor* n) {
         for(auto it = _list.begin(); it != _list.end(); it++) {
 
             //if within range, add it
-            if(twoPointDistance(it->first->coordinate, c->coordinate) < _rMax)
+            if(twoPointDistancesquared(it->first->coordinate, c->coordinate) < (_rMax * _rMax))
                 it->second.push_back(c);
         }
     }

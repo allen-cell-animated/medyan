@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -63,6 +63,12 @@ public:
     /// Run a minimization on the system using the chosen algorithm
     void run(bool steplimit = true) {  _minimizerAlgorithms[0]->equlibrate(_FFManager, steplimit); }
 
+
+    floatingpoint getEnergy(){
+    
+        return _minimizerAlgorithms[0]->getEnergy(_FFManager,0.0);
+        
+    }
     
 };
 

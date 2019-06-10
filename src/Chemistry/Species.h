@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -122,7 +122,7 @@ public:
                 return name.substr(0, i);
             }
         }
-        //if there was no integer, retu rn the name
+        //if there was no integer, return the name
         return name;
     }
     
@@ -695,11 +695,15 @@ public:
         return new SpeciesMotor(*this);
     }
     
+    
     /// Return the full name of this Species in a string format (e.g. "Myosin{Motor}"
     virtual string getFullName() const {return getName() + "{Motor}";}
     
     /// Default destructor
     ~SpeciesMotor () noexcept {};
+    
+    CBound* getCBoundd() {return _cBound;}
+    
 };
 
 /// Used for species that can be bound to a Filament.

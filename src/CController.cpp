@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -24,7 +24,7 @@
 #include "CCylinder.h"
 #include "Cylinder.h"
 
-void CController::initialize(string& chemAlgorithm, ChemistryData& chem) {
+void CController::initialize(string& chemAlgorithm, ChemistryData& chem, DissipationTracker* dt) {
     
     // new ChemSim object
     _chemSim = new ChemSim;
@@ -62,7 +62,9 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem) {
     
     //Create manager, intialize
     _chemManager = new ChemManager(_subSystem, chem);
+    csi->_dt = dt;
     _chemManager->initializeSystem(_chemSim);
+    
     
     // init chemsim
     _chemSim->initialize();
@@ -72,6 +74,11 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem) {
     
     CCylinder::_chemSim = _chemSim;
     Cylinder::_chemManager = _chemManager;
+    
+
+    
+    
+    
     
 }
 
@@ -96,4 +103,17 @@ bool CController::runSteps(int steps) {
     //run the steps
     return _chemSim->runSteps(steps);
 }
+
+vector<floatingpoint> CController::getEnergy(){
+    return _chemSim->getEnergy();};
+
+ChemSim* CController::getCS(){
+    return _chemSim;};
+
+DissipationTracker* CController::getDT(){
+    return _chemSim->getDT();
+};
+
+
+
 

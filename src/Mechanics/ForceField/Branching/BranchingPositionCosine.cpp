@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -246,7 +246,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
 
         U += U_i;
     }
-    delete mp;
+    delete[] mp;
     return U;
 }
 
@@ -313,8 +313,8 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
 
         U += U_i;
     }
-    delete mp;
-    delete vzero;
+    delete[] mp;
+    delete[] vzero;
     return U;
 }
 
@@ -445,5 +445,5 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
 	    }
 	    #endif
     }
-    delete mp;
+    delete[] mp;
 }

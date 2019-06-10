@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -211,7 +211,6 @@ public:
             if(!success)
                 return false;
         }
-
         return true;
     }
     
@@ -259,7 +258,7 @@ private:
     exponential_distribution<floatingpoint> _exp_distr; ///< Adaptor for the exponential distribution
     uniform_real_distribution<floatingpoint> _uniform_distr;
     floatingpoint _t; ///< global time
-    floatingpoint _a_total; 
+    floatingpoint _a_total;
     size_t _n_reacts; ///< number of reactions in the network
 };
 

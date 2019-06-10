@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -21,6 +21,9 @@
 
 #include "MTOCAttachment.h"
 #include "MTOCAttachmentHarmonic.h"
+
+#include "MTOCBending.h"
+#include "MTOCBendingCosine.h"
 
 #include "Bubble.h"
 #include "Bead.h"
@@ -53,6 +56,18 @@ BubbleFF::BubbleFF (string type, string mtoc) {
     }
 }
 
+void BubbleFF::vectorize() {
+
+    for (auto &interaction : _bubbleInteractionVector)
+    interaction->vectorize();
+}
+
+void BubbleFF::cleanup() {
+
+    for (auto &interaction : _bubbleInteractionVector)
+    interaction->deallocate();
+}
+
 void BubbleFF::whoIsCulprit() {
     
     cout << endl;
@@ -60,23 +75,25 @@ void BubbleFF::whoIsCulprit() {
     cout << "Culprit interaction = " << _culpritInteraction->getName() << endl;
     
     cout << "Printing the culprit bubble..." << endl;
-    _culpritInteraction->_bubbleCulprit->printSelf();
+    if(_culpritInteraction->_bubbleCulprit != nullptr)
+        _culpritInteraction->_bubbleCulprit->printSelf();
     
-    cout << "Printing the other culprit structure..." << endl;
-    _culpritInteraction->_otherCulprit->printSelf();
+//    cout << "Printing the other culprit structure..." << endl;
+//    if(_culpritInteraction->_otherCulprit != nullptr)
+//        _culpritInteraction->_otherCulprit->printSelf();
     
     cout << endl;
 }
 
 
-floatingpoint BubbleFF::computeEnergy(floatingpoint d) {
-    
-    floatingpoint U= 0.0;
-    floatingpoint U_i=0.0;
+floatingpoint BubbleFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+
+	floatingpoint U= 0.0;
+	floatingpoint U_i=0.0;
     
     for (auto &interaction : _bubbleInteractionVector) {
         
-        U_i = interaction->computeEnergy(d);
+        U_i = interaction->computeEnergy(coord, f, d);
         
         if(U_i <= -1) {
             //set culprit and return
@@ -89,17 +106,17 @@ floatingpoint BubbleFF::computeEnergy(floatingpoint d) {
     return U;
 }
 
-void BubbleFF::computeForces() {
+void BubbleFF::computeForces(floatingpoint *coord, floatingpoint *f) {
     
     for (auto &interaction : _bubbleInteractionVector)
-        interaction->computeForces();
+        interaction->computeForces(coord, f);
 }
 
-void BubbleFF::computeForcesAux() {
-    
-    for (auto &interaction : _bubbleInteractionVector)
-        interaction->computeForcesAux();
-}
+//void BubbleFF::computeForcesAux() {
+//
+//    for (auto &interaction : _bubbleInteractionVector)
+//        interaction->computeForcesAux();
+//}
 
 void BubbleFF::computeLoadForces() {
     

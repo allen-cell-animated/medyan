@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -137,6 +137,25 @@ public:
 /// is the number of bound heads in the ensemble, beta is an emperical parameter
 /// which determines the rate of increase for the number of bound heads with
 /// respect to applied forces.
+
+// Adding back PLOS version of Mechanochemical feedback based in Medyan3.0.
+// TURN it on with macro PLOSFEEDBACK
+/// @note - Assuming a duty ratio p = 0.1
+/// @note - This function updates unbinding rates of a
+/// Myosin II ensemble based on the following exponential form:
+///
+///      k_unbinding,eff = beta * (k_0 / N_b) * exp(-F / (N_b * F_0))
+///
+/// where k_0 is the unbinding rate under zero load,
+/// F_0 is the characteristic force defining this catch,
+/// beta has been chosen to be 0.2,
+/// and N_b is the number of bound motor heads in the ensemble,
+/// approximated by Erdmann et al. 2013 to be:
+///
+///             N_b = p * N_t + (F * gamma)
+///
+/// where gamma has been chosen to be 0.05
+/// for a low duty ratio motor (p = 0.1).
 
 class MotorCatch : public MotorRateChanger {
     

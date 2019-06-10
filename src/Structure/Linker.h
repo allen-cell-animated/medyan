@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -79,6 +79,7 @@ private:
     ///Helper to get coordinate
     void updateCoordinate();
     
+    
 public:
     vector<floatingpoint> coordinate;
     ///< coordinate of midpoint, updated with updatePosition()
@@ -150,6 +151,9 @@ public:
     
     /// Count the number of linker species with a given name in the system
     static species_copy_t countSpecies(const string& name);
+    
+    
+    
 };
 
 

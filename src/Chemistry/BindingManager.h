@@ -50,9 +50,9 @@ enum NucleationZoneType {
 /// To store and manage binding reactions.
 
 /*!
- *  FilamentBindingManager is used to store a binding Reaction on [Filaments](@ref Filament) 
- *  in Compartment. Contains the binding reaction, possible binding sites, and integers 
- *  representing the binding species involved in the reaction. Classes that extend this will 
+ *  FilamentBindingManager is used to store a binding Reaction on [Filaments](@ref Filament)
+ *  in Compartment. Contains the binding reaction, possible binding sites, and integers
+ *  representing the binding species involved in the reaction. Classes that extend this will
  *  implement their own data structures for holding possible reaction sites, etc.
  *
  *  The main function of this class is to call updatePossibleBindings(), which will
@@ -64,28 +64,28 @@ enum NucleationZoneType {
  *  data structure state, and perform whatever callback is associated with that binding reaction.
  */
 class FilamentBindingManager {
-    
+
 friend class ChemManager;
-    
+
 protected:
     ReactionBase* _bindingReaction; ///< The binding reaction for this compartment
-    
+
     Compartment* _compartment; ///< Compartment this is in
-    
+
     short _boundInt; ///< Integer index in CMonomer of bound chemical value.
                      ///< @note - THIS ALSO REPRESENTS THE SPECIES TYPE THAT IS MANAGED.
-    
+
     string _boundName; ///< String name of bound chemical value
-    
+
     short _filamentType; ///< The filament type to operate on
-    
+
     Species* _bindingSpecies; ///< The binding species that this manager tracks.
                               ///< Resposible for all copy number changes
-    
+
     short _nlIndex = 0; ///<Index of this manager (for access of neighbor lists)
     short _mIndex = 0;  ///<Index of this manager (for access in other compartments)
 
-    
+
     static SubSystem *_subSystem; ///< Ptr to the SubSystem
 
 
@@ -93,10 +93,10 @@ protected:
 #ifdef NLSTENCILLIST
     vector<floatingpoint> bindingSites;
 #endif
-    
+
     ///helper function to update copy number and reactions
     void updateBindingReaction( int oldN, int newN) {
-        
+
         int diff = newN - oldN;
         //update copy number
         if(diff > 0) {
@@ -131,10 +131,10 @@ public:
                            Compartment* compartment,
                            short boundInt, string boundName,
                            short filamentType)
-    
+
     : _bindingReaction(reaction), _compartment(compartment),
       _boundInt(boundInt), _boundName(boundName), _filamentType(filamentType) {
-    
+
 #if !defined(REACTION_SIGNALING) || !defined(RSPECIES_SIGNALING)
         cout << "Any filament binding reaction relies on reaction and species signaling. Please"
         << " set these compilation macros and try again. Exiting." << endl;
@@ -143,7 +143,7 @@ public:
 
     }
     ~FilamentBindingManager() {}
-    
+
     //@{
     ///add possible binding reactions that could occur
 #ifdef NLORIGINAL
@@ -151,7 +151,7 @@ public:
 
     virtual void addPossibleBindings(CCylinder* cc) = 0;
     //@}
-    
+
     //@{
     /// Remove all bindings including this cylinder
     virtual void removePossibleBindings(CCylinder* cc, short bindingSite) = 0;
@@ -171,15 +171,15 @@ public:
     short getBoundInt() {return _boundInt;}
     ///Get the bound species name
     string getBoundName() {return _boundName;}
-    
+
     ///Set the index of this manager, for access to NeighborList
     void setNLIndex(int index) {_nlIndex = index;}
-    
+
     ///Set the index of this manager, for access to other managers
     void setMIndex(int index) {_mIndex = index;}
     ///Check consistency and correctness of binding sites. Used for debugging.
     virtual bool isConsistent() = 0;
-    
+
     ///get the filament that the species binds to aravind June 30, 2016.
     short getfilamentType() {return _filamentType;}
 
@@ -233,11 +233,11 @@ public:
 class BranchingManager : public FilamentBindingManager {
 
 friend class ChemManager;
-    
+
 private:
     ///Nucleation zone type, to define where nucleation should occur
     NucleationZoneType _nucleationZone;
-    
+
     ///If using a nucleation zone, nucleating distance from the boundary
     floatingpoint _nucleationDistance = 0.0;
 
@@ -261,7 +261,7 @@ public:
                      NucleationZoneType zone = NucleationZoneType::ALL,
                      floatingpoint nucleationDistance = numeric_limits<floatingpoint>::infinity());
     ~BranchingManager() {}
-    
+
     //@{
 #ifdef NLORIGINAL
     ///add possible binding reactions that could occur
@@ -269,7 +269,7 @@ public:
 
     virtual void addPossibleBindings(CCylinder* cc);
     //@}
-    
+
     //@{
     /// Remove all bindings including this cylinder
     virtual void removePossibleBindings(CCylinder* cc, short bindingSite);
@@ -349,7 +349,7 @@ public:
         floatingpoint oldN=numBindingSitesstencil();
         _possibleBindingsstencil.insert(t1);
 //        _branchCylinder=(get<0>(t2));
-        floatingpoint newN=numBindingSitesstencil();
+        double newN=numBindingSitesstencil();
         updateBindingReaction(oldN,newN);}
     virtual void clearpossibleBindingsstencil() {
         floatingpoint oldN=numBindingSitesstencil();
@@ -403,33 +403,42 @@ public:
  *  Manages a multimap of possible binding sites.
  */
 class LinkerBindingManager : public FilamentBindingManager {
-    
+
 friend class ChemManager;
-    
+
 private:
     float _rMin; ///< Minimum reaction range
     float _rMax; ///< Maximum reaction range
-    float _rMinsq; ///< Minimum reaction range squared
-    float _rMaxsq; ///< Maximum reaction range squared
+	float _rMinsq = _rMin * _rMin; ///< Minimum reaction range squared
+	float _rMaxsq = _rMax * _rMax; ///< Maximum reaction range squared
     floatingpoint minparamcyl2;
     floatingpoint maxparamcyl2;
     vector<floatingpoint> bindingsites;
     static short HNLID;
     static short _idvec[2];
-    
+    int dBInt = 1;
+    int dBI = SysParams::Chemistry().difBindInt;
+    std::set<int> difBindInts{2,12,22,32}; /// allow diffent binding sites for linkers and motors
+
+
+
     //possible bindings at current state. updated according to neighbor list
 #ifdef DEBUGCONSTANTSEED
     vector<vector<tuple<CCylinder*, short>>> _possibleBindings;
 //    multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
 #else
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
+
+    unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*, short>>> _reversePossibleBindings;
+
+
         //possible bindings at current state. updated according to neighbor list stencil
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
             _possibleBindingsstencil;
-    #endif
+#endif
     //static neighbor list
     static vector<CylinderCylinderNL*> _neighborLists;
-    
+
 public:
     LinkerBindingManager(ReactionBase* reaction,
                          Compartment* compartment,
@@ -437,9 +446,9 @@ public:
                          string boundName,
                          short filamentType,
                          float rMax, float rMin);
-    
+
     ~LinkerBindingManager() {}
-    
+
     //@{
 #ifdef NLORIGINAL
     ///add possible binding reactions that could occur
@@ -447,7 +456,7 @@ public:
 
     virtual void addPossibleBindings(CCylinder* cc);
     //@}
-    
+
     //@{
     /// Remove all bindings including this cylinder
     virtual void removePossibleBindings(CCylinder* cc, short bindingSite);
@@ -458,7 +467,7 @@ public:
     virtual void updateAllPossibleBindings();
 
     virtual int numBindingSites() {
-        
+
         return _possibleBindings.size();
     }
 
@@ -476,7 +485,7 @@ public:
         return _possibleBindings;
     }
 #endif
-    
+
     /// ARAVIND ADDED FEB 18 2016. clear possible bindings.
     virtual void clearpossibleBindings() {
         floatingpoint oldN=numBindingSites();
@@ -495,7 +504,7 @@ public:
     float getRMin() {return _rMin;}
     float getRMax() {return _rMax;}
     //@}
-    
+
     virtual bool isConsistent();
 
 #ifdef NLSTENCILLIST
@@ -569,21 +578,21 @@ private:
  *  Manages a multimap of possible binding sites.
  */
 class MotorBindingManager : public FilamentBindingManager {
-    
+
 friend class ChemManager;
-    
+
 private:
         //DEPRECATED AS OF 9/22/16
 //    vector<int> _unboundIDs = {};
     ///< A vector of unbound motor ID's that are contained in this compartment. This is used
     ///< for tracking binding/unbinding and movement of specific motors.
-    
+
     float _rMin; ///< Minimum reaction range
     float _rMax; ///< Maximum reaction range
-    float _rMinsq; ///< Minimum reaction range squared
-    float _rMaxsq; ///< Maximum reaction range squared
-    floatingpoint minparamcyl2;
-    floatingpoint maxparamcyl2;
+	float _rMinsq = _rMin * _rMin; ///< Minimum reaction range squared
+	float _rMaxsq = _rMax * _rMax; ///< Maximum reaction range squared
+	floatingpoint minparamcyl2;
+	floatingpoint maxparamcyl2;
     vector<floatingpoint> bindingsites;
     static short HNLID;
     static short _idvec[2];
@@ -594,15 +603,19 @@ private:
 #else
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
     _possibleBindings;
+
+    unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*, short>>> _reversePossibleBindings;
+
+
         //possible bindings at current state. updated according to neighbor list stencil
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
             _possibleBindingsstencil;
     #endif
 
-    
+
     //static neighbor list
     static vector<CylinderCylinderNL*> _neighborLists;
-    
+
 public:
 
     MotorBindingManager(ReactionBase* reaction,
@@ -611,16 +624,16 @@ public:
                         string boundName,
                         short filamentType,
                         float rMax, float rMin);
-    
+
     ~MotorBindingManager() {}
-    
+
     //@{
 #ifdef NLORIGINAL
     ///add possible binding reactions that could occur
     virtual void addPossibleBindings(CCylinder* cc, short bindingSite);
     virtual void addPossibleBindings(CCylinder* cc);
     //@}
-    
+
     //@{
     /// Remove all bindings including this cylinder
     virtual void removePossibleBindings(CCylinder* cc, short bindingSite);
@@ -631,7 +644,7 @@ public:
     virtual void updateAllPossibleBindings();
 
     virtual int numBindingSites() {
-        
+
         return _possibleBindings.size();
     }
 
@@ -646,7 +659,7 @@ public:
         return _possibleBindings;
     }
 #endif
-    
+
     /// ARAVIND ADDED FEB 18 2016. clear possible bindings.
     virtual void clearpossibleBindings() {
         floatingpoint oldN=numBindingSites();
@@ -665,7 +678,7 @@ public:
     float getRMin() {return _rMin;}
     float getRMax() {return _rMax;}
     //@}
-    
+
     virtual bool isConsistent();
 #ifdef NLSTENCILLIST
     virtual void addPossibleBindingsstencil(CCylinder* cc);
@@ -731,33 +744,33 @@ public:
     //DEPRECATED AS OF 9/8/16
 //    /// Adds an unbound ID to the container
 //    void addUnboundID(int ID) {_unboundIDs.push_back(ID);}
-//    
+//
 //    /// Get a random ID from the container, and remove the ID
 //    int getUnboundID() {
-//        
+//
 //        assert(_unboundIDs.size() != 0 && "Major bug: No unbound IDs, but non-zero copy numbers.");
-//        
+//
 //        int ri = Rand::randInteger(0, _unboundIDs.size() - 1);
 //        int ID = _unboundIDs[ri];
-//        
+//
 //        //delete and return
 //        _unboundIDs.erase(_unboundIDs.begin() + ri);
-//        
+//
 //        return ID;
 //    }
-//    
+//
 //    // remove a specific ID from the list
 //    void removeUnboundID(int ID) {
-//        
+//
 //        for (auto IDit = _unboundIDs.begin(); IDit != _unboundIDs.end(); IDit++) {
-//            
+//
 //            if(*IDit == ID) {
 //                _unboundIDs.erase(IDit);
 //                return;
 //            }
 //        }
 //    }
-//    
+//
 //    ///Get all unbound ID's, but do not change container
 //    const vector<int>& getAllUnboundIDs() const { return _unboundIDs; }
 

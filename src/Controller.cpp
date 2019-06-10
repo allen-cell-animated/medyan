@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -38,7 +38,7 @@
 #include "MController.h"
 #include "Cylinder.h"
 #include <unordered_map>
-#include 	<tuple>
+#include     <tuple>
 #include <vector>
 #include <algorithm>
 #include "ChemManager.h"
@@ -46,6 +46,7 @@
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
+#include "util/io/log.h"
 using namespace mathfunc;
 
 Controller::Controller(SubSystem* s) : _subSystem(s) {
@@ -66,14 +67,13 @@ Controller::Controller(SubSystem* s) : _subSystem(s) {
 void Controller::initialize(string inputFile,
                             string inputDirectory,
                             string outputDirectory, int threads) {
-    cout<<threads<<endl;
+
     SysParams::INITIALIZEDSTATUS = false;
     SysParams::numthreads = threads;
     //general check of macros
 #if defined(DYNAMICRATES) && (!defined(CHEMISTRY) || !defined(MECHANICS))
-    cout << "If dynamic rates is turned on, chemistry and mechanics must be "
-         << "defined. Please set these compilation macros and try again. Exiting."
-         << endl;
+    LOG(FATAL) << "If dynamic rates is turned on, chemistry and mechanics must be "
+         << "defined. Please set these compilation macros and try again. Exiting.";
     exit(EXIT_FAILURE);
 #endif
 
@@ -95,6 +95,8 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", _subSystem));
 
     _outputs.push_back(new PlusEnd(_outputDirectory + "plusend.traj", _subSystem));
+    //ReactionOut should be the last one in the output list
+    //Otherwise incorrect deltaMinusEnd or deltaPlusEnd values may be genetrated.
     _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", _subSystem));
     //Qin add br force out and local diffussing species concentration
     _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
@@ -107,20 +109,20 @@ void Controller::initialize(string inputFile,
     //CALLING ALL CONTROLLERS TO INITIALIZE
     //Initialize geometry controller
     cout << "---" << endl;
-    cout << "Initializing geometry...";
+    LOG(STEP) << "Initializing geometry...";
     _gController->initializeGrid();
-    cout << "Done." << endl;
+    LOG(INFO) << "Done.";
 
     //Initialize boundary
     cout << "---" << endl;
-    cout << "Initializing boundary...";
+    LOG(STEP) << "Initializing boundary...";
 
     auto BTypes = p.readBoundaryType();
     p.readBoundParams();
 
     //initialize
     _gController->initializeBoundary(BTypes);
-    cout << "Done." <<endl;
+    LOG(INFO) << "Done.";
 
 #ifdef MECHANICS
     //read algorithm and types
@@ -132,9 +134,9 @@ void Controller::initialize(string inputFile,
 
     //Initialize Mechanical controller
     cout << "---" << endl;
-    cout << "Initializing mechanics...";
+    LOG(STEP) << "Initializing mechanics...";
     _mController->initialize(MTypes, MAlgorithm);
-    cout << "Done." <<endl;
+    LOG(INFO) << "Done.";
 
 #endif
 
@@ -142,12 +144,25 @@ void Controller::initialize(string inputFile,
     //Activate necessary compartments for diffusion
     _gController->setActiveCompartments();
 
+    if(_subSystem->getBoundary()->getShape() == BoundaryShape::Cylinder){
+        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+            C->getSlicedVolumeArea();
+        }
+    }
+    else{
+        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+            C->getNonSlicedVolumeArea();
+        }
+    }
+    //Calculate surface area and volume for reaction rate scaling
+
+
     //read parameters
     p.readChemParams();
 
     //Initialize chemical controller
     cout << "---" << endl;
-    cout << "Initializing chemistry...";
+    LOG(STEP) << "Initializing chemistry...";
     //read algorithm
     auto CAlgorithm = p.readChemistryAlgorithm();
     auto CSetup = p.readChemistrySetup();
@@ -174,25 +189,68 @@ void Controller::initialize(string inputFile,
         _chemData=ChemData;
     }
     else {
-        cout << "Need to specify a chemical input file. Exiting." << endl;
+        LOG(FATAL) << "Need to specify a chemical input file. Exiting.";
         exit(EXIT_FAILURE);
     }
-    _cController->initialize(CAlgorithm.algorithm, ChemData);
-    cout << "Done." << endl;
+
+    // Dissipation
+    _dt = new DissipationTracker(_mController);
+    _cController->initialize(CAlgorithm.algorithm, ChemData, _dt);
+    LOG(INFO) << "Done.";
 
     //Set up chemistry output if any
     string chemsnapname = _outputDirectory + "chemistry.traj";
     _outputs.push_back(new Chemistry(chemsnapname, _subSystem, ChemData,
                                      _subSystem->getCompartmentGrid()));
 
+    ChemSim* _cs = _cController->getCS();
+
     string concenname = _outputDirectory + "concentration.traj";
     _outputs.push_back(new Concentrations(concenname, _subSystem, ChemData));
+
+
+
+    //Dissipation
+    if(SysParams::CParams.dissTracking){
+    //Set up reactions output if any
+    string disssnapname = _outputDirectory + "dissipation.traj";
+    _outputs.push_back(new Dissipation(disssnapname, _subSystem, _cs));
+
+    //Set up HRCD output if any
+    string hrcdsnapname = _outputDirectory + "HRCD.traj";
+    _outputs.push_back(new HRCD(hrcdsnapname, _subSystem, _cs));
+    }
+
+    if(SysParams::CParams.eventTracking){
+    //Set up MotorWalkingEvents
+    string motorwalkingevents = _outputDirectory + "motorwalkingevents.traj";
+    _outputs.push_back(new MotorWalkingEvents(motorwalkingevents, _subSystem, _cs));
+
+    //Set up LinkerUnbindingEvents
+    string linkerunbindingevents = _outputDirectory + "linkerunbindingevents.traj";
+    _outputs.push_back(new LinkerUnbindingEvents(linkerunbindingevents, _subSystem, _cs));
+
+    //Set up LinkerBindingEvents
+    string linkerbindingevents = _outputDirectory + "linkerbindingevents.traj";
+    _outputs.push_back(new LinkerBindingEvents(linkerbindingevents, _subSystem, _cs));
+    }
+
+
+    //Set up CMGraph output if any
+    string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
+    _outputs.push_back(new CMGraph(cmgraphsnapname, _subSystem));
+
+
+
+//    //Set up Turnover output if any
+//    string turnover = _outputDirectory + "Turnover.traj";
+//    _outputs.push_back(new FilamentTurnoverTimes(turnover, _subSystem));
 
 #endif
 
 #ifdef DYNAMICRATES
     cout << "---" << endl;
-    cout << "Initializing dynamic rates...";
+    LOG(STEP) << "Initializing dynamic rates...";
     //read dynamic rate parameters
     p.readDyRateParams();
 
@@ -201,13 +259,13 @@ void Controller::initialize(string inputFile,
 
     //init controller
     _drController->initialize(DRTypes);
-    cout << "Done." << endl;
+    LOG(INFO) << "Done.";
 
 #endif
 
     //Check consistency of all chemistry and mechanics parameters
     cout << "---" << endl;
-    cout << "Checking cross-parameter consistency...";
+    LOG(STEP) << "Checking cross-parameter consistency...";
 #ifdef CHEMISTRY
     if(!SysParams::checkChemParameters(ChemData))
         exit(EXIT_FAILURE);
@@ -221,7 +279,7 @@ void Controller::initialize(string inputFile,
         exit(EXIT_FAILURE);
 #endif
 
-    cout << "Done." << endl;
+    LOG(INFO) << "Done.";
 
     //setup initial network configuration
     setupInitialNetwork(p);
@@ -383,8 +441,6 @@ void Controller::setupSpecialStructures(SystemParser& p) {
             int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
 
             // check how many segments can fit between end-to-end of the filament
-
-
             Filament *f = _subSystem->addTrackable<Filament>(_subSystem, SType.mtocFilamentType,
                                                              coords, numSegment + 1, "ARC");
 
@@ -737,7 +793,6 @@ void Controller::updateReactionRates() {
     /// update all reactables
     for(auto r : _subSystem->getReactables()) r->updateReactionRates();
 }
-
 #endif
 
 void Controller::updateNeighborLists() {
@@ -760,6 +815,10 @@ void Controller::updateNeighborLists() {
 //    std::cout<<"time split "<<elapsed_runnl2.count()<<" "<<elapsed_runbvec.count()<<" "
 //            ""<<elapsed_runb.count()<<endl;
 #endif
+}
+
+void Controller::resetCounters() {
+    for(Filament* f : Filament::getFilaments()) f->resetCounters();
 }
 
 void Controller::pinBoundaryFilaments() {
@@ -1011,6 +1070,7 @@ void Controller::run() {
     oldTau = 0;
 #endif
     for(auto o: _outputs) o->print(0);
+    resetCounters();
 
     cout << "Starting simulation..." << endl;
 
@@ -1023,10 +1083,13 @@ void Controller::run() {
         //activate/deactivate compartments
         mins = chrono::high_resolution_clock::now();
         activatedeactivateComp();
+	    // Dissipation
+	    if(SysParams::CParams.dissTracking){
+		    _dt->setG1();
+	    }
         mine= chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runspl(mine - mins);
         specialtime += elapsed_runspl.count();
-
         while(tau() <= _runTime) {
             //run ccontroller
             cout<<"Starting chemistry"<<endl;
@@ -1087,12 +1150,17 @@ void Controller::run() {
             mins = chrono::high_resolution_clock::now();
             if(var) {
                 for(auto o: _outputs) o->print(i);
+                resetCounters();
                 break;
             }
+            // Dissipation
+            if(SysParams::CParams.dissTracking){
+            _dt->setGMid();
+            }
+
             mine= chrono::high_resolution_clock::now();
             chrono::duration<floatingpoint> elapsed_runout(mine - mins);
             outputtime += elapsed_runout.count();
-
             //add the last step
             tauLastSnapshot += tau() - oldTau;
             tauLastMinimization += tau() - oldTau;
@@ -1112,9 +1180,7 @@ void Controller::run() {
             CUDAcommon::cudavars = cvars;
     //@}
 #endif
-            /*cout<<"times mtime "<<_minimizationTime<<" taulastmin "<<tauLastMinimization<<
-            " tau " <<tau() <<" oldTau "<<oldTau<<endl;*/
-			//run mcontroller, update system
+            //run mcontroller, update system
             if(tauLastMinimization >= _minimizationTime) {
 
 	            Bead::revectorizeifneeded();
@@ -1150,6 +1216,7 @@ void Controller::run() {
                 mins = chrono::high_resolution_clock::now();
                 cout << "Current simulation time = "<< tau() << endl;
                 for(auto o: _outputs) o->print(i);
+                resetCounters();
                 i++;
                 tauLastSnapshot = 0.0;
                 mine= chrono::high_resolution_clock::now();
@@ -1183,12 +1250,13 @@ void Controller::run() {
             }
             //Special protocols
             mins = chrono::high_resolution_clock::now();
-            //TODO uncommented special protocols
-            //executeSpecialProtocols();
+            //special protocols
+            executeSpecialProtocols();
             mine= chrono::high_resolution_clock::now();
             chrono::duration<floatingpoint> elapsed_runspl2(mine - mins);
             specialtime += elapsed_runspl2.count();
             oldTau = tau();
+
 #ifdef CUDAACCL
 
             //reset CUDA context
@@ -1231,6 +1299,7 @@ void Controller::run() {
             //run ccontroller
             if(!_cController->runSteps(_minimizationSteps)) {
                 for(auto o: _outputs) o->print(i);
+                resetCounters();
                 break;
             }
 
@@ -1253,11 +1322,13 @@ void Controller::run() {
             if(stepsLastSnapshot >= _snapshotSteps) {
                 cout << "Current simulation time = "<< tau() << endl;
                 for(auto o: _outputs) o->print(i);
+                resetCounters();
                 i++;
                 stepsLastSnapshot = 0;
             }
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
+            resetCounters();
             i++;
 #endif
 
@@ -1285,6 +1356,7 @@ void Controller::run() {
 
     //print last snapshots
     for(auto o: _outputs) o->print(i);
+	resetCounters();
 //    cout<<"Printing Excluded volume counters"<<endl;
 //    cout<<"Parallel "<<SysParams::exvolcounter[0]<<endl;
 //    cout<<"In-plane "<<SysParams::exvolcounter[1]<<endl;

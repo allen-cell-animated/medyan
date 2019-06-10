@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -15,6 +15,9 @@
 #define MEDYAN_ChemSimImpl_h
 
 #include "common.h"
+#include "Histogram.h"
+#include "DissipationTracker.h"
+#include <fstream>
 
 //FORWARD DECLARATIONS
 class ReactionBase;
@@ -52,6 +55,9 @@ public:
     /// Mainly used for debugging: print chemical reactions in the network at
     /// this moment
     virtual void printReactions() const = 0;
+    
+    DissipationTracker * _dt = nullptr;
+    
 };
 
 #endif

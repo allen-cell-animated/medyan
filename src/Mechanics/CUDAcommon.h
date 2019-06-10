@@ -2,21 +2,21 @@
 // Created by aravind on 9/18/17.
 //
 
-#ifndef CUDA_VEC_CUDACOMMON_H
-#define CUDA_VEC_CUDACOMMON_H
+#ifndef MEDYAN_CUDAcommon_h
+#define MEDYAN_CUDAcommon_h
 #include <vector>
 #include <list>
-#include <FilamentStretchingHarmonic.h>
-#include <FilamentBendingHarmonic.h>
-#include <FilamentBendingCosine.h>
-#include <LinkerStretchingHarmonic.h>
-#include <MotorGhostStretchingHarmonic.h>
-#include <CylinderExclVolRepulsion.h>
-#include <BranchingStretchingHarmonic.h>
-#include <BranchingBendingCosine.h>
-#include <BranchingDihedralCosine.h>
-#include <BranchingPositionCosine.h>
-#include <BoundaryCylinderRepulsionExp.h>
+#include "FilamentStretchingHarmonic.h"
+#include "FilamentBendingHarmonic.h"
+#include "FilamentBendingCosine.h"
+#include "LinkerStretchingHarmonic.h"
+#include "MotorGhostStretchingHarmonic.h"
+#include "CylinderExclVolRepulsion.h"
+#include "BranchingStretchingHarmonic.h"
+#include "BranchingBendingCosine.h"
+#include "BranchingDihedralCosine.h"
+#include "BranchingPositionCosine.h"
+#include "BoundaryCylinderRepulsionExp.h"
 #include "CCylinder.h"
 #include "common.h"
 #include "string.h"

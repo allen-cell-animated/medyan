@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -23,32 +23,32 @@
 
 /// A class to store and iterate over all [ForceFields](@ref ForceField).
 /*!
- *  The ForceFieldManager is used to store all [ForceFields](@ref ForceField) 
- *  initialized by the system, as well as iterate over these potentials and calculate 
+ *  The ForceFieldManager is used to store all [ForceFields](@ref ForceField)
+ *  initialized by the system, as well as iterate over these potentials and calculate
  *  total forces and energies. This class contains functions for the said calculations.
  */
 class ForceFieldManager {
-    
+
 friend class CGMethod;
-    
+
 public:
      vector<ForceField*> _forceFields; ///< All forcefields in the system
 
      static ForceField* _culpritForceField;
-    
+
     /// Vectorize all interactions involved in calculation
     void vectorizeAllForceFields();
     /// Deallocation of vectorized memory
     void cleanupAllForceFields();
-    
+
     /// Compute the energy using all available force fields
     /// @return Returns infinity if there was a problem with a ForceField
     /// energy calculation, such that beads will not be moved to this
     /// problematic configuration.
     /// @param print - prints detailed info about energies
     floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d, bool verbose = false);
-    
-    /// Compute the forces of all force fields 
+
+    /// Compute the forces of all force fields
     void computeForces(floatingpoint *coord, floatingpoint *f);
     
     /// Copy forces from f to fprev
@@ -78,8 +78,10 @@ public:
     int *gpu_params;
     vector<int> params;
     //@}
-    void assignallforcemags();
+
 #endif
+    void assignallforcemags();
+
 private:
     chrono::high_resolution_clock::time_point tbegin, tend;
 };

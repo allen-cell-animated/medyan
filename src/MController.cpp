@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -20,7 +20,7 @@
 #include "MotorGhostFF.h"
 #include "BoundaryFF.h"
 #include "BranchingFF.h"
-//#include "BubbleFF.h"
+#include "BubbleFF.h"
 #include "CylinderVolumeFF.h"
 
 #include "ConjugateGradient.h"
@@ -97,16 +97,17 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
 #endif
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         _subSystem->addBNeighborList(nl);
+//        _subSystem->addNeighborList(nl);
 #endif
     }
-    
-//    auto bubbleFF = new BubbleFF(forceFields.BubbleFFType,
-//                                 forceFields.MTOCFFType);
-//    _FFManager._forceFields.push_back(bubbleFF);
-//    for(auto nl : bubbleFF->getNeighborLists()) {
-//        
-//        if(nl != nullptr)
-//            _subSystem->addNeighborList(nl);
-//    }
+
+    auto bubbleFF = new BubbleFF(forceFields.BubbleFFType,
+                                 forceFields.MTOCFFType);
+    _FFManager._forceFields.push_back(bubbleFF);
+    for(auto nl : bubbleFF->getNeighborLists()) {
+
+        if(nl != nullptr)
+            _subSystem->addBNeighborList(nl);
+    }
 }
 

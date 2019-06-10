@@ -1,8 +1,8 @@
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -234,6 +234,16 @@ namespace mathfunc {
                     (v2[2] - v1[2]) * (v2[2] - v1[2]));
     }
 
+    inline floatingpoint twoPointDistancesquared(const vector<floatingpoint> &v1, const
+    vector<floatingpoint> &v2) {
+
+	    floatingpoint d0 = v2[0] - v1[0];
+	    floatingpoint d1 = v2[1] - v1[1];
+	    floatingpoint d2 = v2[2] - v1[2];
+
+        return d0*d0 + d1*d1 + d2*d2;
+    }
+
     inline floatingpoint twoPointDistance(floatingpoint const *v1, const vector<floatingpoint> &v2) {
 
         return sqrt((v2[0] - v1[0]) * (v2[0] - v1[0]) +
@@ -241,13 +251,6 @@ namespace mathfunc {
                     (v2[2] - v1[2]) * (v2[2] - v1[2]));
     }
 
-    inline floatingpoint twoPointDistancesquared(const vector<floatingpoint> &v1, const vector<floatingpoint>
-                                            &v2) {
-
-        return ((v2[0] - v1[0]) * (v2[0] - v1[0]) +
-                    (v2[1] - v1[1]) * (v2[1] - v1[1]) +
-                    (v2[2] - v1[2]) * (v2[2] - v1[2]));
-    }
 
 
     inline floatingpoint twoPointDistance(const vector<floatingpoint> &v1, floatingpoint const *v2) {
@@ -1331,7 +1334,6 @@ namespace mathfunc {
 
         //TODO normalize cp and v3
         auto cp = crossProduct(v1, v2);
-
         return areEqual(dotProduct(v3, cp), 0.0);
     }
 
@@ -1358,7 +1360,7 @@ namespace mathfunc {
         }
         return false;
     }
-    
+
     inline void printvariablebinary(floatingpoint *x, int startpoint, int endpoint){
     	string str;
     	for(int i = startpoint; i <= endpoint; i++){
@@ -1398,7 +1400,21 @@ namespace mathfunc {
     tuple<vector<floatingpoint>, vector<floatingpoint>> branchProjection(const vector<floatingpoint> &n,
                                                            const vector<floatingpoint> &p,
                                                            floatingpoint l, floatingpoint m, floatingpoint theta);
+    tuple<vector<double>, vector<double>> branchProjection(const vector<double> &n,
+                                                           const vector<double> &p,
+                                                           double l, double m, double theta);
+
+
+    float delGGenChem(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);
+
+    float delGGenChemI(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);
+
+    float delGDifChem(species_copy_t reacN ,species_copy_t prodN);
+
+
+    float delGPolyChem(float delGzero, species_copy_t reacN, string whichWay);
+
+    float delGMyoChem(float nh, float rn);
 
 }
 #endif
-

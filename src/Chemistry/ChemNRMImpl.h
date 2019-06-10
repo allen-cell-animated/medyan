@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -312,7 +312,6 @@ public:
                 return false;
         }
         return true;
-//        cout<<"printing chemistry times "<<endTime<<" _t "<<_t<<" time "<<time<<endl;
     }
     
     /// This method runs the Gillespie algorithm for the given amount of reaction steps.

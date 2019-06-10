@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -21,6 +21,7 @@
 #include "GController.h"
 #include "CController.h"
 #include "DRController.h"
+#include "DissipationTracker.h"
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -61,6 +62,8 @@ private:
     floatingpoint _minimizationTime;  ///< Frequency of mechanical minimization
     floatingpoint _neighborListTime;  ///< Frequency of neighbor list updates
     
+    DissipationTracker* _dt;   ///< dissipation tracking object
+    
     //@{
     /// Same parameter set as timestep, but in terms of chemical
     /// reaction steps. Useful for small runs and debugging.
@@ -74,8 +77,8 @@ private:
     vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> fil;
     tuple< vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> , vector<tuple<string, short, vector<vector<floatingpoint>>>> , vector<tuple<string, short, vector<floatingpoint>>> , vector<vector<floatingpoint>> > filaments;
     vector<Compartment*> activatecompartments;
-     multimap<int,Compartment*> fCompmap;
-     multimap<int,Compartment*> bCompmap;
+    multimap<int,Compartment*> fCompmap;
+    multimap<int,Compartment*> bCompmap;
     //@}
     floatingpoint bounds[2], bounds_prev[2];
     ///INITIALIZATION HELPER FUNCTIONS
@@ -108,15 +111,16 @@ private:
     
     /// Update neighbors lists, called in run
     void updateNeighborLists();
-    
+
     /// Execute any special protocols needed, for example,
     /// making Linker and Filament species static
     void executeSpecialProtocols();
 
-    
+    /// Reset counters on all elements in the system
+    void resetCounters();
+
     ///Helper function to pin filaments near the boundary
     void pinBoundaryFilaments();
-    //Qin
     void pinLowerBoundaryFilaments();
     
 public:

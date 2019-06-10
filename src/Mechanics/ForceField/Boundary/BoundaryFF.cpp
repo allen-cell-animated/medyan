@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -33,8 +33,9 @@ BoundaryFF::BoundaryFF (string type) {
     if (type == "REPULSIONEXP") {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>());
-        //_boundaryInteractionVector.emplace_back(
-        //new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
+
+        _boundaryInteractionVector.emplace_back(
+        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
     }
     else if(type == "REPULSIONEXPIN") {
         _boundaryInteractionVector.emplace_back(
@@ -107,14 +108,20 @@ floatingpoint BoundaryFF::computeEnergy(floatingpoint *coord, floatingpoint *f, 
         }
         else U += U_i;
         
+        
     }
+    
+    
     return U;
 }
 
 void BoundaryFF::computeForces(floatingpoint *coord, floatingpoint *f) {
 
-    for (auto &interaction : _boundaryInteractionVector)
+    for (auto &interaction : _boundaryInteractionVector){
         interaction->computeForces(coord, f);
+
+    }
+    
 }
 
 void BoundaryFF::computeLoadForces() {

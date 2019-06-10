@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -48,10 +48,10 @@ void MotorGhostFF::whoIsCulprit() {
 
 void MotorGhostFF::vectorize() {
     //Reset stretching forces to 0.
-    for(auto m:MotorGhost::getMotorGhosts()){
+    /*for(auto m:MotorGhost::getMotorGhosts()){
         //Using += to ensure that the stretching forces are additive.
         m->getMMotorGhost()->stretchForce = 0.0;
-    }
+    }*/
 
 
     for (auto &interaction : _motorGhostInteractionVector)

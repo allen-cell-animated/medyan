@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -111,8 +111,16 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     
     ReactionBase* offRxn =
     new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(os, _offRate);
+    // Dissipation
+    if(SysParams::Chemistry().dissTracking){
+    floatingpoint gnum = onRxn->getGNumber();
     offRxn->setReactionType(ReactionType::MOTORUNBINDING);
+    offRxn->setGNumber(-gnum);
     
+    //set hrcdid of offreaction
+    string hrcdid = onRxn->getHRCDID();
+    offRxn->setHRCDID(hrcdid + "off");
+    }
     //Attach the callback to the off reaction, add it
     MotorUnbindingCallback mcallback(_pMotorGhost, ps);
     ConnectionBlock rcb(offRxn->connect(mcallback,false));
@@ -134,6 +142,14 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
     auto seNew = cc->getCMonomer(newPosition)->speciesBound(boundType);
     
     ReactionBase* newOffRxn;
+    
+    // Dissipation
+    string hrcdid = "NA";
+    floatingpoint gnum = 0.0;
+    if(SysParams::Chemistry().dissTracking){
+        hrcdid = _offRxn->getHRCDID();
+        gnum = _offRxn->getGNumber();
+    }
     
     if(getFirstSpecies() == smOld) {
         
@@ -171,6 +187,17 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
     //set new reaction type
     newOffRxn->setReactionType(ReactionType::MOTORUNBINDING);
     
+    // set new reaction gnum
+    
+    // Dissipation
+    if(SysParams::Chemistry().dissTracking){
+    newOffRxn->setGNumber(gnum);
+    
+    //set hrcdid of offreaction
+    
+    newOffRxn->setHRCDID(hrcdid);
+    }
+    
     //attach signal
     MotorUnbindingCallback mcallback(_pMotorGhost, ps);
     ConnectionBlock rcb(newOffRxn->connect(mcallback,false));
@@ -200,6 +227,14 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
     
     ReactionBase* newOffRxn;
     
+    
+    // Dissipation
+    string hrcdid = "NA";
+    floatingpoint gnum = 0.0;
+    if(SysParams::Chemistry().dissTracking){
+    hrcdid = _offRxn->getHRCDID();
+    gnum = _offRxn->getGNumber();
+    }
     if(getFirstSpecies() == smOld) {
         
         _position1 = newPosition;
@@ -249,8 +284,18 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
     //set new reaction type
     newOffRxn->setReactionType(ReactionType::MOTORUNBINDING);
     
+    // Dissipation
+    if(SysParams::Chemistry().dissTracking){
+    // set new reaction gnum
+    newOffRxn->setGNumber(gnum);
+    
+    //set hrcdid of offreaction
+    
+    newOffRxn->setHRCDID(hrcdid);
+    }
     //attach signal
     MotorUnbindingCallback mcallback(_pMotorGhost, ps);
+    
     ConnectionBlock rcb(newOffRxn->connect(mcallback,false));
 
     //add new
@@ -259,4 +304,9 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
     //set new unbinding reaction
     setOffReaction(newOffRxn);
     
+}
+
+
+void CMotorGhost::printReaction(){
+    cout<<_offRxn->getHRCDID()<<endl;
 }

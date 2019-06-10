@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -14,7 +14,7 @@
 #ifndef MEDYAN_CylinderVolumeInteractions_h
 #define MEDYAN_CylinderVolumeInteractions_h
 
-#include <HybridNeighborListImpl.h>
+#include "HybridNeighborListImpl.h"
 #include "common.h"
 
 //FORWARD DECLARATIONS

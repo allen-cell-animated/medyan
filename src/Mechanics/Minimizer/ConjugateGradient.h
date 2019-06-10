@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -20,6 +20,8 @@
 #include "CGPolakRibiereMethod.h"
 #include "CGSteepestDescent.h"
 #include "Minimizer.h"
+
+#include "ForceFieldManager.h"
 
 //FORWARD DECLARATIONS
 class ForceFieldManager;
@@ -51,6 +53,36 @@ public:
     void equlibrate(ForceFieldManager &FFM, bool steplimit) {
         _CGType.minimize(FFM, _GRADTOL, _MAXDIST, _LAMBDAMAX, steplimit);
     }
+
+
+
+
+
+    floatingpoint getEnergy(ForceFieldManager &FFM, floatingpoint d){
+      
+        //double* coord = _CGType.getCoords();
+        floatingpoint* coord = CUDAcommon::serlvars.coord;
+        
+        FFM.vectorizeAllForceFields();
+
+        floatingpoint dummyForce[1] = {0};
+
+        floatingpoint f = FFM.computeEnergy(coord,dummyForce,0.0);
+        
+        // delete [] coord;
+        
+        FFM.cleanupAllForceFields();
+        
+        
+        
+        return f;
+        
+        
+        
+    }
+
+    
+    
 };
 
 #endif

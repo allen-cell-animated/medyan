@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -272,15 +272,15 @@ void SubSystem::updateBindingManagers() {
         else if ((mManager = dynamic_cast<MotorBindingManager *>(manager.get()))) {
             //calculate all binding Sites.
             getallpossiblemotorbindingsitesCUDA(mManager, cylcylnlvars
-                    .gpu_cmon_state_motor);
-            }
+                                                .gpu_cmon_state_motor);
+        }
         //Brancher
         else if ((bManager = dynamic_cast<BranchingManager *>(manager.get()))) {
             //calculate all binding Sites.
             getallpossiblebrancherbindingsitesCUDA(bManager, cylcylnlvars
-                    .gpu_cmon_state_brancher);
+                                                   .gpu_cmon_state_brancher);
 
-            }
+        }
     }
 
     //Free vars
@@ -288,12 +288,12 @@ void SubSystem::updateBindingManagers() {
     //Assign to respective possible bindings.
     assigntorespectivebindingmanagersCUDA();
 
-//    for(auto gpb:gpu_possibleBindings_vec)
-//        CUDAcommon::handleerror(cudaFree(gpb),"cudaFree","SubSystem.cu");
-//    for(auto pb:possibleBindings_vec)
-//        CUDAcommon::handleerror(cudaFreeHost(pb), "cudaFree", "SubSystem.cu");
-//    for(auto np:numpairs_vec)
-//        CUDAcommon::handleerror(cudaFreeHost(np),"cudaFree","SubSystem.cu");
+    //    for(auto gpb:gpu_possibleBindings_vec)
+    //        CUDAcommon::handleerror(cudaFree(gpb),"cudaFree","SubSystem.cu");
+    //    for(auto pb:possibleBindings_vec)
+    //        CUDAcommon::handleerror(cudaFreeHost(pb), "cudaFree", "SubSystem.cu");
+    //    for(auto np:numpairs_vec)
+    //        CUDAcommon::handleerror(cudaFreeHost(np),"cudaFree","SubSystem.cu");
 
     //cudaFree
     endresetCUDA();
@@ -454,10 +454,10 @@ void SubSystem::initializebindingsitesearchCUDA() {
     for (auto bs:bindingSites)
     {cpu_bindingSites[iii] = int(bs); iii++;}
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_bindingSites, bindingSites.size() *
-                                                                    sizeof(int)), "cuda data transfer", "SubSystem.cu");
+                                       sizeof(int)), "cuda data transfer", "SubSystem.cu");
     CUDAcommon::handleerror(cudaMemcpy(gpu_bindingSites, cpu_bindingSites,
                                        bindingSites.size() *  sizeof(int), cudaMemcpyHostToDevice));
-//        }
+    //        }
     //@}
 }
 
@@ -489,13 +489,13 @@ void SubSystem::getallpossiblelinkerbindingsitesCUDA(LinkerBindingManager* lMana
         int *gpu_possibleBindings;
 
         CUDAcommon::handleerror(cudaMalloc((void **) &gpu_possibleBindings, SysParams::Chemistry()
-                                                                                    .numBindingSites[0] * 5 * nint * sizeof(int)));
+                                           .numBindingSites[0] * 5 * nint * sizeof(int)));
         cudaOccupancyMaxPotentialBlockSize(&minGridSize, &blockSize,
                                            updateAllPossibleBindingsCUDA, 0, 0);
         blocksnthreads.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreads.push_back(blockSize);
         std::cout << "Linker blocks and threads " << blocksnthreads.at(0) << " " << blocksnthreads.at(1)
-                  << endl;
+        << endl;
         resetintvariableCUDA<<<1,1,0,s>>>(numpairs);
         //call CUDA kernel function
         updateAllPossibleBindingsCUDA << < blocksnthreads[0], blocksnthreads[1],0,s >> >
@@ -537,7 +537,7 @@ void SubSystem::getallpossiblelinkerbindingsitesCUDA(LinkerBindingManager* lMana
 }
 
 void SubSystem::getallpossiblemotorbindingsitesCUDA(MotorBindingManager* mManager, int*
-                                                            cmon_state_motor){
+                                                    cmon_state_motor){
     mManager->assigncudavars();
     cudaStream_t  s;
     if(numbindmgrs + 1 > strvec.size() )
@@ -560,13 +560,13 @@ void SubSystem::getallpossiblemotorbindingsitesCUDA(MotorBindingManager* mManage
         int *gpu_possibleBindings;
 
         CUDAcommon::handleerror(cudaMalloc((void **) &gpu_possibleBindings, SysParams::Chemistry()
-                                                                                    .numBindingSites[0] * 5 * nint * sizeof(int)));
+                                           .numBindingSites[0] * 5 * nint * sizeof(int)));
         cudaOccupancyMaxPotentialBlockSize(&minGridSize, &blockSize,
                                            updateAllPossibleBindingsCUDA, 0, 0);
         blocksnthreads.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreads.push_back(blockSize);
         std::cout << "Motor blocks and threads " << blocksnthreads.at(0) << " " << blocksnthreads.at(1)
-                  << endl;
+        << endl;
         resetintvariableCUDA << < 1, 1, 0, s >> > (numpairs);
 
         updateAllPossibleBindingsCUDA << < blocksnthreads[0], blocksnthreads[1],0,s >> >
@@ -660,7 +660,7 @@ void SubSystem::getallpossiblebrancherbindingsitesCUDA(BranchingManager* bManage
         int *gpu_possibleBindings;
 
         CUDAcommon::handleerror(cudaMalloc((void **) &gpu_possibleBindings, SysParams::Chemistry()
-                                                                                    .numBindingSites[0] * 3 * nint * sizeof(int)));
+                                           .numBindingSites[0] * 3 * nint * sizeof(int)));
         cudaOccupancyMaxPotentialBlockSize(&minGridSize, &blockSize,
                                            updateAllPossibleBindingsCUDA, 0, 0);
         blocksnthreads.push_back((nint + blockSize - 1) / blockSize);
@@ -821,5 +821,3 @@ floatingpoint SubSystem::HYBDtime  = 0.0;
 floatingpoint SubSystem::timeneighbor  = 0.0;
 floatingpoint SubSystem::timedneighbor  = 0.0;
 floatingpoint SubSystem::timetrackable  = 0.0;
-
-

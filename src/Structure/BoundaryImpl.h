@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -33,7 +33,7 @@ public:
     
     virtual bool within(Compartment* C);
     virtual bool within(const vector<floatingpoint>& coordinates);
-    
+
     virtual floatingpoint distance(const vector<floatingpoint>& coordinates);
     
     //Qin
@@ -41,7 +41,7 @@ public:
     virtual floatingpoint sidedistance(const vector<floatingpoint>& coordinates);
 
     virtual floatingpoint getboundaryelementcoord(int i);
-    
+
     virtual void move(vector<floatingpoint> dist);
     
     ///Returns the normal inward at this coordinate
@@ -63,7 +63,7 @@ public:
     ///        if the midpoint of the compartment is within the boundary.
     virtual bool within(Compartment* C);
     virtual bool within(const vector<floatingpoint>& coordinates);
-    
+
     virtual floatingpoint distance(const vector<floatingpoint>& coordinates);
     
     //Qin
@@ -93,7 +93,7 @@ public:
     ///        if the midpoint of the compartment is within the boundary.
     virtual bool within(Compartment* C);
     virtual bool within(const vector<floatingpoint>& coordinates);
-    
+
     virtual floatingpoint distance(const vector<floatingpoint>& coordinates);
     virtual floatingpoint getboundaryelementcoord(int i){};
     //Qin
@@ -124,7 +124,7 @@ public:
     ///        if the midpoint of the compartment is within the boundary.
     virtual bool within(Compartment* C);
     virtual bool within(const vector<floatingpoint>& coordinates);
-    
+
     virtual floatingpoint distance(const vector<floatingpoint>& coordinates);
     virtual floatingpoint getboundaryelementcoord(int i){};
     //Qin

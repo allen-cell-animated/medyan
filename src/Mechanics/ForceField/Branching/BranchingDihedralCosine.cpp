@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -376,12 +376,6 @@ void BranchingDihedralCosine::forces(floatingpoint *coord, floatingpoint *f, int
         YD = n1y/D/Y/Y/Y;
 
         position = pos[i];
-
-/*        if(isnan(position)||isinf(position)||isnan(XD)||isinf(XD)||isnan(f0)||isinf(f0)
-        ||isnan(YD)||isinf(YD)){
-        	cout<<"Culprit is BranchingDihedralCosine"<<endl;
-        	cout<<"position "<<position<<" XD "<<XD<<" YD "<<YD<<" f0 "<<f0<<endl;
-        }*/
 
         //force on b1:
         f1[0] += f0*(- (1 - position)*XD*(1-position)*( (coord2[1] - coord1[1])*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) - (coord2[2] - coord1[2])*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) ) + (1 - position)*(X1 - X2)*(1-position)*(coord2[0] - coord1[0]) - (1 - position)*Y1*(coord4[0] - coord3[0]) + (1 - position)*(D1 + D2)*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]));

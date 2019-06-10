@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -26,14 +26,14 @@ class Bead;
 /// For performing a conjugate gradient minimization method
 
 /*!
- *  CGMethod is an abstract class that contains methods for conjugate gradient 
- *  minimization. It has functions for various line search techniques, including golden 
- *  section, backtracking, and quadratic line search. This base class also contains 
+ *  CGMethod is an abstract class that contains methods for conjugate gradient
+ *  minimization. It has functions for various line search techniques, including golden
+ *  section, backtracking, and quadratic line search. This base class also contains
  *  parameters for tolerance criterion and other helpful parameters.
  */
 class CGMethod {
-    
-    
+
+
 
 protected:
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -53,18 +53,18 @@ protected:
     /// Safe mode which chooses the safe backtracking search if the
     /// minimizer got itself into trouble.
     bool _safeMode = false;
-    
+
     /// Minimum number of minimization steps, in the case of a
     /// small number of beads in the system
     const int _MINNUMSTEPS = 1E4;
-    
+
     //@{
     /// Parameter used in backtracking line search
     const floatingpoint LAMBDAREDUCE = 0.5;     ///< Lambda reduction parameter for backtracking
     floatingpoint LAMBDATOL = 1e-4;       ///< Lambda tolerance parameter
-    
+
     const floatingpoint SAFELAMBDAREDUCE = 0.9;  ///< Lambda reduction parameter for conservative backtracking
-    
+
     const floatingpoint BACKTRACKSLOPE = 0.4;   ///< Backtracking slope
     //@}
 
@@ -78,7 +78,7 @@ protected:
     float sum = 0;//sum of the lambdas found in previouslambdavcec.
     bool runningaveragestatus = false;
     //@}
-    
+
     //@{
 
 #ifdef CUDAACCL
@@ -154,12 +154,12 @@ protected:
     
     /// Get bead with the max force in the system
     Bead* maxBead();
-    
+
     /// Transfers data to lightweight arrays for min
     void startMinimization();
     /// Transfers updated coordinates and force to bead members
     void endMinimization();
-    
+
     /// Move beads in search direction by d
     void moveBeads(floatingpoint d);
 
@@ -216,10 +216,10 @@ protected:
     }
 
     //@}
-    
+
     /// Print forces on all beads
     void printForces();
-    
+
     /// Initialize data arrays
     inline void allocate(long numBeadsx3, long Ncyl) {
 
@@ -236,7 +236,7 @@ protected:
 	        coordlineSearch[i] = 0.0;
         }
     }
-    
+
     ///Deallocation of CG arrays
     inline void deallocate() {
 //        coord = CUDAcommon::serlvars.coord;
@@ -249,9 +249,9 @@ protected:
 public:
     static long N; ///< Number of beads in the system, set before each minimization
     static long Ncyl;
-    
+
     virtual ~CGMethod() {};
-    
+
     /// Minimize the system
     virtual void minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                           floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit) = 0;

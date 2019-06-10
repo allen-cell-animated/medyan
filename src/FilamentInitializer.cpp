@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -35,7 +35,7 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
     //Create random distribution of filaments
     int filamentCounter = 0;
 
-    //Qin, if boundary shape is cylinder, create filament in the center of system and vertical to Z axis
+    //Qin, if boundary shape is cylinder, create filament in the center of system and perpendicular to Z axis
     if(b->getShape() == BoundaryShape::Cylinder) {
 
         while (filamentCounter < numFilaments) {
@@ -56,9 +56,10 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
             //check if these points are outside bubbles
             bool inBubble = false;
             for(auto bb : Bubble::getBubbles()) {
+                auto radius = bb->getRadius();
 
-                if((twoPointDistance(bb->getBead()->coordinate, firstPoint) < bb->getRadius()) ||
-                   (twoPointDistance(bb->getBead()->coordinate, secondPoint) < bb->getRadius()))
+                if((twoPointDistancesquared(bb->getBead()->coordinate, firstPoint) < (radius * radius)) ||
+                   (twoPointDistancesquared(bb->getBead()->coordinate, secondPoint) < (radius * radius)))
                     inBubble = true;
             }
 
@@ -97,9 +98,10 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
             //check if these points are outside bubbles
             bool inBubble = false;
             for(auto bb : Bubble::getBubbles()) {
-
-                if((twoPointDistance(bb->getBead()->coordinate, firstPoint) < bb->getRadius()) ||
-                   (twoPointDistance(bb->getBead()->coordinate, secondPoint) < bb->getRadius()))
+                auto radius = bb->getRadius();
+                
+                if((twoPointDistancesquared(bb->getBead()->coordinate, firstPoint) < (radius * radius)) ||
+                   (twoPointDistancesquared(bb->getBead()->coordinate, secondPoint) < (radius * radius)))
                     inBubble = true;
             }
 

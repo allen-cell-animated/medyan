@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -46,8 +46,8 @@ class Cylinder;
 
 /// A container or holding Species and [Reactions](@ref Reactions).
 
-/*! The Compartment class is a container for Species, internal [Reactions](@ref Reactions), 
- *  and diffusion [Reactions](@ref Reactions) that can occur. A Compartment object keeps 
+/*! The Compartment class is a container for Species, internal [Reactions](@ref Reactions),
+ *  and diffusion [Reactions](@ref Reactions) that can occur. A Compartment object keeps
  *  track of the above while also holding pointers to its neighbors in order to generate
  *  diffusion [Reactions](@ref Reactions) and control other interactions.
  *
@@ -68,12 +68,12 @@ protected:
                                                     ///< reactions in compartment
     ReactionPtrContainerVector _diffusion_reactions; ///< Container with all diffusion
                                                      ///< reactions in compartment
-    
+
     unordered_map<int,float> _diffusion_rates; ///< Diffusion rates of Species
                                                ///< in compartment
 
 
-    
+
     /// All binding managers for this compartment
     vector<unique_ptr<FilamentBindingManager>> _bindingManagers;
     vector<unique_ptr<FilamentBindingManager>> _branchingManagers;
@@ -84,16 +84,19 @@ protected:
     ///ELEMENT CONTAINERS
     unordered_set<BoundaryElement*> _boundaryElements; ///< Set of boundary element
                                                        ///< that are in this compartment
-    
+
     unordered_set<Bead*> _beads; ///< Set of beads that are in this compartment
-    
+
     #ifdef DEBUGCONSTANTSEED
     set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
     #else
     unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
     #endif
-    
+
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment (neighbors that
+    unordered_map<Compartment*, size_t> _neighborIndex; ///< Spacial index of the neighbors of the same order as _neighbors
+    ///< In 3D, the indices are in the order (x-, x+, y-, y+, z-, z+)
+
     // touch along faces
     vector<Compartment*> _enclosingneighbours; ///< Neighbors that envelop the compartment
     vector<Compartment*> _uniquepermuteneighbours; //Neighbors tht help to parse
@@ -107,7 +110,15 @@ protected:
     ///OTHER COMPARTMENT PROPERTIES
     vector<floatingpoint> _coords;  ///< Coordinates of this compartment
     bool _activated = false; ///< The compartment is activated for diffusion
-    
+
+    floatingpoint _partialVolume = 1.0; ///< The volume fraction inside the
+    // membrane/boundary
+    ///< Might be changed to a list or a map when more membranes are involved
+    array<floatingpoint, 6> _partialArea {{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}}; ///< The area
+    // inside the cell membrane
+    ///<In the order of x, y and z, from smaller coordinate value neighbor to larger coordinate value
+    ///< Might be changed to a list of arrays or a map of arrays when more membranes are involved
+
 public:
     short _ID;
     vector<uint16_t> cindex_bs;
@@ -586,10 +597,10 @@ public:
     }
     ///get the boundary elements in this compartment
    unordered_set<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}
-    
+
     ///Add a cylinder to this compartment
     void addCylinder(Cylinder* c) {_cylinders.insert(c);}
-    
+
     ///Remove a cylinder from this compartment
     ///@note does nothing if cylinder is not in compartment already
     void removeCylinder(Cylinder* c) {
@@ -602,26 +613,26 @@ public:
     #else
     unordered_set<Cylinder*>& getCylinders() {return _cylinders;}
     #endif
-    
+
     /// Get the diffusion rate of a species
     /// @param - species_name, a string
     float getDiffusionRate(string species_name) {
         int molecule = SpeciesNamesDB::stringToInt(species_name);
         return _diffusion_rates[molecule];
     }
-    
+
     /// Set the diffusion rate of a species in the compartment
     void setDiffusionRate(Species *sp, float diff_rate) {
         int molecule = sp->getMolecule();
         _diffusion_rates[molecule]=diff_rate;
     }
-    
+
     /// Set the diffusion rate of a species in the compartment
     /// @param - molecule, an integer representing the species in the speciesDB
     void setDiffusionRate(int molecule, float diff_rate) {
         _diffusion_rates[molecule]=diff_rate;
     }
-    
+
     /// Set the diffusion rate of a species in the compartment
     /// @param - species_name, a string
     void setDiffusionRate(string species_name, float diff_rate) {
@@ -630,20 +641,23 @@ public:
     }
 
     /// Add a neighboring compartment to this compartments list of neighbors
-    void addNeighbour(Compartment *comp) {
+    void addNeighbour(Compartment *comp, size_t spatialIndex) {
         auto nit = find(_neighbours.begin(),_neighbours.end(), comp);
-        if(nit==_neighbours.end())
+        if(nit==_neighbours.end()) {
             _neighbours.push_back(comp);
+            _neighborIndex[comp] = spatialIndex;
+        }
         else
             throw runtime_error(
-            "Compartment::addNeighbour(): Compartment is already a neighbour");
+                                "Compartment::addNeighbour(): Compartment is already a neighbour");
     }
-    
+
     /// Remove a neighboring compartment
     void removeNeighbour(Compartment *comp) {
         auto nit = find(_neighbours.begin(),_neighbours.end(), comp);
         if(nit!=_neighbours.end())
             _neighbours.erase(nit);
+        _neighborIndex.erase(comp);
     }
 
     /// Add a neighboring compartment to this compartments list of neighbors
@@ -711,12 +725,12 @@ public:
             target->addSpeciesUnique(unique_ptr<Species>(sClone));
         }
     }
-    
+
     /// Clone the reaction values of another compartment into this one
     void cloneReactions (Compartment *target) const {
         assert(target->numberOfReactions()==0);
         for(auto &r : _internal_reactions.reactions()){
-            
+
             auto rClone = r->clone(target->_species);
             target->addInternalReaction(rClone);
         }
@@ -727,67 +741,67 @@ public:
         if(_activated) this->cloneSpecies(C);
         this->cloneReactions(C);
         C->_diffusion_rates = this->_diffusion_rates;
-        
+
     }
-    
+
     /// Clone a compartment
     /// @note - this does not clone the neighbors, just reactions and species
     virtual Compartment* clone() {
         Compartment *C = new Compartment(*this);
         return C;
     }
-    
+
     /// Generate diffusion reactions between this compartment and another
-    ///@return - a vector of reactionbases that was just added 
+    ///@return - a vector of reactionbases that was just added
     vector<ReactionBase*> generateDiffusionReactions(Compartment* C);
-    
+
     //Qin
     vector<ReactionBase*> generateScaleDiffusionReactions(Compartment* C);
-    float generateScaleFactor(Compartment* C);
-    
+    floatingpoint generateScaleFactor(Compartment* C);
+
     /// Generate all diffusion reactions for this compartment and its neighbors
     ///@return - a vector of reactionbases that was just added
     vector<ReactionBase*> generateAllDiffusionReactions();
-    
+
     /// Generates all diffusion reactions between this compartment and its neighbors
     /// in addition to generating reverse reactions
     ///@return - a vector of reactionbases that was just added
     vector<ReactionBase*> generateAllpairsDiffusionReactions();
-    
+
     /// Remove diffusion reactions between this compartment and another
     ///@return - a vector of reactionbases that was just removed
     void removeDiffusionReactions(ChemSim* chem, Compartment* C);
-    
-    
+
+
     /// Remove all diffusion reactions for this compartment and its neighbors
     ///@return - a vector of reactionbases that was just removed
     void removeAllDiffusionReactions(ChemSim* chem);
-    
-    
+
+
     /// Gives the number of neighbors to this compartment
     size_t numberOfNeighbours() const {return _neighbours.size();}
 
     /// Gives the number of enclosing neighbors to this compartment
     size_t numberOfenclosingNeighbours() const {return _enclosingneighbours.size();}
-    
-    
+
+
     ///Get the species container vector
     SpeciesPtrContainerVector& getSpeciesContainer() {return _species;}
     const SpeciesPtrContainerVector& getSpeciesContainer() const {return _species;}
-    
+
     ///Get the internal reaction container vector
     ReactionPtrContainerVector& getInternalReactionContainer() {return _internal_reactions;}
     const ReactionPtrContainerVector& getInternalReactionContainer() const {return _internal_reactions;}
-    
+
     ///Get the diffusion reaction container vector
     ReactionPtrContainerVector& getDiffusionReactionContainer() {return _diffusion_reactions;}
     const ReactionPtrContainerVector& getDiffusionReactionContainer() const {return _diffusion_reactions;}
-    
+
     /// Get the vector list of neighbors to this compartment
     vector<Compartment*>& getNeighbours() {return _neighbours;}
 
     const vector<Compartment*>& getNeighbours() const {return _neighbours;}
-    
+
     /// Print the species in this compartment
     void printSpecies() {_species.printSpecies();}
     /// Print the reactions in this compartment
@@ -795,17 +809,17 @@ public:
         _internal_reactions.printReactions();
         _diffusion_reactions.printReactions();
     }
-    
+
     /// Check if all species are unique pointers
     bool areAllSpeciesUnique () {return _species.areAllSpeciesUnique();}
-    
+
     /// Adds the reactions of this compartment to the ChemSim object
     /// @param - chem, a ChemSim object that runs the reaction-diffusion algorithm
     virtual void addChemSimReactions(ChemSim* chem) {
         for(auto &r : _internal_reactions.reactions()) chem->addReaction(r.get());
         for(auto &r : _diffusion_reactions.reactions()) chem->addReaction(r.get());
     }
-    
+
     /// Print properties of this compartment
     virtual void printSelf() override {
         cout << this->getFullName() << "\n"
@@ -817,7 +831,26 @@ public:
 
     //GetType implementation just returns zero (no Compartment types yet)
     virtual int getType() override {return 0;}
-    
+
+    // Helper function for getting the result of geometry from a approximately planar slice
+    void getSlicedVolumeArea();
+    // Helper function that does not scale rates
+    void getNonSlicedVolumeArea();
+
+    // Properties (public variables and getters and setters for private variables)
+    bool boundaryInteresting = false; // A marker indicating this compartment is near a certain boundary
+
+    //_partialVolume is the volume fraction
+    //TODO, need to double check
+    floatingpoint getPartialVolume()const { return _partialVolume; }
+    void setPartialVolume(floatingpoint partialVolume) { _partialVolume = partialVolume; }
+    floatingpoint getVolumeFrac()const {
+        return _partialVolume;
+    }
+    const array<floatingpoint, 6>& getPartialArea()const { return _partialArea; }
+    void setPartialArea(const array<floatingpoint, 6>& partialArea) { _partialArea =
+    partialArea; }
+
 };
 #ifdef SIMDBINDINGSEARCH
 template<>

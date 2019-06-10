@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -35,18 +35,18 @@ CLinker::CLinker(short linkerType, Compartment* c,
 //            SysParams::Chemistry().linkerBoundIndex[_filamentType]);
 //    SpeciesBound* BL2 = _cc2->getCMonomer(_position2)->speciesBound(
 //            SysParams::Chemistry().linkerBoundIndex[_filamentType]);
-    /*SpeciesBound* BB1 = _cc1->getCMonomer(_position1)->speciesBound(
-            SysParams::Chemistry().brancherBoundIndex[_filamentType]);
-    SpeciesBound* BB2 = _cc2->getCMonomer(_position2)->speciesBound(
-            SysParams::Chemistry().brancherBoundIndex[_filamentType]);
-    SpeciesBound* BM1 = _cc1->getCMonomer(_position1)->speciesBound(
-            SysParams::Chemistry().motorBoundIndex[_filamentType]);
-    SpeciesBound* BM2 = _cc2->getCMonomer(_position2)->speciesBound(
-            SysParams::Chemistry().motorBoundIndex[_filamentType]);
-    SpeciesBound* sm1 = _cc1->getCMonomer(_position1)->speciesMotor(0);
-    SpeciesBound* sm2 = _cc2->getCMonomer(_position2)->speciesMotor(0);
-    SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesBrancher(0);
-    SpeciesBound* sb2 = _cc2->getCMonomer(_position2)->speciesBrancher(0);*/
+//    SpeciesBound* BB1 = _cc1->getCMonomer(_position1)->speciesBound(
+//            SysParams::Chemistry().brancherBoundIndex[_filamentType]);
+//    SpeciesBound* BB2 = _cc2->getCMonomer(_position2)->speciesBound(
+//            SysParams::Chemistry().brancherBoundIndex[_filamentType]);
+//    SpeciesBound* BM1 = _cc1->getCMonomer(_position1)->speciesBound(
+//            SysParams::Chemistry().motorBoundIndex[_filamentType]);
+//    SpeciesBound* BM2 = _cc2->getCMonomer(_position2)->speciesBound(
+//            SysParams::Chemistry().motorBoundIndex[_filamentType]);
+//    SpeciesBound* sm1 = _cc1->getCMonomer(_position1)->speciesMotor(0);
+//    SpeciesBound* sm2 = _cc2->getCMonomer(_position2)->speciesMotor(0);
+//    SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesBrancher(0);
+//    SpeciesBound* sb2 = _cc2->getCMonomer(_position2)->speciesBrancher(0);
 //    std::cout<<"Linker "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "<<cc2->getCylinder()->getID()<<" "<<
 //            ""<<_position2<<" linkerType "<<linkerType<<endl;
 //	cout<<"Linker cIndices "<<cc1->getCylinder()->_dcIndex<<" "<<cc2->getCylinder()
@@ -114,6 +114,18 @@ void CLinker::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(os, _offRate);
     offRxn->setReactionType(ReactionType::LINKERUNBINDING);
     
+    //set gnum of offreaction
+    // Dissipation
+    if(SysParams::Chemistry().dissTracking){
+
+    floatingpoint gnum = onRxn->getGNumber();
+    offRxn->setGNumber(-gnum);
+
+    //set hrcdid of offreaction
+    string hrcdid = onRxn->getHRCDID();
+    offRxn->setHRCDID(hrcdid + "off");
+    }
+
     //Attach the callback to the off reaction, add it
     LinkerUnbindingCallback lcallback(_pLinker, ps);
     ConnectionBlock rcb(offRxn->connect(lcallback,false));

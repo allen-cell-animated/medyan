@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -16,8 +16,11 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "common.h"
-#include "CUDAcommon.h"
 #include "FilamentInteractions.h"
+#ifdef CUDAACCL
+#include "CUDAcommon.h"
+#endif
+
 /// Represents a Filament stretching interaction
 template <class FStretchingInteractionType>
 class FilamentStretching : public FilamentInteractions {

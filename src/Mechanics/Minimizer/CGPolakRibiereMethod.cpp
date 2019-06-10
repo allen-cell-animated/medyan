@@ -2,9 +2,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -690,8 +690,6 @@ std::cout<<"----------------------------------------"<<endl;
 //        std::cout<<"serial"<<endl;
         newGrad = CGMethod::allFADotFA();
         prevGrad = CGMethod::allFADotFAP();
-
-//        cout<<"Polak FADotFA "<<newGrad<<" FADotFAP "<<prevGrad<<endl;
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runs2a(tend - tbegin);
@@ -767,7 +765,6 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
         curGrad = newGrad;
         auto maxForce = maxF();
-//        cout<<"maxForce "<<maxForce<<endl;
         Ms_isminimizationstate = maxForce > GRADTOL;
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
@@ -777,11 +774,6 @@ std::cout<<"----------------------------------------"<<endl;
     }
 #endif //SERIAL
     std::cout<<"SERL Total number of iterations "<<numIter<<endl;
-
-	//Output energy
-//	cout<<"Energy after minimization"<<endl;
-//	FFM.computeEnergy(coord, force, 0.0, true);
-
 #ifdef CUDATIMETRACK_MACRO
     std::cout<<"SERL Energy time taken (s) "<<CUDAcommon::serltime.TcomputeE<<" for total "
             "iters "<<CUDAcommon::serltime.Ecount<<endl;
@@ -807,7 +799,7 @@ std::cout<<"----------------------------------------"<<endl;
         cout << endl;
 
         cout << "WARNING: Did not minimize in N = " << N << " steps." << endl;
-//        cout << "Maximum force in system = " << maxF() << endl;
+        cout << "Maximum force in system = " << maxF() << endl;
 
         cout << "Culprit ..." << endl;
         auto b = maxBead();

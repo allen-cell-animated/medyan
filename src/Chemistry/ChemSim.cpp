@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -42,3 +42,24 @@ void ChemSim::initialize() {
 void ChemSim::printReactions() {
     return _pimpl->printReactions();
 }
+
+//Dissipation
+vector<floatingpoint> ChemSim::getEnergy(){
+    vector<floatingpoint> returnvec;
+    if(SysParams::Chemistry().dissTracking){
+    returnvec.push_back(_pimpl->_dt->getCumDissEnergy());
+    returnvec.push_back(_pimpl->_dt->getCumDissChemEnergy());
+    returnvec.push_back(_pimpl->_dt->getCumDissMechEnergy());
+    returnvec.push_back(_pimpl->_dt->getCumGChemEn());
+    returnvec.push_back(_pimpl->_dt->getCumGMechEn());
+    }
+    return returnvec;
+}
+
+
+DissipationTracker* ChemSim::getDT(){
+    return _pimpl->_dt;
+}
+
+
+

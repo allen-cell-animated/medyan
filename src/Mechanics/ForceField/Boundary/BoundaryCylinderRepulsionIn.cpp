@@ -125,7 +125,6 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::vectorize() {
         }
 #endif
     }
-
 #ifdef CUDAACCL
     #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -19,9 +19,9 @@
 #include "SysParams.h"
 
 float BrownianRatchet::changeRate(float bareRate, floatingpoint force) {
-    
+
     force = min<floatingpoint>(force, (floatingpoint)100.0); //ceiling
-    
+
     floatingpoint newRate = bareRate * exp( - force * _x / kT);
     
     return newRate;
@@ -34,7 +34,7 @@ float LinkerCatchSlip::changeRate(float bareRate, floatingpoint force) {
 }
 
 float LinkerSlip::changeRate(float bareRate, floatingpoint force) {
-    
+
     floatingpoint newRate = bareRate * exp( force * _x / kT);
     
     return newRate;
@@ -42,7 +42,7 @@ float LinkerSlip::changeRate(float bareRate, floatingpoint force) {
 
 //Qin ----------------
 float BranchSlip::changeRate(float bareRate, floatingpoint force) {
-    
+
     floatingpoint newRate = bareRate * exp( force * _x / kT);
     
     return newRate;
@@ -82,7 +82,6 @@ float MotorCatch::changeRate(float onRate, float offRate,
     return newRate;
 }
 
-
 float MotorStall::changeRate(float onRate, float offRate,
                              floatingpoint numHeads, floatingpoint force) {
 //    cout<<"onRate "<<onRate<<endl;
@@ -97,6 +96,5 @@ float MotorStall::changeRate(float onRate, float offRate,
     floatingpoint newRate =  max<floatingpoint>((floatingpoint)0.0, k_0 * (_F0 - force)
                                / (_F0 + (force / (_alpha))));
 #endif
-    
     return newRate;
 }

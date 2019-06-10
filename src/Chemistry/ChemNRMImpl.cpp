@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -13,7 +13,7 @@
 
 #include <iostream>
 #include <chrono>
-
+#include "Rand.h"
 #ifdef BOOST_MEM_POOL
     #include <boost/pool/pool.hpp>
     #include <boost/pool/pool_alloc.hpp>
@@ -22,12 +22,13 @@
 
 #include "ChemNRMImpl.h"
 #include "Rand.h"
+#include "CController.h"
 
 #ifdef BOOST_MEM_POOL
 #ifdef BOOST_POOL_MEM_RNODENRM
 boost::pool<> allocator_rnodenrm(sizeof(RNodeNRM),BOOL_POOL_NSIZE);
 #endif
-    
+
 #ifdef BOOST_POOL_MEM_PQNODE
 boost::pool<> allocator_pqnode(sizeof(PQNode),BOOL_POOL_NSIZE);
 #endif
@@ -43,7 +44,7 @@ void PQNode::operator delete(void* ptr) noexcept {
     boost::fast_pool_allocator<PQNode>::deallocate((PQNode*)ptr);
 }
 #endif
- 
+
 #ifdef BOOST_POOL_MEM_RNODENRM
 void* RNodeNRM::operator new(size_t size) {
     void *ptr = boost::fast_pool_allocator<RNodeNRM>::allocate();
@@ -95,7 +96,7 @@ void RNodeNRM::updateHeap() {
 void RNodeNRM::generateNewRandTau() {
     floatingpoint newTau;
     reComputePropensity();//calculated new _a
-    
+
 #ifdef TRACK_ZERO_COPY_N
     newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #else
@@ -116,7 +117,6 @@ void RNodeNRM::activateReaction() {
 }
 
 void RNodeNRM::passivateReaction() {
-//    std::cout<<"passivate RNodeNRM "<<endl;
     _a=0;
     floatingpoint tau = numeric_limits<floatingpoint>::infinity();
     setTau(tau);
@@ -182,22 +182,21 @@ bool ChemNRMImpl::makeStep() {
     floatingpoint t_prev = _t;
 
     _t=tau_top;
-
     syncGlobalTime();
+    //std::cout<<"------------"<<endl;
+    //rn->printSelf();
+    //std::cout<<"------------"<<endl;
 
-   /* std::cout<<"------------"<<endl;
-    rn->printSelf();
-    std::cout<<"------------"<<endl;
-    auto rctnts = rn->getReaction()->getParent();
-    cout<<(rctnts == NULL)<<endl;
-    cout<<rctnts<<endl;*/
-//    rn->printSelf();
-
+    //Dissipation
+    if(SysParams::Chemistry().dissTracking){
+    ReactionBase* react = rn->getReaction();
+    _dt->updateDelGChem(react);
+    }
     rn->makeStep();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
 #endif
-//        std::cout<<"Update R and Tau for fired reaction"<<endl;
+        //std::cout<<"Update R and Tau for fired reaction"<<endl;
         rn->generateNewRandTau();
         rn->updateHeap();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N

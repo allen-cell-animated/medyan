@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -122,7 +122,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
         }
 #endif
     }
-	#ifdef CUDAACCL
+#ifdef CUDAACCL
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
@@ -176,7 +176,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
     CUDAcommon::cudatime.TvecvectorizeFF.push_back(elapsed_run.count());
     CUDAcommon::cudatime.TvectorizeFF += elapsed_run.count();
 #endif
-	#endif
+#endif
     delete [] beListplane;
     delete [] nintvec;
 }
@@ -382,7 +382,6 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
                 auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
 
-
                 bd->lfim = 0;
                 for (int i = 0; i < cylSize; i++) {
 
@@ -413,4 +412,3 @@ template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeFo
 template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeLoadForces();
 template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::vectorize();
 template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::deallocate();
-

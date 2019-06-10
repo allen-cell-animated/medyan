@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -18,7 +18,7 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
-
+#include "Bubble.h"
 #include "MathFunctions.h"
 #ifdef CUDAACCL
 #include <cuda.h>
@@ -180,7 +180,7 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, floatingpoin
                                        floatingpoint *kbend, floatingpoint *eqt){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;
-    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
+    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
     floatingpoint *coord1, *coord2, *coord3, dist, U_i, L1, L2, L1L2, l1l2;
 
@@ -223,7 +223,7 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, floatingpoin
                                        floatingpoint *kbend, floatingpoint *eqt, floatingpoint d ){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;
-    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
+    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
     floatingpoint *coord1, *coord2, *coord3, dist, U_i, L1, L2, L1L2, l1l2;
     floatingpoint *force1, *force2, *force3;
@@ -278,7 +278,7 @@ void FilamentBendingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int
                                      floatingpoint *kbend, floatingpoint *eqt){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;
-    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
+    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
     floatingpoint *coord1, *coord2, *coord3, dist,
             L1, L2, l1l2, invL1, invL2, A,B,C, k;

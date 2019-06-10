@@ -481,45 +481,6 @@ void HybridCylinderCylinderNL::reset() {
 //            tot[idx] += _list4mbinvec[idx][cylinder].size();
 //        }
     }
-//    std::cout<<endl;
-//    for(int idx = 0; idx < totalhybridNL; idx++)
-//        std::cout<<"reset HybridNLSTENCILLIST size "<<" "<<tot[idx]<<endl;
-/*    mine= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_sten(mine - mins);
-    std::cout<<"Hybrid NLSTEN reset time "<<elapsed_sten.count()<<endl;*/
-
-    //Check if HNLID = 1 is symmetric
-/*    short HNLID = 1;
-    int idx = 0; int idx2 = _rMaxsqvec[idx].size()-1;
-    auto _list4mbin = _list4mbinvec[HNLID];
-    std::cout<<"map size = " << _list4mbin.size()<<endl;
-    std::cout << "max_size = " << _list4mbin.max_size() <<endl;
-    for(auto cylinder: Cylinder::getCylinders()) {
-        auto neighbors = _list4mbin[cylinder];
-        auto cylinderbin = cylinder->_hbinvec[0];
-        auto cylbincoord = cylinderbin->coordinates();
-        for(auto ncylinder:neighbors){
-            auto ncylinderbin = ncylinder->_hbinvec[0];
-            auto ncylbincoord = ncylinderbin->coordinates();
-            //look for cylinder in the neighbor list of ncylinder
-            auto ncylinderneighbors = _list4mbin[ncylinder];
-            std::cout<<"neighborvec size "<<ncylinderneighbors.size()<<" capacity "
-                     <<ncylinderneighbors.capacity()<<" max_size "<<ncylinderneighbors
-                    .max_size()<<endl;
-            if(find(ncylinderneighbors.begin(),ncylinderneighbors.end(),cylinder) ==
-                    ncylinderneighbors.end()){
-                std::cout<<" cylinder "<<cylinder->getID()<<" from bin "
-                        ""<<cylinderbin<<" "
-                        "coordinates "<<cylbincoord[0]<<" "<<cylbincoord[1]<<" "
-                        ""<<cylbincoord[2]<<" has neighbor cylinder "<<ncylinder->getID()
-                         <<" from bin "<<ncylinderbin<<" coordinates "
-                        ""<<ncylbincoord[0]<<" "<<ncylbincoord[1]<<" "
-                        ""<<ncylbincoord[2]<<endl;
-                std::cout<<"But neighbor cylinder does not have cylinder in it's "
-                        "neighbors list. Check algorithm."<<endl;
-            }
-        }
-    }*/
 }
 
 #endif

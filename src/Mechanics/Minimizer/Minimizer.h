@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -30,6 +30,11 @@ public:
     /// @param FFM - The force field manager of this system. @see ForceFieldManager.
     /// @param stepLimit - If there is a limit for the number of equlibration steps.
     void virtual equlibrate(ForceFieldManager &FFM, bool stepLimit) = 0;
+
+	floatingpoint virtual getEnergy(ForceFieldManager &FFM, floatingpoint d) = 0;
+    
+    
+    
 };
 
 #endif

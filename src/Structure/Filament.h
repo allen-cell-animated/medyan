@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -81,7 +81,7 @@ private:
     ///Histogram data
     static Histogram* _turnoverTimes;
     //@}
-
+    
 public:
     /// This constructor creates a short filament, containing only two beads, at runtime.
     /// Coordinates of the first bead is an input, second is set up by using an input
@@ -159,33 +159,38 @@ public:
     deque<Cylinder*>& getCylinderVector() {return _cylinderVector;}
     
     //@{
-    /// Reset delta
+    /// Get / reset temporary counters
     void resetDeltaPlusEnd() {_deltaPlusEnd = 0;}
     void resetDeltaMinusEnd() {_deltaMinusEnd = 0;}
-    //@}
-    
-    //@{
-    /// Get delta
     short getDeltaPlusEnd() {return _deltaPlusEnd;}
     short getDeltaMinusEnd() {return _deltaMinusEnd;}
-    //@}
-    
-    //@{
-    /// Get reactions
+
     short getPolyPlusEnd() {return _polyPlusEnd;}
     void resetPolyPlusEnd() { _polyPlusEnd = 0;}
-    
+
     short getPolyMinusEnd() {return _polyMinusEnd;}
     void resetPolyMinusEnd() { _polyMinusEnd = 0;}
-    
+
     short getDepolyPlusEnd() {return _depolyPlusEnd;}
     void resetDepolyPlusEnd() { _depolyPlusEnd = 0;}
-    
+
     short getDepolyMinusEnd() {return _depolyMinusEnd;}
     void resetDepolyMinusEnd() { _depolyMinusEnd = 0;}
-    
+
     short getNucleation() {return _nucleationReaction;}
     void resetNucleation() { _nucleationReaction = 0;}
+
+    void resetCounters() {
+        resetDeltaPlusEnd();
+        resetDeltaMinusEnd();
+        resetPolyPlusEnd();
+        resetPolyMinusEnd();
+        resetDepolyPlusEnd();
+        resetDepolyMinusEnd();
+        resetNucleation();
+        resetSevering();
+        resetSeveringID();
+    }
     //@}
     
     short getSevering() {return _severingReaction;}

@@ -34,7 +34,8 @@ FSTRETCHINGFFTYPE:           HARMONIC
 FSTRETCHINGK:                100.0
 
 FBENDINGFFTYPE:              COSINE
-FBENDINGK:                   672.5
+#Use 672.5 for 108nm cylinder size
+FBENDINGK:                   2960.0
 FBENDINGTHETA:               0.0
 
 VOLUMEFFTYPE:               REPULSION

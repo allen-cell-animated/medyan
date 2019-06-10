@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -17,6 +17,8 @@
 #include "common.h"
 
 #include "Compartment.h"
+#include "ChemSimImpl.h"
+
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -60,7 +62,7 @@ public:
     /// Initialize the ChemSim algorithm as well as the ChemManager
     ///@param chemAlgorithm - a string defining the chemical algorithm to be used
     ///@param chemInitializer - a string defining the chemical manager used
-    void initialize(string& chemAlgorithm, ChemistryData& chem);
+    void initialize(string& chemAlgorithm, ChemistryData& chem, DissipationTracker* dt);
     //aravind June 29,2016.
     void restart();
     
@@ -72,6 +74,14 @@ public:
     
     ///Remove set of reactions at runtime, specified by input
     void removeReactions();
+    
+    vector<floatingpoint> getEnergy();
+    
+    ChemSim* getCS();
+    
+    DissipationTracker* getDT();
+
+    
 };
 
 
