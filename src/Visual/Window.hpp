@@ -4,7 +4,6 @@
 #include <iostream> // cout, endl
 #include <vector>
 
-#include "MathFunctions.h"
 #include "Util/Environment.h"
 #include "util/io/log.h"
 #include "Visual/Camera.hpp"
@@ -171,24 +170,32 @@ inline void createWindow() {
             auto& ve = shared::visualElements.back();
             ve->profile.enabled = true;
             ve->profile.flag = Profile::targetMembrane;
+            ve->profile.colorAmbient = glm::vec3(0.3f, 0.6f, 0.95f);
+            ve->profile.colorDiffuse = glm::vec3(0.3f, 0.6f, 0.95f);
         }
         {
             shared::visualElements.emplace_back(new VisualElement);
             auto& ve = shared::visualElements.back();
             ve->profile.enabled = true;
             ve->profile.flag = Profile::targetMembrane | Profile::displayForce;
+            ve->profile.colorAmbient = glm::vec3(0.3f, 0.6f, 0.95f);
+            ve->profile.colorDiffuse = glm::vec3(0.3f, 0.6f, 0.95f);
         }
         {
             shared::visualElements.emplace_back(new VisualElement);
             auto& ve = shared::visualElements.back();
             ve->profile.enabled = true;
             ve->profile.flag = Profile::targetFilament;
+            ve->profile.colorAmbient = glm::vec3(0.95f, 0.1f, 0.15f);
+            ve->profile.colorDiffuse = glm::vec3(0.95f, 0.1f, 0.15f);
         }
         {
             shared::visualElements.emplace_back(new VisualElement);
             auto& ve = shared::visualElements.back();
             ve->profile.enabled = true;
             ve->profile.flag = Profile::targetFilament | Profile::displayForce;
+            ve->profile.colorAmbient = glm::vec3(0.95f, 0.1f, 0.15f);
+            ve->profile.colorDiffuse = glm::vec3(0.95f, 0.1f, 0.15f);
         }
     }
 }
@@ -249,42 +256,6 @@ inline void mainLoop() {
 
                 // Update data
                 if(ve->state.attribChanged) {
-                    if(ve->state.eleMode == GL_LINES) {
-                        using Vec3f = mathfunc::Vec< 3, float >;
-                        // Compute normal
-                        const auto numLines = ve->state.vertexAttribs.size() / (2 * GlState::vaStride);
-                        const Vec3f vc {
-                            camera.position.x,
-                            camera.position.y,
-                            camera.position.z
-                        };
-                        for(size_t i = 0; i < numLines; ++i) {
-                            auto& attr = ve->state.vertexAttribs;
-                            const Vec3f v0 {
-                                attr[(2 * i) * GlState::vaStride + GlState::vaPosStart + 0],
-                                attr[(2 * i) * GlState::vaStride + GlState::vaPosStart + 1],
-                                attr[(2 * i) * GlState::vaStride + GlState::vaPosStart + 2]
-                            };
-                            const Vec3f v1 {
-                                attr[(2 * i + 1) * GlState::vaStride + GlState::vaPosStart + 0],
-                                attr[(2 * i + 1) * GlState::vaStride + GlState::vaPosStart + 1],
-                                attr[(2 * i + 1) * GlState::vaStride + GlState::vaPosStart + 2]
-                            };
-                            const auto r01 = v1 - v0;
-                            auto normal = cross(cross(r01, vc - v1), r01);
-                            if(normal[0] == 0.0f && normal[1] == 0.0f && normal[2] == 0.0f)
-                                normal = Vec3f { 1.0, 0.0, 0.0 };
-                            else
-                                normalize(normal);
-                            attr[(2 * i) * GlState::vaStride + GlState::vaNormalStart + 0] = normal[0];
-                            attr[(2 * i) * GlState::vaStride + GlState::vaNormalStart + 1] = normal[1];
-                            attr[(2 * i) * GlState::vaStride + GlState::vaNormalStart + 2] = normal[2];
-                            attr[(2 * i + 1) * GlState::vaStride + GlState::vaNormalStart + 0] = normal[0];
-                            attr[(2 * i + 1) * GlState::vaStride + GlState::vaNormalStart + 1] = normal[1];
-                            attr[(2 * i + 1) * GlState::vaStride + GlState::vaNormalStart + 2] = normal[2];
-                        }
-                    }
-
                     glBindBuffer(GL_ARRAY_BUFFER, ve->state.vbo);
                     replaceBuffer(GL_ARRAY_BUFFER, ve->state.vertexAttribs);
                     ve->state.attribChanged = false;

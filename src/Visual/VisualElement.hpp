@@ -14,6 +14,7 @@ struct Profile {
     using FlagType = std::uint_fast8_t;
 
     enum class PathMode { Line, Extrude };
+    enum class ColorMode { Fixed };
 
     static constexpr FlagType targetFilament      = 1 << 0;
     static constexpr FlagType targetMembrane      = 1 << 1;
@@ -36,14 +37,20 @@ struct Profile {
     GLenum polygonMode = GL_LINE;
 
     // color settings
+    glm::vec3 colorAmbient;
+    glm::vec3 colorDiffuse;
+    glm::vec3 colorSpecular;
+    float     colorShininess;
 };
 
 struct GlState {
-    static constexpr unsigned int vaStride = 6;
+    static constexpr unsigned int vaStride = 9;
     static constexpr unsigned int vaPosStart = 0;
     static constexpr unsigned int vaPosSize = 3;
     static constexpr unsigned int vaNormalStart = 3;
     static constexpr unsigned int vaNormalSize = 3;
+    static constexpr unsigned int vaColorStart = 6;
+    static constexpr unsigned int vaColorSize = 3;
 
     // vao, vbo, ebo
     GLuint vao;
@@ -77,6 +84,9 @@ struct GlState {
         // Normal
         glVertexAttribPointer(1, vaNormalSize, GL_FLOAT, GL_FALSE, vaStride * sizeof(float), static_cast<const char*>(0) + vaNormalStart);
         glEnableVertexAttribArray(1);
+        // Color
+        glVertexAttribPointer(2, vaColorSize,  GL_FLOAT, GL_FALSE, vaStride * sizeof(float), static_cast<const char*>(0) + vaColorStart );
+        glEnableVertexAttribArray(2);
 
         // temporarily retarget
         glBindBuffer(GL_ARRAY_BUFFER, 0);

@@ -78,6 +78,9 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         ve->state.vertexAttribs.push_back(coord[1]);
                         ve->state.vertexAttribs.push_back(coord[2]);
                         ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + GlState::vaNormalSize); // dummy normal
+                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
 
                         const auto force = sdfv.copiedBeadData.forces[i];
                         const auto forceTip = force * ve->profile.forceScale + coord;
@@ -85,6 +88,9 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         ve->state.vertexAttribs.push_back(forceTip[1]);
                         ve->state.vertexAttribs.push_back(forceTip[2]);
                         ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + GlState::vaNormalSize); // dummy normal
+                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
                     }
                 }
 
@@ -127,6 +133,9 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                             ve->state.vertexAttribs.push_back(un[0]);
                             ve->state.vertexAttribs.push_back(un[1]);
                             ve->state.vertexAttribs.push_back(un[2]);
+                            ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
+                            ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
+                            ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
                         }
                     }
 
@@ -168,6 +177,9 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         ve->state.vertexAttribs.push_back(coord[1]);
                         ve->state.vertexAttribs.push_back(coord[2]);
                         ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + GlState::vaNormalSize); // dummy normal
+                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
 
                         const auto force = sdfv.copiedBeadData.forces[i];
                         const auto forceTip = force * ve->profile.forceScale + coord;
@@ -175,6 +187,9 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         ve->state.vertexAttribs.push_back(forceTip[1]);
                         ve->state.vertexAttribs.push_back(forceTip[2]);
                         ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + GlState::vaNormalSize); // dummy normal
+                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
                     }
                 }
 
@@ -226,6 +241,9 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                             ve->state.vertexAttribs.push_back(un[0]);
                             ve->state.vertexAttribs.push_back(un[1]);
                             ve->state.vertexAttribs.push_back(un[2]);
+                            ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
+                            ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
+                            ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
                         }
                     }
 
