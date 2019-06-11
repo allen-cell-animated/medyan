@@ -139,15 +139,7 @@ floatingpoint ChemNRMImpl::generateTau(floatingpoint a){
     exponential_distribution<floatingpoint>::param_type pm(a);
     
     _exp_distr.param(pm);
-#ifdef DEBUGCONSTANTSEED
-    Rand::counter++;
-    Rand::Ncounter++;
-//    std::cout<<"Counters N "<<Rand::Ncounter<<" D "<<Rand::Dcounter<<" T "<<Rand::counter<<
-//             endl;
-    return _exp_distr(Rand::_eng);
-#else
-    return _exp_distr(_eng);
-#endif
+    return _exp_distr(Rand::eng);
 }
 
 bool ChemNRMImpl::makeStep() {

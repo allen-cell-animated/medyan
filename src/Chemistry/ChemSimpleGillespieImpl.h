@@ -34,9 +34,6 @@ class ChemSimpleGillespieImpl : public ChemSimImpl {
 public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0
     ChemSimpleGillespieImpl() :
-#ifndef DEBUGCONSTANTSEED
- _eng(rdtsc()),
-#endif
     ChemSimImpl(),
     _exp_distr(0.0), _uniform_distr() { resetTime(); }
     
@@ -125,9 +122,6 @@ private:
 private:
     vector<ReactionBase*> _reactions; ///< The database of Reaction objects,
                                       ///< representing the reaction network
-#ifndef DEBUGCONSTANTSEED
-    mt19937 _eng; ///< Random number generator
-#endif
     exponential_distribution<floatingpoint> _exp_distr; ///< Adaptor for the exponential distribution
     uniform_real_distribution<floatingpoint> _uniform_distr; ///< Adaptor for the uniform distribution
     floatingpoint _t; ///< global time

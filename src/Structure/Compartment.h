@@ -16,13 +16,8 @@
 
 #include <vector>
 #include <array>
-#ifdef DEBUGCONSTANTSEED
-#include <map>
-#include <set>
-#else
 #include <unordered_map>
 #include <unordered_set>
-#endif
 
 #include "common.h"
 
@@ -87,11 +82,7 @@ protected:
 
     unordered_set<Bead*> _beads; ///< Set of beads that are in this compartment
 
-    #ifdef DEBUGCONSTANTSEED
-    set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
-    #else
     unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
-    #endif
 
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment (neighbors that
     unordered_map<Compartment*, size_t> _neighborIndex; ///< Spacial index of the neighbors of the same order as _neighbors
@@ -608,11 +599,7 @@ public:
         if(it != _cylinders.end()) _cylinders.erase(it);
     }
     ///get the cylinders in this compartment
-    #ifdef DEBUGCONSTANTSEED
-    set<Cylinder*>& getCylinders() {return _cylinders;}
-    #else
     unordered_set<Cylinder*>& getCylinders() {return _cylinders;}
-    #endif
 
     /// Get the diffusion rate of a species
     /// @param - species_name, a string

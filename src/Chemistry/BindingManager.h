@@ -14,13 +14,8 @@
 #ifndef MEDYAN_BindingManager_h
 #define MEDYAN_BindingManager_h
 
-#ifdef DEBUGCONSTANTSEED
-#include <map>
-#include <set>
-#else
 #include <unordered_map>
 #include <unordered_set>
-#endif
 #include <random>
 
 #include "common.h"
@@ -242,15 +237,11 @@ private:
     floatingpoint _nucleationDistance = 0.0;
 
     ///possible bindings at current state
-    #ifdef DEBUGCONSTANTSEED
-    set<tuple<CCylinder*, short>> _possibleBindings;
-    #else
 //    #elif defined(NLORIGINAL)
     unordered_set<tuple<CCylinder*, short>> _possibleBindings;
 //    #elif defined(NLSTENCILLIST)
     ///possible bindings at current state in Stencil list.
     unordered_set<tuple<CCylinder*, short>> _possibleBindingsstencil;
-    #endif
     vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> _branchrestarttuple; //Used only during restart conditions.
 
 public:
@@ -317,15 +308,9 @@ public:
         _possibleBindings.clear();
         updateBindingReaction(oldN,0);
     }
-#ifdef DEBUGCONSTANTSEED
-    virtual set<tuple<CCylinder*, short>> getpossibleBindings(){
-        return _possibleBindings;
-    }
-#else
     virtual unordered_set<tuple<CCylinder*, short>> getpossibleBindings(){
         return _possibleBindings;
     }
-#endif
 
 #endif
     virtual bool isConsistent();
@@ -423,10 +408,6 @@ private:
 
 
     //possible bindings at current state. updated according to neighbor list
-#ifdef DEBUGCONSTANTSEED
-    vector<vector<tuple<CCylinder*, short>>> _possibleBindings;
-//    multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
-#else
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
 
     unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*, short>>> _reversePossibleBindings;
@@ -435,7 +416,6 @@ private:
         //possible bindings at current state. updated according to neighbor list stencil
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
             _possibleBindingsstencil;
-#endif
     //static neighbor list
     static vector<CylinderCylinderNL*> _neighborLists;
 
@@ -476,15 +456,9 @@ public:
             short> t2);
 
     //get possible bindings.
-#ifdef DEBUGCONSTANTSEED
-//    virtual multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> getpossibleBindings(){
-//        return _possibleBindings;
-//    }
-#else
     virtual unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> getpossibleBindings(){
         return _possibleBindings;
     }
-#endif
 
     /// ARAVIND ADDED FEB 18 2016. clear possible bindings.
     virtual void clearpossibleBindings() {
@@ -495,9 +469,6 @@ public:
 
         /// Choose random binding sites based on current state
     vector<tuple<CCylinder*, short>> chooseBindingSites();
-#ifdef DEBUGCONSTANTSEED
-    virtual void erasepossibleBindings(CCylinder* cc, short bindingSite);
-#endif//debugconstantseed
 #endif
     //@{
     /// Getters for distances
@@ -597,10 +568,6 @@ private:
     static short HNLID;
     static short _idvec[2];
     //possible bindings at current state. updated according to neighbor list
-#ifdef DEBUGCONSTANTSEED
-    vector<vector<tuple<CCylinder*, short>>> _possibleBindings;
-//    multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
-#else
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
     _possibleBindings;
 
@@ -610,7 +577,6 @@ private:
         //possible bindings at current state. updated according to neighbor list stencil
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
             _possibleBindingsstencil;
-    #endif
 
 
     //static neighbor list
@@ -652,13 +618,9 @@ public:
     virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*,
             short> t2);
     //get possible bindings.
-#ifdef DEBUGCONSTANTSEED
-
-#else
     virtual unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> getpossibleBindings(){
         return _possibleBindings;
     }
-#endif
 
     /// ARAVIND ADDED FEB 18 2016. clear possible bindings.
     virtual void clearpossibleBindings() {
@@ -669,9 +631,6 @@ public:
 
     /// Choose random binding sites based on current state
     vector<tuple<CCylinder*, short>> chooseBindingSites();
-#ifdef DEBUGCONSTANTSEED
-    virtual void erasepossibleBindings(CCylinder* cc, short bindingSite);
-#endif//debugconstantseed
 #endif
     //@{
     /// Getters for distances

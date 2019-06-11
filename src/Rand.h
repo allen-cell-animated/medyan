@@ -26,28 +26,15 @@ private:
     static uniform_int_distribution<int> _int_distr;
 
 public:
-    static mt19937 _eng;
-#ifdef DEBUGCONSTANTSEED
-    static long counter;
-    static long Dcounter;
-    static long Ncounter;
-#endif
+    static mt19937 eng;
     ///Get a random floatingpoint between low and high
     static inline floatingpoint randfloatingpoint(floatingpoint low, floatingpoint high) {
-#ifdef DEBUGCONSTANTSEED
-        counter++;
-        Dcounter++;
-#endif
-        return ((float)_int_distr(_eng) / numeric_limits<int>::max()) * (high - low) + low;
+        return ((float)_int_distr(eng) / numeric_limits<int>::max()) * (high - low) + low;
     }
     ///Get a random integer between low and high
     static inline int randInteger(int low, int high) {
-        int y =_int_distr(_eng);
+        int y =_int_distr(eng);
         int x = low + (y % (high - low + 1));
-#ifdef DEBUGCONSTANTSEED
-        counter++;
-//        std::cout<<"RandomInteger "<<x<<" "<<y<<" "<<high<<" "<<low<<" "<<counter<<" "<<Dcounter<<" "<<Ncounter<<endl;
-#endif
         return x;
     }
 };
