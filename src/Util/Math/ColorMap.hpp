@@ -24,9 +24,9 @@ namespace utility {
     constexpr mathfunc::Vec< colorDim, FloatColor >
     interpolate(FloatVal v, std::array< mathfunc::Vec< colorDim, FloatColor >, listSize > interpList) {
         static_assert(listSize > 1, "Must have at least 2 elements for interpolation");
-        constexpr FloatVal interval = static_cast< FloatVal >(1.0) / (listSize - 1);
-        constexpr FloatVal normalizedPos = v / interval;
-        constexpr size_t intervalIndex = static_cast< size_t >(normalizedPos);
+        const FloatVal interval = static_cast< FloatVal >(1.0) / (listSize - 1);
+        const FloatVal normalizedPos = v / interval;
+        const size_t intervalIndex = static_cast< size_t >(normalizedPos);
         if(intervalIndex >= listSize - 1) return interpList[listSize - 1];
 
         return interpList[intervalIndex    ] * (intervalIndex + 1 - normalizedPos)
