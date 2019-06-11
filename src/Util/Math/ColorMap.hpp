@@ -27,9 +27,9 @@ mathfunc::Vec< 3, FloatOut >
 jet(FloatIn v) {
     constexpr auto interpolation = [](FloatIn v) { return colormap::utility::clamp01((FloatIn)1.5 - std::abs(2 * v)); };
     return mathfunc::Vec< 3, FloatOut > {
-        interpolation(v - 0.5),
-        interpolation(v),
-        interpolation(v + 0.5)
+        static_cast< FloatOut >(interpolation(v - 0.5)),
+        static_cast< FloatOut >(interpolation(v      )),
+        static_cast< FloatOut >(interpolation(v + 0.5))
     };
 }
 
