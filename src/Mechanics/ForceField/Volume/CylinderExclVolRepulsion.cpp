@@ -502,7 +502,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 			}
 			else {
 				U += U_i;
-				break;
+				continue;
 			}
 
 			if (false) {
@@ -577,10 +577,8 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 			}
 		}
 			//add energy to total energy and move on to the next interaction.
-		else {
+		else
 			U += U_i;
-			break;
-		}
 
 //        }
 	}
@@ -1085,6 +1083,10 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 #endif
 	}
 	delete [] newc2;
+	delete [] cp;
+	delete [] vec_A;
+	delete [] vec_B;
+	delete [] vec_C;
 }
 
 floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord, floatingpoint *force,
