@@ -25,7 +25,7 @@ template< typename FloatOut, typename FloatIn >
 inline
 mathfunc::Vec< 3, FloatOut >
 jet(FloatIn v) {
-    constexpr auto interpolation = [](FloatIn v) { return clamp01((FloatIn)1.5 - std::abs(2 * v)); };
+    constexpr auto interpolation = [](FloatIn v) { return colormap::utility::clamp01((FloatIn)1.5 - std::abs(2 * v)); };
     return mathfunc::Vec< 3, FloatOut > {
         interpolation(v - 0.5),
         interpolation(v),
