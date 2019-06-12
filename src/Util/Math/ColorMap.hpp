@@ -29,8 +29,8 @@ namespace utility {
         const size_t intervalIndex = static_cast< size_t >(normalizedPos);
         if(intervalIndex >= listSize - 1) return interpList[listSize - 1];
 
-        return interpList[intervalIndex    ] * (intervalIndex + 1 - normalizedPos)
-            +  interpList[intervalIndex + 1] * (normalizedPos - intervalIndex);
+        return interpList[intervalIndex    ] * static_cast< FloatColor >(intervalIndex + 1 - normalizedPos)
+            +  interpList[intervalIndex + 1] * static_cast< FloatColor >(normalizedPos - intervalIndex);
     }
 
 } // namespace utility
