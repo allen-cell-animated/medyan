@@ -39,8 +39,8 @@ using namespace mathfunc;
 Database<Filament*> Filament::_filaments;
 Histogram* Filament::_turnoverTimes;
 
-Filament::Filament(SubSystem* s, short filamentType, vector<floatingpoint>& position,
-                   vector<floatingpoint>& direction, bool nucleation, bool branch)
+Filament::Filament(SubSystem* s, short filamentType, const vector<floatingpoint>& position,
+                   const vector<floatingpoint>& direction, bool nucleation, bool branch)
 
     : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
  
@@ -72,7 +72,7 @@ Filament::Filament(SubSystem* s, short filamentType, vector<floatingpoint>& posi
 }
 
 
-Filament::Filament(SubSystem* s, short filamentType, vector<vector<floatingpoint> >& position,
+Filament::Filament(SubSystem* s, short filamentType, const vector<vector<floatingpoint> >& position,
                    int numBeads, string projectionType)
 
     : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
@@ -667,7 +667,7 @@ Filament* Filament::sever(int cylinderPosition) {
     return newFilament;
 }
 
-vector<vector<floatingpoint>> Filament::straightFilamentProjection(vector<vector<floatingpoint>>& v, int numBeads) {
+vector<vector<floatingpoint>> Filament::straightFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads) {
     
     vector<vector<floatingpoint>> coordinate;
     vector<floatingpoint> tmpVec (3, 0);
@@ -688,7 +688,7 @@ vector<vector<floatingpoint>> Filament::straightFilamentProjection(vector<vector
     return coordinate;
 }
 
-vector<vector<floatingpoint>> Filament::zigZagFilamentProjection(vector<vector<floatingpoint>>& v, int numBeads){
+vector<vector<floatingpoint>> Filament::zigZagFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads){
     
     vector<vector<floatingpoint>> coordinate;
     vector<floatingpoint> tmpVec (3, 0);
@@ -828,7 +828,7 @@ void matrix_mul(boost::numeric::ublas::matrix<floatingpoint>&X,
     }
 }
 
-void arcOutward(vector<floatingpoint>&v1,vector<floatingpoint>&v2,vector<vector<floatingpoint>>&v) {
+void arcOutward(vector<floatingpoint>&v1,vector<floatingpoint>&v2, const vector<vector<floatingpoint>>&v) {
     
     vector<floatingpoint> center,tempv1,tempv2,temp2,temp3(3),
                    temp4(3),mid,mid2(3),mid3(3),temp5;
@@ -874,7 +874,7 @@ void arcOutward(vector<floatingpoint>&v1,vector<floatingpoint>&v2,vector<vector<
                    std::back_inserter(v2), std::plus<floatingpoint>());
 }
 
-vector<vector<floatingpoint>> Filament::arcFilamentProjection(vector<vector<floatingpoint>>& v, int numBeads) {
+vector<vector<floatingpoint>> Filament::arcFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads) {
     
     using namespace boost::numeric::ublas;
 
@@ -891,7 +891,7 @@ vector<vector<floatingpoint>> Filament::arcFilamentProjection(vector<vector<floa
     return coordinates;
 }
 // predefined projection
-vector<vector<floatingpoint>> Filament::predefinedFilamentProjection(vector<vector<floatingpoint>>& v, int numBeads) {
+vector<vector<floatingpoint>> Filament::predefinedFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads) {
     return v;
 }
 //@

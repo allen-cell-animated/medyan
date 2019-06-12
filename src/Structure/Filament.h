@@ -89,8 +89,8 @@ public:
     /// @param nucleation - this filament was nucleated at runtime by a non-branching species
     /// @param branching - this filament was branched at runtime from an existing filament
 	Filament(SubSystem* s, short filamentType,
-                           vector<floatingpoint>& position,
-                           vector<floatingpoint>& direction,
+                           const vector<floatingpoint>& position,
+                           const vector<floatingpoint>& direction,
                            bool nucleation = false,
                            bool branch = false);
     
@@ -98,7 +98,7 @@ public:
     /// with a number of beads numBeads. Filaments starts and ends in the point
     /// determined by position vector.
     Filament(SubSystem* s, short filamentType,
-             vector<vector<floatingpoint>>& position, int numBeads,
+             const vector<vector<floatingpoint>>& position, int numBeads,
              string projectionType = "STRAIGHT");
     
     /// This constructor is called when a filament is severed. It creates a filament
@@ -232,11 +232,11 @@ public:
     /// Projection function, returns a vector of coordinates for bead creation
     vector<floatingpoint> nextBeadProjection(Bead* b, floatingpoint d, vector<floatingpoint> director);
     
-    vector<vector<floatingpoint>> straightFilamentProjection(vector<vector<floatingpoint>>& v, int numBeads);
-    vector<vector<floatingpoint>> zigZagFilamentProjection(vector<vector<floatingpoint>>& v, int numBeads);
-    vector<vector<floatingpoint>> arcFilamentProjection(vector<vector<floatingpoint>>& v, int numBeads);
+    vector<vector<floatingpoint>> straightFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads);
+    vector<vector<floatingpoint>> zigZagFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads);
+    vector<vector<floatingpoint>> arcFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads);
     //Aravind 18 Feb 2016.
-    vector<vector<floatingpoint>> predefinedFilamentProjection(vector<vector<floatingpoint>>& v, int numBeads);
+    vector<vector<floatingpoint>> predefinedFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads);
     //@}
     
     virtual void printSelf();
