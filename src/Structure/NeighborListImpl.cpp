@@ -583,6 +583,10 @@ void CylinderCylinderNL::reset() {
 #endif
     _list.clear();
 
+    for(auto cylinder: Cylinder::getCylinders()) {
+        updateNeighbors(cylinder);
+    }
+
 #endif
 
 
