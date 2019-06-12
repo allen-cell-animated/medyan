@@ -216,17 +216,8 @@ public:
           _radius(radius), _height(height) {}
 
     virtual floatingpoint distance(const vector<floatingpoint>& point) {
-
-
-        ///check z coordinate. If outside, return infinity
-        if(point[2] > (_coords[2] + _height / 2) ||
-           point[2] < (_coords[2] - _height / 2))
-
-            return numeric_limits<floatingpoint>::infinity();
-
-
-	        return _radius - twoPointDistance({_coords[0],_coords[1], 0},
-	                               {  point[0],  point[1], 0});
+        return _radius - twoPointDistance({_coords[0],_coords[1], 0},
+                                          {  point[0],  point[1], 0});
     }
     //TODO
     virtual floatingpoint distance(floatingpoint const *point) {
@@ -258,18 +249,12 @@ public:
 
 
     virtual floatingpoint stretchedDistance(const vector<floatingpoint>& point,
-                                     const vector<floatingpoint>& force,
-                                     floatingpoint d) {
-
-        // check z coordinate. If outside, return infinity
-//        if((point[2] + d * force[2]) > (_coords[2] + _height / 2) ||
-//           (point[2] + d * force[2]) < (_coords[2] - _height / 2))
-//
-//            return numeric_limits<floatingpoint>::infinity();
+                                            const vector<floatingpoint>& force,
+                                            floatingpoint d) {
 
         vector<floatingpoint> movedPoint{point[0] + d * force[0],
-                                  point[1] + d * force[1],
-                                  point[2] + d * force[2]};
+                                         point[1] + d * force[1],
+                                         point[2] + d * force[2]};
 
         return distance(movedPoint);
 
@@ -338,11 +323,6 @@ public:
 
     virtual floatingpoint distance(const vector<floatingpoint>& point) {
 
-        // check z coordinate. If outside, return infinity
-        if((_up && (point[2] > _coords[2])) ||
-          (!_up && (point[2] < _coords[2])))
-            return numeric_limits<floatingpoint>::infinity();
-
         return _radius - twoPointDistance(_coords, point);
     }
 
@@ -356,38 +336,20 @@ public:
     //Qin, the same as distance
     virtual floatingpoint lowerdistance(const vector<floatingpoint>& point) {
 
-        // check z coordinate. If outside, return infinity
-        if((_up && (point[2] > _coords[2])) ||
-           (!_up && (point[2] < _coords[2])))
-            return numeric_limits<floatingpoint>::infinity();
-
         return _radius - twoPointDistance(_coords, point);
     }
     virtual floatingpoint sidedistance(const vector<floatingpoint>& point) {
-
-        // check z coordinate. If outside, return infinity
-        if((_up && (point[2] > _coords[2])) ||
-           (!_up && (point[2] < _coords[2])))
-            return numeric_limits<floatingpoint>::infinity();
-//        if((_up && (point[2] > _coords[2])) ||
-//           (!_up && (point[2] < _coords[2])))
-//            return numeric_limits<floatingpoint>::infinity();
 
         return _radius - twoPointDistance(_coords, point);
     }
 
     virtual floatingpoint stretchedDistance(const vector<floatingpoint>& point,
-                                     const vector<floatingpoint>& force,
-                                     floatingpoint d) {
+                                            const vector<floatingpoint>& force,
+                                            floatingpoint d) {
 
         vector<floatingpoint> movedPoint{point[0] + d * float(force[0]),
-                                  point[1] + d * float(force[1]),
-                                  point[2] + d * float(force[2])};
-
-        // check z coordinate. If outside, return infinity
-        if((_up && (movedPoint[2] > _coords[2])) ||
-          (!_up && (movedPoint[2] < _coords[2])))
-            return numeric_limits<floatingpoint>::infinity();
+                                         point[1] + d * float(force[1]),
+                                         point[2] + d * float(force[2])};
 
         return distance(movedPoint);
 
@@ -439,14 +401,6 @@ public:
 
     virtual floatingpoint distance(const vector<floatingpoint>& point) {
 
-
-        ///check z coordinate. If outside, return infinity
-        if(point[2] > (_coords[2] + _height / 2) ||
-           point[2] < (_coords[2] - _height / 2))
-
-            return numeric_limits<floatingpoint>::infinity();
-
-        //Qin
         auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
                                               {  point[0],  point[1], 0});
 
@@ -465,9 +419,6 @@ public:
         else {
             return dxy;
         }
-
-        //        return _radius - twoPointDistance({_coords[0],_coords[1], 0},
-        //                                {  point[0],  point[1], 0});
     }
 
     //Qin, find the distance for the lower boundary
@@ -488,18 +439,12 @@ public:
 
 
     virtual floatingpoint stretchedDistance(const vector<floatingpoint>& point,
-                                     const vector<floatingpoint>& force,
-                                     floatingpoint d) {
-
-        // check z coordinate. If outside, return infinity
-//        if((point[2] + d * force[2]) > (_coords[2] + _height / 2) ||
-//           (point[2] + d * force[2]) < (_coords[2] - _height / 2))
-//
-//            return numeric_limits<floatingpoint>::infinity();
+                                            const vector<floatingpoint>& force,
+                                            floatingpoint d) {
 
         vector<floatingpoint> movedPoint{point[0] + d * float(force[0]),
-                                  point[1] + d * float(force[1]),
-                                  point[2] + d * float(force[2])};
+                                         point[1] + d * float(force[1]),
+                                         point[2] + d * float(force[2])};
 
         return distance(movedPoint);
 
@@ -552,13 +497,7 @@ public:
     }
 
     virtual floatingpoint distance(floatingpoint const *point) {
-        ///check z coordinate. If outside, return infinity
-//        if(point[2] > (_coords[2] + _height / 2) ||
-//           point[2] < (_coords[2] - _height / 2))
-//
-//        return numeric_limits<floatingpoint>::infinity();
 
-        //Qin
         auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
                                               {  point[0],  point[1], 0});
 
@@ -579,17 +518,11 @@ public:
         }
     }
     virtual floatingpoint stretchedDistance(floatingpoint const *point,
-                                     floatingpoint const *force, floatingpoint d) {
-
-        // check z coordinate. If outside, return infinity
-//        if((point[2] + d * force[2]) > (_coords[2] + _height / 2) ||
-//           (point[2] + d * force[2]) < (_coords[2] - _height / 2))
-//
-//        return numeric_limits<floatingpoint>::infinity();
+                                            floatingpoint const *force, floatingpoint d) {
 
         vector<floatingpoint> movedPoint{point[0] + d * force[0],
-            point[1] + d * force[1],
-            point[2] + d * force[2]};
+                                         point[1] + d * force[1],
+                                         point[2] + d * force[2]};
 
         return distance(movedPoint);
 
