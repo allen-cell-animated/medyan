@@ -12,20 +12,20 @@
 # for your given system.
 ##################################################
 
-SOURCES_TEST	:= $(shell find ./TESTS -name 'test_*')
-SOURCES_CPP := $(shell find . -name '*.cpp' ! -path './TESTS/*' ! -path './dist_moduleV2/*')
-SOURCES_CPP += ./dist_moduleV2/dist_avx_par.cpp  ./dist_moduleV2/dist_bench.cpp  ./dist_moduleV2/dist_example.cpp  ./dist_moduleV2/dist_mod_vars.cpp
+SOURCES_TEST             := $(shell find ./TESTS -name 'test_*')
+SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './TESTS/*' ! -path './dist_moduleV2/*')
+SOURCES_CPP              += ./dist_moduleV2/dist_avx_par.cpp  ./dist_moduleV2/dist_bench.cpp  ./dist_moduleV2/dist_example.cpp  ./dist_moduleV2/dist_mod_vars.cpp
 SOURCES_CPP_WITHOUT_MAIN := $(filter-out ./MEDYAN.cpp,$(SOURCES_CPP))
-SOURCES_CU  := $(shell find . -name '*.cu'  ! -path './TESTS/*' ! -path './dist_moduleV2/*')
-SOURCES = $(SOURCES_CPP) $(SOURCES_CU)
-HEADERS := $(shell find . -name '*.h' ! -path './dist_moduleV2/*')
-HEADERS += ./dist_moduleV2/umesimd/UMESimd.h
+SOURCES_CU               := $(shell find . -name '*.cu'  ! -path './TESTS/*' ! -path './dist_moduleV2/*')
+SOURCES                   = $(SOURCES_CPP) $(SOURCES_CU)
+HEADERS                  := $(shell find . -name '*.h' ! -path './dist_moduleV2/*')
+HEADERS                  += ./dist_moduleV2/umesimd/UMESimd.h
 
 OBJECTS_TEST             := $(SOURCES_TEST:.cpp=.o)
-OBJECTS_CPP := $(SOURCES_CPP:.cpp=.o)
-OBJECTS_CU  := $(SOURCES_CU:.cu=.o)
+OBJECTS_CPP              := $(SOURCES_CPP:.cpp=.o)
+OBJECTS_CU               := $(SOURCES_CU:.cu=.o)
 OBJECTS_CPP_WITHOUT_MAIN := $(SOURCES_CPP_WITHOUT_MAIN:.cpp=.o)
-OBJECTS = $(OBJECTS_CPP) $(OBJECTS_CU)
+OBJECTS                   = $(OBJECTS_CPP) $(OBJECTS_CU)
 
 DEPENDS := $(SOURCES_TEST:.cpp=.d) $(SOURCES_CPP:.cpp=.d)
 
@@ -62,14 +62,14 @@ CPPFLAGS = $(INCLUDES)
 INCLUDES_NVCC = $(INCLUDES) -I/usr/local/include -I/usr/local/cuda/include
 
 CXXFLAGS_CXX = $(FAST_CXX) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
--Wno-uninitialized -Wno-unknown-warning-option $(INCLUDES)
+-Wno-uninitialized -Wno-unknown-warning-option
 #NVCC DEBUG MODE
 CXXFLAGS_NVCC = -g -G -x=cu -arch=sm_35 -Xcompiler -lpthread -ldl -lrt \
 -lineinfo --compiler-options -O0 -Xptxas -v $(INCLUDES_NVCC)
 
 # Linking flags
 LDLIBS_TEST = -L../build/gtest/lib -lgtest -lgtest_main -lpthread
-LDLIBS = -L/usr/local/lib/ -lboost_system -L./dist_moduleV2/umesimd
+LDLIBS = -L/usr/local/lib/ -lboost_system -L./dist_moduleV2/umesimd \
 -static-libstdc++ -pthread
 LDLIBS_NVCC = $(LDLIBS) -L/usr/local/cuda/lib64 -L/usr/local/cuda/lib -Icudart -lpthread -lnvToolsExt
 LDFLAGS_CXX = $(FAST_CXX) 
@@ -146,7 +146,7 @@ CPPFLAGS_CXX_TEST = $(CPPFLAGS_CXX) $(INCLUDES_TEST)
 all: MEDYAN
 
 # Build main program
-medyan: $(OBJECTS)
+MEDYAN: $(OBJECTS)
 ifeq ($(USING_CUDA), true)
 	$(NVCC) -o MEDYAN $(OBJECTS) $(LDLIBS_NVCC)
 else
@@ -175,8 +175,9 @@ endif
 
 # Add empty dependency for dependencies
 %.d: ;
+
 clean:
-    \find . -name "*.d" -delete
+	\find . -name "*.d" -delete
 	\find . -name '*.o' -delete
 	\rm -f MEDYAN medyan_test
 
