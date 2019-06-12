@@ -38,8 +38,17 @@ using namespace std;
 typedef float floatingpoint;
 typedef double doubleprecision;
 
+namespace detail {
+
+template< typename Float >
+constexpr Float zeroPrec = 1e-6;
+template<> constexpr double zeroPrec< double > = 1e-6;
+template<> constexpr float  zeroPrec< float  > = 1e-4;
+
+} // namespace detail
+
 //to test for zero values
-const floatingpoint ZERO_PREC = 1E-4;
+const floatingpoint ZERO_PREC = detail::zeroPrec< floatingpoint >;
 
 /// A random seed based on clock cycles
 extern unsigned long long rdtsc();
