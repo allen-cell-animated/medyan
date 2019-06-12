@@ -360,7 +360,6 @@ void SubSystem::updateBindingManagers() {
 	#endif
 }
 
-//OBSOLETE
 void SubSystem::vectorizeCylinder() {
     //vectorize
     SysParams::MParams.speciesboundvec.clear();
