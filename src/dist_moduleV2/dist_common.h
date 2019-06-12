@@ -8,7 +8,7 @@ Many common typedefs and some miscellaneous functions for printing bits in varia
 #define DIST_COMMON
 
 #include <bitset>
-#include <UMESimd.h>
+#include "UMESimd.h"
 #include <vector>
 
 typedef unsigned int uint;

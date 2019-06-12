@@ -195,7 +195,7 @@ protected:
     floatingpoint safeBacktrackingLineSearch(ForceFieldManager& FFM,
     		floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool *gpu_safestate);
 
-    floatingpoint setLAMBDATOL(int maxF_order){
+    void setLAMBDATOL(int maxF_order){
 
         int orderdimension = 3; ///1000s of nm
         int LAMBDATOLorder = -(6-orderdimension) - maxF_order;
