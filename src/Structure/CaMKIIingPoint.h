@@ -53,7 +53,7 @@ private:
                        ///< camkii point, managed by the Database
     
     float _birthTime;  ///<Birth time
-    short _filType = 5000;  //TODO number
+    const short _filType = CAMKII_CYLINDER_FILAMENT_TYPE;  //TODO number
 
     Compartment* _compartment; ///< Where this camkii point is
     

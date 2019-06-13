@@ -427,8 +427,7 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite
 
     //Code based on linker
     //add valid binding sites
-	if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
-		SysParams::Chemistry().camkiierBoundIndex[_filamentType])->getN(), 1.0)) {
+	if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[_filamentType])->getN(), 1.0)) {
 
 		//TODO loop through camkii neighbors
 		//_nlIndex may have to change since it is a new neighbor list
@@ -565,6 +564,9 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
     //remove all neighbors which have this binding site pair
     for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
 
+    	if(!cn)
+    		continue;
+
         if(cn->getType() != _filamentType) continue;
 
         if(cn->getCompartment() != _compartment) {
@@ -608,7 +610,7 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc) {
 void CaMKIIBundlingManager::updateAllPossibleBindings() {
 
 	_possibleBindings.clear();
-	int camkiiFilamentType = 5000;
+	int camkiiFilamentType = CAMKII_CYLINDER_FILAMENT_TYPE;
 
     //The first cylinder should be a CAMKII cylinder
     for(auto c : _compartment->getCylinders()) {
@@ -621,19 +623,23 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
         if (dc) {
             cp = dc->getCaMKIIPointParent();
         } else {
+        	cerr << "CaMKII - There is a CaMKII cylinder without CaMKIIPoint." << endl;
+        	exit(1);
         }
         short it1=1;
-        //for(auto it1 = SysParams::Chemistry().bindingSites[camkiiFilamentType].begin();
-        //         it1 != SysParams::Chemistry().bindingSites[camkiiFilamentType].end(); it1++) {
+//        for(auto it1 = SysParams::Chemistry().bindingSites[camkiiFilamentType].begin();
+//                 it1 != SysParams::Chemistry().bindingSites[camkiiFilamentType].end(); it1++) {
 
         	// skip if parent coordination number isn't between >=1 and <6 (MAX coordination number SysParams::Chemistry().maxcamkii_coord_number)
         	//now re add valid binding sites
         	//TODO see if CP is defined
-        	if (cp && cp->getCoordinationNumber() < _maxCoordination) {
+        	if (cp->getCoordinationNumber() < _maxCoordination) {
                 //loop through neighbors
                 // The neighbors should be the cylinders from the other filaments (obtained from the neighbor list)
             	//now re add valid based on CCNL
+
             	for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
+
                     if(cn->getParent() == c->getParent()) continue;
                     if(cn->getType() != _filamentType) continue;
                     auto ccn = cn->getCCylinder();
@@ -676,7 +682,7 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
                     }
                 }
             }
-        //}
+//        }
     }
     int oldN = _bindingSpecies->getN();
     int newN = numBindingSites();

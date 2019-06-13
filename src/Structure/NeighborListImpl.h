@@ -33,8 +33,8 @@ class CaMKIIingPoint;
 class CaMKIIingPointCylinderNL : public NeighborList {
 
 private:
-    unordered_map<CaMKIIingPoint*, vector<Cylinder*>> _list;
     ///< The neighbors list, as a hash map
+    unordered_map<CaMKIIingPoint*, vector<Cylinder*>> _list;
 
     bool _full; ///<Specifying whether this is a full or half list
 
@@ -68,11 +68,11 @@ public:
 /// An implementation of NeighborList for Cylinder-Cylinder interactions
 /// This can be a half or full list depending on the usage.
 class CylinderCylinderNL : public NeighborList {
-    
+
 private:
-    unordered_map<Cylinder*, vector<Cylinder*>> _list;
-    ///< The neighbors list, as a hash map
-    
+	///< The neighbors list, as a hash map
+	unordered_map<Cylinder*, vector<Cylinder*>> _list;
+
     bool _full; ///<Specifying whether this is a full or half list
     
     ///Helper function to update neighbors

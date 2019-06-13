@@ -3028,7 +3028,7 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
     Filament* f = (Filament*)(c->getParent());
 	short filType ;
     if (f == nullptr){
-      filType = 5000; // filType assignment for CaMKII
+      filType = CAMKII_CYLINDER_FILAMENT_TYPE; // filType assignment for CaMKII
     } else {
 	  filType = f->getType();
     }
@@ -3191,7 +3191,7 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
         }
     }
     //Add all reaction templates to this cylinder
-    if (filType != 5000) {
+    if (filType != CAMKII_CYLINDER_FILAMENT_TYPE) {
     	for(auto &r : _filRxnTemplates[filType]) { r->addReaction(cc); }
     }
 }

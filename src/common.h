@@ -40,6 +40,7 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 
 ///Num filament types maximum
 #define MAX_FILAMENT_TYPES 10
+#define CAMKII_CYLINDER_FILAMENT_TYPE (MAX_FILAMENT_TYPES-1)
 
 //@{
 /// Constant Species index identifiers

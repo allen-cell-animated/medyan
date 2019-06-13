@@ -13,5 +13,11 @@
 
 #include "Rand.h"
 
+
+#ifdef RAND_STATIC_SEED
+default_random_engine Rand::_eng(RAND_STATIC_SEED);
+uniform_int_distribution<int> Rand::_int_distr;
+#else
 mt19937 Rand::_eng(rdtsc());
 uniform_int_distribution<int> Rand::_int_distr;
+#endif

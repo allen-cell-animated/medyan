@@ -21,9 +21,13 @@
 
 /// A random number generator class.
 class Rand {
-    
+
 private:
+#ifdef RAND_STATIC_SEED
+	static default_random_engine _eng;
+#else
     static mt19937 _eng;
+#endif
     static uniform_int_distribution<int> _int_distr;
     
 public:
@@ -36,6 +40,5 @@ public:
         return low + (_int_distr(_eng) % (high - low + 1));
     }
 };
-
 
 #endif

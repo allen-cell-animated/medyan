@@ -28,6 +28,95 @@ using namespace mathfunc;
 
 //TODO CaMKIIingPoint-Cylinder Neighbor List, updateNeighbors, addNeighbor, removeNeighbor, reset, and getNeighbors
 
+//CaMKII-CYLINDER
+
+#if 0
+void CaMKIIingPointCylinderNL::updateNeighbors(CaMKIIingPoint* cylinder, bool runtime) {
+
+	//clear existing
+	_list[cylinder].clear();
+
+	//Find surrounding compartments (For now its conservative)
+	vector<Compartment*> compartments;
+	auto searchDist = SysParams::Geometry().largestCompartmentSide;
+
+	GController::findCompartments(cylinder->coordinate,
+								  cylinder->getCompartment(),
+								  searchDist + _rMax, compartments);
+
+	for(auto &comp : compartments) {
+		for(auto &ncylinder : comp->getCylinders()) {
+
+			//Don't add the same cylinder!
+//			if(cylinder == ncylinder) continue;
+
+			//Dont add if ID is more than cylinder for half-list
+//			if(!_full && cylinder->getID() <= ncylinder->getID()) continue;
+
+			//Don't add if belonging to same parent
+			if(cylinder->getParent() == ncylinder->getParent()) {
+
+				//if not cross filament, check if not neighboring
+				auto dist = fabs(cylinder->getPosition() -
+								 ncylinder->getPosition());
+				if(dist <= 2) continue;
+			}
+
+			//Dont add if not within range
+			double dist = twoPointDistance(cylinder->coordinate,
+										   ncylinder->coordinate);
+			if(dist > _rMax || dist < _rMin) continue;
+
+			//If we got through all of this, add it!
+			_list[cylinder].push_back(ncylinder);
+
+			//if runtime, add to other list as well if full
+//			if(runtime && _full) _list[ncylinder].push_back(cylinder);
+		}
+	}
+}
+
+
+void CaMKIIingPointCylinderNL::addNeighbor(Neighbor* n) {
+
+	//return if not a cylinder!
+	Cylinder* cylinder;
+	if(!(cylinder = dynamic_cast<Cylinder*>(n))) return;
+
+	//update neighbors
+	updateNeighbors(cylinder, true);
+}
+
+void CaMKIIingPointCylinderNL::removeNeighbor(Neighbor* n) {
+
+	Cylinder* cylinder;
+	if(!(cylinder = dynamic_cast<Cylinder*>(n))) return;
+
+	_list.erase(cylinder);
+
+	//remove from other lists
+	for(auto it = _list.begin(); it != _list.end(); it++) {
+
+		auto cit = find(it->second.begin(), it->second.end(), cylinder);
+		if(cit != it->second.end()) it->second.erase(cit);
+	}
+}
+
+void CaMKIIingPointCylinderNL::reset() {
+
+	_list.clear();
+
+	//loop through all neighbor keys
+	for(auto cylinder: Cylinder::getCylinders())
+
+		updateNeighbors(cylinder);
+}
+
+vector<Cylinder*> CaMKIIingPointCylinderNL::getNeighbors(Cylinder* cylinder) {
+	return _list[cylinder];
+}
+
+#endif
 
 
 //CYLINDER-CYLINDER
@@ -47,32 +136,43 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
     
     for(auto &comp : compartments) {
         for(auto &ncylinder : comp->getCylinders()) {
-            
+
+        	// We are skipping the rest of the iteration if it is a
+        	const bool isCaMKII_b1 = (dynamic_cast<CaMKIICylinder*>(cylinder) != nullptr);
+        	const bool isCaMKII_b2 = (dynamic_cast<CaMKIICylinder*>(ncylinder) != nullptr);
+//        	if(isCaMKII_b1 || isCaMKII_b2)
+//        		continue;
+
             //Don't add the same cylinder!
             if(cylinder == ncylinder) continue;
-            
-            //Dont add if ID is more than cylinder for half-list
-            if(!_full && cylinder->getID() <= ncylinder->getID()) continue;
-            
+
+			//Dont add if ID is more than cylinder for half-list
+			if (!_full && cylinder->getID() <= ncylinder->getID()) continue;
+
             //Don't add if belonging to same parent
             if(cylinder->getParent() == ncylinder->getParent()) {
-                
+
                 //if not cross filament, check if not neighboring
                 auto dist = fabs(cylinder->getPosition() -
                                  ncylinder->getPosition());
                 if(dist <= 2) continue;
             }
-            
+
             //Dont add if not within range
             double dist = twoPointDistance(cylinder->coordinate,
                                            ncylinder->coordinate);
             if(dist > _rMax || dist < _rMin) continue;
-            
+
+//            if(ncylinder == nullptr || cylinder == nullptr) {
+//            	cout << "ERROR!" << endl;
+//            }
+
             //If we got through all of this, add it!
             _list[cylinder].push_back(ncylinder);
-            
+
             //if runtime, add to other list as well if full
-            if(runtime && _full) _list[ncylinder].push_back(cylinder);
+            if((runtime && _full) || isCaMKII_b1 || isCaMKII_b2)
+            	_list[ncylinder].push_back(cylinder);
         }
     }
 }

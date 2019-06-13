@@ -602,7 +602,6 @@ struct CaMKIIBindingCallback {
 
         //choose a random binding site from manager
         auto site = _bManager->chooseBindingSite();
-        cout << get<0>(site)<< " "<< get<1>(site) << endl;
         //get info from site
         Cylinder* c1 = get<0>(site)->getCylinder();
         short filType = c1->getType();
@@ -762,26 +761,46 @@ struct CaMKIIBundlingCallback {
         Cylinder*       c2  = get<0>(get<1>(site))->getCylinder();
         short           pos2 = get<1>(get<1>(site));
 
-        cp->addBond(c2, pos2);
+        bool b1 = (dynamic_cast<CaMKIICylinder*>(c1)!= nullptr);
+        bool b2 = (dynamic_cast<CaMKIICylinder*>(c2)!= nullptr);
+
+        // If none of them or both of them are CaMKIIPoint, do nothing!
+        if((!b1 && !b2) || (b1 && b2))
+        	return;
+
+        if(b1) {
+			cp = dynamic_cast<CaMKIICylinder *>(c1)->getCaMKIIPointParent();
+
+			// cp should be CaMKIIPoint
+			cp->addBond(c2, pos2);
+
+		} else {
+			cp = dynamic_cast<CaMKIICylinder *>(c2)->getCaMKIIPointParent();
+
+			// cp should be CaMKIIPoint
+			cp->addBond(c1, pos1);
+		}
+
+        
 //TODO CJY make sure isn't needed before cleaning
 #if 0
 
         // CamKIIingPoint cylinder pair filament with
-        
+
         //get info from site
         Cylinder* c1 = get<0>(site)->getCylinder();
         short filType = c1->getType();
-        
+
         double pos = double(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
         if(SysParams::RUNSTATE==true){
         //Get a position and direction of a new filament
         auto x1 = c1->getFirstBead()->coordinate;
         auto x2 = c1->getSecondBead()->coordinate;
-        
+
         //get original direction of cylinder
         auto p= midPointCoordinate(x1, x2, pos);
         vector<double> n = twoPointDirection(x1, x2);
-        
+
         //get camkii projection
 #ifdef MECHANICS
         //use mechanical parameters
@@ -806,10 +825,10 @@ struct CaMKIIBundlingCallback {
         double t = 1.22;
 #endif
         double s = SysParams::Geometry().monomerSize[filType];
-        
+
         auto camkiiPosDir = camkiiProjection(n, p, l, s, t);
         auto bd = get<0>(camkiiPosDir); auto bp = get<1>(camkiiPosDir);
-        
+
         //TODO Search for new filament
 //        //create a new filament
 //        Filament* f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
@@ -837,7 +856,7 @@ struct CaMKIIBundlingCallback {
         //TODO Update new CAMKII to update coordination number
         //TODO Create the bonds between CAMKII and filament
         //b= _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos);
-            
+
             for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
                 auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
                 auto yy =c->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(camkiiType);
@@ -873,7 +892,7 @@ struct CaMKIIBundlingCallback {
                 //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
                 //vector<Cylinder*> cy{c1,c->getCylinder()};
                 b= _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos);
-                
+
                 x=c->getCMonomer(0);
                 for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
                     auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
@@ -889,6 +908,7 @@ struct CaMKIIBundlingCallback {
                 //exit(EXIT_FAILURE);
         }
 #endif
+
         //create off reaction
         auto cCaMKIIer = cp->getCCaMKIIingPoint();
         
