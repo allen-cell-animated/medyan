@@ -155,7 +155,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 2)
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
     else
-        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS>(species, _rate);
+        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
 
     mine = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_time3(mine - mins);
