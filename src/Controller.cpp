@@ -66,6 +66,12 @@ void prepareMembraneSharedData() {
     visual::copySystemDataAndRunHelper(visual::sys_data_update::BeadPosition | visual::sys_data_update::BeadConnection);
 }
 
+void invalidateMembraneMeshIndexCache() {
+    for(auto m : Membrane::getMembranes()) {
+        m->getMesh().getMetaAttribute().cacheValid = false;
+    }
+}
+
 } // namespace
 
 Controller::Controller(SubSystem* s) : _subSystem(s) {
@@ -1041,6 +1047,7 @@ void Controller::run() {
         mins = chrono::high_resolution_clock::now();
         cout<<"Minimizing energy"<<endl;
 
+        invalidateMembraneMeshIndexCache();
         _mController->run(false);
 
         mine= chrono::high_resolution_clock::now();
@@ -1120,6 +1127,7 @@ void Controller::run() {
 #ifdef MECHANICS
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
+    invalidateMembraneMeshIndexCache();
     _mController->run(false);
     membraneAdaptiveRemesh();
     prepareMembraneSharedData();
@@ -1231,6 +1239,7 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
 
                 mins = chrono::high_resolution_clock::now();
+                invalidateMembraneMeshIndexCache();
                 _mController->run();
 
                 // Membrane remeshing
@@ -1366,6 +1375,7 @@ void Controller::run() {
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
             if(stepsLastMinimization >= _minimizationSteps) {
+                invalidateMembraneMeshIndexCache();
                 _mController->run();
 
                 // Membrane remeshing
