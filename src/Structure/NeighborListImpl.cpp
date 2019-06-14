@@ -138,8 +138,8 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
         for(auto &ncylinder : comp->getCylinders()) {
 
         	// We are skipping the rest of the iteration if it is a
-        	const bool isCaMKII_b1 = (dynamic_cast<CaMKIICylinder*>(cylinder) != nullptr);
-        	const bool isCaMKII_b2 = (dynamic_cast<CaMKIICylinder*>(ncylinder) != nullptr);
+//        	const bool isCaMKII_b1 = (dynamic_cast<CaMKIICylinder*>(cylinder) != nullptr);
+//        	const bool isCaMKII_b2 = (dynamic_cast<CaMKIICylinder*>(ncylinder) != nullptr);
 //        	if(isCaMKII_b1 || isCaMKII_b2)
 //        		continue;
 
@@ -171,7 +171,8 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
             _list[cylinder].push_back(ncylinder);
 
             //if runtime, add to other list as well if full
-            if((runtime && _full) || isCaMKII_b1 || isCaMKII_b2)
+//            if((runtime && _full) || isCaMKII_b1 || isCaMKII_b2)
+            if((runtime && _full))
             	_list[ncylinder].push_back(cylinder);
         }
     }
