@@ -1391,19 +1391,6 @@ namespace mathfunc {
                                        int i, floatingpoint d);
 
 
-    /// Function to create a initial branching point and direction, given an
-    /// initial normal vector and point.
-    /// @param l - the distance of the branch from the original point
-    /// @param m - the size of the branch projection
-    /// @param theta - the angle of branching
-    /// @return a vector describing the initial branching direction and point
-    tuple<vector<floatingpoint>, vector<floatingpoint>> branchProjection(const vector<floatingpoint> &n,
-                                                           const vector<floatingpoint> &p,
-                                                           floatingpoint l, floatingpoint m, floatingpoint theta);
-    tuple<vector<double>, vector<double>> branchProjection(const vector<double> &n,
-                                                           const vector<double> &p,
-                                                           double l, double m, double theta);
-
 
     float delGGenChem(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);
 
