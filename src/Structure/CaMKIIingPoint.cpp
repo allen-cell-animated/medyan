@@ -196,10 +196,10 @@ CaMKIIingPoint::~CaMKIIingPoint() noexcept {
     }
 #endif
     //reset camkiiing cylinder
-    getCylinder(0)->setCaMKIIingCylinder(nullptr);
+//    getCylinder(0)->setCaMKIIingCylinder(nullptr);
             
-    for (int i=0; i<_bonds.size(); i++) { delete get<0>(_bonds[i]);}
-        _bonds.clear();
+//    for (int i=0; i<_bonds.size(); i++) { delete get<0>(_bonds[i]);}
+//        _bonds.clear();
 }
 
 void CaMKIIingPoint::updatePosition() {
