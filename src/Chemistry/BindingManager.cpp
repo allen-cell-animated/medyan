@@ -564,8 +564,8 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
     //remove all neighbors which have this binding site pair
     for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
 
-    	if(!cn)
-    		continue;
+//    	if(!cn)
+//    		continue;
 
         if(cn->getType() != _filamentType) continue;
 
