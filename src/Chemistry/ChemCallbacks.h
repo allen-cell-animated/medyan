@@ -919,6 +919,12 @@ struct MotorWalkingCallback {
         m->updateReactionRates();
 
 #endif
+        
+        if(SysParams::Chemistry().eventTracking){
+            _dt->recordWalk(m);
+        }
+        
+        
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tMotorWalkingCallback += elapsed_time.count();
