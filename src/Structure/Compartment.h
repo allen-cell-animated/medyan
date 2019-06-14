@@ -74,6 +74,7 @@ protected:
     vector<unique_ptr<FilamentBindingManager>> _branchingManagers;
 
 #ifdef HYBRID_NLSTENCILLIST
+    //Each compartment has a single instance of hybridbindingmanagers
     HybridBindingSearchManager* _bindingsearchManagers = NULL;
 #endif
     ///ELEMENT CONTAINERS
@@ -742,7 +743,6 @@ public:
     ///@return - a vector of reactionbases that was just added
     vector<ReactionBase*> generateDiffusionReactions(Compartment* C);
 
-    //Qin
     vector<ReactionBase*> generateScaleDiffusionReactions(Compartment* C);
     floatingpoint generateScaleFactor(Compartment* C);
 
@@ -828,7 +828,6 @@ public:
     bool boundaryInteresting = false; // A marker indicating this compartment is near a certain boundary
 
     //_partialVolume is the volume fraction
-    //TODO, need to double check
     floatingpoint getPartialVolume()const { return _partialVolume; }
     void setPartialVolume(floatingpoint partialVolume) { _partialVolume = partialVolume; }
     floatingpoint getVolumeFrac()const {

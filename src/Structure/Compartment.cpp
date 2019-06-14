@@ -1789,7 +1789,7 @@ void Compartment::getSlicedVolumeArea() {
 //    }
 }
 
-//TODO
+
 vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
     // The compartment C and "this" must be neighbors of each other, and
     // "this" must be an active compartment.

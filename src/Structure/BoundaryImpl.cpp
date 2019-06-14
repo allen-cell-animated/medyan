@@ -112,7 +112,6 @@ floatingpoint BoundaryCubic::distance(const vector<floatingpoint>& coordinates) 
     return smallestDist;
 }
 
-//Qin
 floatingpoint BoundaryCubic::lowerdistance(const vector<floatingpoint>& coordinates) {
     
     // loop through, get smallest non-negative distance
@@ -425,7 +424,7 @@ floatingpoint BoundarySpherical::distance(const vector<floatingpoint>& coordinat
     else return numeric_limits<floatingpoint>::infinity();
 }
 
-//Qin, the same as distance
+//the same as distance
 floatingpoint BoundarySpherical::lowerdistance(const vector<floatingpoint>& coordinates) {
     
     auto be = _boundarySurfaces[0]->boundaryElements()[0].get();
@@ -563,9 +562,6 @@ void BoundaryCapsule::volume(){
     floatingpoint pi = 22/7;
     Boundary::systemvolume = (h + 4/3 * r) * pi * r * r;
 }
-
-///Qin------------------
-
 
 BoundaryCylinder::BoundaryCylinder(SubSystem* s, floatingpoint diameter, vector<BoundaryMove> move)
 

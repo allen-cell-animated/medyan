@@ -59,6 +59,8 @@ public:
     
     ///Constructor
     CylinderExclVolume() {
+        //If Hybrid NeighborList is not preferred, neighborList is created using Original
+        // framework.
 #ifndef HYBRID_NLSTENCILLIST
         _neighborList = new CylinderCylinderNL(SysParams::Mechanics().VolumeCutoff);
 #endif

@@ -43,9 +43,8 @@ void DRController::initialize(DynamicRateType& drTypes) {
             filamentIndex++;
         }
     }
-    
 
-    //Qin branching point unbinding changer
+    //branching point unbinding changer
     int branchIndex = 0;
     int charLengthIndexbr = 0;
     

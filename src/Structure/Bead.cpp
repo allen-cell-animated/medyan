@@ -33,7 +33,7 @@ vector<int> Bead::removedbindex;//vector of bead indices that were once alloted 
 // beads but are free to be reallocated now.
 
 Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
-// Qin add brforce, pinforce
+//add brforce, pinforce
     : Trackable(true),
       coordinate(v), coordinateP(v),
       force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0),
@@ -85,7 +85,7 @@ Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
 }
 
 Bead::Bead(Composite* parent, int position)
-// Qin add brforce, pinforce
+//add brforce, pinforce
     : Trackable(true),
     coordinate(3, 0), coordinateP(3, 0),
     force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0), _position(position) {

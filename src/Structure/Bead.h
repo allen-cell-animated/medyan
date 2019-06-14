@@ -62,7 +62,7 @@ public:
     vector<floatingpoint> forceAux;  ///< An auxiliary field needed during CG minimization.
     vector<floatingpoint> forceAuxP; ///< An auxiliary field needed during CG minimization.
     
-    vector<floatingpoint> brforce; //Qin boundary repulsion force
+    vector<floatingpoint> brforce; //boundary repulsion force
     vector<floatingpoint> pinforce;
 
     vector<floatingpoint> loadForcesP;
@@ -139,9 +139,6 @@ public:
     }
     
     const vector<floatingpoint>& getPinPosition() { return pinnedPosition;}
-    //Qin
-    // Remove all pinned beads.
-    //Qin
     // Remove all pinned beads.
     void resetAllPinned() {
 
@@ -204,7 +201,7 @@ public:
         brforce[1]*brforce[1] +
         brforce[2]*brforce[2];
     }
-    //Qin add pinFDotpinF
+    //add pinFDotpinF
     inline floatingpoint pinFDotpinF() {
         return pinforce[0]*pinforce[0] +
         pinforce[1]*pinforce[1] +

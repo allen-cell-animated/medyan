@@ -386,7 +386,7 @@ void Cylinder::updateReactionRates() {
                 else{
                     newRate = _polyChanger[_type]->changeRate(r->getBareRate(), force);
                 }
-                //Ask Qin why setRate was replaced by setRateScaled
+
                 r->setRateScaled(newRate);
                 r->updatePropensity();
 

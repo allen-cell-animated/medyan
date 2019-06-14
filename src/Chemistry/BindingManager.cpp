@@ -80,7 +80,7 @@ void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
                 else
                     inZone = false;
             }
-            //Qin, add SIDEBOUNDARY that check the distance to the side of cylinder
+            //add SIDEBOUNDARY that check the distance to the side of cylinder
             else if(_nucleationZone == NucleationZoneType::SIDEBOUNDARY){
                 if(_subSystem->getBoundary()->sidedistance(coord) < _nucleationDistance)
                     inZone = true;
@@ -187,7 +187,7 @@ void BranchingManager::updateAllPossibleBindings() {
                         else
                             inZone = false;
                     }
-                    //Qin, add SIDEBOUNDARY that check the distance to the side of cylinder
+                    //add SIDEBOUNDARY that check the distance to the side of cylinder
                     else if(_nucleationZone == NucleationZoneType::SIDEBOUNDARY){
                         if(_subSystem->getBoundary()->sidedistance(coord) < _nucleationDistance){
                             inZone = true;
@@ -291,7 +291,7 @@ void BranchingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSi
                 else
                     inZone = false;
             }
-                //Qin, add SIDEBOUNDARY that check the distance to the side of cylinder
+                //add SIDEBOUNDARY that check the distance to the side of cylinder
             else if(_nucleationZone == NucleationZoneType::SIDEBOUNDARY){
                 if(_subSystem->getBoundary()->sidedistance(coord) < _nucleationDistance)
                     inZone = true;
@@ -366,7 +366,7 @@ void BranchingManager::updateAllPossibleBindingsstencil() {
                         else
                             inZone = false;
                     }
-                    //Qin, add SIDEBOUNDARY that check the distance to the side of cylinder
+                    //add SIDEBOUNDARY that check the distance to the side of cylinder
                     else if(_nucleationZone == NucleationZoneType::SIDEBOUNDARY){
                         if(_subSystem->getBoundary()->sidedistance(coord) < _nucleationDistance){
                             inZone = true;

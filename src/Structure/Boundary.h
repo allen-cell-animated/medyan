@@ -72,8 +72,7 @@ public:
     /// closest boundary element in the boundary.
     /// Will return infinity if outside of the boundary.
     virtual floatingpoint distance(const vector<floatingpoint>& coordinates) = 0;
-    
-    //Qin
+
     // Returns the distance from the boundary element in the lower boundary
     virtual floatingpoint lowerdistance(const vector<floatingpoint>& coordinates) = 0;
     // Returns the distance from the boundary element in the side boundary

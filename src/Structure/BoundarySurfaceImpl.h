@@ -79,7 +79,6 @@ public:
     
 };
 
-//Qin -----
 /// A simple implementation of the BoundarySurface class.
 class CylinderXYZ: public BoundarySurface {
     

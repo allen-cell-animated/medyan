@@ -87,7 +87,6 @@ public:
     //@}
 
     //@{
-    //Qin
     virtual floatingpoint lowerdistance(const vector<floatingpoint>& point) = 0;
     virtual floatingpoint sidedistance(const vector<floatingpoint>& point) = 0;
 

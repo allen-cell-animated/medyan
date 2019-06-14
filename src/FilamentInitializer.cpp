@@ -35,7 +35,7 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
     //Create random distribution of filaments
     int filamentCounter = 0;
 
-    //Qin, if boundary shape is cylinder, create filament in the center of system and perpendicular to Z axis
+    //if boundary shape is cylinder, create filament in the center of system and perpendicular to Z axis
     if(b->getShape() == BoundaryShape::Cylinder) {
 
         while (filamentCounter < numFilaments) {
@@ -78,7 +78,6 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
         return make_tuple(filaments, dummy, dummy2, dummy3);
     }
 
-    //Qin
     else{
         while (filamentCounter < numFilaments) {
 

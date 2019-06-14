@@ -65,8 +65,7 @@ private:
     
     ///Helper to get coordinate
     void updateCoordinate();
-    
-    //Qin ---
+
     ///For dynamic rate unbinding
     static vector<BranchRateChanger*> _unbindingChangers;
     

@@ -46,7 +46,7 @@ floatingpoint BoundaryBubbleRepulsionExp::energy(floatingpoint *coord, floatingp
 
                 //set culprit and return
                 BoundaryInteractions::_boundaryElementCulprit = be;
-                ///TODO
+                //TODO
                 //BoundaryInteractions::_otherCulprit;
 
                 return -1;
@@ -90,7 +90,7 @@ floatingpoint BoundaryBubbleRepulsionExp::energy(floatingpoint *coord, floatingp
 
                 //set culprit and return
                 BoundaryInteractions::_boundaryElementCulprit = be;
-                ///TODO
+                //TODO
                 //BoundaryInteractions::_otherCulprit;
 
                 return -1;

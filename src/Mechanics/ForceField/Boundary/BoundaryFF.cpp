@@ -53,7 +53,7 @@ BoundaryFF::BoundaryFF (string type) {
         new BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>());
     }
     
-    //Qin, don't change it for now
+    //don't change it for now
     if(SysParams::Mechanics().pinLowerBoundaryFilaments) {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>());

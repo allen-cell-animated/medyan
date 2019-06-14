@@ -54,11 +54,11 @@ public:
                 sqrt(pow(_a, 2) + pow(_b, 2) + pow(_c, 2));
     }
 
-    //Qin,  lower distance is the z axis
+    //lower distance is the z axis
     virtual floatingpoint lowerdistance(const vector<floatingpoint>& point) {
         return point[2];
     }
-    //Qin, side distance is either x or y axis
+    //side distance is either x or y axis
     virtual floatingpoint sidedistance(const vector<floatingpoint>& point) {
         if(point[0] > point[1]) {
             return point[1];
@@ -147,7 +147,7 @@ public:
     virtual const void elementeqn(floatingpoint* var){
         var[0] = _radius;
     }
-    //Qin, the same as distance
+    //the same as distance
     virtual floatingpoint lowerdistance(const vector<floatingpoint>& point) {
 
         return _radius - twoPointDistance(_coords, point);
@@ -230,7 +230,7 @@ public:
         var[0] = _radius; var[1] = _height;
     }
 
-    //Qin, find the distance for the lower boundary
+    //find the distance for the lower boundary
     virtual floatingpoint lowerdistance(const vector<floatingpoint>& point) {
 
 
@@ -239,7 +239,7 @@ public:
     }
 
 
-    //Qin, find the distance for the side boundary
+    //find the distance for the side boundary
     virtual floatingpoint sidedistance(const vector<floatingpoint>& point) {
 
         auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
@@ -259,14 +259,17 @@ public:
         return distance(movedPoint);
 
     }
-    ///TODO
+    //TODO
     virtual floatingpoint stretchedDistance(floatingpoint const *point,
                                             floatingpoint const *force,
-                                     floatingpoint d) {return 0.0;}
+                                            floatingpoint d) {
+        cout<<"stretchedDistance not implemented for CylindricalZBoundaryElement. Exiting"
+             "..."<<endl;
+        exit(EXIT_FAILURE);
+        return 0.0;}
 
     virtual const vector<floatingpoint> normal(const vector<floatingpoint>& point) {
 
-        //Qin
         auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
                                               {  point[0],  point[1], 0});
 
@@ -286,11 +289,9 @@ public:
             return twoPointDirection({point[0],  point[1], 0},
                  {_coords[0],_coords[1], 0});
       }
-      //return twoPointDirection({point[0],  point[1], 0},
-      //                         {_coords[0],_coords[1], 0});
     }
 
-    ///TODO
+    //TODO
     virtual const vector<floatingpoint> normal(floatingpoint const *point) {cout<<"Function not "
                                                                     "implemented. Exiting."<<endl;
     exit(EXIT_FAILURE);
@@ -326,7 +327,7 @@ public:
         return _radius - twoPointDistance(_coords, point);
     }
 
-    ///TODO
+    //TODO
     virtual floatingpoint distance(floatingpoint const *point) {
         cout<<"Distance not implemented for Boundary Element of HalfSphereZ type. "
                 "Exiting"<<endl;
@@ -359,18 +360,26 @@ public:
         var[0] = _radius;
     }
 
-    ///TODO
+    //TODO
     virtual floatingpoint stretchedDistance(floatingpoint const *point,
                                             floatingpoint const *force,
-                                     floatingpoint d) {return 0.0;}
+                                     floatingpoint d) {
+        cout<<"stretchedDistance not implemented for HalfSphereZBoundaryElement. "
+              "Exiting"<<endl;
+        exit(EXIT_FAILURE);
+        return 0.0;}
 
     virtual const vector<floatingpoint> normal(const vector<floatingpoint>& point) {
 
         return twoPointDirection(point, _coords);
     }
 
-    ///TODO
-    virtual const vector<floatingpoint> normal(floatingpoint const *point) {return vector<floatingpoint>{};};
+    //TODO
+    virtual const vector<floatingpoint> normal(floatingpoint const *point) {
+        cout<<"normal not implemented for HalfSphereZBoundaryElement. Exiting."<<endl;
+        exit(EXIT_FAILURE);
+        return
+        vector<floatingpoint>{};};
 
     virtual void updateCoords(const vector<floatingpoint> newCoords) {
 
@@ -421,13 +430,13 @@ public:
         }
     }
 
-    //Qin, find the distance for the lower boundary
+    //find the distance for the lower boundary
     virtual floatingpoint lowerdistance(const vector<floatingpoint>& point) {
 
         return point[2];
     }
 
-    //Qin, find the distance for the side boundary
+    //find the distance for the side boundary
     virtual floatingpoint sidedistance(const vector<floatingpoint>& point) {
 
 
@@ -452,7 +461,6 @@ public:
 
     virtual const vector<floatingpoint> normal(const vector<floatingpoint>& point) {
 
-        //Qin
         auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0.0},
                                               {  point[0],  point[1], 0.0});
 

@@ -205,7 +205,6 @@ struct BoundaryType {
     
     string boundaryShape = "";
     vector<string> boundaryMove = {};
-    //Qin
     //string scaleDiffusion = "";
 };
 

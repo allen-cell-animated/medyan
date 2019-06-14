@@ -51,9 +51,9 @@ public:
     virtual const string getName() = 0;
 
 #ifdef HYBRID_NLSTENCILLIST
-
+    //setter to store HNeighborList pointer.
     virtual void setHNeighborList(HybridCylinderCylinderNL* Hnl) = 0;
-
+    //getter to obtain HNeighborList pointer.
     virtual HybridCylinderCylinderNL* getHNeighborList() = 0;
 #endif
 

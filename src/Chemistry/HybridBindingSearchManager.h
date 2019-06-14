@@ -29,9 +29,6 @@
 #include "Rand.h"
 #include "BindingManager.h"
 #include "dist_driver.h"
-/*#include <deque>
-#include <tuple>
-#include <thrust/binary_search.h>*/
 
 //FORWARD DECLARATIONS
 class SubSystem;

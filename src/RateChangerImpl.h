@@ -100,7 +100,6 @@ public:
     virtual float changeRate(float bareRate, floatingpoint force);
 };
 
-// Qin -------------------------
 ///A slip bond implementation of the BrancherRateChanger.
 ///The same as crosslinker so far, details is being explored
 

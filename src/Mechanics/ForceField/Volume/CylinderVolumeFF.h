@@ -53,6 +53,7 @@ public:
     
     virtual vector<NeighborList*> getNeighborLists();
 #ifdef HYBRID_NLSTENCILLIST
+    //setter to store HybridneighborList pointer
     virtual void setHNeighborLists(HybridCylinderCylinderNL* Hnl);
 #endif
 };

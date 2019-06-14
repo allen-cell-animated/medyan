@@ -177,7 +177,6 @@ void SystemParser::readChemParams() {
         if (line.find("SPECIALPROTOCOL") != string::npos) {
 
             vector<string> lineVector = split<string>(line);
-            //Qin
             //the vector size can be 5 for PINLOWERBOUNDARYFILAMENTS
             if(lineVector.size() > 5) {
                 cout <<
@@ -1458,7 +1457,7 @@ DynamicRateType SystemParser::readDynamicRateType() {
             }
         }
 
-            // Qin, adding branching dy type
+            //adding branching dy type
         else if (line.find("DBUNBINDINGTYPE") != string::npos) {
 
             vector<string> lineVector = split<string>(line);
@@ -1508,7 +1507,7 @@ BoundaryType SystemParser::readBoundaryType() {
                 BType.boundaryMove.push_back(lineVector[1]);
             }
         }
-        //Qin, add Compartment Scaling
+        //add Compartment Scaling
         //else if (line.find("DIFFUSIONSCALE") != string::npos) {
 
         //  vector<string> lineVector = split<string>(line);

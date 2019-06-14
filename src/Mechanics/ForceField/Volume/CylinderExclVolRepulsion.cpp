@@ -972,91 +972,10 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 		f4l[2] =  - invJJ*( 0.5*(c2[2] - c1[2] )*( -E13 + F13 + 2*E11*d + 2*F11*d -
 		                                           4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*F + F11*F +4*U*e*F - (F12*(d + F))/FF ) + (c4[2] - c3[2])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[2] - c3[2] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*F + 2*U*(d*e - a*F) - (B12*F)/BB - (F12*(d + F))/FF) ) ;
 
-
-//	    cout<<"printing analytical forces"<<endl;
-/*	    cout<<f1l[0]<<" "<<f1l[1]<<" "<<f1l[2]<<endl;
-	    cout<<f2l[0]<<" "<<f2l[1]<<" "<<f2l[2]<<endl;
-	    cout<<f3l[0]<<" "<<f3l[1]<<" "<<f3l[2]<<endl;
-	    cout<<f4l[0]<<" "<<f4l[1]<<" "<<f4l[2]<<endl;*/
-
-
-//		cout<<"-------------"<<endl;
 		#ifdef CHECKFORCES_INF_NAN
 		if(checkNaN_INF(f1l, 0, 2)||checkNaN_INF(f2l,0,2)||checkNaN_INF(f3l, 0, 2)
 		   ||checkNaN_INF(f4l,0,2)){
-
 			forceN(coord, f, beadSet, krep, i);
-
-			/*cout<<"Cylinder Exclusion Force becomes infinite. Printing data "<<endl;
-
-			short found = 0;
-			Cylinder *cyl1, *cyl2;
-			for(auto cyl:Cylinder::getCylinders()){
-				auto dbIndex1 = cyl->getFirstBead()->_dbIndex;
-				auto dbIndex2 = cyl->getSecondBead()->_dbIndex;
-				if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
-					cyl1 = cyl;
-					found++;
-					if(found>=2)
-						break;
-				}
-				else if(dbIndex1 == beadSet[n * i + 2] && dbIndex2 == beadSet[n * i + 3]){
-				   cyl2 = cyl;
-					found++;
-					if(found>=2)
-						break;
-				}
-			}
-			cout<<"Cylinder IDs "<<cyl1->getID()<<" "<<cyl2->getID()<<" with cIndex "
-				<<cyl1->_dcIndex<<" "<<cyl2->_dcIndex<<" and bIndex "
-				<<cyl1->getFirstBead()->_dbIndex<<" "
-				<<cyl1->getSecondBead()->_dbIndex<<" "
-				<<cyl2->getFirstBead()->_dbIndex<<" "
-				<<cyl2->getSecondBead()->_dbIndex<<endl;
-
-			cout<<"Printing coords"<<endl;
-			cout<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<endl;
-			cout<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<endl;
-			cout<<c3[0]<<" "<<c3[1]<<" "<<c3[2]<<endl;
-			cout<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
-			cout<<"Printing force"<<endl;
-			cout<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<endl;
-			cout<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<endl;
-			cout<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<endl;
-			cout<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
-			cout<<"Printing binary Coords"<<endl;
-			printvariablebinary(c1,0,2);
-			printvariablebinary(c2,0,2);
-			printvariablebinary(c3,0,2);
-			printvariablebinary(c4,0,2);
-			cout<<"Printing binary Force"<<endl;
-			printvariablebinary(f1,0,2);
-			printvariablebinary(f2,0,2);
-			printvariablebinary(f3,0,2);
-			printvariablebinary(f4,0,2);
-
-			cout<<"Printing infinite energy contributions "<<endl;
-			cout<<"a "<<a<<" b "<<b<<" c "<<c<<" d "<<d<<" e "<<e<<" f "<<F<<endl;
-			cout<<"JJ "<<JJ<<" CC "<<CC<<" AA "<<AA<<" ATG1 "<<ATG1<<" GG "<<GG<<" EE "
-				<<EE<<" ATG2 "<<ATG2<<" DD "<<DD<<" BB "<<BB<<" ATG3 "<<ATG3<<" HH "<<HH<<" FF "
-				<<FF<<" ATG4 "<<ATG4<<endl;
-			 AA = sqrt(a*c - e*e);
-			 BB = sqrt(b*c - F*F);
-
-			 CC = d*e - a*F;
-			 DD = b*e - d*F;
-
-			 EE = sqrt( a*(b + c - 2*F) - (d - e)*(d - e) );
-			 FF = sqrt( b*(a + c + 2*e) - (d + F)*(d + F) );
-
-			 GG = d*d - a*b - CC;
-			 HH = CC + GG - DD;
-			 JJ = c*(GG + CC) + e*DD - F*CC;
-			cout<<"JJ "<<JJ<<" CC "<<CC<<" AA "<<AA<<" ATG1 "<<ATG1<<" GG "<<GG<<" EE "
-				<<EE<<" ATG2 "<<ATG2<<" DD "<<DD<<" BB "<<BB<<" ATG3 "<<ATG3<<" HH "<<HH<<" FF "
-				<<FF<<" ATG4 "<<ATG4<<endl;
-
-			exit(EXIT_FAILURE);*/
 		}
 		else{
 			for(int dim = 0; dim<3; dim++) {

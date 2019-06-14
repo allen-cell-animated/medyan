@@ -50,7 +50,6 @@ public:
     virtual float changeRate(float bareRate, floatingpoint force) = 0;
 };
 
-// Qin -----------------------------
 /// Used to change Linker reaction rates based on forces in the network
 /*!
  *  The LinkerRateChanger class is an abstract class which allows

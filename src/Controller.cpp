@@ -98,7 +98,7 @@ void Controller::initialize(string inputFile,
     //ReactionOut should be the last one in the output list
     //Otherwise incorrect deltaMinusEnd or deltaPlusEnd values may be genetrated.
     _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", _subSystem));
-    //Qin add br force out and local diffussing species concentration
+    //add br force out and local diffussing species concentration
     _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
     //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", _subSystem));
 
@@ -851,7 +851,7 @@ void Controller::pinBoundaryFilaments() {
         }
     }
 }
-//Qin
+
 void Controller::pinLowerBoundaryFilaments() {
 
     //renew pinned filament list everytime

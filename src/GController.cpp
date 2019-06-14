@@ -487,7 +487,6 @@ vector<floatingpoint> GController::getRandomCoordinates(Compartment* c) {
     return coords;
 }
 
-//Qin
 vector<floatingpoint> GController::getRandomCenterCoordinates(Compartment* c) {
     
     //get coordinates of compartment

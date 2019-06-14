@@ -186,8 +186,7 @@ void BranchingPoint::updatePosition() {
 #endif
     }
 }
-            
-//Qin ----
+
 void BranchingPoint::updateReactionRates() {
                 
         //if no rate changers were defined, skip

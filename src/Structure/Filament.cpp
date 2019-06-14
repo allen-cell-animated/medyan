@@ -659,9 +659,6 @@ Filament* Filament::sever(int cylinderPosition) {
     cc1->removeCrossCylinderReactions(cc2);
     cc2->removeCrossCylinderReactions(cc1);
 #endif
-    
-    //Qin
-
     _severingReaction++;
     _severingID.push_back(newFilament->getID());
     return newFilament;

@@ -1099,7 +1099,6 @@ namespace mathfunc {
 	    normalizeVector(cp);
 	    normalizeVector(v3);
 	    //Check for equality with a lowered threshold
-//	    cout<<"dotProduct "<<dotProduct(v3, cp)<<endl;
         auto retVal = areEqualLT(dotProduct(v3, cp), (floatingpoint)0.0);
         delete [] v1;
         delete [] v2;
@@ -1133,15 +1132,11 @@ namespace mathfunc {
         v3[1] = p4[id + 1] - p1[id + 1];
         v3[2] = p4[id + 2] - p1[id + 2];
 
-//        printf("%f %f %f %f %f %f %f %f %f\n",v1[0],v1[1],v1[2],v2[0],v2[1],v2[2],v3[0],v3[1],v3[2]);
-//        cp[0] = v1[1] * v2[2] - v1[2] * v2[1];
-//        cp[1] = v1[2] * v2[0] - v1[0] * v2[2];
-//        cp[2] = v1[0] * v2[1] - v1[1] * v2[0];
-
         crossProduct(cp, v1, v2);
-//        auto xxx=dotProduct(v3, cp);
-        auto retVal = areEqual(dotProduct(v3, cp), 0.0);
-//        delete v1, v2, cp;
+	    //Normalize before checking the angle.
+	    normalizeVector(cp);
+	    normalizeVector(v3);
+        auto retVal = areEqualLT(dotProduct(v3, cp), (floatingpoint)0.0);
         return retVal;
     }
 

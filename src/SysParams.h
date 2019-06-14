@@ -84,7 +84,6 @@ struct MechParams {
     //@{
     /// SPECIAL MECHANICAL PROTOCOLS
 
-    //Qin
     bool pinLowerBoundaryFilaments = false;
     floatingpoint pinFraction = 1.0; //test
     

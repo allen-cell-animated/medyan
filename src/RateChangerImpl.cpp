@@ -40,7 +40,6 @@ float LinkerSlip::changeRate(float bareRate, floatingpoint force) {
     return newRate;
 }
 
-//Qin ----------------
 float BranchSlip::changeRate(float bareRate, floatingpoint force) {
 
     floatingpoint newRate = bareRate * exp( force * _x / kT);

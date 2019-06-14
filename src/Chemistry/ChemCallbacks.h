@@ -614,7 +614,7 @@ struct BranchingCallback {
         cBrancher->createOffReaction(r, _ps);
         cBrancher->getOffReaction()->setBareRate(SysParams::BUBBareRate[branchType]);
 #ifdef DYNAMICRATES
-        //Qin ----------------
+
         b -> updateReactionRates();
 #endif
 	    mine = chrono::high_resolution_clock::now();
@@ -1028,7 +1028,7 @@ struct FilamentCreationCallback {
         //set up a random initial position and direction
         vector<floatingpoint> position;
         vector<floatingpoint> direction;
-        //Qin
+
         if(_ps->getBoundary()->getShape() == BoundaryShape::Cylinder) {
             while(true) {
                 position = GController::getRandomCenterCoordinates(c);
@@ -1058,11 +1058,9 @@ struct FilamentCreationCallback {
                 //check if within boundary && if within REPULSIONEXPIN region (set as 125nm)
                 if(_ps->getBoundary()->within(position) &&
                    _ps->getBoundary()->within(npp)){
-                    cout<<"Check this line now"<<endl;
-                    exit(EXIT_FAILURE);
-/*                    if(_ps->getBoundary()->distance(position) > 125 &&
-                       _ps->getBoundary()->distance(npp) > 125)*/
-                        break;
+                    if(_ps->getBoundary()->distance(position) > 125 &&
+                       _ps->getBoundary()->distance(npp) > 125)
+                    	break;
                 }
 
             }

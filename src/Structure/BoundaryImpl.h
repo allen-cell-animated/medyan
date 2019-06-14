@@ -35,8 +35,7 @@ public:
     virtual bool within(const vector<floatingpoint>& coordinates);
 
     virtual floatingpoint distance(const vector<floatingpoint>& coordinates);
-    
-    //Qin
+
     virtual floatingpoint lowerdistance(const vector<floatingpoint>& coordinates);
     virtual floatingpoint sidedistance(const vector<floatingpoint>& coordinates);
 
@@ -96,7 +95,7 @@ public:
 
     virtual floatingpoint distance(const vector<floatingpoint>& coordinates);
     virtual floatingpoint getboundaryelementcoord(int i){};
-    //Qin
+
     virtual floatingpoint lowerdistance(const vector<floatingpoint>& coordinates);
     virtual floatingpoint sidedistance(const vector<floatingpoint>& coordinates);
     
