@@ -29,9 +29,7 @@
 
 #include "SysParams.h"
 
-#ifdef CUDAACCL
 #include "CUDAcommon.h"
-#endif
 #include "CGMethod.h"
 #include "Filament.h"
 #include "Cylinder.h"
@@ -42,7 +40,7 @@
 #include "HybridNeighborListImpl.h"
 
 #include <initializer_list>
-
+#include "dist_common.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
@@ -90,6 +88,7 @@ public:
     /// Add a Trackable to the SubSystem
     template<class T, typename ...Args>
     T *addTrackable(Args &&...args) {
+	    minsT = chrono::high_resolution_clock::now();
 
         //create instance
         T *t = new T(forward<Args>(args)...);
@@ -103,21 +102,31 @@ public:
 
         //if neighbor, add
         if (t->_dneighbor) {
+	        minsN = chrono::high_resolution_clock::now();
 #ifdef HYBRID_NLSTENCILLIST
             _HneighborList->addDynamicNeighbor((DynamicNeighbor *) t);
-            //Remove boundary and bubble neighbors
+            //Remove boundary neighbors
             for (auto nlist : __bneighborLists.getElements())
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
 #else
             for (auto nlist : _neighborLists.getElements())
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
 #endif
+	        mineN = chrono::high_resolution_clock::now();
+	        chrono::duration<floatingpoint> elapsed_time(mineN - minsN);
+	        timedneighbor += elapsed_time.count();
 
         } else if (t->_neighbor) {
+	        minsN = chrono::high_resolution_clock::now();
             for (auto nlist : _neighborLists.getElements())
                 nlist->addNeighbor((Neighbor *) t);
+	        mineN = chrono::high_resolution_clock::now();
+	        chrono::duration<floatingpoint> elapsed_time(mineN - minsN);
+	        timeneighbor += elapsed_time.count();
         }
-
+	    mineT = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_timeT(mineT - minsT);
+	    timetrackable += elapsed_timeT.count();
         return t;
     }
 
@@ -220,8 +229,8 @@ public:
 #endif
     //@{
     ///Subsystem energy management
-    double getSubSystemEnergy() {return _energy;}
-    void setSubSystemEnergy(double energy) {_energy = energy;}
+    floatingpoint getSubSystemEnergy() {return _energy;}
+    void setSubSystemEnergy(floatingpoint energy) {_energy = energy;}
     //@}
     
     //@{
@@ -243,9 +252,16 @@ public:
         return _staticgrid;
     }
 
-    static double HYBDtime;
+    static floatingpoint SIMDtime;
+    static floatingpoint SIMDtimeV2;
+    static floatingpoint HYBDtime;
+	static floatingpoint timeneighbor;
+	static floatingpoint timedneighbor;
+	static floatingpoint timetrackable;
 private:
-    double _energy = 0; ///< Energy of this subsystem
+	chrono::high_resolution_clock::time_point minsN, mineN, minsT,mineT;
+    dist::Coords temptest;
+    floatingpoint _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer
     
     unordered_set<Movable*> _movables; ///< All movables in the subsystem
@@ -265,11 +281,13 @@ private:
     CCylinder** ccylindervec;
     Cylinder** cylinderpointervec;
     static CompartmentGrid* _staticgrid;
-    double* cylsqmagnitudevector = NULL;
+    floatingpoint* cylsqmagnitudevector;
     static bool initialize;
+
+    chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD;
 #ifdef CUDAACCL_NL
-    double* gpu_coord;
-    double* gpu_coord_com;
+    floatingpoint* gpu_coord;
+    floatingpoint* gpu_coord_com;
     int * gpu_beadSet;
     int *gpu_cylID;
     int *gpu_filID;
@@ -281,8 +299,8 @@ private:
 //    int *gpu_cylvecpospercmp;
     int *gpu_fvecpos;
     int *gpu_filType;
-    double *coord;
-    double *coord_com;
+    floatingpoint *coord;
+    floatingpoint *coord_com;
     int *beadSet;
     int *cylID;
     int *filID;

@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
     Controller c(s);
 
     string inputFile, inputDirectory, outputDirectory;
-
+	int threadcount = 0;
     // Parsing command line args
     {
         using namespace cmdparse;
@@ -98,6 +98,7 @@ int main(int argc, char **argv) {
         cmdMain.addOptionWithVar('s', "", "file", "System input file", true, inputFile);
         cmdMain.addOptionWithVar('i', "", "path", "Input directory", true, inputDirectory);
         cmdMain.addOptionWithVar('o', "", "path", "Output directory", true, outputDirectory);
+	    cmdMain.addOptionWithVar('t', "", "int", "Thread Count", false, threadcount);
         cmdMain.addHelp();
 
         try {
@@ -121,7 +122,7 @@ int main(int argc, char **argv) {
     ::medyan::logger::Logger::defaultLoggerInitialization();
 
     //initialize and run system
-    c.initialize(inputFile, inputDirectory, outputDirectory);
+    c.initialize(inputFile, inputDirectory, outputDirectory, threadcount);
     c.run();
 
 }

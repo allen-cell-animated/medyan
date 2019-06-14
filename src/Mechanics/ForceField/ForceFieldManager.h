@@ -34,6 +34,8 @@ friend class CGMethod;
 public:
      vector<ForceField*> _forceFields; ///< All forcefields in the system
 
+     static ForceField* _culpritForceField;
+
     /// Vectorize all interactions involved in calculation
     void vectorizeAllForceFields();
     /// Deallocation of vectorized memory
@@ -44,18 +46,20 @@ public:
     /// energy calculation, such that beads will not be moved to this
     /// problematic configuration.
     /// @param print - prints detailed info about energies
-    double computeEnergy(double *coord, double *f, double d, bool verbose = false);
+    floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d, bool verbose = false);
 
     /// Compute the forces of all force fields
-    void computeForces(double *coord, double *f);
-
+    void computeForces(floatingpoint *coord, floatingpoint *f);
+    
     /// Copy forces from f to fprev
-    void copyForces(double *f, double *fprev);
+    void copyForces(floatingpoint *f, floatingpoint *fprev);
+
+    void printculprit(floatingpoint* force);
 
 #ifdef CUDAACCL
         cudaStream_t  streamF = NULL;
     /// CUDA Copy forces from f to fprev
-    void CUDAcopyForces(cudaStream_t  stream, double *f, double *fprev);
+    void CUDAcopyForces(cudaStream_t  stream, floatingpoint *f, floatingpoint *fprev);
 #endif
 
     /// Compute the load forces on the beads. This does not update the force (xyz) vector
@@ -74,10 +78,12 @@ public:
     int *gpu_params;
     vector<int> params;
     //@}
-  
+
 #endif
     void assignallforcemags();
 
+private:
+    chrono::high_resolution_clock::time_point tbegin, tend;
 };
 
 #endif

@@ -28,7 +28,7 @@ class FilamentRateChanger {
     
 public:
     /// Change the reaction rate based on a bare rate and given force.
-    virtual float changeRate(float bareRate, double force) = 0;
+    virtual float changeRate(float bareRate, floatingpoint force) = 0;
 };
 
 /// Used to change Linker reaction rates based on forces in the network
@@ -47,7 +47,7 @@ public:
     LinkerRateChanger(short linkerType) : _linkerType(linkerType) {}
     
     /// Change the reaction rate based on a bare rate and given force.
-    virtual float changeRate(float bareRate, double force) = 0;
+    virtual float changeRate(float bareRate, floatingpoint force) = 0;
 };
 
 // Qin -----------------------------
@@ -67,7 +67,7 @@ public:
     BranchRateChanger(short branchType) : _branchType(branchType) {}
     
     /// Change the reaction rate based on a bare rate and given force.
-    virtual float changeRate(float bareRate, double force) = 0;
+    virtual float changeRate(float bareRate, floatingpoint force) = 0;
 };
 
 /// Used to change MotorGhost reaction rates based on forces in the network
@@ -87,12 +87,12 @@ public:
     
     /// Calculate the number of bound heads in the ensemble, dependent on force
     virtual float numBoundHeads(float onRate, float offRate,
-                                double force, int numHeads) = 0;
+                                floatingpoint force, int numHeads) = 0;
     
     /// Change the reaction rate based on an on rate, off rate,
     /// number of heads, and given force.
     virtual float changeRate(float onRate, float offRate,
-                             double numBoundHeads, double force) = 0;
+                             floatingpoint numBoundHeads, floatingpoint force) = 0;
 };
 
 #endif

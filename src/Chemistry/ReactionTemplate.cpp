@@ -22,12 +22,13 @@
 #include "SysParams.h"
 #include "MathFunctions.h"
 
-
+#include "CUDAcommon.h"
 
 using namespace mathfunc;
 
 void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
 
+    mins = chrono::high_resolution_clock::now();
     //loop through all monomers of filament
     int maxlength = cc->getSize();
 
@@ -102,6 +103,11 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
 
     }
 
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_time1(mine - mins);
+    CUDAcommon::ppendtime.rxntempate1 += elapsed_time1.count();
+
+    mins = chrono::high_resolution_clock::now();
     //add extension callback reaction
     CMonomer* m = cc->getCMonomer(maxlength - 1);
     vector<Species*> reactantSpecies;
@@ -134,6 +140,11 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     for(auto j : SysParams::Chemistry().bindingIndices[_filamentType])
         productSpecies.push_back(m->speciesBound(j));
 
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_time2(mine - mins);
+    CUDAcommon::ppendtime.rxntempate2 += elapsed_time2.count();
+
+    mins = chrono::high_resolution_clock::now();
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
@@ -146,12 +157,20 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     else
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
 
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_time3(mine - mins);
+    CUDAcommon::ppendtime.rxntempate3 += elapsed_time3.count();
+
+    mins = chrono::high_resolution_clock::now();
     //callbacks
 #ifdef REACTION_SIGNALING
     short plusEndProduct = getInt(_products[1]);
     FilamentExtensionPlusEndCallback extCallback(cc->getCylinder(), plusEndProduct);
     ConnectionBlock rcb(rxn->connect(extCallback,false));
 #endif
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_time4(mine - mins);
+    CUDAcommon::ppendtime.rxntempate4 += elapsed_time4.count();
 
     cc->addInternalReaction(rxn);
     rxn->setReactionType(ReactionType::POLYMERIZATIONPLUSEND);
@@ -889,7 +908,7 @@ void DestructionTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     CMonomer* m2 = cc2->getCMonomer(0);
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
-
+    
     //FIRST REACTANT MUST BE PLUS END
     auto r = _reactants[0];
     reactantSpecies.push_back(m2->speciesPlusEnd(getInt(r)));

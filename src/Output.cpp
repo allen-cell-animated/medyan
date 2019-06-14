@@ -16,6 +16,7 @@
 #include "Output.h"
 
 #include "SubSystem.h"
+#include "CompartmentGrid.h"
 
 #include "Filament.h"
 #include "Cylinder.h"
@@ -26,7 +27,6 @@
 #include "Bubble.h"
 
 #include "Boundary.h"
-#include "CompartmentGrid.h"
 #include "Compartment.h"
 #include "GController.h"
 
@@ -278,14 +278,14 @@ void Forces::print(int snapshot) {
 
         //print force
         for (auto cylinder : filament->getCylinderVector()){
-
-            double forceMag= cylinder->getFirstBead()->FDotF();
+            
+            floatingpoint forceMag= cylinder->getFirstBead()->FDotF();
             forceMag = sqrt(forceMag);
             _outputFile<<forceMag << " ";
 
         }
         //print last bead force
-        double forceMag = filament->getCylinderVector().back()->
+        floatingpoint forceMag = filament->getCylinderVector().back()->
                           getSecondBead()->FDotF();
         forceMag = sqrt(forceMag);
         _outputFile<<forceMag;
@@ -378,9 +378,9 @@ void Tensions::print(int snapshot) {
 
         //print
         for (auto cylinder : filament->getCylinderVector()){
-
-            double k = cylinder->getMCylinder()->getStretchingConst();
-            double deltaL = cylinder->getMCylinder()->getLength() -
+            
+            floatingpoint k = cylinder->getMCylinder()->getStretchingConst();
+            floatingpoint deltaL = cylinder->getMCylinder()->getLength() -
                             cylinder->getMCylinder()->getEqLength();
 
             _outputFile<< k * deltaL << " ";
@@ -388,8 +388,8 @@ void Tensions::print(int snapshot) {
         }
         //print last
         Cylinder* cylinder = filament->getCylinderVector().back();
-        double k = cylinder->getMCylinder()->getStretchingConst();
-        double deltaL = cylinder->getMCylinder()->getLength() -
+        floatingpoint k = cylinder->getMCylinder()->getStretchingConst();
+        floatingpoint deltaL = cylinder->getMCylinder()->getLength() -
                         cylinder->getMCylinder()->getEqLength();
         _outputFile<< k * deltaL;
 
@@ -481,17 +481,17 @@ void WallTensions::print(int snapshot) {
 
         //print
         for (auto cylinder : filament->getCylinderVector()){
-
-            double k = SysParams::Mechanics().pinK;
+            
+            floatingpoint k = SysParams::Mechanics().pinK;
             Bead* b = cylinder->getFirstBead();
 
             if(b->isPinned()) {
                 auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
                 auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
-
-                double deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
-
-
+                
+                floatingpoint deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
+                
+                
                 _outputFile<< k * deltaL * dotProduct(norm, dirL) << " ";
             }
             else
@@ -500,15 +500,15 @@ void WallTensions::print(int snapshot) {
         }
         //print last
         Cylinder* cylinder = filament->getCylinderVector().back();
-        double k = SysParams::Mechanics().pinK;
+        floatingpoint k = SysParams::Mechanics().pinK;
         Bead* b = cylinder->getSecondBead();
 
         if(b->isPinned()) {
             auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
             auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
-
-            double deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
-
+            
+            floatingpoint deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
+            
             _outputFile<< k * deltaL * dotProduct(norm, dirL) << " ";
         }
         else
@@ -775,7 +775,7 @@ void Dissipation::print(int snapshot) {
 
     // print first line (snapshot number, time)
     _outputFile << snapshot << " " << tau() << endl;
-    vector<double> energies;
+    vector<floatingpoint> energies;
     energies = _cs->getEnergy();
     _outputFile << energies[0] << "     " << energies[1] << "     "<< energies[2]<<"     "<<energies[3]<<"     "<<energies[4];
 
@@ -784,7 +784,7 @@ void Dissipation::print(int snapshot) {
 
 void HRCD::print(int snapshot) {
     DissipationTracker* dt = _cs->getDT();
-    vector<tuple<string, double>> hrcdvec = dt->getHRCDVec();
+    vector<tuple<string, floatingpoint>> hrcdvec = dt->getHRCDVec();
     // print first line (snapshot number, time)
 
     _outputFile << snapshot << " " << tau() << endl;
@@ -933,9 +933,83 @@ void ReactionOut::print(int snapshot) {
         filament->getDepolyMinusEnd() << " " << filament->getDepolyPlusEnd() << " " <<
         filament->getNucleation() << " " << numMonomer << endl;
 
+        _outputFile << "SEVERING " << filament->getSevering() << endl;
+        if (filament->getNewID().size() == 0) {
+            _outputFile << "-1";
+        }
+        else {
+            for (int i = 0; i < filament->getNewID().size(); ++i) {
+                _outputFile << filament->getNewID()[i] << " ";
+            }
+        }
+
+        _outputFile << endl;
     }
 
     _outputFile << endl;
+
+}
+
+
+void BRForces::print(int snapshot) {
+
+    _outputFile.precision(10);
+
+    // print first line (snapshot number, time, number of filaments,
+    // linkers, motors, branchers)
+    _outputFile << snapshot << " " << tau() << " " <<
+    Filament::numFilaments() << " " <<
+    Linker::numLinkers() << " " <<
+    MotorGhost::numMotorGhosts() << " " <<
+    BranchingPoint::numBranchingPoints() << " " <<
+    Bubble::numBubbles() << endl;
+
+    for(auto &filament : Filament::getFilaments()) {
+
+        //print first line (Filament ID, type, length, left_delta, right_delta
+        _outputFile << "FILAMENT " << filament->getID() << " " <<
+        filament->getType() << " " <<
+        filament->getCylinderVector().size() + 1 << " " <<
+        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
+
+        //print force
+        for (auto cylinder : filament->getCylinderVector()){
+
+            floatingpoint forceMag= cylinder->getFirstBead()->brFDotbrF();
+            forceMag = sqrt(forceMag);
+            _outputFile<<forceMag << " ";
+
+        }
+        //print last bead force
+        floatingpoint forceMag = filament->getCylinderVector().back()->
+        getSecondBead()->brFDotbrF();
+        forceMag = sqrt(forceMag);
+        _outputFile<<forceMag;
+
+        _outputFile << endl;
+    }
+
+    for(auto &linker : Linker::getLinkers()) {
+
+        //print first line
+        _outputFile << "LINKER " << linker->getID()<< " " <<
+        linker->getType() << endl;
+
+        //print stretch force
+        _outputFile << linker->getMLinker()->stretchForce << " " <<
+        linker->getMLinker()->stretchForce << endl;
+    }
+
+    for(auto &motor : MotorGhost::getMotorGhosts()) {
+
+        //print first line
+        //also contains a Bound(1) or unbound(0) qualifier
+        _outputFile << "MOTOR " << motor->getID() << " " << motor->getType() << " " << 1 << endl;
+
+        //print stretch force
+        _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
+        motor->getMMotorGhost()->stretchForce << endl;
+    }
 
 }
 
@@ -965,38 +1039,38 @@ void Concentrations::print(int snapshot) {
 
 void MotorWalkingEvents::print(int snapshot) {
     DissipationTracker* dt = _cs->getDT();
-    vector<tuple<double, double, double, double>> motorData = dt->getMotorData();
+    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> motorData = dt->getMotorData();
     for(auto i = 0; i < motorData.size(); i++){
-        tuple<double, double, double, double> line = motorData[i];
+        tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint> line = motorData[i];
         _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line) <<endl;
     }
     dt->clearMotorData();
-    
-    
+
+
 }
 
 
 void LinkerUnbindingEvents::print(int snapshot) {
     DissipationTracker* dt = _cs->getDT();
-    vector<tuple<double, double, double, double>> linkerUnbindingData = dt->getLinkerUnbindingData();
+    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> linkerUnbindingData = dt->getLinkerUnbindingData();
     for(auto i = 0; i < linkerUnbindingData.size(); i++){
-        tuple<double, double, double, double> line = linkerUnbindingData[i];
+        tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint> line = linkerUnbindingData[i];
         _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line) <<endl;
     }
     dt->clearLinkerUnbindingData();
-    
-    
+
+
 }
 
 
 void LinkerBindingEvents::print(int snapshot) {
     DissipationTracker* dt = _cs->getDT();
-    vector<tuple<double, double, double, double>> linkerBindingData = dt->getLinkerBindingData();
+    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> linkerBindingData = dt->getLinkerBindingData();
     for(auto i = 0; i < linkerBindingData.size(); i++){
-        tuple<double, double, double, double> line = linkerBindingData[i];
+        tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint> line = linkerBindingData[i];
         _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line) <<endl;
     }
     dt->clearLinkerBindingData();
-    
-    
+
+
 }

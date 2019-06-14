@@ -97,7 +97,7 @@ void CCylinder::removeInternalReaction(ReactionBase* r) {
     
     //remove from internal reaction list
     if (_internalReactions.find(r) != _internalReactions.end()) {
-        
+//        std::cout<<"passivate removeInternalReaction"<<endl;
         //passivate reaction, removing from dependents
         r->passivateReaction();
         
@@ -142,7 +142,8 @@ void CCylinder::removeCrossCylinderReaction(CCylinder* other,
        
         //erase the reaction
         _crossCylinderReactions[other].erase(it);
-        
+//        std::cout<<"passivate removeCrossCylinderReaction"<<endl;
+
         //passivate reaction, removing from dependents
         r->passivateReaction();
         

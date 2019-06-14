@@ -30,20 +30,21 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::deallocate() {
 
 
 template <class BRepulsionInteractionType>
-double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double* coord, double *f, double d) {
-    
-    double U = 0.0;
-    double U_i=0.0;
+floatingpoint BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy
+(floatingpoint* coord, floatingpoint *f, floatingpoint d) {
+
+    floatingpoint U = 0.0;
+    floatingpoint U_i=0.0;
     
     for (auto bb: Bubble::getBubbles()) {
         
         for(auto &bbo : _neighborList->getNeighbors(bb)) {
             
-            double kRep = bb->getRepulsionConst();
-            double screenLength = bb->getScreeningLength();
+            floatingpoint kRep = bb->getRepulsionConst();
+            floatingpoint screenLength = bb->getScreeningLength();
             
-            double radius1 = bb->getRadius();
-            double radius2 = bbo->getRadius();
+            floatingpoint radius1 = bb->getRadius();
+            floatingpoint radius2 = bbo->getRadius();
             
             Bead* bd1 = bb->getBead();
             Bead* bd2 = bbo->getBead();
@@ -55,17 +56,17 @@ double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double* c
             U_i = _FFType.energy(
                                  bd1, bd2, radius1, radius2, kRep, screenLength, d);
             
-            if(fabs(U_i) == numeric_limits<double>::infinity()
+            if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                || U_i != U_i || U_i < -1.0) {
                 
                 //set culprits and return
-//                _otherCulprit = bbo;
-//                BubbleInteractions::_bubbleCulprit = bb;
+                //_otherCulprit = bbo;
+                //_bubbleCulprit = bb;
                 
                 return -1;
             }
             else
-            U += U_i;
+                U += U_i;
         }
     }
     
@@ -73,17 +74,17 @@ double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double* c
 }
 
 template <class BRepulsionInteractionType>
-void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces(double *coord, double *f) {
+void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
     
     for (auto bb : Bubble::getBubbles()) {
         
         for(auto &bbo : _neighborList->getNeighbors(bb)) {
             
-            double kRep = bb->getRepulsionConst();
-            double screenLength = bb->getScreeningLength();
+            floatingpoint kRep = bb->getRepulsionConst();
+            floatingpoint screenLength = bb->getScreeningLength();
             
-            double radius1 = bb->getRadius();
-            double radius2 = bbo->getRadius();
+            floatingpoint radius1 = bb->getRadius();
+            floatingpoint radius2 = bbo->getRadius();
             
             Bead* bd1 = bb->getBead();
             Bead* bd2 = bbo->getBead();
@@ -96,17 +97,17 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces(double *coo
 
 
 //template <class BRepulsionInteractionType>
-//void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForcesAux(double *coord, double *f) {
+//void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForcesAux(floatingpoint *coord, floatingpoint *f) {
 //
 //    for (auto bb : Bubble::getBubbles()) {
 //
 //        for(auto &bbo : _neighborList->getNeighbors(bb)) {
 //
-//            double kRep = bb->getRepulsionConst();
-//            double screenLength = bb->getScreeningLength();
+//            floatingpoint kRep = bb->getRepulsionConst();
+//            floatingpoint screenLength = bb->getScreeningLength();
 //
-//            double radius1 = bb->getRadius();
-//            double radius2 = bbo->getRadius();
+//            floatingpoint radius1 = bb->getRadius();
+//            floatingpoint radius2 = bbo->getRadius();
 //
 //            Bead* bd1 = bb->getBead();
 //            Bead* bd2 = bbo->getBead();
@@ -118,9 +119,10 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces(double *coo
 //}
 
 ///Template specializations
-template double BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeEnergy(double *coord, double *f, double d);
-template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForces(double *coord, double *f);
-//template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForcesAux(double *coord, double *f);
+template floatingpoint BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForces(floatingpoint
+        *coord, floatingpoint *f);
+//template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForcesAux(floatingpoint *coord, floatingpoint *f);
 template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::vectorize();
 template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::deallocate();
 

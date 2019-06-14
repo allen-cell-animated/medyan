@@ -52,7 +52,7 @@ public:
     void removeReaction(ReactionBase *r);
     
     /// Run the chemical dynamics for a set amount of time
-    bool run(double time);
+    bool run(floatingpoint time);
     
     /// Run the chemical dynamics for a set amount of reaction steps
     bool runSteps(int steps);
@@ -61,7 +61,7 @@ public:
     /// this moment
     void printReactions();
     
-    vector<double> getEnergy();
+    vector<floatingpoint> getEnergy();
     
     DissipationTracker* getDT();
     

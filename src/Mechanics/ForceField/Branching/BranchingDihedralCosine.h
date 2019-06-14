@@ -23,32 +23,32 @@ class Bead;
 class BranchingDihedralCosine {
     
 public:
-    double energy(double *coord, double *f, int *beadSet,
-                  double *kdih, double *pos);
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                  floatingpoint *kdih, floatingpoint *pos);
     
-    double energy(double *coord, double *f, int *beadSet,
-                  double *kdih, double *pos, double d);
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                  floatingpoint *kdih, floatingpoint *pos, floatingpoint d);
 
-    void forces(double *coord, double *f, int *beadSet,
-                double *kdih, double *pos);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                floatingpoint *kdih, floatingpoint *pos);
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint);
 
-    double* energy(double *coord, double *f, int *beadSet, double *kdih,
-                   double *pos, int *params);
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kdih,
+                   floatingpoint *pos, int *params);
 
-    double* energy(double *coord, double *f, int *beadSet, double *kdih, double *pos,
-                   double *z, int *params);
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kdih, floatingpoint *pos,
+                   floatingpoint *z, int *params);
 
-    void forces(double *coord, double *f, int *beadSet, double *kdih, double *pos, int *params);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kdih, floatingpoint *pos, int *params);
     void deallocate();
     vector<int> blocksnthreadse;
     vector<int> blocksnthreadsez;
     vector<int> blocksnthreadsf;
     vector<int> bntaddvec2;
     static void checkforculprit();
-    double *gU_i;
-    double *gU_sum;
+    floatingpoint *gU_i;
+    floatingpoint *gU_sum;
     char *gFF, *ginteraction;
     cudaStream_t stream = NULL;
 #endif

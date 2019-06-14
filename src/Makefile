@@ -12,30 +12,39 @@
 # for your given system.
 ##################################################
 
-SOURCES_TEST             := $(shell find ./TESTS -name 'test_*.cpp')
-SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './TESTS/*')
+SOURCES_TEST             := $(shell find ./TESTS -name 'test_*')
+SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './TESTS/*' ! -path './dist_moduleV2/*')
+SOURCES_CPP              += ./dist_moduleV2/dist_avx_par.cpp  ./dist_moduleV2/dist_bench.cpp  ./dist_moduleV2/dist_example.cpp  ./dist_moduleV2/dist_mod_vars.cpp
 SOURCES_CPP_WITHOUT_MAIN := $(filter-out ./MEDYAN.cpp,$(SOURCES_CPP))
-SOURCES                  =  $(SOURCES_CPP)
-HEADERS                  := $(shell find . -name '*.h')
+SOURCES_CU               := $(shell find . -name '*.cu'  ! -path './TESTS/*' ! -path './dist_moduleV2/*')
+SOURCES                   = $(SOURCES_CPP) $(SOURCES_CU)
+HEADERS                  := $(shell find . -name '*.h' ! -path './dist_moduleV2/*')
+HEADERS                  += ./dist_moduleV2/umesimd/UMESimd.h
 
 OBJECTS_TEST             := $(SOURCES_TEST:.cpp=.o)
 OBJECTS_CPP              := $(SOURCES_CPP:.cpp=.o)
+OBJECTS_CU               := $(SOURCES_CU:.cu=.o)
 OBJECTS_CPP_WITHOUT_MAIN := $(SOURCES_CPP_WITHOUT_MAIN:.cpp=.o)
-OBJECTS                  =  $(OBJECTS_CPP)
+OBJECTS                   = $(OBJECTS_CPP) $(OBJECTS_CU)
 
 DEPENDS := $(SOURCES_TEST:.cpp=.d) $(SOURCES_CPP:.cpp=.d)
 
 #CPP COMPILER CHOICE AND FLAGS
-CXX = g++ -std=c++11
+CXX = g++ -std=c++14
+NVCC = nvcc -std=c++11
+
+# Flags used by compiler and linker
 DEBUG = -g
-FAST_CXX = -Os -ffast-math -fno-finite-math-only -flto -funroll-loops -DNDEBUG -mtune=native
+FAST_CXX = -Os -ffast-math -fno-finite-math-only -flto -funroll-loops -DNDEBUG -mtune=native -march=native # -Xpreprocessor -fopenmp # -mavx2
+#FAST_CXX = -Og -march=native -mtune=native
 
 # Compiling flags
 DEPFLAGS = -MMD -MP
 
 INCLUDES_TEST = -I../build/gtest/include
-INCLUDES = \
+INCLUDES = -I./dist_module -I./dist_module/umesimd/ \
 -I/usr/local/include -I/usr/include/boost \
+-I./dist_moduleV2 -I./dist_moduleV2/umesimd\
 -I./ -IStructure -IStructure/Special      \
 -IChemistry                               \
 -IMechanics/                              \
@@ -50,17 +59,20 @@ INCLUDES = \
 -IMechanics/ForceField/Bubble
 
 CPPFLAGS = $(INCLUDES)
+INCLUDES_NVCC = $(INCLUDES) -I/usr/local/include -I/usr/local/cuda/include
 
-CXXFLAGS_CXX = $(FAST_CXX) \
--Wall -Wno-sign-compare \
--Wno-maybe-uninitialized -Wno-uninitialized \
--Wno-unknown-warning-option
+CXXFLAGS_CXX = $(FAST_CXX) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
+-Wno-uninitialized -Wno-unknown-warning-option
+#NVCC DEBUG MODE
+CXXFLAGS_NVCC = -g -G -x=cu -arch=sm_35 -Xcompiler -lpthread -ldl -lrt \
+-lineinfo --compiler-options -O0 -Xptxas -v $(INCLUDES_NVCC)
 
 # Linking flags
 LDLIBS_TEST = -L../build/gtest/lib -lgtest -lgtest_main -lpthread
-LDLIBS      = -L/usr/local/lib/ -lboost_system
-
-LDFLAGS_CXX = $(FAST_CXX)
+LDLIBS = -L/usr/local/lib/ -lboost_system -L./dist_moduleV2/umesimd \
+-static-libstdc++ -pthread
+LDLIBS_NVCC = $(LDLIBS) -L/usr/local/cuda/lib64 -L/usr/local/cuda/lib -Icudart -lpthread -lnvToolsExt
+LDFLAGS_CXX = $(FAST_CXX) 
 
 
 #################MAIN USER MACROS#################
@@ -75,21 +87,25 @@ LDFLAGS_CXX = $(FAST_CXX)
 CPPFLAGS += -DCHEMISTRY
 #Initialize mechanical components of system
 CPPFLAGS += -DMECHANICS
+CPPFLAGS += -DMOVEBEADSLINESEARCH
 #Use dynamic rate changing
 CPPFLAGS += -DDYNAMICRATES
-#neighbors list calculations
-CPPFLAGS += -DNLORIGINAL
-#serialized energy minimization
+#vectorized serial energy minimization
 CPPFLAGS += -DSERIAL
-#CPPFLAGS += -DDETAILEDOUTPUT
+#neighbors list calculations
+#CPPFLAGS += -DNLORIGINAL
+CPPFLAGS += -DNLSTENCILLIST
+CPPFLAGS += -DHYBRID_NLSTENCILLIST
+CPPFLAGS += -DSIMDBINDINGSEARCH
 #CPPFLAGS += -DDEBUGCONSTANTSEED
-
 #Boost memory macros
 CPPFLAGS += -DBOOST_MEM_POOL
 CPPFLAGS += -DBOOL_POOL_NSIZE=65536
-
-#serialized energy minimization
-CPPFLAGS += -DSERIAL
+CPPFLAGS += -DNPROCS=8
+CPPFLAGS += -DPLOSFEEDBACK
+CPPFLAGS += -DCHECKFORCES_INF_NAN
+#if compiling the testing suite
+#CPPFLAGS += -DTESTING
 
 #Detailed chemistry macros.
 #FOR ALL STANDARD FUNCTIONALITY, NONE OF THESE SHOULD BE TURNED OFF!!!
@@ -101,7 +117,6 @@ CPPFLAGS += -DTRACK_DEPENDENTS
 #For passivating and activating reactions accordingly
 CPPFLAGS += -DTRACK_ZERO_COPY_N
 CPPFLAGS += -DTRACK_UPPER_COPY_N
-#CPPFLAGS += -DDEBUGCONSTANTSEED
 
 #Reaction signaling. Needed for all Filament, Linker,
 #Motor, and BranchingPoint reactions in system
@@ -110,15 +125,12 @@ CPPFLAGS += -DREACTION_SIGNALING
 #Species signaling
 CPPFLAGS += -DRSPECIES_SIGNALING
 
-# Implementation fix (should be turned on by default)
-CPPFLAGS += -DPLOSFEEDBACK
+#CUDA specific
+CPPFLAGS_NVCC = $(CPPFLAGS) -DCUDAACCL
 
-CPPFLAGS += -DHYBRID_NLSTENCILLIST
-CPPFLAGS += -DNLSTENCILLIST
-
-# Non-CUDA specific
-CPPFLAGS_CXX      = $(CPPFLAGS)
-CPPFLAGS_CXX_TEST = $(CPPFLAGS_CXX) $(INCLUDES_TEST) -DTESTING
+#Non-CUDA specific
+CPPFLAGS_CXX = $(CPPFLAGS)
+CPPFLAGS_CXX_TEST = $(CPPFLAGS_CXX) $(INCLUDES_TEST)
 
 ################MAKEFILE OPTIONS###################
 #
@@ -127,13 +139,19 @@ CPPFLAGS_CXX_TEST = $(CPPFLAGS_CXX) $(INCLUDES_TEST) -DTESTING
 #   make clean	      - remove all files
 #						generated by make
 #
+#	Use USING_CUDA=true to make cuda version
+#
 ##################################################
 
 all: MEDYAN
 
 # Build main program
 MEDYAN: $(OBJECTS)
+ifeq ($(USING_CUDA), true)
+	$(NVCC) -o MEDYAN $(OBJECTS) $(LDLIBS_NVCC)
+else
 	$(CXX) $(LDFLAGS_CXX) -o MEDYAN $(OBJECTS) $(LDLIBS)
+endif
 
 # Build test
 medyan_test: $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST)
@@ -148,12 +166,19 @@ test_%.o: test_%.cpp test_%.d
 %.o: %.cpp %.d
 	$(CXX) $(DEPFLAGS) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -c -o $@ $<
 
+%.o: %.cu
+ifeq ($(USING_CUDA), true)
+	$(NVCC) $(CPPFLAGS_NVCC) $(CXXFLAGS_NVCC) -c $< -o $@
+else
+	$(CXX) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -xc++ -c $< -o $@
+endif
+
 # Add empty dependency for dependencies
 %.d: ;
 
 clean:
 	\find . -name "*.d" -delete
-	\find . -name "*.o" -delete
+	\find . -name '*.o' -delete
 	\rm -f MEDYAN medyan_test
 
 .PRECIOUS: %.d

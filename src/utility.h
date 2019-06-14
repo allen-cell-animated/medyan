@@ -21,6 +21,7 @@
 #include <vector>
 #include <sstream>
 #include <iterator>
+
 #ifdef CUDAACCL
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -33,26 +34,45 @@
 #endif
 using namespace std;
 
+///floatingpoint typedef
+typedef float floatingpoint;
+typedef double doubleprecision;
+
+namespace detail {
+
+template< typename Float >
+constexpr Float zeroPrec = 1e-6;
+template<> constexpr double zeroPrec< double > = 1e-6;
+template<> constexpr float  zeroPrec< float  > = 1e-4;
+
+} // namespace detail
+
 //to test for zero values
-const double ZERO_PREC = 1E-6;
+const floatingpoint ZERO_PREC = detail::zeroPrec< floatingpoint >;
 
 /// A random seed based on clock cycles
 extern unsigned long long rdtsc();
 
-///Check equaility of doubles
+///Check equaility of floatingpoints
 #ifdef CUDAACCL
 __host__ __device__
 #endif
-inline bool areEqual(double d1, double d2) {
-    const double ZERO_PREC = 1E-6;
+inline bool areEqual(floatingpoint d1, floatingpoint d2) {
+    const floatingpoint ZERO_PREC = 1E-4;
     return fabs(d1 - d2) < ZERO_PREC;
+}
+
+//checking for equality with a lower threshold.
+inline bool areEqualLT(floatingpoint d1, floatingpoint d2) {
+	const floatingpoint ZERO_PRECLT = 1E-1;
+	return fabs(d1 - d2) < ZERO_PRECLT;
 }
 
 /// Safe arc cos function
 #ifdef CUDAACCL
  __host__ __device__
 #endif
-inline double safeacos (double x) {
+inline floatingpoint safeacos (floatingpoint x) {
     if (x < -1.0) x = -1.0;
     else if (x > 1.0) x = 1.0;
     return acos(x);

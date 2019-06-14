@@ -435,10 +435,10 @@ private:
     int _numEvents;      ///< The number of events to generate an average copy number
     int _eventCount = 0; ///< Tracking the number of events since last average
     
-    double _localTau;  ///< The time since the last event occured
-    double _firstTau;  ///< Time since an average update occured
+    floatingpoint _localTau;  ///< The time since the last event occured
+    floatingpoint _firstTau;  ///< Time since an average update occured
     
-    double _average;   ///< The current average value
+    floatingpoint _average;   ///< The current average value
     
     bool _newAvg = false; ///< If we just calculated a new average. Used by Reaction to mark the
                           ///< updating of its dependencies accordingly.
@@ -446,13 +446,13 @@ private:
     /// A map of copy number and time (representing the time the species has been at this
     /// copy number). These values will be collected until a new average is needed, and the
     /// map will be used to compute an average and then reset.
-    unordered_map<species_copy_t, double> _copyNumbers;
+    unordered_map<species_copy_t, floatingpoint> _copyNumbers;
     
     ///Compute the time average of the currently tracked, previous copy numbers
     void computeAverageN() {
         
-        double totalTau = tau() - _firstTau;
-        double average = 0;
+        floatingpoint totalTau = tau() - _firstTau;
+        floatingpoint average = 0;
         
         //average values
         for(auto it : _copyNumbers)
@@ -517,7 +517,7 @@ public:
         
         // if initialization, set avg to be true
         // copy number and return
-        double deltaTau = tau() - _localTau;
+        floatingpoint deltaTau = tau() - _localTau;
         
         if(areEqual(deltaTau, 0.0)) {
             
@@ -568,7 +568,7 @@ public:
 #ifdef TRACK_UPPER_COPY_N
         species_copy_t prev_n = _n;
 #endif
-        double deltaTau = tau() - _localTau;
+        floatingpoint deltaTau = tau() - _localTau;
         
         //add old n to map
         _copyNumbers[_n] += deltaTau;

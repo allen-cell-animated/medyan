@@ -43,43 +43,43 @@ private:
     int count;
     
     // cumulative dissipated Gibbs free energy
-    double cumDissEnergy;
+    floatingpoint cumDissEnergy;
     
     // Mechanical energy before checmial simulation
-    double G1;
+    floatingpoint G1;
     
     // Mechanical energy after chemical simulation
-    double GMid;
+    floatingpoint GMid;
     
     // Mechanical energy after subsequent mechanical equilibration
-    double G2;
+    floatingpoint G2;
     
     // Change in chemical free energy after chemical simulation
-    double GChem;
+    floatingpoint GChem;
     
     // cumulative dissiapted chemical energy
-    double cumDissChemEnergy;
+    floatingpoint cumDissChemEnergy;
     
     // cumulative dissiapted mechanical energy
-    double cumDissMechEnergy;
+    floatingpoint cumDissMechEnergy;
 
     // cumulative change in chemical energy
-    double cumGChemEn;
+    floatingpoint cumGChemEn;
     
     // cumulative change in mechanical energy
-    double cumGMechEn;
+    floatingpoint cumGMechEn;
     
     // vector of HRCD elements
-    vector<tuple<string, double>> HRCDVec;
+    vector<tuple<string, floatingpoint>> HRCDVec;
     
     // vector of motor walking data
-    vector<tuple<double, double, double, double>> motorData;
+    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> motorData;
     
     // vector of linker unbinding data
-    vector<tuple<double, double, double, double>> linkerUnbindingData;
+    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> linkerUnbindingData;
     
     // vector of linker binding data
-    vector<tuple<double, double, double, double>> linkerBindingData;
+    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> linkerBindingData;
     
 public:
     
@@ -117,13 +117,13 @@ public:
     float v = (float)(nx*ny*nz);
     
     // get the stepFrac parameter for myosin walking, assume all fil and motor are type 0
-    double d_step = SysParams::Chemistry().motorStepSize[0];
-    double d_total = (double)SysParams::Geometry().cylinderSize[0] /
+    floatingpoint d_step = SysParams::Chemistry().motorStepSize[0];
+    floatingpoint d_total = (floatingpoint)SysParams::Geometry().cylinderSize[0] /
     SysParams::Chemistry().numBindingSites[0];
-    double _stepFrac = d_step / d_total;
+    floatingpoint _stepFrac = d_step / d_total;
     
     // Find the Gibbs free energy change for a reaction using its ReactionBase representation
-    double getDelGChem(ReactionBase* re){
+    floatingpoint getDelGChem(ReactionBase* re){
         
         // get the type of reaction
         ReactionType reType = re->getReactionType();
@@ -219,11 +219,11 @@ public:
             
         } else if(reType==7){
             // Motor Binding
-            double rn=re->getGNumber();
+            floatingpoint rn=re->getGNumber();
             
-            double nh1 = SysParams::Chemistry().motorNumHeadsMin[0];
-            double nh2 = SysParams::Chemistry().motorNumHeadsMax[0];
-            double nh = (nh1+nh2)/2.0;
+            floatingpoint nh1 = SysParams::Chemistry().motorNumHeadsMin[0];
+            floatingpoint nh2 = SysParams::Chemistry().motorNumHeadsMax[0];
+            floatingpoint nh = (nh1+nh2)/2.0;
             
             delG = delGMyoChem(nh,rn);
             
@@ -242,7 +242,7 @@ public:
             
         } else if(reType==9){
             // Motor Unbinding
-            double rn=re->getGNumber();
+            floatingpoint rn=re->getGNumber();
             
             CBound* CBound = re->getCBound();
             SpeciesBound* sm1 = CBound->getFirstSpecies();
@@ -339,36 +339,36 @@ public:
     }
     
     // return the mechanical energy of the system
-    double getMechEnergy(){
-        double ret = _mcon->getEnergy();
+    floatingpoint getMechEnergy(){
+        floatingpoint ret = _mcon->getEnergy();
         return float(ret/kT);
     }
     
     // return the cumulative dissipated Gibbs free energy
-    double getCumDissEnergy(){
+    floatingpoint getCumDissEnergy(){
         return cumDissEnergy;
     }
     
     // return the cumulative dissipated chemical Gibbs free energy
-    double getCumDissChemEnergy(){
+    floatingpoint getCumDissChemEnergy(){
         return cumDissChemEnergy;
     }
     
     // return the cumulative dissipated mechanical Gibbs free energy
-    double getCumDissMechEnergy(){
+    floatingpoint getCumDissMechEnergy(){
         return cumDissMechEnergy;
     }
     
-    double getCumGChemEn(){
+    floatingpoint getCumGChemEn(){
         return cumGChemEn;
     }
     
-    double getCumGMechEn(){
+    floatingpoint getCumGMechEn(){
         return cumGMechEn;
     }
     
     //  used to determine if minization should proceed
-    double getCurrentStress(){
+    floatingpoint getCurrentStress(){
         return GMid-G1;
     };
     
@@ -430,7 +430,7 @@ public:
         G1=G2;
     };
     
-    void updateHRCDVec(string hrcdid, double delG){
+    void updateHRCDVec(string hrcdid, floatingpoint delG){
         
         for(auto i = 0; i<HRCDVec.size(); i++){
             
@@ -446,12 +446,12 @@ public:
         
     }
     
-    vector<tuple<string,double>> getHRCDVec(){
+    vector<tuple<string,floatingpoint>> getHRCDVec(){
         return HRCDVec;
     }
     
     void recordWalk(MotorGhost* m){
-        vector<double> mcoords = m->coordinate;
+        vector<floatingpoint> mcoords = m->coordinate;
         mcoords.insert(mcoords.begin(), tau());
         motorData.push_back(make_tuple(mcoords[0], mcoords[1], mcoords[2], mcoords[3]));
         
@@ -461,7 +461,7 @@ public:
         //}
     }
     
-    vector<tuple<double, double, double, double>> getMotorData(){
+    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> getMotorData(){
         return motorData;
     }
     
@@ -470,14 +470,14 @@ public:
     }
     
     void recordLinkerUnbinding(Linker* l){
-        vector<double> lcoords = l->coordinate;
+        vector<floatingpoint> lcoords = l->coordinate;
         lcoords.insert(lcoords.begin(), tau());
         linkerUnbindingData.push_back(make_tuple(lcoords[0], lcoords[1], lcoords[2], lcoords[3]));
         
   
     }
     
-    vector<tuple<double, double, double, double>> getLinkerUnbindingData(){
+    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> getLinkerUnbindingData(){
         return linkerUnbindingData;
     }
     
@@ -486,14 +486,14 @@ public:
     }
     
     void recordLinkerBinding(Linker* l){
-        vector<double> lcoords = l->coordinate;
+        vector<floatingpoint> lcoords = l->coordinate;
         lcoords.insert(lcoords.begin(), tau());
         linkerBindingData.push_back(make_tuple(lcoords[0], lcoords[1], lcoords[2], lcoords[3]));
         
 
     }
     
-    vector<tuple<double, double, double, double>> getLinkerBindingData(){
+    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> getLinkerBindingData(){
         return linkerBindingData;
     }
     

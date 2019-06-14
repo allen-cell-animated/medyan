@@ -20,15 +20,15 @@
 
 using namespace mathfunc;
 
-double BoundaryCylinderAttachmentHarmonic::energy(double *coord, double *f, int *beadSet,
-                                                  double *kattr, double *pins) {
+floatingpoint BoundaryCylinderAttachmentHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                                  floatingpoint *kattr, floatingpoint *pins) {
     
 
     int n = BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::n;
     int nint = Bead::getPinnedBeads().size();
 
-    double *coord1, *pin1, distsq, U_i;
-    double U = 0.0;
+    floatingpoint *coord1, *pin1, distsq, U_i;
+    floatingpoint U = 0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -38,7 +38,7 @@ double BoundaryCylinderAttachmentHarmonic::energy(double *coord, double *f, int 
         distsq = twoPointDistancesquared(coord1, pin1);
         U_i = 0.5 * kattr[i] * distsq;
 
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return
@@ -52,16 +52,17 @@ double BoundaryCylinderAttachmentHarmonic::energy(double *coord, double *f, int 
     return U;
 }
 
-double BoundaryCylinderAttachmentHarmonic::energy(double *coord, double *f, int *beadSet,
-                                                  double *kattr, double *pins, double d) {
+floatingpoint BoundaryCylinderAttachmentHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                                  floatingpoint *kattr, floatingpoint *pins, floatingpoint d) {
 
 
     int n = BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::n;
     int nint = Bead::getPinnedBeads().size();
 
-    double *coord1, *pin1, *force1, *zero, dist, U_i;
-    double U = 0.0;
-    zero = new double[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
+    floatingpoint *coord1, *pin1, *zero, dist, U_i;
+    floatingpoint *force1;
+    floatingpoint U = 0;
+    zero = new floatingpoint[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -73,7 +74,7 @@ double BoundaryCylinderAttachmentHarmonic::energy(double *coord, double *f, int 
         dist = twoPointDistanceStretched(coord1, force1, pin1, zero, d);
         U_i = 0.5 * kattr[i] * dist * dist;
 
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return
@@ -88,14 +89,15 @@ double BoundaryCylinderAttachmentHarmonic::energy(double *coord, double *f, int 
     return U;
 }
 
-void BoundaryCylinderAttachmentHarmonic::forces(double *coord, double *f, int *beadSet,
-                                                double *kattr, double *pins) {
+void BoundaryCylinderAttachmentHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                                floatingpoint *kattr, floatingpoint *pins) {
     
     int n = BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::n;
     int nint = Bead::getPinnedBeads().size();
 
-    double *coord1, *pin1, *force1, *dir, dist, f0;
-    dir = new double[3];
+    floatingpoint *coord1, *pin1, *dir, dist, f0;
+    floatingpoint *force1;
+    dir = new floatingpoint[3];
 
     for(int i = 0; i < nint; i += 1) {
 

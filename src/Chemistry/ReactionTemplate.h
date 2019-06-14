@@ -51,6 +51,7 @@ class FilamentReactionTemplate {
 friend class CController;
     
 protected:
+    chrono::high_resolution_clock::time_point mins, mine;
     static SubSystem* _ps; ///< A subsystem pointer to initialize and
                            ///< call chemical callbacks
     short _filamentType;   ///< Filament type that this template acts on
@@ -59,7 +60,7 @@ protected:
     vector<tuple<int,SpeciesType>> _products; ///< Products in this reaction
     
     float _rate; ///< Rate of reaction
-    double _gnum;
+    floatingpoint _gnum;
     string _hrcdid;
     DissipationTracker* _dt;
     
@@ -67,7 +68,8 @@ public:
     FilamentReactionTemplate(short filamentType,
                              vector<tuple<int, SpeciesType>> reactants,
                              vector<tuple<int, SpeciesType>> products,
-                             float rate, double gnum = 0.0, string hrcdid = "NA", DissipationTracker* dt = nullptr)
+                             float rate, floatingpoint gnum = (floatingpoint)0.0, string
+                             hrcdid = "NA", DissipationTracker* dt = nullptr)
         : _filamentType(filamentType),
           _reactants(reactants), _products(products), _rate(rate) , _gnum(gnum), _hrcdid(hrcdid), _dt(dt) {
 
@@ -95,7 +97,7 @@ public:
     PolyPlusEndTemplate(short filamentType,
                         vector<tuple<int, SpeciesType>> reactants,
                         vector<tuple<int, SpeciesType>> products,
-                        float rate, double gnum, string hrcdid, DissipationTracker* dt)
+                        float rate, floatingpoint gnum, string hrcdid, DissipationTracker* dt)
     : FilamentReactionTemplate(filamentType, reactants, products, rate, gnum, hrcdid, dt) {}
     ~PolyPlusEndTemplate() {}
     
@@ -110,7 +112,7 @@ public:
     PolyMinusEndTemplate(short filamentType,
                          vector<tuple<int, SpeciesType>> reactants,
                          vector<tuple<int, SpeciesType>> products,
-                         float rate, double gnum, string hrcdid, DissipationTracker* dt)
+                         float rate, floatingpoint gnum, string hrcdid, DissipationTracker* dt)
     : FilamentReactionTemplate(filamentType, reactants, products, rate, gnum, hrcdid, dt) {}
     ~PolyMinusEndTemplate() {}
     
@@ -126,7 +128,7 @@ public:
     DepolyPlusEndTemplate(short filamentType,
                           vector<tuple<int, SpeciesType>> reactants,
                           vector<tuple<int, SpeciesType>> products,
-                          float rate,  double gnum, string hrcdid, DissipationTracker* dt)
+                          float rate,  floatingpoint gnum, string hrcdid, DissipationTracker* dt)
     : FilamentReactionTemplate(filamentType, reactants, products, rate, gnum, hrcdid, dt) {}
     ~DepolyPlusEndTemplate() {}
     
@@ -141,7 +143,7 @@ public:
     DepolyMinusEndTemplate(short filamentType,
                            vector<tuple<int, SpeciesType>> reactants,
                            vector<tuple<int, SpeciesType>> products,
-                           float rate,  double gnum, string hrcdid, DissipationTracker* dt)
+                           float rate,  floatingpoint gnum, string hrcdid, DissipationTracker* dt)
     : FilamentReactionTemplate(filamentType, reactants, products, rate, gnum, hrcdid, dt) {}
     ~DepolyMinusEndTemplate() {}
     
@@ -157,7 +159,7 @@ public:
     MotorWalkPTemplate(short filamentType,
                        vector<tuple<int, SpeciesType>> reactants,
                        vector<tuple<int, SpeciesType>> products,
-                       float rate, double gnum, string hrcdid, DissipationTracker* _dt)
+                       float rate, floatingpoint gnum, string hrcdid, DissipationTracker* _dt)
     : FilamentReactionTemplate(filamentType, reactants, products, rate, gnum, hrcdid, _dt) {}
     ~MotorWalkPTemplate() {}
     
@@ -173,7 +175,7 @@ public:
     MotorWalkMTemplate(short filamentType,
                        vector<tuple<int, SpeciesType>> reactants,
                        vector<tuple<int, SpeciesType>> products,
-                       float rate, double gnum, string hrcdid, DissipationTracker* dt)
+                       float rate, floatingpoint gnum, string hrcdid, DissipationTracker* dt)
     : FilamentReactionTemplate(filamentType, reactants, products, rate, gnum, hrcdid, dt) {}
     ~MotorWalkMTemplate() {}
     
@@ -189,7 +191,7 @@ public:
     AgingTemplate(short filamentType,
                   vector<tuple<int, SpeciesType>> reactants,
                   vector<tuple<int, SpeciesType>> products,
-                  float rate, double gnum, string hrcdid, DissipationTracker* dt)
+                  float rate, floatingpoint gnum, string hrcdid, DissipationTracker* dt)
     : FilamentReactionTemplate(filamentType, reactants, products, rate, gnum, hrcdid, dt) {}
     ~AgingTemplate() {}
     

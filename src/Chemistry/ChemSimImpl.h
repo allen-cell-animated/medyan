@@ -47,7 +47,7 @@ public:
     virtual void removeReaction(ReactionBase *r) = 0;
     
     /// Run the chemical dynamics for a set amount of time
-    virtual bool run(double time) = 0;
+    virtual bool run(floatingpoint time) = 0;
     
     /// Run the chemical dynamics for a set amount of reaction steps
     virtual bool runSteps(int steps) = 0;

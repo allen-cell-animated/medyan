@@ -14,13 +14,8 @@
 #ifndef MEDYAN_BindingManager_h
 #define MEDYAN_BindingManager_h
 
-#ifdef DEBUGCONSTANTSEED
-#include <map>
-#include <set>
-#else
 #include <unordered_map>
 #include <unordered_set>
-#endif
 #include <random>
 
 #include "common.h"
@@ -91,7 +86,7 @@ protected:
 
 
 #ifdef NLSTENCILLIST
-    vector<double> bindingSites;
+    vector<floatingpoint> bindingSites;
 #endif
 
     ///helper function to update copy number and reactions
@@ -239,18 +234,14 @@ private:
     NucleationZoneType _nucleationZone;
 
     ///If using a nucleation zone, nucleating distance from the boundary
-    double _nucleationDistance = 0.0;
+    floatingpoint _nucleationDistance = 0.0;
 
     ///possible bindings at current state
-    #ifdef DEBUGCONSTANTSEED
-    set<tuple<CCylinder*, short>> _possibleBindings;
-    #else
 //    #elif defined(NLORIGINAL)
     unordered_set<tuple<CCylinder*, short>> _possibleBindings;
 //    #elif defined(NLSTENCILLIST)
     ///possible bindings at current state in Stencil list.
     unordered_set<tuple<CCylinder*, short>> _possibleBindingsstencil;
-    #endif
     vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> _branchrestarttuple; //Used only during restart conditions.
 
 public:
@@ -259,7 +250,7 @@ public:
                      short boundInt, string boundName,
                      short filamentType,
                      NucleationZoneType zone = NucleationZoneType::ALL,
-                     double nucleationDistance = numeric_limits<double>::infinity());
+                     floatingpoint nucleationDistance = numeric_limits<floatingpoint>::infinity());
     ~BranchingManager() {}
 
     //@{
@@ -298,34 +289,28 @@ public:
     }
     /// ARAVIND ADDED FEB 17 2016. append possible bindings to be used for restart
     virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2){
-        double oldN=numBindingSites();
+        floatingpoint oldN=numBindingSites();
         _possibleBindings.insert(t1);
         _branchrestarttuple.push_back(make_tuple(t1,t2));
 //        _branchCylinder=(get<0>(t2));
-        double newN=numBindingSites();
+        floatingpoint newN=numBindingSites();
         updateBindingReaction(oldN,newN);}
 
     virtual void appendpossibleBindings(tuple<CCylinder*, short> t1){
-        double oldN=numBindingSites();
+        floatingpoint oldN=numBindingSites();
         _possibleBindings.insert(t1);
 //        _branchCylinder=(get<0>(t2));
-        double newN=numBindingSites();
+        floatingpoint newN=numBindingSites();
         updateBindingReaction(oldN,newN);}
 
     virtual void clearpossibleBindings() {
-        double oldN=numBindingSites();
+        floatingpoint oldN=numBindingSites();
         _possibleBindings.clear();
         updateBindingReaction(oldN,0);
     }
-#ifdef DEBUGCONSTANTSEED
-    virtual set<tuple<CCylinder*, short>> getpossibleBindings(){
-        return _possibleBindings;
-    }
-#else
     virtual unordered_set<tuple<CCylinder*, short>> getpossibleBindings(){
         return _possibleBindings;
     }
-#endif
 
 #endif
     virtual bool isConsistent();
@@ -339,20 +324,20 @@ public:
     virtual void updateAllPossibleBindingsstencil();
     virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
                                                tuple<CCylinder*, short> t2){
-        double oldN=numBindingSitesstencil();
+        floatingpoint oldN=numBindingSitesstencil();
         _possibleBindingsstencil.insert(t1);
         _branchrestarttuple.push_back(make_tuple(t1,t2));
 //        _branchCylinder=(get<0>(t2));
-        double newN=numBindingSitesstencil();
+        floatingpoint newN=numBindingSitesstencil();
         updateBindingReaction(oldN,newN);}
     virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1){
-        double oldN=numBindingSitesstencil();
+        floatingpoint oldN=numBindingSitesstencil();
         _possibleBindingsstencil.insert(t1);
 //        _branchCylinder=(get<0>(t2));
         double newN=numBindingSitesstencil();
         updateBindingReaction(oldN,newN);}
     virtual void clearpossibleBindingsstencil() {
-        double oldN=numBindingSitesstencil();
+        floatingpoint oldN=numBindingSitesstencil();
         _possibleBindingsstencil.clear();
         updateBindingReaction(oldN,0);
     }
@@ -364,7 +349,7 @@ public:
     virtual unordered_set<tuple<CCylinder*, short>> getpossibleBindingsstencil(){
         return _possibleBindingsstencil;
     }
-    tuple<CCylinder*, short> chooseBindingSitestencil() {
+    tuple<CCylinder*, short> chooseBindingSitesstencil() {
 
         assert((_possibleBindingsstencil.size() != 0)
                && "Major bug: Branching manager should not have zero binding \
@@ -385,12 +370,12 @@ public:
 #endif
 
 #ifdef CUDAACCL_NL
-    double *gpu_distance;
+    floatingpoint *gpu_distance;
     int *gpu_zone;
     int *gpu_numpairs = NULL;
     void assigncudavars();
     void freecudavars();
-    double* getdistancesCUDA(){return gpu_distance;}
+    floatingpoint* getdistancesCUDA(){return gpu_distance;}
     int* getzoneCUDA();
     int* getnumpairsCUDA();
     int* getpossiblebindingssizeCUDA(){ return gpu_numpairs;}
@@ -409,12 +394,11 @@ friend class ChemManager;
 private:
     float _rMin; ///< Minimum reaction range
     float _rMax; ///< Maximum reaction range
-    float _rMinsq = _rMin * _rMin;
-    float _rMaxsq = _rMax * _rMax;
-    const std::vector<short> startInt = SysParams::Chemistry().bindingSites[0];
-    double minparamcyl2;
-    double maxparamcyl2;
-    vector<double> bindingsites;
+	float _rMinsq = _rMin * _rMin; ///< Minimum reaction range squared
+	float _rMaxsq = _rMax * _rMax; ///< Maximum reaction range squared
+    floatingpoint minparamcyl2;
+    floatingpoint maxparamcyl2;
+    vector<floatingpoint> bindingsites;
     static short HNLID;
     static short _idvec[2];
     int dBInt = 1;
@@ -424,10 +408,6 @@ private:
 
 
     //possible bindings at current state. updated according to neighbor list
-#ifdef DEBUGCONSTANTSEED
-    vector<vector<tuple<CCylinder*, short>>> _possibleBindings;
-//    multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
-#else
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
 
     unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*, short>>> _reversePossibleBindings;
@@ -436,7 +416,6 @@ private:
         //possible bindings at current state. updated according to neighbor list stencil
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
             _possibleBindingsstencil;
-#endif
     //static neighbor list
     static vector<CylinderCylinderNL*> _neighborLists;
 
@@ -477,28 +456,19 @@ public:
             short> t2);
 
     //get possible bindings.
-#ifdef DEBUGCONSTANTSEED
-//    virtual multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> getpossibleBindings(){
-//        return _possibleBindings;
-//    }
-#else
     virtual unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> getpossibleBindings(){
         return _possibleBindings;
     }
-#endif
 
     /// ARAVIND ADDED FEB 18 2016. clear possible bindings.
     virtual void clearpossibleBindings() {
-        double oldN=numBindingSites();
+        floatingpoint oldN=numBindingSites();
         _possibleBindings.clear();
         updateBindingReaction(oldN,0);
     }
 
         /// Choose random binding sites based on current state
     vector<tuple<CCylinder*, short>> chooseBindingSites();
-#ifdef DEBUGCONSTANTSEED
-    virtual void erasepossibleBindings(CCylinder* cc, short bindingSite);
-#endif//debugconstantseed
 #endif
     //@{
     /// Getters for distances
@@ -515,13 +485,13 @@ public:
     virtual void updateAllPossibleBindingsstencil();
     virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
                                                tuple<CCylinder*, short> t2){
-        double oldN=numBindingSitesstencil();
+        floatingpoint oldN=numBindingSitesstencil();
         _possibleBindingsstencil.emplace(t1,t2);
-        double newN=numBindingSitesstencil();
+        floatingpoint newN=numBindingSitesstencil();
         updateBindingReaction(oldN,newN);
     }
     virtual void clearpossibleBindingsstencil() {
-        double oldN=numBindingSitesstencil();
+        floatingpoint oldN=numBindingSitesstencil();
         _possibleBindingsstencil.clear();
         updateBindingReaction(oldN,0);
     }
@@ -553,11 +523,11 @@ public:
 #endif
 
 #ifdef CUDAACCL_NL
-    double *gpu_rminmax = NULL;
+    floatingpoint *gpu_rminmax = NULL;
     int *gpu_numpairs = NULL;
     void assigncudavars();
     void freecudavars();
-    double* getdistancesCUDA() { return gpu_rminmax;}
+    floatingpoint* getdistancesCUDA() { return gpu_rminmax;}
     int* getpossiblebindingssizeCUDA(){ return gpu_numpairs;}
     int getNLsize(){
         return _neighborLists[_nlIndex]->getNLsize();
@@ -590,19 +560,14 @@ private:
 
     float _rMin; ///< Minimum reaction range
     float _rMax; ///< Maximum reaction range
-    float _rMinsq = _rMin * _rMin;
-    float _rMaxsq = _rMax * _rMax;
-    double minparamcyl2;
-    double maxparamcyl2;
-    vector<double> bindingsites;
+	float _rMinsq = _rMin * _rMin; ///< Minimum reaction range squared
+	float _rMaxsq = _rMax * _rMax; ///< Maximum reaction range squared
+	floatingpoint minparamcyl2;
+	floatingpoint maxparamcyl2;
+    vector<floatingpoint> bindingsites;
     static short HNLID;
     static short _idvec[2];
-
     //possible bindings at current state. updated according to neighbor list
-#ifdef DEBUGCONSTANTSEED
-    vector<vector<tuple<CCylinder*, short>>> _possibleBindings;
-//    multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
-#else
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
     _possibleBindings;
 
@@ -612,7 +577,6 @@ private:
         //possible bindings at current state. updated according to neighbor list stencil
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
             _possibleBindingsstencil;
-    #endif
 
 
     //static neighbor list
@@ -654,26 +618,19 @@ public:
     virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*,
             short> t2);
     //get possible bindings.
-#ifdef DEBUGCONSTANTSEED
-
-#else
     virtual unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> getpossibleBindings(){
         return _possibleBindings;
     }
-#endif
 
     /// ARAVIND ADDED FEB 18 2016. clear possible bindings.
     virtual void clearpossibleBindings() {
-        double oldN=numBindingSites();
+        floatingpoint oldN=numBindingSites();
         _possibleBindings.clear();
         updateBindingReaction(oldN,0);
     }
 
     /// Choose random binding sites based on current state
     vector<tuple<CCylinder*, short>> chooseBindingSites();
-#ifdef DEBUGCONSTANTSEED
-    virtual void erasepossibleBindings(CCylinder* cc, short bindingSite);
-#endif//debugconstantseed
 #endif
     //@{
     /// Getters for distances
@@ -689,13 +646,13 @@ public:
     virtual void updateAllPossibleBindingsstencil();
     virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
                                                tuple<CCylinder*, short> t2){
-        double oldN=numBindingSitesstencil();
+        floatingpoint oldN=numBindingSitesstencil();
         _possibleBindingsstencil.emplace(t1,t2);
-        double newN=numBindingSitesstencil();
+        floatingpoint newN=numBindingSitesstencil();
         updateBindingReaction(oldN,newN);
     }
     virtual void clearpossibleBindingsstencil() {
-        double oldN=numBindingSitesstencil();
+        floatingpoint oldN=numBindingSitesstencil();
         _possibleBindingsstencil.clear();
         updateBindingReaction(oldN,0);
     }
@@ -727,11 +684,11 @@ public:
 #endif
 
 #ifdef CUDAACCL_NL
-    double *gpu_rminmax = NULL;
+    floatingpoint *gpu_rminmax = NULL;
     int *gpu_numpairs = NULL;
     void assigncudavars();
     void freecudavars();
-    double* getdistancesCUDA() { return gpu_rminmax;}
+    floatingpoint* getdistancesCUDA() { return gpu_rminmax;}
     int* getpossiblebindingssizeCUDA(){ return gpu_numpairs;}
     int getNLsize(){
         return _neighborLists[_nlIndex]->getNLsize();

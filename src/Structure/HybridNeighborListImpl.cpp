@@ -87,7 +87,7 @@ void HybridCylinderCylinderNL::generateConnections() {
                 vector<size_t> indices{i,j,k};
                 Bin *target = getBin(indices);//defined in this file.
 
-                vector<double> coordinates =
+                vector<floatingpoint> coordinates =
                         {indices[0] * _binSize[0] + _binSize[0] / 2,
                          indices[1] * _binSize[1] + _binSize[1] / 2,
                          indices[2] * _binSize[2] + _binSize[2] / 2};
@@ -169,10 +169,12 @@ void HybridCylinderCylinderNL::generateConnections() {
 void HybridCylinderCylinderNL::initializeBinGrid() {
 
 //    //Initial parameters of system
+    //Creates bins based on the largest rMax in the system.
     auto _nDim = SysParams::Geometry().nDim;
-    double searchdist = 1.125 * (sqrt(_largestrMaxsq));
-//    std::cout<<"H searchdist "<<searchdist<<" rMax "<<sqrt(_largestrMaxsq)<<endl;
+    floatingpoint searchdist = 1.125 * (sqrt(_largestrMaxsq));
+    std::cout<<"H searchdist "<<searchdist<<" rMax "<<sqrt(_largestrMaxsq)<<endl;
     _binSize = {searchdist, searchdist, searchdist};
+
     if(_nDim >=1) {
         _size.push_back(int(SysParams::Geometry().NX * SysParams::Geometry()
                 .compartmentSizeX));
@@ -180,8 +182,8 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
             _grid.push_back(_size[0]/_binSize[0]);
         else
             _grid.push_back(_size[0]/_binSize[0] + 1);
-        cout<<_grid[0]<<" "<<_size[0]<<" "<<_binSize[0]<<endl;
     }
+
     if (_nDim >= 2) {
         _size.push_back(int(SysParams::Geometry().NY * SysParams::Geometry()
                 .compartmentSizeY));
@@ -189,8 +191,8 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
             _grid.push_back(_size[1]/_binSize[1]);
         else
             _grid.push_back(_size[1]/_binSize[1] + 1);
-        cout<<_grid[1]<<" "<<_size[1]<<" "<<_binSize[1]<<endl;
     }
+
     if (_nDim == 3) {
         _size.push_back(int(SysParams::Geometry().NZ * SysParams::Geometry()
                 .compartmentSizeZ));
@@ -198,45 +200,33 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
             _grid.push_back(_size[2]/_binSize[2]);
         else
             _grid.push_back(_size[2]/_binSize[2] + 1);
-        cout<<_grid[2]<<" "<<_size[2]<<" "<<_binSize[2]<<endl;
     }
 
     //Check that grid and compartmentSize match nDim
-    if((_nDim == 3 &&
-        _grid[0] != 0 && _grid[1] != 0 && _grid[2]!=0 &&
-        _binSize[0] != 0 &&
-        _binSize[1] != 0 &&
-        _binSize[2] != 0)){
+    if((_nDim == 3 && _grid[0] != 0 && _grid[1] != 0 && _grid[2]!=0 && _binSize[0] != 0 &&
+        _binSize[1] != 0 && _binSize[2] != 0)){
+        //Do nothing
     }
     else {
         cout << "Bin parameters for CylinderCylinderNeighborLists are invalid. Exiting." <<
              endl;
         exit(EXIT_FAILURE);
     }
-    
     int size = 1;
-    if(_grid.size() > 3){
-        for(int x = 0; x < 3; x++) {
-            if(_grid[x] != 0) size*=_grid[x];
-        }
+    for(auto x: _grid) {
+        if(x != 0) size*=x;
     }
-    else{
-        for(auto x: _grid) {
-            if(x != 0) size*=x;
-        }
-    }
-
-    cout<<"grid number and size: " << endl;
-    cout<<_grid[0]<<" "<<_grid[1]<<" "<<_grid[2]<<endl;
-    cout<<size<<endl;
+    cout<<"Grid size "<<_grid[0]<<" "<<_grid[1]<<" "<<_grid[2]<<endl;
+    cout<<"Total number of bins "<<size<<endl;
     //Set the instance of this grid with given parameters
     _binGrid = new BinGrid(size, _ID, _binSize);
     //Create connections based on dimensionality
     generateConnections();
+    cout<<"connections generated"<<endl;
 }
 
 //You need a vector of all grids so you can loop through and update respective coordinates.
-Bin* HybridCylinderCylinderNL::getBin(const vector<double> &coords) {
+Bin* HybridCylinderCylinderNL::getBin(const vector<floatingpoint> &coords) {
     //Check if out of bounds
     size_t index = 0;
     size_t i = 0;
@@ -245,7 +235,7 @@ Bin* HybridCylinderCylinderNL::getBin(const vector<double> &coords) {
         //Flatten the coordinates to 1D, get integer index
         if(i == 0) {
             if(x < 0 || x >= (_binSize[0] * _grid[0])) {
-                cout<<"get Bin coords x"<<endl;
+
                 throw OutOfBoundsException();
             }
 
@@ -253,7 +243,7 @@ Bin* HybridCylinderCylinderNL::getBin(const vector<double> &coords) {
         }
         else if(i == 1) {
             if(x < 0 || x >= (_binSize[1] * _grid[1])) {
-                cout<<"get Bin coords y"<<endl;
+
                 throw OutOfBoundsException();
             }
 
@@ -261,7 +251,7 @@ Bin* HybridCylinderCylinderNL::getBin(const vector<double> &coords) {
         }
         else {
             if(x < 0 || x >= (_binSize[2] * _grid[2])) {
-                cout<<"get Bin coords z"<<endl;
+
                 throw OutOfBoundsException();
             }
 
@@ -347,7 +337,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
     vector<Bin*> _neighboringBins = binvec.at(_ID)//Get the bin that belongs to the
                     // current binGrid of interest for this NL.
                                                     ->getNeighbours();
-    double *coord = CUDAcommon::getSERLvars().coord;
+    floatingpoint *coord = CUDAcommon::getSERLvars().coord;
     auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
     auto cylinderpointervec = CUDAcommon::getSERLvars().cylinderpointervec;
     int cindex = currcylinder->_dcIndex;
@@ -398,7 +388,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                             if (ftype1 != fpairs[0] || ftype2 != fpairs[1])continue;
                         }
                         else if (ftype1 != fpairs[1] || ftype2 != fpairs[0]) continue;
-                        double dist = twoPointDistancesquared(c.coord, ncylinder.coord);
+                        floatingpoint dist = twoPointDistancesquared(c.coord, ncylinder.coord);
                         if (dist < _smallestrMinsq || dist > _largestrMaxsq) continue;
                         for (int idx2 = 0; idx2 < countbounds; idx2++) {
                             //Dont add if ID is more than cylinder for half-list
@@ -491,8 +481,6 @@ void HybridCylinderCylinderNL::reset() {
 //            tot[idx] += _list4mbinvec[idx][cylinder].size();
 //        }
     }
-
 }
-
 
 #endif

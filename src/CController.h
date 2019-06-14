@@ -67,7 +67,7 @@ public:
     void restart();
     
     ///Run chemistry for a given amount of time
-    bool run(double time);
+    bool run(floatingpoint time);
     
     ///Run chemistry for a given number of reaction steps
     bool runSteps(int steps);
@@ -75,7 +75,7 @@ public:
     ///Remove set of reactions at runtime, specified by input
     void removeReactions();
     
-    vector<double> getEnergy();
+    vector<floatingpoint> getEnergy();
     
     ChemSim* getCS();
     

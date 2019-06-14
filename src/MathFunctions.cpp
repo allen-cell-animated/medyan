@@ -20,13 +20,13 @@
 
 namespace mathfunc {
 
-    tuple<vector<double>, vector<double>> branchProjection(const vector<double>& n,
-                                                           const vector<double>& p,
-                                                           double l, double m, double theta){
+    tuple<vector<floatingpoint>, vector<floatingpoint>> branchProjection(const vector<floatingpoint>& n,
+                                                           const vector<floatingpoint>& p,
+                                                           floatingpoint l, floatingpoint m, floatingpoint theta){
         //get random permutation from p
-        vector<double> r = {p[0] + Rand::randDouble(-1, 1),
-                            p[1] + Rand::randDouble(-1, 1),
-                            p[2] + Rand::randDouble(-1, 1)};
+        vector<floatingpoint> r = {p[0] + Rand::randfloatingpoint(-1, 1),
+                            p[1] + Rand::randfloatingpoint(-1, 1),
+                            p[2] + Rand::randfloatingpoint(-1, 1)};
 
         //construct vector z which is r-p
         auto z = twoPointDirection(p, r);
@@ -38,21 +38,21 @@ namespace mathfunc {
         normalize(u); normalize(v);
 
         //find random point on circle defining the branching point
-        double thetaRandom = Rand::randDouble(0, 2*M_PI);
-        vector<double> bp1;
+        floatingpoint thetaRandom = Rand::randfloatingpoint(0, 2*M_PI);
+        vector<floatingpoint> bp1;
         bp1.push_back(p[0] + l * (u[0] * cos(thetaRandom) + v[0] * sin(thetaRandom)));
         bp1.push_back(p[1] + l * (u[1] * cos(thetaRandom) + v[1] * sin(thetaRandom)));
         bp1.push_back(p[2] + l * (u[2] * cos(thetaRandom) + v[2] * sin(thetaRandom)));
 
         //now find the second point
-        vector<double> newP;
-        double dist = m * cos(theta);
+        vector<floatingpoint> newP;
+        floatingpoint dist = m * cos(theta);
         newP.push_back(p[0] + n[0] * dist);
         newP.push_back(p[1] + n[1] * dist);
         newP.push_back(p[2] + n[2] * dist);
-        double newL = (l + m * sin(theta));
+        floatingpoint newL = (l + m * sin(theta));
 
-        vector<double> bp2;
+        vector<floatingpoint> bp2;
         bp2.push_back(newP[0] + newL * (u[0] * cos(thetaRandom) + v[0] * sin(thetaRandom)));
         bp2.push_back(newP[1] + newL * (u[1] * cos(thetaRandom) + v[1] * sin(thetaRandom)));
         bp2.push_back(newP[2] + newL * (u[2] * cos(thetaRandom) + v[2] * sin(thetaRandom)));
@@ -60,13 +60,13 @@ namespace mathfunc {
         //get direction
         auto direction = twoPointDirection(bp1, bp2);
 
-        return tuple<vector<double>, vector<double>>(direction, bp1);
+        return tuple<vector<floatingpoint>, vector<floatingpoint>>(direction, bp1);
     }
 
 #ifdef CUDAACCL
-//     __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot){
+//     __global__ void addvector(floatingpoint *U, int *params, floatingpoint *U_sum, floatingpoint *U_tot){
 //        U_sum[0] = 0.0;
-//        double sum = 0.0;
+//        floatingpoint sum = 0.0;
 //        for(auto i=0;i<params[1];i++){
 //            if(U[i] == -1.0 && sum != -1.0){
 //                U_sum[0] = -1.0;
@@ -83,9 +83,9 @@ namespace mathfunc {
 //
 //    }
 
-//    __global__ void addvectorred(double *U, int *params, double *U_sum, double *U_tot){
-//        extern __shared__ double s[];
-//        double *c1 = s;
+//    __global__ void addvectorred(floatingpoint *U, int *params, floatingpoint *U_sum, floatingpoint *U_tot){
+//        extern __shared__ floatingpoint s[];
+//        floatingpoint *c1 = s;
 //        int start = 0;
 //        int end = params[1];
 //        int factor = params[1]/blockDim.x;
@@ -123,7 +123,7 @@ namespace mathfunc {
 //        }
 //        else if(threadIdx.x == 0) {
 //            U_sum[0] = 0.0;
-//            double sum = 0.0;
+//            floatingpoint sum = 0.0;
 //            for (auto i = 0; i < params[1]; i++) {
 //                if (U[i] == -1.0 && sum != -1.0) {
 //                    U_sum[0] = -1.0;
@@ -139,9 +139,9 @@ namespace mathfunc {
 //        }
 //    }
 
-    __global__ void addvectorred2(double *g_idata, int *num, double *U_sum, double *g_odata)
+    __global__ void addvectorred2(floatingpoint *g_idata, int *num, floatingpoint *U_sum, floatingpoint *g_odata)
     {
-        extern __shared__ double sdata[];
+        extern __shared__ floatingpoint sdata[];
         unsigned int tid = threadIdx.x;
         auto blockSize = blockDim.x;
         unsigned int i = blockIdx.x*(blockSize*2) + tid;
@@ -176,9 +176,9 @@ namespace mathfunc {
         }
     }
 
-    __global__ void addvectorred3(double *g_idata, int *num, double *U_sum)
+    __global__ void addvectorred3(floatingpoint *g_idata, int *num, floatingpoint *U_sum)
     {
-        extern __shared__ double sdata[];
+        extern __shared__ floatingpoint sdata[];
         unsigned int tid = threadIdx.x;
         auto blockSize = blockDim.x;
         unsigned int i = blockIdx.x*(blockSize*2) + tid;
@@ -216,14 +216,14 @@ namespace mathfunc {
     __global__ void resetintvariableCUDA(int *variable){
         variable[0] = 0;
     }
-    __global__ void resetdoublevariableCUDA(double *variable){
+    __global__ void resetfloatingpointvariableCUDA(floatingpoint *variable){
         variable[0] = 0.0;
     }
 #endif
-//    __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot, int *culpritID, char* culpritFF,
+//    __global__ void addvector(floatingpoint *U, int *params, floatingpoint *U_sum, floatingpoint *U_tot, int *culpritID, char* culpritFF,
 //                              char* culpritinteraction, char* FF, char* interaction){
 //        U_sum[0] = 0.0;
-//        double sum = 0.0;
+//        floatingpoint sum = 0.0;
 //        for(auto i=0;i<params[1];i++){
 //            if(U[i] == -1.0 && sum != -1.0){
 //                U_sum[0] = -1.0;

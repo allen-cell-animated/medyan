@@ -27,7 +27,7 @@ void ChemSim::removeReaction(ReactionBase *r){
     _pimpl->removeReaction(r); 
 }
 
-bool ChemSim::run(double time){
+bool ChemSim::run(floatingpoint time){
     return _pimpl->run(time);
 }
 
@@ -44,8 +44,8 @@ void ChemSim::printReactions() {
 }
 
 //Dissipation
-vector<double> ChemSim::getEnergy(){
-    vector<double> returnvec;
+vector<floatingpoint> ChemSim::getEnergy(){
+    vector<floatingpoint> returnvec;
     if(SysParams::Chemistry().dissTracking){
     returnvec.push_back(_pimpl->_dt->getCumDissEnergy());
     returnvec.push_back(_pimpl->_dt->getCumDissChemEnergy());

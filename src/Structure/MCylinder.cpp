@@ -18,7 +18,7 @@
 
 using namespace mathfunc;
 
-MCylinder::MCylinder(short filamentType, double eqLength){
+MCylinder::MCylinder(short filamentType, floatingpoint eqLength){
     
     //Set equilibrium length and constants relative to full cylinder length
     setEqLength(filamentType, eqLength);
@@ -31,9 +31,9 @@ MCylinder::MCylinder(short filamentType, double eqLength){
         _eqTheta = SysParams::Mechanics().FBendingTheta[filamentType];
 }
 
-void MCylinder::setEqLength(short filamentType, double l) {
+void MCylinder::setEqLength(short filamentType, floatingpoint l) {
     _eqLength = l;
-    double fracCylinderSize = SysParams::Geometry().cylinderSize[filamentType] / l;
+    floatingpoint fracCylinderSize = SysParams::Geometry().cylinderSize[filamentType] / l;
     // recalculate other constants
     if(!SysParams::Mechanics().FStretchingK.empty())
         _kStretch = SysParams::Mechanics().FStretchingK[filamentType] * fracCylinderSize;

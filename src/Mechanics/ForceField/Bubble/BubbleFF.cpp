@@ -48,9 +48,6 @@ BubbleFF::BubbleFF (string type, string mtoc) {
     if (mtoc == "ATTACHMENTHARMONIC") {
         _bubbleInteractionVector.emplace_back(
         new MTOCAttachment<MTOCAttachmentHarmonic>());
-        //Have both FFs for now
-//        _bubbleInteractionVector.emplace_back(
-//        new MTOCBending<MTOCBendingCosine>());
     }
     else if(mtoc == "") {}
     else {
@@ -60,13 +57,13 @@ BubbleFF::BubbleFF (string type, string mtoc) {
 }
 
 void BubbleFF::vectorize() {
-    
+
     for (auto &interaction : _bubbleInteractionVector)
     interaction->vectorize();
 }
 
 void BubbleFF::cleanup() {
-        
+
     for (auto &interaction : _bubbleInteractionVector)
     interaction->deallocate();
 }
@@ -89,10 +86,10 @@ void BubbleFF::whoIsCulprit() {
 }
 
 
-double BubbleFF::computeEnergy(double *coord, double *f, double d) {
-    
-    double U= 0.0;
-    double U_i=0.0;
+floatingpoint BubbleFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+
+	floatingpoint U= 0.0;
+	floatingpoint U_i=0.0;
     
     for (auto &interaction : _bubbleInteractionVector) {
         
@@ -109,14 +106,14 @@ double BubbleFF::computeEnergy(double *coord, double *f, double d) {
     return U;
 }
 
-void BubbleFF::computeForces(double *coord, double *f) {
+void BubbleFF::computeForces(floatingpoint *coord, floatingpoint *f) {
     
     for (auto &interaction : _bubbleInteractionVector)
         interaction->computeForces(coord, f);
 }
 
 //void BubbleFF::computeForcesAux() {
-//    
+//
 //    for (auto &interaction : _bubbleInteractionVector)
 //        interaction->computeForcesAux();
 //}

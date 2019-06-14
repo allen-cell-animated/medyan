@@ -44,31 +44,31 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
             if(c->isMinusEnd()) nint++;
             nint++;
         }
-        
+
     }
-    
+
     //stores number of interactions per bubble
     nneighbors = new int[Bubble::getBubbles().size()];
     //stores bubble index
     bubbleSet = new int[Bubble::getBubbles().size()];
-    radius = new double[Bubble::getBubbles().size()];
+    radius = new floatingpoint[Bubble::getBubbles().size()];
     //stores cumulative number of nneighbors, for CUDA only.
 //    nintvec = new int[Bubble::getBubbles().size()];
     beadSet = new int[nint];
-    krep = new double[nint];
-    slen = new double[nint];
-    
+    krep = new floatingpoint[nint];
+    slen = new floatingpoint[nint];
+
     int idb = 0;
-    
+
     int bindex = 0;
     int cumnn=0;
-    
-    
+
+
     for (auto bb:Bubble::getBubbles()){
         
         nneighbors[idb] = 0;
         int idx = 0;
-        
+
         //total number of neighbor cylinders
         int cmax = _neighborList->getNeighbors(bb).size();
         for(int ni = 0; ni < cmax; ni++){
@@ -110,7 +110,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
 
 //    delete [] nintvec;
 
-    
+
 }
 
 template <class BRepulsionInteractionType>
@@ -123,10 +123,11 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
 }
 
 template <class BRepulsionInteractionType>
-double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double* coord, double *f, double d) {
-    
-    double U = 0.0;
-    double U_i=0.0;
+floatingpoint BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(floatingpoint* coord,
+														floatingpoint *f, floatingpoint d) {
+
+    floatingpoint U = 0.0;
+    floatingpoint U_i=0.0;
     if (d == 0.0) {
         U_i = _FFType.energy(coord, f, beadSet, bubbleSet, krep, slen, radius, nneighbors);
     }
@@ -135,15 +136,15 @@ double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double*
     }
 
 
-    
+
     return U;
 }
 
 template <class BRepulsionInteractionType>
-void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeForces(double *coord, double *f) {
-    
+void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
+
 _FFType.forces(coord, f, beadSet, bubbleSet, krep, slen, radius, nneighbors);
-    
+
 }
 
 template <class BRepulsionInteractionType>
@@ -167,10 +168,10 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 continue;
             }
             
-            double kRep = bb->getRepulsionConst();
-            double screenLength = bb->getScreeningLength();
+            floatingpoint kRep = bb->getRepulsionConst();
+            floatingpoint screenLength = bb->getScreeningLength();
             
-            double radius = bb->getRadius();
+            floatingpoint radius = bb->getRadius();
             
             Bead* bd1 = bb->getBead();
             
@@ -191,15 +192,15 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 bd2->lfip = 0;
                 for (int i = 0; i < cylSize; i++) {
                     
-                    auto newCoord = vector<double>{bd2->coordinate[0] + i * normal[0] * monSize,
+                    auto newCoord = vector<floatingpoint>{bd2->coordinate[0] + i * normal[0] * monSize,
                         bd2->coordinate[1] + i * normal[1] * monSize,
                         bd2->coordinate[2] + i * normal[2] * monSize};
                     
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
-                    double proj = dotProduct(twoPointDirection(newCoord, bd1->coordinate), normal);
-                    
-                    double loadForce = _FFType.loadForces(bd1, bd2, radius, kRep, screenLength);
+                    floatingpoint proj = dotProduct(twoPointDirection(newCoord, bd1->coordinate), normal);
+
+                    floatingpoint loadForce = _FFType.loadForces(bd1, bd2, radius, kRep, screenLength);
                     bd2->loadForcesP[bd2->lfip++] += proj * loadForce;
                 }
                 //reset lfi
@@ -220,15 +221,15 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 bd2->lfim = 0;
                 for (int i = 0; i < cylSize; i++) {
                     
-                    auto newCoord = vector<double>{bd2->coordinate[0] + i * normal[0] * monSize,
+                    auto newCoord = vector<floatingpoint>{bd2->coordinate[0] + i * normal[0] * monSize,
                         bd2->coordinate[1] + i * normal[1] * monSize,
                         bd2->coordinate[2] + i * normal[2] * monSize};
                     
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
-                    double proj = dotProduct(twoPointDirection(newCoord, bd1->coordinate), normal);
-                    
-                    double loadForce = _FFType.loadForces(bd1, bd2, radius, kRep, screenLength);
+                    floatingpoint proj = dotProduct(twoPointDirection(newCoord, bd1->coordinate), normal);
+
+                    floatingpoint loadForce = _FFType.loadForces(bd1, bd2, radius, kRep, screenLength);
                     bd2->loadForcesM[bd2->lfim++] += proj * loadForce;
                 }
                 //reset lfi
@@ -240,8 +241,8 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
 
 
 ///Template specializations
-template double BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeEnergy(double *coord, double *f, double d);
-template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeForces(double *coord, double *f);
+template floatingpoint BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeForces(floatingpoint *coord, floatingpoint *f);
 //template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeForcesAux(double *coord, double *f);
 template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeLoadForces();
 template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::vectorize();

@@ -82,7 +82,7 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem, Dissipa
     
 }
 
-bool CController::run(double time) {
+bool CController::run(floatingpoint time) {
     
     //update copy numbers
     _chemManager->updateCopyNumbers();
@@ -104,7 +104,7 @@ bool CController::runSteps(int steps) {
     return _chemSim->runSteps(steps);
 }
 
-vector<double> CController::getEnergy(){
+vector<floatingpoint> CController::getEnergy(){
     return _chemSim->getEnergy();};
 
 ChemSim* CController::getCS(){

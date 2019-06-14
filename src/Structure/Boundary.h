@@ -61,7 +61,7 @@ public:
     }
     
     /// Check if coordinates are within boundary
-    virtual bool within(const vector<double>& coordinates) = 0;
+    virtual bool within(const vector<floatingpoint>& coordinates) = 0;
     
     /// Check if a compartment is within boundary
     /// @note - this checks if ANY part of the compartment volume
@@ -71,26 +71,26 @@ public:
     /// Get the distance from the boundary. Returns the distance from
     /// closest boundary element in the boundary.
     /// Will return infinity if outside of the boundary.
-    virtual double distance(const vector<double>& coordinates) = 0;
+    virtual floatingpoint distance(const vector<floatingpoint>& coordinates) = 0;
     
     //Qin
     // Returns the distance from the boundary element in the lower boundary
-    virtual double lowerdistance(const vector<double>& coordinates) = 0;
+    virtual floatingpoint lowerdistance(const vector<floatingpoint>& coordinates) = 0;
     // Returns the distance from the boundary element in the side boundary
-    virtual double sidedistance(const vector<double>& coordinates) = 0;
-    virtual double getboundaryelementcoord(int bidx) = 0;
+    virtual floatingpoint sidedistance(const vector<floatingpoint>& coordinates) = 0;
+    virtual floatingpoint getboundaryelementcoord(int bidx) = 0;
     ///Move a given part of a boundary a given distance
     ///@note a negative distance denotes movement towards the center of the grid.
-    virtual void move(vector<double> dist) = 0;
+    virtual void move(vector<floatingpoint> dist) = 0;
     
     //Give a normal to the plane (pointing inward) at a given point
-    virtual vector<double> normal(vector<double>& coordinates) = 0;
+    virtual vector<floatingpoint> normal(vector<floatingpoint>& coordinates) = 0;
 
     //returns volume of the enclosed volume. Note. If there are moving boundaries, this
     // volume MAY not the same as volume specified in systeminputfile.
     virtual void volume() = 0;
 
-    static double systemvolume;
+    static floatingpoint systemvolume;
     
 };
 

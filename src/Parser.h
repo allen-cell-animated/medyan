@@ -49,9 +49,9 @@ struct MechanicsAlgorithm {
     string ConjugateGradient = "";
     
     /// Tolerance and cg parameters
-    double gradientTolerance = 1.0;
-    double maxDistance = 1.0;
-    double lambdaMax = 1.0;
+    floatingpoint gradientTolerance = 1.0;
+    floatingpoint maxDistance = 1.0;
+    floatingpoint lambdaMax = 1.0;
     
     /// Not yet used
     string MD = "";
@@ -65,12 +65,12 @@ struct ChemistryAlgorithm {
     //@{
     /// User can specify total run time of the simulation, as well as
     /// frequency of snapshots, neighbor list updates and minimizations.
-    double runTime = 0.0;
+    floatingpoint runTime = 0.0;
     
-    double snapshotTime = 0.0;
+    floatingpoint snapshotTime = 0.0;
     
-    double minimizationTime = 0.0;
-    double neighborListTime = 0.0;
+    floatingpoint minimizationTime = 0.0;
+    floatingpoint neighborListTime = 0.0;
     //@}
     
     //@{
@@ -82,79 +82,76 @@ struct ChemistryAlgorithm {
     
     int minimizationSteps = 0;
     int neighborListSteps = 0;
-    
     //@}
-    
-    
 };
 
 /// Struct to hold Species and Reaction information
 /// @note - all filament-related reactions and species are 2D vectors corresponding
 ///         to the filament type specified in the input file.
 struct ChemistryData {
- 
+
     /// Reaction happening between SpeciesBulk and SpeciesDiffusing ONLY
-    vector<tuple<vector<string>, vector<string>, double, double, string>> genReactions = {};
-    
+    vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>> genReactions = {};
+
     /// Reaction happening between SpeciesBulk ONLY
-    vector<tuple<vector<string>, vector<string>, double>> bulkReactions = {};
-    
+    vector<tuple<vector<string>, vector<string>, floatingpoint>> bulkReactions = {};
+
     /// Filament nucleation reaction
-    vector<vector<tuple<vector<string>, vector<string>, double>>> nucleationReactions;
-    
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint>>> nucleationReactions;
+
     //@{
     /// Filament reactions
     /*!
-     *  All Filament reactions are held using a vector containing a tuple with the 
-     *  string of reactants, string of products, and the reaction rate.
-     */
+        *  All Filament reactions are held using a vector containing a tuple with the 
+        *  string of reactants, string of products, and the reaction rate.
+        */
     /// Polymerization reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, double, string>>> polymerizationReactions;
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> polymerizationReactions;
     /// Depolymerization reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, double, string>>> depolymerizationReactions;
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> depolymerizationReactions;
     /// Aging reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, double, string>>> agingReactions;
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> agingReactions;
     /// Destruction reactions
-    vector<vector<tuple<vector<string>, vector<string>, double>>> destructionReactions;
-    
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint>>> destructionReactions;
+
     /// Branching reactions
     /// This reaction also contains the off rate, and a string
     /// specifying the nucleation zone and relevant distance parameter
-    vector<vector<tuple<vector<string>, vector<string>, double, double, string, double>>> branchingReactions;
-    
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string, floatingpoint>>> branchingReactions;
+
     /// Severing reactions
-    vector<vector<tuple<string, double>>> severingReactions;
+    vector<vector<tuple<string, floatingpoint>>> severingReactions;
     //@}
-    
+
     //@{
     /// Cross Filament binding and unbinding reactions
     /*!
-     *  All cross Filament reactions are held using a vector containing a tuple with 
-     *  the string of reactants, string of products, the reaction rate, and binding 
-     *  range.
-     */
+        *  All cross Filament reactions are held using a vector containing a tuple with 
+        *  the string of reactants, string of products, the reaction rate, and binding 
+        *  range.
+        */
     /// Linker reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double, double, string>>> linkerReactions;
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint, string>>> linkerReactions;
     /// MotorGhost reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double, double, string>>> motorReactions;
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint, string>>> motorReactions;
     //@}
-    
+
     /// MotorGhost walking reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, double, string>>> motorWalkingReactions;
-    
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> motorWalkingReactions;
+
     /// SpeciesBulk parsed, in the form of a tuple which contains the name and
     /// initial copy number, release time, removal time, CONST/REG qualifier, TARGET TYPE
     /// (TOTCONC/FREECONC) and Target CONCENTRATION (needed in move boundary)
-    vector<tuple<string, int, double, double, string, string, double>> speciesBulk =
+    vector<tuple<string, int, floatingpoint, floatingpoint, string, string, floatingpoint>> speciesBulk =
             {};
 
-    
+
     /// SpeicesDiffusing parsed, in the form of a tuple which contains name,
     /// initial copy number in reaction volume, the rate of diffusion, release time,
     /// removal time, AVG/REG qualifier, and number of events to average if applicable.
-    vector<tuple<string, int, double, double, double, string, int, string, double>>
+    vector<tuple<string, int, floatingpoint, floatingpoint, floatingpoint, string, int, string, floatingpoint>>
             speciesDiffusing = {};
-    
+
     //@{
     /// Filament species parsed
     vector<vector<string>> speciesFilament;
@@ -400,7 +397,8 @@ public:
     /// Reads filament input file. Returns a vector of tuples containing
     /// filament type and positions (start and end points).
     /// @note - Does not check for coordinate correctness.
-     tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> >  readFilaments();
+     tuple< vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> , vector<tuple<string, short, vector<vector<floatingpoint>>>> ,
+            vector<tuple<string, short, vector<floatingpoint>>> , vector<vector<floatingpoint>> >  readFilaments();
 };
 
 /// Used to parse initial Bubble information, initialized by the Controller.
@@ -413,7 +411,7 @@ public:
     /// Reads bubble input file. Returns a vector of tuples containing
     /// bubble type and position.
     /// @note - Does not check for coordinate correctness.
-    vector<tuple<short, vector<double>>> readBubbles();
+    vector<tuple<short, vector<floatingpoint>>> readBubbles();
 };
 
 

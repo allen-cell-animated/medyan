@@ -36,19 +36,21 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
     SpeciesBound* BB1 = _cc1->getCMonomer(_position1)->speciesBound(
             SysParams::Chemistry().brancherBoundIndex[_filamentType]);
     SpeciesBound* BB2 = _cc2->getCMonomer(_position2)->speciesBound(
-            SysParams::Chemistry().brancherBoundIndex[_filamentType]);
-    SpeciesBound* BM1 = _cc1->getCMonomer(_position1)->speciesBound(
-            SysParams::Chemistry().motorBoundIndex[_filamentType]);
-    SpeciesBound* BM2 = _cc2->getCMonomer(_position2)->speciesBound(
-            SysParams::Chemistry().motorBoundIndex[_filamentType]);
-    SpeciesBound* sl1 = _cc1->getCMonomer(_position1)->speciesLinker(0);
+            SysParams::Chemistry().brancherBoundIndex[_filamentType]);*/
+//    SpeciesBound* BM1 = _cc1->getCMonomer(_position1)->speciesBound(
+//            SysParams::Chemistry().motorBoundIndex[_filamentType]);
+//    SpeciesBound* BM2 = _cc2->getCMonomer(_position2)->speciesBound(
+//            SysParams::Chemistry().motorBoundIndex[_filamentType]);
+    /*SpeciesBound* sl1 = _cc1->getCMonomer(_position1)->speciesLinker(0);
     SpeciesBound* sl2 = _cc2->getCMonomer(_position2)->speciesLinker(0);
     SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesBrancher(0);
-    SpeciesBound* sb2 = _cc2->getCMonomer(_position2)->speciesBrancher(0);
-    std::cout<<"Motor "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "<<cc2->getCylinder()->getID()<<" "<<
-             ""<<_position2<<" MotorType "<<motorType<< endl;
-        std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "<<BM2->getN()<<endl;
-        std::cout<<"Linker "<<sl1->getN()<<" "<<sl2->getN()<<" BOUND "<<BL1->getN()<<" "<<BL2->getN()<<endl;*/
+    SpeciesBound* sb2 = _cc2->getCMonomer(_position2)->speciesBrancher(0);*/
+//    std::cout<<"Motor "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "<<cc2->getCylinder()->getID()<<" "<<
+//             ""<<_position2<<" MotorType "<<motorType<< endl;
+//    cout<<"Motor cIndices "<<cc1->getCylinder()->_dcIndex<<" "<<cc2->getCylinder()
+//    ->_dcIndex<<endl;
+//        std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "<<BM2->getN()<<endl;
+//        std::cout<<"Linker "<<sl1->getN()<<" "<<sl2->getN()<<" BOUND "<<BL1->getN()<<" "<<BL2->getN()<<endl;
 //        std::cout<<"Brancher "<<sb1->getN()<<" "<<sb2->getN()<<" BOUND "<<BB1->getN()<<" "<<BB2->getN()<<endl;
 //    for(auto c:Cylinder::getCylinders()){
 //        std::cout<<c->getID()<<" "<<c->getMCylinder()->getLength()<<" ";
@@ -59,9 +61,14 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
     std::cout<<"Chosen sites Cyl1 "<<cc1->getCylinder()->getID()<<" bs1 "<<_position1<<" "
             "Cyl2 "<<cc2->getCylinder()->getID()<<" bs2 "<<_position2<<endl;
 #endif
-/*    std::cout<<"Motor binding "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "
-             <<cc2->getCylinder()->getID()<<" "<<
-             <<_position2<<" MotorType "<<motorType<< endl;*/
+    /*std::cout<<"Motor binding "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "
+             <<cc2->getCylinder()->getID()<<" "<<_position2<<" MotorType "<<motorType<< endl;
+    cout<<"species statuses (bound) "<<se1->getN()<<" "<<se2->getN()<<" (motor) "<<sm1->getN()<<" "
+									""<<sm2->getN()<<endl;
+	auto c1coord = cc1->getCompartment()->coordinates();
+	auto c2coord = cc2->getCompartment()->coordinates();
+    cout<<"coordinate Cmp "<<c1coord[0]<<" "<<c1coord[1]<<" "<<c1coord[2]<<" "
+																		   ""<<c2coord[0]<<" "<<c2coord[1]<<" "<<c2coord[2]<<endl;*/
     //mark species
     assert(areEqual(sm1->getN(), 0.0) && areEqual(sm2->getN(), 0.0) &&
            areEqual(se1->getN(), 1.0) && areEqual(se2->getN(), 1.0) &&
@@ -106,7 +113,7 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(os, _offRate);
     // Dissipation
     if(SysParams::Chemistry().dissTracking){
-    double gnum = onRxn->getGNumber();
+    floatingpoint gnum = onRxn->getGNumber();
     offRxn->setReactionType(ReactionType::MOTORUNBINDING);
     offRxn->setGNumber(-gnum);
     
@@ -138,7 +145,7 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
     
     // Dissipation
     string hrcdid = "NA";
-    double gnum = 0.0;
+    floatingpoint gnum = 0.0;
     if(SysParams::Chemistry().dissTracking){
         hrcdid = _offRxn->getHRCDID();
         gnum = _offRxn->getGNumber();
@@ -223,7 +230,7 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
     
     // Dissipation
     string hrcdid = "NA";
-    double gnum = 0.0;
+    floatingpoint gnum = 0.0;
     if(SysParams::Chemistry().dissTracking){
     hrcdid = _offRxn->getHRCDID();
     gnum = _offRxn->getGNumber();
