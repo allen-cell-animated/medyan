@@ -1018,7 +1018,7 @@ void Controller::run() {
 #ifdef MECHANICS
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
-    //TODO update neighorLists before and after minimization. Need excluded volume
+    // update neighorLists before and after minimization. Need excluded volume
     // interactions.
 	_subSystem->resetNeighborLists();
     _mController->run(false);
@@ -1200,6 +1200,11 @@ void Controller::run() {
                 chrono::duration<floatingpoint> elapsed_rxn2(mine - mins);
                 updateposition += elapsed_rxn2.count();
 
+                // Dissipation
+                if(SysParams::CParams.dissTracking){
+                    _dt->updateAfterMinimization();
+                }
+
 	            //update reaction rates
 	            mins = chrono::high_resolution_clock::now();
 #ifdef DYNAMICRATES
@@ -1316,6 +1321,10 @@ void Controller::run() {
                 _mController->run();
                 updatePositions();
 
+#ifdef DYNAMICRATES
+                updateReactionRates();
+#endif
+
                 stepsLastMinimization = 0;
             }
 
@@ -1330,10 +1339,6 @@ void Controller::run() {
             for(auto o: _outputs) o->print(i);
             resetCounters();
             i++;
-#endif
-
-#ifdef DYNAMICRATES
-            updateReactionRates();
 #endif
 
 #ifdef CHEMISTRY
