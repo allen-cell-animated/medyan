@@ -134,7 +134,6 @@ struct ChemParams {
     vector<short> numBindingSites = {};
 
     short maxbindingsitespercylinder = 0;
-    short minbindingsitespercylinder = 32767;
 
     //@{
     ///Extra motor parameters

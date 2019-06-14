@@ -262,8 +262,6 @@ void SystemParser::readChemParams() {
 
         CParams.maxbindingsitespercylinder = max(CParams.maxbindingsitespercylinder,
                                                  CParams.numBindingSites[i]);
-        CParams.minbindingsitespercylinder = max(CParams.minbindingsitespercylinder,
-                                                 CParams.numBindingSites[i]);
 
         vector<short> tempBindingSites;
 
