@@ -944,16 +944,6 @@ void ReactionOut::print(int snapshot) {
         }
 
         _outputFile << endl;
-
-        filament->resetPolyMinusEnd();
-        filament->resetPolyPlusEnd();
-        filament->resetDepolyMinusEnd();
-        filament->resetDepolyPlusEnd();
-        filament->resetNucleation();
-        filament->resetDeltaPlusEnd();
-        filament->resetDeltaMinusEnd();
-        filament->resetSevering();
-        filament->resetSeveringID();
     }
 
     _outputFile << endl;
