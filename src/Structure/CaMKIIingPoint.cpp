@@ -183,6 +183,8 @@ CaMKIIingPoint::~CaMKIIingPoint() noexcept {
         }
             
         //remove the filament from the system
+        //TODO remove this lines (This lines come from the Arp2/3 brancher)
+        // We shouldn't remove a filament
         Filament *bf = (Filament*)(getCylinder(0)->getParent());
         _subSystem->removeTrackable<Filament>(bf);
         
