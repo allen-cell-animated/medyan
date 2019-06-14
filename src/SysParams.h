@@ -93,8 +93,6 @@ struct MechParams {
     floatingpoint pinDistance = 250; ///< 250nm pinning distance for now
     floatingpoint pinK = 0.0;       ///< Tethered stiffness
     floatingpoint pinTime = 0.0;    ///< Time at which to pin the filaments
-    //int transfershareaxis=-1;       ///Axis along which activate/deactivate protocols
-/// should be executed.
     //@}
 
     //vectorization
