@@ -1,5 +1,6 @@
 #include "VisualHelper.hpp"
 
+#include <array>
 #include <functional> // cref, reference_wrapper
 #include <mutex>
 #include <numeric> // iota
@@ -11,6 +12,7 @@
 #include "Structure/Bead.h"
 #include "Structure/Cylinder.h"
 #include "Structure/Filament.h"
+#include "Structure/Linker.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Visual/Render/PathExtrude.hpp"
 #include "Visual/SharedData.hpp"
@@ -34,6 +36,8 @@ struct SystemDataForVisual {
 
     std::vector< MembraneIndex > membraneIndices;
     std::vector< std::vector< size_t > > filamentIndices; // [Filament Idx][Bead position in filament]
+
+    std::vector< std::array< mathfunc::Vec3, 2 > > linkerCoords;
 };
 
 // Shared data
@@ -263,6 +267,65 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
             ve->state.eleMode = GL_TRIANGLES;
         }
     }
+    else if(ve->profile.flag & Profile::targetLinker) {
+        //-----------------------------------------------------------------
+        // Linker Shape
+        //-----------------------------------------------------------------
+        if(sdfv.updated & sys_data_update::BeadPosition) {
+            ve->state.vertexAttribs.clear();
+            ve->state.attribChanged = true;
+            // if(sdfv.updated & sys_data_update::BeadConnection) {
+            //     ve->state.vertexIndices.clear();
+            //     ve->state.indexChanged = true;
+            // }
+
+            for(const auto& c : sdfv.linkerCoords) {
+                mathfunc::VecArray< 3, float > genVertices;
+                std::vector< unsigned > genTriInd;
+
+                std::tie(genVertices, genTriInd) = visual::PathExtrude<float>{
+                    ve->profile.pathExtrudeRadius,
+                    ve->profile.pathExtrudeSides
+                }.generate(c, std::array<size_t, 2>{0, 1});
+
+                // Update coords
+                ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + GlState::vaStride * genTriInd.size());
+                const auto numTriangles = genTriInd.size() / 3;
+                for(size_t t = 0; t < numTriangles; ++t) {
+                    const decltype(genVertices[0]) coord[] {
+                        genVertices[genTriInd[3 * t + 0]],
+                        genVertices[genTriInd[3 * t + 1]],
+                        genVertices[genTriInd[3 * t + 2]]
+                    };
+                    const auto un = normalizedVector(cross(coord[1] - coord[0], coord[2] - coord[0]));
+
+                    for(size_t i = 0; i < 3; ++i) {
+                        ve->state.vertexAttribs.push_back(coord[i][0]);
+                        ve->state.vertexAttribs.push_back(coord[i][1]);
+                        ve->state.vertexAttribs.push_back(coord[i][2]);
+                        ve->state.vertexAttribs.push_back(un[0]);
+                        ve->state.vertexAttribs.push_back(un[1]);
+                        ve->state.vertexAttribs.push_back(un[2]);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
+                    }
+                }
+
+                // if(sdfv.updated & sys_data_update::BeadConnection) {
+                //     // Update indices
+                //     ve->state.vertexIndices.reserve(ve->state.vertexIndices.size() + genTriInd.size());
+                //     for(auto i : genTriInd) {
+                //         ve->state.vertexIndices.push_back(i + curVertexStart);
+                //     }
+                // }
+
+                // curVertexStart += genVertices.size();
+            }
+        } // End if updated bead position
+        ve->state.eleMode = GL_TRIANGLES;
+
+    } // End if profile target
 
 } // void prepareVisualElement(...)
 
@@ -325,6 +388,20 @@ void copySystemDataAndRunHelper(sys_data_update::FlagType update) {
                 for(Cylinder* c : cylinders)
                     fi.push_back(c->getFirstBead()->getIndex()); // TODO make c const Cylinder*
                 fi.push_back(cylinders.back()->getSecondBead()->getIndex());
+            }
+
+            // Extract motors and linkers
+            sdfv.linkerCoords.clear();
+            for(Linker* l : Linker::getLinkers()) {
+                sdfv.linkerCoords.emplace_back();
+                const auto pos0 = l->getFirstPosition();
+                sdfv.linkerCoords.back()[0]
+                    = l->getFirstCylinder()->getFirstBead()->coordinate() * (1 - pos0)
+                    + l->getFirstCylinder()->getSecondBead()->coordinate() * pos0;
+                const auto pos1 = l->getSecondPosition();
+                sdfv.linkerCoords.back()[0]
+                    = l->getSecondCylinder()->getFirstBead()->coordinate() * (1 - pos1)
+                    + l->getSecondCylinder()->getSecondBead()->coordinate() * pos1;
             }
 
             // Save updated

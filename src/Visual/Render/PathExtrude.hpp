@@ -20,10 +20,10 @@ struct PathExtrude {
 
     // This function transforms a path to a mesh of tubes
     // Parameters
-    //   - coords:  the VecArray where the coordinates of beads can be found
+    //   - coords:  the container where the coordinates of beads can be found
     //   - indices: the bead indices on the path in the coords container
-    template< typename InputFloat >
-    auto generate(const mathfunc::VecArray< 3, InputFloat >& coords, const std::vector< size_t >& indices) const {
+    template< typename CoordContainer, typename IndexContainer >
+    auto generate(const CoordContainer& coords, const IndexContainer& indices) const {
         using namespace mathfunc;
         using std::size_t;
 
