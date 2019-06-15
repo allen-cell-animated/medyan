@@ -13,6 +13,7 @@
 #include "Structure/Cylinder.h"
 #include "Structure/Filament.h"
 #include "Structure/Linker.h"
+#include "Structure/MotorGhost.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Visual/Render/PathExtrude.hpp"
 #include "Visual/SharedData.hpp"
@@ -38,6 +39,7 @@ struct SystemDataForVisual {
     std::vector< std::vector< size_t > > filamentIndices; // [Filament Idx][Bead position in filament]
 
     std::vector< std::array< mathfunc::Vec3, 2 > > linkerCoords;
+    std::vector< std::array< mathfunc::Vec3, 2 > > motorCoords;
 };
 
 // Shared data
@@ -267,7 +269,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
             ve->state.eleMode = GL_TRIANGLES;
         }
     }
-    else if(ve->profile.flag & Profile::targetLinker) {
+    else if(ve->profile.flag & (Profile::targetLinker | Profile::targetMotor)) {
         //-----------------------------------------------------------------
         // Linker Shape
         //-----------------------------------------------------------------
@@ -279,7 +281,8 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
             //     ve->state.indexChanged = true;
             // }
 
-            for(const auto& c : sdfv.linkerCoords) {
+            const auto& coords = (ve->profile.flag & Profile::targetLinker) ? sdfv.linkerCoords : sdfv.motorCoords;
+            for(const auto& c : coords) {
                 mathfunc::VecArray< 3, float > genVertices;
                 std::vector< unsigned > genTriInd;
 
@@ -400,6 +403,18 @@ void copySystemDataAndRunHelper(sys_data_update::FlagType update) {
                     + l->getFirstCylinder()->getSecondBead()->coordinate() * pos0;
                 const auto pos1 = l->getSecondPosition();
                 sdfv.linkerCoords.back()[1]
+                    = l->getSecondCylinder()->getFirstBead()->coordinate() * (1 - pos1)
+                    + l->getSecondCylinder()->getSecondBead()->coordinate() * pos1;
+            }
+            sdfv.motorCoords.clear();
+            for(MotorGhost* l : MotorGhost::getMotorGhosts()) {
+                sdfv.motorCoords.emplace_back();
+                const auto pos0 = l->getFirstPosition();
+                sdfv.motorCoords.back()[0]
+                    = l->getFirstCylinder()->getFirstBead()->coordinate() * (1 - pos0)
+                    + l->getFirstCylinder()->getSecondBead()->coordinate() * pos0;
+                const auto pos1 = l->getSecondPosition();
+                sdfv.motorCoords.back()[1]
                     = l->getSecondCylinder()->getFirstBead()->coordinate() * (1 - pos1)
                     + l->getSecondCylinder()->getSecondBead()->coordinate() * pos1;
             }
