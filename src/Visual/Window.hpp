@@ -170,8 +170,8 @@ inline void createWindow() {
             auto& ve = shared::visualElements.back();
             ve->profile.enabled = true;
             ve->profile.flag = Profile::targetMembrane;
-            ve->profile.colorAmbient = glm::vec3(0.3f, 0.6f, 0.95f);
-            ve->profile.colorDiffuse = glm::vec3(0.3f, 0.6f, 0.95f);
+            ve->profile.colorAmbient = glm::vec3(0.4f, 0.6f, 0.95f);
+            ve->profile.colorDiffuse = glm::vec3(0.4f, 0.6f, 0.95f);
         }
         {
             shared::visualElements.emplace_back(new VisualElement);
@@ -196,6 +196,22 @@ inline void createWindow() {
             ve->profile.flag = Profile::targetFilament | Profile::displayForce;
             ve->profile.colorAmbient = glm::vec3(0.95f, 0.1f, 0.15f);
             ve->profile.colorDiffuse = glm::vec3(0.95f, 0.1f, 0.15f);
+        }
+        {
+            shared::visualElements.emplace_back(new VisualElement);
+            auto& ve = shared::visualElements.back();
+            ve->profile.enabled = true;
+            ve->profile.flag = Profile::targetLinker;
+            ve->profile.colorAmbient = glm::vec3(0.1f, 0.9f, 0.0f);
+            ve->profile.colorDiffuse = glm::vec3(0.1f, 0.9f, 0.0f);
+        }
+        {
+            shared::visualElements.emplace_back(new VisualElement);
+            auto& ve = shared::visualElements.back();
+            ve->profile.enabled = true;
+            ve->profile.flag = Profile::targetMotor;
+            ve->profile.colorAmbient = glm::vec3(0.1f, 0.1f, 0.99f);
+            ve->profile.colorDiffuse = glm::vec3(0.1f, 0.1f, 0.99f);
         }
     }
 }
