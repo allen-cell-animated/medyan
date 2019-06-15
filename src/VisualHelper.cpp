@@ -399,7 +399,7 @@ void copySystemDataAndRunHelper(sys_data_update::FlagType update) {
                     = l->getFirstCylinder()->getFirstBead()->coordinate() * (1 - pos0)
                     + l->getFirstCylinder()->getSecondBead()->coordinate() * pos0;
                 const auto pos1 = l->getSecondPosition();
-                sdfv.linkerCoords.back()[0]
+                sdfv.linkerCoords.back()[1]
                     = l->getSecondCylinder()->getFirstBead()->coordinate() * (1 - pos1)
                     + l->getSecondCylinder()->getSecondBead()->coordinate() * pos1;
             }
