@@ -857,8 +857,6 @@ void HybridBindingSearchManager::countNpairsfound(short idvec[2]){
 void HybridBindingSearchManager::updateAllPossibleBindingsstencilSIMDV3() {
 
 #ifdef SIMDBINDINGSEARCH
-    short idvecL[2] = {0,0};
-    short idvecM[2] = {0,1};
     short count = 0;
 	for (short idx = 0; idx < totaluniquefIDpairs; idx++) {
 		int countbounds = _rMaxsqvec[idx].size();

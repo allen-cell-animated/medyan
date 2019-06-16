@@ -299,7 +299,7 @@ void SubSystem::updateBindingManagers() {
     endresetCUDA();
 #endif
     vectorizeCylinder();
-
+    //Version1
     #ifdef NLORIGINAL
     for (auto C : _compartmentGrid->getCompartments()){
         for(auto &manager : C->getFilamentBindingManagers()){
@@ -307,7 +307,25 @@ void SubSystem::updateBindingManagers() {
         }
     }
 	#endif
-
+	//Version2
+    #ifdef NLSTENCILLIST
+	#if !defined(HYBRID_NLSTENCILLIST) && !defined(SIMDBINDINGSEARCH)
+    for (auto C : _compartmentGrid->getCompartments()){
+        for(auto &manager : C->getFilamentBindingManagers()){
+            manager->updateAllPossibleBindingsstencil();
+        }
+    }
+	#endif
+	#endif
+	//Version3
+    #if defined(HYBIRD_NLSTENCILLIST) && !defined(SIMDBINDINGSEARCH)
+    for (auto C : _compartmentGrid->getCompartments()) {
+        C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilHYBD();
+        for(auto &manager : C->getBranchingManagers()) {
+            manager->updateAllPossibleBindingsstencil();
+        }
+    }
+    #endif
     chrono::high_resolution_clock::time_point mins, mine;
     mins = chrono::high_resolution_clock::now();
     //SIMD cylinder update
@@ -317,17 +335,19 @@ void SubSystem::updateBindingManagers() {
 		    ->initializeSIMDvars();
         initialize = true;
     }
-
+    //Generate binding site coordinates in each compartment and seggregate them into
+    // different spatial sub-sections.
     for(auto C : _compartmentGrid->getCompartments()) {
         C->SIMDcoordinates4linkersearch_section(1);
         C->SIMDcoordinates4motorsearch_section(1);
     }
-
+    //Empty the existing binding pair list
     for (auto C : _compartmentGrid->getCompartments())
         C->getHybridBindingSearchManager()->resetpossibleBindings();
     minsSIMD = chrono::high_resolution_clock::now();
     HybridBindingSearchManager::findtimeV3 = 0.0;
     HybridBindingSearchManager::SIMDV3appendtime = 0.0;
+    // Update binding sites in SIMD
     for (auto C : _compartmentGrid->getCompartments()) {
         C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV3();
 	    for(auto &manager : C->getBranchingManagers()) {
