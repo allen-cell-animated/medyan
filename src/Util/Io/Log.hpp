@@ -10,7 +10,7 @@
 #include <vector>
 #include <utility>
 
-#include "util/environment.h"
+#include "Util/Environment.h"
 
 namespace medyan {
 namespace logger {
