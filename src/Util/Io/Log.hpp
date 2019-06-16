@@ -1,5 +1,5 @@
-#ifndef MEDYAN_CORE_IO_LOG_H
-#define MEDYAN_CORE_IO_LOG_H
+#ifndef MEDYAN_Util_Io_Log_Hpp
+#define MEDYAN_Util_Io_Log_Hpp
 
 #include <algorithm> // find_if
 #include <fstream>

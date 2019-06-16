@@ -1,5 +1,5 @@
-#ifndef MEDYAN_UTIL_IO_CMDPARSE_H
-#define MEDYAN_UTIL_IO_CMDPARSE_H
+#ifndef MEDYAN_Util_Io_CmdParse_Hpp
+#define MEDYAN_Util_Io_CmdParse_Hpp
 
 #include <cstdlib> // exit
 #include <functional>

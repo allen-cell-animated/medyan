@@ -1,5 +1,5 @@
-#ifndef MEDYAN_UTIL_PROFILER_H
-#define MEDYAN_UTIL_PROFILER_H
+#ifndef MEDYAN_Util_Profiler_Hpp
+#define MEDYAN_Util_Profiler_Hpp
 
 #include <atomic>
 #include <chrono>

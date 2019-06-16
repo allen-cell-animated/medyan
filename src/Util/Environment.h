@@ -1,5 +1,5 @@
-#ifndef MEDYAN_UTIL_ENVIRONMENT_H
-#define MEDYAN_UTIL_ENVIRONMENT_H
+#ifndef MEDYAN_Util_Environment_Hpp
+#define MEDYAN_Util_Environment_Hpp
 
 #if defined(__unix__) || defined(__APPLE__) && defined(__MACH__)
     #define PLATFORM_UNIX_LIKE

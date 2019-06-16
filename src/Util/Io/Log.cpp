@@ -122,8 +122,6 @@ void Logger::defaultLoggerInitialization() {
     // Detect output redirection, set console environment, etc.
     initializeTerminal();
 
-    std::cout << "out, err: " << stdoutRedirected << ' ' << stderrRedirected << std::endl;
-
     LoggerOstreamContainer& scrn = l.attachOstream(&std::cout, false);
 #ifdef NDEBUG
     scrn.disp.turnOnAtLeast(LogLevel::Info);
