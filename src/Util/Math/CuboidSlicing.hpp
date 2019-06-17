@@ -1,5 +1,5 @@
-#ifndef MEDYAN_CuboidSlicing_hpp
-#define MEDYAN_CuboidSlicing_hpp
+#ifndef MEDYAN_Util_Math_CuboidSlicing_Hpp
+#define MEDYAN_Util_Math_CuboidSlicing_Hpp
 
 #include <array>
 

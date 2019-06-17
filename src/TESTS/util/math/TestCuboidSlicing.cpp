@@ -1,7 +1,7 @@
 #include "catch2/catch.hpp"
 
 #include "MathFunctions.h"
-#include "util/math/CuboidSlicing.hpp"
+#include "Util/Math/CuboidSlicing.hpp"
 
 using namespace mathfunc;
 

@@ -13,7 +13,7 @@
 
 #include "Compartment.h"
 
-#include "util/math/CuboidSlicing.hpp"
+#include "Util/Math/CuboidSlicing.hpp"
 #include "GController.h"
 #include "MathFunctions.h"
 using namespace mathfunc;
