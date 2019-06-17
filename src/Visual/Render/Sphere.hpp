@@ -103,8 +103,8 @@ struct SphereUv {
         // Calculate vertices
         for(size_t i = 0; i < numVertices; ++i) {
             vertices[i] = coord + radius * (
-                e0 * cache.vertices[i][0],
-                e1 * cache.vertices[i][1],
+                e0 * cache.vertices[i][0] +
+                e1 * cache.vertices[i][1] +
                 e2 * cache.vertices[i][2]
             );
         }
