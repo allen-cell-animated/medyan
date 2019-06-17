@@ -16,6 +16,7 @@
 #include "Structure/MotorGhost.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Visual/Render/PathExtrude.hpp"
+#include "Visual/Render/Sphere.hpp"
 #include "Visual/SharedData.hpp"
 #include "Visual/VisualElement.hpp"
 

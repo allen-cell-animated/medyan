@@ -13,7 +13,7 @@ struct Profile {
 
     using FlagType = std::uint_fast8_t;
 
-    enum class PathMode { Line, Extrude };
+    enum class PathMode { Line, Extrude, Bead };
     enum class ColorMode { Fixed };
 
     static constexpr FlagType targetFilament      = 1 << 0;

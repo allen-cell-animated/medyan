@@ -5,7 +5,7 @@
 #include <tuple>
 #include <vector>
 
-#include "util/math/vec.hpp"
+#include "Util/Math/Vec.hpp"
 
 namespace visual {
 
