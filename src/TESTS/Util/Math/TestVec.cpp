@@ -3,7 +3,7 @@
 
 #include "catch2/catch.hpp"
 
-#include "util/math/vec.hpp"
+#include "Util/Math/Vec.hpp"
 
 using std::size_t;
 using namespace mathfunc;
