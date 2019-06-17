@@ -223,49 +223,110 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 //     ve->state.indexChanged = true;
                 // }
 
-                for(const auto& fi : sdfv.filamentIndices) {
-                    mathfunc::VecArray< 3, float > genVertices;
-                    std::vector< std::array< size_t, 3 > > genTriInd;
+                switch(ve->profile.pathMode) {
 
-                    std::tie(genVertices, genTriInd) = visual::PathExtrude<float>{
-                        ve->profile.pathExtrudeRadius,
-                        ve->profile.pathExtrudeSides
-                    }.generate(sdfv.copiedBeadData.coords, fi);
+                case Profile::PathMode::Line:
+                    // TODO implement it
+                    break;
 
-                    // Update coords
-                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + GlState::vaStride * 3 * genTriInd.size());
-                    const auto numTriangles = genTriInd.size();
-                    for(size_t t = 0; t < numTriangles; ++t) {
-                        const decltype(genVertices[0]) coord[] {
-                            genVertices[genTriInd[t][0]],
-                            genVertices[genTriInd[t][1]],
-                            genVertices[genTriInd[t][2]]
-                        };
-                        const auto un = normalizedVector(cross(coord[1] - coord[0], coord[2] - coord[0]));
+                case Profile::PathMode::Extrude:
+                    for(const auto& fi : sdfv.filamentIndices) {
+                        mathfunc::VecArray< 3, float > genVertices;
+                        std::vector< std::array< size_t, 3 > > genTriInd;
 
-                        for(size_t i = 0; i < 3; ++i) {
-                            ve->state.vertexAttribs.push_back(coord[i][0]);
-                            ve->state.vertexAttribs.push_back(coord[i][1]);
-                            ve->state.vertexAttribs.push_back(coord[i][2]);
-                            ve->state.vertexAttribs.push_back(un[0]);
-                            ve->state.vertexAttribs.push_back(un[1]);
-                            ve->state.vertexAttribs.push_back(un[2]);
-                            ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
-                            ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
-                            ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
+                        std::tie(genVertices, genTriInd) = visual::PathExtrude<float>{
+                            ve->profile.pathExtrudeRadius,
+                            ve->profile.pathExtrudeSides
+                        }.generate(sdfv.copiedBeadData.coords, fi);
+
+                        // Update coords
+                        ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + GlState::vaStride * 3 * genTriInd.size());
+                        const auto numTriangles = genTriInd.size();
+                        for(size_t t = 0; t < numTriangles; ++t) {
+                            const decltype(genVertices[0]) coord[] {
+                                genVertices[genTriInd[t][0]],
+                                genVertices[genTriInd[t][1]],
+                                genVertices[genTriInd[t][2]]
+                            };
+                            const auto un = normalizedVector(cross(coord[1] - coord[0], coord[2] - coord[0]));
+
+                            for(size_t i = 0; i < 3; ++i) {
+                                ve->state.vertexAttribs.push_back(coord[i][0]);
+                                ve->state.vertexAttribs.push_back(coord[i][1]);
+                                ve->state.vertexAttribs.push_back(coord[i][2]);
+                                ve->state.vertexAttribs.push_back(un[0]);
+                                ve->state.vertexAttribs.push_back(un[1]);
+                                ve->state.vertexAttribs.push_back(un[2]);
+                                ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
+                                ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
+                                ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
+                            }
                         }
+
+                        // if(sdfv.updated & sys_data_update::BeadConnection) {
+                        //     // Update indices
+                        //     ve->state.vertexIndices.reserve(ve->state.vertexIndices.size() + genTriInd.size());
+                        //     for(auto i : genTriInd) {
+                        //         ve->state.vertexIndices.push_back(i + curVertexStart);
+                        //     }
+                        // }
+
+                        // curVertexStart += genVertices.size();
+                    } // End loop filaments
+                    break;
+
+                case Profile::PathMode::Bead:
+                    {
+                        const auto sphereGen = visual::SphereUv<float> {
+                            ve->profile.beadRadius,
+                            ve->profile.beadLongitudeSegs,
+                            ve->profile.beadLatitudeSegs
+                        };
+                        const auto sphereCache = sphereGen.makeCache();
+
+                        for(const auto& fi : sdfv.filamentIndices) {
+                            for(auto bi : fi) {
+                                std::vector< Vec< 3, float > > genVertices;
+
+                                std::tie(genVertices, std::ignore) = sphereGen.generate(
+                                    {
+                                        static_cast<float>(sdfv.copiedBeadData.coords[bi][0]),
+                                        static_cast<float>(sdfv.copiedBeadData.coords[bi][1]),
+                                        static_cast<float>(sdfv.copiedBeadData.coords[bi][2])
+                                    },
+                                    sphereCache
+                                );
+
+                                // Update coords
+                                ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + GlState::vaStride * 3 * sphereCache.triInd.size());
+                                const auto numTriangles = sphereCache.triInd.size();
+                                for(size_t t = 0; t < numTriangles; ++t) {
+                                    const typename decltype(genVertices)::value_type coord[] {
+                                        genVertices[sphereCache.triInd[t][0]],
+                                        genVertices[sphereCache.triInd[t][1]],
+                                        genVertices[sphereCache.triInd[t][2]]
+                                    };
+                                    const auto un = normalizedVector(cross(coord[1] - coord[0], coord[2] - coord[0]));
+
+                                    for(size_t i = 0; i < 3; ++i) {
+                                        ve->state.vertexAttribs.push_back(coord[i][0]);
+                                        ve->state.vertexAttribs.push_back(coord[i][1]);
+                                        ve->state.vertexAttribs.push_back(coord[i][2]);
+                                        ve->state.vertexAttribs.push_back(un[0]);
+                                        ve->state.vertexAttribs.push_back(un[1]);
+                                        ve->state.vertexAttribs.push_back(un[2]);
+                                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
+                                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
+                                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
+                                    }
+                                }
+                            } // End loop beads in a filament
+
+                        } // End loop filaments
                     }
+                    break;
 
-                    // if(sdfv.updated & sys_data_update::BeadConnection) {
-                    //     // Update indices
-                    //     ve->state.vertexIndices.reserve(ve->state.vertexIndices.size() + genTriInd.size());
-                    //     for(auto i : genTriInd) {
-                    //         ve->state.vertexIndices.push_back(i + curVertexStart);
-                    //     }
-                    // }
-
-                    // curVertexStart += genVertices.size();
-                }
+                } // End switch path mode
             }
             ve->state.eleMode = GL_TRIANGLES;
         }

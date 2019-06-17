@@ -186,6 +186,16 @@ inline void createWindow() {
             auto& ve = shared::visualElements.back();
             ve->profile.enabled = true;
             ve->profile.flag = Profile::targetFilament;
+            ve->profile.pathMode = Profile::PathMode::Extrude;
+            ve->profile.colorAmbient = glm::vec3(0.95f, 0.1f, 0.15f);
+            ve->profile.colorDiffuse = glm::vec3(0.95f, 0.1f, 0.15f);
+        }
+        {
+            shared::visualElements.emplace_back(new VisualElement);
+            auto& ve = shared::visualElements.back();
+            ve->profile.enabled = true;
+            ve->profile.flag = Profile::targetFilament;
+            ve->profile.pathMode = Profile::PathMode::Bead;
             ve->profile.colorAmbient = glm::vec3(0.95f, 0.1f, 0.15f);
             ve->profile.colorDiffuse = glm::vec3(0.95f, 0.1f, 0.15f);
         }

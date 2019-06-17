@@ -36,6 +36,8 @@ struct Profile {
     float             pathExtrudeRadius = 8.0f;
     std::uint_fast8_t pathExtrudeSides = 10;
     float             beadRadius = 15.0f;
+    std::uint_fast8_t beadLongitudeSegs = 20;
+    std::uint_fast8_t beadLatitudeSegs = 10;
     float             forceScale = 5.0f;
 
     GLenum polygonMode = GL_LINE;
