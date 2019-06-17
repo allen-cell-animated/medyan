@@ -23,7 +23,7 @@ using namespace mathfunc;
 #include "Structure/SurfaceMesh/Vertex.h"
 #include "Cylinder.h"
 #include "Bead.h"
-#include "util/math/RayTriangleIntersect.hpp"
+#include "Util/Math/RayTriangleIntersect.hpp"
 
 template <class TriangleCylinderExclVolumeInteractionType>
 double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeEnergy(const double* coord, bool stretched) {

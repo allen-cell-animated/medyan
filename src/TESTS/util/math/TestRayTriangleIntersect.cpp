@@ -1,6 +1,6 @@
 #include "catch2/catch.hpp"
 
-#include "util/math/RayTriangleIntersect.hpp"
+#include "Util/Math/RayTriangleIntersect.hpp"
 
 using namespace mathfunc;
 
