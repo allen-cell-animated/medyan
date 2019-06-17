@@ -1,5 +1,5 @@
-#ifndef MEDYAN_util_math_RayTriangleIntersect_hpp
-#define MEDYAN_util_math_RayTriangleIntersect_hpp
+#ifndef MEDYAN_Util_Math_RayTriangleIntersect_Hpp
+#define MEDYAN_Util_Math_RayTriangleIntersect_Hpp
 
 #include <type_traits> // common_type, enable_if_t
 
