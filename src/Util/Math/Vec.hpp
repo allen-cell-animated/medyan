@@ -1,5 +1,5 @@
-#ifndef MEDYAN_UTIL_MATH_VEC_HPP
-#define MEDYAN_UTIL_MATH_VEC_HPP
+#ifndef MEDYAN_Util_Math_Vec_Hpp
+#define MEDYAN_Util_Math_Vec_Hpp
 
 #include <algorithm> // copy
 #include <array>
