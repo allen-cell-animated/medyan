@@ -46,7 +46,7 @@
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
-#include "util/io/log.h"
+#include "Util/Io/Log.hpp"
 using namespace mathfunc;
 
 Controller::Controller(SubSystem* s) : _subSystem(s) {
