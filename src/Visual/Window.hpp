@@ -214,6 +214,14 @@ inline void createWindow() {
             ve->profile.colorAmbient = glm::vec3(0.1f, 0.1f, 0.99f);
             ve->profile.colorDiffuse = glm::vec3(0.1f, 0.1f, 0.99f);
         }
+        {
+            shared::visualElements.emplace_back(new VisualElement);
+            auto& ve = shared::visualElements.back();
+            ve->profile.enabled = true;
+            ve->profile.flag = Profile::targetBrancher;
+            ve->profile.colorAmbient = glm::vec3(0.95f, 0.9f, 0.05f);
+            ve->profile.colorDiffuse = glm::vec3(0.95f, 0.9f, 0.05f);
+        }
     }
 }
 
