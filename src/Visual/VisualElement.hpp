@@ -33,11 +33,11 @@ struct Profile {
 
     // shape settings
     PathMode          pathMode = PathMode::Line; // TODO implement this in visual helper
-    float             pathExtrudeRadius = 8.0f;
+    float             pathExtrudeRadius = 7.5f;
     std::uint_fast8_t pathExtrudeSides = 10;
-    float             beadRadius = 15.0f;
-    std::uint_fast8_t beadLongitudeSegs = 18;
-    std::uint_fast8_t beadLatitudeSegs = 9;
+    float             beadRadius = 12.0f;
+    std::uint_fast8_t beadLongitudeSegs = 10;
+    std::uint_fast8_t beadLatitudeSegs = 5;
     float             forceScale = 5.0f;
 
     GLenum polygonMode = GL_LINE;
