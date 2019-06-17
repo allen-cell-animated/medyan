@@ -225,7 +225,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
 
                 for(const auto& fi : sdfv.filamentIndices) {
                     mathfunc::VecArray< 3, float > genVertices;
-                    std::vector< unsigned > genTriInd;
+                    std::vector< std::array< size_t, 3 > > genTriInd;
 
                     std::tie(genVertices, genTriInd) = visual::PathExtrude<float>{
                         ve->profile.pathExtrudeRadius,
@@ -233,13 +233,13 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                     }.generate(sdfv.copiedBeadData.coords, fi);
 
                     // Update coords
-                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + GlState::vaStride * genTriInd.size());
-                    const auto numTriangles = genTriInd.size() / 3;
+                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + GlState::vaStride * 3 * genTriInd.size());
+                    const auto numTriangles = genTriInd.size();
                     for(size_t t = 0; t < numTriangles; ++t) {
                         const decltype(genVertices[0]) coord[] {
-                            genVertices[genTriInd[3 * t + 0]],
-                            genVertices[genTriInd[3 * t + 1]],
-                            genVertices[genTriInd[3 * t + 2]]
+                            genVertices[genTriInd[t][0]],
+                            genVertices[genTriInd[t][1]],
+                            genVertices[genTriInd[t][2]]
                         };
                         const auto un = normalizedVector(cross(coord[1] - coord[0], coord[2] - coord[0]));
 
@@ -272,7 +272,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
     }
     else if(ve->profile.flag & (Profile::targetLinker | Profile::targetMotor)) {
         //-----------------------------------------------------------------
-        // Linker Shape
+        // Linker or Motor Shape
         //-----------------------------------------------------------------
         if(sdfv.updated & sys_data_update::BeadPosition) {
             ve->state.vertexAttribs.clear();
@@ -285,7 +285,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
             const auto& coords = (ve->profile.flag & Profile::targetLinker) ? sdfv.linkerCoords : sdfv.motorCoords;
             for(const auto& c : coords) {
                 mathfunc::VecArray< 3, float > genVertices;
-                std::vector< unsigned > genTriInd;
+                std::vector< std::array< size_t, 3 > > genTriInd;
 
                 std::tie(genVertices, genTriInd) = visual::PathExtrude<float>{
                     ve->profile.pathExtrudeRadius,
@@ -293,13 +293,13 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 }.generate(c, std::array<size_t, 2>{0, 1});
 
                 // Update coords
-                ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + GlState::vaStride * genTriInd.size());
-                const auto numTriangles = genTriInd.size() / 3;
+                ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + GlState::vaStride * 3 * genTriInd.size());
+                const auto numTriangles = genTriInd.size();
                 for(size_t t = 0; t < numTriangles; ++t) {
                     const decltype(genVertices[0]) coord[] {
-                        genVertices[genTriInd[3 * t + 0]],
-                        genVertices[genTriInd[3 * t + 1]],
-                        genVertices[genTriInd[3 * t + 2]]
+                        genVertices[genTriInd[t][0]],
+                        genVertices[genTriInd[t][1]],
+                        genVertices[genTriInd[t][2]]
                     };
                     const auto un = normalizedVector(cross(coord[1] - coord[0], coord[2] - coord[0]));
 

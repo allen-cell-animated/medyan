@@ -1,6 +1,7 @@
 #ifndef MEDYAN_Visual_Render_Sphere_Hpp
 #define MEDYAN_Visual_Render_Sphere_Hpp
 
+#include <array>
 #include <cstdint> // uint_fast8_t
 #include <tuple>
 #include <vector>

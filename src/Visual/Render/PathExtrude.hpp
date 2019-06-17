@@ -1,6 +1,7 @@
 #ifndef MEDYAN_Visual_Render_PathExtrude_Hpp
 #define MEDYAN_Visual_Render_PathExtrude_Hpp
 
+#include <array>
 #include <cstdint> // uint_fast8_t
 #include <tuple>
 #include <vector>
@@ -32,10 +33,11 @@ struct PathExtrude {
 
         const size_t numVertices = indices.size();
         const size_t numTubeVertices = sides * numVertices;
+        const size_t numTriangles = (numVertices - 1) * 2 * sides;
 
         // Results
         VecArray< 3, Float > vertices;
-        std::vector< unsigned > triInd;
+        std::vector< std::array< size_t, 3 > > triInd(numTriangles);
 
         if(indices.size() < 2)
             return std::make_tuple(vertices, triInd);
@@ -71,17 +73,16 @@ struct PathExtrude {
         }
 
         // Make indices (GL_TRIANGLES)
-        triInd.resize((numVertices - 1) * (6 * sides));
         for(size_t i = 0; i < numVertices - 1; ++i) {
             for(size_t j = 0; j < sides; ++j) {
                 // First triangle
-                triInd[i * (6 * sides) + 6 * j    ] = (i    ) * sides + j;
-                triInd[i * (6 * sides) + 6 * j + 1] = (i + 1) * sides + j;
-                triInd[i * (6 * sides) + 6 * j + 2] = (i    ) * sides + (j + 1) % sides;
+                triInd[i * (2 * sides) + 2 * j][0] = (i    ) * sides + j;
+                triInd[i * (2 * sides) + 2 * j][1] = (i + 1) * sides + j;
+                triInd[i * (2 * sides) + 2 * j][2] = (i    ) * sides + (j + 1) % sides;
                 // Second triangle
-                triInd[i * (6 * sides) + 6 * j + 3] = (i    ) * sides + (j + 1) % sides;
-                triInd[i * (6 * sides) + 6 * j + 4] = (i + 1) * sides + j;
-                triInd[i * (6 * sides) + 6 * j + 5] = (i + 1) * sides + (j + 1) % sides;
+                triInd[i * (2 * sides) + 2 * j + 1][0] = (i    ) * sides + (j + 1) % sides;
+                triInd[i * (2 * sides) + 2 * j + 1][1] = (i + 1) * sides + j;
+                triInd[i * (2 * sides) + 2 * j + 1][2] = (i + 1) * sides + (j + 1) % sides;
             }
         }
 
