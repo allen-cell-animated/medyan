@@ -1,9 +1,13 @@
-#ifndef MEDYAN_Util_Environment_Hpp
-#define MEDYAN_Util_Environment_Hpp
+#ifndef MEDYAN_Util_Environment_h
+#define MEDYAN_Util_Environment_h
 
-#if defined(__unix__) || defined(__APPLE__) && defined(__MACH__)
+#if defined(__APPLE__) && defined(__MACH__)
+    #define PLATFORM_MACOS
+#endif
+#if defined(__unix__) || defined(PLATFORM_MACOS)
     #define PLATFORM_UNIX_LIKE
-#elif defined(_WIN32)
+#endif
+#if defined(_WIN32)
     #define PLATFORM_WINDOWS
 #endif
 
