@@ -1,4 +1,4 @@
-#include "util/io/log.h"
+#include "Util/Io/Log.hpp"
 
 #include <chrono>
 #include <ctime>
@@ -121,8 +121,6 @@ void Logger::defaultLoggerInitialization() {
 
     // Detect output redirection, set console environment, etc.
     initializeTerminal();
-
-    std::cout << "out, err: " << stdoutRedirected << ' ' << stderrRedirected << std::endl;
 
     LoggerOstreamContainer& scrn = l.attachOstream(&std::cout, false);
 #ifdef NDEBUG
