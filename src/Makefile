@@ -12,7 +12,7 @@
 # for your given system.
 ##################################################
 
-SOURCES_TEST             := $(shell find ./TESTS -name 'test_*')
+SOURCES_TEST             := $(shell find ./TESTS -name '*.cpp')
 SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './TESTS/*' ! -path './dist_moduleV2/*')
 SOURCES_CPP              += ./dist_moduleV2/dist_avx_par.cpp  ./dist_moduleV2/dist_bench.cpp  ./dist_moduleV2/dist_example.cpp  ./dist_moduleV2/dist_mod_vars.cpp
 SOURCES_CPP_WITHOUT_MAIN := $(filter-out ./MEDYAN.cpp,$(SOURCES_CPP))
@@ -41,10 +41,9 @@ FAST_CXX = -Os -ffast-math -fno-finite-math-only -flto -funroll-loops -DNDEBUG -
 # Compiling flags
 DEPFLAGS = -MMD -MP
 
-INCLUDES_TEST = -I../build/gtest/include
-INCLUDES = -I./dist_module -I./dist_module/umesimd/ \
+INCLUDES = \
+-I../external \
 -I/usr/local/include -I/usr/include/boost \
--I./dist_moduleV2 -I./dist_moduleV2/umesimd\
 -I./ -IStructure -IStructure/Special      \
 -IChemistry                               \
 -IMechanics/                              \
@@ -68,8 +67,7 @@ CXXFLAGS_NVCC = -g -G -x=cu -arch=sm_35 -Xcompiler -lpthread -ldl -lrt \
 -lineinfo --compiler-options -O0 -Xptxas -v $(INCLUDES_NVCC)
 
 # Linking flags
-LDLIBS_TEST = -L../build/gtest/lib -lgtest -lgtest_main -lpthread
-LDLIBS = -L/usr/local/lib/ -lboost_system -L./dist_moduleV2/umesimd \
+LDLIBS = -L/usr/local/lib/ -lboost_system \
 -static-libstdc++ -pthread
 LDLIBS_NVCC = $(LDLIBS) -L/usr/local/cuda/lib64 -L/usr/local/cuda/lib -Icudart -lpthread -lnvToolsExt
 LDFLAGS_CXX = $(FAST_CXX) 
@@ -130,7 +128,6 @@ CPPFLAGS_NVCC = $(CPPFLAGS) -DCUDAACCL
 
 #Non-CUDA specific
 CPPFLAGS_CXX = $(CPPFLAGS)
-CPPFLAGS_CXX_TEST = $(CPPFLAGS_CXX) $(INCLUDES_TEST)
 
 ################MAKEFILE OPTIONS###################
 #
@@ -155,13 +152,9 @@ endif
 
 # Build test
 medyan_test: $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST)
-	$(CXX) $(LDFLAGS_CXX) -o $@ $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST) $(LDLIBS) $(LDLIBS_TEST)
+	$(CXX) $(LDFLAGS_CXX) -o $@ $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST) $(LDLIBS)
 
 # Compile to object and generate dependency
-test_%.o: test_%.cpp
-test_%.o: test_%.cpp test_%.d
-	$(CXX) $(DEPFLAGS) $(CPPFLAGS_CXX_TEST) $(CXXFLAGS_CXX) -c -o $@ $<
-
 %.o: %.cpp
 %.o: %.cpp %.d
 	$(CXX) $(DEPFLAGS) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -c -o $@ $<
