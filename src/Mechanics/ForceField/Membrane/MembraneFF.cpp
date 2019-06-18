@@ -22,7 +22,7 @@
 #include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "util/io/log.h"
+#include "Util/Io/Log.hpp"
 
 MembraneFF::MembraneFF (const string& stretching, const string& stretchingAccu, const string& bending) {
     

@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "Structure/SurfaceMesh/SurfaceMeshGenerator.hpp"
-#include "util/io/log.h"
+#include "Util/Io/Log.hpp"
 
 namespace mesh_gen {
 

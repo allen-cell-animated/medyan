@@ -12,7 +12,7 @@
 
 #include "analysis/io/pdb.h"
 #include "Core/Globals.hpp"
-#include "util/io/log.h"
+#include "Util/Io/Log.hpp"
 #include "Structure/Bead.h"
 #include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/Edge.h"

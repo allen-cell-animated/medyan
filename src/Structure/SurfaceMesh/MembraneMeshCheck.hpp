@@ -5,7 +5,7 @@
 #include <unordered_set>
 #include "Structure/SurfaceMesh/MembraneMeshTriangleQuality.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "util/io/log.h"
+#include "Util/Io/Log.hpp"
 
 namespace membrane_mesh_check {
 
