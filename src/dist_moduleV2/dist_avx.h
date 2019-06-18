@@ -49,11 +49,11 @@ namespace dist {
 			
 			// auto vcond = (vsum > vdl) && (vsum < vdh);
 
-			__m256i vcond = (__m256i)_mm256_and_ps(_mm256_cmp_ps(vsum.mVec,vdl.mVec,_CMP_GT_OQ),
-			                                _mm256_cmp_ps(vdh.mVec,vsum.mVec,_CMP_GT_OQ));
+			__m256i vcond = _mm256_castps_si256(_mm256_and_ps(_mm256_cmp_ps(vsum.mVec,vdl.mVec,_CMP_GT_OQ),
+			                                _mm256_cmp_ps(vdh.mVec,vsum.mVec,_CMP_GT_OQ)));
 											
 	
-			int icond = _mm256_movemask_ps((__m256)vcond);
+			int icond = _mm256_movemask_ps(_mm256_castsi256_ps(vcond));
 
 			uvec8_i i_ind(&c1_indices[i]);
 			uvec8_i j_ind(&c2.indices[j]);

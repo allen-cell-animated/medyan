@@ -114,11 +114,11 @@ namespace dist {
 				// On my Macbook Pro it is fine, even with gcc (8.x)
 			
 				// auto vcond = (vsum > vdl) && (vsum < vdh);
-				__m256i vcond = (__m256i)_mm256_and_ps(_mm256_cmp_ps(vsum.mVec,vdl.mVec,_CMP_GT_OQ),
-				                                _mm256_cmp_ps(vdh.mVec,vsum.mVec,_CMP_GT_OQ));
+				__m256i vcond = _mm256_castps_si256(_mm256_and_ps(_mm256_cmp_ps(vsum.mVec,vdl.mVec,_CMP_GT_OQ),
+				                                _mm256_cmp_ps(vdh.mVec,vsum.mVec,_CMP_GT_OQ)));
 				
 				
-				int icond = _mm256_movemask_ps((__m256)vcond);
+				int icond = _mm256_movemask_ps(_mm256_castsi256_ps(vcond));
 				
 				if(!icond)
 					continue;
@@ -131,10 +131,10 @@ namespace dist {
 					sindex_x = sindex_x + zero_to_seven;
 					// print_m256i_as_int32(sindex_x.mVec);
 					auto mask_within_bounds = sindex_x > sindex_y;
-					int ic2 = _mm256_movemask_ps((__m256)mask_within_bounds.mMask);
+					int ic2 = _mm256_movemask_ps(_mm256_castsi256_ps(mask_within_bounds.mMask));
 					// print_bits(ic2);
-					vcond = (__m256i)_mm256_and_ps((__m256)vcond, (__m256)mask_within_bounds.mMask);
-					int ic3 = _mm256_movemask_ps((__m256)vcond);
+					vcond = _mm256_castps_si256(_mm256_and_ps(_mm256_castsi256_ps(vcond), _mm256_castsi256_ps(mask_within_bounds.mMask)));
+					int ic3 = _mm256_movemask_ps(_mm256_castsi256_ps(vcond));
 					// print_bits(ic3);
 					// cout << endl << endl;
 					icond = ic3;
