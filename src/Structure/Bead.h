@@ -26,7 +26,7 @@
 #include "Movable.h"
 #include "DynamicNeighbor.h"
 #include "SysParams.h"
-#include "util/math/vec.hpp"
+#include "Util/Math/Vec.hpp"
 
 //FORWARD DECLARATIONS
 class Compartment;
