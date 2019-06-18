@@ -617,7 +617,7 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
 		//@@@{ STEP 6 FIND LAMBDA
 	    tbegin = chrono::high_resolution_clock::now();
-        bool *dummy;
+        bool *dummy = nullptr;
 	    lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy)
                            : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy);
 	    tend = chrono::high_resolution_clock::now();
