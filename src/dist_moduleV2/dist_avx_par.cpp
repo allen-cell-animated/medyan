@@ -26,7 +26,7 @@ namespace dist {
 	// std::array<uint, 4> ncontacts_global_h;
 	
 	uvec8_i zero_to_seven{0,1,2,3,4,5,6,7};
-	extern std::array<uint, 256*8> _lut_avx2; 
+	extern uint _lut_avx2[256*8]; 
 	
 	// uvec8_i zero_to_eight{0,1,2,3,4,5,6,7};
 	

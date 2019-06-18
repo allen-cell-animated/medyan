@@ -21,7 +21,7 @@ Main code for both AVX and AVX2 calculations where the elementary type is a floa
 
 namespace dist {
 
-	extern std::array<uint, 256*8> _lut_avx2; 
+	extern uint _lut_avx2[256*8]; 
  
 	// Load 8 elements of i and j vectors, and operate on them vectorially. 
 	template <uint D, bool SELF>
