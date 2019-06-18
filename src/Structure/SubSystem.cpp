@@ -19,9 +19,9 @@
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"
 #include <vector>
-#include "dist_driver.h"
-#include "dist_coords.h"
-#include "dist_common.h"
+#include "dist_moduleV2/dist_driver.h"
+#include "dist_moduleV2/dist_coords.h"
+#include "dist_moduleV2/dist_common.h"
 #include "Cylinder.h"
 using namespace mathfunc;
 void SubSystem::resetNeighborLists() {

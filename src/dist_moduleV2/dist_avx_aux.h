@@ -15,7 +15,7 @@ A workaround around the absence of _mm256_permutevar8x32_epi32 in AVX.
 #include <cmath>
 #include <bitset>
 
-#include "dist_simd.h"
+#include "dist_moduleV2/dist_simd.h"
 
 
 namespace dist {

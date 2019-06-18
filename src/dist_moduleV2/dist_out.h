@@ -12,8 +12,8 @@ Both input distance thresholds and the output arrays that hold found contact ind
 #include <array>
 #include <vector>
 
-#include "dist_common.h"
-#include "dist_coords.h"
+#include "dist_moduleV2/dist_common.h"
+#include "dist_moduleV2/dist_coords.h"
 
 //#ifdef __CUDACC__
 //#include <thrust/host_vector.h>

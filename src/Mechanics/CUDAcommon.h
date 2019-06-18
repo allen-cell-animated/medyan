@@ -21,7 +21,7 @@
 #include "common.h"
 #include "string.h"
 #include "MathFunctions.h"
-#include "dist_driver.h"
+#include "dist_moduleV2/dist_driver.h"
 using namespace mathfunc;
 struct bin{
     int binID;

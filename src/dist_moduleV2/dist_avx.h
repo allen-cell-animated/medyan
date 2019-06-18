@@ -15,8 +15,8 @@ Main code for both AVX and AVX2 calculations where the elementary type is a floa
 #include <cmath>
 #include <bitset>
 
-#include "dist_simd.h"
-#include "dist_avx_aux.h"
+#include "dist_moduleV2/dist_simd.h"
+#include "dist_moduleV2/dist_avx_aux.h"
 
 
 namespace dist {

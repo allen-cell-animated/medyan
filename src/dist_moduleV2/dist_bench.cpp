@@ -2,9 +2,9 @@
 #include <iostream>
 #include <chrono>
 
-#include "dist_coords.h"
-#include "dist_driver.h"
-#include "dist_out.h"
+#include "dist_moduleV2/dist_coords.h"
+#include "dist_moduleV2/dist_driver.h"
+#include "dist_moduleV2/dist_out.h"
 
 namespace dist {
 

@@ -13,7 +13,7 @@ A Coords structure that holds coordinates, bead indices and a number of auxiliar
 #include <random>
 #include <initializer_list>
 
-#include "dist_common.h"
+#include "dist_moduleV2/dist_common.h"
 
 namespace dist {
 

@@ -8,7 +8,7 @@ A multithreaded versio of the code for both AVX and AVX2 calculations.
 #include <mutex>
 
 
-#include "dist_avx_par.h"
+#include "dist_moduleV2/dist_avx_par.h"
 
 namespace dist {
 	using namespace std;

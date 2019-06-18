@@ -1,4 +1,4 @@
-#include "dist_cuda_common.cuh"
+#include "dist_moduleV2/dist_cuda_common.cuh"
 
 namespace dist {
 
