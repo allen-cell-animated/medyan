@@ -51,8 +51,8 @@
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
-#include "util/io/log.h"
-#include "util/profiler.h"
+#include "Util/Io/Log.hpp"
+#include "Util/Profiler.hpp"
 using namespace mathfunc;
 
 namespace {

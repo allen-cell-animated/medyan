@@ -103,8 +103,8 @@ void CylinderCylinderNL::generateConnections() {
                                 int iprime = i+ii;
                                 int jprime = j+jj;
                                 int kprime = k+kk;
-                                if(iprime<0 or iprime==int(_grid[0]) or jprime<0 or
-                                   jprime==int(_grid[1]) or kprime<0 or
+                                if(iprime<0 || iprime==int(_grid[0]) || jprime<0 ||
+                                   jprime==int(_grid[1]) || kprime<0 ||
                                    kprime==int(_grid[2]))
                                     continue;
                                 vector<size_t> currentIndices{size_t(iprime), size_t
