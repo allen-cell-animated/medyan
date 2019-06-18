@@ -69,8 +69,8 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 
 #include "Controller.h"
 #include "SubSystem.h"
-#include "util/io/cmdparse.h"
-#include "util/io/log.h"
+#include "Util/Io/CmdParse.hpp"
+#include "Util/Io/Log.hpp"
 
 int main(int argc, char **argv) {
 

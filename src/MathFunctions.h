@@ -21,7 +21,7 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #endif
-#include "util/math/vec.hpp"
+#include "Util/Math/Vec.hpp"
 
 /// @namespace mathfunc is used for the mathematics module for the entire codebase
 /// mathfunc includes functions to calculate distances, products, and midpoints
