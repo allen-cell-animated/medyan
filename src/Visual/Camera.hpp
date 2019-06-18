@@ -1,7 +1,7 @@
 #ifndef MEDYAN_Visual_Camera_Hpp
 #define MEDYAN_Visual_Camera_Hpp
 
-#include "util/math/vec.hpp"
+#include "Util/Math/Vec.hpp"
 #include "Visual/Common.hpp"
 
 namespace visual {

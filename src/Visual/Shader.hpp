@@ -3,7 +3,7 @@
 
 #ifdef VISUAL
 
-#include "util/io/log.h"
+#include "Util/Io/Log.hpp"
 #include "Visual/Common.hpp"
 
 namespace visual {
