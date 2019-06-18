@@ -4,6 +4,8 @@ AUTHOR: G.A. Papoian, Date: Nov 22, 2018
 A simple testing suite. Mainly checks the SIMD version results again the serial ones.
 */
 
+#ifdef MEDYAN_DISTMODULE_TEST
+
 #include <random>
 #include <iostream>
 #include <chrono>
@@ -348,3 +350,5 @@ namespace dist {
 	}
 
 } // end-of-namespace dist
+
+#endif // MEDYAN_DISTMODULE_TEST

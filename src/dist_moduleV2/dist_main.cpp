@@ -1,3 +1,5 @@
+#ifdef MEDYAN_DISTMODULE_TEST
+
 #include <iostream>
 
 #include "dist_moduleV2/dist_driver.h"
@@ -43,4 +45,4 @@ int main(int argc, char* argv[]){
 // SIMD-AVX2-I2: 4 ns
 //
 
-
+#endif // MEDYAN_DISTMODULE_TEST

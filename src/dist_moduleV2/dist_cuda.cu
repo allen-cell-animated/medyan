@@ -1,3 +1,5 @@
+#ifdef CUDAACCL
+
 #include "dist_moduleV2/dist_cuda.cuh"
 
 namespace dist {
@@ -8,3 +10,5 @@ namespace dist {
 	template void find_distances_cuda(dOut<2,false> &out, Coords &c1, Coords &c2);
 	
 } // end of namespace dist
+
+#endif // CUDAACCL
