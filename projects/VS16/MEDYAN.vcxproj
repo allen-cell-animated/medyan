@@ -89,12 +89,14 @@
         REACTION_SIGNALING; RSPECIES_SIGNALING;
         SERIAL;
         HYBRID_NLSTENCILLIST; NLSTENCILLIST;
+        NPROCS=8; <!-- deprecated -->
 
         _USE_MATH_DEFINES;
         _SCL_SECURE_NO_WARNINGS;
         _MBCS;%(PreprocessorDefinitions)
       </PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="$(Configuration.Contains('Debug'))">

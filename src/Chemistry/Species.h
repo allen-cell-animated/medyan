@@ -14,7 +14,6 @@
 #ifndef MEDYAN_Species_h
 #define MEDYAN_Species_h
 
-#include <ciso646> // Define alternative operators for non-conforming compilers like MSVC. No use otherwise.
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -364,7 +363,7 @@ public:
     /// their names are equal.
     friend bool operator ==(const Species& a, const Species& b)
     {
-        if (a.getMolecule() != b.getMolecule() or typeid(a) != typeid(b))
+        if (a.getMolecule() != b.getMolecule() || typeid(a) != typeid(b))
             return false;
         return true;
     }
