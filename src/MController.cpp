@@ -27,7 +27,7 @@
 #include "TriangleCylinderVolumeFF.h"
 
 #include "ConjugateGradient.h"
-#include "util/io/log.h"
+#include "Util/Io/Log.hpp"
 
 void MController::initializeMinAlgorithm (MechanicsAlgorithm& MAlgorithm) {
     

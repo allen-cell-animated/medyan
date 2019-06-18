@@ -20,7 +20,7 @@
 #include "Bead.h"
 
 #include "SysParams.h"
-#include "util/io/log.h"
+#include "Util/Io/Log.hpp"
 
 void SystemParser::readChemParams() {
 

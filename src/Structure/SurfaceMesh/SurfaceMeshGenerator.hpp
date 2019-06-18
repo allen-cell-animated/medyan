@@ -7,7 +7,7 @@
 #include <type_traits> // integral_constant, enable_if
 #include <vector>
 
-#include "util/math/vec.hpp"
+#include "Util/Math/Vec.hpp"
 
 namespace mesh_gen {
 

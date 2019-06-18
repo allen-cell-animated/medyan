@@ -625,7 +625,7 @@ void Compartment::deactivate(ChemSim* chem, bool init) {
 }
 
 bool operator==(const Compartment& a, const Compartment& b) {
-    if(a.numberOfSpecies()!=b.numberOfSpecies() or
+    if(a.numberOfSpecies()!=b.numberOfSpecies() ||
        a.numberOfInternalReactions()!=b.numberOfInternalReactions())
         return false;
 

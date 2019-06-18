@@ -29,7 +29,7 @@
 #include "DynamicNeighbor.h"
 #include "Component.h"
 #include "Bead.h"
-#include "util/math/vec.hpp"
+#include "Util/Math/Vec.hpp"
 
 //FORWARD DECLARATIONS
 class Filament;

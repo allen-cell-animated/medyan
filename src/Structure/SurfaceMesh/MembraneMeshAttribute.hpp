@@ -15,7 +15,7 @@
 #include "Structure/SurfaceMesh/GeometricMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/Triangle.h"
 #include "Structure/SurfaceMesh/Vertex.h"
-#include "util/io/log.h"
+#include "Util/Io/Log.hpp"
 
 /******************************************************************************
 Implements the attributes of the meshwork used by the membrane, mainly
