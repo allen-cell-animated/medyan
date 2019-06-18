@@ -650,7 +650,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
     floatingpoint *coord = CUDAcommon::getSERLvars().coord;
     auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
     int Ncylincmp = _compartment->getCylinders().size();
-    int cindexvec[Ncylincmp]; //stores cindex of cylinders in this compartment
+    int* cindexvec = new int[Ncylincmp]; //stores cindex of cylinders in this compartment
     vector<vector<int>> ncindices; //cindices of cylinders in neighbor list.
     vector<int> ncindex; //helper vector
 
@@ -837,6 +837,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
             fManagervec[idx][idx2]->updateBindingReaction(newNOther);
         }
     }
+    delete[] cindexvec;
 }
 
 void HybridBindingSearchManager::countNpairsfound(short idvec[2]){
