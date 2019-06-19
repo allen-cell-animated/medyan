@@ -869,7 +869,7 @@ void BRForces::print(int snapshot) {
     for(auto &filament : Filament::getFilaments()) {
 
         //print first line (Filament ID, type, length, left_delta, right_delta
-        _outputFile << "FILAMENT " << filament->getID() << " " <<
+        _outputFile << "FILAMENT " << filament->getId() << " " <<
         filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
@@ -894,7 +894,7 @@ void BRForces::print(int snapshot) {
     for(auto &linker : Linker::getLinkers()) {
 
         //print first line
-        _outputFile << "LINKER " << linker->getID()<< " " <<
+        _outputFile << "LINKER " << linker->getId()<< " " <<
         linker->getType() << endl;
 
         //print stretch force
@@ -906,7 +906,7 @@ void BRForces::print(int snapshot) {
 
         //print first line
         //also contains a Bound(1) or unbound(0) qualifier
-        _outputFile << "MOTOR " << motor->getID() << " " << motor->getType() << " " << 1 << endl;
+        _outputFile << "MOTOR " << motor->getId() << " " << motor->getType() << " " << 1 << endl;
 
         //print stretch force
         _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
