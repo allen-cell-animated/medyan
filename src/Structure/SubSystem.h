@@ -109,12 +109,12 @@ public:
             for (auto nlist : __bneighborLists.getElements())
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
 #else
-            for (auto nlist : _neighborLists.getElements())
+            for (auto nlist : _neighborLists)
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
 #endif
 
         } else if (t->_neighbor) {
-            for (auto nlist : _neighborLists.getElements())
+            for (auto nlist : _neighborLists)
                 nlist->addNeighbor((Neighbor *) t);
         }
 
@@ -142,12 +142,12 @@ public:
             for (auto nlist : __bneighborLists.getElements())
                 nlist->removeDynamicNeighbor((DynamicNeighbor *) t);
 #else
-            for (auto nlist : _neighborLists.getElements())
+            for (auto nlist : _neighborLists)
                 nlist->removeDynamicNeighbor((DynamicNeighbor *) t);
 #endif
 
         } else if (t->_neighbor) {
-            for (auto nlist : _neighborLists.getElements())
+            for (auto nlist : _neighborLists)
                 nlist->removeNeighbor((Neighbor *) t);
         }
     }
@@ -185,7 +185,7 @@ public:
     void addBoundary(Boundary *boundary) { _boundary = boundary; }
 
     /// Add a neighbor list to the subsystem
-    void addNeighborList(NeighborList *nl) { _neighborLists.addElement(nl); }
+    void addNeighborList(NeighborList *nl) { _neighborLists.push_back(nl); }
 
     void addBNeighborList(NeighborList *nl) { __bneighborLists.addElement(nl); }
 
@@ -249,7 +249,7 @@ private:
     unordered_set<Movable*> _movables; ///< All movables in the subsystem
     unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
         
-    OldDatabase<NeighborList*> _neighborLists; ///< All neighborlists in the system
+    std::vector<NeighborList*> _neighborLists; ///< All neighborlists in the system
     OldDatabase<NeighborList*> __bneighborLists; ///< Boundary neighborlists in the system.
     // Used only in Hybrid binding Manager cases
 #ifdef HYBRID_NLSTENCILLIST
