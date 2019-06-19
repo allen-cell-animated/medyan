@@ -233,7 +233,7 @@ void SubSystem::resetNeighborLists() {
 
 #elif defined(NLORIGINAL) || defined(NLSTENCILLIST)
 #ifndef HYBRID_NLSTENCILLIST
-    for (auto nl: _neighborLists.getElements())
+    for (auto nl: _neighborLists)
             nl->reset();
 #endif
 #endif

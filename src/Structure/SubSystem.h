@@ -109,7 +109,7 @@ public:
             for (auto nlist : __bneighborLists.getElements())
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
 #else
-            for (auto nlist : _neighborLists.getElements())
+            for (auto nlist : _neighborLists)
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
 #endif
 	        mineN = chrono::high_resolution_clock::now();
@@ -118,7 +118,7 @@ public:
 
         } else if (t->_neighbor) {
 	        minsN = chrono::high_resolution_clock::now();
-            for (auto nlist : _neighborLists.getElements())
+            for (auto nlist : _neighborLists)
                 nlist->addNeighbor((Neighbor *) t);
 	        mineN = chrono::high_resolution_clock::now();
 	        chrono::duration<floatingpoint> elapsed_time(mineN - minsN);
@@ -151,12 +151,12 @@ public:
             for (auto nlist : __bneighborLists.getElements())
                 nlist->removeDynamicNeighbor((DynamicNeighbor *) t);
 #else
-            for (auto nlist : _neighborLists.getElements())
+            for (auto nlist : _neighborLists)
                 nlist->removeDynamicNeighbor((DynamicNeighbor *) t);
 #endif
 
         } else if (t->_neighbor) {
-            for (auto nlist : _neighborLists.getElements())
+            for (auto nlist : _neighborLists)
                 nlist->removeNeighbor((Neighbor *) t);
         }
     }
@@ -194,7 +194,7 @@ public:
     void addBoundary(Boundary *boundary) { _boundary = boundary; }
 
     /// Add a neighbor list to the subsystem
-    void addNeighborList(NeighborList *nl) { _neighborLists.addElement(nl); }
+    void addNeighborList(NeighborList *nl) { _neighborLists.push_back(nl); }
 
     void addBNeighborList(NeighborList *nl) { __bneighborLists.addElement(nl); }
 
@@ -267,7 +267,7 @@ private:
     unordered_set<Movable*> _movables; ///< All movables in the subsystem
     unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
         
-    Database<NeighborList*> _neighborLists; ///< All neighborlists in the system
+    std::vector<NeighborList*> _neighborLists; ///< All neighborlists in the system
     Database<NeighborList*> __bneighborLists; ///< Boundary neighborlists in the system.
     // Used only in Hybrid binding Manager cases
 #ifdef HYBRID_NLSTENCILLIST
