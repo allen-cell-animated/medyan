@@ -35,7 +35,7 @@
 using namespace std;
 
 ///floatingpoint typedef
-typedef float floatingpoint;
+typedef double floatingpoint;
 typedef double doubleprecision;
 
 namespace detail {
