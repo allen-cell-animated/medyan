@@ -14,11 +14,13 @@
 #ifndef MEDYAN_BoundaryImpl_h
 #define MEDYAN_BoundaryImpl_h
 
+#include <stdexcept> // logic_error
 #include <vector>
 
 #include "common.h"
 
 #include "Boundary.h"
+#include "Util/Io/Log.hpp"
 
 ///FORWARD DECLARATIONS
 class Compartment;
@@ -67,9 +69,12 @@ public:
     virtual double distance(const vector<double>& coordinates);
 
     //Qin
-    virtual double lowerdistance(const vector<double>& coordinates);
-    virtual double sidedistance(const vector<double>& coordinates);
-    virtual double getboundaryelementcoord(int i) { return 0.0; };
+    virtual floatingpoint lowerdistance(const vector<floatingpoint>& coordinates);
+    virtual floatingpoint sidedistance(const vector<floatingpoint>& coordinates);
+    virtual floatingpoint getboundaryelementcoord(int i) {
+        LOG(ERROR) << "Function is not implemented.";
+        throw std::logic_error("Function not implemented");
+    }
     ///@note - not yet implemented.
     virtual void move(vector<double> dist) {}
 
@@ -94,11 +99,11 @@ public:
     virtual bool within(Compartment* C);
     virtual bool within(const vector<double>& coordinates);
 
-    virtual double distance(const vector<double>& coordinates);
-    virtual double getboundaryelementcoord(int i) { return 0.0; };
-    //Qin
-    virtual double lowerdistance(const vector<double>& coordinates);
-    virtual double sidedistance(const vector<double>& coordinates);
+    virtual floatingpoint distance(const vector<floatingpoint>& coordinates);
+    virtual floatingpoint getboundaryelementcoord(int i) {
+        LOG(ERROR) << "Function is not implemented.";
+        throw std::logic_error("Function not implemented");
+    }
 
     ///@note - Not yet implemented.
     virtual void move(vector<double> dist) {}
@@ -125,8 +130,11 @@ public:
     virtual bool within(Compartment* C);
     virtual bool within(const vector<double>& coordinates);
 
-    virtual double distance(const vector<double>& coordinates);
-    virtual double getboundaryelementcoord(int i) { return 0.0; };
+    virtual floatingpoint distance(const vector<floatingpoint>& coordinates);
+    virtual floatingpoint getboundaryelementcoord(int i) {
+        LOG(ERROR) << "Function is not implemented.";
+        throw std::logic_error("Function not implemented");
+    }
     //Qin
     virtual double lowerdistance(const vector<double>& coordinates);
     virtual double sidedistance(const vector<double>& coordinates);
