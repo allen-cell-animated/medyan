@@ -4,13 +4,15 @@ AUTHOR: G.A. Papoian, Date: Nov 22, 2018
 A simple testing suite. Mainly checks the SIMD version results again the serial ones.
 */
 
+#ifdef MEDYAN_DISTMODULE_TEST
+
 #include <random>
 #include <iostream>
 #include <chrono>
 
-#include "dist_coords.h"
-#include "dist_driver.h"
-#include "dist_out.h"
+#include "dist_moduleV2/dist_coords.h"
+#include "dist_moduleV2/dist_driver.h"
+#include "dist_moduleV2/dist_out.h"
 
 namespace dist {
 
@@ -348,3 +350,5 @@ namespace dist {
 	}
 
 } // end-of-namespace dist
+
+#endif // MEDYAN_DISTMODULE_TEST

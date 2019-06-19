@@ -3630,7 +3630,7 @@
 					/opt/local/include,
 					"./src/**",
 					/opt/local/include,
-					./src/dist_moduleV2/umesimd/,
+					./external/,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
@@ -3714,7 +3714,7 @@
 					/opt/local/include,
 					"./src/**",
 					/opt/local/include,
-					./src/dist_moduleV2/umesimd/,
+					./external/,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
@@ -3760,6 +3760,7 @@
 					"$(inherited)",
 					/opt/local/include,
 					./src,
+					./external,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
@@ -3801,6 +3802,7 @@
 					"$(inherited)",
 					/opt/local/include,
 					./src,
+					./external,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
@@ -3834,7 +3836,10 @@
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					./external,
+				);
 				LIBRARY_SEARCH_PATHS = (
 					/opt/local/Library/Frameworks/gtest.framework/,
 					/usr/local/lib,
@@ -3873,7 +3878,10 @@
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					./external,
+				);
 				LIBRARY_SEARCH_PATHS = (
 					/opt/local/Library/Frameworks/gtest.framework/,
 					/usr/local/lib,

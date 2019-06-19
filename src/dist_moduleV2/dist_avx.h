@@ -15,13 +15,13 @@ Main code for both AVX and AVX2 calculations where the elementary type is a floa
 #include <cmath>
 #include <bitset>
 
-#include "dist_simd.h"
-#include "dist_avx_aux.h"
+#include "dist_moduleV2/dist_simd.h"
+#include "dist_moduleV2/dist_avx_aux.h"
 
 
 namespace dist {
 
-	extern std::array<uint, 256*8> _lut_avx2; 
+	extern uint _lut_avx2[256*8]; 
  
 	// Load 8 elements of i and j vectors, and operate on them vectorially. 
 	template <uint D, bool SELF>
@@ -49,11 +49,11 @@ namespace dist {
 			
 			// auto vcond = (vsum > vdl) && (vsum < vdh);
 
-			__m256i vcond = (__m256i)_mm256_and_ps(_mm256_cmp_ps(vsum.mVec,vdl.mVec,_CMP_GT_OQ),
-			                                _mm256_cmp_ps(vdh.mVec,vsum.mVec,_CMP_GT_OQ));
+			__m256i vcond = _mm256_castps_si256(_mm256_and_ps(_mm256_cmp_ps(vsum.mVec,vdl.mVec,_CMP_GT_OQ),
+			                                _mm256_cmp_ps(vdh.mVec,vsum.mVec,_CMP_GT_OQ)));
 											
 	
-			int icond = _mm256_movemask_ps((__m256)vcond);
+			int icond = _mm256_movemask_ps(_mm256_castsi256_ps(vcond));
 
 			uvec8_i i_ind(&c1_indices[i]);
 			uvec8_i j_ind(&c2.indices[j]);

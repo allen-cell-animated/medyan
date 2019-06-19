@@ -43,7 +43,7 @@
             floatingpoint lambda, beta, newGrad;
 
             //temporary
-            bool *dummy;
+            bool *dummy = nullptr;
             //find lambda by line search, move beads
             lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy)
                                : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy);

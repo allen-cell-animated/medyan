@@ -9,14 +9,14 @@ This is the main header that should be included in the client code.
 
 #include <random>
 
-#include "dist_common.h"
-#include "dist_out.h"
-#include "dist_coords.h"
-#include "dist_serial.h"
-#include "dist_simd.h"
-#include "dist_avx.h"
-#include "dist_avx_par.h"
-#include "dist_cuda.h"
+#include "dist_moduleV2/dist_common.h"
+#include "dist_moduleV2/dist_out.h"
+#include "dist_moduleV2/dist_coords.h"
+#include "dist_moduleV2/dist_serial.h"
+#include "dist_moduleV2/dist_simd.h"
+#include "dist_moduleV2/dist_avx.h"
+#include "dist_moduleV2/dist_avx_par.h"
+#include "dist_moduleV2/dist_cuda.h"
 
 namespace dist {
 

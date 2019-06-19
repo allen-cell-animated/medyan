@@ -19,9 +19,9 @@
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"
 #include <vector>
-#include "dist_driver.h"
-#include "dist_coords.h"
-#include "dist_common.h"
+#include "dist_moduleV2/dist_driver.h"
+#include "dist_moduleV2/dist_coords.h"
+#include "dist_moduleV2/dist_common.h"
 #include "Cylinder.h"
 using namespace mathfunc;
 void SubSystem::resetNeighborLists() {
@@ -393,7 +393,7 @@ void SubSystem::vectorizeCylinder() {
     cylsqmagnitudevector = new floatingpoint[Cylinder::vectormaxsize];
     unsigned long maxbindingsitespercyl = 0;
     for(auto ftype = 0; ftype < SysParams::CParams.numFilaments; ftype++) {
-        maxbindingsitespercyl = max(maxbindingsitespercyl,SysParams::Chemistry()
+        maxbindingsitespercyl = max<size_t>(maxbindingsitespercyl,SysParams::Chemistry()
                 .bindingSites[ftype].size());
     }
     long vectorsize = maxbindingsitespercyl * Cylinder::vectormaxsize;

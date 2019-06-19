@@ -7,9 +7,9 @@ Simple serial implementation for finding contacts.
 #ifndef DIST_SERIAL
 #define DIST_SERIAL
 
-#include "dist_common.h"
-#include "dist_out.h"
-#include "dist_coords.h"
+#include "dist_moduleV2/dist_common.h"
+#include "dist_moduleV2/dist_out.h"
+#include "dist_moduleV2/dist_coords.h"
 
 namespace dist {
 

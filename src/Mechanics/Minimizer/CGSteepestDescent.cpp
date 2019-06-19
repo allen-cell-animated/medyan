@@ -42,7 +42,7 @@
             floatingpoint lambda;
 
             //find lambda by line search, move beads
-            bool *dummy;
+            bool *dummy = nullptr;
             lambda = backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy);
             moveBeads(lambda);
 

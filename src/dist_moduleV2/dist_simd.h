@@ -17,7 +17,7 @@ Most other functions/variables below should be considered private to the module.
 #include <thread>
 #include <mutex>
 
-#include "dist_simd_utils.h"
+#include "dist_moduleV2/dist_simd_utils.h"
 
 namespace dist {
 

@@ -583,7 +583,7 @@ struct BranchingCallback {
         }
         else
         {
-            CCylinder* c; auto check = false;
+            CCylinder* c = nullptr; auto check = false;
             vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
             for(auto T:BrT){
                 CCylinder* cx=get<0>(get<0>(T));

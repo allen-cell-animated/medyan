@@ -22,7 +22,7 @@
 
 RSpecies::~RSpecies() noexcept{
 
-    assert((_as_reactants.empty() and _as_products.empty())
+    assert((_as_reactants.empty() && _as_products.empty())
     && "Major bug: RSpecies should not contain Reactions when being destroyed.");
 #ifdef RSPECIES_SIGNALING
     if(_signal!=nullptr)

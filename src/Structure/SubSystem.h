@@ -40,7 +40,7 @@
 #include "HybridNeighborListImpl.h"
 
 #include <initializer_list>
-#include "dist_common.h"
+#include "dist_moduleV2/dist_common.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif

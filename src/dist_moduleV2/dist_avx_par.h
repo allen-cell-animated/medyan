@@ -24,8 +24,8 @@ A multithreaded versio of the code for both AVX and AVX2 calculations.
 // #include "xtensor/xio.hpp"
 
 
-#include "dist_simd.h"
-#include "dist_avx_aux.h"
+#include "dist_moduleV2/dist_simd.h"
+#include "dist_moduleV2/dist_avx_aux.h"
 
 // # define PBLOCKDIMX 4
 // # define PBLOCKDIMY 4

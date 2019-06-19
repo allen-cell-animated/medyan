@@ -28,7 +28,7 @@
 #include "SysParams.h"
 #include "Rand.h"
 #include "BindingManager.h"
-#include "dist_driver.h"
+#include "dist_moduleV2/dist_driver.h"
 
 //FORWARD DECLARATIONS
 class SubSystem;

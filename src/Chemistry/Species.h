@@ -363,7 +363,7 @@ public:
     /// their names are equal.
     friend bool operator ==(const Species& a, const Species& b)
     {
-        if (a.getMolecule() != b.getMolecule() or typeid(a) != typeid(b))
+        if (a.getMolecule() != b.getMolecule() || typeid(a) != typeid(b))
             return false;
         return true;
     }

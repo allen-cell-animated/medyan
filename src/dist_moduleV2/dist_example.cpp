@@ -13,9 +13,9 @@ Example functions for various scenarios how to run find_distances(...)
 #include <thread>
 
 
-#include "dist_coords.h"
-#include "dist_driver.h"
-#include "dist_out.h"
+#include "dist_moduleV2/dist_coords.h"
+#include "dist_moduleV2/dist_driver.h"
+#include "dist_moduleV2/dist_out.h"
 
 namespace dist {
 
