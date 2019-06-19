@@ -107,7 +107,7 @@ void Controller::initialize(string inputFile,
     //Otherwise incorrect deltaMinusEnd or deltaPlusEnd values may be genetrated.
     _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", _subSystem));
     //add br force out and local diffussing species concentration
-    //_outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
+    _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
     //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", _subSystem));
 
     //Always read geometry, check consistency
@@ -120,18 +120,18 @@ void Controller::initialize(string inputFile,
     LOG(STEP) << "Initializing geometry...";
     _gController->initializeGrid();
     LOG(INFO) << "Done.";
-    
+
     //Initialize boundary
     cout << "---" << endl;
     LOG(STEP) << "Initializing boundary...";
-    
+
     auto BTypes = p.readBoundaryType();
     p.readBoundParams();
 
     //initialize
     _gController->initializeBoundary(BTypes);
     LOG(INFO) << "Done.";
-    
+
 #ifdef MECHANICS
     //read algorithm and types
     auto MTypes = p.readMechanicsFFType();
@@ -225,7 +225,7 @@ void Controller::initialize(string inputFile,
     //init controller
     _drController->initialize(DRTypes);
     LOG(INFO) << "Done.";
-    
+
 #endif
 
     //Check consistency of all chemistry and mechanics parameters
@@ -243,9 +243,9 @@ void Controller::initialize(string inputFile,
     if(!SysParams::checkDyRateParameters(DRTypes))
         exit(EXIT_FAILURE);
 #endif
-    
+
     LOG(INFO) << "Done.";
-    
+
     //setup initial network configuration
     setupInitialNetwork(p);
 #ifdef HYBRID_NLSTENCILLIST
@@ -299,6 +299,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
 //    FilamentData filaments;
 
     cout << "---" << endl;
+//    HybridBindingSearchManager::setdOut();
     cout << "Initializing filaments...";
 
     if(FSetup.inputFile != "") {
@@ -329,12 +330,12 @@ void Controller::setupInitialNetwork(SystemParser& p) {
                  <<"invalid filament type. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
-        vector<vector<double>> coords = {coord1, coord2};
+        vector<vector<floatingpoint>> coords = {coord1, coord2};
 
         if(coord2.size()==3){
 
-            double d = twoPointDistance(coord1, coord2);
-            vector<double> tau = twoPointDirection(coord1, coord2);
+            floatingpoint d = twoPointDistance(coord1, coord2);
+            vector<floatingpoint> tau = twoPointDirection(coord1, coord2);
             int numSegment = static_cast<int>(std::round(d / SysParams::Geometry().cylinderSize[type]));
 
             // check how many segments can fit between end-to-end of the filament
@@ -345,7 +346,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         }
         else if(coord2.size()>3){
             int numSegment = coord2.size()/3;
-            vector<vector<double>> coords;
+            vector<vector<floatingpoint>> coords;
             coords.push_back(coord1);
             for(int id=0;id<numSegment;id++)
                 coords.push_back({coord2[id*3],coord2[id*3+1],coord2[id*3+2]});
@@ -374,11 +375,11 @@ void Controller::setupSpecialStructures(SystemParser& p) {
         MTOC* mtoc = _subSystem->addTrackable<MTOC>();
 
         //create the bubble in top part of grid, centered in x,y
-        double bcoordx = GController::getSize()[0] / 2;
-        double bcoordy = GController::getSize()[1] / 2;
-        double bcoordz = GController::getSize()[2] * 5 / 6;
+        floatingpoint bcoordx = GController::getSize()[0] / 2;
+        floatingpoint bcoordy = GController::getSize()[1] / 2;
+        floatingpoint bcoordz = GController::getSize()[2] * 5 / 6;
 
-        vector<double> bcoords = {bcoordx, bcoordy, bcoordz};
+        vector<floatingpoint> bcoords = {bcoordx, bcoordy, bcoordz};
         Bubble* b = _subSystem->addTrackable<Bubble>(_subSystem, bcoords, SType.mtocBubbleType);
 
         mtoc->setBubble(b);
@@ -397,13 +398,13 @@ void Controller::setupSpecialStructures(SystemParser& p) {
             auto coord1 = get<1>(it);
             auto coord2 = get<2>(it);
 
-            vector<vector<double>> coords = {coord1, coord2};
+            vector<vector<floatingpoint>> coords = {coord1, coord2};
 
-            double d = twoPointDistance(coord1, coord2);
-            vector<double> tau = twoPointDirection(coord1, coord2);
+            floatingpoint d = twoPointDistance(coord1, coord2);
+            vector<floatingpoint> tau = twoPointDirection(coord1, coord2);
 
             int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
-            
+
             // check how many segments can fit between end-to-end of the filament
             Filament *f = _subSystem->addTrackable<Filament>(_subSystem, SType.mtocFilamentType,
                                                              coords, numSegment + 1, "ARC");
@@ -416,7 +417,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
 
 void Controller::activatedeactivateComp(){
 
-    if(SysParams::Boundaries().transfershareaxis!=3){
+    if(SysParams::Boundaries().transfershareaxis>=0){
         fCompmap.clear();
         bCompmap.clear();
         activatecompartments.clear();
@@ -462,8 +463,8 @@ void Controller::ControlfrontbackEndComp(){
     bool mincompstate = false;
     if(planestomove == 2 || planestomove == 0) maxcompstate = true;
     if(planestomove == 2 || planestomove == 1) mincompstate = true;
-    double systemspan = 0.0;
-    double cmpsize = 0.0;
+    floatingpoint systemspan = 0.0;
+    floatingpoint cmpsize = 0.0;
     if(tsaxis == 0)
     {systemspan = SysParams::Geometry().NX * SysParams::Geometry()
                                                               .compartmentSizeX;
@@ -607,12 +608,12 @@ void Controller::ControlfrontbackEndComp(){
     std::cout<<"Maxbound "<<bounds[1]<<" Minbound "<<bounds[0]<<endl;
 }
 
-void Controller::moveBoundary(double deltaTau) {
+void Controller::moveBoundary(floatingpoint deltaTau) {
     //calculate distance to move
-    double dist = SysParams::Boundaries().moveSpeed * deltaTau;
+    floatingpoint dist = SysParams::Boundaries().moveSpeed * deltaTau;
 
-    if(SysParams::Boundaries().transfershareaxis != 3){
-        vector<double> distvec= {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    if(SysParams::Boundaries().transfershareaxis>=0){
+        vector<floatingpoint> distvec= {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
         if(SysParams::Boundaries().transfershareaxis == 0){
             distvec[0] = bounds[0] - bounds_prev[0];
@@ -627,6 +628,28 @@ void Controller::moveBoundary(double deltaTau) {
             distvec[5] = bounds[1] - bounds_prev[1];
         }
         _subSystem->getBoundary()->move(distvec);
+    }
+        //deprecated not good to use.
+    else if(abs(dist)>0){
+        vector<floatingpoint> distvec = {dist, -dist, dist, -dist, dist, -dist};
+        //move it
+        if(tau() >= SysParams::Boundaries().moveStartTime &&
+           tau() <= SysParams::Boundaries().moveEndTime)
+            _subSystem->getBoundary()->move(distvec);
+
+        //activate, deactivate necessary compartments
+        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+
+            if(_subSystem->getBoundary()->within(C)) {
+
+                if(C->isActivated()) continue;
+                else _cController->activate(C);
+            }
+            else {
+                if(!C->isActivated()) continue;
+                else _cController->deactivate(C);
+            }
+        }
     }
     //calculate system volume.
     _subSystem->getBoundary()->volume();
@@ -685,22 +708,19 @@ void Controller::updateReactionRates() {
 
 void Controller::updateNeighborLists() {
     chrono::high_resolution_clock::time_point mins, mine;
-    mins = chrono::high_resolution_clock::now();
-    //vectorize cylinder to have all cylinder information in a few arrays.
-    mine = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runbvec(mine - mins);
-    bmgrvectime += elapsed_runbvec.count();
+
     mins = chrono::high_resolution_clock::now();
     //Full reset of neighbor lists
     _subSystem->resetNeighborLists();
+//	cout<<"updated NeighborLists"<<endl;
     mine = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runnl2(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runnl2(mine - mins);
     nl2time += elapsed_runnl2.count();
 #ifdef CHEMISTRY
     mins = chrono::high_resolution_clock::now();
     _subSystem->updateBindingManagers();
     mine = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runb(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runb(mine - mins);
     bmgrtime += elapsed_runb.count();
 //    std::cout<<"time split "<<elapsed_runnl2.count()<<" "<<elapsed_runbvec.count()<<" "
 //            ""<<elapsed_runb.count()<<endl;
@@ -776,10 +796,10 @@ void Controller::pinLowerBoundaryFilaments() {
 void Controller::run() {
 
 #ifdef CHEMISTRY
-    double tauLastSnapshot = 0;
-    double tauLastMinimization = 0;
-    double tauLastNeighborList = 0;
-    double oldTau = 0;
+    floatingpoint tauLastSnapshot = 0;
+    floatingpoint tauLastMinimization = 0;
+    floatingpoint tauLastNeighborList = 0;
+    floatingpoint oldTau = 0;
 
     long stepsLastSnapshot = 0;
     long stepsLastMinimization = 0;
@@ -847,7 +867,7 @@ void Controller::run() {
         _mController->run(false);
 
         mine= chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runm(mine - mins);
+        chrono::duration<floatingpoint> elapsed_runm(mine - mins);
         minimizationtime += elapsed_runm.count();
         std::cout<<"Time taken for minimization "<<elapsed_runm.count()<<endl;
         SysParams::RUNSTATE=true;
@@ -900,21 +920,6 @@ void Controller::run() {
         cout << "Current simulation time = "<< tau() << endl;
         //restart phase ends
     }
-
-    //perform first minimization
-//#ifdef MECHANICS
-//    _mController->run(false);
-//
-//    //reupdate positions and neighbor lists
-//    updatePositions();
-//    updateNeighborLists();
-//
-//#ifdef DYNAMICRATES
-//    updateReactionRates();
-//#endif
-//
-//#endif
-
 #ifdef CHEMISTRY
     tauLastSnapshot = tau();
     oldTau = 0;
@@ -923,9 +928,12 @@ void Controller::run() {
 #ifdef MECHANICS
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
+    // update neighorLists before and after minimization. Need excluded volume
+    // interactions.
+	_subSystem->resetNeighborLists();
     _mController->run(false);
     mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runm2(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runm2(mine - mins);
     minimizationtime += elapsed_runm2.count();
     std::cout<<"Time taken for minimization "<<elapsed_runm2.count()<<endl;
 
@@ -933,7 +941,7 @@ void Controller::run() {
     mins = chrono::high_resolution_clock::now();
     //set initial values of variables.
     int tsaxis = SysParams::Boundaries().transfershareaxis;
-    double systemspan = 0.0;
+    floatingpoint systemspan = 0.0;
     if(tsaxis == 0)
         systemspan = SysParams::Geometry().NX * SysParams::Geometry().compartmentSizeX;
     else if(tsaxis == 1)
@@ -963,7 +971,7 @@ void Controller::run() {
     updateReactionRates();
 #endif
     mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runrxn(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runrxn(mine - mins);
     rxnratetime += elapsed_runrxn.count();
 #endif
 
@@ -976,7 +984,6 @@ void Controller::run() {
 
     cout << "Starting simulation..." << endl;
 
-
     int i = 1;
 
     //if runtime was specified, use this
@@ -987,7 +994,7 @@ void Controller::run() {
         mins = chrono::high_resolution_clock::now();
         //activatedeactivateComp();
         mine= chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runspl(mine - mins);
+        chrono::duration<floatingpoint> elapsed_runspl(mine - mins);
         specialtime += elapsed_runspl.count();
 
         while(tau() <= _runTime) {
@@ -995,7 +1002,7 @@ void Controller::run() {
             mins = chrono::high_resolution_clock::now();
             auto var = !_cController->run(_minimizationTime);
             mine= chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed_runchem(mine - mins);
+            chrono::duration<floatingpoint> elapsed_runchem(mine - mins);
             chemistrytime += elapsed_runchem.count();
 
             //print output if chemistry fails.

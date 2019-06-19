@@ -14,6 +14,8 @@
 #include "SysParams.h"
 bool SysParams::RUNSTATE=true;
 bool SysParams::INITIALIZEDSTATUS=false;
+bool SysParams::DURINGCHEMISTRY=false;
+int SysParams::numthreads=0;
 int SysParams::exvolcounter[3] = {0,0,0};
 long long SysParams::exvolcounterz[3] = {0,0,0};
 #ifdef NLSTENCILLIST

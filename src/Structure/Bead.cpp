@@ -22,7 +22,7 @@
 
 using namespace mathfunc;
 
-OldDatabase<Bead*> Bead::_pinnedBeads;
+std::vector<Bead*> Bead::_pinnedBeads;
 
 Bead::Bead (vector<double> v, Composite* parent, int position)
 // Qin add brforce, pinforce

@@ -14,6 +14,7 @@
 #ifndef MEDYAN_Bead_h
 #define MEDYAN_Bead_h
 
+#include <algorithm> // find
 #include <vector>
 #include <list>
 
@@ -178,7 +179,7 @@ public:
     /// Add this bead as a pinned bead
     void addAsPinned() {
         _isPinned = true;
-        _pinnedBeads.addElement(this);
+        _pinnedBeads.push_back(this);
     }
     
     /// Remove this bead as pinned. Will remove from pinnedBeads DB
@@ -186,7 +187,8 @@ public:
     void removeAsPinned() {
         
         _isPinned = false;
-        _pinnedBeads.removeElement(this);
+        auto it = std::find(_pinnedBeads.begin(), _pinnedBeads.end(), this);
+        if(it != _pinnedBeads.end()) _pinnedBeads.erase(it);
     }
     
     const vector<double>& getPinPosition() { return pinnedPosition;}
@@ -196,12 +198,12 @@ public:
     void resetAllPinned() {
 
         _isPinned = false;
-        _pinnedBeads.clearElements();
+        _pinnedBeads.clear();
     }
     /// Get all pinned beads from subsystem
     static const vector<Bead*>& getPinnedBeads() {
         
-        return _pinnedBeads.getElements();
+        return _pinnedBeads;
     }
     
     bool isPinned() {return _isPinned;}
@@ -294,7 +296,7 @@ private:
     
     bool _isPinned = false;
     
-    static OldDatabase<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem
+    static std::vector<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem
                                          ///< (attached to some element in SubSystem)
 };
 
