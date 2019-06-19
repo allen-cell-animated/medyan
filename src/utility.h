@@ -58,7 +58,6 @@ extern unsigned long long rdtsc();
 __host__ __device__
 #endif
 inline bool areEqual(floatingpoint d1, floatingpoint d2) {
-    const floatingpoint ZERO_PREC = 1E-4;
     return fabs(d1 - d2) < ZERO_PREC;
 }
 
