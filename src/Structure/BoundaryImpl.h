@@ -104,6 +104,9 @@ public:
         LOG(ERROR) << "Function is not implemented.";
         throw std::logic_error("Function not implemented");
     }
+    //Qin
+    virtual double lowerdistance(const vector<double>& coordinates);
+    virtual double sidedistance(const vector<double>& coordinates);
 
     ///@note - Not yet implemented.
     virtual void move(vector<double> dist) {}
