@@ -59,7 +59,6 @@ public:
     static bool triggercylindervectorization;
     vector<floatingpoint> coordinate;  ///< Coordinates of the bead
     vector<floatingpoint> coordinateP; ///< Prev coordinates of bead in CG minimization
-    int _ID; ///<Bead IDs
     int _dbIndex =  -1; ///<Position in database vector
 
 	vector<floatingpoint> force; ///< Forces based on curent coordinates.
@@ -170,8 +169,6 @@ public:
     
     //GetType implementation just returns type of parent
     virtual int getType() {return getParent()->getType();}
-    //Aravind get ID
-    int getID() {return _ID;}
     //Aravind return static
     bool getstaticstate() {return isStatic;}
     //Aravind set static
@@ -281,7 +278,7 @@ public:
 	static void printBeaddata(){
 		cout<<"Printing bead data "<<endl;
 		for(auto b:getElements()){
-			cout<<"Bead ID "<<b->getID()<<" dbIndex "<<b->_dbIndex<<endl;
+			cout<<"Bead ID "<<b->getId()<<" dbIndex "<<b->_dbIndex<<endl;
 		}
 		cout<<"removedbindex "<<removedbindex.size()<<endl;
 		cout<<"------------------------------Bead"<<endl;

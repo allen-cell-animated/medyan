@@ -537,8 +537,8 @@ void HybridBindingSearchManager::checkoccupancy(short idvec[2]){
             SpeciesBound* BM2 = ccyl2->getCMonomer(bs2)->speciesBound(
                     SysParams::Chemistry().motorBoundIndex[0]);
             std::cout<<"Cmp "<<_compartment->coordinates()[0]<<" "<<_compartment->coordinates()
-            [1]<<" "<<_compartment->coordinates()[2]<<" Motor "<<ccyl1->getCylinder()->getID()<<" "<<bs1<<" "
-                    ""<<ccyl2->getCylinder()->getID()<<" "<<
+            [1]<<" "<<_compartment->coordinates()[2]<<" Motor "<<ccyl1->getCylinder()->getId()<<" "<<bs1<<" "
+                    ""<<ccyl2->getCylinder()->getId()<<" "<<
                      ""<<bs2<< endl;
             std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "<<BM2->getN()<<endl;
         }
@@ -558,7 +558,7 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
     short bstatepos = bstateposvec[idx][idx2];
 
     for(auto cyl: Cylinder::getCylinders())
-        CIDvec[cyl->_dcIndex] = cyl->getID();
+        CIDvec[cyl->_dcIndex] = cyl->getId();
 
     auto pbs = _possibleBindingsstencilvecuint[idx][idx2];
 
@@ -619,8 +619,8 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
                                    _compartment->coordinates()[1]<<" "<<
                                    _compartment->coordinates()[2]<<
                         " nCmp "<<ncmpcoord[0]<<" "<< ncmpcoord[1]<<" "<< ncmpcoord[2]<<
-                        " L/M CylID bs"<< ccyl1->getCylinder()->getID()<<" "<<it1<<" "<<
-                                  ccyl2->getCylinder()->getID()<<" "<<it2<<" cindices "
+                        " L/M CylID bs"<< ccyl1->getCylinder()->getId()<<" "<<it1<<" "<<
+                                  ccyl2->getCylinder()->getId()<<" "<<it2<<" cindices "
                                   <<cIndex1<<" "<<cIndex2<<" "<<endl;
 
                 cout<<"uint32_t "<<leg1<<" "<<V<<endl;
@@ -683,7 +683,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
             auto Neighbors = _HneighborList->getNeighborsstencil(HNLIDvec[idx], c);
             ncindex.reserve(Neighbors.size());
             for (auto cn : Neighbors) {
-                if (c->getID() > cn->getID())
+                if (c->getId() > cn->getId())
                     ncindex.push_back(cn->_dcIndex);
             }
             ncindices.push_back(ncindex);

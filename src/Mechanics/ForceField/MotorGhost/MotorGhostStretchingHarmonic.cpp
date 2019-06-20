@@ -398,7 +398,7 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f
 		    auto m = MotorGhost::getMotorGhosts()[i];
 		    auto cyl1 = m->getFirstCylinder();
 		    auto cyl2 = m->getSecondCylinder();
-		    cout<<"mID "<<m->getID()<<" Cylinder IDs "<<cyl1->getID()<<" "<<cyl2->getID()
+		    cout<<"mID "<<m->getId()<<" Cylinder IDs "<<cyl1->getId()<<" "<<cyl2->getId()
 		    <<" with cIndex "
 		    <<cyl1->_dcIndex<<" "<<cyl2->_dcIndex<<" and bIndex "
 		    <<cyl1->getFirstBead()->_dbIndex<<" "

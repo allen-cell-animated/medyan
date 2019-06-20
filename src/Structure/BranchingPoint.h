@@ -55,9 +55,6 @@ private:
     
     short _branchType; ///< Integer specifying the type
     
-    int _branchID;     ///< Integer ID of this specific
-                       ///< branch point, managed by the Database
-    
     float _birthTime;  ///<Birth time
     
     Compartment* _compartment; ///< Where this branch point is
@@ -101,7 +98,6 @@ public:
     //@{
     /// Get branch parameter
     virtual int getType() {return _branchType;}
-    int getID() {return _branchID;}
     //@}
     
     /// Get compartment

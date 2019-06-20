@@ -2847,7 +2847,7 @@ void PinRestartParser::resetPins() {
         auto b1 = f->getMinusEndCylinder()->getFirstBead();
         auto b2 = f->getPlusEndCylinder()->getSecondBead();
 
-        int filID = f->getID();
+        int filID = f->getId();
         string searchID = "FILAMENT " + std::to_string(filID) + ":";
 
         string line;

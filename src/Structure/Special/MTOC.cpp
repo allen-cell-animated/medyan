@@ -31,7 +31,7 @@ void MTOC::printSelf() {
     cout << endl;
     
     cout << "MTOC: ptr = " << this << endl;
-    cout << "MTOC ID = " << _ID << endl;
+    cout << "MTOC ID = " << getId() << endl;
     
     cout << endl;
     cout << "Bubble information..." << endl;

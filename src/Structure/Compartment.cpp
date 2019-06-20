@@ -60,7 +60,7 @@ void Compartment::SIMDcoordinates_section(){
                 uint32_t shiftedindex = (cyl->_dcIndex << 4);
 
                 Cyldcindexvec[i] = cyl->_dcIndex;
-                CylcIDvec[i] = cyl->getID();
+                CylcIDvec[i] = cyl->getId();
                 uint32_t j = 0;
                 for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
                      it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {

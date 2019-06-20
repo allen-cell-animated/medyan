@@ -69,7 +69,6 @@ private:
     floatingpoint _position2; ///< Position on second cylinder
     
     short _motorType; ///< Integer specifying the type of linker
-    int _motorID; ///< Integer ID of this motor, managed by Database
     
     float _birthTime; ///< Birth time
     float _walkLength = 0; ///< Walk length of ensemble
@@ -146,9 +145,6 @@ public:
     //@{
     ///Parameter management
     virtual int getType() {return _motorType;}
-    int getID() {return _motorID;}
-    
-    void setID(int ID) {_motorID = ID;}
     //@}
     
     /// Get the birth time

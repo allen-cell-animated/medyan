@@ -60,7 +60,6 @@ private:
     floatingpoint _position2; ///< Position on second cylinder
     
     short _linkerType; ///< Integer specifying the type
-    int _linkerID; ///< Integer ID of this specific linker, managed by Database
     
     float _birthTime; ///Birth time
     
@@ -114,7 +113,6 @@ public:
     //@{
     /// Get linker parameter
     virtual int getType() {return _linkerType;}
-    int getID() {return _linkerID;}
     //@}
     
     /// Get the birth time

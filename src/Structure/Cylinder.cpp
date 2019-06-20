@@ -43,18 +43,18 @@ void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
         //set _dcIndex
         cyl->_dcIndex = i;
         //copy attributes to a structure array
-        cylindervec[i].filamentID = dynamic_cast<Filament*>(cyl->getParent())->getID();
+        cylindervec[i].filamentID = dynamic_cast<Filament*>(cyl->getParent())->getId();
         cylindervec[i].filamentposition = cyl->getPosition();
         cylindervec[i].bindices[0] = cyl->getFirstBead()->_dbIndex;
         cylindervec[i].bindices[1] = cyl->getSecondBead()->_dbIndex;
-        cylindervec[i].cmpID = cyl->getCompartment()->getID();
+        cylindervec[i].cmpID = cyl->getCompartment()->getId();
         cylindervec[i].cindex = i;
         auto coord = cyl->coordinate;
         cylindervec[i].coord[0] = coord[0];
         cylindervec[i].coord[1] = coord[1];
         cylindervec[i].coord[2] = coord[2];
         cylindervec[i].type = cyl->getType();
-        cylindervec[i].ID = cyl->getID();
+        cylindervec[i].ID = cyl->getId();
         //other arrays needed
         ccylindervec[i] = cyl->getCCylinder();
         cylinderpointervec[i] = cyl;
@@ -75,18 +75,18 @@ void Cylinder::appendrevectorize(cylinder* cylindervec, Cylinder** cylinderpoint
 		i = cyl->_dcIndex;
 		maxcindex = max(maxcindex,i);
 		//copy attributes to a structure array
-		cylindervec[i].filamentID = dynamic_cast<Filament*>(cyl->getParent())->getID();
+		cylindervec[i].filamentID = dynamic_cast<Filament*>(cyl->getParent())->getId();
 		cylindervec[i].filamentposition = cyl->getPosition();
 		cylindervec[i].bindices[0] = cyl->getFirstBead()->_dbIndex;
 		cylindervec[i].bindices[1] = cyl->getSecondBead()->_dbIndex;
-		cylindervec[i].cmpID = cyl->getCompartment()->getID();
+		cylindervec[i].cmpID = cyl->getCompartment()->getId();
 		cylindervec[i].cindex = i;
 		auto coord = cyl->coordinate;
 		cylindervec[i].coord[0] = coord[0];
 		cylindervec[i].coord[1] = coord[1];
 		cylindervec[i].coord[2] = coord[2];
 		cylindervec[i].type = cyl->getType();
-		cylindervec[i].ID = cyl->getID();
+		cylindervec[i].ID = cyl->getId();
 		//other arrays needed
 		ccylindervec[i] = cyl->getCCylinder();
 		cylinderpointervec[i] = cyl;
@@ -111,14 +111,14 @@ void  Cylinder::copytoarrays() {
     Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
     CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
     //copy attributes to a structure array
-    cylindervec[i].filamentID = dynamic_cast<Filament*>(this->getParent())->getID();
+    cylindervec[i].filamentID = dynamic_cast<Filament*>(this->getParent())->getId();
     cylindervec[i].filamentposition = _position;
     cylindervec[i].bindices[0] = _b1->_dbIndex;
     cylindervec[i].bindices[1] = _b2->_dbIndex;
-    cylindervec[i].cmpID = _compartment->getID();
+    cylindervec[i].cmpID = _compartment->getId();
     cylindervec[i].cindex = i;
     cylindervec[i].type = _type;
-    cylindervec[i].ID = _ID;
+    cylindervec[i].ID = getId();
     //update coordinate in updatecoordinate
 /*    auto coord = coordinate;
     cylindervec[i].coord[0] = coord[0];
@@ -153,7 +153,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
                    bool extensionFront, bool extensionBack, bool initialization)
 
     : Trackable(true, true, true, false),
-      _b1(b1), _b2(b2), _type(type), _position(position), _ID(getId()) {
+      _b1(b1), _b2(b2), _type(type), _position(position) {
 
 	//@{
 
@@ -179,7 +179,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
         removedcindex.erase(removedcindex.begin());
     }
 #ifdef CROSSCHECK
-	cout<<"cindex "<<_dcIndex<< " alloted to ID "<<_ID<<endl;
+	cout<<"cindex "<<_dcIndex<< " alloted to ID "<<getId()<<endl;
 #endif
     //@}
 
@@ -191,7 +191,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
     //copy attributes to a structure array
 
-    cylindervec[_dcIndex].filamentID = static_cast<Filament*>(this->getParent())->getID();
+    cylindervec[_dcIndex].filamentID = static_cast<Filament*>(this->getParent())->getId();
     cylindervec[_dcIndex].filamentposition = _position;
     cylindervec[_dcIndex].bindices[0] = _b1->_dbIndex;
     cylindervec[_dcIndex].bindices[1] = _b2->_dbIndex;
@@ -244,10 +244,10 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     _cCylinder->setCylinder(this);
 
     //copy further components to the array
-    cylindervec[_dcIndex].cmpID = _compartment->getID();
+    cylindervec[_dcIndex].cmpID = _compartment->getId();
     cylindervec[_dcIndex].cindex = _dcIndex;
     cylindervec[_dcIndex].type = _type;
-    cylindervec[_dcIndex].ID = _ID;
+    cylindervec[_dcIndex].ID = getId();
     //other arrays needed
     ccylindervec[_dcIndex] = _cCylinder.get();
     cylinderpointervec[_dcIndex] = this;
@@ -327,7 +327,7 @@ void Cylinder::updatePosition() {
 
 //        std::cout<<"moving cylinder with cindex "<<_dcIndex<<" and ID "<<_ID<<endl;
 			//change both CCylinder and Compartment ID in the vector
-			CUDAcommon::serlvars.cylindervec[_dcIndex].cmpID = _compartment->getID();
+			CUDAcommon::serlvars.cylindervec[_dcIndex].cmpID = _compartment->getId();
 			CUDAcommon::serlvars.cylinderpointervec[_dcIndex] = this;
 			CUDAcommon::serlvars.ccylindervec[_dcIndex] = _cCylinder.get();
 
@@ -456,7 +456,7 @@ void Cylinder::printSelf() {
     cout << endl;
     
     cout << "Cylinder: ptr = " << this << endl;
-    cout << "Cylinder ID = " << _ID << endl;
+    cout << "Cylinder ID = " << getId() << endl;
     cout << "Parent ptr = " << getParent() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     

@@ -41,10 +41,9 @@ private:
     Bubble* _bubble; ///< A bubble that physically represents the MTOC
     vector<Filament*> _filaments; ///< An ordered vector of filaments in the MTOC
     
-    int _ID; ///< Unique identifier
 public:
     ///Constructor
-    MTOC() : Trackable(), _ID(getId()) {}
+    MTOC() : Trackable() {}
     
     //@{
     ///Setters

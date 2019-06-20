@@ -37,7 +37,7 @@ Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
       DatabaseType(),
       coordinate(v), coordinateP(v),
       force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0),
-      _position(position), _birthTime(tau()),_ID(getId()) {
+      _position(position), _birthTime(tau()) {
     
     parent->addChild(unique_ptr<Component>(this));
           

@@ -98,9 +98,9 @@ private:
             typedef unordered_multimap<int, tuple<int, short>>:: iterator umit;
             pair<umit, umit> range;
             if(flag ==0)
-                range = _singlecylfilunsortedpairings.equal_range(x->getID());
+                range = _singlecylfilunsortedpairings.equal_range(x->getId());
             else
-                range = _bsinglecylfilunsortedpairings.equal_range(x->getID());
+                range = _bsinglecylfilunsortedpairings.equal_range(x->getId());
 
             vector<int> bVpos; //position in boundVector
             vector<short> bSite; //binding Sites occupied
@@ -139,7 +139,7 @@ private:
                     }
                 }
                 else{ //in case where there are fewer monomers in the cylinder.
-                    auto vecpos = find(branchcylIDs.begin(), branchcylIDs.end(), x->getID());
+                    auto vecpos = find(branchcylIDs.begin(), branchcylIDs.end(), x->getId());
                     //If the cylinder is both a branch and branching cylinder (like the shaft in letter I), we need to re-do the binding site position when it is branching cylinder.
                     if(vecpos != branchcylIDs.end() && flag == 1){
                           vector<short> posBindingSites=SysParams::Chemistry().bindingSites[filType];
@@ -342,7 +342,7 @@ private:
             auto c1=get<0>(map[one])->getCylinder();
             auto c2=get<0>(map[two])->getCylinder();
             //@
-            if(c1->getID() > c2->getID())        {
+            if(c1->getId() > c2->getId())        {
                 for(auto &Mgr:c1->getCompartment()->getFilamentBindingManagers()){
                     if(dynamic_cast<LinkerBindingManager*>(Mgr.get())) {
                         if(Mgr->getBoundName().compare(boundName)==0){
@@ -548,7 +548,7 @@ public:
                             floatingpoint d=0.0;
                             if(_numMonPerCyl< SysParams::Geometry().cylinderNumMon[filamentType]){
                                 if(x->isMinusEnd()){
-                                    auto vecpos = find(branchcylIDs.begin(), branchcylIDs.end(), x->getID());
+                                    auto vecpos = find(branchcylIDs.begin(), branchcylIDs.end(), x->getId());
                                     if(vecpos!=branchcylIDs.end()) //If it is a branch cylinder, then the CMonomers are re-arranged starting from 0 instead of CMonomer.size().
                                         d = round(angdeltapos.at(2)*SysParams::Geometry().cylinderNumMon[filamentType]/angdeltapos.at(3));
                                         //d = round(angdeltapos.at(2)*_numMonPerCyl/SysParams::Geometry().cylinderSize[filamentType]); //THIS IS THE CORRECT WAY. TEMPORARILY DEPRECATED.
@@ -597,7 +597,7 @@ public:
                                 //                                _unsortedpairings.insert({iter,make_tuple(x->getCCylinder(),posBindingSites[lo])});
                             }
                             else{
-                                _singlecylfilunsortedpairings.insert({x->getID(),make_tuple(iter, d)});
+                                _singlecylfilunsortedpairings.insert({x->getId(),make_tuple(iter, d)});
                             }
                         }
                         //@Leg1 ENDS & Leg2
@@ -607,7 +607,7 @@ public:
                             floatingpoint d=0.0;
                             if(_numMonPerCyl< SysParams::Geometry().cylinderNumMon[filamentType]){
                                 if(x->isMinusEnd()){
-                                    auto vecpos = find(branchcylIDs.begin(), branchcylIDs.end(), x->getID());
+                                    auto vecpos = find(branchcylIDs.begin(), branchcylIDs.end(), x->getId());
                                     if(vecpos!=branchcylIDs.end()) //If it is a branch cylinder, then the CMonomers are re-arranged starting from 0 instead of CMonomer.size().
                                         d = round(angdeltapos.at(2)*SysParams::Geometry().cylinderNumMon[filamentType]/angdeltapos.at(3));
                                     //d = round(angdeltapos.at(2)*_numMonPerCyl/SysParams::Geometry().cylinderSize[filamentType]); //THIS IS THE CORRECT WAY. TEMPORARILY DEPRECATED.
@@ -658,7 +658,7 @@ public:
 //                                _unsortedpairings.insert({iter,make_tuple(x->getCCylinder(),posBindingSites[lo])});
                             }
                             else{
-                                _singlecylfilunsortedpairings.insert({x->getID(),make_tuple(iter, d)});
+                                _singlecylfilunsortedpairings.insert({x->getId(),make_tuple(iter, d)});
                             }
                         }//@Leg2 ENDS
                     }//@IF
@@ -721,7 +721,7 @@ public:
                             }
                             else{
 
-                                _bsinglecylfilunsortedpairings.insert({x->getID(),make_tuple(iter, d)});
+                                _bsinglecylfilunsortedpairings.insert({x->getId(),make_tuple(iter, d)});
                             }
                         }
                         //Find the closest minus end based on distance alone.
@@ -731,7 +731,7 @@ public:
                             
                             if(f->getCylinderVector().size()==1){
                                 _bunsortedpairings.insert({iter,make_tuple(x->getCCylinder(),0)});
-                                branchcylIDs.push_back(x->getID());
+                                branchcylIDs.push_back(x->getId());
                                 
                                 auto cc = x->getCCylinder();
                                 int nummonomers = min((int) round(x->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filamentType]),SysParams::Geometry().cylinderNumMon[filamentType]);
@@ -825,7 +825,7 @@ public:
                     auto c2=get<0>(map[J])->getCylinder();
                     auto pos1=get<1>(map[I]);
                     auto pos2=get<1>(map[J]);
-                    if(c1->getID()!=c2->getID() && c1->getType()==filamentType && c2->getType()==filamentType){
+                    if(c1->getId()!=c2->getId() && c1->getType()==filamentType && c2->getType()==filamentType){
                         vector<floatingpoint> l1;
                         short check=0;
                         if(pos1!=0)

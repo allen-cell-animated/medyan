@@ -75,8 +75,6 @@ private:
 
     short _type; ///< Type of cylinder, either corresponding to Filament or other
 
-    int _ID = -1; ///< Unique ID of cylinder, managed by Database
-
     Compartment* _compartment = nullptr; ///< Where this cylinder is
 
     Cylinder* _branchingCylinder = nullptr; ///< ptr to a branching cylinder
@@ -147,9 +145,6 @@ public:
     void setBranchingCylinder(Cylinder* c) {_branchingCylinder = c;}
     //@}
 
-    /// Get ID
-    int getID() {return _ID;}
-
     ///@{
     /// Set plus and minus end boolean markers
     bool isPlusEnd() {return _plusEnd;}
@@ -170,7 +165,7 @@ public:
         //Reset in bead coordinate vector and add _dbIndex to the list of removedcindex.
         removedcindex.push_back(_dcIndex);
 #ifdef CROSSCHECK
-        cout<<"cindex "<<_dcIndex<<" removed from ID "<<_ID<<endl;
+        cout<<"cindex "<<_dcIndex<<" removed from ID "<<getId()<<endl;
 #endif
         resetarrays();
         _dcIndex = -1;
@@ -265,8 +260,8 @@ public:
             for (auto cyl:Cylinder::getCylinders()) {
                 int i = cyl->_dcIndex;
                 int id1 = cylindervec[i].ID;
-                int id2 = Cylinderpointervec[i]->getID();
-                int id3 = ccylindervec[i]->getCylinder()->getID();
+                int id2 = Cylinderpointervec[i]->getId();
+                int id3 = ccylindervec[i]->getCylinder()->getId();
                 if (id1 != id2 || id2 != id3 || id3 != id1)
                     std::cout << id1 << " " << id2 << " " << id3 << endl;
                 auto b1 = cyl->getFirstBead();
@@ -276,14 +271,14 @@ public:
                 cylinder c = cylindervec[i];
 
                 if (c.bindices[0] != idx1 || c.bindices[1] != idx2) {
-                    std::cout << "3 bindices for cyl with ID "<<cyl->getID()<<" cindex " << i <<
+                    std::cout << "3 bindices for cyl with ID "<<cyl->getId()<<" cindex " << i <<
                               " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
 
                     std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1]
                               << " " << b1->coordinate[2] << " " << " " << b2->coordinate[0]
                               << " " << b2->coordinate[1] << " " << b2->coordinate[2]
                               << " idx " << b1->_dbIndex << " " << b2->_dbIndex << "ID "
-																				   ""<<b1->getID()<<" "<<b2->getID()<<endl;
+																				   ""<<b1->getId()<<" "<<b2->getId()<<endl;
 
                     std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
                               << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "

@@ -44,7 +44,7 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 
     : Trackable(true, true), _c1(c1), _c2(c2),
       _position1(position1), _position2(position2),
-      _linkerType(linkerType), _linkerID(getId()), _birthTime(tau()) {
+      _linkerType(linkerType), _birthTime(tau()) {
         
     updateCoordinate();
 
@@ -179,7 +179,7 @@ void Linker::printSelf() {
     cout << endl;
     
     cout << "Linker: ptr = " << this << endl;
-    cout << "Linker type = " << _linkerType << ", Linker ID = " << _linkerID << endl;
+    cout << "Linker type = " << _linkerType << ", Linker ID = " << getId() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     
     cout << "Position on first cylinder (floatingpoint) = " << _position1 << endl;

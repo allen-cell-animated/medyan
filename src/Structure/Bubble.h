@@ -50,8 +50,6 @@ private:
     floatingpoint _screenLength; ///< Screening length for a repulsive potential
 	floatingpoint _MTOCBendingK; ///< use for MTOC-MT bending force field
     
-    int _ID;        ///< Identifier
-    
     bool _isMTOC = false;   ///< If representing a MTOC
     
 public:
@@ -70,7 +68,6 @@ public:
     
     Bead* getBead() {return _bead;}
     
-    int getID() {return _ID;}
     virtual int getType() {return _type;}
     //@}
     

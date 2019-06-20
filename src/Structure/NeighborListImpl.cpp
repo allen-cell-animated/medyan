@@ -347,7 +347,7 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
                     if (cylinder == ncylinder) continue;
 
                     //Dont add if ID is more than cylinder for half-list
-                    if (!_full && cylinder->getID() <= ncylinder->getID())
+                    if (!_full && cylinder->getId() <= ncylinder->getId())
                         continue;
 
                     //Don't add if belonging to same parent
@@ -458,7 +458,7 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
             if(cylinder == ncylinder) continue;
 
             //Dont add if ID is more than cylinder for half-list
-            if(!_full && cylinder->getID() <= ncylinder->getID())
+            if(!_full && cylinder->getId() <= ncylinder->getId())
                 continue;
 
             //Don't add if belonging to same parent
@@ -988,7 +988,7 @@ void BubbleBubbleNL::updateNeighbors(Bubble* bb) {
 
         floatingpoint distsq = twoPointDistancesquared(bb->coordinate, bbo->coordinate);
 
-        if(bb->getID() <= bbo->getID()) continue;
+        if(bb->getId() <= bbo->getId()) continue;
 
         //If within range, add it
         if(distsq < (_rMax * _rMax)) _list[bb].push_back(bbo);

@@ -85,11 +85,11 @@ void SubSystem::resetNeighborLists() {
 
                         beadSet[2 * i] = c->getFirstBead()->_dbIndex;
                         beadSet[2 * i + 1] = c->getSecondBead()->_dbIndex;
-                        cylID[i] = c->getID();
+                        cylID[i] = c->getId();
                         c->_dcIndex = i;
                         fvecpos[i] = c->getPosition();
                         auto fil = dynamic_cast<Filament*>(c->getParent());
-                        filID[i] =  fil->getID();
+                        filID[i] =  fil->getId();
                         cmpID[i] = GController::getCompartmentID(c->getCompartment()->coordinates());
                         filType[i] = fil->getType();
         //                cylstate[i] = c->isFullLength();

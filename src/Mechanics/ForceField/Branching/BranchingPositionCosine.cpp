@@ -414,7 +414,7 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
             auto b = BranchingPoint::getBranchingPoints()[i];
             auto cyl1 = b->getFirstCylinder();
             auto cyl2 = b->getSecondCylinder();
-            cout<<"Cylinder IDs "<<cyl1->getID()<<" "<<cyl2->getID()<<" with cIndex "
+            cout<<"Cylinder IDs "<<cyl1->getId()<<" "<<cyl2->getId()<<" with cIndex "
                 <<cyl1->_dcIndex<<" "<<cyl2->_dcIndex<<" and bIndex "
                 <<cyl1->getFirstBead()->_dbIndex<<" "
                 <<cyl1->getSecondBead()->_dbIndex<<" "
