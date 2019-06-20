@@ -53,8 +53,8 @@ void Compartment::SIMDcoordinates_section(){
                 int cindex = cyl->getStableIndex();
                 if (checkftype)
                     short _filamentType = Cylinder::getDbData().value[cindex].type;
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
+                auto x1 = cyl->getFirstBead()->vcoordinate();
+                auto x2 = cyl->getSecondBead()->vcoordinate();
 //            uint32_t shiftedindex = (i << 4);
                 uint32_t shiftedindex = (cyl->getStableIndex() << 4);
 
@@ -137,8 +137,8 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                 uint32_t cindex = cyl->getStableIndex();
                 if (checkftype)
                     short _filamentType = Cylinder::getDbData().value[cindex].type;
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
+                auto x1 = cyl->getFirstBead()->vcoordinate();
+                auto x2 = cyl->getSecondBead()->vcoordinate();
 //            uint16_t shiftedindex = (i << 4);
                 uint32_t shiftedindex = (cindex << 4);
                 Cyldcindexvec[i] = cindex;
@@ -287,8 +287,8 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                 }*/
                 if (checkftype)
                     short _filamentType = Cylinder::getDbData().value[cindex].type;
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
+                auto x1 = cyl->getFirstBead()->vcoordinate();
+                auto x2 = cyl->getSecondBead()->vcoordinate();
 //                uint16_t shiftedindex = (i << 4);
                 uint32_t shiftedindex = (cindex << 4);
                 Cyldcindexvec[i] = cindex;

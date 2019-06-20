@@ -438,7 +438,7 @@ void Filament::depolymerizePlusEnd() {
 
     auto direction = twoPointDirection(b2->vcoordinate(), b1->vcoordinate());
     
-    b2->coordinate() = vector2Vec<3, double>(nextPointProjection(b2->vcoordinate(),
+    b2->coordinate() = vector2Vec<3, floatingpoint>(nextPointProjection(b2->vcoordinate(),
     SysParams::Geometry().monomerSize[_filType], direction));
 
     cBack->getCoordinate() = b2->coordinate();
@@ -471,7 +471,7 @@ void Filament::depolymerizeMinusEnd() {
     
     auto direction = twoPointDirection(b1->vcoordinate(), b2->vcoordinate());
     
-    b1->coordinate() = vector2Vec<3, double>(nextPointProjection(b1->vcoordinate(),
+    b1->coordinate() = vector2Vec<3, floatingpoint>(nextPointProjection(b1->vcoordinate(),
     SysParams::Geometry().monomerSize[_filType], direction));
 
     cFront->getCoordinate() = b1->coordinate();

@@ -1154,8 +1154,6 @@ void Controller::run() {
             //run mcontroller, update system
             if(tauLastMinimization >= _minimizationTime) {
 
-	            Bead::revectorizeifneeded();
-	            Cylinder::revectorizeifneeded();
                 mins = chrono::high_resolution_clock::now();
                 _mController->run();
                 mine= chrono::high_resolution_clock::now();

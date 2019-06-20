@@ -38,7 +38,7 @@ void Cylinder::updateData() {
         data.compartmentId = c->getCompartment()->getId();
         data.beadCoord[0] = c->getFirstBead()->coordinate();
         data.beadCoord[1] = c->getSecondBead()->coordinate();
-        data.coord = vector2Vec<3, double>(c->coordinate);
+        data.coord = vector2Vec<3, floatingpoint>(c->coordinate);
         data.type = c->getType();
         data.id = c->getId();
 
@@ -127,7 +127,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     data.compartmentId = _compartment->getId();
     data.beadCoord[0] = _b1->coordinate();
     data.beadCoord[1] = _b2->coordinate();
-    data.coord = vector2Vec<3, double>(coordinate);
+    data.coord = vector2Vec<3, floatingpoint>(coordinate);
     data.type = getType();
     data.id = getId();
 

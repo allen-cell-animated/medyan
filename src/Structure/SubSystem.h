@@ -200,6 +200,8 @@ public:
 
     /// Reset all neighbor lists in subsystem
     void resetNeighborLists();
+    //create vectors of cylinder information.
+    void vectorizeCylinder();
 
 #ifdef CUDAACCL_NL
     void endresetCUDA(){

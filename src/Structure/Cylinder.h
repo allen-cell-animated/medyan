@@ -216,6 +216,9 @@ public:
         _filID = filID;
     };
 
+    int getFilID() const {
+        return _filID;
+    }
 
     static floatingpoint timecylinder1;
 	static floatingpoint timecylinder2;

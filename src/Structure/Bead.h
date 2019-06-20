@@ -34,7 +34,7 @@ class Compartment;
 class Filament;
 
 struct BeadData {
-    using vec_type = mathfunc::Vec3;
+    using vec_type = mathfunc::Vec< 3, floatingpoint >;
     using vec_array_type = mathfunc::VecArray< 3, floatingpoint >;
 
     vec_array_type coords;
@@ -96,7 +96,7 @@ public:
     using DatabaseType = Database< Bead, false, BeadData >;
 
     ///@note - all vectors are in x,y,z coordinates.
-    vector<double> coordinateP; ///< Prev coordinates of bead in CG minimization
+    vector<floatingpoint> coordinateP; ///< Prev coordinates of bead in CG minimization
 
                           ///< Forces should always correspond to current coordinates.
     

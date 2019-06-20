@@ -22,6 +22,7 @@
 #include "GController.h"
 #include "SysParams.h"
 #include "MathFunctions.h"
+#include "Mechanics/CUDAcommon.h"
 
 using namespace mathfunc;
 
