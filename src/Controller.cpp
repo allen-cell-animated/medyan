@@ -1230,6 +1230,7 @@ void Controller::run() {
             }
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
+	        resetCounters();
             i++;
 #endif
 
