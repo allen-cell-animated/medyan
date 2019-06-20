@@ -40,6 +40,3 @@ void MTOC::printSelf() {
     
     cout << endl;
 }
-
-
-Database<MTOC*> MTOC::_mtocs;

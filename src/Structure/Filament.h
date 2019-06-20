@@ -43,7 +43,8 @@ class Bead;
  * 
  * A Filament can also be initialized as a number of different shapes.
  */
-class Filament : public Composite, public Trackable {
+class Filament : public Composite, public Trackable,
+    public Database< Filament, false > {
 
 friend class Controller;
     
@@ -74,9 +75,6 @@ private:
     int _plusEndPosition   = 0;  ///< Position of plus end bead at last turnover
     floatingpoint _turnoverTime   = 0;  ///< Time since last turnover
 
-    
-    static Database<Filament*> _filaments; ///< Collection in SubSystem
-    
     //@{
     ///Histogram data
     static Histogram* _turnoverTimes;
@@ -104,7 +102,7 @@ public:
     /// This constructor is called when a filament is severed. It creates a filament
     /// that initially has no cylinders.
     Filament(SubSystem* s, short filamentType)
-        : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {}
+        : Trackable(), _subSystem(s), _filType(filamentType), _ID(getId()) {}
     
     /// This destructor is called when a filament is to be removed from the system.
     /// Removes all cylinders and beads associated with the filament.
@@ -213,17 +211,18 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _filaments.addElement(this);}
-    virtual void removeFromSubSystem() {_filaments.removeElement(this);}
+    // Does nothing
+    virtual void addToSubSystem() override { }
+    virtual void removeFromSubSystem() override {}
     //@}
     
     /// Get all instances of this class from the SubSystem
     static const vector<Filament*>& getFilaments() {
-        return _filaments.getElements();
+        return getElements();
     }
     /// Get the number of filaments in this system
     static int numFilaments() {
-        return _filaments.countElements();
+        return getElements().size();
     }
     /// Get the turnover times
     static Histogram* getTurnoverTimes() {return _turnoverTimes;}

@@ -36,13 +36,12 @@
 
 using namespace mathfunc;
 
-Database<Filament*> Filament::_filaments;
 Histogram* Filament::_turnoverTimes;
 
 Filament::Filament(SubSystem* s, short filamentType, const vector<floatingpoint>& position,
                    const vector<floatingpoint>& direction, bool nucleation, bool branch)
 
-    : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
+    : Trackable(), _subSystem(s), _filType(filamentType), _ID(getId()) {
  
     //create beads
     Bead* b1 = _subSystem->addTrackable<Bead>(position, this, 0);
@@ -75,7 +74,7 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<floatingpoint>
 Filament::Filament(SubSystem* s, short filamentType, const vector<vector<floatingpoint> >& position,
                    int numBeads, string projectionType)
 
-    : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
+    : Trackable(), _subSystem(s), _filType(filamentType), _ID(getId()) {
 
     
     //create a projection of beads
@@ -954,7 +953,7 @@ species_copy_t Filament::countSpecies(short filamentType, const string& name) {
     
     species_copy_t copyNum = 0;
     
-    for(auto f : _filaments.getElements()) {
+    for(auto f : getElements()) {
         
         if(f->getType() != filamentType) continue;
         

@@ -44,7 +44,8 @@ class SubSystem;
  *  Extending the Reactable class, the reactions associated with 
  *  all instances can be updated by the SubSystem.
  */
-class MotorGhost : public Component, public Trackable, public Movable, public Reactable {
+class MotorGhost : public Component, public Trackable, public Movable, public Reactable,
+    public Database< MotorGhost, false > {
    
 friend class Controller;
 friend class DRController;
@@ -84,8 +85,6 @@ private:
     floatingpoint _onRate = 0.0;
     floatingpoint _offRate = 0.0;
     //@}
-    
-    static Database<MotorGhost*> _motorGhosts;///< Collection in SubSystem
     
     //@{
     ///Histogram data
@@ -160,17 +159,18 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _motorGhosts.addElement(this);}
-    virtual void removeFromSubSystem() {_motorGhosts.removeElement(this);}
+    // Does nothing
+    virtual void addToSubSystem() override { }
+    virtual void removeFromSubSystem() override {}
     //@}
     
     /// Get all instances of this class from the SubSystem
     static const vector<MotorGhost*>& getMotorGhosts() {
-        return _motorGhosts.getElements();
+        return getElements();
     }
     /// Get the number of motors in this system
     static int numMotorGhosts() {
-        return _motorGhosts.countElements();
+        return getElements().size();
     }
 
     /// Get the lifetimes

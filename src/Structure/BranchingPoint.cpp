@@ -38,7 +38,7 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
                                short branchType, floatingpoint position)
 
     : Trackable(true,true), _c1(c1), _c2(c2), _position(position),
-      _branchType(branchType), _branchID(_branchingPoints.getID()), _birthTime(tau()) {
+      _branchType(branchType), _branchID(getId()), _birthTime(tau()) {
     
     //Find compartment
     updateCoordinate();
@@ -245,7 +245,7 @@ species_copy_t BranchingPoint::countSpecies(const string& name) {
     
     species_copy_t copyNum = 0;
     
-    for(auto b : _branchingPoints.getElements()) {
+    for(auto b : getElements()) {
         
         auto s = b->getCBranchingPoint()->getFirstSpecies();
         string sname = SpeciesNamesDB::removeUniqueFilName(s->getName());
@@ -257,6 +257,3 @@ species_copy_t BranchingPoint::countSpecies(const string& name) {
 }
             
 vector<BranchRateChanger*> BranchingPoint::_unbindingChangers;
-
-Database<BranchingPoint*> BranchingPoint::_branchingPoints;
-            

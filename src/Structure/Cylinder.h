@@ -30,6 +30,7 @@
 #include "Component.h"
 #include "CUDAcommon.h"
 #include "Bead.h"
+#include "Util/Math/Vec.hpp"
 
 //FORWARD DECLARATIONS
 class Filament;
@@ -51,7 +52,8 @@ class Bin;
  *  kept in [NeighborLists](@ref NeighborList).
  */
 class Cylinder : public Component, public Trackable, public Movable,
-                                   public Reactable, public DynamicNeighbor {
+                                   public Reactable, public DynamicNeighbor,
+                                   public Database< Cylinder, true > {
 
 friend class CController;
 friend class DRController;
@@ -78,8 +80,6 @@ private:
     Compartment* _compartment = nullptr; ///< Where this cylinder is
 
     Cylinder* _branchingCylinder = nullptr; ///< ptr to a branching cylinder
-
-    static Database<Cylinder*> _cylinders; ///< Collection in SubSystem
 
     ///For dynamic polymerization rate
     static vector<FilamentRateChanger*> _polyChanger;
@@ -163,9 +163,9 @@ public:
 
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() {
-        _cylinders.addElement(this);}
-    virtual void removeFromSubSystem() {
+    // Does nothing
+    virtual void addToSubSystem() override {}
+    virtual void removeFromSubSystem() override {
         //Remove from cylinder structure by resetting to default value
         //Reset in bead coordinate vector and add _dbIndex to the list of removedcindex.
         removedcindex.push_back(_dcIndex);
@@ -174,18 +174,17 @@ public:
 #endif
         resetarrays();
         _dcIndex = -1;
-        _cylinders.removeElement(this);
-        Ncyl = _cylinders.getElements().size();
+        Ncyl = getElements().size();
     }
     //@}
 
     /// Get all instances of this class from the SubSystem
     static const vector<Cylinder*>& getCylinders() {
-        return _cylinders.getElements();
+        return getElements();
     }
     /// Get the number of cylinders in this system
     static int numCylinders() {
-        return _cylinders.countElements();
+        return getElements().size();
     }
 
     /// Update the position, inherited from Movable

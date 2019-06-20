@@ -21,7 +21,7 @@
 Bubble::Bubble(SubSystem* ps, vector<floatingpoint> coordinates, short type)
 
     : Trackable(true, false, true, false), _ps(ps), _type(type),
-      _ID(_bubbles.getID()), coordinate(coordinates) {
+      _ID(getId()), coordinate(coordinates) {
     
     //set up mechanical constants
     _kRepuls = SysParams::Mechanics().BubbleK[_type];
@@ -61,5 +61,3 @@ void Bubble::printSelf() {
     
     cout << endl;
 }
-
-Database<Bubble*> Bubble::_bubbles;

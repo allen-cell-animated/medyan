@@ -39,7 +39,7 @@ void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
 	cout<<"revectorize"<<endl;
 	#endif
     int i = 0;
-    for(auto cyl:_cylinders.getElements()){
+    for(auto cyl:getElements()){
         //set _dcIndex
         cyl->_dcIndex = i;
         //copy attributes to a structure array
@@ -61,7 +61,7 @@ void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
         i++;
     }
     removedcindex.clear();
-    Ncyl = _cylinders.getElements().size();
+    Ncyl = getElements().size();
     maxcindex = Ncyl;
 }
 
@@ -70,7 +70,7 @@ void Cylinder::appendrevectorize(cylinder* cylindervec, Cylinder** cylinderpoint
 	cout<<"append revectorize"<<endl;
 	int i = 0;
 	maxcindex = 0;
-	for(auto cyl:_cylinders.getElements()){
+	for(auto cyl:getElements()){
 
 		i = cyl->_dcIndex;
 		maxcindex = max(maxcindex,i);
@@ -102,7 +102,7 @@ void Cylinder::appendrevectorize(cylinder* cylindervec, Cylinder** cylinderpoint
 	}
 
 
-	Ncyl = _cylinders.getElements().size();
+	Ncyl = getElements().size();
 }
 
 void  Cylinder::copytoarrays() {
@@ -153,7 +153,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
                    bool extensionFront, bool extensionBack, bool initialization)
 
     : Trackable(true, true, true, false),
-      _b1(b1), _b2(b2), _type(type), _position(position), _ID(_cylinders.getID()) {
+      _b1(b1), _b2(b2), _type(type), _position(position), _ID(getId()) {
 
 	//@{
 
@@ -184,7 +184,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     //@}
 
     //@{
-    Ncyl = _cylinders.getElements().size();
+    Ncyl = getElements().size();
     //check if you need to revectorize.
     cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
     Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
@@ -507,7 +507,6 @@ bool Cylinder::within(Cylinder* other, floatingpoint dist) {
 vector<FilamentRateChanger*> Cylinder::_polyChanger;
 ChemManager* Cylinder::_chemManager = 0;
 
-Database<Cylinder*> Cylinder::_cylinders;
 bool Cylinder::setpositionupdatedstate = false;
 floatingpoint Cylinder::timecylinder1 = 0.0;
 floatingpoint Cylinder::timecylinder2= 0.0;

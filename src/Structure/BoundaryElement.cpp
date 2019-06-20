@@ -13,9 +13,6 @@
 
 #include "BoundaryElement.h"
 
-Database<BoundaryElement*> BoundaryElement::_boundaryElements;
-
-
 void BoundaryElement::printSelf() {
     
     cout << endl;
