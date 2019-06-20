@@ -22,6 +22,7 @@
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
+#include "Mechanics/CUDAcommon.h"
 
 template <class BDihedralInteractionType>
 void BranchingDihedral<BDihedralInteractionType>::vectorize() {
