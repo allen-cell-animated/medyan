@@ -389,7 +389,7 @@ void BranchingManager::updateAllPossibleBindingsstencil() {
                 else
                 inZone = false;
             }
-            if (areEqual(boundstate[0][maxnbs * c->getStableIndex() + j], 1.0) && inZone) {
+            if (areEqual(boundstate[0][maxnbs * c->getStableIndex() + j], (floatingpoint)1.0) && inZone) {
 //                output test
 //                auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
 //                auto x1 = cc->getCylinder()->getFirstBead()->vcoordinate();
@@ -454,9 +454,9 @@ void BranchingManager::crosscheck(){
             //            auto bs2_s =  get<1>(*it2[1]);
             sum = 0;
             if(cyl1_o->getId() == cyl1_s->getId() )
-            sum++;
-            //            if(cyl2_o->getId() == cyl2_s->getId() )
-            //                sum++;
+                sum++;
+//            if(cyl2_o->getID() == cyl2_s->getID() )
+//                sum++;
             if(bs1_o == bs1_s )
             sum++;
             //            if(bs2_o == bs2_s )
@@ -561,14 +561,6 @@ _rMin(rMin), _rMax(rMax) {
 void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
 
     if(cc->getType() != _filamentType) return;
-#ifdef DEBUGCONSTANTSEED
-    struct Orderset
-    {
-        bool operator()(Cylinder* lhs, Cylinder* rhs) const  {
-            return lhs->getId() < rhs->getId();
-        }
-    };
-#endif
 
     //if we change other managers copy number
     vector<LinkerBindingManager*> affectedManagers;
@@ -619,23 +611,13 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
 
                     //add in correct order
                     if(c->getId() > cn->getId()) {
-#ifdef DEBUGCONSTANTSEED
-                        appendpossibleBindings(t1,t2);
-                        //                        _possibleBindings.emplace(t1, t2);
-#else
                         _possibleBindings.emplace(t1, t2);
-#endif
                     }
                     else {
                         //add in this compartment
                         if(cn->getCompartment() == _compartment) {
 
-#ifdef DEBUGCONSTANTSEED
-                            appendpossibleBindings(t1,t2);
-                            //                            _possibleBindings.emplace(t1, t2);
-#else
                             _possibleBindings.emplace(t1, t2);
-#endif
                         }
                         //add in other
                         else {
@@ -644,12 +626,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
 
                             affectedManagers.push_back(m);
 
-#ifdef DEBUGCONSTANTSEED
-                            m->appendpossibleBindings(t2,t1);
-                            //                            m->_possibleBindings.emplace(t2,t1);
-#else
                             m->_possibleBindings.emplace(t2,t1);
-#endif
                         }
                     }
                 }
@@ -834,12 +811,12 @@ void LinkerBindingManager::updateAllPossibleBindings() {
             mindistsq = mindistsq * mindistsq;
             if(mindistsq > _rMaxsq || maxdistsq < _rMinsq) continue;
 
-            double X1X3squared = sqmagnitude(X1X3);
-            double X1X2squared = cylsqmagnitudevector.at(c->getStableIndex());
-            double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-            double X3X4squared = cylsqmagnitudevector.at(cn->getStableIndex());
-            double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
-            double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
+            floatingpoint X1X3squared = sqmagnitude(X1X3);
+            floatingpoint X1X2squared = cylsqmagnitudevector[c->getStableIndex()];
+            floatingpoint X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
+            floatingpoint X3X4squared = cylsqmagnitudevector[cn->getStableIndex()];
+            floatingpoint X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
+            floatingpoint X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
             mins2 = chrono::high_resolution_clock::now();
             int i = -1;
             for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
