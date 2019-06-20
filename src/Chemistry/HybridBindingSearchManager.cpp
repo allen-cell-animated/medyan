@@ -238,7 +238,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 		//add valid binding sites
 		if (bstatecheck) {
 
-			uint32_t shiftedIndex1 = cc->getCylinder()->_dcIndex;
+			uint32_t shiftedIndex1 = cc->getCylinder()->getStableIndex();
 			shiftedIndex1 = shiftedIndex1 << 4;
 
 			uint32_t pos = find(SysParams::Chemistry().bindingSites[_filamentType].begin(),
@@ -300,7 +300,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 
 						if (distsq > _rMaxsq || distsq < _rMinsq) {k++;continue;}
 #ifdef SIMDBINDINGSEARCH
-						uint32_t shiftedIndex2 = cn->_dcIndex << 4;
+						uint32_t shiftedIndex2 = cn->getStableIndex() << 4;
 
 						uint32_t t2 = shiftedIndex2|k;
 
@@ -356,7 +356,7 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
 	short idvecM[2] = {0,1};
 
     //remove all tuples which have this ccylinder as key
-    uint32_t t = cc->getCylinder()->_dcIndex<<4;
+    uint32_t t = cc->getCylinder()->getStableIndex()<<4;
 
     uint32_t pos = find (SysParams::Chemistry().bindingSites[_filamentType].begin(),
                       SysParams::Chemistry().bindingSites[_filamentType].end(),
@@ -558,7 +558,7 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
     short bstatepos = bstateposvec[idx][idx2];
 
     for(auto cyl: Cylinder::getCylinders())
-        CIDvec[cyl->_dcIndex] = cyl->getId();
+        CIDvec[cyl->getStableIndex()] = cyl->getId();
 
     auto pbs = _possibleBindingsstencilvecuint[idx][idx2];
 

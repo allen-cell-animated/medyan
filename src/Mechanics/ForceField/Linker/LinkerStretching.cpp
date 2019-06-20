@@ -29,7 +29,7 @@ void LinkerStretching<LStretchingInteractionType>::assignforcemags() {
 
     for(auto l:Linker::getLinkers()){
         //Using += to ensure that the stretching forces are additive.
-        l->getMLinker()->stretchForce = stretchforce[l->_dbIndex];
+        l->getMLinker()->stretchForce = stretchforce[l->getIndex()];
 
     }
 

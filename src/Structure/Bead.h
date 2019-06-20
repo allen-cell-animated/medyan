@@ -35,7 +35,7 @@ class Filament;
 
 struct BeadData {
     using vec_type = mathfunc::Vec3;
-    using vec_array_type = mathfunc::VecArray< 3, double >;
+    using vec_array_type = mathfunc::VecArray< 3, floatingpoint >;
 
     vec_array_type coords;
     vec_array_type coordsStr; // stretched coordinate
@@ -283,51 +283,6 @@ public:
         cout << endl;
     }
 
-    // TODO CLEAN
-    static int getmaxbindex(){
-        return maxbindex;
-    }
-
-	// through depolymerization/ destruction reactions.
-	static void revectorizeifneeded(){
-		//Run the special protocol during chemistry, the regular otherwise.
-		if(SysParams::DURINGCHEMISTRY)
-			appendrevectorizeifneeded();
-		else {
-			int newsize = vectormaxsize;
-			//if the maximum bead index is very close to the vector size
-			if (vectormaxsize - maxbindex <= bead_cache / 10)
-				//new size will be increased by bead_cache
-				newsize = (int(Nbeads / bead_cache) + 2) * bead_cache;
-			//if we have removed bead_cache number of beads from the system
-			if (removedbindex.size() >= bead_cache)
-				//we can revectorize with a smaller size.
-				newsize = (int(Nbeads / bead_cache) + 1) * bead_cache;
-			//set parameters and revectorize
-			if (newsize != vectormaxsize) {
-//				cout<<"vectorize bead"<<endl;
-				floatingpoint *coord = CUDAcommon::serlvars.coord;
-				delete[] coord;
-				floatingpoint *newcoord = new floatingpoint[3 * newsize];
-				CUDAcommon::serlvars.coord = newcoord;
-				revectorize(newcoord);
-				//copyvector(newcoord, coord);
-				vectormaxsize = newsize;
-				//cylinder structure needs to be revecotrized as well.
-				triggercylindervectorization = true;
-			}
-		}
-	}
-	static void printBeaddata(){
-		cout<<"Printing bead data "<<endl;
-		for(auto b:getElements()){
-			cout<<"Bead ID "<<b->getId()<<" dbIndex "<<b->_dbIndex<<endl;
-		}
-		cout<<"removedbindex "<<removedbindex.size()<<endl;
-		cout<<"------------------------------Bead"<<endl;
-    }
-
-    // END TODO CLEAN
 private:
     Compartment* _compartment = nullptr; ///< Pointer to the compartment that this bead is in
     
@@ -338,88 +293,6 @@ private:
     
     static std::vector<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem
                                          ///< (attached to some element in SubSystem)
-    // TODO CLEAN
-    //Vectorize beads so the coordinates are all available in a single array.
-    //@{
-    static int maxbindex;//Maximum bead index alloted.
-    static int vectormaxsize;//maximum number of beads that can be appended without
-    // revectorization
-    static int Nbeads;//Total number of beads in the system
-    static vector<int> removedbindex;//stores the bead indices that have been freed
-
-
-    static void revectorize(floatingpoint* coord){
-        //set contiguous bindices and set coordinates.
-        int idx = 0;
-        for(auto b:getElements()){
-            int index = 3 * idx;
-            coord[index] = b->coordinate[0];
-            coord[index + 1] = b->coordinate[1];
-            coord[index + 2] = b->coordinate[2];
-            b->_dbIndex = idx;
-            idx++;
-        }
-        Nbeads =getElements().size();
-        maxbindex = getElements().size();
-        removedbindex.clear();
-    }
-
-    static void appendrevectorizeifneeded(){
-
-        int newsize = vectormaxsize;
-        //if the maximum bead index is very close to the vector size
-        if(vectormaxsize - maxbindex <= bead_cache/10 )
-            //new size will be increased by bead_cache
-            newsize = vectormaxsize + bead_cache;
-        //set parameters and revectorize
-        if(newsize != vectormaxsize){
-            floatingpoint *coord = CUDAcommon::serlvars.coord;
-            delete[] coord;
-            floatingpoint *newcoord = new floatingpoint[3 * newsize];
-            CUDAcommon::serlvars.coord = newcoord;
-            appendrevectorize(newcoord);
-            //copyvector(newcoord, coord);
-            vectormaxsize = newsize;
-            //cylinder structure needs to be revecotrized as well.
-            triggercylindervectorization = true;
-        }
-    }
-
-	static void appendrevectorize(floatingpoint* coord){
-		//set coords based on bindices.
-		maxbindex = 0;
-		for(auto b:getElements()){
-		    maxbindex = max<int>(maxbindex, b->_dbIndex);
-			int index = 3 * b->_dbIndex;
-			coord[index] = b->coordinate[0];
-			coord[index + 1] = b->coordinate[1];
-			coord[index + 2] = b->coordinate[2];
-		}
-		maxbindex++;
-		Nbeads =getElements().size();
-	}
-
-    //deprecated
-    static void copyvector(floatingpoint* newcoord, floatingpoint* coord){
-        int idx = 0;
-        for(auto b:getElements()){
-            idx++;
-        }
-    }
-    //copy coodinates of this bead to the appropriate spot in coord vector.
-    void  copycoordinatestovector() {
-            CUDAcommon::serlvars.coord[3 * _dbIndex] = coordinate[0];
-            CUDAcommon::serlvars.coord[3 * _dbIndex + 1] = coordinate[1];
-            CUDAcommon::serlvars.coord[3 * _dbIndex + 2] = coordinate[2];
-    }
-    void resetcoordinates() {
-        CUDAcommon::serlvars.coord[3 * _dbIndex] = -1.0;
-        CUDAcommon::serlvars.coord[3 * _dbIndex + 1] = -1.0;
-        CUDAcommon::serlvars.coord[3 * _dbIndex + 2] = -1.0;
-    }
-    //@}
-
-    // END TODO CLEAN
 };
 
 

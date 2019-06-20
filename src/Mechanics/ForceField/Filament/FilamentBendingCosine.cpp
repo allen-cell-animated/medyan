@@ -247,8 +247,8 @@ floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint 
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
             for(auto cyl:Cylinder::getCylinders()){
-            	auto dbIndex1 = cyl->getFirstBead()->_dbIndex;
-	            auto dbIndex2 = cyl->getSecondBead()->_dbIndex;
+            	auto dbIndex1 = cyl->getFirstBead()->getIndex();
+	            auto dbIndex2 = cyl->getSecondBead()->getIndex();
 	            if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
 	            	auto F = dynamic_cast<Filament*>(cyl->getParent());
 		            FilamentInteractions::_filamentCulprit = F;
@@ -319,8 +319,8 @@ floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint 
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 	        for(auto cyl:Cylinder::getCylinders()){
-		        auto dbIndex1 = cyl->getFirstBead()->_dbIndex;
-		        auto dbIndex2 = cyl->getSecondBead()->_dbIndex;
+		        auto dbIndex1 = cyl->getFirstBead()->getIndex();
+		        auto dbIndex2 = cyl->getSecondBead()->getIndex();
 		        if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
 			        auto F = dynamic_cast<Filament*>(cyl->getParent());
 			        FilamentInteractions::_filamentCulprit = F;
@@ -424,8 +424,8 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *
 		    short found = 0;
 		    Cylinder *cyl1, *cyl2;
 		    for(auto cyl:Cylinder::getCylinders()){
-			    auto dbIndex1 = cyl->getFirstBead()->_dbIndex;
-			    auto dbIndex2 = cyl->getSecondBead()->_dbIndex;
+			    auto dbIndex1 = cyl->getFirstBead()->getIndex();
+			    auto dbIndex2 = cyl->getSecondBead()->getIndex();
 			    if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
 				    cyl1 = cyl;
 				    found++;
@@ -440,11 +440,11 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *
 			    }
 		    }
 		    cout<<"Cylinder IDs "<<cyl1->getId()<<" "<<cyl2->getId()<<" with cIndex "
-		        <<cyl1->_dcIndex<<" "<<cyl2->_dcIndex<<" and bIndex "
-		        <<cyl1->getFirstBead()->_dbIndex<<" "
-		        <<cyl1->getSecondBead()->_dbIndex<<" "
-		        <<cyl2->getFirstBead()->_dbIndex<<" "
-		        <<cyl2->getSecondBead()->_dbIndex<<endl;
+		        <<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex()<<" and bIndex "
+		        <<cyl1->getFirstBead()->getIndex()<<" "
+		        <<cyl1->getSecondBead()->getIndex()<<" "
+		        <<cyl2->getFirstBead()->getIndex()<<" "
+		        <<cyl2->getSecondBead()->getIndex()<<endl;
 
 		    cout<<"Printing coords"<<endl;
 		    cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;

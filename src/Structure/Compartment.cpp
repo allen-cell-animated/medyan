@@ -50,16 +50,16 @@ void Compartment::SIMDcoordinates_section(){
 
         for(short filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
             for (auto cyl:_cylinders) {
-                int cindex = cyl->_dcIndex;
+                int cindex = cyl->getStableIndex();
                 auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
                 if (checkftype)
                     short _filamentType = cylinderstruct.type;
                 auto x1 = cyl->getFirstBead()->coordinate;
                 auto x2 = cyl->getSecondBead()->coordinate;
 //            uint32_t shiftedindex = (i << 4);
-                uint32_t shiftedindex = (cyl->_dcIndex << 4);
+                uint32_t shiftedindex = (cyl->getStableIndex() << 4);
 
-                Cyldcindexvec[i] = cyl->_dcIndex;
+                Cyldcindexvec[i] = cyl->getStableIndex();
                 CylcIDvec[i] = cyl->getId();
                 uint32_t j = 0;
                 for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
@@ -135,7 +135,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
         unsigned int i = 0;
 //        cout<<"Cmp coord "<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<endl;
             for (auto cyl:_cylinders) {
-                uint32_t cindex = cyl->_dcIndex;
+                uint32_t cindex = cyl->getStableIndex();
                 auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
                 if (checkftype)
                     short _filamentType = cylinderstruct.type;
@@ -273,7 +273,7 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
 
 
             for (auto cyl:_cylinders) {
-                uint32_t cindex = cyl->_dcIndex;
+                uint32_t cindex = cyl->getStableIndex();
                 auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
                 /*if(cylinderstruct.ID != cyl->getID()){
                 	cout<<"OOPS! cylinder is struct vec is inaccurate"<<endl;

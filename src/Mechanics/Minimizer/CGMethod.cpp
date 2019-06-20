@@ -890,7 +890,7 @@ void CGMethod::checkcoord_forces() {
                   endl;
         bool failstatus = false;
         for (auto cyl:Cylinder::getCylinders()) {
-            int i = cyl->_dcIndex;
+            int i = cyl->getStableIndex();
             int id1 = cylindervec[i].ID;
             int id2 = Cylinderpointervec[i]->getId();
             int id3 = ccylindervec[i]->getCylinder()->getId();
@@ -903,8 +903,8 @@ void CGMethod::checkcoord_forces() {
             }
             auto b1 = cyl->getFirstBead();
             auto b2 = cyl->getSecondBead();
-            long idx1 = b1->_dbIndex;
-            long idx2 = b2->_dbIndex;
+            long idx1 = b1->getIndex();
+            long idx2 = b2->getIndex();
             floatingpoint* coord_local;
             floatingpoint* force_local;
             coord_local = &coord[3 * idx1];
