@@ -23,6 +23,7 @@
 #include "nvToolsExt.h"
 #include "cross_check.h"
 #endif
+#include "Mechanics/CUDAcommon.h"
 
 template <class BPositionInteractionType>
 void BranchingPosition<BPositionInteractionType>::vectorize() {

@@ -428,7 +428,7 @@ floatingpoint CGMethod::allFDotFA()
 }
 
 floatingpoint CGMethod::maxF() {
-    double mag2Max = 0.0;
+    floatingpoint mag2Max = 0.0;
     for(auto x : Bead::getDbData().forcesAux) {
         mag2Max = std::max(mag2Max, mathfunc::magnitude2(x));
     }

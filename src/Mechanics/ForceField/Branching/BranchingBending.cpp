@@ -22,6 +22,7 @@
 #include "nvToolsExt.h"
 #endif
 #include "cross_check.h"
+#include "Mechanics/CUDAcommon.h"
 
 template <class BBendingInteractionType>
 void BranchingBending<BBendingInteractionType>::vectorize() {
