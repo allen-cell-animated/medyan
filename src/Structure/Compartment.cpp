@@ -51,9 +51,8 @@ void Compartment::SIMDcoordinates_section(){
         for(short filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
             for (auto cyl:_cylinders) {
                 int cindex = cyl->getStableIndex();
-                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
                 if (checkftype)
-                    short _filamentType = cylinderstruct.type;
+                    short _filamentType = Cylinder::getDbData().value[cindex].type;
                 auto x1 = cyl->getFirstBead()->coordinate;
                 auto x2 = cyl->getSecondBead()->coordinate;
 //            uint32_t shiftedindex = (i << 4);
@@ -136,9 +135,8 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
 //        cout<<"Cmp coord "<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<endl;
             for (auto cyl:_cylinders) {
                 uint32_t cindex = cyl->getStableIndex();
-                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
                 if (checkftype)
-                    short _filamentType = cylinderstruct.type;
+                    short _filamentType = Cylinder::getDbData().value[cindex].type;
                 auto x1 = cyl->getFirstBead()->coordinate;
                 auto x2 = cyl->getSecondBead()->coordinate;
 //            uint16_t shiftedindex = (i << 4);
@@ -274,7 +272,6 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
 
             for (auto cyl:_cylinders) {
                 uint32_t cindex = cyl->getStableIndex();
-                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
                 /*if(cylinderstruct.ID != cyl->getID()){
                 	cout<<"OOPS! cylinder is struct vec is inaccurate"<<endl;
                 	exit(EXIT_FAILURE);
@@ -289,7 +286,7 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
 	                exit(EXIT_FAILURE);
                 }*/
                 if (checkftype)
-                    short _filamentType = cylinderstruct.type;
+                    short _filamentType = Cylinder::getDbData().value[cindex].type;
                 auto x1 = cyl->getFirstBead()->coordinate;
                 auto x2 = cyl->getSecondBead()->coordinate;
 //                uint16_t shiftedindex = (i << 4);

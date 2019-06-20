@@ -229,8 +229,6 @@ public:
     virtual void minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                           floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit) = 0;
 
-    //Checks to make sure none of the coordinates are NaN or Inf
-    inline void checkcoord_forces();
 };
 
 

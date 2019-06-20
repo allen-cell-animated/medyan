@@ -877,64 +877,6 @@ void CGMethod::endMinimization() {
 #endif
 }
 
-void CGMethod::checkcoord_forces() {
-    if(false) {
-
-        cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
-        Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-        CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
-        floatingpoint *coord = CUDAcommon::serlvars.coord;
-        std::cout << "check revectorized cylinders" << endl;
-        std::cout << "3 Total Cylinders " << Cylinder::getCylinders().size() << " Beads "
-                  << Bead::getBeads().size() << " maxcindex " << Cylinder::getmaxcindex() <<
-                  endl;
-        bool failstatus = false;
-        for (auto cyl:Cylinder::getCylinders()) {
-            int i = cyl->getStableIndex();
-            int id1 = cylindervec[i].ID;
-            int id2 = Cylinderpointervec[i]->getId();
-            int id3 = ccylindervec[i]->getCylinder()->getId();
-            if (id1 != id2 || id2 != id3 || id3 != id1) {
-            	cout<<"CylinderIDs do not match"<<endl;
-	            std::cout <<cyl->getId()<<" "<< id1 << " " << id2 << " " << id3 << endl;
-	            cout<<"cIndex "<<i<<endl;
-
-	            failstatus = true;
-            }
-            auto b1 = cyl->getFirstBead();
-            auto b2 = cyl->getSecondBead();
-            long idx1 = b1->getIndex();
-            long idx2 = b2->getIndex();
-            floatingpoint* coord_local;
-            floatingpoint* force_local;
-            coord_local = &coord[3 * idx1];
-	        force_local = &force[3 * idx1];
-	        for(int dim =0; dim < 3; dim++){
-	        	if(isnan(coord_local[dim])||isinf(coord_local[dim])||
-	        	isnan(force_local[dim])||isinf(force_local[dim])){
-	        		failstatus = true;
-			        cylinder c = cylindervec[i];
-			        std::cout << "bindices for cyl with ID " << cyl->getId() << " cindex " << i <<
-			                  " are " << idx1 << " " << idx2 << " " << c.bindices[0] << " "
-			                  << c.bindices[1] <<" coords ";
-			        std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
-			                  << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
-			                  << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] <<" forces ";
-			        std::cout << force[3 * idx1] << " " << force[3 * idx1 + 1] << " "
-			                  << force[3 * idx1 + 2] << " " << force[3 * idx2] << " "
-			                  << force[3 * idx2 + 1] << " " << force[3 * idx2 + 2] << endl;
-	        	}
-	        }
-        }
-        if(failstatus){
-        	cout<<"Coordinate/Force values are either Inf/NaN or Cylinder IDs do not "
-			   "match. Exiting."<<endl;
-        	exit(EXIT_FAILURE);
-        } else
-        	cout<<"Passed successfully"<<endl;
-    }
-}
-
 #ifdef CUDAACCL
 floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, floatingpoint MAXDIST,
                                         floatingpoint LAMBDAMAX, bool *gpu_safestate) {

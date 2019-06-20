@@ -554,7 +554,9 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
     auto speciesboundvec = SysParams::Mechanics().speciesboundvec;
     auto maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
     vector<int> CIDvec(Cylinder::vectormaxsize);
-    auto ccylindervec = CUDAcommon::serlvars.ccylindervec;
+
+    const auto& cylinderInfoData = Cylinder::getDbData().value;
+
     short bstatepos = bstateposvec[idx][idx2];
 
     for(auto cyl: Cylinder::getCylinders())
@@ -571,7 +573,7 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
         uint32_t cIndex1 = leg1 >> 4;
         uint32_t bsite1 = mask & leg1;
 
-        CCylinder* ccyl1 = ccylindervec[cIndex1];
+        CCylinder* ccyl1 = cylinderInfoData[cIndex1].chemCylinder;
 
         short it1 = SysParams::Chemistry().bindingSites[_filamentType][bsite1];
 
@@ -592,7 +594,7 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
         for(auto V:leg2){
             uint32_t cIndex2 = V >> 4;
             uint32_t bsite2 = mask & V;
-            CCylinder* ccyl2 = ccylindervec[cIndex2];
+            CCylinder* ccyl2 = cylinderInfoData[cIndex2].chemCylinder;
 
             short it2 = SysParams::Chemistry().bindingSites[_complimentaryfilamentType][bsite2];
 
@@ -915,7 +917,6 @@ bspairsoutSself, short idvec[2]) {
 
 	auto filTypepairs =_filamentIDvec[idvec[0]];
 	auto boundstate = SysParams::Mechanics().speciesboundvec;
-	CCylinder **ccylvec = CUDAcommon::getSERLvars().ccylindervec;
 	auto cylcmp1 = _compartment->Cyldcindexvec;
 
 	minsfind = chrono::high_resolution_clock::now();
@@ -981,7 +982,6 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
 	auto filTypepairs =_filamentIDvec[idvec[0]];
 
     auto boundstate = SysParams::Mechanics().speciesboundvec;
-    CCylinder **ccylvec = CUDAcommon::getSERLvars().ccylindervec;
     int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
     auto cylcmp1 = _compartment->Cyldcindexvec;
     auto upnstencilvec = _compartment->getuniquepermuteneighborsstencil();
@@ -1088,10 +1088,8 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
     int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
     //Need to rewrite to give CylinderID instead.
 
-    auto cylindervec = CUDAcommon::serlvars.cylindervec;
+    const auto& cylinderInfoData = Cylinder::getDbData().value;
 
-    auto cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-    auto ccylindervec = CUDAcommon::serlvars.ccylindervec;
 	int counter = 0;
     for(uint pid = first; pid < last; pid++) {
         uint32_t site1 = bspairsoutS.dout[2 * (D - 1)][pid];
@@ -1100,8 +1098,8 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
         uint32_t cIndex1 = site1>>4;
         uint32_t cIndex2 = site2>>4;
 
-        cylinder cylinder1 = cylindervec[cIndex1];
-        cylinder cylinder2 = cylindervec[cIndex2];
+        const auto& cylinder1 = cylinderInfoData[cIndex1];
+        const auto& cylinder2 = cylinderInfoData[cIndex2];
 
         /*vector<floatingpoint> cylcoord = {cylinder1.coord[0], cylinder1.coord[1], cylinder1.coord[2]};
 	    auto C = GController::getCompartment(cylcoord);
@@ -1128,9 +1126,10 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
 
 	    //Checks to make sure sites on a filament that are less than two cylinders away are
 	    // not added.
-		bool neighborcondition = (cylinder1.filamentID == cylinder2.filamentID &&
-		                                    abs(cylinder1.filamentposition - cylinder2
-		                                    .filamentposition) <=2);
+		bool neighborcondition = (
+            cylinder1.filamentId == cylinder2.filamentId &&
+            abs(cylinder1.positionOnFilament - cylinder2.positionOnFilament) <=2
+        );
         if (!neighborcondition) {
 
 	        /*uint32_t cID1 = cylinder1.ID;
@@ -1197,6 +1196,9 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
     short idx2 = idvec[1];
     auto fpairs = _filamentIDvec[idx].data();
     int pbsSize = Nbindingpairs[idx][idx2];
+
+    const auto& cylinderInfoData = Cylinder::getDbData().value;
+
     assert((pbsSize!= 0)
            && "Major bug: Linker binding manager should not have zero binding \
                    sites when called to choose a binding site.");
@@ -1233,10 +1235,8 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
 	    CCylinder *ccyl1;
 	    CCylinder *ccyl2;
 
-	    auto Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-
-	    ccyl1 = Cylinderpointervec[cIndex1]->getCCylinder();
-	    ccyl2 = Cylinderpointervec[cIndex2]->getCCylinder();
+	    ccyl1 = cylinderInfoData[cIndex1].chemCylinder;
+	    ccyl2 = cylinderInfoData[cIndex2].chemCylinder;
 
 //    cout<<"CHECK "<<CylID1<<" "<<CylID2<<" "<<position<<" "<<it->second.size()<<endl;
 
