@@ -61,13 +61,13 @@ struct CylinderInfoData {
  *  Cylinder class is used to manage and store a MCylinder and CCylinder.
  *  Upon intialization, both of these components are created.
  *
- *  Extending the Movable class, the positions of all instances 
+ *  Extending the Movable class, the positions of all instances
  *  can be updated by the SubSystem.
  *
- *  Extending the Reactable class, the reactions associated with 
+ *  Extending the Reactable class, the reactions associated with
  *  all instances can be updated by the SubSystem.
  *
- *  Extending the DynamicNeighbor class, all instances can be 
+ *  Extending the DynamicNeighbor class, all instances can be
  *  kept in [NeighborLists](@ref NeighborList).
  */
 class Cylinder : public Component, public Trackable, public Movable,
@@ -76,41 +76,51 @@ class Cylinder : public Component, public Trackable, public Movable,
     
 friend class CController;
 friend class DRController;
-    
+
 private:
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     Bead* _b1;  ///< Pointer to the first bead.
     Bead* _b2; ///< Pointer to the end bead.
-    
+
     unique_ptr<MCylinder> _mCylinder; ///< Pointer to mech cylinder
     unique_ptr<CCylinder> _cCylinder; ///< Pointer to chem cylinder
-    
+
     int _position;          ///< Position on structure
-    
+
     bool _plusEnd = false;  ///< If the cylinder is at the plus end
     bool _minusEnd = false; ///< If the cylinder is at the minus end
-    
+
     short _type; ///< Type of cylinder, either corresponding to Filament or other
-                                       
+
     Compartment* _compartment = nullptr; ///< Where this cylinder is
-    
+
     Cylinder* _branchingCylinder = nullptr; ///< ptr to a branching cylinder
-    
+
     ///For dynamic polymerization rate
     static vector<FilamentRateChanger*> _polyChanger;
-                                       
+
     static ChemManager* _chemManager; ///< A pointer to the ChemManager,
                                       ///< intiailized by CController
-    
+
     ///Helper to get coordinate
     void updateCoordinate();
-    
-public:
-    using db_type = Database< Cylinder, true, CylinderInfoData >;
 
-    vector<double> coordinate;
+
+    /// ID of filament
+    int _filID;
+
+public:
+    using DatabaseType = Database< Cylinder, true, CylinderInfoData >;
+
+    vector<floatingpoint> coordinate;
     vector<Bin*> _binvec; //vector of bins. binID corresponding to each binGrid.
     ///< Coordinates of midpoint, updated with updatePosition()
     vector<Bin*> _hbinvec;
+
+    static bool setpositionupdatedstate; //Setter to check if position has been updated
+
 ///< Continuous ID assigned for
 ///< CUDANL calculation
 
@@ -121,7 +131,7 @@ public:
              bool extensionFront = false,
              bool extensionBack  = false,
              bool initialization = false);
-                                       
+
     virtual ~Cylinder() noexcept;
 
     const auto& getCoordinate() const { return getDbData().value[getStableIndex()].coord; }
@@ -129,55 +139,55 @@ public:
 
     /// Get mech cylinder
     MCylinder* getMCylinder() {return _mCylinder.get();}
-    
+
     /// Get chem cylinder
     CCylinder* getCCylinder() {return _cCylinder.get();}
     /// set chem cylinder
     /// @note: since this is a unique ptr, will implicitly delete old chem cylinder
     void setCCylinder(CCylinder* c) {_cCylinder = unique_ptr<CCylinder>(c);}
-    
+
     /// Get cylinder type
     virtual int getType();
-                                       
+
     //@{
     /// Get beads
     Bead* getFirstBead() {return _b1;}
     Bead* getSecondBead() {return _b2;}
     //@}
-    
+
     //@{
     /// Set beads
     void setFirstBead(Bead* b) {_b1 = b;}
     void setSecondBead(Bead* b) {_b2 = b;}
     //@}
-    
+
     /// Get compartment
     Compartment* getCompartment() {return _compartment;}
-    
+
     //@{
     /// Branching cylinder management
     Cylinder* getBranchingCylinder() {return _branchingCylinder;}
     void setBranchingCylinder(Cylinder* c) {_branchingCylinder = c;}
     //@}
-    
+
     ///@{
     /// Set plus and minus end boolean markers
     bool isPlusEnd() {return _plusEnd;}
     void setPlusEnd(bool plusEnd) {_plusEnd = plusEnd;}
-    
+
     bool isMinusEnd() {return _minusEnd;}
     void setMinusEnd(bool minusEnd) {_minusEnd = minusEnd;}
     //@}
-    
+
     int getPosition() {return _position;}
-    
+
     //@{
     /// SubSystem management, inherited from Trackable
     // Does nothing
-    virtual void addToSubSystem() {}
-    virtual void removeFromSubSystem() {}
+    virtual void addToSubSystem() override {}
+    virtual void removeFromSubSystem() override {}
     //@}
-    
+
     /// Get all instances of this class from the SubSystem
     static const vector<Cylinder*>& getCylinders() {
         return getElements();
@@ -186,23 +196,178 @@ public:
     static int numCylinders() {
         return getElements().size();
     }
-    
+
     /// Update the position, inherited from Movable
     /// @note - changes compartment if needed
     virtual void updatePosition();
-    
+
     /// Update the reaction rates, inherited from Reactable
     virtual void updateReactionRates();
-                                       
+
     /// Check if this cylinder is grown to full length
     bool isFullLength();
-                                       
+
     virtual void printSelf();
-                                       
+
     /// Returns whether a cylinder is within a certain distance from another
     /// Uses the closest point between the two cylinders
-    virtual bool within(Cylinder* other, double dist);
+    virtual bool within(Cylinder* other, floatingpoint dist);
+    void setFilID(int filID){
+        _filID = filID;
+    };
 
+    // TODO CLEAN
+    //Vectorize beads so the coordinates are all available in a single array.
+    //@{
+    static int maxcindex;//maximum cindex value alloted
+    static int vectormaxsize;//maximum length of the vector
+    static int Ncyl;
+    static vector<int> removedcindex;
+    static void revectorizeifneeded(){
+        //Run the special protocol during chemistry, the regular otherwise.
+        bool check = false;
+        if(SysParams::DURINGCHEMISTRY)
+            appendrevectorizeifneeded();
+        else {
+            #ifdef CROSSCHECK
+            cout<<"revectorize Cylinder "<<endl;
+            #endif
+            int newsize = vectormaxsize;
+
+            if (Bead::triggercylindervectorization ||
+                    (vectormaxsize - maxcindex) <= bead_cache / 20) {
+
+                newsize = (int(Ncyl / cylinder_cache) + 2) * cylinder_cache;
+                if (removedcindex.size() >= bead_cache)
+                    newsize = (int(Ncyl / cylinder_cache) + 1) * cylinder_cache;
+                if (newsize != vectormaxsize || Bead::triggercylindervectorization) {
+                    check = true;
+                    cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
+                    Cylinder **cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+                    CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
+                    delete[] cylindervec;
+                    delete[] cylinderpointervec;
+                    delete[] ccylindervec;
+                    cylinder *newcylindervec = new cylinder[newsize];
+                    Cylinder **newcylinderpointervec = new Cylinder *[newsize];
+                    CCylinder **newccylindervec = new CCylinder *[newsize];
+                    CUDAcommon::serlvars.cylindervec = newcylindervec;
+                    CUDAcommon::serlvars.cylinderpointervec = newcylinderpointervec;
+                    CUDAcommon::serlvars.ccylindervec = newccylindervec;
+                    revectorize(newcylindervec, newcylinderpointervec, newccylindervec);
+                    vectormaxsize = newsize;
+                }
+            }
+            Bead::triggercylindervectorization = false;
+        }
+        //@{ check begins
+        if(false) {
+            cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
+            Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+            CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
+            floatingpoint *coord = CUDAcommon::serlvars.coord;
+            std::cout<<"check revectorized cylinders"<<endl;
+            std::cout << "3 Total Cylinders " << Cylinder::getCylinders().size() << " "
+                    "Beads "
+                    "" << Bead::getBeads().size() <<"maxcindex "<<maxcindex<< endl;
+            for (auto cyl:Cylinder::getCylinders()) {
+                int i = cyl->_dcIndex;
+                int id1 = cylindervec[i].ID;
+                int id2 = Cylinderpointervec[i]->getId();
+                int id3 = ccylindervec[i]->getCylinder()->getId();
+                if (id1 != id2 || id2 != id3 || id3 != id1)
+                    std::cout << id1 << " " << id2 << " " << id3 << endl;
+                auto b1 = cyl->getFirstBead();
+                auto b2 = cyl->getSecondBead();
+                long idx1 = b1->_dbIndex;
+                long idx2 = b2->_dbIndex;
+                cylinder c = cylindervec[i];
+
+                if (c.bindices[0] != idx1 || c.bindices[1] != idx2) {
+                    std::cout << "3 bindices for cyl with ID "<<cyl->getId()<<" cindex " << i <<
+                              " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
+
+                    std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1]
+                              << " " << b1->coordinate[2] << " " << " " << b2->coordinate[0]
+                              << " " << b2->coordinate[1] << " " << b2->coordinate[2]
+                              << " idx " << b1->_dbIndex << " " << b2->_dbIndex << "ID "
+																				   ""<<b1->getId()<<" "<<b2->getId()<<endl;
+
+                    std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
+                              << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
+                              << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            cout<<"----------------------------------------CylcheckEND"<<endl;
+        }
+        //@} check ends.
+    }
+    //called during chemistry. Does not shrink the array. Just appends values to the end
+    // of the array.
+    static void appendrevectorizeifneeded(){
+
+        int newsize = vectormaxsize;
+        bool check = false;
+        if(Bead::triggercylindervectorization || (vectormaxsize - maxcindex) <= bead_cache/20){
+
+            /*cout<<"size "<<newsize<<" "<<vectormaxsize<<" "
+                                                        ""<<Bead::triggercylindervectorization<<endl;*/
+
+            newsize = vectormaxsize + cylinder_cache;
+            if(newsize != vectormaxsize || Bead::triggercylindervectorization){
+                check = true;
+                cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
+                Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+                CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
+                delete[] cylindervec;
+                delete[] cylinderpointervec;
+                delete[] ccylindervec;
+                cylinder *newcylindervec = new cylinder[newsize];
+                Cylinder **newcylinderpointervec = new Cylinder*[newsize];
+                CCylinder **newccylindervec = new CCylinder*[newsize];
+                CUDAcommon::serlvars.cylindervec = newcylindervec;
+                CUDAcommon::serlvars.cylinderpointervec = newcylinderpointervec;
+                CUDAcommon::serlvars.ccylindervec = newccylindervec;
+                appendrevectorize(newcylindervec, newcylinderpointervec, newccylindervec);
+                vectormaxsize = newsize;
+            }
+        }
+        Bead::triggercylindervectorization = false;
+    }
+
+	static int getmaxcindex(){
+		return maxcindex;
+	}
+
+    static void revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
+                            CCylinder** ccylindervec);
+
+    static void appendrevectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
+                            CCylinder** ccylindervec);
+    void  copytoarrays();
+    void resetarrays();
+    void resetcylinderstruct(cylinder* cylindervec, long idx){
+        cylindervec[idx].filamentID = -1;
+        cylindervec[idx].filamentposition = -1;
+        cylindervec[idx].bindices[0]= -1;
+        cylindervec[idx].bindices[1]= -1;
+        cylindervec[idx].cmpID = -1;
+        cylindervec[idx].cindex = -1;
+        cylindervec[idx].coord[0] = -1.0;
+        cylindervec[idx].coord[1] = -1.0;
+        cylindervec[idx].coord[2] = -1.0;
+        cylindervec[idx].type = -1;
+        cylindervec[idx].ID = -1;
+        cylindervec[idx].availbscount = -1;
+    }
+    // END TODO CLEAN
+
+    static floatingpoint timecylinder1;
+	static floatingpoint timecylinder2;
+	static floatingpoint timecylinderchem;
+	static floatingpoint timecylindermech;
+    //@}
 };
 
 #endif

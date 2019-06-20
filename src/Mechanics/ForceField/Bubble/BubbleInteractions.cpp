@@ -9,3 +9,4 @@
 #include "BubbleInteractions.h"
 
 Bubble* BubbleInteractions::_bubbleCulprit;
+Component* BubbleInteractions::_otherCulprit;

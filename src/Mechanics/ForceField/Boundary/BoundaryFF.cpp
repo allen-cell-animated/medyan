@@ -40,8 +40,8 @@ BoundaryFF::BoundaryFF (string type) {
     else if(type == "REPULSIONEXPIN") {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>());
-        _boundaryInteractionVector.emplace_back(
-        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
+/*        _boundaryInteractionVector.emplace_back(
+        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());*/
     }
     else {
         cout << "Boundary FF not recognized. Exiting." << endl;
@@ -53,7 +53,7 @@ BoundaryFF::BoundaryFF (string type) {
         new BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>());
     }
     
-    //Qin, don't change it for now
+    //don't change it for now
     if(SysParams::Mechanics().pinLowerBoundaryFilaments) {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>());
@@ -92,10 +92,10 @@ void BoundaryFF::whoIsCulprit() {
 }
 
 
-double BoundaryFF::computeEnergy(double *coord, double *f, double d) {
+floatingpoint BoundaryFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
     
-    double U= 0.0;
-    double U_i=0.0;
+    floatingpoint U= 0.0;
+    floatingpoint U_i=0.0;
     
     for (auto &interaction : _boundaryInteractionVector) {
         
@@ -115,7 +115,7 @@ double BoundaryFF::computeEnergy(double *coord, double *f, double d) {
     return U;
 }
 
-void BoundaryFF::computeForces(double *coord, double *f) {
+void BoundaryFF::computeForces(floatingpoint *coord, floatingpoint *f) {
 
     for (auto &interaction : _boundaryInteractionVector){
         interaction->computeForces(coord, f);

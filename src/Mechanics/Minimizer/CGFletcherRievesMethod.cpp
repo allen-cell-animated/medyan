@@ -17,8 +17,8 @@
 #include "Composite.h"
 #include "Output.h"
 #include "Structure/Bead.h"
-    void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
-                                  double MAXDIST, double LAMBDAMAX, bool steplimit) {
+    void FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
+                                  floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit) {
         //number of steps
         int N;
         if (steplimit) {
@@ -35,13 +35,13 @@
         Bead::getDbData().forcesAux = Bead::getDbData().forces;
 
         //compute first gradient
-        double curGrad = CGMethod::allFDotF();
+        floatingpoint curGrad = CGMethod::allFDotF();
 
         int numIter = 0;
         while (/* Iteration criterion */  numIter < N &&
                                           /* Gradient tolerance  */  maxF() > GRADTOL) {
             numIter++;
-            double lambda, beta, newGrad;
+            floatingpoint lambda, beta, newGrad;
 
             //temporary
             bool *dummy = nullptr;

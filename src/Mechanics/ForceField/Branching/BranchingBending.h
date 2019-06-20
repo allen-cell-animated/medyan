@@ -33,15 +33,15 @@ private:
     int *beadSet;
     
     ///Array describing the constants in calculation
-    double *kbend;
-    double *eqt;
+    floatingpoint *kbend;
+    floatingpoint *eqt;
 #ifdef CUDAACCL
     int * gpu_beadSet;
-    double * gpu_kbend;
-    double *gpu_eqt;
+    floatingpoint * gpu_kbend;
+    floatingpoint *gpu_eqt;
     int * gpu_params;
     CUDAvars cvars;
-    double *F_i;
+    floatingpoint *F_i;
 #endif
 public:
     
@@ -52,8 +52,8 @@ public:
     virtual void vectorize();
     virtual void deallocate();
     
-    virtual double computeEnergy(double *coord, double *f, double d);
-    virtual void computeForces(double *coord, double *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     
     virtual const string getName() {return "Branching Bending";}
 };

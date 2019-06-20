@@ -35,7 +35,7 @@ void BranchingPoint::updateCoordinate() {
 }
 
 BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
-                               short branchType, double position)
+                               short branchType, floatingpoint position)
 
     : Trackable(true,true), _c1(c1), _c2(c2), _position(position),
       _branchType(branchType), _birthTime(tau()) {
@@ -74,10 +74,10 @@ BranchingPoint::~BranchingPoint() noexcept {
     //offset the branching cylinder's bead by a little for safety
     auto msize = SysParams::Geometry().monomerSize[_c1->getType()];
     
-    vector<double> offsetCoord =
-    {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
-     (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
-     (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize)};
+    vector<floatingpoint> offsetCoord =
+    {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randfloatingpoint(msize, 2 * msize),
+     (Rand::randInteger(0,1) ? -1 : +1) * Rand::randfloatingpoint(msize, 2 * msize),
+     (Rand::randInteger(0,1) ? -1 : +1) * Rand::randfloatingpoint(msize, 2 * msize)};
     
     auto b = _c2->getFirstBead();
     
@@ -186,29 +186,28 @@ void BranchingPoint::updatePosition() {
 #endif
     }
 }
-            
-//Qin ----
+
 void BranchingPoint::updateReactionRates() {
                 
-    //if no rate changers were defined, skip
-    if(_unbindingChangers.empty()) return;
-            
-    //current force on branching point, use the total force
-    double fs = _mBranchingPoint->stretchForce;
-    double fb = _mBranchingPoint->bendingForce;
-    double fd = _mBranchingPoint->dihedralForce;
-    double ft = fs + fb + fd;
-    double force = max(0.0, ft);
-            
-    //get the unbinding reaction
-    ReactionBase* offRxn = _cBranchingPoint->getOffReaction();
-            
-    //change the rate
-    float newRate = _unbindingChangers[_branchType]->changeRate(offRxn->getBareRate(), force);
-    if(SysParams::RUNSTATE==false)
-    {newRate=0.0;}
-    offRxn->setRate(newRate);
-    offRxn->updatePropensity();    
+        //if no rate changers were defined, skip
+        if(_unbindingChangers.empty()) return;
+                
+        //current force on branching point, use the total force
+        floatingpoint fs = _mBranchingPoint->stretchForce;
+        floatingpoint fb = _mBranchingPoint->bendingForce;
+        floatingpoint fd = _mBranchingPoint->dihedralForce;
+        floatingpoint ft = fs + fb + fd;
+        floatingpoint force = max<floatingpoint>((floatingpoint)0.0, ft);
+                
+        //get the unbinding reaction
+        ReactionBase* offRxn = _cBranchingPoint->getOffReaction();
+                
+        //change the rate
+        float newRate = _unbindingChangers[_branchType]->changeRate(offRxn->getBareRate(), force);
+        if(SysParams::RUNSTATE==false)
+        {newRate=0.0;}
+        offRxn->setRate(newRate);
+        offRxn->updatePropensity();    
 }
             
 void BranchingPoint::printSelf() {
@@ -219,7 +218,7 @@ void BranchingPoint::printSelf() {
     cout << "Branching type = " << _branchType << ", Branch ID = " << getId() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     
-    cout << "Position on mother cylinder (double) = " << _position << endl;
+    cout << "Position on mother cylinder (floatingpoint) = " << _position << endl;
     cout << "Birth time = " << _birthTime << endl;
     
     cout << endl;

@@ -34,21 +34,21 @@ private:
     int *beadSet;
     
     ///Array describing the constants in calculation
-    double *kstr;
-    double *eql;
-    double *pos1;
-    double *pos2;
-    double *stretchforce;
+    floatingpoint *kstr;
+    floatingpoint *eql;
+    floatingpoint *pos1;
+    floatingpoint *pos2;
+    floatingpoint *stretchforce;
 
 #ifdef CUDAACCL
     int * gpu_beadSet;
-    double * gpu_kstr;
-    double *gpu_eql;
+    floatingpoint * gpu_kstr;
+    floatingpoint *gpu_eql;
     int * gpu_params;
-    double *gpu_pos1;
-    double *gpu_pos2;
-    double *F_i;
-    double *gpu_Mstretchforce;
+    floatingpoint *gpu_pos1;
+    floatingpoint *gpu_pos2;
+    floatingpoint *F_i;
+    floatingpoint *gpu_Mstretchforce;
     cudaStream_t stream = NULL;
 #endif
     
@@ -65,8 +65,9 @@ public:
     virtual void deallocate();
     
     
-    virtual double computeEnergy(double *coord, double *f, double d);
-    virtual void computeForces(double *coord, double *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f,
+            floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
 
 
     virtual const string getName() {return "MotorGhost Stretching";}

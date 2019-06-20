@@ -17,16 +17,16 @@ using namespace mathfunc;
 #if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 
 #else
-static __inline__ __device__ double atomicAdd(double *address, double val) {
+static __inline__ __device__ floatingpoint atomicAdd(floatingpoint *address, floatingpoint val) {
     unsigned long long int* address_as_ull = (unsigned long long int*)address;
     unsigned long long int old = *address_as_ull, assumed;
     if (val==0.0)
-      return __longlong_as_double(old);
+      return __longlong_as_floatingpoint(old);
     do {
       assumed = old;
-      old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val +__longlong_as_double(assumed)));
+      old = atomicCAS(address_as_ull, assumed, __floatingpoint_as_longlong(val +__longlong_as_floatingpoint(assumed)));
     } while (assumed != old);
-    return __longlong_as_double(old);
+    return __longlong_as_floatingpoint(old);
   }
 #endif
 //__global__ void testfunction(int *a){
@@ -35,13 +35,13 @@ static __inline__ __device__ double atomicAdd(double *address, double val) {
 //    printf("%d %d\n",b,a[0]);
 //}
 
-__global__ void CylinderCylinderNLCUDA(double *coord_com, int *beadSet, int *cylID, int *filID, int *cmpIDlist,
-                                       int * fvecposition, int *pair_cIndex_cnIndex, double
+__global__ void CylinderCylinderNLCUDA(floatingpoint *coord_com, int *beadSet, int *cylID, int *filID, int *cmpIDlist,
+                                       int * fvecposition, int *pair_cIndex_cnIndex, floatingpoint
                                        *params, int *numpairs, int *NL, int *params2) {
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
-    double cyl[3], cyln[3];
-    double rmin = params[0];
-    double rmax = params[1];
+    floatingpoint cyl[3], cyln[3];
+    floatingpoint rmin = params[0];
+    floatingpoint rmax = params[1];
     int nint = params2[0];
     int fullstate = params2[1];
     bool checkstate = true;
@@ -69,7 +69,7 @@ __global__ void CylinderCylinderNLCUDA(double *coord_com, int *beadSet, int *cyl
 //        printf("C2 %d \n", checkstate);
         if (checkstate) {
             //check for distance between the two cylinders
-            double dist = twoPointDistancemixedID(cyl, cyln, 0, 0);
+            floatingpoint dist = twoPointDistancemixedID(cyl, cyln, 0, 0);
 //            printf("C %d %d %f %f %f\n", cIndex, cnIndex, dist, rmin, rmax);
             if (dist >= rmin && dist <= rmax) {
                 int numpair_prev = atomicAdd(&numpairs[0], 1);
@@ -172,7 +172,7 @@ __global__ void getfreq(int* binarray, int* ncylm, int* ulimit, int* countvec){
     }
 }
 
-//__global__ void CylinderCylinderNLCUDA(double *coord_com, int *beadSet, int *cylID, int *filID, int *cmpIDlist,
+//__global__ void CylinderCylinderNLCUDA(floatingpoint *coord_com, int *beadSet, int *cylID, int *filID, int *cmpIDlist,
 //                                       int * fvecposition, int *cylvecpospercmp, int *pair_cIndex_cmp, int
 //                                        *params, int *numpairs, int *NL, int *offsetvec){
 //    const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
@@ -180,7 +180,7 @@ __global__ void getfreq(int* binarray, int* ncylm, int* ulimit, int* countvec){
 //    int cmpID = pair_cIndex_cmp[ 2 * blockIdx.x + 1];
 //    int cnIndexstart = cylvecpospercmp[2 * cmpID];
 //    int cnIndexend = cylvecpospercmp[2 * cmpID + 1];
-//    double cyl[3], cyln[3];
+//    floatingpoint cyl[3], cyln[3];
 //    //Get the cylinder
 //    for(auto i = 0;i <3; i++){
 //        cyl[i] = coord_com[3 * cIndex + i];
@@ -209,7 +209,7 @@ __global__ void getfreq(int* binarray, int* ncylm, int* ulimit, int* countvec){
 //                    cyln[i] = coord_com[3 * cnIndex + i];
 //                }
 //                //check for distance between the two cylinders
-//                double dist = twoPointDistancemixedID(cyl, cyln, 0, 0);
+//                floatingpoint dist = twoPointDistancemixedID(cyl, cyln, 0, 0);
 //                if(dist > rmin && dist < rmax){
 //                    int numpair_prev = atomicAdd(&numpairs[0], 1);
 //                    numpair_prev++;

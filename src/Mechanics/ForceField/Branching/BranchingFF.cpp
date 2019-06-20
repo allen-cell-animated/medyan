@@ -76,8 +76,9 @@ void BranchingFF::vectorize() {
     }
 
 
-    for (auto &interaction : _branchingInteractionVector)
+    for (auto &interaction : _branchingInteractionVector) {
         interaction->vectorize();
+    }
 }
 
 void BranchingFF::cleanup() {
@@ -100,10 +101,10 @@ void BranchingFF::whoIsCulprit() {
 }
 
 
-double BranchingFF::computeEnergy(double *coord, double *f, double d) {
+floatingpoint BranchingFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
 
-    double U = 0.0;
-    double U_i=0.0;
+    floatingpoint U = 0.0;
+    floatingpoint U_i=0.0;
     for (auto &interaction : _branchingInteractionVector) {
 #ifdef SERIAL_CUDACROSSCHECK
         CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
@@ -127,7 +128,7 @@ double BranchingFF::computeEnergy(double *coord, double *f, double d) {
     return U;
 }
 
-void BranchingFF::computeForces(double *coord, double *f) {
+void BranchingFF::computeForces(floatingpoint *coord, floatingpoint *f) {
 
     for (auto &interaction : _branchingInteractionVector)
         interaction->computeForces(coord, f);

@@ -24,24 +24,24 @@ using namespace mathfunc;
 //#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 //
 //#else
-//static __inline__ __device__ double atomicAdd(double *address, double val) {
+//static __inline__ __device__ floatingpoint atomicAdd(floatingpoint *address, floatingpoint val) {
 //    unsigned long long int* address_as_ull = (unsigned long long int*)address;
 //    unsigned long long int old = *address_as_ull, assumed;
 //    if (val==0.0)
-//      return __longlong_as_double(old);
+//      return __longlong_as_floatingpoint(old);
 //    do {
 //      assumed = old;
-//      old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val +__longlong_as_double(assumed)));
+//      old = atomicCAS(address_as_ull, assumed, __floatingpoint_as_longlong(val +__longlong_as_floatingpoint(assumed)));
 //    } while (assumed != old);
-//    return __longlong_as_double(old);
+//    return __longlong_as_floatingpoint(old);
 //  }
 //
 //
 //#endif
 
-//__global__ void addvectorBB(double *U, int *params, double *U_sum, double *U_tot){
+//__global__ void addvectorBB(floatingpoint *U, int *params, floatingpoint *U_sum, floatingpoint *U_tot){
 //    U_sum[0] = 0.0;
-//    double sum = 0.0;
+//    floatingpoint sum = 0.0;
 //    for(auto i=0;i<params[1];i++){
 //        if(U[i] == -1.0 && sum != -1.0){
 //            U_sum[0] = -1.0;
@@ -57,17 +57,17 @@ using namespace mathfunc;
 //
 //}
 
-__global__ void BranchingBendingCosineenergy(double *coord, double *force, int *beadSet, double *kbend,
-                                            double *eqt, int *params, double *U_i,  double *z, int *culpritID,
+__global__ void BranchingBendingCosineenergy(floatingpoint *coord, floatingpoint *force, int *beadSet, floatingpoint *kbend,
+                                            floatingpoint *eqt, int *params, floatingpoint *U_i,  floatingpoint *z, int *culpritID,
                                              char* culpritFF, char* culpritinteraction, char* FF, char*
                                             interaction) {
     if(z[0] == 0.0) {
-        extern __shared__ double s[];
-        double *c1 = s;
-        double *c2 = &c1[3 * blockDim.x];
-        double *c3 = &c2[3 * blockDim.x];
-        double *c4 = &c3[3 * blockDim.x];
-        double L1, L2, L1L2, l1l2, phi, dPhi;
+        extern __shared__ floatingpoint s[];
+        floatingpoint *c1 = s;
+        floatingpoint *c2 = &c1[3 * blockDim.x];
+        floatingpoint *c3 = &c2[3 * blockDim.x];
+        floatingpoint *c4 = &c3[3 * blockDim.x];
+        floatingpoint L1, L2, L1L2, l1l2, phi, dPhi;
 
         int nint = params[1];
         int n = params[0];
@@ -98,7 +98,7 @@ __global__ void BranchingBendingCosineenergy(double *coord, double *force, int *
 
             U_i[thread_idx] = kbend[thread_idx] * (1 - cos(dPhi));
 
-            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
 
                 U_i[thread_idx] = -1.0;
@@ -122,21 +122,21 @@ __global__ void BranchingBendingCosineenergy(double *coord, double *force, int *
 //    __syncthreads();
 }
 
-__global__ void BranchingBendingCosineenergyz(double *coord, double *f, int *beadSet, double *kbend,
-                                             double *eqt, int *params, double *U_i, double *z,  int *culpritID,
+__global__ void BranchingBendingCosineenergyz(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kbend,
+                                             floatingpoint *eqt, int *params, floatingpoint *U_i, floatingpoint *z,  int *culpritID,
                                               char* culpritFF, char* culpritinteraction, char* FF, char*
                                                 interaction) {
     if(z[0] != 0.0) {
-        extern __shared__ double s[];
-        double *c1 = s;
-        double *c2 = &c1[3 * blockDim.x];
-        double *c3 = &c2[3 * blockDim.x];
-        double *c4 = &c3[3 * blockDim.x];
-        double *f1 = &c4[3 * blockDim.x];
-        double *f2 = &f1[3 * blockDim.x];
-        double *f3 = &f2[3 * blockDim.x];
-        double *f4 = &f3[3 * blockDim.x];
-        double L1, L2, L1L2, l1l2, phi, dPhi;
+        extern __shared__ floatingpoint s[];
+        floatingpoint *c1 = s;
+        floatingpoint *c2 = &c1[3 * blockDim.x];
+        floatingpoint *c3 = &c2[3 * blockDim.x];
+        floatingpoint *c4 = &c3[3 * blockDim.x];
+        floatingpoint *f1 = &c4[3 * blockDim.x];
+        floatingpoint *f2 = &f1[3 * blockDim.x];
+        floatingpoint *f3 = &f2[3 * blockDim.x];
+        floatingpoint *f4 = &f3[3 * blockDim.x];
+        floatingpoint L1, L2, L1L2, l1l2, phi, dPhi;
 
         int nint = params[1];
         int n = params[0];
@@ -173,7 +173,7 @@ __global__ void BranchingBendingCosineenergyz(double *coord, double *f, int *bea
 
             U_i[thread_idx] = kbend[thread_idx] * (1 - cos(dPhi));
 
-            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
 
                 U_i[thread_idx] = -1.0;
@@ -198,19 +198,19 @@ __global__ void BranchingBendingCosineenergyz(double *coord, double *f, int *bea
 
 }
 
-//__global__ void BranchingBendingCosineenergyz2(double *coord, double *f, int *beadSet, double *kbend,
-//                                              double *eqt, int *params, double *U_i, double *z) {
+//__global__ void BranchingBendingCosineenergyz2(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kbend,
+//                                              floatingpoint *eqt, int *params, floatingpoint *U_i, floatingpoint *z) {
 //
-//    extern __shared__ double s[];
-//    double *c1 = s;
-//    double *c2 = &c1[3 * blockDim.x];
-//    double *c3 = &c2[3 * blockDim.x];
-//    double *c4 = &c3[3 * blockDim.x];
-////    double *f1 = &c4[3 * blockDim.x];
-////    double *f2 = &f1[3 * blockDim.x];
-////    double *f3 = &f2[3 * blockDim.x];
-////    double *f4 = &f3[3 * blockDim.x];
-//    double L1, L2, L1L2, l1l2, phi, dPhi;
+//    extern __shared__ floatingpoint s[];
+//    floatingpoint *c1 = s;
+//    floatingpoint *c2 = &c1[3 * blockDim.x];
+//    floatingpoint *c3 = &c2[3 * blockDim.x];
+//    floatingpoint *c4 = &c3[3 * blockDim.x];
+////    floatingpoint *f1 = &c4[3 * blockDim.x];
+////    floatingpoint *f2 = &f1[3 * blockDim.x];
+////    floatingpoint *f3 = &f2[3 * blockDim.x];
+////    floatingpoint *f4 = &f3[3 * blockDim.x];
+//    floatingpoint L1, L2, L1L2, l1l2, phi, dPhi;
 //
 //    int nint = params[1];
 //    int n = params[0];
@@ -252,7 +252,7 @@ __global__ void BranchingBendingCosineenergyz(double *coord, double *f, int *bea
 //
 ////        U_i[thread_idx] = kbend[thread_idx] * ( 1 - cos(dPhi) );
 //        U_i[thread_idx] += 0.0;
-//        if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+//        if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
 //            || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
 //            //TODO set culprit in host after return
 ////            BranchingInteractions::_motorCulprit = Branching::getBranchings()[i];
@@ -266,14 +266,14 @@ __global__ void BranchingBendingCosineenergyz(double *coord, double *f, int *bea
 
 
 
-__global__ void BranchingBendingCosineforces(double *coord, double *f, int *beadSet,
-                                            double *kbend, double *eqt, int *params){
-    extern __shared__ double s[];
-    double *c1 = s;
-    double *c2 = &c1[3 * blockDim.x];
-    double *c3 = &c2[3 * blockDim.x];
-    double *c4 = &c3[3 * blockDim.x];
-    double  f1[3], f2[3], f3[3], f4[3], L1, L2, L1L2, l1l2, invL1, invL2, A,B,C, phi, dPhi, k;
+__global__ void BranchingBendingCosineforces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                            floatingpoint *kbend, floatingpoint *eqt, int *params){
+    extern __shared__ floatingpoint s[];
+    floatingpoint *c1 = s;
+    floatingpoint *c2 = &c1[3 * blockDim.x];
+    floatingpoint *c3 = &c2[3 * blockDim.x];
+    floatingpoint *c4 = &c3[3 * blockDim.x];
+    floatingpoint  f1[3], f2[3], f3[3], f4[3], L1, L2, L1L2, l1l2, invL1, invL2, A,B,C, phi, dPhi, k;
 
     int nint = params[1];
     int n = params[0];

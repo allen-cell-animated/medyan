@@ -16,7 +16,7 @@
 
 #include "common.h"
 
-typedef vector<tuple<short, vector<double>>> BubbleData;
+typedef vector<tuple<short, vector<floatingpoint>>> BubbleData;
 
 ///FORWARD DECLARATIONS
 class Boundary;

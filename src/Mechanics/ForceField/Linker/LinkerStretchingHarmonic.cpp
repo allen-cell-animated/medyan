@@ -19,6 +19,7 @@
 #include "Bead.h"
 
 #include "MathFunctions.h"
+#include "Cylinder.h"
 #ifdef CUDAACCL
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -73,10 +74,10 @@ void LinkerStretchingHarmonic::optimalblocksnthreads( int nint, cudaStream_t str
         //get addition vars
         bntaddvec2.clear();
         bntaddvec2 = getaddred2bnt(nint);
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(floatingpoint)));
         CUDAcommon::handleerror(cudaMemsetAsync(gU_i, 0, bntaddvec2.at(0) * sizeof
-                                                                                    (double), stream));
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+                                                                                    (floatingpoint), stream));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(floatingpoint)));
         char a[] = "LinkerFF";
         char b[] = "Linker Stretching Harmonic";
         CUDAcommon::handleerror(cudaMalloc((void **) &gFF, 100 * sizeof(char)));
@@ -97,13 +98,13 @@ void LinkerStretchingHarmonic::optimalblocksnthreads( int nint, cudaStream_t str
     }
 
 }
-double* LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                         double *kstr, double *eql, double *pos1, double *pos2,
+floatingpoint* LinkerStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                         floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2,
                                          int *params) {
 //    if(blocksnthreadse[1]>0) {
 //
 //        LinkerStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
-//                (double), stream>>>
+//                (floatingpoint), stream>>>
 //                          (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
 //                                  CUDAcommon::getCUDAvars().gculpritFF,
 //                                  CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
@@ -111,7 +112,7 @@ double* LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
 //        auto cvars = CUDAcommon::getCUDAvars();
 //        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror( cudaGetLastError() ,"LinkerStretchingHarmonicenergy", "LinkerStretchingHarmonic.cu");
 //        return gU_sum;}
@@ -120,13 +121,13 @@ double* LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
 }
 
 
-double* LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                         double *kstr, double *eql, double *pos1, double *pos2, double *z,
+floatingpoint* LinkerStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                         floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2, floatingpoint *z,
                                          int *params) {
 //    if(blocksnthreadse[1]>0) {
 
 //        LinkerStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
-//                (double), stream>>>
+//                (floatingpoint), stream>>>
 //                          (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, z, CUDAcommon::getCUDAvars()
 //                                  .gculpritID,
 //                                  CUDAcommon::getCUDAvars().gculpritFF,
@@ -138,7 +139,7 @@ double* LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
         auto boolvarvec = CUDAcommon::cudavars.backtrackbools;
 //        LinkerStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (24 * blocksnthreadsez[1]) *
         LinkerStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (0) *
-                                             sizeof(double), stream>> >
+                                             sizeof(floatingpoint), stream>> >
                                             (coord, f, beadSet, kstr, eql, pos1, pos2,
                                                     params, gU_i, CUDAcommon::cudavars.gpu_energyvec,  z ,
                                              CUDAcommon::getCUDAvars().gculpritID,
@@ -153,22 +154,22 @@ double* LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
 #ifdef CUDA_INDIVIDUAL_ESUM
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
-        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+        resetfloatingpointvariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(floatingpoint),stream>>>(gU_i,
                 params, gU_sum, gpu_Utot);
 #endif
         CUDAcommon::handleerror( cudaGetLastError() ,"LinkerStretchingHarmonicenergy", "LinkerStretchingHarmonic.cu");
         return gU_sum;
     }
 }
-void LinkerStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
-                                      double *kstr, double *eql, double *pos1, double
-                                      *pos2, int *params, double *Lstretchforce ) {
+void LinkerStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                      floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint
+                                      *pos2, int *params, floatingpoint *Lstretchforce ) {
     if (blocksnthreadsf[1] > 0) {
 //        LinkerStretchingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (12 *
         LinkerStretchingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (0 *
-                                       blocksnthreadsf[1]) * sizeof(double), stream >> >
+                                       blocksnthreadsf[1]) * sizeof(floatingpoint), stream >> >
                                     (coord, f, beadSet, kstr, eql, pos1, pos2, params, Lstretchforce);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
@@ -186,17 +187,18 @@ void LinkerStretchingHarmonic::checkforculprit() {
 }
 
 #endif
-    double LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                            double *kstr, double *eql, double *pos1, double *pos2) {
+floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord,
+        floatingpoint *f, int *beadSet, floatingpoint *kstr, floatingpoint *eql,
+        floatingpoint *pos1, floatingpoint *pos2) {
 
         int n = LinkerStretching<LinkerStretchingHarmonic>::n;
         int nint = Linker::getLinkers().size();
 
-        double *coord1, *coord2, *coord3, *coord4, dist, U_i;
-        double *v1 = new double[3];
-        double *v2 = new double[3];
+        floatingpoint *coord1, *coord2, *coord3, *coord4, dist, U_i;
+        floatingpoint *v1 = new floatingpoint[3];
+        floatingpoint *v2 = new floatingpoint[3];
 
-        double U = 0.0;
+        floatingpoint U = 0.0;
 
         for(int i = 0; i < nint; i += 1) {
 
@@ -211,7 +213,7 @@ void LinkerStretchingHarmonic::checkforculprit() {
             dist = twoPointDistance(v1, v2) - eql[i];
             U_i = 0.5 * kstr[i] * dist * dist;
 
-            if(fabs(U_i) == numeric_limits<double>::infinity()
+            if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                || U_i != U_i || U_i < -1.0) {
 
                 //set culprit and return
@@ -228,17 +230,19 @@ void LinkerStretchingHarmonic::checkforculprit() {
         return U;
     }
 
-    double LinkerStretchingHarmonic::energy(double *coord, double * f, int *beadSet,
-                                            double *kstr, double *eql, double *pos1, double *pos2, double d){
+floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, floatingpoint * f,
+        int *beadSet, floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1,
+        floatingpoint *pos2, floatingpoint d){
 
         int n = LinkerStretching<LinkerStretchingHarmonic>::n;
         int nint = Linker::getLinkers().size();
 
-        double *coord1, *coord2, *coord3, *coord4, *f1, *f2, *f3, *f4, dist;
-        double *v1 = new double[3];
-        double *v2 = new double[3];
+        floatingpoint *coord1, *coord2, *coord3, *coord4, dist;
+        floatingpoint  *f1, *f2, *f3, *f4;
+        floatingpoint *v1 = new floatingpoint[3];
+        floatingpoint *v2 = new floatingpoint[3];
 
-        double U = 0.0;
+        floatingpoint U = 0.0;
 
         for(int i = 0; i < nint; i += 1) {
 
@@ -257,7 +261,18 @@ void LinkerStretchingHarmonic::checkforculprit() {
 
             dist = twoPointDistance(v1,  v2) - eql[i];
 
-            U += 0.5 * kstr[i] * dist * dist;
+            floatingpoint U_i= 0.5 * kstr[i] * dist * dist;
+
+            if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
+               || U_i != U_i || U_i < -1.0) {
+
+                //set culprit and return
+                LinkerInteractions::_linkerCulprit = Linker::getLinkers()[i];
+
+                return -1;
+            }
+            U += U_i;
+
         }
         delete [] v1;
         delete [] v2;
@@ -265,19 +280,20 @@ void LinkerStretchingHarmonic::checkforculprit() {
         return U;
 
     }
-    void LinkerStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
-                                          double *kstr, double *eql, double *pos1, double
-                                          *pos2, double *stretchforce){
+
+    void LinkerStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                          floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint
+                                          *pos2, floatingpoint *stretchforce){
 
 
         int n = LinkerStretching<LinkerStretchingHarmonic>::n;
         int nint = Linker::getLinkers().size();
 
-        double *coord1, *coord2, *coord3, *coord4, dist, invL;
-        double *v1 = new double[3];
-        double *v2 = new double[3];
+        floatingpoint *coord1, *coord2, *coord3, *coord4, dist, invL;
+        floatingpoint *v1 = new floatingpoint[3];
+        floatingpoint *v2 = new floatingpoint[3];
 
-        double f0, *f1, *f2, *f3, *f4;
+        floatingpoint f0, *f1, *f2, *f3, *f4;
 
         for(int i = 0; i < nint; i += 1) {
 
@@ -323,10 +339,45 @@ void LinkerStretchingHarmonic::checkforculprit() {
 
             //assign stretch force
             stretchforce[i] = f0/invL;
-//        std::cout<<"L "<<i<< " "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "
-//                ""<<f2[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
-//            std::cout<<"L "<<i<<" "<<kstr[i]<<" "<<dist<<" "<<eql[i]<<" "<<invL<<" "
-//                    ""<<pos1[i]<<" "<<pos2[i]<<endl;
+
+	        #ifdef CHECKFORCES_INF_NAN
+	        if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)||checkNaN_INF(f3,0,2)
+	           ||checkNaN_INF(f4,0,2)){
+		        cout<<"Linker Force becomes infinite. Printing data "<<endl;
+
+		        auto l = Linker::getLinkers()[i];
+		        auto cyl1 = l->getFirstCylinder();
+		        auto cyl2 = l->getSecondCylinder();
+		        cout<<"Cylinder IDs "<<cyl1->getId()<<" "<<cyl2->getId()<<" with cIndex "
+		            <<cyl1->_dcIndex<<" "<<cyl2->_dcIndex<<" and bIndex "
+		            <<cyl1->getFirstBead()->_dbIndex<<" "
+		            <<cyl1->getSecondBead()->_dbIndex<<" "
+		            <<cyl2->getFirstBead()->_dbIndex<<" "
+		            <<cyl2->getSecondBead()->_dbIndex<<endl;
+
+		        cout<<"Printing coords"<<endl;
+		        cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
+		        cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
+		        cout<<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
+		        cout<<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<endl;
+		        cout<<"Printing force"<<endl;
+		        cout<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<endl;
+		        cout<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<endl;
+		        cout<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<endl;
+		        cout<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
+		        cout<<"Printing binary Coords"<<endl;
+		        printvariablebinary(coord1,0,2);
+		        printvariablebinary(coord2,0,2);
+		        printvariablebinary(coord3,0,2);
+		        printvariablebinary(coord4,0,2);
+		        cout<<"Printing binary Force"<<endl;
+		        printvariablebinary(f1,0,2);
+		        printvariablebinary(f2,0,2);
+		        printvariablebinary(f3,0,2);
+		        printvariablebinary(f4,0,2);
+		        exit(EXIT_FAILURE);
+	        }
+	        #endif
         }
         delete [] v1;
         delete [] v2;

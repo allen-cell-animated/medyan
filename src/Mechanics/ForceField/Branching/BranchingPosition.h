@@ -33,15 +33,15 @@ private:
     int *beadSet;
     
     ///Array describing the constants in calculation
-    double *kpos;
-    double *pos;
+    floatingpoint *kpos;
+    floatingpoint *pos;
 #ifdef CUDAACCL
     int * gpu_beadSet;
-    double * gpu_kpos;
-    double *gpu_pos;
+    floatingpoint * gpu_kpos;
+    floatingpoint *gpu_pos;
     int * gpu_params;
     CUDAvars cvars;
-    double *F_i;
+    floatingpoint *F_i;
 #endif
     
 public:
@@ -53,8 +53,8 @@ public:
     virtual void vectorize();
     virtual void deallocate();
     
-    virtual double computeEnergy(double *coord, double *f, double d);
-    virtual void computeForces(double *coord, double *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     
     virtual const string getName() {return "Branching Position";}
 };

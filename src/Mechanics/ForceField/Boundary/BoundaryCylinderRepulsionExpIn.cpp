@@ -39,7 +39,7 @@ void BoundaryCylinderRepulsionExpIn::deallocate(){
     //Memory alloted
     //@{
     //    size_t allocmem = 0;
-    //    allocmem += (bntaddvec2.at(0) + 1) * sizeof(double) + 200 * sizeof(char);
+    //    allocmem += (bntaddvec2.at(0) + 1) * sizeof(floatingpoint) + 200 * sizeof(char);
     //    auto c = CUDAcommon::getCUDAvars();
     //    c.memincuda -= allocmem;
     //    CUDAcommon::cudavars = c;
@@ -82,10 +82,10 @@ void BoundaryCylinderRepulsionExpIn::optimalblocksnthreads( int nint){
         //get addition vars
         bntaddvec2.clear();
         bntaddvec2 = getaddred2bnt(nint);
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
-        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(double)));
-        //        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(floatingpoint)));
+        //        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(floatingpoint)));
         char a[] = "Boundary Cylinder Repulsion";
         char b[] = "Boundary Cylinder Repulsion Exp";
         CUDAcommon::handleerror(cudaMalloc((void **) &gFF, 100 * sizeof(char)));
@@ -95,7 +95,7 @@ void BoundaryCylinderRepulsionExpIn::optimalblocksnthreads( int nint){
         //Memory alloted
         //@{
         //        size_t allocmem = 0;
-        //        allocmem += (bntaddvec2.at(0) + 1) * sizeof(double) + 200 * sizeof(char);
+        //        allocmem += (bntaddvec2.at(0) + 1) * sizeof(floatingpoint) + 200 * sizeof(char);
         //        auto c = CUDAcommon::getCUDAvars();
         //        c.memincuda += allocmem;
         //        CUDAcommon::cudavars = c;
@@ -115,8 +115,8 @@ void BoundaryCylinderRepulsionExpIn::optimalblocksnthreads( int nint){
 }
 
 
-double* BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *beadSet, double *krep, double *slen,
-                                             int* nintvec, double* beListplane, double *z,int *params) {
+floatingpoint* BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
+                                             int* nintvec, floatingpoint* beListplane, floatingpoint *z,int *params) {
     //    nvtxRangePushA("E_wait");
     //    CUDAcommon::handleerror(cudaStreamWaitEvent(stream, *(CUDAcommon::getCUDAvars().event), 0));
     //    nvtxRangePop();
@@ -124,7 +124,7 @@ double* BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *be
     if(blocksnthreadse[1]>0) {
 
         BoundaryCylinderRepulsionExpenergy<<<blocksnthreadse[0], blocksnthreadse[1], (3 * blocksnthreadse[1]) * sizeof
-        (double), stream>>>
+        (floatingpoint), stream>>>
         (coord, f, beadSet, krep, slen, nintvec, beListplane, params, gU_i, z,
          CUDAcommon::getCUDAvars().gculpritID, CUDAcommon::getCUDAvars().gculpritFF,
          CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
@@ -132,7 +132,7 @@ double* BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *be
         //        auto cvars = CUDAcommon::getCUDAvars();
         //        cvars.streamvec.push_back(&stream);
         //        CUDAcommon::cudavars = cvars;
-        //        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+        //        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
         //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
         //        CUDAcommon::handleerror( cudaGetLastError() ,"BoundaryCylinderRepulsionExpenergy", "BoundaryCylinderRepulsionExp.cu");
         //        return gU_sum;
@@ -140,7 +140,7 @@ double* BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *be
 
     if(blocksnthreadsez[1]>0) {
         BoundaryCylinderRepulsionExpenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (6 * blocksnthreadsez[1]) *
-        sizeof(double), stream>> >(coord, f, beadSet, krep, slen, nintvec,
+        sizeof(floatingpoint), stream>> >(coord, f, beadSet, krep, slen, nintvec,
                                    beListplane, params, gU_i, z, CUDAcommon::getCUDAvars().gculpritID,
                                    CUDAcommon::getCUDAvars().gculpritFF,
                                    CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
@@ -148,7 +148,7 @@ double* BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *be
         //        auto cvars = CUDAcommon::getCUDAvars();
         //        cvars.streamvec.push_back(&stream);
         //        CUDAcommon::cudavars = cvars;
-        //        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+        //        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
         //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
         //        CUDAcommon::handleerror(cudaGetLastError(),"BoundaryCylinderRepulsionExpenergyz", "BoundaryCylinderRepulsionExp.cu");
         //
@@ -160,25 +160,25 @@ double* BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *be
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
         //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
         //        cudaStreamSynchronize(stream);
-        //        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+        //        addvectorred<<<1,200,200*sizeof(floatingpoint),stream>>>(gU_i,params, gU_sum, gpu_Utot);
         //        cudaStreamSynchronize(stream);
         //        std::cout<<"bntaddvec "<<bntaddvec2.at(0)<<" "<<bntaddvec2.at(1)<<" "<<bntaddvec2.at(0)<<" "
         //                ""<<bntaddvec2.at(2)<<" "<<bntaddvec2.at(3)<<endl;
-        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
-        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+        resetfloatingpointvariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(floatingpoint),stream>>>(gU_i,
                                                                                                        params, gU_sum, gpu_Utot);
         CUDAcommon::handleerror(cudaGetLastError(),"BoundaryCylinderRepulsionExpenergyz", "BoundaryCylinderRepulsionExp.cu");
         return gU_sum;
     }
 }
-void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadSet, double *krep, double *slen,
-                                          int* nintvec, double* beListplane, int *params) {
+void BoundaryCylinderRepulsionExpIn::forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
+                                          int* nintvec, floatingpoint* beListplane, int *params) {
     if (blocksnthreadsf[1] > 0) {
         BoundaryCylinderRepulsionExpforces << < blocksnthreadsf[0], blocksnthreadsf[1], (3 * blocksnthreadsf[1]) *
-        sizeof(double), stream >> >(coord, f, beadSet, krep, slen, nintvec,
+        sizeof(floatingpoint), stream >> >(coord, f, beadSet, krep, slen, nintvec,
                                     beListplane, params);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
@@ -202,20 +202,20 @@ void BoundaryCylinderRepulsionExpIn::checkforculprit() {
 
 
 
-double BoundaryCylinderRepulsionExpIn::loadForces(double r, double kRep, double screenLength) {
+floatingpoint BoundaryCylinderRepulsionExpIn::loadForces(floatingpoint r, floatingpoint kRep, floatingpoint screenLength) {
 
-    double R = -r/screenLength + 100.0 / screenLength;
+    floatingpoint R = -r/screenLength + 100.0 / screenLength;
 
     return kRep * exp(R)/screenLength;
-
+    
 }
 
-double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *beadSet,
-                                            double *krep, double *slen, int *nneighbors) {
+floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                              floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
 
     int nb, nc;
-    double *coord1, R, r, U_i;
-    double U = 0.0;
+    floatingpoint *coord1, R, r;
+    floatingpoint U_i, U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
@@ -233,8 +233,11 @@ double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *bea
             R = -r / slen[Cumnc + ic] + 100/slen[Cumnc + ic];
             U_i = krep[Cumnc + ic] * exp(R);
 
-            if (fabs(U_i) == numeric_limits<double>::infinity()
+            if (fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                 || U_i != U_i || U_i < -1.0) {
+
+                cout<<"infinite boundary"<<endl;
+                cout<<"U_i "<<U_i<<" krep "<<krep[Cumnc + ic]<<" R "<<R<<endl;
 
                 //set culprit and return
                 BoundaryInteractions::_boundaryElementCulprit = be;
@@ -250,12 +253,13 @@ double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *bea
     return U;
 }
 
-double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *beadSet,
-                                            double *krep, double *slen, int *nneighbors, double d) {
+floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                              floatingpoint *krep, floatingpoint *slen, int *nneighbors, floatingpoint d) {
 
     int nb, nc;
-    double *coord1, *force1, R, r, U_i;
-    double U = 0.0;
+    floatingpoint *coord1, R, r, U_i;
+    floatingpoint *force1;
+    floatingpoint U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
@@ -276,8 +280,10 @@ double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *bea
 
             U_i = krep[Cumnc + ic] * exp(R);
 
-            if(fabs(U_i) == numeric_limits<double>::infinity()
+            if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                || U_i != U_i || U_i < -1.0) {
+                cout<<"infinite boundary z"<<endl;
+                cout<<"U_i "<<U_i<<" krep "<<krep[Cumnc + ic]<<" R "<<R<<endl;
 
                 //set culprit and return
                 BoundaryInteractions::_boundaryElementCulprit = be;
@@ -295,11 +301,12 @@ double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *bea
 
 
 
-void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadSet,
-                                          double *krep, double *slen, int *nneighbors) {
+void BoundaryCylinderRepulsionExpIn::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                            floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
     int nb, nc;
-    double *coord1, *force1, R, r, f0;
-    double *F_i;
+    floatingpoint *coord1, R, r;
+    floatingpoint *force1, f0;
+    floatingpoint *F_i;
 
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
@@ -321,6 +328,19 @@ void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadS
             force1[1] += f0 *norm[1];
             force1[2] += f0 *norm[2];
 
+            if(checkNaN_INF(force1, 0, 2)){
+                cout<<"Boundary Cylinder ExpIn Force becomes infinite. Printing data " <<endl;
+
+                cout<<"Printing coords"<<endl;
+                cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
+                cout<<"Printing force"<<endl;
+                cout<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<endl;
+                cout<<"Printing binary Coords"<<endl;
+                printvariablebinary(coord1,0,2);
+                cout<<"Printing binary Force"<<endl;
+                printvariablebinary(force1,0,2);
+                exit(EXIT_FAILURE);
+            }
         }
         Cumnc+=nc;
     }}

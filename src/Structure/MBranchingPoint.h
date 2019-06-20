@@ -36,15 +36,15 @@ public:
     
     //@{
     /// Getter for constants
-    double getStretchingConstant(){return _kStretch;}
-    double getEqLength(){return _eqLength;}
+    floatingpoint getStretchingConstant(){return _kStretch;}
+    floatingpoint getEqLength(){return _eqLength;}
     
-    double getBendingConstant(){return _kBend;}
-    double getEqTheta(){return _eqTheta;}
+    floatingpoint getBendingConstant(){return _kBend;}
+    floatingpoint getEqTheta(){return _eqTheta;}
     
-    double getDihedralConstant(){return _kDihedr;}
+    floatingpoint getDihedralConstant(){return _kDihedr;}
     
-    double getPositionConstant(){return _kPosition;}
+    floatingpoint getPositionConstant(){return _kPosition;}
     //@}
     
     /// Set parent
@@ -53,22 +53,21 @@ public:
     }
     /// Get parent
     BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
-    
-    //Qin -----
-    double stretchForce = 0.0; ///< Stretching force of brancher at current state
-    double bendingForce = 0.0;
-    double dihedralForce = 0.0;
+
+    floatingpoint stretchForce = 0.0; ///< Stretching force of brancher at current state
+    floatingpoint bendingForce = 0.0;
+    floatingpoint dihedralForce = 0.0;
     
 private:
-    double _eqLength;  ///< Equilibrium length
-    double _kStretch;  ///< Stretching constant
+    floatingpoint _eqLength;  ///< Equilibrium length
+    floatingpoint _kStretch;  ///< Stretching constant
     
-    double _eqTheta; ///< Bending equilibrium angle
-    double _kBend; //< Bending constant
+    floatingpoint _eqTheta; ///< Bending equilibrium angle
+    floatingpoint _kBend; //< Bending constant
     
-    double _kDihedr; ///< Twisting constant
+    floatingpoint _kDihedr; ///< Twisting constant
     
-    double _kPosition; ///< Position constant
+    floatingpoint _kPosition; ///< Position constant
     
     BranchingPoint* _pBranchingPoint; ///< Pointer to parent branch point
     

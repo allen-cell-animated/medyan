@@ -11,10 +11,10 @@
 #include "MathFunctions.h"
 using namespace mathfunc;
 
-__global__ void setenergytozero(double *U_tot){
+__global__ void setenergytozero(floatingpoint *U_tot){
     U_tot[0] = 0.0;
 }
-__global__ void copyForcesCUDA(double *f, double *fAux, int* n){
+__global__ void copyForcesCUDA(floatingpoint *f, floatingpoint *fAux, int* n){
 
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
 
@@ -25,7 +25,7 @@ __global__ void copyForcesCUDA(double *f, double *fAux, int* n){
     }
 }
 
-__global__ void resetForcesCUDA(double *f, int* n){
+__global__ void resetForcesCUDA(floatingpoint *f, int* n){
 
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
 //    printf("%d \n", n[0]);

@@ -171,7 +171,7 @@ all: MEDYAN medyan_test
 
 clean:
 	\find . -name "*.d" -delete
-	\find . -name "*.o" -delete
+	\find . -name '*.o' -delete
 	\rm -f MEDYAN medyan_test
 
 .PRECIOUS: %.d

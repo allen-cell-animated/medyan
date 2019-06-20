@@ -46,13 +46,14 @@ public:
     virtual string getName() {return "Excluded Volume";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(double *coord, double *f, double d);
-    virtual void computeForces(double *coord, double *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     
     virtual void computeLoadForces() {return;}
     
     virtual vector<NeighborList*> getNeighborLists();
 #ifdef HYBRID_NLSTENCILLIST
+    //setter to store HybridneighborList pointer
     virtual void setHNeighborLists(HybridCylinderCylinderNL* Hnl);
 #endif
 };

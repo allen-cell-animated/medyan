@@ -23,24 +23,24 @@ using namespace mathfunc;
 //#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 //
 //#else
-//static __inline__ __device__ double atomicAdd(double *address, double val) {
+//static __inline__ __device__ floatingpoint atomicAdd(floatingpoint *address, floatingpoint val) {
 //    unsigned long long int* address_as_ull = (unsigned long long int*)address;
 //    unsigned long long int old = *address_as_ull, assumed;
 //    if (val==0.0)
-//      return __longlong_as_double(old);
+//      return __longlong_as_floatingpoint(old);
 //    do {
 //      assumed = old;
-//      old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val +__longlong_as_double(assumed)));
+//      old = atomicCAS(address_as_ull, assumed, __floatingpoint_as_longlong(val +__longlong_as_floatingpoint(assumed)));
 //    } while (assumed != old);
-//    return __longlong_as_double(old);
+//    return __longlong_as_floatingpoint(old);
 //  }
 //
 //
 //#endif
 
-//__global__ void addvectorBS(double *U, int *params, double *U_sum, double *U_tot){
+//__global__ void addvectorBS(floatingpoint *U, int *params, floatingpoint *U_sum, floatingpoint *U_tot){
 //    U_sum[0] = 0.0;
-//    double sum = 0.0;
+//    floatingpoint sum = 0.0;
 //    for(auto i=0;i<params[1];i++){
 //        if(U[i] == -1.0 && sum != -1.0){
 //            U_sum[0] = -1.0;
@@ -56,18 +56,18 @@ using namespace mathfunc;
 //
 //}
 
-__global__ void BranchingStretchingHarmonicenergy(double *coord, double *force, int *beadSet, double *kstr,
-                                                 double *eql, double *pos, int *params, double *U_i, double *z,  int
+__global__ void BranchingStretchingHarmonicenergy(floatingpoint *coord, floatingpoint *force, int *beadSet, floatingpoint *kstr,
+                                                 floatingpoint *eql, floatingpoint *pos, int *params, floatingpoint *U_i, floatingpoint *z,  int
                                                   *culpritID,
                                                   char* culpritFF, char* culpritinteraction, char* FF, char*
 interaction) {
     if(z[0] == 0.0) {
-        extern __shared__ double s[];
-        double *c1 = s;
-        double *c2 = &c1[3 * blockDim.x];
-        double *c3 = &c2[3 * blockDim.x];
-        double dist;
-        double v1[3];
+        extern __shared__ floatingpoint s[];
+        floatingpoint *c1 = s;
+        floatingpoint *c2 = &c1[3 * blockDim.x];
+        floatingpoint *c3 = &c2[3 * blockDim.x];
+        floatingpoint dist;
+        floatingpoint v1[3];
         int nint = params[1];
         int n = params[0];
         const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
@@ -88,7 +88,7 @@ interaction) {
 
             U_i[thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
 
-            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
 
                 U_i[thread_idx] = -1.0;
@@ -111,22 +111,22 @@ interaction) {
     }
 }
 
-__global__ void BranchingStretchingHarmonicenergyz(double *coord, double *f, int *beadSet, double *kstr,
-                                                  double *eql, double *pos, int *params, double *U_i, double *z,
+__global__ void BranchingStretchingHarmonicenergyz(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kstr,
+                                                  floatingpoint *eql, floatingpoint *pos, int *params, floatingpoint *U_i, floatingpoint *z,
                                                    int *culpritID, char* culpritFF, char* culpritinteraction, char* FF,
                                                    char* interaction) {
     if(z[0] != 0.0) {
-        extern __shared__ double s[];
-        double *c1 = s;
-        double *c2 = &c1[3 * blockDim.x];
-        double *c3 = &c2[3 * blockDim.x];
-        double *f1 = &c3[3 * blockDim.x];
-        double *f2 = &f1[3 * blockDim.x];
-        double *f3 = &f2[3 * blockDim.x];
+        extern __shared__ floatingpoint s[];
+        floatingpoint *c1 = s;
+        floatingpoint *c2 = &c1[3 * blockDim.x];
+        floatingpoint *c3 = &c2[3 * blockDim.x];
+        floatingpoint *f1 = &c3[3 * blockDim.x];
+        floatingpoint *f2 = &f1[3 * blockDim.x];
+        floatingpoint *f3 = &f2[3 * blockDim.x];
 
-        double dist;
-        double v1[3];
-        double vzero[3];
+        floatingpoint dist;
+        floatingpoint v1[3];
+        floatingpoint vzero[3];
         vzero[0] = 0;
         vzero[1] = 0;
         vzero[2] = 0;
@@ -155,7 +155,7 @@ __global__ void BranchingStretchingHarmonicenergyz(double *coord, double *f, int
 
             U_i[thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
 
-            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
 
                 U_i[thread_idx] = -1.0;
@@ -180,14 +180,14 @@ __global__ void BranchingStretchingHarmonicenergyz(double *coord, double *f, int
 }
 
 
-__global__ void BranchingStretchingHarmonicforces(double *coord, double *f, int *beadSet,
-                                                 double *kstr, double *eql, double *pos, int *params){
-    extern __shared__ double s[];
-    double *c1 = s;
-    double *c2 = &c1[3 * blockDim.x];
-    double *c3 = &c2[3 * blockDim.x];
-    double dist, invL, f0;
-    double v1[3], f1[3], f2[3], f3[3];
+__global__ void BranchingStretchingHarmonicforces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                                 floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, int *params){
+    extern __shared__ floatingpoint s[];
+    floatingpoint *c1 = s;
+    floatingpoint *c2 = &c1[3 * blockDim.x];
+    floatingpoint *c3 = &c2[3 * blockDim.x];
+    floatingpoint dist, invL, f0;
+    floatingpoint v1[3], f1[3], f2[3], f3[3];
     int nint = params[1];
     int n = params[0];
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;

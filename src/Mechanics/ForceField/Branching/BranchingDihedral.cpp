@@ -26,9 +26,10 @@
 template <class BDihedralInteractionType>
 void BranchingDihedral<BDihedralInteractionType>::vectorize() {
 
+    CUDAcommon::tmin.numinteractions[6] += BranchingPoint::getBranchingPoints().size();
     beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
-    kdih = new double[BranchingPoint::getBranchingPoints().size()];
-    pos = new double[BranchingPoint::getBranchingPoints().size()];
+    kdih = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
+    pos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
 
     int i = 0;
 
@@ -56,11 +57,11 @@ void BranchingDihedral<BDihedralInteractionType>::vectorize() {
     CUDAcommon::handleerror(cudaMemcpy(gpu_beadSet, beadSet, n * numInteractions * sizeof(int),
                                        cudaMemcpyHostToDevice));
 
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_kdih, numInteractions * sizeof(double)));
-    CUDAcommon::handleerror(cudaMemcpy(gpu_kdih, kdih, numInteractions * sizeof(double), cudaMemcpyHostToDevice));
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_kdih, numInteractions * sizeof(floatingpoint)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_kdih, kdih, numInteractions * sizeof(floatingpoint), cudaMemcpyHostToDevice));
 
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_pos, numInteractions * sizeof(double)));
-    CUDAcommon::handleerror(cudaMemcpy(gpu_pos, pos, numInteractions * sizeof(double), cudaMemcpyHostToDevice));
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_pos, numInteractions * sizeof(floatingpoint)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_pos, pos, numInteractions * sizeof(floatingpoint), cudaMemcpyHostToDevice));
 
     vector<int> params;
     params.push_back(int(n));
@@ -88,16 +89,17 @@ void BranchingDihedral<BDihedralInteractionType>::deallocate() {
 
 
 template <class BDihedralInteractionType>
-double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double *coord, double *f, double d) {
+floatingpoint BranchingDihedral<BDihedralInteractionType>::computeEnergy(floatingpoint
+*coord, floatingpoint *f, floatingpoint d) {
 
-    double U_i[1], U_ii;
-    double* gU_i;
+    floatingpoint U_i[1], U_ii=0.0;
+    floatingpoint* gU_i;
     U_ii = 0.0;
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
-    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
-    double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
-    double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
+    floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    floatingpoint * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
+    floatingpoint * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
 
 
 //    if(d == 0.0){
@@ -118,11 +120,11 @@ double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double *coord,
 #endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
     CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
-    double cuda_energy[1];
+    floatingpoint cuda_energy[1];
     if(gU_i == NULL)
         cuda_energy[0] = 0.0;
     else {
-        CUDAcommon::handleerror(cudaMemcpy(cuda_energy, gU_i, sizeof(double),
+        CUDAcommon::handleerror(cudaMemcpy(cuda_energy, gU_i, sizeof(floatingpoint),
                                            cudaMemcpyDeviceToHost));
     }
     std::cout<<getName()<<" Serial Energy "<<U_ii<<" Cuda Energy "<<cuda_energy[0]<<endl;
@@ -132,12 +134,13 @@ double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double *coord,
 }
 
 template <class BDihedralInteractionType>
-void BranchingDihedral<BDihedralInteractionType>::computeForces(double *coord, double *f) {
+void BranchingDihedral<BDihedralInteractionType>::computeForces(floatingpoint *coord,
+        floatingpoint *f) {
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
-    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
 
-    double * gpu_force;
+    floatingpoint * gpu_force;
 
     if(cross_checkclass::Aux){
 
@@ -162,7 +165,9 @@ void BranchingDihedral<BDihedralInteractionType>::computeForces(double *coord, d
 }
 
 ///Template specializations
-template double BranchingDihedral<BranchingDihedralCosine>::computeEnergy(double *coord, double *f, double d);
-template void BranchingDihedral<BranchingDihedralCosine>::computeForces(double *coord, double *f);
+template floatingpoint BranchingDihedral<BranchingDihedralCosine>::computeEnergy
+        (floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template void BranchingDihedral<BranchingDihedralCosine>::computeForces(floatingpoint
+        *coord, floatingpoint *f);
 template void BranchingDihedral<BranchingDihedralCosine>::vectorize();
 template void BranchingDihedral<BranchingDihedralCosine>::deallocate();

@@ -24,8 +24,6 @@
 #include "MathFunctions.h"
 #include "Boundary.h"
 
-
-
 using namespace mathfunc;
 
 void ChemManager::setupBindingSites() {
@@ -121,11 +119,11 @@ void ChemManager::configCMonomer() {
 
         //create offset vector for filament
         CMonomer::_speciesFilamentIndex[filType].insert(
-                                                        CMonomer::_speciesFilamentIndex[filType].end(), {0,o1,o2});
+        CMonomer::_speciesFilamentIndex[filType].end(), {0,o1,o2});
 
         //create offset vector for bound
         CMonomer::_speciesBoundIndex[filType].insert(
-                                                     CMonomer::_speciesBoundIndex[filType].end(), {0,o3,o4,o5});
+        CMonomer::_speciesBoundIndex[filType].end(), {0,o3,o4,o5});
     }
 }
 
@@ -142,14 +140,14 @@ void ChemManager::initCMonomer(CMonomer* m, short filamentType, Compartment* c) 
     }
     for (auto &p : _chemData.speciesPlusEnd[filamentType]) {
         SpeciesPlusEnd* sp =
-        c->addSpeciesPlusEnd(SpeciesNamesDB::genUniqueFilName(p));
+                c->addSpeciesPlusEnd(SpeciesNamesDB::genUniqueFilName(p));
         m->_speciesFilament[fIndex] = sp;
         fIndex++;
 
     }
     for (auto &mi : _chemData.speciesMinusEnd[filamentType]) {
         SpeciesMinusEnd* smi =
-        c->addSpeciesMinusEnd(SpeciesNamesDB::genUniqueFilName(mi));
+                c->addSpeciesMinusEnd(SpeciesNamesDB::genUniqueFilName(mi));
         m->_speciesFilament[fIndex] = smi;
         fIndex++;
     }
@@ -165,19 +163,19 @@ void ChemManager::initCMonomer(CMonomer* m, short filamentType, Compartment* c) 
     }
     for (auto &l : _chemData.speciesLinker[filamentType]) {
         SpeciesLinker* sl =
-        c->addSpeciesLinker(SpeciesNamesDB::genUniqueFilName(l));
+                c->addSpeciesLinker(SpeciesNamesDB::genUniqueFilName(l));
         m->_speciesBound[bIndex] = sl;
         bIndex++;
     }
     for (auto &mo : _chemData.speciesMotor[filamentType]) {
         SpeciesMotor* sm =
-        c->addSpeciesMotor(SpeciesNamesDB::genUniqueFilName(mo));
+                c->addSpeciesMotor(SpeciesNamesDB::genUniqueFilName(mo));
         m->_speciesBound[bIndex] = sm;
         bIndex++;
     }
     for (auto &br : _chemData.speciesBrancher[filamentType]) {
         SpeciesBrancher* sbr =
-        c->addSpeciesBrancher(SpeciesNamesDB::genUniqueFilName(br));
+                c->addSpeciesBrancher(SpeciesNamesDB::genUniqueFilName(br));
         m->_speciesBound[bIndex] = sbr;
         bIndex++;
     }
@@ -213,7 +211,7 @@ void ChemManager::genFilReactionTemplates() {
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                  [name](tuple<string, int, double, double, string, string, double>
+                                  [name](tuple<string, int, floatingpoint, floatingpoint, string, string, floatingpoint>
                                          element) {
                                       return get<0>(element) == name ? true : false; });
 
@@ -232,8 +230,8 @@ void ChemManager::genFilReactionTemplates() {
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                                  [name](tuple<string, int, double, double, double,
-                                          string, int, string, double> element) {
+                                  [name](tuple<string, int, floatingpoint, floatingpoint, floatingpoint,
+                                          string, int, string, floatingpoint> element) {
                                       return get<0>(element) == name ? true : false; });
                 if(it == _chemData.speciesDiffusing.end()) {
                     cout <<
@@ -242,7 +240,7 @@ void ChemManager::genFilReactionTemplates() {
                     exit(EXIT_FAILURE);
                 }
                 reactantTemplate.push_back(tuple<int, SpeciesType>(
-                                                                   SpeciesNamesDB::stringToInt(name), SpeciesType::DIFFUSING));
+                        SpeciesNamesDB::stringToInt(name), SpeciesType::DIFFUSING));
             }
             else {
                 cout <<
@@ -390,10 +388,12 @@ void ChemManager::genFilReactionTemplates() {
             //Add polymerization managers
             if(d == FilamentReactionDirection::FORWARD)
                 _filRxnTemplates[filType].emplace_back(
-                                                       new PolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                new PolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),
+                        get<3>(r), get<4>(r), _dt));
             else
                 _filRxnTemplates[filType].emplace_back(
-                                                       new PolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                new PolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),
+                        get<3>(r), get<4>(r), _dt));
         }
 
         //set up reaction templates
@@ -505,8 +505,8 @@ void ChemManager::genFilReactionTemplates() {
                 //Look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                  [name](tuple<string, int, double, double, string,
-                                          string, double> element) {
+                                  [name](tuple<string, int, floatingpoint, floatingpoint, string,
+                                          string, floatingpoint> element) {
                                       return get<0>(element) == name ? true : false; });
 
                 if(it == _chemData.speciesBulk.end()) {
@@ -516,7 +516,7 @@ void ChemManager::genFilReactionTemplates() {
                     exit(EXIT_FAILURE);
                 }
                 productTemplate.push_back(tuple<int, SpeciesType>(
-                                                                  SpeciesNamesDB::stringToInt(name), SpeciesType::BULK));
+                SpeciesNamesDB::stringToInt(name), SpeciesType::BULK));
             }
 
             else if(product.find("DIFFUSING") != string::npos) {
@@ -524,7 +524,7 @@ void ChemManager::genFilReactionTemplates() {
                 //Look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                                  [name](tuple<string, int, double, double, double, string, int, string, double> element) {
+                                  [name](tuple<string, int, floatingpoint, floatingpoint, floatingpoint, string, int, string, floatingpoint> element) {
                                       return get<0>(element) == name ? true : false; });
                 if(it == _chemData.speciesDiffusing.end()) {
                     cout <<
@@ -533,7 +533,7 @@ void ChemManager::genFilReactionTemplates() {
                     exit(EXIT_FAILURE);
                 }
                 productTemplate.push_back(tuple<int, SpeciesType>(
-                                                                  SpeciesNamesDB::stringToInt(name), SpeciesType::DIFFUSING));
+                SpeciesNamesDB::stringToInt(name), SpeciesType::DIFFUSING));
             }
             else {
                 cout <<
@@ -595,10 +595,10 @@ void ChemManager::genFilReactionTemplates() {
             //Add depolymerization managers
             if(d == FilamentReactionDirection::FORWARD)
                 _filRxnTemplates[filType].emplace_back(
-                                                       new DepolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                new DepolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r), _dt));
             else
                 _filRxnTemplates[filType].emplace_back(
-                                                       new DepolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                new DepolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r), _dt));
         }
 
         for(auto &r: _chemData.motorWalkingReactions[filType]) {
@@ -608,6 +608,7 @@ void ChemManager::genFilReactionTemplates() {
 
             vector<string> reactants = get<0>(r);
             vector<string> products = get<1>(r);
+
             //read strings, and look up type
             ReactionType type;
             string species1;
@@ -777,12 +778,14 @@ void ChemManager::genFilReactionTemplates() {
             }
 
             //add reaction
-            if(type == ReactionType::MOTORWALKINGFORWARD)
+            if(type == ReactionType::MOTORWALKINGFORWARD) {
+
+
                 _filRxnTemplates[filType].emplace_back(
-                                                       new MotorWalkPTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
-            else {
+                new MotorWalkPTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r),_dt));
+            } else {
                 _filRxnTemplates[filType].emplace_back(
-                                                       new MotorWalkMTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                new MotorWalkMTemplate(filType, reactantTemplate, productTemplate, get<2>(r),-get<3>(r), get<4>(r)+"m", _dt));
             }
         }
 
@@ -944,7 +947,7 @@ void ChemManager::genFilReactionTemplates() {
             }
 
             //add reaction
-            _filRxnTemplates[filType].emplace_back(new AgingTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+            _filRxnTemplates[filType].emplace_back(new AgingTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r), _dt));
         }
 
 
@@ -1027,8 +1030,8 @@ void ChemManager::genFilReactionTemplates() {
                     //Look up species, make sure in list
                     string name = product.substr(0, product.find(":"));
                     auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                      [name](tuple<string, int, double, double, string, string,
-                                              double> element) {
+                                      [name](tuple<string, int, floatingpoint, floatingpoint, string, string,
+                                              floatingpoint> element) {
                                           return get<0>(element) == name ? true : false; });
 
                     if(it == _chemData.speciesBulk.end()) {
@@ -1038,7 +1041,7 @@ void ChemManager::genFilReactionTemplates() {
                         exit(EXIT_FAILURE);
                     }
                     productTemplate.push_back(tuple<int, SpeciesType>(
-                                                                      SpeciesNamesDB::stringToInt(name), SpeciesType::BULK));
+                    SpeciesNamesDB::stringToInt(name), SpeciesType::BULK));
                 }
 
                 else if(product.find("DIFFUSING") != string::npos) {
@@ -1046,7 +1049,7 @@ void ChemManager::genFilReactionTemplates() {
                     //Look up species, make sure in list
                     string name = product.substr(0, product.find(":"));
                     auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                                      [name](tuple<string, int, double, double, double, string, int, string, double> element) {
+                                      [name](tuple<string, int, floatingpoint, floatingpoint, floatingpoint, string, int, string, floatingpoint> element) {
                                           return get<0>(element) == name ? true : false; });
                     if(it == _chemData.speciesDiffusing.end()) {
                         cout <<
@@ -1055,7 +1058,7 @@ void ChemManager::genFilReactionTemplates() {
                         exit(EXIT_FAILURE);
                     }
                     productTemplate.push_back(tuple<int, SpeciesType>(
-                                                                      SpeciesNamesDB::stringToInt(name), SpeciesType::DIFFUSING));
+                    SpeciesNamesDB::stringToInt(name), SpeciesType::DIFFUSING));
                 }
                 else {
                     cout <<
@@ -1118,23 +1121,23 @@ void ChemManager::genFilBindingReactions() {
 
     //init subsystem ptr
     FilamentBindingManager::_subSystem = _subSystem;
-    double rMax, rMin;
+    floatingpoint rMax, rMin;
     bool status = false;
-#ifdef HYBRID_NLSTENCILLIST
-    //If linker and motor reactions exist, create HybridBindingSearchManager
-    short totalreactions = 0;
-    for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
-        totalreactions += _chemData.linkerReactions[filType].size() +
-        _chemData.motorReactions[filType].size();
-    }
-    if(totalreactions)
-        status = true;
-    for (auto C : grid->getCompartments()) {
-        HybridBindingSearchManager *Hbsn = new HybridBindingSearchManager(C);
-        C->addHybridBindingSearchManager(Hbsn);
-    }
-#endif
-    
+	#ifdef HYBRID_NLSTENCILLIST
+	//If linker and motor reactions exist, create HybridBindingSearchManager
+	short totalreactions = 0;
+	for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
+		totalreactions += _chemData.linkerReactions[filType].size() +
+		    _chemData.motorReactions[filType].size();
+	}
+	if(totalreactions)
+		status = true;
+	for (auto C : grid->getCompartments()) {
+		HybridBindingSearchManager *Hbsn = new HybridBindingSearchManager(C);
+		C->addHybridBindingSearchManager(Hbsn);
+	}
+	#endif
+
     for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
 
         //loop through all compartments
@@ -1231,8 +1234,8 @@ void ChemManager::genFilBindingReactions() {
                     string name = reactant.substr(0, reactant.find(":"));
 
                     auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                      [name](tuple<string, int, double, double, string, string,
-                                              double> element) {
+                                      [name](tuple<string, int, floatingpoint, floatingpoint, string, string,
+                                              floatingpoint> element) {
                                           return get<0>(element) == name ? true : false; });
 
                     if(it == _chemData.speciesBulk.end()) {
@@ -1250,7 +1253,7 @@ void ChemManager::genFilBindingReactions() {
                     string name = reactant.substr(0, reactant.find(":"));
 
                     auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                                      [name](tuple<string, int, double, double, double, string, int, string, double> element) {
+                                      [name](tuple<string, int, floatingpoint, floatingpoint, floatingpoint, string, int, string, floatingpoint> element) {
                                           return get<0>(element) == name ? true : false; });
                     if(it == _chemData.speciesDiffusing.end()) {
                         cout <<
@@ -1276,8 +1279,8 @@ void ChemManager::genFilBindingReactions() {
                     //Look up species, make sure in list
                     string name = reactant.substr(0, reactant.find(":"));
                     auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                      [name](tuple<string, int, double, double, string, string,
-                                              double> element) {
+                                      [name](tuple<string, int, floatingpoint, floatingpoint, string, string,
+                                              floatingpoint> element) {
                                           return get<0>(element) == name ? true : false; });
 
                     if(it == _chemData.speciesBulk.end()) {
@@ -1294,7 +1297,7 @@ void ChemManager::genFilBindingReactions() {
                     //Look up species, make sure in list
                     string name = reactant.substr(0, reactant.find(":"));
                     auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                                      [name](tuple<string, int, double, double, double, string, int, string, double> element) {
+                                      [name](tuple<string, int, floatingpoint, floatingpoint, floatingpoint, string, int, string, floatingpoint> element) {
                                           return get<0>(element) == name ? true : false; });
                     if(it == _chemData.speciesDiffusing.end()) {
                         cout <<
@@ -1379,7 +1382,7 @@ void ChemManager::genFilBindingReactions() {
                     cout << "Nucleation zone type specified in a branching reaction not valid. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
-                double nucleationDist = get<5>(r);
+                floatingpoint nucleationDist = get<5>(r);
 
                 ReactionBase* rxn = new Reaction<3,0>(reactantSpecies, onRate, false, C->getVolumeFrac(), -numDiffusingReactant);
                 rxn->setReactionType(ReactionType::BRANCHING);
@@ -1391,6 +1394,10 @@ void ChemManager::genFilBindingReactions() {
                                                                   nucleationZone, nucleationDist);
                 C->addFilamentBindingManager(bManager);
 
+                #ifdef SIMDBINDINGSEARCH
+                C->addBranchingBindingManager(bManager);
+				#endif
+
                 bManager->setMIndex(managerIndex++);
 
 
@@ -1399,6 +1406,7 @@ void ChemManager::genFilBindingReactions() {
                 ConnectionBlock rcb(rxn->connect(bcallback,false));
             }
 
+
             for(auto &r: _chemData.linkerReactions[filType]) {
 
                 vector<Species*> reactantSpecies;
@@ -1406,6 +1414,8 @@ void ChemManager::genFilBindingReactions() {
 
                 vector<string> reactants = get<0>(r);
                 vector<string> products = get<1>(r);
+                floatingpoint gnum = get<6>(r);
+                string hrcdid = get<7>(r);
 
                 //Checks on number of reactants, products
                 if(reactants.size() != LMBINDINGREACTANTS ||
@@ -1567,8 +1577,8 @@ void ChemManager::genFilBindingReactions() {
                     //Look up species, make sure in list
                     string name = reactant.substr(0, reactant.find(":"));
                     auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                      [name](tuple<string, int, double, double, string, string,
-                                              double> element) {
+                                      [name](tuple<string, int, floatingpoint, floatingpoint, string, string,
+                                              floatingpoint> element) {
                                           return get<0>(element) == name ? true : false; });
 
                     if(it == _chemData.speciesBulk.end()) {
@@ -1585,7 +1595,7 @@ void ChemManager::genFilBindingReactions() {
                     //Look up species, make sure in list
                     string name = reactant.substr(0, reactant.find(":"));
                     auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                                      [name](tuple<string, int, double, double, double, string, int, string, double> element) {
+                                      [name](tuple<string, int, floatingpoint, floatingpoint, floatingpoint, string, int, string, floatingpoint> element) {
                                           return get<0>(element) == name ? true : false; });
                     if(it == _chemData.speciesDiffusing.end()) {
                         cout <<
@@ -1602,9 +1612,9 @@ void ChemManager::genFilBindingReactions() {
                     << endl;
                     exit(EXIT_FAILURE);
                 }
-
-                double onRate = get<2>(r);
-                double offRate = get<3>(r);
+            
+                floatingpoint onRate = get<2>(r);
+                floatingpoint offRate = get<3>(r);
                 //aravind 24, June, 2016.
                 auto temp=SysParams::LUBBareRate;
                 if(temp.size()>0)
@@ -1617,6 +1627,11 @@ void ChemManager::genFilBindingReactions() {
 
                 ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate, false, C->getVolumeFrac(), -numDiffusingReactant);
                 rxn->setReactionType(ReactionType::LINKERBINDING);
+                // Dissipation
+                if(SysParams::Chemistry().dissTracking){
+                rxn->setGNumber(gnum);
+                rxn->setHRCDID(hrcdid);
+                }
 
                 C->addInternalReaction(rxn);
 
@@ -1630,7 +1645,7 @@ void ChemManager::genFilBindingReactions() {
                 lManager->setMIndex(managerIndex++);
 
                 //attach callback
-                LinkerBindingCallback lcallback(lManager, onRate, offRate, _subSystem);
+                LinkerBindingCallback lcallback(lManager, onRate, offRate, _subSystem, _dt);
                 ConnectionBlock rcb(rxn->connect(lcallback,false));
 #ifdef HYBRID_NLSTENCILLIST
                 auto Hbsm = C->getHybridBindingSearchManager();
@@ -1646,6 +1661,9 @@ void ChemManager::genFilBindingReactions() {
 
                 vector<string> reactants = get<0>(r);
                 vector<string> products = get<1>(r);
+
+                floatingpoint gnum = get<6>(r);
+                string hrcdid = get<7>(r);
 
                 //Checks on number of reactants, products
                 if(reactants.size() != LMBINDINGREACTANTS ||
@@ -1804,8 +1822,8 @@ void ChemManager::genFilBindingReactions() {
                     //Look up species, make sure in list
                     string name = reactant.substr(0, reactant.find(":"));
                     auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                      [name](tuple<string, int, double, double, string, string,
-                                              double> element) {
+                                      [name](tuple<string, int, floatingpoint, floatingpoint, string, string,
+                                              floatingpoint> element) {
                                           return get<0>(element) == name ? true : false; });
 
                     if(it == _chemData.speciesBulk.end()) {
@@ -1822,7 +1840,7 @@ void ChemManager::genFilBindingReactions() {
                     //Look up species, make sure in list
                     string name = reactant.substr(0, reactant.find(":"));
                     auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                                      [name](tuple<string, int, double, double, double, string, int, string, double> element) {
+                                      [name](tuple<string, int, floatingpoint, floatingpoint, floatingpoint, string, int, string, floatingpoint> element) {
                                           return get<0>(element) == name ? true : false; });
                     if(it == _chemData.speciesDiffusing.end()) {
                         cout <<
@@ -1839,9 +1857,9 @@ void ChemManager::genFilBindingReactions() {
                     << endl;
                     exit(EXIT_FAILURE);
                 }
-
-                double onRate = get<2>(r);
-                double offRate = get<3>(r);
+                
+                floatingpoint onRate = get<2>(r);
+                floatingpoint offRate = get<3>(r);
                 //aravind June 24, 2016.
                 auto temp=SysParams::MUBBareRate;
                 if(temp.size()>0)
@@ -1854,8 +1872,23 @@ void ChemManager::genFilBindingReactions() {
 
                 //multiply by num heads to get rate
                 ///CHANGED
-                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate, false, C->getVolumeFrac(), -numDiffusingReactant);
+                floatingpoint nh1 = SysParams::Chemistry().motorNumHeadsMin[motorInt];
+                floatingpoint nh2 = SysParams::Chemistry().motorNumHeadsMax[motorInt];
+                // vector<short> motorNumHeadsMax = {};
+
+
+                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate * (nh1 + nh2) / 2.0, false, C->getVolumeFrac(), -numDiffusingReactant);
+
                 rxn->setReactionType(ReactionType::MOTORBINDING);
+
+                // Dissipation
+                if(SysParams::Chemistry().dissTracking){
+                    rxn->setGNumber(gnum);
+                    rxn->setHRCDID(hrcdid);
+                }
+
+                // cal edit
+                SysParams::CParams.dutyRatio = (onRate)/(onRate + offRate);
 
                 C->addInternalReaction(rxn);
 
@@ -1875,15 +1908,15 @@ void ChemManager::genFilBindingReactions() {
                 //2 let's it identify with a motor binding manager
                 Hbsm->setbindingsearchparameter(mManager, 2, 0,0,rMax,rMin);
 #endif
-            }
         }
+
+        } // Loop through Compartment
 
         //init neighbor lists
         //get a compartment
-
         Compartment* C0 = grid->getCompartments()[0];
+        //if NOT DEFINED
 #ifndef HYBRID_NLSTENCILLIST
-        
         for(auto &manager : C0->getFilamentBindingManagers()) {
 
             LinkerBindingManager* lManager;
@@ -1919,18 +1952,18 @@ void ChemManager::genFilBindingReactions() {
             }
         }
 #endif
-    }
-#ifdef HYBRID_NLSTENCILLIST
-    Compartment *C0 = grid->getCompartments()[0];
-    //status checks if there are linker and motor binding reactions for this
-    // filamentType
-    if (status) {
-        HybridBindingSearchManager::_HneighborList = _subSystem->getHNeighborList();
-        auto Hmanager = C0->getHybridBindingSearchManager();
-        Hmanager->addtoHNeighborList();
-    }
-    _subSystem->initializeHNeighborList();
-#endif
+    } //Loop through Filament types
+    #ifdef HYBRID_NLSTENCILLIST
+	Compartment *C0 = grid->getCompartments()[0];
+	//status checks if there are linker and motor binding reactions for this
+	// filamentType
+	if (status) {
+		HybridBindingSearchManager::_HneighborList = _subSystem->getHNeighborList();
+		auto Hmanager = C0->getHybridBindingSearchManager();
+		Hmanager->addtoHNeighborList();
+	}
+	_subSystem->initializeHNeighborList();
+	#endif
 }
 
 void ChemManager::genSpecies(Compartment& protoCompartment) {
@@ -2103,7 +2136,7 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
 void ChemManager::updateCopyNumbers() {
     //Special protocol if move boundary protocol exists
     int tsaxis = SysParams::Boundaries().transfershareaxis;
-    double cmpsize = 0.0;
+    floatingpoint cmpsize = 0.0;
     //X axis
     if(tsaxis == 0)
         cmpsize = SysParams::Geometry().compartmentSizeX;
@@ -2124,7 +2157,7 @@ void ChemManager::updateCopyNumbers() {
         auto removalTime = get<4>(s);
         auto cpynummanipulationType = get<7>(s);
         auto holdmolarity = get<8>(s);
-        double factor = SysParams::Geometry().compartmentSizeX * SysParams::Geometry()
+        floatingpoint factor = SysParams::Geometry().compartmentSizeX * SysParams::Geometry()
                         .compartmentSizeY * SysParams::Geometry().compartmentSizeZ * 6.023*1e-7;
         int updatedbasecopynumber = (int)(holdmolarity * factor);
 
@@ -2158,7 +2191,7 @@ void ChemManager::updateCopyNumbers() {
                     cpynummanipulationType ==
                     "BASECONC") {
                     //set the coordinate that will help you find the necessary Base compartment
-                    double distancetocompare = 0.0;
+                    floatingpoint distancetocompare = 0.0;
                     if (SysParams::Boundaries().planestomove == 2 &&
                         cpynummanipulationType != "NONE") {
                         cout
@@ -2173,7 +2206,7 @@ void ChemManager::updateCopyNumbers() {
                         //if you are moving  left, bottom or front boundaries, use right, top or
                         // back boundaries as the base.
                     else if (SysParams::Boundaries().planestomove == 1) {
-                        double systemspan = 0.0;
+                        floatingpoint systemspan = 0.0;
                         if (tsaxis == 0)
                             systemspan = SysParams::Geometry().NX * SysParams::Geometry()
                                     .compartmentSizeX;
@@ -2236,7 +2269,7 @@ void ChemManager::updateCopyNumbers() {
         auto removalTime = get<3>(s);
         auto cpynummanipulationType = get<5>(s);
         auto holdmolarity = get<6>(s);
-        double factor = Boundary::systemvolume * 6.023*1e-7;
+        floatingpoint factor = Boundary::systemvolume * 6.023*1e-7;
         if(tau() >= releaseTime && copyNumber != 0) {
 
             //find the species, set copy number
@@ -2299,7 +2332,7 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                  [name](tuple<string, int, double, double, string, string, double>
+                                  [name](tuple<string, int, floatingpoint, floatingpoint, string, string, floatingpoint>
                                          element) {
                                    return get<0>(element) == name ? true : false; });
 
@@ -2318,7 +2351,7 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it =
                 find_if(_chemData.speciesDiffusing.begin(), _chemData.speciesDiffusing.end(),
-                        [name](tuple<string, int, double, double, double, string, int, string, double> element) {
+                        [name](tuple<string, int, floatingpoint, floatingpoint, floatingpoint, string, int, string, floatingpoint> element) {
                             return get<0>(element) == name ? true : false; });
                 if(it == _chemData.speciesDiffusing.end()) {
                     cout <<
@@ -2345,8 +2378,8 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
                 //Look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                  [name](tuple<string, int, double, double, string,
-                                          string, double> element) {
+                                  [name](tuple<string, int, floatingpoint, floatingpoint, string,
+                                          string, floatingpoint> element) {
                                       return get<0>(element) == name ? true : false; });
 
                 if(it == _chemData.speciesBulk.end()) {
@@ -2364,7 +2397,7 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
                 string name = product.substr(0, product.find(":"));
                 auto it =
                 find_if(_chemData.speciesDiffusing.begin(), _chemData.speciesDiffusing.end(),
-                        [name](tuple<string, int, double, double, double, string, int, string, double> element) {
+                        [name](tuple<string, int, floatingpoint, floatingpoint, floatingpoint, string, int, string, floatingpoint> element) {
                             return get<0>(element) == name ? true : false; });
                 if(it == _chemData.speciesDiffusing.end()) {
                     cout <<
@@ -2419,9 +2452,18 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
             exit(EXIT_FAILURE);
         }
 
+
         //add to compartment
         protoCompartment.addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::REGULAR);
+
+        // Dissipation
+        if(SysParams::Chemistry().dissTracking){
+            rxn->setGNumber(get<3>(r));
+            rxn->setHRCDID(get<4>(r));
+        }
+
+
     }
 }
 
@@ -2444,8 +2486,8 @@ void ChemManager::genBulkReactions() {
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                  [name](tuple<string, int, double, double, string,
-                                          string, double> element) {
+                                  [name](tuple<string, int, floatingpoint, floatingpoint, string,
+                                          string, floatingpoint> element) {
                                       return get<0>(element) == name ? true : false; });
 
                 if(it == _chemData.speciesBulk.end()) {
@@ -2470,8 +2512,8 @@ void ChemManager::genBulkReactions() {
                 //Look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                  [name](tuple<string, int, double, double, string, string,
-                                          double> element) {
+                                  [name](tuple<string, int, floatingpoint, floatingpoint, string, string,
+                                          floatingpoint> element) {
                                       return get<0>(element) == name ? true : false; });
 
                 if(it == _chemData.speciesBulk.end()) {
@@ -2572,8 +2614,8 @@ void ChemManager::genNucleationReactions() {
                         //Look up species, make sure in list
                         string name = reactant.substr(0, reactant.find(":"));
                         auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                                          [name](tuple<string, int, double, double,
-                                                  string, string, double> element) {
+                                          [name](tuple<string, int, floatingpoint, floatingpoint,
+                                                  string, string, floatingpoint> element) {
                                               return get<0>(element) == name ? true : false; });
 
                         if(it == _chemData.speciesBulk.end()) {
@@ -2592,7 +2634,7 @@ void ChemManager::genNucleationReactions() {
                         string name = reactant.substr(0, reactant.find(":"));
                         auto it =
                                 find_if(_chemData.speciesDiffusing.begin(), _chemData.speciesDiffusing.end(),
-                                        [name](tuple<string, int, double, double, double, string, int, string, double> element) {
+                                        [name](tuple<string, int, floatingpoint, floatingpoint, floatingpoint, string, int, string, floatingpoint> element) {
                                             return get<0>(element) == name ? true : false; });
                         if(it == _chemData.speciesDiffusing.end()) {
                             cout <<
@@ -2714,7 +2756,7 @@ void ChemManager::genNucleationReactions() {
                 //now, add the callback
 #ifdef REACTION_SIGNALING
                 FilamentCreationCallback
-                fcallback(plusEnd, filament, minusEnd, filType, _subSystem, creationCompartment);
+                        fcallback(plusEnd, filament, minusEnd, filType, _subSystem, creationCompartment);
                 ConnectionBlock rcb(rxn->connect(fcallback,false));
 #endif
             }
@@ -2757,13 +2799,15 @@ void ChemManager::initializeSystem(ChemSim* chemSim) {
 
     //try initial copy number setting
     updateCopyNumbers();
+    
+    _dt = chemSim->getDT();
 
     genNucleationReactions();
     genFilBindingReactions();
 
     //add reactions in compartment grid to chemsim
     grid->addChemSimReactions(chemSim);
-
+    
     genFilReactionTemplates();
 }
 
@@ -2773,6 +2817,7 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                                       bool extensionBack,
                                       bool initialization) {
 
+	mins = chrono::high_resolution_clock::now();
     //get some related objects
     Compartment* C = cc->getCompartment();
     Cylinder* c = cc->getCylinder();
@@ -2793,39 +2838,53 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             UpdateBrancherBindingCallback bcallback(c, i);
 
             Species* bs = cc->getCMonomer(i)->speciesBound(
-                                                           SysParams::CParams.brancherBoundIndex[filType]);
+                    SysParams::CParams.brancherBoundIndex[filType]);
             ConnectionBlock rcbb(bs->connect(bcallback,false));
 
             UpdateLinkerBindingCallback lcallback(c, i);
 
             Species* ls = cc->getCMonomer(i)->speciesBound(
-                                                           SysParams::CParams.linkerBoundIndex[filType]);
+                          SysParams::CParams.linkerBoundIndex[filType]);
             ConnectionBlock rcbl(ls->connect(lcallback,false));
 
             UpdateMotorBindingCallback mcallback(c, i);
 
             Species* ms = cc->getCMonomer(i)->speciesBound(
-                                                           SysParams::CParams.motorBoundIndex[filType]);
+                          SysParams::CParams.motorBoundIndex[filType]);
             ConnectionBlock rcbm(ms->connect(mcallback,false));
         }
     }
+
+	mine = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_time1(mine - mins);
+	tchemmanager1 += elapsed_time1.count();
+
 
     //get last ccylinder
     CCylinder* lastcc = nullptr;
 
     //extension of front
     if(extensionFront) {
+	    mins = chrono::high_resolution_clock::now();
         lastcc = f->getCylinderVector().back()->getCCylinder();
         for(auto &r : _filRxnTemplates[filType]) r->addReaction(lastcc, cc);
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time2(mine - mins);
+	    tchemmanager2 += elapsed_time2.count();
     }
     //extension of back
     else if(extensionBack) {
+	    mins = chrono::high_resolution_clock::now();
         lastcc = f->getCylinderVector().front()->getCCylinder();
         for(auto &r : _filRxnTemplates[filType]) r->addReaction(cc, lastcc);
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time2(mine - mins);
+	    tchemmanager2 += elapsed_time2.count();
     }
 
     //Base case, initialization
     else if (initialization) {
+		mins = chrono::high_resolution_clock::now();
         //Check if this is the first cylinder
         if(!f->getCylinderVector().empty()) {
 
@@ -2918,7 +2977,23 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
 #endif
             }
         }
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time3(mine - mins);
+	    tchemmanager3 += elapsed_time3.count();
+
     }
+
+
+	mins = chrono::high_resolution_clock::now();
     //Add all reaction templates to this cylinder
     for(auto &r : _filRxnTemplates[filType]) { r->addReaction(cc); }
+
+	mine = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_time4(mine - mins);
+	tchemmanager4 += elapsed_time4.count();
 }
+
+floatingpoint ChemManager::tchemmanager1 = 0.0;
+floatingpoint ChemManager::tchemmanager2 = 0.0;
+floatingpoint ChemManager::tchemmanager3 = 0.0;
+floatingpoint ChemManager::tchemmanager4 = 0.0;

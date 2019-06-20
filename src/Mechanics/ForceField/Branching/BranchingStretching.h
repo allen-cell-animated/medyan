@@ -34,19 +34,19 @@ private:
     int *beadSet;
     
     ///Array describing the constants in calculation
-    double *kstr;
-    double *eql;
-    double *pos;
-    double *stretchforce;
+    floatingpoint *kstr;
+    floatingpoint *eql;
+    floatingpoint *pos;
+    floatingpoint *stretchforce;
 
 #ifdef CUDAACCL
     int * gpu_beadSet;
-    double * gpu_kstr;
-    double *gpu_eql;
-    double *gpu_pos;
+    floatingpoint * gpu_kstr;
+    floatingpoint *gpu_eql;
+    floatingpoint *gpu_pos;
     int * gpu_params;
     CUDAvars cvars;
-    double *F_i;
+    floatingpoint *F_i;
 #endif
     
 public:
@@ -58,8 +58,8 @@ public:
     virtual void vectorize();
     virtual void deallocate();
     
-    virtual double computeEnergy(double *coord, double *f, double d);
-    virtual void computeForces(double *coord, double *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     
     virtual const string getName() {return "Branching Stretching";}
 };

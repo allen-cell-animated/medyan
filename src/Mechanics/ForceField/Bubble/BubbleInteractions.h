@@ -32,9 +32,9 @@ friend class BubbleFF;
 //    Bubble* _bubbleCulprit = nullptr;
 //    Component* _otherCulprit = nullptr;
 //    //@}
-    
+
 public:
-    
+
     //@{
     /// In the case of an error
     static Bubble* _bubbleCulprit;
@@ -45,11 +45,11 @@ public:
     virtual void vectorize() = 0;
     ///Deallocate the vectorized data
     virtual void deallocate() = 0;
-    
+
     /// Compute energy of this interaction
-    virtual double computeEnergy(double *coord, double *f, double d) = 0;
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) = 0;
     /// Compute forces of this interaction
-    virtual void computeForces(double *coord, double *f) = 0;
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f) = 0;
     /// Compute auxiliary forces of this interaction
     //virtual void computeForcesAux() = 0;
     

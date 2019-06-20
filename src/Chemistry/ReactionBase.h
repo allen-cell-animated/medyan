@@ -83,8 +83,8 @@ protected:
     
     float _rate;      ///< the rate for this ReactionBase
     float _rate_bare; ///< the bare rate for this ReactionBase (original rate)
-    
-    double _volumeFrac; ///< Used in compartments to store volume fraction of the compartment
+
+	floatingpoint _volumeFrac; ///< Used in compartments to store volume fraction of the compartment
     int _rateVolumeDepExp; ///< Exponent of rate dependency on volume
     ///< Dependence on bulk properties are NOT considered currently
     
@@ -98,14 +98,25 @@ protected:
     ReactionType _reactionType; ///< Reaction type enumeration
     
     bool _isProtoCompartment = false;///< Reaction is in proto compartment
-                                     ///< (Do not copy as a dependent, not in ChemSim)
+    ///< (Do not copy as a dependent, not in ChemSim)
     
     CBound* _cBound = nullptr; ///< CBound that is attached to this reaction
     
+    
+    float _gnum = 0.0;
+    
+    string _hrcdid = "NA";
+    
+    float _linkRateForward = 0.0;
+    
+    float _linkRateBackward = 0.0;
+    
 public:
+    
     /// The main constructor:
     /// @param rate - the rate constant for this ReactionBase
-    ReactionBase (float rate, bool isProtoCompartment, double volumeFrac=1.0, int rateVolumeDepExp=0);
+    ReactionBase (float rate, bool isProtoCompartment, floatingpoint volumeFrac=
+    		(floatingpoint)1.0,	int rateVolumeDepExp=0);
     
     /// No copying (including all derived classes)
     ReactionBase (const ReactionBase &rb) = delete;
@@ -137,18 +148,66 @@ public:
     /// size() to determine the iteration limits). The corresponding array<RSpecies*> is
     /// defined by the derived classes.
     virtual RSpecies** rspecies() = 0;
+    
     //aravind, June 30, 2016.
     vector<string> getreactantspecies(){
         vector<string> returnvector;
-        for(int i=0;i<2;i++)
-        {returnvector.push_back((*(rspecies()+i))->getSpecies().getName());}
+        for(int i=0;i<2;i++){
+            returnvector.push_back((*(rspecies()+i))->getSpecies().getName());
+        }
         return returnvector;
     }
+
+    
+    vector<string> getReactantSpecies() {
+        vector<string> returnvector;
+        for(auto i=0U;i<getM();++i){
+            string name = (*(rspecies()+i))->getSpecies().getName();
+            string namecut = name.substr(0,name.find("-",0));
+            returnvector.push_back(namecut);
+        }
+        return returnvector;
+    }
+    
+    vector<string> getProductSpecies() {
+        vector<string> returnvector;
+        for(auto i=getM();i<size();++i){
+        string name = (*(rspecies()+i))->getSpecies().getName();
+        string namecut = name.substr(0,name.find("-",0));
+        returnvector.push_back(namecut);
+        }
+        return returnvector;
+    }
+    
+    vector<species_copy_t> getReactantCopyNumbers()  {
+        vector<species_copy_t> returnvector;
+        for(auto i=0U;i<getM();i++)
+        {returnvector.push_back((*(rspecies()+i))->getN());}
+        return returnvector;
+    }
+    
+    vector<species_copy_t> getProductCopyNumbers()  {
+        vector<species_copy_t> returnvector;
+        for(auto i=getM();i<size();i++)
+        {returnvector.push_back((*(rspecies()+i))->getN());}
+        return returnvector;
+    }
+
+    
+    
     ///Set reaction type
     void setReactionType(ReactionType rxnType) {_reactionType = rxnType;}
     
     ///Get reaction type
     ReactionType getReactionType() {return _reactionType;}
+    
+    void setGNumber(floatingpoint gnum) {_gnum = gnum;};
+
+	floatingpoint getGNumber() {return _gnum;};
+    
+    void setHRCDID(string hrcdid) {_hrcdid = hrcdid;};
+    
+    string getHRCDID() {return _hrcdid;};
     
     ///Set CBound
     void setCBound(CBound* cBound) {_cBound = cBound;}
@@ -179,7 +238,7 @@ public:
     }
     
     /// Getter and setter for compartment volume fraction
-    double getVolumeFrac()const { return _volumeFrac; }
+    floatingpoint getVolumeFrac()const { return _volumeFrac; }
     void setVolumeFrac(float volumeFrac) { _volumeFrac = volumeFrac; }
     
     /// Sets the RNode pointer associated with this ReactionBase to rhs. Usually is
@@ -236,22 +295,22 @@ public:
     /// Can be used to quickly determine whether this ReactionBase should be allowed to
     /// activate - if one of the reactants has a copy number equal to zero, then zero is
     /// returned, indicating that this ReactionBase should not be (yet) activated.
-    double getProductOfReactants () const {return getProductOfReactantsImpl();}
+    floatingpoint getProductOfReactants () const {return getProductOfReactantsImpl();}
     
     /// (Private) implementation of the getProductOfReactants() method to be elaborated
     /// in derived classes.
-    virtual double getProductOfReactantsImpl() const = 0;
+    virtual floatingpoint getProductOfReactantsImpl() const = 0;
     
     /// Computes the product of the copy number of all product RSpecies minus maximum
     /// allowed copy number. Can be used to quickly determine whether this ReactionBase
     /// should be allowed to activate - if one of the products has a copy number equal
     /// to the maximum allowed, then zero is returned, indicating that this ReactionBase
     /// should not be (yet) activated.
-    double getProductOfProducts () const {return getProductOfProductsImpl();}
+    floatingpoint getProductOfProducts () const {return getProductOfProductsImpl();}
     
     /// (Private) implementation of the getProductOfProducts() method to be elaborated
     /// in derived classes.
-    virtual double getProductOfProductsImpl() const = 0;
+    virtual floatingpoint getProductOfProductsImpl() const = 0;
     
     /// Return true if the ReactionBase is currently passivated
 #if defined TRACK_ZERO_COPY_N || defined  TRACK_UPPER_COPY_N
@@ -342,11 +401,11 @@ public:
     
     /// Compute the ReactionBase propensity that is needed by a Gillespie like
     /// algorithm, rate*reactant_1.getN()*reactant_2.getN()...
-    double computePropensity() const {return computePropensityImpl();}
+    floatingpoint computePropensity() const {return computePropensityImpl();}
     
     /// (Private) implementation of the computePropensity() method to be elaborated
     /// in derived classes.
-    virtual double computePropensityImpl() const = 0;
+    virtual floatingpoint computePropensityImpl() const = 0;
     
     /// Usually is applied to ReactionBase objects with propensity of 0 (e.g. when one
     /// of the copy numbers of reactants has dropped to 0. This method call notifies all

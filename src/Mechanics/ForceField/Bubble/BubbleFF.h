@@ -40,12 +40,12 @@ public:
     
     virtual void vectorize();
     virtual void cleanup();
-    
+
     virtual string getName() {return "Bubble";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(double *coord, double *f, double d);
-    virtual void computeForces(double *coord, double *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
 //    virtual void computeForcesAux();
     
     /// BubbleFF can compute load forces on all Bead from Bubble elements

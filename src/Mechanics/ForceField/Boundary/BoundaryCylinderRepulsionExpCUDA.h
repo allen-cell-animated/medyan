@@ -12,20 +12,20 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 using namespace mathfunc;
-__global__ void BoundaryCylinderRepulsionExpenergy(double* coord, double* f, int* beadSet, double* krep, double* slen,
-                                                   int* nintvec, double* beListplane,
-                                                   int* params, double* U_i,
-                                                   double *z, int* culpritID, char*
+__global__ void BoundaryCylinderRepulsionExpenergy(floatingpoint* coord, floatingpoint* f, int* beadSet, floatingpoint* krep, floatingpoint* slen,
+                                                   int* nintvec, floatingpoint* beListplane,
+                                                   int* params, floatingpoint* U_i,
+                                                   floatingpoint *z, int* culpritID, char*
                                                    culpritFF, char* culpritinteraction, char*
                                                    FF, char* interaction){
     if(z[0] == 0.0) {
-        extern __shared__ double s[];
-        double *c1 = s;
+        extern __shared__ floatingpoint s[];
+        floatingpoint *c1 = s;
         int nint = params[1];
-        double R, r;
+        floatingpoint R, r;
         int n = params[0];
         const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
-        double plane[4];
+        floatingpoint plane[4];
         if (thread_idx < nint) {
             U_i[thread_idx] = 0.0;
             for (auto i = 0; i < 3; i++) {
@@ -56,7 +56,7 @@ __global__ void BoundaryCylinderRepulsionExpenergy(double* coord, double* f, int
             R = -r / slen[thread_idx];
             U_i[thread_idx] = krep[thread_idx] * exp(R);
 
-            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                 //set culprit and exit
                 U_i[thread_idx] = -1.0;
@@ -89,22 +89,22 @@ __global__ void BoundaryCylinderRepulsionExpenergy(double* coord, double* f, int
     }
 }
 
-__global__ void BoundaryCylinderRepulsionExpenergyz(double* coord, double* f, int* beadSet, double* krep, double* slen,
-                                                   int* nintvec, double* beListplane,
-                                                    int* params, double* U_i, double *U_vec,
-                                                   double *z, int* culpritID, char* culpritFF, char* culpritinteraction,
+__global__ void BoundaryCylinderRepulsionExpenergyz(floatingpoint* coord, floatingpoint* f, int* beadSet, floatingpoint* krep, floatingpoint* slen,
+                                                   int* nintvec, floatingpoint* beListplane,
+                                                    int* params, floatingpoint* U_i, floatingpoint *U_vec,
+                                                   floatingpoint *z, int* culpritID, char* culpritFF, char* culpritinteraction,
                                                    char* FF, char* interaction, bool*
                                                     conv_state1, bool* conv_state2){
     if(conv_state1[0]||conv_state2[0]) return;
     if(z[0] == 0.0) {
-//        extern __shared__ double s[];
-//        double *c1 = s;
-        double *c1;
+//        extern __shared__ floatingpoint s[];
+//        floatingpoint *c1 = s;
+        floatingpoint *c1;
         int nint = params[1];
-        double R, r;
+        floatingpoint R, r;
         int n = params[0];
         const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
-        double plane[4];
+        floatingpoint plane[4];
         int offset = max(params[2] - 1,0);
         if (thread_idx < nint) {
 //            if(thread_idx == 0){
@@ -141,7 +141,7 @@ __global__ void BoundaryCylinderRepulsionExpenergyz(double* coord, double* f, in
             R = -r / slen[thread_idx];
             U_i[thread_idx] = krep[thread_idx] * exp(R);
             U_vec[offset + thread_idx] = krep[thread_idx] * exp(R);
-            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                 //set culprit and exit
                 U_i[thread_idx] = -1.0;
@@ -173,16 +173,16 @@ __global__ void BoundaryCylinderRepulsionExpenergyz(double* coord, double* f, in
         }
     }
     else if(z[0] != 0.0) {
-//        extern __shared__ double s[];
-//        double *c1 = s;
-//        double *f1 = &c1[3 * blockDim.x];
+//        extern __shared__ floatingpoint s[];
+//        floatingpoint *c1 = s;
+//        floatingpoint *f1 = &c1[3 * blockDim.x];
         int offset = max(params[2] - 1,0);
         int nint = params[1];
-        double R, r;
+        floatingpoint R, r;
         int n = params[0];
         const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
-        double plane[4];
-        double *c1, *f1;
+        floatingpoint plane[4];
+        floatingpoint *c1, *f1;
         if (thread_idx < nint) {
 //            if(thread_idx == 0){
 //                printf("Offset %d \n", offset);
@@ -221,7 +221,7 @@ __global__ void BoundaryCylinderRepulsionExpenergyz(double* coord, double* f, in
             U_i[thread_idx] = krep[thread_idx] * exp(R);
             U_vec[offset + thread_idx] = krep[thread_idx] * exp(R);
 
-/*            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+/*            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                 //set culprit and exit
                 U_i[thread_idx] = -1.0;
@@ -256,16 +256,16 @@ __global__ void BoundaryCylinderRepulsionExpenergyz(double* coord, double* f, in
     }
 }
 
-__global__ void BoundaryCylinderRepulsionExpforces(double* coord, double* f, int* beadSet, double* krep, double* slen,
-                                                   int* nintvec, double* beListplane, int* params){
-//    extern __shared__ double s[];
-//    double *c1 = s;
-    double *c1;
+__global__ void BoundaryCylinderRepulsionExpforces(floatingpoint* coord, floatingpoint* f, int* beadSet, floatingpoint* krep, floatingpoint* slen,
+                                                   int* nintvec, floatingpoint* beListplane, int* params){
+//    extern __shared__ floatingpoint s[];
+//    floatingpoint *c1 = s;
+    floatingpoint *c1;
     int nint = params[1];
-    double R, r, norm[3], f0;
+    floatingpoint R, r, norm[3], f0;
     int n = params[0];
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
-    double plane[4];
+    floatingpoint plane[4];
     if(thread_idx<nint) {
 //        for(auto i=0;i<3;i++){
 //            c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
@@ -308,7 +308,7 @@ __global__ void BoundaryCylinderRepulsionExpforces(double* coord, double* f, int
         R = -r / slen[thread_idx];
         f0 = krep[thread_idx] * exp(R);
         for (int i = 0; i < 3; i++) {
-            if (fabs(f0*norm[i]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(f0*norm[i]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || f0*norm[i] != f0*norm[i]) {
                 printf("Boundary Force became infinite %f %f \n",f0, norm[i]);
                 assert(0);
@@ -317,7 +317,7 @@ __global__ void BoundaryCylinderRepulsionExpforces(double* coord, double* f, int
         }
     }
 }
-//__global__ void BoundaryCylinderRepulsionadd(double *force, double *forcecopy, int *nint) {
+//__global__ void BoundaryCylinderRepulsionadd(floatingpoint *force, floatingpoint *forcecopy, int *nint) {
 //    const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
 //
 //    if (thread_idx < nint[0]) {

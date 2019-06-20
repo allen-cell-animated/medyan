@@ -19,6 +19,7 @@
 #include "Bead.h"
 
 #include "MathFunctions.h"
+#include "Cylinder.h"
 #ifdef CUDAACCL
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -74,13 +75,13 @@ void BranchingDihedralCosine::optimalblocksnthreads( int nint){
 //get addition vars
         bntaddvec2.clear();
         bntaddvec2 = getaddred2bnt(nint);
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
-        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(double)));
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(floatingpoint)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(floatingpoint)));
 
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(floatingpoint)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(floatingpoint)));
 
         char a[] = "BranchingFF";
         char b[] = "Branching Dihedral Cosine";
@@ -99,12 +100,12 @@ void BranchingDihedralCosine::optimalblocksnthreads( int nint){
     }
 
 }
-double* BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
-                                         double *kdih, double *pos, int *params) {
+floatingpoint* BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                         floatingpoint *kdih, floatingpoint *pos, int *params) {
 //    if(blocksnthreadse[1]>0) {
 //
 //        BranchingDihedralCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
-//                (double), stream>>>
+//                (floatingpoint), stream>>>
 //                          (coord, f, beadSet, kdih, pos, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
 //                                  CUDAcommon::getCUDAvars().gculpritFF,
 //                                  CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
@@ -112,7 +113,7 @@ double* BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
 //        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
 //        CUDAcommon::handleerror( cudaGetLastError(),"BranchingDihedralCosineenergy", "BranchingDihedralCosine.cu");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i, params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingDihedralCosineenergy", "BranchingDihedralCosine.cu");
 //        return gU_sum;}
@@ -121,13 +122,13 @@ double* BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
 }
 
 
-double* BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
-                                         double *kdih, double *pos, double *z,
+floatingpoint* BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                         floatingpoint *kdih, floatingpoint *pos, floatingpoint *z,
                                          int *params) {
         if(blocksnthreadse[1]>0) {
 
         BranchingDihedralCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
-                (double), stream>>>
+                (floatingpoint), stream>>>
                           (coord, f, beadSet, kdih, pos, params, gU_i, z, CUDAcommon::getCUDAvars().gculpritID,
                                   CUDAcommon::getCUDAvars().gculpritFF,
                                   CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
@@ -135,7 +136,7 @@ double* BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
 //        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
 //        CUDAcommon::handleerror( cudaGetLastError(),"BranchingDihedralCosineenergy", "BranchingDihedralCosine.cu");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i, params, gU_sum, gpu_Utot);
         CUDAcommon::handleerror( cudaGetLastError() ,"BranchingDihedralCosineenergy", "BranchingDihedralCosine.cu");
 //        return gU_sum;
@@ -143,7 +144,7 @@ double* BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
 
     if(blocksnthreadsez[1]>0) {
         BranchingDihedralCosineenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (24 * blocksnthreadsez[1]) *
-                                            sizeof(double), stream>> > (coord, f, beadSet, kdih, pos,
+                                            sizeof(floatingpoint), stream>> > (coord, f, beadSet, kdih, pos,
                                             params, gU_i, z, CUDAcommon::getCUDAvars().gculpritID,
                 CUDAcommon::getCUDAvars().gculpritFF,
                 CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction );
@@ -151,7 +152,7 @@ double* BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
 //        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
 //        CUDAcommon::handleerror(cudaGetLastError(),"BranchingDihedralCosineenergyz", "BranchingDihedralCosine.cu");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i, params, gU_sum, gpu_Utot);
         CUDAcommon::handleerror(cudaGetLastError(),"BranchingDihedralCosineenergyz", "BranchingDihedralCosine.cu");
 
@@ -163,27 +164,27 @@ double* BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
-//        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        addvectorred<<<1,200,200*sizeof(floatingpoint),stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
 //        std::cout<<"bntaddvec "<<bntaddvec2.at(0)<<" "<<bntaddvec2.at(1)<<" "<<bntaddvec2.at(0)<<" "
 //                ""<<bntaddvec2.at(2)<<" "<<bntaddvec2.at(3)<<endl;
-        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
-        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+        resetfloatingpointvariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(floatingpoint),stream>>>(gU_i,
                 params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror(cudaDeviceSynchronize(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
         CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
         return gU_sum;
     }
 }
-void BranchingDihedralCosine::forces(double *coord, double *f, int *beadSet,
-                                      double *kdih,  double *pos, int *params) {
+void BranchingDihedralCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                      floatingpoint *kdih,  floatingpoint *pos, int *params) {
     if (blocksnthreadsf[1] > 0) {
         BranchingDihedralCosineforces << < blocksnthreadsf[0], blocksnthreadsf[1], (12 * blocksnthreadsf[1]) *
-                                            sizeof(double), stream >> > (coord, f, beadSet, kdih, pos, params);
+                                            sizeof(floatingpoint), stream >> > (coord, f, beadSet, kdih, pos, params);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
@@ -200,20 +201,20 @@ void BranchingDihedralCosine::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-double BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
-                                       double *kdih, double *pos){
+floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                       floatingpoint *kdih, floatingpoint *pos){
 
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
 
-    double *coord1, *coord2, *coord3, *coord4, n1n2, U_i;
-    double *mp = new double[3];
-    double *n1 = new double[3];
-    double *n2 = new double[3];
+    floatingpoint *coord1, *coord2, *coord3, *coord4, n1n2, U_i;
+    floatingpoint *mp = new floatingpoint[3];
+    floatingpoint *n1 = new floatingpoint[3];
+    floatingpoint *n2 = new floatingpoint[3];
 
-    double U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -233,7 +234,7 @@ double BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
 
         U_i = kdih[i] * ( 1 - n1n2 );
 
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return
@@ -252,20 +253,21 @@ double BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
 }
 
 
-double BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
-                                       double *kdih, double *pos, double d){
+floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                       floatingpoint *kdih, floatingpoint *pos, floatingpoint d){
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
 
-    double *coord1, *coord2, *coord3, *coord4, *f1, *f2, *f3, *f4, n1n2, U_i;
-    double *mp = new double[3];
-    double *n1 = new double[3];
-    double *n2 = new double[3];
-    double *zero = new double[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
+    floatingpoint *coord1, *coord2, *coord3, *coord4, n1n2, U_i;
+    floatingpoint *f1, *f2, *f3, *f4;
+    floatingpoint *mp = new floatingpoint[3];
+    floatingpoint *n1 = new floatingpoint[3];
+    floatingpoint *n2 = new floatingpoint[3];
+    floatingpoint *zero = new floatingpoint[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
 
-    double U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -290,7 +292,7 @@ double BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
 
         U_i = kdih[i] * ( 1 - n1n2 );
 
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return
@@ -308,21 +310,22 @@ double BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
     return U;
 }
 
-void BranchingDihedralCosine::forces(double *coord, double *f, int *beadSet,
-                                     double *kdih, double *pos){
+void BranchingDihedralCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                     floatingpoint *kdih, floatingpoint *pos){
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
 
-    double *coord1, *coord2, *coord3, *coord4, *f1, *f2, *f3, *f4, N1, N2, n1n2, f0, NN1, NN2, X, D, Y, position;
-    double n2x, n1y, xd, yd, xx, xy, yy, XD, X1, X2, Y1, Y2, D1, D2, YD;
-    double *mp = new double[3];
-    double *n1 = new double[3];
-    double *n2 = new double[3];
-    double *zero = new double[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
+    floatingpoint *coord1, *coord2, *coord3, *coord4, N1, N2, n1n2, f0, NN1, NN2, X, D, Y, position;
+    floatingpoint *f1, *f2, *f3, *f4;
+	floatingpoint n2x, n1y, xd, yd, xx, xy, yy, XD, X1, X2, Y1, Y2, D1, D2, YD;
+    floatingpoint *mp = new floatingpoint[3];
+    floatingpoint *n1 = new floatingpoint[3];
+    floatingpoint *n2 = new floatingpoint[3];
+    floatingpoint *zero = new floatingpoint[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
 
-    double U = 0.0;
+    floatingpoint U = 0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -404,6 +407,45 @@ void BranchingDihedralCosine::forces(double *coord, double *f, int *beadSet,
         f4[1] +=f0*( YD*( (coord4[2] - coord3[2])*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) - (coord4[0] - coord3[0])*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) ) + Y2*(coord4[1] - coord3[1]) - D2*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) );
 
         f4[2] +=f0*( YD*( (coord4[0] - coord3[0])*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) - (coord4[1] - coord3[1])*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) ) + Y2*(coord4[2] - coord3[2]) - D2*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
+
+        #ifdef CHECKFORCES_INF_NAN
+        if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)||checkNaN_INF(f3,0,2)
+           ||checkNaN_INF(f4,0,2)){
+            cout<<"Branching Dihedral Force becomes infinite. Printing data "<<endl;
+
+            auto b = BranchingPoint::getBranchingPoints()[i];
+            auto cyl1 = b->getFirstCylinder();
+            auto cyl2 = b->getSecondCylinder();
+            cout<<"Cylinder IDs "<<cyl1->getId()<<" "<<cyl2->getId()<<" with cIndex "
+                <<cyl1->_dcIndex<<" "<<cyl2->_dcIndex<<" and bIndex "
+                <<cyl1->getFirstBead()->_dbIndex<<" "
+                <<cyl1->getSecondBead()->_dbIndex<<" "
+                <<cyl2->getFirstBead()->_dbIndex<<" "
+                <<cyl2->getSecondBead()->_dbIndex<<endl;
+
+            cout<<"Printing coords"<<endl;
+            cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
+            cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
+            cout<<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
+            cout<<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<endl;
+            cout<<"Printing force"<<endl;
+            cout<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<endl;
+            cout<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<endl;
+            cout<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<endl;
+            cout<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
+            cout<<"Printing binary Coords"<<endl;
+            printvariablebinary(coord1,0,2);
+            printvariablebinary(coord2,0,2);
+            printvariablebinary(coord3,0,2);
+            printvariablebinary(coord4,0,2);
+            cout<<"Printing binary Force"<<endl;
+            printvariablebinary(f1,0,2);
+            printvariablebinary(f2,0,2);
+            printvariablebinary(f3,0,2);
+            printvariablebinary(f4,0,2);
+            exit(EXIT_FAILURE);
+        }
+        #endif
     }
     delete [] mp;
     delete [] n1;

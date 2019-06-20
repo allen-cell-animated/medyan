@@ -93,19 +93,18 @@ class Bead : public Component, public Trackable, public Movable,
     public Database< Bead, false, BeadData > {
     
 public:
-    using db_type = Database< Bead, false, BeadData >;
+    using DatabaseType = Database< Bead, false, BeadData >;
 
     ///@note - all vectors are in x,y,z coordinates.
     vector<double> coordinateP; ///< Prev coordinates of bead in CG minimization
 
                           ///< Forces should always correspond to current coordinates.
-    vector<double> force1;
     
-    vector<double> brforce; //Qin boundary repulsion force
-    vector<double> pinforce;
+    vector<floatingpoint> brforce; //boundary repulsion force
+    vector<floatingpoint> pinforce;
 
-    vector<double> loadForcesP;
-    vector<double> loadForcesM;
+    vector<floatingpoint> loadForcesP;
+    vector<floatingpoint> loadForcesM;
     ///< The force on this bead due to an external load
     ///< This is not a vector (x,y,z) value, but a list of
     ///< force magnitudes in the direction of polymerization with
@@ -124,12 +123,12 @@ public:
     /// The bead can be pinned to a certain position in the simulation volume.
     /// These parameters describe the pinning. Adding the Bead to the list of pinned
     /// Beads is done by a corresponding special protocol. (see executeSpecialProtocols() in Controller)
-    vector<double> pinnedPosition;
+    vector<floatingpoint> pinnedPosition;
     
     bool isStatic = false;
     
     ///Main constructor
-    Bead (vector<double> v, Composite* parent, int position);
+    Bead (vector<floatingpoint> v, Composite* parent, int position);
     
     ///Default constructor
     Bead(Composite* parent, int position);
@@ -189,9 +188,7 @@ public:
         if(it != _pinnedBeads.end()) _pinnedBeads.erase(it);
     }
     
-    const vector<double>& getPinPosition() { return pinnedPosition;}
-
-    //Qin
+    const vector<floatingpoint>& getPinPosition() { return pinnedPosition;}
     // Remove all pinned beads.
     void resetAllPinned() {
 
@@ -243,13 +240,13 @@ public:
         return dot(forceAux(), forceAuxP());
     }
     //Qin add brFDotbrF
-    inline double brFDotbrF() {
+    inline floatingpoint brFDotbrF() {
         return brforce[0]*brforce[0] +
         brforce[1]*brforce[1] +
         brforce[2]*brforce[2];
     }
-    //Qin add pinFDotpinF
-    inline double pinFDotpinF() {
+    //add pinFDotpinF
+    inline floatingpoint pinFDotpinF() {
         return pinforce[0]*pinforce[0] +
         pinforce[1]*pinforce[1] +
         pinforce[2]*pinforce[2];
@@ -258,7 +255,7 @@ public:
     
     ///Helper functions for load forces
     
-    double getLoadForcesP();
+    floatingpoint getLoadForcesP();
     
     void printLoadForcesP() {
         
@@ -272,7 +269,7 @@ public:
         cout << endl;
     }
     
-    double getLoadForcesM();
+    floatingpoint getLoadForcesM();
  
     void printLoadForcesM()  {
         
@@ -286,6 +283,51 @@ public:
         cout << endl;
     }
 
+    // TODO CLEAN
+    static int getmaxbindex(){
+        return maxbindex;
+    }
+
+	// through depolymerization/ destruction reactions.
+	static void revectorizeifneeded(){
+		//Run the special protocol during chemistry, the regular otherwise.
+		if(SysParams::DURINGCHEMISTRY)
+			appendrevectorizeifneeded();
+		else {
+			int newsize = vectormaxsize;
+			//if the maximum bead index is very close to the vector size
+			if (vectormaxsize - maxbindex <= bead_cache / 10)
+				//new size will be increased by bead_cache
+				newsize = (int(Nbeads / bead_cache) + 2) * bead_cache;
+			//if we have removed bead_cache number of beads from the system
+			if (removedbindex.size() >= bead_cache)
+				//we can revectorize with a smaller size.
+				newsize = (int(Nbeads / bead_cache) + 1) * bead_cache;
+			//set parameters and revectorize
+			if (newsize != vectormaxsize) {
+//				cout<<"vectorize bead"<<endl;
+				floatingpoint *coord = CUDAcommon::serlvars.coord;
+				delete[] coord;
+				floatingpoint *newcoord = new floatingpoint[3 * newsize];
+				CUDAcommon::serlvars.coord = newcoord;
+				revectorize(newcoord);
+				//copyvector(newcoord, coord);
+				vectormaxsize = newsize;
+				//cylinder structure needs to be revecotrized as well.
+				triggercylindervectorization = true;
+			}
+		}
+	}
+	static void printBeaddata(){
+		cout<<"Printing bead data "<<endl;
+		for(auto b:getElements()){
+			cout<<"Bead ID "<<b->getId()<<" dbIndex "<<b->_dbIndex<<endl;
+		}
+		cout<<"removedbindex "<<removedbindex.size()<<endl;
+		cout<<"------------------------------Bead"<<endl;
+    }
+
+    // END TODO CLEAN
 private:
     Compartment* _compartment = nullptr; ///< Pointer to the compartment that this bead is in
     
@@ -296,6 +338,88 @@ private:
     
     static std::vector<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem
                                          ///< (attached to some element in SubSystem)
+    // TODO CLEAN
+    //Vectorize beads so the coordinates are all available in a single array.
+    //@{
+    static int maxbindex;//Maximum bead index alloted.
+    static int vectormaxsize;//maximum number of beads that can be appended without
+    // revectorization
+    static int Nbeads;//Total number of beads in the system
+    static vector<int> removedbindex;//stores the bead indices that have been freed
+
+
+    static void revectorize(floatingpoint* coord){
+        //set contiguous bindices and set coordinates.
+        int idx = 0;
+        for(auto b:getElements()){
+            int index = 3 * idx;
+            coord[index] = b->coordinate[0];
+            coord[index + 1] = b->coordinate[1];
+            coord[index + 2] = b->coordinate[2];
+            b->_dbIndex = idx;
+            idx++;
+        }
+        Nbeads =getElements().size();
+        maxbindex = getElements().size();
+        removedbindex.clear();
+    }
+
+    static void appendrevectorizeifneeded(){
+
+        int newsize = vectormaxsize;
+        //if the maximum bead index is very close to the vector size
+        if(vectormaxsize - maxbindex <= bead_cache/10 )
+            //new size will be increased by bead_cache
+            newsize = vectormaxsize + bead_cache;
+        //set parameters and revectorize
+        if(newsize != vectormaxsize){
+            floatingpoint *coord = CUDAcommon::serlvars.coord;
+            delete[] coord;
+            floatingpoint *newcoord = new floatingpoint[3 * newsize];
+            CUDAcommon::serlvars.coord = newcoord;
+            appendrevectorize(newcoord);
+            //copyvector(newcoord, coord);
+            vectormaxsize = newsize;
+            //cylinder structure needs to be revecotrized as well.
+            triggercylindervectorization = true;
+        }
+    }
+
+	static void appendrevectorize(floatingpoint* coord){
+		//set coords based on bindices.
+		maxbindex = 0;
+		for(auto b:getElements()){
+		    maxbindex = max<int>(maxbindex, b->_dbIndex);
+			int index = 3 * b->_dbIndex;
+			coord[index] = b->coordinate[0];
+			coord[index + 1] = b->coordinate[1];
+			coord[index + 2] = b->coordinate[2];
+		}
+		maxbindex++;
+		Nbeads =getElements().size();
+	}
+
+    //deprecated
+    static void copyvector(floatingpoint* newcoord, floatingpoint* coord){
+        int idx = 0;
+        for(auto b:getElements()){
+            idx++;
+        }
+    }
+    //copy coodinates of this bead to the appropriate spot in coord vector.
+    void  copycoordinatestovector() {
+            CUDAcommon::serlvars.coord[3 * _dbIndex] = coordinate[0];
+            CUDAcommon::serlvars.coord[3 * _dbIndex + 1] = coordinate[1];
+            CUDAcommon::serlvars.coord[3 * _dbIndex + 2] = coordinate[2];
+    }
+    void resetcoordinates() {
+        CUDAcommon::serlvars.coord[3 * _dbIndex] = -1.0;
+        CUDAcommon::serlvars.coord[3 * _dbIndex + 1] = -1.0;
+        CUDAcommon::serlvars.coord[3 * _dbIndex + 2] = -1.0;
+    }
+    //@}
+
+    // END TODO CLEAN
 };
 
 

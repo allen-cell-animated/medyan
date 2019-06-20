@@ -81,6 +81,10 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     //Get the force field access to the HNLID
     for(auto nl : volumeFF->getNeighborLists()) {
 #ifdef HYBRID_NLSTENCILLIST
+        //Original neighborlist is created even when HybridNeighborList is use as the
+        // neighborLists are implemented as predominantly modifications in the back-end.
+        // Front end functions remain the same and function calls are internally
+        // redirected to HybridNeighborList functions.
             volumeFF->setHNeighborLists(_subSystem->getHNeighborList());
 #endif
         if(nl != nullptr)
@@ -97,7 +101,6 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
 #endif
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         _subSystem->addBNeighborList(nl);
-//        _subSystem->addNeighborList(nl);
 #endif
     }
 

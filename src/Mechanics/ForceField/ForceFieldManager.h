@@ -23,36 +23,40 @@
 
 /// A class to store and iterate over all [ForceFields](@ref ForceField).
 /*!
- *  The ForceFieldManager is used to store all [ForceFields](@ref ForceField) 
- *  initialized by the system, as well as iterate over these potentials and calculate 
+ *  The ForceFieldManager is used to store all [ForceFields](@ref ForceField)
+ *  initialized by the system, as well as iterate over these potentials and calculate
  *  total forces and energies. This class contains functions for the said calculations.
  */
 class ForceFieldManager {
-    
+
 friend class CGMethod;
-    
+
 public:
      vector<ForceField*> _forceFields; ///< All forcefields in the system
-    
+
+     static ForceField* _culpritForceField;
+
     /// Vectorize all interactions involved in calculation
     void vectorizeAllForceFields();
     /// Deallocation of vectorized memory
     void cleanupAllForceFields();
-    
+
     /// Compute the energy using all available force fields
     /// @return Returns infinity if there was a problem with a ForceField
     /// energy calculation, such that beads will not be moved to this
     /// problematic configuration.
     /// @param print - prints detailed info about energies
-    double computeEnergy(double *coord, double *f, double d, bool verbose = false);
+    floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d, bool verbose = false);
+
+    /// Compute the forces of all force fields
+    void computeForces(floatingpoint *coord, floatingpoint *f);
     
-    /// Compute the forces of all force fields 
-    void computeForces(double *coord, double *f);
-    
+    void printculprit(floatingpoint* force);
+
 #ifdef CUDAACCL
         cudaStream_t  streamF = NULL;
     /// CUDA Copy forces from f to fprev
-    void CUDAcopyForces(cudaStream_t  stream, double *f, double *fprev);
+    void CUDAcopyForces(cudaStream_t  stream, floatingpoint *f, floatingpoint *fprev);
 #endif
 
     /// Compute the load forces on the beads. This does not update the force (xyz) vector
@@ -71,8 +75,12 @@ public:
     int *gpu_params;
     vector<int> params;
     //@}
-    void assignallforcemags();
+
 #endif
+    void assignallforcemags();
+
+private:
+    chrono::high_resolution_clock::time_point tbegin, tend;
 };
 
 #endif

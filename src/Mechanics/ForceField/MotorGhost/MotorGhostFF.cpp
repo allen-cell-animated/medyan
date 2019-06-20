@@ -48,10 +48,10 @@ void MotorGhostFF::whoIsCulprit() {
 
 void MotorGhostFF::vectorize() {
     //Reset stretching forces to 0.
-    for(auto m:MotorGhost::getMotorGhosts()){
+    /*for(auto m:MotorGhost::getMotorGhosts()){
         //Using += to ensure that the stretching forces are additive.
         m->getMMotorGhost()->stretchForce = 0.0;
-    }
+    }*/
 
 
     for (auto &interaction : _motorGhostInteractionVector)
@@ -65,10 +65,10 @@ void MotorGhostFF::cleanup() {
 }
 
 
-double MotorGhostFF::computeEnergy(double *coord, double *f, double d) {
+floatingpoint MotorGhostFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
 
-    double U= 0.0;
-    double U_i=0.0;
+    floatingpoint U= 0.0;
+    floatingpoint U_i=0.0;
 
     for (auto &interaction : _motorGhostInteractionVector) {
 
@@ -85,7 +85,7 @@ double MotorGhostFF::computeEnergy(double *coord, double *f, double d) {
     return U;
 }
 
-void MotorGhostFF::computeForces(double *coord, double *f) {
+void MotorGhostFF::computeForces(floatingpoint *coord, floatingpoint *f) {
 
     for (auto &interaction : _motorGhostInteractionVector)
         interaction->computeForces(coord, f);

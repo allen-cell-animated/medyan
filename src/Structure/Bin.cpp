@@ -18,4 +18,3 @@ void Bin::updatecindices(){
     for(auto &c:_cylinders)
         cindicesvector.push_back(c->getStableIndex());
 }
-

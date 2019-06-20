@@ -23,24 +23,24 @@ using namespace mathfunc;
 //#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 //
 //#else
-//static __inline__ __device__ double atomicAdd(double *address, double val) {
+//static __inline__ __device__ floatingpoint atomicAdd(floatingpoint *address, floatingpoint val) {
 //    unsigned long long int* address_as_ull = (unsigned long long int*)address;
 //    unsigned long long int old = *address_as_ull, assumed;
 //    if (val==0.0)
-//      return __longlong_as_double(old);
+//      return __longlong_as_floatingpoint(old);
 //    do {
 //      assumed = old;
-//      old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val +__longlong_as_double(assumed)));
+//      old = atomicCAS(address_as_ull, assumed, __floatingpoint_as_longlong(val +__longlong_as_floatingpoint(assumed)));
 //    } while (assumed != old);
-//    return __longlong_as_double(old);
+//    return __longlong_as_floatingpoint(old);
 //  }
 //
 //
 //#endif
 
-//__global__ void addvectorFB(double *U, int *params, double *U_sum, double *U_tot){
+//__global__ void addvectorFB(floatingpoint *U, int *params, floatingpoint *U_sum, floatingpoint *U_tot){
 //    U_sum[0] = 0.0;
-//    double sum = 0.0;
+//    floatingpoint sum = 0.0;
 //    for(auto i=0;i<params[1];i++){
 //        if(U[i] == -1.0 && sum != -1.0){
 //            U_sum[0] = -1.0;
@@ -56,16 +56,16 @@ using namespace mathfunc;
 //
 //}
 
-__global__ void FilamentBendingCosineenergy(double *coord, double *force, int *beadSet, double *kbend,
-                                            double *eqt, int *params, double *U_i, double *z, int *culpritID,
+__global__ void FilamentBendingCosineenergy(floatingpoint *coord, floatingpoint *force, int *beadSet, floatingpoint *kbend,
+                                            floatingpoint *eqt, int *params, floatingpoint *U_i, floatingpoint *z, int *culpritID,
                                             char* culpritFF, char* culpritinteraction, char* FF, char*
                                             interaction) {
     if(z[0] == 0.0) {
-        extern __shared__ double s[];
-        double *c1 = s;
-        double *c2 = &c1[3 * blockDim.x];
-        double *c3 = &c2[3 * blockDim.x];
-        double L1, L2, L1L2, l1l2, phi, dPhi;
+        extern __shared__ floatingpoint s[];
+        floatingpoint *c1 = s;
+        floatingpoint *c2 = &c1[3 * blockDim.x];
+        floatingpoint *c3 = &c2[3 * blockDim.x];
+        floatingpoint L1, L2, L1L2, l1l2, phi, dPhi;
 
         int nint = params[1];
         int n = params[0];
@@ -95,7 +95,7 @@ __global__ void FilamentBendingCosineenergy(double *coord, double *force, int *b
 
             U_i[thread_idx] = kbend[thread_idx] * (1 - cos(dPhi));
 
-            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                 U_i[thread_idx] = -1.0;
                 culpritID[0] = thread_idx;
@@ -117,21 +117,21 @@ __global__ void FilamentBendingCosineenergy(double *coord, double *force, int *b
     }
 }
 
-__global__ void FilamentBendingCosineenergyz(double *coord, double *f, int *beadSet, double *kbend,
-                                             double *eqt, int *params, double *U_i,
-                                             double *U_vec, double *z, int *culpritID,
+__global__ void FilamentBendingCosineenergyz(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kbend,
+                                             floatingpoint *eqt, int *params, floatingpoint *U_i,
+                                             floatingpoint *U_vec, floatingpoint *z, int *culpritID,
                                              char* culpritFF, char* culpritinteraction, char* FF, char*
                                              interaction, bool* conv_state1, bool*
                                              conv_state2){
     if(conv_state1[0]||conv_state2[0]) return;
 
     if(z[0] == 0.0) {
-        extern __shared__ double s[];
-        double *c1 = s;
-        double *c2 = &c1[3 * blockDim.x];
-        double *c3 = &c2[3 * blockDim.x];
-        double L1, L2, L1L2, l1l2, phi, dPhi;
-//        double *c1, *c2, *c3;
+        extern __shared__ floatingpoint s[];
+        floatingpoint *c1 = s;
+        floatingpoint *c2 = &c1[3 * blockDim.x];
+        floatingpoint *c3 = &c2[3 * blockDim.x];
+        floatingpoint L1, L2, L1L2, l1l2, phi, dPhi;
+//        floatingpoint *c1, *c2, *c3;
         int nint = params[1];
         int n = params[0];
         int offset = max(params[2] -1 , 0);
@@ -172,7 +172,7 @@ __global__ void FilamentBendingCosineenergyz(double *coord, double *f, int *bead
 
             U_i[thread_idx] = kbend[thread_idx] * (1 - cos(dPhi));
             U_vec[offset + thread_idx] = kbend[thread_idx] * (1 - cos(dPhi));
-            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                 U_i[thread_idx] = -1.0;
                 culpritID[0] = thread_idx;
@@ -194,15 +194,15 @@ __global__ void FilamentBendingCosineenergyz(double *coord, double *f, int *bead
     }
 
     else if(z[0] != 0.0) {
-        extern __shared__ double s[];
-        double *c1 = s;
-        double *c2 = &c1[3 * blockDim.x];
-        double *c3 = &c2[3 * blockDim.x];
-        double *f1 = &c3[3 * blockDim.x];
-        double *f2 = &f1[3 * blockDim.x];
-        double *f3 = &f2[3 * blockDim.x];
-        double L1, L2, L1L2, l1l2, phi, dPhi;
-//        double *c1, *c2, *c3, *f1, *f2, *f3;
+        extern __shared__ floatingpoint s[];
+        floatingpoint *c1 = s;
+        floatingpoint *c2 = &c1[3 * blockDim.x];
+        floatingpoint *c3 = &c2[3 * blockDim.x];
+        floatingpoint *f1 = &c3[3 * blockDim.x];
+        floatingpoint *f2 = &f1[3 * blockDim.x];
+        floatingpoint *f3 = &f2[3 * blockDim.x];
+        floatingpoint L1, L2, L1L2, l1l2, phi, dPhi;
+//        floatingpoint *c1, *c2, *c3, *f1, *f2, *f3;
         int nint = params[1];
         int n = params[0];
         int offset = max(params[2] -1 , 0 );
@@ -250,7 +250,7 @@ __global__ void FilamentBendingCosineenergyz(double *coord, double *f, int *bead
 
             U_i[thread_idx] = kbend[thread_idx] * (1 - cos(dPhi));
             U_vec[offset + thread_idx] = kbend[thread_idx] * (1 - cos(dPhi));
-/*            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+/*            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                 U_i[thread_idx] = -1.0;
                 culpritID[0] = thread_idx;
@@ -274,13 +274,13 @@ __global__ void FilamentBendingCosineenergyz(double *coord, double *f, int *bead
 }
 
 
-__global__ void FilamentBendingCosineforces(double *coord, double *f, int *beadSet,
-                                                 double *kbend, double *eqt, int *params){
-    extern __shared__ double s[];
-    double *c1 = s;
-    double *c2 = &c1[3 * blockDim.x];
-    double *c3 = &c2[3 * blockDim.x];
-    double  f1[3], f2[3], f3[3], L1, L2, l1l2, invL1, invL2, A,B,C, phi, dPhi, k;
+__global__ void FilamentBendingCosineforces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                                 floatingpoint *kbend, floatingpoint *eqt, int *params){
+    extern __shared__ floatingpoint s[];
+    floatingpoint *c1 = s;
+    floatingpoint *c2 = &c1[3 * blockDim.x];
+    floatingpoint *c3 = &c2[3 * blockDim.x];
+    floatingpoint  f1[3], f2[3], f3[3], L1, L2, l1l2, invL1, invL2, A,B,C, phi, dPhi, k;
 
     int nint = params[1];
     int n = params[0];

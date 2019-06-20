@@ -17,6 +17,8 @@
 #include "common.h"
 
 #include "Compartment.h"
+#include "ChemSimImpl.h"
+
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -60,18 +62,26 @@ public:
     /// Initialize the ChemSim algorithm as well as the ChemManager
     ///@param chemAlgorithm - a string defining the chemical algorithm to be used
     ///@param chemInitializer - a string defining the chemical manager used
-    void initialize(string& chemAlgorithm, ChemistryData& chem);
+    void initialize(string& chemAlgorithm, ChemistryData& chem, DissipationTracker* dt);
     //aravind June 29,2016.
     void restart();
     
     ///Run chemistry for a given amount of time
-    bool run(double time);
+    bool run(floatingpoint time);
     
     ///Run chemistry for a given number of reaction steps
     bool runSteps(int steps);
     
     ///Remove set of reactions at runtime, specified by input
     void removeReactions();
+    
+    vector<floatingpoint> getEnergy();
+    
+    ChemSim* getCS();
+    
+    DissipationTracker* getDT();
+
+    
 };
 
 

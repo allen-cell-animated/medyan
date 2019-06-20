@@ -24,18 +24,18 @@ using namespace mathfunc;
 
 std::vector<Bead*> Bead::_pinnedBeads;
 
-Bead::Bead (vector<double> v, Composite* parent, int position)
-// Qin add brforce, pinforce
+Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
+//add brforce, pinforce
     : Trackable(true),
-      db_type(vector2Vec<3>(v), Vec3{}, Vec3{}, Vec3{}, Vec3{}),
+      DatabaseType(vector2Vec<3>(v), Vec3{}, Vec3{}, Vec3{}, Vec3{}),
       coordinateP(v),
       brforce(3, 0), pinforce(3,0),
       _position(position), _birthTime(tau()) {
     
     parent->addChild(unique_ptr<Component>(this));
           
-    loadForcesP = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
-    loadForcesM = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
+    loadForcesP = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
+    loadForcesM = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
     
     //Find compartment
     try {_compartment = GController::getCompartment(v);}
@@ -54,9 +54,9 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
 }
 
 Bead::Bead(Composite* parent, int position)
-// Qin add brforce, pinforce
+//add brforce, pinforce
     : Trackable(true),
-    db_type(Vec3{}, Vec3{}, Vec3{}, Vec3{}, Vec3{}),
+    DatabaseType(Vec3{}, Vec3{}, Vec3{}, Vec3{}, Vec3{}),
     coordinateP(3, 0),
     brforce(3, 0), pinforce(3,0), _position(position) {
     
@@ -99,7 +99,7 @@ void Bead::printSelf() {
     cout << endl;
 }
 
-double Bead::getLoadForcesP() {
+floatingpoint Bead::getLoadForcesP() {
     
     if (lfip < 0)
         return loadForcesP[0];
@@ -110,7 +110,7 @@ double Bead::getLoadForcesP() {
     else return loadForcesP[lfip];
 }
 
-double Bead::getLoadForcesM() {
+floatingpoint Bead::getLoadForcesM() {
     
     if (lfim < 0)
         return loadForcesM[0];
