@@ -1165,7 +1165,7 @@ void Controller::run() {
 
                 mins = chrono::high_resolution_clock::now();
                 rearrangeAllDatabases();
-                Cylinder::updateData();
+                Cylinder::updateAllData();
                 _mController->run();
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runm3(mine - mins);
@@ -1300,7 +1300,7 @@ void Controller::run() {
             //run mcontroller, update system
             if(stepsLastMinimization >= _minimizationSteps) {
                 rearrangeAllDatabases();
-                Cylinder::updateData();
+                Cylinder::updateAllData();
                 _mController->run();
                 updatePositions();
 

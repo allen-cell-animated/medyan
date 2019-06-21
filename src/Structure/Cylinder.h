@@ -122,7 +122,11 @@ public:
     static bool setpositionupdatedstate; //Setter to check if position has been updated
 
     // Update CylinderInfoData using newest information in the system
-    static void updateData();
+    static void updateAllData() {
+        // Update data for all cylinders
+        for(auto c : getCylinders()) c->updateData();
+    }
+    void updateData(); // Update data for this cylinder. TODO: make it const
 
     /// Constructor, initializes a cylinder
     Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int position,
