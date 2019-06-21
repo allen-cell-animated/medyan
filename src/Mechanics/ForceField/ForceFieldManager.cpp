@@ -127,8 +127,8 @@ void ForceFieldManager::cleanupAllForceFields() {
 
 template< bool stretched >
 floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbose) const {
-#ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
+#ifdef CUDATIMETRACK
 //    CUDAcommon::cudatime.TcomputeE = 0.0;
     CUDAcommon::cudatime.TveccomputeE.clear();
     CUDAcommon::cudatime.Ecount++;
@@ -172,7 +172,6 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
     CUDAcommon::handleerror(cudaMemcpy(cuda_lambda, CUDAcommon::cudavars.gpu_lambda,  sizeof(floatingpoint),
                                        cudaMemcpyDeviceToHost));
 
-    std::cout<<"Lambda used CUDA "<<cuda_lambda[0]<<" SERL "<<d<<endl;
 #endif
     short count = 0;
     CUDAcommon::tmin.computeenergycalls++;
@@ -191,7 +190,7 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
         else
             CUDAcommon::tmin.individualenergies.push_back(elapsed_energy.count());
 
-		    if(areEqual(d,0.0)){
+		    if(!stretched){
 			    if(CUDAcommon::tmin.individualenergieszero.size() == _forceFields.size())
 				    CUDAcommon::tmin.individualenergieszero[count] += elapsed_energy.count();
 			    else
@@ -230,7 +229,7 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
                 return numeric_limits<floatingpoint>::infinity();
             }
                 //if this is a minimization try, just return infinity
-            else {cout<<"Returning infintie energy "<<ff->getName()<<" d "<<d<<endl;
+            else {cout<<"Returning infintie energy "<<ff->getName()<<endl;
                 return numeric_limits<floatingpoint>::infinity();}
         }
         else energy += tempEnergy;
@@ -319,8 +318,8 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
 #endif
     return energy;
 }
-template double ForceFieldManager::computeEnergy< false >(double *, bool) const;
-template double ForceFieldManager::computeEnergy< true >(double *, bool) const;
+template floatingpoint ForceFieldManager::computeEnergy< false >(floatingpoint *, bool) const;
+template floatingpoint ForceFieldManager::computeEnergy< true >(floatingpoint *, bool) const;
 
 void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
     //reset to zero

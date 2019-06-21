@@ -83,7 +83,7 @@ void BoundaryBubbleRepulsion<BRepulsionInteractionType>::deallocate() {
 }
 
 template <class BRepulsionInteractionType>
-double BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(floatingpoint *coord) {
+floatingpoint BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(floatingpoint *coord) {
     
     return _FFType.energy(coord, beadSet, krep, slen, nneighbors);
     
