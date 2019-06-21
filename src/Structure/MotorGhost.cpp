@@ -209,8 +209,8 @@ void MotorGhost::updateReactionRates() {
     auto b4 = _c2->getSecondBead();
     cout<<"MG mID "<<getId()<<" "<<_c1->getId()<<" "<<_c2->getId()<<" "<<_position1<<" "
         <<_position2<<" cindex "<<_c1->getStableIndex()<<" "<<_c2->getStableIndex()<<" bID "<<b1->getId
-            ()<<" "<<b2->getId()<<" bindex "<<b1->getIndex()<<" "<<b2->getIndex()<<" "
-            <<b3->getIndex()<<" "<<b4->getIndex()<<endl;
+            ()<<" "<<b2->getId()<<" bindex "<<b1->getStableIndex()<<" "<<b2->getStableIndex()<<" "
+            <<b3->getStableIndex()<<" "<<b4->getStableIndex()<<endl;
 #endif
 
     //current force
@@ -350,8 +350,8 @@ void MotorGhost::updateReactionRates() {
 #ifdef CROSSCHECK
     cout<<"MG mID "<<getId()<<" "<<_c1->getId()<<" "<<_c2->getId()<<" "<<_position1<<" "
         <<_position2<<" cindex "<<_c1->getStableIndex()<<" "<<_c2->getStableIndex()<<" bID "<<b1->getId
-            ()<<" "<<b2->getId()<<" bindex "<<b1->getIndex()<<" "<<b2->getIndex()<<" "
-        <<b3->getIndex()<<" "<<b4->getIndex()<<endl;
+            ()<<" "<<b2->getId()<<" bindex "<<b1->getStableIndex()<<" "<<b2->getStableIndex()<<" "
+        <<b3->getStableIndex()<<" "<<b4->getStableIndex()<<endl;
 #endif
 }
 
@@ -376,8 +376,8 @@ void MotorGhost::moveMotorHead(Cylinder* c,
 
 	cout<<"motor-walking  mID "<<getId()<<" "<<_c1->getId()<<" "<<_c2->getId()<<" "<<_position1<<" "
         <<_position2<<" cindex "<<_c1->getStableIndex()<<" "<<_c2->getStableIndex()<<" bID "<<b1->getId
-            ()<<" "<<b2->getId()<<" bindex "<<b1->getIndex()<<" "<<b2->getIndex()<<" "
-        <<b3->getIndex()<<" "<<b4->getIndex()<<" move "<<c->getId()<<" old "<<oldPosition<<" new "
+            ()<<" "<<b2->getId()<<" bindex "<<b1->getStableIndex()<<" "<<b2->getStableIndex()<<" "
+        <<b3->getStableIndex()<<" "<<b4->getStableIndex()<<" move "<<c->getId()<<" old "<<oldPosition<<" new "
         <<newPosition<<endl;
 	cout<<"mcoord before "<<mp1[0]<<" "<<mp1[1]<<" "<<mp1[2]<<" "<<mp2[0]<<" "<<mp2[1]<<" "
 																			  ""<<mp2[2]<<endl;
@@ -479,8 +479,8 @@ void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
 
     cout<<"motor-walking  mID "<<getId()<<" "<<_c1->getId()<<" "<<_c2->getId()<<" "<<_position1<<" "
         <<_position2<<" cindex "<<_c1->getStableIndex()<<" "<<_c2->getStableIndex()<<" bID "<<b1->getId
-            ()<<" "<<b2->getId()<<" bindex "<<b1->getIndex()<<" "<<b2->getIndex()<<" "
-        <<b3->getIndex()<<" "<<b4->getIndex()<<" move oldC "<<oldC->getId()<<" newC "
+            ()<<" "<<b2->getId()<<" bindex "<<b1->getStableIndex()<<" "<<b2->getStableIndex()<<" "
+        <<b3->getStableIndex()<<" "<<b4->getStableIndex()<<" move oldC "<<oldC->getId()<<" newC "
         <<newC->getId() <<" old " <<oldPosition<<" new "<<newPosition<<endl;
 
 	if(newC->getId() == _c1->getId() && newPosition == _position1)

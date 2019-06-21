@@ -260,7 +260,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
     long i = 0;
     long index = 0;
     for(auto b:Bead::getBeads()){
-        index = 3 * b->getIndex();
+        index = 3 * b->getStableIndex();
         std::cout<<b->getId()<<" "<< b->coordinate() <<" "
                 "" << b->force() <<endl;
     }
@@ -408,13 +408,13 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
         long i = 0;
         long index = 0;
         for(auto b:Bead::getBeads()){
-            index = 3 * b->getIndex();
+            index = 3 * b->getStableIndex();
 
             std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                     ""<<coord[index + 2]<<" "
                     ""<<forceAux[index]<<" "
                     ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-                    b->getIndex()<<endl;
+                    b->getStableIndex()<<endl;
         }
         std::cout<<"MB printed beads & forces"<<endl;
 #endif
@@ -645,13 +645,13 @@ std::cout<<"----------------------------------------"<<endl;
         long i = 0;
         long index = 0;
         for(auto b:Bead::getBeads()){
-            index = 3 * b->getIndex();
+            index = 3 * b->getStableIndex();
 
             std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                     ""<<coord[index + 2]<<" "
                     ""<<forceAux[index]<<" "
                     ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-                    b->getIndex()<<endl;
+                    b->getStableIndex()<<endl;
         }
         std::cout<<"MB printed beads & forces"<<endl;
 #endif

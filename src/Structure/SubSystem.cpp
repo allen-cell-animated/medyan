@@ -83,8 +83,8 @@ void SubSystem::resetNeighborLists() {
                             coord_com[index + 1] = c->coordinate[1];
                             coord_com[index + 2] = c->coordinate[2];
 
-                        beadSet[2 * i] = c->getFirstBead()->getIndex();
-                        beadSet[2 * i + 1] = c->getSecondBead()->getIndex();
+                        beadSet[2 * i] = c->getFirstBead()->getStableIndex();
+                        beadSet[2 * i + 1] = c->getSecondBead()->getStableIndex();
                         cylID[i] = c->getId();
                         c->_dcIndex = i;
                         fvecpos[i] = c->getPosition();

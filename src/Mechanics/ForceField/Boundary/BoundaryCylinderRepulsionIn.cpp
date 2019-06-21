@@ -82,13 +82,13 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::vectorize() {
                     ->getIndex()<<" "<<neighbor->getSecondBead()->getIndex()<<endl;*/
             if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
             {
-                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->getIndex();
+                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->getStableIndex();
                 beadSet[cumnn+idx] = bindex;
                 krep[cumnn+idx] = be->getRepulsionConst();
                 slen[cumnn+idx] = be->getScreeningLength();
                 idx++;
             }
-            bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->getIndex();
+            bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->getStableIndex();
             beadSet[cumnn+idx] = bindex;
             krep[cumnn+idx] = be->getRepulsionConst();
             slen[cumnn+idx] = be->getScreeningLength();

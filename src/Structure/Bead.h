@@ -57,21 +57,37 @@ struct BeadData {
         forcesAuxP.push_back(forceAuxP);
     }
 
-    void pop_back() {
-        coords.pop_back();
-        coordsStr.pop_back();
-        forces.pop_back();
-        forcesAux.pop_back();
-        forcesAuxP.pop_back();
+    void set_content(
+        std::size_t pos,
+        const vec_type& coord,
+        const vec_type& coordStr,
+        const vec_type& force,
+        const vec_type& forceAux,
+        const vec_type& forceAuxP
+    ) {
+        coords    [pos] = coord;
+        coordsStr [pos] = coordStr;
+        forces    [pos] = force;
+        forcesAux [pos] = forceAux;
+        forcesAuxP[pos] = forceAuxP;
     }
 
-    void move_from_back(std::size_t dbIndex) {
-        coords[dbIndex] = coords.back();
-        coordsStr[dbIndex] = coordsStr.back();
-        forces[dbIndex] = forces.back();
-        forcesAux[dbIndex] = forcesAux.back();
-        forcesAuxP[dbIndex] = forcesAuxP.back();
+    void move_content(std::size_t from, std::size_t to) {
+        coords    [to] = coords    [from];
+        coordsStr [to] = coordsStr [from];
+        forces    [to] = forces    [from];
+        forcesAux [to] = forcesAux [from];
+        forcesAuxP[to] = forcesAuxP[from];
     }
+
+    void resize(size_t size) {
+        coords    .resize(size);
+        coordsStr .resize(size);
+        forces    .resize(size);
+        forcesAux .resize(size);
+        forcesAuxP.resize(size);
+    }
+
 };
 
 /// Represents a single coordinate between [Cylinders](@ref Cylinder), and holds forces
@@ -90,10 +106,10 @@ struct BeadData {
  */
 
 class Bead : public Component, public Trackable, public Movable,
-    public Database< Bead, false, BeadData > {
+    public Database< Bead, true, BeadData > {
     
 public:
-    using DatabaseType = Database< Bead, false, BeadData >;
+    using DatabaseType = Database< Bead, true, BeadData >;
 
     ///@note - all vectors are in x,y,z coordinates.
     vector<floatingpoint> coordinateP; ///< Prev coordinates of bead in CG minimization
@@ -133,15 +149,15 @@ public:
     ///Default constructor
     Bead(Composite* parent, int position);
 
-    auto coordinate()    { return getDbData().coords    [getIndex()]; }
-    auto force()         { return getDbData().forces    [getIndex()]; }
-    auto forceAux()      { return getDbData().forcesAux [getIndex()]; }
-    auto forceAuxP()     { return getDbData().forcesAuxP[getIndex()]; }
+    auto coordinate()    { return getDbData().coords    [getStableIndex()]; }
+    auto force()         { return getDbData().forces    [getStableIndex()]; }
+    auto forceAux()      { return getDbData().forcesAux [getStableIndex()]; }
+    auto forceAuxP()     { return getDbData().forcesAuxP[getStableIndex()]; }
 
-    auto coordinate()    const { return getDbDataConst().coords    [getIndex()]; }
-    auto force()         const { return getDbDataConst().forces    [getIndex()]; }
-    auto forceAux()      const { return getDbDataConst().forcesAux [getIndex()]; }
-    auto forceAuxP()     const { return getDbDataConst().forcesAuxP[getIndex()]; }
+    auto coordinate()    const { return getDbDataConst().coords    [getStableIndex()]; }
+    auto force()         const { return getDbDataConst().forces    [getStableIndex()]; }
+    auto forceAux()      const { return getDbDataConst().forcesAux [getStableIndex()]; }
+    auto forceAuxP()     const { return getDbDataConst().forcesAuxP[getStableIndex()]; }
 
     // Temporary compromise
     auto vcoordinate()    const { return mathfunc::vec2Vector(coordinate()   ); }

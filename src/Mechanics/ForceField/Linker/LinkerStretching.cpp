@@ -59,10 +59,10 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
 
     for (auto l: Linker::getLinkers()) {
         /* Haoran 03/18/2019 l->getIndex() = i; */
-        beadSet[n * i] = l->getFirstCylinder()->getFirstBead()->getIndex();
-        beadSet[n * i + 1] = l->getFirstCylinder()->getSecondBead()->getIndex();
-        beadSet[n * i + 2] = l->getSecondCylinder()->getFirstBead()->getIndex();
-        beadSet[n * i + 3] = l->getSecondCylinder()->getSecondBead()->getIndex();
+        beadSet[n * i] = l->getFirstCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 1] = l->getFirstCylinder()->getSecondBead()->getStableIndex();
+        beadSet[n * i + 2] = l->getSecondCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 3] = l->getSecondCylinder()->getSecondBead()->getStableIndex();
 
         kstr[i] = l->getMLinker()->getStretchingConstant();
         eql[i] = l->getMLinker()->getEqLength();

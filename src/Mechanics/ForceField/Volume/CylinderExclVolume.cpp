@@ -77,10 +77,10 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
             auto cin = neighbors[ni];
             if(!cin->isFullLength()||
                cin->getBranchingCylinder() == ci) continue;
-            beadSet[n * (Cumnc)] = ci->getFirstBead()->getIndex();
-            beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->getIndex();
-            beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->getIndex();
-            beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->getIndex();
+            beadSet[n * (Cumnc)] = ci->getFirstBead()->getStableIndex();
+            beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->getStableIndex();
+            beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->getStableIndex();
+            beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->getStableIndex();
             
             //Get KRepuls based on filament type
             if(ci->getType() != cin->getType()){
