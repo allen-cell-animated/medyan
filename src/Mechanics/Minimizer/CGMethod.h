@@ -163,9 +163,6 @@ protected:
     /// Move beads in search direction by d
     void moveBeads(floatingpoint d);
 
-    /// Create moved beads during line search
-    void moveBeadslineSearch(floatingpoint d);
-
     /// shift the gradient by d
     void shiftGradient(floatingpoint d);
 

@@ -42,6 +42,17 @@
 #include "cross_check.h"
 //
 long CGMethod::N = 0;
+
+namespace {
+
+void stretchBeads(floatingpoint d) {
+    const std::size_t num = Bead::getDbData().coords.size_raw();
+    for(size_t i = 0; i < num; ++i)
+        Bead::getDbData().coordsStr.value[i] = Bead::getDbData().coords.value[i] + d * Bead::getDbData().forces.value[i];
+}
+
+} // namespace
+
 #ifdef CUDAACCL
 void CGMethod::CUDAresetlambda(cudaStream_t stream) {
     resetlambdaCUDA<<<1,1,0, stream>>>(CUDAcommon::getCUDAvars().gpu_lambda);
@@ -486,18 +497,6 @@ void CGMethod::moveBeads(floatingpoint d)
     const std::size_t num = Bead::getDbData().coords.size_raw();
     for(size_t i = 0; i < num; ++i)
         Bead::getDbData().coords.value[i] += d * Bead::getDbData().forces.value[i];
-}
-
-void CGMethod::moveBeadslineSearch(floatingpoint d)
-{
-	///<NOTE: Ignores static beads for now.
-	//if(!b->getstaticstate())
-
-//    std::cout<<"3N "<<N<<endl;
-//	cout<<"moving by lambda "<<d<<endl;
-	for (int i = 0; i < N; i++) {
-		coordlineSearch[i] = coord[i] + d * force[i];
-	}
 }
 
 void CGMethod::shiftGradient(floatingpoint d)
@@ -1165,7 +1164,7 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 
         tbegin = chrono::high_resolution_clock::now();
 	    #ifdef MOVEBEADSLINESEARCH
-	    moveBeadslineSearch(lambda);
+	    stretchBeads(lambda);
         floatingpoint energyLambda = FFM.computeEnergy(Bead::getDbData().coordsStr.data(), Bead::getDbData().forces.data(), lambda);
 		#else
         floatingpoint energyLambda = FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), lambda);
@@ -1302,7 +1301,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
 
 	    tbegin = chrono::high_resolution_clock::now();
 	    #ifdef MOVEBEADSLINESEARCH
-	    moveBeadslineSearch(lambda);
+	    stretchBeads(lambda);
         floatingpoint energyLambda = FFM.computeEnergy(Bead::getDbData().coordsStr.data(), Bead::getDbData().forces.data(), lambda);
 	    #else
         floatingpoint energyLambda = FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), lambda);
