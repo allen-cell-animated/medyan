@@ -649,7 +649,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
     floatingpoint minveca[2];
     floatingpoint maxveca[2];
     floatingpoint* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
-    floatingpoint *coord = Bead::getDbData().coords.data();
+    const auto& coords = Bead::getDbDataConst().coords;
     int Ncylincmp = _compartment->getCylinders().size();
     int* cindexvec = new int[Ncylincmp]; //stores cindex of cylinders in this compartment
     vector<vector<int>> ncindices; //cindices of cylinders in neighbor list.
@@ -698,8 +698,8 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
             int cindex = cindexvec[i];
             short complimentaryfID;
             const auto& c = cylinderInfoData[cindex];
-            const auto& x1 = c.beadCoord[0];
-            const auto& x2 = c.beadCoord[1];
+            const auto& x1 = coords[c.beadIndices[0]];
+            const auto& x2 = coords[c.beadIndices[1]];
             floatingpoint X1X2[3] = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
             int *cnindices = ncindices[i].data();
 
@@ -718,8 +718,8 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
                 if (c.filamentId == cn.filamentId) continue;
                 if(c.type != complimentaryfID) continue;
 
-                const auto& x3 = cn.beadCoord[0];
-                const auto& x4 = cn.beadCoord[1];
+                const auto& x3 = coords[cn.beadIndices[0]];
+                const auto& x4 = coords[cn.beadIndices[1]];
                 floatingpoint X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
                 floatingpoint X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
                 floatingpoint X1X3squared = sqmagnitude(X1X3);

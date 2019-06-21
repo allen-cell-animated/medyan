@@ -41,7 +41,7 @@ struct CylinderInfoData {
         int filamentId = -1;
         int positionOnFilament = -1;
         int compartmentId = -1;
-        mathfunc::Vec< 3, floatingpoint > beadCoord[2];
+        std::size_t beadIndices[2];
         mathfunc::Vec< 3, floatingpoint > coord;
         short type = -1;
         int id = -1;
@@ -121,9 +121,7 @@ public:
 
     static bool setpositionupdatedstate; //Setter to check if position has been updated
 
-///< Continuous ID assigned for
-///< CUDANL calculation
-
+    // Update CylinderInfoData using newest information in the system
     static void updateData();
 
     /// Constructor, initializes a cylinder

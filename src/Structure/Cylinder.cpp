@@ -36,8 +36,8 @@ void Cylinder::updateData() {
         data.filamentId = static_cast<Filament*>(c->getParent())->getId();
         data.positionOnFilament = c->getPosition();
         data.compartmentId = c->getCompartment()->getId();
-        data.beadCoord[0] = c->getFirstBead()->coordinate();
-        data.beadCoord[1] = c->getSecondBead()->coordinate();
+        data.beadIndices[0] = c->getFirstBead()->getStableIndex();
+        data.beadIndices[1] = c->getSecondBead()->getStableIndex();
         data.coord = vector2Vec<3, floatingpoint>(c->coordinate);
         data.type = c->getType();
         data.id = c->getId();
@@ -125,8 +125,8 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     data.filamentId = static_cast<Filament*>(getParent())->getId();
     data.positionOnFilament = _position;
     data.compartmentId = _compartment->getId();
-    data.beadCoord[0] = _b1->coordinate();
-    data.beadCoord[1] = _b2->coordinate();
+    data.beadIndices[0] = _b1->getStableIndex();
+    data.beadIndices[1] = _b2->getStableIndex();
     data.coord = vector2Vec<3, floatingpoint>(coordinate);
     data.type = getType();
     data.id = getId();

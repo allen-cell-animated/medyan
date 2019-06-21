@@ -52,7 +52,19 @@ using namespace mathfunc;
 
 namespace {
 
+//-----------------------------------------------------------------------------
+// The function rearranges the elements that use stable indexing, to make their
+// Database storage contiguous.
+// Also updates some cylinder information cache (such as position on filament,
+// etc).
+//
+// Note:
+//   - This function invalidates any previously cached stable indices
+//   - Forgetting calling this function should NOT cause any semantic problems
+//     in the program.
+//-----------------------------------------------------------------------------
 void rearrangeAllDatabases() {
+    Bead::rearrange();
     Cylinder::rearrange(); Cylinder::updateData();
 }
 
@@ -1020,7 +1032,6 @@ void Controller::run() {
     //reupdate positions and neighbor lists
     mins = chrono::high_resolution_clock::now();
     updatePositions();
-    rearrangeAllDatabases();
     cout<<"Positions updated"<<endl;
     updateNeighborLists();
     mine= chrono::high_resolution_clock::now();
@@ -1155,6 +1166,7 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
 
                 mins = chrono::high_resolution_clock::now();
+                rearrangeAllDatabases();
                 _mController->run();
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runm3(mine - mins);
@@ -1216,7 +1228,6 @@ void Controller::run() {
             // update neighbor lists & Binding Managers
             if(tauLastNeighborList >= _neighborListTime) {
                 mins = chrono::high_resolution_clock::now();
-                rearrangeAllDatabases();
                 updateNeighborLists();
                 tauLastNeighborList = 0.0;
                 mine= chrono::high_resolution_clock::now();
@@ -1289,6 +1300,7 @@ void Controller::run() {
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
             if(stepsLastMinimization >= _minimizationSteps) {
+                rearrangeAllDatabases();
                 _mController->run();
                 updatePositions();
 
@@ -1320,7 +1332,6 @@ void Controller::run() {
 
             // update neighbor lists
             if(stepsLastNeighborList >= _neighborListSteps) {
-                rearrangeAllDatabases();
                 updateNeighborLists();
                 stepsLastNeighborList = 0;
             }
