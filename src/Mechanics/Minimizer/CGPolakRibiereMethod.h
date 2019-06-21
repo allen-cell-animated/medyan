@@ -27,11 +27,10 @@ class PolakRibiere : public CGMethod
 {
 public:
     
-    virtual void minimize(ForceFieldManager &FFM, double GRADTOL,
-                          double MAXDIST, double LAMBDAMAX, bool steplimit);
-
-    
+    virtual void minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
+                          floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit);
 protected:
+	chrono::high_resolution_clock::time_point tbegin, tend;
 #ifdef CUDAACCL
     cudaStream_t stream_shiftsafe = NULL, stream_dotcopy = NULL;
     cudaStream_t stream1 = NULL, stream2 = NULL, stream3 = NULL;

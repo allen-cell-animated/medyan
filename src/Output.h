@@ -19,6 +19,8 @@
 #include "common.h"
 
 #include "Parser.h"
+#include "DissipationTracker.h"
+
 
 ///FORWARD DECLARATIONS
 class CompartmentGrid;
@@ -153,41 +155,56 @@ public:
 
 /// Print MotorGhost binding lifetimes
 class MotorLifetimes : public Output {
-    
+
 public:
     MotorLifetimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~MotorLifetimes() {}
-    
+
     virtual void print(int snapshot);
 };
 
 /// Print MotorGhost walk lengths
 class MotorWalkLengths : public Output {
-    
+
 public:
     MotorWalkLengths(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~MotorWalkLengths() {}
-    
+
     virtual void print(int snapshot);
 };
 
 /// Print Linker binding lifetimes
 class LinkerLifetimes : public Output {
-    
+
 public:
     LinkerLifetimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~LinkerLifetimes() {}
-    
+
     virtual void print(int snapshot);
 };
 
 /// Print Filament turnover times
 class FilamentTurnoverTimes : public Output {
-    
+
 public:
     FilamentTurnoverTimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~FilamentTurnoverTimes() {}
-    
+
+    virtual void print(int snapshot);
+};
+
+/// Print total, chemdiss, mechdiss, chem, and mech
+class Dissipation : public Output {
+
+    ChemSim* _cs;
+
+public:
+    Dissipation(string outputFileName, SubSystem* s, ChemSim* cs)
+
+    : Output(outputFileName, s), _cs(cs) {}
+
+    ~Dissipation() {}
+
     virtual void print(int snapshot);
 };
 
@@ -213,6 +230,37 @@ public:
 };
 
 
+/// Print chem energy changes by HRCDID
+class HRCD : public Output {
+
+    ChemSim* _cs;
+
+public:
+    HRCD(string outputFileName, SubSystem* s, ChemSim* cs)
+
+    : Output(outputFileName, s), _cs(cs) {}
+
+    ~HRCD() {}
+
+    virtual void print(int snapshot);
+};
+
+
+// Print cm graph
+class CMGraph : public Output {
+
+public:
+    CMGraph(string outputFileName, SubSystem* s)
+
+    : Output(outputFileName, s) {}
+
+    ~CMGraph() {}
+
+    virtual void print(int snapshot);
+};
+
+
+
 // Print boundary repulsion force
 class BRForces : public Output {
 
@@ -236,6 +284,50 @@ public:
     : Output(outputFileName, s), _subSystem(s), _chemData(chemData) {}
     ~Concentrations() {}
 
+    virtual void print(int snapshot);
+};
+
+/// Print total, chemdiss, mechdiss, chem, and mech
+class MotorWalkingEvents : public Output {
+    
+    ChemSim* _cs;
+    
+public:
+    MotorWalkingEvents(string outputFileName, SubSystem* s, ChemSim* cs)
+    
+    : Output(outputFileName, s), _cs(cs) {}
+    
+    ~MotorWalkingEvents() {}
+    
+    virtual void print(int snapshot);
+};
+
+class LinkerUnbindingEvents : public Output {
+    
+    ChemSim* _cs;
+    
+public:
+    LinkerUnbindingEvents(string outputFileName, SubSystem* s, ChemSim* cs)
+    
+    : Output(outputFileName, s), _cs(cs) {}
+    
+    ~LinkerUnbindingEvents() {}
+    
+    virtual void print(int snapshot);
+};
+
+
+class LinkerBindingEvents : public Output {
+    
+    ChemSim* _cs;
+    
+public:
+    LinkerBindingEvents(string outputFileName, SubSystem* s, ChemSim* cs)
+    
+    : Output(outputFileName, s), _cs(cs) {}
+    
+    ~LinkerBindingEvents() {}
+    
     virtual void print(int snapshot);
 };
 

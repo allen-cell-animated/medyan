@@ -23,14 +23,14 @@ class Bead;
 class MTOCBendingCosine {
     
 public:
-    double energy(double *coord, int *beadSet,
-                  double *kbend, double);
-    double energy(double *coord, double *f, int *beadSet,
-                  double *kbend, double, double);
-    void forces(double *coord, double *f, int *beadSet,
-                double *kbend, double);
+    floatingpoint energy(floatingpoint *coord, int *beadSet,
+                  floatingpoint *kbend, floatingpoint);
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                  floatingpoint *kbend, floatingpoint, floatingpoint);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                floatingpoint *kbend, floatingpoint);
     
-    //void forcesAux(Bead*, Bead*, double, double);
+    //void forcesAux(Bead*, Bead*, floatingpoint, floatingpoint);
 };
 
 #endif

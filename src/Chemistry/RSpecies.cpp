@@ -80,11 +80,13 @@ void RSpecies::activateAssocProductReactions() {
 }
 
 void RSpecies::passivateAssocReactantReactions() {
+//    std::cout<<"passivate RSpecies::passivateAssocReactantReactions"<<endl;
     for (auto &r : _as_reactants)
         r->passivateReaction();
 }
     
 void RSpecies::passivateAssocProductReactions() {
+//    std::cout<<"passivate RSpecies::passivateAssocProductReactions"<<endl;
     for (auto &r : _as_products)
         r->passivateReaction();
 }

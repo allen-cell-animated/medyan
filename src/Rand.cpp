@@ -12,12 +12,6 @@
 //------------------------------------------------------------------
 
 #include "Rand.h"
-#ifdef DEBUGCONSTANTSEED
-mt19937 Rand::eng(1);
-#else
 mt19937 Rand::eng(rdtsc());
-#endif
 uniform_int_distribution<int> Rand::_int_distr;
-long Rand::counter = 0;
-long Rand::Dcounter = 0;
-long Rand::Ncounter = 0;
+

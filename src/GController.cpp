@@ -23,7 +23,7 @@
 #include "Rand.h"
 
 using namespace mathfunc;
-unsigned int GController::getCompartmentID(const vector<double> &coords)
+unsigned int GController::getCompartmentID(const vector<floatingpoint> &coords)
 {
     //Check if out of bounds
     unsigned int index = 0;
@@ -106,7 +106,7 @@ Compartment* GController::getCompartment(const vector<size_t> &indices)
     }
 }
 
-Compartment* GController::getCompartment(const vector<double> &coords)
+Compartment* GController::getCompartment(const vector<floatingpoint> &coords)
 {
     //Check if out of bounds
     size_t index = 0;
@@ -134,7 +134,7 @@ Compartment* GController::getCompartment(const vector<double> &coords)
         }
         i++;
     }
-
+    
     try {
         return _compartmentGrid->getCompartment(index);
     }
@@ -156,8 +156,8 @@ void GController::generateConnections()
             {
                 vector<size_t> indices{i,j,k};
                 Compartment *target = getCompartment(indices);
-
-                vector<double> coordinates =
+                
+                vector<floatingpoint> coordinates =
                    {indices[0] * _compartmentSize[0] + _compartmentSize[0] / 2,
                     indices[1] * _compartmentSize[1] + _compartmentSize[1] / 2,
                     indices[2] * _compartmentSize[2] + _compartmentSize[2] / 2};
@@ -436,8 +436,8 @@ void GController::setActiveCompartments() {
         if(_boundary->within(C)) C->setAsActive();
 }
 
-void GController::findCompartments(const vector<double>& coords,
-                                   Compartment* ccheck, double dist,
+void GController::findCompartments(const vector<floatingpoint>& coords,
+                                   Compartment* ccheck, floatingpoint dist,
                                    vector<Compartment*>& compartments) {
 
     //base case : if c and ccheck are not within range, return
@@ -465,74 +465,74 @@ Compartment* GController::getRandomCompartment() {
     while(true) {
 
         //create a random coordinate
-        vector<double> coord =
-        {_grid[0] * _compartmentSize[0] * Rand::randDouble(0,0.999),
-         _grid[1] * _compartmentSize[1] * Rand::randDouble(0,0.999),
-        _grid[2] * _compartmentSize[2] * Rand::randDouble(0,0.999)};
-
+        vector<floatingpoint> coord =
+        {_grid[0] * _compartmentSize[0] * Rand::randfloatingpoint(0,0.999),
+         _grid[1] * _compartmentSize[1] * Rand::randfloatingpoint(0,0.999),
+        _grid[2] * _compartmentSize[2] * Rand::randfloatingpoint(0,0.999)};
+        
         Compartment* c = getCompartment(coord);
         if(c->isActivated()) return c;
     }
 }
 
-vector<double> GController::getRandomCoordinates(Compartment* c) {
-
+vector<floatingpoint> GController::getRandomCoordinates(Compartment* c) {
+    
     //get coordinates of compartment
     auto coordsCompartment = c->coordinates();
-    vector<double> coords;
-    coords.push_back(coordsCompartment[0] + _compartmentSize[0] * Rand::randDouble(-1,1) / 2);
-    coords.push_back(coordsCompartment[1] + _compartmentSize[1] * Rand::randDouble(-1,1) / 2);
-    coords.push_back(coordsCompartment[2] + _compartmentSize[2] * Rand::randDouble(-1,1) / 2);
-
+    vector<floatingpoint> coords;
+    coords.push_back(coordsCompartment[0] + _compartmentSize[0] * Rand::randfloatingpoint(-1,1) / 2);
+    coords.push_back(coordsCompartment[1] + _compartmentSize[1] * Rand::randfloatingpoint(-1,1) / 2);
+    coords.push_back(coordsCompartment[2] + _compartmentSize[2] * Rand::randfloatingpoint(-1,1) / 2);
+    
     return coords;
 }
 
-//Qin
-vector<double> GController::getRandomCenterCoordinates(Compartment* c) {
-
+vector<floatingpoint> GController::getRandomCenterCoordinates(Compartment* c) {
+    
     //get coordinates of compartment
     auto coordsCompartment = c->coordinates();
-    vector<double> coords;
-    coords.push_back(coordsCompartment[0] + _compartmentSize[0] * Rand::randDouble(-1,1) / 2);
-    coords.push_back(coordsCompartment[1] + _compartmentSize[1] * Rand::randDouble(-1,1) / 2);
-    coords.push_back(coordsCompartment[2] + _compartmentSize[2] * Rand::randDouble(-0.4,0.4) / 2);
-
+    vector<floatingpoint> coords;
+    coords.push_back(coordsCompartment[0] + _compartmentSize[0] * Rand::randfloatingpoint(-1,1) / 2);
+    coords.push_back(coordsCompartment[1] + _compartmentSize[1] * Rand::randfloatingpoint(-1,1) / 2);
+    coords.push_back(coordsCompartment[2] + _compartmentSize[2] * Rand::randfloatingpoint(-0.4,0.4) / 2);
+    
     return coords;
 }
 
-vector<double> GController::getRandomCoordinates() {
+vector<floatingpoint> GController::getRandomCoordinates() {
 
-    vector<double> coords;
+    vector<floatingpoint> coords;
     auto bboundsinit = SysParams::Boundaries().fraccompartmentspan;
-    coords.push_back(Rand::randDouble(bboundsinit[0][0],
+    coords.push_back(Rand::randfloatingpoint(bboundsinit[0][0],
                                       bboundsinit[1][0]) * _grid[0] * _compartmentSize[0]);
-    coords.push_back(Rand::randDouble(bboundsinit[0][1],
+    coords.push_back(Rand::randfloatingpoint(bboundsinit[0][1],
                                       bboundsinit[1][1]) * _grid[1] * _compartmentSize[1]);
-    coords.push_back(Rand::randDouble(bboundsinit[0][2],
+    coords.push_back(Rand::randfloatingpoint(bboundsinit[0][2],
                                       bboundsinit[1][2]) * _grid[2] * _compartmentSize[2]);
 
     return coords;
 }
 
 //Qin
-vector<double> GController::getRandomCenterCoordinates() {
+vector<floatingpoint> GController::getRandomCenterCoordinates() {
 
-    vector<double> coords;
+    vector<floatingpoint> coords;
 
-    coords.push_back(Rand::randDouble(0,1) * _grid[0] * _compartmentSize[0]);
-    coords.push_back(Rand::randDouble(0,1) * _grid[1] * _compartmentSize[1]);
-    coords.push_back(Rand::randDouble(0.3,0.7) * _grid[2] * _compartmentSize[2]);
-
+    coords.push_back(Rand::randfloatingpoint(0,1) * _grid[0] * _compartmentSize[0]);
+    coords.push_back(Rand::randfloatingpoint(0,1) * _grid[1] * _compartmentSize[1]);
+    coords.push_back(Rand::randfloatingpoint(0.3,0.7) * _grid[2] * _compartmentSize[2]);
+    
     return coords;
 }
 
 short GController::_nDim = 0;
 
 vector<int>    GController::_grid = {};
-vector<double> GController::_size = {};
-vector<double> GController::_compartmentSize = {};
-vector<double> GController::_centerGrid = {};
-double         GController::_compartmentVolume = 0;
-vector<double> GController::_compartmentArea = {};
+vector<floatingpoint> GController::_size = {};
+vector<floatingpoint> GController::_compartmentSize = {};
+vector<floatingpoint> GController::_centerGrid = {};
+floatingpoint         GController::_compartmentVolume = 0;
+vector<floatingpoint> GController::_compartmentArea = {};
 
 CompartmentGrid* GController::_compartmentGrid = 0;
+

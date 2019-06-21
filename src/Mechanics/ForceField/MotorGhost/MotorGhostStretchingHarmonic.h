@@ -23,52 +23,52 @@ class Bead;
 class MotorGhostStretchingHarmonic {
     
 public:
-    double energy(double *coord, int *beadSet,
-                  double *kstr, double *eql, double *pos1, double *pos2);
+    floatingpoint energy(floatingpoint *coord, int *beadSet,
+                  floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2);
     
-    double energy(double *coord, double * f, int *beadSet,
-                  double *kstr, double *eql, double *pos1, double *pos2, double d);
+    floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
+                  floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2, floatingpoint d);
     
-    void forces(double *coord, double *f, int *beadSet,
-                double *kstr, double *eql, double *pos1, double *pos2, double
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2, floatingpoint
                 *stretchforce);
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint, cudaStream_t stream);
 
-    double* energy(double *coord, double *f, int *beadSet, double *kstr, double *eql,
-                  double *pos1, double *pos2, int *params);
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kstr, floatingpoint *eql,
+                  floatingpoint *pos1, floatingpoint *pos2, int *params);
 
-    double* energy(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *pos1, double *pos2,
-           double *z, int *params);
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2,
+           floatingpoint *z, int *params);
 
-    void forces(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *pos1, double *pos2, int
-    *params, double *Mstretchforce);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2, int
+    *params, floatingpoint *Mstretchforce);
     void deallocate();
     vector<int> blocksnthreadse;
     vector<int> blocksnthreadsez;
     vector<int> blocksnthreadsf;
     vector<int> bntaddvec2;
     static void checkforculprit();
-    double *gU_i;
-    double *gU_sum;
+    floatingpoint *gU_i;
+    floatingpoint *gU_sum;
     char *gFF, *ginteraction;
     cudaStream_t stream = NULL;
 
 #endif
 #ifdef CROSSCHECK
-    double energy(Bead*, Bead*, Bead*, Bead*,
-                  double position1, double position2,
-                  double kStretch, double eqLength);
-    double energy(Bead*, Bead*, Bead*, Bead*,
-                  double position1, double position2,
-                  double kStretch, double eqLength, double d);
+    floatingpoint energy(Bead*, Bead*, Bead*, Bead*,
+                  floatingpoint position1, floatingpoint position2,
+                  floatingpoint kStretch, floatingpoint eqLength);
+    floatingpoint energy(Bead*, Bead*, Bead*, Bead*,
+                  floatingpoint position1, floatingpoint position2,
+                  floatingpoint kStretch, floatingpoint eqLength, floatingpoint d);
     
-    double forces(Bead*, Bead*, Bead*, Bead*,
-                  double position1, double position2,
-                  double kStretch, double eqLength);
-    double forcesAux(Bead*, Bead*, Bead*, Bead*,
-                     double position1, double position2,
-                     double kStretch, double eqLength);
+    floatingpoint forces(Bead*, Bead*, Bead*, Bead*,
+                  floatingpoint position1, floatingpoint position2,
+                  floatingpoint kStretch, floatingpoint eqLength);
+    floatingpoint forcesAux(Bead*, Bead*, Bead*, Bead*,
+                     floatingpoint position1, floatingpoint position2,
+                     floatingpoint kStretch, floatingpoint eqLength);
 #endif
 };
 

@@ -26,43 +26,43 @@ class Bead;
 class BoundaryCylinderRepulsionExp {
     
 public:
-    double energy(double *coord, int *beadSet,
-                  double *krep, double *slen, int *nneighbors);
+    floatingpoint energy(floatingpoint *coord, int *beadSet,
+                  floatingpoint *krep, floatingpoint *slen, int *nneighbors);
     
-    double energy(double *coord, double *f, int *beadSet,
-                  double *krep, double *slen, int *nnneighbors, double d);
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                  floatingpoint *krep, floatingpoint *slen, int *nnneighbors, floatingpoint d);
     
-    void forces(double *coord, double *f, int *beadSet,
-                double *krep, double *slen, int *nneighbors);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                floatingpoint *krep, floatingpoint *slen, int *nneighbors);
     
-    double loadForces(double r, double krep , double slen);
+    floatingpoint loadForces(floatingpoint r, floatingpoint krep , floatingpoint slen);
 
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint, cudaStream_t stream);
 
-    double* energy(double *coord, double *f, int *beadSet, double *krep, double *slen,
-                   int* nintvec, double* beListplane, int *params);
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
+                   int* nintvec, floatingpoint* beListplane, int *params);
 
-    double* energy(double *coord, double *f, int *beadSet, double *krep, double *slen,
-                   int* nintvec, double* beListplane, double *z, int *params);
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
+                   int* nintvec, floatingpoint* beListplane, floatingpoint *z, int *params);
 
-    void forces(double *coord, double *f, int *beadSet, double *krep, double *slen,
-                int* nintvec, double* beListplane, int *params);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
+                int* nintvec, floatingpoint* beListplane, int *params);
     void deallocate();
     vector<int> blocksnthreadse;
     vector<int> blocksnthreadsez;
     vector<int> blocksnthreadsf;
     vector<int> bntaddvec2;
     static void checkforculprit();
-    double *gU_i;
-    double *gU_sum;
+    floatingpoint *gU_i;
+    floatingpoint *gU_sum;
     char *gFF, *ginteraction;
     cudaStream_t stream = NULL;
 #endif
 private:
 #ifdef CUDAACCL
-//    double *F_i;
-//    double *forcecopy;
+//    floatingpoint *F_i;
+//    floatingpoint *forcecopy;
 #endif
 };
 

@@ -34,8 +34,8 @@ class Compartment;
 class Filament;
 
 struct BeadData {
-    using vec_type = mathfunc::Vec3;
-    using vec_array_type = mathfunc::VecArray< 3, double >;
+    using vec_type = mathfunc::Vec< 3, floatingpoint >;
+    using vec_array_type = mathfunc::VecArray< 3, floatingpoint >;
 
     vec_array_type coords;
     vec_array_type coordsStr; // stretched coordinate
@@ -93,19 +93,18 @@ class Bead : public Component, public Trackable, public Movable,
     public Database< Bead, false, BeadData > {
     
 public:
-    using db_type = Database< Bead, false, BeadData >;
+    using DatabaseType = Database< Bead, false, BeadData >;
 
     ///@note - all vectors are in x,y,z coordinates.
-    vector<double> coordinateP; ///< Prev coordinates of bead in CG minimization
+    vector<floatingpoint> coordinateP; ///< Prev coordinates of bead in CG minimization
 
                           ///< Forces should always correspond to current coordinates.
-    vector<double> force1;
     
-    vector<double> brforce; //Qin boundary repulsion force
-    vector<double> pinforce;
+    vector<floatingpoint> brforce; //boundary repulsion force
+    vector<floatingpoint> pinforce;
 
-    vector<double> loadForcesP;
-    vector<double> loadForcesM;
+    vector<floatingpoint> loadForcesP;
+    vector<floatingpoint> loadForcesM;
     ///< The force on this bead due to an external load
     ///< This is not a vector (x,y,z) value, but a list of
     ///< force magnitudes in the direction of polymerization with
@@ -124,12 +123,12 @@ public:
     /// The bead can be pinned to a certain position in the simulation volume.
     /// These parameters describe the pinning. Adding the Bead to the list of pinned
     /// Beads is done by a corresponding special protocol. (see executeSpecialProtocols() in Controller)
-    vector<double> pinnedPosition;
+    vector<floatingpoint> pinnedPosition;
     
     bool isStatic = false;
     
     ///Main constructor
-    Bead (vector<double> v, Composite* parent, int position);
+    Bead (vector<floatingpoint> v, Composite* parent, int position);
     
     ///Default constructor
     Bead(Composite* parent, int position);
@@ -191,9 +190,7 @@ public:
         if(it != _pinnedBeads.end()) _pinnedBeads.erase(it);
     }
     
-    const vector<double>& getPinPosition() { return pinnedPosition;}
-
-    //Qin
+    const vector<floatingpoint>& getPinPosition() { return pinnedPosition;}
     // Remove all pinned beads.
     void resetAllPinned() {
 
@@ -245,13 +242,13 @@ public:
         return dot(forceAux(), forceAuxP());
     }
     //Qin add brFDotbrF
-    inline double brFDotbrF() {
+    inline floatingpoint brFDotbrF() {
         return brforce[0]*brforce[0] +
         brforce[1]*brforce[1] +
         brforce[2]*brforce[2];
     }
-    //Qin add pinFDotpinF
-    inline double pinFDotpinF() {
+    //add pinFDotpinF
+    inline floatingpoint pinFDotpinF() {
         return pinforce[0]*pinforce[0] +
         pinforce[1]*pinforce[1] +
         pinforce[2]*pinforce[2];
@@ -260,7 +257,7 @@ public:
     
     ///Helper functions for load forces
     
-    double getLoadForcesP();
+    floatingpoint getLoadForcesP();
     
     void printLoadForcesP() {
         
@@ -274,7 +271,7 @@ public:
         cout << endl;
     }
     
-    double getLoadForcesM();
+    floatingpoint getLoadForcesM();
  
     void printLoadForcesM()  {
         

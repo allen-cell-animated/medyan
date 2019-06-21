@@ -23,24 +23,24 @@ using namespace mathfunc;
 //#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 //
 //#else
-//static __inline__ __device__ double atomicAdd(double *address, double val) {
+//static __inline__ __device__ floatingpoint atomicAdd(floatingpoint *address, floatingpoint val) {
 //    unsigned long long int* address_as_ull = (unsigned long long int*)address;
 //    unsigned long long int old = *address_as_ull, assumed;
 //    if (val==0.0)
-//      return __longlong_as_double(old);
+//      return __longlong_as_floatingpoint(old);
 //    do {
 //      assumed = old;
-//      old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val +__longlong_as_double(assumed)));
+//      old = atomicCAS(address_as_ull, assumed, __floatingpoint_as_longlong(val +__longlong_as_floatingpoint(assumed)));
 //    } while (assumed != old);
-//    return __longlong_as_double(old);
+//    return __longlong_as_floatingpoint(old);
 //  }
 //
 //
 //#endif
 
-//__global__ void addvectorFS(double *U, int *params, double *U_sum, double *U_tot){
+//__global__ void addvectorFS(floatingpoint *U, int *params, floatingpoint *U_sum, floatingpoint *U_tot){
 //    U_sum[0] = 0.0;
-//    double sum = 0.0;
+//    floatingpoint sum = 0.0;
 //    for(auto i=0;i<params[1];i++){
 //        if(U[i] == -1.0 && sum != -1.0){
 //            U_sum[0] = -1.0;
@@ -56,15 +56,15 @@ using namespace mathfunc;
 //
 //}
 
-__global__ void FilamentStretchingHarmonicenergy(double *coord, double *force, int *beadSet, double *kstr,
-                                                 double *eql, int *params, double *U_i, double *z, int *culpritID,
+__global__ void FilamentStretchingHarmonicenergy(floatingpoint *coord, floatingpoint *force, int *beadSet, floatingpoint *kstr,
+                                                 floatingpoint *eql, int *params, floatingpoint *U_i, floatingpoint *z, int *culpritID,
                                                  char* culpritFF, char* culpritinteraction, char* FF, char*
                                                  interaction) {
     if(z[0] == 0.0) {
-        extern __shared__ double s[];
-        double *c1 = s;
-        double *c2 = &c1[3 * blockDim.x];
-        double dist;
+        extern __shared__ floatingpoint s[];
+        floatingpoint *c1 = s;
+        floatingpoint *c2 = &c1[3 * blockDim.x];
+        floatingpoint dist;
         int nint = params[1];
         int n = params[0];
         const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
@@ -79,7 +79,7 @@ __global__ void FilamentStretchingHarmonicenergy(double *coord, double *force, i
 
             dist = twoPointDistance(c1, c2, 3 * threadIdx.x) - eql[thread_idx];
             U_i[thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
-            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
 
                 U_i[thread_idx] = -1.0;
@@ -102,9 +102,9 @@ __global__ void FilamentStretchingHarmonicenergy(double *coord, double *force, i
     }
 }
 
-__global__ void FilamentStretchingHarmonicenergyz(double *coord, double *f, int *beadSet, double *kstr,
-                                                  double *eql, int *params, double *U_i,
-                                                  double *U_vec, double *z, int *culpritID,
+__global__ void FilamentStretchingHarmonicenergyz(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kstr,
+                                                  floatingpoint *eql, int *params, floatingpoint *U_i,
+                                                  floatingpoint *U_vec, floatingpoint *z, int *culpritID,
                                                   char* culpritFF, char* culpritinteraction, char* FF, char*
                                                   interaction, bool*
                                                   conv_state1, bool* conv_state2){
@@ -114,14 +114,14 @@ if(conv_state1[0]||conv_state2[0]) {
     return;
 }
     if(z[0] == 0.0) {
-//        extern __shared__ double s[];
-//        double *c1 = s;
-//        double *c2 = &c1[3 * blockDim.x];
-        double dist;
+//        extern __shared__ floatingpoint s[];
+//        floatingpoint *c1 = s;
+//        floatingpoint *c2 = &c1[3 * blockDim.x];
+        floatingpoint dist;
         int nint = params[1];
         int n = params[0];
         int offset = max(params[2] -1,0);
-        double *c1, *c2;
+        floatingpoint *c1, *c2;
         const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
 
         if (thread_idx < nint) {
@@ -145,7 +145,7 @@ if(conv_state1[0]||conv_state2[0]) {
 
             U_i[thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
             U_vec[offset + thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
-            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
 
                 U_i[thread_idx] = -1.0;
@@ -167,13 +167,13 @@ if(conv_state1[0]||conv_state2[0]) {
         }
     }
     else if(z[0] != 0.0) {
-//        extern __shared__ double s[];
-//        double *c1 = s;
-//        double *c2 = &c1[3 * blockDim.x];
-//        double *f1 = &c2[3 * blockDim.x];
-//        double *f2 = &f1[3 * blockDim.x];
-        double *c1, *c2, *f1, *f2;
-        double dist;
+//        extern __shared__ floatingpoint s[];
+//        floatingpoint *c1 = s;
+//        floatingpoint *c2 = &c1[3 * blockDim.x];
+//        floatingpoint *f1 = &c2[3 * blockDim.x];
+//        floatingpoint *f2 = &f1[3 * blockDim.x];
+        floatingpoint *c1, *c2, *f1, *f2;
+        floatingpoint dist;
         int nint = params[1];
         int n = params[0];
         int offset = max(params[2] -1,0);
@@ -202,7 +202,7 @@ if(conv_state1[0]||conv_state2[0]) {
 //            printf("dist %f \n", dist);
            U_i[thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
            U_vec[offset + thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
-/*            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+/*            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                 U_i[thread_idx] = -1.0;
                 culpritID[0] = thread_idx;
@@ -226,13 +226,13 @@ if(conv_state1[0]||conv_state2[0]) {
 }
 
 
-__global__ void FilamentStretchingHarmonicforces(double *coord, double *f, int *beadSet,
-                                                   double *kstr, double *eql, int *params){
-    extern __shared__ double s[];
-    double *c1 = s;
-    double *c2 = &c1[3 * blockDim.x];
-//    double *c1, *c2;
-    double dist, invL, f0, f1[3], f2[3];
+__global__ void FilamentStretchingHarmonicforces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                                   floatingpoint *kstr, floatingpoint *eql, int *params){
+    extern __shared__ floatingpoint s[];
+    floatingpoint *c1 = s;
+    floatingpoint *c2 = &c1[3 * blockDim.x];
+//    floatingpoint *c1, *c2;
+    floatingpoint dist, invL, f0, f1[3], f2[3];
     int nint = params[1];
     int n = params[0];
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
@@ -261,12 +261,12 @@ __global__ void FilamentStretchingHarmonicforces(double *coord, double *f, int *
         f1[2] = f0 * (-c1[3 * threadIdx.x + 2] + c2[3 * threadIdx.x + 2]);
 
         for (int i = 0; i < 3; i++) {
-            if (fabs(f1[i]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(f1[i]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || f1[i] != f1[i]) {
                 printf("Fil. Stret. Force became infinite %f %f %f\n",f1[0], f1[1], f1[2]);
                 assert(0);
             }
-            if (fabs(f2[i]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(f2[i]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || f2[i] != f2[i]) {
                 printf("Fil. Stret. became infinite %f %f %f\n",f2[0], f2[1], f2[2]);
                 assert(0);

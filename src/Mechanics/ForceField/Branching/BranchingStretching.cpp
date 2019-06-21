@@ -11,7 +11,7 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-//#include <CGMethod.h>
+#include <CGMethod.h>
 #include "BranchingStretching.h"
 
 #include "BranchingStretchingHarmonic.h"
@@ -27,11 +27,12 @@
 template <class BStretchingInteractionType>
 void BranchingStretching<BStretchingInteractionType>::vectorize() {
 
+    CUDAcommon::tmin.numinteractions[4] += BranchingPoint::getBranchingPoints().size();
     beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
-    kstr = new double[BranchingPoint::getBranchingPoints().size()];
-    eql = new double[BranchingPoint::getBranchingPoints().size()];
-    pos = new double[BranchingPoint::getBranchingPoints().size()];
-    stretchforce = new double[BranchingPoint::getBranchingPoints().size()];
+    kstr = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
+    eql = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
+    pos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
+    stretchforce = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
 
     int i = 0;
 
@@ -49,7 +50,7 @@ void BranchingStretching<BStretchingInteractionType>::vectorize() {
     }
     //CUDA
 #ifdef CUDAACCL
-//    F_i = new double[CGMethod::N];
+//    F_i = new floatingpoint[CGMethod::N];
 
     int numInteractions = BranchingPoint::getBranchingPoints().size();
     _FFType.optimalblocksnthreads(numInteractions);
@@ -58,14 +59,14 @@ void BranchingStretching<BStretchingInteractionType>::vectorize() {
     CUDAcommon::handleerror(cudaMemcpy(gpu_beadSet, beadSet, n * numInteractions * sizeof(int),
                                        cudaMemcpyHostToDevice));
 
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_kstr, numInteractions * sizeof(double)));
-    CUDAcommon::handleerror(cudaMemcpy(gpu_kstr, kstr, numInteractions * sizeof(double), cudaMemcpyHostToDevice));
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_kstr, numInteractions * sizeof(floatingpoint)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_kstr, kstr, numInteractions * sizeof(floatingpoint), cudaMemcpyHostToDevice));
 
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_eql, numInteractions * sizeof(double)));
-    CUDAcommon::handleerror(cudaMemcpy(gpu_eql, eql, numInteractions * sizeof(double), cudaMemcpyHostToDevice));
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_eql, numInteractions * sizeof(floatingpoint)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_eql, eql, numInteractions * sizeof(floatingpoint), cudaMemcpyHostToDevice));
 
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_pos, numInteractions * sizeof(double)));
-    CUDAcommon::handleerror(cudaMemcpy(gpu_pos, pos, numInteractions * sizeof(double), cudaMemcpyHostToDevice));
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_pos, numInteractions * sizeof(floatingpoint)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_pos, pos, numInteractions * sizeof(floatingpoint), cudaMemcpyHostToDevice));
 
     vector<int> params;
     params.push_back(int(n));
@@ -100,17 +101,17 @@ void BranchingStretching<BStretchingInteractionType>::deallocate() {
 
 
 template <class BStretchingInteractionType>
-double BranchingStretching<BStretchingInteractionType>::computeEnergy(double *coord) {
+floatingpoint BranchingStretching<BStretchingInteractionType>::computeEnergy(floatingpoint *coord) {
 
 
-    double U_i[1], U_ii;
-    double* gU_i;
+    floatingpoint U_i[1], U_ii=0.0;
+    floatingpoint* gU_i;
     U_ii = 0.0;
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
-    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
-    double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
-    double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
+    floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    floatingpoint * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
+    floatingpoint * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
 
 //    if(d == 0.0){
 //        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos, gpu_params);
@@ -128,11 +129,11 @@ double BranchingStretching<BStretchingInteractionType>::computeEnergy(double *co
 #endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
     CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
-    double cuda_energy[1];
+    floatingpoint cuda_energy[1];
     if(gU_i == NULL)
         cuda_energy[0] = 0.0;
     else {
-        CUDAcommon::handleerror(cudaMemcpy(cuda_energy, gU_i, sizeof(double),
+        CUDAcommon::handleerror(cudaMemcpy(cuda_energy, gU_i, sizeof(floatingpoint),
                                            cudaMemcpyDeviceToHost));
     }
         std::cout << getName()<<" "<<"Serial Energy " << U_ii << " Cuda Energy " <<
@@ -142,12 +143,12 @@ double BranchingStretching<BStretchingInteractionType>::computeEnergy(double *co
 }
 
 template <class BStretchingInteractionType>
-void BranchingStretching<BStretchingInteractionType>::computeForces(double *coord, double *f) {
+void BranchingStretching<BStretchingInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
-    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
 
-    double * gpu_force;
+    floatingpoint * gpu_force;
     if(cross_checkclass::Aux){
 
         gpu_force=CUDAcommon::getCUDAvars().gpu_forceAux;
@@ -166,8 +167,8 @@ void BranchingStretching<BStretchingInteractionType>::computeForces(double *coor
 #endif
 }
 ///Template specializations
-template double
-BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(double *coord);
-template void BranchingStretching<BranchingStretchingHarmonic>::computeForces(double *coord, double *f);
+template floatingpoint
+BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(floatingpoint *coord);
+template void BranchingStretching<BranchingStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void BranchingStretching<BranchingStretchingHarmonic>::vectorize();
 template void BranchingStretching<BranchingStretchingHarmonic>::deallocate();

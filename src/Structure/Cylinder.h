@@ -41,8 +41,8 @@ struct CylinderInfoData {
         int filamentId = -1;
         int positionOnFilament = -1;
         int compartmentId = -1;
-        mathfunc::Vec3 beadCoord[2];
-        mathfunc::Vec3 coord;
+        mathfunc::Vec< 3, floatingpoint > beadCoord[2];
+        mathfunc::Vec< 3, floatingpoint > coord;
         short type = -1;
         int id = -1;
         CCylinder* chemCylinder;
@@ -61,13 +61,13 @@ struct CylinderInfoData {
  *  Cylinder class is used to manage and store a MCylinder and CCylinder.
  *  Upon intialization, both of these components are created.
  *
- *  Extending the Movable class, the positions of all instances 
+ *  Extending the Movable class, the positions of all instances
  *  can be updated by the SubSystem.
  *
- *  Extending the Reactable class, the reactions associated with 
+ *  Extending the Reactable class, the reactions associated with
  *  all instances can be updated by the SubSystem.
  *
- *  Extending the DynamicNeighbor class, all instances can be 
+ *  Extending the DynamicNeighbor class, all instances can be
  *  kept in [NeighborLists](@ref NeighborList).
  */
 class Cylinder : public Component, public Trackable, public Movable,
@@ -76,41 +76,51 @@ class Cylinder : public Component, public Trackable, public Movable,
     
 friend class CController;
 friend class DRController;
-    
+
 private:
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     Bead* _b1;  ///< Pointer to the first bead.
     Bead* _b2; ///< Pointer to the end bead.
-    
+
     unique_ptr<MCylinder> _mCylinder; ///< Pointer to mech cylinder
     unique_ptr<CCylinder> _cCylinder; ///< Pointer to chem cylinder
-    
+
     int _position;          ///< Position on structure
-    
+
     bool _plusEnd = false;  ///< If the cylinder is at the plus end
     bool _minusEnd = false; ///< If the cylinder is at the minus end
-    
+
     short _type; ///< Type of cylinder, either corresponding to Filament or other
-                                       
+
     Compartment* _compartment = nullptr; ///< Where this cylinder is
-    
+
     Cylinder* _branchingCylinder = nullptr; ///< ptr to a branching cylinder
-    
+
     ///For dynamic polymerization rate
     static vector<FilamentRateChanger*> _polyChanger;
-                                       
+
     static ChemManager* _chemManager; ///< A pointer to the ChemManager,
                                       ///< intiailized by CController
-    
+
     ///Helper to get coordinate
     void updateCoordinate();
-    
-public:
-    using db_type = Database< Cylinder, true, CylinderInfoData >;
 
-    vector<double> coordinate;
+
+    /// ID of filament
+    int _filID;
+
+public:
+    using DatabaseType = Database< Cylinder, true, CylinderInfoData >;
+
+    vector<floatingpoint> coordinate;
     vector<Bin*> _binvec; //vector of bins. binID corresponding to each binGrid.
     ///< Coordinates of midpoint, updated with updatePosition()
     vector<Bin*> _hbinvec;
+
+    static bool setpositionupdatedstate; //Setter to check if position has been updated
+
 ///< Continuous ID assigned for
 ///< CUDANL calculation
 
@@ -121,7 +131,7 @@ public:
              bool extensionFront = false,
              bool extensionBack  = false,
              bool initialization = false);
-                                       
+
     virtual ~Cylinder() noexcept;
 
     const auto& getCoordinate() const { return getDbData().value[getStableIndex()].coord; }
@@ -129,55 +139,55 @@ public:
 
     /// Get mech cylinder
     MCylinder* getMCylinder() {return _mCylinder.get();}
-    
+
     /// Get chem cylinder
     CCylinder* getCCylinder() {return _cCylinder.get();}
     /// set chem cylinder
     /// @note: since this is a unique ptr, will implicitly delete old chem cylinder
     void setCCylinder(CCylinder* c) {_cCylinder = unique_ptr<CCylinder>(c);}
-    
+
     /// Get cylinder type
     virtual int getType();
-                                       
+
     //@{
     /// Get beads
     Bead* getFirstBead() {return _b1;}
     Bead* getSecondBead() {return _b2;}
     //@}
-    
+
     //@{
     /// Set beads
     void setFirstBead(Bead* b) {_b1 = b;}
     void setSecondBead(Bead* b) {_b2 = b;}
     //@}
-    
+
     /// Get compartment
     Compartment* getCompartment() {return _compartment;}
-    
+
     //@{
     /// Branching cylinder management
     Cylinder* getBranchingCylinder() {return _branchingCylinder;}
     void setBranchingCylinder(Cylinder* c) {_branchingCylinder = c;}
     //@}
-    
+
     ///@{
     /// Set plus and minus end boolean markers
     bool isPlusEnd() {return _plusEnd;}
     void setPlusEnd(bool plusEnd) {_plusEnd = plusEnd;}
-    
+
     bool isMinusEnd() {return _minusEnd;}
     void setMinusEnd(bool minusEnd) {_minusEnd = minusEnd;}
     //@}
-    
+
     int getPosition() {return _position;}
-    
+
     //@{
     /// SubSystem management, inherited from Trackable
     // Does nothing
-    virtual void addToSubSystem() {}
-    virtual void removeFromSubSystem() {}
+    virtual void addToSubSystem() override {}
+    virtual void removeFromSubSystem() override {}
     //@}
-    
+
     /// Get all instances of this class from the SubSystem
     static const vector<Cylinder*>& getCylinders() {
         return getElements();
@@ -186,23 +196,35 @@ public:
     static int numCylinders() {
         return getElements().size();
     }
-    
+
     /// Update the position, inherited from Movable
     /// @note - changes compartment if needed
     virtual void updatePosition();
-    
+
     /// Update the reaction rates, inherited from Reactable
     virtual void updateReactionRates();
-                                       
+
     /// Check if this cylinder is grown to full length
     bool isFullLength();
-                                       
+
     virtual void printSelf();
-                                       
+
     /// Returns whether a cylinder is within a certain distance from another
     /// Uses the closest point between the two cylinders
-    virtual bool within(Cylinder* other, double dist);
+    virtual bool within(Cylinder* other, floatingpoint dist);
+    void setFilID(int filID){
+        _filID = filID;
+    };
 
+    int getFilID() const {
+        return _filID;
+    }
+
+    static floatingpoint timecylinder1;
+	static floatingpoint timecylinder2;
+	static floatingpoint timecylinderchem;
+	static floatingpoint timecylindermech;
+    //@}
 };
 
 #endif

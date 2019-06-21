@@ -34,15 +34,15 @@ class ChemSimpleGillespieImpl : public ChemSimImpl {
 public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0
     ChemSimpleGillespieImpl() :
-        ChemSimImpl(),
-        _exp_distr(0.0), _uniform_distr() { resetTime(); }
+    ChemSimImpl(),
+    _exp_distr(0.0), _uniform_distr() { resetTime(); }
     
     /// Copying is not allowed
     ChemSimpleGillespieImpl(const ChemSimpleGillespieImpl &rhs) = delete;
     
     /// Assignment is not allowed
     ChemSimpleGillespieImpl& operator=(ChemSimpleGillespieImpl &rhs) = delete;
-    
+
     ///Dtor: The reaction network is cleared.
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as
     /// potentially throwing, which in turn disables move operations by the STL
@@ -55,7 +55,7 @@ public:
     
     /// Return the current global time (which should be the sum of all previously
     /// occurred tau-s of the Gillespie algorithm)
-    double getTime() const {return _t;}
+    floatingpoint getTime() const {return _t;}
     
     /// Sets global time to 0.0
     void resetTime() {_t=0.0; syncGlobalTime(); }
@@ -71,14 +71,14 @@ public:
     
     /// Compute the total propensity of the reaction network, by adding all individual
     /// reaction propensities
-    double computeTotalA();
+    floatingpoint computeTotalA();
     
     /// A pure function (without sideeffects), which returns a random time tau, drawn
     /// from the exponential distribution, with the propensity given by a.
-    double generateTau(double a);
+    floatingpoint generateTau(floatingpoint a);
     
     /// This function generates a random number between 0 and 1
-    double generateUniform();
+    floatingpoint generateUniform();
     
     /// This function needs to be called before calling run(...).
     /// @note If somewhere in the middle of simulaiton initialize() is called, it will
@@ -88,9 +88,9 @@ public:
     
     /// This method runs the Gillespie algorithm for the given amount of time.
     /// @return true if successful.
-    virtual bool run(double time) {
+    virtual bool run(floatingpoint time) {
         
-        double endTime = _t + time;
+        floatingpoint endTime = _t + time;
         
         while(_t < endTime) {
             bool success = makeStep();
@@ -122,9 +122,9 @@ private:
 private:
     vector<ReactionBase*> _reactions; ///< The database of Reaction objects,
                                       ///< representing the reaction network
-    exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
-    uniform_real_distribution<double> _uniform_distr; ///< Adaptor for the uniform distribution
-    double _t; ///< global time
+    exponential_distribution<floatingpoint> _exp_distr; ///< Adaptor for the exponential distribution
+    uniform_real_distribution<floatingpoint> _uniform_distr; ///< Adaptor for the uniform distribution
+    floatingpoint _t; ///< global time
 };
 
 

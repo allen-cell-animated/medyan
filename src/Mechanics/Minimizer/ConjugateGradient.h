@@ -21,6 +21,8 @@
 #include "CGSteepestDescent.h"
 #include "Minimizer.h"
 
+#include "ForceFieldManager.h"
+
 //FORWARD DECLARATIONS
 class ForceFieldManager;
 
@@ -30,15 +32,15 @@ template <class CGType> class ConjugateGradient : public Minimizer {
 private:
     CGType _CGType;  ///< Implementation of a CG method
     
-    double _GRADTOL;   ///< Gradient tolerance used
-    double _MAXDIST;   ///< Max distance used to move
-    double _LAMBDAMAX; ///< Maximum lambda that can be returned
+    floatingpoint _GRADTOL;   ///< Gradient tolerance used
+    floatingpoint _MAXDIST;   ///< Max distance used to move
+    floatingpoint _LAMBDAMAX; ///< Maximum lambda that can be returned
     
 public:
     /// Constructor sets gradient tolerance parameter
-    ConjugateGradient(double gradientTolerance,
-                      double maxDistance,
-                      double lambdaMax)
+    ConjugateGradient(floatingpoint gradientTolerance,
+                      floatingpoint maxDistance,
+                      floatingpoint lambdaMax)
     
         : _GRADTOL(gradientTolerance),
           _MAXDIST(maxDistance),
@@ -51,6 +53,36 @@ public:
     void equlibrate(ForceFieldManager &FFM, bool steplimit) {
         _CGType.minimize(FFM, _GRADTOL, _MAXDIST, _LAMBDAMAX, steplimit);
     }
+
+
+
+
+
+    floatingpoint getEnergy(ForceFieldManager &FFM, floatingpoint d){
+      
+        //double* coord = _CGType.getCoords();
+        floatingpoint* coord = Bead::getDbData().coords.data();
+        
+        FFM.vectorizeAllForceFields();
+
+        floatingpoint dummyForce[1] = {0};
+
+        floatingpoint f = FFM.computeEnergy(coord,dummyForce,0.0);
+        
+        // delete [] coord;
+        
+        FFM.cleanupAllForceFields();
+        
+        
+        
+        return f;
+        
+        
+        
+    }
+
+    
+    
 };
 
 #endif

@@ -22,6 +22,7 @@
 
 #include "ChemNRMImpl.h"
 #include "Rand.h"
+#include "CController.h"
 
 #ifdef BOOST_MEM_POOL
 #ifdef BOOST_POOL_MEM_RNODENRM
@@ -93,14 +94,14 @@ void RNodeNRM::updateHeap() {
 }
 
 void RNodeNRM::generateNewRandTau() {
-    double newTau;
+    floatingpoint newTau;
     reComputePropensity();//calculated new _a
 
 #ifdef TRACK_ZERO_COPY_N
     newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #else
-    if(_a<1.0e-10) // numeric_limits< double >::min()
-        newTau = numeric_limits<double>::infinity();
+    if(_a<1.0e-10) // numeric_limits< floatingpoint >::min()
+        newTau = numeric_limits<floatingpoint>::infinity();
     else
         newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #endif
@@ -117,7 +118,7 @@ void RNodeNRM::activateReaction() {
 
 void RNodeNRM::passivateReaction() {
     _a=0;
-    double tau = numeric_limits<double>::infinity();
+    floatingpoint tau = numeric_limits<floatingpoint>::infinity();
     setTau(tau);
     updateHeap();
 }
@@ -134,14 +135,10 @@ ChemNRMImpl::~ChemNRMImpl() {
     _map_rnodes.clear();
 }
 
-double ChemNRMImpl::generateTau(double a){
-    exponential_distribution<double>::param_type pm(a);
-
+floatingpoint ChemNRMImpl::generateTau(floatingpoint a){
+    exponential_distribution<floatingpoint>::param_type pm(a);
+    
     _exp_distr.param(pm);
-    Rand::counter++;
-    Rand::Ncounter++;
-//    std::cout<<"Counters N "<<Rand::Ncounter<<" D "<<Rand::Dcounter<<" T "<<Rand::counter<<
-//            endl;
     return _exp_distr(Rand::eng);
 }
 
@@ -153,8 +150,8 @@ bool ChemNRMImpl::makeStep() {
         return false;
     }
     RNodeNRM *rn = _heap.top()._rn;
-    double tau_top = rn->getTau();
-    if(tau_top==numeric_limits<double>::infinity()){
+    floatingpoint tau_top = rn->getTau();
+    if(tau_top==numeric_limits<floatingpoint>::infinity()){
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
         return false;
     }
@@ -168,14 +165,25 @@ bool ChemNRMImpl::makeStep() {
         rn->printSelf();
         return false;
     }
-    
-    double t_prev = _t;
+
+//    if(rn->getReaction()->getReactionType() == ReactionType::LINKERBINDING) {
+//
+//        cout << "Stopping to check linker rxn." << endl;
+//    }
+
+    floatingpoint t_prev = _t;
 
     _t=tau_top;
     syncGlobalTime();
-/*    std::cout<<"------------"<<endl;
-    rn->printSelf();
-    std::cout<<"------------"<<endl;*/
+    //std::cout<<"------------"<<endl;
+    //rn->printSelf();
+    //std::cout<<"------------"<<endl;
+
+    //Dissipation
+    if(SysParams::Chemistry().dissTracking){
+    ReactionBase* react = rn->getReaction();
+    _dt->updateDelGChem(react);
+    }
     rn->makeStep();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
@@ -194,23 +202,23 @@ bool ChemNRMImpl::makeStep() {
         for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
 
             RNodeNRM *rn_other = (RNodeNRM*)((*rit)->getRnode());
-            double a_old = rn_other->getPropensity();
+            floatingpoint a_old = rn_other->getPropensity();
 
             //recompute propensity
             rn_other->reComputePropensity();
 
-            double tau_new;
-            double tau_old = rn_other->getTau();
+            floatingpoint tau_new;
+            floatingpoint tau_old = rn_other->getTau();
 
-            double a_new = rn_other->getPropensity();
+            floatingpoint a_new = rn_other->getPropensity();
 
 #ifdef TRACK_ZERO_COPY_N
             //recompute tau
             tau_new = (a_old/a_new)*(tau_old-_t)+_t;
 #else
             //recompute tau
-            if(a_new<1.0e-15) // numeric_limits< double >::min()
-                tau_new = numeric_limits<double>::infinity();
+            if(a_new<1.0e-15) // numeric_limits< floatingpoint >::min()
+                tau_new = numeric_limits<floatingpoint>::infinity();
             else if (a_old<1.0e-15){
                 rn_other->generateNewRandTau();
                 tau_new = rn_other->getTau();
@@ -219,7 +227,7 @@ bool ChemNRMImpl::makeStep() {
                 tau_new = (a_old/a_new)*(tau_old-_t)+_t;
             }
 #endif
-            if(boost::math::isnan(tau_new)){tau_new=numeric_limits<double>::infinity();}
+            if(boost::math::isnan(tau_new)){tau_new=numeric_limits<floatingpoint>::infinity();}
             ///DEBUG
             if(tau_new < _t) {
 

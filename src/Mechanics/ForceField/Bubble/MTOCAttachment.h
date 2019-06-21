@@ -32,25 +32,25 @@ class MTOCAttachment : public BubbleInteractions {
     
 private:
     MTOCInteractionType _FFType;
-    
+
     int *beadSet;
     ///Array describing the constants in calculation
-    double *kstr;
-    double *pos1;
-    double *pos2;
-    
-    
+    floatingpoint *kstr;
+	floatingpoint *pos1;
+	floatingpoint *pos2;
+
+
 public:
-    
+
     ///Array describing indexed set of interactions
     ///For MTOC, this is a 1-bead potential
     const static int n = 1;
     
     virtual void vectorize();
     virtual void deallocate();
-    
-    virtual double computeEnergy(double *coord, bool stretched) override;
-    virtual void computeForces(double *coord, double *f);
+
+    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) override;
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     //virtual void computeForcesAux(double *coord, double *f);
     
     virtual void computeLoadForces() {return;}

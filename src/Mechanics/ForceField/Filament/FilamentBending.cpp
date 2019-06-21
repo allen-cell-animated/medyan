@@ -30,8 +30,8 @@ void FilamentBending<FBendingInteractionType>::vectorize() {
     int numInteractions = Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles();
 
     beadSet = new int[n * numInteractions];
-    kbend = new double[numInteractions];
-    eqt = new double[numInteractions];
+    kbend = new floatingpoint[numInteractions];
+    eqt = new floatingpoint[numInteractions];
 
     int i = 0;
 
@@ -67,7 +67,7 @@ void FilamentBending<FBendingInteractionType>::vectorize() {
     if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
         CUDAcommon::handleerror(cudaStreamCreate(&stream));
 
-//    F_i = new double[3 * Bead::getBeads().size()];
+//    F_i = new floatingpoint[3 * Bead::getBeads().size()];
 
     _FFType.optimalblocksnthreads(numInteractions, stream);
 
@@ -76,12 +76,12 @@ void FilamentBending<FBendingInteractionType>::vectorize() {
                                                 sizeof(int),
                                        cudaMemcpyHostToDevice, stream));
 
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_kbend, numInteractions * sizeof(double)));
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_kbend, numInteractions * sizeof(floatingpoint)));
     CUDAcommon::handleerror(cudaMemcpyAsync(gpu_kbend, kbend, numInteractions * sizeof
-                            (double), cudaMemcpyHostToDevice, stream));
+                            (floatingpoint), cudaMemcpyHostToDevice, stream));
 
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_eqt, numInteractions * sizeof(double)));
-    CUDAcommon::handleerror(cudaMemcpyAsync(gpu_eqt, eqt, numInteractions * sizeof(double),
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_eqt, numInteractions * sizeof(floatingpoint)));
+    CUDAcommon::handleerror(cudaMemcpyAsync(gpu_eqt, eqt, numInteractions * sizeof(floatingpoint),
                                         cudaMemcpyHostToDevice, stream));
 
     vector<int> params;
@@ -100,7 +100,7 @@ void FilamentBending<FBendingInteractionType>::vectorize() {
 //    CUDAcommon::handleerror(cudaDeviceSynchronize(),"FilamentBending.cu",
 //                            "vectorizeFF.cu");
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
     CUDAcommon::cudatime.TvecvectorizeFF.push_back(elapsed_run.count());
     CUDAcommon::cudatime.TvectorizeFF += elapsed_run.count();
 #endif
@@ -126,10 +126,10 @@ void FilamentBending<FBendingInteractionType>::deallocate() {
 
 
 template <class FBendingInteractionType>
-double FilamentBending<FBendingInteractionType>::computeEnergy(double *coord){
+floatingpoint FilamentBending<FBendingInteractionType>::computeEnergy(floatingpoint *coord){
 
-    double U_i[1], U_ii;
-    double* gU_i;
+    floatingpoint U_i[1], U_ii=0.0;
+    floatingpoint* gU_i;
     U_ii = 0.0;
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -141,9 +141,9 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(double *coord){
 #endif
 
     //has to be changed to accomodate aux force
-    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
-    double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
-    double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
+    floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    floatingpoint * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
+    floatingpoint * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
 
 
 //    if(d == 0.0){
@@ -158,7 +158,7 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(double *coord){
 //    CUDAcommon::handleerror(cudaDeviceSynchronize(),"FilamentBending.cu",
 //                            "computeEnergy");
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
     CUDAcommon::cudatime.TveccomputeE.push_back(elapsed_run.count());
     CUDAcommon::cudatime.TcomputeE += elapsed_run.count();
     CUDAcommon::cudatime.TcomputeEiter += elapsed_run.count();
@@ -173,7 +173,7 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(double *coord){
 
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runs(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
     CUDAcommon::serltime.TveccomputeE.push_back(elapsed_runs.count());
     CUDAcommon::serltime.TcomputeE += elapsed_runs.count();
     CUDAcommon::serltime.TcomputeEiter += elapsed_runs.count();
@@ -184,15 +184,15 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(double *coord){
 }
 
 template <class FBendingInteractionType>
-void FilamentBending<FBendingInteractionType>::computeForces(double *coord, double *f) {
+void FilamentBending<FBendingInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
 #endif
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
-    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
-    double * gpu_force;
+    floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    floatingpoint * gpu_force;
     if(cross_checkclass::Aux){
         gpu_force=CUDAcommon::getCUDAvars().gpu_forceAux;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kbend, gpu_eqt, gpu_params);
@@ -204,7 +204,7 @@ void FilamentBending<FBendingInteractionType>::computeForces(double *coord, doub
 #endif
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
     CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
     CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
     tbegin = chrono::high_resolution_clock::now();
@@ -214,13 +214,13 @@ void FilamentBending<FBendingInteractionType>::computeForces(double *coord, doub
 #endif
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runs(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
     CUDAcommon::serltime.TveccomputeF.push_back(elapsed_runs.count());
     CUDAcommon::serltime.TcomputeF += elapsed_runs.count();
 #endif
 #ifdef DETAILEDOUTPUT
-    double maxF = 0.0;
-    double mag = 0.0;
+    floatingpoint maxF = 0.0;
+    floatingpoint mag = 0.0;
     for(int i = 0; i < CGMethod::N/3; i++) {
         mag = 0.0;
         for(int j = 0; j < 3; j++)
@@ -236,13 +236,13 @@ void FilamentBending<FBendingInteractionType>::computeForces(double *coord, doub
 }
 
 ///Template specializations
-template double FilamentBending<FilamentBendingHarmonic>::computeEnergy(double *coord);
-template void FilamentBending<FilamentBendingHarmonic>::computeForces(double *coord, double *f);
+template floatingpoint FilamentBending<FilamentBendingHarmonic>::computeEnergy(floatingpoint *coord);
+template void FilamentBending<FilamentBendingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void FilamentBending<FilamentBendingHarmonic>::vectorize();
 template void FilamentBending<FilamentBendingHarmonic>::deallocate();
 
 
-template double FilamentBending<FilamentBendingCosine>::computeEnergy(double *coord);
-template void FilamentBending<FilamentBendingCosine>::computeForces(double *coord, double *f);
+template floatingpoint FilamentBending<FilamentBendingCosine>::computeEnergy(floatingpoint *coord);
+template void FilamentBending<FilamentBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void FilamentBending<FilamentBendingCosine>::vectorize();
 template void FilamentBending<FilamentBendingCosine>::deallocate();

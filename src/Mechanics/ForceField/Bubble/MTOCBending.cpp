@@ -26,7 +26,7 @@ void MTOCBending<MTOCInteractionType>::vectorize() {
     //Watch out! Only one MTOC is allowed
     for(auto mtoc : MTOC::getMTOCs()) {
         beadSet = new int[n *  mtoc->getFilaments().size() + 1];
-        kbend = new double[n *  mtoc->getFilaments().size() + 1];
+        kbend = new floatingpoint[n *  mtoc->getFilaments().size() + 1];
         
         beadSet[0] = mtoc->getBubble()->getBead()->getIndex();
         kbend[0] = 0.0;
@@ -39,7 +39,7 @@ void MTOCBending<MTOCInteractionType>::vectorize() {
             beadSet[n * i - 1] = f->getMinusEndCylinder()->getFirstBead()->getIndex();
             beadSet[n * i] = f->getMinusEndCylinder()->getSecondBead()->getIndex();
             
-            double kk = mtoc->getBubble()->getMTOCBendingK();
+            floatingpoint kk = mtoc->getBubble()->getMTOCBendingK();
             kbend[n * i - 1] = kk;
             kbend[n * i] = kk;
             
@@ -59,10 +59,10 @@ void MTOCBending<MTOCInteractionType>::deallocate() {
 
 
 template <class MTOCInteractionType>
-double MTOCBending<MTOCInteractionType>::computeEnergy(double* coord, bool stretched) {
+floatingpoint MTOCBending<MTOCInteractionType>::computeEnergy(floatingpoint* coord, bool stretched) {
     
-    double U = 0.0;
-    double U_i=0.0;
+    floatingpoint U = 0.0;
+    floatingpoint U_i=0.0;
     
     //TO DO, for loop may be removed
     
@@ -77,15 +77,15 @@ double MTOCBending<MTOCInteractionType>::computeEnergy(double* coord, bool stret
         //            Cylinder* c = f->getMinusEndCylinder();
         //
         //            Bead* b2 = c->getFirstBead();
-        //            double kStretch = c->getMCylinder()->getStretchingConst();
-        double radius = mtoc->getBubble()->getRadius();
+        //            floatingpoint kStretch = c->getMCylinder()->getStretchingConst();
+        floatingpoint radius = mtoc->getBubble()->getRadius();
         
         U_i = _FFType.energy(coord, beadSet, kbend, radius);
     }
     
     return U_i;
     
-    //            if(fabs(U_i) == numeric_limits<double>::infinity()
+    //            if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
     //               || U_i != U_i || U_i < -1.0) {
     //
     //                //set culprits and return
@@ -103,7 +103,7 @@ double MTOCBending<MTOCInteractionType>::computeEnergy(double* coord, bool stret
 }
 
 template <class MTOCInteractionType>
-void MTOCBending<MTOCInteractionType>::computeForces(double *coord, double *f) {
+void MTOCBending<MTOCInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
     
     for(auto mtoc : MTOC::getMTOCs()) {
         //
@@ -116,8 +116,8 @@ void MTOCBending<MTOCInteractionType>::computeForces(double *coord, double *f) {
         //            Cylinder* c = f->getMinusEndCylinder();
         //
         //            Bead* b2 = c->getFirstBead();
-        //            double kStretch = c->getMCylinder()->getStretchingConst();
-        double radius = mtoc->getBubble()->getRadius();
+        //            floatingpoint kStretch = c->getMCylinder()->getStretchingConst();
+        floatingpoint radius = mtoc->getBubble()->getRadius();
         _FFType.forces(coord, f, beadSet, kbend, radius);
         //        }
     }
@@ -126,7 +126,7 @@ void MTOCBending<MTOCInteractionType>::computeForces(double *coord, double *f) {
 
 
 //template <class MTOCInteractionType>
-//void MTOCAttachment<MTOCInteractionType>::computeForcesAux(double *coord, double *f) {
+//void MTOCAttachment<MTOCInteractionType>::computeForcesAux(floatingpoint *coord, floatingpoint *f) {
 //    cout << "MTOCAttachment<MTOCInteractionType>::computeForcesAux should not be called in vectorized version." << endl;
 //
 //    for(auto mtoc : MTOC::getMTOCs()) {
@@ -140,8 +140,8 @@ void MTOCBending<MTOCInteractionType>::computeForces(double *coord, double *f) {
 //            Cylinder* c = f->getMinusEndCylinder();
 //
 //            Bead* b2 = c->getFirstBead();
-//            double kStretch = c->getMCylinder()->getStretchingConst();
-//            double radius = mtoc->getBubble()->getRadius();
+//            floatingpoint kStretch = c->getMCylinder()->getStretchingConst();
+//            floatingpoint radius = mtoc->getBubble()->getRadius();
 //
 //            _FFType.forcesAux(coord, f, beadSet, kstr);
 //        }
@@ -149,9 +149,9 @@ void MTOCBending<MTOCInteractionType>::computeForces(double *coord, double *f) {
 //}
 
 ///Template specializations
-template double MTOCBending<MTOCBendingCosine>::computeEnergy(double *coord, bool stretched);
-template void MTOCBending<MTOCBendingCosine>::computeForces(double *coord, double *f);
-//template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux(double *coord, double *f);
+template floatingpoint MTOCBending<MTOCBendingCosine>::computeEnergy(floatingpoint *coord, bool stretched);
+template void MTOCBending<MTOCBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
+//template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux(floatingpoint *coord, floatingpoint *f);
 template void MTOCBending<MTOCBendingCosine>::vectorize();
 template void MTOCBending<MTOCBendingCosine>::deallocate();
 

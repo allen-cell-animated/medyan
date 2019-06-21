@@ -26,10 +26,18 @@
 
 template <class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::assignforcemags() {
+
+    for(auto l:Linker::getLinkers()){
+        //Using += to ensure that the stretching forces are additive.
+        l->getMLinker()->stretchForce = stretchforce[l->getIndex()];
+
+    }
+
+
 #ifdef CUDAACCL
-    double stretchforce[Linker::getLinkers().size()];
+    floatingpoint stretchforce[Linker::getLinkers().size()];
     CUDAcommon::handleerror(cudaMemcpy(stretchforce, gpu_Lstretchforce,
-                                       Linker::getLinkers().size() * sizeof(double),
+                                       Linker::getLinkers().size() * sizeof(floatingpoint),
                                        cudaMemcpyDeviceToHost));
     int id = 0;
     for(auto l:Linker::getLinkers())
@@ -39,13 +47,13 @@ void LinkerStretching<LStretchingInteractionType>::assignforcemags() {
 
 template <class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::vectorize() {
-
+    CUDAcommon::tmin.numinteractions[2] += Linker::getLinkers().size();
     beadSet = new int[n * Linker::getLinkers().size()];
-    kstr = new double[Linker::getLinkers().size()];
-    eql = new double[Linker::getLinkers().size()];
-    pos1 = new double[Linker::getLinkers().size()];
-    pos2 = new double[Linker::getLinkers().size()];
-    stretchforce = new double[Linker::getLinkers().size()];
+    kstr = new floatingpoint[Linker::getLinkers().size()];
+    eql = new floatingpoint[Linker::getLinkers().size()];
+    pos1 = new floatingpoint[Linker::getLinkers().size()];
+    pos2 = new floatingpoint[Linker::getLinkers().size()];
+    stretchforce = new floatingpoint[Linker::getLinkers().size()];
 
     int i = 0;
 
@@ -73,7 +81,7 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
     //CUDA stream create
     if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
         CUDAcommon::handleerror(cudaStreamCreate(&stream));
-//    F_i = new double[3 * Bead::getBeads().size()];
+//    F_i = new floatingpoint[3 * Bead::getBeads().size()];
 //    cudaEvent_t start, stop;
 //    CUDAcommon::handleerror(cudaEventCreate( &start));
 //    CUDAcommon::handleerror(cudaEventCreate( &stop));
@@ -87,28 +95,28 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
                                                 sizeof(int),
                                        cudaMemcpyHostToDevice, stream),"cuda data transfer", "LinkerStretching.cu");
 
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_kstr, numInteractions * sizeof(double)),"cuda data transfer",
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_kstr, numInteractions * sizeof(floatingpoint)),"cuda data transfer",
                                        "LinkerStretching.cu");
     CUDAcommon::handleerror(cudaMemcpyAsync(gpu_kstr, kstr, numInteractions * sizeof
-                            (double), cudaMemcpyHostToDevice, stream),
+                            (floatingpoint), cudaMemcpyHostToDevice, stream),
                             "cuda data transfer", "LinkerStretching.cu");
 
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_eql, numInteractions * sizeof(double)),"cuda data transfer",
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_eql, numInteractions * sizeof(floatingpoint)),"cuda data transfer",
                             "LinkerStretching.cu");
-    CUDAcommon::handleerror(cudaMemcpyAsync(gpu_eql, eql, numInteractions * sizeof(double),
+    CUDAcommon::handleerror(cudaMemcpyAsync(gpu_eql, eql, numInteractions * sizeof(floatingpoint),
                             cudaMemcpyHostToDevice, stream), "cuda data transfer", "LinkerStretching.cu");
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_pos1, numInteractions * sizeof(double)),"cuda data transfer",
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_pos1, numInteractions * sizeof(floatingpoint)),"cuda data transfer",
                             "LinkerStretching.cu");
     CUDAcommon::handleerror(cudaMemcpyAsync(gpu_pos1, pos1, numInteractions * sizeof
-                            (double), cudaMemcpyHostToDevice, stream),
+                            (floatingpoint), cudaMemcpyHostToDevice, stream),
                             "cuda data transfer", "LinkerStretching.cu");
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_pos2, numInteractions * sizeof(double)),"cuda data transfer",
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_pos2, numInteractions * sizeof(floatingpoint)),"cuda data transfer",
                             "LinkerStretching.cu");
     CUDAcommon::handleerror(cudaMemcpyAsync(gpu_pos2, pos2, numInteractions * sizeof
-                            (double), cudaMemcpyHostToDevice, stream),
+                            (floatingpoint), cudaMemcpyHostToDevice, stream),
                             "cuda data transfer", "LinkerStretching.cu");
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_Lstretchforce, numInteractions *
-                                                                     sizeof(double)),"cuda data transfer",
+                                                                     sizeof(floatingpoint)),"cuda data transfer",
                             "LinkerStretching.cu");
     vector<int> params;
     params.push_back(int(n));
@@ -127,7 +135,7 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
 //    CUDAcommon::handleerror(cudaDeviceSynchronize(),"LinkerStretching.cu",
 //                            "vectorizeFF");
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
     CUDAcommon::cudatime.TvecvectorizeFF.push_back(elapsed_run.count());
     CUDAcommon::cudatime.TvectorizeFF += elapsed_run.count();
 #endif
@@ -162,10 +170,10 @@ void LinkerStretching<LStretchingInteractionType>::deallocate() {
 
 
 template <class LStretchingInteractionType>
-double LinkerStretching<LStretchingInteractionType>::computeEnergy(double* coord){
+floatingpoint LinkerStretching<LStretchingInteractionType>::computeEnergy(floatingpoint* coord){
 
-    double U_i[1], U_ii;
-    double* gU_i;
+    floatingpoint U_i[1], U_ii;
+    floatingpoint* gU_i;
     U_ii = 0.0;
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -177,9 +185,9 @@ double LinkerStretching<LStretchingInteractionType>::computeEnergy(double* coord
 #endif
 
     //has to be changed to accomodate aux force
-    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
-    double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
-    double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
+    floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    floatingpoint * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
+    floatingpoint * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
 
 
 //    if(d == 0.0){
@@ -193,7 +201,7 @@ double LinkerStretching<LStretchingInteractionType>::computeEnergy(double* coord
 //    CUDAcommon::handleerror(cudaDeviceSynchronize(),"CylinderExclVolume.cu",
 //                            "computeEnergy");
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
     CUDAcommon::cudatime.TveccomputeE.push_back(elapsed_run.count());
     CUDAcommon::cudatime.TcomputeE += elapsed_run.count();
     CUDAcommon::cudatime.TcomputeEiter += elapsed_run.count();
@@ -208,7 +216,7 @@ double LinkerStretching<LStretchingInteractionType>::computeEnergy(double* coord
 
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runs(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
     CUDAcommon::serltime.TveccomputeE.push_back(elapsed_runs.count());
     CUDAcommon::serltime.TcomputeE += elapsed_runs.count();
     CUDAcommon::serltime.TcomputeEiter += elapsed_runs.count();
@@ -219,15 +227,15 @@ double LinkerStretching<LStretchingInteractionType>::computeEnergy(double* coord
 }
 
 template <class LStretchingInteractionType>
-void LinkerStretching<LStretchingInteractionType>::computeForces(double *coord, double *f) {
+void LinkerStretching<LStretchingInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
 #endif
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
-    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
-    double * gpu_force;
+    floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    floatingpoint * gpu_force;
     if(cross_checkclass::Aux){
         gpu_force=CUDAcommon::getCUDAvars().gpu_forceAux;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1,
@@ -241,7 +249,7 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(double *coord, 
 #endif
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
     CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
     CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
     tbegin = chrono::high_resolution_clock::now();
@@ -250,8 +258,8 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(double *coord, 
     _FFType.forces(coord, f, beadSet, kstr, eql, pos1, pos2, stretchforce);
 #endif
 #ifdef DETAILEDOUTPUT
-    double maxF = 0.0;
-    double mag = 0.0;
+    floatingpoint maxF = 0.0;
+    floatingpoint mag = 0.0;
     for(int i = 0; i < CGMethod::N/3; i++) {
         mag = 0.0;
         for(int j = 0; j < 3; j++)
@@ -265,7 +273,7 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(double *coord, 
 #endif
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runs(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
     CUDAcommon::serltime.TveccomputeF.push_back(elapsed_runs.count());
     CUDAcommon::serltime.TcomputeF += elapsed_runs.count();
 #endif
@@ -273,8 +281,9 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(double *coord, 
 
 
 ///Temlate specializations
-template double LinkerStretching<LinkerStretchingHarmonic>::computeEnergy(double *coord);
-template void LinkerStretching<LinkerStretchingHarmonic>::computeForces(double *coord, double *f);
+template floatingpoint LinkerStretching<LinkerStretchingHarmonic>::computeEnergy(floatingpoint *coord);
+template void LinkerStretching<LinkerStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void LinkerStretching<LinkerStretchingHarmonic>::vectorize();
 template void LinkerStretching<LinkerStretchingHarmonic>::deallocate();
 template void LinkerStretching<LinkerStretchingHarmonic>::assignforcemags();
+

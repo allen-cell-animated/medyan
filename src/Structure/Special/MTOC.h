@@ -61,8 +61,8 @@ public:
     //@{
     /// SubSystem management, inherited from Trackable
     // Does nothing
-    virtual void addToSubSystem() { }
-    virtual void removeFromSubSystem() {}
+    virtual void addToSubSystem() override { }
+    virtual void removeFromSubSystem() override {}
     //@}
     
     /// Get all instances of this class from the SubSystem

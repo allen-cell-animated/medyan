@@ -38,7 +38,7 @@ void Cylinder::updateData() {
         data.compartmentId = c->getCompartment()->getId();
         data.beadCoord[0] = c->getFirstBead()->coordinate();
         data.beadCoord[1] = c->getSecondBead()->coordinate();
-        data.coord = vector2Vec<3, double>(c->coordinate);
+        data.coord = vector2Vec<3, floatingpoint>(c->coordinate);
         data.type = c->getType();
         data.id = c->getId();
 
@@ -61,9 +61,10 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 
     : Trackable(true, true, true, false),
       _b1(b1), _b2(b2), _type(type), _position(position),
-      db_type(CylinderInfoData::CylinderInfo {}) {
+      DatabaseType(CylinderInfoData::CylinderInfo {}) {
     
     parent->addChild(unique_ptr<Component>(this));
+	//@{
 
     //Set coordinate
     updateCoordinate();
@@ -76,22 +77,23 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 
    //add to compartment
    _compartment->addCylinder(this);
-          
+
+    //@}
 #ifdef MECHANICS
           //set eqLength according to cylinder size
           
-    double eqLength  = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
+    floatingpoint eqLength  = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
     if(!SysParams::RUNSTATE) //RESTARTPHASE
     {
         int nummonomers = (int) round(eqLength/ SysParams::Geometry().monomerSize[type]);
-        double tpd = eqLength;
+        floatingpoint tpd = eqLength;
               
         if(nummonomers ==0){
             eqLength = SysParams::Geometry().monomerSize[type];
         }
         else{
             eqLength = (nummonomers) * SysParams::Geometry().monomerSize[type];
-            double mindis = abs(tpd - eqLength);
+            floatingpoint mindis = abs(tpd - eqLength);
 
             for(auto i=nummonomers-1;i<=min(nummonomers+1, SysParams::Geometry().cylinderNumMon[type]);i++){
                 if(mindis > abs(tpd - i * SysParams::Geometry().monomerSize[type]))
@@ -101,8 +103,8 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
                 }
             }
         }
-              
-            
+        
+    
     }
     _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
     _mCylinder->setCylinder(this);
@@ -125,7 +127,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     data.compartmentId = _compartment->getId();
     data.beadCoord[0] = _b1->coordinate();
     data.beadCoord[1] = _b2->coordinate();
-    data.coord = vector2Vec<3, double>(coordinate);
+    data.coord = vector2Vec<3, floatingpoint>(coordinate);
     data.type = getType();
     data.id = getId();
 
@@ -145,50 +147,54 @@ Cylinder::~Cylinder() noexcept {
 int Cylinder::getType() {return _type;}
 
 void Cylinder::updatePosition() {
+	if(!setpositionupdatedstate) {
 
-    //check if were still in same compartment, set new position
-    updateCoordinate();
+		//check if were still in same compartment, set new position
+		updateCoordinate();
 
-    Compartment* c;
-    try {c = GController::getCompartment(coordinate);}
-    catch (exception& e) {
-        cout << e.what();
-        
-        printSelf();
-        
-        exit(EXIT_FAILURE);
-    }
-    
-    if(c != _compartment) { 
+		Compartment *c;
+		try { c = GController::getCompartment(coordinate); }
+		catch (exception &e) {
+			cout << e.what();
+
+			printSelf();
+
+			exit(EXIT_FAILURE);
+		}
+
+		if (c != _compartment) {
+			mins = chrono::high_resolution_clock::now();
 
 #ifdef CHEMISTRY
-        auto oldCompartment = _compartment;
-        auto newCompartment = c;
+			auto oldCompartment = _compartment;
+			auto newCompartment = c;
 #endif
-        
-        //remove from old compartment, add to new
-        _compartment->removeCylinder(this);
-        _compartment = c;
-        _compartment->addCylinder(this);
+
+			//remove from old compartment, add to new
+			_compartment->removeCylinder(this);
+			_compartment = c;
+			_compartment->addCylinder(this);
 
 #ifdef CHEMISTRY
-        auto oldCCylinder = _cCylinder.get();
-        
-        //Remove old ccylinder from binding managers
-        for(auto &manager : oldCompartment->getFilamentBindingManagers()) {
+			auto oldCCylinder = _cCylinder.get();
+
+			//Remove old ccylinder from binding managers
+			//Removed March 8, 2019 Aravind. Unnecessary as all UpdatePosition calls are
+			// immediately followed by UpdateNeighborLists call in Controller.cpp/.cu
+/*        for(auto &manager : oldCompartment->getFilamentBindingManagers()) {
 #ifdef NLORIGINAL
             manager->removePossibleBindings(oldCCylinder);
 #endif
 #ifdef NLSTENCILLIST
             manager->removePossibleBindingsstencil(oldCCylinder);
 #endif
-        }
+        }*/
 
-        //clone and set new ccylinder
-        CCylinder* clone = _cCylinder->clone(c);
-        setCCylinder(clone);
-        
-        auto newCCylinder = _cCylinder.get();
+			//clone and set new ccylinder
+			CCylinder *clone = _cCylinder->clone(c);
+			setCCylinder(clone);
+
+			auto newCCylinder = _cCylinder.get();
 
         //change both CCylinder and Compartment ID in the vector
         auto& data = getDbData().value[getStableIndex()];
@@ -196,7 +202,7 @@ void Cylinder::updatePosition() {
         data.chemCylinder = newCCylinder;
         
         //Add new ccylinder to binding managers
-        for(auto &manager : newCompartment->getFilamentBindingManagers()){
+/*        for(auto &manager : newCompartment->getFilamentBindingManagers()){
 #ifdef NLORIGINAL
             manager->addPossibleBindings(newCCylinder);
 #endif
@@ -204,16 +210,20 @@ void Cylinder::updatePosition() {
             //This directs call to Hybrid Binding Manager.
             manager->addPossibleBindingsstencil(newCCylinder);
 #endif
-        }
-    }
+        }*/
+			mine = chrono::high_resolution_clock::now();
+			chrono::duration<floatingpoint> compartment_update(mine - mins);
+			CUDAcommon::tmin.timecylinderupdate += compartment_update.count();
+			CUDAcommon::tmin.callscylinderupdate++;
+		}
 #endif
-    
+
 #ifdef MECHANICS
     //update length
     _mCylinder->setLength(twoPointDistance(_b1->vcoordinate(),
                                            _b2->vcoordinate()));
 #endif
-
+	}
 }
 
 /// @note -  The function uses the bead load force to calculate this changed rate.
@@ -221,7 +231,7 @@ void Cylinder::updatePosition() {
 
 void Cylinder::updateReactionRates() {
     
-    double force;
+    floatingpoint force;
     
     //if no rate changer was defined, skip
     if(_polyChanger.empty()) return;
@@ -234,9 +244,9 @@ void Cylinder::updateReactionRates() {
         
         //change all plus end polymerization rates
         for(auto &r : _cCylinder->getInternalReactions()) {
-            float newRate;
+            floatingpoint newRate;
             if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
-                
+
                 //If reaching a threshold time for manual treadmilling rate changer
                 if(tau() > SysParams::DRParams.manualCharStartTime){
                     //all bare rate will be change by a threshold ratio
@@ -245,12 +255,12 @@ void Cylinder::updateReactionRates() {
                 else{
                     newRate = _polyChanger[_type]->changeRate(r->getBareRate(), force);
                 }
-                
+
                 r->setRateScaled(newRate);
                 r->updatePropensity();
 
             }
-            
+
             //change all plus end depolymerization rates, not force dependent
             //If reaching a threshold time for manual treadmilling rate changer
             if(tau() > SysParams::DRParams.manualCharStartTime){
@@ -262,7 +272,7 @@ void Cylinder::updateReactionRates() {
         }
     
     }
-    
+
     //load force from back (affects minus end polymerization)
     if(_minusEnd) {
         
@@ -271,7 +281,7 @@ void Cylinder::updateReactionRates() {
         
         //change all plus end polymerization rates
         for(auto &r : _cCylinder->getInternalReactions()) {
-            float newRate;
+            floatingpoint newRate;
             if(r->getReactionType() == ReactionType::POLYMERIZATIONMINUSEND) {
                 
                 //If reaching a threshold time for manual treadmilling rate changer
@@ -285,9 +295,9 @@ void Cylinder::updateReactionRates() {
                 
                 r->setRateScaled(newRate);
                 r->updatePropensity();
-                
+
             }
-            
+
             //change all minus end depolymerization rates, not force dependent
             //If reaching a threshold time for manual treadmilling rate changer
             if(tau() > SysParams::DRParams.manualCharStartTime){
@@ -298,7 +308,6 @@ void Cylinder::updateReactionRates() {
                 }
             }
         }
-
     }
 }
 
@@ -332,7 +341,7 @@ void Cylinder::printSelf() {
     cout<< "Eq Theta "<<_mCylinder->getEqTheta()<<endl;
     cout<<" Stretching constant "<<_mCylinder->getStretchingConst()<<endl;
     cout<<" Bending constant "<<_mCylinder->getBendingConst()<<endl;
-    
+
     cout << endl;
     
 #ifdef CHEMISTRY
@@ -349,8 +358,8 @@ void Cylinder::printSelf() {
     
     cout << endl;
 }
-
-bool Cylinder::within(Cylinder* other, double dist) {
+//Ask Qin when this is used
+bool Cylinder::within(Cylinder* other, floatingpoint dist) {
     
     //check midpoints
     if(twoPointDistancesquared(coordinate, other->coordinate) <= (dist * dist))
@@ -366,3 +375,9 @@ bool Cylinder::within(Cylinder* other, double dist) {
 
 vector<FilamentRateChanger*> Cylinder::_polyChanger;
 ChemManager* Cylinder::_chemManager = 0;
+
+bool Cylinder::setpositionupdatedstate = false;
+floatingpoint Cylinder::timecylinder1 = 0.0;
+floatingpoint Cylinder::timecylinder2= 0.0;
+floatingpoint Cylinder::timecylinderchem= 0.0;
+floatingpoint Cylinder::timecylindermech= 0.0;

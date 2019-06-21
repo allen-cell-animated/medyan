@@ -26,18 +26,18 @@ void MTOCAttachment<MTOCInteractionType>::vectorize() {
     
     for(auto mtoc : MTOC::getMTOCs()) {
         beadSet = new int[n * mtoc->getFilaments().size() + 1];
-        kstr = new double[n * Cylinder::getCylinders().size() + 1];
-        
+        kstr = new floatingpoint[n * Cylinder::getCylinders().size() + 1];
+
         beadSet[0] = mtoc->getBubble()->getBead()->getIndex();
         kstr[0] = 0;
-        
+
         int i = 1;
         
         for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
             Filament *f = mtoc->getFilaments()[fIndex];
             
             beadSet[n * i] = f->getMinusEndCylinder()->getFirstBead()->getIndex();
-            
+
             kstr[n * i] = f->getMinusEndCylinder()->getMCylinder()->getStretchingConst();
             
             i++;
@@ -47,22 +47,22 @@ void MTOCAttachment<MTOCInteractionType>::vectorize() {
 
 template <class MTOCInteractionType>
 void MTOCAttachment<MTOCInteractionType>::deallocate() {
-    
+
     delete [] beadSet;
     delete [] kstr;
 }
 
 
 template <class MTOCInteractionType>
-double MTOCAttachment<MTOCInteractionType>::computeEnergy(double* coord, bool stretched) {
+floatingpoint MTOCAttachment<MTOCInteractionType>::computeEnergy(floatingpoint* coord, bool stretched) {
     
-    double U = 0.0;
-    double U_i=0.0;
+    floatingpoint U = 0.0;
+    floatingpoint U_i=0.0;
     
     //TO DO, for loop may be removed
-    
+
     for(auto mtoc : MTOC::getMTOCs()) {
-        
+
         //        Bead* b1 = mtoc->getBubble()->getBead();
         //
         //        for(int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
@@ -73,13 +73,13 @@ double MTOCAttachment<MTOCInteractionType>::computeEnergy(double* coord, bool st
         //
         //            Bead* b2 = c->getFirstBead();
         //            double kStretch = c->getMCylinder()->getStretchingConst();
-        double radius = mtoc->getBubble()->getRadius();
+        floatingpoint radius = mtoc->getBubble()->getRadius();
         
         U_i = _FFType.energy(coord, beadSet, kstr, radius);
     }
-    
+
     return U_i;
-    
+
     //            if(fabs(U_i) == numeric_limits<double>::infinity()
     //               || U_i != U_i || U_i < -1.0) {
     //
@@ -94,11 +94,11 @@ double MTOCAttachment<MTOCInteractionType>::computeEnergy(double* coord, bool st
     //        }
     //    }
     //    return U;
-    
+
 }
 
 template <class MTOCInteractionType>
-void MTOCAttachment<MTOCInteractionType>::computeForces(double *coord, double *f) {
+void MTOCAttachment<MTOCInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
     
     for(auto mtoc : MTOC::getMTOCs()) {
         //
@@ -112,11 +112,11 @@ void MTOCAttachment<MTOCInteractionType>::computeForces(double *coord, double *f
         //
         //            Bead* b2 = c->getFirstBead();
         //            double kStretch = c->getMCylinder()->getStretchingConst();
-        double radius = mtoc->getBubble()->getRadius();
+	    floatingpoint radius = mtoc->getBubble()->getRadius();
         _FFType.forces(coord, f, beadSet, kstr, radius);
         //        }
     }
-    
+
 }
 
 
@@ -144,8 +144,8 @@ void MTOCAttachment<MTOCInteractionType>::computeForces(double *coord, double *f
 //}
 
 ///Template specializations
-template double MTOCAttachment<MTOCAttachmentHarmonic>::computeEnergy(double *coord, bool stretched);
-template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForces(double *coord, double *f);
+template floatingpoint MTOCAttachment<MTOCAttachmentHarmonic>::computeEnergy(floatingpoint *coord, bool stretched);
+template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 //template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux(double *coord, double *f);
 template void MTOCAttachment<MTOCAttachmentHarmonic>::vectorize();
 template void MTOCAttachment<MTOCAttachmentHarmonic>::deallocate();

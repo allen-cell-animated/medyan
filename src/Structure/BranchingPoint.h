@@ -51,7 +51,7 @@ private:
     Cylinder* _c1; ///< Mother cylinder
     Cylinder* _c2; ///< Branching cylinder
     
-    double _position;  ///< Position on mother cylinder
+    floatingpoint _position;  ///< Position on mother cylinder
     
     short _branchType; ///< Integer specifying the type
     
@@ -61,17 +61,16 @@ private:
     
     ///Helper to get coordinate
     void updateCoordinate();
-    
-    //Qin ---
+
     ///For dynamic rate unbinding
     static vector<BranchRateChanger*> _unbindingChangers;
     
 public:
-    vector<double> coordinate; ///< coordinate of midpoint,
+    vector<floatingpoint> coordinate; ///< coordinate of midpoint,
                                ///< updated with updatePosition()
     
     BranchingPoint(Cylinder* c1, Cylinder* c2,
-                   short branchType, double position = 0.5);
+                   short branchType, floatingpoint position = 0.5);
     virtual ~BranchingPoint() noexcept;
     
     //@{
@@ -92,8 +91,8 @@ public:
     
     //@{
     /// Position management
-    double getPosition() {return _position;}
-    void setPosition(double position) {_position = position;}
+    floatingpoint getPosition() {return _position;}
+    void setPosition(floatingpoint position) {_position = position;}
     //@}
     
     //@{
