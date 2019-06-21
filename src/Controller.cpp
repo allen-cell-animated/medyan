@@ -58,8 +58,8 @@ namespace {
 //
 // Note:
 //   - This function invalidates any previously cached stable indices
-//   - Forgetting calling this function should NOT cause any semantic problems
-//     in the program.
+//   - The mechanics minimization requires that bead has contiguous indexing,
+//     so it is necessary that this function is called before minimization.
 //-----------------------------------------------------------------------------
 void rearrangeAllDatabases() {
     Bead::rearrange();
