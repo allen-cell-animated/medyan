@@ -55,8 +55,6 @@ namespace {
 //-----------------------------------------------------------------------------
 // The function rearranges the elements that use stable indexing, to make their
 // Database storage contiguous.
-// Also updates some cylinder information cache (such as position on filament,
-// etc).
 //
 // Note:
 //   - This function invalidates any previously cached stable indices
@@ -65,7 +63,7 @@ namespace {
 //-----------------------------------------------------------------------------
 void rearrangeAllDatabases() {
     Bead::rearrange();
-    Cylinder::rearrange(); Cylinder::updateData();
+    Cylinder::rearrange();
 }
 
 } // namespace
@@ -1167,6 +1165,7 @@ void Controller::run() {
 
                 mins = chrono::high_resolution_clock::now();
                 rearrangeAllDatabases();
+                Cylinder::updateData();
                 _mController->run();
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runm3(mine - mins);
@@ -1301,6 +1300,7 @@ void Controller::run() {
             //run mcontroller, update system
             if(stepsLastMinimization >= _minimizationSteps) {
                 rearrangeAllDatabases();
+                Cylinder::updateData();
                 _mController->run();
                 updatePositions();
 
