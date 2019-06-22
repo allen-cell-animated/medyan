@@ -50,24 +50,6 @@
 #include "Util/Profiler.hpp"
 using namespace mathfunc;
 
-namespace {
-
-//-----------------------------------------------------------------------------
-// The function rearranges the elements that use stable indexing, to make their
-// Database storage contiguous.
-//
-// Note:
-//   - This function invalidates any previously cached stable indices
-//   - The mechanics minimization requires that bead has contiguous indexing,
-//     so it is necessary that this function is called before minimization.
-//-----------------------------------------------------------------------------
-void rearrangeAllDatabases() {
-    Bead::rearrange();
-    Cylinder::rearrange();
-}
-
-} // namespace
-
 Controller::Controller(SubSystem* s) : _subSystem(s) {
 
     //init subsystem
@@ -1164,7 +1146,8 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
 
                 mins = chrono::high_resolution_clock::now();
-                rearrangeAllDatabases();
+                Bead::rearrange();
+                Cylinder::rearrange(); // FIXME: should be put before neighbor list search
                 Cylinder::updateAllData();
                 _mController->run();
                 mine= chrono::high_resolution_clock::now();
@@ -1299,7 +1282,8 @@ void Controller::run() {
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
             if(stepsLastMinimization >= _minimizationSteps) {
-                rearrangeAllDatabases();
+                Bead::rearrange();
+                Cylinder::rearrange(); // FIXME: should be put before neighbor list search
                 Cylinder::updateAllData();
                 _mController->run();
                 updatePositions();
