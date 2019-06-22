@@ -316,8 +316,8 @@ void CylinderExclVolRepulsion::checkforculprit() {
     int i = 0;
     cout<<"Printing culprit cylinders.."<<endl;
     for (auto cyl: Cylinder::getCylinders()) {
-            auto id1 = cyl->getFirstBead()->getIndex();
-            auto id2 = cyl->getSecondBead()->getIndex();
+            auto id1 = cyl->getFirstBead()->getStableIndex();
+            auto id2 = cyl->getSecondBead()->getStableIndex();
             if(id1 == CUDAcommon::getCUDAvars().culpritID[0] && id2 == CUDAcommon::getCUDAvars().culpritID[1])
                 cyl->printSelf();
             else if(id1 == CUDAcommon::getCUDAvars().culpritID[2] && id2 == CUDAcommon::getCUDAvars().culpritID[3])
@@ -449,8 +449,8 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSe
 			   || U_i != U_i || U_i < -1.0) {
 				short found = 0;
 				for (auto cyl:Cylinder::getCylinders()) {
-					auto dbIndex1 = cyl->getFirstBead()->getIndex();
-					auto dbIndex2 = cyl->getSecondBead()->getIndex();
+					auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
+					auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
 					if (dbIndex1 == beadSet[n * i] &&
 					    dbIndex2 == beadSet[n * i + 1]) {
 						CylinderVolumeInteractions::_cylinderCulprit1 = cyl;
@@ -523,8 +523,8 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSe
 				else {
 					short found = 0;
 					for (auto cyl:Cylinder::getCylinders()) {
-						auto dbIndex1 = cyl->getFirstBead()->getIndex();
-						auto dbIndex2 = cyl->getSecondBead()->getIndex();
+						auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
+						auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
 						if (dbIndex1 == beadSet[n * i] &&
 						    dbIndex2 == beadSet[n * i + 1]) {
 							CylinderVolumeInteractions::_cylinderCulprit1 = cyl;
@@ -651,8 +651,8 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 			   || U_i != U_i || U_i < -1.0) {
 				short found = 0;
 				for(auto cyl:Cylinder::getCylinders()){
-					auto dbIndex1 = cyl->getFirstBead()->getIndex();
-					auto dbIndex2 = cyl->getSecondBead()->getIndex();
+					auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
+					auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
 					if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
 						CylinderVolumeInteractions::_cylinderCulprit1 = cyl;
 						found++;
@@ -720,8 +720,8 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 		   || U_i != U_i || U_i < -1.0) {
 			short found = 0;
 			for(auto cyl:Cylinder::getCylinders()){
-				auto dbIndex1 = cyl->getFirstBead()->getIndex();
-				auto dbIndex2 = cyl->getSecondBead()->getIndex();
+				auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
+				auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
 				if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
 					CylinderVolumeInteractions::_cylinderCulprit1 = cyl;
 					found++;
@@ -1252,8 +1252,8 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 		short found = 0;
 		Cylinder *cyl1, *cyl2;
 		for(auto cyl:Cylinder::getCylinders()){
-			auto dbIndex1 = cyl->getFirstBead()->getIndex();
-			auto dbIndex2 = cyl->getSecondBead()->getIndex();
+			auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
+			auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
 			if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
 				cyl1 = cyl;
 				found++;
@@ -1269,10 +1269,10 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 		}
 		cout<<"Cylinder IDs "<<cyl1->getId()<<" "<<cyl2->getId()<<" with cIndex "
 		    <<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex()<<" and bIndex "
-		    <<cyl1->getFirstBead()->getIndex()<<" "
-		    <<cyl1->getSecondBead()->getIndex()<<" "
-		    <<cyl2->getFirstBead()->getIndex()<<" "
-		    <<cyl2->getSecondBead()->getIndex()<<endl;
+		    <<cyl1->getFirstBead()->getStableIndex()<<" "
+		    <<cyl1->getSecondBead()->getStableIndex()<<" "
+		    <<cyl2->getFirstBead()->getStableIndex()<<" "
+		    <<cyl2->getSecondBead()->getStableIndex()<<endl;
 
 		cout<<"Printing coords"<<endl;
 		cout<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<endl;

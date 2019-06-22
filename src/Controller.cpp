@@ -50,14 +50,6 @@
 #include "Util/Profiler.hpp"
 using namespace mathfunc;
 
-namespace {
-
-void rearrangeAllDatabases() {
-    Cylinder::rearrange(); Cylinder::updateData();
-}
-
-} // namespace
-
 Controller::Controller(SubSystem* s) : _subSystem(s) {
 
     //init subsystem
@@ -1020,7 +1012,6 @@ void Controller::run() {
     //reupdate positions and neighbor lists
     mins = chrono::high_resolution_clock::now();
     updatePositions();
-    rearrangeAllDatabases();
     cout<<"Positions updated"<<endl;
     updateNeighborLists();
     mine= chrono::high_resolution_clock::now();
@@ -1155,6 +1146,9 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
 
                 mins = chrono::high_resolution_clock::now();
+                Bead::rearrange();
+                Cylinder::rearrange(); // FIXME: should be put before neighbor list search
+                Cylinder::updateAllData();
                 _mController->run();
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runm3(mine - mins);
@@ -1216,7 +1210,6 @@ void Controller::run() {
             // update neighbor lists & Binding Managers
             if(tauLastNeighborList >= _neighborListTime) {
                 mins = chrono::high_resolution_clock::now();
-                rearrangeAllDatabases();
                 updateNeighborLists();
                 tauLastNeighborList = 0.0;
                 mine= chrono::high_resolution_clock::now();
@@ -1289,6 +1282,9 @@ void Controller::run() {
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
             if(stepsLastMinimization >= _minimizationSteps) {
+                Bead::rearrange();
+                Cylinder::rearrange(); // FIXME: should be put before neighbor list search
+                Cylinder::updateAllData();
                 _mController->run();
                 updatePositions();
 
@@ -1320,7 +1316,6 @@ void Controller::run() {
 
             // update neighbor lists
             if(stepsLastNeighborList >= _neighborListSteps) {
-                rearrangeAllDatabases();
                 updateNeighborLists();
                 stepsLastNeighborList = 0;
             }

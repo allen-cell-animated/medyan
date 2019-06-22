@@ -56,10 +56,10 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 
     for (auto m: MotorGhost::getMotorGhosts()) {
         /* Haoran 03/18/2019 m->getIndex() = i; */
-        beadSet[n * i] = m->getFirstCylinder()->getFirstBead()->getIndex();
-        beadSet[n * i + 1] = m->getFirstCylinder()->getSecondBead()->getIndex();
-        beadSet[n * i + 2] = m->getSecondCylinder()->getFirstBead()->getIndex();
-        beadSet[n * i + 3] = m->getSecondCylinder()->getSecondBead()->getIndex();
+        beadSet[n * i] = m->getFirstCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 1] = m->getFirstCylinder()->getSecondBead()->getStableIndex();
+        beadSet[n * i + 2] = m->getSecondCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 3] = m->getSecondCylinder()->getSecondBead()->getStableIndex();
 
         kstr[i] = m->getMMotorGhost()->getStretchingConstant();
         eql[i] = m->getMMotorGhost()->getEqLength();

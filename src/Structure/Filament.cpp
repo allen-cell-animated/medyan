@@ -374,7 +374,8 @@ void Filament::polymerizePlusEnd() {
     b2->coordinate() = vector2Vec<3, floatingpoint>(nextPointProjection(b2->vcoordinate(),
     SysParams::Geometry().monomerSize[_filType], direction));
 
-    cBack->getCoordinate() = b2->coordinate();
+    // Update cylinder data
+    cBack->getCoordinate() = (floatingpoint)0.5 * (b1->coordinate() + b2->coordinate());
     
 #ifdef MECHANICS
     //increment load
@@ -407,7 +408,8 @@ void Filament::polymerizeMinusEnd() {
     b1->coordinate() = vector2Vec<3, floatingpoint>(nextPointProjection(b1->vcoordinate(),
     SysParams::Geometry().monomerSize[_filType], direction));
 
-    cFront->getCoordinate() = b1->coordinate();
+    // Update cylinder data
+    cFront->getCoordinate() = (floatingpoint)0.5 * (b1->coordinate() + b2->coordinate());
 
 #ifdef MECHANICS
     
@@ -441,7 +443,8 @@ void Filament::depolymerizePlusEnd() {
     b2->coordinate() = vector2Vec<3, floatingpoint>(nextPointProjection(b2->vcoordinate(),
     SysParams::Geometry().monomerSize[_filType], direction));
 
-    cBack->getCoordinate() = b2->coordinate();
+    // Update cylinder data
+    cBack->getCoordinate() = (floatingpoint)0.5 * (b1->coordinate() + b2->coordinate());
 
 #ifdef MECHANICS
     
@@ -474,7 +477,8 @@ void Filament::depolymerizeMinusEnd() {
     b1->coordinate() = vector2Vec<3, floatingpoint>(nextPointProjection(b1->vcoordinate(),
     SysParams::Geometry().monomerSize[_filType], direction));
 
-    cFront->getCoordinate() = b1->coordinate();
+    // Update cylinder data
+    cFront->getCoordinate() = (floatingpoint)0.5 * (b1->coordinate() + b2->coordinate());
 
 #ifdef MECHANICS
     

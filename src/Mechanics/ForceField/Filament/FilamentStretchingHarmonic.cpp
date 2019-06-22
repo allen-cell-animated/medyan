@@ -278,8 +278,8 @@ void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, 
 
             auto cyl = Cylinder::getCylinders()[i];
             cout<<"Cylinder ID "<<cyl->getId()<<" with cindex "<<cyl->getStableIndex()<<
-            " and bIndex "<< cyl->getFirstBead()->getIndex()<<" "<<cyl->getSecondBead()
-            ->getIndex()<<endl;
+            " and bIndex "<< cyl->getFirstBead()->getStableIndex()<<" "<<cyl->getSecondBead()
+            ->getStableIndex()<<endl;
 
             cout<<"Printing coords"<<endl;
             cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;

@@ -401,10 +401,10 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f
 		    cout<<"mID "<<m->getId()<<" Cylinder IDs "<<cyl1->getId()<<" "<<cyl2->getId()
 		    <<" with cIndex "
 		    <<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex()<<" and bIndex "
-		    <<cyl1->getFirstBead()->getIndex()<<" "
-		    <<cyl1->getSecondBead()->getIndex()<<" "
-		        <<cyl2->getFirstBead()->getIndex()<<" "
-		        <<cyl2->getSecondBead()->getIndex()<<endl;
+		    <<cyl1->getFirstBead()->getStableIndex()<<" "
+		    <<cyl1->getSecondBead()->getStableIndex()<<" "
+		        <<cyl2->getFirstBead()->getStableIndex()<<" "
+		        <<cyl2->getSecondBead()->getStableIndex()<<endl;
 
 		    cout<<"Printing coords"<<endl;
 		    cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
