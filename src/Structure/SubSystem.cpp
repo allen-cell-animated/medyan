@@ -19,16 +19,15 @@
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"
 #include <vector>
-
+#include "dist_moduleV2/dist_driver.h"
+#include "dist_moduleV2/dist_coords.h"
+#include "dist_moduleV2/dist_common.h"
 #include "Cylinder.h"
-#include "HybridBindingSearchManager.h"
-
-
 using namespace mathfunc;
 void SubSystem::resetNeighborLists() {
 #ifdef CUDAACCL_NL
-    coord = new double[CGMethod::N];
-                coord_com = new double[3 * Cylinder::getCylinders().size()];
+    coord = new floatingpoint[CGMethod::N];
+                coord_com = new floatingpoint[3 * Cylinder::getCylinders().size()];
                 beadSet = new int[2 * Cylinder::getCylinders().size()];
                 cylID = new int[Cylinder::getCylinders().size()];
                 filID = new int[Cylinder::getCylinders().size()];
@@ -84,8 +83,8 @@ void SubSystem::resetNeighborLists() {
                             coord_com[index + 1] = c->coordinate[1];
                             coord_com[index + 2] = c->coordinate[2];
 
-                        beadSet[2 * i] = c->getFirstBead()->getIndex();
-                        beadSet[2 * i + 1] = c->getSecondBead()->getIndex();
+                        beadSet[2 * i] = c->getFirstBead()->getStableIndex();
+                        beadSet[2 * i + 1] = c->getSecondBead()->getStableIndex();
                         cylID[i] = c->getId();
                         c->_dcIndex = i;
                         fvecpos[i] = c->getPosition();
@@ -129,10 +128,10 @@ void SubSystem::resetNeighborLists() {
         //        CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
         //        fprintf(stdout,"\t### Available VRAM : %g Mo/ %g Mo(total)\n\n",
         //                free/1e6, total/1e6);
-                CUDAcommon::handleerror(cudaMalloc((void **) &gpu_coord, CGMethod::N * sizeof(double)),"cuda data "
+                CUDAcommon::handleerror(cudaMalloc((void **) &gpu_coord, CGMethod::N * sizeof(floatingpoint)),"cuda data "
                                         "transfer", " SubSystem.h");
                 CUDAcommon::handleerror(cudaMalloc((void **) &gpu_coord_com, 3 * Cylinder::getCylinders().size() * sizeof
-                                        (double)),"cuda data transfer", " SubSystem.h");
+                                        (floatingpoint)),"cuda data transfer", " SubSystem.h");
                 CUDAcommon::handleerror(cudaMalloc((void **) &gpu_beadSet, 2 * Cylinder::getCylinders().size() * sizeof
                                         (int)), "cuda data transfer", " SubSystem.h");
                 CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cylID, Cylinder::getCylinders().size() * sizeof(int)),
@@ -166,9 +165,9 @@ void SubSystem::resetNeighborLists() {
                 //@}
                 //CUDAMEMCPY
                 //@{
-                CUDAcommon::handleerror(cudaMemcpy(gpu_coord, coord, CGMethod::N *sizeof(double), cudaMemcpyHostToDevice));
+                CUDAcommon::handleerror(cudaMemcpy(gpu_coord, coord, CGMethod::N *sizeof(floatingpoint), cudaMemcpyHostToDevice));
                 CUDAcommon::handleerror(cudaMemcpy(gpu_coord_com, coord_com, 3 * Cylinder::getCylinders().size() *sizeof
-                                                   (double), cudaMemcpyHostToDevice));
+                                                   (floatingpoint), cudaMemcpyHostToDevice));
                 CUDAcommon::handleerror(cudaMemcpy(gpu_beadSet, beadSet, 2 * Cylinder::getCylinders().size() *sizeof(int),
                                                    cudaMemcpyHostToDevice));
                 CUDAcommon::handleerror(cudaMemcpy(gpu_cylID, cylID, Cylinder::getCylinders().size() *sizeof(int),
@@ -218,28 +217,23 @@ void SubSystem::resetNeighborLists() {
 #endif
     chrono::high_resolution_clock::time_point mins, mine;
     mins = chrono::high_resolution_clock::now();
+
 #ifdef HYBRID_NLSTENCILLIST
     _HneighborList->reset();
     mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_H(mine - mins);
-//    std::cout<<"H NLSTEN reset time "<<elapsed_H.count()<<endl;
+    chrono::duration<floatingpoint> elapsed_H(mine - mins);
+    std::cout<<"H NLSTEN reset time "<<elapsed_H.count()<<endl;
     mins = chrono::high_resolution_clock::now();
-    for (auto nlist : __bneighborLists.getElements())
+    for (auto nlist : __bneighborLists)
         nlist->reset();
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_B(mine - mins);
 //    std::cout<<"H NLSTEN B reset time "<<elapsed_B.count()<<endl;
 #endif
 #if defined(NLORIGINAL) || defined(NLSTENCILLIST)
-    for (auto nl: _neighborLists.getElements())
+    for (auto nl: _neighborLists)
             nl->reset();
 #endif
-    /*mins = chrono::high_resolution_clock::now();
-    for (auto nl: _neighborLists.getElements())
-        nl->reset();
-    mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_NL(mine - mins);
-    std::cout<<"NLSTEN reset time "<<elapsed_NL.count()<<endl;*/
 
 }
 void SubSystem::updateBindingManagers() {
@@ -251,7 +245,7 @@ void SubSystem::updateBindingManagers() {
     initializebindingsitesearchCUDA();
 
     if(CUDAcommon::getCUDAvars().conservestreams)
-    numbindmgrs = 0;
+        numbindmgrs = 0;
     //Calculate binding sites in CUDA
     Compartment* C0 = _compartmentGrid->getCompartments()[0];
     for(auto &manager : C0->getFilamentBindingManagers()) {
@@ -301,7 +295,89 @@ void SubSystem::updateBindingManagers() {
     //cudaFree
     endresetCUDA();
 #endif
-#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST)
+    vectorizeCylinder();
+    //Version1
+    #ifdef NLORIGINAL
+    for (auto C : _compartmentGrid->getCompartments()){
+        for(auto &manager : C->getFilamentBindingManagers()){
+            manager->updateAllPossibleBindings();
+        }
+    }
+	#endif
+	//Version2
+    #ifdef NLSTENCILLIST
+	#if !defined(HYBRID_NLSTENCILLIST) && !defined(SIMDBINDINGSEARCH)
+    for (auto C : _compartmentGrid->getCompartments()){
+        for(auto &manager : C->getFilamentBindingManagers()){
+            manager->updateAllPossibleBindingsstencil();
+        }
+    }
+	#endif
+	#endif
+	//Version3
+    #if defined(HYBIRD_NLSTENCILLIST) && !defined(SIMDBINDINGSEARCH)
+    for (auto C : _compartmentGrid->getCompartments()) {
+        C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilHYBD();
+        for(auto &manager : C->getBranchingManagers()) {
+            manager->updateAllPossibleBindingsstencil();
+        }
+    }
+    #endif
+    chrono::high_resolution_clock::time_point mins, mine;
+    mins = chrono::high_resolution_clock::now();
+    //SIMD cylinder update
+#ifdef SIMDBINDINGSEARCH
+	if(!initialize) {
+		    _compartmentGrid->getCompartments()[0]->getHybridBindingSearchManager()
+		    ->initializeSIMDvars();
+        initialize = true;
+    }
+    //Generate binding site coordinates in each compartment and seggregate them into
+    // different spatial sub-sections.
+    for(auto C : _compartmentGrid->getCompartments()) {
+        C->SIMDcoordinates4linkersearch_section(1);
+        C->SIMDcoordinates4motorsearch_section(1);
+    }
+    //Empty the existing binding pair list
+    for (auto C : _compartmentGrid->getCompartments())
+        C->getHybridBindingSearchManager()->resetpossibleBindings();
+    minsSIMD = chrono::high_resolution_clock::now();
+    HybridBindingSearchManager::findtimeV3 = 0.0;
+    HybridBindingSearchManager::SIMDV3appendtime = 0.0;
+    // Update binding sites in SIMD
+    for (auto C : _compartmentGrid->getCompartments()) {
+        C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV3();
+	    for(auto &manager : C->getBranchingManagers()) {
+	    		manager->updateAllPossibleBindingsstencil();
+	    }
+    }
+    //UpdateAllBindingReactions
+    for (auto C : _compartmentGrid->getCompartments()) {
+//        cout<<"Cmp ID "<<C->getID()<<endl;
+        C->getHybridBindingSearchManager()->updateAllBindingReactions();
+    }
+
+    mineSIMD = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_runSIMDV3(mineSIMD - minsSIMD);
+    cout << "SIMDV3 time " << elapsed_runSIMDV3.count() << endl;
+    cout << "findV3 time " << HybridBindingSearchManager::findtimeV3 << endl;
+    cout << "Append time " << HybridBindingSearchManager::SIMDV3appendtime << endl;
+#endif
+
+    mine= chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_orig(mine - mins);
+    std::cout<<"BMgr update time "<<elapsed_orig.count()<<endl;
+
+//free memory
+	SysParams::MParams.speciesboundvec.clear();
+	#ifdef SIMDBINDINGSEARCH
+	for(auto C : _compartmentGrid->getCompartments()) {
+		C->deallocateSIMDcoordinates();
+	}
+	#endif
+}
+
+void SubSystem::vectorizeCylinder() {
     //vectorize
     SysParams::MParams.speciesboundvec.clear();
     int cidx = 0;
@@ -310,10 +386,8 @@ void SubSystem::updateBindingManagers() {
 //    vector<int> bspeciesoffsetvec(SysParams::CParams.numFilaments);
     auto cylvec = Cylinder::getCylinders();
     int ncyl = cylvec.size();
-    if(cylsqmagnitudevector != NULL)
-        delete [] cylsqmagnitudevector;
-    
-    cylsqmagnitudevector = new double[Cylinder::rawNumStableElements()];
+    delete [] cylsqmagnitudevector;
+    cylsqmagnitudevector = new floatingpoint[Cylinder::rawNumStableElements()];
     unsigned long maxbindingsitespercyl = 0;
     for(auto ftype = 0; ftype < SysParams::CParams.numFilaments; ftype++) {
         maxbindingsitespercyl = max<size_t>(maxbindingsitespercyl,SysParams::Chemistry()
@@ -332,11 +406,10 @@ void SubSystem::updateBindingManagers() {
 
     //fill with appropriate values.
     for (auto cyl: cylvec) {
-//        cout<<cyl->_dcIndex<<" "<<cyl->getId()<<endl;
         auto _filamentType = cyl->getType();
         auto x1 = cyl->getFirstBead()->vcoordinate();
         auto x2 = cyl->getSecondBead()->vcoordinate();
-        vector<double> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
+        vector<floatingpoint> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
         cylsqmagnitudevector[cyl->getStableIndex()] = sqmagnitude(X1X2);
         auto cc = cyl->getCCylinder();
         int idx = 0;
@@ -362,44 +435,7 @@ void SubSystem::updateBindingManagers() {
     SysParams::MParams.speciesboundvec.push_back(motorspeciesbound);
     SysParams::CParams.maxbindingsitespercylinder = maxbindingsitespercyl;
     SysParams::MParams.cylsqmagnitudevector = cylsqmagnitudevector;
-//    SysParams::MParams.bsoffsetvec = bspeciesoffsetvec;
     SysParams::MParams.ncylvec = ncylvec;
-//    std::cout<<SysParams::Mechanics().speciesboundvec.size()<<endl;
-//    std::cout<<motorspeciesbound.size()<<endl;
-#endif
-
-    chrono::high_resolution_clock::time_point minsHYBD, mineHYBD, mins, mine;
-
-#ifdef HYBRID_NLSTENCILLIST
-if(true) {
-/*    for (auto C : _compartmentGrid->getCompartments()) {
-        C->getHybridBindingSearchManager()->resetpossibleBindings();
-    }*/
-
-    minsHYBD = chrono::high_resolution_clock::now();
-    for (auto C : _compartmentGrid->getCompartments()) {
-#ifdef HYBRID_NLSTENCILLIST
-        C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilHYBD();
-        for (auto &manager : C->getFilamentBindingManagers()) {
-#ifdef NLSTENCILLIST
-            BranchingManager *bManager;
-            if (bManager = dynamic_cast<BranchingManager *>(manager.get()))
-                manager->updateAllPossibleBindingsstencil();
-#endif
-        }
-    }
-#endif
-    mineHYBD = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runHYBD(mineHYBD - minsHYBD);
-    HYBDtime += elapsed_runHYBD.count();
-//    cout << "HYBD time " << elapsed_runHYBD.count() << endl;
-//    cout<<"HYBD map time "<<HybridBindingSearchManager::HYBDappendtime<<endl;
-}
-#endif
-
-    mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_orig(mine - mins);
-//    std::cout<<"BMgr update time "<<elapsed_orig.count()<<endl;
 }
 
 #ifdef CUDAACCL_NL
@@ -409,8 +445,8 @@ void SubSystem::initializebindingsitesearchCUDA() {
     numpairs_vec.clear();
     possibleBindings_vec.clear();
     gpu_possibleBindings_vec.clear();
-    //   auto x = CMonomer::_numBSpecies;
-    //    auto var = SysParams::Chemistry().bmanagerdistances;
+//   auto x = CMonomer::_numBSpecies;
+//    auto var = SysParams::Chemistry().bmanagerdistances;
     //Malloc params
 
     //Copy necessary cylinder data to GPU memory
@@ -425,8 +461,8 @@ void SubSystem::initializebindingsitesearchCUDA() {
                             "cuda data transfer", "SubSystem.cu");
     CUDAcommon::handleerror(cudaMemcpy(gpu_params, params, 4 * sizeof(int),
                                        cudaMemcpyHostToDevice));
-    //        }
-    //        if (gpu_bindingSites == NULL) {
+//        }
+//        if (gpu_bindingSites == NULL) {
     auto bindingSites = SysParams::Chemistry().bindingSites[0];//filType dependant
     int cpu_bindingSites[bindingSites.size()];
     int iii = 0;
@@ -447,9 +483,9 @@ void SubSystem::getallpossiblelinkerbindingsitesCUDA(LinkerBindingManager* lMana
     if(numbindmgrs + 1 > strvec.size() )
     { cudaStreamCreate(&s); strvec.push_back(s);}
     else
-    s = strvec.at(numbindmgrs);
+        s = strvec.at(numbindmgrs);
     numbindmgrs++;
-    //    int *cmon_state_linker = cylcylnlvars.gpu_cmon_state_linker;
+//    int *cmon_state_linker = cylcylnlvars.gpu_cmon_state_linker;
     //1. Assign optimal blocks and threads
     vector<int> blocksnthreads;
     int blockSize;   // The launch configurator returned block size
@@ -458,11 +494,11 @@ void SubSystem::getallpossiblelinkerbindingsitesCUDA(LinkerBindingManager* lMana
     int *NL = lManager->getNLCUDA();
     int *numNLpairs = lManager->getNLsizeCUDA();
     int *numpairs = lManager->getpossiblebindingssizeCUDA();
-    double *params2 = lManager->getdistancesCUDA();
+    floatingpoint *params2 = lManager->getdistancesCUDA();
     std::cout<<"Total Linker NL size "<<nint<<endl;
-    //            int *numpairs, test[1];test[0] = 0;
-    //            CUDAcommon::handleerror(cudaMalloc((void **) &numpairs, sizeof(int)), "cuda data transfer", "SubSystem.cu");
-    //            CUDAcommon::handleerror(cudaMemcpy(numpairs, test, sizeof(int), cudaMemcpyHostToDevice));
+//            int *numpairs, test[1];test[0] = 0;
+//            CUDAcommon::handleerror(cudaMalloc((void **) &numpairs, sizeof(int)), "cuda data transfer", "SubSystem.cu");
+//            CUDAcommon::handleerror(cudaMemcpy(numpairs, test, sizeof(int), cudaMemcpyHostToDevice));
     //2. Calculate binding sites
     if (nint > 0) {
         int *gpu_possibleBindings;
@@ -478,11 +514,11 @@ void SubSystem::getallpossiblelinkerbindingsitesCUDA(LinkerBindingManager* lMana
         resetintvariableCUDA<<<1,1,0,s>>>(numpairs);
         //call CUDA kernel function
         updateAllPossibleBindingsCUDA << < blocksnthreads[0], blocksnthreads[1],0,s >> >
-        (coord, beadSet, cylID, filID, filType, cmpID, NL, numNLpairs, numpairs,
-         gpu_params, params2, gpu_possibleBindings, cmon_state_linker,
-         gpu_bindingSites);
+                                                                                  (coord, beadSet, cylID, filID, filType, cmpID, NL, numNLpairs, numpairs,
+                                                                                          gpu_params, params2, gpu_possibleBindings, cmon_state_linker,
+                                                                                          gpu_bindingSites);
 
-        //                CUDAcommon::handleerror(cudaDeviceSynchronize());
+//                CUDAcommon::handleerror(cudaDeviceSynchronize());
         //copy binding sites back to CPU
         int *cpu_numpairs, *possibleBindings;
         CUDAcommon::handleerror(cudaHostAlloc(&cpu_numpairs, sizeof(int), cudaHostAllocDefault),"Copy",
@@ -497,18 +533,18 @@ void SubSystem::getallpossiblelinkerbindingsitesCUDA(LinkerBindingManager* lMana
             CUDAcommon::handleerror(cudaHostAlloc(&possibleBindings, 5 * cpu_numpairs[0] * sizeof(int),
                                                   cudaHostAllocDefault), "Copy", "Subsystem.cu");
             CUDAcommon::handleerror(
-                                    cudaMemcpyAsync(possibleBindings, gpu_possibleBindings, 5 * cpu_numpairs[0] *
-                                                    sizeof(int), cudaMemcpyDeviceToHost,
-                                                    s), "Copy", "Subsystem.cu");
+                    cudaMemcpyAsync(possibleBindings, gpu_possibleBindings, 5 * cpu_numpairs[0] *
+                                                                            sizeof(int), cudaMemcpyDeviceToHost,
+                                    s), "Copy", "Subsystem.cu");
             possibleBindings_vec.push_back(possibleBindings);
         }
         gpu_possibleBindings_vec.push_back(gpu_possibleBindings);
-        //                int cpu_numpairs[1];
-        //                cudaMemcpy(cpu_numpairs, numpairs, sizeof(int), cudaMemcpyDeviceToHost);
-        //                std::cout << "Number of possibleBindings " << cpu_numpairs[0] << endl;
-        //                int possibleBindings[5 * cpu_numpairs[0]];
-        //                cudaMemcpy(possibleBindings, gpu_possibleBindings, 5 * cpu_numpairs[0] * sizeof(int),
-        //                           cudaMemcpyDeviceToHost);
+//                int cpu_numpairs[1];
+//                cudaMemcpy(cpu_numpairs, numpairs, sizeof(int), cudaMemcpyDeviceToHost);
+//                std::cout << "Number of possibleBindings " << cpu_numpairs[0] << endl;
+//                int possibleBindings[5 * cpu_numpairs[0]];
+//                cudaMemcpy(possibleBindings, gpu_possibleBindings, 5 * cpu_numpairs[0] * sizeof(int),
+//                           cudaMemcpyDeviceToHost);
     }
     lManager->freecudavars();
     //Free NL numpairs
@@ -522,9 +558,9 @@ void SubSystem::getallpossiblemotorbindingsitesCUDA(MotorBindingManager* mManage
     if(numbindmgrs + 1 > strvec.size() )
     { cudaStreamCreate(&s); strvec.push_back(s);}
     else
-    s = strvec.at(numbindmgrs);
+        s = strvec.at(numbindmgrs);
     numbindmgrs++;
-    //    int *cmon_state_motor = cylcylnlvars.gpu_cmon_state_motor;
+//    int *cmon_state_motor = cylcylnlvars.gpu_cmon_state_motor;
     //2. Assign optimal blocks and threads
     vector<int> blocksnthreads;
     int blockSize;   // The launch configurator returned block size
@@ -533,7 +569,7 @@ void SubSystem::getallpossiblemotorbindingsitesCUDA(MotorBindingManager* mManage
     int *NL = mManager->getNLCUDA();
     int *numNLpairs = mManager->getNLsizeCUDA();
     int *numpairs = mManager->getpossiblebindingssizeCUDA();
-    double *params2 = mManager->getdistancesCUDA();
+    floatingpoint *params2 = mManager->getdistancesCUDA();
     std::cout<<"Total Motor NL size "<<nint<<endl;
     if (nint > 0) {
         int *gpu_possibleBindings;
@@ -549,10 +585,10 @@ void SubSystem::getallpossiblemotorbindingsitesCUDA(MotorBindingManager* mManage
         resetintvariableCUDA << < 1, 1, 0, s >> > (numpairs);
 
         updateAllPossibleBindingsCUDA << < blocksnthreads[0], blocksnthreads[1],0,s >> >
-        (coord, beadSet, cylID, filID, filType, cmpID, NL, numNLpairs, numpairs,
-         gpu_params, params2,
-         gpu_possibleBindings, cmon_state_motor,
-         gpu_bindingSites);
+                                                                                  (coord, beadSet, cylID, filID, filType, cmpID, NL, numNLpairs, numpairs,
+                                                                                          gpu_params, params2,
+                                                                                          gpu_possibleBindings, cmon_state_motor,
+                                                                                          gpu_bindingSites);
 
         //copy back to CPU
         int *cpu_numpairs, *possibleBindings;
@@ -568,22 +604,22 @@ void SubSystem::getallpossiblemotorbindingsitesCUDA(MotorBindingManager* mManage
             CUDAcommon::handleerror(cudaHostAlloc(&possibleBindings, 5 * cpu_numpairs[0] * sizeof(int),
                                                   cudaHostAllocDefault), "Copy", "Subsystem.cu");
             CUDAcommon::handleerror(
-                                    cudaMemcpyAsync(possibleBindings, gpu_possibleBindings, 5 * cpu_numpairs[0] *
-                                                    sizeof(int), cudaMemcpyDeviceToHost,
-                                                    s), "Copy", "Subsystem.cu");
+                    cudaMemcpyAsync(possibleBindings, gpu_possibleBindings, 5 * cpu_numpairs[0] *
+                                                                            sizeof(int), cudaMemcpyDeviceToHost,
+                                    s), "Copy", "Subsystem.cu");
             possibleBindings_vec.push_back(possibleBindings);
         }
         gpu_possibleBindings_vec.push_back(gpu_possibleBindings);
 
-        //                CUDAcommon::handleerror(cudaDeviceSynchronize());
-        //                CUDAcommon::handleerror(cudaDeviceSynchronize());
-        //                //copy back to CPU
-        //                int cpu_numpairs[1];
-        //                cudaMemcpy(cpu_numpairs, numpairs, sizeof(int), cudaMemcpyDeviceToHost);
-        //                std::cout << "Number of possibleBindings " << cpu_numpairs[0] << endl;
-        //                int possibleBindings[5 * cpu_numpairs[0]];
-        //                cudaMemcpy(possibleBindings, gpu_possibleBindings, 5 * cpu_numpairs[0] * sizeof(int),
-        //                           cudaMemcpyDeviceToHost);
+//                CUDAcommon::handleerror(cudaDeviceSynchronize());
+//                CUDAcommon::handleerror(cudaDeviceSynchronize());
+//                //copy back to CPU
+//                int cpu_numpairs[1];
+//                cudaMemcpy(cpu_numpairs, numpairs, sizeof(int), cudaMemcpyDeviceToHost);
+//                std::cout << "Number of possibleBindings " << cpu_numpairs[0] << endl;
+//                int possibleBindings[5 * cpu_numpairs[0]];
+//                cudaMemcpy(possibleBindings, gpu_possibleBindings, 5 * cpu_numpairs[0] * sizeof(int),
+//                           cudaMemcpyDeviceToHost);
 
     }
     mManager->freecudavars();
@@ -598,9 +634,9 @@ void SubSystem::getallpossiblebrancherbindingsitesCUDA(BranchingManager* bManage
     if(numbindmgrs + 1 > strvec.size() )
     { cudaStreamCreate(&s); strvec.push_back(s);}
     else
-    s = strvec.at(numbindmgrs);
+        s = strvec.at(numbindmgrs);
     numbindmgrs++;
-    //    int *cmon_state_brancher = cylcylnlvars.gpu_cmon_state_brancher;
+//    int *cmon_state_brancher = cylcylnlvars.gpu_cmon_state_brancher;
     //2. Assign optimal blocks and threads
     vector<int> blocksnthreads;
     int blockSize;   // The launch configurator returned block size
@@ -609,19 +645,19 @@ void SubSystem::getallpossiblebrancherbindingsitesCUDA(BranchingManager* bManage
     //int *NL = bManager->getNLCUDA();
     //int *numNLpairs = bManager->getNLsizeCUDA();
     int *numpairs = bManager->getpossiblebindingssizeCUDA();
-    double *params2 = bManager->getdistancesCUDA();
+    floatingpoint *params2 = bManager->getdistancesCUDA();
     int *zone = bManager->getzoneCUDA();
     //std::cout<<"Total Motor NL size "<<nint<<endl;
     if (nint > 0) {
         //Boundary plane
         auto beList = BoundaryElement::getBoundaryElements();
         int nbe = BoundaryElement::getBoundaryElements().size();
-        double *beListplane = new double[4 * nbe];
-        double *gpu_beListplane;
+        floatingpoint *beListplane = new floatingpoint[4 * nbe];
+        floatingpoint *gpu_beListplane;
         for (int i = 0; i < nbe; i++) {
 
             if(dynamic_cast<PlaneBoundaryElement*>(beList[i])) {
-                double *x = new double[4];
+                floatingpoint *x = new floatingpoint[4];
                 beList[i]->elementeqn(x);
                 beListplane[4 * i] = x[0];
                 beListplane[4 * i +1] = x[1];
@@ -633,8 +669,8 @@ void SubSystem::getallpossiblebrancherbindingsitesCUDA(BranchingManager* bManage
                 exit(EXIT_FAILURE);
             }
         }
-        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_beListplane, 4 * nbe * sizeof(double)));
-        CUDAcommon::handleerror(cudaMemcpy(gpu_beListplane, beListplane, 4 * nbe * sizeof(double), cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_beListplane, 4 * nbe * sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMemcpy(gpu_beListplane, beListplane, 4 * nbe * sizeof(floatingpoint), cudaMemcpyHostToDevice));
         //
         int *gpu_possibleBindings;
 
@@ -645,15 +681,15 @@ void SubSystem::getallpossiblebrancherbindingsitesCUDA(BranchingManager* bManage
         blocksnthreads.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreads.push_back(blockSize);
         std::cout << "Brancher blocks and threads " << blocksnthreads.at(0) << " " << blocksnthreads.at(1)
-        << endl;
+                  << endl;
         resetintvariableCUDA << < 1, 1, 0, s >> > (numpairs);
 
         updateAllPossibleBindingsBrancherCUDA << < blocksnthreads[0], blocksnthreads[1],0,s >> >
-        (coord, beadSet, cylID, filID, filType, cmpID, numpairs,
-         gpu_params, params2, zone, gpu_possibleBindings,gpu_bindingSites,
-         cmon_state_brancher, gpu_beListplane);
+                                                                                          (coord, beadSet, cylID, filID, filType, cmpID, numpairs,
+                                                                                                  gpu_params, params2, zone, gpu_possibleBindings,gpu_bindingSites,
+                                                                                                  cmon_state_brancher, gpu_beListplane);
 
-        //                CUDAcommon::handleerror(cudaDeviceSynchronize());
+//                CUDAcommon::handleerror(cudaDeviceSynchronize());
         //copy back to CPU
         int *cpu_numpairs, *possibleBindings;
         CUDAcommon::handleerror(cudaHostAlloc(&cpu_numpairs, sizeof(int), cudaHostAllocDefault),"Copy",
@@ -668,9 +704,9 @@ void SubSystem::getallpossiblebrancherbindingsitesCUDA(BranchingManager* bManage
             CUDAcommon::handleerror(cudaHostAlloc(&possibleBindings, cpu_numpairs[0] * 3 * sizeof(int),
                                                   cudaHostAllocDefault), "Copy", "Subsystem.cu");
             CUDAcommon::handleerror(
-                                    cudaMemcpyAsync(possibleBindings, gpu_possibleBindings, cpu_numpairs[0] * 3 *
-                                                    sizeof(int), cudaMemcpyDeviceToHost,
-                                                    s), "Copy", "Subsystem.cu");
+                    cudaMemcpyAsync(possibleBindings, gpu_possibleBindings, cpu_numpairs[0] * 3 *
+                                                                            sizeof(int), cudaMemcpyDeviceToHost,
+                                    s), "Copy", "Subsystem.cu");
             possibleBindings_vec.push_back(possibleBindings);
         }
         gpu_possibleBindings_vec.push_back(gpu_possibleBindings);
@@ -687,7 +723,7 @@ void SubSystem::terminatebindingsitesearchCUDA(){
     //Delete sterams
     if(CUDAcommon::getCUDAvars().conservestreams == false) {
         for (auto s:strvec)
-        CUDAcommon::handleerror(cudaStreamDestroy(s), "stream destroy", "SubsSystem.cu");
+            CUDAcommon::handleerror(cudaStreamDestroy(s), "stream destroy", "SubsSystem.cu");
         strvec.clear();
     }
     //clear all possible bindings.
@@ -729,9 +765,9 @@ void SubSystem::assigntorespectivebindingmanagersCUDA(){
                 }
             }
             if(numpairs[0] > 0)
-            count++;
+                count++;
         }
-        //MOTORS
+            //MOTORS
         else if ((mManager = dynamic_cast<MotorBindingManager *>(manager.get()))) {
             auto numpairs = numpairs_vec[count];
             auto possibleBindings = possibleBindings_vec[count];
@@ -755,7 +791,7 @@ void SubSystem::assigntorespectivebindingmanagersCUDA(){
                 }
             }
             if(numpairs[0] > 0)
-            count++;
+                count++;
         }
         else if ((bManager = dynamic_cast<BranchingManager *>(manager.get()))) {
             auto numpairs = numpairs_vec[count];
@@ -773,19 +809,19 @@ void SubSystem::assigntorespectivebindingmanagersCUDA(){
                     }
                 }
             }
-            //            int n = 0;
-            //            std::cout<<"-----serial----"<<endl;
-            //            for(auto C : _compartmentGrid->getCompartments()) {
-            //                for(auto &bbmanager : C->getFilamentBindingManagers()) {
-            //                    if ((bManager = dynamic_cast<BranchingManager *>(bbmanager.get()))) {
-            //                        bbmanager->updateAllPossibleBindings();
-            //                        n += dynamic_cast<BranchingManager *>(bbmanager.get())->getpossibleBindings().size();
-            //                    }
-            //                }
-            //            }
-            //            std::cout<<n<<" "<<numpairs_vec[count][0]<<endl;
+//            int n = 0;
+//            std::cout<<"-----serial----"<<endl;
+//            for(auto C : _compartmentGrid->getCompartments()) {
+//                for(auto &bbmanager : C->getFilamentBindingManagers()) {
+//                    if ((bManager = dynamic_cast<BranchingManager *>(bbmanager.get()))) {
+//                        bbmanager->updateAllPossibleBindings();
+//                        n += dynamic_cast<BranchingManager *>(bbmanager.get())->getpossibleBindings().size();
+//                    }
+//                }
+//            }
+//            std::cout<<n<<" "<<numpairs_vec[count][0]<<endl;
             if(numpairs[0] > 0)
-            count++;
+                count++;
             std::cout<<endl;
         }
     }
@@ -794,4 +830,9 @@ void SubSystem::assigntorespectivebindingmanagersCUDA(){
 #endif
 CompartmentGrid* SubSystem::_staticgrid;
 bool SubSystem::initialize = false;
-double SubSystem::HYBDtime  = 0.0;
+floatingpoint SubSystem::SIMDtime  = 0.0;
+floatingpoint SubSystem::SIMDtimeV2  = 0.0;
+floatingpoint SubSystem::HYBDtime  = 0.0;
+floatingpoint SubSystem::timeneighbor  = 0.0;
+floatingpoint SubSystem::timedneighbor  = 0.0;
+floatingpoint SubSystem::timetrackable  = 0.0;

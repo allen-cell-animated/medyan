@@ -24,28 +24,28 @@ class Bead;
 class BranchingStretchingHarmonic {
     
 public:
-    double energy(double *coord, int *beadSet,
-                  double *kstr, double *eql, double *pos);
+    floatingpoint energy(floatingpoint *coord, int *beadSet,
+                  floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos);
     
-    double energy(double *coord, double * f, int *beadSet,
-                  double *kstr, double *eql, double *pos, double d);
+    floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
+                  floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, floatingpoint d);
 
-    void forces(double *coord, double *f, int *beadSet,
-                double *kstr, double *eql, double *pos, double
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, floatingpoint
                 *stretchforce);
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint);
 
-    double* energy(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *pos, int *params);
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, int *params);
 
-    double* energy(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *pos, double *z, int
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, floatingpoint *z, int
             *params);
 
-    void forces(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *pos, int *params);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, int *params);
     void deallocate();
     static void checkforculprit();
-    double *gU_i;
-    double *gU_sum;
+    floatingpoint *gU_i;
+    floatingpoint *gU_sum;
     char *gFF, *ginteraction;
     vector<int> blocksnthreadse;
     vector<int> blocksnthreadsez;

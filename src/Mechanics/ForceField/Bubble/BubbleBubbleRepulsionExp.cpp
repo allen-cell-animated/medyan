@@ -19,30 +19,30 @@
 
 using namespace mathfunc;
 
-double BubbleBubbleRepulsionExp::energy(Bead* b1, Bead* b2, double r1, double r2,
-                                        double kRep, double screenLength, bool stretched) {
+floatingpoint BubbleBubbleRepulsionExp::energy(Bead* b1, Bead* b2, floatingpoint r1, floatingpoint r2,
+                                        floatingpoint kRep, floatingpoint screenLength, bool stretched) {
     
-    double dist = distance(
+    floatingpoint dist = distance(
         stretched ? b1->coordinateStr() : b1->coordinate(),
         stretched ? b2->coordinateStr() : b2->coordinate()
     );
     
-    double effd = dist - r1 - r2;
+    floatingpoint effd = dist - r1 - r2;
     
-    double R = -effd / screenLength;
+    floatingpoint R = -effd / screenLength;
     return kRep * exp(R);
 }
 
-void BubbleBubbleRepulsionExp::forces(Bead* b1, Bead* b2, double r1, double r2,
-                                      double kRep, double screenLength) {
+void BubbleBubbleRepulsionExp::forces(Bead* b1, Bead* b2, floatingpoint r1, floatingpoint r2,
+                                      floatingpoint kRep, floatingpoint screenLength) {
     
     //get dist
-    double dist = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
+    floatingpoint dist = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
     
-    double effd = dist - r1 - r2;
+    floatingpoint effd = dist - r1 - r2;
     
-    double R = -effd / screenLength;
-    double f0 = kRep * exp(R) / screenLength;
+    floatingpoint R = -effd / screenLength;
+    floatingpoint f0 = kRep * exp(R) / screenLength;
     
     //get norm
     auto norm = normalizeVector(twoPointDirection(b1->vcoordinate(), b2->vcoordinate()));
@@ -56,16 +56,16 @@ void BubbleBubbleRepulsionExp::forces(Bead* b1, Bead* b2, double r1, double r2,
     b2->force()[2] += f0 *norm[2];
 }
 
-void BubbleBubbleRepulsionExp::forcesAux(Bead* b1, Bead* b2, double r1, double r2,
-                                         double kRep, double screenLength) {
+void BubbleBubbleRepulsionExp::forcesAux(Bead* b1, Bead* b2, floatingpoint r1, floatingpoint r2,
+                                         floatingpoint kRep, floatingpoint screenLength) {
     
     //get dist
-    double dist = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
+    floatingpoint dist = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
     
-    double effd = dist - r1 - r2;
+    floatingpoint effd = dist - r1 - r2;
     
-    double R = -effd / screenLength;
-    double f0 = kRep * exp(R) / screenLength;
+    floatingpoint R = -effd / screenLength;
+    floatingpoint f0 = kRep * exp(R) / screenLength;
     
     //get norm
     auto norm = normalizeVector(twoPointDirection(b1->vcoordinate(), b2->vcoordinate()));

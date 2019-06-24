@@ -17,10 +17,12 @@
 #include <memory>
 
 #include "common.h"
+
     
 //FORWARD DECLARATIONS
 class ChemSimImpl;
 class ReactionBase;
+class DissipationTracker;
 
 /// Used to manage running a network of chemical reactions.
 
@@ -50,7 +52,7 @@ public:
     void removeReaction(ReactionBase *r);
     
     /// Run the chemical dynamics for a set amount of time
-    bool run(double time);
+    bool run(floatingpoint time);
     
     /// Run the chemical dynamics for a set amount of reaction steps
     bool runSteps(int steps);
@@ -58,6 +60,13 @@ public:
     /// Mainly used for debugging: print chemical reactions in the network at
     /// this moment
     void printReactions();
+    
+    vector<floatingpoint> getEnergy();
+    
+    DissipationTracker* getDT();
+    
+    
+    
     
 private:
     ChemSimImpl* _pimpl; ///< Store a pointer to a specific implementation

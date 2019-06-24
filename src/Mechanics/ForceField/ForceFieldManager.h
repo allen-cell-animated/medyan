@@ -26,14 +26,14 @@ class SubSystem;
 
 /// A class to store and iterate over all [ForceFields](@ref ForceField).
 /*!
- *  The ForceFieldManager is used to store all [ForceFields](@ref ForceField) 
- *  initialized by the system, as well as iterate over these potentials and calculate 
+ *  The ForceFieldManager is used to store all [ForceFields](@ref ForceField)
+ *  initialized by the system, as well as iterate over these potentials and calculate
  *  total forces and energies. This class contains functions for the said calculations.
  */
 class ForceFieldManager {
-    
+
 friend class CGMethod;
-    
+
 public:
     vector<ForceField*> _forceFields; ///< All forcefields in the system
 
@@ -41,26 +41,30 @@ public:
 
     ForceFieldManager(SubSystem* s) { _subSystem = s; }
     
+    static ForceField* _culpritForceField;
+
     /// Vectorize all interactions involved in calculation
     void vectorizeAllForceFields();
     /// Deallocation of vectorized memory
     void cleanupAllForceFields();
-    
+
     /// Compute the energy using all available force fields
     /// @return Returns infinity if there was a problem with a ForceField
     /// energy calculation, such that beads will not be moved to this
     /// problematic configuration.
     /// @param stretched - whether intermediate variables are treated as temporary or not
     template< bool stretched = false >
-    double computeEnergy(double *coord, bool verbose = false) const;
+    floatingpoint computeEnergy(floatingpoint *coord, bool verbose = false) const;
     
     /// Compute the forces of all force fields 
-    void computeForces(double *coord, double *f);
+    void computeForces(floatingpoint *coord, floatingpoint *f);
     
+    void printculprit(floatingpoint* force);
+
 #ifdef CUDAACCL
         cudaStream_t  streamF = NULL;
     /// CUDA Copy forces from f to fprev
-    void CUDAcopyForces(cudaStream_t  stream, double *f, double *fprev);
+    void CUDAcopyForces(cudaStream_t  stream, floatingpoint *f, floatingpoint *fprev);
 #endif
 
     /// Compute the load forces on the beads. This does not update the force (xyz) vector
@@ -79,8 +83,12 @@ public:
     int *gpu_params;
     vector<int> params;
     //@}
-    void assignallforcemags();
+
 #endif
+    void assignallforcemags();
+
+private:
+    chrono::high_resolution_clock::time_point tbegin, tend;
 };
 
 #endif

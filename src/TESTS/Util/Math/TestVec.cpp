@@ -229,10 +229,17 @@ TEST_CASE("VecArray tests", "[VecArray]") {
         CHECK((*v3f_i     )[0] == Approx(1.0f));
     }
 
-    SECTION("Element popping") {
+    SECTION("Modifiers") {
+        // Check popping
         v3f.pop_back();
         CHECK(v3f.size() == 4);
         CHECK(v3f.size_raw() == 12);
+
+        // Check resize
+        v3f.resize(5);
+        REQUIRE(v3f.size() == 5);
+        REQUIRE(v3f.size_raw() == 15);
+
     }
 
     SECTION("Arithmetics") {

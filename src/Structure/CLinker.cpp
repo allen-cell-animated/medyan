@@ -25,12 +25,12 @@ CLinker::CLinker(short linkerType, Compartment* c,
     //Find species on cylinder that should be marked
     SpeciesBound* sl1 = _cc1->getCMonomer(_position1)->speciesLinker(linkerType);
     SpeciesBound* sl2 = _cc2->getCMonomer(_position2)->speciesLinker(linkerType);
-        
+
     SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(
                         SysParams::Chemistry().linkerBoundIndex[_filamentType]);
     SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(
                         SysParams::Chemistry().linkerBoundIndex[_filamentType]);
-//    //@{
+////    //@{
 //    SpeciesBound* BL1 = _cc1->getCMonomer(_position1)->speciesBound(
 //            SysParams::Chemistry().linkerBoundIndex[_filamentType]);
 //    SpeciesBound* BL2 = _cc2->getCMonomer(_position2)->speciesBound(
@@ -49,19 +49,20 @@ CLinker::CLinker(short linkerType, Compartment* c,
 //    SpeciesBound* sb2 = _cc2->getCMonomer(_position2)->speciesBrancher(0);
 //    std::cout<<"Linker "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "<<cc2->getCylinder()->getID()<<" "<<
 //            ""<<_position2<<" linkerType "<<linkerType<<endl;
-////    std::cout<<"Species Bound "<<se1->getN()<<" "<<se2->getN()<<endl;
-//    std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "<<BM2->getN()<<endl;
+//	cout<<"Linker cIndices "<<cc1->getCylinder()->_dcIndex<<" "<<cc2->getCylinder()
+//			->_dcIndex<<endl;
+//    std::cout<<"Species Bound "<<se1->getN()<<" "<<se2->getN()<<endl;
+   /* std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "
+                                                                                 ""<<BM2->getN()<<endl;*/
 //    std::cout<<"Linker "<<sl1->getN()<<" "<<sl2->getN()<<" BOUND "<<BL1->getN()<<" "<<BL2->getN()<<endl;
-//    std::cout<<"Brancher "<<sb1->getN()<<" "<<sb2->getN()<<" BOUND "<<BB1->getN()<<" "<<BB2->getN()<<endl;
-//    std::cout<<sl1->getN()<<endl;
-//    std::cout<<sl2->getN()<<endl;
-//    std::cout<<se1->getN()<<endl;
-//    std::cout<<se2->getN()<<endl;
-//
-//    for(auto c:Cylinder::getCylinders()){
-//        std::cout<<c->getID()<<" "<<c->getMCylinder()->getLength()<<" ";
-//    }
-//    std::cout<<endl;
+    /*std::cout<<"Brancher "<<sb1->getN()<<" "<<sb2->getN()<<" BOUND "<<BB1->getN()<<"
+    "<<BB2->getN()<<endl;*/
+//    std::cout<<sl1->getN()<<" "<<sl2->getN()<<" "<<se1->getN()<<" "<<se2->getN()<<endl;
+
+    /*for(auto c:Cylinder::getCylinders()){
+        std::cout<<c->getID()<<" "<<c->getMCylinder()->getLength()<<" ";
+    }
+    std::cout<<endl;*/
 //    //@}
 
 #ifdef DETAILEDOUTPUT
@@ -70,11 +71,10 @@ CLinker::CLinker(short linkerType, Compartment* c,
 #endif
 
     //mark species
-    assert(areEqual(sl1->getN(), 0.0) && areEqual(sl2->getN(), 0.0) &&
-           areEqual(se1->getN(), 1.0) && areEqual(se2->getN(), 1.0) &&
+        
+    assert(areEqual(sl1->getN(), (floatingpoint)0.0) && areEqual(sl2->getN(), (floatingpoint)0.0) &&
+           areEqual(se1->getN(), (floatingpoint)1.0) && areEqual(se2->getN(), (floatingpoint)1.0) &&
            "Major bug: Linker binding to an occupied site.");
-
-
     
     sl1->up(); sl2->up();
     se1->down(); se2->down();
@@ -114,9 +114,22 @@ void CLinker::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(os, _offRate);
     offRxn->setReactionType(ReactionType::LINKERUNBINDING);
     
+    //set gnum of offreaction
+    // Dissipation
+    if(SysParams::Chemistry().dissTracking){
+
+    floatingpoint gnum = onRxn->getGNumber();
+    offRxn->setGNumber(-gnum);
+
+    //set hrcdid of offreaction
+    string hrcdid = onRxn->getHRCDID();
+    offRxn->setHRCDID(hrcdid + "off");
+    }
+
     //Attach the callback to the off reaction, add it
     LinkerUnbindingCallback lcallback(_pLinker, ps);
     ConnectionBlock rcb(offRxn->connect(lcallback,false));
+    
     _cc1->addCrossCylinderReaction(_cc2, offRxn);
     setOffReaction(offRxn);
 }

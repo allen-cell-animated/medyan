@@ -29,7 +29,7 @@ BubbleData RandomBubbleDist::createBubbles(Boundary* b, int numBubbles,
     while (bubbleCounter < numBubbles) {
         
         //Create a random Bubble coord
-        vector<double> coord = GController::getRandomCoordinates();
+        vector<floatingpoint> coord = GController::getRandomCoordinates();
         
         if(b->within(coord) &&
            b->distance(coord) > SysParams::Mechanics().BubbleRadius[bubbleType]) {

@@ -18,19 +18,19 @@
 #include "Filament.h"
 #include <stdio.h>
 #include <limits>
-typedef std::numeric_limits< double > dbl;
+typedef std::numeric_limits< floatingpoint > dbl;
 class cross_checkclass{
     public:
     static bool Aux;
 };
 
 namespace cross_check{
-inline bool crosscheckforces(double* force){
+inline bool crosscheckforces(floatingpoint* force){
     bool state=false;
     for(auto b: Bead::getBeads()) {
         
         //set bead index
-        auto idx=3*b->getIndex();
+        auto idx=3*b->getStableIndex();
         cout.precision(dbl::max_digits10);
 //        if(force[idx]!=b->force[0])
 //            std::cout<<"0"<<endl;
@@ -52,12 +52,12 @@ inline bool crosscheckforces(double* force){
     }
     return state;
 }
-    inline bool crosscheckAuxforces(double* force){
+    inline bool crosscheckAuxforces(floatingpoint* force){
         bool state=false;
         for(auto b: Bead::getBeads()) {
             
             //set bead index
-            auto idx=3*b->getIndex();
+            auto idx=3*b->getStableIndex();
             cout.precision(dbl::max_digits10);
             //        if(force[idx]!=b->force[0])
             //            std::cout<<"0"<<endl;

@@ -40,9 +40,9 @@ public:
     virtual void deallocate() = 0;
     
     /// Compute the energy of this interaction
-    virtual double computeEnergy(double *coord) = 0;
+    virtual floatingpoint computeEnergy(floatingpoint *coord) = 0;
     /// Compute the forces of this interaction
-    virtual void computeForces(double *coord, double *f) = 0;
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f) = 0;
     
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() = 0;
@@ -51,9 +51,9 @@ public:
     virtual const string getName() = 0;
 
 #ifdef HYBRID_NLSTENCILLIST
-
+    //setter to store HNeighborList pointer.
     virtual void setHNeighborList(HybridCylinderCylinderNL* Hnl) = 0;
-
+    //getter to obtain HNeighborList pointer.
     virtual HybridCylinderCylinderNL* getHNeighborList() = 0;
 #endif
 

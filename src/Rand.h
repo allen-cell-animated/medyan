@@ -22,25 +22,17 @@ class Rand {
     
 private:
     static std::uniform_int_distribution<int> _int_distr;
-    
+
 public:
     static std::mt19937 eng; ///< The global random generator.
-    static std::mt19937 engFixed; ///< Currently only used in tests.
 
-    static long counter;
-    static long Dcounter;
-    static long Ncounter;
-
-    ///Get a random double between low and high
-    static inline double randDouble(double low, double high) {
-        counter++;
-        Dcounter++;
-        return ((float)_int_distr(eng) / std::numeric_limits<int>::max()) * (high - low) + low;
+    ///Get a random floatingpoint between low and high
+    static inline floatingpoint randfloatingpoint(floatingpoint low, floatingpoint high) {
+        return ((float)_int_distr(eng) / numeric_limits<int>::max()) * (high - low) + low;
     }
     ///Get a random integer between low and high
     static inline int randInteger(int low, int high) {
-        counter++;
-        int y =_int_distr(eng); 
+        int y =_int_distr(eng);
         int x = low + (y % (high - low + 1));
         return x;
     }

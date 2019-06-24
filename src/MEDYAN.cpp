@@ -97,6 +97,7 @@ int main(int argc, char **argv) {
     SubSystem* s = nullptr;
     Controller c(s);
 
+	int threadcount = 0;
     // Parsing command line args
     {
         using namespace cmdparse;
@@ -112,6 +113,7 @@ int main(int argc, char **argv) {
                 VariableWrite<unsigned long long>{std::string("seed")}(globalMutable().randomGenSeed, arg);
             }
         );
+	    cmdMain.addOptionWithVar('t', "", "int", "Thread Count", false, threadcount);
         cmdMain.addHelp();
 
         Command* cmdAnalyze = cmdMain.addCommand("analyze", "Analyze simulation output",
@@ -154,7 +156,8 @@ int main(int argc, char **argv) {
         //initialize and run system
         c.initialize(global().systemInputFile,
                      global().inputDirectory,
-                     global().outputDirectory);
+                     global().outputDirectory,
+                     threadcount);
         c.run();
         break;
     case GlobalVar::RunMode::Analysis:

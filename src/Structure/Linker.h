@@ -56,8 +56,8 @@ private:
     Cylinder* _c1; ///< First cylinder the linker is bound to
     Cylinder* _c2; ///< Second cylinder the linker is bound to
     
-    double _position1; ///< Position on first cylinder
-    double _position2; ///< Position on second cylinder
+    floatingpoint _position1; ///< Position on first cylinder
+    floatingpoint _position2; ///< Position on second cylinder
     
     short _linkerType; ///< Integer specifying the type
     
@@ -76,12 +76,13 @@ private:
     ///Helper to get coordinate
     void updateCoordinate();
     
+    
 public:
-    vector<double> coordinate;
+    vector<floatingpoint> coordinate;
     ///< coordinate of midpoint, updated with updatePosition()
     
     Linker(Cylinder* c1, Cylinder* c2, short linkerType,
-           double position1 = 0.5, double position2 = 0.5);
+           floatingpoint position1 = 0.5, floatingpoint position2 = 0.5);
     
     virtual ~Linker() noexcept;
     
@@ -101,11 +102,11 @@ public:
     
     //@{
     /// Position management
-    double getFirstPosition() {return _position1;}
-    void setFirstPosition(double position1) {_position1 = position1;}
+    floatingpoint getFirstPosition() {return _position1;}
+    void setFirstPosition(floatingpoint position1) {_position1 = position1;}
     
-    double getSecondPosition() {return _position2;}
-    void setSecondPosition(double position2) {_position2 = position2;}
+    floatingpoint getSecondPosition() {return _position2;}
+    void setSecondPosition(floatingpoint position2) {_position2 = position2;}
     //@}
     
     //@{
@@ -119,8 +120,8 @@ public:
     //@{
     /// SubSystem management, inherited from Trackable
     // Does nothing
-    virtual void addToSubSystem() { }
-    virtual void removeFromSubSystem() {}
+    virtual void addToSubSystem() override { }
+    virtual void removeFromSubSystem() override {}
     //@}
     
     /// Get all instances of this class from the SubSystem
@@ -146,6 +147,9 @@ public:
     
     /// Count the number of linker species with a given name in the system
     static species_copy_t countSpecies(const string& name);
+    
+    
+    
 };
 
 

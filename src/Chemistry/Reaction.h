@@ -41,8 +41,9 @@ template <unsigned short M, unsigned short N>
         /// (starting from reactants)
         /// @param rate - the rate constant for this ReactionBase
         Reaction(initializer_list<Species*> species,
-                float rate = 0.0, bool isProtoCompartment = false, double volumeFrac = 1.0, int rateVolumeDepExp = 0)
-            : ReactionBase(rate, isProtoCompartment, volumeFrac, rateVolumeDepExp) {
+                float rate = 0.0, bool isProtoCompartment = false, float volumeFrac = 1.0,
+                int rateVolumeDepExp = 0)
+                : ReactionBase(rate, isProtoCompartment, volumeFrac, rateVolumeDepExp) {
             initializeSpecies(species);
         }
         
@@ -52,8 +53,9 @@ template <unsigned short M, unsigned short N>
         /// @param rate - the rate constant for this ReactionBase
         template <typename InputContainer>
         Reaction(const InputContainer &species,
-                 float rate = 0.0, bool isProtoCompartment = false, double volumeFrac = 1.0, int rateVolumeDepExp = 0)
-            : ReactionBase(rate, isProtoCompartment, volumeFrac, rateVolumeDepExp) {
+                 float rate = 0.0, bool isProtoCompartment = false, float volumeFrac = 1.0,
+                 int rateVolumeDepExp = 0)
+                : ReactionBase(rate, isProtoCompartment, volumeFrac, rateVolumeDepExp) {
             initializeSpecies(species);
         }
         
@@ -154,33 +156,17 @@ template <unsigned short M, unsigned short N>
         }
         
         /// Implementation of getProductOfReactants()
-        inline virtual double getProductOfReactantsImpl() const override
+        inline virtual floatingpoint getProductOfReactantsImpl() const override
         {
-            double prod = 1;
-
-//            
-//            if(M == 3 && N == 0){
-//                //double check if the name matches
-//                if(_rspecies[0]->getFullName() == _rspecies[1]->getFullName()){
-//
-//                    if(areEqual(_rspecies[0]->getN(),1.0)) return 0.0;
-//
-//                    prod*=_rspecies[0]->getN();
-//                    prod*=(_rspecies[1]->getN() - 1);
-//                    prod*=_rspecies[2]->getN();
-//                    return prod / 2;
-//                }
-//            }
-            
+            floatingpoint prod = 1;
             for(auto i=0U; i<M; ++i)
                 prod*=_rspecies[i]->getN();
             return prod;
             
-            
         }
 
         /// Implementation of computePropensity()
-        inline virtual double computePropensityImpl() const override
+        inline virtual floatingpoint computePropensityImpl() const override
         {
             if(isPassivated()) return 0.0;
 #ifdef TRACK_UPPER_COPY_N
@@ -192,10 +178,10 @@ template <unsigned short M, unsigned short N>
         }
         
         /// Implementation of getProductOfProducts()
-        inline virtual double getProductOfProductsImpl() const override
+        inline virtual floatingpoint getProductOfProductsImpl() const override
         {
 #ifdef TRACK_UPPER_COPY_N
-            double prod = 1;
+            floatingpoint prod = 1;
             for(auto i=M; i<(M+N); ++i){
                 prod*=_rspecies[i]->getN()-_rspecies[i]->getUpperLimitForN();
             }
@@ -282,13 +268,13 @@ private:
 public:
     /// The main constructor
     DiffusionReaction(initializer_list<Species*> species,
-                      float rate = 0.0, bool isProtoCompartment = false, double volumeFrac = 1.0)
-    : Reaction(species, rate, isProtoCompartment, volumeFrac, -1) {
+                      float rate = 0.0, bool isProtoCompartment = false, floatingpoint volumeFrac = 1.0)
+        : Reaction(species, rate, isProtoCompartment, volumeFrac, -1) {
     
         //set averaging
         if(dynamic_cast<RSpeciesAvg*>(_rspecies[0]))
             _averaging = true;
-        
+
         //set type
         _reactionType = ReactionType::DIFFUSION;
     }

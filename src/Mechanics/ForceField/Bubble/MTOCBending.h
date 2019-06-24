@@ -35,9 +35,9 @@ private:
     
     int *beadSet;
     ///Array describing the constants in calculation
-    double *kbend;
-    double *pos1;
-    double *pos2;
+    floatingpoint *kbend;
+    floatingpoint *pos1;
+    floatingpoint *pos2;
     
     
 public:
@@ -49,9 +49,9 @@ public:
     virtual void vectorize();
     virtual void deallocate();
     
-    virtual double computeEnergy(double *coord, bool stretched) override;
-    virtual void computeForces(double *coord, double *f);
-    //virtual void computeForcesAux(double *coord, double *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) override;
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+    //virtual void computeForcesAux(floatingpoint *coord, floatingpoint *f);
     
     virtual void computeLoadForces() {return;}
     

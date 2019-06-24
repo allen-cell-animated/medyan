@@ -22,7 +22,7 @@
 
 using namespace mathfunc;
 
-Plane::Plane(SubSystem* s, vector<double> coords, vector<double> normal ) :
+Plane::Plane(SubSystem* s, vector<floatingpoint> coords, vector<floatingpoint> normal ) :
     BoundarySurface(s, 3), _coords(coords), _normal(normal) {
     
     //Create a plane boundary element
@@ -32,7 +32,7 @@ Plane::Plane(SubSystem* s, vector<double> coords, vector<double> normal ) :
                                    SysParams::Boundaries().BScreenLength));
 }
 
-Sphere::Sphere(SubSystem* s, vector<double> coords, double radius)
+Sphere::Sphere(SubSystem* s, vector<floatingpoint> coords, floatingpoint radius)
     : BoundarySurface(s, 3), _coords(coords) {
     
     //Create a sphere boundary element
@@ -43,7 +43,7 @@ Sphere::Sphere(SubSystem* s, vector<double> coords, double radius)
     
 }
 
-CylinderZ::CylinderZ(SubSystem* s, vector<double> coords, double radius, double height)
+CylinderZ::CylinderZ(SubSystem* s, vector<floatingpoint> coords, floatingpoint radius, floatingpoint height)
     : BoundarySurface(s, 3), _coords(coords) {
     
     //Create a cylindricalZ boundary element
@@ -53,7 +53,7 @@ CylinderZ::CylinderZ(SubSystem* s, vector<double> coords, double radius, double 
                                    SysParams::Boundaries().BScreenLength));
 }
 
-CylinderXYZ::CylinderXYZ(SubSystem* s, vector<double> coords, double radius, double height)
+CylinderXYZ::CylinderXYZ(SubSystem* s, vector<floatingpoint> coords, floatingpoint radius, floatingpoint height)
 : BoundarySurface(s, 3), _coords(coords) {
     
     //Create a cylindricalZ boundary element
@@ -63,7 +63,7 @@ CylinderXYZ::CylinderXYZ(SubSystem* s, vector<double> coords, double radius, dou
                                     SysParams::Boundaries().BScreenLength));
 }
 
-HalfSphereZ::HalfSphereZ(SubSystem* s, vector<double> coords, double radius, bool up)
+HalfSphereZ::HalfSphereZ(SubSystem* s, vector<floatingpoint> coords, floatingpoint radius, bool up)
     : BoundarySurface(s, 3), _coords(coords) {
     
     //Create a half sphere Z boundary element

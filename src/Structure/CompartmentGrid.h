@@ -160,7 +160,7 @@ public:
     ///the simulation volume (dependent on the compartment). This is used for analyzing motor
     ///gradients when species can either be bound or unbound.
     ///@return - a tuple of the motor ID, the type, and two coordinates defining its end positions
-    vector<tuple<int, int, vector<double>, vector<double>>> getDiffusingMotors();
+    vector<tuple<int, int, vector<floatingpoint>, vector<floatingpoint>>> getDiffusingMotors();
     
 };
 

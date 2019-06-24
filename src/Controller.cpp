@@ -47,6 +47,7 @@
 #include <vector>
 #include <algorithm>
 #include "Rand.h"
+#include "ChemManager.h"
 #include "Restart.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
@@ -56,10 +57,6 @@
 using namespace mathfunc;
 
 namespace {
-
-void rearrangeAllDatabases() {
-    Cylinder::rearrange(); Cylinder::updateData();
-}
 
 void invalidateMembraneMeshIndexCache() {
     for(auto m : Membrane::getMembranes()) {
@@ -86,10 +83,10 @@ Controller::Controller(SubSystem* s) : _subSystem(s) {
 
 void Controller::initialize(string inputFile,
                             string inputDirectory,
-                            string outputDirectory) {
+                            string outputDirectory, int threads) {
 
     SysParams::INITIALIZEDSTATUS = false;
-
+    SysParams::numthreads = threads;
     //general check of macros
 #if defined(DYNAMICRATES) && (!defined(CHEMISTRY) || !defined(MECHANICS))
     LOG(FATAL) << "If dynamic rates is turned on, chemistry and mechanics must be "
@@ -119,7 +116,7 @@ void Controller::initialize(string inputFile,
     //Otherwise incorrect deltaMinusEnd or deltaPlusEnd values may be genetrated.
     _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", _subSystem));
     //add br force out and local diffussing species concentration
-    //_outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
+    _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
     //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", _subSystem));
 
     //Always read geometry, check consistency
@@ -132,18 +129,18 @@ void Controller::initialize(string inputFile,
     LOG(STEP) << "Initializing geometry...";
     _gController->initializeGrid();
     LOG(INFO) << "Done.";
-    
+
     //Initialize boundary
     cout << "---" << endl;
     LOG(STEP) << "Initializing boundary...";
-    
+
     auto BTypes = p.readBoundaryType();
     p.readBoundParams();
 
     //initialize
     _gController->initializeBoundary(BTypes);
     LOG(INFO) << "Done.";
-    
+
 #ifdef MECHANICS
     //read algorithm and types
     auto MTypes = p.readMechanicsFFType();
@@ -212,16 +209,59 @@ void Controller::initialize(string inputFile,
         LOG(FATAL) << "Need to specify a chemical input file. Exiting.";
         exit(EXIT_FAILURE);
     }
-    _cController->initialize(CAlgorithm.algorithm, ChemData);
+
+    // Dissipation
+    _dt = new DissipationTracker(_mController);
+    _cController->initialize(CAlgorithm.algorithm, ChemData, _dt);
     LOG(INFO) << "Done.";
-    
+
     //Set up chemistry output if any
     string chemsnapname = _outputDirectory + "chemistry.traj";
     _outputs.push_back(new Chemistry(chemsnapname, _subSystem, ChemData,
                                      _subSystem->getCompartmentGrid()));
 
+    ChemSim* _cs = _cController->getCS();
+
     string concenname = _outputDirectory + "concentration.traj";
     _outputs.push_back(new Concentrations(concenname, _subSystem, ChemData));
+
+
+
+    //Dissipation
+    if(SysParams::CParams.dissTracking){
+    //Set up reactions output if any
+    string disssnapname = _outputDirectory + "dissipation.traj";
+    _outputs.push_back(new Dissipation(disssnapname, _subSystem, _cs));
+
+    //Set up HRCD output if any
+    string hrcdsnapname = _outputDirectory + "HRCD.traj";
+    _outputs.push_back(new HRCD(hrcdsnapname, _subSystem, _cs));
+    }
+
+    if(SysParams::CParams.eventTracking){
+    //Set up MotorWalkingEvents
+    string motorwalkingevents = _outputDirectory + "motorwalkingevents.traj";
+    _outputs.push_back(new MotorWalkingEvents(motorwalkingevents, _subSystem, _cs));
+
+    //Set up LinkerUnbindingEvents
+    string linkerunbindingevents = _outputDirectory + "linkerunbindingevents.traj";
+    _outputs.push_back(new LinkerUnbindingEvents(linkerunbindingevents, _subSystem, _cs));
+
+    //Set up LinkerBindingEvents
+    string linkerbindingevents = _outputDirectory + "linkerbindingevents.traj";
+    _outputs.push_back(new LinkerBindingEvents(linkerbindingevents, _subSystem, _cs));
+    }
+
+
+    //Set up CMGraph output if any
+    string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
+    _outputs.push_back(new CMGraph(cmgraphsnapname, _subSystem));
+
+
+
+//    //Set up Turnover output if any
+//    string turnover = _outputDirectory + "Turnover.traj";
+//    _outputs.push_back(new FilamentTurnoverTimes(turnover, _subSystem));
 
 #endif
 
@@ -237,7 +277,7 @@ void Controller::initialize(string inputFile,
     //init controller
     _drController->initialize(DRTypes);
     LOG(INFO) << "Done.";
-    
+
 #endif
 
     //Check consistency of all chemistry and mechanics parameters
@@ -283,7 +323,7 @@ void Controller::initialize(string inputFile,
     );
     
     LOG(INFO) << "Done.";
-    
+
     //setup initial network configuration
     setupInitialNetwork(p);
 #ifdef HYBRID_NLSTENCILLIST
@@ -437,6 +477,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     FilamentSetup FSetup = p.readFilamentSetup();
     
     cout << "---" << endl;
+//    HybridBindingSearchManager::setdOut();
     cout << "Initializing filaments...";
 
     if(FSetup.inputFile != "") {
@@ -467,12 +508,12 @@ void Controller::setupInitialNetwork(SystemParser& p) {
                  <<"invalid filament type. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
-        vector<vector<double>> coords = {coord1, coord2};
+        vector<vector<floatingpoint>> coords = {coord1, coord2};
 
         if(coord2.size()==3){
 
-            double d = twoPointDistance(coord1, coord2);
-            vector<double> tau = twoPointDirection(coord1, coord2);
+            floatingpoint d = twoPointDistance(coord1, coord2);
+            vector<floatingpoint> tau = twoPointDirection(coord1, coord2);
             int numSegment = static_cast<int>(std::round(d / SysParams::Geometry().cylinderSize[type]));
 
             // check how many segments can fit between end-to-end of the filament
@@ -483,7 +524,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         }
         else if(coord2.size()>3){
             int numSegment = coord2.size()/3;
-            vector<vector<double>> coords;
+            vector<vector<floatingpoint>> coords;
             coords.push_back(coord1);
             for(int id=0;id<numSegment;id++)
                 coords.push_back({coord2[id*3],coord2[id*3+1],coord2[id*3+2]});
@@ -512,11 +553,11 @@ void Controller::setupSpecialStructures(SystemParser& p) {
         MTOC* mtoc = _subSystem->addTrackable<MTOC>();
 
         //create the bubble in top part of grid, centered in x,y
-        double bcoordx = GController::getSize()[0] / 2;
-        double bcoordy = GController::getSize()[1] / 2;
-        double bcoordz = GController::getSize()[2] * 5 / 6;
+        floatingpoint bcoordx = GController::getSize()[0] / 2;
+        floatingpoint bcoordy = GController::getSize()[1] / 2;
+        floatingpoint bcoordz = GController::getSize()[2] * 5 / 6;
 
-        vector<double> bcoords = {bcoordx, bcoordy, bcoordz};
+        vector<floatingpoint> bcoords = {bcoordx, bcoordy, bcoordz};
         Bubble* b = _subSystem->addTrackable<Bubble>(_subSystem, bcoords, SType.mtocBubbleType);
 
         mtoc->setBubble(b);
@@ -535,13 +576,13 @@ void Controller::setupSpecialStructures(SystemParser& p) {
             auto coord1 = get<1>(it);
             auto coord2 = get<2>(it);
 
-            vector<vector<double>> coords = {coord1, coord2};
+            vector<vector<floatingpoint>> coords = {coord1, coord2};
 
-            double d = twoPointDistance(coord1, coord2);
-            vector<double> tau = twoPointDirection(coord1, coord2);
+            floatingpoint d = twoPointDistance(coord1, coord2);
+            vector<floatingpoint> tau = twoPointDirection(coord1, coord2);
 
             int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
-            
+
             // check how many segments can fit between end-to-end of the filament
             Filament *f = _subSystem->addTrackable<Filament>(_subSystem, SType.mtocFilamentType,
                                                              coords, numSegment + 1, "ARC");
@@ -554,7 +595,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
 
 void Controller::activatedeactivateComp(){
 
-    if(SysParams::Boundaries().transfershareaxis!=3){
+    if(SysParams::Boundaries().transfershareaxis>=0){
         fCompmap.clear();
         bCompmap.clear();
         activatecompartments.clear();
@@ -600,8 +641,8 @@ void Controller::ControlfrontbackEndComp(){
     bool mincompstate = false;
     if(planestomove == 2 || planestomove == 0) maxcompstate = true;
     if(planestomove == 2 || planestomove == 1) mincompstate = true;
-    double systemspan = 0.0;
-    double cmpsize = 0.0;
+    floatingpoint systemspan = 0.0;
+    floatingpoint cmpsize = 0.0;
     if(tsaxis == 0)
     {systemspan = SysParams::Geometry().NX * SysParams::Geometry()
                                                               .compartmentSizeX;
@@ -745,12 +786,12 @@ void Controller::ControlfrontbackEndComp(){
     std::cout<<"Maxbound "<<bounds[1]<<" Minbound "<<bounds[0]<<endl;
 }
 
-void Controller::moveBoundary(double deltaTau) {
+void Controller::moveBoundary(floatingpoint deltaTau) {
     //calculate distance to move
-    double dist = SysParams::Boundaries().moveSpeed * deltaTau;
+    floatingpoint dist = SysParams::Boundaries().moveSpeed * deltaTau;
 
-    if(SysParams::Boundaries().transfershareaxis != 3){
-        vector<double> distvec= {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    if(SysParams::Boundaries().transfershareaxis>=0){
+        vector<floatingpoint> distvec= {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
         if(SysParams::Boundaries().transfershareaxis == 0){
             distvec[0] = bounds[0] - bounds_prev[0];
@@ -765,6 +806,28 @@ void Controller::moveBoundary(double deltaTau) {
             distvec[5] = bounds[1] - bounds_prev[1];
         }
         _subSystem->getBoundary()->move(distvec);
+    }
+        //deprecated not good to use.
+    else if(abs(dist)>0){
+        vector<floatingpoint> distvec = {dist, -dist, dist, -dist, dist, -dist};
+        //move it
+        if(tau() >= SysParams::Boundaries().moveStartTime &&
+           tau() <= SysParams::Boundaries().moveEndTime)
+            _subSystem->getBoundary()->move(distvec);
+
+        //activate, deactivate necessary compartments
+        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+
+            if(_subSystem->getBoundary()->within(C)) {
+
+                if(C->isActivated()) continue;
+                else _cController->activate(C);
+            }
+            else {
+                if(!C->isActivated()) continue;
+                else _cController->deactivate(C);
+            }
+        }
     }
     //calculate system volume.
     _subSystem->getBoundary()->volume();
@@ -854,12 +917,27 @@ void Controller::executeSpecialProtocols() {
 }
 
 void Controller::updatePositions() {
-
+	chrono::high_resolution_clock::time_point minsp, minep;
     //NEED TO UPDATE CYLINDERS FIRST
-    for(auto c : Cylinder::getCylinders()) c->updatePosition();
+	minsp = chrono::high_resolution_clock::now();
+    //Reset Cylinder update position state
+    Cylinder::setpositionupdatedstate = false;
+    for(auto c : Cylinder::getCylinders())
+    	c->updatePosition();
+    cout<<"Cylinder position updated"<<endl;
+    //Reset state to updated state
+	Cylinder::setpositionupdatedstate = true;
+	minep = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> compartment_update(minep - minsp);
+    updatepositioncylinder += compartment_update.count();
 
+    minsp = chrono::high_resolution_clock::now();
     //update all other moveables
     for(auto m : _subSystem->getMovables()) m->updatePosition();
+
+    minep = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> compartment_update2(minep - minsp);
+    updatepositionmovable += compartment_update2.count();
 }
 
 #ifdef DYNAMICRATES
@@ -871,22 +949,20 @@ void Controller::updateReactionRates() {
 
 void Controller::updateNeighborLists() {
     chrono::high_resolution_clock::time_point mins, mine;
-    mins = chrono::high_resolution_clock::now();
-    //vectorize cylinder to have all cylinder information in a few arrays.
-    mine = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runbvec(mine - mins);
-    bmgrvectime += elapsed_runbvec.count();
+
     mins = chrono::high_resolution_clock::now();
     //Full reset of neighbor lists
     _subSystem->resetNeighborLists();
+//	cout<<"updated NeighborLists"<<endl;
     mine = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runnl2(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runnl2(mine - mins);
     nl2time += elapsed_runnl2.count();
 #ifdef CHEMISTRY
     mins = chrono::high_resolution_clock::now();
     _subSystem->updateBindingManagers();
+	cout<<"updated BindingManagers"<<endl;
     mine = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runb(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runb(mine - mins);
     bmgrtime += elapsed_runb.count();
 //    std::cout<<"time split "<<elapsed_runnl2.count()<<" "<<elapsed_runbvec.count()<<" "
 //            ""<<elapsed_runb.count()<<endl;
@@ -927,7 +1003,7 @@ void Controller::pinBoundaryFilaments() {
         }
     }
 }
-//Qin
+
 void Controller::pinLowerBoundaryFilaments() {
 
     //renew pinned filament list everytime
@@ -946,7 +1022,7 @@ void Controller::pinLowerBoundaryFilaments() {
             //cout << _subSystem->getBoundary()->lowerdistance(b->vcoordinate()) << endl;
             //cout << SysParams::Mechanics().pinDistance << endl;
 
-            auto index = Rand::randDouble(0,1);
+            auto index = Rand::randfloatingpoint(0,1);
             //cout << index <<endl;
             //if within dist to boundary and index > 0.5, add
             if(_subSystem->getBoundary()->lowerdistance(b->vcoordinate()) < SysParams::Mechanics().pinDistance
@@ -972,10 +1048,10 @@ void Controller::membraneAdaptiveRemesh() const {
 void Controller::run() {
 
 #ifdef CHEMISTRY
-    double tauLastSnapshot = 0;
-    double tauLastMinimization = 0;
-    double tauLastNeighborList = 0;
-    double oldTau = 0;
+    floatingpoint tauLastSnapshot = 0;
+    floatingpoint tauLastMinimization = 0;
+    floatingpoint tauLastNeighborList = 0;
+    floatingpoint oldTau = 0;
 
     long stepsLastSnapshot = 0;
     long stepsLastMinimization = 0;
@@ -1044,7 +1120,7 @@ void Controller::run() {
         _mController->run(false);
 
         mine= chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runm(mine - mins);
+        chrono::duration<floatingpoint> elapsed_runm(mine - mins);
         minimizationtime += elapsed_runm.count();
         std::cout<<"Time taken for minimization "<<elapsed_runm.count()<<endl;
         SysParams::RUNSTATE=true;
@@ -1097,21 +1173,6 @@ void Controller::run() {
         cout << "Current simulation time = "<< tau() << endl;
         //restart phase ends
     }
-
-    //perform first minimization
-//#ifdef MECHANICS
-//    _mController->run(false);
-//
-//    //reupdate positions and neighbor lists
-//    updatePositions();
-//    updateNeighborLists();
-//
-//#ifdef DYNAMICRATES
-//    updateReactionRates();
-//#endif
-//
-//#endif
-
 #ifdef CHEMISTRY
     tauLastSnapshot = tau();
     oldTau = 0;
@@ -1121,10 +1182,13 @@ void Controller::run() {
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
     invalidateMembraneMeshIndexCache();
+    // update neighorLists before and after minimization. Need excluded volume
+    // interactions.
+	_subSystem->resetNeighborLists();
     _mController->run(false);
     membraneAdaptiveRemesh();
     mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runm2(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runm2(mine - mins);
     minimizationtime += elapsed_runm2.count();
     std::cout<<"Time taken for minimization "<<elapsed_runm2.count()<<endl;
 
@@ -1132,7 +1196,7 @@ void Controller::run() {
     mins = chrono::high_resolution_clock::now();
     //set initial values of variables.
     int tsaxis = SysParams::Boundaries().transfershareaxis;
-    double systemspan = 0.0;
+    floatingpoint systemspan = 0.0;
     if(tsaxis == 0)
         systemspan = SysParams::Geometry().NX * SysParams::Geometry().compartmentSizeX;
     else if(tsaxis == 1)
@@ -1145,16 +1209,16 @@ void Controller::run() {
     activatedeactivateComp();
     moveBoundary(0.0);
     mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runspl(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runspl(mine - mins);
     specialtime += elapsed_runspl.count();
 
     //reupdate positions and neighbor lists
     mins = chrono::high_resolution_clock::now();
     updatePositions();
-    rearrangeAllDatabases();
+    cout<<"Positions updated"<<endl;
     updateNeighborLists();
     mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runnl(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runnl(mine - mins);
     nltime += elapsed_runnl.count();
     std::cout<<"NL time "<<elapsed_runnl.count()<<endl;
     mins = chrono::high_resolution_clock::now();
@@ -1162,7 +1226,7 @@ void Controller::run() {
     updateReactionRates();
 #endif
     mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runrxn(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runrxn(mine - mins);
     rxnratetime += elapsed_runrxn.count();
 #endif
 
@@ -1175,7 +1239,6 @@ void Controller::run() {
 
     cout << "Starting simulation..." << endl;
 
-
     int i = 1;
 
     //if runtime was specified, use this
@@ -1184,19 +1247,70 @@ void Controller::run() {
 #ifdef CHEMISTRY
         //activate/deactivate compartments
         mins = chrono::high_resolution_clock::now();
-        //activatedeactivateComp();
+        activatedeactivateComp();
+	    // Dissipation
+	    if(SysParams::CParams.dissTracking){
+		    _dt->setG1();
+	    }
         mine= chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runspl(mine - mins);
+        chrono::duration<floatingpoint> elapsed_runspl(mine - mins);
         specialtime += elapsed_runspl.count();
-
         while(tau() <= _runTime) {
             //run ccontroller
+            cout<<"Starting chemistry"<<endl;
+            SysParams::DURINGCHEMISTRY = true;
             mins = chrono::high_resolution_clock::now();
-            auto var = !_cController->run(_minimizationTime);
+            floatingpoint chemistryTime = _minimizationTime;
+            //1 ms
+//            chemistryTime = 0.001;
+            auto var = !_cController->run(chemistryTime);
             mine= chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed_runchem(mine - mins);
+            chrono::duration<floatingpoint> elapsed_runchem(mine - mins);
             chemistrytime += elapsed_runchem.count();
+            SysParams::DURINGCHEMISTRY = false;
 
+            //Printing walking reaction
+            /*auto mwalk = CUDAcommon::mwalk;
+            cout<<"Motor-Walking statistics"<<endl;
+            cout<<"MW C2C "<<mwalk.contracttocontract<<endl;
+            cout<<"MW S2S "<<mwalk.stretchtostretch<<endl;
+            cout<<"MW E2E "<<mwalk.equibtoequib<<endl;
+            cout<<"MW C2S "<<mwalk.contracttostretch<<endl;
+            cout<<"MW S2C "<<mwalk.stretchtocontract<<endl;
+            cout<<"MW E2C "<<mwalk.equibtocontract<<endl;
+            cout<<"MW E2S "<<mwalk.equibtostretch<<endl;
+			//reset counters
+            CUDAcommon::mwalk.contracttocontract = 0;
+	        CUDAcommon::mwalk.stretchtocontract = 0;
+	        CUDAcommon::mwalk.contracttostretch = 0;
+	        CUDAcommon::mwalk.stretchtostretch = 0;
+	        CUDAcommon::mwalk.equibtoequib = 0;
+	        CUDAcommon::mwalk.equibtostretch = 0;
+	        CUDAcommon::mwalk.equibtocontract = 0;*/
+
+            //Printing stretch forces
+/*            cout<<"Motor-forces ";
+            for(auto m: MotorGhost::getMotorGhosts()){
+                std::cout<<m->getMMotorGhost()->stretchForce<<" ";
+            }
+            cout<<endl;
+            cout<<"Linker-forces ";
+            for(auto l: Linker::getLinkers()){
+                std::cout<<l->getMLinker()->stretchForce<<" ";
+            }
+            cout<<endl;*/
+
+	        auto mtimex = CUDAcommon::tmin;
+	        cout<<"motorbinding calls "<<mtimex.motorbindingcalls<<endl;
+	        cout<<"motorunbinding calls "<<mtimex.motorunbindingcalls<<endl;
+	        cout<<"motorwalking calls "<<mtimex.motorwalkingcalls<<endl;
+	        cout<<"linkerbinding calls "<<mtimex.linkerbindingcalls<<endl;
+	        cout<<"linkerunbinding calls "<<mtimex.linkerunbindingcalls<<endl;
+	        CUDAcommon::tmin.motorbindingcalls = 0;
+	        CUDAcommon::tmin.motorunbindingcalls = 0;
+	        CUDAcommon::tmin.motorwalkingcalls = 0;
+	        CUDAcommon::tmin.linkerbindingcalls = 0;
+	        CUDAcommon::tmin.linkerunbindingcalls = 0;
             //print output if chemistry fails.
             mins = chrono::high_resolution_clock::now();
             if(var) {
@@ -1204,10 +1318,14 @@ void Controller::run() {
                 resetCounters();
                 break;
             }
-            mine= chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed_runout(mine - mins);
-            outputtime += elapsed_runout.count();
+            // Dissipation
+            if(SysParams::CParams.dissTracking){
+            _dt->setGMid();
+            }
 
+            mine= chrono::high_resolution_clock::now();
+            chrono::duration<floatingpoint> elapsed_runout(mine - mins);
+            outputtime += elapsed_runout.count();
             //add the last step
             tauLastSnapshot += tau() - oldTau;
             tauLastMinimization += tau() - oldTau;
@@ -1232,15 +1350,18 @@ void Controller::run() {
 
                 mins = chrono::high_resolution_clock::now();
                 invalidateMembraneMeshIndexCache();
+                Bead::rearrange();
+                Cylinder::rearrange(); // FIXME: should be put before neighbor list search
+                Cylinder::updateAllData();
                 _mController->run();
 
                 // Membrane remeshing
                 membraneAdaptiveRemesh();
 
                 mine= chrono::high_resolution_clock::now();
-                chrono::duration<double> elapsed_runm3(mine - mins);
+                chrono::duration<floatingpoint> elapsed_runm3(mine - mins);
                 minimizationtime += elapsed_runm3.count();
-//                std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
+                std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
                 //update position
                 mins = chrono::high_resolution_clock::now();
 
@@ -1249,10 +1370,26 @@ void Controller::run() {
                 // Update activation of the compartments
                 updateActiveCompartments();
 
+                cout<<"Position updated"<<endl;
                 tauLastMinimization = 0.0;
                 mine= chrono::high_resolution_clock::now();
-                chrono::duration<double> elapsed_rxn2(mine - mins);
-                rxnratetime += elapsed_rxn2.count();
+                chrono::duration<floatingpoint> elapsed_rxn2(mine - mins);
+                updateposition += elapsed_rxn2.count();
+
+                // Dissipation
+                if(SysParams::CParams.dissTracking){
+                    _dt->updateAfterMinimization();
+                }
+
+	            //update reaction rates
+	            mins = chrono::high_resolution_clock::now();
+#ifdef DYNAMICRATES
+	            updateReactionRates();
+	            cout<<"updated Reaction Rates"<<endl;
+#endif
+	            mine= chrono::high_resolution_clock::now();
+	            chrono::duration<floatingpoint> elapsed_rxn3(mine - mins);
+	            rxnratetime += elapsed_rxn3.count();
 
             }
             //output snapshot
@@ -1264,23 +1401,15 @@ void Controller::run() {
                 i++;
                 tauLastSnapshot = 0.0;
                 mine= chrono::high_resolution_clock::now();
-                chrono::duration<double> elapsed_runout2(mine - mins);
+                chrono::duration<floatingpoint> elapsed_runout2(mine - mins);
                 outputtime += elapsed_runout2.count();
             }
-
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
-            resetCounters();
+	        resetCounters();
             i++;
 #endif
-            //update reaction rates
-            mins = chrono::high_resolution_clock::now();
-#ifdef DYNAMICRATES
-            updateReactionRates();
-#endif
-            mine= chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed_rxn3(mine - mins);
-            rxnratetime += elapsed_rxn3.count();
+
 #ifdef CHEMISTRY
             //activate/deactivate compartments
             mins = chrono::high_resolution_clock::now();
@@ -1288,25 +1417,25 @@ void Controller::run() {
             //move the boundary
             moveBoundary(tau() - oldTau);
             mine= chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed_runspl(mine - mins);
+            chrono::duration<floatingpoint> elapsed_runspl(mine - mins);
             specialtime += elapsed_runspl.count();
 
             // update neighbor lists & Binding Managers
             if(tauLastNeighborList >= _neighborListTime) {
                 mins = chrono::high_resolution_clock::now();
-                rearrangeAllDatabases();
                 updateNeighborLists();
                 tauLastNeighborList = 0.0;
                 mine= chrono::high_resolution_clock::now();
-                chrono::duration<double> elapsed_runnl2(mine - mins);
+                chrono::duration<floatingpoint> elapsed_runnl2(mine - mins);
                 nltime += elapsed_runnl2.count();
+                cout<<"update NeighborLists"<<endl;
             }
             //Special protocols
             mins = chrono::high_resolution_clock::now();
             //special protocols
             executeSpecialProtocols();
             mine= chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed_runspl2(mine - mins);
+            chrono::duration<floatingpoint> elapsed_runspl2(mine - mins);
             specialtime += elapsed_runspl2.count();
             oldTau = tau();
 
@@ -1367,6 +1496,9 @@ void Controller::run() {
             //run mcontroller, update system
             if(stepsLastMinimization >= _minimizationSteps) {
                 invalidateMembraneMeshIndexCache();
+                Bead::rearrange();
+                Cylinder::rearrange(); // FIXME: should be put before neighbor list search
+                Cylinder::updateAllData();
                 _mController->run();
 
                 // Membrane remeshing
@@ -1376,6 +1508,10 @@ void Controller::run() {
                 
                 // Update activation of the compartments
                 updateActiveCompartments();
+
+#ifdef DYNAMICRATES
+                updateReactionRates();
+#endif
 
                 stepsLastMinimization = 0;
             }
@@ -1393,10 +1529,6 @@ void Controller::run() {
             i++;
 #endif
 
-#ifdef DYNAMICRATES
-            updateReactionRates();
-#endif
-
 #ifdef CHEMISTRY
             //activate/deactivate compartments
             activatedeactivateComp();
@@ -1405,12 +1537,9 @@ void Controller::run() {
 
             // update neighbor lists
             if(stepsLastNeighborList >= _neighborListSteps) {
-                rearrangeAllDatabases();
                 updateNeighborLists();
                 stepsLastNeighborList = 0;
             }
-
-
 
             //special protocols
             executeSpecialProtocols();
@@ -1420,23 +1549,189 @@ void Controller::run() {
 
     //print last snapshots
     for(auto o: _outputs) o->print(i);
-    resetCounters();
-
+	resetCounters();
+//    cout<<"Printing Excluded volume counters"<<endl;
+//    cout<<"Parallel "<<SysParams::exvolcounter[0]<<endl;
+//    cout<<"In-plane "<<SysParams::exvolcounter[1]<<endl;
+//    cout<<"Rest "<<SysParams::exvolcounter[2]<<endl;
+//    cout<<"Z Parallel "<<SysParams::exvolcounterz[0]<<endl;
+//    cout<<"Z In-plane "<<SysParams::exvolcounterz[1]<<endl;
+//    cout<<"Z Rest "<<SysParams::exvolcounterz[2]<<endl;
     chk2 = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run(chk2-chk1);
+    chrono::duration<floatingpoint> elapsed_run(chk2-chk1);
     cout<< "Chemistry time for run=" << chemistrytime <<endl;
     cout << "Minimization time for run=" << minimizationtime <<endl;
-    cout<< "Neighbor list + Bmgr time for run="<<nltime<<endl;
-    cout<< "Neighbor list time "<<nl2time<<endl;
-    cout<< "Bmgr vec time "<<bmgrvectime<<endl;
-    cout<< "HYBD time "<<SubSystem::HYBDtime<<endl;
-    cout<< "Bmgr time "<<bmgrtime<<endl;
+    cout<< "Neighbor-list+Bmgr-time for run="<<nltime<<endl;
+    cout<< "Neighbor-list time for run="<<nl2time<<endl;
+    cout<< "Bmgr-vec time for run="<<bmgrvectime<<endl;
+    cout<< "SIMD time for run="<<SubSystem::SIMDtime<<endl;
+    cout<< "HYBD time for run="<<SubSystem::HYBDtime<<endl;
+    cout<< "Bmgr time for run="<<bmgrtime<<endl;
+    cout<<"update-position time for run="<<updateposition<<endl;
+
     cout<<"rxnrate time for run="<<rxnratetime<<endl;
     cout<<"Output time for run="<<outputtime<<endl;
     cout<<"Special time for run="<<specialtime<<endl;
     cout << "Time elapsed for run: dt=" << elapsed_run.count() << endl;
     cout << "Total simulation time: dt=" << tau() << endl;
-    cout << "Done with simulation!" << endl;
+    cout<<"-----------"<<endl;
+    if(true){
+        auto mtime = CUDAcommon::tmin;
+        cout<<"update-position time for run="<<updateposition<<endl;
+        cout<<"update-position-cylinder time for run="<<updatepositioncylinder<<endl;
+        cout<<"update-position-movable time for run="<<updatepositionmovable<<endl;
+        cout<<"move-compartment cylinder ="<<mtime.timecylinderupdate<<" calls "<<mtime
+        .callscylinderupdate<<endl;
+        cout<<"move-compartment linker ="<<mtime.timelinkerupdate<<" calls "<<mtime
+                .callslinkerupdate<<endl;
+        cout<<"move-compartment motor ="<<mtime.timemotorupdate<<" calls "<<mtime
+                .callsmotorupdate<<endl;
+        cout<<"-----------"<<endl;
+
+        cout << "Minimization time for run=" << minimizationtime <<endl;
+        cout<<"Printing minimization times in seconds."<<endl;
+        cout<<"starting minimization "<<mtime.vectorize<<endl;
+        cout<<"Finding lambda "<<mtime.findlambda<<endl;
+        cout<<"copy forces "<<mtime.copyforces<<endl;
+        cout<<"other computations "<<mtime.tother<<endl;
+        cout<<"end minimization "<<mtime.endminimization<<endl;
+        cout<<"compute energies "<<mtime.computeenergy<<" calls "<<mtime
+        .computeenergycalls<<endl;
+        cout<<"compute energieszero "<<mtime.computeenergyzero<<" calls "<<mtime
+        .computeenerycallszero<<endl;
+	    cout<<"compute energiesnonzero "<<mtime.computeenergynonzero<<" calls "<<mtime
+			    .computeenerycallsnonzero<<endl;
+        cout<<"compute forces "<<mtime.computeforces<<" calls "<<mtime
+                .computeforcescalls<<endl;
+        cout<<"Time taken to compute energy in each forcefield "<<endl;
+        cout<<"Filament, Linker, Motor, Branching, Excluded Volume, and Boundary"<<endl;
+        for(auto x:mtime.individualenergies)
+            cout<<x<<" ";
+        cout<<endl;
+	    cout<<"Time taken to compute energy in "<<endl;
+	    cout<<"Filament Stretching "<<mtime.stretchingenergy<<endl;
+	    cout<<"Filament Bending "<<mtime.bendingenergy<<endl;
+        cout<<"Time taken to compute energyzero in each forcefield "<<endl;
+        for(auto x:mtime.individualenergieszero)
+            cout<<x<<" ";
+        cout<<endl;
+        cout<<"Time taken to compute energynonzero in each forcefield "<<endl;
+        for(auto x:mtime.individualenergiesnonzero)
+            cout<<x<<" ";
+        cout<<endl;
+        cout<<"Time taken to compute forces in each forcefield "<<endl;
+        for(auto x:mtime.individualforces)
+            cout<<x<<" ";
+        cout<<endl;
+	    cout<<"Time taken to compute forces in "<<endl;
+	    cout<<"Filament Stretching "<<mtime.stretchingforces<<endl;
+	    cout<<"Filament Bending "<<mtime.bendingforces<<endl;
+
+		cout<<"Number of interactions considered in each force field"<<endl;
+
+		cout<<"Filament Stretching "<<mtime.numinteractions[0]<<endl;
+	    cout<<"Filament Bending "<<mtime.numinteractions[1]<<endl;
+	    cout<<"Linker Stretching "<<mtime.numinteractions[2]<<endl;
+	    cout<<"Motor Stretching "<<mtime.numinteractions[3]<<endl;
+	    cout<<"Branching Stretching "<<mtime.numinteractions[4]<<endl;
+	    cout<<"Branching Bending "<<mtime.numinteractions[5]<<endl;
+	    cout<<"Branching Dihedral "<<mtime.numinteractions[6]<<endl;
+	    cout<<"Branching Position "<<mtime.numinteractions[7]<<endl;
+	    cout<<"Cylinder-Cylinder Repulsion "<<mtime.numinteractions[8]<<endl;
+	    cout<<"Cylinder-Boundary Repulsion "<<mtime.numinteractions[9]<<endl;
+    }
+    if(false) {
+        cout << "Printing callback times" << endl;
+        auto ctime = CUDAcommon::ctime;
+        auto ccount = CUDAcommon::ccount;
+        cout << "UpdateBrancherBindingCallback " << ctime.tUpdateBrancherBindingCallback
+             << " count "
+             << ccount.cUpdateBrancherBindingCallback << endl;
+        cout << "UpdateLinkerBindingCallback " << ctime.tUpdateLinkerBindingCallback
+             << " count "
+             << ccount.cUpdateLinkerBindingCallback << endl;
+        cout << "UpdateMotorBindingCallback " << ctime.tUpdateMotorBindingCallback
+             << " count "
+             << ccount.cUpdateMotorBindingCallback << endl;
+        cout << "UpdateMotorIDCallback " << ctime.tUpdateMotorIDCallback << " count "
+             << ccount.cUpdateMotorIDCallback << endl;
+        cout << "FilamentExtensionPlusEndCallback "
+             << ctime.tFilamentExtensionPlusEndCallback << " count "
+             << ccount.cFilamentExtensionPlusEndCallback << endl;
+        cout << "FilamentExtensionMinusEndCallback "
+             << ctime.tFilamentExtensionMinusEndCallback << " count "
+             << ccount.cFilamentExtensionMinusEndCallback << endl;
+        cout << "FilamentRetractionPlusEndCallback "
+             << ctime.tFilamentRetractionPlusEndCallback << " count "
+             << ccount.cFilamentRetractionPlusEndCallback << endl;
+        cout << "FilamentRetractionMinusEndCallback "
+             << ctime.tFilamentRetractionMinusEndCallback << " count "
+             << ccount.cFilamentRetractionMinusEndCallback << endl;
+        cout << "FilamentPolymerizationPlusEndCallback "
+             << ctime.tFilamentPolymerizationPlusEndCallback << " count "
+             << ccount.cFilamentPolymerizationPlusEndCallback << endl;
+        cout << "FilamentPolymerizationMinusEndCallback "
+             << ctime.tFilamentPolymerizationMinusEndCallback << " count "
+             << ccount.cFilamentPolymerizationMinusEndCallback << endl;
+        cout << "FilamentDepolymerizationPlusEndCallback "
+             << ctime.tFilamentDepolymerizationPlusEndCallback << " count "
+             << ccount.cFilamentDepolymerizationPlusEndCallback << endl;
+        cout << "FilamentDepolymerizationMinusEndCallback "
+             << ctime.tFilamentDepolymerizationMinusEndCallback << " count "
+             << ccount.cFilamentDepolymerizationMinusEndCallback << endl;
+        cout << "BranchingPointUnbindingCallback " << ctime.tBranchingPointUnbindingCallback
+             << " count "
+             << ccount.cBranchingPointUnbindingCallback << endl;
+        cout << "BranchingCallback " << ctime.tBranchingCallback << " count "
+             << ccount.cBranchingCallback << endl;
+        cout << "LinkerUnbindingCallback " << ctime.tLinkerUnbindingCallback << " count "
+             << ccount.cLinkerUnbindingCallback << endl;
+        cout << "LinkerBindingCallback " << ctime.tLinkerBindingCallback << " count "
+             << ccount.cLinkerBindingCallback << endl;
+        cout << "MotorUnbindingCallback " << ctime.tMotorUnbindingCallback << " count "
+             << ccount.cMotorUnbindingCallback << endl;
+        cout << "MotorBindingCallback " << ctime.tMotorBindingCallback << " count "
+             << ccount.cMotorBindingCallback << endl;
+        cout << "MotorWalkingCallback " << ctime.tMotorWalkingCallback << " count "
+             << ccount.cMotorWalkingCallback << endl;
+        cout << "MotorMovingCylinderCallback " << ctime.tMotorMovingCylinderCallback
+             << " count "
+             << ccount.cMotorMovingCylinderCallback << endl;
+        cout << "FilamentCreationCallback " << ctime.tFilamentCreationCallback << " count "
+             << ccount.cFilamentCreationCallback << endl;
+        cout << "FilamentSeveringCallback " << ctime.tFilamentSeveringCallback << " count "
+             << ccount.cFilamentSeveringCallback << endl;
+        cout << "FilamentDestructionCallback " << ctime.tFilamentDestructionCallback
+             << " count "
+             << ccount.cFilamentDestructionCallback << endl;
+        cout << "------------" << endl;
+        cout << "Printing neighbor times" << endl;
+        cout << "Dynamic neighbor " << SubSystem::timedneighbor << endl;
+        cout << "Neighbor " << SubSystem::timeneighbor << endl;
+        cout << "Trackable " << SubSystem::timetrackable << endl;
+        cout << "Done with simulation!" << endl;
+        cout << "-------------" << endl;
+        cout << "Filament extendPlusEnd 1 " << Filament::FilextendPlusendtimer1 << endl;
+        cout << "Filament extendPlusEnd 2 " << Filament::FilextendPlusendtimer2 << endl;
+        cout << "-------------" << endl;
+        cout << "Cylinder constructor" << endl;
+        cout << "part1 " << Cylinder::timecylinder1 << " part2 " << Cylinder::timecylinder2
+             << " "
+                "Ccylinder "
+             << Cylinder::timecylinderchem << " mCylinder " << Cylinder::timecylindermech
+             << endl;
+        cout << "initializeCCylinder for loop " << ChemManager::tchemmanager1 << endl;
+        cout << "extension Front/Back " << ChemManager::tchemmanager2 << endl;
+        cout << "initialize " << ChemManager::tchemmanager3 << endl;
+        cout << "last part " << ChemManager::tchemmanager4 << endl;
+        cout << "------------" << endl;
+        cout << "PolyPlusEndTemplate time" << endl;
+        cout << "For loop " << CUDAcommon::ppendtime.rxntempate1 << " part2 (findspecies) "
+             << CUDAcommon::ppendtime.rxntempate2 << " part3 (create rxn) "
+             << CUDAcommon::ppendtime
+                     .rxntempate3 << " part4 (Callback) "
+             << CUDAcommon::ppendtime.rxntempate4 << endl;
+    }
 #ifdef CUDAACCL
     cudaDeviceReset();
 #endif

@@ -21,23 +21,23 @@
 
 using namespace mathfunc;
 
-double MTOCAttachmentHarmonic::energy(double *coord, int *beadSet,
-                                      double *kstr, double radius){
-    
-    double *coord1, *coord2, dist;
-    double U = 0.0;
-    
+floatingpoint MTOCAttachmentHarmonic::energy(floatingpoint *coord, int *beadSet,
+                                             floatingpoint *kstr, floatingpoint radius){
+
+    floatingpoint *coord1, *coord2, dist;
+    floatingpoint U = 0.0;
+
     int n = MTOCAttachment<MTOCAttachmentHarmonic>::n;
     for(auto mtoc : MTOC::getMTOCs()) {
         int nint = mtoc->getFilaments().size();
-        
+
         coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC
 
         for(int i = 1; i < nint + 1; i+=1){
             coord2 = &coord[3 * beadSet[n * i]];
-            
+
             dist = twoPointDistance(coord1, coord2) - radius;
-            
+
             U += 0.5 * kstr[i] * dist * dist;
         }
     }
@@ -45,64 +45,64 @@ double MTOCAttachmentHarmonic::energy(double *coord, int *beadSet,
     
 }
 
-double MTOCAttachmentHarmonic::energy(double *coord, double *f, int *beadSet,
-                                      double *kstr, double radius, double d){
-    
-    double *coord1, *coord2, *f1, *f2, dist;
-    double U = 0.0;
-    
+floatingpoint MTOCAttachmentHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                             floatingpoint *kstr, floatingpoint radius, floatingpoint d){
+
+	floatingpoint *coord1, *coord2, *f1, *f2, dist;
+	floatingpoint U = 0.0;
+
     int n = MTOCAttachment<MTOCAttachmentHarmonic>::n;
     for(auto mtoc : MTOC::getMTOCs()) {
         int nint = mtoc->getFilaments().size();
-        
+
         coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC
         f1 = &f[3 * beadSet[0]];
-        
+
         for(int i = 1; i < nint + 1; i+=1){
             coord2 = &coord[3 * beadSet[n * i]];
             f2 = &f[3 * beadSet[n * i]];
-            
+
             dist = twoPointDistanceStretched(coord1, f1,  coord2, f2, d) - radius;
-            
+
             U += 0.5 * kstr[i] * dist * dist;
         }
     }
     return U;
-    
+
 }
 
-void MTOCAttachmentHarmonic::forces(double *coord, double *f, int *beadSet,
-                                    double *kstr, double radius){
-    
+void MTOCAttachmentHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                    floatingpoint *kstr, floatingpoint radius){
+
     
     int n = MTOCAttachment<MTOCAttachmentHarmonic>::n;
     for(auto mtoc : MTOC::getMTOCs()) {
         int nint = mtoc->getFilaments().size();
-        
-        double *coord1, *coord2, dist, invL;
-        double f0, *f1, *f2;
-        
+
+	    floatingpoint *coord1, *coord2, dist, invL;
+	    floatingpoint f0, *f1, *f2;
+
         coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC
         f1 = &f[3 * beadSet[0]];
-        
+
         for(int i = 1; i < nint + 1; i+=1){
             coord2 = &coord[3 * beadSet[n * i]];
             f2 = &f[3 * beadSet[n * i]];
-            
+
             dist = twoPointDistance(coord1, coord2);
             invL = 1 / dist;
-            
+
             f0 = kstr[i] * ( dist - radius ) * invL;
-            
+
             f2[0] +=  f0 * ( coord1[0] - coord2[0] );
             f2[1] +=  f0 * ( coord1[1] - coord2[1] );
             f2[2] +=  f0 * ( coord1[2] - coord2[2] );
-            
+
             // force i-1
             f1[0] +=  f0 * ( coord2[0] - coord1[0] );
             f1[1] +=  f0 * ( coord2[1] - coord1[1] );
             f1[2] +=  f0 * ( coord2[2] - coord1[2] );
-            
+
         }
     }
     

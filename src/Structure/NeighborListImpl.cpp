@@ -22,9 +22,7 @@
 
 #include "GController.h"
 #include "MathFunctions.h"
-#ifdef CUDAACCL
 #include "CUDAcommon.h"
-#endif
 #include "NeighborListImplCUDA.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
@@ -87,7 +85,7 @@ void CylinderCylinderNL::generateConnections() {
                 vector<size_t> indices{i,j,k};
                 Bin *target = getBin(indices);//defined in this file.
 
-                vector<double> coordinates =
+                vector<floatingpoint> coordinates =
                         {indices[0] * _binSize[0] + _binSize[0] / 2,
                          indices[1] * _binSize[1] + _binSize[1] / 2,
                          indices[2] * _binSize[2] + _binSize[2] / 2};
@@ -160,7 +158,7 @@ void CylinderCylinderNL::initializeBinGrid() {
 
 //    //Initial parameters of system
     auto _nDim = SysParams::Geometry().nDim;
-    double searchdist = 1.125 * (_rMax);
+    floatingpoint searchdist = 1.125 * (_rMax);
     std::cout<<"searchdist "<<searchdist<<" rMax "<<_rMax<<endl;
     _binSize = {searchdist, searchdist, searchdist};
     if(_nDim >=1) {
@@ -233,7 +231,7 @@ void CylinderCylinderNL::initializeBinGrid() {
 }
 
 //You need a vector of all grids so you can loop through and update respective coordinates.
-Bin* CylinderCylinderNL::getBin(const vector<double> &coords) {
+Bin* CylinderCylinderNL::getBin(const vector<floatingpoint> &coords) {
     //Check if out of bounds
     size_t index = 0;
     size_t i = 0;
@@ -362,7 +360,7 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
                         if (dist <= 2) continue;
                     }
                     //Dont add if not within range
-                    double dist = twoPointDistance(cylinder->coordinate,
+                    floatingpoint dist = twoPointDistance(cylinder->coordinate,
                                                    ncylinder->coordinate);
                     if (dist > _rMax || dist < _rMin) continue;
                     //If we got through all of this, add it!
@@ -413,7 +411,7 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
                     if (dist <= 2) continue;
                 }
                 //Dont add if not within range
-                double dist = twoPointDistance(cylinder->coordinate,
+                floatingpoint dist = twoPointDistance(cylinder->coordinate,
                                                ncylinder->coordinate);
                 if (dist > _rMax || dist < _rMin) continue;
                 //If we got through all of this, add it!
@@ -473,7 +471,7 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
                 if(dist <= 2) continue;
             }
             //Dont add if not within range
-            double distsq = twoPointDistancesquared(cylinder->coordinate,
+            floatingpoint distsq = twoPointDistancesquared(cylinder->coordinate,
                                            ncylinder->coordinate);
             if(distsq > (_rMax * _rMax) || distsq < (_rMin * _rMin)) continue;
 
@@ -585,21 +583,10 @@ void CylinderCylinderNL::reset() {
     mins = chrono::high_resolution_clock::now();
 #endif
     _list.clear();
-    tot = 0;
+
     for(auto cylinder: Cylinder::getCylinders()) {
         updateNeighbors(cylinder);
-        tot += _list[cylinder].size();
     }
-     std::cout<<"ORIGINAL ";
-    for(auto cylinder: Cylinder::getCylinders()) {
-        std::cout<<_list4mbin[cylinder].size()<<" ";
-    }
-    std::cout<<endl;
-    std::cout<<"reset NLORIGINAL size "<<" "<<tot<<endl;
-#ifdef CUDA_TIMETRACK
-
-
-#endif
 
 #endif
 
@@ -621,12 +608,12 @@ void CylinderCylinderNL::reset() {
     }
 //    std::cout<<"reset NLSTENCILLIST size "<<" "<<tot<<endl;
     /*mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_sten(mine - mins);
+    chrono::duration<floatingpoint> elapsed_sten(mine - mins);
     std::cout<<"NLSTEN reset time "<<elapsed_sten.count()<<endl;*/
     #ifdef CUDA_TIMETRACK
     std::cout<<"reset NLSTENCILLIST size "<<" "<<tot<<endl;
     mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_sten(mine - mins);
+    chrono::duration<floatingpoint> elapsed_sten(mine - mins);
     std::cout<<"NLSTEN reset time "<<elapsed_sten.count()<<endl;
     #endif
 #endif
@@ -700,7 +687,7 @@ void CylinderCylinderNL::reset() {
 
         //Gather all necessary variables.
     auto cylcylnlvars = CUDAcommon::getCylCylNLvars();
-    double* coord_com = cylcylnlvars.gpu_coord_com;
+    floatingpoint* coord_com = cylcylnlvars.gpu_coord_com;
     int *beadSet = cylcylnlvars.gpu_beadSet;
     int *cylID = cylcylnlvars.gpu_cylID;
     int *filID = cylcylnlvars.gpu_filID;
@@ -708,12 +695,12 @@ void CylinderCylinderNL::reset() {
     int *fvecposition = cylcylnlvars.gpu_fvecpos;
 //    int *cylvecpospercmp = cylcylnlvars.gpu_cylvecpospercmp;
 //    if(gpu_params == NULL) {
-        double cpu_params[2];
-        cpu_params[0] = double(_rMin);
-        cpu_params[1] = double(_rMax);
-        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params,  2 * sizeof(double)),
+        floatingpoint cpu_params[2];
+        cpu_params[0] = floatingpoint(_rMin);
+        cpu_params[1] = floatingpoint(_rMax);
+        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params,  2 * sizeof(floatingpoint)),
                                 "cuda data transfer", " NeighborListImpl.h");
-        CUDAcommon::handleerror(cudaMemcpy(gpu_params, cpu_params, 2 * sizeof(double), cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpy(gpu_params, cpu_params, 2 * sizeof(floatingpoint), cudaMemcpyHostToDevice));
 //    }
 
 //    std::cout<<_rMin<<" "<<_rMax<<endl;
@@ -798,7 +785,7 @@ void CylinderCylinderNL::reset() {
         testarray.at(i) = (rand() % Nv);
         std::cout<<testarray.at(i)<<" ";
     }
-//    vector<double> testarray = { 19.0, 128.0, 9.0, 101.0, 14.0, 98.0, 45.0, 32.0, 4.0, 2.0, 50.0, 30.0, 95.0, 38.0, 17.0, 40.0};
+//    vector<floatingpoint> testarray = { 19.0, 128.0, 9.0, 101.0, 14.0, 98.0, 45.0, 32.0, 4.0, 2.0, 50.0, 30.0, 95.0, 38.0, 17.0, 40.0};
     std::cout<<endl;
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_array, Nv*sizeof(int)));
     CUDAcommon::handleerror(cudaMemcpy(gpu_array, testarray.data(), Nv* sizeof(int),
@@ -832,7 +819,6 @@ void CylinderCylinderNL::reset() {
 }
 
 vector<Cylinder*> CylinderCylinderNL::getNeighbors(Cylinder* cylinder) {
-
     return _list[cylinder];
 }
 
@@ -846,7 +832,7 @@ void BoundaryCylinderNL::updateNeighbors(BoundaryElement* be) {
     //loop through beads, add as neighbor
     for (auto &c : Cylinder::getCylinders()) {
 
-        double dist = be->distance(c->coordinate);
+        floatingpoint dist = be->distance(c->coordinate);
         //If within range, add it
         if(dist < _rMax) _list[be].push_back(c);
     }
@@ -923,7 +909,7 @@ void BoundaryBubbleNL::updateNeighbors(BoundaryElement* be) {
     //loop through beads, add as neighbor
     for (auto &b : Bubble::getBubbles()) {
 
-        double dist = be->distance(b->coordinate);
+        floatingpoint dist = be->distance(b->coordinate);
         //If within range, add it
         if(dist < _rMax) _list[be].push_back(b);
     }
@@ -1001,7 +987,7 @@ void BubbleBubbleNL::updateNeighbors(Bubble* bb) {
     //loop through beads, add as neighbor
     for (auto &bbo : Bubble::getBubbles()) {
 
-        double distsq = twoPointDistancesquared(bb->coordinate, bbo->coordinate);
+        floatingpoint distsq = twoPointDistancesquared(bb->coordinate, bbo->coordinate);
 
         if(bb->getId() <= bbo->getId()) continue;
 
@@ -1059,7 +1045,7 @@ void BubbleCylinderNL::updateNeighbors(Bubble* bb) {
     //loop through beads, add as neighbor
     for (auto &c : Cylinder::getCylinders()) {
 
-        double distsq = twoPointDistancesquared(c->coordinate, bb->coordinate);
+        floatingpoint distsq = twoPointDistancesquared(c->coordinate, bb->coordinate);
 
         //If within range, add it
         if(distsq < (_rMax * _rMax)) _list[bb].push_back(c);

@@ -1,11 +1,14 @@
+//------------------------------------------------------------------
+//  **MEDYAN** - Simulation Package for the Mechanochemical
+//               Dynamics of Active Networks, v3.1
 //
-//  Boundary.cpp
-//  medyan
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
-//  Created by qin ni on 2/25/19.
-//  Copyright © 2019 University of Maryland. All rights reserved.
+//                 ALL RIGHTS RESERVED
 //
+//  See the MEDYAN web page for more information:
+//  http://www.medyan.org
+//------------------------------------------------------------------
 
 #include "Boundary.h"
-
-double Boundary::systemvolume = 0.0;
+floatingpoint Boundary::systemvolume = 0.0;

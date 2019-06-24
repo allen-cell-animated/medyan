@@ -63,23 +63,23 @@ public:
     /// Return the currently stored propensity, "a", for this Reaction.
     /// @note The propensity is not recomputed in this method, so it potentially
     /// can be out of sync.
-    double getPropensity() const {return _a;}
+    floatingpoint getPropensity() const {return _a;}
     
     /// Set the propensity, "a", for this Reaction.
-    void setA(double a) {_a=a;}
+    void setA(floatingpoint a) {_a=a;}
     
     /// Return the propensity, "a", associated with the penultimate step
     /// of this Reaction.
     /// @note The propensity is not recomputed in this method, so it potentially
     /// can be out of sync.
-    double getPenultStepPropensity() const {return _a_prev;}
+    floatingpoint getPenultStepPropensity() const {return _a_prev;}
 
     /// Set the propensity, "a", associated with the penultimate step of this Reaction.
-    void setPenultA(double a_prev) {_a_prev=a_prev;}
+    void setPenultA(floatingpoint a_prev) {_a_prev=a_prev;}
     
     /// (Re)Compute and return the propensity associated with this Reaction.
     /// Remembers the penultimate step propensity as well
-    double reComputePropensity() {
+    floatingpoint reComputePropensity() {
         _a_prev=_a;
         _a=_react->computePropensity();
         return _a;
@@ -116,9 +116,9 @@ private:
                                         ///< generators, etc.
     ReactionBase *_react; ///< The pointer to the associated Reaction object. The
                           ///<corresponding memory is not managed by RNodeGillespie.
-    double _a; ///< The propensity associated with the Reaction. It may be outdated
+    floatingpoint _a; ///< The propensity associated with the Reaction. It may be outdated
                ///< and may need to be recomputed if needed.
-    double _a_prev; ///< The propensity associated with the penultimate
+    floatingpoint _a_prev; ///< The propensity associated with the penultimate
                     ///< step of this Reaction.
 };
 
@@ -163,7 +163,7 @@ public:
     size_t getSize() const {return _map_rnodes.size();}
     
     /// Return the current global time (as defined in the Gillespie algorithm)
-    double getTime() const {return _t;}
+    floatingpoint getTime() const {return _t;}
     
     /// Sets the global time to 0.0
     void resetTime() {_t=0.0; syncGlobalTime(); }
@@ -178,14 +178,14 @@ public:
     virtual void removeReaction(ReactionBase *r);
     
     /// Unconditionally compute the total propensity associated with the network.
-    double computeTotalA();
+    floatingpoint computeTotalA();
     
     /// Returns a random time tau, drawn from the exponential distribution,
     /// with the propensity given by a.
-    double generateTau(double a);
+    floatingpoint generateTau(floatingpoint a);
     
     /// Returns a random number between 0 and 1, drawn from the uniform distribution
-   double generateUniform();
+   floatingpoint generateUniform();
     
     /// This function iterates over all RNodeGillespie objects in the network,
     /// activating all Reaction objects and calling reset().
@@ -199,9 +199,9 @@ public:
     
     /// This method runs the Gillespie algorithm for the given amount of time.
     /// @return true if successful.
-    virtual bool run(double time) {
+    virtual bool run(floatingpoint time) {
         
-        double endTime = _t + time;
+        floatingpoint endTime = _t + time;
         
         while(_t < endTime) {
             bool success = makeStep();
@@ -249,10 +249,10 @@ private:
 private:
     unordered_map<ReactionBase*, unique_ptr<RNodeGillespie>> _map_rnodes; ///< The database of RNodeGillespie
                                                                           ///< objects, representing the reaction network
-    exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
-    uniform_real_distribution<double> _uniform_distr;
-    double _t; ///< global time
-    double _a_total; 
+    exponential_distribution<floatingpoint> _exp_distr; ///< Adaptor for the exponential distribution
+    uniform_real_distribution<floatingpoint> _uniform_distr;
+    floatingpoint _t; ///< global time
+    floatingpoint _a_total;
     size_t _n_reacts; ///< number of reactions in the network
 };
 
