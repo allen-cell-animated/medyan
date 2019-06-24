@@ -8,14 +8,90 @@
 using std::size_t;
 using namespace mathfunc;
 
-TEST_CASE("Vec tests", "[Vec]") {
+TEST_CASE("Vec and RefVec tests", "[Vec]") {
     Vec< 3, float > v3f_1 = {0.0f, 1.0f, 2.0f};
     VecArray< 3, float > va3f = { {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f} };
-    auto v3f_2 = va3f[1];
+    auto v3f_2 = va3f[1];                        // 3 4 5
+    auto v3f_3 = makeRefVec< 3 >(va3f.data());   // 0 1 2
 
     Vec< 4, double > v4d_1 = {-4.0, -3.0, -2.0, -1.0};
-    VecArray< 4, double > va4d = { {-1.0, -2.0, -3.0, -4.0} };
-    auto v4d_2 = va4d[0];
+    VecArray< 4, double > va4d = { {-1.0, -2.0, -3.0, -4.0, -5.0, -6.0, -7.0, -8.0} };
+    auto v4d_2 = va4d[0];                            // -1 -2 -3 -4
+    auto v4d_3 = makeRefVec< 4 >(va4d.data() + 4);   // -5 -6 -7 -8
+
+    // Check element access
+    REQUIRE(v3f_1[1] == Approx(1.0f));
+    REQUIRE(v3f_2[1] == Approx(4.0f));
+    REQUIRE(v3f_3[1] == Approx(1.0f));
+
+    REQUIRE(v4d_1[2] == Approx(-2.0));
+    REQUIRE(v4d_2[2] == Approx(-3.0));
+    REQUIRE(v4d_3[2] == Approx(-7.0));
+
+    SECTION("Conversion and copy assignments") {
+        // Check copy assignment between Vec's and between RefVec's
+        {
+            Vec3f v3f { 3.0f, 4.0f, 5.0f };
+            v3f = v3f_1;
+            CHECK(v3f[1] == Approx(1.0f));
+
+            double vp4d[] { -1.0, -2.0, -3.0, -4.0 };
+            auto v4d = makeRefVec< 4 >(vp4d);
+            v4d = v4d_3;
+            CHECK(v4d[2] == Approx(-7.0));
+        }
+        // Check assignment between different Vec's
+        {
+            Vec3f v3f   { 0.0f, 1.0f, 2.0f };
+            Vec3d v3d_1 {  6.0,  7.0,  8.0 };
+            Vec3d v3d_2 { -1.0, -2.0, -3.0 };
+
+            v3f = v3d_1;
+            CHECK(v3f[1] == Approx(7.0f));
+
+            v3d_2 = v3f;
+            CHECK(v3d_2[1] == Approx(7.0));
+        }
+        // Check assignment between Vec and RefVec
+        {
+            Vec3f v3f { 0.0f, 1.0f, 2.0f };
+            std::vector<double> vv3d { 6.0, 7.0, 8.0, -1.0, -2.0, -3.0 };
+            auto v3d_1 = RefVec< 3, double, std::vector<double> >(&vv3d, 0); //  6  7  8
+            auto v3d_2 = makeRefVec< 3 >(vv3d.data() + 3);                   // -1 -2 -3
+
+            v3f = v3d_1;
+            CHECK(v3f[1] == Approx(7.0f));
+
+            v3d_2 = v3f;
+            CHECK(v3d_2[1] == Approx(7.0));
+        }
+        // Check assignment between different RefVec's
+        {
+            std::vector<float> vv3f { 0.0f, 1.0f, 2.0f };
+            std::vector<double> vv3d { 6.0, 7.0, 8.0, -1.0, -2.0, -3.0 };
+            auto v3f = makeRefVec< 3 >(vv3f.data());                         //  0  1  2
+            auto v3d_1 = RefVec< 3, double, std::vector<double> >(&vv3d, 0); //  6  7  8
+            auto v3d_2 = makeRefVec< 3 >(vv3d.data() + 3);                   // -1 -2 -3
+
+            v3f = v3d_1;
+            CHECK(v3f[1] == Approx(7.0f));
+
+            v3d_2 = v3f;
+            CHECK(v3d_2[1] == Approx(7.0));
+        }
+        // Check construction of Vec using conversions
+        {
+            // This is to ensure no ambiguity of construction from the same type
+            Vec3f v3f (v3f_1);
+            CHECK(v3f[1] == Approx(1.0f));
+
+            Vec3d v3d (v3f_1);
+            CHECK(v3d[1] == Approx(1.0));
+
+            Vec< 4, float > v4f (v4d_3);
+            CHECK(v4f[2] == Approx(-7.0));
+        }
+    }
 
     SECTION("Compound operators") {
         v3f_1 += v3f_2;
@@ -28,6 +104,11 @@ TEST_CASE("Vec tests", "[Vec]") {
         CHECK(v3f_2[1] == Approx(-1.0f));
         CHECK(v3f_2[2] == Approx(-2.0f));
 
+        v3f_3 += v3f_2;
+        CHECK(v3f_3[0] == Approx(0.0f));
+        CHECK(v3f_3[1] == Approx(0.0f));
+        CHECK(v3f_3[2] == Approx(0.0f));
+
         v4d_1 *= 2.0;
         CHECK(v4d_1[0] == Approx(-8.0));
         CHECK(v4d_1[1] == Approx(-6.0));
@@ -39,6 +120,12 @@ TEST_CASE("Vec tests", "[Vec]") {
         CHECK(v4d_2[1] == Approx(-1.0));
         CHECK(v4d_2[2] == Approx(-1.5));
         CHECK(v4d_2[3] == Approx(-2.0));
+
+        v4d_3 *= -1.0;
+        CHECK(v4d_3[0] == Approx(5.0));
+        CHECK(v4d_3[1] == Approx(6.0));
+        CHECK(v4d_3[2] == Approx(7.0));
+        CHECK(v4d_3[3] == Approx(8.0));
     }
 
     SECTION("Arithmetic operators") {
@@ -47,7 +134,7 @@ TEST_CASE("Vec tests", "[Vec]") {
         CHECK(res1[1] == Approx(5.0f));
         CHECK(res1[2] == Approx(7.0f));
 
-        auto res2 = v3f_1 - v3f_2;
+        auto res2 = v3f_3 - v3f_2;
         CHECK(res2[0] == Approx(-3.0f));
         CHECK(res2[1] == Approx(-3.0f));
         CHECK(res2[2] == Approx(-3.0f));
@@ -58,11 +145,11 @@ TEST_CASE("Vec tests", "[Vec]") {
         CHECK(res3[2] == Approx(-4.0));
         CHECK(res3[3] == Approx(-2.0));
 
-        auto res4 = v4d_2 / 2.0;
-        CHECK(res4[0] == Approx(-0.5));
-        CHECK(res4[1] == Approx(-1.0));
-        CHECK(res4[2] == Approx(-1.5));
-        CHECK(res4[3] == Approx(-2.0));
+        auto res4 = v4d_3 / 2.0;
+        CHECK(res4[0] == Approx(-2.5));
+        CHECK(res4[1] == Approx(-3.0));
+        CHECK(res4[2] == Approx(-3.5));
+        CHECK(res4[3] == Approx(-4.0));
     }
 
     SECTION("Vector products") {
@@ -91,17 +178,17 @@ TEST_CASE("VecArray tests", "[VecArray]") {
 
     // Appending elements
     const Vec< 3, float > push_v3f[] {
-        0.0f, 0.0f, 0.0f,
-        1.0f, 1.0f, 1.0f,
-        2.0f, 2.0f, 2.0f,
-        3.0f, 3.0f, 3.0f,
-        4.0f, 4.0f, 4.0f
+        { 0.0f, 0.0f, 0.0f },
+        { 1.0f, 1.0f, 1.0f },
+        { 2.0f, 2.0f, 2.0f },
+        { 3.0f, 3.0f, 3.0f },
+        { 4.0f, 4.0f, 4.0f }
     };
     const Vec< 4, double > push_v4d[] {
-        -4.0, -4.0, -4.0, -4.0,
-        -3.0, -3.0, -3.0, -3.0,
-        -2.0, -2.0, -2.0, -2.0,
-        -1.0, -1.0, -1.0, -1.0
+        { -4.0, -4.0, -4.0, -4.0 },
+        { -3.0, -3.0, -3.0, -3.0 },
+        { -2.0, -2.0, -2.0, -2.0 },
+        { -1.0, -1.0, -1.0, -1.0 }
     };
 
     for(auto& x : push_v3f) v3f.push_back(x);
@@ -157,7 +244,7 @@ TEST_CASE("VecArray tests", "[VecArray]") {
 
     SECTION("Conversion and assignment of RefVec") {
         // Using conversion from RefVec to Vec
-        Vec< 3, float > v3f_2_copy = v3f[2];
+        Vec< 3, float > v3f_2_copy (v3f[2]);
         CHECK(v3f_2_copy[0] == 2.0f); // Check copy is successful
 
         v3f_2_copy[0] = 2.1f;
