@@ -53,13 +53,13 @@ using Vec3f = Vec< 3, float >;
 namespace internal {
 
     template< typename RefVecType, std::enable_if_t< std::remove_reference_t<RefVecType>::raw_ptr_container >* = nullptr >
-    constexpr auto refVecBaseGetBegin(RefVecType&& v) { return v.ptr; }
+    constexpr decltype(auto) refVecBaseGetBegin(RefVecType&& v) { return v.ptr; }
     template< typename RefVecType, std::enable_if_t< !std::remove_reference_t<RefVecType>::raw_ptr_container >* = nullptr >
-    constexpr auto refVecBaseGetBegin(RefVecType&& v) { return v.ptr->begin(); }
+    constexpr decltype(auto) refVecBaseGetBegin(RefVecType&& v) { return v.ptr->begin(); }
     template< typename RefVecType, std::enable_if_t< std::remove_reference_t<RefVecType>::raw_ptr_container >* = nullptr >
-    constexpr auto refVecBaseGetContainer(RefVecType&& v) { return v.ptr; }
+    constexpr decltype(auto) refVecBaseGetContainer(RefVecType&& v) { return v.ptr; }
     template< typename RefVecType, std::enable_if_t< !std::remove_reference_t<RefVecType>::raw_ptr_container >* = nullptr >
-    constexpr auto refVecBaseGetContainer(RefVecType&& v) { return *v.ptr; }
+    constexpr decltype(auto) refVecBaseGetContainer(RefVecType&& v) { return *v.ptr; }
 
     // RefVecBase is the base impl for RefVec and ConstRefVec
     // Note:
