@@ -28,6 +28,71 @@ TEST_CASE("Vec and RefVec tests", "[Vec]") {
     REQUIRE(v4d_2[2] == Approx(-3.0));
     REQUIRE(v4d_3[2] == Approx(-7.0));
 
+    SECTION("Conversion and copy assignments") {
+        // Check copy assignment between Vec's and between RefVec's
+        {
+            Vec3f v3f { 3.0f, 4.0f, 5.0f };
+            v3f = v3f_1;
+            CHECK(v3f[1] == Approx(1.0f));
+
+            double vp4d[] { -1.0, -2.0, -3.0, -4.0 };
+            auto v4d = makeRefVec< 4 >(vp4d);
+            v4d = v4d_3;
+            CHECK(v4d[2] == Approx(-7.0));
+        }
+        // Check assignment between different Vec's
+        {
+            Vec3f v3f   { 0.0f, 1.0f, 2.0f };
+            Vec3d v3d_1 {  6.0,  7.0,  8.0 };
+            Vec3d v3d_2 { -1.0, -2.0, -3.0 };
+
+            v3f = v3d_1;
+            CHECK(v3f[1] == Approx(7.0f));
+
+            v3d_2 = v3f;
+            CHECK(v3d_2[1] == Approx(7.0));
+        }
+        // Check assignment between Vec and RefVec
+        {
+            Vec3f v3f { 0.0f, 1.0f, 2.0f };
+            std::vector<double> vv3d { 6.0, 7.0, 8.0, -1.0, -2.0, -3.0 };
+            auto v3d_1 = RefVec< 3, double, std::vector<double> >(&vv3d, 0); //  6  7  8
+            auto v3d_2 = makeRefVec< 3 >(vv3d.data() + 3);                   // -1 -2 -3
+
+            v3f = v3d_1;
+            CHECK(v3f[1] == Approx(7.0f));
+
+            v3d_2 = v3f;
+            CHECK(v3d_2[1] == Approx(7.0));
+        }
+        // Check assignment between different RefVec's
+        {
+            std::vector<float> vv3f { 0.0f, 1.0f, 2.0f };
+            std::vector<double> vv3d { 6.0, 7.0, 8.0, -1.0, -2.0, -3.0 };
+            auto v3f = makeRefVec< 3 >(vv3f.data());                         //  0  1  2
+            auto v3d_1 = RefVec< 3, double, std::vector<double> >(&vv3d, 0); //  6  7  8
+            auto v3d_2 = makeRefVec< 3 >(vv3d.data() + 3);                   // -1 -2 -3
+
+            v3f = v3d_1;
+            CHECK(v3f[1] == Approx(7.0f));
+
+            v3d_2 = v3f;
+            CHECK(v3d_2[1] == Approx(7.0));
+        }
+        // Check construction of Vec using conversions
+        {
+            // This is to ensure no ambiguity of construction from the same type
+            Vec3f v3f (v3f_1);
+            CHECK(v3f[1] == Approx(1.0f));
+
+            Vec3d v3d (v3f_1);
+            CHECK(v3d[1] == Approx(1.0));
+
+            Vec< 4, float > v4f (v4d_3);
+            CHECK(v4f[2] == Approx(-7.0));
+        }
+    }
+
     SECTION("Compound operators") {
         v3f_1 += v3f_2;
         CHECK(v3f_1[0] == Approx(3.0f));
@@ -179,7 +244,7 @@ TEST_CASE("VecArray tests", "[VecArray]") {
 
     SECTION("Conversion and assignment of RefVec") {
         // Using conversion from RefVec to Vec
-        Vec< 3, float > v3f_2_copy = v3f[2];
+        Vec< 3, float > v3f_2_copy (v3f[2]);
         CHECK(v3f_2_copy[0] == 2.0f); // Check copy is successful
 
         v3f_2_copy[0] = 2.1f;

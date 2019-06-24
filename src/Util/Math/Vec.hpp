@@ -34,6 +34,14 @@ template< size_t dim, typename Float = double > struct Vec {
         return *this;
     }
 
+    // Conversion operator to another Vec
+    template< typename FloatOut >
+    explicit operator Vec< vec_size, FloatOut >() const {
+        Vec< vec_size, FloatOut > res;
+        for(size_t i = 0; i < vec_size; ++i) res[i] = (*this)[i];
+        return res;
+    }
+
     constexpr size_type size() const noexcept { return dim; }
 
     constexpr iterator       begin()       noexcept { return value.begin(); }
@@ -106,7 +114,7 @@ namespace internal {
 
         // Conversion operator to normal Vec
         template< typename FloatOut >
-        operator Vec< vec_size, FloatOut >() const {
+        explicit operator Vec< vec_size, FloatOut >() const {
             Vec< vec_size, FloatOut > res;
             for(size_t i = 0; i < vec_size; ++i) res[i] = (*this)[i];
             return res;
@@ -157,6 +165,11 @@ struct RefVec : internal::RefVecBase< dim, Float, Container, false, RefVec< dim,
     // Copy/move constructors
     constexpr RefVec(const RefVec&  rv) : RefVec(rv.ptr, rv.pos) {}
     constexpr RefVec(      RefVec&& rv) : RefVec(rv.ptr, rv.pos) {}
+
+    RefVec& operator=(const RefVec& v) {
+        for(size_t i = 0; i < dim; ++i) (*this)[i] = v[i];
+        return *this;
+    }
 
     template< typename VecType, std::enable_if_t< dim == VecType::vec_size > * = nullptr >
     RefVec& operator=(const VecType& v) {
