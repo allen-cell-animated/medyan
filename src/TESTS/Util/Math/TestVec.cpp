@@ -8,14 +8,25 @@
 using std::size_t;
 using namespace mathfunc;
 
-TEST_CASE("Vec tests", "[Vec]") {
+TEST_CASE("Vec and RefVec tests", "[Vec]") {
     Vec< 3, float > v3f_1 = {0.0f, 1.0f, 2.0f};
     VecArray< 3, float > va3f = { {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f} };
-    auto v3f_2 = va3f[1];
+    auto v3f_2 = va3f[1];                        // 3 4 5
+    auto v3f_3 = makeRefVec< 3 >(va3f.data());   // 0 1 2
 
     Vec< 4, double > v4d_1 = {-4.0, -3.0, -2.0, -1.0};
-    VecArray< 4, double > va4d = { {-1.0, -2.0, -3.0, -4.0} };
-    auto v4d_2 = va4d[0];
+    VecArray< 4, double > va4d = { {-1.0, -2.0, -3.0, -4.0, -5.0, -6.0, -7.0, -8.0} };
+    auto v4d_2 = va4d[0];                            // -1 -2 -3 -4
+    auto v4d_3 = makeRefVec< 4 >(va4d.data() + 4);   // -5 -6 -7 -8
+
+    // Check element access
+    REQUIRE(v3f_1[1] == Approx(1.0f));
+    REQUIRE(v3f_2[1] == Approx(4.0f));
+    REQUIRE(v3f_3[1] == Approx(1.0f));
+
+    REQUIRE(v4d_1[2] == Approx(-2.0));
+    REQUIRE(v4d_2[2] == Approx(-3.0));
+    REQUIRE(v4d_3[2] == Approx(-7.0));
 
     SECTION("Compound operators") {
         v3f_1 += v3f_2;
@@ -28,6 +39,11 @@ TEST_CASE("Vec tests", "[Vec]") {
         CHECK(v3f_2[1] == Approx(-1.0f));
         CHECK(v3f_2[2] == Approx(-2.0f));
 
+        v3f_3 += v3f_2;
+        CHECK(v3f_3[0] == Approx(0.0f));
+        CHECK(v3f_3[1] == Approx(0.0f));
+        CHECK(v3f_3[2] == Approx(0.0f));
+
         v4d_1 *= 2.0;
         CHECK(v4d_1[0] == Approx(-8.0));
         CHECK(v4d_1[1] == Approx(-6.0));
@@ -39,6 +55,12 @@ TEST_CASE("Vec tests", "[Vec]") {
         CHECK(v4d_2[1] == Approx(-1.0));
         CHECK(v4d_2[2] == Approx(-1.5));
         CHECK(v4d_2[3] == Approx(-2.0));
+
+        v4d_3 *= -1.0;
+        CHECK(v4d_3[0] == Approx(5.0));
+        CHECK(v4d_3[1] == Approx(6.0));
+        CHECK(v4d_3[2] == Approx(7.0));
+        CHECK(v4d_3[3] == Approx(8.0));
     }
 
     SECTION("Arithmetic operators") {
@@ -47,7 +69,7 @@ TEST_CASE("Vec tests", "[Vec]") {
         CHECK(res1[1] == Approx(5.0f));
         CHECK(res1[2] == Approx(7.0f));
 
-        auto res2 = v3f_1 - v3f_2;
+        auto res2 = v3f_3 - v3f_2;
         CHECK(res2[0] == Approx(-3.0f));
         CHECK(res2[1] == Approx(-3.0f));
         CHECK(res2[2] == Approx(-3.0f));
@@ -58,11 +80,11 @@ TEST_CASE("Vec tests", "[Vec]") {
         CHECK(res3[2] == Approx(-4.0));
         CHECK(res3[3] == Approx(-2.0));
 
-        auto res4 = v4d_2 / 2.0;
-        CHECK(res4[0] == Approx(-0.5));
-        CHECK(res4[1] == Approx(-1.0));
-        CHECK(res4[2] == Approx(-1.5));
-        CHECK(res4[3] == Approx(-2.0));
+        auto res4 = v4d_3 / 2.0;
+        CHECK(res4[0] == Approx(-2.5));
+        CHECK(res4[1] == Approx(-3.0));
+        CHECK(res4[2] == Approx(-3.5));
+        CHECK(res4[3] == Approx(-4.0));
     }
 
     SECTION("Vector products") {

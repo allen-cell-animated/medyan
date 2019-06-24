@@ -52,6 +52,7 @@ using Vec3f = Vec< 3, float >;
 
 namespace internal {
 
+    // Helper functions and types to choose implementation according to whether RefVecBase of raw_ptr_container
     template< typename RefVecType, std::enable_if_t< std::remove_reference_t<RefVecType>::raw_ptr_container >* = nullptr >
     constexpr decltype(auto) refVecBaseGetBegin(RefVecType&& v) { return v.ptr; }
     template< typename RefVecType, std::enable_if_t< !std::remove_reference_t<RefVecType>::raw_ptr_container >* = nullptr >
@@ -60,6 +61,24 @@ namespace internal {
     constexpr decltype(auto) refVecBaseGetContainer(RefVecType&& v) { return v.ptr; }
     template< typename RefVecType, std::enable_if_t< !std::remove_reference_t<RefVecType>::raw_ptr_container >* = nullptr >
     constexpr decltype(auto) refVecBaseGetContainer(RefVecType&& v) { return *v.ptr; }
+
+    template< bool is_const, bool raw_ptr_container, typename Float, typename Container >
+    struct RefVecBaseIterator { using type = std::conditional_t< is_const, const Float *, Float * >; };
+    template< bool is_const, typename Float, typename Container >
+    struct RefVecBaseIterator< is_const, false, Float, Container > {
+        using type = std::conditional_t< is_const, typename Container::const_iterator, typename Container::iterator >;
+    };
+    template< bool is_const, bool raw_ptr_container, typename Float, typename Container >
+    using RefVecBaseIterator_t = typename RefVecBaseIterator< is_const, raw_ptr_container, Float, Container >::type;
+
+    template< bool is_const, bool raw_ptr_container, typename Float, typename Container >
+    struct RefVecBaseReference { using type = std::conditional_t< is_const, const Float &, Float & >; };
+    template< bool is_const, typename Float, typename Container >
+    struct RefVecBaseReference< is_const, false, Float, Container > {
+        using type = std::conditional_t< is_const, typename Container::const_reference, typename Container::reference >;
+    };
+    template< bool is_const, bool raw_ptr_container, typename Float, typename Container >
+    using RefVecBaseReference_t = typename RefVecBaseReference< is_const, raw_ptr_container, Float, Container >::type;
 
     // RefVecBase is the base impl for RefVec and ConstRefVec
     // Note:
@@ -78,16 +97,8 @@ namespace internal {
         static constexpr bool raw_ptr_container = std::is_same< Float*, Container >::value;
 
         using container_type = std::conditional_t< is_const, const Container, Container >;
-        using iterator = std::conditional_t<
-            is_const,
-            std::conditional_t< raw_ptr_container, const Float *, typename container_type::const_iterator >,
-            std::conditional_t< raw_ptr_container,       Float *, typename container_type::iterator >
-        >;
-        using reference = std::conditional_t<
-            is_const,
-            std::conditional_t< raw_ptr_container, const Float &, typename container_type::const_reference >,
-            std::conditional_t< raw_ptr_container,       Float &, typename container_type::reference >
-        >;
+        using iterator = RefVecBaseIterator_t< is_const, raw_ptr_container, Float, Container >;
+        using reference = RefVecBaseReference_t< is_const, raw_ptr_container, Float, Container >;
         using container_ptr_type = std::conditional_t< raw_ptr_container, container_type, container_type * >;
 
         container_ptr_type ptr;
