@@ -7,12 +7,14 @@
 #include <cstddef> // ptrdiff_t
 #include <iterator> // tag
 #include <ostream>
-#include <type_traits> // common_type, conditional, enable_if, is_same
+#include <type_traits> // common_type, conditional, enable_if, is_same, remove_reference
 
 namespace mathfunc {
 
-// A simple coordinate type that makes operations easier
+//-----------------------------------------------------------------------------
+// Vec is a simple coordinate type that makes operations easier
 // Can be replaced by linalg/tensor libraries in the future
+//-----------------------------------------------------------------------------
 template< size_t dim, typename Float = double > struct Vec {
 
     static constexpr size_t vec_size = dim;
@@ -32,6 +34,14 @@ template< size_t dim, typename Float = double > struct Vec {
         return *this;
     }
 
+    // Conversion operator to another Vec
+    template< typename FloatOut >
+    explicit operator Vec< vec_size, FloatOut >() const {
+        Vec< vec_size, FloatOut > res;
+        for(size_t i = 0; i < vec_size; ++i) res[i] = (*this)[i];
+        return res;
+    }
+
     constexpr size_type size() const noexcept { return dim; }
 
     constexpr iterator       begin()       noexcept { return value.begin(); }
@@ -44,8 +54,151 @@ template< size_t dim, typename Float = double > struct Vec {
 };
 
 // Frequently used type alias
-using Vec3 = Vec<3>;
+using Vec3  = Vec< 3 >;
+using Vec3d = Vec< 3, double >;
+using Vec3f = Vec< 3, float >;
 
+namespace internal {
+
+    // Helper functions and types to choose implementation according to whether RefVecBase of raw_ptr_container
+    template< typename RefVecType, std::enable_if_t< std::remove_reference_t<RefVecType>::raw_ptr_container >* = nullptr >
+    constexpr decltype(auto) refVecBaseGetBegin(RefVecType&& v) { return v.ptr; }
+    template< typename RefVecType, std::enable_if_t< !std::remove_reference_t<RefVecType>::raw_ptr_container >* = nullptr >
+    constexpr decltype(auto) refVecBaseGetBegin(RefVecType&& v) { return v.ptr->begin(); }
+    template< typename RefVecType, std::enable_if_t< std::remove_reference_t<RefVecType>::raw_ptr_container >* = nullptr >
+    constexpr decltype(auto) refVecBaseGetContainer(RefVecType&& v) { return v.ptr; }
+    template< typename RefVecType, std::enable_if_t< !std::remove_reference_t<RefVecType>::raw_ptr_container >* = nullptr >
+    constexpr decltype(auto) refVecBaseGetContainer(RefVecType&& v) { return *v.ptr; }
+
+    template< bool is_const, bool raw_ptr_container, typename Float, typename Container >
+    struct RefVecBaseIterator { using type = std::conditional_t< is_const, const Float *, Float * >; };
+    template< bool is_const, typename Float, typename Container >
+    struct RefVecBaseIterator< is_const, false, Float, Container > {
+        using type = std::conditional_t< is_const, typename Container::const_iterator, typename Container::iterator >;
+    };
+    template< bool is_const, bool raw_ptr_container, typename Float, typename Container >
+    using RefVecBaseIterator_t = typename RefVecBaseIterator< is_const, raw_ptr_container, Float, Container >::type;
+
+    template< bool is_const, bool raw_ptr_container, typename Float, typename Container >
+    struct RefVecBaseReference { using type = std::conditional_t< is_const, const Float &, Float & >; };
+    template< bool is_const, typename Float, typename Container >
+    struct RefVecBaseReference< is_const, false, Float, Container > {
+        using type = std::conditional_t< is_const, typename Container::const_reference, typename Container::reference >;
+    };
+    template< bool is_const, bool raw_ptr_container, typename Float, typename Container >
+    using RefVecBaseReference_t = typename RefVecBaseReference< is_const, raw_ptr_container, Float, Container >::type;
+
+    // RefVecBase is the base impl for RefVec and ConstRefVec
+    // Note:
+    //   - There must be a Container::iterator that is a RandomAccessIterator
+    //     unless the Container is a Float* raw pointer
+    template<
+        size_t dim,
+        typename Float,
+        typename Container,
+        bool is_const,
+        typename Concrete
+    > struct RefVecBase {
+        static constexpr size_t vec_size = dim;
+        using float_type = Float;
+
+        static constexpr bool raw_ptr_container = std::is_same< Float*, Container >::value;
+
+        using container_type = std::conditional_t< is_const, const Container, Container >;
+        using iterator = RefVecBaseIterator_t< is_const, raw_ptr_container, Float, Container >;
+        using reference = RefVecBaseReference_t< is_const, raw_ptr_container, Float, Container >;
+        using container_ptr_type = std::conditional_t< raw_ptr_container, container_type, container_type * >;
+
+        container_ptr_type ptr;
+        size_t pos; // index of first Float
+
+        // Conversion operator to normal Vec
+        template< typename FloatOut >
+        explicit operator Vec< vec_size, FloatOut >() const {
+            Vec< vec_size, FloatOut > res;
+            for(size_t i = 0; i < vec_size; ++i) res[i] = (*this)[i];
+            return res;
+        }
+
+        // Copy/move assignment operators are deleted
+        RefVecBase& operator=(const RefVecBase & ) = delete;
+        RefVecBase& operator=(      RefVecBase &&) = delete;
+
+        constexpr auto size() const noexcept { return dim; }
+
+        // Iterators
+        constexpr iterator begin() const noexcept { return refVecBaseGetBegin(*this) + pos; }
+        constexpr iterator end()   const noexcept { return refVecBaseGetBegin(*this) + pos + dim; }
+
+        // sub_pos must be within [0, dim)
+        reference operator[](size_t sub_pos) const { return refVecBaseGetContainer(*this)[pos + sub_pos]; }
+
+        // also works like pointer
+        Concrete*       operator->()       noexcept { return static_cast<      Concrete*>(this); }
+        const Concrete* operator->() const noexcept { return static_cast<const Concrete*>(this); }
+    };
+
+} // namespace internal
+
+//-----------------------------------------------------------------------------
+// RefVec and ConstRefVec refer to the Vec-like data in an array. They contain
+// pointers to the container and relative positions in the array, but do not
+// contain data themselves.
+//
+// They can perform most of the arithmetics just like a normal Vec does. A
+// RefVec can also change the data it refers to. If an arithmetic generates
+// a new object, then the object should NOT be a RefVec.
+//
+// Note:
+//   - The copy/move constructors here have different semantics from copy/move
+//     assignment operators. Both RefVec and ConstRefVec have copy/move
+//     constructors to copy the pointer information from another RefVec. On the
+//     other hand, assignment operators deal directly with the data they refer
+//     to, just like a normal Vec.
+//-----------------------------------------------------------------------------
+template< size_t dim, typename Float, typename Container >
+struct RefVec : internal::RefVecBase< dim, Float, Container, false, RefVec< dim, Float, Container > > {
+    using base_type = internal::RefVecBase< dim, Float, Container, false, RefVec >;
+
+    constexpr RefVec(typename base_type::container_ptr_type ptr, size_t pos) : base_type{ptr, pos} {}
+
+    // Copy/move constructors
+    constexpr RefVec(const RefVec&  rv) : RefVec(rv.ptr, rv.pos) {}
+    constexpr RefVec(      RefVec&& rv) : RefVec(rv.ptr, rv.pos) {}
+
+    RefVec& operator=(const RefVec& v) {
+        for(size_t i = 0; i < dim; ++i) (*this)[i] = v[i];
+        return *this;
+    }
+
+    template< typename VecType, std::enable_if_t< dim == VecType::vec_size > * = nullptr >
+    RefVec& operator=(const VecType& v) {
+        for(size_t i = 0; i < dim; ++i) (*this)[i] = v[i];
+        return *this;
+    }
+    template< typename VecType, std::enable_if_t< dim == VecType::vec_size > * = nullptr >
+    RefVec& operator=(VecType&& v) {
+        for(size_t i = 0; i < dim; ++i) (*this)[i] = v[i];
+        return *this;
+    }
+};
+template< size_t dim, typename Float, typename Container >
+struct ConstRefVec : internal::RefVecBase< dim, Float, Container, true, ConstRefVec< dim, Float, Container > > {
+    using base_type = internal::RefVecBase< dim, Float, Container, true, ConstRefVec >;
+
+    constexpr ConstRefVec(typename base_type::container_ptr_type ptr, size_t pos) : base_type{ptr, pos} {}
+
+    constexpr ConstRefVec(const RefVec< dim, Float, Container >&  rv) : ConstRefVec(rv.ptr, rv.pos) {}
+    constexpr ConstRefVec(      RefVec< dim, Float, Container >&& rv) : ConstRefVec(rv.ptr, rv.pos) {}
+
+    // Copy/move constructors
+    constexpr ConstRefVec(const ConstRefVec&  crv) : ConstRefVec(crv.ptr, crv.pos) {}
+    constexpr ConstRefVec(      ConstRefVec&& crv) : ConstRefVec(crv.ptr, crv.pos) {}
+};
+
+//-----------------------------------------------------------------------------
+// The VecArray type is like an array of Vec's but has flattened storage.
+//-----------------------------------------------------------------------------
 template<
     size_t dim,
     typename Float = double,
@@ -60,87 +213,8 @@ template<
     static_assert(std::is_same<typename container_type::iterator::iterator_category, std::random_access_iterator_tag>::value,
         "The iterator of the VecArray container must be random access iterator.");
 
-    // RefVec and ConstRefVec refer to the Vec-like data in a VecArray. They
-    // contain pointers to the container and relative positions in the array,
-    // but do not contain data themselves.
-    //
-    // They can perform most of the arithmetics just like a normal Vec does. A
-    // RefVec can also change the data it refers to. If an arithmetic generates
-    // a new object, then the object should not be a RefVec.
-    //
-    // Note: The copy/move constructors here have different semantics from
-    // copy/move assignment operators. Both RefVec and ConstRefVec have copy/
-    // move constructors to copy the pointer information from another RefVec.
-    // On the other hand, assignment operators deal directly with the data they
-    // refer to, just like a normal Vec.
-    template< bool is_const, typename Concrete > struct RefVecBase {
-        static constexpr size_t vec_size = dim;
-        using float_type = Float;
-
-        using vec_array_type = VecArray;
-        using size_type = vec_array_type::size_type;
-        using iterator = std::conditional_t< is_const, typename container_type::const_iterator, typename container_type::iterator >;
-        using reference = std::conditional_t< is_const, typename container_type::const_reference, typename container_type::reference >;
-
-        std::conditional_t< is_const, const vec_array_type::container_type, vec_array_type::container_type >
-            * ptr;
-        size_type pos; // index of first Float
-
-        // Conversion operator to normal Vec
-        operator Vec< vec_size, float_type >() const {
-            Vec< vec_size, float_type > res;
-            for(size_t i = 0; i < vec_size; ++i) res[i] = (*this)[i];
-            return res;
-        }
-
-        // Copy/move assignment operators are deleted
-        RefVecBase& operator=(const RefVecBase & ) = delete;
-        RefVecBase& operator=(      RefVecBase &&) = delete;
-
-        constexpr size_type size() const noexcept { return dim; }
-
-        constexpr iterator begin() const noexcept { return ptr->begin() + pos; }
-        constexpr iterator end() const noexcept { return ptr->begin() + pos + dim; }
-
-        // sub_pos must be within [0, dim)
-        reference operator[](size_type sub_pos) const { return (*ptr)[pos + sub_pos]; }
-
-        // also works like pointer
-        Concrete*       operator->()       noexcept { return static_cast<      Concrete*>(this); }
-        const Concrete* operator->() const noexcept { return static_cast<const Concrete*>(this); }
-    };
-    struct RefVec : RefVecBase< false, RefVec > {
-        using base_type = RefVecBase< false, RefVec >;
-
-        RefVec(container_type* ptr, size_type pos) : base_type{ptr, pos} {}
-
-        // Copy/move constructors
-        RefVec(const RefVec& rv) : RefVec(rv.ptr, rv.pos) {}
-        RefVec(RefVec&& rv)      : RefVec(rv.ptr, rv.pos) {}
-
-        template< typename VecType, std::enable_if_t< dim == VecType::vec_size > * = nullptr >
-        RefVec& operator=(const VecType& v) {
-            for(size_t i = 0; i < dim; ++i) (*this)[i] = v[i];
-            return *this;
-        }
-        template< typename VecType, std::enable_if_t< dim == VecType::vec_size > * = nullptr >
-        RefVec& operator=(VecType&& v) {
-            for(size_t i = 0; i < dim; ++i) (*this)[i] = v[i];
-            return *this;
-        }
-    };
-    struct ConstRefVec : RefVecBase< true, ConstRefVec > {
-        using base_type = RefVecBase< true, ConstRefVec >;
-
-        ConstRefVec(const container_type* ptr, size_type pos) : base_type{ptr, pos} {}
-
-        ConstRefVec(const RefVec& rv) : ConstRefVec(rv.ptr, rv.pos) {}
-        ConstRefVec(RefVec&& rv)      : ConstRefVec(rv.ptr, rv.pos) {}
-
-        // Copy/move constructors
-        ConstRefVec(const ConstRefVec& crv) : ConstRefVec(crv.ptr, crv.pos) {}
-        ConstRefVec(ConstRefVec&& crv)      : ConstRefVec(crv.ptr, crv.pos) {}
-    };
+    using reference       = RefVec     < dim, Float, Container >;
+    using const_reference = ConstRefVec< dim, Float, Container >;
 
     template< bool is_const > class VecIterator {
         template< bool friend_const > friend class VecIterator;
@@ -154,8 +228,8 @@ template<
         using iterator_category = std::random_access_iterator_tag;
         using value_type = SolidVec; // Not used in class
         using difference_type = std::ptrdiff_t;
-        using pointer = std::conditional_t< is_const, ConstRefVec, RefVec >; // The pointer type is the reference itself
-        using reference = std::conditional_t< is_const, ConstRefVec, RefVec >;
+        using pointer = std::conditional_t< is_const, VecArray::const_reference, VecArray::reference >; // The pointer type is the reference itself
+        using reference = std::conditional_t< is_const, VecArray::const_reference, VecArray::reference >;
 
     private:
         container_type* _ptr;
@@ -226,11 +300,11 @@ template<
     iterator       end()       noexcept { return       iterator(&value, size()); }
     const_iterator end() const noexcept { return const_iterator(&value, size()); }
 
-    RefVec      operator[](size_type index)       { return      RefVec(&value, index * dim); }
-    ConstRefVec operator[](size_type index) const { return ConstRefVec(&value, index * dim); }
+    reference       operator[](size_type index)       { return       reference(&value, index * dim); }
+    const_reference operator[](size_type index) const { return const_reference(&value, index * dim); }
 
-    RefVec      back()       { return      RefVec(&value, size_raw() - dim); }
-    ConstRefVec back() const { return ConstRefVec(&value, size_raw() - dim); }
+    reference       back()       { return       reference(&value, size_raw() - dim); }
+    const_reference back() const { return const_reference(&value, size_raw() - dim); }
 
     template< typename VecType, std::enable_if_t<dim == VecType::vec_size>* = nullptr >
     void push_back(const VecType& v) {
@@ -244,7 +318,16 @@ template<
     }
 };
 
-// Factory
+//-----------------------------------------------------------------------------
+// Factory functions
+//-----------------------------------------------------------------------------
+template< size_t dim, typename Float = double >
+constexpr auto makeRefVec     (const Float* source) { return ConstRefVec< dim, Float, Float* >(source, 0); }
+template< size_t dim, typename Float = double >
+constexpr auto makeRefVec     (      Float* source) { return      RefVec< dim, Float, Float* >(source, 0); }
+template< size_t dim, typename Float = double >
+constexpr auto makeConstRefVec(const Float* source) { return ConstRefVec< dim, Float, Float* >(source, 0); }
+
 template< size_t dim, typename Float = double >
 inline auto makeVec(const Float* source) {
     Vec< dim, Float > res;
