@@ -14,6 +14,7 @@
 #ifndef MEDYAN_Bead_h
 #define MEDYAN_Bead_h
 
+#include <algorithm> // find
 #include <vector>
 #include <list>
 
@@ -33,8 +34,8 @@ class Compartment;
 class Filament;
 
 struct BeadData {
-    using vec_type = mathfunc::Vec3;
-    using vec_array_type = mathfunc::VecArray< 3, double >;
+    using vec_type = mathfunc::Vec< 3, floatingpoint >;
+    using vec_array_type = mathfunc::VecArray< 3, floatingpoint >;
 
     vec_array_type coords;
     vec_array_type coordsStr; // stretched coordinate
@@ -56,21 +57,37 @@ struct BeadData {
         forcesAuxP.push_back(forceAuxP);
     }
 
-    void pop_back() {
-        coords.pop_back();
-        coordsStr.pop_back();
-        forces.pop_back();
-        forcesAux.pop_back();
-        forcesAuxP.pop_back();
+    void set_content(
+        std::size_t pos,
+        const vec_type& coord,
+        const vec_type& coordStr,
+        const vec_type& force,
+        const vec_type& forceAux,
+        const vec_type& forceAuxP
+    ) {
+        coords    [pos] = coord;
+        coordsStr [pos] = coordStr;
+        forces    [pos] = force;
+        forcesAux [pos] = forceAux;
+        forcesAuxP[pos] = forceAuxP;
     }
 
-    void move_from_back(std::size_t dbIndex) {
-        coords[dbIndex] = coords.back();
-        coordsStr[dbIndex] = coordsStr.back();
-        forces[dbIndex] = forces.back();
-        forcesAux[dbIndex] = forcesAux.back();
-        forcesAuxP[dbIndex] = forcesAuxP.back();
+    void move_content(std::size_t from, std::size_t to) {
+        coords    [to] = coords    [from];
+        coordsStr [to] = coordsStr [from];
+        forces    [to] = forces    [from];
+        forcesAux [to] = forcesAux [from];
+        forcesAuxP[to] = forcesAuxP[from];
     }
+
+    void resize(size_t size) {
+        coords    .resize(size);
+        coordsStr .resize(size);
+        forces    .resize(size);
+        forcesAux .resize(size);
+        forcesAuxP.resize(size);
+    }
+
 };
 
 /// Represents a single coordinate between [Cylinders](@ref Cylinder), and holds forces
@@ -89,25 +106,24 @@ struct BeadData {
  */
 
 class Bead : public Component, public Trackable, public Movable,
-    public Database< Bead, false, BeadData > {
+    public Database< Bead, true, BeadData > {
     
 public:
     using coordinate_type      = BeadData::vec_type;
-    using coordinate_ref_type  = BeadData::vec_array_type::RefVec;
-    using coordinate_cref_type = BeadData::vec_array_type::ConstRefVec;
-    using db_type              = Database< Bead, false, BeadData >;
+    using coordinate_ref_type  = BeadData::vec_array_type::reference;
+    using coordinate_cref_type = BeadData::vec_array_type::const_reference;
+    using DatabaseType         = Database< Bead, true, BeadData >;
 
     ///@note - all vectors are in x,y,z coordinates.
-    vector<double> coordinateP; ///< Prev coordinates of bead in CG minimization
+    vector<floatingpoint> coordinateP; ///< Prev coordinates of bead in CG minimization
 
                           ///< Forces should always correspond to current coordinates.
-    vector<double> force1;
     
-    vector<double> brforce; //Qin boundary repulsion force
-    vector<double> pinforce;
+    vector<floatingpoint> brforce; //boundary repulsion force
+    vector<floatingpoint> pinforce;
 
-    vector<double> loadForcesP;
-    vector<double> loadForcesM;
+    vector<floatingpoint> loadForcesP;
+    vector<floatingpoint> loadForcesM;
     ///< The force on this bead due to an external load
     ///< This is not a vector (x,y,z) value, but a list of
     ///< force magnitudes in the direction of polymerization with
@@ -126,27 +142,27 @@ public:
     /// The bead can be pinned to a certain position in the simulation volume.
     /// These parameters describe the pinning. Adding the Bead to the list of pinned
     /// Beads is done by a corresponding special protocol. (see executeSpecialProtocols() in Controller)
-    vector<double> pinnedPosition;
+    vector<floatingpoint> pinnedPosition;
     
     bool isStatic = false;
     
     ///Main constructor
-    Bead (vector<double> v, Composite* parent, int position);
+    Bead (vector<floatingpoint> v, Composite* parent, int position);
     
     ///Default constructor
     Bead(Composite* parent, int position);
 
-    auto coordinate()    { return getDbData().coords    [getIndex()]; }
-    auto coordinateStr() { return getDbData().coordsStr [getIndex()]; }
-    auto force()         { return getDbData().forces    [getIndex()]; }
-    auto forceAux()      { return getDbData().forcesAux [getIndex()]; }
-    auto forceAuxP()     { return getDbData().forcesAuxP[getIndex()]; }
+    auto coordinate()    { return getDbData().coords    [getStableIndex()]; }
+    auto coordinateStr() { return getDbData().coordsStr [getStableIndex()]; }
+    auto force()         { return getDbData().forces    [getStableIndex()]; }
+    auto forceAux()      { return getDbData().forcesAux [getStableIndex()]; }
+    auto forceAuxP()     { return getDbData().forcesAuxP[getStableIndex()]; }
 
-    auto coordinate()    const { return getDbDataConst().coords    [getIndex()]; }
-    auto coordinateStr() const { return getDbDataConst().coordsStr [getIndex()]; }
-    auto force()         const { return getDbDataConst().forces    [getIndex()]; }
-    auto forceAux()      const { return getDbDataConst().forcesAux [getIndex()]; }
-    auto forceAuxP()     const { return getDbDataConst().forcesAuxP[getIndex()]; }
+    auto coordinate()    const { return getDbDataConst().coords    [getStableIndex()]; }
+    auto coordinateStr() const { return getDbDataConst().coordsStr [getStableIndex()]; }
+    auto force()         const { return getDbDataConst().forces    [getStableIndex()]; }
+    auto forceAux()      const { return getDbDataConst().forcesAux [getStableIndex()]; }
+    auto forceAuxP()     const { return getDbDataConst().forcesAuxP[getStableIndex()]; }
 
     // Temporary compromise
     auto vcoordinate()    const { return mathfunc::vec2Vector(coordinate()   ); }
@@ -186,7 +202,7 @@ public:
     /// Add this bead as a pinned bead
     void addAsPinned() {
         _isPinned = true;
-        _pinnedBeads.addElement(this);
+        _pinnedBeads.push_back(this);
     }
     
     /// Remove this bead as pinned. Will remove from pinnedBeads DB
@@ -194,22 +210,21 @@ public:
     void removeAsPinned() {
         
         _isPinned = false;
-        _pinnedBeads.removeElement(this);
+        auto it = std::find(_pinnedBeads.begin(), _pinnedBeads.end(), this);
+        if(it != _pinnedBeads.end()) _pinnedBeads.erase(it);
     }
     
-    const vector<double>& getPinPosition() { return pinnedPosition;}
-
-    //Qin
+    const vector<floatingpoint>& getPinPosition() { return pinnedPosition;}
     // Remove all pinned beads.
     void resetAllPinned() {
 
         _isPinned = false;
-        _pinnedBeads.clearElements();
+        _pinnedBeads.clear();
     }
     /// Get all pinned beads from subsystem
     static const vector<Bead*>& getPinnedBeads() {
         
-        return _pinnedBeads.getElements();
+        return _pinnedBeads;
     }
     
     bool isPinned() {return _isPinned;}
@@ -251,13 +266,13 @@ public:
         return dot(forceAux(), forceAuxP());
     }
     //Qin add brFDotbrF
-    inline double brFDotbrF() {
+    inline floatingpoint brFDotbrF() {
         return brforce[0]*brforce[0] +
         brforce[1]*brforce[1] +
         brforce[2]*brforce[2];
     }
-    //Qin add pinFDotpinF
-    inline double pinFDotpinF() {
+    //add pinFDotpinF
+    inline floatingpoint pinFDotpinF() {
         return pinforce[0]*pinforce[0] +
         pinforce[1]*pinforce[1] +
         pinforce[2]*pinforce[2];
@@ -266,7 +281,7 @@ public:
     
     ///Helper functions for load forces
     
-    double getLoadForcesP();
+    floatingpoint getLoadForcesP();
     
     void printLoadForcesP() {
         
@@ -280,7 +295,7 @@ public:
         cout << endl;
     }
     
-    double getLoadForcesM();
+    floatingpoint getLoadForcesM();
  
     void printLoadForcesM()  {
         
@@ -302,7 +317,7 @@ private:
     
     bool _isPinned = false;
     
-    static OldDatabase<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem
+    static std::vector<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem
                                          ///< (attached to some element in SubSystem)
 };
 

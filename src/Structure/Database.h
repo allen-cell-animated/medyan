@@ -211,37 +211,4 @@ public:
 template< typename T, typename DatabaseData > std::vector<T*> Database< T, true, DatabaseData >::_stableElems;
 template< typename T, typename DatabaseData > std::vector<std::size_t> Database< T, true, DatabaseData >::_deletedIndices;
 
-
-template< typename T >
-class OldDatabase {
-protected:
-    std::vector<T> _elems;  ///< Elements in the collection
-
-public:
-    /// Add an element to the collection
-    void addElement(T elem) {
-        
-        _elems.push_back(elem);
-    }
-    
-    /// Remove an element from the collection
-    void removeElement(T elem) {
-        
-        //try to find
-        auto it = find(_elems.begin(), _elems.end(), elem);
-        if(it != _elems.end()) _elems.erase(it);
-    }
-    
-    /// Clear the contents of the database
-    void clearElements() { _elems.clear(); }
-    
-    /// Get all items in database
-    std::vector<T>& getElements() { return _elems; }
-    
-    /// Count the number of objects in the collection
-    int countElements() { return _elems.size(); }
-    
-
-};
-
 #endif

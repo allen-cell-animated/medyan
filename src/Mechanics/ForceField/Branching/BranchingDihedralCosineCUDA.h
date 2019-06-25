@@ -25,24 +25,24 @@ using namespace mathfunc;
 //#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 //
 //#else
-//static __inline__ __device__ double atomicAdd(double *address, double val) {
+//static __inline__ __device__ floatingpoint atomicAdd(floatingpoint *address, floatingpoint val) {
 //    unsigned long long int* address_as_ull = (unsigned long long int*)address;
 //    unsigned long long int old = *address_as_ull, assumed;
 //    if (val==0.0)
-//      return __longlong_as_double(old);
+//      return __longlong_as_floatingpoint(old);
 //    do {
 //      assumed = old;
-//      old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val +__longlong_as_double(assumed)));
+//      old = atomicCAS(address_as_ull, assumed, __floatingpoint_as_longlong(val +__longlong_as_floatingpoint(assumed)));
 //    } while (assumed != old);
-//    return __longlong_as_double(old);
+//    return __longlong_as_floatingpoint(old);
 //  }
 //
 //
 //#endif
 
-//__global__ void addvectorBDC(double *U, int *params, double *U_sum, double *U_tot){
+//__global__ void addvectorBDC(floatingpoint *U, int *params, floatingpoint *U_sum, floatingpoint *U_tot){
 //    U_sum[0] = 0.0;
-//    double sum = 0.0;
+//    floatingpoint sum = 0.0;
 //    for(auto i=0;i<params[1];i++){
 //        if(U[i] == -1.0 && sum != -1.0){
 //            U_sum[0] = -1.0;
@@ -58,19 +58,19 @@ using namespace mathfunc;
 //
 //}
 
-__global__ void BranchingDihedralCosineenergy(double *coord, double *force, int *beadSet, double *kdih,
-                                               double *pos, int *params,
-                                               double *U_i, double *z,  int *culpritID,
+__global__ void BranchingDihedralCosineenergy(floatingpoint *coord, floatingpoint *force, int *beadSet, floatingpoint *kdih,
+                                               floatingpoint *pos, int *params,
+                                               floatingpoint *U_i, floatingpoint *z,  int *culpritID,
                                               char* culpritFF, char* culpritinteraction, char* FF, char*
                                                 interaction) {
     if(z[0] == 0.0) {
-        extern __shared__ double s[];
-        double *c1 = s;
-        double *c2 = &c1[3 * blockDim.x];
-        double *c3 = &c2[3 * blockDim.x];
-        double *c4 = &c3[3 * blockDim.x];
-        double n1n2;
-        double mp[3], n1[3], n2[3];
+        extern __shared__ floatingpoint s[];
+        floatingpoint *c1 = s;
+        floatingpoint *c2 = &c1[3 * blockDim.x];
+        floatingpoint *c3 = &c2[3 * blockDim.x];
+        floatingpoint *c4 = &c3[3 * blockDim.x];
+        floatingpoint n1n2;
+        floatingpoint mp[3], n1[3], n2[3];
 
         int nint = params[1];
         int n = params[0];
@@ -99,7 +99,7 @@ __global__ void BranchingDihedralCosineenergy(double *coord, double *force, int 
 
             U_i[thread_idx] = kdih[thread_idx] * (1 - n1n2);
 
-            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
 
                 U_i[thread_idx] = -1.0;
@@ -123,24 +123,24 @@ __global__ void BranchingDihedralCosineenergy(double *coord, double *force, int 
 //    __syncthreads();
 }
 
-__global__ void BranchingDihedralCosineenergyz(double *coord, double *f, int *beadSet, double *kdih,
-                                                double *pos, int *params,
-                                                double *U_i, double *z,  int *culpritID,
+__global__ void BranchingDihedralCosineenergyz(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kdih,
+                                                floatingpoint *pos, int *params,
+                                                floatingpoint *U_i, floatingpoint *z,  int *culpritID,
                                                char* culpritFF, char* culpritinteraction, char* FF, char*
                                                 interaction) {
     if(z[0] != 0.0) {
-        extern __shared__ double s[];
-        double *c1 = s;
-        double *c2 = &c1[3 * blockDim.x];
-        double *c3 = &c2[3 * blockDim.x];
-        double *c4 = &c3[3 * blockDim.x];
-        double *f1 = &c4[3 * blockDim.x];
-        double *f2 = &f1[3 * blockDim.x];
-        double *f3 = &f2[3 * blockDim.x];
-        double *f4 = &f3[3 * blockDim.x];
+        extern __shared__ floatingpoint s[];
+        floatingpoint *c1 = s;
+        floatingpoint *c2 = &c1[3 * blockDim.x];
+        floatingpoint *c3 = &c2[3 * blockDim.x];
+        floatingpoint *c4 = &c3[3 * blockDim.x];
+        floatingpoint *f1 = &c4[3 * blockDim.x];
+        floatingpoint *f2 = &f1[3 * blockDim.x];
+        floatingpoint *f3 = &f2[3 * blockDim.x];
+        floatingpoint *f4 = &f3[3 * blockDim.x];
 
-        double n1n2;
-        double mp[3], n1[3], n2[3], zero[3];
+        floatingpoint n1n2;
+        floatingpoint mp[3], n1[3], n2[3], zero[3];
         zero[0] = 0;
         zero[1] = 0;
         zero[2] = 0;
@@ -178,7 +178,7 @@ __global__ void BranchingDihedralCosineenergyz(double *coord, double *f, int *be
 
             U_i[thread_idx] = kdih[thread_idx] * (1 - n1n2);
 
-            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
 
                 U_i[thread_idx] = -1.0;
@@ -203,17 +203,17 @@ __global__ void BranchingDihedralCosineenergyz(double *coord, double *f, int *be
 }
 
 
-__global__ void BranchingDihedralCosineforces(double *coord, double *f, int *beadSet,
-                                               double *kdih, double *pos, int *params){
+__global__ void BranchingDihedralCosineforces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                               floatingpoint *kdih, floatingpoint *pos, int *params){
 
-    extern __shared__ double s[];
-    double *c1 = s;
-    double *c2 = &c1[3 * blockDim.x];
-    double *c3 = &c2[3 * blockDim.x];
-    double *c4 = &c3[3 * blockDim.x];
-    double N1, N2, n1n2, f0, NN1, NN2, X, D, Y, position;
-    double n2x, n1y, xd, yd, xx, xy, yy, XD, X1, X2, Y1, Y2, D1, D2, YD;
-    double mp[3], n1[3], n2[3], zero[3], f1[3], f2[3], f3[3], f4[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
+    extern __shared__ floatingpoint s[];
+    floatingpoint *c1 = s;
+    floatingpoint *c2 = &c1[3 * blockDim.x];
+    floatingpoint *c3 = &c2[3 * blockDim.x];
+    floatingpoint *c4 = &c3[3 * blockDim.x];
+    floatingpoint N1, N2, n1n2, f0, NN1, NN2, X, D, Y, position;
+    floatingpoint n2x, n1y, xd, yd, xx, xy, yy, XD, X1, X2, Y1, Y2, D1, D2, YD;
+    floatingpoint mp[3], n1[3], n2[3], zero[3], f1[3], f2[3], f3[3], f4[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
     int nint = params[1];
     int n = params[0];
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;

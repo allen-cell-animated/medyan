@@ -48,7 +48,7 @@ private:
     vector<int> pair_cIndex_cnIndex;
     int *gpu_pair_cIndex_cnIndex;
 //    int *gpu_pair_cIndex_cmp;
-    double *gpu_params = NULL;
+    floatingpoint *gpu_params = NULL;
     int *gpu_NL = NULL;
     int *gpu_numpairs = NULL;
     int *gpu_params2;
@@ -80,14 +80,14 @@ public:
     void generateConnections();
     void initializeBinGrid();
     vector<int> _grid; ///< Number of bins in each dimension
-    vector<double> _binSize; ///< Bin size in each dimension
+    vector<floatingpoint> _binSize; ///< Bin size in each dimension
     vector<int> _size;       ///< Size of entire grid spanned in each dimension
-    double maxcylsize; // maximum of the two cylinder sizes that are part of this
+    floatingpoint maxcylsize; // maximum of the two cylinder sizes that are part of this
     // CylinderCylinderNL.
     short NLcyltypes[2] = {0,0};// The two types of cylinders that engage in this neighbors
     // List
     BinGrid* _binGrid;
-    Bin* getBin(const vector<double> &coords);
+    Bin* getBin(const vector<floatingpoint> &coords);
     Bin* getBin(const vector<size_t> &indices);
     void assignallcylinderstobin();
     void assignbin(Cylinder* cyl);

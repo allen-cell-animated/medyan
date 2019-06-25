@@ -16,7 +16,7 @@ struct MembraneStretchingHarmonic {
     }
     
     void forces(
-        double* force, double area, const mathfunc::Vec3& dArea, double kElastic, double eqArea
+        floatingpoint* force, double area, const mathfunc::Vec3& dArea, double kElastic, double eqArea
     ) const {
         // F_i = -grad_i U = -k / A_0 * (A - A_0) * grad_i A
         // A(rea) and grad_i A(rea) are obtained as function parameters
@@ -37,7 +37,7 @@ struct MembraneStretchingLinear {
         return tension * area;
     }
 
-    void forces(double* force, const mathfunc::Vec3& dArea, double tension) const {
+    void forces(floatingpoint* force, const mathfunc::Vec3& dArea, double tension) const {
         const auto deltaF = - tension * dArea;
         for(size_t i = 0; i < 3; ++i) force[i] += deltaF[i];
     }

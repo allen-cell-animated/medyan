@@ -21,6 +21,7 @@
 #include "common.h"
 #include "Composite.h"
 
+
 //#include "Cylinder.h"
 /*!
  * Bin is a spatial voxel subset of reaction volume. Bin is exclusively used to calculate
@@ -40,7 +41,7 @@ protected:
     vector<Bin*> _neighbours; ///< Neighbors of the bin
     vector<Bin*> _uniquepermutationneighbours;
     ///OTHER BIN PROPERTIES
-    vector<double> _coords;  ///< Coordinates of this bin
+    vector<floatingpoint> _coords;  ///< Coordinates of this bin
     short _binGridType = -1;
     vector<int> cindicesvector;
 
@@ -77,8 +78,8 @@ public:
     }
 
     ///Setter and getter for coordinates
-    virtual void setCoordinates(vector<double> coords) {_coords = coords;}
-    virtual const vector<double>& coordinates() {return _coords;}
+    virtual void setCoordinates(vector<floatingpoint> coords) {_coords = coords;}
+    virtual const vector<floatingpoint>& coordinates() {return _coords;}
 
     /// Remove this bin from the neighbor list
     virtual void removeFromNeighboursList() {
@@ -166,7 +167,6 @@ public:
     void updatecindices();
 
     vector<int> getcindices(){return cindicesvector;}
-
 
 };
 #endif

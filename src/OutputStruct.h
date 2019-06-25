@@ -78,7 +78,7 @@ private:
     short _deltaMinusEnd;
     short _deltaPlusEnd;
 
-    std::vector<mathfunc::Vec3> _coords;
+    std::vector<mathfunc::Vec< 3, floatingpoint >> _coords;
 
     /// Non data
     Filament* _filament;
@@ -104,7 +104,7 @@ private:
     int _id;
     int _type;
 
-    std::array<mathfunc::Vec3, 2> _coords;
+    std::array<mathfunc::Vec< 3, floatingpoint >, 2> _coords;
 
     /// Non data
     Linker* _linker;
@@ -131,7 +131,7 @@ private:
     int _type;
     int _bound = 1;
 
-    std::array<mathfunc::Vec3, 2> _coords;
+    std::array<mathfunc::Vec< 3, floatingpoint >, 2> _coords;
 
     /// Non data
     MotorGhost* _motor;
@@ -155,7 +155,7 @@ private:
     int _id;
     int _type;
 
-    mathfunc::Vec3 _coord;
+    mathfunc::Vec< 3, floatingpoint > _coord;
 
     /// Non data
     BranchingPoint* _brancher;
@@ -179,7 +179,7 @@ private:
     int _id;
     int _type;
 
-    mathfunc::Vec3 _coord;
+    mathfunc::Vec< 3, floatingpoint > _coord;
 
     /// Non data
     Bubble* _bubble;

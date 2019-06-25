@@ -11,7 +11,7 @@ class VolumeConservationMembraneHarmonic {
 public:
     double energy(double, double, double);
     
-    void forces(double* force, double, const mathfunc::Vec3&, double, double);
+    void forces(floatingpoint* force, double, const mathfunc::Vec3&, double, double);
 };
 
 

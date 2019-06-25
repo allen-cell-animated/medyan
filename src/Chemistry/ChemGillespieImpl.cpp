@@ -70,28 +70,26 @@ ChemGillespieImpl::~ChemGillespieImpl() noexcept{
     _map_rnodes.clear();
 }
 
-double ChemGillespieImpl::generateTau(double a) {
+floatingpoint ChemGillespieImpl::generateTau(floatingpoint a) {
 
 #if defined(_MSC_VER) && defined(_DEBUG) // MSVC requires the parameter to be positive
     if(a == 0.0) {
-        _exp_distr.param(exponential_distribution<double>::param_type(numeric_limits<double>::min()));
-        return numeric_limits<double>::infinity();
+        _exp_distr.param(exponential_distribution<floatingpoint>::param_type(numeric_limits<floatingpoint>::min()));
+        return numeric_limits<floatingpoint>::infinity();
     }
 #endif
 
-    exponential_distribution<double>::param_type pm(a);
+    exponential_distribution<floatingpoint>::param_type pm(a);
     _exp_distr.param(pm);
-    Rand::counter++;
     return _exp_distr(Rand::eng);
 }
 
-double ChemGillespieImpl::generateUniform() {
-    Rand::counter++;
+floatingpoint ChemGillespieImpl::generateUniform() {
     return _uniform_distr(Rand::eng);
 }
 
-double ChemGillespieImpl::computeTotalA() {
-    double rates_sum = 0;
+floatingpoint ChemGillespieImpl::computeTotalA() {
+    floatingpoint rates_sum = 0;
     for (auto &x : _map_rnodes){
         auto rn = x.second.get();
         if(rn->getReaction()->isPassivated())
@@ -105,13 +103,13 @@ bool ChemGillespieImpl::makeStep() {
     RNodeGillespie *rn_selected = nullptr;
     
     //Gillespie algorithm's first step; We assume that _a_total is up to date
-    double tau = generateTau(_a_total);
+    floatingpoint tau = generateTau(_a_total);
     _t+=tau;
     syncGlobalTime();
     
     //Gillespie algorithm's second step: finding which reaction happened;
-    double mu = _a_total*generateUniform();
-    double rates_sum = 0;
+    floatingpoint mu = _a_total*generateUniform();
+    floatingpoint rates_sum = 0;
     for (auto &x : _map_rnodes){
         
         auto rn = x.second.get();
@@ -129,7 +127,7 @@ bool ChemGillespieImpl::makeStep() {
             rates_sum << ", mu=" << mu << ", _a_total=" << _a_total << endl;
         throw runtime_error("ChemGillespieImpl::makeStep(): No Reaction was selected during the Gillespie step!");
     }
-    double a_new, a_penult;
+    floatingpoint a_new, a_penult;
     rn_selected->makeStep();
     if(!rn_selected->isPassivated()){
         rn_selected->reComputePropensity();
@@ -181,8 +179,8 @@ void ChemGillespieImpl::activateReaction(ReactionBase *r) {
     if(mit!=_map_rnodes.end()){
         RNodeGillespie *rn_this = mit->second.get();
         rn_this->reComputePropensity();
-        double a_new = rn_this->getPropensity();
-        double a_penult = rn_this->getPenultStepPropensity();
+        floatingpoint a_new = rn_this->getPropensity();
+        floatingpoint a_penult = rn_this->getPenultStepPropensity();
         _a_total = _a_total - a_penult + a_new;
     }
     else
@@ -197,7 +195,7 @@ void ChemGillespieImpl::passivateReaction(ReactionBase *r) {
         "ChemGillespieImpl::passivateReaction(...): Reaction not found!");
     RNodeGillespie *rn_this = mit->second.get();
     
-    double a_new, a_penult;
+    floatingpoint a_new, a_penult;
     a_penult = rn_this->getPropensity();
     rn_this->setPenultA(a_penult);
     a_new = 0;

@@ -23,16 +23,16 @@ using namespace mathfunc;
 //#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 //
 //#else
-//static __inline__ __device__ double atomicAdd(double *address, double val) {
+//static __inline__ __device__ floatingpoint atomicAdd(floatingpoint *address, floatingpoint val) {
 //    unsigned long long int* address_as_ull = (unsigned long long int*)address;
 //    unsigned long long int old = *address_as_ull, assumed;
 //    if (val==0.0)
-//      return __longlong_as_double(old);
+//      return __longlong_as_floatingpoint(old);
 //    do {
 //      assumed = old;
-//      old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val +__longlong_as_double(assumed)));
+//      old = atomicCAS(address_as_ull, assumed, __floatingpoint_as_longlong(val +__longlong_as_floatingpoint(assumed)));
 //    } while (assumed != old);
-//    return __longlong_as_double(old);
+//    return __longlong_as_floatingpoint(old);
 //  }
 //
 //
@@ -44,22 +44,22 @@ void saxpy(int n, float a, float *x, float *y)
     int i = blockIdx.x*blockDim.x + threadIdx.x;
     if (i < n) y[i] = a*x[i] + y[i];
 }
-__global__ void CUDAExclVolRepulsionenergy(double *coord, double *force, int *beadSet, double *krep,
-                                           int *params, double *U_i, double *z, int *culpritID,
+__global__ void CUDAExclVolRepulsionenergy(floatingpoint *coord, floatingpoint *force, int *beadSet, floatingpoint *krep,
+                                           int *params, floatingpoint *U_i, floatingpoint *z, int *culpritID,
                                            char* culpritFF, char* culpritinteraction, char* FField, char*
                                            interaction) {
-//memory needed: 34*THREADSPERBLOCK*sizeof(double)+2*THREADSPERBLOCK*sizeof(int);
+//memory needed: 34*THREADSPERBLOCK*sizeof(floatingpoint)+2*THREADSPERBLOCK*sizeof(int);
     if(z[0] == 0.0) {
-        extern __shared__ double s[];
-//    double *coord_image=s;
-//    double *c1 = &coord_image[3 * blockDim.x];
-        double *c1 = s;
-        double *c2 = &c1[3 * blockDim.x];
-        double *c3 = &c2[3 * blockDim.x];
-        double *c4 = &c3[3 * blockDim.x];
-        double d, invDSquare;
-        double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
-        double ATG1, ATG2, ATG3, ATG4;
+        extern __shared__ floatingpoint s[];
+//    floatingpoint *coord_image=s;
+//    floatingpoint *c1 = &coord_image[3 * blockDim.x];
+        floatingpoint *c1 = s;
+        floatingpoint *c2 = &c1[3 * blockDim.x];
+        floatingpoint *c3 = &c2[3 * blockDim.x];
+        floatingpoint *c4 = &c3[3 * blockDim.x];
+        floatingpoint d, invDSquare;
+        floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
+        floatingpoint ATG1, ATG2, ATG3, ATG4;
         int nint = params[1];
         int n = params[0];
         const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
@@ -84,7 +84,7 @@ __global__ void CUDAExclVolRepulsionenergy(double *coord, double *force, int *be
                 invDSquare = 1 / (d * d);
                 U_i[thread_idx] = krep[thread_idx] * invDSquare * invDSquare;
 
-                if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000) //infinity
+                if (U_i[thread_idx] == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                     || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                     U_i[thread_idx] = -1.0;
                     culpritID[0] = beadSet[n * thread_idx];
@@ -111,7 +111,7 @@ __global__ void CUDAExclVolRepulsionenergy(double *coord, double *force, int *be
                 if (areInPlane(c1, c2, c3, c4, 3 * threadIdx.x)) {
 
                     //slightly move point
-                    movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01, 3 * threadIdx.x);
+                    movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01f, 3 * threadIdx.x);
                 }
 
                 a = scalarProduct(c1, c2, c1, c2, 3 * threadIdx.x);
@@ -143,7 +143,7 @@ __global__ void CUDAExclVolRepulsionenergy(double *coord, double *force, int *be
                 U_i[thread_idx] = 0.5 * krep[thread_idx] / JJ *
                                   (CC / AA * ATG1 + GG / EE * ATG2 + DD / BB * ATG3 + HH / FF * ATG4);
 
-                if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000)
+                if (U_i[thread_idx] == __longlong_as_floatingpoint(0x7ff0000000000000)
                     || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                     U_i[thread_idx] = -1.0;
                     culpritID[0] = beadSet[n * thread_idx];
@@ -175,24 +175,24 @@ __global__ void CUDAExclVolRepulsionenergy(double *coord, double *force, int *be
 }
 
 
-__global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadSet,
-                                            double *krep, int *params, double *U_i,
-                                            double *U_vec, double *z, int *culpritID,
+__global__ void CUDAExclVolRepulsionenergyz(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                            floatingpoint *krep, int *params, floatingpoint *U_i,
+                                            floatingpoint *U_vec, floatingpoint *z, int *culpritID,
                                             char* culpritFF, char* culpritinteraction, char* FField, char*
                                             interaction, bool*
                                             conv_state1, bool* conv_state2){
     if(conv_state1[0]||conv_state2[0]) return;
     if(z[0] == 0.0) {
-        extern __shared__ double s[];
-//    double *coord_image=s;
-//    double *c1 = &coord_image[3 * blockDim.x];
-        double *c1 = s;
-        double *c2 = &c1[3 * blockDim.x];
-        double *c3 = &c2[3 * blockDim.x];
-        double *c4 = &c3[3 * blockDim.x];
-        double d, invDSquare;
-        double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
-        double ATG1, ATG2, ATG3, ATG4;
+        extern __shared__ floatingpoint s[];
+//    floatingpoint *coord_image=s;
+//    floatingpoint *c1 = &coord_image[3 * blockDim.x];
+        floatingpoint *c1 = s;
+        floatingpoint *c2 = &c1[3 * blockDim.x];
+        floatingpoint *c3 = &c2[3 * blockDim.x];
+        floatingpoint *c4 = &c3[3 * blockDim.x];
+        floatingpoint d, invDSquare;
+        floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
+        floatingpoint ATG1, ATG2, ATG3, ATG4;
         int nint = params[1];
         int n = params[0];
         int offset = max(params[2] -1 , 0 );
@@ -218,7 +218,7 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
                 U_i[thread_idx] = krep[thread_idx] * invDSquare * invDSquare;
                 U_vec[offset + thread_idx] = krep[thread_idx] * invDSquare * invDSquare;
 //                printf("%d %f P\n", thread_idx, U_i[thread_idx]);
-                if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000) //infinity
+                if (U_i[thread_idx] == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                     || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                     U_i[thread_idx] = -1.0;
                     culpritID[0] = beadSet[n * thread_idx];
@@ -245,7 +245,7 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
                 if (areInPlane(c1, c2, c3, c4, 3 * threadIdx.x)) {
 
                     //slightly move point
-                    movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01, 3 * threadIdx.x);
+                    movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01f, 3 * threadIdx.x);
                 }
 
                 a = scalarProduct(c1, c2, c1, c2, 3 * threadIdx.x);
@@ -279,7 +279,7 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
                 U_vec[offset + thread_idx] = 0.5 * krep[thread_idx] / JJ *
                                   (CC / AA * ATG1 + GG / EE * ATG2 + DD / BB * ATG3 + HH / FF * ATG4);
 //                printf("%d %f NP\n", thread_idx, U_i[thread_idx]);
-                if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000)
+                if (U_i[thread_idx] == __longlong_as_floatingpoint(0x7ff0000000000000)
                     || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                     U_i[thread_idx] = -1.0;
                     culpritID[0] = beadSet[n * thread_idx];
@@ -309,18 +309,18 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
         }
     }
 
-    else if(z[0] != 0.0) {
+    else if(z[0] != 0.0f) {
 
-        extern __shared__ double s[];
+        extern __shared__ floatingpoint s[];
 
-        double *c1 = s;
-        double *c2 = &c1[3 * blockDim.x];
-        double *c3 = &c2[3 * blockDim.x];
-        double *c4 = &c3[3 * blockDim.x];
+        floatingpoint *c1 = s;
+        floatingpoint *c2 = &c1[3 * blockDim.x];
+        floatingpoint *c3 = &c2[3 * blockDim.x];
+        floatingpoint *c4 = &c3[3 * blockDim.x];
 
-        double d, invDSquare;
-        double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
-        double ATG1, ATG2, ATG3, ATG4;
+        floatingpoint d, invDSquare;
+        floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
+        floatingpoint ATG1, ATG2, ATG3, ATG4;
         int nint = params[1];
         int n = params[0];
         int offset = max(params[2] - 1 , 0);
@@ -330,7 +330,7 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
 //            if(thread_idx == 0){
 //                printf("Offset %d \n", offset);
 //            }
-            U_i[thread_idx] = 0.0;
+            U_i[thread_idx] = 0.0f;
             for (auto i = 0; i < 3; i++) {
                 c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i]
                                           + z[0] * f[3 * beadSet[n * thread_idx] + i];
@@ -350,8 +350,8 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
                 U_i[thread_idx] = krep[thread_idx] * invDSquare * invDSquare;
                 U_vec[offset + thread_idx] = krep[thread_idx] * invDSquare * invDSquare;
 
-                if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000) //infinity
-                    || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
+                if (U_i[thread_idx] == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
+                    || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < (floatingpoint)-1.0) {
                     U_i[thread_idx] = -1.0;
                     culpritID[0] = beadSet[n * thread_idx];
                     culpritID[1] = beadSet[n * thread_idx + 1];
@@ -374,7 +374,7 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
                 //check if in same plane
                 if (areInPlane(c1, c2, c3, c4, 3 * threadIdx.x)) {
                     //slightly move point
-                    movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01, 3 * threadIdx.x);
+                    movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01f, 3 * threadIdx.x);
                 }
                 // else
                 a = scalarProduct(c1, c2, c1, c2, 3 * threadIdx.x);
@@ -408,7 +408,7 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
                 U_vec[offset + thread_idx] = 0.5 * krep[thread_idx] / JJ *
                                   (CC / AA * ATG1 + GG / EE * ATG2 + DD / BB * ATG3 + HH / FF * ATG4);
 
-                /*if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000)
+                /*if (U_i[thread_idx] == __longlong_as_floatingpoint(0x7ff0000000000000)
                     || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                     U_i[thread_idx] = -1.0;
                     culpritID[0] = beadSet[n * thread_idx];
@@ -446,27 +446,27 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
 }
 
 
-__global__ void CUDAExclVolRepulsionforce(double *coord, double *f, int *beadSet, double *krep, int *params){
+__global__ void CUDAExclVolRepulsionforce(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, int *params){
 
 
     int nint = params[1];
     int n = params[0];
-    double d, invDSquare, U;
-    double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ, invJJ;
-    double ATG1, ATG2, ATG3, ATG4;
-    double A1, A2, E1, E2, B1, B2, F1, F2, A11, A12, A13, A14;
-    double E11, E12, E13, E14, B11, B12, B13, B14, F11, F12, F13, F14;
-    double f1[3], f2[3], f3[3], f4[3];
+    floatingpoint d, invDSquare, U;
+    floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ, invJJ;
+    floatingpoint ATG1, ATG2, ATG3, ATG4;
+    floatingpoint A1, A2, E1, E2, B1, B2, F1, F2, A11, A12, A13, A14;
+    floatingpoint E11, E12, E13, E14, B11, B12, B13, B14, F11, F12, F13, F14;
+    floatingpoint f1[3], f2[3], f3[3], f4[3];
 
-    extern __shared__ double s[];
-    double *c1 = s;
-    double *c2 = &c1[3 * blockDim.x];
-    double *c3 = &c2[3 * blockDim.x];
-    double *c4 = &c3[3 * blockDim.x];
-//    double *f1 = &c4[3 * blockDim.x];
-//    double *f2 = &f1[3 * blockDim.x];
-//    double *f3 = &f2[3 * blockDim.x];
-//    double *f4 = &f3[3 * blockDim.x];
+    extern __shared__ floatingpoint s[];
+    floatingpoint *c1 = s;
+    floatingpoint *c2 = &c1[3 * blockDim.x];
+    floatingpoint *c3 = &c2[3 * blockDim.x];
+    floatingpoint *c4 = &c3[3 * blockDim.x];
+//    floatingpoint *f1 = &c4[3 * blockDim.x];
+//    floatingpoint *f2 = &f1[3 * blockDim.x];
+//    floatingpoint *f3 = &f2[3 * blockDim.x];
+//    floatingpoint *f4 = &f3[3 * blockDim.x];
 
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
 
@@ -493,7 +493,7 @@ __global__ void CUDAExclVolRepulsionforce(double *coord, double *f, int *beadSet
             invDSquare =  1 / (d * d);
             U = krep[thread_idx] * invDSquare * invDSquare;
 
-            double f0 = 4 * krep[thread_idx] * invDSquare * invDSquare * invDSquare;
+            floatingpoint f0 = 4 * krep[thread_idx] * invDSquare * invDSquare * invDSquare;
 
             f1[0] = - f0 * (c3[0] - c1[0]);
             f1[1] = - f0 * (c3[1] - c1[1]);
@@ -525,7 +525,7 @@ __global__ void CUDAExclVolRepulsionforce(double *coord, double *f, int *beadSet
             if(areInPlane(c1, c2, c3, c4, 3 * threadIdx.x)) {
 
                 //slightly move point
-                movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01, 3 * threadIdx.x);
+                movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01f, 3 * threadIdx.x);
             }
 
             a = scalarProduct(c1, c2, c1, c2, 3 * threadIdx.x);

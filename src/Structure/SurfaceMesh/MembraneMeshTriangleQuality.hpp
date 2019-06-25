@@ -2,6 +2,7 @@
 #define MEDYAN_Structure_SurfaceMesh_MembraneMeshTriangleQuality_hpp
 
 #include <limits>
+#include <type_traits> // enable_if, is_floating_point
 
 #include "MathFunctions.h"
 
@@ -18,8 +19,14 @@ template<> struct TriangleQuality< TriangleQualityCriteria::RadiusRatio > {
     static constexpr auto worseOne(double q1, double q2) { return worse(q1, q2) ? q1 : q2; }
     static constexpr auto improvement(double q0, double q1) { return q0 / q1; }
 
-    template< typename VecType >
-    auto operator()(const VecType& v0, const VecType& v1, const VecType& v2) const {
+    template<
+        typename VT0, typename VT1, typename VT2,
+        std::enable_if_t<
+            (VT0::vec_size > 0) &&
+            VT0::vec_size == VT1::vec_size &&
+            VT0::vec_size == VT2::vec_size
+        >* = nullptr
+    > auto operator()(const VT0& v0, const VT1& v1, const VT2& v2) const {
         using namespace mathfunc;
         const auto d0 = distance(v1, v2);
         const auto d1 = distance(v2, v0);
@@ -27,7 +34,14 @@ template<> struct TriangleQuality< TriangleQualityCriteria::RadiusRatio > {
         return operator()(d0, d1, d2);
     }
 
-    auto operator()(double d0, double d1, double d2) const {
+    template<
+        typename F0, typename F1, typename F2,
+        std::enable_if_t<
+            std::is_floating_point< F0 >::value &&
+            std::is_floating_point< F1 >::value &&
+            std::is_floating_point< F2 >::value
+        >* = nullptr
+    > auto operator()(F0 d0, F1 d1, F2 d2) const {
         const auto p = 0.5 * (d0 + d1 + d2);
         // Note that the abs is needed to avoid extreme cases where the result is negative.
         return std::abs(d0 * d1 * d2 / (8 * (p - d0) * (p - d1) * (p - d2)));

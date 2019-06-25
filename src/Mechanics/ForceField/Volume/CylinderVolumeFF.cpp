@@ -57,10 +57,10 @@ void CylinderVolumeFF::cleanup() {
 
 
 
-double CylinderVolumeFF::computeEnergy(double *coord, bool stretched) {
-    
-    double U= 0.0;
-    double U_i=0.0;
+floatingpoint CylinderVolumeFF::computeEnergy(floatingpoint *coord, bool stretched) {
+
+    floatingpoint U= 0.0;
+    floatingpoint U_i=0.0;
     
     for (auto &interaction : _cylinderVolInteractionVector) {
         
@@ -87,7 +87,7 @@ void CylinderVolumeFF::setHNeighborLists(HybridCylinderCylinderNL* Hnl) {
 };
 #endif
 
-void CylinderVolumeFF::computeForces(double *coord, double *f) {
+void CylinderVolumeFF::computeForces(floatingpoint *coord, floatingpoint *f) {
     
     for (auto &interaction : _cylinderVolInteractionVector)
         interaction->computeForces(coord, f);

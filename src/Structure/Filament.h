@@ -72,7 +72,7 @@ private:
     short _severingReaction = 0;
     
     int _plusEndPosition   = 0;  ///< Position of plus end bead at last turnover
-    double _turnoverTime   = 0;  ///< Time since last turnover
+    floatingpoint _turnoverTime   = 0;  ///< Time since last turnover
 
     //@{
     ///Histogram data
@@ -86,8 +86,8 @@ public:
     /// @param nucleation - this filament was nucleated at runtime by a non-branching species
     /// @param branching - this filament was branched at runtime from an existing filament
 	Filament(SubSystem* s, short filamentType,
-                           const vector<double>& position,
-                           const vector<double>& direction,
+                           const vector<floatingpoint>& position,
+                           const vector<floatingpoint>& direction,
                            bool nucleation = false,
                            bool branch = false);
     
@@ -95,7 +95,7 @@ public:
     /// with a number of beads numBeads. Filaments starts and ends in the point
     /// determined by position vector.
     Filament(SubSystem* s, short filamentType,
-             const vector<vector<double>>& position, int numBeads,
+             const vector<vector<floatingpoint>>& position, int numBeads,
              string projectionType = "STRAIGHT");
     
     /// This constructor is called when a filament is severed. It creates a filament
@@ -119,8 +119,8 @@ public:
     void extendMinusEnd(short minusEnd);
     
     ///Extend, used for initialization
-    void extendPlusEnd(vector<double>& coordinates);
-    void extendMinusEnd(vector<double>& coordinates);
+    void extendPlusEnd(vector<floatingpoint>& coordinates);
+    void extendMinusEnd(vector<floatingpoint>& coordinates);
     
     /// Retraction of front of a cylinder. Removes one cylinder and one bead from the
     /// front of filament.
@@ -190,24 +190,6 @@ public:
     }
     //@}
     
-//    //@{
-//    /// Get reactions
-//    short getPolyPlusEnd() {return _polyPlusEnd;}
-//    void resetPolyPlusEnd() { _polyPlusEnd = 0;}
-//
-//    short getPolyMinusEnd() {return _polyMinusEnd;}
-//    void resetPolyMinusEnd() { _polyMinusEnd = 0;}
-//
-//    short getDepolyPlusEnd() {return _depolyPlusEnd;}
-//    void resetDepolyPlusEnd() { _depolyPlusEnd = 0;}
-//
-//    short getDepolyMinusEnd() {return _depolyMinusEnd;}
-//    void resetDepolyMinusEnd() { _depolyMinusEnd = 0;}
-//
-//    short getNucleation() {return _nucleationReaction;}
-//    void resetNucleation() { _nucleationReaction = 0;}
-//    //@}
-//
     short getSevering() {return _severingReaction;}
     void resetSevering() { _severingReaction = 0;}
     vector<int> getNewID() {return _severingID;};
@@ -226,8 +208,8 @@ public:
     //@{
     /// SubSystem management, inherited from Trackable
     // Does nothing
-    virtual void addToSubSystem() { }
-    virtual void removeFromSubSystem() {}
+    virtual void addToSubSystem() override { }
+    virtual void removeFromSubSystem() override {}
     //@}
     
     /// Get all instances of this class from the SubSystem
@@ -243,13 +225,13 @@ public:
     
     //@{
     /// Projection function, returns a vector of coordinates for bead creation
-    vector<double> nextBeadProjection(Bead* b, double d, vector<double> director);
+    vector<floatingpoint> nextBeadProjection(Bead* b, floatingpoint d, vector<floatingpoint> director);
     
-    vector<vector<double>> straightFilamentProjection(const vector<vector<double>>& v, int numBeads);
-    vector<vector<double>> zigZagFilamentProjection(const vector<vector<double>>& v, int numBeads);
-    vector<vector<double>> arcFilamentProjection(const vector<vector<double>>& v, int numBeads);
+    vector<vector<floatingpoint>> straightFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads);
+    vector<vector<floatingpoint>> zigZagFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads);
+    vector<vector<floatingpoint>> arcFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads);
     //Aravind 18 Feb 2016.
-    vector<vector<double>> predefinedFilamentProjection(const vector<vector<double>>& v, int numBeads);
+    vector<vector<floatingpoint>> predefinedFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads);
     //@}
     
     virtual void printSelf()const;
@@ -260,6 +242,13 @@ public:
     
     /// Count the number of filament species with a given name in the system
     static species_copy_t countSpecies(short filamentType, const string& name);
+
+    static floatingpoint FilextendPlusendtimer1;
+    static floatingpoint FilextendPlusendtimer2;
+    static floatingpoint FilextendPlusendtimer3;
+	static floatingpoint FilextendMinusendtimer1;
+	static floatingpoint FilextendMinusendtimer2;
+	static floatingpoint FilextendMinusendtimer3;
 };
 
 #endif

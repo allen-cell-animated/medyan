@@ -74,12 +74,13 @@ void FilamentFF::whoIsCulprit() {
 }
 
 
-double FilamentFF::computeEnergy(double *coord, bool stretched) {
+floatingpoint FilamentFF::computeEnergy(floatingpoint *coord, bool stretched) {
 
-    double U= 0.0;
-    double U_i=0.0;
-
+    floatingpoint U= 0.0;
+    floatingpoint U_i=0.0;
+    short i = 0;
     for (auto &interaction : _filamentInteractionVector) {
+        tbegin = chrono::high_resolution_clock::now();
         U_i = interaction->computeEnergy(coord);
         if(U_i <= -1) {
             //set culprit and return
@@ -91,29 +92,45 @@ double FilamentFF::computeEnergy(double *coord, bool stretched) {
 #ifdef DETAILEDOUTPUT
         std::cout<<getName()<<" "<<U_i<<endl;
 #endif
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
+        if(i ==0)
+            CUDAcommon::tmin.stretchingenergy+= elapsed_energy.count();
+        else
+            CUDAcommon::tmin.bendingenergy+= elapsed_energy.count();
+        i++;
     }
 
     return U;
 }
 
-void FilamentFF::computeForces(double *coord, double *f) {
-//    double *F_i = new double[CGMethod::N];
+void FilamentFF::computeForces(floatingpoint *coord, floatingpoint *f) {
+//    floatingpoint *F_i = new floatingpoint[CGMethod::N];
+    short i = 0;
     for (auto &interaction : _filamentInteractionVector) {
+        tbegin = chrono::high_resolution_clock::now();
         interaction->computeForces(coord, f);
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
+        if(i ==0)
+            CUDAcommon::tmin.stretchingforces+= elapsed_energy.count();
+        else
+            CUDAcommon::tmin.bendingforces+= elapsed_energy.count();
+        i++;
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
 
 
 //        if(cross_checkclass::Aux)
 //            CUDAcommon::handleerror(
 //                    cudaMemcpy(F_i, CUDAcommon::getCUDAvars().gpu_forceAux, CGMethod::N * sizeof
-//                                       (double),
+//                                       (floatingpoint),
 //                               cudaMemcpyDeviceToHost));
 //        else
 //            CUDAcommon::handleerror(
 //                    cudaMemcpy(F_i, CUDAcommon::getCUDAvars().gpu_force, CGMethod::N * sizeof
-//                                       (double),
+//                                       (floatingpoint),
 //                               cudaMemcpyDeviceToHost));
-//        double fmax = 0.0;
+//        floatingpoint fmax = 0.0;
 //        int id=0;
 //        for (auto iter = 0; iter < CGMethod::N/3; iter++) {
 //            if(abs(F_i[3 *iter])> fmax) {fmax = abs(F_i[3*iter]);id = iter;}

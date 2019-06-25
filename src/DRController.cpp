@@ -32,7 +32,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
         
             if(changer == "BROWRATCHET") {
                 //get params
-                double a = SysParams::DynamicRates().dFilPolymerizationCharLength[filamentIndex];
+                floatingpoint a = SysParams::DynamicRates().dFilPolymerizationCharLength[filamentIndex];
                 Cylinder::_polyChanger.push_back(new BrownianRatchet(a));
             }
             else if(changer == "") {}
@@ -43,9 +43,8 @@ void DRController::initialize(DynamicRateType& drTypes) {
             filamentIndex++;
         }
     }
-    
 
-    //Qin branching point unbinding changer
+    //branching point unbinding changer
     int branchIndex = 0;
     int charLengthIndexbr = 0;
     
@@ -60,7 +59,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
                     return;
                 
                 //get the param
-                double x1 = SysParams::DynamicRates().dBranchUnbindingCharLength[charLengthIndexbr];
+                floatingpoint x1 = SysParams::DynamicRates().dBranchUnbindingCharLength[charLengthIndexbr];
                 
                 //add the rate changer
                 BranchingPoint::_unbindingChangers.push_back(new BranchSlip(branchIndex, x1));
@@ -94,12 +93,12 @@ void DRController::initialize(DynamicRateType& drTypes) {
                     return;
                 
                 //get two params for each, amp
-                double a1 = SysParams::DynamicRates().dLinkerUnbindingAmplitude[ampIndex];
-                double a2 = SysParams::DynamicRates().dLinkerUnbindingAmplitude[ampIndex + 1];
+                floatingpoint a1 = SysParams::DynamicRates().dLinkerUnbindingAmplitude[ampIndex];
+                floatingpoint a2 = SysParams::DynamicRates().dLinkerUnbindingAmplitude[ampIndex + 1];
                 
                 //now char length
-                double x1 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex];
-                double x2 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex + 1];
+                floatingpoint x1 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex];
+                floatingpoint x2 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex + 1];
                 
                 //add the rate changer
                 Linker::_unbindingChangers.push_back(new LinkerCatchSlip(linkerIndex, a1, a2, x1, x2));
@@ -115,7 +114,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
                     return;
                 
                 //get the param
-                double x1 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex];
+                floatingpoint x1 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex];
                 
                 //add the rate changer
                 Linker::_unbindingChangers.push_back(new LinkerSlip(linkerIndex, x1));
@@ -145,7 +144,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
                     return;
                 
                 //get param
-                double f = SysParams::DynamicRates().dMotorUnbindingCharForce[forceIndex];
+                floatingpoint f = SysParams::DynamicRates().dMotorUnbindingCharForce[forceIndex];
                 
                 //add the rate changer
                 MotorGhost::_unbindingChangers.push_back(new LowDutyMotorCatch(motorIndex, f));
@@ -158,7 +157,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
                     return;
                 
                 //get param
-                double f = SysParams::DynamicRates().dMotorUnbindingCharForce[forceIndex];
+                floatingpoint f = SysParams::DynamicRates().dMotorUnbindingCharForce[forceIndex];
                 
                 //add the rate changer
                 MotorGhost::_unbindingChangers.push_back(new HighDutyMotorCatch(motorIndex, f));
@@ -188,7 +187,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
                     return;
                 
                 //get the param
-                double f = SysParams::DynamicRates().dMotorWalkingCharForce[forceIndex];
+                floatingpoint f = SysParams::DynamicRates().dMotorWalkingCharForce[forceIndex];
                 
                 //add the rate changer
                 MotorGhost::_walkingChangers.push_back(new LowDutyMotorStall(motorIndex, 0, f));
@@ -201,7 +200,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
                     return;
                 
                 //get the param
-                double f = SysParams::DynamicRates().dMotorWalkingCharForce[forceIndex];
+                floatingpoint f = SysParams::DynamicRates().dMotorWalkingCharForce[forceIndex];
                 
                 //add the rate changer
                 MotorGhost::_walkingChangers.push_back(new HighDutyMotorStall(motorIndex, 0, f));

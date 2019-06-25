@@ -16,8 +16,8 @@ private:
     MembraneBendingInteractionType _FFType;
     
 public:
-    virtual double computeEnergy(const double* coord, bool stretched) override;
-    virtual void computeForces(const double* coord, double* force) override;
+    virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) override;
+    virtual void computeForces(const floatingpoint* coord, floatingpoint* force) override;
     
     virtual string getName() const override { return "Membrane Bending"; }
 };

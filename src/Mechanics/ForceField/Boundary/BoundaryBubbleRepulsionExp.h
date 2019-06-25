@@ -27,14 +27,14 @@ class BoundaryElement;
 class BoundaryBubbleRepulsionExp {
     
 public:
-    double energy(double *coord, int *beadSet,
-                  double *krep, double *slen, int *nneighbors);
+    floatingpoint energy(floatingpoint *coord, int *beadSet,
+                  floatingpoint *krep, floatingpoint *slen, int *nneighbors);
     
-    double energy(double *coord, double *f, int *beadSet,
-                  double *krep, double *slen, int *nnneighbors, double d);
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                  floatingpoint *krep, floatingpoint *slen, int *nnneighbors, floatingpoint d);
     
-    void forces(double *coord, double *f, int *beadSet,
-                double *krep, double *slen, int *nneighbors);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                floatingpoint *krep, floatingpoint *slen, int *nneighbors);
 
 };
 

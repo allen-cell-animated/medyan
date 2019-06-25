@@ -61,6 +61,13 @@ public:
 
     /// Run a minimization on the system using the chosen algorithm
     void run(bool steplimit = true) {  _minimizerAlgorithm->equlibrate(_FFManager, steplimit); }
+
+
+    floatingpoint getEnergy(){
+    
+        return _minimizerAlgorithm->getEnergy(_FFManager,0.0);
+        
+    }
     
 };
 

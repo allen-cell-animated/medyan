@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "common.h"
+
 //FORWARD DECLARATIONS
 class Membrane;
 
@@ -17,9 +19,9 @@ protected:
 
 public:
     /// Compute the energy of this interaction
-    virtual double computeEnergy(const double* coord, bool stretched) = 0; // d is the stretching parameter along the force
+    virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) = 0; // d is the stretching parameter along the force
     /// Compute forces of this interaction
-    virtual void computeForces(const double* coord, double* force) = 0;
+    virtual void computeForces(const floatingpoint* coord, floatingpoint* force) = 0;
     
     /// Get the name of this interaction
     virtual std::string getName()const = 0;

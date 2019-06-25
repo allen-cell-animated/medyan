@@ -26,7 +26,7 @@ using namespace mathfunc;
 #include "Util/Math/RayTriangleIntersect.hpp"
 
 template <class TriangleCylinderExclVolumeInteractionType>
-double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeEnergy(const double* coord, bool stretched) {
+floatingpoint TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeEnergy(const floatingpoint* coord, bool stretched) {
     
     double U = 0;
     double U_i;
@@ -56,10 +56,10 @@ double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::co
                 Bead* b = (idx? c->getSecondBead(): c->getFirstBead());
                 
                 U_i = _FFType.energy(
-                    makeVec<3>(coord + 3 * v0->Bead::getIndex()),
-                    makeVec<3>(coord + 3 * v1->Bead::getIndex()),
-                    makeVec<3>(coord + 3 * v2->Bead::getIndex()),
-                    makeVec<3>(coord + 3 * b->getIndex()),
+                    static_cast<Vec3>(makeVec<3>(coord + 3 * v0->Bead::getIndex())),
+                    static_cast<Vec3>(makeVec<3>(coord + 3 * v1->Bead::getIndex())),
+                    static_cast<Vec3>(makeVec<3>(coord + 3 * v2->Bead::getIndex())),
+                    static_cast<Vec3>(makeVec<3>(coord + 3 * b->getIndex())),
                     area, kExVol);
                 
                 if(fabs(U_i) == numeric_limits<double>::infinity()
@@ -81,7 +81,7 @@ double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::co
 }
 
 template <class TriangleCylinderExclVolumeInteractionType>
-void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeForces(const double* coord, double* force) {
+void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeForces(const floatingpoint* coord, floatingpoint* force) {
 
     for(auto t: Triangle::getTriangles()) {
 
@@ -113,10 +113,10 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                     force + 3 * v1->Bead::getIndex(),
                     force + 3 * v2->Bead::getIndex(),
                     force + 3 * b->getIndex(),
-                    makeVec<3>(coord + 3 * v0->Bead::getIndex()),
-                    makeVec<3>(coord + 3 * v1->Bead::getIndex()),
-                    makeVec<3>(coord + 3 * v2->Bead::getIndex()),
-                    makeVec<3>(coord + 3 * b->getIndex()),
+                    static_cast<Vec3>(makeVec<3>(coord + 3 * v0->Bead::getIndex())),
+                    static_cast<Vec3>(makeVec<3>(coord + 3 * v1->Bead::getIndex())),
+                    static_cast<Vec3>(makeVec<3>(coord + 3 * v2->Bead::getIndex())),
+                    static_cast<Vec3>(makeVec<3>(coord + 3 * b->getIndex())),
                     area, dArea0, dArea1, dArea2, kExVol);
             }
         }
@@ -133,9 +133,9 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
         const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
         const size_t hei1 = mesh.next(hei0);
         const size_t hei2 = mesh.next(hei1);
-        const Vec3 v0 = mesh.getVertexAttribute(mesh.target(hei0)).getCoordinate();
-        const Vec3 v1 = mesh.getVertexAttribute(mesh.target(hei1)).getCoordinate();
-        const Vec3 v2 = mesh.getVertexAttribute(mesh.target(hei2)).getCoordinate();
+        const Vec3 v0 (mesh.getVertexAttribute(mesh.target(hei0)).getCoordinate());
+        const Vec3 v1 (mesh.getVertexAttribute(mesh.target(hei1)).getCoordinate());
+        const Vec3 v2 (mesh.getVertexAttribute(mesh.target(hei2)).getCoordinate());
 
         const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
         double kExVol = t->getMTriangle()->getExVolConst();
@@ -176,7 +176,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 bd->lfip = 0;
                 for (int i = 0; i < cylSize; i++) {
                     
-                    Vec3 newCoord {
+                    Vec< 3, floatingpoint > newCoord {
                         bd->coordinate()[0] + i * normal[0] * monSize,
                         bd->coordinate()[1] + i * normal[1] * monSize,
                         bd->coordinate()[2] + i * normal[2] * monSize
@@ -222,7 +222,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 bd->lfim = 0;
                 for (int i = 0; i < cylSize; i++) {
                     
-                    Vec3 newCoord {
+                    Vec< 3, floatingpoint > newCoord {
                         bd->coordinate()[0] + i * normal[0] * monSize,
                         bd->coordinate()[1] + i * normal[1] * monSize,
                         bd->coordinate()[2] + i * normal[2] * monSize
@@ -244,6 +244,6 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
 }
 
 ///Template specializations
-template double TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeEnergy(const double* coord, bool stretched);
-template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeForces(const double* coord, double* force);
+template floatingpoint TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeEnergy(const floatingpoint* coord, bool stretched);
+template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeForces(const floatingpoint* coord, floatingpoint* force);
 template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeLoadForces();

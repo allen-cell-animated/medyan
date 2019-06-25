@@ -307,7 +307,7 @@ struct MembraneMeshAttribute {
 
         info.vertexCoordinateList.reserve(numVertices);
         for(size_t i = 0; i < numVertices; ++i) {
-            info.vertexCoordinateList.push_back(mesh.getVertexAttribute(i).vertex->coordinate());
+            info.vertexCoordinateList.push_back(static_cast<coordinate_type>(mesh.getVertexAttribute(i).vertex->coordinate()));
         }
 
         return info;
@@ -373,7 +373,7 @@ struct MembraneMeshAttribute {
         for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
             auto& va = mesh.getVertexAttribute(vi);
             auto& vag = va.template getGVertex<stretched>();
-            const Vec3 ci = coords[va.cachedCoordIndex];
+            const coordinate_type ci (coords[va.cachedCoordIndex]);
 
             // clearing
             vag.astar = 0.0;
@@ -394,8 +394,8 @@ struct MembraneMeshAttribute {
                 const size_t ti0 = cvt[mesh.getMetaAttribute().cachedVertexOffsetPolygon(vi) + i];
                 const size_t hei_n = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
                 const size_t hei_on = cvt[mesh.getMetaAttribute().cachedVertexOffsetOuterHE(vi) + (i + 1) % va.cachedDegree];
-                const Vec3 cn = coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]];
-                const Vec3 c_right = coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + 1) % va.cachedDegree]];
+                const coordinate_type cn      (coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]]);
+                const coordinate_type c_right (coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + 1) % va.cachedDegree]]);
 
                 const auto sumCotTheta =
                     mesh.getHalfEdgeAttribute(hei_n).template getGHalfEdge<stretched>().cotTheta
@@ -442,10 +442,10 @@ struct MembraneMeshAttribute {
             const auto& hei = ta.cachedHalfEdgeIndex;
             auto& tag = mesh.getTriangleAttribute(ti).gTriangle;
 
-            const Vec3 c[] {
-                coords[ta.cachedCoordIndex[0]],
-                coords[ta.cachedCoordIndex[1]],
-                coords[ta.cachedCoordIndex[2]]
+            const coordinate_type c[] {
+                static_cast<coordinate_type>(coords[ta.cachedCoordIndex[0]]),
+                static_cast<coordinate_type>(coords[ta.cachedCoordIndex[1]]),
+                static_cast<coordinate_type>(coords[ta.cachedCoordIndex[2]])
             };
 
             const double l2[] {
@@ -511,7 +511,7 @@ struct MembraneMeshAttribute {
         for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
             auto& va = mesh.getVertexAttribute(vi);
             auto& vag = va.gVertex;
-            const Vec3 ci = coords[va.cachedCoordIndex];
+            const coordinate_type ci (coords[va.cachedCoordIndex]);
 
             // clearing
             vag.astar = 0.0;
@@ -551,8 +551,8 @@ struct MembraneMeshAttribute {
                 const size_t hei_n = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
                 const size_t hei_p = cvt[mesh.getMetaAttribute().cachedVertexOffsetOuterHE(vi) + i];
                 const size_t hei_on = cvt[mesh.getMetaAttribute().cachedVertexOffsetOuterHE(vi) + (i + 1) % va.cachedDegree];
-                const Vec3 cn = coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]];
-                const Vec3 c_right = coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + 1) % va.cachedDegree]];
+                const coordinate_type cn      (coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]]);
+                const coordinate_type c_right (coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + 1) % va.cachedDegree]]);
 
                 const auto sumCotTheta = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.cotTheta + mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.cotTheta;
 
@@ -586,9 +586,9 @@ struct MembraneMeshAttribute {
                 const size_t hei_n = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
                 const size_t hei_p = cvt[mesh.getMetaAttribute().cachedVertexOffsetOuterHE(vi) + i];
                 const size_t hei_on = cvt[mesh.getMetaAttribute().cachedVertexOffsetOuterHE(vi) + (i + 1) % va.cachedDegree];
-                const Vec3 cn = coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]];
-                const Vec3 c_left = coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + va.cachedDegree - 1) % va.cachedDegree]];
-                const Vec3 c_right = coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + 1) % va.cachedDegree]];
+                const coordinate_type cn      (coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]]);
+                const coordinate_type c_left  (coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + va.cachedDegree - 1) % va.cachedDegree]]);
+                const coordinate_type c_right (coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + 1) % va.cachedDegree]]);
 
                 const auto sumCotTheta = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.cotTheta + mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.cotTheta;
                 const auto& dCotThetaLeft = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.dCotTheta;
@@ -760,7 +760,8 @@ struct MembraneMeshAttribute {
     boundary potential. However, this field is not C1-continuous everywhere,
     which is detrimental to conjugate gradient methods.
     **************************************************************************/
-    static double signedDistance(const MeshType& mesh, const mathfunc::Vec3& p) {
+    template< typename Float >
+    static double signedDistance(const MeshType& mesh, const mathfunc::Vec< 3, Float >& p) {
         using namespace mathfunc;
 
         const size_t numTriangles = mesh.getTriangles().size();
@@ -779,10 +780,10 @@ struct MembraneMeshAttribute {
             const size_t vi[] {
                 mesh.target(hei0), mesh.target(hei1), mesh.target(hei2)
             };
-            const Vec3 c[] {
-                mesh.getVertexAttribute(vi[0]).vertex->coordinate(),
-                mesh.getVertexAttribute(vi[1]).vertex->coordinate(),
-                mesh.getVertexAttribute(vi[2]).vertex->coordinate()
+            const coordinate_type c[] {
+                static_cast<coordinate_type>(mesh.getVertexAttribute(vi[0]).vertex->coordinate()),
+                static_cast<coordinate_type>(mesh.getVertexAttribute(vi[1]).vertex->coordinate()),
+                static_cast<coordinate_type>(mesh.getVertexAttribute(vi[2]).vertex->coordinate())
             };
 
             const auto r01 = c[1] - c[0];
@@ -804,7 +805,7 @@ struct MembraneMeshAttribute {
                 d = dot(mesh.getTriangleAttribute(ti).gTriangle.unitNormal, r0p);
             } else {
                 // p' is outside the triangle
-                const Vec3 r2 {
+                const Vec< 3, typename coordinate_type::float_type > r2 {
                     distance2(c[1], c[2]),
                     distance2(c[2], c[0]),
                     distance2(c[0], c[1])
@@ -852,7 +853,8 @@ struct MembraneMeshAttribute {
         
         return minAbsDistance;
     }
-    static bool contains(const MeshType& mesh, const mathfunc::Vec3& p) {
+    template< typename Float >
+    static bool contains(const MeshType& mesh, const mathfunc::Vec< 3, Float >& p) {
         return signedDistance(mesh, p) < 0.0;
     }
 

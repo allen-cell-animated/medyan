@@ -47,12 +47,12 @@ public:
     void generateConnections();
     void initializeBinGrid();
     vector<int> _grid; ///< Number of bins in each dimension
-    vector<double> _binSize; ///< Bin size in each dimension
+    vector<floatingpoint> _binSize; ///< Bin size in each dimension
     vector<int> _size;       ///< Size of entire grid spanned in each dimension
 //    short NLcyltypes[2] = {0,0};// The two types of cylinders that engage in this neighbors
     // List
     BinGrid* _binGrid;
-    Bin* getBin(const vector<double> &coords);
+    Bin* getBin(const vector<floatingpoint> &coords);
     Bin* getBin(const vector<size_t> &indices);
     void assignallcylinderstobin();
     void assignbin(Cylinder* cyl);
@@ -211,8 +211,6 @@ public:
 
     /// Get all cylinder neighbors
     vector<Cylinder*> getNeighbors(Cylinder* cylinder);
-
-    //TESTING
 
 };
 #endif

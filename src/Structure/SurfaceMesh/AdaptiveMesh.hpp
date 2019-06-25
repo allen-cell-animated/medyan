@@ -67,6 +67,8 @@ constexpr size_t mesh_adaptation_hard_max_iter = 25;
 template< typename Mesh, TriangleQualityCriteria c > class EdgeFlipManager {
 public:
     using TriangleQualityType = TriangleQuality< c >;
+    using CoordinateType = typename Mesh::AttributeType::coordinate_type;
+
     enum class State {
         Success,
         InvalidTopo,
@@ -128,10 +130,10 @@ public:
         ) < _minDotNormal) return State::NonCoplanar;
 
         // Check if the target triangles are coplanar.
-        const Vec3 c0 = mesh.getVertexAttribute(vi0).getCoordinate();
-        const Vec3 c1 = mesh.getVertexAttribute(vi1).getCoordinate();
-        const Vec3 c2 = mesh.getVertexAttribute(vi2).getCoordinate();
-        const Vec3 c3 = mesh.getVertexAttribute(vi3).getCoordinate();
+        const CoordinateType c0 (mesh.getVertexAttribute(vi0).getCoordinate());
+        const CoordinateType c1 (mesh.getVertexAttribute(vi1).getCoordinate());
+        const CoordinateType c2 (mesh.getVertexAttribute(vi2).getCoordinate());
+        const CoordinateType c3 (mesh.getVertexAttribute(vi3).getCoordinate());
         const auto n013 = cross(c1 - c0, c3 - c0);
         const auto mag_n013 = magnitude(n013);
         const auto n231 = cross(c3 - c2, c1 - c2);
@@ -179,9 +181,11 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::MidP
     size_t v0, v1;
     template< typename Mesh >
     auto coordinate(const Mesh& mesh, size_t v) const {
+        using CoordinateType = typename Mesh::AttributeType::coordinate_type;
+
         const auto c0 = mesh.getVertexAttribute(v0).getCoordinate();
         const auto c1 = mesh.getVertexAttribute(v1).getCoordinate();
-        return (c0 + c1) * 0.5;
+        return static_cast<CoordinateType>((c0 + c1) * 0.5);
     }
 };
 template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgCurv > {
@@ -191,8 +195,10 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgC
     template< typename Mesh >
     auto coordinate(const Mesh& mesh, size_t v) const {
         using namespace mathfunc;
-        const Vec3 c0 = mesh.getVertexAttribute(v0).getCoordinate();
-        const Vec3 c1 = mesh.getVertexAttribute(v1).getCoordinate();
+        using CoordinateType = typename Mesh::AttributeType::coordinate_type;
+
+        const CoordinateType c0 (mesh.getVertexAttribute(v0).getCoordinate());
+        const CoordinateType c1 (mesh.getVertexAttribute(v1).getCoordinate());
         const auto& un0 = mesh.getVertexAttribute(v0).aVertex.unitNormal;
         const auto& un1 = mesh.getVertexAttribute(v1).aVertex.unitNormal;
 
@@ -204,7 +210,7 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgC
         const auto r0 = mag2_r / (2 * dot(un0, r));
         const auto r1 = -mag2_r / (2 * dot(un1, r));
 
-        Vec3 res0, res1;
+        CoordinateType res0, res1;
 
         if(std::abs(r0) == std::numeric_limits<double>::infinity()) {
             res0 = 0.5 * (c0 + c1);
@@ -234,7 +240,7 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgC
             res1 = c1 + r1 * un1 + ro1 * (std::abs(r1) / mag_ro1);
         }
 
-        return 0.5 * (res0 + res1);
+        return static_cast<CoordinateType>(0.5 * (res0 + res1));
     }
 };
 
@@ -246,6 +252,7 @@ template<
 public:
     using EdgeFlipManagerType = EdgeFlipManager< Mesh, c >;
     using EdgeSplitVertexInsertionType = EdgeSplitVertexInsertion< m >;
+    using CoordinateType = typename Mesh::AttributeType::coordinate_type;
     enum class State {
         Success,
         InvalidTopo,
@@ -294,10 +301,10 @@ public:
         ) return State::InvalidTopo;
 
         // Check whether the current edge is the longest in the triangle
-        const Vec3 c0 = mesh.getVertexAttribute(vi0).getCoordinate();
-        const Vec3 c1 = mesh.getVertexAttribute(vi1).getCoordinate();
-        const Vec3 c2 = mesh.getVertexAttribute(vi2).getCoordinate();
-        const Vec3 c3 = mesh.getVertexAttribute(vi3).getCoordinate();
+        const CoordinateType c0 (mesh.getVertexAttribute(vi0).getCoordinate());
+        const CoordinateType c1 (mesh.getVertexAttribute(vi1).getCoordinate());
+        const CoordinateType c2 (mesh.getVertexAttribute(vi2).getCoordinate());
+        const CoordinateType c3 (mesh.getVertexAttribute(vi3).getCoordinate());
         const auto l2_e = distance2(c0, c2);
         const auto l2_01 = distance2(c0, c1);
         const auto l2_12 = distance2(c1, c2);
@@ -344,6 +351,8 @@ public:
 template< typename Mesh, TriangleQualityCriteria c > class EdgeCollapseManager {
 public:
     using TriangleQualityType = TriangleQuality< c >;
+    using CoordinateType = typename Mesh::AttributeType::coordinate_type;
+
     enum class State {
         Success,
         InvalidTopo,
@@ -373,8 +382,8 @@ private:
 
         const auto vi0 = mesh.target(hei); // preserved
         const auto vi1 = mesh.target(hei_o); // to be removed
-        const Vec3 c0 = mesh.getVertexAttribute(vi0).getCoordinate();
-        const Vec3 c1 = mesh.getVertexAttribute(vi1).getCoordinate();
+        const CoordinateType c0 (mesh.getVertexAttribute(vi0).getCoordinate());
+        const CoordinateType c1 (mesh.getVertexAttribute(vi1).getCoordinate());
 
         const auto ti0 = mesh.triangle(hei);
         const auto ti1 = mesh.triangle(hei_o);
@@ -391,8 +400,8 @@ private:
                 const auto chei_po = mesh.opposite(mesh.prev(chei));
                 const auto vn = mesh.target(mesh.next(chei));
                 const auto vp = mesh.target(mesh.prev(chei));
-                const Vec3 cn = mesh.getVertexAttribute(vn).getCoordinate();
-                const Vec3 cp = mesh.getVertexAttribute(vp).getCoordinate();
+                const CoordinateType cn (mesh.getVertexAttribute(vn).getCoordinate());
+                const CoordinateType cp (mesh.getVertexAttribute(vp).getCoordinate());
 
                 // Triangle quality before
                 qBefore = TriangleQualityType::worseOne(
@@ -553,9 +562,11 @@ template<> struct VertexSizeMeasure< SizeMeasureCriteria::Curvature > {
     // Requires
     //   - Vertex unit normal
     template< typename Mesh > auto vertexSize(Mesh& mesh, size_t vi) const {
+        using CoordinateType = typename Mesh::AttributeType::coordinate_type;
+
         double minRadiusCurvature = std::numeric_limits<double>::infinity();
         const auto& un = mesh.getVertexAttribute(vi).aVertex.unitNormal;
-        const mathfunc::Vec3 ci = mesh.getVertexAttribute(vi).getCoordinate();
+        const CoordinateType ci (mesh.getVertexAttribute(vi).getCoordinate());
         mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
             const auto r = mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).getCoordinate() - ci;
             minRadiusCurvature = std::min(
@@ -673,6 +684,7 @@ template< typename Mesh >
 class MeshAdapter {
 public:
     using GeometryManagerType = GeometryManager< Mesh >;
+    using CoordinateType = typename Mesh::AttributeType::coordinate_type;
 
     static constexpr auto vertexRelaxationType = VertexRelaxationType::GlobalElastic;
     static constexpr auto optimalVertexLocationMethod = OptimalVertexLocationMethod::Barycenter;
@@ -761,8 +773,8 @@ public:
                     const size_t v0 = mesh.target(hei0);
                     const size_t v1 = mesh.target(mesh.opposite(hei0));
 
-                    const Vec3 c0 = mesh.getVertexAttribute(v0).getCoordinate();
-                    const Vec3 c1 = mesh.getVertexAttribute(v1).getCoordinate();
+                    const CoordinateType c0 (mesh.getVertexAttribute(v0).getCoordinate());
+                    const CoordinateType c1 (mesh.getVertexAttribute(v1).getCoordinate());
                     const double length2 = distance2(c0, c1);
 
                     const double eqLength = mesh.getEdgeAttribute(ei).aEdge.eqLength;

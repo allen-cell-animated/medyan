@@ -16,13 +16,8 @@
 
 #include <vector>
 #include <array>
-#ifdef DEBUGCONSTANTSEED
-#include <map>
-#include <set>
-#else
 #include <unordered_map>
 #include <unordered_set>
-#endif
 
 #include "common.h"
 
@@ -33,8 +28,9 @@
 #include "Composite.h"
 #include "ChemSim.h"
 
+#include "dist_moduleV2/dist_driver.h"
+#include "dist_moduleV2/dist_coords.h"
 #include "MathFunctions.h"
-
 
 //#include "BinGrid.h"
 //#include "Bin.h"
@@ -52,10 +48,10 @@ class Edge;
  *  track of the above while also holding pointers to its neighbors in order to generate
  *  diffusion [Reactions](@ref Reactions) and control other interactions.
  *
- *  The Compartment also keeps Trackable elements in the SubSystem that are in its space, including
+ *  The Compartment also keeps Trackable elements in the SubSystem that are in its space, including 
  *  [Beads](@ref Bead), [Cylinders](@ref Cylinder), and [BoundaryElements](@ref BoundaryElement).
  *
- *  Lastly, the Compartment holds a container of FilamentBindingManager for updating
+ *  Lastly, the Compartment holds a container of FilamentBindingManager for updating 
  *  binding reactions local to this compartment space only.
  */
 
@@ -85,7 +81,10 @@ protected:
 
     /// All binding managers for this compartment
     vector<unique_ptr<FilamentBindingManager>> _bindingManagers;
+    vector<unique_ptr<FilamentBindingManager>> _branchingManagers;
+
 #ifdef HYBRID_NLSTENCILLIST
+    //Each compartment has a single instance of hybridbindingmanagers
     HybridBindingSearchManager* _bindingsearchManagers = NULL;
 #endif
     ///ELEMENT CONTAINERS
@@ -94,18 +93,14 @@ protected:
 
     unordered_set<Bead*> _beads; ///< Set of beads that are in this compartment
 
-    #ifdef DEBUGCONSTANTSEED
-    set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
-    #else
     unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
     unordered_set<Triangle*> _triangles;
     unordered_set<Edge*>     _edges;
-    #endif
 
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment (neighbors that
     unordered_map<Compartment*, size_t> _neighborIndex; ///< Spacial index of the neighbors of the same order as _neighbors
     ///< In 3D, the indices are in the order (x-, x+, y-, y+, z-, z+)
-    
+
     // touch along faces
     vector<Compartment*> _enclosingneighbours; ///< Neighbors that envelop the compartment
     vector<Compartment*> _uniquepermuteneighbours; //Neighbors tht help to parse
@@ -115,14 +110,15 @@ protected:
     // position IDs between 0-26. This ID immediately helps us determine relative
     // position of the Enclosing Compartment with respect to the current compartment.
 
-
+    
     ///OTHER COMPARTMENT PROPERTIES
-    vector<double> _coords;  ///< Coordinates of this compartment
+    vector<floatingpoint> _coords;  ///< Coordinates of this compartment
     bool _activated = false; ///< The compartment is activated for diffusion
 
-    double _volumeFrac = 1.0; ///< The volume fraction inside the membrane/boundary
+    floatingpoint _volumeFrac = 1.0; ///< The volume fraction inside the membrane/boundary
     ///< Might be changed to a list or a map when more membranes are involved
-    array<double, 6> _partialArea {{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}}; ///< The area inside the cell membrane
+    array<floatingpoint, 6> _partialArea {{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}}; ///< The area
+    // inside the cell membrane
     ///<In the order of x, y and z, from smaller coordinate value neighbor to larger coordinate value
     ///< Might be changed to a list of arrays or a map of arrays when more membranes are involved
 
@@ -134,7 +130,7 @@ public:
     Compartment() : _species(), _internal_reactions(),
     _diffusion_reactions(), _diffusion_rates(), _neighbours()  {
         }
-
+    
     /// Constructor which clones another compartment
     Compartment(const Compartment &C) : _species(), _internal_reactions(),
                                         _diffusion_reactions(), _neighbours()
@@ -146,7 +142,7 @@ public:
 
         // Should eventually clone beads, cylinders, boundary elements.... not clear yet
     }
-
+    
     /// Assignment operator
     Compartment& operator=(const Compartment &other);
 
@@ -161,7 +157,7 @@ public:
         clearReactions();
         clearSpecies();
         removeFromNeighboursList();
-
+        
         // Should eventually delete beads, cylinders, boundary elements....not yet clear
     }
 
@@ -170,15 +166,15 @@ public:
     /// Applies SpeciesVisitor v to every Species* object directly owned by this node.
     /// This method needs to be overriden by descendent classes that contain Species.
     virtual bool apply_impl(SpeciesVisitor &v) override;
-
+    
     /// Applies ReactionVisitor v to every ReactionBase* object directly owned by this
     /// node. This method needs to be overriden by descendent classes that contain
     /// ReactionBase.
     virtual bool apply_impl(ReactionVisitor &v) override;
-
+    
     ///Set a compartment as active. Used at initialization.
     virtual void setAsActive() {_activated = true;}
-
+    
     /// Activate a compartment. Has the following side effects:
     /// 1) Adds diffusion reactions between this compartment's diffusing
     ///    species and its neighboring active compartments
@@ -206,26 +202,26 @@ public:
     
     ///Check if compartment is activated
     virtual bool isActivated() {return _activated;}
-
-    ///Setter and getter for coordinates
-    virtual void setCoordinates(vector<double> coords) {_coords = coords;}
-    virtual const vector<double>& coordinates() {return _coords;}
-
-
+    
+    ///Setter and getter for fs
+    virtual void setCoordinates(vector<floatingpoint> coords) {_coords = coords;}
+    virtual const vector<floatingpoint>& coordinates() {return _coords;}
+    
+    
     /// Transfer all species copy numbers from this compartment to neighboring
     /// active compartments. If no neighboring active compartments are present,
     /// throw an error.
     virtual void transferSpecies(int i);
     virtual void shareSpecies(int i);
-
-
+    
+    
     /// Removes all reactions from this compartment, diffusing and internal
     virtual void clearReactions() {
-
+        
         _internal_reactions.reactions().clear();
         _diffusion_reactions.reactions().clear();
     }
-
+    
     /// Clear all species from this compartment
     virtual void clearSpecies() {
         _species.species().clear();
@@ -233,7 +229,7 @@ public:
 
     /// Remove diffusion reactions between this compartment and its neighbors
     virtual void clearNeighbouringReactions() {
-
+        
         for(auto &s : _species.species())
         {
             for(auto &n : _neighbours)
@@ -245,25 +241,25 @@ public:
     }
     /// Remove this compartment from the neighbor list
     virtual void removeFromNeighboursList() {
-
+        
         for(auto &n : _neighbours)
         {
             n->removeNeighbour(this);
         }
     }
-
+    
     /// Returns true if two Compartment objects are equal.
     /// Two Compartment objects are equal if each contains analogous Species and
     /// Reaction objects, in the same order
     friend bool operator==(const Compartment& a, const Compartment& b);
-
+    
     /// Return true if two Compartment are not equal.
     /// @see operator ==(const Compartment& a, const Compartment& b) above
     friend bool operator !=(const Compartment& a, const Compartment& b)
     {
         return !(a==b);
     }
-
+    
     /// This is a species container
     virtual bool isSpeciesContainer() const override {return true;}
     /// This is a reaction container
@@ -282,7 +278,7 @@ public:
         return _internal_reactions.reactions().size() +
                _diffusion_reactions.reactions().size();
     }
-
+    
     //@{
     /// Species finder functions
     Species* findSpeciesByName(const string &name) {
@@ -298,42 +294,42 @@ public:
         return _species.findSimilarSpecies(s);
     }
     //@}
-
+    
     ///Remove species from this compartment
     size_t removeSpecies(Species* species) {return _species.removeSpecies(species);}
-
+    
     /// Finds a similar internal reaction, see ReactionBase function
     ReactionBase* findSimilarInternalReaction (const ReactionBase &r) {
         return _internal_reactions.findSimilarReaction(r);
     }
-
+    
     /// Finds a similar diffusion reaction, see ReactionBase function
     ReactionBase* findSimilarDiffusionReaction (const ReactionBase &r) {
         return _diffusion_reactions.findSimilarReaction(r);
     }
-
+    
     /// Remove all diffusion reactions that have a given species
     /// @param s - species whose reactions should be removed
     virtual void removeDiffusionReactions (Species* s) {
         _diffusion_reactions.removeReactions(s);
     }
-
+    
     /// Remove all internal reactions that have a given species
     /// @param s - species whose reactions should be removed
     virtual void removeInternalReactions (Species* s) {
         _internal_reactions.removeReactions(s);
     }
-
+    
     /// Remove a diffusion reaction
     virtual void removeDiffusionReaction(ReactionBase *r) {
         _diffusion_reactions.removeReaction(r);
     }
-
+    
     /// Remove an internal reaction
     virtual void removeInternalReaction(ReactionBase *r) {
         _internal_reactions.removeReaction(r);
     }
-
+    
     /// Add a unique species pointer to this compartment
     Species* addSpeciesUnique (unique_ptr<Species> &&species, float diff_rate = -1.0) {
         Species *sp = _species.addSpeciesUnique(move(species));
@@ -341,35 +337,35 @@ public:
         _diffusion_rates[sp->getMolecule()]=diff_rate;
         return sp;
     }
-
+    
     /// Add a unique internal reaction pointer to this compartment
     ReactionBase* addInternalReactionUnique (unique_ptr<ReactionBase> &&reaction) {
         ReactionBase *r = _internal_reactions.addReactionUnique(move(reaction));
         r->setParent(this);
         return r;
     }
-
+    
     /// Add a unique diffusing reaction pointer to this compartment
     ReactionBase* addDiffusionReactionUnique (unique_ptr<ReactionBase> &&reaction) {
         ReactionBase *r = _diffusion_reactions.addReactionUnique(move(reaction));
         r->setParent(this);
         return r;
     }
-
+    
     /// Add an internal reaction pointer to this compartment. Make unique
     ReactionBase* addInternalReaction (ReactionBase* r) {
         _internal_reactions.addReactionUnique(unique_ptr<ReactionBase>(r));
         r->setParent(this);
         return r;
     }
-
+    
     /// Add a diffusion reaciton pointer to this compartment. Make unique
     ReactionBase* addDiffusionReaction (ReactionBase* r) {
         _diffusion_reactions.addReactionUnique(unique_ptr<ReactionBase>(r));
         r->setParent(this);
         return r;
     }
-
+    
     /// Add a diffusing species to this compartment
     /// @param args - any number of SpeciesDiffusing objects
     template<typename ...Args>
@@ -380,7 +376,7 @@ public:
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
     }
-
+    
     /// Add a filament species to this compartment
     /// @param args - any number of SpeciesFilament objects
     template<typename ...Args>
@@ -391,7 +387,7 @@ public:
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
     }
-
+    
     /// Add a plus end species to this compartment
     /// @param args - any number of SpeciesBound objects
     template<typename ...Args>
@@ -402,7 +398,7 @@ public:
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
     }
-
+    
     /// Add a minus end species to this compartment
     /// @param args - any number of SpeciesBound objects
     template<typename ...Args>
@@ -413,7 +409,7 @@ public:
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
     }
-
+    
     /// Add a bound species to this compartment
     /// @param args - any number of SpeciesBound objects
     template<typename ...Args>
@@ -424,7 +420,7 @@ public:
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
     }
-
+    
     /// Add a linker species to this compartment
     /// @param args - any number of SpeciesLinker objects
     template<typename ...Args>
@@ -435,7 +431,7 @@ public:
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
     }
-
+    
     /// Add a motor species to this compartment
     /// @param args - any number of SpeciesMotor objects
     template<typename ...Args>
@@ -446,7 +442,7 @@ public:
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
     }
-
+    
     /// Add a brancher species to this compartment
     /// @param args - any number of SpeciesBrancher objects
     template<typename ...Args>
@@ -457,7 +453,7 @@ public:
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
     }
-
+    
     /// Add a single binding species to this compartment
     /// @param args - any number of SpeciesSingleBinding objects
     template<typename ...Args>
@@ -468,7 +464,7 @@ public:
         _diffusion_rates[sb->getMolecule()]=-1.0;
         return sb;
     }
-
+    
     /// Add a pair binding species to this compartment
     /// @param args - any number of SpeciesPairBinding objects
     template<typename ...Args>
@@ -487,7 +483,7 @@ public:
         r->setParent(this);
         return r;
     }
-
+    
     /// Add an internal reaction to this compartment
     /// @param species, rate - specifying the species and rate that should be assigned
     template<template <unsigned short M, unsigned short N> class RXN, unsigned short M, unsigned short N>
@@ -496,13 +492,18 @@ public:
         r->setParent(this);
         return r;
     }
-
+    
     /// Add a diffusion reaction to this compartment
     template<typename ...Args>
     ReactionBase* addDiffusionReaction (Args&& ...args) {
         ReactionBase *r = _diffusion_reactions.addReaction<1,1>(forward<Args>(args)...);
         r->setParent(this);
         return r;
+    }
+
+    ///Add branching manager to this compartment. Used only in SIMD case
+    void addBranchingBindingManager(FilamentBindingManager* m){
+    	_branchingManagers.emplace_back(m);
     }
 
     /// Add a binding manager to this compartment
@@ -524,29 +525,77 @@ public:
         return _bindingsearchManagers;
     }
 #endif
+    dist::Coords bscoords;
+    vector<dist::Coords> bscoords_section;
+	vector<dist::Coords> bscoords_section_linker;
+	vector<dist::Coords> bscoords_section_motor;
+
+    vector<int> Cyldcindexvec;
+    vector<int> CylcIDvec;
+
+    template<bool LinkerorMotor>
+    dist::Coords& getSIMDcoordsV3(short i, short filamentType){
+        if(LinkerorMotor)
+            return bscoords_section_linker[filamentType*27 + i];
+        else
+            return bscoords_section_motor[filamentType*27 + i];
+    }
+#ifdef SIMDBINDINGSEARCH
+
+    vector<floatingpoint> partitionedcoordx[27], partitionedcoordy[27], partitionedcoordz[27];
+    vector<uint32_t>  cindex_bs_section[27];
+
+    void SIMDcoordinates_section();
+    void SIMDcoordinates4linkersearch_section(bool isvectorizedgather);
+    void SIMDcoordinates4motorsearch_section(bool isvectorizedgather);
+    void getpartition3Dindex(int (&indices)[3], vector<floatingpoint> coord);
+    template<bool rMaxvsCmpsize>
+    void getpartitionindex(int (&indices)[3], vector<floatingpoint> coord,
+                                floatingpoint (&cmpcornercoords)[6]);
+
+    void addcoord(vector<floatingpoint> coord, uint16_t index, short i){cout<<"DONOT CALL"<<endl;
+    exit(EXIT_FAILURE);};
+	void addcoord(vector<floatingpoint> coord, uint32_t index, short i);
+    bool checkoccupancy(Cylinder* cyl, short it, short _filamentType, short bstatepos);
+    bool checkoccupancy(vector<vector<bool>>& boundstate, short bstatepos, int pos);
+    void addcoordtopartitons(int (&pindices)[3], vector<floatingpoint> coord, uint32_t
+    index);
+    void addcoordtopartitons_smallrmax(int (&pindices)[3], vector<floatingpoint> coord,
+                                  uint16_t index);
+    template<bool rMaxvsCmpsize>
+    void addcoordtorMaxbasedpartitons(int (&pindices)[3], vector<floatingpoint> coord,
+                                       uint32_t index);
+
+    void deallocateSIMDcoordinates();
+#endif
     /// Get binding managers for this compartment
     vector<unique_ptr<FilamentBindingManager>>& getFilamentBindingManagers() {
         return _bindingManagers;
     }
 
+    //Get BranchingBindingManager
+    vector<unique_ptr<FilamentBindingManager>>& getBranchingManagers() {
+        return _branchingManagers;
+    }
+
     /// Get a specific motor binding manager from this compartment
     MotorBindingManager* getMotorBindingManager(int motorType) {
-
+        
         MotorBindingManager* mp;
-
+        
         for(auto it = _bindingManagers.begin(); it != _bindingManagers.end(); it++) {
-
+            
             //find the correct manager and type
             if((mp = dynamic_cast<MotorBindingManager*>((*it).get())) && (*it)->getBoundInt() == motorType)
                 return mp;
         }
-
+        
         return nullptr;
     }
-
+    
     ///Add a boundary element to this compartment
     void addBoundaryElement(BoundaryElement* be) {_boundaryElements.insert(be);}
-
+    
     ///Remove a boundary element from this compartment
     ///@note does nothing if boundary element is not in compartment
     void removeBoundaryElement(BoundaryElement* be) {
@@ -556,7 +605,7 @@ public:
     ///Check if boundary element is in this container
     bool hasBoundaryElement(BoundaryElement* be) {
         auto it = _boundaryElements.find(be);
-        return (it != _boundaryElements.end());
+        return (it != _boundaryElements.end());   
     }
     ///get the boundary elements in this compartment
    unordered_set<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}
@@ -565,14 +614,12 @@ public:
     void addCylinder(Cylinder* c) {_cylinders.insert(c);}
 
     ///Remove a cylinder from this compartment
+    ///@note does nothing if cylinder is not in compartment already
     void removeCylinder(Cylinder* c) {
         auto it = _cylinders.find(c);
         if(it != _cylinders.end()) _cylinders.erase(it);
     }
     ///get the cylinders in this compartment
-    #ifdef DEBUGCONSTANTSEED
-    set<Cylinder*>& getCylinders() {return _cylinders;}
-#else
     unordered_set<Cylinder*>& getCylinders() {return _cylinders;}
 
     /// Add, remove and get triangles
@@ -589,7 +636,6 @@ public:
         if(it != _edges.end()) _edges.erase(it);
     }
     unordered_set<Edge*>& getEdges() { return _edges; }
-#endif
     
     /// Get the diffusion rate of a species
     /// @param - species_name, a string
@@ -618,11 +664,11 @@ public:
     }
 
     /// Add a neighboring compartment to this compartments list of neighbors
-    void addNeighbour(Compartment *comp, size_t spacialIndex) {
+    void addNeighbour(Compartment *comp, size_t spatialIndex) {
         auto nit = find(_neighbours.begin(),_neighbours.end(), comp);
         if(nit==_neighbours.end()) {
             _neighbours.push_back(comp);
-            _neighborIndex[comp] = spacialIndex;
+            _neighborIndex[comp] = spatialIndex;
         }
         else
             throw runtime_error(
@@ -687,7 +733,9 @@ public:
             }
         }
     }
-
+    vector<short> getuniquepermuteneighborsstencil(){
+        return _uniquepermuteneighboursstencil;
+    }
     vector<Compartment*> getuniquepermuteNeighbours(){
         return _uniquepermuteneighbours;
     }
@@ -807,9 +855,23 @@ public:
     bool boundaryInteresting = false; // A marker indicating this compartment is near a certain boundary
 
     void resetVolumeFrac() { _volumeFrac = 1.0; }
-    double getVolumeFrac() const { return _volumeFrac; };
-    const array<double, 6>& getPartialArea()const { return _partialArea; }
-    void setPartialArea(const array<double, 6>& partialArea) { _partialArea = partialArea; }
+    floatingpoint getVolumeFrac() const { return _volumeFrac; };
+    const array<floatingpoint, 6>& getPartialArea()const { return _partialArea; }
+    void setPartialArea(const array<floatingpoint, 6>& partialArea) { _partialArea = partialArea; }
     
 };
+#ifdef SIMDBINDINGSEARCH
+template<>
+void Compartment::getpartitionindex<true>(int (&indices)[3], vector<floatingpoint> coord,
+                             floatingpoint (&cmpcornercoords)[6]);
+template<>
+void Compartment::getpartitionindex<false>(int (&indices)[3], vector<floatingpoint> coord,
+                              floatingpoint (&cmpcornercoords)[6]);
+template<>
+void Compartment::addcoordtorMaxbasedpartitons<true>(int (&pindices)[3], vector<floatingpoint>
+        coord, uint32_t index);
+template<>
+void Compartment::addcoordtorMaxbasedpartitons<false>(int (&pindices)[3], vector<floatingpoint>
+        coord, uint32_t index);
+#endif
 #endif

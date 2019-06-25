@@ -42,8 +42,8 @@ private:
     int *beadSet;
     
     ///Array describing the constants in calculation
-    double *kattr;
-    double *pins; ///< coordinates of pins for each bead
+    floatingpoint *kattr;
+    floatingpoint *pins; ///< coordinates of pins for each bead
     
 public:
     
@@ -54,10 +54,10 @@ public:
     virtual void vectorize();
     virtual void deallocate();
     
-    virtual double computeEnergy(double *coord) override;
+    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
     //@{
     /// Tepulsive force calculation
-    virtual void computeForces(double *coord, double *f);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     virtual void computeLoadForces() {};
     //@}
     

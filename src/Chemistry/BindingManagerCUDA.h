@@ -15,17 +15,17 @@
 #include "MathFunctions.h"
 using namespace mathfunc;
 
-__global__ void updateAllPossibleBindingsCUDA(double *coord, int *beadSet, int *cylID, int *filID, int
+__global__ void updateAllPossibleBindingsCUDA(floatingpoint *coord, int *beadSet, int *cylID, int *filID, int
 *filType, unsigned int *cmpID,  int *NL, int *numNLpairs, int *numpairs, int *params,
-                                              double *params2, int *possibleBindings,
+                                              floatingpoint *params2, int *possibleBindings,
 int *relevant_spboundvec, int *bindingSites){
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
     int numBindingSites = params[0];
     int filamenttype = params[1];
     int numMonomerperCyl = params[2];
-    double rmin = params2[0];
-    double rmax = params2[1];
-    double cylf[3], cyls[3], cylnf[3], cylns[3], leg1[3], leg2[3] ;
+    floatingpoint rmin = params2[0];
+    floatingpoint rmax = params2[1];
+    floatingpoint cylf[3], cyls[3], cylnf[3], cylns[3], leg1[3], leg2[3] ;
     bool checkstate = true;
 //    printf("Num NL pairs %d %f %f %d\n", numNLpairs[0], rmin, rmax, filamenttype);
     if(thread_idx < numNLpairs[0]){
@@ -48,7 +48,7 @@ int *relevant_spboundvec, int *bindingSites){
             //loop through binding sites
 //            int count = 0;
             for (int bs = 0; bs < numBindingSites; bs++) {
-                double mp1 = double (bindingSites[bs])/double(numMonomerperCyl);
+                floatingpoint mp1 = floatingpoint (bindingSites[bs])/floatingpoint(numMonomerperCyl);
                 midPointCoordinate(leg1, cylf, cyls, mp1, 0);
                 for (int bsn = 0; bsn < numBindingSites; bsn++) {
 //                    count++;
@@ -64,14 +64,14 @@ int *relevant_spboundvec, int *bindingSites){
 //                           relevant_spboundvec[numBindingSites * cnIndex + bsn], int(relevant_spboundvec[numBindingSites
 //                           * cIndex + bs] - 1.0) , int(relevant_spboundvec[numBindingSites * cnIndex + bsn] - 1.0));
                     if(checkstate){
-                        double mp2 = (double) (bindingSites[bsn])/double(numMonomerperCyl);
+                        floatingpoint mp2 = (floatingpoint) (bindingSites[bsn])/floatingpoint(numMonomerperCyl);
                         midPointCoordinate(leg2, cylnf, cylns, mp2, 0);
 //                        printf("%f %f %d %d %d\n", mp1, mp2, bindingSites[bs],bindingSites[bsn], numMonomerperCyl );
 //                        printf("%d %d %d %d\n",bindingSites[0],bindingSites[1],bindingSites[2], bindingSites[3]);
 //                        printf("c3 %d %d %d %d %f %f %f %f %f %f %f %f\n", cIndex, cnIndex, bs, bsn, leg1[0], leg1[1],
 //                               leg1[2], leg2[0], leg2[1], leg2[2],
 //                               mp1, mp2);
-                        double dist = twoPointDistance(leg1, leg2, 0);
+                        floatingpoint dist = twoPointDistance(leg1, leg2, 0);
 //                        printf("%f %f %f\n", dist, rmin, rmax);
                         if(dist >= rmin && dist <= rmax){
 //                            printf("c %d %d %d %d %f %f %f %f %f %f %f %f\n", cIndex, cnIndex, bs, bsn, leg1[0], leg1[1],
@@ -96,40 +96,40 @@ int *relevant_spboundvec, int *bindingSites){
     }
 }
 
-__global__ void updateAllPossibleBindingsBrancherCUDA (double *coord, int *beadSet, int *cylID, int *filID, int *
+__global__ void updateAllPossibleBindingsBrancherCUDA (floatingpoint *coord, int *beadSet, int *cylID, int *filID, int *
                                                       filType, unsigned int *cmpID, int
 *numpairs, int *params,
-                                                      double *distances, int *zone, int *possibleBindings,
+                                                      floatingpoint *distances, int *zone, int *possibleBindings,
                                                       int *bindingSites, int
-                                                       *relevant_spboundvec, double *beListplane){
+                                                       *relevant_spboundvec, floatingpoint *beListplane){
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
     int numBindingSites = params[0];
     int filamenttype = params[1];
     int numMonomerperCyl = params[2];
     int numcyl = params[3];
-    double leg1[3];
+    floatingpoint leg1[3];
     bool checkstate = true;
     if(thread_idx < numcyl){
         int cIndex = thread_idx;
         if (filamenttype != filType[cIndex])
             checkstate = false;
         if(checkstate){
-            double cylf[3], cyls[3];
+            floatingpoint cylf[3], cyls[3];
             for(int i = 0; i < 3; i++) {
                 cylf[i] = coord[3 * beadSet[2 * cIndex] + i];
                 cyls[i] = coord[3 * beadSet[2 * cIndex + 1] + i];
             }
             for (int bs = 0; bs < numBindingSites; bs++) {
-                double dist = -1.0;
+                floatingpoint dist = -1.0;
                 if (zone[0] > 0) {// Type 0 = ALL
-                    double mp1 = double(bindingSites[bs]) / double(numMonomerperCyl);
+                    floatingpoint mp1 = floatingpoint(bindingSites[bs]) / floatingpoint(numMonomerperCyl);
                     midPointCoordinate(leg1, cylf, cyls, mp1, 0);
                 //Get distance from the closest boundary.
                     for (auto b = 0; b < 6; b++) {
-                        double plane[4];
+                        floatingpoint plane[4];
                         for (auto i = 0; i < 4; i++)
                             plane[i] = beListplane[4*b + i];
-                        double dist_temp = getdistancefromplane(leg1, plane, 0);
+                        floatingpoint dist_temp = getdistancefromplane(leg1, plane, 0);
                         if(dist == -1.0)
                             dist = dist_temp;
                         else if (dist_temp < dist)

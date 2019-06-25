@@ -21,6 +21,7 @@
 #include "Bead.h"
 
 #include "MathFunctions.h"
+#include "Cylinder.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
@@ -63,15 +64,15 @@ void BranchingBendingCosine::optimalblocksnthreads( int nint){
         blocksnthreadsf.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreadsf.push_back(blockSize);
 
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(floatingpoint)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(floatingpoint)));
         //get addition vars
         bntaddvec2.clear();
         bntaddvec2 = getaddred2bnt(nint);
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
-        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(double)));
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(floatingpoint)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(floatingpoint)));
 
         char a[] = "BranchingFF";
         char b[] = "Branching Bending Cosine";
@@ -90,18 +91,18 @@ void BranchingBendingCosine::optimalblocksnthreads( int nint){
     }
 
 }
-double* BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
-                                       double *kbend, double *eqt, int *params) {
+floatingpoint* BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                       floatingpoint *kbend, floatingpoint *eqt, int *params) {
 //    if(blocksnthreadse[1]>0) {
 //        BranchingBendingCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
-//                (double), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
+//                (floatingpoint), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
 //                CUDAcommon::getCUDAvars().gculpritFF,
 //                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
 //        auto cvars = CUDAcommon::getCUDAvars();
 //        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
 //        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingBendingCosineenergy", "BranchingBendingCosine.cu");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror( cudaGetLastError(),"BranchingBendingCosineenergy", "BranchingBendingCosine.cu");
 //        return gU_sum;}
@@ -110,11 +111,11 @@ double* BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
 }
 
 
-double* BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
-                                       double *kbend, double *eqt, double *z, int *params) {
+floatingpoint* BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                       floatingpoint *kbend, floatingpoint *eqt, floatingpoint *z, int *params) {
         if(blocksnthreadse[1]>0) {
         BranchingBendingCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
-                (double), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, z, CUDAcommon::getCUDAvars()
+                (floatingpoint), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, z, CUDAcommon::getCUDAvars()
                 .gculpritID,
                 CUDAcommon::getCUDAvars().gculpritFF,
                 CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
@@ -122,7 +123,7 @@ double* BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
 //        auto cvars = CUDAcommon::getCUDAvars();
 //        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror( cudaGetLastError(),"BranchingBendingCosineenergy", "BranchingBendingCosine.cu");
 //        return gU_sum;
@@ -130,7 +131,7 @@ double* BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
     if(blocksnthreadsez[1]>0) {
 
         BranchingBendingCosineenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (24 * blocksnthreadsez[1]) *
-                                      sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i, z,
+                                      sizeof(floatingpoint), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i, z,
                 CUDAcommon::getCUDAvars().gculpritID,
                 CUDAcommon::getCUDAvars().gculpritFF,
                 CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction );
@@ -138,12 +139,12 @@ double* BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
 //        auto cvars = CUDAcommon::getCUDAvars();
 //        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror(cudaGetLastError(),"BranchingBendingCosineenergyz", "BranchingBendingCosine.cu");
 
 //        BranchingBendingCosineenergyz2 << < blocksnthreadsf[0], blocksnthreadsf[1], (12 * blocksnthreadsf[1]) *
-//                                                                                     sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i, z );
+//                                                                                     sizeof(floatingpoint), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i, z );
 //        CUDAcommon::handleerror(cudaGetLastError(),"BranchingBendingCosineenergyz2", "BranchingBendingCosine.cu");
 //        return gU_sum;
     }
@@ -153,16 +154,16 @@ double* BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
-        double *gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+        floatingpoint *gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
-//        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        addvectorred<<<1,200,200*sizeof(floatingpoint),stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
 //        std::cout<<"bntaddvec "<<bntaddvec2.at(0)<<" "<<bntaddvec2.at(1)<<" "<<bntaddvec2.at(0)<<" "
 //                ""<<bntaddvec2.at(2)<<" "<<bntaddvec2.at(3)<<endl;
-        resetdoublevariableCUDA << < 1, 1, 0, stream >> > (gU_sum);
-        addvectorred2 << < bntaddvec2.at(2), bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double), stream >> > (gU_i,
+        resetfloatingpointvariableCUDA << < 1, 1, 0, stream >> > (gU_sum);
+        addvectorred2 << < bntaddvec2.at(2), bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(floatingpoint), stream >> > (gU_i,
                 params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror(cudaDeviceSynchronize(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
         CUDAcommon::handleerror(cudaGetLastError(), "FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
@@ -170,11 +171,11 @@ double* BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
     }
 }
 
-void BranchingBendingCosine::forces(double *coord, double *f, int *beadSet,
-                                    double *kbend, double *eqt, int *params){
+void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                    floatingpoint *kbend, floatingpoint *eqt, int *params){
     if(blocksnthreadsf[1]>0) {
         BranchingBendingCosineforces << < blocksnthreadsf[0], blocksnthreadsf[1], (12 * blocksnthreadsf[1]) *
-                                                                                  sizeof(double), stream >> > (coord, f, beadSet, kbend, eqt, params);
+                                                                                  sizeof(floatingpoint), stream >> > (coord, f, beadSet, kbend, eqt, params);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
@@ -191,15 +192,15 @@ void BranchingBendingCosine::checkforculprit() {
 }
 #endif
 
-double BranchingBendingCosine::energy(double *coord, int *beadSet,
-                                      double *kbend, double *eqt){
+floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, int *beadSet,
+                                      floatingpoint *kbend, floatingpoint *eqt){
 
     int n = BranchingBending<BranchingBendingCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    double *coord1, *coord2, *coord3, *coord4, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
+    floatingpoint *coord1, *coord2, *coord3, *coord4, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
 
-    double U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -217,12 +218,26 @@ double BranchingBendingCosine::energy(double *coord, int *beadSet,
         l1l2 = scalarProduct(coord1, coord2,
                              coord3, coord4);
 
-        phi = safeacos(l1l2 / L1L2);
+        floatingpoint x=l1l2 / L1L2;
+        if (x < -1.0) x = -1.0;
+        else if (x > 1.0) x = 1.0;
+        //Option 1 ignore eqt as it is always 0.
+        if(areEqual(eqt[i],0.0))
+            U_i = kbend[i] * (1 - x);
+            //Option 2 Need to calculate Cos(A-B).
+        else{
+            floatingpoint cosA = x;
+            floatingpoint sinA = max<floatingpoint>(sqrt(1-cosA*cosA),(floatingpoint)0.0);
+            floatingpoint cosAminusB = cosA*cos(eqt[i]) - sinA*sin(eqt[i]);
+            U_i = kbend[i] *(1-cosAminusB);
+        }
+
+        /*phi = safeacos(l1l2 / L1L2);
         dPhi = phi-eqt[i];
 
-        U_i = kbend[i] * ( 1 - cos(dPhi) );
+        U_i = kbend[i] * ( 1 - cos(dPhi) );*/
 
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return
@@ -237,15 +252,15 @@ double BranchingBendingCosine::energy(double *coord, int *beadSet,
     return U;
 }
 
-double BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
-                                      double *kbend, double *eqt, double d){
+floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                      floatingpoint *kbend, floatingpoint *eqt, floatingpoint d){
 
     int n = BranchingBending<BranchingBendingCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    double *coord1, *coord2, *coord3, *coord4, *force1, *force2, *force3, *force4, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
-
-    double U = 0.0;
+    floatingpoint *coord1, *coord2, *coord3, *coord4, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
+	floatingpoint *force1, *force2, *force3, *force4;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -269,12 +284,27 @@ double BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
         l1l2 = scalarProductStretched(coord1, force1, coord2, force2,
                                       coord3, force3, coord4, force4, d);
 
-        phi = safeacos(l1l2 / L1L2);
+        floatingpoint x = l1l2/L1L2;
+
+        if (x < -1.0) x = -1.0;
+        else if (x > 1.0) x = 1.0;
+        //Option 1 ignore eqt as it is always 0.
+        if(areEqual(eqt[i],0.0))
+            U_i = kbend[i] * (1 - x);
+            //Option 2 Need to calculate Cos(A-B).
+        else{
+            floatingpoint cosA = x;
+            floatingpoint sinA = max<floatingpoint>(sqrt(1-cosA*cosA),(floatingpoint)0.0);
+            floatingpoint cosAminusB = cosA*cos(eqt[i]) - sinA*sin(eqt[i]);
+            U_i = kbend[i] *(1-cosAminusB);
+        }
+
+        /*phi = safeacos(l1l2 / L1L2);
         dPhi = phi-eqt[i];
 
-        U_i = kbend[i] * ( 1 - cos(dPhi) );
+        U_i = kbend[i] * ( 1 - cos(dPhi) );*/
 
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return
@@ -289,17 +319,18 @@ double BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
     return U;
 }
 
-void BranchingBendingCosine::forces(double *coord, double *f, int *beadSet,
-                                    double *kbend, double *eqt){
+void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                    floatingpoint *kbend, floatingpoint *eqt){
 
 
     int n = BranchingBending<BranchingBendingCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    double *coord1, *coord2, *coord3, *coord4, *force1, *force2, *force3, *force4;
-    double L1, L2, L1L2, l1l2, phi, dPhi, A, B, C, invL1, invL2, k;
+    floatingpoint *coord1, *coord2, *coord3, *coord4;
+	floatingpoint  *force1, *force2, *force3, *force4;
+    floatingpoint L1, L2, L1L2, l1l2, phi, dPhi, A, B, C, invL1, invL2, k;
 
-//    double U = 0;
+//    floatingpoint U = 0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -328,11 +359,31 @@ void BranchingBendingCosine::forces(double *coord, double *f, int *beadSet,
         B = l1l2*invL1*A*A*L2;
         C = l1l2*invL2*A*A*L1;
 
-//        phi = safeacos(l1l2 / L1L2);
+        if (areEqual(eqt[i], 0.0)) k = kbend[i];
+
+        else{
+            if(abs(abs(l1l2*A) - 1.0)<0.001)
+                l1l2 = 0.999*l1l2;
+
+            floatingpoint x = l1l2 *A;
+            if (x < -1.0) x = -1.0;
+            else if (x > 1.0) x = 1.0;
+
+            floatingpoint cosp =  x;
+            floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
+            floatingpoint sinpminusq = sinp * cos(eqt[i]) - cosp * sin(eqt[i]);
+
+            k = kbend[i] * sinpminusq/sinp;
+        }
+
+        /*	    if(abs(l1l2*A - 1.0)<0.001){
+		    l1l2 = 0.999*l1l2;
+	    }
+
         phi = safeacos(l1l2 * A);
         dPhi = phi-eqt[i];
 
-        k =  kbend[i] * sin(dPhi)/sin(phi);
+        k =  kbend[i] * sin(dPhi)/sin(phi);*/
 
         //force on i, f = k*(-A*l2 + 2*B*l1):
         force1[0] += k * ((coord3[0] - coord4[0])*A +
@@ -366,5 +417,45 @@ void BranchingBendingCosine::forces(double *coord, double *f, int *beadSet,
                          (coord4[1] - coord3[1])*C );
         force4[2] += k *((-coord1[2] + coord2[2])*A -
                          (coord4[2] - coord3[2])*C );
+
+        #ifdef CHECKFORCES_INF_NAN
+        if(checkNaN_INF(force1, 0, 2)||checkNaN_INF(force2,0,2)||checkNaN_INF(force3,0,2)
+        ||checkNaN_INF(force4,0,2)){
+            cout<<"Branching Bending Force becomes infinite. Printing data "<<endl;
+
+            auto b = BranchingPoint::getBranchingPoints()[i];
+            auto cyl1 = b->getFirstCylinder();
+            auto cyl2 = b->getSecondCylinder();
+            cout<<"Cylinder IDs "<<cyl1->getId()<<" "<<cyl2->getId()<<" with cIndex "
+                <<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex()<<" and bIndex "
+                <<cyl1->getFirstBead()->getStableIndex()<<" "
+                <<cyl1->getSecondBead()->getStableIndex()<<" "
+                <<cyl2->getFirstBead()->getStableIndex()<<" "
+                <<cyl2->getSecondBead()->getStableIndex()<<endl;
+
+            cout<<"Printing coords"<<endl;
+            cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
+            cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
+            cout<<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
+            cout<<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<endl;
+            cout<<"Printing force"<<endl;
+            cout<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<endl;
+            cout<<force2[0]<<" "<<force2[1]<<" "<<force2[2]<<endl;
+            cout<<force3[0]<<" "<<force3[1]<<" "<<force3[2]<<endl;
+            cout<<force4[0]<<" "<<force4[1]<<" "<<force4[2]<<endl;
+            cout<<"Printing binary Coords"<<endl;
+            printvariablebinary(coord1,0,2);
+            printvariablebinary(coord2,0,2);
+            printvariablebinary(coord3,0,2);
+            printvariablebinary(coord4,0,2);
+            cout<<"Printing binary Force"<<endl;
+            printvariablebinary(force1,0,2);
+            printvariablebinary(force2,0,2);
+            printvariablebinary(force3,0,2);
+            printvariablebinary(force4,0,2);
+            exit(EXIT_FAILURE);
+        }
+        #endif
+
     }
 }

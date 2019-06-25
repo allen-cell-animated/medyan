@@ -21,11 +21,11 @@
 
 using namespace mathfunc;
 
-double MTOCBendingCosine::energy(double *coord, int *beadSet,
-                                      double *kbend, double radius){
+floatingpoint MTOCBendingCosine::energy(floatingpoint *coord, int *beadSet,
+                                      floatingpoint *kbend, floatingpoint radius){
     
-    double *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
-    double U = 0.0;
+    floatingpoint *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
+    floatingpoint U = 0.0;
     
     int n = MTOCBending<MTOCBendingCosine>::n;
     for(auto mtoc : MTOC::getMTOCs()) {
@@ -50,7 +50,7 @@ double MTOCBendingCosine::energy(double *coord, int *beadSet,
             
             U_i = kbend[i] * ( 1 - cos(dPhi) );
             
-            if(fabs(U_i) == numeric_limits<double>::infinity()
+            if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                || U_i != U_i || U_i < -1.0) {
                 
                 //set culprit and return TODO
@@ -67,13 +67,13 @@ double MTOCBendingCosine::energy(double *coord, int *beadSet,
     
 }
 
-double MTOCBendingCosine::energy(double *coord, double *f, int *beadSet,
-                                      double *kbend, double radius, double d){
+floatingpoint MTOCBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                      floatingpoint *kbend, floatingpoint radius, floatingpoint d){
     
     //Do not use for now
     
-    double *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
-    double U = 0.0;
+    floatingpoint *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
+    floatingpoint U = 0.0;
     
     int n = MTOCBending<MTOCBendingCosine>::n;
     for(auto mtoc : MTOC::getMTOCs()) {
@@ -99,7 +99,7 @@ double MTOCBendingCosine::energy(double *coord, double *f, int *beadSet,
             
             U_i = kbend[i] * ( 1 - cos(dPhi) );
             
-            if(fabs(U_i) == numeric_limits<double>::infinity()
+            if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                || U_i != U_i || U_i < -1.0) {
                 
                 //set culprit and return TODO
@@ -116,15 +116,15 @@ double MTOCBendingCosine::energy(double *coord, double *f, int *beadSet,
     
 }
 
-void MTOCBendingCosine::forces(double *coord, double *f, int *beadSet,
-                                    double *kbend, double radius){
+void MTOCBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                    floatingpoint *kbend, floatingpoint radius){
     
     
     int n = MTOCBending<MTOCBendingCosine>::n;
     for(auto mtoc : MTOC::getMTOCs()) {
         int nint = mtoc->getFilaments().size();
         
-        double *coord1, *coord2, *coord3, *force1, *force2, *force3,
+        floatingpoint *coord1, *coord2, *coord3, *force1, *force2, *force3,
         L1, L2, l1l2, invL1, invL2, A,B,C, phi, dPhi, k;
         
         coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC

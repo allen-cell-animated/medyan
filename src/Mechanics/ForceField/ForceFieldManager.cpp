@@ -54,6 +54,8 @@ void updateMembraneSharedData() {
 
 } // namespace
 
+ForceField* ForceFieldManager::_culpritForceField = nullptr;
+
 void ForceFieldManager::vectorizeAllForceFields() {
     prepareForceSharedData();
 #ifdef CUDATIMETRACK
@@ -84,7 +86,7 @@ void ForceFieldManager::vectorizeAllForceFields() {
     CUDAcommon::handleerror(cudaMemcpyAsync(gpu_nint, nint, sizeof(int),
                                         cudaMemcpyHostToDevice, streamF));
     CUDAcommon::handleerror(cudaMalloc((void **) &(CUDAcommon::cudavars.gpu_energyvec),
-                                       CUDAcommon::cudavars.offset_E * sizeof(double)));
+                                       CUDAcommon::cudavars.offset_E * sizeof(floatingpoint)));
     int THREADSPERBLOCK;
     cudaDeviceProp prop;
     cudaGetDeviceProperties(&prop, 0);
@@ -100,13 +102,13 @@ void ForceFieldManager::vectorizeAllForceFields() {
     bntaddvec2.clear();
     bntaddvec2 = getaddred2bnt(CUDAcommon::cudavars.offset_E);
     CUDAcommon::handleerror(cudaMalloc((void **) &(CUDAcommon::cudavars.gpu_energyvec), bntaddvec2.at
-            (0)*sizeof (double)));
-    vector<double> zerovec(bntaddvec2.at(0));
+            (0)*sizeof (floatingpoint)));
+    vector<floatingpoint> zerovec(bntaddvec2.at(0));
     fill(zerovec.begin(),zerovec.begin()+bntaddvec2.at(0),0.0);
     CUDAcommon::handleerror(cudaMemcpyAsync(CUDAcommon::cudavars.gpu_energyvec, zerovec.data(),
-                            bntaddvec2.at(0) * sizeof(double), cudaMemcpyHostToDevice,streamF));
+                            bntaddvec2.at(0) * sizeof(floatingpoint), cudaMemcpyHostToDevice,streamF));
 /*    CUDAcommon::handleerror(cudaMemsetAsync(CUDAcommon::cudavars.gpu_energyvec, 0,
-                                            bntaddvec2.at(0) * sizeof(double), streamF));*/
+                                            bntaddvec2.at(0) * sizeof(floatingpoint), streamF));*/
 
     params.clear();
     params.push_back(CUDAcommon::cudavars.offset_E);
@@ -118,7 +120,7 @@ void ForceFieldManager::vectorizeAllForceFields() {
 #ifdef CUDATIMETRACK
 //    CUDAcommon::handleerror(cudaDeviceSynchronize(),"CGPolakRibiereMethod.cu","CGPolakRibiereMethod.cu");
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
     CUDAcommon::cudatime.TvectorizeFF += elapsed_run.count();
     std::cout<<"Time total vectorizeFF (s) "<<CUDAcommon::cudatime.TvectorizeFF<<endl;
     std::cout<<"Time split vectorizeFF (s) ";
@@ -146,7 +148,7 @@ void ForceFieldManager::cleanupAllForceFields() {
         //Memory alloted
         //@{
 //        size_t allocmem = 0;
-//        allocmem += sizeof(double);
+//        allocmem += sizeof(floatingpoint);
 //        auto c = CUDAcommon::getCUDAvars();
 //        c.memincuda -= allocmem;
 //        CUDAcommon::cudavars = c;
@@ -159,9 +161,9 @@ void ForceFieldManager::cleanupAllForceFields() {
 }
 
 template< bool stretched >
-double ForceFieldManager::computeEnergy(double *coord, bool verbose) const {
-#ifdef CUDATIMETRACK
+floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbose) const {
     chrono::high_resolution_clock::time_point tbegin, tend;
+#ifdef CUDATIMETRACK
 //    CUDAcommon::cudatime.TcomputeE = 0.0;
     CUDAcommon::cudatime.TveccomputeE.clear();
     CUDAcommon::cudatime.Ecount++;
@@ -169,20 +171,20 @@ double ForceFieldManager::computeEnergy(double *coord, bool verbose) const {
     CUDAcommon::serltime.TveccomputeE.clear();
     CUDAcommon::serltime.Ecount++;
 #endif
-    double energy = 0.0;
+    floatingpoint energy = 0.0;
 #ifdef CUDAACCL
 #ifdef CUDA_INDIVIDUAL_ESUM
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_Uvec, sizeof (double)));
-    CUDAcommon::handleerror(cudaMemset(gpu_Uvec, 0.0, sizeof (double)));
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_Uvec, sizeof (floatingpoint)));
+    CUDAcommon::handleerror(cudaMemset(gpu_Uvec, 0.0, sizeof (floatingpoint)));
 #else
-    double *gpu_Uvec = CUDAcommon::getCUDAvars().gpu_energy;
-    /*double *gpu_Uvec;
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_Uvec, sizeof (double)));
-    CUDAcommon::handleerror(cudaMemsetAsync(gpu_Uvec, 0, sizeof (double),streamF));*/
+    floatingpoint *gpu_Uvec = CUDAcommon::getCUDAvars().gpu_energy;
+    /*floatingpoint *gpu_Uvec;
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_Uvec, sizeof (floatingpoint)));
+    CUDAcommon::handleerror(cudaMemsetAsync(gpu_Uvec, 0, sizeof (floatingpoint),streamF));*/
 #endif
 #ifdef SERIAL_CUDACROSSCHECK
     CUDAcommon::handleerror(cudaMemset(CUDAcommon::cudavars.gpu_energyvec, 0, bntaddvec2.at(0) * sizeof
-            (double)));
+            (floatingpoint)));
 #endif
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
@@ -194,30 +196,33 @@ double ForceFieldManager::computeEnergy(double *coord, bool verbose) const {
 //    CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceFieldManager.cu",
 //                            "computeEnergy");
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
     CUDAcommon::cudatime.TcomputeE += elapsed_run.count();
     CUDAcommon::cudatime.TcomputeEiter += elapsed_run.count();
 #endif
 #endif
 #ifdef SERIAL_CUDACROSSCHECK
     CUDAcommon::handleerror(cudaDeviceSynchronize());
-    double cuda_lambda[1];
-    CUDAcommon::handleerror(cudaMemcpy(cuda_lambda, CUDAcommon::cudavars.gpu_lambda,  sizeof(double),
+    floatingpoint cuda_lambda[1];
+    CUDAcommon::handleerror(cudaMemcpy(cuda_lambda, CUDAcommon::cudavars.gpu_lambda,  sizeof(floatingpoint),
                                        cudaMemcpyDeviceToHost));
 
-    std::cout<<"Lambda used CUDA "<<cuda_lambda[0]<<" SERL "<<d<<endl;
 #endif
 
     // Compute geometry
     updateGeometryValue< stretched >();
 
     for (auto &ff : _forceFields) {
-
+        tbegin = chrono::high_resolution_clock::now();
         auto tempEnergy = ff->computeEnergy(coord, stretched);
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
+//        cout<<ff->getName()<<" "<<tempEnergy<<"pN.nm"<<" ";
+
 #ifdef ALLSYNC
         cudaDeviceSynchronize();
 #endif
-//        std::cout<<ff->getName()<<" "<<tempEnergy<<endl;
+
         if (verbose) cout << ff->getName() << " energy = " << tempEnergy << endl;
         //if energy is infinity, exit with infinity.
         if (tempEnergy <= -1) {
@@ -232,28 +237,29 @@ double ForceFieldManager::computeEnergy(double *coord, bool verbose) const {
                         << endl;
                 cout << "The culprit was ... " << ff->getName() << endl;
 
-                //get the culprit in output
-                ff->whoIsCulprit();
-
-                exit(EXIT_FAILURE);
+                _culpritForceField = ff;
+                return numeric_limits<floatingpoint>::infinity();
             }
                 //if this is a minimization try, just return infinity
-            else return numeric_limits<double>::infinity();
-        } else energy += tempEnergy;
+            else {cout<<"Returning infintie energy "<<ff->getName()<<endl;
+                return numeric_limits<floatingpoint>::infinity();}
+        }
+        else energy += tempEnergy;
 #ifdef SERIAL_CUDACROSSCHECK
         cudaDeviceSynchronize();
-        resetdoublevariableCUDA<<<1,1,0, streamF>>>(gpu_Uvec);
-        addvectorred3<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double)
+        resetfloatingpointvariableCUDA<<<1,1,0, streamF>>>(gpu_Uvec);
+        addvectorred3<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(floatingpoint)
                                                                    , streamF>>>
         (CUDAcommon::cudavars.gpu_energyvec, gpu_params,
                 gpu_Uvec);
-        double cuda_energyvec[1];
-        CUDAcommon::handleerror(cudaMemcpy(cuda_energyvec, gpu_Uvec, sizeof(double),
+        floatingpoint cuda_energyvec[1];
+        CUDAcommon::handleerror(cudaMemcpy(cuda_energyvec, gpu_Uvec, sizeof(floatingpoint),
                                            cudaMemcpyDeviceToHost));
         std::cout<<ff->getName()<<" Energy. CUDA "<<cuda_energyvec[0]<<" SERL "
                 ""<<energy<<endl;
 #endif
     }
+//    cout<<endl;
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
 #endif
@@ -267,34 +273,34 @@ double ForceFieldManager::computeEnergy(double *coord, bool verbose) const {
         }
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run2(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run2(tend - tbegin);
     CUDAcommon::cudatime.TveccomputeE.push_back(elapsed_run2.count());
     CUDAcommon::cudatime.TcomputeE += elapsed_run2.count();
     CUDAcommon::cudatime.TcomputeEiter += elapsed_run2.count();
     tbegin = chrono::high_resolution_clock::now();
 #endif
 //    std::cout<<"CUDA energy total nint "<<CUDAcommon::cudavars.offset_E<<endl;
-    /*vector<double> ones;
+    /*vector<floatingpoint> ones;
     for(int i = 0;i<8192;i++)
         ones.push_back(1.0);
     CUDAcommon::handleerror(cudaMemcpyAsync(CUDAcommon::cudavars.gpu_energyvec, ones
                                                         .data() ,
                                                 bntaddvec2.at(0) * sizeof
-                                                        (double),
+                                                        (floatingpoint),
                                                 cudaMemcpyHostToDevice,streamF));*/
 /*    CUDAcommon::handleerror(cudaMemsetAsync(CUDAcommon::cudavars.gpu_energyvec, 1,
                                             bntaddvec2.at(0) * sizeof
-            (double),streamF));
+            (floatingpoint),streamF));
     cudaDeviceSynchronize();*/
-    resetdoublevariableCUDA<<<1,1,0, streamF>>>(gpu_Uvec);
-    addvectorred3<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double)
+    resetfloatingpointvariableCUDA<<<1,1,0, streamF>>>(gpu_Uvec);
+    addvectorred3<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(floatingpoint)
                     , streamF>>>(CUDAcommon::cudavars.gpu_energyvec, gpu_params,
                         gpu_Uvec);
     CUDAcommon::handleerror(cudaStreamSynchronize(streamF));
 #ifdef DETAILEDOUTPUT_ENERGY
     cudaDeviceSynchronize();
-    double cuda_energyvec[1];
-    CUDAcommon::handleerror(cudaMemcpy(cuda_energyvec, gpu_Uvec, sizeof(double),
+    floatingpoint cuda_energyvec[1];
+    CUDAcommon::handleerror(cudaMemcpy(cuda_energyvec, gpu_Uvec, sizeof(floatingpoint),
                                        cudaMemcpyDeviceToHost));
     std::cout<<"vector energy addition CUDA "<<cuda_energyvec[0]<<" SERL "<<energy<<endl;
 #endif
@@ -306,7 +312,7 @@ double ForceFieldManager::computeEnergy(double *coord, bool verbose) const {
 
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run3(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run3(tend - tbegin);
     CUDAcommon::cudatime.TveccomputeE.push_back(elapsed_run3.count());
     CUDAcommon::cudatime.TcomputeE += elapsed_run3.count();
     CUDAcommon::cudatime.TcomputeEiter += elapsed_run3.count();
@@ -325,10 +331,10 @@ double ForceFieldManager::computeEnergy(double *coord, bool verbose) const {
     updateMembraneSharedData<stretched>();
     return energy;
 }
-template double ForceFieldManager::computeEnergy< false >(double *, bool) const;
-template double ForceFieldManager::computeEnergy< true >(double *, bool) const;
+template floatingpoint ForceFieldManager::computeEnergy< false >(floatingpoint *, bool) const;
+template floatingpoint ForceFieldManager::computeEnergy< true >(floatingpoint *, bool) const;
 
-void ForceFieldManager::computeForces(double *coord, double *f) {
+void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
     //reset to zero
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -344,7 +350,7 @@ void ForceFieldManager::computeForces(double *coord, double *f) {
     //@}
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
     CUDAcommon::serltime.TveccomputeF.push_back(elapsed_run.count());
     CUDAcommon::serltime.TcomputeF += elapsed_run.count();
     tbegin = chrono::high_resolution_clock::now();
@@ -363,7 +369,7 @@ void ForceFieldManager::computeForces(double *coord, double *f) {
 #endif
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run2(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run2(tend - tbegin);
     CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run2.count());
     CUDAcommon::cudatime.TcomputeF += elapsed_run2.count();
     tbegin = chrono::high_resolution_clock::now();
@@ -373,9 +379,24 @@ void ForceFieldManager::computeForces(double *coord, double *f) {
     updateGeometryValueWithDerivative();
 
     //recompute
-//    double *F_i = new double[CGMethod::N];
+//    floatingpoint *F_i = new floatingpoint[CGMethod::N];
+    short count = 0;
+    CUDAcommon::tmin.computeforcescalls++;
     for (auto &ff : _forceFields) {
+        tbegin = chrono::high_resolution_clock::now();
         ff->computeForces(coord, f);
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
+        if(CUDAcommon::tmin.individualforces.size() == _forceFields.size())
+            CUDAcommon::tmin.individualforces[count]+= elapsed_energy.count();
+        else
+            CUDAcommon::tmin.individualforces.push_back(elapsed_energy.count());
+        count++;
+/*        for(int i=0;i<CGMethod::N;i++){
+            if(isnan(f[i])||isinf(f[i])){
+                cout<<"Culprit ForceField "<<ff->getName()<<endl;
+            }
+        }*/
 #ifdef ALLSYNC
         cudaDeviceSynchronize();
 #endif
@@ -383,14 +404,14 @@ void ForceFieldManager::computeForces(double *coord, double *f) {
 //        if(cross_checkclass::Aux)
 //            CUDAcommon::handleerror(
 //                cudaMemcpy(F_i, CUDAcommon::getCUDAvars().gpu_forceAux, 3 * Bead::getBeads().size() * sizeof
-//                                   (double),
+//                                   (floatingpoint),
 //                           cudaMemcpyDeviceToHost));
 //        else
 //            CUDAcommon::handleerror(
 //                    cudaMemcpy(F_i, CUDAcommon::getCUDAvars().gpu_force, 3 * Bead::getBeads().size() * sizeof
-//                                       (double),
+//                                       (floatingpoint),
 //                               cudaMemcpyDeviceToHost));
-//        double fmax = 0.0;
+//        floatingpoint fmax = 0.0;
 //        int id=0;
 //        for (auto iter = 0; iter < Bead::getBeads().size(); iter++) {
 //            if(abs(F_i[3 *iter])> fmax) {fmax = abs(F_i[3*iter]);id = iter;}
@@ -426,14 +447,76 @@ void ForceFieldManager::computeLoadForces() {
     }
 }
 
+void ForceFieldManager::printculprit(floatingpoint* force){
+
+    /*cout<<"Printing cylinder data overall"<<endl;
+    if(true) {
+
+        cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
+        Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+        CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
+        floatingpoint *coord = CUDAcommon::serlvars.coord;
+        std::cout << "check revectorized cylinders" << endl;
+        std::cout << "3 Total Cylinders " << Cylinder::getCylinders().size() << " Beads "
+                  << Bead::getBeads().size() << "maxcindex " << Cylinder::getmaxcindex() <<
+                  endl;
+        for (auto cyl:Cylinder::getCylinders()) {
+            int i = cyl->_dcIndex;
+            int id1 = cylindervec[i].ID;
+            int id2 = Cylinderpointervec[i]->getID();
+            int id3 = ccylindervec[i]->getCylinder()->getID();
+            if (id1 != id2 || id2 != id3 || id3 != id1)
+                std::cout << id1 << " " << id2 << " " << id3 << endl;
+            auto b1 = cyl->getFirstBead();
+            auto b2 = cyl->getSecondBead();
+            long idx1 = b1->_dbIndex;
+            long idx2 = b2->_dbIndex;
+            cylinder c = cylindervec[i];
+            std::cout << "bindices for cyl with ID " << cyl->getID() << " cindex " << i <<
+                      " are " << idx1 << " " << idx2 << " " << c.bindices[0] << " "
+                      << c.bindices[1] <<" coords ";
+            std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
+                      << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
+                      << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] <<" forces ";
+            std::cout << force[3 * idx1] << " " << force[3 * idx1 + 1] << " "
+                      << force[3 * idx1 + 2] << " " << force[3 * idx2] << " "
+                      << force[3 * idx2 + 1] << " " << force[3 * idx2 + 2] << endl;
+            if (c.bindices[0] != idx1 || c.bindices[1] != idx2) {
+
+                std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1]
+                          << " " << b1->coordinate[2] << " " << " " << b2->coordinate[0]
+                          << " " << b2->coordinate[1] << " " << b2->coordinate[2]
+                          << " idx " << b1->_dbIndex << " " << b2->_dbIndex << "ID "
+                                                                               ""
+                          << b1->getID() << " " << b2->getID() << endl;
+
+                std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
+                          << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
+                          << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] << endl;
+                std::cout << force[3 * idx1] << " " << force[3 * idx1 + 1] << " "
+                          << force[3 * idx1 + 2] << " " << force[3 * idx2] << " "
+                          << force[3 * idx2 + 1] << " " << force[3 * idx2 + 2] << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+
+    cout<<"-------DONE------"<<endl;
+    }*/
+
+	//get the culprit in output
+	_culpritForceField->whoIsCulprit();
+
+	exit(EXIT_FAILURE);
+}
+
 #ifdef CUDAACCL
 
-void ForceFieldManager::CUDAcopyForces(cudaStream_t stream, double *fprev, double *f) {
+void ForceFieldManager::CUDAcopyForces(cudaStream_t stream, floatingpoint *fprev, floatingpoint *f) {
 
 
 //    CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_forceAux));
-//    double* gpu_forceAux;
-//    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_forceAux, CGMethod::N * sizeof(double)));
+//    floatingpoint* gpu_forceAux;
+//    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_forceAux, CGMethod::N * sizeof(floatingpoint)));
 //    CUDAvars cvars=CUDAcommon::getCUDAvars();
 //    cvars.gpu_forceAux=gpu_forceAux;
 //    CUDAcommon::cudavars=cvars;
@@ -445,10 +528,10 @@ void ForceFieldManager::CUDAcopyForces(cudaStream_t stream, double *fprev, doubl
     CUDAcommon::handleerror(cudaGetLastError(), "copyForcesCUDA", "ForceFieldManager.cu");
 }
 
+#endif
+
 void ForceFieldManager::assignallforcemags() {
 
     for (auto &ff : _forceFields)
         ff->assignforcemags();
 }
-
-#endif

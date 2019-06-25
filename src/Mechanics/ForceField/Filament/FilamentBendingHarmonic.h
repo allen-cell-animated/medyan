@@ -23,25 +23,25 @@ class Bead;
 class FilamentBendingHarmonic {
     
 public:
-    double energy(double *coord, int *beadSet,
-                  double *kbend, double *eqt);
+    floatingpoint energy(floatingpoint *coord, int *beadSet,
+                  floatingpoint *kbend, floatingpoint *eqt);
     
-    double energy(double *coord, double * f, int *beadSet,
-                  double *kbend, double *eqt, double d);
+    floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
+                  floatingpoint *kbend, floatingpoint *eqt, floatingpoint d);
     
-    void forces(double *coord, double *f, int *beadSet,
-                double *kbend, double *eqt);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                floatingpoint *kbend, floatingpoint *eqt);
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint, cudaStream_t stream);
-    double* energy(double *coord, double *f, int *beadSet, double *kbend, double *eqt, int *params);
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kbend, floatingpoint *eqt, int *params);
 
-    double* energy(double *coord, double *f, int *beadSet, double *kbend, double *eqt, double *z, int *params);
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kbend, floatingpoint *eqt, floatingpoint *z, int *params);
 
-    void forces(double *coord, double *f, int *beadSet, double *kbend, double *eqt, int *params);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kbend, floatingpoint *eqt, int *params);
     void deallocate();
     static void checkforculprit();
-    double *gU_i;
-    double *gU_sum;
+    floatingpoint *gU_i;
+    floatingpoint *gU_sum;
     char *gFF, *ginteraction;
     vector<int> blocksnthreadse;
     vector<int> blocksnthreadsez;
@@ -50,11 +50,11 @@ public:
     cudaStream_t stream = NULL;
 #endif
 #ifdef CROSSCHECK
-    double energy(Bead*, Bead*, Bead*, double, double);
-    double energy(Bead*, Bead*, Bead*, double, double, double);
+    floatingpoint energy(Bead*, Bead*, Bead*, floatingpoint, floatingpoint);
+    floatingpoint energy(Bead*, Bead*, Bead*, floatingpoint, floatingpoint, floatingpoint);
     
-    void forces(Bead*, Bead*, Bead*, double, double);
-    void forcesAux(Bead*, Bead*, Bead*, double, double);
+    void forces(Bead*, Bead*, Bead*, floatingpoint, floatingpoint);
+    void forcesAux(Bead*, Bead*, Bead*, floatingpoint, floatingpoint);
 #endif
 };
 
