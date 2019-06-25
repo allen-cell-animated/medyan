@@ -77,6 +77,18 @@
 		AE28236D22C27CAD00C2F923 /* read_snapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = AE28236922C27CAC00C2F923 /* read_snapshot.h */; };
 		AE28236E22C27CAD00C2F923 /* read_snapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE28236A22C27CAC00C2F923 /* read_snapshot.cpp */; };
 		AE28236F22C27CAD00C2F923 /* pdb.h in Headers */ = {isa = PBXBuildFile; fileRef = AE28236B22C27CAC00C2F923 /* pdb.h */; };
+		AE28237C22C27D3500C2F923 /* SharedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE28237122C27D3500C2F923 /* SharedData.cpp */; };
+		AE28237D22C27D3500C2F923 /* Sphere.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE28237322C27D3500C2F923 /* Sphere.hpp */; };
+		AE28237E22C27D3500C2F923 /* PathExtrude.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE28237422C27D3500C2F923 /* PathExtrude.hpp */; };
+		AE28237F22C27D3500C2F923 /* VisualElement.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE28237522C27D3500C2F923 /* VisualElement.hpp */; };
+		AE28238022C27D3500C2F923 /* Window.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE28237622C27D3500C2F923 /* Window.hpp */; };
+		AE28238122C27D3500C2F923 /* SharedData.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE28237722C27D3500C2F923 /* SharedData.hpp */; };
+		AE28238222C27D3500C2F923 /* Shader.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE28237822C27D3500C2F923 /* Shader.hpp */; };
+		AE28238322C27D3500C2F923 /* Common.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE28237922C27D3500C2F923 /* Common.hpp */; };
+		AE28238422C27D3500C2F923 /* ShaderSrc.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE28237A22C27D3500C2F923 /* ShaderSrc.hpp */; };
+		AE28238522C27D3500C2F923 /* Camera.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE28237B22C27D3500C2F923 /* Camera.hpp */; };
+		AE28238822C27D4500C2F923 /* VisualHelper.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE28238622C27D4500C2F923 /* VisualHelper.hpp */; };
+		AE28238922C27D4500C2F923 /* VisualHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE28238722C27D4500C2F923 /* VisualHelper.cpp */; };
 		AEC5486C225D3799007CB7E9 /* CController.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC546CF225D3798007CB7E9 /* CController.h */; };
 		AEC5486D225D3799007CB7E9 /* Composite.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC546D1225D3798007CB7E9 /* Composite.h */; };
 		AEC5486E225D3799007CB7E9 /* SysParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEC546D2225D3798007CB7E9 /* SysParams.cpp */; };
@@ -1042,6 +1054,18 @@
 		AE28236922C27CAC00C2F923 /* read_snapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = read_snapshot.h; sourceTree = "<group>"; };
 		AE28236A22C27CAC00C2F923 /* read_snapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = read_snapshot.cpp; sourceTree = "<group>"; };
 		AE28236B22C27CAC00C2F923 /* pdb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pdb.h; sourceTree = "<group>"; };
+		AE28237122C27D3500C2F923 /* SharedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedData.cpp; sourceTree = "<group>"; };
+		AE28237322C27D3500C2F923 /* Sphere.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Sphere.hpp; sourceTree = "<group>"; };
+		AE28237422C27D3500C2F923 /* PathExtrude.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PathExtrude.hpp; sourceTree = "<group>"; };
+		AE28237522C27D3500C2F923 /* VisualElement.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VisualElement.hpp; sourceTree = "<group>"; };
+		AE28237622C27D3500C2F923 /* Window.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Window.hpp; sourceTree = "<group>"; };
+		AE28237722C27D3500C2F923 /* SharedData.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SharedData.hpp; sourceTree = "<group>"; };
+		AE28237822C27D3500C2F923 /* Shader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Shader.hpp; sourceTree = "<group>"; };
+		AE28237922C27D3500C2F923 /* Common.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Common.hpp; sourceTree = "<group>"; };
+		AE28237A22C27D3500C2F923 /* ShaderSrc.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ShaderSrc.hpp; sourceTree = "<group>"; };
+		AE28237B22C27D3500C2F923 /* Camera.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Camera.hpp; sourceTree = "<group>"; };
+		AE28238622C27D4500C2F923 /* VisualHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VisualHelper.hpp; sourceTree = "<group>"; };
+		AE28238722C27D4500C2F923 /* VisualHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisualHelper.cpp; sourceTree = "<group>"; };
 		AEC546CF225D3798007CB7E9 /* CController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CController.h; sourceTree = "<group>"; };
 		AEC546D1225D3798007CB7E9 /* Composite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Composite.h; sourceTree = "<group>"; };
 		AEC546D2225D3798007CB7E9 /* SysParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SysParams.cpp; sourceTree = "<group>"; };
@@ -2861,9 +2885,37 @@
 			path = io;
 			sourceTree = "<group>";
 		};
+		AE28237022C27D3500C2F923 /* Visual */ = {
+			isa = PBXGroup;
+			children = (
+				AE28237122C27D3500C2F923 /* SharedData.cpp */,
+				AE28237222C27D3500C2F923 /* Render */,
+				AE28237522C27D3500C2F923 /* VisualElement.hpp */,
+				AE28237622C27D3500C2F923 /* Window.hpp */,
+				AE28237722C27D3500C2F923 /* SharedData.hpp */,
+				AE28237822C27D3500C2F923 /* Shader.hpp */,
+				AE28237922C27D3500C2F923 /* Common.hpp */,
+				AE28237A22C27D3500C2F923 /* ShaderSrc.hpp */,
+				AE28237B22C27D3500C2F923 /* Camera.hpp */,
+			);
+			path = Visual;
+			sourceTree = "<group>";
+		};
+		AE28237222C27D3500C2F923 /* Render */ = {
+			isa = PBXGroup;
+			children = (
+				AE28237322C27D3500C2F923 /* Sphere.hpp */,
+				AE28237422C27D3500C2F923 /* PathExtrude.hpp */,
+			);
+			path = Render;
+			sourceTree = "<group>";
+		};
 		AEC546CE225D3798007CB7E9 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				AE28238722C27D4500C2F923 /* VisualHelper.cpp */,
+				AE28238622C27D4500C2F923 /* VisualHelper.hpp */,
+				AE28237022C27D3500C2F923 /* Visual */,
 				AE28236622C27CAC00C2F923 /* analysis */,
 				AE28236322C27BB800C2F923 /* OutputStruct.cpp */,
 				AE28236222C27BB800C2F923 /* OutputStruct.h */,
@@ -3331,6 +3383,7 @@
 				AEC548C3225D3799007CB7E9 /* BoundaryCylinderAttachment.h in Headers */,
 				AE281F5622C278BA00C2F923 /* SurfaceMeshGenerator.hpp in Headers */,
 				AEC548C1225D3799007CB7E9 /* BoundaryInteractions.h in Headers */,
+				AE28238422C27D3500C2F923 /* ShaderSrc.hpp in Headers */,
 				AEC548B7225D3799007CB7E9 /* ForceFieldManager.h in Headers */,
 				AEC548C2225D3799007CB7E9 /* BoundaryFF.h in Headers */,
 				AE281F5922C278BA00C2F923 /* MTriangle.h in Headers */,
@@ -3343,6 +3396,7 @@
 				AEC54903225D3799007CB7E9 /* FilamentBendingCosine.h in Headers */,
 				AEC54940225D3799007CB7E9 /* RateChanger.h in Headers */,
 				AEC54988225D3799007CB7E9 /* MController.h in Headers */,
+				AE28237E22C27D3500C2F923 /* PathExtrude.hpp in Headers */,
 				AE281FC222C278DD00C2F923 /* MembraneBending.hpp in Headers */,
 				AEC5490D225D3799007CB7E9 /* ForceField.h in Headers */,
 				AEC548F6225D3799007CB7E9 /* BranchingPosition.h in Headers */,
@@ -3356,6 +3410,7 @@
 				AEC54877225D3799007CB7E9 /* log.h in Headers */,
 				AE281F5D22C278BA00C2F923 /* AdaptiveMeshAttribute.hpp in Headers */,
 				AE281FB322C278DD00C2F923 /* VolumeConservationFF.h in Headers */,
+				AE28238222C27D3500C2F923 /* Shader.hpp in Headers */,
 				AEC54948225D3799007CB7E9 /* Reactable.h in Headers */,
 				AEC548D4225D3799007CB7E9 /* MTOCAttachmentHarmonic.h in Headers */,
 				AE28235C22C27A1900C2F923 /* TriangleCylinderVolumeInteractions.h in Headers */,
@@ -3379,6 +3434,7 @@
 				AEC54897225D3799007CB7E9 /* HybridBindingSearchManager.h in Headers */,
 				AEC54925225D3799007CB7E9 /* CGPolakRibiereMethod.h in Headers */,
 				AEC5493E225D3799007CB7E9 /* Component.h in Headers */,
+				AE28238322C27D3500C2F923 /* Common.hpp in Headers */,
 				AEC548EA225D3799007CB7E9 /* BranchingDihedralCosineCUDA.h in Headers */,
 				AEC548CC225D3799007CB7E9 /* BoundaryCylinderRepulsionExpCUDA.h in Headers */,
 				AE28235F22C27A1900C2F923 /* CylinderVolumeFF.h in Headers */,
@@ -3404,6 +3460,7 @@
 				AEC54953225D3799007CB7E9 /* BoundarySurfaceImpl.h in Headers */,
 				AEC54974225D3799007CB7E9 /* Database.h in Headers */,
 				AEC548CD225D3799007CB7E9 /* BoundaryCylinderRepulsion.h in Headers */,
+				AE28238022C27D3500C2F923 /* Window.hpp in Headers */,
 				AEC5496B225D3799007CB7E9 /* MTOC.h in Headers */,
 				AEC548CF225D3799007CB7E9 /* ForceFieldManagerCUDA.h in Headers */,
 				AEC548B5225D3799007CB7E9 /* LinkerStretching.h in Headers */,
@@ -3425,9 +3482,11 @@
 				AEC5488C225D3799007CB7E9 /* ChemSim.h in Headers */,
 				AE28235222C27A1900C2F923 /* CylinderExclVolume.h in Headers */,
 				AE28236122C27A1900C2F923 /* TriangleCylinderBeadExclVolRepulsion.h in Headers */,
+				AE28237D22C27D3500C2F923 /* Sphere.hpp in Headers */,
 				AEC54986225D3799007CB7E9 /* Bin.h in Headers */,
 				AE28235422C27A1900C2F923 /* CylinderExclVolRepulsion.h in Headers */,
 				AEC54924225D3799007CB7E9 /* CGMethodCUDA.h in Headers */,
+				AE28238122C27D3500C2F923 /* SharedData.hpp in Headers */,
 				AEC54894225D3799007CB7E9 /* ReactionTemplate.h in Headers */,
 				AEC5493A225D3799007CB7E9 /* ControllerCUDA.h in Headers */,
 				AEC54898225D3799007CB7E9 /* ChemSimImpl.h in Headers */,
@@ -3469,6 +3528,7 @@
 				AEC548F9225D3799007CB7E9 /* BranchingBending.h in Headers */,
 				AEC548F8225D3799007CB7E9 /* BranchingBendingCosineCUDA.h in Headers */,
 				AEC54980225D3799007CB7E9 /* NeighborListImpl.h in Headers */,
+				AE28238822C27D4500C2F923 /* VisualHelper.hpp in Headers */,
 				AEC5494E225D3799007CB7E9 /* HybridNeighborList.h in Headers */,
 				AEC54895225D3799007CB7E9 /* ChemManager.h in Headers */,
 				AEC54933225D3799007CB7E9 /* Controller.h in Headers */,
@@ -3483,10 +3543,12 @@
 				AEC54976225D3799007CB7E9 /* Filament.h in Headers */,
 				AEC548D2225D3799007CB7E9 /* BubbleBubbleRepulsion.h in Headers */,
 				AEC54941225D3799007CB7E9 /* utility.h in Headers */,
+				AE28237F22C27D3500C2F923 /* VisualElement.hpp in Headers */,
 				AEC5490B225D3799007CB7E9 /* FilamentBendingHarmonic.h in Headers */,
 				AEC5494D225D3799007CB7E9 /* BoundarySurface.h in Headers */,
 				AE281F6922C278BA00C2F923 /* GeometricMeshAttribute.hpp in Headers */,
 				AE281F4A22C278BA00C2F923 /* SurfaceMeshGeneratorPreset.hpp in Headers */,
+				AE28238522C27D3500C2F923 /* Camera.hpp in Headers */,
 				AEC54922225D3799007CB7E9 /* CGMethod.h in Headers */,
 				AE281F6522C278BA00C2F923 /* SurfaceMesh.hpp in Headers */,
 				AEC5492A225D3799007CB7E9 /* Minimizer.h in Headers */,
@@ -3646,6 +3708,7 @@
 				AEC548EB225D3799007CB7E9 /* BranchingDihedralCosine.cpp in Sources */,
 				AEC54907225D3799007CB7E9 /* FilamentInteractions.cpp in Sources */,
 				AEC548C8225D3799007CB7E9 /* BoundaryBubbleRepulsionExp.cpp in Sources */,
+				AE28237C22C27D3500C2F923 /* SharedData.cpp in Sources */,
 				AEC548E6225D3799007CB7E9 /* BranchingStretching.cpp in Sources */,
 				AEC54872225D3799007CB7E9 /* common.cpp in Sources */,
 				AE281F5E22C278BA00C2F923 /* MVoronoiCell.cpp in Sources */,
@@ -3700,6 +3763,7 @@
 				AEC54957225D3799007CB7E9 /* HybridNeighborListImpl.cpp in Sources */,
 				AEC54904225D3799007CB7E9 /* FilamentBendingCosine.cpp in Sources */,
 				AEC54901225D3799007CB7E9 /* FilamentStretchingHarmonic.cpp in Sources */,
+				AE28238922C27D4500C2F923 /* VisualHelper.cpp in Sources */,
 				AE28235622C27A1900C2F923 /* TriangleCylinderVolumeFF.cpp in Sources */,
 				AEC548B9225D3799007CB7E9 /* BoundaryCylinderAttachmentHarmonic.cpp in Sources */,
 				AEC54952225D3799007CB7E9 /* CBranchingPoint.cpp in Sources */,
