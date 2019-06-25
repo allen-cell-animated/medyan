@@ -17,6 +17,8 @@
 #include <limits>
 #include <random>
 
+#include "common.h"
+
 /// A random number generator class.
 class Rand {
     

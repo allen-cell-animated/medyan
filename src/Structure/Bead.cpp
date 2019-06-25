@@ -36,8 +36,8 @@ Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
     parent->addChild(unique_ptr<Component>(this));
           
     if(medyan::global().mode == medyan::GlobalVar::RunMode::Simulation) {
-        loadForcesP = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
-        loadForcesM = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
+        loadForcesP = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
+        loadForcesM = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
 
         //Find compartment
         try {_compartment = GController::getCompartment(v);}

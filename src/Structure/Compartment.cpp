@@ -1600,8 +1600,8 @@ void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
             const size_t numTriangle = _triangles.size();
             if(numTriangle) {
                 double sumArea = 0.0;
-                Vec3 sumNormal {};
-                Vec3 sumPos {};
+                Vec< 3, floatingpoint > sumNormal {};
+                Vec< 3, floatingpoint > sumPos {};
                 for(Triangle* t: _triangles) {
                     const auto& mesh = t->getParent()->getMesh();
                     const size_t ti = t->getTopoIndex();
@@ -1614,12 +1614,12 @@ void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
                 normalize(sumNormal);
                 sumPos /= sumArea;
 
-                PlaneCuboidSlicingResult res = PlaneCuboidSlicer() (
+                auto res = PlaneCuboidSlicer() (
                     sumPos, sumNormal,
                     {
-                        _coords[0] - SysParams::Geometry().compartmentSizeX * 0.5,
-                        _coords[1] - SysParams::Geometry().compartmentSizeY * 0.5,
-                        _coords[2] - SysParams::Geometry().compartmentSizeZ * 0.5
+                        _coords[0] - SysParams::Geometry().compartmentSizeX * (floatingpoint)0.5,
+                        _coords[1] - SysParams::Geometry().compartmentSizeY * (floatingpoint)0.5,
+                        _coords[2] - SysParams::Geometry().compartmentSizeZ * (floatingpoint)0.5
                     },
                     {{
                         SysParams::Geometry().compartmentSizeX,

@@ -6,26 +6,27 @@
 #include "MathFunctions.h"
 
 // The result produced by plane intersecting a cube
+template< typename Float = double >
 struct PlaneCuboidSlicingResult {
-    double volumeIn;
+    Float volumeIn;
 
-    std::array<double, 6> areaIn;
+    std::array<Float, 6> areaIn;
     // in the order of
     // x = x_min, x = x_max,
     // y = y_min, y = y_max,
     // z = z_min, z = z_max
 
-    PlaneCuboidSlicingResult& operator*=(double a) {
+    PlaneCuboidSlicingResult& operator*=(Float a) {
         // Expand the volume and area
-        double a2 = a * a;
+        Float a2 = a * a;
         volumeIn *= a2 * a;
-        for(double& eachAreaIn: areaIn) eachAreaIn *= a2;
+        for(Float& eachAreaIn: areaIn) eachAreaIn *= a2;
         return *this;
     }
 
-    PlaneCuboidSlicingResult& operator*=(const std::array<double, 3>& a) {
+    PlaneCuboidSlicingResult& operator*=(const std::array<Float, 3>& a) {
         // Expand the volume and area with different aspect ratio
-        const std::array<double, 3> areaFac {{ a[1] * a[2], a[2] * a[0], a[0] * a[1] }};
+        const std::array<Float, 3> areaFac {{ a[1] * a[2], a[2] * a[0], a[0] * a[1] }};
         for(size_t idx = 0; idx < 3; ++idx) {
             areaIn[2*idx    ] *= areaFac[idx];
             areaIn[2*idx + 1] *= areaFac[idx];
@@ -42,20 +43,21 @@ struct PlaneCuboidSlicingResult {
         }
         return *this;
     }
-    PlaneCuboidSlicingResult& reverse(double a) { // a is cube size
-        double a2 = a * a;
+    PlaneCuboidSlicingResult& reverse(Float a) { // a is cube size
+        Float a2 = a * a;
         volumeIn = a2 * a - volumeIn;
-        for(double& eachAreaIn: areaIn) eachAreaIn = a2 - eachAreaIn;
+        for(Float& eachAreaIn: areaIn) eachAreaIn = a2 - eachAreaIn;
         return *this;
     }
 
 };
 
-inline PlaneCuboidSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 1]
-    const mathfunc::Vec3& point,  // A point on the plane
-    const mathfunc::Vec3& normal  // Unit normal of the plane pointing outwards
+template< typename Float = double >
+inline auto planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 1]
+    const mathfunc::Vec< 3, Float >& point,  // A point on the plane
+    const mathfunc::Vec< 3, Float >& normal  // Unit normal of the plane pointing outwards
 ) {
-    PlaneCuboidSlicingResult res{}; // zero-initiate
+    PlaneCuboidSlicingResult< Float > res{}; // zero-initiate
 
     // First consider the case where normal has only non-neg components
     auto flippedPoint = point;
@@ -69,8 +71,8 @@ inline PlaneCuboidSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0
         }
     }
 
-    double signedDist = mathfunc::dot(flippedPoint, flippedNormal);
-    double signedDistMax = mathfunc::dot(mathfunc::Vec3{ 1,1,1 }, flippedNormal);
+    Float signedDist = mathfunc::dot(flippedPoint, flippedNormal);
+    Float signedDistMax = mathfunc::dot(mathfunc::Vec< 3, Float >{ 1,1,1 }, flippedNormal);
 
     bool reverse = false;
 
@@ -95,9 +97,9 @@ inline PlaneCuboidSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0
         // Now the signedDist should be within [0, 0.5 signedDistMax]
 
         // Find the intersections on the axis. The values should be within [0, +inf]
-        double x = signedDist / flippedNormal[0];
-        double y = signedDist / flippedNormal[1];
-        double z = signedDist / flippedNormal[2];
+        Float x = signedDist / flippedNormal[0];
+        Float y = signedDist / flippedNormal[1];
+        Float z = signedDist / flippedNormal[2];
 
         size_t numGT1 = 0;
         if(x > 1) ++numGT1;
@@ -116,10 +118,10 @@ inline PlaneCuboidSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0
 
         case 1:
             if(x > 1) {
-                double r = 1 - 1 / x;
-                double y1 = y * r;
-                double z1 = z * r;
-                res.volumeIn = (x == std::numeric_limits<double>::infinity()?
+                Float r = 1 - 1 / x;
+                Float y1 = y * r;
+                Float z1 = z * r;
+                res.volumeIn = (x == std::numeric_limits<Float>::infinity()?
                     y * z / 2:
                     (x * y * z - (x - 1) * y1 * z1) / 6
                 );
@@ -127,10 +129,10 @@ inline PlaneCuboidSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0
                 res.areaIn[2] = (z + z1) / 2;
                 res.areaIn[4] = (y + y1) / 2;
             } else if(y > 1) {
-                double r = 1 - 1 / y;
-                double z1 = z * r;
-                double x1 = x * r;
-                res.volumeIn = (y == std::numeric_limits<double>::infinity()?
+                Float r = 1 - 1 / y;
+                Float z1 = z * r;
+                Float x1 = x * r;
+                res.volumeIn = (y == std::numeric_limits<Float>::infinity()?
                     z * x / 2:
                     (x * y * z - (y - 1) * z1 * x1) / 6
                 );
@@ -138,10 +140,10 @@ inline PlaneCuboidSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0
                 res.areaIn[4] = (x + x1) / 2;
                 res.areaIn[0] = (z + z1) / 2;
             } else if(z > 1) {
-                double r = 1 - 1 / z;
-                double x1 = x * r;
-                double y1 = y * r;
-                res.volumeIn = (z == std::numeric_limits<double>::infinity()?
+                Float r = 1 - 1 / z;
+                Float x1 = x * r;
+                Float y1 = y * r;
+                res.volumeIn = (z == std::numeric_limits<Float>::infinity()?
                     x * y / 2:
                     (x * y * z - (z - 1) * x1 * y1) / 6
                 );
@@ -153,15 +155,15 @@ inline PlaneCuboidSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0
 
         case 2:
             if(x <= 1) {
-                double r1 = 1 - 1 / y;
-                double r2 = 1 - 1 / z;
-                double r3 = r1 + r2 - 1;
+                Float r1 = 1 - 1 / y;
+                Float r2 = 1 - 1 / z;
+                Float r3 = r1 + r2 - 1;
 
-                double y1 = y * r2;
-                double z1 = z * r1;
+                Float y1 = y * r2;
+                Float z1 = z * r1;
 
-                double x1 = x * r1;
-                double x2 = x * r2;
+                Float x1 = x * r1;
+                Float x2 = x * r2;
                 if(r3 <= 0) {
                     // Neither y nor z can be inf
                     res.volumeIn = (x * y * z - y1 * x2 * (z - 1) - z1 * x1 * (y - 1)) / 6;
@@ -169,22 +171,22 @@ inline PlaneCuboidSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0
                     res.areaIn[2] = (x + x2) / 2;   res.areaIn[3] = z1 * x1 / 2;
                     res.areaIn[4] = (x + x1) / 2;   res.areaIn[5] = y1 * x2 / 2;
                 } else {
-                    double x3 = x * r3;
+                    Float x3 = x * r3;
                     res.volumeIn = (x + x3) / 2;
                     res.areaIn[0] = 1;
                     res.areaIn[2] = (x + x2) / 2;   res.areaIn[3] = (x1 + x3) / 2;
                     res.areaIn[4] = (x + x1) / 2;   res.areaIn[5] = (x2 + x3) / 2;
                 }
             } else if(y <= 1) {
-                double r1 = 1 - 1 / z;
-                double r2 = 1 - 1 / x;
-                double r3 = r1 + r2 - 1;
+                Float r1 = 1 - 1 / z;
+                Float r2 = 1 - 1 / x;
+                Float r3 = r1 + r2 - 1;
 
-                double z1 = z * r2;
-                double x1 = x * r1;
+                Float z1 = z * r2;
+                Float x1 = x * r1;
 
-                double y1 = y * r1;
-                double y2 = y * r2;
+                Float y1 = y * r1;
+                Float y2 = y * r2;
                 if(r3 <= 0) {
                     // Neither z nor x can be inf
                     res.volumeIn = (x * y * z - z1 * y2 * (x - 1) - x1 * y1 * (z - 1)) / 6;
@@ -192,22 +194,22 @@ inline PlaneCuboidSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0
                     res.areaIn[4] = (y + y2) / 2;   res.areaIn[5] = x1 * y1 / 2;
                     res.areaIn[0] = (y + y1) / 2;   res.areaIn[1] = z1 * y2 / 2;
                 } else {
-                    double y3 = y * r3;
+                    Float y3 = y * r3;
                     res.volumeIn = (y + y3) / 2;
                     res.areaIn[2] = 1;
                     res.areaIn[4] = (y + y2) / 2;   res.areaIn[5] = (y1 + y3) / 2;
                     res.areaIn[0] = (y + y1) / 2;   res.areaIn[1] = (y2 + y3) / 2;
                 }
             } else if(z <= 1) {
-                double r1 = 1 - 1 / x;
-                double r2 = 1 - 1 / y;
-                double r3 = r1 + r2 - 1;
+                Float r1 = 1 - 1 / x;
+                Float r2 = 1 - 1 / y;
+                Float r3 = r1 + r2 - 1;
 
-                double x1 = x * r2;
-                double y1 = y * r1;
+                Float x1 = x * r2;
+                Float y1 = y * r1;
 
-                double z1 = z * r1;
-                double z2 = z * r2;
+                Float z1 = z * r1;
+                Float z2 = z * r2;
                 if(r3 <= 0) {
                     // Neither x nor y can be inf
                     res.volumeIn = (x * y * z - x1 * z2 * (y - 1) - y1 * z1 * (x - 1)) / 6;
@@ -215,7 +217,7 @@ inline PlaneCuboidSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0
                     res.areaIn[0] = (z + z2) / 2;   res.areaIn[1] = y1 * z1 / 2;
                     res.areaIn[2] = (z + z1) / 2;   res.areaIn[3] = x1 * z2 / 2;
                 } else {
-                    double z3 = z * r3;
+                    Float z3 = z * r3;
                     res.volumeIn = (z + z3) / 2;
                     res.areaIn[4] = 1;
                     res.areaIn[0] = (z + z2) / 2;   res.areaIn[1] = (z1 + z3) / 2;
@@ -227,13 +229,13 @@ inline PlaneCuboidSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0
         case 3:
             {
                 // no x, y or z can be inf
-                double r1 = 1 - 1 / x;
-                double r2 = 1 - 1 / y;
-                double r3 = 1 - 1 / z;
+                Float r1 = 1 - 1 / x;
+                Float r2 = 1 - 1 / y;
+                Float r3 = 1 - 1 / z;
 
-                double x1 = x * r2, x2 = x * r3;
-                double y1 = y * r3, y2 = y * r1;
-                double z1 = z * r1, z2 = z * r2;
+                Float x1 = x * r2, x2 = x * r3;
+                Float y1 = y * r3, y2 = y * r1;
+                Float z1 = z * r1, z2 = z * r2;
 
                 res.volumeIn = (x * y * z - y2 * z1 * (x - 1) - z2 * x1 * (y - 1) - x2 * y1 * (x - 1)) / 6;
                 res.areaIn[0] = (y * z - y1 * (z - 1) - z2 * (y - 1)) / 2;  res.areaIn[1] = y2 * z1 / 2;
@@ -252,13 +254,14 @@ inline PlaneCuboidSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0
 }
 
 struct PlaneCubeSlicer {
-    PlaneCuboidSlicingResult operator() (
-        const mathfunc::Vec3& point,  // A point on the plane
-        const mathfunc::Vec3& normal, // Unit normal of the plane pointing outwards
-        const mathfunc::Vec3& r0,     // (x_min, y_min, z_min) of the cube
-        double                a       // Side length of the cube
+    template< typename Float = double >
+    auto operator() (
+        const mathfunc::Vec< 3, Float >& point,  // A point on the plane
+        const mathfunc::Vec< 3, Float >& normal, // Unit normal of the plane pointing outwards
+        const mathfunc::Vec< 3, Float >& r0,     // (x_min, y_min, z_min) of the cube
+        Float                            a       // Side length of the cube
     ) {
-        PlaneCuboidSlicingResult res;
+        PlaneCuboidSlicingResult< Float > res;
         res = planeUnitCubeSlice(
             (point - r0) * (1.0 / a),
             normal
@@ -269,19 +272,20 @@ struct PlaneCubeSlicer {
 };
 
 struct PlaneCuboidSlicer {
-    PlaneCuboidSlicingResult operator() (
-        const mathfunc::Vec3& point,   // A point on the plane
-        const mathfunc::Vec3& normal,  // Unit normal of the plane pointing outwards
-        const mathfunc::Vec3& r0,      // (x_min, y_min, z_min) of the cuboid
-        const std::array<double, 3>& a // Edge length of the cuboid
+    template< typename Float = double >
+    auto operator() (
+        const mathfunc::Vec< 3, Float >& point,   // A point on the plane
+        const mathfunc::Vec< 3, Float >& normal,  // Unit normal of the plane pointing outwards
+        const mathfunc::Vec< 3, Float >& r0,      // (x_min, y_min, z_min) of the cuboid
+        const std::array<Float, 3>&      a        // Edge length of the cuboid
     ) {
-        PlaneCuboidSlicingResult res;
-        const mathfunc::Vec3 pointInUnitCube {
+        PlaneCuboidSlicingResult< Float > res;
+        const mathfunc::Vec< 3, Float > pointInUnitCube {
             (point[0] - r0[0]) / a[0],
             (point[1] - r0[1]) / a[1],
             (point[2] - r0[2]) / a[2]
         };
-        const auto normalInUnitCube = mathfunc::normalizedVector(mathfunc::Vec3 {
+        const auto normalInUnitCube = mathfunc::normalizedVector(mathfunc::Vec< 3, Float > {
             normal[0] * a[0],
             normal[1] * a[1],
             normal[2] * a[2]

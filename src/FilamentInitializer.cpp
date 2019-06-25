@@ -114,7 +114,7 @@ FilamentData RandomFilamentDist::createFilaments(const MembraneRegion& mr,
                 mr.getBoundary()->distance(secondPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0
             );
             
-            if(mr.contains(vector2Vec<3, double>(firstPoint)) && mr.contains(vector2Vec<3, double>(secondPoint)) && !inBubble && !outsideCutoff) {
+            if(mr.contains(vector2Vec<3, floatingpoint>(firstPoint)) && mr.contains(vector2Vec<3, floatingpoint>(secondPoint)) && !inBubble && !outsideCutoff) {
                 filaments.emplace_back(filamentType, firstPoint, secondPoint);
                 filamentCounter++;
             }
@@ -200,7 +200,7 @@ FilamentData ConnectedFilamentDist::createFilaments(const MembraneRegion& mr,
         
         //choose if within boundary
         if(
-            mr.contains(vector2Vec<3, double>(firstPoint)) && mr.contains(vector2Vec<3, double>(secondPoint)) && (
+            mr.contains(vector2Vec<3, floatingpoint>(firstPoint)) && mr.contains(vector2Vec<3, floatingpoint>(secondPoint)) && (
                 !mr.getBoundary() || (
                     mr.getBoundary()->distance(firstPoint) > safeDist &&
                     mr.getBoundary()->distance(secondPoint) > safeDist

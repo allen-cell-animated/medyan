@@ -92,7 +92,7 @@ double TriangleCylinderBeadExclVolRepulsion::energy(
 }
 
 void TriangleCylinderBeadExclVolRepulsion::forces(
-    double* f0, double* f1, double* f2, double* fb,
+    floatingpoint* f0, floatingpoint* f1, floatingpoint* f2, floatingpoint* fb,
     Vec3 c0, Vec3 c1, Vec3 c2, Vec3 cb,
     double area, const Vec3& dArea0, const Vec3& dArea1, const Vec3& dArea2,
     double kExVol
@@ -236,10 +236,10 @@ void TriangleCylinderBeadExclVolRepulsion::forces(
 }
 
 Vec3 TriangleCylinderBeadExclVolRepulsion::loadForces(
-    const Vec3& c0, const Vec3& c1, const Vec3& c2, const Vec3& coord,
+    const Vec3& c0, const Vec3& c1, const Vec3& c2, const Vec< 3, floatingpoint >& coord,
     double area, double kExVol
 ) {
-    Vec3 cb = coord;
+    Vec3 cb (coord);
 
     //check if in same plane
     auto cp = cross(c1 - c0, c2 - c0);

@@ -8,7 +8,7 @@ double VolumeConservationMembraneHarmonic::energy(double volume, double kBulk, d
 }
 
 void VolumeConservationMembraneHarmonic::forces(
-    double* force,
+    floatingpoint* force,
     double volume, const mathfunc::Vec3& dVolume,
     double kBulk, double eqVolume
 ) {

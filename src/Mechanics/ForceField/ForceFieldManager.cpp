@@ -197,28 +197,7 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
 //        cout<<ff->getName()<<" "<<tempEnergy<<"pN.nm"<<" ";
-        if(CUDAcommon::tmin.individualenergies.size() == _forceFields.size())
-            CUDAcommon::tmin.individualenergies[count] += elapsed_energy.count();
-        else
-            CUDAcommon::tmin.individualenergies.push_back(elapsed_energy.count());
 
-		    if(!stretched){
-			    if(CUDAcommon::tmin.individualenergieszero.size() == _forceFields.size())
-				    CUDAcommon::tmin.individualenergieszero[count] += elapsed_energy.count();
-			    else
-				    CUDAcommon::tmin.individualenergieszero.push_back(elapsed_energy.count());
-		    }
-		    else{
-			    if(CUDAcommon::tmin.individualenergiesnonzero.size() == _forceFields.size())
-				    CUDAcommon::tmin.individualenergiesnonzero[count] += elapsed_energy
-				    		.count();
-			    else
-				    CUDAcommon::tmin.individualenergiesnonzero.push_back(elapsed_energy
-				    .count());
-		    }
-
-        count++;
-//        cout<<ff->getName()<<" "<<tempEnergy<<endl;
 #ifdef ALLSYNC
         cudaDeviceSynchronize();
 #endif

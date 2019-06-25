@@ -76,7 +76,7 @@ void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
             if(Membrane::getMembranes().size()) {
                 if(cc->getCompartment()->isActivated()) {
                     if(cc->getCompartment()->getVolumeFrac() < 1.0) // Not fully activated
-                        if(!Membrane::getMembranes()[0]->contains(vector2Vec<3, double>(coord)))
+                        if(!Membrane::getMembranes()[0]->contains(vector2Vec<3, floatingpoint>(coord)))
                             inZone = false;
                 }
                 else inZone = false;
@@ -194,7 +194,7 @@ void BranchingManager::updateAllPossibleBindings() {
                     if(Membrane::getMembranes().size()) {
                         if(cc->getCompartment()->isActivated()) {
                             if(cc->getCompartment()->getVolumeFrac() < 1.0) // Not fully activated
-                                if(!Membrane::getMembranes()[0]->contains(vector2Vec<3, double>(coord)))
+                                if(!Membrane::getMembranes()[0]->contains(vector2Vec<3, floatingpoint>(coord)))
                                     inZone = false;
                         }
                         else inZone = false;

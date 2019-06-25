@@ -8,7 +8,7 @@
 
 // Using the Helfrich Hamiltonian of mean curvature in Voronoi cells
 template<>
-double MembraneBending<MembraneBendingHelfrich>::computeEnergy(const double* coord, bool stretched) {
+floatingpoint MembraneBending<MembraneBendingHelfrich>::computeEnergy(const floatingpoint* coord, bool stretched) {
     double U = 0;
     double U_i;
 
@@ -40,7 +40,7 @@ double MembraneBending<MembraneBendingHelfrich>::computeEnergy(const double* coo
 }
 
 template<>
-void MembraneBending<MembraneBendingHelfrich>::computeForces(const double* coord, double* force) {
+void MembraneBending<MembraneBendingHelfrich>::computeForces(const floatingpoint* coord, floatingpoint* force) {
     
     for (auto m: Membrane::getMembranes()) {
     

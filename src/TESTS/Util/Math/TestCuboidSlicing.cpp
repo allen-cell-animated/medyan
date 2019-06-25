@@ -7,7 +7,7 @@ using namespace mathfunc;
 
 namespace {
 
-bool planeCuboidSlicingResultEqual(const PlaneCuboidSlicingResult& r1, const PlaneCuboidSlicingResult& r2, double eps) {
+bool planeCuboidSlicingResultEqual(const PlaneCuboidSlicingResult<double>& r1, const PlaneCuboidSlicingResult<double>& r2, double eps) {
     if(abs(r1.volumeIn - r2.volumeIn) > eps) return false;
     size_t s = r1.areaIn.size();
     for(size_t i = 0; i < r1.areaIn.size(); ++i) {
@@ -16,7 +16,7 @@ bool planeCuboidSlicingResultEqual(const PlaneCuboidSlicingResult& r1, const Pla
     return true;
 }
 
-PlaneCuboidSlicingResult planeUnitCubeSliceByIntersection(double x, double y, double z) {
+PlaneCuboidSlicingResult<double> planeUnitCubeSliceByIntersection(double x, double y, double z) {
     auto normal = normalizedVector(Vec3{1.0/x, 1.0/y, 1.0/z});
     auto point = Vec3{x, 0, 0};
     return planeUnitCubeSlice(point, normal);

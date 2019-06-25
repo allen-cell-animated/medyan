@@ -43,8 +43,8 @@ public:
     virtual string getName() { return "Volume conservation"; }
     virtual void whoIsCulprit();
 
-    virtual double computeEnergy(double* coord, bool stretched) override;
-    virtual void computeForces(double* coord, double* f) override;
+    virtual floatingpoint computeEnergy(floatingpoint* coord, bool stretched) override;
+    virtual void computeForces(floatingpoint* coord, floatingpoint* f) override;
     
     virtual void computeLoadForces() {}
     

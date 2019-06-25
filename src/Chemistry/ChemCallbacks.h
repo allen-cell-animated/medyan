@@ -540,7 +540,7 @@ struct BranchingCallback {
             
             //get original direction of cylinder
             auto p= midPointCoordinate(x1, x2, pos);
-            vector<double> n = twoPointDirection(x1, x2);
+            vector<floatingpoint> n = twoPointDirection(x1, x2);
             
             //get branch projection
 #ifdef MECHANICS
@@ -1102,8 +1102,8 @@ struct FilamentCreationCallback {
                     _ps->getBoundary()->within(npp) &&
                     c->isActivated() &&
                     (c->getVolumeFrac() >= 1.0 ||
-                        Membrane::getMembranes()[0]->contains(vector2Vec<3, double>(position)) &&
-                        Membrane::getMembranes()[0]->contains(vector2Vec<3, double>(npp)))
+                        Membrane::getMembranes()[0]->contains(vector2Vec<3, floatingpoint>(position)) &&
+                        Membrane::getMembranes()[0]->contains(vector2Vec<3, floatingpoint>(npp)))
                 ) break;
             }
             

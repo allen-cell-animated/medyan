@@ -244,9 +244,9 @@ struct MembraneMeshQualityCheck {
             const size_t v0 = mesh.target(hei);
             const size_t v1 = mesh.target(mesh.next(hei));
             const size_t v2 = mesh.target(mesh.prev(hei));
-            const Vec3 c0 = mesh.getVertexAttribute(v0).getCoordinate();
-            const Vec3 c1 = mesh.getVertexAttribute(v1).getCoordinate();
-            const Vec3 c2 = mesh.getVertexAttribute(v2).getCoordinate();
+            const Vec3 c0 (mesh.getVertexAttribute(v0).getCoordinate());
+            const Vec3 c1 (mesh.getVertexAttribute(v1).getCoordinate());
+            const Vec3 c2 (mesh.getVertexAttribute(v2).getCoordinate());
 
             const auto q = TriangleQualityType{}(c0, c1, c2);
 
@@ -310,9 +310,9 @@ struct MembraneMeshQualityReport {
             const size_t v0 = mesh.target(hei);
             const size_t v1 = mesh.target(mesh.next(hei));
             const size_t v2 = mesh.target(mesh.prev(hei));
-            const Vec3 c0 = mesh.getVertexAttribute(v0).getCoordinate();
-            const Vec3 c1 = mesh.getVertexAttribute(v1).getCoordinate();
-            const Vec3 c2 = mesh.getVertexAttribute(v2).getCoordinate();
+            const Vec3 c0 (mesh.getVertexAttribute(v0).getCoordinate());
+            const Vec3 c1 (mesh.getVertexAttribute(v1).getCoordinate());
+            const Vec3 c2 (mesh.getVertexAttribute(v2).getCoordinate());
 
             const auto q = TriangleQualityType{}(c0, c1, c2);
 

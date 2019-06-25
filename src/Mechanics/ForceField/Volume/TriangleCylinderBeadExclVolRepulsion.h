@@ -28,14 +28,14 @@ public:
     double energy(mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3 cb, double area, double kExVol);
     
     void forces(
-        double* f0, double* f1, double* f2, double* fb,
+        floatingpoint* f0, floatingpoint* f1, floatingpoint* f2, floatingpoint* fb,
         mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3 cb,
         double area, const mathfunc::Vec3&, const mathfunc::Vec3&, const mathfunc::Vec3&,
         double kExVol
     );
 
     mathfunc::Vec3 loadForces(
-        const mathfunc::Vec3& c0, const mathfunc::Vec3& c1, const mathfunc::Vec3& c2, const mathfunc::Vec3& coord,
+        const mathfunc::Vec3& c0, const mathfunc::Vec3& c1, const mathfunc::Vec3& c2, const mathfunc::Vec< 3, floatingpoint >& coord,
         double area, double kExVol
     );
 };

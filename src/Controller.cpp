@@ -386,7 +386,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     }
 
     for(const auto& param : MemSetup.meshParam) {
-        const auto newMesh = mesh_gen::generateMeshViaParams(param);
+        const auto newMesh = mesh_gen::generateMeshViaParams< floatingpoint >(param);
         membraneData.push_back({newMesh.vertexCoordinateList, newMesh.triangleList});
     }
     
@@ -435,7 +435,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             c->computeSlicedVolumeArea(Compartment::SliceMethod::Membrane);
             _cController->updateActivation(c, Compartment::ActivateReason::Membrane);
 
-        } else if( ! regionInMembrane->contains(vector2Vec<3, double>(c->coordinates()))) {
+        } else if( ! regionInMembrane->contains(vector2Vec<3, floatingpoint>(c->coordinates()))) {
             // Compartment is outside the membrane
             _cController->deactivate(c, true);
         }
@@ -857,7 +857,7 @@ void Controller::updateActiveCompartments() {
             } else if(c->boundaryInteresting) { // Interesting last round but now empty
                 bool inMembrane = (
                     (!theMembrane->isClosed()) ||
-                    (theMembrane->contains(vector2Vec<3, double>(c->coordinates())))
+                    (theMembrane->contains(vector2Vec<3, floatingpoint>(c->coordinates())))
                 );
                 if(inMembrane) {
                     // Fully activate the compartment

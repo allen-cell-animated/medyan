@@ -65,7 +65,7 @@ generateMeshViaParams(const std::vector< std::string >& param) {
             std::istringstream iss(param[i+1]);
             iss >> value[i];
         }
-        return generateEllipsoid({value[0], value[1], value[2]}, {value[3], value[4], value[5]});
+        return generateEllipsoid< Float >({value[0], value[1], value[2]}, {value[3], value[4], value[5]});
     }
 
     LOG(ERROR) << "Unrecognized mesh initializer";

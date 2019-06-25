@@ -19,7 +19,7 @@ public:
     }
     
     void forces(
-        double* force,
+        floatingpoint* force,
         double area, const mathfunc::Vec3& dArea,
         double curv, const mathfunc::Vec3& dCurv,
         double kBending, double eqCurv

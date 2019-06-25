@@ -43,7 +43,7 @@ void TriangleCylinderVolumeFF::whoIsCulprit() {
     cout << endl;
 }
 
-double TriangleCylinderVolumeFF::computeEnergy(double* coord, bool stretched) {
+floatingpoint TriangleCylinderVolumeFF::computeEnergy(floatingpoint* coord, bool stretched) {
     
     double U= 0;
     double U_i;
@@ -63,7 +63,7 @@ double TriangleCylinderVolumeFF::computeEnergy(double* coord, bool stretched) {
     return U;
 }
 
-void TriangleCylinderVolumeFF::computeForces(double* coord, double* f) {
+void TriangleCylinderVolumeFF::computeForces(floatingpoint* coord, floatingpoint* f) {
     
     for (auto &interaction : _triangleCylinderVolInteractionVector)
         interaction->computeForces(coord, f);

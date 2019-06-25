@@ -110,8 +110,8 @@ class Bead : public Component, public Trackable, public Movable,
     
 public:
     using coordinate_type      = BeadData::vec_type;
-    using coordinate_ref_type  = BeadData::vec_array_type::RefVec;
-    using coordinate_cref_type = BeadData::vec_array_type::ConstRefVec;
+    using coordinate_ref_type  = BeadData::vec_array_type::reference;
+    using coordinate_cref_type = BeadData::vec_array_type::const_reference;
     using DatabaseType         = Database< Bead, true, BeadData >;
 
     ///@note - all vectors are in x,y,z coordinates.

@@ -42,7 +42,7 @@ private:
     Compartment* _compartment = nullptr; // The compartment containing this triangle
 
 public:
-    mathfunc::Vec3 coordinate; // Coordinate of the center point, updated with updateCoordiante()
+    mathfunc::Vec< 3, floatingpoint > coordinate; // Coordinate of the center point, updated with updateCoordiante()
 
     Triangle(Membrane *parent, size_t topoIndex);
     ~Triangle();

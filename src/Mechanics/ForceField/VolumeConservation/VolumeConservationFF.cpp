@@ -41,7 +41,7 @@ void VolumeConservationFF::whoIsCulprit() {
     cout << endl;
 }
 
-double VolumeConservationFF::computeEnergy(double* coord, bool stretched) {
+floatingpoint VolumeConservationFF::computeEnergy(floatingpoint* coord, bool stretched) {
     
     double U= 0;
     double U_i;
@@ -61,7 +61,7 @@ double VolumeConservationFF::computeEnergy(double* coord, bool stretched) {
     return U;
 }
 
-void VolumeConservationFF::computeForces(double* coord, double* f) {
+void VolumeConservationFF::computeForces(floatingpoint* coord, floatingpoint* f) {
     
     for (auto &interaction : _volumeConservationInteractionVector)
         interaction->computeForces(coord, f);

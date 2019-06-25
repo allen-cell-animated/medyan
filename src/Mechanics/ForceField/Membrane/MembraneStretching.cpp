@@ -24,11 +24,11 @@ double implEnergy(const Impl& impl, double area, double param0, double param1) {
 }
 
 template< typename Impl, std::enable_if_t< std::is_same< Impl, MembraneStretchingHarmonic >::value >* = nullptr >
-void implForces(const Impl& impl, double* force, double area, const mathfunc::Vec3& dArea, double param0, double param1) {
+void implForces(const Impl& impl, floatingpoint* force, double area, const mathfunc::Vec3& dArea, double param0, double param1) {
     impl.forces(force, area, dArea, param0, param1);
 }
 template< typename Impl, std::enable_if_t< std::is_same< Impl, MembraneStretchingLinear >::value >* = nullptr >
-void implForces(const Impl& impl, double* force, double area, const mathfunc::Vec3& dArea, double param0, double param1) {
+void implForces(const Impl& impl, floatingpoint* force, double area, const mathfunc::Vec3& dArea, double param0, double param1) {
     impl.forces(force, dArea, param0);
 }
 
@@ -37,7 +37,7 @@ void implForces(const Impl& impl, double* force, double area, const mathfunc::Ve
 #endif // ifdef __cpp_if_constexpr
 
 template< typename Impl, MembraneStretchingAccumulationType accuType >
-double MembraneStretching< Impl, accuType >::computeEnergy(const double* coord, bool stretched) {
+floatingpoint MembraneStretching< Impl, accuType >::computeEnergy(const floatingpoint* coord, bool stretched) {
     double U = 0;
     double U_i;
 
@@ -90,7 +90,7 @@ double MembraneStretching< Impl, accuType >::computeEnergy(const double* coord, 
 }
 
 template< typename Impl, MembraneStretchingAccumulationType accuType >
-void MembraneStretching< Impl, accuType >::computeForces(const double* coord, double* force) {
+void MembraneStretching< Impl, accuType >::computeForces(const floatingpoint* coord, floatingpoint* force) {
     
     for (auto m: Membrane::getMembranes()) {
 

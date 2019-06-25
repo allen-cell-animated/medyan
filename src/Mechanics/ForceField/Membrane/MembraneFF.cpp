@@ -85,7 +85,7 @@ void MembraneFF::whoIsCulprit() {
 }
 
 
-double MembraneFF::computeEnergy(double* coord, bool stretched) {
+floatingpoint MembraneFF::computeEnergy(floatingpoint* coord, bool stretched) {
     
     double U= 0;
     double U_i;
@@ -105,7 +105,7 @@ double MembraneFF::computeEnergy(double* coord, bool stretched) {
     return U;
 }
 
-void MembraneFF::computeForces(double* coord, double* f) {
+void MembraneFF::computeForces(floatingpoint* coord, floatingpoint* f) {
     
     for (auto &interaction : _membraneInteractionVector)
         interaction->computeForces(coord, f);

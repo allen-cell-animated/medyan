@@ -9,7 +9,7 @@
 #include "Mechanics/ForceField/VolumeConservation/VolumeConservationMembraneHarmonic.h"
 
 template<>
-double VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeEnergy(const double* coord, bool stretched) {
+floatingpoint VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeEnergy(const floatingpoint* coord, bool stretched) {
     double U = 0;
     double U_i;
 
@@ -41,7 +41,7 @@ double VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeEn
 }
 
 template<>
-void VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeForces(const double* coord, double* force) {
+void VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeForces(const floatingpoint* coord, floatingpoint* force) {
     
     for (auto m: Membrane::getMembranes()) {
 

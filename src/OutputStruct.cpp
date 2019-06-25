@@ -48,8 +48,8 @@ void OutputStructFilament::getFromSystemWithoutChildren() {
     // Store coordinates
     _coords.reserve(_numBeads);
     for (auto cylinder : _filament->getCylinderVector())
-        _coords.push_back(cylinder->getFirstBead()->coordinate());
-    _coords.push_back(_filament->getCylinderVector().back()->getSecondBead()->coordinate());
+        _coords.push_back(Vec<3, floatingpoint>(cylinder->getFirstBead()->coordinate()));
+    _coords.push_back(Vec<3, floatingpoint>(_filament->getCylinderVector().back()->getSecondBead()->coordinate()));
         
 }
 
@@ -67,7 +67,7 @@ void OutputStructFilament::outputFromStoredWithoutChildren(std::ostream& os) {
         << _deltaPlusEnd << std::endl;
 
     for(auto& coord: _coords)
-        for(double value: coord)
+        for(floatingpoint value: coord)
             os << value << " ";
     os << std::endl;
 }
@@ -83,9 +83,9 @@ void OutputStructFilament::getFromOutput(std::istream& is, std::istringstream& i
     std::getline(is, nextLine);
     std::istringstream newIss(nextLine);
     _coords.clear();
-    double tmp;
+    floatingpoint tmp;
     while(newIss >> tmp) {
-        mathfunc::Vec3 coord;
+        mathfunc::Vec< 3, floatingpoint > coord;
         coord[0] = tmp;
         newIss >> coord[1] >> coord[2];
         _coords.push_back(coord);
@@ -105,12 +105,12 @@ void OutputStructLinker::getFromSystemWithoutChildren() {
 
     // Store coordinates
     _coords = {{
-        vector2Vec<3, double>(midPointCoordinate(
+        vector2Vec<3, floatingpoint>(midPointCoordinate(
             _linker->getFirstCylinder()->getFirstBead()->vcoordinate(),
             _linker->getFirstCylinder()->getSecondBead()->vcoordinate(),
             _linker->getFirstPosition()
         )),
-        vector2Vec<3, double>(midPointCoordinate(
+        vector2Vec<3, floatingpoint>(midPointCoordinate(
             _linker->getSecondCylinder()->getFirstBead()->vcoordinate(),
             _linker->getSecondCylinder()->getSecondBead()->vcoordinate(),
             _linker->getSecondPosition()
@@ -130,7 +130,7 @@ void OutputStructLinker::outputFromStoredWithoutChildren(std::ostream& os) {
         << _type << std::endl;
 
     for(auto& coord: _coords)
-        for(double value: coord)
+        for(floatingpoint value: coord)
             os << value << " ";
     os << std::endl;
 }
@@ -143,7 +143,7 @@ void OutputStructLinker::getFromOutput(std::istream& is, std::istringstream& iss
     std::getline(is, nextLine);
     std::istringstream newIss(nextLine);
     for(auto& coord: _coords)
-        for(double& value: coord)
+        for(floatingpoint& value: coord)
             newIss >> value;
 }
 //@}
@@ -160,12 +160,12 @@ void OutputStructMotor::getFromSystemWithoutChildren() {
 
     // Store coordinates
     _coords = {{
-        vector2Vec<3, double>(midPointCoordinate(
+        vector2Vec<3, floatingpoint>(midPointCoordinate(
             _motor->getFirstCylinder()->getFirstBead()->vcoordinate(),
             _motor->getFirstCylinder()->getSecondBead()->vcoordinate(),
             _motor->getFirstPosition()
         )),
-        vector2Vec<3, double>(midPointCoordinate(
+        vector2Vec<3, floatingpoint>(midPointCoordinate(
             _motor->getSecondCylinder()->getFirstBead()->vcoordinate(),
             _motor->getSecondCylinder()->getSecondBead()->vcoordinate(),
             _motor->getSecondPosition()
@@ -186,7 +186,7 @@ void OutputStructMotor::outputFromStoredWithoutChildren(std::ostream& os) {
         << _bound << std::endl;
 
     for(auto& coord: _coords)
-        for(double value: coord)
+        for(floatingpoint value: coord)
             os << value << " ";
     os << std::endl;
 }
@@ -200,7 +200,7 @@ void OutputStructMotor::getFromOutput(std::istream& is, std::istringstream& iss)
     std::getline(is, nextLine);
     std::istringstream newIss(nextLine);
     for(auto& coord: _coords)
-        for(double& value: coord)
+        for(floatingpoint& value: coord)
             newIss >> value;
 }
 //@}
@@ -216,7 +216,7 @@ void OutputStructBrancher::getFromSystemWithoutChildren() {
     _type = _brancher->getType();
 
     // Store coordinates
-    _coord = vector2Vec<3, double>(_brancher->coordinate);
+    _coord = vector2Vec<3, floatingpoint>(_brancher->coordinate);
         
 }
 
@@ -230,7 +230,7 @@ void OutputStructBrancher::outputFromStoredWithoutChildren(std::ostream& os) {
         << _id << " "
         << _type << std::endl;
 
-    for(double value: _coord)
+    for(floatingpoint value: _coord)
         os << value << " ";
     os << std::endl;
 }
@@ -242,7 +242,7 @@ void OutputStructBrancher::getFromOutput(std::istream& is, std::istringstream& i
     std::string nextLine;
     std::getline(is, nextLine);
     std::istringstream newIss(nextLine);
-    for(double& value: _coord)
+    for(floatingpoint& value: _coord)
         newIss >> value;
 }
 //@}
@@ -258,7 +258,7 @@ void OutputStructBubble::getFromSystemWithoutChildren() {
     _type = _bubble->getType();
 
     // Store coordinates
-    _coord = vector2Vec<3, double>(_bubble->coordinate);
+    _coord = vector2Vec<3, floatingpoint>(_bubble->coordinate);
         
 }
 
@@ -272,7 +272,7 @@ void OutputStructBubble::outputFromStoredWithoutChildren(std::ostream& os) {
         << _id << " "
         << _type << std::endl;
 
-    for(double value: _coord)
+    for(floatingpoint value: _coord)
         os << value << " ";
     os << std::endl;
 }
@@ -284,7 +284,7 @@ void OutputStructBubble::getFromOutput(std::istream& is, std::istringstream& iss
     std::string nextLine;
     std::getline(is, nextLine);
     std::istringstream newIss(nextLine);
-    for(double& value: _coord)
+    for(floatingpoint& value: _coord)
         newIss >> value;
 }
 //@}
@@ -319,7 +319,7 @@ void OutputStructMembrane::outputFromStoredWithoutChildren(std::ostream& os) {
 
     // print coordinates
     for(const auto& it : _memInfo.attributeInitializerInfo.vertexCoordinateList) {
-        for(double value : it) os << value << ' ';
+        for(floatingpoint value : it) os << value << ' ';
         os << '\n';
     }
 
@@ -347,7 +347,7 @@ void OutputStructMembrane::getFromOutput(std::istream& is, std::istringstream& i
         auto& coord = _memInfo.attributeInitializerInfo.vertexCoordinateList.back();
 
         // Record coordinates
-        for(double& value: coord)
+        for(floatingpoint& value: coord)
             newIss >> value;
     }
     for(size_t i = 0; i < _numTriangles; ++i) {

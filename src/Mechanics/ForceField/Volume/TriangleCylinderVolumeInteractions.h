@@ -36,9 +36,9 @@ protected:
     
 public:
     /// Compute the energy of this interaction
-    virtual double computeEnergy(const double* coord, bool stretched) = 0;
+    virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) = 0;
     /// Compute the forces of this interaction
-    virtual void computeForces(const double* coord, double* force) = 0;
+    virtual void computeForces(const floatingpoint* coord, floatingpoint* force) = 0;
 
     /// Compute the load forces on beads from this interaction
     virtual void computeLoadForces() = 0;

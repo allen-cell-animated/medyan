@@ -41,7 +41,7 @@ public:
     Membrane* getParent()const { return _parent; }
     void setTopoIndex(size_t index) { _topoIndex = index; }
 
-    mathfunc::Vec3 coordinate; // Coordinate of the mid point, updated with updateCoordiante()
+    mathfunc::Vec< 3, floatingpoint > coordinate; // Coordinate of the mid point, updated with updateCoordiante()
 
     /// Get all instances of this class from the SubSystem
     static const vector<Edge*>& getEdges() {

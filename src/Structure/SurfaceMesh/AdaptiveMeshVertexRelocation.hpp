@@ -162,29 +162,31 @@ template<> struct OptimalVertexLocation< OptimalVertexLocationMethod::Barycenter
     // Given vertex v1, v2, and unit normal un,
     // Find the vertex v0 such that triangle (v0, v1, v2) is equilateral
     // and un is the normal direction of the triangle.
-    static mathfunc::Vec3 findEquilateralTriangle(
-        const mathfunc::Vec3& v1,
-        const mathfunc::Vec3& v2,
-        const mathfunc::Vec3& un
+    template< typename Float >
+    static mathfunc::Vec< 3, Float > findEquilateralTriangle(
+        const mathfunc::Vec< 3, Float >& v1,
+        const mathfunc::Vec< 3, Float >& v2,
+        const mathfunc::Vec< 3, Float >& un
     ) {
-        return 0.5 * (v1 + v2) + mathfunc::cross(un, v2 - v1) * (std::sqrt(3.0) * 0.5);
+        return (Float)0.5 * (v1 + v2) + mathfunc::cross(un, v2 - v1) * (Float)(std::sqrt(3.0) * 0.5);
     }
 
     template< typename Mesh >
-    mathfunc::Vec3 operator()(const Mesh& mesh, size_t vi) const {
+    auto operator()(const Mesh& mesh, size_t vi) const {
         using namespace mathfunc;
+        using CoordinateType = typename Mesh::AttributeType::coordinate_type;
 
-        Vec3 target {};
+        CoordinateType target {};
         mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
-            const Vec3 cn = mesh.getVertexAttribute(mesh.target(mesh.next(hei))).getCoordinate();
-            const Vec3 cp = mesh.getVertexAttribute(mesh.target(mesh.prev(hei))).getCoordinate();
-            const auto& un = mesh.getTriangleAttribute(mesh.triangle(hei)).gTriangle.unitNormal;
-            target += findEquilateralTriangle(cp, cn, un);
+            const CoordinateType cn (mesh.getVertexAttribute(mesh.target(mesh.next(hei))).getCoordinate());
+            const CoordinateType cp (mesh.getVertexAttribute(mesh.target(mesh.prev(hei))).getCoordinate());
+            const CoordinateType un (mesh.getTriangleAttribute(mesh.triangle(hei)).gTriangle.unitNormal);
+            target += findEquilateralTriangle< typename CoordinateType::float_type >(cp, cn, un);
         });
         target *= (1.0 / mesh.degree(vi));
 
         // project onto tangent plane
-        const Vec3 ci = mesh.getVertexAttribute(vi).getCoordinate();
+        const CoordinateType ci (mesh.getVertexAttribute(vi).getCoordinate());
         const auto& un = mesh.getVertexAttribute(vi).aVertex.unitNormal;
         target -= un * dot(un, target - ci);
 

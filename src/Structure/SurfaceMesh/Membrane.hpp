@@ -3,7 +3,7 @@
 
 #include <array>
 #include <limits> // numeric_limits
-#include <stdexcept> // logic_error
+#include <stdexcept> // runtime_error
 #include <vector>
 #include <memory>
 
@@ -102,16 +102,18 @@ public:
      * Throws an exception if the membrane is not closed.
      * The function will search through the whole meshwork, so it might not be efficient.
      */
-    double signedDistance(const mathfunc::Vec3& p) const {
-        if(!isClosed()) throw std::logic_error("Membrane is not closed while trying to find signed distance field.");
+    template< typename Float >
+    double signedDistance(const mathfunc::Vec< 3, Float >& p) const {
+        if(!isClosed()) throw std::runtime_error("Membrane is not closed while trying to find signed distance field.");
         return MembraneMeshAttributeType::signedDistance(_mesh, p);
     }
     /**
      * Use signed distance or other methods to judge whether a point is inside membrane.
      * Throws an exception if the membrane is not closed.
      */
-    bool contains(const mathfunc::Vec3& p) const {
-        if(!isClosed()) throw std::logic_error("Membrane is not closed while trying to find signed distance field.");
+    template< typename Float >
+    bool contains(const mathfunc::Vec< 3, Float >& p) const {
+        if(!isClosed()) throw std::runtime_error("Membrane is not closed while trying to find signed distance field.");
         return MembraneMeshAttributeType::contains(_mesh, p);
     }
 

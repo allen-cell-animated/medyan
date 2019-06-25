@@ -1,11 +1,5 @@
 #include "Structure/SurfaceMesh/MembraneRegion.h"
 
-#include "Structure/SurfaceMesh/MembraneHierarchy.h"
-#include "Structure/SurfaceMesh/Membrane.hpp"
-#include "Structure/Boundary.h"
-
-#include "MathFunctions.h"
-
 MembraneRegion::MembraneRegion(MembraneHierarchy* hier, bool excludeChildren):
     _hierOut({hier})
 {
@@ -26,37 +20,6 @@ MembraneRegion::MembraneRegion(Boundary* b, MembraneHierarchy* parentOfExcluded)
     for(size_t idx = 0; idx < n; ++idx) {
         _hierIn.push_back( static_cast<MembraneHierarchy*>(parentOfExcluded->children(idx)) );
     }
-}
-
-bool MembraneRegion::contains(const mathfunc::Vec3& point)const {
-    /**************************************************************************
-    This function checks whether a certain point is in the region. If a point
-    is in the region, it must satisfy all of the following.
-        - within _boundary if specified
-        - in any of the membranes in _hierOut
-        - not in any of the membranes in _hierIn
-    **************************************************************************/
-    if(_boundary) {
-        auto p = mathfunc::vec2Vector(point);
-        if(!_boundary->within(p)) return false;
-    }
-
-    if(!_hierOut.empty()) {
-        bool hierOutGood = false;
-        for(auto eachHier: _hierOut) {
-            if(eachHier->getMembrane()->contains(point)) {
-                hierOutGood = true;
-                break;
-            }
-        }
-        if(!hierOutGood) return false;
-    }
-
-    for(auto eachHier: _hierIn) {
-        if(eachHier->getMembrane()->contains(point)) return false;
-    }
-
-    return true;
 }
 
 std::unique_ptr<MembraneRegion> MembraneRegion::makeByChildren(const MembraneHierarchy& hier, bool excludeChildren) {

@@ -1,4 +1,3 @@
-floatingpoint
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.2.1
