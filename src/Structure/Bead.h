@@ -268,7 +268,6 @@ public:
 				floatingpoint *newcoord = new floatingpoint[3 * newsize];
 				CUDAcommon::serlvars.coord = newcoord;
 				revectorize(newcoord);
-				//copyvector(newcoord, coord);
 				vectormaxsize = newsize;
 				//cylinder structure needs to be revecotrized as well.
 				triggercylindervectorization = true;
@@ -332,7 +331,6 @@ private:
             floatingpoint *newcoord = new floatingpoint[3 * newsize];
             CUDAcommon::serlvars.coord = newcoord;
             appendrevectorize(newcoord);
-            //copyvector(newcoord, coord);
             vectormaxsize = newsize;
             //cylinder structure needs to be revecotrized as well.
             triggercylindervectorization = true;
@@ -353,13 +351,6 @@ private:
 		Nbeads =getElements().size();
 	}
 
-    //deprecated
-    static void copyvector(floatingpoint* newcoord, floatingpoint* coord){
-        int idx = 0;
-        for(auto b:getElements()){
-            idx++;
-        }
-    }
     //copy coodinates of this bead to the appropriate spot in coord vector.
     void  copycoordinatestovector() {
             CUDAcommon::serlvars.coord[3 * _dbIndex] = coordinate[0];

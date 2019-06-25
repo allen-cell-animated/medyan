@@ -27,7 +27,9 @@ friend class LinkerFF;
 public:
     /// The linker in the case of an error
     static Linker* _linkerCulprit;
-    
+
+    virtual ~LinkerInteractions() = default;
+
     ///Vectorize the bead interactions for minimization
     virtual void vectorize() = 0;
     ///Deallocate the vectorized data

@@ -79,7 +79,7 @@ public:
         exit(EXIT_FAILURE);
 #endif
     }
-    ~FilamentReactionTemplate() {}
+    virtual ~FilamentReactionTemplate() = default;
 
     /// Add this chemical reaction. Adds all extension and retraction callbacks needed
     virtual void addReaction(CCylinder* cc) = 0;
