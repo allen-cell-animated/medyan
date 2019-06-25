@@ -11,6 +11,72 @@
 		1F41AAC622B176740073835F /* dist_bench.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F41A7F422B06A070073835F /* dist_bench.cpp */; };
 		1F41AAC722B1767D0073835F /* dist_example.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F41A7FE22B06A070073835F /* dist_example.cpp */; };
 		1F41AAC822B176880073835F /* dist_mod_vars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F41A80122B06A070073835F /* dist_mod_vars.cpp */; };
+		AE281F4A22C278BA00C2F923 /* SurfaceMeshGeneratorPreset.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F1E22C278B900C2F923 /* SurfaceMeshGeneratorPreset.hpp */; };
+		AE281F4B22C278BA00C2F923 /* AdaptiveMeshVertexRelocation.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F1F22C278B900C2F923 /* AdaptiveMeshVertexRelocation.hpp */; };
+		AE281F4E22C278BA00C2F923 /* Vertex.h in Headers */ = {isa = PBXBuildFile; fileRef = AE281F2222C278B900C2F923 /* Vertex.h */; };
+		AE281F4F22C278BA00C2F923 /* MembraneMeshAttribute.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F2322C278B900C2F923 /* MembraneMeshAttribute.hpp */; };
+		AE281F5022C278BA00C2F923 /* Edge.h in Headers */ = {isa = PBXBuildFile; fileRef = AE281F2422C278B900C2F923 /* Edge.h */; };
+		AE281F5222C278BA00C2F923 /* MMembrane.h in Headers */ = {isa = PBXBuildFile; fileRef = AE281F2622C278B900C2F923 /* MMembrane.h */; };
+		AE281F5522C278BA00C2F923 /* MembraneMeshTriangleQuality.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F2922C278BA00C2F923 /* MembraneMeshTriangleQuality.hpp */; };
+		AE281F5622C278BA00C2F923 /* SurfaceMeshGenerator.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F2A22C278BA00C2F923 /* SurfaceMeshGenerator.hpp */; };
+		AE281F5822C278BA00C2F923 /* Membrane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE281F2C22C278BA00C2F923 /* Membrane.cpp */; };
+		AE281F5922C278BA00C2F923 /* MTriangle.h in Headers */ = {isa = PBXBuildFile; fileRef = AE281F2D22C278BA00C2F923 /* MTriangle.h */; };
+		AE281F5C22C278BA00C2F923 /* AdaptiveMeshGeometryManager.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F3022C278BA00C2F923 /* AdaptiveMeshGeometryManager.hpp */; };
+		AE281F5D22C278BA00C2F923 /* AdaptiveMeshAttribute.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F3122C278BA00C2F923 /* AdaptiveMeshAttribute.hpp */; };
+		AE281F5E22C278BA00C2F923 /* MVoronoiCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE281F3222C278BA00C2F923 /* MVoronoiCell.cpp */; };
+		AE281F6122C278BA00C2F923 /* Membrane.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F3522C278BA00C2F923 /* Membrane.hpp */; };
+		AE281F6222C278BA00C2F923 /* Triangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE281F3622C278BA00C2F923 /* Triangle.cpp */; };
+		AE281F6322C278BA00C2F923 /* MembraneHierarchy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE281F3722C278BA00C2F923 /* MembraneHierarchy.cpp */; };
+		AE281F6522C278BA00C2F923 /* SurfaceMesh.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F3922C278BA00C2F923 /* SurfaceMesh.hpp */; };
+		AE281F6722C278BA00C2F923 /* Triangle.h in Headers */ = {isa = PBXBuildFile; fileRef = AE281F3B22C278BA00C2F923 /* Triangle.h */; };
+		AE281F6822C278BA00C2F923 /* MTriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE281F3C22C278BA00C2F923 /* MTriangle.cpp */; };
+		AE281F6922C278BA00C2F923 /* GeometricMeshAttribute.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F3D22C278BA00C2F923 /* GeometricMeshAttribute.hpp */; };
+		AE281F6C22C278BA00C2F923 /* MVoronoiCell.h in Headers */ = {isa = PBXBuildFile; fileRef = AE281F4022C278BA00C2F923 /* MVoronoiCell.h */; };
+		AE281F6D22C278BA00C2F923 /* MembraneHierarchy.h in Headers */ = {isa = PBXBuildFile; fileRef = AE281F4122C278BA00C2F923 /* MembraneHierarchy.h */; };
+		AE281F6E22C278BA00C2F923 /* Vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE281F4222C278BA00C2F923 /* Vertex.cpp */; };
+		AE281F6F22C278BA00C2F923 /* MembraneRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = AE281F4322C278BA00C2F923 /* MembraneRegion.h */; };
+		AE281F7022C278BA00C2F923 /* Edge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE281F4422C278BA00C2F923 /* Edge.cpp */; };
+		AE281F7222C278BA00C2F923 /* AdaptiveMesh.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F4622C278BA00C2F923 /* AdaptiveMesh.hpp */; };
+		AE281F7422C278BA00C2F923 /* MembraneRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE281F4822C278BA00C2F923 /* MembraneRegion.cpp */; };
+		AE281F7522C278BA00C2F923 /* MembraneMeshCheck.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F4922C278BA00C2F923 /* MembraneMeshCheck.hpp */; };
+		AE281FB322C278DD00C2F923 /* VolumeConservationFF.h in Headers */ = {isa = PBXBuildFile; fileRef = AE281F7722C278DD00C2F923 /* VolumeConservationFF.h */; };
+		AE281FB722C278DD00C2F923 /* VolumeConservationMembraneHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE281F7B22C278DD00C2F923 /* VolumeConservationMembraneHarmonic.cpp */; };
+		AE281FB822C278DD00C2F923 /* VolumeConservationInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = AE281F7C22C278DD00C2F923 /* VolumeConservationInteractions.h */; };
+		AE281FBA22C278DD00C2F923 /* VolumeConservationMembrane.h in Headers */ = {isa = PBXBuildFile; fileRef = AE281F7E22C278DD00C2F923 /* VolumeConservationMembrane.h */; };
+		AE281FBD22C278DD00C2F923 /* VolumeConservationMembraneHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = AE281F8122C278DD00C2F923 /* VolumeConservationMembraneHarmonic.h */; };
+		AE281FBE22C278DD00C2F923 /* VolumeConservationFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE281F8222C278DD00C2F923 /* VolumeConservationFF.cpp */; };
+		AE281FBF22C278DD00C2F923 /* VolumeConservationMembrane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE281F8322C278DD00C2F923 /* VolumeConservationMembrane.cpp */; };
+		AE281FC222C278DD00C2F923 /* MembraneBending.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F8722C278DD00C2F923 /* MembraneBending.hpp */; };
+		AE281FC322C278DD00C2F923 /* MembraneStretching.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F8822C278DD00C2F923 /* MembraneStretching.hpp */; };
+		AE281FC422C278DD00C2F923 /* MembraneFF.h in Headers */ = {isa = PBXBuildFile; fileRef = AE281F8922C278DD00C2F923 /* MembraneFF.h */; };
+		AE281FC622C278DD00C2F923 /* MembraneStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE281F8B22C278DD00C2F923 /* MembraneStretching.cpp */; };
+		AE281FC822C278DD00C2F923 /* MembraneInteractions.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F8D22C278DD00C2F923 /* MembraneInteractions.hpp */; };
+		AE281FCA22C278DD00C2F923 /* MembraneStretchingImpl.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F8F22C278DD00C2F923 /* MembraneStretchingImpl.hpp */; };
+		AE281FCB22C278DD00C2F923 /* MembraneBendingHelfrich.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE281F9022C278DD00C2F923 /* MembraneBendingHelfrich.hpp */; };
+		AE281FCD22C278DD00C2F923 /* MembraneFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE281F9222C278DD00C2F923 /* MembraneFF.cpp */; };
+		AE281FCE22C278DD00C2F923 /* MembraneBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE281F9322C278DD00C2F923 /* MembraneBending.cpp */; };
+		AE28235222C27A1900C2F923 /* CylinderExclVolume.h in Headers */ = {isa = PBXBuildFile; fileRef = AE28234222C27A1900C2F923 /* CylinderExclVolume.h */; };
+		AE28235322C27A1900C2F923 /* CylinderVolumeInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = AE28234322C27A1900C2F923 /* CylinderVolumeInteractions.h */; };
+		AE28235422C27A1900C2F923 /* CylinderExclVolRepulsion.h in Headers */ = {isa = PBXBuildFile; fileRef = AE28234422C27A1900C2F923 /* CylinderExclVolRepulsion.h */; };
+		AE28235522C27A1900C2F923 /* TriangleCylinderExclVolume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE28234522C27A1900C2F923 /* TriangleCylinderExclVolume.cpp */; };
+		AE28235622C27A1900C2F923 /* TriangleCylinderVolumeFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE28234622C27A1900C2F923 /* TriangleCylinderVolumeFF.cpp */; };
+		AE28235722C27A1900C2F923 /* CylinderExclVolRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE28234722C27A1900C2F923 /* CylinderExclVolRepulsion.cpp */; };
+		AE28235822C27A1900C2F923 /* CylinderExclVolume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE28234822C27A1900C2F923 /* CylinderExclVolume.cpp */; };
+		AE28235922C27A1900C2F923 /* TriangleCylinderBeadExclVolRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE28234922C27A1900C2F923 /* TriangleCylinderBeadExclVolRepulsion.cpp */; };
+		AE28235A22C27A1900C2F923 /* CylinderVolumeFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE28234A22C27A1900C2F923 /* CylinderVolumeFF.cpp */; };
+		AE28235B22C27A1900C2F923 /* TriangleCylinderVolumeFF.h in Headers */ = {isa = PBXBuildFile; fileRef = AE28234B22C27A1900C2F923 /* TriangleCylinderVolumeFF.h */; };
+		AE28235C22C27A1900C2F923 /* TriangleCylinderVolumeInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = AE28234C22C27A1900C2F923 /* TriangleCylinderVolumeInteractions.h */; };
+		AE28235D22C27A1900C2F923 /* CylinderExclVolRepulsionCUDA.h in Headers */ = {isa = PBXBuildFile; fileRef = AE28234D22C27A1900C2F923 /* CylinderExclVolRepulsionCUDA.h */; };
+		AE28235E22C27A1900C2F923 /* CylinderVolumeInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE28234E22C27A1900C2F923 /* CylinderVolumeInteractions.cpp */; };
+		AE28235F22C27A1900C2F923 /* CylinderVolumeFF.h in Headers */ = {isa = PBXBuildFile; fileRef = AE28234F22C27A1900C2F923 /* CylinderVolumeFF.h */; };
+		AE28236022C27A1900C2F923 /* TriangleCylinderExclVolume.h in Headers */ = {isa = PBXBuildFile; fileRef = AE28235022C27A1900C2F923 /* TriangleCylinderExclVolume.h */; };
+		AE28236122C27A1900C2F923 /* TriangleCylinderBeadExclVolRepulsion.h in Headers */ = {isa = PBXBuildFile; fileRef = AE28235122C27A1900C2F923 /* TriangleCylinderBeadExclVolRepulsion.h */; };
+		AE28236422C27BB800C2F923 /* OutputStruct.h in Headers */ = {isa = PBXBuildFile; fileRef = AE28236222C27BB800C2F923 /* OutputStruct.h */; };
+		AE28236522C27BB800C2F923 /* OutputStruct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE28236322C27BB800C2F923 /* OutputStruct.cpp */; };
+		AE28236C22C27CAD00C2F923 /* pdb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE28236822C27CAC00C2F923 /* pdb.cpp */; };
+		AE28236D22C27CAD00C2F923 /* read_snapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = AE28236922C27CAC00C2F923 /* read_snapshot.h */; };
+		AE28236E22C27CAD00C2F923 /* read_snapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE28236A22C27CAC00C2F923 /* read_snapshot.cpp */; };
+		AE28236F22C27CAD00C2F923 /* pdb.h in Headers */ = {isa = PBXBuildFile; fileRef = AE28236B22C27CAC00C2F923 /* pdb.h */; };
 		AEC5486C225D3799007CB7E9 /* CController.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC546CF225D3798007CB7E9 /* CController.h */; };
 		AEC5486D225D3799007CB7E9 /* Composite.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC546D1225D3798007CB7E9 /* Composite.h */; };
 		AEC5486E225D3799007CB7E9 /* SysParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEC546D2225D3798007CB7E9 /* SysParams.cpp */; };
@@ -170,15 +236,6 @@
 		AEC54915225D3799007CB7E9 /* MotorGhostFF.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC54785225D3798007CB7E9 /* MotorGhostFF.h */; };
 		AEC54916225D3799007CB7E9 /* MotorGhostStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEC54786225D3798007CB7E9 /* MotorGhostStretching.cpp */; };
 		AEC54917225D3799007CB7E9 /* cross_check.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEC54787225D3798007CB7E9 /* cross_check.cpp */; };
-		AEC54918225D3799007CB7E9 /* CylinderExclVolume.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC54789225D3798007CB7E9 /* CylinderExclVolume.h */; };
-		AEC54919225D3799007CB7E9 /* CylinderVolumeInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC5478A225D3798007CB7E9 /* CylinderVolumeInteractions.h */; };
-		AEC5491A225D3799007CB7E9 /* CylinderExclVolRepulsion.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC5478B225D3798007CB7E9 /* CylinderExclVolRepulsion.h */; };
-		AEC5491B225D3799007CB7E9 /* CylinderExclVolRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEC5478C225D3798007CB7E9 /* CylinderExclVolRepulsion.cpp */; };
-		AEC5491C225D3799007CB7E9 /* CylinderExclVolume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEC5478D225D3798007CB7E9 /* CylinderExclVolume.cpp */; };
-		AEC5491D225D3799007CB7E9 /* CylinderVolumeFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEC5478E225D3798007CB7E9 /* CylinderVolumeFF.cpp */; };
-		AEC5491E225D3799007CB7E9 /* CylinderExclVolRepulsionCUDA.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC5478F225D3798007CB7E9 /* CylinderExclVolRepulsionCUDA.h */; };
-		AEC5491F225D3799007CB7E9 /* CylinderVolumeInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEC54790225D3798007CB7E9 /* CylinderVolumeInteractions.cpp */; };
-		AEC54920225D3799007CB7E9 /* CylinderVolumeFF.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC54791225D3798007CB7E9 /* CylinderVolumeFF.h */; };
 		AEC54921225D3799007CB7E9 /* CGSteepestDescent.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC54793225D3798007CB7E9 /* CGSteepestDescent.h */; };
 		AEC54922225D3799007CB7E9 /* CGMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC54794225D3798007CB7E9 /* CGMethod.h */; };
 		AEC54923225D3799007CB7E9 /* CGMethod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEC54795225D3798007CB7E9 /* CGMethod.cpp */; };
@@ -919,6 +976,72 @@
 		1F41AA6A22B06A080073835F /* ignore_warnings_unused_parameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ignore_warnings_unused_parameter.h; sourceTree = "<group>"; };
 		1F41AA6C22B06A080073835F /* isainfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = isainfo.cpp; sourceTree = "<group>"; };
 		1F41AA6D22B06A080073835F /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		AE281F1E22C278B900C2F923 /* SurfaceMeshGeneratorPreset.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SurfaceMeshGeneratorPreset.hpp; sourceTree = "<group>"; };
+		AE281F1F22C278B900C2F923 /* AdaptiveMeshVertexRelocation.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AdaptiveMeshVertexRelocation.hpp; sourceTree = "<group>"; };
+		AE281F2222C278B900C2F923 /* Vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
+		AE281F2322C278B900C2F923 /* MembraneMeshAttribute.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MembraneMeshAttribute.hpp; sourceTree = "<group>"; };
+		AE281F2422C278B900C2F923 /* Edge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Edge.h; sourceTree = "<group>"; };
+		AE281F2622C278B900C2F923 /* MMembrane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMembrane.h; sourceTree = "<group>"; };
+		AE281F2922C278BA00C2F923 /* MembraneMeshTriangleQuality.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MembraneMeshTriangleQuality.hpp; sourceTree = "<group>"; };
+		AE281F2A22C278BA00C2F923 /* SurfaceMeshGenerator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SurfaceMeshGenerator.hpp; sourceTree = "<group>"; };
+		AE281F2C22C278BA00C2F923 /* Membrane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Membrane.cpp; sourceTree = "<group>"; };
+		AE281F2D22C278BA00C2F923 /* MTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTriangle.h; sourceTree = "<group>"; };
+		AE281F3022C278BA00C2F923 /* AdaptiveMeshGeometryManager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AdaptiveMeshGeometryManager.hpp; sourceTree = "<group>"; };
+		AE281F3122C278BA00C2F923 /* AdaptiveMeshAttribute.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AdaptiveMeshAttribute.hpp; sourceTree = "<group>"; };
+		AE281F3222C278BA00C2F923 /* MVoronoiCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MVoronoiCell.cpp; sourceTree = "<group>"; };
+		AE281F3522C278BA00C2F923 /* Membrane.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Membrane.hpp; sourceTree = "<group>"; };
+		AE281F3622C278BA00C2F923 /* Triangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Triangle.cpp; sourceTree = "<group>"; };
+		AE281F3722C278BA00C2F923 /* MembraneHierarchy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MembraneHierarchy.cpp; sourceTree = "<group>"; };
+		AE281F3922C278BA00C2F923 /* SurfaceMesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SurfaceMesh.hpp; sourceTree = "<group>"; };
+		AE281F3B22C278BA00C2F923 /* Triangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Triangle.h; sourceTree = "<group>"; };
+		AE281F3C22C278BA00C2F923 /* MTriangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MTriangle.cpp; sourceTree = "<group>"; };
+		AE281F3D22C278BA00C2F923 /* GeometricMeshAttribute.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GeometricMeshAttribute.hpp; sourceTree = "<group>"; };
+		AE281F4022C278BA00C2F923 /* MVoronoiCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MVoronoiCell.h; sourceTree = "<group>"; };
+		AE281F4122C278BA00C2F923 /* MembraneHierarchy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MembraneHierarchy.h; sourceTree = "<group>"; };
+		AE281F4222C278BA00C2F923 /* Vertex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vertex.cpp; sourceTree = "<group>"; };
+		AE281F4322C278BA00C2F923 /* MembraneRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MembraneRegion.h; sourceTree = "<group>"; };
+		AE281F4422C278BA00C2F923 /* Edge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Edge.cpp; sourceTree = "<group>"; };
+		AE281F4622C278BA00C2F923 /* AdaptiveMesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AdaptiveMesh.hpp; sourceTree = "<group>"; };
+		AE281F4822C278BA00C2F923 /* MembraneRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MembraneRegion.cpp; sourceTree = "<group>"; };
+		AE281F4922C278BA00C2F923 /* MembraneMeshCheck.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MembraneMeshCheck.hpp; sourceTree = "<group>"; };
+		AE281F7722C278DD00C2F923 /* VolumeConservationFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeConservationFF.h; sourceTree = "<group>"; };
+		AE281F7B22C278DD00C2F923 /* VolumeConservationMembraneHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumeConservationMembraneHarmonic.cpp; sourceTree = "<group>"; };
+		AE281F7C22C278DD00C2F923 /* VolumeConservationInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeConservationInteractions.h; sourceTree = "<group>"; };
+		AE281F7E22C278DD00C2F923 /* VolumeConservationMembrane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeConservationMembrane.h; sourceTree = "<group>"; };
+		AE281F8122C278DD00C2F923 /* VolumeConservationMembraneHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeConservationMembraneHarmonic.h; sourceTree = "<group>"; };
+		AE281F8222C278DD00C2F923 /* VolumeConservationFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumeConservationFF.cpp; sourceTree = "<group>"; };
+		AE281F8322C278DD00C2F923 /* VolumeConservationMembrane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumeConservationMembrane.cpp; sourceTree = "<group>"; };
+		AE281F8722C278DD00C2F923 /* MembraneBending.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MembraneBending.hpp; sourceTree = "<group>"; };
+		AE281F8822C278DD00C2F923 /* MembraneStretching.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MembraneStretching.hpp; sourceTree = "<group>"; };
+		AE281F8922C278DD00C2F923 /* MembraneFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MembraneFF.h; sourceTree = "<group>"; };
+		AE281F8B22C278DD00C2F923 /* MembraneStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MembraneStretching.cpp; sourceTree = "<group>"; };
+		AE281F8D22C278DD00C2F923 /* MembraneInteractions.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MembraneInteractions.hpp; sourceTree = "<group>"; };
+		AE281F8F22C278DD00C2F923 /* MembraneStretchingImpl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MembraneStretchingImpl.hpp; sourceTree = "<group>"; };
+		AE281F9022C278DD00C2F923 /* MembraneBendingHelfrich.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MembraneBendingHelfrich.hpp; sourceTree = "<group>"; };
+		AE281F9222C278DD00C2F923 /* MembraneFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MembraneFF.cpp; sourceTree = "<group>"; };
+		AE281F9322C278DD00C2F923 /* MembraneBending.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MembraneBending.cpp; sourceTree = "<group>"; };
+		AE28234222C27A1900C2F923 /* CylinderExclVolume.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CylinderExclVolume.h; sourceTree = "<group>"; };
+		AE28234322C27A1900C2F923 /* CylinderVolumeInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CylinderVolumeInteractions.h; sourceTree = "<group>"; };
+		AE28234422C27A1900C2F923 /* CylinderExclVolRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CylinderExclVolRepulsion.h; sourceTree = "<group>"; };
+		AE28234522C27A1900C2F923 /* TriangleCylinderExclVolume.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TriangleCylinderExclVolume.cpp; sourceTree = "<group>"; };
+		AE28234622C27A1900C2F923 /* TriangleCylinderVolumeFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TriangleCylinderVolumeFF.cpp; sourceTree = "<group>"; };
+		AE28234722C27A1900C2F923 /* CylinderExclVolRepulsion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CylinderExclVolRepulsion.cpp; sourceTree = "<group>"; };
+		AE28234822C27A1900C2F923 /* CylinderExclVolume.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CylinderExclVolume.cpp; sourceTree = "<group>"; };
+		AE28234922C27A1900C2F923 /* TriangleCylinderBeadExclVolRepulsion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TriangleCylinderBeadExclVolRepulsion.cpp; sourceTree = "<group>"; };
+		AE28234A22C27A1900C2F923 /* CylinderVolumeFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CylinderVolumeFF.cpp; sourceTree = "<group>"; };
+		AE28234B22C27A1900C2F923 /* TriangleCylinderVolumeFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriangleCylinderVolumeFF.h; sourceTree = "<group>"; };
+		AE28234C22C27A1900C2F923 /* TriangleCylinderVolumeInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriangleCylinderVolumeInteractions.h; sourceTree = "<group>"; };
+		AE28234D22C27A1900C2F923 /* CylinderExclVolRepulsionCUDA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CylinderExclVolRepulsionCUDA.h; sourceTree = "<group>"; };
+		AE28234E22C27A1900C2F923 /* CylinderVolumeInteractions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CylinderVolumeInteractions.cpp; sourceTree = "<group>"; };
+		AE28234F22C27A1900C2F923 /* CylinderVolumeFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CylinderVolumeFF.h; sourceTree = "<group>"; };
+		AE28235022C27A1900C2F923 /* TriangleCylinderExclVolume.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriangleCylinderExclVolume.h; sourceTree = "<group>"; };
+		AE28235122C27A1900C2F923 /* TriangleCylinderBeadExclVolRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriangleCylinderBeadExclVolRepulsion.h; sourceTree = "<group>"; };
+		AE28236222C27BB800C2F923 /* OutputStruct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutputStruct.h; sourceTree = "<group>"; };
+		AE28236322C27BB800C2F923 /* OutputStruct.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OutputStruct.cpp; sourceTree = "<group>"; };
+		AE28236822C27CAC00C2F923 /* pdb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pdb.cpp; sourceTree = "<group>"; };
+		AE28236922C27CAC00C2F923 /* read_snapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = read_snapshot.h; sourceTree = "<group>"; };
+		AE28236A22C27CAC00C2F923 /* read_snapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = read_snapshot.cpp; sourceTree = "<group>"; };
+		AE28236B22C27CAC00C2F923 /* pdb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pdb.h; sourceTree = "<group>"; };
 		AEC546CF225D3798007CB7E9 /* CController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CController.h; sourceTree = "<group>"; };
 		AEC546D1225D3798007CB7E9 /* Composite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Composite.h; sourceTree = "<group>"; };
 		AEC546D2225D3798007CB7E9 /* SysParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SysParams.cpp; sourceTree = "<group>"; };
@@ -1089,15 +1212,6 @@
 		AEC54785225D3798007CB7E9 /* MotorGhostFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotorGhostFF.h; sourceTree = "<group>"; };
 		AEC54786225D3798007CB7E9 /* MotorGhostStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MotorGhostStretching.cpp; sourceTree = "<group>"; };
 		AEC54787225D3798007CB7E9 /* cross_check.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cross_check.cpp; sourceTree = "<group>"; };
-		AEC54789225D3798007CB7E9 /* CylinderExclVolume.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CylinderExclVolume.h; sourceTree = "<group>"; };
-		AEC5478A225D3798007CB7E9 /* CylinderVolumeInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CylinderVolumeInteractions.h; sourceTree = "<group>"; };
-		AEC5478B225D3798007CB7E9 /* CylinderExclVolRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CylinderExclVolRepulsion.h; sourceTree = "<group>"; };
-		AEC5478C225D3798007CB7E9 /* CylinderExclVolRepulsion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CylinderExclVolRepulsion.cpp; sourceTree = "<group>"; };
-		AEC5478D225D3798007CB7E9 /* CylinderExclVolume.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CylinderExclVolume.cpp; sourceTree = "<group>"; };
-		AEC5478E225D3798007CB7E9 /* CylinderVolumeFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CylinderVolumeFF.cpp; sourceTree = "<group>"; };
-		AEC5478F225D3798007CB7E9 /* CylinderExclVolRepulsionCUDA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CylinderExclVolRepulsionCUDA.h; sourceTree = "<group>"; };
-		AEC54790225D3798007CB7E9 /* CylinderVolumeInteractions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CylinderVolumeInteractions.cpp; sourceTree = "<group>"; };
-		AEC54791225D3798007CB7E9 /* CylinderVolumeFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CylinderVolumeFF.h; sourceTree = "<group>"; };
 		AEC54793225D3798007CB7E9 /* CGSteepestDescent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGSteepestDescent.h; sourceTree = "<group>"; };
 		AEC54794225D3798007CB7E9 /* CGMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGMethod.h; sourceTree = "<group>"; };
 		AEC54795225D3798007CB7E9 /* CGMethod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CGMethod.cpp; sourceTree = "<group>"; };
@@ -2640,9 +2754,119 @@
 			path = ISAInfo;
 			sourceTree = "<group>";
 		};
+		AE281F1D22C278B900C2F923 /* SurfaceMesh */ = {
+			isa = PBXGroup;
+			children = (
+				AE281F1E22C278B900C2F923 /* SurfaceMeshGeneratorPreset.hpp */,
+				AE281F1F22C278B900C2F923 /* AdaptiveMeshVertexRelocation.hpp */,
+				AE281F2222C278B900C2F923 /* Vertex.h */,
+				AE281F2322C278B900C2F923 /* MembraneMeshAttribute.hpp */,
+				AE281F2422C278B900C2F923 /* Edge.h */,
+				AE281F2622C278B900C2F923 /* MMembrane.h */,
+				AE281F2922C278BA00C2F923 /* MembraneMeshTriangleQuality.hpp */,
+				AE281F2A22C278BA00C2F923 /* SurfaceMeshGenerator.hpp */,
+				AE281F2C22C278BA00C2F923 /* Membrane.cpp */,
+				AE281F2D22C278BA00C2F923 /* MTriangle.h */,
+				AE281F3022C278BA00C2F923 /* AdaptiveMeshGeometryManager.hpp */,
+				AE281F3122C278BA00C2F923 /* AdaptiveMeshAttribute.hpp */,
+				AE281F3222C278BA00C2F923 /* MVoronoiCell.cpp */,
+				AE281F3522C278BA00C2F923 /* Membrane.hpp */,
+				AE281F3622C278BA00C2F923 /* Triangle.cpp */,
+				AE281F3722C278BA00C2F923 /* MembraneHierarchy.cpp */,
+				AE281F3922C278BA00C2F923 /* SurfaceMesh.hpp */,
+				AE281F3B22C278BA00C2F923 /* Triangle.h */,
+				AE281F3C22C278BA00C2F923 /* MTriangle.cpp */,
+				AE281F3D22C278BA00C2F923 /* GeometricMeshAttribute.hpp */,
+				AE281F4022C278BA00C2F923 /* MVoronoiCell.h */,
+				AE281F4122C278BA00C2F923 /* MembraneHierarchy.h */,
+				AE281F4222C278BA00C2F923 /* Vertex.cpp */,
+				AE281F4322C278BA00C2F923 /* MembraneRegion.h */,
+				AE281F4422C278BA00C2F923 /* Edge.cpp */,
+				AE281F4622C278BA00C2F923 /* AdaptiveMesh.hpp */,
+				AE281F4822C278BA00C2F923 /* MembraneRegion.cpp */,
+				AE281F4922C278BA00C2F923 /* MembraneMeshCheck.hpp */,
+			);
+			path = SurfaceMesh;
+			sourceTree = "<group>";
+		};
+		AE281F7622C278DD00C2F923 /* VolumeConservation */ = {
+			isa = PBXGroup;
+			children = (
+				AE281F7722C278DD00C2F923 /* VolumeConservationFF.h */,
+				AE281F7B22C278DD00C2F923 /* VolumeConservationMembraneHarmonic.cpp */,
+				AE281F7C22C278DD00C2F923 /* VolumeConservationInteractions.h */,
+				AE281F7E22C278DD00C2F923 /* VolumeConservationMembrane.h */,
+				AE281F8122C278DD00C2F923 /* VolumeConservationMembraneHarmonic.h */,
+				AE281F8222C278DD00C2F923 /* VolumeConservationFF.cpp */,
+				AE281F8322C278DD00C2F923 /* VolumeConservationMembrane.cpp */,
+			);
+			path = VolumeConservation;
+			sourceTree = "<group>";
+		};
+		AE281F8422C278DD00C2F923 /* Membrane */ = {
+			isa = PBXGroup;
+			children = (
+				AE281F8722C278DD00C2F923 /* MembraneBending.hpp */,
+				AE281F8822C278DD00C2F923 /* MembraneStretching.hpp */,
+				AE281F8922C278DD00C2F923 /* MembraneFF.h */,
+				AE281F8B22C278DD00C2F923 /* MembraneStretching.cpp */,
+				AE281F8D22C278DD00C2F923 /* MembraneInteractions.hpp */,
+				AE281F8F22C278DD00C2F923 /* MembraneStretchingImpl.hpp */,
+				AE281F9022C278DD00C2F923 /* MembraneBendingHelfrich.hpp */,
+				AE281F9222C278DD00C2F923 /* MembraneFF.cpp */,
+				AE281F9322C278DD00C2F923 /* MembraneBending.cpp */,
+			);
+			path = Membrane;
+			sourceTree = "<group>";
+		};
+		AE28234122C27A1900C2F923 /* Volume */ = {
+			isa = PBXGroup;
+			children = (
+				AE28234222C27A1900C2F923 /* CylinderExclVolume.h */,
+				AE28234322C27A1900C2F923 /* CylinderVolumeInteractions.h */,
+				AE28234422C27A1900C2F923 /* CylinderExclVolRepulsion.h */,
+				AE28234522C27A1900C2F923 /* TriangleCylinderExclVolume.cpp */,
+				AE28234622C27A1900C2F923 /* TriangleCylinderVolumeFF.cpp */,
+				AE28234722C27A1900C2F923 /* CylinderExclVolRepulsion.cpp */,
+				AE28234822C27A1900C2F923 /* CylinderExclVolume.cpp */,
+				AE28234922C27A1900C2F923 /* TriangleCylinderBeadExclVolRepulsion.cpp */,
+				AE28234A22C27A1900C2F923 /* CylinderVolumeFF.cpp */,
+				AE28234B22C27A1900C2F923 /* TriangleCylinderVolumeFF.h */,
+				AE28234C22C27A1900C2F923 /* TriangleCylinderVolumeInteractions.h */,
+				AE28234D22C27A1900C2F923 /* CylinderExclVolRepulsionCUDA.h */,
+				AE28234E22C27A1900C2F923 /* CylinderVolumeInteractions.cpp */,
+				AE28234F22C27A1900C2F923 /* CylinderVolumeFF.h */,
+				AE28235022C27A1900C2F923 /* TriangleCylinderExclVolume.h */,
+				AE28235122C27A1900C2F923 /* TriangleCylinderBeadExclVolRepulsion.h */,
+			);
+			path = Volume;
+			sourceTree = "<group>";
+		};
+		AE28236622C27CAC00C2F923 /* analysis */ = {
+			isa = PBXGroup;
+			children = (
+				AE28236722C27CAC00C2F923 /* io */,
+			);
+			path = analysis;
+			sourceTree = "<group>";
+		};
+		AE28236722C27CAC00C2F923 /* io */ = {
+			isa = PBXGroup;
+			children = (
+				AE28236822C27CAC00C2F923 /* pdb.cpp */,
+				AE28236922C27CAC00C2F923 /* read_snapshot.h */,
+				AE28236A22C27CAC00C2F923 /* read_snapshot.cpp */,
+				AE28236B22C27CAC00C2F923 /* pdb.h */,
+			);
+			path = io;
+			sourceTree = "<group>";
+		};
 		AEC546CE225D3798007CB7E9 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				AE28236622C27CAC00C2F923 /* analysis */,
+				AE28236322C27BB800C2F923 /* OutputStruct.cpp */,
+				AE28236222C27BB800C2F923 /* OutputStruct.h */,
 				1F41A7B122B06A070073835F /* dist_moduleV2 */,
 				AEC546CF225D3798007CB7E9 /* CController.h */,
 				AEC546D1225D3798007CB7E9 /* Composite.h */,
@@ -2784,6 +3008,9 @@
 		AEC54716225D3798007CB7E9 /* ForceField */ = {
 			isa = PBXGroup;
 			children = (
+				AE28234122C27A1900C2F923 /* Volume */,
+				AE281F8422C278DD00C2F923 /* Membrane */,
+				AE281F7622C278DD00C2F923 /* VolumeConservation */,
 				AEC54717225D3798007CB7E9 /* cross_check.h */,
 				AEC54718225D3798007CB7E9 /* Linker */,
 				AEC54722225D3798007CB7E9 /* ForceFieldManager.h */,
@@ -2796,7 +3023,6 @@
 				AEC5477C225D3798007CB7E9 /* ForceField.h */,
 				AEC5477D225D3798007CB7E9 /* MotorGhost */,
 				AEC54787225D3798007CB7E9 /* cross_check.cpp */,
-				AEC54788225D3798007CB7E9 /* Volume */,
 			);
 			path = ForceField;
 			sourceTree = "<group>";
@@ -2944,22 +3170,6 @@
 			path = MotorGhost;
 			sourceTree = "<group>";
 		};
-		AEC54788225D3798007CB7E9 /* Volume */ = {
-			isa = PBXGroup;
-			children = (
-				AEC54789225D3798007CB7E9 /* CylinderExclVolume.h */,
-				AEC5478A225D3798007CB7E9 /* CylinderVolumeInteractions.h */,
-				AEC5478B225D3798007CB7E9 /* CylinderExclVolRepulsion.h */,
-				AEC5478C225D3798007CB7E9 /* CylinderExclVolRepulsion.cpp */,
-				AEC5478D225D3798007CB7E9 /* CylinderExclVolume.cpp */,
-				AEC5478E225D3798007CB7E9 /* CylinderVolumeFF.cpp */,
-				AEC5478F225D3798007CB7E9 /* CylinderExclVolRepulsionCUDA.h */,
-				AEC54790225D3798007CB7E9 /* CylinderVolumeInteractions.cpp */,
-				AEC54791225D3798007CB7E9 /* CylinderVolumeFF.h */,
-			);
-			path = Volume;
-			sourceTree = "<group>";
-		};
 		AEC54792225D3798007CB7E9 /* Minimizer */ = {
 			isa = PBXGroup;
 			children = (
@@ -2981,6 +3191,7 @@
 		AEC54820225D3799007CB7E9 /* Structure */ = {
 			isa = PBXGroup;
 			children = (
+				AE281F1D22C278B900C2F923 /* SurfaceMesh */,
 				AEC54821225D3799007CB7E9 /* CBranchingPoint.h */,
 				AEC54822225D3799007CB7E9 /* CMotorGhost.h */,
 				AEC54823225D3799007CB7E9 /* Compartment.h */,
@@ -3087,6 +3298,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE28236022C27A1900C2F923 /* TriangleCylinderExclVolume.h in Headers */,
 				AEC54873225D3799007CB7E9 /* SysParams.h in Headers */,
 				AEC548D8225D3799007CB7E9 /* BubbleFF.h in Headers */,
 				AEC548E2225D3799007CB7E9 /* BubbleBubbleRepulsionExp.h in Headers */,
@@ -3095,26 +3307,33 @@
 				AEC5497A225D3799007CB7E9 /* MLinker.h in Headers */,
 				AEC548AE225D3799007CB7E9 /* LinkerStretchingHarmonic.h in Headers */,
 				AEC548BE225D3799007CB7E9 /* BoundaryCylinderAttachmentHarmonic.h in Headers */,
+				AE281FCA22C278DD00C2F923 /* MembraneStretchingImpl.hpp in Headers */,
 				AEC54921225D3799007CB7E9 /* CGSteepestDescent.h in Headers */,
 				AEC5486D225D3799007CB7E9 /* Composite.h in Headers */,
 				AEC54871225D3799007CB7E9 /* BubbleInitializer.h in Headers */,
 				AEC54972225D3799007CB7E9 /* MotorGhost.h in Headers */,
 				AEC54964225D3799007CB7E9 /* MBranchingPoint.h in Headers */,
+				AE28236F22C27CAD00C2F923 /* pdb.h in Headers */,
 				AEC5487B225D3799007CB7E9 /* FilamentInitializer.h in Headers */,
 				AEC548F1225D3799007CB7E9 /* BranchingStretchingHarmonicCUDA.h in Headers */,
 				AEC54938225D3799007CB7E9 /* common.h in Headers */,
 				AEC54915225D3799007CB7E9 /* MotorGhostFF.h in Headers */,
 				AEC548E8225D3799007CB7E9 /* BranchingDihedralCosine.h in Headers */,
+				AE28236422C27BB800C2F923 /* OutputStruct.h in Headers */,
 				AEC54965225D3799007CB7E9 /* BoundaryImpl.h in Headers */,
 				AEC548B4225D3799007CB7E9 /* LinkerInteractions.h in Headers */,
 				AEC54893225D3799007CB7E9 /* BindingManager.h in Headers */,
 				AEC548BC225D3799007CB7E9 /* BoundaryCylinderRepulsionCUDA.h in Headers */,
 				AEC54944225D3799007CB7E9 /* Compartment.h in Headers */,
+				AE28236D22C27CAD00C2F923 /* read_snapshot.h in Headers */,
+				AE281F5C22C278BA00C2F923 /* AdaptiveMeshGeometryManager.hpp in Headers */,
 				AEC5494F225D3799007CB7E9 /* Boundary.h in Headers */,
 				AEC548C3225D3799007CB7E9 /* BoundaryCylinderAttachment.h in Headers */,
+				AE281F5622C278BA00C2F923 /* SurfaceMeshGenerator.hpp in Headers */,
 				AEC548C1225D3799007CB7E9 /* BoundaryInteractions.h in Headers */,
 				AEC548B7225D3799007CB7E9 /* ForceFieldManager.h in Headers */,
 				AEC548C2225D3799007CB7E9 /* BoundaryFF.h in Headers */,
+				AE281F5922C278BA00C2F923 /* MTriangle.h in Headers */,
 				AEC548ED225D3799007CB7E9 /* BranchingPositionCosineCUDA.h in Headers */,
 				AEC54977225D3799007CB7E9 /* Trackable.h in Headers */,
 				AEC54881225D3799007CB7E9 /* ReactionBase.h in Headers */,
@@ -3124,51 +3343,62 @@
 				AEC54903225D3799007CB7E9 /* FilamentBendingCosine.h in Headers */,
 				AEC54940225D3799007CB7E9 /* RateChanger.h in Headers */,
 				AEC54988225D3799007CB7E9 /* MController.h in Headers */,
+				AE281FC222C278DD00C2F923 /* MembraneBending.hpp in Headers */,
 				AEC5490D225D3799007CB7E9 /* ForceField.h in Headers */,
 				AEC548F6225D3799007CB7E9 /* BranchingPosition.h in Headers */,
 				AEC5487A225D3799007CB7E9 /* profiler.h in Headers */,
 				AEC5489F225D3799007CB7E9 /* ChemSimpleGillespieImpl.h in Headers */,
-				AEC54919225D3799007CB7E9 /* CylinderVolumeInteractions.h in Headers */,
+				AE281F6C22C278BA00C2F923 /* MVoronoiCell.h in Headers */,
 				AEC548F5225D3799007CB7E9 /* BranchingInteractions.h in Headers */,
 				AEC548FA225D3799007CB7E9 /* BranchingDihedral.h in Headers */,
 				AEC5498B225D3799007CB7E9 /* DRController.h in Headers */,
 				AEC548B0225D3799007CB7E9 /* LinkerFF.h in Headers */,
 				AEC54877225D3799007CB7E9 /* log.h in Headers */,
+				AE281F5D22C278BA00C2F923 /* AdaptiveMeshAttribute.hpp in Headers */,
+				AE281FB322C278DD00C2F923 /* VolumeConservationFF.h in Headers */,
 				AEC54948225D3799007CB7E9 /* Reactable.h in Headers */,
 				AEC548D4225D3799007CB7E9 /* MTOCAttachmentHarmonic.h in Headers */,
+				AE28235C22C27A1900C2F923 /* TriangleCylinderVolumeInteractions.h in Headers */,
 				AEC5495C225D3799007CB7E9 /* CMonomer.h in Headers */,
 				AEC54910225D3799007CB7E9 /* MotorGhostInteractions.h in Headers */,
+				AE281FC822C278DD00C2F923 /* MembraneInteractions.hpp in Headers */,
 				AEC548E5225D3799007CB7E9 /* BranchingBendingCosine.h in Headers */,
 				AEC54954225D3799007CB7E9 /* CLinker.h in Headers */,
+				AE281F6D22C278BA00C2F923 /* MembraneHierarchy.h in Headers */,
 				AEC5497C225D3799007CB7E9 /* Linker.h in Headers */,
-				AEC5491A225D3799007CB7E9 /* CylinderExclVolRepulsion.h in Headers */,
 				AEC5494A225D3799007CB7E9 /* CBound.h in Headers */,
+				AE281FBA22C278DD00C2F923 /* VolumeConservationMembrane.h in Headers */,
 				AEC54985225D3799007CB7E9 /* MMotorGhost.h in Headers */,
 				AEC5494B225D3799007CB7E9 /* CCylinder.h in Headers */,
 				AEC5490E225D3799007CB7E9 /* MotorGhostStretchingHarmonic.h in Headers */,
 				AEC5493B225D3799007CB7E9 /* Rand.h in Headers */,
 				AEC54973225D3799007CB7E9 /* BoundaryElement.h in Headers */,
-				AEC5491E225D3799007CB7E9 /* CylinderExclVolRepulsionCUDA.h in Headers */,
+				AE281F4B22C278BA00C2F923 /* AdaptiveMeshVertexRelocation.hpp in Headers */,
+				AE28235322C27A1900C2F923 /* CylinderVolumeInteractions.h in Headers */,
 				AEC5489B225D3799007CB7E9 /* Species.h in Headers */,
 				AEC54897225D3799007CB7E9 /* HybridBindingSearchManager.h in Headers */,
 				AEC54925225D3799007CB7E9 /* CGPolakRibiereMethod.h in Headers */,
 				AEC5493E225D3799007CB7E9 /* Component.h in Headers */,
 				AEC548EA225D3799007CB7E9 /* BranchingDihedralCosineCUDA.h in Headers */,
 				AEC548CC225D3799007CB7E9 /* BoundaryCylinderRepulsionExpCUDA.h in Headers */,
+				AE28235F22C27A1900C2F923 /* CylinderVolumeFF.h in Headers */,
 				AEC54937225D3799007CB7E9 /* Restart.h in Headers */,
 				AEC54929225D3799007CB7E9 /* CGFletcherRievesMethod.h in Headers */,
+				AE281F4F22C278BA00C2F923 /* MembraneMeshAttribute.hpp in Headers */,
 				AEC548C0225D3799007CB7E9 /* BoundaryBubbleRepulsion.h in Headers */,
 				AEC54981225D3799007CB7E9 /* BranchingPoint.h in Headers */,
 				AEC5496A225D3799007CB7E9 /* Bubble.h in Headers */,
 				AEC5497E225D3799007CB7E9 /* NeighborListImplCUDA.h in Headers */,
 				AEC548E1225D3799007CB7E9 /* MTOCAttachment.h in Headers */,
+				AE281FCB22C278DD00C2F923 /* MembraneBendingHelfrich.hpp in Headers */,
 				AEC54905225D3799007CB7E9 /* FilamentStretchingHarmonicCUDA.h in Headers */,
 				AEC5489D225D3799007CB7E9 /* ChemCallbacks.h in Headers */,
 				AEC5487E225D3799007CB7E9 /* MathFunctions.h in Headers */,
-				AEC54920225D3799007CB7E9 /* CylinderVolumeFF.h in Headers */,
 				AEC54886225D3799007CB7E9 /* ChemGillespieImpl.h in Headers */,
+				AE281F5022C278BA00C2F923 /* Edge.h in Headers */,
 				AEC548FF225D3799007CB7E9 /* FilamentBendingHarmonicCUDA.h in Headers */,
 				AEC54899225D3799007CB7E9 /* Reaction.h in Headers */,
+				AE281FB822C278DD00C2F923 /* VolumeConservationInteractions.h in Headers */,
 				AEC54888225D3799007CB7E9 /* SpeciesContainer.h in Headers */,
 				AEC548C5225D3799007CB7E9 /* BoundaryBubbleRepulsionExp.h in Headers */,
 				AEC54953225D3799007CB7E9 /* BoundarySurfaceImpl.h in Headers */,
@@ -3186,11 +3416,17 @@
 				AEC54962225D3799007CB7E9 /* BinGrid.h in Headers */,
 				AEC548C6225D3799007CB7E9 /* BoundaryCylinderRepulsionExpIn.h in Headers */,
 				AEC548BF225D3799007CB7E9 /* BoundaryCylinderRepulsionIn.h in Headers */,
+				AE28235D22C27A1900C2F923 /* CylinderExclVolRepulsionCUDA.h in Headers */,
 				AEC548FE225D3799007CB7E9 /* FilamentStretching.h in Headers */,
+				AE281F5522C278BA00C2F923 /* MembraneMeshTriangleQuality.hpp in Headers */,
 				AEC54942225D3799007CB7E9 /* CBranchingPoint.h in Headers */,
 				AEC54955225D3799007CB7E9 /* SubSystem.h in Headers */,
+				AE281F5222C278BA00C2F923 /* MMembrane.h in Headers */,
 				AEC5488C225D3799007CB7E9 /* ChemSim.h in Headers */,
+				AE28235222C27A1900C2F923 /* CylinderExclVolume.h in Headers */,
+				AE28236122C27A1900C2F923 /* TriangleCylinderBeadExclVolRepulsion.h in Headers */,
 				AEC54986225D3799007CB7E9 /* Bin.h in Headers */,
+				AE28235422C27A1900C2F923 /* CylinderExclVolRepulsion.h in Headers */,
 				AEC54924225D3799007CB7E9 /* CGMethodCUDA.h in Headers */,
 				AEC54894225D3799007CB7E9 /* ReactionTemplate.h in Headers */,
 				AEC5493A225D3799007CB7E9 /* ControllerCUDA.h in Headers */,
@@ -3201,7 +3437,9 @@
 				AEC548FD225D3799007CB7E9 /* FilamentBending.h in Headers */,
 				AEC548E0225D3799007CB7E9 /* BubbleInteractions.h in Headers */,
 				AEC54896225D3799007CB7E9 /* BindingManagerCUDA.h in Headers */,
+				AE281FC422C278DD00C2F923 /* MembraneFF.h in Headers */,
 				AEC548FC225D3799007CB7E9 /* FilamentInteractions.h in Headers */,
+				AE281FBD22C278DD00C2F923 /* VolumeConservationMembraneHarmonic.h in Headers */,
 				AEC548F4225D3799007CB7E9 /* BranchingStretching.h in Headers */,
 				AEC54883225D3799007CB7E9 /* ChemNRMImpl.h in Headers */,
 				AEC5492D225D3799007CB7E9 /* Output.h in Headers */,
@@ -3212,7 +3450,9 @@
 				AEC54931225D3799007CB7E9 /* Visitor.h in Headers */,
 				AEC54909225D3799007CB7E9 /* FilamentBendingCosineCUDA.h in Headers */,
 				AEC548DB225D3799007CB7E9 /* BubbleCylinderRepulsionExp.h in Headers */,
+				AE28235B22C27A1900C2F923 /* TriangleCylinderVolumeFF.h in Headers */,
 				AEC5495E225D3799007CB7E9 /* Movable.h in Headers */,
+				AE281FC322C278DD00C2F923 /* MembraneStretching.hpp in Headers */,
 				AEC548AD225D3799007CB7E9 /* cross_check.h in Headers */,
 				AEC54879225D3799007CB7E9 /* environment.h in Headers */,
 				AEC5498A225D3799007CB7E9 /* RateChangerImpl.h in Headers */,
@@ -3220,9 +3460,11 @@
 				AEC548F0225D3799007CB7E9 /* BranchingPositionCosine.h in Headers */,
 				AEC5488A225D3799007CB7E9 /* DissipationTracker.h in Headers */,
 				AEC54984225D3799007CB7E9 /* MCylinder.h in Headers */,
-				AEC54918225D3799007CB7E9 /* CylinderExclVolume.h in Headers */,
+				AE281F6F22C278BA00C2F923 /* MembraneRegion.h in Headers */,
 				AEC5490C225D3799007CB7E9 /* FilamentStretchingHarmonic.h in Headers */,
 				AEC548D7225D3799007CB7E9 /* MTOCBendingCosine.h in Headers */,
+				AE281F4E22C278BA00C2F923 /* Vertex.h in Headers */,
+				AE281F6722C278BA00C2F923 /* Triangle.h in Headers */,
 				AEC54891225D3799007CB7E9 /* ReactionContainer.h in Headers */,
 				AEC548F9225D3799007CB7E9 /* BranchingBending.h in Headers */,
 				AEC548F8225D3799007CB7E9 /* BranchingBendingCosineCUDA.h in Headers */,
@@ -3230,17 +3472,23 @@
 				AEC5494E225D3799007CB7E9 /* HybridNeighborList.h in Headers */,
 				AEC54895225D3799007CB7E9 /* ChemManager.h in Headers */,
 				AEC54933225D3799007CB7E9 /* Controller.h in Headers */,
+				AE281F7522C278BA00C2F923 /* MembraneMeshCheck.hpp in Headers */,
 				AEC54978225D3799007CB7E9 /* HybridNeighborListImpl.h in Headers */,
 				AEC5492B225D3799007CB7E9 /* ConjugateGradient.h in Headers */,
 				AEC54936225D3799007CB7E9 /* GController.h in Headers */,
 				AEC5486C225D3799007CB7E9 /* CController.h in Headers */,
+				AE281F7222C278BA00C2F923 /* AdaptiveMesh.hpp in Headers */,
+				AE281F6122C278BA00C2F923 /* Membrane.hpp in Headers */,
 				AEC5495B225D3799007CB7E9 /* CompartmentGrid.h in Headers */,
 				AEC54976225D3799007CB7E9 /* Filament.h in Headers */,
 				AEC548D2225D3799007CB7E9 /* BubbleBubbleRepulsion.h in Headers */,
 				AEC54941225D3799007CB7E9 /* utility.h in Headers */,
 				AEC5490B225D3799007CB7E9 /* FilamentBendingHarmonic.h in Headers */,
 				AEC5494D225D3799007CB7E9 /* BoundarySurface.h in Headers */,
+				AE281F6922C278BA00C2F923 /* GeometricMeshAttribute.hpp in Headers */,
+				AE281F4A22C278BA00C2F923 /* SurfaceMeshGeneratorPreset.hpp in Headers */,
 				AEC54922225D3799007CB7E9 /* CGMethod.h in Headers */,
+				AE281F6522C278BA00C2F923 /* SurfaceMesh.hpp in Headers */,
 				AEC5492A225D3799007CB7E9 /* Minimizer.h in Headers */,
 				AEC54943225D3799007CB7E9 /* CMotorGhost.h in Headers */,
 				AEC5495F225D3799007CB7E9 /* Cylinder.h in Headers */,
@@ -3342,6 +3590,7 @@
 				1F41AAC522B1766D0073835F /* dist_avx_par.cpp in Sources */,
 				AEC54947225D3799007CB7E9 /* CLinker.cpp in Sources */,
 				AEC548EC225D3799007CB7E9 /* BranchingFF.cpp in Sources */,
+				AE28235722C27A1900C2F923 /* CylinderExclVolRepulsion.cpp in Sources */,
 				AEC54950225D3799007CB7E9 /* Compartment.cpp in Sources */,
 				AEC54916225D3799007CB7E9 /* MotorGhostStretching.cpp in Sources */,
 				AEC54902225D3799007CB7E9 /* FilamentBending.cpp in Sources */,
@@ -3351,54 +3600,66 @@
 				AEC5495D225D3799007CB7E9 /* NeighborListImpl.cpp in Sources */,
 				AEC54889225D3799007CB7E9 /* ChemSimpleGillespieImpl.cpp in Sources */,
 				AEC548D6225D3799007CB7E9 /* BubbleBubbleRepulsion.cpp in Sources */,
+				AE28236522C27BB800C2F923 /* OutputStruct.cpp in Sources */,
 				AEC54875225D3799007CB7E9 /* log.cpp in Sources */,
 				AEC54885225D3799007CB7E9 /* Species.cpp in Sources */,
 				AEC548AB225D3799007CB7E9 /* DRController.cpp in Sources */,
 				AEC5494C225D3799007CB7E9 /* MMotorGhost.cpp in Sources */,
 				AEC5493F225D3799007CB7E9 /* Controller.cpp in Sources */,
+				AE28235522C27A1900C2F923 /* TriangleCylinderExclVolume.cpp in Sources */,
 				AEC54968225D3799007CB7E9 /* CMonomer.cpp in Sources */,
 				AEC548AF225D3799007CB7E9 /* LinkerInteractions.cpp in Sources */,
 				AEC54932225D3799007CB7E9 /* FilamentInitializer.cpp in Sources */,
+				AE281FBE22C278DD00C2F923 /* VolumeConservationFF.cpp in Sources */,
 				AEC548F7225D3799007CB7E9 /* BranchingBendingCosine.cpp in Sources */,
-				AEC5491C225D3799007CB7E9 /* CylinderExclVolume.cpp in Sources */,
 				AEC54912225D3799007CB7E9 /* MotorGhostFF.cpp in Sources */,
 				AEC54934225D3799007CB7E9 /* Composite.cpp in Sources */,
 				AEC548CB225D3799007CB7E9 /* BoundaryInteractions.cpp in Sources */,
 				AEC54987225D3799007CB7E9 /* utility.cpp in Sources */,
+				AE281FBF22C278DD00C2F923 /* VolumeConservationMembrane.cpp in Sources */,
 				AEC548D5225D3799007CB7E9 /* MTOCAttachmentHarmonic.cpp in Sources */,
 				AEC54970225D3799007CB7E9 /* CCylinder.cpp in Sources */,
 				AEC548AC225D3799007CB7E9 /* CUDAcommon.cpp in Sources */,
+				AE28235A22C27A1900C2F923 /* CylinderVolumeFF.cpp in Sources */,
 				AEC5490A225D3799007CB7E9 /* FilamentBendingHarmonic.cpp in Sources */,
+				AE28235922C27A1900C2F923 /* TriangleCylinderBeadExclVolRepulsion.cpp in Sources */,
+				AE281F6322C278BA00C2F923 /* MembraneHierarchy.cpp in Sources */,
 				AEC54884225D3799007CB7E9 /* ChemSim.cpp in Sources */,
 				AEC548BB225D3799007CB7E9 /* BoundaryCylinderRepulsionExp.cpp in Sources */,
 				AEC54878225D3799007CB7E9 /* cmdparse.cpp in Sources */,
 				AEC548E3225D3799007CB7E9 /* BubbleCylinderRepulsionExp.cpp in Sources */,
+				AE281F5822C278BA00C2F923 /* Membrane.cpp in Sources */,
 				AEC54874225D3799007CB7E9 /* profiler.cpp in Sources */,
 				AEC5492F225D3799007CB7E9 /* Output.cpp in Sources */,
+				AE28236E22C27CAD00C2F923 /* read_snapshot.cpp in Sources */,
 				AEC54989225D3799007CB7E9 /* Parser.cpp in Sources */,
 				AEC548B3225D3799007CB7E9 /* LinkerStretchingHarmonic.cpp in Sources */,
+				AE281F6222C278BA00C2F923 /* Triangle.cpp in Sources */,
 				AEC548E9225D3799007CB7E9 /* BranchingInteractions.cpp in Sources */,
 				AEC54906225D3799007CB7E9 /* FilamentStretching.cpp in Sources */,
 				AEC5496C225D3799007CB7E9 /* MTOC.cpp in Sources */,
 				AEC54927225D3799007CB7E9 /* CGFletcherRievesMethod.cpp in Sources */,
 				AEC548D9225D3799007CB7E9 /* BubbleBubbleRepulsionExp.cpp in Sources */,
-				AEC5491D225D3799007CB7E9 /* CylinderVolumeFF.cpp in Sources */,
 				AEC548DF225D3799007CB7E9 /* BubbleFF.cpp in Sources */,
+				AE281FCE22C278DD00C2F923 /* MembraneBending.cpp in Sources */,
+				AE281F7022C278BA00C2F923 /* Edge.cpp in Sources */,
 				AEC548EB225D3799007CB7E9 /* BranchingDihedralCosine.cpp in Sources */,
 				AEC54907225D3799007CB7E9 /* FilamentInteractions.cpp in Sources */,
 				AEC548C8225D3799007CB7E9 /* BoundaryBubbleRepulsionExp.cpp in Sources */,
-				AEC5491B225D3799007CB7E9 /* CylinderExclVolRepulsion.cpp in Sources */,
 				AEC548E6225D3799007CB7E9 /* BranchingStretching.cpp in Sources */,
 				AEC54872225D3799007CB7E9 /* common.cpp in Sources */,
+				AE281F5E22C278BA00C2F923 /* MVoronoiCell.cpp in Sources */,
 				AEC548C7225D3799007CB7E9 /* BoundaryCylinderRepulsionExpIn.cpp in Sources */,
 				AEC5486E225D3799007CB7E9 /* SysParams.cpp in Sources */,
 				AEC54949225D3799007CB7E9 /* Bead.cpp in Sources */,
 				AEC548E7225D3799007CB7E9 /* BranchingPositionCosine.cpp in Sources */,
+				AE281F6E22C278BA00C2F923 /* Vertex.cpp in Sources */,
 				AEC548CE225D3799007CB7E9 /* ForceFieldManager.cpp in Sources */,
 				AEC54958225D3799007CB7E9 /* SubSystem.cpp in Sources */,
 				AEC5496E225D3799007CB7E9 /* BranchingPoint.cpp in Sources */,
 				AEC54961225D3799007CB7E9 /* CompartmentGrid.cpp in Sources */,
 				AEC5487C225D3799007CB7E9 /* MathFunctions.cpp in Sources */,
+				AE28236C22C27CAD00C2F923 /* pdb.cpp in Sources */,
 				AEC54946225D3799007CB7E9 /* Cylinder.cpp in Sources */,
 				AEC548D0225D3799007CB7E9 /* BubbleInteractions.cpp in Sources */,
 				AEC548FB225D3799007CB7E9 /* BranchingStretchingHarmonic.cpp in Sources */,
@@ -3406,12 +3667,14 @@
 				AEC548EF225D3799007CB7E9 /* BranchingDihedral.cpp in Sources */,
 				AEC54926225D3799007CB7E9 /* CGPolakRibiereMethod.cpp in Sources */,
 				AEC54930225D3799007CB7E9 /* CController.cpp in Sources */,
+				AE281FC622C278DD00C2F923 /* MembraneStretching.cpp in Sources */,
 				AEC548F2225D3799007CB7E9 /* BranchingBending.cpp in Sources */,
 				AEC548B1225D3799007CB7E9 /* LinkerStretching.cpp in Sources */,
 				AEC54911225D3799007CB7E9 /* MotorGhostInteractions.cpp in Sources */,
-				AEC5491F225D3799007CB7E9 /* CylinderVolumeInteractions.cpp in Sources */,
+				AE28235E22C27A1900C2F923 /* CylinderVolumeInteractions.cpp in Sources */,
 				AEC5489E225D3799007CB7E9 /* Reaction.cpp in Sources */,
 				AEC5496F225D3799007CB7E9 /* MBranchingPoint.cpp in Sources */,
+				AE28235822C27A1900C2F923 /* CylinderExclVolume.cpp in Sources */,
 				AEC54935225D3799007CB7E9 /* RateChangerImpl.cpp in Sources */,
 				AEC54887225D3799007CB7E9 /* BindingManager.cpp in Sources */,
 				AEC548B6225D3799007CB7E9 /* LinkerFF.cpp in Sources */,
@@ -3424,6 +3687,7 @@
 				AEC54917225D3799007CB7E9 /* cross_check.cpp in Sources */,
 				AEC548DE225D3799007CB7E9 /* MTOCAttachment.cpp in Sources */,
 				AEC54923225D3799007CB7E9 /* CGMethod.cpp in Sources */,
+				AE281F7422C278BA00C2F923 /* MembraneRegion.cpp in Sources */,
 				AEC548BA225D3799007CB7E9 /* BoundaryCylinderRepulsionIn.cpp in Sources */,
 				AEC54956225D3799007CB7E9 /* Filament.cpp in Sources */,
 				AEC54963225D3799007CB7E9 /* Bin.cpp in Sources */,
@@ -3431,19 +3695,23 @@
 				AEC548C4225D3799007CB7E9 /* BoundaryCylinderAttachment.cpp in Sources */,
 				AEC54969225D3799007CB7E9 /* MCylinder.cpp in Sources */,
 				AEC54979225D3799007CB7E9 /* BoundarySurfaceImpl.cpp in Sources */,
+				AE281FB722C278DD00C2F923 /* VolumeConservationMembraneHarmonic.cpp in Sources */,
 				AEC54960225D3799007CB7E9 /* CMotorGhost.cpp in Sources */,
 				AEC54957225D3799007CB7E9 /* HybridNeighborListImpl.cpp in Sources */,
 				AEC54904225D3799007CB7E9 /* FilamentBendingCosine.cpp in Sources */,
 				AEC54901225D3799007CB7E9 /* FilamentStretchingHarmonic.cpp in Sources */,
+				AE28235622C27A1900C2F923 /* TriangleCylinderVolumeFF.cpp in Sources */,
 				AEC548B9225D3799007CB7E9 /* BoundaryCylinderAttachmentHarmonic.cpp in Sources */,
 				AEC54952225D3799007CB7E9 /* CBranchingPoint.cpp in Sources */,
 				AEC5488B225D3799007CB7E9 /* ChemNRMImpl.cpp in Sources */,
+				AE281F6822C278BA00C2F923 /* MTriangle.cpp in Sources */,
 				AEC54966225D3799007CB7E9 /* Linker.cpp in Sources */,
 				AEC5488F225D3799007CB7E9 /* HybridBindingSearchManager.cpp in Sources */,
 				AEC5493D225D3799007CB7E9 /* BubbleInitializer.cpp in Sources */,
 				AEC5492E225D3799007CB7E9 /* GController.cpp in Sources */,
 				AEC5497D225D3799007CB7E9 /* MLinker.cpp in Sources */,
 				AEC54971225D3799007CB7E9 /* Bubble.cpp in Sources */,
+				AE281FCD22C278DD00C2F923 /* MembraneFF.cpp in Sources */,
 				AEC54882225D3799007CB7E9 /* ChemGillespieImpl.cpp in Sources */,
 				AEC54914225D3799007CB7E9 /* MotorGhostStretchingHarmonic.cpp in Sources */,
 				AEC548BD225D3799007CB7E9 /* BoundaryBubbleRepulsion.cpp in Sources */,
