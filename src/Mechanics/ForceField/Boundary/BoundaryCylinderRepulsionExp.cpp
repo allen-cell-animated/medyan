@@ -317,7 +317,6 @@ void BoundaryCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f
     int nb, nc;
     floatingpoint *coord1, R, r, f0;
 	floatingpoint *force1;
-    floatingpoint *F_i;
 //    floatingpoint *forcecopy;
 //    forcecopy = new floatingpoint[CGMethod::N];
 //    for(auto iter=0;iter<CGMethod::N;iter++)

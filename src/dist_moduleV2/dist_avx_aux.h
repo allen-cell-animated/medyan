@@ -20,9 +20,9 @@ A workaround around the absence of _mm256_permutevar8x32_epi32 in AVX.
 
 namespace dist {
 
-	extern std::array<int, 256*8> _lut_avx; 
-	extern std::array<int, 5*8>   _lut_avx_step2; 
-	extern std::array<int, 5*8>   _lut_avx_blend;
+    extern uint _lut_avx      [256*8];
+    extern uint _lut_avx_step2[5*8]; 
+    extern uint _lut_avx_blend[5*8];
 		
 	// In AVX, _mm256_permutevar8x32_epi32 does not exist (it was introduced in AVX2)
 	// We have to implement it using more elementary instructions.
@@ -49,6 +49,6 @@ namespace dist {
 	
 } // end-of-namespace dist
 
-#endif // __AVX2__
+#endif // __AVX__
 
 #endif // DIST_AVX_AUX

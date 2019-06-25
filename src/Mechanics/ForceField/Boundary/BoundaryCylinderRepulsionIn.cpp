@@ -213,8 +213,8 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::deallocate() {
 template <class BRepulsionInteractionType>
 floatingpoint BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeEnergy
 (floatingpoint *coord, floatingpoint *f, floatingpoint d) {
-    floatingpoint U_i[1], U_ii=0.0;
-    floatingpoint* gU_i;
+    floatingpoint U_ii=0.0;
+    [[maybe_unused]] floatingpoint* gU_i;
     U_ii = 0.0;
 //    std::cout<<"Total boundary nint "<<nint<<endl;
 #ifdef CUDATIMETRACK
