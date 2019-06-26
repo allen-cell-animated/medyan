@@ -564,8 +564,13 @@ struct BranchingCallback {
             double l = 10.0;
             double t = 1.22;
 #endif
-            double s = SysParams::Geometry().monomerSize[filType];
+            floatingpoint s = SysParams::Geometry().monomerSize[filType];
             
+	        //n direction vector of mother filament
+	        //p coordinate of brancher
+	        //l stretching equilibrium length
+	        //s monomer size
+	        //t bending theta.
             auto branchPosDir = branchProjection(n, p, l, s, t);
             auto bd = get<0>(branchPosDir); auto bp = get<1>(branchPosDir);
             

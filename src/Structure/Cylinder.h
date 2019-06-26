@@ -87,12 +87,12 @@ private:
     unique_ptr<MCylinder> _mCylinder; ///< Pointer to mech cylinder
     unique_ptr<CCylinder> _cCylinder; ///< Pointer to chem cylinder
 
-    int _position;          ///< Position on structure
-
     bool _plusEnd = false;  ///< If the cylinder is at the plus end
     bool _minusEnd = false; ///< If the cylinder is at the minus end
 
     short _type; ///< Type of cylinder, either corresponding to Filament or other
+
+	int _position;          ///< Position on structure
 
     Compartment* _compartment = nullptr; ///< Where this cylinder is
 

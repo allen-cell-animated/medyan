@@ -33,17 +33,11 @@ using namespace mathfunc;
 
 void Compartment::SIMDcoordinates_section(){
 
-    for(short i =0; i < 27; i++) {
-        partitionedcoordx[i].clear();
-        partitionedcoordy[i].clear();
-        partitionedcoordz[i].clear();
-        cindex_bs_section[i].clear();
-    }
     //setting size to the number of maximum binding sites per cylinder * number of
     // cylinders in compartment.
     int N = _cylinders.size() * SysParams::Chemistry().maxbindingsitespercylinder;
     if(N) {
-        Cyldcindexvec.resize(_cylinders.size());
+//        Cyldcindexvec.resize(_cylinders.size());
         CylcIDvec.resize(_cylinders.size());
 
         short _filamentType = 0;
@@ -51,21 +45,28 @@ void Compartment::SIMDcoordinates_section(){
         if (SysParams::Chemistry().numFilaments > 1)
             checkftype = true;
         unsigned int i = 0;
-        uint32_t k = 0;
 
         bscoords_section.resize(SysParams::Chemistry().numFilaments * 27);
 
         for(short filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
             for (auto cyl:_cylinders) {
+                for(short i =0; i < 27; i++) {
+                    partitionedcoordx[i].clear();
+                    partitionedcoordy[i].clear();
+                    partitionedcoordz[i].clear();
+                    cindex_bs_section[i].clear();
+                }
+
                 int cindex = cyl->getStableIndex();
-                if (checkftype)
-                    short _filamentType = Cylinder::getDbData().value[cindex].type;
+                short _filamentType = Cylinder::getDbData().value[cindex].type;
+                if (checkftype && _filamentType != filType) continue;
+
                 auto x1 = cyl->getFirstBead()->vcoordinate();
                 auto x2 = cyl->getSecondBead()->vcoordinate();
 //            uint32_t shiftedindex = (i << 4);
                 uint32_t shiftedindex = (cyl->getStableIndex() << 4);
 
-                Cyldcindexvec[i] = cyl->getStableIndex();
+//                Cyldcindexvec[i] = cyl->_dcIndex;
                 CylcIDvec[i] = cyl->getId();
                 uint32_t j = 0;
                 for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
@@ -84,7 +85,6 @@ void Compartment::SIMDcoordinates_section(){
                 }
             }
 
-
 //    assert(k<65536);
             //Create input vector for SIMD calculations
 //        cout<<bscoords.size()<<" "<<partitionedcoordx[0].size()<<endl;
@@ -101,14 +101,7 @@ void Compartment::SIMDcoordinates_section(){
 
 void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
 
-	if(areEqual(HybridBindingSearchManager::largestmotordistance, 0.0)) return;
-
-    for(short i =0; i < 27; i++) {
-        partitionedcoordx[i].clear();
-        partitionedcoordy[i].clear();
-        partitionedcoordz[i].clear();
-        cindex_bs_section[i].clear();
-    }
+	if(areEqual(HybridBindingSearchManager::largestlinkerdistance, 0.0)) return;
 
     //setting size to the number of maximum binding sites per cylinder * number of
     // cylinders in compartment.
@@ -133,35 +126,31 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
 
     for (short filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
         if(N) {
-            Cyldcindexvec.resize(_cylinders.size());
+            for(short i =0; i < 27; i++) {
+                partitionedcoordx[i].clear();
+                partitionedcoordy[i].clear();
+                partitionedcoordz[i].clear();
+                cindex_bs_section[i].clear();
+            }
+
+//            Cyldcindexvec.resize(_cylinders.size());
             short _filamentType = 0;
             bool checkftype = false;
             if (SysParams::Chemistry().numFilaments > 1)
             checkftype = true;
-        unsigned int i = 0;
+            unsigned int i = 0;
 //        cout<<"Cmp coord "<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<endl;
             for (auto cyl:_cylinders) {
                 uint32_t cindex = cyl->getStableIndex();
-                if (checkftype)
-                    short _filamentType = Cylinder::getDbData().value[cindex].type;
+                short _filamentType = Cylinder::getDbData().value[cindex].type;
+                if (checkftype && _filamentType != filType) continue;
+
                 auto x1 = cyl->getFirstBead()->vcoordinate();
                 auto x2 = cyl->getSecondBead()->vcoordinate();
 //            uint16_t shiftedindex = (i << 4);
                 uint32_t shiftedindex = (cindex << 4);
-                Cyldcindexvec[i] = cindex;
+//                Cyldcindexvec[i] = cindex;
                 i++;
-/*			cout<<cyl->getID()<<" ";
-	        auto guessCmp = GController::getCompartment(cyl->coordinate);
-	        if(guessCmp != this){
-	        	cout<<endl;
-		        cout<<"OOPS! Cylinder does not belong to this compartment, Linker "
-				"slice"<<endl;
-		        cout<<"cylinder compartment "<<guessCmp->coordinates()[0]<<" "
-		                                                                   ""<<guessCmp->coordinates()[2]<<endl;
-		        cout<<"current compartment "<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<endl;
-		        exit(EXIT_FAILURE);
-	        }*/
-
                 uint32_t j = 0;
                 for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
                      it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
@@ -184,10 +173,6 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                             getpartitionindex<false>(pindices, coord, coord_bounds);
                             addcoordtorMaxbasedpartitons<false>(pindices, coord, index);
                         }
-/*                    getpartition3Dindex(pindices, coord, coord_bounds);
-                    addcoordtopartitons_smallrmax(pindices, coord, index);
-                    getpartition3Dindex(pindices, coord);
-                    addcoordtopartitons(pindices, coord, index);*/
                     }
                     j++;
                 }
@@ -198,25 +183,11 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
 //        cout<<"Linker coord size ";
 
             for (short i = 0; i < 27; i++) {
-//            cout<<partitionedcoordx[i].size()<<" ";
                 bscoords_section_linker[filType * 27 + i].init_coords(partitionedcoordx[i],
                                                                       partitionedcoordy[i],
                                                                       partitionedcoordz[i],
                                                                       cindex_bs_section[i]);
             }
-//        cout<<endl;
-/*        cout<<"Cmp Linker coord "<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<endl;
-        for(short partition = 0; partition < 27; partition ++) {
-            cout<<"Partition "<<partition<<endl;
-            for (int i = 0; i < partitionedcoordx[partition].size(); i++) {
-                cout << cindex_bs_section[partition][i]<<" "
-                                                      ""<<partitionedcoordx[partition][i] << " " <<
-                partitionedcoordy[partition][i] <<
-                " " << partitionedcoordz[partition][i] <<" ";
-            }
-            cout<<endl;
-            cout << "---------------------" << endl;
-        }*/
         }
         else{
             for (short i = 0; i < 27; i++) {
@@ -257,48 +228,35 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
             _coords[1] + SysParams::Geometry().compartmentSizeY/2 - searchdist,
             _coords[2] + SysParams::Geometry().compartmentSizeZ/2 - searchdist};
 
-/*    cout<<"Cmp corner coords ";
-    for(uint i = 0; i < 6; i ++)
-        cout<<coord_bounds[i]<<" ";
-    cout<<endl;*/
-
     int N = _cylinders.size() * maxnbs;
 	bscoords_section_motor.resize(SysParams::Chemistry().numFilaments * 27);
     for (short filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
         if (N) {
-            Cyldcindexvec.resize(_cylinders.size());
+            for(short i =0; i < 27; i++) {
+                partitionedcoordx[i].clear();
+                partitionedcoordy[i].clear();
+                partitionedcoordz[i].clear();
+                cindex_bs_section[i].clear();
+            }
+
+//            Cyldcindexvec.resize(_cylinders.size());
 
             short _filamentType = 0;
             bool checkftype = false;
             if (SysParams::Chemistry().numFilaments > 1)
                 checkftype = true;
             unsigned int i = 0;
-            uint32_t k = 0;
-
-
 
             for (auto cyl:_cylinders) {
                 uint32_t cindex = cyl->getStableIndex();
-                /*if(cylinderstruct.ID != cyl->getID()){
-                	cout<<"OOPS! cylinder is struct vec is inaccurate"<<endl;
-                	exit(EXIT_FAILURE);
-                }
-                auto guessCmp = GController::getCompartment(cyl->coordinate);
-                if(guessCmp != this){
-                	cout<<"OOPS! Cylinder does not belong to this compartment, Motor slice"
-					   ""<<endl;
-                	cout<<"cylinder compartment "<<guessCmp->coordinates()[0]<<" "
-																			   ""<<guessCmp->coordinates()[2]<<endl;
-                	cout<<"current compartment "<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<endl;
-	                exit(EXIT_FAILURE);
-                }*/
-                if (checkftype)
-                    short _filamentType = Cylinder::getDbData().value[cindex].type;
+                short _filamentType = Cylinder::getDbData().value[cindex].type;
+                if (checkftype && _filamentType != filType) continue;
+
                 auto x1 = cyl->getFirstBead()->vcoordinate();
                 auto x2 = cyl->getSecondBead()->vcoordinate();
 //                uint16_t shiftedindex = (i << 4);
                 uint32_t shiftedindex = (cindex << 4);
-                Cyldcindexvec[i] = cindex;
+//                Cyldcindexvec[i] = cindex;
                 i++;
                 uint32_t j = 0;
                 for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
@@ -344,24 +302,6 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                                                                      cindex_bs_section[i]);
             }
 
-/*        cout<<"indices ";
-        for(auto x:cindex_bs_section[0])
-        	cout<<x<<" ";
-        cout<<endl;*/
-
-//        cout<<endl;
-            /*cout<<"Cmp Motor coord "<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<endl;
-			for(short partition = 0; partition < 27; partition ++) {
-				cout<<"Partition "<<partition<<endl;
-				for (int i = 0; i < partitionedcoordx[partition].size(); i++) {
-					cout << cindex_bs_section[partition][i]<<" "
-															 ""<<partitionedcoordx[partition][i] << " " <<
-						 partitionedcoordy[partition][i] <<
-						 " " << partitionedcoordz[partition][i] <<" ";
-				}
-				cout<<endl;
-				cout << "---------------------" << endl;
-			}*/
         } else {
             for (short i = 0; i < 27; i++)
                 bscoords_section_motor[filType * 27 + i].resize(0);
@@ -1819,7 +1759,6 @@ void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
         }
         break;
     }
-
 }
 
 vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C, bool outwardOnly) {

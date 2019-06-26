@@ -565,7 +565,7 @@ public:
                             else
                                 d = round(angdeltapos.at(2)*_numMonPerCyl/angdeltapos.at(3));
                             if(f->getCylinderVector().size()>1){
-                                int lo=0;
+//                                int lo=0;
                                 int mm;
                                 vector<short> test;
                                 vector<short>bindingsites;
@@ -626,7 +626,7 @@ public:
                             else
                                 d = round(angdeltapos.at(2)*_numMonPerCyl/angdeltapos.at(3));
                             if(f->getCylinderVector().size()>1){
-                                int lo=0;
+//                                int lo=0;
                                 int mm;
                                 vector<short> test;
                                 vector<short>bindingsites;
@@ -818,7 +818,6 @@ public:
             floatingpoint threshold=SysParams::Geometry().cylinderSize[filamentType];
             floatingpoint one,two;
             int check2=0;
-            short pos;
             for(int I=0;I<map.size();I++){
                 for(int J=I+1;J<map.size();J++){
                     auto c1=get<0>(map[I])->getCylinder();
@@ -842,9 +841,9 @@ public:
                                 distanceproj=twoPointDistance(branch, c1->getFirstBead()->vcoordinate());
                             if(distanceproj<threshold)
                             {if(check==1)
-                            {one=I;two=J;pos=pos1;}
+                            {one=I;two=J;}
                             else
-                            {one=J;two=I;pos=pos2;}
+                            {one=J;two=I;}
                                 check2=1;threshold=distanceproj;
                             }}
                     } //@IF get ID

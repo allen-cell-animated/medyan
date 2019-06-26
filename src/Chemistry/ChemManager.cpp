@@ -1915,10 +1915,10 @@ void ChemManager::genFilBindingReactions() {
         } // Loop through Compartment
 
         //init neighbor lists
-        //get a compartment
-        Compartment* C0 = grid->getCompartments()[0];
         //if NOT DEFINED
 #ifndef HYBRID_NLSTENCILLIST
+        //get a compartment
+        Compartment* C0 = grid->getCompartments()[0];
         for(auto &manager : C0->getFilamentBindingManagers()) {
 
             LinkerBindingManager* lManager;

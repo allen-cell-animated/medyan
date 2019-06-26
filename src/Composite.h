@@ -116,7 +116,7 @@ public:
         
         //remove hanging ptr from old parent, which has been set to null
         auto child_iter = find_if(_children.begin(),_children.end(),
-                                  [&child](const unique_ptr<Component> &element)
+                                  [](const unique_ptr<Component> &element)
                                   {return element==nullptr ? true : false;});
         if(child_iter!=_children.end())
             _children.erase(child_iter);
