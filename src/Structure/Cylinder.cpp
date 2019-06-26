@@ -148,8 +148,8 @@ void Cylinder::updatePosition() {
 			mins = chrono::high_resolution_clock::now();
 
 #ifdef CHEMISTRY
-			auto oldCompartment = _compartment;
-			auto newCompartment = c;
+//			auto oldCompartment = _compartment;
+//			auto newCompartment = c;
 #endif
 
 			//remove from old compartment, add to new
@@ -158,7 +158,7 @@ void Cylinder::updatePosition() {
 			_compartment->addCylinder(this);
 
 #ifdef CHEMISTRY
-			auto oldCCylinder = _cCylinder.get();
+//			auto oldCCylinder = _cCylinder.get();
 
 			//Remove old ccylinder from binding managers
 			//Removed March 8, 2019 Aravind. Unnecessary as all UpdatePosition calls are
@@ -176,23 +176,13 @@ void Cylinder::updatePosition() {
 			CCylinder *clone = _cCylinder->clone(c);
 			setCCylinder(clone);
 
-			auto newCCylinder = _cCylinder.get();
+//			auto newCCylinder = _cCylinder.get();
 
-        //change both CCylinder and Compartment ID in the vector
-        auto& data = getDbData().value[getStableIndex()];
-        data.compartmentId = _compartment->getId();
-        data.chemCylinder = newCCylinder;
-        
-        //Add new ccylinder to binding managers
-/*        for(auto &manager : newCompartment->getFilamentBindingManagers()){
-#ifdef NLORIGINAL
-            manager->addPossibleBindings(newCCylinder);
-#endif
-#ifdef NLSTENCILLIST
-            //This directs call to Hybrid Binding Manager.
-            manager->addPossibleBindingsstencil(newCCylinder);
-#endif
-        }*/
+            //change both CCylinder and Compartment ID in the vector
+            auto& data = getDbData().value[getStableIndex()];
+            data.compartmentId = _compartment->getId();
+            data.chemCylinder = newCCylinder;
+
 			mine = chrono::high_resolution_clock::now();
 			chrono::duration<floatingpoint> compartment_update(mine - mins);
 			CUDAcommon::tmin.timecylinderupdate += compartment_update.count();
