@@ -181,7 +181,7 @@ void Cylinder::updatePosition() {
             //change both CCylinder and Compartment ID in the vector
             auto& data = getDbData().value[getStableIndex()];
             data.compartmentId = _compartment->getId();
-            data.chemCylinder = newCCylinder;
+            data.chemCylinder = _cCylinder.get();
 
 			mine = chrono::high_resolution_clock::now();
 			chrono::duration<floatingpoint> compartment_update(mine - mins);
