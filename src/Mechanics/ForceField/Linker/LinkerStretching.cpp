@@ -172,8 +172,7 @@ void LinkerStretching<LStretchingInteractionType>::deallocate() {
 template <class LStretchingInteractionType>
 floatingpoint LinkerStretching<LStretchingInteractionType>::computeEnergy(floatingpoint* coord){
 
-    floatingpoint U_i[1], U_ii;
-    floatingpoint* gU_i;
+    floatingpoint U_ii;
     U_ii = 0.0;
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -183,7 +182,7 @@ floatingpoint LinkerStretching<LStretchingInteractionType>::computeEnergy(floati
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
 #endif
-
+	floatingpoint* gU_i;
     //has to be changed to accomodate aux force
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
     floatingpoint * gpu_force=CUDAcommon::getCUDAvars().gpu_force;

@@ -113,12 +113,12 @@ public:
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
 
         } else if (t->_neighbor) {
-	        minsN = chrono::high_resolution_clock::now();
-            for (auto nlist : _neighborLists)
-                nlist->addNeighbor((Neighbor *) t);
-	        mineN = chrono::high_resolution_clock::now();
-	        chrono::duration<floatingpoint> elapsed_time(mineN - minsN);
-	        timeneighbor += elapsed_time.count();
+        	minsN = chrono::high_resolution_clock::now();
+        	for (auto nlist : _neighborLists)
+        		nlist->addNeighbor((Neighbor *) t);
+        	mineN = chrono::high_resolution_clock::now();
+        	chrono::duration<floatingpoint> elapsed_time(mineN - minsN);
+        	timeneighbor += elapsed_time.count();
         }
 	    mineT = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_timeT(mineT - minsT);

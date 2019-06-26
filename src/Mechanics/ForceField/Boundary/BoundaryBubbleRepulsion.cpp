@@ -26,9 +26,7 @@ void BoundaryBubbleRepulsion<BRepulsionInteractionType>::vectorize() {
     for (auto be: BoundaryElement::getBoundaryElements())
     {
 
-        for(auto &c : _neighborList->getNeighbors(be)) {
-            nint++;
-        }
+        nint += _neighborList->getNeighbors(be).size();
     }
 
     beadSet = new int[n * nint];

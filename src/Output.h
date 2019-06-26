@@ -275,8 +275,8 @@ public:
 // Print concentration in each compartment
 class Concentrations : public Output {
 
-    ChemistryData _chemData; ///< chemistry data of this system
     SubSystem* _subSystem;///< SubSystem ptr
+    ChemistryData _chemData; ///< chemistry data of this system
 
 public:
     Concentrations(string outputFileName, SubSystem* s,

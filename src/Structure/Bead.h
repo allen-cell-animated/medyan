@@ -314,7 +314,6 @@ private:
     
     int _position;     ///< Position on structure
     float _birthTime;  ///< Time of birth
-    
     bool _isPinned = false;
     
     static std::vector<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem

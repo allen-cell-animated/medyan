@@ -137,7 +137,7 @@ public:
 #endif
 
     }
-    ~FilamentBindingManager() {}
+    virtual ~FilamentBindingManager() = default;
 
     //@{
     ///add possible binding reactions that could occur

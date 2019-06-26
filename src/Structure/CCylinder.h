@@ -83,7 +83,7 @@ public:
     ~CCylinder();
     
     /// Clone, calls copy constructor
-    virtual CCylinder* clone(Compartment* c) {
+    CCylinder* clone(Compartment* c) {
         return new CCylinder(*this, c);
     }
     
@@ -141,7 +141,7 @@ public:
     vector<ReactionBase*> getAllReactions();
     
     /// Print
-    virtual void printCCylinder();
+    void printCCylinder();
     
     //Check if all chemical species held in this CCylinder
     //are self-consistent. For debugging purposes only.
