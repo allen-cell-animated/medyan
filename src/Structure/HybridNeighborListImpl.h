@@ -127,7 +127,7 @@ public:
                 }
                 int countbounds = uniquestatusvec[idx].size();
                 if(!isfound && !uniquestatus &&  countbounds > 0){
-                    HNLIDvec[idx][uniquestatusvec[idx].size()] = totalhybridNL;
+                    HNLIDvec[idx].push_back(totalhybridNL);
                     returnHNLID = totalhybridNL;
                     totalhybridNL++;
                     //set and break
