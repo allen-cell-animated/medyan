@@ -182,7 +182,7 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, int *beadSet
     int n = FilamentBending<FilamentBendingHarmonic>::n;
     int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
-    floatingpoint *coord1, *coord2, *coord3, dist, U_i, L1, L2, L1L2, l1l2;
+    floatingpoint *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2;
 
     floatingpoint U = 0.0;
 
@@ -225,7 +225,7 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, floatingpoin
     int n = FilamentBending<FilamentBendingHarmonic>::n;
     int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
-    floatingpoint *coord1, *coord2, *coord3, dist, U_i, L1, L2, L1L2, l1l2;
+    floatingpoint *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2;
     floatingpoint *force1, *force2, *force3;
 
     floatingpoint U = 0.0;
@@ -280,8 +280,7 @@ void FilamentBendingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int
     int n = FilamentBending<FilamentBendingHarmonic>::n;
     int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
-    floatingpoint *coord1, *coord2, *coord3, dist,
-            L1, L2, l1l2, invL1, invL2, A,B,C, k;
+    floatingpoint *coord1, *coord2, *coord3, L1, L2, l1l2, invL1, invL2, A,B,C, k;
     floatingpoint *force1, *force2, *force3;
 
     for(int i = 0; i < nint; i += 1) {

@@ -72,6 +72,7 @@ typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
  */
 class ReactionBase {
 protected:
+
     unordered_set<ReactionBase*>  _dependents; ///< Pointers to ReactionBase objects that depend
                                                ///< on this ReactionBase being executed
     
@@ -84,9 +85,7 @@ protected:
     float _rate;      ///< the rate for this ReactionBase
     float _rate_bare; ///< the bare rate for this ReactionBase (original rate)
 
-	floatingpoint _volumeFrac; ///< Used in compartments to store volume fraction of the compartment
-    int _rateVolumeDepExp; ///< Exponent of rate dependency on volume
-    ///< Dependence on bulk properties are NOT considered currently
+
     
 #ifdef REACTION_SIGNALING
     unique_ptr<ReactionEventSignal> _signal;///< Can be used to broadcast a signal
@@ -110,7 +109,10 @@ protected:
     float _linkRateForward = 0.0;
     
     float _linkRateBackward = 0.0;
-    
+
+    floatingpoint _volumeFrac; ///< Used in compartments to store volume fraction of the compartment
+    int _rateVolumeDepExp; ///< Exponent of rate dependency on volume
+    ///< Dependence on bulk properties are NOT considered currently
 public:
     
     /// The main constructor:
