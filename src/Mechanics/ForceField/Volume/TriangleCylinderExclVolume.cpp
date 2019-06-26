@@ -56,10 +56,10 @@ floatingpoint TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionTy
                 Bead* b = (idx? c->getSecondBead(): c->getFirstBead());
                 
                 U_i = _FFType.energy(
-                    static_cast<Vec3>(makeVec<3>(coord + 3 * v0->Bead::getIndex())),
-                    static_cast<Vec3>(makeVec<3>(coord + 3 * v1->Bead::getIndex())),
-                    static_cast<Vec3>(makeVec<3>(coord + 3 * v2->Bead::getIndex())),
-                    static_cast<Vec3>(makeVec<3>(coord + 3 * b->getIndex())),
+                    static_cast<Vec3>(makeVec<3>(coord + 3 * v0->Bead::getStableIndex())),
+                    static_cast<Vec3>(makeVec<3>(coord + 3 * v1->Bead::getStableIndex())),
+                    static_cast<Vec3>(makeVec<3>(coord + 3 * v2->Bead::getStableIndex())),
+                    static_cast<Vec3>(makeVec<3>(coord + 3 * b->getStableIndex())),
                     area, kExVol);
                 
                 if(fabs(U_i) == numeric_limits<double>::infinity()
@@ -109,14 +109,14 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 Bead* b = (idx? c->getSecondBead(): c->getFirstBead());
             
                 _FFType.forces(
-                    force + 3 * v0->Bead::getIndex(),
-                    force + 3 * v1->Bead::getIndex(),
-                    force + 3 * v2->Bead::getIndex(),
-                    force + 3 * b->getIndex(),
-                    static_cast<Vec3>(makeVec<3>(coord + 3 * v0->Bead::getIndex())),
-                    static_cast<Vec3>(makeVec<3>(coord + 3 * v1->Bead::getIndex())),
-                    static_cast<Vec3>(makeVec<3>(coord + 3 * v2->Bead::getIndex())),
-                    static_cast<Vec3>(makeVec<3>(coord + 3 * b->getIndex())),
+                    force + 3 * v0->Bead::getStableIndex(),
+                    force + 3 * v1->Bead::getStableIndex(),
+                    force + 3 * v2->Bead::getStableIndex(),
+                    force + 3 * b->getStableIndex(),
+                    static_cast<Vec3>(makeVec<3>(coord + 3 * v0->Bead::getStableIndex())),
+                    static_cast<Vec3>(makeVec<3>(coord + 3 * v1->Bead::getStableIndex())),
+                    static_cast<Vec3>(makeVec<3>(coord + 3 * v2->Bead::getStableIndex())),
+                    static_cast<Vec3>(makeVec<3>(coord + 3 * b->getStableIndex())),
                     area, dArea0, dArea1, dArea2, kExVol);
             }
         }
