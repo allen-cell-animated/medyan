@@ -89,6 +89,7 @@
 		AE28238522C27D3500C2F923 /* Camera.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE28237B22C27D3500C2F923 /* Camera.hpp */; };
 		AE28238822C27D4500C2F923 /* VisualHelper.hpp in Headers */ = {isa = PBXBuildFile; fileRef = AE28238622C27D4500C2F923 /* VisualHelper.hpp */; };
 		AE28238922C27D4500C2F923 /* VisualHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE28238722C27D4500C2F923 /* VisualHelper.cpp */; };
+		AE999E2F22C40F7000A38D3B /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = AE999E2E22C40F6F00A38D3B /* glad.c */; };
 		AEC5486C225D3799007CB7E9 /* CController.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC546CF225D3798007CB7E9 /* CController.h */; };
 		AEC5486D225D3799007CB7E9 /* Composite.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC546D1225D3798007CB7E9 /* Composite.h */; };
 		AEC5486E225D3799007CB7E9 /* SysParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEC546D2225D3798007CB7E9 /* SysParams.cpp */; };
@@ -1066,6 +1067,7 @@
 		AE28237B22C27D3500C2F923 /* Camera.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Camera.hpp; sourceTree = "<group>"; };
 		AE28238622C27D4500C2F923 /* VisualHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VisualHelper.hpp; sourceTree = "<group>"; };
 		AE28238722C27D4500C2F923 /* VisualHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisualHelper.cpp; sourceTree = "<group>"; };
+		AE999E2E22C40F6F00A38D3B /* glad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glad.c; path = external/glad/src/glad.c; sourceTree = SOURCE_ROOT; };
 		AEC546CF225D3798007CB7E9 /* CController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CController.h; sourceTree = "<group>"; };
 		AEC546D1225D3798007CB7E9 /* Composite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Composite.h; sourceTree = "<group>"; };
 		AEC546D2225D3798007CB7E9 /* SysParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SysParams.cpp; sourceTree = "<group>"; };
@@ -2913,6 +2915,7 @@
 		AEC546CE225D3798007CB7E9 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				AE999E2E22C40F6F00A38D3B /* glad.c */,
 				AE28238722C27D4500C2F923 /* VisualHelper.cpp */,
 				AE28238622C27D4500C2F923 /* VisualHelper.hpp */,
 				AE28237022C27D3500C2F923 /* Visual */,
@@ -3789,6 +3792,7 @@
 				AEC54939225D3799007CB7E9 /* Rand.cpp in Sources */,
 				AEC5489A225D3799007CB7E9 /* ChemManager.cpp in Sources */,
 				AEC548B8225D3799007CB7E9 /* BoundaryFF.cpp in Sources */,
+				AE999E2F22C40F7000A38D3B /* glad.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3963,6 +3967,8 @@
 					"./src/**",
 					/opt/local/include,
 					./external/,
+					./external/glad/include,
+					"~/Documents/repos/glfw/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
@@ -4047,6 +4053,8 @@
 					"./src/**",
 					/opt/local/include,
 					./external/,
+					./external/glad/include,
+					"~/Documents/repos/glfw/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
@@ -4093,6 +4101,8 @@
 					/opt/local/include,
 					./src,
 					./external,
+					./external/glad/include,
+					"~/Documents/repos/glfw/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
@@ -4135,6 +4145,8 @@
 					/opt/local/include,
 					./src,
 					./external,
+					./external/glad/include,
+					"~/Documents/repos/glfw/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
