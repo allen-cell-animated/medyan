@@ -489,7 +489,7 @@ void copySystemDataAndRunHelper(sys_data_update::FlagType update) {
 
                 mi.vertexIndices.reserve(mesh.numVertices());
                 for(const auto& v : mesh.getVertices()) {
-                    mi.vertexIndices.push_back(v.attr.vertex->Bead::getIndex());
+                    mi.vertexIndices.push_back(v.attr.vertex->Bead::getStableIndex());
                 }
 
                 mi.triangleVertexIndices.reserve(mesh.numTriangles());
@@ -512,8 +512,8 @@ void copySystemDataAndRunHelper(sys_data_update::FlagType update) {
                 const auto& cylinders = f->getCylinderVector(); // TODO make f const Filament*
                 fi.reserve(cylinders.size() + 1);
                 for(Cylinder* c : cylinders)
-                    fi.push_back(c->getFirstBead()->getIndex()); // TODO make c const Cylinder*
-                fi.push_back(cylinders.back()->getSecondBead()->getIndex());
+                    fi.push_back(c->getFirstBead()->getStableIndex()); // TODO make c const Cylinder*
+                fi.push_back(cylinders.back()->getSecondBead()->getStableIndex());
             }
 
             // Extract motors and linkers
