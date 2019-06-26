@@ -456,6 +456,11 @@ floatingpoint CGMethod::maxF() {
         if(mag > maxF) maxF = mag;
     }
 
+	if(fabs(maxF) == numeric_limits<floatingpoint>::infinity()
+	   || maxF != maxF || maxF < -1.0) {
+		cout<<"maxF is infinity. Check parameters. Exiting."<<endl;
+		exit(EXIT_FAILURE);
+	}
 //    for(int i = 0; i < N; i++) {
 //        mag = sqrt(forceAux[i]*forceAux[i]);
 //        if(mag > maxF) maxF = mag;
@@ -1420,7 +1425,6 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
     }
 //    std::cout<<"lambda determined in "<<iter<< " iterations. lambda="<<lambda<<endl;
 //synchronize streams
-    if(cconvergencecheck[0]||sconvergencecheck) {
 #ifdef SERIAL
         delete [] cconvergencecheck;
 #endif
@@ -1446,7 +1450,6 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 
 	    //@}
         return lambda;
-    }
 
 }
 
@@ -1536,45 +1539,10 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
 #endif
     }
 //    std::cout<<"Safe lambda determined in "<<iter<< " iterations. lambda="<<lambda<<endl;
-    if(cconvergencecheck[0]||sconvergencecheck) {
+
 #ifdef SERIAL
         delete [] cconvergencecheck;
 #endif
         return lambda;
-    }
-}
-
-/*
- double* CGMethod::getCoords(){
-    //COPY BEAD DATA
-    N = 3 * Bead::getBeads().size();
-    //    std::cout<<3 * Bead::getBeads().size()<<endl;
-    coordDiss = new double[N];
-    
-    //coord management
-    long i = 0;
-    long index = 0;
-    for(auto b: Bead::getBeads()) {
-        
-        //set bead index
-        b->_dbIndex = i;
-        
-        //flatten indices
-        index = 3 * i;
-        coordDiss[index] = b->coordinate[0];
-        coordDiss[index + 1] = b->coordinate[1];
-        coordDiss[index + 2] = b->coordinate[2];
-        
-        b->coordinateP = b->coordinate;
-        //        force[index] = 0.0;
-        //        force[index + 1] = 0.0;
-        //        force[index + 2] = 0.0;
-        i++;
-    }
-    
-    return coordDiss;
-    
-    
 
 }
- */

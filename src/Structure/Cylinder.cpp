@@ -105,31 +105,6 @@ void Cylinder::appendrevectorize(cylinder* cylindervec, Cylinder** cylinderpoint
 	Ncyl = _cylinders.getElements().size();
 }
 
-void  Cylinder::copytoarrays() {
-    long i =_dcIndex;
-    cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
-    Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-    CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
-    //copy attributes to a structure array
-    cylindervec[i].filamentID = dynamic_cast<Filament*>(this->getParent())->getID();
-    cylindervec[i].filamentposition = _position;
-    cylindervec[i].bindices[0] = _b1->_dbIndex;
-    cylindervec[i].bindices[1] = _b2->_dbIndex;
-    cylindervec[i].cmpID = _compartment->getID();
-    cylindervec[i].cindex = i;
-    cylindervec[i].type = _type;
-    cylindervec[i].ID = _ID;
-    //update coordinate in updatecoordinate
-/*    auto coord = coordinate;
-    cylindervec[i].coord[0] = coord[0];
-    cylindervec[i].coord[1] = coord[1];
-    cylindervec[i].coord[2] = coord[2];*/
-
-    //other arrays needed
-/*    ccylindervec[i] = _cCylinder.get();
-    cylinderpointervec[i] = this;*/
-}
-
 void Cylinder::resetarrays() {
     cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
     Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
@@ -295,8 +270,8 @@ void Cylinder::updatePosition() {
 			mins = chrono::high_resolution_clock::now();
 
 #ifdef CHEMISTRY
-			auto oldCompartment = _compartment;
-			auto newCompartment = c;
+//			auto oldCompartment = _compartment;
+//			auto newCompartment = c;
 #endif
 
 			//remove from old compartment, add to new
@@ -305,7 +280,7 @@ void Cylinder::updatePosition() {
 			_compartment->addCylinder(this);
 
 #ifdef CHEMISTRY
-			auto oldCCylinder = _cCylinder.get();
+//			auto oldCCylinder = _cCylinder.get();
 
 			//Remove old ccylinder from binding managers
 			//Removed March 8, 2019 Aravind. Unnecessary as all UpdatePosition calls are
@@ -323,25 +298,13 @@ void Cylinder::updatePosition() {
 			CCylinder *clone = _cCylinder->clone(c);
 			setCCylinder(clone);
 
-			auto newCCylinder = _cCylinder.get();
+//			auto newCCylinder = _cCylinder.get();
 
-//        std::cout<<"moving cylinder with cindex "<<_dcIndex<<" and ID "<<_ID<<endl;
 			//change both CCylinder and Compartment ID in the vector
 			CUDAcommon::serlvars.cylindervec[_dcIndex].cmpID = _compartment->getID();
 			CUDAcommon::serlvars.cylinderpointervec[_dcIndex] = this;
 			CUDAcommon::serlvars.ccylindervec[_dcIndex] = _cCylinder.get();
 
-//			cout<<"Done "<<endl;
-			//Add new ccylinder to binding managers
-/*        for(auto &manager : newCompartment->getFilamentBindingManagers()){
-#ifdef NLORIGINAL
-            manager->addPossibleBindings(newCCylinder);
-#endif
-#ifdef NLSTENCILLIST
-            //This directs call to Hybrid Binding Manager.
-            manager->addPossibleBindingsstencil(newCCylinder);
-#endif
-        }*/
 			mine = chrono::high_resolution_clock::now();
 			chrono::duration<floatingpoint> compartment_update(mine - mins);
 			CUDAcommon::tmin.timecylinderupdate += compartment_update.count();

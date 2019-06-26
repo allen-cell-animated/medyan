@@ -337,15 +337,13 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
     vector<Bin*> _neighboringBins = binvec.at(_ID)//Get the bin that belongs to the
                     // current binGrid of interest for this NL.
                                                     ->getNeighbours();
-    floatingpoint *coord = CUDAcommon::getSERLvars().coord;
+
     auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
     auto cylinderpointervec = CUDAcommon::getSERLvars().cylinderpointervec;
     int cindex = currcylinder->_dcIndex;
     cylinder c = cylindervec[cindex];
 
     //
-    int ncyls2 = 0;
-    int tcyl2 = 0;
     int nbincount = 0;
     auto nbinstencil = parentbin->stencilID;// A standard templated numbering of
     // neighboring bins is implemented i.e. based on position w.r.t. bin of interest,

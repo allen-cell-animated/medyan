@@ -705,7 +705,8 @@ std::cout<<"----------------------------------------"<<endl;
         if(Ms_isminimizationstate)
             //shift gradient
             shiftGradient(beta);
-	    tend = chrono::high_resolution_clock::now();
+
+        tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_other4(tend - tbegin);
 	    CUDAcommon::tmin.tother+= elapsed_other4.count();
         //@@@} OTHER
