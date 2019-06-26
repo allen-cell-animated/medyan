@@ -948,7 +948,7 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
 }
 
 void HybridBindingSearchManager::addtoHNeighborList(){
-    HNLIDvec.reserve(totaluniquefIDpairs);
+    HNLIDvec.resize(totaluniquefIDpairs);
     for(short idx = 0; idx < totaluniquefIDpairs; idx++) {
         vector<float> temprMaxsq = _rMaxsqvec[idx];
         vector<float> temprMinsq = _rMinsqvec[idx];
