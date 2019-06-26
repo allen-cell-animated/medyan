@@ -383,12 +383,12 @@ void SubSystem::updateBindingManagers() {
 void SubSystem::vectorizeCylinder() {
     //vectorize
     SysParams::MParams.speciesboundvec.clear();
-    int cidx = 0;
+//    int cidx = 0;
     vector<int> ncylvec(SysParams::CParams.numFilaments);// Number of cylinders
     // corresponding to each filament type.
 //    vector<int> bspeciesoffsetvec(SysParams::CParams.numFilaments);
     auto cylvec = Cylinder::getCylinders();
-    int ncyl = cylvec.size();
+//    int ncyl = cylvec.size();
     delete [] cylsqmagnitudevector;
     cylsqmagnitudevector = new floatingpoint[Cylinder::vectormaxsize];
     unsigned long maxbindingsitespercyl = 0;

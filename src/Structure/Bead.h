@@ -59,6 +59,7 @@ public:
     static bool triggercylindervectorization;
     vector<floatingpoint> coordinate;  ///< Coordinates of the bead
     vector<floatingpoint> coordinateP; ///< Prev coordinates of bead in CG minimization
+
     int _dbIndex =  -1; ///<Position in database vector
 
 	vector<floatingpoint> force; ///< Forces based on curent coordinates.
@@ -287,7 +288,7 @@ private:
     
     int _position;     ///< Position on structure
     float _birthTime;  ///< Time of birth
-    
+	int _ID; ///<Bead IDs
     bool _isPinned = false;
     
     static std::vector<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem

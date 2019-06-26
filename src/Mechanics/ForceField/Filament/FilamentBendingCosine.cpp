@@ -202,7 +202,7 @@ floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint 
     int n = FilamentBending<FilamentBendingCosine>::n;
     int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
-    floatingpoint *coord1, *coord2, *coord3, L1, L2, L1L2, l1l2, phi, dPhi;
+    floatingpoint *coord1, *coord2, *coord3, L1, L2, L1L2, l1l2;
 
     floatingpoint U = 0.0, U_i;
 
@@ -270,7 +270,7 @@ floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint 
     int n = FilamentBending<FilamentBendingCosine>::n;
     int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
-    floatingpoint *coord1, *coord2, *coord3, L1, L2, L1L2, l1l2, phi, dPhi;
+    floatingpoint *coord1, *coord2, *coord3, L1, L2, L1L2, l1l2;
     floatingpoint  *force1, *force2, *force3;
 
     floatingpoint U = 0.0, U_i;
@@ -342,7 +342,7 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *
     int n = FilamentBending<FilamentBendingCosine>::n;
     int nint =  (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
-    floatingpoint *coord1, *coord2, *coord3, L1, L2, l1l2, invL1, invL2, A,B,C, phi, dPhi, k;
+    floatingpoint *coord1, *coord2, *coord3, L1, L2, l1l2, invL1, invL2, A,B,C, k;
     floatingpoint *force1, *force2, *force3;
 
     for(int i = 0; i < nint; i += 1) {

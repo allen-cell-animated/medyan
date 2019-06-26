@@ -591,7 +591,8 @@ public:
    unordered_set<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}
 
     ///Add a cylinder to this compartment
-    void addCylinder(Cylinder* c) {_cylinders.insert(c);}
+    void addCylinder(Cylinder* c) {_cylinders.insert(c);
+    }
 
     ///Remove a cylinder from this compartment
     ///@note does nothing if cylinder is not in compartment already
@@ -742,9 +743,6 @@ public:
     /// Generate diffusion reactions between this compartment and another
     ///@return - a vector of reactionbases that was just added
     vector<ReactionBase*> generateDiffusionReactions(Compartment* C);
-
-    vector<ReactionBase*> generateScaleDiffusionReactions(Compartment* C);
-    floatingpoint generateScaleFactor(Compartment* C);
 
     /// Generate all diffusion reactions for this compartment and its neighbors
     ///@return - a vector of reactionbases that was just added

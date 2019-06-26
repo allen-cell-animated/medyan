@@ -68,12 +68,12 @@ private:
     unique_ptr<MCylinder> _mCylinder; ///< Pointer to mech cylinder
     unique_ptr<CCylinder> _cCylinder; ///< Pointer to chem cylinder
 
-    int _position;          ///< Position on structure
-
     bool _plusEnd = false;  ///< If the cylinder is at the plus end
     bool _minusEnd = false; ///< If the cylinder is at the minus end
 
     short _type; ///< Type of cylinder, either corresponding to Filament or other
+
+	int _position;          ///< Position on structure
 
     Compartment* _compartment = nullptr; ///< Where this cylinder is
 
@@ -212,7 +212,6 @@ public:
     static vector<int> removedcindex;
     static void revectorizeifneeded(){
         //Run the special protocol during chemistry, the regular otherwise.
-        bool check = false;
         if(SysParams::DURINGCHEMISTRY)
             appendrevectorizeifneeded();
         else {
@@ -228,7 +227,6 @@ public:
                 if (removedcindex.size() >= bead_cache)
                     newsize = (int(Ncyl / cylinder_cache) + 1) * cylinder_cache;
                 if (newsize != vectormaxsize || Bead::triggercylindervectorization) {
-                    check = true;
                     cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
                     Cylinder **cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
                     CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
@@ -295,15 +293,10 @@ public:
     static void appendrevectorizeifneeded(){
 
         int newsize = vectormaxsize;
-        bool check = false;
         if(Bead::triggercylindervectorization || (vectormaxsize - maxcindex) <= bead_cache/20){
-
-            /*cout<<"size "<<newsize<<" "<<vectormaxsize<<" "
-                                                        ""<<Bead::triggercylindervectorization<<endl;*/
 
             newsize = vectormaxsize + cylinder_cache;
             if(newsize != vectormaxsize || Bead::triggercylindervectorization){
-                check = true;
                 cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
                 Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
                 CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
@@ -332,7 +325,7 @@ public:
 
     static void appendrevectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
                             CCylinder** ccylindervec);
-    void  copytoarrays();
+
     void resetarrays();
     void resetcylinderstruct(cylinder* cylindervec, long idx){
         cylindervec[idx].filamentID = -1;

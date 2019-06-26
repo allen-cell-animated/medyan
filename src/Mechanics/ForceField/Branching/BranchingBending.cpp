@@ -89,10 +89,10 @@ void BranchingBending<BBendingInteractionType>::deallocate() {
 template <class BBendingInteractionType>
 floatingpoint BranchingBending<BBendingInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
 
-    floatingpoint U_i[1], U_ii=0.0;
-    floatingpoint* gU_i;
-    U_ii = 0.0;
+    floatingpoint U_ii=(floatingpoint)0.0;
+
 #ifdef CUDAACCL
+    floatingpoint* gU_i;
     //has to be changed to accomodate aux force
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
     floatingpoint * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
