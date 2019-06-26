@@ -85,10 +85,6 @@ protected:
     float _rate;      ///< the rate for this ReactionBase
     float _rate_bare; ///< the bare rate for this ReactionBase (original rate)
 
-    floatingpoint _volumeFrac; ///< Used in compartments to store volume fraction of the compartment
-    int _rateVolumeDepExp; ///< Exponent of rate dependency on volume
-                           ///< Dependence on bulk properties are NOT considered currently
-
 #ifdef REACTION_SIGNALING
     unique_ptr<ReactionEventSignal> _signal;///< Can be used to broadcast a signal
                                             ///< associated with this ReactionBase
