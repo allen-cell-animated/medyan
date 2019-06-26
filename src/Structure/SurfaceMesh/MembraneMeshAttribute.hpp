@@ -207,9 +207,9 @@ struct MembraneMeshAttribute {
                 const size_t vi2 = mesh.target(mesh.next(hei));
 
                 auto& hea = mesh.getHalfEdgeAttribute(hei);
-                hea.cachedCoordIndex[0] = vertices[vi0].attr.vertex->Bead::getIndex();
-                hea.cachedCoordIndex[1] = vertices[vi1].attr.vertex->Bead::getIndex();
-                hea.cachedCoordIndex[2] = vertices[vi2].attr.vertex->Bead::getIndex();
+                hea.cachedCoordIndex[0] = vertices[vi0].attr.vertex->Bead::getStableIndex();
+                hea.cachedCoordIndex[1] = vertices[vi1].attr.vertex->Bead::getStableIndex();
+                hea.cachedCoordIndex[2] = vertices[vi2].attr.vertex->Bead::getStableIndex();
             }
 
             for(size_t ti = 0; ti < numTriangles; ++ti) {
@@ -221,9 +221,9 @@ struct MembraneMeshAttribute {
                 const size_t vi2 = mesh.target(hei_p);
 
                 auto& ta = mesh.getTriangleAttribute(ti);
-                ta.cachedCoordIndex[0] = vertices[vi0].attr.vertex->Bead::getIndex();
-                ta.cachedCoordIndex[1] = vertices[vi1].attr.vertex->Bead::getIndex();
-                ta.cachedCoordIndex[2] = vertices[vi2].attr.vertex->Bead::getIndex();
+                ta.cachedCoordIndex[0] = vertices[vi0].attr.vertex->Bead::getStableIndex();
+                ta.cachedCoordIndex[1] = vertices[vi1].attr.vertex->Bead::getStableIndex();
+                ta.cachedCoordIndex[2] = vertices[vi2].attr.vertex->Bead::getStableIndex();
                 ta.cachedHalfEdgeIndex[0] = hei;
                 ta.cachedHalfEdgeIndex[1] = hei_n;
                 ta.cachedHalfEdgeIndex[2] = hei_p;
@@ -239,8 +239,8 @@ struct MembraneMeshAttribute {
                 const size_t vi1 = mesh.target(mesh.prev(hei));
 
                 auto& ea = mesh.getEdgeAttribute(ei);
-                ea.cachedCoordIndex[0]   = vertices[vi0].attr.vertex->Bead::getIndex();
-                ea.cachedCoordIndex[1]   = vertices[vi1].attr.vertex->Bead::getIndex();
+                ea.cachedCoordIndex[0]   = vertices[vi0].attr.vertex->Bead::getStableIndex();
+                ea.cachedCoordIndex[1]   = vertices[vi1].attr.vertex->Bead::getStableIndex();
                 ea.cachedPolygonType[0]  = halfEdges[hei].polygonType;
                 ea.cachedPolygonType[1]  = halfEdges[hei_o].polygonType;
                 ea.cachedPolygonIndex[0] = mesh.polygon(hei);
@@ -261,7 +261,7 @@ struct MembraneMeshAttribute {
                 auto& va = mesh.getVertexAttribute(vi);
 
                 va.cachedDegree = mesh.degree(vi);
-                va.cachedCoordIndex = vertices[vi].attr.vertex->Bead::getIndex();
+                va.cachedCoordIndex = vertices[vi].attr.vertex->Bead::getStableIndex();
 
                 size_t i = 0; // Neighbor index
 
@@ -269,7 +269,7 @@ struct MembraneMeshAttribute {
                     const size_t hei_o = mesh.opposite(hei);
                     const size_t vn = mesh.target(hei_o);
 
-                    mesh.getMetaAttribute().cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i] = vertices[vn].attr.vertex->Bead::getIndex();
+                    mesh.getMetaAttribute().cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i] = vertices[vn].attr.vertex->Bead::getStableIndex();
                     mesh.getMetaAttribute().cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetTargetingHE  (vi) + i] = hei;
                     mesh.getMetaAttribute().cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE    (vi) + i] = hei_o;
                     mesh.getMetaAttribute().cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetOuterHE      (vi) + i] = mesh.prev(hei);
