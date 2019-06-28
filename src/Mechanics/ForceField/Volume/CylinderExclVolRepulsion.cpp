@@ -331,7 +331,6 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
                                                int *beadSet, floatingpoint *krep) {
 	floatingpoint *c1, *c2, *c3, *c2temp, *c4, *newc2, d;
 
-	doubleprecision invDSquare;
 	doubleprecision a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
 	doubleprecision ATG1, ATG2, ATG3, ATG4;
 
@@ -638,9 +637,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 		c4[0] = c4us[0] + z * f4[0];
 		c4[1] = c4us[1] + z * f4[1];
 		c4[2] = c4us[2] + z * f4[2];
-//        std::cout<<"AFTER "<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "
-//                ""<<c2[1]<<" "<<
-//                 c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
+
 		//check if parallel
 		if(areParallel(c1, c2, c3, c4)) {
 //            SysParams::exvolcounterz[0] += 1;
@@ -764,7 +761,7 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 
 	floatingpoint *c1, *c2, *c3, *c4, *newc2, d, U;
 	floatingpoint *f1, *f2, *f3, *f4;
-	doubleprecision invDSquare;
+
 	doubleprecision a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ, invJJ;
 	doubleprecision ATG1, ATG2, ATG3, ATG4;
 	doubleprecision A1, A2, E1, E2, B1, B2, F1, F2, A11, A12, A13, A14;

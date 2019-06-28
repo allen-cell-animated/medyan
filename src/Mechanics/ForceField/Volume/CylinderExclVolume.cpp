@@ -184,9 +184,9 @@ void CylinderExclVolume<CVolumeInteractionType>::deallocate() {
 template <class CVolumeInteractionType>
 floatingpoint CylinderExclVolume<CVolumeInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
 
-    floatingpoint U_i[1];
+
     floatingpoint U_ii=0.0f;
-    floatingpoint *gU_i;
+
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
 #endif
@@ -227,6 +227,8 @@ floatingpoint CylinderExclVolume<CVolumeInteractionType>::computeEnergy(floating
         U_ii = _FFType.energy(coord, f, beadSet, krep, d);
 
 #ifdef CUDATIMETRACK
+    floatingpoint U_i[1];
+    floatingpoint *gU_i;
     tend= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
     CUDAcommon::serltime.TveccomputeE.push_back(elapsed_runs.count());

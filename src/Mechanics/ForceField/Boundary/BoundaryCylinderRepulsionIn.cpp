@@ -60,7 +60,8 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::vectorize() {
     int bindex = 0;
 
     nneighbors = new int[nbe];//stores number of interactions per boundary element.
-    floatingpoint *beListplane;
+
+    floatingpoint* beListplane;
     int *nintvec;
     beListplane = new floatingpoint[4 * nbe];
     nintvec = new int[nbe];//stores cumulative number of nneighbors.
@@ -75,11 +76,6 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::vectorize() {
         auto idx = 0;
 
         for (ni = 0; ni < nn; ni++) {
-//            auto check=false;
-//            auto neighbor = _neighborList->getNeighbors(be)[ni];
-            /*std::cout<<"Boundary with cindex "<<neighbor->_dcIndex<<" and ID "
-                    ""<<neighbor->getID()<<" with bindices "<<neighbor->getFirstBead()
-                    ->_dbIndex<<" "<<neighbor->getSecondBead()->_dbIndex<<endl;*/
             if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
             {
                 bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->_dbIndex;
@@ -94,22 +90,12 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::vectorize() {
             slen[cumnn+idx] = be->getScreeningLength();
             idx++;
 
-
-//            if (_neighborList->getNeighbors(be)[ni]->isPlusEnd())
-//            {bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->_dbIndex;check=true;}
-//            else if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
-//            {bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->_dbIndex;check=true;}
-//                if(check){
-//                    beadSet[cumnn+idx] = bindex;
-//                    krep[cumnn+idx] = be->getRepulsionConst();
-//                    slen[cumnn+idx] = be->getScreeningLength();
-//                    idx++;
-//                }
         }
         nneighbors[i]=idx;
         cumnn+=idx;
         nintvec[i] = cumnn;
 #ifdef CUDAACCL
+        floatingpoint *beListplane;
         if(dynamic_cast<PlaneBoundaryElement*>(beList[i])) {
             floatingpoint *x = new floatingpoint[4];
             beList[i]->elementeqn(x);
@@ -214,9 +200,7 @@ template <class BRepulsionInteractionType>
 floatingpoint BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeEnergy
 (floatingpoint *coord, floatingpoint *f, floatingpoint d) {
     floatingpoint U_ii=0.0;
-    [[maybe_unused]] floatingpoint* gU_i;
-    U_ii = 0.0;
-//    std::cout<<"Total boundary nint "<<nint<<endl;
+
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
 #endif
@@ -258,6 +242,7 @@ floatingpoint BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeEne
         U_ii = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors, d);
     }
 #ifdef CUDATIMETRACK
+    floatingpoint* gU_i;
     tend= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
     CUDAcommon::serltime.TveccomputeE.push_back(elapsed_runs.count());

@@ -53,7 +53,7 @@ void Compartment::SIMDcoordinates_section(){
                 int cindex = cyl->_dcIndex;
                 auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
 
-                short _filamentType = cylinderstruct.type;
+                _filamentType = cylinderstruct.type;
                  if (checkftype && _filamentType != filType) continue;
 
                 auto x1 = cyl->getFirstBead()->coordinate;
@@ -139,7 +139,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                 uint32_t cindex = cyl->_dcIndex;
                 auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
 
-                short _filamentType = cylinderstruct.type;
+                _filamentType = cylinderstruct.type;
                 if (checkftype && _filamentType != filType) continue;
 
                 auto x1 = cyl->getFirstBead()->coordinate;
@@ -248,7 +248,7 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                 uint32_t cindex = cyl->_dcIndex;
                 auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
 
-                short _filamentType = cylinderstruct.type;
+                _filamentType = cylinderstruct.type;
                 if (checkftype && _filamentType != filType) continue;
 
                 auto x1 = cyl->getFirstBead()->coordinate;

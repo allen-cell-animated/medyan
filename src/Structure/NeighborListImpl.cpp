@@ -573,7 +573,6 @@ void CylinderCylinderNL::reset() {
 
 #endif
     //loop through all neighbor keys
-    int tot = 0;
 #ifdef CUDA_TIMETRACK
     chrono::high_resolution_clock::time_point mins, mine;
 #endif
