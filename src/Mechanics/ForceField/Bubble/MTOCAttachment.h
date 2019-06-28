@@ -36,6 +36,7 @@ private:
     int *beadSet;
     ///Array describing the constants in calculation
     floatingpoint *kstr;
+    floatingpoint *radiusvec;
 	floatingpoint *pos1;
 	floatingpoint *pos2;
 
@@ -43,8 +44,9 @@ private:
 public:
 
     ///Array describing indexed set of interactions
-    ///For MTOC, this is a 1-bead potential
-    const static int n = 1;
+    ///For MTOC, this is a 2-bead potential
+    const static int n = 2;
+	static int numInteractions;
     
     virtual void vectorize();
     virtual void deallocate();

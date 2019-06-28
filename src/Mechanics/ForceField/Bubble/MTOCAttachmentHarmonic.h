@@ -24,11 +24,11 @@ class MTOCAttachmentHarmonic {
     
 public:
 	floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
-	                     floatingpoint *kstr, floatingpoint radiusvec);
+	                     floatingpoint *kstr, floatingpoint* radiusvec);
 	floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
-	                     floatingpoint *kstr, floatingpoint radiusvec, floatingpoint d);
+	                     floatingpoint *kstr, floatingpoint* radiusvec, floatingpoint d);
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                floatingpoint *kstr, floatingpoint radiusvec);
+                floatingpoint *kstr, floatingpoint* radiusvec);
     
     //void forcesAux(Bead*, Bead*, double, double);
 };
