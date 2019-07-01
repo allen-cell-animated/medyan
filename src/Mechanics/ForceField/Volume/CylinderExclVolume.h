@@ -61,7 +61,7 @@ public:
     CylinderExclVolume() {
         //If Hybrid NeighborList is not preferred, neighborList is created using Original
         // framework.
-#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
+#if !defined(HYBRID_NLSTENCILLIST) || !defined(SIMDBINDINGSEARCH)
         _neighborList = new CylinderCylinderNL(SysParams::Mechanics().VolumeCutoff);
 #endif
 #ifdef CUDAACCL_NL

@@ -200,11 +200,8 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 			                    SysParams::Chemistry().bindingSites[_filamentType].end(),
 			                    bindingSite)
 			               - SysParams::Chemistry().bindingSites[_filamentType].begin();
-#ifdef SIMDBINDINGSEARCH
+
 			uint32_t t1 = shiftedIndex1|pos;
-#else
-			auto t1 = tuple<CCylinder *, short>(cc, bindingSite);
-#endif
 			//loop through neighbors
 			//now re add valid based on CCNL
 			vector<Cylinder *> Neighbors;
@@ -254,7 +251,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 						floatingpoint distsq = twoPointDistancesquared(m1, m2);
 
 						if (distsq > _rMaxsq || distsq < _rMinsq) {k++;continue;}
-#ifdef SIMDBINDINGSEARCH
+
 						uint32_t shiftedIndex2 = cn->_dcIndex << 4;
 
 						uint32_t t2 = shiftedIndex2|k;
@@ -263,12 +260,6 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 //						_mpossibleBindingsstencilvecuint[idx][idx2].emplace(t1,t2);
 						_possibleBindingsstencilvecuint[idx][idx2][t1].push_back(t2);
 						_reversepossibleBindingsstencilvecuint[idx][idx2][t2].push_back(t1);
-#else
-						auto t2 = tuple<CCylinder *, short>(ccn, *it);
-						_possibleBindingsstencilvec[idx][idx2].emplace(t1, t2);
-						_reversepossibleBindingsstencilvec[idx][idx2][t2]
-								.push_back(t1);
-#endif
 					}
 
 					k = k + 1;
@@ -376,11 +367,11 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
         }
     }
 }
-
-void HybridBindingSearchManager::checkoccupancy(short idvec[2]){
+//Deprecated
+/*void HybridBindingSearchManager::checkoccupancy(short idvec[2]){
     short idx = idvec[0];
     short idx2 = idvec[1];
-    auto pbs = _possibleBindingsstencilvec[idx][idx2];
+    auto pbs = _possibleBindingsstencilvecuint[idx][idx2];
     for(auto pair = pbs.begin(); pair != pbs.end(); pair++){
         auto leg1 = pair->first;
         auto leg2 = pair->second;
@@ -407,7 +398,7 @@ void HybridBindingSearchManager::checkoccupancy(short idvec[2]){
             std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "<<BM2->getN()<<endl;
         }
     }
-}
+}*/
 
 void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
 
@@ -501,8 +492,8 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
     for (int idx = 0; idx < totaluniquefIDpairs; idx++){
         int countbounds = _rMaxsqvec[idx].size();
         for (int idx2 = 0; idx2 < countbounds; idx2++) {
-            _possibleBindingsstencilvec[idx][idx2].clear();
-            _reversepossibleBindingsstencilvec[idx][idx2].clear();
+            _possibleBindingsstencilvecuint[idx][idx2].clear();
+            _reversepossibleBindingsstencilvecuint[idx][idx2].clear();
         }
     }
 
@@ -667,14 +658,16 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
                                     auto it1 = SysParams::Chemistry().bindingSites[fpairs[0]][pos1];
                                     auto it2 = SysParams::Chemistry().bindingSites[fpairs[1]][pos2];
 
+	                                uint32_t shiftedIndex1 = ccylvec[cindex]->getCylinder()->_dcIndex;
+	                                shiftedIndex1 = shiftedIndex1 << 4;
+	                                uint32_t t1 = shiftedIndex1|pos1;
 
-                                    auto t1 = tuple<CCylinder *, short>(ccylvec[cindex], it1);
-                                    auto t2 = tuple<CCylinder *, short>(ccylvec[cnindex], it2);
-                                    //add in correct order
-                                    _possibleBindingsstencilvec[idx][idx2].emplace(t1, t2);
-                                    _reversepossibleBindingsstencilvec[idx][idx2][t2]
-                                            .push_back(t1);
+	                                uint32_t shiftedIndex2 = ccylvec[cnindex]->getCylinder()->_dcIndex << 4;
+	                                uint32_t t2 = shiftedIndex2|pos2;
 
+	                                //add in correct order
+	                                _possibleBindingsstencilvecuint[idx][idx2][t1].push_back(t2);
+	                                _reversepossibleBindingsstencilvecuint[idx][idx2][t2].push_back(t1);
                                 }
                             }
                         }
@@ -687,7 +680,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
     for(short idx = 0; idx<totaluniquefIDpairs; idx++){
         int countbounds = _rMaxsqvec[idx].size();
         for (short idx2 = 0; idx2 < countbounds; idx2++) {
-            int newNOther = _possibleBindingsstencilvec[idx][idx2].size();
+            int newNOther = _possibleBindingsstencilvecuint[idx][idx2].size();
             fManagervec[idx][idx2]->updateBindingReaction(newNOther);
         }
     }
@@ -700,7 +693,6 @@ void HybridBindingSearchManager::countNpairsfound(short idvec[2]){
     int N = 0;
     Nbindingpairs[idx][idx2] = 0;
 
-//    N = _mpossibleBindingsstencilvecuint[idx][idx2].size();
     for (auto iter = _possibleBindingsstencilvecuint[idx][idx2].begin(); iter !=
 		    _possibleBindingsstencilvecuint[idx][idx2].end(); iter++) {
         N += iter->second.size();
@@ -745,7 +737,6 @@ void HybridBindingSearchManager::updateAllBindingReactions() {
 		for (short idx2 = 0; idx2 < countbounds; idx2++) {
 			short idvec[2] = {idx, idx2};
 			countNpairsfound(idvec);
-//				cout<<"Total found pairs "<<Nbindingpairs[idx][idx2]<<endl;
 			fManagervec[idx][idx2]->updateBindingReaction(Nbindingpairs[idx][idx2]);
 		}
 	}

@@ -352,6 +352,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     delete fInit;
 
     //add filaments
+
     for (auto it: fil) {
 
         auto coord1 = get<1>(it);

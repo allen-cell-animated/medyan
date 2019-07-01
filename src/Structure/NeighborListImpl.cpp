@@ -433,6 +433,7 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
 
 vector<Cylinder*> CylinderCylinderNL::getNeighborsstencil(Cylinder* cylinder) {
 
+
     return _list4mbin[cylinder];
 }
 #endif

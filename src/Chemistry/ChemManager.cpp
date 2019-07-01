@@ -1914,7 +1914,7 @@ void ChemManager::genFilBindingReactions() {
 
         //init neighbor lists
         //if NOT DEFINED
-#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
+#if !defined(HYBRID_NLSTENCILLIST) || !defined(SIMDBINDINGSEARCH)
         //get a compartment
         Compartment* C0 = grid->getCompartments()[0];
         for(auto &manager : C0->getFilamentBindingManagers()) {

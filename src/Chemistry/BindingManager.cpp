@@ -1061,6 +1061,7 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
 //        Neighbors = cc->getCompartment()->getHybridBindingSearchManager()->getHNeighbors
 //                (cc->getCylinder(),HNLID);
 //#else
+
         Neighbors = _neighborLists[_nlIndex]->getNeighborsstencil(cc->getCylinder());
 //#endif
         for (auto cn : Neighbors) {
@@ -2050,7 +2051,7 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
 
                 if (areEqual(ccn->getCMonomer(*it)->speciesBound(
                         SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(),
-                        		(floatingpoint)1.0f) {
+                        		(floatingpoint)1.0f)) {
 
                     //check distances..
                     auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
