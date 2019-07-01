@@ -73,7 +73,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
 
         for (ni = 0; ni < nn; ni++) {
 //            auto check=false;
-            auto neighbor = _neighborList->getNeighbors(be)[ni];
+//            auto neighbor = _neighborList->getNeighbors(be)[ni];
             /*std::cout<<"Boundary with cindex "<<neighbor->_dcIndex<<" and ID "
                     ""<<neighbor->getID()<<" with bindices "<<neighbor->getFirstBead()
                     ->_dbIndex<<" "<<neighbor->getSecondBead()->_dbIndex<<endl;*/
@@ -210,14 +210,14 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
 template <class BRepulsionInteractionType>
 floatingpoint BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy
         (floatingpoint *coord, floatingpoint *f, floatingpoint d) {
-    floatingpoint U_i[1], U_ii=0.0;
-    floatingpoint* gU_i;
-    U_ii = 0.0;
+    floatingpoint U_ii=0.0;
+
 //    std::cout<<"Total boundary nint "<<nint<<endl;
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
 #endif
 #ifdef CUDAACCL
+    floatingpoint* gU_i;
 //    std::cout<<"Boundary nint "<<nint<<endl;
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();

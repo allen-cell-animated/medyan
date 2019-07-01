@@ -85,7 +85,7 @@ struct UpdateBrancherBindingCallback {
 #ifdef NLORIGINAL
                     manager->addPossibleBindings(cc, _bindingSite);
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
                     manager->addPossibleBindingsstencil(cc, _bindingSite);
 #endif
                 }
@@ -94,7 +94,7 @@ struct UpdateBrancherBindingCallback {
 #ifdef NLORIGINAL
                     manager->removePossibleBindings(cc, _bindingSite);
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
                     manager->removePossibleBindingsstencil(cc, _bindingSite);
 #endif
                 }
@@ -137,7 +137,7 @@ struct UpdateLinkerBindingCallback {
 #ifdef NLORIGINAL
                     manager->addPossibleBindings(cc, _bindingSite);
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
                     manager->addPossibleBindingsstencil(cc, _bindingSite);
 #endif
                 }
@@ -146,7 +146,7 @@ struct UpdateLinkerBindingCallback {
 #ifdef NLORIGINAL
                     manager->removePossibleBindings(cc, _bindingSite);
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
                     manager->removePossibleBindingsstencil(cc, _bindingSite);
 #endif
                 }
@@ -189,7 +189,7 @@ struct UpdateMotorBindingCallback {
 #ifdef NLORIGINAL
                     manager->addPossibleBindings(cc, _bindingSite);
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
                     manager->addPossibleBindingsstencil(cc, _bindingSite);
 #endif
                 }
@@ -198,7 +198,7 @@ struct UpdateMotorBindingCallback {
 #ifdef NLORIGINAL
                     manager->removePossibleBindings(cc, _bindingSite);
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
                     manager->removePossibleBindingsstencil(cc, _bindingSite);
 #endif
                 }
@@ -523,7 +523,7 @@ struct BranchingCallback {
 #ifdef NLORIGINAL
         site = _bManager->chooseBindingSite();
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         site = _bManager->chooseBindingSitesstencil();
 #endif
         
@@ -690,7 +690,7 @@ struct LinkerBindingCallback {
 #ifdef NLORIGINAL
         site = _lManager->chooseBindingSites();
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         site = _lManager->chooseBindingSitesstencil();
 #endif
         
@@ -810,7 +810,7 @@ struct MotorBindingCallback {
 #ifdef NLORIGINAL
         site = _mManager->chooseBindingSites();
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         site = _mManager->chooseBindingSitesstencil();
 #endif
         

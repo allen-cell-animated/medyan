@@ -193,7 +193,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, theta, posheta, dTheta, U_i;
+    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, posheta, U_i;
     floatingpoint *mp = new floatingpoint[3];
 
     floatingpoint U = 0.0;
@@ -256,7 +256,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, theta, posheta, dTheta, U_i;
+    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, posheta, U_i;
     floatingpoint *f1, *f2, *f3;
     floatingpoint *mp = new floatingpoint[3];
     floatingpoint *vzero = new floatingpoint[3]; vzero[0] = 0.0; vzero[1] = 0.0; vzero[2] = 0.0;
@@ -324,7 +324,7 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, invX, invD, position, A, B, C, k, theta, posheta, dTheta;
+    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, invX, invD, position, A, B, C, k, posheta;
 	floatingpoint  *f1, *f2, *f3;
     floatingpoint *mp = new floatingpoint[3];
 

@@ -306,7 +306,6 @@ void BoundaryCylinderRepulsionExpIn::forces(floatingpoint *coord, floatingpoint 
     int nb, nc;
     floatingpoint *coord1, R, r;
     floatingpoint *force1, f0;
-    floatingpoint *F_i;
 
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();

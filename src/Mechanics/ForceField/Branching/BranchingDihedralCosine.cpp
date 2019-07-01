@@ -325,8 +325,6 @@ void BranchingDihedralCosine::forces(floatingpoint *coord, floatingpoint *f, int
     floatingpoint *n2 = new floatingpoint[3];
     floatingpoint *zero = new floatingpoint[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
 
-    floatingpoint U = 0;
-
     for(int i = 0; i < nint; i += 1) {
 
         coord1 = &coord[3 * beadSet[n * i]];

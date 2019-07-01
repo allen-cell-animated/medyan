@@ -118,7 +118,7 @@ void BranchingManager::addPossibleBindings(CCylinder* cc) {
 #ifdef NLORIGINAL
         addPossibleBindings(cc, *bit);
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         addPossibleBindingsstencil(cc, *bit);
 #endif
     }
@@ -193,8 +193,8 @@ void BranchingManager::updateAllPossibleBindings() {
                             inZone = true;
                             //cout << "x= " << coord[1] << "y= " << coord[2] << endl;
                         }
-                        
-                        
+
+
                         else
                             inZone = false;
                     }
@@ -228,7 +228,7 @@ void BranchingManager::updateAllPossibleBindings() {
 bool BranchingManager::isConsistent() {
 #ifdef NLORIGINAL
     auto bindinglist = _possibleBindings;
-#elif defined(NLSTENCILLIST)
+#elif defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     auto bindinglist = _possibleBindingsstencil;
 #endif
     for (auto it = bindinglist.begin(); it != bindinglist.end(); it++) {
@@ -258,7 +258,7 @@ bool BranchingManager::isConsistent() {
     return true;
 }
 
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 void BranchingManager::addPossibleBindingsstencil(CCylinder* cc) {
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
         bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++) {
@@ -661,7 +661,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc) {
 #ifdef NLORIGINAL
         addPossibleBindings(cc, *bit);
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         addPossibleBindingsstencil(cc, *bit);
 #endif
     }
@@ -987,50 +987,51 @@ void LinkerBindingManager::appendpossibleBindings(tuple<CCylinder*, short> t1,
     updateBindingReaction(oldN,newN);
 }
 #endif
+//Deprecated. Used to compare stencil based search with original search.
 bool LinkerBindingManager::isConsistent() {
 
-#ifdef NLORIGINAL
-    auto bindinglist = _possibleBindings;
-#elif defined(NLSTENCILLIST)
-    auto bindinglist = _possibleBindingsstencil;
-#endif
-    for (auto it = bindinglist.begin(); it != bindinglist.end(); it++) {
-        CCylinder* cc1 = get<0>(it->first);
-
-        CCylinder* cc2 = get<0>(it->second);
-
-        short bindingSite1 = get<1>(it->first);
-        short bindingSite2 = get<1>(it->second);
-
-        Cylinder*  c1  = cc1->getCylinder();
-        Cylinder*  c2  = cc2->getCylinder();
-
-        bool flag = true;
-
-        //check site empty
-        if(!areEqual(cc1->getCMonomer(bindingSite1)->speciesBound(
-                SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), (floatingpoint)1.0) ||
-
-           !areEqual(cc2->getCMonomer(bindingSite2)->speciesBound(
-                   SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), (floatingpoint)1.0))
-
-        flag = false;
-
-        if(!flag) {
-            cout << "Binding site in linker manager is inconsistent. " << endl;
-            cout << "Binding site for cylinder 1 = " << bindingSite1 << endl;
-            cout << "Binding site for cylinder 2 = " << bindingSite2 << endl;
-
-            cout << "Cylinder info ..." << endl;
-            c1->printSelf();
-            c2->printSelf();
-
-            return false;
-        }
-    }
-    return true;
+//#ifdef NLORIGINAL
+//    auto bindinglist = _possibleBindings;
+//#elif defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
+//    auto bindinglist = _possibleBindingsstencil;
+//#endif
+//    for (auto it = bindinglist.begin(); it != bindinglist.end(); it++) {
+//        CCylinder* cc1 = get<0>(it->first);
+//
+//        CCylinder* cc2 = get<0>(it->second);
+//
+//        short bindingSite1 = get<1>(it->first);
+//        short bindingSite2 = get<1>(it->second);
+//
+//        Cylinder*  c1  = cc1->getCylinder();
+//        Cylinder*  c2  = cc2->getCylinder();
+//
+//        bool flag = true;
+//
+//        //check site empty
+//        if(!areEqual(cc1->getCMonomer(bindingSite1)->speciesBound(
+//                SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), (floatingpoint)1.0) ||
+//
+//           !areEqual(cc2->getCMonomer(bindingSite2)->speciesBound(
+//                   SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), (floatingpoint)1.0))
+//
+//        flag = false;
+//
+//        if(!flag) {
+//            cout << "Binding site in linker manager is inconsistent. " << endl;
+//            cout << "Binding site for cylinder 1 = " << bindingSite1 << endl;
+//            cout << "Binding site for cylinder 2 = " << bindingSite2 << endl;
+//
+//            cout << "Cylinder info ..." << endl;
+//            c1->printSelf();
+//            c2->printSelf();
+//
+//            return false;
+//        }
+//    }
+//    return true;
 }
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc) {
 /*    std::cout<<"Adding possible bindings of cylinder with ID "<<cc->getCylinder()
             ->getID()<<" with cindex "<<cc->getCylinder()->_dcIndex<<endl;*/
@@ -1040,7 +1041,7 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc) {
     }
 }
 void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSite) {
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     auto HManager = _compartment->getHybridBindingSearchManager();
     HManager->addPossibleBindingsstencil(_idvec,cc,bindingSite);
 #else
@@ -1060,6 +1061,7 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
 //        Neighbors = cc->getCompartment()->getHybridBindingSearchManager()->getHNeighbors
 //                (cc->getCylinder(),HNLID);
 //#else
+
         Neighbors = _neighborLists[_nlIndex]->getNeighborsstencil(cc->getCylinder());
 //#endif
         for (auto cn : Neighbors) {
@@ -1137,7 +1139,9 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
     updateBindingReaction(oldN, newN);
 #endif
 }
+
 void LinkerBindingManager::updateAllPossibleBindingsstencil() {
+#ifdef NLSTENCILLIST
     _possibleBindingsstencil.clear();
     floatingpoint min1,min2,max1,max2;
     bool status1 = true;
@@ -1283,7 +1287,12 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     int newN = numBindingSitesstencil();
     updateBindingReaction(oldN, newN);
     delete[] cindexvec;
+#else
+    cout<<"Erroneous function call. Please check compiler macros. Exiting."<<endl;
+    exit(EXIT_FAILURE);
+#endif
 }
+
 void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc) {
 
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
@@ -1291,7 +1300,7 @@ void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc) {
         removePossibleBindingsstencil(cc, *bit);
 }
 void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bindingSite) {
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     auto HManager = _compartment->getHybridBindingSearchManager();
     HManager->removePossibleBindingsstencil(_idvec, cc, bindingSite);
 /*    for(auto C:SubSystem::getstaticgrid()->getCompartments()){
@@ -1428,7 +1437,7 @@ void LinkerBindingManager::crosscheck(){
     }
 }
 vector<tuple<CCylinder*, short>> LinkerBindingManager::chooseBindingSitesstencil() {
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     auto HManager = _compartment->getHybridBindingSearchManager();
     return HManager->chooseBindingSitesstencil(_idvec);
 #else
@@ -1625,7 +1634,7 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc) {
 #ifdef NLORIGINAL
         addPossibleBindings(cc, *bit);
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         addPossibleBindingsstencil(cc, *bit);
 #endif
     }
@@ -1946,59 +1955,59 @@ void MotorBindingManager::appendpossibleBindings(tuple<CCylinder*, short> t1,
     updateBindingReaction(oldN,newN);
 }
 #endif
+//Deprecated.
 bool MotorBindingManager::isConsistent() {
-
-#ifdef NLORIGINAL
-    auto bindinglist = _possibleBindings;
-#elif defined(NLSTENCILLIST)
-    auto bindinglist = _possibleBindingsstencil;
-#endif
-    for (auto it = bindinglist.begin(); it != bindinglist.end(); it++) {
-
-        CCylinder* cc1 = get<0>(it->first);
-
-        CCylinder* cc2 = get<0>(it->second);
-
-        short bindingSite1 = get<1>(it->first);
-        short bindingSite2 = get<1>(it->second);
-        Cylinder*  c1  = cc1->getCylinder();
-        Cylinder*  c2  = cc2->getCylinder();
-
-        bool flag = true;
-
-        //check site empty
-        if(!areEqual(cc1->getCMonomer(bindingSite1)->speciesBound(
-                SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), (floatingpoint)1.0) ||
-
-           !areEqual(cc2->getCMonomer(bindingSite2)->speciesBound(
-                   SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), (floatingpoint)1.0))
-
-        flag = false;
-
-        if(!flag) {
-            cout << "Binding site in motor manager is inconsistent. " << endl;
-            cout << "Binding site for cylinder 1 = " << bindingSite1 << endl;
-            cout << "Binding site for cylinder 2 = " << bindingSite2 << endl;
-
-            cout << "Cylinder info ..." << endl;
-            c1->printSelf();
-            c2->printSelf();
-
-            //check if in neighbor list
-            auto nlist = _neighborLists[_nlIndex]->getNeighbors(c1);
-            if(find(nlist.begin(), nlist.end(), c2) == nlist.end()) {
-                cout << "Not in neighbor list 1" << endl;
-            }
-            nlist = _neighborLists[_nlIndex]->getNeighbors(c2);
-            if(find(nlist.begin(), nlist.end(), c1) == nlist.end()) {
-                cout << "Not in neighbor list 2" << endl;
-            }
-            return false;
-        }
-    }
-    return true;
+//#ifdef NLORIGINAL
+//    auto bindinglist = _possibleBindings;
+//#elif defined(NLSTENCILLIST)
+//    auto bindinglist = _possibleBindingsstencil;
+//#endif
+//    for (auto it = bindinglist.begin(); it != bindinglist.end(); it++) {
+//
+//        CCylinder* cc1 = get<0>(it->first);
+//
+//        CCylinder* cc2 = get<0>(it->second);
+//
+//        short bindingSite1 = get<1>(it->first);
+//        short bindingSite2 = get<1>(it->second);
+//        Cylinder*  c1  = cc1->getCylinder();
+//        Cylinder*  c2  = cc2->getCylinder();
+//
+//        bool flag = true;
+//
+//        //check site empty
+//        if(!areEqual(cc1->getCMonomer(bindingSite1)->speciesBound(
+//                SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), (floatingpoint)1.0) ||
+//
+//           !areEqual(cc2->getCMonomer(bindingSite2)->speciesBound(
+//                   SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), (floatingpoint)1.0))
+//
+//        flag = false;
+//
+//        if(!flag) {
+//            cout << "Binding site in motor manager is inconsistent. " << endl;
+//            cout << "Binding site for cylinder 1 = " << bindingSite1 << endl;
+//            cout << "Binding site for cylinder 2 = " << bindingSite2 << endl;
+//
+//            cout << "Cylinder info ..." << endl;
+//            c1->printSelf();
+//            c2->printSelf();
+//
+//            //check if in neighbor list
+//            auto nlist = _neighborLists[_nlIndex]->getNeighbors(c1);
+//            if(find(nlist.begin(), nlist.end(), c2) == nlist.end()) {
+//                cout << "Not in neighbor list 1" << endl;
+//            }
+//            nlist = _neighborLists[_nlIndex]->getNeighbors(c2);
+//            if(find(nlist.begin(), nlist.end(), c1) == nlist.end()) {
+//                cout << "Not in neighbor list 2" << endl;
+//            }
+//            return false;
+//        }
+//    }
+//    return true;
 }
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc) {
 /*    std::cout<<"Adding possible bindings of cylinder with ID "<<cc->getCylinder()
             ->getID()<<" with cindex "<<cc->getCylinder()->_dcIndex<<endl;*/
@@ -2008,7 +2017,7 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc) {
     }
 }
 void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSite) {
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 //    cout<<"Adding "<<cc->getCylinder()->getID()<<" "<<bindingSite<<endl;
     auto HManager = _compartment->getHybridBindingSearchManager();
     HManager->addPossibleBindingsstencil(_idvec,cc,bindingSite);
@@ -2042,7 +2051,7 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
 
                 if (areEqual(ccn->getCMonomer(*it)->speciesBound(
                         SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(),
-                        		(floatingpoint)1.0f) {
+                        		(floatingpoint)1.0f)) {
 
                     //check distances..
                     auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
@@ -2107,8 +2116,10 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
     updateBindingReaction(oldN, newN);
 #endif
 }
-void MotorBindingManager::updateAllPossibleBindingsstencil() {
 
+
+void MotorBindingManager::updateAllPossibleBindingsstencil() {
+#ifdef NLSTENCILLIST
     _possibleBindingsstencil.clear();
     int offset = 0;
             //SysParams::Mechanics().bsoffsetvec.at(_filamentType);
@@ -2262,6 +2273,10 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     updateBindingReaction(oldN, newN);
     /*std::cout<<"Motor consistency "<<isConsistent()<<endl;*/
     delete[] cindexvec;
+#else
+    cout<<"Erroneous function call. Please check compiler macros. Exiting."<<endl;
+    exit(EXIT_FAILURE);
+#endif
 }
 void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc) {
 
@@ -2270,7 +2285,7 @@ void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc) {
         removePossibleBindingsstencil(cc, *bit);
 }
 void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bindingSite) {
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 //    cout<<"Removing "<<cc->getCylinder()->getID()<<" "<<bindingSite<<endl;
     auto HManager = _compartment->getHybridBindingSearchManager();
         HManager->removePossibleBindingsstencil(_idvec, cc, bindingSite);
@@ -2407,7 +2422,7 @@ void MotorBindingManager::crosscheck(){
     }
 }
 vector<tuple<CCylinder*, short>> MotorBindingManager::chooseBindingSitesstencil() {
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     auto HManager = _compartment->getHybridBindingSearchManager();
     return HManager->chooseBindingSitesstencil(_idvec);
 #else

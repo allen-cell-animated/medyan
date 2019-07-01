@@ -198,7 +198,7 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint
     int n = BranchingBending<BranchingBendingCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, *coord4, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
+    floatingpoint *coord1, *coord2, *coord3, *coord4, U_i, L1, L2, L1L2, l1l2;
 
     floatingpoint U = 0.0;
 
@@ -258,7 +258,7 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint
     int n = BranchingBending<BranchingBendingCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, *coord4, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
+    floatingpoint *coord1, *coord2, *coord3, *coord4, U_i, L1, L2, L1L2, l1l2;
 	floatingpoint *force1, *force2, *force3, *force4;
     floatingpoint U = 0.0;
 
@@ -328,7 +328,7 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
 
     floatingpoint *coord1, *coord2, *coord3, *coord4;
 	floatingpoint  *force1, *force2, *force3, *force4;
-    floatingpoint L1, L2, L1L2, l1l2, phi, dPhi, A, B, C, invL1, invL2, k;
+    floatingpoint L1, L2, l1l2, A, B, C, invL1, invL2, k;
 
 //    floatingpoint U = 0;
 
@@ -349,7 +349,7 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
         L2 = sqrt(scalarProduct(coord3, coord4,
                                 coord3, coord4));
 
-        L1L2 = L1*L2;
+//        L1L2 = L1*L2;
         l1l2 = scalarProduct(coord1, coord2,
                              coord3, coord4);
 

@@ -97,20 +97,8 @@ floatingpoint BranchingBending<BBendingInteractionType>::computeEnergy(floatingp
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
     floatingpoint * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
     floatingpoint * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
-
-
-//    if(d == 0.0){
-
-//        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kbend, gpu_eqt, gpu_params);
-
-//    }
-//    else{
-
-        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kbend, gpu_eqt, gpu_d,
+    gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kbend, gpu_eqt, gpu_d,
                             gpu_params);
-
-//    }
-
 #endif
 #ifdef SERIAL
 

@@ -10,7 +10,8 @@
 //  See the MEDYAN web page for more information:
 //  http://www.medyan.org
 //------------------------------------------------------------------
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
+
 #include "HybridNeighborListImpl.h"
 
 #include "Bead.h"
@@ -442,6 +443,7 @@ void HybridCylinderCylinderNL::removeNeighbor(Neighbor* n) {
             //Remove from bin
             Bin *bin = cylinder->_hbinvec.at(_ID);
             unassignbin(cylinder, bin);
+            //TODO if the list is a full list, searching through a subset of the neighborlist is enough to get all entries with n as value.
             //remove from other lists
 //            std::cout << "Removed from cylinders ";
             for (auto it = _list4mbinvec[HNLID].begin();

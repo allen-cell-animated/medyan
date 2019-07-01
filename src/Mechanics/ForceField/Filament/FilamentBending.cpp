@@ -128,9 +128,8 @@ void FilamentBending<FBendingInteractionType>::deallocate() {
 template <class FBendingInteractionType>
 floatingpoint FilamentBending<FBendingInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d){
 
-    floatingpoint U_i[1], U_ii=0.0;
-    floatingpoint* gU_i;
-    U_ii = 0.0;
+    floatingpoint U_ii=0.0;
+
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
 #endif
@@ -139,7 +138,7 @@ floatingpoint FilamentBending<FBendingInteractionType>::computeEnergy(floatingpo
 
     tbegin = chrono::high_resolution_clock::now();
 #endif
-
+    floatingpoint* gU_i;
     //has to be changed to accomodate aux force
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
     floatingpoint * gpu_force=CUDAcommon::getCUDAvars().gpu_force;

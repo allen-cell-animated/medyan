@@ -283,9 +283,7 @@ void Controller::initialize(string inputFile,
 
     //setup initial network configuration
     setupInitialNetwork(p);
-#ifdef HYBRID_NLSTENCILLIST
-//    _subSystem->initializeHNeighborList();
-#endif
+
     //setup special structures
     setupSpecialStructures(p);
 
@@ -354,6 +352,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     delete fInit;
 
     //add filaments
+
     for (auto it: fil) {
 
         auto coord1 = get<1>(it);
