@@ -13,7 +13,7 @@
 #ifndef MEDYAN_HybridBindingSearchManager_h
 #define MEDYAN_HybridBindingSearchManager_h
 
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 #include <unordered_map>
 #include <unordered_set>
 #include <random>

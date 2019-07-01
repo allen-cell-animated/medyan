@@ -219,7 +219,7 @@ void SubSystem::resetNeighborLists() {
     chrono::high_resolution_clock::time_point mins, mine;
     mins = chrono::high_resolution_clock::now();
 
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     _HneighborList->reset();
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_H(mine - mins);

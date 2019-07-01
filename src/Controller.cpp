@@ -283,9 +283,7 @@ void Controller::initialize(string inputFile,
 
     //setup initial network configuration
     setupInitialNetwork(p);
-#ifdef HYBRID_NLSTENCILLIST
-//    _subSystem->initializeHNeighborList();
-#endif
+
     //setup special structures
     setupSpecialStructures(p);
 

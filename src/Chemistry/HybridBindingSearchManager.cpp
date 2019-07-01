@@ -10,7 +10,7 @@
 //  See the MEDYAN web page for more information:
 //  http://www.medyan.org
 //------------------------------------------------------------------
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 #include "Compartment.h"
 #include "Filament.h"
 #include "Cylinder.h"
@@ -497,6 +497,7 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
 }
 
 void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
+	//Delete all entries in the binding pair maps
     for (int idx = 0; idx < totaluniquefIDpairs; idx++){
         int countbounds = _rMaxsqvec[idx].size();
         for (int idx2 = 0; idx2 < countbounds; idx2++) {
@@ -510,19 +511,22 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
     bool status2 = true;
     floatingpoint minveca[2];
     floatingpoint maxveca[2];
+    //vector of squared cylinder length
     floatingpoint* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
     floatingpoint *coord = CUDAcommon::getSERLvars().coord;
+    //structure of cylinder
     auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
+    //Number of cylinders in the compartment
     int Ncylincmp = _compartment->getCylinders().size();
     int* cindexvec = new int[Ncylincmp]; //stores cindex of cylinders in this compartment
     vector<vector<int>> ncindices; //cindices of cylinders in neighbor list.
     vector<int> ncindex; //helper vector
-
+	//vector storing information on state (bound/free) of each binding site
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
     CCylinder **ccylvec = CUDAcommon::getSERLvars().ccylindervec;
     int idx; int idx2;
-//Go through all filament types in our simulation
+	//Go through all filament types in our simulation
     for(idx = 0; idx<totaluniquefIDpairs;idx++) {
 
         long id = 0;
@@ -537,6 +541,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
         for (auto c : _compartment->getCylinders()) {
             cindexvec[id] = c->_dcIndex;
             id++;
+            //Get neighors corresponding to the cylinder.
             auto Neighbors = _HneighborList->getNeighborsstencil(HNLIDvec[idx], c);
             ncindex.reserve(Neighbors.size());
             for (auto cn : Neighbors) {
@@ -1069,5 +1074,3 @@ template void HybridBindingSearchManager::calculatebspairsself<3,false>();
 template void HybridBindingSearchManager::calculatebspairsself<4,true>();
 template void HybridBindingSearchManager::calculatebspairsself<4,false>();*/
 #endif
-
-

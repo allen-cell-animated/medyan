@@ -39,7 +39,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     for(auto ci : Cylinder::getCylinders()) {
         if(!ci->isFullLength()) continue;
         //do not calculate exvol for a non full length cylinder
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         auto neighbors = _HneighborList->getNeighborsstencil(_HnlID, ci);
 #else
         auto neighbors = _neighborList->getNeighbors(ci);
@@ -65,7 +65,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     for (i = 0; i < nc; i++) {
         auto ci = Cylinder::getCylinders()[i];
         if(!ci->isFullLength()) continue;
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         auto neighbors = _HneighborList->getNeighborsstencil(_HnlID, ci);
 #else
         auto neighbors = _neighborList->getNeighbors(ci);
@@ -81,7 +81,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
             beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->_dbIndex;
             beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->_dbIndex;
             beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->_dbIndex;
-            
+
             //Get KRepuls based on filament type
             if(ci->getType() != cin->getType()){
                 auto ki = ci->getMCylinder()->getExVolConst();
@@ -91,7 +91,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
             else{
                 krep[Cumnc] = ci->getMCylinder()->getExVolConst();
             }
-            
+
             Cumnc++;
             //std::cout<<"CV"<<ci->getID()<<" "<<cin->getID()<<endl;
         }
@@ -299,5 +299,3 @@ template floatingpoint CylinderExclVolume<CylinderExclVolRepulsion>::computeEner
 template void CylinderExclVolume<CylinderExclVolRepulsion>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void CylinderExclVolume<CylinderExclVolRepulsion>::vectorize();
 template void CylinderExclVolume<CylinderExclVolRepulsion>::deallocate();
-
-

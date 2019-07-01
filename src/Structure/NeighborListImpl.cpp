@@ -1097,4 +1097,3 @@ vector<Cylinder*> BubbleCylinderNL::getNeighbors(Bubble* bb) {
 
     return _list[bb];
 }
-
