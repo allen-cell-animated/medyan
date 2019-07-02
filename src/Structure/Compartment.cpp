@@ -1747,7 +1747,7 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
 
     vector<ReactionBase*> rxns;
 
-    cout << "This compartment: x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
+//    cout << "This compartment: x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
 
     for(auto &sp_this : _species.species()) {
         int molecule = sp_this->getMolecule();

@@ -470,17 +470,24 @@ void HybridCylinderCylinderNL::reset() {
 //        std::cout<<"Hybrid rmin rmax "<<_rMinsqvec[idx]<<" "<<_rMaxsqvec[idx]<<endl;
     }
 
-    /*chrono::high_resolution_clock::time_point mins, mine;
-    mins = chrono::high_resolution_clock::now();*/
+    chrono::high_resolution_clock::time_point mins, mine;
+    mins = chrono::high_resolution_clock::now();
     //check and reassign cylinders to different bins if needed.
     updateallcylinderstobin();
     _binGrid->updatecindices();
+    mine= chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_B(mine - mins);
+    std::cout<<"update cindices "<<elapsed_B.count()<<endl;
+    mins = chrono::high_resolution_clock::now();
     for(auto cylinder: Cylinder::getCylinders()) {
         updateNeighborsbin(cylinder);
 //        for (int idx = 0; idx < totalhybridNL; idx++) {
 //            tot[idx] += _list4mbinvec[idx][cylinder].size();
 //        }
     }
+    mine= chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_N(mine - mins);
+    std::cout<<"update neighbors "<<elapsed_N.count()<<endl;
 }
 
 #endif

@@ -154,7 +154,6 @@ floatingpoint FilamentStretching<FStretchingInteractionType>::computeEnergy
     tbegin = chrono::high_resolution_clock::now();
 #endif
 
-
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql);
     else

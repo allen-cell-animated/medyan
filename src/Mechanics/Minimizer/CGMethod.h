@@ -42,9 +42,10 @@ protected:
     floatingpoint *coord;  ///<bead coordinates (length 3*N)
     floatingpoint *coordlineSearch; ///coords used during line search
 
-    floatingpoint *force; ///< bead forces (length 3*N)
-    floatingpoint *forceAux; ///< auxiliary force calculations (length 3*N)
-    floatingpoint *forceAuxPrev; ///<auxiliary force calculation previously (length 3*N)
+    floatingpoint *force=NULL; ///< bead forces (length 3*N)
+    floatingpoint *forceAux=NULL; ///< auxiliary force calculations (length 3*N)
+    floatingpoint *forceAuxPrev=NULL; ///<auxiliary force calculation previously (length
+    // 3*N)
 //    cylinder* cylindervec;
 
 //Gradients
@@ -241,9 +242,11 @@ protected:
     inline void deallocate() {
 //        coord = CUDAcommon::serlvars.coord;
 //        delete [] coord;
-        delete [] force;
-        delete [] forceAux;
-        delete [] forceAuxPrev;
+        if(force != NULL) {
+            delete[] force;
+            delete[] forceAux;
+            delete[] forceAuxPrev;
+        }
     }
 
 public:

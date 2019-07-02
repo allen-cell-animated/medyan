@@ -240,6 +240,8 @@ void SubSystem::resetNeighborLists() {
 
 }
 void SubSystem::updateBindingManagers() {
+    chrono::high_resolution_clock::time_point mins, mine;
+    mins = chrono::high_resolution_clock::now();
 #ifdef CUDAACCL_NL
     if(SysParams::Chemistry().numFilaments > 1) {
         cout << "CUDA Binding Manager cannot handle more than one type of filaments." << endl;
@@ -318,16 +320,19 @@ void SubSystem::updateBindingManagers() {
 	#endif
 	#endif
 	//Version3
-    #if defined(HYBIRD_NLSTENCILLIST) && !defined(SIMDBINDINGSEARCH)
+    #ifdef HYBRID_NLSTENCILLIST
     for (auto C : _compartmentGrid->getCompartments()) {
         C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilHYBD();
         for(auto &manager : C->getBranchingManagers()) {
             manager->updateAllPossibleBindingsstencil();
         }
     }
+    //UpdateAllBindingReactions
+    for (auto C : _compartmentGrid->getCompartments()) {
+        C->getHybridBindingSearchManager()->updateAllBindingReactions();
+    }
     #endif
-    chrono::high_resolution_clock::time_point mins, mine;
-    mins = chrono::high_resolution_clock::now();
+
     //SIMD cylinder update
 #ifdef SIMDBINDINGSEARCH
 	if(!initialize) {
