@@ -180,11 +180,11 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoi
 	    CUDAcommon::tmin.computeenerycallsnonzero++;*/
     for (auto &ff : _forceFields) {
         tbegin = chrono::high_resolution_clock::now();
-	    #ifdef MOVEBEADSLINESEARCH
+//	    #ifdef MOVEBEADSLINESEARCH
         floatingpoint tempEnergy = ff->computeEnergy(coord, f, 0.0);
-		#else
+/*		#else
 		floatingpoint tempEnergy = ff->computeEnergy(coord, f, d);
-		#endif
+		#endif*/
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
 //        cout<<ff->getName()<<" "<<tempEnergy<<"pN.nm"<<" ";
