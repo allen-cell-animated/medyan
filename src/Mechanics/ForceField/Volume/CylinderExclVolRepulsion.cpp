@@ -969,7 +969,7 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 		f4l[2] =  - invJJ*( 0.5*(c2[2] - c1[2] )*( -E13 + F13 + 2*E11*d + 2*F11*d -
 		                                           4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*F + F11*F +4*U*e*F - (F12*(d + F))/FF ) + (c4[2] - c3[2])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[2] - c3[2] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*F + 2*U*(d*e - a*F) - (B12*F)/BB - (F12*(d + F))/FF) ) ;
 
-		#ifdef CHECKFORCES_INF_NAN
+
 		if(checkNaN_INF(f1l, 0, 2)||checkNaN_INF(f2l,0,2)||checkNaN_INF(f3l, 0, 2)
 		   ||checkNaN_INF(f4l,0,2)){
 			forceN(coord, f, beadSet, krep, i);
@@ -982,14 +982,6 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 				f4[dim] += f4l[dim];
 			}
 		}
-		#else
-		for(int dim = 0; dim<3; dim++) {
-		    f1[dim] += f1l[dim];
-		    f2[dim] += f2l[dim];
-		    f3[dim] += f3l[dim];
-		    f4[dim] += f4l[dim];
-	    }
-		#endif
 
 #ifdef DETAILEDOUTPUT
 		std::cout<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<
@@ -1241,7 +1233,7 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 	cout<<f4l[0]<<" "<<f4l[1]<<" "<<f4l[2]<<endl;*/
 
 	delete [] integrandarray;
-	#ifdef CHECKFORCES_INF_NAN
+
 	if(checkNaN_INF(f1l, 0, 2)||checkNaN_INF(f2l,0,2)||checkNaN_INF(f3l, 0, 2)
 	   ||checkNaN_INF(f4l,0,2)){
 
@@ -1306,12 +1298,4 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 			f4[dim] += f4l[dim];
 		}
 	}
-	#else
-	for(int dim = 0; dim<3; dim++) {
-			f1[dim] += f1l[dim];
-			f2[dim] += f2l[dim];
-			f3[dim] += f3l[dim];
-			f4[dim] += f4l[dim];
-		}
-	#endif
 }
