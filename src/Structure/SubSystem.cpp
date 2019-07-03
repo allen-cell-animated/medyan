@@ -394,7 +394,9 @@ void SubSystem::vectorizeCylinder() {
 //    vector<int> bspeciesoffsetvec(SysParams::CParams.numFilaments);
     auto cylvec = Cylinder::getCylinders();
 //    int ncyl = cylvec.size();
-    delete [] cylsqmagnitudevector;
+    if(cylsqmagnitudevector != nullptr){
+        delete [] cylsqmagnitudevector;
+    };
     cylsqmagnitudevector = new floatingpoint[Cylinder::vectormaxsize];
     unsigned long maxbindingsitespercyl = 0;
     for(auto ftype = 0; ftype < SysParams::CParams.numFilaments; ftype++) {
