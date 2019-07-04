@@ -325,6 +325,13 @@ The following chemical parameters can be set. It should be noted that the number
        \noindent\texttt{NUMMOTORHEADSMAX} -- int -- Maximum number of motor heads per motor species defined. \\
      
        \noindent\texttt{MOTORSTEPSIZE} -- double -- Single motor head step size. \\
+       
+       \noindent \texttt{DISSIPATIONTRACKING} -- ON -- Switches on the dissipation tracking feature \\
+       
+       \noindent \texttt{DIFBINDING} -- int -- Switches on the different binding tracking feature to allow motors to have more binding spots per cylinder than linkers.  Currently only supported for the original neighborlist implementation, not the SIMD or hybrid neighborlist.  The specified integer is the number of binding sites that the cross-linkers will skip before accepting a possible binding site. \\
+       
+       \noindent \texttt{EVENTTRACKING} -- ON -- Switches on the event tracking feature \\
+       
      
 
 \normalsize
@@ -504,119 +511,143 @@ Reaction definitions must follow these common rules:
 \item Species that are defined in reactions must be previously defined in the chemistry file. 
 \item For filament-related reactions, most species type and ordering parameters are fixed; if they are fixed, they will be pre-defined in the reaction definition below. If the ordering is not properly followed, a startup error will result. 
 \item All species declarations in a reaction must be separated by white space, with \texttt{+} markers between reactants and products. A \texttt{->} must be placed between reactants and products, separated by whitespace. If this syntax is not followed, a startup error will result.
+\item The optional string \texttt{<HRCDID>} and accompanying float \texttt{<DELGZERO>} specify the identity and the $\Delta G^0$ value for the reaction, respectively, for use in dissipation tracking.  If this feature is turned on, then this field must be supplied, and if it is turned off then this field must be omitted.  Currently only some reactions support dissipation tracking, as specified below, and it is only supported when the Next Reaction Method algorithm choice is used.  For those reactions which do not support dissipation tracking, the \texttt{<HRCDID>} and \texttt{<DELGZERO>} fields should not be set.  This allows those reactions to be included in the chemical system while allowing dissipation tracking for supported reactions. 
 \end{itemize}
 
 \noindent Different types of reactions can be defined as follows:
 \begin{itemize}
-
-
-\item A \textbf{general reaction} between any bulk or diffusing species can be defined in the following form: \newline\texttt{GENREACTION:}\newline 
-\texttt{<NAME>:BULK/DIFFUSING + <NAME>:BULK/DIFFUSING + ... ->}\newline
-\texttt{<NAME>:BULK/DIFFUSING + <NAME>:BULK/DIFFUSING + ... <RATE>}\newline\newline 
-where any bulk or diffusing species can be included, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction.
-
-\item A \textbf{bulk reaction} between bulk species only can be defined in the following form: \newline\newline
-\texttt{BULKREACTION:}\newline
-\texttt{<NAME>:BULK + <NAME>:BULK + ... ->}\newline
-\texttt{ <NAME>:BULK + <NAME>:BULK + ... <RATE>}\newline\newline 
-where any bulk species can be included. If the reaction only contains bulk species, it must be specified as a bulk reaction. \texttt{<RATE>} is a float value that determines the rate constant  of the reaction.
-
-\item A \textbf{polymerization reaction} can be defined in the following form:\newline\newline
-\texttt{POLYMERIZATIONREACTION: <FILAMENTTYPE>}\newline
-\texttt{<NAME>:BULK/DIFFUSING + <NAME>:PLUSEND/MINUSEND ->}\newline
-\texttt{<NAME>:FILAMENT + <NAME>:PLUSEND/MINUSEND <RATE>}\newline\newline 
-where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant  of the reaction. It is noted that the first species listed can be either \texttt{DIFFUSING} or \texttt{BULK}, and the reaction can contain a \texttt{PLUSEND} or \texttt{MINUSEND}.
-
-This reaction will polymerize the filament, producing a new chemical species on the end of the filament and increasing 
-the length of the filament by a single monomer.
-
-\item A \textbf{depolymerization reaction} can be defined in the following form:\newline\newline
-\texttt{DEPOLYMERIZATIONREACTION: <FILAMENTTYPE>}\newline
-\texttt{<NAME>:FILAMENT + <NAME>:PLUSEND/MINUSEND ->}\newline
-\texttt{<NAME>:BULK/DIFFUSING + <NAME>:PLUSEND/MINUSEND <RATE>}\newline\newline
- where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. It is noted that the third species listed can be either \texttt{DIFFUSING} or \texttt{BULK}, and the reaction can contain a \texttt{PLUSEND} or \texttt{MINUSEND}.
- 
- This reaction will depolymerize the filament, removing a chemical species from the end of the filament and decreasing the length of the filament by a single monomer.
-
-\item A \textbf{cross-linker reaction} between two filaments can be defined in the following form:\newline\newline
-\texttt{LINKERREACTION: <FILAMENTTYPE>}\newline
-\texttt{<NAME>:BOUND:1 + <NAME>:BOUND:2 + <NAME>:BULK/DIFFUSING <->}\newline
-\texttt{<NAME>:LINKER:1 + <NAME>:LINKER:2 <ONRATE> <OFFRATE> <RMIN> <RMAX>}\newline
-
-where \texttt{<NAME>} is the string name of the species, and \texttt{<ONRATE>} and \texttt{<OFFRATE>} are float values that determines the rate constant of the binding and unbinding reactions. \texttt{<RMIN>} and \texttt{<RMAX>} are the range of the chemical reaction, and this can be set depending on the structure of the simulated cross-linker. It is noted that the third species listed can be either \texttt{DIFFUSING} or \texttt{BULK}. The bound species listed must be the corresponding cross-linker binding site.
-
-This reaction produces cross-linker species at two separate positions on each respective filament which are chemically and mechanically connected. If mechanical force fields are defined for the cross-linkers, a potential will be created between the filaments. The unbinding reaction will remove these species from the filaments, as well as remove any linker potentials that have been created between the filaments.
-
- 
- \item A \textbf{motor reaction} between two filaments can be defined in the following form:\newline\newline
-\texttt{MOTORREACTION: <FILAMENTTYPE>}\newline
-\texttt{<NAME>:BOUND:1 + <NAME>:BOUND:2 + <NAME>:BULK/DIFFUSING <->}\newline
-\texttt{<NAME>:MOTOR:1 + <NAME>:MOTOR:2 <ONRATE> <OFFRATE> <RMIN> <RMAX>}\newline
-
-where \texttt{<NAME>} is the string name of the species, and \texttt{<ONRATE>} and \texttt{<OFFRATE>} are float values that determines the rate constant of the binding and unbinding reactions. \texttt{<RMIN>} and \texttt{<RMAX>} are the range of the chemical reaction, and this can be set depending on the structure of the simulated motor. It is noted that the third species listed can be either \texttt{DIFFUSING} or \texttt{BULK}. The bound species listed must be the corresponding motor binding site.
-
-This binding reaction produces motor species at two separate positions on each respective filament which are chemically and mechanically connected. If mechanical force fields are defined for the motor, a potential will be created between the filaments. The unbinding reaction will remove these species from the filaments, as well as remove any motor potentials that have been created between the filaments.
-
-
-\item A \textbf{motor walking reaction} can be defined in the following form:\newline\newline
-\texttt{MOTORWALKINGREACTION: <FILAMENTTYPE>}\newline
-\texttt{<NAME>:MOTOR:N/N+1 + <NAME>:BOUND:N/N+1 ->}\newline
-\texttt{<NAME>:MOTOR:N/N+1 + <NAME>:BOUND:N/N+1 <RATE>}\newline\newline
-where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. The choice of \texttt{N/N+1} will determine whether the motor is stepping forward or backward. A motor movement from \texttt{N} to \texttt{N+1} is defined as forward movement (towards the plus end of the filament), and the opposite is backward (towards the minus end). These choices for the reactants and products must be self-consistent as well as consistent with the bound species positions chosen in the reaction, or a startup error will result. The bound species listed must be the corresponding motor binding site.
-
-This reaction will move a motor head in the given direction.
- 
-\item A \textbf{branching reaction} can be defined in the following form:\newline\newline
-\texttt{BRANCHINGREACTION: <FILAMENTTYPE>}\newline
-\texttt{<NAME>:BULK/DIFFUSING + <NAME>:BULK/DIFFUSING +  <NAME>:BOUND <->}\newline
-\texttt{<NAME>:BRANCHER + <NAME>:PLUSEND <ONRATE> <OFFRATE> <NUCLEATIONZONE> <NUCLEATIONDIST>}\newline\newline
-where \texttt{<NAME>} is the string name of the species, and \texttt{<ONRATE>, <OFFRATE>} are float values that determine the rate constants of the reaction.  It is noted that the first and second species listed can be either \texttt{DIFFUSING} or \texttt{BULK}. The bound species listed must be the corresponding branching binding site.
-
-The \texttt{NUCLEATIONZONE} and \texttt{NUCLEATIONDIST} specify the volume in which a branching reaction can occur. The choices for the zone parameter are the following
-
-\begin{itemize}
-\item \texttt{ALL} : A new filament can nucleate anywhere in the simulation volume due to branching.
-\item \texttt{BOUNDARY} : A new filament can nucleate a given distance away from a boundary due to branching, specified by the \texttt{NUCLEATIONDIST} from the system boundary.
-
-\item \texttt{TOPBOUNDARY} : Similar to \texttt{BOUNDARY} except only in the top half of the volume (in the z direction).
-
-\end{itemize}
-
-It is noted that \texttt{NUCLEATIONDIST} needs to be specified for all nucleation zones, but it is unused for \texttt{ALL}.
-
-This reaction will create a new branching point, as well as a filament with the desired chemical plus end. If mechanical force fields are defined for the branching point, a potential will be created between the parent and child filament. The unbinding reaction will remove the branching point from the filaments, thus freeing the child filament from the parent. It will also remove any branching point potentials that have been created between the filaments.
- 
-\item A \textbf{nucleation reaction} can be defined in the following form:\newline\newline
-\texttt{NUCLEATIONREACTION: <FILAMENTTYPE>}\newline
-\texttt{<NAME>:BULK/DIFFUSING + <NAME>:BULK/DIFFUSING ->}\newline
-\texttt{<NAME>:PLUSEND + <NAME>:FILAMENT + <NAME>:MINUSEND <RATE>}\newline\newline
-where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. It is noted that the first and second species listed can be either \texttt{DIFFUSING} or \texttt{BULK}.
-
-This reaction will create a new filament with the given chemical plus end, minus end, and filament species. PLEASE REFER TO THE EXAMPLE FILES FOR A COMPLETE NUCLEATION CYCLE. 
-
-\item A \textbf{destruction reaction} can be defined in the following form:\newline\newline
-\texttt{DESTRUCTIONREACTION: <FILAMENTTYPE>}\newline
-\texttt{<NAME>:PLUSEND + <NAME>:MINUSEND ->}\newline
-\texttt{<NAME>:BULK/DIFFUSING + <NAME>:BULK/DIFFUSING <RATE>}\newline\newline
-where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. It is noted that the third and fourth species listed can be either \texttt{DIFFUSING} or \texttt{BULK}.
-
-This reaction will destroy a filament, removing it from the system.
-
-\item An \textbf{filament aging reaction} can be defined in the following form:\newline\newline
-\texttt{AGINGREACTION: <FILAMENTTYPE>}\newline
-\texttt{<NAME>:FILAMENT/PLUSEND/MINUSEND ->}\newline
-\texttt{<NAME>:FILAMENT/PLUSEND/MINUSEND <RATE>}\newline\newline
-where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. Either of the reactant or product species can be \texttt{FILAMENT}, \texttt{PLUSEND}, or \texttt{MINUEND}, but the product and reactant species must be the same type, or a startup error will result.
-
-This reaction will change the chemical species that resides in a filament.
-
-\item A \textbf{filament severing reaction} can be defined in the following form:\newline\newline
-\texttt{SEVERINGREACTION: <FILAMENTTYPE>}\newline
-\texttt{AT <NAME>:FILAMENT <RATE>}\newline\newline
-where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction.
-
-This reaction will sever the filament at the closest cylinder connection to a given chemical position, producing two child filaments.
-
+	
+	
+	\item A \textbf{general reaction} between any bulk or diffusing species can be defined in the following form: \newline\texttt{GENREACTION: (<DELGZERO>:<HRCDID>)}\newline 
+	\texttt{<NAME>:BULK/DIFFUSING + <NAME>:BULK/DIFFUSING + ... ->}\newline
+	\texttt{<NAME>:BULK/DIFFUSING + <NAME>:BULK/DIFFUSING + ... <RATE>}\newline\newline 
+	where any bulk or diffusing species can be included, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction.
+	
+	This reaction supports dissipation tracking, so if the feature is turned on, then \texttt{<HRCDID>} should be set to a user specified short unique string, and \texttt{<DELGZERO>} should be set to a float value based on the user's parameterization of the chemical energetics.  
+	
+	\item A \textbf{bulk reaction} between bulk species only can be defined in the following form: \newline\newline
+	\texttt{BULKREACTION:}\newline
+	\texttt{<NAME>:BULK + <NAME>:BULK + ... ->}\newline
+	\texttt{ <NAME>:BULK + <NAME>:BULK + ... <RATE>}\newline\newline 
+	where any bulk species can be included. If the reaction only contains bulk species, it must be specified as a bulk reaction. \texttt{<RATE>} is a float value that determines the rate constant  of the reaction.  
+	
+	This reaction does not support dissipation tracking, so \texttt{<HRCDID>} and \texttt{<DELGZERO>} should not be provided.  
+	
+	\item A \textbf{polymerization reaction} can be defined in the following form:\newline\newline
+	\texttt{POLYMERIZATIONREACTION: (<DELGZERO>:<HRCDID>) <FILAMENTTYPE>}\newline
+	\texttt{<NAME>:BULK/DIFFUSING + <NAME>:PLUSEND/MINUSEND ->}\newline
+	\texttt{<NAME>:FILAMENT + <NAME>:PLUSEND/MINUSEND <RATE>}\newline\newline 
+	where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant  of the reaction. It is noted that the first species listed can be either \texttt{DIFFUSING} or \texttt{BULK}, and the reaction can contain a \texttt{PLUSEND} or \texttt{MINUSEND}.
+	
+	This reaction will polymerize the filament, producing a new chemical species on the end of the filament and increasing 
+	the length of the filament by a single monomer.
+	
+	This reaction supports dissipation tracking, so if the feature is turned on, then \texttt{<HRCDID>} should be set to a user specified short unique string, and \texttt{<DELGZERO>} should be set to a float value based on the user's parameterization of the chemical energetics.
+	
+	\item A \textbf{depolymerization reaction} can be defined in the following form:\newline\newline
+	\texttt{DEPOLYMERIZATIONREACTION: (<DELGZERO>:<HRCDID>) <FILAMENTTYPE>}\newline
+	\texttt{<NAME>:FILAMENT + <NAME>:PLUSEND/MINUSEND ->}\newline
+	\texttt{<NAME>:BULK/DIFFUSING + <NAME>:PLUSEND/MINUSEND <RATE>}\newline\newline
+	where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. It is noted that the third species listed can be either \texttt{DIFFUSING} or \texttt{BULK}, and the reaction can contain a \texttt{PLUSEND} or \texttt{MINUSEND}.
+	
+	This reaction will depolymerize the filament, removing a chemical species from the end of the filament and decreasing the length of the filament by a single monomer.
+	
+	This reaction supports dissipation tracking, so if the feature is turned on, then \texttt{<HRCDID>} should be set to a user specified short unique string, and \texttt{<DELGZERO>} should be set to a float value based on the user's parameterization of the chemical energetics.
+	
+	\item A \textbf{cross-linker reaction} between two filaments can be defined in the following form:\newline\newline
+	\texttt{LINKERREACTION: (<DELGZERO>:<HRCDID>) <FILAMENTTYPE>}\newline
+	\texttt{<NAME>:BOUND:1 + <NAME>:BOUND:2 + <NAME>:BULK/DIFFUSING <->}\newline
+	\texttt{<NAME>:LINKER:1 + <NAME>:LINKER:2 <ONRATE> <OFFRATE> <RMIN> <RMAX>}\newline
+	
+	where \texttt{<NAME>} is the string name of the species, and \texttt{<ONRATE>} and \texttt{<OFFRATE>} are float values that determines the rate constant of the binding and unbinding reactions. \texttt{<RMIN>} and \texttt{<RMAX>} are the range of the chemical reaction, and this can be set depending on the structure of the simulated cross-linker. It is noted that the third species listed can be either \texttt{DIFFUSING} or \texttt{BULK}. The bound species listed must be the corresponding cross-linker binding site.
+	
+	This reaction produces cross-linker species at two separate positions on each respective filament which are chemically and mechanically connected. If mechanical force fields are defined for the cross-linkers, a potential will be created between the filaments. The unbinding reaction will remove these species from the filaments, as well as remove any linker potentials that have been created between the filaments.
+	
+	This reaction supports dissipation tracking, so if the feature is turned on, then \texttt{<HRCDID>} should be set to a user specified short unique string, and \texttt{<DELGZERO>} should be set to a float value based on the user's parameterization of the chemical energetics.
+	
+	\item A \textbf{motor reaction} between two filaments can be defined in the following form:\newline\newline
+	\texttt{MOTORREACTION: (<DELGZERO>:<HRCDID>) <FILAMENTTYPE>}\newline
+	\texttt{<NAME>:BOUND:1 + <NAME>:BOUND:2 + <NAME>:BULK/DIFFUSING <->}\newline
+	\texttt{<NAME>:MOTOR:1 + <NAME>:MOTOR:2 <ONRATE> <OFFRATE> <RMIN> <RMAX>}\newline
+	
+	where \texttt{<NAME>} is the string name of the species, and \texttt{<ONRATE>} and \texttt{<OFFRATE>} are float values that determines the rate constant of the binding and unbinding reactions. \texttt{<RMIN>} and \texttt{<RMAX>} are the range of the chemical reaction, and this can be set depending on the structure of the simulated motor. It is noted that the third species listed can be either \texttt{DIFFUSING} or \texttt{BULK}. The bound species listed must be the corresponding motor binding site.
+	
+	This binding reaction produces motor species at two separate positions on each respective filament which are chemically and mechanically connected. If mechanical force fields are defined for the motor, a potential will be created between the filaments. The unbinding reaction will remove these species from the filaments, as well as remove any motor potentials that have been created between the filaments.
+	
+	This reaction supports dissipation tracking, so if the feature is turned on, then \texttt{<HRCDID>} should be set to a user specified short unique string, and \texttt{<DELGZERO>} should be set to a float value based on the user's parameterization of the chemical energetics.	
+	
+	\item A \textbf{motor walking reaction} can be defined in the following form:\newline\newline
+	\texttt{MOTORWALKINGREACTION: (<DELGZERO>:<HRCDID>) <FILAMENTTYPE>}\newline
+	\texttt{<NAME>:MOTOR:N/N+1 + <NAME>:BOUND:N/N+1 ->}\newline
+	\texttt{<NAME>:MOTOR:N/N+1 + <NAME>:BOUND:N/N+1 <RATE>}\newline\newline
+	where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. The choice of \texttt{N/N+1} will determine whether the motor is stepping forward or backward. A motor movement from \texttt{N} to \texttt{N+1} is defined as forward movement (towards the plus end of the filament), and the opposite is backward (towards the minus end). These choices for the reactants and products must be self-consistent as well as consistent with the bound species positions chosen in the reaction, or a startup error will result. The bound species listed must be the corresponding motor binding site.
+	
+	This reaction will move a motor head in the given direction.
+	
+	This reaction supports dissipation tracking, so if the feature is turned on, then \texttt{<HRCDID>} should be set to a user specified short unique string, and \texttt{<DELGZERO>} should be set to a float value based on the user's parameterization of the chemical energetics.
+	
+	\item A \textbf{branching reaction} can be defined in the following form:\newline\newline
+	\texttt{BRANCHINGREACTION:  <FILAMENTTYPE>}\newline
+	\texttt{<NAME>:BULK/DIFFUSING + <NAME>:BULK/DIFFUSING +  <NAME>:BOUND <->}\newline
+	\texttt{<NAME>:BRANCHER + <NAME>:PLUSEND <ONRATE> <OFFRATE> <NUCLEATIONZONE> <NUCLEATIONDIST>}\newline\newline
+	where \texttt{<NAME>} is the string name of the species, and \texttt{<ONRATE>, <OFFRATE>} are float values that determine the rate constants of the reaction.  It is noted that the first and second species listed can be either \texttt{DIFFUSING} or \texttt{BULK}. The bound species listed must be the corresponding branching binding site.
+	
+	The \texttt{NUCLEATIONZONE} and \texttt{NUCLEATIONDIST} specify the volume in which a branching reaction can occur. The choices for the zone parameter are the following
+	
+	\begin{itemize}
+		\item \texttt{ALL} : A new filament can nucleate anywhere in the simulation volume due to branching.
+		\item \texttt{BOUNDARY} : A new filament can nucleate a given distance away from a boundary due to branching, specified by the \texttt{NUCLEATIONDIST} from the system boundary.
+		
+		\item \texttt{TOPBOUNDARY} : Similar to \texttt{BOUNDARY} except only in the top half of the volume (in the z direction).
+		
+	\end{itemize}
+	
+	It is noted that \texttt{NUCLEATIONDIST} needs to be specified for all nucleation zones, but it is unused for \texttt{ALL}.
+	
+	This reaction will create a new branching point, as well as a filament with the desired chemical plus end. If mechanical force fields are defined for the branching point, a potential will be created between the parent and child filament. The unbinding reaction will remove the branching point from the filaments, thus freeing the child filament from the parent. It will also remove any branching point potentials that have been created between the filaments.
+	
+	This reaction does not support dissipation tracking, so \texttt{<HRCDID>} and \texttt{<DELGZERO>} should not be provided.   
+	
+	\item A \textbf{nucleation reaction} can be defined in the following form:\newline\newline
+	\texttt{NUCLEATIONREACTION:  <FILAMENTTYPE>}\newline
+	\texttt{<NAME>:BULK/DIFFUSING + <NAME>:BULK/DIFFUSING ->}\newline
+	\texttt{<NAME>:PLUSEND + <NAME>:FILAMENT + <NAME>:MINUSEND <RATE>}\newline\newline
+	where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. It is noted that the first and second species listed can be either \texttt{DIFFUSING} or \texttt{BULK}.
+	
+	This reaction will create a new filament with the given chemical plus end, minus end, and filament species. PLEASE REFER TO THE EXAMPLE FILES FOR A COMPLETE NUCLEATION CYCLE. 
+	
+	This reaction does not support dissipation tracking, so \texttt{<HRCDID>} and \texttt{<DELGZERO>} should not be provided.
+	
+	\item A \textbf{destruction reaction} can be defined in the following form:\newline\newline
+	\texttt{DESTRUCTIONREACTION: <FILAMENTTYPE>}\newline
+	\texttt{<NAME>:PLUSEND + <NAME>:MINUSEND ->}\newline
+	\texttt{<NAME>:BULK/DIFFUSING + <NAME>:BULK/DIFFUSING <RATE>}\newline\newline
+	where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. It is noted that the third and fourth species listed can be either \texttt{DIFFUSING} or \texttt{BULK}.
+	
+	This reaction will destroy a filament, removing it from the system.
+	
+	This reaction does not support dissipation tracking, so \texttt{<HRCDID>} and \texttt{<DELGZERO>} should not be provided.  
+	
+	\item An \textbf{filament aging reaction} can be defined in the following form:\newline\newline
+	\texttt{AGINGREACTION: (<DELGZERO>:<HRCDID>) <FILAMENTTYPE>}\newline
+	\texttt{<NAME>:FILAMENT/PLUSEND/MINUSEND ->}\newline
+	\texttt{<NAME>:FILAMENT/PLUSEND/MINUSEND <RATE>}\newline\newline
+	where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. Either of the reactant or product species can be \texttt{FILAMENT}, \texttt{PLUSEND}, or \texttt{MINUEND}, but the product and reactant species must be the same type, or a startup error will result.
+	
+	This reaction will change the chemical species that resides in a filament.
+	
+	This reaction supports dissipation tracking, so if the feature is turned on, then \texttt{<HRCDID>} should be set to a user specified short unique string, and \texttt{<DELGZERO>} should be set to a float value based on the user's parameterization of the chemical energetics.
+	
+	
+	\item A \textbf{filament severing reaction} can be defined in the following form:\newline\newline
+	\texttt{SEVERINGREACTION: <FILAMENTTYPE>}\newline
+	\texttt{AT <NAME>:FILAMENT <RATE>}\newline\newline
+	where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction.
+	
+	This reaction will sever the filament at the closest cylinder connection to a given chemical position, producing two child filaments.
+	
+	This reaction does not support dissipation tracking, so \texttt{<HRCDID>} and \texttt{<DELGZERO>} should not be provided.  
+	
 \end{itemize}
 
 \subsection{Filament input file}
@@ -708,6 +739,35 @@ The monomers trajectory files gives the number of reactions occurred since last 
 \noindent\texttt{chemstepnumber time numfilaments numlinkers nummotors numbranchers}\newline
 \texttt{F filamentid filamenttype filamentcyllength DeltaMinusEnd DeltaPlusEnd}\newline
 \texttt{DeltaMinusEnd DeltaPlusEnd PolyMinusEnd PolyPlusEnd DepolyMinusEnd DepolyPlusEnd IfNucleation TotalNumMonomers}\newline
+
+\subsubsection{dissipation.traj}
+The dissipation file gives the cumulative changes in the Gibbs free energy of the system resulting from chemical reactions and mechanical rearrangements.  The difference between the values at consecutive times will approximate the dissipation rates.  The distinction between \texttt{chemdiss} and \texttt{chemenergy} and between \texttt{mechdiss} and \texttt{mechenergy} is explained in accompanying material.  The format of the output file is:\newline
+
+\noindent\texttt{chemstepnumber time }\newline
+\texttt{total chemdiss mechdiss chemenergy mechenergy}\newline
+
+
+\subsubsection{HRCD.traj}
+The high resolution chemical dissipation file gives the cumulative changes in the Gibbs free energy of the system resulting from chemical reactions, with the contributions from each reaction specified separately.  The order of the reactions is preserved from time step to time step and is set by the order of their first occurrence in the trajectory.  For the change in Gibbs free energy resulting from diffusion of a diffusing species, the \texttt{HRCDDID} is given as \texttt{DIF\char`_SPECIESNAME}.  For the change in Gibbs free energy resulting from the unbinding of linkers or motors, the  \texttt{HRCDDID} is given as \texttt{HRCDIDoff}, where \texttt{HRCDID} is that of the corresponding binding reaction.  The format of the output file is:\newline
+
+\noindent\texttt{chemstepnumber time }\newline
+\texttt{HRCDID1 HRCDID2 ... }\newline
+\texttt{chemenergy1 chemenergy2 ... }\newline
+
+Here the \texttt{chemenergy} fields are cumulative changes in Gibbs free energy owing to this reaction.  
+
+\subsubsection{CMGraph.traj}
+The connectivity-based mapping output gives information which can be used to construct a weighted graph, in which filaments are nodes and the weighted edges between them represent the number of cross-linkers connecting them.  The format of the output file is:\newline
+
+\noindent\texttt{chemstepnumber time }\newline
+\texttt{filid1a filid1b numlinks1 filid2a fildid2b numlinks2 ... }\newline
+
+Here the \texttt{filida} and \texttt{filidb} fields are the filament identification numbers, indicating that this pair of filaments is connected by \texttt{numlinks} cross-linkers.   
+
+\subsubsection{motorwalkingevents.traj, linkerbindingevents.traj, linkerunbindingevents.traj}
+These output files will be generated if the event tracking feature is turned on.  They give detailed information on the spatiotemporal occurrences of motor walking, and cross-linker binding and unbinding.  The format for these output files is:\newline
+
+\noindent\texttt{event\char`_t event\char`_x event\char`_y event\char`_z }\newline
 
 \subsection{Visualization of output}
 \subsubsection{VMD based visualization}
