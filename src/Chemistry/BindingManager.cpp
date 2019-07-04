@@ -767,8 +767,8 @@ void LinkerBindingManager::updateAllPossibleBindings() {
 
     floatingpoint min1,min2,max1,max2;
     chrono::high_resolution_clock::time_point mins, mine, mins2, mine2,mints,minte;
-    floatingpoint timetaken = 0.0;
-    floatingpoint time16 = 0.0;
+
+
     floatingpoint minparamcyl2 = (float)*(SysParams::Chemistry().bindingSites[_filamentType].begin())/
     SysParams::Geometry().cylinderNumMon[_filamentType];
     floatingpoint maxparamcyl2 = (float)(SysParams::Chemistry().bindingSites[_filamentType].back())/
@@ -778,8 +778,8 @@ void LinkerBindingManager::updateAllPossibleBindings() {
     bool status2 = true;
     vector<floatingpoint> maxvec;
     vector<floatingpoint> minvec;
-    int accepts = 0;
-    int total = 0;
+    
+
     int rejects16 = 0;
     int rejectsnavail =0;
     mints = chrono::high_resolution_clock::now();
@@ -797,10 +797,8 @@ void LinkerBindingManager::updateAllPossibleBindings() {
     //    chrono::duration<floatingpoint> elapsed_vec(minte - mints);
     //    std::cout<<"Vectorize time "<<elapsed_vec.count()<<endl;
 
-    accepts =0;
-    total = 0;
-    time16 = 0.0;
-    timetaken = 0.0;
+
+
     _possibleBindings.clear();
     mints = chrono::high_resolution_clock::now();
 
@@ -921,7 +919,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                         if (areEqual(boundstate[1][offset + SysParams::Chemistry()
                                                    .bindingSites[_filamentType]
                                                    .size()*cn->_dcIndex + j], 1.0)) {
-                            total++;
+
                             //check distances..
                             auto mp2 = bindingsites.at(j);
 
@@ -938,7 +936,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                                 }
                             }
 
-                            accepts++;
+
                             if(check2) {
                                 mins = chrono::high_resolution_clock::now();
                                 auto t1 = tuple<CCylinder *, short>(cc, *it1);
@@ -1148,8 +1146,8 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     bool status2 = true;
     floatingpoint minveca[2];
     floatingpoint maxveca[2];
-    int accepts = 0;
-    int total = 0;
+
+
 
     int nbs = SysParams::Chemistry().bindingSites[_filamentType].size();
     int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
@@ -1254,7 +1252,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                     }
                     for(int pos2 = 0; pos2<nbs;pos2++){
                         if (areEqual(boundstate[1][maxnbs *cn.cindex + pos2], (floatingpoint)1.0)) {
-                            total++;
+
                             //check distances..
                             auto mp2 = bindingsites.at(pos2);
                             if(!status2) {
@@ -1269,7 +1267,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                                         continue;}
                                 }
                             }
-                            accepts++;
+
                             auto it1 = SysParams::Chemistry().bindingSites[_filamentType][pos1];
                             auto it2 = SysParams::Chemistry().bindingSites[_filamentType][pos2];
 
@@ -1742,8 +1740,8 @@ void MotorBindingManager::updateAllPossibleBindings() {
 
     floatingpoint min1,min2,max1,max2;
     chrono::high_resolution_clock::time_point mins, mine, mins2, mine2,mints,minte;
-    floatingpoint timetaken = 0.0;
-    floatingpoint time16 = 0.0;
+
+
     floatingpoint minparamcyl2 = (float)*(SysParams::Chemistry().bindingSites[_filamentType].begin())/
     SysParams::Geometry().cylinderNumMon[_filamentType];
     floatingpoint maxparamcyl2 = (float)(SysParams::Chemistry().bindingSites[_filamentType].back())/
@@ -1753,8 +1751,8 @@ void MotorBindingManager::updateAllPossibleBindings() {
     bool status2 = true;
     vector<floatingpoint> maxvec;
     vector<floatingpoint> minvec;
-    int accepts = 0;
-    int total = 0;
+
+
     int rejects16 = 0;
     int rejectsnavail =0;
     mints = chrono::high_resolution_clock::now();
@@ -1772,10 +1770,10 @@ void MotorBindingManager::updateAllPossibleBindings() {
     //    chrono::duration<floatingpoint> elapsed_vec(minte - mints);
     //    std::cout<<"Vectorize time "<<elapsed_vec.count()<<endl;
 
-    accepts =0;
-    total = 0;
-    time16 = 0.0;
-    timetaken = 0.0;
+
+
+
+
     _possibleBindings.clear();
     mints = chrono::high_resolution_clock::now();
     for(auto c : _compartment->getCylinders()) {
@@ -2128,8 +2126,8 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     bool status2 = true;
     floatingpoint minveca[2];
     floatingpoint maxveca[2];
-    int accepts = 0;
-    int total = 0;
+
+
 
     int nbs = SysParams::Chemistry().bindingSites[_filamentType].size();
     int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
@@ -2239,7 +2237,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
                 }
                     for(int pos2 = 0; pos2<nbs;pos2++){
                     if (areEqual(boundstate[2][offset + maxnbs *cn.cindex + pos2], (floatingpoint)1.0)) {
-                        total++;
+
                         //check distances..
                         auto mp2 = bindingsites.at(pos2);
                         if(!status2) {
@@ -2254,7 +2252,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
                                     continue;}
                             }
                         }
-                        accepts++;
+
 
                         auto it1 = SysParams::Chemistry().bindingSites[_filamentType][pos1];
                         auto it2 = SysParams::Chemistry().bindingSites[_filamentType][pos2];

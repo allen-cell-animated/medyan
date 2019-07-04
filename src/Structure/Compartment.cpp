@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -1732,7 +1732,7 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
 
     vector<ReactionBase*> rxns;
 
-    cout << "This compartment: x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
+//    cout << "This compartment: x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
 
     for(auto &sp_this : _species.species()) {
         int molecule = sp_this->getMolecule();

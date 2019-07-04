@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -233,7 +233,7 @@ floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint 
         else{
         	floatingpoint cosA = x;
         	floatingpoint sinA = max<floatingpoint>(sqrt(1-cosA*cosA),(floatingpoint)0.0);
-        	floatingpoint cosAminusB = cosA*cos(eqt[i]) - sinA*sin(eqt[i]);
+        	floatingpoint cosAminusB = cosA*cos(eqt[i]) + sinA*sin(eqt[i]);
         	U_i = kbend[i] *(1-cosAminusB);
         }
 
@@ -312,7 +312,7 @@ floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint 
 	    else{
 		    floatingpoint cosA = x;
 		    floatingpoint sinA = max<floatingpoint>(sqrt(1-cosA*cosA),(floatingpoint)0.0);
-		    floatingpoint cosAminusB = cosA*cos(eqt[i]) - sinA*sin(eqt[i]);
+		    floatingpoint cosAminusB = cosA*cos(eqt[i]) + sinA*sin(eqt[i]);
 		    U_i = kbend[i] *(1-cosAminusB);
 	    }
 

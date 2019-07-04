@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -153,7 +153,6 @@ floatingpoint FilamentStretching<FStretchingInteractionType>::computeEnergy
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
 #endif
-
 
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql);

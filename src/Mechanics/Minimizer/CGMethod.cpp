@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -1360,12 +1360,12 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
         //let each forcefield also add energies to two different energy variables.
 
         tbegin = chrono::high_resolution_clock::now();
-	    #ifdef MOVEBEADSLINESEARCH
+//	    #ifdef MOVEBEADSLINESEARCH
 	    moveBeadslineSearch(lambda);
         floatingpoint energyLambda = FFM.computeEnergy(coordlineSearch, force, lambda);
-		#else
+/*		#else
         floatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
-		#endif
+		#endif*/
 	    CUDAcommon::tmin.computeenerycallsnonzero++;
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
@@ -1495,12 +1495,12 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
         iter++;
 
 	    tbegin = chrono::high_resolution_clock::now();
-	    #ifdef MOVEBEADSLINESEARCH
+//	    #ifdef MOVEBEADSLINESEARCH
 	    moveBeadslineSearch(lambda);
 	    floatingpoint energyLambda = FFM.computeEnergy(coordlineSearch, force, lambda);
-	    #else
+/*	    #else
 	    floatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
-		#endif
+		#endif*/
 	    CUDAcommon::tmin.computeenerycallsnonzero++;
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);

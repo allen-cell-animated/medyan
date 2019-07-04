@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -179,10 +179,14 @@ bool ChemNRMImpl::makeStep() {
     //rn->printSelf();
     //std::cout<<"------------"<<endl;
 
-    //Dissipation
+    // if dissipation tracking is enabled and the reaction is supported, then compute the change in Gibbs free energy and store it
     if(SysParams::Chemistry().dissTracking){
     ReactionBase* react = rn->getReaction();
-    _dt->updateDelGChem(react);
+    string HRCDID = react->getHRCDID();
+    string testString = "DNT";
+    if(HRCDID != testString){
+        _dt->updateDelGChem(react);
+        }
     }
     rn->makeStep();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N

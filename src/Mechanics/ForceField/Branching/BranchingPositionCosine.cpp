@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -225,7 +225,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
         floatingpoint cosp =  x;
         posheta = 0.5*M_PI;
         floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
-        floatingpoint cospminusq = cosp * cos(posheta) - sinp * sin(posheta);
+        floatingpoint cospminusq = cosp * cos(posheta) + sinp * sin(posheta);
         U_i = kpos[i] * ( 1 - cospminusq );
 
         /*theta = safeacos(xd / XD);
@@ -293,7 +293,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
         floatingpoint cosp =  x;
         posheta = 0.5*M_PI;
         floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
-        floatingpoint cospminusq = cosp * cos(posheta) - sinp * sin(posheta);
+        floatingpoint cospminusq = cosp * cos(posheta) + sinp * sin(posheta);
         U_i = kpos[i] * ( 1 - cospminusq );
 
         /*theta = safeacos(xd / XD);
