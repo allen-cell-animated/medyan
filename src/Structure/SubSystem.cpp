@@ -222,14 +222,18 @@ void SubSystem::resetNeighborLists() {
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     _HneighborList->reset();
     mine= chrono::high_resolution_clock::now();
+#ifdef OPTIMOUT
     chrono::duration<floatingpoint> elapsed_H(mine - mins);
     std::cout<<"H NLSTEN reset time "<<elapsed_H.count()<<endl;
     mins = chrono::high_resolution_clock::now();
+#endif
     for (auto nlist : __bneighborLists)
         nlist->reset();
+#ifdef OPTIMOUT
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_B(mine - mins);
     std::cout<<"H NLSTEN B reset time "<<elapsed_B.count()<<endl;
+#endif
 
 #elif defined(NLORIGINAL) || defined(NLSTENCILLIST)
 #ifndef HYBRID_NLSTENCILLIST
@@ -240,8 +244,10 @@ void SubSystem::resetNeighborLists() {
 
 }
 void SubSystem::updateBindingManagers() {
+#ifdef OPTIMOUT
     chrono::high_resolution_clock::time_point mins, mine;
     mins = chrono::high_resolution_clock::now();
+#endif
 #ifdef CUDAACCL_NL
     if(SysParams::Chemistry().numFilaments > 1) {
         cout << "CUDA Binding Manager cannot handle more than one type of filaments." << endl;
@@ -364,17 +370,19 @@ void SubSystem::updateBindingManagers() {
 //        cout<<"Cmp ID "<<C->getID()<<endl;
         C->getHybridBindingSearchManager()->updateAllBindingReactions();
     }
-
+    #ifdef OPTIMOUT
     mineSIMD = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runSIMDV3(mineSIMD - minsSIMD);
     cout << "SIMDV3 time " << elapsed_runSIMDV3.count() << endl;
     cout << "findV3 time " << HybridBindingSearchManager::findtimeV3 << endl;
     cout << "Append time " << HybridBindingSearchManager::SIMDV3appendtime << endl;
+	#endif
 #endif
-
+#ifdef OPTIMOUT
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_orig(mine - mins);
     std::cout<<"BMgr update time "<<elapsed_orig.count()<<endl;
+#endif
 
 //free memory
 	SysParams::MParams.speciesboundvec.clear();

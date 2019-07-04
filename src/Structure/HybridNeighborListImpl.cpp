@@ -173,7 +173,7 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
     //Creates bins based on the largest rMax in the system.
     auto _nDim = SysParams::Geometry().nDim;
     floatingpoint searchdist = 1.125 * (sqrt(_largestrMaxsq));
-    std::cout<<"H searchdist "<<searchdist<<" rMax "<<sqrt(_largestrMaxsq)<<endl;
+//    std::cout<<"H searchdist "<<searchdist<<" rMax "<<sqrt(_largestrMaxsq)<<endl;
     _binSize = {searchdist, searchdist, searchdist};
 
     if(_nDim >=1) {
@@ -217,13 +217,13 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
     for(auto x: _grid) {
         if(x != 0) size*=x;
     }
-    cout<<"Grid size "<<_grid[0]<<" "<<_grid[1]<<" "<<_grid[2]<<endl;
-    cout<<"Total number of bins "<<size<<endl;
+//    cout<<"Grid size "<<_grid[0]<<" "<<_grid[1]<<" "<<_grid[2]<<endl;
+//    cout<<"Total number of bins "<<size<<endl;
     //Set the instance of this grid with given parameters
     _binGrid = new BinGrid(size, _ID, _binSize);
     //Create connections based on dimensionality
     generateConnections();
-    cout<<"connections generated"<<endl;
+//    cout<<"connections generated"<<endl;
 }
 
 //You need a vector of all grids so you can loop through and update respective coordinates.
@@ -470,24 +470,24 @@ void HybridCylinderCylinderNL::reset() {
 //        std::cout<<"Hybrid rmin rmax "<<_rMinsqvec[idx]<<" "<<_rMaxsqvec[idx]<<endl;
     }
 
-    chrono::high_resolution_clock::time_point mins, mine;
-    mins = chrono::high_resolution_clock::now();
+    /*chrono::high_resolution_clock::time_point mins, mine;
+    mins = chrono::high_resolution_clock::now();*/
     //check and reassign cylinders to different bins if needed.
     updateallcylinderstobin();
     _binGrid->updatecindices();
-    mine= chrono::high_resolution_clock::now();
+    /*mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_B(mine - mins);
     std::cout<<"update cindices "<<elapsed_B.count()<<endl;
-    mins = chrono::high_resolution_clock::now();
+    mins = chrono::high_resolution_clock::now();*/
     for(auto cylinder: Cylinder::getCylinders()) {
         updateNeighborsbin(cylinder);
 //        for (int idx = 0; idx < totalhybridNL; idx++) {
 //            tot[idx] += _list4mbinvec[idx][cylinder].size();
 //        }
     }
-    mine= chrono::high_resolution_clock::now();
+   /* mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_N(mine - mins);
-    std::cout<<"update neighbors "<<elapsed_N.count()<<endl;
+    std::cout<<"update neighbors "<<elapsed_N.count()<<endl;*/
 }
 
 #endif
