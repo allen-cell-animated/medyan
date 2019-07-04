@@ -104,7 +104,7 @@ protected:
     
     float _gnum = 0.0;
     
-    string _hrcdid = "NA";
+    string _hrcdid = "DNT";
     
     float _linkRateForward = 0.0;
     

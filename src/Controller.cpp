@@ -193,7 +193,7 @@ void Controller::initialize(string inputFile,
         exit(EXIT_FAILURE);
     }
 
-    // Dissipation
+    // create the dissiption tracking object
     _dt = new DissipationTracker(_mController);
     _cController->initialize(CAlgorithm.algorithm, ChemData, _dt);
     LOG(INFO) << "Done.";
@@ -210,33 +210,33 @@ void Controller::initialize(string inputFile,
 
 
 
-    //Dissipation
+
     if(SysParams::CParams.dissTracking){
-    //Set up reactions output if any
+    //Set up dissipation output if dissipation tracking is enabled
     string disssnapname = _outputDirectory + "dissipation.traj";
     _outputs.push_back(new Dissipation(disssnapname, _subSystem, _cs));
 
-    //Set up HRCD output if any
+    //Set up HRCD output if dissipation tracking is enabled
     string hrcdsnapname = _outputDirectory + "HRCD.traj";
     _outputs.push_back(new HRCD(hrcdsnapname, _subSystem, _cs));
     }
 
     if(SysParams::CParams.eventTracking){
-    //Set up MotorWalkingEvents
+    //Set up MotorWalkingEvents if event tracking is enabled
     string motorwalkingevents = _outputDirectory + "motorwalkingevents.traj";
     _outputs.push_back(new MotorWalkingEvents(motorwalkingevents, _subSystem, _cs));
 
-    //Set up LinkerUnbindingEvents
+    //Set up LinkerUnbindingEvents if event tracking is enabled
     string linkerunbindingevents = _outputDirectory + "linkerunbindingevents.traj";
     _outputs.push_back(new LinkerUnbindingEvents(linkerunbindingevents, _subSystem, _cs));
 
-    //Set up LinkerBindingEvents
+    //Set up LinkerBindingEvents if event tracking is enabled
     string linkerbindingevents = _outputDirectory + "linkerbindingevents.traj";
     _outputs.push_back(new LinkerBindingEvents(linkerbindingevents, _subSystem, _cs));
     }
 
 
-    //Set up CMGraph output if any
+    //Set up CMGraph output
     string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
     _outputs.push_back(new CMGraph(cmgraphsnapname, _subSystem));
 
@@ -1082,7 +1082,7 @@ void Controller::run() {
         //activate/deactivate compartments
         mins = chrono::high_resolution_clock::now();
         activatedeactivateComp();
-	    // Dissipation
+	    // set initial mechanical energy of system through a call to force field manager if dissipation tracking is enabled
 	    if(SysParams::CParams.dissTracking){
 		    _dt->setG1();
 	    }
@@ -1152,7 +1152,7 @@ void Controller::run() {
                 resetCounters();
                 break;
             }
-            // Dissipation
+            // set intermediate mechanical energy of system through a call to force field manager if dissipation tracking is enabled
             if(SysParams::CParams.dissTracking){
             _dt->setGMid();
             }
@@ -1199,7 +1199,7 @@ void Controller::run() {
                 chrono::duration<floatingpoint> elapsed_rxn2(mine - mins);
                 updateposition += elapsed_rxn2.count();
 
-                // Dissipation
+                // perform multiple functions to update cumulative energy counters and reset the mechanical energy variables
                 if(SysParams::CParams.dissTracking){
                     _dt->updateAfterMinimization();
                 }

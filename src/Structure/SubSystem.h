@@ -281,7 +281,7 @@ private:
     CCylinder** ccylindervec;
     Cylinder** cylinderpointervec;
     static CompartmentGrid* _staticgrid;
-    floatingpoint* cylsqmagnitudevector;
+    floatingpoint* cylsqmagnitudevector = nullptr;
     static bool initialize;
 
     chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD;
