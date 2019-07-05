@@ -40,13 +40,17 @@ floatingpoint BranchingDihedralQuadratic::energy(
         const auto b3 = coord4 - coord3;
 
         // Triangle normals
-        const auto n1 = cross(b1, b2);
-        const auto n2 = cross(b3, b2);
+        const auto n1    = cross(b1, b2);
+        const auto n2    = cross(b3, b2);
         const auto n1mag = magnitude(n1);
         const auto n2mag = magnitude(n2);
 
-        const auto n1n2 = dot(n1, n2) / (n1mag * n2mag);
-        const auto theta = std::acos(n1n2);
+        // cos(theta)
+        auto c = dot(n1, n2) / (n1mag * n2mag);
+        if(c < -1.0) c = -1.0;
+        if(c >  1.0) c =  1.0;
+
+        const auto theta = std::acos(c);
 
         const auto U_i = kdih[i] * theta * theta;
 
