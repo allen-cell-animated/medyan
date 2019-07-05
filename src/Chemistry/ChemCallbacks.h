@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -85,7 +85,7 @@ struct UpdateBrancherBindingCallback {
 #ifdef NLORIGINAL
                     manager->addPossibleBindings(cc, _bindingSite);
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
                     manager->addPossibleBindingsstencil(cc, _bindingSite);
 #endif
                 }
@@ -94,7 +94,7 @@ struct UpdateBrancherBindingCallback {
 #ifdef NLORIGINAL
                     manager->removePossibleBindings(cc, _bindingSite);
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
                     manager->removePossibleBindingsstencil(cc, _bindingSite);
 #endif
                 }
@@ -137,7 +137,7 @@ struct UpdateLinkerBindingCallback {
 #ifdef NLORIGINAL
                     manager->addPossibleBindings(cc, _bindingSite);
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
                     manager->addPossibleBindingsstencil(cc, _bindingSite);
 #endif
                 }
@@ -146,7 +146,7 @@ struct UpdateLinkerBindingCallback {
 #ifdef NLORIGINAL
                     manager->removePossibleBindings(cc, _bindingSite);
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
                     manager->removePossibleBindingsstencil(cc, _bindingSite);
 #endif
                 }
@@ -189,7 +189,7 @@ struct UpdateMotorBindingCallback {
 #ifdef NLORIGINAL
                     manager->addPossibleBindings(cc, _bindingSite);
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
                     manager->addPossibleBindingsstencil(cc, _bindingSite);
 #endif
                 }
@@ -198,7 +198,7 @@ struct UpdateMotorBindingCallback {
 #ifdef NLORIGINAL
                     manager->removePossibleBindings(cc, _bindingSite);
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
                     manager->removePossibleBindingsstencil(cc, _bindingSite);
 #endif
                 }
@@ -523,7 +523,7 @@ struct BranchingCallback {
 #ifdef NLORIGINAL
         site = _bManager->chooseBindingSite();
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         site = _bManager->chooseBindingSitesstencil();
 #endif
         
@@ -641,7 +641,9 @@ struct LinkerUnbindingCallback {
     LinkerUnbindingCallback(Linker* l, SubSystem* ps) : _ps(ps), _linker(l) {}
     
     void operator() (ReactionBase *r) {
+#ifdef OPTIMOUT
 	    CUDAcommon::tmin.linkerunbindingcalls++;
+#endif
 	    mins = chrono::high_resolution_clock::now();
 
 //        //@{
@@ -678,7 +680,9 @@ struct LinkerBindingCallback {
     : _ps(ps), _lManager(lManager), _onRate(onRate), _offRate(offRate), _dt(dt) {}
     
     void operator() (ReactionBase *r) {
+#ifdef OPTIMOUT
 	    CUDAcommon::tmin.linkerbindingcalls++;
+#endif
 	    mins = chrono::high_resolution_clock::now();
 
         //get a random binding
@@ -690,7 +694,7 @@ struct LinkerBindingCallback {
 #ifdef NLORIGINAL
         site = _lManager->chooseBindingSites();
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         site = _lManager->chooseBindingSitesstencil();
 #endif
         
@@ -749,7 +753,9 @@ struct MotorUnbindingCallback {
     _ps(ps), _motor(m) {}
     
     void operator() (ReactionBase *r) {
+#ifdef OPTIMOUT
     	CUDAcommon::tmin.motorunbindingcalls++;
+#endif
 	    mins = chrono::high_resolution_clock::now();
 
         //find the motor binding manager associated with this species
@@ -799,7 +805,9 @@ struct MotorBindingCallback {
     : _ps(ps), _mManager(mManager), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
+#ifdef OPTIMOUT
 	    CUDAcommon::tmin.motorbindingcalls++;
+#endif
 	    mins = chrono::high_resolution_clock::now();
 
         //get a random binding
@@ -810,7 +818,7 @@ struct MotorBindingCallback {
 #ifdef NLORIGINAL
         site = _mManager->chooseBindingSites();
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         site = _mManager->chooseBindingSitesstencil();
 #endif
         
@@ -883,7 +891,9 @@ struct MotorWalkingCallback {
     _motorType(motorType), _boundType(boundType), _ps(ps), _dt(dt) {}
     
     void operator() (ReactionBase* r) {
+#ifdef OPTIMOUT
 	    CUDAcommon::tmin.motorwalkingcalls++;
+#endif
 	    mins = chrono::high_resolution_clock::now();
 //        cout<<"Motor walking begins"<<endl;
         //get species
@@ -960,7 +970,9 @@ struct MotorMovingCylinderCallback {
     _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
+#ifdef OPTIMOUT
 	    CUDAcommon::tmin.motorwalkingcalls++;
+#endif
 	    mins = chrono::high_resolution_clock::now();
 //        cout<<"Motor moving cylinder begins"<<endl;
         //get species

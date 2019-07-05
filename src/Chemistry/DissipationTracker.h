@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v4.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -31,12 +31,18 @@
 
 using namespace mathfunc;
 
+/* Dissipation Tracker is used to track the energetics of the system.  It has functions to compute the change in Gibbs free energy of a chemical reaction
+ based on the instantaneous compartment copy numbers, using expressions derived in "A Discrete Approximation to Gibbs Free Energy of Chemical Reactions is Needed 
+ for Accurately Calculating Entropy Production in Mesoscopic Simulations" by Carlos Floyd, Garegin A. Papoian, and Christopher Jarzynski.  It also tracks the changes in 
+ mechanical energy of the system through calls to the ForceFieldManager, which iterates through the force fields and computes the instantaneous mechanical energy of each.  
+ It further contains functions to track the spatiotemporal information of motor walking, linker binding, and linker unbinding events.
+ */
 
 class DissipationTracker{
     
 private:
     
-
+    // pointer to the mechanical controller
     MController* _mcon;
     
     // reaction counter - not used
@@ -122,12 +128,13 @@ public:
     SysParams::Chemistry().numBindingSites[0];
     floatingpoint _stepFrac = d_step / d_total;
     
+    
     // Find the Gibbs free energy change for a reaction using its ReactionBase representation
     floatingpoint getDelGChem(ReactionBase* re){
         
         // get the type of reaction
         ReactionType reType = re->getReactionType();
-        
+            
         // get the number of reactants
         int M = re->getM();
         
@@ -137,7 +144,6 @@ public:
         
         
         // for a vector of stoichiometric coefficients, assumed to be 1 for all
-        
         vector<int> reacNu(M,1);
         vector<int> prodNu(N,1);
         
@@ -145,13 +151,15 @@ public:
         vector<species_copy_t> reacN = re->getReactantCopyNumbers();
         vector<species_copy_t> prodN = re->getProductCopyNumbers();
         
+        // get vector of names of the reactants and products
         vector<string> reacNames = re->getReactantSpecies();
         vector<string> prodNames = re->getProductSpecies();
         
+        // get the HRCDID of this reaction
         string hrcdid;
-        
         hrcdid = re->getHRCDID();
         
+        // add the name of the diffusing species to the HRCDID of the diffusion reaction
         if(reType==1){
             hrcdid = "DIF_";
             hrcdid += reacNames[0];
@@ -212,10 +220,7 @@ public:
             species_copy_t nMon = reacN[1];
             delG = delGPolyChem(delGZero,nMon,"P");
             
-            
-            
-            
-            //recordLinkerBinding
+
             
         } else if(reType==7){
             // Motor Binding
@@ -279,24 +284,23 @@ public:
             delG = delGGenChem(delGZero, numR, reacNu, numP, prodNu);
             
         } else if(reType==13){
-            // Filament Creation
+            // Filament Creation, not currently supported
             
         } else if(reType==14){
-            // Filament Destruction
+            // Filament Destruction, not currently supported
             
         } else if(reType==15){
-            // Branching
+            // Branching, not currently supported
             
         } else if(reType==16){
-            // Branch Unbinding
+            // Branch Unbinding, not currently supported
             
         } else if(reType==17){
-            // Severing
+            // Severing, not currently supported
             
         }
         
         // check for nan
-        
         if(delG<-pow(10,7)){
             delG=0;
         }
@@ -313,16 +317,13 @@ public:
             delG=0;
         }
         
+        // record this reaction in the HRCD data
         updateHRCDVec(hrcdid,delG);
         
-        if(hrcdid=="NA"){
+        if(hrcdid=="DNT"){
             cout<<reType<<endl;
         }
-        
-//        cout<<reType<<endl;
-//        cout<<reacN[0]<<endl;
-//        cout<<prodN[0]<<endl;
-       // cout<<"delG "<<delG<<endl;
+
 
         return delG;
         
@@ -354,15 +355,17 @@ public:
         return cumDissChemEnergy;
     }
     
-    // return the cumulative dissipated mechanical Gibbs free energy
+    // return the cumulative dissipated mechanical energy
     floatingpoint getCumDissMechEnergy(){
         return cumDissMechEnergy;
     }
     
+    // return the cumulative change in chemical Gibbs free energy
     floatingpoint getCumGChemEn(){
         return cumGChemEn;
     }
     
+    // return the cumulative change in mechanical energy
     floatingpoint getCumGMechEn(){
         return cumGMechEn;
     }
@@ -384,10 +387,12 @@ public:
         
     }
     
+    // set the value of GMid
     void setGMid(){
         GMid=getMechEnergy();
     }
     
+    // perform multiple functions to update cumulative energy counters and reset the mechanical energy variables
     void updateAfterMinimization(){
         setG2();
         updateCumDissChemEnergy();
@@ -430,35 +435,28 @@ public:
         G1=G2;
     };
     
+    // add the changes in the reactions' chemical energy consumptions
     void updateHRCDVec(string hrcdid, floatingpoint delG){
-        
         for(auto i = 0; i<HRCDVec.size(); i++){
-            
             if(get<0>(HRCDVec[i])==hrcdid){
-                
                 get<1>(HRCDVec[i]) += delG;
-                
                 return;
             }
         };
-        
         HRCDVec.push_back(make_tuple(hrcdid,delG));
-        
     }
     
     vector<tuple<string,floatingpoint>> getHRCDVec(){
         return HRCDVec;
     }
     
+    // store the space time information of a motor walking event to motorData
     void recordWalk(MotorGhost* m){
         vector<floatingpoint> mcoords = m->coordinate;
         mcoords.insert(mcoords.begin(), tau());
         motorData.push_back(make_tuple(mcoords[0], mcoords[1], mcoords[2], mcoords[3]));
         
-        
-        //for(auto i = 0; i<mcoords.size(); i++){
-        //    cout<<mcoords[i]<<endl;
-        //}
+    
     }
     
     vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> getMotorData(){
@@ -469,6 +467,7 @@ public:
         motorData.clear();
     }
     
+    // store the space time information of a linker unbinding event to linkerUnbindingData
     void recordLinkerUnbinding(Linker* l){
         vector<floatingpoint> lcoords = l->coordinate;
         lcoords.insert(lcoords.begin(), tau());
@@ -485,6 +484,7 @@ public:
         linkerUnbindingData.clear();
     }
     
+    // store the space time information of a linker binding event to linkerBindingData
     void recordLinkerBinding(Linker* l){
         vector<floatingpoint> lcoords = l->coordinate;
         lcoords.insert(lcoords.begin(), tau());

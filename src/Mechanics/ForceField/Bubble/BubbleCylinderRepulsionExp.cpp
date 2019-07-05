@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -25,7 +25,7 @@ floatingpoint BubbleCylinderRepulsionExp::energy(floatingpoint *coord, floatingp
                                                  floatingpoint *krep, floatingpoint *slen, floatingpoint *radius, int *nneighbors) {
     
     int nb, nc;
-	floatingpoint *coord1, *coordb, R, r, U_i;
+	floatingpoint *coord1, *coordb, R, U_i;
 	floatingpoint U = 0.0;
     int Cumnc=0;
     auto bbList = Bubble::getBubbles();
@@ -68,7 +68,7 @@ floatingpoint BubbleCylinderRepulsionExp::energy(floatingpoint *coord, floatingp
                                           floatingpoint *krep, floatingpoint *slen, floatingpoint *radius, int *nneighbors, floatingpoint d) {
     
     int nb, nc;
-	floatingpoint *coord1, *coordb, *fb, *f1, R, r, U_i;
+	floatingpoint *coord1, *coordb, *fb, *f1, R, U_i;
 	floatingpoint U = 0.0;
     int Cumnc=0;
     auto bbList = Bubble::getBubbles();

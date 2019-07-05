@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -40,9 +40,9 @@ void BoundaryBubbleRepulsion<BRepulsionInteractionType>::vectorize() {
     int bindex = 0;
 
     nneighbors = new int[nbe];//stores number of interactions per boundary element.
-	floatingpoint *beListplane;
+
     int *nintvec;
-    beListplane = new floatingpoint[4 * nbe];
+
     nintvec = new int[nbe];//stores cumulative number of nneighbors.
 
     int cumnn=0;

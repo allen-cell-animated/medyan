@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -31,11 +31,11 @@ class Cylinder;
 /// Represents an excuded volume interaction between two [Cylinders](@ref Cylinder).
 template <class CVolumeInteractionType>
 class CylinderExclVolume : public CylinderVolumeInteractions {
-    
+
 private:
     CVolumeInteractionType _FFType;
     CylinderCylinderNL* _neighborList;  ///< Neighbor list of cylinders
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     HybridCylinderCylinderNL* _HneighborList;
     short _HnlID;
 #endif
@@ -56,22 +56,22 @@ public:
     ///For volume, this is a 4-bead potential
     const static int n = 4;
     static int numInteractions;
-    
+
     ///Constructor
     CylinderExclVolume() {
         //If Hybrid NeighborList is not preferred, neighborList is created using Original
         // framework.
-#ifndef HYBRID_NLSTENCILLIST
+#if !defined(HYBRID_NLSTENCILLIST) || !defined(SIMDBINDINGSEARCH)
         _neighborList = new CylinderCylinderNL(SysParams::Mechanics().VolumeCutoff);
 #endif
 #ifdef CUDAACCL_NL
         _neighborList->cudacpyforces = true;
 #endif
     }
-    
+
     virtual void vectorize();
     virtual void deallocate();
-    
+
     virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
     //@{
     /// This repulsive force calculation also updates load forces
@@ -83,7 +83,7 @@ public:
 
     virtual const string getName() {return "Cylinder Excluded Volume";}
 
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 
     virtual void setHNeighborList(HybridCylinderCylinderNL* Hnl) {
         _HneighborList = Hnl;

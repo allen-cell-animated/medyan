@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -182,11 +182,11 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoi
 	    CUDAcommon::tmin.computeenerycallsnonzero++;*/
     for (auto &ff : _forceFields) {
         tbegin = chrono::high_resolution_clock::now();
-	    #ifdef MOVEBEADSLINESEARCH
+//	    #ifdef MOVEBEADSLINESEARCH
         floatingpoint tempEnergy = ff->computeEnergy(coord, f, 0.0);
-		#else
+/*		#else
 		floatingpoint tempEnergy = ff->computeEnergy(coord, f, d);
-		#endif
+		#endif*/
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
 //        cout<<ff->getName()<<" "<<tempEnergy<<"pN.nm"<<" ";

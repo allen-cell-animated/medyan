@@ -10,7 +10,8 @@
 //  See the MEDYAN web page for more information:
 //  http://www.medyan.org
 //------------------------------------------------------------------
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
+
 #include "HybridNeighborListImpl.h"
 
 #include "Bead.h"
@@ -172,7 +173,7 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
     //Creates bins based on the largest rMax in the system.
     auto _nDim = SysParams::Geometry().nDim;
     floatingpoint searchdist = 1.125 * (sqrt(_largestrMaxsq));
-    std::cout<<"H searchdist "<<searchdist<<" rMax "<<sqrt(_largestrMaxsq)<<endl;
+//    std::cout<<"H searchdist "<<searchdist<<" rMax "<<sqrt(_largestrMaxsq)<<endl;
     _binSize = {searchdist, searchdist, searchdist};
 
     if(_nDim >=1) {
@@ -216,13 +217,13 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
     for(auto x: _grid) {
         if(x != 0) size*=x;
     }
-    cout<<"Grid size "<<_grid[0]<<" "<<_grid[1]<<" "<<_grid[2]<<endl;
-    cout<<"Total number of bins "<<size<<endl;
+//    cout<<"Grid size "<<_grid[0]<<" "<<_grid[1]<<" "<<_grid[2]<<endl;
+//    cout<<"Total number of bins "<<size<<endl;
     //Set the instance of this grid with given parameters
     _binGrid = new BinGrid(size, _ID, _binSize);
     //Create connections based on dimensionality
     generateConnections();
-    cout<<"connections generated"<<endl;
+//    cout<<"connections generated"<<endl;
 }
 
 //You need a vector of all grids so you can loop through and update respective coordinates.
@@ -439,6 +440,7 @@ void HybridCylinderCylinderNL::removeNeighbor(Neighbor* n) {
             //Remove from bin
             Bin *bin = cylinder->_hbinvec.at(_ID);
             unassignbin(cylinder, bin);
+            //TODO if the list is a full list, searching through a subset of the neighborlist is enough to get all entries with n as value.
             //remove from other lists
 //            std::cout << "Removed from cylinders ";
             for (auto it = _list4mbinvec[HNLID].begin();
@@ -470,12 +472,19 @@ void HybridCylinderCylinderNL::reset() {
     //check and reassign cylinders to different bins if needed.
     updateallcylinderstobin();
     _binGrid->updatecindices();
+    /*mine= chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_B(mine - mins);
+    std::cout<<"update cindices "<<elapsed_B.count()<<endl;
+    mins = chrono::high_resolution_clock::now();*/
     for(auto cylinder: Cylinder::getCylinders()) {
         updateNeighborsbin(cylinder);
 //        for (int idx = 0; idx < totalhybridNL; idx++) {
 //            tot[idx] += _list4mbinvec[idx][cylinder].size();
 //        }
     }
+   /* mine= chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_N(mine - mins);
+    std::cout<<"update neighbors "<<elapsed_N.count()<<endl;*/
 }
 
 #endif

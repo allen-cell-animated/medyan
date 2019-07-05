@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -42,9 +42,10 @@ protected:
     floatingpoint *coord;  ///<bead coordinates (length 3*N)
     floatingpoint *coordlineSearch; ///coords used during line search
 
-    floatingpoint *force; ///< bead forces (length 3*N)
-    floatingpoint *forceAux; ///< auxiliary force calculations (length 3*N)
-    floatingpoint *forceAuxPrev; ///<auxiliary force calculation previously (length 3*N)
+    floatingpoint *force=NULL; ///< bead forces (length 3*N)
+    floatingpoint *forceAux=NULL; ///< auxiliary force calculations (length 3*N)
+    floatingpoint *forceAuxPrev=NULL; ///<auxiliary force calculation previously (length
+    // 3*N)
 //    cylinder* cylindervec;
 
 //Gradients

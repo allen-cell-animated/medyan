@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -324,8 +324,6 @@ void BranchingDihedralCosine::forces(floatingpoint *coord, floatingpoint *f, int
     floatingpoint *n1 = new floatingpoint[3];
     floatingpoint *n2 = new floatingpoint[3];
     floatingpoint *zero = new floatingpoint[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
-
-    floatingpoint U = 0;
 
     for(int i = 0; i < nint; i += 1) {
 

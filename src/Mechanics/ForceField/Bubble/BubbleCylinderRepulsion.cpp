@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -126,13 +126,12 @@ template <class BRepulsionInteractionType>
 floatingpoint BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(floatingpoint* coord,
 														floatingpoint *f, floatingpoint d) {
 
-    floatingpoint U = 0.0;
-    floatingpoint U_i=0.0;
+    floatingpoint U = (floatingpoint) 0.0;
     if (d == 0.0) {
-        U_i = _FFType.energy(coord, f, beadSet, bubbleSet, krep, slen, radius, nneighbors);
+        U = _FFType.energy(coord, f, beadSet, bubbleSet, krep, slen, radius, nneighbors);
     }
     else {
-        U_i = _FFType.energy(coord, f, beadSet, bubbleSet,krep, slen, radius, nneighbors, d);
+        U = _FFType.energy(coord, f, beadSet, bubbleSet,krep, slen, radius, nneighbors, d);
     }
 
 

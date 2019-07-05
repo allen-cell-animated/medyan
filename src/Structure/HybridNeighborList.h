@@ -13,7 +13,7 @@
 
 #ifndef MEDYAN_HybridNeighborList_h
 #define MEDYAN_HybridNeighborList_h
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 #include "common.h"
 
 //FORWARD DECLARATIONS
