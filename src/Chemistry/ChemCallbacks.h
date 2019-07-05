@@ -573,8 +573,9 @@ struct CaMKIIingPointUnbindingCallback {
     void operator() (ReactionBase *r) {
         
         //remove the camkiiing point
+        _ps->removeTrackable<CaMKIICylinder>(_camkiiingPoint->getCaMKIICylinder());
         _ps->removeTrackable<CaMKIIingPoint>(_camkiiingPoint);
-        delete _camkiiingPoint;
+//        delete _camkiiingPoint;
     }
 };
 
@@ -720,7 +721,7 @@ struct CaMKIIBindingCallback {
 
         cCaMKIIer->setRates(_onRate, frate);
         cCaMKIIer->createOffReaction(r, _ps);
-        cCaMKIIer->getOffReaction()->setBareRate(SysParams::BUBBareRate[camkiiType]);
+        cCaMKIIer->getOffReaction()->setBareRate(SysParams::CUBBareRate[camkiiType]);
     }
 };
 
@@ -781,7 +782,7 @@ struct CaMKIIBundlingCallback {
 			cp->addBond(c1, pos1);
 		}
 
-        
+
 //TODO CJY make sure isn't needed before cleaning
 #if 0
 

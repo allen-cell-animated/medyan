@@ -116,6 +116,7 @@ void CaMKIIingPoint::updateCaMKIIingPointCoM(){
 CaMKIIingPoint::~CaMKIIingPoint() noexcept {
     
 #ifdef MECHANICS
+#if 0
     //offset the camkiiing cylinder's bead by a little for safety
     auto msize = SysParams::Geometry().monomerSize[get<0>(_bonds.at(0))->getType()];
     
@@ -130,16 +131,18 @@ CaMKIIingPoint::~CaMKIIingPoint() noexcept {
     b->coordinate[1] += offsetCoord[1];
     b->coordinate[2] += offsetCoord[2];
 #endif
+#endif
     
     
 #ifdef CHEMISTRY
+#if 0
     //mark the correct species on the minus end of the camkiied
     //filament. If this is a filament species, change it to its
     //corresponding minus end. If a plus end, release a diffusing
     //or bulk species, depending on the initial reaction.
     CMonomer* m = getCylinder(0)->getCCylinder()->getCMonomer(0);
     short speciesFilament = m->activeSpeciesFilament();
-    
+
     //there is a filament species, mark its corresponding minus end
     if(speciesFilament != -1) {
         m->speciesMinusEnd(speciesFilament)->up();
@@ -152,17 +155,17 @@ CaMKIIingPoint::~CaMKIIingPoint() noexcept {
     else {
         //find the free species
         Species* speciesFilament = m->speciesFilament(m->activeSpeciesPlusEnd());
-        
+
         string speciesName = SpeciesNamesDB::removeUniqueFilName(speciesFilament->getName());
         string speciesFirstChar = speciesName.substr(0,1);
         
         //find the free monomer, either bulk or diffusing
         Species* freeMonomer = nullptr;
         auto grid = _subSystem->getCompartmentGrid();
-        
+
         Species* dMonomer  = _compartment->findSpeciesByName(speciesName);
         Species* dfMonomer = _compartment->findSpeciesByName(speciesFirstChar);
-        
+
         Species* bMonomer  = grid->findSpeciesBulkByName(speciesName);
         Species* bfMonomer = grid->findSpeciesBulkByName(speciesFirstChar);
         
@@ -181,7 +184,6 @@ CaMKIIingPoint::~CaMKIIingPoint() noexcept {
                     ". Exiting." << endl;
             exit(EXIT_FAILURE);
         }
-            
         //remove the filament from the system
         //TODO remove this lines (This lines come from the Arp2/3 brancher)
         // We shouldn't remove a filament
@@ -194,6 +196,7 @@ CaMKIIingPoint::~CaMKIIingPoint() noexcept {
         freeMonomer->up();
         freeMonomer->updateReactantPropensities();
     }
+#endif
 #endif
     //reset camkiiing cylinder
 //    getCylinder(0)->setCaMKIIingCylinder(nullptr);

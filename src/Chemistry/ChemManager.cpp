@@ -1531,12 +1531,12 @@ void ChemManager::genFilBindingReactions() {
                 //Create reaction
                 float onRate = get<2>(r);
                 float offRate = get<3>(r);
-                auto temp=SysParams::BUBBareRate;
+                auto temp=SysParams::CUBBareRate;
                 if(temp.size()>0)
                     temp[camkiierInt]=offRate;
                 else
                     temp.push_back(offRate);
-                SysParams::BUBBareRate=temp;
+                SysParams::CUBBareRate=temp;
                 //get nucleation zone
                 string nzstr = get<4>(r);
                 NucleationZoneType nucleationZone;
@@ -1688,12 +1688,12 @@ void ChemManager::genFilBindingReactions() {
                 //Create reaction
                 float onRate = get<2>(r);
                 float offRate = get<3>(r);
-                auto temp=SysParams::BUBBareRate; //TODO BUB to CUB
+                auto temp=SysParams::CUBBareRate; //TODO BUB to CUB
                 if(temp.size()>0)
                     temp[camkiierInt]=offRate;
                 else
                     temp.push_back(offRate);
-                SysParams::BUBBareRate=temp; //TODO BUB to CUB
+                SysParams::CUBBareRate=temp; //TODO BUB to CUB
                 rMin = get<4>(r);
                 rMax = get<5>(r);
                 int maxCoordination = get<6>(r);
@@ -2208,9 +2208,17 @@ void ChemManager::genFilBindingReactions() {
                 new CylinderCylinderNL(bManager->getRMax() + SysParams::Geometry().cylinderSize[filType],
                                    max(bManager->getRMin() - SysParams::Geometry().cylinderSize[filType], 0.0), true);
 
-                //add to subsystem and manager
+
                 CaMKIIBundlingManager::_neighborLists.push_back(nl);
                 _subSystem->addNeighborList(nl);
+
+//				auto nl2 =
+//				new CaMKIIingPointCylinderNL(bManager->getRMax() + SysParams::Geometry().cylinderSize[filType],
+//						max(bManager->getRMin() - SysParams::Geometry().cylinderSize[filType], 0.0), true);
+//
+//				//add to subsystem and manager
+//                CaMKIIBundlingManager::_neighborLists.push_back(nl2);
+//                _subSystem->addNeighborList(nl2);
             }
         }
     }

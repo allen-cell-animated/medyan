@@ -43,7 +43,8 @@ CCaMKIIingPoint::CCaMKIIingPoint(short camkiiType, Compartment* c,
 }
 
 CCaMKIIingPoint::~CCaMKIIingPoint() {
-    
+
+    // TODO: July 1st, 2019 - Check whether removeInternalReaction is appropriate here!
     //remove the unbinding reaction
     _cc1->removeInternalReaction(_offRxn);
     

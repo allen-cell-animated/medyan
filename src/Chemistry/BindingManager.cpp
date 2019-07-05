@@ -567,7 +567,7 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
 //    	if(!cn)
 //    		continue;
 
-        if(cn->getType() != _filamentType) continue;
+		if (cn->getType() != _filamentType) continue;
 
         if(cn->getCompartment() != _compartment) {
 
@@ -1362,5 +1362,6 @@ SubSystem* FilamentBindingManager::_subSystem = 0;
 
 vector<CylinderCylinderNL*> LinkerBindingManager::_neighborLists;
 vector<CylinderCylinderNL*> MotorBindingManager::_neighborLists;
+//vector<CaMKIIingPointCylinderNL*> CaMKIIBundlingManager::_neighborLists; //TODO fix the type on NL
 vector<CylinderCylinderNL*> CaMKIIBundlingManager::_neighborLists; //TODO fix the type on NL
 

@@ -30,7 +30,14 @@ using namespace mathfunc;
 
 //CaMKII-CYLINDER
 
-#if 0
+void CaMKIIingPointCylinderNL::updateNeighbors(Cylinder* input_cylinder, bool runtime) {
+	CaMKIICylinder *camcylinder = nullptr;
+	if(!(camcylinder = dynamic_cast<CaMKIICylinder*>(input_cylinder))) return;
+	CaMKIIingPoint *cylinder = camcylinder->getCaMKIIPointParent();
+
+	updateNeighbors(cylinder);
+}
+
 void CaMKIIingPointCylinderNL::updateNeighbors(CaMKIIingPoint* cylinder, bool runtime) {
 
 	//clear existing
@@ -46,6 +53,12 @@ void CaMKIIingPointCylinderNL::updateNeighbors(CaMKIIingPoint* cylinder, bool ru
 
 	for(auto &comp : compartments) {
 		for(auto &ncylinder : comp->getCylinders()) {
+
+			// We are skipping the rest of the iteration if it is a
+        	const bool isCaMKII_b1 = (dynamic_cast<CaMKIICylinder*>(cylinder) != nullptr);
+        	const bool isCaMKII_b2 = (dynamic_cast<CaMKIICylinder*>(ncylinder) != nullptr);
+        	if(!isCaMKII_b1 && !isCaMKII_b2)
+        		continue;
 
 			//Don't add the same cylinder!
 //			if(cylinder == ncylinder) continue;
@@ -77,6 +90,7 @@ void CaMKIIingPointCylinderNL::updateNeighbors(CaMKIIingPoint* cylinder, bool ru
 }
 
 
+
 void CaMKIIingPointCylinderNL::addNeighbor(Neighbor* n) {
 
 	//return if not a cylinder!
@@ -88,18 +102,24 @@ void CaMKIIingPointCylinderNL::addNeighbor(Neighbor* n) {
 }
 
 void CaMKIIingPointCylinderNL::removeNeighbor(Neighbor* n) {
+	Cylinder* tmp_cylinder;
+	if(!(tmp_cylinder = dynamic_cast<Cylinder*>(n))) return;
 
-	Cylinder* cylinder;
-	if(!(cylinder = dynamic_cast<Cylinder*>(n))) return;
+	CaMKIICylinder *camcylinder;
+	if(!(camcylinder = dynamic_cast<CaMKIICylinder*>(tmp_cylinder))) return;
+	CaMKIIingPoint *cylinder = camcylinder->getCaMKIIPointParent();
 
 	_list.erase(cylinder);
 
 	//remove from other lists
+	// TODO: Does removing all the entries with similar values make sense?
+#if 0
 	for(auto it = _list.begin(); it != _list.end(); it++) {
 
 		auto cit = find(it->second.begin(), it->second.end(), cylinder);
 		if(cit != it->second.end()) it->second.erase(cit);
 	}
+#endif
 }
 
 void CaMKIIingPointCylinderNL::reset() {
@@ -112,11 +132,15 @@ void CaMKIIingPointCylinderNL::reset() {
 		updateNeighbors(cylinder);
 }
 
-vector<Cylinder*> CaMKIIingPointCylinderNL::getNeighbors(Cylinder* cylinder) {
+
+vector<Cylinder*> CaMKIIingPointCylinderNL::getNeighbors(Cylinder* input_cylinder) {
+	CaMKIICylinder *camcylinder;
+	if(!(camcylinder = dynamic_cast<CaMKIICylinder*>(input_cylinder))) return vector<Cylinder*>();
+	CaMKIIingPoint *cylinder = camcylinder->getCaMKIIPointParent();
+
 	return _list[cylinder];
 }
 
-#endif
 
 
 //CYLINDER-CYLINDER
@@ -137,11 +161,9 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
     for(auto &comp : compartments) {
         for(auto &ncylinder : comp->getCylinders()) {
 
-        	// We are skipping the rest of the iteration if it is a
-//        	const bool isCaMKII_b1 = (dynamic_cast<CaMKIICylinder*>(cylinder) != nullptr);
-//        	const bool isCaMKII_b2 = (dynamic_cast<CaMKIICylinder*>(ncylinder) != nullptr);
-//        	if(isCaMKII_b1 || isCaMKII_b2)
-//        		continue;
+			// We are skipping the rest of the iteration if it is a
+//			const bool isCaMKII_b1 = (dynamic_cast<CaMKIICylinder*>(cylinder) != nullptr);
+//			const bool isCaMKII_b2 = (dynamic_cast<CaMKIICylinder*>(ncylinder) != nullptr);
 
             //Don't add the same cylinder!
             if(cylinder == ncylinder) continue;
@@ -163,17 +185,19 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
                                            ncylinder->coordinate);
             if(dist > _rMax || dist < _rMin) continue;
 
-//            if(ncylinder == nullptr || cylinder == nullptr) {
-//            	cout << "ERROR!" << endl;
-//            }
+//			if(isCaMKII_b1) {
+//				_list[cylinder].push_back(ncylinder);
+//			} else if(isCaMKII_b2) {
+//				_list[ncylinder].push_back(cylinder);
+//			} else {
 
-            //If we got through all of this, add it!
-            _list[cylinder].push_back(ncylinder);
+				//If we got through all of this, add it!
+				_list[cylinder].push_back(ncylinder);
 
-            //if runtime, add to other list as well if full
-//            if((runtime && _full) || isCaMKII_b1 || isCaMKII_b2)
-            if((runtime && _full))
-            	_list[ncylinder].push_back(cylinder);
+				//if runtime, add to other list as well if full
+				if ((runtime && _full))
+					_list[ncylinder].push_back(cylinder);
+//			}
         }
     }
 }

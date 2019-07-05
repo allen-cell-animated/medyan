@@ -344,6 +344,7 @@ private:
 
     //static neighbor list
     static vector<CylinderCylinderNL*> _neighborLists;
+//    static vector<CaMKIIingPointCylinderNL*> _neighborLists;
 
 
 

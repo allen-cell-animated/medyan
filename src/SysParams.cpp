@@ -16,6 +16,7 @@ bool SysParams::RUNSTATE=true;
 vector<float> SysParams::MUBBareRate ={};
 vector<float> SysParams::LUBBareRate ={};
 vector<float> SysParams::BUBBareRate ={};
+vector<float> SysParams::CUBBareRate ={};
 bool SysParams::checkChemParameters(ChemistryData& chem) {
     
     if(CParams.numFilaments < 1) {

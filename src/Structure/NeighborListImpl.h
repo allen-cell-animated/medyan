@@ -27,6 +27,7 @@ class Cylinder;
 class Bubble;
 class BoundaryElement;
 class CaMKIIingPoint;
+class CaMKIICylinder;
 
 /// TODO An implementation of NeighborList for CaMKIIing-Cylinder interactions
 /// This can be a half or full list depending on the usage.
@@ -41,7 +42,8 @@ private:
     ///Helper function to update neighbors
     ///@param runtime - specifying whether the cylinder is being
     ///created/destroyed at runtime vs at a full neighbor list update.
-    void updateNeighbors(CaMKIIingPoint* camkii, bool runtime = false);
+	void updateNeighbors(Cylinder* camkiiCylinder, bool runtime = false);
+	void updateNeighbors(CaMKIIingPoint* camkii, bool runtime = false);
 
 public:
     CaMKIIingPointCylinderNL(float rMax, float rMin=0.0, bool full = false)
@@ -61,8 +63,7 @@ public:
     virtual void reset();
 
     /// Get all cylinder neighbors
-    vector<Cylinder*> getNeighbors(CaMKIIingPoint* camkii);
-
+    vector<Cylinder*> getNeighbors(Cylinder* camkii);
 };
 
 /// An implementation of NeighborList for Cylinder-Cylinder interactions

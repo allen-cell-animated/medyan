@@ -82,6 +82,7 @@ public:
     Cylinder* getFirstCylinder() { return get<0>(_bonds.at(0));}
     Cylinder* getSecondCylinder() { return get<0>(_bonds.at(1));} //TODO fix
     int getCoordinationNumber() { return _bonds.size(); }
+    CaMKIICylinder* getCaMKIICylinder() {return _camkiiCylinder.get();}
     //@}
     
     
