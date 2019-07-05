@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -55,9 +55,9 @@ species_copy_t CompartmentGrid::countBulkSpecies(const string& name) {
 
 //DEPRECATED AS OF 9/8/16
 
-//vector<tuple<int, int, vector<double>, vector<double>>> CompartmentGrid::getDiffusingMotors() {
+//vector<tuple<int, int, vector<floatingpoint>, vector<floatingpoint>>> CompartmentGrid::getDiffusingMotors() {
 //    
-//    vector<tuple<int, int, vector<double>, vector<double>>> output;
+//    vector<tuple<int, int, vector<floatingpoint>, vector<floatingpoint>>> output;
 //
 //    //for all motor types, get compartment binding managers
 //    //@note - this is for filament type 0 only. For multiple filament types, this would require a fix.
@@ -74,18 +74,18 @@ species_copy_t CompartmentGrid::countBulkSpecies(const string& name) {
 //                while(!found) {
 //                
 //                    //pick random two points in compartment
-//                    double dist = (mm->getRMax() + mm->getRMin()) / 2.0;
+//                    floatingpoint dist = (mm->getRMax() + mm->getRMin()) / 2.0;
 //                
-//                    vector<double> midpoint = GController::getRandomCoordinates(c);
+//                    vector<floatingpoint> midpoint = GController::getRandomCoordinates(c);
 //                
-//                    double directionX = Rand::randDouble(-1,1);
-//                    double directionY = Rand::randDouble(-1,1);
-//                    double directionZ = Rand::randDouble(-1,1);
-//                    vector<double> direction = normalizedVector({directionX, directionY, directionZ});
+//                    floatingpoint directionX = Rand::randfloatingpoint(-1,1);
+//                    floatingpoint directionY = Rand::randfloatingpoint(-1,1);
+//                    floatingpoint directionZ = Rand::randfloatingpoint(-1,1);
+//                    vector<floatingpoint> direction = normalizeVector({directionX, directionY, directionZ});
 //                
-//                    vector<double> firstPoint  = nextPointProjection(midpoint, dist / 2.0, direction);
-//                    vector<double> secondPoint = nextPointProjection(midpoint, dist / 2.0,
-//                                                 vector<double>{-direction[0], -direction[1], -direction[2]});
+//                    vector<floatingpoint> firstPoint  = nextPointProjection(midpoint, dist / 2.0, direction);
+//                    vector<floatingpoint> secondPoint = nextPointProjection(midpoint, dist / 2.0,
+//                                                 vector<floatingpoint>{-direction[0], -direction[1], -direction[2]});
 //                    
 //                    try {
 //                        GController::getCompartment(firstPoint);

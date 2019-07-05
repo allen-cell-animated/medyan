@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -26,10 +26,44 @@ class Bead;
 class BoundaryCylinderRepulsionExp {
     
 public:
-    double energy(Bead*, double, double, double);
-    void forces(Bead*, double, vector<double>& norm, double, double);
-    void forcesAux(Bead*, double, vector<double>& norm, double, double);
-    double loadForces(double, double, double);
+	floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                  floatingpoint *krep, floatingpoint *slen, int *nneighbors);
+
+	floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                  floatingpoint *krep, floatingpoint *slen, int *nnneighbors, floatingpoint d);
+    
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                floatingpoint *krep, floatingpoint *slen, int *nneighbors);
+    
+    floatingpoint loadForces(floatingpoint r, floatingpoint krep , floatingpoint slen);
+
+#ifdef CUDAACCL
+    void optimalblocksnthreads(int nint, cudaStream_t stream);
+
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
+                   int* nintvec, floatingpoint* beListplane, int *params);
+
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
+                   int* nintvec, floatingpoint* beListplane, floatingpoint *z, int *params);
+
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
+                int* nintvec, floatingpoint* beListplane, int *params);
+    void deallocate();
+    vector<int> blocksnthreadse;
+    vector<int> blocksnthreadsez;
+    vector<int> blocksnthreadsf;
+    vector<int> bntaddvec2;
+    static void checkforculprit();
+    floatingpoint *gU_i;
+    floatingpoint *gU_sum;
+    char *gFF, *ginteraction;
+    cudaStream_t stream = NULL;
+#endif
+private:
+#ifdef CUDAACCL
+//    floatingpoint *F_i;
+//    floatingpoint *forcecopy;
+#endif
 };
 
 #endif

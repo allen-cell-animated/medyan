@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -19,26 +19,28 @@
 #include "CGFletcherRievesMethod.h"
 #include "CGPolakRibiereMethod.h"
 #include "CGSteepestDescent.h"
+#include "Minimizer.h"
+
+#include "ForceFieldManager.h"
 
 //FORWARD DECLARATIONS
 class ForceFieldManager;
 
 /// An implementation of [Minimzer](@ref Minimizer).
-template <class CGType>
-class ConjugateGradient : public Minimizer {
+template <class CGType> class ConjugateGradient : public Minimizer {
     
 private:
     CGType _CGType;  ///< Implementation of a CG method
     
-    double _GRADTOL;   ///< Gradient tolerance used
-    double _MAXDIST;   ///< Max distance used to move
-    double _LAMBDAMAX; ///< Maximum lambda that can be returned
+    floatingpoint _GRADTOL;   ///< Gradient tolerance used
+    floatingpoint _MAXDIST;   ///< Max distance used to move
+    floatingpoint _LAMBDAMAX; ///< Maximum lambda that can be returned
     
 public:
     /// Constructor sets gradient tolerance parameter
-    ConjugateGradient(double gradientTolerance,
-                      double maxDistance,
-                      double lambdaMax)
+    ConjugateGradient(floatingpoint gradientTolerance,
+                      floatingpoint maxDistance,
+                      floatingpoint lambdaMax)
     
         : _GRADTOL(gradientTolerance),
           _MAXDIST(maxDistance),
@@ -51,6 +53,36 @@ public:
     void equlibrate(ForceFieldManager &FFM, bool steplimit) {
         _CGType.minimize(FFM, _GRADTOL, _MAXDIST, _LAMBDAMAX, steplimit);
     }
+
+
+
+
+
+    floatingpoint getEnergy(ForceFieldManager &FFM, floatingpoint d){
+      
+        //double* coord = _CGType.getCoords();
+        floatingpoint* coord = CUDAcommon::serlvars.coord;
+        
+        FFM.vectorizeAllForceFields();
+
+        floatingpoint dummyForce[1] = {0};
+
+        floatingpoint f = FFM.computeEnergy(coord,dummyForce,0.0);
+        
+        // delete [] coord;
+        
+        FFM.cleanupAllForceFields();
+        
+        
+        
+        return f;
+        
+        
+        
+    }
+
+    
+    
 };
 
 #endif

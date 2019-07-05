@@ -1,6 +1,6 @@
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -120,13 +120,13 @@ public:
     //@{
     /// On rate management
     void setOnRate(float rate) {_onRate = rate;}
-    double getOnRate(){return _onRate;}
+    floatingpoint getOnRate(){return _onRate;}
     //@}
     
     //@{
     /// Off rate management
     void setOffRate(float rate) {_offRate = rate;}
-    double getOffRate(){return _offRate;}
+    floatingpoint getOffRate(){return _offRate;}
     //@}
     
     /// Set all rates at once

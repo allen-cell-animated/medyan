@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -32,18 +32,22 @@ private:
     vector<unique_ptr<BranchingInteractions>>
     _branchingInteractionVector; ///< Vector of initialized branching interactions
     
+protected:
     BranchingInteractions* _culpritInteraction; ///< Culprit in case of error
+    
 public:
     /// Constructor, intializes all interaction at the branching point
     BranchingFF(string& stretching, string& bending,
                 string& dihedral, string& position);
     
+    virtual void vectorize();
+    virtual void cleanup();
+    
     virtual string getName() {return "Branching";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(double d);
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     
     virtual void computeLoadForces() {return;}
     

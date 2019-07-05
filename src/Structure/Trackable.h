@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -29,6 +29,12 @@ class SubSystem;
  *  A class extending Trackable can either be Movable, Reactable, DynamicNeighbor, or Neighbor.
  *  These concrete subclasses will implement the boolean functions which define which 
  *  extension of this class is being used.
+ *  Dynamic neighbor refers to CylinderCylinderNL while Neighbor refers to
+ *  BoundaryCylinderNL
+ *  Filament _dneighbor false _neighbor false
+ *  Bead _dneighbor false _neighbor false
+ *  Cylinder _dneighbor true _neighbor false
+ *  BoundaryElement _dneighbor false _neighbor true
  */
 class Trackable {
     
@@ -43,7 +49,7 @@ protected:
               bool neighbor  = false)
     
         : _movable(movable), _reactable(reactable),
-          _dneighbor(dneighbor), _neighbor(neighbor) {};
+          _dneighbor(dneighbor), _neighbor(neighbor) { };
     
     static SubSystem* _subSystem; ///< A subsystem pointer for every trackable
     

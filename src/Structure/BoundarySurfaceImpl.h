@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -24,15 +24,15 @@
 class Plane: public BoundarySurface {
     
 private:
-    vector<double> _coords; ///< Coordinates of center
-    vector<double> _normal; ///< Normal vector
+    vector<floatingpoint> _coords; ///< Coordinates of center
+    vector<floatingpoint> _normal; ///< Normal vector
     
 public:
     
     ///Constructor, creates boundary elements
     ///@param coords - coordinates of center of plane
     ///@param normal - normal vector to plane
-    Plane(SubSystem* s, vector<double> coords, vector<double> normal);
+    Plane(SubSystem* s, vector<floatingpoint> coords, vector<floatingpoint> normal);
 };
 
 
@@ -41,13 +41,13 @@ public:
 class Sphere: public BoundarySurface {
     
 private:
-    vector<double> _coords; ///< Center of sphere
+    vector<floatingpoint> _coords; ///< Center of sphere
     
 public:
     ///Constructor, creates boundary elements
     ///@param coords - coordinates of center of plane
     ///@param normal - normal vector to sphere
-    Sphere(SubSystem* s, vector<double> coords, double radius);
+    Sphere(SubSystem* s, vector<floatingpoint> coords, floatingpoint radius);
 };
 
 
@@ -55,13 +55,13 @@ public:
 class CylinderZ: public BoundarySurface {
     
 private:
-    vector<double> _coords; ///< Center of cylinder
+    vector<floatingpoint> _coords; ///< Center of cylinder
     
 public:
     ///Constructor, creates boundary elements
     ///@param coords - coordinates of center of cylinder
     ///@param normal - normal vector to sphere
-    CylinderZ(SubSystem* s, vector<double> coords, double radius, double height);
+    CylinderZ(SubSystem* s, vector<floatingpoint> coords, floatingpoint radius, floatingpoint height);
     
 };
 
@@ -69,28 +69,27 @@ public:
 class HalfSphereZ: public BoundarySurface {
     
 private:
-    vector<double> _coords; ///< Center of half-sphere
+    vector<floatingpoint> _coords; ///< Center of half-sphere
     
 public:
     ///Constructor, creates boundary elements
     ///@param coords - coordinates of center of half sphere
     ///@param normal - normal vector to sphere
-    HalfSphereZ(SubSystem* s, vector<double> coords, double radius, bool up);
+    HalfSphereZ(SubSystem* s, vector<floatingpoint> coords, floatingpoint radius, bool up);
     
 };
 
-//Qin -----
 /// A simple implementation of the BoundarySurface class.
 class CylinderXYZ: public BoundarySurface {
     
 private:
-    vector<double> _coords; ///< Center of cylinder
+    vector<floatingpoint> _coords; ///< Center of cylinder
     
 public:
     ///Constructor, creates boundary elements
     ///@param coords - coordinates of center of cylinder
     ///@param normal - normal vector to sphere
-    CylinderXYZ(SubSystem* s, vector<double> coords, double radius, double height);
+    CylinderXYZ(SubSystem* s, vector<floatingpoint> coords, floatingpoint radius, floatingpoint height);
     
 };
 

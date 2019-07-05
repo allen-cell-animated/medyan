@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -18,6 +18,7 @@
 
 #include "ReactionTemplate.h"
 #include "Parser.h"
+#include "DissipationTracker.h"
 
 //FORWARD DECLARATIONS
 class Compartment;
@@ -39,6 +40,7 @@ class CMonomer;
 class ChemManager {
     
 private:
+    chrono::high_resolution_clock::time_point mins, mine;
     //@{
     /// Helper functions. Names are pretty self-explanatory.
     void setupBindingSites();
@@ -58,6 +60,11 @@ private:
     //@}
     
 public:
+	static floatingpoint tchemmanager1;
+	static floatingpoint tchemmanager2;
+	static floatingpoint tchemmanager3;
+	static floatingpoint tchemmanager4;
+
     ///Constructor sets subsystem pointer, and loads chem data
     ChemManager(SubSystem* subSystem, ChemistryData chem)
         : _subSystem(subSystem), _chemData(chem) {}
@@ -79,10 +86,12 @@ public:
     ///         if molecules should be released at the current time.
     virtual void updateCopyNumbers();
     
+    
 private:
     //DATA MEMBERS
     SubSystem* _subSystem;   ///< A pointer to subsytem for creation of callbacks, etc.
     ChemistryData _chemData; ///<The chemistry data for the system
+    DissipationTracker* _dt;
     
     /// A list of reactions to add to every new CCylinder
     /// @note - is a 2D vector corresponding to different filament types

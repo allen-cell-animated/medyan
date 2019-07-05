@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -80,7 +80,7 @@ public:
     void setMotorGhost(MotorGhost* MotorGhost) {_pMotorGhost = MotorGhost;}
     /// Get parent
     MotorGhost* getMotorGhost() {return _pMotorGhost;}
-    
+        
     
     /// Create the off reaction for this MotorGhost
     virtual void createOffReaction(ReactionBase* onRxn, SubSystem* ps);
@@ -102,6 +102,7 @@ public:
                        short boundType,
                        SubSystem* ps);
     
+    void printReaction();
 };
 
 #endif

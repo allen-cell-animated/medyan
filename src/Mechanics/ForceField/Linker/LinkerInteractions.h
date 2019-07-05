@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -24,20 +24,26 @@ class LinkerInteractions {
     
 friend class LinkerFF;
     
-protected:
-    /// The linker in the case of an error
-    Linker* _linkerCulprit = nullptr;
-    
 public:
+    /// The linker in the case of an error
+    static Linker* _linkerCulprit;
+
+    virtual ~LinkerInteractions() = default;
+
+    ///Vectorize the bead interactions for minimization
+    virtual void vectorize() = 0;
+    ///Deallocate the vectorized data
+    virtual void deallocate() = 0;
+    
     /// Compute the energy of this interaction
-    virtual double computeEnergy(double d) = 0;
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) = 0;
     /// Compute the forces of this interaction
-    virtual void computeForces() = 0;
-    /// Compute the auxiliary forces of this interaction
-    virtual void computeForcesAux() = 0;
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f) = 0;
     
     /// Get the name of this interaction
     virtual const string getName() = 0;
+
+    virtual void assignforcemags(){};
     
 };
 

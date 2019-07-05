@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -60,10 +60,13 @@ friend class Output;
 private:
     static short _nDim; ///< Number of dimensions in the system
     static vector<int> _grid; ///< Size of each dimension, in compartment lengths
-    static vector<double> _compartmentSize; ///< Compartment size in each dimension
-    static vector<double> _centerGrid; ///< The center of the grid
-    static vector<double> _size;       ///< The size of the full grid in each dimension
-    
+    static vector<floatingpoint> _compartmentSize; ///< Compartment size in each dimension
+    static vector<floatingpoint> _centerGrid; ///< The center of the grid
+    static vector<floatingpoint> _size;       ///< The size of the full grid in each dimension
+	static floatingpoint         _compartmentVolume; ///< The volume of the compartment
+	static vector<floatingpoint> _compartmentArea; ///< The areas of the compartment (yOz,
+	// zOx, xOy)
+
     static CompartmentGrid* _compartmentGrid; ///< The compartment grid
     
     Boundary* _boundary;   ///< The boundary that this controls
@@ -95,37 +98,42 @@ public:
     //@{
     /// Get a compartment based on coordinates or indices
     static Compartment* getCompartment(const vector<size_t> &indices);
-    static Compartment* getCompartment(const vector<double> &coords);
+    static Compartment* getCompartment(const vector<floatingpoint> &coords);
+    static unsigned int getCompartmentID(const vector<floatingpoint> &coords);
+    static Compartment* getCompartment(const int index);
     //@}
     
     /// Get the center of the grid space
-    static const vector<double>& getCenter() {return _centerGrid;}
-    static const vector<double>& getSize() {return _size;}
-    static const vector<double>& getCompartmentSize() {return _compartmentSize;}
+    static const vector<floatingpoint>& getCenter() {return _centerGrid;}
+    static const vector<floatingpoint>& getSize() {return _size;}
+     static const vector<floatingpoint>& getCompartmentSize() {return _compartmentSize;}
     
+    static floatingpoint getCompartmentVolume() { return _compartmentVolume; }
+    static const vector<floatingpoint>& getCompartmentArea() { return _compartmentArea; }
+
     /// Get all compartments within a given range from the specified coordinate
     /// @param ccheck - Compartment to check when initially calling this function
     /// @param compartments - List of compartments that are within range. This will be
     /// populated by the function
-    static void findCompartments(const vector<double>& coords,
-                                 Compartment* ccheck, double dist,
+    static void findCompartments(const vector<floatingpoint>& coords,
+                                 Compartment* ccheck, floatingpoint dist,
                                  vector<Compartment*>& compartments);
     
     /// Choose a random compartment from the grid (that is activated)
     static Compartment* getRandomCompartment();
     
     /// Get random coordinates in a given compartment
-    static vector<double> getRandomCoordinates(Compartment* c);
+    static vector<floatingpoint> getRandomCoordinates(Compartment* c);
     
     /// Get random coordinates from entire grid
-    static vector<double> getRandomCoordinates();
+    static vector<floatingpoint> getRandomCoordinates();
     
-    //Qin, add getRandomCenterCoordinates for flat cylinder
+    //add getRandomCenterCoordinates for flat cylinder
     /// Get random coordinates in the center of a given compartment
-    static vector<double> getRandomCenterCoordinates(Compartment* c);
+    static vector<floatingpoint> getRandomCenterCoordinates(Compartment* c);
     
     /// Get random coordinates from the center of entire grid
-    static vector<double> getRandomCenterCoordinates();
+    static vector<floatingpoint> getRandomCenterCoordinates();
 };
 
 #endif

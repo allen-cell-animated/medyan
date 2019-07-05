@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -27,13 +27,39 @@ CBranchingPoint::CBranchingPoint(short branchType, Compartment* c,
     SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesBrancher(branchType);
     SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(
                         SysParams::Chemistry().brancherBoundIndex[_filamentType]);
-    
+
+//    //@{
+//    SpeciesBound* BL1 = _cc1->getCMonomer(_position1)->speciesBound(
+//            SysParams::Chemistry().linkerBoundIndex[_filamentType]);
+//    SpeciesBound* BL2 = _cc2->getCMonomer(_position2)->speciesBound(
+//            SysParams::Chemistry().linkerBoundIndex[_filamentType]);
+//    SpeciesBound* BB1 = _cc1->getCMonomer(_position1)->speciesBound(
+//            SysParams::Chemistry().brancherBoundIndex[_filamentType]);
+//    SpeciesBound* BB2 = _cc2->getCMonomer(_position2)->speciesBound(
+//            SysParams::Chemistry().brancherBoundIndex[_filamentType]);
+//    SpeciesBound* BM1 = _cc1->getCMonomer(_position1)->speciesBound(
+//            SysParams::Chemistry().motorBoundIndex[_filamentType]);
+//    SpeciesBound* BM2 = _cc2->getCMonomer(_position2)->speciesBound(
+//            SysParams::Chemistry().motorBoundIndex[_filamentType]);
+//    SpeciesBound* sm1 = _cc1->getCMonomer(_position1)->speciesMotor(0);
+//    SpeciesBound* sm2 = _cc2->getCMonomer(_position2)->speciesMotor(0);
+//    SpeciesBound* sl1 = _cc1->getCMonomer(_position1)->speciesLinker(0);
+//    SpeciesBound* sl2 = _cc2->getCMonomer(_position2)->speciesLinker(0);
+//
+//    std::cout<<"BranchingPoint "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "<<cc2->getCylinder()->getID()<<" "<<
+//             ""<<_position2<<" branchType "<<branchType<<endl;
+//    std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "<<BM2->getN()<<endl;
+//    std::cout<<"Linker "<<sl1->getN()<<" "<<sl2->getN()<<" BOUND "<<BL1->getN()<<" "<<BL2->getN()<<endl;
+//    std::cout<<"Brancher "<<sb1->getN()<<" BOUND "<<BB1->getN()<<" "<<BB2->getN()<<endl;
+//    //@}
+
+
     //mark species
     assert(areEqual(sb1->getN(), 0.0) && areEqual(se1->getN(), 1.0) &&
            "Major bug: Brancher binding to an occupied site.");
         
     sb1->up(); se1->down();
-        
+
     //attach this branchpoint to the species
     setFirstSpecies(sb1);
 }

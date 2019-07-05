@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -23,11 +23,14 @@ class Bead;
 class MTOCAttachmentHarmonic {
     
 public:
-    double energy(Bead*, Bead*, double, double);
-    double energy(Bead*, Bead*, double, double, double);
+	floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+	                     floatingpoint *kstr, floatingpoint* radiusvec);
+	floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+	                     floatingpoint *kstr, floatingpoint* radiusvec, floatingpoint d);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                floatingpoint *kstr, floatingpoint* radiusvec);
     
-    void forces(Bead*, Bead*, double, double);
-    void forcesAux(Bead*, Bead*, double, double);
+    //void forcesAux(Bead*, Bead*, double, double);
 };
 
 #endif

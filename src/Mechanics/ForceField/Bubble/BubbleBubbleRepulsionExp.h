@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -26,11 +26,11 @@ class Bead;
 class BubbleBubbleRepulsionExp {
     
 public:
-    double energy(Bead*, Bead*, double, double, double, double);
-    double energy(Bead*, Bead*, double, double, double, double, double);
+    floatingpoint energy(Bead*, Bead*, floatingpoint, floatingpoint, floatingpoint, floatingpoint);
+    floatingpoint energy(Bead*, Bead*, floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint);
     
-    void forces(Bead*, Bead*, double, double, double, double);
-    void forcesAux(Bead*, Bead*, double, double, double, double);
+    void forces(Bead*, Bead*, floatingpoint, floatingpoint, floatingpoint, floatingpoint);
+    void forcesAux(Bead*, Bead*, floatingpoint, floatingpoint, floatingpoint, floatingpoint);
 };
 
 #endif

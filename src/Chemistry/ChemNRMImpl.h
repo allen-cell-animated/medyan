@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -74,7 +74,7 @@ public:
     /// @param *rnode is a pointer to the RNodeNRM instance which this PQNode tracks
     /// (no ownership - make sure it is not null)
     /// @note tau is set to infinity in the constructor
-    PQNode(RNodeNRM *rnode) : _rn(rnode), _tau (numeric_limits<double>::infinity()) {}
+    PQNode(RNodeNRM *rnode) : _rn(rnode), _tau (numeric_limits<floatingpoint>::infinity()) {}
 
     /// Dtor: we only reassign _rn to null, the actual pointer needs to be deleted
     /// somewhere else to avoid memory leaks
@@ -100,7 +100,7 @@ public:
 private: 
     RNodeNRM *_rn; ///< Pointer to the reaction node (RNodeNRM) which this PQNode
                    ///< represents (or tracks)
-    double _tau;   ///< tau for this reaction for the Gibson-Bruck NRM algoritm
+    floatingpoint _tau;   ///< tau for this reaction for the Gibson-Bruck NRM algoritm
 private:
     // Think of PQNode as a simple C-like structure (i.e. no methods),
     // but that is private to ChemNRMImpl and RNodeNRM
@@ -165,10 +165,10 @@ public:
     void updateHeap();
     
     /// Returns the tau from the the associated PQNode element
-    inline double getTau() const {return (*_handle)._tau;}
+    inline floatingpoint getTau() const {return (*_handle)._tau;}
     
     /// Sets the tau of the the associated PQNode element. Does not update the heap.
-    inline void setTau(double tau) {(*_handle)._tau=tau;}
+    inline void setTau(floatingpoint tau) {(*_handle)._tau=tau;}
     
     /// Returns a handle to the associated PQNode element, which can be used to access
     /// tau, for example.
@@ -177,10 +177,10 @@ public:
     /// Return the currently stored propensity, "a", for this Reaction.
     /// @note The propensity is not recomputed in this method, so it potentially can be
     /// out of sync.
-    inline double getPropensity() const {return _a;}
+    inline floatingpoint getPropensity() const {return _a;}
     
     /// (Re)Compute and return the propensity associated with this Reaction.
-    inline double reComputePropensity() {_a=_react->computePropensity(); return _a;}
+    inline floatingpoint reComputePropensity() {_a=_react->computePropensity(); return _a;}
 
     /// Compute and return the product of reactant copy numbers. This method can be used
     /// to quickly check whether this reaction needs to be passivated, if the returned
@@ -228,7 +228,7 @@ private:
     handle_t _handle; ///< The handle to the associated PQNode element in the heap.
     ReactionBase *_react; ///< The pointer to the associated Reaction object. The
                           ///< corresponding memory is not managed by RNodeNRM.
-    double _a; ///< The propensity associated with the Reaction.
+    floatingpoint _a; ///< The propensity associated with the Reaction.
                ///< It may be outdated and may need to be recomputed if needed.
 };
 
@@ -245,10 +245,9 @@ class ChemNRMImpl : public ChemSimImpl {
 public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0 and the number
     /// of reactions to 0
-    ChemNRMImpl() :
-        ChemSimImpl(),
-        _exp_distr(0.0), _n_reacts(0) { resetTime(); }
-
+    ChemNRMImpl() :ChemSimImpl(),
+    _exp_distr(0.0), _n_reacts(0) { resetTime(); }
+    
     /// Copying is not allowed
     ChemNRMImpl(const ChemNRMImpl &rhs) = delete;
     
@@ -266,7 +265,7 @@ public:
     inline size_t getSize() const {return _n_reacts;}
     
     /// Return the current global time (as defined in the NRM algorithm)
-    inline double getTime() const {return _t;}
+    inline floatingpoint getTime() const {return _t;}
     
     /// Sets global time to 0.0
     inline void resetTime() {_t=0.0; syncGlobalTime(); }
@@ -285,7 +284,7 @@ public:
     
     /// A pure function (without sideeffects), which returns a random time tau, drawn
     /// from the exponential distribution, with the propensity given by a.
-    double generateTau(double a);
+    floatingpoint generateTau(floatingpoint a);
         
     /// This function iterates over all RNodeNRM objects in the network, generating new
     /// tau-s for each case and subsequently updating the heap. It needs to be called
@@ -298,9 +297,9 @@ public:
     
     /// This method runs the Gillespie algorithm for the given amount of time.
     /// @return true if successful.
-    virtual bool run(double time) {
+    virtual bool run(floatingpoint time) {
         
-        double endTime = _t + time;
+        floatingpoint endTime = _t + time;
         
         while(_t < endTime) {
             bool success = makeStep();
@@ -346,8 +345,8 @@ private:
                                                                     ///< representing the reaction network
     boost_heap _heap; ///< A priority queue for the NRM algorithm,
                       ///< containing PQNode elements
-    exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
-    double _t; ///< global time
+    exponential_distribution<floatingpoint> _exp_distr; ///< Adaptor for the exponential distribution
+    floatingpoint _t; ///< global time
     size_t _n_reacts; ///< number of reactions in the network
 };
     

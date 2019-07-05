@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -38,23 +38,23 @@ class MotorGhost;
 class MMotorGhost {
     
 public:
-    double stretchForce = 0.0; ///< Stretching force of motor at current state
+    floatingpoint stretchForce = 0.0; ///< Stretching force of motor at current state
     
     /// Main constructor
     /// @param position - position on cylinder 1 and 2, respectively
     /// @param coord - coordinates of cylinder1's bead 1, bead 2, etc
-    MMotorGhost(int motorType, int numBoundHeads, double position1, double position2,
-                const vector<double>& coord11, const vector<double>& coord12,
-                const vector<double>& coord21, const vector<double>& coord22);
+    MMotorGhost(int motorType, int numBoundHeads, floatingpoint position1, floatingpoint position2,
+                const vector<floatingpoint>& coord11, const vector<floatingpoint>& coord12,
+                const vector<floatingpoint>& coord21, const vector<floatingpoint>& coord22);
     
     //@{
     /// Getter for constants
-    double getStretchingConstant(){return _kStretch;}
-    double getEqLength(){return _eqLength;}
+    floatingpoint getStretchingConstant(){return _kStretch;}
+    floatingpoint getEqLength(){return _eqLength;}
     //@}
     
     /// Reset the spring constant of the motor based on number of bound heads
-    void setStretchingConstant(int motorType, double numBoundHeads);
+    void setStretchingConstant(int motorType, floatingpoint numBoundHeads);
     
     /// Set parent
     void setMotorGhost(MotorGhost* motor) {_pMotorGhost = motor;}
@@ -63,17 +63,17 @@ public:
     
     //@{
     /// Length management
-    void setLength(double l){_currentLength = l;}
-    double getLength() {return _currentLength;}
+    void setLength(floatingpoint l){_currentLength = l;}
+    floatingpoint getLength() {return _currentLength;}
     //@}
     
 private:
-    double _eqLength;  ///< Equilibrium length, set at construction
-    double _kStretch;  ///< Stretching parameter
+    floatingpoint _eqLength;  ///< Equilibrium length, set at construction
+    floatingpoint _kStretch;  ///< Stretching parameter
     
     MotorGhost* _pMotorGhost; ///< Pointer to parent
     
-    double _currentLength; ///< Current length of motor
+    floatingpoint _currentLength; ///< Current length of motor
 };
 
 

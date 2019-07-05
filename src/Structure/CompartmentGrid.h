@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -47,10 +47,12 @@ private:
 public:
     /// Constructor, creates a number of Compartment instances
     CompartmentGrid(int numCompartments) {
-        
         //add children
-        for(size_t i=0; i<numCompartments; ++i)
-            addChild(unique_ptr<Component>(new Compartment()));
+        for(size_t i=0; i<numCompartments; ++i) {
+            auto c = new Compartment();
+            c->_ID = i;
+            addChild(unique_ptr<Component>(c));
+        }
     }
     
     /// Get compartments that this grid holds
@@ -158,7 +160,7 @@ public:
     ///the simulation volume (dependent on the compartment). This is used for analyzing motor
     ///gradients when species can either be bound or unbound.
     ///@return - a tuple of the motor ID, the type, and two coordinates defining its end positions
-    vector<tuple<int, int, vector<double>, vector<double>>> getDiffusingMotors();
+    vector<tuple<int, int, vector<floatingpoint>, vector<floatingpoint>>> getDiffusingMotors();
     
 };
 

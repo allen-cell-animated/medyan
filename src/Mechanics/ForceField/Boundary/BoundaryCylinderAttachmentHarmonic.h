@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -26,11 +26,13 @@ class Bead;
 class BoundaryCylinderAttachmentHarmonic {
     
 public:
-    double energy(Bead*, double);
-    double energy(Bead*, double, double);
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                  floatingpoint *kattr, floatingpoint *pins);
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                  floatingpoint *kattr, floatingpoint *pins, floatingpoint d);
     
-    void forces(Bead*, double);
-    void forcesAux(Bead*, double);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                floatingpoint *kattr, floatingpoint *pins);
 };
 
 #endif

@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -32,11 +32,28 @@ class MTOCAttachment : public BubbleInteractions {
     
 private:
     MTOCInteractionType _FFType;
+
+    int *beadSet;
+    ///Array describing the constants in calculation
+    floatingpoint *kstr;
+    floatingpoint *radiusvec;
+	floatingpoint *pos1;
+	floatingpoint *pos2;
+
+
 public:
-    virtual double computeEnergy(double d);
+
+    ///Array describing indexed set of interactions
+    ///For MTOC, this is a 2-bead potential
+    const static int n = 2;
+	static int numInteractions;
     
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual void vectorize();
+    virtual void deallocate();
+
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+    //virtual void computeForcesAux(double *coord, double *f);
     
     virtual void computeLoadForces() {return;}
     

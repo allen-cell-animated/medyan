@@ -1,3 +1,19 @@
+# 4.0 (Released 2019-07-05)
+
+## New features
+- Added support for MSVC compilers and added Visual Studio solution file.
+- Added cylindrical boundary type.
+- Added support for runtime modification of filament polymerization/depolymerization rate.
+- Added support for energy dissipation tracking.
+
+## Optimizations
+- Used flattened storage for force field computations.
+- Improved performance for neighbor list and binding site search. Binding site search now gains SIMD support. (See *file-name* for detailed performance benchmark)
+
+## Bug fixes
+- Fixed a bug in boundary repulsion potential.
+- Fixed numerical errors that might occur in cylinder volume exclusion potential.
+
 # 3.2.1 (Released 2018-08-23)
 
 ## Bug fixes

@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -22,7 +22,7 @@
 
 RSpecies::~RSpecies() noexcept{
 
-    assert((_as_reactants.empty() and _as_products.empty())
+    assert((_as_reactants.empty() && _as_products.empty())
     && "Major bug: RSpecies should not contain Reactions when being destroyed.");
 #ifdef RSPECIES_SIGNALING
     if(_signal!=nullptr)
@@ -80,11 +80,13 @@ void RSpecies::activateAssocProductReactions() {
 }
 
 void RSpecies::passivateAssocReactantReactions() {
+//    std::cout<<"passivate RSpecies::passivateAssocReactantReactions"<<endl;
     for (auto &r : _as_reactants)
         r->passivateReaction();
 }
     
 void RSpecies::passivateAssocProductReactions() {
+//    std::cout<<"passivate RSpecies::passivateAssocProductReactions"<<endl;
     for (auto &r : _as_products)
         r->passivateReaction();
 }

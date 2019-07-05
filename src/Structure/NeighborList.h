@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -30,40 +30,41 @@ class DynamicNeighbor;
  *  The neighbor list contains a function to reset, which uses the databases to clear
  *  and update the list.
  */
+
 class NeighborList {
-    
+
 protected:
     float _rMax;  ///< max distance cutoff
     float _rMin;  ///< min distance cutoff
-    
+
 public:
     ///Constructor and destructor
     NeighborList(float rMax = 0.0, float rMin = 0.0) : _rMax(rMax), _rMin(rMin) {}
-    
+
     ///Destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as
     /// potentially throwing, which in turn disables move operations by the STL
     /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
     /// be fixed in the future.
     virtual ~NeighborList() noexcept {}
-    
+
     /// Add neighbor
     virtual void addNeighbor(Neighbor* n) = 0;
     /// Remove a neighbor if possible
     virtual void removeNeighbor(Neighbor* n) = 0;
-    
+
     /// Add a dynamic neighbor to the system.
     /// For BoundaryElementNeighborList list, this will be Bead.
     /// For CylinderNeighborList, all elements in neighbors list are dynamic.
     virtual void addDynamicNeighbor(DynamicNeighbor* n) = 0;
-    
+
     /// Remove a dynamic neighbor from the system.
     /// For BoundaryElementNeighborList list, this will be Bead.
     /// For CylinderNeighborList, all elements in neighbors list are dynamic.
     virtual void removeDynamicNeighbor(DynamicNeighbor* n) = 0;
-    
+
     /// Re-initialize the neighborlist
     virtual void reset() = 0;
-};
 
+};
 #endif

@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -23,11 +23,40 @@ class Bead;
 class FilamentStretchingHarmonic {
     
 public:
-    double energy(Bead*, Bead*, double, double);
-    double energy(Bead*, Bead*, double, double, double);
+	floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                  floatingpoint *kstr, floatingpoint *eql);
+
+	floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
+                  floatingpoint *kstr, floatingpoint *eql, floatingpoint d);
     
-    void forces(Bead*, Bead*, double, double);
-    void forcesAux(Bead*, Bead*, double, double);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                floatingpoint *kstr, floatingpoint *eql);
+#ifdef CUDAACCL
+    void optimalblocksnthreads(int nint, cudaStream_t stream);
+
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kstr, floatingpoint *eql, int *params);
+
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kstr, floatingpoint *eql, floatingpoint *z, int *params);
+
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kstr, floatingpoint *eql, int *params);
+    void deallocate();
+    static void checkforculprit();
+    vector<int> blocksnthreadse;
+    vector<int> blocksnthreadsez;
+    vector<int> blocksnthreadsf;
+    vector<int> bntaddvec2;
+    floatingpoint *gU_i;
+    floatingpoint *gU_sum;
+    char *gFF, *ginteraction;
+    cudaStream_t stream = NULL;
+#endif
+#ifdef CROSSCHECK
+    floatingpoint energy(Bead*, Bead*, floatingpoint, floatingpoint);
+    floatingpoint energy(Bead*, Bead*, floatingpoint, floatingpoint, floatingpoint);
+    
+    void forces(Bead*, Bead*, floatingpoint, floatingpoint);
+    void forcesAux(Bead*, Bead*, floatingpoint, floatingpoint);
+#endif
 };
 
 #endif

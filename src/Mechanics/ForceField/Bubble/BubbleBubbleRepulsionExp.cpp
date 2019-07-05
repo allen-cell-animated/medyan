@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -19,41 +19,41 @@
 
 using namespace mathfunc;
 
-double BubbleBubbleRepulsionExp::energy(Bead* b1, Bead* b2, double r1, double r2,
-                                        double kRep, double screenLength) {
+floatingpoint BubbleBubbleRepulsionExp::energy(Bead* b1, Bead* b2, floatingpoint r1, floatingpoint r2,
+                                        floatingpoint kRep, floatingpoint screenLength) {
     
-    double dist = twoPointDistance(b1->coordinate, b2->coordinate);
+    floatingpoint dist = twoPointDistance(b1->coordinate, b2->coordinate);
     
-    double effd = dist - r1 - r2;
+    floatingpoint effd = dist - r1 - r2;
     
-    double R = -effd / screenLength;
+    floatingpoint R = -effd / screenLength;
     return kRep * exp(R);
 }
 
-double BubbleBubbleRepulsionExp::energy(Bead* b1, Bead* b2, double r1, double r2,
-                                        double kRep, double screenLength, double d) {
+floatingpoint BubbleBubbleRepulsionExp::energy(Bead* b1, Bead* b2, floatingpoint r1, floatingpoint r2,
+                                        floatingpoint kRep, floatingpoint screenLength, floatingpoint d) {
     
-    double dist = twoPointDistanceStretched(b1->coordinate, b1->force,
+    floatingpoint dist = twoPointDistanceStretched(b1->coordinate, b1->force,
                                             b2->coordinate, b2->force, d);
-    double effd = dist - r1 - r2;
+    floatingpoint effd = dist - r1 - r2;
     
-    double R = -effd / screenLength;
+    floatingpoint R = -effd / screenLength;
     return kRep * exp(R);
 }
 
-void BubbleBubbleRepulsionExp::forces(Bead* b1, Bead* b2, double r1, double r2,
-                                      double kRep, double screenLength) {
+void BubbleBubbleRepulsionExp::forces(Bead* b1, Bead* b2, floatingpoint r1, floatingpoint r2,
+                                      floatingpoint kRep, floatingpoint screenLength) {
     
     //get dist
-    double dist = twoPointDistance(b1->coordinate, b2->coordinate);
+    floatingpoint dist = twoPointDistance(b1->coordinate, b2->coordinate);
     
-    double effd = dist - r1 - r2;
+    floatingpoint effd = dist - r1 - r2;
     
-    double R = -effd / screenLength;
-    double f0 = kRep * exp(R) / screenLength;
+    floatingpoint R = -effd / screenLength;
+    floatingpoint f0 = kRep * exp(R) / screenLength;
     
     //get norm
-    auto norm = normalizedVector(twoPointDirection(b1->coordinate, b2->coordinate));
+    auto norm = normalizeVector(twoPointDirection(b1->coordinate, b2->coordinate));
 
     b1->force[0] += - f0 *norm[0];
     b1->force[1] += - f0 *norm[1];
@@ -64,19 +64,19 @@ void BubbleBubbleRepulsionExp::forces(Bead* b1, Bead* b2, double r1, double r2,
     b2->force[2] += f0 *norm[2];
 }
 
-void BubbleBubbleRepulsionExp::forcesAux(Bead* b1, Bead* b2, double r1, double r2,
-                                         double kRep, double screenLength) {
+void BubbleBubbleRepulsionExp::forcesAux(Bead* b1, Bead* b2, floatingpoint r1, floatingpoint r2,
+                                         floatingpoint kRep, floatingpoint screenLength) {
     
     //get dist
-    double dist = twoPointDistance(b1->coordinate, b2->coordinate);
+    floatingpoint dist = twoPointDistance(b1->coordinate, b2->coordinate);
     
-    double effd = dist - r1 - r2;
+    floatingpoint effd = dist - r1 - r2;
     
-    double R = -effd / screenLength;
-    double f0 = kRep * exp(R) / screenLength;
+    floatingpoint R = -effd / screenLength;
+    floatingpoint f0 = kRep * exp(R) / screenLength;
     
     //get norm
-    auto norm = normalizedVector(twoPointDirection(b1->coordinate, b2->coordinate));
+    auto norm = normalizeVector(twoPointDirection(b1->coordinate, b2->coordinate));
     
     b1->force[0] += - f0 *norm[0];
     b1->force[1] += - f0 *norm[1];

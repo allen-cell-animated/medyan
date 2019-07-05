@@ -14,7 +14,7 @@
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 
-\title{Installation Guide for MEDYAN \textbf{v3.1}}
+\title{Installation Guide for MEDYAN \textbf{v4.0}}
 \author{Papoian Lab, University of Maryland}
 \date{}							% Activate to display a given date or no date
 
@@ -49,6 +49,7 @@ MEDYAN is a C++ program that can be compiled with the following C++11 compilers:
 \begin{itemize}
 \item Boost libraries 1.49 or above
 \item  GSL library
+\item UME\footnote{Valid only if using SIMD based pair-wise distance search protocol on an Intel chip set machine. Please refer to command line compilation macros for more details.} (patched version of UMS::SIMD. Included in the external directory).
 \end{itemize} 
 
 \subsection{Editing the Makefile}
@@ -86,8 +87,12 @@ The command line macros can be edited in the Makefile to turn on or off certain 
  \hline
   CHEMISTRY & Enable system chemistry. \\
   \hline
-  MECHANICS & Enable system mechanics. \\ 
-  \hline
+  Enable both\\
+  \vtop{\hbox{\strut MECHANICS}\hbox{\strut SERIAL}} & \vtop{\hbox{\strut Enable system mechanics.}\hbox{\strut Serial implementation of conjugate gradient}} \\ 
+  \hline\hline
+  
+    \vtop{\hbox{\strut Pair-wise distance protocols}\hbox{\strut NLORIGINAL}\hbox{\strut  HYBRID\_NLSTENCILLIST}\hbox{\strut SIMDBINDINGSEARCH}} & \vtop{\hbox{\strut Choose one of the macros}\hbox{\strut Optimized protocol similar to MEDYAN3.2}\hbox{\strut \textbf{New} optimized SIMD-free protocol}\hbox{\strut \textbf{New} SIMD based search protocol}} \\ 
+  \hline\hline
   DYNAMICRATES & Enable dynamic rate changing. This macro can only be specified if both CHEMISTRY and
   MECHANICS are enabled. \\
   \hline
@@ -105,13 +110,12 @@ The command line macros can be edited in the Makefile to turn on or off certain 
   \hline
      RSPECIES\_SIGNALING & Enable species callback signaling.\\
   \hline
-     DEBUGCONSTANTSEED & Remove stochasticity from simulations while debugging/testing.\\
+  DCHECKFORCES\_INF\_NAN & Checks if forces are NaN or Inf. Exists if forces become unreasonable.\\
   \hline
           PLOSFEEDBACK & Uses feedback models described in Plos 2016 paper.\\
   \hline
 \end{tabular}
 \end{table}
-   DEBUGCONSTANTSEED is best enbled to debug small systems without diffusion reactions. Might slow down the simulations considerably.
 \normalsize
 
 	

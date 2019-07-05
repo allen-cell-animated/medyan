@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -16,75 +16,82 @@
 #include "ForceFieldManager.h"
 #include "Composite.h"
 #include "Output.h"
-
-void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
-                              double MAXDIST, double LAMBDAMAX, bool steplimit)
-{
-    //number of steps
-    int N;
-    if(steplimit) {
-        int beadMaxStep = 5 * Bead::numBeads();
-        N = (beadMaxStep > _MINNUMSTEPS ? beadMaxStep : _MINNUMSTEPS);
-    }
-    else {
-        N = numeric_limits<int>::max();
-    }
-    
-    FFM.computeForces();
-    startMinimization();
-    
-    //compute first gradient
-    double curGrad = CGMethod::allFDotF();
-    
-    int numIter = 0;
-    while (/* Iteration criterion */  numIter < N &&
-           /* Gradient tolerance  */  maxF() > GRADTOL) {
-        numIter++;
-        double lambda, beta, newGrad;
-        
-        //find lambda by line search, move beads
-        lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX)
-                           : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX);
-        moveBeads(lambda); setBeads();
-        
-        //compute new forces
-        FFM.computeForcesAux();
-        
-        //compute direction
-        newGrad = CGMethod::allFADotFA();
-        
-        //Fletcher-Rieves update
-        beta = newGrad / curGrad;
-        
-        //shift gradient
-        shiftGradient(beta);
-        
-        //direction reset if not downhill or no progress made
-        if(CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad)) {
-            shiftGradient(0.0);
-            _safeMode = true;
+    void FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
+                                  floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit) {
+        //number of steps
+        int N;
+        if (steplimit) {
+            int beadMaxStep = 5 * Bead::numBeads();
+            N = (beadMaxStep > _MINNUMSTEPS ? beadMaxStep : _MINNUMSTEPS);
+        } else {
+            N = numeric_limits<int>::max();
         }
-        
-        curGrad = newGrad;
+
+        startMinimization();
+        FFM.vectorizeAllForceFields();
+
+        FFM.computeForces(coord, force);
+        FFM.copyForces(forceAux, force);
+
+        //compute first gradient
+        floatingpoint curGrad = CGMethod::allFDotF();
+
+        int numIter = 0;
+        while (/* Iteration criterion */  numIter < N &&
+                                          /* Gradient tolerance  */  maxF() > GRADTOL) {
+            numIter++;
+            floatingpoint lambda, beta, newGrad;
+
+            //temporary
+            bool *dummy = nullptr;
+            //find lambda by line search, move beads
+            lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy)
+                               : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy);
+            moveBeads(lambda);
+
+            //compute new forces
+            FFM.computeForces(coord, forceAux);
+
+            //compute direction
+            newGrad = CGMethod::allFADotFA();
+
+            //Fletcher-Rieves update
+            beta = newGrad / curGrad;
+
+            //shift gradient
+            shiftGradient(beta);
+
+            //direction reset if not downhill or no progress made
+            if (CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad)) {
+                shiftGradient(0.0);
+                _safeMode = true;
+            }
+
+            curGrad = newGrad;
+        }
+
+        if (numIter >= N) {
+            cout << endl;
+
+            cout << "WARNING: Did not minimize in N = " << N << " steps." << endl;
+            cout << "Maximum force in system = " << maxF() << endl;
+
+            cout << "Culprit ..." << endl;
+            auto b = maxBead();
+            if (b != nullptr) b->getParent()->printSelf();
+
+            cout << "System energy..." << endl;
+            FFM.computeEnergy(coord, force, 0.0, true);
+
+            cout << endl;
+        }
+
+        //final force calculation
+        FFM.computeForces(coord, force);
+        FFM.copyForces(forceAux, force);
+        FFM.computeLoadForces();
+        endMinimization();
+
+        FFM.cleanupAllForceFields();
     }
-    
-    if (numIter >= N) {
-        cout << endl;
-        
-        cout << "WARNING: Did not minimize in N = " << N << " steps." << endl;
-        cout << "Maximum force in system = " << maxF() << endl;
-        
-        cout << "Culprit ..." << endl;
-        auto b = maxBead();
-        if(b != nullptr) b->getParent()->printSelf();
-        
-        cout << "System energy..." << endl;
-        FFM.computeEnergy(0.0, true);
-        
-        cout << endl;
-    }
-    
-    //final force calculation
-    FFM.computeForces();
-    FFM.computeLoadForces();
-}
+

@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -15,9 +15,13 @@
 
 #include "Composite.h"
 
-ReactionBase::ReactionBase (float rate, bool isProtoCompartment)
-    : _rnode(nullptr), _parent(nullptr), _rate(rate), 
-      _rate_bare(rate), _isProtoCompartment(isProtoCompartment) {
+ReactionBase::ReactionBase (float rate, bool isProtoCompartment, floatingpoint volumeFrac, int rateVolumeDepExp)
+    : _rnode(nullptr), _parent(nullptr), _rate(rate),
+    _rate_bare(rate), _isProtoCompartment(isProtoCompartment),
+    _volumeFrac(volumeFrac), _rateVolumeDepExp(rateVolumeDepExp) {
+    
+    // Scale the rate
+    if(rateVolumeDepExp) setRateScaled(rate);
 #ifdef REACTION_SIGNALING
     _signal=nullptr;
 #endif

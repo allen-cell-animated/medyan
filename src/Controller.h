@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -21,6 +21,7 @@
 #include "GController.h"
 #include "CController.h"
 #include "DRController.h"
+#include "DissipationTracker.h"
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -54,30 +55,32 @@ private:
     
     vector<Output*> _outputs; ///< Vector of specified outputs
     
-    double _runTime;          ///< Total desired runtime for simulation
+    floatingpoint _runTime;          ///< Total desired runtime for simulation
 
-    double _snapshotTime;     ///< Desired time for each snapshot
+    floatingpoint _snapshotTime;     ///< Desired time for each snapshot
     
-    double _minimizationTime;  ///< Frequency of mechanical minimization
-    double _neighborListTime;  ///< Frequency of neighbor list updates
+    floatingpoint _minimizationTime;  ///< Frequency of mechanical minimization
+    floatingpoint _neighborListTime;  ///< Frequency of neighbor list updates
+    
+    DissipationTracker* _dt;   ///< dissipation tracking object
     
     //@{
     /// Same parameter set as timestep, but in terms of chemical
     /// reaction steps. Useful for small runs and debugging.
-    double _runSteps;
-    double _snapshotSteps;
+    floatingpoint _runSteps;
+    floatingpoint _snapshotSteps;
     
-    double _minimizationSteps;
-    double _neighborListSteps;
+    floatingpoint _minimizationSteps;
+    floatingpoint _neighborListSteps;
     ChemistryData _chemData;
     ChemistryAlgorithm _cAlgorithm;
-    vector<tuple<short, vector<double>, vector<double>>> fil;
-    tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
+    vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> fil;
+    tuple< vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> , vector<tuple<string, short, vector<vector<floatingpoint>>>> , vector<tuple<string, short, vector<floatingpoint>>> , vector<vector<floatingpoint>> > filaments;
     vector<Compartment*> activatecompartments;
     multimap<int,Compartment*> fCompmap;
     multimap<int,Compartment*> bCompmap;
     //@}
-    
+    floatingpoint bounds[2], bounds_prev[2];
     ///INITIALIZATION HELPER FUNCTIONS
     
     /// Set up an initial configuration of a network
@@ -92,7 +95,7 @@ private:
     ///RUNTIME HELPER FUNCTIONS
     
     /// Move the boundary based on the timestep
-    void moveBoundary(double deltaTau);
+    void moveBoundary(floatingpoint deltaTau);
     ///Activate/deactivate compartments based on the longest filament (along Xaxis).
     void activatedeactivateComp();
     void ControlfrontEndCompobsolete();
@@ -118,17 +121,29 @@ private:
 
     ///Helper function to pin filaments near the boundary
     void pinBoundaryFilaments();
-    //Qin
     void pinLowerBoundaryFilaments();
     
 public:
+    floatingpoint chemistrytime = 0.0;
+    floatingpoint minimizationtime = 0.0;
+    floatingpoint nltime = 0.0;
+    floatingpoint nl2time = 0.0;
+    floatingpoint bmgrvectime = 0.0;
+    floatingpoint bmgrtime = 0.0;
+    floatingpoint rxnratetime = 0.0;
+    floatingpoint updateposition = 0.0;
+    floatingpoint outputtime =0.0;
+    floatingpoint specialtime = 0.0;
+    floatingpoint updatepositioncylinder = 0.0;
+    floatingpoint updatepositionmovable=0.0;
+
     Controller(SubSystem* s);
     ~Controller() {};
     
     ///Initialize the system, given an input and output directory
     void initialize(string inputFile,
                     string inputDirectory,
-                    string outputDirectory);
+                    string outputDirectory, int nthreads);
     ///Run the simulation
     void run();
 };

@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -27,20 +27,24 @@ class BoundaryInteractions {
     
 friend class BoundaryFF;
     
-protected:
+public:
     //@{
     /// In the case of an error
-    BoundaryElement* _boundaryElementCulprit = nullptr;
-    Component* _otherCulprit = nullptr;
+    static BoundaryElement* _boundaryElementCulprit;
+    static Component* _otherCulprit;
     //@}
+
+    virtual ~BoundaryInteractions() = default;
+
+    ///Vectorize the bead interactions for minimization
+    virtual void vectorize() = 0;
+    ///Deallocate the vectorized data
+    virtual void deallocate() = 0;
     
-public:
-    /// Compute energy of this interaction
-    virtual double computeEnergy(double d) = 0;
-    /// Compute forces of this interaction
-    virtual void computeForces() = 0;
-    /// Compute auxiliary forces of this interaction
-    virtual void computeForcesAux() = 0;
+    /// Compute the energy of this interaction
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) = 0;
+    /// Compute the forces of this interaction
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f) = 0;
     
     /// Compute the load forces on beads from this interaction
     virtual void computeLoadForces() = 0;

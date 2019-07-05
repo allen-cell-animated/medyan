@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -37,13 +37,13 @@
 class BrownianRatchet : public FilamentRateChanger {
     
 private:
-    double _x; ///< The characteristic length for this function
-    const double _max_f = 100; ///< 100pN ceiling
+    floatingpoint _x; ///< The characteristic length for this function
+    const floatingpoint _max_f = 100; ///< 100pN ceiling
     
 public:
-    BrownianRatchet(double charLength) : _x(charLength) {}
+    BrownianRatchet(floatingpoint charLength) : _x(charLength) {}
     
-    virtual float changeRate(float bareRate, double force);
+    virtual float changeRate(float bareRate, floatingpoint force);
 };
 
 ///A catch-slip bond implementation of the LinkerRateChanger.
@@ -60,21 +60,21 @@ public:
 class LinkerCatchSlip : public LinkerRateChanger {
     
 private:
-    double _a1; ///< catch bond amplitude
-    double _a2; ///< slip bond amplitude
-    double _x1; ///< catch bond characteristic length
-    double _x2; ///< slip bond characteristic length
+    floatingpoint _a1; ///< catch bond amplitude
+    floatingpoint _a2; ///< slip bond amplitude
+    floatingpoint _x1; ///< catch bond characteristic length
+    floatingpoint _x2; ///< slip bond characteristic length
     
 public:
     LinkerCatchSlip(short linkerType,
-                    double amplitude1, double amplitude2,
-                    double charLength1, double charLength2)
+                    floatingpoint amplitude1, floatingpoint amplitude2,
+                    floatingpoint charLength1, floatingpoint charLength2)
     
     : LinkerRateChanger(linkerType),
     _a1(amplitude1),  _a2(amplitude2),
     _x1(charLength1), _x2(charLength2) {}
     
-    virtual float changeRate(float bareRate, double force);
+    virtual float changeRate(float bareRate, floatingpoint force);
 };
 
 ///A slip bond implementation of the LinkerRateChanger.
@@ -90,31 +90,30 @@ public:
 class LinkerSlip : public LinkerRateChanger {
     
 private:
-    double _x; ///< The characteristic length for this function
+    floatingpoint _x; ///< The characteristic length for this function
     
 public:
-    LinkerSlip(short linkerType, double charLength)
+    LinkerSlip(short linkerType, floatingpoint charLength)
     
     : LinkerRateChanger(linkerType), _x(charLength) {}
     
-    virtual float changeRate(float bareRate, double force);
+    virtual float changeRate(float bareRate, floatingpoint force);
 };
 
-// Qin -------------------------
 ///A slip bond implementation of the BrancherRateChanger.
 ///The same as crosslinker so far, details is being explored
 
 class BranchSlip : public BranchRateChanger {
     
 private:
-    double _x; ///< The characteristic length for this function
+    floatingpoint _x; ///< The characteristic length for this function
     
 public:
-    BranchSlip(short branchType, double charLength)
+    BranchSlip(short branchType, floatingpoint charLength)
     
     : BranchRateChanger(branchType), _x(charLength) {}
     
-    virtual float changeRate(float bareRate, double force);
+    virtual float changeRate(float bareRate, floatingpoint force);
 };
 
 ///A catch bond implementation of the MotorRateChanger
@@ -160,29 +159,28 @@ public:
 class MotorCatch : public MotorRateChanger {
     
 private:
-    double _F0;  ///< characteristic force
+    floatingpoint _F0;  ///< characteristic force
     
     //@{
     ///Constant parameters
-    double _dutyRatio;
-    double _beta;
+    floatingpoint _dutyRatio;
+    floatingpoint _beta;
     #ifdef PLOSFEEDBACK
-    double _gamma = 0.05;
+    floatingpoint _gamma = 0.05;
     #endif
     //@}
-
     
 public:
-    MotorCatch(short motorType, double charForce, double dutyRatio, double beta)
+    MotorCatch(short motorType, floatingpoint charForce, floatingpoint dutyRatio, floatingpoint beta)
     
     : MotorRateChanger(motorType), _F0(charForce), _dutyRatio(dutyRatio), _beta(beta) {}
     
     /// Set the number of bound heads based on force
     virtual float numBoundHeads(float onRate, float offRate,
-                                double force, int numHeads);
+                                floatingpoint force, int numHeads);
     
     virtual float changeRate(float onRate, float offRate,
-                             double numHeads, double force);
+                             floatingpoint numHeads, floatingpoint force);
 };
 
 ///A low duty catch bond implementation of the MotorRateChanger
@@ -193,7 +191,7 @@ public:
 class LowDutyMotorCatch : public MotorCatch {
     
 public:
-    LowDutyMotorCatch(short motorType, double charForce)
+    LowDutyMotorCatch(short motorType, floatingpoint charForce)
     
     : MotorCatch(motorType, charForce, 0.1, 2.0){}
 };
@@ -206,7 +204,7 @@ public:
 class HighDutyMotorCatch : public MotorCatch {
     
 public:
-    HighDutyMotorCatch(short motorType, double charForce)
+    HighDutyMotorCatch(short motorType, floatingpoint charForce)
     
     : MotorCatch(motorType, charForce, 0.33, 1.0){}
 };
@@ -243,38 +241,38 @@ public:
 class MotorStall : public MotorRateChanger  {
     
 private:
-    double _F0;            ///< characteristic force
+    floatingpoint _F0;            ///< characteristic force
     float _stepFrac = 1.0; ///< step size of a single head relative to sim
     
     
     //@{
     ///Constant parameters
-    double _dutyRatio;
-    double _alpha;
+    floatingpoint _dutyRatio;
+    floatingpoint _alpha;
     //@}
     
     
 public:
-    MotorStall(short motorType, short filamentType, double charForce,
-               double dutyRatio, double alpha)
+    MotorStall(short motorType, short filamentType, floatingpoint charForce,
+               floatingpoint dutyRatio, floatingpoint alpha)
     
     : MotorRateChanger(motorType), _F0(charForce),
     _dutyRatio(dutyRatio), _alpha(alpha) {
         
         //calculate rate based on step fraction
-        double d_step = SysParams::Chemistry().motorStepSize[_motorType];
+        floatingpoint d_step = SysParams::Chemistry().motorStepSize[_motorType];
         
-        double d_total = (double)SysParams::Geometry().cylinderSize[filamentType] /
+        floatingpoint d_total = (floatingpoint)SysParams::Geometry().cylinderSize[filamentType] /
         SysParams::Chemistry().numBindingSites[filamentType];
         
         _stepFrac = d_step / d_total;
     }
     
     virtual float numBoundHeads(float onRate, float offRate,
-                                double force, int numHeads) {return 0.0;}
+                                floatingpoint force, int numHeads) {return 0.0;}
     
     virtual float changeRate(float onRate, float offRate,
-                             double numHeads, double force);
+                             floatingpoint numHeads, floatingpoint force);
 };
 
 ///A low duty stall force implementation of the MotorRateChanger.
@@ -285,7 +283,7 @@ class LowDutyMotorStall : public MotorStall {
     
     
 public:
-    LowDutyMotorStall(short motorType, short filamentType, double charForce)
+    LowDutyMotorStall(short motorType, short filamentType, floatingpoint charForce)
     
     : MotorStall(motorType, filamentType, charForce, 0.1, 0.2){}
 };
@@ -298,7 +296,7 @@ class HighDutyMotorStall : public MotorStall {
     
     
 public:
-    HighDutyMotorStall(short motorType, short filamentType, double charForce)
+    HighDutyMotorStall(short motorType, short filamentType, floatingpoint charForce)
     
     : MotorStall(motorType, filamentType, charForce, 0.33, 0.3){}
 };

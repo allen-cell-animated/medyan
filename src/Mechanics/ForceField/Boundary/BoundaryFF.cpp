@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -33,14 +33,15 @@ BoundaryFF::BoundaryFF (string type) {
     if (type == "REPULSIONEXP") {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>());
+
         _boundaryInteractionVector.emplace_back(
         new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
     }
     else if(type == "REPULSIONEXPIN") {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>());
-        _boundaryInteractionVector.emplace_back(
-        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
+/*        _boundaryInteractionVector.emplace_back(
+        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());*/
     }
     else {
         cout << "Boundary FF not recognized. Exiting." << endl;
@@ -52,12 +53,25 @@ BoundaryFF::BoundaryFF (string type) {
         new BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>());
     }
     
-    //Qin, don't change it for now
+    //don't change it for now
     if(SysParams::Mechanics().pinLowerBoundaryFilaments) {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>());
     }
 }
+
+void BoundaryFF::vectorize() {
+    
+    for (auto &interaction : _boundaryInteractionVector)
+        interaction->vectorize();
+}
+
+void BoundaryFF::cleanup() {
+    
+    for (auto &interaction : _boundaryInteractionVector)
+        interaction->deallocate();
+}
+
 
 void BoundaryFF::whoIsCulprit() {
     
@@ -78,14 +92,14 @@ void BoundaryFF::whoIsCulprit() {
 }
 
 
-double BoundaryFF::computeEnergy(double d) {
+floatingpoint BoundaryFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
     
-    double U= 0.0;
-    double U_i=0.0;
+    floatingpoint U= 0.0;
+    floatingpoint U_i=0.0;
     
     for (auto &interaction : _boundaryInteractionVector) {
         
-        U_i = interaction->computeEnergy(d);
+        U_i = interaction->computeEnergy(coord, f, d);
         
         if(U_i <= -1) {
             //set culprit and return
@@ -94,22 +108,21 @@ double BoundaryFF::computeEnergy(double d) {
         }
         else U += U_i;
         
+        
     }
+    
+    
     return U;
 }
 
-void BoundaryFF::computeForces() {
+void BoundaryFF::computeForces(floatingpoint *coord, floatingpoint *f) {
 
-    for (auto &interaction : _boundaryInteractionVector)
-        interaction->computeForces();
-}
+    for (auto &interaction : _boundaryInteractionVector){
+        interaction->computeForces(coord, f);
 
-void BoundaryFF::computeForcesAux() {
+    }
     
-    for (auto &interaction : _boundaryInteractionVector)
-        interaction->computeForcesAux();
 }
-
 
 void BoundaryFF::computeLoadForces() {
     

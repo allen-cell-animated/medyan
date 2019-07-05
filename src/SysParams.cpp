@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -13,6 +13,14 @@
 
 #include "SysParams.h"
 bool SysParams::RUNSTATE=true;
+bool SysParams::INITIALIZEDSTATUS=false;
+bool SysParams::DURINGCHEMISTRY=false;
+int SysParams::numthreads=0;
+int SysParams::exvolcounter[3] = {0,0,0};
+long long SysParams::exvolcounterz[3] = {0,0,0};
+#ifdef NLSTENCILLIST
+short SysParams::numcylcylNL = 0;
+#endif
 vector<float> SysParams::MUBBareRate ={};
 vector<float> SysParams::LUBBareRate ={};
 vector<float> SysParams::BUBBareRate ={};
@@ -33,7 +41,7 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         return false;
     }
     if(chem.speciesDiffusing.size() != CParams.numDiffusingSpecies) {
-        
+
         cout << "Number of diffusing species in chemistry input does not "
              << "match the system file. Check these parameters. Exiting."
         <<endl;
@@ -501,5 +509,6 @@ ChemParams   SysParams::CParams;
 GeoParams    SysParams::GParams;
 BoundParams  SysParams::BParams;
 DyRateParams SysParams::DRParams;
+
 
 

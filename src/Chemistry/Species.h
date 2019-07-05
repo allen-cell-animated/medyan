@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -363,7 +363,7 @@ public:
     /// their names are equal.
     friend bool operator ==(const Species& a, const Species& b)
     {
-        if (a.getMolecule() != b.getMolecule() or typeid(a) != typeid(b))
+        if (a.getMolecule() != b.getMolecule() || typeid(a) != typeid(b))
             return false;
         return true;
     }
@@ -695,11 +695,15 @@ public:
         return new SpeciesMotor(*this);
     }
     
+    
     /// Return the full name of this Species in a string format (e.g. "Myosin{Motor}"
     virtual string getFullName() const {return getName() + "{Motor}";}
     
     /// Default destructor
     ~SpeciesMotor () noexcept {};
+    
+    CBound* getCBoundd() {return _cBound;}
+    
 };
 
 /// Used for species that can be bound to a Filament.

@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -23,19 +23,26 @@
 using namespace mathfunc;
 
 Database<Bead*> Bead::_beads;
-Database<Bead*> Bead::_pinnedBeads;
+std::vector<Bead*> Bead::_pinnedBeads;
+//static vars needed to vectorize on-the-fly
+int Bead::maxbindex = 0;
+int Bead::vectormaxsize = 0;
+int Bead::Nbeads = 0;
+bool Bead::triggercylindervectorization = false;
+vector<int> Bead::removedbindex;//vector of bead indices that were once alloted to other
+// beads but are free to be reallocated now.
 
-Bead::Bead (vector<double> v, Composite* parent, int position)
-// Qin add brforce, pinforce
+Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
+//add brforce, pinforce
     : Trackable(true),
-      coordinate(v), coordinateP(v), coordinateB(v),
+      coordinate(v), coordinateP(v),
       force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0),
       _position(position), _birthTime(tau()),_ID(_beads.getID()) {
     
     parent->addChild(unique_ptr<Component>(this));
           
-    loadForcesP = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0);
-    loadForcesM = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0);
+    loadForcesP = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
+    loadForcesM = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
     
     //Find compartment
     try {_compartment = GController::getCompartment(v);}
@@ -50,16 +57,63 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
         
         exit(EXIT_FAILURE);
     }
-          
+
+    //revectorize if needed
+    revectorizeifneeded();
+	//set bIndex
+/*	_dbIndex = maxbindex;
+	maxbindex++;*/
+
+	// if beads were removed earlier, allot one of the available bead indices.
+	//Commented out as it might deem dbIndex race conditions i.e. if any super structures
+	// are created. More relevant for cylinders but am extending the protocol to beads
+	// too just to be consistent.
+	//set bindex based on maxbindex if there were no beads removed.
+	if(removedbindex.size() == 0)
+	{_dbIndex = maxbindex;
+		maxbindex++;
+	}
+    else{
+        _dbIndex = removedbindex.at(0);
+        removedbindex.erase(removedbindex.begin());
+    }
+
+    Nbeads = _beads.getElements().size();
+
+    //copy bead coordiantes to the appropriate spot in the coord vector.
+    copycoordinatestovector();
 }
 
 Bead::Bead(Composite* parent, int position)
-// Qin add brforce, pinforce
+//add brforce, pinforce
     : Trackable(true),
-    coordinate(3, 0), coordinateP(3, 0), coordinateB(3, 0),
+    coordinate(3, 0), coordinateP(3, 0),
     force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0), _position(position) {
     
     parent->addChild(unique_ptr<Component>(this));
+    //check if you need to revectorize.
+    revectorizeifneeded();
+    //set bIndex
+/*	_dbIndex = maxbindex;
+	maxbindex++;*/
+
+    // if beads were removed earlier, allot one of the available bead indices.
+    //Commented out as it might deem dbIndex race conditions i.e. if any super structures
+    // are created. More relevant for cylinders but am extending the protocol to beads
+    // too just to be consistent.
+	//set bindex based on maxbindex if there were no beads removed.
+	if(removedbindex.size() == 0)
+	{_dbIndex = maxbindex;
+		maxbindex++;
+	}
+    else{
+        _dbIndex = removedbindex.at(0);
+        removedbindex.erase(removedbindex.begin());
+    }
+
+    Nbeads = _beads.getElements().size();
+    //copy bead coordiantes to the appropriate spot in the coord vector.
+    copycoordinatestovector();
 }
 
 void Bead::updatePosition() {
@@ -86,18 +140,18 @@ void Bead::printSelf() {
     
     cout << "Bead: ptr = " << this << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
-    cout << "Previous coordinates in minimization = " << coordinateP[0] << ", " << coordinateP[1] << ", " << coordinateP[2] << endl;
-    cout << "Previous coordinates before minimization = " << coordinateB[0] << ", " << coordinateB[1] << ", " << coordinateB[2] << endl;
+    cout << "Previous coordinates before minimization = " << coordinateP[0] << ", " << coordinateP[1] << ", " << coordinateP[2] << endl;
     cout << "Forces = " << force[0] << ", " << force[1] << ", " << force[2] << endl;
     cout << "Auxiliary forces = " << forceAux[0] << ", " << forceAux[1] << ", " << forceAux[2] << endl;
 
     cout << "Position on structure = " << _position << endl;
     cout << "Birth time = " << _birthTime << endl;
     
+    
     cout << endl;
 }
 
-double Bead::getLoadForcesP() {
+floatingpoint Bead::getLoadForcesP() {
     
     if (lfip < 0)
         return loadForcesP[0];
@@ -108,7 +162,7 @@ double Bead::getLoadForcesP() {
     else return loadForcesP[lfip];
 }
 
-double Bead::getLoadForcesM() {
+floatingpoint Bead::getLoadForcesM() {
     
     if (lfim < 0)
         return loadForcesM[0];

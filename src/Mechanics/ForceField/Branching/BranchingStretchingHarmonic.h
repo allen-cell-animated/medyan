@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -24,15 +24,35 @@ class Bead;
 class BranchingStretchingHarmonic {
     
 public:
-    double energy(Bead*, Bead*, Bead*,
-                  double position, double kStretch, double eqLength);
-    double energy(Bead*, Bead*, Bead*,
-                  double position, double kStretch, double eqLength, double d);
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                  floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos);
     
-    double forces(Bead*, Bead*, Bead*,
-                double position, double kStretch, double eqLength);
-    void forcesAux(Bead*, Bead*, Bead*,
-                   double position, double kStretch, double eqLength);
+    floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
+                  floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, floatingpoint d);
+
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, floatingpoint
+                *stretchforce);
+#ifdef CUDAACCL
+    void optimalblocksnthreads(int nint);
+
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, int *params);
+
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, floatingpoint *z, int
+            *params);
+
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, int *params);
+    void deallocate();
+    static void checkforculprit();
+    floatingpoint *gU_i;
+    floatingpoint *gU_sum;
+    char *gFF, *ginteraction;
+    vector<int> blocksnthreadse;
+    vector<int> blocksnthreadsez;
+    vector<int> blocksnthreadsf;
+    vector<int> bntaddvec2;
+    cudaStream_t stream = NULL;
+#endif
     
 };
 

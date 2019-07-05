@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -40,10 +40,12 @@ public:
         _neighborList = new BubbleBubbleNL(SysParams::Mechanics().BubbleCutoff);
     }
     
-    virtual double computeEnergy(double d);
+    virtual void vectorize();
+    virtual void deallocate();
     
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+    //virtual void computeForcesAux(double *coord, double *f);
     
     virtual void computeLoadForces() {return;}
     

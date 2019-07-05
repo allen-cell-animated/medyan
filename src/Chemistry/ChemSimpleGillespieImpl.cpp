@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -23,20 +23,18 @@ ChemSimpleGillespieImpl::~ChemSimpleGillespieImpl() noexcept {
     _reactions.clear();
 }
 
-double ChemSimpleGillespieImpl::generateTau(double a){
-    exponential_distribution<double>::param_type pm(a);
+floatingpoint ChemSimpleGillespieImpl::generateTau(floatingpoint a){
+    exponential_distribution<floatingpoint>::param_type pm(a);
     _exp_distr.param(pm);
-    Rand::counter++;
     return _exp_distr(Rand::eng);
 }
 
-double ChemSimpleGillespieImpl::generateUniform(){
-    Rand::counter++;
+floatingpoint ChemSimpleGillespieImpl::generateUniform(){
     return _uniform_distr(Rand::eng);
 }
 
-double ChemSimpleGillespieImpl::computeTotalA(){
-    double rates_sum = 0;
+floatingpoint ChemSimpleGillespieImpl::computeTotalA(){
+    floatingpoint rates_sum = 0;
     for (auto &r : _reactions){
         rates_sum+=r->computePropensity();
     }
@@ -45,19 +43,19 @@ double ChemSimpleGillespieImpl::computeTotalA(){
 
 bool ChemSimpleGillespieImpl::makeStep() {
     
-    double a_total = computeTotalA();
+    floatingpoint a_total = computeTotalA();
     
     // this means that the network has come to a halt
     if(a_total<1e-15)
         return false;
 
-    double tau = generateTau(a_total);
+    floatingpoint tau = generateTau(a_total);
     _t+=tau;
     syncGlobalTime();
     
     //Gillespie algorithm's second step: finding which reaction happened;
-    double mu = a_total*generateUniform();
-    double rates_sum = 0;
+    floatingpoint mu = a_total*generateUniform();
+    floatingpoint rates_sum = 0;
     ReactionBase* r_selected = nullptr;
     for (auto &r : _reactions){
         

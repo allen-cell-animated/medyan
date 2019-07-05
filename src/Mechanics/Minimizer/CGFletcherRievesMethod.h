@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -21,12 +21,10 @@
 #include "common.h"
 
 #include "CGMethod.h"
-
 /// The Fletcher-Rieves method for conjugate gradient minimization
-class FletcherRieves : public CGMethod {
-public:
-    virtual void minimize(ForceFieldManager &FFM, double GRADTOL,
-                          double MAXDIST, double LAMBDAMAX, bool steplimit);
-};
-
+    class FletcherRieves : public CGMethod {
+    public:
+        virtual void minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
+                              floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit);
+    };
 #endif

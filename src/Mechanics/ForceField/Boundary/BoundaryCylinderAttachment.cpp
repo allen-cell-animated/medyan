@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -20,57 +20,56 @@
 #include "Bead.h"
 
 template <class BAttachmentInteractionType>
-double BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEnergy(double d) {
+void BoundaryCylinderAttachment<BAttachmentInteractionType>::vectorize() {
     
-    double U = 0.0;
-    double U_i=0.0;
+    //first coord in beadset is bead, then pin position
+    beadSet = new int[Bead::getPinnedBeads().size()];
+    kattr = new floatingpoint[Bead::getPinnedBeads().size()];
     
-    
+    int i = 0;
     for(auto b : Bead::getPinnedBeads()) {
-    
-        double kAttr = SysParams::Mechanics().pinK;
-            
-        if (d == 0.0)
-            U_i =  _FFType.energy(b, kAttr);
-        else
-            U_i =  _FFType.energy(b, kAttr, d);
-            
-        if(fabs(U_i) == numeric_limits<double>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-                
-            //set culprits and return
-            _otherCulprit = b;
-                
-            return -1;
-        }
-        else
-        U += U_i;
+
+        beadSet[n * i] = b->_dbIndex;
+        kattr[n * i] = SysParams::Mechanics().pinK;
+
+        pins[3 * (n * i)] = b->getPinPosition()[0];
+        pins[3 * (n * i) + 1] = b->getPinPosition()[1];
+        pins[3 * (n * i) + 2] = b->getPinPosition()[2];
+
+        i++;
     }
-    
+}
+
+template <class BAttachmentInteractionType>
+void BoundaryCylinderAttachment<BAttachmentInteractionType>::deallocate() {
+
+    delete beadSet;
+    delete kattr;
+    delete pins;
+}
+
+template <class BAttachmentInteractionType>
+floatingpoint BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+
+
+    floatingpoint U;
+
+    if (d == 0.0)
+        U =  _FFType.energy(coord, f, beadSet, kattr, pins);
+    else
+        U =  _FFType.energy(coord, f, beadSet, kattr, pins, d);
+
     return U;
 }
 
 template <class BAttachmentInteractionType>
-void BoundaryCylinderAttachment<BAttachmentInteractionType>::computeForces() {
-    //Qin
-    for(auto b : Bead::getPinnedBeads()) {
-        double kAttr = SysParams::Mechanics().pinK;
-        _FFType.forces(b, kAttr);
-    }
-}
+void BoundaryCylinderAttachment<BAttachmentInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
 
-
-template <class BAttachmentInteractionType>
-void BoundaryCylinderAttachment<BAttachmentInteractionType>::computeForcesAux() {
-    
-    for(auto b : Bead::getPinnedBeads()) {
-        
-        double kAttr = SysParams::Mechanics().pinK;
-        _FFType.forcesAux(b, kAttr);
-    }
+    _FFType.forces(coord, f, beadSet, kattr, pins);
 }
 
 ///Template specializations
-template double BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeEnergy(double d);
-template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeForces();
-template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeForcesAux();
+template floatingpoint BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
+template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::vectorize();
+template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::deallocate();

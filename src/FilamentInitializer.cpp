@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -28,47 +28,48 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
                                                               int filamentType,
                                                               int lenFilaments) {
     
-    vector<tuple<short, vector<double>, vector<double>>> filaments;
-    vector<tuple<string, short, vector<vector<double>>>> dummy;
-    vector<tuple<string, short, vector<double>>> dummy2;
-    vector<vector<double>> dummy3;
+    vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> filaments;
+    vector<tuple<string, short, vector<vector<floatingpoint>>>> dummy;
+    vector<tuple<string, short, vector<floatingpoint>>> dummy2;
+    vector<vector<floatingpoint>> dummy3;
     //Create random distribution of filaments
     int filamentCounter = 0;
-    
-    //Qin, if boundary shape is cylinder, create filament in the center of system and vertical to Z axis
+
+    //if boundary shape is cylinder, create filament in the center of system and perpendicular to Z axis
     if(b->getShape() == BoundaryShape::Cylinder) {
-        
+
         while (filamentCounter < numFilaments) {
 
             //Create a random filament vector one cylinder long
-            vector<double> firstPoint = GController::getRandomCenterCoordinates();
-            
-            double directionX = Rand::randDouble(-1,1);
-            double directionY = Rand::randDouble(-1,1);
+            vector<floatingpoint> firstPoint = GController::getRandomCenterCoordinates();
 
-            double directionZ = 0;
-            vector<double> direction = normalizedVector({directionX, directionY, directionZ});
-            
-            vector<double> secondPoint =
-                nextPointProjection(firstPoint,(double)lenFilaments *
+            floatingpoint directionX = Rand::randfloatingpoint(-1,1);
+            floatingpoint directionY = Rand::randfloatingpoint(-1,1);
+
+            floatingpoint directionZ = 0;
+            vector<floatingpoint> direction = normalizeVector({directionX, directionY, directionZ});
+
+            vector<floatingpoint> secondPoint =
+                nextPointProjection(firstPoint,(floatingpoint)lenFilaments *
                 SysParams::Geometry().cylinderSize[filamentType] - 0.01, direction);
-            
+
             //check if these points are outside bubbles
             bool inBubble = false;
             for(auto bb : Bubble::getBubbles()) {
-                
-                if((twoPointDistance(bb->getBead()->coordinate, firstPoint) < bb->getRadius()) ||
-                   (twoPointDistance(bb->getBead()->coordinate, secondPoint) < bb->getRadius()))
+                auto radius = bb->getRadius();
+
+                if((twoPointDistancesquared(bb->getBead()->coordinate, firstPoint) < (radius * radius)) ||
+                   (twoPointDistancesquared(bb->getBead()->coordinate, secondPoint) < (radius * radius)))
                     inBubble = true;
             }
-            
+
             //check if within cutoff of boundary
             bool outsideCutoff = false;
             if(b->distance(firstPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0 ||
                b->distance(secondPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0) {
                 outsideCutoff = true;
             }
-            
+
             if(b->within(firstPoint) && b->within(secondPoint) && !inBubble && !outsideCutoff) {
                 filaments.emplace_back(filamentType, firstPoint, secondPoint);
                 filamentCounter++;
@@ -76,80 +77,81 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
         }
         return make_tuple(filaments, dummy, dummy2, dummy3);
     }
-    
-    //Qin
+
     else{
         while (filamentCounter < numFilaments) {
-            
+
             //Create a random filament vector one cylinder long
-            vector<double> firstPoint = GController::getRandomCoordinates();
-            
-            double directionX = Rand::randDouble(-1,1);
-            double directionY = Rand::randDouble(-1,1);
-            double directionZ = Rand::randDouble(-1,1);
-            vector<double> direction = normalizedVector({directionX, directionY, directionZ});
-            
-            vector<double> secondPoint =
-            nextPointProjection(firstPoint,(double)lenFilaments *
-                                SysParams::Geometry().cylinderSize[filamentType] - 0.01, direction);
-            
+            vector<floatingpoint> firstPoint = GController::getRandomCoordinates();
+
+            floatingpoint directionX = Rand::randfloatingpoint(-1,1);
+            floatingpoint directionY = Rand::randfloatingpoint(-1,1);
+            floatingpoint directionZ = Rand::randfloatingpoint(-1,1);
+            vector<floatingpoint> direction = normalizeVector({directionX, directionY, directionZ});
+
+            vector<floatingpoint> secondPoint =
+            nextPointProjection(firstPoint,(floatingpoint)lenFilaments *
+                                SysParams::Geometry().cylinderSize[filamentType] - 0.01,
+                                direction);
+
             //check if these points are outside bubbles
             bool inBubble = false;
             for(auto bb : Bubble::getBubbles()) {
+                auto radius = bb->getRadius();
                 
-                if((twoPointDistance(bb->getBead()->coordinate, firstPoint) < bb->getRadius()) ||
-                   (twoPointDistance(bb->getBead()->coordinate, secondPoint) < bb->getRadius()))
+                if((twoPointDistancesquared(bb->getBead()->coordinate, firstPoint) < (radius * radius)) ||
+                   (twoPointDistancesquared(bb->getBead()->coordinate, secondPoint) < (radius * radius)))
                     inBubble = true;
             }
-            
+
             //check if within cutoff of boundary
             bool outsideCutoff = false;
             if(b->distance(firstPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0 ||
                b->distance(secondPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0) {
                 outsideCutoff = true;
             }
-            
+
             if(b->within(firstPoint) && b->within(secondPoint) && !inBubble && !outsideCutoff) {
                 filaments.emplace_back(filamentType, firstPoint, secondPoint);
                 filamentCounter++;
             }
         }
         return make_tuple(filaments, dummy, dummy2, dummy3);
-        
+
     }
-    
-    
-    
+
+
+
 }
 FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilaments,
                                                     int filamentType,
                                                     int lenFilaments) {
 
     ///SET THIS SPACING PARAMETER
-    double maxSpacing = 50;
+    floatingpoint maxSpacing = 50;
     
-    vector<tuple<short, vector<double>, vector<double>>> filaments;
-    vector<tuple<string, short, vector<vector<double>>>> dummy;
-    vector<tuple<string, short, vector<double>>> dummy2;
-    vector<vector<double>> dummy3;
+    vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> filaments;
+    vector<tuple<string, short, vector<vector<floatingpoint>>>> dummy;
+    vector<tuple<string, short, vector<floatingpoint>>> dummy2;
+    vector<vector<floatingpoint>> dummy3;
     
     ///First filament as normal
     //Create a random filament vector one cylinder long
-    vector<double> firstPoint = {500,1000,1000};
+    vector<floatingpoint> firstPoint = {500,1000,1000};
     
-    vector<double> direction = normalizedVector({1, 0, 0});
+    vector<floatingpoint> direction = normalizeVector({1, 0, 0});
     
-    vector<double> secondPoint =
-    nextPointProjection(firstPoint,(double)lenFilaments *
+    vector<floatingpoint> secondPoint =
+    nextPointProjection(firstPoint,(floatingpoint)lenFilaments *
                         SysParams::Geometry().cylinderSize[filamentType] - 0.01, direction);
     
-    double len = twoPointDistance(firstPoint, secondPoint);
+    floatingpoint len = twoPointDistance(firstPoint, secondPoint);
     filaments.emplace_back(filamentType, firstPoint, secondPoint);
     
-    vector<double> prevFirstPoint = firstPoint;
-    vector<double> prevSecondPoint = secondPoint;
+    vector<floatingpoint> prevFirstPoint = firstPoint;
+    vector<floatingpoint> prevSecondPoint = secondPoint;
     
-    double safeDist = SysParams::Boundaries().BoundaryCutoff;
+    floatingpoint safeDist = SysParams::Boundaries().BoundaryCutoff;
     
     ///now create properly distanced network
     int filamentCounter = 1;
@@ -158,27 +160,27 @@ FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilament
         ///pick a random distance from a random point on the chain
         direction = twoPointDirection(firstPoint, secondPoint);
         len = twoPointDistance(firstPoint, secondPoint);
-        double randomSeg = Rand::randDouble(0, len);
+        floatingpoint randomSeg = Rand::randfloatingpoint(0, len);
         
-        vector<double> randomPoint = nextPointProjection(firstPoint, randomSeg, direction);
+        vector<floatingpoint> randomPoint = nextPointProjection(firstPoint, randomSeg, direction);
         
         //now pick another random point which is within a certain distance away
-        double directionX = Rand::randDouble(-1,1);
-        double directionY = Rand::randDouble(-1,1);
-        double directionZ = Rand::randDouble(-1,1);
-        vector<double> randDirection = normalizedVector({directionX, directionY, directionZ});
+        floatingpoint directionX = Rand::randfloatingpoint(-1,1);
+        floatingpoint directionY = Rand::randfloatingpoint(-1,1);
+        floatingpoint directionZ = Rand::randfloatingpoint(-1,1);
+        vector<floatingpoint> randDirection = normalizeVector({directionX, directionY, directionZ});
         
-        double randomDist = Rand::randDouble(0, maxSpacing);
-        vector<double> nextRandomPoint = nextPointProjection(randomPoint, randomDist, randDirection);
+        floatingpoint randomDist = Rand::randfloatingpoint(0, maxSpacing);
+        vector<floatingpoint> nextRandomPoint = nextPointProjection(randomPoint, randomDist, randDirection);
         
         //now pick another random direction for the next filament creation
-        directionX = Rand::randDouble(-1,1);
-        directionY = Rand::randDouble(-1,1);
-        directionZ = Rand::randDouble(-1,1);
-        randDirection = normalizedVector({directionX, directionY, directionZ});
+        directionX = Rand::randfloatingpoint(-1,1);
+        directionY = Rand::randfloatingpoint(-1,1);
+        directionZ = Rand::randfloatingpoint(-1,1);
+        randDirection = normalizeVector({directionX, directionY, directionZ});
     
         //random length spacing for new filament
-        double randomLengthSpacing = Rand::randDouble(0, (double)lenFilaments *
+        floatingpoint randomLengthSpacing = Rand::randfloatingpoint(0, (floatingpoint)lenFilaments *
                                      SysParams::Geometry().cylinderSize[filamentType] - 0.01);
         
         firstPoint = nextPointProjection(nextRandomPoint, randomLengthSpacing, randDirection);
@@ -188,7 +190,7 @@ FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilament
         randDirection[1] = - randDirection[1];
         randDirection[2] = - randDirection[2];
         
-        secondPoint = nextPointProjection(firstPoint, (double)lenFilaments *
+        secondPoint = nextPointProjection(firstPoint, (floatingpoint)lenFilaments *
                       SysParams::Geometry().cylinderSize[filamentType] - 0.01, randDirection);
         
         //choose if within boundary
@@ -216,23 +218,23 @@ FilamentData MTOCFilamentDist::createFilaments(Boundary* b, int numFilaments,
                                                             int filamentType,
                                                             int lenFilaments) {
     
-    vector<tuple<short, vector<double>, vector<double>>> filaments;
-    vector<tuple<string, short, vector<vector<double>>>> dummy;
-    vector<vector<double>> dummy3;
-    vector<tuple<string, short, vector<double>>> dummy2;
+    vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> filaments;
+    vector<tuple<string, short, vector<vector<floatingpoint>>>> dummy;
+    vector<vector<floatingpoint>> dummy3;
+    vector<tuple<string, short, vector<floatingpoint>>> dummy2;
     int filamentCounter = 0;
     while (filamentCounter < numFilaments) {
         
-        double l = Rand::randDouble(0,2 * M_PI);
-        double h = Rand::randDouble(-M_PI/2, M_PI/2);
+        floatingpoint l = Rand::randfloatingpoint(0,2 * M_PI);
+        floatingpoint h = Rand::randfloatingpoint(-M_PI/2, M_PI/2);
         
-        vector<double> point1;
+        vector<floatingpoint> point1;
         point1.push_back(_coordMTOC[0] + _radius * cos(l) * cos(h));
         point1.push_back(_coordMTOC[1] + _radius * sin(h));
         point1.push_back(_coordMTOC[2] + _radius * sin(l) * cos(h));
         
         // get projection outward from the MTOC
-        auto dir = normalizedVector(twoPointDirection(_coordMTOC, point1));
+        auto dir = normalizeVector(twoPointDirection(_coordMTOC, point1));
         auto point2 = nextPointProjection(point1,
             SysParams::Geometry().cylinderSize[filamentType]*lenFilaments - 0.01, dir);
         

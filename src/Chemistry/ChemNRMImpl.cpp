@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -21,12 +21,14 @@
 #endif
 
 #include "ChemNRMImpl.h"
+#include "Rand.h"
+#include "CController.h"
 
 #ifdef BOOST_MEM_POOL
 #ifdef BOOST_POOL_MEM_RNODENRM
 boost::pool<> allocator_rnodenrm(sizeof(RNodeNRM),BOOL_POOL_NSIZE);
 #endif
-    
+
 #ifdef BOOST_POOL_MEM_PQNODE
 boost::pool<> allocator_pqnode(sizeof(PQNode),BOOL_POOL_NSIZE);
 #endif
@@ -42,7 +44,7 @@ void PQNode::operator delete(void* ptr) noexcept {
     boost::fast_pool_allocator<PQNode>::deallocate((PQNode*)ptr);
 }
 #endif
- 
+
 #ifdef BOOST_POOL_MEM_RNODENRM
 void* RNodeNRM::operator new(size_t size) {
     void *ptr = boost::fast_pool_allocator<RNodeNRM>::allocate();
@@ -92,21 +94,20 @@ void RNodeNRM::updateHeap() {
 }
 
 void RNodeNRM::generateNewRandTau() {
-    double newTau;
+    floatingpoint newTau;
     reComputePropensity();//calculated new _a
-    
+
 #ifdef TRACK_ZERO_COPY_N
     newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #else
-    if(_a<1.0e-10) // numeric_limits< double >::min()
-        newTau = numeric_limits<double>::infinity();
+    if(_a<1.0e-10) // numeric_limits< floatingpoint >::min()
+        newTau = numeric_limits<floatingpoint>::infinity();
     else
         newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #endif
     setTau(newTau);
 //    std::cout<<"generating R and Tau reaction"<<endl;
 //    printSelf();
-//    std::cout<<endl;
 }
 
 void RNodeNRM::activateReaction() {
@@ -117,7 +118,7 @@ void RNodeNRM::activateReaction() {
 
 void RNodeNRM::passivateReaction() {
     _a=0;
-    double tau = numeric_limits<double>::infinity();
+    floatingpoint tau = numeric_limits<floatingpoint>::infinity();
     setTau(tau);
     updateHeap();
 }
@@ -134,14 +135,10 @@ ChemNRMImpl::~ChemNRMImpl() {
     _map_rnodes.clear();
 }
 
-double ChemNRMImpl::generateTau(double a){
-    exponential_distribution<double>::param_type pm(a);
+floatingpoint ChemNRMImpl::generateTau(floatingpoint a){
+    exponential_distribution<floatingpoint>::param_type pm(a);
     
     _exp_distr.param(pm);
-    Rand::counter++;
-    Rand::Ncounter++;
-//    std::cout<<"Counters N "<<Rand::Ncounter<<" D "<<Rand::Dcounter<<" T "<<Rand::counter<<
-//            endl;
     return _exp_distr(Rand::eng);
 }
 
@@ -153,11 +150,11 @@ bool ChemNRMImpl::makeStep() {
         return false;
     }
     RNodeNRM *rn = _heap.top()._rn;
-    double tau_top = rn->getTau();
-    if(tau_top==numeric_limits<double>::infinity()){
+    floatingpoint tau_top = rn->getTau();
+    if(tau_top==numeric_limits<floatingpoint>::infinity()){
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
         return false;
-    }    
+    }
     ///DEBUG
     //assert heap ordering
     if(tau_top < _t) {
@@ -168,14 +165,29 @@ bool ChemNRMImpl::makeStep() {
         rn->printSelf();
         return false;
     }
-    
-    double t_prev = _t;
-    
+
+//    if(rn->getReaction()->getReactionType() == ReactionType::LINKERBINDING) {
+//
+//        cout << "Stopping to check linker rxn." << endl;
+//    }
+
+    floatingpoint t_prev = _t;
+
     _t=tau_top;
     syncGlobalTime();
-//    std::cout<<"----------------"<<endl;
-//    rn->printSelf();
-//    std::cout<<"----------------"<<endl;
+    //std::cout<<"------------"<<endl;
+    //rn->printSelf();
+    //std::cout<<"------------"<<endl;
+
+    // if dissipation tracking is enabled and the reaction is supported, then compute the change in Gibbs free energy and store it
+    if(SysParams::Chemistry().dissTracking){
+    ReactionBase* react = rn->getReaction();
+    string HRCDID = react->getHRCDID();
+    string testString = "DNT";
+    if(HRCDID != testString){
+        _dt->updateDelGChem(react);
+        }
+    }
     rn->makeStep();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
@@ -188,29 +200,29 @@ bool ChemNRMImpl::makeStep() {
 #endif
     // Updating dependencies
     ReactionBase *r = rn->getReaction();
-    
+
     if(r->updateDependencies()) {
-    
+
         for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
-            
+
             RNodeNRM *rn_other = (RNodeNRM*)((*rit)->getRnode());
-            double a_old = rn_other->getPropensity();
-            
+            floatingpoint a_old = rn_other->getPropensity();
+
             //recompute propensity
             rn_other->reComputePropensity();
-            
-            double tau_new;
-            double tau_old = rn_other->getTau();
-            
-            double a_new = rn_other->getPropensity();
-            
+
+            floatingpoint tau_new;
+            floatingpoint tau_old = rn_other->getTau();
+
+            floatingpoint a_new = rn_other->getPropensity();
+
 #ifdef TRACK_ZERO_COPY_N
             //recompute tau
             tau_new = (a_old/a_new)*(tau_old-_t)+_t;
 #else
             //recompute tau
-            if(a_new<1.0e-15) // numeric_limits< double >::min()
-                tau_new = numeric_limits<double>::infinity();
+            if(a_new<1.0e-15) // numeric_limits< floatingpoint >::min()
+                tau_new = numeric_limits<floatingpoint>::infinity();
             else if (a_old<1.0e-15){
                 rn_other->generateNewRandTau();
                 tau_new = rn_other->getTau();
@@ -219,26 +231,26 @@ bool ChemNRMImpl::makeStep() {
                 tau_new = (a_old/a_new)*(tau_old-_t)+_t;
             }
 #endif
-            if(boost::math::isnan(tau_new)){tau_new=numeric_limits<double>::infinity();}
+            if(boost::math::isnan(tau_new)){tau_new=numeric_limits<floatingpoint>::infinity();}
             ///DEBUG
             if(tau_new < _t) {
-                
+
                 cout << "WARNING: Generated tau may be incorrect. " << endl;
-                
+
                 cout << "Tau new = " << tau_new << endl;
                 cout << "Tau old = " << tau_old << endl;
                 cout << "Current global t = " << _t << endl;
                 cout << "Previous global t = " << t_prev << endl;
                 cout << "a_old = " << a_old << endl;
                 cout << "a_new = " << a_new << endl;
-                
+
                 cout << "Reaction type = " << rn->getReaction()->getReactionType() << endl;
-                
-                
+
+
                 rn->printSelf();
                 rn_other->printSelf();
             }
-            
+
             rn_other->setTau(tau_new);
             rn_other->updateHeap();
         }

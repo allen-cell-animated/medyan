@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -38,19 +38,30 @@ class BoundaryCylinderAttachment : public BoundaryInteractions {
     
 private:
     BAttachmentInteractionType _FFType;
+    
+    int *beadSet;
+    
+    ///Array describing the constants in calculation
+    floatingpoint *kattr;
+    floatingpoint *pins; ///< coordinates of pins for each bead
+    
 public:
     
-    /// Constructor
-    BoundaryCylinderAttachment() {}
+    ///Array describing indexed set of interactions
+    ///For filaments, this is a 1-point potential (only the active bead is updated)
+    const static int n = 1;
     
-    virtual double computeEnergy(double d);
+    virtual void vectorize();
+    virtual void deallocate();
     
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    //@{
+    /// Tepulsive force calculation
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+    virtual void computeLoadForces() {};
+    //@}
     
-    virtual void computeLoadForces() {}
-    
-    /// Just return null - no neighbor list here
+    /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() {return nullptr;}
     
     virtual const string getName() {return "Boundary-Cylinder Attachment";}

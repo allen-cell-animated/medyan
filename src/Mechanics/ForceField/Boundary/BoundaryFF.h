@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -33,18 +33,22 @@ private:
     vector<unique_ptr<BoundaryInteractions>>
     _boundaryInteractionVector; ///< Vector of initialized boundary element interactions
     
+protected:
     /// The culprit in the case of an error
     BoundaryInteractions* _culpritInteraction;
+    
 public:
     /// Initialize the forcefields (repulsion, attraction, etc)
     BoundaryFF(string type);
     
+    virtual void vectorize();
+    virtual void cleanup();
+
     virtual string getName() {return "Boundary";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(double d);
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     
     /// BoundaryFF can compute load forces from all boundaries.
     virtual void computeLoadForces();

@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -44,21 +44,21 @@ friend class BoundaryCubic;
 friend class BoundarySpherical;
 friend class BoundaryCapsule;
 friend class BoundaryCylinder;
-    
+
 private:
     static Database<BoundaryElement*> _boundaryElements;
     ///< Collection of boundary elements in SubSystem
     
 protected:
     
-    vector<double> _coords; ///< coordinates
+    vector<floatingpoint> _coords; ///< coordinates
     
-    double _kRep; ///< Repulsion constant
-    double _r0; ///< Screening length
+    floatingpoint _kRep; ///< Repulsion constant
+    floatingpoint _r0; ///< Screening length
     
 public:
     /// Default constructor
-    BoundaryElement(vector<double> coords, double kRepuls, double screenLength)
+    BoundaryElement(vector<floatingpoint> coords, floatingpoint kRepuls, floatingpoint screenLength)
     
         : Trackable(false, false, false, true),
           _coords(coords), _kRep(kRepuls), _r0(screenLength) {}
@@ -71,33 +71,46 @@ public:
     virtual ~BoundaryElement() noexcept {}
     
     ///return coordinates of boundary element
-    const vector<double>& getCoords() {return _coords;}
+    const vector<floatingpoint>& getCoords() {return _coords;}
     
     ///update the coordinates of the boundary element
-    virtual void updateCoords(const vector<double> newCoords) = 0;
+    virtual void updateCoords(const vector<floatingpoint> newCoords) = 0;
     
+    //@{
     /// Implement for all boundary elements
     /// Returns the distance from a given point to this boundary element
     /// @return - 1) positive number if point is within boundary element
     ///           2) Negative number if point is outside boundary element
     ///           3) Infinity if point is not in domain of this boundary element
-    virtual double distance(const vector<double>& point) = 0;
-    
-    //Qin
-    virtual double lowerdistance(const vector<double>& point) = 0;
-    virtual double sidedistance(const vector<double>& point) = 0;
-    
+    virtual floatingpoint distance(const vector<floatingpoint>& point) = 0;
+    virtual floatingpoint distance(floatingpoint const *point) = 0;
+    //@}
+
+    //@{
+    virtual floatingpoint lowerdistance(const vector<floatingpoint>& point) = 0;
+    virtual floatingpoint sidedistance(const vector<floatingpoint>& point) = 0;
+
     /// Returns stretched distance, similar to distance above
-    virtual double stretchedDistance(const vector<double>& point,
-                                     const vector<double>& force, double d) = 0;
-    
+    virtual floatingpoint stretchedDistance(const vector<floatingpoint>& point,
+                                     const vector<floatingpoint>& force,
+                                     floatingpoint d) = 0;
+    virtual floatingpoint stretchedDistance(floatingpoint const *point,
+                                     floatingpoint const *force, floatingpoint d)
+    = 0;
+    //@}
+
+
+    //@{
     /// Returns normal vector of point to plane
-    virtual const vector<double> normal(const vector<double> &point) = 0;
-    
+    virtual const vector<floatingpoint> normal(const vector<floatingpoint> &point) = 0;
+    virtual const vector<floatingpoint> normal(const floatingpoint *point) = 0;
+    virtual const void elementeqn(floatingpoint* var) = 0;
+    //@}
+
     //@{
     /// Getter for mechanical parameters
-    virtual double getRepulsionConst() {return _kRep;}
-    virtual double getScreeningLength() {return _r0;}
+    virtual floatingpoint getRepulsionConst() {return _kRep;}
+    virtual floatingpoint getScreeningLength() {return _r0;}
     //@}
     
     //@{
@@ -119,6 +132,8 @@ public:
     
     //GetType implementation just returns zero (no boundary element types yet)
     virtual int getType() {return 0;}
+
+
 };
 
 #endif

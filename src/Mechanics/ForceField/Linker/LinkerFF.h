@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -32,6 +32,7 @@ private:
     vector<unique_ptr<LinkerInteractions>>
     _linkerInteractionVector; ///< Vector of initialized linker interactions
     
+protected:
     /// The culprit in the case of an error
     LinkerInteractions* _culpritInteraction;
     
@@ -39,16 +40,20 @@ public:
     /// Constructor, intializes stretching, bending, and twisting forces
     LinkerFF(string& stretching, string& bending, string& twisting );
     
+    virtual void vectorize();
+    virtual void cleanup();
+
     virtual string getName() {return "Linker";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(double d);
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     
     virtual void computeLoadForces() {return;}
     
     virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
+    //Assigns stretchforces for ratechangeimpl
+    virtual void assignforcemags();
     
 };
 

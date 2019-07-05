@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -38,12 +38,15 @@ public:
     /// Initialize the forcefields
     BubbleFF(string type, string mtoc);
     
+    virtual void vectorize();
+    virtual void cleanup();
+
     virtual string getName() {return "Bubble";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(double d);
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+//    virtual void computeForcesAux();
     
     /// BubbleFF can compute load forces on all Bead from Bubble elements
     virtual void computeLoadForces();
