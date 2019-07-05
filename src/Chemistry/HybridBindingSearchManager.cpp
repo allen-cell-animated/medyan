@@ -654,11 +654,11 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
                                     auto it1 = SysParams::Chemistry().bindingSites[fpairs[0]][pos1];
                                     auto it2 = SysParams::Chemistry().bindingSites[fpairs[1]][pos2];
 
-	                                uint32_t shiftedIndex1 = ccylvec[cindex]->getCylinder()->_dcIndex;
+	                                uint32_t shiftedIndex1 = cindex;
 	                                shiftedIndex1 = shiftedIndex1 << 4;
 	                                uint32_t t1 = shiftedIndex1|pos1;
 
-	                                uint32_t shiftedIndex2 = ccylvec[cnindex]->getCylinder()->getStableIndex() << 4;
+	                                uint32_t shiftedIndex2 = cnindex << 4;
 	                                uint32_t t2 = shiftedIndex2|pos2;
 
 	                                //add in correct order
