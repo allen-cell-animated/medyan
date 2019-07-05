@@ -575,7 +575,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
 #endif
     _safeMode = false;
 #ifdef OPTIMOUT
-std::cout<<"----------------------------------------"<<endl;1
+std::cout<<"----------------------------------------"<<endl;
     std::cout<<"maxF "<<maxF()<<endl;
 #endif
 	tend = chrono::high_resolution_clock::now();
