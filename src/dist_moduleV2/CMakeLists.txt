@@ -11,7 +11,7 @@ set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -pthread")
 
 set(CMAKE_CXX_STANDARD 14)
 set(SRC_DIR #ENTER FULL PATH#)
-include_directories(#ENTER FULL PATH#)
+include_directories(#ENTER FULL PATH TO UMESIMD#)
 
 #file(GLOB_RECURSE simd_dist_module_SRC
     #    ${SRC_DIR}/umesimd/UMESimd.h
