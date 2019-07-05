@@ -13,7 +13,7 @@
 
 #ifndef MEDYAN_HybridNeighborListImpl_h
 #define MEDYAN_HybridNeighborListImpl_h
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 #include <unordered_map>
 
 #include <vector>
@@ -29,6 +29,8 @@
 class Cylinder;
 
 //Hybrid Manager to control calculate all neighborlists in a single search.
+//For every pair-wise distance between two filament types, there are fullstatus and uniquestatus requirements.
+//Unique status determines whether
 class HybridCylinderCylinderNL : public HybridNeighborList {
 
 private:
@@ -42,28 +44,36 @@ private:
     static short totalhybridNL;
 public:
     short _ID = 0; //ID helps link binGridType to NeighborList.
+    //In the implementation of Hybrid NeighborList, each compartment has a single HybridNeighborList pointer.
+    // So, _ID is always 0.
 
     ///< The neighbors list, as a hash map
-    void generateConnections();
-    void initializeBinGrid();
+    void initializeBinGrid();//Segments reaction volume into a collection of bins whose dimension is determined by the _largestrMax.
+    void generateConnections();//Assigns 3-d index and coordinate to each bin. Also determines neighbors of each bin.
+
     vector<int> _grid; ///< Number of bins in each dimension
     vector<floatingpoint> _binSize; ///< Bin size in each dimension
     vector<int> _size;       ///< Size of entire grid spanned in each dimension
 //    short NLcyltypes[2] = {0,0};// The two types of cylinders that engage in this neighbors
     // List
     BinGrid* _binGrid;
-    Bin* getBin(const vector<floatingpoint> &coords);
+    Bin* getBin(const vector<floatingpoint> &coords);//Get bin based on Coordinates of bin cneter-of-mass
     Bin* getBin(const vector<size_t> &indices);
-    void assignallcylinderstobin();
-    void assignbin(Cylinder* cyl);
-    void unassignbin(Cylinder* cyl, Bin* bin);
-    void updateallcylinderstobin();
-    void updatebin(Cylinder* cyl);
+    void assignallcylinderstobin();//Assigns all cylinders to bins in the grid
+    void assignbin(Cylinder* cyl);//Associates cylinder with a bin based on coordinates.
+    void unassignbin(Cylinder* cyl, Bin* bin);//Disassociates cylinder from the bin.
+    void updateallcylinderstobin();//updates bin associations of all cylinders
+    void updatebin(Cylinder* cyl);//updates bin association of a cylinder.
     void updateNeighborsbin(Cylinder* cylinder, bool runtime = false);
-    vector<Cylinder*> getNeighborsstencil(short HNLID, Cylinder* cylinder);
+    vector<Cylinder*> getNeighborsstencil(short HNLID, Cylinder* cylinder);//Each unique neighborList in the HybridNeighborList has an associated ID HNLID.
+    //This ID is assigned when the parameters are set.
+
+    //For any pair wise cylinder map requested, additional parameters such as fullstatus and uniquestatus are required.
+
     short setneighborsearchparameters(short ftype1, short ftype2,bool uniquestatus, bool fullstatus,
                                       float rMax, float rMin){
-        short returnHNLID = -1;
+        short returnHNLID = -1;//Each unique neighborList in the HybridNeighborList has an associated ID HNLID.
+        //This ID is assigned when the parameters are set.
         vector<short> ftypepairs;
         float localrMinsq = rMin * rMin;
         float localrMaxsq = rMax * rMax;
@@ -189,11 +199,8 @@ public:
 
 
     //constructor
-    HybridCylinderCylinderNL() {
-//        _ID = SysParams::numcylcylNL;
-//        SysParams::numcylcylNL++;
-        //Determine binSize based on the longer of the two cylinders involved in the NL.
-    }
+    HybridCylinderCylinderNL() {}
+
     virtual void initializeHybridNeighborList(){
         initializeBinGrid();
         assignallcylinderstobin();

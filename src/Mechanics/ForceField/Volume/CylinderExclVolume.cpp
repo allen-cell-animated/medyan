@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -39,7 +39,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     for(auto ci : Cylinder::getCylinders()) {
         if(!ci->isFullLength()) continue;
         //do not calculate exvol for a non full length cylinder
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         auto neighbors = _HneighborList->getNeighborsstencil(_HnlID, ci);
 #else
         auto neighbors = _neighborList->getNeighbors(ci);
@@ -65,7 +65,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     for (i = 0; i < nc; i++) {
         auto ci = Cylinder::getCylinders()[i];
         if(!ci->isFullLength()) continue;
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         auto neighbors = _HneighborList->getNeighborsstencil(_HnlID, ci);
 #else
         auto neighbors = _neighborList->getNeighbors(ci);
@@ -81,7 +81,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
             beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->getStableIndex();
             beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->getStableIndex();
             beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->getStableIndex();
-            
+
             //Get KRepuls based on filament type
             if(ci->getType() != cin->getType()){
                 auto ki = ci->getMCylinder()->getExVolConst();
@@ -91,7 +91,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
             else{
                 krep[Cumnc] = ci->getMCylinder()->getExVolConst();
             }
-            
+
             Cumnc++;
             //std::cout<<"CV"<<ci->getID()<<" "<<cin->getID()<<endl;
         }
@@ -184,9 +184,9 @@ void CylinderExclVolume<CVolumeInteractionType>::deallocate() {
 template <class CVolumeInteractionType>
 floatingpoint CylinderExclVolume<CVolumeInteractionType>::computeEnergy(floatingpoint *coord) {
 
-    floatingpoint U_i[1];
+
     floatingpoint U_ii=0.0f;
-    floatingpoint *gU_i;
+
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
 #endif
@@ -225,6 +225,8 @@ floatingpoint CylinderExclVolume<CVolumeInteractionType>::computeEnergy(floating
     U_ii = _FFType.energy(coord, beadSet, krep);
 
 #ifdef CUDATIMETRACK
+    floatingpoint U_i[1];
+    floatingpoint *gU_i;
     tend= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
     CUDAcommon::serltime.TveccomputeE.push_back(elapsed_runs.count());
@@ -295,5 +297,3 @@ template floatingpoint CylinderExclVolume<CylinderExclVolRepulsion>::computeEner
 template void CylinderExclVolume<CylinderExclVolRepulsion>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void CylinderExclVolume<CylinderExclVolRepulsion>::vectorize();
 template void CylinderExclVolume<CylinderExclVolRepulsion>::deallocate();
-
-

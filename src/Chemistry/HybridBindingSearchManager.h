@@ -13,7 +13,7 @@
 #ifndef MEDYAN_HybridBindingSearchManager_h
 #define MEDYAN_HybridBindingSearchManager_h
 
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 #include <unordered_map>
 #include <unordered_set>
 #include <random>
@@ -68,8 +68,8 @@ private:
     //possible bindings at current state. updated according to neighbor list
     //possible bindings at current state. updated according to neighbor list stencil
 
-    vector<vector<unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>>>
-            _possibleBindingsstencilvec;
+//    vector<vector<unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>>>
+//            _possibleBindingsstencilvec;
 
     /*vector<vector<unordered_multimap<uint32_t, uint32_t>>>
             _mpossibleBindingsstencilvecuint;*/
@@ -236,7 +236,8 @@ public:
         for(idx = 0; idx<totaluniquefIDpairs; idx++){
             int countbounds = _rMaxsqvec[idx].size();
             for (idx2 = 0; idx2 < countbounds; idx2++) {
-                std::cout<<"Hybrid "<<_possibleBindingsstencilvec[idx][idx2].size()<< " SIMD "
+                std::cout<<"Hybrid "<<_possibleBindingsstencilvecuint[idx][idx2].size()<<
+                " SIMD "
                                           ""<<Nbindingpairs[idx][idx2]<<endl;
             }
         }
