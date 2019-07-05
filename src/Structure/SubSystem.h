@@ -1,7 +1,7 @@
- 
+
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -62,13 +62,13 @@ class CompartmentGrid;
 /// system Boundary.
 
 /*! This is a class which handles all changes and information regarding the simulated system.
- *  This class operates as a top manager and provides connections between smaller parts 
- *  of the system. All creation and changes go through this class and will be redirected 
+ *  This class operates as a top manager and provides connections between smaller parts
+ *  of the system. All creation and changes go through this class and will be redirected
  *  to lower levels. See the databases for more documentation on the explicit creation of
  *  subsystem objects at initialization and during runtime.
  *
  *  This class has functions to add or remove Trackable elements from the system, as well
- *  as update Movable and Reactable instances in the system. It also can update the 
+ *  as update Movable and Reactable instances in the system. It also can update the
  *  NeighborList container that it holds for the system.
  */
 class SubSystem {
@@ -78,7 +78,7 @@ public:
     ///constructor creates and stores an instance of HybridCylinderCylinderNL
 
     SubSystem() {
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         _HneighborList = new HybridCylinderCylinderNL();
 #endif
 }
@@ -103,7 +103,7 @@ public:
         //if neighbor, add
         if (t->_dneighbor) {
 	        minsN = chrono::high_resolution_clock::now();
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
             _HneighborList->addDynamicNeighbor((DynamicNeighbor *) t);
             //Remove boundary and bubble neighbors
             for (auto nlist : __bneighborLists)
@@ -145,7 +145,7 @@ public:
 
         //if neighbor, remove
         if (t->_dneighbor) {
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
             _HneighborList->removeDynamicNeighbor((DynamicNeighbor *) t);
             //Remove boundary neighbors
             for (auto nlist : __bneighborLists)
@@ -232,17 +232,17 @@ public:
     floatingpoint getSubSystemEnergy() {return _energy;}
     void setSubSystemEnergy(floatingpoint energy) {_energy = energy;}
     //@}
-    
+
     //@{
     /// CompartmentGrid management
     void setCompartmentGrid(CompartmentGrid* grid) {_compartmentGrid = grid; _staticgrid = _compartmentGrid;}
     CompartmentGrid* getCompartmentGrid() {return _compartmentGrid;}
     //@]
-    
+
     /// Update the binding managers of the system
     void updateBindingManagers();
 
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     //getter for HneighborList
     HybridCylinderCylinderNL* getHNeighborList(){return _HneighborList;}
 
@@ -263,22 +263,22 @@ private:
     dist::Coords temptest;
     floatingpoint _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer
-    
+
     unordered_set<Movable*> _movables; ///< All movables in the subsystem
     unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
-        
+
     std::vector<NeighborList*> _neighborLists; ///< All neighborlists in the system
     std::vector<NeighborList*> __bneighborLists; ///< Boundary neighborlists in the system.
     // Used only in Hybrid binding Manager cases
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     HybridCylinderCylinderNL* _HneighborList;
 #endif
-        
+
     CompartmentGrid* _compartmentGrid; ///< The compartment grid
 
     //Cylinder vector
     static CompartmentGrid* _staticgrid;
-    floatingpoint* cylsqmagnitudevector;
+    floatingpoint* cylsqmagnitudevector = nullptr;
     static bool initialize;
 
     chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD;

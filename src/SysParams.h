@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -75,7 +75,7 @@ struct MechParams {
 
 
 	floatingpoint BubbleCutoff = 0.0;
-    
+
     ///If using more than one bubble
     short numBubbleTypes = 1;
     //@}
@@ -86,7 +86,7 @@ struct MechParams {
 
     bool pinLowerBoundaryFilaments = false;
     floatingpoint pinFraction = 1.0; //test
-    
+
     ///To pin filaments on boundary via an attractive potential
     bool pinBoundaryFilaments = false;
     floatingpoint pinDistance = 250; ///< 250nm pinning distance for now
@@ -141,7 +141,7 @@ struct ChemParams {
     vector<short> motorNumHeadsMax = {};
 
     floatingpoint dutyRatio = 0.1;
-    
+
     vector<floatingpoint> motorStepSize = {};
     //@}
 
@@ -168,7 +168,7 @@ struct ChemParams {
     /// reactions, resulting in constant length filaments for the rest of simulation.
     bool makeFilamentsStatic = false;
     floatingpoint makeFilamentsStaticTime = 0.0;
-    
+
     /// Option to make Linker objects static after a certain time.
     /// This passivates any unbinding reactions, resulting in permanently
     /// bound linkers for the rest of simulation.
@@ -178,7 +178,7 @@ struct ChemParams {
     bool dissTracking = false;
     bool eventTracking = false;
     int difBindInt = 1;
-    
+
     //@}
 #ifdef CUDAACCL_NL
     string bindingmanagerlist = "";
@@ -196,7 +196,7 @@ struct GeoParams {
     int NX = 0;
     int NY = 0;
     int NZ = 0;
-    
+
     floatingpoint compartmentSizeX = 0;
     floatingpoint compartmentSizeY = 0;
     floatingpoint compartmentSizeZ = 0;
@@ -206,14 +206,14 @@ struct GeoParams {
     floatingpoint largestCylinderSize = 0;
 
     vector<floatingpoint> monomerSize = {};
-    
+
     ///Number of monomers in a cylinder
     vector<int> cylinderNumMon = {};
-    
+
     vector<floatingpoint> cylinderSize = {};
 
     vector<floatingpoint> minCylinderSize = {};
-    
+
     /// Minimum monomer length of a cylinder is preset
     int minCylinderNumMon = 3;
     //@}
@@ -233,10 +233,10 @@ struct BoundParams {
     /// Cutoff for force calculation
     floatingpoint BoundaryCutoff = 0;
     floatingpoint diameter = 0;
-    
+
     /// Moving speed (if any)
     floatingpoint moveSpeed = 0;
-    
+
     //@{
     /// Moving times
     floatingpoint moveStartTime = 0;
@@ -255,17 +255,17 @@ struct DyRateParams {
 
     /// Option for dynamic polymerization rate of filaments
     vector<floatingpoint> dFilPolymerizationCharLength = {};
-    
+
     /// Option for dynamic unbinding rate of linkers
     vector<floatingpoint> dLinkerUnbindingCharLength = {};
     vector<floatingpoint> dLinkerUnbindingAmplitude = {};
-    
+
     /// Option for dynamic unbinding rate of motors
     vector<floatingpoint> dMotorUnbindingCharForce = {};
-    
+
     /// Option for dynamic walking rate of motors
     vector<floatingpoint> dMotorWalkingCharForce = {};
-    
+
     //Qin
     /// Option for dynamic branching point unbinding rate
     vector<floatingpoint> dBranchUnbindingCharLength = {};
@@ -304,7 +304,7 @@ public:
 public:
     //@{
 #ifdef NLSTENCILLIST
-    static short numcylcylNL;
+    static short numcylcylNL;//Tracks total number of neighborlists in the system
 #endif
     //counter to check excluded volume.
     static int exvolcounter[3]; //positions 0, 1, and 2 correspond to parallel,

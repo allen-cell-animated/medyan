@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -193,7 +193,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, int *beadSet
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, theta, posheta, dTheta, U_i;
+    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, posheta, U_i;
     floatingpoint *mp = new floatingpoint[3];
 
     floatingpoint U = 0.0;
@@ -225,7 +225,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, int *beadSet
         floatingpoint cosp =  x;
         posheta = 0.5*M_PI;
         floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
-        floatingpoint cospminusq = cosp * cos(posheta) - sinp * sin(posheta);
+        floatingpoint cospminusq = cosp * cos(posheta) + sinp * sin(posheta);
         U_i = kpos[i] * ( 1 - cospminusq );
 
         /*theta = safeacos(xd / XD);
@@ -256,7 +256,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, theta, posheta, dTheta, U_i;
+    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, posheta, U_i;
     floatingpoint *f1, *f2, *f3;
     floatingpoint *mp = new floatingpoint[3];
     floatingpoint *vzero = new floatingpoint[3]; vzero[0] = 0.0; vzero[1] = 0.0; vzero[2] = 0.0;
@@ -293,7 +293,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
         floatingpoint cosp =  x;
         posheta = 0.5*M_PI;
         floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
-        floatingpoint cospminusq = cosp * cos(posheta) - sinp * sin(posheta);
+        floatingpoint cospminusq = cosp * cos(posheta) + sinp * sin(posheta);
         U_i = kpos[i] * ( 1 - cospminusq );
 
         /*theta = safeacos(xd / XD);
@@ -324,7 +324,7 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, invX, invD, position, A, B, C, k, theta, posheta, dTheta;
+    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, invX, invD, position, A, B, C, k, posheta;
 	floatingpoint  *f1, *f2, *f3;
     floatingpoint *mp = new floatingpoint[3];
 

@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -92,9 +92,8 @@ void BranchingDihedral<BDihedralInteractionType>::deallocate() {
 template <class BDihedralInteractionType>
 floatingpoint BranchingDihedral<BDihedralInteractionType>::computeEnergy(floatingpoint *coord) {
 
-    floatingpoint U_i[1], U_ii=0.0;
-    floatingpoint* gU_i;
-    U_ii = 0.0;
+    floatingpoint U_ii=(floatingpoint)0.0;
+
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -118,6 +117,9 @@ floatingpoint BranchingDihedral<BDihedralInteractionType>::computeEnergy(floatin
 
 #endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
+    floatingpoint U_i[1];
+    floatingpoint* gU_i;
+
     CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
     floatingpoint cuda_energy[1];
     if(gU_i == NULL)

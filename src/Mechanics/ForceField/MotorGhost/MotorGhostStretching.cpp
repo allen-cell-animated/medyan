@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -177,9 +177,7 @@ void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
 
 template <class MStretchingInteractionType>
 floatingpoint MotorGhostStretching<MStretchingInteractionType>::computeEnergy(floatingpoint* coord){
-    floatingpoint U_i[1], U_ii;
-    floatingpoint* gU_i;
-    U_ii = 0.0;
+    floatingpoint U_ii=0.0;
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
 #endif
@@ -223,6 +221,8 @@ floatingpoint MotorGhostStretching<MStretchingInteractionType>::computeEnergy(fl
     U_ii = _FFType.energy(coord, beadSet, kstr, eql, pos1, pos2);
 
 #ifdef CUDATIMETRACK
+    floatingpoint U_i[1], U_ii=0.0;
+    floatingpoint* gU_i;
     tend= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
     CUDAcommon::serltime.TveccomputeE.push_back(elapsed_runs.count());
