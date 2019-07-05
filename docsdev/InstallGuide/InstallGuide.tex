@@ -14,7 +14,7 @@
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 
-\title{Installation Guide for MEDYAN \textbf{v3.1}}
+\title{Installation Guide for MEDYAN \textbf{v4.0}}
 \author{Papoian Lab, University of Maryland}
 \date{}							% Activate to display a given date or no date
 
@@ -87,10 +87,11 @@ The command line macros can be edited in the Makefile to turn on or off certain 
  \hline
   CHEMISTRY & Enable system chemistry. \\
   \hline
+  Enable both\\
   \vtop{\hbox{\strut MECHANICS}\hbox{\strut SERIAL}} & \vtop{\hbox{\strut Enable system mechanics.}\hbox{\strut Serial implementation of conjugate gradient}} \\ 
   \hline\hline
-  Pair-wise distance protocols\\
-    \vtop{\hbox{\strut NLORIGINAL}\hbox{\strut  HYBRID\_NLSTENCILLIST}\hbox{\strut SIMDBINDINGSEARCH}} & \vtop{\hbox{\strut Enable system mechanics.}\hbox{\strut Serial implementation of conjugate gradient}} \\ 
+  
+    \vtop{\hbox{\strut Pair-wise distance protocols}\hbox{\strut NLORIGINAL}\hbox{\strut  HYBRID\_NLSTENCILLIST}\hbox{\strut SIMDBINDINGSEARCH}} & \vtop{\hbox{\strut Choose one of the macros}\hbox{\strut Optimized protocol similar to MEDYAN3.2}\hbox{\strut \textbf{New} optimized SIMD-free protocol}\hbox{\strut \textbf{New} SIMD based search protocol}} \\ 
   \hline\hline
   DYNAMICRATES & Enable dynamic rate changing. This macro can only be specified if both CHEMISTRY and
   MECHANICS are enabled. \\
@@ -115,7 +116,6 @@ The command line macros can be edited in the Makefile to turn on or off certain 
   \hline
 \end{tabular}
 \end{table}
-   DEBUGCONSTANTSEED is best enbled to debug small systems without diffusion reactions. Might slow down the simulations considerably.
 \normalsize
 
 	

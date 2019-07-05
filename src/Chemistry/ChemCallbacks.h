@@ -641,7 +641,9 @@ struct LinkerUnbindingCallback {
     LinkerUnbindingCallback(Linker* l, SubSystem* ps) : _ps(ps), _linker(l) {}
     
     void operator() (ReactionBase *r) {
+#ifdef OPTIMOUT
 	    CUDAcommon::tmin.linkerunbindingcalls++;
+#endif
 	    mins = chrono::high_resolution_clock::now();
 
 //        //@{
@@ -678,7 +680,9 @@ struct LinkerBindingCallback {
     : _ps(ps), _lManager(lManager), _onRate(onRate), _offRate(offRate), _dt(dt) {}
     
     void operator() (ReactionBase *r) {
+#ifdef OPTIMOUT
 	    CUDAcommon::tmin.linkerbindingcalls++;
+#endif
 	    mins = chrono::high_resolution_clock::now();
 
         //get a random binding
@@ -749,7 +753,9 @@ struct MotorUnbindingCallback {
     _ps(ps), _motor(m) {}
     
     void operator() (ReactionBase *r) {
+#ifdef OPTIMOUT
     	CUDAcommon::tmin.motorunbindingcalls++;
+#endif
 	    mins = chrono::high_resolution_clock::now();
 
         //find the motor binding manager associated with this species
@@ -799,7 +805,9 @@ struct MotorBindingCallback {
     : _ps(ps), _mManager(mManager), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
+#ifdef OPTIMOUT
 	    CUDAcommon::tmin.motorbindingcalls++;
+#endif
 	    mins = chrono::high_resolution_clock::now();
 
         //get a random binding
@@ -883,7 +891,9 @@ struct MotorWalkingCallback {
     _motorType(motorType), _boundType(boundType), _ps(ps), _dt(dt) {}
     
     void operator() (ReactionBase* r) {
+#ifdef OPTIMOUT
 	    CUDAcommon::tmin.motorwalkingcalls++;
+#endif
 	    mins = chrono::high_resolution_clock::now();
 //        cout<<"Motor walking begins"<<endl;
         //get species
@@ -960,7 +970,9 @@ struct MotorMovingCylinderCallback {
     _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
+#ifdef OPTIMOUT
 	    CUDAcommon::tmin.motorwalkingcalls++;
+#endif
 	    mins = chrono::high_resolution_clock::now();
 //        cout<<"Motor moving cylinder begins"<<endl;
         //get species

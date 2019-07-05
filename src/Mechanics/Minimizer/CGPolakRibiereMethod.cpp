@@ -573,9 +573,11 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
     CUDAcommon::serltime.TcomputeE = 0.0;
     CUDAcommon::serltime.TcomputeF = 0.0;
 #endif
+    _safeMode = false;
+#ifdef OPTIMOUT
 std::cout<<"----------------------------------------"<<endl;
-	_safeMode = false;
     std::cout<<"maxF "<<maxF()<<endl;
+#endif
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_other(tend - tbegin);
 	CUDAcommon::tmin.tother+= elapsed_other.count();
@@ -774,7 +776,9 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
     }
 #endif //SERIAL
+#ifdef OPTIMOUT
     std::cout<<"SERL Total number of iterations "<<numIter<<endl;
+#endif
 #ifdef CUDATIMETRACK_MACRO
     std::cout<<"SERL Energy time taken (s) "<<CUDAcommon::serltime.TcomputeE<<" for total "
             "iters "<<CUDAcommon::serltime.Ecount<<endl;
@@ -903,7 +907,9 @@ std::cout<<"----------------------------------------"<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
     FFM.computeLoadForces();
+#ifdef OPTIMOUT
     std::cout<<"End Minimization************"<<endl;
+#endif
     FFM.cleanupAllForceFields();
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_end(tend - tbegin);

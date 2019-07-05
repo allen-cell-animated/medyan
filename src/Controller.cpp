@@ -732,7 +732,9 @@ void Controller::updatePositions() {
     Cylinder::setpositionupdatedstate = false;
     for(auto c : Cylinder::getCylinders())
     	c->updatePosition();
+#ifdef OPTIMOUT
     cout<<"Cylinder position updated"<<endl;
+#endif
     //Reset state to updated state
 	Cylinder::setpositionupdatedstate = true;
 	minep = chrono::high_resolution_clock::now();
@@ -807,7 +809,9 @@ void Controller::updateNeighborLists() {
 #ifdef CHEMISTRY
     mins = chrono::high_resolution_clock::now();
     _subSystem->updateBindingManagers();
+#ifdef OPTIMOUT
 	cout<<"updated BindingManagers"<<endl;
+#endif
     mine = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runb(mine - mins);
     bmgrtime += elapsed_runb.count();
@@ -954,11 +958,12 @@ void Controller::run() {
         cout<<"Minimizing energy"<<endl;
 
         _mController->run(false);
-
+#ifdef OPTIMOUT
         mine= chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runm(mine - mins);
         minimizationtime += elapsed_runm.count();
         std::cout<<"Time taken for minimization "<<elapsed_runm.count()<<endl;
+#endif
         SysParams::RUNSTATE=true;
 
         //reupdate positions and neighbor lists
@@ -1024,7 +1029,9 @@ void Controller::run() {
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runm2(mine - mins);
     minimizationtime += elapsed_runm2.count();
+#ifdef OPTIMOUT
     std::cout<<"Time taken for minimization "<<elapsed_runm2.count()<<endl;
+#endif
 
     //activate/deactivate compartments
     mins = chrono::high_resolution_clock::now();
@@ -1049,13 +1056,17 @@ void Controller::run() {
     //reupdate positions and neighbor lists
     mins = chrono::high_resolution_clock::now();
     updatePositions();
+#ifdef OPTIMOUT
     cout<<"Positions updated"<<endl;
+#endif
     updateNeighborLists();
+#ifdef OPTIMOUT
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runnl(mine - mins);
     nltime += elapsed_runnl.count();
     std::cout<<"NL time "<<elapsed_runnl.count()<<endl;
     mins = chrono::high_resolution_clock::now();
+#endif
 #ifdef DYNAMICRATES
     updateReactionRates();
 #endif
@@ -1091,7 +1102,9 @@ void Controller::run() {
         specialtime += elapsed_runspl.count();
         while(tau() <= _runTime) {
             //run ccontroller
+            #ifdef OPTIMOUT
             cout<<"Starting chemistry"<<endl;
+			#endif
             SysParams::DURINGCHEMISTRY = true;
             mins = chrono::high_resolution_clock::now();
             floatingpoint chemistryTime = _minimizationTime;
@@ -1133,7 +1146,7 @@ void Controller::run() {
                 std::cout<<l->getMLinker()->stretchForce<<" ";
             }
             cout<<endl;*/
-
+#ifdef OPTIMOUT
 	        auto mtimex = CUDAcommon::tmin;
 	        cout<<"motorbinding calls "<<mtimex.motorbindingcalls<<endl;
 	        cout<<"motorunbinding calls "<<mtimex.motorunbindingcalls<<endl;
@@ -1145,6 +1158,7 @@ void Controller::run() {
 	        CUDAcommon::tmin.motorwalkingcalls = 0;
 	        CUDAcommon::tmin.linkerbindingcalls = 0;
 	        CUDAcommon::tmin.linkerunbindingcalls = 0;
+#endif
             //print output if chemistry fails.
             mins = chrono::high_resolution_clock::now();
             if(var) {
@@ -1187,13 +1201,21 @@ void Controller::run() {
                 mins = chrono::high_resolution_clock::now();
                 _mController->run();
                 mine= chrono::high_resolution_clock::now();
+
+                #ifdef OPTIMOUT
                 chrono::duration<floatingpoint> elapsed_runm3(mine - mins);
                 minimizationtime += elapsed_runm3.count();
                 std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
+				#endif
+
                 //update position
                 mins = chrono::high_resolution_clock::now();
                 updatePositions();
+
+                #ifdef OPTIMOUT
                 cout<<"Position updated"<<endl;
+				#endif
+
                 tauLastMinimization = 0.0;
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_rxn2(mine - mins);
@@ -1208,7 +1230,9 @@ void Controller::run() {
 	            mins = chrono::high_resolution_clock::now();
 #ifdef DYNAMICRATES
 	            updateReactionRates();
+#ifdef OPTIMOUT
 	            cout<<"updated Reaction Rates"<<endl;
+#endif
 #endif
 	            mine= chrono::high_resolution_clock::now();
 	            chrono::duration<floatingpoint> elapsed_rxn3(mine - mins);
@@ -1251,7 +1275,9 @@ void Controller::run() {
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runnl2(mine - mins);
                 nltime += elapsed_runnl2.count();
+#ifdef OPTIMOUT
                 cout<<"update NeighborLists"<<endl;
+#endif
             }
             //Special protocols
             mins = chrono::high_resolution_clock::now();
@@ -1362,13 +1388,7 @@ void Controller::run() {
     //print last snapshots
     for(auto o: _outputs) o->print(i);
 	resetCounters();
-//    cout<<"Printing Excluded volume counters"<<endl;
-//    cout<<"Parallel "<<SysParams::exvolcounter[0]<<endl;
-//    cout<<"In-plane "<<SysParams::exvolcounter[1]<<endl;
-//    cout<<"Rest "<<SysParams::exvolcounter[2]<<endl;
-//    cout<<"Z Parallel "<<SysParams::exvolcounterz[0]<<endl;
-//    cout<<"Z In-plane "<<SysParams::exvolcounterz[1]<<endl;
-//    cout<<"Z Rest "<<SysParams::exvolcounterz[2]<<endl;
+	#ifdef OPTIMOUT
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_run(chk2-chk1);
     cout<< "Chemistry time for run=" << chemistrytime <<endl;
@@ -1544,6 +1564,7 @@ void Controller::run() {
                      .rxntempate3 << " part4 (Callback) "
              << CUDAcommon::ppendtime.rxntempate4 << endl;
     }
+	#endif
 #ifdef CUDAACCL
     cudaDeviceReset();
 #endif

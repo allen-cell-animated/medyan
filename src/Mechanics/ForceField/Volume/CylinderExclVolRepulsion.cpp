@@ -1081,7 +1081,7 @@ floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord, floatingpo
 
 	U_i = krep[i] * (deltas * deltat/9.0) * (Termset1 + Termset2 + Termset3 + Termset4);
 
-	cout<<"Numerical result_2 "<<U_i<<endl;
+	cout<<"Numerical result "<<U_i<<endl;
 	return U_i;
 }
 
