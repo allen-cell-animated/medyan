@@ -22,6 +22,7 @@ floatingpoint BranchingDihedralQuadratic::energy(
     const floatingpoint *kdih, const floatingpoint *pos
 ) const {
 
+    // Beads per interaction
     constexpr std::uint_fast8_t bpi = 4;
     static_assert(
         bpi == BranchingDihedral< BranchingDihedralQuadratic >::n,
@@ -32,10 +33,10 @@ floatingpoint BranchingDihedralQuadratic::energy(
     floatingpoint U = 0.0;
 
     for(size_t i = 0; i < nint; ++i) {
-        auto coord1 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i    ]);
-        auto coord2 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 1]);
-        auto coord3 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 2]);
-        auto coord4 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 3]);
+        const auto coord1 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i    ]);
+        const auto coord2 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 1]);
+        const auto coord3 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 2]);
+        const auto coord4 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 3]);
 
         // Brancher coordinate on the mother filament
         const auto p = pos[i];
@@ -89,6 +90,7 @@ void BranchingDihedralQuadratic::forces(
     const floatingpoint *kdih, const floatingpoint *pos
 ) const {
 
+    // Beads per interaction
     constexpr std::uint_fast8_t bpi = 4;
     static_assert(
         bpi == BranchingDihedral< BranchingDihedralQuadratic >::n,
@@ -97,10 +99,10 @@ void BranchingDihedralQuadratic::forces(
     auto nint = BranchingPoint::getBranchingPoints().size(); // should be passed as an argument
 
     for(size_t i = 0; i < nint; ++i) {
-        auto coord1 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i    ]);
-        auto coord2 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 1]);
-        auto coord3 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 2]);
-        auto coord4 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 3]);
+        const auto coord1 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i    ]);
+        const auto coord2 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 1]);
+        const auto coord3 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 2]);
+        const auto coord4 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 3]);
 
         auto f1 = makeRefVec< 3, floatingpoint >(f + 3 * beadSet[bpi * i    ]);
         auto f2 = makeRefVec< 3, floatingpoint >(f + 3 * beadSet[bpi * i + 1]);
@@ -122,6 +124,7 @@ void BranchingDihedralQuadratic::forces(
         //   = E3(c1, c2, c3, c4)
         //
         // If we have dE1, and let E1i = dE1 / dbi, then
+        //
         //   dE2 / dc2 = E11
         //   dE2 / dmp = - E11 - E12
         //   dE2 / dc3 = E12 - E13
@@ -172,9 +175,12 @@ void BranchingDihedralQuadratic::forces(
         const auto b2mag  = std::sqrt(b2mag2);
         const auto b3mag  = std::sqrt(b3mag2);
 
-        const auto mag13inv = (floatingpoint)1.0 / (b1mag * b3mag);
-        const auto mag12inv = (floatingpoint)1.0 / (b1mag * b2mag);
-        const auto mag32inv = (floatingpoint)1.0 / (b3mag * b2mag);
+        const auto b1mag2inv = (floatingpoint)1.0 / b1mag2;
+        const auto b2mag2inv = (floatingpoint)1.0 / b2mag2;
+        const auto b3mag2inv = (floatingpoint)1.0 / b3mag2;
+        const auto mag13inv  = (floatingpoint)1.0 / (b1mag * b3mag);
+        const auto mag12inv  = (floatingpoint)1.0 / (b1mag * b2mag);
+        const auto mag32inv  = (floatingpoint)1.0 / (b3mag * b2mag);
 
         const auto dot13 = dot(b1, b3);
         const auto dot12 = dot(b1, b2);
@@ -198,7 +204,7 @@ void BranchingDihedralQuadratic::forces(
         // ct -- cos(theta)
         const auto ctFac1 = cos13 - cos12 * cos32; // ct numerator
         const auto ctFac2 = sin12inv * sin32inv;   // ct inv denominator
-        const auto ct     = ctFac1 * ctFac2;
+        auto       ct     = ctFac1 * ctFac2;
 
         if(ct > 1.0 + cosDihTol || ct < -1.0 - cosDihTol) {
             LOG(WARNING) << "Dihedral incorrect cos theta: " << ct;
@@ -209,6 +215,13 @@ void BranchingDihedralQuadratic::forces(
 
         if(ct < -1.0) ct = -1.0;
         if(ct >  1.0) ct =  1.0;
+
+        // derivative of the energy E = k theta^2
+        // dE = eFac * d(ct), where eFac = -2 k theta / sin(theta)
+        const auto theta = std::acos(ct);
+        const auto st    = std::max< floatingpoint >(std::sin(theta), dihSinMin);
+        const auto stInv = (floatingpoint)1.0 / st;
+        const auto eFac  = -2 * kdih[i] * theta * stInv;
 
         // derivatives on ct
         //---------------------------------------------------------------------
@@ -253,28 +266,28 @@ void BranchingDihedralQuadratic::forces(
         // d(ct) = ---------- - ct * d(ln ct_de)
         //            ct_de
         //
-        // Let E1i = E1i1 * b1 + E1i2 * b2 + E1i3 * b3, then
+        // Let E1i = eFac * (cti1 * b1 + cti2 * b2 + cti3 * b3), then
         //
         //             ct       cos^2 <b1, b2>       ct                  ct
-        // E111 = - -------- - ---------------- * -------- = - -----------------------
+        // ct11 = - -------- - ---------------- * -------- = - -----------------------
         //           |b1|^2     sin^2 <b1, b2>     |b1|^2       sin^2 <b1, b2> |b1|^2
         //
         //             cos<b3, b2>       cos^2 <b1, b2>   ct
-        // E112 = - ----------------- + -------------------------
+        // ct12 = - ----------------- + -------------------------
         //           ct_de |b1| |b2|     sin^2 <b1, b2>  b1 . b2
         //
         //             1      [    cos<b3, b2>     cos<b1, b2> ct  ]
         //      = ----------- [ - ------------- + ---------------- ]
         //         |b1| |b2|  [       ct_de        sin^2 <b1, b2>  ]
         //
-        // E113 = 1 / (|b1| |b3| ct_de)
+        // ct13 = 1 / (|b1| |b3| ct_de)
         //
         //             cos<b3, b2>       cos^2 <b1, b2>   ct
-        // E121 = - ----------------- + ------------------------- = E112
+        // ct21 = - ----------------- + ------------------------- = ct12
         //           ct_de |b1| |b2|     sin^2 <b1, b2>  b1 . b2
         //
         //         2 cos<b1, b2> cos<b3, b2>      cos^2 <b1, b2>  ct        cos^2 <b3, b2>  ct
-        // E122 = --------------------------- - ----------------------- - -----------------------
+        // ct22 = --------------------------- - ----------------------- - -----------------------
         //              ct_de   |b2|^2           sin^2 <b1, b2> |b2|^2     sin^2 <b3, b2> |b2|^2
         //
         //            1    [  2 cos<b1, b3>       [      cos^2 <b1, b2>     cos^2 <b3, b2>  ] ]
@@ -286,12 +299,52 @@ void BranchingDihedralQuadratic::forces(
         //         |b2|^2  [      ct_de           [  sin^2 <b1, b2>     sin^2 <b3, b2>  ] ]
         //
         //             cos<b1, b2>       cos^2 <b3, b2>   ct
-        // E123 = - ----------------- + ------------------------- = E132
+        // ct23 = - ----------------- + ------------------------- = ct32
         //           ct_de |b3| |b2|     sin^2 <b3, b2>  b3 . b2
         //
         //---------------------------------------------------------------------
 
-    // TODO
+        const auto e111 = -eFac * ct * sin12inv2 * b1mag2inv;
+        const auto e112 = eFac * mag12inv * (-cos32 * ctFac2 + cos12 * ct * sin12inv2);
+        const auto e113 = eFac * mag13inv * ctFac2;
+
+        const auto e121 = e112;
+        const auto e122 = eFac * b2mag2inv * (2 * cos13 * ctFac2 - ct * (sin12inv2 + sin32inv2));
+        const auto e123 = eFac * mag32inv * (-cos12 * ctFac2 + cos32 * ct * sin32inv2);
+
+        const auto e131 = e113;
+        const auto e132 = e123;
+        const auto e133 = -eFac * ct * sin32inv2 * b3mag2inv;
+
+        // translate to actual force dependence on b1, b2 and b3
+        const auto f11 = (1-p) * (e111 + e121);
+        const auto f12 = (1-p) * (e112 + e122);
+        const auto f13 = (1-p) * (e113 + e123);
+
+        const auto f21 = (p-1) * e111 + p * e121;
+        const auto f22 = (p-1) * e112 + p * e122;
+        const auto f23 = (p-1) * e113 + p * e123;
+
+        const auto f31 = -e121 + e131;
+        const auto f32 = -e122 + e132;
+        const auto f33 = -e123 + e133;
+
+        const auto f41 = -e131;
+        const auto f42 = -e132;
+        const auto f43 = -e133;
+
+        // compute forces
+        const auto force1 = f11 * b1 + f12 * b2 + f13 * b3;
+        const auto force2 = f21 * b1 + f22 * b2 + f23 * b3;
+        const auto force3 = f31 * b1 + f32 * b2 + f33 * b3;
+        const auto force4 = f41 * b1 + f42 * b2 + f43 * b3;
+
+        // apply forces
+        f1 += force1;
+        f2 += force2;
+        f3 += force3;
+        f4 += force4;
+
     } // End loop interactions
 
 } // void force(...)
