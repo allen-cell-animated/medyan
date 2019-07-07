@@ -13,7 +13,8 @@
 
 #include "BranchingDihedral.h"
 
-#include "BranchingDihedralCosine.h"
+#include "Mechanics/ForceField/Branching/BranchingDihedralCosine.h"
+#include "Mechanics/ForceField/Branching/BranchingDihedralQuadratic.hpp"
 
 #include "BranchingPoint.h"
 #include "Cylinder.h"
@@ -165,10 +166,11 @@ void BranchingDihedral<BDihedralInteractionType>::computeForces(floatingpoint *c
 #endif
 }
 
-///Template specializations
+// Template instantiations
 template floatingpoint BranchingDihedral<BranchingDihedralCosine>::computeEnergy
         (floatingpoint *coord, floatingpoint *f, floatingpoint d);
 template void BranchingDihedral<BranchingDihedralCosine>::computeForces(floatingpoint
         *coord, floatingpoint *f);
 template void BranchingDihedral<BranchingDihedralCosine>::vectorize();
 template void BranchingDihedral<BranchingDihedralCosine>::deallocate();
+template class BranchingDihedral< BranchingDihedralQuadratic >;
