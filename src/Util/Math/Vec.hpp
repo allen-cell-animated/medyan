@@ -166,6 +166,8 @@ struct RefVec : internal::RefVecBase< dim, Float, Container, false, RefVec< dim,
     constexpr RefVec(const RefVec&  rv) : RefVec(rv.ptr, rv.pos) {}
     constexpr RefVec(      RefVec&& rv) : RefVec(rv.ptr, rv.pos) {}
 
+    // Copy assignment operator must be explicity defined.
+    // Otherwise it is implicitly defined as deleted.
     RefVec& operator=(const RefVec& v) {
         for(size_t i = 0; i < dim; ++i) (*this)[i] = v[i];
         return *this;

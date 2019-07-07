@@ -13,7 +13,7 @@
 using namespace mathfunc;
 using V3 = Vec< 3, floatingpoint >;
 
-constexpr floatingpoint thetaWarn = 0.05;
+constexpr floatingpoint cosDihTol = 0.01;
 constexpr floatingpoint angSinMin = 0.001;
 constexpr floatingpoint dihSinMin = 0.00001;
 
@@ -38,7 +38,8 @@ floatingpoint BranchingDihedralQuadratic::energy(
         auto coord4 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 3]);
 
         // Brancher coordinate on the mother filament
-        const auto mp = (1 - pos[i]) * coord1 + pos[i] * coord2;
+        const auto p = pos[i];
+        const auto mp = (1 - p) * coord1 + p * coord2;
 
         // Bonds
         const auto b1 = coord2 - mp;
@@ -52,11 +53,19 @@ floatingpoint BranchingDihedralQuadratic::energy(
         const auto n2mag = magnitude(n2);
 
         // cos(theta)
-        auto c = dot(n1, n2) / (n1mag * n2mag);
-        if(c < -1.0) c = -1.0;
-        if(c >  1.0) c =  1.0;
+        auto ct = dot(n1, n2) / (n1mag * n2mag);
 
-        const auto theta = std::acos(c);
+        if(ct > 1.0 + cosDihTol || ct < -1.0 - cosDihTol) {
+            LOG(WARNING) << "Dihedral incorrect cos theta: " << ct;
+            LOG(INFO) << "Interaction information:\n"
+                << "Bead coords: " << coord1 << ' ' << coord2 << ' ' << coord3 << ' ' << coord4 << '\n'
+                << "Position: " << p << ", brancher coord: " << mp;
+        }
+
+        if(ct < -1.0) ct = -1.0;
+        if(ct >  1.0) ct =  1.0;
+
+        const auto theta = std::acos(ct);
 
         const auto U_i = kdih[i] * theta * theta;
 
@@ -172,22 +181,116 @@ void BranchingDihedralQuadratic::forces(
         const auto dot32 = dot(b3, b2);
 
         // Bond angles
-        const auto cos12    = dot12 * mag12inv;
-        const auto sin12_2  = std::max< floatingpoint >(1 - cos12 * cos12, 0.0);
-        const auto sin12    = std::max< floatingpoint >(std::sqrt(sin12_2), angSinMin);
-        const auto sin12inv = (floatingpoint)1.0 / sin12;
+        const auto cos12     = dot12 * mag12inv;
+        const auto sin12_2   = std::max< floatingpoint >(1 - cos12 * cos12, 0.0);
+        const auto sin12     = std::max< floatingpoint >(std::sqrt(sin12_2), angSinMin);
+        const auto sin12inv  = (floatingpoint)1.0 / sin12;
+        const auto sin12inv2 = sin12inv * sin12inv;
 
-        const auto cos32    = dot32 * mag32inv;
-        const auto sin32_2  = std::max< floatingpoint >(1 - cos32 * cos32, 0.0);
-        const auto sin32    = std::max< floatingpoint >(std::sqrt(sin32_2), angSinMin);
-        const auto sin32inv = (floatingpoint)1.0 / sin32;
+        const auto cos32     = dot32 * mag32inv;
+        const auto sin32_2   = std::max< floatingpoint >(1 - cos32 * cos32, 0.0);
+        const auto sin32     = std::max< floatingpoint >(std::sqrt(sin32_2), angSinMin);
+        const auto sin32inv  = (floatingpoint)1.0 / sin32;
+        const auto sin32inv2 = sin32inv * sin32inv;
 
         const auto cos13 = dot13 * mag13inv;
 
         // ct -- cos(theta)
-        const auto ctFac1 = cos13 - cos12 * cos32;
-        const auto ctFac2 = sin12inv * sin32inv;
+        const auto ctFac1 = cos13 - cos12 * cos32; // ct numerator
+        const auto ctFac2 = sin12inv * sin32inv;   // ct inv denominator
         const auto ct     = ctFac1 * ctFac2;
+
+        if(ct > 1.0 + cosDihTol || ct < -1.0 - cosDihTol) {
+            LOG(WARNING) << "Dihedral incorrect cos theta: " << ct;
+            LOG(INFO) << "Interaction information:\n"
+                << "Bead coords: " << coord1 << ' ' << coord2 << ' ' << coord3 << ' ' << coord4 << '\n'
+                << "Position: " << p << ", brancher coord: " << mp;
+        }
+
+        if(ct < -1.0) ct = -1.0;
+        if(ct >  1.0) ct =  1.0;
+
+        // derivatives on ct
+        //---------------------------------------------------------------------
+        // d(ct_nu) / db1
+        //
+        //           b3                      b1
+        //    = ----------- - cos<b1, b3> --------
+        //       |b1| |b3|                 |b1|^2
+        //
+        //                        b2                                   b1
+        //      - cos<b3, b2> ----------- + cos<b3, b2> cos<b1, b2> --------
+        //                     |b1| |b2|                             |b1|^2
+        //
+        // d(ct_nu) / db2
+        //
+        //                         b3                                  b2
+        //    = - cos<b1, b2> ----------- + cos<b1, b2> cos<b3, b2> --------
+        //                     |b2| |b3|                             |b2|^2
+        //
+        //                         b1                                  b2
+        //      - cos<b3, b2> ----------- + cos<b1, b2> cos<b3, b2> --------
+        //                     |b2| |b1|                             |b2|^2
+        //
+        // d(ln ct_de) / db1
+        //
+        //         cos^2 <b1, b2>  [     b2         b1    ]
+        //    = - ---------------- [ --------- - -------- ]
+        //         sin^2 <b1, b2>  [  b1 . b2     |b1|^2  ]
+        //
+        // d(ln ct_de) / db2
+        //
+        //         cos^2 <b3, b2>  [     b3         b2    ]
+        //    = - ---------------- [ --------- - -------- ]
+        //         sin^2 <b3, b2>  [  b3 . b2     |b2|^2  ]
+        //
+        //         cos^2 <b1, b2>  [     b1         b2    ]
+        //      - ---------------- [ --------- - -------- ]
+        //         sin^2 <b1, b2>  [  b1 . b2     |b2|^2  ]
+        //
+        //---------------------------------------------------------------------
+        //          d(ct_nu)
+        // d(ct) = ---------- - ct * d(ln ct_de)
+        //            ct_de
+        //
+        // Let E1i = E1i1 * b1 + E1i2 * b2 + E1i3 * b3, then
+        //
+        //             ct       cos^2 <b1, b2>       ct                  ct
+        // E111 = - -------- - ---------------- * -------- = - -----------------------
+        //           |b1|^2     sin^2 <b1, b2>     |b1|^2       sin^2 <b1, b2> |b1|^2
+        //
+        //             cos<b3, b2>       cos^2 <b1, b2>   ct
+        // E112 = - ----------------- + -------------------------
+        //           ct_de |b1| |b2|     sin^2 <b1, b2>  b1 . b2
+        //
+        //             1      [    cos<b3, b2>     cos<b1, b2> ct  ]
+        //      = ----------- [ - ------------- + ---------------- ]
+        //         |b1| |b2|  [       ct_de        sin^2 <b1, b2>  ]
+        //
+        // E113 = 1 / (|b1| |b3| ct_de)
+        //
+        //             cos<b3, b2>       cos^2 <b1, b2>   ct
+        // E121 = - ----------------- + ------------------------- = E112
+        //           ct_de |b1| |b2|     sin^2 <b1, b2>  b1 . b2
+        //
+        //         2 cos<b1, b2> cos<b3, b2>      cos^2 <b1, b2>  ct        cos^2 <b3, b2>  ct
+        // E122 = --------------------------- - ----------------------- - -----------------------
+        //              ct_de   |b2|^2           sin^2 <b1, b2> |b2|^2     sin^2 <b3, b2> |b2|^2
+        //
+        //            1    [  2 cos<b1, b3>       [      cos^2 <b1, b2>     cos^2 <b3, b2>  ] ]
+        //      = -------- [ --------------- - ct [ 2 + ---------------- + ---------------- ] ]
+        //         |b2|^2  [      ct_de           [      sin^2 <b1, b2>     sin^2 <b3, b2>  ] ]
+        //
+        //            1    [  2 cos<b1, b3>       [         1                  1        ] ]
+        //      = -------- [ --------------- - ct [ ---------------- + ---------------- ] ]
+        //         |b2|^2  [      ct_de           [  sin^2 <b1, b2>     sin^2 <b3, b2>  ] ]
+        //
+        //             cos<b1, b2>       cos^2 <b3, b2>   ct
+        // E123 = - ----------------- + ------------------------- = E132
+        //           ct_de |b3| |b2|     sin^2 <b3, b2>  b3 . b2
+        //
+        //---------------------------------------------------------------------
+
     // TODO
     } // End loop interactions
 
