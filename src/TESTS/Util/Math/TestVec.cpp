@@ -56,8 +56,8 @@ TEST_CASE("Vec and RefVec tests", "[Vec]") {
         {
             Vec3f v3f { 0.0f, 1.0f, 2.0f };
             std::vector<double> vv3d { 6.0, 7.0, 8.0, -1.0, -2.0, -3.0 };
-            auto v3d_1 = RefVec< 3, double, std::vector<double> >(&vv3d, 0); //  6  7  8
-            auto v3d_2 = makeRefVec< 3 >(vv3d.data() + 3);                   // -1 -2 -3
+            auto v3d_1 = RefVec< 3, std::vector<double> >(vv3d, 0); //  6  7  8
+            auto v3d_2 = makeRefVec< 3 >(vv3d.data() + 3);          // -1 -2 -3
 
             v3f = v3d_1;
             CHECK(v3f[1] == Approx(7.0f));
@@ -69,9 +69,9 @@ TEST_CASE("Vec and RefVec tests", "[Vec]") {
         {
             std::vector<float> vv3f { 0.0f, 1.0f, 2.0f };
             std::vector<double> vv3d { 6.0, 7.0, 8.0, -1.0, -2.0, -3.0 };
-            auto v3f = makeRefVec< 3 >(vv3f.data());                         //  0  1  2
-            auto v3d_1 = RefVec< 3, double, std::vector<double> >(&vv3d, 0); //  6  7  8
-            auto v3d_2 = makeRefVec< 3 >(vv3d.data() + 3);                   // -1 -2 -3
+            auto v3f = makeRefVec< 3 >(vv3f.data());                //  0  1  2
+            auto v3d_1 = RefVec< 3, std::vector<double> >(vv3d, 0); //  6  7  8
+            auto v3d_2 = makeRefVec< 3 >(vv3d.data() + 3);          // -1 -2 -3
 
             v3f = v3d_1;
             CHECK(v3f[1] == Approx(7.0f));
