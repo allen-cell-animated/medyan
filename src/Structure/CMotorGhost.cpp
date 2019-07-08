@@ -111,10 +111,11 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     
     ReactionBase* offRxn =
     new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(os, _offRate);
+
+    offRxn->setReactionType(ReactionType::MOTORUNBINDING);
     // Dissipation
     if(SysParams::Chemistry().dissTracking){
     floatingpoint gnum = onRxn->getGNumber();
-    offRxn->setReactionType(ReactionType::MOTORUNBINDING);
     offRxn->setGNumber(-gnum);
     
     //set hrcdid of offreaction
