@@ -18,7 +18,7 @@ constexpr floatingpoint angSinMin = 0.001;
 constexpr floatingpoint dihSinMin = 0.00001;
 
 floatingpoint BranchingDihedralQuadratic::energy(
-    const floatingpoint *coord, floatingpoint* f /* to be removed */, const int *beadSet,
+    const floatingpoint *coord, floatingpoint* f /* to be removed */, const unsigned int *beadSet,
     const floatingpoint *kdih, const floatingpoint *pos
 ) const {
 
@@ -86,7 +86,7 @@ floatingpoint BranchingDihedralQuadratic::energy(
 } // floatingpoint energy(...)
 
 void BranchingDihedralQuadratic::forces(
-    const floatingpoint *coord, floatingpoint *f, const int *beadSet,
+    const floatingpoint *coord, floatingpoint *f, const unsigned int *beadSet,
     const floatingpoint *kdih, const floatingpoint *pos
 ) const {
 

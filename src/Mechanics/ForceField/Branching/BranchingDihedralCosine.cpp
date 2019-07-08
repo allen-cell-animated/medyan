@@ -201,7 +201,7 @@ void BranchingDihedralCosine::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoint *f, unsigned int *beadSet,
                                        floatingpoint *kdih, floatingpoint *pos){
 
 
@@ -253,7 +253,7 @@ floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoin
 }
 
 
-floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoint *f, unsigned int *beadSet,
                                        floatingpoint *kdih, floatingpoint *pos, floatingpoint d){
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
@@ -310,7 +310,7 @@ floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoin
     return U;
 }
 
-void BranchingDihedralCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+void BranchingDihedralCosine::forces(floatingpoint *coord, floatingpoint *f, unsigned int *beadSet,
                                      floatingpoint *kdih, floatingpoint *pos){
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;

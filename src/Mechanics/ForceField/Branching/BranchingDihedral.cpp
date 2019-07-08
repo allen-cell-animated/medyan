@@ -112,10 +112,9 @@ floatingpoint BranchingDihedral<BDihedralInteractionType>::computeEnergy(floatin
 
 #endif
 #ifdef SERIAL
-    if (d == 0.0)
-        U_ii = _FFType.energy(coord, f, beadSet.data(), kdih, pos);
-    else
-        U_ii = _FFType.energy(coord, f, beadSet.data(), kdih, pos, d);
+
+    U_ii = _FFType.energy(coord, f, beadSet.data(), kdih, pos);
+
 #endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
     floatingpoint U_i[1];
