@@ -111,26 +111,27 @@ namespace internal {
     > struct RefVecBase {
         static constexpr size_t vec_size = dim;
 
-        static constexpr bool is_raw_ptr_container = std::is_pointer< Container >::value;
-        using float_type = RefVecBaseFloatType_t< is_raw_ptr_container, Container >;
+        using container_type = std::decay_t< Container >;
+        static constexpr bool is_raw_ptr_container = std::is_pointer< container_type >::value;
+        using float_type = RefVecBaseFloatType_t< is_raw_ptr_container, container_type >;
         using value_type = float_type; // for STL compatibility
 
         using container_ref_type = std::conditional_t<
             is_raw_ptr_container,
             std::conditional_t< is_const, const float_type * const, float_type * const >,
-            std::conditional_t< is_const, const Container &, Container & >
+            std::conditional_t< is_const, const container_type &, container_type & >
         >;
         // The type for use in constructors to prevent unwanted dangling const references
         using container_ref_arg_type = std::conditional_t<
             is_raw_ptr_container,
             std::conditional_t< is_const, const float_type * const, float_type * const >,
-            std::conditional_t< is_const, std::reference_wrapper< const Container >, Container & >
+            std::conditional_t< is_const, std::reference_wrapper< const container_type >, container_type & >
         >;
 
-        using iterator       = RefVecBaseIterator_t< is_const, is_raw_ptr_container, float_type, Container >;
-        using const_iterator = RefVecBaseIterator_t< true,     is_raw_ptr_container, float_type, Container >;
-        using reference       = RefVecBaseReference_t< is_const, is_raw_ptr_container, float_type, Container >;
-        using const_reference = RefVecBaseReference_t< true,     is_raw_ptr_container, float_type, Container >;
+        using iterator       = RefVecBaseIterator_t< is_const, is_raw_ptr_container, float_type, container_type >;
+        using const_iterator = RefVecBaseIterator_t< true,     is_raw_ptr_container, float_type, container_type >;
+        using reference       = RefVecBaseReference_t< is_const, is_raw_ptr_container, float_type, container_type >;
+        using const_reference = RefVecBaseReference_t< true,     is_raw_ptr_container, float_type, container_type >;
 
         container_ref_type ref;
         const size_t pos; // index of first Float
@@ -364,7 +365,83 @@ inline auto makeVec(const Float* source) {
     return res;
 }
 
+//-----------------------------------------------------------------------------
+// Traits and types
+//-----------------------------------------------------------------------------
+// Vec
+template< typename VecType > struct IsVec : std::false_type {};
+template< size_t dim, typename Float > struct IsVec< Vec< dim, Float > > : std::true_type {};
+
+// (non-const) RefVec
+template< typename VecType > struct IsNonConstRefVec : std::false_type {};
+template< size_t dim, typename Container > struct IsNonConstRefVec< RefVec< dim, Container > > : std::true_type {};
+
+// ConstRefVec
+template< typename VecType > struct IsConstRefVec : std::false_type {};
+template< size_t dim, typename Container > struct IsConstRefVec< ConstRefVec< dim, Container > > : std::true_type {};
+
+// any RefVec
+template< typename VecType > struct IsRefVec : std::integral_constant< bool,
+    IsNonConstRefVec< VecType >::value || IsConstRefVec< VecType >::value
+> {};
+
+// Convert any RefVec to non-const or const RefVec
+template< typename VecType > struct RefVecToNonConstRefVecType {
+    using type = std::enable_if_t<
+        IsRefVec< VecType >::value,
+        RefVec< VecType::vec_size, typename VecType::container_type >
+    >;
+};
+template< typename VecType > using RefVecToNonConstRefVecType_t = typename RefVecToNonConstRefVecType< VecType >::type;
+
+template< typename VecType > struct RefVecToConstRefVecType {
+    using type = std::enable_if_t<
+        IsRefVec< VecType >::value,
+        ConstRefVec< VecType::vec_size, typename VecType::container_type >
+    >;
+};
+template< typename VecType > using RefVecToConstRefVecType_t = typename RefVecToConstRefVecType< VecType >::type;
+
+// any Vec like
+template< typename VecType > struct IsVecLike : std::integral_constant< bool,
+    IsVec< VecType >::value || IsRefVec< VecType >::value
+> {};
+
+// get general non-const vec ref
+template< typename VecType > class VecNonConstRefLikeType {
+private:
+    using VecTypeDecayed = std::decay_t< VecType >;
+public:
+    using type = std::enable_if_t<
+        IsVecLike< VecTypeDecayed >::value,
+        std::conditional_t<
+            IsVec< VecTypeDecayed >::value,
+            VecTypeDecayed &,
+            RefVecToNonConstRefVecType_t< VecTypeDecayed >
+        >
+    >;
+};
+template< typename VecType > using VecNonConstRefLikeType_t = typename VecNonConstRefLikeType< VecType >::type;
+
+// get general const vec ref
+template< typename VecType > class VecConstRefLikeType {
+private:
+    using VecTypeDecayed = std::decay_t< VecType >;
+public:
+    using type = std::enable_if_t<
+        IsVecLike< VecTypeDecayed >::value,
+        std::conditional_t<
+            IsVec< VecTypeDecayed >::value,
+            VecTypeDecayed &,
+            RefVecToConstRefVecType_t< VecTypeDecayed >
+        >
+    >;
+};
+template< typename VecType > using VecConstRefLikeType_t = typename VecConstRefLikeType< VecType >::type;
+
+//-----------------------------------------------------------------------------
 // Formatting
+//-----------------------------------------------------------------------------
 // undefined behavior if size is 0
 template< typename VecType, size_t = VecType::vec_size > inline
 std::ostream& operator<<(std::ostream& os, const VecType& v) {
@@ -374,7 +451,9 @@ std::ostream& operator<<(std::ostream& os, const VecType& v) {
     return os;
 }
 
+//-----------------------------------------------------------------------------
 // Fixed size vector arithmetics
+//-----------------------------------------------------------------------------
 
 // Magnitude, distance and normalization
 template< typename VecType, size_t = VecType::vec_size >
@@ -496,7 +575,9 @@ auto cross(const VT1& v1, const VT2& v2) {
     };
 }
 
+//-----------------------------------------------------------------------------
 // VecArray arithmetics
+//-----------------------------------------------------------------------------
 
 // Dot product
 // Always using the size of the 1st operand.
