@@ -366,7 +366,7 @@ inline auto makeVec(const Float* source) {
 }
 
 //-----------------------------------------------------------------------------
-// Traits and types
+// Traits
 //-----------------------------------------------------------------------------
 // Vec
 template< typename VecType > struct IsVec : std::false_type {};
@@ -385,59 +385,22 @@ template< typename VecType > struct IsRefVec : std::integral_constant< bool,
     IsNonConstRefVec< VecType >::value || IsConstRefVec< VecType >::value
 > {};
 
-// Convert any RefVec to non-const or const RefVec
-template< typename VecType > struct RefVecToNonConstRefVecType {
-    using type = std::enable_if_t<
-        IsRefVec< VecType >::value,
-        RefVec< VecType::vec_size, typename VecType::container_type >
-    >;
-};
-template< typename VecType > using RefVecToNonConstRefVecType_t = typename RefVecToNonConstRefVecType< VecType >::type;
-
-template< typename VecType > struct RefVecToConstRefVecType {
-    using type = std::enable_if_t<
-        IsRefVec< VecType >::value,
-        ConstRefVec< VecType::vec_size, typename VecType::container_type >
-    >;
-};
-template< typename VecType > using RefVecToConstRefVecType_t = typename RefVecToConstRefVecType< VecType >::type;
-
-// any Vec like
+// any Vec like (can decay)
 template< typename VecType > struct IsVecLike : std::integral_constant< bool,
-    IsVec< VecType >::value || IsRefVec< VecType >::value
+    IsVec< std::decay_t< VecType > >::value || IsRefVec< std::decay_t< VecType > >::value
 > {};
 
-// get general non-const vec ref
-template< typename VecType > class VecNonConstRefLikeType {
-private:
-    using VecTypeDecayed = std::decay_t< VecType >;
-public:
-    using type = std::enable_if_t<
-        IsVecLike< VecTypeDecayed >::value,
-        std::conditional_t<
-            IsVec< VecTypeDecayed >::value,
-            VecTypeDecayed &,
-            RefVecToNonConstRefVecType_t< VecTypeDecayed >
-        >
-    >;
-};
-template< typename VecType > using VecNonConstRefLikeType_t = typename VecNonConstRefLikeType< VecType >::type;
-
-// get general const vec ref
-template< typename VecType > class VecConstRefLikeType {
-private:
-    using VecTypeDecayed = std::decay_t< VecType >;
-public:
-    using type = std::enable_if_t<
-        IsVecLike< VecTypeDecayed >::value,
-        std::conditional_t<
-            IsVec< VecTypeDecayed >::value,
-            VecTypeDecayed &,
-            RefVecToConstRefVecType_t< VecTypeDecayed >
-        >
-    >;
-};
-template< typename VecType > using VecConstRefLikeType_t = typename VecConstRefLikeType< VecType >::type;
+// any Vec non-const ref like (non-const RefVec can decay)
+template< typename VecType > struct IsVecNonConstRefLike : std::integral_constant< bool,
+    (
+        IsVec< VecType >::value &&
+        std::is_reference< VecType >::value &&
+        !std::is_const< std::remove_reference_t< VecType > >::value
+    ) ||
+    (
+        IsNonConstRefVec< std::decay_t< VecType > >::value
+    )
+> {};
 
 //-----------------------------------------------------------------------------
 // Formatting
