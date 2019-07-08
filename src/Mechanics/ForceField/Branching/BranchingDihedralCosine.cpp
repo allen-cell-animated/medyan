@@ -201,13 +201,12 @@ void BranchingDihedralCosine::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoint *f, unsigned int *beadSet,
-                                       floatingpoint *kdih, floatingpoint *pos){
+floatingpoint BranchingDihedralCosine::energy(
+    floatingpoint *coord, floatingpoint *f, size_t nint,
+    unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos){
 
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
-    int nint = BranchingPoint::getBranchingPoints().size();
-
 
     floatingpoint *coord1, *coord2, *coord3, *coord4, n1n2, U_i;
     floatingpoint *mp = new floatingpoint[3];
@@ -310,12 +309,11 @@ floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoin
     return U;
 }
 
-void BranchingDihedralCosine::forces(floatingpoint *coord, floatingpoint *f, unsigned int *beadSet,
-                                     floatingpoint *kdih, floatingpoint *pos){
+void BranchingDihedralCosine::forces(
+    floatingpoint *coord, floatingpoint *f, size_t nint,
+    unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos){
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
-    int nint = BranchingPoint::getBranchingPoints().size();
-
 
     floatingpoint *coord1, *coord2, *coord3, *coord4, N1, N2, n1n2, f0, NN1, NN2, X, D, Y, position;
     floatingpoint *f1, *f2, *f3, *f4;

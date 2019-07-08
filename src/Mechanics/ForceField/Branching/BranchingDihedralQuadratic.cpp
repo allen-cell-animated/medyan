@@ -18,8 +18,8 @@ constexpr floatingpoint angSinMin = 0.001;
 constexpr floatingpoint dihSinMin = 0.00001;
 
 floatingpoint BranchingDihedralQuadratic::energy(
-    const floatingpoint *coord, floatingpoint* f /* to be removed */, const unsigned int *beadSet,
-    const floatingpoint *kdih, const floatingpoint *pos
+    const floatingpoint *coord, floatingpoint* f /* to be removed */, size_t nint,
+    const unsigned int *beadSet, const floatingpoint *kdih, const floatingpoint *pos
 ) const {
 
     // Beads per interaction
@@ -28,7 +28,6 @@ floatingpoint BranchingDihedralQuadratic::energy(
         bpi == BranchingDihedral< BranchingDihedralQuadratic >::n,
         "Number of beads per interaction in branching dihedral quadratic does not match"
     );
-    const auto nint = BranchingPoint::getBranchingPoints().size(); // should be passed as an argument
 
     floatingpoint U = 0.0;
 
@@ -86,8 +85,8 @@ floatingpoint BranchingDihedralQuadratic::energy(
 } // floatingpoint energy(...)
 
 void BranchingDihedralQuadratic::forces(
-    const floatingpoint *coord, floatingpoint *f, const unsigned int *beadSet,
-    const floatingpoint *kdih, const floatingpoint *pos
+    const floatingpoint *coord, floatingpoint *f, size_t nint,
+    const unsigned int *beadSet, const floatingpoint *kdih, const floatingpoint *pos
 ) const {
 
     // Beads per interaction
@@ -96,7 +95,6 @@ void BranchingDihedralQuadratic::forces(
         bpi == BranchingDihedral< BranchingDihedralQuadratic >::n,
         "Number of beads per interaction in branching dihedral quadratic does not match"
     );
-    auto nint = BranchingPoint::getBranchingPoints().size(); // should be passed as an argument
 
     for(size_t i = 0; i < nint; ++i) {
         const auto coord1 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i    ]);

@@ -113,7 +113,7 @@ floatingpoint BranchingDihedral<BDihedralInteractionType>::computeEnergy(floatin
 #endif
 #ifdef SERIAL
 
-    U_ii = _FFType.energy(coord, f, beadSet.data(), kdih, pos);
+    U_ii = _FFType.energy(coord, f, BranchingPoint::getBranchingPoints().size(), beadSet.data(), kdih, pos);
 
 #endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
@@ -160,7 +160,7 @@ void BranchingDihedral<BDihedralInteractionType>::computeForces(floatingpoint *c
 #ifdef SERIAL
 
 
-    _FFType.forces(coord, f, beadSet.data(), kdih, pos);
+    _FFType.forces(coord, f, BranchingPoint::getBranchingPoints().size(), beadSet.data(), kdih, pos);
 
 #endif
 }

@@ -5,13 +5,13 @@
 
 struct BranchingDihedralQuadratic {
     floatingpoint energy(
-        const floatingpoint *coord, floatingpoint* f /* to be removed */, const unsigned int *beadSet,
-        const floatingpoint *kdih, const floatingpoint *pos
+        const floatingpoint *coord, floatingpoint* f /* to be removed */, size_t nint,
+        const unsigned int *beadSet, const floatingpoint *kdih, const floatingpoint *pos
     ) const;
 
     void forces(
-        const floatingpoint *coord, floatingpoint *f, const unsigned int *beadSet,
-        const floatingpoint *kdih, const floatingpoint *pos
+        const floatingpoint *coord, floatingpoint *f, size_t nint,
+        const unsigned int *beadSet, const floatingpoint *kdih, const floatingpoint *pos
     ) const;
 };
 
