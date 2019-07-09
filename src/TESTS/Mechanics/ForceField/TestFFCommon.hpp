@@ -41,7 +41,7 @@ inline Float vecDot(mathfunc::VecArray< dim, Float, Container >& v1, const mathf
 
 // Compare equal
 template< typename Float >
-inline void equalRelEps(Float a, Float b, Float relEps) {
+inline bool equalRelEps(Float a, Float b, Float relEps) {
     return std::fabs(a - b) <= std::min(std::fabs(a), std::fabs(b)) * relEps;
 }
 
@@ -59,7 +59,7 @@ template<
     typename Float,
     typename FuncEnergy,
     typename FuncForce
-> auto testEnergyForceConsistency(
+> inline auto testEnergyForceConsistency(
     const CoordContainer& c0,
     FuncEnergy&& calcEnergy, FuncForce&& calcForce,
     Float moveMag, Float energyRelEps
