@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -30,7 +30,7 @@
 #include "Util/Io/Log.hpp"
 
 void MController::initializeMinAlgorithm (MechanicsAlgorithm& MAlgorithm) {
-    
+
     if (MAlgorithm.ConjugateGradient == "FLETCHERRIEVES")
         _minimizerAlgorithm.reset(
         new ConjugateGradient<FletcherRieves>(MAlgorithm.gradientTolerance,
@@ -46,7 +46,7 @@ void MController::initializeMinAlgorithm (MechanicsAlgorithm& MAlgorithm) {
         new ConjugateGradient<SteepestDescent>(MAlgorithm.gradientTolerance,
                                                MAlgorithm.maxDistance,
                                                MAlgorithm.lambdaMax));
-    
+
     else {
         LOG(FATAL) << "Conjugate gradient method not recognized. Exiting.";
         exit(EXIT_FAILURE);
@@ -60,17 +60,17 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
         new FilamentFF(forceFields.FStretchingType,
                        forceFields.FBendingType,
                        forceFields.FTwistingType));
-    
+
     _FFManager._forceFields.push_back(
         new LinkerFF(forceFields.LStretchingType,
                      forceFields.LBendingType,
                      forceFields.LTwistingType));
-    
+
     _FFManager._forceFields.push_back(
         new MotorGhostFF(forceFields.MStretchingType,
                          forceFields.MBendingType,
                          forceFields.MTwistingType));
-    
+
     _FFManager._forceFields.push_back(
         new BranchingFF(forceFields.BrStretchingType,
                         forceFields.BrBendingType,
@@ -93,7 +93,8 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
 
     //Get the force field access to the HNLID
     for(auto nl : volumeFF->getNeighborLists()) {
-#ifdef HYBRID_NLSTENCILLIST
+
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         //Original neighborlist is created even when HybridNeighborList is use as the
         // neighborLists are implemented as predominantly modifications in the back-end.
         // Front end functions remain the same and function calls are internally
@@ -114,7 +115,7 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     auto boundaryFF = new BoundaryFF(forceFields.BoundaryFFType);
     _FFManager._forceFields.push_back(boundaryFF);
     for(auto nl : boundaryFF->getNeighborLists()) {
-        
+
         if(nl != nullptr)
 #if defined(NLSTENCILLIST) || defined(NLORIGINAL)
             _subSystem->addNeighborList(nl);
@@ -133,4 +134,3 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
             _subSystem->addBNeighborList(nl);
     }
 }
-

@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -434,6 +434,7 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
 
 vector<Cylinder*> CylinderCylinderNL::getNeighborsstencil(Cylinder* cylinder) {
 
+
     return _list4mbin[cylinder];
 }
 #endif
@@ -574,7 +575,6 @@ void CylinderCylinderNL::reset() {
 
 #endif
     //loop through all neighbor keys
-    int tot = 0;
 #ifdef CUDA_TIMETRACK
     chrono::high_resolution_clock::time_point mins, mine;
 #endif

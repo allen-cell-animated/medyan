@@ -24,7 +24,7 @@ using namespace mathfunc;
 floatingpoint MTOCBendingCosine::energy(floatingpoint *coord, int *beadSet,
                                       floatingpoint *kbend, floatingpoint radius){
     
-    floatingpoint *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
+    floatingpoint *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2, dPhi;
     floatingpoint U = 0.0;
     
     int n = MTOCBending<MTOCBendingCosine>::n;
@@ -72,7 +72,7 @@ floatingpoint MTOCBendingCosine::energy(floatingpoint *coord, floatingpoint *f, 
     
     //Do not use for now
     
-    floatingpoint *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
+    floatingpoint *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2, dPhi;
     floatingpoint U = 0.0;
     
     int n = MTOCBending<MTOCBendingCosine>::n;
@@ -125,7 +125,7 @@ void MTOCBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *bead
         int nint = mtoc->getFilaments().size();
         
         floatingpoint *coord1, *coord2, *coord3, *force1, *force2, *force3,
-        L1, L2, l1l2, invL1, invL2, A,B,C, phi, dPhi, k;
+        L1, L2, l1l2, invL1, invL2, A,B,C, k;
         
         coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC
         force1 = &f[3 * beadSet[0]];

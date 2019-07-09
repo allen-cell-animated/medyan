@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -2535,7 +2535,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
 
             vector<string> lineVector = split<string>(line);
 
-            //Dissipation
+            // check parameters related to dissipation tracking if it is enabled
             float gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
@@ -2649,7 +2649,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
 
             int filType = atoi(lineVector[2].c_str());
-            //Dissipation
+            // check parameters related to dissipation tracking if it is enabled
             float gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
@@ -2704,7 +2704,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
 
             int filType = atoi(lineVector[2].c_str());
-            //Dissipation
+            // check parameters related to dissipation tracking if it is enabled
             floatingpoint gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
@@ -2761,7 +2761,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
 
             int filType = atoi(lineVector[2].c_str());
-            //Dissipation
+            // check parameters related to dissipation tracking if it is enabled
             floatingpoint gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
@@ -2818,7 +2818,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
 
             int filType = atoi(lineVector[2].c_str());
-            //Dissipation
+            // check parameters related to dissipation tracking if it is enabled
             floatingpoint gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
@@ -2876,7 +2876,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
 
             int filType = atoi(lineVector[2].c_str());
-            //Dissipation
+            // check parameters related to dissipation tracking if it is enabled
             floatingpoint gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
@@ -2931,7 +2931,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
 
             int filType = atoi(lineVector[2].c_str());
-            //Dissipation
+            // check parameters related to dissipation tracking if it is enabled 
             floatingpoint gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";

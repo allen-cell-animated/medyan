@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -111,10 +111,11 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     
     ReactionBase* offRxn =
     new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(os, _offRate);
+
+    offRxn->setReactionType(ReactionType::MOTORUNBINDING);
     // Dissipation
     if(SysParams::Chemistry().dissTracking){
     floatingpoint gnum = onRxn->getGNumber();
-    offRxn->setReactionType(ReactionType::MOTORUNBINDING);
     offRxn->setGNumber(-gnum);
     
     //set hrcdid of offreaction

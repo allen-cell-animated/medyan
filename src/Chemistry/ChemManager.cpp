@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -1123,7 +1123,7 @@ void ChemManager::genFilBindingReactions() {
     FilamentBindingManager::_subSystem = _subSystem;
     floatingpoint rMax, rMin;
     bool status = false;
-	#ifdef HYBRID_NLSTENCILLIST
+	#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 	//If linker and motor reactions exist, create HybridBindingSearchManager
 	short totalreactions = 0;
 	for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
@@ -1396,7 +1396,7 @@ void ChemManager::genFilBindingReactions() {
                                                                   nucleationZone, nucleationDist);
                 C->addFilamentBindingManager(bManager);
 
-                #ifdef SIMDBINDINGSEARCH
+                #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
                 C->addBranchingBindingManager(bManager);
 				#endif
 
@@ -1614,7 +1614,7 @@ void ChemManager::genFilBindingReactions() {
                     << endl;
                     exit(EXIT_FAILURE);
                 }
-            
+
                 floatingpoint onRate = get<2>(r);
                 floatingpoint offRate = get<3>(r);
                 //aravind 24, June, 2016.
@@ -1649,7 +1649,7 @@ void ChemManager::genFilBindingReactions() {
                 //attach callback
                 LinkerBindingCallback lcallback(lManager, onRate, offRate, _subSystem, _dt);
                 ConnectionBlock rcb(rxn->connect(lcallback,false));
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
                 auto Hbsm = C->getHybridBindingSearchManager();
                 //1 refers to linker binding manager
                 Hbsm->setbindingsearchparameter(lManager, 1, 0,0,rMax,rMin);
@@ -1859,7 +1859,7 @@ void ChemManager::genFilBindingReactions() {
                     << endl;
                     exit(EXIT_FAILURE);
                 }
-                
+
                 floatingpoint onRate = get<2>(r);
                 floatingpoint offRate = get<3>(r);
                 //aravind June 24, 2016.
@@ -1905,7 +1905,7 @@ void ChemManager::genFilBindingReactions() {
                 //attach callback
                 MotorBindingCallback mcallback(mManager, onRate, offRate, _subSystem);
                 ConnectionBlock rcb(rxn->connect(mcallback,false));
-#ifdef HYBRID_NLSTENCILLIST
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
                 auto Hbsm = C->getHybridBindingSearchManager();
                 //2 let's it identify with a motor binding manager
                 Hbsm->setbindingsearchparameter(mManager, 2, 0,0,rMax,rMin);
@@ -1916,7 +1916,7 @@ void ChemManager::genFilBindingReactions() {
 
         //init neighbor lists
         //if NOT DEFINED
-#ifndef HYBRID_NLSTENCILLIST
+#if !defined(HYBRID_NLSTENCILLIST) || !defined(SIMDBINDINGSEARCH)
         //get a compartment
         Compartment* C0 = grid->getCompartments()[0];
         for(auto &manager : C0->getFilamentBindingManagers()) {
@@ -1955,7 +1955,7 @@ void ChemManager::genFilBindingReactions() {
         }
 #endif
     } //Loop through Filament types
-    #ifdef HYBRID_NLSTENCILLIST
+    #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 	Compartment *C0 = grid->getCompartments()[0];
 	//status checks if there are linker and motor binding reactions for this
 	// filamentType
@@ -2801,7 +2801,7 @@ void ChemManager::initializeSystem(ChemSim* chemSim) {
 
     //try initial copy number setting
     updateCopyNumbers();
-    
+
     _dt = chemSim->getDT();
 
     genNucleationReactions();
@@ -2809,7 +2809,7 @@ void ChemManager::initializeSystem(ChemSim* chemSim) {
 
     //add reactions in compartment grid to chemsim
     grid->addChemSimReactions(chemSim);
-    
+
     genFilReactionTemplates();
 }
 

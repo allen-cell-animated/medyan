@@ -60,8 +60,7 @@ void MTOCBending<MTOCInteractionType>::deallocate() {
 
 template <class MTOCInteractionType>
 floatingpoint MTOCBending<MTOCInteractionType>::computeEnergy(floatingpoint* coord, bool stretched) {
-    
-    floatingpoint U = 0.0;
+
     floatingpoint U_i=0.0;
     
     //TO DO, for loop may be removed

@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2.1
+//               Dynamics of Active Networks, v4.0
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -216,7 +216,7 @@ void Controller::initialize(string inputFile,
         exit(EXIT_FAILURE);
     }
 
-    // Dissipation
+    // create the dissiption tracking object
     _dt = new DissipationTracker(_mController);
     _cController->initialize(CAlgorithm.algorithm, ChemData, _dt);
     LOG(INFO) << "Done.";
@@ -233,33 +233,33 @@ void Controller::initialize(string inputFile,
 
 
 
-    //Dissipation
+
     if(SysParams::CParams.dissTracking){
-    //Set up reactions output if any
+    //Set up dissipation output if dissipation tracking is enabled
     string disssnapname = _outputDirectory + "dissipation.traj";
     _outputs.push_back(new Dissipation(disssnapname, _subSystem, _cs));
 
-    //Set up HRCD output if any
+    //Set up HRCD output if dissipation tracking is enabled
     string hrcdsnapname = _outputDirectory + "HRCD.traj";
     _outputs.push_back(new HRCD(hrcdsnapname, _subSystem, _cs));
     }
 
     if(SysParams::CParams.eventTracking){
-    //Set up MotorWalkingEvents
+    //Set up MotorWalkingEvents if event tracking is enabled
     string motorwalkingevents = _outputDirectory + "motorwalkingevents.traj";
     _outputs.push_back(new MotorWalkingEvents(motorwalkingevents, _subSystem, _cs));
 
-    //Set up LinkerUnbindingEvents
+    //Set up LinkerUnbindingEvents if event tracking is enabled
     string linkerunbindingevents = _outputDirectory + "linkerunbindingevents.traj";
     _outputs.push_back(new LinkerUnbindingEvents(linkerunbindingevents, _subSystem, _cs));
 
-    //Set up LinkerBindingEvents
+    //Set up LinkerBindingEvents if event tracking is enabled
     string linkerbindingevents = _outputDirectory + "linkerbindingevents.traj";
     _outputs.push_back(new LinkerBindingEvents(linkerbindingevents, _subSystem, _cs));
     }
 
 
-    //Set up CMGraph output if any
+    //Set up CMGraph output
     string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
     _outputs.push_back(new CMGraph(cmgraphsnapname, _subSystem));
 
@@ -332,9 +332,7 @@ void Controller::initialize(string inputFile,
 
     //setup initial network configuration
     setupInitialNetwork(p);
-#ifdef HYBRID_NLSTENCILLIST
-//    _subSystem->initializeHNeighborList();
-#endif
+
     //setup special structures
     setupSpecialStructures(p);
 
@@ -504,6 +502,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     delete fInit;
 
     //add filaments
+
     for (auto it: fil) {
 
         auto coord1 = get<1>(it);
@@ -931,7 +930,9 @@ void Controller::updatePositions() {
     Cylinder::setpositionupdatedstate = false;
     for(auto c : Cylinder::getCylinders())
     	c->updatePosition();
+#ifdef OPTIMOUT
     cout<<"Cylinder position updated"<<endl;
+#endif
     //Reset state to updated state
 	Cylinder::setpositionupdatedstate = true;
 	minep = chrono::high_resolution_clock::now();
@@ -967,7 +968,9 @@ void Controller::updateNeighborLists() {
 #ifdef CHEMISTRY
     mins = chrono::high_resolution_clock::now();
     _subSystem->updateBindingManagers();
+#ifdef OPTIMOUT
 	cout<<"updated BindingManagers"<<endl;
+#endif
     mine = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runb(mine - mins);
     bmgrtime += elapsed_runb.count();
@@ -1125,11 +1128,12 @@ void Controller::run() {
 
         invalidateMembraneMeshIndexCache();
         _mController->run(false);
-
+#ifdef OPTIMOUT
         mine= chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runm(mine - mins);
         minimizationtime += elapsed_runm.count();
         std::cout<<"Time taken for minimization "<<elapsed_runm.count()<<endl;
+#endif
         SysParams::RUNSTATE=true;
 
         //reupdate positions and neighbor lists
@@ -1198,7 +1202,9 @@ void Controller::run() {
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runm2(mine - mins);
     minimizationtime += elapsed_runm2.count();
+#ifdef OPTIMOUT
     std::cout<<"Time taken for minimization "<<elapsed_runm2.count()<<endl;
+#endif
 
     //activate/deactivate compartments
     mins = chrono::high_resolution_clock::now();
@@ -1223,13 +1229,17 @@ void Controller::run() {
     //reupdate positions and neighbor lists
     mins = chrono::high_resolution_clock::now();
     updatePositions();
+#ifdef OPTIMOUT
     cout<<"Positions updated"<<endl;
+#endif
     updateNeighborLists();
+#ifdef OPTIMOUT
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runnl(mine - mins);
     nltime += elapsed_runnl.count();
     std::cout<<"NL time "<<elapsed_runnl.count()<<endl;
     mins = chrono::high_resolution_clock::now();
+#endif
 #ifdef DYNAMICRATES
     updateReactionRates();
 #endif
@@ -1256,7 +1266,7 @@ void Controller::run() {
         //activate/deactivate compartments
         mins = chrono::high_resolution_clock::now();
         activatedeactivateComp();
-	    // Dissipation
+	    // set initial mechanical energy of system through a call to force field manager if dissipation tracking is enabled
 	    if(SysParams::CParams.dissTracking){
 		    _dt->setG1();
 	    }
@@ -1265,7 +1275,9 @@ void Controller::run() {
         specialtime += elapsed_runspl.count();
         while(tau() <= _runTime) {
             //run ccontroller
+            #ifdef OPTIMOUT
             cout<<"Starting chemistry"<<endl;
+			#endif
             SysParams::DURINGCHEMISTRY = true;
             mins = chrono::high_resolution_clock::now();
             floatingpoint chemistryTime = _minimizationTime;
@@ -1307,7 +1319,7 @@ void Controller::run() {
                 std::cout<<l->getMLinker()->stretchForce<<" ";
             }
             cout<<endl;*/
-
+#ifdef OPTIMOUT
 	        auto mtimex = CUDAcommon::tmin;
 	        cout<<"motorbinding calls "<<mtimex.motorbindingcalls<<endl;
 	        cout<<"motorunbinding calls "<<mtimex.motorunbindingcalls<<endl;
@@ -1319,6 +1331,7 @@ void Controller::run() {
 	        CUDAcommon::tmin.motorwalkingcalls = 0;
 	        CUDAcommon::tmin.linkerbindingcalls = 0;
 	        CUDAcommon::tmin.linkerunbindingcalls = 0;
+#endif
             //print output if chemistry fails.
             mins = chrono::high_resolution_clock::now();
             if(var) {
@@ -1326,7 +1339,7 @@ void Controller::run() {
                 resetCounters();
                 break;
             }
-            // Dissipation
+            // set intermediate mechanical energy of system through a call to force field manager if dissipation tracking is enabled
             if(SysParams::CParams.dissTracking){
             _dt->setGMid();
             }
@@ -1368,9 +1381,13 @@ void Controller::run() {
                 prepareMembraneSharedData();
 
                 mine= chrono::high_resolution_clock::now();
+
+                #ifdef OPTIMOUT
                 chrono::duration<floatingpoint> elapsed_runm3(mine - mins);
                 minimizationtime += elapsed_runm3.count();
                 std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
+				#endif
+
                 //update position
                 mins = chrono::high_resolution_clock::now();
 
@@ -1379,13 +1396,16 @@ void Controller::run() {
                 // Update activation of the compartments
                 updateActiveCompartments();
 
+                #ifdef OPTIMOUT
                 cout<<"Position updated"<<endl;
+				#endif
+
                 tauLastMinimization = 0.0;
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_rxn2(mine - mins);
                 updateposition += elapsed_rxn2.count();
 
-                // Dissipation
+                // perform multiple functions to update cumulative energy counters and reset the mechanical energy variables
                 if(SysParams::CParams.dissTracking){
                     _dt->updateAfterMinimization();
                 }
@@ -1394,7 +1414,9 @@ void Controller::run() {
 	            mins = chrono::high_resolution_clock::now();
 #ifdef DYNAMICRATES
 	            updateReactionRates();
+#ifdef OPTIMOUT
 	            cout<<"updated Reaction Rates"<<endl;
+#endif
 #endif
 	            mine= chrono::high_resolution_clock::now();
 	            chrono::duration<floatingpoint> elapsed_rxn3(mine - mins);
@@ -1437,7 +1459,9 @@ void Controller::run() {
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runnl2(mine - mins);
                 nltime += elapsed_runnl2.count();
+#ifdef OPTIMOUT
                 cout<<"update NeighborLists"<<endl;
+#endif
             }
             //Special protocols
             mins = chrono::high_resolution_clock::now();
@@ -1560,13 +1584,7 @@ void Controller::run() {
     //print last snapshots
     for(auto o: _outputs) o->print(i);
 	resetCounters();
-//    cout<<"Printing Excluded volume counters"<<endl;
-//    cout<<"Parallel "<<SysParams::exvolcounter[0]<<endl;
-//    cout<<"In-plane "<<SysParams::exvolcounter[1]<<endl;
-//    cout<<"Rest "<<SysParams::exvolcounter[2]<<endl;
-//    cout<<"Z Parallel "<<SysParams::exvolcounterz[0]<<endl;
-//    cout<<"Z In-plane "<<SysParams::exvolcounterz[1]<<endl;
-//    cout<<"Z Rest "<<SysParams::exvolcounterz[2]<<endl;
+	#ifdef OPTIMOUT
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_run(chk2-chk1);
     cout<< "Chemistry time for run=" << chemistrytime <<endl;
@@ -1742,6 +1760,7 @@ void Controller::run() {
                      .rxntempate3 << " part4 (Callback) "
              << CUDAcommon::ppendtime.rxntempate4 << endl;
     }
+	#endif
 #ifdef CUDAACCL
     cudaDeviceReset();
 #endif

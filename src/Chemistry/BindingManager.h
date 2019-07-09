@@ -85,7 +85,7 @@ protected:
 
 
 
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     vector<floatingpoint> bindingSites;
 #endif
 
@@ -114,7 +114,7 @@ protected:
                && "Species representing binding sites does not match \
                    number of binding sites held by the manager.");
 #endif
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
                 assert((_bindingSpecies->getN() == numBindingSitesstencil())
                && "Species representing binding sites does not match \
                    number of binding sites held by the manager.");
@@ -181,7 +181,7 @@ public:
     ///aravind, June 30,2016.
     vector<string> getrxnspecies(){return _bindingReaction->getreactantspecies();}
 
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     virtual void addPossibleBindingsstencil(CCylinder* cc) = 0;
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite) = 0;
     ///update all possible binding reactions that could occur using stencil NL
@@ -317,7 +317,7 @@ public:
     vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> getbtuple() {
         return _branchrestarttuple;
     }
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     virtual void addPossibleBindingsstencil(CCylinder* cc);
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite);
     ///update all possible binding reactions that could occur using stencil NL
@@ -478,7 +478,7 @@ public:
 
     virtual bool isConsistent();
 
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     virtual void addPossibleBindingsstencil(CCylinder* cc);
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite);
     ///update all possible binding reactions that could occur using stencil NL
@@ -639,7 +639,7 @@ public:
     //@}
 
     virtual bool isConsistent();
-#ifdef NLSTENCILLIST
+#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     virtual void addPossibleBindingsstencil(CCylinder* cc);
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite);
     ///update all possible binding reactions that could occur using stencil NL
