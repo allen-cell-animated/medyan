@@ -65,7 +65,7 @@ void Compartment::SIMDcoordinates_section(){
                 uint32_t shiftedindex = (cyl->_dcIndex << 4);
 
 //                Cyldcindexvec[i] = cyl->_dcIndex;
-                CylcIDvec[i] = cyl->getID();
+                CylcIDvec[i] = cyl->getId();
                 uint32_t j = 0;
                 float cylsizesquared = SysParams::Geometry().cylinderSize[_filamentType]
                                       * SysParams::Geometry().cylinderSize[_filamentType];
