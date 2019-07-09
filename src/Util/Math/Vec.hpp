@@ -557,6 +557,30 @@ inline auto dot(const VA1& v1, const VA2& v2) {
     return res;
 }
 
+// Increment
+// Always using the size of the 1st operand.
+// If 2 operands have different sizes, the behavior is undefined
+template< typename VA1, typename VA2, std::enable_if_t<VA1::element_vec_size == VA2::element_vec_size>* = nullptr >
+inline auto& operator+=(VA1& v1, const VA2& v2) {
+    const size_t num = v1.value.size();
+    for(size_t i = 0; i < num; ++i) {
+        v1.value[i] += v2.value[i];
+    }
+    return v1;
+}
+
+// Decrement
+// Always using the size of the 1st operand.
+// If 2 operands have different sizes, the behavior is undefined
+template< typename VA1, typename VA2, std::enable_if_t<VA1::element_vec_size == VA2::element_vec_size>* = nullptr >
+inline auto& operator-=(VA1& v1, const VA2& v2) {
+    const size_t num = v1.value.size();
+    for(size_t i = 0; i < num; ++i) {
+        v1.value[i] -= v2.value[i];
+    }
+    return v1;
+}
+
 } // namespace mathfunc
 
 #endif

@@ -202,7 +202,7 @@ void BranchingDihedralCosine::checkforculprit() {
 }
 #endif
 floatingpoint BranchingDihedralCosine::energy(
-    floatingpoint *coord, floatingpoint *f, size_t nint,
+    floatingpoint *coord, size_t nint,
     unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos){
 
 

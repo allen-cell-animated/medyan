@@ -23,7 +23,7 @@ class Bead;
 class BranchingDihedralCosine {
     
 public:
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, size_t nint,
+    floatingpoint energy(floatingpoint *coord, size_t nint,
         unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos);
     
     [[deprecated]] floatingpoint energy(floatingpoint *coord, floatingpoint *f, unsigned int *beadSet,
