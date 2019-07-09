@@ -18,8 +18,6 @@ TEST_CASE("Force field: Branching Dihedral Quadratic", "[ForceField]") {
 
     // Prepare data
     //---------------------------------
-    const size_t bpi = 4;
-
     vector< floatingpoint > kdih;
     vector< floatingpoint > pos;
     VA3 coords;
@@ -82,5 +80,6 @@ TEST_CASE("Force field: Branching Dihedral Quadratic", "[ForceField]") {
     // Run the test
     //---------------------------------
     const auto res = testEnergyForceConsistency(coords, calcEnergy, calcForce, moveMag, diffDeRelEps);
+    INFO("Actual de: " << res.deActual << " Expected de: " << res.deExpected);
     REQUIRE(res.passed);
 }
