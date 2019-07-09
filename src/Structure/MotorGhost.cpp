@@ -117,7 +117,7 @@ MotorGhost::~MotorGhost() noexcept {
 }
 
 void MotorGhost::updatePosition() {
-#ifdef CROSSCHECK
+#ifdef CROSSCHECK_IDX
     cout<<"MG position begin"<<endl;
 #endif
 #ifdef CHEMISTRY
@@ -188,7 +188,7 @@ void MotorGhost::updatePosition() {
 #endif
 
 #endif
-#ifdef CROSSCHECK
+#ifdef CROSSCHECK_IDX
 	cout<<"MG position end"<<endl;
 #endif
 }
@@ -201,7 +201,7 @@ void MotorGhost::updatePosition() {
 /// consider compression forces, only stretching.
 void MotorGhost::updateReactionRates() {
 
-#ifdef CROSSCHECK
+#ifdef CROSSCHECK_IDX
     auto b1 = _c1->getFirstBead();
     auto b2 = _c1->getSecondBead();
     auto b3 = _c2->getFirstBead();
@@ -346,7 +346,7 @@ void MotorGhost::updateReactionRates() {
         offRxn->setRate(newRate);
         offRxn->activateReaction();
     }
-#ifdef CROSSCHECK
+#ifdef CROSSCHECK_IDX
     cout<<"MG mID "<<_motorID<<" "<<_c1->getID()<<" "<<_c2->getID()<<" "<<_position1<<" "
         <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getID
             ()<<" "<<b2->getID()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
@@ -357,7 +357,7 @@ void MotorGhost::updateReactionRates() {
 void MotorGhost::moveMotorHead(Cylinder* c,
                                floatingpoint oldPosition, floatingpoint newPosition,
                                short boundType, SubSystem* ps) {
-#ifdef CROSSCHECK
+#ifdef CROSSCHECK_MOTOR
 	//Print coordinate
 	auto x1 = _c1->getFirstBead()->coordinate;
 	auto x2 = _c1->getSecondBead()->coordinate;
@@ -408,7 +408,7 @@ void MotorGhost::moveMotorHead(Cylinder* c,
     
     _cMotorGhost->moveMotorHead(c->getCCylinder(), oldpos, newpos,
                                 _motorType, boundType, ps);
-
+#if CROSSCHECK_MOTOR
 	auto x1 = _c1->getFirstBead()->coordinate;
 	auto x2 = _c1->getSecondBead()->coordinate;
 	auto x3 = _c2->getFirstBead()->coordinate;
@@ -448,7 +448,6 @@ void MotorGhost::moveMotorHead(Cylinder* c,
     else if(unstretched == true && unstretchednow == true)
         CUDAcommon::mwalk.equibtoequib++;
 
-#ifdef CROSSCHECK
 	cout<<"mcoord after "<<mp1[0]<<" "<<mp1[1]<<" "<<mp1[2]<<" "<<mp2[0]<<" "<<mp2[1]<<" "
 	                                                                                    ""<<mp2[2]<<endl;
 #endif
@@ -461,7 +460,7 @@ void MotorGhost::moveMotorHead(Cylinder* c,
 void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
                                floatingpoint oldPosition, floatingpoint newPosition,
                                short boundType, SubSystem* ps) {
-#ifdef CROSSCHECK
+#ifdef CROSSCHECK_MOTOR
 	//Print coordinate
 	auto x1 = _c1->getFirstBead()->coordinate;
 	auto x2 = _c1->getSecondBead()->coordinate;
@@ -508,6 +507,7 @@ void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
     _cMotorGhost->moveMotorHead(oldC->getCCylinder(), newC->getCCylinder(),
                                 oldpos, newpos, _motorType, boundType, ps);
 
+#if CROSSCHECK_MOTOR
 	auto x1 = _c1->getFirstBead()->coordinate;
 	auto x2 = _c1->getSecondBead()->coordinate;
 	auto x3 = _c2->getFirstBead()->coordinate;
@@ -546,6 +546,7 @@ void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
 		//equib - equib
 	else if(unstretched == true && unstretchednow == true)
 		CUDAcommon::mwalk.equibtoequib++;
+#endif
 #endif
 }
 

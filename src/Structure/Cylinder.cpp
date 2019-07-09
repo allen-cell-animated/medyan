@@ -35,7 +35,7 @@ vector<int> Cylinder::removedcindex;//vector of bead indices that were once allo
 // beads but are free to be reallocated now.
 void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
                         CCylinder** ccylindervec){
-	#ifdef CROSSCHECK
+	#ifdef CROSSCHECK_IDX
 	cout<<"revectorize"<<endl;
 	#endif
     int i = 0;
@@ -67,7 +67,9 @@ void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
 
 void Cylinder::appendrevectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
                            CCylinder** ccylindervec){
-//	cout<<"append revectorize"<<endl;
+	#ifdef CROSSCHECK_IDX
+	cout<<"append revectorize"<<endl;
+	#endif
 	int i = 0;
 	maxcindex = 0;
 	for(auto cyl:_cylinders.getElements()){
@@ -153,8 +155,9 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
         _dcIndex = *removedcindex.begin();
         removedcindex.erase(removedcindex.begin());
     }
-#ifdef CROSSCHECK
-	cout<<"cindex "<<_dcIndex<< " alloted to ID "<<_ID<<endl;
+#ifdef CROSSCHECK_IDX
+	cout<<"cindex "<<_dcIndex<< " alloted to ID "<<_ID<<" with bindex "
+	<<b1->_dbIndex<<" " <<b2->_dbIndex<<" and bID "<<b1->getID()<<" "<<b2->getID()<<endl;
 #endif
     //@}
 
@@ -242,11 +245,14 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 }
 
 Cylinder::~Cylinder() noexcept {
+	#ifdef CROSSCHECK_IDX
+	cout<<"cindex "<<_dcIndex<<" removed from ID "<<_ID<<" with bindices "
+	<<_b1->_dbIndex<<" "<<_b2->_dbIndex<<" and bID "<<b1->getID()<<" "<<b2->getID()<<endl;
+	#endif
     //remove from compartment
     _compartment->removeCylinder(this);
     
 }
-
 /// Get filament type
 int Cylinder::getType() {return _type;}
 

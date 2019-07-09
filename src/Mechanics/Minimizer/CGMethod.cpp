@@ -569,7 +569,8 @@ void CGMethod::startMinimization() {
     Ncyl = Cylinder::getmaxcindex();
     deallocate();
     allocate(N, Ncyl);
-    if(false) {
+	#ifdef CROSSCHECK_IDX
+    if(true) {
 	    cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
 	    Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
 	    CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
@@ -586,7 +587,7 @@ void CGMethod::startMinimization() {
 	    		<<force[3 * idx1] << " " << force[3 * idx1 + 1] << " " << force[3 * idx1 + 2]<<endl;
 	    	}
 	    }
-	    if(false) {
+	    if(true) {
 		    for (auto cyl:Cylinder::getCylinders()) {
 			    int i = cyl->_dcIndex;
 			    int id1 = cylindervec[i].ID;
@@ -631,6 +632,7 @@ void CGMethod::startMinimization() {
 	    }
 
     }
+	#endif
     //coord management
 /*    long i = 0;
     long index = 0;

@@ -169,7 +169,7 @@ public:
         //Remove from cylinder structure by resetting to default value
         //Reset in bead coordinate vector and add _dbIndex to the list of removedcindex.
         removedcindex.push_back(_dcIndex);
-#ifdef CROSSCHECK
+#ifdef CROSSCHECK_IDX
         cout<<"cindex "<<_dcIndex<<" removed from ID "<<_ID<<endl;
 #endif
         resetarrays();
@@ -221,7 +221,7 @@ public:
         if(SysParams::DURINGCHEMISTRY)
             appendrevectorizeifneeded();
         else {
-            #ifdef CROSSCHECK
+            #ifdef CROSSCHECK_IDX
             cout<<"revectorize Cylinder "<<endl;
             #endif
             int newsize = vectormaxsize;
