@@ -1,4 +1,5 @@
 #include <numeric> // iota
+#include <type_traits> // is_same
 #include <vector>
 
 #include "catch2/catch.hpp"
@@ -73,13 +74,22 @@ TEST_CASE("Force field: Branching Dihedral Quadratic", "[ForceField]") {
 
     // Prepare test parameters
     //---------------------------------
-    const floatingpoint moveMag = 1e-3;
+    const floatingpoint moveMag      = std::is_same< floatingpoint, float >::value ? 5e-3 : 1e-5;
 
-    const floatingpoint diffDeRelEps = 1e-3;
+    const floatingpoint diffDeRelEps = std::is_same< floatingpoint, float >::value ? 6e-2 : 5e-4;
+
+    const size_t repsTot     = 10;
+    const size_t repsPassReq = 9;
 
     // Run the test
     //---------------------------------
-    const auto res = testEnergyForceConsistency(coords, calcEnergy, calcForce, moveMag, diffDeRelEps);
-    INFO("Actual de: " << res.deActual << " Expected de: " << res.deExpected);
-    REQUIRE(res.passed);
+    size_t repsPass = 0;
+    for(size_t rep = 1; rep <= repsTot; ++rep) {
+        const auto res = testEnergyForceConsistency(coords, calcEnergy, calcForce, moveMag, diffDeRelEps);
+        if(res.passed)
+            ++repsPass;
+        else
+            WARN("(Rep " << rep << '/' << repsTot << " fail) E: " << calcEnergy(coords) << " Actual de: " << res.deActual << " Expected de: " << res.deExpected);
+    }
+    REQUIRE(repsPass >= repsPassReq);
 }

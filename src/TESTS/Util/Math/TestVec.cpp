@@ -323,6 +323,15 @@ TEST_CASE("VecArray tests", "[VecArray]") {
     }
 
     SECTION("Arithmetics") {
+        // Dot product
         CHECK(dot(v3f, v3f) == Approx(90.0f));
+
+        // Increment and decrement
+        VecArray< 3, float > v3f1 {{ 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f }};
+        VecArray< 3, float > v3f2 {{ 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f }};
+        v3f1 += v3f2;
+        CHECK(v3f1[0][1] == Approx(2.2f));
+        v3f1 -= v3f2;
+        CHECK(v3f1[1][1] == Approx(5.0f));
     }
 }
