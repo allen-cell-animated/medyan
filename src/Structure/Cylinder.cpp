@@ -67,7 +67,7 @@ void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
 
 void Cylinder::appendrevectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
                            CCylinder** ccylindervec){
-	cout<<"append revectorize"<<endl;
+//	cout<<"append revectorize"<<endl;
 	int i = 0;
 	maxcindex = 0;
 	for(auto cyl:getElements()){

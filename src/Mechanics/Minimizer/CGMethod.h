@@ -246,6 +246,7 @@ protected:
             delete[] force;
             delete[] forceAux;
             delete[] forceAuxPrev;
+            delete[] coordlineSearch;
         }
     }
 

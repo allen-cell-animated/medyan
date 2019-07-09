@@ -69,7 +69,7 @@ void Compartment::SIMDcoordinates_section(){
                 uint32_t j = 0;
                 float cylsizesquared = SysParams::Geometry().cylinderSize[_filamentType]
                                       * SysParams::Geometry().cylinderSize[_filamentType];
-                float maxmp = twoPointDistancesquared(x1,x2)/cylsizesquared;
+                float maxmp = sqrt(twoPointDistancesquared(x1,x2)/cylsizesquared);
 
                 for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
                      it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
@@ -171,7 +171,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                                   SysParams::Geometry().cylinderNumMon[_filamentType];
                         float cylsizesquared = SysParams::Geometry().cylinderSize[_filamentType]
                                             * SysParams::Geometry().cylinderSize[_filamentType];
-                        float maxmp = twoPointDistancesquared(x1,x2)/cylsizesquared;
+                        float maxmp = sqrt(twoPointDistancesquared(x1,x2)/cylsizesquared);
                         if(mp <= maxmp){
                           auto coord = midPointCoordinate(x1, x2, mp);
                           //last 4 bits are binding site while first 12 bits are cylinder index.
