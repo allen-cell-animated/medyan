@@ -247,7 +247,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 Cylinder::~Cylinder() noexcept {
 	#ifdef CROSSCHECK_IDX
 	cout<<"cindex "<<_dcIndex<<" removed from ID "<<_ID<<" with bindices "
-	<<_b1->_dbIndex<<" "<<_b2->_dbIndex<<" and bID "<<b1->getID()<<" "<<b2->getID()<<endl;
+	<<_b1->_dbIndex<<" "<<_b2->_dbIndex<<" and bID "<<_b1->getID()<<" "<<_b2->getID()<<endl;
 	#endif
     //remove from compartment
     _compartment->removeCylinder(this);
