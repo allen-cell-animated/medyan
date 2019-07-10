@@ -1160,7 +1160,6 @@ void Controller::run() {
 
                 mins = chrono::high_resolution_clock::now();
                 Bead::rearrange();
-                Cylinder::rearrange(); // FIXME: should be put before neighbor list search
                 Cylinder::updateAllData();
                 _mController->run();
                 mine= chrono::high_resolution_clock::now();
@@ -1308,7 +1307,6 @@ void Controller::run() {
             //run mcontroller, update system
             if(stepsLastMinimization >= _minimizationSteps) {
                 Bead::rearrange();
-                Cylinder::rearrange(); // FIXME: should be put before neighbor list search
                 Cylinder::updateAllData();
                 _mController->run();
                 updatePositions();
