@@ -44,11 +44,11 @@ floatingpoint MTOCAttachmentHarmonic::energy(floatingpoint *coord, floatingpoint
         || U_i != U_i || U_i < -1.0) {
 	        for(auto mtoc : MTOC::getMTOCs()) {
 		        Bead* b1 = mtoc->getBubble()->getBead();
-	        	if(b1->_dbIndex != beadSet[n*i]) continue;
+	        	if(b1->getStableIndex() != beadSet[n*i]) continue;
 		        BubbleInteractions::_bubbleCulprit = mtoc->getBubble();
 		        for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
 			        Filament *f = mtoc->getFilaments()[fIndex];
-			        if(f->getMinusEndCylinder()->getFirstBead()->_dbIndex == beadSet[n *
+			        if(f->getMinusEndCylinder()->getFirstBead()->getStableIndex() == beadSet[n *
 			        i + 1]){
 				        BubbleInteractions::_otherCulprit = f;
 				        break;
@@ -87,11 +87,11 @@ floatingpoint MTOCAttachmentHarmonic::energy(floatingpoint *coord, floatingpoint
 		   || U_i != U_i || U_i < -1.0) {
 			for(auto mtoc : MTOC::getMTOCs()) {
 				Bead* b1 = mtoc->getBubble()->getBead();
-				if(b1->_dbIndex != beadSet[n*i]) continue;
+				if(b1->getStableIndex() != beadSet[n*i]) continue;
 				BubbleInteractions::_bubbleCulprit = mtoc->getBubble();
 				for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
 					Filament *f = mtoc->getFilaments()[fIndex];
-					if(f->getMinusEndCylinder()->getFirstBead()->_dbIndex == beadSet[n * i + 1]){
+					if(f->getMinusEndCylinder()->getFirstBead()->getStableIndex() == beadSet[n * i + 1]){
 						BubbleInteractions::_otherCulprit = f;
 						break;
 					}

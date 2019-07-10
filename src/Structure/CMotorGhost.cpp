@@ -53,7 +53,7 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
 //        std::cout<<"Linker "<<sl1->getN()<<" "<<sl2->getN()<<" BOUND "<<BL1->getN()<<" "<<BL2->getN()<<endl;
 //        std::cout<<"Brancher "<<sb1->getN()<<" "<<sb2->getN()<<" BOUND "<<BB1->getN()<<" "<<BB2->getN()<<endl;
 //    for(auto c:Cylinder::getCylinders()){
-//        std::cout<<c->getID()<<" "<<c->getMCylinder()->getLength()<<" ";
+//        std::cout<<c->getId()<<" "<<c->getMCylinder()->getLength()<<" ";
 //    }
 //    std::cout<<endl;
 //    //@}

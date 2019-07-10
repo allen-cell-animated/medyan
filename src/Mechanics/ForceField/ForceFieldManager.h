@@ -51,9 +51,6 @@ public:
     /// Compute the forces of all force fields
     void computeForces(floatingpoint *coord, floatingpoint *f);
     
-    /// Copy forces from f to fprev
-    void copyForces(floatingpoint *f, floatingpoint *fprev);
-
     void printculprit(floatingpoint* force);
 
 #ifdef CUDAACCL

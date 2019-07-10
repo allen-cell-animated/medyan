@@ -21,6 +21,8 @@
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
+#include "Structure/Bead.h"
+
 void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                             floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit){
 #ifdef CUDATIMETRACK
@@ -65,7 +67,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
 #endif
     //@@@{ STEP 2: COMPUTE FORCES
 	tbegin = chrono::high_resolution_clock::now();
-    FFM.computeForces(coord, force); //split and synchronize in the end
+    FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data()); //split and synchronize in the end
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
 	CUDAcommon::tmin.computeforces+= elapsed_force.count();
@@ -77,8 +79,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
 #ifdef SERIAL // SERIAL
 	//@@@{ STEP 3: COPY FORCES
 	tbegin = chrono::high_resolution_clock::now();
-    FFM.copyForces(forceAux, force);
-    FFM.copyForces(forceAuxPrev, force);
+    Bead::getDbData().forcesAux = Bead::getDbData().forces;
+    Bead::getDbData().forcesAuxP = Bead::getDbData().forces;
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_copy(tend - tbegin);
 	CUDAcommon::tmin.copyforces+= elapsed_copy.count();
@@ -127,18 +129,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
     CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
 #endif
 #ifdef CUDATIMETRACK
-/*    std::cout<<"Time total computeForces (s) CUDA "<<CUDAcommon::cudatime
-            .TcomputeF<<" SERL "<<CUDAcommon::serltime.TcomputeF<<" factor "
-                     ""<<CUDAcommon::serltime.TcomputeF/CUDAcommon::cudatime
-            .TcomputeF<<endl;
-    std::cout<<"Time split computeForces (s) CUDA ";
-    for(auto x:CUDAcommon::cudatime.TveccomputeF)
-        std::cout<<x<<" ";
-    std::cout<<endl;
-    std::cout<<"Time split computeForces (s) SERL ";
-    for(auto x:CUDAcommon::serltime.TveccomputeF)
-        std::cout<<x<<" ";
-    std::cout<<endl;*/
 
     //Reset lambda time tracker.
     CUDAcommon::cudatime.Tlambda = 0.0;
@@ -270,11 +260,9 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
     long i = 0;
     long index = 0;
     for(auto b:Bead::getBeads()){
-        index = 3 * b->_dbIndex;
-        std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
-                ""<<coord[index + 2]<<" "
-                ""<<force[index]<<" "
-                ""<<force[index + 1]<<" "<<force[index + 2]<<endl;
+        index = 3 * b->getStableIndex();
+        std::cout<<b->getId()<<" "<< b->coordinate() <<" "
+                "" << b->force() <<endl;
     }
     std::cout<<"printed beads & forces"<<endl;
 #endif
@@ -414,19 +402,19 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
 #endif
 
         //compute new forces
-        FFM.computeForces(coord, forceAux);//split and synchronize
+        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());//split and synchronize
 #ifdef DETAILEDOUTPUT
         std::cout<<"MB printing beads & forces L "<<lambda<<endl;
         long i = 0;
         long index = 0;
         for(auto b:Bead::getBeads()){
-            index = 3 * b->_dbIndex;
+            index = 3 * b->getStableIndex();
 
             std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                     ""<<coord[index + 2]<<" "
                     ""<<forceAux[index]<<" "
                     ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-                    b->_dbIndex<<endl;
+                    b->getStableIndex()<<endl;
         }
         std::cout<<"MB printed beads & forces"<<endl;
 #endif
@@ -445,20 +433,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
         chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
         CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
         CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
-#endif
-#ifdef CUDATIMETRACK
-/*        std::cout<<"Time total computeForces (s) CUDA "<<CUDAcommon::cudatime
-                .TcomputeF<<" SERL "<<CUDAcommon::serltime.TcomputeF<<" factor "
-                         ""<<CUDAcommon::serltime.TcomputeF/CUDAcommon::cudatime
-                .TcomputeF<<endl;
-        std::cout<<"Time split computeForces (s) CUDA ";
-        for(auto x:CUDAcommon::cudatime.TveccomputeF)
-            std::cout<<x<<" ";
-        std::cout<<endl;
-        std::cout<<"Time split computeForces (s) SERL ";
-        for(auto x:CUDAcommon::serltime.TveccomputeF)
-            std::cout<<x<<" ";
-        std::cout<<endl;*/
 #endif
 #ifdef CUDATIMETRACK
         tbegin = chrono::high_resolution_clock::now();
@@ -663,7 +637,7 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
         ///@@@{ STEP 8 compute new forces
 	    tbegin = chrono::high_resolution_clock::now();
-        FFM.computeForces(coord, forceAux);//split and synchronize
+        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());//split and synchronize
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
 	    CUDAcommon::tmin.computeforces+= elapsed_force.count();
@@ -673,13 +647,13 @@ std::cout<<"----------------------------------------"<<endl;
         long i = 0;
         long index = 0;
         for(auto b:Bead::getBeads()){
-            index = 3 * b->_dbIndex;
+            index = 3 * b->getStableIndex();
 
             std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                     ""<<coord[index + 2]<<" "
                     ""<<forceAux[index]<<" "
                     ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-                    b->_dbIndex<<endl;
+                    b->getStableIndex()<<endl;
         }
         std::cout<<"MB printed beads & forces"<<endl;
 #endif
@@ -733,7 +707,7 @@ std::cout<<"----------------------------------------"<<endl;
 
         //@@@{ STEP 10 vectorized copy
 	    tbegin = chrono::high_resolution_clock::now();
-        FFM.copyForces(forceAuxPrev, forceAux);
+        Bead::getDbData().forcesAuxP = Bead::getDbData().forcesAux;
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_copy2(tend - tbegin);
 	    CUDAcommon::tmin.copyforces+= elapsed_copy2.count();
@@ -816,7 +790,7 @@ std::cout<<"----------------------------------------"<<endl;
         CUDAcommon::cudavars = cvars;
 #endif
         cout << "System energy..." << endl;
-        FFM.computeEnergy(coord, force, 0.0, true);
+        FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), 0.0, true);
 #ifdef CUDAACCL
         for(auto strm:CUDAcommon::getCUDAvars().streamvec)
             CUDAcommon::handleerror(cudaStreamSynchronize(*strm));
@@ -833,7 +807,7 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
 
     //final force calculation
-    FFM.computeForces(coord, force);
+    FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
@@ -859,7 +833,8 @@ std::cout<<"----------------------------------------"<<endl;
     cudaDeviceSynchronize();
 #endif
 #ifdef SERIAL
-    FFM.copyForces(forceAux, force);
+    Bead::getDbData().forcesAux = Bead::getDbData().forces;
+
 #endif
 #ifdef CUDAACCL
     CUDAcommon::handleerror(cudaFreeHost(Mmh_stop));
@@ -918,10 +893,8 @@ std::cout<<"----------------------------------------"<<endl;
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;
     for(auto b:Bead::getBeads()){
-        std::cout<<b->getId()<<" "<<b->coordinate[0]<<" "<<b->coordinate[1]<<" "
-                ""<<b->coordinate[2]<<" "
-                ""<<b->force[index]<<" "
-                ""<<b->force[index+1]<<" "<<b->force[index+2]<<endl;
+        std::cout<<b->getId()<<" "<< b->coordinate() <<" "
+                ""<<b->force() <<endl;
     }
     std::cout<<"printed beads & forces"<<endl;
 #endif

@@ -22,7 +22,7 @@ using namespace mathfunc;
 floatingpoint BubbleBubbleRepulsionExp::energy(Bead* b1, Bead* b2, floatingpoint r1, floatingpoint r2,
                                         floatingpoint kRep, floatingpoint screenLength) {
     
-    floatingpoint dist = twoPointDistance(b1->coordinate, b2->coordinate);
+    floatingpoint dist = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
     
     floatingpoint effd = dist - r1 - r2;
     
@@ -33,8 +33,8 @@ floatingpoint BubbleBubbleRepulsionExp::energy(Bead* b1, Bead* b2, floatingpoint
 floatingpoint BubbleBubbleRepulsionExp::energy(Bead* b1, Bead* b2, floatingpoint r1, floatingpoint r2,
                                         floatingpoint kRep, floatingpoint screenLength, floatingpoint d) {
     
-    floatingpoint dist = twoPointDistanceStretched(b1->coordinate, b1->force,
-                                            b2->coordinate, b2->force, d);
+    floatingpoint dist = twoPointDistanceStretched(b1->vcoordinate(), b1->vforce(),
+                                            b2->vcoordinate(), b2->vforce(), d);
     floatingpoint effd = dist - r1 - r2;
     
     floatingpoint R = -effd / screenLength;
@@ -45,7 +45,7 @@ void BubbleBubbleRepulsionExp::forces(Bead* b1, Bead* b2, floatingpoint r1, floa
                                       floatingpoint kRep, floatingpoint screenLength) {
     
     //get dist
-    floatingpoint dist = twoPointDistance(b1->coordinate, b2->coordinate);
+    floatingpoint dist = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
     
     floatingpoint effd = dist - r1 - r2;
     
@@ -53,22 +53,22 @@ void BubbleBubbleRepulsionExp::forces(Bead* b1, Bead* b2, floatingpoint r1, floa
     floatingpoint f0 = kRep * exp(R) / screenLength;
     
     //get norm
-    auto norm = normalizeVector(twoPointDirection(b1->coordinate, b2->coordinate));
+    auto norm = normalizeVector(twoPointDirection(b1->vcoordinate(), b2->vcoordinate()));
 
-    b1->force[0] += - f0 *norm[0];
-    b1->force[1] += - f0 *norm[1];
-    b1->force[2] += - f0 *norm[2];
+    b1->force()[0] += - f0 *norm[0];
+    b1->force()[1] += - f0 *norm[1];
+    b1->force()[2] += - f0 *norm[2];
     
-    b2->force[0] += f0 *norm[0];
-    b2->force[1] += f0 *norm[1];
-    b2->force[2] += f0 *norm[2];
+    b2->force()[0] += f0 *norm[0];
+    b2->force()[1] += f0 *norm[1];
+    b2->force()[2] += f0 *norm[2];
 }
 
 void BubbleBubbleRepulsionExp::forcesAux(Bead* b1, Bead* b2, floatingpoint r1, floatingpoint r2,
                                          floatingpoint kRep, floatingpoint screenLength) {
     
     //get dist
-    floatingpoint dist = twoPointDistance(b1->coordinate, b2->coordinate);
+    floatingpoint dist = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
     
     floatingpoint effd = dist - r1 - r2;
     
@@ -76,14 +76,14 @@ void BubbleBubbleRepulsionExp::forcesAux(Bead* b1, Bead* b2, floatingpoint r1, f
     floatingpoint f0 = kRep * exp(R) / screenLength;
     
     //get norm
-    auto norm = normalizeVector(twoPointDirection(b1->coordinate, b2->coordinate));
+    auto norm = normalizeVector(twoPointDirection(b1->vcoordinate(), b2->vcoordinate()));
     
-    b1->force[0] += - f0 *norm[0];
-    b1->force[1] += - f0 *norm[1];
-    b1->force[2] += - f0 *norm[2];
+    b1->force()[0] += - f0 *norm[0];
+    b1->force()[1] += - f0 *norm[1];
+    b1->force()[2] += - f0 *norm[2];
     
-    b2->force[0] += f0 *norm[0];
-    b2->force[1] += f0 *norm[1];
-    b2->force[2] += f0 *norm[2];
+    b2->force()[0] += f0 *norm[0];
+    b2->force()[1] += f0 *norm[1];
+    b2->force()[2] += f0 *norm[2];
     
 }

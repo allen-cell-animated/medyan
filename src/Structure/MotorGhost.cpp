@@ -23,16 +23,17 @@
 #include "GController.h"
 #include "SysParams.h"
 #include "MathFunctions.h"
+#include "Mechanics/CUDAcommon.h"
 #include "Rand.h"
 
 using namespace mathfunc;
 
 void MotorGhost::updateCoordinate() {
     
-    auto x1 = _c1->getFirstBead()->coordinate;
-    auto x2 = _c1->getSecondBead()->coordinate;
-    auto x3 = _c2->getFirstBead()->coordinate;
-    auto x4 = _c2->getSecondBead()->coordinate;
+    auto x1 = _c1->getFirstBead()->vcoordinate();
+    auto x2 = _c1->getSecondBead()->vcoordinate();
+    auto x3 = _c2->getFirstBead()->vcoordinate();
+    auto x4 = _c2->getSecondBead()->vcoordinate();
     
     auto m1 = midPointCoordinate(x1, x2, _position1);
     auto m2 = midPointCoordinate(x3, x4, _position2);
@@ -83,10 +84,10 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
 #endif
     
 #ifdef MECHANICS
-    auto x1 = _c1->getFirstBead()->coordinate;
-    auto x2 = _c1->getSecondBead()->coordinate;
-    auto x3 = _c2->getFirstBead()->coordinate;
-    auto x4 = _c2->getSecondBead()->coordinate;
+    auto x1 = _c1->getFirstBead()->vcoordinate();
+    auto x2 = _c1->getSecondBead()->vcoordinate();
+    auto x3 = _c2->getFirstBead()->vcoordinate();
+    auto x4 = _c2->getSecondBead()->vcoordinate();
 #ifdef PLOSFEEDBACK
     _mMotorGhost = unique_ptr<MMotorGhost>(
     new MMotorGhost(motorType, _numBoundHeads, position1, position2, x1, x2, x3, x4));
@@ -161,10 +162,10 @@ void MotorGhost::updatePosition() {
     }
     
 #ifdef MECHANICS
-    auto x1 = _c1->getFirstBead()->coordinate;
-    auto x2 = _c1->getSecondBead()->coordinate;
-    auto x3 = _c2->getFirstBead()->coordinate;
-    auto x4 = _c2->getSecondBead()->coordinate;
+    auto x1 = _c1->getFirstBead()->vcoordinate();
+    auto x2 = _c1->getSecondBead()->vcoordinate();
+    auto x3 = _c2->getFirstBead()->vcoordinate();
+    auto x4 = _c2->getSecondBead()->vcoordinate();
     
     auto m1 = midPointCoordinate(x1, x2, _position1);
     auto m2 = midPointCoordinate(x3, x4, _position2);
@@ -207,9 +208,9 @@ void MotorGhost::updateReactionRates() {
     auto b3 = _c2->getFirstBead();
     auto b4 = _c2->getSecondBead();
     cout<<"MG mID "<<getId()<<" "<<_c1->getId()<<" "<<_c2->getId()<<" "<<_position1<<" "
-        <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getId
-            ()<<" "<<b2->getId()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
-            <<b3->_dbIndex<<" "<<b4->_dbIndex<<endl;
+        <<_position2<<" cindex "<<_c1->getStableIndex()<<" "<<_c2->getStableIndex()<<" bID "<<b1->getId
+            ()<<" "<<b2->getId()<<" bindex "<<b1->getStableIndex()<<" "<<b2->getStableIndex()<<" "
+            <<b3->getStableIndex()<<" "<<b4->getStableIndex()<<endl;
 #endif
 
     //current force
@@ -224,10 +225,10 @@ void MotorGhost::updateReactionRates() {
     
     //walking rate changer
     if(!_walkingChangers.empty()) {
-        auto x1 = _c1->getFirstBead()->coordinate;
-        auto x2 = _c1->getSecondBead()->coordinate;
-        auto x3 = _c2->getFirstBead()->coordinate;
-        auto x4 = _c2->getSecondBead()->coordinate;
+        auto x1 = _c1->getFirstBead()->vcoordinate();
+        auto x2 = _c1->getSecondBead()->vcoordinate();
+        auto x3 = _c2->getFirstBead()->vcoordinate();
+        auto x4 = _c2->getSecondBead()->vcoordinate();
 
 
         auto mp1 = midPointCoordinate(x1, x2, _position1);
@@ -348,9 +349,9 @@ void MotorGhost::updateReactionRates() {
     }
 #ifdef CROSSCHECK
     cout<<"MG mID "<<getId()<<" "<<_c1->getId()<<" "<<_c2->getId()<<" "<<_position1<<" "
-        <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getId
-            ()<<" "<<b2->getId()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
-        <<b3->_dbIndex<<" "<<b4->_dbIndex<<endl;
+        <<_position2<<" cindex "<<_c1->getStableIndex()<<" "<<_c2->getStableIndex()<<" bID "<<b1->getId
+            ()<<" "<<b2->getId()<<" bindex "<<b1->getStableIndex()<<" "<<b2->getStableIndex()<<" "
+        <<b3->getStableIndex()<<" "<<b4->getStableIndex()<<endl;
 #endif
 }
 
@@ -359,10 +360,10 @@ void MotorGhost::moveMotorHead(Cylinder* c,
                                short boundType, SubSystem* ps) {
 #ifdef CROSSCHECK
 	//Print coordinate
-	auto x1 = _c1->getFirstBead()->coordinate;
-	auto x2 = _c1->getSecondBead()->coordinate;
-	auto x3 = _c2->getFirstBead()->coordinate;
-	auto x4 = _c2->getSecondBead()->coordinate;
+	auto x1 = _c1->getFirstBead()->vcoordinate();
+	auto x2 = _c1->getSecondBead()->vcoordinate();
+	auto x3 = _c2->getFirstBead()->vcoordinate();
+	auto x4 = _c2->getSecondBead()->vcoordinate();
 	auto mp1 = midPointCoordinate(x1, x2, _position1);
 	auto mp2 = midPointCoordinate(x3, x4, _position2);
 	auto motorcoord = midPointCoordinate(mp1,mp2,0.5);
@@ -374,9 +375,9 @@ void MotorGhost::moveMotorHead(Cylinder* c,
 
 
 	cout<<"motor-walking  mID "<<getId()<<" "<<_c1->getId()<<" "<<_c2->getId()<<" "<<_position1<<" "
-        <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getId
-            ()<<" "<<b2->getId()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
-        <<b3->_dbIndex<<" "<<b4->_dbIndex<<" move "<<c->getId()<<" old "<<oldPosition<<" new "
+        <<_position2<<" cindex "<<_c1->getStableIndex()<<" "<<_c2->getStableIndex()<<" bID "<<b1->getId
+            ()<<" "<<b2->getId()<<" bindex "<<b1->getStableIndex()<<" "<<b2->getStableIndex()<<" "
+        <<b3->getStableIndex()<<" "<<b4->getStableIndex()<<" move "<<c->getId()<<" old "<<oldPosition<<" new "
         <<newPosition<<endl;
 	cout<<"mcoord before "<<mp1[0]<<" "<<mp1[1]<<" "<<mp1[2]<<" "<<mp2[0]<<" "<<mp2[1]<<" "
 																			  ""<<mp2[2]<<endl;
@@ -409,10 +410,10 @@ void MotorGhost::moveMotorHead(Cylinder* c,
     _cMotorGhost->moveMotorHead(c->getCCylinder(), oldpos, newpos,
                                 _motorType, boundType, ps);
 
-	auto x1 = _c1->getFirstBead()->coordinate;
-	auto x2 = _c1->getSecondBead()->coordinate;
-	auto x3 = _c2->getFirstBead()->coordinate;
-	auto x4 = _c2->getSecondBead()->coordinate;
+	auto x1 = _c1->getFirstBead()->vcoordinate();
+	auto x2 = _c1->getSecondBead()->vcoordinate();
+	auto x3 = _c2->getFirstBead()->vcoordinate();
+	auto x4 = _c2->getSecondBead()->vcoordinate();
 	auto mp1 = midPointCoordinate(x1, x2, _position1);
 	auto mp2 = midPointCoordinate(x3, x4, _position2);
 	auto DeltaL = twoPointDistance(mp1, mp2) - _mMotorGhost->getEqLength();
@@ -463,10 +464,10 @@ void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
                                short boundType, SubSystem* ps) {
 #ifdef CROSSCHECK
 	//Print coordinate
-	auto x1 = _c1->getFirstBead()->coordinate;
-	auto x2 = _c1->getSecondBead()->coordinate;
-	auto x3 = _c2->getFirstBead()->coordinate;
-	auto x4 = _c2->getSecondBead()->coordinate;
+	auto x1 = _c1->getFirstBead()->vcoordinate();
+	auto x2 = _c1->getSecondBead()->vcoordinate();
+	auto x3 = _c2->getFirstBead()->vcoordinate();
+	auto x4 = _c2->getSecondBead()->vcoordinate();
 	auto mp1 = midPointCoordinate(x1, x2, _position1);
 	auto mp2 = midPointCoordinate(x3, x4, _position2);
 	auto motorcoord = midPointCoordinate(mp1,mp2,0.5);
@@ -477,9 +478,9 @@ void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
     auto b4 = _c2->getSecondBead();
 
     cout<<"motor-walking  mID "<<getId()<<" "<<_c1->getId()<<" "<<_c2->getId()<<" "<<_position1<<" "
-        <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getId
-            ()<<" "<<b2->getId()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
-        <<b3->_dbIndex<<" "<<b4->_dbIndex<<" move oldC "<<oldC->getId()<<" newC "
+        <<_position2<<" cindex "<<_c1->getStableIndex()<<" "<<_c2->getStableIndex()<<" bID "<<b1->getId
+            ()<<" "<<b2->getId()<<" bindex "<<b1->getStableIndex()<<" "<<b2->getStableIndex()<<" "
+        <<b3->getStableIndex()<<" "<<b4->getStableIndex()<<" move oldC "<<oldC->getId()<<" newC "
         <<newC->getId() <<" old " <<oldPosition<<" new "<<newPosition<<endl;
 
 	if(newC->getId() == _c1->getId() && newPosition == _position1)
@@ -508,10 +509,10 @@ void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
     _cMotorGhost->moveMotorHead(oldC->getCCylinder(), newC->getCCylinder(),
                                 oldpos, newpos, _motorType, boundType, ps);
 
-	auto x1 = _c1->getFirstBead()->coordinate;
-	auto x2 = _c1->getSecondBead()->coordinate;
-	auto x3 = _c2->getFirstBead()->coordinate;
-	auto x4 = _c2->getSecondBead()->coordinate;
+	auto x1 = _c1->getFirstBead()->vcoordinate();
+	auto x2 = _c1->getSecondBead()->vcoordinate();
+	auto x3 = _c2->getFirstBead()->vcoordinate();
+	auto x4 = _c2->getSecondBead()->vcoordinate();
 	auto mp1 = midPointCoordinate(x1, x2, _position1);
 	auto mp2 = midPointCoordinate(x3, x4, _position2);
 	auto DeltaL = twoPointDistance(mp1, mp2) - _mMotorGhost->getEqLength();

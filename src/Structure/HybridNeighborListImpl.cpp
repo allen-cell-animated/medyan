@@ -338,11 +338,8 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
     vector<Bin*> _neighboringBins = binvec.at(_ID)//Get the bin that belongs to the
                     // current binGrid of interest for this NL.
                                                     ->getNeighbours();
-
-    auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
-    auto cylinderpointervec = CUDAcommon::getSERLvars().cylinderpointervec;
-    int cindex = currcylinder->_dcIndex;
-    cylinder c = cylindervec[cindex];
+    auto cindex = currcylinder->getStableIndex();
+    const auto& c = Cylinder::getDbData().value[cindex];
 
     //
     int nbincount = 0;
@@ -365,15 +362,15 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                 int numneighbors = cindicesvec.size();
                 for (int iter = 0; iter < numneighbors; iter++) {
                     int ncindex = cindicesvec[iter];
-                    cylinder ncylinder = cylindervec[ncindex];
+                    const auto& ncylinder = Cylinder::getDbData().value[ncindex];
                     short ftype2 = ncylinder.type;
 //                    //Don't add the same cylinder
 //                    if (c.ID == ncylinder.ID) continue;
                     // Testing if a half neighborlist will be stable
-                    if(c.ID <= ncylinder.ID) continue;
+                    if(c.id <= ncylinder.id) continue;
                     //Don't add if belonging to same parent
-                    if (c.filamentID == ncylinder.filamentID) {
-                        auto distsep = fabs(c.filamentposition - ncylinder.filamentposition);
+                    if (c.filamentId == ncylinder.filamentId) {
+                        auto distsep = fabs(c.positionOnFilament - ncylinder.positionOnFilament);
                         //if not cross filament, check if not neighboring
                         if (distsep <= 2) continue;
                     }
@@ -387,7 +384,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                             if (ftype1 != fpairs[0] || ftype2 != fpairs[1])continue;
                         }
                         else if (ftype1 != fpairs[1] || ftype2 != fpairs[0]) continue;
-                        floatingpoint dist = twoPointDistancesquared(c.coord, ncylinder.coord);
+                        floatingpoint dist = distance2(c.coord, ncylinder.coord);
                         if (dist < _smallestrMinsq || dist > _largestrMaxsq) continue;
                         for (int idx2 = 0; idx2 < countbounds; idx2++) {
                             //Dont add if ID is more than cylinder for half-list
@@ -398,7 +395,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                                 continue;
                             short HNLID = HNLIDvec[idx][idx2];
                             //If we got through all of this, add it!
-                            Cylinder *Ncylinder = cylinderpointervec[ncindex];
+                            Cylinder *Ncylinder = Cylinder::getStableElement(ncindex);
                             _list4mbinvec[HNLID][currcylinder].push_back(Ncylinder);
 
                             //if runtime, add to other list as well if full

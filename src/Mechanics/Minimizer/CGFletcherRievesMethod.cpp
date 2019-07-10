@@ -16,6 +16,7 @@
 #include "ForceFieldManager.h"
 #include "Composite.h"
 #include "Output.h"
+#include "Structure/Bead.h"
     void FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                                   floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit) {
         //number of steps
@@ -30,8 +31,8 @@
         startMinimization();
         FFM.vectorizeAllForceFields();
 
-        FFM.computeForces(coord, force);
-        FFM.copyForces(forceAux, force);
+        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
+        Bead::getDbData().forcesAux = Bead::getDbData().forces;
 
         //compute first gradient
         floatingpoint curGrad = CGMethod::allFDotF();
@@ -50,7 +51,7 @@
             moveBeads(lambda);
 
             //compute new forces
-            FFM.computeForces(coord, forceAux);
+            FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());
 
             //compute direction
             newGrad = CGMethod::allFADotFA();
@@ -81,14 +82,14 @@
             if (b != nullptr) b->getParent()->printSelf();
 
             cout << "System energy..." << endl;
-            FFM.computeEnergy(coord, force, 0.0, true);
+            FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), 0.0, true);
 
             cout << endl;
         }
 
         //final force calculation
-        FFM.computeForces(coord, force);
-        FFM.copyForces(forceAux, force);
+        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
+        Bead::getDbData().forcesAux = Bead::getDbData().forces;
         FFM.computeLoadForces();
         endMinimization();
 

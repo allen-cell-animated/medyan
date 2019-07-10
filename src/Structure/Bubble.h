@@ -48,7 +48,7 @@ private:
     floatingpoint _radius;       ///< The radius of this bubble
     floatingpoint _kRepuls;      ///< Repulsion constant for bubble-bubble and bubble-cylinder interactions
     floatingpoint _screenLength; ///< Screening length for a repulsive potential
-	floatingpoint _MTOCBendingK; ///< use for MTOC-MT bending force field
+    floatingpoint _MTOCBendingK; ///< use for MTOC-MT bending force field
     
     bool _isMTOC = false;   ///< If representing a MTOC
     

@@ -243,7 +243,7 @@ struct UpdateMotorIDCallback{
 //            }
 //            //else - create an ID. This is an addition at runtime
 //            else{
-//                mManager->addUnboundID(MotorGhost::_motorGhosts.getID());
+//                mManager->addUnboundID(MotorGhost::_motorGhosts.getId());
 //            }
 //        }
 //        
@@ -475,9 +475,9 @@ struct BranchingPointUnbindingCallback {
 	    mins = chrono::high_resolution_clock::now();
 
 //        //@{
-//        std::cout<<"Brancher unbinding "<<_branchingPoint->getFirstCylinder()->getID()<<" "
+//        std::cout<<"Brancher unbinding "<<_branchingPoint->getFirstCylinder()->getId()<<" "
 //                ""<<_branchingPoint->getPosition()
-//                 <<" "<<_branchingPoint->getSecondCylinder()->getID()<<endl;
+//                 <<" "<<_branchingPoint->getSecondCylinder()->getId()<<endl;
 //        //@}
         //remove the branching point
         _ps->removeTrackable<BranchingPoint>(_branchingPoint);
@@ -534,8 +534,8 @@ struct BranchingCallback {
         floatingpoint pos = floatingpoint(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
         if(SysParams::RUNSTATE==true){
         //Get a position and direction of a new filament
-        auto x1 = c1->getFirstBead()->coordinate;
-        auto x2 = c1->getSecondBead()->coordinate;
+        auto x1 = c1->getFirstBead()->vcoordinate();
+        auto x2 = c1->getSecondBead()->vcoordinate();
         
         //get original direction of cylinder
         auto p= midPointCoordinate(x1, x2, pos);
@@ -647,8 +647,8 @@ struct LinkerUnbindingCallback {
 	    mins = chrono::high_resolution_clock::now();
 
 //        //@{
-//        std::cout<<"Linker unbinding "<<_linker->getFirstCylinder()->getID()<<" "<<_linker->getFirstPosition()
-//                 <<" "<<_linker->getSecondCylinder()->getID()<<" "<<_linker->getSecondPosition()<<endl;
+//        std::cout<<"Linker unbinding "<<_linker->getFirstCylinder()->getId()<<" "<<_linker->getFirstPosition()
+//                 <<" "<<_linker->getSecondCylinder()->getId()<<" "<<_linker->getSecondPosition()<<endl;
 //        //@}
         //remove the linker
         _ps->removeTrackable<Linker>(_linker);
@@ -769,11 +769,11 @@ struct MotorUnbindingCallback {
 //        mManager->removeUnboundID(MotorGhost::_motorGhosts.deleteID());
 //        
 //        //re-add unbound ID to motor binding manager
-//        mManager->addUnboundID(_motor->getID());
+//        mManager->addUnboundID(_motor->getId());
 
 //        //@{
-//        std::cout<<"Motor unbinding "<<_motor->getFirstCylinder()->getID()<<" "<<_motor->getFirstPosition()
-//                  <<" "<<_motor->getSecondCylinder()->getID()<<" "<<_motor->getSecondPosition()<<endl;
+//        std::cout<<"Motor unbinding "<<_motor->getFirstCylinder()->getId()<<" "<<_motor->getFirstPosition()
+//                  <<" "<<_motor->getSecondCylinder()->getId()<<" "<<_motor->getSecondPosition()<<endl;
 //        //@}
 
         //remove the motor
@@ -1062,8 +1062,8 @@ struct FilamentCreationCallback {
                 for(auto bb : Bubble::getBubbles()) {
                     auto radius = bb->getRadius();
 
-                    if((twoPointDistancesquared(bb->getBead()->coordinate, position) < (radius * radius)) ||
-                       (twoPointDistancesquared(bb->getBead()->coordinate, npp) < (radius * radius))){
+                    if((twoPointDistancesquared(bb->getBead()->vcoordinate(), position) < (radius * radius)) ||
+                       (twoPointDistancesquared(bb->getBead()->vcoordinate(), npp) < (radius * radius))){
                         inbubble = true;
                         break;
                     }
@@ -1104,8 +1104,8 @@ struct FilamentCreationCallback {
                 for(auto bb : Bubble::getBubbles()) {
                     auto radius = bb->getRadius();
 
-                    if((twoPointDistancesquared(bb->getBead()->coordinate, position) < (radius * radius)) ||
-                       (twoPointDistancesquared(bb->getBead()->coordinate, npp) < (radius * radius))){
+                    if((twoPointDistancesquared(bb->getBead()->vcoordinate(), position) < (radius * radius)) ||
+                       (twoPointDistancesquared(bb->getBead()->vcoordinate(), npp) < (radius * radius))){
                         inbubble = true;
                         break;
                     }

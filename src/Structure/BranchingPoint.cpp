@@ -29,8 +29,8 @@ using namespace mathfunc;
 
 void BranchingPoint::updateCoordinate() {
     
-    coordinate = midPointCoordinate(_c1->getFirstBead()->coordinate,
-                                    _c1->getSecondBead()->coordinate,
+    coordinate = midPointCoordinate(_c1->getFirstBead()->vcoordinate(),
+                                    _c1->getSecondBead()->vcoordinate(),
                                     _position);
 }
 
@@ -81,9 +81,9 @@ BranchingPoint::~BranchingPoint() noexcept {
     
     auto b = _c2->getFirstBead();
     
-    b->coordinate[0] += offsetCoord[0];
-    b->coordinate[1] += offsetCoord[1];
-    b->coordinate[2] += offsetCoord[2];
+    b->coordinate()[0] += offsetCoord[0];
+    b->coordinate()[1] += offsetCoord[1];
+    b->coordinate()[2] += offsetCoord[2];
 #endif
     
     

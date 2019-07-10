@@ -99,7 +99,6 @@ private:
 public:
     vector<floatingpoint> coordinate;
         ///< coordinate of midpoint, updated with updatePosition()
-        int _dbIndex; ///<Position in database vector
     
     ///Standard constructor
     MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,

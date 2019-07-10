@@ -62,12 +62,12 @@ void BasicSnapshot::print(int snapshot) {
         //print coordinates
         for (auto cylinder : filament->getCylinderVector()){
 
-            auto x = cylinder->getFirstBead()->coordinate;
+            auto x = cylinder->getFirstBead()->vcoordinate();
             _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" ";
 
         }
         //print last bead coord
-        auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
+        auto x = filament->getCylinderVector().back()->getSecondBead()->vcoordinate();
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
 
         _outputFile << endl;
@@ -82,13 +82,13 @@ void BasicSnapshot::print(int snapshot) {
 
         //print coordinates
         auto x =
-            midPointCoordinate(linker->getFirstCylinder()->getFirstBead()->coordinate,
-                               linker->getFirstCylinder()->getSecondBead()->coordinate,
+            midPointCoordinate(linker->getFirstCylinder()->getFirstBead()->vcoordinate(),
+                               linker->getFirstCylinder()->getSecondBead()->vcoordinate(),
                                linker->getFirstPosition());
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
 
-        x = midPointCoordinate(linker->getSecondCylinder()->getFirstBead()->coordinate,
-                               linker->getSecondCylinder()->getSecondBead()->coordinate,
+        x = midPointCoordinate(linker->getSecondCylinder()->getFirstBead()->vcoordinate(),
+                               linker->getSecondCylinder()->getSecondBead()->vcoordinate(),
                                linker->getSecondPosition());
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
 
@@ -103,13 +103,13 @@ void BasicSnapshot::print(int snapshot) {
 
         //print coordinates
         auto x =
-            midPointCoordinate(motor->getFirstCylinder()->getFirstBead()->coordinate,
-                               motor->getFirstCylinder()->getSecondBead()->coordinate,
+            midPointCoordinate(motor->getFirstCylinder()->getFirstBead()->vcoordinate(),
+                               motor->getFirstCylinder()->getSecondBead()->vcoordinate(),
                                motor->getFirstPosition());
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
 
-        x = midPointCoordinate(motor->getSecondCylinder()->getFirstBead()->coordinate,
-                               motor->getSecondCylinder()->getSecondBead()->coordinate,
+        x = midPointCoordinate(motor->getSecondCylinder()->getFirstBead()->vcoordinate(),
+                               motor->getSecondCylinder()->getSecondBead()->vcoordinate(),
                                motor->getSecondPosition());
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
 
@@ -209,7 +209,6 @@ void BirthTimes::print(int snapshot) {
         //print first line
         //also contains a Bound(1) or unbound(0) qualifier
         _outputFile << "MOTOR " << motor->getId() << " " << motor->getType() << " " << 1 << endl;
-
         //print birth times
         _outputFile << motor->getBirthTime() << " " <<
                        motor->getBirthTime() << endl;
@@ -309,7 +308,6 @@ void Forces::print(int snapshot) {
         //print first line
         //also contains a Bound(1) or unbound(0) qualifier
         _outputFile << "MOTOR " << motor->getId() << " " << motor->getType() << " " << 1 << endl;
-
         //print stretch force
         _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
                        motor->getMMotorGhost()->stretchForce << endl;
@@ -412,7 +410,6 @@ void Tensions::print(int snapshot) {
         //print first line
         //also contains a Bound(1) or unbound(0) qualifier
         _outputFile << "MOTOR " << motor->getId() << " " << motor->getType() << " " << 1 << endl;
-
         //print
         _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
         motor->getMMotorGhost()->stretchForce << endl;
@@ -487,10 +484,9 @@ void WallTensions::print(int snapshot) {
 
             if(b->isPinned()) {
                 auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
-                auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
+                auto dirL = twoPointDirection(b->pinnedPosition, b->vcoordinate());
                 
-                floatingpoint deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
-                
+                floatingpoint deltaL = twoPointDistance(b->vcoordinate(), b->pinnedPosition);
                 
                 _outputFile<< k * deltaL * dotProduct(norm, dirL) << " ";
             }
@@ -505,9 +501,9 @@ void WallTensions::print(int snapshot) {
 
         if(b->isPinned()) {
             auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
-            auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
+            auto dirL = twoPointDirection(b->pinnedPosition, b->vcoordinate());
             
-            floatingpoint deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
+            floatingpoint deltaL = twoPointDistance(b->vcoordinate(), b->pinnedPosition);
             
             _outputFile<< k * deltaL * dotProduct(norm, dirL) << " ";
         }
@@ -607,7 +603,6 @@ void Types::print(int snapshot) {
         //print first line
         //also contains a Bound(1) or unbound(0) qualifier
         _outputFile << "MOTOR " << motor->getId() << " " << motor->getType() << " " << 1 << endl;
-
         _outputFile << motor->getType() << " " <<
         motor->getType() << endl;
     }
@@ -822,7 +817,7 @@ void PlusEnd::print(int snapshot) {
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
 
         //print plus end
-        auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
+        auto x = filament->getCylinderVector().back()->getSecondBead()->vcoordinate();
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" \n";
 
 
