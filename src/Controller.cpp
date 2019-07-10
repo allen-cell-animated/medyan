@@ -1364,7 +1364,6 @@ void Controller::run() {
                 mins = chrono::high_resolution_clock::now();
                 invalidateMembraneMeshIndexCache();
                 Bead::rearrange();
-                Cylinder::rearrange(); // FIXME: should be put before neighbor list search
                 Cylinder::updateAllData();
                 _mController->run();
 
@@ -1521,7 +1520,6 @@ void Controller::run() {
             if(stepsLastMinimization >= _minimizationSteps) {
                 invalidateMembraneMeshIndexCache();
                 Bead::rearrange();
-                Cylinder::rearrange(); // FIXME: should be put before neighbor list search
                 Cylinder::updateAllData();
                 _mController->run();
 

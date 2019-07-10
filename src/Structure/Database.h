@@ -14,6 +14,7 @@
 #ifndef MEDYAN_Database_h
 #define MEDYAN_Database_h
 
+#include <algorithm> // max
 #include <cstddef> // size_t
 #include <utility> // forward
 #include <vector>
@@ -44,20 +45,18 @@ template< typename T >
 class DatabaseBase {
     
 private:
-    static std::vector<T*> _elems;  ///< Pointer to the elements in the collection
+    static std::vector<T*> _elems;  // Pointer to the elements in the collection
+    static std::size_t _nextId;     // Next unique id
 
     std::size_t _id;
     std::size_t _index;
-
-    // Get the next unique id
-    static std::size_t _nextId() { static std::size_t nextId = 0; return nextId++; }
 
 public:
     static const auto& getElements() { return _elems; }
     static auto numElements() { return _elems.size(); }
 
     // Add element on construction
-    DatabaseBase() : _id(_nextId()), _index(_elems.size()) {
+    DatabaseBase() : _id(_nextId++), _index(_elems.size()) {
         _elems.push_back(static_cast<T*>(this));
     }
     // Remove element on destruction
@@ -76,10 +75,19 @@ public:
     std::size_t getId() const { return _id; }
     std::size_t getIndex() const { return _index; }
 
+    // This function overrides the current id of the element.
+    // One should not use it unless in cases like re-initializing the system.
+    void overrideId(std::size_t id) {
+        _id = id;
+        _nextId = std::max(_id + 1, _nextId);
+    }
+
 };
 // Static variable definition (can be inlined starting C++17)
 template< typename T >
 std::vector<T*> DatabaseBase< T >::_elems;
+template< typename T >
+std::size_t DatabaseBase< T >::_nextId = 0;
 
 template< typename DatabaseData > class DatabaseDataManager {
 
@@ -114,6 +122,8 @@ template< typename DatabaseData > DatabaseData DatabaseDataManager< DatabaseData
  *    invalidated after any other element is created/destroyed.
  */
 template< typename T, bool stableIndexing, typename DatabaseData = DatabaseDataDefault > class Database;
+
+// Specialization for unstable indexing
 template< typename T, typename DatabaseData >
 class Database< T, false, DatabaseData > : public DatabaseBase<T>, public DatabaseDataManager<DatabaseData> {
 
@@ -138,6 +148,8 @@ public:
         db_data_type::getDbData().pop_back();
     }
 };
+
+// Specialization for stable indexing
 template< typename T, typename DatabaseData >
 class Database< T, true, DatabaseData > : public DatabaseBase<T>, public DatabaseDataManager<DatabaseData> {
     static std::vector<T*> _stableElems;
