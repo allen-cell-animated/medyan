@@ -44,7 +44,8 @@ class SubSystem;
  *  Extending the Reactable class, the reactions associated with 
  *  all instances can be updated by the SubSystem.
  */
-class MotorGhost : public Component, public Trackable, public Movable, public Reactable {
+class MotorGhost : public Component, public Trackable, public Movable, public Reactable,
+    public Database< MotorGhost, false > {
    
 friend class Controller;
 friend class DRController;
@@ -68,7 +69,6 @@ private:
     floatingpoint _position2; ///< Position on second cylinder
     
     short _motorType; ///< Integer specifying the type of linker
-    int _motorID; ///< Integer ID of this motor, managed by Database
     
     float _birthTime; ///< Birth time
     float _walkLength = 0; ///< Walk length of ensemble
@@ -84,8 +84,6 @@ private:
     floatingpoint _onRate = 0.0;
     floatingpoint _offRate = 0.0;
     //@}
-    
-    static Database<MotorGhost*> _motorGhosts;///< Collection in SubSystem
     
     //@{
     ///Histogram data
@@ -147,9 +145,6 @@ public:
     //@{
     ///Parameter management
     virtual int getType() {return _motorType;}
-    int getID() {return _motorID;}
-    
-    void setID(int ID) {_motorID = ID;}
     //@}
     
     /// Get the birth time
@@ -160,17 +155,18 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _motorGhosts.addElement(this);}
-    virtual void removeFromSubSystem() {_motorGhosts.removeElement(this);}
+    // Does nothing
+    virtual void addToSubSystem() override { }
+    virtual void removeFromSubSystem() override {}
     //@}
     
     /// Get all instances of this class from the SubSystem
     static const vector<MotorGhost*>& getMotorGhosts() {
-        return _motorGhosts.getElements();
+        return getElements();
     }
     /// Get the number of motors in this system
     static int numMotorGhosts() {
-        return _motorGhosts.countElements();
+        return getElements().size();
     }
 
     /// Get the lifetimes

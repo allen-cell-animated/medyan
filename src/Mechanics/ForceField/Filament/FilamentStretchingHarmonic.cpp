@@ -277,7 +277,7 @@ void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, 
             cout<<"Filament Stretching Force becomes infinite. Printing data "<<endl;
 
             auto cyl = Cylinder::getCylinders()[i];
-            cout<<"Cylinder ID "<<cyl->getID()<<" with cindex "<<cyl->_dcIndex<<
+            cout<<"Cylinder ID "<<cyl->getId()<<" with cindex "<<cyl->_dcIndex<<
             " and bIndex "<< cyl->getFirstBead()->_dbIndex<<" "<<cyl->getSecondBead()
             ->_dbIndex<<endl;
 

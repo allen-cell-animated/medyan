@@ -65,7 +65,7 @@ void Compartment::SIMDcoordinates_section(){
                 uint32_t shiftedindex = (cyl->_dcIndex << 4);
 
 //                Cyldcindexvec[i] = cyl->_dcIndex;
-                CylcIDvec[i] = cyl->getID();
+                CylcIDvec[i] = cyl->getId();
                 uint32_t j = 0;
                 float cylsizesquared = SysParams::Geometry().cylinderSize[_filamentType]
                                       * SysParams::Geometry().cylinderSize[_filamentType];
@@ -1550,21 +1550,6 @@ void Compartment::getSlicedVolumeArea() {
     //  - The unit normal vector of triangles
     // ASSUMPTIONS:
     //  - This compartment is a CUBE
-//    size_t numTriangle = _triangles.size();
-//    if(numTriangle) {
-//        double sumArea = 0.0;
-//        array<double, 3> sumNormal {};
-//        array<double, 3> sumPos {};
-//        for(Triangle* t: _triangles) {
-//            double area = t->getGTriangle()->getArea();
-//            vectorIncrease(sumNormal, vectorMultiply(t->getGTriangle()->getUnitNormal(), area));
-//            vectorIncrease(sumPos, vectorMultiply(t->coordinate, area));
-//            sumArea += area;
-//        }
-//        double oneOverSumArea = 1.0 / sumArea;
-//        vectorExpand(sumNormal, oneOverSumArea);
-//        vectorExpand(sumPos, oneOverSumArea);
-//
     //get compartment sizes in X,Y and the radius of cylinder
     auto sizex = SysParams::Geometry().compartmentSizeX;
     auto sizey = SysParams::Geometry().compartmentSizeY;

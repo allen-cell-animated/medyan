@@ -450,7 +450,7 @@ void BranchingManager::crosscheck(){
             auto cyl1_s = get<0>(*it2)->getCylinder();
             auto bs1_s =  get<1>(*it2);
             sum = 0;
-            if(cyl1_o->getID() == cyl1_s->getID() )
+            if(cyl1_o->getId() == cyl1_s->getId() )
                 sum++;
 
             if(bs1_o == bs1_s )
@@ -570,7 +570,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
 
             if(cn->getParent() == c->getParent()) continue;
             if(cn->getType() != _filamentType) continue;
-            if(c->getID() < cn->getID()) continue;
+            if(c->getId() < cn->getId()) continue;
 
             auto ccn = cn->getCCylinder();
             dBInt = 2;
@@ -607,7 +607,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                     auto t2 = tuple<CCylinder*, short>(ccn, *it);
 
                     //add in correct order
-                    if(c->getID() > cn->getID()) {
+                    if(c->getId() > cn->getId()) {
                         _possibleBindings.emplace(t1, t2);
                         _reversePossibleBindings[t2].push_back(t1);
                     }
@@ -815,7 +815,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
 
             if(cn->getParent() == c->getParent()) continue;
             if(cn->getType() != _filamentType) continue;
-            if(c->getID() < cn->getID()) continue;
+            if(c->getId() < cn->getId()) continue;
             auto ccn = cn->getCCylinder();
 
             auto x3 = cn->getFirstBead()->coordinate;
@@ -943,7 +943,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                                 auto t2 = tuple<CCylinder *, short>(ccn, *it2);
 
                                 //add in correct order
-                                if(c->getID() > cn->getID()) {
+                                if(c->getId() > cn->getId()) {
                                     _possibleBindings.emplace(t1, t2);
                                     _reversePossibleBindings[t2].push_back(t1);
                                 }
@@ -1098,7 +1098,7 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
                     auto t2 = tuple<CCylinder*, short>(ccn, *it);
 
                     //add in correct order
-                    if(c->getID() > cn->getID())
+                    if(c->getId() > cn->getId())
                     _possibleBindingsstencil.emplace(t1,t2);
                     else {
                         //add in this compartment
@@ -1166,7 +1166,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
         cindexvec[id] = c->_dcIndex;
         id++;
         for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(c)) {
-            if(c->getID() > cn->getID())
+            if(c->getId() > cn->getId())
                 ncindex.push_back(cn->_dcIndex);
         }
         ncindices.push_back(ncindex);
@@ -1404,9 +1404,9 @@ void LinkerBindingManager::crosscheck(){
             auto cyl2_s = get<0>(it2->second)->getCylinder();
             auto bs2_s =  get<1>(it2->second);
             sum = 0;
-            if(cyl1_o->getID() == cyl1_s->getID() )
+            if(cyl1_o->getId() == cyl1_s->getId() )
                 sum++;
-            if(cyl2_o->getID() == cyl2_s->getID() )
+            if(cyl2_o->getId() == cyl2_s->getId() )
                 sum++;
             if(bs1_o == bs1_s )
                 sum++;
@@ -1577,7 +1577,7 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
                     auto t2 = tuple<CCylinder *, short>(ccn, *it);
 
                     //add in correct order
-                    if (c->getID() > cn->getID()) {
+                    if (c->getId() > cn->getId()) {
                         _possibleBindings.emplace(t1, t2);
                         _reversePossibleBindings[t2].push_back(t1);
 
@@ -1788,7 +1788,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
 
             if(cn->getParent() == c->getParent()) continue;
             if(cn->getType() != _filamentType) continue;
-            if(c->getID() < cn->getID()) continue;
+            if(c->getId() < cn->getId()) continue;
             auto ccn = cn->getCCylinder();
             auto x3 = cn->getFirstBead()->coordinate;
             auto x4 = cn->getSecondBead()->coordinate;
@@ -1891,7 +1891,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
                             auto t2 = tuple<CCylinder*, short>(ccn, *it2);
 
                             //add in correct order
-                            if(c->getID() > cn->getID()) {
+                            if(c->getId() > cn->getId()) {
                                 //                                        ""<<x[1]<<" "<<x[2]<<endl;
                                 _possibleBindings.emplace(t1, t2);
                                  _reversePossibleBindings[t2].push_back(t1);
@@ -2071,7 +2071,7 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
                     auto t2 = tuple<CCylinder*, short>(ccn, *it);
 
                     //add in correct order
-                    if(c->getID() > cn->getID())
+                    if(c->getId() > cn->getId())
                     {
                         _possibleBindingsstencil.emplace(t1,t2);
                     }
@@ -2150,7 +2150,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
         totalneighbors += _neighborLists[_nlIndex]->getNeighborsstencil(c).size();
         id++;
         for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(c)) {
-            if(c->getID() > cn->getID())
+            if(c->getId() > cn->getId())
                 ncindex.push_back(cn->_dcIndex);
             else
                 counter1++;
@@ -2391,9 +2391,9 @@ void MotorBindingManager::crosscheck(){
             auto cyl2_s = get<0>(it2->second)->getCylinder();
             auto bs2_s =  get<1>(it2->second);
             sum = 0;
-            if(cyl1_o->getID() == cyl1_s->getID() )
+            if(cyl1_o->getId() == cyl1_s->getId() )
                 sum++;
-            if(cyl2_o->getID() == cyl2_s->getID() )
+            if(cyl2_o->getId() == cyl2_s->getId() )
                 sum++;
             if(bs1_o == bs1_s )
                 sum++;

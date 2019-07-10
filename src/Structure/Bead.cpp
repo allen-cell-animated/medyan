@@ -22,7 +22,6 @@
 
 using namespace mathfunc;
 
-Database<Bead*> Bead::_beads;
 std::vector<Bead*> Bead::_pinnedBeads;
 //static vars needed to vectorize on-the-fly
 int Bead::maxbindex = 0;
@@ -35,9 +34,10 @@ vector<int> Bead::removedbindex;//vector of bead indices that were once alloted 
 Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
 //add brforce, pinforce
     : Trackable(true),
+      DatabaseType(),
       coordinate(v), coordinateP(v),
       force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0),
-      _position(position), _birthTime(tau()),_ID(_beads.getID()) {
+      _position(position), _birthTime(tau()) {
     
     parent->addChild(unique_ptr<Component>(this));
           
@@ -78,7 +78,7 @@ Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
         removedbindex.erase(removedbindex.begin());
     }
 
-    Nbeads = _beads.getElements().size();
+    Nbeads = getElements().size();
 
     //copy bead coordiantes to the appropriate spot in the coord vector.
     copycoordinatestovector();
@@ -87,6 +87,7 @@ Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
 Bead::Bead(Composite* parent, int position)
 //add brforce, pinforce
     : Trackable(true),
+    DatabaseType(),
     coordinate(3, 0), coordinateP(3, 0),
     force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0), _position(position) {
     
@@ -111,7 +112,7 @@ Bead::Bead(Composite* parent, int position)
         removedbindex.erase(removedbindex.begin());
     }
 
-    Nbeads = _beads.getElements().size();
+    Nbeads = getElements().size();
     //copy bead coordiantes to the appropriate spot in the coord vector.
     copycoordinatestovector();
 }

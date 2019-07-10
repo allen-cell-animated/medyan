@@ -592,7 +592,7 @@ struct BranchingCallback {
             for(auto T:BrT){
                 CCylinder* cx=get<0>(get<0>(T));
                 floatingpoint p = floatingpoint(get<1>(get<0>(T)))/ floatingpoint(SysParams::Geometry().cylinderNumMon[filType]);
-                if(cx->getCylinder()->getID()==c1->getID() && p==pos){
+                if(cx->getCylinder()->getId()==c1->getId() && p==pos){
                     c=get<0>(get<1>(T));
                     check = true;
                     break;

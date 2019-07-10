@@ -48,7 +48,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     : Trackable(true, true),
       _c1(c1), _c2(c2),
       _position1(position1), _position2(position2),
-      _motorType(motorType), _motorID(_motorGhosts.getID()), _birthTime(tau()),
+      _motorType(motorType), _birthTime(tau()),
       _onRate(onRate), _offRate(offRate) {
           
     //find compartment
@@ -206,9 +206,9 @@ void MotorGhost::updateReactionRates() {
     auto b2 = _c1->getSecondBead();
     auto b3 = _c2->getFirstBead();
     auto b4 = _c2->getSecondBead();
-    cout<<"MG mID "<<_motorID<<" "<<_c1->getID()<<" "<<_c2->getID()<<" "<<_position1<<" "
-        <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getID
-            ()<<" "<<b2->getID()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
+    cout<<"MG mID "<<getId()<<" "<<_c1->getId()<<" "<<_c2->getId()<<" "<<_position1<<" "
+        <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getId
+            ()<<" "<<b2->getId()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
             <<b3->_dbIndex<<" "<<b4->_dbIndex<<endl;
 #endif
 
@@ -347,9 +347,9 @@ void MotorGhost::updateReactionRates() {
         offRxn->activateReaction();
     }
 #ifdef CROSSCHECK
-    cout<<"MG mID "<<_motorID<<" "<<_c1->getID()<<" "<<_c2->getID()<<" "<<_position1<<" "
-        <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getID
-            ()<<" "<<b2->getID()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
+    cout<<"MG mID "<<getId()<<" "<<_c1->getId()<<" "<<_c2->getId()<<" "<<_position1<<" "
+        <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getId
+            ()<<" "<<b2->getId()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
         <<b3->_dbIndex<<" "<<b4->_dbIndex<<endl;
 #endif
 }
@@ -373,17 +373,17 @@ void MotorGhost::moveMotorHead(Cylinder* c,
     auto b4 = _c2->getSecondBead();
 
 
-	cout<<"motor-walking  mID "<<_motorID<<" "<<_c1->getID()<<" "<<_c2->getID()<<" "<<_position1<<" "
-        <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getID
-            ()<<" "<<b2->getID()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
-        <<b3->_dbIndex<<" "<<b4->_dbIndex<<" move "<<c->getID()<<" old "<<oldPosition<<" new "
+	cout<<"motor-walking  mID "<<getId()<<" "<<_c1->getId()<<" "<<_c2->getId()<<" "<<_position1<<" "
+        <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getId
+            ()<<" "<<b2->getId()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
+        <<b3->_dbIndex<<" "<<b4->_dbIndex<<" move "<<c->getId()<<" old "<<oldPosition<<" new "
         <<newPosition<<endl;
 	cout<<"mcoord before "<<mp1[0]<<" "<<mp1[1]<<" "<<mp1[2]<<" "<<mp2[0]<<" "<<mp2[1]<<" "
 																			  ""<<mp2[2]<<endl;
 
-    if(c->getID() == _c1->getID() && newPosition == _position1)
+    if(c->getId() == _c1->getId() && newPosition == _position1)
     	cout<<"c1 walking on itself"<<endl;
-    else if(c->getID() == _c2->getID() && newPosition == _position2)
+    else if(c->getId() == _c2->getId() && newPosition == _position2)
 	    cout<<"c2 walking on itself"<<endl;
 #endif
 
@@ -476,15 +476,15 @@ void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
     auto b3 = _c2->getFirstBead();
     auto b4 = _c2->getSecondBead();
 
-    cout<<"motor-walking  mID "<<_motorID<<" "<<_c1->getID()<<" "<<_c2->getID()<<" "<<_position1<<" "
-        <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getID
-            ()<<" "<<b2->getID()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
-        <<b3->_dbIndex<<" "<<b4->_dbIndex<<" move oldC "<<oldC->getID()<<" newC "
-        <<newC->getID() <<" old " <<oldPosition<<" new "<<newPosition<<endl;
+    cout<<"motor-walking  mID "<<getId()<<" "<<_c1->getId()<<" "<<_c2->getId()<<" "<<_position1<<" "
+        <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getId
+            ()<<" "<<b2->getId()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
+        <<b3->_dbIndex<<" "<<b4->_dbIndex<<" move oldC "<<oldC->getId()<<" newC "
+        <<newC->getId() <<" old " <<oldPosition<<" new "<<newPosition<<endl;
 
-	if(newC->getID() == _c1->getID() && newPosition == _position1)
+	if(newC->getId() == _c1->getId() && newPosition == _position1)
 		cout<<"c1 walking on itself"<<endl;
-	else if(newC->getID() == _c2->getID() && newPosition == _position2)
+	else if(newC->getId() == _c2->getId() && newPosition == _position2)
 		cout<<"c2 walking on itself"<<endl;
 #endif
     //shift the head
@@ -555,7 +555,7 @@ void MotorGhost::printSelf() {
     cout << endl;
     
     cout << "MotorGhost: ptr = " << this << endl;
-    cout << "Motor type = " << _motorType << ", Motor ID = " << _motorID << endl;
+    cout << "Motor type = " << _motorType << ", Motor ID = " << getId() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     
     cout << "Position on first cylinder (floatingpoint) = " << _position1 << endl;
@@ -589,7 +589,7 @@ species_copy_t MotorGhost::countSpecies(const string& name) {
     
     species_copy_t copyNum = 0;
     
-    for(auto m : _motorGhosts.getElements()) {
+    for(auto m : getElements()) {
         
         auto s = m->getCMotorGhost()->getFirstSpecies();
         string sname = SpeciesNamesDB::removeUniqueFilName(s->getName());
@@ -603,7 +603,6 @@ species_copy_t MotorGhost::countSpecies(const string& name) {
 vector<MotorRateChanger*> MotorGhost::_unbindingChangers;
 vector<MotorRateChanger*> MotorGhost::_walkingChangers;
 
-Database<MotorGhost*> MotorGhost::_motorGhosts;
 Histogram* MotorGhost::_lifetimes;
 Histogram* MotorGhost::_walkLengths;
 

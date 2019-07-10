@@ -581,7 +581,7 @@ void CGMethod::startMinimization() {
 	    if(false){
 	    	for(auto b:Bead::getBeads()){
 	    		long idx1 = b->_dbIndex;
-	    		cout<<"Bead ID "<<b->getID()<<" index "<<idx1<<" Coords "<<coord[3 * idx1]
+	    		cout<<"Bead ID "<<b->getId()<<" index "<<idx1<<" Coords "<<coord[3 * idx1]
 	    		<< " " << coord[3 * idx1 + 1] << " " << coord[3 * idx1 + 2]<<" Force "
 	    		<<force[3 * idx1] << " " << force[3 * idx1 + 1] << " " << force[3 * idx1 + 2]<<endl;
 	    	}
@@ -590,8 +590,8 @@ void CGMethod::startMinimization() {
 		    for (auto cyl:Cylinder::getCylinders()) {
 			    int i = cyl->_dcIndex;
 			    int id1 = cylindervec[i].ID;
-			    int id2 = Cylinderpointervec[i]->getID();
-			    int id3 = ccylindervec[i]->getCylinder()->getID();
+			    int id2 = Cylinderpointervec[i]->getId();
+			    int id3 = ccylindervec[i]->getCylinder()->getId();
 			    if (id1 != id2 || id2 != id3 || id3 != id1)
 				    std::cout << id1 << " " << id2 << " " << id3 << endl;
 			    auto b1 = cyl->getFirstBead();
@@ -599,7 +599,7 @@ void CGMethod::startMinimization() {
 			    long idx1 = b1->_dbIndex;
 			    long idx2 = b2->_dbIndex;
 			    cylinder c = cylindervec[i];
-			    std::cout << "bindices for cyl with ID " << cyl->getID() << " cindex " << i
+			    std::cout << "bindices for cyl with ID " << cyl->getId() << " cindex " << i
 			              <<
 			              " are " << idx1 << " " << idx2 << " " << c.bindices[0] << " "
 			              << c.bindices[1] << " coords ";
@@ -617,7 +617,7 @@ void CGMethod::startMinimization() {
 				              << " " << b2->coordinate[1] << " " << b2->coordinate[2]
 				              << " idx " << b1->_dbIndex << " " << b2->_dbIndex << "ID "
 				                                                                   ""
-				              << b1->getID() << " " << b2->getID() << endl;
+				              << b1->getId() << " " << b2->getId() << endl;
 
 				    std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
 				              << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
@@ -1030,11 +1030,11 @@ void CGMethod::checkcoord_forces() {
         for (auto cyl:Cylinder::getCylinders()) {
             int i = cyl->_dcIndex;
             int id1 = cylindervec[i].ID;
-            int id2 = Cylinderpointervec[i]->getID();
-            int id3 = ccylindervec[i]->getCylinder()->getID();
+            int id2 = Cylinderpointervec[i]->getId();
+            int id3 = ccylindervec[i]->getCylinder()->getId();
             if (id1 != id2 || id2 != id3 || id3 != id1) {
             	cout<<"CylinderIDs do not match"<<endl;
-	            std::cout <<cyl->getID()<<" "<< id1 << " " << id2 << " " << id3 << endl;
+	            std::cout <<cyl->getId()<<" "<< id1 << " " << id2 << " " << id3 << endl;
 	            cout<<"cIndex "<<i<<endl;
 
 	            failstatus = true;
@@ -1052,7 +1052,7 @@ void CGMethod::checkcoord_forces() {
 	        	isnan(force_local[dim])||isinf(force_local[dim])){
 	        		failstatus = true;
 			        cylinder c = cylindervec[i];
-			        std::cout << "bindices for cyl with ID " << cyl->getID() << " cindex " << i <<
+			        std::cout << "bindices for cyl with ID " << cyl->getId() << " cindex " << i <<
 			                  " are " << idx1 << " " << idx2 << " " << c.bindices[0] << " "
 			                  << c.bindices[1] <<" coords ";
 			        std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "

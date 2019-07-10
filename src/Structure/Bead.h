@@ -21,13 +21,14 @@
 
 #include "common.h"
 
-#include "Database.h"
+#include "Structure/Database.h"
 #include "Component.h"
 #include "Composite.h"
 #include "Trackable.h"
 #include "Movable.h"
 #include "DynamicNeighbor.h"
 #include "SysParams.h"
+#include "Util/Math/Vec.hpp"
 
 //FORWARD DECLARATIONS
 class Compartment;
@@ -48,9 +49,12 @@ class Filament;
  *  [NeighborLists](@ref NeighborList).
  */
 
-class Bead : public Component, public Trackable, public Movable{
+class Bead : public Component, public Trackable, public Movable,
+    public Database< Bead, false > {
     
 public:
+    using DatabaseType = Database< Bead, false >;
+
     ///@note - all vectors are in x,y,z coordinates.
     static bool triggercylindervectorization;
     vector<floatingpoint> coordinate;  ///< Coordinates of the bead
@@ -107,22 +111,21 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _beads.addElement(this);}
+    // only takes care of pinned bead removal
+    virtual void addToSubSystem() override {}
     virtual void removeFromSubSystem() {
         //Reset in bead coordinate vector and add _dbIndex to the list of removedbindex.
         removedbindex.push_back(_dbIndex);
         resetcoordinates();
-        //remove from database
-        _beads.removeElement(this);
         //remove if pinned
         if(_isPinned) removeAsPinned();
-        Nbeads = _beads.getElements().size();
+        Nbeads = getElements().size();
     }
     //@}
     
     /// Get all instances of this class from the SubSystem
     static const vector<Bead*>& getBeads() {
-        return _beads.getElements();
+        return getElements();
     }
     
     /// Add this bead as a pinned bead
@@ -157,7 +160,7 @@ public:
     
     /// Get the number of beads in this system
     static int numBeads() {
-        return _beads.countElements();
+        return getElements().size();
     }
     
     /// Update the position, inherited from Movable
@@ -167,8 +170,6 @@ public:
     
     //GetType implementation just returns type of parent
     virtual int getType() {return getParent()->getType();}
-    //Aravind get ID
-    int getID() {return _ID;}
     //Aravind return static
     bool getstaticstate() {return isStatic;}
     //Aravind set static
@@ -273,18 +274,11 @@ public:
 				triggercylindervectorization = true;
 			}
 		}
-/*		cout<<"Printing bead data triggercylindervectorization "
-		""<<triggercylindervectorization<<endl;
-		for(auto b:_beads.getElements()){
-			cout<<"Bead ID "<<b->getID()<<" dbIndex "<<b->_dbIndex<<endl;
-		}
-		cout<<"removedbindex "<<removedbindex.size()<<endl;
-		cout<<"------------------------------Bead"<<endl;*/
 	}
 	static void printBeaddata(){
 		cout<<"Printing bead data "<<endl;
-		for(auto b:_beads.getElements()){
-			cout<<"Bead ID "<<b->getID()<<" dbIndex "<<b->_dbIndex<<endl;
+		for(auto b:getElements()){
+			cout<<"Bead ID "<<b->getId()<<" dbIndex "<<b->_dbIndex<<endl;
 		}
 		cout<<"removedbindex "<<removedbindex.size()<<endl;
 		cout<<"------------------------------Bead"<<endl;
@@ -297,7 +291,6 @@ private:
 	int _ID; ///<Bead IDs
     bool _isPinned = false;
     
-    static Database<Bead*> _beads; ///< Collection of beads in SubSystem
     static std::vector<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem
                                          ///< (attached to some element in SubSystem)
     //Vectorize beads so the coordinates are all available in a single array.
@@ -312,7 +305,7 @@ private:
     static void revectorize(floatingpoint* coord){
         //set contiguous bindices and set coordinates.
         int idx = 0;
-        for(auto b:_beads.getElements()){
+        for(auto b:getElements()){
             int index = 3 * idx;
             coord[index] = b->coordinate[0];
             coord[index + 1] = b->coordinate[1];
@@ -320,8 +313,8 @@ private:
             b->_dbIndex = idx;
             idx++;
         }
-        Nbeads =_beads.getElements().size();
-        maxbindex = _beads.getElements().size();
+        Nbeads =getElements().size();
+        maxbindex = getElements().size();
         removedbindex.clear();
     }
 
@@ -348,7 +341,7 @@ private:
 	static void appendrevectorize(floatingpoint* coord){
 		//set coords based on bindices.
 		maxbindex = 0;
-		for(auto b:_beads.getElements()){
+		for(auto b:getElements()){
 		    maxbindex = max<int>(maxbindex, b->_dbIndex);
 			int index = 3 * b->_dbIndex;
 			coord[index] = b->coordinate[0];
@@ -356,7 +349,7 @@ private:
 			coord[index + 2] = b->coordinate[2];
 		}
 		maxbindex++;
-		Nbeads =_beads.getElements().size();
+		Nbeads =getElements().size();
 	}
 
     //copy coodinates of this bead to the appropriate spot in coord vector.
