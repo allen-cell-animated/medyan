@@ -39,12 +39,12 @@ protected:
     chrono::high_resolution_clock::time_point tbegin, tend;
 
     ///< Data vectors for calculation
-    floatingpoint *coord;  ///<bead coordinates (length 3*N)
-    floatingpoint *coordlineSearch; ///coords used during line search
+    [[deprecated]] floatingpoint *coord;  ///<bead coordinates (length 3*N)
+    [[deprecated]] floatingpoint *coordlineSearch; ///coords used during line search
 
-    floatingpoint *force=NULL; ///< bead forces (length 3*N)
-    floatingpoint *forceAux=NULL; ///< auxiliary force calculations (length 3*N)
-    floatingpoint *forceAuxPrev=NULL; ///<auxiliary force calculation previously (length
+    [[deprecated]] floatingpoint *force=NULL; ///< bead forces (length 3*N)
+    [[deprecated]] floatingpoint *forceAux=NULL; ///< auxiliary force calculations (length 3*N)
+    [[deprecated]] floatingpoint *forceAuxPrev=NULL; ///<auxiliary force calculation previously (length
     // 3*N)
 //    cylinder* cylindervec;
 
