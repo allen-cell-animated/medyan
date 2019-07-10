@@ -34,7 +34,7 @@ class CylinderExclVolume : public CylinderVolumeInteractions {
 
 private:
     CVolumeInteractionType _FFType;
-    CylinderCylinderNL* _neighborList;  ///< Neighbor list of cylinders
+    CylinderCylinderNL* _neighborList = nullptr;  ///< Neighbor list of cylinders
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     HybridCylinderCylinderNL* _HneighborList;
     short _HnlID;
