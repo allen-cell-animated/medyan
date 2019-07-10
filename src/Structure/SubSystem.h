@@ -105,7 +105,7 @@ public:
 	        minsN = chrono::high_resolution_clock::now();
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
             _HneighborList->addDynamicNeighbor((DynamicNeighbor *) t);
-            //Remove boundary neighbors
+            //Remove boundary and bubble neighbors
             for (auto nlist : __bneighborLists)
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
 #else
@@ -277,9 +277,6 @@ private:
     CompartmentGrid* _compartmentGrid; ///< The compartment grid
 
     //Cylinder vector
-    cylinder *cylindervec;
-    CCylinder** ccylindervec;
-    Cylinder** cylinderpointervec;
     static CompartmentGrid* _staticgrid;
     floatingpoint* cylsqmagnitudevector = nullptr;
     static bool initialize;

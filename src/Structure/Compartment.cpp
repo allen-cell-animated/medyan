@@ -52,24 +52,23 @@ void Compartment::SIMDcoordinates_section(){
                     cindex_bs_section[i].clear();
                 }
 
-                int cindex = cyl->_dcIndex;
-                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
+                int cindex = cyl->getStableIndex();
 
-                _filamentType = cylinderstruct.type;
+                _filamentType = Cylinder::getDbDataConst().value[cindex].type;
                 //Only consider cylinders that are filType
-                 if (checkftype && _filamentType != filType) continue;
+                if (checkftype && _filamentType != filType) continue;
 
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
+                auto x1 = cyl->getFirstBead()->vcoordinate();
+                auto x2 = cyl->getSecondBead()->vcoordinate();
 //            uint32_t shiftedindex = (i << 4);
-                uint32_t shiftedindex = (cyl->_dcIndex << 4);
+                uint32_t shiftedindex = (cyl->getStableIndex() << 4);
 
 //                Cyldcindexvec[i] = cyl->_dcIndex;
-                CylcIDvec[i] = cyl->getID();
+                CylcIDvec[i] = cyl->getId();
                 uint32_t j = 0;
                 float cylsizesquared = SysParams::Geometry().cylinderSize[_filamentType]
                                       * SysParams::Geometry().cylinderSize[_filamentType];
-                float maxmp = twoPointDistancesquared(x1,x2)/cylsizesquared;
+                float maxmp = sqrt(twoPointDistancesquared(x1,x2)/cylsizesquared);
 
                 for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
                      it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
@@ -145,15 +144,14 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                         checkftype = true;
             unsigned int i = 0;
             for (auto cyl:_cylinders) {
-                uint32_t cindex = cyl->_dcIndex;
-                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
+                uint32_t cindex = cyl->getStableIndex();
 
-                _filamentType = cylinderstruct.type;
+                _filamentType = Cylinder::getDbData().value[cindex].type;
                 //Consider only cylinders of filamentType fType
                 if (checkftype && _filamentType != filType) continue;
 
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
+                auto x1 = cyl->getFirstBead()->vcoordinate();
+                auto x2 = cyl->getSecondBead()->vcoordinate();
 //            uint16_t shiftedindex = (i << 4);
                 uint32_t shiftedindex = (cindex << 4);
 //                Cyldcindexvec[i] = cindex;
@@ -171,7 +169,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                                   SysParams::Geometry().cylinderNumMon[_filamentType];
                         float cylsizesquared = SysParams::Geometry().cylinderSize[_filamentType]
                                             * SysParams::Geometry().cylinderSize[_filamentType];
-                        float maxmp = twoPointDistancesquared(x1,x2)/cylsizesquared;
+                        float maxmp = sqrt(twoPointDistancesquared(x1,x2)/cylsizesquared);
                         if(mp <= maxmp){
                           auto coord = midPointCoordinate(x1, x2, mp);
                           //last 4 bits are binding site while first 12 bits are cylinder index.
@@ -260,14 +258,13 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
             unsigned int i = 0;
 
             for (auto cyl:_cylinders) {
-                uint32_t cindex = cyl->_dcIndex;
-                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
+                uint32_t cindex = cyl->getStableIndex();
 
-                _filamentType = cylinderstruct.type;
+                _filamentType = Cylinder::getDbData().value[cindex].type;
                 if (checkftype && _filamentType != filType) continue;
 
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
+                auto x1 = cyl->getFirstBead()->vcoordinate();
+                auto x2 = cyl->getSecondBead()->vcoordinate();
 //                uint16_t shiftedindex = (i << 4);
                 uint32_t shiftedindex = (cindex << 4);
 //                Cyldcindexvec[i] = cindex;
@@ -1550,21 +1547,6 @@ void Compartment::getSlicedVolumeArea() {
     //  - The unit normal vector of triangles
     // ASSUMPTIONS:
     //  - This compartment is a CUBE
-//    size_t numTriangle = _triangles.size();
-//    if(numTriangle) {
-//        double sumArea = 0.0;
-//        array<double, 3> sumNormal {};
-//        array<double, 3> sumPos {};
-//        for(Triangle* t: _triangles) {
-//            double area = t->getGTriangle()->getArea();
-//            vectorIncrease(sumNormal, vectorMultiply(t->getGTriangle()->getUnitNormal(), area));
-//            vectorIncrease(sumPos, vectorMultiply(t->coordinate, area));
-//            sumArea += area;
-//        }
-//        double oneOverSumArea = 1.0 / sumArea;
-//        vectorExpand(sumNormal, oneOverSumArea);
-//        vectorExpand(sumPos, oneOverSumArea);
-//
     //get compartment sizes in X,Y and the radius of cylinder
     auto sizex = SysParams::Geometry().compartmentSizeX;
     auto sizey = SysParams::Geometry().compartmentSizeY;
@@ -1747,7 +1729,7 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
 
     vector<ReactionBase*> rxns;
 
-//    cout << "This compartment: x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
+    // cout << "This compartment: x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
 
     for(auto &sp_this : _species.species()) {
         int molecule = sp_this->getMolecule();
@@ -1759,12 +1741,12 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
             size_t idxFwd = _neighborIndex.at(C), idxBwd = C->_neighborIndex.at(this);
             double scaleFactor = 0.5 * (_partialArea[idxFwd] + C->_partialArea[idxBwd]) / GController::getCompartmentArea()[idxFwd / 2];
             //double scaleFactor = 1.0;
-//            cout << "To neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] << ", z = " << C->_coords[2] <<endl;
-//            cout << "scaleFactor = " << scaleFactor << endl;
+            // cout << "To neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] << ", z = " << C->_coords[2] <<endl;
+            // cout << "scaleFactor = " << scaleFactor << endl;
 
             float actualDiffRate = diff_rate * scaleFactor;
             float volumeFrac = getVolumeFrac();
-//            cout << "VolumeFraction = " << volumeFrac << endl;
+            // cout << "VolumeFraction = " << volumeFrac << endl;
 
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
             //Diffusion reaction from "this" compartment to C.

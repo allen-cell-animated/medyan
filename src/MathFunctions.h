@@ -21,11 +21,29 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #endif
+#include "Util/Math/Vec.hpp"
 
 /// @namespace mathfunc is used for the mathematics module for the entire codebase
 /// mathfunc includes functions to calculate distances, products, and midpoints
 
 namespace mathfunc {
+
+/// Vector and array converter. Need to ensure the vector has size of _Size
+// No need for move semantics because normally we use this for copying integers or doubles
+template< size_t dim, typename Float >
+inline auto vector2Vec(const vector<Float>& v) {
+    // Assert v.size() == Size
+    Vec<dim, Float> res;
+    for(size_t idx = 0; idx < dim; ++idx){
+        res[idx] = v[idx];
+    }
+    return res;
+}
+template< typename VecType, size_t = VecType::vec_size >
+inline auto vec2Vector(const VecType& a) {
+    return vector<typename VecType::float_type>(a.begin(), a.end());
+}
+
     struct temp{
         int a;
         int b;
@@ -199,8 +217,7 @@ namespace mathfunc {
     #ifdef CUDAACCL
     __host__ __device__
 	#endif
-
-    inline floatingpoint getdistancefromplane(floatingpoint *coord, floatingpoint * plane,int id){
+    inline floatingpoint getdistancefromplane(const floatingpoint *coord, const floatingpoint * plane,int id){
         return (plane[0] * coord[id] + plane[1] * coord[id + 1] + plane[2] * coord[id + 2] + plane[3]) /
                sqrt(pow(plane[0], 2) + pow(plane[1], 2) + pow(plane[2], 2));
     }
@@ -208,7 +225,7 @@ namespace mathfunc {
 #ifdef CUDAACCL
     __host__ __device__
 #endif
-    inline floatingpoint getdistancefromplane(floatingpoint *coord, floatingpoint * plane){
+    inline floatingpoint getdistancefromplane(const floatingpoint *coord, const floatingpoint * plane){
         int id = 0;
         return (plane[0] * coord[id] + plane[1] * coord[id + 1] + plane[2] * coord[id + 2] + plane[3]) /
                sqrt(pow(plane[0], 2) + pow(plane[1], 2) + pow(plane[2], 2));

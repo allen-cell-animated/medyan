@@ -53,9 +53,9 @@ void SubSystem::resetNeighborLists() {
                 for(auto b: Bead::getBeads()) {
                     //flatten indices
                     int index = 3 * i;
-                    coord[index] = b->coordinate[0];
-                    coord[index + 1] = b->coordinate[1];
-                    coord[index + 2] = b->coordinate[2];
+                    coord[index] = b->vcoordinate()[0];
+                    coord[index + 1] = b->vcoordinate()[1];
+                    coord[index + 2] = b->vcoordinate()[2];
                     i++;
                 }
                 i = 0; //int countcyl = 0;
@@ -83,13 +83,13 @@ void SubSystem::resetNeighborLists() {
                             coord_com[index + 1] = c->coordinate[1];
                             coord_com[index + 2] = c->coordinate[2];
 
-                        beadSet[2 * i] = c->getFirstBead()->_dbIndex;
-                        beadSet[2 * i + 1] = c->getSecondBead()->_dbIndex;
-                        cylID[i] = c->getID();
+                        beadSet[2 * i] = c->getFirstBead()->getStableIndex();
+                        beadSet[2 * i + 1] = c->getSecondBead()->getStableIndex();
+                        cylID[i] = c->getId();
                         c->_dcIndex = i;
                         fvecpos[i] = c->getPosition();
                         auto fil = dynamic_cast<Filament*>(c->getParent());
-                        filID[i] =  fil->getID();
+                        filID[i] =  fil->getId();
                         cmpID[i] = GController::getCompartmentID(c->getCompartment()->coordinates());
                         filType[i] = fil->getType();
         //                cylstate[i] = c->isFullLength();
@@ -215,7 +215,6 @@ void SubSystem::resetNeighborLists() {
         //                                           cudaMemcpyHostToDevice));
                 //@}
 #endif
-    //check ends
     chrono::high_resolution_clock::time_point mins, mine;
     mins = chrono::high_resolution_clock::now();
 
@@ -405,13 +404,13 @@ void SubSystem::vectorizeCylinder() {
     if(cylsqmagnitudevector != nullptr){
         delete [] cylsqmagnitudevector;
     };
-    cylsqmagnitudevector = new floatingpoint[Cylinder::vectormaxsize];
+    cylsqmagnitudevector = new floatingpoint[Cylinder::rawNumStableElements()];
     unsigned long maxbindingsitespercyl = 0;
     for(auto ftype = 0; ftype < SysParams::CParams.numFilaments; ftype++) {
         maxbindingsitespercyl = max<size_t>(maxbindingsitespercyl,SysParams::Chemistry()
                 .bindingSites[ftype].size());
     }
-    long vectorsize = maxbindingsitespercyl * Cylinder::vectormaxsize;
+    long vectorsize = maxbindingsitespercyl * Cylinder::rawNumStableElements();
     vector<bool> branchspeciesbound(vectorsize);
     vector<bool> linkerspeciesbound(vectorsize);
     vector<bool> motorspeciesbound(vectorsize);//stores species bound corresponding to each
@@ -425,29 +424,28 @@ void SubSystem::vectorizeCylinder() {
     //fill with appropriate values.
     for (auto cyl: cylvec) {
         auto _filamentType = cyl->getType();
-        auto x1 = cyl->getFirstBead()->coordinate;
-        auto x2 = cyl->getSecondBead()->coordinate;
+        auto x1 = cyl->getFirstBead()->vcoordinate();
+        auto x2 = cyl->getSecondBead()->vcoordinate();
         vector<floatingpoint> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
-        cylsqmagnitudevector[cyl->_dcIndex] = sqmagnitude(X1X2);
+        cylsqmagnitudevector[cyl->getStableIndex()] = sqmagnitude(X1X2);
         auto cc = cyl->getCCylinder();
         int idx = 0;
         for (auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
              it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
 
-            branchspeciesbound[maxbindingsitespercyl * cyl->_dcIndex + idx] =
+            branchspeciesbound[maxbindingsitespercyl * cyl->getStableIndex() + idx] =
                     (cc->getCMonomer(*it1)->speciesBound(
                             SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN());
-            linkerspeciesbound[maxbindingsitespercyl * cyl->_dcIndex + idx] =
+            linkerspeciesbound[maxbindingsitespercyl * cyl->getStableIndex() + idx] =
                     (cc->getCMonomer(*it1)->speciesBound(
                             SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN());
-            motorspeciesbound[maxbindingsitespercyl * cyl->_dcIndex + idx] =
+            motorspeciesbound[maxbindingsitespercyl * cyl->getStableIndex() + idx] =
                     (cc->getCMonomer(*it1)->speciesBound(
                             SysParams::Chemistry().motorBoundIndex[_filamentType])->getN());
             idx++;
         }
     }
     //@}
-
 
     SysParams::MParams.speciesboundvec.push_back(branchspeciesbound);
     SysParams::MParams.speciesboundvec.push_back(linkerspeciesbound);

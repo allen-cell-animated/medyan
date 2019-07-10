@@ -42,10 +42,10 @@ void MTOCAttachment<MTOCInteractionType>::vectorize() {
         for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
             Filament *f = mtoc->getFilaments()[fIndex];
 			//get mtoc bead
-	        beadSet[n*interaction_counter] = mtoc->getBubble()->getBead()->_dbIndex;
+	        beadSet[n*interaction_counter] = mtoc->getBubble()->getBead()->getStableIndex();
             //get filament bead
             beadSet[n*interaction_counter + 1] = f->getMinusEndCylinder()->getFirstBead()
-            		->_dbIndex;
+            		->getStableIndex();
 			//The MTOC attachment constant is the same as stretching constant
             kstr[interaction_counter] = f->getMinusEndCylinder()->getMCylinder()->getStretchingConst();
 

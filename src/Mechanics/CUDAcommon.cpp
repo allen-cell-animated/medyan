@@ -3,7 +3,6 @@
 //
 
 #include "CUDAcommon.h"
-SERLvars CUDAcommon::serlvars;
 Callbacktime CUDAcommon::ctime;
 Callbackcount CUDAcommon::ccount;
 PolyPlusEndTemplatetime CUDAcommon::ppendtime;

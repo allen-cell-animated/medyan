@@ -38,17 +38,14 @@ class Bead;
  * Extending the Neighbor class, all instances can be kept in 
  * [NeighborLists](@ref NeighborList).
  */
-class BoundaryElement : public Component, public Trackable, public Neighbor {
+class BoundaryElement : public Component, public Trackable, public Neighbor,
+    public Database< BoundaryElement, false > {
 
 friend class BoundaryCubic;
 friend class BoundarySpherical;
 friend class BoundaryCapsule;
 friend class BoundaryCylinder;
 
-private:
-    static Database<BoundaryElement*> _boundaryElements;
-    ///< Collection of boundary elements in SubSystem
-    
 protected:
     
     vector<floatingpoint> _coords; ///< coordinates
@@ -115,17 +112,18 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _boundaryElements.addElement(this);}
-    virtual void removeFromSubSystem() {_boundaryElements.removeElement(this);}
+    // Does nothing
+    virtual void addToSubSystem() { }
+    virtual void removeFromSubSystem() {}
     //@}
     
     /// Get all instances of this class from the SubSystem
     static const vector<BoundaryElement*>& getBoundaryElements() {
-        return _boundaryElements.getElements();
+        return getElements();
     }
     /// Get the number of boundary elements in this system
     static int numBoundaryElements() {
-        return _boundaryElements.countElements();
+        return getElements().size();
     }
     
     virtual void printSelf();

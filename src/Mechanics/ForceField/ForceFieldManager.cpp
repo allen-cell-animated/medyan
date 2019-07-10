@@ -18,6 +18,8 @@
 #include "cross_check.h"
 #include <algorithm>
 
+#include "Structure/Bead.h"
+
 ForceField* ForceFieldManager::_culpritForceField = nullptr;
 
 void ForceFieldManager::vectorizeAllForceFields() {
@@ -333,7 +335,7 @@ void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
     tbegin = chrono::high_resolution_clock::now();
 #endif
     //@{
-    for (int i = 0; i < CGMethod::N; i++)
+    for (int i = 0; i < Bead::getDbData().forces.size_raw(); i++)
         f[i] = 0.0;
     //@}
 #ifdef CUDATIMETRACK
@@ -427,12 +429,6 @@ void ForceFieldManager::computeLoadForces() {
         b->lfip = 0;
         b->lfim = 0;
     }
-}
-
-void ForceFieldManager::copyForces(floatingpoint *fprev, floatingpoint *f) {
-
-    for (int i = 0; i < CGMethod::N; i++)
-        fprev[i] = f[i];
 }
 
 void ForceFieldManager::printculprit(floatingpoint* force){

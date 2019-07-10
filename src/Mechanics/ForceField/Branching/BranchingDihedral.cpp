@@ -23,6 +23,7 @@
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
+#include "Mechanics/CUDAcommon.h"
 
 template <class BDihedralInteractionType>
 void BranchingDihedral<BDihedralInteractionType>::vectorize() {
@@ -36,10 +37,10 @@ void BranchingDihedral<BDihedralInteractionType>::vectorize() {
 
     for (auto b: BranchingPoint::getBranchingPoints()) {
 
-        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->_dbIndex;
-        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->_dbIndex;
-        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->_dbIndex;
-        beadSet[n * i + 3] = b->getSecondCylinder()->getSecondBead()->_dbIndex;
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getStableIndex();
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 3] = b->getSecondCylinder()->getSecondBead()->getStableIndex();
 
         kdih[i] = b->getMBranchingPoint()->getDihedralConstant();
         pos[i] = b->getPosition();

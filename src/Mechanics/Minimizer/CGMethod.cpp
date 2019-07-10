@@ -13,10 +13,13 @@
 
 #include "CGMethod.h"
 
+#include <algorithm> // max
+
 #include "ForceFieldManager.h"
 
 #include "CGMethodCUDA.h"
-#include "Bead.h"
+#include "MathFunctions.h"
+#include "Structure/Bead.h"
 #ifdef CUDAACCL
 #ifdef __CUDACC__
 #define CUDA_HOSTDEV __host__ __device__
@@ -39,7 +42,17 @@
 #include "cross_check.h"
 //
 long CGMethod::N = 0;
-long CGMethod::Ncyl = 0;
+
+namespace {
+
+void stretchBeads(floatingpoint d) {
+    const std::size_t num = Bead::getDbData().coords.size_raw();
+    for(size_t i = 0; i < num; ++i)
+        Bead::getDbData().coordsStr.value[i] = Bead::getDbData().coords.value[i] + d * Bead::getDbData().forces.value[i];
+}
+
+} // namespace
+
 #ifdef CUDAACCL
 void CGMethod::CUDAresetlambda(cudaStream_t stream) {
     resetlambdaCUDA<<<1,1,0, stream>>>(CUDAcommon::getCUDAvars().gpu_lambda);
@@ -376,20 +389,11 @@ void CGMethod::CUDAinitializePolak(cudaStream_t stream, bool *minstatein, bool *
 #endif
 floatingpoint CGMethod::allFDotF()
 {
-
-	floatingpoint g = 0;
-    for(int i = 0; i < N; i++)
-        g += force[i] * force[i];
-
-    return g;
+    return mathfunc::dot(Bead::getDbData().forces, Bead::getDbData().forces);
 }
 
 floatingpoint CGMethod::allFADotFA()
 {
-
-	floatingpoint g = 0;
-    for(int i = 0; i < N; i++)
-        g += forceAux[i] * forceAux[i];
 //#ifdef CUDAACCL
 
 //    auto g_cuda = gpuFDotF(CUDAcommon::getCUDAvars().gpu_forceAux,CUDAcommon::getCUDAvars().gpu_forceAux);
@@ -406,24 +410,16 @@ floatingpoint CGMethod::allFADotFA()
 //        std::cout << g << " " << g_cuda << endl;
 //        std::cout << "Precison mismatch FADotFA " << abs(g - g_cuda) << endl;
 //    }
-    return g;
+    return mathfunc::dot(Bead::getDbData().forcesAux, Bead::getDbData().forcesAux);
 }
 
 floatingpoint CGMethod::allFADotFAP()
 {
-	floatingpoint g = 0;
-    for(int i = 0; i < N; i++)
-        g += forceAux[i] * forceAuxPrev[i];
-
-    return g;
+    return mathfunc::dot(Bead::getDbData().forcesAux, Bead::getDbData().forcesAuxP);
 }
 
 floatingpoint CGMethod::allFDotFA()
 {
-	floatingpoint g = 0;
-    for(int i = 0; i < N; i++) {
-        g += force[i] * forceAux[i];
-    }
 //#ifdef CUDAACCL
 //    auto g_cuda = gpuFDotF(CUDAcommon::getCUDAvars().gpu_force,CUDAcommon::getCUDAvars().gpu_forceAux);
 //#endif
@@ -439,49 +435,30 @@ floatingpoint CGMethod::allFDotFA()
 //        std::cout << g << " " << g_cuda << endl;
 //
 //    }
-    return g;
+    return mathfunc::dot(Bead::getDbData().forces, Bead::getDbData().forcesAux);
 }
 
 floatingpoint CGMethod::maxF() {
-
-    floatingpoint maxF = 0.0;
-    floatingpoint mag = 0.0;
-    for(int i = 0; i < N/3; i++) {
-        mag = 0.0;
-        for(int j = 0; j < 3; j++)
-            mag += forceAux[3 * i + j]*forceAux[3 * i + j];
-        mag = sqrt(mag);
-//        std::cout<<"SL "<<i<<" "<<mag*mag<<" "<<forceAux[3 * i]<<" "<<forceAux[3 * i + 1]<<" "<<forceAux[3 * i +
-//                2]<<endl;
-        if(mag > maxF) maxF = mag;
+    floatingpoint mag2Max = 0.0;
+    for(auto x : Bead::getDbData().forcesAux) {
+        mag2Max = std::max(mag2Max, mathfunc::magnitude2(x));
     }
 
-	if(fabs(maxF) == numeric_limits<floatingpoint>::infinity()
-	   || maxF != maxF || maxF < -1.0) {
-		cout<<"maxF is infinity. Check parameters. Exiting."<<endl;
-		exit(EXIT_FAILURE);
-	}
-//    for(int i = 0; i < N; i++) {
-//        mag = sqrt(forceAux[i]*forceAux[i]);
-//        if(mag > maxF) maxF = mag;
-//    }
-
-    return maxF;
+    return std::sqrt(mag2Max);
 }
 
 Bead* CGMethod::maxBead() {
 
-    floatingpoint maxF = 0.0;
-    floatingpoint currentF;
+    floatingpoint maxF2 = 0.0;
+    floatingpoint currentF2;
     long index = 0;
 #ifdef SERIAL
-    for (int i = 0; i < N/3; i++) {
-        for (int j = 0 ; j < 3; j++) {
-            currentF = forceAux[3*i+j] * forceAux[3*i+j];
-        }
-        if(currentF > maxF) {
+    const std::size_t numBeads = Bead::numBeads();
+    for (size_t i = 0; i < numBeads; ++i) {
+        currentF2 = mathfunc::magnitude2(Bead::getDbData().forcesAux[i]);
+        if(currentF2 > maxF2) {
             index = i;
-            maxF = currentF;
+            maxF2 = currentF2;
         }
     }
 #endif
@@ -517,32 +494,17 @@ void CGMethod::moveBeads(floatingpoint d)
     //if(!b->getstaticstate())
 
 //    std::cout<<"3N "<<N<<endl;
-	floatingpoint temp;
-    for (int i = 0; i < N; i++) {
-    	temp = coord[i] + d * force[i];
-        coord[i] = temp;
-
-    }
-}
-
-void CGMethod::moveBeadslineSearch(floatingpoint d)
-{
-	///<NOTE: Ignores static beads for now.
-	//if(!b->getstaticstate())
-
-//    std::cout<<"3N "<<N<<endl;
-//	cout<<"moving by lambda "<<d<<endl;
-	for (int i = 0; i < N; i++) {
-		coordlineSearch[i] = coord[i] + d * force[i];
-	}
+    const std::size_t num = Bead::getDbData().coords.size_raw();
+    for(size_t i = 0; i < num; ++i)
+        Bead::getDbData().coords.value[i] += d * Bead::getDbData().forces.value[i];
 }
 
 void CGMethod::shiftGradient(floatingpoint d)
 {
-	//force is gradient, forceAux is force
-    for (int i = 0; i < N; i ++) {
-	    force[i] = forceAux[i] + d * force[i];
-    }
+    const std::size_t num = Bead::getDbData().coords.size_raw();
+    for (size_t i = 0; i < num; i ++)
+        Bead::getDbData().forces.value[i]
+            = Bead::getDbData().forcesAux.value[i] + d * Bead::getDbData().forces.value[i];
 }
 
 void CGMethod::printForces()
@@ -551,8 +513,8 @@ void CGMethod::printForces()
     for(auto b: Bead::getBeads()) {
 
         for (int i = 0; i<3; i++)
-            cout << b->coordinate[i] << "  "<<
-                 b->force[i] <<"  "<<b->forceAux[i]<<endl;
+            cout << b->coordinate()[i] << "  "<<
+                 b->force()[i] <<"  "<<b->forceAux()[i]<<endl;
     }
     cout << "End of Print Forces" << endl;
 }
@@ -563,91 +525,8 @@ void CGMethod::startMinimization() {
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
 #endif
-    coord = CUDAcommon::serlvars.coord;
-//    N = 3 * Bead::getBeads().size();
-        N = 3 * Bead::getmaxbindex();
-    Ncyl = Cylinder::getmaxcindex();
-    deallocate();
-    allocate(N, Ncyl);
-    if(false) {
-	    cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
-	    Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-	    CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
-	    floatingpoint *coord = CUDAcommon::serlvars.coord;
-	    std::cout << "check revectorized cylinders" << endl;
-	    std::cout << "Total Cylinders " << Cylinder::getCylinders().size() << " Beads "
-	              << Bead::getBeads().size() << "maxcindex " << Cylinder::getmaxcindex()
-	              <<" maxbindex "<<Bead::getmaxbindex()<<endl;
-	    if(false){
-	    	for(auto b:Bead::getBeads()){
-	    		long idx1 = b->_dbIndex;
-	    		cout<<"Bead ID "<<b->getID()<<" index "<<idx1<<" Coords "<<coord[3 * idx1]
-	    		<< " " << coord[3 * idx1 + 1] << " " << coord[3 * idx1 + 2]<<" Force "
-	    		<<force[3 * idx1] << " " << force[3 * idx1 + 1] << " " << force[3 * idx1 + 2]<<endl;
-	    	}
-	    }
-	    if(false) {
-		    for (auto cyl:Cylinder::getCylinders()) {
-			    int i = cyl->_dcIndex;
-			    int id1 = cylindervec[i].ID;
-			    int id2 = Cylinderpointervec[i]->getID();
-			    int id3 = ccylindervec[i]->getCylinder()->getID();
-			    if (id1 != id2 || id2 != id3 || id3 != id1)
-				    std::cout << id1 << " " << id2 << " " << id3 << endl;
-			    auto b1 = cyl->getFirstBead();
-			    auto b2 = cyl->getSecondBead();
-			    long idx1 = b1->_dbIndex;
-			    long idx2 = b2->_dbIndex;
-			    cylinder c = cylindervec[i];
-			    std::cout << "bindices for cyl with ID " << cyl->getID() << " cindex " << i
-			              <<
-			              " are " << idx1 << " " << idx2 << " " << c.bindices[0] << " "
-			              << c.bindices[1] << " coords ";
-			    std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
-			              << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
-			              << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2]
-			              << " forces ";
-			    std::cout << force[3 * idx1] << " " << force[3 * idx1 + 1] << " "
-			              << force[3 * idx1 + 2] << " " << force[3 * idx2] << " "
-			              << force[3 * idx2 + 1] << " " << force[3 * idx2 + 2] << endl;
-			    if (c.bindices[0] != idx1 || c.bindices[1] != idx2) {
+    long Ncyl = Cylinder::getCylinders().size();
 
-				    std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1]
-				              << " " << b1->coordinate[2] << " " << " " << b2->coordinate[0]
-				              << " " << b2->coordinate[1] << " " << b2->coordinate[2]
-				              << " idx " << b1->_dbIndex << " " << b2->_dbIndex << "ID "
-				                                                                   ""
-				              << b1->getID() << " " << b2->getID() << endl;
-
-				    std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
-				              << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
-				              << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] << endl;
-				    std::cout << force[3 * idx1] << " " << force[3 * idx1 + 1] << " "
-				              << force[3 * idx1 + 2] << " " << force[3 * idx2] << " "
-				              << force[3 * idx2 + 1] << " " << force[3 * idx2 + 2] << endl;
-				    exit(EXIT_FAILURE);
-			    }
-		    }
-	    }
-
-    }
-    //coord management
-/*    long i = 0;
-    long index = 0;
-    for(auto b: Bead::getBeads()) {
-
-        //set bead index
-        b->_dbIndex = i;
-
-        //flatten indices
-        index = 3 * i;
-        coord[index] = b->coordinate[0];
-        coord[index + 1] = b->coordinate[1];
-        coord[index + 2] = b->coordinate[2];
-        b->coordinateP = b->coordinate;
-        i++;
-    }
-    CUDAcommon::serlvars.coord = coord;*/
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runst(tend - tbegin);
@@ -910,24 +789,6 @@ void CGMethod::endMinimization() {
 //                            sizeof(floatingpoint), cudaMemcpyDeviceToHost));
 
     #endif
-    ///RECOPY BEAD DATA
-    //coord management
-    long i = 0;
-    long index = 0;
-	checkcoord_forces();
-    for(auto b: Bead::getBeads()) {
-
-        //flatten indices
-        index = 3 * b->_dbIndex;
-        b->coordinate[0] = coord[index];
-        b->coordinate[1] = coord[index + 1];
-        b->coordinate[2] = coord[index + 2];
-        b->force[0] = force[index];
-        b->force[1] = force[index + 1];
-        b->force[2] = force[index + 2];
-
-        i++;
-    }
 
 //    deallocate();
 #ifdef CUDAACCL
@@ -1013,64 +874,6 @@ void CGMethod::endMinimization() {
     CUDAcommon::cudatime.Tstartmin = elapsed_run.count();
     std::cout<<"end min time taken (s) "<<elapsed_run.count()<<endl;
 #endif
-}
-
-void CGMethod::checkcoord_forces() {
-    if(false) {
-
-        cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
-        Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-        CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
-        floatingpoint *coord = CUDAcommon::serlvars.coord;
-        std::cout << "check revectorized cylinders" << endl;
-        std::cout << "3 Total Cylinders " << Cylinder::getCylinders().size() << " Beads "
-                  << Bead::getBeads().size() << " maxcindex " << Cylinder::getmaxcindex() <<
-                  endl;
-        bool failstatus = false;
-        for (auto cyl:Cylinder::getCylinders()) {
-            int i = cyl->_dcIndex;
-            int id1 = cylindervec[i].ID;
-            int id2 = Cylinderpointervec[i]->getID();
-            int id3 = ccylindervec[i]->getCylinder()->getID();
-            if (id1 != id2 || id2 != id3 || id3 != id1) {
-            	cout<<"CylinderIDs do not match"<<endl;
-	            std::cout <<cyl->getID()<<" "<< id1 << " " << id2 << " " << id3 << endl;
-	            cout<<"cIndex "<<i<<endl;
-
-	            failstatus = true;
-            }
-            auto b1 = cyl->getFirstBead();
-            auto b2 = cyl->getSecondBead();
-            long idx1 = b1->_dbIndex;
-            long idx2 = b2->_dbIndex;
-            floatingpoint* coord_local;
-            floatingpoint* force_local;
-            coord_local = &coord[3 * idx1];
-	        force_local = &force[3 * idx1];
-	        for(int dim =0; dim < 3; dim++){
-	        	if(isnan(coord_local[dim])||isinf(coord_local[dim])||
-	        	isnan(force_local[dim])||isinf(force_local[dim])){
-	        		failstatus = true;
-			        cylinder c = cylindervec[i];
-			        std::cout << "bindices for cyl with ID " << cyl->getID() << " cindex " << i <<
-			                  " are " << idx1 << " " << idx2 << " " << c.bindices[0] << " "
-			                  << c.bindices[1] <<" coords ";
-			        std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
-			                  << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
-			                  << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] <<" forces ";
-			        std::cout << force[3 * idx1] << " " << force[3 * idx1 + 1] << " "
-			                  << force[3 * idx1 + 2] << " " << force[3 * idx2] << " "
-			                  << force[3 * idx2 + 1] << " " << force[3 * idx2 + 2] << endl;
-	        	}
-	        }
-        }
-        if(failstatus){
-        	cout<<"Coordinate/Force values are either Inf/NaN or Cylinder IDs do not "
-			   "match. Exiting."<<endl;
-        	exit(EXIT_FAILURE);
-        } else
-        	cout<<"Passed successfully"<<endl;
-    }
 }
 
 #ifdef CUDAACCL
@@ -1331,7 +1134,7 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 #endif
 #endif
 	tbegin = chrono::high_resolution_clock::now();
-    floatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
+    floatingpoint currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), 0.0);
 	CUDAcommon::tmin.computeenerycallszero++;
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
@@ -1361,8 +1164,8 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 
         tbegin = chrono::high_resolution_clock::now();
 //	    #ifdef MOVEBEADSLINESEARCH
-	    moveBeadslineSearch(lambda);
-        floatingpoint energyLambda = FFM.computeEnergy(coordlineSearch, force, lambda);
+	    stretchBeads(lambda);
+        floatingpoint energyLambda = FFM.computeEnergy(Bead::getDbData().coordsStr.data(), Bead::getDbData().forces.data(), lambda);
 /*		#else
         floatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
 		#endif*/
@@ -1468,7 +1271,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
 #endif
 //prepare for ping pong optimization
 	tbegin = chrono::high_resolution_clock::now();
-    floatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
+    floatingpoint currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), 0.0);
 	CUDAcommon::tmin.computeenerycallszero++;
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
@@ -1496,8 +1299,8 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
 
 	    tbegin = chrono::high_resolution_clock::now();
 //	    #ifdef MOVEBEADSLINESEARCH
-	    moveBeadslineSearch(lambda);
-	    floatingpoint energyLambda = FFM.computeEnergy(coordlineSearch, force, lambda);
+	    stretchBeads(lambda);
+        floatingpoint energyLambda = FFM.computeEnergy(Bead::getDbData().coordsStr.data(), Bead::getDbData().forces.data(), lambda);
 /*	    #else
 	    floatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
 		#endif*/

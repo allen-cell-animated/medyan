@@ -22,6 +22,7 @@
 #include "nvToolsExt.h"
 #endif
 #include "cross_check.h"
+#include "Mechanics/CUDAcommon.h"
 
 template <class BBendingInteractionType>
 void BranchingBending<BBendingInteractionType>::vectorize() {
@@ -35,10 +36,10 @@ void BranchingBending<BBendingInteractionType>::vectorize() {
 
     for (auto b: BranchingPoint::getBranchingPoints()) {
 
-        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->_dbIndex;
-        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->_dbIndex;
-        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->_dbIndex;
-        beadSet[n * i + 3] = b->getSecondCylinder()->getSecondBead()->_dbIndex;
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getStableIndex();
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 3] = b->getSecondCylinder()->getSecondBead()->getStableIndex();
 
         kbend[i] = b->getMBranchingPoint()->getStretchingConstant();
         eqt[i] = b->getMBranchingPoint()->getEqTheta();

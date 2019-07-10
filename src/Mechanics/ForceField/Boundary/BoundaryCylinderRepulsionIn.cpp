@@ -78,13 +78,13 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::vectorize() {
         for (ni = 0; ni < nn; ni++) {
             if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
             {
-                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->_dbIndex;
+                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->getStableIndex();
                 beadSet[cumnn+idx] = bindex;
                 krep[cumnn+idx] = be->getRepulsionConst();
                 slen[cumnn+idx] = be->getScreeningLength();
                 idx++;
             }
-            bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->_dbIndex;
+            bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->getStableIndex();
             beadSet[cumnn+idx] = bindex;
             krep[cumnn+idx] = be->getRepulsionConst();
             slen[cumnn+idx] = be->getScreeningLength();
@@ -336,7 +336,7 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeLoadForces()
                 bo = c->getFirstBead();
 
                 ///this normal is in the direction of polymerization
-                auto normal = normalizeVector(twoPointDirection(bo->coordinate, bd->coordinate));
+                auto normal = normalizeVector(twoPointDirection(bo->vcoordinate(), bd->vcoordinate()));
 
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
@@ -345,9 +345,9 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeLoadForces()
                 bd->lfip = 0;
                 for (int i = 0; i < cylSize; i++) {
 
-                    auto newCoord = vector<floatingpoint>{bd->coordinate[0] + i * normal[0] * monSize,
-                                                   bd->coordinate[1] + i * normal[1] * monSize,
-                                                   bd->coordinate[2] + i * normal[2] * monSize};
+                    auto newCoord = vector<floatingpoint>{bd->vcoordinate()[0] + i * normal[0] * monSize,
+                        bd->vcoordinate()[1] + i * normal[1] * monSize,
+                        bd->vcoordinate()[2] + i * normal[2] * monSize};
 
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
@@ -369,7 +369,7 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeLoadForces()
                 bo = c->getSecondBead();
 
                 ///this normal is in the direction of polymerization
-                auto normal = normalizeVector(twoPointDirection(bo->coordinate, bd->coordinate));
+                auto normal = normalizeVector(twoPointDirection(bo->vcoordinate(), bd->vcoordinate()));
 
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
@@ -379,9 +379,9 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeLoadForces()
                 bd->lfim = 0;
                 for (int i = 0; i < cylSize; i++) {
 
-                    auto newCoord = vector<floatingpoint>{bd->coordinate[0] + i * normal[0] * monSize,
-                                                   bd->coordinate[1] + i * normal[1] * monSize,
-                                                   bd->coordinate[2] + i * normal[2] * monSize};
+                    auto newCoord = vector<floatingpoint>{bd->vcoordinate()[0] + i * normal[0] * monSize,
+                        bd->vcoordinate()[1] + i * normal[1] * monSize,
+                        bd->vcoordinate()[2] + i * normal[2] * monSize};
 
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj

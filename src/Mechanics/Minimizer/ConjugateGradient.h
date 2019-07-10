@@ -61,7 +61,7 @@ public:
     floatingpoint getEnergy(ForceFieldManager &FFM, floatingpoint d){
       
         //double* coord = _CGType.getCoords();
-        floatingpoint* coord = CUDAcommon::serlvars.coord;
+        floatingpoint* coord = Bead::getDbData().coords.data();
         
         FFM.vectorizeAllForceFields();
 
