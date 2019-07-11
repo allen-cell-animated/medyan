@@ -626,9 +626,9 @@ struct CaMKIIBindingCallback {
             t = SysParams::Mechanics().CaMKIIBendingTheta[camkiiType];
         }
         else {
-            cout << "CaMKIIing initialization cannot occur unless mechanical parameters are specified."
-            << " Using default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
-            << endl;
+//            cout << "CaMKIIing initialization cannot occur unless mechanical parameters are specified."
+//            << " Using default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
+//            << endl;
             l = 10.0;
             t = 1.22;
         }

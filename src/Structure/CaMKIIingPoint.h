@@ -41,7 +41,7 @@ class CaMKIIingPoint : public Component, public Trackable, public Movable {
     
 private:
     unique_ptr<MCaMKIIingPoint> _mCaMKIIingPoint; ///< Pointer to mech camkii point
-    unique_ptr<CCaMKIIingPoint> _cCaMKIIingPoint; ///< Pointer to chem camkii point
+	unique_ptr<CCaMKIIingPoint> _cCaMKIIingPoint; ///< Pointer to chem camkii point
     unique_ptr<CaMKIICylinder> _camkiiCylinder; ///< Pointer to CaMKIICylinder
 
 
@@ -53,13 +53,13 @@ private:
                        ///< camkii point, managed by the Database
     
     float _birthTime;  ///<Birth time
-    const short _filType = CAMKII_CYLINDER_FILAMENT_TYPE;  //TODO number
+    const short _filType = CAMKII_CYLINDER_FILAMENT_TYPE;
 
     Compartment* _compartment; ///< Where this camkii point is
     
     static Database<CaMKIIingPoint*> _camkiiingPoints; ///< Collection in SubSystem
 
-    vector<double> _coordinate; //TODO check if shouldn't be an int
+    vector<double> _coordinate;
 
     ///Helper to get coordinate
     void updateCoordinate();

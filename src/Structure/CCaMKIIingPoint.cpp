@@ -40,14 +40,22 @@ CCaMKIIingPoint::CCaMKIIingPoint(short camkiiType, Compartment* c,
 
     //attach this camkiipoint to the species
     setFirstSpecies(sb1);
+
+	string str = getFirstSpecies()->getName();
+	str = str + string("hello");
+
 }
 
 CCaMKIIingPoint::~CCaMKIIingPoint() {
 
     // TODO: July 1st, 2019 - Check whether removeInternalReaction is appropriate here!
     //remove the unbinding reaction
-    _cc1->removeInternalReaction(_offRxn);
-    
+    if(!_offRxn) {
+		cerr << "Off reaction in CCaMKIIingPoint " << __FILE__ << " (" << __LINE__ << ") is NULL." << endl;
+    	exit(1);
+    }
+	_cc1->removeInternalReaction(_offRxn);
+
 }
 
 void CCaMKIIingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
@@ -63,7 +71,7 @@ void CCaMKIIingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
     
     //create reaction, add to cylinder
     ReactionBase* offRxn =
-    new Reaction<BUNBINDINGREACTANTS,BUNBINDINGPRODUCTS>(os, _offRate);
+    new Reaction<CAMKIIUNBINDINGREACTANTS,CAMKIIUNBINDINGPRODUCTS>(os, _offRate);
     
     offRxn->setReactionType(ReactionType::CAMKIIUNBINDING);
     

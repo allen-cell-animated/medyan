@@ -70,7 +70,14 @@ public:
     virtual CCaMKIIingPoint* clone(Compartment* c) {
         
         CCaMKIIingPoint* cb = new CCaMKIIingPoint(*this, c);
-        _offRxn = nullptr; return cb;
+        _offRxn = nullptr;
+        if(cb->_offRxn == NULL || _offRxn != NULL) {
+        	cerr << "Off reaction is NULL at " << __FILE__ << " (" << __LINE__
+        	<< ") - cb->offRxn == NULL (" << (cb->_offRxn == NULL) << ") _offRxn != NULL ("
+        	<< (_offRxn != NULL) << ")" << endl;
+        	exit(1);
+        }
+        return cb;
     }
     
     /// Set parent
@@ -82,7 +89,10 @@ public:
     
     virtual void createOffReaction(ReactionBase* onRxn, SubSystem* ps);
 
-    void setConnectedCCylinder(CCylinder* cc){}; //TODO implement
+    void setConnectedCCylinder(CCylinder* cc){
+        //TODO - implement the case with multiple bonds
+        _cc1 = cc;
+    };
 };
 
 #endif

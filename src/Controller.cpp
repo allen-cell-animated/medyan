@@ -1014,6 +1014,7 @@ void Controller::run() {
                 }
 
                 auto j=0;
+#if 0
                 for (auto b: CaMKIIingPoint::getCaMKIIingPoints()) {
                     
 //                    Bead* b1 = b->getCylinder(0)->getFirstBead();
@@ -1033,6 +1034,7 @@ void Controller::run() {
                         //std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
                     }
                 }
+#endif
 
                 tauLastMinimization = 0.0;
 

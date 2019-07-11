@@ -72,7 +72,7 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double posi
 
     //Dummy Cylinder for CaMKII
     //choose length
-    //Composite *Dummy = NULL; //TODO used for readable purposes
+    //Composite *Dummy = NULL;
 
     updateCaMKIIingPointCoM();
 
@@ -113,106 +113,19 @@ void CaMKIIingPoint::updateCaMKIIingPointCoM(){
 	_coordinate[2] = temp[2]/_bonds.size();
 }
 
-CaMKIIingPoint::~CaMKIIingPoint() noexcept {
-    
-#ifdef MECHANICS
-#if 0
-    //offset the camkiiing cylinder's bead by a little for safety
-    auto msize = SysParams::Geometry().monomerSize[get<0>(_bonds.at(0))->getType()];
-    
-    vector<double> offsetCoord =
-    {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
-     (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
-     (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize)};
-    
-    auto b = getCylinder(0)->getFirstBead();
-    
-    b->coordinate[0] += offsetCoord[0];
-    b->coordinate[1] += offsetCoord[1];
-    b->coordinate[2] += offsetCoord[2];
-#endif
-#endif
-    
-    
-#ifdef CHEMISTRY
-#if 0
-    //mark the correct species on the minus end of the camkiied
-    //filament. If this is a filament species, change it to its
-    //corresponding minus end. If a plus end, release a diffusing
-    //or bulk species, depending on the initial reaction.
-    CMonomer* m = getCylinder(0)->getCCylinder()->getCMonomer(0);
-    short speciesFilament = m->activeSpeciesFilament();
-
-    //there is a filament species, mark its corresponding minus end
-    if(speciesFilament != -1) {
-        m->speciesMinusEnd(speciesFilament)->up();
-        
-        //unmark the filament and bound species
-        m->speciesFilament(speciesFilament)->down();
-        m->speciesBound(SysParams::Chemistry().camkiierBoundIndex[getCylinder(0)->getType()])->down();
-    }
-    //mark the free species instead
-    else {
-        //find the free species
-        Species* speciesFilament = m->speciesFilament(m->activeSpeciesPlusEnd());
-
-        string speciesName = SpeciesNamesDB::removeUniqueFilName(speciesFilament->getName());
-        string speciesFirstChar = speciesName.substr(0,1);
-        
-        //find the free monomer, either bulk or diffusing
-        Species* freeMonomer = nullptr;
-        auto grid = _subSystem->getCompartmentGrid();
-
-        Species* dMonomer  = _compartment->findSpeciesByName(speciesName);
-        Species* dfMonomer = _compartment->findSpeciesByName(speciesFirstChar);
-
-        Species* bMonomer  = grid->findSpeciesBulkByName(speciesName);
-        Species* bfMonomer = grid->findSpeciesBulkByName(speciesFirstChar);
-        
-        //try diffusing
-        if(dMonomer != nullptr) freeMonomer = dMonomer;
-        // try bulk
-        else if(bMonomer  != nullptr) freeMonomer = bMonomer;
-        //diffusing, remove all but first char
-        else if(dfMonomer != nullptr) freeMonomer = dfMonomer;
-        //bulk, remove all but first char
-        else if(bfMonomer != nullptr) freeMonomer = bfMonomer;
-        //could not find. exit ungracefully
-        else {
-            cout << "In uncamkiiing reaction, could not find corresponding " <<
-                    "diffusing species of filament species " << speciesName <<
-                    ". Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        //remove the filament from the system
-        //TODO remove this lines (This lines come from the Arp2/3 brancher)
-        // We shouldn't remove a filament
-        Filament *bf = (Filament*)(getCylinder(0)->getParent());
-        _subSystem->removeTrackable<Filament>(bf);
-        
-        delete bf;
-            
-        //mark species, update reactions
-        freeMonomer->up();
-        freeMonomer->updateReactantPropensities();
-    }
-#endif
-#endif
-    //reset camkiiing cylinder
-//    getCylinder(0)->setCaMKIIingCylinder(nullptr);
-            
-//    for (int i=0; i<_bonds.size(); i++) { delete get<0>(_bonds[i]);}
-//        _bonds.clear();
-}
+CaMKIIingPoint::~CaMKIIingPoint() noexcept {}
 
 void CaMKIIingPoint::updatePosition() {
     
 #ifdef CHEMISTRY
     //update ccylinders
-    for (int i=0; i<_bonds.size(); i++) {
-        _cCaMKIIingPoint->setConnectedCCylinder(getCylinder(i)->getCCylinder());
-    }
-    
+//    for (int i=0; i<_bonds.size(); i++) {
+//        _cCaMKIIingPoint->setConnectedCCylinder(getCylinder(i)->getCCylinder());
+//    }
+
+	assert(_bonds.size() == 1);
+	_cCaMKIIingPoint->setConnectedCCylinder(get<0>(_bonds[0])->getCCylinder());
+
 #endif
     //Find compartment
     updateCoordinate();
@@ -235,6 +148,9 @@ void CaMKIIingPoint::updatePosition() {
         
         CCaMKIIingPoint* clone = _cCaMKIIingPoint->clone(c);
         setCCaMKIIingPoint(clone);
+
+        string str = firstSpecies->getName();
+        str += "hello";
         
         _cCaMKIIingPoint->setFirstSpecies(firstSpecies);
 #endif
@@ -274,10 +190,10 @@ species_copy_t CaMKIIingPoint::countSpecies(const string& name) {
     species_copy_t copyNum = 0;
     
     for(auto b : _camkiiingPoints.getElements()) {
-        
+
         auto s = b->getCCaMKIIingPoint()->getFirstSpecies();
         string sname = SpeciesNamesDB::removeUniqueFilName(s->getName());
-        
+
         if(sname == name)
             copyNum += s->getN();
     }

@@ -1688,12 +1688,12 @@ void ChemManager::genFilBindingReactions() {
                 //Create reaction
                 float onRate = get<2>(r);
                 float offRate = get<3>(r);
-                auto temp=SysParams::CUBBareRate; //TODO BUB to CUB
+                auto temp=SysParams::CUBBareRate;
                 if(temp.size()>0)
                     temp[camkiierInt]=offRate;
                 else
                     temp.push_back(offRate);
-                SysParams::CUBBareRate=temp; //TODO BUB to CUB
+                SysParams::CUBBareRate=temp;
                 rMin = get<4>(r);
                 rMax = get<5>(r);
                 int maxCoordination = get<6>(r);
