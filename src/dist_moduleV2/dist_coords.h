@@ -13,7 +13,8 @@ A Coords structure that holds coordinates, bead indices and a number of auxiliar
 #include <random>
 #include <initializer_list>
 
-#include "dist_moduleV2/dist_common.h"
+//#include "dist_moduleV2/dist_common.h"
+#include "dist_common.h"
 
 namespace dist {
 
@@ -25,11 +26,13 @@ namespace dist {
 
 		std::vector<int> indices;
 		std::vector<float> x, y, z;
+		std::vector<int> filinfo;
 	
 		// --- Methods ------------------
 	
 		template <typename T, typename U>
-		void init_coords(const std::vector<T> &xx, const std::vector<T> &yy, const std::vector<T> &zz, const std::vector<U> &indx)		
+		void init_coords(const std::vector<T> &xx, const std::vector<T> &yy, const
+		std::vector<T> &zz, const std::vector<U> &indx, const std::vector<U> &finfo)
 		{
 			uint N = xx.size();
 			this->resize(N);
@@ -38,6 +41,7 @@ namespace dist {
 			copy(yy.begin(),yy.end(),y.begin());
 			copy(zz.begin(),zz.end(),z.begin());
 			copy(indx.begin(),indx.end(),indices.begin());
+			copy(finfo.begin(),finfo.end(),filinfo.begin());
 		}
 		
 		void _init_coords_mock(uint N)
@@ -56,9 +60,10 @@ namespace dist {
 		}
 
 		template <typename T, typename U>
-		Coords(const std::vector<T> &xx, const std::vector<T> &yy, const std::vector<T> &zz, const std::vector<U> &indx)
+		Coords(const std::vector<T> &xx, const std::vector<T> &yy, const std::vector<T>
+		        &zz, const std::vector<U> &indx, const std::vector<U> &finfo)
 		{
-			init_coords(xx,yy,zz,indx);
+			init_coords(xx,yy,zz,indx,finfo);
 		}
 	
 		void resize(uint N){
@@ -66,6 +71,7 @@ namespace dist {
 			y.resize(N);
 			z.resize(N);
 			indices.resize(N);
+			filinfo.resize(N);
 		}
 			
 		uint size() const {return x.size();}
@@ -75,6 +81,7 @@ namespace dist {
 			std::random_device rd;
 			std::mt19937 mt(rd());
 		    std::uniform_real_distribution<float> dist_d(1.0, 10.0);
+			std::uniform_int_distribution<int> fil_f(0, 100);
 		
 			uint N = x.size();
 	
@@ -82,6 +89,7 @@ namespace dist {
 				x[i] = dist_d(mt);
 				y[i] = dist_d(mt);
 				z[i] = dist_d(mt);
+				filinfo[i] = fil_f(mt);
 			}
 		}	
 	};

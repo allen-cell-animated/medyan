@@ -7,9 +7,11 @@ SIMD specific typedefs and many functions for bitwise or elementwise printing of
 #ifndef DIST_SIMD_UTILS
 #define DIST_SIMD_UTILS
 
-#include "dist_moduleV2/dist_common.h"
-#include "dist_moduleV2/dist_coords.h"
-#include "dist_moduleV2/dist_serial.h"
+#include "dist_common.h"
+/*#include "dist_moduleV2/dist_coords.h"
+#include "dist_moduleV2/dist_serial.h"*/
+#include "dist_coords.h"
+#include "dist_serial.h"
 
 namespace dist {
 

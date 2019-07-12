@@ -8,7 +8,9 @@ A multithreaded versio of the code for both AVX and AVX2 calculations.
 #include <mutex>
 
 
-#include "dist_moduleV2/dist_avx_par.h"
+//#include "dist_moduleV2/dist_avx_par.h"
+
+#include "dist_avx_par.h"
 
 namespace dist {
 	using namespace std;
@@ -42,7 +44,9 @@ namespace dist {
 	}
 	
 	template <uint D, bool SELF>
-	inline void dist_simd_ij_warp(PBlock block, uint tx, uint ty, uint N1, uint N2, dOut<D,SELF> &out, uvec8_i &c1_i_ind, uvec8_f &c1_vxi, uvec8_f &c1_vyi, uvec8_f &c1_vzi, Coords &c2){
+	inline void dist_simd_ij_warp(PBlock block, uint tx, uint ty, uint N1, uint N2,
+			dOut<D,SELF> &out, uvec8_i &c1_i_ind, uvec8_i &c1_finfo, uvec8_f &c1_vxi,
+			uvec8_f &c1_vyi, uvec8_f &c1_vzi, Coords &c2){
 		
 		// mat(py,px) += 1;
 		
@@ -80,6 +84,7 @@ namespace dist {
 			uvec8_f c2_vxj(&c2.x[sx]);
 			uvec8_f c2_vyj(&c2.y[sx]);
 			uvec8_f c2_vzj(&c2.z[sx]);
+			uvec8_i c2_finfo(&c2.filinfo[sx]);
 			
 			//uvec8_i c1_i_ind;
 
@@ -91,6 +96,12 @@ namespace dist {
 			uvec8_f vdx = c2_vxj-c1_vxi;
 			uvec8_f vdy = c2_vyj-c1_vyi;
 			uvec8_f vdz = c2_vzj-c1_vzi;
+			//compute finfo
+			uvec8_i diff = c2_finfo - c1_finfo;
+			diff = UME::SIMD::FUNCTIONS::abs(diff);
+			uvec8_i &reffinfo = out.maxneighbors[0];
+
+			auto vcond2 = (_mm256_cmpgt_epi32(diff.mVec,reffinfo.mVec));
 
 			uvec8_f vsum = vdx*vdx + vdy*vdy + vdz*vdz;
 
@@ -114,8 +125,14 @@ namespace dist {
 				// On my Macbook Pro it is fine, even with gcc (8.x)
 			
 				// auto vcond = (vsum > vdl) && (vsum < vdh);
-				__m256i vcond = _mm256_castps_si256(_mm256_and_ps(_mm256_cmp_ps(vsum.mVec,vdl.mVec,_CMP_GT_OQ),
-				                                _mm256_cmp_ps(vdh.mVec,vsum.mVec,_CMP_GT_OQ)));
+//				__m256i vcond = _mm256_castps_si256(_mm256_and_ps(_mm256_cmp_ps(vsum.mVec,vdl.mVec,_CMP_GT_OQ),
+//				                                _mm256_cmp_ps(vdh.mVec,vsum.mVec,_CMP_GT_OQ)));
+
+				__m256i vcond3 = _mm256_castps_si256(_mm256_and_ps(
+						/*Cndn2*/_mm256_cmp_ps(vsum.mVec,vdl.mVec,_CMP_GT_OQ),
+						/*Cndn3*/_mm256_cmp_ps(vdh.mVec,vsum.mVec,_CMP_GT_OQ)));
+
+				__m256i vcond = _mm256_and_si256(vcond2, vcond3);
 				
 				
 				int icond = _mm256_movemask_ps(_mm256_castsi256_ps(vcond));
@@ -243,8 +260,10 @@ namespace dist {
 					uvec8_f c1_vyi(c1.y[py]);
 					uvec8_f c1_vzi(c1.z[py]);
 					uvec8_i c1_i_ind(c1.indices[py]);
+					uvec8_i c1_finfo(c1.filinfo[py]);
 
-					dist_simd_ij_warp(block, tx, ty, N1, N2, out, c1_i_ind, c1_vxi, c1_vyi, c1_vzi, c2);
+					dist_simd_ij_warp(block, tx, ty, N1, N2, out, c1_i_ind, c1_finfo,
+							c1_vxi, c1_vyi, c1_vzi, c2);
 					// cout << "blockx=" << blockx << " blocky=" << blocky << " x=" << x << " px=" << px << " y=" << y << " py=" << py << endl;
 				}			
 			}

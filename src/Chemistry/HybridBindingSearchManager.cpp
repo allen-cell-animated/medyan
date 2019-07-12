@@ -906,30 +906,32 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
     auto cylindervec = CUDAcommon::serlvars.cylindervec;
 
     for(uint pid = first; pid < last; pid++) {
-        uint32_t t1 = bspairsoutS.dout[2 * (D - 1)][pid];
-        uint32_t t2 = bspairsoutS.dout[2 * (D - 1) + 1][pid];
+	    uint32_t t1 = bspairsoutS.dout[2 * (D - 1)][pid];
+	    uint32_t t2 = bspairsoutS.dout[2 * (D - 1) + 1][pid];
+	    if(false) {
 
-        uint32_t cIndex1 = t1>>4;
-        uint32_t cIndex2 = t2>>4;
+		    uint32_t cIndex1 = t1 >> 4;
+		    uint32_t cIndex2 = t2 >> 4;
 
-        cylinder cylinder1 = cylindervec[cIndex1];
-        cylinder cylinder2 = cylindervec[cIndex2];
+		    cylinder cylinder1 = cylindervec[cIndex1];
+		    cylinder cylinder2 = cylindervec[cIndex2];
 
-        /*short _filType1 = cylinder1.type;
-        short _filType2 = cylinder2.type;
+		    /*short _filType1 = cylinder1.type;
+			short _filType2 = cylinder2.type;
 
-	    auto fpairs = _filamentIDvec[idvec[0]].data();
+			auto fpairs = _filamentIDvec[idvec[0]].data();
 
-        //Check if the filament type pair matches that of the binding manager.
-        //Commented as it is already taken care in the SIMD function call
-	    if ((fpairs[0] == _filType1 && fpairs[1] ==_filType2)||
-	        (fpairs[1] == _filType1 && fpairs[0] ==_filType2)) */
-	    {
+			//Check if the filament type pair matches that of the binding manager.
+			//Commented as it is already taken care in the SIMD function call
+			if ((fpairs[0] == _filType1 && fpairs[1] ==_filType2)||
+				(fpairs[1] == _filType1 && fpairs[0] ==_filType2)) {*/
+
 		    //Checks to make sure sites on a filament that are less than two cylinders away are
 		    // not added.
 		    bool neighborcondition = (cylinder1.filamentID == cylinder2.filamentID &&
 		                              abs(cylinder1.filamentposition - cylinder2
 				                              .filamentposition) <= 2);
+
 		    if (!neighborcondition) {
 
 /*			    short bsite1 = mask & site1;
@@ -944,9 +946,15 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
 			    //unordered map
 			    _possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
 
-			    _reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
+			    _reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(
+					    t1);
 		    }
+//	    }
 	    }
+	    _possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+
+	    _reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(
+			    t1);
     }
 }
 

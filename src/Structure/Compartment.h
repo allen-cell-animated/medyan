@@ -526,6 +526,7 @@ public:
     Binding distance determines if the volumes are overlapping or not.*/
     vector<floatingpoint> partitionedcoordx[27], partitionedcoordy[27], partitionedcoordz[27];
     vector<uint32_t>  cindex_bs_section[27];
+    vector<uint32_t> finfo_bs_section[27];
 
     void SIMDcoordinates_section();
     void SIMDcoordinates4linkersearch_section(bool isvectorizedgather);
@@ -535,18 +536,16 @@ public:
     void getpartitionindex(int (&indices)[3], vector<floatingpoint> coord,
                                 floatingpoint (&cmpcornercoords)[6]);
 
-    void addcoord(vector<floatingpoint> coord, uint16_t index, short i){cout<<"DONOT CALL"<<endl;
-    exit(EXIT_FAILURE);};
-	void addcoord(vector<floatingpoint> coord, uint32_t index, short i);
+	void addcoord(vector<floatingpoint> coord, uint32_t index, uint32_t cylfinfo, short i);
     bool checkoccupancy(Cylinder* cyl, short it, short _filamentType, short bstatepos);
     bool checkoccupancy(vector<vector<bool>>& boundstate, short bstatepos, int pos);
     void addcoordtopartitons(int (&pindices)[3], vector<floatingpoint> coord, uint32_t
-    index);
+    index, uint32_t cylfinfo);
     void addcoordtopartitons_smallrmax(int (&pindices)[3], vector<floatingpoint> coord,
-                                  uint16_t index);
+                                  uint16_t index, uint32_t cylfinfo);
     template<bool rMaxvsCmpsize>
     void addcoordtorMaxbasedpartitons(int (&pindices)[3], vector<floatingpoint> coord,
-                                       uint32_t index);
+                                       uint32_t index, uint32_t cylfinfo);
 
     void deallocateSIMDcoordinates();
 #endif
@@ -847,9 +846,9 @@ void Compartment::getpartitionindex<false>(int (&indices)[3], vector<floatingpoi
                               floatingpoint (&cmpcornercoords)[6]);
 template<>
 void Compartment::addcoordtorMaxbasedpartitons<true>(int (&pindices)[3], vector<floatingpoint>
-        coord, uint32_t index);
+        coord, uint32_t index, uint32_t cylfinfo);
 template<>
 void Compartment::addcoordtorMaxbasedpartitons<false>(int (&pindices)[3], vector<floatingpoint>
-        coord, uint32_t index);
+        coord, uint32_t index, uint32_t cylfinfo);
 #endif
 #endif
