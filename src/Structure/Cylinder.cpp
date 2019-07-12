@@ -23,6 +23,7 @@
 
 #include "GController.h"
 #include "MathFunctions.h"
+#include "CaMKIIingPoint.h"
 
 using namespace mathfunc;
 
@@ -109,6 +110,27 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 
 Cylinder::~Cylinder() noexcept {
     
+	//loop through camkii points
+//	for camkii in
+//	get bond
+//	get cylinder
+//	if cylinder==this
+//	/error message
+//	for b in _bonds
+
+	bool _exit = false;
+	for (auto camkii : CaMKIIingPoint::getCaMKIIingPoints()) {
+		for(auto v : camkii->getBonds()) {
+//			vector<tuple<Cylinder*, double>>
+			Cylinder *c = get<0>(v);
+			if(c == this) {
+                //TODO: Solve this error caused by cylinder missing after filament depolimerization
+				cerr << "We find camkii cylinder in removal.\n";
+				exit(1);
+			}
+		}
+	}
+
     //remove from compartment
     _compartment->removeCylinder(this);
     

@@ -71,12 +71,12 @@ public:
         
         CCaMKIIingPoint* cb = new CCaMKIIingPoint(*this, c);
         _offRxn = nullptr;
-        if(cb->_offRxn == NULL || _offRxn != NULL) {
-        	cerr << "Off reaction is NULL at " << __FILE__ << " (" << __LINE__
-        	<< ") - cb->offRxn == NULL (" << (cb->_offRxn == NULL) << ") _offRxn != NULL ("
-        	<< (_offRxn != NULL) << ")" << endl;
-        	exit(1);
-        }
+//        if(cb->_offRxn == NULL || _offRxn != NULL) {
+//        	cerr << "Off reaction is NULL at " << __FILE__ << " (" << __LINE__
+//        	<< ") - cb->offRxn == NULL (" << (cb->_offRxn == NULL) << ") _offRxn != NULL ("
+//        	<< (_offRxn != NULL) << ")" << endl;
+//        	exit(1);
+//        }
         return cb;
     }
     

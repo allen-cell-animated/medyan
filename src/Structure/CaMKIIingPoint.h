@@ -83,6 +83,7 @@ public:
     Cylinder* getSecondCylinder() { return get<0>(_bonds.at(1));} //TODO fix
     int getCoordinationNumber() { return _bonds.size(); }
     CaMKIICylinder* getCaMKIICylinder() {return _camkiiCylinder.get();}
+    vector<tuple<Cylinder*, double>> getBonds() {return _bonds;}
     //@}
     
     

@@ -135,12 +135,11 @@ void ChemManager::configCMonomer() {
         short o1 = _chemData.speciesFilament[filType].size();
         short o2 = o1 + _chemData.speciesPlusEnd[filType].size();
         
-        short o3 = _chemData.speciesBound[filType].size();
-        short o4 = o3 + _chemData.speciesLinker[filType].size();
-        short o5 = o4 + _chemData.speciesMotor[filType].size();
-        short o6 = o5 + _chemData.speciesBrancher[filType].size();
-	
-        
+        short o3 = _chemData.speciesBound[filType].size(); //Linker
+        short o4 = o3 + _chemData.speciesLinker[filType].size(); //Motor
+        short o5 = o4 + _chemData.speciesMotor[filType].size(); //Brancher
+        short o6 = o5 + _chemData.speciesBrancher[filType].size(); //CaMKII
+
         //create offset vector for filament
         CMonomer::_speciesFilamentIndex[filType].insert(
         CMonomer::_speciesFilamentIndex[filType].end(), {0,o1,o2});

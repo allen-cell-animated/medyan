@@ -50,10 +50,10 @@ CCaMKIIingPoint::~CCaMKIIingPoint() {
 
     // TODO: July 1st, 2019 - Check whether removeInternalReaction is appropriate here!
     //remove the unbinding reaction
-    if(!_offRxn) {
-		cerr << "Off reaction in CCaMKIIingPoint " << __FILE__ << " (" << __LINE__ << ") is NULL." << endl;
-    	exit(1);
-    }
+//    if(!_offRxn) {
+//		cerr << "Off reaction in CCaMKIIingPoint " << __FILE__ << " (" << __LINE__ << ") is NULL." << endl;
+//    	exit(1);
+//    }
 	_cc1->removeInternalReaction(_offRxn);
 
 }

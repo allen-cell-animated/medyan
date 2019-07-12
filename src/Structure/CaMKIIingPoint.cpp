@@ -123,6 +123,12 @@ void CaMKIIingPoint::updatePosition() {
 //        _cCaMKIIingPoint->setConnectedCCylinder(getCylinder(i)->getCCylinder());
 //    }
 
+	auto ccyl=get<0>(_bonds[0]);
+	if(ccyl == nullptr){
+	    //A cylinder was removed
+	    cerr << "CC1 is NULL\n";
+		exit(1);
+	}
 	assert(_bonds.size() == 1);
 	_cCaMKIIingPoint->setConnectedCCylinder(get<0>(_bonds[0])->getCCylinder());
 
