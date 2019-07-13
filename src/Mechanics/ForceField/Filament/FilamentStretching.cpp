@@ -31,13 +31,13 @@ void FilamentStretching<FStretchingInteractionType>::vectorize() {
     int i = 0;
 
     for (auto c: Cylinder::getCylinders()) {
-        beadSet[n * i] = c->getFirstBead()->_dbIndex;
-        beadSet[n * i + 1] = c->getSecondBead()->_dbIndex;
+        beadSet[n * i] = c->getFirstBead()->getStableIndex();
+        beadSet[n * i + 1] = c->getSecondBead()->getStableIndex();
         kstr[i] = c->getMCylinder()->getStretchingConst();
         eql[i] = c->getMCylinder()->getEqLength();
 /*        std::cout<<"Filstretching with cindex "<<c->_dcIndex<<" and ID "
                 ""<<c->getID()<<" with bindices "<<c->getFirstBead()
-                         ->_dbIndex<<" "<<c->getSecondBead()->_dbIndex<<endl;*/
+                         ->getIndex()<<" "<<c->getSecondBead()->getIndex()<<endl;*/
         i++;
     }
     //CUDA

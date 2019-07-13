@@ -29,7 +29,7 @@ void LinkerStretching<LStretchingInteractionType>::assignforcemags() {
 
     for(auto l:Linker::getLinkers()){
         //Using += to ensure that the stretching forces are additive.
-        l->getMLinker()->stretchForce = stretchforce[l->_dbIndex];
+        l->getMLinker()->stretchForce = stretchforce[l->getIndex()];
 
     }
 
@@ -58,11 +58,11 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
     int i = 0;
 
     for (auto l: Linker::getLinkers()) {
-        l->_dbIndex = i;
-        beadSet[n * i] = l->getFirstCylinder()->getFirstBead()->_dbIndex;
-        beadSet[n * i + 1] = l->getFirstCylinder()->getSecondBead()->_dbIndex;
-        beadSet[n * i + 2] = l->getSecondCylinder()->getFirstBead()->_dbIndex;
-        beadSet[n * i + 3] = l->getSecondCylinder()->getSecondBead()->_dbIndex;
+        /* Haoran 03/18/2019 l->getIndex() = i; */
+        beadSet[n * i] = l->getFirstCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 1] = l->getFirstCylinder()->getSecondBead()->getStableIndex();
+        beadSet[n * i + 2] = l->getSecondCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 3] = l->getSecondCylinder()->getSecondBead()->getStableIndex();
 
         kstr[i] = l->getMLinker()->getStretchingConstant();
         eql[i] = l->getMLinker()->getEqLength();
@@ -146,7 +146,7 @@ template<class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::deallocate() {
     for(auto l:Linker::getLinkers()){
         //Using += to ensure that the stretching forces are additive.
-        l->getMLinker()->stretchForce += stretchforce[l->_dbIndex];
+        l->getMLinker()->stretchForce += stretchforce[l->getIndex()];
     }
     delete [] stretchforce;
     delete [] beadSet;

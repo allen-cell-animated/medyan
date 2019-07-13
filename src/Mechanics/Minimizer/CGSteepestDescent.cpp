@@ -16,6 +16,7 @@
 #include "ForceFieldManager.h"
 #include "Composite.h"
 #include "Output.h"
+#include "Structure/Bead.h"
 
     void SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                                    floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit) {
@@ -31,8 +32,8 @@
         startMinimization();
         FFM.vectorizeAllForceFields();
 
-        FFM.computeForces(coord, force);
-        FFM.copyForces(forceAux, force);
+        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
+        Bead::getDbData().forcesAux = Bead::getDbData().forces;
 
         int numIter = 0;
         while (/* Iteration criterion */  numIter < N &&
@@ -47,7 +48,7 @@
             moveBeads(lambda);
 
             //compute new forces
-            FFM.computeForces(coord, forceAux);
+            FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());
 
             //shift gradient
             shiftGradient(0.0);
@@ -64,14 +65,14 @@
             if (b != nullptr) b->getParent()->printSelf();
 
             cout << "System energy..." << endl;
-            FFM.computeEnergy(coord, force, 0.0, true);
+            FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), 0.0, true);
 
             cout << endl;
         }
 
         //final force calculation
-        FFM.computeForces(coord, force);
-        FFM.copyForces(forceAux, force);
+        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
+        Bead::getDbData().forcesAux = Bead::getDbData().forces;
         FFM.computeLoadForces();
         endMinimization();
 

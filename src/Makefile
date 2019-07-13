@@ -140,8 +140,6 @@ CPPFLAGS_CXX = $(CPPFLAGS)
 #
 ##################################################
 
-all: MEDYAN
-
 # Build main program
 MEDYAN: $(OBJECTS)
 ifeq ($(USING_CUDA), true)
@@ -168,6 +166,8 @@ endif
 
 # Add empty dependency for dependencies
 %.d: ;
+
+all: MEDYAN medyan_test
 
 clean:
 	\find . -name "*.d" -delete

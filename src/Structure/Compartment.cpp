@@ -52,37 +52,34 @@ void Compartment::SIMDcoordinates_section(){
                     partitionedcoordy[i].clear();
                     partitionedcoordz[i].clear();
                     cindex_bs_section[i].clear();
-	                finfo_bs_section[i].clear();
+                    finfo_bs_section[i].clear();
                 }
 
-                int cindex = cyl->_dcIndex;
-                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
+                int cindex = cyl->getStableIndex();
 
-                _filamentType = cylinderstruct.type;
-                _fID = cylinderstruct.filamentID;
-                _fpos = cylinderstruct.filamentposition;
+                _filamentType = Cylinder::getDbDataConst().value[cindex].type;
+                _fID = Cylinder::getDbDataConst().value[cindex].filamentId;
+                _fpos = Cylinder::getDbDataConst().value[cindex].positionOnFilament;
 
-
-	            //packed integer containing filament ID and filament position.
-	            //Assumes you don't have 127 (2^7 -1) cylinders
-	            uint32_t cylfinfo = (_fID<< 7);
-	            cylfinfo = cylfinfo | _fpos;
+                //packed integer containing filament ID and filament position.
+                //Assumes you don't have 127 (2^7 -1) cylinders
+                uint32_t cylfinfo = (_fID<< 7);
+                cylfinfo = cylfinfo | _fpos;
 
                 //Only consider cylinders that are filType
-                 if (checkftype && _filamentType != filType) continue;
+                if (checkftype && _filamentType != filType) continue;
 
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
+                auto x1 = cyl->getFirstBead()->vcoordinate();
+                auto x2 = cyl->getSecondBead()->vcoordinate();
 //            uint32_t shiftedindex = (i << 4);
-                uint32_t shiftedindex = (cyl->_dcIndex << 4);
+                uint32_t shiftedindex = (cyl->getStableIndex() << 4);
 
 //                Cyldcindexvec[i] = cyl->_dcIndex;
-                CylcIDvec[i] = cyl->getID();
+                CylcIDvec[i] = cyl->getId();
                 uint32_t j = 0;
                 float cylsizesquared = SysParams::Geometry().cylinderSize[_filamentType]
                                       * SysParams::Geometry().cylinderSize[_filamentType];
                 float maxmp = sqrt(twoPointDistancesquared(x1,x2)/cylsizesquared);
-
 
                 for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
                      it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
@@ -96,7 +93,7 @@ void Compartment::SIMDcoordinates_section(){
                       uint32_t index = shiftedindex | j;
                       int pindices[3];
                       getpartition3Dindex(pindices, coord);
-                      addcoordtopartitons(pindices, coord, index, cylfinfo);
+                        addcoordtopartitons(pindices, coord, index, cylfinfo);
                     }
                     j++;
                 }
@@ -109,8 +106,7 @@ void Compartment::SIMDcoordinates_section(){
             for (short i = 0; i < 27; i++) {
 //            cout<<partitionedcoordx[i].size()<<" ";
                 bscoords_section[filType*27 + i].init_coords(partitionedcoordx[i],
-                        partitionedcoordy[i], partitionedcoordz[i],
-                        cindex_bs_section[i], finfo_bs_section[i]);
+                        partitionedcoordy[i], partitionedcoordz[i], cindex_bs_section[i], finfo_bs_section[i]);
             }
 //        cout<<endl;
         }
@@ -155,29 +151,32 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
 
 //            Cyldcindexvec.resize(_cylinders.size());
             short _filamentType = 0;
-	        uint32_t _fID = 0;
-	        uint32_t _fpos = 0;
+            uint32_t _fID = 0;
+            uint32_t _fpos = 0;
+
 
             bool checkftype = false;
             if (SysParams::Chemistry().numFilaments > 1)
                         checkftype = true;
             unsigned int i = 0;
             for (auto cyl:_cylinders) {
-                uint32_t cindex = cyl->_dcIndex;
-                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
+                uint32_t cindex = cyl->getStableIndex();
 
-                _filamentType = cylinderstruct.type;
-	            _fID = cylinderstruct.filamentID;
-	            _fpos = cylinderstruct.filamentposition;
-	            //packed integer containing filament ID and filament position.
-	            uint32_t cylfinfo = (_fID<< 7);
-	            cylfinfo = cylfinfo | _fpos;
+                _filamentType = Cylinder::getDbData().value[cindex].type;
+                _filamentType = Cylinder::getDbDataConst().value[cindex].type;
+                _fID = Cylinder::getDbDataConst().value[cindex].filamentId;
+                _fpos = Cylinder::getDbDataConst().value[cindex].positionOnFilament;
+
+                //packed integer containing filament ID and filament position.
+                //Assumes you don't have 127 (2^7 -1) cylinders
+                uint32_t cylfinfo = (_fID<< 7);
+                cylfinfo = cylfinfo | _fpos;
 
                 //Consider only cylinders of filamentType fType
                 if (checkftype && _filamentType != filType) continue;
 
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
+                auto x1 = cyl->getFirstBead()->vcoordinate();
+                auto x2 = cyl->getSecondBead()->vcoordinate();
 //            uint16_t shiftedindex = (i << 4);
                 uint32_t shiftedindex = (cindex << 4);
 //                Cyldcindexvec[i] = cindex;
@@ -204,11 +203,11 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                           if (rMaxvsCmpSize) {
                               getpartitionindex<true>(pindices, coord, coord_bounds);
                               addcoordtorMaxbasedpartitons<true>(pindices, coord, index,
-                              		cylfinfo);
+                                                                 cylfinfo);
                           } else {
                               getpartitionindex<false>(pindices, coord, coord_bounds);
                               addcoordtorMaxbasedpartitons<false>(pindices, coord, index,
-                              		cylfinfo);
+                                                                  cylfinfo);
                           }
                         }
                     }
@@ -283,8 +282,8 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
 //            Cyldcindexvec.resize(_cylinders.size());
 
             short _filamentType = 0;
-	        uint32_t _fID = 0;
-	        uint32_t _fpos = 0;
+            uint32_t _fID = 0;
+            uint32_t _fpos = 0;
 
             bool checkftype = false;
             if (SysParams::Chemistry().numFilaments > 1)
@@ -292,20 +291,21 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
             unsigned int i = 0;
 
             for (auto cyl:_cylinders) {
-                uint32_t cindex = cyl->_dcIndex;
-                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
+                uint32_t cindex = cyl->getStableIndex();
 
-                _filamentType = cylinderstruct.type;
-	            _fID = cylinderstruct.filamentID;
-	            _fpos = cylinderstruct.filamentposition;
-	            //packed integer containing filament ID and filament position.
-	            uint32_t cylfinfo = (_fID<< 7);
-	            cylfinfo = cylfinfo | _fpos;
+                _filamentType = Cylinder::getDbData().value[cindex].type;
+                _filamentType = Cylinder::getDbDataConst().value[cindex].type;
+                _fID = Cylinder::getDbDataConst().value[cindex].filamentId;
+                _fpos = Cylinder::getDbDataConst().value[cindex].positionOnFilament;
 
+                //packed integer containing filament ID and filament position.
+                //Assumes you don't have 127 (2^7 -1) cylinders
+                uint32_t cylfinfo = (_fID<< 7);
+                cylfinfo = cylfinfo | _fpos;
                 if (checkftype && _filamentType != filType) continue;
 
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
+                auto x1 = cyl->getFirstBead()->vcoordinate();
+                auto x2 = cyl->getSecondBead()->vcoordinate();
 //                uint16_t shiftedindex = (i << 4);
                 uint32_t shiftedindex = (cindex << 4);
 //                Cyldcindexvec[i] = cindex;
@@ -330,11 +330,11 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                         if (rMaxvsCmpSize) {
                             getpartitionindex<true>(pindices, coord, coord_bounds);
                             addcoordtorMaxbasedpartitons<true>(pindices, coord, index,
-                            		cylfinfo);
+                                                               cylfinfo);
                         } else {
                             getpartitionindex<false>(pindices, coord, coord_bounds);
                             addcoordtorMaxbasedpartitons<false>(pindices, coord, index,
-                            		cylfinfo);
+                                                                cylfinfo);
                         }
 /*                        getpartition3Dindex(pindices, coord, coord_bounds);
                         addcoordtopartitons_smallrmax(pindices, coord, index);
@@ -450,7 +450,7 @@ bool Compartment::checkoccupancy(Cylinder* cyl, short it, short _filamentType,
 }
 
 void Compartment::addcoordtopartitons(int (&pindices)[3], vector<floatingpoint> coord, uint32_t
-                                    index, uint32_t cylfinfo){
+index, uint32_t cylfinfo){
     addcoord(coord, index, cylfinfo, 0);
 
     if(pindices[0] ==0 && pindices[1] == 0 && pindices[2] == 0){
@@ -553,7 +553,7 @@ void Compartment::addcoordtopartitons(int (&pindices)[3], vector<floatingpoint> 
 }
 
 void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<floatingpoint> coord,
-                                uint16_t index, uint32_t cylfinfo){
+                                                uint16_t index, uint32_t cylfinfo){
     addcoord(coord, index, cylfinfo, 0);
     //111
     if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 1) {
@@ -572,7 +572,7 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         //Vertex
         addcoord(coord, index, cylfinfo, 26);
     }
-    //001
+        //001
     else if(pindices[0] ==0 && pindices[1] == 0 && pindices[2] == 1){
         //Plane
         addcoord(coord, index, cylfinfo, 5);
@@ -581,7 +581,7 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         addcoord(coord, index, cylfinfo, 18);
         //Vertex
     }
-    //002
+        //002
     else if(pindices[0] ==0 && pindices[1] == 0 && pindices[2] == 2){
         //Plane
         addcoord(coord, index, cylfinfo, 5);
@@ -594,7 +594,7 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         //Vertex
         addcoord(coord, index, cylfinfo, 24);
     }
-    //010
+        //010
     else if(pindices[0] ==0 && pindices[1] == 1 && pindices[2] == 0){
         //Plane
         addcoord(coord, index, cylfinfo, 5);
@@ -603,14 +603,14 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         addcoord(coord, index, cylfinfo, 16);
         //Vertex
     }
-    //011
+        //011
     else if(pindices[0] ==0 && pindices[1] == 1 && pindices[2] == 1){
         //Plane
         addcoord(coord, index, cylfinfo, 5);
         //Edge
         //Vertex
     }
-    //012
+        //012
     else if(pindices[0] ==0 && pindices[1] == 1 && pindices[2] == 2){
         //Plane
         addcoord(coord, index, cylfinfo, 5);
@@ -619,7 +619,7 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         addcoord(coord, index, cylfinfo, 7);
         //Vertex
     }
-    //020
+        //020
     else if(pindices[0] ==0 && pindices[1] == 2 && pindices[2] == 0){
         //Plane
         addcoord(coord, index, cylfinfo, 5);
@@ -632,7 +632,7 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         //Vertex
         addcoord(coord, index, cylfinfo, 19);
     }
-    //021
+        //021
     else if(pindices[0] ==0 && pindices[1] == 2 && pindices[2] == 1){
         //Plane
         addcoord(coord, index, cylfinfo, 3);
@@ -641,7 +641,7 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         addcoord(coord, index, cylfinfo, 9);
         //Vertex
     }
-    //022
+        //022
     else if(pindices[0] ==0 && pindices[1] == 2 && pindices[2] == 2){
         //Plane
         addcoord(coord, index, cylfinfo, 5);
@@ -654,7 +654,7 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         //Vertex
         addcoord(coord, index, cylfinfo, 21);
     }
-    //100
+        //100
     else if(pindices[0] ==1 && pindices[1] == 0 && pindices[2] == 0){
         //Plane
         addcoord(coord, index, cylfinfo, 2);
@@ -663,14 +663,14 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         addcoord(coord, index, cylfinfo, 14);
         //Vertex
     }
-    //101
+        //101
     else if(pindices[0] ==1 && pindices[1] == 0 && pindices[2] == 1){
         //Plane
         addcoord(coord, index, cylfinfo, 4);
         //Edge
         //Vertex
     }
-    //102
+        //102
     else if(pindices[0] ==1 && pindices[1] == 0 && pindices[2] == 2){
         //Plane
         addcoord(coord, index, cylfinfo, 1);
@@ -679,21 +679,21 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         addcoord(coord, index, cylfinfo, 12);
         //Vertex
     }
-    //110
+        //110
     else if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 0){
         //Plane
         addcoord(coord, index, cylfinfo, 2);
         //Edge
         //Vertex
     }
-    //112
+        //112
     else if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 2){
         //Plane
         addcoord(coord, index, cylfinfo, 1);
         //Edge
         //Vertex
     }
-    //120
+        //120
     else if(pindices[0] ==1 && pindices[1] == 2 && pindices[2] == 0){
         //Plane
         addcoord(coord, index, cylfinfo, 2);
@@ -702,14 +702,14 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         addcoord(coord, index, cylfinfo, 11);
         //Vertex
     }
-    //121
+        //121
     else if(pindices[0] ==1 && pindices[1] == 2 && pindices[2] == 1){
         //Plane
         addcoord(coord, index, cylfinfo, 3);
         //Edge
         //Vertex
     }
-    //122
+        //122
     else if(pindices[0] ==1 && pindices[1] == 2 && pindices[2] == 2){
         //Plane
         addcoord(coord, index, cylfinfo, 1);
@@ -718,7 +718,7 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         addcoord(coord, index, cylfinfo, 13);
         //Vertex
     }
-    //200
+        //200
     else if(pindices[0] ==2 && pindices[1] == 0 && pindices[2] == 0){
         //Plane
         addcoord(coord, index, cylfinfo, 6);
@@ -731,7 +731,7 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         //Vertex
         addcoord(coord, index, cylfinfo, 22);
     }
-    //201
+        //201
     else if(pindices[0] ==2 && pindices[1] == 0 && pindices[2] == 1){
         //Plane
         addcoord(coord, index, cylfinfo, 6);
@@ -740,7 +740,7 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         addcoord(coord, index, cylfinfo, 10);
         //Vertex
     }
-    //202
+        //202
     else if(pindices[0] ==2 && pindices[1] == 0 && pindices[2] == 2){
         //Plane
         addcoord(coord, index, cylfinfo, 6);
@@ -754,7 +754,7 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         addcoord(coord, index, cylfinfo, 20);
 
     }
-    //210
+        //210
     else if(pindices[0] ==2 && pindices[1] == 1 && pindices[2] == 0){
         //Plane
         addcoord(coord, index, cylfinfo, 6);
@@ -764,14 +764,14 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         //Vertex
 
     }
-    //211
+        //211
     else if(pindices[0] ==2 && pindices[1] == 1 && pindices[2] == 1){
         //Plane
         addcoord(coord, index, cylfinfo, 6);
         //Edge
         //Vertex
     }
-    //212
+        //212
     else if(pindices[0] ==2 && pindices[1] == 1 && pindices[2] == 2){
         //Plane
         addcoord(coord, index, cylfinfo, 1);
@@ -780,7 +780,7 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         addcoord(coord, index, cylfinfo, 15);
         //Vertex
     }
-    //220
+        //220
     else if(pindices[0] ==2 && pindices[1] == 2 && pindices[2] == 0){
         //Plane
         addcoord(coord, index, cylfinfo, 6);
@@ -793,7 +793,7 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         //Vertex
         addcoord(coord, index, cylfinfo, 23);
     }
-    //221
+        //221
     else if(pindices[0] ==2 && pindices[1] == 2 && pindices[2] == 1){
         //Plane
         addcoord(coord, index, cylfinfo, 6);
@@ -802,7 +802,7 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
         addcoord(coord, index, cylfinfo, 17);
         //Vertex
     }
-    //222
+        //222
     else if(pindices[0] ==2 && pindices[1] == 2 && pindices[2] == 2){
         //Plane
         addcoord(coord, index, cylfinfo, 6);
@@ -823,7 +823,7 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
 //if rMax+Cylsize/2+delta is lesser than CmpSize/2
 template<>
 void Compartment::addcoordtorMaxbasedpartitons<true>(int (&pindices)[3], vector<floatingpoint>
-        coord, uint32_t index, uint32_t cylfinfo){
+coord, uint32_t index, uint32_t cylfinfo){
     addcoord(coord, index, cylfinfo, 0);
     //111
     if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 1) {
@@ -1090,7 +1090,7 @@ void Compartment::addcoordtorMaxbasedpartitons<true>(int (&pindices)[3], vector<
 //if rMax+Cylsize/2+delta is greater than CmpSize/2
 template<>
 void Compartment::addcoordtorMaxbasedpartitons<false>(int (&pindices)[3], vector<floatingpoint>
-        coord, uint32_t index, uint32_t cylfinfo){
+coord, uint32_t index, uint32_t cylfinfo){
     addcoord(coord, index, cylfinfo, 0);
     //111
     if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 1) {
@@ -1545,6 +1545,7 @@ void Compartment::addcoordtorMaxbasedpartitons<false>(int (&pindices)[3], vector
         addcoord(coord, index, cylfinfo, 13);
         //Vertex
         addcoord(coord, index, cylfinfo, 25);
+        addcoord(coord, index, cylfinfo, 23);
     }
 }
 
@@ -1594,21 +1595,6 @@ void Compartment::getSlicedVolumeArea() {
     //  - The unit normal vector of triangles
     // ASSUMPTIONS:
     //  - This compartment is a CUBE
-//    size_t numTriangle = _triangles.size();
-//    if(numTriangle) {
-//        double sumArea = 0.0;
-//        array<double, 3> sumNormal {};
-//        array<double, 3> sumPos {};
-//        for(Triangle* t: _triangles) {
-//            double area = t->getGTriangle()->getArea();
-//            vectorIncrease(sumNormal, vectorMultiply(t->getGTriangle()->getUnitNormal(), area));
-//            vectorIncrease(sumPos, vectorMultiply(t->coordinate, area));
-//            sumArea += area;
-//        }
-//        double oneOverSumArea = 1.0 / sumArea;
-//        vectorExpand(sumNormal, oneOverSumArea);
-//        vectorExpand(sumPos, oneOverSumArea);
-//
     //get compartment sizes in X,Y and the radius of cylinder
     auto sizex = SysParams::Geometry().compartmentSizeX;
     auto sizey = SysParams::Geometry().compartmentSizeY;
@@ -1791,7 +1777,7 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
 
     vector<ReactionBase*> rxns;
 
-//    cout << "This compartment: x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
+    // cout << "This compartment: x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
 
     for(auto &sp_this : _species.species()) {
         int molecule = sp_this->getMolecule();
@@ -1803,12 +1789,12 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
             size_t idxFwd = _neighborIndex.at(C), idxBwd = C->_neighborIndex.at(this);
             double scaleFactor = 0.5 * (_partialArea[idxFwd] + C->_partialArea[idxBwd]) / GController::getCompartmentArea()[idxFwd / 2];
             //double scaleFactor = 1.0;
-//            cout << "To neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] << ", z = " << C->_coords[2] <<endl;
-//            cout << "scaleFactor = " << scaleFactor << endl;
+            // cout << "To neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] << ", z = " << C->_coords[2] <<endl;
+            // cout << "scaleFactor = " << scaleFactor << endl;
 
             float actualDiffRate = diff_rate * scaleFactor;
             float volumeFrac = getVolumeFrac();
-//            cout << "VolumeFraction = " << volumeFrac << endl;
+            // cout << "VolumeFraction = " << volumeFrac << endl;
 
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
             //Diffusion reaction from "this" compartment to C.

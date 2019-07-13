@@ -53,13 +53,13 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
 //        std::cout<<"Linker "<<sl1->getN()<<" "<<sl2->getN()<<" BOUND "<<BL1->getN()<<" "<<BL2->getN()<<endl;
 //        std::cout<<"Brancher "<<sb1->getN()<<" "<<sb2->getN()<<" BOUND "<<BB1->getN()<<" "<<BB2->getN()<<endl;
 //    for(auto c:Cylinder::getCylinders()){
-//        std::cout<<c->getID()<<" "<<c->getMCylinder()->getLength()<<" ";
+//        std::cout<<c->getId()<<" "<<c->getMCylinder()->getLength()<<" ";
 //    }
 //    std::cout<<endl;
 //    //@}
 #ifdef DETAILEDOUTPUT
-    std::cout<<"Chosen sites Cyl1 "<<cc1->getCylinder()->getID()<<" bs1 "<<_position1<<" "
-            "Cyl2 "<<cc2->getCylinder()->getID()<<" bs2 "<<_position2<<endl;
+    std::cout<<"Chosen sites Cyl1 "<<cc1->getCylinder()->getId()<<" bs1 "<<_position1<<" "
+            "Cyl2 "<<cc2->getCylinder()->getId()<<" bs2 "<<_position2<<endl;
 #endif
     /*std::cout<<"Motor binding "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "
              <<cc2->getCylinder()->getID()<<" "<<_position2<<" MotorType "<<motorType<< endl;

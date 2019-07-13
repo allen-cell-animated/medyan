@@ -23,6 +23,7 @@
 #include "nvToolsExt.h"
 #include "cross_check.h"
 #endif
+#include "Mechanics/CUDAcommon.h"
 
 template <class BPositionInteractionType>
 void BranchingPosition<BPositionInteractionType>::vectorize() {
@@ -35,9 +36,9 @@ void BranchingPosition<BPositionInteractionType>::vectorize() {
 
     for (auto b: BranchingPoint::getBranchingPoints()) {
 
-        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->_dbIndex;
-        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->_dbIndex;
-        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->_dbIndex;
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getStableIndex();
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getStableIndex();
 
         kpos[i] = b->getMBranchingPoint()->getPositionConstant();
         pos[i] = b->getPosition();

@@ -36,7 +36,8 @@ class Bead;
  *   the physical size of the bubble.
  */
 
-class Bubble : public Composite, public Trackable, public Movable, public DynamicNeighbor {
+class Bubble : public Composite, public Trackable, public Movable, public DynamicNeighbor,
+    public Database< Bubble, false > {
 
 private:
     Bead* _bead;    ///< The bead representing the center of the bubble
@@ -47,11 +48,7 @@ private:
     floatingpoint _radius;       ///< The radius of this bubble
     floatingpoint _kRepuls;      ///< Repulsion constant for bubble-bubble and bubble-cylinder interactions
     floatingpoint _screenLength; ///< Screening length for a repulsive potential
-	floatingpoint _MTOCBendingK; ///< use for MTOC-MT bending force field
-    
-    int _ID;        ///< Identifier
-    
-    static Database<Bubble*> _bubbles; ///< Collection in SubSystem
+    floatingpoint _MTOCBendingK; ///< use for MTOC-MT bending force field
     
     bool _isMTOC = false;   ///< If representing a MTOC
     
@@ -71,7 +68,6 @@ public:
     
     Bead* getBead() {return _bead;}
     
-    int getID() {return _ID;}
     virtual int getType() {return _type;}
     //@}
     
@@ -83,17 +79,18 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _bubbles.addElement(this);}
-    virtual void removeFromSubSystem() {_bubbles.removeElement(this);}
+    // Does nothing
+    virtual void addToSubSystem() { }
+    virtual void removeFromSubSystem() {}
     //@}
     
     /// Get all instances of this class from the SubSystem
     static const vector<Bubble*>& getBubbles() {
-        return _bubbles.getElements();
+        return getElements();
     }
     /// Get the number of cylinders in this system
     static int numBubbles() {
-        return _bubbles.countElements();
+        return getElements().size();
     }
     
     ///Update bubble position

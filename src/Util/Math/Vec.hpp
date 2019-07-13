@@ -313,6 +313,9 @@ template<
     void pop_back() {
         value.resize(value.size() - dim);
     }
+    void resize(size_type count) {
+        value.resize(dim * count);
+    }
 };
 
 //-----------------------------------------------------------------------------

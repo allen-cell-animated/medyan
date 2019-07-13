@@ -22,22 +22,15 @@
 
 using namespace mathfunc;
 
-Database<Bead*> Bead::_beads;
 std::vector<Bead*> Bead::_pinnedBeads;
-//static vars needed to vectorize on-the-fly
-int Bead::maxbindex = 0;
-int Bead::vectormaxsize = 0;
-int Bead::Nbeads = 0;
-bool Bead::triggercylindervectorization = false;
-vector<int> Bead::removedbindex;//vector of bead indices that were once alloted to other
-// beads but are free to be reallocated now.
 
 Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
 //add brforce, pinforce
     : Trackable(true),
-      coordinate(v), coordinateP(v),
-      force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0),
-      _position(position), _birthTime(tau()),_ID(_beads.getID()) {
+      DatabaseType(vector2Vec<3>(v), Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}),
+      coordinateP(v),
+      brforce(3, 0), pinforce(3,0),
+      _position(position), _birthTime(tau()) {
     
     parent->addChild(unique_ptr<Component>(this));
           
@@ -58,67 +51,22 @@ Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
         exit(EXIT_FAILURE);
     }
 
-    //revectorize if needed
-    revectorizeifneeded();
-	//set bIndex
-/*	_dbIndex = maxbindex;
-	maxbindex++;*/
-
-	// if beads were removed earlier, allot one of the available bead indices.
-	//Commented out as it might deem dbIndex race conditions i.e. if any super structures
-	// are created. More relevant for cylinders but am extending the protocol to beads
-	// too just to be consistent.
-	//set bindex based on maxbindex if there were no beads removed.
-	if(removedbindex.size() == 0)
-	{_dbIndex = maxbindex;
-		maxbindex++;
-	}
-    else{
-        _dbIndex = removedbindex.at(0);
-        removedbindex.erase(removedbindex.begin());
-    }
-
-    Nbeads = _beads.getElements().size();
-
-    //copy bead coordiantes to the appropriate spot in the coord vector.
-    copycoordinatestovector();
 }
 
 Bead::Bead(Composite* parent, int position)
 //add brforce, pinforce
     : Trackable(true),
-    coordinate(3, 0), coordinateP(3, 0),
-    force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0), _position(position) {
+    DatabaseType(Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}),
+    coordinateP(3, 0),
+    brforce(3, 0), pinforce(3,0), _position(position) {
     
     parent->addChild(unique_ptr<Component>(this));
-    //check if you need to revectorize.
-    revectorizeifneeded();
-    //set bIndex
-/*	_dbIndex = maxbindex;
-	maxbindex++;*/
 
-    // if beads were removed earlier, allot one of the available bead indices.
-    //Commented out as it might deem dbIndex race conditions i.e. if any super structures
-    // are created. More relevant for cylinders but am extending the protocol to beads
-    // too just to be consistent.
-	//set bindex based on maxbindex if there were no beads removed.
-	if(removedbindex.size() == 0)
-	{_dbIndex = maxbindex;
-		maxbindex++;
-	}
-    else{
-        _dbIndex = removedbindex.at(0);
-        removedbindex.erase(removedbindex.begin());
-    }
-
-    Nbeads = _beads.getElements().size();
-    //copy bead coordiantes to the appropriate spot in the coord vector.
-    copycoordinatestovector();
 }
 
 void Bead::updatePosition() {
     
-    try {GController::getCompartment(coordinate);}
+    try {GController::getCompartment(vec2Vector(coordinate()));}
     catch (exception& e) {
         
         //print exception
@@ -139,10 +87,10 @@ void Bead::printSelf() {
     cout << endl;
     
     cout << "Bead: ptr = " << this << endl;
-    cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
+    cout << "Coordinates = " << coordinate()[0] << ", " << coordinate()[1] << ", " << coordinate()[2] << endl;
     cout << "Previous coordinates before minimization = " << coordinateP[0] << ", " << coordinateP[1] << ", " << coordinateP[2] << endl;
-    cout << "Forces = " << force[0] << ", " << force[1] << ", " << force[2] << endl;
-    cout << "Auxiliary forces = " << forceAux[0] << ", " << forceAux[1] << ", " << forceAux[2] << endl;
+    cout << "Forces = " << force()[0] << ", " << force()[1] << ", " << force()[2] << endl;
+    cout << "Auxiliary forces = " << forceAux()[0] << ", " << forceAux()[1] << ", " << forceAux()[2] << endl;
 
     cout << "Position on structure = " << _position << endl;
     cout << "Birth time = " << _birthTime << endl;

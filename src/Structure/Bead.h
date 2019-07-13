@@ -17,21 +17,78 @@
 #include <algorithm> // find
 #include <vector>
 #include <list>
-#include "CUDAcommon.h"
 
 #include "common.h"
-
-#include "Database.h"
+#include "MathFunctions.h" // vec2Vector
+#include "Structure/Database.h"
 #include "Component.h"
 #include "Composite.h"
 #include "Trackable.h"
 #include "Movable.h"
 #include "DynamicNeighbor.h"
 #include "SysParams.h"
+#include "Util/Math/Vec.hpp"
 
 //FORWARD DECLARATIONS
 class Compartment;
 class Filament;
+
+struct BeadData {
+    using vec_type = mathfunc::Vec< 3, floatingpoint >;
+    using vec_array_type = mathfunc::VecArray< 3, floatingpoint >;
+
+    vec_array_type coords;
+    vec_array_type coordsStr; // stretched coordinate
+    vec_array_type forces; // currently the search dir in cg method
+    vec_array_type forcesAux; // real force
+    vec_array_type forcesAuxP; // prev real force
+
+    void push_back(
+        const vec_type& coord,
+        const vec_type& coordStr,
+        const vec_type& force,
+        const vec_type& forceAux,
+        const vec_type& forceAuxP
+    ) {
+        coords.push_back(coord);
+        coordsStr.push_back(coordStr);
+        forces.push_back(force);
+        forcesAux.push_back(forceAux);
+        forcesAuxP.push_back(forceAuxP);
+    }
+
+    void set_content(
+        std::size_t pos,
+        const vec_type& coord,
+        const vec_type& coordStr,
+        const vec_type& force,
+        const vec_type& forceAux,
+        const vec_type& forceAuxP
+    ) {
+        coords    [pos] = coord;
+        coordsStr [pos] = coordStr;
+        forces    [pos] = force;
+        forcesAux [pos] = forceAux;
+        forcesAuxP[pos] = forceAuxP;
+    }
+
+    void move_content(std::size_t from, std::size_t to) {
+        coords    [to] = coords    [from];
+        coordsStr [to] = coordsStr [from];
+        forces    [to] = forces    [from];
+        forcesAux [to] = forcesAux [from];
+        forcesAuxP[to] = forcesAuxP[from];
+    }
+
+    void resize(size_t size) {
+        coords    .resize(size);
+        coordsStr .resize(size);
+        forces    .resize(size);
+        forcesAux .resize(size);
+        forcesAuxP.resize(size);
+    }
+
+};
 
 /// Represents a single coordinate between [Cylinders](@ref Cylinder), and holds forces
 /// needed for mechanical equilibration.
@@ -48,20 +105,16 @@ class Filament;
  *  [NeighborLists](@ref NeighborList).
  */
 
-class Bead : public Component, public Trackable, public Movable{
+class Bead : public Component, public Trackable, public Movable,
+    public Database< Bead, true, BeadData > {
     
 public:
+    using DatabaseType = Database< Bead, true, BeadData >;
+
     ///@note - all vectors are in x,y,z coordinates.
-    static bool triggercylindervectorization;
-    vector<floatingpoint> coordinate;  ///< Coordinates of the bead
     vector<floatingpoint> coordinateP; ///< Prev coordinates of bead in CG minimization
 
-    int _dbIndex =  -1; ///<Position in database vector
-
-	vector<floatingpoint> force; ///< Forces based on curent coordinates.
                           ///< Forces should always correspond to current coordinates.
-    vector<floatingpoint> forceAux;  ///< An auxiliary field needed during CG minimization.
-    vector<floatingpoint> forceAuxP; ///< An auxiliary field needed during CG minimization.
     
     vector<floatingpoint> brforce; //boundary repulsion force
     vector<floatingpoint> pinforce;
@@ -95,6 +148,22 @@ public:
     
     ///Default constructor
     Bead(Composite* parent, int position);
+
+    auto coordinate()    { return getDbData().coords    [getStableIndex()]; }
+    auto force()         { return getDbData().forces    [getStableIndex()]; }
+    auto forceAux()      { return getDbData().forcesAux [getStableIndex()]; }
+    auto forceAuxP()     { return getDbData().forcesAuxP[getStableIndex()]; }
+
+    auto coordinate()    const { return getDbDataConst().coords    [getStableIndex()]; }
+    auto force()         const { return getDbDataConst().forces    [getStableIndex()]; }
+    auto forceAux()      const { return getDbDataConst().forcesAux [getStableIndex()]; }
+    auto forceAuxP()     const { return getDbDataConst().forcesAuxP[getStableIndex()]; }
+
+    // Temporary compromise
+    auto vcoordinate()    const { return mathfunc::vec2Vector(coordinate()   ); }
+    auto vforce()         const { return mathfunc::vec2Vector(force()        ); }
+    auto vforceAux()      const { return mathfunc::vec2Vector(forceAux()     ); }
+    auto vforceAuxP()     const { return mathfunc::vec2Vector(forceAuxP()    ); }
     
     /// Get Compartment
     Compartment* getCompartment() {return _compartment;}
@@ -107,22 +176,17 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _beads.addElement(this);}
+    // only takes care of pinned bead removal
+    virtual void addToSubSystem() override {}
     virtual void removeFromSubSystem() {
-        //Reset in bead coordinate vector and add _dbIndex to the list of removedbindex.
-        removedbindex.push_back(_dbIndex);
-        resetcoordinates();
-        //remove from database
-        _beads.removeElement(this);
         //remove if pinned
         if(_isPinned) removeAsPinned();
-        Nbeads = _beads.getElements().size();
     }
     //@}
     
     /// Get all instances of this class from the SubSystem
     static const vector<Bead*>& getBeads() {
-        return _beads.getElements();
+        return getElements();
     }
     
     /// Add this bead as a pinned bead
@@ -157,7 +221,7 @@ public:
     
     /// Get the number of beads in this system
     static int numBeads() {
-        return _beads.countElements();
+        return getElements().size();
     }
     
     /// Update the position, inherited from Movable
@@ -167,35 +231,29 @@ public:
     
     //GetType implementation just returns type of parent
     virtual int getType() {return getParent()->getType();}
-    //Aravind get ID
-    int getID() {return _ID;}
     //Aravind return static
     bool getstaticstate() {return isStatic;}
     //Aravind set static
     void setstaticstate(bool index) {isStatic = index;}
     //@{
     /// Auxiliary method for CG minimization
-    inline floatingpoint FDotF() {
-        return force[0]*force[0] +
-               force[1]*force[1] +
-               force[2]*force[2];
+    inline double FDotF() {
+        return magnitude2(force());
     }
-    inline floatingpoint FDotFA() {
-        return force[0]*forceAux[0] +
-               force[1]*forceAux[1] +
-               force[2]*forceAux[2];
+//    inline double FDotF() {
+//        return force1[0]*force1[0] +
+//        force1[1]*force1[1] +
+//        force1[2]*force1[2];
+//    }
+    inline double FDotFA() {
+        return dot(force(), forceAux());
     }
-    
-    inline floatingpoint FADotFA() {
-        return forceAux[0]*forceAux[0] +
-               forceAux[1]*forceAux[1] +
-               forceAux[2]*forceAux[2];
+    inline double FADotFA() {
+        return dot(forceAux(), forceAux());
     }
     
-    inline floatingpoint FADotFAP() {
-        return forceAux[0]*forceAuxP[0] +
-               forceAux[1]*forceAuxP[1] +
-               forceAux[2]*forceAuxP[2];
+    inline double FADotFAP() {
+        return dot(forceAux(), forceAuxP());
     }
     //Qin add brFDotbrF
     inline floatingpoint brFDotbrF() {
@@ -241,136 +299,15 @@ public:
         cout << endl;
     }
 
-    static int getmaxbindex(){
-        return maxbindex;
-    }
-
-	// through depolymerization/ destruction reactions.
-	static void revectorizeifneeded(){
-		//Run the special protocol during chemistry, the regular otherwise.
-		if(SysParams::DURINGCHEMISTRY)
-			appendrevectorizeifneeded();
-		else {
-			int newsize = vectormaxsize;
-			//if the maximum bead index is very close to the vector size
-			if (vectormaxsize - maxbindex <= bead_cache / 10)
-				//new size will be increased by bead_cache
-				newsize = (int(Nbeads / bead_cache) + 2) * bead_cache;
-			//if we have removed bead_cache number of beads from the system
-			if (removedbindex.size() >= bead_cache)
-				//we can revectorize with a smaller size.
-				newsize = (int(Nbeads / bead_cache) + 1) * bead_cache;
-			//set parameters and revectorize
-			if (newsize != vectormaxsize) {
-//				cout<<"vectorize bead"<<endl;
-				floatingpoint *coord = CUDAcommon::serlvars.coord;
-				delete[] coord;
-				floatingpoint *newcoord = new floatingpoint[3 * newsize];
-				CUDAcommon::serlvars.coord = newcoord;
-				revectorize(newcoord);
-				vectormaxsize = newsize;
-				//cylinder structure needs to be revecotrized as well.
-				triggercylindervectorization = true;
-			}
-		}
-/*		cout<<"Printing bead data triggercylindervectorization "
-		""<<triggercylindervectorization<<endl;
-		for(auto b:_beads.getElements()){
-			cout<<"Bead ID "<<b->getID()<<" dbIndex "<<b->_dbIndex<<endl;
-		}
-		cout<<"removedbindex "<<removedbindex.size()<<endl;
-		cout<<"------------------------------Bead"<<endl;*/
-	}
-	static void printBeaddata(){
-		cout<<"Printing bead data "<<endl;
-		for(auto b:_beads.getElements()){
-			cout<<"Bead ID "<<b->getID()<<" dbIndex "<<b->_dbIndex<<endl;
-		}
-		cout<<"removedbindex "<<removedbindex.size()<<endl;
-		cout<<"------------------------------Bead"<<endl;
-    }
 private:
     Compartment* _compartment = nullptr; ///< Pointer to the compartment that this bead is in
     
     int _position;     ///< Position on structure
     float _birthTime;  ///< Time of birth
-	int _ID; ///<Bead IDs
     bool _isPinned = false;
     
-    static Database<Bead*> _beads; ///< Collection of beads in SubSystem
     static std::vector<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem
                                          ///< (attached to some element in SubSystem)
-    //Vectorize beads so the coordinates are all available in a single array.
-    //@{
-    static int maxbindex;//Maximum bead index alloted.
-    static int vectormaxsize;//maximum number of beads that can be appended without
-    // revectorization
-    static int Nbeads;//Total number of beads in the system
-    static vector<int> removedbindex;//stores the bead indices that have been freed
-
-
-    static void revectorize(floatingpoint* coord){
-        //set contiguous bindices and set coordinates.
-        int idx = 0;
-        for(auto b:_beads.getElements()){
-            int index = 3 * idx;
-            coord[index] = b->coordinate[0];
-            coord[index + 1] = b->coordinate[1];
-            coord[index + 2] = b->coordinate[2];
-            b->_dbIndex = idx;
-            idx++;
-        }
-        Nbeads =_beads.getElements().size();
-        maxbindex = _beads.getElements().size();
-        removedbindex.clear();
-    }
-
-    static void appendrevectorizeifneeded(){
-
-        int newsize = vectormaxsize;
-        //if the maximum bead index is very close to the vector size
-        if(vectormaxsize - maxbindex <= bead_cache/10 )
-            //new size will be increased by bead_cache
-            newsize = vectormaxsize + bead_cache;
-        //set parameters and revectorize
-        if(newsize != vectormaxsize){
-            floatingpoint *coord = CUDAcommon::serlvars.coord;
-            delete[] coord;
-            floatingpoint *newcoord = new floatingpoint[3 * newsize];
-            CUDAcommon::serlvars.coord = newcoord;
-            appendrevectorize(newcoord);
-            vectormaxsize = newsize;
-            //cylinder structure needs to be revecotrized as well.
-            triggercylindervectorization = true;
-        }
-    }
-
-	static void appendrevectorize(floatingpoint* coord){
-		//set coords based on bindices.
-		maxbindex = 0;
-		for(auto b:_beads.getElements()){
-		    maxbindex = max<int>(maxbindex, b->_dbIndex);
-			int index = 3 * b->_dbIndex;
-			coord[index] = b->coordinate[0];
-			coord[index + 1] = b->coordinate[1];
-			coord[index + 2] = b->coordinate[2];
-		}
-		maxbindex++;
-		Nbeads =_beads.getElements().size();
-	}
-
-    //copy coodinates of this bead to the appropriate spot in coord vector.
-    void  copycoordinatestovector() {
-            CUDAcommon::serlvars.coord[3 * _dbIndex] = coordinate[0];
-            CUDAcommon::serlvars.coord[3 * _dbIndex + 1] = coordinate[1];
-            CUDAcommon::serlvars.coord[3 * _dbIndex + 2] = coordinate[2];
-    }
-    void resetcoordinates() {
-        CUDAcommon::serlvars.coord[3 * _dbIndex] = -1.0;
-        CUDAcommon::serlvars.coord[3 * _dbIndex + 1] = -1.0;
-        CUDAcommon::serlvars.coord[3 * _dbIndex + 2] = -1.0;
-    }
-    //@}
 };
 
 

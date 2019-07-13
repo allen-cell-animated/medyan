@@ -47,6 +47,7 @@
 #include "nvToolsExt.h"
 #endif
 #include "Util/Io/Log.hpp"
+#include "Util/Profiler.hpp"
 using namespace mathfunc;
 
 Controller::Controller(SubSystem* s) : _subSystem(s) {
@@ -748,45 +749,6 @@ void Controller::updatePositions() {
     minep = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> compartment_update2(minep - minsp);
     updatepositionmovable += compartment_update2.count();
-    //@{ check begins
-    /*std::cout<<"Check after update positions"<<endl;
-    cylinder* cylindervec  = CUDAcommon::serlvars.cylindervec;
-    Cylinder** Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-    CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
-    floatingpoint* coord = CUDAcommon::serlvars.coord;
-    std::cout<<"1 Total Cylinders "<<Cylinder::getCylinders().size()<<" Beads "
-            ""<<Bead::getBeads().size()<<endl;
-    for(auto cyl:Cylinder::getCylinders()){
-        int i = cyl->_dcIndex;
-        int id1 = cylindervec[i].ID;
-        int id2 = Cylinderpointervec[i]->getID();
-        auto xx = ccylindervec[i]->getCylinder();
-        int id3 = ccylindervec[i]->getCylinder()->getID();
-        if(id1 != id2 || id2 != id3 || id3 != id1)
-            std::cout<<id1<<" "<<id2<<" "<<id3<<endl;
-        auto b1 = cyl->getFirstBead();
-        auto b2 = cyl->getSecondBead();
-        long idx1 = b1->_dbIndex;
-        long idx2 = b2->_dbIndex;
-        cylinder c = cylindervec[i];
-        std::cout << "1 bindices for cyl with ID "<<cyl->getID()<<" cindex " << i <<
-                  " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
-        if(c.bindices[0] != idx1 || c.bindices[1] != idx2) {
-
-            std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1] << " "
-                    "" << b1->coordinate[2] << " " << " " << b2->coordinate[0] << " "
-                              "" << b2->coordinate[1] << " " << b2->coordinate[2] << " idx "
-                      << b1->_dbIndex << " "
-                              "" << b2->_dbIndex << endl;
-
-            std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
-                      << coord[3 * idx1 + 2] << " "
-                              "" << coord[3 * idx2] << " " << coord[3 * idx2 + 1] << " "
-                      << coord[3 * idx2 + 2] << endl;
-        }
-
-    }*/
-    //@ check ends
 }
 
 #ifdef DYNAMICRATES
@@ -841,14 +803,14 @@ void Controller::pinBoundaryFilaments() {
         if((plusEndC->getSecondBead() == b) ||
            (minusEndC->getFirstBead() == b)) {
 
-            cout << _subSystem->getBoundary()->distance(b->coordinate) << endl;
+            cout << _subSystem->getBoundary()->distance(b->vcoordinate()) << endl;
             cout << SysParams::Mechanics().pinDistance << endl;
 
 
             //if within dist to boundary, add
-            if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {
+            if(_subSystem->getBoundary()->distance(b->vcoordinate()) < SysParams::Mechanics().pinDistance) {
 
-                b->pinnedPosition = b->coordinate;
+                b->pinnedPosition = b->vcoordinate();
                 b->addAsPinned();
             }
         }
@@ -870,16 +832,16 @@ void Controller::pinLowerBoundaryFilaments() {
         if((plusEndC->getSecondBead() != b) ||
            (minusEndC->getFirstBead() != b)) {
 
-            //cout << _subSystem->getBoundary()->lowerdistance(b->coordinate) << endl;
+            //cout << _subSystem->getBoundary()->lowerdistance(b->vcoordinate()) << endl;
             //cout << SysParams::Mechanics().pinDistance << endl;
 
             auto index = Rand::randfloatingpoint(0,1);
             //cout << index <<endl;
             //if within dist to boundary and index > 0.5, add
-            if(_subSystem->getBoundary()->lowerdistance(b->coordinate) < SysParams::Mechanics().pinDistance
+            if(_subSystem->getBoundary()->lowerdistance(b->vcoordinate()) < SysParams::Mechanics().pinDistance
                && index < SysParams::Mechanics().pinFraction && b->isPinned() == false) {
                 //cout << index << endl;
-                b->pinnedPosition = b->coordinate;
+                b->pinnedPosition = b->vcoordinate();
                 b->addAsPinned();
             }
         }
@@ -1196,9 +1158,9 @@ void Controller::run() {
             //run mcontroller, update system
             if(tauLastMinimization >= _minimizationTime) {
 
-	            Bead::revectorizeifneeded();
-	            Cylinder::revectorizeifneeded();
                 mins = chrono::high_resolution_clock::now();
+                Bead::rearrange();
+                Cylinder::updateAllData();
                 _mController->run();
                 mine= chrono::high_resolution_clock::now();
 
@@ -1344,6 +1306,8 @@ void Controller::run() {
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
             if(stepsLastMinimization >= _minimizationSteps) {
+                Bead::rearrange();
+                Cylinder::updateAllData();
                 _mController->run();
                 updatePositions();
 
