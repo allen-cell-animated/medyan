@@ -234,7 +234,7 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoi
                 return numeric_limits<floatingpoint>::infinity();
             }
                 //if this is a minimization try, just return infinity
-            else {cout<<"Returning infintie energy "<<ff->getName()<<" d "<<d<<endl;
+            else {cout<<"Returning infinite energy "<<ff->getName()<<" d "<<d<<endl;
                 return numeric_limits<floatingpoint>::infinity();}
         }
         else energy += tempEnergy;

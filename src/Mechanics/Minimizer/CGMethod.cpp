@@ -600,10 +600,7 @@ if(true) {
 
     }
 #endif
-    //coord management
-/*    long i = 0;
-    long index = 0;
-    for(auto b: Bead::getBeads()) {
+
 
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
@@ -954,7 +951,7 @@ void CGMethod::endMinimization() {
 #endif
 }
 
-void CGMethod::checkcoord_forces() {
+/*void CGMethod::checkcoord_forces() {
     if(false) {
 
         cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
@@ -1010,7 +1007,7 @@ void CGMethod::checkcoord_forces() {
         } else
         	cout<<"Passed successfully"<<endl;
     }
-}
+}*/
 
 #ifdef CUDAACCL
 floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, floatingpoint MAXDIST,
@@ -1280,7 +1277,7 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 
     if(ForceFieldManager::_culpritForceField != nullptr){
         endMinimization();
-        FFM.printculprit(force);
+        FFM.printculprit(Bead::getDbData().forces.data());
     }
 #ifdef DETAILEDOUTPUT_ENERGY
     CUDAcommon::handleerror(cudaDeviceSynchronize());
@@ -1416,7 +1413,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
 
     if(ForceFieldManager::_culpritForceField != nullptr){
         endMinimization();
-        FFM.printculprit(force);
+	    FFM.printculprit(Bead::getDbData().forces.data());
     }
 #ifdef DETAILEDOUTPUT_ENERGY
     CUDAcommon::handleerror(cudaDeviceSynchronize());
