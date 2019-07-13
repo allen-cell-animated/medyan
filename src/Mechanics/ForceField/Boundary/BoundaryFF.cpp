@@ -48,7 +48,9 @@ BoundaryFF::BoundaryFF (string type) {
         exit(EXIT_FAILURE);
     }
     //if pinning to boundaries
-    if(SysParams::Mechanics().pinBoundaryFilaments) {
+    if(SysParams::Mechanics().pinBoundaryFilaments ||
+        SysParams::Mechanics().pinBubbles
+    ) {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>());
     }

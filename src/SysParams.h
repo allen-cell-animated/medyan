@@ -106,6 +106,9 @@ struct MechParams {
     floatingpoint pinDistance = 250; ///< 250nm pinning distance for now
     floatingpoint pinK = 0.0;       ///< Tethered stiffness
     floatingpoint pinTime = 0.0;    ///< Time at which to pin the filaments
+
+    // pin bubbles, using pinK and pinTime
+    bool pinBubbles = false;
     //@}
 
     //vectorization
