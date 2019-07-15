@@ -18,7 +18,6 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
-#include "Bubble.h"
 #include "MathFunctions.h"
 #ifdef CUDAACCL
 #include <cuda.h>
@@ -176,11 +175,10 @@ void FilamentBendingHarmonic::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, int *beadSet,
+floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, size_t nint, int *beadSet,
                                        floatingpoint *kbend, floatingpoint *eqt){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;
-    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
     floatingpoint *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2;
 
@@ -219,11 +217,10 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, int *beadSet
     return U;
 }
 
-floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, floatingpoint *f, size_t nint, int *beadSet,
                                        floatingpoint *kbend, floatingpoint *eqt, floatingpoint d ){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;
-    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
     floatingpoint *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2;
     floatingpoint *force1, *force2, *force3;
@@ -274,11 +271,10 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, floatingpoin
     return U;
 }
 
-void FilamentBendingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+void FilamentBendingHarmonic::forces(floatingpoint *coord, floatingpoint *f, size_t nint, int *beadSet,
                                      floatingpoint *kbend, floatingpoint *eqt){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;
-    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
     floatingpoint *coord1, *coord2, *coord3, L1, L2, l1l2, invL1, invL2, A,B,C, k;
     floatingpoint *force1, *force2, *force3;
