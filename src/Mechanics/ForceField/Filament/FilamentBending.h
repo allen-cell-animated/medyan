@@ -29,6 +29,8 @@ class FilamentBending : public FilamentInteractions {
 private:
     FBendingInteractionType _FFType;
     
+    // Cache of vectorized data
+    std::size_t _numInteractions;
     int *beadSet;
     
     ///Array describing the constants in calculation

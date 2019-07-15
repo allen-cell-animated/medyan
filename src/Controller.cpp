@@ -69,6 +69,24 @@ void invalidateMembraneMeshIndexCache() {
     }
 }
 
+void pinBubbles() {
+
+    // Only pin once
+    static bool pinned = false;
+    if(pinned) return;
+
+    //loop through beads, check if within pindistance
+    for(auto bb : Bubble::getBubbles()) {
+
+        Bead* const b = bb->getBead();
+
+        b->pinnedPosition = b->vcoordinate();
+        b->addAsPinned();
+    }
+
+    pinned = true;
+} // pinBubbles()
+
 } // namespace
 
 Controller::Controller(SubSystem* s) : _subSystem(s) {
@@ -920,6 +938,10 @@ void Controller::executeSpecialProtocols() {
 
         pinLowerBoundaryFilaments();
     }
+
+    if(SysParams::Mechanics().pinBubbles && tau() >= SysParams::Mechanics().pinTime) {
+        pinBubbles();
+    }
 }
 
 void Controller::updatePositions() {
@@ -1372,7 +1394,6 @@ void Controller::run() {
                 mins = chrono::high_resolution_clock::now();
                 invalidateMembraneMeshIndexCache();
                 Bead::rearrange();
-                Cylinder::rearrange(); // FIXME: should be put before neighbor list search
                 Cylinder::updateAllData();
                 _mController->run();
 
@@ -1530,7 +1551,6 @@ void Controller::run() {
             if(stepsLastMinimization >= _minimizationSteps) {
                 invalidateMembraneMeshIndexCache();
                 Bead::rearrange();
-                Cylinder::rearrange(); // FIXME: should be put before neighbor list search
                 Cylinder::updateAllData();
                 _mController->run();
 

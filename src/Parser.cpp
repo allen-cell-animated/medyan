@@ -1141,6 +1141,19 @@ void SystemParser::readMechParams() {
                 }
 
             }
+            else if(lineVector[1] == "PIN_BUBBLES") {
+                if(lineVector.size() != 4) {
+                    LOG(ERROR) << "Error parameter specification for pinning bubbles";
+                    LOG(INFO) << "PIN_BUBBLES <pin-k> <pin-time>";
+                    throw std::runtime_error("Error pinning bubbles");
+                }
+
+                else {
+                    MParams.pinBubbles = true;
+                    MParams.pinK = std::stod(lineVector[2]);
+                    MParams.pinTime = std::stod(lineVector[3]);
+                }
+            }
             else if (lineVector.size() == 5) {
 
                 //Qin
