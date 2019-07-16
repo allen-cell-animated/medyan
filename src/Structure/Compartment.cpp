@@ -1857,7 +1857,7 @@ void Compartment::transferSpecies(int i) {
 
     assert(activeNeighbors.size() != 0
            && "Cannot transfer species to another compartment... no neighbors are active");
-    if(i<3 && activeNeighbors.size()>1){
+    if(i >= 0 && i<3 && activeNeighbors.size()>1){
         cout<<"Error transferring species along an axis. More than 1 neighbor. Exiting. "<< endl;
         exit(EXIT_FAILURE);
     }
@@ -1930,7 +1930,7 @@ void Compartment::shareSpecies(int i) {
 
     assert(activeNeighbors.size() != 0
            && "Cannot share species to another compartment... no neighbors are active");
-    if(i<3 && activeNeighbors.size()>1){
+    if(i >= 0 && i<3 && activeNeighbors.size()>1){
         cout<<"Error sharing species along an axis. More than 1 neighbor. Exiting."<< endl;
         exit(EXIT_FAILURE);
     }
