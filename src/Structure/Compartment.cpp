@@ -1878,6 +1878,7 @@ void Compartment::removeAllDiffusionReactions(ChemSim* chem) {
 
 void Compartment::transferSpecies(int i) {
     //i axis
+    //-1 all directions
     //0 X
     //1 Y
     //2 Z
@@ -1889,11 +1890,12 @@ void Compartment::transferSpecies(int i) {
         auto ncoord=neighbor->coordinates();
 
         if(neighbor->isActivated()){
-            if(i==3)
+            if(i < 0 || i == 3)
                 activeNeighbors.push_back(neighbor);
             else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
                 activeNeighbors.push_back(neighbor);
-        }}
+        }
+    }
 
     assert(activeNeighbors.size() != 0
            && "Cannot transfer species to another compartment... no neighbors are active");
@@ -1950,6 +1952,7 @@ void Compartment::transferSpecies(int i) {
 
 void Compartment::shareSpecies(int i) {
     //i axis
+    //-1 all directions
     //0 X
     //1 Y
     //2 Z
@@ -1959,12 +1962,13 @@ void Compartment::shareSpecies(int i) {
 
     for(auto &neighbor : _neighbours){
         auto ncoord=neighbor->coordinates();
-    if(neighbor->isActivated()){
-        if(i==3)
-            activeNeighbors.push_back(neighbor);
-        else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
-        activeNeighbors.push_back(neighbor);
-    }}
+        if(neighbor->isActivated()){
+            if(i < 0 || i == 3)
+                activeNeighbors.push_back(neighbor);
+            else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
+                activeNeighbors.push_back(neighbor);
+        }
+    }
 
     assert(activeNeighbors.size() != 0
            && "Cannot share species to another compartment... no neighbors are active");
