@@ -20,7 +20,8 @@ namespace sys_data_update {
     constexpr FlagType None            = 0;
     constexpr FlagType BeadPosition    = 1 << 0;
     constexpr FlagType BeadConnection  = 1 << 1;
-    constexpr FlagType Concentration   = 1 << 2;
+    constexpr FlagType Compartment     = 1 << 2;
+    constexpr FlagType Concentration   = 1 << 3;
 
 } // namespace sys_data_update
 

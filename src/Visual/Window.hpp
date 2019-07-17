@@ -169,6 +169,14 @@ inline void createWindow() {
             shared::visualElements.emplace_back(new VisualElement);
             auto& ve = shared::visualElements.back();
             ve->profile.enabled = true;
+            ve->profile.flag = Profile::targetCompartment;
+            ve->profile.colorAmbient = glm::vec3(0.8f, 0.8f, 0.8f);
+            ve->profile.colorDiffuse = glm::vec3(0.8f, 0.8f, 0.8f);
+        }
+        {
+            shared::visualElements.emplace_back(new VisualElement);
+            auto& ve = shared::visualElements.back();
+            ve->profile.enabled = true;
             ve->profile.flag = Profile::targetMembrane;
             ve->profile.colorAmbient = glm::vec3(0.4f, 0.6f, 0.95f);
             ve->profile.colorDiffuse = glm::vec3(0.4f, 0.6f, 0.95f);

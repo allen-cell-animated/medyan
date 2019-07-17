@@ -16,6 +16,7 @@
 #include "Structure/Linker.h"
 #include "Structure/MotorGhost.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
+#include "SysParams.h"
 #include "Visual/Render/PathExtrude.hpp"
 #include "Visual/Render/Sphere.hpp"
 #include "Visual/SharedData.hpp"
@@ -34,6 +35,9 @@ struct SystemDataForVisual {
     std::mutex me;
 
     sys_data_update::FlagType updated;
+
+    mathfunc::Vec< 3, size_t > compartmentNum;
+    mathfunc::Vec3             compartmentSize;
 
     BeadData copiedBeadData;
 
@@ -451,6 +455,17 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
         } // End if updated bead position
         ve->state.eleMode = GL_TRIANGLES;
 
+    }
+    else if(ve->profile.flag & Profile::targetCompartment) {
+        //-----------------------------------------------------------------
+        // Compartments
+        //-----------------------------------------------------------------
+        if(sdfv.updated & sys_data_update::Compartment) {
+            ve->state.vertexAttribs.clear();
+            ve->state.attribChanged = true;
+
+            // TODO implementation
+        }
     } // End if profile target
 
 } // void prepareVisualElement(...)
@@ -552,10 +567,26 @@ void copySystemDataAndRunHelper(sys_data_update::FlagType update) {
                 });
             }
 
-            // Save updated
-            sdfv.updated = update;
+        } // End update bead connection
+
+        if(update & (sys_data_update::Compartment)) {
+            sdfv.compartmentNum = {
+                SysParams::Geometry().NX,
+                SysParams::Geometry().NY,
+                SysParams::Geometry().NZ
+            };
+            sdfv.compartmentSize = {
+                SysParams::Geometry().compartmentSizeX,
+                SysParams::Geometry().compartmentSizeY,
+                SysParams::Geometry().compartmentSizeZ
+            };
+
         }
-    }
+
+        // Save updated
+        sdfv.updated = update;
+
+    } // ~lock_guard
 
     // Launch helper thread (may use thread pool)
     std::thread(helper).detach();

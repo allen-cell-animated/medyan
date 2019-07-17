@@ -11,9 +11,10 @@ namespace visual {
 
 struct Profile {
 
-    using FlagType = std::uint_fast8_t;
+    using FlagType = std::uint_fast16_t;
 
     enum class PathMode { Line, Extrude, Bead };
+    enum class GridMode { Boundary, Mesh };
     enum class ColorMode { Fixed };
 
     static constexpr FlagType targetFilament      = 1 << 0;
@@ -23,7 +24,8 @@ struct Profile {
     static constexpr FlagType targetBrancher      = 1 << 4;
     static constexpr FlagType displayForce        = 1 << 5;
     static constexpr FlagType forceUseSearchDir   = 1 << 6;
-    static constexpr FlagType targetConcentration = 1 << 7;
+    static constexpr FlagType targetCompartment   = 1 << 7;
+    static constexpr FlagType targetConcentration = 1 << 8;
 
     // User settings
     //-------------------------------------------------------------------------
@@ -33,13 +35,18 @@ struct Profile {
     FlagType flag = 0;
 
     // shape settings
+    // -------- Pathable objects --------
     PathMode          pathMode = PathMode::Line; // TODO implement this in visual helper
     float             pathExtrudeRadius = 7.5f;
     std::uint_fast8_t pathExtrudeSides = 10;
+    // -------- Bead-like objects --------
     float             beadRadius = 12.0f;
     std::uint_fast8_t beadLongitudeSegs = 10;
     std::uint_fast8_t beadLatitudeSegs = 5;
+    // -------- Forces --------
     float             forceScale = 5.0f;
+    // -------- Grid-like objects --------
+    GridMode          gridMode = GridMode::Boundary;
 
     GLenum polygonMode = GL_LINE;
 
