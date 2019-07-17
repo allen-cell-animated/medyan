@@ -164,9 +164,7 @@ int main(int argc, char **argv) {
         {
             std::thread mainThread(&Controller::run, &c);
 #ifdef VISUAL
-            visual::createWindow();
-            visual::mainLoop();
-            visual::deallocate();
+            visual::VisualDisplay{}.run();
 #endif // VISUAL
             mainThread.join();
         }

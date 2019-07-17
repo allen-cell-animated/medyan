@@ -571,9 +571,9 @@ void copySystemDataAndRunHelper(sys_data_update::FlagType update) {
 
         if(update & (sys_data_update::Compartment)) {
             sdfv.compartmentNum = {
-                SysParams::Geometry().NX,
-                SysParams::Geometry().NY,
-                SysParams::Geometry().NZ
+                static_cast< size_t >(SysParams::Geometry().NX),
+                static_cast< size_t >(SysParams::Geometry().NY),
+                static_cast< size_t >(SysParams::Geometry().NZ)
             };
             sdfv.compartmentSize = {
                 SysParams::Geometry().compartmentSizeX,

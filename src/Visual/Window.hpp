@@ -159,7 +159,7 @@ inline void createWindow() {
     glEnable(GL_DEPTH_TEST);
 
     // Shader
-    state::sd.init(shader::VertexElement, shader::FragElement);
+    state::sd.init(shader::VertexElementLight, shader::FragElementLight);
 
     {
         // Setup profile
@@ -320,6 +320,14 @@ inline void deallocate() {
     glfwTerminate();
 
 }
+
+// The RAII object
+struct VisualDisplay {
+    VisualDisplay() { createWindow(); }
+    ~VisualDisplay() { deallocate(); }
+
+    void run() const { mainLoop(); }
+};
 
 } // namespace visual
 

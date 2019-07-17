@@ -4,7 +4,7 @@
 namespace visual {
 namespace shader {
 
-constexpr const char* VertexElement = R"(
+constexpr const char* VertexElementLight = R"(
 #version 330 core
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
@@ -30,7 +30,7 @@ void main() {
 }
 )";
 
-constexpr const char* FragElement = R"(
+constexpr const char* FragElementLight = R"(
 #version 330 core
 out vec4 FragColor;
 
