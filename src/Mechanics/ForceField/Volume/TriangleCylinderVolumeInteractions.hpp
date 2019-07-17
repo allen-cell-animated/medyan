@@ -11,8 +11,8 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_TriangleCylinderVolumeInteractions_h
-#define MEDYAN_TriangleCylinderVolumeInteractions_h
+#ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderVolumeInteractions_Hpp
+#define MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderVolumeInteractions_Hpp
 
 #include "common.h"
 
@@ -35,6 +35,8 @@ protected:
     //@}
     
 public:
+    virtual ~TriangleCylinderVolumeInteractions() = default;
+
     /// Compute the energy of this interaction
     virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) = 0;
     /// Compute the forces of this interaction

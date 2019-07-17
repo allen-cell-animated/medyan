@@ -13,13 +13,15 @@
 
 #include "Mechanics/ForceField/Volume/TriangleCylinderExclVolume.h"
 
+#include <algorithm> // max
+
 #include "MathFunctions.h"
 using namespace mathfunc;
 
-#include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.h"
+#include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.hpp"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "Structure/SurfaceMesh/Triangle.h"
+#include "Structure/SurfaceMesh/Triangle.hpp"
 #include "Structure/SurfaceMesh/Vertex.h"
 #include "Cylinder.h"
 #include "Bead.h"
@@ -123,8 +125,80 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
     }
 }
 
-template <class TriangleCylinderExclVolumeInteractionType>
-void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeLoadForces() {
+namespace {
+
+template< typename InteractionType, typename VecType >
+void exclVolLoadForce(
+    const InteractionType& interaction, double area, double kExVol,
+    const Bead& bo, Bead& bd, typename TriangleCylinderExclVolume< InteractionType >::LoadForceEnd end,
+    const VecType& v0, const VecType& v1, const VecType& v2
+) {
+    using LoadForceEnd = typename TriangleCylinderExclVolume< InteractionType >::LoadForceEnd;
+
+    auto& loadForces = (end == LoadForceEnd::Plus ? bd.loadForcesP : bd.loadForcesM);
+    auto& lfi        = (end == LoadForceEnd::Plus ? bd.lfip        : bd.lfim       );
+
+    // This is the direction of polymerization
+    const auto dir = normalizedVector(bd.coordinate() - bo.coordinate());
+
+    // Test intersection of the ray with the triangle
+    const auto intersectRes = ray_tracing::MollerTrumboreIntersect<>()(
+        bd.coordinate(), dir,
+        v0, v1, v2
+    );
+
+    //array of coordinate values to update
+    const auto monSize = SysParams::Geometry().monomerSize   [bd.getType()];
+    auto       cylSize = SysParams::Geometry().cylinderNumMon[bd.getType()];
+
+    // Set load force to inf right before intersection.
+    if(intersectRes.intersect && intersectRes.t > 0) {
+        const int maxCylSize = static_cast<int>(intersectRes.t / monSize);
+        if(maxCylSize < cylSize) {
+            loadForces[maxCylSize] = std::numeric_limits< floatingpoint >::infinity();
+            cylSize = maxCylSize;
+        }
+    }
+
+    for (int i = 0; i < cylSize; i++) {
+
+        const auto newCoord = bd.coordinate() + (i * monSize) * dir;
+
+        const auto loadForce = interaction.loadForces(v0, v1, v2, newCoord, area, kExVol);
+        const auto effLoadForce = std::max< double >(-dot(dir, loadForce), 0.0);
+
+        loadForces[i] += effLoadForce;
+    }
+    //reset lfi
+    lfi = 0;
+
+} // void exclVolLoadForce(...)
+
+} // namespace (anonymous)
+
+template< typename InteractionType >
+void TriangleCylinderExclVolume< InteractionType >::computeLoadForce(const Bead& bo, Bead& bd, LoadForceEnd end, const Triangle& t) const {
+    const auto& mesh = t.getParent()->getMesh();
+    const size_t ti = t.getTopoIndex();
+    const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
+    const size_t hei1 = mesh.next(hei0);
+    const size_t hei2 = mesh.next(hei1);
+    const Vec3 v0 (mesh.getVertexAttribute(mesh.target(hei0)).getCoordinate());
+    const Vec3 v1 (mesh.getVertexAttribute(mesh.target(hei1)).getCoordinate());
+    const Vec3 v2 (mesh.getVertexAttribute(mesh.target(hei2)).getCoordinate());
+
+    const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
+    double kExVol = t.getMTriangle()->getExVolConst();
+
+    exclVolLoadForce(
+        _FFType, area, kExVol,
+        bo, bd, end,
+        v0, v1, v2
+    );
+}
+
+template < typename InteractionType >
+void TriangleCylinderExclVolume< InteractionType >::computeLoadForces() {
 
     for(auto t: Triangle::getTriangles()) {
 
@@ -144,106 +218,26 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
 
             // potential acts on second cylinder bead if it is a plus  end
             // potential acts on first  cylinder bead if it is a minus end
-            Bead* bd;
-            Bead* bo;
             if(c->isPlusEnd()) {
-                
-                bd = c->getSecondBead();
-                bo = c->getFirstBead();
-                
-                ///this normal is in the direction of polymerization
-                const auto normal = normalizedVector(bd->coordinate() - bo->coordinate());
-
-                // Test intersection of the ray with the triangle
-                const auto intersectRes = ray_tracing::MollerTrumboreIntersect<>()(
-                    bd->coordinate(), normal,
+                exclVolLoadForce(
+                    _FFType, area, kExVol,
+                    *c->getFirstBead(), *c->getSecondBead(), LoadForceEnd::Plus,
                     v0, v1, v2
                 );
-
-                //array of coordinate values to update
-                const auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
-                auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
-
-                // Set load force to inf right before intersection.
-                if(intersectRes.intersect && intersectRes.t > 0) {
-                    const int maxCylSize = static_cast<int>(intersectRes.t / monSize);
-                    if(maxCylSize < cylSize) {
-                        bd->loadForcesP[maxCylSize] = std::numeric_limits<double>::infinity();
-                        cylSize = maxCylSize;
-                    }
-                }
-
-                bd->lfip = 0;
-                for (int i = 0; i < cylSize; i++) {
-                    
-                    Vec< 3, floatingpoint > newCoord {
-                        bd->coordinate()[0] + i * normal[0] * monSize,
-                        bd->coordinate()[1] + i * normal[1] * monSize,
-                        bd->coordinate()[2] + i * normal[2] * monSize
-                    };
-                    
-                    auto loadForce = _FFType.loadForces(v0, v1, v2, newCoord, area, kExVol); // FIXME change it
-                    double effLoadForce = -dot(normal, loadForce);
-                    if(effLoadForce < 0.0) effLoadForce = 0.0;
-
-                    bd->loadForcesP[bd->lfip++] += effLoadForce;
-                }
-                //reset lfi
-                bd->lfip = 0;
             }
             
             if(c->isMinusEnd()) {
-                
-                bd = c->getFirstBead();
-                bo = c->getSecondBead();
-                
-                ///this normal is in the direction of polymerization
-                const auto normal = normalizedVector(bd->coordinate() - bo->coordinate());
-
-                // Test intersection of the ray with the triangle
-                const auto intersectRes = ray_tracing::MollerTrumboreIntersect<>()(
-                    bd->coordinate(), normal,
+                exclVolLoadForce(
+                    _FFType, area, kExVol,
+                    *c->getSecondBead(), *c->getFirstBead(), LoadForceEnd::Minus,
                     v0, v1, v2
                 );
-
-                //array of coordinate values to update
-                const auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
-                auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
-
-                // Set load force to inf right before intersection.
-                if(intersectRes.intersect && intersectRes.t > 0) {
-                    const int maxCylSize = static_cast<int>(intersectRes.t / monSize);
-                    if(maxCylSize < cylSize) {
-                        bd->loadForcesP[maxCylSize] = std::numeric_limits<double>::infinity();
-                        cylSize = maxCylSize;
-                    }
-                }
-
-                bd->lfim = 0;
-                for (int i = 0; i < cylSize; i++) {
-                    
-                    Vec< 3, floatingpoint > newCoord {
-                        bd->coordinate()[0] + i * normal[0] * monSize,
-                        bd->coordinate()[1] + i * normal[1] * monSize,
-                        bd->coordinate()[2] + i * normal[2] * monSize
-                    };
-                    
-                    auto loadForce = _FFType.loadForces(v0, v1, v2, newCoord, area, kExVol);
-                    double effLoadForce = -dot(normal, loadForce);
-                    if(effLoadForce < 0.0) effLoadForce = 0.0;
-
-                    bd->loadForcesM[bd->lfim++] += effLoadForce;
-                }
-                //reset lfi
-                bd->lfim = 0;
             }
             
         }
     }
 
-}
+} // void ...::computeLoadForces()
 
-///Template specializations
-template floatingpoint TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeEnergy(const floatingpoint* coord, bool stretched);
-template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeForces(const floatingpoint* coord, floatingpoint* force);
-template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeLoadForces();
+// Template instantiation
+template class TriangleCylinderExclVolume< TriangleCylinderBeadExclVolRepulsion >;

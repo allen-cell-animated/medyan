@@ -14,9 +14,9 @@
 #include "Mechanics/ForceField/Volume/TriangleCylinderVolumeFF.h"
 
 #include "Mechanics/ForceField/Volume/TriangleCylinderExclVolume.h"
-#include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.h"
+#include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.hpp"
 
-#include "Structure/SurfaceMesh/Triangle.h"
+#include "Structure/SurfaceMesh/Triangle.hpp"
 #include "Cylinder.h"
 
 TriangleCylinderVolumeFF::TriangleCylinderVolumeFF (string& type) {

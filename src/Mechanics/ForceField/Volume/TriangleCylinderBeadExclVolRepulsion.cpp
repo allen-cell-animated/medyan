@@ -11,9 +11,9 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.h"
+#include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.hpp"
 
-#include "Structure/SurfaceMesh/Triangle.h"
+#include "Structure/SurfaceMesh/Triangle.hpp"
 #include "Structure/SurfaceMesh/Vertex.h"
 #include "Bead.h"
 
@@ -35,7 +35,7 @@ using namespace mathfunc;
 double TriangleCylinderBeadExclVolRepulsion::energy(
     Vec3 c0, Vec3 c1, Vec3 c2, Vec3 cb, double area,
     double kExVol
-) {
+) const {
 
     //check if in same plane
     auto cp = cross(c1 - c0, c2 - c0);
@@ -96,7 +96,7 @@ void TriangleCylinderBeadExclVolRepulsion::forces(
     Vec3 c0, Vec3 c1, Vec3 c2, Vec3 cb,
     double area, const Vec3& dArea0, const Vec3& dArea1, const Vec3& dArea2,
     double kExVol
-) {
+) const {
     
     //check if in same plane
     auto cp = cross(c1 - c0, c2 - c0);
@@ -238,7 +238,7 @@ void TriangleCylinderBeadExclVolRepulsion::forces(
 Vec3 TriangleCylinderBeadExclVolRepulsion::loadForces(
     const Vec3& c0, const Vec3& c1, const Vec3& c2, const Vec< 3, floatingpoint >& coord,
     double area, double kExVol
-) {
+) const {
     Vec3 cb (coord);
 
     //check if in same plane

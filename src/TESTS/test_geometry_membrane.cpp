@@ -30,7 +30,7 @@ using namespace mathfunc;
 
 #    include "Vertex.h"
 #    include "Edge.h"
-#    include "Triangle.h"
+#    include "Triangle.hpp"
 #    include "GVoronoiCell.h"
 #    include "GEdge.h"
 #    include "GTriangle.h"

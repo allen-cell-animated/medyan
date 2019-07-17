@@ -11,33 +11,28 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_TriangleCylinderBeadExclVolRepulsion_h
-#define MEDYAN_TriangleCylinderBeadExclVolRepulsion_h
+#ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderBeadExclVolRepulsion_Hpp
+#define MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderBeadExclVolRepulsion_Hpp
 
 #include "MathFunctions.h"
 
-//FORWARD DECLARATIONS
-class Vertex;
-class Bead;
-
 /// Represents a repulsive excluded volume potential used by the
 /// TriangleCylinderExclVolume template.
-class TriangleCylinderBeadExclVolRepulsion {
+struct TriangleCylinderBeadExclVolRepulsion {
     
-public:
-    double energy(mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3 cb, double area, double kExVol);
+    double energy(mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3 cb, double area, double kExVol) const;
     
     void forces(
         floatingpoint* f0, floatingpoint* f1, floatingpoint* f2, floatingpoint* fb,
         mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3 cb,
         double area, const mathfunc::Vec3&, const mathfunc::Vec3&, const mathfunc::Vec3&,
         double kExVol
-    );
+    ) const;
 
     mathfunc::Vec3 loadForces(
         const mathfunc::Vec3& c0, const mathfunc::Vec3& c1, const mathfunc::Vec3& c2, const mathfunc::Vec< 3, floatingpoint >& coord,
         double area, double kExVol
-    );
+    ) const;
 };
 
 

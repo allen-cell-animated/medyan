@@ -1,7 +1,5 @@
-#ifndef MEDYAN_Triangle_h
-#define MEDYAN_Triangle_h
-
-#include <array>
+#ifndef MEDYAN_Structure_SurfaceMesh_Triangle_Hpp
+#define MEDYAN_Structure_SurfaceMesh_Triangle_Hpp
 
 #include "common.h"
 #include "Database.h"
@@ -10,7 +8,7 @@
 //#include "Reactable.h"
 #include "DynamicNeighbor.h"
 #include "MathFunctions.h"
-#include "Structure/SurfaceMesh/MTriangle.h"
+#include "Structure/SurfaceMesh/MTriangle.hpp"
 
 // Forward declarations
 class Compartment;
@@ -52,7 +50,8 @@ public:
     size_t getTopoIndex() const { return _topoIndex; }
 
     // Get mech triangle
-    MTriangle* getMTriangle() { return _mTriangle.get(); }
+    MTriangle*       getMTriangle()       { return _mTriangle.get(); }
+    const MTriangle* getMTriangle() const { return _mTriangle.get(); }
 
     /// Get all instances of this class from the SubSystem
     static const vector<Triangle*>& getTriangles() {

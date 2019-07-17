@@ -5,7 +5,6 @@
 #include "SubSystem.h"
 #include "SysParams.h"
 
-#include "Structure/SurfaceMesh/MTriangle.h"
 #include "Structure/SurfaceMesh/MVoronoiCell.h"
 #include "Structure/SurfaceMesh/MMembrane.h"
 

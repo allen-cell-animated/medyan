@@ -1,7 +1,5 @@
-#ifndef MEDYAN_MTriangle_h
-#define MEDYAN_MTriangle_h
-
-#include <array>
+#ifndef MEDYAN_Structure_SurfaceMesh_MTriangle_Hpp
+#define MEDYAN_Structure_SurfaceMesh_MTriangle_Hpp
 
 /******************************************************************************
 
@@ -19,8 +17,8 @@ private:
 public:
     MTriangle(short membraneType);
 
-    void getExVolConst(double kExVol) { _kExVol = kExVol; }
-    double getExVolConst() { return _kExVol; }
+    void setExVolConst(double kExVol) { _kExVol = kExVol; }
+    double getExVolConst() const { return _kExVol; }
 
 };
 

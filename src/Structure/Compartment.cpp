@@ -23,7 +23,7 @@ using namespace mathfunc;
 #include "ChemNRMImpl.h"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "Structure/SurfaceMesh/Triangle.h"
+#include "Structure/SurfaceMesh/Triangle.hpp"
 #include "Filament.h"
 #include "Cylinder.h"
 #include <stdint.h>

@@ -18,7 +18,7 @@
 #include "Cylinder.h"
 #include "Bubble.h"
 #include "BoundaryElement.h"
-#include "Structure/SurfaceMesh/Triangle.h"
+#include "Structure/SurfaceMesh/Triangle.hpp"
 
 #include "GController.h"
 #include "MathFunctions.h"
