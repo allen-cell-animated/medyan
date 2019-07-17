@@ -1,4 +1,4 @@
-#include "Structure/SurfaceMesh/MTriangle.h"
+#include "Structure/SurfaceMesh/MTriangle.hpp"
 
 #include "SysParams.h"
 

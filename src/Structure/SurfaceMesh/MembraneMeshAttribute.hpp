@@ -13,7 +13,7 @@
 #include "Structure/SurfaceMesh/AdaptiveMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/Edge.h"
 #include "Structure/SurfaceMesh/GeometricMeshAttribute.hpp"
-#include "Structure/SurfaceMesh/Triangle.h"
+#include "Structure/SurfaceMesh/Triangle.hpp"
 #include "Structure/SurfaceMesh/Vertex.h"
 #include "Util/Io/Log.hpp"
 

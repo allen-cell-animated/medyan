@@ -1,4 +1,4 @@
-#include "Triangle.h"
+#include "Triangle.hpp"
 
 #include "Core/Globals.hpp"
 #include "Compartment.h"

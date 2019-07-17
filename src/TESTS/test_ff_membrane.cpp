@@ -31,8 +31,8 @@ using namespace mathfunc;
 #    include "Membrane.hpp"
 #    include "Vertex.h"
 #    include "MVoronoiCell.h"
-#    include "Triangle.h"
-#    include "MTriangle.h"
+#    include "Triangle.hpp"
+#    include "MTriangle.hpp"
 
 #    include "MembraneInteractions.hpp"
 #    include "MembraneStretching.hpp"

@@ -29,11 +29,11 @@ using namespace mathfunc;
 #    include "Component.h"
 
 #    include "Edge.h"
-#    include "Triangle.h"
+#    include "Triangle.hpp"
 #    include "Cylinder.h"
 
 #    include "TriangleCylinderExclVolume.h"
-#    include "TriangleCylinderBeadExclVolRepulsion.h"
+#    include "TriangleCylinderBeadExclVolRepulsion.hpp"
 
 namespace {
 

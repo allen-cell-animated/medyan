@@ -447,6 +447,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     // Optimize the membrane
     membraneAdaptiveRemesh();
     prepareMembraneSharedData();
+    updatePositions();
 
     // Deactivate all the compartments outside membrane, and mark boundaries as interesting
     for(auto c : _subSystem->getCompartmentGrid()->getCompartments()) {

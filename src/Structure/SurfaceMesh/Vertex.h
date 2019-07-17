@@ -9,7 +9,7 @@
 
 #include "Structure/SurfaceMesh/Edge.h"
 #include "Structure/SurfaceMesh/MVoronoiCell.h"
-#include "Structure/SurfaceMesh/Triangle.h"
+#include "Structure/SurfaceMesh/Triangle.hpp"
 
 // Forward declarations
 class Edge;
