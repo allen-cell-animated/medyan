@@ -8,6 +8,11 @@
 
 namespace visual {
 
+// Managing the shader compilation process
+//
+// Note:
+//   - Creation/modification/destruction of objects of this type must be within
+//     an opengl context
 class Shader {
 public:
 

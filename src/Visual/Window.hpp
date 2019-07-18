@@ -108,65 +108,6 @@ inline void replaceBuffer(GLenum target, const std::vector<T>& source) {
     }
 } 
 
-// The main loop for all windows.
-// Note:
-//   - This function must be called from the main thread.
-inline void mainLoop(GLFWwindow* window) {
-    using namespace state;
-
-    // Loop
-    LOG(INFO) << "Entering main loop";
-
-    while (!glfwWindowShouldClose(window)) {
-        // input
-        processInput(window);
-
-        // rendering
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // transform
-        state::projection = glm::perspective(state::fov, (float)state::windowWidth / (float)state::windowHeight, state::nearDistance, state::farDistance);
-        state::model = glm::mat4(1.0f);
-        glm::mat3 modelInvTrans3(glm::transpose(glm::inverse(state::model)));
-
-        state::sd.setMat4("projection", state::projection);
-        state::sd.setMat4("model", state::model);
-        state::sd.setMat3("modelInvTrans3", modelInvTrans3);
-        state::sd.setMat4("view", camera.view());
-        state::sd.setVec3("CameraPos", camera.position);
-
-        glUseProgram(state::sd.id());
-
-        {
-            std::lock_guard< std::mutex > guard(shared::veMutex);
-
-            for(const auto& ve : shared::visualElements) {
-                std::lock_guard< std::mutex > guard(ve->me);
-
-                glBindVertexArray(ve->state.vao);
-
-                glPolygonMode(GL_FRONT_AND_BACK, ve->profile.polygonMode);
-
-                // Update data
-                if(ve->state.attribChanged) {
-                    glBindBuffer(GL_ARRAY_BUFFER, ve->state.vbo);
-                    replaceBuffer(GL_ARRAY_BUFFER, ve->state.vertexAttribs);
-                    ve->state.attribChanged = false;
-                }
-
-                // Draw
-                glDrawArrays(ve->state.eleMode, 0, ve->state.vertexAttribs.size() / ve->state.size.vaStride);
-                // glDrawElements(ve->state.eleMode, ve->state.vertexIndices.size(), GL_UNSIGNED_INT, (void*)0);
-            }
-        }
-        glBindVertexArray(0);
-
-        // check
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
-}
 
 // The RAII object for managing visualization context and window
 //
@@ -260,12 +201,14 @@ public:
     }
 
     auto window() const { return window_; }
+    const auto& windowSettings() const { return windowSettings_; }
 
 private:
     GLFWwindow* window_;
     WindowSettings windowSettings_;
-};
+}; // VisualContext
 
+// The RAII object for all the rendering process
 struct VisualDisplay {
     // The overall opengl context. Must be at top
     VisualContext vc;
@@ -350,8 +293,63 @@ struct VisualDisplay {
 
     } // VisualDisplay()
 
-    void run() const { mainLoop(vc.window()); }
-};
+    void run() {
+
+        while (!glfwWindowShouldClose(vc.window())) {
+            // input
+            processInput(vc.window());
+
+            // rendering
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            // transform
+            state::projection = glm::perspective(state::fov, (float)vc.windowSettings().width / (float)vc.windowSettings().height, state::nearDistance, state::farDistance);
+            state::model = glm::mat4(1.0f);
+            glm::mat3 modelInvTrans3(glm::transpose(glm::inverse(state::model)));
+
+            for(auto& vp : vps) {
+                std::lock_guard< std::mutex > guard(vp.veMutex);
+
+                if(!vp.visualElements.empty()) {
+                    glUseProgram(vp.shader.id());
+
+                    vp.shader.setMat4("projection", state::projection);
+                    vp.shader.setMat4("model", state::model);
+                    vp.shader.setMat3("modelInvTrans3", modelInvTrans3);
+                    vp.shader.setMat4("view", state::camera.view());
+                    vp.shader.setVec3("CameraPos", state::camera.position);
+
+                    for(const auto& ve : vp.visualElements) {
+                        std::lock_guard< std::mutex > guard(ve->me);
+
+                        glBindVertexArray(ve->state.vao);
+
+                        glPolygonMode(GL_FRONT_AND_BACK, ve->profile.polygonMode);
+
+                        // Update data
+                        if(ve->state.attribChanged) {
+                            glBindBuffer(GL_ARRAY_BUFFER, ve->state.vbo);
+                            replaceBuffer(GL_ARRAY_BUFFER, ve->state.vertexAttribs);
+                            ve->state.attribChanged = false;
+                        }
+
+                        // Draw
+                        glDrawArrays(ve->state.eleMode, 0, ve->state.vertexAttribs.size() / ve->state.size.vaStride);
+                        // glDrawElements(ve->state.eleMode, ve->state.vertexIndices.size(), GL_UNSIGNED_INT, (void*)0);
+                    }
+                }
+            } // End loop visual presets
+            glBindVertexArray(0);
+
+            // check
+            glfwSwapBuffers(vc.window());
+            glfwPollEvents();
+
+        } // End main loop
+
+    } // void run() const
+}; // VisualDisplay
 
 } // namespace visual
 
