@@ -60,7 +60,7 @@ using namespace mathfunc;
 namespace {
 
 void prepareMembraneSharedData() {
-    visual::copySystemDataAndRunHelper(visual::sys_data_update::BeadPosition | visual::sys_data_update::BeadConnection);
+    visual::copySystemDataAndRunHelper(visual::sys_data_update::BeadPosition | visual::sys_data_update::BeadConnection | visual::sys_data_update::Compartment);
 }
 
 void invalidateMembraneMeshIndexCache() {

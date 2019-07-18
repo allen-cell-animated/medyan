@@ -218,10 +218,12 @@ struct VisualDisplay {
     VisualContext vc;
 
     // Visual presets
-    std::array< VisualPreset, 1 > vps {{
-        { GlSize {}, shader::VertexElementLight, shader::FragElementLight }
+    std::array< VisualPreset, 2 > vps {{
+        { GlSize {9, 0, 3, 3, 3, 6, 3}, shader::VertexElementLight, shader::FragElementLight },
+        { GlSize {6, 0, 3, 3, 0, 3, 3}, shader::VertexElementLine,  shader::FragElementLine  }
     }};
     VisualPreset& vpLight = vps[0];
+    VisualPreset& vpLine  = vps[1];
 
     VisualDisplay() {
         // Configure global opengl state
@@ -229,20 +231,14 @@ struct VisualDisplay {
 
         // Setup visual with light
         {
-            std::lock_guard< std::mutex > guard(vpLight.veMutex);
+            auto& vp = vpLight;
+            std::lock_guard< std::mutex > guard(vp.veMutex);
 
-            const auto newVe = [this]() -> auto& {
-                vpLight.visualElements.emplace_back(new VisualElement(vpLight.size));
-                return vpLight.visualElements.back();
+            const auto newVe = [&]() -> auto& {
+                vp.visualElements.emplace_back(new VisualElement(vp.size));
+                return vp.visualElements.back();
             };
 
-            {
-                auto& ve = newVe();
-                ve->profile.enabled = true;
-                ve->profile.flag = Profile::targetCompartment;
-                ve->profile.colorAmbient = glm::vec3(0.8f, 0.8f, 0.8f);
-                ve->profile.colorDiffuse = glm::vec3(0.8f, 0.8f, 0.8f);
-            }
             {
                 auto& ve = newVe();
                 ve->profile.enabled = true;
@@ -293,7 +289,27 @@ struct VisualDisplay {
                 ve->profile.colorAmbient = glm::vec3(0.95f, 0.9f, 0.05f);
                 ve->profile.colorDiffuse = glm::vec3(0.95f, 0.9f, 0.05f);
             }
-        } // ~lock_guard
+        } // ~lock_guard (vpLight)
+
+        // Setup visual for non-lights
+        {
+            auto& vp = vpLine;
+            std::lock_guard< std::mutex > guard(vp.veMutex);
+
+            const auto newVe = [&]() -> auto& {
+                vp.visualElements.emplace_back(new VisualElement(vp.size));
+                return vp.visualElements.back();
+            };
+
+            {
+                auto& ve = newVe();
+                ve->state.eleMode = GL_LINES;
+                ve->profile.enabled = true;
+                ve->profile.flag = Profile::targetCompartment;
+                ve->profile.colorAmbient = glm::vec3(0.8f, 0.8f, 0.8f);
+                ve->profile.colorDiffuse = glm::vec3(0.8f, 0.8f, 0.8f);
+            }
+        } // ~lock_guard (vpLine)
 
     } // VisualDisplay()
 

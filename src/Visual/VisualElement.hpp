@@ -100,15 +100,25 @@ struct GlState {
 
         // Vertex attribute
         //---------------------------------------------------------------------
+        GLuint idx = 0;
         // Position
-        glVertexAttribPointer(0, size.vaPosSize,    GL_FLOAT, GL_FALSE, size.vaStride * sizeof(float), static_cast<const char*>(0) + sizeof(float) * size.vaPosStart   );
-        glEnableVertexAttribArray(0);
+        if(size.vaPosSize) {
+            glVertexAttribPointer(idx, size.vaPosSize,    GL_FLOAT, GL_FALSE, size.vaStride * sizeof(float), static_cast<const char*>(0) + sizeof(float) * size.vaPosStart   );
+            glEnableVertexAttribArray(idx);
+            ++idx;
+        }
         // Normal
-        glVertexAttribPointer(1, size.vaNormalSize, GL_FLOAT, GL_FALSE, size.vaStride * sizeof(float), static_cast<const char*>(0) + sizeof(float) * size.vaNormalStart);
-        glEnableVertexAttribArray(1);
+        if(size.vaNormalSize) {
+            glVertexAttribPointer(idx, size.vaNormalSize, GL_FLOAT, GL_FALSE, size.vaStride * sizeof(float), static_cast<const char*>(0) + sizeof(float) * size.vaNormalStart);
+            glEnableVertexAttribArray(idx);
+            ++idx;
+        }
         // Color
-        glVertexAttribPointer(2, size.vaColorSize,  GL_FLOAT, GL_FALSE, size.vaStride * sizeof(float), static_cast<const char*>(0) + sizeof(float) * size.vaColorStart );
-        glEnableVertexAttribArray(2);
+        if(size.vaColorSize) {
+            glVertexAttribPointer(idx, size.vaColorSize,  GL_FLOAT, GL_FALSE, size.vaStride * sizeof(float), static_cast<const char*>(0) + sizeof(float) * size.vaColorStart );
+            glEnableVertexAttribArray(idx);
+            ++idx;
+        }
 
         // temporarily retarget
         glBindBuffer(GL_ARRAY_BUFFER, 0);
