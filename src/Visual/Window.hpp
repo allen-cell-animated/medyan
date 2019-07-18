@@ -48,8 +48,7 @@ double mouseLastX;
 double mouseLastY;
 
 // gl data
-GLFWwindow* window;
-Shader sd;
+Shader sd(shader::VertexElementLight, shader::FragElementLight); // FIXME: should not be init'ed here
 
 } // namespace state
 
@@ -58,41 +57,6 @@ inline void glfwError(int id, const char* description) {
     system("pause");
 }
 
-inline void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    state::windowWidth = width;
-    state::windowHeight = height;
-    glViewport(0, 0, width, height);
-}
-inline void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
-    using namespace state;
-    int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-    if(state == GLFW_PRESS) {
-        if(mouseLeftAlreadyPressed) {
-            // Transform
-            double dist = glm::distance(camera.target, camera.position);
-
-            camera.position -= (camera.right * float(xpos - mouseLastX) + camera.up * float(mouseLastY - ypos)) * (float)camera.mouseControlSpeed;
-            camera.position = camera.target + glm::normalize(camera.position - camera.target) * (float)dist;
-            
-            // Update direction
-            camera.right = glm::normalize(glm::cross(camera.target - camera.position, camera.up));
-            camera.up = glm::normalize(glm::cross(camera.right, camera.target - camera.position));
-
-        } else {
-            mouseLeftAlreadyPressed = true;
-        }
-        mouseLastX = xpos;
-        mouseLastY = ypos;
-    } else {
-        mouseLeftAlreadyPressed = false;
-    }
-}
-inline void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-    using namespace state;
-    fov -= 0.02 * yoffset;
-    if(fov < 0.01f) fov = 0.01f;
-    if(fov > 3.13f) fov = 3.13f;
-}
 inline void processInput(GLFWwindow* window) {
     using namespace state;
 
@@ -129,44 +93,15 @@ inline void processInput(GLFWwindow* window) {
 }
 
 inline void createWindow() {
-    LOG(DEBUG) << "Initializing GLFW";
-    glfwSetErrorCallback(&glfwError);
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-    state::window = glfwCreateWindow(state::windowWidth, state::windowHeight, "MEDYAN", NULL, NULL);
-    if(state::window == NULL) {
-        LOG(ERROR) << "Failed to create GLFW window";
-        glfwTerminate();
-        return;
-    }
-    glfwMakeContextCurrent(state::window);
-
-    LOG(DEBUG) << "initializing GLAD";
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        LOG(ERROR) << "Failed to initialize GLAD";
-        return;
-    }
-    glViewport(0, 0, state::windowWidth, state::windowHeight);
-    glfwSetFramebufferSizeCallback(state::window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(state::window, cursor_position_callback);
-    glfwSetScrollCallback(state::window, scroll_callback);
-
     // Configure global opengl state
     glEnable(GL_DEPTH_TEST);
-
-    // Shader
-    state::sd.init(shader::VertexElementLight, shader::FragElementLight);
 
     {
         // Setup profile
         std::lock_guard< std::mutex > guard(shared::veMutex);
 
         {
-            shared::visualElements.emplace_back(new VisualElement);
+            shared::visualElements.emplace_back(new VisualElement(GlSize{}));
             auto& ve = shared::visualElements.back();
             ve->profile.enabled = true;
             ve->profile.flag = Profile::targetCompartment;
@@ -174,7 +109,7 @@ inline void createWindow() {
             ve->profile.colorDiffuse = glm::vec3(0.8f, 0.8f, 0.8f);
         }
         {
-            shared::visualElements.emplace_back(new VisualElement);
+            shared::visualElements.emplace_back(new VisualElement(GlSize{}));
             auto& ve = shared::visualElements.back();
             ve->profile.enabled = true;
             ve->profile.flag = Profile::targetMembrane;
@@ -182,7 +117,7 @@ inline void createWindow() {
             ve->profile.colorDiffuse = glm::vec3(0.4f, 0.6f, 0.95f);
         }
         {
-            shared::visualElements.emplace_back(new VisualElement);
+            shared::visualElements.emplace_back(new VisualElement(GlSize{}));
             auto& ve = shared::visualElements.back();
             ve->profile.enabled = true;
             ve->profile.flag = Profile::targetMembrane | Profile::displayForce;
@@ -190,7 +125,7 @@ inline void createWindow() {
             ve->profile.colorDiffuse = glm::vec3(0.3f, 0.6f, 0.95f);
         }
         {
-            shared::visualElements.emplace_back(new VisualElement);
+            shared::visualElements.emplace_back(new VisualElement(GlSize{}));
             auto& ve = shared::visualElements.back();
             ve->profile.enabled = true;
             ve->profile.flag = Profile::targetFilament;
@@ -199,7 +134,7 @@ inline void createWindow() {
             ve->profile.colorDiffuse = glm::vec3(0.95f, 0.1f, 0.15f);
         }
         {
-            shared::visualElements.emplace_back(new VisualElement);
+            shared::visualElements.emplace_back(new VisualElement(GlSize{}));
             auto& ve = shared::visualElements.back();
             ve->profile.enabled = true;
             ve->profile.flag = Profile::targetFilament | Profile::displayForce;
@@ -207,7 +142,7 @@ inline void createWindow() {
             ve->profile.colorDiffuse = glm::vec3(0.95f, 0.1f, 0.15f);
         }
         {
-            shared::visualElements.emplace_back(new VisualElement);
+            shared::visualElements.emplace_back(new VisualElement(GlSize{}));
             auto& ve = shared::visualElements.back();
             ve->profile.enabled = true;
             ve->profile.flag = Profile::targetLinker;
@@ -215,7 +150,7 @@ inline void createWindow() {
             ve->profile.colorDiffuse = glm::vec3(0.1f, 0.9f, 0.0f);
         }
         {
-            shared::visualElements.emplace_back(new VisualElement);
+            shared::visualElements.emplace_back(new VisualElement(GlSize{}));
             auto& ve = shared::visualElements.back();
             ve->profile.enabled = true;
             ve->profile.flag = Profile::targetMotor;
@@ -223,7 +158,7 @@ inline void createWindow() {
             ve->profile.colorDiffuse = glm::vec3(0.1f, 0.1f, 0.99f);
         }
         {
-            shared::visualElements.emplace_back(new VisualElement);
+            shared::visualElements.emplace_back(new VisualElement(GlSize{}));
             auto& ve = shared::visualElements.back();
             ve->profile.enabled = true;
             ve->profile.flag = Profile::targetBrancher;
@@ -250,15 +185,15 @@ inline void replaceBuffer(GLenum target, const std::vector<T>& source) {
 // The main loop for all windows.
 // Note:
 //   - This function must be called from the main thread.
-inline void mainLoop() {
+inline void mainLoop(GLFWwindow* window) {
     using namespace state;
 
     // Loop
     LOG(INFO) << "Entering main loop";
 
-    while (!glfwWindowShouldClose(state::window)) {
+    while (!glfwWindowShouldClose(window)) {
         // input
-        processInput(state::window);
+        processInput(window);
 
         // rendering
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -275,7 +210,7 @@ inline void mainLoop() {
         state::sd.setMat4("view", camera.view());
         state::sd.setVec3("CameraPos", camera.position);
 
-        glUseProgram(state::sd.id);
+        glUseProgram(state::sd.id());
 
         {
             std::lock_guard< std::mutex > guard(shared::veMutex);
@@ -295,14 +230,14 @@ inline void mainLoop() {
                 }
 
                 // Draw
-                glDrawArrays(ve->state.eleMode, 0, ve->state.vertexAttribs.size() / GlState::vaStride);
+                glDrawArrays(ve->state.eleMode, 0, ve->state.vertexAttribs.size() / ve->state.size.vaStride);
                 // glDrawElements(ve->state.eleMode, ve->state.vertexIndices.size(), GL_UNSIGNED_INT, (void*)0);
             }
         }
         glBindVertexArray(0);
 
         // check
-        glfwSwapBuffers(state::window);
+        glfwSwapBuffers(window);
         glfwPollEvents();
     }
 }
@@ -317,16 +252,113 @@ inline void deallocate() {
         shared::visualElements.clear();
     }
 
-    glfwTerminate();
-
 }
 
-// The RAII object
+// The RAII object for managing visualization context and window
+//
+// Note:
+//   - Only one object of this type can be created at a time.
+//   - The window signal handling should only be done from the main thread (due
+//     to MacOS Cocoa framework).
+class VisualContext {
+public:
+    struct WindowSettings {
+        int width = 1200;
+        int height = 800;
+    };
+
+    VisualContext() {
+        // GLFW initializing
+        LOG(DEBUG) << "Initializing GLFW";
+        glfwSetErrorCallback(&glfwError);
+        glfwInit();
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+        // GLAD initializing
+        LOG(DEBUG) << "initializing GLAD";
+        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+            LOG(ERROR) << "Failed to initialize GLAD";
+            return;
+        }
+
+        // Window initializing
+        window_ = glfwCreateWindow(windowSettings_.width, windowSettings_.height, "MEDYAN", NULL, NULL);
+        if(window_ == NULL) {
+            LOG(ERROR) << "Failed to create GLFW window";
+            glfwTerminate();
+            return;
+        }
+        glfwMakeContextCurrent(window_);
+
+        glViewport(0, 0, windowSettings_.width, windowSettings_.height);
+        glfwSetWindowUserPointer(window_, &windowSettings_);
+
+        // Set window callbacks
+        const auto framebufferSizeCallback = [](GLFWwindow* window, int width, int height) {
+            auto ws = static_cast< WindowSettings* >(glfwGetWindowUserPointer(window));
+            ws->width = width;
+            ws->height = height;
+            glViewport(0, 0, width, height);
+        };
+        const auto cursorPositionCallback = [](GLFWwindow* window, double xpos, double ypos) {
+            using namespace state;
+
+            int mouseState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+            if(mouseState == GLFW_PRESS) {
+                if(mouseLeftAlreadyPressed) {
+                    // Transform
+                    double dist = glm::distance(camera.target, camera.position);
+
+                    camera.position -= (camera.right * float(xpos - mouseLastX) + camera.up * float(mouseLastY - ypos)) * (float)camera.mouseControlSpeed;
+                    camera.position = camera.target + glm::normalize(camera.position - camera.target) * (float)dist;
+                    
+                    // Update direction
+                    camera.right = glm::normalize(glm::cross(camera.target - camera.position, camera.up));
+                    camera.up = glm::normalize(glm::cross(camera.right, camera.target - camera.position));
+
+                } else {
+                    mouseLeftAlreadyPressed = true;
+                }
+                mouseLastX = xpos;
+                mouseLastY = ypos;
+            } else {
+                mouseLeftAlreadyPressed = false;
+            }
+        };
+        const auto scrollCallback = [](GLFWwindow* window, double xoffset, double yoffset) {
+            using namespace state;
+            fov -= 0.02 * yoffset;
+            if(fov < 0.01f) fov = 0.01f;
+            if(fov > 3.13f) fov = 3.13f;
+        };
+
+        glfwSetFramebufferSizeCallback(window_, framebufferSizeCallback);
+        glfwSetCursorPosCallback(window_, cursorPositionCallback);
+        glfwSetScrollCallback(window_, scrollCallback);
+
+    } // VisualContext()
+
+    ~VisualContext() {
+        glfwTerminate();
+    }
+
+    auto window() const { return window_; }
+
+private:
+    GLFWwindow* window_;
+    WindowSettings windowSettings_;
+};
+
 struct VisualDisplay {
+    VisualContext vc;
+
     VisualDisplay() { createWindow(); }
     ~VisualDisplay() { deallocate(); }
 
-    void run() const { mainLoop(); }
+    void run() const { mainLoop(vc.window()); }
 };
 
 } // namespace visual

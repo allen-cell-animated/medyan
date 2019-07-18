@@ -8,10 +8,38 @@
 
 namespace visual {
 
-struct Shader {
-    unsigned int id;
+class Shader {
+public:
 
-    void init(const char* vertexShaderSrc, const char* fragmentShaderSrc) {
+    Shader(const char* vertexShaderSrc, const char* fragmentShaderSrc) {
+        init_(vertexShaderSrc, fragmentShaderSrc);
+    }
+
+    ~Shader() {
+        destroy_();
+    }
+
+    auto id() const { return id_; }
+
+    void reset(const char* vertexShaderSrc, const char* fragmentShaderSrc) {
+        destroy_();
+        init_(vertexShaderSrc, fragmentShaderSrc);
+    }
+
+    void setMat3(const char* name, const glm::mat3& mat) const {
+        glUniformMatrix3fv(glGetUniformLocation(id_, name), 1, GL_FALSE, glm::value_ptr(mat));
+    }
+    void setMat4(const char* name, const glm::mat4& mat) const {
+        glUniformMatrix4fv(glGetUniformLocation(id_, name), 1, GL_FALSE, glm::value_ptr(mat));
+    }
+    void setVec3(const char* name, const glm::vec3& vec) const {
+        glUniform3fv(glGetUniformLocation(id_, name), 1, glm::value_ptr(vec));
+    }
+
+private:
+    unsigned int id_;
+
+    void init_(const char* vertexShaderSrc, const char* fragmentShaderSrc) {
         int success;
         char infoLog[512];
 
@@ -33,29 +61,25 @@ struct Shader {
             LOG(ERROR) << "Fragment shader compile failed: " << infoLog;
         }
 
-        id = glCreateProgram();
-        glAttachShader(id, vertexShader);
-        glAttachShader(id, fragmentShader);
-        glLinkProgram(id);
-        glGetProgramiv(id, GL_LINK_STATUS, &success);
+        id_ = glCreateProgram();
+        glAttachShader(id_, vertexShader);
+        glAttachShader(id_, fragmentShader);
+        glLinkProgram(id_);
+        glGetProgramiv(id_, GL_LINK_STATUS, &success);
         if (!success) {
-            glGetProgramInfoLog(id, 512, NULL, infoLog);
+            glGetProgramInfoLog(id_, 512, NULL, infoLog);
             LOG(ERROR) << "Shader program link failed: " << infoLog;
         }
 
+        glDetachShader(id_, vertexShader);
+        glDetachShader(id_, fragmentShader);
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
 
     }
 
-    void setMat3(const char* name, const glm::mat3& mat) const {
-        glUniformMatrix3fv(glGetUniformLocation(id, name), 1, GL_FALSE, glm::value_ptr(mat));
-    }
-    void setMat4(const char* name, const glm::mat4& mat) const {
-        glUniformMatrix4fv(glGetUniformLocation(id, name), 1, GL_FALSE, glm::value_ptr(mat));
-    }
-    void setVec3(const char* name, const glm::vec3& vec) const {
-        glUniform3fv(glGetUniformLocation(id, name), 1, glm::value_ptr(vec));
+    void destroy_() const {
+        glDeleteProgram(id_);
     }
 };
 

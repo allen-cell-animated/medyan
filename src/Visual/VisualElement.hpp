@@ -2,10 +2,12 @@
 #define MEDYAN_Visual_VisualElement_Hpp
 
 #include <cstdint>
+#include <memory> // shared_ptr
 #include <mutex>
 #include <vector>
 
 #include "Visual/Common.hpp"
+#include "Visual/Shader.hpp"
 
 namespace visual {
 
@@ -57,14 +59,18 @@ struct Profile {
     float     colorShininess;
 };
 
+struct GlSize {
+    unsigned int vaStride      = 9;
+    unsigned int vaPosStart    = 0;
+    unsigned int vaPosSize     = 3;
+    unsigned int vaNormalStart = 3;
+    unsigned int vaNormalSize  = 3;
+    unsigned int vaColorStart  = 6;
+    unsigned int vaColorSize   = 3;
+};
+
 struct GlState {
-    static constexpr unsigned int vaStride = 9;
-    static constexpr unsigned int vaPosStart = 0;
-    static constexpr unsigned int vaPosSize = 3;
-    static constexpr unsigned int vaNormalStart = 3;
-    static constexpr unsigned int vaNormalSize = 3;
-    static constexpr unsigned int vaColorStart = 6;
-    static constexpr unsigned int vaColorSize = 3;
+    const GlSize size; // This is a redundant GlSize for thread safe access
 
     // vao, vbo, ebo
     GLuint vao;
@@ -81,7 +87,7 @@ struct GlState {
     GLenum eleMode = GL_TRIANGLES;
 
     // ctor and dtor
-    GlState() {
+    GlState(GlSize newSize) : size(newSize) {
         glGenBuffers(1, &vbo);
         // glGenBuffers(1, &ebo);
         glGenVertexArrays(1, &vao);
@@ -93,13 +99,13 @@ struct GlState {
         // Vertex attribute
         //---------------------------------------------------------------------
         // Position
-        glVertexAttribPointer(0, vaPosSize,    GL_FLOAT, GL_FALSE, vaStride * sizeof(float), static_cast<const char*>(0) + sizeof(float) * vaPosStart   );
+        glVertexAttribPointer(0, size.vaPosSize,    GL_FLOAT, GL_FALSE, size.vaStride * sizeof(float), static_cast<const char*>(0) + sizeof(float) * size.vaPosStart   );
         glEnableVertexAttribArray(0);
         // Normal
-        glVertexAttribPointer(1, vaNormalSize, GL_FLOAT, GL_FALSE, vaStride * sizeof(float), static_cast<const char*>(0) + sizeof(float) * vaNormalStart);
+        glVertexAttribPointer(1, size.vaNormalSize, GL_FLOAT, GL_FALSE, size.vaStride * sizeof(float), static_cast<const char*>(0) + sizeof(float) * size.vaNormalStart);
         glEnableVertexAttribArray(1);
         // Color
-        glVertexAttribPointer(2, vaColorSize,  GL_FLOAT, GL_FALSE, vaStride * sizeof(float), static_cast<const char*>(0) + sizeof(float) * vaColorStart );
+        glVertexAttribPointer(2, size.vaColorSize,  GL_FLOAT, GL_FALSE, size.vaStride * sizeof(float), static_cast<const char*>(0) + sizeof(float) * size.vaColorStart );
         glEnableVertexAttribArray(2);
 
         // temporarily retarget
@@ -134,6 +140,24 @@ struct VisualElement {
     //-------------------------------------------------------------------------
     GlState state;
 
+    VisualElement(GlSize size) : state(size) {}
+
+};
+
+// Preset configurations for shaders and vector structures
+//
+// Thread safety: Creation or modification of objects of this type should only
+//     happen in the opengl main thread.
+// Note:
+//   - The creation/modification/destruction of objects of this type must be
+//     within an OpenGL context
+struct VisualPreset {
+    const GlSize size;
+    const Shader shader;
+    std::vector< std::shared_ptr< VisualElement > > visualElements;
+
+    VisualPreset(GlSize size, const char* vertexShaderSrc, const char* fragmentShaderSrc)
+        : size(size), shader(vertexShaderSrc, fragmentShaderSrc) { }
 };
 
 } // namespace visual

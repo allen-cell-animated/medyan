@@ -85,13 +85,13 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 const auto& forces = (ve->profile.flag & Profile::forceUseSearchDir) ? sdfv.copiedBeadData.forces : sdfv.copiedBeadData.forcesAux;
 
                 for(const auto& mi : sdfv.membraneIndices) {
-                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 2 * GlState::vaStride * mi.vertexIndices.size());
+                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 2 * ve->state.size.vaStride * mi.vertexIndices.size());
                     for(size_t i : mi.vertexIndices) {
                         const auto coord = sdfv.copiedBeadData.coords[i];
                         ve->state.vertexAttribs.push_back(coord[0]);
                         ve->state.vertexAttribs.push_back(coord[1]);
                         ve->state.vertexAttribs.push_back(coord[2]);
-                        ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + GlState::vaNormalSize); // dummy normal
+                        ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + ve->state.size.vaNormalSize); // dummy normal
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
@@ -101,14 +101,14 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         ve->state.vertexAttribs.push_back(forceTip[0]);
                         ve->state.vertexAttribs.push_back(forceTip[1]);
                         ve->state.vertexAttribs.push_back(forceTip[2]);
-                        ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + GlState::vaNormalSize); // dummy normal
+                        ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + ve->state.size.vaNormalSize); // dummy normal
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
                     }
                 }
 
-                // const auto numBeads = ve->state.vertexAttribs.size() / GlState::vaStride;
+                // const auto numBeads = ve->state.vertexAttribs.size() / ve->state.size.vaStride;
                 // if(sdfv.updated & sys_data_update::BeadConnection) {
                 //     ve->state.vertexIndices.resize(numBeads);
                 //     std::iota(ve->state.vertexIndices.begin(), ve->state.vertexIndices.end(), 0u);
@@ -131,7 +131,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
 
                 for(const auto& mi : sdfv.membraneIndices) {
                     // Update coords
-                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 3 * GlState::vaStride * mi.triangleVertexIndices.size());
+                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 3 * ve->state.size.vaStride * mi.triangleVertexIndices.size());
                     for(const auto& t : mi.triangleVertexIndices) {
                         const decltype(sdfv.copiedBeadData.coords[0]) coord[] {
                             sdfv.copiedBeadData.coords[mi.vertexIndices[t[0]]],
@@ -185,13 +185,13 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 const auto& forces = (ve->profile.flag & Profile::forceUseSearchDir) ? sdfv.copiedBeadData.forces : sdfv.copiedBeadData.forcesAux;
 
                 for(const auto& fi : sdfv.filamentIndices) {
-                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 2 * GlState::vaStride * fi.size());
+                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 2 * ve->state.size.vaStride * fi.size());
                     for(size_t i : fi) {
                         const auto coord = sdfv.copiedBeadData.coords[i];
                         ve->state.vertexAttribs.push_back(coord[0]);
                         ve->state.vertexAttribs.push_back(coord[1]);
                         ve->state.vertexAttribs.push_back(coord[2]);
-                        ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + GlState::vaNormalSize); // dummy normal
+                        ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + ve->state.size.vaNormalSize); // dummy normal
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
@@ -201,7 +201,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         ve->state.vertexAttribs.push_back(forceTip[0]);
                         ve->state.vertexAttribs.push_back(forceTip[1]);
                         ve->state.vertexAttribs.push_back(forceTip[2]);
-                        ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + GlState::vaNormalSize); // dummy normal
+                        ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + ve->state.size.vaNormalSize); // dummy normal
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
@@ -246,7 +246,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         }.generate(sdfv.copiedBeadData.coords, fi);
 
                         // Update coords
-                        ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + GlState::vaStride * 3 * genTriInd.size());
+                        ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + ve->state.size.vaStride * 3 * genTriInd.size());
                         const auto numTriangles = genTriInd.size();
                         for(size_t t = 0; t < numTriangles; ++t) {
                             const decltype(genVertices[0]) coord[] {
@@ -304,7 +304,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                                 );
 
                                 // Update coords
-                                ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + GlState::vaStride * 3 * sphereCache.triInd.size());
+                                ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + ve->state.size.vaStride * 3 * sphereCache.triInd.size());
                                 const auto numTriangles = sphereCache.triInd.size();
                                 for(size_t t = 0; t < numTriangles; ++t) {
                                     const typename decltype(genVertices)::value_type coord[] {
@@ -360,7 +360,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 }.generate(c, std::array<size_t, 2>{0, 1});
 
                 // Update coords
-                ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + GlState::vaStride * 3 * genTriInd.size());
+                ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + ve->state.size.vaStride * 3 * genTriInd.size());
                 const auto numTriangles = genTriInd.size();
                 for(size_t t = 0; t < numTriangles; ++t) {
                     const decltype(genVertices[0]) coord[] {
@@ -429,7 +429,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 );
 
                 // Update coords
-                ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + GlState::vaStride * 3 * sphereCache.triInd.size());
+                ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + ve->state.size.vaStride * 3 * sphereCache.triInd.size());
                 const auto numTriangles = sphereCache.triInd.size();
                 for(size_t t = 0; t < numTriangles; ++t) {
                     const typename decltype(genVertices)::value_type coord[] {
