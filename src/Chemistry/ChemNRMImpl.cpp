@@ -184,7 +184,12 @@ bool ChemNRMImpl::makeStep() {
 #endif
     // Updating dependencies
     ReactionBase *r = rn->getReaction();
-    
+#if 0
+    if(r->getReactionType() == ReactionType::MOTORBINDING) {
+        r->printDependents();
+        cout << "-----------------------------------------------------\n";
+    }
+#endif
     if(r->updateDependencies()) {
     
         for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
@@ -239,9 +244,25 @@ bool ChemNRMImpl::makeStep() {
             rn_other->updateHeap();
         }
     }
+
+#if 0
+    if(r->getReactionType() == ReactionType::MOTORBINDING) {
+        r->printDependents();
+        cout << "-----------------------------------------------------\n";
+    }
+#endif
+
 #ifdef REACTION_SIGNALING
     // Send signal
     r->emitSignal();
+
+#if 0
+	if(r->getReactionType() == ReactionType::MOTORBINDING) {
+		r->printDependents();
+		cout << "-----------------------------------------------------\n";
+	}
+#endif
+
 #endif
     return true;
 }

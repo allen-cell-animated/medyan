@@ -575,7 +575,7 @@ struct CaMKIIingPointUnbindingCallback {
         //remove the camkiiing point
         _ps->removeTrackable<CaMKIICylinder>(_camkiiingPoint->getCaMKIICylinder());
         _ps->removeTrackable<CaMKIIingPoint>(_camkiiingPoint);
-//        delete _camkiiingPoint;
+        delete _camkiiingPoint;
     }
 };
 

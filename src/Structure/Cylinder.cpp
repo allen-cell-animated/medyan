@@ -118,7 +118,7 @@ Cylinder::~Cylinder() noexcept {
 //	/error message
 //	for b in _bonds
 
-	bool _exit = false;
+#if 0
 	for (auto camkii : CaMKIIingPoint::getCaMKIIingPoints()) {
 		for(auto v : camkii->getBonds()) {
 //			vector<tuple<Cylinder*, double>>
@@ -157,6 +157,7 @@ Cylinder::~Cylinder() noexcept {
 			}
 		}
 	}
+#endif
 
     //remove from compartment
     _compartment->removeCylinder(this);

@@ -55,12 +55,13 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double posi
         
     int pos = int(position * SysParams::Geometry().cylinderNumMon[getCylinder(0)->getType()]);
           //std::cout<<c1->getID()<<" "<<c2->getID()<<" "<<pos<<endl;
+
 #ifdef CHEMISTRY
     _cCaMKIIingPoint = unique_ptr<CCaMKIIingPoint>(
     new CCaMKIIingPoint(camkiiType, _compartment, getCylinder(0)->getCCylinder(), getCylinder(0)->getCCylinder(), pos));
     _cCaMKIIingPoint->setCaMKIIingPoint(this);
 #endif
-    
+
 #ifdef MECHANICS
     _mCaMKIIingPoint = unique_ptr<MCaMKIIingPoint>(new MCaMKIIingPoint(camkiiType));
     _mCaMKIIingPoint->setCaMKIIingPoint(this);
