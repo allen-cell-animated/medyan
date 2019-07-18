@@ -59,7 +59,7 @@ using namespace mathfunc;
 
 namespace {
 
-void prepareMembraneSharedData() {
+void displayCopySystem() {
     visual::copySystemDataAndRunHelper(visual::sys_data_update::BeadPosition | visual::sys_data_update::BeadConnection | visual::sys_data_update::Compartment);
 }
 
@@ -446,7 +446,6 @@ void Controller::setupInitialNetwork(SystemParser& p) {
 
     // Optimize the membrane
     membraneAdaptiveRemesh();
-    prepareMembraneSharedData();
     updatePositions();
 
     // Deactivate all the compartments outside membrane, and mark boundaries as interesting
@@ -1219,9 +1218,10 @@ void Controller::run() {
     // update neighorLists before and after minimization. Need excluded volume
     // interactions.
 	_subSystem->resetNeighborLists();
+    displayCopySystem();
     _mController->run(false);
     membraneAdaptiveRemesh();
-    prepareMembraneSharedData();
+    displayCopySystem();
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runm2(mine - mins);
     minimizationtime += elapsed_runm2.count();
@@ -1400,7 +1400,7 @@ void Controller::run() {
 
                 // Membrane remeshing
                 membraneAdaptiveRemesh();
-                prepareMembraneSharedData();
+                displayCopySystem();
 
                 mine= chrono::high_resolution_clock::now();
 
@@ -1557,7 +1557,7 @@ void Controller::run() {
 
                 // Membrane remeshing
                 membraneAdaptiveRemesh();
-                prepareMembraneSharedData();
+                displayCopySystem();
 
                 updatePositions();
                 
