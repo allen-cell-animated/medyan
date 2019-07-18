@@ -36,14 +36,14 @@ struct PathExtrude {
         const size_t numTriangles = (numVertices - 1) * 2 * sides;
 
         // Results
-        VecArray< 3, Float > vertices;
+        std::vector< CoordType > vertices; vertices.reserve(numTubeVertices);
         std::vector< std::array< size_t, 3 > > triInd(numTriangles);
 
         if(indices.size() < 2)
             return std::make_tuple(vertices, triInd);
 
         // Locate first circle
-        auto seg = normalizedVector(coords[indices[1]] - coords[indices[0]]);
+        CoordType seg ( normalizedVector(coords[indices[1]] - coords[indices[0]]) );
         auto n0 = cross(seg, a0);
         if(magnitude2(n0) == static_cast< Float >(0.0)) n0 = cross(seg, a1);
         normalize(n0);
@@ -51,21 +51,21 @@ struct PathExtrude {
         auto segn = seg;
 
         for(size_t j = 0; j < sides; ++j) {
-            const auto a = j * 2 * M_PI / sides;
-            const auto point = coords[indices[0]] + n0 * (radius * std::cos((Float)a)) + n1 * (radius * std::sin((Float)a));
+            const Float a = j * 2 * M_PI / sides;
+            const auto point = static_cast< CoordType >(coords[indices[0]]) + n0 * (radius * std::cos((Float)a)) + n1 * (radius * std::sin((Float)a));
             vertices.push_back(point);
         }
 
         // Propagate circles
         for(size_t i = 1; i < numVertices; ++i) {
             segn = normalizedVector(i == numVertices - 1 ? coords[indices[i]] - coords[indices[i-1]] : coords[indices[i+1]] - coords[indices[i]]);
-            const auto t = normalizedVector(0.5 * (seg + segn));
+            const auto t = normalizedVector((Float)0.5 * (seg + segn));
             for(size_t j = 0; j < sides; ++j) {
                 // Solve for p_new given:
                 //   dot(p_new - coords[indices[i]], t) = 0
                 //   p_new = x * seg + pp
                 const auto pp = vertices[(i-1) * sides + j];
-                const auto x = dot(coords[indices[i]] - pp, t) / dot(seg, t);
+                const Float x = dot(coords[indices[i]] - pp, t) / dot(seg, t);
                 vertices.push_back(x * seg + pp);
             }
 

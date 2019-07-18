@@ -69,6 +69,8 @@ struct GlSize {
     unsigned int vaColorSize   = 3;
 };
 
+// Note:
+//   - The object of this type must be created within an OpenGL context.
 struct GlState {
     const GlSize size; // This is a redundant GlSize for thread safe access
 
@@ -146,19 +148,30 @@ struct VisualElement {
 
 // Preset configurations for shaders and vector structures
 //
-// Thread safety: Creation or modification of objects of this type should only
-//     happen in the opengl main thread.
+// Thread safety: Not thread safe. Creation or modification of objects of this
+//     type should only happen in the opengl main thread.
 // Note:
 //   - The creation/modification/destruction of objects of this type must be
 //     within an OpenGL context
 struct VisualPreset {
     const GlSize size;
     const Shader shader;
+
+    // Read or modification of visualElements vector requires lock.
+    std::mutex veMutex;
     std::vector< std::shared_ptr< VisualElement > > visualElements;
 
     VisualPreset(GlSize size, const char* vertexShaderSrc, const char* fragmentShaderSrc)
         : size(size), shader(vertexShaderSrc, fragmentShaderSrc) { }
-};
+
+    ~VisualPreset() {
+        {
+            // Delete visual elements
+            std::lock_guard< std::mutex > guard(veMutex);
+            visualElements.clear();
+        }
+    } // ~VisualPreset()
+}; // VisualPreset
 
 } // namespace visual
 

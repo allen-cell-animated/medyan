@@ -237,7 +237,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
 
                 case Profile::PathMode::Extrude:
                     for(const auto& fi : sdfv.filamentIndices) {
-                        mathfunc::VecArray< 3, float > genVertices;
+                        std::vector< mathfunc::Vec3f > genVertices;
                         std::vector< std::array< size_t, 3 > > genTriInd;
 
                         std::tie(genVertices, genTriInd) = visual::PathExtrude<float>{
@@ -249,7 +249,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + ve->state.size.vaStride * 3 * genTriInd.size());
                         const auto numTriangles = genTriInd.size();
                         for(size_t t = 0; t < numTriangles; ++t) {
-                            const decltype(genVertices[0]) coord[] {
+                            const mathfunc::Vec3f coord[] {
                                 genVertices[genTriInd[t][0]],
                                 genVertices[genTriInd[t][1]],
                                 genVertices[genTriInd[t][2]]
@@ -351,7 +351,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
 
             const auto& coords = (ve->profile.flag & Profile::targetLinker) ? sdfv.linkerCoords : sdfv.motorCoords;
             for(const auto& c : coords) {
-                mathfunc::VecArray< 3, float > genVertices;
+                std::vector< mathfunc::Vec3f > genVertices;
                 std::vector< std::array< size_t, 3 > > genTriInd;
 
                 std::tie(genVertices, genTriInd) = visual::PathExtrude<float>{
@@ -363,7 +363,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + ve->state.size.vaStride * 3 * genTriInd.size());
                 const auto numTriangles = genTriInd.size();
                 for(size_t t = 0; t < numTriangles; ++t) {
-                    const decltype(genVertices[0]) coord[] {
+                    const mathfunc::Vec3f coord[] {
                         genVertices[genTriInd[t][0]],
                         genVertices[genTriInd[t][1]],
                         genVertices[genTriInd[t][2]]

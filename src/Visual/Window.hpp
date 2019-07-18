@@ -1,6 +1,7 @@
 #ifndef MEDYAN_Visual_Window_Hpp
 #define MEDYAN_Visual_Window_Hpp
 
+#include <array>
 #include <iostream> // cout, endl
 #include <vector>
 
@@ -92,81 +93,6 @@ inline void processInput(GLFWwindow* window) {
     }
 }
 
-inline void createWindow() {
-    // Configure global opengl state
-    glEnable(GL_DEPTH_TEST);
-
-    {
-        // Setup profile
-        std::lock_guard< std::mutex > guard(shared::veMutex);
-
-        {
-            shared::visualElements.emplace_back(new VisualElement(GlSize{}));
-            auto& ve = shared::visualElements.back();
-            ve->profile.enabled = true;
-            ve->profile.flag = Profile::targetCompartment;
-            ve->profile.colorAmbient = glm::vec3(0.8f, 0.8f, 0.8f);
-            ve->profile.colorDiffuse = glm::vec3(0.8f, 0.8f, 0.8f);
-        }
-        {
-            shared::visualElements.emplace_back(new VisualElement(GlSize{}));
-            auto& ve = shared::visualElements.back();
-            ve->profile.enabled = true;
-            ve->profile.flag = Profile::targetMembrane;
-            ve->profile.colorAmbient = glm::vec3(0.4f, 0.6f, 0.95f);
-            ve->profile.colorDiffuse = glm::vec3(0.4f, 0.6f, 0.95f);
-        }
-        {
-            shared::visualElements.emplace_back(new VisualElement(GlSize{}));
-            auto& ve = shared::visualElements.back();
-            ve->profile.enabled = true;
-            ve->profile.flag = Profile::targetMembrane | Profile::displayForce;
-            ve->profile.colorAmbient = glm::vec3(0.3f, 0.6f, 0.95f);
-            ve->profile.colorDiffuse = glm::vec3(0.3f, 0.6f, 0.95f);
-        }
-        {
-            shared::visualElements.emplace_back(new VisualElement(GlSize{}));
-            auto& ve = shared::visualElements.back();
-            ve->profile.enabled = true;
-            ve->profile.flag = Profile::targetFilament;
-            ve->profile.pathMode = Profile::PathMode::Extrude;
-            ve->profile.colorAmbient = glm::vec3(0.95f, 0.1f, 0.15f);
-            ve->profile.colorDiffuse = glm::vec3(0.95f, 0.1f, 0.15f);
-        }
-        {
-            shared::visualElements.emplace_back(new VisualElement(GlSize{}));
-            auto& ve = shared::visualElements.back();
-            ve->profile.enabled = true;
-            ve->profile.flag = Profile::targetFilament | Profile::displayForce;
-            ve->profile.colorAmbient = glm::vec3(0.95f, 0.1f, 0.15f);
-            ve->profile.colorDiffuse = glm::vec3(0.95f, 0.1f, 0.15f);
-        }
-        {
-            shared::visualElements.emplace_back(new VisualElement(GlSize{}));
-            auto& ve = shared::visualElements.back();
-            ve->profile.enabled = true;
-            ve->profile.flag = Profile::targetLinker;
-            ve->profile.colorAmbient = glm::vec3(0.1f, 0.9f, 0.0f);
-            ve->profile.colorDiffuse = glm::vec3(0.1f, 0.9f, 0.0f);
-        }
-        {
-            shared::visualElements.emplace_back(new VisualElement(GlSize{}));
-            auto& ve = shared::visualElements.back();
-            ve->profile.enabled = true;
-            ve->profile.flag = Profile::targetMotor;
-            ve->profile.colorAmbient = glm::vec3(0.1f, 0.1f, 0.99f);
-            ve->profile.colorDiffuse = glm::vec3(0.1f, 0.1f, 0.99f);
-        }
-        {
-            shared::visualElements.emplace_back(new VisualElement(GlSize{}));
-            auto& ve = shared::visualElements.back();
-            ve->profile.enabled = true;
-            ve->profile.flag = Profile::targetBrancher;
-            ve->profile.colorAmbient = glm::vec3(0.95f, 0.9f, 0.05f);
-            ve->profile.colorDiffuse = glm::vec3(0.95f, 0.9f, 0.05f);
-        }
-    }
-}
 
 template< typename T >
 inline void replaceBuffer(GLenum target, const std::vector<T>& source) {
@@ -240,18 +166,6 @@ inline void mainLoop(GLFWwindow* window) {
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-}
-
-inline void deallocate() {
-
-    // Deallocate resources
-    {
-        // Delete profiles
-        std::lock_guard< std::mutex > guard(shared::veMutex);
-
-        shared::visualElements.clear();
-    }
-
 }
 
 // The RAII object for managing visualization context and window
@@ -353,10 +267,88 @@ private:
 };
 
 struct VisualDisplay {
+    // The overall opengl context. Must be at top
     VisualContext vc;
 
-    VisualDisplay() { createWindow(); }
-    ~VisualDisplay() { deallocate(); }
+    // Visual presets
+    std::array< VisualPreset, 1 > vps {{
+        { GlSize {}, shader::VertexElementLight, shader::FragElementLight }
+    }};
+    VisualPreset& vpLight = vps[0];
+
+    VisualDisplay() {
+        // Configure global opengl state
+        glEnable(GL_DEPTH_TEST);
+
+        // Setup visual with light
+        {
+            std::lock_guard< std::mutex > guard(vpLight.veMutex);
+
+            const auto newVe = [this]() -> auto& {
+                vpLight.visualElements.emplace_back(new VisualElement(vpLight.size));
+                return vpLight.visualElements.back();
+            };
+
+            {
+                auto& ve = newVe();
+                ve->profile.enabled = true;
+                ve->profile.flag = Profile::targetCompartment;
+                ve->profile.colorAmbient = glm::vec3(0.8f, 0.8f, 0.8f);
+                ve->profile.colorDiffuse = glm::vec3(0.8f, 0.8f, 0.8f);
+            }
+            {
+                auto& ve = newVe();
+                ve->profile.enabled = true;
+                ve->profile.flag = Profile::targetMembrane;
+                ve->profile.colorAmbient = glm::vec3(0.4f, 0.6f, 0.95f);
+                ve->profile.colorDiffuse = glm::vec3(0.4f, 0.6f, 0.95f);
+            }
+            {
+                auto& ve = newVe();
+                ve->profile.enabled = true;
+                ve->profile.flag = Profile::targetMembrane | Profile::displayForce;
+                ve->profile.colorAmbient = glm::vec3(0.3f, 0.6f, 0.95f);
+                ve->profile.colorDiffuse = glm::vec3(0.3f, 0.6f, 0.95f);
+            }
+            {
+                auto& ve = newVe();
+                ve->profile.enabled = true;
+                ve->profile.flag = Profile::targetFilament;
+                ve->profile.pathMode = Profile::PathMode::Extrude;
+                ve->profile.colorAmbient = glm::vec3(0.95f, 0.1f, 0.15f);
+                ve->profile.colorDiffuse = glm::vec3(0.95f, 0.1f, 0.15f);
+            }
+            {
+                auto& ve = newVe();
+                ve->profile.enabled = true;
+                ve->profile.flag = Profile::targetFilament | Profile::displayForce;
+                ve->profile.colorAmbient = glm::vec3(0.95f, 0.1f, 0.15f);
+                ve->profile.colorDiffuse = glm::vec3(0.95f, 0.1f, 0.15f);
+            }
+            {
+                auto& ve = newVe();
+                ve->profile.enabled = true;
+                ve->profile.flag = Profile::targetLinker;
+                ve->profile.colorAmbient = glm::vec3(0.1f, 0.9f, 0.0f);
+                ve->profile.colorDiffuse = glm::vec3(0.1f, 0.9f, 0.0f);
+            }
+            {
+                auto& ve = newVe();
+                ve->profile.enabled = true;
+                ve->profile.flag = Profile::targetMotor;
+                ve->profile.colorAmbient = glm::vec3(0.1f, 0.1f, 0.99f);
+                ve->profile.colorDiffuse = glm::vec3(0.1f, 0.1f, 0.99f);
+            }
+            {
+                auto& ve = newVe();
+                ve->profile.enabled = true;
+                ve->profile.flag = Profile::targetBrancher;
+                ve->profile.colorAmbient = glm::vec3(0.95f, 0.9f, 0.05f);
+                ve->profile.colorDiffuse = glm::vec3(0.95f, 0.9f, 0.05f);
+            }
+        } // ~lock_guard
+
+    } // VisualDisplay()
 
     void run() const { mainLoop(vc.window()); }
 };
