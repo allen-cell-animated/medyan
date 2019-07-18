@@ -453,6 +453,15 @@ void SubSystem::vectorizeCylinder() {
     SysParams::CParams.maxbindingsitespercylinder = maxbindingsitespercyl;
     SysParams::MParams.cylsqmagnitudevector = cylsqmagnitudevector;
     SysParams::MParams.ncylvec = ncylvec;
+
+	//Enter filament first cylinder position
+	for(auto fil:Filament::getFilaments()) {
+		int filamentfirstentry = fil->getMinusEndCylinder()->getPosition();
+		for(auto cyl:fil->getCylinderVector()){
+			auto cindex = cyl->getStableIndex();
+			Cylinder::getDbData().value[cindex].filamentFirstEntry = filamentfirstentry;
+		}
+	}
 }
 
 #ifdef CUDAACCL_NL

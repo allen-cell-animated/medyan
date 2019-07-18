@@ -40,6 +40,7 @@ struct CylinderInfoData {
     struct CylinderInfo {
         int filamentId = -1;
         int positionOnFilament = -1;
+        int filamentFirstEntry = 0;
         int compartmentId = -1;
         std::size_t beadIndices[2];
         mathfunc::Vec< 3, floatingpoint > coord;

@@ -25,13 +25,13 @@ Main code for both AVX and AVX2 calculations where the elementary type is a floa
 
 namespace dist {
 
-	extern uint _lut_avx2[256*8]; 
- 
+	extern uint _lut_avx2[256*8];
+
 	// Load 8 elements of i and j vectors, and operate on them vectorially. 
 	template <uint D, bool SELF>
 	inline void dist_simd_ij(dOut<D,SELF> &out, std::vector<int> &c1_indices, uvec8_f
 	&c1_vxi, uvec8_f &c1_vyi, uvec8_f &c1_vzi, uvec8_i &c1_finfo, Coords &c2, uint i, uint
-	j, tag_simd<simd_avx,float> tag){
+	                         j, tag_simd<simd_avx,float> tag){
 
 		//Get the SIMD block site info from c2
 		uvec8_f c2_vxj(&c2.x[j]);
@@ -63,7 +63,7 @@ namespace dist {
 			// The commented line below is preferable, but DTII gcc 6.1 and UME::SIMD interact badly, slowing down
 			// the program by 4 fold (because UMD::SIMD starts using scalar emulation, for some reason).
 			// On my Macbook Pro it is fine, even with gcc (8.x)
-			
+
 			// auto vcond = (vsum > vdl) && (vsum < vdh);
 
 /*			__m256i vcond = _mm256_castps_si256(_mm256_and_ps(_mm256_cmp_ps(vsum.mVec,vdl.mVec,_CMP_GT_OQ),
@@ -82,7 +82,7 @@ namespace dist {
 
 			uvec8_i i_ind(&c1_indices[i]);
 			uvec8_i j_ind(&c2.indices[j]);
-			
+
 #ifdef __AVX2__
 			UME::SIMD::SIMDSwizzle<8> vmask(&_lut_avx2[8*icond]);
 			i_ind.swizzlea(vmask);
@@ -91,14 +91,14 @@ namespace dist {
 			swizzlea_8x32_avx_impl(i_ind, icond);
 			swizzlea_8x32_avx_impl(j_ind, icond);
 #endif
-			
+
 			i_ind.store(&(out.dout[2*d])[counter]);
 			j_ind.store(&(out.dout[2*d+1])[counter]);
-			
+
 			counter+= _mm_popcnt_u32(icond);
 		}
 	}
-	
+
 } // end-of-namespace dist
 
 #endif // __AVX2__
