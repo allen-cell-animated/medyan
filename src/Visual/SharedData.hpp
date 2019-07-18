@@ -12,10 +12,6 @@ namespace shared {
 
 extern std::mutex dataMutex;
 
-extern std::mutex veMutex;
-// Must be created and deleted within a valid opengl context
-extern std::vector< std::shared_ptr< VisualElement > > visualElements;
-
 extern std::vector< float > vertexCoords;
 extern bool coordChanged;
 

@@ -5,9 +5,6 @@
 namespace visual {
 namespace shared {
 
-std::mutex veMutex;
-std::vector< std::shared_ptr< VisualElement > > visualElements;
-
 std::vector< float > vertexCoords;
 bool coordChanged = true;
 

@@ -3,6 +3,7 @@
 
 #include <array>
 #include <iostream> // cout, endl
+#include <stdexcept> // runtime_error
 #include <vector>
 
 #include "Util/Environment.h"
@@ -25,72 +26,9 @@ struct Window {
     GLFWwindow* window;
 }; // Currently not used
 
-namespace state {
-// Defines variables used in the main thread
-
-enum class ProjectionType { Orthographic, Perspective };
-
-// settings
-int windowWidth = 1200;
-int windowHeight = 800;
-ProjectionType projType = ProjectionType::Perspective;
-float fov = glm::radians(45.0f); // perspective
-float nearDistance = 0.1f;
-float farDistance = 20000.0f;
-glm::mat4 projection;
-glm::mat4 model;
-
-Camera camera;
-
-float deltaTime = 0.01f;
-float lastTime = 0.0f;
-bool mouseLeftAlreadyPressed = false;
-double mouseLastX;
-double mouseLastY;
-
-// gl data
-Shader sd(shader::VertexElementLight, shader::FragElementLight); // FIXME: should not be init'ed here
-
-} // namespace state
-
 inline void glfwError(int id, const char* description) {
     LOG(ERROR) << description;
-    system("pause");
-}
-
-inline void processInput(GLFWwindow* window) {
-    using namespace state;
-
-    float currentTime = glfwGetTime();
-    deltaTime = currentTime - lastTime;
-    lastTime = currentTime;
-    float cameraMove = camera.keyControlSpeed * deltaTime;
-
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        LOG(INFO) << "Escape key hit!";
-        glfwSetWindowShouldClose(window, true);
-    }
-
-    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        const auto change = cameraMove * glm::normalize(camera.target - camera.position);
-        camera.position += change;
-        camera.target += change;
-    }
-    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        const auto change = cameraMove * glm::normalize(camera.target - camera.position);
-        camera.position -= change;
-        camera.target -= change;
-    }
-    if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        const auto change = glm::normalize(glm::cross(glm::normalize(camera.target - camera.position), camera.up)) * cameraMove;
-        camera.position -= change;
-        camera.target -= change;
-    }
-    if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        const auto change = glm::normalize(glm::cross(glm::normalize(camera.target - camera.position), camera.up)) * cameraMove;
-        camera.position += change;
-        camera.target += change;
-    }
+    throw std::runtime_error("Error in GLFW environment");
 }
 
 
@@ -117,9 +55,33 @@ inline void replaceBuffer(GLenum target, const std::vector<T>& source) {
 //     to MacOS Cocoa framework).
 class VisualContext {
 public:
-    struct WindowSettings {
+    struct WindowStates {
+        struct Transformation {
+            enum class ProjectionType { Orthographic, Perspective };
+
+            ProjectionType projType = ProjectionType::Perspective;
+            float fov               = glm::radians(45.0f); // perspective
+            float nearDistance      = 0.1f;
+            float farDistance       = 20000.0f;
+            glm::mat4 projection;
+            glm::mat4 model;
+
+            Camera camera;
+        };
+
+        // Size
         int width = 1200;
         int height = 800;
+
+        // Model, view, perspective...
+        Transformation trans;
+
+        // Other states
+        float deltaTime = 0.01f;
+        float lastTime  = 0.0f;
+        bool mouseLeftAlreadyPressed = false;
+        double mouseLastX;
+        double mouseLastY;
     };
 
     VisualContext() {
@@ -132,15 +94,8 @@ public:
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-        // GLAD initializing
-        LOG(DEBUG) << "initializing GLAD";
-        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-            LOG(ERROR) << "Failed to initialize GLAD";
-            return;
-        }
-
         // Window initializing
-        window_ = glfwCreateWindow(windowSettings_.width, windowSettings_.height, "MEDYAN", NULL, NULL);
+        window_ = glfwCreateWindow(windowStates_.width, windowStates_.height, "MEDYAN", NULL, NULL);
         if(window_ == NULL) {
             LOG(ERROR) << "Failed to create GLFW window";
             glfwTerminate();
@@ -148,26 +103,34 @@ public:
         }
         glfwMakeContextCurrent(window_);
 
-        glViewport(0, 0, windowSettings_.width, windowSettings_.height);
-        glfwSetWindowUserPointer(window_, &windowSettings_);
+        // GLAD initializing
+        LOG(DEBUG) << "initializing GLAD";
+        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+            LOG(ERROR) << "Failed to initialize GLAD";
+            return;
+        }
+
+        glViewport(0, 0, windowStates_.width, windowStates_.height);
+        glfwSetWindowUserPointer(window_, &windowStates_);
 
         // Set window callbacks
         const auto framebufferSizeCallback = [](GLFWwindow* window, int width, int height) {
-            auto ws = static_cast< WindowSettings* >(glfwGetWindowUserPointer(window));
+            auto ws = static_cast< WindowStates* >(glfwGetWindowUserPointer(window));
             ws->width = width;
             ws->height = height;
             glViewport(0, 0, width, height);
         };
         const auto cursorPositionCallback = [](GLFWwindow* window, double xpos, double ypos) {
-            using namespace state;
+            auto ws = static_cast< WindowStates* >(glfwGetWindowUserPointer(window));
+            auto& camera = ws->trans.camera;
 
-            int mouseState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+            const int mouseState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
             if(mouseState == GLFW_PRESS) {
-                if(mouseLeftAlreadyPressed) {
+                if(ws->mouseLeftAlreadyPressed) {
                     // Transform
-                    double dist = glm::distance(camera.target, camera.position);
+                    const double dist = glm::distance(camera.target, camera.position);
 
-                    camera.position -= (camera.right * float(xpos - mouseLastX) + camera.up * float(mouseLastY - ypos)) * (float)camera.mouseControlSpeed;
+                    camera.position -= (camera.right * float(xpos - ws->mouseLastX) + camera.up * float(ws->mouseLastY - ypos)) * (float)camera.mouseControlSpeed;
                     camera.position = camera.target + glm::normalize(camera.position - camera.target) * (float)dist;
                     
                     // Update direction
@@ -175,16 +138,18 @@ public:
                     camera.up = glm::normalize(glm::cross(camera.right, camera.target - camera.position));
 
                 } else {
-                    mouseLeftAlreadyPressed = true;
+                    ws->mouseLeftAlreadyPressed = true;
                 }
-                mouseLastX = xpos;
-                mouseLastY = ypos;
+                ws->mouseLastX = xpos;
+                ws->mouseLastY = ypos;
             } else {
-                mouseLeftAlreadyPressed = false;
+                ws->mouseLeftAlreadyPressed = false;
             }
         };
         const auto scrollCallback = [](GLFWwindow* window, double xoffset, double yoffset) {
-            using namespace state;
+            auto ws = static_cast< WindowStates* >(glfwGetWindowUserPointer(window));
+            auto& fov = ws->trans.fov;
+
             fov -= 0.02 * yoffset;
             if(fov < 0.01f) fov = 0.01f;
             if(fov > 3.13f) fov = 3.13f;
@@ -201,12 +166,51 @@ public:
     }
 
     auto window() const { return window_; }
-    const auto& windowSettings() const { return windowSettings_; }
+    auto&       windowStates()       { return windowStates_; }
+    const auto& windowStates() const { return windowStates_; }
+
+    // Helper function to process window inputs
+    void processInput() {
+
+        auto& camera = windowStates_.trans.camera;
+
+        const float currentTime = glfwGetTime();
+        windowStates_.deltaTime = currentTime - windowStates_.lastTime;
+        windowStates_.lastTime = currentTime;
+        const float cameraMove = camera.keyControlSpeed * windowStates_.deltaTime;
+
+        if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+            LOG(INFO) << "Escape key hit!";
+            glfwSetWindowShouldClose(window_, true);
+        }
+
+        if(glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS) {
+            const auto change = cameraMove * glm::normalize(camera.target - camera.position);
+            camera.position += change;
+            camera.target += change;
+        }
+        if(glfwGetKey(window_, GLFW_KEY_S) == GLFW_PRESS) {
+            const auto change = cameraMove * glm::normalize(camera.target - camera.position);
+            camera.position -= change;
+            camera.target -= change;
+        }
+        if(glfwGetKey(window_, GLFW_KEY_A) == GLFW_PRESS) {
+            const auto change = glm::normalize(glm::cross(glm::normalize(camera.target - camera.position), camera.up)) * cameraMove;
+            camera.position -= change;
+            camera.target -= change;
+        }
+        if(glfwGetKey(window_, GLFW_KEY_D) == GLFW_PRESS) {
+            const auto change = glm::normalize(glm::cross(glm::normalize(camera.target - camera.position), camera.up)) * cameraMove;
+            camera.position += change;
+            camera.target += change;
+        }
+    }
 
 private:
     GLFWwindow* window_;
-    WindowSettings windowSettings_;
+    WindowStates windowStates_;
 }; // VisualContext
+
 
 // The RAII object for all the rendering process
 struct VisualDisplay {
@@ -297,16 +301,18 @@ struct VisualDisplay {
 
         while (!glfwWindowShouldClose(vc.window())) {
             // input
-            processInput(vc.window());
+            vc.processInput();
+
+            auto& ws = vc.windowStates();
 
             // rendering
             glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // transform
-            state::projection = glm::perspective(state::fov, (float)vc.windowSettings().width / (float)vc.windowSettings().height, state::nearDistance, state::farDistance);
-            state::model = glm::mat4(1.0f);
-            glm::mat3 modelInvTrans3(glm::transpose(glm::inverse(state::model)));
+            ws.trans.projection = glm::perspective(ws.trans.fov, (float)ws.width / (float)ws.height, ws.trans.nearDistance, ws.trans.farDistance);
+            ws.trans.model      = glm::mat4(1.0f);
+            glm::mat3 modelInvTrans3(glm::transpose(glm::inverse(ws.trans.model)));
 
             for(auto& vp : vps) {
                 std::lock_guard< std::mutex > guard(vp.veMutex);
@@ -314,11 +320,11 @@ struct VisualDisplay {
                 if(!vp.visualElements.empty()) {
                     glUseProgram(vp.shader.id());
 
-                    vp.shader.setMat4("projection", state::projection);
-                    vp.shader.setMat4("model", state::model);
+                    vp.shader.setMat4("projection", ws.trans.projection);
+                    vp.shader.setMat4("model",      ws.trans.model);
                     vp.shader.setMat3("modelInvTrans3", modelInvTrans3);
-                    vp.shader.setMat4("view", state::camera.view());
-                    vp.shader.setVec3("CameraPos", state::camera.position);
+                    vp.shader.setMat4("view",       ws.trans.camera.view());
+                    vp.shader.setVec3("CameraPos",  ws.trans.camera.position);
 
                     for(const auto& ve : vp.visualElements) {
                         std::lock_guard< std::mutex > guard(ve->me);
