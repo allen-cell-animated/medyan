@@ -21,8 +21,11 @@
 #include "Visual/Render/Sphere.hpp"
 #include "Visual/SharedData.hpp"
 #include "Visual/VisualElement.hpp"
+#include "Visual/Window.hpp"
 
 namespace visual {
+
+std::weak_ptr< VisualDisplay > vdWeak;
 
 namespace {
 
@@ -472,12 +475,17 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
 
 void helper() {
     std::lock_guard< std::mutex > sdfvGuard(sdfv.me);
-    std::lock_guard< std::mutex > veGuard(shared::veMutex);
 
-    for(const auto& spv : shared::visualElements) {
-        // Current executed serially, but could be parallelized
-        // If parallelized, the shared_ptr must be copied to the working thread
-        prepareVisualElement(spv);
+    if(auto vd = vdWeak.lock()) {
+        for(auto& vp : vd->vps) {
+            std::lock_guard< std::mutex > veGuard(vp.veMutex);
+
+            for(const auto& spv : vp.visualElements) {
+                // Current executed serially, but could be parallelized
+                // If parallelized, the shared_ptr must be copied to the working thread
+                prepareVisualElement(spv);
+            }
+        }
     }
 } // void helper(...)
 

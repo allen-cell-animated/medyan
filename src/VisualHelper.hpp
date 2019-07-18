@@ -2,6 +2,8 @@
 #define MEDYAN_VisualHelper_Hpp
 
 #include <cstdint>
+#include <memory> // weak_ptr
+
 //-----------------------------------------------------------------------------
 // Visualization helper transforms the system related data to actual OpenGL
 // recognized data according to the settings.
@@ -12,6 +14,9 @@
 //-----------------------------------------------------------------------------
 
 namespace visual {
+
+struct VisualDisplay;
+extern std::weak_ptr< VisualDisplay > vdWeak;
 
 namespace sys_data_update {
 

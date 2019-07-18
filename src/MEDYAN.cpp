@@ -78,6 +78,7 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "Util/Io/CmdParse.hpp"
 #include "Util/Io/Log.hpp"
 #include "Visual/Window.hpp"
+#include "VisualHelper.hpp"
 
 using namespace medyan;
 
@@ -164,7 +165,11 @@ int main(int argc, char **argv) {
         {
             std::thread mainThread(&Controller::run, &c);
 #ifdef VISUAL
-            visual::VisualDisplay{}.run();
+            {
+                auto vd = std::make_shared< visual::VisualDisplay >();
+                visual::vdWeak = vd;
+                vd->run();
+            }
 #endif // VISUAL
             mainThread.join();
         }
