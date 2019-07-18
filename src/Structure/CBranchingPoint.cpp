@@ -41,10 +41,10 @@ CBranchingPoint::CBranchingPoint(short branchType, Compartment* c,
 CBranchingPoint::~CBranchingPoint() {
     
     //remove the unbinding reaction
-	if(!_offRxn) {
-		cerr << "Off reaction in CBranchingPoint " << __FILE__ << " (" << __LINE__ << ") is NULL." << endl;
-		exit(1);
-	}
+//	if(!_offRxn) {
+//		cerr << "Off reaction in CBranchingPoint " << __FILE__ << " (" << __LINE__ << ") is NULL." << endl;
+//		exit(1);
+//	}
     _cc1->removeInternalReaction(_offRxn);
     
 }
