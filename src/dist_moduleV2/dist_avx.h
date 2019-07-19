@@ -47,11 +47,23 @@ namespace dist {
 		uvec8_f vsum = vdx*vdx + vdy*vdy + vdz*vdz;
 
 		//compute finfo
+
 		uvec8_i diff = c2_finfo - c1_finfo;
 		diff = UME::SIMD::FUNCTIONS::abs(diff);
 		uvec8_i &reffinfo = out.maxneighbors[0];
+		#ifdef __AVX2__
+		__m256i vcond2 = (_mm256_cmpgt_epi32(diff.mVec,reffinfo.mVec));
+		#else
 
-		auto vcond2 = (_mm256_cmpgt_epi32(diff.mVec,reffinfo.mVec));
+		/* AVX does not support 256bit packed integer comparisons. So cast the data to
+		 * float and compare*/
+
+		/*vcond2 =  compare( cast_to_float(diff.mVec), cast_to_float (reffinfo.mVec) ) */
+		__m256 vcond2 = _mm256_cmp_ps(
+				 		_mm256_castsi256_ps(diff.mVec),
+				 		_mm256_castsi256_ps(reffinfo.mVec),
+				 		_CMP_GT_OQ);
+		#endif
 
 
 		for(uint d=0; d<D; ++d){
@@ -66,18 +78,24 @@ namespace dist {
 
 			// auto vcond = (vsum > vdl) && (vsum < vdh);
 
-/*			__m256i vcond = _mm256_castps_si256(_mm256_and_ps(_mm256_cmp_ps(vsum.mVec,vdl.mVec,_CMP_GT_OQ),
-			                                _mm256_cmp_ps(vdh.mVec,vsum.mVec,_CMP_GT_OQ)));*/
+			__m256i vcond;
 
-
-
+#ifdef __AVX2__
 			__m256i vcond3 = _mm256_castps_si256(_mm256_and_ps(
 					/*Cndn2*/_mm256_cmp_ps(vsum.mVec,vdl.mVec,_CMP_GT_OQ),
 					/*Cndn3*/_mm256_cmp_ps(vdh.mVec,vsum.mVec,_CMP_GT_OQ)));
 
-			__m256i vcond = _mm256_and_si256(vcond2, vcond3);
+			vcond = _mm256_and_si256(vcond2, vcond3);
+#else
+			/* AVX does not support bitwise AND of 256bit integers. So do not case vcond3
+			 * as an integer*/
+			__m256 vcond3 = _mm256_and_ps(
+					/*Cndn2*/_mm256_cmp_ps(vsum.mVec,vdl.mVec,_CMP_GT_OQ),
+					/*Cndn3*/_mm256_cmp_ps(vdh.mVec,vsum.mVec,_CMP_GT_OQ));
 
+			vcond = _mm256_castps_si256(_mm256_and_ps(vcond2,vcond3));
 
+#endif
 			int icond = _mm256_movemask_ps(_mm256_castsi256_ps(vcond));
 
 			uvec8_i i_ind(&c1_indices[i]);
