@@ -1122,7 +1122,7 @@ void Datadump::print(int snapshot) {
         short filamentType = cyl->getType();
         int numMonomers = SysParams::Geometry().cylinderNumMon[filamentType];
         short minusendmonomer = 0;
-        short plusendmonomer = numMonomers;
+        short plusendmonomer = numMonomers-1;
         short minusendtype = -1;
         short plusendtype = -1;
         short foundstatus = 0; //0 none found, 1 found one end, 2 found both ends
