@@ -1194,7 +1194,7 @@ void Datadump::print(int snapshot) {
 	}
 	_outputFile <<endl;
 	//Compartment Data
-	_outputFile <<"COMPARTMENT DATA: CMPID DIFFUSINGSPECIES COPYNUM BULKSPECIES "
+	_outputFile <<"COMPARTMENT DATA: CMPID DIFFUSINGSPECIES"
 			   "COPYNUM"<<endl;
 	for(auto cmp:_subSystem->getCompartmentGrid()->getCompartments()){
 		_outputFile <<cmp->getId()<<" ";
@@ -1204,13 +1204,18 @@ void Datadump::print(int snapshot) {
 			auto copyNum = s->getN();
 			_outputFile <<name<<" "<<copyNum<<" ";
 		}
-		for(auto sb : _chemData.speciesBulk) {
-			string name = get<0>(sb);
-			auto s = cmp->findSpeciesByName(name);
-			auto copyNum = s->getN();
-			_outputFile <<name<<" "<<copyNum<<" ";
-		}
+
 		_outputFile <<endl;
+	}
+	_outputFile <<endl;
+	//BulkSpecies
+	_outputFile <<"BULKSPECIES: BULKSPECIES COPYNUM"<<endl;
+	auto cmp = _subSystem->getCompartmentGrid()->getCompartments()[0];
+	for(auto sb : _chemData.speciesBulk) {
+		string name = get<0>(sb);
+		auto s = cmp->findSpeciesByName(name);
+		auto copyNum = s->getN();
+		_outputFile <<name<<" "<<copyNum<<" ";
 	}
 	_outputFile <<endl;
 }
