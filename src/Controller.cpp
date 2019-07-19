@@ -209,9 +209,6 @@ void Controller::initialize(string inputFile,
     string concenname = _outputDirectory + "concentration.traj";
     _outputs.push_back(new Concentrations(concenname, _subSystem, ChemData));
 
-
-
-
     if(SysParams::CParams.dissTracking){
     //Set up dissipation output if dissipation tracking is enabled
     string disssnapname = _outputDirectory + "dissipation.traj";
@@ -242,6 +239,9 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new CMGraph(cmgraphsnapname, _subSystem));
 
 
+    //Set up datadump output if any
+    string datadumpname = _outputDirectory + "datadump.traj";
+    _outputs.push_back(new Datadump(datadumpname, _subSystem, ChemData));
 
 //    //Set up Turnover output if any
 //    string turnover = _outputDirectory + "Turnover.traj";
@@ -1124,7 +1124,8 @@ void Controller::run() {
             //print output if chemistry fails.
             mins = chrono::high_resolution_clock::now();
             if(var) {
-                for(auto o: _outputs) o->print(i);
+                short Ocounter = 0;
+                for(auto o: _outputs) { o->print(i); }
                 resetCounters();
                 break;
             }

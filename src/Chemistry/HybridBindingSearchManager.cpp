@@ -190,6 +190,14 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 			bstatecheck = areEqual(cc->getCMonomer(bindingSite)->speciesBound(
 					SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0);
 
+		/*if Minus End, check if binding site exists*/
+		auto cylinder = cc->getCylinder();
+		if(cylinder->isMinusEnd()){
+			auto sf = cc->getCMonomer(bindingSite)->activeSpeciesFilament();
+			if(sf == -1)
+				return;
+		}
+
 		//add valid binding sites
 		if (bstatecheck) {
 
@@ -221,6 +229,13 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 				for (auto it = SysParams::Chemistry().bindingSites[_nfilamentType].begin();
 				     it != SysParams::Chemistry().bindingSites[_nfilamentType].end(); it++) {
 
+					bool filstatecheckn = true;
+					if(cn->isMinusEnd()) {
+						auto sfn = ccn->getCMonomer(*it)->activeSpeciesFilament();
+						if (sfn == -1)
+							filstatecheckn = false;
+					}
+
 					bool bstatecheckn = false;
 
 					if (bstatepos == 1)
@@ -232,7 +247,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 								SysParams::Chemistry().motorBoundIndex[_nfilamentType])->getN(),
 						                        1.0);
 
-					if (bstatecheckn) {
+					if (bstatecheckn && filstatecheckn) {
 //						cout<<"Adding neighbor "<<cn->getID()<<" "<<*it<<" "<<k<<endl;
 						//check distances..
 						auto mp1 = (float) bindingSite /

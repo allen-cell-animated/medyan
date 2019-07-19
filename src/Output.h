@@ -331,4 +331,23 @@ public:
     virtual void print(int snapshot);
 };
 
+class Datadump : public Output {
+
+    ChemSim* _cs;
+
+public:
+    Datadump(string outputFileName, SubSystem* s, ChemistryData chemData)
+
+            : Output(outputFileName, s), _chemData(chemData),
+            _outputFileName(outputFileName){}
+
+    ~Datadump() {}
+
+	ChemistryData _chemData; ///< chemistry data of this system
+	string _outputFileName;
+
+public:
+    virtual void print(int snapshot);
+};
+
 #endif

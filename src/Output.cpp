@@ -565,7 +565,7 @@ void Types::print(int snapshot) {
     Linker::numLinkers() << " " <<
     MotorGhost::numMotorGhosts() << " " <<
     BranchingPoint::numBranchingPoints() << " " <<
-    Bubble::numBubbles() << endl;;
+    Bubble::numBubbles() << endl;
 
     for(auto &filament : Filament::getFilaments()) {
 
@@ -1069,3 +1069,149 @@ void LinkerBindingEvents::print(int snapshot) {
 
 
 }
+
+
+void Datadump::print(int snapshot) {
+    _outputFile.close();
+    _outputFile.open(_outputFileName, std::ofstream::trunc);
+	_outputFile.precision(15);
+    if(!_outputFile.is_open()) {
+        cout << "There was an error opening file " << _outputFileName
+             << " for output. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
+    //Rearrange bead and cylinder data to create a continuous array.
+    Bead::rearrange();
+    Cylinder::rearrange();
+    _outputFile << snapshot << " " << tau() << endl;
+    _outputFile << Filament::numFilaments() << " " <<
+                             Linker::numLinkers() << " " <<
+                             MotorGhost::numMotorGhosts() << " " <<
+                             BranchingPoint::numBranchingPoints() << " " <<
+                             Bubble::numBubbles() << endl;
+    //Bead data
+    _outputFile <<"BEAD DATA: BEADIDX(STABLE) COORDX COORDY COORDZ FORCEAUXX "
+                  "FORCEAUXY FORCEAUXZ"<<endl;
+    auto beadData = Bead::getDbDataConst();
+    auto deletedIndices = Bead::getdeletedIndices();
+    for(int bidx = 0; bidx<Bead::rawNumStableElements(); bidx++){
+        //Check if it a valid bidx
+        if(deletedIndices.size()){
+            if(find(deletedIndices.begin(), deletedIndices.end(), bidx) != deletedIndices.end())
+                continue;
+        }
+        _outputFile <<bidx<<" "<<beadData.coords.data()[3*bidx]<<" "<<beadData.coords.data()[3*bidx + 1]<<" "
+        <<beadData.coords.data()[3*bidx + 2]<<" "<<beadData.forcesAux.data()[3*bidx]<<" "<<beadData
+        .forcesAux.data()[3*bidx + 1]<<" "<<beadData.forcesAux.data()[3*bidx + 2]<<endl;
+    }
+	_outputFile <<endl;
+    //Cylinder data
+    _outputFile <<"CYLINDER DATA: CYLIDX(STABLE) B1_IDX B2_IDX MINUSENDTYPE "
+                  "PLUSENDTYPE MINUSENDMONOMER PLUSENDMONOMER TOTALMONOMERS EQLEN"<<endl;
+    const auto& cylinderInfoData = Cylinder::getDbData().value;
+    auto deletedcIndices = Cylinder::getdeletedIndices();
+    for(int cidx = 0; cidx < Cylinder::rawNumStableElements(); cidx++){
+        //Check if it a valid cidx
+        if(deletedIndices.size()){
+            if(find(deletedcIndices.begin(), deletedcIndices.end(), cidx) !=
+            deletedcIndices.end())
+                continue;
+        }
+        Cylinder* cyl = cylinderInfoData[cidx].chemCylinder->getCylinder();
+        CCylinder* ccyl  = cylinderInfoData[cidx].chemCylinder;
+        short filamentType = cyl->getType();
+        int numMonomers = SysParams::Geometry().cylinderNumMon[filamentType];
+        short minusendmonomer = 0;
+        short plusendmonomer = numMonomers;
+        short minusendtype = -1;
+        short plusendtype = -1;
+        short foundstatus = 0; //0 none found, 1 found one end, 2 found both ends
+                for(int midx = 0; midx<numMonomers; midx++){
+                if(foundstatus ==2)
+                    break;
+                short m = ccyl->getCMonomer(midx)->activeSpeciesMinusEnd();
+                short p = ccyl->getCMonomer(midx)->activeSpeciesPlusEnd();
+                if(m != -1) {
+                    foundstatus++;
+                    minusendtype = m;
+                    minusendmonomer = midx;
+                }
+
+                if(p != -1) {
+                    plusendtype = p;
+                    foundstatus++;
+                    plusendmonomer = midx;
+                }
+            }
+
+        /*Cidx minus-end plus-end num-monomers*/
+        _outputFile <<cidx<<" "<<cyl->getFirstBead()->getStableIndex()<<" "
+        <<cyl->getSecondBead()->getStableIndex()<<" "<<minusendtype<<" "<<plusendtype<<" "
+        <<minusendmonomer<<" "<<plusendmonomer<<" "<<(plusendmonomer-minusendmonomer)+1<<" "
+        <<cyl->getMCylinder()->getEqLength()<<endl;
+    }
+	_outputFile <<endl;
+    //Filament Data
+	_outputFile <<"FILAMENT DATA: FILID CYLIDvec"<<endl;
+	for(auto fil : Filament::getFilaments()){
+		_outputFile <<fil->getId()<<" ";
+		for(auto cyl :fil->getCylinderVector()){
+			_outputFile << cyl->getStableIndex()<<" ";
+		}
+		_outputFile << endl;
+	}
+	_outputFile <<endl;
+	//Linker Data
+	_outputFile <<"LINKER DATA: LINKERID CYL1_IDX CYL2_IDX POS1 POS2 EQLEN"<<endl;
+	for(auto l :Linker::getLinkers()){
+		Cylinder* cyl1 = l->getFirstCylinder();
+		Cylinder* cyl2 = l->getSecondCylinder();
+		float pos1 = l->getFirstPosition();
+		float pos2 = l->getSecondPosition();
+		_outputFile <<l->getId()<<" "<<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex
+		()<<" "<<pos1<<" "<<pos2<<" "<<l->getMLinker()->getEqLength()<<endl;
+	}
+	_outputFile <<endl;
+	//MOTOR Data
+	_outputFile <<"MOTOR DATA: MOTORID CYL1_IDX CYL2_IDX POS1 POS2 EQLEN"<<endl;
+	for(auto l :MotorGhost::getMotorGhosts()){
+		Cylinder* cyl1 = l->getFirstCylinder();
+		Cylinder* cyl2 = l->getSecondCylinder();
+		float pos1 = l->getFirstPosition();
+		float pos2 = l->getSecondPosition();
+		_outputFile <<l->getId()<<" "<<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex
+				()<<" "<<pos1<<" "<<pos2<<" "<<l->getMMotorGhost()->getEqLength()<<endl;
+	}
+	_outputFile <<endl;
+	//Brancher Data
+	_outputFile <<"BRANCHING DATA: BRANCHID CYL1_IDX CYL2_IDX POS1 EQLEN"<<endl;
+	for(auto l :BranchingPoint::getBranchingPoints()){
+		Cylinder* cyl1 = l->getFirstCylinder();
+		Cylinder* cyl2 = l->getSecondCylinder();
+		float pos1 = l->getPosition();
+		_outputFile <<l->getId()<<" "<<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex
+				()<<" "<<pos1<<" "<<l->getMBranchingPoint()->getEqLength()<<endl;
+	}
+	_outputFile <<endl;
+	//Compartment Data
+	_outputFile <<"COMPARTMENT DATA: CMPID DIFFUSINGSPECIES COPYNUM BULKSPECIES "
+			   "COPYNUM"<<endl;
+	for(auto cmp:_subSystem->getCompartmentGrid()->getCompartments()){
+		_outputFile <<cmp->getId()<<" ";
+		for(auto sd : _chemData.speciesDiffusing) {
+			string name = get<0>(sd);
+			auto s = cmp->findSpeciesByName(name);
+			auto copyNum = s->getN();
+			_outputFile <<name<<" "<<copyNum<<" ";
+		}
+		for(auto sb : _chemData.speciesBulk) {
+			string name = get<0>(sb);
+			auto s = cmp->findSpeciesByName(name);
+			auto copyNum = s->getN();
+			_outputFile <<name<<" "<<copyNum<<" ";
+		}
+		_outputFile <<endl;
+	}
+	_outputFile <<endl;
+}
+

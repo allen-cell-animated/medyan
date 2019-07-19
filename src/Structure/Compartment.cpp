@@ -78,25 +78,49 @@ void Compartment::SIMDcoordinates_section(){
 //                Cyldcindexvec[i] = cyl->_dcIndex;
                 CylcIDvec[i] = cyl->getId();
                 uint32_t j = 0;
-                float cylsizesquared = SysParams::Geometry().cylinderSize[_filamentType]
-                                      * SysParams::Geometry().cylinderSize[_filamentType];
-                float maxmp = sqrt(twoPointDistancesquared(x1,x2)/cylsizesquared);
+                if(cyl->isMinusEnd() == false) {
+                    float cylsizesquared = SysParams::Geometry().cylinderSize[_filamentType]
+                                           *
+                                           SysParams::Geometry().cylinderSize[_filamentType];
+                    float maxmp = sqrt(twoPointDistancesquared(x1, x2) / cylsizesquared);
 
-                for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                    for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                         it !=
+                         SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
 
-                    auto mp = (float) *it /
-                              SysParams::Geometry().cylinderNumMon[_filamentType];
+                        auto mp = (float) *it /
+                                  SysParams::Geometry().cylinderNumMon[_filamentType];
 
-                    if(mp <= maxmp){
-                      auto coord = midPointCoordinate(x1, x2, mp);
-                      //last 4 bits are binding site while first 12 bits are cylinder index.
-                      uint32_t index = shiftedindex | j;
-                      int pindices[3];
-                      getpartition3Dindex(pindices, coord);
-                        addcoordtopartitons(pindices, coord, index, cylfinfo);
+                        if (mp <= maxmp) {
+                            auto coord = midPointCoordinate(x1, x2, mp);
+                            //last 4 bits are binding site while first 12 bits are cylinder index.
+                            uint32_t index = shiftedindex | j;
+                            int pindices[3];
+                            getpartition3Dindex(pindices, coord);
+                            addcoordtopartitons(pindices, coord, index, cylfinfo);
+                        }
+                        j++;
                     }
-                    j++;
+                }
+                else{
+                    /* If it is the minus end Cylinder, add the binding sites that are
+                     * species Filament*/
+                    for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                         it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                         auto sf = Cylinder::getDbDataConst().value[cindex]
+                                .chemCylinder->getCMonomer(*it)->activeSpeciesFilament();
+                         if(sf !=-1){
+                             auto mp = (float) *it /
+                                       SysParams::Geometry().cylinderNumMon[_filamentType];
+                             auto coord = midPointCoordinate(x1, x2, mp);
+                             //last 4 bits are binding site while first 12 bits are cylinder index.
+                             uint32_t index = shiftedindex | j;
+                             int pindices[3];
+                             getpartition3Dindex(pindices, coord);
+                             addcoordtopartitons(pindices, coord, index, cylfinfo);
+                         }
+                         j++;
+                    }
                 }
             }
 
@@ -183,36 +207,81 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
 //                Cyldcindexvec[i] = cindex;
                 i++;
                 uint32_t j = 0;
-                for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-                    bool state = false;
-                    if (isvectorizedgather)
-                        state = checkoccupancy(boundstate, bstatepos, maxnbs * cindex + j);
-                    else
-                        state = checkoccupancy(cyl, *it, _filamentType, bstatepos);
-                    if (state) {
-                        auto mp = (float) *it /
-                                  SysParams::Geometry().cylinderNumMon[_filamentType];
-                        float cylsizesquared = SysParams::Geometry().cylinderSize[_filamentType]
-                                            * SysParams::Geometry().cylinderSize[_filamentType];
-                        float maxmp = sqrt(twoPointDistancesquared(x1,x2)/cylsizesquared);
-                        if(mp <= maxmp){
-                          auto coord = midPointCoordinate(x1, x2, mp);
-                          //last 4 bits are binding site while first 12 bits are cylinder index.
-                          uint32_t index = shiftedindex | j;
-                          int pindices[3];
-                          if (rMaxvsCmpSize) {
-                              getpartitionindex<true>(pindices, coord, coord_bounds);
-                              addcoordtorMaxbasedpartitons<true>(pindices, coord, index,
-                                                                 cylfinfo);
-                          } else {
-                              getpartitionindex<false>(pindices, coord, coord_bounds);
-                              addcoordtorMaxbasedpartitons<false>(pindices, coord, index,
-                                                                  cylfinfo);
-                          }
+                if(cyl->isMinusEnd() == false) {
+                    for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                         it !=
+                         SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                        bool state = false;
+                        if (isvectorizedgather)
+                            state = checkoccupancy(boundstate, bstatepos,
+                                                   maxnbs * cindex + j);
+                        else
+                            state = checkoccupancy(cyl, *it, _filamentType, bstatepos);
+                        if (state) {
+                            auto mp = (float) *it /
+                                      SysParams::Geometry().cylinderNumMon[_filamentType];
+                            float cylsizesquared =
+                                    SysParams::Geometry().cylinderSize[_filamentType]
+                                    * SysParams::Geometry().cylinderSize[_filamentType];
+                            float maxmp = sqrt(
+                                    twoPointDistancesquared(x1, x2) / cylsizesquared);
+                            if (mp <= maxmp) {
+                                auto coord = midPointCoordinate(x1, x2, mp);
+                                //last 4 bits are binding site while first 12 bits are cylinder index.
+                                uint32_t index = shiftedindex | j;
+                                int pindices[3];
+                                if (rMaxvsCmpSize) {
+                                    getpartitionindex<true>(pindices, coord, coord_bounds);
+                                    addcoordtorMaxbasedpartitons<true>(pindices, coord,
+                                                                       index,
+                                                                       cylfinfo);
+                                } else {
+                                    getpartitionindex<false>(pindices, coord, coord_bounds);
+                                    addcoordtorMaxbasedpartitons<false>(pindices, coord,
+                                                                        index,
+                                                                        cylfinfo);
+                                }
+                            }
                         }
+                        j++;
                     }
-                    j++;
+                }
+                else{
+                    /* If it is the minus end Cylinder, add the binding sites that are
+                     * species Filament*/
+                    for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                         it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                        auto sf = Cylinder::getDbDataConst().value[cindex]
+                                .chemCylinder->getCMonomer(*it)->activeSpeciesFilament();
+                        if(sf !=-1){
+                            bool state = false;
+                            if (isvectorizedgather)
+                                state = checkoccupancy(boundstate, bstatepos,
+                                                       maxnbs * cindex + j);
+                            else
+                                state = checkoccupancy(cyl, *it, _filamentType, bstatepos);
+                            if (state) {
+                                auto mp = (float) *it /
+                                          SysParams::Geometry().cylinderNumMon[_filamentType];
+                                auto coord = midPointCoordinate(x1, x2, mp);
+                                //last 4 bits are binding site while first 12 bits are cylinder index.
+                                uint32_t index = shiftedindex | j;
+                                int pindices[3];
+                                if (rMaxvsCmpSize) {
+                                    getpartitionindex<true>(pindices, coord, coord_bounds);
+                                    addcoordtorMaxbasedpartitons<true>(pindices, coord,
+                                                                       index,
+                                                                       cylfinfo);
+                                } else {
+                                    getpartitionindex<false>(pindices, coord, coord_bounds);
+                                    addcoordtorMaxbasedpartitons<false>(pindices, coord,
+                                                                        index,
+                                                                        cylfinfo);
+                                }
+                            }
+                        }
+                        j++;
+                    }
                 }
             }
 //        cout<<endl;
@@ -227,7 +296,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                                                                       cindex_bs_section[i],
                                                                       finfo_bs_section[i]);
             }
-        }
+        }//if(N)
         else{
             for (short i = 0; i < 27; i++) {
                     bscoords_section_linker[filType * 27 + i].resize(0);
@@ -312,37 +381,117 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
 //                Cyldcindexvec[i] = cindex;
                 i++;
                 uint32_t j = 0;
-                for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-                    bool state = false;
-                    if (isvectorizedgather)
-                        state = checkoccupancy(boundstate, bstatepos, maxnbs * cindex + j);
-                    else
-                        state = checkoccupancy(cyl, *it, _filamentType, bstatepos);
-                    if (state) {
-                        auto mp = (float) *it /
-                                  SysParams::Geometry().cylinderNumMon[_filamentType];
-                        auto coord = midPointCoordinate(x1, x2, mp);
-                        //last 4 bits are binding site while first 12 bits are cylinder index.
-                        uint32_t index = shiftedindex | j;
-                        //split and crosscheck
+                if(cyl->isMinusEnd() == false) {
+                    for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                         it !=
+                         SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                        bool state = false;
+                        if (isvectorizedgather)
+                            state = checkoccupancy(boundstate, bstatepos,
+                                                   maxnbs * cindex + j);
+                        else
+                            state = checkoccupancy(cyl, *it, _filamentType, bstatepos);
+                        if (state) {
+                            auto mp = (float) *it /
+                                      SysParams::Geometry().cylinderNumMon[_filamentType];
+                            auto coord = midPointCoordinate(x1, x2, mp);
+                            //last 4 bits are binding site while first 12 bits are cylinder index.
+                            uint32_t index = shiftedindex | j;
+                            //split and crosscheck
 //						cout<<index<<" ";
-                        int pindices[3];
-                        if (rMaxvsCmpSize) {
-                            getpartitionindex<true>(pindices, coord, coord_bounds);
-                            addcoordtorMaxbasedpartitons<true>(pindices, coord, index,
-                                                               cylfinfo);
-                        } else {
-                            getpartitionindex<false>(pindices, coord, coord_bounds);
-                            addcoordtorMaxbasedpartitons<false>(pindices, coord, index,
-                                                                cylfinfo);
-                        }
+                            int pindices[3];
+                            if (rMaxvsCmpSize) {
+                                getpartitionindex<true>(pindices, coord, coord_bounds);
+                                addcoordtorMaxbasedpartitons<true>(pindices, coord, index,
+                                                                   cylfinfo);
+                            } else {
+                                getpartitionindex<false>(pindices, coord, coord_bounds);
+                                addcoordtorMaxbasedpartitons<false>(pindices, coord, index,
+                                                                    cylfinfo);
+                            }
 /*                        getpartition3Dindex(pindices, coord, coord_bounds);
                         addcoordtopartitons_smallrmax(pindices, coord, index);
                         getpartition3Dindex(pindices, coord);
                         addcoordtopartitons(pindices, coord, index);*/
+                        }
+                        j++;
                     }
-                    j++;
+                }
+                else{
+                    /* If it is the minus end Cylinder, add the binding sites that are
+                     * species Filament*/
+                    for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                         it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                        auto sf = Cylinder::getDbDataConst().value[cindex]
+                                .chemCylinder->getCMonomer(*it)->activeSpeciesFilament();
+                        if(sf !=-1){
+                            bool state = false;
+                            if (isvectorizedgather)
+                                state = checkoccupancy(boundstate, bstatepos,
+                                                       maxnbs * cindex + j);
+                            else
+                                state = checkoccupancy(cyl, *it, _filamentType, bstatepos);
+                            if (state) {
+                                auto mp = (float) *it /
+                                          SysParams::Geometry().cylinderNumMon[_filamentType];
+                                auto coord = midPointCoordinate(x1, x2, mp);
+                                //last 4 bits are binding site while first 12 bits are cylinder index.
+                                uint32_t index = shiftedindex | j;
+                                int pindices[3];
+                                if (rMaxvsCmpSize) {
+                                    getpartitionindex<true>(pindices, coord, coord_bounds);
+                                    addcoordtorMaxbasedpartitons<true>(pindices, coord,
+                                                                       index,
+                                                                       cylfinfo);
+                                } else {
+                                    getpartitionindex<false>(pindices, coord, coord_bounds);
+                                    addcoordtorMaxbasedpartitons<false>(pindices, coord,
+                                                                        index,
+                                                                        cylfinfo);
+                                }
+                            }
+                        }
+                        /*else{
+                            cout<<twoPointDistance(x1,x2)<<endl;
+                            for(int mon =0;mon<40;mon++){
+                                auto sfx = Cylinder::getDbDataConst().value[cindex]
+                                        .chemCylinder->getCMonomer(mon)
+                                        ->activeSpeciesFilament();
+                                cout<<sfx<<" ";
+                            }
+                            cout<<endl;
+                            //PlusEnd
+                            cout<<"Plus End "<<endl;
+                            short numPlusEndSpecies = SysParams::Chemistry().numPlusEndSpecies[_filamentType];
+                            for(int mon =0;mon<40;mon++){
+                                for(int i = 0; i < numPlusEndSpecies; i++) {
+                                    SpeciesFilament *s = Cylinder::getDbDataConst().value[cindex]
+                                            .chemCylinder->getCMonomer(mon)
+                                            ->speciesPlusEnd(i);
+                                    cout<<s->getN()<<" ";
+                                }
+                                cout<<"|";
+                            }
+                            cout<<endl;
+                            //MinusEnd
+                            cout<<"Minus End "<<endl;
+                            short numMinusEndSpecies = SysParams::Chemistry()
+                                    .numMinusEndSpecies[_filamentType];
+                            for(int mon =0;mon<40;mon++){
+                                for(int i = 0; i < numMinusEndSpecies; i++) {
+                                    SpeciesFilament *s = Cylinder::getDbDataConst().value[cindex]
+                                            .chemCylinder->getCMonomer(mon)
+                                            ->speciesMinusEnd(i);
+                                    cout<<s->getN()<<" ";
+                                }
+                                cout<<"|";
+                            }
+                            cout<<endl;
+                            cout<<sf<<endl;
+                            cout<<"----------"<<endl;
+                        }*/
+                        j++;
+                    }
                 }
             }
 //            cout<<endl;
@@ -358,7 +507,8 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                                                                      finfo_bs_section[i]);
             }
 
-        } else {
+        } //if(N)
+        else {
             for (short i = 0; i < 27; i++)
                 bscoords_section_motor[filType * 27 + i].resize(0);
         }

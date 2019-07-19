@@ -165,6 +165,8 @@ public:
     // Get raw number of stable elements (including deleted)
     static auto rawNumStableElements() { return _stableElems.size(); }
 
+    static std::vector<std::size_t> getdeletedIndices(){ return _deletedIndices;}
+
     static void rearrange() {
         using std::size_t;
 
@@ -219,6 +221,8 @@ public:
     }
 
     std::size_t getStableIndex() const { return _stableIndex; }
+
+
 };
 template< typename T, typename DatabaseData > std::vector<T*> Database< T, true, DatabaseData >::_stableElems;
 template< typename T, typename DatabaseData > std::vector<std::size_t> Database< T, true, DatabaseData >::_deletedIndices;
