@@ -13,7 +13,8 @@
 
 #include "BranchingDihedral.h"
 
-#include "BranchingDihedralCosine.h"
+#include "Mechanics/ForceField/Branching/BranchingDihedralCosine.h"
+#include "Mechanics/ForceField/Branching/BranchingDihedralQuadratic.hpp"
 
 #include "BranchingPoint.h"
 #include "Cylinder.h"
@@ -28,7 +29,7 @@ template <class BDihedralInteractionType>
 void BranchingDihedral<BDihedralInteractionType>::vectorize() {
 
     CUDAcommon::tmin.numinteractions[6] += BranchingPoint::getBranchingPoints().size();
-    beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
+    beadSet.resize(n * BranchingPoint::getBranchingPoints().size());
     kdih = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
     pos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
 
@@ -55,7 +56,7 @@ void BranchingDihedral<BDihedralInteractionType>::vectorize() {
     int numInteractions =BranchingPoint::getBranchingPoints().size();
     _FFType.optimalblocksnthreads(numInteractions);
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_beadSet, n * numInteractions * sizeof(int)));
-    CUDAcommon::handleerror(cudaMemcpy(gpu_beadSet, beadSet, n * numInteractions * sizeof(int),
+    CUDAcommon::handleerror(cudaMemcpy(gpu_beadSet, beadSet.data(), n * numInteractions * sizeof(int),
                                        cudaMemcpyHostToDevice));
 
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_kdih, numInteractions * sizeof(floatingpoint)));
@@ -76,7 +77,6 @@ void BranchingDihedral<BDihedralInteractionType>::vectorize() {
 
 template<class BDihedralInteractionType>
 void BranchingDihedral<BDihedralInteractionType>::deallocate() {
-    delete [] beadSet;
     delete [] kdih;
     delete [] pos;
 #ifdef CUDAACCL
@@ -113,10 +113,9 @@ floatingpoint BranchingDihedral<BDihedralInteractionType>::computeEnergy(floatin
 
 #endif
 #ifdef SERIAL
-    if (d == 0.0)
-        U_ii = _FFType.energy(coord, f, beadSet, kdih, pos);
-    else
-        U_ii = _FFType.energy(coord, f, beadSet, kdih, pos, d);
+
+    U_ii = _FFType.energy(coord, BranchingPoint::getBranchingPoints().size(), beadSet.data(), kdih, pos);
+
 #endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
     floatingpoint U_i[1];
@@ -162,15 +161,16 @@ void BranchingDihedral<BDihedralInteractionType>::computeForces(floatingpoint *c
 #ifdef SERIAL
 
 
-    _FFType.forces(coord, f, beadSet, kdih, pos);
+    _FFType.forces(coord, f, BranchingPoint::getBranchingPoints().size(), beadSet.data(), kdih, pos);
 
 #endif
 }
 
-///Template specializations
+// Template instantiations
 template floatingpoint BranchingDihedral<BranchingDihedralCosine>::computeEnergy
         (floatingpoint *coord, floatingpoint *f, floatingpoint d);
 template void BranchingDihedral<BranchingDihedralCosine>::computeForces(floatingpoint
         *coord, floatingpoint *f);
 template void BranchingDihedral<BranchingDihedralCosine>::vectorize();
 template void BranchingDihedral<BranchingDihedralCosine>::deallocate();
+template class BranchingDihedral< BranchingDihedralQuadratic >;

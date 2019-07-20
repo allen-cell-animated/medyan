@@ -13,6 +13,8 @@
 
 #include "BranchingFF.h"
 
+#include <stdexcept> // runtime_error
+
 #include "BranchingStretching.h"
 #include "BranchingStretchingHarmonic.h"
 
@@ -21,12 +23,15 @@
 
 #include "BranchingDihedral.h"
 #include "BranchingDihedralCosine.h"
+#include "Mechanics/ForceField/Branching/BranchingDihedralQuadratic.hpp"
 
 #include "BranchingPosition.h"
 #include "BranchingPositionCosine.h"
 
 #include "BranchingPoint.h"
 #include "Bead.h"
+#include "Util/Io/Log.hpp"
+
 BranchingFF::BranchingFF(string& stretching, string& bending,
                          string& dihedral, string& position)
 {
@@ -51,10 +56,13 @@ BranchingFF::BranchingFF(string& stretching, string& bending,
     if(dihedral == "COSINE")
         _branchingInteractionVector.emplace_back(
                 new BranchingDihedral<BranchingDihedralCosine>());
+    else if(dihedral == "QUADRATIC")
+        _branchingInteractionVector.emplace_back(
+            new BranchingDihedral< BranchingDihedralQuadratic >());
     else if(dihedral == "") {}
     else {
-        cout << "Branching dihedral FF not recognized. Exiting." << endl;
-        exit(EXIT_FAILURE);
+        LOG(ERROR) << "Branching dihedral FF " << dihedral << " not recognized.";
+        throw std::runtime_error("Unrecognized branching dihedral force field");
     }
 
     if(position == "COSINE")
