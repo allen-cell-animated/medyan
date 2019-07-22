@@ -51,7 +51,7 @@ public:
     virtual void vectorize();
     virtual void deallocate();
 
-    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) override;
     virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     //virtual void computeForcesAux(double *coord, double *f);
     

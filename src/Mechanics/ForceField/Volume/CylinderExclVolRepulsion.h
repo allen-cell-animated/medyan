@@ -27,15 +27,15 @@ class CylinderExclVolRepulsion {
 public:
 
 
-	floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep);
+    floatingpoint energy(floatingpoint *coord, int *beadSet, floatingpoint *krep);
 
-	floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint d);
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint d);
     
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep);
 
 private:
 
-	floatingpoint energyN(floatingpoint *coord, floatingpoint *f, int *beadSet,
+	floatingpoint energyN(floatingpoint *coord, int *beadSet,
 	                      floatingpoint *krep, int intID);
 
 	void forceN(floatingpoint *coord, floatingpoint *f, int *beadSet,

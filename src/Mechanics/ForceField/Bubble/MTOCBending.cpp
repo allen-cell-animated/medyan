@@ -59,7 +59,7 @@ void MTOCBending<MTOCInteractionType>::deallocate() {
 
 
 template <class MTOCInteractionType>
-floatingpoint MTOCBending<MTOCInteractionType>::computeEnergy(floatingpoint* coord, floatingpoint *f, floatingpoint d) {
+floatingpoint MTOCBending<MTOCInteractionType>::computeEnergy(floatingpoint* coord, bool stretched) {
 
     floatingpoint U_i=0.0;
     
@@ -79,10 +79,7 @@ floatingpoint MTOCBending<MTOCInteractionType>::computeEnergy(floatingpoint* coo
         //            floatingpoint kStretch = c->getMCylinder()->getStretchingConst();
         floatingpoint radius = mtoc->getBubble()->getRadius();
         
-        if (d == 0.0)
-        U_i = _FFType.energy(coord, f, beadSet, kbend, radius);
-        else
-        U_i = _FFType.energy(coord, f, beadSet, kbend, radius, d);
+        U_i = _FFType.energy(coord, beadSet, kbend, radius);
     }
     
     return U_i;
@@ -151,7 +148,7 @@ void MTOCBending<MTOCInteractionType>::computeForces(floatingpoint *coord, float
 //}
 
 ///Template specializations
-template floatingpoint MTOCBending<MTOCBendingCosine>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template floatingpoint MTOCBending<MTOCBendingCosine>::computeEnergy(floatingpoint *coord, bool stretched);
 template void MTOCBending<MTOCBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
 //template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux(floatingpoint *coord, floatingpoint *f);
 template void MTOCBending<MTOCBendingCosine>::vectorize();

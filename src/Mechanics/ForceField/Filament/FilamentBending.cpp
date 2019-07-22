@@ -128,7 +128,7 @@ void FilamentBending<FBendingInteractionType>::deallocate() {
 
 
 template <class FBendingInteractionType>
-floatingpoint FilamentBending<FBendingInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d){
+floatingpoint FilamentBending<FBendingInteractionType>::computeEnergy(floatingpoint *coord){
 
     floatingpoint U_ii=0.0;
 
@@ -170,10 +170,7 @@ floatingpoint FilamentBending<FBendingInteractionType>::computeEnergy(floatingpo
     tbegin = chrono::high_resolution_clock::now();
 #endif
 
-    if (d == 0.0)
-        U_ii = _FFType.energy(coord, f, _numInteractions, beadSet, kbend, eqt);
-    else
-        U_ii= _FFType.energy(coord, f, _numInteractions, beadSet, kbend, eqt, d);
+    U_ii = _FFType.energy(coord, _numInteractions, beadSet, kbend, eqt);
 
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
@@ -240,13 +237,13 @@ void FilamentBending<FBendingInteractionType>::computeForces(floatingpoint *coor
 }
 
 ///Template specializations
-template floatingpoint FilamentBending<FilamentBendingHarmonic>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template floatingpoint FilamentBending<FilamentBendingHarmonic>::computeEnergy(floatingpoint *coord);
 template void FilamentBending<FilamentBendingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void FilamentBending<FilamentBendingHarmonic>::vectorize();
 template void FilamentBending<FilamentBendingHarmonic>::deallocate();
 
 
-template floatingpoint FilamentBending<FilamentBendingCosine>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template floatingpoint FilamentBending<FilamentBendingCosine>::computeEnergy(floatingpoint *coord);
 template void FilamentBending<FilamentBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void FilamentBending<FilamentBendingCosine>::vectorize();
 template void FilamentBending<FilamentBendingCosine>::deallocate();

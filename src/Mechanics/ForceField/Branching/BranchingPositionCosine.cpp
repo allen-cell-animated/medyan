@@ -186,7 +186,7 @@ void BranchingPositionCosine::checkforculprit() {
 }
 #endif
 
-floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, int *beadSet,
                                        floatingpoint *kpos, floatingpoint *pos){
 
 

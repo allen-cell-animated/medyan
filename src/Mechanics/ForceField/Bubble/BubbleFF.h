@@ -44,7 +44,7 @@ public:
     virtual string getName() {return "Bubble";}
     virtual void whoIsCulprit();
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched = false) override;
     virtual void computeForces(floatingpoint *coord, floatingpoint *f);
 //    virtual void computeForcesAux();
     

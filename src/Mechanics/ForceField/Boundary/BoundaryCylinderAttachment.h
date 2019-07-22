@@ -54,7 +54,7 @@ public:
     virtual void vectorize();
     virtual void deallocate();
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
     //@{
     /// Tepulsive force calculation
     virtual void computeForces(floatingpoint *coord, floatingpoint *f);

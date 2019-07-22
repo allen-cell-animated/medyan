@@ -187,9 +187,8 @@ void LinkerStretchingHarmonic::checkforculprit() {
 }
 
 #endif
-floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord,
-        floatingpoint *f, int *beadSet, floatingpoint *kstr, floatingpoint *eql,
-        floatingpoint *pos1, floatingpoint *pos2) {
+floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, int *beadSet,
+        floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2) {
 
         int n = LinkerStretching<LinkerStretchingHarmonic>::n;
         int nint = Linker::getLinkers().size();

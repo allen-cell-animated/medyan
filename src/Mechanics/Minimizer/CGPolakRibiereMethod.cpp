@@ -790,7 +790,7 @@ std::cout<<"----------------------------------------"<<endl;
         CUDAcommon::cudavars = cvars;
 #endif
         cout << "System energy..." << endl;
-        FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), 0.0, true);
+        FFM.computeEnergy(Bead::getDbData().coords.data(), true);
 #ifdef CUDAACCL
         for(auto strm:CUDAcommon::getCUDAvars().streamvec)
             CUDAcommon::handleerror(cudaStreamSynchronize(*strm));

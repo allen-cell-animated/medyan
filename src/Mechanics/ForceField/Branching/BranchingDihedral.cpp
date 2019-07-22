@@ -90,8 +90,7 @@ void BranchingDihedral<BDihedralInteractionType>::deallocate() {
 
 
 template <class BDihedralInteractionType>
-floatingpoint BranchingDihedral<BDihedralInteractionType>::computeEnergy(floatingpoint
-*coord, floatingpoint *f, floatingpoint d) {
+floatingpoint BranchingDihedral<BDihedralInteractionType>::computeEnergy(floatingpoint *coord) {
 
     floatingpoint U_ii=(floatingpoint)0.0;
 
@@ -167,10 +166,8 @@ void BranchingDihedral<BDihedralInteractionType>::computeForces(floatingpoint *c
 }
 
 // Template instantiations
-template floatingpoint BranchingDihedral<BranchingDihedralCosine>::computeEnergy
-        (floatingpoint *coord, floatingpoint *f, floatingpoint d);
-template void BranchingDihedral<BranchingDihedralCosine>::computeForces(floatingpoint
-        *coord, floatingpoint *f);
+template floatingpoint BranchingDihedral<BranchingDihedralCosine>::computeEnergy(floatingpoint *coord);
+template void BranchingDihedral<BranchingDihedralCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void BranchingDihedral<BranchingDihedralCosine>::vectorize();
 template void BranchingDihedral<BranchingDihedralCosine>::deallocate();
 template class BranchingDihedral< BranchingDihedralQuadratic >;

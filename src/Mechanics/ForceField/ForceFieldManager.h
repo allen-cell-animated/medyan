@@ -45,10 +45,11 @@ public:
     /// @return Returns infinity if there was a problem with a ForceField
     /// energy calculation, such that beads will not be moved to this
     /// problematic configuration.
-    /// @param print - prints detailed info about energies
-    floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d, bool verbose = false);
-
-    /// Compute the forces of all force fields
+    /// @param stretched - whether intermediate variables are treated as temporary or not
+    template< bool stretched = false >
+    floatingpoint computeEnergy(floatingpoint *coord, bool verbose = false) const;
+    
+    /// Compute the forces of all force fields 
     void computeForces(floatingpoint *coord, floatingpoint *f);
     
     void printculprit(floatingpoint* force);

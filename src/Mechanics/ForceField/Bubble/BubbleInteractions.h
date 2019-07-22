@@ -47,7 +47,7 @@ public:
     virtual void deallocate() = 0;
 
     /// Compute energy of this interaction
-    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) = 0;
+    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) = 0;
     /// Compute forces of this interaction
     virtual void computeForces(floatingpoint *coord, floatingpoint *f) = 0;
     /// Compute auxiliary forces of this interaction

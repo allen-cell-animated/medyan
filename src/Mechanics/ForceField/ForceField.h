@@ -42,8 +42,7 @@ public:
     /// Compute total energy of this forcefield in the system
     /// @return  the energy value if valid. If an inf or NaN value has been
     /// calculated, return -1.
-    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f,
-            floatingpoint d) = 0;
+    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched = false) = 0;
 
     /// Compute forces of this forcefield in the system. Update Bead
     /// forces accordingly.
