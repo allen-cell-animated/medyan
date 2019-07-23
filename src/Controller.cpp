@@ -426,11 +426,12 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     cout << "Done. " << membraneData.size() << " membranes created." << endl;
 
     // Create a region inside the membrane
-    auto regionInMembrane = (
+    _regionInMembrane = (
         membraneData.empty() ?
         make_unique<MembraneRegion<Membrane>>(_subSystem->getBoundary()) :
         MembraneRegion<Membrane>::makeByChildren(MembraneHierarchy< Membrane >::root())
     );
+    _subSystem->setRegionInMembrane(_regionInMembrane.get());
 
     // Optimize the membrane
     membraneAdaptiveRemesh();
@@ -446,7 +447,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             c->computeSlicedVolumeArea(Compartment::SliceMethod::Membrane);
             _cController->updateActivation(c, Compartment::ActivateReason::Membrane);
 
-        } else if( ! regionInMembrane->contains(vector2Vec<3, floatingpoint>(c->coordinates()))) {
+        } else if( ! _regionInMembrane->contains(vector2Vec<3, floatingpoint>(c->coordinates()))) {
             // Compartment is outside the membrane
             _cController->deactivate(c, true);
         }
@@ -499,7 +500,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     //add other filaments if specified
     FilamentInitializer* fInit = new RandomFilamentDist();
     
-    auto filamentsGen = fInit->createFilaments(*regionInMembrane,
+    auto filamentsGen = fInit->createFilaments(*_regionInMembrane,
                                                FSetup.numFilaments,
                                                FSetup.filamentType,
                                                FSetup.filamentLength);

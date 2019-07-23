@@ -24,6 +24,8 @@
 #include "CController.h"
 #include "DRController.h"
 #include "Structure/SurfaceMesh/AdaptiveMesh.hpp"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/MembraneRegion.hpp"
 #include "DissipationTracker.h"
 
 //FORWARD DECLARATIONS
@@ -66,6 +68,7 @@ private:
     floatingpoint _neighborListTime;  ///< Frequency of neighbor list updates
 
     std::unique_ptr<adaptive_mesh::MembraneMeshAdapter> _meshAdapter; ///< Used in adaptive remeshing algorithm
+    std::unique_ptr< MembraneRegion< Membrane > > _regionInMembrane; // The region that is inside the outermost membrane
 
     DissipationTracker* _dt;   ///< dissipation tracking object
     
