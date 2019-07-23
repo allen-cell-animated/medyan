@@ -13,6 +13,7 @@
 
 #include "MathFunctions.h"
 #include "Structure/SubSystem.h"
+#include "Structure/SurfaceMesh/MembraneHierarchy.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/MMembrane.h"
 #include "Structure/SurfaceMesh/SurfaceMesh.hpp"
@@ -34,6 +35,8 @@ public:
     using coordinate_type = typename MembraneMeshAttributeType::coordinate_type;
     using MeshType = SurfaceTriangularMesh< MembraneMeshAttributeType >;
 
+    using HierarchyType = MembraneHierarchy< Membrane >;
+
 private:
 
     MeshType _mesh;
@@ -54,6 +57,10 @@ public:
         const std::vector< coordinate_type >& vertexCoordinateList,
         const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
     );
+
+    ~Membrane() {
+        HierarchyType::removeMembrane(this);
+    }
 
     /// Get vector of triangles/edges/vertices that this membrane contains.
     const auto& getMesh() const { return _mesh; }

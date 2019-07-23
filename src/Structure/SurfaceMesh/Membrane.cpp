@@ -5,8 +5,8 @@
 #include "SubSystem.h"
 #include "SysParams.h"
 
-#include "Structure/SurfaceMesh/MVoronoiCell.h"
 #include "Structure/SurfaceMesh/MMembrane.h"
+#include "Structure/SurfaceMesh/MVoronoiCell.h"
 
 using namespace mathfunc;
 
@@ -30,6 +30,9 @@ Membrane::Membrane(
     updateGeometryValue<false>();
 
     initMMembrane();
+
+    // Add to membrane hierarchy (must have updated geometry)
+    HierarchyType::addMembrane(this);
 }
 
 void Membrane::initMMembrane() {

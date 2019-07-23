@@ -422,12 +422,6 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             it.vertexCoordinateList,
             it.triangleVertexIndexList
         );
-
-        // Update membrane geometry
-        newMembrane->updateGeometryValue();
-
-        // Add to the global membrane hierarchy
-        MembraneHierarchy< Membrane >::addMembrane(newMembrane);
     }
     cout << "Done. " << membraneData.size() << " membranes created." << endl;
 
