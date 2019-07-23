@@ -427,15 +427,15 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         newMembrane->updateGeometryValue();
 
         // Add to the global membrane hierarchy
-        MembraneHierarchy::addMembrane(newMembrane);
+        MembraneHierarchy< Membrane >::addMembrane(newMembrane);
     }
     cout << "Done. " << membraneData.size() << " membranes created." << endl;
 
     // Create a region inside the membrane
     auto regionInMembrane = (
-        membraneData.size()?
-        MembraneRegion::makeByChildren(MembraneHierarchy::getRoot()):
-        make_unique<MembraneRegion>(_subSystem->getBoundary())
+        membraneData.empty() ?
+        make_unique<MembraneRegion<Membrane>>(_subSystem->getBoundary()) :
+        MembraneRegion<Membrane>::makeByChildren(MembraneHierarchy< Membrane >::root())
     );
 
     // Optimize the membrane
