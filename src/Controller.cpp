@@ -34,8 +34,8 @@
 #include "Bubble.h"
 #include "MTOC.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "Structure/SurfaceMesh/MembraneHierarchy.h"
-#include "Structure/SurfaceMesh/MembraneRegion.h"
+#include "Structure/SurfaceMesh/MembraneHierarchy.hpp"
+#include "Structure/SurfaceMesh/MembraneRegion.hpp"
 #include "Structure/SurfaceMesh/SurfaceMeshGeneratorPreset.hpp"
 
 #include "SysParams.h"

@@ -102,8 +102,8 @@ public:
      * Throws an exception if the membrane is not closed.
      * The function will search through the whole meshwork, so it might not be efficient.
      */
-    template< typename Float >
-    double signedDistance(const mathfunc::Vec< 3, Float >& p) const {
+    template< typename VecType, std::enable_if_t< VecType::vec_size == 3 >* = nullptr >
+    double signedDistance(const VecType& p) const {
         if(!isClosed()) throw std::runtime_error("Membrane is not closed while trying to find signed distance field.");
         return MembraneMeshAttributeType::signedDistance(_mesh, p);
     }
@@ -111,8 +111,8 @@ public:
      * Use signed distance or other methods to judge whether a point is inside membrane.
      * Throws an exception if the membrane is not closed.
      */
-    template< typename Float >
-    bool contains(const mathfunc::Vec< 3, Float >& p) const {
+    template< typename VecType, std::enable_if_t< VecType::vec_size == 3 >* = nullptr >
+    bool contains(const VecType& p) const {
         if(!isClosed()) throw std::runtime_error("Membrane is not closed while trying to find signed distance field.");
         return MembraneMeshAttributeType::contains(_mesh, p);
     }

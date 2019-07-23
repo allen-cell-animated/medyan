@@ -1,5 +1,5 @@
-#ifndef MEDYAN_MembraneHierarchy_h
-#define MEDYAN_MembraneHierarchy_h
+#ifndef MEDYAN_Structure_SurfaceMesh_MembraneHierarchy_Hpp
+#define MEDYAN_Structure_SurfaceMesh_MembraneHierarchy_Hpp
 
 #include <string>
 
@@ -49,15 +49,15 @@ public:
     Membrane* getMembrane()const { return _membrane; }
 
     /**************************************************************************
-    Getters and Setters (static)
-    **************************************************************************/
-    static MembraneHierarchy& getRoot() { return _root; }
-
-    /**************************************************************************
     Implements Component
     **************************************************************************/
     virtual int getType()override { return 0; }
     virtual void printSelf()const override;
+
+    /**************************************************************************
+    Getters and Setters (static)
+    **************************************************************************/
+    static MembraneHierarchy& getRoot() { return _root; }
 
     /**************************************************************************
     Operations on a tree structure

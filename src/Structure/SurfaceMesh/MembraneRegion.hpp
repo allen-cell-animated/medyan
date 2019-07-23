@@ -1,5 +1,5 @@
-#ifndef MEDYAN_MembraneRegion_h
-#define MEDYAN_MembraneRegion_h
+#ifndef MEDYAN_Structure_SurfaceMesh_MembraneRegion_Hpp
+#define MEDYAN_Structure_SurfaceMesh_MembraneRegion_Hpp
 
 #include <array>
 #include <vector>
@@ -8,7 +8,7 @@
 #include "MathFunctions.h"
 #include "Structure/Boundary.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "Structure/SurfaceMesh/MembraneHierarchy.h"
+#include "Structure/SurfaceMesh/MembraneHierarchy.hpp"
 
 // Forward Declarations
 class MembraneHierarchy;

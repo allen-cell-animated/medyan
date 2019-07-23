@@ -760,8 +760,8 @@ struct MembraneMeshAttribute {
     boundary potential. However, this field is not C1-continuous everywhere,
     which is detrimental to conjugate gradient methods.
     **************************************************************************/
-    template< typename Float >
-    static double signedDistance(const MeshType& mesh, const mathfunc::Vec< 3, Float >& p) {
+    template< typename VecType, std::enable_if_t< VecType::vec_size == 3 >* = nullptr >
+    static double signedDistance(const MeshType& mesh, const VecType& p) {
         using namespace mathfunc;
 
         const size_t numTriangles = mesh.getTriangles().size();
@@ -853,8 +853,8 @@ struct MembraneMeshAttribute {
         
         return minAbsDistance;
     }
-    template< typename Float >
-    static bool contains(const MeshType& mesh, const mathfunc::Vec< 3, Float >& p) {
+    template< typename VecType, std::enable_if_t< VecType::vec_size == 3 >* = nullptr >
+    static bool contains(const MeshType& mesh, const VecType& p) {
         return signedDistance(mesh, p) < 0.0;
     }
 

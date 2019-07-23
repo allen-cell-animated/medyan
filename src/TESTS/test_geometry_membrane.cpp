@@ -35,7 +35,7 @@ using namespace mathfunc;
 #    include "GEdge.h"
 #    include "GTriangle.h"
 #    include "Membrane.hpp"
-#    include "MembraneHierarchy.h"
+#    include "MembraneHierarchy.hpp"
 
 namespace {
     using VertexData = tuple<array<double, 3>, vector<size_t>>;

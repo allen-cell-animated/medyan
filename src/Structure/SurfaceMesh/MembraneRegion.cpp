@@ -1,4 +1,4 @@
-#include "Structure/SurfaceMesh/MembraneRegion.h"
+#include "Structure/SurfaceMesh/MembraneRegion.hpp"
 
 MembraneRegion::MembraneRegion(MembraneHierarchy* hier, bool excludeChildren):
     _hierOut({hier})
