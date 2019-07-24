@@ -12,7 +12,7 @@ public:
     virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) override;
     virtual void computeForces(const floatingpoint* coord, floatingpoint* force) override;
 
-    virtual std::string getName()const { return "Membrane Volume Conservation"; }
+    virtual std::string getName() const override { return "Membrane Volume Conservation"; }
 };
 
 

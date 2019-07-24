@@ -24,7 +24,7 @@
 #include "CylinderVolumeFF.h"
 #include "Mechanics/ForceField/Membrane/MembraneFF.h"
 #include "Mechanics/ForceField/VolumeConservation/VolumeConservationFF.h"
-#include "TriangleCylinderVolumeFF.h"
+#include "TriangleCylinderVolumeFF.hpp"
 
 #include "ConjugateGradient.h"
 #include "Util/Io/Log.hpp"

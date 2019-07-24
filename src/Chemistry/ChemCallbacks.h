@@ -584,12 +584,13 @@ struct BranchingCallback {
                 auto branchPosDir = branchProjection(n, p, l, s, theta);
                 bd = get<0>(branchPosDir);
                 bp = get<1>(branchPosDir);
+                const auto b2 = vector2Vec< 3, floatingpoint >(bp) + s * vector2Vec< 3, floatingpoint >(bd);
 
                 auto regionInMembrane = _ps->getRegionInMembrane();
                 if(
                     regionInMembrane && (
-                        regionInMembrane->contains(vector2Vec< 3, floatingpoint >(bd)) &&
-                        regionInMembrane->contains(vector2Vec< 3, floatingpoint >(bp))
+                        regionInMembrane->contains(vector2Vec< 3, floatingpoint >(bp)) &&
+                        regionInMembrane->contains(b2)
                     )
                 )
                     break; // 2 points are both in region
@@ -597,8 +598,8 @@ struct BranchingCallback {
                 ++tries;
                 if(tries >= triesWarning)
                     LOG(WARNING) << "Cannot find a branching point in region. Trial " << tries << ": "
-                        << "bd (" << bd[0] << ' ' << bd[1] << ' ' << bd[2] << ") "
-                        << "bp (" << bp[0] << ' ' << bp[1] << ' ' << bp[2] << ')';
+                        << "dir (" << bd[0] << ' ' << bd[1] << ' ' << bd[2] << ") "
+                        << "pos (" << bp[0] << ' ' << bp[1] << ' ' << bp[2] << ')';
             }
             
             //create a new filament
