@@ -396,7 +396,26 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
 }
 template< typename InteractionType >
 void BoundaryCylinderRepulsion< InteractionType >::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
-    // TODO
+    for (auto be : BoundaryElement::getBoundaryElements()) {
+
+        for(auto cyl : _neighborList->getNeighbors(be)) if(c == cyl) {
+
+            floatingpoint kRep = be->getRepulsionConst();
+            floatingpoint screenLength = be->getScreeningLength();
+
+            boundaryCylinderRepulsionLoadForce(
+                _FFType, kRep, screenLength,
+                (end == LoadForceEnd::Plus ? *c->getFirstBead() : *c->getSecondBead()),
+                (end == LoadForceEnd::Plus ? *c->getSecondBead() : *c->getFirstBead()),
+                end,
+                be
+            );
+
+            break;
+
+        }
+
+    }
 }
 
 // Explicit template instantiations

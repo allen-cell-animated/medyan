@@ -227,7 +227,44 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
 }
 template< typename InteractionType >
 void BubbleCylinderRepulsion< InteractionType >::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
-    // TODO
+    for (auto bb : Bubble::getBubbles()) {
+        
+        //total number of neighbor cylinders
+        int cmax = _neighborList->getNeighbors(bb).size();
+        for(int ni = 0; ni < cmax; ni++){
+            
+            //if part of an MTOC, skip
+            if(bb->isMTOC()) {
+                
+                auto mtoc = (MTOC*)bb->getParent();
+                auto filaments = mtoc->getFilaments();
+                
+                auto f = (Filament*) _neighborList->getNeighbors(bb)[ni]->getParent();
+                
+                if(find(filaments.begin(), filaments.end(), f) != filaments.end())
+                continue;
+            }
+            
+            floatingpoint kRep = bb->getRepulsionConst();
+            floatingpoint screenLength = bb->getScreeningLength();
+            
+            floatingpoint radius = bb->getRadius();
+            
+            Bead* bd1 = bb->getBead();
+            
+            Cylinder* cyl = _neighborList->getNeighbors(bb)[ni];
+            if(cyl == c) {
+                bubbleCylinderRepulsionLoadForce(
+                    _FFType, radius, kRep, screenLength,
+                    (end == LoadForceEnd::Plus ? *c->getFirstBead() : *c->getSecondBead()),
+                    (end == LoadForceEnd::Plus ? *c->getSecondBead() : *c->getFirstBead()),
+                    end,
+                    bd1
+                );
+                break;
+            }
+        } // End loop neighbor of bb
+    } // End loop bubbles
 }
 
 // Explicit template instantiations
