@@ -16,6 +16,8 @@ protected:
     Membrane* _membraneCulprit = nullptr;
 
 public:
+    virtual ~MembraneInteractions() = default;
+
     /// Compute the energy of this interaction
     virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) = 0; // d is the stretching parameter along the force
     /// Compute forces of this interaction

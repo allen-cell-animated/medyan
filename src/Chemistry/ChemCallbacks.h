@@ -28,6 +28,7 @@
 #include "BranchingPoint.h"
 #include "Boundary.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/MembraneRegion.hpp"
 
 #include "BindingManager.h"
 
@@ -39,6 +40,7 @@
 
 #include <chrono>
 #include "CUDAcommon.h"
+#include "Util/Io/Log.hpp"
 
 using namespace mathfunc;
 
@@ -571,8 +573,33 @@ struct BranchingCallback {
 	        //l stretching equilibrium length
 	        //s monomer size
 	        //t bending theta.
-            auto branchPosDir = branchProjection(n, p, l, s, t);
-            auto bd = get<0>(branchPosDir); auto bp = get<1>(branchPosDir);
+            int tries = 0;
+            constexpr int triesShiftParam = 3;
+            constexpr int triesWarning    = 3;
+
+            vector< floatingpoint > bd, bp;
+            while(true) {
+                const double theta = (tries >= triesShiftParam ? Rand::randfloatingpoint(0.1, 3.04) : t);
+
+                auto branchPosDir = branchProjection(n, p, l, s, theta);
+                bd = get<0>(branchPosDir);
+                bp = get<1>(branchPosDir);
+
+                auto regionInMembrane = _ps->getRegionInMembrane();
+                if(
+                    regionInMembrane && (
+                        regionInMembrane->contains(vector2Vec< 3, floatingpoint >(bd)) &&
+                        regionInMembrane->contains(vector2Vec< 3, floatingpoint >(bp))
+                    )
+                )
+                    break; // 2 points are both in region
+
+                ++tries;
+                if(tries >= triesWarning)
+                    LOG(WARNING) << "Cannot find a branching point in region. Trial " << tries << ": "
+                        << "bd (" << bd[0] << ' ' << bd[1] << ' ' << bd[2] << ") "
+                        << "bp (" << bp[0] << ' ' << bp[1] << ' ' << bp[2] << ')';
+            }
             
             //create a new filament
             Filament* f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
