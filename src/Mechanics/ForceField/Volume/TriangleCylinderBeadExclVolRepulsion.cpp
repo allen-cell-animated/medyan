@@ -13,12 +13,7 @@
 
 #include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.hpp"
 
-#include "Structure/SurfaceMesh/Triangle.hpp"
-#include "Structure/SurfaceMesh/Vertex.h"
-#include "Bead.h"
-
 #include "MathFunctions.h"
-#include "SysParams.h"
 
 using namespace mathfunc;
 

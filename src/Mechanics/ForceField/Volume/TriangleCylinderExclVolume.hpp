@@ -11,8 +11,8 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_TriangleCylinderExclVolume_h
-#define MEDYAN_TriangleCylinderExclVolume_h
+#ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderExclVolume_Hpp
+#define MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderExclVolume_Hpp
 
 #include <memory> // unique_ptr
 
@@ -26,11 +26,11 @@ class Cylinder;
 class Bead;
 
 /// Represents an excuded volume interaction between a triangle and a cylinder (bead).
-template <class TriangleCylinderExclVolumeInteractionType>
+template < typename InteractionType >
 class TriangleCylinderExclVolume : public TriangleCylinderVolumeInteractions {
     
 private:
-    TriangleCylinderExclVolumeInteractionType _FFType;
+    InteractionType _FFType;
     std::unique_ptr<TriangleCylinderNL> _neighborList;  ///< Neighbor list of cylinders
 
 public:

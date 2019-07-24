@@ -13,7 +13,7 @@
 
 #include "Mechanics/ForceField/Volume/TriangleCylinderVolumeFF.h"
 
-#include "Mechanics/ForceField/Volume/TriangleCylinderExclVolume.h"
+#include "Mechanics/ForceField/Volume/TriangleCylinderExclVolume.hpp"
 #include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.hpp"
 
 #include "Structure/SurfaceMesh/Triangle.hpp"

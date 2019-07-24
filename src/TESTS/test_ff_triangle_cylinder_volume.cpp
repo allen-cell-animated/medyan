@@ -32,7 +32,7 @@ using namespace mathfunc;
 #    include "Triangle.hpp"
 #    include "Cylinder.h"
 
-#    include "TriangleCylinderExclVolume.h"
+#    include "TriangleCylinderExclVolume.hpp"
 #    include "TriangleCylinderBeadExclVolRepulsion.hpp"
 
 namespace {

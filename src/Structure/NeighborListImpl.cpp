@@ -1109,9 +1109,9 @@ void TriangleCylinderNL::updateNeighbors(Triangle *t) {
     // loop through beads, add as neighbor
     for(auto &c: Cylinder::getCylinders()) {
         
-        auto dist = distance(vector2Vec<3, floatingpoint>(c->coordinate), t->coordinate);
+        const auto dist2 = distance2(vector2Vec<3, floatingpoint>(c->coordinate), t->coordinate);
         //If within range, add it
-        if(dist < _rMax) _list[t].push_back(c);
+        if(dist2 < _rMax * _rMax) _list[t].push_back(c);
     }
 }
 
@@ -1126,7 +1126,7 @@ void TriangleCylinderNL::addNeighbor(Neighbor* n) {
         for(auto it = _list.begin(); it != _list.end(); it++) {
             
             //if within range, add it
-            if(distance(it->first->coordinate, vector2Vec<3, floatingpoint>(c->coordinate)) < _rMax)
+            if(distance2(it->first->coordinate, vector2Vec<3, floatingpoint>(c->coordinate)) < _rMax * _rMax)
                 it->second.push_back(c);
         }
     }
