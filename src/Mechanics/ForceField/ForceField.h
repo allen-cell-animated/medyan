@@ -34,6 +34,8 @@ class ForceField {
 public:
     using LoadForceEnd = ForceFieldTypes::LoadForceEnd;
 
+    virtual ~ForceField() = default;
+
     /// Get the name of this forcefield
     virtual string getName() = 0;
     
