@@ -13,6 +13,8 @@
 
 #include "BubbleCylinderRepulsion.h"
 
+#include <algorithm> // max
+
 #include "BubbleCylinderRepulsionExp.h"
 
 #include "MTOC.h"
@@ -136,6 +138,46 @@ _FFType.forces(coord, f, beadSet, bubbleSet, krep, slen, radius, nneighbors);
 
 }
 
+namespace {
+
+template< typename InteractionType >
+void bubbleCylinderRepulsionLoadForce(
+    const InteractionType& interaction, floatingpoint radius, floatingpoint kRep, floatingpoint screenLen,
+    const Bead& bo, Bead& bd, typename BubbleCylinderRepulsion< InteractionType >::LoadForceEnd end,
+    Bead* bbb
+) {
+    using LoadForceEnd = typename BubbleCylinderRepulsion< InteractionType >::LoadForceEnd;
+
+    auto& loadForces = (end == LoadForceEnd::Plus ? bd.loadForcesP : bd.loadForcesM);
+    auto& lfi        = (end == LoadForceEnd::Plus ? bd.lfip        : bd.lfim       );
+
+    // Direction of polymerization
+    const auto dir = normalizedVector(bd.coordinate() - bo.coordinate());
+
+    // Array of coordinate values to update
+    const auto monSize = SysParams::Geometry().monomerSize   [bd.getType()];
+    const auto cylSize = SysParams::Geometry().cylinderNumMon[bd.getType()];
+
+    for (int i = 0; i < cylSize; i++) {
+
+        const auto newCoord = bd.coordinate() + (i * monSize) * dir;
+
+        // Projection magnitude ratio on the direction of the cylinder
+        // (Effective monomer size) = (monomer size) * proj
+        const auto proj = std::max< floatingpoint >(dot(normalizedVector(bbb->coordinate() - newCoord), dir), 0.0);
+        const auto loadForce = interaction.loadForces(bbb, &bd, radius, kRep, screenLen);
+
+        // The load force stored in bead also considers effective monomer size.
+        loadForces[i] += proj * loadForce;
+    }
+
+    //reset lfi
+    lfi = 0;
+
+} // void bubbleCylinderRepulsionLoadForce(...)
+
+} // namespace (anonymous)
+
 template <class BRepulsionInteractionType>
 void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
     
@@ -164,65 +206,21 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
             
             Bead* bd1 = bb->getBead();
             
-            //potential acts on second bead unless this is a minus end
-            Bead* bd2;
-            Bead* bo;
-            if(_neighborList->getNeighbors(bb)[ni]->isPlusEnd()) {
-                bd2 = _neighborList->getNeighbors(bb)[ni]->getSecondBead();
-                bo = _neighborList->getNeighbors(bb)[ni]->getFirstBead();
-                
-                ///this normal is in the direction of polymerization
-                auto normal = normalizeVector(twoPointDirection(bo->vcoordinate(), bd2->vcoordinate()));
-                
-                //array of coordinate values to update
-                auto monSize = SysParams::Geometry().monomerSize[bd2->getType()];
-                auto cylSize = SysParams::Geometry().cylinderNumMon[bd2->getType()];
-                
-                bd2->lfip = 0;
-                for (int i = 0; i < cylSize; i++) {
-                    
-                    auto newCoord = vector<floatingpoint>{bd2->vcoordinate()[0] + i * normal[0] * monSize,
-                        bd2->vcoordinate()[1] + i * normal[1] * monSize,
-                        bd2->vcoordinate()[2] + i * normal[2] * monSize};
-                    
-                    // Projection magnitude ratio on the direction of the cylinder
-                    // (Effective monomer size) = (monomer size) * proj
-                    floatingpoint proj = dotProduct(twoPointDirection(newCoord, bd1->vcoordinate()), normal);
-                    
-                    floatingpoint loadForce = _FFType.loadForces(bd1, bd2, radius, kRep, screenLength);
-                    bd2->loadForcesP[bd2->lfip++] += proj * loadForce;
-                }
-                //reset lfi
-                bd2->lfip = 0;
-                
+            Cylinder* c = _neighborList->getNeighbors(bb)[ni];
+
+            if(c->isPlusEnd()) {
+                bubbleCylinderRepulsionLoadForce(
+                    _FFType, radius, kRep, screenLength,
+                    *c->getFirstBead(), *c->getSecondBead(), LoadForceEnd::Plus,
+                    bd1
+                );
             }
-            if(_neighborList->getNeighbors(bb)[ni]->isMinusEnd()) {
-                bd2 = _neighborList->getNeighbors(bb)[ni]->getFirstBead();
-                bo = _neighborList->getNeighbors(bb)[ni]->getSecondBead();
-                
-                ///this normal is in the direction of polymerization
-                auto normal = normalizeVector(twoPointDirection(bo->vcoordinate(), bd2->vcoordinate()));
-                
-                //array of coordinate values to update
-                auto monSize = SysParams::Geometry().monomerSize[bd2->getType()];
-                auto cylSize = SysParams::Geometry().cylinderNumMon[bd2->getType()];
-                
-                bd2->lfim = 0;
-                for (int i = 0; i < cylSize; i++) {
-                    
-                    auto newCoord = vector<floatingpoint>{bd2->vcoordinate()[0] + i * normal[0] * monSize,
-                        bd2->vcoordinate()[1] + i * normal[1] * monSize,
-                        bd2->vcoordinate()[2] + i * normal[2] * monSize};
-                    
-                    // Projection magnitude ratio on the direction of the cylinder
-                    // (Effective monomer size) = (monomer size) * proj
-                    floatingpoint proj = dotProduct(twoPointDirection(newCoord, bd1->vcoordinate()), normal);
-                    
-                    floatingpoint loadForce = _FFType.loadForces(bd1, bd2, radius, kRep, screenLength);
-                    bd2->loadForcesM[bd2->lfim++] += proj * loadForce;
-                }
-                //reset lfi
-                bd2->lfim = 0;
+            if(c->isMinusEnd()) {
+                bubbleCylinderRepulsionLoadForce(
+                    _FFType, radius, kRep, screenLength,
+                    *c->getSecondBead(), *c->getFirstBead(), LoadForceEnd::Minus,
+                    bd1
+                );
             }
         }
     }

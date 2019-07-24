@@ -35,7 +35,7 @@ public:
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                 floatingpoint *krep, floatingpoint *slen, int *nneighbors);
     
-    floatingpoint loadForces(floatingpoint r, floatingpoint krep , floatingpoint slen);
+    floatingpoint loadForces(floatingpoint r, floatingpoint krep , floatingpoint slen) const;
 
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint, cudaStream_t stream);
