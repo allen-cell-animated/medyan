@@ -24,6 +24,7 @@
 class BoundaryInteractions;
 class BoundaryElement;
 class Bead;
+class Cylinder;
 
 /// An implementation of the ForceField class that calculates BoundaryElement
 /// repulsion and attraction to [Beads](@ref Bead) in the system.
@@ -52,6 +53,7 @@ public:
     
     /// BoundaryFF can compute load forces from all boundaries.
     virtual void computeLoadForces();
+    virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
     
     virtual vector<NeighborList*> getNeighborLists();
 };

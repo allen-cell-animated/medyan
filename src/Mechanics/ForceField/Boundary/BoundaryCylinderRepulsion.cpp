@@ -401,10 +401,10 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
 
     }
 }
+template< typename InteractionType >
+void BoundaryCylinderRepulsion< InteractionType >::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
+    // TODO
+}
 
-///Template specializations
-template floatingpoint BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeEnergy(floatingpoint *coord);
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeLoadForces();
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::vectorize();
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::deallocate();
+// Explicit template instantiations
+template class BoundaryCylinderRepulsion< BoundaryCylinderRepulsionExp >;

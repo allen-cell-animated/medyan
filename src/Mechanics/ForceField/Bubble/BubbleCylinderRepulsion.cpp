@@ -227,15 +227,10 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
         }
     }
 }
+template< typename InteractionType >
+void BubbleCylinderRepulsion< InteractionType >::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
+    // TODO
+}
 
-
-///Template specializations
-template floatingpoint BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeEnergy(floatingpoint *coord, bool stretched);
-template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeForces(floatingpoint *coord, floatingpoint *f);
-//template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeForcesAux(double *coord, double *f);
-template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeLoadForces();
-template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::vectorize();
-template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::deallocate();
-
-
-
+// Explicit template instantiations
+template class BubbleCylinderRepulsion< BubbleCylinderRepulsionExp >;

@@ -17,8 +17,10 @@
 #include <vector>
 
 #include "common.h"
+#include "Mechanics/ForceField/Types.hpp"
 
 //FORWARD DECLARATIONS
+class Cylinder;
 class NeighborList;
 class HybridNeighborList;
 
@@ -30,6 +32,8 @@ class HybridNeighborList;
 class ForceField {
     
 public:
+    using LoadForceEnd = ForceFieldTypes::LoadForceEnd;
+
     /// Get the name of this forcefield
     virtual string getName() = 0;
     
@@ -51,6 +55,7 @@ public:
     ///Compute all load forces on beads in this system.
     ///Updates all Bead's load force components for Reaction updating.
     virtual void computeLoadForces() = 0;
+    virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const { }
     
     /// In the case of a calculation error, print the culprit of the FF error.
     /// Typically, will just print the Trackable element where the error came from.

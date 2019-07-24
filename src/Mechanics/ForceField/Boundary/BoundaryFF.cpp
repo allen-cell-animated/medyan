@@ -129,6 +129,10 @@ void BoundaryFF::computeLoadForces() {
     for (auto &interaction : _boundaryInteractionVector)
         interaction->computeLoadForces();
 }
+void BoundaryFF::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
+    for(const auto& interaction : _boundaryInteractionVector)
+        interaction->computeLoadForce(c, end);
+}
 
 vector<NeighborList*> BoundaryFF::getNeighborLists() {
     
