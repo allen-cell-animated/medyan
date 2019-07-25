@@ -4,7 +4,7 @@
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/MMembrane.h"
-#include "Structure/SurfaceMesh/Vertex.h"
+#include "Structure/SurfaceMesh/Vertex.hpp"
 
 #include "Mechanics/ForceField/VolumeConservation/VolumeConservationMembraneHarmonic.h"
 

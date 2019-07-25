@@ -42,10 +42,8 @@ public:
     virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) override;
     virtual void computeForces(const floatingpoint* coord, floatingpoint* force) override;
 
-    // helper function for load force computation
-    enum class LoadForceEnd { Plus, Minus };
-    void computeLoadForce(const Bead& bo, Bead& bd, LoadForceEnd end, const Triangle& t) const;
-    virtual void computeLoadForces() override;
+    virtual void computeLoadForces() const override;
+    virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
 
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() override { return _neighborList.get(); }

@@ -17,7 +17,7 @@
 #include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/Edge.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "Structure/SurfaceMesh/Vertex.h"
+#include "Structure/SurfaceMesh/Vertex.hpp"
 
 namespace medyan {
 namespace analysis {

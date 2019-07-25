@@ -29,7 +29,7 @@ using namespace mathfunc;
 #    include "SubSystem.h"
 
 #    include "Membrane.hpp"
-#    include "Vertex.h"
+#    include "Vertex.hpp"
 #    include "MVoronoiCell.h"
 #    include "Triangle.hpp"
 #    include "MTriangle.hpp"

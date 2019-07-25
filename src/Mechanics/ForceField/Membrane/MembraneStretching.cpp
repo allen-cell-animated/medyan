@@ -5,7 +5,7 @@
 #include "Mechanics/ForceField/Membrane/MembraneStretchingImpl.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/Triangle.hpp"
-#include "Structure/SurfaceMesh/Vertex.h"
+#include "Structure/SurfaceMesh/Vertex.hpp"
 
 #ifdef __cpp_if_constexpr
     #define IF_CONSTEXPR if constexpr

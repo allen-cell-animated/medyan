@@ -1,7 +1,7 @@
-#ifndef MEDYAN_Vertex_h
-#define MEDYAN_Vertex_h
+#ifndef MEDYAN_Structure_SurfaceMesh_Vertex_Hpp
+#define MEDYAN_Structure_SurfaceMesh_Vertex_Hpp
 
-#include<vector>
+#include <memory> // unique_ptr
 
 #include "common.h"
 
@@ -53,7 +53,7 @@ public:
     MVoronoiCell* getMVoronoiCell() { return _mVoronoiCell.get(); }
 
     /// Get all instances of this class from the SubSystem
-    static const vector<Vertex*>& getVertices() {
+    static const auto& getVertices() {
         return vertex_db_type::getElements();
     }
     static size_t numVertices() {

@@ -14,7 +14,7 @@
 #include "Structure/SurfaceMesh/Edge.h"
 #include "Structure/SurfaceMesh/GeometricMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/Triangle.hpp"
-#include "Structure/SurfaceMesh/Vertex.h"
+#include "Structure/SurfaceMesh/Vertex.hpp"
 #include "Util/Io/Log.hpp"
 
 /******************************************************************************

@@ -14,7 +14,8 @@
 #ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderVolumeInteractions_Hpp
 #define MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderVolumeInteractions_Hpp
 
-#include "common.h"
+#include "common.h" // floatingpoint
+#include "Mechanics/ForceField/Types.hpp"
 
 //FORWARD DECLARATIONS
 class NeighborList;
@@ -35,6 +36,8 @@ protected:
     //@}
     
 public:
+    using LoadForceEnd = ForceFieldTypes::LoadForceEnd;
+
     virtual ~TriangleCylinderVolumeInteractions() = default;
 
     /// Compute the energy of this interaction
@@ -43,7 +46,8 @@ public:
     virtual void computeForces(const floatingpoint* coord, floatingpoint* force) = 0;
 
     /// Compute the load forces on beads from this interaction
-    virtual void computeLoadForces() = 0;
+    virtual void computeLoadForces() const = 0;
+    virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const { }
     
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() = 0;
