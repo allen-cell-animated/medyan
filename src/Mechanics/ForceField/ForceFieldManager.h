@@ -21,9 +21,6 @@
 #include "ForceField.h"
 #include "Bead.h"
 
-// Forward declarations
-class SubSystem;
-
 /// A class to store and iterate over all [ForceFields](@ref ForceField).
 /*!
  *  The ForceFieldManager is used to store all [ForceFields](@ref ForceField)
@@ -35,11 +32,7 @@ class ForceFieldManager {
 friend class CGMethod;
 
 public:
-    vector<ForceField*> _forceFields; ///< All forcefields in the system
-
-    SubSystem* _subSystem; ///< Pointer to the subsystem
-
-    ForceFieldManager(SubSystem* s) { _subSystem = s; }
+     vector<ForceField*> _forceFields; ///< All forcefields in the system
     
     static ForceField* _culpritForceField;
 
