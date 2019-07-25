@@ -27,7 +27,7 @@
 #include "Linker.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "MotorGhost.h"
-#include "Structure/SurfaceMesh/Vertex.h"
+#include "Structure/SurfaceMesh/Vertex.hpp"
 
 #include "Boundary.h"
 #include "Compartment.h"

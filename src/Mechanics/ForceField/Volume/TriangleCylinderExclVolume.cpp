@@ -24,7 +24,7 @@ using namespace mathfunc;
 #include "Structure/Cylinder.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/Triangle.hpp"
-#include "Structure/SurfaceMesh/Vertex.h"
+#include "Structure/SurfaceMesh/Vertex.hpp"
 #include "Util/Math/RayTriangleIntersect.hpp"
 
 template <class TriangleCylinderExclVolumeInteractionType>

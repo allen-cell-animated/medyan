@@ -28,7 +28,7 @@
 #include "Linker.h"
 #include "MotorGhost.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "Structure/SurfaceMesh/Vertex.h"
+#include "Structure/SurfaceMesh/Vertex.hpp"
 
 using namespace mathfunc;
 

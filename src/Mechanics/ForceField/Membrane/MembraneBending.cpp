@@ -1,7 +1,7 @@
 #include "Mechanics/ForceField/Membrane/MembraneBending.hpp"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "Structure/SurfaceMesh/Vertex.h"
+#include "Structure/SurfaceMesh/Vertex.hpp"
 #include "Structure/SurfaceMesh/MVoronoiCell.h"
 
 #include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"

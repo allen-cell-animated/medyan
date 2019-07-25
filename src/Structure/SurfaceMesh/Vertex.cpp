@@ -1,4 +1,4 @@
-#include "Structure/SurfaceMesh/Vertex.h"
+#include "Structure/SurfaceMesh/Vertex.hpp"
 
 #include "Structure/SurfaceMesh/Membrane.hpp" // Membrane::getMesh()
 

@@ -28,7 +28,7 @@ using namespace mathfunc;
 #    include "GController.h"
 #    include "SubSystem.h"
 
-#    include "Vertex.h"
+#    include "Vertex.hpp"
 #    include "Edge.h"
 #    include "Triangle.hpp"
 #    include "GVoronoiCell.h"
