@@ -27,6 +27,7 @@
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/MembraneRegion.hpp"
 #include "DissipationTracker.h"
+#include "Structure/SubSystem.h"
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -48,12 +49,12 @@ class Controller {
 private:
     string _inputFile; ///< System input file
     
-    SubSystem *_subSystem; ///< A pointer to the subsystem that this controls
+    SubSystem _subSystem; ///< A pointer to the subsystem that this controls
 
-    MController* _mController;   ///< Chemical controller used
-    CController* _cController;   ///< Mechanical controller used
-    GController* _gController;   ///< Geometry controller used
-    DRController* _drController; ///< Dynamic rate controller used
+    MController _mController;   ///< Chemical controller used
+    CController _cController;   ///< Mechanical controller used
+    GController _gController;   ///< Geometry controller used
+    DRController _drController; ///< Dynamic rate controller used
     
     string _inputDirectory;   ///< Input directory being used
     string _outputDirectory;  ///< Output directory being used
@@ -154,7 +155,7 @@ public:
     floatingpoint updatepositioncylinder = 0.0;
     floatingpoint updatepositionmovable=0.0;
 
-    Controller(SubSystem* s);
+    Controller();
     ~Controller() {};
     
     ///Initialize the system, given an input and output directory

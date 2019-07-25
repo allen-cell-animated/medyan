@@ -23,6 +23,7 @@
 //FORWARD DECLARATIONS
 class BubbleInteractions;
 class Bead;
+class Cylinder;
 
 /// An implementation of the ForceField class that calculates Bubble
 /// repulsion and attraction to [Beads](@ref Bead) in the system.
@@ -50,6 +51,7 @@ public:
     
     /// BubbleFF can compute load forces on all Bead from Bubble elements
     virtual void computeLoadForces();
+    virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
     
     virtual vector<NeighborList*> getNeighborLists();
 };

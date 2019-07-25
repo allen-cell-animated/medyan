@@ -21,6 +21,9 @@
 #include "ForceField.h"
 #include "Bead.h"
 
+// Forward declarations
+class Cylinder;
+
 /// A class to store and iterate over all [ForceFields](@ref ForceField).
 /*!
  *  The ForceFieldManager is used to store all [ForceFields](@ref ForceField)
@@ -32,8 +35,8 @@ class ForceFieldManager {
 friend class CGMethod;
 
 public:
-     vector<ForceField*> _forceFields; ///< All forcefields in the system
-    
+    vector<ForceField*> _forceFields; ///< All forcefields in the system
+
     static ForceField* _culpritForceField;
 
     /// Vectorize all interactions involved in calculation
@@ -64,6 +67,9 @@ public:
     /// contained by Bead, but updates the loadForce vector which contains precalculated
     /// load values based on the bead's directionality of growth in a filament.
     void computeLoadForces();
+
+    // Compute the load forces on the bead for a specific cylinder.
+    void computeLoadForce(Cylinder* c, ForceField::LoadForceEnd end) const;
 #ifdef CROSSCHECK
     /// Reset the forces of all objects
     void resetForces();

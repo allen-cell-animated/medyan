@@ -71,7 +71,6 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "Controller.h"
 #include "Core/Globals.hpp"
 #include "Rand.h"
-#include "Structure/SubSystem.h"
 #include "utility.h"
 #include "Util/Io/CmdParse.hpp"
 #include "Util/Io/Log.hpp"
@@ -88,14 +87,6 @@ int main(int argc, char **argv) {
     cout << "*******************************************************" << endl;
     
     cout.precision(8);
-    
-    /**************************************************************************
-    Initializations
-    **************************************************************************/
-
-    //create subsystem and controller to run it
-    SubSystem* s = nullptr;
-    Controller c(s);
 
 	int threadcount = 0;
     // Parsing command line args
@@ -154,11 +145,14 @@ int main(int argc, char **argv) {
     switch(global().mode) {
     case GlobalVar::RunMode::Simulation:
         //initialize and run system
-        c.initialize(global().systemInputFile,
-                     global().inputDirectory,
-                     global().outputDirectory,
-                     threadcount);
-        c.run();
+        {
+            Controller c;
+            c.initialize(global().systemInputFile,
+                         global().inputDirectory,
+                         global().outputDirectory,
+                         threadcount);
+            c.run();
+        }
         break;
     case GlobalVar::RunMode::Analysis:
         {
