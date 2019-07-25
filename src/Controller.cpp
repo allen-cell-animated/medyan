@@ -50,19 +50,13 @@
 #include "Util/Profiler.hpp"
 using namespace mathfunc;
 
-Controller::Controller(SubSystem* s) : _subSystem(s) {
-
-    //init subsystem
-    _subSystem = new SubSystem();
-
-    //init controllers
-    _mController   = new MController(_subSystem);
-    _cController   = new CController(_subSystem);
-    _gController   = new GController(_subSystem);
-    _drController  = new DRController();
+Controller::Controller() :
+    _mController(&_subSystem),
+    _cController(&_subSystem),
+    _gController(&_subSystem) {
 
     //set Trackable's subsystem ptr
-    Trackable::_subSystem = _subSystem;
+    Trackable::_subSystem = &_subSystem;
 }
 
 void Controller::initialize(string inputFile,
@@ -90,18 +84,18 @@ void Controller::initialize(string inputFile,
     cout << endl;
 
     //trajectory-style data
-    _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.traj", _subSystem));
-    _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj", _subSystem));
-    _outputs.push_back(new Forces(_outputDirectory + "forces.traj", _subSystem));
-    _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", _subSystem));
+    _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.traj", &_subSystem));
+    _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj", &_subSystem));
+    _outputs.push_back(new Forces(_outputDirectory + "forces.traj", &_subSystem));
+    _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", &_subSystem));
 
-    _outputs.push_back(new PlusEnd(_outputDirectory + "plusend.traj", _subSystem));
+    _outputs.push_back(new PlusEnd(_outputDirectory + "plusend.traj", &_subSystem));
     //ReactionOut should be the last one in the output list
     //Otherwise incorrect deltaMinusEnd or deltaPlusEnd values may be genetrated.
-    _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", _subSystem));
+    _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", &_subSystem));
     //add br force out and local diffussing species concentration
-    _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
-    //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", _subSystem));
+    _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", &_subSystem));
+    //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", &_subSystem));
 
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -111,7 +105,7 @@ void Controller::initialize(string inputFile,
     //Initialize geometry controller
     cout << "---" << endl;
     LOG(STEP) << "Initializing geometry...";
-    _gController->initializeGrid();
+    _gController.initializeGrid();
     LOG(INFO) << "Done.";
 
     //Initialize boundary
@@ -122,7 +116,7 @@ void Controller::initialize(string inputFile,
     p.readBoundParams();
 
     //initialize
-    _gController->initializeBoundary(BTypes);
+    _gController.initializeBoundary(BTypes);
     LOG(INFO) << "Done.";
 
 #ifdef MECHANICS
@@ -136,22 +130,22 @@ void Controller::initialize(string inputFile,
     //Initialize Mechanical controller
     cout << "---" << endl;
     LOG(STEP) << "Initializing mechanics...";
-    _mController->initialize(MTypes, MAlgorithm);
+    _mController.initialize(MTypes, MAlgorithm);
     LOG(INFO) << "Done.";
 
 #endif
 
 #ifdef CHEMISTRY
     //Activate necessary compartments for diffusion
-    _gController->setActiveCompartments();
+    _gController.setActiveCompartments();
 
-    if(_subSystem->getBoundary()->getShape() == BoundaryShape::Cylinder){
-        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+    if(_subSystem.getBoundary()->getShape() == BoundaryShape::Cylinder){
+        for(auto C : _subSystem.getCompartmentGrid()->getCompartments()){
             C->getSlicedVolumeArea();
         }
     }
     else{
-        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+        for(auto C : _subSystem.getCompartmentGrid()->getCompartments()){
             C->getNonSlicedVolumeArea();
         }
     }
@@ -195,19 +189,19 @@ void Controller::initialize(string inputFile,
     }
 
     // create the dissiption tracking object
-    _dt = new DissipationTracker(_mController);
-    _cController->initialize(CAlgorithm.algorithm, ChemData, _dt);
+    _dt = new DissipationTracker(&_mController);
+    _cController.initialize(CAlgorithm.algorithm, ChemData, _dt);
     LOG(INFO) << "Done.";
 
     //Set up chemistry output if any
     string chemsnapname = _outputDirectory + "chemistry.traj";
-    _outputs.push_back(new Chemistry(chemsnapname, _subSystem, ChemData,
-                                     _subSystem->getCompartmentGrid()));
+    _outputs.push_back(new Chemistry(chemsnapname, &_subSystem, ChemData,
+                                     _subSystem.getCompartmentGrid()));
 
-    ChemSim* _cs = _cController->getCS();
+    ChemSim* _cs = _cController.getCS();
 
     string concenname = _outputDirectory + "concentration.traj";
-    _outputs.push_back(new Concentrations(concenname, _subSystem, ChemData));
+    _outputs.push_back(new Concentrations(concenname, &_subSystem, ChemData));
 
 
 
@@ -215,37 +209,37 @@ void Controller::initialize(string inputFile,
     if(SysParams::CParams.dissTracking){
     //Set up dissipation output if dissipation tracking is enabled
     string disssnapname = _outputDirectory + "dissipation.traj";
-    _outputs.push_back(new Dissipation(disssnapname, _subSystem, _cs));
+    _outputs.push_back(new Dissipation(disssnapname, &_subSystem, _cs));
 
     //Set up HRCD output if dissipation tracking is enabled
     string hrcdsnapname = _outputDirectory + "HRCD.traj";
-    _outputs.push_back(new HRCD(hrcdsnapname, _subSystem, _cs));
+    _outputs.push_back(new HRCD(hrcdsnapname, &_subSystem, _cs));
     }
 
     if(SysParams::CParams.eventTracking){
     //Set up MotorWalkingEvents if event tracking is enabled
     string motorwalkingevents = _outputDirectory + "motorwalkingevents.traj";
-    _outputs.push_back(new MotorWalkingEvents(motorwalkingevents, _subSystem, _cs));
+    _outputs.push_back(new MotorWalkingEvents(motorwalkingevents, &_subSystem, _cs));
 
     //Set up LinkerUnbindingEvents if event tracking is enabled
     string linkerunbindingevents = _outputDirectory + "linkerunbindingevents.traj";
-    _outputs.push_back(new LinkerUnbindingEvents(linkerunbindingevents, _subSystem, _cs));
+    _outputs.push_back(new LinkerUnbindingEvents(linkerunbindingevents, &_subSystem, _cs));
 
     //Set up LinkerBindingEvents if event tracking is enabled
     string linkerbindingevents = _outputDirectory + "linkerbindingevents.traj";
-    _outputs.push_back(new LinkerBindingEvents(linkerbindingevents, _subSystem, _cs));
+    _outputs.push_back(new LinkerBindingEvents(linkerbindingevents, &_subSystem, _cs));
     }
 
 
     //Set up CMGraph output
     string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
-    _outputs.push_back(new CMGraph(cmgraphsnapname, _subSystem));
+    _outputs.push_back(new CMGraph(cmgraphsnapname, &_subSystem));
 
 
 
 //    //Set up Turnover output if any
 //    string turnover = _outputDirectory + "Turnover.traj";
-//    _outputs.push_back(new FilamentTurnoverTimes(turnover, _subSystem));
+//    _outputs.push_back(new FilamentTurnoverTimes(turnover, &_subSystem));
 
 #endif
 
@@ -259,7 +253,7 @@ void Controller::initialize(string inputFile,
     DynamicRateType DRTypes = p.readDynamicRateType();
 
     //init controller
-    _drController->initialize(DRTypes);
+    _drController.initialize(DRTypes);
     LOG(INFO) << "Done.";
 
 #endif
@@ -307,7 +301,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     //add other bubbles if specified
     BubbleInitializer* bInit = new RandomBubbleDist();
 
-    auto bubblesGen = bInit->createBubbles(_subSystem->getBoundary(),
+    auto bubblesGen = bInit->createBubbles(_subSystem.getBoundary(),
                                            BSetup.numBubbles,
                                            BSetup.bubbleType);
     bubbles.insert(bubbles.end(), bubblesGen.begin(), bubblesGen.end());
@@ -324,7 +318,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
                  <<"invalid bubble type. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
-        _subSystem->addTrackable<Bubble>(_subSystem, coord, type);
+        _subSystem.addTrackable<Bubble>(&_subSystem, coord, type);
     }
     cout << "Done. " << bubbles.size() << " bubbles created." << endl;
 
@@ -344,7 +338,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     //add other filaments if specified
     FilamentInitializer* fInit = new RandomFilamentDist();
 
-    auto filamentsGen = fInit->createFilaments(_subSystem->getBoundary(),
+    auto filamentsGen = fInit->createFilaments(_subSystem.getBoundary(),
                                                FSetup.numFilaments,
                                                FSetup.filamentType,
                                                FSetup.filamentLength);
@@ -375,9 +369,9 @@ void Controller::setupInitialNetwork(SystemParser& p) {
 
             // check how many segments can fit between end-to-end of the filament
             if (numSegment == 0)
-                _subSystem->addTrackable<Filament>(_subSystem, type, coords, 2, FSetup.projectionType);
+                _subSystem.addTrackable<Filament>(&_subSystem, type, coords, 2, FSetup.projectionType);
             else
-                _subSystem->addTrackable<Filament>(_subSystem, type, coords, numSegment + 1, FSetup.projectionType);
+                _subSystem.addTrackable<Filament>(&_subSystem, type, coords, numSegment + 1, FSetup.projectionType);
         }
         else if(coord2.size()>3){
             int numSegment = coord2.size()/3;
@@ -387,9 +381,9 @@ void Controller::setupInitialNetwork(SystemParser& p) {
                 coords.push_back({coord2[id*3],coord2[id*3+1],coord2[id*3+2]});
 
             if (numSegment == 0)
-                _subSystem->addTrackable<Filament>(_subSystem, type, coords, 2, FSetup.projectionType);
+                _subSystem.addTrackable<Filament>(&_subSystem, type, coords, 2, FSetup.projectionType);
             else
-                _subSystem->addTrackable<Filament>(_subSystem, type, coords, numSegment + 1, FSetup.projectionType);
+                _subSystem.addTrackable<Filament>(&_subSystem, type, coords, numSegment + 1, FSetup.projectionType);
         }
     }
     cout << "Done. " << fil.size() << " filaments created." << endl;
@@ -407,7 +401,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
     //For now, uses 20 filaments
     if(SType.mtoc) {
 
-        MTOC* mtoc = _subSystem->addTrackable<MTOC>();
+        MTOC* mtoc = _subSystem.addTrackable<MTOC>();
 
         //create the bubble in top part of grid, centered in x,y
         floatingpoint bcoordx = GController::getSize()[0] / 2;
@@ -415,14 +409,14 @@ void Controller::setupSpecialStructures(SystemParser& p) {
         floatingpoint bcoordz = GController::getSize()[2] * 5 / 6;
 
         vector<floatingpoint> bcoords = {bcoordx, bcoordy, bcoordz};
-        Bubble* b = _subSystem->addTrackable<Bubble>(_subSystem, bcoords, SType.mtocBubbleType);
+        Bubble* b = _subSystem.addTrackable<Bubble>(&_subSystem, bcoords, SType.mtocBubbleType);
 
         mtoc->setBubble(b);
 
         FilamentInitializer *init = new MTOCFilamentDist(bcoords,
                                                          SysParams::Mechanics().BubbleRadius[SType.mtocBubbleType]);
 
-        auto filaments = init->createFilaments(_subSystem->getBoundary(),
+        auto filaments = init->createFilaments(_subSystem.getBoundary(),
                                                SType.mtocNumFilaments,
                                                SType.mtocFilamentType,
                                                SType.mtocFilamentLength);
@@ -441,7 +435,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
             int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
 
             // check how many segments can fit between end-to-end of the filament
-            Filament *f = _subSystem->addTrackable<Filament>(_subSystem, SType.mtocFilamentType,
+            Filament *f = _subSystem.addTrackable<Filament>(&_subSystem, SType.mtocFilamentType,
                                                              coords, numSegment + 1, "ARC");
 
             mtoc->addFilament(f);
@@ -461,14 +455,14 @@ void Controller::activatedeactivateComp(){
         for(auto it=activatecompartments.begin();it!=activatecompartments.end();it++)
         {
             if(!(*it)->isActivated())
-                _cController->activate(*it);
+                _cController.activate(*it);
         }
         //deactivate compartments starting from the right extreme
         for (std::multimap<int,Compartment*>::reverse_iterator it=fCompmap.rbegin(); it!=fCompmap.rend(); ++it)
-            _cController->deactivate(it->second);
+            _cController.deactivate(it->second);
         //deactivate compartments starting from the left extreme
         for (std::multimap<int,Compartment*>::iterator it=bCompmap.begin(); it!=bCompmap.end(); ++it)
-            _cController->deactivate(it->second);
+            _cController.deactivate(it->second);
         fCompmap.clear();
         bCompmap.clear();
 
@@ -516,7 +510,7 @@ void Controller::ControlfrontbackEndComp(){
     //copy vector to prevcopy
     bounds_prev[0] = bounds[0];bounds_prev[1] = bounds[1];
     bounds[0] = 0.0; bounds[1] =  systemspan;
-    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+    for(auto C : _subSystem.getCompartmentGrid()->getCompartments()){
         auto cyls=C->getCylinders();
         if(cyls.size()>0){
             //maxcomp refers to the compartment on the right extreme of reaction volume
@@ -577,7 +571,7 @@ void Controller::ControlfrontbackEndComp(){
         cmaxcomp = maxcomp->coordinates();
         assert((maxcomp != NULL) && "Non existent maxcomp. Exiting.");
         //Loop through compartments
-        for (auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+        for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
             auto cC = C->coordinates();
             //if compartment is to the right of maxcomp and activated, add to a vector to
             // deactivate later.
@@ -619,7 +613,7 @@ void Controller::ControlfrontbackEndComp(){
         cmincomp = mincomp->coordinates();
         assert(mincomp != NULL && "Non existent mincomp. Exiting.");
         //Loop through compartments
-        for (auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+        for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
             auto cC = C->coordinates();
             //if compartment C is to the left of mincomp and was added to
             // activatecompartments vector, remove. If it is already active, add to a vector
@@ -662,7 +656,7 @@ void Controller::moveBoundary(floatingpoint deltaTau) {
             distvec[4] = bounds[0] - bounds_prev[0];
             distvec[5] = bounds[1] - bounds_prev[1];
         }
-        _subSystem->getBoundary()->move(distvec);
+        _subSystem.getBoundary()->move(distvec);
     }
         //deprecated not good to use.
     else if(abs(dist)>0){
@@ -670,24 +664,24 @@ void Controller::moveBoundary(floatingpoint deltaTau) {
         //move it
         if(tau() >= SysParams::Boundaries().moveStartTime &&
            tau() <= SysParams::Boundaries().moveEndTime)
-            _subSystem->getBoundary()->move(distvec);
+            _subSystem.getBoundary()->move(distvec);
 
         //activate, deactivate necessary compartments
-        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+        for(auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
 
-            if(_subSystem->getBoundary()->within(C)) {
+            if(_subSystem.getBoundary()->within(C)) {
 
                 if(C->isActivated()) continue;
-                else _cController->activate(C);
+                else _cController.activate(C);
             }
             else {
                 if(!C->isActivated()) continue;
-                else _cController->deactivate(C);
+                else _cController.deactivate(C);
             }
         }
     }
     //calculate system volume.
-    _subSystem->getBoundary()->volume();
+    _subSystem.getBoundary()->volume();
 }
 
 void Controller::executeSpecialProtocols() {
@@ -744,7 +738,7 @@ void Controller::updatePositions() {
 
     minsp = chrono::high_resolution_clock::now();
     //update all other moveables
-    for(auto m : _subSystem->getMovables()) m->updatePosition();
+    for(auto m : _subSystem.getMovables()) m->updatePosition();
 
     minep = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> compartment_update2(minep - minsp);
@@ -754,7 +748,7 @@ void Controller::updatePositions() {
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
     /// update all reactables
-    for(auto r : _subSystem->getReactables()) r->updateReactionRates();
+    for(auto r : _subSystem.getReactables()) r->updateReactionRates();
 }
 #endif
 
@@ -763,14 +757,14 @@ void Controller::updateNeighborLists() {
 
     mins = chrono::high_resolution_clock::now();
     //Full reset of neighbor lists
-    _subSystem->resetNeighborLists();
+    _subSystem.resetNeighborLists();
 //	cout<<"updated NeighborLists"<<endl;
     mine = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runnl2(mine - mins);
     nl2time += elapsed_runnl2.count();
 #ifdef CHEMISTRY
     mins = chrono::high_resolution_clock::now();
-    _subSystem->updateBindingManagers();
+    _subSystem.updateBindingManagers();
 #ifdef OPTIMOUT
 	cout<<"updated BindingManagers"<<endl;
 #endif
@@ -803,12 +797,12 @@ void Controller::pinBoundaryFilaments() {
         if((plusEndC->getSecondBead() == b) ||
            (minusEndC->getFirstBead() == b)) {
 
-            cout << _subSystem->getBoundary()->distance(b->vcoordinate()) << endl;
+            cout << _subSystem.getBoundary()->distance(b->vcoordinate()) << endl;
             cout << SysParams::Mechanics().pinDistance << endl;
 
 
             //if within dist to boundary, add
-            if(_subSystem->getBoundary()->distance(b->vcoordinate()) < SysParams::Mechanics().pinDistance) {
+            if(_subSystem.getBoundary()->distance(b->vcoordinate()) < SysParams::Mechanics().pinDistance) {
 
                 b->pinnedPosition = b->vcoordinate();
                 b->addAsPinned();
@@ -838,7 +832,7 @@ void Controller::pinLowerBoundaryFilaments() {
             auto index = Rand::randfloatingpoint(0,1);
             //cout << index <<endl;
             //if within dist to boundary and index > 0.5, add
-            if(_subSystem->getBoundary()->lowerdistance(b->vcoordinate()) < SysParams::Mechanics().pinDistance
+            if(_subSystem.getBoundary()->lowerdistance(b->vcoordinate()) < SysParams::Mechanics().pinDistance
                && index < SysParams::Mechanics().pinFraction && b->isPinned() == false) {
                 //cout << index << endl;
                 b->pinnedPosition = b->vcoordinate();
@@ -867,7 +861,7 @@ void Controller::run() {
 //RESTART PHASE BEGINS
     if(SysParams::RUNSTATE==false){
         cout<<"RESTART PHASE BEINGS."<<endl;
-        Restart* _restart = new Restart(_subSystem, filaments,_chemData);
+        Restart* _restart = new Restart(&_subSystem, filaments,_chemData);
 //Step 1. Turn off diffusion, passivate filament reactions and empty binding managers.
 //        _restart->settorestartphase();
         cout<<"Turned off Diffusion, filament reactions."<<endl;
@@ -880,10 +874,10 @@ void Controller::run() {
         _restart->settorestartphase();
 //Step 3. ############ RUN LINKER/MOTOR REACTIONS TO BIND BRANCHERS, LINKERS, MOTORS AT RESPECTIVE POSITIONS.#######
         cout<<"Reactions to be fired "<<_restart->getnumchemsteps()<<endl;
-        _cController->runSteps(_restart->getnumchemsteps());
+        _cController.runSteps(_restart->getnumchemsteps());
         cout<<"Reactions fired! Displaying heap"<<endl;
 //Step 4. Display the number of reactions yet to be fired. Should be zero.
-        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+        for(auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
             for(auto &Mgr:C->getFilamentBindingManagers()){
                 int numsites = 0;
 #ifdef NLORIGINAL
@@ -919,7 +913,7 @@ void Controller::run() {
         mins = chrono::high_resolution_clock::now();
         cout<<"Minimizing energy"<<endl;
 
-        _mController->run(false);
+        _mController.run(false);
 #ifdef OPTIMOUT
         mine= chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runm(mine - mins);
@@ -956,7 +950,7 @@ void Controller::run() {
             BB->getCBranchingPoint()->getOffReaction()->updatePropensity();
         }
 //STEP 7: Get cylinders, activate filament reactions.
-        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+        for(auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
             for(auto x : C->getCylinders()) {
                 x->getCCylinder()->activatefilreactions();
                 x->getCCylinder()->activatefilcrossreactions();
@@ -964,7 +958,7 @@ void Controller::run() {
         cout<<"Unbinding rates of bound species restored. filament reactions activated"<<endl;
 //@
 #ifdef CHEMISTRY
-        _subSystem->updateBindingManagers();
+        _subSystem.updateBindingManagers();
 #endif
 #ifdef DYNAMICRATES
         updateReactionRates();
@@ -972,7 +966,7 @@ void Controller::run() {
         cout<< "Restart procedures completed. Starting original Medyan framework"<<endl;
         cout << "---" << endl;
         resetglobaltime();
-        _cController->restart();
+        _cController.restart();
         cout << "Current simulation time = "<< tau() << endl;
         //restart phase ends
     }
@@ -986,8 +980,8 @@ void Controller::run() {
     mins = chrono::high_resolution_clock::now();
     // update neighorLists before and after minimization. Need excluded volume
     // interactions.
-	_subSystem->resetNeighborLists();
-    _mController->run(false);
+	_subSystem.resetNeighborLists();
+    _mController.run(false);
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runm2(mine - mins);
     minimizationtime += elapsed_runm2.count();
@@ -1072,7 +1066,7 @@ void Controller::run() {
             floatingpoint chemistryTime = _minimizationTime;
             //1 ms
 //            chemistryTime = 0.001;
-            auto var = !_cController->run(chemistryTime);
+            auto var = !_cController.run(chemistryTime);
             mine= chrono::high_resolution_clock::now();
             chrono::duration<floatingpoint> elapsed_runchem(mine - mins);
             chemistrytime += elapsed_runchem.count();
@@ -1161,7 +1155,7 @@ void Controller::run() {
                 mins = chrono::high_resolution_clock::now();
                 Bead::rearrange();
                 Cylinder::updateAllData();
-                _mController->run();
+                _mController.run();
                 mine= chrono::high_resolution_clock::now();
 
                 #ifdef OPTIMOUT
@@ -1290,7 +1284,7 @@ void Controller::run() {
 #ifdef CHEMISTRY
         while(totalSteps <= _runSteps) {
             //run ccontroller
-            if(!_cController->runSteps(_minimizationSteps)) {
+            if(!_cController.runSteps(_minimizationSteps)) {
                 for(auto o: _outputs) o->print(i);
                 resetCounters();
                 break;
@@ -1308,7 +1302,7 @@ void Controller::run() {
             if(stepsLastMinimization >= _minimizationSteps) {
                 Bead::rearrange();
                 Cylinder::updateAllData();
-                _mController->run();
+                _mController.run();
                 updatePositions();
 
 #ifdef DYNAMICRATES

@@ -14,6 +14,7 @@
 #ifndef MEDYAN_SubSystem_h
 #define MEDYAN_SubSystem_h
 
+#include <functional>
 #include <vector>
 #include <unordered_set>
 
@@ -38,6 +39,7 @@
 #include "GController.h"
 #include "HybridNeighborList.h"
 #include "HybridNeighborListImpl.h"
+#include "Mechanics/ForceField/Types.hpp"
 
 #include <initializer_list>
 #include "dist_moduleV2/dist_common.h"
@@ -248,6 +250,11 @@ public:
 
     void initializeHNeighborList(){_HneighborList->initializeHybridNeighborList();}
 #endif
+
+    const auto& getCylinderLoadForceFunc() const { return _cylinderLoadForceFunc; }
+    template< typename Func >
+    void setCylinderLoadForceFunc(Func&& f) { _cylinderLoadForceFunc = std::forward<Func>(f); }
+
     static CompartmentGrid* getstaticgrid(){
         return _staticgrid;
     }
@@ -280,6 +287,9 @@ private:
     static CompartmentGrid* _staticgrid;
     floatingpoint* cylsqmagnitudevector = nullptr;
     static bool initialize;
+
+    // The observer pointer of force field manager used in MController
+    std::function< void(Cylinder*, ForceFieldTypes::LoadForceEnd) > _cylinderLoadForceFunc;
 
     chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD;
 #ifdef CUDAACCL_NL
