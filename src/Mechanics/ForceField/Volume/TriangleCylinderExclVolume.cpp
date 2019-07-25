@@ -27,8 +27,8 @@ using namespace mathfunc;
 #include "Structure/SurfaceMesh/Vertex.hpp"
 #include "Util/Math/RayTriangleIntersect.hpp"
 
-template <class TriangleCylinderExclVolumeInteractionType>
-floatingpoint TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeEnergy(const floatingpoint* coord, bool stretched) {
+template< typename InteractionType >
+floatingpoint TriangleCylinderExclVolume< InteractionType >::computeEnergy(const floatingpoint* coord, bool stretched) {
     
     double U = 0;
     double U_i;
@@ -82,8 +82,8 @@ floatingpoint TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionTy
     return U;
 }
 
-template <class TriangleCylinderExclVolumeInteractionType>
-void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeForces(const floatingpoint* coord, floatingpoint* force) {
+template< typename InteractionType >
+void TriangleCylinderExclVolume< InteractionType >::computeForces(const floatingpoint* coord, floatingpoint* force) {
 
     for(auto t: Triangle::getTriangles()) {
 
@@ -176,29 +176,8 @@ void exclVolLoadForce(
 
 } // namespace (anonymous)
 
-template< typename InteractionType >
-void TriangleCylinderExclVolume< InteractionType >::computeLoadForce(const Bead& bo, Bead& bd, LoadForceEnd end, const Triangle& t) const {
-    const auto& mesh = t.getParent()->getMesh();
-    const size_t ti = t.getTopoIndex();
-    const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
-    const size_t hei1 = mesh.next(hei0);
-    const size_t hei2 = mesh.next(hei1);
-    const Vec3 v0 (mesh.getVertexAttribute(mesh.target(hei0)).getCoordinate());
-    const Vec3 v1 (mesh.getVertexAttribute(mesh.target(hei1)).getCoordinate());
-    const Vec3 v2 (mesh.getVertexAttribute(mesh.target(hei2)).getCoordinate());
-
-    const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
-    double kExVol = t.getMTriangle()->getExVolConst();
-
-    exclVolLoadForce(
-        _FFType, area, kExVol,
-        bo, bd, end,
-        v0, v1, v2
-    );
-}
-
 template < typename InteractionType >
-void TriangleCylinderExclVolume< InteractionType >::computeLoadForces() {
+void TriangleCylinderExclVolume< InteractionType >::computeLoadForces() const {
 
     for(auto t: Triangle::getTriangles()) {
 
@@ -237,7 +216,50 @@ void TriangleCylinderExclVolume< InteractionType >::computeLoadForces() {
         }
     }
 
-} // void ...::computeLoadForces()
+} // void ...::computeLoadForces() const
+
+template < typename InteractionType >
+void TriangleCylinderExclVolume< InteractionType >::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
+
+    for(auto t: Triangle::getTriangles()) {
+
+        for(auto &cyl : _neighborList->getNeighbors(t)) if(c == cyl) {
+
+            const auto& mesh = t->getParent()->getMesh();
+            const size_t ti = t->getTopoIndex();
+            const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
+            const size_t hei1 = mesh.next(hei0);
+            const size_t hei2 = mesh.next(hei1);
+            const Vec3 v0 (mesh.getVertexAttribute(mesh.target(hei0)).getCoordinate());
+            const Vec3 v1 (mesh.getVertexAttribute(mesh.target(hei1)).getCoordinate());
+            const Vec3 v2 (mesh.getVertexAttribute(mesh.target(hei2)).getCoordinate());
+
+            const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
+            double kExVol = t->getMTriangle()->getExVolConst();
+
+            // potential acts on second cylinder bead if it is a plus  end
+            // potential acts on first  cylinder bead if it is a minus end
+            if(c->isPlusEnd()) {
+                exclVolLoadForce(
+                    _FFType, area, kExVol,
+                    *c->getFirstBead(), *c->getSecondBead(), LoadForceEnd::Plus,
+                    v0, v1, v2
+                );
+            }
+            
+            if(c->isMinusEnd()) {
+                exclVolLoadForce(
+                    _FFType, area, kExVol,
+                    *c->getSecondBead(), *c->getFirstBead(), LoadForceEnd::Minus,
+                    v0, v1, v2
+                );
+            }
+
+            break;
+        }
+    }
+
+} // void ...::computeLoadForce(...) const
 
 // Template instantiation
 template class TriangleCylinderExclVolume< TriangleCylinderBeadExclVolRepulsion >;

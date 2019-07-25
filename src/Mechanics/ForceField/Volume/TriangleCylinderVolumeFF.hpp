@@ -46,6 +46,7 @@ public:
     virtual void computeForces(floatingpoint* coord, floatingpoint* f) override;
 
     virtual void computeLoadForces() override;
+    virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
 
     virtual vector<NeighborList*> getNeighborLists() override;
 };
