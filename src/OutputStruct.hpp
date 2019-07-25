@@ -1,5 +1,5 @@
-#ifndef MEDYAN_OutputStruct_h
-#define MEDYAN_OutputStruct_h
+#ifndef MEDYAN_OutputStruct_Hpp
+#define MEDYAN_OutputStruct_Hpp
 
 #include <array>
 #include <iostream>
@@ -38,6 +38,8 @@ class MotorGhost;
 
 class OutputStruct {
 public:
+    virtual ~OutputStruct() = default;
+
     /// get data from system data
     virtual void getFromSystem() { getFromSystemWithoutChildren(); }
     virtual void getFromSystemWithoutChildren() = 0; ///< Used in outputFromSystem

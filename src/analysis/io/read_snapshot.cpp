@@ -8,7 +8,7 @@
 
 #include "utility.h"
 
-#include "OutputStruct.h"
+#include "OutputStruct.hpp"
 
 #include "analysis/io/pdb.h"
 #include "Core/Globals.hpp"

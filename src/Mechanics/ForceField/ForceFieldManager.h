@@ -22,7 +22,7 @@
 #include "Bead.h"
 
 // Forward declarations
-class SubSystem;
+class Cylinder;
 
 /// A class to store and iterate over all [ForceFields](@ref ForceField).
 /*!
@@ -37,10 +37,6 @@ friend class CGMethod;
 public:
     vector<ForceField*> _forceFields; ///< All forcefields in the system
 
-    SubSystem* _subSystem; ///< Pointer to the subsystem
-
-    ForceFieldManager(SubSystem* s) { _subSystem = s; }
-    
     static ForceField* _culpritForceField;
 
     /// Vectorize all interactions involved in calculation
@@ -71,6 +67,9 @@ public:
     /// contained by Bead, but updates the loadForce vector which contains precalculated
     /// load values based on the bead's directionality of growth in a filament.
     void computeLoadForces();
+
+    // Compute the load forces on the bead for a specific cylinder.
+    void computeLoadForce(Cylinder* c, ForceField::LoadForceEnd end) const;
 #ifdef CROSSCHECK
     /// Reset the forces of all objects
     void resetForces();

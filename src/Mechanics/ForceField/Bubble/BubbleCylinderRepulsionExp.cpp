@@ -182,7 +182,7 @@ void BubbleCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f, 
 //}
 
 floatingpoint BubbleCylinderRepulsionExp::loadForces(Bead* b1, Bead* b2, floatingpoint radius,
-                                              floatingpoint kRep, floatingpoint screenLength) {
+                                              floatingpoint kRep, floatingpoint screenLength) const {
     
     //get dist
     floatingpoint dist = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());

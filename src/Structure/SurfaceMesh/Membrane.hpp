@@ -13,6 +13,7 @@
 
 #include "MathFunctions.h"
 #include "Structure/SubSystem.h"
+#include "Structure/SurfaceMesh/MembraneHierarchy.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/MMembrane.h"
 #include "Structure/SurfaceMesh/SurfaceMesh.hpp"
@@ -34,6 +35,8 @@ public:
     using coordinate_type = typename MembraneMeshAttributeType::coordinate_type;
     using MeshType = SurfaceTriangularMesh< MembraneMeshAttributeType >;
 
+    using HierarchyType = MembraneHierarchy< Membrane >;
+
 private:
 
     MeshType _mesh;
@@ -54,6 +57,10 @@ public:
         const std::vector< coordinate_type >& vertexCoordinateList,
         const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
     );
+
+    ~Membrane() {
+        HierarchyType::removeMembrane(this);
+    }
 
     /// Get vector of triangles/edges/vertices that this membrane contains.
     const auto& getMesh() const { return _mesh; }
@@ -102,8 +109,8 @@ public:
      * Throws an exception if the membrane is not closed.
      * The function will search through the whole meshwork, so it might not be efficient.
      */
-    template< typename Float >
-    double signedDistance(const mathfunc::Vec< 3, Float >& p) const {
+    template< typename VecType, std::enable_if_t< VecType::vec_size == 3 >* = nullptr >
+    double signedDistance(const VecType& p) const {
         if(!isClosed()) throw std::runtime_error("Membrane is not closed while trying to find signed distance field.");
         return MembraneMeshAttributeType::signedDistance(_mesh, p);
     }
@@ -111,8 +118,8 @@ public:
      * Use signed distance or other methods to judge whether a point is inside membrane.
      * Throws an exception if the membrane is not closed.
      */
-    template< typename Float >
-    bool contains(const mathfunc::Vec< 3, Float >& p) const {
+    template< typename VecType, std::enable_if_t< VecType::vec_size == 3 >* = nullptr >
+    bool contains(const VecType& p) const {
         if(!isClosed()) throw std::runtime_error("Membrane is not closed while trying to find signed distance field.");
         return MembraneMeshAttributeType::contains(_mesh, p);
     }

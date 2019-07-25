@@ -11,13 +11,12 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "Mechanics/ForceField/Volume/TriangleCylinderVolumeFF.h"
+#include "Mechanics/ForceField/Volume/TriangleCylinderVolumeFF.hpp"
 
-#include "Mechanics/ForceField/Volume/TriangleCylinderExclVolume.h"
+#include "Mechanics/ForceField/Volume/TriangleCylinderExclVolume.hpp"
 #include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.hpp"
-
+#include "Structure/Cylinder.h"
 #include "Structure/SurfaceMesh/Triangle.hpp"
-#include "Cylinder.h"
 
 TriangleCylinderVolumeFF::TriangleCylinderVolumeFF (string& type) {
     if (type == "REPULSION")

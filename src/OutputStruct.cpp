@@ -10,7 +10,7 @@
 //  See the MEDYAN web page for more information:
 //  http://www.medyan.org
 //------------------------------------------------------------------
-#include "OutputStruct.h"
+#include "OutputStruct.hpp"
 
 #include <iterator>
 #include <string>

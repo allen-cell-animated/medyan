@@ -1,5 +1,5 @@
-#ifndef MEDYAN_VolumeConservationInteractions_h
-#define MEDYAN_VolumeConservationInteractions_h
+#ifndef MEDYAN_Mechanics_ForceField_VolumeConservation_Interactions_Hpp
+#define MEDYAN_Mechanics_ForceField_VolumeConservation_Interactions_Hpp
 
 #include <string>
 
@@ -18,6 +18,8 @@ protected:
     Membrane* _membraneCulprit = nullptr;
 
 public:
+    virtual ~VolumeConservationInteractions() = default;
+
     /// Compute the energy of this interaction
     virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) = 0; // d is the stretching parameter along the force
     /// Compute forces of this interaction

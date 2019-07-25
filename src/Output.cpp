@@ -16,7 +16,7 @@
 #include "Output.h"
 
 #include "SubSystem.h"
-#include "OutputStruct.h"
+#include "OutputStruct.hpp"
 #include "CompartmentGrid.h"
 
 #include "Bead.h"

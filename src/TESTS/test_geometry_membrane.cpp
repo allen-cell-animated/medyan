@@ -35,7 +35,7 @@ using namespace mathfunc;
 #    include "GEdge.h"
 #    include "GTriangle.h"
 #    include "Membrane.hpp"
-#    include "MembraneHierarchy.h"
+#    include "MembraneHierarchy.hpp"
 
 namespace {
     using VertexData = tuple<array<double, 3>, vector<size_t>>;
@@ -132,11 +132,11 @@ namespace {
         }
         return os;
     }
-    MembraneHierarchyFlattened FlattenMembraneHierarchy(const MembraneHierarchy& root) {
+    MembraneHierarchyFlattened FlattenMembraneHierarchy(const MembraneHierarchy< Membrane >& root) {
         MembraneHierarchyFlattened res(root.getMembrane()? root.getMembrane()->getId(): -1);
 
         for(auto& child: root.children()) {
-            res.children.push_back(FlattenMembraneHierarchy(*static_cast<MembraneHierarchy*>(child.get())));
+            res.children.push_back(FlattenMembraneHierarchy(*static_cast<MembraneHierarchy< Membrane >*>(child.get())));
         }
 
         return res;
@@ -452,7 +452,7 @@ TEST_F(MembraneGeometryTest, Derivative) {
 
 }
 
-TEST_F(MembraneGeometryTest, MembraneHierarchy) {
+TEST_F(MembraneGeometryTest, MembraneHierarchy< Membrane >) {
     vector<Membrane*> ms(6);
     ms[0] = new Membrane(&s, 0, membraneDataOctahedron({2000, 2000, 2000}, 500));
     ms[1] = new Membrane(&s, 0, membraneDataOctahedron({1900, 2000, 2000}, 5));
@@ -465,9 +465,9 @@ TEST_F(MembraneGeometryTest, MembraneHierarchy) {
 
     for(auto eachM: ms) eachM->updateGeometry(true);
 
-    MembraneHierarchy root(nullptr);
+    MembraneHierarchy< Membrane > root(nullptr);
     for(auto eachM: ms) {
-        MembraneHierarchy::addMembrane(eachM, root);
+        MembraneHierarchy< Membrane >::addMembrane(eachM, root);
     }
 
     // Check printSelf function manually
@@ -494,7 +494,7 @@ TEST_F(MembraneGeometryTest, MembraneHierarchy) {
             << "Membrane hierarchy incorrect.";
     }
 
-    MembraneHierarchy::removeMembrane(ms[0], root);
+    MembraneHierarchy< Membrane >::removeMembrane(ms[0], root);
     {
         MembraneHierarchyFlattened exHie { -1, {
             { 5 + idShift, {
@@ -509,7 +509,7 @@ TEST_F(MembraneGeometryTest, MembraneHierarchy) {
             << "Membrane hierarchy incorrect after removing membrane with id " << 0 + idShift;
     }
 
-    MembraneHierarchy::removeMembrane(ms[3], root);
+    MembraneHierarchy< Membrane >::removeMembrane(ms[3], root);
     {
         MembraneHierarchyFlattened exHie { -1, {
             { 5 + idShift, {
@@ -522,7 +522,7 @@ TEST_F(MembraneGeometryTest, MembraneHierarchy) {
             << "Membrane hierarchy incorrect after removing membrane with id " << 3 + idShift;
     }
 
-    MembraneHierarchy::addMembrane(ms[0], root);
+    MembraneHierarchy< Membrane >::addMembrane(ms[0], root);
     {
         MembraneHierarchyFlattened exHie { -1, {
             { 5 + idShift, {

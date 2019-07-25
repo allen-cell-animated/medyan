@@ -1,7 +1,5 @@
 #include "Mechanics/ForceField/VolumeConservation/VolumeConservationMembraneHarmonic.h"
 
-#include "Structure/SurfaceMesh/Vertex.h"
-
 double VolumeConservationMembraneHarmonic::energy(double volume, double kBulk, double eqVolume) {
     double dist = volume - eqVolume;
     return 0.5 * kBulk * dist * dist / eqVolume;

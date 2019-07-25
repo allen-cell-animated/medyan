@@ -11,7 +11,7 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "Mechanics/ForceField/Volume/TriangleCylinderExclVolume.h"
+#include "Mechanics/ForceField/Volume/TriangleCylinderExclVolume.hpp"
 
 #include <algorithm> // max
 
@@ -20,11 +20,11 @@ using namespace mathfunc;
 
 #include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.hpp"
 
+#include "Structure/Bead.h"
+#include "Structure/Cylinder.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/Triangle.hpp"
 #include "Structure/SurfaceMesh/Vertex.h"
-#include "Cylinder.h"
-#include "Bead.h"
 #include "Util/Math/RayTriangleIntersect.hpp"
 
 template <class TriangleCylinderExclVolumeInteractionType>

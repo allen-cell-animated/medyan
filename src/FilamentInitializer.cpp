@@ -16,7 +16,8 @@
 #include "Boundary.h"
 #include "Bubble.h"
 #include "Bead.h"
-#include "Structure/SurfaceMesh/MembraneRegion.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/MembraneRegion.hpp"
 
 #include "MathFunctions.h"
 #include "GController.h"
@@ -25,7 +26,7 @@
 
 using namespace mathfunc;
 
-FilamentData RandomFilamentDist::createFilaments(const MembraneRegion& mr,
+FilamentData RandomFilamentDist::createFilaments(const MembraneRegion<Membrane>& mr,
                                                  int numFilaments,
                                                  int filamentType,
                                                  int lenFilaments) {
@@ -127,7 +128,7 @@ FilamentData RandomFilamentDist::createFilaments(const MembraneRegion& mr,
 
 }
 
-FilamentData ConnectedFilamentDist::createFilaments(const MembraneRegion& mr,
+FilamentData ConnectedFilamentDist::createFilaments(const MembraneRegion<Membrane>& mr,
                                                     int numFilaments,
                                                     int filamentType,
                                                     int lenFilaments) {
@@ -224,7 +225,7 @@ FilamentData ConnectedFilamentDist::createFilaments(const MembraneRegion& mr,
     return make_tuple(filaments,dummy,dummy2, dummy3);
 }
 
-FilamentData MTOCFilamentDist::createFilaments(const MembraneRegion& mr,
+FilamentData MTOCFilamentDist::createFilaments(const MembraneRegion<Membrane>& mr,
                                                int numFilaments,
                                                int filamentType,
                                                int lenFilaments) {

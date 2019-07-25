@@ -32,7 +32,7 @@ using namespace mathfunc;
 #    include "Membrane.hpp"
 #    include "Vertex.h"
 
-#    include "VolumeConservationInteractions.h"
+#    include "Mechanics/ForceField/VolumeConservation/Interactions.hpp"
 #    include "VolumeConservationMembrane.h"
 #    include "VolumeConservationMembraneHarmonic.h"
 

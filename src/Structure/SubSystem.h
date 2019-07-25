@@ -14,6 +14,7 @@
 #ifndef MEDYAN_SubSystem_h
 #define MEDYAN_SubSystem_h
 
+#include <functional>
 #include <vector>
 #include <unordered_set>
 
@@ -38,6 +39,7 @@
 #include "GController.h"
 #include "HybridNeighborList.h"
 #include "HybridNeighborListImpl.h"
+#include "Mechanics/ForceField/Types.hpp"
 
 #include <initializer_list>
 #include "dist_moduleV2/dist_common.h"
@@ -53,8 +55,10 @@ class Cylinder;
 class Linker;
 class MotorGhost;
 class BranchingPoint;
+class Membrane;
 
 class CompartmentGrid;
+template< typename MemType > class MembraneRegion;
 
 /// Manages all [Movables](@ref Movable) and [Reactables](@ref Reactable). Also holds all
 /// [NeighborLists](@ref NeighborList) associated with chemical or mechanical interactions,
@@ -188,6 +192,10 @@ public:
     /// Add a boundary to this subsystem
     void addBoundary(Boundary *boundary) { _boundary = boundary; }
 
+    // Region in membrane
+    MembraneRegion< Membrane >* getRegionInMembrane() const { return _regionInMembrane; }
+    void setRegionInMembrane(MembraneRegion< Membrane >* r) { _regionInMembrane = r; }
+
     /// Add a neighbor list to the subsystem
     void addNeighborList(NeighborList *nl) { _neighborLists.push_back(nl); }
 
@@ -243,6 +251,11 @@ public:
 
     void initializeHNeighborList(){_HneighborList->initializeHybridNeighborList();}
 #endif
+
+    const auto& getCylinderLoadForceFunc() const { return _cylinderLoadForceFunc; }
+    template< typename Func >
+    void setCylinderLoadForceFunc(Func&& f) { _cylinderLoadForceFunc = std::forward<Func>(f); }
+
     static CompartmentGrid* getstaticgrid(){
         return _staticgrid;
     }
@@ -258,6 +271,7 @@ private:
     dist::Coords temptest;
     floatingpoint _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer
+    MembraneRegion< Membrane >* _regionInMembrane; // The region inside membrane. The value is set by the controller
 
     unordered_set<Movable*> _movables; ///< All movables in the subsystem
     unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
@@ -275,6 +289,9 @@ private:
     static CompartmentGrid* _staticgrid;
     floatingpoint* cylsqmagnitudevector = nullptr;
     static bool initialize;
+
+    // The observer pointer of force field manager used in MController
+    std::function< void(Cylinder*, ForceFieldTypes::LoadForceEnd) > _cylinderLoadForceFunc;
 
     chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD;
 #ifdef CUDAACCL_NL

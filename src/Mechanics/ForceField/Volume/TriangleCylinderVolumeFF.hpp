@@ -11,8 +11,8 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_TriangleCylinderVolumeFF_h
-#define MEDYAN_TriangleCylinderVolumeFF_h
+#ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderVolumeFF_Hpp
+#define MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderVolumeFF_Hpp
 
 #include <vector>
 
@@ -22,17 +22,14 @@
 
 //FORWARD DECLARATIONS
 class TriangleCylinderVolumeInteractions;
-class Triangle;
-class Cylinder;
-class Bead;
 
 /// An implementation of the ForceField class that calculates
 /// Triangle vs bead volume interactions.
 class TriangleCylinderVolumeFF : public ForceField {
     
 private:
-    vector <unique_ptr<TriangleCylinderVolumeInteractions>>
-    _triangleCylinderVolInteractionVector;  ///< Vector of initialized volume interactions
+    std::vector< std::unique_ptr< TriangleCylinderVolumeInteractions > >
+        _triangleCylinderVolInteractionVector;  ///< Vector of initialized volume interactions
     
     TriangleCylinderVolumeInteractions* _culpritInteraction; ///< Culprit in case of error
 public:
@@ -41,16 +38,16 @@ public:
 
     virtual void vectorize() override { }
     virtual void cleanup() override { }
-    
-    virtual string getName() {return "Triangle Cylinder Volume";}
-    virtual void whoIsCulprit();
+
+    virtual string getName() override {return "Triangle Cylinder Volume";}
+    virtual void whoIsCulprit() override;
 
     virtual floatingpoint computeEnergy(floatingpoint* coord, bool stretched) override;
     virtual void computeForces(floatingpoint* coord, floatingpoint* f) override;
-    
-    virtual void computeLoadForces();
-    
-    virtual vector<NeighborList*> getNeighborLists();
+
+    virtual void computeLoadForces() override;
+
+    virtual vector<NeighborList*> getNeighborLists() override;
 };
 
 #endif

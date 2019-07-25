@@ -19,7 +19,8 @@ typedef vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> filam
 typedef  tuple< vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> , vector<tuple<string, short, vector<vector<floatingpoint>>>> , vector<tuple<string, short, vector<floatingpoint>>> , vector<vector<floatingpoint>> >  FilamentData;
 
 ///FORWARD DECLARATIONS
-class MembraneRegion;
+template< typename MemType > class MembraneRegion;
+class Membrane;
 
 /// An interface to initialize an initial configuration of [Filaments](@ref Filament)
 /// in the SubSystem.
@@ -40,7 +41,7 @@ public:
     
     /// Returns a vector of tuples representing the Filament type and beginning and end
     /// coordinates, similar to the structure of manual parsing.
-    virtual FilamentData createFilaments(const MembraneRegion& mr,
+    virtual FilamentData createFilaments(const MembraneRegion<Membrane>& mr,
                                          int numFilaments,
                                          int filamentType,
                                          int lenFilaments) = 0;
@@ -51,7 +52,7 @@ public:
 class RandomFilamentDist : public FilamentInitializer {
     
 public:
-    FilamentData createFilaments(const MembraneRegion& mr,
+    FilamentData createFilaments(const MembraneRegion<Membrane>& mr,
                                  int numFilaments,
                                  int filamentType,
                                  int lenFilaments);
@@ -62,7 +63,7 @@ public:
 class ConnectedFilamentDist : public FilamentInitializer {
     
 public:
-    FilamentData createFilaments(const MembraneRegion& mr,
+    FilamentData createFilaments(const MembraneRegion<Membrane>& mr,
                                  int numFilaments,
                                  int filamentType,
                                  int lenFilaments);
@@ -80,7 +81,7 @@ public:
     MTOCFilamentDist(vector<floatingpoint> coord, floatingpoint radius)
         : _coordMTOC(coord), _radius(radius) {}
     
-    FilamentData createFilaments(const MembraneRegion& mr,
+    FilamentData createFilaments(const MembraneRegion<Membrane>& mr,
                                  int numFilaments,
                                  int filamentType,
                                  int lenFilaments);

@@ -3,9 +3,6 @@
 
 #include "MathFunctions.h"
 
-// Forward declaration
-class Vertex;
-
 class VolumeConservationMembraneHarmonic {
 
 public:

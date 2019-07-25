@@ -24,7 +24,6 @@
 
 #include "common.h"
 #include "utility.h"
-#include "Structure/SurfaceMesh/SurfaceMesh.hpp"
 #include "Util/Math/Vec.hpp"
 
 /// Struct to hold output types;
