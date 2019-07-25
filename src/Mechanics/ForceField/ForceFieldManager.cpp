@@ -519,3 +519,19 @@ void ForceFieldManager::assignallforcemags() {
     for (auto &ff : _forceFields)
         ff->assignforcemags();
 }
+
+
+void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f,int total_DOF, float delta){
+    
+    auto forces_copy = *f;
+    for(auto i = 0; total_DOF; i++){
+        
+        auto coords_copy = *coord;
+        
+        
+        
+    }
+    
+    
+    
+}

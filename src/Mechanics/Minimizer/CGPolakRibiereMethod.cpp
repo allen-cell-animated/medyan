@@ -882,6 +882,11 @@ std::cout<<"----------------------------------------"<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
     FFM.computeLoadForces();
+    
+    int total_DOF = Bead::getDbData().coords.size_raw();
+    FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, 0.01);
+    
+    
 #ifdef OPTIMOUT
     std::cout<<"End Minimization************"<<endl;
 #endif

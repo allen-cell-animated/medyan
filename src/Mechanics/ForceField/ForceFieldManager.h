@@ -51,6 +51,9 @@ public:
     /// Compute the forces of all force fields
     void computeForces(floatingpoint *coord, floatingpoint *f);
     
+    void computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta);
+    
+    
     void printculprit(floatingpoint* force);
 
 #ifdef CUDAACCL
