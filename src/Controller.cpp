@@ -410,8 +410,8 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             exit(EXIT_FAILURE);
         }
 
-        Membrane* newMembrane = _subSystem->addTrackable<Membrane>(
-            _subSystem,
+        Membrane* newMembrane = _subSystem.addTrackable<Membrane>(
+            &_subSystem,
             type,
             it.vertexCoordinateList,
             it.triangleVertexIndexList
@@ -422,35 +422,35 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     // Create a region inside the membrane
     _regionInMembrane = (
         membraneData.empty() ?
-        make_unique<MembraneRegion<Membrane>>(_subSystem->getBoundary()) :
+        make_unique<MembraneRegion<Membrane>>(_subSystem.getBoundary()) :
         MembraneRegion<Membrane>::makeByChildren(MembraneHierarchy< Membrane >::root())
     );
-    _subSystem->setRegionInMembrane(_regionInMembrane.get());
+    _subSystem.setRegionInMembrane(_regionInMembrane.get());
 
     // Optimize the membrane
     membraneAdaptiveRemesh();
     updatePositions();
 
     // Deactivate all the compartments outside membrane, and mark boundaries as interesting
-    for(auto c : _subSystem->getCompartmentGrid()->getCompartments()) {
+    for(auto c : _subSystem.getCompartmentGrid()->getCompartments()) {
         if(!c->getTriangles().empty()) {
             // Contains triangles, so this compartment is at the boundary.
             c->boundaryInteresting = true;
 
             // Update partial activate status
             c->computeSlicedVolumeArea(Compartment::SliceMethod::Membrane);
-            _cController->updateActivation(c, Compartment::ActivateReason::Membrane);
+            _cController.updateActivation(c, Compartment::ActivateReason::Membrane);
 
         } else if( ! _regionInMembrane->contains(vector2Vec<3, floatingpoint>(c->coordinates()))) {
             // Compartment is outside the membrane
-            _cController->deactivate(c, true);
+            _cController.deactivate(c, true);
         }
     }
 
     // Transfer species from all the inactive compartments
     {
         vector<Compartment*> ac, ic;
-        for(auto c : _subSystem->getCompartmentGrid()->getCompartments()) {
+        for(auto c : _subSystem.getCompartmentGrid()->getCompartments()) {
             if(c->isActivated()) ac.push_back(c);
             else                 ic.push_back(c);
         }
@@ -857,7 +857,7 @@ void Controller::updateActiveCompartments() {
             if(!ts.empty()) {
                 // Update partial activate status
                 c->computeSlicedVolumeArea(Compartment::SliceMethod::Membrane);
-                _cController->updateActivation(c, Compartment::ActivateReason::Membrane);
+                _cController.updateActivation(c, Compartment::ActivateReason::Membrane);
 
                 // No matter whether the compartment is interesting before, mark it as interesting
                 c->boundaryInteresting = true;
@@ -875,10 +875,10 @@ void Controller::updateActiveCompartments() {
 						fullArea[1], fullArea[1],
 						fullArea[2], fullArea[2]
                     }});
-                    _cController->updateActivation(c, Compartment::ActivateReason::Membrane);
+                    _cController.updateActivation(c, Compartment::ActivateReason::Membrane);
                 } else {
                     // Deactivate the compartment
-                    _cController->deactivate(c);
+                    _cController.deactivate(c);
                 }
 
                 // Mark the compartment as not interesting
