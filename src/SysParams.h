@@ -101,6 +101,7 @@ struct MechParams {
     vector<int> ncylvec;
     vector<int>bsoffsetvec;
     
+    // parameters controlling the calculation of the Hessian matrix
     bool hessTracking = false;
     float hessDelta = 0.0001;
 

@@ -1222,53 +1222,30 @@ void Datadump::print(int snapshot) {
 
 
 void HessianMatrix::print(int snapshot){
-    
     _outputFile.precision(10);
-    
     vector<vector<vector<floatingpoint > > > hVec = _ffm->hessianVector;
     vector<floatingpoint> tauVector = _ffm-> tauVector;
-    
+    // Outputs a sparse representation of the Hessian matrix, where only elements with appreciable size (>0.00001) are
+    // output along with their indices.  Currently this outputs for each minimization, however to reduce the file size this could be changed.
     for(auto k = 0; k < hVec.size(); k++){
-        
         vector<vector<floatingpoint > > hMat = hVec[k];
         int total_DOF = hMat.size();
-        
-        
-        //int num_elements = 0;
         vector<tuple<int, int, floatingpoint>> elements;
         for(auto i = 0; i < total_DOF; i++){
             for(auto j = 0; j < total_DOF; j++){
-                
-                if(std::abs(hMat[i][j]) > 0.001){
+                if(std::abs(hMat[i][j]) > 0.00001){
                     elements.push_back(std::make_tuple(i,j,hMat[i][j]));
-                    //num_elements += 1;
                 }
-
             }
-
-            
         }
-        
-        
-        
-        
         _outputFile << tauVector[k] << "     "<< total_DOF<< "     " << elements.size()<<endl;
         for(auto i = 0; i < elements.size(); i++){
             tuple<int, int, floatingpoint> element = elements[i];
             _outputFile<< get<0>(element) << "     "<< get<1>(element)<<"     "<< get<2>(element)<<endl;
         }
-        
-        
-        
     _outputFile<<endl;
-        
-    
-        
     };
+    // This clears the vectors storing the matrices to reduce the amount of memory needed.  
     _ffm->clearHessian();
-    
-    
-    
-    
 }
 
