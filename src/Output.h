@@ -331,6 +331,25 @@ public:
     virtual void print(int snapshot);
 };
 
+
+class HessianMatrix : public Output {
+    
+    ForceFieldManager* _ffm;
+    
+public:
+    HessianMatrix(string outputFileName, SubSystem* s, ForceFieldManager* ffm)
+    
+    : Output(outputFileName, s), _ffm(ffm) {}
+    
+    ~HessianMatrix() {}
+    
+    virtual void print(int snapshot);
+};
+
+
+
+
+
 class Datadump : public Output {
 
     ChemSim* _cs;

@@ -1870,7 +1870,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
                                                    .bindingSites[_filamentType]
                                                    .size()*cn->getStableIndex() + j],
                                                    		(floatingpoint)1.0)) {
-                            total++;
+                            //total++;
                             //check distances..
                             auto mp2 = bindingsites.at(j);
 

@@ -883,8 +883,9 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
     FFM.computeLoadForces();
     
+    
     int total_DOF = Bead::getDbData().coords.size_raw();
-    FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, 0.01);
+    FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, .0001);
     
     
 #ifdef OPTIMOUT

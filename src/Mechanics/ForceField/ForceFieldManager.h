@@ -53,8 +53,17 @@ public:
     
     void computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta);
     
+    void clearHessian(){
+        hessianVector.clear();
+        tauVector.clear();
+    }
+    
     
     void printculprit(floatingpoint* force);
+    
+    vector<vector<vector<floatingpoint>>> hessianVector;
+    
+    vector<floatingpoint> tauVector;
 
 #ifdef CUDAACCL
         cudaStream_t  streamF = NULL;
