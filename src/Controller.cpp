@@ -234,10 +234,11 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new LinkerBindingEvents(linkerbindingevents, _subSystem, _cs));
     }
     
-    //Set up HessianMatrix if event tracking is enabled
+    if(SysParams::MParams.hessTracking){
+    //Set up HessianMatrix if hessiantracking is enabled
     string hessianmatrix = _outputDirectory + "hessianmatrix.traj";
     _outputs.push_back(new HessianMatrix(hessianmatrix, _subSystem, _ffm));
-
+    }
 
     //Set up CMGraph output
     string cmgraphsnapname = _outputDirectory + "CMGraph.traj";

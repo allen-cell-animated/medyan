@@ -883,10 +883,10 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
     FFM.computeLoadForces();
     
-    
+    if(SysParams::Mechanics().hessTracking){
     int total_DOF = Bead::getDbData().coords.size_raw();
-    FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, .0001);
-    
+    FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, SysParams::Mechanics().hessDelta);
+    }
     
 #ifdef OPTIMOUT
     std::cout<<"End Minimization************"<<endl;

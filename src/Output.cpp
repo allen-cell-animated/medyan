@@ -1234,14 +1234,14 @@ void HessianMatrix::print(int snapshot){
         int total_DOF = hMat.size();
         
         
-        int num_elements = 0;
+        //int num_elements = 0;
         vector<tuple<int, int, floatingpoint>> elements;
         for(auto i = 0; i < total_DOF; i++){
             for(auto j = 0; j < total_DOF; j++){
                 
                 if(std::abs(hMat[i][j]) > 0.001){
                     elements.push_back(std::make_tuple(i,j,hMat[i][j]));
-                    num_elements += 1;
+                    //num_elements += 1;
                 }
 
             }
@@ -1252,8 +1252,8 @@ void HessianMatrix::print(int snapshot){
         
         
         
-        _outputFile << tauVector[k] << "     "<< total_DOF<< "     " << num_elements<<endl;
-        for(auto i = 0; i < num_elements; i++){
+        _outputFile << tauVector[k] << "     "<< total_DOF<< "     " << elements.size()<<endl;
+        for(auto i = 0; i < elements.size(); i++){
             tuple<int, int, floatingpoint> element = elements[i];
             _outputFile<< get<0>(element) << "     "<< get<1>(element)<<"     "<< get<2>(element)<<endl;
         }

@@ -521,12 +521,10 @@ void ForceFieldManager::assignallforcemags() {
 }
 
 
-void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta){
-    
+void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta){    
     // store the minimization time and initialize the matrix
     tauVector.push_back(tau());
     vector<vector<floatingpoint> > HessianMatrix(total_DOF, vector<floatingpoint>(total_DOF));
-    
     // loop through all the coordinates
     for(auto i = 0; i < total_DOF; i++){
         
@@ -548,7 +546,7 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
         for(auto j = 0; j < total_DOF; j++){
             
             // store the derivative of the force on each coordinate j
-            HessianMatrix[i][j] = (forces_copy[j] - f[j])/delta;
+            HessianMatrix[i][j] = -(forces_copy[j] - f[j])/delta;
         }
              
     }
