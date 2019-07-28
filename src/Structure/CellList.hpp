@@ -6,23 +6,37 @@
 
 namespace internal {
 
+// User of elements, like each molecule in compartments
 template< typename T >
-struct CellListElement {
+struct CellListElementUser {
     T* user;
     std::size_t head;
     std::size_t index;
 };
 
+// The necessary structure for element list
 template< typename T >
-struct CellListNode {
-    using ElementType = CellListElement<T>;
+struct CellListElement {
+    using UserType = CellListElementUser<T>;
 
-    ElementType* element;
+    UserType* elementUser;
     std::size_t next;
     std::size_t prev;
 };
 
+// User of heads, like each compartment holding molecules
+template< typename T >
+struct CellListHeadUser {
+    T* user;
+    std::size_t head;
+};
+
+// The necessary structure for head list
+template< typename T >
 struct CellListHead {
+    using UserType = CellListHeadUser<T>;
+
+    UserType* headUser;
     std::size_t first;
     std::size_t last;
 };
@@ -31,74 +45,83 @@ struct CellListHead {
 //   - 0th position for node list is reserved for end() iterator
 //   - next/prev index 0 means no next/prev index
 template< typename T >
-using CellListNodeList = std::vector< CellListNode<T> >;
-using CellListHeadList = std::vector< CellListHead >;
-
+using CellListElementList = std::vector< CellListElement<T> >;
 template< typename T >
-inline void cellListClear(CellListNodeList<T>& nodes, CellListHeadList& heads) {
-    nodes.resize(1);
+using CellListHeadList    = std::vector< CellListHead<T>    >;
+
+template< typename TElement, typename THead >
+inline void cellListClear(CellListElementList<TElement>& elements, CellListHeadList<THead>& heads) {
+    elements.resize(1);
     for(auto& head : heads) {
         head.first = 0;
         head.last  = 0;
     }
 } // void cellListClear(...)
 
-template< typename T >
-inline void cellListAddElement(CellListElement<T>& element, const CellListHead& head, CellListNodeList<T>& nodes, CellListHeadList& heads) {
-    element.head = head;
+template< typename TElement, typename THead >
+inline void cellListAddElement(
+    CellListElementUser<TElement>& eu, const CellListHeadUser<THead>& hu,
+    CellListElementList<TElement>& elements, CellListHeadList<THead>& heads
+) {
+    const auto head = hu.head;
+    eu.head = head;
 
     // Add new element
-    const auto newIndex = nodes.size();
-    nodes.push_back({&element});
-    auto& lastAddedNode = nodes.back();
+    const auto newIndex = elements.size();
+    elements.push_back({&eu});
+    auto& lastAddedElement = elements.back();
 
     // Reconnect linked list
     const auto last = heads[head].last;
     if(last) {
         // Insert as last
-        lastAddedNode.prev = last;
-        lastAddedNode.next = 0; // no connection
-        nodes[last].next = newIndex;
+        lastAddedElement.prev = last;
+        lastAddedElement.next = 0; // no connection
+        elements[last].next = newIndex;
         heads[head].last = newIndex;
     }
     else {
         // Was empty
-        lastAddedNode.prev = 0;
-        lastAddedNode.next = 0;
+        lastAddedElement.prev = 0;
+        lastAddedElement.next = 0;
         heads[head].first = newIndex;
         heads[head].last  = newIndex;
     }
 } // void cellListAddElement
 
-template< typename T >
-inline void cellListUpdateCell(CellListElement<T>& element, const CellListHead& newHead, CellListNodeList<T>& nodes, CellListHeadList& heads) {
-    const auto index = element.index;
-    const auto oldHead = element.head;
+template< typename TElement, typename THead >
+inline void cellListUpdateCell(
+    CellListElementUser<TElement>& eu, const CellListHeadUser<THead>& newHu,
+    CellListElementList<TElement>& elements, CellListHeadList<THead>& heads
+) {
+    const auto newHead = newHu.head;
+    const auto index = eu.index;
+    const auto oldHead = eu.head;
 
     // Remove from current head
     {
-        const auto prev = nodes[index].prev;
-        const auto next = nodes[index].next;
-        if(prev) nodes[prev].next = next; else heads[oldHead].first = next;
-        if(next) nodes[next].prev = prev; else heads[oldHead].last  = prev;
+        const auto prev = elements[index].prev;
+        const auto next = elements[index].next;
+        if(prev) elements[prev].next = next; else heads[oldHead].first = next;
+        if(next) elements[next].prev = prev; else heads[oldHead].last  = prev;
     }
 
     // Add to new head last
     {
-        element.head = newHead;
+        eu.head = newHead;
 
         const auto last = heads[newHead].last;
         if(last) {
             // Insert as last
-            nodes[index].prev = last;
-            nodes[index].next = 0; // no connection
-            nodes[last].next = index;
+            elements[index].prev = last;
+            elements[index].next = 0; // no connection
+            elements[last].next = index;
             heads[newHead].last = index;
         }
         else {
             // Was empty
-            nodes[index].prev = 0;
-            nodes[index].next = 0;
+            elements[index].prev = 0;
+            elements[index].next = 0;
             heads[newHead].first = index;
             heads[newHead].last  = index;
         }
