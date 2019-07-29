@@ -1,7 +1,8 @@
 #ifndef MEDYAN_Structure_CellList_Hpp
 #define MEDYAN_Structure_CellList_Hpp
 
-#include <cstddef> // size_t
+#include <cstddef> // ptrdiff_t, size_t
+#include <iterator> // tags
 #include <vector>
 
 namespace cell_list {
@@ -63,11 +64,96 @@ public:
     using ElementUser = CellListElementUser< TElement, THead >;
     using HeadUser    = CellListHeadUser   < TElement, THead >;
 
+    // The class for viewing and iterating the element pointers in a specific cell.
+    // The class acts like a double linked list.
+    // Only const iterator is offered.
+    class CellView {
+    private:
+
+        // The const iterator for traversing cell list
+        class ConstIterator_ {
+        public:
+            using iterator_category = std::bidirectional_iterator_tag;
+            using value_type        = TElement*;
+            using difference_type   = std::ptrdiff_t;
+            using pointer           = const value_type*;
+            using reference         = const value_type&;
+
+        private:
+            const ElementList* el_;
+            const CellListHead<THead>* head_;
+            std::size_t ei_;
+            bool atEnd_;
+
+        public:
+            ConstIterator_() = default;
+            ConstIterator_(const ElementList* el, const CellListHead<THead>* head, std::size_t elementIndex, bool atEnd) :
+                el_(el), head_(head), ei_(elementIndex), atEnd_(atEnd || (head_->size == 0))
+            { }
+            ConstIterator_(const ConstIterator_&) = default;
+            ConstIterator_& operator=(const ConstIterator_&) = default;
+
+            // Dereferencing
+            //---------------------------------------------
+            reference operator*() const { return (*el_)[ei_].ptr; }
+            pointer operator->() const { return &(*el_)[ei_].ptr; }
+
+            // Modification
+            //---------------------------------------------
+            // Precondition: *this is dereferenceable
+            ConstIterator_& operator++() {
+                if((*el_)[ei_].hasNext) ei_ = (*el_)[ei_].next;
+                else atEnd_ = true;
+                return *this;
+            }
+            // Precondition: *this is decrementable
+            ConstIterator_& operator--() {
+                if(atEnd_) {
+                    ei_ = head_->last; // head_->size == 0 is UB
+                    atEnd_ = false;
+                }
+                else ei_ = (*el_)[ei_].prev; // (*el_)[ei_].hasPrev == false is UB
+                return *this;
+            }
+            ConstIterator_ operator++(int) { ConstIterator_ tmp(*this); ++(*this); return tmp; }
+            ConstIterator_ operator--(int) { ConstIterator_ tmp(*this); --(*this); return tmp; }
+
+            // Comparison
+            //---------------------------------------------
+            bool operator==(const ConstIterator_& rhs) const {
+                return (atEnd_ && rhs.atEnd_) || (!atEnd_ && !rhs.atEnd_ && ei_ == rhs.ei_);
+            }
+            bool operator!=(const ConstIterator_& rhs) const {
+                return !(*this == rhs);
+            }
+        }; // class ConstIterator_
+
+    public:
+        using const_iterator = ConstIterator_;
+        using size_type = std::size_t;
+
+        CellView(const ElementList* el, const CellListHead<THead>* head) :
+            el_(el), head_(head)
+        { }
+
+        size_type size() const noexcept { return head_->size; }
+
+        const_iterator begin() const noexcept { return const_iterator(el_, head_, head_->first, false); }
+        const_iterator end() const noexcept { return const_iterator(el_, head_, 0, true); }
+
+    private:
+        const ElementList* el_;
+        const CellListHead<THead>* head_;
+    };
+
     // Accessors
     //-------------------------------------------------------------------------
 
-    auto getHeadPtr(std::size_t headIndex) const { return headList_[headIndex].ptr; }
-    auto getHeadPtr(const ElementUser& eu) const { return getHeadPtr(eu.head); }
+    THead* getHeadPtr(std::size_t headIndex) const { return headList_[headIndex].ptr; }
+    THead* getHeadPtr(const ElementUser& eu) const { return getHeadPtr(eu.head); }
+
+    CellView getElementPtrs(std::size_t headIndex) const { return CellView(&elementList_, &headList_[headIndex]); }
+    CellView getElementPtrs(const HeadUser& hu) const { return getElementPtrs(hu.index); }
 
     // Element operations with fixed head users
     //-------------------------------------------------------------------------

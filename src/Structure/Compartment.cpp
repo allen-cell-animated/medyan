@@ -28,10 +28,10 @@ void Compartment::SIMDcoordinates_section(){
 
     //setting size to the number of maximum binding sites per cylinder * number of
     // cylinders in compartment.
-    int N = _cylinders.size() * SysParams::Chemistry().maxbindingsitespercylinder;
+    int N = getCylinders().size() * SysParams::Chemistry().maxbindingsitespercylinder;
     if(N) {
 //        Cyldcindexvec.resize(_cylinders.size());
-        CylcIDvec.resize(_cylinders.size());
+        CylcIDvec.resize(getCylinders().size());
 
         short _filamentType = 0;
         bool checkftype = false;
@@ -43,7 +43,7 @@ void Compartment::SIMDcoordinates_section(){
         //Loop through all filament Types
         for(short filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
           //Loop through cylinders in the compartment
-            for (auto cyl:_cylinders) {
+            for (auto cyl:getCylinders()) {
               //clear partitioned coordiante vectors
                 for(short i =0; i < 27; i++) {
                     partitionedcoordx[i].clear();
@@ -124,7 +124,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
             _coords[1] + SysParams::Geometry().compartmentSizeY/2 - searchdist,
             _coords[2] + SysParams::Geometry().compartmentSizeZ/2 - searchdist};
 
-    int N = _cylinders.size() * maxnbs;
+    int N = getCylinders().size() * maxnbs;
     //Paritioned coordinates are created for each unique filamentType
 	  bscoords_section_linker.resize(SysParams::Chemistry().numFilaments * 27);
 
@@ -143,7 +143,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
             if (SysParams::Chemistry().numFilaments > 1)
                         checkftype = true;
             unsigned int i = 0;
-            for (auto cyl:_cylinders) {
+            for (auto cyl:getCylinders()) {
                 uint32_t cindex = cyl->getStableIndex();
 
                 _filamentType = Cylinder::getDbData().value[cindex].type;
@@ -238,7 +238,7 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
             _coords[1] + SysParams::Geometry().compartmentSizeY/2 - searchdist,
             _coords[2] + SysParams::Geometry().compartmentSizeZ/2 - searchdist};
 
-    int N = _cylinders.size() * maxnbs;
+    int N = getCylinders().size() * maxnbs;
 	bscoords_section_motor.resize(SysParams::Chemistry().numFilaments * 27);
     for (short filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
         if (N) {
@@ -257,7 +257,7 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                 checkftype = true;
             unsigned int i = 0;
 
-            for (auto cyl:_cylinders) {
+            for (auto cyl:getCylinders()) {
                 uint32_t cindex = cyl->getStableIndex();
 
                 _filamentType = Cylinder::getDbData().value[cindex].type;
@@ -2007,7 +2007,7 @@ void Compartment::activate(ChemSim* chem) {
 void Compartment::deactivate(ChemSim* chem) {
 
     //assert no cylinders in this compartment
-    assert((_cylinders.size() == 0)
+    assert((getCylinders().size() == 0)
            && "Compartment cannot be deactivated when containing active cylinders.");
 
     assert(_activated && "Compartment is already deactivated.");

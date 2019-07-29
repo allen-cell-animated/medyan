@@ -84,8 +84,6 @@ protected:
 
     unordered_set<Bead*> _beads; ///< Set of beads that are in this compartment
 
-    unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
-
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment (neighbors that
     unordered_map<Compartment*, size_t> _neighborIndex; ///< Spacial index of the neighbors of the same order as _neighbors
     ///< In 3D, the indices are in the order (x-, x+, y-, y+, z-, z+)
@@ -597,7 +595,7 @@ public:
    unordered_set<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}
 
     ///get the cylinders in this compartment
-    unordered_set<Cylinder*>& getCylinders() {return _cylinders;}
+    auto getCylinders() const { return cylinderCell.manager->getElementPtrs(cylinderCell); }
 
     /// Get the diffusion rate of a species
     /// @param - species_name, a string
