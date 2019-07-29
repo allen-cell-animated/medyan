@@ -9,8 +9,10 @@ namespace cell_list {
 // Forward declarations
 template< typename TElement, typename THead > class CellListManager;
 
-// Storing redundant information for user of elements,
-// like each molecule
+// Storing information for user of elements,
+// like each molecule.
+// Note:
+//   - The users must make sure that the manager points to a valid location
 template< typename TElement, typename THead >
 struct CellListElementUser {
     using ManagerType = CellListManager< TElement, THead >;
@@ -20,6 +22,19 @@ struct CellListElementUser {
     std::size_t index;
 };
 
+// Storing information for user of heads,
+// like each compartment storing molecules.
+// Note:
+//   - The users must make sure that the manager points to a valid location
+template< typename TElement, typename THead >
+struct CellListHeadUser {
+    using ManagerType = CellListManager< TElement, THead >;
+
+    ManagerType* manager = nullptr;
+    std::size_t index;
+};
+
+
 // The necessary structure for element list
 template< typename T >
 struct CellListElement {
@@ -28,16 +43,6 @@ struct CellListElement {
     std::size_t prev;
     bool hasNext;
     bool hasPrev;
-};
-
-// Storing redundant information for user of heads,
-// like each compartment storing molecules
-template< typename TElement, typename THead >
-struct CellListHeadUser {
-    using ManagerType = CellListManager< TElement, THead >;
-
-    ManagerType* manager = nullptr;
-    std::size_t index;
 };
 
 // The necessary structure for head list
@@ -77,9 +82,9 @@ public:
 
     void addElement(
         TElement* element,
-        ElementUser& eu, const HeadUser& headUser
+        ElementUser& eu, const HeadUser& hu
     ) {
-        const auto head = headUser.head;
+        const auto head = hu.index;
 
         // Add the new element
         std::size_t newIndex;
@@ -100,8 +105,8 @@ public:
 
     } // void addElement(...)
 
-    void updateElement(ElementUser& eu, const HeadUser& newHeadUser) {
-        const auto newHead = newHeadUser.head;
+    void updateElement(ElementUser& eu, const HeadUser& newHu) {
+        const auto newHead = newHu.index;
         const auto index = eu.index;
         const auto oldHead = eu.head;
 

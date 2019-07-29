@@ -596,16 +596,6 @@ public:
     ///get the boundary elements in this compartment
    unordered_set<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}
 
-    ///Add a cylinder to this compartment
-    void addCylinder(Cylinder* c) {_cylinders.insert(c);
-    }
-
-    ///Remove a cylinder from this compartment
-    ///@note does nothing if cylinder is not in compartment already
-    void removeCylinder(Cylinder* c) {
-        auto it = _cylinders.find(c);
-        if(it != _cylinders.end()) _cylinders.erase(it);
-    }
     ///get the cylinders in this compartment
     unordered_set<Cylinder*>& getCylinders() {return _cylinders;}
 
