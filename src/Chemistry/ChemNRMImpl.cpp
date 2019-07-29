@@ -72,8 +72,13 @@ RNodeNRM::~RNodeNRM() noexcept {
 }
 
 void RNodeNRM::printSelf() const {
-    cout << "RNodeNRM: ptr=" << this << ", tau=" << getTau() <<
-        ", a=" << _a << ", points to Reaction:\n";
+	Compartment* c = static_cast<Compartment*>(_react->getParent());
+	auto coord = c->coordinates();
+	std::cout.precision(10);
+//    cout << "RNodeNRM: ptr=" << this <<", tau=" << getTau() <<
+	cout << "tau=" << getTau() <<
+        ", a=" << _a <<" in Compartment "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<
+        ", points to Reaction:\n";
     cout << (*_react);
 }
 
@@ -106,6 +111,10 @@ void RNodeNRM::generateNewRandTau() {
         newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #endif
     setTau(newTau);
+    #ifdef DEBUGCONSTANTSEED
+    this->printSelf();
+    cout<<"counter "<<Rand::chemistrycounter<<endl;
+	#endif
 //    std::cout<<"generating R and Tau reaction"<<endl;
 //    printSelf();
 }
@@ -137,8 +146,12 @@ ChemNRMImpl::~ChemNRMImpl() {
 
 floatingpoint ChemNRMImpl::generateTau(floatingpoint a){
     exponential_distribution<floatingpoint>::param_type pm(a);
-    
+
     _exp_distr.param(pm);
+
+	#ifdef DEBUGCONSTANTSEED
+	Rand::chemistrycounter++;
+	#endif
     return _exp_distr(Rand::eng);
 }
 
@@ -176,7 +189,9 @@ bool ChemNRMImpl::makeStep() {
     _t=tau_top;
     syncGlobalTime();
     //std::cout<<"------------"<<endl;
-    //rn->printSelf();
+//    rn->printSelf();
+//    cout<<"b4_1 "<<Rand::chemistrycounter<<" "<<Rand::intcounter<<" "
+//																""<<Rand::floatcounter<<endl;
     //std::cout<<"------------"<<endl;
 
     // if dissipation tracking is enabled and the reaction is supported, then compute the change in Gibbs free energy and store it
@@ -189,12 +204,15 @@ bool ChemNRMImpl::makeStep() {
         }
     }
     rn->makeStep();
+
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
 #endif
         //std::cout<<"Update R and Tau for fired reaction"<<endl;
         rn->generateNewRandTau();
         rn->updateHeap();
+//	    cout<<"b4_2 "<<Rand::chemistrycounter<<" "<<Rand::intcounter<<" "
+//	                                                                  ""<<Rand::floatcounter<<endl;
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     }
 #endif
@@ -259,6 +277,8 @@ bool ChemNRMImpl::makeStep() {
     // Send signal
     r->emitSignal();
 #endif
+//	cout<<"af "<<Rand::chemistrycounter<<" "<<Rand::intcounter<<" "
+//	                                                            ""<<Rand::floatcounter<<endl;
     return true;
 }
 

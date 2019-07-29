@@ -1898,6 +1898,7 @@ BubbleSetup SystemParser::readBubbleSetup() {
                 
             }
                 filamentVector.emplace_back(type, coord1, coord2);}
+                /*Linker Motor*/
             else
             {
                 type = atoi((*(lineVector.begin() + 1)).c_str());

@@ -31,9 +31,10 @@ Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
       coordinateP(v),
       brforce(3, 0), pinforce(3,0),
       _position(position), _birthTime(tau()) {
-    
-    parent->addChild(unique_ptr<Component>(this));
-          
+
+    if(SysParams::RUNSTATE)
+        parent->addChild(unique_ptr<Component>(this));
+
     loadForcesP = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
     loadForcesM = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
     

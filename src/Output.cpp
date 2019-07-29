@@ -1082,6 +1082,7 @@ void Datadump::print(int snapshot) {
     }
     //Rearrange bead and cylinder data to create a continuous array.
     Bead::rearrange();
+	Cylinder::updateAllData();
     Cylinder::rearrange();
     _outputFile << snapshot << " " << tau() << endl;
     _outputFile << Filament::numFilaments() << " " <<
@@ -1090,33 +1091,33 @@ void Datadump::print(int snapshot) {
                              BranchingPoint::numBranchingPoints() << " " <<
                              Bubble::numBubbles() << endl;
     //Bead data
-    _outputFile <<"BEAD DATA: BEADIDX(STABLE) COORDX COORDY COORDZ FORCEAUXX "
+    _outputFile <<"BEAD DATA: BEADIDX(STABLE) FID COORDX COORDY COORDZ FORCEAUXX "
                   "FORCEAUXY FORCEAUXZ"<<endl;
-    auto beadData = Bead::getDbDataConst();
-    auto deletedIndices = Bead::getdeletedIndices();
-    for(int bidx = 0; bidx<Bead::rawNumStableElements(); bidx++){
-        //Check if it a valid bidx
-        if(deletedIndices.size()){
-            if(find(deletedIndices.begin(), deletedIndices.end(), bidx) != deletedIndices.end())
-                continue;
-        }
+    const auto& beadData = Bead::getDbDataConst();
+
+    for(auto b:Bead::getBeads()){
+        auto bidx = b->getStableIndex();
+        Filament* f = static_cast<Filament*>(b->getParent());
+        _outputFile <<bidx<<" "<<f->getId()<<" "<<beadData.coords.data()
+        [3*bidx]<<" " <<beadData.coords.data()[3*bidx + 1]<<" "
+        <<beadData.coords.data()[3*bidx + 2]<<" "<<beadData.forcesAux.data()[3*bidx]<<" "<<
+        beadData.forcesAux.data()[3*bidx + 1]<<" "<<beadData.forcesAux.data()[3*bidx + 2]<<endl;
+
+    }
+
+    /*for(int bidx = 0; bidx<Bead::rawNumStableElements(); bidx++){
+
         _outputFile <<bidx<<" "<<beadData.coords.data()[3*bidx]<<" "<<beadData.coords.data()[3*bidx + 1]<<" "
         <<beadData.coords.data()[3*bidx + 2]<<" "<<beadData.forcesAux.data()[3*bidx]<<" "<<beadData
         .forcesAux.data()[3*bidx + 1]<<" "<<beadData.forcesAux.data()[3*bidx + 2]<<endl;
     }
-	_outputFile <<endl;
+	_outputFile <<endl;*/
     //Cylinder data
     _outputFile <<"CYLINDER DATA: CYLIDX(STABLE) B1_IDX B2_IDX MINUSENDTYPE "
                   "PLUSENDTYPE MINUSENDMONOMER PLUSENDMONOMER TOTALMONOMERS EQLEN"<<endl;
     const auto& cylinderInfoData = Cylinder::getDbData().value;
-    auto deletedcIndices = Cylinder::getdeletedIndices();
+
     for(int cidx = 0; cidx < Cylinder::rawNumStableElements(); cidx++){
-        //Check if it a valid cidx
-        if(deletedIndices.size()){
-            if(find(deletedcIndices.begin(), deletedcIndices.end(), cidx) !=
-            deletedcIndices.end())
-                continue;
-        }
         Cylinder* cyl = cylinderInfoData[cidx].chemCylinder->getCylinder();
         CCylinder* ccyl  = cylinderInfoData[cidx].chemCylinder;
         short filamentType = cyl->getType();

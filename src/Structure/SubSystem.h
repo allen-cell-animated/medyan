@@ -172,7 +172,11 @@ public:
 
     //@}
     /// Get all Movable
+	#ifdef DEBUGCONSTANTSEED
+	set<Movable *> &getMovables() { return _movables; }
+	#else
     const unordered_set<Movable *> &getMovables() { return _movables; }
+	#endif
 
     //@{
     /// Setter function for Reactable
@@ -185,7 +189,11 @@ public:
 
     //@}
     /// Get all Reactable
+	#ifdef DEBUGCONSTANTSEED
+	const set<Reactable *> &getReactables() { return _reactables; }
+	#else
     const unordered_set<Reactable *> &getReactables() { return _reactables; }
+	#endif
 
     /// Get the subsystem boundary
     Boundary *getBoundary() { return _boundary; }
@@ -263,9 +271,13 @@ private:
     dist::Coords temptest;
     floatingpoint _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer
-
+#ifdef DEBUGCONSTANTSEED
+	set<Movable*> _movables; ///< All movables in the subsystem
+	set<Reactable*> _reactables; ///< All reactables in the subsystem
+#else
     unordered_set<Movable*> _movables; ///< All movables in the subsystem
     unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
+#endif
 
     std::vector<NeighborList*> _neighborLists; ///< All neighborlists in the system
     std::vector<NeighborList*> __bneighborLists; ///< Boundary neighborlists in the system.

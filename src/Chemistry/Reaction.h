@@ -236,7 +236,8 @@ template <unsigned short M, unsigned short N>
                 ++i;
             }
             os << ", " << "curr_rate = " << getRate() << ", a="
-               << computePropensity() << ", ReactionBase ptr=" << this << "\n";
+                    << computePropensity() << "\n";
+//               << computePropensity() << ", ReactionBase ptr=" << this << "\n";
         }
         
         /// Implementation of  clone()

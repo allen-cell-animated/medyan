@@ -24,7 +24,6 @@
 #include <random>
 #include <chrono>
 
-#include "Controller.h"
 
 #include "Parser.h"
 #include "Output.h"
@@ -58,6 +57,14 @@ using namespace mathfunc;
 class SubSystem;
 class Cylinder;
 class FilamentBindingManager;
+
+/*Structures to store data parsed from Restartfile*/
+struct restartBeadData{
+	vector<unsigned int> bidvec;
+	vector<float> coordvec;
+	vector<float> forceAuxvec;
+};
+
 class Restart {
 private:
     SubSystem *_subSystem; ///< A pointer to the subsystem that this controls
@@ -74,6 +81,9 @@ private:
     vector<tuple<string, short, vector<vector<floatingpoint>>>> boundVector;
     vector<short> branchcylIDs;
     int  _numChemSteps=0;
+
+	fstream _inputFile; ///< input file being used
+	restartBeadData _rBData;
     
     //gives angle and delta
     vector<floatingpoint> getAngleDeltaPos(vector<floatingpoint>leg, vector<floatingpoint> site1, vector<floatingpoint> site2){
@@ -459,10 +469,21 @@ private:
             counter++;
     }}
 public:
-    Restart(SubSystem* s, tuple< vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> , vector<tuple<string, short,
-            vector<vector<floatingpoint>>>> , vector<tuple<string, short, vector<floatingpoint>>> , vector<vector<floatingpoint>> > f, ChemistryData _cd)
-            : _subSystem(s), filaments(f), _chemData(_cd) {}
+    Restart(SubSystem* s, ChemistryData _cd, const string inputFileName)
+            : _subSystem(s), _chemData(_cd) {
+	    _inputFile.open(inputFileName);
+	    if(!_inputFile.is_open()) {
+		    cout << "There was an error parsing file " << inputFileName
+		         << ". Exiting." << endl;
+		    exit(EXIT_FAILURE);
+	    }
+
+    }
+
+    ~Restart(){_inputFile.close();}
+
     int getnumchemsteps(){return _numChemSteps;}
+
     void settorestartphase(){
 //STEP #1: Get a copy of diffusion rate and set diffusion rate to 0, reset linker motor and branching managers.
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
@@ -473,8 +494,7 @@ public:
         for(auto &Mgr:C->getFilamentBindingManagers()){
 #ifdef NLORIGINAL
             Mgr->clearpossibleBindings();
-#endif
-#ifdef NLSTENCILLIST
+#else
             Mgr->clearpossibleBindingsstencil();
 #endif
         }}
@@ -905,5 +925,8 @@ public:
                 counter++;}
             C->getDiffusionReactionContainer().updatePropensityComprtment();}
     }
+
+    void readNetworkSetup();
+    void setupInitialNetwork();
 };
 #endif

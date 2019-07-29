@@ -792,20 +792,22 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 		f3 = &f[3 * beadSet[n * i + 2]];
 		f4 = &f[3 * beadSet[n * i + 3]];
 
-		//check if in same plane
-		if(areInPlane(c1, c2, c3, c4)) {
+		if(false) {
+			//check if in same plane
+			if (areInPlane(c1, c2, c3, c4)) {
 
-			//slightly move point
-			movePointOutOfPlane(c1, c2, c3, c4, newc2, 2, 0.01);
-			c2 = newc2;
+				//slightly move point
+				movePointOutOfPlane(c1, c2, c3, c4, newc2, 2, 0.01);
+				c2 = newc2;
 
 #ifdef DETAILEDOUTPUT
-			std::cout<<"Mv"<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<
-                     c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "<<
-                     c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<
-                     c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
-            std::cout<<"M ";
+				std::cout<<"Mv"<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<
+						 c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "<<
+						 c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<
+						 c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
+				std::cout<<"M ";
 #endif
+			}
 		}
 #ifdef DETAILEDOUTPUT
 		else{

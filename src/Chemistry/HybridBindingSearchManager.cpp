@@ -1045,6 +1045,15 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
     }
 }
 
+void HybridBindingSearchManager::clearPossibleBindingsstencil(short idvec[2]){
+	short idx = idvec[0];
+	short idx2 = idvec[1];
+	_possibleBindingsstencilvecuint[idx][idx2].clear();
+	_reversepossibleBindingsstencilvecuint[idx][idx2].clear();
+	countNpairsfound(idvec);
+	fManagervec[idx][idx2]->updateBindingReaction(Nbindingpairs[idx][idx2]);
+}
+
 HybridCylinderCylinderNL* HybridBindingSearchManager::_HneighborList;
 bool initialized = false;
 //D = 1

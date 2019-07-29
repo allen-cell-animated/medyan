@@ -1451,6 +1451,17 @@ vector<tuple<CCylinder*, short>> LinkerBindingManager::chooseBindingSitesstencil
     return vector<tuple<CCylinder*, short>>{it->first, it->second};
 #endif
 }
+
+void LinkerBindingManager::clearpossibleBindingsstencil() {
+    #ifdef NLSTENCILLIST
+    floatingpoint oldN=numBindingSitesstencil();
+        _possibleBindingsstencil.clear();
+        updateBindingReaction(oldN,0);
+    #else
+    auto HManager = _compartment->getHybridBindingSearchManager();
+    HManager->clearPossibleBindingsstencil(_idvec);
+    #endif
+}
 #endif
 #ifdef CUDAACCL_NL
 void LinkerBindingManager::assigncudavars() {
@@ -2431,6 +2442,18 @@ vector<tuple<CCylinder*, short>> MotorBindingManager::chooseBindingSitesstencil(
 
     return vector<tuple<CCylinder*, short>>{it->first, it->second};
 #endif
+}
+
+void MotorBindingManager::clearpossibleBindingsstencil() {
+    #ifdef NLSTENCILLIST
+    floatingpoint oldN=numBindingSitesstencil();
+        _possibleBindingsstencil.clear();
+        updateBindingReaction(oldN,0);
+    #else
+    auto HManager = _compartment->getHybridBindingSearchManager();
+    HManager->clearPossibleBindingsstencil(_idvec);
+
+    #endif
 }
 #endif
 #ifdef CUDAACCL_NL
