@@ -4,7 +4,7 @@
 #include <cstddef> // size_t
 #include <vector>
 
-namespace internal {
+namespace cell_list {
 
 // Forward declarations
 template< typename TElement, typename THead > class CellListManager;
@@ -15,7 +15,7 @@ template< typename TElement, typename THead >
 struct CellListElementUser {
     using ManagerType = CellListManager< TElement, THead >;
 
-    ManagerType* manager;
+    ManagerType* manager = nullptr;
     std::size_t head;
     std::size_t index;
 };
@@ -23,7 +23,7 @@ struct CellListElementUser {
 // The necessary structure for element list
 template< typename T >
 struct CellListElement {
-    T* user;
+    T* ptr;
     std::size_t next;
     std::size_t prev;
     bool hasNext;
@@ -36,34 +36,33 @@ template< typename TElement, typename THead >
 struct CellListHeadUser {
     using ManagerType = CellListManager< TElement, THead >;
 
-    ManagerType* manager;
-    std::size_t head;
+    ManagerType* manager = nullptr;
+    std::size_t index;
 };
 
 // The necessary structure for head list
 template< typename T >
 struct CellListHead {
-    T* user;
+    T* ptr;
     std::size_t size = 0;
     std::size_t first;
     std::size_t last;
 };
 
-// Note:
-//   - 0th position for node list is reserved for end() iterator
-//   - next/prev index 0 means no next/prev index
-template< typename T >
-using CellListElementList = std::vector< CellListElement<T> >;
-template< typename T >
-using CellListHeadList    = std::vector< CellListHead<T>    >;
-
+// The class managing a cell list
 template< typename TElement, typename THead >
 class CellListManager {
 public:
-    using ElementList = std::vector< CellListElement<T> >;
-    using HeadList    = std::vector< CellListHead   <T> >;
+    using ElementList = std::vector< CellListElement<TElement> >;
+    using HeadList    = std::vector< CellListHead   <THead   > >;
     using ElementUser = CellListElementUser< TElement, THead >;
     using HeadUser    = CellListHeadUser   < TElement, THead >;
+
+    // Accessors
+    //-------------------------------------------------------------------------
+
+    auto getHeadPtr(std::size_t headIndex) const { return headList_[headIndex].ptr; }
+    auto getHeadPtr(const ElementUser& eu) const { return getHeadPtr(eu.head); }
 
     // Element operations with fixed head users
     //-------------------------------------------------------------------------
@@ -89,7 +88,7 @@ public:
             newIndex = elementList_.size() - 1;
         } else {
             newIndex = elementDeletedIndices_.back();
-            elementList_[newIndex].user = element;
+            elementList_[newIndex].ptr = element;
             elementDeletedIndices_.pop_back();
         }
 
@@ -124,9 +123,17 @@ public:
         elementDeletedIndices_.push_back(index);
     } // void removeElement(...)
 
+    // Head operations with fixed element users
+    //-------------------------------------------------------------------------
+
+    void addHead(THead* head, HeadUser& hu) {
+        headList_.push_back({head});
+        hu.index = headList_.size() - 1;
+    }
+
 private:
-    CellListHeadList           headList_;
-    CellListElementList        elementList_;
+    HeadList                   headList_;
+    ElementList                elementList_;
     std::vector< std::size_t > elementDeletedIndices_;
 
     // Helper function to register an element at an index to a head
@@ -185,6 +192,6 @@ private:
 
 
 
-} // namespace internal
+} // namespace cell_list
 
 #endif

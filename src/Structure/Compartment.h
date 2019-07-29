@@ -31,6 +31,7 @@
 #include "dist_moduleV2/dist_driver.h"
 #include "dist_moduleV2/dist_coords.h"
 #include "MathFunctions.h"
+#include "Structure/CellList.hpp"
 
 //#include "BinGrid.h"
 //#include "Bin.h"
@@ -115,6 +116,9 @@ public:
     short _ID;
     vector<uint16_t> cindex_bs;
     vector<uint32_t> cID_bs;
+
+    cell_list::CellListHeadUser< Cylinder, Compartment > cylinderCell; // Cell of cylinders
+
     /// Default constructor, only takes in number of dimensions
     Compartment() : _species(), _internal_reactions(),
     _diffusion_reactions(), _diffusion_rates(), _neighbours()  {
