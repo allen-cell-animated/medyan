@@ -882,6 +882,13 @@ std::cout<<"----------------------------------------"<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
     FFM.computeLoadForces();
+    
+    // compute the Hessian matrix at this point if the feature is enabled
+    if(SysParams::Mechanics().hessTracking){
+        int total_DOF = Bead::getDbData().coords.size_raw();
+        FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, SysParams::Mechanics().hessDelta);
+    }
+    
 #ifdef OPTIMOUT
     std::cout<<"End Minimization************"<<endl;
 #endif

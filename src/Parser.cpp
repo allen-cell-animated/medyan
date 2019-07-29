@@ -238,6 +238,10 @@ void SystemParser::readChemParams() {
 
             }
         }
+        
+        
+        
+        
 
         if (line.find("DIFBINDING:") != string::npos) {
 
@@ -996,6 +1000,24 @@ void SystemParser::readMechParams() {
                 MParams.MTOCBendingK.push_back(atof((lineVector[i].c_str())));
             }
         }
+        
+        if (line.find("HESSIANTRACKING:") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MParams.hessTracking = true;
+                MParams.hessDelta = atof(lineVector[1].c_str());
+                cout<<"delta is "<<MParams.hessDelta<<endl;
+                
+            }
+        }
+        
 
         if (line.find("SPECIALPROTOCOL") != string::npos) {
 

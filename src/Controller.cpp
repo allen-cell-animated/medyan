@@ -205,6 +205,7 @@ void Controller::initialize(string inputFile,
                                      _subSystem->getCompartmentGrid()));
 
     ChemSim* _cs = _cController->getCS();
+    ForceFieldManager* _ffm = _mController->getForceFieldManager();
 
     string concenname = _outputDirectory + "concentration.traj";
     _outputs.push_back(new Concentrations(concenname, _subSystem, ChemData));
@@ -232,7 +233,12 @@ void Controller::initialize(string inputFile,
     string linkerbindingevents = _outputDirectory + "linkerbindingevents.traj";
     _outputs.push_back(new LinkerBindingEvents(linkerbindingevents, _subSystem, _cs));
     }
-
+    
+    if(SysParams::MParams.hessTracking){
+    //Set up HessianMatrix if hessiantracking is enabled
+    string hessianmatrix = _outputDirectory + "hessianmatrix.traj";
+    _outputs.push_back(new HessianMatrix(hessianmatrix, _subSystem, _ffm));
+    }
 
     //Set up CMGraph output
     string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
