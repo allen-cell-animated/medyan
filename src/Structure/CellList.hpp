@@ -6,10 +6,16 @@
 
 namespace internal {
 
-// User of elements, like each molecule in compartments
-template< typename T >
+// Forward declarations
+template< typename TElement, typename THead > class CellListManager;
+
+// Storing redundant information for user of elements,
+// like each molecule
+template< typename TElement, typename THead >
 struct CellListElementUser {
-    T* user;
+    using ManagerType = CellListManager< TElement, THead >;
+
+    ManagerType* manager;
     std::size_t head;
     std::size_t index;
 };
@@ -17,26 +23,28 @@ struct CellListElementUser {
 // The necessary structure for element list
 template< typename T >
 struct CellListElement {
-    using UserType = CellListElementUser<T>;
-
-    UserType* elementUser;
+    T* user;
     std::size_t next;
     std::size_t prev;
+    bool hasNext;
+    bool hasPrev;
 };
 
-// User of heads, like each compartment holding molecules
-template< typename T >
+// Storing redundant information for user of heads,
+// like each compartment storing molecules
+template< typename TElement, typename THead >
 struct CellListHeadUser {
-    T* user;
+    using ManagerType = CellListManager< TElement, THead >;
+
+    ManagerType* manager;
     std::size_t head;
 };
 
 // The necessary structure for head list
 template< typename T >
 struct CellListHead {
-    using UserType = CellListHeadUser<T>;
-
-    UserType* headUser;
+    T* user;
+    std::size_t size = 0;
     std::size_t first;
     std::size_t last;
 };
@@ -50,83 +58,132 @@ template< typename T >
 using CellListHeadList    = std::vector< CellListHead<T>    >;
 
 template< typename TElement, typename THead >
-inline void cellListClear(CellListElementList<TElement>& elements, CellListHeadList<THead>& heads) {
-    elements.resize(1);
-    for(auto& head : heads) {
-        head.first = 0;
-        head.last  = 0;
-    }
-} // void cellListClear(...)
+class CellListManager {
+public:
+    using ElementList = std::vector< CellListElement<T> >;
+    using HeadList    = std::vector< CellListHead   <T> >;
+    using ElementUser = CellListElementUser< TElement, THead >;
+    using HeadUser    = CellListHeadUser   < TElement, THead >;
 
-template< typename TElement, typename THead >
-inline void cellListAddElement(
-    CellListElementUser<TElement>& eu, const CellListHeadUser<THead>& hu,
-    CellListElementList<TElement>& elements, CellListHeadList<THead>& heads
-) {
-    const auto head = hu.head;
-    eu.head = head;
+    // Element operations with fixed head users
+    //-------------------------------------------------------------------------
 
-    // Add new element
-    const auto newIndex = elements.size();
-    elements.push_back({&eu});
-    auto& lastAddedElement = elements.back();
-
-    // Reconnect linked list
-    const auto last = heads[head].last;
-    if(last) {
-        // Insert as last
-        lastAddedElement.prev = last;
-        lastAddedElement.next = 0; // no connection
-        elements[last].next = newIndex;
-        heads[head].last = newIndex;
-    }
-    else {
-        // Was empty
-        lastAddedElement.prev = 0;
-        lastAddedElement.next = 0;
-        heads[head].first = newIndex;
-        heads[head].last  = newIndex;
-    }
-} // void cellListAddElement
-
-template< typename TElement, typename THead >
-inline void cellListUpdateCell(
-    CellListElementUser<TElement>& eu, const CellListHeadUser<THead>& newHu,
-    CellListElementList<TElement>& elements, CellListHeadList<THead>& heads
-) {
-    const auto newHead = newHu.head;
-    const auto index = eu.index;
-    const auto oldHead = eu.head;
-
-    // Remove from current head
-    {
-        const auto prev = elements[index].prev;
-        const auto next = elements[index].next;
-        if(prev) elements[prev].next = next; else heads[oldHead].first = next;
-        if(next) elements[next].prev = prev; else heads[oldHead].last  = prev;
+    void clearElements() {
+        elementList_.clear();
+        elementDeletedIndices_.clear();
+        for(auto& head : headList_) {
+            head.size  = 0;
+        }
     }
 
-    // Add to new head last
-    {
+    void addElement(
+        TElement* element,
+        ElementUser& eu, const HeadUser& headUser
+    ) {
+        const auto head = headUser.head;
+
+        // Add the new element
+        std::size_t newIndex;
+        if(elementDeletedIndices_.empty()) {
+            elementList_.push_back({element});
+            newIndex = elementList_.size() - 1;
+        } else {
+            newIndex = elementDeletedIndices_.back();
+            elementList_[newIndex].user = element;
+            elementDeletedIndices_.pop_back();
+        }
+
+        eu.head = head;
+        eu.index = newIndex;
+
+        // Connect the new element
+        registerElement_(newIndex, head);
+
+    } // void addElement(...)
+
+    void updateElement(ElementUser& eu, const HeadUser& newHeadUser) {
+        const auto newHead = newHeadUser.head;
+        const auto index = eu.index;
+        const auto oldHead = eu.head;
+
+        // Remove from current head
+        unregsiterElement_(index, oldHead);
+
+        // Add to the new head
         eu.head = newHead;
+        registerElement_(index, newHead);
 
-        const auto last = heads[newHead].last;
-        if(last) {
+    } // void updateElement(...)
+
+    void removeElement(const ElementUser& eu) {
+        const auto index = eu.index;
+        const auto head = eu.head;
+
+        unregsiterElement_(index, head);
+
+        elementDeletedIndices_.push_back(index);
+    } // void removeElement(...)
+
+private:
+    CellListHeadList           headList_;
+    CellListElementList        elementList_;
+    std::vector< std::size_t > elementDeletedIndices_;
+
+    // Helper function to register an element at an index to a head
+    // Note:
+    //   - This function causes the head size count to increase by 1.
+    //   - This function does not manage allocating the element.
+    void registerElement_(const std::size_t index, const std::size_t head) {
+        if(headList_[head].size) {
             // Insert as last
-            elements[index].prev = last;
-            elements[index].next = 0; // no connection
-            elements[last].next = index;
-            heads[newHead].last = index;
+            const auto last = headList_[head].last;
+            elementList_[index].hasPrev = true;
+            elementList_[index].prev = last;
+            elementList_[index].hasNext = false;
+
+            elementList_[last].hasNext = true;
+            elementList_[last].next = index;
+            headList_[head].last = index;
         }
         else {
             // Was empty
-            elements[index].prev = 0;
-            elements[index].next = 0;
-            heads[newHead].first = index;
-            heads[newHead].last  = index;
+            elementList_[index].hasPrev = false;
+            elementList_[index].hasNext = false;
+            headList_[head].first = index;
+            headList_[head].last  = index;
         }
-    }
-} // void cellListUpdateCell(...)
+
+        ++headList_[head].size;
+    } // void registerElement_(...)
+
+    // Helper function to unregister an element at an index from a head
+    // Note:
+    //   - This function causes the head size count to decrease by 1.
+    //   - This function does not manage removing the element.
+    void unregsiterElement_(const std::size_t index, const std::size_t head) {
+        --headList_[head].size;
+
+        // Reconnect linked list
+        const auto& e = elementList_[index];
+
+        if(e.hasPrev) {
+            elementList_[e.prev].hasNext = e.hasNext;
+            if(e.hasNext) elementList_[e.prev].next = e.next;
+        } else {
+            if(e.hasNext) headList_[head].first = e.next;
+        }
+
+        if(e.hasNext) {
+            elementList_[e.next].hasPrev = e.hasPrev;
+            if(e.hasPrev) elementList_[e.next].prev = e.prev;
+        } else {
+            if(e.hasPrev) headList_[head].last = e.prev;
+        }
+    } // void unregisterElement_(...)
+
+}; // template<...> class CellListManager
+
+
 
 } // namespace internal
 
