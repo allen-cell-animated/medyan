@@ -128,6 +128,7 @@ public:
     vector<uint32_t> cID_bs;
 
     cell_list::CellListHeadUser< Cylinder, Compartment > cylinderCell; // Cell of cylinders
+    cell_list::CellListHeadUser< Triangle, Compartment > triangleCell; // Cell of triangles
 
     /// Default constructor, only takes in number of dimensions
     Compartment() : _species(), _internal_reactions(),
@@ -618,13 +619,9 @@ public:
     ///get the cylinders in this compartment
     auto getCylinders() const { return cylinderCell.manager->getElementPtrs(cylinderCell); }
 
-    /// Add, remove and get triangles
-    void addTriangle(Triangle* t) { _triangles.insert(t); }
-    void removeTriangle(Triangle* t) {
-        auto it = _triangles.find(t);
-        if(it != _triangles.end()) _triangles.erase(it);
-    }
-    unordered_set<Triangle*>& getTriangles() { return _triangles; }
+    /// get triangles in this compartment
+    auto getTriangles() const { return triangleCell.manager->getElementPtrs(triangleCell); }
+
     /// Add, remove and get edges
     void addEdge(Edge* e) { _edges.insert(e); }
     void removeEdge(Edge* e) {
