@@ -137,6 +137,7 @@ public:
         { }
 
         size_type size() const noexcept { return head_->size; }
+        bool empty() const noexcept { return !size(); }
 
         const_iterator begin() const noexcept { return const_iterator(el_, head_, head_->first, false); }
         const_iterator end() const noexcept { return const_iterator(el_, head_, 0, true); }
