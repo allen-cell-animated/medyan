@@ -15,6 +15,8 @@
 
 #include "Composite.h"
 
+#include "ChemNRMImpl.h"
+
 ReactionBase::ReactionBase (float rate, bool isProtoCompartment, floatingpoint volumeFrac, int rateVolumeDepExp)
     : _rnode(nullptr), _parent(nullptr), _rate(rate),
     _rate_bare(rate), _isProtoCompartment(isProtoCompartment),
@@ -66,5 +68,27 @@ void ReactionBase::printDependents()  {
         cout << endl;
     for(auto r : _dependents)
         cout << (*r) << endl;
+}
+
+bool afterchemsiminit = false;
+void ReactionBase::activateReaction() {
+	#ifdef CHECKRXN
+	if(afterchemsiminit) {
+		cout << "activating " << getReactionType() <<" RNodeNRM ptr "<< _rnode<< endl;
+		_rnode->printSelf();
+		cout << *this << endl;
+	}
+	#endif
+#ifdef TRACK_ZERO_COPY_N
+	if(areEqual(getProductOfReactants(), 0.0)) // One of the reactants is still at zero copy n,
+		// no need to activate yet...
+		return;
+#endif
+#ifdef TRACK_UPPER_COPY_N
+	if(areEqual(getProductOfProducts(), 0.0)) // One of the products is at the maximum allowed
+		//copy number, no need to activate yet...
+		return;
+#endif
+	activateReactionUnconditional();
 }
 

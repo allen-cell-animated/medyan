@@ -33,6 +33,7 @@
 
 #include "Species.h"
 
+
 //FORWARD DECLARATIONS
 class CBound;
 class RNode;
@@ -432,19 +433,7 @@ public:
     /// it, which can be used to follow Reaction objects whose propensities change upon
     /// firing of some Reaction. This request will be ignored if the Reaction's
     /// propensity is still zero.
-    void activateReaction() {
-#ifdef TRACK_ZERO_COPY_N
-        if(areEqual(getProductOfReactants(), 0.0)) // One of the reactants is still at zero copy n,
-                                                   // no need to activate yet...
-            return;
-#endif
-#ifdef TRACK_UPPER_COPY_N
-        if(areEqual(getProductOfProducts(), 0.0)) // One of the products is at the maximum allowed
-                                                  //copy number, no need to activate yet...
-            return;
-#endif
-        activateReactionUnconditional();
-    }
+    void activateReaction();
     
     /// Performs a simple updating of the propensity of this ReactionBase. Does not change
     /// dependents, only updates the RNode if initialized.

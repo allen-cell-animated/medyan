@@ -68,6 +68,8 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem, Dissipa
     
     // init chemsim
     _chemSim->initialize();
+    extern bool afterchemsiminit;
+    afterchemsiminit = true;
     
     // set some static ptrs
     FilamentReactionTemplate::_ps = _subSystem;

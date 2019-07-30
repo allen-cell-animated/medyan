@@ -75,8 +75,8 @@ void RNodeNRM::printSelf() const {
 	Compartment* c = static_cast<Compartment*>(_react->getParent());
 	auto coord = c->coordinates();
 	std::cout.precision(10);
-//    cout << "RNodeNRM: ptr=" << this <<", tau=" << getTau() <<
-	cout << "tau=" << getTau() <<
+    cout << "RNodeNRM: ptr=" << this <<", tau=" << getTau() <<
+//	cout << "tau=" << getTau() <<
         ", a=" << _a <<" in Compartment "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<
         ", points to Reaction:\n";
     cout << (*_react);
@@ -203,6 +203,12 @@ bool ChemNRMImpl::makeStep() {
         _dt->updateDelGChem(react);
         }
     }
+
+    #ifdef CHECKRXN
+    cout<<"rxn"<<endl;
+    rn->printSelf();
+	#endif
+
     rn->makeStep();
 
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N

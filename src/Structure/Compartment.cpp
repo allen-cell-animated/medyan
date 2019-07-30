@@ -2192,11 +2192,10 @@ void Compartment::activate(ChemSim* chem) {
                     if(rs1->getN()>0 && r->isPassivated()){
                         r->activateReaction();
                     }
+                }
+            }
         }
     }
-        }
-    }
-
 }
 
 void Compartment::deactivate(ChemSim* chem) {
