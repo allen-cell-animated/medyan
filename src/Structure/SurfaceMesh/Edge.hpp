@@ -1,13 +1,11 @@
-#ifndef MEDYAN_Edge_h
-#define MEDYAN_Edge_h
+#ifndef MEDYAN_Structure_SurfaceMesh_Edge_Hpp
+#define MEDYAN_Structure_SurfaceMesh_Edge_Hpp
 
 /*
  
 An unordered edge contains 2 vertices.
  
 */
-
-#include <array>
 
 #include "common.h"
 #include "Database.h"

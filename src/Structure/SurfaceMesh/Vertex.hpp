@@ -7,7 +7,7 @@
 
 #include "Bead.h"
 
-#include "Structure/SurfaceMesh/Edge.h"
+#include "Structure/SurfaceMesh/Edge.hpp"
 #include "Structure/SurfaceMesh/MVoronoiCell.h"
 #include "Structure/SurfaceMesh/Triangle.hpp"
 

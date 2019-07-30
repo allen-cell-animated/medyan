@@ -11,7 +11,7 @@
 #include "MathFunctions.h"
 #include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/AdaptiveMeshAttribute.hpp"
-#include "Structure/SurfaceMesh/Edge.h"
+#include "Structure/SurfaceMesh/Edge.hpp"
 #include "Structure/SurfaceMesh/GeometricMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/Triangle.hpp"
 #include "Structure/SurfaceMesh/Vertex.hpp"
