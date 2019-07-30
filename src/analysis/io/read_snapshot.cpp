@@ -15,7 +15,7 @@
 #include "Util/Io/Log.hpp"
 #include "Structure/Bead.h"
 #include "Structure/SubSystem.h"
-#include "Structure/SurfaceMesh/Edge.h"
+#include "Structure/SurfaceMesh/Edge.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/Vertex.hpp"
 

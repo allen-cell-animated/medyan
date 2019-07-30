@@ -17,9 +17,13 @@
 #include "common.h"
 
 #include "Compartment.h"
+#include "Structure/CellList.hpp"
 
 //FORWARD DECLARATIONS
 class ChemSim;
+class Cylinder;
+class Edge;
+class Triangle;
 
 /// A simple n-dimensional grid of Compartment objects.
 
@@ -45,6 +49,11 @@ private:
     ReactionPtrContainerVector _bulkReactions; ///< Bulk reactions in this grid
     
 public:
+
+    cell_list::CellListManager< Cylinder, Compartment > cylinderCellList;
+    cell_list::CellListManager< Triangle, Compartment > triangleCellList;
+    cell_list::CellListManager< Edge,     Compartment > edgeCellList;
+
     /// Constructor, creates a number of Compartment instances
     CompartmentGrid(int numCompartments) {
         //add children
@@ -52,6 +61,13 @@ public:
             auto c = new Compartment();
             c->_ID = i;
             addChild(unique_ptr<Component>(c));
+
+            cylinderCellList.addHead(c, c->cylinderCell);
+            c->cylinderCell.manager = &cylinderCellList;
+            triangleCellList.addHead(c, c->triangleCell);
+            c->triangleCell.manager = &triangleCellList;
+            edgeCellList.addHead(c, c->edgeCell);
+            c->edgeCell.manager = &edgeCellList;
         }
     }
     

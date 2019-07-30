@@ -858,7 +858,7 @@ void Controller::updateActiveCompartments() {
         // For the "interesting" compartments last round but now empty, we fully activate or deactivate them
         // For the rest we do nothing, assuming that the membranes will NOT move across a whole compartment
         for(auto c: GController::getCompartmentGrid()->getCompartments()) {
-            auto& ts = c->getTriangles();
+            const auto& ts = c->getTriangles();
             if(!ts.empty()) {
                 // Update partial activate status
                 c->computeSlicedVolumeArea(Compartment::SliceMethod::Membrane);

@@ -8,6 +8,7 @@
 //#include "Reactable.h"
 #include "DynamicNeighbor.h"
 #include "MathFunctions.h"
+#include "Structure/CellList.hpp"
 #include "Structure/SurfaceMesh/MTriangle.hpp"
 
 // Forward declarations
@@ -37,7 +38,7 @@ private:
 
     void updateCoordinate(); // helper function to update coordiante of this triangle
 
-    Compartment* _compartment = nullptr; // The compartment containing this triangle
+    cell_list::CellListElementUser< Triangle, Compartment > _cellElement;
 
 public:
     mathfunc::Vec< 3, floatingpoint > coordinate; // Coordinate of the center point, updated with updateCoordiante()
@@ -71,7 +72,7 @@ public:
     /// Implements Movable
     virtual void updatePosition() override;
     //@}
-    Compartment* getCompartment() { return _compartment; }
+    Compartment* getCompartment() const { return _cellElement.manager->getHeadPtr(_cellElement); }
 
 
 };

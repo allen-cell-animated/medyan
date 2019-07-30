@@ -28,7 +28,7 @@ using namespace mathfunc;
 #    include "SubSystem.h"
 #    include "Component.h"
 
-#    include "Edge.h"
+#    include "Edge.hpp"
 #    include "Triangle.hpp"
 #    include "Cylinder.h"
 

@@ -31,6 +31,7 @@
 #include "dist_moduleV2/dist_driver.h"
 #include "dist_moduleV2/dist_coords.h"
 #include "MathFunctions.h"
+#include "Structure/CellList.hpp"
 
 //#include "BinGrid.h"
 //#include "Bin.h"
@@ -93,7 +94,6 @@ protected:
 
     unordered_set<Bead*> _beads; ///< Set of beads that are in this compartment
 
-    unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
     unordered_set<Triangle*> _triangles;
     unordered_set<Edge*>     _edges;
 
@@ -126,6 +126,11 @@ public:
     short _ID;
     vector<uint16_t> cindex_bs;
     vector<uint32_t> cID_bs;
+
+    cell_list::CellListHeadUser< Cylinder, Compartment > cylinderCell; // Cell of cylinders
+    cell_list::CellListHeadUser< Triangle, Compartment > triangleCell; // Cell of triangles
+    cell_list::CellListHeadUser< Edge,     Compartment > edgeCell;     // Cell of edges
+
     /// Default constructor, only takes in number of dimensions
     Compartment() : _species(), _internal_reactions(),
     _diffusion_reactions(), _diffusion_rates(), _neighbours()  {
@@ -612,33 +617,14 @@ public:
     ///get the boundary elements in this compartment
    unordered_set<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}
 
-    ///Add a cylinder to this compartment
-    void addCylinder(Cylinder* c) {_cylinders.insert(c);
-    }
-
-    ///Remove a cylinder from this compartment
-    ///@note does nothing if cylinder is not in compartment already
-    void removeCylinder(Cylinder* c) {
-        auto it = _cylinders.find(c);
-        if(it != _cylinders.end()) _cylinders.erase(it);
-    }
     ///get the cylinders in this compartment
-    unordered_set<Cylinder*>& getCylinders() {return _cylinders;}
+    auto getCylinders() const { return cylinderCell.manager->getElementPtrs(cylinderCell); }
 
-    /// Add, remove and get triangles
-    void addTriangle(Triangle* t) { _triangles.insert(t); }
-    void removeTriangle(Triangle* t) {
-        auto it = _triangles.find(t);
-        if(it != _triangles.end()) _triangles.erase(it);
-    }
-    unordered_set<Triangle*>& getTriangles() { return _triangles; }
-    /// Add, remove and get edges
-    void addEdge(Edge* e) { _edges.insert(e); }
-    void removeEdge(Edge* e) {
-        auto it = _edges.find(e);
-        if(it != _edges.end()) _edges.erase(it);
-    }
-    unordered_set<Edge*>& getEdges() { return _edges; }
+    /// get triangles in this compartment
+    auto getTriangles() const { return triangleCell.manager->getElementPtrs(triangleCell); }
+
+    /// get edges in this compartment
+    auto getEdges() const { return edgeCell.manager->getElementPtrs(edgeCell); }
     
     /// Get the diffusion rate of a species
     /// @param - species_name, a string

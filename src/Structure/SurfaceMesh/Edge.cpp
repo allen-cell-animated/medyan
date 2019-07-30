@@ -1,4 +1,4 @@
-#include "Structure/SurfaceMesh/Edge.h"
+#include "Structure/SurfaceMesh/Edge.hpp"
 
 #include "Core/Globals.hpp"
 #include "Compartment.h"
@@ -13,18 +13,21 @@ Edge::Edge(Membrane* parent, size_t topoIndex):
     // Set coordinate and add to compartment
     updateCoordinate();
     if(medyan::global().mode == medyan::GlobalVar::RunMode::Simulation) {
-        try { _compartment = GController::getCompartment(mathfunc::vec2Vector(coordinate)); }
+        Compartment* compartment;
+        try { compartment = GController::getCompartment(mathfunc::vec2Vector(coordinate)); }
         catch (exception& e) {
             cout << e.what() << endl;
             printSelf();
             exit(EXIT_FAILURE);
         }
-        _compartment->addEdge(this);
+        _cellElement.manager = compartment->edgeCell.manager;
+        _cellElement.manager->addElement(this, _cellElement, compartment->edgeCell);
     }
 }
 
 Edge::~Edge() {
-    _compartment->removeEdge(this);
+    if(medyan::global().mode == medyan::GlobalVar::RunMode::Simulation)
+        _cellElement.manager->removeElement(_cellElement);
 }
 
 void Edge::updateCoordinate() {
@@ -50,12 +53,11 @@ void Edge::updatePosition() {
     }
 
     // Things to do if the comparment changes
-    if(c != _compartment) {
+    Compartment* curCompartment = getCompartment();
+    if(c != curCompartment) {
      
         //remove from old compartment, add to new
-        _compartment->removeEdge(this);
-        _compartment = c;
-        _compartment->addEdge(this);
+        _cellElement.manager->updateElement(_cellElement, c->edgeCell);
     }
 }
 
