@@ -105,7 +105,7 @@ struct BeadData {
  *  [NeighborLists](@ref NeighborList).
  */
 
-class Bead : public Component, public Trackable, public Movable,
+class Bead : public Component, public Trackable, public Movable, public DynamicNeighbor,
     public Database< Bead, true, BeadData > {
     
 public:
@@ -113,6 +113,10 @@ public:
     using coordinate_ref_type  = BeadData::vec_array_type::reference;
     using coordinate_cref_type = BeadData::vec_array_type::const_reference;
     using DatabaseType         = Database< Bead, true, BeadData >;
+
+    enum class BeadUsage { Filament, Bubble, Membrane };
+
+    BeadUsage usage = BeadUsage::Filament;
 
     ///@note - all vectors are in x,y,z coordinates.
     vector<floatingpoint> coordinateP; ///< Prev coordinates of bead in CG minimization
