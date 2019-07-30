@@ -13,6 +13,7 @@ An unordered edge contains 2 vertices.
 #include "DynamicNeighbor.h"
 #include "MathFunctions.h"
 #include "Movable.h"
+#include "Structure/CellList.hpp"
 
 // Forward declarations
 class Compartment;
@@ -30,7 +31,7 @@ private:
 
     void updateCoordinate(); // helper function to update coordiante of this edge
 
-    Compartment* _compartment = nullptr; // The compartment containing this edge
+    cell_list::CellListElementUser< Edge, Compartment > _cellElement;
 
 public:
     Edge(Membrane *parent, size_t topoIndex);
@@ -59,7 +60,7 @@ public:
     /// Implements Movable
     virtual void updatePosition() override;
     //@}
-    Compartment* getCompartment() { return _compartment; }
+    Compartment* getCompartment() const { return _cellElement.manager->getHeadPtr(_cellElement); }
 
 };
 

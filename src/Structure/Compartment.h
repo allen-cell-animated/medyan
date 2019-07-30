@@ -129,6 +129,7 @@ public:
 
     cell_list::CellListHeadUser< Cylinder, Compartment > cylinderCell; // Cell of cylinders
     cell_list::CellListHeadUser< Triangle, Compartment > triangleCell; // Cell of triangles
+    cell_list::CellListHeadUser< Edge,     Compartment > edgeCell;     // Cell of edges
 
     /// Default constructor, only takes in number of dimensions
     Compartment() : _species(), _internal_reactions(),
@@ -622,13 +623,8 @@ public:
     /// get triangles in this compartment
     auto getTriangles() const { return triangleCell.manager->getElementPtrs(triangleCell); }
 
-    /// Add, remove and get edges
-    void addEdge(Edge* e) { _edges.insert(e); }
-    void removeEdge(Edge* e) {
-        auto it = _edges.find(e);
-        if(it != _edges.end()) _edges.erase(it);
-    }
-    unordered_set<Edge*>& getEdges() { return _edges; }
+    /// get edges in this compartment
+    auto getEdges() const { return edgeCell.manager->getElementPtrs(edgeCell); }
     
     /// Get the diffusion rate of a species
     /// @param - species_name, a string

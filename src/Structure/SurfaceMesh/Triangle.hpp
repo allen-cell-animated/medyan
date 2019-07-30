@@ -38,7 +38,6 @@ private:
 
     void updateCoordinate(); // helper function to update coordiante of this triangle
 
-    Compartment* _compartment = nullptr; // The compartment containing this triangle
     cell_list::CellListElementUser< Triangle, Compartment > _cellElement;
 
 public:
