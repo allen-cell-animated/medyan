@@ -82,6 +82,14 @@ TEST_CASE("Cell list tests", "[CellList]") {
         checkCellContent(1, {2, 1});
         checkCellContent(2, {});
 
+        // Check CellView
+        {
+            REQUIRE(m.getElementPtrs(dc[0].cell).size() == 1);
+            REQUIRE(m.getElementPtrs(dc[2].cell).size() == 0);
+            REQUIRE(m.getElementPtrs(dc[1].cell).empty() == false);
+            REQUIRE(m.getElementPtrs(dc[2].cell).empty() == true);
+        }
+
         // Check CellView iterators
         // Iterator dereference and comparison
         {
