@@ -18,6 +18,7 @@
 #include "Cylinder.h"
 #include "Bubble.h"
 #include "BoundaryElement.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/Triangle.hpp"
 
 #include "GController.h"
@@ -27,6 +28,8 @@
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
+#include "Util/Math/TriangleArithmetics.hpp"
+
 using namespace mathfunc;
 #ifdef NLSTENCILLIST
 void CylinderCylinderNL::updateallcylinderstobin() {
@@ -1100,61 +1103,85 @@ vector<Cylinder*> BubbleCylinderNL::getNeighbors(Bubble* bb) {
     return _list[bb];
 }
 
-/// Triangle - Cylinder
+/// Triangle - Beads (filament)
 
-void TriangleCylinderNL::updateNeighbors(Triangle *t) {
-    // clear existing
-    _list[t].clear();
+void TriangleFilBeadNL::addNeighbor(Neighbor* n) {
 
-    // loop through beads, add as neighbor
-    for(auto &c: Cylinder::getCylinders()) {
-        
-        const auto dist2 = distance2(vector2Vec<3, floatingpoint>(c->coordinate), t->coordinate);
-        //If within range, add it
-        if(dist2 < _rMax * _rMax) _list[t].push_back(c);
+    const auto& coords = Bead::getDbDataConst().coords;
+
+    if(Triangle* t = dynamic_cast<Triangle*>(n)) {
+        auto& mesh = t->getParent()->getMesh();
+        Membrane::MembraneMeshAttributeType::cacheIndices(mesh);
+        const auto& bi = mesh.getTriangleAttribute(t->getTopoIndex()).cachedCoordIndex;
+
+        for(auto b : Bead::getBeads()) if(b->usage == Bead::BeadUsage::Filament) {
+            const auto dist = trianglePointDistance(
+                coords[bi[0]], coords[bi[1]], coords[bi[2]],
+                b->coordinate()
+            );
+
+            if(dist < _rMax) {
+                _listBT[b].push_back(t);
+                _listTB[t].push_back(b);
+            }
+        }
     }
-}
+    else if(Bead* b = dynamic_cast<Bead*>(n)) if(b->usage == Bead::BeadUsage::Filament) {
 
-void TriangleCylinderNL::addNeighbor(Neighbor* n) {
-    
-    Triangle* t; Cylinder* c;
-    if((t = dynamic_cast<Triangle*>(n))) {
-        updateNeighbors(t);
-    }
-    else if((c = dynamic_cast<Cylinder*>(n))) {
-        
-        for(auto it = _list.begin(); it != _list.end(); it++) {
-            
-            //if within range, add it
-            if(distance2(it->first->coordinate, vector2Vec<3, floatingpoint>(c->coordinate)) < _rMax * _rMax)
-                it->second.push_back(c);
+        for(auto t : Triangle::getTriangles()) {
+            auto& mesh = t->getParent()->getMesh();
+            Membrane::MembraneMeshAttributeType::cacheIndices(mesh);
+            const auto& bi = mesh.getTriangleAttribute(t->getTopoIndex()).cachedCoordIndex;
+
+            const auto dist = trianglePointDistance(
+                coords[bi[0]], coords[bi[1]], coords[bi[2]],
+                b->coordinate()
+            );
+
+            if(dist < _rMax) {
+                _listBT[b].push_back(t);
+                _listTB[t].push_back(b);
+            }
         }
     }
     else return;
 }
 
-void TriangleCylinderNL::removeNeighbor(Neighbor* n) {
+void TriangleFilBeadNL::removeNeighbor(Neighbor* n) {
     
-    Triangle* t; Cylinder* c;
-    if((t = dynamic_cast<Triangle*>(n))) {
-        _list.erase(t);
+    if(Triangle* t = dynamic_cast<Triangle*>(n)) {
+        removeNeighbor_(t);
     }
-    else if((c = dynamic_cast<Cylinder*>(n))) {
-        for(auto it = _list.begin(); it != _list.end(); it++) {
-            
-            auto cit = find(it->second.begin(), it->second.end(), c);
-            if(cit != it->second.end()) it->second.erase(cit);
-        }
+    else if(Bead* b = dynamic_cast<Bead*>(n)) {
+        removeNeighbor_(b);
     }
     else return;
 }
 
-void TriangleCylinderNL::reset() {
+void TriangleFilBeadNL::reset() {
     
-    _list.clear();
-    
-    //loop through all neighbor keys
-    for(auto t: Triangle::getTriangles())
-        updateNeighbors(t);
+    _listBT.clear();
+    _listTB.clear();
+
+    const auto& coords = Bead::getDbDataConst().coords;
+
+    for(auto t: Triangle::getTriangles()) {
+
+        auto& mesh = t->getParent()->getMesh();
+        Membrane::MembraneMeshAttributeType::cacheIndices(mesh);
+        const auto& bi = mesh.getTriangleAttribute(t->getTopoIndex()).cachedCoordIndex;
+
+        for(auto b : Bead::getBeads()) if(b->usage == Bead::BeadUsage::Filament) {
+            const auto dist = trianglePointDistance(
+                coords[bi[0]], coords[bi[1]], coords[bi[2]],
+                b->coordinate()
+            );
+
+            if(dist < _rMax) {
+                _listBT[b].push_back(t);
+                _listTB[t].push_back(b);
+            }
+        }
+    }
 }
 

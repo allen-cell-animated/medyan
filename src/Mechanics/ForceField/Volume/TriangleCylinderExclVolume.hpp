@@ -31,12 +31,12 @@ class TriangleCylinderExclVolume : public TriangleCylinderVolumeInteractions {
     
 private:
     InteractionType _FFType;
-    std::unique_ptr<TriangleCylinderNL> _neighborList;  ///< Neighbor list of cylinders
+    std::unique_ptr<TriangleFilBeadNL> _neighborList;  ///< Neighbor list of cylinders
 
 public:
     ///Constructor
     TriangleCylinderExclVolume()
-        : _neighborList(std::make_unique< TriangleCylinderNL >(SysParams::Mechanics().MemCylinderVolumeCutoff))
+        : _neighborList(std::make_unique< TriangleFilBeadNL >(SysParams::Mechanics().MemCylinderVolumeCutoff))
     { }
 
     virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) override;
