@@ -11,17 +11,17 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "Mechanics/ForceField/Volume/TriangleCylinderVolumeFF.hpp"
+#include "Mechanics/ForceField/Volume/TriangleBeadVolumeFF.hpp"
 
-#include "Mechanics/ForceField/Volume/TriangleCylinderExclVolume.hpp"
+#include "Mechanics/ForceField/Volume/TriangleBeadExclVolume.hpp"
 #include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.hpp"
 #include "Structure/Cylinder.h"
 #include "Structure/SurfaceMesh/Triangle.hpp"
 
-TriangleCylinderVolumeFF::TriangleCylinderVolumeFF (string& type) {
+TriangleBeadVolumeFF::TriangleBeadVolumeFF (string& type) {
     if (type == "REPULSION")
-        _triangleCylinderVolInteractionVector.emplace_back(
-        new TriangleCylinderExclVolume <TriangleCylinderBeadExclVolRepulsion>());
+        _triangleBeadVolInteractionVector.emplace_back(
+        new TriangleBeadExclVolume <TriangleCylinderBeadExclVolRepulsion>());
     else if(type == "") {}
     else {
         cout << "Volume FF not recognized. Exiting." << endl;
@@ -29,25 +29,30 @@ TriangleCylinderVolumeFF::TriangleCylinderVolumeFF (string& type) {
     }
 }
 
-void TriangleCylinderVolumeFF::whoIsCulprit() {
+void TriangleBeadVolumeFF::vectorize() {
+    for(auto& interaction : _triangleBeadVolInteractionVector)
+        interaction->vectorize();
+}
+
+void TriangleBeadVolumeFF::whoIsCulprit() {
     
     cout << endl;
     
     cout << "Culprit interaction = " << _culpritInteraction->getName() << endl;
     
-    cout << "Printing the culprit triangle and cylinder..." << endl;
-    _culpritInteraction->_triangleCulprit->printSelf();
-    _culpritInteraction->_cylinderCulprit->printSelf();
+    cout << "Printing the culprit triangle and bead..." << endl;
+    _culpritInteraction->triangleCulprit_->printSelf();
+    _culpritInteraction->beadCulprit_    ->printSelf();
     
     cout << endl;
 }
 
-floatingpoint TriangleCylinderVolumeFF::computeEnergy(floatingpoint* coord, bool stretched) {
+floatingpoint TriangleBeadVolumeFF::computeEnergy(floatingpoint* coord, bool stretched) {
     
     double U= 0;
     double U_i;
     
-    for (auto &interaction : _triangleCylinderVolInteractionVector) {
+    for (auto &interaction : _triangleBeadVolInteractionVector) {
         
         U_i = interaction->computeEnergy(coord, stretched);
                 
@@ -62,26 +67,26 @@ floatingpoint TriangleCylinderVolumeFF::computeEnergy(floatingpoint* coord, bool
     return U;
 }
 
-void TriangleCylinderVolumeFF::computeForces(floatingpoint* coord, floatingpoint* f) {
+void TriangleBeadVolumeFF::computeForces(floatingpoint* coord, floatingpoint* f) {
     
-    for (auto &interaction : _triangleCylinderVolInteractionVector)
+    for (auto &interaction : _triangleBeadVolInteractionVector)
         interaction->computeForces(coord, f);
 }
 
-void TriangleCylinderVolumeFF::computeLoadForces() {
-    for(auto& interaction: _triangleCylinderVolInteractionVector)
+void TriangleBeadVolumeFF::computeLoadForces() {
+    for(auto& interaction: _triangleBeadVolInteractionVector)
         interaction->computeLoadForces();
 }
-void TriangleCylinderVolumeFF::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
-    for(const auto& interaction : _triangleCylinderVolInteractionVector)
+void TriangleBeadVolumeFF::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
+    for(const auto& interaction : _triangleBeadVolInteractionVector)
         interaction->computeLoadForce(c, end);
 }
 
-vector<NeighborList*> TriangleCylinderVolumeFF::getNeighborLists() {
+vector<NeighborList*> TriangleBeadVolumeFF::getNeighborLists() {
     
     vector<NeighborList*> neighborLists;
     
-    for(auto &interaction : _triangleCylinderVolInteractionVector)
+    for(auto &interaction : _triangleBeadVolInteractionVector)
         neighborLists.push_back(interaction->getNeighborList());
     
     return neighborLists;

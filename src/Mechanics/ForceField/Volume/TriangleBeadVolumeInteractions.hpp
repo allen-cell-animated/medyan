@@ -11,8 +11,8 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderVolumeInteractions_Hpp
-#define MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderVolumeInteractions_Hpp
+#ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleBeadVolumeInteractions_Hpp
+#define MEDYAN_Mechanics_ForceField_Volume_TriangleBeadVolumeInteractions_Hpp
 
 #include "common.h" // floatingpoint
 #include "Mechanics/ForceField/Types.hpp"
@@ -24,21 +24,23 @@ class Cylinder;
 class Bead;
 
 /// Represents a volume interaction between [Cylinders](@ref Cylinder).
-class TriangleCylinderVolumeInteractions {
+class TriangleBeadVolumeInteractions {
 
-friend class TriangleCylinderVolumeFF;
+friend class TriangleBeadVolumeFF;
     
 protected:
     //@{
     /// The triangle and bead culprits in the case of an error
-    Triangle* _triangleCulprit = nullptr;
-    Cylinder* _cylinderCulprit = nullptr;
+    Triangle* triangleCulprit_ = nullptr;
+    Bead*     beadCulprit_     = nullptr;
     //@}
     
 public:
     using LoadForceEnd = ForceFieldTypes::LoadForceEnd;
 
-    virtual ~TriangleCylinderVolumeInteractions() = default;
+    virtual ~TriangleBeadVolumeInteractions() = default;
+
+    virtual void vectorize() = 0;
 
     /// Compute the energy of this interaction
     virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) = 0;

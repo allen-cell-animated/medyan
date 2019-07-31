@@ -315,7 +315,9 @@ public:
     virtual void reset() override;
 
     /// Get all Cylinder neighbors of a triangle
-    const auto& getNeighbors(Bead* b    ) const { return _listBT.at(b); }
+    bool hasNeighbor(Bead*     b) const { return _listBT.find(b) != _listBT.end(); }
+    bool hasNeighbor(Triangle* t) const { return _listTB.find(t) != _listTB.end(); }
+    const auto& getNeighbors(Bead*     b) const { return _listBT.at(b); }
     const auto& getNeighbors(Triangle* t) const { return _listTB.at(t); }
 };
 

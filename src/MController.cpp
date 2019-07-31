@@ -24,7 +24,7 @@
 #include "CylinderVolumeFF.h"
 #include "Mechanics/ForceField/Membrane/MembraneFF.h"
 #include "Mechanics/ForceField/VolumeConservation/VolumeConservationFF.h"
-#include "TriangleCylinderVolumeFF.hpp"
+#include "TriangleBeadVolumeFF.hpp"
 
 #include "ConjugateGradient.h"
 #include "Util/Io/Log.hpp"
@@ -105,7 +105,7 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
             _subSystem->addNeighborList(nl);
     }
 
-    auto triangleCylinderVolumeFF = new TriangleCylinderVolumeFF(forceFields.MemBeadVolumeFFType);
+    auto triangleCylinderVolumeFF = new TriangleBeadVolumeFF(forceFields.MemBeadVolumeFFType);
     _FFManager._forceFields.push_back(triangleCylinderVolumeFF);
     for(auto nl : triangleCylinderVolumeFF->getNeighborLists()) {
         if(nl != nullptr)

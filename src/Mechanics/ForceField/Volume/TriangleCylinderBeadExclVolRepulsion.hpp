@@ -17,7 +17,7 @@
 #include "MathFunctions.h"
 
 /// Represents a repulsive excluded volume potential used by the
-/// TriangleCylinderExclVolume template.
+/// TriangleBeadExclVolume template.
 struct TriangleCylinderBeadExclVolRepulsion {
     
     double energy(mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3 cb, double area, double kExVol) const;

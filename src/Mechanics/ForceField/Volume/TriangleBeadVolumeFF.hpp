@@ -11,8 +11,8 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderVolumeFF_Hpp
-#define MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderVolumeFF_Hpp
+#ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleBeadVolumeFF_Hpp
+#define MEDYAN_Mechanics_ForceField_Volume_TriangleBeadVolumeFF_Hpp
 
 #include <vector>
 
@@ -21,25 +21,25 @@
 #include "Mechanics/ForceField/ForceField.h"
 
 //FORWARD DECLARATIONS
-class TriangleCylinderVolumeInteractions;
+class TriangleBeadVolumeInteractions;
 
 /// An implementation of the ForceField class that calculates
 /// Triangle vs bead volume interactions.
-class TriangleCylinderVolumeFF : public ForceField {
+class TriangleBeadVolumeFF : public ForceField {
     
 private:
-    std::vector< std::unique_ptr< TriangleCylinderVolumeInteractions > >
-        _triangleCylinderVolInteractionVector;  ///< Vector of initialized volume interactions
+    std::vector< std::unique_ptr< TriangleBeadVolumeInteractions > >
+        _triangleBeadVolInteractionVector;  ///< Vector of initialized volume interactions
     
-    TriangleCylinderVolumeInteractions* _culpritInteraction; ///< Culprit in case of error
+    TriangleBeadVolumeInteractions* _culpritInteraction; ///< Culprit in case of error
 public:
     /// Initialize the volume forcefields
-    TriangleCylinderVolumeFF(string& interaction);
+    TriangleBeadVolumeFF(string& interaction);
 
-    virtual void vectorize() override { }
+    virtual void vectorize() override;
     virtual void cleanup() override { }
 
-    virtual string getName() override {return "Triangle Cylinder Volume";}
+    virtual string getName() override {return "Triangle Bead Volume";}
     virtual void whoIsCulprit() override;
 
     virtual floatingpoint computeEnergy(floatingpoint* coord, bool stretched) override;
