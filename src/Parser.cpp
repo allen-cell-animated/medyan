@@ -723,7 +723,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MType.MemBendingFFType = lineVector[1];
             }
         }
-        else if(line.find("MEM_CYLINDER_VOLUME_FF_TYPE") != string::npos) {
+        else if(line.find("MEM_BEAD_VOLUME_FF_TYPE") != string::npos) {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout << "There was an error parsing input file at membrane cylinder volume FF type. Exiting."
@@ -731,7 +731,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if(lineVector.size() == 2) {
-                MType.MemCylinderVolumeFFType = lineVector[1];
+                MType.MemBeadVolumeFFType = lineVector[1];
             }
         }
         else if(line.find("VOLUME_CONSERVATION_FF_TYPE") != string::npos) {
@@ -997,15 +997,15 @@ void SystemParser::readMechParams() {
                 MParams.VolumeCutoff = atoi(lineVector[1].c_str());
             }
         }
-        else if (line.find("MEM_CYLINDER_VOLUME_K") != string::npos) {
+        else if (line.find("MEM_BEAD_VOLUME_K") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.MemCylinderVolumeK.push_back(atof(lineVector[i].c_str()));
+                    MParams.MemBeadVolumeK.push_back(atof(lineVector[i].c_str()));
             }
         }
-        else if (line.find("MEM_CYLINDER_VOLUME_CUTOFF") != string::npos) {
+        else if (line.find("MEM_BEAD_VOLUME_CUTOFF") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
@@ -1014,7 +1014,7 @@ void SystemParser::readMechParams() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.MemCylinderVolumeCutoff = atoi(lineVector[1].c_str());
+                MParams.MemBeadVolumeCutoff = atoi(lineVector[1].c_str());
             }
         }
         

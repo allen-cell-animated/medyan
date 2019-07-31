@@ -3,7 +3,7 @@
 #include "SysParams.h"
 
 MTriangle::MTriangle(short membraneType) {
-    if(!SysParams::Mechanics().MemCylinderVolumeK.empty())
-        _kExVol = SysParams::Mechanics().MemCylinderVolumeK[membraneType];
+    if(!SysParams::Mechanics().MemBeadVolumeK.empty())
+        _kExVol = SysParams::Mechanics().MemBeadVolumeK[membraneType];
     
 }

@@ -12,6 +12,8 @@
 //------------------------------------------------------------------
 
 #include "SysParams.h"
+#include "Util/Io/Log.hpp"
+
 bool SysParams::RUNSTATE=true;
 bool SysParams::INITIALIZEDSTATUS=false;
 bool SysParams::DURINGCHEMISTRY=false;
@@ -341,13 +343,13 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
         cout << "Must set a cylinder volume cutoff for mechanical equilibration. Exiting." << endl;
         return false;
     }
-    if(mech.MemCylinderVolumeFFType != "" &&
-       MParams.MemCylinderVolumeK.size() != CParams.numMembranes) {
-        cout << "Must set a membrane-cylinder volume force constant for every membrane type. Exiting." << endl;
+    if(mech.MemBeadVolumeFFType != "" &&
+       MParams.MemBeadVolumeK.size() != CParams.numMembranes) {
+        LOG(ERROR) << "Membrane-bead volume force constants for some membrane types are not set.";
         return false;
     }
-    if(mech.MemCylinderVolumeFFType != "" && areEqual(MParams.MemCylinderVolumeCutoff, 0.0)) {
-        cout << "Must set a membrane-cylinder volume cutoff for mechanical equilibration. Exiting." << endl;
+    if(mech.MemBeadVolumeFFType != "" && MParams.MemBeadVolumeCutoff == 0.0) {
+        LOG(ERROR) << "The membrane-bead volume cutoff for mechanical equilibration is not set.";
         return false;
     }
     

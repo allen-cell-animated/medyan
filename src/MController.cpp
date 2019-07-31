@@ -105,7 +105,7 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
             _subSystem->addNeighborList(nl);
     }
 
-    auto triangleCylinderVolumeFF = new TriangleCylinderVolumeFF(forceFields.MemCylinderVolumeFFType);
+    auto triangleCylinderVolumeFF = new TriangleCylinderVolumeFF(forceFields.MemBeadVolumeFFType);
     _FFManager._forceFields.push_back(triangleCylinderVolumeFF);
     for(auto nl : triangleCylinderVolumeFF->getNeighborLists()) {
         if(nl != nullptr)
