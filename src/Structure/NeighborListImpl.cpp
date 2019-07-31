@@ -1107,16 +1107,19 @@ vector<Cylinder*> BubbleCylinderNL::getNeighbors(Bubble* bb) {
 
 void TriangleFilBeadNL::addNeighbor(Neighbor* n) {
 
-    const auto& coords = Bead::getDbDataConst().coords;
-
     if(Triangle* t = dynamic_cast<Triangle*>(n)) {
-        auto& mesh = t->getParent()->getMesh();
-        Membrane::MembraneMeshAttributeType::cacheIndices(mesh);
-        const auto& bi = mesh.getTriangleAttribute(t->getTopoIndex()).cachedCoordIndex;
+        const auto& mesh = t->getParent()->getMesh();
+        const size_t ti = t->getTopoIndex();
+        const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
+        const size_t hei1 = mesh.next(hei0);
+        const size_t hei2 = mesh.next(hei1);
+        const Vec< 3, floatingpoint > v0 (mesh.getVertexAttribute(mesh.target(hei0)).getCoordinate());
+        const Vec< 3, floatingpoint > v1 (mesh.getVertexAttribute(mesh.target(hei1)).getCoordinate());
+        const Vec< 3, floatingpoint > v2 (mesh.getVertexAttribute(mesh.target(hei2)).getCoordinate());
 
         for(auto b : Bead::getBeads()) if(b->usage == Bead::BeadUsage::Filament) {
             const auto dist = trianglePointDistance(
-                coords[bi[0]], coords[bi[1]], coords[bi[2]],
+                v0, v1, v2,
                 b->coordinate()
             );
 
@@ -1129,12 +1132,17 @@ void TriangleFilBeadNL::addNeighbor(Neighbor* n) {
     else if(Bead* b = dynamic_cast<Bead*>(n)) if(b->usage == Bead::BeadUsage::Filament) {
 
         for(auto t : Triangle::getTriangles()) {
-            auto& mesh = t->getParent()->getMesh();
-            Membrane::MembraneMeshAttributeType::cacheIndices(mesh);
-            const auto& bi = mesh.getTriangleAttribute(t->getTopoIndex()).cachedCoordIndex;
+            const auto& mesh = t->getParent()->getMesh();
+            const size_t ti = t->getTopoIndex();
+            const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
+            const size_t hei1 = mesh.next(hei0);
+            const size_t hei2 = mesh.next(hei1);
+            const Vec< 3, floatingpoint > v0 (mesh.getVertexAttribute(mesh.target(hei0)).getCoordinate());
+            const Vec< 3, floatingpoint > v1 (mesh.getVertexAttribute(mesh.target(hei1)).getCoordinate());
+            const Vec< 3, floatingpoint > v2 (mesh.getVertexAttribute(mesh.target(hei2)).getCoordinate());
 
             const auto dist = trianglePointDistance(
-                coords[bi[0]], coords[bi[1]], coords[bi[2]],
+                v0, v1, v2,
                 b->coordinate()
             );
 

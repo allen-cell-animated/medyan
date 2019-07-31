@@ -41,7 +41,9 @@ floatingpoint TriangleBeadExclVolume< InteractionType >::computeEnergy(const flo
 
     for(auto t: Triangle::getTriangles()) {
 
-        const auto& mesh = t->getParent()->getMesh();
+        auto& mesh = t->getParent()->getMesh();
+        Membrane::MembraneMeshAttributeType::cacheIndices(mesh);
+
         const size_t ti = t->getTopoIndex();
         const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
         const size_t hei1 = mesh.next(hei0);
@@ -85,7 +87,9 @@ void TriangleBeadExclVolume< InteractionType >::computeForces(const floatingpoin
 
     for(auto t: Triangle::getTriangles()) {
 
-        const auto& mesh = t->getParent()->getMesh();
+        auto& mesh = t->getParent()->getMesh();
+        Membrane::MembraneMeshAttributeType::cacheIndices(mesh);
+
         const size_t ti = t->getTopoIndex();
         const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
         const size_t hei1 = mesh.next(hei0);
