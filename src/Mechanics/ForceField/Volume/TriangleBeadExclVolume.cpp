@@ -18,7 +18,7 @@
 #include "MathFunctions.h"
 using namespace mathfunc;
 
-#include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.hpp"
+#include "Mechanics/ForceField/Volume/TriangleBeadExclVolRepulsion.hpp"
 
 #include "Structure/Bead.h"
 #include "Structure/Cylinder.h"
@@ -241,4 +241,4 @@ void TriangleBeadExclVolume< InteractionType >::computeLoadForce(Cylinder* c, Lo
 } // void ...::computeLoadForce(...) const
 
 // Template instantiation
-template class TriangleBeadExclVolume< TriangleCylinderBeadExclVolRepulsion >;
+template class TriangleBeadExclVolume< TriangleBeadExclVolRepulsion >;

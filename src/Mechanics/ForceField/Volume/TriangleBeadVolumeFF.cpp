@@ -14,14 +14,14 @@
 #include "Mechanics/ForceField/Volume/TriangleBeadVolumeFF.hpp"
 
 #include "Mechanics/ForceField/Volume/TriangleBeadExclVolume.hpp"
-#include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.hpp"
+#include "Mechanics/ForceField/Volume/TriangleBeadExclVolRepulsion.hpp"
 #include "Structure/Cylinder.h"
 #include "Structure/SurfaceMesh/Triangle.hpp"
 
 TriangleBeadVolumeFF::TriangleBeadVolumeFF (string& type) {
     if (type == "REPULSION")
         _triangleBeadVolInteractionVector.emplace_back(
-        new TriangleBeadExclVolume <TriangleCylinderBeadExclVolRepulsion>());
+        new TriangleBeadExclVolume <TriangleBeadExclVolRepulsion>());
     else if(type == "") {}
     else {
         cout << "Volume FF not recognized. Exiting." << endl;

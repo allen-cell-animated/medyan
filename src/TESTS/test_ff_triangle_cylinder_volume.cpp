@@ -33,7 +33,7 @@ using namespace mathfunc;
 #    include "Cylinder.h"
 
 #    include "TriangleBeadExclVolume.hpp"
-#    include "TriangleCylinderBeadExclVolRepulsion.hpp"
+#    include "TriangleBeadExclVolRepulsion.hpp"
 
 namespace {
 
@@ -155,7 +155,7 @@ namespace {
 }
 
 TEST_F(TriangleCylinderVolumeFFTest, Force) {
-    TriangleBeadExclVolume<TriangleCylinderBeadExclVolRepulsion> tcv;
+    TriangleBeadExclVolume<TriangleBeadExclVolRepulsion> tcv;
 
     assignRandomForceAuxP(radius/200);
     recordCoordinate();
