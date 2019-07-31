@@ -29,11 +29,6 @@ using namespace mathfunc;
 #include "Util/Math/RayTriangleIntersect.hpp"
 
 template< typename InteractionType >
-void TriangleBeadExclVolume< InteractionType >::vectorize() {
-    // TODO
-}
-
-template< typename InteractionType >
 floatingpoint TriangleBeadExclVolume< InteractionType >::computeEnergy(const floatingpoint* coord, bool stretched) {
     
     double U = 0;
@@ -45,25 +40,21 @@ floatingpoint TriangleBeadExclVolume< InteractionType >::computeEnergy(const flo
         Membrane::MembraneMeshAttributeType::cacheIndices(mesh);
 
         const size_t ti = t->getTopoIndex();
-        const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
-        const size_t hei1 = mesh.next(hei0);
-        const size_t hei2 = mesh.next(hei1);
-        Vertex* const v0 = mesh.getVertexAttribute(mesh.target(hei0)).vertex;
-        Vertex* const v1 = mesh.getVertexAttribute(mesh.target(hei1)).vertex;
-        Vertex* const v2 = mesh.getVertexAttribute(mesh.target(hei2)).vertex;
+        const auto& ta = mesh.getTriangleAttribute(ti);
+        const size_t vi0 = ta.cachedCoordIndex[0];
+        const size_t vi1 = ta.cachedCoordIndex[1];
+        const size_t vi2 = ta.cachedCoordIndex[2];
 
-        const auto area = stretched ?
-            mesh.getTriangleAttribute(ti).gTriangleS.area :
-            mesh.getTriangleAttribute(ti).gTriangle.area;
-        double kExVol = t->getMTriangle()->getExVolConst();
+        const auto area = stretched ? ta.gTriangleS.area : ta.gTriangle.area;
+        const double kExVol = t->getMTriangle()->getExVolConst();
         
         if(_neighborList->hasNeighbor(t)) for(auto b : _neighborList->getNeighbors(t)) {
                 
             U_i = _FFType.energy(
-                static_cast<Vec3>(makeVec<3>(coord + 3 * v0->Bead::getStableIndex())),
-                static_cast<Vec3>(makeVec<3>(coord + 3 * v1->Bead::getStableIndex())),
-                static_cast<Vec3>(makeVec<3>(coord + 3 * v2->Bead::getStableIndex())),
-                static_cast<Vec3>(makeVec<3>(coord + 3 * b->getStableIndex())),
+                static_cast<Vec3d>(makeVec<3>(coord + 3 * vi0)),
+                static_cast<Vec3d>(makeVec<3>(coord + 3 * vi1)),
+                static_cast<Vec3d>(makeVec<3>(coord + 3 * vi2)),
+                static_cast<Vec3d>(makeVec<3>(coord + 3 * b->getStableIndex())),
                 area, kExVol);
             
             if(!std::isfinite(U_i) || U_i < -1.0) {
@@ -91,29 +82,30 @@ void TriangleBeadExclVolume< InteractionType >::computeForces(const floatingpoin
         Membrane::MembraneMeshAttributeType::cacheIndices(mesh);
 
         const size_t ti = t->getTopoIndex();
-        const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
-        const size_t hei1 = mesh.next(hei0);
-        const size_t hei2 = mesh.next(hei1);
-        Vertex* const v0 = mesh.getVertexAttribute(mesh.target(hei0)).vertex;
-        Vertex* const v1 = mesh.getVertexAttribute(mesh.target(hei1)).vertex;
-        Vertex* const v2 = mesh.getVertexAttribute(mesh.target(hei2)).vertex;
+        const auto& ta = mesh.getTriangleAttribute(ti);
+        const size_t hei0 = ta.cachedHalfEdgeIndex[0];
+        const size_t hei1 = ta.cachedHalfEdgeIndex[1];
+        const size_t hei2 = ta.cachedHalfEdgeIndex[2];
+        const size_t vi0 = ta.cachedCoordIndex[0];
+        const size_t vi1 = ta.cachedCoordIndex[1];
+        const size_t vi2 = ta.cachedCoordIndex[2];
 
-        const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
+        const auto area = ta.gTriangle.area;
         const auto& dArea0 = mesh.getHalfEdgeAttribute(hei0).gHalfEdge.dTriangleArea;
         const auto& dArea1 = mesh.getHalfEdgeAttribute(hei1).gHalfEdge.dTriangleArea;
         const auto& dArea2 = mesh.getHalfEdgeAttribute(hei2).gHalfEdge.dTriangleArea;
-        double kExVol = t->getMTriangle()->getExVolConst();
+        const double kExVol = t->getMTriangle()->getExVolConst();
 
         if(_neighborList->hasNeighbor(t)) for(auto b : _neighborList->getNeighbors(t)) {
 
             _FFType.forces(
-                force + 3 * v0->Bead::getStableIndex(),
-                force + 3 * v1->Bead::getStableIndex(),
-                force + 3 * v2->Bead::getStableIndex(),
+                force + 3 * vi0,
+                force + 3 * vi1,
+                force + 3 * vi2,
                 force + 3 * b->getStableIndex(),
-                static_cast<Vec3>(makeVec<3>(coord + 3 * v0->Bead::getStableIndex())),
-                static_cast<Vec3>(makeVec<3>(coord + 3 * v1->Bead::getStableIndex())),
-                static_cast<Vec3>(makeVec<3>(coord + 3 * v2->Bead::getStableIndex())),
+                static_cast<Vec3>(makeVec<3>(coord + 3 * vi0)),
+                static_cast<Vec3>(makeVec<3>(coord + 3 * vi1)),
+                static_cast<Vec3>(makeVec<3>(coord + 3 * vi2)),
                 static_cast<Vec3>(makeVec<3>(coord + 3 * b->getStableIndex())),
                 area, dArea0, dArea1, dArea2, kExVol);
         }
