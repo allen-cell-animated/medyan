@@ -76,7 +76,7 @@ void ReactionBase::activateReaction() {
 	if(afterchemsiminit) {
 		cout << "activating " << getReactionType() <<" RNodeNRM ptr "<< _rnode<< endl;
 		_rnode->printSelf();
-		cout << *this << endl;
+//		cout << *this << endl;
 	}
 	#endif
 #ifdef TRACK_ZERO_COPY_N

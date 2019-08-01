@@ -336,7 +336,7 @@ void MotorGhost::updateReactionRates() {
         ReactionBase* offRxn = _cMotorGhost->getOffReaction();
 
         #ifdef CHECKRXN
-        cout<<"update MG off rxn "<<offRxn<<" with mID "<<this->getId()<<endl;
+        cout<<"update MG off rxn "<<offRxn<<"with RNode "<<offRxn->getRnode()<<" with mID "<<this->getId()<<endl;
         #endif
         
         //change the rate
