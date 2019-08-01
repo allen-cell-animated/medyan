@@ -1558,9 +1558,9 @@ void ChemManager::genFilBindingReactions() {
                 
                 //create manager
                 CaMKIIBindingManager* bManager = new CaMKIIBindingManager(rxn, C, camkiierInt, camkiierName, filType,
-                                                                  nucleationZone, nucleationDist);
+                		nucleationZone, nucleationDist);
                 C->addFilamentBindingManager(bManager);
-                
+
                 bManager->setMIndex(managerIndex++);
                 
                 //attach callback
@@ -1700,12 +1700,15 @@ void ChemManager::genFilBindingReactions() {
                 ReactionBase* rxn = new Reaction<1,0>(reactantSpecies, onRate);
                 rxn->setReactionType(ReactionType::CAMKIIBUNDLING);
                 C->addInternalReaction(rxn);
-                //create manager
-                CaMKIIBundlingManager* bManager = new CaMKIIBundlingManager(rxn, C, camkiierInt, camkiierName, filType,rMax,rMin, maxCoordination);
-                C->addFilamentBindingManager(bManager);
-                bManager->setNLIndex(camkiiIndex++);
 
+                //create manager
+                CaMKIIBundlingManager* bManager = new CaMKIIBundlingManager(rxn, C, camkiierInt, camkiierName,
+                		filType,rMax,rMin, maxCoordination);
+                C->addFilamentBindingManager(bManager);
+
+                bManager->setNLIndex(camkiiIndex++);
                 bManager->setMIndex(managerIndex++);
+
                 //attach callback
                 CaMKIIBundlingCallback camkiicallback(bManager, onRate, offRate, _subSystem);
                 ConnectionBlock rcb(rxn->connect(camkiicallback,false));

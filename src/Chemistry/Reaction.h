@@ -49,9 +49,9 @@ template <unsigned short M, unsigned short N>
         /// The main constructor:
         /// @param it_begin - an iterator to the beginning of an RSpecies* container
         /// @param it_end - an iterator to the end of an RSpecies* container
-        /// @param rate - the rate constant for this ReactionBase
         template <typename InputContainer>
         Reaction(const InputContainer &species,
+        /// @param rate - the rate constant for this ReactionBase
                  float rate = 0.0, bool isProtoCompartment = false)
             : ReactionBase(rate, isProtoCompartment) {
             initializeSpecies(species);

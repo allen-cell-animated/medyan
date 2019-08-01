@@ -26,6 +26,16 @@
 #include "SysParams.h"
 #include "Rand.h"
 
+/*
+ * CJYM: We believe these constants point to the positions
+ * of binding sites (bound species).
+ *
+ * For example, C1_RXN_INDEX is being used for CaMKII binding reactions.
+ * The order of the reactant species for CaMKII binding reactions is defined
+ * in ChemManager.cpp.
+ * The index for the CaMKII binding site is 1.
+ *
+ */
 #define B_RXN_INDEX 2
 #define C1_RXN_INDEX 1
 #define C2_RXN_INDEX 0

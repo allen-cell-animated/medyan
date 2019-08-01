@@ -1,0 +1,152 @@
+##################################################
+##################### GEOMETRY ###################
+
+NDIM:                        3
+
+NX:                          2
+NY:                          2
+NZ:                          2 
+
+COMPARTMENTSIZEX:            500.0
+COMPARTMENTSIZEY:            500.0
+COMPARTMENTSIZEZ:            500.0
+
+MONOMERSIZE:                 2.7
+ 
+CYLINDERSIZE:                27.0
+
+BOUNDARYSHAPE:               CUBIC
+
+##################################################
+################### MECHANICS ####################
+
+### ALGORITHM ###
+CONJUGATEGRADIENT:           POLAKRIBIERE
+
+GRADIENTTOLERANCE:           1.0
+
+MAXDISTANCE:		         0.05
+LAMBDAMAX:		             0.005
+
+### FILAMENTS ###
+
+FSTRETCHINGFFTYPE:           HARMONIC
+FSTRETCHINGK:                100.0
+
+FBENDINGFFTYPE:              COSINE
+FBENDINGK:                   2690
+FBENDINGTHETA:               0.0
+
+VOLUMEFFTYPE:               REPULSION
+VOLUMECUTOFF:               27.0
+
+VOLUMEK:                    1E4
+
+### MOTORS ###
+
+MSTRETCHINGFFTYPE:           HARMONIC
+MSTRETCHINGK:                2.5
+
+### LINKERS ###
+
+LSTRETCHINGFFTYPE:	     HARMONIC
+LSTRETCHINGK:		     8.0
+
+### BOUNDARY ###
+
+BOUNDARYFFTYPE:             REPULSIONEXP
+BOUNDARYCUTOFF:             200.0
+
+BOUNDARYINTERACTIONK:       4.10
+BOUNDARYSCREENLENGTH:       2.7
+
+### BRANCHING ###
+BRSTRETCHINGFFTYPE:	     HARMONIC
+BRSTRETCHINGK:		     100.0
+BRSTRETCHINGL:		     6.0
+
+BRBENDINGFFTYPE:		 COSINE
+BRBENDINGK:		         100.0
+BRBENDINGTHETA:		     1.22
+
+	
+BRDIHEDRALTYPE:			 COSINE
+BRDIHEDRALK:		         100.0
+
+BRPOSITIONFFTYPE: COSINE
+BRPOSITIONK: 100.0 
+
+### CAMKII ###
+#CAMKIISTRETCHINGFFTYPE:      HARMONIC
+#CAMKIISTRETCHINGK:           100.0
+#CAMKIISTRETCHINGL:           6.0
+
+#CAMKIIBENDINGFFTYPE:         COSINE
+#CAMKIIBENDINGK:              100.0
+#CAMKIIBENDINGTHETA:          1.22
+
+    
+#CAMKIIDIHEDRALTYPE:          COSINE
+#CAMKIIDIHEDRALK:                 100.0
+
+#CAMKIIPOSITIONFFTYPE: COSINE
+#CAMKIIPOSITIONK: 100.0 
+
+##################################################
+################### CHEMISTRY ####################
+
+CHEMISTRYFILE:               chemistryinput.txt
+
+CALGORITHM:                  NRM
+NUMTOTALSTEPS:		     	 
+RUNTIME:                    100.0
+
+SNAPSHOTTIME:                0.1
+
+MINIMIZATIONTIME: 	         0.0005
+NEIGHBORLISTTIME:	         0.0005
+
+NUMDIFFUSINGSPECIES: 	     5
+NUMBULKSPECIES:		         0
+
+NUMFILAMENTTYPES:	         1
+
+NUMFILAMENTSPECIES:          1
+NUMPLUSENDSPECIES:           1
+NUMMINUSENDSPECIES:          1
+
+NUMBOUNDSPECIES:             2
+NUMLINKERSPECIES:            1
+NUMMOTORSPECIES:             1
+NUMBRANCHERSPECIES:          1
+NUMCAMKIIERSPECIES:          1
+
+NUMBINDINGSITES:             1
+
+NUMMOTORHEADSMIN:	        15 
+NUMMOTORHEADSMAX:	       	30 
+MOTORSTEPSIZE:			     6.0
+
+##################################################
+############## DYNAMIC RATE CHANGING #############
+
+DFPOLYMERIZATIONTYPE: 	  BROWRATCHET 
+DFPOLYMERIZATIONLEN:	    2.7 		   
+
+DMUNBINDINGTYPE:	     LOWDUTYCATCH  
+DMUNBINDINGFORCE:	     12.62
+
+DMWALKINGTYPE:		     LOWDUTYSTALL
+DMWALKINGFORCE:	    	 15.0
+
+DLUNBINDINGTYPE:		 SLIP
+DLUNBINDINGLEN:			 0.24
+
+
+##################################################
+################# INITIALIZATION #################
+
+NUMFILAMENTS:                50 
+FILAMENTLENGTH:              1
+FILAMENTTYPE: 		         0
+

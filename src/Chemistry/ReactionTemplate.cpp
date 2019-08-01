@@ -315,7 +315,11 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
         ReactionBase* rxn;
 
         //added for CaMKII, jli013
-        
+        /*
+         * CJYM: The number 4 represents the maximum number of binding sites.
+         * One for each species: linker, motor, brancher, CaMKII
+         *
+        */
         if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 4)
             rxn = new Reaction<DEPOLYREACTANTS+4,DEPOLYPRODUCTS>(species, _rate);        
         else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
