@@ -128,6 +128,9 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     
     _cc1->addCrossCylinderReaction(_cc2, offRxn);
     setOffReaction(offRxn);
+    #ifdef CHECKRXN
+    cout<<"create MG off rxn "<<offRxn<<" with mID "<<_pMotorGhost->getId()<<endl;
+	#endif
 }
 
 void CMotorGhost::moveMotorHead(CCylinder* cc,

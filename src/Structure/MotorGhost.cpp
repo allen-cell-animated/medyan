@@ -331,9 +331,13 @@ void MotorGhost::updateReactionRates() {
     
     //unbinding rate changer
     if(!_unbindingChangers.empty()) {
-        
+
         //get the unbinding reaction
         ReactionBase* offRxn = _cMotorGhost->getOffReaction();
+
+        #ifdef CHECKRXN
+        cout<<"update MG off rxn "<<offRxn<<" with mID "<<this->getId()<<endl;
+        #endif
         
         //change the rate
         float newRate =
