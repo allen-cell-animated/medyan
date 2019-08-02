@@ -52,6 +52,9 @@ void* RNodeNRM::operator new(size_t size) {
 }
 
 void RNodeNRM::operator delete(void* ptr) noexcept {
+#ifdef CHECKRXN
+    cout<<"deleting RNodeNRM "<<ptr<<" with Rxn "<<((RNodeNRM*)ptr)->getReaction()<<endl;
+#endif
     boost::fast_pool_allocator<RNodeNRM>::deallocate((RNodeNRM*)ptr);
 }
 #endif
@@ -294,6 +297,9 @@ void ChemNRMImpl::addReaction(ReactionBase *r) {
 }
 
 void ChemNRMImpl::removeReaction(ReactionBase *r) {
+	#ifdef CHECKRXN
+	cout<<"Removing reaction "<<r<<" with RNodeNRM "<<r->getRNode()<<endl;
+	#endif
     _map_rnodes.erase(r);
     --_n_reacts;
 }
