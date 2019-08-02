@@ -69,6 +69,9 @@ RNodeNRM::RNodeNRM(ReactionBase *r, ChemNRMImpl &chem_nrm)
 }
 
 RNodeNRM::~RNodeNRM() noexcept {
+	#ifdef CHECKRXN
+	cout<<"deleting RNodeNRM 2 "<<this<<" with Rxn "<<this->getReaction()<<endl;
+	#endif
     boost_heap *heap = _chem_nrm.getHeap();
     heap->erase(_handle);
     _react->setRnode(nullptr);

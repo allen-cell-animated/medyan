@@ -166,6 +166,16 @@ void MotorGhost::updatePosition() {
     }
     
     if(c != _compartment) {
+	    #ifdef CROSSCHECK_MOTOR
+    	auto oldcoord = _compartment->coordinates();
+	    auto newcoord = c->coordinates();
+
+    	cout<<"MotorGhost  move Cmp mID "<<this->getId()<<" from Cmp ID "
+    	<<_compartment->getId()<<" with Coord "<<oldcoord[0]<<" " <<oldcoord[1]<<" "
+    	<<oldcoord[2]<<" to Cmp ID "
+    	<<c->getId()<<" with Coord "<<newcoord[0]<<" " <<newcoord[1]<<" "
+	    <<newcoord[2]<<endl;
+		#endif
         mins = chrono::high_resolution_clock::now();
         
         _compartment = c;

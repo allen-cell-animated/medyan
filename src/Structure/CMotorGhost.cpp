@@ -84,6 +84,10 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
 }
 
 CMotorGhost::~CMotorGhost() {
+    #ifdef CHECKRXN
+    cout<<"Removing crosscylinder reaction "<<_offRxn<<" RNodeNRM "
+    <<_offRxn->getRNode()<<" mID "<<_pMotorGhost->getId()<<endl;
+	#endif
     
     //remove the off reaction
     _cc1->removeCrossCylinderReaction(_cc2, _offRxn);
