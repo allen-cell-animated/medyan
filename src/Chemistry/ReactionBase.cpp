@@ -73,7 +73,7 @@ void ReactionBase::printDependents()  {
 bool afterchemsiminit = false;
 void ReactionBase::activateReaction() {
 	#ifdef CHECKRXN
-	if(afterchemsiminit) {
+	if(afterchemsiminit && false) {
 		cout << "activating " << getReactionType() <<" RNodeNRM ptr "<< _rnode<< endl;
 		_rnode->printSelf();
 //		cout << *this << endl;

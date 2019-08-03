@@ -153,7 +153,6 @@ void MotorGhost::updatePosition() {
 #endif
     //check if in same compartment
     updateCoordinate();
-    
     Compartment* c;
     
     try {c = GController::getCompartment(coordinate);}
