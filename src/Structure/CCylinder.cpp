@@ -63,7 +63,8 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
 	            if(dynamic_cast<CMotorGhost*>(r->getCBound())) {
 		            CMotorGhost* cm = dynamic_cast<CMotorGhost*>(r->getCBound());
 		            cout<<"MotorGhost mID "<<cm->getMotorGhost()->getId()
-		                <<" with Rxn "<<rxnClone<<" Type "<<rxnClone->getReactionType()
+		                <<" with clone Rxn "<<rxnClone<<" from Rxn "<<r<<" Type "
+                        <<rxnClone->getReactionType()
 		                <<" between "<<rhsPtr->getCylinder()->getId()<<" & "
 		                <<ccylpair->getCylinder()->getId()<<endl;
 	            }
@@ -88,7 +89,8 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
                 if(dynamic_cast<CMotorGhost*>(r->getCBound())) {
                     CMotorGhost* cm = dynamic_cast<CMotorGhost*>(r->getCBound());
                     cout<<"MotorGhost mID "<<cm->getMotorGhost()->getId()
-                        <<" with Rxn "<<rxnClone<<" Type "<<rxnClone->getReactionType()
+                        <<" with clone Rxn "<<rxnClone<<" from Rxn "<<r<<
+                        " Type "<<rxnClone->getReactionType()
                         <<" between "<<ccyl->getCylinder()->getId()<<" & "
 	                    <<rhsPtr->getCylinder()->getId()<<endl;
                 }
