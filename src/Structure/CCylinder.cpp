@@ -50,17 +50,28 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
     //copy all cross-cylinder reactions
     for(auto it = rhs._crossCylinderReactions.begin();
              it != rhs._crossCylinderReactions.end(); it++) {
-        
+        #ifdef CHECKRXN
+        auto ccylpair = it->first;
+		#endif
         for(auto &r : it->second) {
 
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
             
-            if(r->getCBound() != nullptr)
-                r->getCBound()->setOffReaction(rxnClone);
+            if(r->getCBound() != nullptr) {
+	            #ifdef CHECKRXN
+	            if(dynamic_cast<CMotorGhost*>(r->getCBound())) {
+		            CMotorGhost* cm = dynamic_cast<CMotorGhost*>(r->getCBound());
+		            cout<<"MotorGhost mID "<<cm->getMotorGhost()->getId()
+		                <<" with Rxn "<<rxnClone<<" Type "<<rxnClone->getReactionType()
+		                <<" between "<<rhsPtr->getCylinder()->getId()<<" & "
+		                <<ccylpair->getCylinder()->getId()<<endl;
+	            }
+	            #endif
+	            r->getCBound()->setOffReaction(rxnClone);
+            }
             
-            addCrossCylinderReaction
-(it->first, rxnClone);
+            addCrossCylinderReaction(it->first, rxnClone);
         }
     }
     //Copy reacting cylinders, Clone reactions where this cylinder is involved
@@ -71,13 +82,15 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
-            
+
             if(r->getCBound() != nullptr) {
                 #ifdef CHECKRXN
                 if(dynamic_cast<CMotorGhost*>(r->getCBound())) {
                     CMotorGhost* cm = dynamic_cast<CMotorGhost*>(r->getCBound());
                     cout<<"MotorGhost mID "<<cm->getMotorGhost()->getId()
-                    <<" with Rxn "<<rxnClone<<" Type "<<rxnClone->getReactionType()<<endl;
+                        <<" with Rxn "<<rxnClone<<" Type "<<rxnClone->getReactionType()
+                        <<" between "<<ccyl->getCylinder()->getId()<<" & "
+	                    <<rhsPtr->getCylinder()->getId()<<endl;
                 }
 				#endif
                 r->getCBound()->setOffReaction(rxnClone);
