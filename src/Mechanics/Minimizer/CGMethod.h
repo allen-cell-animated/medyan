@@ -62,7 +62,7 @@ protected:
     //@{
     /// Parameter used in backtracking line search
     const floatingpoint LAMBDAREDUCE = 0.5;     ///< Lambda reduction parameter for backtracking
-    floatingpoint LAMBDATOL = 1e-4;       ///< Lambda tolerance parameter
+    floatingpoint LAMBDATOL = 1e-8;       ///< Lambda tolerance parameter
 
     const floatingpoint SAFELAMBDAREDUCE = 0.9;  ///< Lambda reduction parameter for conservative backtracking
 

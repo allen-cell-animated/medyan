@@ -567,11 +567,13 @@ std::cout<<"----------------------------------------"<<endl;
 
 		//@@@{ STEP 5 OTHER
 	    tbegin = chrono::high_resolution_clock::now();
-        //set the floor of lambda (lowest lambda allowed based on maxf
-        int maxForder = static_cast<int>(floor(log10(maxF())));
-        if(maxForder < 0 ) maxForder--;
+	    if(std::is_same<floatingpoint,float>::value) {
+		    //set the floor of lambda (lowest lambda allowed based on maxf
+		    int maxForder = static_cast<int>(floor(log10(maxF())));
+		    if (maxForder < 0) maxForder--;
 
-        CGMethod::setLAMBDATOL(maxForder);
+		    CGMethod::setLAMBDATOL(maxForder);
+	    }
 
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_other2(tend - tbegin);
