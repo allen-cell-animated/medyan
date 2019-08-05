@@ -222,7 +222,7 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
     _cc1->removeCrossCylinderReaction(_cc2, _offRxn);
 	#ifdef CHECKRXN
 	cout<<"Add cross mID "<<_pMotorGhost->getId()<<" Cylinders "<<_cc1->getCylinder()
-			->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<_offRxn<<endl;
+			->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<newOffRxn<<endl;
 	#endif
     _cc1->addCrossCylinderReaction(_cc2, newOffRxn);
     
@@ -327,7 +327,7 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
     ConnectionBlock rcb(newOffRxn->connect(mcallback,false));
 	#ifdef CHECKRXN
 	cout<<"Add cross mID "<<_pMotorGhost->getId()<<" Cylinders "<<_cc1->getCylinder()
-			->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<_offRxn<<endl;
+			->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<newOffRxn<<endl;
 	#endif
     //add new
     _cc1->addCrossCylinderReaction(_cc2, newOffRxn);

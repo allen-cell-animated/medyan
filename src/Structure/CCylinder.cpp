@@ -59,7 +59,8 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             if(r->getCBound() != nullptr)
                 r->getCBound()->setOffReaction(rxnClone);
             
-            addCrossCylinderReaction(it->first, rxnClone);
+            addCrossCylinderReaction
+(it->first, rxnClone);
         }
     }
     //Copy reacting cylinders, Clone reactions where this cylinder is involved
@@ -76,7 +77,7 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
                 if(dynamic_cast<CMotorGhost*>(r->getCBound())) {
                     CMotorGhost* cm = dynamic_cast<CMotorGhost*>(r->getCBound());
                     cout<<"MotorGhost mID "<<cm->getMotorGhost()->getId()
-                    <<" with Rxn "<<rxnClone<<endl;
+                    <<" with Rxn "<<rxnClone<<" Type "<<rxnClone->getReactionType()<<endl;
                 }
 				#endif
                 r->getCBound()->setOffReaction(rxnClone);
@@ -129,7 +130,8 @@ void CCylinder::addCrossCylinderReaction(CCylinder* other,
         if(dynamic_cast<CMotorGhost*>(r->getCBound())) {
             CMotorGhost* cm = dynamic_cast<CMotorGhost*>(r->getCBound());
             cout<<"MotorGhost mID "<<cm->getMotorGhost()->getId()
-                <<" with Rxn "<<r<<" with RNodeNRM "<<r->getRNode()<<endl;
+                <<" with Rxn "<<r<<" with RNodeNRM "<<r->getRNode()
+                <<" Type "<<r->getReactionType()<<endl;
         }
     }
     #endif

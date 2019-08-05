@@ -53,7 +53,8 @@ void* RNodeNRM::operator new(size_t size) {
 
 void RNodeNRM::operator delete(void* ptr) noexcept {
 #ifdef CHECKRXN
-    cout<<"deleting RNodeNRM "<<ptr<<" with Rxn "<<((RNodeNRM*)ptr)->getReaction()<<endl;
+    cout<<"deleting RNodeNRM "<<ptr<<" with Rxn "<<((RNodeNRM*)ptr)->getReaction()<<" Type "
+    <<((RNodeNRM*)ptr)->getReaction()->getReactionType()<<endl;
 #endif
     boost::fast_pool_allocator<RNodeNRM>::deallocate((RNodeNRM*)ptr);
 }
@@ -70,7 +71,8 @@ RNodeNRM::RNodeNRM(ReactionBase *r, ChemNRMImpl &chem_nrm)
 
 RNodeNRM::~RNodeNRM() noexcept {
 	#ifdef CHECKRXN
-	cout<<"deleting RNodeNRM 2 "<<this<<" with Rxn "<<this->getReaction()<<endl;
+	cout<<"deleting RNodeNRM 2 "<<this<<" with Rxn "<<this->getReaction()<<" Type "
+	<<this->getReaction()->getReactionType()<<endl;
 	#endif
     boost_heap *heap = _chem_nrm.getHeap();
     heap->erase(_handle);
@@ -295,13 +297,18 @@ bool ChemNRMImpl::makeStep() {
 }
 
 void ChemNRMImpl::addReaction(ReactionBase *r) {
+	#ifdef CHECKRXN
+	cout<<"Adding reaction "<<r<<" with RNodeNRM "<<r->getRNode()<<" Type "
+	    <<r->getReactionType()<<endl;
+	#endif
     _map_rnodes.emplace(r,make_unique<RNodeNRM>(r,*this));
     ++_n_reacts;
 }
 
 void ChemNRMImpl::removeReaction(ReactionBase *r) {
 	#ifdef CHECKRXN
-	cout<<"Removing reaction "<<r<<" with RNodeNRM "<<r->getRNode()<<endl;
+	cout<<"Removing reaction "<<r<<" with RNodeNRM "<<r->getRNode()<<" Type "
+	<<r->getReactionType()<<endl;
 	#endif
     _map_rnodes.erase(r);
     --_n_reacts;
