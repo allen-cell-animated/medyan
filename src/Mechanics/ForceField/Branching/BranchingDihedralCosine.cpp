@@ -407,8 +407,8 @@ void BranchingDihedralCosine::forces(floatingpoint *coord, floatingpoint *f, int
         f4[2] +=f0*( YD*( (coord4[0] - coord3[0])*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) - (coord4[1] - coord3[1])*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) ) + Y2*(coord4[2] - coord3[2]) - D2*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
 
         #ifdef CHECKFORCES_INF_NAN
-        if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)||checkNaN_INF(f3,0,2)
-           ||checkNaN_INF(f4,0,2)){
+        if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)||checkNaN_INF<floatingpoint>(f3,0,2)
+           ||checkNaN_INF<floatingpoint>(f4,0,2)){
             cout<<"Branching Dihedral Force becomes infinite. Printing data "<<endl;
 
             auto b = BranchingPoint::getBranchingPoints()[i];

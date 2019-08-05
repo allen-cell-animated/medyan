@@ -341,8 +341,8 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, floatingpoi
             stretchforce[i] = f0/invL;
 
 	        #ifdef CHECKFORCES_INF_NAN
-	        if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)||checkNaN_INF(f3,0,2)
-	           ||checkNaN_INF(f4,0,2)){
+	        if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)
+	                ||checkNaN_INF<floatingpoint>(f3,0,2) ||checkNaN_INF<floatingpoint>(f4,0,2)){
 		        cout<<"Linker Force becomes infinite. Printing data "<<endl;
 
 		        auto l = Linker::getLinkers()[i];

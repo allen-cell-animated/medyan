@@ -89,7 +89,7 @@ float MotorStall::changeRate(float onRate, float offRate,
     float k_0 = ((1 - _dutyRatio) / _dutyRatio) * onRate * _stepFrac;
 
 #if defined(PLOSFEEDBACK) || defined(PLOSSTALLFEEDBACK)
-    floatingpoint newRate =  max(0.0f, k_0 * (_F0 - force/numHeads)
+    floatingpoint newRate =  max((floatingpoint(0.0)), k_0 * (_F0 - force/numHeads)
                           / (_F0 + (force / (numHeads * _alpha))));
 #else
     floatingpoint newRate =  max<floatingpoint>((floatingpoint)0.0, k_0 * (_F0 - force)

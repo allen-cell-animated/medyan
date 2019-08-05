@@ -408,7 +408,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 
 		GG = d*g - a*I;
 		HH = CC + GG - DD;
-		crossProduct(cp, vec_A, vec_B);
+		crossProduct<doubleprecision>(cp, vec_A, vec_B);
 		JJ = scalarProduct(cp,vec_C);
 		JJ = - JJ*JJ;
 
@@ -854,7 +854,7 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 
 		GG = d*g - a*I;
 		HH = CC + GG - DD;
-		crossProduct(cp, vec_A, vec_B);
+		crossProduct<doubleprecision>(cp, vec_A, vec_B);
 		JJ = scalarProduct(cp,vec_C);
 		JJ = - JJ*JJ;
 		invJJ = 1/JJ;
@@ -972,8 +972,8 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 		                                           4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*F + F11*F +4*U*e*F - (F12*(d + F))/FF ) + (c4[2] - c3[2])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[2] - c3[2] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*F + 2*U*(d*e - a*F) - (B12*F)/BB - (F12*(d + F))/FF) ) ;
 
 
-		if(checkNaN_INF(f1l, 0, 2)||checkNaN_INF(f2l,0,2)||checkNaN_INF(f3l, 0, 2)
-		   ||checkNaN_INF(f4l,0,2)){
+		if(checkNaN_INF<doubleprecision>(f1l, 0, 2)||checkNaN_INF<doubleprecision>(f2l,0,2)
+		||checkNaN_INF<doubleprecision>(f3l, 0, 2)||checkNaN_INF<doubleprecision>(f4l,0, 2)){
 			forceN(coord, f, beadSet, krep, i);
 		}
 		else{
@@ -1236,8 +1236,8 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 
 	delete [] integrandarray;
 
-	if(checkNaN_INF(f1l, 0, 2)||checkNaN_INF(f2l,0,2)||checkNaN_INF(f3l, 0, 2)
-	   ||checkNaN_INF(f4l,0,2)){
+	if(checkNaN_INF<doubleprecision>(f1l, 0, 2)||checkNaN_INF<doubleprecision>(f2l,0,2)
+	        ||checkNaN_INF<doubleprecision>(f3l, 0, 2) ||checkNaN_INF<doubleprecision>(f4l,0,2)){
 
 		cout<<"Cylinder Exclusion Force becomes infinite. Printing data "<<endl;
 

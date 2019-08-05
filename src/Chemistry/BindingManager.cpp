@@ -1503,6 +1503,7 @@ _rMin(rMin), _rMax(rMax) {
 
     //find the pair binding species
     RSpecies** rs = reaction->rspecies();
+
     string name = rs[ML_RXN_INDEX]->getSpecies().getName();
 
     _bindingSpecies = _compartment->findSpeciesByName(name);

@@ -418,7 +418,8 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *
                            (coord3[2] - coord2[2])*C );
 
 	    #ifdef CHECKFORCES_INF_NAN
-	    if(checkNaN_INF(force1, 0, 2)||checkNaN_INF(force2,0,2)||checkNaN_INF(force3,0,2)){
+	    if(checkNaN_INF<floatingpoint>(force1, 0, 2)||checkNaN_INF<floatingpoint>(force2,0,2)
+	       ||checkNaN_INF<floatingpoint>(force3,0,2)){
 		    cout<<"Filament Bending Force becomes infinite. Printing data "<<endl;
 
 		    short found = 0;

@@ -419,8 +419,8 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
                          (coord4[2] - coord3[2])*C );
 
         #ifdef CHECKFORCES_INF_NAN
-        if(checkNaN_INF(force1, 0, 2)||checkNaN_INF(force2,0,2)||checkNaN_INF(force3,0,2)
-        ||checkNaN_INF(force4,0,2)){
+        if(checkNaN_INF<floatingpoint>(force1, 0, 2)||checkNaN_INF<floatingpoint>(force2,0,2)||checkNaN_INF<floatingpoint>(force3,0,2)
+        ||checkNaN_INF<floatingpoint>(force4,0,2)){
             cout<<"Branching Bending Force becomes infinite. Printing data "<<endl;
 
             auto b = BranchingPoint::getBranchingPoints()[i];
