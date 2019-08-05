@@ -35,8 +35,11 @@ private:
 
 public:
     ///Constructor
-    TriangleBeadExclVolume()
-        : _neighborList(std::make_unique< TriangleFilBeadNL >(SysParams::Mechanics().MemBeadVolumeCutoff))
+    TriangleBeadExclVolume() :
+        _neighborList(std::make_unique< TriangleFilBeadNL >(
+            SysParams::Mechanics().MemBeadVolumeCutoff,
+            SysParams::Mechanics().MemBeadVolumeCutoffMech
+        ))
     { }
 
     virtual void vectorize() override {}

@@ -1124,8 +1124,8 @@ void TriangleFilBeadNL::addNeighbor(Neighbor* n) {
             );
 
             if(dist < _rMax) {
-                _listBT[b].push_back(t);
-                _listTB[t].push_back(b);
+                listBT_[b].push_back(t);
+                listTB_[t].push_back(b);
             }
         }
     }
@@ -1147,8 +1147,8 @@ void TriangleFilBeadNL::addNeighbor(Neighbor* n) {
             );
 
             if(dist < _rMax) {
-                _listBT[b].push_back(t);
-                _listTB[t].push_back(b);
+                listBT_[b].push_back(t);
+                listTB_[t].push_back(b);
             }
         }
     }
@@ -1158,18 +1158,18 @@ void TriangleFilBeadNL::addNeighbor(Neighbor* n) {
 void TriangleFilBeadNL::removeNeighbor(Neighbor* n) {
     
     if(Triangle* t = dynamic_cast<Triangle*>(n)) {
-        removeNeighbor_(t);
+        removeNeighbor_(t, listTB_, listBT_);
     }
     else if(Bead* b = dynamic_cast<Bead*>(n)) {
-        removeNeighbor_(b);
+        removeNeighbor_(b, listBT_, listTB_);
     }
     else return;
 }
 
 void TriangleFilBeadNL::reset() {
     
-    _listBT.clear();
-    _listTB.clear();
+    listBT_.clear();
+    listTB_.clear();
 
     const auto& coords = Bead::getDbDataConst().coords;
 
@@ -1186,8 +1186,8 @@ void TriangleFilBeadNL::reset() {
             );
 
             if(dist < _rMax) {
-                _listBT[b].push_back(t);
-                _listTB[t].push_back(b);
+                listBT_[b].push_back(t);
+                listTB_[t].push_back(b);
             }
         }
     }

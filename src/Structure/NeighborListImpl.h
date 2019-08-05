@@ -277,30 +277,28 @@ public:
 class TriangleFilBeadNL: public NeighborList {
 
 private:
-    std::unordered_map<Bead*, std::vector<Triangle*>> _listBT;
-    std::unordered_map<Triangle*, std::vector<Bead*>> _listTB;
+    double rMaxMech_ = 0.0;
 
-    void removeNeighbor_(Bead* b) {
-        if(_listBT.find(b) != _listBT.end()) {
-            for(auto t : _listBT[b]) {
-                auto& beads = _listTB[t];
-                beads.erase(std::remove(beads.begin(), beads.end(), b), beads.end());
+    std::unordered_map< Bead*, std::vector<Triangle*> > listBT_, listBTMech_;
+    std::unordered_map< Triangle*, std::vector<Bead*> > listTB_, listTBMech_;
+
+    template< typename A, typename B >
+    void removeNeighbor_(
+        A* a,
+        std::unordered_map< A*, std::vector<B*> >& listAB,
+        std::unordered_map< B*, std::vector<A*> >& listBA
+    ) {
+        if(listAB.find(a) != listAB.end()) {
+            for(auto b : listAB[a]) {
+                auto& as = listBA[b];
+                as.erase(std::remove(as.begin(), as.end(), a), as.end());
             }
-            _listBT.erase(b);
-        }
-    }
-    void removeNeighbor_(Triangle* t) {
-        if(_listTB.find(t) != _listTB.end()) {
-            for(auto b : _listTB[t]) {
-                auto& triangles = _listBT[b];
-                triangles.erase(std::remove(triangles.begin(), triangles.end(), t), triangles.end());
-            }
-            _listTB.erase(t);
+            listAB.erase(a);
         }
     }
 
 public:
-    TriangleFilBeadNL(double rMax): NeighborList(rMax) {}
+    TriangleFilBeadNL(double rMax, double rMaxMech): NeighborList(rMax), rMaxMech_(rMaxMech) {}
 
     virtual void addNeighbor(Neighbor* n) override;
     virtual void removeNeighbor(Neighbor* n) override;
@@ -315,10 +313,10 @@ public:
     virtual void reset() override;
 
     /// Get all Cylinder neighbors of a triangle
-    bool hasNeighbor(Bead*     b) const { return _listBT.find(b) != _listBT.end(); }
-    bool hasNeighbor(Triangle* t) const { return _listTB.find(t) != _listTB.end(); }
-    const auto& getNeighbors(Bead*     b) const { return _listBT.at(b); }
-    const auto& getNeighbors(Triangle* t) const { return _listTB.at(t); }
+    bool hasNeighbor(Bead*     b) const { return listBT_.find(b) != listBT_.end(); }
+    bool hasNeighbor(Triangle* t) const { return listTB_.find(t) != listTB_.end(); }
+    const auto& getNeighbors(Bead*     b) const { return listBT_.at(b); }
+    const auto& getNeighbors(Triangle* t) const { return listTB_.at(t); }
 };
 
 

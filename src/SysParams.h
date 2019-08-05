@@ -64,8 +64,9 @@ struct MechParams {
     /// Volume parameter
     vector<floatingpoint> VolumeK                 = {};
     floatingpoint         VolumeCutoff            = 0.0;
-    vector<double> MemBeadVolumeK      = {};
-    double         MemBeadVolumeCutoff = 0.0;
+    vector<double> MemBeadVolumeK          = {};
+    double         MemBeadVolumeCutoff     = 0.0;
+    double         MemBeadVolumeCutoffMech = 0.0;
     //@}
 
     //@{
