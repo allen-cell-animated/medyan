@@ -32,7 +32,7 @@ class SubSystem;
  *  Dynamic neighbor refers to CylinderCylinderNL while Neighbor refers to
  *  BoundaryCylinderNL
  *  Filament _dneighbor false _neighbor false
- *  Bead _dneighbor false _neighbor false
+ *  Bead _dneighbor true _neighbor false
  *  Cylinder _dneighbor true _neighbor false
  *  BoundaryElement _dneighbor false _neighbor true
  */

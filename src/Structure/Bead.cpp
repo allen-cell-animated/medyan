@@ -27,7 +27,7 @@ std::vector<Bead*> Bead::_pinnedBeads;
 
 Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
 //add brforce, pinforce
-    : Trackable(true),
+    : Trackable(true, false, true, false),
       DatabaseType(vector2Vec<3>(v), Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}),
       coordinateP(v),
       brforce(3, 0), pinforce(3,0),
@@ -58,7 +58,7 @@ Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
 
 Bead::Bead(Composite* parent, int position)
 //add brforce, pinforce
-    : Trackable(true),
+    : Trackable(true, false, true, false),
     DatabaseType(Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}),
     coordinateP(3, 0),
     brforce(3, 0), pinforce(3,0), _position(position) {
