@@ -1127,49 +1127,61 @@ void TriangleFilBeadNL::addNeighbor(Neighbor* n) {
                 listBT_[b].push_back(t);
                 listTB_[t].push_back(b);
             }
-        }
-    }
-    else if(Bead* b = dynamic_cast<Bead*>(n)) if(b->usage == Bead::BeadUsage::Filament) {
-
-        for(auto t : Triangle::getTriangles()) {
-            const auto& mesh = t->getParent()->getMesh();
-            const size_t ti = t->getTopoIndex();
-            const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
-            const size_t hei1 = mesh.next(hei0);
-            const size_t hei2 = mesh.next(hei1);
-            const Vec< 3, floatingpoint > v0 (mesh.getVertexAttribute(mesh.target(hei0)).getCoordinate());
-            const Vec< 3, floatingpoint > v1 (mesh.getVertexAttribute(mesh.target(hei1)).getCoordinate());
-            const Vec< 3, floatingpoint > v2 (mesh.getVertexAttribute(mesh.target(hei2)).getCoordinate());
-
-            const auto dist = trianglePointDistance(
-                v0, v1, v2,
-                b->coordinate()
-            );
-
-            if(dist < _rMax) {
-                listBT_[b].push_back(t);
-                listTB_[t].push_back(b);
+            if(dist < rMaxMech_) {
+                listBTMech_[b].push_back(t);
+                listTBMech_[t].push_back(b);
             }
         }
     }
-    else return;
+    else if(Bead* b = dynamic_cast<Bead*>(n)) {
+        if(b->usage == Bead::BeadUsage::Filament) {
+
+            for(auto t : Triangle::getTriangles()) {
+                const auto& mesh = t->getParent()->getMesh();
+                const size_t ti = t->getTopoIndex();
+                const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
+                const size_t hei1 = mesh.next(hei0);
+                const size_t hei2 = mesh.next(hei1);
+                const Vec< 3, floatingpoint > v0 (mesh.getVertexAttribute(mesh.target(hei0)).getCoordinate());
+                const Vec< 3, floatingpoint > v1 (mesh.getVertexAttribute(mesh.target(hei1)).getCoordinate());
+                const Vec< 3, floatingpoint > v2 (mesh.getVertexAttribute(mesh.target(hei2)).getCoordinate());
+
+                const auto dist = trianglePointDistance(
+                    v0, v1, v2,
+                    b->coordinate()
+                );
+
+                if(dist < _rMax) {
+                    listBT_[b].push_back(t);
+                    listTB_[t].push_back(b);
+                }
+                if(dist < rMaxMech_) {
+                    listBTMech_[b].push_back(t);
+                    listTBMech_[t].push_back(b);
+                }
+            } // End loop triangles
+        }
+    }
 }
 
 void TriangleFilBeadNL::removeNeighbor(Neighbor* n) {
     
     if(Triangle* t = dynamic_cast<Triangle*>(n)) {
         removeNeighbor_(t, listTB_, listBT_);
+        removeNeighbor_(t, listTBMech_, listBTMech_);
     }
     else if(Bead* b = dynamic_cast<Bead*>(n)) {
         removeNeighbor_(b, listBT_, listTB_);
+        removeNeighbor_(b, listBTMech_, listTBMech_);
     }
-    else return;
 }
 
 void TriangleFilBeadNL::reset() {
     
     listBT_.clear();
     listTB_.clear();
+    listBTMech_.clear();
+    listTBMech_.clear();
 
     const auto& coords = Bead::getDbDataConst().coords;
 
@@ -1188,6 +1200,10 @@ void TriangleFilBeadNL::reset() {
             if(dist < _rMax) {
                 listBT_[b].push_back(t);
                 listTB_[t].push_back(b);
+            }
+            if(dist < rMaxMech_) {
+                listBTMech_[b].push_back(t);
+                listTBMech_[t].push_back(b);
             }
         }
     }

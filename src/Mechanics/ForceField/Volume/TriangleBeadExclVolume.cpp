@@ -48,8 +48,8 @@ floatingpoint TriangleBeadExclVolume< InteractionType >::computeEnergy(const flo
         const auto area = stretched ? ta.gTriangleS.area : ta.gTriangle.area;
         const double kExVol = t->getMTriangle()->getExVolConst();
         
-        if(_neighborList->hasNeighbor(t)) for(auto b : _neighborList->getNeighbors(t)) {
-                
+        if(_neighborList->hasNeighborMech(t)) for(auto b : _neighborList->getNeighborsMech(t)) {
+
             U_i = _FFType.energy(
                 static_cast<Vec3d>(makeVec<3>(coord + 3 * vi0)),
                 static_cast<Vec3d>(makeVec<3>(coord + 3 * vi1)),
@@ -96,7 +96,7 @@ void TriangleBeadExclVolume< InteractionType >::computeForces(const floatingpoin
         const auto& dArea2 = mesh.getHalfEdgeAttribute(hei2).gHalfEdge.dTriangleArea;
         const double kExVol = t->getMTriangle()->getExVolConst();
 
-        if(_neighborList->hasNeighbor(t)) for(auto b : _neighborList->getNeighbors(t)) {
+        if(_neighborList->hasNeighborMech(t)) for(auto b : _neighborList->getNeighborsMech(t)) {
 
             _FFType.forces(
                 force + 3 * vi0,

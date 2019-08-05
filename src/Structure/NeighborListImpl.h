@@ -317,6 +317,11 @@ public:
     bool hasNeighbor(Triangle* t) const { return listTB_.find(t) != listTB_.end(); }
     const auto& getNeighbors(Bead*     b) const { return listBT_.at(b); }
     const auto& getNeighbors(Triangle* t) const { return listTB_.at(t); }
+
+    bool hasNeighborMech(Bead*     b) const { return listBTMech_.find(b) != listBTMech_.end(); }
+    bool hasNeighborMech(Triangle* t) const { return listTBMech_.find(t) != listTBMech_.end(); }
+    const auto& getNeighborsMech(Bead*     b) const { return listBTMech_.at(b); }
+    const auto& getNeighborsMech(Triangle* t) const { return listTBMech_.at(t); }
 };
 
 
