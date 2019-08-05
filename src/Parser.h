@@ -329,7 +329,6 @@ struct MembraneSetup {
 
     std::vector< std::vector< std::string > > meshParam;
 
-    [[deprecated]] int numMembranes = 0;
     /// Membrane type to create
     short membraneType = 0;
 };
