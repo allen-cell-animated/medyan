@@ -1197,6 +1197,8 @@ void Controller::run() {
 #ifdef MECHANICS
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
+    Bead::rearrange();
+    Cylinder::updateAllData();
     invalidateMembraneMeshIndexCache();
     // update neighorLists before and after minimization. Need excluded volume
     // interactions.
