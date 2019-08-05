@@ -11,7 +11,7 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.hpp"
+#include "Mechanics/ForceField/Volume/TriangleBeadExclVolRepulsion.hpp"
 
 #include "MathFunctions.h"
 
@@ -27,7 +27,7 @@ using namespace mathfunc;
 
 // Note: These functions require that the area of the triangle has already been calculated
 
-double TriangleCylinderBeadExclVolRepulsion::energy(
+double TriangleBeadExclVolRepulsion::energy(
     Vec3 c0, Vec3 c1, Vec3 c2, Vec3 cb, double area,
     double kExVol
 ) const {
@@ -86,7 +86,7 @@ double TriangleCylinderBeadExclVolRepulsion::energy(
     return energy;
 }
 
-void TriangleCylinderBeadExclVolRepulsion::forces(
+void TriangleBeadExclVolRepulsion::forces(
     floatingpoint* f0, floatingpoint* f1, floatingpoint* f2, floatingpoint* fb,
     Vec3 c0, Vec3 c1, Vec3 c2, Vec3 cb,
     double area, const Vec3& dArea0, const Vec3& dArea1, const Vec3& dArea2,
@@ -230,7 +230,7 @@ void TriangleCylinderBeadExclVolRepulsion::forces(
     }
 }
 
-Vec3 TriangleCylinderBeadExclVolRepulsion::loadForces(
+Vec3 TriangleBeadExclVolRepulsion::loadForces(
     const Vec3& c0, const Vec3& c1, const Vec3& c2, const Vec< 3, floatingpoint >& coord,
     double area, double kExVol
 ) const {

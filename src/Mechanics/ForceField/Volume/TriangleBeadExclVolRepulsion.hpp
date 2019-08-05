@@ -11,14 +11,14 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderBeadExclVolRepulsion_Hpp
-#define MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderBeadExclVolRepulsion_Hpp
+#ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleBeadExclVolRepulsion_Hpp
+#define MEDYAN_Mechanics_ForceField_Volume_TriangleBeadExclVolRepulsion_Hpp
 
 #include "MathFunctions.h"
 
 /// Represents a repulsive excluded volume potential used by the
-/// TriangleCylinderExclVolume template.
-struct TriangleCylinderBeadExclVolRepulsion {
+/// TriangleBeadExclVolume template.
+struct TriangleBeadExclVolRepulsion {
     
     double energy(mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3 cb, double area, double kExVol) const;
     

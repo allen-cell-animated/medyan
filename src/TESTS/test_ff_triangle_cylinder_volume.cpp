@@ -32,8 +32,8 @@ using namespace mathfunc;
 #    include "Triangle.hpp"
 #    include "Cylinder.h"
 
-#    include "TriangleCylinderExclVolume.hpp"
-#    include "TriangleCylinderBeadExclVolRepulsion.hpp"
+#    include "TriangleBeadExclVolume.hpp"
+#    include "TriangleBeadExclVolRepulsion.hpp"
 
 namespace {
 
@@ -62,8 +62,8 @@ namespace {
 			SysParams::GParams.monomerSize.resize(1, 1.0);
             SysParams::CParams.bindingSites.resize(1); // For CCylinder use
 
-            SysParams::MParams.MemCylinderVolumeK.resize(1, 1725);
-            SysParams::MParams.MemCylinderVolumeCutoff = 15;
+            SysParams::MParams.MemBeadVolumeK.resize(1, 1725);
+            SysParams::MParams.MemBeadVolumeCutoff = 15;
 
             double trans = radius + height; // To ensure that all coordinates of all the beads are greater than 0.
 
@@ -93,7 +93,7 @@ namespace {
 			SysParams::GParams.monomerSize.resize(0);
             SysParams::CParams.bindingSites.resize(0);
 
-            SysParams::MParams.MemCylinderVolumeK.resize(0);
+            SysParams::MParams.MemBeadVolumeK.resize(0);
 
             // Remove the triangle
             t->removeFromSubSystem();
@@ -155,7 +155,7 @@ namespace {
 }
 
 TEST_F(TriangleCylinderVolumeFFTest, Force) {
-    TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion> tcv;
+    TriangleBeadExclVolume<TriangleBeadExclVolRepulsion> tcv;
 
     assignRandomForceAuxP(radius/200);
     recordCoordinate();

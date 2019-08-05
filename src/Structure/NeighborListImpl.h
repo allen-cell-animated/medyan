@@ -14,6 +14,8 @@
 #ifndef MEDYAN_NeighborListImpl_h
 #define MEDYAN_NeighborListImpl_h
 
+#include <algorithm> // remove
+#include <stdexcept> // logic_error
 #include <unordered_map>
 
 #include <vector>
@@ -26,6 +28,7 @@
 #include "SysParams.h"
 
 //FORWARD DECLARATIONS
+class Bead;
 class Cylinder;
 class Bubble;
 class BoundaryElement;
@@ -271,15 +274,33 @@ public:
 };
 
 
-class TriangleCylinderNL: public NeighborList {
+class TriangleFilBeadNL: public NeighborList {
 
 private:
-    unordered_map<Triangle*, vector<Cylinder*>> _list; // The neighbors list, as a hash map
+    std::unordered_map<Bead*, std::vector<Triangle*>> _listBT;
+    std::unordered_map<Triangle*, std::vector<Bead*>> _listTB;
 
-    void updateNeighbors(Triangle* t); // Helper function to update neighbors
+    void removeNeighbor_(Bead* b) {
+        if(_listBT.find(b) != _listBT.end()) {
+            for(auto t : _listBT[b]) {
+                auto& beads = _listTB[t];
+                beads.erase(std::remove(beads.begin(), beads.end(), b), beads.end());
+            }
+            _listBT.erase(b);
+        }
+    }
+    void removeNeighbor_(Triangle* t) {
+        if(_listTB.find(t) != _listTB.end()) {
+            for(auto b : _listTB[t]) {
+                auto& triangles = _listBT[b];
+                triangles.erase(std::remove(triangles.begin(), triangles.end(), t), triangles.end());
+            }
+            _listTB.erase(t);
+        }
+    }
 
 public:
-    TriangleCylinderNL(double rMax): NeighborList(rMax) {}
+    TriangleFilBeadNL(double rMax): NeighborList(rMax) {}
 
     virtual void addNeighbor(Neighbor* n) override;
     virtual void removeNeighbor(Neighbor* n) override;
@@ -294,7 +315,10 @@ public:
     virtual void reset() override;
 
     /// Get all Cylinder neighbors of a triangle
-    vector<Cylinder*> getNeighbors(Triangle* t) { return _list[t]; }
+    bool hasNeighbor(Bead*     b) const { return _listBT.find(b) != _listBT.end(); }
+    bool hasNeighbor(Triangle* t) const { return _listTB.find(t) != _listTB.end(); }
+    const auto& getNeighbors(Bead*     b) const { return _listBT.at(b); }
+    const auto& getNeighbors(Triangle* t) const { return _listTB.at(t); }
 };
 
 

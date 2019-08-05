@@ -11,12 +11,12 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderExclVolume_Hpp
-#define MEDYAN_Mechanics_ForceField_Volume_TriangleCylinderExclVolume_Hpp
+#ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleBeadExclVolume_Hpp
+#define MEDYAN_Mechanics_ForceField_Volume_TriangleBeadExclVolume_Hpp
 
 #include <memory> // unique_ptr
 
-#include "Mechanics/ForceField/Volume/TriangleCylinderVolumeInteractions.hpp"
+#include "Mechanics/ForceField/Volume/TriangleBeadVolumeInteractions.hpp"
 #include "Structure/NeighborListImpl.h"
 #include "SysParams.h"
 
@@ -27,17 +27,19 @@ class Bead;
 
 /// Represents an excuded volume interaction between a triangle and a cylinder (bead).
 template < typename InteractionType >
-class TriangleCylinderExclVolume : public TriangleCylinderVolumeInteractions {
+class TriangleBeadExclVolume : public TriangleBeadVolumeInteractions {
     
 private:
     InteractionType _FFType;
-    std::unique_ptr<TriangleCylinderNL> _neighborList;  ///< Neighbor list of cylinders
+    std::unique_ptr<TriangleFilBeadNL> _neighborList;  ///< Neighbor list of triangle-bead
 
 public:
     ///Constructor
-    TriangleCylinderExclVolume()
-        : _neighborList(std::make_unique< TriangleCylinderNL >(SysParams::Mechanics().MemCylinderVolumeCutoff))
+    TriangleBeadExclVolume()
+        : _neighborList(std::make_unique< TriangleFilBeadNL >(SysParams::Mechanics().MemBeadVolumeCutoff))
     { }
+
+    virtual void vectorize() override {}
 
     virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) override;
     virtual void computeForces(const floatingpoint* coord, floatingpoint* force) override;
@@ -48,7 +50,7 @@ public:
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() override { return _neighborList.get(); }
     
-    virtual const string getName() override {return "Triangle Cylinder Excluded Volume";}
+    virtual const string getName() override {return "Triangle Bead Excluded Volume";}
 };
 
 #endif

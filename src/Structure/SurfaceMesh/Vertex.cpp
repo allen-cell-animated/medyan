@@ -10,4 +10,6 @@ Vertex::Vertex(const Bead::coordinate_type& v, Composite* parent, size_t topoInd
     _mVoronoiCell = std::make_unique<MVoronoiCell>(getType());
 #endif
 
+    usage = Bead::BeadUsage::Membrane;
+
 }
