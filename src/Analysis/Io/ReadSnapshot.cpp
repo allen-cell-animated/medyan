@@ -10,7 +10,7 @@
 
 #include "OutputStruct.hpp"
 
-#include "analysis/io/pdb.h"
+#include "Analysis/Io/pdb.h"
 #include "Core/Globals.hpp"
 #include "Util/Io/Log.hpp"
 #include "Structure/Bead.h"
