@@ -1007,15 +1007,28 @@ void SystemParser::readMechParams() {
         }
         else if (line.find("MEM_BEAD_VOLUME_CUTOFF") != string::npos) {
             
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "Error reading Volume cutoff. Exiting." << endl;
-                exit(EXIT_FAILURE);
+            if (line.find("MEM_BEAD_VOLUME_CUTOFF_MECH") != string::npos) {
+            
+                vector<string> lineVector = split<string>(line);
+                if(lineVector.size() != 2) {
+                    LOG(ERROR) << "Error reading membrane-bead volume cutoff for mech.";
+                    throw std::runtime_error("Error reading volume cutoff");
+                }
+                else {
+                    MParams.MemBeadVolumeCutoffMech = std::stod(lineVector[1]);
+                }
             }
-            else if (lineVector.size() == 2) {
-                MParams.MemBeadVolumeCutoff = atoi(lineVector[1].c_str());
+            else {
+                vector<string> lineVector = split<string>(line);
+                if(lineVector.size() != 2) {
+                    LOG(ERROR) << "Error reading membrane-bead volume cutoff.";
+                    throw std::runtime_error("Error reading volume cutoff");
+                }
+                else {
+                    MParams.MemBeadVolumeCutoff = std::stod(lineVector[1]);
+                }
             }
+
         }
         
         //Bubble parameter
