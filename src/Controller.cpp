@@ -1106,7 +1106,12 @@ void Controller::run() {
 			#endif
             SysParams::DURINGCHEMISTRY = true;
             mins = chrono::high_resolution_clock::now();
-            floatingpoint chemistryTime = _minimizationTime;
+            float factor = 1.0;
+#ifdef SLOWDOWNINITIALCYCLE
+            if(tau() <=10.0)
+            	factor = 10.0;
+#endif
+            floatingpoint chemistryTime = _minimizationTime/10.0;
             //1 ms
 //            chemistryTime = 0.001;
             auto var = !_cController->run(chemistryTime);
@@ -1194,7 +1199,7 @@ void Controller::run() {
     //@}
 #endif
             //run mcontroller, update system
-            if(tauLastMinimization >= _minimizationTime) {
+            if(tauLastMinimization >= _minimizationTime/factor) {
 
                 mins = chrono::high_resolution_clock::now();
                 Bead::rearrange();
@@ -1268,7 +1273,7 @@ void Controller::run() {
             specialtime += elapsed_runspl.count();
 
             // update neighbor lists & Binding Managers
-            if(tauLastNeighborList >= _neighborListTime) {
+            if(tauLastNeighborList >= _neighborListTime/factor) {
                 mins = chrono::high_resolution_clock::now();
                 updateNeighborLists();
                 tauLastNeighborList = 0.0;
