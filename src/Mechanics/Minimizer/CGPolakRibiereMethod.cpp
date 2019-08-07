@@ -24,7 +24,9 @@
 #include "Structure/Bead.h"
 
 void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                            floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit){
+                            floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+                            floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                            bool steplimit){
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbeginTot, tendTot;
     chrono::high_resolution_clock::time_point tbeginII, tendII;
@@ -597,7 +599,8 @@ std::cout<<"----------------------------------------"<<endl;
 	    tbegin = chrono::high_resolution_clock::now();
         bool *dummy = nullptr;
 	    lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy)
-                           : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy);
+                           : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX,
+                                                    LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_lambda(tend - tbegin);
 	    CUDAcommon::tmin.findlambda+= elapsed_lambda.count();

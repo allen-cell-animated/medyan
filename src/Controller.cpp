@@ -246,8 +246,10 @@ void Controller::initialize(string inputFile,
 
 
     //Set up datadump output if any
-    string datadumpname = _outputDirectory + "datadump.traj";
-    _outputs.push_back(new Datadump(datadumpname, _subSystem, ChemData));
+#ifdef RESTARTDEV
+	    string datadumpname = _outputDirectory + "datadump.traj";
+	    _outputs.push_back(new Datadump(datadumpname, _subSystem, ChemData));
+#endif
 
 //    //Set up Turnover output if any
 //    string turnover = _outputDirectory + "Turnover.traj";
@@ -1111,7 +1113,7 @@ void Controller::run() {
             if(tau() <=10.0)
             	factor = 10.0;
 #endif
-            floatingpoint chemistryTime = _minimizationTime/10.0;
+            floatingpoint chemistryTime = _minimizationTime/factor;
             //1 ms
 //            chemistryTime = 0.001;
             auto var = !_cController->run(chemistryTime);

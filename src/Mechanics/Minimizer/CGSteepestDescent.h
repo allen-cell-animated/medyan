@@ -25,7 +25,9 @@
     class SteepestDescent : public CGMethod {
     public:
         virtual void minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                              floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit);
+                              floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+                              floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                              bool steplimit);
 
     };
 #endif

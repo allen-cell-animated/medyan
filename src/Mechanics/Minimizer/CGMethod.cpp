@@ -1232,7 +1232,9 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
 #endif // CUDAACCL
 
 floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
-                                        floatingpoint LAMBDAMAX, bool *gpu_safestate) {
+                                        floatingpoint LAMBDAMAX,
+                                        floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                                        bool *gpu_safestate) {
 
     //@{ Lambda phase 1
     floatingpoint lambda;
@@ -1372,7 +1374,7 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
         if(headpos==maxprevlambdacount-1) {
 	        headpos = 0;
 	        floatingpoint temp = Rand::randfloatingpoint(0,1);
-	        if( temp >= 0.7) {
+	        if( temp >= LAMBDARUNNINGAVERAGEPROBABILITY) {
 		        runningaveragestatus = false;
 //		        cout<<"running lambda turned off "<<endl;
 	        }
@@ -1390,7 +1392,8 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 }
 
 floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
-                                            floatingpoint LAMBDAMAX, bool *gpu_safestate) {
+                                            floatingpoint LAMBDAMAX,
+                                            bool *gpu_safestate) {
     //reset safe mode
     _safeMode = false;
     sconvergencecheck = true;

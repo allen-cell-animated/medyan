@@ -31,17 +31,20 @@ void MController::initializeMinAlgorithms (MechanicsAlgorithm& MAlgorithm) {
         _minimizerAlgorithms.push_back(
         new ConjugateGradient<FletcherRieves>(MAlgorithm.gradientTolerance,
                                               MAlgorithm.maxDistance,
-                                              MAlgorithm.lambdaMax));
+                                              MAlgorithm.lambdaMax,
+                                              MAlgorithm.lambdarunningaverageprobability));
     else if (MAlgorithm.ConjugateGradient == "POLAKRIBIERE")
         _minimizerAlgorithms.push_back(
         new ConjugateGradient<PolakRibiere>(MAlgorithm.gradientTolerance,
                                             MAlgorithm.maxDistance,
-                                            MAlgorithm.lambdaMax));
+                                            MAlgorithm.lambdaMax,
+                                            MAlgorithm.lambdarunningaverageprobability));
     else if (MAlgorithm.ConjugateGradient == "STEEPESTDESCENT")
         _minimizerAlgorithms.push_back(
         new ConjugateGradient<SteepestDescent>(MAlgorithm.gradientTolerance,
                                                MAlgorithm.maxDistance,
-                                               MAlgorithm.lambdaMax));
+                                               MAlgorithm.lambdaMax,
+                                               MAlgorithm.lambdarunningaverageprobability));
 
     else {
         cout << "Conjugate gradient method not recognized. Exiting." << endl;

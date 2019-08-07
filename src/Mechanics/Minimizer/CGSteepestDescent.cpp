@@ -19,7 +19,9 @@
 #include "Structure/Bead.h"
 
     void SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                                   floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit) {
+                                   floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+                                   floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                                   bool steplimit) {
         //number of steps
         int N;
         if (steplimit) {
@@ -44,7 +46,8 @@
 
             //find lambda by line search, move beads
             bool *dummy = nullptr;
-            lambda = backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy);
+            lambda = backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX,
+                    LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
             moveBeads(lambda);
 
             //compute new forces

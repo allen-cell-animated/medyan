@@ -18,7 +18,9 @@
 #include "Output.h"
 #include "Structure/Bead.h"
     void FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                                  floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit) {
+                                  floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+                                  floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                                  bool steplimit) {
         //number of steps
         int N;
         if (steplimit) {
@@ -47,7 +49,8 @@
             bool *dummy = nullptr;
             //find lambda by line search, move beads
             lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy)
-                               : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy);
+                               : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX,
+                                       LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
             moveBeads(lambda);
 
             //compute new forces

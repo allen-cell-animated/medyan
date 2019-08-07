@@ -185,7 +185,9 @@ protected:
     /// A simple backtracking search method that computes an optimal
     /// energy change and compares the backtracked energy to it
     floatingpoint backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
-                                                          floatingpoint LAMBDAMAX, bool *gpu_safestate);
+                                         floatingpoint LAMBDAMAX,
+                                         floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                                         bool *gpu_safestate);
     
     /// The safemode backtracking search, returns the first energy decrease
     ///@note - The most robust linesearch method, but very slow
@@ -225,7 +227,9 @@ public:
 
     /// Minimize the system
     virtual void minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                          floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit) = 0;
+                          floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+                          floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                          bool steplimit) = 0;
 
 };
 
