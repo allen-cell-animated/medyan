@@ -917,49 +917,49 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
     for(uint pid = first; pid < last; pid++) {
 	    uint32_t t1 = bspairsoutS.dout[2 * (D - 1)][pid];
 	    uint32_t t2 = bspairsoutS.dout[2 * (D - 1) + 1][pid];
-	    if(false) {
-
-		    uint32_t cIndex1 = t1 >> 4;
-		    uint32_t cIndex2 = t2 >> 4;
-
-        const auto& cylinder1 = cylinderInfoData[cIndex1];
-        const auto& cylinder2 = cylinderInfoData[cIndex2];
-
-		    /*short _filType1 = cylinder1.type;
-			short _filType2 = cylinder2.type;
-
-			auto fpairs = _filamentIDvec[idvec[0]].data();
-
-			//Check if the filament type pair matches that of the binding manager.
-			//Commented as it is already taken care in the SIMD function call
-			if ((fpairs[0] == _filType1 && fpairs[1] ==_filType2)||
-				(fpairs[1] == _filType1 && fpairs[0] ==_filType2)) {*/
-
-		    //Checks to make sure sites on a filament that are less than two cylinders away are
-		    // not added.
-            bool neighborcondition = (
-                cylinder1.filamentId == cylinder2.filamentId &&
-                abs(cylinder1.positionOnFilament - cylinder2.positionOnFilament) <=2
-            );
-		    if (!neighborcondition) {
-
-/*			    short bsite1 = mask & site1;
-			    short bsite2 = mask & site2;
-
-			    uint32_t t1 = cIndex1 << 4 | bsite1;
-			    uint32_t t2 = cIndex2 << 4 | bsite2;
-
-				uint32_t t1 = site1;
-				uint32_t t2 = site2;*/
-
-			    //unordered map
-			    _possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
-
-			    _reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(
-					    t1);
-		    }
+//	    if(false) {
+//
+//		    uint32_t cIndex1 = t1 >> 4;
+//		    uint32_t cIndex2 = t2 >> 4;
+//
+//        const auto& cylinder1 = cylinderInfoData[cIndex1];
+//        const auto& cylinder2 = cylinderInfoData[cIndex2];
+//
+//		    /*short _filType1 = cylinder1.type;
+//			short _filType2 = cylinder2.type;
+//
+//			auto fpairs = _filamentIDvec[idvec[0]].data();
+//
+//			//Check if the filament type pair matches that of the binding manager.
+//			//Commented as it is already taken care in the SIMD function call
+//			if ((fpairs[0] == _filType1 && fpairs[1] ==_filType2)||
+//				(fpairs[1] == _filType1 && fpairs[0] ==_filType2)) {*/
+//
+//		    //Checks to make sure sites on a filament that are less than two cylinders away are
+//		    // not added.
+//            bool neighborcondition = (
+//                cylinder1.filamentId == cylinder2.filamentId &&
+//                abs(cylinder1.positionOnFilament - cylinder2.positionOnFilament) <=2
+//            );
+//		    if (!neighborcondition) {
+//
+///*			    short bsite1 = mask & site1;
+//			    short bsite2 = mask & site2;
+//
+//			    uint32_t t1 = cIndex1 << 4 | bsite1;
+//			    uint32_t t2 = cIndex2 << 4 | bsite2;
+//
+//				uint32_t t1 = site1;
+//				uint32_t t2 = site2;*/
+//
+//			    //unordered map
+//			    _possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+//
+//			    _reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(
+//					    t1);
+//		    }
+////	    }
 //	    }
-	    }
 	    _possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
 
 	    _reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(

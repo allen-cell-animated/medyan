@@ -190,10 +190,11 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                 _filamentType = Cylinder::getDbData().value[cindex].type;
                 _filamentType = Cylinder::getDbDataConst().value[cindex].type;
                 _fID = Cylinder::getDbDataConst().value[cindex].filamentId;
-                _fpos = Cylinder::getDbDataConst().value[cindex].positionOnFilament;
+                _fpos = Cylinder::getDbDataConst().value[cindex].positionOnFilament-
+                        Cylinder::getDbDataConst().value[cindex].filamentFirstEntry;
 
                 //packed integer containing filament ID and filament position.
-                //Assumes you don't have 127 (2^7 -1) cylinders
+                //Assumes you don't have 127 (2^7 -1) cylinders in the same filament
                 uint32_t cylfinfo = (_fID<< 7);
                 cylfinfo = cylfinfo | _fpos;
 
@@ -366,7 +367,8 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                 _filamentType = Cylinder::getDbData().value[cindex].type;
                 _filamentType = Cylinder::getDbDataConst().value[cindex].type;
                 _fID = Cylinder::getDbDataConst().value[cindex].filamentId;
-                _fpos = Cylinder::getDbDataConst().value[cindex].positionOnFilament;
+                _fpos = Cylinder::getDbDataConst().value[cindex].positionOnFilament-
+                        Cylinder::getDbDataConst().value[cindex].filamentFirstEntry;
 
                 //packed integer containing filament ID and filament position.
                 //Assumes you don't have 127 (2^7 -1) cylinders
