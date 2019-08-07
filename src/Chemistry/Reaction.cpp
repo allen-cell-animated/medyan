@@ -93,7 +93,7 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
     }
     //Create new reaction, copy ownership of signal
     Reaction* newReaction = new Reaction<M,N>(species, _rate_bare);
-    newReaction->setRate(_rate);
+    newReaction->_rate = _rate;
     
 #ifdef REACTION_SIGNALING
     newReaction->_signal = std::move(_signal);
@@ -103,6 +103,7 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
     newReaction->_reactionType = _reactionType;
     newReaction->_gnum = _gnum;
     newReaction->_hrcdid = _hrcdid;
+    newReaction->_ratemulfactors = _ratemulfactors;
     return newReaction;
 }
 

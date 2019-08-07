@@ -27,9 +27,23 @@ float BrownianRatchet::changeRate(float bareRate, floatingpoint force) {
     return newRate;
 }
 
+float BrownianRatchet::getRateChangeFactor(floatingpoint force) {
+
+    force = min<floatingpoint>(force, (floatingpoint)100.0); //ceiling
+
+    return exp( - force * _x / kT);
+}
+
+
 float LinkerCatchSlip::changeRate(float bareRate, floatingpoint force) {
     
     return bareRate * (_a1 * exp(- force * _x1 / kT) +
+                       _a2 * exp(  force * _x2 / kT));
+}
+
+float LinkerCatchSlip::getRateChangeFactor(floatingpoint force) {
+
+    return (_a1 * exp(- force * _x1 / kT) +
                        _a2 * exp(  force * _x2 / kT));
 }
 
@@ -40,11 +54,21 @@ float LinkerSlip::changeRate(float bareRate, floatingpoint force) {
     return newRate;
 }
 
+float LinkerSlip::getRateChangeFactor(floatingpoint force) {
+
+    return exp( force * _x / kT);
+}
+
 float BranchSlip::changeRate(float bareRate, floatingpoint force) {
 
     floatingpoint newRate = bareRate * exp( force * _x / kT);
     
     return newRate;
+}
+
+float BranchSlip::getRateChangeFactor( floatingpoint force) {
+
+    return exp( force * _x / kT);
 }
 
 float MotorCatch::numBoundHeads(float onRate, float offRate,

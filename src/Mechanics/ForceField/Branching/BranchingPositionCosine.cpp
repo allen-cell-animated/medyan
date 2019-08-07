@@ -224,7 +224,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
 
         floatingpoint cosp =  x;
         posheta = 0.5*M_PI;
-        floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
+        floatingpoint sinp = sqrt(max<floatingpoint>((1-cosp*cosp),(floatingpoint)0.0));
         floatingpoint cospminusq = cosp * cos(posheta) + sinp * sin(posheta);
         U_i = kpos[i] * ( 1 - cospminusq );
 
@@ -292,7 +292,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
 
         floatingpoint cosp =  x;
         posheta = 0.5*M_PI;
-        floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
+        floatingpoint sinp = sqrt(max<floatingpoint>((1-cosp*cosp),(floatingpoint)0.0));
         floatingpoint cospminusq = cosp * cos(posheta) + sinp * sin(posheta);
         U_i = kpos[i] * ( 1 - cospminusq );
 
@@ -362,7 +362,7 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
 
         floatingpoint cosp =  x;
         posheta = 0.5*M_PI;
-        floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
+        floatingpoint sinp = sqrt(max<floatingpoint>((1-cosp*cosp),(floatingpoint)0.0));
         floatingpoint sinpminusq = sinp * cos(posheta) - cosp * sin(posheta);
 
         position = pos[i];

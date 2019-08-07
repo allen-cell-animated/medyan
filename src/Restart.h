@@ -489,7 +489,7 @@ public:
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
         for(auto &it: C->getDiffusionReactionContainer().reactions())
         {temp_diffrate_vector.push_back(it->getRate());
-            it->setRate(0.0);}
+            it->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);}
         C->getDiffusionReactionContainer().updatePropensityComprtment();
         for(auto &Mgr:C->getFilamentBindingManagers()){
 #ifdef NLORIGINAL
@@ -921,7 +921,7 @@ public:
         counter=0;
         for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
             for(auto &it: C->getDiffusionReactionContainer().reactions())
-            {it->setRate(temp_diffrate_vector[counter]);
+            {it->setBareRate(temp_diffrate_vector[counter]);
                 counter++;}
             C->getDiffusionReactionContainer().updatePropensityComprtment();}
     }

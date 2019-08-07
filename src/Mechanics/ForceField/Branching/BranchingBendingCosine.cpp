@@ -370,7 +370,7 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
             else if (x > 1.0) x = 1.0;
 
             floatingpoint cosp =  x;
-            floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
+            floatingpoint sinp = sqrt(max<floatingpoint>((1-cosp*cosp),(floatingpoint)0.0));
             floatingpoint sinpminusq = sinp * cos(eqt[i]) - cosp * sin(eqt[i]);
 
             k = kbend[i] * sinpminusq/sinp;

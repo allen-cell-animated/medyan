@@ -967,7 +967,8 @@ void Controller::run() {
         for(auto LL : Linker::getLinkers())
         {
             LL->getCLinker()->setOffRate(LL->getCLinker()->getOffReaction()->getBareRate());
-            LL->getCLinker()->getOffReaction()->setRate(LL->getCLinker()->getOffReaction()->getBareRate());
+            /*LL->getCLinker()->getOffReaction()->setRate(LL->getCLinker()->getOffReaction
+			        ()->getBareRate());*/
             LL->updateReactionRates();
             LL->getCLinker()->getOffReaction()->updatePropensity();
 
@@ -975,7 +976,9 @@ void Controller::run() {
         for(auto MM : MotorGhost::getMotorGhosts())
         {
             MM->getCMotorGhost()->setOffRate(MM->getCMotorGhost()->getOffReaction()->getBareRate());
-            MM->getCMotorGhost()->getOffReaction()->setRate(MM->getCMotorGhost()->getOffReaction()->getBareRate());
+            /*MM->getCMotorGhost()->getOffReaction()->setRate(MM->getCMotorGhost()
+		                                                             ->getOffReaction()
+		                                                             ->getBareRate());*/
             MM->updateReactionRates();
             MM->getCMotorGhost()->getOffReaction()->updatePropensity();
         }
@@ -983,7 +986,10 @@ void Controller::run() {
         for (auto BB: BranchingPoint::getBranchingPoints()) {
             dummy++;
             BB->getCBranchingPoint()->setOffRate(BB->getCBranchingPoint()->getOffReaction()->getBareRate());
-            BB->getCBranchingPoint()->getOffReaction()->setRate(BB->getCBranchingPoint()->getOffReaction()->getBareRate());
+            /*BB->getCBranchingPoint()->getOffReaction()->setRate(BB->getCBranchingPoint()
+		                                                                 ->getOffReaction
+		                                                                 ()->getBareRate
+		                                                                 ());*/
             BB->getCBranchingPoint()->getOffReaction()->updatePropensity();
         }
 //STEP 7: Get cylinders, activate filament reactions.
