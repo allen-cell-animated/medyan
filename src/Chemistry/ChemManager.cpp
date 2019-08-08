@@ -1757,7 +1757,7 @@ void ChemManager::genFilBindingReactions() {
 
                         //find the species pair binding, push
                         string mname = SpeciesNamesDB::genBindingName(motorName, name);
-                        
+
                         reactantSpecies.push_back(C->findSpeciesByName(mname));
                     }
                     else {
