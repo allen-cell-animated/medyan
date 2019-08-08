@@ -22,7 +22,7 @@
 
 using namespace mathfunc;
 
-floatingpoint MTOCAttachmentHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint MTOCAttachmentHarmonic::energy(floatingpoint *coord, int *beadSet,
                                              floatingpoint *kstr, floatingpoint* radiusvec){
 
 	floatingpoint *coord1, *coord2, dist;

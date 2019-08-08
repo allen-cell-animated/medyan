@@ -26,12 +26,12 @@ class Bead;
 class BubbleCylinderRepulsionExp {
     
 public:
-	floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet, int *bubbleSet,
-	                     floatingpoint *krep, floatingpoint *slen, floatingpoint *radius, int *nneighbors);
-
-	floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet, int *bubbleSet,
-	                     floatingpoint *krep, floatingpoint *slen, floatingpoint *radius, int *nnneighbors, floatingpoint d);
-
+    floatingpoint energy(floatingpoint *coord, int *beadSet, int *bubbleSet,
+                         floatingpoint *krep, floatingpoint *slen, floatingpoint *radius, int *nneighbors);
+    
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet, int *bubbleSet,
+                         floatingpoint *krep, floatingpoint *slen, floatingpoint *radius, int *nnneighbors, floatingpoint d);
+    
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, int *bubbleSet,
                 floatingpoint *krep, floatingpoint *slen, floatingpoint *radius, int *nneighbors);
 //    void forcesAux(Bead*, Bead*, double, double, double);

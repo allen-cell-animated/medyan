@@ -68,7 +68,7 @@
             if (b != nullptr) b->getParent()->printSelf();
 
             cout << "System energy..." << endl;
-            FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), 0.0, true);
+            FFM.computeEnergy(Bead::getDbData().coords.data(), true);
 
             cout << endl;
         }

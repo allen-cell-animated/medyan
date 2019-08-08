@@ -69,9 +69,7 @@ public:
         
         FFM.vectorizeAllForceFields();
 
-        floatingpoint dummyForce[1] = {0};
-
-        floatingpoint f = FFM.computeEnergy(coord,dummyForce,0.0);
+        floatingpoint f = FFM.computeEnergy(coord);
         
         // delete [] coord;
         

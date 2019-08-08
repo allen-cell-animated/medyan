@@ -65,14 +65,14 @@ void LinkerFF::whoIsCulprit() {
     cout << endl;
 }
 
-floatingpoint LinkerFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint LinkerFF::computeEnergy(floatingpoint *coord, bool stretched) {
 
     floatingpoint U= 0.0;
     floatingpoint U_i=0.0;
 
     for (auto &interaction : _linkerInteractionVector) {
 
-        U_i = interaction->computeEnergy(coord, f, d);
+        U_i = interaction->computeEnergy(coord);
 
         if(U_i <= -1) {
             //set culprit and return

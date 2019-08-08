@@ -31,6 +31,7 @@
 #include "dist_moduleV2/dist_driver.h"
 #include "dist_moduleV2/dist_coords.h"
 #include "MathFunctions.h"
+#include "Structure/CellList.hpp"
 
 //#include "BinGrid.h"
 //#include "Bin.h"
@@ -83,8 +84,6 @@ protected:
 
     unordered_set<Bead*> _beads; ///< Set of beads that are in this compartment
 
-    unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
-
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment (neighbors that
     unordered_map<Compartment*, size_t> _neighborIndex; ///< Spacial index of the neighbors of the same order as _neighbors
     ///< In 3D, the indices are in the order (x-, x+, y-, y+, z-, z+)
@@ -115,6 +114,9 @@ public:
     short _ID;
     vector<uint16_t> cindex_bs;
     vector<uint32_t> cID_bs;
+
+    cell_list::CellListHeadUser< Cylinder, Compartment > cylinderCell; // Cell of cylinders
+
     /// Default constructor, only takes in number of dimensions
     Compartment() : _species(), _internal_reactions(),
     _diffusion_reactions(), _diffusion_rates(), _neighbours()  {
@@ -591,18 +593,8 @@ public:
     ///get the boundary elements in this compartment
    unordered_set<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}
 
-    ///Add a cylinder to this compartment
-    void addCylinder(Cylinder* c) {_cylinders.insert(c);
-    }
-
-    ///Remove a cylinder from this compartment
-    ///@note does nothing if cylinder is not in compartment already
-    void removeCylinder(Cylinder* c) {
-        auto it = _cylinders.find(c);
-        if(it != _cylinders.end()) _cylinders.erase(it);
-    }
     ///get the cylinders in this compartment
-    unordered_set<Cylinder*>& getCylinders() {return _cylinders;}
+    auto getCylinders() const { return cylinderCell.manager->getElementPtrs(cylinderCell); }
 
     /// Get the diffusion rate of a species
     /// @param - species_name, a string

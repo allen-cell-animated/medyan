@@ -327,8 +327,7 @@ void CylinderExclVolRepulsion::checkforculprit() {
 }
 
 #endif
-floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoint *force,
-                                               int *beadSet, floatingpoint *krep) {
+floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSet, floatingpoint *krep) {
 	floatingpoint *c1, *c2, *c3, *c2temp, *c4, *newc2, d;
 
 	doubleprecision a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
@@ -444,7 +443,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 		if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
 		   || U_i != U_i || U_i < -1.0) {
 			//evaluate numerically
-			U_i = energyN(coord, force, beadSet, krep, i);
+			U_i = energyN(coord, beadSet, krep, i);
 			if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
 			   || U_i != U_i || U_i < -1.0) {
 				short found = 0;
@@ -999,7 +998,7 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 	delete [] vec_C;
 }
 
-floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord, floatingpoint *force,
+floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord,
                                                 int *beadSet, floatingpoint *krep, int i) {
 	floatingpoint *c1, *c2, *c3, *c4;
 

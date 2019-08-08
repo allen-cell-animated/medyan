@@ -1269,7 +1269,7 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 #endif
 #endif
 	tbegin = chrono::high_resolution_clock::now();
-    floatingpoint currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), 0.0);
+    floatingpoint currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data());
 	CUDAcommon::tmin.computeenerycallszero++;
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
@@ -1298,12 +1298,8 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
         //let each forcefield also add energies to two different energy variables.
 
         tbegin = chrono::high_resolution_clock::now();
-//	    #ifdef MOVEBEADSLINESEARCH
 	    stretchBeads(lambda);
-        floatingpoint energyLambda = FFM.computeEnergy(Bead::getDbData().coordsStr.data(), Bead::getDbData().forces.data(), lambda);
-/*		#else
-        floatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
-		#endif*/
+        floatingpoint energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
 	    CUDAcommon::tmin.computeenerycallsnonzero++;
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
@@ -1408,7 +1404,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
 #endif
 //prepare for ping pong optimization
 	tbegin = chrono::high_resolution_clock::now();
-    floatingpoint currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), 0.0);
+    floatingpoint currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data());
 	CUDAcommon::tmin.computeenerycallszero++;
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
@@ -1435,12 +1431,8 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
         iter++;
 
 	    tbegin = chrono::high_resolution_clock::now();
-//	    #ifdef MOVEBEADSLINESEARCH
 	    stretchBeads(lambda);
-        floatingpoint energyLambda = FFM.computeEnergy(Bead::getDbData().coordsStr.data(), Bead::getDbData().forces.data(), lambda);
-/*	    #else
-	    floatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
-		#endif*/
+        floatingpoint energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
 	    CUDAcommon::tmin.computeenerycallsnonzero++;
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);

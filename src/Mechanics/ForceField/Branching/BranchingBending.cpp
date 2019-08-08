@@ -88,7 +88,7 @@ void BranchingBending<BBendingInteractionType>::deallocate() {
 
 
 template <class BBendingInteractionType>
-floatingpoint BranchingBending<BBendingInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint BranchingBending<BBendingInteractionType>::computeEnergy(floatingpoint *coord) {
 
     floatingpoint U_ii=(floatingpoint)0.0;
 
@@ -103,11 +103,7 @@ floatingpoint BranchingBending<BBendingInteractionType>::computeEnergy(floatingp
 #endif
 #ifdef SERIAL
 
-
-    if (d == 0.0)
-        U_ii = _FFType.energy(coord, f, beadSet, kbend, eqt);
-    else
-        U_ii = _FFType.energy(coord, f, beadSet, kbend, eqt, d);
+    U_ii = _FFType.energy(coord, beadSet, kbend, eqt);
 
 #endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
@@ -151,7 +147,7 @@ void BranchingBending<BBendingInteractionType>::computeForces(floatingpoint *coo
 }
 
 ///Template specializations
-template floatingpoint BranchingBending<BranchingBendingCosine>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template floatingpoint BranchingBending<BranchingBendingCosine>::computeEnergy(floatingpoint *coord);
 template void BranchingBending<BranchingBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void BranchingBending<BranchingBendingCosine>::vectorize();
 template void BranchingBending<BranchingBendingCosine>::deallocate();

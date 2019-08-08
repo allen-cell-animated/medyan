@@ -150,11 +150,13 @@ public:
     Bead(Composite* parent, int position);
 
     auto coordinate()    { return getDbData().coords    [getStableIndex()]; }
+    auto coordinateStr() { return getDbData().coordsStr [getStableIndex()]; }
     auto force()         { return getDbData().forces    [getStableIndex()]; }
     auto forceAux()      { return getDbData().forcesAux [getStableIndex()]; }
     auto forceAuxP()     { return getDbData().forcesAuxP[getStableIndex()]; }
 
     auto coordinate()    const { return getDbDataConst().coords    [getStableIndex()]; }
+    auto coordinateStr() const { return getDbDataConst().coordsStr [getStableIndex()]; }
     auto force()         const { return getDbDataConst().forces    [getStableIndex()]; }
     auto forceAux()      const { return getDbDataConst().forcesAux [getStableIndex()]; }
     auto forceAuxP()     const { return getDbDataConst().forcesAuxP[getStableIndex()]; }

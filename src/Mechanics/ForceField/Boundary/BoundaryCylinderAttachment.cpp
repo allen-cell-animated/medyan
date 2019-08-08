@@ -49,17 +49,10 @@ void BoundaryCylinderAttachment<BAttachmentInteractionType>::deallocate() {
 }
 
 template <class BAttachmentInteractionType>
-floatingpoint BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEnergy(floatingpoint *coord) {
 
+    return _FFType.energy(coord, beadSet, kattr, pins);
 
-    floatingpoint U;
-
-    if (d == 0.0)
-        U =  _FFType.energy(coord, f, beadSet, kattr, pins);
-    else
-        U =  _FFType.energy(coord, f, beadSet, kattr, pins, d);
-
-    return U;
 }
 
 template <class BAttachmentInteractionType>
@@ -69,7 +62,7 @@ void BoundaryCylinderAttachment<BAttachmentInteractionType>::computeForces(float
 }
 
 ///Template specializations
-template floatingpoint BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template floatingpoint BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeEnergy(floatingpoint *coord);
 template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::vectorize();
 template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::deallocate();

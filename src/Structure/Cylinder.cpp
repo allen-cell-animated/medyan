@@ -31,7 +31,7 @@ void Cylinder::updateData() {
 
     data.filamentId = static_cast<Filament*>(getParent())->getId();
     data.positionOnFilament = _position;
-    data.compartmentId = _compartment->getId();
+    data.compartmentId = getCompartment()->getId();
     data.beadIndices[0] = _b1->getStableIndex();
     data.beadIndices[1] = _b2->getStableIndex();
     data.coord = vector2Vec<3, floatingpoint>(coordinate);
@@ -64,25 +64,27 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     //Set coordinate
     updateCoordinate();
 
-    try {_compartment = GController::getCompartment(coordinate);}
+    Compartment* compartment;
+    try {compartment = GController::getCompartment(coordinate);}
     catch (exception& e) {
         cout << e.what() << endl;
         exit(EXIT_FAILURE);
     }
 
-   //add to compartment
-   _compartment->addCylinder(this);
+    //add to compartment
+    _cellElement.manager = compartment->cylinderCell.manager;
+    _cellElement.manager->addElement(this, _cellElement, compartment->cylinderCell);
 
     //@}
 #ifdef MECHANICS
           //set eqLength according to cylinder size
-
+          
     floatingpoint eqLength  = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
     if(!SysParams::RUNSTATE) //RESTARTPHASE
     {
         int nummonomers = (int) round(eqLength/ SysParams::Geometry().monomerSize[type]);
         floatingpoint tpd = eqLength;
-
+              
         if(nummonomers ==0){
             eqLength = SysParams::Geometry().monomerSize[type];
         }
@@ -98,15 +100,15 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
                 }
             }
         }
-
-
+        
+    
     }
     _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
     _mCylinder->setCylinder(this);
 #endif
-
+    
 #ifdef CHEMISTRY
-    _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment, this));
+    _cCylinder = unique_ptr<CCylinder>(new CCylinder(compartment, this));
     _cCylinder->setCylinder(this);
 
     //init using chem manager
@@ -127,8 +129,8 @@ Cylinder::~Cylinder() noexcept {
 																		 <<endl;
 	#endif
     //remove from compartment
-    _compartment->removeCylinder(this);
-
+    _cellElement.manager->removeElement(_cellElement);
+    
 }
 
 /// Get filament type
@@ -149,22 +151,16 @@ void Cylinder::updatePosition() {
 			exit(EXIT_FAILURE);
 		}
 
-		if (c != _compartment) {
-            #ifdef CHECKRXN
-		    cout<<"move Cmp Cylinder with ID "<<getId()<<" from Cmp "
-		    <<_compartment->getId()<<" to Cmp "<<c->getId()<<endl;
+        Compartment* curCompartment = getCompartment();
+		if (c != curCompartment) {
+			#ifdef CHECKRXN
+			cout<<"move Cmp Cylinder with ID "<<getId()<<" from Cmp "
+			    <<getCompartment()->getId()<<" to Cmp "<<c->getId()<<endl;
 			#endif
 			mins = chrono::high_resolution_clock::now();
 
-#ifdef CHEMISTRY
-//			auto oldCompartment = _compartment;
-//			auto newCompartment = c;
-#endif
-
 			//remove from old compartment, add to new
-			_compartment->removeCylinder(this);
-			_compartment = c;
-			_compartment->addCylinder(this);
+            _cellElement.manager->updateElement(_cellElement, c->cylinderCell);
 
 #ifdef CHEMISTRY
 //			auto oldCCylinder = _cCylinder.get();
@@ -189,7 +185,7 @@ void Cylinder::updatePosition() {
 
             //change both CCylinder and Compartment ID in the vector
             auto& data = getDbData().value[getStableIndex()];
-            data.compartmentId = _compartment->getId();
+            data.compartmentId = c->getId();
             data.chemCylinder = _cCylinder.get();
 
 			mine = chrono::high_resolution_clock::now();

@@ -29,6 +29,8 @@ class FilamentBending : public FilamentInteractions {
 private:
     FBendingInteractionType _FFType;
     
+    // Cache of vectorized data
+    std::size_t _numInteractions;
     int *beadSet;
     
     ///Array describing the constants in calculation
@@ -53,7 +55,7 @@ public:
     virtual void vectorize();
     virtual void deallocate();
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
     virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     
     virtual const string getName() {return "Filament Bending";}

@@ -29,6 +29,7 @@
 #include "DynamicNeighbor.h"
 #include "Component.h"
 #include "Bead.h"
+#include "Structure/CellList.hpp"
 #include "Util/Math/Vec.hpp"
 
 //FORWARD DECLARATIONS
@@ -95,7 +96,7 @@ private:
 
 	int _position;          ///< Position on structure
 
-    Compartment* _compartment = nullptr; ///< Where this cylinder is
+    cell_list::CellListElementUser< Cylinder, Compartment > _cellElement;
 
     Cylinder* _branchingCylinder = nullptr; ///< ptr to a branching cylinder
 
@@ -165,7 +166,7 @@ public:
     //@}
 
     /// Get compartment
-    Compartment* getCompartment() {return _compartment;}
+    Compartment* getCompartment() const { return _cellElement.manager->getHeadPtr(_cellElement); }
 
     //@{
     /// Branching cylinder management

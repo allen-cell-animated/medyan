@@ -74,14 +74,14 @@ void FilamentFF::whoIsCulprit() {
 }
 
 
-floatingpoint FilamentFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint FilamentFF::computeEnergy(floatingpoint *coord, bool stretched) {
 
     floatingpoint U= 0.0;
     floatingpoint U_i=0.0;
     short i = 0;
     for (auto &interaction : _filamentInteractionVector) {
         tbegin = chrono::high_resolution_clock::now();
-        U_i = interaction->computeEnergy(coord, f, d);
+        U_i = interaction->computeEnergy(coord);
         if(U_i <= -1) {
             //set culprit and return
             _culpritInteraction = interaction.get();

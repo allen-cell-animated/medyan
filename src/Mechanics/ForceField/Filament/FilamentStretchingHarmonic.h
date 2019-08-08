@@ -23,10 +23,10 @@ class Bead;
 class FilamentStretchingHarmonic {
     
 public:
-	floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    floatingpoint energy(floatingpoint *coord, int *beadSet,
                   floatingpoint *kstr, floatingpoint *eql);
 
-	floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
+    floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
                   floatingpoint *kstr, floatingpoint *eql, floatingpoint d);
     
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,

@@ -23,7 +23,7 @@ class Bead;
 class LinkerStretchingHarmonic {
     
 public:
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    floatingpoint energy(floatingpoint *coord, int *beadSet,
                   floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2);
     
     floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
