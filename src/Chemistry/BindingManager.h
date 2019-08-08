@@ -38,7 +38,7 @@
  */
 #define B_RXN_INDEX 2
 #define C1_RXN_INDEX 1
-#define C2_RXN_INDEX 0
+#define C2_RXN_INDEX 1
 #define ML_RXN_INDEX 0
 
 //FORWARD DECLARATIONS

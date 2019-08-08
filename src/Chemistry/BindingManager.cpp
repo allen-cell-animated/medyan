@@ -637,7 +637,7 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
         	cerr << "CaMKII - There is a CaMKII cylinder without CaMKIIPoint." << endl;
         	exit(1);
         }
-        
+
         short it1=1;
 
         // skip if parent coordination number isn't between >=1 and <6 (MAX coordination number SysParams::Chemistry().maxcamkii_coord_number)

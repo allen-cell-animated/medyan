@@ -1629,7 +1629,20 @@ void ChemManager::genFilBindingReactions() {
 						camkiierName = name;
 
 						//get position of iterator
-						camkiierInt = distance(_chemData.speciesCaMKIIer[filType].begin(), it);
+						position = distance(_chemData.speciesCaMKIIer[filType].begin(), it);
+						if(position >= SysParams::CParams.camkiierBoundIndex[filType]) {
+							cout <<
+								 "First species listed in a CaMKII bundling reaction must be the camkiier. Exiting."
+								 << endl;
+							exit(EXIT_FAILURE);
+						}
+						/*
+						 * CJYM: reactionTemplate or reactantSpecies
+						 * We cannot find CaMKIIer in the compartment.
+						 * We believe CaMKIIer species information is stored in
+						 * CMonomer.
+						 */
+						reactantSpecies.push_back(C->findSpeciesByName(name));
 					}
 					else {
 						cout <<
@@ -1697,7 +1710,7 @@ void ChemManager::genFilBindingReactions() {
                 rMax = get<5>(r);
                 int maxCoordination = get<6>(r);
 
-                ReactionBase* rxn = new Reaction<1,0>(reactantSpecies, onRate);
+                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
                 rxn->setReactionType(ReactionType::CAMKIIBUNDLING);
                 C->addInternalReaction(rxn);
 
