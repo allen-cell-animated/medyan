@@ -38,10 +38,76 @@ in vec3 ModelPos;
 in vec3 Normal;
 in vec3 Color;
 
+struct Material {
+    vec3 diffuse; // also for ambient
+    vec3 specular;
+    float shininess;
+};
+
+struct DirLight {
+    vec3 direction;
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
+struct PointLight {
+    vec3 position;
+
+    float constant;
+    float linear;
+    float quadratic;
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
+#define NUM_DIR_LIGHTS 1
+#define NUM_POINT_LIGHTS 4
+
 uniform vec3 CameraPos;
+uniform DirLight dirLights[NUM_DIR_LIGHTS];
+uniform PointLight pointLights[NUM_POINT_LIGHTS];
+uniform Material material;
+
+vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir);
+vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main() {
     FragColor = vec4(Color, 1.0f);
+}
+
+vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir) {
+    vec3 lightDir = normalize(-light.direction);
+    // Diffuse
+    float diffuseFac = max(dot(normal, lightDir), 0.0);
+    // Specular
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float specularFac = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    // Combine
+    vec3 ambient = light.ambient * material.diffuse;
+    vec3 diffuse = light.diffuse * diffuseFac * material.diffuse;
+    vec3 specular = light.specular * specularFac * material.specular;
+    return ambient + diffuse + specular;
+}
+
+vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
+    vec3 lightDir = normalize(light.position - fragPos);
+    // Diffuse
+    float diffuseFac = max(dot(normal, lightDir), 0.0);
+    // Specular
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float specularFac = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    // Attenuation
+    float distance = length(light.position - fragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * distance * distance);
+    // Combine
+    vec3 ambient = light.ambient * material.diffuse;
+    vec3 diffuse = light.diffuse * diffuseFac * material.diffuse;
+    vec3 specular = light.specular * specularFac * material.specular;
+    return ambient + diffuse + specular;
 }
 )";
 

@@ -31,6 +31,9 @@ public:
         init_(vertexShaderSrc, fragmentShaderSrc);
     }
 
+    void setFloat(const char* name, float f) const {
+        glUniform1f(glGetUniformLocation(id_, name), f);
+    }
     void setMat3(const char* name, const glm::mat3& mat) const {
         glUniformMatrix3fv(glGetUniformLocation(id_, name), 1, GL_FALSE, glm::value_ptr(mat));
     }
