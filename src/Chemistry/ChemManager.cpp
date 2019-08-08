@@ -1757,7 +1757,7 @@ void ChemManager::genFilBindingReactions() {
 
                         //find the species pair binding, push
                         string mname = SpeciesNamesDB::genBindingName(motorName, name);
-
+                        
                         reactantSpecies.push_back(C->findSpeciesByName(mname));
                     }
                     else {
@@ -2084,7 +2084,6 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
                         << endl;
                         exit(EXIT_FAILURE);
                     }
-
                     //add a single binding species with name sl + bound
                     protoCompartment.addSpeciesPairBinding(SpeciesNamesDB::genBindingName(sl, bound));
                 }
