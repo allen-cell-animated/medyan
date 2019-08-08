@@ -98,7 +98,7 @@ struct UpdateCaMKIIerBindingCallback {
         
         //update this cylinder
         Compartment* c = _cylinder->getCompartment();
-        
+
         for(auto &manager : c->getFilamentBindingManagers()) {
             
             if(dynamic_cast<CaMKIIBindingManager*>(manager.get())) {

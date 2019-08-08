@@ -169,7 +169,14 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
             return false;
         }
 
-        
+        //check if binding sites are valid
+        if(chem.CaMKII_BUNDLING_INDEX[filType] == "" && chem.speciesCaMKIIer[filType].size() != 0) {
+            cout << "A camkiier bundling site must be set for every filament type. Exiting."
+                 << endl;
+            return false;
+        }
+
+
         if(chem.L_BINDING_INDEX[filType] == "" && chem.speciesLinker[filType].size() != 0) {
             cout << "A linker binding site must be set for every filament type. Exiting."
             << endl;

@@ -60,7 +60,23 @@ void ChemManager::setupBindingSites() {
                  exit(EXIT_FAILURE);
             }
             else {
-                SysParams::CParams.camkiierBoundIndex[filType] = it - _chemData.speciesBound[filType].begin();
+                SysParams::CParams.camkiierBindingBoundIndex[filType] = it - _chemData.speciesBound[filType].begin();
+            }
+        }
+
+        if(_chemData.CaMKII_BUNDLING_INDEX[filType] != "") {
+            auto it = find(_chemData.speciesBound[filType].begin(),
+                           _chemData.speciesBound[filType].end(),
+                           _chemData.CaMKII_BUNDLING_INDEX[filType]);
+
+            if(it == _chemData.speciesBound[filType].end()) {
+
+                cout << "The camkiier bundling site listed is not a valid bound species. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else {
+                SysParams::CParams.camkiierBundlingBoundIndex[filType] = it - _chemData.speciesBound[filType].begin();
             }
         }
         
@@ -107,12 +123,19 @@ void ChemManager::setupBindingSites() {
 
         if(SysParams::CParams.brancherBoundIndex[filType] != SysParams::CParams.motorBoundIndex[filType] &&
             SysParams::CParams.linkerBoundIndex[filType]   != SysParams::CParams.motorBoundIndex[filType])
-            SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.motorBoundIndex[filType]);        
+            SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.motorBoundIndex[filType]);
 
-        if(SysParams::CParams.brancherBoundIndex[filType] != SysParams::CParams.camkiierBoundIndex[filType] &&
-            SysParams::CParams.linkerBoundIndex[filType]   != SysParams::CParams.camkiierBoundIndex[filType] &&
-            SysParams::CParams.motorBoundIndex[filType]   != SysParams::CParams.camkiierBoundIndex[filType])
-            SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.camkiierBoundIndex[filType]);
+        if(SysParams::CParams.brancherBoundIndex[filType] != SysParams::CParams.camkiierBindingBoundIndex[filType] &&
+            SysParams::CParams.linkerBoundIndex[filType]   != SysParams::CParams.camkiierBindingBoundIndex[filType] &&
+            SysParams::CParams.motorBoundIndex[filType]   != SysParams::CParams.camkiierBindingBoundIndex[filType])
+            SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.camkiierBindingBoundIndex[filType]);
+
+        if(SysParams::CParams.brancherBoundIndex[filType] != SysParams::CParams.camkiierBundlingBoundIndex[filType] &&
+           SysParams::CParams.linkerBoundIndex[filType]   != SysParams::CParams.camkiierBundlingBoundIndex[filType] &&
+           SysParams::CParams.motorBoundIndex[filType]   != SysParams::CParams.camkiierBundlingBoundIndex[filType] &&
+           SysParams::CParams.camkiierBindingBoundIndex[filType]   != SysParams::CParams.camkiierBundlingBoundIndex[filType])
+            SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.camkiierBundlingBoundIndex[filType]);
+
     }
 }
 
@@ -1501,7 +1524,7 @@ void ChemManager::genFilBindingReactions() {
                         //get position of iterator
                         position = distance(_chemData.speciesBound[filType].begin(), it);
                         
-                        if(position != SysParams::CParams.camkiierBoundIndex[filType]) {
+                        if(position != SysParams::CParams.camkiierBindingBoundIndex[filType]) {
                             cout <<
                             "Second species listed in a CaMKII binding reaction must be the corresponding camkiier empty site. Exiting."
                             << endl;
@@ -1509,7 +1532,7 @@ void ChemManager::genFilBindingReactions() {
                         }
                         
                         //find the species single binding, push
-                        string bename = SpeciesNamesDB::genBindingName(camkiierName, name);
+                        string bename = SpeciesNamesDB::genBindingName("C" + camkiierName, name);
                         
                         reactantSpecies.push_back(C->findSpeciesByName(bename));
                     }
@@ -1630,19 +1653,12 @@ void ChemManager::genFilBindingReactions() {
 
 						//get position of iterator
 						position = distance(_chemData.speciesCaMKIIer[filType].begin(), it);
-						if(position >= SysParams::CParams.camkiierBoundIndex[filType]) {
+						if(position >= SysParams::CParams.camkiierBundlingBoundIndex[filType]) {
 							cout <<
 								 "First species listed in a CaMKII bundling reaction must be the camkiier. Exiting."
 								 << endl;
 							exit(EXIT_FAILURE);
 						}
-						/*
-						 * CJYM: reactionTemplate or reactantSpecies
-						 * We cannot find CaMKIIer in the compartment.
-						 * We believe CaMKIIer species information is stored in
-						 * CMonomer.
-						 */
-						reactantSpecies.push_back(C->findSpeciesByName(name));
 					}
 					else {
 						cout <<
@@ -1672,7 +1688,7 @@ void ChemManager::genFilBindingReactions() {
 						//get position of iterator
 						position = distance(_chemData.speciesBound[filType].begin(), it);
 
-						if(position != SysParams::CParams.camkiierBoundIndex[filType]) {
+						if(position != SysParams::CParams.camkiierBundlingBoundIndex[filType]) {
 							cout <<
 							"Second species listed in a CaMKII bundling reaction must be the corresponding camkiier empty site. Exiting."
 							<< endl;
@@ -1710,7 +1726,7 @@ void ChemManager::genFilBindingReactions() {
                 rMax = get<5>(r);
                 int maxCoordination = get<6>(r);
 
-                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
+                ReactionBase* rxn = new Reaction<1,0>(reactantSpecies, onRate);
                 rxn->setReactionType(ReactionType::CAMKIIBUNDLING);
                 C->addInternalReaction(rxn);
 
@@ -2363,8 +2379,9 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
                         exit(EXIT_FAILURE);
                     }
 
-                    //add a single binding species with name sb + bound
-                    protoCompartment.addSpeciesSingleBinding(SpeciesNamesDB::genBindingName(sb, bound));
+                    // add a single binding species with name sb + bound
+                    // added "C" to describe bundled CaMKII
+                    protoCompartment.addSpeciesSingleBinding(SpeciesNamesDB::genBindingName("C" + sb, bound));
                 }
             }
             //look at camkii bundling reaction that is associated with this species
@@ -3075,13 +3092,13 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             UpdateCaMKIIerBindingCallback camkiibindingcallback(c, i);
             
             Species* cs = cc->getCMonomer(i)->speciesBound(
-                          SysParams::CParams.camkiierBoundIndex[filType]);
+                          SysParams::CParams.camkiierBindingBoundIndex[filType]);
             ConnectionBlock rcbcamkii(cs->connect(camkiibindingcallback,false));
 
             UpdateCaMKIIerBundlingCallback camkiibundlingcallback(c, i);
 
             Species* cs2 = cc->getCMonomer(i)->speciesBound(
-                          SysParams::CParams.camkiierBoundIndex[filType]);
+                          SysParams::CParams.camkiierBundlingBoundIndex[filType]);
             ConnectionBlock rcb2camkii(cs2->connect(camkiibundlingcallback,false));
 
             UpdateLinkerBindingCallback lcallback(c, i);

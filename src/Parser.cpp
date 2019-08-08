@@ -2172,6 +2172,18 @@ ChemistryData ChemistryParser::readChemistryInput() {
             else {}
         }
 
+        else if(line.find("CAMKIIERBUNDLINGSITE") != string::npos) {
+
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() !=  3) {
+                cout << "Error reading a camkiier bundling site. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 3)
+                chem.CaMKII_BUNDLING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
+            else {}
+        }
+
         else if(line.find("LINKERBINDINGSITE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);

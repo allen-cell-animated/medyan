@@ -26,7 +26,7 @@ CCaMKIIingPoint::CCaMKIIingPoint(short camkiiType, Compartment* c,
     //Find species on cylinder that should be marked
     SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesCaMKIIer(camkiiType);
     SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(
-                        SysParams::Chemistry().camkiierBoundIndex[_filamentType]);
+                        SysParams::Chemistry().camkiierBindingBoundIndex[_filamentType]);
 
     //mark species
     //TODO assert fails, need to check whether neighbor list update is correct (remove bound binding site from the neighbor list)
@@ -59,7 +59,10 @@ CCaMKIIingPoint::~CCaMKIIingPoint() {
 }
 
 void CCaMKIIingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
-    
+    // TODO: This reaction needs to be implemented for unbinding and unbundling mix.
+    // Currently it only implements unbinding.
+
+
     //first, find the correct diffusing or bulk species
     RSpecies** rs = onRxn->rspecies();
     Species* sfb = &(rs[SPECIESCaMKII_BINDING_INDEX]->getSpecies());
@@ -67,7 +70,7 @@ void CCaMKIIingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
     //create the reaction species
     CMonomer* m = _cc1->getCMonomer(_position1);
     vector<Species*> os = {m->speciesCaMKIIer(_camkiiType),
-                           m->speciesBound(SysParams::Chemistry().camkiierBoundIndex[_filamentType]), sfb};
+                           m->speciesBound(SysParams::Chemistry().camkiierBindingBoundIndex[_filamentType]), sfb};
     
     //create reaction, add to cylinder
     ReactionBase* offRxn =
