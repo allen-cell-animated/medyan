@@ -61,8 +61,8 @@ public:
 
             ProjectionType projType = ProjectionType::Perspective;
             float fov               = glm::radians(45.0f); // perspective
-            float nearDistance      = 0.1f;
-            float farDistance       = 20000.0f;
+            float zNear      = 10.0f;
+            float zFar       = 20000.0f;
             glm::mat4 projection;
             glm::mat4 model;
 
@@ -338,7 +338,7 @@ struct VisualDisplay {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // transform
-            ws.trans.projection = glm::perspective(ws.trans.fov, (float)ws.width / (float)ws.height, ws.trans.nearDistance, ws.trans.farDistance);
+            ws.trans.projection = glm::perspective(ws.trans.fov, (float)ws.width / (float)ws.height, ws.trans.zNear, ws.trans.zFar);
             ws.trans.model      = glm::mat4(1.0f);
             glm::mat3 modelInvTrans3(glm::transpose(glm::inverse(ws.trans.model)));
 
