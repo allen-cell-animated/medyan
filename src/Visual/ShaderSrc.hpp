@@ -64,7 +64,7 @@ struct PointLight {
     vec3 specular;
 };
 
-#define NUM_DIR_LIGHTS 1
+#define NUM_DIR_LIGHTS 2
 #define NUM_POINT_LIGHTS 4
 
 uniform vec3 CameraPos;
