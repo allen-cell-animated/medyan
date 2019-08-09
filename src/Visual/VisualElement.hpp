@@ -55,7 +55,7 @@ struct Profile {
     // color settings
     glm::vec3 colorAmbient; // Currently not used
     glm::vec3 colorDiffuse;
-    glm::vec3 colorSpecular;
+    glm::vec3 colorSpecular  = { 0.7, 0.7, 0.7 };
     float     colorShininess = 32.0f;
 };
 

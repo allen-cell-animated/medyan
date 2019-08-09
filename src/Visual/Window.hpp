@@ -358,7 +358,7 @@ struct VisualDisplay {
 
                         vp.shader.setVec3("dirLights[0].direction", glm::vec3 {1.0f, 1.0f, 1.0f});
                         vp.shader.setVec3("dirLights[0].ambient",   glm::vec3 {0.05f, 0.05f, 0.05f});
-                        vp.shader.setVec3("dirLights[0].diffuse",   glm::vec3 {0.4f, 0.4f, 0.4f});
+                        vp.shader.setVec3("dirLights[0].diffuse",   glm::vec3 {0.3f, 0.3f, 0.3f});
                         vp.shader.setVec3("dirLights[0].specular",  glm::vec3 {0.5f, 0.5f, 0.5f});
 
                         const glm::vec3 pointLightPositions[4] {
@@ -368,33 +368,33 @@ struct VisualDisplay {
                             { 3500.0f, 3500.0f, -500.0f }
                         };
                         vp.shader.setVec3("pointLights[0].position", pointLightPositions[0]);
-                        vp.shader.setVec3("pointLights[0].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
-                        vp.shader.setVec3("pointLights[0].diffuse",  glm::vec3 { 0.8f, 0.8f, 0.8f });
-                        vp.shader.setVec3("pointLights[0].sepcular", glm::vec3 { 1.0f, 1.0f, 1.0f });
+                        vp.shader.setVec3("pointLights[0].ambient",  glm::vec3 { 0.0f, 0.0f, 0.0f });
+                        vp.shader.setVec3("pointLights[0].diffuse",  glm::vec3 { 0.6f, 0.6f, 0.6f });
+                        vp.shader.setVec3("pointLights[0].specular", glm::vec3 { 1.0f, 1.0f, 1.0f });
                         vp.shader.setFloat("pointLights[0].constant",  1.0f);
-                        vp.shader.setFloat("pointLights[0].linear",    0.09f);
-                        vp.shader.setFloat("pointLights[0].quadratic", 0.032f);
+                        vp.shader.setFloat("pointLights[0].linear",    7e-5f);
+                        vp.shader.setFloat("pointLights[0].quadratic", 1.8e-8f);
                         vp.shader.setVec3("pointLights[1].position", pointLightPositions[1]);
-                        vp.shader.setVec3("pointLights[1].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
-                        vp.shader.setVec3("pointLights[1].diffuse",  glm::vec3 { 0.8f, 0.8f, 0.8f });
-                        vp.shader.setVec3("pointLights[1].sepcular", glm::vec3 { 1.0f, 1.0f, 1.0f });
+                        vp.shader.setVec3("pointLights[1].ambient",  glm::vec3 { 0.0f, 0.0f, 0.0f });
+                        vp.shader.setVec3("pointLights[1].diffuse",  glm::vec3 { 0.6f, 0.6f, 0.6f });
+                        vp.shader.setVec3("pointLights[1].specular", glm::vec3 { 1.0f, 1.0f, 1.0f });
                         vp.shader.setFloat("pointLights[1].constant",  1.0f);
-                        vp.shader.setFloat("pointLights[1].linear",    0.09f);
-                        vp.shader.setFloat("pointLights[1].quadratic", 0.032f);
+                        vp.shader.setFloat("pointLights[1].linear",    7e-5f);
+                        vp.shader.setFloat("pointLights[1].quadratic", 1.8e-8f);
                         vp.shader.setVec3("pointLights[2].position", pointLightPositions[2]);
-                        vp.shader.setVec3("pointLights[2].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
+                        vp.shader.setVec3("pointLights[2].ambient",  glm::vec3 { 0.0f, 0.0f, 0.0f });
                         vp.shader.setVec3("pointLights[2].diffuse",  glm::vec3 { 0.0f, 0.0f, 0.0f });
-                        vp.shader.setVec3("pointLights[2].sepcular", glm::vec3 { 0.0f, 0.0f, 0.0f });
+                        vp.shader.setVec3("pointLights[2].specular", glm::vec3 { 0.0f, 0.0f, 0.0f });
                         vp.shader.setFloat("pointLights[2].constant",  1.0f);
-                        vp.shader.setFloat("pointLights[2].linear",    0.09f);
-                        vp.shader.setFloat("pointLights[2].quadratic", 0.032f);
+                        vp.shader.setFloat("pointLights[2].linear",    7e-5f);
+                        vp.shader.setFloat("pointLights[2].quadratic", 1.8e-8f);
                         vp.shader.setVec3("pointLights[3].position", pointLightPositions[3]);
-                        vp.shader.setVec3("pointLights[3].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
+                        vp.shader.setVec3("pointLights[3].ambient",  glm::vec3 { 0.0f, 0.0f, 0.0f });
                         vp.shader.setVec3("pointLights[3].diffuse",  glm::vec3 { 0.0f, 0.0f, 0.0f });
-                        vp.shader.setVec3("pointLights[3].sepcular", glm::vec3 { 0.0f, 0.0f, 0.0f });
+                        vp.shader.setVec3("pointLights[3].specular", glm::vec3 { 0.0f, 0.0f, 0.0f });
                         vp.shader.setFloat("pointLights[3].constant",  1.0f);
-                        vp.shader.setFloat("pointLights[3].linear",    0.09f);
-                        vp.shader.setFloat("pointLights[3].quadratic", 0.032f);
+                        vp.shader.setFloat("pointLights[3].linear",    7e-5f);
+                        vp.shader.setFloat("pointLights[3].quadratic", 1.8e-8f);
                     }
 
                     for(const auto& ve : vp.visualElements) {
