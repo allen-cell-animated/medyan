@@ -249,25 +249,11 @@ struct VisualDisplay {
             {
                 auto& ve = newVe();
                 ve->profile.enabled = true;
-                ve->profile.flag = Profile::targetMembrane | Profile::displayForce;
-                ve->profile.colorAmbient = glm::vec3(0.3f, 0.6f, 0.95f);
-                ve->profile.colorDiffuse = glm::vec3(0.3f, 0.6f, 0.95f);
-            }
-            {
-                auto& ve = newVe();
-                ve->profile.enabled = true;
                 ve->profile.flag = Profile::targetFilament;
                 ve->profile.pathMode = Profile::PathMode::Extrude;
                 ve->profile.polygonMode = GL_FILL;
                 ve->profile.pathExtrudeRadius = 7.5f;
                 ve->profile.pathExtrudeSides = 15;
-                ve->profile.colorAmbient = glm::vec3(0.95f, 0.1f, 0.15f);
-                ve->profile.colorDiffuse = glm::vec3(0.95f, 0.1f, 0.15f);
-            }
-            {
-                auto& ve = newVe();
-                ve->profile.enabled = true;
-                ve->profile.flag = Profile::targetFilament | Profile::displayForce;
                 ve->profile.colorAmbient = glm::vec3(0.95f, 0.1f, 0.15f);
                 ve->profile.colorDiffuse = glm::vec3(0.95f, 0.1f, 0.15f);
             }
@@ -318,8 +304,19 @@ struct VisualDisplay {
                 ve->state.eleMode = GL_LINES;
                 ve->profile.enabled = true;
                 ve->profile.flag = Profile::targetCompartment;
-                ve->profile.colorAmbient = glm::vec3(0.8f, 0.8f, 0.8f);
                 ve->profile.colorDiffuse = glm::vec3(0.8f, 0.8f, 0.8f);
+            }
+            {
+                auto& ve = newVe();
+                ve->profile.enabled = true;
+                ve->profile.flag = Profile::targetMembrane | Profile::displayForce;
+                ve->profile.colorDiffuse = glm::vec3(0.3f, 0.6f, 0.95f);
+            }
+            {
+                auto& ve = newVe();
+                ve->profile.enabled = true;
+                ve->profile.flag = Profile::targetFilament | Profile::displayForce;
+                ve->profile.colorDiffuse = glm::vec3(0.95f, 0.1f, 0.15f);
             }
         } // ~lock_guard (vpLine)
 
