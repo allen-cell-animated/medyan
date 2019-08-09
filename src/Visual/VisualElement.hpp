@@ -53,10 +53,10 @@ struct Profile {
     GLenum polygonMode = GL_LINE;
 
     // color settings
-    glm::vec3 colorAmbient;
+    glm::vec3 colorAmbient; // Currently not used
     glm::vec3 colorDiffuse;
     glm::vec3 colorSpecular;
-    float     colorShininess;
+    float     colorShininess = 32.0f;
 };
 
 struct GlSize {

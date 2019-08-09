@@ -21,7 +21,7 @@ uniform mat4 projection;
 
 void main() {
     ModelPos = vec3(model * vec4(aPos, 1.0));
-    Normal = modelInvTrans3 * aNormal;
+    Normal = normalize(modelInvTrans3 * aNormal);
 
     // Simplified color (used in ambient and diffuse color)
     Color = aColor;
@@ -36,7 +36,7 @@ out vec4 FragColor;
 
 in vec3 ModelPos;
 in vec3 Normal;
-in vec3 Color;
+in vec3 Color; // Currently not used
 
 struct Material {
     vec3 diffuse; // also for ambient
@@ -76,7 +76,15 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir);
 vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main() {
-    FragColor = vec4(Color, 1.0f);
+    vec3 viewDir = normalize(CameraPos - ModelPos);
+
+    vec3 result = vec3(0.0, 0.0, 0.0);
+    for(int i = 0; i < NUM_DIR_LIGHTS; ++i)
+        result += calcDirLight(dirLights[i], Normal, viewDir);
+    for(int i = 0; i < NUM_POINT_LIGHTS; ++i)
+        result += calcPointLight(pointLights[i], Normal, ModelPos, viewDir);
+
+    FragColor = vec4(result, 1.0);
 }
 
 vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir) {
