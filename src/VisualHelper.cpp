@@ -95,9 +95,9 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         ve->state.vertexAttribs.push_back(coord[1]);
                         ve->state.vertexAttribs.push_back(coord[2]);
                         ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + ve->state.size.vaNormalSize); // dummy normal
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.x);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.y);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.z);
 
                         const auto force = forces[i];
                         const auto forceTip = force * ve->profile.forceScale + coord;
@@ -105,9 +105,9 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         ve->state.vertexAttribs.push_back(forceTip[1]);
                         ve->state.vertexAttribs.push_back(forceTip[2]);
                         ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + ve->state.size.vaNormalSize); // dummy normal
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.x);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.y);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.z);
                     }
                 }
 
@@ -195,9 +195,9 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         ve->state.vertexAttribs.push_back(coord[1]);
                         ve->state.vertexAttribs.push_back(coord[2]);
                         ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + ve->state.size.vaNormalSize); // dummy normal
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.x);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.y);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.z);
 
                         const auto force = forces[i];
                         const auto forceTip = force * ve->profile.forceScale + coord;
@@ -205,9 +205,9 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         ve->state.vertexAttribs.push_back(forceTip[1]);
                         ve->state.vertexAttribs.push_back(forceTip[2]);
                         ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + ve->state.size.vaNormalSize); // dummy normal
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.x);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.y);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.z);
                     }
                 }
 
@@ -342,7 +342,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
     }
     else if(ve->profile.flag & (Profile::targetLinker | Profile::targetMotor | Profile::targetBrancher)) {
         //-----------------------------------------------------------------
-        // Linker or Motor Shape
+        // Linker, motor or brancher shape
         //-----------------------------------------------------------------
         if(sdfv.updated & sys_data_update::BeadPosition) {
             ve->state.vertexAttribs.clear();
@@ -425,15 +425,15 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         ve->state.vertexAttribs.push_back(coord0[0]);
                         ve->state.vertexAttribs.push_back(coord0[1]);
                         ve->state.vertexAttribs.push_back(coord0[2]);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.x);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.y);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.z);
                         ve->state.vertexAttribs.push_back(coord1[0]);
                         ve->state.vertexAttribs.push_back(coord1[1]);
                         ve->state.vertexAttribs.push_back(coord1[2]);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.x);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.y);
+                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.z);
                     }
                 }
             };
