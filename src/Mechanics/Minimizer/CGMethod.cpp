@@ -1098,8 +1098,9 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
 }
 #endif // CUDAACCL
 
-floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
-                                        floatingpoint LAMBDAMAX, bool *gpu_safestate) {
+floatingpoint CGMethod::backtrackingLineSearch(
+    ForceFieldManager& FFM, floatingpoint MAXDIST, floatingpoint maxForce,
+    floatingpoint LAMBDAMAX, bool *gpu_safestate) {
 
     //@{ Lambda phase 1
     floatingpoint lambda;
@@ -1252,8 +1253,10 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 
 }
 
-floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
-                                            floatingpoint LAMBDAMAX, bool *gpu_safestate) {
+floatingpoint CGMethod::safeBacktrackingLineSearch(
+    ForceFieldManager& FFM, floatingpoint MAXDIST, floatingpoint maxForce,
+    floatingpoint LAMBDAMAX, bool *gpu_safestate) {
+
     //reset safe mode
     _safeMode = false;
     sconvergencecheck = true;
