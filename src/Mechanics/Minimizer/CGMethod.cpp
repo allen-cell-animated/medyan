@@ -1098,8 +1098,9 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
 }
 #endif // CUDAACCL
 
-floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
-                                        floatingpoint LAMBDAMAX, bool *gpu_safestate) {
+floatingpoint CGMethod::backtrackingLineSearch(
+    ForceFieldManager& FFM, floatingpoint MAXDIST, floatingpoint maxForce,
+    floatingpoint LAMBDAMAX, bool *gpu_safestate) {
 
     //@{ Lambda phase 1
     floatingpoint lambda;
@@ -1110,27 +1111,28 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
     cconvergencecheck[0] = true;
 #endif
 #ifdef SERIAL
-    floatingpoint f = maxF();
     //return zero if no forces
-    if(f == 0.0){
+    if(maxForce == 0.0) {
         lambda = 0.0;
 #ifdef DETAILEDOUTPUT_LAMBDA
         std::cout<<"initial_lambda_serial "<<lambda<<endl;
 #endif
-        sconvergencecheck = true;}
+        return lambda;
+    }
+
     //calculate first lambda
 	floatingpoint ravg = sum/(maxprevlambdacount);
     if(runningaveragestatus)
-	    lambda = min<floatingpoint>(min<floatingpoint >(LAMBDAMAX, MAXDIST / f), ravg);
+	    lambda = min<floatingpoint>(min<floatingpoint >(LAMBDAMAX, MAXDIST / maxForce), ravg);
     else
-	    lambda = min(LAMBDAMAX, MAXDIST / f);
+	    lambda = min(LAMBDAMAX, MAXDIST / maxForce);
 	   /* cout<<"lambda old "<<lambda<<" lambda max "<<LAMBDAMAX<<" maxdist/f "
 	    <<MAXDIST/f<<" ravg "<<ravg<<endl;*/
 
 
     //@} Lambda phase 1
 #ifdef DETAILEDOUTPUT_LAMBDA
-    std::cout<<"SL lambdamax "<<LAMBDAMAX<<" serial_lambda "<<lambda<<" fmax "<<f<<" state "<<sconvergencecheck<<endl;
+    std::cout<<"SL lambdamax "<<LAMBDAMAX<<" serial_lambda "<<lambda<<" fmax "<<maxForce<<" state "<<sconvergencecheck<<endl;
 #endif
 #endif
 	tbegin = chrono::high_resolution_clock::now();
@@ -1252,13 +1254,19 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 
 }
 
-floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
-                                            floatingpoint LAMBDAMAX, bool *gpu_safestate) {
+floatingpoint CGMethod::safeBacktrackingLineSearch(
+    ForceFieldManager& FFM, floatingpoint MAXDIST, floatingpoint maxForce,
+    floatingpoint LAMBDAMAX, bool *gpu_safestate) {
+
     //reset safe mode
     _safeMode = false;
     sconvergencecheck = true;
+
+    if(maxForce == 0.0) { return 0.0; }
+
     //calculate first lambda
-    floatingpoint lambda = LAMBDAMAX;
+    floatingpoint lambda = std::min(LAMBDAMAX, MAXDIST / maxForce);
+
 //    std::cout<<"safe 0"<<endl;
 #ifdef SERIAL //SERIAL
     sconvergencecheck = false;
@@ -1324,7 +1332,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
             //just shake if we cant find an energy min,
             //so we dont get stuck
             if(lambda <= 0.0 || lambda <= LAMBDATOL) {
-                lambda = MAXDIST / maxF();
+                lambda = MAXDIST / maxForce;
                 sconvergencecheck = true;
             }
 /*            cout<<"Safe energyChange "<<energyChange<<" maxF"<<maxF()<<" MAXDIST "
