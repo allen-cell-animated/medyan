@@ -203,10 +203,13 @@ void BranchingPoint::updateReactionRates() {
         ReactionBase* offRxn = _cBranchingPoint->getOffReaction();
                 
         //change the rate
-        float newRate = _unbindingChangers[_branchType]->changeRate(offRxn->getBareRate(), force);
+        float factor = _unbindingChangers[_branchType]->getRateChangeFactor(force);
         if(SysParams::RUNSTATE==false)
-        {newRate=0.0;}
-        offRxn->setRate(newRate);
+            offRxn->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
+        else
+            offRxn->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
+
+        offRxn->setRateMulFactor(factor, ReactionBase::MECHANOCHEMICALFACTOR);
         offRxn->updatePropensity();    
 }
             

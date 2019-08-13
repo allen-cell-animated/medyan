@@ -26,10 +26,16 @@ ChemSimpleGillespieImpl::~ChemSimpleGillespieImpl() noexcept {
 floatingpoint ChemSimpleGillespieImpl::generateTau(floatingpoint a){
     exponential_distribution<floatingpoint>::param_type pm(a);
     _exp_distr.param(pm);
+    #ifdef DEBUGCONSTANTSEED
+    Rand::chemistrycounter++;
+    #endif
     return _exp_distr(Rand::eng);
 }
 
 floatingpoint ChemSimpleGillespieImpl::generateUniform(){
+    #ifdef DEBUGCONSTANTSEED
+    Rand::chemistrycounter++;
+    #endif
     return _uniform_distr(Rand::eng);
 }
 

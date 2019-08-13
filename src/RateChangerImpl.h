@@ -44,6 +44,8 @@ public:
     BrownianRatchet(floatingpoint charLength) : _x(charLength) {}
     
     virtual float changeRate(float bareRate, floatingpoint force);
+
+    virtual float getRateChangeFactor(floatingpoint force);
 };
 
 ///A catch-slip bond implementation of the LinkerRateChanger.
@@ -75,6 +77,8 @@ public:
     _x1(charLength1), _x2(charLength2) {}
     
     virtual float changeRate(float bareRate, floatingpoint force);
+
+    virtual float getRateChangeFactor(floatingpoint force);
 };
 
 ///A slip bond implementation of the LinkerRateChanger.
@@ -98,6 +102,8 @@ public:
     : LinkerRateChanger(linkerType), _x(charLength) {}
     
     virtual float changeRate(float bareRate, floatingpoint force);
+
+    virtual float getRateChangeFactor(floatingpoint force);
 };
 
 ///A slip bond implementation of the BrancherRateChanger.
@@ -114,6 +120,8 @@ public:
     : BranchRateChanger(branchType), _x(charLength) {}
     
     virtual float changeRate(float bareRate, floatingpoint force);
+
+    virtual float getRateChangeFactor(floatingpoint force);
 };
 
 ///A catch bond implementation of the MotorRateChanger

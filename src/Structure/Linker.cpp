@@ -161,16 +161,19 @@ void Linker::updateReactionRates() {
     ReactionBase* offRxn = _cLinker->getOffReaction();
 
     //change the rate
-    float newRate = _unbindingChangers[_linkerType]->changeRate(offRxn->getBareRate(), force);
+    float factor = _unbindingChangers[_linkerType]->getRateChangeFactor(force);
     if(SysParams::RUNSTATE==false)
-    {newRate=0.0;}
+        offRxn->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
+    else
+        offRxn->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
+
 #ifdef DETAILEDOUTPUT
     std::cout<<"Linker UB f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
             ""<<coordinate[1]<<" "
             ""<<coordinate[2]<<endl;
 #endif
 
-    offRxn->setRateScaled(newRate);
+    offRxn->setRateMulFactor(factor, ReactionBase::MECHANOCHEMICALFACTOR);
     offRxn->updatePropensity();
 }
 

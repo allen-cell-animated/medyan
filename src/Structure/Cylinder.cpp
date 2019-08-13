@@ -57,7 +57,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     : Trackable(true, true, true, false),
       _b1(b1), _b2(b2), _type(type), _position(position),
       DatabaseType(CylinderInfoData::CylinderInfo {}) {
-    
+
     parent->addChild(unique_ptr<Component>(this));
 	//@{
 
@@ -122,6 +122,12 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 }
 
 Cylinder::~Cylinder() noexcept {
+	#ifdef CROSSCHECK_IDX
+	cout<<"cindex "<<getStableIndex()<<" removed from ID "<<getId()<<" with bindices "
+	<<_b1->getStableIndex()<<" "<<_b2->getStableIndex()<<" and bID "<<_b1->getId()<<" "
+																		 ""<<_b2->getId()
+																		 <<endl;
+	#endif
     //remove from compartment
     _cellElement.manager->removeElement(_cellElement);
     
@@ -135,7 +141,6 @@ void Cylinder::updatePosition() {
 
 		//check if were still in same compartment, set new position
 		updateCoordinate();
-
 		Compartment *c;
 		try { c = GController::getCompartment(coordinate); }
 		catch (exception &e) {
@@ -148,6 +153,10 @@ void Cylinder::updatePosition() {
 
         Compartment* curCompartment = getCompartment();
 		if (c != curCompartment) {
+			#ifdef CHECKRXN
+			cout<<"move Cmp Cylinder with ID "<<getId()<<" from Cmp "
+			    <<getCompartment()->getId()<<" to Cmp "<<c->getId()<<endl;
+			#endif
 			mins = chrono::high_resolution_clock::now();
 
 			//remove from old compartment, add to new
@@ -198,33 +207,34 @@ void Cylinder::updatePosition() {
 /// If there is no force on the beads the reaction rates are set to the bare.
 
 void Cylinder::updateReactionRates() {
-    
+
     floatingpoint force;
-    
+
     //if no rate changer was defined, skip
     if(_polyChanger.empty()) return;
-    
+
     //load force from front (affects plus end polymerization)
     if(_plusEnd) {
-        
+
         //get force of front bead
         force = _b2->getLoadForcesP();
-        
+
         //change all plus end polymerization rates
         for(auto &r : _cCylinder->getInternalReactions()) {
-            floatingpoint newRate;
+            floatingpoint factor;
             if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
 
                 //If reaching a threshold time for manual treadmilling rate changer
                 if(tau() > SysParams::DRParams.manualCharStartTime){
                     //all bare rate will be change by a threshold ratio
-                    newRate = _polyChanger[_type]->changeRate(r->getBareRate() * SysParams::DRParams.manualPlusPolyRate, force);
+                    factor = _polyChanger[_type]->getRateChangeFactor(force)*
+                             SysParams::DRParams.manualPlusPolyRate;
                 }
                 else{
-                    newRate = _polyChanger[_type]->changeRate(r->getBareRate(), force);
+                    factor = _polyChanger[_type]->getRateChangeFactor(force);
                 }
 
-                r->setRateScaled(newRate);
+                r->setRateMulFactor(factor, ReactionBase::MECHANOCHEMICALFACTOR);
                 r->updatePropensity();
 
             }
@@ -233,37 +243,38 @@ void Cylinder::updateReactionRates() {
             //If reaching a threshold time for manual treadmilling rate changer
             if(tau() > SysParams::DRParams.manualCharStartTime){
                 if(r->getReactionType() == ReactionType::DEPOLYMERIZATIONPLUSEND) {
-                    r->setRateScaled(r->getBareRate() * SysParams::DRParams.manualPlusDepolyRate);
+                    r->setRateMulFactor(SysParams::DRParams.manualPlusDepolyRate,
+                                        ReactionBase::MANUALRATECHANGEFACTOR1);
                     r->updatePropensity();
                 }
             }
         }
-    
     }
 
     //load force from back (affects minus end polymerization)
     if(_minusEnd) {
-        
+
         //get force of front bead
         force = _b1->getLoadForcesM();
-        
+
         //change all plus end polymerization rates
         for(auto &r : _cCylinder->getInternalReactions()) {
-            floatingpoint newRate;
+            floatingpoint factor;
             if(r->getReactionType() == ReactionType::POLYMERIZATIONMINUSEND) {
-                
+
                 //If reaching a threshold time for manual treadmilling rate changer
                 if(tau() > SysParams::DRParams.manualCharStartTime){
                     //all bare rate will be change by a threshold ratio
-                    newRate = _polyChanger[_type]->changeRate(r->getBareRate() * SysParams::DRParams.manualMinusPolyRate, force);
+                    factor = _polyChanger[_type]->getRateChangeFactor(force) *
+                            SysParams::DRParams.manualMinusPolyRate;
                 }
                 else{
-                    newRate = _polyChanger[_type]->changeRate(r->getBareRate(), force);
-                }
-                
-                r->setRateScaled(newRate);
-                r->updatePropensity();
 
+                    factor = _polyChanger[_type]->getRateChangeFactor(force);
+                }
+
+                r->setRateMulFactor(factor, ReactionBase::MECHANOCHEMICALFACTOR);
+                r->updatePropensity();
             }
 
             //change all minus end depolymerization rates, not force dependent
@@ -271,7 +282,8 @@ void Cylinder::updateReactionRates() {
             if(tau() > SysParams::DRParams.manualCharStartTime){
 
                 if(r->getReactionType() == ReactionType::DEPOLYMERIZATIONMINUSEND) {
-                    r->setRateScaled(r->getBareRate() * SysParams::DRParams.manualMinusDepolyRate);
+                    r->setRateMulFactor(SysParams::DRParams.manualPlusDepolyRate,
+                                        ReactionBase::MANUALRATECHANGEFACTOR1);
                     r->updatePropensity();
                 }
             }
@@ -280,7 +292,7 @@ void Cylinder::updateReactionRates() {
 }
 
 bool Cylinder::isFullLength() {
-    
+
 #ifdef MECHANICS
     return areEqual(_mCylinder->getEqLength(), SysParams::Geometry().cylinderSize[_type]);
 #else
@@ -289,21 +301,21 @@ bool Cylinder::isFullLength() {
 }
 
 void Cylinder::printSelf() {
-    
+
     cout << endl;
-    
+
     cout << "Cylinder: ptr = " << this << endl;
     cout << "Cylinder ID = " << getId() << endl;
     cout << "Parent ptr = " << getParent() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
-    
+
     if(_plusEnd) cout << "Is a plus end." << endl;
     if(_minusEnd) cout << "Is a minus end." << endl;
-    
+
     if(_branchingCylinder != nullptr) cout << "Has a branching cylinder." << endl;
-    
+
     cout << "Position = " << _position << endl;
-    
+
     cout<< "Length "<<_mCylinder->getLength()<<endl;
     cout<< "Eq Length "<<_mCylinder->getEqLength()<<endl;
     cout<< "Eq Theta "<<_mCylinder->getEqTheta()<<endl;
@@ -311,33 +323,33 @@ void Cylinder::printSelf() {
     cout<<" Bending constant "<<_mCylinder->getBendingConst()<<endl;
 
     cout << endl;
-    
+
 #ifdef CHEMISTRY
     cout << "Chemical composition of cylinder:" << endl;
     _cCylinder->printCCylinder();
 #endif
-    
+
     cout << endl;
-    
+
     cout << "Bead information..." << endl;
-    
+
     _b1->printSelf();
     _b2->printSelf();
-    
+
     cout << endl;
 }
 //Ask Qin when this is used
 bool Cylinder::within(Cylinder* other, floatingpoint dist) {
-    
+
     //check midpoints
     if(twoPointDistancesquared(coordinate, other->coordinate) <= (dist * dist))
         return true;
-    
+
     //briefly check endpoints of other
     if(twoPointDistancesquared(coordinate, other->_b1->vcoordinate()) <= (dist * dist) ||
        twoPointDistancesquared(coordinate, other->_b2->vcoordinate()) <= (dist * dist))
         return true;
-    
+
     return false;
 }
 

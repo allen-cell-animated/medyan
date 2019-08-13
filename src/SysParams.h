@@ -100,6 +100,10 @@ struct MechParams {
     floatingpoint* cylsqmagnitudevector;
     vector<int> ncylvec;
     vector<int>bsoffsetvec;
+    
+    // parameters controlling the calculation of the Hessian matrix
+    bool hessTracking = false;
+    float hessDelta = 0.0001;
 
 
 };
@@ -178,6 +182,7 @@ struct ChemParams {
     bool dissTracking = false;
     bool eventTracking = false;
     int difBindInt = 1;
+    
 
     //@}
 #ifdef CUDAACCL_NL

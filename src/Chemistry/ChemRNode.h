@@ -39,6 +39,9 @@ public:
     
     /// Return true if the Reaction is currently passivated
     virtual bool isPassivated() const = 0;
+
+    ///Temporarily adding printSelf to this.
+    virtual void printSelf() const = 0;
 };
 
 #endif

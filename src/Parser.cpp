@@ -238,6 +238,10 @@ void SystemParser::readChemParams() {
 
             }
         }
+        
+        
+        
+        
 
         if (line.find("DIFBINDING:") != string::npos) {
 
@@ -996,6 +1000,24 @@ void SystemParser::readMechParams() {
                 MParams.MTOCBendingK.push_back(atof((lineVector[i].c_str())));
             }
         }
+        
+        if (line.find("HESSIANTRACKING:") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MParams.hessTracking = true;
+                MParams.hessDelta = atof(lineVector[1].c_str());
+                cout<<"delta is "<<MParams.hessDelta<<endl;
+                
+            }
+        }
+        
 
         if (line.find("SPECIALPROTOCOL") != string::npos) {
 
@@ -1089,6 +1111,13 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if (lineVector.size() == 2) {
                 MAlgorithm.lambdaMax = atof(lineVector[1].c_str());
+            }
+        }
+        else if (line.find("LAMBDARUNNINGAVERAGEPROBABILITY") != string::npos) {
+
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() == 2) {
+                MAlgorithm.lambdarunningaverageprobability = atof(lineVector[1].c_str());
             }
         }
     }
@@ -1898,6 +1927,7 @@ BubbleSetup SystemParser::readBubbleSetup() {
                 
             }
                 filamentVector.emplace_back(type, coord1, coord2);}
+                /*Linker Motor*/
             else
             {
                 type = atoi((*(lineVector.begin() + 1)).c_str());

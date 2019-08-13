@@ -17,15 +17,17 @@ A multithreaded versio of the code for both AVX and AVX2 calculations.
 #include <queue> 
 #include <atomic>
 #include <thread>
-#include "SysParams.h"
 
 // #include "xtensor/xarray.hpp"
 // #include "xtensor/xbuilder.hpp"
 // #include "xtensor/xio.hpp"
 
 
-#include "dist_moduleV2/dist_simd.h"
-#include "dist_moduleV2/dist_avx_aux.h"
+//#include "dist_moduleV2/dist_simd.h"
+//#include "dist_moduleV2/dist_avx_aux.h"
+
+#include "dist_simd.h"
+#include "dist_avx_aux.h"
 
 // # define PBLOCKDIMX 4
 // # define PBLOCKDIMY 4
@@ -143,7 +145,7 @@ namespace dist {
 #ifdef NPROCS
 		nthreads = NPROCS;
 #endif
-		nthreads = SysParams::numthreads;
+		nthreads = 1;
 //		cout<<"#threads "<<nthreads<<endl;
 //		cout << "find_distances(...tag_simd<simd_avx_par, float>...) nthreads=" << nthreads << endl;
 		
@@ -152,8 +154,8 @@ namespace dist {
 			threads_avx.push_back(std::thread(kernel_dist_simd_avx_par<D,SELF>, std::ref(out), std::ref(c1), std::ref(c2)));
 		}
 
-			    for(auto &t : threads_avx)
-			    	t.join();
+		for(auto &t : threads_avx)
+			t.join();
 	  
 		// for(uint i=0; i<nblocks; ++i)
 		// 	kernel_dist_simd_avx_par(out, c1, c2);

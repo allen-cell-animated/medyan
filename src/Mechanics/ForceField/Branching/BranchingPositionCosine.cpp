@@ -224,7 +224,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, int *beadSet
 
         floatingpoint cosp =  x;
         posheta = 0.5*M_PI;
-        floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
+        floatingpoint sinp = sqrt(max<floatingpoint>((1-cosp*cosp),(floatingpoint)0.0));
         floatingpoint cospminusq = cosp * cos(posheta) + sinp * sin(posheta);
         U_i = kpos[i] * ( 1 - cospminusq );
 
@@ -292,7 +292,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
 
         floatingpoint cosp =  x;
         posheta = 0.5*M_PI;
-        floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
+        floatingpoint sinp = sqrt(max<floatingpoint>((1-cosp*cosp),(floatingpoint)0.0));
         floatingpoint cospminusq = cosp * cos(posheta) + sinp * sin(posheta);
         U_i = kpos[i] * ( 1 - cospminusq );
 
@@ -362,7 +362,7 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
 
         floatingpoint cosp =  x;
         posheta = 0.5*M_PI;
-        floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
+        floatingpoint sinp = sqrt(max<floatingpoint>((1-cosp*cosp),(floatingpoint)0.0));
         floatingpoint sinpminusq = sinp * cos(posheta) - cosp * sin(posheta);
 
         position = pos[i];
@@ -408,7 +408,7 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
         f3[2] +=  k * ( (1-position)*(coord2[2] - coord1[2]) - xd * C*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
 
 	    #ifdef CHECKFORCES_INF_NAN
-	    if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)||checkNaN_INF(f3,0,2)){
+	    if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)||checkNaN_INF<floatingpoint>(f3,0,2)){
 		    cout<<"Branching Position Force becomes infinite. Printing data "<<endl;
 
             auto b = BranchingPoint::getBranchingPoints()[i];

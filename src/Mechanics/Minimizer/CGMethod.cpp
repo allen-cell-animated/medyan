@@ -444,7 +444,17 @@ floatingpoint CGMethod::maxF() {
         mag2Max = std::max(mag2Max, mathfunc::magnitude2(x));
     }
 
-    return std::sqrt(mag2Max);
+	if(fabs(mag2Max) == numeric_limits<floatingpoint>::infinity()
+	   || mag2Max != mag2Max || mag2Max < -1.0) {
+		cout<<"maxF is infinity. Check parameters. Exiting."<<endl;
+		exit(EXIT_FAILURE);
+	}
+//    for(int i = 0; i < N; i++) {
+//        mag = sqrt(forceAux[i]*forceAux[i]);
+//        if(mag > maxF) maxF = mag;
+//    }
+
+	return std::sqrt(mag2Max);
 }
 
 Bead* CGMethod::maxBead() {
@@ -525,7 +535,72 @@ void CGMethod::startMinimization() {
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
 #endif
-    long Ncyl = Cylinder::getCylinders().size();
+	long Ncyl = Cylinder::getCylinders().size();
+#ifdef CROSSCHECK_IDX
+if(true) {
+	    cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
+	    Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+	    CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
+	    floatingpoint *coord = CUDAcommon::serlvars.coord;
+	    std::cout << "check revectorized cylinders" << endl;
+	    std::cout << "Total Cylinders " << Cylinder::getCylinders().size() << " Beads "
+	              << Bead::getBeads().size() << "maxcindex " << Cylinder::getmaxcindex()
+	              <<" maxbindex "<<Bead::getmaxbindex()<<endl;
+	    if(false){
+	    	for(auto b:Bead::getBeads()){
+	    		long idx1 = b->_dbIndex;
+	    		cout<<"Bead ID "<<b->getID()<<" index "<<idx1<<" Coords "<<coord[3 * idx1]
+	    		<< " " << coord[3 * idx1 + 1] << " " << coord[3 * idx1 + 2]<<" Force "
+	    		<<force[3 * idx1] << " " << force[3 * idx1 + 1] << " " << force[3 * idx1 + 2]<<endl;
+	    	}
+	    }
+	    if(false) {
+		    for (auto cyl:Cylinder::getCylinders()) {
+			    int i = cyl->_dcIndex;
+			    int id1 = cylindervec[i].ID;
+			    int id2 = Cylinderpointervec[i]->getID();
+			    int id3 = ccylindervec[i]->getCylinder()->getID();
+			    if (id1 != id2 || id2 != id3 || id3 != id1)
+				    std::cout << id1 << " " << id2 << " " << id3 << endl;
+			    auto b1 = cyl->getFirstBead();
+			    auto b2 = cyl->getSecondBead();
+			    long idx1 = b1->_dbIndex;
+			    long idx2 = b2->_dbIndex;
+			    cylinder c = cylindervec[i];
+			    std::cout << "bindices for cyl with ID " << cyl->getID() << " cindex " << i
+			              <<
+			              " are " << idx1 << " " << idx2 << " " << c.bindices[0] << " "
+			              << c.bindices[1] << " coords ";
+			    std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
+			              << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
+			              << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2]
+			              << " forces ";
+			    std::cout << force[3 * idx1] << " " << force[3 * idx1 + 1] << " "
+			              << force[3 * idx1 + 2] << " " << force[3 * idx2] << " "
+			              << force[3 * idx2 + 1] << " " << force[3 * idx2 + 2] << endl;
+			    if (c.bindices[0] != idx1 || c.bindices[1] != idx2) {
+
+				    std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1]
+				              << " " << b1->coordinate[2] << " " << " " << b2->coordinate[0]
+				              << " " << b2->coordinate[1] << " " << b2->coordinate[2]
+				              << " idx " << b1->_dbIndex << " " << b2->_dbIndex << "ID "
+				                                                                   ""
+				              << b1->getID() << " " << b2->getID() << endl;
+
+				    std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
+				              << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
+				              << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] << endl;
+				    std::cout << force[3 * idx1] << " " << force[3 * idx1 + 1] << " "
+				              << force[3 * idx1 + 2] << " " << force[3 * idx2] << " "
+				              << force[3 * idx2 + 1] << " " << force[3 * idx2 + 2] << endl;
+				    exit(EXIT_FAILURE);
+			    }
+		    }
+	    }
+
+    }
+#endif
+
 
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
@@ -1098,9 +1173,10 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
 }
 #endif // CUDAACCL
 
-floatingpoint CGMethod::backtrackingLineSearch(
-    ForceFieldManager& FFM, floatingpoint MAXDIST, floatingpoint maxForce,
-    floatingpoint LAMBDAMAX, bool *gpu_safestate) {
+floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
+                                               floatingpoint maxForce, floatingpoint LAMBDAMAX,
+                                                floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                                                 bool *gpu_safestate) {
 
     //@{ Lambda phase 1
     floatingpoint lambda;
@@ -1146,7 +1222,7 @@ floatingpoint CGMethod::backtrackingLineSearch(
 
     if(ForceFieldManager::_culpritForceField != nullptr){
         endMinimization();
-        FFM.printculprit(force);
+        FFM.printculprit(Bead::getDbData().forces.data());
     }
 #ifdef DETAILEDOUTPUT_ENERGY
     CUDAcommon::handleerror(cudaDeviceSynchronize());
@@ -1237,12 +1313,13 @@ floatingpoint CGMethod::backtrackingLineSearch(
         if(headpos==maxprevlambdacount-1) {
 	        headpos = 0;
 	        floatingpoint temp = Rand::randfloatingpoint(0,1);
-	        if( temp >= 0.7) {
-		        runningaveragestatus = false;
+	        if( temp >= LAMBDARUNNINGAVERAGEPROBABILITY) {
+		        runningaveragestatus = true;
 //		        cout<<"running lambda turned off "<<endl;
 	        }
 	        else {
-		        runningaveragestatus = true;
+		        runningaveragestatus = false;
+
 //		        cout<<"running lambda turned on "<<endl;
 	        }
         }
@@ -1284,7 +1361,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(
 
     if(ForceFieldManager::_culpritForceField != nullptr){
         endMinimization();
-        FFM.printculprit(force);
+	    FFM.printculprit(Bead::getDbData().forces.data());
     }
 #ifdef DETAILEDOUTPUT_ENERGY
     CUDAcommon::handleerror(cudaDeviceSynchronize());

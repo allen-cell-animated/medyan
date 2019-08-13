@@ -22,6 +22,7 @@
 #include "CController.h"
 #include "DRController.h"
 #include "DissipationTracker.h"
+#include "Restart.h"
 #include "Structure/SubSystem.h"
 
 //FORWARD DECLARATIONS
@@ -32,7 +33,7 @@ class FilamentBindingManager;
 /// Used to initialize, manage, and run an entire simulation.
 
 /*!
- *  The Controller is initialized in the main program, and initializes the SubSystem 
+ *  The Controller is initialized in the main program, and initializes the SubSystem
  *  given an initial input directory. After initialization of all member controllers,
  *  the Controller class can run a simulation given the already read input parameters, 
  *  by iteratively switching between mechanical equilibration and stochastic chemical 
@@ -80,6 +81,8 @@ private:
     vector<Compartment*> activatecompartments;
     multimap<int,Compartment*> fCompmap;
     multimap<int,Compartment*> bCompmap;
+
+    Restart* _restart;
     //@}
     floatingpoint bounds[2], bounds_prev[2];
     ///INITIALIZATION HELPER FUNCTIONS

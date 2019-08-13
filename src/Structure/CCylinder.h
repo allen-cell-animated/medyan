@@ -46,14 +46,28 @@ class CCylinder {
 friend class CController;
     
 private:
+    #ifdef DEBUGCONSTANTSEED
+	using internalreactiondatatype = unordered_set<ReactionBase*, HashbyId<ReactionBase*>,
+			customEqualId<ReactionBase*>>;
+//	using internalreactiondatatype = set<ReactionBase*, customcompareId<ReactionBase*>>;
+	using reactingcylindersdatatype = set<CCylinder*, customcompareId<CCylinder*>>;
+	using crosscylinderreactionsdatatype = map<CCylinder*,unordered_set<ReactionBase*, HashbyId<ReactionBase*>,
+			customEqualId<ReactionBase*>>>;
+	#else
+    using internalreactiondatatype = unordered_set<ReactionBase*>;
+    using reactingcylindersdatatype = unordered_set<CCylinder*>;//This can be rewritten
+    // as a set of CCylinder IDs.
+    using crosscylinderreactionsdatatype = map<CCylinder*,unordered_set<ReactionBase*>>;
+	#endif
+
     vector<unique_ptr<CMonomer>> _monomers; ///< List of monomers
     
     ///REACTION CONTAINERS
-    unordered_set<ReactionBase*> _internalReactions;///< Set of internal reactions associated
-    
-    unordered_set<CCylinder*> _reactingCylinders;   ///< Set of ccylinders that this ccylinder has
+    internalreactiondatatype _internalReactions;///< Set of internal reactions associated
+
+	reactingcylindersdatatype _reactingCylinders;   ///< Set of ccylinders that this ccylinder has
                                                     ///< reactions with, but not ownership
-    map<CCylinder*,unordered_set<ReactionBase*>> _crossCylinderReactions;
+    crosscylinderreactionsdatatype _crossCylinderReactions;
     ///< Map of cross-cylinder reactions owned
     
     Compartment* _compartment; ///< Compartment this ccylinder is in
@@ -104,13 +118,13 @@ public:
     CMonomer* getCMonomer(int index) {return _monomers[index].get();}
     
     ///Get list of reactions associated
-    const unordered_set<ReactionBase*>& getInternalReactions() {return _internalReactions;}
+    const internalreactiondatatype& getInternalReactions() {return _internalReactions;}
     
     ///Get list of reacting cylinders associated
-    const unordered_set<CCylinder*>& getReactingCylinders() {return _reactingCylinders;}
+    const reactingcylindersdatatype& getReactingCylinders() {return _reactingCylinders;}
     
     ///Get map of reactions associated
-    map<CCylinder*,unordered_set<ReactionBase*>>& getCrossCylinderReactions() {
+    crosscylinderreactionsdatatype& getCrossCylinderReactions() {
         return _crossCylinderReactions;
     }
     
@@ -152,6 +166,8 @@ public:
     
     /// Get the type
     short getType();
+
+    int getId();
     
 };
 
