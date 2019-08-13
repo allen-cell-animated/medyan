@@ -171,6 +171,7 @@ void CCylinder:: removeAllInternalReactions() {
 
 void CCylinder::removeCrossCylinderReaction(CCylinder* other,
                                             ReactionBase* r) {
+	if (r == nullptr) return;
     #ifdef CHECKRXN
     cout<<"Removing cross Cylinder Reaction"<<endl;
 	#endif
@@ -375,4 +376,6 @@ short CCylinder::getType() {
     
     return _pCylinder->getType();
 }
+
+int CCylinder::getId(){ return _pCylinder->getId();}
 

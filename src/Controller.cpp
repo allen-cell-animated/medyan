@@ -777,7 +777,10 @@ void Controller::updatePositions() {
 
     minsp = chrono::high_resolution_clock::now();
     //update all other moveables
-    for(auto m : _subSystem->getMovables()) m->updatePosition();
+//    for(auto m : _subSystem->getMovables()) m->updatePosition();
+	int count = 0;
+	for(auto m : Movable::getMovableList()) m->updatePosition();
+
 
     minep = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> compartment_update2(minep - minsp);
@@ -787,7 +790,21 @@ void Controller::updatePositions() {
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
     /// update all reactables
-    for(auto r : _subSystem->getReactables()) r->updateReactionRates();
+//    for(auto r : _subSystem->getReactables()) r->updateReactionRates();
+	for(auto r : Reactable::getReactableList()){
+		r->updateReactionRates();
+/*		cout<<r<<endl;
+		if(dynamic_cast<MotorGhost*>(r)){
+			auto m = static_cast<MotorGhost*>(r);
+			cout<<m->getId()<<endl;
+		}
+		else{
+			if(dynamic_cast<Linker*>(r)){
+				auto m = static_cast<Linker*>(r);
+				cout<<m->getId()<<endl;
+			}
+		}*/
+		}
 }
 #endif
 

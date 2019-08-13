@@ -94,11 +94,10 @@ public:
         T *t = new T(forward<Args>(args)...);
         t->addToSubSystem();
 
-
         //if movable or reactable, add
-        if (t->_movable) addMovable((Movable *) t);
+//        if (t->_movable) addMovable((Movable *) t);
 
-        if (t->_reactable) addReactable((Reactable *) t);
+//        if (t->_reactable) addReactable((Reactable *) t);
 
         //if neighbor, add
         if (t->_dneighbor) {
@@ -139,9 +138,9 @@ public:
         t->removeFromSubSystem();
 
         //if movable or reactable, remove
-        if (t->_movable) removeMovable((Movable *) t);
+//        if (t->_movable) removeMovable((Movable *) t);
 
-        if (t->_reactable) removeReactable((Reactable *) t);
+//        if (t->_reactable) removeReactable((Reactable *) t);
 
         //if neighbor, remove
         if (t->_dneighbor) {
@@ -163,37 +162,29 @@ public:
 
     //@{
     /// Setter functions for Movable
-    void addMovable(Movable *mov) { _movables.insert(mov); }
+//    void addMovable(Movable *mov) { _movables.insert(mov); }
 
-    void removeMovable(Movable *mov) {
+    /*void removeMovable(Movable *mov) {
         auto it = _movables.find(mov);
         if (it != _movables.end()) _movables.erase(it);
-    }
+    }*/
 
     //@}
     /// Get all Movable
-	#ifdef DEBUGCONSTANTSEED
-	set<Movable *> &getMovables() { return _movables; }
-	#else
-    const unordered_set<Movable *> &getMovables() { return _movables; }
-	#endif
+//    const unordered_set<Movable *> &getMovables() { return _movables; }
 
     //@{
     /// Setter function for Reactable
-    void addReactable(Reactable *r) { _reactables.insert(r); }
+    /*void addReactable(Reactable *r) { _reactables.insert(r); }
 
     void removeReactable(Reactable *r) {
         auto it = _reactables.find(r);
         if (it != _reactables.end()) _reactables.erase(it);
-    }
+    }*/
 
     //@}
     /// Get all Reactable
-	#ifdef DEBUGCONSTANTSEED
-	const set<Reactable *> &getReactables() { return _reactables; }
-	#else
-    const unordered_set<Reactable *> &getReactables() { return _reactables; }
-	#endif
+//    const unordered_set<Reactable *> &getReactables() { return _reactables; }
 
     /// Get the subsystem boundary
     Boundary *getBoundary() { return _boundary; }
@@ -271,13 +262,8 @@ private:
     dist::Coords temptest;
     floatingpoint _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer
-#ifdef DEBUGCONSTANTSEED
-	set<Movable*> _movables; ///< All movables in the subsystem
-	set<Reactable*> _reactables; ///< All reactables in the subsystem
-#else
-    unordered_set<Movable*> _movables; ///< All movables in the subsystem
-    unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
-#endif
+//    unordered_set<Movable*> _movables; ///< All movables in the subsystem
+//    unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
 
     std::vector<NeighborList*> _neighborLists; ///< All neighborlists in the system
     std::vector<NeighborList*> __bneighborLists; ///< Boundary neighborlists in the system.

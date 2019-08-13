@@ -86,8 +86,7 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
 CMotorGhost::~CMotorGhost() {
     #ifdef CHECKRXN
 	cout<<"Remove cross mID destructor "<<_pMotorGhost->getId()<<" Cylinders "
-														""<<_cc1->getCylinder()
-			->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<_offRxn<<endl;
+	<<_cc1->getCylinder()->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<_offRxn<<endl;
     #endif
     
     //remove the off reaction
@@ -138,7 +137,7 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     setOffReaction(offRxn);
     #ifdef CHECKRXN
     cout<<"create MG off rxn "<<offRxn<<"with RNode "<<offRxn->getRnode()<<" with mID "
-    <<_pMotorGhost->getId()<<endl;
+    <<_pMotorGhost->getId()<<" Id "<<offRxn->getId()<<endl;
 	#endif
 }
 
@@ -216,7 +215,7 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
     ConnectionBlock rcb(newOffRxn->connect(mcallback,false));
     #ifdef CHECKRXN
 	cout<<"Remove cross mID "<<_pMotorGhost->getId()<<" Cylinders "<<_cc1->getCylinder()
-			->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<_offRxn<<endl;
+			->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<_offRxn<<" Id " <<_offRxn->getId()<<endl;
     #endif
     //remove old reaction, add new one
     _cc1->removeCrossCylinderReaction(_cc2, _offRxn);
@@ -275,7 +274,7 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
         //remove old off reaction
         #ifdef CHECKRXN
 	    cout<<"Remove cross mID "<<_pMotorGhost->getId()<<" Cylinders "<<_cc1->getCylinder()
-			    ->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<_offRxn<<endl;
+			    ->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<_offRxn<<" Id " <<_offRxn->getId()<<endl;
         #endif
         _cc1->removeCrossCylinderReaction(_cc2, _offRxn);
         
@@ -300,7 +299,7 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
 
         #ifdef CHECKRXN
         cout<<"Remove cross mID "<<_pMotorGhost->getId()<<" Cylinders "<<_cc1->getCylinder()
-                ->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<_offRxn<<endl;
+                ->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<_offRxn<<" Id " <<_offRxn->getId()<<endl;
 		#endif
         //remove old off reaction
         _cc1->removeCrossCylinderReaction(_cc2, _offRxn);

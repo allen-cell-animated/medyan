@@ -119,10 +119,6 @@ void RNodeNRM::generateNewRandTau() {
         newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #endif
     setTau(newTau);
-    #ifdef DEBUGCONSTANTSEED
-    this->printSelf();
-    cout<<"counter "<<Rand::chemistrycounter<<endl;
-	#endif
 //    std::cout<<"generating R and Tau reaction"<<endl;
 //    printSelf();
 }
@@ -218,7 +214,9 @@ bool ChemNRMImpl::makeStep() {
 	#endif
 
     rn->makeStep();
-
+	#ifdef DEBUGCONSTANTSEED
+    cout<<"tau "<<_t<<endl;
+	#endif
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
 #endif

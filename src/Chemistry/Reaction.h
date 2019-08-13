@@ -97,7 +97,12 @@ template <unsigned short M, unsigned short N>
         /// reaction were to be executed.
         virtual vector<ReactionBase*> getAffectedReactions() override
         {
-            unordered_set<ReactionBase*> rxns;
+	        #ifdef DEBUGCONSTANTSEED
+            unordered_set<ReactionBase*, HashbyId<ReactionBase*>,
+                    customEqualId<ReactionBase*>> rxns;
+			#else
+        	unordered_set<ReactionBase*> rxns;
+			#endif
             
             for(int i = 0; i < M + N; i++) {
               
@@ -241,7 +246,7 @@ template <unsigned short M, unsigned short N>
             }
             os << ", " << "curr_rate = " << getRate() << ", a="
 //                    << computePropensity() << "\n";
-               << computePropensity() << ", ReactionBase ptr=" << this << "\n";
+               << computePropensity() << ", ReactionBase ptr=" << this <<"\n";
         }
         
         /// Implementation of  clone()

@@ -590,6 +590,7 @@ public:
         auto it = _boundaryElements.find(be);
         return (it != _boundaryElements.end());
     }
+
     ///get the boundary elements in this compartment
    unordered_set<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}
 
