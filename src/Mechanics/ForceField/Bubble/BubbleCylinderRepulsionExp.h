@@ -38,7 +38,7 @@ public:
 
 	floatingpoint loadForces(Bead* b1, Bead* b2, floatingpoint radius,
 	                                                     floatingpoint kRep,
-	                                                     floatingpoint screenLength);
+	                                                     floatingpoint screenLength) const;
 };
 
 #endif

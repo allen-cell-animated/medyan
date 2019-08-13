@@ -15,12 +15,14 @@
 #define MEDYAN_BoundaryInteractions_h
 
 #include "common.h"
+#include "Mechanics/ForceField/Types.hpp"
 
 //FORWARD DECLARATIONS
 class NeighborList;
 class BoundaryElement;
 class Bead;
 class Component;
+class Cylinder;
 
 /// Represents a BoundaryElement interaction with a Bead.
 class BoundaryInteractions {
@@ -28,6 +30,8 @@ class BoundaryInteractions {
 friend class BoundaryFF;
     
 public:
+    using LoadForceEnd = ForceFieldTypes::LoadForceEnd;
+
     //@{
     /// In the case of an error
     static BoundaryElement* _boundaryElementCulprit;
@@ -48,6 +52,7 @@ public:
     
     /// Compute the load forces on beads from this interaction
     virtual void computeLoadForces() = 0;
+    virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const { }
     
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() = 0;

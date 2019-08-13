@@ -123,6 +123,10 @@ void BubbleFF::computeLoadForces() {
     for (auto &interaction : _bubbleInteractionVector)
         interaction->computeLoadForces();
 }
+void BubbleFF::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
+    for(const auto& interaction : _bubbleInteractionVector)
+        interaction->computeLoadForce(c, end);
+}
 
 vector<NeighborList*> BubbleFF::getNeighborLists() {
     

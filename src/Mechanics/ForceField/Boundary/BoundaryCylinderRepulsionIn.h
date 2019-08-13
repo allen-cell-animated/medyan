@@ -28,6 +28,7 @@
 //FORWARD DECLARATIONS
 class BoundaryElement;
 class Bead;
+class Cylinder;
 
 /// Represents a repulsive interaction between a BoundaryElement and Cylinder.
 template <class BRepulsionInteractionType>
@@ -80,6 +81,7 @@ public:
     /// on beads within the interaction range.
     virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     virtual void computeLoadForces();
+    virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
     //@}
 
     /// Get the neighbor list for this interaction

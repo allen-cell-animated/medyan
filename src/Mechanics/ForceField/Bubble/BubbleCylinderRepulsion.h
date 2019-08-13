@@ -63,6 +63,7 @@ public:
     //virtual void computeForcesAux(double *coord, double *f);
     
     virtual void computeLoadForces();
+    virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
     
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() {return _neighborList;}
