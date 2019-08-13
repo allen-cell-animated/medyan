@@ -184,14 +184,16 @@ protected:
     /// Linear search methods
     /// A simple backtracking search method that computes an optimal
     /// energy change and compares the backtracked energy to it
-    floatingpoint backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
-                                                          floatingpoint LAMBDAMAX, bool *gpu_safestate);
+    floatingpoint backtrackingLineSearch(
+        ForceFieldManager& FFM, floatingpoint MAXDIST, floatingpoint maxForce,
+        floatingpoint LAMBDAMAX, bool *gpu_safestate);
     
     /// The safemode backtracking search, returns the first energy decrease
     ///@note - The most robust linesearch method, but very slow
 
-    floatingpoint safeBacktrackingLineSearch(ForceFieldManager& FFM,
-    		floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool *gpu_safestate);
+    floatingpoint safeBacktrackingLineSearch(
+        ForceFieldManager& FFM, floatingpoint MAXDIST, floatingpoint maxForce,
+        floatingpoint LAMBDAMAX, bool *gpu_safestate);
 
     void setLAMBDATOL(int maxF_order){
 
