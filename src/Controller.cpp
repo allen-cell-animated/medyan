@@ -48,7 +48,7 @@
 #include <algorithm>
 #include "Rand.h"
 #include "ChemManager.h"
-#include "Restart.h"
+
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
@@ -233,12 +233,10 @@ void Controller::initialize(string inputFile,
                                      _subSystem.getCompartmentGrid()));
 
     ChemSim* _cs = _cController.getCS();
+	ForceFieldManager* _ffm = _mController.getForceFieldManager();
 
     string concenname = _outputDirectory + "concentration.traj";
     _outputs.push_back(new Concentrations(concenname, &_subSystem, ChemData));
-
-
-
 
     if(SysParams::CParams.dissTracking){
     //Set up dissipation output if dissipation tracking is enabled
@@ -264,12 +262,22 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new LinkerBindingEvents(linkerbindingevents, &_subSystem, _cs));
     }
 
+    if(SysParams::MParams.hessTracking){
+    //Set up HessianMatrix if hessiantracking is enabled
+    string hessianmatrix = _outputDirectory + "hessianmatrix.traj";
+    _outputs.push_back(new HessianMatrix(hessianmatrix, &_subSystem, _ffm));
+    }
 
     //Set up CMGraph output
     string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
     _outputs.push_back(new CMGraph(cmgraphsnapname, &_subSystem));
 
 
+    //Set up datadump output if any
+#ifdef RESTARTDEV
+	    string datadumpname = _outputDirectory + "datadump.traj";
+	    _outputs.push_back(new Datadump(datadumpname, _subSystem, ChemData));
+#endif
 
 //    //Set up Turnover output if any
 //    string turnover = _outputDirectory + "Turnover.traj";
@@ -354,12 +362,12 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     cout << "---" << endl;
     cout << "Initializing bubbles...";
 
-    if(BSetup.inputFile != "") {
+    if (BSetup.inputFile != "") {
         BubbleParser bp(_inputDirectory + BSetup.inputFile);
         bubbles = bp.readBubbles();
     }
     //add other bubbles if specified
-    BubbleInitializer* bInit = new RandomBubbleDist();
+    BubbleInitializer *bInit = new RandomBubbleDist();
 
     auto bubblesGen = bInit->createBubbles(_subSystem.getBoundary(),
                                            BSetup.numBubbles,
@@ -486,64 +494,81 @@ void Controller::setupInitialNetwork(SystemParser& p) {
 //    HybridBindingSearchManager::setdOut();
     cout << "Initializing filaments...";
 
-    if(FSetup.inputFile != "") {
-        FilamentParser fp(_inputDirectory + FSetup.inputFile);
-        filaments = fp.readFilaments();
+    if (SysParams::RUNSTATE == true) {
+        if (FSetup.inputFile != "") {
+            FilamentParser fp(_inputDirectory + FSetup.inputFile);
+            filaments = fp.readFilaments();
+        }
+        fil = get<0>(filaments);
+        //add other filaments if specified
+        FilamentInitializer *fInit = new RandomFilamentDist();
+
+        auto filamentsGen = fInit->createFilaments(*_regionInMembrane,
+                                                    FSetup.numFilaments,
+                                                    FSetup.filamentType,
+                                                    FSetup.filamentLength);
+        auto filGen = get<0>(filamentsGen);
+        fil.insert(fil.end(), filGen.begin(), filGen.end());
+        delete fInit;
+
+        //add filaments
+
+        for (auto it: fil) {
+
+            auto coord1 = get<1>(it);
+            auto coord2 = get<2>(it);
+            auto type = get<0>(it);
+
+            if (type >= SysParams::Chemistry().numFilaments) {
+                cout << "Filament data specified contains an "
+                        << "invalid filament type. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            vector<vector<floatingpoint>> coords = {coord1, coord2};
+
+            if (coord2.size() == 3) {
+
+                floatingpoint d = twoPointDistance(coord1, coord2);
+                vector<floatingpoint> tau = twoPointDirection(coord1, coord2);
+                int numSegment = static_cast<int>(std::round(
+                        d / SysParams::Geometry().cylinderSize[type]));
+
+                // check how many segments can fit between end-to-end of the filament
+                if (numSegment == 0)
+                    _subSystem.addTrackable<Filament>(&_subSystem, type, coords, 2,
+                                                        FSetup.projectionType);
+                else
+                    _subSystem.addTrackable<Filament>(&_subSystem, type, coords,
+                                                        numSegment + 1,
+                                                        FSetup.projectionType);
+            } else if (coord2.size() > 3) {
+                int numSegment = coord2.size() / 3;
+                vector<vector<floatingpoint>> coords;
+                coords.push_back(coord1);
+                for (int id = 0; id < numSegment; id++)
+                    coords.push_back(
+                            {coord2[id * 3], coord2[id * 3 + 1], coord2[id * 3 + 2]});
+
+                if (numSegment == 0)
+                    _subSystem.addTrackable<Filament>(&_subSystem, type, coords, 2,
+                                                        FSetup.projectionType);
+                else
+                    _subSystem.addTrackable<Filament>(&_subSystem, type, coords,
+                                                        numSegment + 1,
+                                                        FSetup.projectionType);
+            }
+        }
+        cout << "Done. " << fil.size() << " filaments created." << endl;
+        cout << "Total cylinders " << Cylinder::getCylinders().size() << endl;
     }
-    fil=get<0>(filaments);
-    //add other filaments if specified
-    FilamentInitializer* fInit = new RandomFilamentDist();
-
-    auto filamentsGen = fInit->createFilaments(*_regionInMembrane,
-                                               FSetup.numFilaments,
-                                               FSetup.filamentType,
-                                               FSetup.filamentLength);
-    auto filGen=get<0>(filamentsGen);
-    fil.insert(fil.end(), filGen.begin(), filGen.end());
-    delete fInit;
-
-    //add filaments
-
-    for (auto it: fil) {
-
-        auto coord1 = get<1>(it);
-        auto coord2 = get<2>(it);
-        auto type = get<0>(it);
-
-        if(type >= SysParams::Chemistry().numFilaments) {
-            cout << "Filament data specified contains an "
-                 <<"invalid filament type. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        vector<vector<floatingpoint>> coords = {coord1, coord2};
-
-        if(coord2.size()==3){
-
-            floatingpoint d = twoPointDistance(coord1, coord2);
-            vector<floatingpoint> tau = twoPointDirection(coord1, coord2);
-            int numSegment = static_cast<int>(std::round(d / SysParams::Geometry().cylinderSize[type]));
-
-            // check how many segments can fit between end-to-end of the filament
-            if (numSegment == 0)
-                _subSystem.addTrackable<Filament>(&_subSystem, type, coords, 2, FSetup.projectionType);
-            else
-                _subSystem.addTrackable<Filament>(&_subSystem, type, coords, numSegment + 1, FSetup.projectionType);
-        }
-        else if(coord2.size()>3){
-            int numSegment = coord2.size()/3;
-            vector<vector<floatingpoint>> coords;
-            coords.push_back(coord1);
-            for(int id=0;id<numSegment;id++)
-                coords.push_back({coord2[id*3],coord2[id*3+1],coord2[id*3+2]});
-
-            if (numSegment == 0)
-                _subSystem.addTrackable<Filament>(&_subSystem, type, coords, 2, FSetup.projectionType);
-            else
-                _subSystem.addTrackable<Filament>(&_subSystem, type, coords, numSegment + 1, FSetup.projectionType);
-        }
+    else{
+        //Create the restart pointer
+        const string inputfileName = _inputDirectory + FSetup.inputFile;
+        _restart = new Restart(&_subSystem, _chemData, inputfileName);
+        //read set up.
+        _restart->readNetworkSetup();
+        _restart->setupInitialNetwork();
     }
-    cout << "Done. " << fil.size() << " filaments created." << endl;
-    cout<<"Total cylinders "<<Cylinder::getCylinders().size()<<endl;
 }
 
 void Controller::setupSpecialStructures(SystemParser& p) {
@@ -946,7 +971,10 @@ void Controller::updatePositions() {
 
     minsp = chrono::high_resolution_clock::now();
     //update all other moveables
-    for(auto m : _subSystem.getMovables()) m->updatePosition();
+//    for(auto m : _subSystem->getMovables()) m->updatePosition();
+	int count = 0;
+	for(auto m : Movable::getMovableList()) m->updatePosition();
+
 
     minep = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> compartment_update2(minep - minsp);
@@ -956,7 +984,10 @@ void Controller::updatePositions() {
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
     /// update all reactables
-    for(auto r : _subSystem.getReactables()) r->updateReactionRates();
+//    for(auto r : _subSystem->getReactables()) r->updateReactionRates();
+	for(auto r : Reactable::getReactableList()){
+		r->updateReactionRates();
+		}
 }
 #endif
 
@@ -1079,7 +1110,7 @@ void Controller::run() {
 //RESTART PHASE BEGINS
     if(SysParams::RUNSTATE==false){
         cout<<"RESTART PHASE BEINGS."<<endl;
-        Restart* _restart = new Restart(&_subSystem, filaments,_chemData);
+//    Commented in 2019    _restart = new Restart(&_subSystem, filaments,_chemData);
 //Step 1. Turn off diffusion, passivate filament reactions and empty binding managers.
 //        _restart->settorestartphase();
         cout<<"Turned off Diffusion, filament reactions."<<endl;
@@ -1149,7 +1180,8 @@ void Controller::run() {
         for(auto LL : Linker::getLinkers())
         {
             LL->getCLinker()->setOffRate(LL->getCLinker()->getOffReaction()->getBareRate());
-            LL->getCLinker()->getOffReaction()->setRate(LL->getCLinker()->getOffReaction()->getBareRate());
+            /*LL->getCLinker()->getOffReaction()->setRate(LL->getCLinker()->getOffReaction
+			        ()->getBareRate());*/
             LL->updateReactionRates();
             LL->getCLinker()->getOffReaction()->updatePropensity();
 
@@ -1157,7 +1189,9 @@ void Controller::run() {
         for(auto MM : MotorGhost::getMotorGhosts())
         {
             MM->getCMotorGhost()->setOffRate(MM->getCMotorGhost()->getOffReaction()->getBareRate());
-            MM->getCMotorGhost()->getOffReaction()->setRate(MM->getCMotorGhost()->getOffReaction()->getBareRate());
+            /*MM->getCMotorGhost()->getOffReaction()->setRate(MM->getCMotorGhost()
+		                                                             ->getOffReaction()
+		                                                             ->getBareRate());*/
             MM->updateReactionRates();
             MM->getCMotorGhost()->getOffReaction()->updatePropensity();
         }
@@ -1165,7 +1199,10 @@ void Controller::run() {
         for (auto BB: BranchingPoint::getBranchingPoints()) {
             dummy++;
             BB->getCBranchingPoint()->setOffRate(BB->getCBranchingPoint()->getOffReaction()->getBareRate());
-            BB->getCBranchingPoint()->getOffReaction()->setRate(BB->getCBranchingPoint()->getOffReaction()->getBareRate());
+            /*BB->getCBranchingPoint()->getOffReaction()->setRate(BB->getCBranchingPoint()
+		                                                                 ->getOffReaction
+		                                                                 ()->getBareRate
+		                                                                 ());*/
             BB->getCBranchingPoint()->getOffReaction()->updatePropensity();
         }
 //STEP 7: Get cylinders, activate filament reactions.
@@ -1286,7 +1323,12 @@ void Controller::run() {
 			#endif
             SysParams::DURINGCHEMISTRY = true;
             mins = chrono::high_resolution_clock::now();
-            floatingpoint chemistryTime = _minimizationTime;
+            float factor = 1.0;
+#ifdef SLOWDOWNINITIALCYCLE
+            if(tau() <=10.0)
+            	factor = 10.0;
+#endif
+            floatingpoint chemistryTime = _minimizationTime/factor;
             //1 ms
 //            chemistryTime = 0.001;
             auto var = !_cController.run(chemistryTime);
@@ -1341,7 +1383,8 @@ void Controller::run() {
             //print output if chemistry fails.
             mins = chrono::high_resolution_clock::now();
             if(var) {
-                for(auto o: _outputs) o->print(i);
+                short counter = 0;
+                for(auto o: _outputs) { o->print(i); }
                 resetCounters();
                 break;
             }
@@ -1373,7 +1416,7 @@ void Controller::run() {
     //@}
 #endif
             //run mcontroller, update system
-            if(tauLastMinimization >= _minimizationTime) {
+            if(tauLastMinimization >= _minimizationTime/factor) {
 
                 mins = chrono::high_resolution_clock::now();
                 invalidateMembraneMeshIndexCache();
@@ -1456,7 +1499,7 @@ void Controller::run() {
             specialtime += elapsed_runspl.count();
 
             // update neighbor lists & Binding Managers
-            if(tauLastNeighborList >= _neighborListTime) {
+            if(tauLastNeighborList >= _neighborListTime/factor) {
                 mins = chrono::high_resolution_clock::now();
                 updateNeighborLists();
                 tauLastNeighborList = 0.0;

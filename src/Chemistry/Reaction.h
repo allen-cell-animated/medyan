@@ -79,6 +79,10 @@ template <unsigned short M, unsigned short N>
         /// presumbaly be fixed in the future.
         virtual ~Reaction() noexcept
         {
+	        #ifdef CHECKRXN
+        	cout<<"Deleting reaction "<<this<<" with RNodeNRM "<<this->getRNode()<<" Type "
+        	<<this->getReactionType()<<endl;
+			#endif
             for(auto i=0U; i<M; ++i) _rspecies[i]->removeAsReactant(this);
             for(auto i=M; i<(M+N); ++i) _rspecies[i]->removeAsProduct(this);
         }
@@ -93,7 +97,12 @@ template <unsigned short M, unsigned short N>
         /// reaction were to be executed.
         virtual vector<ReactionBase*> getAffectedReactions() override
         {
-            unordered_set<ReactionBase*> rxns;
+	        #ifdef DEBUGCONSTANTSEED
+            unordered_set<ReactionBase*, HashbyId<ReactionBase*>,
+                    customEqualId<ReactionBase*>> rxns;
+			#else
+        	unordered_set<ReactionBase*> rxns;
+			#endif
             
             for(int i = 0; i < M + N; i++) {
               
@@ -236,7 +245,8 @@ template <unsigned short M, unsigned short N>
                 ++i;
             }
             os << ", " << "curr_rate = " << getRate() << ", a="
-               << computePropensity() << ", ReactionBase ptr=" << this << "\n";
+//                    << computePropensity() << "\n";
+               << computePropensity() << ", ReactionBase ptr=" << this <<"\n";
         }
         
         /// Implementation of  clone()

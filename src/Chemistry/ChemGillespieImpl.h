@@ -247,7 +247,12 @@ private:
     /// more reactions to fire
     bool makeStep();
 private:
-    unordered_map<ReactionBase*, unique_ptr<RNodeGillespie>> _map_rnodes; ///< The database of RNodeGillespie
+    #ifdef DEBUGCONSTANTSEED
+    map<ReactionBase*, unique_ptr<RNodeGillespie>> _map_rnodes;
+    #else
+    unordered_map<ReactionBase*, unique_ptr<RNodeGillespie>> _map_rnodes;
+	#endif
+    ///< The database of RNodeGillespie
                                                                           ///< objects, representing the reaction network
     exponential_distribution<floatingpoint> _exp_distr; ///< Adaptor for the exponential distribution
     uniform_real_distribution<floatingpoint> _uniform_distr;

@@ -493,7 +493,7 @@ void Types::print(int snapshot) {
     Linker::numLinkers() << " " <<
     MotorGhost::numMotorGhosts() << " " <<
     BranchingPoint::numBranchingPoints() << " " <<
-    Bubble::numBubbles() << endl;;
+    Bubble::numBubbles() << endl;
 
     for(auto &filament : Filament::getFilaments()) {
 
@@ -997,3 +997,184 @@ void LinkerBindingEvents::print(int snapshot) {
 
 
 }
+
+
+void Datadump::print(int snapshot) {
+    _outputFile.close();
+    _outputFile.open(_outputFileName, std::ofstream::trunc);
+	_outputFile.precision(15);
+    if(!_outputFile.is_open()) {
+        cout << "There was an error opening file " << _outputFileName
+             << " for output. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
+    //Rearrange bead and cylinder data to create a continuous array.
+    Bead::rearrange();
+	Cylinder::updateAllData();
+    Cylinder::rearrange();
+    _outputFile << snapshot << " " << tau() << endl;
+    _outputFile << Filament::numFilaments() << " " <<
+                             Linker::numLinkers() << " " <<
+                             MotorGhost::numMotorGhosts() << " " <<
+                             BranchingPoint::numBranchingPoints() << " " <<
+                             Bubble::numBubbles() << endl;
+    //Bead data
+    _outputFile <<"BEAD DATA: BEADIDX(STABLE) FID COORDX COORDY COORDZ FORCEAUXX "
+                  "FORCEAUXY FORCEAUXZ"<<endl;
+    const auto& beadData = Bead::getDbDataConst();
+
+    for(auto b:Bead::getBeads()){
+        auto bidx = b->getStableIndex();
+        Filament* f = static_cast<Filament*>(b->getParent());
+        _outputFile <<bidx<<" "<<f->getId()<<" "<<beadData.coords.data()
+        [3*bidx]<<" " <<beadData.coords.data()[3*bidx + 1]<<" "
+        <<beadData.coords.data()[3*bidx + 2]<<" "<<beadData.forcesAux.data()[3*bidx]<<" "<<
+        beadData.forcesAux.data()[3*bidx + 1]<<" "<<beadData.forcesAux.data()[3*bidx + 2]<<endl;
+
+    }
+
+    /*for(int bidx = 0; bidx<Bead::rawNumStableElements(); bidx++){
+
+        _outputFile <<bidx<<" "<<beadData.coords.data()[3*bidx]<<" "<<beadData.coords.data()[3*bidx + 1]<<" "
+        <<beadData.coords.data()[3*bidx + 2]<<" "<<beadData.forcesAux.data()[3*bidx]<<" "<<beadData
+        .forcesAux.data()[3*bidx + 1]<<" "<<beadData.forcesAux.data()[3*bidx + 2]<<endl;
+    }
+	_outputFile <<endl;*/
+    //Cylinder data
+    _outputFile <<"CYLINDER DATA: CYLIDX(STABLE) B1_IDX B2_IDX MINUSENDTYPE "
+                  "PLUSENDTYPE MINUSENDMONOMER PLUSENDMONOMER TOTALMONOMERS EQLEN"<<endl;
+    const auto& cylinderInfoData = Cylinder::getDbData().value;
+
+    for(int cidx = 0; cidx < Cylinder::rawNumStableElements(); cidx++){
+        Cylinder* cyl = cylinderInfoData[cidx].chemCylinder->getCylinder();
+        CCylinder* ccyl  = cylinderInfoData[cidx].chemCylinder;
+        short filamentType = cyl->getType();
+        int numMonomers = SysParams::Geometry().cylinderNumMon[filamentType];
+        short minusendmonomer = 0;
+        short plusendmonomer = numMonomers-1;
+        short minusendtype = -1;
+        short plusendtype = -1;
+        short foundstatus = 0; //0 none found, 1 found one end, 2 found both ends
+                for(int midx = 0; midx<numMonomers; midx++){
+                if(foundstatus ==2)
+                    break;
+                short m = ccyl->getCMonomer(midx)->activeSpeciesMinusEnd();
+                short p = ccyl->getCMonomer(midx)->activeSpeciesPlusEnd();
+                if(m != -1) {
+                    foundstatus++;
+                    minusendtype = m;
+                    minusendmonomer = midx;
+                }
+
+                if(p != -1) {
+                    plusendtype = p;
+                    foundstatus++;
+                    plusendmonomer = midx;
+                }
+            }
+
+        /*Cidx minus-end plus-end num-monomers*/
+        _outputFile <<cidx<<" "<<cyl->getFirstBead()->getStableIndex()<<" "
+        <<cyl->getSecondBead()->getStableIndex()<<" "<<minusendtype<<" "<<plusendtype<<" "
+        <<minusendmonomer<<" "<<plusendmonomer<<" "<<(plusendmonomer-minusendmonomer)+1<<" "
+        <<cyl->getMCylinder()->getEqLength()<<endl;
+    }
+	_outputFile <<endl;
+    //Filament Data
+	_outputFile <<"FILAMENT DATA: FILID CYLIDvec"<<endl;
+	for(auto fil : Filament::getFilaments()){
+		_outputFile <<fil->getId()<<" ";
+		for(auto cyl :fil->getCylinderVector()){
+			_outputFile << cyl->getStableIndex()<<" ";
+		}
+		_outputFile << endl;
+	}
+	_outputFile <<endl;
+	//Linker Data
+	_outputFile <<"LINKER DATA: LINKERID CYL1_IDX CYL2_IDX POS1 POS2 EQLEN"<<endl;
+	for(auto l :Linker::getLinkers()){
+		Cylinder* cyl1 = l->getFirstCylinder();
+		Cylinder* cyl2 = l->getSecondCylinder();
+		float pos1 = l->getFirstPosition();
+		float pos2 = l->getSecondPosition();
+		_outputFile <<l->getId()<<" "<<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex
+		()<<" "<<pos1<<" "<<pos2<<" "<<l->getMLinker()->getEqLength()<<endl;
+	}
+	_outputFile <<endl;
+	//MOTOR Data
+	_outputFile <<"MOTOR DATA: MOTORID CYL1_IDX CYL2_IDX POS1 POS2 EQLEN"<<endl;
+	for(auto l :MotorGhost::getMotorGhosts()){
+		Cylinder* cyl1 = l->getFirstCylinder();
+		Cylinder* cyl2 = l->getSecondCylinder();
+		float pos1 = l->getFirstPosition();
+		float pos2 = l->getSecondPosition();
+		_outputFile <<l->getId()<<" "<<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex
+				()<<" "<<pos1<<" "<<pos2<<" "<<l->getMMotorGhost()->getEqLength()<<endl;
+	}
+	_outputFile <<endl;
+	//Brancher Data
+	_outputFile <<"BRANCHING DATA: BRANCHID CYL1_IDX CYL2_IDX POS1 EQLEN"<<endl;
+	for(auto l :BranchingPoint::getBranchingPoints()){
+		Cylinder* cyl1 = l->getFirstCylinder();
+		Cylinder* cyl2 = l->getSecondCylinder();
+		float pos1 = l->getPosition();
+		_outputFile <<l->getId()<<" "<<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex
+				()<<" "<<pos1<<" "<<l->getMBranchingPoint()->getEqLength()<<endl;
+	}
+	_outputFile <<endl;
+	//Compartment Data
+	_outputFile <<"COMPARTMENT DATA: CMPID DIFFUSINGSPECIES"
+			   "COPYNUM"<<endl;
+	for(auto cmp:_subSystem->getCompartmentGrid()->getCompartments()){
+		_outputFile <<cmp->getId()<<" ";
+		for(auto sd : _chemData.speciesDiffusing) {
+			string name = get<0>(sd);
+			auto s = cmp->findSpeciesByName(name);
+			auto copyNum = s->getN();
+			_outputFile <<name<<" "<<copyNum<<" ";
+		}
+
+		_outputFile <<endl;
+	}
+	_outputFile <<endl;
+	//BulkSpecies
+	_outputFile <<"BULKSPECIES: BULKSPECIES COPYNUM"<<endl;
+	auto cmp = _subSystem->getCompartmentGrid()->getCompartments()[0];
+	for(auto sb : _chemData.speciesBulk) {
+		string name = get<0>(sb);
+		auto s = cmp->findSpeciesByName(name);
+		auto copyNum = s->getN();
+		_outputFile <<name<<" "<<copyNum<<" ";
+	}
+	_outputFile <<endl;
+}
+
+
+void HessianMatrix::print(int snapshot){
+    _outputFile.precision(10);
+    vector<vector<vector<floatingpoint > > > hVec = _ffm->hessianVector;
+    vector<floatingpoint> tauVector = _ffm-> tauVector;
+    // Outputs a sparse representation of the Hessian matrix, where only elements with appreciable size (>0.00001) are
+    // output along with their indices.  Currently this outputs for each minimization, however to reduce the file size this could be changed.
+    for(auto k = 0; k < hVec.size(); k++){
+        vector<vector<floatingpoint > > hMat = hVec[k];
+        int total_DOF = hMat.size();
+        vector<tuple<int, int, floatingpoint>> elements;
+        for(auto i = 0; i < total_DOF; i++){
+            for(auto j = 0; j < total_DOF; j++){
+                if(std::abs(hMat[i][j]) > 0.00001){
+                    elements.push_back(std::make_tuple(i,j,hMat[i][j]));
+                }
+            }
+        }
+        _outputFile << tauVector[k] << "     "<< total_DOF<< "     " << elements.size()<<endl;
+        for(auto i = 0; i < elements.size(); i++){
+            tuple<int, int, floatingpoint> element = elements[i];
+            _outputFile<< get<0>(element) << "     "<< get<1>(element)<<"     "<< get<2>(element)<<endl;
+        }
+    _outputFile<<endl;
+    };
+    // This clears the vectors storing the matrices to reduce the amount of memory needed.  
+    _ffm->clearHessian();
+}
+

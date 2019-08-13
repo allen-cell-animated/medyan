@@ -53,6 +53,7 @@ struct MechanicsAlgorithm {
     floatingpoint gradientTolerance = 1.0;
     floatingpoint maxDistance = 1.0;
     floatingpoint lambdaMax = 1.0;
+    floatingpoint lambdarunningaverageprobability = 0.0;
     
     /// Not yet used
     string MD = "";

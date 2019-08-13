@@ -82,7 +82,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     new CMotorGhost(motorType, _compartment, _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2));
     _cMotorGhost->setMotorGhost(this);
 #endif
-    
+
 #ifdef MECHANICS
     auto x1 = _c1->getFirstBead()->vcoordinate();
     auto x2 = _c1->getSecondBead()->vcoordinate();
@@ -98,11 +98,35 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     _mMotorGhost->setMotorGhost(this);
 #endif
 #endif
+#ifdef CROSSCHECK_MOTOR
+	auto b1 = _c1->getFirstBead();
+	auto b2 = _c1->getSecondBead();
+	auto b3 = _c2->getFirstBead();
+	auto b4 = _c2->getSecondBead();
+
+	cout<<"motor binding  mID "<<getId()<<" cIDs "<<_c1->getId()<<" "<<_c2->getId()<<" "
+	                                                                                 ""<<_position1<<" "
+	    <<_position2<<" cindex "<<_c1->getStableIndex()<<" "<<_c2->getStableIndex()<<" bID "<<b1->getId
+			()<<" "<<b2->getId()<<" bindex "<<b1->getStableIndex()<<" "<<b2->getStableIndex()<<" "
+	    <<b3->getStableIndex()<<" "<<b4->getStableIndex()<<endl;
+#endif
     
 }
 
 ///@note - record lifetime data here
 MotorGhost::~MotorGhost() noexcept {
+	#ifdef CROSSCHECK_MOTOR
+	auto b1 = _c1->getFirstBead();
+	auto b2 = _c1->getSecondBead();
+	auto b3 = _c2->getFirstBead();
+	auto b4 = _c2->getSecondBead();
+
+	cout<<"motor un-binding  mID "<<getId()<<" cIDs "<<_c1->getId()<<" "<<_c2->getId()<<" "
+	<<_position1<<" "<<_position2<<" cindex "<<_c1->getStableIndex()<<" "
+	<<_c2->getStableIndex()<<" bID "<<b1->getId()<<" "<<b2->getId()<<" bindex "
+	<<b1->getStableIndex()<<" "<<b2->getStableIndex()<<" "
+	<<b3->getStableIndex()<<" "<<b4->getStableIndex()<<endl;
+	#endif
 
 //    floatingpoint lifetime = tau() - _birthTime;
 //    
@@ -118,7 +142,7 @@ MotorGhost::~MotorGhost() noexcept {
 }
 
 void MotorGhost::updatePosition() {
-#ifdef CROSSCHECK
+#ifdef CROSSCHECK_IDX
     cout<<"MG position begin"<<endl;
 #endif
 #ifdef CHEMISTRY
@@ -129,7 +153,6 @@ void MotorGhost::updatePosition() {
 #endif
     //check if in same compartment
     updateCoordinate();
-    
     Compartment* c;
     
     try {c = GController::getCompartment(coordinate);}
@@ -142,13 +165,27 @@ void MotorGhost::updatePosition() {
     }
     
     if(c != _compartment) {
+	    #ifdef CROSSCHECK_MOTOR
+    	auto oldcoord = _compartment->coordinates();
+	    auto newcoord = c->coordinates();
+
+    	cout<<"MotorGhost  move Cmp mID "<<this->getId()<<" from Cmp ID "
+    	<<_compartment->getId()<<" with Coord "<<oldcoord[0]<<" " <<oldcoord[1]<<" "
+    	<<oldcoord[2]<<" to Cmp ID "
+    	<<c->getId()<<" with Coord "<<newcoord[0]<<" " <<newcoord[1]<<" "
+	    <<newcoord[2]<<endl;
+		#endif
         mins = chrono::high_resolution_clock::now();
         
         _compartment = c;
 #ifdef CHEMISTRY
         SpeciesBound* firstSpecies = _cMotorGhost->getFirstSpecies();
         SpeciesBound* secondSpecies = _cMotorGhost->getSecondSpecies();
-        
+#ifdef CHECKRXN
+        cout<<"Clone _cMotorGhost with offRxn "<<_cMotorGhost->getOffReaction()<<" with "
+																				 "Id "
+					 ""<<_cMotorGhost->getOffReaction()->getId()<<endl;
+#endif
         CMotorGhost* clone = _cMotorGhost->clone(c);
         setCMotorGhost(clone);
         
@@ -189,7 +226,7 @@ void MotorGhost::updatePosition() {
 #endif
 
 #endif
-#ifdef CROSSCHECK
+#ifdef CROSSCHECK_IDX
 	cout<<"MG position end"<<endl;
 #endif
 }
@@ -202,7 +239,7 @@ void MotorGhost::updatePosition() {
 /// consider compression forces, only stretching.
 void MotorGhost::updateReactionRates() {
 
-#ifdef CROSSCHECK
+#ifdef CROSSCHECK_IDX
     auto b1 = _c1->getFirstBead();
     auto b2 = _c1->getSecondBead();
     auto b3 = _c2->getFirstBead();
@@ -230,6 +267,31 @@ void MotorGhost::updateReactionRates() {
         auto x3 = _c2->getFirstBead()->vcoordinate();
         auto x4 = _c2->getSecondBead()->vcoordinate();
 
+	    const auto& cylinderInfoData = Cylinder::getDbData().value;
+
+	    auto c1struct = cylinderInfoData[_c1->getStableIndex()];
+	    auto c2struct = cylinderInfoData[_c2->getStableIndex()];
+	    auto fType1 = c1struct.type;
+	    auto fType2 = c2struct.type;
+
+	    bool consider_passivation = false;
+	    bool isc1leftofc2 = false;
+	    /* isc1leftofc2 tells which of the two cylinders is close to minus end. c1 is
+	     * connected to leg1 and c2 is connected to leg2 of motor.
+	     * If isc1leftofc2= true, in MotorWalkingForward reactions, the reaction
+	     * involving leg1 should be passivated.
+	     * If isc1leftofc2 = false, in MotorWalkingBackward reactions, the reaction
+	     * involving leg2 should be passivated.*/
+
+	    if((c1struct.filamentId == c2struct.filamentId)) {
+	    	auto c1posonFil = c1struct.positionOnFilament;
+		    auto c2posonFil = c2struct.positionOnFilament;
+		    consider_passivation = abs(c1posonFil - c2posonFil) <= 3;
+		    //A distance of 3 or lesser between two cylinders on the same filament is not
+		    // acceptable.
+		    isc1leftofc2 = c1posonFil < c2posonFil;
+	    }
+
 
         auto mp1 = midPointCoordinate(x1, x2, _position1);
         auto mp2 = midPointCoordinate(x3, x4, _position2);
@@ -254,86 +316,136 @@ void MotorGhost::updateReactionRates() {
         for(auto r : s1->getRSpecies().reactantReactions()) {
             
             if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
-                
-                float newRate =
-                _walkingChangers[_motorType]->
-                changeRate(_cMotorGhost->getOnRate(),
-                           _cMotorGhost->getOffRate(),
-                           _numHeads, max<floatingpoint>((floatingpoint)0.0, forceDotDirectionC1));
-                if(SysParams::RUNSTATE==false){
-                    newRate=0.0;}
-#ifdef DETAILEDOUTPUT
-                std::cout<<"Motor WF1 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
-                        ""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
-                         forceDotDirectionC2<<" NH "<<_numHeads<<endl;
-#endif
-                r->setRate(newRate);
-                r->updatePropensity();
 
-            }
-            else if(r->getReactionType() == ReactionType::MOTORWALKINGBACKWARD) {
-                float newRate =
-                _walkingChangers[_motorType]->
-                changeRate(_cMotorGhost->getOnRate(),
-                           _cMotorGhost->getOffRate(),
-                           _numHeads, max<floatingpoint>((floatingpoint)0.0, -forceDotDirectionC1));
-                
-                if(SysParams::RUNSTATE==false){
-                    newRate=0.0;}
+            	if(consider_passivation && isc1leftofc2){
+
+		            auto c1lastbindingsite = *(SysParams::Chemistry()
+				            .bindingSites[fType1].end())/SysParams::Geometry()
+				                                     .cylinderNumMon[fType1];
+
+		            if(areEqual(c1lastbindingsite,_position1))
+			            r->setRateMulFactor(0.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
+            	}
+            	else{
+		            r->setRateMulFactor(1.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
+		            float newRate =
+				            _walkingChangers[_motorType]->
+						            changeRate(_cMotorGhost->getOnRate(),
+						                       _cMotorGhost->getOffRate(),
+						                       _numHeads, max<floatingpoint>((floatingpoint)0.0, forceDotDirectionC1));
+		            if(SysParams::RUNSTATE==false){
+			            newRate=0.0;}
 #ifdef DETAILEDOUTPUT
-                std::cout<<"Motor WB1 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
+		            std::cout<<"Motor WF1 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
                         ""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
                          forceDotDirectionC2<<" NH "<<_numHeads<<endl;
 #endif
-                r->setRate(newRate);
-                r->updatePropensity();
+		            r->setBareRate(newRate);
+	            }/*if(consider_passivation && isc1leftofc2)*/
+	            r->updatePropensity();
+            }/*MOTORWALKINGFORWARD*/
+            else if(r->getReactionType() == ReactionType::MOTORWALKINGBACKWARD) {
+
+	            if(consider_passivation && !isc1leftofc2) {
+
+		            auto c1firstbindingsite = *(SysParams::Chemistry()
+				            .bindingSites[fType1].begin()) /
+		                                      SysParams::Geometry().cylinderNumMon[fType1];
+		            if(areEqual(c1firstbindingsite,_position1))
+			            r->setRateMulFactor(0.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
+
+	            }else{
+		            r->setRateMulFactor(1.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
+		            float newRate =
+				            _walkingChangers[_motorType]->
+						            changeRate(_cMotorGhost->getOnRate(),
+						                       _cMotorGhost->getOffRate(),
+						                       _numHeads, max<floatingpoint>((floatingpoint)0.0, -forceDotDirectionC1));
+
+		            if(SysParams::RUNSTATE==false){ newRate=0.0;}
+#ifdef DETAILEDOUTPUT
+		            std::cout<<"Motor WB1 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
+                        ""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
+                         forceDotDirectionC2<<" NH "<<_numHeads<<endl;
+#endif
+		            r->setBareRate(newRate);
+	            }
+	            r->updatePropensity();
             }
         }
         for(auto r : s2->getRSpecies().reactantReactions()) {
             
             if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
-                
-                float newRate =
-                _walkingChangers[_motorType]->
-                changeRate(_cMotorGhost->getOnRate(),
-                           _cMotorGhost->getOffRate(),
-                           _numHeads, max<floatingpoint>((floatingpoint)0.0,
-                           forceDotDirectionC2));
-                if(SysParams::RUNSTATE==false)
-                { newRate=0.0;}
+
+	            if(consider_passivation && !isc1leftofc2) {
+		            auto c2lastbindingsite = *(SysParams::Chemistry()
+				            .bindingSites[fType2].end())/SysParams::Geometry()
+				                                     .cylinderNumMon[fType2];
+		            if(areEqual(c2lastbindingsite,_position2))
+			            r->setRateMulFactor(0.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
+
+	            }else {
+		            r->setRateMulFactor(1.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
+		            if(r->isPassivated()) {r->activateReaction();}
+		            float newRate =
+				            _walkingChangers[_motorType]->
+						            changeRate(_cMotorGhost->getOnRate(),
+						                       _cMotorGhost->getOffRate(),
+						                       _numHeads,
+						                       max<floatingpoint>((floatingpoint) 0.0,
+						                                          forceDotDirectionC2));
+		            if (SysParams::RUNSTATE == false) { newRate = 0.0; }
+
 #ifdef DETAILEDOUTPUT
-                std::cout<<"Motor WF2 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
-                        ""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
-                        forceDotDirectionC2<<" NH "<<_numHeads<<endl;
+					std::cout<<"Motor WF2 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
+							""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
+							forceDotDirectionC2<<" NH "<<_numHeads<<endl;
 #endif
-                r->setRate(newRate);
-                r->updatePropensity();
-            }
+		            r->setBareRate(newRate);
+	            }
+	            r->updatePropensity();
+            }/*MOTORWALKINGFORWARD*/
             else if(r->getReactionType() == ReactionType::MOTORWALKINGBACKWARD) {
-                
-                float newRate =
-                _walkingChangers[_motorType]->
-                changeRate(_cMotorGhost->getOnRate(),
-                           _cMotorGhost->getOffRate(),
-                           _numHeads, max<floatingpoint>((floatingpoint)0.0, -forceDotDirectionC2));
-                if(SysParams::RUNSTATE==false)
-                { newRate=0.0;}
+
+	            if(consider_passivation && isc1leftofc2) {
+		            auto c2firstbindingsite = *(SysParams::Chemistry()
+				            .bindingSites[fType2].begin())/SysParams::Geometry()
+				                                      .cylinderNumMon[fType2];
+		            if(areEqual(c2firstbindingsite,_position2))
+			            r->setRateMulFactor(0.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
+	            }
+	            else{
+		            r->setRateMulFactor(1.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
+	            	if(r->isPassivated()) {r->activateReaction();}
+		            float newRate =
+				            _walkingChangers[_motorType]->
+						            changeRate(_cMotorGhost->getOnRate(),
+						                       _cMotorGhost->getOffRate(),
+						                       _numHeads, max<floatingpoint>((floatingpoint)0.0, -forceDotDirectionC2));
+		            if(SysParams::RUNSTATE==false)
+		            { newRate=0.0;}
 #ifdef DETAILEDOUTPUT
-                std::cout<<"Motor WB2 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
+		            std::cout<<"Motor WB2 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
                         ""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
                          forceDotDirectionC2<<" NH "<<_numHeads<<endl;
 #endif
-                r->setRate(newRate);
-                r->updatePropensity();
+		            r->setBareRate(newRate);
+	            }
+	            r->updatePropensity();
             }
         }
     }
     
     //unbinding rate changer
     if(!_unbindingChangers.empty()) {
-        
+
         //get the unbinding reaction
         ReactionBase* offRxn = _cMotorGhost->getOffReaction();
+
+        #ifdef CHECKRXN
+        cout<<"update MG off rxn "<<offRxn<<" with RNode "<<offRxn->getRnode()<<" with "
+																				"mID "<<this->getId()<<endl;
+        #endif
         
         //change the rate
         float newRate =
@@ -344,7 +456,7 @@ void MotorGhost::updateReactionRates() {
                 ""<<coordinate[1]<<" "
                 ""<<coordinate[2]<<endl;
 #endif
-        offRxn->setRate(newRate);
+        offRxn->setBareRate(newRate);
         offRxn->activateReaction();
     }
 #ifdef CROSSCHECK
@@ -358,7 +470,7 @@ void MotorGhost::updateReactionRates() {
 void MotorGhost::moveMotorHead(Cylinder* c,
                                floatingpoint oldPosition, floatingpoint newPosition,
                                short boundType, SubSystem* ps) {
-#ifdef CROSSCHECK
+#ifdef CROSSCHECK_MOTOR
 	//Print coordinate
 	auto x1 = _c1->getFirstBead()->vcoordinate();
 	auto x2 = _c1->getSecondBead()->vcoordinate();
@@ -374,7 +486,8 @@ void MotorGhost::moveMotorHead(Cylinder* c,
     auto b4 = _c2->getSecondBead();
 
 
-	cout<<"motor-walking  mID "<<getId()<<" "<<_c1->getId()<<" "<<_c2->getId()<<" "<<_position1<<" "
+	cout<<"motor-walking  mID "<<getId()<<" cIDs "<<_c1->getId()<<" "<<_c2->getId()<<" "
+                                                                              ""<<_position1<<" "
         <<_position2<<" cindex "<<_c1->getStableIndex()<<" "<<_c2->getStableIndex()<<" bID "<<b1->getId
             ()<<" "<<b2->getId()<<" bindex "<<b1->getStableIndex()<<" "<<b2->getStableIndex()<<" "
         <<b3->getStableIndex()<<" "<<b4->getStableIndex()<<" move "<<c->getId()<<" old "<<oldPosition<<" new "
@@ -409,13 +522,13 @@ void MotorGhost::moveMotorHead(Cylinder* c,
     
     _cMotorGhost->moveMotorHead(c->getCCylinder(), oldpos, newpos,
                                 _motorType, boundType, ps);
-
-	auto x1 = _c1->getFirstBead()->vcoordinate();
-	auto x2 = _c1->getSecondBead()->vcoordinate();
-	auto x3 = _c2->getFirstBead()->vcoordinate();
-	auto x4 = _c2->getSecondBead()->vcoordinate();
-	auto mp1 = midPointCoordinate(x1, x2, _position1);
-	auto mp2 = midPointCoordinate(x3, x4, _position2);
+#if CROSSCHECK_MOTOR
+	x1 = _c1->getFirstBead()->vcoordinate();
+	x2 = _c1->getSecondBead()->vcoordinate();
+	x3 = _c2->getFirstBead()->vcoordinate();
+	x4 = _c2->getSecondBead()->vcoordinate();
+	mp1 = midPointCoordinate(x1, x2, _position1);
+	mp2 = midPointCoordinate(x3, x4, _position2);
 	auto DeltaL = twoPointDistance(mp1, mp2) - _mMotorGhost->getEqLength();
 
     //(If motor is stretched) stretchForce > 0 => DeltaL > 0
@@ -449,9 +562,7 @@ void MotorGhost::moveMotorHead(Cylinder* c,
     else if(unstretched == true && unstretchednow == true)
         CUDAcommon::mwalk.equibtoequib++;
 
-#ifdef CROSSCHECK
-	cout<<"mcoord after "<<mp1[0]<<" "<<mp1[1]<<" "<<mp1[2]<<" "<<mp2[0]<<" "<<mp2[1]<<" "
-	                                                                                    ""<<mp2[2]<<endl;
+	cout<<"mcoord after "<<mp1[0]<<" "<<mp1[1]<<" "<<mp1[2]<<" "<<mp2[0]<<" "<<mp2[1]<<" "<<mp2[2]<<endl;
 #endif
 
 
@@ -462,7 +573,7 @@ void MotorGhost::moveMotorHead(Cylinder* c,
 void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
                                floatingpoint oldPosition, floatingpoint newPosition,
                                short boundType, SubSystem* ps) {
-#ifdef CROSSCHECK
+#ifdef CROSSCHECK_MOTOR
 	//Print coordinate
 	auto x1 = _c1->getFirstBead()->vcoordinate();
 	auto x2 = _c1->getSecondBead()->vcoordinate();
@@ -509,12 +620,13 @@ void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
     _cMotorGhost->moveMotorHead(oldC->getCCylinder(), newC->getCCylinder(),
                                 oldpos, newpos, _motorType, boundType, ps);
 
-	auto x1 = _c1->getFirstBead()->vcoordinate();
-	auto x2 = _c1->getSecondBead()->vcoordinate();
-	auto x3 = _c2->getFirstBead()->vcoordinate();
-	auto x4 = _c2->getSecondBead()->vcoordinate();
-	auto mp1 = midPointCoordinate(x1, x2, _position1);
-	auto mp2 = midPointCoordinate(x3, x4, _position2);
+#if CROSSCHECK_MOTOR
+	x1 = _c1->getFirstBead()->vcoordinate();
+	x2 = _c1->getSecondBead()->vcoordinate();
+	x3 = _c2->getFirstBead()->vcoordinate();
+	x4 = _c2->getSecondBead()->vcoordinate();
+	mp1 = midPointCoordinate(x1, x2, _position1);
+	mp2 = midPointCoordinate(x3, x4, _position2);
 	auto DeltaL = twoPointDistance(mp1, mp2) - _mMotorGhost->getEqLength();
 
 	//(If motor is stretched) stretchForce > 0 => DeltaL > 0
@@ -547,6 +659,7 @@ void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
 		//equib - equib
 	else if(unstretched == true && unstretchednow == true)
 		CUDAcommon::mwalk.equibtoequib++;
+#endif
 #endif
 }
 

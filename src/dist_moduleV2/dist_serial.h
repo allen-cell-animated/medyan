@@ -7,9 +7,13 @@ Simple serial implementation for finding contacts.
 #ifndef DIST_SERIAL
 #define DIST_SERIAL
 
-#include "dist_moduleV2/dist_common.h"
+/*#include "dist_moduleV2/dist_common.h"
 #include "dist_moduleV2/dist_out.h"
-#include "dist_moduleV2/dist_coords.h"
+#include "dist_moduleV2/dist_coords.h"*/
+
+#include "dist_common.h"
+#include "dist_out.h"
+#include "dist_coords.h"
 
 namespace dist {
 
@@ -20,6 +24,9 @@ namespace dist {
 		float dx = c2.x[j]-c1.x[i];
 		float dy = c2.y[j]-c1.y[i];
 		float dz = c2.z[j]-c1.z[i];
+		int diff = c1.filinfo[i] - c2.filinfo[j];
+		diff = abs(diff);
+//		diff = 3;
 
 		float dist_sq = dx*dx + dy*dy + dz*dz;
 
@@ -27,7 +34,8 @@ namespace dist {
 			float d_l = out.dt[2*d];
 			float d_h = out.dt[2*d+1];
 			uint &counter(out.counter[d]);
-			if(dist_sq > d_l && dist_sq<d_h){
+			if(dist_sq > d_l && dist_sq<d_h && diff > 2){
+//			if(dist_sq > d_l && dist_sq<d_h){
 				(out.dout[2*d])[counter] = c1.indices[i];
 				(out.dout[2*d+1])[counter] = c2.indices[j];
 				++counter;

@@ -33,7 +33,8 @@ Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
       brforce(3, 0), pinforce(3,0),
       _position(position), _birthTime(tau()) {
     
-    parent->addChild(unique_ptr<Component>(this));
+    if(SysParams::RUNSTATE)
+        parent->addChild(unique_ptr<Component>(this));
           
     if(medyan::global().mode == medyan::GlobalVar::RunMode::Simulation) {
         loadForcesP = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);

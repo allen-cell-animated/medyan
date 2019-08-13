@@ -15,20 +15,28 @@
 
 #include "Composite.h"
 
+#include "ChemNRMImpl.h"
+
+size_t ReactionBase::_Idcounter = 0;
+
 ReactionBase::ReactionBase (float rate, bool isProtoCompartment, floatingpoint volumeFrac, int rateVolumeDepExp)
     : _rnode(nullptr), _parent(nullptr), _rate(rate), 
       _rate_bare(rate), _isProtoCompartment(isProtoCompartment),
       _volumeFrac(volumeFrac), _rateVolumeDepExp(rateVolumeDepExp) {
     
-    // Scale the rate
-    if(rateVolumeDepExp) setRateScaled(rate);
+	for(uint i = 0; i < RateMulFactorType::RATEMULFACTSIZE; i++)
+		_ratemulfactors[i] = 1.0;
 
+    // Scale the rate
+	recalcRateVolumeFactor();
 #ifdef REACTION_SIGNALING
     _signal=nullptr;
 #endif
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     _passivated=true;
 #endif
+    _Id = _Idcounter;
+    _Idcounter++;
 }
 
 Composite* ReactionBase::getRoot() {
@@ -67,5 +75,27 @@ void ReactionBase::printDependents()  {
         cout << endl;
     for(auto r : _dependents)
         cout << (*r) << endl;
+}
+
+bool afterchemsiminit = false;
+void ReactionBase::activateReaction() {
+	#ifdef CHECKRXN
+	/*if(afterchemsiminit && false) {
+		cout << "activating " << getReactionType() <<" RNodeNRM ptr "<< _rnode<< endl;
+		_rnode->printSelf();
+//		cout << *this << endl;
+	}*/
+	#endif
+#ifdef TRACK_ZERO_COPY_N
+	if(areEqual(getProductOfReactants(), 0.0)) // One of the reactants is still at zero copy n,
+		// no need to activate yet...
+		return;
+#endif
+#ifdef TRACK_UPPER_COPY_N
+	if(areEqual(getProductOfProducts(), 0.0)) // One of the products is at the maximum allowed
+		//copy number, no need to activate yet...
+		return;
+#endif
+	activateReactionUnconditional();
 }
 

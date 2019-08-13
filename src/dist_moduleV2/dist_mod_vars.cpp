@@ -4,9 +4,12 @@ AUTHOR: G.A. Papoian, Date: Nov 22, 2018
 Initializing various module variables.
 */
 
-#include "dist_moduleV2/dist_out.h"
-#include "dist_moduleV2/dist_simd.h"
-#include "dist_moduleV2/dist_simd_utils.h"
+//#include "dist_moduleV2/dist_out.h"
+//#include "dist_moduleV2/dist_simd.h"
+//#include "dist_moduleV2/dist_simd_utils.h"
+#include "dist_out.h"
+#include "dist_simd.h"
+#include "dist_simd_utils.h"
 
 namespace dist {
 	
