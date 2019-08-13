@@ -19,6 +19,7 @@
 #include <algorithm>
 
 #include "Structure/Bead.h"
+#include "Structure/Cylinder.h"
 
 ForceField* ForceFieldManager::_culpritForceField = nullptr;
 
@@ -426,6 +427,19 @@ void ForceFieldManager::computeLoadForces() {
         b->lfip = 0;
         b->lfim = 0;
     }
+}
+void ForceFieldManager::computeLoadForce(Cylinder* c, ForceField::LoadForceEnd end) const {
+    auto  b          = (end == ForceField::LoadForceEnd::Plus ? c->getSecondBead() : c->getFirstBead());
+    auto& loadForces = (end == ForceField::LoadForceEnd::Plus ? b->loadForcesP     : b->loadForcesM   );
+    auto& lfi        = (end == ForceField::LoadForceEnd::Plus ? b->lfip            : b->lfim          );
+
+    // reset
+    std::fill(loadForces.begin(), loadForces.end(), 0.0);
+
+    for(auto& f : _forceFields) f->computeLoadForce(c, end);
+
+    // reset lfi
+    lfi = 0;
 }
 
 void ForceFieldManager::printculprit(floatingpoint* force){

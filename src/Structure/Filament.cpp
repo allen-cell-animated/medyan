@@ -68,6 +68,13 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<floatingpoint>
 
     //set plus end marker
     _plusEndPosition = 1;
+
+    // update reaction rates
+    if(const auto& loadForceFunc = _subSystem->getCylinderLoadForceFunc()) {
+        loadForceFunc(c0, ForceFieldTypes::LoadForceEnd::Plus);
+        loadForceFunc(c0, ForceFieldTypes::LoadForceEnd::Minus);
+        c0->updateReactionRates();
+    }
 }
 
 
@@ -113,6 +120,14 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<vector<floatin
         
     //set plus end marker
     _plusEndPosition = numBeads - 1;
+
+    // update reaction rates
+    if(const auto& loadForceFunc = _subSystem->getCylinderLoadForceFunc()) {
+        loadForceFunc(_cylinderVector.back(), ForceFieldTypes::LoadForceEnd::Plus);
+        _cylinderVector.back()->updateReactionRates();
+        loadForceFunc(_cylinderVector.front(), ForceFieldTypes::LoadForceEnd::Minus);
+        _cylinderVector.front()->updateReactionRates();
+    }
 }
 
 Filament::~Filament() {
