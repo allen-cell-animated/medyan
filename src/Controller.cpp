@@ -199,7 +199,7 @@ void Controller::initialize(string inputFile,
                                      _subSystem.getCompartmentGrid()));
 
     ChemSim* _cs = _cController.getCS();
-	ForceFieldManager* _ffm = _mController->getForceFieldManager();
+	ForceFieldManager* _ffm = _mController.getForceFieldManager();
 
     string concenname = _outputDirectory + "concentration.traj";
     _outputs.push_back(new Concentrations(concenname, &_subSystem, ChemData));
@@ -231,7 +231,7 @@ void Controller::initialize(string inputFile,
     if(SysParams::MParams.hessTracking){
     //Set up HessianMatrix if hessiantracking is enabled
     string hessianmatrix = _outputDirectory + "hessianmatrix.traj";
-    _outputs.push_back(new HessianMatrix(hessianmatrix, _subSystem, _ffm));
+    _outputs.push_back(new HessianMatrix(hessianmatrix, &_subSystem, _ffm));
     }
 
     //Set up CMGraph output
@@ -408,7 +408,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     else{
         //Create the restart pointer
         const string inputfileName = _inputDirectory + FSetup.inputFile;
-        _restart = new Restart(_subSystem, _chemData, inputfileName);
+        _restart = new Restart(&_subSystem, _chemData, inputfileName);
         //read set up.
         _restart->readNetworkSetup();
         _restart->setupInitialNetwork();

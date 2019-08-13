@@ -35,13 +35,12 @@ class Bin : public Composite {
 
 private:
 	#ifdef DEBUGCONSTANTSEED
-//    using bincylinderdatatype = unordered_set<Cylinder*, HashbyId<Cylinder*>, customEqualId<Cylinder*>>;
+	using bincylinderdatatype = unordered_set<Cylinder*, HashbyId<Cylinder*>, customEqualId<Cylinder*>>;
 
 	#else
 	using bincylinderdatatype = unordered_set<Cylinder*>; ///< Set of cylinders
     // that are in this bin
 	#endif
-	using bincylinderdatatype = unordered_set<Cylinder*, HashbyId<Cylinder*>, customEqualId<Cylinder*>>;
 
 protected:
 
