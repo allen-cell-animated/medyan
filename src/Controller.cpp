@@ -295,19 +295,19 @@ void Controller::initialize(string inputFile,
 
 void Controller::setupInitialNetwork(SystemParser& p) {
 
-	//Read bubble setup, parse bubble input file if needed
-	BubbleSetup BSetup = p.readBubbleSetup();
-	BubbleData bubbles;
+    //Read bubble setup, parse bubble input file if needed
+    BubbleSetup BSetup = p.readBubbleSetup();
+    BubbleData bubbles;
 
-	cout << "---" << endl;
-	cout << "Initializing bubbles...";
+    cout << "---" << endl;
+    cout << "Initializing bubbles...";
 
-	if (BSetup.inputFile != "") {
-		BubbleParser bp(_inputDirectory + BSetup.inputFile);
-		bubbles = bp.readBubbles();
-	}
-	//add other bubbles if specified
-	BubbleInitializer *bInit = new RandomBubbleDist();
+    if (BSetup.inputFile != "") {
+        BubbleParser bp(_inputDirectory + BSetup.inputFile);
+        bubbles = bp.readBubbles();
+    }
+    //add other bubbles if specified
+    BubbleInitializer *bInit = new RandomBubbleDist();
 
     auto bubblesGen = bInit->createBubbles(_subSystem.getBoundary(),
                                            BSetup.numBubbles,
@@ -315,11 +315,11 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     bubbles.insert(bubbles.end(), bubblesGen.begin(), bubblesGen.end());
     delete bInit;
 
-	//add bubbles
-	for (auto it: bubbles) {
+    //add bubbles
+    for (auto it: bubbles) {
 
-		auto coord = get<1>(it);
-		auto type = get<0>(it);
+        auto coord = get<1>(it);
+        auto type = get<0>(it);
 
         if(type >= SysParams::Mechanics().numBubbleTypes) {
             cout << "Bubble data specified contains an "
@@ -330,89 +330,89 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     }
     cout << "Done. " << bubbles.size() << " bubbles created." << endl;
 
-	//Read filament setup, parse filament input file if needed
-	FilamentSetup FSetup = p.readFilamentSetup();
+    //Read filament setup, parse filament input file if needed
+    FilamentSetup FSetup = p.readFilamentSetup();
 //    FilamentData filaments;
 
-	cout << "---" << endl;
+    cout << "---" << endl;
 //    HybridBindingSearchManager::setdOut();
-	cout << "Initializing filaments...";
+    cout << "Initializing filaments...";
 
-	if (SysParams::RUNSTATE == true) {
-		if (FSetup.inputFile != "") {
-			FilamentParser fp(_inputDirectory + FSetup.inputFile);
-			filaments = fp.readFilaments();
-		}
-		fil = get<0>(filaments);
-		//add other filaments if specified
-		FilamentInitializer *fInit = new RandomFilamentDist();
+    if (SysParams::RUNSTATE == true) {
+        if (FSetup.inputFile != "") {
+            FilamentParser fp(_inputDirectory + FSetup.inputFile);
+            filaments = fp.readFilaments();
+        }
+        fil = get<0>(filaments);
+        //add other filaments if specified
+        FilamentInitializer *fInit = new RandomFilamentDist();
 
-		auto filamentsGen = fInit->createFilaments(_subSystem.getBoundary(),
-		                                           FSetup.numFilaments,
-		                                           FSetup.filamentType,
-		                                           FSetup.filamentLength);
-		auto filGen = get<0>(filamentsGen);
-		fil.insert(fil.end(), filGen.begin(), filGen.end());
-		delete fInit;
+        auto filamentsGen = fInit->createFilaments(_subSystem.getBoundary(),
+                                                    FSetup.numFilaments,
+                                                    FSetup.filamentType,
+                                                    FSetup.filamentLength);
+        auto filGen = get<0>(filamentsGen);
+        fil.insert(fil.end(), filGen.begin(), filGen.end());
+        delete fInit;
 
-		//add filaments
+        //add filaments
 
-		for (auto it: fil) {
+        for (auto it: fil) {
 
-			auto coord1 = get<1>(it);
-			auto coord2 = get<2>(it);
-			auto type = get<0>(it);
+            auto coord1 = get<1>(it);
+            auto coord2 = get<2>(it);
+            auto type = get<0>(it);
 
-			if (type >= SysParams::Chemistry().numFilaments) {
-				cout << "Filament data specified contains an "
-				     << "invalid filament type. Exiting." << endl;
-				exit(EXIT_FAILURE);
-			}
-			vector<vector<floatingpoint>> coords = {coord1, coord2};
+            if (type >= SysParams::Chemistry().numFilaments) {
+                cout << "Filament data specified contains an "
+                        << "invalid filament type. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            vector<vector<floatingpoint>> coords = {coord1, coord2};
 
-			if (coord2.size() == 3) {
+            if (coord2.size() == 3) {
 
-				floatingpoint d = twoPointDistance(coord1, coord2);
-				vector<floatingpoint> tau = twoPointDirection(coord1, coord2);
-				int numSegment = static_cast<int>(std::round(
-						d / SysParams::Geometry().cylinderSize[type]));
+                floatingpoint d = twoPointDistance(coord1, coord2);
+                vector<floatingpoint> tau = twoPointDirection(coord1, coord2);
+                int numSegment = static_cast<int>(std::round(
+                        d / SysParams::Geometry().cylinderSize[type]));
 
-				// check how many segments can fit between end-to-end of the filament
-				if (numSegment == 0)
-					_subSystem.addTrackable<Filament>(&_subSystem, type, coords, 2,
-					                                  FSetup.projectionType);
-				else
-					_subSystem.addTrackable<Filament>(&_subSystem, type, coords,
-					                                  numSegment + 1,
-					                                  FSetup.projectionType);
-			} else if (coord2.size() > 3) {
-				int numSegment = coord2.size() / 3;
-				vector<vector<floatingpoint>> coords;
-				coords.push_back(coord1);
-				for (int id = 0; id < numSegment; id++)
-					coords.push_back(
-							{coord2[id * 3], coord2[id * 3 + 1], coord2[id * 3 + 2]});
+                // check how many segments can fit between end-to-end of the filament
+                if (numSegment == 0)
+                    _subSystem.addTrackable<Filament>(&_subSystem, type, coords, 2,
+                                                        FSetup.projectionType);
+                else
+                    _subSystem.addTrackable<Filament>(&_subSystem, type, coords,
+                                                        numSegment + 1,
+                                                        FSetup.projectionType);
+            } else if (coord2.size() > 3) {
+                int numSegment = coord2.size() / 3;
+                vector<vector<floatingpoint>> coords;
+                coords.push_back(coord1);
+                for (int id = 0; id < numSegment; id++)
+                    coords.push_back(
+                            {coord2[id * 3], coord2[id * 3 + 1], coord2[id * 3 + 2]});
 
-				if (numSegment == 0)
-					_subSystem.addTrackable<Filament>(&_subSystem, type, coords, 2,
-					                                  FSetup.projectionType);
-				else
-					_subSystem.addTrackable<Filament>(&_subSystem, type, coords,
-					                                  numSegment + 1,
-					                                  FSetup.projectionType);
-			}
-		}
-		cout << "Done. " << fil.size() << " filaments created." << endl;
-		cout << "Total cylinders " << Cylinder::getCylinders().size() << endl;
-	}
-	else{
-		//Create the restart pointer
-		const string inputfileName = _inputDirectory + FSetup.inputFile;
-		_restart = new Restart(_subSystem, _chemData, inputfileName);
-		//read set up.
-		_restart->readNetworkSetup();
-		_restart->setupInitialNetwork();
-	}
+                if (numSegment == 0)
+                    _subSystem.addTrackable<Filament>(&_subSystem, type, coords, 2,
+                                                        FSetup.projectionType);
+                else
+                    _subSystem.addTrackable<Filament>(&_subSystem, type, coords,
+                                                        numSegment + 1,
+                                                        FSetup.projectionType);
+            }
+        }
+        cout << "Done. " << fil.size() << " filaments created." << endl;
+        cout << "Total cylinders " << Cylinder::getCylinders().size() << endl;
+    }
+    else{
+        //Create the restart pointer
+        const string inputfileName = _inputDirectory + FSetup.inputFile;
+        _restart = new Restart(_subSystem, _chemData, inputfileName);
+        //read set up.
+        _restart->readNetworkSetup();
+        _restart->setupInitialNetwork();
+    }
 }
 
 void Controller::setupSpecialStructures(SystemParser& p) {
