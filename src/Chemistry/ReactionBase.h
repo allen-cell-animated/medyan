@@ -292,11 +292,15 @@ public:
     ///aravind June 24, 2016
     void setBareRate(float a) {
         if(_rate_bare == a) return;
-        else if(_rate_bare = 0){
+        else if(_rate_bare == 0.0){
             _rate_bare = a;
             _rate = _rate_bare;
             for(uint i = 0; i < RateMulFactorType::RATEMULFACTSIZE; i++)
                 _rate *= _ratemulfactors[i];
+        }
+        else{
+            _rate = _rate*a/_rate_bare;
+            _rate_bare = a;
         }
     }
     /// Returns a pointer to the RNode associated with this ReactionBase.
