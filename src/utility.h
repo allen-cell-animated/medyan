@@ -35,7 +35,7 @@
 using namespace std;
 
 ///floatingpoint typedef
-typedef float floatingpoint;
+typedef double floatingpoint;
 typedef double doubleprecision;
 
 namespace detail {
@@ -139,7 +139,40 @@ namespace std{
         }
         
     };
-    
+
+    #ifdef DEBUGCONSTANTSEED
+	template< typename T>
+	struct customEqualId {
+		bool operator() (const T& _t1, const T& _t2) const {
+			if(_t1->getId() == _t2->getId())
+				return true;
+			else
+				return false;
+		}
+	};
+
+	template< typename T>
+	struct customcompareId {
+		bool operator() (const T& _t1, const T& _t2) const {
+			return _t1->getId() < _t2->getId();
+		}
+	};
+
+	template< typename T>
+	struct HashbyId {
+	public:
+		size_t operator()(const T& _t1) const {
+			return _t1->getId();
+		}
+	};
+/*	template< typename T>
+	struct customcylindercompare {
+		bool operator() (T& _t1, T &_t2) const {
+			return _t1->getCylinder->getId() < _t2->getCylinder->getId();
+		}
+	};*/
+	#endif
+
     ///Sum a vector of shorts
     inline short sum(vector<short> vec) {
         

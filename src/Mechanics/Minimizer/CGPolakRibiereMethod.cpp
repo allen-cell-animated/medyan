@@ -24,7 +24,9 @@
 #include "Structure/Bead.h"
 
 void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                            floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit){
+                            floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+                            floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                            bool steplimit){
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbeginTot, tendTot;
     chrono::high_resolution_clock::time_point tbeginII, tendII;
@@ -568,11 +570,13 @@ std::cout<<"----------------------------------------"<<endl;
 
 		//@@@{ STEP 5 OTHER
 	    tbegin = chrono::high_resolution_clock::now();
-        //set the floor of lambda (lowest lambda allowed based on maxf
-        int maxForder = static_cast<int>(floor(log10(maxForce)));
-        if(maxForder < 0 ) maxForder--;
+	    if(std::is_same<floatingpoint,float>::value) {
+		    //set the floor of lambda (lowest lambda allowed based on maxf
+		    int maxForder = static_cast<int>(floor(log10(maxForce)));
+		    if (maxForder < 0) maxForder--;
 
-        CGMethod::setLAMBDATOL(maxForder);
+		    CGMethod::setLAMBDATOL(maxForder);
+	    }
 
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_other2(tend - tbegin);
@@ -596,7 +600,8 @@ std::cout<<"----------------------------------------"<<endl;
 	    tbegin = chrono::high_resolution_clock::now();
         bool *dummy = nullptr;
 	    lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX, dummy)
-                           : backtrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX, dummy);
+                           : backtrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
+                                                    LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_lambda(tend - tbegin);
 	    CUDAcommon::tmin.findlambda+= elapsed_lambda.count();
@@ -883,6 +888,13 @@ std::cout<<"----------------------------------------"<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
     FFM.computeLoadForces();
+
+    // compute the Hessian matrix at this point if the feature is enabled
+    if(SysParams::Mechanics().hessTracking){
+        int total_DOF = Bead::getDbData().coords.size_raw();
+        FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, SysParams::Mechanics().hessDelta);
+    }
+
 #ifdef OPTIMOUT
     std::cout<<"End Minimization************"<<endl;
 #endif

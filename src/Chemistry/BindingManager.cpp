@@ -559,7 +559,6 @@ _rMin(rMin), _rMax(rMax) {
     //find the pair binding species
     RSpecies** rs = reaction->rspecies();
     string name = rs[ML_RXN_INDEX]->getSpecies().getName();
-
     _bindingSpecies = _compartment->findSpeciesByName(name);
     _rMaxsq = rMax*rMax;
     _rMinsq = rMin*rMin;
@@ -1474,6 +1473,17 @@ vector<tuple<CCylinder*, short>> LinkerBindingManager::chooseBindingSitesstencil
     return vector<tuple<CCylinder*, short>>{it->first, it->second};
 #endif
 }
+
+void LinkerBindingManager::clearpossibleBindingsstencil() {
+    #ifdef NLSTENCILLIST
+    floatingpoint oldN=numBindingSitesstencil();
+        _possibleBindingsstencil.clear();
+        updateBindingReaction(oldN,0);
+    #else
+    auto HManager = _compartment->getHybridBindingSearchManager();
+    HManager->clearPossibleBindingsstencil(_idvec);
+    #endif
+}
 #endif
 #ifdef CUDAACCL_NL
 void LinkerBindingManager::assigncudavars() {
@@ -1515,6 +1525,7 @@ _rMin(rMin), _rMax(rMax) {
 
     //find the pair binding species
     RSpecies** rs = reaction->rspecies();
+
     string name = rs[ML_RXN_INDEX]->getSpecies().getName();
 
     _bindingSpecies = _compartment->findSpeciesByName(name);
@@ -1893,7 +1904,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
                                                    .bindingSites[_filamentType]
                                                    .size()*cn->getStableIndex() + j],
                                                    		(floatingpoint)1.0)) {
-                            total++;
+                            //total++;
                             //check distances..
                             auto mp2 = bindingsites.at(j);
 
@@ -2454,6 +2465,18 @@ vector<tuple<CCylinder*, short>> MotorBindingManager::chooseBindingSitesstencil(
 
     return vector<tuple<CCylinder*, short>>{it->first, it->second};
 #endif
+}
+
+void MotorBindingManager::clearpossibleBindingsstencil() {
+    #ifdef NLSTENCILLIST
+    floatingpoint oldN=numBindingSitesstencil();
+        _possibleBindingsstencil.clear();
+        updateBindingReaction(oldN,0);
+    #else
+    auto HManager = _compartment->getHybridBindingSearchManager();
+    HManager->clearPossibleBindingsstencil(_idvec);
+
+    #endif
 }
 #endif
 #ifdef CUDAACCL_NL

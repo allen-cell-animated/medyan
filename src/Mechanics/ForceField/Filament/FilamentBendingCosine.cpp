@@ -373,7 +373,7 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, size_
 	        else if (x > 1.0) x = 1.0;
 
             floatingpoint cosp =  x;
-            floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
+            floatingpoint sinp = sqrt(max<floatingpoint>((1-cosp*cosp),(floatingpoint)0.0));
             floatingpoint sinpminusq = sinp * cos(eqt[i]) - cosp * sin(eqt[i]);
 
 /*            phi = safeacos(l1l2 *A);
@@ -414,7 +414,8 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, size_
                            (coord3[2] - coord2[2])*C );
 
 	    #ifdef CHECKFORCES_INF_NAN
-	    if(checkNaN_INF(force1, 0, 2)||checkNaN_INF(force2,0,2)||checkNaN_INF(force3,0,2)){
+	    if(checkNaN_INF<floatingpoint>(force1, 0, 2)||checkNaN_INF<floatingpoint>(force2,0,2)
+	       ||checkNaN_INF<floatingpoint>(force3,0,2)){
 		    cout<<"Filament Bending Force becomes infinite. Printing data "<<endl;
 
 		    short found = 0;

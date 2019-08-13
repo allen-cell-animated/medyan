@@ -274,6 +274,8 @@ public:
         bspairsmotor2.init_dout(10000,{30625.0f, 50625.0f});
     }
 
+    void clearPossibleBindingsstencil(short idvec[2]);
+
 	void initializeSIMDvars();
 
 	static floatingpoint largestlinkerdistance;

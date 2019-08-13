@@ -7,9 +7,13 @@ Simple serial implementation for finding contacts.
 #ifndef DIST_CUDA
 #define DIST_CUDA
 
-#include "dist_moduleV2/dist_common.h"
+/*#include "dist_moduleV2/dist_common.h"
 #include "dist_moduleV2/dist_out.h"
-#include "dist_moduleV2/dist_coords.h"
+#include "dist_moduleV2/dist_coords.h"*/
+
+#include "dist_common.h"
+#include "dist_out.h"
+#include "dist_coords.h"
 
 namespace dist {	
 			

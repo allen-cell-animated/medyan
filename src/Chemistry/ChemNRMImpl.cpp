@@ -54,6 +54,10 @@ void* RNodeNRM::operator new(size_t size) {
 }
 
 void RNodeNRM::operator delete(void* ptr) noexcept {
+#ifdef CHECKRXN
+    cout<<"deleting RNodeNRM "<<ptr<<" with Rxn "<<((RNodeNRM*)ptr)->getReaction()<<" Type "
+    <<((RNodeNRM*)ptr)->getReaction()->getReactionType()<<endl;
+#endif
     boost::fast_pool_allocator<RNodeNRM>::deallocate((RNodeNRM*)ptr);
 }
 #endif
@@ -68,14 +72,23 @@ RNodeNRM::RNodeNRM(ReactionBase *r, ChemNRMImpl &chem_nrm)
 }
 
 RNodeNRM::~RNodeNRM() noexcept {
+	#ifdef CHECKRXN
+	cout<<"deleting RNodeNRM 2 "<<this<<" with Rxn "<<this->getReaction()<<" Type "
+	<<this->getReaction()->getReactionType()<<endl;
+	#endif
     boost_heap *heap = _chem_nrm.getHeap();
     heap->erase(_handle);
     _react->setRnode(nullptr);
 }
 
 void RNodeNRM::printSelf() const {
-    cout << "RNodeNRM: ptr=" << this << ", tau=" << getTau() <<
-        ", a=" << _a << ", points to Reaction:\n";
+	Compartment* c = static_cast<Compartment*>(_react->getParent());
+	auto coord = c->coordinates();
+	std::cout.precision(10);
+    cout << "RNodeNRM: ptr=" << this <<", tau=" << getTau() <<
+//	cout << "tau=" << getTau() <<
+        ", a=" << _a <<" in Compartment "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<
+        ", points to Reaction:\n";
     cout << (*_react);
 }
 
@@ -149,6 +162,10 @@ floatingpoint ChemNRMImpl::generateTau(floatingpoint a){
     exponential_distribution<floatingpoint>::param_type pm(a);
 
     _exp_distr.param(pm);
+
+	#ifdef DEBUGCONSTANTSEED
+	Rand::chemistrycounter++;
+	#endif
     return _exp_distr(Rand::eng);
 }
 
@@ -186,7 +203,9 @@ bool ChemNRMImpl::makeStep() {
     _t=tau_top;
     syncGlobalTime();
     //std::cout<<"------------"<<endl;
-    //rn->printSelf();
+//    rn->printSelf();
+//    cout<<"b4_1 "<<Rand::chemistrycounter<<" "<<Rand::intcounter<<" "
+//																""<<Rand::floatcounter<<endl;
     //std::cout<<"------------"<<endl;
 
     // if dissipation tracking is enabled and the reaction is supported, then compute the change in Gibbs free energy and store it
@@ -198,13 +217,24 @@ bool ChemNRMImpl::makeStep() {
         _dt->updateDelGChem(react);
         }
     }
+
+    #ifdef CHECKRXN
+    cout<<"rxn"<<endl;
+    rn->printSelf();
+	#endif
+
     rn->makeStep();
+	#ifdef DEBUGCONSTANTSEED
+    cout<<"tau "<<_t<<endl;
+	#endif
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
 #endif
         //std::cout<<"Update R and Tau for fired reaction"<<endl;
         rn->generateNewRandTau();
         rn->updateHeap();
+//	    cout<<"b4_2 "<<Rand::chemistrycounter<<" "<<Rand::intcounter<<" "
+//	                                                                  ""<<Rand::floatcounter<<endl;
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     }
 #endif
@@ -269,15 +299,25 @@ bool ChemNRMImpl::makeStep() {
     // Send signal
     r->emitSignal();
 #endif
+//	cout<<"af "<<Rand::chemistrycounter<<" "<<Rand::intcounter<<" "
+//	                                                            ""<<Rand::floatcounter<<endl;
     return true;
 }
 
 void ChemNRMImpl::addReaction(ReactionBase *r) {
+	#ifdef CHECKRXN
+	cout<<"Adding reaction "<<r<<" with RNodeNRM "<<r->getRNode()<<" Type "
+	    <<r->getReactionType()<<endl;
+	#endif
     _map_rnodes.emplace(r,make_unique<RNodeNRM>(r,*this));
     ++_n_reacts;
 }
 
 void ChemNRMImpl::removeReaction(ReactionBase *r) {
+	#ifdef CHECKRXN
+	cout<<"Removing reaction "<<r<<" with RNodeNRM "<<r->getRNode()<<" Type "
+	<<r->getReactionType()<<endl;
+	#endif
     _map_rnodes.erase(r);
     --_n_reacts;
 }

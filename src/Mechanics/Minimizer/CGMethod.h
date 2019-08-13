@@ -62,7 +62,7 @@ protected:
     //@{
     /// Parameter used in backtracking line search
     const floatingpoint LAMBDAREDUCE = 0.5;     ///< Lambda reduction parameter for backtracking
-    floatingpoint LAMBDATOL = 1e-4;       ///< Lambda tolerance parameter
+    floatingpoint LAMBDATOL = 1e-8;       ///< Lambda tolerance parameter
 
     const floatingpoint SAFELAMBDAREDUCE = 0.9;  ///< Lambda reduction parameter for conservative backtracking
 
@@ -184,9 +184,11 @@ protected:
     /// Linear search methods
     /// A simple backtracking search method that computes an optimal
     /// energy change and compares the backtracked energy to it
-    floatingpoint backtrackingLineSearch(
-        ForceFieldManager& FFM, floatingpoint MAXDIST, floatingpoint maxForce,
-        floatingpoint LAMBDAMAX, bool *gpu_safestate);
+    floatingpoint backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
+                                         floatingpoint maxForce,
+                                         floatingpoint LAMBDAMAX,
+                                         floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                                         bool *gpu_safestate);
     
     /// The safemode backtracking search, returns the first energy decrease
     ///@note - The most robust linesearch method, but very slow
@@ -227,7 +229,9 @@ public:
 
     /// Minimize the system
     virtual void minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                          floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit) = 0;
+                          floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+                          floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                          bool steplimit) = 0;
 
 };
 
