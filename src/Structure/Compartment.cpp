@@ -2001,19 +2001,20 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C, bo
             // cout << "To neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] << ", z = " << C->_coords[2] <<endl;
             // cout << "scaleFactor = " << scaleFactor << endl;
 
-            float actualDiffRate = diff_rate * scaleFactor;
             float volumeFrac = getVolumeFrac();
             // cout << "VolumeFraction = " << volumeFrac << endl;
 
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
 
-            ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour}, actualDiffRate, false, volumeFrac);
+            ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour}, diff_rate, false, volumeFrac);
+            R->setRateMulFactor(scaleFactor, ReactionBase::AreaDiffusing);
             this->addDiffusionReaction(R);
             rxns.push_back(R);
 
             if(!outwardOnly) {
                 // Generate inward diffusion reaction
-                ReactionBase* R = new DiffusionReaction({sp_neighbour, sp_this.get()}, actualDiffRate, false, C->getVolumeFrac());
+                ReactionBase* R = new DiffusionReaction({sp_neighbour, sp_this.get()}, diff_rate, false, C->getVolumeFrac());
+                R->setRateMulFactor(scaleFactor, ReactionBase::AreaDiffusing);
                 C->addDiffusionReaction(R);
                 rxns.push_back(R);
             }
@@ -2263,20 +2264,21 @@ void Compartment::updateActivation(ChemSim* chem, ActivateReason reason) {
                 double scaleFactor =
                     0.5 * (_partialArea[idxFwd] + c->_partialArea[idxBwd]) /
                     GController::getCompartmentArea()[idxFwd / 2];
-                double actualDiffRate = baseDiffRate * scaleFactor;
 
                 // Update outward reaction rate
                 for(auto& r: _diffusion_reactions.reactions())
                     if(sp_this.get() == &r->rspecies()[0]->getSpecies() && sp_neighbor == &r->rspecies()[1]->getSpecies()) {
                         r->setVolumeFrac(volumeFrac);
-                        r->setRateScaled(actualDiffRate);
+                        r->recalcRateVolumeFactor();
+                        r->setRateMulFactor(scaleFactor, ReactionBase::AreaDiffusing);
                     }
                 // We also update inward reaction rate here to ensure that neighbors are always on the same page.
                 // Update inward reaction rate
                 for(auto& r: c->_diffusion_reactions.reactions())
                     if(sp_this.get() == &r->rspecies()[1]->getSpecies() && sp_neighbor == &r->rspecies()[0]->getSpecies()) {
                         r->setVolumeFrac(c->getVolumeFrac());
-                        r->setRateScaled(actualDiffRate);
+                        r->recalcRateVolumeFactor();
+                        r->setRateMulFactor(scaleFactor, ReactionBase::AreaDiffusing);
                     }
             }
 
@@ -2288,7 +2290,7 @@ void Compartment::updateActivation(ChemSim* chem, ActivateReason reason) {
     // Update the internal reaction rates
     for(auto& r: _internal_reactions.reactions()) {
         r->setVolumeFrac(volumeFrac);
-        r->setRateScaled(r->getBareRate());
+        r->recalcRateVolumeFactor();
     }
 }
 
