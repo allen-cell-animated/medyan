@@ -95,7 +95,6 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
     Reaction* newReaction = new Reaction<M,N>(species, _rate_bare, _isProtoCompartment, _volumeFrac, _rateVolumeDepExp);
     newReaction->_rate = _rate;
     newReaction->_Id = _Id;
-    cout<<"Clone rxn ID "<<newReaction->getId()<<endl;
 #ifdef REACTION_SIGNALING
     newReaction->_signal = std::move(_signal);
     _signal = nullptr;
