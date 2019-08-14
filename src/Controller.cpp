@@ -250,7 +250,13 @@ void Controller::initialize(string inputFile,
 
     //Set up HRCD output if dissipation tracking is enabled
     string hrcdsnapname = _outputDirectory + "HRCD.traj";
+
     _outputs.push_back(new HRCD(hrcdsnapname, &_subSystem, _cs));
+        
+    //Set up HRMD output if dissipation tracking is enabled
+    string hrmdsnapname = _outputDirectory + "HRMD.traj";
+    _outputs.push_back(new HRMD(hrmdsnapname, &_subSystem, _cs));
+        
     }
 
     if(SysParams::CParams.eventTracking){

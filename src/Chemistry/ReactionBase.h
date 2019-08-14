@@ -136,6 +136,7 @@ public:
     array<float, RATEMULFACTSIZE> _ratemulfactors;
 
     void setRateMulFactor(float factor, RateMulFactorType type){
+//    	cout<<"set Rate type "<<type<<" "<<factor<<endl;
 
         if(factor == _ratemulfactors[type]) return;
 

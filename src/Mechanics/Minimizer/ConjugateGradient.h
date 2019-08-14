@@ -62,14 +62,14 @@ public:
 
 
 
-    floatingpoint getEnergy(ForceFieldManager &FFM, floatingpoint d){
+    tuple<floatingpoint, vector<floatingpoint>, vector<string>> getEnergy(ForceFieldManager &FFM, floatingpoint d){
       
         //double* coord = _CGType.getCoords();
         floatingpoint* coord = Bead::getDbData().coords.data();
         
         FFM.vectorizeAllForceFields();
 
-        floatingpoint f = FFM.computeEnergy(coord);
+        tuple<floatingpoint, vector<floatingpoint>, vector<string>> HRMDvec = FFM.computeEnergyHRMD(coord);
         
         // delete [] coord;
         
@@ -77,7 +77,7 @@ public:
         
         
         
-        return f;
+        return HRMDvec;
         
         
         
