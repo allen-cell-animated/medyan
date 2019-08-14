@@ -246,6 +246,24 @@ public:
 };
 
 
+/// Print mech energy changes by HRMD
+class HRMD : public Output {
+    
+    ChemSim* _cs;
+    
+public:
+    HRMD(string outputFileName, SubSystem* s, ChemSim* cs)
+    
+    : Output(outputFileName, s), _cs(cs) {}
+    
+    ~HRMD() {}
+    
+    virtual void print(int snapshot);
+};
+
+
+
+
 // Print cm graph
 class CMGraph : public Output {
 
