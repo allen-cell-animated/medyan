@@ -331,6 +331,8 @@ tuple<floatingpoint, vector<floatingpoint>, vector<string>> ForceFieldManager::c
     vector<string> HRMDnames;
     for (auto &ff : _forceFields) {
         auto tempEnergy = ff->computeEnergy(coord);
+        // convert to units of kT
+        tempEnergy = tempEnergy / kT;
         HRMDenergies.push_back(tempEnergy);
         HRMDnames.push_back(ff->getName());
         energy += tempEnergy;
