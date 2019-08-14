@@ -318,11 +318,28 @@ void MotorGhost::updateReactionRates() {
             if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
 
             	if(consider_passivation && isc1leftofc2){
+		            #ifdef CROSSCHECK_MOTOR
+		            auto b1 = _c1->getFirstBead();
+		            auto b2 = _c1->getSecondBead();
+		            auto b3 = _c2->getFirstBead();
+		            auto b4 = _c2->getSecondBead();
+		            cout<<"motor-walking  c1 mID "<<getId()<<" cIDs "<<_c1->getId()<<" "
+		                                                                             ""<<_c2->getId()<<" "
+		                                                                                               ""<<_position1<<" "
+		                <<_position2<<" cindex "<<_c1->getStableIndex()<<" "<<_c2->getStableIndex()<<" bID "<<b1->getId
+				            ()<<" "<<b2->getId()<<" bindex "<<b1->getStableIndex()<<" "<<b2->getStableIndex()<<" "
+		                <<b3->getStableIndex()<<" "<<b4->getStableIndex()<<endl;
+		            #endif
 
-		            auto c1lastbindingsite = *(SysParams::Chemistry()
-				            .bindingSites[fType1].end())/SysParams::Geometry()
-				                                     .cylinderNumMon[fType1];
-
+		            float c1lastbindingsite = float(*(SysParams::Chemistry()
+				            .bindingSites[fType1].end() -1))/float(SysParams::Geometry()
+				            		.cylinderNumMon[fType1]);
+		            #ifdef CROSSCHECK_MOTOR
+		            cout<<"c1lastbindingsite "<<c1lastbindingsite<<" "<<
+		            *(SysParams::Chemistry().bindingSites[fType1].begin())<<" "
+		            << *(SysParams::Chemistry().bindingSites[fType1].end()-1)<<" "<<
+		            SysParams::Geometry().cylinderNumMon[fType1]<<endl;
+					#endif
 		            if(areEqual(c1lastbindingsite,_position1))
 			            r->setRateMulFactor(0.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
             	}
@@ -378,9 +395,28 @@ void MotorGhost::updateReactionRates() {
             if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
 
 	            if(consider_passivation && !isc1leftofc2) {
-		            auto c2lastbindingsite = *(SysParams::Chemistry()
-				            .bindingSites[fType2].end())/SysParams::Geometry()
-				                                     .cylinderNumMon[fType2];
+		            #ifdef CROSSCHECK_MOTOR
+		            auto b1 = _c1->getFirstBead();
+		            auto b2 = _c1->getSecondBead();
+		            auto b3 = _c2->getFirstBead();
+		            auto b4 = _c2->getSecondBead();
+		            cout<<"motor-walking  c2 mID "<<getId()<<" cIDs "<<_c1->getId()<<" "
+		                                                                             ""<<_c2->getId()<<" "
+		                                                                                               ""<<_position1<<" "
+		                <<_position2<<" cindex "<<_c1->getStableIndex()<<" "<<_c2->getStableIndex()<<" bID "<<b1->getId
+				            ()<<" "<<b2->getId()<<" bindex "<<b1->getStableIndex()<<" "<<b2->getStableIndex()<<" "
+		                <<b3->getStableIndex()<<" "<<b4->getStableIndex()<<endl;
+		            #endif
+
+		            float c2lastbindingsite = float(*(SysParams::Chemistry()
+				            .bindingSites[fType2].end()-1))
+				            		/float(SysParams::Geometry().cylinderNumMon[fType2]);
+		            #ifdef CROSSCHECK_MOTOR
+		            cout<<"c2lastbindingsite "<<c2lastbindingsite<<" "<<
+		                *(SysParams::Chemistry().bindingSites[fType1].begin())<<" "
+		                << *(SysParams::Chemistry().bindingSites[fType1].end()-1)<<" "<<
+		                SysParams::Geometry().cylinderNumMon[fType1]<<endl;
+		            #endif
 		            if(areEqual(c2lastbindingsite,_position2))
 			            r->setRateMulFactor(0.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
 
