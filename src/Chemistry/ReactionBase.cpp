@@ -17,6 +17,8 @@
 
 #include "ChemNRMImpl.h"
 
+size_t ReactionBase::_Idcounter = 0;
+
 ReactionBase::ReactionBase (float rate, bool isProtoCompartment, floatingpoint volumeFrac, int rateVolumeDepExp)
     : _rnode(nullptr), _parent(nullptr), _rate(rate),
     _rate_bare(rate), _isProtoCompartment(isProtoCompartment),
@@ -33,6 +35,8 @@ ReactionBase::ReactionBase (float rate, bool isProtoCompartment, floatingpoint v
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     _passivated=true;
 #endif
+    _Id = _Idcounter;
+    _Idcounter++;
 }
 
 Composite* ReactionBase::getRoot() {

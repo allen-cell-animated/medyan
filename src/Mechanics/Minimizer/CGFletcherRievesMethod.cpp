@@ -21,6 +21,7 @@
                                   floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
                                   floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
                                   bool steplimit) {
+
         //number of steps
         int N;
         if (steplimit) {
@@ -35,26 +36,29 @@
 
         FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
         Bead::getDbData().forcesAux = Bead::getDbData().forces;
+        auto maxForce = maxF();
 
         //compute first gradient
         floatingpoint curGrad = CGMethod::allFDotF();
 
         int numIter = 0;
         while (/* Iteration criterion */  numIter < N &&
-                                          /* Gradient tolerance  */  maxF() > GRADTOL) {
+               /* Gradient tolerance  */  maxForce > GRADTOL) {
             numIter++;
             floatingpoint lambda, beta, newGrad;
 
             //temporary
             bool *dummy = nullptr;
             //find lambda by line search, move beads
-            lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy)
-                               : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX,
+            lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce,
+            		LAMBDAMAX, dummy)
+                               : backtrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
                                        LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
             moveBeads(lambda);
 
             //compute new forces
             FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());
+            maxForce = maxF();
 
             //compute direction
             newGrad = CGMethod::allFADotFA();
@@ -97,5 +101,5 @@
         endMinimization();
 
         FFM.cleanupAllForceFields();
-    }
+}
 

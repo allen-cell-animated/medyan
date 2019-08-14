@@ -361,7 +361,7 @@ void BoundaryCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f
         Cumnc+=nc;
     }}
 
-floatingpoint BoundaryCylinderRepulsionExp::loadForces(floatingpoint r, floatingpoint kRep, floatingpoint screenLength) {
+floatingpoint BoundaryCylinderRepulsionExp::loadForces(floatingpoint r, floatingpoint kRep, floatingpoint screenLength) const {
 
     floatingpoint R = -r/screenLength;
     return kRep * exp(R)/screenLength;

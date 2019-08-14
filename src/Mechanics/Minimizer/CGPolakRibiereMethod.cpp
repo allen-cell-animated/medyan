@@ -83,6 +83,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
 	tbegin = chrono::high_resolution_clock::now();
     Bead::getDbData().forcesAux = Bead::getDbData().forces;
     Bead::getDbData().forcesAuxP = Bead::getDbData().forces;
+    auto maxForce = maxF();
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_copy(tend - tbegin);
 	CUDAcommon::tmin.copyforces+= elapsed_copy.count();
@@ -253,7 +254,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
     floatingpoint curGrad = CGMethod::allFDotF();
     Ms_isminimizationstate = true;
     Ms_issafestate = false;
-    Ms_isminimizationstate = maxF() > GRADTOL;
+    Ms_isminimizationstate = maxForce > GRADTOL;
 
     //
     //
@@ -571,7 +572,7 @@ std::cout<<"----------------------------------------"<<endl;
 	    tbegin = chrono::high_resolution_clock::now();
 	    if(std::is_same<floatingpoint,float>::value) {
 		    //set the floor of lambda (lowest lambda allowed based on maxf
-		    int maxForder = static_cast<int>(floor(log10(maxF())));
+		    int maxForder = static_cast<int>(floor(log10(maxForce)));
 		    if (maxForder < 0) maxForder--;
 
 		    CGMethod::setLAMBDATOL(maxForder);
@@ -598,8 +599,8 @@ std::cout<<"----------------------------------------"<<endl;
 		//@@@{ STEP 6 FIND LAMBDA
 	    tbegin = chrono::high_resolution_clock::now();
         bool *dummy = nullptr;
-	    lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy)
-                           : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX,
+	    lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX, dummy)
+                           : backtrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
                                                     LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_lambda(tend - tbegin);
@@ -643,6 +644,7 @@ std::cout<<"----------------------------------------"<<endl;
         ///@@@{ STEP 8 compute new forces
 	    tbegin = chrono::high_resolution_clock::now();
         FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());//split and synchronize
+        maxForce = maxF();
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
 	    CUDAcommon::tmin.computeforces+= elapsed_force.count();
@@ -746,7 +748,6 @@ std::cout<<"----------------------------------------"<<endl;
         tbegin = chrono::high_resolution_clock::now();
 #endif
         curGrad = newGrad;
-        auto maxForce = maxF();
         Ms_isminimizationstate = maxForce > GRADTOL;
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
@@ -887,13 +888,13 @@ std::cout<<"----------------------------------------"<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
     FFM.computeLoadForces();
-    
+
     // compute the Hessian matrix at this point if the feature is enabled
     if(SysParams::Mechanics().hessTracking){
         int total_DOF = Bead::getDbData().coords.size_raw();
         FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, SysParams::Mechanics().hessDelta);
     }
-    
+
 #ifdef OPTIMOUT
     std::cout<<"End Minimization************"<<endl;
 #endif

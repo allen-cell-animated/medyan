@@ -13,6 +13,8 @@
 
 #include "BoundaryCylinderRepulsionIn.h"
 
+#include <stdexcept> // runtime_error
+
 #include "BoundaryCylinderRepulsionExpIn.h"
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"
@@ -22,6 +24,7 @@
 
 #include "MathFunctions.h"
 #include "cross_check.h"
+#include "Util/Io/Log.hpp"
 //TODO
 //CUDA is not implemented
 #ifdef CUDAACCL
@@ -397,10 +400,11 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeLoadForces()
 
     }
 }
+template< typename InteractionType >
+void BoundaryCylinderRepulsionIn< InteractionType >::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
+    LOG(ERROR) << "Load force computation for a specific cylinder is not implemented in this force field.";
+    throw std::runtime_error("Not implemented error");
+}
 
-///Template specializations
-template floatingpoint BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeEnergy(floatingpoint *coord);
-template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeLoadForces();
-template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::vectorize();
-template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::deallocate();
+// Explicit template instantiations
+template class BoundaryCylinderRepulsionIn< BoundaryCylinderRepulsionExpIn >;

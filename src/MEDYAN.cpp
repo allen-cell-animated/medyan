@@ -68,7 +68,6 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "common.h"
 
 #include "Controller.h"
-#include "SubSystem.h"
 #include "Util/Io/CmdParse.hpp"
 #include "Util/Io/Log.hpp"
 
@@ -82,10 +81,6 @@ int main(int argc, char **argv) {
     cout << "*******************************************************" << endl;
     
     cout.precision(8);
-    
-    //create subsystem and controller to run it
-    SubSystem* s = nullptr;
-    Controller c(s);
 
     string inputFile, inputDirectory, outputDirectory;
 	int threadcount = 0;
@@ -122,6 +117,7 @@ int main(int argc, char **argv) {
     ::medyan::logger::Logger::defaultLoggerInitialization();
 
     //initialize and run system
+    Controller c;
     c.initialize(inputFile, inputDirectory, outputDirectory, threadcount);
     c.run();
 

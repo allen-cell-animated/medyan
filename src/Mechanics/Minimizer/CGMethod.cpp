@@ -951,64 +951,6 @@ void CGMethod::endMinimization() {
 #endif
 }
 
-/*void CGMethod::checkcoord_forces() {
-    if(false) {
-
-        cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
-        Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-        CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
-        floatingpoint *coord = CUDAcommon::serlvars.coord;
-        std::cout << "check revectorized cylinders" << endl;
-        std::cout << "3 Total Cylinders " << Cylinder::getCylinders().size() << " Beads "
-                  << Bead::getBeads().size() << " maxcindex " << Cylinder::getmaxcindex() <<
-                  endl;
-        bool failstatus = false;
-        for (auto cyl:Cylinder::getCylinders()) {
-            int i = cyl->_dcIndex;
-            int id1 = cylindervec[i].ID;
-            int id2 = Cylinderpointervec[i]->getID();
-            int id3 = ccylindervec[i]->getCylinder()->getID();
-            if (id1 != id2 || id2 != id3 || id3 != id1) {
-            	cout<<"CylinderIDs do not match"<<endl;
-	            std::cout <<cyl->getID()<<" "<< id1 << " " << id2 << " " << id3 << endl;
-	            cout<<"cIndex "<<i<<endl;
-
-	            failstatus = true;
-            }
-            auto b1 = cyl->getFirstBead();
-            auto b2 = cyl->getSecondBead();
-            long idx1 = b1->_dbIndex;
-            long idx2 = b2->_dbIndex;
-            floatingpoint* coord_local;
-            floatingpoint* force_local;
-            coord_local = &coord[3 * idx1];
-	        force_local = &force[3 * idx1];
-	        for(int dim =0; dim < 3; dim++){
-	        	if(isnan(coord_local[dim])||isinf(coord_local[dim])||
-	        	isnan(force_local[dim])||isinf(force_local[dim])){
-	        		failstatus = true;
-			        cylinder c = cylindervec[i];
-			        std::cout << "bindices for cyl with ID " << cyl->getID() << " cindex " << i <<
-			                  " are " << idx1 << " " << idx2 << " " << c.bindices[0] << " "
-			                  << c.bindices[1] <<" coords ";
-			        std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
-			                  << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
-			                  << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] <<" forces ";
-			        std::cout << force[3 * idx1] << " " << force[3 * idx1 + 1] << " "
-			                  << force[3 * idx1 + 2] << " " << force[3 * idx2] << " "
-			                  << force[3 * idx2 + 1] << " " << force[3 * idx2 + 2] << endl;
-	        	}
-	        }
-        }
-        if(failstatus){
-        	cout<<"Coordinate/Force values are either Inf/NaN or Cylinder IDs do not "
-			   "match. Exiting."<<endl;
-        	exit(EXIT_FAILURE);
-        } else
-        	cout<<"Passed successfully"<<endl;
-    }
-}*/
-
 #ifdef CUDAACCL
 floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, floatingpoint MAXDIST,
                                         floatingpoint LAMBDAMAX, bool *gpu_safestate) {
@@ -1232,9 +1174,9 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
 #endif // CUDAACCL
 
 floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
-                                        floatingpoint LAMBDAMAX,
-                                        floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
-                                        bool *gpu_safestate) {
+                                               floatingpoint maxForce, floatingpoint LAMBDAMAX,
+                                                floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                                                 bool *gpu_safestate) {
 
     //@{ Lambda phase 1
     floatingpoint lambda;
@@ -1245,27 +1187,28 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
     cconvergencecheck[0] = true;
 #endif
 #ifdef SERIAL
-    floatingpoint f = maxF();
     //return zero if no forces
-    if(f == 0.0){
+    if(maxForce == 0.0) {
         lambda = 0.0;
 #ifdef DETAILEDOUTPUT_LAMBDA
         std::cout<<"initial_lambda_serial "<<lambda<<endl;
 #endif
-        sconvergencecheck = true;}
+        return lambda;
+    }
+
     //calculate first lambda
 	floatingpoint ravg = sum/(maxprevlambdacount);
     if(runningaveragestatus)
-	    lambda = min<floatingpoint>(min<floatingpoint >(LAMBDAMAX, MAXDIST / f), ravg);
+	    lambda = min<floatingpoint>(min<floatingpoint >(LAMBDAMAX, MAXDIST / maxForce), ravg);
     else
-	    lambda = min(LAMBDAMAX, MAXDIST / f);
+	    lambda = min(LAMBDAMAX, MAXDIST / maxForce);
 	   /* cout<<"lambda old "<<lambda<<" lambda max "<<LAMBDAMAX<<" maxdist/f "
 	    <<MAXDIST/f<<" ravg "<<ravg<<endl;*/
 
 
     //@} Lambda phase 1
 #ifdef DETAILEDOUTPUT_LAMBDA
-    std::cout<<"SL lambdamax "<<LAMBDAMAX<<" serial_lambda "<<lambda<<" fmax "<<f<<" state "<<sconvergencecheck<<endl;
+    std::cout<<"SL lambdamax "<<LAMBDAMAX<<" serial_lambda "<<lambda<<" fmax "<<maxForce<<" state "<<sconvergencecheck<<endl;
 #endif
 #endif
 	tbegin = chrono::high_resolution_clock::now();
@@ -1388,14 +1331,19 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 
 }
 
-floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
-                                            floatingpoint LAMBDAMAX,
-                                            bool *gpu_safestate) {
+floatingpoint CGMethod::safeBacktrackingLineSearch(
+    ForceFieldManager& FFM, floatingpoint MAXDIST, floatingpoint maxForce,
+    floatingpoint LAMBDAMAX, bool *gpu_safestate) {
+
     //reset safe mode
     _safeMode = false;
     sconvergencecheck = true;
+
+    if(maxForce == 0.0) { return 0.0; }
+
     //calculate first lambda
-    floatingpoint lambda = LAMBDAMAX;
+    floatingpoint lambda = std::min(LAMBDAMAX, MAXDIST / maxForce);
+
 //    std::cout<<"safe 0"<<endl;
 #ifdef SERIAL //SERIAL
     sconvergencecheck = false;
@@ -1461,7 +1409,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
             //just shake if we cant find an energy min,
             //so we dont get stuck
             if(lambda <= 0.0 || lambda <= LAMBDATOL) {
-                lambda = MAXDIST / maxF();
+                lambda = MAXDIST / maxForce;
                 sconvergencecheck = true;
             }
 /*            cout<<"Safe energyChange "<<energyChange<<" maxF"<<maxF()<<" MAXDIST "

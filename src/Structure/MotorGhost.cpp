@@ -82,7 +82,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     new CMotorGhost(motorType, _compartment, _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2));
     _cMotorGhost->setMotorGhost(this);
 #endif
-    
+
 #ifdef MECHANICS
     auto x1 = _c1->getFirstBead()->vcoordinate();
     auto x2 = _c1->getSecondBead()->vcoordinate();
@@ -181,7 +181,11 @@ void MotorGhost::updatePosition() {
 #ifdef CHEMISTRY
         SpeciesBound* firstSpecies = _cMotorGhost->getFirstSpecies();
         SpeciesBound* secondSpecies = _cMotorGhost->getSecondSpecies();
-        
+#ifdef CHECKRXN
+        cout<<"Clone _cMotorGhost with offRxn "<<_cMotorGhost->getOffReaction()<<" with "
+																				 "Id "
+					 ""<<_cMotorGhost->getOffReaction()->getId()<<endl;
+#endif
         CMotorGhost* clone = _cMotorGhost->clone(c);
         setCMotorGhost(clone);
         
