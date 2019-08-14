@@ -795,6 +795,46 @@ void HRCD::print(int snapshot) {
 
 }
 
+
+
+void HRMD::print(int snapshot) {
+    DissipationTracker* dt = _cs->getDT();
+       // print first line (snapshot number, time)
+    
+    vector<tuple<string, floatingpoint>> cumHRMDMechEnergy = dt->getCumHRMDMechEnergy();
+    vector<tuple<string, floatingpoint>> cumHRMDMechDiss = dt->getCumHRMDMechDiss();
+    
+    _outputFile << snapshot << " " << tau() << endl;
+   
+    // write row of names
+    for(auto i = 0; i < cumHRMDMechEnergy.size(); i++){
+        _outputFile << get<0>(cumHRMDMechEnergy[i]) << "     ";
+    }
+    _outputFile<<endl;
+    
+    // write row of mech energy
+    for(auto i = 0; i < cumHRMDMechEnergy.size(); i++){
+        _outputFile << get<1>(cumHRMDMechEnergy[i]) << "     ";
+    }
+    _outputFile<<endl;
+    
+    // write row of mech diss, assuming names are same
+    for(auto i = 0; i < cumHRMDMechEnergy.size(); i++){
+        for(auto j = 0; j < cumHRMDMechEnergy.size(); j++){
+            if(get<0>(cumHRMDMechDiss[j]) == get<0>(cumHRMDMechEnergy[i])){
+                _outputFile << get<1>(cumHRMDMechDiss[j]) << "     ";
+            }
+        }
+        
+    }
+    
+    _outputFile<<endl<<endl;
+    
+}
+
+
+
+
 void PlusEnd::print(int snapshot) {
 
     _outputFile.precision(10);

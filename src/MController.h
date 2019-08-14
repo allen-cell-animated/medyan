@@ -68,7 +68,7 @@ public:
         return &_FFManager;
     }
 
-    floatingpoint getEnergy(){
+    tuple<floatingpoint, vector<floatingpoint>, vector<string>>  getEnergy(){
     
         return _minimizerAlgorithms[0]->getEnergy(_FFManager,0.0);
         

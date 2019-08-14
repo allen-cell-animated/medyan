@@ -316,8 +316,30 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
 //        std::cout<<x<<" ";
 //    std::cout<<endl;
 #endif
+
     return energy;
+    
 }
+
+
+
+
+tuple<floatingpoint, vector<floatingpoint>, vector<string>> ForceFieldManager::computeEnergyHRMD(floatingpoint *coord) const {
+    floatingpoint energy = 0.0;
+    vector<floatingpoint> HRMDenergies;
+    vector<string> HRMDnames;
+    for (auto &ff : _forceFields) {
+        auto tempEnergy = ff->computeEnergy(coord);
+        HRMDenergies.push_back(tempEnergy);
+        HRMDnames.push_back(ff->getName());
+        energy += tempEnergy;
+    }
+    return make_tuple(energy, HRMDenergies, HRMDnames);
+}
+
+
+
+
 template floatingpoint ForceFieldManager::computeEnergy< false >(floatingpoint *, bool) const;
 template floatingpoint ForceFieldManager::computeEnergy< true >(floatingpoint *, bool) const;
 

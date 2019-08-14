@@ -47,7 +47,12 @@ public:
     /// problematic configuration.
     /// @param stretched - whether intermediate variables are treated as temporary or not
     template< bool stretched = false >
+    
     floatingpoint computeEnergy(floatingpoint *coord, bool verbose = false) const;
+    
+    
+    tuple<floatingpoint, vector<floatingpoint>, vector<string>> computeEnergyHRMD(floatingpoint *coord) const;
+    
     
     /// Compute the forces of all force fields 
     void computeForces(floatingpoint *coord, floatingpoint *f);
@@ -60,6 +65,7 @@ public:
         tauVector.clear();
     }
     
+    vector<floatingpoint> HRMDenergies;
     
     void printculprit(floatingpoint* force);
     
