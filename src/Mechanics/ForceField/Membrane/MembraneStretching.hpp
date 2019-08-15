@@ -1,7 +1,7 @@
 #ifndef MEDYAN_Mechanics_ForceField_Membrane_MembraneStretching_Hpp
 #define MEDYAN_Mechanics_ForceField_Membrane_MembraneStretching_Hpp
 
-#include "Mechanics/ForceField/Membrane/MembraneInteractions.hpp"
+#include "Mechanics/ForceField/Membrane/Interactions.hpp"
 
 enum class MembraneStretchingAccumulationType {
     ByTriangle, ByVertex

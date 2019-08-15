@@ -1,14 +1,14 @@
-#include "Mechanics/ForceField/Membrane/MembraneBending.hpp"
+#include "Mechanics/ForceField/Membrane/Bending.hpp"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/Vertex.hpp"
 #include "Structure/SurfaceMesh/MVoronoiCell.h"
 
-#include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
+#include "Mechanics/ForceField/Membrane/BendingHelfrich.hpp"
 
 // Using the Helfrich Hamiltonian of mean curvature in Voronoi cells
-template<>
-floatingpoint MembraneBending<MembraneBendingHelfrich>::computeEnergy(const floatingpoint* coord, bool stretched) {
+template< typename InteractionType >
+floatingpoint MembraneBending< InteractionType >::computeEnergy(const floatingpoint* coord, bool stretched) {
     double U = 0;
     double U_i;
 
@@ -39,8 +39,8 @@ floatingpoint MembraneBending<MembraneBendingHelfrich>::computeEnergy(const floa
     return U;
 }
 
-template<>
-void MembraneBending<MembraneBendingHelfrich>::computeForces(const floatingpoint* coord, floatingpoint* force) {
+template< typename InteractionType >
+void MembraneBending< InteractionType >::computeForces(const floatingpoint* coord, floatingpoint* force) {
     
     for (auto m: Membrane::getMembranes()) {
     
@@ -80,3 +80,6 @@ void MembraneBending<MembraneBendingHelfrich>::computeForces(const floatingpoint
 
     }
 }
+
+// Explicit instantiations
+template class MembraneBending< MembraneBendingHelfrich >;
