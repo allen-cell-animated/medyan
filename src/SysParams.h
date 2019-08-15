@@ -181,7 +181,7 @@ struct ChemParams {
 
     bool dissTracking = false;
     bool eventTracking = false;
-    int difBindInt = 1;
+    int linkerbindingskip = 2;
     
 
     //@}

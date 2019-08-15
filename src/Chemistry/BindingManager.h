@@ -407,10 +407,7 @@ private:
     static short HNLID;
     static short _idvec[2];
     int dBInt = 1;
-    int dBI = SysParams::Chemistry().difBindInt;
-    std::set<int> difBindInts{2,12,22,32}; /// allow diffent binding sites for linkers and motors
-
-
+    int dBI = SysParams::Chemistry().linkerbindingskip-1;
 
     //possible bindings at current state. updated according to neighbor list
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;

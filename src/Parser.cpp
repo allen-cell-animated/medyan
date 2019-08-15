@@ -238,12 +238,8 @@ void SystemParser::readChemParams() {
 
             }
         }
-        
-        
-        
-        
 
-        if (line.find("DIFBINDING:") != string::npos) {
+        if (line.find("LINKERBINDINGSKIP:") != string::npos) {
 
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
@@ -253,7 +249,7 @@ void SystemParser::readChemParams() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CParams.difBindInt = atoi(lineVector[1].c_str());
+                CParams.linkerbindingskip = atoi(lineVector[1].c_str());
 
             }
         }
