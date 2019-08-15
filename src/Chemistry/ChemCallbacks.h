@@ -571,11 +571,43 @@ struct CaMKIIingPointUnbindingCallback {
     : _ps(ps), _camkiiingPoint(b) {}
     
     void operator() (ReactionBase *r) {
-        
+
         //remove the camkiiing point
         _ps->removeTrackable<CaMKIICylinder>(_camkiiingPoint->getCaMKIICylinder());
         _ps->removeTrackable<CaMKIIingPoint>(_camkiiingPoint);
         delete _camkiiingPoint;
+    }
+};
+
+/// Callback to unbind a CaMKIIingPoint from a Filament
+struct CaMKIIingPointUnbundlingCallback {
+
+    SubSystem* _ps;
+    CaMKIIingPoint* _camkiiingPoint;
+
+    CaMKIIingPointUnbundlingCallback(CaMKIIingPoint* b, SubSystem* ps)
+            : _ps(ps), _camkiiingPoint(b) {}
+
+    void operator() (ReactionBase *r) {
+
+        _camkiiingPoint->removeRandomBond();
+
+        if(_camkiiingPoint->getCoordinationNumber() == 1) {
+
+            // passivate unbundling reaction
+			r->passivateReaction();
+
+			auto offRxnBinding = _camkiiingPoint->getCCaMKIIingPoint()->getOffRxnBinding();
+
+			offRxnBinding->activateReaction();
+
+			get<0>(_camkiiingPoint->getBonds()[0])->getCCylinder()->removeInternalReaction(r);
+            get<0>(_camkiiingPoint->getBonds()[0])->getCCylinder()->addInternalReaction(offRxnBinding);
+
+            _camkiiingPoint->getCCaMKIIingPoint()->setOffReaction(offRxnBinding);
+        }
+
+        _camkiiingPoint->updateReactionRates();
     }
 };
 
@@ -721,7 +753,7 @@ struct CaMKIIBindingCallback {
 
         cCaMKIIer->setRates(_onRate, frate);
         cCaMKIIer->createOffReaction(r, _ps);
-        cCaMKIIer->getOffReaction()->setBareRate(SysParams::CUBBareRate[camkiiType]);
+        cCaMKIIer->getOffReaction()->setBareRate(SysParams::CaMKIIUnbindingBareRate[camkiiType]);
     }
 };
 
@@ -915,7 +947,7 @@ struct CaMKIIBundlingCallback {
         
         cCaMKIIer->setRates(_onRate, _offRate);
         cCaMKIIer->createOffReaction(r, _ps);
-        cCaMKIIer->getOffReaction()->setBareRate(SysParams::BUBBareRate[camkiiType]);
+        cCaMKIIer->getOffReaction()->setBareRate(SysParams::CaMKIIUnbundlingBareRate[camkiiType]);
     }
 };
 

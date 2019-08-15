@@ -275,7 +275,8 @@ public:
     static vector<float> MUBBareRate;
     static vector<float> LUBBareRate;
     static vector<float> BUBBareRate;
-    static vector<float> CUBBareRate;
+	static vector<float> CaMKIIUnbindingBareRate;
+	static vector<float> CaMKIIUnbundlingBareRate;
 
     //@
     static const MechParams& Mechanics() {return MParams;}

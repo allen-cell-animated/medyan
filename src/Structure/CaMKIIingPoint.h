@@ -78,7 +78,7 @@ public:
     ///Get attached bonds tuples <cylinders, short> (a cylinder and a position)
     tuple<Cylinder*, double> getBond(int n) { return _bonds.at(n);}
     Cylinder* getCylinder(int n) { return get<0>(getBond(n));}
-    void addBond(Cylinder* c, short pos) { _bonds.push_back(tuple<Cylinder*, short>(c, pos));}
+    void addBond(Cylinder* c, short pos) {_bonds.push_back(tuple<Cylinder*, short>(c, pos));}
     Cylinder* getFirstCylinder() { return get<0>(_bonds.at(0));}
     Cylinder* getSecondCylinder() { return get<0>(_bonds.at(1));} //TODO fix
     int getCoordinationNumber() { return _bonds.size(); }
@@ -138,6 +138,10 @@ public:
     
     /// Count the number of camkiier species with a given name in the system
     static species_copy_t countSpecies(const string& name);
+
+    void removeRandomBond();
+
+    void updateReactionRates();
 };
 
 #endif

@@ -155,9 +155,6 @@ void CaMKIIingPoint::updatePosition() {
         CCaMKIIingPoint* clone = _cCaMKIIingPoint->clone(c);
         setCCaMKIIingPoint(clone);
 
-        string str = firstSpecies->getName();
-        str += "hello";
-        
         _cCaMKIIingPoint->setFirstSpecies(firstSpecies);
 #endif
     }
@@ -205,5 +202,29 @@ species_copy_t CaMKIIingPoint::countSpecies(const string& name) {
     }
     return copyNum;
 }
+
+void CaMKIIingPoint::removeRandomBond() {
+	size_t sz = _bonds.size();
+	size_t index = Rand::randInteger(0, sz-1);
+	tuple<Cylinder*, double> &bondToRemove = _bonds[index];
+	assert(this->getCCaMKIIingPoint()->getOffReaction() == this->getCCaMKIIingPoint()->getOffRxnBundling());
+	get<0>(bondToRemove)->getCCylinder()->removeInternalReaction(this->getCCaMKIIingPoint()->getOffReaction());
+	_bonds.erase(_bonds.begin() + index);
+}
+
+void CaMKIIingPoint::updateReactionRates() {
+
+	//get the unbinding reaction
+	ReactionBase* offRxn = getCCaMKIIingPoint()->getOffReaction();
+
+	//change the rate
+	float newRate = offRxn->getBareRate() * getCoordinationNumber();
+	if(SysParams::RUNSTATE==false)
+		newRate=0.0;
+
+	offRxn->setRate(newRate);
+	offRxn->updatePropensity();
+}
+
 
 Database<CaMKIIingPoint*> CaMKIIingPoint::_camkiiingPoints;

@@ -21,7 +21,9 @@
 CCaMKIIingPoint::CCaMKIIingPoint(short camkiiType, Compartment* c,
                                  CCylinder* cc1, CCylinder* cc2, int position)
 
-    : CBound(cc1->getType(), c, cc1, cc2, position, 0), _camkiiType(camkiiType) {
+    : CBound(cc1->getType(), c, cc1, cc2, position, 0), _camkiiType(camkiiType),
+    		_offRxnBinding(nullptr),
+    		_offRxnBundling(nullptr) {
 
     //Find species on cylinder that should be marked
     SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesCaMKIIer(camkiiType);
@@ -41,9 +43,6 @@ CCaMKIIingPoint::CCaMKIIingPoint(short camkiiType, Compartment* c,
     //attach this camkiipoint to the species
     setFirstSpecies(sb1);
 
-	string str = getFirstSpecies()->getName();
-	str = str + string("hello");
-
 }
 
 CCaMKIIingPoint::~CCaMKIIingPoint() {
@@ -58,31 +57,83 @@ CCaMKIIingPoint::~CCaMKIIingPoint() {
 
 }
 
+void CCaMKIIingPoint::createOffReactionBinding(ReactionBase *onRxn, SubSystem *ps) {
+	//first, find the correct diffusing or bulk species
+	RSpecies** rs = onRxn->rspecies();
+	Species* sfb = &(rs[SPECIESCaMKII_BINDING_INDEX]->getSpecies());
+
+	//create the reaction species
+	CMonomer* m = _cc1->getCMonomer(_position1);
+	vector<Species*> os = {m->speciesCaMKIIer(_camkiiType),
+						   m->speciesBound(SysParams::Chemistry().camkiierBindingBoundIndex[_filamentType]), sfb};
+
+	//create reaction, add to cylinder
+	ReactionBase* offRxn =
+			new Reaction<CAMKIIUNBINDINGREACTANTS,CAMKIIUNBINDINGPRODUCTS>(os, _offRate);
+
+	offRxn->setReactionType(ReactionType::CAMKIIUNBINDING);
+
+	//add the unbinding reaction and callback
+	CaMKIIingPointUnbindingCallback bcallback(_pCaMKIIingPoint, ps);
+	ConnectionBlock rcb(offRxn->connect(bcallback,false));
+
+	setOffReaction(offRxn);
+	_cc1->addInternalReaction(offRxn);
+	_offRxnBinding = offRxn;
+}
+
+void CCaMKIIingPoint::createOffReactionBundling(ReactionBase *onRxn, SubSystem *ps) {
+	//first, find the correct diffusing or bulk species
+	RSpecies** rs = onRxn->rspecies();
+	Species* sfb = &(rs[SPECIESCaMKII_BINDING_INDEX]->getSpecies());
+
+	//create the reaction species
+	CMonomer* m = _cc1->getCMonomer(_position1);
+	vector<Species*> os = {m->speciesCaMKIIer(_camkiiType),
+						   m->speciesBound(SysParams::Chemistry().camkiierBindingBoundIndex[_filamentType]), sfb};
+
+	//create reaction, add to cylinder
+	ReactionBase* offRxn =
+			new Reaction<CAMKIIUNBUNDLINGGREACTANTS,CAMKIIUNBUNDLINGPRODUCTS>(os, _offRate);
+
+	offRxn->setReactionType(ReactionType::CAMKIIUNBUNDLING);
+
+	//add the unbinding reaction and callback
+	CaMKIIingPointUnbundlingCallback bcallback(_pCaMKIIingPoint, ps);
+	ConnectionBlock rcb(offRxn->connect(bcallback,false));
+
+	_offRxnBinding->passivateReaction();
+
+	auto bonds = _pCaMKIIingPoint->getBonds();
+	for(int i=0;i<bonds.size();i++) {
+		auto cc = get<0>(bonds[i])->getCCylinder();
+		cc->removeInternalReaction(_offRxn);
+		cc->addInternalReaction(offRxn);
+	}
+
+	setOffReaction(offRxn);
+
+	_offRxnBundling = offRxn;
+}
+
 void CCaMKIIingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
     // TODO: This reaction needs to be implemented for unbinding and unbundling mix.
     // Currently it only implements unbinding.
 
+    assert(_pCaMKIIingPoint->getCoordinationNumber() != 0);
 
-    //first, find the correct diffusing or bulk species
-    RSpecies** rs = onRxn->rspecies();
-    Species* sfb = &(rs[SPECIESCaMKII_BINDING_INDEX]->getSpecies());
-    
-    //create the reaction species
-    CMonomer* m = _cc1->getCMonomer(_position1);
-    vector<Species*> os = {m->speciesCaMKIIer(_camkiiType),
-                           m->speciesBound(SysParams::Chemistry().camkiierBindingBoundIndex[_filamentType]), sfb};
-    
-    //create reaction, add to cylinder
-    ReactionBase* offRxn =
-    new Reaction<CAMKIIUNBINDINGREACTANTS,CAMKIIUNBINDINGPRODUCTS>(os, _offRate);
-    
-    offRxn->setReactionType(ReactionType::CAMKIIUNBINDING);
-    
-    //add the unbinding reaction and callback
-    CaMKIIingPointUnbindingCallback bcallback(_pCaMKIIingPoint, ps);
-    ConnectionBlock rcb(offRxn->connect(bcallback,false));
-    
-    setOffReaction(offRxn);
-    _cc1->addInternalReaction(offRxn);
-    
+    if(_pCaMKIIingPoint->getCoordinationNumber() == 1) {
+		createOffReactionBinding(onRxn, ps);
+    } else if(_pCaMKIIingPoint->getCoordinationNumber() == 2){
+		createOffReactionBundling(onRxn, ps);
+    } else {
+		auto bonds = _pCaMKIIingPoint->getBonds();
+		for(int i=0;i<bonds.size();i++) {
+			auto cc = get<0>(bonds[i])->getCCylinder();
+			cc->addInternalReaction(_offRxnBundling);
+		}
+    }
+
+    _pCaMKIIingPoint->updateReactionRates();
+
 }

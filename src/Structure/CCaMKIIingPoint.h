@@ -37,7 +37,9 @@ private:
     CaMKIIingPoint* _pCaMKIIingPoint; ///< Pointer to parent
     
     short _camkiiType; ///< CaMKIIing point type
-    
+
+    ReactionBase *_offRxnBinding, *_offRxnBundling;
+
 public:
     /// Default constructor and destructor
     /// @param pos - monomer index on first cylinder
@@ -93,6 +95,26 @@ public:
         //TODO - implement the case with multiple bonds
         _cc1 = cc;
     };
+
+    void createOffReactionBinding(ReactionBase *onRxn, SubSystem *ps);
+    void createOffReactionBundling(ReactionBase *onRxn, SubSystem *ps);
+
+
+    ReactionBase *getOffRxnBinding() {
+        return _offRxnBinding;
+    }
+    ReactionBase *getOffRxnBundling() {
+
+        return _offRxnBundling;
+    }
+
+    void setOffRxnBinding(ReactionBase *p) {
+        _offRxnBinding = p;
+    }
+
+    void setOffRxnBundling(ReactionBase *p) {
+        _offRxnBundling = p;
+    }
 };
 
 #endif

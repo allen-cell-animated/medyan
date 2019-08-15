@@ -1553,12 +1553,12 @@ void ChemManager::genFilBindingReactions() {
                 //Create reaction
                 float onRate = get<2>(r);
                 float offRate = get<3>(r);
-                auto temp=SysParams::CUBBareRate;
+                auto temp=SysParams::CaMKIIUnbindingBareRate;
                 if(temp.size()>0)
                     temp[camkiierInt]=offRate;
                 else
                     temp.push_back(offRate);
-                SysParams::CUBBareRate=temp;
+                SysParams::CaMKIIUnbindingBareRate=temp;
                 //get nucleation zone
                 string nzstr = get<4>(r);
                 NucleationZoneType nucleationZone;
@@ -1716,12 +1716,12 @@ void ChemManager::genFilBindingReactions() {
                 //Create reaction
                 float onRate = get<2>(r);
                 float offRate = get<3>(r);
-                auto temp=SysParams::CUBBareRate;
+                auto temp=SysParams::CaMKIIUnbundlingBareRate;
                 if(temp.size()>0)
                     temp[camkiierInt]=offRate;
                 else
                     temp.push_back(offRate);
-                SysParams::CUBBareRate=temp;
+                SysParams::CaMKIIUnbundlingBareRate=temp;
                 rMin = get<4>(r);
                 rMax = get<5>(r);
                 int maxCoordination = get<6>(r);
