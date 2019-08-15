@@ -110,6 +110,9 @@ struct MechParams {
 
     // pin bubbles, using pinK and pinTime
     bool pinBubbles = false;
+
+    // pin membrane border vertices, using pinK
+    bool pinMembraneBorderVertices = false;
     //@}
 
     //vectorization

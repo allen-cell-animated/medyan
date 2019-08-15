@@ -82,6 +82,28 @@ void pinBubbles() {
     pinned = true;
 } // pinBubbles()
 
+void pinMembraneBorderVertices() {
+
+    // Only pin once
+    static bool pinned = false;
+    if(pinned) return;
+
+    for(auto m : Membrane::getMembranes()) {
+        auto& mesh = m->getMesh();
+        for(const auto& border : mesh.getBorders()) {
+            mesh.forEachHalfEdgeInPolygon(border, [&](size_t hei) {
+                const auto vi = mesh.target(hei);
+                Bead* const b = static_cast< Bead* >(mesh.getVertexAttribute(vi).vertex);
+
+                b->pinnedPosition = b->vcoordinate();
+                b->addAsPinned();
+            });
+        }
+    }
+
+    pinned = true;
+} // pinMembraneBorderVertices()
+
 } // namespace
 
 Controller::Controller() :
@@ -955,6 +977,10 @@ void Controller::executeSpecialProtocols() {
 
     if(SysParams::Mechanics().pinBubbles && tau() >= SysParams::Mechanics().pinTime) {
         pinBubbles();
+    }
+
+    if(SysParams::Mechanics().pinMembraneBorderVertices) {
+        pinMembraneBorderVertices();
     }
 }
 
