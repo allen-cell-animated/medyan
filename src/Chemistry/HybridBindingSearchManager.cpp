@@ -182,13 +182,18 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 		float _rMaxsq = _rMaxsqvec[idx][idx2];
 		float _rMinsq = _rMinsqvec[idx][idx2];
 
-		if (bstatepos == 1)
+		int bindingsitestep = 1;
+
+		if (bstatepos == 1) {
+			bindingsitestep = SysParams::Chemistry().linkerbindingskip-1;
 			bstatecheck = areEqual(cc->getCMonomer(bindingSite)->speciesBound(
 					SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0);
+		}
 
-		if (bstatepos == 2)
+		if (bstatepos == 2) {
 			bstatecheck = areEqual(cc->getCMonomer(bindingSite)->speciesBound(
 					SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0);
+		}
 
 		/*if Minus End, check if binding site exists*/
 		auto cylinder = cc->getCylinder();
@@ -209,6 +214,9 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 			                    bindingSite)
 			               - SysParams::Chemistry().bindingSites[_filamentType].begin();
 
+			// Do not add if the linker to be added does not satisfy this condition.
+			if(pos % bindingsitestep != 0) return;
+
 			uint32_t t1 = shiftedIndex1|pos;
 			//loop through neighbors
 			//now re add valid based on CCNL
@@ -227,7 +235,8 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 				int k = 0;
 
 				for (auto it = SysParams::Chemistry().bindingSites[_nfilamentType].begin();
-				     it != SysParams::Chemistry().bindingSites[_nfilamentType].end(); it++) {
+				     it != SysParams::Chemistry().bindingSites[_nfilamentType].end();
+				     it=it+bindingsitestep) {
 
 					bool filstatecheckn = true;
 					if(cn->isMinusEnd()) {
@@ -276,7 +285,6 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 						_possibleBindingsstencilvecuint[idx][idx2][t1].push_back(t2);
 						_reversepossibleBindingsstencilvecuint[idx][idx2][t2].push_back(t1);
 					}
-
 					k = k + 1;
 				}
 			}
@@ -601,6 +609,11 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
                     for (idx2 = 0; idx2 < Nbounds; idx2++) {
 
                         short bstatepos = bstateposvec[idx][idx2];
+						// Check for linkers if the binding site is acceptable.
+	                    if (bstatepos == 1) {
+		                    int bindingsitestep = SysParams::Chemistry().linkerbindingskip - 1;
+		                    if(pos1 % bindingsitestep != 0) continue;
+	                    }
 
                         //now re add valid binding sites
                         if (areEqual(boundstate[bstatepos][maxnbs * cindex + pos1], 1.0)) {
@@ -655,6 +668,12 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
                             }
 
                             for (int pos2 = 0; pos2 < nbs2; pos2++) {
+
+	                            // Check for linkers if the binding site is acceptable.
+	                            if (bstatepos == 1) {
+		                            int bindingsitestep = SysParams::Chemistry().linkerbindingskip - 1;
+		                            if(pos2 % bindingsitestep != 0) continue;
+	                            }
 
                                 if (areEqual(boundstate[bstatepos][maxnbs * cnindex + pos2], 1.0)) {
 

@@ -134,8 +134,8 @@ public:
 
     virtual floatingpoint distance(const vector<floatingpoint>& coordinates);
     virtual floatingpoint getboundaryelementcoord(int i) {
-        LOG(ERROR) << "Function is not implemented.";
-        throw std::logic_error("Function not implemented");
+        LOG(ERROR) << "getboundaryelementcoord Function is not implemented.";
+        throw std::logic_error("getboundaryelementcoord Function not implemented");
     }
     //Qin
     virtual floatingpoint lowerdistance(const vector<floatingpoint>& coordinates);
@@ -146,7 +146,10 @@ public:
     
     ///Returns the normal inward at this coordinate
     //@note - Not yet implemented.
-    virtual vector<floatingpoint> normal(vector<floatingpoint>& coordinate) {return vector<floatingpoint>{0,0,0};}
+    virtual vector<floatingpoint> normal(vector<floatingpoint>& coordinate) {
+        LOG(ERROR) << "normal Function is not implemented.";
+        throw std::logic_error("normal Function not implemented");
+        return vector<floatingpoint>{0,0,0};}
 
     virtual void volume();
 };

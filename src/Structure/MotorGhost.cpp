@@ -365,9 +365,10 @@ void MotorGhost::updateReactionRates() {
 
 	            if(consider_passivation && !isc1leftofc2) {
 
-		            auto c1firstbindingsite = *(SysParams::Chemistry()
-				            .bindingSites[fType1].begin()) /
-		                                      SysParams::Geometry().cylinderNumMon[fType1];
+		            auto c1firstbindingsite = float(*(SysParams::Chemistry()
+				            .bindingSites[fType1].begin()))/
+		                                      float(SysParams::Geometry()
+		                                      .cylinderNumMon[fType1]);
 		            if(areEqual(c1firstbindingsite,_position1))
 			            r->setRateMulFactor(0.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
 
@@ -444,9 +445,9 @@ void MotorGhost::updateReactionRates() {
             else if(r->getReactionType() == ReactionType::MOTORWALKINGBACKWARD) {
 
 	            if(consider_passivation && isc1leftofc2) {
-		            auto c2firstbindingsite = *(SysParams::Chemistry()
-				            .bindingSites[fType2].begin())/SysParams::Geometry()
-				                                      .cylinderNumMon[fType2];
+		            auto c2firstbindingsite = float(*(SysParams::Chemistry()
+				            .bindingSites[fType2].begin()))/float(SysParams::Geometry()
+				                                      .cylinderNumMon[fType2]);
 		            if(areEqual(c2firstbindingsite,_position2))
 			            r->setRateMulFactor(0.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
 	            }
