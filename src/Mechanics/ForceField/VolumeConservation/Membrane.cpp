@@ -6,14 +6,14 @@
 #include "Structure/SurfaceMesh/MMembrane.h"
 #include "Structure/SurfaceMesh/Vertex.hpp"
 
-#include "Mechanics/ForceField/VolumeConservation/VolumeConservationMembraneHarmonic.h"
+#include "Mechanics/ForceField/VolumeConservation/MembraneHarmonic.hpp"
 
-template<>
-floatingpoint VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeEnergy(const floatingpoint* coord, bool stretched) {
+template< typename InteractionType >
+floatingpoint VolumeConservationMembrane< InteractionType >::computeEnergy(const floatingpoint* coord, bool stretched) {
     double U = 0;
     double U_i;
 
-    for(auto m: Membrane::getMembranes()) {
+    for(auto m: Membrane::getMembranes()) if(m->isClosed()) {
         U_i = 0;
 
         const auto& mesh = m->getMesh();
@@ -40,10 +40,10 @@ floatingpoint VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::co
     return U;
 }
 
-template<>
-void VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeForces(const floatingpoint* coord, floatingpoint* force) {
-    
-    for (auto m: Membrane::getMembranes()) {
+template< typename InteractionType >
+void VolumeConservationMembrane< InteractionType >::computeForces(const floatingpoint* coord, floatingpoint* force) {
+
+    for (auto m: Membrane::getMembranes()) if(m->isClosed()) {
 
         const auto& mesh = m->getMesh();
 
@@ -63,3 +63,6 @@ void VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeForc
         }
     }
 }
+
+// Explicit instantiations
+template class VolumeConservationMembrane< VolumeConservationMembraneHarmonic >;

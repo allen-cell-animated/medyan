@@ -34,7 +34,7 @@ using namespace mathfunc;
 
 #    include "Mechanics/ForceField/VolumeConservation/Interactions.hpp"
 #    include "VolumeConservationMembrane.h"
-#    include "VolumeConservationMembraneHarmonic.h"
+#    include "MembraneHarmonic.hpp"
 
 namespace {
     using VertexData = tuple<array<double, 3>, vector<size_t>>;

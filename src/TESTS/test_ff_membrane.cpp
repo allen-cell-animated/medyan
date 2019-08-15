@@ -34,11 +34,11 @@ using namespace mathfunc;
 #    include "Triangle.hpp"
 #    include "MTriangle.hpp"
 
-#    include "MembraneInteractions.hpp"
+#    include "Interactions.hpp"
 #    include "MembraneStretching.hpp"
 #    include "MembraneStretchingImpl.hpp"
-#    include "MembraneBending.hpp"
-#    include "MembraneBendingHelfrich.hpp"
+#    include "Bending.hpp"
+#    include "BendingHelfrich.hpp"
 
 namespace {
     using VertexData = tuple<array<double, 3>, vector<size_t>>;

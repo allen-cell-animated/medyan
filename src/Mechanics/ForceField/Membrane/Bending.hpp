@@ -1,9 +1,9 @@
-#ifndef MEDYAN_Mechancis_ForceField_Membrane_MembraneBending_Hpp
-#define MEDYAN_Mechancis_ForceField_Membrane_MembraneBending_Hpp
+#ifndef MEDYAN_Mechancis_ForceField_Membrane_Bending_Hpp
+#define MEDYAN_Mechancis_ForceField_Membrane_Bending_Hpp
 
 #include "common.h"
 
-#include "Mechanics/ForceField/Membrane/MembraneInteractions.hpp"
+#include "Mechanics/ForceField/Membrane/Interactions.hpp"
 
 //FORWARD DECLARATIONS
 class Membrane;

@@ -1189,6 +1189,18 @@ void SystemParser::readMechParams() {
                     MParams.pinTime = std::stod(lineVector[3]);
                 }
             }
+            else if(lineVector[1] == "PIN_MEMBRANE_BORDER_VERTICES") {
+                if(lineVector.size() != 3) {
+                    LOG(ERROR) << "Error parameter specification for pinning membrane border vertices";
+                    LOG(INFO) << "PIN_MEMBRANE_BORDER_VERTICES <pin-k>";
+                    throw std::runtime_error("Error pinning membrane border vertices");
+                }
+
+                else {
+                    MParams.pinMembraneBorderVertices = true;
+                    MParams.pinK = std::stod(lineVector[2]);
+                }
+            }
             else if (lineVector.size() == 5) {
 
                 //Qin
