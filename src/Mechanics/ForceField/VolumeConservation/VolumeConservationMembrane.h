@@ -3,10 +3,10 @@
 
 #include "Mechanics/ForceField/VolumeConservation/Interactions.hpp"
 
-template<class VolumeConservationMembraneInteractionType>
+template<class InteractionType>
 class VolumeConservationMembrane: public VolumeConservationInteractions {
 private:
-    VolumeConservationMembraneInteractionType _FFType;
+    InteractionType _FFType;
 
 public:
     virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) override;
