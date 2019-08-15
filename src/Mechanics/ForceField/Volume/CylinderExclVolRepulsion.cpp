@@ -791,7 +791,7 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 		f3 = &f[3 * beadSet[n * i + 2]];
 		f4 = &f[3 * beadSet[n * i + 3]];
 
-		if(false) {
+		if(true) {
 			//check if in same plane
 			if (areInPlane(c1, c2, c3, c4)) {
 
