@@ -211,7 +211,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                 int dBI = SysParams::Chemistry().linkerbindingskip-1;
                 if(cyl->isMinusEnd() == false) {
                     for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                         it != SysParams::Chemistry().bindingSites[_filamentType].end();
+                         it < SysParams::Chemistry().bindingSites[_filamentType].end();
                          it=it+dBI) {
                         bool state = false;
                         if (isvectorizedgather)
@@ -252,7 +252,8 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                     /* If it is the minus end Cylinder, add the binding sites that are
                      * species Filament*/
                     for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                         it != SysParams::Chemistry().bindingSites[_filamentType].end(); it=it+dBI) {
+                         it < SysParams::Chemistry().bindingSites[_filamentType].end();
+                         it=it+dBI) {
                         auto sf = Cylinder::getDbDataConst().value[cindex]
                                 .chemCylinder->getCMonomer(*it)->activeSpeciesFilament();
                         if(sf !=-1){

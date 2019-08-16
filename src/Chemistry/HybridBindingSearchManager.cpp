@@ -235,7 +235,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 				int k = 0;
 
 				for (auto it = SysParams::Chemistry().bindingSites[_nfilamentType].begin();
-				     it != SysParams::Chemistry().bindingSites[_nfilamentType].end();
+				     it < SysParams::Chemistry().bindingSites[_nfilamentType].end();
 				     it=it+bindingsitestep) {
 
 					bool filstatecheckn = true;
