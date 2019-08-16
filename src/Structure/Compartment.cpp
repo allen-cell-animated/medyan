@@ -72,8 +72,8 @@ void Compartment::SIMDcoordinates_section(){
 
                 auto x1 = cyl->getFirstBead()->vcoordinate();
                 auto x2 = cyl->getSecondBead()->vcoordinate();
-//            uint32_t shiftedindex = (i << 4);
-                uint32_t shiftedindex = (cyl->getStableIndex() << 4);
+//            uint32_t shiftedindex = (i << SysParams::Chemistry().shiftbybits);
+                uint32_t shiftedindex = (cyl->getStableIndex() << SysParams::Chemistry().shiftbybits);
 
 //                Cyldcindexvec[i] = cyl->_dcIndex;
                 CylcIDvec[i] = cyl->getId();
@@ -203,15 +203,15 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
 
                 auto x1 = cyl->getFirstBead()->vcoordinate();
                 auto x2 = cyl->getSecondBead()->vcoordinate();
-//            uint16_t shiftedindex = (i << 4);
-                uint32_t shiftedindex = (cindex << 4);
+//            uint16_t shiftedindex = (i << SysParams::Chemistry().shiftbybits);
+                uint32_t shiftedindex = (cindex << SysParams::Chemistry().shiftbybits);
 //                Cyldcindexvec[i] = cindex;
                 i++;
                 uint32_t j = 0;
                 int dBI = SysParams::Chemistry().linkerbindingskip-1;
                 if(cyl->isMinusEnd() == false) {
                     for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                         it != SysParams::Chemistry().bindingSites[_filamentType].end();
+                         it < SysParams::Chemistry().bindingSites[_filamentType].end();
                          it=it+dBI) {
                         bool state = false;
                         if (isvectorizedgather)
@@ -252,7 +252,8 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                     /* If it is the minus end Cylinder, add the binding sites that are
                      * species Filament*/
                     for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                         it != SysParams::Chemistry().bindingSites[_filamentType].end(); it=it+dBI) {
+                         it < SysParams::Chemistry().bindingSites[_filamentType].end();
+                         it=it+dBI) {
                         auto sf = Cylinder::getDbDataConst().value[cindex]
                                 .chemCylinder->getCMonomer(*it)->activeSpeciesFilament();
                         if(sf !=-1){
@@ -380,7 +381,7 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                 auto x1 = cyl->getFirstBead()->vcoordinate();
                 auto x2 = cyl->getSecondBead()->vcoordinate();
 //                uint16_t shiftedindex = (i << 4);
-                uint32_t shiftedindex = (cindex << 4);
+                uint32_t shiftedindex = (cindex << SysParams::Chemistry().shiftbybits);
 //                Cyldcindexvec[i] = cindex;
                 i++;
                 uint32_t j = 0;

@@ -58,6 +58,17 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
       _b1(b1), _b2(b2), _type(type), _position(position),
       DatabaseType(CylinderInfoData::CylinderInfo {}) {
 
+    #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
+        if(getStableIndex() >= SysParams::Chemistry().maxStableIndex) {
+            LOG(ERROR) << "Total number of cylinders initialized("<< getStableIndex()<<
+            ") equals/exceeds the maximum ("<<SysParams::Chemistry().maxStableIndex<<")."
+                          "Check number of binding sites to continue to use "
+                          "HYBRID_NLSTENCILLIST or SIMDBINDINGSEARCH. If not, shift to "
+                          "other binding search algorithms. Exiting.";
+            throw std::logic_error("Max value reached");
+        }
+	#endif
+
     parent->addChild(unique_ptr<Component>(this));
 	//@{
 
