@@ -34,6 +34,7 @@
 vector<short> HybridBindingSearchManager::HNLIDvec;
 using namespace mathfunc;
 HybridBindingSearchManager::HybridBindingSearchManager(Compartment* compartment){
+	mask = (1 << SysParams::Chemistry().shiftbybits) - 1;
     _compartment = compartment;
     totaluniquefIDpairs = 0;
 }
@@ -162,7 +163,7 @@ dist::dOut<1,false>& HybridBindingSearchManager::getdOut(short dOutID){
 void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
                                  CCylinder* cc, short bindingSite) {
 	if (SysParams::INITIALIZEDSTATUS) {
-		/*cout<<"Adding Cylinder with ID "<<cc->getCylinder()->getID()<<" "
+		/*cout<<"Adding Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
 			<<bindingSite<<" manager indices "<<idvec[0]<<" "<<idvec[1]<<endl;*/
 		short idx = idvec[0];
 		short idx2 = idvec[1];
@@ -207,7 +208,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 		if (bstatecheck) {
 
 			uint32_t shiftedIndex1 = cc->getCylinder()->getStableIndex();
-			shiftedIndex1 = shiftedIndex1 << 4;
+			shiftedIndex1 = shiftedIndex1 << SysParams::Chemistry().shiftbybits;
 
 			uint32_t pos = find(SysParams::Chemistry().bindingSites[_filamentType].begin(),
 			                    SysParams::Chemistry().bindingSites[_filamentType].end(),
@@ -221,7 +222,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 			//loop through neighbors
 			//now re add valid based on CCNL
 			vector<Cylinder *> Neighbors;
-//			std::cout<<"HNLID "<<HNLID<<endl;
+
 			Neighbors = _HneighborList->getNeighborsstencil(HNLID, cc->getCylinder());
 
 			for (auto cn : Neighbors) {
@@ -276,7 +277,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 
 						if (distsq > _rMaxsq || distsq < _rMinsq) {k++;continue;}
 
-						uint32_t shiftedIndex2 = cn->getStableIndex() << 4;
+						uint32_t shiftedIndex2 = cn->getStableIndex() << SysParams::Chemistry().shiftbybits;
 
 						uint32_t t2 = shiftedIndex2|k;
 
@@ -311,6 +312,9 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], CCylinder*
                                     cc, short bindingSite) {
 
+	/*cout<<"Removing Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
+	    <<bindingSite<<" manager indices "<<idvec[0]<<" "<<idvec[1]<<endl;*/
+
     short idx = idvec[0];
     short idx2 = idvec[1];
     auto fIDpair = _filamentIDvec[idx].data();
@@ -319,7 +323,7 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
     if(_filamentType != fIDpair[0] && _filamentType != fIDpair[1] ) return;
 
     //remove all tuples which have this ccylinder as key
-    uint32_t t = cc->getCylinder()->getStableIndex()<<4;
+    uint32_t t = cc->getCylinder()->getStableIndex()<<SysParams::Chemistry().shiftbybits;
 
     uint32_t pos = find (SysParams::Chemistry().bindingSites[_filamentType].begin(),
                       SysParams::Chemistry().bindingSites[_filamentType].end(),
@@ -389,6 +393,7 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
 
         }
     }
+//	checkoccupancySIMD(idvec);
 }
 //Deprecated
 /*void HybridBindingSearchManager::checkoccupancy(short idvec[2]){
@@ -446,7 +451,7 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
         uint32_t leg1 = pair->first;
         vector<uint32_t> leg2 = pair->second;
 
-        uint32_t cIndex1 = leg1 >> 4;
+        uint32_t cIndex1 = leg1 >> SysParams::Chemistry().shiftbybits;
         uint32_t bsite1 = mask & leg1;
 
         CCylinder* ccyl1 = cylinderInfoData[cIndex1].chemCylinder;
@@ -468,7 +473,7 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
 
         //Values
         for(auto V:leg2){
-            uint32_t cIndex2 = V >> 4;
+            uint32_t cIndex2 = V >> SysParams::Chemistry().shiftbybits;
             uint32_t bsite2 = mask & V;
             CCylinder* ccyl2 = cylinderInfoData[cIndex2].chemCylinder;
 
@@ -497,12 +502,13 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
                                    _compartment->coordinates()[1]<<" "<<
                                    _compartment->coordinates()[2]<<
                         " nCmp "<<ncmpcoord[0]<<" "<< ncmpcoord[1]<<" "<< ncmpcoord[2]<<
-                        " L/M CylID bs"<< ccyl1->getCylinder()->getId()<<" "<<it1<<" "<<
-                                  ccyl2->getCylinder()->getId()<<" "<<it2<<" cindices "
-                                  <<cIndex1<<" "<<cIndex2<<" "<<endl;
+                        " L/M Cylindex bs "<< cIndex1<<" "<<it1<<" "<<
+                                  cIndex2<<" "<<it2<<" cIDs "
+                                  <<ccyl1->getCylinder()->getId()<<" "
+                                  <<ccyl2->getCylinder()->getId()<<" "<<endl;
 
                 cout<<"uint32_t "<<leg1<<" "<<V<<endl;
-                exit(EXIT_FAILURE);
+//                exit(EXIT_FAILURE);
 
             }
 
@@ -689,10 +695,10 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
                                     auto it2 = SysParams::Chemistry().bindingSites[fpairs[1]][pos2];
 
 	                                uint32_t shiftedIndex1 = cindex;
-	                                shiftedIndex1 = shiftedIndex1 << 4;
+	                                shiftedIndex1 = shiftedIndex1 << SysParams::Chemistry().shiftbybits;
 	                                uint32_t t1 = shiftedIndex1|pos1;
 
-	                                uint32_t shiftedIndex2 = cnindex << 4;
+	                                uint32_t shiftedIndex2 = cnindex << SysParams::Chemistry().shiftbybits;
 	                                uint32_t t2 = shiftedIndex2|pos2;
 
 	                                //add in correct order
@@ -965,8 +971,8 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
 ///*			    short bsite1 = mask & site1;
 //			    short bsite2 = mask & site2;
 //
-//			    uint32_t t1 = cIndex1 << 4 | bsite1;
-//			    uint32_t t2 = cIndex2 << 4 | bsite2;
+//			    uint32_t t1 = cIndex1 << SysParams::Chemistry().shiftbybits | bsite1;
+//			    uint32_t t2 = cIndex2 << SysParams::Chemistry().shiftbybits | bsite2;
 //
 //				uint32_t t1 = site1;
 //				uint32_t t2 = site2;*/
@@ -1042,8 +1048,8 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
 	    uint32_t site1 = it->first;
 	    uint32_t site2 = it->second[position];
 
-	    uint32_t cIndex1 = site1 >> 4;
-	    uint32_t cIndex2 = site2 >> 4;
+	    uint32_t cIndex1 = site1 >> SysParams::Chemistry().shiftbybits;
+	    uint32_t cIndex2 = site2 >> SysParams::Chemistry().shiftbybits;
 
 	    short bsitepos1 = mask & site1;
 	    short bsitepos2 = mask & site2;

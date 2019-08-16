@@ -72,8 +72,8 @@ void Compartment::SIMDcoordinates_section(){
 
                 auto x1 = cyl->getFirstBead()->vcoordinate();
                 auto x2 = cyl->getSecondBead()->vcoordinate();
-//            uint32_t shiftedindex = (i << 4);
-                uint32_t shiftedindex = (cyl->getStableIndex() << 4);
+//            uint32_t shiftedindex = (i << SysParams::Chemistry().shiftbybits);
+                uint32_t shiftedindex = (cyl->getStableIndex() << SysParams::Chemistry().shiftbybits);
 
 //                Cyldcindexvec[i] = cyl->_dcIndex;
                 CylcIDvec[i] = cyl->getId();
@@ -203,8 +203,8 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
 
                 auto x1 = cyl->getFirstBead()->vcoordinate();
                 auto x2 = cyl->getSecondBead()->vcoordinate();
-//            uint16_t shiftedindex = (i << 4);
-                uint32_t shiftedindex = (cindex << 4);
+//            uint16_t shiftedindex = (i << SysParams::Chemistry().shiftbybits);
+                uint32_t shiftedindex = (cindex << SysParams::Chemistry().shiftbybits);
 //                Cyldcindexvec[i] = cindex;
                 i++;
                 uint32_t j = 0;
@@ -381,7 +381,7 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                 auto x1 = cyl->getFirstBead()->vcoordinate();
                 auto x2 = cyl->getSecondBead()->vcoordinate();
 //                uint16_t shiftedindex = (i << 4);
-                uint32_t shiftedindex = (cindex << 4);
+                uint32_t shiftedindex = (cindex << SysParams::Chemistry().shiftbybits);
 //                Cyldcindexvec[i] = cindex;
                 i++;
                 uint32_t j = 0;
