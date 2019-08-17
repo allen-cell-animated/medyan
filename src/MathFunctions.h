@@ -164,7 +164,20 @@ inline auto vec2Vector(const VecType& a) {
     /// ARRAY VERSION
     #ifdef CUDAACCL
     __host__ __device__
-    #endif
+	#endif
+
+    inline uint32_t nextPowerOf2( uint32_t n)
+    {
+        n--;
+        n |= n >> 1;
+        n |= n >> 2;
+        n |= n >> 4;
+        n |= n >> 8;
+        n |= n >> 16;
+        n++;
+        return n;
+    }
+
     inline void normalizeVector(floatingpoint *v) {
 
         floatingpoint x2 = v[0] * v[0];
