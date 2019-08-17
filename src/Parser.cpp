@@ -242,12 +242,8 @@ void SystemParser::readChemParams() {
 
             }
         }
-        
-        
-        
-        
 
-        if (line.find("DIFBINDING:") != string::npos) {
+        if (line.find("LINKERBINDINGSKIP:") != string::npos) {
 
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
@@ -257,7 +253,7 @@ void SystemParser::readChemParams() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CParams.difBindInt = atoi(lineVector[1].c_str());
+                CParams.linkerbindingskip = atoi(lineVector[1].c_str());
 
             }
         }
@@ -288,8 +284,18 @@ void SystemParser::readChemParams() {
         //push to CParams
         CParams.bindingSites.push_back(tempBindingSites);
     }
+    //Find the maximum allowed Cindex and shift operator
+    auto np2 = mathfunc::nextPowerOf2(uint32_t(CParams
+            .maxbindingsitespercylinder));
 
-    //set system parameters
+    if(np2 == CParams.maxbindingsitespercylinder)
+        np2 *= 2;
+
+	CParams.shiftbybits = log2(np2);
+    CParams.maxStableIndex = numeric_limits<uint32_t>::max()/CParams.shiftbybits -1;
+	cout<<"shiftbybits "<<CParams.shiftbybits<<" maxbindingsitespercylinder "<<CParams
+	.maxbindingsitespercylinder<<endl;
+	//set system parameters
     SysParams::CParams = CParams;
 }
 

@@ -21,6 +21,7 @@
 #include "BoundaryInteractions.h"
 
 #include "SysParams.h"
+#include "Util/Math/Vec.hpp"
 
 //FORWARD DECLARATIONS
 class BoundaryElement;
@@ -43,7 +44,7 @@ private:
     
     ///Array describing the constants in calculation
     floatingpoint *kattr;
-    floatingpoint *pins; ///< coordinates of pins for each bead
+    std::vector< mathfunc::Vec< 3, floatingpoint > > pins; ///< coordinates of pins for each bead
     
 public:
     

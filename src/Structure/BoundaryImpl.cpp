@@ -574,7 +574,7 @@ BoundaryCylinder::BoundaryCylinder(SubSystem* s, floatingpoint diameter, vector<
     floatingpoint height = sysZ;
     
     _boundarySurfaces.emplace_back(
-                                   new CylinderXYZ(s, {sysX / 2, sysY / 2, sysZ / 2}, diameter / 2, height));
+            new CylinderXYZ(s, {sysX / 2, sysY / 2, sysZ / 2}, diameter / 2, height));
     volume();
 
 }

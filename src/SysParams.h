@@ -159,6 +159,12 @@ struct ChemParams {
 
     short maxbindingsitespercylinder = 0;
 
+    //Bindingsites are stored as packed 32bit integers. To ensure that there is adequate
+    // memory space to store the binding sites, we need to shift based on the maximum
+    // number of binding sites per cylinder.
+    uint32_t shiftbybits = 0;
+    uint32_t maxStableIndex = 0;
+
     //@{
     ///Extra motor parameters
     /// Vector corresponds to each filament type
@@ -205,7 +211,7 @@ struct ChemParams {
 
     bool dissTracking = false;
     bool eventTracking = false;
-    int difBindInt = 1;
+    int linkerbindingskip = 2;
     
 
     //@}
