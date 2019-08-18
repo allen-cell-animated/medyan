@@ -183,7 +183,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
             bool checkftype = false;
             if (SysParams::Chemistry().numFilaments > 1)
                         checkftype = true;
-            unsigned int i = 0;
+//            unsigned int i = 0;
             for (auto cyl:getCylinders()) {
                 uint32_t cindex = cyl->getStableIndex();
 
@@ -206,7 +206,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
 //            uint16_t shiftedindex = (i << SysParams::Chemistry().shiftbybits);
                 uint32_t shiftedindex = (cindex << SysParams::Chemistry().shiftbybits);
 //                Cyldcindexvec[i] = cindex;
-                i++;
+//                i++;
                 uint32_t j = 0;
                 int dBI = SysParams::Chemistry().linkerbindingskip-1;
                 if(cyl->isMinusEnd() == false) {
@@ -245,7 +245,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                                 }
                             }
                         }
-                        j++;
+                        j+=dBI;
                     }
                 }
                 else{
@@ -283,7 +283,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                                 }
                             }
                         }
-                        j++;
+                        j+=dBI;
                     }
                 }
             }

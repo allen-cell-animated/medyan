@@ -162,8 +162,8 @@ dist::dOut<1,false>& HybridBindingSearchManager::getdOut(short dOutID){
 
 void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
                                  CCylinder* cc, short bindingSite) {
-	if (SysParams::INITIALIZEDSTATUS) {
-		/*cout<<"Adding Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
+	if (SysParams::INITIALIZEDSTATUS ) {
+/*		cout<<"Adding Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
 			<<bindingSite<<" manager indices "<<idvec[0]<<" "<<idvec[1]<<endl;*/
 		short idx = idvec[0];
 		short idx2 = idvec[1];
@@ -275,7 +275,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 
 						floatingpoint distsq = twoPointDistancesquared(m1, m2);
 
-						if (distsq > _rMaxsq || distsq < _rMinsq) {k++;continue;}
+						if (distsq > _rMaxsq || distsq < _rMinsq) {k = k + bindingsitestep;continue;}
 
 						uint32_t shiftedIndex2 = cn->getStableIndex() << SysParams::Chemistry().shiftbybits;
 
@@ -286,7 +286,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 						_possibleBindingsstencilvecuint[idx][idx2][t1].push_back(t2);
 						_reversepossibleBindingsstencilvecuint[idx][idx2][t2].push_back(t1);
 					}
-					k = k + 1;
+					k = k + bindingsitestep;
 				}
 			}
 
@@ -312,7 +312,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], CCylinder*
                                     cc, short bindingSite) {
 
-	/*cout<<"Removing Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
+/*	cout<<"Removing Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
 	    <<bindingSite<<" manager indices "<<idvec[0]<<" "<<idvec[1]<<endl;*/
 
     short idx = idvec[0];
@@ -508,7 +508,7 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
                                   <<ccyl2->getCylinder()->getId()<<" "<<endl;
 
                 cout<<"uint32_t "<<leg1<<" "<<V<<endl;
-//                exit(EXIT_FAILURE);
+                exit(EXIT_FAILURE);
 
             }
 
@@ -763,6 +763,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilSIMDV3() {
 				        bspairsmotor2, idvec);
 			}
 			count++;
+//			checkoccupancySIMD(idvec);
 		}
 	}
 
