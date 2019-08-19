@@ -193,6 +193,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                 _fpos = Cylinder::getDbDataConst().value[cindex].positionOnFilament-
                         Cylinder::getDbDataConst().value[cindex].filamentFirstEntry;
 
+
                 //packed integer containing filament ID and filament position.
                 //Assumes you don't have 127 (2^7 -1) cylinders in the same filament
                 uint32_t cylfinfo = (_fID<< 7);
@@ -291,7 +292,6 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
 //    assert(k<65536);
             //Create input vector for SIMD calculations
 //        cout<<"Linker coord size ";
-
             for (short i = 0; i < 27; i++) {
                 bscoords_section_linker[filType * 27 + i].init_coords(partitionedcoordx[i],
                                                                       partitionedcoordy[i],

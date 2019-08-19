@@ -71,7 +71,7 @@ namespace dist {
 		
 			std::copy(vals.begin(),vals.end(),dt.begin());
 
-			maxneighbors[0] = 2;
+				maxneighbors[0] = 2;
 
 			for(uint i=0; i<2*D; ++i){
 				v_dt[i] = dt[i];
