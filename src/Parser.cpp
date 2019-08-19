@@ -1595,6 +1595,20 @@ SpecialSetupType SystemParser::readSpecialSetupType() {
                 SType.mtocBubbleType = atoi(lineVector[1].c_str());
             }
         }
+        
+        else if (line.find("MTOCXYZCOORD") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 4) {
+                cout <<
+                "Coordinates of MTOC must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 4) {
+                SType.mtocInputCoordXYZ.push_back(stof(lineVector[1].c_str()));
+                SType.mtocInputCoordXYZ.push_back(stof(lineVector[2].c_str()));
+                SType.mtocInputCoordXYZ.push_back(stof(lineVector[3].c_str()));
+            }
+        }
     }
     return SType;
 }

@@ -408,11 +408,12 @@ void Controller::setupSpecialStructures(SystemParser& p) {
     if(SType.mtoc) {
 
         MTOC* mtoc = _subSystem->addTrackable<MTOC>();
+        
+        //set MTOC coordinates based on input
+        floatingpoint bcoordx = SType.mtocInputCoordXYZ[0];
+        floatingpoint bcoordy = SType.mtocInputCoordXYZ[1];
+        floatingpoint bcoordz = SType.mtocInputCoordXYZ[2];
 
-        //create the bubble in top part of grid, centered in x,y
-        floatingpoint bcoordx = GController::getSize()[0] / 2;
-        floatingpoint bcoordy = GController::getSize()[1] / 2;
-        floatingpoint bcoordz = GController::getSize()[2] * 5 / 6;
 
         vector<floatingpoint> bcoords = {bcoordx, bcoordy, bcoordz};
         Bubble* b = _subSystem->addTrackable<Bubble>(_subSystem, bcoords, SType.mtocBubbleType);

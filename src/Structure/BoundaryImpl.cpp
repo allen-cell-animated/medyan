@@ -96,7 +96,7 @@ bool BoundaryCubic::within(const vector<floatingpoint>& coordinates) {
 
 floatingpoint BoundaryCubic::distance(const vector<floatingpoint>& coordinates) {
     
-    // loop through, get smallest non-negative distance
+    // loop through, get smallest distance
     floatingpoint smallestDist = numeric_limits<floatingpoint>::infinity();
     
     for(auto &bs : _boundarySurfaces) {
@@ -105,7 +105,6 @@ floatingpoint BoundaryCubic::distance(const vector<floatingpoint>& coordinates) 
         
         floatingpoint dist = be->distance(coordinates);
         
-        if(dist < 0) continue;
         if(dist < smallestDist) smallestDist = dist;
         
     }
@@ -114,7 +113,7 @@ floatingpoint BoundaryCubic::distance(const vector<floatingpoint>& coordinates) 
 
 floatingpoint BoundaryCubic::lowerdistance(const vector<floatingpoint>& coordinates) {
     
-    // loop through, get smallest non-negative distance
+    // loop through, get smallest distance
     floatingpoint smallestDist = numeric_limits<floatingpoint>::infinity();
     
     for(auto &bs : _boundarySurfaces) {
@@ -123,7 +122,6 @@ floatingpoint BoundaryCubic::lowerdistance(const vector<floatingpoint>& coordina
         
         floatingpoint dist = be->lowerdistance(coordinates);
         
-        if(dist < 0) continue;
         if(dist < smallestDist) smallestDist = dist;
         
     }
@@ -133,7 +131,7 @@ floatingpoint BoundaryCubic::lowerdistance(const vector<floatingpoint>& coordina
 //Qin, the same as lowerdistance for now
 floatingpoint BoundaryCubic::sidedistance(const vector<floatingpoint>& coordinates) {
     
-    // loop through, get smallest non-negative distance
+    // loop through, get smallest distance
     floatingpoint smallestDist = numeric_limits<floatingpoint>::infinity();
     
     for(auto &bs : _boundarySurfaces) {
@@ -142,7 +140,6 @@ floatingpoint BoundaryCubic::sidedistance(const vector<floatingpoint>& coordinat
         
         floatingpoint dist = be->lowerdistance(coordinates);
         
-        if(dist < 0) continue;
         if(dist < smallestDist) smallestDist = dist;
         
     }
@@ -151,7 +148,7 @@ floatingpoint BoundaryCubic::sidedistance(const vector<floatingpoint>& coordinat
 
 vector<floatingpoint> BoundaryCubic::normal(vector<floatingpoint>& coordinates) {
     
-    // loop through, get smallest non-negative distance
+    // loop through, get smallest distance
     BoundaryElement* closestPlane = nullptr;
     floatingpoint smallestDist = numeric_limits<floatingpoint>::infinity();
     
@@ -161,7 +158,6 @@ vector<floatingpoint> BoundaryCubic::normal(vector<floatingpoint>& coordinates) 
         
         floatingpoint dist = be->distance(coordinates);
         
-        if(dist < 0) continue;
         if(dist < smallestDist) {
             smallestDist = dist;
             closestPlane = be;
@@ -500,7 +496,7 @@ bool BoundaryCapsule::within(const vector<floatingpoint>& coordinates) {
 
 floatingpoint BoundaryCapsule::distance(const vector<floatingpoint>& coordinates) {
     
-    // loop through, get smallest non-negative distance
+    // loop through, get smallest distance
     floatingpoint smallestDist = numeric_limits<floatingpoint>::infinity();
     
     for(auto &bs : _boundarySurfaces) {
@@ -509,17 +505,16 @@ floatingpoint BoundaryCapsule::distance(const vector<floatingpoint>& coordinates
         
         floatingpoint dist = be->distance(coordinates);
         
-        if(dist < 0) continue;
         if(dist < smallestDist) smallestDist = dist;
         
     }
     return smallestDist;
 }
 
-//Qin, the same as distance
+//Do not use it for now
 floatingpoint BoundaryCapsule::lowerdistance(const vector<floatingpoint>& coordinates) {
     
-    // loop through, get smallest non-negative distance
+    // loop through, get smallest distance
     floatingpoint smallestDist = numeric_limits<floatingpoint>::infinity();
     
     for(auto &bs : _boundarySurfaces) {
@@ -528,7 +523,6 @@ floatingpoint BoundaryCapsule::lowerdistance(const vector<floatingpoint>& coordi
         
         floatingpoint dist = be->distance(coordinates);
         
-        if(dist < 0) continue;
         if(dist < smallestDist) smallestDist = dist;
         
     }
@@ -537,7 +531,7 @@ floatingpoint BoundaryCapsule::lowerdistance(const vector<floatingpoint>& coordi
 
 floatingpoint BoundaryCapsule::sidedistance(const vector<floatingpoint>& coordinates) {
     
-    // loop through, get smallest non-negative distance
+    // loop through, get smallest distance
     floatingpoint smallestDist = numeric_limits<floatingpoint>::infinity();
     
     for(auto &bs : _boundarySurfaces) {
@@ -546,7 +540,6 @@ floatingpoint BoundaryCapsule::sidedistance(const vector<floatingpoint>& coordin
         
         floatingpoint dist = be->distance(coordinates);
         
-        if(dist < 0) continue;
         if(dist < smallestDist) smallestDist = dist;
         
     }
@@ -617,7 +610,7 @@ bool BoundaryCylinder::within(const vector<floatingpoint>& coordinates) {
 
 floatingpoint BoundaryCylinder::distance(const vector<floatingpoint>& coordinates) {
     
-    // loop through, get smallest non-negative distance
+    // loop through, get smallest distance
     floatingpoint smallestDist = numeric_limits<floatingpoint>::infinity();
     
     for(auto &bs : _boundarySurfaces) {
@@ -626,7 +619,6 @@ floatingpoint BoundaryCylinder::distance(const vector<floatingpoint>& coordinate
         
         floatingpoint dist = be->distance(coordinates);
         
-        if(dist < 0) continue;
         if(dist < smallestDist) smallestDist = dist;
         
     }

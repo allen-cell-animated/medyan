@@ -238,9 +238,28 @@ FilamentData MTOCFilamentDist::createFilaments(Boundary* b, int numFilaments,
         auto point2 = nextPointProjection(point1,
             SysParams::Geometry().cylinderSize[filamentType]*lenFilaments - 0.01, dir);
         
-        filaments.emplace_back(filamentType, point1, point2);
+        //check if these points are outside bubbles
+        bool inBubble = false;
+        for(auto bb : Bubble::getBubbles()) {
+            auto radius = bb->getRadius();
+            
+            if((twoPointDistancesquared(bb->getBead()->vcoordinate(), point1) < (radius * radius)) ||
+               (twoPointDistancesquared(bb->getBead()->vcoordinate(), point2) < (radius * radius)))
+            inBubble = true;
+        }
         
-        filamentCounter++;
+        //check if within cutoff of boundary
+        bool outsideCutoff = false;
+        if(b->distance(point1) < SysParams::Boundaries().BoundaryCutoff / 4.0 ||
+           b->distance(point2) < SysParams::Boundaries().BoundaryCutoff / 4.0) {
+            outsideCutoff = true;
+        }
+        
+        if(b->within(point1) && b->within(point2) && !inBubble && !outsideCutoff) {
+            filaments.emplace_back(filamentType, point1, point2);
+            filamentCounter++;
+        }
+        
     }
     
     return make_tuple(filaments,dummy,dummy2, dummy3);

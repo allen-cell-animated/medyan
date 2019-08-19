@@ -287,6 +287,8 @@ struct SpecialSetupType {
     int mtocFilamentLength = 0;
     short mtocBubbleType   = 0;
     //@}
+    
+    vector<float> mtocInputCoordXYZ = {};
 };
 
 /// Struct to hold chem setup information
