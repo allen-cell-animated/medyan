@@ -11,6 +11,17 @@
 		1F41AAC622B176740073835F /* dist_bench.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F41A7F422B06A070073835F /* dist_bench.cpp */; };
 		1F41AAC722B1767D0073835F /* dist_example.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F41A7FE22B06A070073835F /* dist_example.cpp */; };
 		1F41AAC822B176880073835F /* dist_mod_vars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F41A80122B06A070073835F /* dist_mod_vars.cpp */; };
+		23BE6E86230B646D00AAB8E8 /* Movable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23BE6E83230B646C00AAB8E8 /* Movable.cpp */; };
+		23BE6E87230B646D00AAB8E8 /* Movable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23BE6E83230B646C00AAB8E8 /* Movable.cpp */; };
+		23BE6E88230B646D00AAB8E8 /* Reactable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23BE6E84230B646C00AAB8E8 /* Reactable.cpp */; };
+		23BE6E89230B646D00AAB8E8 /* Reactable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23BE6E84230B646C00AAB8E8 /* Reactable.cpp */; };
+		23BE6E8A230B646D00AAB8E8 /* CellList.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 23BE6E85230B646C00AAB8E8 /* CellList.hpp */; };
+		23BE6E8C230B648000AAB8E8 /* Restart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23BE6E8B230B648000AAB8E8 /* Restart.cpp */; };
+		23BE6E8D230B648000AAB8E8 /* Restart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23BE6E8B230B648000AAB8E8 /* Restart.cpp */; };
+		23BE6E8F230B64B100AAB8E8 /* Types.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 23BE6E8E230B64B100AAB8E8 /* Types.hpp */; };
+		23BE6E92230B64BF00AAB8E8 /* BranchingDihedralQuadratic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23BE6E90230B64BF00AAB8E8 /* BranchingDihedralQuadratic.cpp */; };
+		23BE6E93230B64BF00AAB8E8 /* BranchingDihedralQuadratic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23BE6E90230B64BF00AAB8E8 /* BranchingDihedralQuadratic.cpp */; };
+		23BE6E94230B64BF00AAB8E8 /* BranchingDihedralQuadratic.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 23BE6E91230B64BF00AAB8E8 /* BranchingDihedralQuadratic.hpp */; };
 		AEC5486C225D3799007CB7E9 /* CController.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC546CF225D3798007CB7E9 /* CController.h */; };
 		AEC5486D225D3799007CB7E9 /* Composite.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC546D1225D3798007CB7E9 /* Composite.h */; };
 		AEC5486E225D3799007CB7E9 /* SysParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEC546D2225D3798007CB7E9 /* SysParams.cpp */; };
@@ -919,6 +930,13 @@
 		1F41AA6A22B06A080073835F /* ignore_warnings_unused_parameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ignore_warnings_unused_parameter.h; sourceTree = "<group>"; };
 		1F41AA6C22B06A080073835F /* isainfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = isainfo.cpp; sourceTree = "<group>"; };
 		1F41AA6D22B06A080073835F /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		23BE6E83230B646C00AAB8E8 /* Movable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Movable.cpp; sourceTree = "<group>"; };
+		23BE6E84230B646C00AAB8E8 /* Reactable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Reactable.cpp; sourceTree = "<group>"; };
+		23BE6E85230B646C00AAB8E8 /* CellList.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CellList.hpp; sourceTree = "<group>"; };
+		23BE6E8B230B648000AAB8E8 /* Restart.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Restart.cpp; sourceTree = "<group>"; };
+		23BE6E8E230B64B100AAB8E8 /* Types.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Types.hpp; sourceTree = "<group>"; };
+		23BE6E90230B64BF00AAB8E8 /* BranchingDihedralQuadratic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingDihedralQuadratic.cpp; sourceTree = "<group>"; };
+		23BE6E91230B64BF00AAB8E8 /* BranchingDihedralQuadratic.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BranchingDihedralQuadratic.hpp; sourceTree = "<group>"; };
 		AEC546CF225D3798007CB7E9 /* CController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CController.h; sourceTree = "<group>"; };
 		AEC546D1225D3798007CB7E9 /* Composite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Composite.h; sourceTree = "<group>"; };
 		AEC546D2225D3798007CB7E9 /* SysParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SysParams.cpp; sourceTree = "<group>"; };
@@ -2678,6 +2696,7 @@
 				AEC547AC225D3798007CB7E9 /* ControllerCUDA.h */,
 				AEC547AD225D3798007CB7E9 /* Rand.h */,
 				AEC547AE225D3798007CB7E9 /* Histogram.h */,
+				23BE6E8B230B648000AAB8E8 /* Restart.cpp */,
 				AEC547AF225D3798007CB7E9 /* BubbleInitializer.cpp */,
 				AEC547B0225D3798007CB7E9 /* Component.h */,
 				AEC547B1225D3798007CB7E9 /* Controller.cpp */,
@@ -2785,6 +2804,7 @@
 			isa = PBXGroup;
 			children = (
 				AEC54717225D3798007CB7E9 /* cross_check.h */,
+				23BE6E8E230B64B100AAB8E8 /* Types.hpp */,
 				AEC54718225D3798007CB7E9 /* Linker */,
 				AEC54722225D3798007CB7E9 /* ForceFieldManager.h */,
 				AEC54723225D3798007CB7E9 /* Boundary */,
@@ -2879,6 +2899,8 @@
 				AEC54752225D3798007CB7E9 /* BranchingFF.h */,
 				AEC54753225D3798007CB7E9 /* BranchingBendingCosine.h */,
 				AEC54754225D3798007CB7E9 /* BranchingStretching.cpp */,
+				23BE6E90230B64BF00AAB8E8 /* BranchingDihedralQuadratic.cpp */,
+				23BE6E91230B64BF00AAB8E8 /* BranchingDihedralQuadratic.hpp */,
 				AEC54755225D3798007CB7E9 /* BranchingPositionCosine.cpp */,
 				AEC54756225D3798007CB7E9 /* BranchingDihedralCosine.h */,
 				AEC54757225D3798007CB7E9 /* BranchingInteractions.cpp */,
@@ -2986,6 +3008,9 @@
 				AEC54823225D3799007CB7E9 /* Compartment.h */,
 				AEC54824225D3799007CB7E9 /* Neighbor.h */,
 				AEC54825225D3799007CB7E9 /* Cylinder.cpp */,
+				23BE6E85230B646C00AAB8E8 /* CellList.hpp */,
+				23BE6E83230B646C00AAB8E8 /* Movable.cpp */,
+				23BE6E84230B646C00AAB8E8 /* Reactable.cpp */,
 				AEC54826225D3799007CB7E9 /* CLinker.cpp */,
 				AEC54827225D3799007CB7E9 /* Reactable.h */,
 				AEC54828225D3799007CB7E9 /* Bead.cpp */,
@@ -3145,6 +3170,7 @@
 				AEC5494A225D3799007CB7E9 /* CBound.h in Headers */,
 				AEC54985225D3799007CB7E9 /* MMotorGhost.h in Headers */,
 				AEC5494B225D3799007CB7E9 /* CCylinder.h in Headers */,
+				23BE6E8A230B646D00AAB8E8 /* CellList.hpp in Headers */,
 				AEC5490E225D3799007CB7E9 /* MotorGhostStretchingHarmonic.h in Headers */,
 				AEC5493B225D3799007CB7E9 /* Rand.h in Headers */,
 				AEC54973225D3799007CB7E9 /* BoundaryElement.h in Headers */,
@@ -3197,11 +3223,13 @@
 				AEC54898225D3799007CB7E9 /* ChemSimImpl.h in Headers */,
 				AEC54876225D3799007CB7E9 /* cmdparse.h in Headers */,
 				AEC54913225D3799007CB7E9 /* MotorGhostStretching.h in Headers */,
+				23BE6E94230B64BF00AAB8E8 /* BranchingDihedralQuadratic.hpp in Headers */,
 				AEC548EE225D3799007CB7E9 /* BranchingStretchingHarmonic.h in Headers */,
 				AEC548FD225D3799007CB7E9 /* FilamentBending.h in Headers */,
 				AEC548E0225D3799007CB7E9 /* BubbleInteractions.h in Headers */,
 				AEC54896225D3799007CB7E9 /* BindingManagerCUDA.h in Headers */,
 				AEC548FC225D3799007CB7E9 /* FilamentInteractions.h in Headers */,
+				23BE6E8F230B64B100AAB8E8 /* Types.hpp in Headers */,
 				AEC548F4225D3799007CB7E9 /* BranchingStretching.h in Headers */,
 				AEC54883225D3799007CB7E9 /* ChemNRMImpl.h in Headers */,
 				AEC5492D225D3799007CB7E9 /* Output.h in Headers */,
@@ -3374,6 +3402,7 @@
 				AEC54878225D3799007CB7E9 /* cmdparse.cpp in Sources */,
 				AEC548E3225D3799007CB7E9 /* BubbleCylinderRepulsionExp.cpp in Sources */,
 				AEC54874225D3799007CB7E9 /* profiler.cpp in Sources */,
+				23BE6E87230B646D00AAB8E8 /* Movable.cpp in Sources */,
 				AEC5492F225D3799007CB7E9 /* Output.cpp in Sources */,
 				AEC54989225D3799007CB7E9 /* Parser.cpp in Sources */,
 				AEC548B3225D3799007CB7E9 /* LinkerStretchingHarmonic.cpp in Sources */,
@@ -3384,6 +3413,7 @@
 				AEC548D9225D3799007CB7E9 /* BubbleBubbleRepulsionExp.cpp in Sources */,
 				AEC5491D225D3799007CB7E9 /* CylinderVolumeFF.cpp in Sources */,
 				AEC548DF225D3799007CB7E9 /* BubbleFF.cpp in Sources */,
+				23BE6E8D230B648000AAB8E8 /* Restart.cpp in Sources */,
 				AEC548EB225D3799007CB7E9 /* BranchingDihedralCosine.cpp in Sources */,
 				AEC54907225D3799007CB7E9 /* FilamentInteractions.cpp in Sources */,
 				AEC548C8225D3799007CB7E9 /* BoundaryBubbleRepulsionExp.cpp in Sources */,
@@ -3391,12 +3421,14 @@
 				AEC548E6225D3799007CB7E9 /* BranchingStretching.cpp in Sources */,
 				AEC54872225D3799007CB7E9 /* common.cpp in Sources */,
 				AEC548C7225D3799007CB7E9 /* BoundaryCylinderRepulsionExpIn.cpp in Sources */,
+				23BE6E89230B646D00AAB8E8 /* Reactable.cpp in Sources */,
 				AEC5486E225D3799007CB7E9 /* SysParams.cpp in Sources */,
 				AEC54949225D3799007CB7E9 /* Bead.cpp in Sources */,
 				AEC548E7225D3799007CB7E9 /* BranchingPositionCosine.cpp in Sources */,
 				AEC548CE225D3799007CB7E9 /* ForceFieldManager.cpp in Sources */,
 				AEC54958225D3799007CB7E9 /* SubSystem.cpp in Sources */,
 				AEC5496E225D3799007CB7E9 /* BranchingPoint.cpp in Sources */,
+				23BE6E93230B64BF00AAB8E8 /* BranchingDihedralQuadratic.cpp in Sources */,
 				AEC54961225D3799007CB7E9 /* CompartmentGrid.cpp in Sources */,
 				AEC5487C225D3799007CB7E9 /* MathFunctions.cpp in Sources */,
 				AEC54946225D3799007CB7E9 /* Cylinder.cpp in Sources */,
@@ -3464,7 +3496,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				23BE6E86230B646D00AAB8E8 /* Movable.cpp in Sources */,
+				23BE6E8C230B648000AAB8E8 /* Restart.cpp in Sources */,
 				AEC5498C225D37AB007CB7E9 /* MEDYAN.cpp in Sources */,
+				23BE6E88230B646D00AAB8E8 /* Reactable.cpp in Sources */,
+				23BE6E92230B64BF00AAB8E8 /* BranchingDihedralQuadratic.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3598,10 +3634,7 @@
 					"SERIAL=1",
 					"CHECKFORCES_INF_NAN=1",
 					"SIMDBINDINGSEARCH=1",
-					"HYBRID_NLSTENCILLIST=1",
 					"MOVEBEADSLINESEARCH=1",
-					"SIMDBINDINGSEARCH=1",
-					"NLSTENCIL=1",
 					"NPROCS=8",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = NO;
@@ -3640,7 +3673,7 @@
 				);
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
-					"-lboost_system",
+					"-lboost_system-mt",
 					"-static-libstdc++",
 					"-pthread",
 					"-L./dist_moduleV2/umesimd",
@@ -3683,8 +3716,6 @@
 					"SERIAL=1",
 					"CHECKFORCES_INF_NAN=1",
 					"SIMDBINDINGSEARCH=1",
-					"HYBRID_NLSTENCILLIST=1",
-					"NLSTENCILLIST=1",
 					"MOVEBEADSLINESEARCH=1",
 					"NPROCS=8",
 				);
@@ -3724,7 +3755,7 @@
 				);
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
-					"-lboost_system",
+					"-lboost_system-mt",
 					"-static-libstdc++",
 					"-pthread",
 					"-L./dist_moduleV2/umesimd",
@@ -3768,7 +3799,7 @@
 					/opt/local/lib,
 				);
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = "-lboost_system";
+				OTHER_LDFLAGS = "-lboost_system-mt";
 				PRODUCT_NAME = MEDYAN;
 			};
 			name = Debug;
@@ -3810,7 +3841,7 @@
 					/opt/local/lib,
 				);
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = "-lboost_system";
+				OTHER_LDFLAGS = "-lboost_system-mt";
 				PRODUCT_NAME = MEDYAN;
 			};
 			name = Release;
