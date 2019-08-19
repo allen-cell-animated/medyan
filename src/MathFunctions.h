@@ -164,7 +164,20 @@ inline auto vec2Vector(const VecType& a) {
     /// ARRAY VERSION
     #ifdef CUDAACCL
     __host__ __device__
-    #endif
+	#endif
+
+    inline uint32_t nextPowerOf2( uint32_t n)
+    {
+        n--;
+        n |= n >> 1;
+        n |= n >> 2;
+        n |= n >> 4;
+        n |= n >> 8;
+        n |= n >> 16;
+        n++;
+        return n;
+    }
+
     inline void normalizeVector(floatingpoint *v) {
 
         floatingpoint x2 = v[0] * v[0];
@@ -893,15 +906,9 @@ inline auto vec2Vector(const VecType& a) {
     #ifdef CUDAACCL
     __host__ __device__
     #endif
-    inline void crossProduct(doubleprecision *cp,
-                             floatingpoint const *v1,
-                             floatingpoint const *v2) {
-        cp[0] = v1[1] * v2[2] - v1[2] * v2[1];
-        cp[1] = v1[2] * v2[0] - v1[0] * v2[2];
-        cp[2] = v1[0] * v2[1] - v1[1] * v2[0];
-    };
 
-	inline void crossProduct(floatingpoint *cp,
+	template <class dataType>
+	inline void crossProduct(dataType *cp,
 	                         floatingpoint const *v1,
 	                         floatingpoint const *v2) {
 		cp[0] = v1[1] * v2[2] - v1[2] * v2[1];
@@ -1048,7 +1055,7 @@ inline auto vec2Vector(const VecType& a) {
         v2[1] = p4[1] - p3[1];
         v2[2] = p4[2] - p3[2];
 
-        crossProduct(cp, v1, v2);
+        crossProduct<floatingpoint>(cp, v1, v2);
 
         auto retVal = areEqual(magnitude(cp), 0.0);
         delete [] v1;
@@ -1078,7 +1085,7 @@ inline auto vec2Vector(const VecType& a) {
         v2[1] = p4[id + 1] - p3[id + 1];
         v2[2] = p4[id + 2] - p3[id + 2];
 
-        crossProduct(cp, v1, v2);
+        crossProduct<floatingpoint>(cp, v1, v2);
 //        printf("cp %d %f %f %f\n", id, cp[0], cp[1], cp[2]);
         auto retVal = areEqual(magnitude(cp), 0.0);
 //        printf("aE %d %d \n",id, retVal);
@@ -1111,7 +1118,7 @@ inline auto vec2Vector(const VecType& a) {
         *(v3 + 1) = *(p4 + 1) - *(p1 + 1);
         *(v3 + 2) = *(p4 + 2) - *(p1 + 2);
 
-        crossProduct(cp, v1, v2);
+        crossProduct<floatingpoint>(cp, v1, v2);
         //Normalize before checking the angle.
 	    normalizeVector(cp);
 	    normalizeVector(v3);
@@ -1149,7 +1156,7 @@ inline auto vec2Vector(const VecType& a) {
         v3[1] = p4[id + 1] - p1[id + 1];
         v3[2] = p4[id + 2] - p1[id + 2];
 
-        crossProduct(cp, v1, v2);
+        crossProduct<floatingpoint>(cp, v1, v2);
 	    //Normalize before checking the angle.
 	    normalizeVector(cp);
 	    normalizeVector(v3);
@@ -1230,7 +1237,7 @@ inline auto vec2Vector(const VecType& a) {
         v2[1] = p3[1] - p1[1];
         v2[2] = p3[2] - p1[2];
 
-        crossProduct(norm, v1, v2);
+        crossProduct<floatingpoint>(norm, v1, v2);
         normalizeVector(norm);
 
         //move bead 1
@@ -1289,7 +1296,7 @@ inline auto vec2Vector(const VecType& a) {
         v2[1] = p3[id + 1] - p1[id + 1];
         v2[2] = p3[id + 2] - p1[id + 2];
 
-        crossProduct(norm, v1, v2);
+        crossProduct<floatingpoint>(norm, v1, v2);
         normalizeVector(norm);
 
         //move bead 1
@@ -1357,15 +1364,17 @@ inline auto vec2Vector(const VecType& a) {
     inline size_t blockToSmemFB2(int blockSize){return 18 * blockSize * sizeof(floatingpoint);}
     inline size_t blockToSmemFB3(int blockSize){return 3 * blockSize * sizeof(floatingpoint);}
 
-    inline bool checkNaN_INF(floatingpoint *x, int startpoint, int endpoint){
-    	for(int i = startpoint; i <= endpoint; i++){
-    		if(isnan(x[i])||isinf(x[i]))
-    			return true;
-    	}
-    	return false;
-    }
 
-    inline bool checkNaN_INF(doubleprecision *x, int startpoint, int endpoint){
+//    inline bool checkNaN_INF(floatingpoint *x, int startpoint, int endpoint){
+//    	for(int i = startpoint; i <= endpoint; i++){
+//    		if(isnan(x[i])||isinf(x[i]))
+//    			return true;
+//    	}
+//    	return false;
+//    }
+
+    template <class dataType>
+    inline bool checkNaN_INF(dataType *x, int startpoint, int endpoint){
         for(int i = startpoint; i <= endpoint; i++){
             if(isnan(x[i])||isinf(x[i]))
                 return true;
@@ -1373,7 +1382,8 @@ inline auto vec2Vector(const VecType& a) {
         return false;
     }
 
-    inline void printvariablebinary(floatingpoint *x, int startpoint, int endpoint){
+    template <class dataType>
+    inline void printvariablebinary(dataType *x, int startpoint, int endpoint){
     	string str;
     	for(int i = startpoint; i <= endpoint; i++){
     		str.clear();

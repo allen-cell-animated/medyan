@@ -26,7 +26,7 @@ class Bead;
 class BubbleBubbleRepulsionExp {
     
 public:
-    floatingpoint energy(Bead*, Bead*, floatingpoint, floatingpoint, floatingpoint, floatingpoint);
+    floatingpoint energy(Bead*, Bead*, floatingpoint, floatingpoint, floatingpoint, floatingpoint, bool stretched);
     floatingpoint energy(Bead*, Bead*, floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint);
     
     void forces(Bead*, Bead*, floatingpoint, floatingpoint, floatingpoint, floatingpoint);

@@ -13,6 +13,8 @@
 
 #include "BranchingFF.h"
 
+#include <stdexcept> // runtime_error
+
 #include "BranchingStretching.h"
 #include "BranchingStretchingHarmonic.h"
 
@@ -21,12 +23,15 @@
 
 #include "BranchingDihedral.h"
 #include "BranchingDihedralCosine.h"
+#include "Mechanics/ForceField/Branching/BranchingDihedralQuadratic.hpp"
 
 #include "BranchingPosition.h"
 #include "BranchingPositionCosine.h"
 
 #include "BranchingPoint.h"
 #include "Bead.h"
+#include "Util/Io/Log.hpp"
+
 BranchingFF::BranchingFF(string& stretching, string& bending,
                          string& dihedral, string& position)
 {
@@ -51,10 +56,13 @@ BranchingFF::BranchingFF(string& stretching, string& bending,
     if(dihedral == "COSINE")
         _branchingInteractionVector.emplace_back(
                 new BranchingDihedral<BranchingDihedralCosine>());
+    else if(dihedral == "QUADRATIC")
+        _branchingInteractionVector.emplace_back(
+            new BranchingDihedral< BranchingDihedralQuadratic >());
     else if(dihedral == "") {}
     else {
-        cout << "Branching dihedral FF not recognized. Exiting." << endl;
-        exit(EXIT_FAILURE);
+        LOG(ERROR) << "Branching dihedral FF " << dihedral << " not recognized.";
+        throw std::runtime_error("Unrecognized branching dihedral force field");
     }
 
     if(position == "COSINE")
@@ -101,7 +109,7 @@ void BranchingFF::whoIsCulprit() {
 }
 
 
-floatingpoint BranchingFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint BranchingFF::computeEnergy(floatingpoint *coord, bool stretched) {
 
     floatingpoint U = 0.0;
     floatingpoint U_i=0.0;
@@ -110,7 +118,7 @@ floatingpoint BranchingFF::computeEnergy(floatingpoint *coord, floatingpoint *f,
         CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
 //        std::cout<<interaction->getName()<<endl;
 #endif
-        U_i = interaction->computeEnergy(coord, f, d);
+        U_i = interaction->computeEnergy(coord);
 //        CUDAcommon::handleerror(cudaDeviceSynchronize(),"BranchingFF","BranchingFF");
 //        std::cout<<interaction->getName()<<" "<<U_i<<endl;
 

@@ -56,14 +56,14 @@ void CylinderVolumeFF::cleanup() {
 
 
 
-floatingpoint CylinderVolumeFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint CylinderVolumeFF::computeEnergy(floatingpoint *coord, bool stretched) {
 
     floatingpoint U= 0.0;
     floatingpoint U_i=0.0;
 
     for (auto &interaction : _cylinderVolInteractionVector) {
 
-        U_i = interaction->computeEnergy(coord, f, d);
+        U_i = interaction->computeEnergy(coord);
 
         if(U_i <= -1) {
             //set culprit and return

@@ -21,7 +21,7 @@
 
 using namespace mathfunc;
 
-floatingpoint BubbleCylinderRepulsionExp::energy(floatingpoint *coord, floatingpoint *f, int *beadSet, int *bubbleSet,
+floatingpoint BubbleCylinderRepulsionExp::energy(floatingpoint *coord, int *beadSet, int *bubbleSet,
                                                  floatingpoint *krep, floatingpoint *slen, floatingpoint *radius, int *nneighbors) {
     
     int nb, nc;
@@ -182,7 +182,7 @@ void BubbleCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f, 
 //}
 
 floatingpoint BubbleCylinderRepulsionExp::loadForces(Bead* b1, Bead* b2, floatingpoint radius,
-                                              floatingpoint kRep, floatingpoint screenLength) {
+                                              floatingpoint kRep, floatingpoint screenLength) const {
     
     //get dist
     floatingpoint dist = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());

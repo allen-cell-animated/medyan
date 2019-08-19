@@ -324,12 +324,17 @@ public:
     virtual void updateAllPossibleBindingsstencil();
     virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
                                                tuple<CCylinder*, short> t2){
+#ifdef NLSTENCILLIST
         floatingpoint oldN=numBindingSitesstencil();
         _possibleBindingsstencil.insert(t1);
         _branchrestarttuple.push_back(make_tuple(t1,t2));
 //        _branchCylinder=(get<0>(t2));
         floatingpoint newN=numBindingSitesstencil();
-        updateBindingReaction(oldN,newN);}
+        updateBindingReaction(oldN,newN);
+#else
+
+#endif
+    }
     virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1){
         floatingpoint oldN=numBindingSitesstencil();
         _possibleBindingsstencil.insert(t1);
@@ -402,10 +407,7 @@ private:
     static short HNLID;
     static short _idvec[2];
     int dBInt = 1;
-    int dBI = SysParams::Chemistry().difBindInt;
-    std::set<int> difBindInts{2,12,22,32}; /// allow diffent binding sites for linkers and motors
-
-
+    int dBI = SysParams::Chemistry().linkerbindingskip-1;
 
     //possible bindings at current state. updated according to neighbor list
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
@@ -490,11 +492,7 @@ public:
         floatingpoint newN=numBindingSitesstencil();
         updateBindingReaction(oldN,newN);
     }
-    virtual void clearpossibleBindingsstencil() {
-        floatingpoint oldN=numBindingSitesstencil();
-        _possibleBindingsstencil.clear();
-        updateBindingReaction(oldN,0);
-    }
+    virtual void clearpossibleBindingsstencil();
     virtual int numBindingSitesstencil() {
 
         return _possibleBindingsstencil.size();
@@ -651,11 +649,7 @@ public:
         floatingpoint newN=numBindingSitesstencil();
         updateBindingReaction(oldN,newN);
     }
-    virtual void clearpossibleBindingsstencil() {
-        floatingpoint oldN=numBindingSitesstencil();
-        _possibleBindingsstencil.clear();
-        updateBindingReaction(oldN,0);
-    }
+	virtual void clearpossibleBindingsstencil();
     virtual int numBindingSitesstencil() {
 
         return _possibleBindingsstencil.size();

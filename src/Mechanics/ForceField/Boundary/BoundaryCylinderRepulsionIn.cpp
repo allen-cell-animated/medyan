@@ -13,6 +13,8 @@
 
 #include "BoundaryCylinderRepulsionIn.h"
 
+#include <stdexcept> // runtime_error
+
 #include "BoundaryCylinderRepulsionExpIn.h"
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"
@@ -22,6 +24,7 @@
 
 #include "MathFunctions.h"
 #include "cross_check.h"
+#include "Util/Io/Log.hpp"
 //TODO
 //CUDA is not implemented
 #ifdef CUDAACCL
@@ -197,8 +200,7 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::deallocate() {
 }
 
 template <class BRepulsionInteractionType>
-floatingpoint BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeEnergy
-(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeEnergy(floatingpoint *coord) {
     floatingpoint U_ii=0.0;
 
 #ifdef CUDATIMETRACK
@@ -235,12 +237,9 @@ floatingpoint BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeEne
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
 #endif
-    if (d == 0.0) {
-        U_ii = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors);
-    }
-    else {
-        U_ii = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors, d);
-    }
+
+    U_ii = _FFType.energy(coord, beadSet, krep, slen, nneighbors);
+
 #ifdef CUDATIMETRACK
     floatingpoint* gU_i;
     tend= chrono::high_resolution_clock::now();
@@ -401,10 +400,11 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeLoadForces()
 
     }
 }
+template< typename InteractionType >
+void BoundaryCylinderRepulsionIn< InteractionType >::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
+    LOG(ERROR) << "Load force computation for a specific cylinder is not implemented in this force field.";
+    throw std::runtime_error("Not implemented error");
+}
 
-///Template specializations
-template floatingpoint BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
-template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeLoadForces();
-template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::vectorize();
-template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::deallocate();
+// Explicit template instantiations
+template class BoundaryCylinderRepulsionIn< BoundaryCylinderRepulsionExpIn >;

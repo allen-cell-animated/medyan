@@ -25,6 +25,7 @@ void BoundaryCylinderAttachment<BAttachmentInteractionType>::vectorize() {
     //first coord in beadset is bead, then pin position
     beadSet = new int[Bead::getPinnedBeads().size()];
     kattr = new floatingpoint[Bead::getPinnedBeads().size()];
+    pins.resize(Bead::getPinnedBeads().size());
     
     int i = 0;
     for(auto b : Bead::getPinnedBeads()) {
@@ -32,9 +33,7 @@ void BoundaryCylinderAttachment<BAttachmentInteractionType>::vectorize() {
         beadSet[n * i] = b->getStableIndex();
         kattr[n * i] = SysParams::Mechanics().pinK;
 
-        pins[3 * (n * i)] = b->getPinPosition()[0];
-        pins[3 * (n * i) + 1] = b->getPinPosition()[1];
-        pins[3 * (n * i) + 2] = b->getPinPosition()[2];
+        pins[n * i] = mathfunc::vector2Vec< 3, floatingpoint >(b->getPinPosition());
 
         i++;
     }
@@ -45,21 +44,13 @@ void BoundaryCylinderAttachment<BAttachmentInteractionType>::deallocate() {
 
     delete beadSet;
     delete kattr;
-    delete pins;
 }
 
 template <class BAttachmentInteractionType>
-floatingpoint BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEnergy(floatingpoint *coord) {
 
+    return _FFType.energy(coord, beadSet, kattr, pins);
 
-    floatingpoint U;
-
-    if (d == 0.0)
-        U =  _FFType.energy(coord, f, beadSet, kattr, pins);
-    else
-        U =  _FFType.energy(coord, f, beadSet, kattr, pins, d);
-
-    return U;
 }
 
 template <class BAttachmentInteractionType>
@@ -69,7 +60,7 @@ void BoundaryCylinderAttachment<BAttachmentInteractionType>::computeForces(float
 }
 
 ///Template specializations
-template floatingpoint BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template floatingpoint BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeEnergy(floatingpoint *coord);
 template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::vectorize();
 template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::deallocate();

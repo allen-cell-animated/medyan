@@ -112,8 +112,7 @@ void FilamentStretching<FStretchingInteractionType>::deallocate() {
 
 
 template <class FStretchingInteractionType>
-floatingpoint FilamentStretching<FStretchingInteractionType>::computeEnergy
-(floatingpoint* coord, floatingpoint *f, floatingpoint d){
+floatingpoint FilamentStretching<FStretchingInteractionType>::computeEnergy(floatingpoint* coord){
 
     floatingpoint U_i[1], U_ii;
     floatingpoint* gU_i;
@@ -154,10 +153,7 @@ floatingpoint FilamentStretching<FStretchingInteractionType>::computeEnergy
     tbegin = chrono::high_resolution_clock::now();
 #endif
 
-    if (d == 0.0)
-        U_ii = _FFType.energy(coord, f, beadSet, kstr, eql);
-    else
-        U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, d);
+    U_ii = _FFType.energy(coord, beadSet, kstr, eql);
 
 #ifdef CUDATIMETRACK
     tend = chrono::high_resolution_clock::now();
@@ -244,7 +240,7 @@ void FilamentStretching<FStretchingInteractionType>::computeForces(floatingpoint
 //    }
 //}
 ///Temlate specializations
-template floatingpoint FilamentStretching<FilamentStretchingHarmonic>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template floatingpoint FilamentStretching<FilamentStretchingHarmonic>::computeEnergy(floatingpoint *coord);
 template void FilamentStretching<FilamentStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void FilamentStretching<FilamentStretchingHarmonic>::vectorize();
 template void FilamentStretching<FilamentStretchingHarmonic>::deallocate();

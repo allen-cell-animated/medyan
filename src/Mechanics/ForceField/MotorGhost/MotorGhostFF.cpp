@@ -65,14 +65,14 @@ void MotorGhostFF::cleanup() {
 }
 
 
-floatingpoint MotorGhostFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint MotorGhostFF::computeEnergy(floatingpoint *coord, bool stretched) {
 
     floatingpoint U= 0.0;
     floatingpoint U_i=0.0;
 
     for (auto &interaction : _motorGhostInteractionVector) {
 
-        U_i = interaction->computeEnergy(coord, f, d);
+        U_i = interaction->computeEnergy(coord);
 
         if(U_i <= -1) {
             //set culprit and return

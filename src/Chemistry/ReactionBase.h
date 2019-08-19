@@ -33,6 +33,7 @@
 
 #include "Species.h"
 
+
 //FORWARD DECLARATIONS
 class CBound;
 class RNode;
@@ -72,10 +73,15 @@ typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
  */
 class ReactionBase {
 protected:
-
-    unordered_set<ReactionBase*>  _dependents; ///< Pointers to ReactionBase objects that depend
+	#ifdef DEBUGCONSTANTSEED
+	using dependentdatatype = unordered_set<ReactionBase*, HashbyId<ReactionBase*>,
+            customEqualId<ReactionBase*>>;
+	#else
+    using dependentdatatype = unordered_set<ReactionBase*>; ///< Pointers to
+    // ReactionBase objects that depend
                                                ///< on this ReactionBase being executed
-    
+	#endif
+    dependentdatatype _dependents;
     RNode* _rnode; ///< A pointer to an RNode object which is used
                    ///< to implement a Gillespie-like algorithm (e.g. NRM)
     
@@ -84,6 +90,8 @@ protected:
     
     float _rate;      ///< the rate for this ReactionBase
     float _rate_bare; ///< the bare rate for this ReactionBase (original rate)
+
+    static size_t  _Idcounter;
 
 
     
@@ -113,8 +121,35 @@ protected:
     floatingpoint _volumeFrac; ///< Used in compartments to store volume fraction of the compartment
     int _rateVolumeDepExp; ///< Exponent of rate dependency on volume
     ///< Dependence on bulk properties are NOT considered currently
+
+    size_t _Id = 0;
+private:
+
 public:
-    
+    /*Multiplicative factors used to update rate of a reaction. Please note that these
+     * factors do not apply to all reactions.*/
+
+    enum RateMulFactorType {
+        VOLUMEFACTOR, MECHANOCHEMICALFACTOR, MOTORWALKCONSTRAINTFACTOR,
+        RESTARTPHASESWITCH, MANUALRATECHANGEFACTOR1, RATEMULFACTSIZE
+    };
+    array<float, RATEMULFACTSIZE> _ratemulfactors;
+
+    void setRateMulFactor(float factor, RateMulFactorType type){
+//    	cout<<"set Rate type "<<type<<" "<<factor<<endl;
+
+        if(factor == _ratemulfactors[type]) return;
+
+        if(_ratemulfactors[type] == 0.0){
+            _rate = _rate_bare;
+            _ratemulfactors[type] = factor;
+            for(uint i = 0; i < RateMulFactorType::RATEMULFACTSIZE; i++)
+                _rate *= _ratemulfactors[i];
+        } else {
+            _rate = _rate * factor / _ratemulfactors[type];
+            _ratemulfactors[type] = factor;
+        }
+    }
     /// The main constructor:
     /// @param rate - the rate constant for this ReactionBase
     ReactionBase (float rate, bool isProtoCompartment, floatingpoint volumeFrac=
@@ -131,7 +166,7 @@ public:
     /// potentially throwing, which in turn disables move operations by the STL
     /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
     /// be fixed in the future.
-    virtual ~ReactionBase() noexcept {}
+    virtual ~ReactionBase() noexcept { }
     
     /// Copy this reaction using SpeciesPtrContainerVector &spcv as a source of
     /// analogous Species.
@@ -217,10 +252,10 @@ public:
     CBound* getCBound() {return _cBound;}
     
     /// Sets the ReactionBase rate to the parameter "rate"
-    void setRate(float rate) {_rate=rate;}
+    [[deprecated]]void setRate(float rate) {_rate=rate;}
     
     // Sets the scaled rate based on volume dependence.
-    void setRateScaled(float rate) {
+    void recalcRateVolumeFactor() {
         // This can automatically set the "_rate" as scaled value of "rate"
 
 //        if(tau() < 2.0) {
@@ -229,12 +264,12 @@ public:
         // Some possibilities of the exponent are implemented specifically to decrease the use of "pow"
         switch(_rateVolumeDepExp) {
             case 0:
-                _rate = rate; break;
+                setRateMulFactor(1.0f, VOLUMEFACTOR); break;
             case -1:
-                _rate = rate / _volumeFrac; break;
+	            setRateMulFactor(1.0f / _volumeFrac, VOLUMEFACTOR); break;
             default:
-                if(_volumeFrac == 1.0f) _rate = rate;
-                else _rate = rate * std::pow(_volumeFrac, _rateVolumeDepExp);
+                if(_volumeFrac == 1.0f) setRateMulFactor(1.0f, VOLUMEFACTOR);
+                else setRateMulFactor(std::pow(_volumeFrac, _rateVolumeDepExp), VOLUMEFACTOR);
                 break;
         }
     }
@@ -256,7 +291,19 @@ public:
     float getBareRate() const {return _rate_bare;}
     
     ///aravind June 24, 2016
-    void setBareRate(float a) {_rate_bare=a;}
+    void setBareRate(float a) {
+        if(_rate_bare == a) return;
+        else if(_rate_bare == 0.0){
+            _rate_bare = a;
+            _rate = _rate_bare;
+            for(uint i = 0; i < RateMulFactorType::RATEMULFACTSIZE; i++)
+                _rate *= _ratemulfactors[i];
+        }
+        else{
+            _rate = _rate*a/_rate_bare;
+            _rate_bare = a;
+        }
+    }
     /// Returns a pointer to the RNode associated with this ReactionBase.
     RNode* getRnode() const {return _rnode;}
     
@@ -366,7 +413,7 @@ public:
     /// 1) via getAffectedReactionBases(), where the copy numbers do influence the
     /// dependencies, and 2) via dependents(), where dependencies stop being counted
     /// if the copy numbers of reactant species drop to 0.
-    const unordered_set<ReactionBase*>& dependents() {return _dependents;}
+    const dependentdatatype& dependents() {return _dependents;}
     
     /// Returns true if two ReactionBase objects are equal.
     /// Two ReactionBase objects are equal if each of their reactants and products
@@ -432,19 +479,7 @@ public:
     /// it, which can be used to follow Reaction objects whose propensities change upon
     /// firing of some Reaction. This request will be ignored if the Reaction's
     /// propensity is still zero.
-    void activateReaction() {
-#ifdef TRACK_ZERO_COPY_N
-        if(areEqual(getProductOfReactants(), 0.0)) // One of the reactants is still at zero copy n,
-                                                   // no need to activate yet...
-            return;
-#endif
-#ifdef TRACK_UPPER_COPY_N
-        if(areEqual(getProductOfProducts(), 0.0)) // One of the products is at the maximum allowed
-                                                  //copy number, no need to activate yet...
-            return;
-#endif
-        activateReactionUnconditional();
-    }
+    void activateReaction();
     
     /// Performs a simple updating of the propensity of this ReactionBase. Does not change
     /// dependents, only updates the RNode if initialized.
@@ -478,14 +513,14 @@ public:
     /// Print self into an iostream
     friend ostream& operator<<(ostream& os, const ReactionBase& rr)
     {
-        rr.printToStream(os);
+    	rr.printToStream(os);
         return os;
     }
     
     ///Whether the dependencies should be updated
     virtual bool updateDependencies() = 0;
+
+    size_t getId() const { return _Id;}
 };
-
-
 
 #endif

@@ -15,11 +15,13 @@
 #define MEDYAN_BubbleInteractions_h
 
 #include "common.h"
+#include "Mechanics/ForceField/Types.hpp"
 
 //FORWARD DECLARATIONS
 class NeighborList;
 class Component;
 class Bubble;
+class Cylinder;
 
 /// Represents a Bubble interaction with a Bead
 class BubbleInteractions {
@@ -34,6 +36,7 @@ friend class BubbleFF;
 //    //@}
 
 public:
+    using LoadForceEnd = ForceFieldTypes::LoadForceEnd;
 
     //@{
     /// In the case of an error
@@ -47,7 +50,7 @@ public:
     virtual void deallocate() = 0;
 
     /// Compute energy of this interaction
-    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) = 0;
+    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) = 0;
     /// Compute forces of this interaction
     virtual void computeForces(floatingpoint *coord, floatingpoint *f) = 0;
     /// Compute auxiliary forces of this interaction
@@ -55,6 +58,7 @@ public:
     
     /// Compute the load forces on beads from this interaction
     virtual void computeLoadForces() = 0;
+    virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const { }
     
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() = 0;

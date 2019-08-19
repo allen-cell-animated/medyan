@@ -327,8 +327,7 @@ void CylinderExclVolRepulsion::checkforculprit() {
 }
 
 #endif
-floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoint *force,
-                                               int *beadSet, floatingpoint *krep) {
+floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSet, floatingpoint *krep) {
 	floatingpoint *c1, *c2, *c3, *c2temp, *c4, *newc2, d;
 
 	doubleprecision a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
@@ -408,7 +407,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 
 		GG = d*g - a*I;
 		HH = CC + GG - DD;
-		crossProduct(cp, vec_A, vec_B);
+		crossProduct<doubleprecision>(cp, vec_A, vec_B);
 		JJ = scalarProduct(cp,vec_C);
 		JJ = - JJ*JJ;
 
@@ -444,7 +443,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 		if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
 		   || U_i != U_i || U_i < -1.0) {
 			//evaluate numerically
-			U_i = energyN(coord, force, beadSet, krep, i);
+			U_i = energyN(coord, beadSet, krep, i);
 			if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
 			   || U_i != U_i || U_i < -1.0) {
 				short found = 0;
@@ -792,20 +791,22 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 		f3 = &f[3 * beadSet[n * i + 2]];
 		f4 = &f[3 * beadSet[n * i + 3]];
 
-		//check if in same plane
-		if(areInPlane(c1, c2, c3, c4)) {
+		if(false) {
+			//check if in same plane
+			if (areInPlane(c1, c2, c3, c4)) {
 
-			//slightly move point
-			movePointOutOfPlane(c1, c2, c3, c4, newc2, 2, 0.01);
-			c2 = newc2;
+				//slightly move point
+				movePointOutOfPlane(c1, c2, c3, c4, newc2, 2, 0.01);
+				c2 = newc2;
 
 #ifdef DETAILEDOUTPUT
-			std::cout<<"Mv"<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<
-                     c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "<<
-                     c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<
-                     c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
-            std::cout<<"M ";
+				std::cout<<"Mv"<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<
+						 c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "<<
+						 c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<
+						 c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
+				std::cout<<"M ";
 #endif
+			}
 		}
 #ifdef DETAILEDOUTPUT
 		else{
@@ -852,7 +853,7 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 
 		GG = d*g - a*I;
 		HH = CC + GG - DD;
-		crossProduct(cp, vec_A, vec_B);
+		crossProduct<doubleprecision>(cp, vec_A, vec_B);
 		JJ = scalarProduct(cp,vec_C);
 		JJ = - JJ*JJ;
 		invJJ = 1/JJ;
@@ -970,8 +971,8 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 		                                           4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*F + F11*F +4*U*e*F - (F12*(d + F))/FF ) + (c4[2] - c3[2])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[2] - c3[2] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*F + 2*U*(d*e - a*F) - (B12*F)/BB - (F12*(d + F))/FF) ) ;
 
 
-		if(checkNaN_INF(f1l, 0, 2)||checkNaN_INF(f2l,0,2)||checkNaN_INF(f3l, 0, 2)
-		   ||checkNaN_INF(f4l,0,2)){
+		if(checkNaN_INF<doubleprecision>(f1l, 0, 2)||checkNaN_INF<doubleprecision>(f2l,0,2)
+		||checkNaN_INF<doubleprecision>(f3l, 0, 2)||checkNaN_INF<doubleprecision>(f4l,0, 2)){
 			forceN(coord, f, beadSet, krep, i);
 		}
 		else{
@@ -997,7 +998,7 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 	delete [] vec_C;
 }
 
-floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord, floatingpoint *force,
+floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord,
                                                 int *beadSet, floatingpoint *krep, int i) {
 	floatingpoint *c1, *c2, *c3, *c4;
 
@@ -1234,8 +1235,8 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 
 	delete [] integrandarray;
 
-	if(checkNaN_INF(f1l, 0, 2)||checkNaN_INF(f2l,0,2)||checkNaN_INF(f3l, 0, 2)
-	   ||checkNaN_INF(f4l,0,2)){
+	if(checkNaN_INF<doubleprecision>(f1l, 0, 2)||checkNaN_INF<doubleprecision>(f2l,0,2)
+	        ||checkNaN_INF<doubleprecision>(f3l, 0, 2) ||checkNaN_INF<doubleprecision>(f4l,0,2)){
 
 		cout<<"Cylinder Exclusion Force becomes infinite. Printing data "<<endl;
 

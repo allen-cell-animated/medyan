@@ -209,7 +209,7 @@ void BoundaryCylinderRepulsionExp::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-floatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, int *beadSet,
                                             floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
 
     int nb, nc;
@@ -342,7 +342,7 @@ void BoundaryCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f
             force1[1] += f0 *norm[1];
             force1[2] += f0 *norm[2];
 #ifdef CHECKFORCES_INF_NAN
-            if(checkNaN_INF(force1, 0, 2)){
+            if(checkNaN_INF<floatingpoint>(force1, 0, 2)){
                 cout<<"Boundary Cylinder Force becomes infinite. Printing data "<<endl;
 
                 cout<<"Printing coords"<<endl;
@@ -361,7 +361,7 @@ void BoundaryCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f
         Cumnc+=nc;
     }}
 
-floatingpoint BoundaryCylinderRepulsionExp::loadForces(floatingpoint r, floatingpoint kRep, floatingpoint screenLength) {
+floatingpoint BoundaryCylinderRepulsionExp::loadForces(floatingpoint r, floatingpoint kRep, floatingpoint screenLength) const {
 
     floatingpoint R = -r/screenLength;
     return kRep * exp(R)/screenLength;

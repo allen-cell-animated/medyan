@@ -66,16 +66,14 @@ void MTOCAttachment<MTOCInteractionType>::deallocate() {
 
 
 template <class MTOCInteractionType>
-floatingpoint MTOCAttachment<MTOCInteractionType>::computeEnergy(floatingpoint* coord,
-		floatingpoint *f, floatingpoint d) {
+floatingpoint MTOCAttachment<MTOCInteractionType>::computeEnergy(floatingpoint* coord, bool stretched) {
 
-	floatingpoint U = 0.0;
-	floatingpoint U_i=0.0;
-	if (d == 0.0)
-		U_i = _FFType.energy(coord, f, beadSet, kstr, radiusvec);
-	else
-		U_i = _FFType.energy(coord, f, beadSet, kstr, radiusvec, d);
-	return U_i;
+    floatingpoint U = 0.0;
+    floatingpoint U_i=0.0;
+
+    U_i = _FFType.energy(coord, beadSet, kstr, radiusvec);
+
+    return U_i;
 }
 
 template <class MTOCInteractionType>
@@ -111,7 +109,7 @@ void MTOCAttachment<MTOCInteractionType>::computeForces(floatingpoint *coord, fl
 ///Template specializations
 template <class MTOCInteractionType>
 int MTOCAttachment<MTOCInteractionType>::numInteractions;
-template floatingpoint MTOCAttachment<MTOCAttachmentHarmonic>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template floatingpoint MTOCAttachment<MTOCAttachmentHarmonic>::computeEnergy(floatingpoint *coord, bool stretched);
 template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 //template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux(double *coord, double *f);
 template void MTOCAttachment<MTOCAttachmentHarmonic>::vectorize();

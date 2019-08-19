@@ -219,6 +219,10 @@ public:
     }
 
     std::size_t getStableIndex() const { return _stableIndex; }
+
+    // Getting information for debug purposes
+    static const std::vector<std::size_t>& getDeletedIndices() { return _deletedIndices; }
+
 };
 template< typename T, typename DatabaseData > std::vector<T*> Database< T, true, DatabaseData >::_stableElems;
 template< typename T, typename DatabaseData > std::vector<std::size_t> Database< T, true, DatabaseData >::_deletedIndices;

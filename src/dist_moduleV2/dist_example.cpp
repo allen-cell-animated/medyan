@@ -13,9 +13,13 @@ Example functions for various scenarios how to run find_distances(...)
 #include <thread>
 
 
-#include "dist_moduleV2/dist_coords.h"
+/*#include "dist_moduleV2/dist_coords.h"
 #include "dist_moduleV2/dist_driver.h"
-#include "dist_moduleV2/dist_out.h"
+#include "dist_moduleV2/dist_out.h"*/
+
+#include "dist_coords.h"
+#include "dist_driver.h"
+#include "dist_out.h"
 
 namespace dist {
 
@@ -28,13 +32,16 @@ namespace dist {
 		std::random_device rd;
 		std::mt19937 mt(rd());
 	    std::uniform_real_distribution<float> dist_d(1.0, 10.0);
+		std::uniform_int_distribution<int> fil_f(0, 100);
 		
 		vector<double> x(N), y(N), z(N);
+		vector<int> finfo(N);
 			
 		for(uint i=0; i<N; ++i){
 			x[i] = dist_d(mt);
 			y[i] = dist_d(mt);
 			z[i] = dist_d(mt);
+			finfo[i] = fil_f(mt);
 		}
 	
 		vector<int> indices(N);
@@ -42,7 +49,7 @@ namespace dist {
 		generate(indices.begin(),indices.end(),[&q](){return q++;});
 		random_shuffle(indices.begin(),indices.end());
 	
-		Coords coords(x,y,z,indices);
+		Coords coords(x,y,z,indices,finfo);
 		dOut<2U> out(N, {5.0f, 12.0f, 6.0f, 13.0f});
 
 		// Note: If the third argument is not provided, then the best SIMD (but non-parallel algo will be chosen)
@@ -59,9 +66,11 @@ namespace dist {
 		std::random_device rd;
 		std::mt19937 mt(rd());
 	    std::uniform_real_distribution<float> dist_d(1.0, 10.0);
+		std::uniform_int_distribution<int> fil_f(0, 100);
 		
 		vector<double> x1(N1), y1(N1), z1(N1);
 		vector<double> x2(N2), y2(N2), z2(N2);
+		vector<int> finfo1(N1), finfo2(N2);
 			
 		generate(x1.begin(),x1.end(),[&](){return dist_d(mt);});
 		generate(y1.begin(),y1.end(),[&](){return dist_d(mt);});
@@ -70,6 +79,10 @@ namespace dist {
 		generate(x2.begin(),x2.end(),[&](){return dist_d(mt);});
 		generate(y2.begin(),y2.end(),[&](){return dist_d(mt);});
 		generate(z2.begin(),z2.end(),[&](){return dist_d(mt);});
+
+		generate(finfo1.begin(),finfo1.end(),[&](){return fil_f(mt);});
+
+		generate(finfo2.begin(),finfo2.end(),[&](){return fil_f(mt);});
 		
 	
 		vector<int> indices1(N1);
@@ -85,8 +98,8 @@ namespace dist {
 		// We are done with generating fake coordinates in two distinct compartments
 		//The next few lines below do the distance calculations
 	
-		Coords c1(x1,y1,z1,indices1);
-		Coords c2(x2,y2,z2,indices2);
+		Coords c1(x1,y1,z1,indices1,finfo1);
+		Coords c2(x2,y2,z2,indices2,finfo2);
 		uint N = std::max({N1,N2});
 		dOut<2U> out(N, {5.0f, 12.0f, 6.0f, 13.0f});
 
@@ -103,13 +116,16 @@ namespace dist {
 		std::random_device rd;
 		std::mt19937 mt(rd());
 	    std::uniform_real_distribution<float> dist_d(1.0, 10.0);
+		std::uniform_int_distribution<int> fil_f(0, 100);
 		
 		vector<double> x(N), y(N), z(N);
+		vector<int> finfo(N);
 			
 		for(uint i=0; i<N; ++i){
 			x[i] = dist_d(mt);
 			y[i] = dist_d(mt);
 			z[i] = dist_d(mt);
+			finfo[i] = fil_f(mt);
 		}
 	
 		vector<int> indices(N);
@@ -117,7 +133,7 @@ namespace dist {
 		generate(indices.begin(),indices.end(),[&q](){return q++;});
 		random_shuffle(indices.begin(),indices.end());
 	
-		Coords coords(x,y,z,indices);
+		Coords coords(x,y,z,indices,finfo);
 		dOut<2U> out(N, {5.0f, 12.0f, 6.0f, 13.0f});
 		auto tic = std::chrono::steady_clock::now();
 		find_distances(out,coords,tag_simd<simd_avx,float>());
@@ -138,9 +154,10 @@ namespace dist {
 		std::random_device rd;
 		std::mt19937 mt(rd());
 	    std::uniform_real_distribution<float> dist_d(1.0, 10.0);
+		std::uniform_int_distribution<int> fil_f(0, 100);
 		
 		vector<float> x1, y1, z1;
-	    vector<int> idx1;
+	    vector<int> idx1, finfo;
 	    dist::dOut<2U> bspairsoutX;
 	    bspairsoutX.init_dout(N,{5.0f, 12.0f, 6.0f, 13.0f});
 	    dist::tag_simd<dist::simd_avx_par,  float>   t_avx_par;		
@@ -152,15 +169,18 @@ namespace dist {
 			y1.resize(N); 
 			z1.resize(N); 
 			idx1.resize(N);
+			finfo.resize(N);
+
 			
 			for(uint i=0; i<N; ++i){
 				x1[i] = dist_d(mt); 
 				y1[i] = dist_d(mt); 
 				z1[i] = dist_d(mt); 
-				idx1[i] = i; 
+				idx1[i] = i;
+				finfo[i] = fil_f(mt);
 			}
 			
-			veccoord[c].init_coords(x1, y1, z1, idx1);
+			veccoord[c].init_coords(x1, y1, z1, idx1,finfo);
 		}
 		
 		cout << "comp 0: findnig interactions within a compartment" << endl;

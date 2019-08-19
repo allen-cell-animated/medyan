@@ -230,7 +230,7 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f
 }
 
 #endif
-floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, int *beadSet,
                                             floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2) {
 
     int n = MotorGhostStretching<MotorGhostStretchingHarmonic>::n;
@@ -391,8 +391,8 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f
 //        MotorGhost::getMotorGhosts()[i]->getMMotorGhost()->stretchForce = f0;
 
 	    #ifdef CHECKFORCES_INF_NAN
-	    if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)||checkNaN_INF(f3,0,2)
-           ||checkNaN_INF(f4,0,2)){
+	    if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)||checkNaN_INF<floatingpoint>(f3,0,2)
+           ||checkNaN_INF<floatingpoint>(f4,0,2)){
 		    cout<<"MotorGhost Stretching Force becomes infinite. Printing data "<<endl;
 
 		    auto m = MotorGhost::getMotorGhosts()[i];

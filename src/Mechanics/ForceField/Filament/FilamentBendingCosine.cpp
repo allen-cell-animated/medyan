@@ -18,7 +18,6 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
-#include "Bubble.h"
 #include "MathFunctions.h"
 
 #ifdef CUDAACCL
@@ -196,11 +195,10 @@ void FilamentBendingCosine::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, size_t nint, int *beadSet,
                                      floatingpoint *kbend, floatingpoint *eqt){
 
     int n = FilamentBending<FilamentBendingCosine>::n;
-    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
     floatingpoint *coord1, *coord2, *coord3, L1, L2, L1L2, l1l2;
 
@@ -264,11 +262,10 @@ floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint 
     return U;
 }
 
-floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint *f, size_t nint, int *beadSet,
                                      floatingpoint *kbend, floatingpoint *eqt, floatingpoint d ){
 
     int n = FilamentBending<FilamentBendingCosine>::n;
-    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
     floatingpoint *coord1, *coord2, *coord3, L1, L2, L1L2, l1l2;
     floatingpoint  *force1, *force2, *force3;
@@ -336,11 +333,10 @@ floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint 
     return U;
 }
 
-void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, size_t nint, int *beadSet,
                                    floatingpoint *kbend, floatingpoint *eqt){
 
     int n = FilamentBending<FilamentBendingCosine>::n;
-    int nint =  (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
     floatingpoint *coord1, *coord2, *coord3, L1, L2, l1l2, invL1, invL2, A,B,C, k;
     floatingpoint *force1, *force2, *force3;
@@ -377,7 +373,7 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *
 	        else if (x > 1.0) x = 1.0;
 
             floatingpoint cosp =  x;
-            floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
+            floatingpoint sinp = sqrt(max<floatingpoint>((1-cosp*cosp),(floatingpoint)0.0));
             floatingpoint sinpminusq = sinp * cos(eqt[i]) - cosp * sin(eqt[i]);
 
 /*            phi = safeacos(l1l2 *A);
@@ -418,7 +414,8 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *
                            (coord3[2] - coord2[2])*C );
 
 	    #ifdef CHECKFORCES_INF_NAN
-	    if(checkNaN_INF(force1, 0, 2)||checkNaN_INF(force2,0,2)||checkNaN_INF(force3,0,2)){
+	    if(checkNaN_INF<floatingpoint>(force1, 0, 2)||checkNaN_INF<floatingpoint>(force2,0,2)
+	       ||checkNaN_INF<floatingpoint>(force3,0,2)){
 		    cout<<"Filament Bending Force becomes infinite. Printing data "<<endl;
 
 		    short found = 0;

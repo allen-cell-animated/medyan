@@ -2,7 +2,8 @@
 
 #include <iostream>
 
-#include "dist_moduleV2/dist_driver.h"
+//#include "dist_moduleV2/dist_driver.h"
+#include "dist_driver.h"
 
 using namespace std;
 
@@ -10,17 +11,17 @@ int main(int argc, char* argv[]){
 	
 	const uint N = 6000; //test
 	
-	// cout << "\n\nStarting tests...\n" << endl;
-	// bool tests_passed = dist::test_dist_module(N,N);
-	// cout << "All tests_passed? " << boolalpha << tests_passed << endl;
+/*	 cout << "\n\nStarting tests...\n" << endl;
+	 bool tests_passed = dist::test_dist_module(N,N);
+	 cout << "All tests_passed? " << boolalpha << tests_passed << endl;*/
 
 	cout << "\n\nStarting benchmarks...\n" << endl;
 	dist::benchmark_dist_module(N);
 	
-	// cout << "\n\nAn example where coordinates and indices are external...\n" << endl;
-	// dist::examples_dist_module();
-	
-	// dist::dist_example_avx_veccoord();
+/*	 cout << "\n\nAn example where coordinates and indices are external...\n" << endl;
+	 dist::examples_dist_module();
+
+	 dist::dist_example_avx_veccoord();*/
 		
 	return 0;
 }

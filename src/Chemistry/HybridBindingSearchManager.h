@@ -91,7 +91,7 @@ private:
     static HybridCylinderCylinderNL* _HneighborList;
 
     //SIMD variables
-    unsigned mask = (1 << 4) - 1;
+    unsigned mask = 0;
     static const dist::tag_simd<dist::simd_avx_par,  float>  t_avx_par;
     static const dist::tag_simd<dist::simd_avx,  float>   t_avx;
     static const dist::tag_simd<dist::simd_no,   float>   t_serial;
@@ -273,6 +273,8 @@ public:
         bspairslinker2.init_dout(10000,{900.0f,1600.0f});
         bspairsmotor2.init_dout(10000,{30625.0f, 50625.0f});
     }
+
+    void clearPossibleBindingsstencil(short idvec[2]);
 
 	void initializeSIMDvars();
 

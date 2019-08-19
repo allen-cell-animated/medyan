@@ -24,7 +24,7 @@ class Bead;
 class BranchingStretchingHarmonic {
     
 public:
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    floatingpoint energy(floatingpoint *coord, int *beadSet,
                   floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos);
     
     floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
