@@ -407,7 +407,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
     //For now, uses 20 filaments
     if(SType.mtoc) {
 
-        MTOC* mtoc = _subSystem->addTrackable<MTOC>();
+        MTOC* mtoc = _subSystem.addTrackable<MTOC>();
         
         //set MTOC coordinates based on input
         floatingpoint bcoordx = SType.mtocInputCoordXYZ[0];
