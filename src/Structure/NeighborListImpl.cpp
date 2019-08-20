@@ -356,7 +356,7 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
                         //if not cross filament, check if not neighboring
                         auto dist = fabs(cylinder->getPosition() -
                                          ncylinder->getPosition());
-                        if (dist <= 2) continue;
+                        if (dist <= SysParams::Mechanics().sameFilBindSkip) continue;
                     }
                     //Dont add if not within range
                     floatingpoint dist = twoPointDistance(cylinder->coordinate,
@@ -407,7 +407,7 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
                     //if not cross filament, check if not neighboring
                     auto dist = fabs(cylinder->getPosition() -
                                      ncylinder->getPosition());
-                    if (dist <= 2) continue;
+                    if (dist <= SysParams::Mechanics().sameFilBindSkip) continue;
                 }
                 //Dont add if not within range
                 floatingpoint dist = twoPointDistance(cylinder->coordinate,
@@ -468,7 +468,7 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
                 //if not cross filament, check if not neighboring
                 auto dist = fabs(cylinder->getPosition() -
                                  ncylinder->getPosition());
-                if(dist <= 2) continue;
+                if(dist <= SysParams::Mechanics().sameFilBindSkip) continue;
             }
             //Dont add if not within range
             floatingpoint distsq = twoPointDistancesquared(cylinder->coordinate,

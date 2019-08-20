@@ -1301,8 +1301,12 @@ void HessianSpectra::print(int snapshot){
     // Outputs the eigenvalues obtained from each Hessian matrix
     for(auto k = 0; k < evaluesVector.size(); k++){
         
-        _outputFile <<tauVector[k] << endl;
-        _outputFile<<evaluesVector[k]<<endl;
+        _outputFile <<tauVector[k] << "     "<< evaluesVector[k].size()<< endl;
+        //_outputFile<<evaluesVector[k].real()<<endl;
+        for(auto i = 0; i< evaluesVector[k].size(); i++){
+            _outputFile<<evaluesVector[k].real()[i]<<endl;
+        }
+        
         
         _outputFile<<endl;
     };

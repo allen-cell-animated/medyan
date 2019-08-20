@@ -1024,6 +1024,21 @@ void SystemParser::readMechParams() {
             }
         }
         
+        if (line.find("SAMEFILBINDINGSKIP:") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MParams.sameFilBindSkip = atoi(lineVector[1].c_str());
+                
+            }
+        }
+        
 
         if (line.find("SPECIALPROTOCOL") != string::npos) {
 

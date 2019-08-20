@@ -286,7 +286,7 @@ void MotorGhost::updateReactionRates() {
 	    if((c1struct.filamentId == c2struct.filamentId)) {
 	    	auto c1posonFil = c1struct.positionOnFilament;
 		    auto c2posonFil = c2struct.positionOnFilament;
-		    consider_passivation = abs(c1posonFil - c2posonFil) <= 3;
+            consider_passivation = abs(c1posonFil - c2posonFil) <= SysParams::Mechanics().sameFilBindSkip + 1;
 		    //A distance of 3 or lesser between two cylinders on the same filament is not
 		    // acceptable.
 		    isc1leftofc2 = c1posonFil < c2posonFil;
