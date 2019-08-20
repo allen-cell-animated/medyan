@@ -36,6 +36,8 @@
 #include "CController.h"
 #include "ChemSimImpl.h"
 
+#include <Eigen/Core>
+
 using namespace mathfunc;
 
 void BasicSnapshot::print(int snapshot) {
@@ -1268,7 +1270,7 @@ void HessianMatrix::print(int snapshot){
     vector<floatingpoint> tauVector = _ffm-> tauVector;
     // Outputs a sparse representation of the Hessian matrix, where only elements with appreciable size (>0.00001) are
     // output along with their indices.  Currently this outputs for each minimization, however to reduce the file size this could be changed.
-    for(auto k = 0; k < hVec.size(); k++){
+    for(auto k = 0; k < hVec.size(); k+= SysParams::Mechanics().hessSkip){
         vector<vector<floatingpoint > > hMat = hVec[k];
         int total_DOF = hMat.size();
         vector<tuple<int, int, floatingpoint>> elements;
@@ -1287,6 +1289,26 @@ void HessianMatrix::print(int snapshot){
     _outputFile<<endl;
     };
     // This clears the vectors storing the matrices to reduce the amount of memory needed.  
-    _ffm->clearHessian();
+    _ffm->clearHessian(0);
 }
+
+
+void HessianSpectra::print(int snapshot){
+    _outputFile.precision(10);
+    vector<Eigen::VectorXcd > evaluesVector = _ffm-> evaluesVector;
+    vector<floatingpoint> tauVector = _ffm-> tauVector;
+    
+    // Outputs the eigenvalues obtained from each Hessian matrix
+    for(auto k = 0; k < evaluesVector.size(); k++){
+        
+        _outputFile <<tauVector[k] << endl;
+        _outputFile<<evaluesVector[k]<<endl;
+        
+        _outputFile<<endl;
+    };
+    // This clears the vectors storing the matrices to reduce the amount of memory needed.
+    _ffm->clearHessian(1);
+}
+
+
 

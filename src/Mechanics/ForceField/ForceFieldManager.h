@@ -72,9 +72,13 @@ public:
     // compute the Hessian matrix if the feature is enabled
     void computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta);
     
-    void clearHessian(){
+    void clearHessian(int a){
+        if(a == 0){
         hessianVector.clear();
+        }else{
+        evaluesVector.clear();
         tauVector.clear();
+        };
     }
     
     vector<floatingpoint> HRMDenergies;
@@ -82,6 +86,8 @@ public:
     void printculprit(floatingpoint* force);
     
     vector<vector<vector<floatingpoint>>> hessianVector;
+    
+    vector<Eigen::VectorXcd> evaluesVector;
     
     vector<floatingpoint> tauVector;
 

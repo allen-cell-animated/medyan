@@ -605,16 +605,24 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
     // Solve for the eigenspectrum
     Spectra::SparseSymShiftSolve<double> op(hessMatSym);
     int numEigs = total_DOF / 2;
-    Spectra::SymEigsShiftSolver<double, Spectra::LARGEST_MAGN, Spectra::SparseSymShiftSolve<double>> eigs(&op, numEigs, 2*numEigs, 10000);
+    Spectra::SymEigsShiftSolver<double, Spectra::LARGEST_MAGN, Spectra::SparseSymShiftSolve<double>> eigs(&op, numEigs, numEigs + 5, 10000);
     eigs.init();
     int nconv = eigs.compute();
     Eigen::VectorXcd evalues;
     evalues = eigs.eigenvalues();
     
-    cout << "Eigenvalues found:\n" << evalues << endl;
+    
+    //Eigen::MatrixXcd evectors;
+    //evectors = eigs.eigenvectors();
+
+    
+    //cout << "Eigenvalues found:\n" << evalues << endl;
 
     // store the full matrix in list
     hessianVector.push_back(hessianMatrix);
+    
+    // store the eigenvalues in list
+    evaluesVector.push_back(evalues);
 
 
 }

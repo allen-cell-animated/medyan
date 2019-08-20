@@ -1018,8 +1018,8 @@ void SystemParser::readMechParams() {
             }
             else if (lineVector.size() == 2) {
                 MParams.hessTracking = true;
-                MParams.hessDelta = atof(lineVector[1].c_str());
-                cout<<"delta is "<<MParams.hessDelta<<endl;
+                //MParams.hessDelta = atof(lineVector[1].c_str());
+                MParams.hessSkip = atof(lineVector[1].c_str());
                 
             }
         }
