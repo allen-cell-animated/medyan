@@ -21,6 +21,15 @@
 #include "ForceField.h"
 #include "Bead.h"
 
+#include <Eigen/Core>
+#include <Eigen/SparseCore>
+#include <Spectra/SymEigsSolver.h>
+#include <Spectra/MatOp/SparseSymMatProd.h>
+#include <Spectra/SymEigsShiftSolver.h>
+#include <Spectra/MatOp/SparseSymShiftSolve.h>
+
+typedef Eigen::Triplet<double> Triplet;
+
 // Forward declarations
 class Cylinder;
 

@@ -21,6 +21,12 @@
 #include "Structure/Bead.h"
 #include "Structure/Cylinder.h"
 
+
+
+
+
+
+
 ForceField* ForceFieldManager::_culpritForceField = nullptr;
 
 void ForceFieldManager::vectorizeAllForceFields() {
@@ -557,7 +563,11 @@ void ForceFieldManager::assignallforcemags() {
 void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta){
     // store the minimization time and initialize the matrix
     tauVector.push_back(tau());
-    vector<vector<floatingpoint> > HessianMatrix(total_DOF, vector<floatingpoint>(total_DOF));
+    vector<vector<floatingpoint> > hessianMatrix(total_DOF, vector<floatingpoint>(total_DOF));
+    
+    vector<Triplet> tripletList;
+    
+    
     // loop through all the coordinates
     for(auto i = 0; i < total_DOF; i++){
 
@@ -579,13 +589,32 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
         for(auto j = 0; j < total_DOF; j++){
 
             // store the derivative of the force on each coordinate j
-            HessianMatrix[i][j] = -(forces_copy[j] - f[j])/delta;
+            float h_i_j = -(forces_copy[j] - f[j])/delta;
+            hessianMatrix[i][j] = h_i_j;
+            tripletList.push_back(Triplet(i,j,h_i_j));
         }
 
     }
+    
+    // create symmetrized sparse matrix object
+    Eigen::SparseMatrix<double> hessMat(total_DOF, total_DOF), hessMatSym;
+    hessMat.setFromTriplets(tripletList.begin(), tripletList.end());
+    hessMatSym = 0.5*(Eigen::SparseMatrix<double>(hessMat.transpose()) + hessMat);
+    
+    
+    // Solve for the eigenspectrum
+    Spectra::SparseSymShiftSolve<double> op(hessMatSym);
+    int numEigs = total_DOF / 2;
+    Spectra::SymEigsShiftSolver<double, Spectra::LARGEST_MAGN, Spectra::SparseSymShiftSolve<double>> eigs(&op, numEigs, 2*numEigs, 10000);
+    eigs.init();
+    int nconv = eigs.compute();
+    Eigen::VectorXcd evalues;
+    evalues = eigs.eigenvalues();
+    
+    cout << "Eigenvalues found:\n" << evalues << endl;
 
-    // store the matrix
-    hessianVector.push_back(HessianMatrix);
+    // store the full matrix in list
+    hessianVector.push_back(hessianMatrix);
 
 
 }
