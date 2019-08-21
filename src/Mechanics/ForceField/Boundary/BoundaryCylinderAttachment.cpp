@@ -25,6 +25,7 @@ void BoundaryCylinderAttachment<BAttachmentInteractionType>::vectorize() {
     //first coord in beadset is bead, then pin position
     beadSet = new int[Bead::getPinnedBeads().size()];
     kattr = new floatingpoint[Bead::getPinnedBeads().size()];
+    pins.resize(Bead::getPinnedBeads().size());
     
     int i = 0;
     for(auto b : Bead::getPinnedBeads()) {
@@ -32,9 +33,7 @@ void BoundaryCylinderAttachment<BAttachmentInteractionType>::vectorize() {
         beadSet[n * i] = b->getStableIndex();
         kattr[n * i] = SysParams::Mechanics().pinK;
 
-        pins[3 * (n * i)] = b->getPinPosition()[0];
-        pins[3 * (n * i) + 1] = b->getPinPosition()[1];
-        pins[3 * (n * i) + 2] = b->getPinPosition()[2];
+        pins[n * i] = mathfunc::vector2Vec< 3, floatingpoint >(b->getPinPosition());
 
         i++;
     }
@@ -45,7 +44,6 @@ void BoundaryCylinderAttachment<BAttachmentInteractionType>::deallocate() {
 
     delete beadSet;
     delete kattr;
-    delete pins;
 }
 
 template <class BAttachmentInteractionType>

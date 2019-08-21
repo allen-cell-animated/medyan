@@ -325,17 +325,17 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
 
 
 
-tuple<floatingpoint, vector<floatingpoint>, vector<string>> ForceFieldManager::computeEnergyHRMD(floatingpoint *coord) const {
-    floatingpoint energy = 0.0;
-    vector<floatingpoint> HRMDenergies;
-    vector<string> HRMDnames;
+EnergyReport ForceFieldManager::computeEnergyHRMD(floatingpoint *coord) const {
+    EnergyReport result;
+    result.total = 0.0;
     for (auto &ff : _forceFields) {
         auto tempEnergy = ff->computeEnergy(coord);
-        HRMDenergies.push_back(tempEnergy);
-        HRMDnames.push_back(ff->getName());
-        energy += tempEnergy;
+        // convert to units of kT
+        tempEnergy = tempEnergy / kT; // TODO: Energy unit conversion might happen outside
+        result.individual.push_back({ff->getName(), tempEnergy});
+        result.total += tempEnergy;
     }
-    return make_tuple(energy, HRMDenergies, HRMDnames);
+    return result;
 }
 
 
@@ -562,24 +562,30 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
     for(auto i = 0; i < total_DOF; i++){
 
         // create new vectors for the foorces and coordinates
-        vector<floatingpoint> forces_copy(total_DOF);
-        vector<floatingpoint> coord_copy(total_DOF);
+        vector<floatingpoint> forces_copy_p(total_DOF);
+        vector<floatingpoint> coord_copy_p(total_DOF);
+        
+        vector<floatingpoint> forces_copy_m(total_DOF);
+        vector<floatingpoint> coord_copy_m(total_DOF);
 
         // copy coordinates to new vector
-        for(auto l = 0; l< coord_copy.size(); l++){
-            coord_copy[l] = coord[l];
+        for(auto l = 0; l< coord_copy_p.size(); l++){
+            coord_copy_p[l] = coord[l];
+            coord_copy_m[l] = coord[l];
         }
 
         // perturb the coordinate i
-        coord_copy[i] += delta;
+        coord_copy_p[i] += delta;
+        coord_copy_m[i] -= delta;
 
         // calculate the new forces based on perturbation
-        computeForces(coord_copy.data(), forces_copy.data());
+        computeForces(coord_copy_p.data(), forces_copy_p.data());
+        computeForces(coord_copy_m.data(), forces_copy_m.data());
 
         for(auto j = 0; j < total_DOF; j++){
 
-            // store the derivative of the force on each coordinate j
-            HessianMatrix[i][j] = -(forces_copy[j] - f[j])/delta;
+            // store the central difference numerical derivative of the force on each coordinate j
+            HessianMatrix[i][j] = -(forces_copy_p[j] - forces_copy_m[j]) / (2 * delta);
         }
 
     }

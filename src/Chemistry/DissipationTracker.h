@@ -27,7 +27,7 @@
 #include <fstream>
 #include "MotorGhost.h"
 #include "Linker.h"
-
+#include "Mechanics/ForceField/Types.hpp"
 
 using namespace mathfunc;
 
@@ -355,10 +355,7 @@ public:
     }
     
     // return the mechanical energy of the system
-    tuple<floatingpoint, vector<floatingpoint>, vector<string>> getMechEnergy(){
-        
-        tuple<floatingpoint, vector<floatingpoint>, vector<string>>  retVec = _mcon->getEnergy();
-        return retVec;
+    [[deprecated]] void getMechEnergy(){
     }
     
     
@@ -403,62 +400,44 @@ public:
     };
     
     // set the value of G1
-    void setG1(){
-        tuple<floatingpoint, vector<floatingpoint>, vector<string>> retVec = getMechEnergy();
-        
-        floatingpoint tot = get<0>(retVec);
-        vector<floatingpoint> HRMDenergies = get<1>(retVec);
-        vector<string> HRMDnames = get<2>(retVec);
-        
+    void setG1(const EnergyReport& report){
         HRMDVec1.clear();
         
-        for(auto i = 0; i < HRMDenergies.size(); i++){
-            HRMDVec1.push_back(make_tuple(HRMDnames[i],HRMDenergies[i]));
-            cumHRMDMechDiss.push_back(make_tuple(HRMDnames[i],0.0));
-            cumHRMDMechEnergy.push_back(make_tuple(HRMDnames[i],0.0));
+        for(auto i = 0; i < report.individual.size(); i++){
+            HRMDVec1.push_back(make_tuple(report.individual[i].name, report.individual[i].energy));
+            cumHRMDMechDiss.push_back(make_tuple(report.individual[i].name, 0.0));
+            cumHRMDMechEnergy.push_back(make_tuple(report.individual[i].name, 0.0));
         };
         
-        G1 = tot;
+        G1 = report.total;
       
     }
     
     // set the value of G2
-    void setG2(){
-        tuple<floatingpoint, vector<floatingpoint>, vector<string>> retVec = getMechEnergy();
-        
-        floatingpoint tot = get<0>(retVec);
-        vector<floatingpoint> HRMDenergies = get<1>(retVec);
-        vector<string> HRMDnames = get<2>(retVec);
-        
+    void setG2(const EnergyReport& report){
         HRMDVec2.clear();
-        for(auto i = 0; i < HRMDenergies.size(); i++){
-            HRMDVec2.push_back(make_tuple(HRMDnames[i],HRMDenergies[i]));
+        for(auto i = 0; i < report.individual.size(); i++){
+            HRMDVec2.push_back(make_tuple(report.individual[i].name, report.individual[i].energy));
         };
         
         
-        G2 = tot;
+        G2 = report.total;
     }
     
     // set the value of GMid
-    void setGMid(){
-        tuple<floatingpoint, vector<floatingpoint>, vector<string>> retVec = getMechEnergy();
-        
-        floatingpoint tot = get<0>(retVec);
-        vector<floatingpoint> HRMDenergies = get<1>(retVec);
-        vector<string> HRMDnames = get<2>(retVec);
-        
+    void setGMid(const EnergyReport& report){
         HRMDVecMid.clear();
-        for(auto i = 0; i < HRMDenergies.size(); i++){
-            HRMDVecMid.push_back(make_tuple(HRMDnames[i],HRMDenergies[i]));
+        for(auto i = 0; i < report.individual.size(); i++){
+            HRMDVecMid.push_back(make_tuple(report.individual[i].name, report.individual[i].energy));
         };
         
         
-        GMid = tot;
+        GMid = report.total;
     }
     
     // perform multiple functions to update cumulative energy counters and reset the mechanical energy variables
-    void updateAfterMinimization(){
-        setG2();
+    void updateAfterMinimization(const EnergyReport& report){
+        setG2(report);
         updateCumDissChemEnergy();
         updateCumDissMechEnergy();
         updateCumDissEn();

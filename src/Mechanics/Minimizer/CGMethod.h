@@ -18,6 +18,7 @@
 
 #include "common.h"
 #include "CUDAcommon.h"
+#include "Mechanics/Minimizer/MinimizationTypes.hpp"
 
 //FORWARD DECLARATIONS
 class ForceFieldManager;
@@ -228,7 +229,7 @@ public:
     virtual ~CGMethod() {};
 
     /// Minimize the system
-    virtual void minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
+    virtual MinimizationResult minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                           floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
                           floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
                           bool steplimit) = 0;
