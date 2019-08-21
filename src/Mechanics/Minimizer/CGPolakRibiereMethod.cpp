@@ -23,10 +23,12 @@
 #endif
 #include "Structure/Bead.h"
 
-void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
+MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                             floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
                             floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
                             bool steplimit){
+
+    MinimizationResult result;
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbeginTot, tendTot;
     chrono::high_resolution_clock::time_point tbeginII, tendII;
@@ -84,6 +86,9 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
     Bead::getDbData().forcesAux = Bead::getDbData().forces;
     Bead::getDbData().forcesAuxP = Bead::getDbData().forces;
     auto maxForce = maxF();
+
+    result.energiesBefore = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_copy(tend - tbegin);
 	CUDAcommon::tmin.copyforces+= elapsed_copy.count();
@@ -812,6 +817,8 @@ std::cout<<"----------------------------------------"<<endl;
     CUDAcommon::cudavars = cvars;
 #endif
 
+    result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+
     //final force calculation
     FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
 #ifdef ALLSYNC
@@ -920,4 +927,6 @@ std::cout<<"----------------------------------------"<<endl;
     chrono::duration<floatingpoint> elapsed_runtot(tendTot - tbeginTot);
     std::cout<<"Total Minimization time "<<elapsed_runtot.count()<<endl;
 #endif
+
+    return result;
 }
