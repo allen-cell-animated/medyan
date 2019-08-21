@@ -18,10 +18,13 @@
 #include "Output.h"
 #include "Structure/Bead.h"
 
-    void SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
+MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                                    floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
                                    floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
                                    bool steplimit) {
+    
+    MinimizationResult result;
+
         //number of steps
         int N;
         if (steplimit) {
@@ -37,6 +40,8 @@
         FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
         Bead::getDbData().forcesAux = Bead::getDbData().forces;
         auto maxForce = maxF();
+
+        result.energiesBefore = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
 
         int numIter = 0;
         while (/* Iteration criterion */  numIter < N &&
@@ -75,6 +80,8 @@
             cout << endl;
         }
 
+        result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+
         //final force calculation
         FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
         Bead::getDbData().forcesAux = Bead::getDbData().forces;
@@ -82,5 +89,7 @@
         endMinimization();
 
         FFM.cleanupAllForceFields();
+
+    return result;
 }
 

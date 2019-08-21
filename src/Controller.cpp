@@ -1030,7 +1030,7 @@ void Controller::run() {
     // update neighorLists before and after minimization. Need excluded volume
     // interactions.
 	_subSystem.resetNeighborLists();
-    _mController.run(false);
+    auto minimizationResult = _mController.run(false);
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runm2(mine - mins);
     minimizationtime += elapsed_runm2.count();
@@ -1100,7 +1100,7 @@ void Controller::run() {
         activatedeactivateComp();
 	    // set initial mechanical energy of system through a call to force field manager if dissipation tracking is enabled
 	    if(SysParams::CParams.dissTracking){
-		    _dt->setG1();
+		    _dt->setG1(minimizationResult.energiesAfter);
 	    }
         mine= chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runspl(mine - mins);
@@ -1177,10 +1177,6 @@ void Controller::run() {
                 resetCounters();
                 break;
             }
-            // set intermediate mechanical energy of system through a call to force field manager if dissipation tracking is enabled
-            if(SysParams::CParams.dissTracking){
-            _dt->setGMid();
-            }
 
             mine= chrono::high_resolution_clock::now();
             chrono::duration<floatingpoint> elapsed_runout(mine - mins);
@@ -1210,7 +1206,7 @@ void Controller::run() {
                 mins = chrono::high_resolution_clock::now();
                 Bead::rearrange();
                 Cylinder::updateAllData();
-                _mController.run();
+                minimizationResult = _mController.run();
                 mine= chrono::high_resolution_clock::now();
 
                 #ifdef OPTIMOUT
@@ -1234,7 +1230,8 @@ void Controller::run() {
 
                 // perform multiple functions to update cumulative energy counters and reset the mechanical energy variables
                 if(SysParams::CParams.dissTracking){
-                    _dt->updateAfterMinimization();
+                    _dt->setGMid(minimizationResult.energiesBefore);
+                    _dt->updateAfterMinimization(minimizationResult.energiesAfter);
                 }
 
 	            //update reaction rates

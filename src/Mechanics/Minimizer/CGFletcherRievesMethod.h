@@ -22,11 +22,12 @@
 
 #include "CGMethod.h"
 /// The Fletcher-Rieves method for conjugate gradient minimization
-    class FletcherRieves : public CGMethod {
-    public:
-        virtual void minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                              floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
-                              floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
-                              bool steplimit);
-    };
+class FletcherRieves : public CGMethod {
+public:
+    virtual MinimizationResult minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
+                            floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+                            floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                            bool steplimit);
+};
+
 #endif

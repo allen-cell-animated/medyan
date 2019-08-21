@@ -53,38 +53,12 @@ public:
     /// This function will minimize the system until the following criterion are met:
     /// 1) Largest force in the network < GRADTOL
     /// 3) Number of iterations exceeds 5N, unless in initial minimization
-    void equlibrate(ForceFieldManager &FFM, bool steplimit) {
-        _CGType.minimize(FFM, _GRADTOL, _MAXDIST, _LAMBDAMAX,
+    virtual MinimizationResult equlibrate(ForceFieldManager &FFM, bool steplimit) override {
+        return _CGType.minimize(FFM, _GRADTOL, _MAXDIST, _LAMBDAMAX,
                 _LAMBDARUNNINGAVERAGEPROBABILITY, steplimit);
     }
 
 
-
-
-
-    tuple<floatingpoint, vector<floatingpoint>, vector<string>> getEnergy(ForceFieldManager &FFM, floatingpoint d){
-      
-        //double* coord = _CGType.getCoords();
-        floatingpoint* coord = Bead::getDbData().coords.data();
-        
-        FFM.vectorizeAllForceFields();
-
-        tuple<floatingpoint, vector<floatingpoint>, vector<string>> HRMDvec = FFM.computeEnergyHRMD(coord);
-        
-        // delete [] coord;
-        
-        FFM.cleanupAllForceFields();
-        
-        
-        
-        return HRMDvec;
-        
-        
-        
-    }
-
-    
-    
 };
 
 #endif
