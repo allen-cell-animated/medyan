@@ -107,5 +107,7 @@ MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoin
         endMinimization();
 
         FFM.cleanupAllForceFields();
+
+    return result;
 }
 
