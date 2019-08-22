@@ -26,10 +26,10 @@
 
 template <class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::assignforcemags() {
-    for(auto m: MotorGhost::getMotorGhosts()){
-        //Using += to ensure that the stretching forces are additive.
-        m->getMMotorGhost()->stretchForce = stretchforce[m->getIndex()];
-    }
+    // for(auto m: MotorGhost::getMotorGhosts()){
+    //     //Using += to ensure that the stretching forces are additive.
+    //     m->getMMotorGhost()->stretchForce = stretchforce[m->getIndex()];
+    // }
 #ifdef CUDAACCL
     floatingpoint stretchforce[MotorGhost::getMotorGhosts().size()];
     CUDAcommon::handleerror(cudaMemcpy(stretchforce, gpu_Mstretchforce,

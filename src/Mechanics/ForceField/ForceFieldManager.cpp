@@ -337,19 +337,17 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
 
 
 
-tuple<floatingpoint, vector<floatingpoint>, vector<string>> ForceFieldManager::computeEnergyHRMD(floatingpoint *coord) const {
-    floatingpoint energy = 0.0;
-    vector<floatingpoint> HRMDenergies;
-    vector<string> HRMDnames;
+EnergyReport ForceFieldManager::computeEnergyHRMD(floatingpoint *coord) const {
+    EnergyReport result;
+    result.total = 0.0;
     for (auto &ff : _forceFields) {
         auto tempEnergy = ff->computeEnergy(coord);
         // convert to units of kT
-        tempEnergy = tempEnergy / kT;
-        HRMDenergies.push_back(tempEnergy);
-        HRMDnames.push_back(ff->getName());
-        energy += tempEnergy;
+        tempEnergy = tempEnergy / kT; // TODO: Energy unit conversion might happen outside
+        result.individual.push_back({ff->getName(), tempEnergy});
+        result.total += tempEnergy;
     }
-    return make_tuple(energy, HRMDenergies, HRMDnames);
+    return result;
 }
 
 
