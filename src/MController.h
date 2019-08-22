@@ -81,19 +81,13 @@ public:
     }
 
     /// Run a minimization on the system using the chosen algorithm
-    void run(bool steplimit = true) {  _minimizerAlgorithm->equlibrate(_FFManager, steplimit); }
+    auto run(bool steplimit = true) { return _minimizerAlgorithm->equlibrate(_FFManager, steplimit); }
 
     
     ForceFieldManager* getForceFieldManager(){
         return &_FFManager;
     }
 
-    tuple<floatingpoint, vector<floatingpoint>, vector<string>>  getEnergy(){
-    
-        return _minimizerAlgorithm->getEnergy(_FFManager,0.0);
-        
-    }
-    
 };
 
 #endif

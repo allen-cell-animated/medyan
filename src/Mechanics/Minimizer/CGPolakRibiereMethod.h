@@ -27,7 +27,7 @@ class PolakRibiere : public CGMethod
 {
 public:
     
-    virtual void minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
+    virtual MinimizationResult minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                           floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
                           floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY, bool steplimit);
 protected:
