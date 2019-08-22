@@ -236,10 +236,11 @@ public:
         for(idx = 0; idx<totaluniquefIDpairs; idx++){
             int countbounds = _rMaxsqvec[idx].size();
             for (idx2 = 0; idx2 < countbounds; idx2++) {
-                std::cout<<"Hybrid "<<_possibleBindingsstencilvecuint[idx][idx2].size()<<
-                " SIMD "
-                                          ""<<Nbindingpairs[idx][idx2]<<endl;
+            	cout<<Nbindingpairs[idx][idx2]<<" ";
+//                std::cout<<"Hybrid "<<_possibleBindingsstencilvecuint[idx][idx2].size()<<
+//                " SIMD "<<Nbindingpairs[idx][idx2]<<endl;
             }
+            cout<<endl;
         }
     }
 

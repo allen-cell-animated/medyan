@@ -369,6 +369,12 @@ void SubSystem::updateBindingManagers() {
 //        cout<<"Cmp ID "<<C->getID()<<endl;
         C->getHybridBindingSearchManager()->updateAllBindingReactions();
     }
+
+	for (auto C : _compartmentGrid->getCompartments()) {
+        cout<<"Cmp ID "<<C->getId()<<" "<<C->coordinates()[0]<<" "<<C->coordinates()[1]<<
+        " "<<C->coordinates()[2]<<" ";
+		C->getHybridBindingSearchManager()->printbindingsizes();
+	}
     #ifdef OPTIMOUT
     mineSIMD = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runSIMDV3(mineSIMD - minsSIMD);
