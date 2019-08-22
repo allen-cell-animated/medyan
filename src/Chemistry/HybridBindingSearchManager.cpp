@@ -163,6 +163,9 @@ dist::dOut<1,false>& HybridBindingSearchManager::getdOut(short dOutID){
 void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
                                  CCylinder* cc, short bindingSite) {
 	if (SysParams::INITIALIZEDSTATUS ) {
+		  #ifdef MOTORBIASCHECK
+		   addcounts = 0;
+		   #endif
 /*		cout<<"Adding Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
 			<<bindingSite<<" manager indices "<<idvec[0]<<" "<<idvec[1]<<endl;*/
 		short idx = idvec[0];
@@ -312,6 +315,9 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], CCylinder*
                                     cc, short bindingSite) {
 
+    #ifdef MOTORBIASCHECK
+     removecounts = 0;
+    #endif
 /*	cout<<"Removing Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
 	    <<bindingSite<<" manager indices "<<idvec[0]<<" "<<idvec[1]<<endl;*/
 
@@ -1016,7 +1022,9 @@ void HybridBindingSearchManager::addtoHNeighborList(){
 
 vector<tuple<CCylinder*, short>>
 HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
-
+	#ifdef MOTORBIASCHECK
+	 choosecounts = 0;
+	 #endif
 
     short idx = idvec[0];
     short idx2 = idvec[1];

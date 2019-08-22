@@ -192,6 +192,12 @@ volumes namely self(1), halves(6), quarters(12) and 1/8ths(8). The position in t
 
    void countNpairsfound(short idvec[2]);
 
+   #ifdef MOTORBIASCHECK
+   size_t addcounts = 0;
+   size_t removecounts = 0;
+   size_t choosecounts = 0;
+   #endif
+
 public:
 
     //constructors
@@ -244,6 +250,12 @@ public:
         }
     }
 
+#ifdef MOTORBIASCHECK
+    size_t getbindingsize(short idvec[2]){
+                return Nbindingpairs[idvec[0]][idvec[1]];
+    }
+#endif
+
     void resetpossibleBindings(){
 
         int idx, idx2;
@@ -255,6 +267,12 @@ public:
                 _reversepossibleBindingsstencilvecuint[idx][idx2].clear();
             }
         }
+
+        #ifdef MOTORBIASCHECK
+        addcounts = 0;
+        removecounts = 0;
+        choosecounts = 0;
+        #endif
     }
 
     static void setdOut(){
@@ -276,11 +294,10 @@ public:
     }
 
     void clearPossibleBindingsstencil(short idvec[2]);
+    void initializeSIMDvars();
 
-	void initializeSIMDvars();
-
-	static floatingpoint largestlinkerdistance;
-	static floatingpoint largestmotordistance;
+    static floatingpoint largestlinkerdistance;
+    static floatingpoint largestmotordistance;
 
     static floatingpoint SIMDtime;
     static floatingpoint HYBDtime;
@@ -293,7 +310,13 @@ public:
     static floatingpoint SIMDcountbs;
     static floatingpoint HYBDappendtime;
     static floatingpoint SIMDV3appendtime;
-	static floatingpoint findtimeV3;
+    static floatingpoint findtimeV3;
+
+    #ifdef MOTORBIASCHECK
+    size_t getaddcounts(){ return addcounts;}
+    size_t getremovecounts(){ return removecounts;}
+    size_t getchoosecounts(){return choosecounts;}
+    #endif
 };
 
 template<>

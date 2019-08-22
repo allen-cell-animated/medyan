@@ -1197,6 +1197,24 @@ void Controller::run() {
             //run mcontroller, update system
             if(tauLastMinimization >= _minimizationTime/factor) {
 
+#ifdef MOTORBIASCHECK
+                cout<<"Hyb-add ";
+                for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
+                    cout<<C->getHybridBindingSearchManager()->getaddcounts()<<" ";
+                }
+                cout<<endl;
+                cout<<"Hyb-remove ";
+                for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
+                    cout<<C->getHybridBindingSearchManager()->getremovecounts()<<" ";
+                }
+                cout<<endl;
+                cout<<"Hyb-choose ";
+                for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
+                    cout<<C->getHybridBindingSearchManager()->getchoosecounts()<<" ";
+                }
+                cout<<endl;
+#endif
+
                 mins = chrono::high_resolution_clock::now();
                 Bead::rearrange();
                 Cylinder::updateAllData();
