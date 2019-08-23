@@ -249,6 +249,10 @@ void Controller::initialize(string inputFile,
     //Set up CMGraph output
     string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
     _outputs.push_back(new CMGraph(cmgraphsnapname, &_subSystem));
+    
+    //Set up TMGraph output
+    string tmgraphsnapname = _outputDirectory + "TMGraph.traj";
+    _outputs.push_back(new TMGraph(tmgraphsnapname, &_subSystem));
 
 
     //Set up datadump output if any

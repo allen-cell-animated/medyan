@@ -934,6 +934,92 @@ void CMGraph::print(int snapshot) {
 }
 
 
+void TMGraph::print(int snapshot) {
+    
+    //_outputFile.precision(10);
+    
+    // print first line (snapshot number, time)
+    
+    _outputFile << snapshot << " " << tau() << endl;
+    
+    vector<tuple<vector<int>,floatingpoint>> filIDVec;
+    
+    for(auto &linker : Linker::getLinkers()) {
+        
+        int fid1 = linker->getFirstCylinder()->getFilID();
+        int fid2 = linker->getSecondCylinder()->getFilID();
+        vector<int> pair;
+        pair.push_back(fid1);
+        pair.push_back(fid2);
+        
+        floatingpoint tension = abs(linker->getMLinker()->stretchForce);
+        
+        sort(pair.begin(),pair.end());
+        filIDVec.push_back(make_tuple(pair,tension));
+        
+        
+        
+    }
+    
+    for(auto &motor : MotorGhost::getMotorGhosts()) {
+        
+        int fid1 = motor->getFirstCylinder()->getFilID();
+        int fid2 = motor->getSecondCylinder()->getFilID();
+        vector<int> pair;
+        pair.push_back(fid1);
+        pair.push_back(fid2);
+        
+        floatingpoint tension = abs(motor->getMMotorGhost()->stretchForce);
+        
+        sort(pair.begin(),pair.end());
+        filIDVec.push_back(make_tuple(pair,tension));
+        
+        
+        
+    }
+    
+    vector<vector<int>> uniqueFilIDVec;
+    vector<tuple<vector<int>,floatingpoint>> uniqueFilIDVecSum;
+    
+    for(auto j : filIDVec){
+        
+        vector<int> i = get<0>(j);
+        
+        if(find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) != uniqueFilIDVec.end()) {
+            
+            int ind = find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) - uniqueFilIDVec.begin();
+            
+            get<1>(uniqueFilIDVecSum.at(ind)) +=  get<1>(j);
+
+            
+        } else {
+            
+            vector<int> pbVec;
+            pbVec.push_back(i[0]);
+            pbVec.push_back(i[1]);
+            //pbVec.push_back(get<1>(j));
+            
+            uniqueFilIDVecSum.push_back(make_tuple(pbVec,get<1>(j)));
+            uniqueFilIDVec.push_back(i);
+        }
+        
+    }
+    
+    for(auto i: uniqueFilIDVecSum){
+        _outputFile<< get<0>(i)[0] <<" "<<  get<0>(i)[1] << " "  << get<1>(i) << " ";
+    }
+    
+    
+    
+    _outputFile<<endl<<endl;
+    
+}
+
+
+
+
+
+
 
 void ReactionOut::print(int snapshot) {
 
