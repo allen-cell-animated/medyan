@@ -523,6 +523,13 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
 }
 
 void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
+
+	#ifdef MOTORBIASCHECK
+	addcounts = 0;
+    removecounts = 0;
+    choosecounts = 0;
+	#endif
+
 	//Delete all entries in the binding pair maps
     for (int idx = 0; idx < totaluniquefIDpairs; idx++){
         int countbounds = _rMaxsqvec[idx].size();
@@ -804,7 +811,8 @@ bspairsoutSself, short idvec[2]) {
 		if(filTypepairs[0] == filTypepairs[1]) {
 			if (C1size >= switchfactor * dist::get_simd_size(t_avx))
 				dist::find_distances(bspairsoutSself,
-						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]), t_avx);
+						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]),
+						        t_serial);
 			else
 				dist::find_distances(bspairsoutSself,
 						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]), t_serial);
@@ -816,7 +824,8 @@ bspairsoutSself, short idvec[2]) {
 
 				dist::find_distances(bspairsoutSself,
 						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]),
-						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[1]), t_avx);
+						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[1]),
+						        t_serial);
 
 			} else {
 
@@ -883,7 +892,7 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
 	    				        (partitioned_volume_ID[pos], filTypepairs[0]),
 	    		        ncmp->getSIMDcoordsV3<LinkerorMotor>
 	    		                (partitioned_volume_ID[pos] + 1, filTypepairs[1]),
-	    		        t_avx);
+	    		        t_serial);
 
 		    } else {
 

@@ -906,6 +906,9 @@ struct MotorWalkingCallback {
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
 
+#ifdef MOTORBIASCHECK
+	    m->walkingsteps++;
+#endif
 
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
 
@@ -973,6 +976,7 @@ struct MotorMovingCylinderCallback {
 #ifdef OPTIMOUT
 	    CUDAcommon::tmin.motorwalkingcalls++;
 #endif
+
 	    mins = chrono::high_resolution_clock::now();
 //        cout<<"Motor moving cylinder begins"<<endl;
         //get species
@@ -983,6 +987,10 @@ struct MotorMovingCylinderCallback {
 
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
+
+	    #ifdef MOTORBIASCHECK
+	    m->walkingsteps++;
+	    #endif
         
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
 /*        cout<<"filament Type "<<filType<<endl;

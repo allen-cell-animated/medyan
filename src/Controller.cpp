@@ -1198,6 +1198,14 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime/factor) {
 
 #ifdef MOTORBIASCHECK
+                cout<<"Hyb-walkID ";
+                for(auto m:MotorGhost::getMotorGhosts())
+                    cout<<m->getId()<<" ";
+                cout<<endl;
+                cout<<"Hyb-walklen ";
+                for(auto m:MotorGhost::getMotorGhosts())
+                    cout<<m->walkingsteps<<" ";
+                cout<<endl;
                 cout<<"Hyb-add ";
                 for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
                     cout<<C->getHybridBindingSearchManager()->getaddcounts()<<" ";

@@ -376,6 +376,8 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                 //Assumes you don't have 127 (2^7 -1) cylinders
                 uint32_t cylfinfo = (_fID<< 7);
                 cylfinfo = cylfinfo | _fpos;
+
+                cout<<cylfinfo<<" "<<_fID<<" "<<_fpos<<endl;
                 if (checkftype && _filamentType != filType) continue;
 
                 auto x1 = cyl->getFirstBead()->vcoordinate();
