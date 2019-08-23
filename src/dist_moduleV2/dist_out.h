@@ -14,6 +14,8 @@ Both input distance thresholds and the output arrays that hold found contact ind
 
 #include "dist_common.h"
 #include "dist_coords.h"
+#include "SysParams.h"
+
 /*#include "dist_moduleV2/dist_common.h"
 #include "dist_moduleV2/dist_coords.h"*/
 
@@ -71,7 +73,7 @@ namespace dist {
 		
 			std::copy(vals.begin(),vals.end(),dt.begin());
 
-				maxneighbors[0] = 2;
+            maxneighbors[0] = SysParams::Mechanics().sameFilBindSkip;
 
 			for(uint i=0; i<2*D; ++i){
 				v_dt[i] = dt[i];

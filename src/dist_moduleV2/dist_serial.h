@@ -34,7 +34,7 @@ namespace dist {
 			float d_l = out.dt[2*d];
 			float d_h = out.dt[2*d+1];
 			uint &counter(out.counter[d]);
-			if(dist_sq > d_l && dist_sq<d_h && diff > 2){
+            if(dist_sq > d_l && dist_sq<d_h && diff > SysParams::Mechanics().sameFilBindSkip){
 //			if(dist_sq > d_l && dist_sq<d_h){
 				(out.dout[2*d])[counter] = c1.indices[i];
 				(out.dout[2*d+1])[counter] = c2.indices[j];
