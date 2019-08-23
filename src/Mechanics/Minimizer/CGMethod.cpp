@@ -1313,7 +1313,7 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
         if(headpos==maxprevlambdacount-1) {
 	        headpos = 0;
 	        floatingpoint temp = Rand::randfloatingpoint(0,1);
-	        if( temp >= LAMBDARUNNINGAVERAGEPROBABILITY) {
+	        if( temp <= LAMBDARUNNINGAVERAGEPROBABILITY) {
 		        runningaveragestatus = true;
 //		        cout<<"running lambda turned off "<<endl;
 	        }
