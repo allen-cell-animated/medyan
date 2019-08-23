@@ -113,6 +113,8 @@ void DiffusionReaction::updatePropensityImpl() {
 template <unsigned short M, unsigned short N>
 void* Reaction<M,N>::operator new(size_t size) {
     void *ptr = boost::fast_pool_allocator<Reaction<M,N>>::allocate();
+    ((Reaction<M,N>*) ptr)->__M = M;
+    ((Reaction<M,N>*) ptr)->__N = N;
     return ptr;
 }
 
@@ -261,4 +263,5 @@ template void Reaction<6,2>::updatePropensityImpl();
 template void Reaction<6,2>::activateReactionUnconditionalImpl();
 template void Reaction<6,2>::passivateReactionImpl();
 template Reaction<6,2>* Reaction<6,2>::cloneImpl(const SpeciesPtrContainerVector &spcv);
+
 

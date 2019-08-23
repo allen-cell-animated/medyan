@@ -73,7 +73,7 @@ public:
     
     CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double position);
     virtual ~CaMKIIingPoint() noexcept;
-    
+
     //@{
     ///Get attached bonds tuples <cylinders, short> (a cylinder and a position)
     tuple<Cylinder*, double> getBond(int n) { return _bonds.at(n);}

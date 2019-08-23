@@ -51,18 +51,18 @@ public:
     /// Copy constructor, standard
     CCaMKIIingPoint(const CCaMKIIingPoint& rhs, Compartment* c)
         : CBound(rhs._filamentType, c, rhs._cc1, rhs._cc2, rhs._position1, rhs._position2),
-          _pCaMKIIingPoint(rhs._pCaMKIIingPoint) {
-        
-          //set species
-          setFirstSpecies(rhs._firstSpecies);
-            
-          //set reaction
-          setOffReaction(rhs._offRxn);
-            
-          //set rates
-          setOnRate(rhs._onRate);
-          setOffRate(rhs._offRate);
+        _pCaMKIIingPoint(rhs._pCaMKIIingPoint),
+        _camkiiType(rhs._camkiiType), _offRxnBinding(rhs._offRxnBinding), _offRxnBundling(rhs._offRxnBundling) {
 
+		//set species
+		setFirstSpecies(rhs._firstSpecies);
+
+		//set reaction
+		setOffReaction(rhs._offRxn);
+
+		//set rates
+		setOnRate(rhs._onRate);
+		setOffRate(rhs._offRate);
     }
     
     /// Assignment is not allowed

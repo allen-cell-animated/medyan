@@ -43,6 +43,8 @@ template <unsigned short M, unsigned short N>
         Reaction(initializer_list<Species*> species,
                 float rate = 0.0, bool isProtoCompartment = false)
             : ReactionBase(rate, isProtoCompartment) {
+            __M = M;
+            __N = N;
             initializeSpecies(species);
         }
         
@@ -54,6 +56,8 @@ template <unsigned short M, unsigned short N>
         /// @param rate - the rate constant for this ReactionBase
                  float rate = 0.0, bool isProtoCompartment = false)
             : ReactionBase(rate, isProtoCompartment) {
+			__M = M;
+			__N = N;
             initializeSpecies(species);
         }
         
@@ -118,7 +122,7 @@ template <unsigned short M, unsigned short N>
             && "Reaction<M,N> Ctor: The species number does not match the template M+N");
             transform(species.begin(),species.end(),_rspecies.begin(),
                       [](Species *s){return &s->getRSpecies();});
-            
+
             if(!_isProtoCompartment) {
 #ifdef TRACK_DEPENDENTS
                 //add dependents

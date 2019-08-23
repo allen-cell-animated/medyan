@@ -17,6 +17,7 @@
 #include "CompartmentGrid.h"
 #include "CCylinder.h"
 #include "CMonomer.h"
+#include "Reaction.h"
 
 CCaMKIIingPoint::CCaMKIIingPoint(short camkiiType, Compartment* c,
                                  CCylinder* cc1, CCylinder* cc2, int position)
@@ -89,6 +90,7 @@ void CCaMKIIingPoint::createOffReactionBundling(ReactionBase *onRxn, SubSystem *
 
 	//create the reaction species
 	CMonomer* m = _cc1->getCMonomer(_position1);
+	sfb = m->speciesCaMKIIer(_camkiiType);
 	vector<Species*> os = {m->speciesCaMKIIer(_camkiiType),
 						   m->speciesBound(SysParams::Chemistry().camkiierBindingBoundIndex[_filamentType]), sfb};
 
@@ -126,6 +128,8 @@ void CCaMKIIingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
 		createOffReactionBinding(onRxn, ps);
     } else if(_pCaMKIIingPoint->getCoordinationNumber() == 2){
 		createOffReactionBundling(onRxn, ps);
+		cerr << _pCaMKIIingPoint->getCoordinationNumber() <<"=============MILLAD UNBUNDLING HAPPENS\n";
+		assert(_pCaMKIIingPoint->getCoordinationNumber() < 4 );
     } else {
 		auto bonds = _pCaMKIIingPoint->getBonds();
 		for(int i=0;i<bonds.size();i++) {

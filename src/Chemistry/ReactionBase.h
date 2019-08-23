@@ -101,6 +101,7 @@ protected:
     CBound* _cBound = nullptr; ///< CBound that is attached to this reaction
     
 public:
+	unsigned short __M=-1, __N=-1;
     /// The main constructor:
     /// @param rate - the rate constant for this ReactionBase
     ReactionBase (float rate, bool isProtoCompartment);
@@ -321,7 +322,7 @@ public:
     /// (Private) implementation of the computePropensity() method to be elaborated
     /// in derived classes.
     virtual double computePropensityImpl() const = 0;
-    
+
     /// Usually is applied to ReactionBase objects with propensity of 0 (e.g. when one
     /// of the copy numbers of reactants has dropped to 0. This method call notifies all
     /// other ReactionBase objects that may affect this ReactionBase to stop tracking
@@ -332,7 +333,7 @@ public:
     /// (Private) implementation of the passivateReaction() method to be elaborated in
     /// derived classes.
     virtual void passivateReactionImpl() = 0;
-    
+
     /// Requests that ReactionBase objects that may affect this Reaction to start
     /// tracking it, which can be used to follow ReactionBase objects whose propensities
     /// change upong firing of some ReactionBase. This request is acted upon
@@ -364,7 +365,7 @@ public:
     void updatePropensity() {updatePropensityImpl();}
     
     virtual void updatePropensityImpl() = 0;
-    
+
     /// Print the ReactionBases that are affacted by this ReactionBase being fired
     void printDependents() ;
     

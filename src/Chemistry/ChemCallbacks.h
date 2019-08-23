@@ -604,6 +604,8 @@ struct CaMKIIingPointUnbundlingCallback {
 			get<0>(_camkiiingPoint->getBonds()[0])->getCCylinder()->removeInternalReaction(r);
             get<0>(_camkiiingPoint->getBonds()[0])->getCCylinder()->addInternalReaction(offRxnBinding);
 
+            cerr << _camkiiingPoint->getCoordinationNumber() << "=============CARLOS UNBUNDLING HAPPENS\n";
+			assert(_camkiiingPoint->getCoordinationNumber() < 4 );
             _camkiiingPoint->getCCaMKIIingPoint()->setOffReaction(offRxnBinding);
         }
 
@@ -944,7 +946,9 @@ struct CaMKIIBundlingCallback {
 
         //create off reaction
         auto cCaMKIIer = cp->getCCaMKIIingPoint();
-        
+
+        cerr << cp->getCoordinationNumber() <<"=============JAMES BUNDLING HAPPENS\n";
+        assert(cp->getCoordinationNumber() < 4 );
         cCaMKIIer->setRates(_onRate, _offRate);
         cCaMKIIer->createOffReaction(r, _ps);
         cCaMKIIer->getOffReaction()->setBareRate(SysParams::CaMKIIUnbundlingBareRate[camkiiType]);

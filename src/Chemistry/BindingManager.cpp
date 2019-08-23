@@ -419,7 +419,7 @@ bool CaMKIIBundlingManager::checkMaxCoordinationNum(CCylinder* cc) {
 	CaMKIIingPoint *cp;
 	if (dc)
 		cp = dc->getCaMKIIPointParent();
-	if (cp->getCoordinationNumber() <= 0 || cp->getCoordinationNumber() >= _maxCoordination)
+	if (cp->getCoordinationNumber() >= _maxCoordination)
 		return false;
 	return true;
 }
@@ -675,7 +675,7 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
 
         // skip if parent coordination number isn't between >=1 and <6 (MAX coordination number SysParams::Chemistry().maxcamkii_coord_number)
         // now re add valid binding sites
-        if (cp->getCoordinationNumber() <= 0 || cp->getCoordinationNumber() >= _maxCoordination)
+        if (cp->getCoordinationNumber() >= _maxCoordination)
             continue;
 
         // loop through neighbors
