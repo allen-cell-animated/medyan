@@ -1943,6 +1943,7 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
             // Scale the diffusion rate according to the contacting areas
             size_t idxFwd = _neighborIndex.at(C), idxBwd = C->_neighborIndex.at(this);
             double scaleFactor = 0.5 * (_partialArea[idxFwd] + C->_partialArea[idxBwd]) / GController::getCompartmentArea()[idxFwd / 2];
+
             //double scaleFactor = 1.0;
             // cout << "To neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] << ", z = " << C->_coords[2] <<endl;
             // cout << "scaleFactor = " << scaleFactor << endl;
@@ -1950,7 +1951,6 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
             float actualDiffRate = diff_rate * scaleFactor;
             float volumeFrac = getVolumeFrac();
             // cout << "VolumeFraction = " << volumeFrac << endl;
-
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
             //Diffusion reaction from "this" compartment to C.
             ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour}, actualDiffRate, false, volumeFrac);
