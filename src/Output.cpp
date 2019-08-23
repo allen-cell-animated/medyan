@@ -1382,6 +1382,8 @@ void HessianMatrix::print(int snapshot){
 void HessianSpectra::print(int snapshot){
     _outputFile.precision(10);
     vector<Eigen::VectorXcd > evaluesVector = _ffm-> evaluesVector;
+    vector<Eigen::VectorXcd > IPRIVector = _ffm-> IPRIVector;
+    vector<Eigen::VectorXcd > IPRIIVector = _ffm-> IPRIIVector;
     vector<floatingpoint> tauVector = _ffm-> tauVector;
     
     // Outputs the eigenvalues obtained from each Hessian matrix
@@ -1390,7 +1392,7 @@ void HessianSpectra::print(int snapshot){
         _outputFile <<tauVector[k] << "     "<< evaluesVector[k].size()<< endl;
         //_outputFile<<evaluesVector[k].real()<<endl;
         for(auto i = 0; i< evaluesVector[k].size(); i++){
-            _outputFile<<evaluesVector[k].real()[i]<<endl;
+            _outputFile<<evaluesVector[k].real()[i]<< "     "<<IPRIVector[k].real()[i]<< "     "<<IPRIIVector[k].real()[i]<<endl;
         }
         
         

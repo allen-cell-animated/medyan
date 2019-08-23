@@ -612,15 +612,43 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
     // Solve for the eigenspectrum
     Spectra::SparseSymShiftSolve<double> op(hessMatSym);
     int numEigs = total_DOF - 2;
+   
     Spectra::SymEigsShiftSolver<double, Spectra::LARGEST_MAGN, Spectra::SparseSymShiftSolve<double>> eigs(&op, numEigs, numEigs + 1, 10000);
     eigs.init();
     int nconv = eigs.compute();
     Eigen::VectorXcd evalues;
     evalues = eigs.eigenvalues();
     
-    //Eigen::MatrixXcd evectors;
-    //evectors = eigs.eigenvectors();
-
+    //columns of evectors matrix are the normalized eigenvectors
+    Eigen::MatrixXcd evectors;
+    evectors = eigs.eigenvectors();
+    
+    
+    Eigen::VectorXcd IPRI(total_DOF);
+    
+    Eigen::VectorXcd IPRII(total_DOF);
+    
+    
+    for(auto i = 0; i<numEigs; i++){
+        
+        floatingpoint RI = 0.0;
+        for(auto j = 0; j < total_DOF; j++){
+            RI += pow(evectors(j,i).real(),4);
+        }
+        
+        floatingpoint RII = 0.0;
+        for(auto j = 0; j < total_DOF/3; j++){
+            floatingpoint temp = 0.0;
+            for(auto k =0; k< 3; k ++){
+                temp += pow(evectors(3*j+k,i).real(),2);
+            }
+            RII += pow(temp,2);
+        }
+        
+        IPRI(i) = RI;
+        IPRII(i) = RII;
+        
+    }
     
     //cout << "Eigenvalues found:\n" << evalues << endl;
 
@@ -629,6 +657,8 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
     
     // store the eigenvalues in list
     evaluesVector.push_back(evalues);
+    IPRIVector.push_back(IPRI);
+    IPRIIVector.push_back(IPRII);
 
 
 }

@@ -78,6 +78,8 @@ public:
         hessianVector.clear();
         }else{
         evaluesVector.clear();
+        IPRIVector.clear();
+        IPRIIVector.clear();
         tauVector.clear();
         };
     }
@@ -89,6 +91,8 @@ public:
     vector<vector<vector<floatingpoint>>> hessianVector;
     
     vector<Eigen::VectorXcd> evaluesVector;
+    vector<Eigen::VectorXcd> IPRIVector;
+    vector<Eigen::VectorXcd> IPRIIVector;
     
     vector<floatingpoint> tauVector;
 
