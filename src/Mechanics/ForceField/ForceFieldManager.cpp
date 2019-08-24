@@ -632,12 +632,12 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
     for(auto i = 0; i<numEigs; i++){
         
         floatingpoint RI = 0.0;
-        for(auto j = 0; j < total_DOF; j++){
+        for(auto j = 0; j < evectors.rows(); j++){
             RI += pow(evectors(j,i).real(),4);
         }
         
         floatingpoint RII = 0.0;
-        for(auto j = 0; j < total_DOF/3; j++){
+        for(auto j = 0; j < evectors.rows()/3; j++){
             floatingpoint temp = 0.0;
             for(auto k =0; k< 3; k ++){
                 temp += pow(evectors(3*j+k,i).real(),2);
