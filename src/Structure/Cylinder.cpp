@@ -118,7 +118,7 @@ Cylinder::~Cylinder() noexcept {
 //	/error message
 //	for b in _bonds
 
-#if 0
+#if 1
 	for (auto camkii : CaMKIIingPoint::getCaMKIIingPoints()) {
 		for(auto v : camkii->getBonds()) {
 //			vector<tuple<Cylinder*, double>>

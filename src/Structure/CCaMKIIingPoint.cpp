@@ -125,18 +125,17 @@ void CCaMKIIingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
     assert(_pCaMKIIingPoint->getCoordinationNumber() != 0);
 
     if(_pCaMKIIingPoint->getCoordinationNumber() == 1) {
-		createOffReactionBinding(onRxn, ps);
+		    createOffReactionBinding(onRxn, ps);
     } else if(_pCaMKIIingPoint->getCoordinationNumber() == 2){
-		createOffReactionBundling(onRxn, ps);
-		cerr << _pCaMKIIingPoint->getCoordinationNumber() <<"=============MILLAD UNBUNDLING HAPPENS\n";
-		assert(_pCaMKIIingPoint->getCoordinationNumber() < 4 );
+		    createOffReactionBundling(onRxn, ps);
     } else {
-		auto bonds = _pCaMKIIingPoint->getBonds();
-		for(int i=0;i<bonds.size();i++) {
-			auto cc = get<0>(bonds[i])->getCCylinder();
-			cc->addInternalReaction(_offRxnBundling);
-		}
+        auto bonds = _pCaMKIIingPoint->getBonds();
+        for(int i=0;i<bonds.size();i++) {
+          auto cc = get<0>(bonds[i])->getCCylinder();
+          cc->addInternalReaction(_offRxnBundling);
+        }
     }
+    cout << "========== CaMKII OffReaction created " <<  "_offRxnBinding: "<< _offRxnBinding << "_offRxnBundling: " << _offRxnBundling <<"_offRxn: " <<_offRxn<<endl;
 
     _pCaMKIIingPoint->updateReactionRates();
 
