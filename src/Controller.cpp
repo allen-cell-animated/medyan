@@ -1206,6 +1206,10 @@ void Controller::run() {
                 for(auto m:MotorGhost::getMotorGhosts())
                     cout<<m->walkingsteps<<" ";
                 cout<<endl;
+                cout<<"Hyb-mstretch ";
+                for(auto m:MotorGhost::getMotorGhosts())
+                    cout<<m->getMMotorGhost()->stretchForce<<" ";
+                cout<<endl;
                 cout<<"Hyb-add ";
                 for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
                     cout<<C->getHybridBindingSearchManager()->getaddcounts()<<" ";
