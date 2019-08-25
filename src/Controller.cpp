@@ -1221,6 +1221,13 @@ void Controller::run() {
                     cout<<C->getHybridBindingSearchManager()->getchoosecounts()<<" ";
                 }
                 cout<<endl;
+                cout<<"Hyb-mwalk ";
+	            for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
+	            	cout<<C->nummotorwalks<<" ";
+	            	C->nummotorwalks = 0;
+	            }
+	            cout<<endl;
+
 #endif
 
                 mins = chrono::high_resolution_clock::now();

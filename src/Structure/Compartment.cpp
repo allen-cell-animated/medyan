@@ -366,7 +366,6 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
             for (auto cyl:getCylinders()) {
                 uint32_t cindex = cyl->getStableIndex();
 
-                _filamentType = Cylinder::getDbData().value[cindex].type;
                 _filamentType = Cylinder::getDbDataConst().value[cindex].type;
                 _fID = Cylinder::getDbDataConst().value[cindex].filamentId;
                 _fpos = Cylinder::getDbDataConst().value[cindex].positionOnFilament-
@@ -377,7 +376,6 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                 uint32_t cylfinfo = (_fID<< 7);
                 cylfinfo = cylfinfo | _fpos;
 
-                cout<<cylfinfo<<" "<<_fID<<" "<<_fpos<<endl;
                 if (checkftype && _filamentType != filType) continue;
 
                 auto x1 = cyl->getFirstBead()->vcoordinate();
@@ -1702,7 +1700,6 @@ coord, uint32_t index, uint32_t cylfinfo){
         addcoord(coord, index, cylfinfo, 13);
         //Vertex
         addcoord(coord, index, cylfinfo, 25);
-        addcoord(coord, index, cylfinfo, 23);
     }
 }
 

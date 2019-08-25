@@ -894,6 +894,9 @@ struct MotorWalkingCallback {
 #ifdef OPTIMOUT
 	    CUDAcommon::tmin.motorwalkingcalls++;
 #endif
+#ifdef MOTORBIASCHECK
+	    _c->getCompartment()->nummotorwalks++;
+#endif
 	    mins = chrono::high_resolution_clock::now();
 //        cout<<"Motor walking begins"<<endl;
         //get species
@@ -976,6 +979,9 @@ struct MotorMovingCylinderCallback {
 #ifdef OPTIMOUT
 	    CUDAcommon::tmin.motorwalkingcalls++;
 #endif
+	    #ifdef MOTORBIASCHECK
+	    _oldC->getCompartment()->nummotorwalks++;
+	    #endif
 
 	    mins = chrono::high_resolution_clock::now();
 //        cout<<"Motor moving cylinder begins"<<endl;

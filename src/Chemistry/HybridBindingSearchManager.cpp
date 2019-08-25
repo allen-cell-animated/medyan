@@ -812,7 +812,7 @@ bspairsoutSself, short idvec[2]) {
 			if (C1size >= switchfactor * dist::get_simd_size(t_avx))
 				dist::find_distances(bspairsoutSself,
 						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]),
-						        t_serial);
+						        t_avx);
 			else
 				dist::find_distances(bspairsoutSself,
 						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]), t_serial);
@@ -825,7 +825,7 @@ bspairsoutSself, short idvec[2]) {
 				dist::find_distances(bspairsoutSself,
 						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]),
 						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[1]),
-						        t_serial);
+						        t_avx);
 
 			} else {
 
@@ -873,7 +873,11 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
     for(auto ncmp: _compartment->getuniquepermuteNeighbours()) {
 
 	    short pos = upnstencilvec[i];
-
+	/*Note. There is hard coded  referencing of complimentary sub volumes. For example,
+	 * the top plane of a compartment has paritioned_volume_ID 1 and the bottom plane
+	 * (complimentary) is 2. So, if permuting through C1 and C2, and if C2 is on top of C1,
+	 * C2's stencil ID in C1 is 14 (Hard Coded in GController.cpp). C1 will compare
+	 * paritioned_volume_ID 1 with C2's paritioned_volume_ID 2*/
 	    int C1size = _compartment->getSIMDcoordsV3<LinkerorMotor>
 	            (partitioned_volume_ID[pos], filTypepairs[0]).size();
 	    int C2size = ncmp->getSIMDcoordsV3<LinkerorMotor>
@@ -891,8 +895,7 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
 	    				_compartment->getSIMDcoordsV3<LinkerorMotor>
 	    				        (partitioned_volume_ID[pos], filTypepairs[0]),
 	    		        ncmp->getSIMDcoordsV3<LinkerorMotor>
-	    		                (partitioned_volume_ID[pos] + 1, filTypepairs[1]),
-	    		        t_serial);
+	    		                (partitioned_volume_ID[pos] + 1, filTypepairs[1]), t_avx);
 
 		    } else {
 
@@ -901,7 +904,7 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
 			    		        (partitioned_volume_ID[pos], filTypepairs[0]),
 			    		ncmp->getSIMDcoordsV3<LinkerorMotor>
 			    		        (partitioned_volume_ID[pos] + 1, filTypepairs[1]),
-			    		t_serial);
+			    		        t_serial);
 
 		    }
 
@@ -1100,9 +1103,9 @@ void HybridBindingSearchManager::clearPossibleBindingsstencil(short idvec[2]){
 HybridCylinderCylinderNL* HybridBindingSearchManager::_HneighborList;
 bool initialized = false;
 //D = 1
-dist::dOut<1U,false> HybridBindingSearchManager::bspairslinker;
+//dist::dOut<1U,false> HybridBindingSearchManager::bspairslinker;
 dist::dOut<1U,true> HybridBindingSearchManager::bspairslinkerself;
-dist::dOut<1U,false> HybridBindingSearchManager::bspairsmotor;
+//dist::dOut<1U,false> HybridBindingSearchManager::bspairsmotor;
 dist::dOut<1U,true> HybridBindingSearchManager::bspairsmotorself;
 dist::dOut<1U,false> HybridBindingSearchManager::bspairsmotor2;
 dist::dOut<1U,false> HybridBindingSearchManager::bspairslinker2;
