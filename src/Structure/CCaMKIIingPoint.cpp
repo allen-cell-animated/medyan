@@ -12,7 +12,6 @@
 //------------------------------------------------------------------
 
 #include "CCaMKIIingPoint.h"
-
 #include "ChemCallbacks.h"
 #include "CompartmentGrid.h"
 #include "CCylinder.h"
@@ -25,26 +24,42 @@ CCaMKIIingPoint::CCaMKIIingPoint(short camkiiType, Compartment* c,
     : CBound(cc1->getType(), c, cc1, cc2, position, 0), _camkiiType(camkiiType),
     		_offRxnBinding(nullptr),
     		_offRxnBundling(nullptr) {
-
-    //Find species on cylinder that should be marked
+//    Code block moved to addBond
+//    //Find species on cylinder that should be marked
     SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesCaMKIIer(camkiiType);
     SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(
                         SysParams::Chemistry().camkiierBindingBoundIndex[_filamentType]);
-
-    //mark species
-    //TODO assert fails, need to check whether neighbor list update is correct (remove bound binding site from the neighbor list)
-    assert(areEqual(sb1->getN(), 0) && areEqual(se1->getN(), 1) &&
-           "Major bug: CaMKIIer binding to an occupied site.");
-        
-    sb1->up(); se1->down();
-
-	assert(areEqual(sb1->getN(), 1) && areEqual(se1->getN(), 0) &&
-		   "Major bug: CaMKIIer didn't bind to the site.");
-
-    //attach this camkiipoint to the species
+//
+//    //mark species
+    assert(areEqual(sb1->getN(), 0) && areEqual(se1->getN(), 1) && "Major bug: CaMKIIer binding to an occupied site.");
+//
+//    sb1->up(); se1->down();
+//
+//	assert(areEqual(sb1->getN(), 1) && areEqual(se1->getN(), 0) &&
+//		   "Major bug: CaMKIIer didn't bind to the site.");
+//
+//    //attach this camkiipoint to the species
     setFirstSpecies(sb1);
 
 }
+
+void CCaMKIIingPoint::addBond(CCylinder* cc, short pos){
+
+  //Find species on cylinder that should be marked
+  SpeciesBound* sb1 = cc->getCMonomer(pos)->speciesCaMKIIer(_camkiiType);
+  SpeciesBound* se1 = cc->getCMonomer(pos)->speciesBound(
+          SysParams::Chemistry().camkiierBindingBoundIndex[_filamentType]);
+
+  //mark species
+  //TODO assert fails, need to check whether neighbor list update is correct (remove bound binding site from the neighbor list)
+  assert(areEqual(sb1->getN(), 0) && areEqual(se1->getN(), 1) &&
+         "Major bug: CaMKIIer binding to an occupied site.");
+
+  sb1->up(); se1->down();
+
+  assert(areEqual(sb1->getN(), 1) && areEqual(se1->getN(), 0) &&
+         "Major bug: CaMKIIer didn't bind to the site.");
+};
 
 CCaMKIIingPoint::~CCaMKIIingPoint() {
 

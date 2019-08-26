@@ -24,43 +24,22 @@
 #include "SysParams.h"
 #include "MathFunctions.h"
 #include "Rand.h"
+#include "../GController.h"
 
 
 using namespace mathfunc;
 
-void CaMKIIingPoint::updateCoordinate() {
-    //The coordinate of the Brancher seems to be on the binding site.
-	//TODO The coordinate of the CAMKII needs to be on the middle of all the cylinders
-	coordinate = midPointCoordinate(get<0>(_bonds.at(0))->getFirstBead()->coordinate,
-									get<0>(_bonds.at(0))->getSecondBead()->coordinate,
-									get<1>(_bonds.at(0)));
-}
-
 CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double position)
-    : Trackable(true), _camkiiType(camkiiType), _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()), _coordinate(3,0.0) {
+    : Trackable(true), _camkiiType(camkiiType), _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()), coordinate(3,0.0) {
 
 	assert(camkiiType == 0);
 
-    addBond(cylinder, position);
-    //Find compartment
-    updateCoordinate();
-
-        
-    try {_compartment = GController::getCompartment(coordinate);}
-    catch (exception& e) {
-        cout << e.what();
-        
-        printSelf();
-        
-        exit(EXIT_FAILURE);
-    }
-        
-    int pos = int(position * SysParams::Geometry().cylinderNumMon[getCylinder(0)->getType()]);
-          //std::cout<<c1->getID()<<" "<<c2->getID()<<" "<<pos<<endl;
+    int pos = int(position * SysParams::Geometry().cylinderNumMon[cylinder->getType()]);
+    //std::cout<<c1->getID()<<" "<<c2->getID()<<" "<<pos<<endl;
 
 #ifdef CHEMISTRY
     _cCaMKIIingPoint = unique_ptr<CCaMKIIingPoint>(
-    new CCaMKIIingPoint(camkiiType, _compartment, getCylinder(0)->getCCylinder(), getCylinder(0)->getCCylinder(), pos));
+    new CCaMKIIingPoint(camkiiType, _compartment, cylinder->getCCylinder(), cylinder->getCCylinder(), pos));
     _cCaMKIIingPoint->setCaMKIIingPoint(this);
 #endif
 
@@ -69,36 +48,25 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double posi
     _mCaMKIIingPoint->setCaMKIIingPoint(this);
 #endif
 
-    //Composite* parent, Bead* b1, Bead* b2, short type, int position;
+    addBond(cylinder, pos);
 
-   // updatePosition();
+    //Find compartment
+    updateCoordinate();
+    try {_compartment = GController::getCompartment(coordinate);}
+    catch (exception& e) {
+      cout << e.what();
+      printSelf();
+      exit(EXIT_FAILURE);
+    }
 
-    //Dummy Cylinder for CaMKII
-    //choose length
-    //Composite *Dummy = NULL;
-
-    updateCaMKIIingPointCoM();
-
-    Bead* b1 = _subSystem->addTrackable<Bead>(_coordinate, nullptr, 0);
-
-	double length = 0.0;
-
-
-	//length = SysParams::Geometry().monomerSize[_filType];
-	//length = SysParams::Geometry().monomerSize[_filType];
-    //length = SysParams::Geometry().minCylinderSize[_filType];
-
-	//auto pos2 = nextPointProjection(position, length, direction);
-	Bead* b2 = _subSystem->addTrackable<Bead>(_coordinate, nullptr, 1);
-
-	//create cylinder
-	//Cylinder* c0 = _subSystem->addTrackable<CaMKIICylinder>(nullptr, b1, b2, _filType, 0);
-
-	//c0->setPlusEnd(true);
-	//c0->setMinusEnd(true);
-	_camkiiCylinder = unique_ptr<CaMKIICylinder>(new CaMKIICylinder(this, b1, _filType, 0)); // init the dummy cylinder for CaMKII
+    Bead* b1 = _subSystem->addTrackable<Bead>(coordinate, nullptr, 0);
+  	_camkiiCylinder = unique_ptr<CaMKIICylinder>(new CaMKIICylinder(this, b1, _filType, 0)); // init the dummy cylinder for CaMKII
 }
 
+void CaMKIIingPoint::addBond(Cylinder* c, short pos){
+  _cCaMKIIingPoint->addBond(c->getCCylinder(), pos);
+  _bonds.push_back(tuple<Cylinder*, short>(c, pos));
+}
 
 void CaMKIIingPoint::updateCaMKIIingPointCoM(){
 

@@ -56,7 +56,6 @@ public:
 
 		//set species
 		setFirstSpecies(rhs._firstSpecies);
-
 		//set reaction
 		setOffReaction(rhs._offRxn);
 
@@ -115,6 +114,7 @@ public:
     void setOffRxnBundling(ReactionBase *p) {
         _offRxnBundling = p;
     }
+    void addBond(CCylinder* cc, short pos);
 };
 
 #endif
