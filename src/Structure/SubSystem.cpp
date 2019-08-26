@@ -340,6 +340,18 @@ void SubSystem::updateBindingManagers() {
 
     //SIMD cylinder update
 #ifdef SIMDBINDINGSEARCH
+#ifdef MOTORBIASCHECK
+	for (auto C : _compartmentGrid->getCompartments()) {
+		C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilHYBD();
+		for(auto &manager : C->getBranchingManagers()) {
+			manager->updateAllPossibleBindingsstencil();
+		}
+	}
+	//UpdateAllBindingReactions
+	for (auto C : _compartmentGrid->getCompartments()) {
+		C->getHybridBindingSearchManager()->updateAllBindingReactions();
+	}
+#else
 	if(!initialize) {
 		    _compartmentGrid->getCompartments()[0]->getHybridBindingSearchManager()
 		    ->initializeSIMDvars();
@@ -377,6 +389,7 @@ void SubSystem::updateBindingManagers() {
     cout << "findV3 time " << HybridBindingSearchManager::findtimeV3 << endl;
     cout << "Append time " << HybridBindingSearchManager::SIMDV3appendtime << endl;
 	#endif
+#endif
 #endif
 #ifdef OPTIMOUT
     mine= chrono::high_resolution_clock::now();
