@@ -292,9 +292,9 @@ void MotorGhost::updateReactionRates() {
 		    // acceptable.
 		    isc1leftofc2 = c1posonFil < c2posonFil;
 	    }
-#ifdef MOTORBIASCHECK
+/*#ifdef MOTORBIASCHECK
 	    consider_passivation = false;
-#endif
+#endif*/
 
         auto mp1 = midPointCoordinate(x1, x2, _position1);
         auto mp2 = midPointCoordinate(x3, x4, _position2);

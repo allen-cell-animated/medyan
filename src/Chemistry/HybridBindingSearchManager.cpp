@@ -165,7 +165,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 	if (SysParams::INITIALIZEDSTATUS ) {
 		  #ifdef MOTORBIASCHECK
 		   addcounts++;
-		   return;
+//		   return;
 		   #endif
 /*		cout<<"Adding Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
 			<<bindingSite<<" manager indices "<<idvec[0]<<" "<<idvec[1]<<endl;*/
