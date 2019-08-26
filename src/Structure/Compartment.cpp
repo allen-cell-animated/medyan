@@ -366,7 +366,6 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
             for (auto cyl:getCylinders()) {
                 uint32_t cindex = cyl->getStableIndex();
 
-                _filamentType = Cylinder::getDbData().value[cindex].type;
                 _filamentType = Cylinder::getDbDataConst().value[cindex].type;
                 _fID = Cylinder::getDbDataConst().value[cindex].filamentId;
                 _fpos = Cylinder::getDbDataConst().value[cindex].positionOnFilament-
@@ -376,6 +375,7 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                 //Assumes you don't have 127 (2^7 -1) cylinders
                 uint32_t cylfinfo = (_fID<< 7);
                 cylfinfo = cylfinfo | _fpos;
+
                 if (checkftype && _filamentType != filType) continue;
 
                 auto x1 = cyl->getFirstBead()->vcoordinate();
@@ -1246,6 +1246,13 @@ coord, uint32_t index, uint32_t cylfinfo){
 template<>
 void Compartment::addcoordtorMaxbasedpartitons<false>(int (&pindices)[3], vector<floatingpoint>
 coord, uint32_t index, uint32_t cylfinfo){
+
+/*#ifdef MOTORBIASCHECK
+	for(int part = 0; part < 27; part++){
+		addcoord(coord, index, cylfinfo, part);
+	}
+	return;
+#endif*/
     addcoord(coord, index, cylfinfo, 0);
     //111
     if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 1) {
@@ -1700,7 +1707,6 @@ coord, uint32_t index, uint32_t cylfinfo){
         addcoord(coord, index, cylfinfo, 13);
         //Vertex
         addcoord(coord, index, cylfinfo, 25);
-        addcoord(coord, index, cylfinfo, 23);
     }
 }
 
@@ -1943,6 +1949,7 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
             // Scale the diffusion rate according to the contacting areas
             size_t idxFwd = _neighborIndex.at(C), idxBwd = C->_neighborIndex.at(this);
             double scaleFactor = 0.5 * (_partialArea[idxFwd] + C->_partialArea[idxBwd]) / GController::getCompartmentArea()[idxFwd / 2];
+
             //double scaleFactor = 1.0;
             // cout << "To neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] << ", z = " << C->_coords[2] <<endl;
             // cout << "scaleFactor = " << scaleFactor << endl;
@@ -1950,7 +1957,6 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
             float actualDiffRate = diff_rate * scaleFactor;
             float volumeFrac = getVolumeFrac();
             // cout << "VolumeFraction = " << volumeFrac << endl;
-
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
             //Diffusion reaction from "this" compartment to C.
             ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour}, actualDiffRate, false, volumeFrac);

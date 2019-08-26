@@ -1207,6 +1207,43 @@ void Controller::run() {
             //run mcontroller, update system
             if(tauLastMinimization >= _minimizationTime/factor) {
 
+#ifdef MOTORBIASCHECK
+                cout<<"Hyb-walkID ";
+                for(auto m:MotorGhost::getMotorGhosts())
+                    cout<<m->getId()<<" ";
+                cout<<endl;
+                cout<<"Hyb-walklen ";
+                for(auto m:MotorGhost::getMotorGhosts())
+                    cout<<m->walkingsteps<<" ";
+                cout<<endl;
+                cout<<"Hyb-mstretch ";
+                for(auto m:MotorGhost::getMotorGhosts())
+                    cout<<m->getMMotorGhost()->stretchForce<<" ";
+                cout<<endl;
+                cout<<"Hyb-add ";
+                for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
+                    cout<<C->getHybridBindingSearchManager()->getaddcounts()<<" ";
+                }
+                cout<<endl;
+                cout<<"Hyb-remove ";
+                for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
+                    cout<<C->getHybridBindingSearchManager()->getremovecounts()<<" ";
+                }
+                cout<<endl;
+                cout<<"Hyb-choose ";
+                for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
+                    cout<<C->getHybridBindingSearchManager()->getchoosecounts()<<" ";
+                }
+                cout<<endl;
+                cout<<"Hyb-mwalk ";
+	            for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
+	            	cout<<C->nummotorwalks<<" ";
+	            	C->nummotorwalks = 0;
+	            }
+	            cout<<endl;
+
+#endif
+
                 mins = chrono::high_resolution_clock::now();
                 Bead::rearrange();
                 Cylinder::updateAllData();

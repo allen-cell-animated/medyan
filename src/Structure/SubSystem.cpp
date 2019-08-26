@@ -244,138 +244,139 @@ void SubSystem::resetNeighborLists() {
 }
 void SubSystem::updateBindingManagers() {
 #ifdef OPTIMOUT
-    chrono::high_resolution_clock::time_point mins, mine;
-    mins = chrono::high_resolution_clock::now();
+	chrono::high_resolution_clock::time_point mins, mine;
+	mins = chrono::high_resolution_clock::now();
 #endif
 #ifdef CUDAACCL_NL
-    if(SysParams::Chemistry().numFilaments > 1) {
-        cout << "CUDA Binding Manager cannot handle more than one type of filaments." << endl;
-        exit(EXIT_FAILURE);
-    }
-    initializebindingsitesearchCUDA();
+	if(SysParams::Chemistry().numFilaments > 1) {
+		cout << "CUDA Binding Manager cannot handle more than one type of filaments." << endl;
+		exit(EXIT_FAILURE);
+	}
+	initializebindingsitesearchCUDA();
 
-    if(CUDAcommon::getCUDAvars().conservestreams)
-        numbindmgrs = 0;
-    //Calculate binding sites in CUDA
-    Compartment* C0 = _compartmentGrid->getCompartments()[0];
-    for(auto &manager : C0->getFilamentBindingManagers()) {
+	if(CUDAcommon::getCUDAvars().conservestreams)
+		numbindmgrs = 0;
+	//Calculate binding sites in CUDA
+	Compartment* C0 = _compartmentGrid->getCompartments()[0];
+	for(auto &manager : C0->getFilamentBindingManagers()) {
 
-        LinkerBindingManager *lManager;
-        MotorBindingManager *mManager;
-        BranchingManager *bManager;
-        auto cylcylnlvars = CUDAcommon::getCylCylNLvars();
-        auto coord = cylcylnlvars.gpu_coord;
-        auto beadSet = cylcylnlvars.gpu_beadSet;
-        auto cylID = cylcylnlvars.gpu_cylID;
-        auto filType = cylcylnlvars.gpu_filType;
-        auto filID = cylcylnlvars.gpu_filID;
-        int *cmpID = cylcylnlvars.gpu_cmpID;
-        //Linker
-        if ((lManager = dynamic_cast<LinkerBindingManager *>(manager.get()))) {
-            //calculate all binding Sites.
-            getallpossiblelinkerbindingsitesCUDA(lManager, cylcylnlvars.gpu_cmon_state_linker);
-        }
-        //Motor
-        else if ((mManager = dynamic_cast<MotorBindingManager *>(manager.get()))) {
-            //calculate all binding Sites.
-            getallpossiblemotorbindingsitesCUDA(mManager, cylcylnlvars
-                                                .gpu_cmon_state_motor);
-        }
-        //Brancher
-        else if ((bManager = dynamic_cast<BranchingManager *>(manager.get()))) {
-            //calculate all binding Sites.
-            getallpossiblebrancherbindingsitesCUDA(bManager, cylcylnlvars
-                                                   .gpu_cmon_state_brancher);
+		LinkerBindingManager *lManager;
+		MotorBindingManager *mManager;
+		BranchingManager *bManager;
+		auto cylcylnlvars = CUDAcommon::getCylCylNLvars();
+		auto coord = cylcylnlvars.gpu_coord;
+		auto beadSet = cylcylnlvars.gpu_beadSet;
+		auto cylID = cylcylnlvars.gpu_cylID;
+		auto filType = cylcylnlvars.gpu_filType;
+		auto filID = cylcylnlvars.gpu_filID;
+		int *cmpID = cylcylnlvars.gpu_cmpID;
+		//Linker
+		if ((lManager = dynamic_cast<LinkerBindingManager *>(manager.get()))) {
+			//calculate all binding Sites.
+			getallpossiblelinkerbindingsitesCUDA(lManager, cylcylnlvars.gpu_cmon_state_linker);
+		}
+		//Motor
+		else if ((mManager = dynamic_cast<MotorBindingManager *>(manager.get()))) {
+			//calculate all binding Sites.
+			getallpossiblemotorbindingsitesCUDA(mManager, cylcylnlvars
+												.gpu_cmon_state_motor);
+		}
+		//Brancher
+		else if ((bManager = dynamic_cast<BranchingManager *>(manager.get()))) {
+			//calculate all binding Sites.
+			getallpossiblebrancherbindingsitesCUDA(bManager, cylcylnlvars
+												   .gpu_cmon_state_brancher);
 
-        }
-    }
+		}
+	}
 
-    //Free vars
-    terminatebindingsitesearchCUDA();
-    //Assign to respective possible bindings.
-    assigntorespectivebindingmanagersCUDA();
+	//Free vars
+	terminatebindingsitesearchCUDA();
+	//Assign to respective possible bindings.
+	assigntorespectivebindingmanagersCUDA();
 
-    //    for(auto gpb:gpu_possibleBindings_vec)
-    //        CUDAcommon::handleerror(cudaFree(gpb),"cudaFree","SubSystem.cu");
-    //    for(auto pb:possibleBindings_vec)
-    //        CUDAcommon::handleerror(cudaFreeHost(pb), "cudaFree", "SubSystem.cu");
-    //    for(auto np:numpairs_vec)
-    //        CUDAcommon::handleerror(cudaFreeHost(np),"cudaFree","SubSystem.cu");
+	//    for(auto gpb:gpu_possibleBindings_vec)
+	//        CUDAcommon::handleerror(cudaFree(gpb),"cudaFree","SubSystem.cu");
+	//    for(auto pb:possibleBindings_vec)
+	//        CUDAcommon::handleerror(cudaFreeHost(pb), "cudaFree", "SubSystem.cu");
+	//    for(auto np:numpairs_vec)
+	//        CUDAcommon::handleerror(cudaFreeHost(np),"cudaFree","SubSystem.cu");
 
-    //cudaFree
-    endresetCUDA();
+	//cudaFree
+	endresetCUDA();
 #endif
-    vectorizeCylinder();
-    //Version1
-    #ifdef NLORIGINAL
-    for (auto C : _compartmentGrid->getCompartments()){
-        for(auto &manager : C->getFilamentBindingManagers()){
-            manager->updateAllPossibleBindings();
-        }
-    }
+	vectorizeCylinder();
+	//Version1
+	#ifdef NLORIGINAL
+	for (auto C : _compartmentGrid->getCompartments()){
+		for(auto &manager : C->getFilamentBindingManagers()){
+			manager->updateAllPossibleBindings();
+		}
+	}
 	#endif
 	//Version2
-    #ifdef NLSTENCILLIST
+	#ifdef NLSTENCILLIST
 	#if !defined(HYBRID_NLSTENCILLIST) && !defined(SIMDBINDINGSEARCH)
-    for (auto C : _compartmentGrid->getCompartments()){
-        for(auto &manager : C->getFilamentBindingManagers()){
-            manager->updateAllPossibleBindingsstencil();
-        }
-    }
+	for (auto C : _compartmentGrid->getCompartments()){
+		for(auto &manager : C->getFilamentBindingManagers()){
+			manager->updateAllPossibleBindingsstencil();
+		}
+	}
 	#endif
 	#endif
 	//Version3
-    #ifdef HYBRID_NLSTENCILLIST
-    for (auto C : _compartmentGrid->getCompartments()) {
-        C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilHYBD();
-        for(auto &manager : C->getBranchingManagers()) {
-            manager->updateAllPossibleBindingsstencil();
-        }
-    }
-    //UpdateAllBindingReactions
-    for (auto C : _compartmentGrid->getCompartments()) {
-        C->getHybridBindingSearchManager()->updateAllBindingReactions();
-    }
-    #endif
+	#ifdef HYBRID_NLSTENCILLIST
+	for (auto C : _compartmentGrid->getCompartments()) {
+		C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilHYBD();
+		for(auto &manager : C->getBranchingManagers()) {
+			manager->updateAllPossibleBindingsstencil();
+		}
+	}
+	//UpdateAllBindingReactions
+	for (auto C : _compartmentGrid->getCompartments()) {
+		C->getHybridBindingSearchManager()->updateAllBindingReactions();
+	}
+	#endif
 
-    //SIMD cylinder update
+	//SIMD cylinder update
 #ifdef SIMDBINDINGSEARCH
 	if(!initialize) {
-		    _compartmentGrid->getCompartments()[0]->getHybridBindingSearchManager()
-		    ->initializeSIMDvars();
-        initialize = true;
-    }
-    //Generate binding site coordinates in each compartment and seggregate them into
-    // different spatial sub-sections.
-    for(auto C : _compartmentGrid->getCompartments()) {
-        C->SIMDcoordinates4linkersearch_section(1);
-        C->SIMDcoordinates4motorsearch_section(1);
-    }
-    //Empty the existing binding pair list
-    for (auto C : _compartmentGrid->getCompartments())
-        C->getHybridBindingSearchManager()->resetpossibleBindings();
-    minsSIMD = chrono::high_resolution_clock::now();
-    HybridBindingSearchManager::findtimeV3 = 0.0;
-    HybridBindingSearchManager::SIMDV3appendtime = 0.0;
-    // Update binding sites in SIMD
-    for (auto C : _compartmentGrid->getCompartments()) {
-        C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV3();
-	    for(auto &manager : C->getBranchingManagers()) {
-	    		manager->updateAllPossibleBindingsstencil();
-	    }
-    }
-    //UpdateAllBindingReactions
-    for (auto C : _compartmentGrid->getCompartments()) {
+			_compartmentGrid->getCompartments()[0]->getHybridBindingSearchManager()
+			->initializeSIMDvars();
+		initialize = true;
+	}
+	//Generate binding site coordinates in each compartment and seggregate them into
+	// different spatial sub-sections.
+	for(auto C : _compartmentGrid->getCompartments()) {
+		C->SIMDcoordinates4linkersearch_section(1);
+		C->SIMDcoordinates4motorsearch_section(1);
+	}
+	//Empty the existing binding pair list
+	for (auto C : _compartmentGrid->getCompartments())
+		C->getHybridBindingSearchManager()->resetpossibleBindings();
+	minsSIMD = chrono::high_resolution_clock::now();
+	HybridBindingSearchManager::findtimeV3 = 0.0;
+	HybridBindingSearchManager::SIMDV3appendtime = 0.0;
+	// Update binding sites in SIMD
+	for (auto C : _compartmentGrid->getCompartments()) {
+		C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV3();
+		for(auto &manager : C->getBranchingManagers()) {
+				manager->updateAllPossibleBindingsstencil();
+		}
+	}
+	//UpdateAllBindingReactions
+	for (auto C : _compartmentGrid->getCompartments()) {
 //        cout<<"Cmp ID "<<C->getID()<<endl;
-        C->getHybridBindingSearchManager()->updateAllBindingReactions();
-    }
-    #ifdef OPTIMOUT
-    mineSIMD = chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_runSIMDV3(mineSIMD - minsSIMD);
-    cout << "SIMDV3 time " << elapsed_runSIMDV3.count() << endl;
-    cout << "findV3 time " << HybridBindingSearchManager::findtimeV3 << endl;
-    cout << "Append time " << HybridBindingSearchManager::SIMDV3appendtime << endl;
-	#endif
+		C->getHybridBindingSearchManager()->updateAllBindingReactions();
+	}
+
+#ifdef OPTIMOUT
+	mineSIMD = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_runSIMDV3(mineSIMD - minsSIMD);
+	cout << "SIMDV3 time " << elapsed_runSIMDV3.count() << endl;
+	cout << "findV3 time " << HybridBindingSearchManager::findtimeV3 << endl;
+	cout << "Append time " << HybridBindingSearchManager::SIMDV3appendtime << endl;
+#endif
 #endif
 #ifdef OPTIMOUT
     mine= chrono::high_resolution_clock::now();
@@ -389,6 +390,22 @@ void SubSystem::updateBindingManagers() {
 	for(auto C : _compartmentGrid->getCompartments()) {
 		C->deallocateSIMDcoordinates();
 	}
+	#endif
+
+	#ifdef MOTORBIASCHECK
+	cout<<"Cmp-Cylinders ";
+	for(auto C : _compartmentGrid->getCompartments()) {
+		cout<<C->getCylinders().size()<<" ";
+	}
+	cout<<endl;
+	cout<<"Binding sizes ";
+	for (auto C : _compartmentGrid->getCompartments()) {
+		short idvec[2];
+		idvec[0] = 0;
+		idvec[1] = 1;
+		cout<<C->getHybridBindingSearchManager()->getbindingsize(idvec)<<" ";
+	}
+	cout<<endl;
 	#endif
 }
 

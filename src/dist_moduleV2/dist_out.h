@@ -73,7 +73,9 @@ namespace dist {
 		
 			std::copy(vals.begin(),vals.end(),dt.begin());
 
+
             maxneighbors[0] = SysParams::Mechanics().sameFilBindSkip;
+
 
 			for(uint i=0; i<2*D; ++i){
 				v_dt[i] = dt[i];
@@ -100,6 +102,7 @@ namespace dist {
 		uint size(uint index) const {return counter[index];}
 		uint dim() const {return D;}
 		int capacity() const {return dout[0].size();}
+
 	};
 
 } // end-of-namespace dist

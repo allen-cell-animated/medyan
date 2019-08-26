@@ -56,7 +56,7 @@ namespace dist {
 		__m256i vcond2 = (_mm256_cmpgt_epi32(diff.mVec,reffinfo.mVec));
 		#else
 
-		/* AVX does not support 256bit packed integer comparisons. So cast the data to
+		/* AVX does not support 256bit packed integer comparisons. So convert the data to
 		 * float and compare*/
 
 		/*vcond2 =  compare( convert_to_float(diff.mVec), convert_to_float (reffinfo.mVec)* ) */
