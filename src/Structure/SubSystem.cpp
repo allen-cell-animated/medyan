@@ -398,12 +398,14 @@ void SubSystem::updateBindingManagers() {
 #endif
 
 //free memory
+#ifndef MOTORBIASCHECK
 	SysParams::MParams.speciesboundvec.clear();
 	#ifdef SIMDBINDINGSEARCH
 	for(auto C : _compartmentGrid->getCompartments()) {
 		C->deallocateSIMDcoordinates();
 	}
 	#endif
+#endif
 
 	#ifdef MOTORBIASCHECK
 	cout<<"Cmp-Cylinders ";
