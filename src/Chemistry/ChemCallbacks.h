@@ -867,12 +867,12 @@ struct CaMKIIBundlingCallback {
 //
 //        //mark first cylinder
 
-        auto bindingSite = _bManager->chooseBindingSite();
-        auto ccx = get<0>(bindingSite);
-        auto cylin = ccx->getCylinder();
-        short bs = get<1>(ccx);
+//        auto bindingSite = _bManager->chooseBindingSite();
+//        auto ccx = get<0>(bindingSite);
+//        auto cylin = ccx->getCylinder();
+//        short bs = get<1>(ccx);
 
-        Cylinder* c = f->getCylinderVector().front();
+//        Cylinder* c = f->getCylinderVector().front();
 //        //c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
 //
 //        //create new camkii
@@ -947,6 +947,7 @@ struct CaMKIIBundlingCallback {
         cCaMKIIer->setRates(_onRate, _offRate);
         cCaMKIIer->createOffReaction(r, _ps);
         cCaMKIIer->getOffReaction()->setBareRate(SysParams::CaMKIIUnbundlingBareRate[camkiiType]);
+        _bManager->updateAllPossibleBindings();
     }
 };
 
