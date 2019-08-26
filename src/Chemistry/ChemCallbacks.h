@@ -627,7 +627,6 @@ struct CaMKIIBindingCallback {
     float _offRate;        ///< Rate of the unbinding reaction
 
     CaMKIIBindingCallback(CaMKIIBindingManager* bManager, float onRate, float offRate, SubSystem* ps)
-
     : _ps(ps), _bManager(bManager), _onRate(onRate), _offRate(offRate) {}
 
     void operator() (ReactionBase *r) {
@@ -772,11 +771,6 @@ struct CaMKIIBundlingCallback {
     float _onRate;         ///< Rate of the binding reaction
     float _offRate;        ///< Rate of the unbinding reaction
     
-    //TODO propagate min and max search Distance
-    float _minSearchDist = 100; ///Minimum search distance
-    float _maxSearchDist = 200; ///Maximum search distance
-    float _maxcoordNumber = 3;
-
     CaMKIIBundlingCallback(CaMKIIBundlingManager* bManager, float onRate, float offRate, SubSystem* ps)
     //TODO add minSearchDist maxSearchDist maxcoordNumber as local data members
     : _ps(ps), _bManager(bManager), _onRate(onRate), _offRate(offRate) {}
