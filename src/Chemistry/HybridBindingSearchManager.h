@@ -77,8 +77,8 @@ private:
     vector<vector<unordered_map<uint32_t, vector<uint32_t>>>>
             _possibleBindingsstencilvecuint;
 
-    vector<vector<unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*,
-    short>>>>>_reversepossibleBindingsstencilvec;
+//    vector<vector<unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*,
+//    short>>>>>_reversepossibleBindingsstencilvec;
 
     vector<vector<unordered_map<uint32_t, vector<uint32_t>>>>
     _reversepossibleBindingsstencilvecuint;

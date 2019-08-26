@@ -1005,10 +1005,25 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
 //		    }
 ////	    }
 //	    }
-	    _possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+		if(SELF == true){
+			_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
 
-	    _reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(
-			    t1);
+			_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(
+					t1);
+		}
+		else {
+			if(t1>t2) {
+				_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+
+				_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
+			}
+			else{
+				nCmp->getHybridBindingSearchManager()
+				->_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
+				nCmp->getHybridBindingSearchManager()
+				->_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+			}
+		}
     }
 }
 
