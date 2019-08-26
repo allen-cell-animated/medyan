@@ -1390,7 +1390,7 @@ void HessianSpectra::print(int snapshot){
     for(auto k = 0; k < evaluesVector.size(); k++){
         
         _outputFile <<tauVector[k] << "     "<< evaluesVector[k].size()<< endl;
-        //_outputFile<<evaluesVector[k].real()<<endl;
+
         for(auto i = 0; i< evaluesVector[k].size(); i++){
             _outputFile<<evaluesVector[k].real()[i]<< "     "<<IPRIVector[k].real()[i]<< "     "<<IPRIIVector[k].real()[i]<<endl;
         }

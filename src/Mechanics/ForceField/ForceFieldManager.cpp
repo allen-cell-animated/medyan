@@ -563,6 +563,9 @@ void ForceFieldManager::assignallforcemags() {
 void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta){
     // store the minimization time and initialize the matrix
     tauVector.push_back(tau());
+    
+    chrono::high_resolution_clock::time_point ta = chrono::high_resolution_clock::now();
+    
     vector<vector<floatingpoint> > hessianMatrix(total_DOF, vector<floatingpoint>(total_DOF));
     
     vector<Triplet> tripletList;
@@ -611,30 +614,49 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
     
     // Solve for the eigenspectrum
     Spectra::SparseSymShiftSolve<double> op(hessMatSym);
-    int numEigs = total_DOF - 2;
+    //Spectra::SparseSymMatProd<double> op(hessMatSym);
+    int numEigs = total_DOF - 1;
+    cout<<"DOF is "<<total_DOF<<endl;
+    
+    chrono::high_resolution_clock::time_point t0 = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_veca(t0 - ta);
+    std::cout<<"Matrix time "<<elapsed_veca.count()<<endl;
    
-    Spectra::SymEigsShiftSolver<double, Spectra::LARGEST_MAGN, Spectra::SparseSymShiftSolve<double>> eigs(&op, numEigs, numEigs + 1, 10000);
+    Spectra::SymEigsShiftSolver<double, Spectra::LARGEST_MAGN, Spectra::SparseSymShiftSolve<double>> eigs(&op, numEigs, numEigs + 1, 100000);
+    //Spectra::SymEigsSolver<double, Spectra::LARGEST_MAGN, Spectra::SparseSymMatProd<double>> eigs(&op, numEigs, numEigs + 1);
     eigs.init();
+    
+    
     int nconv = eigs.compute();
     Eigen::VectorXcd evalues;
     evalues = eigs.eigenvalues();
     
+    
+   
+    chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
+
+    chrono::duration<floatingpoint> elapsed_vec0(t1 - t0);
+    std::cout<<"Evalues time "<<elapsed_vec0.count()<<endl;
+
     //columns of evectors matrix are the normalized eigenvectors
     Eigen::MatrixXcd evectors;
     evectors = eigs.eigenvectors();
     
     
-    Eigen::VectorXcd IPRI(total_DOF);
+    Eigen::VectorXcd IPRI(evectors.cols());
     
-    Eigen::VectorXcd IPRII(total_DOF);
+    Eigen::VectorXcd IPRII(evectors.cols());
     
+    chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_vec(t2 - t1);
+    std::cout<<"Evectors time "<<elapsed_vec.count()<<endl;
     
-    for(auto i = 0; i<numEigs; i++){
+    for(auto i = 0; i<evectors.cols(); i++){
+        
         
         floatingpoint RI = 0.0;
-        for(auto j = 0; j < evectors.rows(); j++){
-            RI += pow(evectors(j,i).real(),4);
-        }
+        Eigen::VectorXd col = evectors.col(i).cwiseAbs2();
+        RI = pow(col.norm(),2);
         
         floatingpoint RII = 0.0;
         for(auto j = 0; j < evectors.rows()/3; j++){
@@ -645,10 +667,18 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
             RII += pow(temp,2);
         }
         
+       
         IPRI(i) = RI;
         IPRII(i) = RII;
         
     }
+    
+    
+    chrono::high_resolution_clock::time_point t3 = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_vec2(t3 - t2);
+    std::cout<<"RI time "<<elapsed_vec2.count()<<endl;
+     
+
     
     //cout << "Eigenvalues found:\n" << evalues << endl;
 
@@ -656,9 +686,9 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
     hessianVector.push_back(hessianMatrix);
     
     // store the eigenvalues in list
-    evaluesVector.push_back(evalues);
     IPRIVector.push_back(IPRI);
     IPRIIVector.push_back(IPRII);
+    evaluesVector.push_back(evalues);
 
 
 }
