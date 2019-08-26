@@ -124,7 +124,7 @@ Cylinder::~Cylinder() noexcept {
 //			vector<tuple<Cylinder*, double>>
 			Cylinder *c = get<0>(v);
 			if(c == this) {
-                //TODO: Solve this error caused by cylinder missing after filament depolymerization
+			  //TODO: Solve this error caused by cylinder missing after filament depolymerization
 				cerr << "We find camkii cylinder in removal.\n";
 				for(int i=0;i<10;i++) {
 				    for(int j=0;j<6;j++) {
@@ -132,27 +132,7 @@ Cylinder::~Cylinder() noexcept {
                         cerr << "For monomer index " << i << " speciesBound index " << j << " : "
                              << x->getFullName() << "  N: " << x->getN() << endl;
                     }
-                    {
-                        auto y = c->getCCylinder()->getCMonomer(i)->speciesLinker(0);
-                        cerr << "For monomer index " << i << " speciesLinker index 0 : "
-                             << y->getFullName() << "  N: " << y->getN() << endl;
-                    }
-                    {
-                        auto y = c->getCCylinder()->getCMonomer(i)->speciesMotor(0);
-                        cerr << "For monomer index " << i << " speciesMotor index 0 : "
-                             << y->getFullName() << "  N: " << y->getN() << endl;
-                    }
-                    {
-                        auto y = c->getCCylinder()->getCMonomer(i)->speciesBrancher(0);
-                        cerr << "For monomer index " << i << " speciesBrancher index 0 : "
-                             << y->getFullName() << "  N: " << y->getN() << endl;
-                    }
-					{
-						auto y = c->getCCylinder()->getCMonomer(i)->speciesCaMKIIer(0);
-						cerr << "For monomer index " << i << " speciesCaMKIIer index 0 : "
-							 << y->getFullName() << "  N: " << y->getN() << endl;
 					}
-                }
 				exit(1);
 			}
 		}

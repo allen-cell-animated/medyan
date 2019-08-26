@@ -59,8 +59,6 @@ private:
     
     static Database<CaMKIIingPoint*> _camkiiingPoints; ///< Collection in SubSystem
 
-    vector<double> _coordinate;
-
     ///Helper to get coordinate
     void updateCoordinate();
     

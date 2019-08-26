@@ -68,20 +68,31 @@ void CaMKIIingPoint::addBond(Cylinder* c, short pos){
   _bonds.push_back(tuple<Cylinder*, short>(c, pos));
 }
 
-void CaMKIIingPoint::updateCaMKIIingPointCoM(){
+void CaMKIIingPoint::updateCoordinate(){
 
-	vector<double> temp(3, 0.0);
-	for (int i=0; i<_bonds.size(); i++) {
+  //Calculate the midpoint coordinate
+  vector<double> temp(3, 0.0);
+		for (int i=0; i<_bonds.size(); i++) {
 		 Cylinder *bond = get<0>(_bonds[i]);
 		 auto pos = get<1>(_bonds[i]);
-		 auto mp = midPointCoordinate(bond->_b1->coordinate, bond->_b2->coordinate, pos);
+		 double position = double(pos)/double(SysParams::Geometry().cylinderNumMon[bond->getType()]);
+		 auto mp = midPointCoordinate(bond->_b1->coordinate, bond->_b2->coordinate, position);
 		 temp[0] += mp[0];
 		 temp[1] += mp[1];
 		 temp[2] += mp[2];
 	}
-	_coordinate[0] = temp[0]/_bonds.size();
-	_coordinate[1] = temp[1]/_bonds.size();
-	_coordinate[2] = temp[2]/_bonds.size();
+
+		// Set the CaMKII coordinates
+	for (int i=0;i<3;i++) {
+    coordinate[i] = temp[i] / _bonds.size();
+    //Constraints the coordinates inside the box
+    if (coordinate[i] > GController::getSize()[i]) { coordinate[i] = GController::getSize()[i] - 1E-5; }
+    if (coordinate[i] < 0.0) { coordinate[i] = 0.0 + 1E-5; }
+  }
+  //cout<< "====== Original cylinder coordinates: " << get<0>(_bonds[0])->_b1->coordinate[0] << " " << get<0>(_bonds[0])->_b1->coordinate[1] << " " << get<0>(_bonds[0])->_b1->coordinate[2] <<endl;
+  //cout<< "====== Original cylinder coordinates: " << get<0>(_bonds[0])->_b2->coordinate[0] << " " << get<0>(_bonds[0])->_b2->coordinate[1] << " " << get<0>(_bonds[0])->_b2->coordinate[2] <<endl;
+  //cout<< "====== Temp cylinder coordinates: " << temp[0] << " " << temp[1] << " " << temp[2] << " bondsize=" << _bonds.size() << " " << get<1>(_bonds[0]) <<endl;
+  //cout<< "====== Updated CaMKIIingPoint Coordinates: " << coordinate[0] << " " << coordinate[1] << " " << coordinate[2] <<endl;
 }
 
 CaMKIIingPoint::~CaMKIIingPoint() noexcept {}
