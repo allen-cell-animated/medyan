@@ -24,6 +24,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
+#include <Eigen/Dense>
 #include <Spectra/SymEigsSolver.h>
 #include <Spectra/MatOp/SparseSymMatProd.h>
 #include <Spectra/SymEigsShiftSolver.h>
@@ -93,7 +94,8 @@ public:
     vector<Eigen::VectorXcd> evaluesVector;
     vector<Eigen::VectorXcd> IPRIVector;
     vector<Eigen::VectorXcd> IPRIIVector;
-    
+    Eigen::VectorXcd evalues;
+    Eigen::MatrixXcd evectors;
     vector<floatingpoint> tauVector;
 
 #ifdef CUDAACCL
