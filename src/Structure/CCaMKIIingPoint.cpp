@@ -51,7 +51,6 @@ void CCaMKIIingPoint::addBond(CCylinder* cc, short pos){
           SysParams::Chemistry().camkiierBindingBoundIndex[_filamentType]);
 
   //mark species
-  //TODO assert fails, need to check whether neighbor list update is correct (remove bound binding site from the neighbor list)
   assert(areEqual(sb1->getN(), 0) && areEqual(se1->getN(), 1) &&
          "Major bug: CaMKIIer binding to an occupied site.");
 
@@ -59,16 +58,13 @@ void CCaMKIIingPoint::addBond(CCylinder* cc, short pos){
 
   assert(areEqual(sb1->getN(), 1) && areEqual(se1->getN(), 0) &&
          "Major bug: CaMKIIer didn't bind to the site.");
+  
+  
 };
 
 CCaMKIIingPoint::~CCaMKIIingPoint() {
 
-    // TODO: July 1st, 2019 - Check whether removeInternalReaction is appropriate here!
-    //remove the unbinding reaction
-//    if(!_offRxn) {
-//		cerr << "Off reaction in CCaMKIIingPoint " << __FILE__ << " (" << __LINE__ << ") is NULL." << endl;
-//    	exit(1);
-//    }
+   // TODO: July 1st, 2019 - Check whether removeInternalReaction is appropriate here!
 	_cc1->removeInternalReaction(_offRxn);
 
 }

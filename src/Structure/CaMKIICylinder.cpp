@@ -27,17 +27,24 @@
 
 using namespace mathfunc;
 
-void CaMKIICylinder::updateCoordinate(){
-    coordinate = _b1->coordinate;
+CaMKIICylinder::CaMKIICylinder(CaMKIIingPoint *camkiiPoint, Bead* b1, short type, int position):
+Cylinder(nullptr, b1, b1, type, position, false, false, false), _camkiiPoint(camkiiPoint){
+    _camkiiPoint = camkiiPoint;
+    for(auto &manager : _compartment->getFilamentBindingManagers())
+      manager->addPossibleBindings(_cCylinder.get());
+};
+
+CaMKIICylinder::~CaMKIICylinder() noexcept {
+    for(auto &manager : _compartment->getFilamentBindingManagers())
+      manager->removePossibleBindings(_cCylinder.get());
+    //remove from compartment
+    _compartment->removeCylinder(this);
+
 }
 
-//Cylinder::~CaMKIICylinder() noexcept {
-//
-//    //remove from compartment
-//    _compartment->removeCylinder(this);
-//
-//}
-
+void CaMKIICylinder::updateCoordinate(){
+  coordinate = _b1->coordinate;
+}
 
 //TODO override this for CaMKII
 void CaMKIICylinder::updatePosition() {

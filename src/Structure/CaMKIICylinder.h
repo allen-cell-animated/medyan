@@ -46,14 +46,11 @@ protected:
 public:
 	/// Constructor, initializes a cylinder
 	// composte is set to NULL and we use only one bead
-	CaMKIICylinder(CaMKIIingPoint *camkiiPoint, Bead* b1, short type, int position, bool extensionFront = false, bool extensionBack  = false, bool initialization = false):
-		Cylinder(nullptr, b1, b1, type, position, extensionFront, extensionBack, initialization), _camkiiPoint(camkiiPoint){
-		_camkiiPoint = camkiiPoint;
-	};
-
+	CaMKIICylinder(CaMKIIingPoint *camkiiPoint, Bead* b1, short type, int position);
 	CaMKIIingPoint* getCaMKIIPointParent() {
 		return _camkiiPoint;
 	};
+	~CaMKIICylinder();
 
 
 };

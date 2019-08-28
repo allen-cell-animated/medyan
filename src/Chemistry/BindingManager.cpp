@@ -28,6 +28,7 @@
 #include "MathFunctions.h"
 #include "GController.h"
 #include "SysParams.h"
+#include "../Structure/CaMKIICylinder.h"
 
 using namespace mathfunc;
 
@@ -419,123 +420,86 @@ bool CaMKIIBundlingManager::checkMaxCoordinationNum(CCylinder* cc) {
 	CaMKIIingPoint *cp;
 	if (dc)
 		cp = dc->getCaMKIIPointParent();
-	if (cp->getCoordinationNumber() >= _maxCoordination)
-		return false;
-	return true;
+  return (cp->getCoordinationNumber() >= _maxCoordination);
 }
 
 void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
 
-	// Run the function is input cylinder (cc) is normal or CaMKII cylinder.
+	  // Run the function is input cylinder (cc) is normal or CaMKII cylinder.
     if(cc->getType() != _filamentType && cc->getType() != CAMKII_CYLINDER_FILAMENT_TYPE) return;
 
+    // checkType is the type of the binding cylinder.
+    // If the cylinder is a CaMKII cylinder, the binding cylinder is a normal cylinder and viceversa
+	  short checkType = _filamentType;
+    if(cc->getType() == _filamentType) {
+      checkType = CAMKII_CYLINDER_FILAMENT_TYPE;
+    } else {
+      //If it is called with CaMKII only execute this script once (when the bindingSite is 0)
+      if (bindingSite!=0) return;
+    }
 
-	short checkType = _filamentType;
-    if(cc->getType() == _filamentType)
-		checkType = CAMKII_CYLINDER_FILAMENT_TYPE;
-
-    bool inZone = true;
     //if we change other managers copy number
     vector<CaMKIIBundlingManager*> affectedManagers;
 
-    //Code based on linker
     //add valid binding sites
-	if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(SysParams::Chemistry().camkiierBundlingBoundIndex[_filamentType])->getN(), 1.0)) {
-
-		//TODO loop through camkii neighbors
-		//_nlIndex may have to change since it is a new neighbor list
-		//now re add valid based on CCNL
-
-		//TODO need to initialize _neighborLists
 		for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
-            Cylinder* c = cc->getCylinder();
+      Cylinder *c = cc->getCylinder();
 
-            if(cn->getParent() == c->getParent()) continue;
-            if(cn->getType() != checkType) continue;
+      if (cn->getType() != checkType) continue;
 
-            auto ccn = cn->getCCylinder();
+      // Assign correct description to cylinders
+      Cylinder *camkii_c;
+      Cylinder *filament_c;
+      if (checkType == CAMKII_CYLINDER_FILAMENT_TYPE) {
+        camkii_c = cn;
+        filament_c = c;
+      } else {
+        camkii_c = c;
+        filament_c = cn;
+      }
+      CCylinder *camkii_cc = camkii_c->getCCylinder();
+      CCylinder *filament_cc = filament_c->getCCylinder();
 
-            //TODO it seems to be each binding site, from the CAMKII, by definition there is only one
-            for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+      //Check that the CaMKII coordination number is less than the maximum
+      if (checkMaxCoordinationNum(camkii_cc)) continue;
 
-                // ccn is a normal cylinder
-                if(ccn->getType() != CAMKII_CYLINDER_FILAMENT_TYPE) {
-
-                    if(!checkMaxCoordinationNum(cc))
-                        continue;
-
-                    //TODO change this to say if the getN() of the cylinder is less than the maximum coordination number
-                    if (areEqual(ccn->getCMonomer(*it)->speciesBound(
-                            SysParams::Chemistry().camkiierBundlingBoundIndex[_filamentType])->getN(), 1.0)) {
-
-                        //check distances..
-                        auto mp1 = (float) bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
-                        //TODO mp2 should be
-                        auto mp2 = (float) *it / SysParams::Geometry().cylinderNumMon[_filamentType];
-
-                        auto x1 = c->getFirstBead()->coordinate;
-                        auto x2 = c->getSecondBead()->coordinate;
-                        auto x3 = cn->getFirstBead()->coordinate;
-                        auto x4 = cn->getSecondBead()->coordinate;
-
-                        auto m1 = midPointCoordinate(x1, x2, mp1);
-                        auto m2 = midPointCoordinate(x3, x4, mp2);
-
-                        double dist = twoPointDistance(m1, m2);
-
-                        if (dist > _rMax || dist < _rMin) continue;
-
-                        auto t1 = tuple<CCylinder *, short>(cc, bindingSite);
-                        auto t2 = tuple<CCylinder *, short>(ccn, *it);
-
-                        // t1 always corresponds to the CaMKII cylinder.
-                        if (cc->getType() == CAMKII_CYLINDER_FILAMENT_TYPE)
-                            _possibleBindings.emplace(t1, t2);
-                        else
-                            _possibleBindings.emplace(t2, t1);
-                    }
-                }
-                // cc is a normal cylinder
-                else {
-
-                    if(!checkMaxCoordinationNum(ccn))
-                        continue;
-
-                    //TODO change this to say if the getN() of the cylinder is less than the maximum coordination number
-                    if (areEqual(cc->getCMonomer(*it)->speciesBound(
-                            SysParams::Chemistry().camkiierBundlingBoundIndex[_filamentType])->getN(), 1.0)) {
-
-                        //check distances..
-                        auto mp1 = (float) bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
-                        //TODO mp2 should be
-                        auto mp2 = (float) *it / SysParams::Geometry().cylinderNumMon[_filamentType];
-
-                        auto x1 = c->getFirstBead()->coordinate;
-                        auto x2 = c->getSecondBead()->coordinate;
-                        auto x3 = cn->getFirstBead()->coordinate;
-                        auto x4 = cn->getSecondBead()->coordinate;
-
-                        auto m1 = midPointCoordinate(x1, x2, mp1);
-                        auto m2 = midPointCoordinate(x3, x4, mp2);
-
-                        double dist = twoPointDistance(m1, m2);
-
-                        if (dist > _rMax || dist < _rMin) continue;
-
-                        auto t1 = tuple<CCylinder *, short>(cc, bindingSite);
-                        auto t2 = tuple<CCylinder *, short>(ccn, *it);
-
-                        // t1 always corresponds to the CaMKII cylinder.
-                        if (cc->getType() == CAMKII_CYLINDER_FILAMENT_TYPE)
-                            _possibleBindings.emplace(t1, t2);
-                        else
-                            _possibleBindings.emplace(t2, t1);
-                    }
-                }
-            }
+      if (checkType == CAMKII_CYLINDER_FILAMENT_TYPE) {
+        // It was called with a regular cylinder
+        // If the binding site of this cylinder is not free, then continue
+        if (!areEqual(filament_cc->getCMonomer(bindingSite)->speciesBound(
+                SysParams::Chemistry().camkiierBundlingBoundIndex[_filamentType])->getN(), 1.0))
+          continue;
+        auto mp1 = (float) bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
+        auto x1 = camkii_c->getFirstBead()->coordinate;
+        auto x3 = filament_c->getFirstBead()->coordinate;
+        auto x4 = filament_c->getSecondBead()->coordinate;
+        auto m2 = midPointCoordinate(x3, x4, mp1);
+        double dist = twoPointDistance(x1, m2);
+        if (dist > _rMax || dist < _rMin) continue;
+        auto t1 = tuple<CCylinder *, short>(camkii_cc, 0);
+        auto t2 = tuple<CCylinder *, short>(filament_cc, bindingSite);
+        _possibleBindings.emplace(t1, t2);
+      } else {
+        // It was called with a CaMKII cylinder, iterate over all possible binding sites of the new cylinder
+        for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+             it != SysParams::Chemistry().bindingSites[_filamentType].end();
+             it++) {
+          //If the binding site of the neighbor is not free, then continue
+          if (!areEqual(filament_cc->getCMonomer(*it)->speciesBound(
+                  SysParams::Chemistry().camkiierBundlingBoundIndex[_filamentType])->getN(), 1.0))
+            continue;
+          auto mp2 = (float) *it / SysParams::Geometry().cylinderNumMon[_filamentType];
+          auto x1 = camkii_c->getFirstBead()->coordinate;
+          auto x3 = filament_c->getFirstBead()->coordinate;
+          auto x4 = filament_c->getSecondBead()->coordinate;
+          auto m2 = midPointCoordinate(x3, x4, mp2);
+          double dist = twoPointDistance(x1, m2);
+          if (dist > _rMax || dist < _rMin) continue;
+          auto t1 = tuple<CCylinder *, short>(camkii_cc, bindingSite);
+          auto t2 = tuple<CCylinder *, short>(filament_cc, *it);
+          _possibleBindings.emplace(t1, t2);
         }
-
+      }
     }
 
     //update affected
@@ -553,51 +517,45 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite
 
     updateBindingReaction(oldN, newN);
 
-// Old code based on brancher
-//    if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
-//        SysParams::Chemistry().camkiierBoundIndex[_filamentType])->getN(), 1.0) && inZone) {
-
-//        auto t = tuple<CCylinder*, short>(cc, bindingSite);
-//        _possibleBindings.insert(cp,t);
-//    }
-//
-//    int oldN = _bindingSpecies->getN();
-//    int newN = numBindingSites();
-//
-//    updateBindingReaction(oldN, newN);
 }
 
 void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc) {
 
-    for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
-             bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
-
-        addPossibleBindings(cc, *bit);
+  if(cc->getType() == _filamentType) {
+    for (auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
+         bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
+      addPossibleBindings(cc, *bit);
+  } else {
+    addPossibleBindings(cc, 0);
+  }
 }
 
 void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingSite) {
 
-//	if(cc->getType() != _filamentType) return;
-    if(cc->getType() != _filamentType && cc->getType() != CAMKII_CYLINDER_FILAMENT_TYPE) return;
+  // Run the function is input cylinder (cc) is normal or CaMKII cylinder.
+  if(cc->getType() != _filamentType && cc->getType() != CAMKII_CYLINDER_FILAMENT_TYPE) return;
 
-	short checkType = _filamentType;
-	if(cc->getType() == _filamentType)
-		checkType = CAMKII_CYLINDER_FILAMENT_TYPE;
+  // checkType is the type of the binding cylinder.
+  // If the cylinder is a CaMKII cylinder, the binding cylinder is a normal cylinder and viceversa
+  short checkType = _filamentType;
+  if(cc->getType() == _filamentType) {
+    checkType = CAMKII_CYLINDER_FILAMENT_TYPE;
+  } else {
+    //If it is called with CaMKII only execute this script once (when the bindingSite is 0)
+    if (bindingSite!=0) return;
+  }
 
-	if(cc->getType() == CAMKII_CYLINDER_FILAMENT_TYPE) {
+  if(cc->getType() == CAMKII_CYLINDER_FILAMENT_TYPE) {
 		//Remove all the tuples that have this value as a key
 		auto t = tuple<CCylinder*, short>(cc, bindingSite);
 		_possibleBindings.erase(t);
 	} else {
 		//Remove all the tuples that have this as a value
 		for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); ) {
-
 			if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
 				_possibleBindings.erase(it++);
-
 			else ++it;
 		}
-
 	}
 
     //if we change other managers copy number
@@ -643,11 +601,17 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
 
 
 void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc) {
+  if(cc->getType() == _filamentType) {
+    for (auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
+         bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
+      removePossibleBindings(cc, *bit);
+  } else {
+    removePossibleBindings(cc, 0);
+  }
+}
 
-    for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
-             bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
-
-        removePossibleBindings(cc, *bit);
+void CaMKIIBundlingManager::updateCaMKIIPossibleBindings(CCylinder* cc) {
+  if (checkMaxCoordinationNum(cc)) removePossibleBindings(cc);
 }
 
 

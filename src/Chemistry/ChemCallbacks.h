@@ -947,7 +947,7 @@ struct CaMKIIBundlingCallback {
         cCaMKIIer->setRates(_onRate, _offRate);
         cCaMKIIer->createOffReaction(r, _ps);
         cCaMKIIer->getOffReaction()->setBareRate(SysParams::CaMKIIUnbundlingBareRate[camkiiType]);
-        _bManager->updateAllPossibleBindings();
+        _bManager->updateCaMKIIPossibleBindings(cp->getCaMKIICylinder()->getCCylinder());
     }
 };
 

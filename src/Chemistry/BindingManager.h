@@ -383,7 +383,7 @@ public:
 
     ///update all possible binding reactions that could occur
     virtual void updateAllPossibleBindings();
-
+    void updateCaMKIIPossibleBindings(CCylinder* cc);
     virtual int numBindingSites() {
 
         return _possibleBindings.size();
