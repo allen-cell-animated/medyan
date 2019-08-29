@@ -639,8 +639,8 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
 
         // skip if parent coordination number isn't between >=1 and <6 (MAX coordination number SysParams::Chemistry().maxcamkii_coord_number)
         // now re add valid binding sites
-        if (cp->getCoordinationNumber() >= _maxCoordination)
-            continue;
+        if (checkMaxCoordinationNum(cc)) continue;
+
 
         // loop through neighbors
         // The neighbors should be the cylinders from the other filaments (obtained from the neighbor list)
@@ -654,8 +654,7 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
             for(auto it2 = SysParams::Chemistry().bindingSites[_filamentType].begin();
                      it2 != SysParams::Chemistry().bindingSites[_filamentType].end(); it2++) {
 
-                if (areEqual(ccn->getCMonomer(*it2)->speciesBound(
-                    SysParams::Chemistry().camkiierBundlingBoundIndex[_filamentType])->getN(), 1.0)) {
+                if (areEqual(ccn->getCMonomer(*it2)->speciesBound(SysParams::Chemistry().camkiierBundlingBoundIndex[_filamentType])->getN(), 1.0)) {
                     //check distances..
                     auto mp1 = (float) it1 / SysParams::Geometry().cylinderNumMon[camkiiFilamentType];
                     auto mp2 = (float)*it2 / SysParams::Geometry().cylinderNumMon[_filamentType];

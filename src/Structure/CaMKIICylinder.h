@@ -43,6 +43,7 @@ protected:
 	void updatePosition() override;
 	bool within(Cylinder* other, double dist) override;
 
+
 public:
 	/// Constructor, initializes a cylinder
 	// composte is set to NULL and we use only one bead
@@ -51,7 +52,8 @@ public:
 		return _camkiiPoint;
 	};
 	~CaMKIICylinder();
-
+  void addToFilamentBindingManagers();
+  void removeFromFilamentBindingManagers();
 
 };
 

@@ -60,7 +60,8 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double posi
     }
 
     Bead* b1 = _subSystem->addTrackable<Bead>(coordinate, nullptr, 0);
-  	_camkiiCylinder = unique_ptr<CaMKIICylinder>(new CaMKIICylinder(this, b1, _filType, 0)); // init the dummy cylinder for CaMKII
+    setCaMKIICylinder(_subSystem->addTrackable<CaMKIICylinder>(this, b1, _filType, 0));
+    _camkiiCylinder->addToFilamentBindingManagers();
 }
 
 void CaMKIIingPoint::addBond(Cylinder* c, short pos){
@@ -95,7 +96,9 @@ void CaMKIIingPoint::updateCoordinate(){
   //cout<< "====== Updated CaMKIIingPoint Coordinates: " << coordinate[0] << " " << coordinate[1] << " " << coordinate[2] <<endl;
 }
 
-CaMKIIingPoint::~CaMKIIingPoint() noexcept {}
+CaMKIIingPoint::~CaMKIIingPoint() noexcept {
+  //TODO: _subSystem->removeTrackable<unique_ptr<CaMKIICylinder>>(_camkiiCylinder);
+}
 
 void CaMKIIingPoint::updatePosition() {
     

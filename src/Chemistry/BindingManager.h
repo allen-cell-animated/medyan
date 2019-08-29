@@ -391,16 +391,20 @@ public:
 
     /// Choose a random binding site based on current state
     tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>> chooseBindingSites() {
-        assert((_possibleBindings.size() != 0)
+      auto len1=_possibleBindings.size();
+      assert((_possibleBindings.size() != 0)
                && "Major bug: CaMKIIing manager should not have zero binding \
                   sites when called to choose a binding site.");
-        int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
-        auto it = _possibleBindings.begin();
-        advance(it, randomIndex);
-        auto b = tuple<CCylinder*, short>(it->second);
-        auto a = it->first;
-        return tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>> (a,b);
-        //return vector<tuple<CCylinder*, short>>{it->first, it->second};
+      updateAllPossibleBindings();
+      auto len2=_possibleBindings.size();
+      assert((len1 == len2)
+             && "Minor bug: CaMKIIing manager was not correctly updated when it reached this point.");
+      int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
+      auto it = _possibleBindings.begin();
+      advance(it, randomIndex);
+      auto b = tuple<CCylinder*, short>(it->second);
+      auto a = it->first;
+      return tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>> (a,b);
     }
 
     virtual bool isConsistent();

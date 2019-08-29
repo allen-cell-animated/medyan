@@ -45,12 +45,8 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
     for(auto &comp : compartments) {
         for(auto &ncylinder : comp->getCylinders()) {
 
-			// We are skipping the rest of the iteration if it is a
-//			const bool isCaMKII_b1 = (dynamic_cast<CaMKIICylinder*>(cylinder) != nullptr);
-//			const bool isCaMKII_b2 = (dynamic_cast<CaMKIICylinder*>(ncylinder) != nullptr);
-
-            //Don't add the same cylinder!
-            if(cylinder == ncylinder) continue;
+      //Don't add the same cylinder!
+      if(cylinder == ncylinder) continue;
 
 			//Dont add if ID is more than cylinder for half-list
 			if (!_full && cylinder->getID() <= ncylinder->getID()) continue;
@@ -68,12 +64,6 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
             double dist = twoPointDistance(cylinder->coordinate,
                                            ncylinder->coordinate);
             if(dist > _rMax || dist < _rMin) continue;
-
-//			if(isCaMKII_b1) {
-//				_list[cylinder].push_back(ncylinder);
-//			} else if(isCaMKII_b2) {
-//				_list[ncylinder].push_back(cylinder);
-//			} else {
 
 				//If we got through all of this, add it!
 				_list[cylinder].push_back(ncylinder);

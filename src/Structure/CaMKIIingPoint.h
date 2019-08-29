@@ -70,7 +70,7 @@ public:
                                ///< updated with updatePosition()
     
     CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double position);
-    virtual ~CaMKIIingPoint() noexcept;
+    virtual ~CaMKIIingPoint()  noexcept;
 
     //@{
     ///Get attached bonds tuples <cylinders, short> (a cylinder and a position)
@@ -81,6 +81,10 @@ public:
     Cylinder* getSecondCylinder() { return get<0>(_bonds.at(1));} //TODO fix
     int getCoordinationNumber() { return _bonds.size(); }
     CaMKIICylinder* getCaMKIICylinder() {return _camkiiCylinder.get();}
+    void setCaMKIICylinder(CaMKIICylinder* CaMKIIcylinder) {
+      _camkiiCylinder = unique_ptr<CaMKIICylinder>(CaMKIIcylinder);
+    }
+
     vector<tuple<Cylinder*, double>> getBonds() {return _bonds;}
     //@}
     
@@ -94,7 +98,7 @@ public:
     
     /// Get mech camkii point
     MCaMKIIingPoint* getMCaMKIIingPoint() {return _mCaMKIIingPoint.get();}
-    
+
     //@{
     /// Position management
     double getPosition() {return get<1>(_bonds.at(0));} //TODO fix later
