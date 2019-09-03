@@ -15,6 +15,7 @@
 #define MEDYAN_Reactable_h
 
 #include "common.h"
+#include "Util/DoubleLinkedList.h"
 
 /// An abstract base class for a reactable element in the SubSystem.
 
@@ -25,7 +26,10 @@
 class Reactable {
     
 protected:
-    Reactable() {}
+    Reactable() {
+    	reactableList.addNode(this, dllnode);
+    }
+
     
 public:
     ///Update the reactions in this element
@@ -39,7 +43,19 @@ public:
     /// potentially throwing, which in turn disables move operations by the STL
     /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
     /// be fixed in the future.
-    virtual ~Reactable() noexcept {}
+    virtual ~Reactable() noexcept {
+    	reactableList.removeNode(dllnode);
+    }
+
+	static const linkedlist::DoubleLinkedList<Reactable>& getReactableList(){
+    	return reactableList;
+    }
+
+private:
+	//static dll list here
+	static linkedlist::DoubleLinkedList<Reactable> reactableList;
+	//Node of this instance
+	linkedlist::DLLNode<Reactable> dllnode;
 };
 
 #endif

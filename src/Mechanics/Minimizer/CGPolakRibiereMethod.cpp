@@ -21,8 +21,14 @@
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
-void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                            floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit){
+#include "Structure/Bead.h"
+
+MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
+                            floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+                            floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                            bool steplimit){
+
+    MinimizationResult result;
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbeginTot, tendTot;
     chrono::high_resolution_clock::time_point tbeginII, tendII;
@@ -65,7 +71,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
 #endif
     //@@@{ STEP 2: COMPUTE FORCES
 	tbegin = chrono::high_resolution_clock::now();
-    FFM.computeForces(coord, force); //split and synchronize in the end
+    FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data()); //split and synchronize in the end
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
 	CUDAcommon::tmin.computeforces+= elapsed_force.count();
@@ -77,8 +83,12 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
 #ifdef SERIAL // SERIAL
 	//@@@{ STEP 3: COPY FORCES
 	tbegin = chrono::high_resolution_clock::now();
-    FFM.copyForces(forceAux, force);
-    FFM.copyForces(forceAuxPrev, force);
+    Bead::getDbData().forcesAux = Bead::getDbData().forces;
+    Bead::getDbData().forcesAuxP = Bead::getDbData().forces;
+    auto maxForce = maxF();
+
+    result.energiesBefore = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_copy(tend - tbegin);
 	CUDAcommon::tmin.copyforces+= elapsed_copy.count();
@@ -127,18 +137,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
     CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
 #endif
 #ifdef CUDATIMETRACK
-/*    std::cout<<"Time total computeForces (s) CUDA "<<CUDAcommon::cudatime
-            .TcomputeF<<" SERL "<<CUDAcommon::serltime.TcomputeF<<" factor "
-                     ""<<CUDAcommon::serltime.TcomputeF/CUDAcommon::cudatime
-            .TcomputeF<<endl;
-    std::cout<<"Time split computeForces (s) CUDA ";
-    for(auto x:CUDAcommon::cudatime.TveccomputeF)
-        std::cout<<x<<" ";
-    std::cout<<endl;
-    std::cout<<"Time split computeForces (s) SERL ";
-    for(auto x:CUDAcommon::serltime.TveccomputeF)
-        std::cout<<x<<" ";
-    std::cout<<endl;*/
 
     //Reset lambda time tracker.
     CUDAcommon::cudatime.Tlambda = 0.0;
@@ -261,7 +259,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
     floatingpoint curGrad = CGMethod::allFDotF();
     Ms_isminimizationstate = true;
     Ms_issafestate = false;
-    Ms_isminimizationstate = maxF() > GRADTOL;
+    Ms_isminimizationstate = maxForce > GRADTOL;
 
     //
     //
@@ -270,11 +268,9 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
     long i = 0;
     long index = 0;
     for(auto b:Bead::getBeads()){
-        index = 3 * b->_dbIndex;
-        std::cout<<b->getID()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
-                ""<<coord[index + 2]<<" "
-                ""<<force[index]<<" "
-                ""<<force[index + 1]<<" "<<force[index + 2]<<endl;
+        index = 3 * b->getStableIndex();
+        std::cout<<b->getId()<<" "<< b->coordinate() <<" "
+                "" << b->force() <<endl;
     }
     std::cout<<"printed beads & forces"<<endl;
 #endif
@@ -414,19 +410,19 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
 #endif
 
         //compute new forces
-        FFM.computeForces(coord, forceAux);//split and synchronize
+        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());//split and synchronize
 #ifdef DETAILEDOUTPUT
         std::cout<<"MB printing beads & forces L "<<lambda<<endl;
         long i = 0;
         long index = 0;
         for(auto b:Bead::getBeads()){
-            index = 3 * b->_dbIndex;
+            index = 3 * b->getStableIndex();
 
-            std::cout<<b->getID()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
+            std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                     ""<<coord[index + 2]<<" "
                     ""<<forceAux[index]<<" "
                     ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-                    b->_dbIndex<<endl;
+                    b->getStableIndex()<<endl;
         }
         std::cout<<"MB printed beads & forces"<<endl;
 #endif
@@ -445,20 +441,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
         chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
         CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
         CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
-#endif
-#ifdef CUDATIMETRACK
-/*        std::cout<<"Time total computeForces (s) CUDA "<<CUDAcommon::cudatime
-                .TcomputeF<<" SERL "<<CUDAcommon::serltime.TcomputeF<<" factor "
-                         ""<<CUDAcommon::serltime.TcomputeF/CUDAcommon::cudatime
-                .TcomputeF<<endl;
-        std::cout<<"Time split computeForces (s) CUDA ";
-        for(auto x:CUDAcommon::cudatime.TveccomputeF)
-            std::cout<<x<<" ";
-        std::cout<<endl;
-        std::cout<<"Time split computeForces (s) SERL ";
-        for(auto x:CUDAcommon::serltime.TveccomputeF)
-            std::cout<<x<<" ";
-        std::cout<<endl;*/
 #endif
 #ifdef CUDATIMETRACK
         tbegin = chrono::high_resolution_clock::now();
@@ -593,11 +575,13 @@ std::cout<<"----------------------------------------"<<endl;
 
 		//@@@{ STEP 5 OTHER
 	    tbegin = chrono::high_resolution_clock::now();
-        //set the floor of lambda (lowest lambda allowed based on maxf
-        int maxForder = static_cast<int>(floor(log10(maxF())));
-        if(maxForder < 0 ) maxForder--;
+	    if(std::is_same<floatingpoint,float>::value) {
+		    //set the floor of lambda (lowest lambda allowed based on maxf
+		    int maxForder = static_cast<int>(floor(log10(maxForce)));
+		    if (maxForder < 0) maxForder--;
 
-        CGMethod::setLAMBDATOL(maxForder);
+		    CGMethod::setLAMBDATOL(maxForder);
+	    }
 
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_other2(tend - tbegin);
@@ -620,8 +604,9 @@ std::cout<<"----------------------------------------"<<endl;
 		//@@@{ STEP 6 FIND LAMBDA
 	    tbegin = chrono::high_resolution_clock::now();
         bool *dummy = nullptr;
-	    lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy)
-                           : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy);
+	    lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX, dummy)
+                           : backtrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
+                                                    LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_lambda(tend - tbegin);
 	    CUDAcommon::tmin.findlambda+= elapsed_lambda.count();
@@ -663,7 +648,8 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
         ///@@@{ STEP 8 compute new forces
 	    tbegin = chrono::high_resolution_clock::now();
-        FFM.computeForces(coord, forceAux);//split and synchronize
+        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());//split and synchronize
+        maxForce = maxF();
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
 	    CUDAcommon::tmin.computeforces+= elapsed_force.count();
@@ -673,13 +659,13 @@ std::cout<<"----------------------------------------"<<endl;
         long i = 0;
         long index = 0;
         for(auto b:Bead::getBeads()){
-            index = 3 * b->_dbIndex;
+            index = 3 * b->getStableIndex();
 
-            std::cout<<b->getID()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
+            std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                     ""<<coord[index + 2]<<" "
                     ""<<forceAux[index]<<" "
                     ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-                    b->_dbIndex<<endl;
+                    b->getStableIndex()<<endl;
         }
         std::cout<<"MB printed beads & forces"<<endl;
 #endif
@@ -733,7 +719,7 @@ std::cout<<"----------------------------------------"<<endl;
 
         //@@@{ STEP 10 vectorized copy
 	    tbegin = chrono::high_resolution_clock::now();
-        FFM.copyForces(forceAuxPrev, forceAux);
+        Bead::getDbData().forcesAuxP = Bead::getDbData().forcesAux;
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_copy2(tend - tbegin);
 	    CUDAcommon::tmin.copyforces+= elapsed_copy2.count();
@@ -767,7 +753,6 @@ std::cout<<"----------------------------------------"<<endl;
         tbegin = chrono::high_resolution_clock::now();
 #endif
         curGrad = newGrad;
-        auto maxForce = maxF();
         Ms_isminimizationstate = maxForce > GRADTOL;
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
@@ -816,7 +801,7 @@ std::cout<<"----------------------------------------"<<endl;
         CUDAcommon::cudavars = cvars;
 #endif
         cout << "System energy..." << endl;
-        FFM.computeEnergy(coord, force, 0.0, true);
+        FFM.computeEnergy(Bead::getDbData().coords.data(), true);
 #ifdef CUDAACCL
         for(auto strm:CUDAcommon::getCUDAvars().streamvec)
             CUDAcommon::handleerror(cudaStreamSynchronize(*strm));
@@ -832,8 +817,10 @@ std::cout<<"----------------------------------------"<<endl;
     CUDAcommon::cudavars = cvars;
 #endif
 
+    result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+
     //final force calculation
-    FFM.computeForces(coord, force);
+    FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
@@ -859,7 +846,8 @@ std::cout<<"----------------------------------------"<<endl;
     cudaDeviceSynchronize();
 #endif
 #ifdef SERIAL
-    FFM.copyForces(forceAux, force);
+    Bead::getDbData().forcesAux = Bead::getDbData().forces;
+
 #endif
 #ifdef CUDAACCL
     CUDAcommon::handleerror(cudaFreeHost(Mmh_stop));
@@ -907,6 +895,13 @@ std::cout<<"----------------------------------------"<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
     FFM.computeLoadForces();
+
+    // compute the Hessian matrix at this point if the feature is enabled
+    if(SysParams::Mechanics().hessTracking){
+        int total_DOF = Bead::getDbData().coords.size_raw();
+        FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, SysParams::Mechanics().hessDelta);
+    }
+
 #ifdef OPTIMOUT
     std::cout<<"End Minimization************"<<endl;
 #endif
@@ -918,10 +913,8 @@ std::cout<<"----------------------------------------"<<endl;
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;
     for(auto b:Bead::getBeads()){
-        std::cout<<b->getID()<<" "<<b->coordinate[0]<<" "<<b->coordinate[1]<<" "
-                ""<<b->coordinate[2]<<" "
-                ""<<b->force[index]<<" "
-                ""<<b->force[index+1]<<" "<<b->force[index+2]<<endl;
+        std::cout<<b->getId()<<" "<< b->coordinate() <<" "
+                ""<<b->force() <<endl;
     }
     std::cout<<"printed beads & forces"<<endl;
 #endif
@@ -934,4 +927,6 @@ std::cout<<"----------------------------------------"<<endl;
     chrono::duration<floatingpoint> elapsed_runtot(tendTot - tbeginTot);
     std::cout<<"Total Minimization time "<<elapsed_runtot.count()<<endl;
 #endif
+
+    return result;
 }

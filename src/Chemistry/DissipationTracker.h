@@ -27,7 +27,7 @@
 #include <fstream>
 #include "MotorGhost.h"
 #include "Linker.h"
-
+#include "Mechanics/ForceField/Types.hpp"
 
 using namespace mathfunc;
 
@@ -77,6 +77,22 @@ private:
     
     // vector of HRCD elements
     vector<tuple<string, floatingpoint>> HRCDVec;
+    
+    // vector of HRMD element
+    vector<tuple<string, floatingpoint>> HRMDVec1;
+    
+    // vector of HRMD element
+    vector<tuple<string, floatingpoint>> HRMDVecMid;
+    
+    
+    // vector of HRMD element
+    vector<tuple<string, floatingpoint>> cumHRMDMechDiss;
+    
+    // vector of HRMD element
+    vector<tuple<string, floatingpoint>> cumHRMDMechEnergy;
+    
+    // vector of HRMD element
+    vector<tuple<string, floatingpoint>> HRMDVec2;
     
     // vector of motor walking data
     vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> motorData;
@@ -140,7 +156,6 @@ public:
         
         // get the number of products
         int N = re->getN();
-        
         
         
         // for a vector of stoichiometric coefficients, assumed to be 1 for all
@@ -340,10 +355,9 @@ public:
     }
     
     // return the mechanical energy of the system
-    floatingpoint getMechEnergy(){
-        floatingpoint ret = _mcon->getEnergy();
-        return float(ret/kT);
+    [[deprecated]] void getMechEnergy(){
     }
+    
     
     // return the cumulative dissipated Gibbs free energy
     floatingpoint getCumDissEnergy(){
@@ -370,36 +384,67 @@ public:
         return cumGMechEn;
     }
     
+    // return the HRMD cumulative change in mechanical energy
+    vector<tuple<string, floatingpoint>> getCumHRMDMechEnergy(){
+        return cumHRMDMechEnergy;
+    }
+    
+    // return the HRMD cumulative change in mechanical dissipation
+    vector<tuple<string, floatingpoint>> getCumHRMDMechDiss(){
+        return cumHRMDMechDiss;
+    }
+    
     //  used to determine if minization should proceed
     floatingpoint getCurrentStress(){
         return GMid-G1;
     };
     
     // set the value of G1
-    void setG1(){
-        G1=getMechEnergy();
+    void setG1(const EnergyReport& report){
+        HRMDVec1.clear();
         
+        for(auto i = 0; i < report.individual.size(); i++){
+            HRMDVec1.push_back(make_tuple(report.individual[i].name, report.individual[i].energy));
+            cumHRMDMechDiss.push_back(make_tuple(report.individual[i].name, 0.0));
+            cumHRMDMechEnergy.push_back(make_tuple(report.individual[i].name, 0.0));
+        };
+        
+        G1 = report.total;
+      
     }
     
     // set the value of G2
-    void setG2(){
-        G2=getMechEnergy();
+    void setG2(const EnergyReport& report){
+        HRMDVec2.clear();
+        for(auto i = 0; i < report.individual.size(); i++){
+            HRMDVec2.push_back(make_tuple(report.individual[i].name, report.individual[i].energy));
+        };
         
+        
+        G2 = report.total;
     }
     
     // set the value of GMid
-    void setGMid(){
-        GMid=getMechEnergy();
+    void setGMid(const EnergyReport& report){
+        HRMDVecMid.clear();
+        for(auto i = 0; i < report.individual.size(); i++){
+            HRMDVecMid.push_back(make_tuple(report.individual[i].name, report.individual[i].energy));
+        };
+        
+        
+        GMid = report.total;
     }
     
     // perform multiple functions to update cumulative energy counters and reset the mechanical energy variables
-    void updateAfterMinimization(){
-        setG2();
+    void updateAfterMinimization(const EnergyReport& report){
+        setG2(report);
         updateCumDissChemEnergy();
         updateCumDissMechEnergy();
         updateCumDissEn();
         updateCumGChemEn();
         updateCumGMechEn();
+        updateCumHRMDMechEnergy();
+        updateCumHRMDMechDiss();
         resetAfterStep();
     }
     
@@ -413,10 +458,7 @@ public:
         cumDissChemEnergy += GChem + getCurrentStress();
     }
     
-    // increment cumDissMechEnergy
-    void updateCumDissMechEnergy(){
-        cumDissMechEnergy += G2-GMid;
-    }
+    
     
     // increment cumDissMechEnergy
     void updateCumGChemEn(){
@@ -428,11 +470,42 @@ public:
         cumGMechEn += G2-G1;
     }
     
+    // increment cumDissMechEnergy
+    void updateCumDissMechEnergy(){
+        cumDissMechEnergy += G2-GMid;
+    }
+    
+    // increment cumHRMDMechEnergy
+    void updateCumHRMDMechEnergy(){
+        
+        for(auto i = 0; i<cumHRMDMechEnergy.size();i++){
+            get<1>(cumHRMDMechEnergy[i]) += get<1>(HRMDVec2[i]) - get<1>(HRMDVec1[i]);
+        }
+        
+    }
+    
+    // increment cumHRMDMechDiss
+    void updateCumHRMDMechDiss(){
+        
+        for(auto i = 0; i<cumHRMDMechEnergy.size();i++){
+            get<1>(cumHRMDMechDiss[i]) += get<1>(HRMDVec2[i]) - get<1>(HRMDVecMid[i]);
+        }
+
+    }
+    
+    
+    
     // set new values of energy trackers after an iteration step has occured
     void resetAfterStep(){
         GChem=0;
         GMid=0;
         G1=G2;
+        
+        for(auto i = 0; i < HRMDVec1.size(); i++){
+            HRMDVecMid[i] = make_tuple(get<0>(HRMDVecMid[i]),0.0);
+            HRMDVec1[i] = make_tuple(get<0>(HRMDVec1[i]),get<1>(HRMDVec2[i]));
+        };
+        
     };
     
     // add the changes in the reactions' chemical energy consumptions

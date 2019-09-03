@@ -192,7 +192,7 @@ void BranchingBendingCosine::checkforculprit() {
 }
 #endif
 
-floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, int *beadSet,
                                       floatingpoint *kbend, floatingpoint *eqt){
 
     int n = BranchingBending<BranchingBendingCosine>::n;
@@ -370,7 +370,7 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
             else if (x > 1.0) x = 1.0;
 
             floatingpoint cosp =  x;
-            floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
+            floatingpoint sinp = sqrt(max<floatingpoint>((1-cosp*cosp),(floatingpoint)0.0));
             floatingpoint sinpminusq = sinp * cos(eqt[i]) - cosp * sin(eqt[i]);
 
             k = kbend[i] * sinpminusq/sinp;
@@ -419,19 +419,19 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
                          (coord4[2] - coord3[2])*C );
 
         #ifdef CHECKFORCES_INF_NAN
-        if(checkNaN_INF(force1, 0, 2)||checkNaN_INF(force2,0,2)||checkNaN_INF(force3,0,2)
-        ||checkNaN_INF(force4,0,2)){
+        if(checkNaN_INF<floatingpoint>(force1, 0, 2)||checkNaN_INF<floatingpoint>(force2,0,2)||checkNaN_INF<floatingpoint>(force3,0,2)
+        ||checkNaN_INF<floatingpoint>(force4,0,2)){
             cout<<"Branching Bending Force becomes infinite. Printing data "<<endl;
 
             auto b = BranchingPoint::getBranchingPoints()[i];
             auto cyl1 = b->getFirstCylinder();
             auto cyl2 = b->getSecondCylinder();
-            cout<<"Cylinder IDs "<<cyl1->getID()<<" "<<cyl2->getID()<<" with cIndex "
-                <<cyl1->_dcIndex<<" "<<cyl2->_dcIndex<<" and bIndex "
-                <<cyl1->getFirstBead()->_dbIndex<<" "
-                <<cyl1->getSecondBead()->_dbIndex<<" "
-                <<cyl2->getFirstBead()->_dbIndex<<" "
-                <<cyl2->getSecondBead()->_dbIndex<<endl;
+            cout<<"Cylinder IDs "<<cyl1->getId()<<" "<<cyl2->getId()<<" with cIndex "
+                <<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex()<<" and bIndex "
+                <<cyl1->getFirstBead()->getStableIndex()<<" "
+                <<cyl1->getSecondBead()->getStableIndex()<<" "
+                <<cyl2->getFirstBead()->getStableIndex()<<" "
+                <<cyl2->getSecondBead()->getStableIndex()<<endl;
 
             cout<<"Printing coords"<<endl;
             cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;

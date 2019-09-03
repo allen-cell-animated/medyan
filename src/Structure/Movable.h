@@ -15,6 +15,7 @@
 #define MEDYAN_Movable_h
 
 #include "common.h"
+#include "Util/DoubleLinkedList.h"
 
 /// An abstract base class for a movable element in the SubSystem.
 
@@ -25,7 +26,9 @@
 class Movable {
     
 protected:
-    Movable() {}
+    Movable() {
+        movableList.addNode(this, dllnode);
+    }
     
 public:
     /// Update the position of this element
@@ -39,7 +42,18 @@ public:
     /// potentially throwing, which in turn disables move operations by the STL
     /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
     /// be fixed in the future.
-    virtual ~Movable() noexcept {}
+    virtual ~Movable() noexcept {
+        movableList.removeNode(dllnode);
+    }
+
+    static const linkedlist::DoubleLinkedList<Movable>& getMovableList(){
+        return movableList;
+    }
+private:
+    //static dll list here
+    static linkedlist::DoubleLinkedList<Movable> movableList;
+    //Node of this instance
+    linkedlist::DLLNode<Movable> dllnode;
 };
 
 #endif

@@ -12,8 +12,10 @@ Both input distance thresholds and the output arrays that hold found contact ind
 #include <array>
 #include <vector>
 
-#include "dist_moduleV2/dist_common.h"
-#include "dist_moduleV2/dist_coords.h"
+#include "dist_common.h"
+#include "dist_coords.h"
+/*#include "dist_moduleV2/dist_common.h"
+#include "dist_moduleV2/dist_coords.h"*/
 
 //#ifdef __CUDACC__
 //#include <thrust/host_vector.h>
@@ -30,6 +32,7 @@ namespace dist {
 		// variables
         alignas(32) std::array<float,2*D> dt; // distance thresholds' vector - lower/upper
         alignas(32) std::array<uvec8_f, 2*D> v_dt; // UME::SIMD versions of dt: i.e. dt elements broadcasted to __m256 registers and wrapped
+		alignas(32) std::array<uvec8_i, 1> maxneighbors;
 		int N1, N2;
 		int COMPRESS=1;
 
@@ -68,8 +71,11 @@ namespace dist {
 		
 			std::copy(vals.begin(),vals.end(),dt.begin());
 
-			for(uint i=0; i<2*D; ++i)
+			maxneighbors[0] = 2;
+
+			for(uint i=0; i<2*D; ++i){
 				v_dt[i] = dt[i];
+			}
 			
 			resize_output_indices();
 		}
@@ -92,6 +98,7 @@ namespace dist {
 		uint size(uint index) const {return counter[index];}
 		uint dim() const {return D;}
 		int capacity() const {return dout[0].size();}
+
 	};
 
 } // end-of-namespace dist

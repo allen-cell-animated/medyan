@@ -13,6 +13,8 @@
 
 #include "BoundaryCylinderRepulsionIn.h"
 
+#include <stdexcept> // runtime_error
+
 #include "BoundaryCylinderRepulsionExpIn.h"
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"
@@ -22,6 +24,7 @@
 
 #include "MathFunctions.h"
 #include "cross_check.h"
+#include "Util/Io/Log.hpp"
 //TODO
 //CUDA is not implemented
 #ifdef CUDAACCL
@@ -78,13 +81,13 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::vectorize() {
         for (ni = 0; ni < nn; ni++) {
             if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
             {
-                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->_dbIndex;
+                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->getStableIndex();
                 beadSet[cumnn+idx] = bindex;
                 krep[cumnn+idx] = be->getRepulsionConst();
                 slen[cumnn+idx] = be->getScreeningLength();
                 idx++;
             }
-            bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->_dbIndex;
+            bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->getStableIndex();
             beadSet[cumnn+idx] = bindex;
             krep[cumnn+idx] = be->getRepulsionConst();
             slen[cumnn+idx] = be->getScreeningLength();
@@ -197,8 +200,7 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::deallocate() {
 }
 
 template <class BRepulsionInteractionType>
-floatingpoint BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeEnergy
-(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeEnergy(floatingpoint *coord) {
     floatingpoint U_ii=0.0;
 
 #ifdef CUDATIMETRACK
@@ -235,12 +237,9 @@ floatingpoint BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeEne
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
 #endif
-    if (d == 0.0) {
-        U_ii = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors);
-    }
-    else {
-        U_ii = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors, d);
-    }
+
+    U_ii = _FFType.energy(coord, beadSet, krep, slen, nneighbors);
+
 #ifdef CUDATIMETRACK
     floatingpoint* gU_i;
     tend= chrono::high_resolution_clock::now();
@@ -336,7 +335,7 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeLoadForces()
                 bo = c->getFirstBead();
 
                 ///this normal is in the direction of polymerization
-                auto normal = normalizeVector(twoPointDirection(bo->coordinate, bd->coordinate));
+                auto normal = normalizeVector(twoPointDirection(bo->vcoordinate(), bd->vcoordinate()));
 
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
@@ -345,9 +344,9 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeLoadForces()
                 bd->lfip = 0;
                 for (int i = 0; i < cylSize; i++) {
 
-                    auto newCoord = vector<floatingpoint>{bd->coordinate[0] + i * normal[0] * monSize,
-                                                   bd->coordinate[1] + i * normal[1] * monSize,
-                                                   bd->coordinate[2] + i * normal[2] * monSize};
+                    auto newCoord = vector<floatingpoint>{bd->vcoordinate()[0] + i * normal[0] * monSize,
+                        bd->vcoordinate()[1] + i * normal[1] * monSize,
+                        bd->vcoordinate()[2] + i * normal[2] * monSize};
 
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
@@ -369,7 +368,7 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeLoadForces()
                 bo = c->getSecondBead();
 
                 ///this normal is in the direction of polymerization
-                auto normal = normalizeVector(twoPointDirection(bo->coordinate, bd->coordinate));
+                auto normal = normalizeVector(twoPointDirection(bo->vcoordinate(), bd->vcoordinate()));
 
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
@@ -379,9 +378,9 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeLoadForces()
                 bd->lfim = 0;
                 for (int i = 0; i < cylSize; i++) {
 
-                    auto newCoord = vector<floatingpoint>{bd->coordinate[0] + i * normal[0] * monSize,
-                                                   bd->coordinate[1] + i * normal[1] * monSize,
-                                                   bd->coordinate[2] + i * normal[2] * monSize};
+                    auto newCoord = vector<floatingpoint>{bd->vcoordinate()[0] + i * normal[0] * monSize,
+                        bd->vcoordinate()[1] + i * normal[1] * monSize,
+                        bd->vcoordinate()[2] + i * normal[2] * monSize};
 
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
@@ -401,10 +400,11 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeLoadForces()
 
     }
 }
+template< typename InteractionType >
+void BoundaryCylinderRepulsionIn< InteractionType >::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
+    LOG(ERROR) << "Load force computation for a specific cylinder is not implemented in this force field.";
+    throw std::runtime_error("Not implemented error");
+}
 
-///Template specializations
-template floatingpoint BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
-template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeLoadForces();
-template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::vectorize();
-template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::deallocate();
+// Explicit template instantiations
+template class BoundaryCylinderRepulsionIn< BoundaryCylinderRepulsionExpIn >;

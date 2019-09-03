@@ -12,9 +12,18 @@
 //------------------------------------------------------------------
 #include "Bin.h"
 #include "Cylinder.h"
+
+void Bin::addCylinder(Cylinder* c) {_cylinders.insert(c);}
+
+//bincylinderdatatype& Bin::getCylinders() {return _cylinders;}
+
+void Bin::removeCylinder(Cylinder* c) {
+    auto it = _cylinders.find(c);
+    if(it != _cylinders.end()) _cylinders.erase(it);
+}
 void Bin::updatecindices(){
     cindicesvector.clear();
     cindicesvector.reserve(_cylinders.size());
     for(auto &c:_cylinders)
-        cindicesvector.push_back(c->_dcIndex);
+        cindicesvector.push_back(c->getStableIndex());
 }

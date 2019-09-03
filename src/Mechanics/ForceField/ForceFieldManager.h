@@ -20,6 +20,10 @@
 
 #include "ForceField.h"
 #include "Bead.h"
+#include "Mechanics/ForceField/Types.hpp"
+
+// Forward declarations
+class Cylinder;
 
 /// A class to store and iterate over all [ForceFields](@ref ForceField).
 /*!
@@ -32,9 +36,9 @@ class ForceFieldManager {
 friend class CGMethod;
 
 public:
-     vector<ForceField*> _forceFields; ///< All forcefields in the system
+    vector<ForceField*> _forceFields; ///< All forcefields in the system
 
-     static ForceField* _culpritForceField;
+    static ForceField* _culpritForceField;
 
     /// Vectorize all interactions involved in calculation
     void vectorizeAllForceFields();
@@ -45,16 +49,33 @@ public:
     /// @return Returns infinity if there was a problem with a ForceField
     /// energy calculation, such that beads will not be moved to this
     /// problematic configuration.
-    /// @param print - prints detailed info about energies
-    floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d, bool verbose = false);
-
-    /// Compute the forces of all force fields
+    /// @param stretched - whether intermediate variables are treated as temporary or not
+    template< bool stretched = false >
+    
+    floatingpoint computeEnergy(floatingpoint *coord, bool verbose = false) const;
+    
+    
+    EnergyReport computeEnergyHRMD(floatingpoint *coord) const;
+    
+    
+    /// Compute the forces of all force fields 
     void computeForces(floatingpoint *coord, floatingpoint *f);
     
-    /// Copy forces from f to fprev
-    void copyForces(floatingpoint *f, floatingpoint *fprev);
-
+    // compute the Hessian matrix if the feature is enabled
+    void computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta);
+    
+    void clearHessian(){
+        hessianVector.clear();
+        tauVector.clear();
+    }
+    
+    vector<floatingpoint> HRMDenergies;
+    
     void printculprit(floatingpoint* force);
+    
+    vector<vector<vector<floatingpoint>>> hessianVector;
+    
+    vector<floatingpoint> tauVector;
 
 #ifdef CUDAACCL
         cudaStream_t  streamF = NULL;
@@ -66,6 +87,9 @@ public:
     /// contained by Bead, but updates the loadForce vector which contains precalculated
     /// load values based on the bead's directionality of growth in a filament.
     void computeLoadForces();
+
+    // Compute the load forces on the bead for a specific cylinder.
+    void computeLoadForce(Cylinder* c, ForceField::LoadForceEnd end) const;
 #ifdef CROSSCHECK
     /// Reset the forces of all objects
     void resetForces();

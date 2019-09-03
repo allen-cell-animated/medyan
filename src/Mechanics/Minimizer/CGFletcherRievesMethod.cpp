@@ -16,8 +16,14 @@
 #include "ForceFieldManager.h"
 #include "Composite.h"
 #include "Output.h"
-    void FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                                  floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit) {
+#include "Structure/Bead.h"
+MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
+                                  floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+                                  floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                                  bool steplimit) {
+
+    MinimizationResult result;
+
         //number of steps
         int N;
         if (steplimit) {
@@ -30,27 +36,33 @@
         startMinimization();
         FFM.vectorizeAllForceFields();
 
-        FFM.computeForces(coord, force);
-        FFM.copyForces(forceAux, force);
+        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
+        Bead::getDbData().forcesAux = Bead::getDbData().forces;
+        auto maxForce = maxF();
+
+        result.energiesBefore = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
 
         //compute first gradient
         floatingpoint curGrad = CGMethod::allFDotF();
 
         int numIter = 0;
         while (/* Iteration criterion */  numIter < N &&
-                                          /* Gradient tolerance  */  maxF() > GRADTOL) {
+               /* Gradient tolerance  */  maxForce > GRADTOL) {
             numIter++;
             floatingpoint lambda, beta, newGrad;
 
             //temporary
             bool *dummy = nullptr;
             //find lambda by line search, move beads
-            lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy)
-                               : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy);
+            lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce,
+            		LAMBDAMAX, dummy)
+                               : backtrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
+                                       LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
             moveBeads(lambda);
 
             //compute new forces
-            FFM.computeForces(coord, forceAux);
+            FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());
+            maxForce = maxF();
 
             //compute direction
             newGrad = CGMethod::allFADotFA();
@@ -81,17 +93,21 @@
             if (b != nullptr) b->getParent()->printSelf();
 
             cout << "System energy..." << endl;
-            FFM.computeEnergy(coord, force, 0.0, true);
+            FFM.computeEnergy(Bead::getDbData().coords.data(), true);
 
             cout << endl;
         }
 
+        result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+
         //final force calculation
-        FFM.computeForces(coord, force);
-        FFM.copyForces(forceAux, force);
+        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
+        Bead::getDbData().forcesAux = Bead::getDbData().forces;
         FFM.computeLoadForces();
         endMinimization();
 
         FFM.cleanupAllForceFields();
-    }
+
+    return result;
+}
 

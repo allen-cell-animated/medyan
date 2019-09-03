@@ -29,6 +29,8 @@ class FilamentRateChanger {
 public:
     /// Change the reaction rate based on a bare rate and given force.
     virtual float changeRate(float bareRate, floatingpoint force) = 0;
+
+    virtual float getRateChangeFactor(floatingpoint force) = 0;
 };
 
 /// Used to change Linker reaction rates based on forces in the network
@@ -48,6 +50,8 @@ public:
     
     /// Change the reaction rate based on a bare rate and given force.
     virtual float changeRate(float bareRate, floatingpoint force) = 0;
+
+    virtual float getRateChangeFactor(floatingpoint force) = 0;
 };
 
 /// Used to change Linker reaction rates based on forces in the network
@@ -67,6 +71,8 @@ public:
     
     /// Change the reaction rate based on a bare rate and given force.
     virtual float changeRate(float bareRate, floatingpoint force) = 0;
+
+    virtual float getRateChangeFactor(floatingpoint force) = 0;
 };
 
 /// Used to change MotorGhost reaction rates based on forces in the network

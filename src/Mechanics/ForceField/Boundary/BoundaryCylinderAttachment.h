@@ -21,6 +21,7 @@
 #include "BoundaryInteractions.h"
 
 #include "SysParams.h"
+#include "Util/Math/Vec.hpp"
 
 //FORWARD DECLARATIONS
 class BoundaryElement;
@@ -43,7 +44,7 @@ private:
     
     ///Array describing the constants in calculation
     floatingpoint *kattr;
-    floatingpoint *pins; ///< coordinates of pins for each bead
+    std::vector< mathfunc::Vec< 3, floatingpoint > > pins; ///< coordinates of pins for each bead
     
 public:
     
@@ -54,7 +55,7 @@ public:
     virtual void vectorize();
     virtual void deallocate();
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
     //@{
     /// Tepulsive force calculation
     virtual void computeForces(floatingpoint *coord, floatingpoint *f);

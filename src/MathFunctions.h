@@ -21,11 +21,29 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #endif
+#include "Util/Math/Vec.hpp"
 
 /// @namespace mathfunc is used for the mathematics module for the entire codebase
 /// mathfunc includes functions to calculate distances, products, and midpoints
 
 namespace mathfunc {
+
+/// Vector and array converter. Need to ensure the vector has size of _Size
+// No need for move semantics because normally we use this for copying integers or doubles
+template< size_t dim, typename Float >
+inline auto vector2Vec(const vector<Float>& v) {
+    // Assert v.size() == Size
+    Vec<dim, Float> res;
+    for(size_t idx = 0; idx < dim; ++idx){
+        res[idx] = v[idx];
+    }
+    return res;
+}
+template< typename VecType, size_t = VecType::vec_size >
+inline auto vec2Vector(const VecType& a) {
+    return vector<typename VecType::float_type>(a.begin(), a.end());
+}
+
     struct temp{
         int a;
         int b;
@@ -146,7 +164,20 @@ namespace mathfunc {
     /// ARRAY VERSION
     #ifdef CUDAACCL
     __host__ __device__
-    #endif
+	#endif
+
+    inline uint32_t nextPowerOf2( uint32_t n)
+    {
+        n--;
+        n |= n >> 1;
+        n |= n >> 2;
+        n |= n >> 4;
+        n |= n >> 8;
+        n |= n >> 16;
+        n++;
+        return n;
+    }
+
     inline void normalizeVector(floatingpoint *v) {
 
         floatingpoint x2 = v[0] * v[0];
@@ -199,8 +230,7 @@ namespace mathfunc {
     #ifdef CUDAACCL
     __host__ __device__
 	#endif
-
-    inline floatingpoint getdistancefromplane(floatingpoint *coord, floatingpoint * plane,int id){
+    inline floatingpoint getdistancefromplane(const floatingpoint *coord, const floatingpoint * plane,int id){
         return (plane[0] * coord[id] + plane[1] * coord[id + 1] + plane[2] * coord[id + 2] + plane[3]) /
                sqrt(pow(plane[0], 2) + pow(plane[1], 2) + pow(plane[2], 2));
     }
@@ -208,7 +238,7 @@ namespace mathfunc {
 #ifdef CUDAACCL
     __host__ __device__
 #endif
-    inline floatingpoint getdistancefromplane(floatingpoint *coord, floatingpoint * plane){
+    inline floatingpoint getdistancefromplane(const floatingpoint *coord, const floatingpoint * plane){
         int id = 0;
         return (plane[0] * coord[id] + plane[1] * coord[id + 1] + plane[2] * coord[id + 2] + plane[3]) /
                sqrt(pow(plane[0], 2) + pow(plane[1], 2) + pow(plane[2], 2));
@@ -876,15 +906,9 @@ namespace mathfunc {
     #ifdef CUDAACCL
     __host__ __device__
     #endif
-    inline void crossProduct(doubleprecision *cp,
-                             floatingpoint const *v1,
-                             floatingpoint const *v2) {
-        cp[0] = v1[1] * v2[2] - v1[2] * v2[1];
-        cp[1] = v1[2] * v2[0] - v1[0] * v2[2];
-        cp[2] = v1[0] * v2[1] - v1[1] * v2[0];
-    };
 
-	inline void crossProduct(floatingpoint *cp,
+	template <class dataType>
+	inline void crossProduct(dataType *cp,
 	                         floatingpoint const *v1,
 	                         floatingpoint const *v2) {
 		cp[0] = v1[1] * v2[2] - v1[2] * v2[1];
@@ -1031,7 +1055,7 @@ namespace mathfunc {
         v2[1] = p4[1] - p3[1];
         v2[2] = p4[2] - p3[2];
 
-        crossProduct(cp, v1, v2);
+        crossProduct<floatingpoint>(cp, v1, v2);
 
         auto retVal = areEqual(magnitude(cp), 0.0);
         delete [] v1;
@@ -1061,7 +1085,7 @@ namespace mathfunc {
         v2[1] = p4[id + 1] - p3[id + 1];
         v2[2] = p4[id + 2] - p3[id + 2];
 
-        crossProduct(cp, v1, v2);
+        crossProduct<floatingpoint>(cp, v1, v2);
 //        printf("cp %d %f %f %f\n", id, cp[0], cp[1], cp[2]);
         auto retVal = areEqual(magnitude(cp), 0.0);
 //        printf("aE %d %d \n",id, retVal);
@@ -1094,7 +1118,7 @@ namespace mathfunc {
         *(v3 + 1) = *(p4 + 1) - *(p1 + 1);
         *(v3 + 2) = *(p4 + 2) - *(p1 + 2);
 
-        crossProduct(cp, v1, v2);
+        crossProduct<floatingpoint>(cp, v1, v2);
         //Normalize before checking the angle.
 	    normalizeVector(cp);
 	    normalizeVector(v3);
@@ -1132,7 +1156,7 @@ namespace mathfunc {
         v3[1] = p4[id + 1] - p1[id + 1];
         v3[2] = p4[id + 2] - p1[id + 2];
 
-        crossProduct(cp, v1, v2);
+        crossProduct<floatingpoint>(cp, v1, v2);
 	    //Normalize before checking the angle.
 	    normalizeVector(cp);
 	    normalizeVector(v3);
@@ -1213,7 +1237,7 @@ namespace mathfunc {
         v2[1] = p3[1] - p1[1];
         v2[2] = p3[2] - p1[2];
 
-        crossProduct(norm, v1, v2);
+        crossProduct<floatingpoint>(norm, v1, v2);
         normalizeVector(norm);
 
         //move bead 1
@@ -1272,7 +1296,7 @@ namespace mathfunc {
         v2[1] = p3[id + 1] - p1[id + 1];
         v2[2] = p3[id + 2] - p1[id + 2];
 
-        crossProduct(norm, v1, v2);
+        crossProduct<floatingpoint>(norm, v1, v2);
         normalizeVector(norm);
 
         //move bead 1
@@ -1340,15 +1364,17 @@ namespace mathfunc {
     inline size_t blockToSmemFB2(int blockSize){return 18 * blockSize * sizeof(floatingpoint);}
     inline size_t blockToSmemFB3(int blockSize){return 3 * blockSize * sizeof(floatingpoint);}
 
-    inline bool checkNaN_INF(floatingpoint *x, int startpoint, int endpoint){
-    	for(int i = startpoint; i <= endpoint; i++){
-    		if(isnan(x[i])||isinf(x[i]))
-    			return true;
-    	}
-    	return false;
-    }
 
-    inline bool checkNaN_INF(doubleprecision *x, int startpoint, int endpoint){
+//    inline bool checkNaN_INF(floatingpoint *x, int startpoint, int endpoint){
+//    	for(int i = startpoint; i <= endpoint; i++){
+//    		if(isnan(x[i])||isinf(x[i]))
+//    			return true;
+//    	}
+//    	return false;
+//    }
+
+    template <class dataType>
+    inline bool checkNaN_INF(dataType *x, int startpoint, int endpoint){
         for(int i = startpoint; i <= endpoint; i++){
             if(isnan(x[i])||isinf(x[i]))
                 return true;
@@ -1356,7 +1382,8 @@ namespace mathfunc {
         return false;
     }
 
-    inline void printvariablebinary(floatingpoint *x, int startpoint, int endpoint){
+    template <class dataType>
+    inline void printvariablebinary(dataType *x, int startpoint, int endpoint){
     	string str;
     	for(int i = startpoint; i <= endpoint; i++){
     		str.clear();

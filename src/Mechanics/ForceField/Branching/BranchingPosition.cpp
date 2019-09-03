@@ -23,6 +23,7 @@
 #include "nvToolsExt.h"
 #include "cross_check.h"
 #endif
+#include "Mechanics/CUDAcommon.h"
 
 template <class BPositionInteractionType>
 void BranchingPosition<BPositionInteractionType>::vectorize() {
@@ -35,9 +36,9 @@ void BranchingPosition<BPositionInteractionType>::vectorize() {
 
     for (auto b: BranchingPoint::getBranchingPoints()) {
 
-        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->_dbIndex;
-        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->_dbIndex;
-        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->_dbIndex;
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getStableIndex();
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getStableIndex();
 
         kpos[i] = b->getMBranchingPoint()->getPositionConstant();
         pos[i] = b->getPosition();
@@ -85,7 +86,7 @@ void BranchingPosition<BPositionInteractionType>::deallocate() {
 }
 
 template <class BPositionInteractionType>
-floatingpoint BranchingPosition<BPositionInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint BranchingPosition<BPositionInteractionType>::computeEnergy(floatingpoint *coord) {
 
     floatingpoint U_ii=(floatingpoint) 0.0;
 
@@ -107,11 +108,8 @@ floatingpoint BranchingPosition<BPositionInteractionType>::computeEnergy(floatin
 #endif
 #ifdef SERIAL
 
+    U_ii = _FFType.energy(coord, beadSet, kpos, pos);
 
-    if (d == (floatingpoint)0.0)
-        U_ii = _FFType.energy(coord, f, beadSet, kpos, pos);
-    else
-        U_ii = _FFType.energy(coord, f, beadSet, kpos, pos, d);
 #endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
 	floatingpoint U_i[1];
@@ -160,7 +158,7 @@ void BranchingPosition<BPositionInteractionType>::computeForces(floatingpoint *c
 
 
 ///Template specializations
-template floatingpoint BranchingPosition<BranchingPositionCosine>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template floatingpoint BranchingPosition<BranchingPositionCosine>::computeEnergy(floatingpoint *coord);
 template void BranchingPosition<BranchingPositionCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void BranchingPosition<BranchingPositionCosine>::vectorize();
 template void BranchingPosition<BranchingPositionCosine>::deallocate();

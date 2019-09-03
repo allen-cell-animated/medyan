@@ -68,8 +68,9 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesPlusEnd(getInt(p)));
 
         //this reaction also marks an empty bound site
-        for(auto j : SysParams::Chemistry().bindingIndices[_filamentType])
-            productSpecies.push_back(m1->speciesBound(j));
+        for(auto j : SysParams::Chemistry().bindingIndices[_filamentType]) {
+	        productSpecies.push_back(m1->speciesBound(j));
+        }
 
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
@@ -388,8 +389,8 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
     //loop through all monomers
     for(int i = 0; i < maxlength - 1; i++) {
 
-        CMonomer* m1 = cc->getCMonomer(i);
-        CMonomer* m2 = cc->getCMonomer(i+1);
+        CMonomer* m1 = cc->getCMonomer(i);//minus end
+        CMonomer* m2 = cc->getCMonomer(i+1);//monomer next to minus end
         vector<Species*> reactantSpecies;
         vector<Species*> productSpecies;
 
@@ -405,7 +406,7 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
 
         //this reaction also needs an empty bound site
         for(auto j : SysParams::Chemistry().bindingIndices[_filamentType])
-            reactantSpecies.push_back(m2->speciesBound(j));
+            reactantSpecies.push_back(m2->speciesBound(j));//1 -> not-bound, 0 -> bound
 
         //FIRST PRODUCT MUST BE BULK OR DIFFUSING
         auto p = _products[0];

@@ -14,6 +14,8 @@
 #ifndef MEDYAN_BranchingDihedral_h
 #define MEDYAN_BranchingDihedral_h
 
+#include <vector>
+
 #include "common.h"
 #ifdef CUDAACCL
 #include "CUDAcommon.h"
@@ -29,8 +31,8 @@ class BranchingDihedral : public BranchingInteractions {
     
 private:
     BDihedralInteractionType _FFType;
-    
-    int *beadSet;
+
+    std::vector< unsigned > beadSet;
     
     ///Array describing the constants in calculation
     floatingpoint *kdih;
@@ -52,7 +54,7 @@ public:
     virtual void vectorize();
     virtual void deallocate();
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
     virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     
     virtual const string getName() {return "Branching Dihedral";}

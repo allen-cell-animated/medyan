@@ -14,6 +14,7 @@
 #ifndef MEDYAN_SubSystem_h
 #define MEDYAN_SubSystem_h
 
+#include <functional>
 #include <vector>
 #include <unordered_set>
 
@@ -38,6 +39,7 @@
 #include "GController.h"
 #include "HybridNeighborList.h"
 #include "HybridNeighborListImpl.h"
+#include "Mechanics/ForceField/Types.hpp"
 
 #include <initializer_list>
 #include "dist_moduleV2/dist_common.h"
@@ -94,18 +96,17 @@ public:
         T *t = new T(forward<Args>(args)...);
         t->addToSubSystem();
 
-
         //if movable or reactable, add
-        if (t->_movable) addMovable((Movable *) t);
+//        if (t->_movable) addMovable((Movable *) t);
 
-        if (t->_reactable) addReactable((Reactable *) t);
+//        if (t->_reactable) addReactable((Reactable *) t);
 
         //if neighbor, add
         if (t->_dneighbor) {
 	        minsN = chrono::high_resolution_clock::now();
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
             _HneighborList->addDynamicNeighbor((DynamicNeighbor *) t);
-            //Remove boundary neighbors
+            //Remove boundary and bubble neighbors
             for (auto nlist : __bneighborLists)
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
 #else
@@ -139,9 +140,9 @@ public:
         t->removeFromSubSystem();
 
         //if movable or reactable, remove
-        if (t->_movable) removeMovable((Movable *) t);
+//        if (t->_movable) removeMovable((Movable *) t);
 
-        if (t->_reactable) removeReactable((Reactable *) t);
+//        if (t->_reactable) removeReactable((Reactable *) t);
 
         //if neighbor, remove
         if (t->_dneighbor) {
@@ -163,29 +164,29 @@ public:
 
     //@{
     /// Setter functions for Movable
-    void addMovable(Movable *mov) { _movables.insert(mov); }
+//    void addMovable(Movable *mov) { _movables.insert(mov); }
 
-    void removeMovable(Movable *mov) {
+    /*void removeMovable(Movable *mov) {
         auto it = _movables.find(mov);
         if (it != _movables.end()) _movables.erase(it);
-    }
+    }*/
 
     //@}
     /// Get all Movable
-    const unordered_set<Movable *> &getMovables() { return _movables; }
+//    const unordered_set<Movable *> &getMovables() { return _movables; }
 
     //@{
     /// Setter function for Reactable
-    void addReactable(Reactable *r) { _reactables.insert(r); }
+    /*void addReactable(Reactable *r) { _reactables.insert(r); }
 
     void removeReactable(Reactable *r) {
         auto it = _reactables.find(r);
         if (it != _reactables.end()) _reactables.erase(it);
-    }
+    }*/
 
     //@}
     /// Get all Reactable
-    const unordered_set<Reactable *> &getReactables() { return _reactables; }
+//    const unordered_set<Reactable *> &getReactables() { return _reactables; }
 
     /// Get the subsystem boundary
     Boundary *getBoundary() { return _boundary; }
@@ -248,6 +249,11 @@ public:
 
     void initializeHNeighborList(){_HneighborList->initializeHybridNeighborList();}
 #endif
+
+    const auto& getCylinderLoadForceFunc() const { return _cylinderLoadForceFunc; }
+    template< typename Func >
+    void setCylinderLoadForceFunc(Func&& f) { _cylinderLoadForceFunc = std::forward<Func>(f); }
+
     static CompartmentGrid* getstaticgrid(){
         return _staticgrid;
     }
@@ -263,9 +269,8 @@ private:
     dist::Coords temptest;
     floatingpoint _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer
-
-    unordered_set<Movable*> _movables; ///< All movables in the subsystem
-    unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
+//    unordered_set<Movable*> _movables; ///< All movables in the subsystem
+//    unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
 
     std::vector<NeighborList*> _neighborLists; ///< All neighborlists in the system
     std::vector<NeighborList*> __bneighborLists; ///< Boundary neighborlists in the system.
@@ -277,12 +282,12 @@ private:
     CompartmentGrid* _compartmentGrid; ///< The compartment grid
 
     //Cylinder vector
-    cylinder *cylindervec;
-    CCylinder** ccylindervec;
-    Cylinder** cylinderpointervec;
     static CompartmentGrid* _staticgrid;
     floatingpoint* cylsqmagnitudevector = nullptr;
     static bool initialize;
+
+    // The observer pointer of force field manager used in MController
+    std::function< void(Cylinder*, ForceFieldTypes::LoadForceEnd) > _cylinderLoadForceFunc;
 
     chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD;
 #ifdef CUDAACCL_NL

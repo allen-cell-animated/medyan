@@ -34,7 +34,7 @@ class CylinderExclVolume : public CylinderVolumeInteractions {
 
 private:
     CVolumeInteractionType _FFType;
-    CylinderCylinderNL* _neighborList;  ///< Neighbor list of cylinders
+    CylinderCylinderNL* _neighborList = nullptr;  ///< Neighbor list of cylinders
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     HybridCylinderCylinderNL* _HneighborList;
     short _HnlID;
@@ -71,8 +71,8 @@ public:
 
     virtual void vectorize();
     virtual void deallocate();
-
-    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    
+    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
     //@{
     /// This repulsive force calculation also updates load forces
     /// on beads within the interaction range.

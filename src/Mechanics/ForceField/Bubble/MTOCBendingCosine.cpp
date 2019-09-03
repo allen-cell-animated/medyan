@@ -21,7 +21,7 @@
 
 using namespace mathfunc;
 
-floatingpoint MTOCBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint MTOCBendingCosine::energy(floatingpoint *coord, int *beadSet,
                                       floatingpoint *kbend, floatingpoint radius){
     
     floatingpoint *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2, dPhi;

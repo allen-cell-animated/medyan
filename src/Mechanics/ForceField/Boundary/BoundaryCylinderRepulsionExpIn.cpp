@@ -210,7 +210,7 @@ floatingpoint BoundaryCylinderRepulsionExpIn::loadForces(floatingpoint r, floati
     
 }
 
-floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, int *beadSet,
                                               floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
 
     int nb, nc;
@@ -327,7 +327,7 @@ void BoundaryCylinderRepulsionExpIn::forces(floatingpoint *coord, floatingpoint 
             force1[1] += f0 *norm[1];
             force1[2] += f0 *norm[2];
 
-            if(checkNaN_INF(force1, 0, 2)){
+            if(checkNaN_INF<floatingpoint>(force1, 0, 2)){
                 cout<<"Boundary Cylinder ExpIn Force becomes infinite. Printing data " <<endl;
 
                 cout<<"Printing coords"<<endl;

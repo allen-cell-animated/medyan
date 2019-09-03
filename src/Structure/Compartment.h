@@ -31,6 +31,7 @@
 #include "dist_moduleV2/dist_driver.h"
 #include "dist_moduleV2/dist_coords.h"
 #include "MathFunctions.h"
+#include "Structure/CellList.hpp"
 
 //#include "BinGrid.h"
 //#include "Bin.h"
@@ -83,8 +84,6 @@ protected:
 
     unordered_set<Bead*> _beads; ///< Set of beads that are in this compartment
 
-    unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
-
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment (neighbors that
     unordered_map<Compartment*, size_t> _neighborIndex; ///< Spacial index of the neighbors of the same order as _neighbors
     ///< In 3D, the indices are in the order (x-, x+, y-, y+, z-, z+)
@@ -113,8 +112,13 @@ protected:
 
 public:
     short _ID;
-    vector<uint16_t> cindex_bs;
-    vector<uint32_t> cID_bs;
+/*    vector<uint16_t> cindex_bs;
+    vector<uint32_t> cID_bs;*/
+#ifdef MOTORBIASCHECK
+    size_t nummotorwalks=0;
+#endif
+    cell_list::CellListHeadUser< Cylinder, Compartment > cylinderCell; // Cell of cylinders
+
     /// Default constructor, only takes in number of dimensions
     Compartment() : _species(), _internal_reactions(),
     _diffusion_reactions(), _diffusion_rates(), _neighbours()  {
@@ -151,7 +155,7 @@ public:
     }
 
     /// get ID
-    virtual int getID(){return _ID;}
+    virtual int getId(){return _ID;}
     /// Applies SpeciesVisitor v to every Species* object directly owned by this node.
     /// This method needs to be overriden by descendent classes that contain Species.
     virtual bool apply_impl(SpeciesVisitor &v) override;
@@ -526,6 +530,7 @@ public:
     Binding distance determines if the volumes are overlapping or not.*/
     vector<floatingpoint> partitionedcoordx[27], partitionedcoordy[27], partitionedcoordz[27];
     vector<uint32_t>  cindex_bs_section[27];
+    vector<uint32_t> finfo_bs_section[27];
 
     void SIMDcoordinates_section();
     void SIMDcoordinates4linkersearch_section(bool isvectorizedgather);
@@ -535,18 +540,16 @@ public:
     void getpartitionindex(int (&indices)[3], vector<floatingpoint> coord,
                                 floatingpoint (&cmpcornercoords)[6]);
 
-    void addcoord(vector<floatingpoint> coord, uint16_t index, short i){cout<<"DONOT CALL"<<endl;
-    exit(EXIT_FAILURE);};
-	void addcoord(vector<floatingpoint> coord, uint32_t index, short i);
+	void addcoord(vector<floatingpoint> coord, uint32_t index, uint32_t cylfinfo, short i);
     bool checkoccupancy(Cylinder* cyl, short it, short _filamentType, short bstatepos);
     bool checkoccupancy(vector<vector<bool>>& boundstate, short bstatepos, int pos);
     void addcoordtopartitons(int (&pindices)[3], vector<floatingpoint> coord, uint32_t
-    index);
+    index, uint32_t cylfinfo);
     void addcoordtopartitons_smallrmax(int (&pindices)[3], vector<floatingpoint> coord,
-                                  uint16_t index);
+                                  uint16_t index, uint32_t cylfinfo);
     template<bool rMaxvsCmpsize>
     void addcoordtorMaxbasedpartitons(int (&pindices)[3], vector<floatingpoint> coord,
-                                       uint32_t index);
+                                       uint32_t index, uint32_t cylfinfo);
 
     void deallocateSIMDcoordinates();
 #endif
@@ -589,21 +592,12 @@ public:
         auto it = _boundaryElements.find(be);
         return (it != _boundaryElements.end());
     }
+
     ///get the boundary elements in this compartment
    unordered_set<BoundaryElement*>& getBoundaryElements() {return _boundaryElements;}
 
-    ///Add a cylinder to this compartment
-    void addCylinder(Cylinder* c) {_cylinders.insert(c);
-    }
-
-    ///Remove a cylinder from this compartment
-    ///@note does nothing if cylinder is not in compartment already
-    void removeCylinder(Cylinder* c) {
-        auto it = _cylinders.find(c);
-        if(it != _cylinders.end()) _cylinders.erase(it);
-    }
     ///get the cylinders in this compartment
-    unordered_set<Cylinder*>& getCylinders() {return _cylinders;}
+    auto getCylinders() const { return cylinderCell.manager->getElementPtrs(cylinderCell); }
 
     /// Get the diffusion rate of a species
     /// @param - species_name, a string
@@ -847,9 +841,9 @@ void Compartment::getpartitionindex<false>(int (&indices)[3], vector<floatingpoi
                               floatingpoint (&cmpcornercoords)[6]);
 template<>
 void Compartment::addcoordtorMaxbasedpartitons<true>(int (&pindices)[3], vector<floatingpoint>
-        coord, uint32_t index);
+        coord, uint32_t index, uint32_t cylfinfo);
 template<>
 void Compartment::addcoordtorMaxbasedpartitons<false>(int (&pindices)[3], vector<floatingpoint>
-        coord, uint32_t index);
+        coord, uint32_t index, uint32_t cylfinfo);
 #endif
 #endif

@@ -35,54 +35,30 @@ private:
     floatingpoint _GRADTOL;   ///< Gradient tolerance used
     floatingpoint _MAXDIST;   ///< Max distance used to move
     floatingpoint _LAMBDAMAX; ///< Maximum lambda that can be returned
+    floatingpoint _LAMBDARUNNINGAVERAGEPROBABILITY = 0.0; //running average probability.
     
 public:
     /// Constructor sets gradient tolerance parameter
     ConjugateGradient(floatingpoint gradientTolerance,
                       floatingpoint maxDistance,
-                      floatingpoint lambdaMax)
+                      floatingpoint lambdaMax,
+                      floatingpoint lambdarunningaverageprobability)
     
         : _GRADTOL(gradientTolerance),
           _MAXDIST(maxDistance),
-          _LAMBDAMAX(lambdaMax) {}
+          _LAMBDAMAX(lambdaMax),
+          _LAMBDARUNNINGAVERAGEPROBABILITY(lambdarunningaverageprobability) {}
     
     
     /// This function will minimize the system until the following criterion are met:
     /// 1) Largest force in the network < GRADTOL
     /// 3) Number of iterations exceeds 5N, unless in initial minimization
-    void equlibrate(ForceFieldManager &FFM, bool steplimit) {
-        _CGType.minimize(FFM, _GRADTOL, _MAXDIST, _LAMBDAMAX, steplimit);
+    virtual MinimizationResult equlibrate(ForceFieldManager &FFM, bool steplimit) override {
+        return _CGType.minimize(FFM, _GRADTOL, _MAXDIST, _LAMBDAMAX,
+                _LAMBDARUNNINGAVERAGEPROBABILITY, steplimit);
     }
 
 
-
-
-
-    floatingpoint getEnergy(ForceFieldManager &FFM, floatingpoint d){
-      
-        //double* coord = _CGType.getCoords();
-        floatingpoint* coord = CUDAcommon::serlvars.coord;
-        
-        FFM.vectorizeAllForceFields();
-
-        floatingpoint dummyForce[1] = {0};
-
-        floatingpoint f = FFM.computeEnergy(coord,dummyForce,0.0);
-        
-        // delete [] coord;
-        
-        FFM.cleanupAllForceFields();
-        
-        
-        
-        return f;
-        
-        
-        
-    }
-
-    
-    
 };
 
 #endif

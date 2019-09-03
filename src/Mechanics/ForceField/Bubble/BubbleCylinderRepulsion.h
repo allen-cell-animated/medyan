@@ -58,11 +58,12 @@ public:
     virtual void vectorize();
     virtual void deallocate();
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) override;
     virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     //virtual void computeForcesAux(double *coord, double *f);
     
     virtual void computeLoadForces();
+    virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
     
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() {return _neighborList;}

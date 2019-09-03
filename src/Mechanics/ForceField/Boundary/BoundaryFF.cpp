@@ -92,14 +92,14 @@ void BoundaryFF::whoIsCulprit() {
 }
 
 
-floatingpoint BoundaryFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint BoundaryFF::computeEnergy(floatingpoint *coord, bool stretched) {
     
     floatingpoint U= 0.0;
     floatingpoint U_i=0.0;
     
     for (auto &interaction : _boundaryInteractionVector) {
         
-        U_i = interaction->computeEnergy(coord, f, d);
+        U_i = interaction->computeEnergy(coord);
         
         if(U_i <= -1) {
             //set culprit and return
@@ -128,6 +128,10 @@ void BoundaryFF::computeLoadForces() {
     
     for (auto &interaction : _boundaryInteractionVector)
         interaction->computeLoadForces();
+}
+void BoundaryFF::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
+    for(const auto& interaction : _boundaryInteractionVector)
+        interaction->computeLoadForce(c, end);
 }
 
 vector<NeighborList*> BoundaryFF::getNeighborLists() {

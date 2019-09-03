@@ -65,8 +65,7 @@ public:
     virtual void deallocate();
     
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f,
-            floatingpoint d);
+    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
     virtual void computeForces(floatingpoint *coord, floatingpoint *f);
 
 

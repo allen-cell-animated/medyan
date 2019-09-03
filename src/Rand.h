@@ -27,12 +27,24 @@ private:
 
 public:
     static mt19937 eng;
+    #ifdef DEBUGCONSTANTSEED
+    static int intcounter;
+    static int floatcounter;
+    static int chemistrycounter;
+	#endif
+
     ///Get a random floatingpoint between low and high
     static inline floatingpoint randfloatingpoint(floatingpoint low, floatingpoint high) {
+        #ifdef DEBUGCONSTANTSEED
+        floatcounter++;
+		#endif
         return ((float)_int_distr(eng) / numeric_limits<int>::max()) * (high - low) + low;
     }
     ///Get a random integer between low and high
     static inline int randInteger(int low, int high) {
+        #ifdef DEBUGCONSTANTSEED
+        intcounter++;
+        #endif
         int y =_int_distr(eng);
         int x = low + (y % (high - low + 1));
         return x;

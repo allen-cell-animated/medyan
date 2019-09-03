@@ -201,13 +201,12 @@ void BranchingDihedralCosine::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                                       floatingpoint *kdih, floatingpoint *pos){
+floatingpoint BranchingDihedralCosine::energy(
+    floatingpoint *coord, size_t nint,
+    unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos){
 
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
-    int nint = BranchingPoint::getBranchingPoints().size();
-
 
     floatingpoint *coord1, *coord2, *coord3, *coord4, n1n2, U_i;
     floatingpoint *mp = new floatingpoint[3];
@@ -253,7 +252,7 @@ floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoin
 }
 
 
-floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoint *f, unsigned int *beadSet,
                                        floatingpoint *kdih, floatingpoint *pos, floatingpoint d){
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
@@ -310,12 +309,11 @@ floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoin
     return U;
 }
 
-void BranchingDihedralCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                                     floatingpoint *kdih, floatingpoint *pos){
+void BranchingDihedralCosine::forces(
+    floatingpoint *coord, floatingpoint *f, size_t nint,
+    unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos){
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
-    int nint = BranchingPoint::getBranchingPoints().size();
-
 
     floatingpoint *coord1, *coord2, *coord3, *coord4, N1, N2, n1n2, f0, NN1, NN2, X, D, Y, position;
     floatingpoint *f1, *f2, *f3, *f4;
@@ -407,19 +405,19 @@ void BranchingDihedralCosine::forces(floatingpoint *coord, floatingpoint *f, int
         f4[2] +=f0*( YD*( (coord4[0] - coord3[0])*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) - (coord4[1] - coord3[1])*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) ) + Y2*(coord4[2] - coord3[2]) - D2*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
 
         #ifdef CHECKFORCES_INF_NAN
-        if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)||checkNaN_INF(f3,0,2)
-           ||checkNaN_INF(f4,0,2)){
+        if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)||checkNaN_INF<floatingpoint>(f3,0,2)
+           ||checkNaN_INF<floatingpoint>(f4,0,2)){
             cout<<"Branching Dihedral Force becomes infinite. Printing data "<<endl;
 
             auto b = BranchingPoint::getBranchingPoints()[i];
             auto cyl1 = b->getFirstCylinder();
             auto cyl2 = b->getSecondCylinder();
-            cout<<"Cylinder IDs "<<cyl1->getID()<<" "<<cyl2->getID()<<" with cIndex "
-                <<cyl1->_dcIndex<<" "<<cyl2->_dcIndex<<" and bIndex "
-                <<cyl1->getFirstBead()->_dbIndex<<" "
-                <<cyl1->getSecondBead()->_dbIndex<<" "
-                <<cyl2->getFirstBead()->_dbIndex<<" "
-                <<cyl2->getSecondBead()->_dbIndex<<endl;
+            cout<<"Cylinder IDs "<<cyl1->getId()<<" "<<cyl2->getId()<<" with cIndex "
+                <<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex()<<" and bIndex "
+                <<cyl1->getFirstBead()->getStableIndex()<<" "
+                <<cyl1->getSecondBead()->getStableIndex()<<" "
+                <<cyl2->getFirstBead()->getStableIndex()<<" "
+                <<cyl2->getSecondBead()->getStableIndex()<<endl;
 
             cout<<"Printing coords"<<endl;
             cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;

@@ -21,7 +21,6 @@
 #include "common.h"
 #include "Composite.h"
 
-
 //#include "Cylinder.h"
 /*!
  * Bin is a spatial voxel subset of reaction volume. Bin is exclusively used to calculate
@@ -34,9 +33,19 @@
 class Cylinder;
 class Bin : public Composite {
 
+private:
+	#ifdef DEBUGCONSTANTSEED
+	using bincylinderdatatype = unordered_set<Cylinder*, HashbyId<Cylinder*>, customEqualId<Cylinder*>>;
+
+	#else
+	using bincylinderdatatype = unordered_set<Cylinder*>; ///< Set of cylinders
+    // that are in this bin
+	#endif
+
 protected:
 
-    unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this bin
+    bincylinderdatatype _cylinders; ///< Set of cylinders
+    // that are in this bin
 
     vector<Bin*> _neighbours; ///< Neighbors of the bin
     vector<Bin*> _uniquepermutationneighbours;
@@ -93,16 +102,14 @@ public:
     virtual string getFullName() const override {return "Bin";};
 
     ///Add a cylinder to this bin
-    void addCylinder(Cylinder* c) {_cylinders.insert(c);}
+    void addCylinder(Cylinder* c);
 
     ///Remove a cylinder from this bin
     ///@note does nothing if cylinder is not in bin already
-    void removeCylinder(Cylinder* c) {
-        auto it = _cylinders.find(c);
-        if(it != _cylinders.end()) _cylinders.erase(it);
-    }
+    void removeCylinder(Cylinder* c);
+
     ///get the cylinders in this bin
-    unordered_set<Cylinder*>& getCylinders() {return _cylinders;}
+    bincylinderdatatype& getCylinders() {return _cylinders;};
 
     /// Add a neighboring bin to this bins list of neighbors
     void addNeighbour(Bin *comp) {

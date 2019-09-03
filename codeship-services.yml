@@ -1,0 +1,5 @@
+medyan:
+  build:
+    image: "medyan/build"
+    dockerfile: ".codeship/Dockerfile"
+

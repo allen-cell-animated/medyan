@@ -38,10 +38,10 @@ LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
 void LinkerFF::vectorize() {
     //Reset stretching forces to 0.
     
-    /* for(auto l:Linker::getLinkers()){
+    for(auto l:Linker::getLinkers()){
         //Using += to ensure that the stretching forces are additive.
         l->getMLinker()->stretchForce = 0.0;
-    }*/
+    }
 
     for (auto &interaction : _linkerInteractionVector)
         interaction->vectorize();
@@ -65,14 +65,14 @@ void LinkerFF::whoIsCulprit() {
     cout << endl;
 }
 
-floatingpoint LinkerFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint LinkerFF::computeEnergy(floatingpoint *coord, bool stretched) {
 
     floatingpoint U= 0.0;
     floatingpoint U_i=0.0;
 
     for (auto &interaction : _linkerInteractionVector) {
 
-        U_i = interaction->computeEnergy(coord, f, d);
+        U_i = interaction->computeEnergy(coord);
 
         if(U_i <= -1) {
             //set culprit and return
