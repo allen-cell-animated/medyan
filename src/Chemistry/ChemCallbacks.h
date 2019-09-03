@@ -127,7 +127,9 @@ struct UpdateCaMKIIerBundlingCallback {
 
     //callback
     void operator() (RSpecies *r, int delta) {
-        //cout<<"========== CaMKIIBundlingManager CallBack" <<endl; //Carlos verbose prints
+    	if(delta != 1 && delta != -1)
+        	cerr <<"========== CaMKIIBundlingManager CallBack ---- delta = " << delta <<endl; //Carlos verbose prints
+
         //update this cylinder
         Compartment* c = _cylinder->getCompartment();
 

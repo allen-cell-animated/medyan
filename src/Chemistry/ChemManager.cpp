@@ -3060,17 +3060,18 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                                       bool extensionFront,
                                       bool extensionBack,
                                       bool initialization) {
-    
+
     //get some related objects
-	Compartment* C = cc->getCompartment();
+    Compartment* C = cc->getCompartment();
     Cylinder* c = cc->getCylinder();
-    
+
+    // CaMKII cylinder does not have a parent cylinder.
     Filament* f = (Filament*)(c->getParent());
-	short filType ;
+    short filType ;
     if (f == nullptr){
-      filType = CAMKII_CYLINDER_FILAMENT_TYPE; // filType assignment for CaMKII
+        filType = CAMKII_CYLINDER_FILAMENT_TYPE; // filType assignment for CaMKII
     } else {
-	  filType = f->getType();
+        filType = f->getType();
     }
     //add monomers to cylinder
     for(int i = 0; i < cc->getSize(); i++) {

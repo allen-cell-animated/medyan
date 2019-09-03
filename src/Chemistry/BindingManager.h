@@ -389,22 +389,41 @@ public:
         return _possibleBindings.size();
     }
 
+	int checkLengthOfPossibleBindingInternal(unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> &mm1,
+			unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> &mm2);
+
+	// This function checks whether two possible bindings are the same for one update operation.
+    void checkLengthOfPossibleBinding() {
+#if 0
+        auto _poss_1st = _possibleBindings;
+        auto len1=_possibleBindings.size();
+        updateAllPossibleBindings();
+        auto checkLength = checkLengthOfPossibleBindingInternal(_poss_1st, _possibleBindings);
+        auto len2=_possibleBindings.size();
+
+		cerr << "========== CaMKII checkLengthOfPossibleBinding - length: ";
+        cerr << checkLength << "   len1: " << len1 << "   len2: " << len2 << endl;
+
+		assert((len1 == len2)
+			   && "Minor bug: CaMKIIing manager was not correctly updated when it reached this point (len1 == len2).");
+		assert((len1 == checkLength)
+			   && "Minor bug: CaMKIIing manager was not correctly updated when it reached this point (len1 == checkLength).");
+#endif
+    }
+
     /// Choose a random binding site based on current state
     tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>> chooseBindingSites() {
-      auto len1=_possibleBindings.size();
-      assert((_possibleBindings.size() != 0)
-               && "Major bug: CaMKIIing manager should not have zero binding \
+        checkLengthOfPossibleBinding();
+
+		assert((_possibleBindings.size() != 0)
+			   && "Major bug: CaMKIIing manager should not have zero binding \
                   sites when called to choose a binding site.");
-      updateAllPossibleBindings();
-      auto len2=_possibleBindings.size();
-      assert((len1 == len2)
-             && "Minor bug: CaMKIIing manager was not correctly updated when it reached this point.");
-      int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
-      auto it = _possibleBindings.begin();
-      advance(it, randomIndex);
-      auto b = tuple<CCylinder*, short>(it->second);
-      auto a = it->first;
-      return tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>> (a,b);
+        int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
+        auto it = _possibleBindings.begin();
+        advance(it, randomIndex);
+        auto b = tuple<CCylinder*, short>(it->second);
+        auto a = it->first;
+        return tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>> (a,b);
     }
 
     virtual bool isConsistent();
