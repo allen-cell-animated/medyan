@@ -98,6 +98,7 @@ namespace dist {
 		uint size(uint index) const {return counter[index];}
 		uint dim() const {return D;}
 		int capacity() const {return dout[0].size();}
+
 	};
 
 } // end-of-namespace dist

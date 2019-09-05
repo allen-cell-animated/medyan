@@ -110,10 +110,11 @@ namespace dist {
 			/* AVX does not support 256bit packed integer comparisons. So cast the data to
 		 * float and compare*/
 
-		/*vcond2 =  compare( cast_to_float(diff.mVec), cast_to_float (reffinfo.mVec) ) */
+		/*vcond2 =  compare( convert_to_float(diff.mVec), convert_to_float (reffinfo.mVec)
+		 * ) */
 		__m256 vcond2 = _mm256_cmp_ps(
-				 		_mm256_castsi256_ps(diff.mVec),
-				 		_mm256_castsi256_ps(reffinfo.mVec),
+				 		_mm256_cvtepi32_ps(diff.mVec),
+				 		_mm256_cvtepi32_ps(reffinfo.mVec),
 				 		_CMP_GT_OQ);
 			#endif
 
@@ -151,8 +152,8 @@ namespace dist {
 
 				vcond = _mm256_and_si256(vcond2, vcond3);
 #else
-				/* AVX does not support bitwise AND of 256bit integers. So do not case vcond3
-			 * as an integer*/
+				/* AVX does not support bitwise AND of 256bit integers. So do not cast
+				 * vcond3 as an integer*/
 			__m256 vcond3 = _mm256_and_ps(
 					/*Cndn2*/_mm256_cmp_ps(vsum.mVec,vdl.mVec,_CMP_GT_OQ),
 					/*Cndn3*/_mm256_cmp_ps(vdh.mVec,vsum.mVec,_CMP_GT_OQ));

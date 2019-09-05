@@ -293,8 +293,8 @@ void SystemParser::readChemParams() {
 
 	CParams.shiftbybits = log2(np2);
     CParams.maxStableIndex = numeric_limits<uint32_t>::max()/CParams.shiftbybits -1;
-	cout<<"shiftbybits "<<CParams.shiftbybits<<" maxbindingsitespercylinder "<<CParams
-	.maxbindingsitespercylinder<<endl;
+//	cout<<"shiftbybits "<<CParams.shiftbybits<<" maxbindingsitespercylinder "<<CParams
+//	.maxbindingsitespercylinder<<endl;
 	//set system parameters
     SysParams::CParams = CParams;
 }

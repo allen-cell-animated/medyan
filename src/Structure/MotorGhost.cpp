@@ -175,6 +175,7 @@ void MotorGhost::updatePosition() {
     	<<c->getId()<<" with Coord "<<newcoord[0]<<" " <<newcoord[1]<<" "
 	    <<newcoord[2]<<endl;
 		#endif
+
         mins = chrono::high_resolution_clock::now();
         
         _compartment = c;
@@ -291,7 +292,9 @@ void MotorGhost::updateReactionRates() {
 		    // acceptable.
 		    isc1leftofc2 = c1posonFil < c2posonFil;
 	    }
-
+/*#ifdef MOTORBIASCHECK
+	    consider_passivation = false;
+#endif*/
 
         auto mp1 = midPointCoordinate(x1, x2, _position1);
         auto mp2 = midPointCoordinate(x3, x4, _position2);
