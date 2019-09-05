@@ -52,9 +52,13 @@ CLinker::CLinker(short linkerType, Compartment* c,
             ""<<_position2<<" linkerType "<<linkerType<<endl;
 	cout<<"Linker cIndices "<<cc1->getCylinder()->getId()<<" "<<cc2->getCylinder()
 			->getId()<<endl;
-    std::cout<<"Species Bound "<<se1->getN()<<" "<<se2->getN()<<endl;*/
+    std::cout<<"Species Bound "<<se1->getN()<<" "<<se2->getN()<<endl;
+    cout<<"isMinusEnd "<<_cc1->getCylinder()->isMinusEnd()<<" "<<_cc2->getCylinder()
+    ->isMinusEnd()<<endl;*/
+
    /* std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "
                                                                                  ""<<BM2->getN()<<endl;*/
+
 //    std::cout<<"Linker "<<sl1->getN()<<" "<<sl2->getN()<<" BOUND "<<BL1->getN()<<" "<<BL2->getN()<<endl;
     /*std::cout<<"Brancher "<<sb1->getN()<<" "<<sb2->getN()<<" BOUND "<<BB1->getN()<<"
     "<<BB2->getN()<<endl;*/

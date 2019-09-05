@@ -77,8 +77,8 @@ private:
     vector<vector<unordered_map<uint32_t, vector<uint32_t>>>>
             _possibleBindingsstencilvecuint;
 
-    vector<vector<unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*,
-    short>>>>>_reversepossibleBindingsstencilvec;
+//    vector<vector<unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*,
+//    short>>>>>_reversepossibleBindingsstencilvec;
 
     vector<vector<unordered_map<uint32_t, vector<uint32_t>>>>
     _reversepossibleBindingsstencilvecuint;
@@ -105,9 +105,9 @@ private:
 	template<uint D, bool SELF>
 	dist::dOut<D,SELF>& getdOut(short dOutID);
 
-    static dist::dOut<1U,false> bspairslinker;
+//    static dist::dOut<1U,false> bspairslinker;
     static dist::dOut<1U,true> bspairslinkerself;
-    static dist::dOut<1U,false> bspairsmotor;
+//    static dist::dOut<1U,false> bspairsmotor;
     static dist::dOut<1U,true> bspairsmotorself;
     static dist::dOut<1U,false> bspairslinker2;
     static dist::dOut<1U,false> bspairsmotor2;
@@ -123,7 +123,13 @@ private:
 volumes namely self(1), halves(6), quarters(12) and 1/8ths(8). The position in the
  vector corresponds to stencil ID. the data corresponds to the position in the
  partioned coordinate vector of vectors. 27 is a dummy entry and should never be
- called.*/
+ called. For example, stencil 4 means that the compartment gives parition 5
+     (partitioned_volume_ID[4] = 5) and so on.*/
+    /*Note. There is hard coded  referencing of complimentary sub volumes. For example,
+ * the top plane of a compartment has paritioned_volume_ID 1 and the bottom plane
+ * (complimentary) is 2. So, if permuting through C1 and C2, and if C2 is on top of C1,
+ * C2's stencil ID in C1 is 14 (Hard Coded in GController.cpp). C1 will compare
+ * paritioned_volume_ID 1 with C2's paritioned_volume_ID 2*/
     uint partitioned_volume_ID[27] = {27, 27, 27, 27, 5, 7, 19, 9, 21, 27, 27, 27, 27, 0, 1,
                                       11, 3, 13, 27, 27, 27, 27, 27, 15, 23, 17, 25};
 
@@ -192,6 +198,12 @@ volumes namely self(1), halves(6), quarters(12) and 1/8ths(8). The position in t
 
    void countNpairsfound(short idvec[2]);
 
+   #ifdef MOTORBIASCHECK
+   size_t addcounts = 0;
+   size_t removecounts = 0;
+   size_t choosecounts = 0;
+   #endif
+
 public:
 
     //constructors
@@ -236,12 +248,19 @@ public:
         for(idx = 0; idx<totaluniquefIDpairs; idx++){
             int countbounds = _rMaxsqvec[idx].size();
             for (idx2 = 0; idx2 < countbounds; idx2++) {
-                std::cout<<"Hybrid "<<_possibleBindingsstencilvecuint[idx][idx2].size()<<
-                " SIMD "
-                                          ""<<Nbindingpairs[idx][idx2]<<endl;
+            	cout<<Nbindingpairs[idx][idx2]<<" ";
+//                std::cout<<"Hybrid "<<_possibleBindingsstencilvecuint[idx][idx2].size()<<
+//                " SIMD "<<Nbindingpairs[idx][idx2]<<endl;
             }
+            cout<<endl;
         }
     }
+
+#ifdef MOTORBIASCHECK
+    size_t getbindingsize(short idvec[2]){
+                return Nbindingpairs[idvec[0]][idvec[1]];
+    }
+#endif
 
     void resetpossibleBindings(){
 
@@ -254,15 +273,21 @@ public:
                 _reversepossibleBindingsstencilvecuint[idx][idx2].clear();
             }
         }
+
+        #ifdef MOTORBIASCHECK
+        addcounts = 0;
+        removecounts = 0;
+        choosecounts = 0;
+        #endif
     }
 
-    static void setdOut(){
+    /*static void setdOut(){
         Totallinkermotor = 2;
-/*        bspairs2self.init_dout(10000, {900.0f, 1600.0f, 30625.0f, 50625.0f});
-        bspairs2.init_dout(10000, {900.0f, 1600.0f, 30625.0f, 50625.0f});*/
+*//*        bspairs2self.init_dout(10000, {900.0f, 1600.0f, 30625.0f, 50625.0f});
+        bspairs2.init_dout(10000, {900.0f, 1600.0f, 30625.0f, 50625.0f});*//*
 
-/*        bspairs2_D1.init_dout(10000,{900.0f,1600.0f});
-        bspairs2_D2.init_dout(10000,{30625.0f, 50625.0f});*/
+*//*        bspairs2_D1.init_dout(10000,{900.0f,1600.0f});
+        bspairs2_D2.init_dout(10000,{30625.0f, 50625.0f});*//*
 
         // V2
         bspairslinkerself.init_dout(10000,{900.0f,1600.0f});
@@ -272,14 +297,13 @@ public:
 
         bspairslinker2.init_dout(10000,{900.0f,1600.0f});
         bspairsmotor2.init_dout(10000,{30625.0f, 50625.0f});
-    }
+    }*/
 
     void clearPossibleBindingsstencil(short idvec[2]);
+    void initializeSIMDvars();
 
-	void initializeSIMDvars();
-
-	static floatingpoint largestlinkerdistance;
-	static floatingpoint largestmotordistance;
+    static floatingpoint largestlinkerdistance;
+    static floatingpoint largestmotordistance;
 
     static floatingpoint SIMDtime;
     static floatingpoint HYBDtime;
@@ -292,7 +316,13 @@ public:
     static floatingpoint SIMDcountbs;
     static floatingpoint HYBDappendtime;
     static floatingpoint SIMDV3appendtime;
-	static floatingpoint findtimeV3;
+    static floatingpoint findtimeV3;
+
+    #ifdef MOTORBIASCHECK
+    size_t getaddcounts(){ return addcounts;}
+    size_t getremovecounts(){ return removecounts;}
+    size_t getchoosecounts(){return choosecounts;}
+    #endif
 };
 
 template<>

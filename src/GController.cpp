@@ -229,6 +229,15 @@ void GController::generateConnections()
             }
         }
     }
+/*    for(auto C: _compartmentGrid->getCompartments()) {
+        cout<<"printing "<<C->getenclosingNeighbours().size()<<" neighbors of "<<C->getId()
+        <<" "<<C->coordinates()[0]<<" "<<C->coordinates()[1]<<" "<<C->coordinates()[2]<<endl;
+*//*        for (auto nc:C->getenclosingNeighbours()){
+            cout<<nc->getId()<<" "<<nc->coordinates()[0]<<" "<<nc->coordinates()[1]<<" "
+            <<nc->coordinates()[2]<<endl;
+        }*//*
+        cout<<"-------"<<endl;
+    }*/
 
 }
 
