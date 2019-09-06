@@ -92,9 +92,9 @@ private:
 
     //SIMD variables
     unsigned mask = 0;
-    static const dist::tag_simd<dist::simd_avx_par,  float>  t_avx_par;
-    static const dist::tag_simd<dist::simd_avx,  float>   t_avx;
-    static const dist::tag_simd<dist::simd_no,   float>   t_serial;
+    static constexpr dist::tag_simd<dist::simd_avx_par,  float>  t_avx_par {};
+    static constexpr dist::tag_simd<dist::simd_avx,  float>   t_avx {};
+    static constexpr dist::tag_simd<dist::simd_no,   float>   t_serial {};
     bool initialized = false;
 
     //listing 12 variables, to support upto 8 distance pairs calculations.
