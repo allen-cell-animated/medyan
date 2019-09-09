@@ -97,12 +97,11 @@ void CCaMKIIingPoint::createOffReactionBinding(ReactionBase *onRxn, SubSystem *p
 void CCaMKIIingPoint::createOffReactionBundling(ReactionBase *onRxn, SubSystem *ps) {
 	//first, find the correct diffusing or bulk species
 	RSpecies** rs = onRxn->rspecies();
-	Species* sfb = &(rs[SPECIESCaMKII_BINDING_INDEX]->getSpecies());
 
 	//create the reaction species
 	CMonomer* m = _cc1->getCMonomer(_position1);
-	sfb = m->speciesCaMKIIer(_camkiiType);
-	vector<Species*> os = {m->speciesCaMKIIer(_camkiiType),
+	Species* sfb = m->speciesCaMKIIer(_camkiiType);
+	vector<Species*> os = {sfb,
 						   m->speciesBound(SysParams::Chemistry().camkiierBindingBoundIndex[_filamentType]), sfb};
 
 	//create reaction, add to cylinder
@@ -146,8 +145,10 @@ void CCaMKIIingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
           cc->addInternalReaction(_offRxnBundling);
         }
     }
-    cout << "========== CaMKII OffReaction created " <<  "_offRxnBinding: "<< _offRxnBinding << "_offRxnBundling: " << _offRxnBundling <<"_offRxn: " <<_offRxn<<endl;
 
     _pCaMKIIingPoint->updateReactionRates();
 
+    assert(_offRxn->isPassivated() == false);
+
+    cout << "========== CaMKII OffReaction created " <<  "  _offRxnBinding: "<< _offRxnBinding << "  _offRxnBundling: " << _offRxnBundling <<"  _offRxn: " <<_offRxn << "  isPassivated: " << _offRxnBinding->isPassivated() << " " << ((_offRxnBundling != NULL) ? _offRxnBundling->isPassivated() : true) << " " << _offRxn->isPassivated() << endl;
 }
