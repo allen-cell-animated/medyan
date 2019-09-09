@@ -188,11 +188,26 @@ species_copy_t CaMKIIingPoint::countSpecies(const string& name) {
 }
 
 void CaMKIIingPoint::removeRandomBond() {
+	assert(_bonds.size() > 1);
+
 	size_t sz = _bonds.size();
 	size_t index = Rand::randInteger(0, sz-1);
 	tuple<Cylinder*, double> &bondToRemove = _bonds[index];
 	assert(this->getCCaMKIIingPoint()->getOffReaction() == this->getCCaMKIIingPoint()->getOffRxnBundling());
-	get<0>(bondToRemove)->getCCylinder()->removeInternalReaction(this->getCCaMKIIingPoint()->getOffReaction());
+
+	//if bond in position 0, move the off reaction
+	if(index == 0) {
+		auto offRxn = this->getCCaMKIIingPoint()->getOffReaction();
+		{ // just for assertion purposes
+			// checking the existence of the internal reaction
+			auto temp_set = get<0>(bondToRemove)->getCCylinder()->getInternalReactions();
+			assert(temp_set.find(offRxn) != temp_set.end());
+		}
+		get<0>(bondToRemove)->getCCylinder()->removeInternalReaction(offRxn);
+		get<0>(_bonds[1])->getCCylinder()->addInternalReaction(offRxn);
+
+		assert(offRxn->getRnode() != nullptr);
+	}
 	_bonds.erase(_bonds.begin() + index);
 }
 
@@ -207,7 +222,10 @@ void CaMKIIingPoint::updateReactionRates() {
 		newRate=0.0;
 
 	offRxn->setRate(newRate);
+	offRxn->activateReaction();
+//	offRxn->activateReactionUnconditional();
 	offRxn->updatePropensity();
+//	assert(offRxn->isPassivated() == true);
 }
 
 

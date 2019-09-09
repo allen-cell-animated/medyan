@@ -110,22 +110,25 @@ void CCaMKIIingPoint::createOffReactionBundling(ReactionBase *onRxn, SubSystem *
 
 	offRxn->setReactionType(ReactionType::CAMKIIUNBUNDLING);
 
+	_offRxnBinding->passivateReaction();
+
+	auto bonds = _pCaMKIIingPoint->getBonds();
+	//for(int i=0;i<bonds.size();i++) {
+
+	int i=0;
+	auto cc = get<0>(bonds[i])->getCCylinder();
+	cc->removeInternalReaction(_offRxn);
+	cc->addInternalReaction(offRxn);
+	//}
+
+	_offRxnBundling = offRxn;
+	setOffReaction(_offRxnBundling);
+
+
 	//add the unbinding reaction and callback
 	CaMKIIingPointUnbundlingCallback bcallback(_pCaMKIIingPoint, ps);
 	ConnectionBlock rcb(offRxn->connect(bcallback,false));
 
-	_offRxnBinding->passivateReaction();
-
-	auto bonds = _pCaMKIIingPoint->getBonds();
-	for(int i=0;i<bonds.size();i++) {
-		auto cc = get<0>(bonds[i])->getCCylinder();
-		cc->removeInternalReaction(_offRxn);
-		cc->addInternalReaction(offRxn);
-	}
-
-	setOffReaction(offRxn);
-
-	_offRxnBundling = offRxn;
 }
 
 void CCaMKIIingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
@@ -135,15 +138,15 @@ void CCaMKIIingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
     assert(_pCaMKIIingPoint->getCoordinationNumber() != 0);
 
     if(_pCaMKIIingPoint->getCoordinationNumber() == 1) {
-		    createOffReactionBinding(onRxn, ps);
+		createOffReactionBinding(onRxn, ps);
     } else if(_pCaMKIIingPoint->getCoordinationNumber() == 2){
-		    createOffReactionBundling(onRxn, ps);
-    } else {
-        auto bonds = _pCaMKIIingPoint->getBonds();
-        for(int i=0;i<bonds.size();i++) {
-          auto cc = get<0>(bonds[i])->getCCylinder();
-          cc->addInternalReaction(_offRxnBundling);
-        }
+		createOffReactionBundling(onRxn, ps);
+//    } else {
+//        auto bonds = _pCaMKIIingPoint->getBonds();
+//        for(int i=0;i<bonds.size();i++) {
+//			auto cc = get<0>(bonds[i])->getCCylinder();
+//			cc->addInternalReaction(_offRxnBundling);
+//        }
     }
 
     _pCaMKIIingPoint->updateReactionRates();
