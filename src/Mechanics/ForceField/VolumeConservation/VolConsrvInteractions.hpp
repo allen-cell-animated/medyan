@@ -1,5 +1,7 @@
-#ifndef MEDYAN_Mechanics_ForceField_Membrane_Interactions_Hpp
-#define MEDYAN_Mechanics_ForceField_Membrane_Interactions_Hpp
+#ifndef MEDYAN_Mechanics_ForceField_VolumeConservation_VolConsrvInteractions_Hpp
+#define MEDYAN_Mechanics_ForceField_VolumeConservation_VolConsrvInteractions_Hpp
+
+#include <string>
 
 #include "common.h"
 
@@ -7,16 +9,16 @@
 class Membrane;
 
 /// Represents an internal Filament interaction
-class MembraneInteractions {
+class VolumeConservationInteractions {
     
-friend class MembraneFF;
+    friend class VolumeConservationFF;
     
 protected:
     /// The membrane in the case of an error
     Membrane* _membraneCulprit = nullptr;
 
 public:
-    virtual ~MembraneInteractions() = default;
+    virtual ~VolumeConservationInteractions() = default;
 
     /// Compute the energy of this interaction
     virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) = 0; // d is the stretching parameter along the force
@@ -24,7 +26,7 @@ public:
     virtual void computeForces(const floatingpoint* coord, floatingpoint* force) = 0;
     
     /// Get the name of this interaction
-    virtual string getName() const = 0;
+    virtual std::string getName()const = 0;
 };
 
 
