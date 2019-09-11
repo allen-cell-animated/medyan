@@ -32,8 +32,8 @@ using namespace mathfunc;
 #    include "Membrane.hpp"
 #    include "Vertex.hpp"
 
-#    include "Mechanics/ForceField/VolumeConservation/Interactions.hpp"
-#    include "VolumeConservationMembrane.h"
+#    include "Mechanics/ForceField/VolumeConservation/VolConsrvInteractions.hpp"
+#    include "Mechanics/ForceField/VolumeConservation/VolConsrvMembrane.hpp"
 #    include "MembraneHarmonic.hpp"
 
 namespace {
