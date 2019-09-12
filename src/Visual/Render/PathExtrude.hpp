@@ -23,6 +23,8 @@ struct PathExtrude {
     // Parameters
     //   - coords:  the container where the coordinates of beads can be found
     //   - indices: the bead indices on the path in the coords container
+    // Future improvements:
+    //   - Introduce different vertex normals at conjunctions.
     template< typename CoordContainer, typename IndexContainer >
     auto generate(const CoordContainer& coords, const IndexContainer& indices) const {
         using namespace mathfunc;
@@ -36,11 +38,12 @@ struct PathExtrude {
         const size_t numTriangles = (numVertices - 1) * 2 * sides;
 
         // Results
-        std::vector< CoordType > vertices; vertices.reserve(numTubeVertices);
+        std::vector< CoordType > vertices;      vertices.reserve(numTubeVertices);
+        std::vector< CoordType > vertexNormals; vertexNormals.reserve(numTubeVertices);
         std::vector< std::array< size_t, 3 > > triInd(numTriangles);
 
         if(indices.size() < 2)
-            return std::make_tuple(vertices, triInd);
+            return std::make_tuple(vertices, vertexNormals, triInd);
 
         // Locate first circle
         CoordType seg ( normalizedVector(coords[indices[1]] - coords[indices[0]]) );
@@ -52,21 +55,28 @@ struct PathExtrude {
 
         for(size_t j = 0; j < sides; ++j) {
             const Float a = j * 2 * M_PI / sides;
-            const auto point = static_cast< CoordType >(coords[indices[0]]) + n0 * (radius * std::cos((Float)a)) + n1 * (radius * std::sin((Float)a));
+            const Float cosa = std::cos(a);
+            const Float sina = std::sin(a);
+            const auto point = static_cast< CoordType >(coords[indices[0]]) + n0 * (radius * cosa) + n1 * (radius * sina);
+            const auto un    = n0 * cosa + n1 * sina;
             vertices.push_back(point);
+            vertexNormals.push_back(un);
         }
 
         // Propagate circles
         for(size_t i = 1; i < numVertices; ++i) {
             segn = normalizedVector(i == numVertices - 1 ? coords[indices[i]] - coords[indices[i-1]] : coords[indices[i+1]] - coords[indices[i]]);
-            const auto t = normalizedVector((Float)0.5 * (seg + segn));
+            const auto t = normalizedVector(seg + segn);
+            const auto dot_seg_t = dot(seg, t);
+
             for(size_t j = 0; j < sides; ++j) {
                 // Solve for p_new given:
                 //   dot(p_new - coords[indices[i]], t) = 0
                 //   p_new = x * seg + pp
                 const auto pp = vertices[(i-1) * sides + j];
-                const Float x = dot(coords[indices[i]] - pp, t) / dot(seg, t);
+                const Float x = dot(coords[indices[i]] - pp, t) / dot_seg_t;
                 vertices.push_back(x * seg + pp);
+                vertexNormals.push_back(normalizedVector(vertices.back() - static_cast< CoordType >(coords[indices[i]])));
             }
 
             seg = segn;
@@ -86,7 +96,7 @@ struct PathExtrude {
             }
         }
 
-        return std::make_tuple(vertices, triInd);
+        return std::make_tuple(vertices, vertexNormals, triInd);
     }
 
 };

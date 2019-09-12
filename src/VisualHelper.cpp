@@ -241,9 +241,10 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 case Profile::PathMode::Extrude:
                     for(const auto& fi : sdfv.filamentIndices) {
                         std::vector< mathfunc::Vec3f > genVertices;
+                        std::vector< mathfunc::Vec3f > genVertexNormals;
                         std::vector< std::array< size_t, 3 > > genTriInd;
 
-                        std::tie(genVertices, genTriInd) = visual::PathExtrude<float>{
+                        std::tie(genVertices, genVertexNormals, genTriInd) = visual::PathExtrude<float>{
                             ve->profile.pathExtrudeRadius,
                             ve->profile.pathExtrudeSides
                         }.generate(sdfv.copiedBeadData.coords, fi);
@@ -252,20 +253,25 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + ve->state.size.vaStride * 3 * genTriInd.size());
                         const auto numTriangles = genTriInd.size();
                         for(size_t t = 0; t < numTriangles; ++t) {
+                            const auto& triInds = genTriInd[t];
                             const mathfunc::Vec3f coord[] {
-                                genVertices[genTriInd[t][0]],
-                                genVertices[genTriInd[t][1]],
-                                genVertices[genTriInd[t][2]]
+                                genVertices[triInds[0]],
+                                genVertices[triInds[1]],
+                                genVertices[triInds[2]]
                             };
-                            const auto un = normalizedVector(cross(coord[1] - coord[0], coord[2] - coord[0]));
+                            const mathfunc::Vec3f un[] {
+                                genVertexNormals[triInds[0]],
+                                genVertexNormals[triInds[1]],
+                                genVertexNormals[triInds[2]]
+                            };
 
                             for(size_t i = 0; i < 3; ++i) {
                                 ve->state.vertexAttribs.push_back(coord[i][0]);
                                 ve->state.vertexAttribs.push_back(coord[i][1]);
                                 ve->state.vertexAttribs.push_back(coord[i][2]);
-                                ve->state.vertexAttribs.push_back(un[0]);
-                                ve->state.vertexAttribs.push_back(un[1]);
-                                ve->state.vertexAttribs.push_back(un[2]);
+                                ve->state.vertexAttribs.push_back(un[i][0]);
+                                ve->state.vertexAttribs.push_back(un[i][1]);
+                                ve->state.vertexAttribs.push_back(un[i][2]);
                                 ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
                                 ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
                                 ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
@@ -357,9 +363,10 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                                                                               sdfv.brancherCoords;
             for(const auto& c : coords) {
                 std::vector< mathfunc::Vec3f > genVertices;
+                std::vector< mathfunc::Vec3f > genVertexNormals;
                 std::vector< std::array< size_t, 3 > > genTriInd;
 
-                std::tie(genVertices, genTriInd) = visual::PathExtrude<float>{
+                std::tie(genVertices, genVertexNormals, genTriInd) = visual::PathExtrude<float>{
                     ve->profile.pathExtrudeRadius,
                     ve->profile.pathExtrudeSides
                 }.generate(c, std::array<size_t, 2>{0, 1});
@@ -368,20 +375,25 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + ve->state.size.vaStride * 3 * genTriInd.size());
                 const auto numTriangles = genTriInd.size();
                 for(size_t t = 0; t < numTriangles; ++t) {
+                    const auto& triInds = genTriInd[t];
                     const mathfunc::Vec3f coord[] {
-                        genVertices[genTriInd[t][0]],
-                        genVertices[genTriInd[t][1]],
-                        genVertices[genTriInd[t][2]]
+                        genVertices[triInds[0]],
+                        genVertices[triInds[1]],
+                        genVertices[triInds[2]]
                     };
-                    const auto un = normalizedVector(cross(coord[1] - coord[0], coord[2] - coord[0]));
+                    const mathfunc::Vec3f un[] {
+                        genVertexNormals[triInds[0]],
+                        genVertexNormals[triInds[1]],
+                        genVertexNormals[triInds[2]]
+                    };
 
                     for(size_t i = 0; i < 3; ++i) {
                         ve->state.vertexAttribs.push_back(coord[i][0]);
                         ve->state.vertexAttribs.push_back(coord[i][1]);
                         ve->state.vertexAttribs.push_back(coord[i][2]);
-                        ve->state.vertexAttribs.push_back(un[0]);
-                        ve->state.vertexAttribs.push_back(un[1]);
-                        ve->state.vertexAttribs.push_back(un[2]);
+                        ve->state.vertexAttribs.push_back(un[i][0]);
+                        ve->state.vertexAttribs.push_back(un[i][1]);
+                        ve->state.vertexAttribs.push_back(un[i][2]);
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
                         ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
