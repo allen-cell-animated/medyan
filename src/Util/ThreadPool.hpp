@@ -1,7 +1,9 @@
 #ifndef MEDYAN_Util_ThreadPool_hpp
 #define MEDYAN_Util_ThreadPool_hpp
 
+#include <cstddef> // size_t
 #include <thread>
+#include <vector>
 
 // The implementation for thread pooling in MEDYAN.
 //
@@ -25,6 +27,37 @@
 //   [ ] automatic load balancing
 
 class ThreadPool {
+public:
+
+    // Constructor
+    ThreadPool(std::size_t numThreads) {
+        // Create working threads
+        threads_.reserve(numThreads);
+        for(int i = 0; i < numThreads; ++i) {
+            threads_.emplace_back(&ThreadPool::work, this);
+        }
+    }
+    // Destructor
+    ~ThreadPool() {
+        // TODO
+    }
+
+    // Submit a new task
+    template< typename F, typename... Args >
+    auto submit() {
+        // TODO
+    }
+
+private:
+
+    // Working thread
+    void work() {
+        while(true) {
+            // TODO
+        }
+    }
+
+    std::vector<std::thread> threads_;
 };
 
 #endif
