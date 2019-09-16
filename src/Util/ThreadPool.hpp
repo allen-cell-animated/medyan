@@ -4,6 +4,7 @@
 #include <cstddef> // size_t
 #include <functional>
 #include <future>
+#include <memory> // unique_ptr
 #include <queue>
 #include <thread>
 #include <type_traits>
@@ -36,6 +37,34 @@ private:
 
     // An implementation of function wrapper to store movable objects, and to store task information
     class FuncWrapper_ {
+    private:
+        struct Base_ {
+            virtual ~Base_() = default;
+            virtual void operator()() = 0;
+        };
+
+        template< typename F >
+        struct Concrete_ : Base_ {
+            F f;
+            Concrete_(F&& f) : f(std::move(f)) {}
+            void operator()() { f(); }
+        };
+
+    public:
+        // Move constructor
+        FuncWrapper_(FuncWrapper_&&) = default;
+
+        // Constructor from callable
+        template< typename F >
+        FuncWrapper_(F&& f) : f_(new Concrete_<F>(std::forward<F>(f))) {}
+
+        // Move assignment operator
+        FuncWrapper_& operator=(FuncWrapper_&&) = default;
+
+        void operator()() const { (*f_)(); }
+
+    private:
+        std::unique_ptr< Base_ > f_;
     };
 
 public:
@@ -85,8 +114,8 @@ private:
         }
     }
 
-    std::queue< std::function< void() > > queue_; // TODO: use thread-safe queue // TODO: use self defined function wrapper to contain meta
-    std::vector< std::thread >            threads_;
+    std::queue< FuncWrapper_ > queue_; // TODO: use thread-safe queue
+    std::vector< std::thread > threads_;
 };
 
 #endif
