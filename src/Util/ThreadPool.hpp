@@ -42,22 +42,32 @@ public:
             threads_.emplace_back(&ThreadPool::work_, this);
         }
     }
+
     // Destructor
     ~ThreadPool() {
         // TODO
     }
 
     // Submit a new task
+    //
+    // Note:
+    //   - When arguments include references or pointers, it is the caller's
+    //     job to ensure that the ref or ptr is valid when the job is running.
     template< typename F, typename... Args >
     auto submit(F&& f, Args&&... args) {
         using ReturnType = std::result_of_t< F(Args...) >;
-        std::packaged_task< ReturnType() > task(std::forward<F>(f));
+
+        // Create a task containing the callable and the arguments
+        std::packaged_task< ReturnType() > task(
+            std::bind(std::forward<F>(f), std::forward<Args>(args)...) // C++20: change to perfect forwarding lambda
+        );
+        auto res = task.get_future();
+
         queue_.push(
-            /*[=, task{std::move(task)}] {
-                return task()
-            }*/
-        )
-        // TODO
+            [task{std::move(task)}] { task(); }
+        );
+
+        return res;
     }
 
 private:
@@ -69,7 +79,7 @@ private:
         }
     }
 
-    std::queue< std::function< void() > > queue_; // TODO: use thread-safe queue
+    std::queue< std::function< void() > > queue_; // TODO: use thread-safe queue // TODO: use self defined function wrapper to contain meta
     std::vector< std::thread >            threads_;
 };
 
