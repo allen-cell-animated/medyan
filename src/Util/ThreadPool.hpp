@@ -5,6 +5,7 @@
 #include <functional>
 #include <future>
 #include <memory> // unique_ptr
+#include <mutex>
 #include <queue>
 #include <thread>
 #include <type_traits>
@@ -33,6 +34,38 @@
 //   [ ] automatic load balancing
 
 class ThreadPool {
+public:
+    // An implementation of a thread-safe queue
+    template< typename T >
+    class SafeQueue {
+    public:
+        SafeQueue() = default;
+
+        void push(const T& x) {
+            std::lock_guard< std::mutex > guard(me_);
+            q_.push(x);
+        }
+        void push(T&& x) {
+            std::lock_guard< std::mutex > guard(me_);
+            q_.push(std::move(x));
+        }
+
+        // This function tries to pop the queue and get the value
+        // If the queue is empty, then return false
+        // Else return true and the popped value is written in the parameter x
+        bool tryPop(T& x) {
+            std::lock_guard< std::mutex > guard(me_);
+            if(q_.empty()) return false;
+            x = std::move(q_.front());
+            q_.pop();
+            return true;
+        }
+
+    private:
+        std::queue<T> q_;
+        std::mutex me_;
+    };
+
 private:
 
     // An implementation of function wrapper to store movable objects, and to store task information
@@ -114,7 +147,7 @@ private:
         }
     }
 
-    std::queue< FuncWrapper_ > queue_; // TODO: use thread-safe queue
+    SafeQueue< FuncWrapper_ >  queue_;
     std::vector< std::thread > threads_;
 };
 
