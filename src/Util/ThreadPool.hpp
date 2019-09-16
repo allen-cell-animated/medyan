@@ -1,6 +1,7 @@
 #ifndef MEDYAN_Util_ThreadPool_hpp
 #define MEDYAN_Util_ThreadPool_hpp
 
+#include <atomic>
 #include <cstddef> // size_t
 #include <functional>
 #include <future>
@@ -84,7 +85,8 @@ private:
         };
 
     public:
-        // Move constructor
+        // Default and move constructor
+        FuncWrapper_() = default;
         FuncWrapper_(FuncWrapper_&&) = default;
 
         // Constructor from callable
@@ -113,7 +115,8 @@ public:
 
     // Destructor
     ~ThreadPool() {
-        // TODO
+        done_ = true;
+        for(auto& t : threads_) t.join();
     }
 
     // Submit a new task
@@ -143,12 +146,18 @@ private:
     // Working thread
     void work_() {
         while(true) {
+            FuncWrapper_ f;
+            if(queue_.tryPop(f)) f();
+
             // TODO
         }
     }
 
+    std::atomic_bool done_;
+
     SafeQueue< FuncWrapper_ >  queue_;
     std::vector< std::thread > threads_;
+
 };
 
 #endif
