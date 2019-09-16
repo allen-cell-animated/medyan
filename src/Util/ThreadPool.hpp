@@ -32,6 +32,12 @@
 //   [ ] automatic load balancing
 
 class ThreadPool {
+private:
+
+    // An implementation of function wrapper to store movable objects, and to store task information
+    class FuncWrapper_ {
+    };
+
 public:
 
     // Constructor
