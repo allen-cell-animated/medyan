@@ -2,7 +2,12 @@
 #define MEDYAN_Util_ThreadPool_hpp
 
 #include <cstddef> // size_t
+#include <functional>
+#include <future>
+#include <queue>
 #include <thread>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 // The implementation for thread pooling in MEDYAN.
@@ -34,7 +39,7 @@ public:
         // Create working threads
         threads_.reserve(numThreads);
         for(int i = 0; i < numThreads; ++i) {
-            threads_.emplace_back(&ThreadPool::work, this);
+            threads_.emplace_back(&ThreadPool::work_, this);
         }
     }
     // Destructor
@@ -44,20 +49,28 @@ public:
 
     // Submit a new task
     template< typename F, typename... Args >
-    auto submit() {
+    auto submit(F&& f, Args&&... args) {
+        using ReturnType = std::result_of_t< F(Args...) >;
+        std::packaged_task< ReturnType() > task(std::forward<F>(f));
+        queue_.push(
+            /*[=, task{std::move(task)}] {
+                return task()
+            }*/
+        )
         // TODO
     }
 
 private:
 
     // Working thread
-    void work() {
+    void work_() {
         while(true) {
             // TODO
         }
     }
 
-    std::vector<std::thread> threads_;
+    std::queue< std::function< void() > > queue_; // TODO: use thread-safe queue
+    std::vector< std::thread >            threads_;
 };
 
 #endif
