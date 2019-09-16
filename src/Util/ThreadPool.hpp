@@ -135,7 +135,7 @@ public:
         auto res = task.get_future();
 
         queue_.push(
-            [task{std::move(task)}] { task(); }
+            [task{std::move(task)}]() mutable { task(); }
         );
 
         return res;
@@ -145,7 +145,7 @@ private:
 
     // Working thread
     void work_() {
-        while(true) {
+        while(!done_) {
             FuncWrapper_ f;
             if(queue_.tryPop(f)) f();
 
@@ -153,7 +153,7 @@ private:
         }
     }
 
-    std::atomic_bool done_;
+    std::atomic_bool done_ {false};
 
     SafeQueue< FuncWrapper_ >  queue_;
     std::vector< std::thread > threads_;
