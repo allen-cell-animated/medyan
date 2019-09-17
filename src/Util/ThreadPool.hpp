@@ -38,7 +38,8 @@
 class ThreadPool {
 private:
 
-    // An implementation of function wrapper to store movable objects, and to store task information
+    // An implementation of function wrapper to store movable objects
+    // It can be also used to store additional task information
     class FuncWrapper_ {
     private:
         struct Base_ {
@@ -69,6 +70,13 @@ private:
 
     private:
         std::unique_ptr< Base_ > f_;
+    };
+
+    template< typename IntegralType >
+    struct ScopeCounter_ {
+        std::atomic< IntegralType >& c;
+        ScopeCounter_(std::atomic< IntegralType >& c) : c(c) { ++c; }
+        ~ScopeCounter_() { --c; }
     };
 
 public:
@@ -116,6 +124,11 @@ public:
         return res;
     }
 
+    // Accessors
+    auto numThreads()        const noexcept { return threads_.size(); }
+    auto numWorkingThreads() const noexcept { return numWorkingThreads_.load(); }
+    auto numIdleThreads()    const noexcept { return numThreads() - numWorkingThreads(); }
+
 private:
 
     // Working thread
@@ -136,7 +149,10 @@ private:
             }
 
             if(done_) return;
-            if(queuePopped) f();
+            if(queuePopped) {
+                ScopeCounter_<int> c(numWorkingThreads_);
+                f();
+            }
 
         }
     }
@@ -160,7 +176,10 @@ private:
     std::mutex              meQueue_;
 
     std::queue< FuncWrapper_ > queue_; // not thread-safe
-    std::vector< std::thread > threads_;
+    std::vector< std::thread > threads_; // not thread-safe
+
+    // Stats
+    std::atomic_int numWorkingThreads_ {0};
 
 };
 
