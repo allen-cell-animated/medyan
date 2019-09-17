@@ -129,6 +129,11 @@ public:
     auto numWorkingThreads() const noexcept { return numWorkingThreads_.load(); }
     auto numIdleThreads()    const noexcept { return numThreads() - numWorkingThreads(); }
 
+    auto numTasks() {
+        std::lock_guard< std::mutex > guard(meQueue_);
+        return queue_.size();
+    }
+
 private:
 
     // Working thread
