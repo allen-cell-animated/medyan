@@ -4,8 +4,10 @@
 #include <string>
 #include <thread>
 
+#include "Rand.h"
 #include "Util/Io/CmdParse.hpp"
 #include "Util/Io/Log.hpp"
+#include "utility.h" // rdtsc
 
 struct MedyanCmdInitResult {
 
@@ -17,19 +19,31 @@ struct MedyanCmdInitResult {
     // Threadings
     int numThreads = -1;
 
+    // RNG
+    bool rngSeedFixed = false;
+    unsigned long long rngSeed = 0;
+
 };
 
 inline auto medyanInitFromCommandLine(int argc, char** argv) {
     using namespace cmdparse;
 
+    // The initialization result output
     MedyanCmdInitResult res;
 
+    // Parsing the command line
     {
         Command cmdMain("MEDYAN", "");
 
         cmdMain.addOptionWithVar('s', "", "file", "System input file", true, res.inputFile);
         cmdMain.addOptionWithVar('i', "", "path", "Input directory", true, res.inputDirectory);
         cmdMain.addOptionWithVar('o', "", "path", "Output directory", true, res.outputDirectory);
+        cmdMain.addOption(0, "seed-fixed", "seed", "Fixed random generator seed", false,
+            [&](const std::string& arg) {
+                res.rngSeedFixed = true;
+                VariableWrite<unsigned long long>{std::string("seed")}(res.rngSeed, arg);
+            }
+        );
         cmdMain.addOptionWithVar('t', "", "int", "Thread count (0 for auto)", false, res.numThreads);
         cmdMain.addHelp();
 
@@ -55,11 +69,12 @@ inline auto medyanInitFromCommandLine(int argc, char** argv) {
     //-------------------------------------------------------------------------
 
     // Initialize the logger
+    //---------------------------------
     ::medyan::logger::Logger::defaultLoggerInitialization();
     // TODO remove logger initialization here
 
     // Number of threads
-    //
+    //---------------------------------
     // The actual number of threads will also be affected by the result of
     // std::thread::hardware_concurrency()
     //
@@ -93,6 +108,14 @@ inline auto medyanInitFromCommandLine(int argc, char** argv) {
         }
     }
     LOG(INFO) << "The program will utilize " << res.numThreads << " thread(s) for computing.";
+
+    // Seed global random generator
+    //---------------------------------
+    if(!res.rngSeedFixed) {
+        res.rngSeed = rdtsc();
+    }
+    LOG(DEBUG) << "Global RNG seed: " << res.rngSeed;
+    Rand::eng.seed(res.rngSeed);
 
 
     return res;
