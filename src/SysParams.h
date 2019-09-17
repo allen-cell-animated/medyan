@@ -350,7 +350,7 @@ public:
     static bool INITIALIZEDSTATUS; // true refers to sucessful initialization. false
     static bool DURINGCHEMISTRY; //true if MEDYAN is running chemistry, false otherwise.
     // corresponds to an on-going initialization state.
-    static int numthreads;
+    [[deprecated]] static int numthreads;
     //aravind July11,2016
     static vector<float> MUBBareRate;
     static vector<float> LUBBareRate;
