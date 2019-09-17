@@ -2,6 +2,7 @@
 #define MEDYAN_Util_ThreadPool_hpp
 
 #include <atomic>
+#include <condition_variable>
 #include <cstddef> // size_t
 #include <functional>
 #include <future>
@@ -35,38 +36,6 @@
 //   [ ] automatic load balancing
 
 class ThreadPool {
-public:
-    // An implementation of a thread-safe queue
-    template< typename T >
-    class SafeQueue {
-    public:
-        SafeQueue() = default;
-
-        void push(const T& x) {
-            std::lock_guard< std::mutex > guard(me_);
-            q_.push(x);
-        }
-        void push(T&& x) {
-            std::lock_guard< std::mutex > guard(me_);
-            q_.push(std::move(x));
-        }
-
-        // This function tries to pop the queue and get the value
-        // If the queue is empty, then return false
-        // Else return true and the popped value is written in the parameter x
-        bool tryPop(T& x) {
-            std::lock_guard< std::mutex > guard(me_);
-            if(q_.empty()) return false;
-            x = std::move(q_.front());
-            q_.pop();
-            return true;
-        }
-
-    private:
-        std::queue<T> q_;
-        std::mutex me_;
-    };
-
 private:
 
     // An implementation of function wrapper to store movable objects, and to store task information
@@ -116,6 +85,7 @@ public:
     // Destructor
     ~ThreadPool() {
         done_ = true;
+        cvWork_.notify_all();
         for(auto& t : threads_) t.join();
     }
 
@@ -134,9 +104,14 @@ public:
         );
         auto res = task.get_future();
 
-        queue_.push(
-            [task{std::move(task)}]() mutable { task(); }
-        );
+        {
+            std::lock_guard< std::mutex > guard(meQueue_);
+
+            queue_.push(
+                [task{std::move(task)}]() mutable { task(); }
+            );
+        }
+        cvWork_.notify_one();
 
         return res;
     }
@@ -145,17 +120,46 @@ private:
 
     // Working thread
     void work_() {
-        while(!done_) {
+        while(true) {
             FuncWrapper_ f;
-            if(queue_.tryPop(f)) f();
+            bool queuePopped = false;
 
-            // TODO
+            {
+                std::unique_lock< std::mutex > lk(meQueue_);
+                cvWork_.wait(
+                    lk,
+                    [&, this] {
+                        queuePopped = tryPop_(f);
+                        return queuePopped || done_;
+                    }
+                );
+            }
+
+            if(done_) return;
+            if(queuePopped) f();
+
         }
+    }
+
+    // Utility function for popping the queue:
+    // If the queue is empty, then return false
+    // Else return true and the popped value is written in the parameter x
+    //
+    // Note:
+    //   - This function is NOT thread-safe
+    bool tryPop_(FuncWrapper_& x) {
+        if(queue_.empty()) return false;
+        x = std::move(queue_.front());
+        queue_.pop();
+        return true;
     }
 
     std::atomic_bool done_ {false};
 
-    SafeQueue< FuncWrapper_ >  queue_;
+    std::condition_variable cvWork_;
+    std::mutex              meQueue_;
+
+    std::queue< FuncWrapper_ > queue_; // not thread-safe
     std::vector< std::thread > threads_;
 
 };
