@@ -122,10 +122,13 @@ Controller::Controller() :
 
 void Controller::initialize(string inputFile,
                             string inputDirectory,
-                            string outputDirectory, int threads) {
+                            string outputDirectory,
+                            ThreadPool& tp) {
+
+    // Set up the thread pool reference in the subsystem
+    _subSystem.tp = &tp;
 
     SysParams::INITIALIZEDSTATUS = false;
-    SysParams::numthreads = threads;
     //general check of macros
 #if defined(DYNAMICRATES) && (!defined(CHEMISTRY) || !defined(MECHANICS))
     LOG(FATAL) << "If dynamic rates is turned on, chemistry and mechanics must be "

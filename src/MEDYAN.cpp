@@ -72,10 +72,8 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "Analysis/Io/read_snapshot.h"
 #include "Controller.h"
 #include "Core/Globals.hpp"
-#include "Rand.h"
-#include "utility.h"
-#include "Util/Io/CmdParse.hpp"
-#include "Util/Io/Log.hpp"
+#include "MedyanArgs.hpp"
+#include "Util/ThreadPool.hpp"
 #include "Visual/Window.hpp"
 #include "VisualHelper.hpp"
 
@@ -92,56 +90,10 @@ int main(int argc, char **argv) {
     
     cout.precision(8);
 
-	int threadcount = 0;
-    // Parsing command line args
-    {
-        using namespace cmdparse;
+    auto cmdRes = medyanInitFromCommandLine(argc, argv);
 
-        Command cmdMain("MEDYAN", "");
-
-        cmdMain.addOptionWithVar('s', "", "file", "System input file", true, globalMutable().systemInputFile);
-        cmdMain.addOptionWithVar('i', "", "path", "Input directory", true, globalMutable().inputDirectory);
-        cmdMain.addOptionWithVar('o', "", "path", "Output directory", true, globalMutable().outputDirectory);
-        cmdMain.addOption(0, "seed-fixed", "seed", "Fixed random generator seed", false,
-            [](const std::string& arg) {
-                globalMutable().randomGenSeedFixed = true;
-                VariableWrite<unsigned long long>{std::string("seed")}(globalMutable().randomGenSeed, arg);
-            }
-        );
-	    cmdMain.addOptionWithVar('t', "", "int", "Thread Count", false, threadcount);
-        cmdMain.addHelp();
-
-        Command* cmdAnalyze = cmdMain.addCommand("analyze", "Analyze simulation output",
-            [] { globalMutable().mode = GlobalVar::RunMode::Analysis; });
-        cmdAnalyze->addOptionWithVar(0, "bond-frame", "frame", "Frame of membrane topology information", false, globalMutable().analyzeMembraneBondFrame);
-        cmdAnalyze->addHelp();
-
-        try {
-            cmdMain.parse(argc, argv);
-        } catch (const CommandLogicError& e) {
-            std::cerr << e.what() << std::endl;
-            // Internal error, no help message generated.
-            throw;
-        } catch (const ParsingError& e) {
-            std::cerr << e.what() << std::endl;
-            cmdMain.printUsage();
-            throw;
-        } catch (const ValidationError& e) {
-            std::cerr << e.what() << std::endl;
-            cmdMain.printUsage();
-            throw;
-        }
-    }
-
-    // Initialize the logger
-    ::medyan::logger::Logger::defaultLoggerInitialization();
-
-    // Seed global random generator
-    if(!global().randomGenSeedFixed) {
-        globalMutable().randomGenSeed = rdtsc();
-        LOG(DEBUG) << "Global RNG seed: " << global().randomGenSeed;
-    }
-    Rand::eng.seed(global().randomGenSeed);
+    // Initialize the thread pool for use in MEDYAN
+    ThreadPool tp(cmdRes.numThreads);
 
     /**************************************************************************
     Start program 
@@ -151,10 +103,7 @@ int main(int argc, char **argv) {
         //initialize and run system
         {
             Controller c;
-            c.initialize(global().systemInputFile,
-                         global().inputDirectory,
-                         global().outputDirectory,
-                         threadcount);
+            c.initialize(cmdRes.inputFile, cmdRes.inputDirectory, cmdRes.outputDirectory, tp);
 
             std::thread mainThread(&Controller::run, &c);
 #ifdef VISUAL
@@ -169,14 +118,15 @@ int main(int argc, char **argv) {
         break;
     case GlobalVar::RunMode::Analysis:
         {
-            string inputFilePath = global().inputDirectory + "/snapshot.traj";
-            string pdbFilePath = global().outputDirectory + "/snapshot.pdb";
-            string psfFilePath = global().outputDirectory + "/snapshot.psf";
+            string inputFilePath = cmdRes.inputDirectory + "/snapshot.traj";
+            string pdbFilePath = cmdRes.outputDirectory + "/snapshot.pdb";
+            string psfFilePath = cmdRes.outputDirectory + "/snapshot.psf";
             analysis::SnapshotReader sr(inputFilePath, pdbFilePath, psfFilePath);
             sr.readAndConvertToVmd();
         }
         break;
     }
 
+    return 0;
 }
 
