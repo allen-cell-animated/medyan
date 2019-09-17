@@ -68,8 +68,7 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "common.h"
 
 #include "Controller.h"
-#include "Util/Io/CmdParse.hpp"
-#include "Util/Io/Log.hpp"
+#include "MedyanArgs.hpp"
 
 int main(int argc, char **argv) {
 
@@ -82,43 +81,11 @@ int main(int argc, char **argv) {
     
     cout.precision(8);
 
-    string inputFile, inputDirectory, outputDirectory;
-	int threadcount = 0;
-    // Parsing command line args
-    {
-        using namespace cmdparse;
-
-        Command cmdMain("MEDYAN", "");
-
-        cmdMain.addOptionWithVar('s', "", "file", "System input file", true, inputFile);
-        cmdMain.addOptionWithVar('i', "", "path", "Input directory", true, inputDirectory);
-        cmdMain.addOptionWithVar('o', "", "path", "Output directory", true, outputDirectory);
-	    cmdMain.addOptionWithVar('t', "", "int", "Thread Count", false, threadcount);
-        cmdMain.addHelp();
-
-        try {
-            cmdMain.parse(argc, argv);
-        } catch (const CommandLogicError& e) {
-            std::cerr << e.what() << std::endl;
-            // Internal error, no help message generated.
-            throw;
-        } catch (const ParsingError& e) {
-            std::cerr << e.what() << std::endl;
-            cmdMain.printUsage();
-            throw;
-        } catch (const ValidationError& e) {
-            std::cerr << e.what() << std::endl;
-            cmdMain.printUsage();
-            throw;
-        }
-    }
-
-    // Initialize the logger
-    ::medyan::logger::Logger::defaultLoggerInitialization();
+    auto cmdRes = medyanInitFromCommandLine(argc, argv);
 
     //initialize and run system
     Controller c;
-    c.initialize(inputFile, inputDirectory, outputDirectory, threadcount);
+    c.initialize(cmdRes.inputFile, cmdRes.inputDirectory, cmdRes.outputDirectory, cmdRes.numThreads);
     c.run();
 
 }
