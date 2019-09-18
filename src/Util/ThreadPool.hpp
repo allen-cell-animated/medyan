@@ -34,6 +34,10 @@
 //   [ ] priority queues
 //   [ ] thread idle/contention stats and recommendations
 //   [ ] automatic load balancing
+//
+// Notes:
+//   - The thread vector is not thread-safe, so no interface is provided for
+//     managing the number of threads.
 
 class ThreadPool {
 private:
