@@ -5,7 +5,7 @@
 #include "SubSystem.h"
 #include "SysParams.h"
 
-#include "Structure/SurfaceMesh/MMembrane.h"
+#include "Structure/SurfaceMesh/MMembrane.hpp"
 #include "Structure/SurfaceMesh/MVoronoiCell.h"
 
 using namespace mathfunc;

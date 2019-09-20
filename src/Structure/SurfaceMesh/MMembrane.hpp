@@ -1,5 +1,5 @@
-#ifndef MEDYAN_MMembrane_h
-#define MEDYAN_MMembrane_h
+#ifndef MEDYAN_Structure_SurfaceMesh_MMembrane_hpp
+#define MEDYAN_Structure_SurfaceMesh_MMembrane_hpp
 
 #include "SysParams.h"
 

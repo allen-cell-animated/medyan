@@ -1,5 +1,5 @@
-#ifndef MEDYAN_Mechanics_ForceField_Membrane_BendingHelfrich_Hpp
-#define MEDYAN_Mechanics_ForceField_Membrane_BendingHelfrich_Hpp
+#ifndef MEDYAN_Mechanics_ForceField_Membrane_MembraneBendingHelfrich_hpp
+#define MEDYAN_Mechanics_ForceField_Membrane_MembraneBendingHelfrich_hpp
 
 #include <array>
 #include <vector>

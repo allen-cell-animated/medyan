@@ -19,7 +19,7 @@
 #include "Mechanics/ForceField/Membrane/MembraneStretchingImpl.hpp"
 
 #include "Mechanics/ForceField/Membrane/MembraneBending.hpp"
-#include "Mechanics/ForceField/Membrane/BendingHelfrich.hpp"
+#include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Util/Io/Log.hpp"

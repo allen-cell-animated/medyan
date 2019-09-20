@@ -3,10 +3,10 @@
 #include "SysParams.h"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "Structure/SurfaceMesh/MMembrane.h"
+#include "Structure/SurfaceMesh/MMembrane.hpp"
 #include "Structure/SurfaceMesh/Vertex.hpp"
 
-#include "Mechanics/ForceField/VolumeConservation/MembraneHarmonic.hpp"
+#include "Mechanics/ForceField/VolumeConservation/VolConsrvMembraneHarmonic.hpp"
 
 template< typename InteractionType >
 floatingpoint VolumeConservationMembrane< InteractionType >::computeEnergy(const floatingpoint* coord, bool stretched) {
