@@ -162,8 +162,12 @@ dist::dOut<1,false>& HybridBindingSearchManager::getdOut(short dOutID){
 
 void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
                                  CCylinder* cc, short bindingSite) {
-	if (SysParams::INITIALIZEDSTATUS) {
-		/*cout<<"Adding Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
+	if (SysParams::INITIALIZEDSTATUS ) {
+		  #ifdef MOTORBIASCHECK
+		   addcounts++;
+//		   return;
+		   #endif
+/*		cout<<"Adding Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
 			<<bindingSite<<" manager indices "<<idvec[0]<<" "<<idvec[1]<<endl;*/
 		short idx = idvec[0];
 		short idx2 = idvec[1];
@@ -275,7 +279,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 
 						floatingpoint distsq = twoPointDistancesquared(m1, m2);
 
-						if (distsq > _rMaxsq || distsq < _rMinsq) {k++;continue;}
+						if (distsq > _rMaxsq || distsq < _rMinsq) {k = k + bindingsitestep;continue;}
 
 						uint32_t shiftedIndex2 = cn->getStableIndex() << SysParams::Chemistry().shiftbybits;
 
@@ -286,7 +290,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 						_possibleBindingsstencilvecuint[idx][idx2][t1].push_back(t2);
 						_reversepossibleBindingsstencilvecuint[idx][idx2][t2].push_back(t1);
 					}
-					k = k + 1;
+					k = k + bindingsitestep;
 				}
 			}
 
@@ -312,7 +316,10 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], CCylinder*
                                     cc, short bindingSite) {
 
-	/*cout<<"Removing Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
+    #ifdef MOTORBIASCHECK
+     removecounts++;
+    #endif
+/*	cout<<"Removing Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
 	    <<bindingSite<<" manager indices "<<idvec[0]<<" "<<idvec[1]<<endl;*/
 
     short idx = idvec[0];
@@ -508,7 +515,7 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
                                   <<ccyl2->getCylinder()->getId()<<" "<<endl;
 
                 cout<<"uint32_t "<<leg1<<" "<<V<<endl;
-//                exit(EXIT_FAILURE);
+                exit(EXIT_FAILURE);
 
             }
 
@@ -517,6 +524,13 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
 }
 
 void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
+
+	#ifdef MOTORBIASCHECK
+	addcounts = 0;
+    removecounts = 0;
+    choosecounts = 0;
+	#endif
+
 	//Delete all entries in the binding pair maps
     for (int idx = 0; idx < totaluniquefIDpairs; idx++){
         int countbounds = _rMaxsqvec[idx].size();
@@ -763,6 +777,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilSIMDV3() {
 				        bspairsmotor2, idvec);
 			}
 			count++;
+//			checkoccupancySIMD(idvec);
 		}
 	}
 
@@ -797,7 +812,8 @@ bspairsoutSself, short idvec[2]) {
 		if(filTypepairs[0] == filTypepairs[1]) {
 			if (C1size >= switchfactor * dist::get_simd_size(t_avx))
 				dist::find_distances(bspairsoutSself,
-						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]), t_avx);
+						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]),
+						        t_avx);
 			else
 				dist::find_distances(bspairsoutSself,
 						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]), t_serial);
@@ -809,7 +825,8 @@ bspairsoutSself, short idvec[2]) {
 
 				dist::find_distances(bspairsoutSself,
 						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]),
-						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[1]), t_avx);
+						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[1]),
+						        t_avx);
 
 			} else {
 
@@ -857,7 +874,11 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
     for(auto ncmp: _compartment->getuniquepermuteNeighbours()) {
 
 	    short pos = upnstencilvec[i];
-
+	/*Note. There is hard coded  referencing of complimentary sub volumes. For example,
+	 * the top plane of a compartment has paritioned_volume_ID 1 and the bottom plane
+	 * (complimentary) is 2. So, if permuting through C1 and C2, and if C2 is on top of C1,
+	 * C2's stencil ID in C1 is 14 (Hard Coded in GController.cpp). C1 will compare
+	 * paritioned_volume_ID 1 with C2's paritioned_volume_ID 2*/
 	    int C1size = _compartment->getSIMDcoordsV3<LinkerorMotor>
 	            (partitioned_volume_ID[pos], filTypepairs[0]).size();
 	    int C2size = ncmp->getSIMDcoordsV3<LinkerorMotor>
@@ -875,8 +896,7 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
 	    				_compartment->getSIMDcoordsV3<LinkerorMotor>
 	    				        (partitioned_volume_ID[pos], filTypepairs[0]),
 	    		        ncmp->getSIMDcoordsV3<LinkerorMotor>
-	    		                (partitioned_volume_ID[pos] + 1, filTypepairs[1]),
-	    		        t_avx);
+	    		                (partitioned_volume_ID[pos] + 1, filTypepairs[1]), t_avx);
 
 		    } else {
 
@@ -885,7 +905,7 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
 			    		        (partitioned_volume_ID[pos], filTypepairs[0]),
 			    		ncmp->getSIMDcoordsV3<LinkerorMotor>
 			    		        (partitioned_volume_ID[pos] + 1, filTypepairs[1]),
-			    		t_serial);
+			    		        t_serial);
 
 		    }
 
@@ -985,10 +1005,25 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
 //		    }
 ////	    }
 //	    }
-	    _possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+		if(SELF == true){
+			_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
 
-	    _reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(
-			    t1);
+			_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(
+					t1);
+		}
+		else {
+			if(t1>t2) {
+				_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+
+				_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
+			}
+			else{
+				nCmp->getHybridBindingSearchManager()
+				->_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
+				nCmp->getHybridBindingSearchManager()
+				->_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+			}
+		}
     }
 }
 
@@ -1015,7 +1050,9 @@ void HybridBindingSearchManager::addtoHNeighborList(){
 
 vector<tuple<CCylinder*, short>>
 HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
-
+	#ifdef MOTORBIASCHECK
+	 choosecounts++;
+	 #endif
 
     short idx = idvec[0];
     short idx2 = idvec[1];
@@ -1082,9 +1119,9 @@ void HybridBindingSearchManager::clearPossibleBindingsstencil(short idvec[2]){
 HybridCylinderCylinderNL* HybridBindingSearchManager::_HneighborList;
 bool initialized = false;
 //D = 1
-dist::dOut<1U,false> HybridBindingSearchManager::bspairslinker;
+//dist::dOut<1U,false> HybridBindingSearchManager::bspairslinker;
 dist::dOut<1U,true> HybridBindingSearchManager::bspairslinkerself;
-dist::dOut<1U,false> HybridBindingSearchManager::bspairsmotor;
+//dist::dOut<1U,false> HybridBindingSearchManager::bspairsmotor;
 dist::dOut<1U,true> HybridBindingSearchManager::bspairsmotorself;
 dist::dOut<1U,false> HybridBindingSearchManager::bspairsmotor2;
 dist::dOut<1U,false> HybridBindingSearchManager::bspairslinker2;

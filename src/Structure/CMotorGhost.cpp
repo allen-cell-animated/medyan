@@ -29,7 +29,7 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
     SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(
                         SysParams::Chemistry().motorBoundIndex[_filamentType]);
 //    //@{
-    /*SpeciesBound* BL1 = _cc1->getCMonomer(_position1)->speciesBound(
+/*    SpeciesBound* BL1 = _cc1->getCMonomer(_position1)->speciesBound(
             SysParams::Chemistry().linkerBoundIndex[_filamentType]);
     SpeciesBound* BL2 = _cc2->getCMonomer(_position2)->speciesBound(
             SysParams::Chemistry().linkerBoundIndex[_filamentType]);
@@ -37,18 +37,20 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
             SysParams::Chemistry().brancherBoundIndex[_filamentType]);
     SpeciesBound* BB2 = _cc2->getCMonomer(_position2)->speciesBound(
             SysParams::Chemistry().brancherBoundIndex[_filamentType]);*/
+
 //    SpeciesBound* BM1 = _cc1->getCMonomer(_position1)->speciesBound(
 //            SysParams::Chemistry().motorBoundIndex[_filamentType]);
 //    SpeciesBound* BM2 = _cc2->getCMonomer(_position2)->speciesBound(
 //            SysParams::Chemistry().motorBoundIndex[_filamentType]);
+
     /*SpeciesBound* sl1 = _cc1->getCMonomer(_position1)->speciesLinker(0);
     SpeciesBound* sl2 = _cc2->getCMonomer(_position2)->speciesLinker(0);
     SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesBrancher(0);
-    SpeciesBound* sb2 = _cc2->getCMonomer(_position2)->speciesBrancher(0);*/
-//    std::cout<<"Motor "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "<<cc2->getCylinder()->getID()<<" "<<
-//             ""<<_position2<<" MotorType "<<motorType<< endl;
-//    cout<<"Motor cIndices "<<cc1->getCylinder()->_dcIndex<<" "<<cc2->getCylinder()
-//    ->_dcIndex<<endl;
+    SpeciesBound* sb2 = _cc2->getCMonomer(_position2)->speciesBrancher(0);
+    std::cout<<"Motor "<<cc1->getCylinder()->getStableIndex()<<" "<<_position1<<" "
+    <<cc2->getCylinder()->getStableIndex()<<" "<<
+    <<_position2<<" MotorType "<<motorType<< endl;
+    cout<<"Motor ID "<<cc1->getCylinder()->getId()<<" "<<cc2->getCylinder()->getId()<<endl;*/
 //        std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "<<BM2->getN()<<endl;
 //        std::cout<<"Linker "<<sl1->getN()<<" "<<sl2->getN()<<" BOUND "<<BL1->getN()<<" "<<BL2->getN()<<endl;
 //        std::cout<<"Brancher "<<sb1->getN()<<" "<<sb2->getN()<<" BOUND "<<BB1->getN()<<" "<<BB2->getN()<<endl;

@@ -20,6 +20,7 @@
 
 #include "ForceField.h"
 #include "Bead.h"
+#include "Mechanics/ForceField/Types.hpp"
 
 // Forward declarations
 class Cylinder;
@@ -54,7 +55,7 @@ public:
     floatingpoint computeEnergy(floatingpoint *coord, bool verbose = false) const;
     
     
-    tuple<floatingpoint, vector<floatingpoint>, vector<string>> computeEnergyHRMD(floatingpoint *coord) const;
+    EnergyReport computeEnergyHRMD(floatingpoint *coord) const;
     
     
     /// Compute the forces of all force fields 

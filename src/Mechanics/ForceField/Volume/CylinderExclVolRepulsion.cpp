@@ -1241,7 +1241,7 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 		cout<<"Cylinder Exclusion Force becomes infinite. Printing data "<<endl;
 
 		short found = 0;
-		Cylinder *cyl1, *cyl2;
+		Cylinder *cyl1 = nullptr, *cyl2 = nullptr;
 		for(auto cyl:Cylinder::getCylinders()){
 			auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
 			auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
