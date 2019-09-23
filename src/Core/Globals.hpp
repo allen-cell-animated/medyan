@@ -22,6 +22,7 @@ struct GlobalVar {
 
     // Analyze specific
     std::size_t analyzeMembraneBondFrame = 0;
+    int analyzeFrameInterval = 1; // must be >= 1
 
 };
 

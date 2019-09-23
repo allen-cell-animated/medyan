@@ -1,4 +1,4 @@
-#include "read_snapshot.h"
+#include "ReadSnapshot.hpp"
 
 #include <fstream>
 #include <iomanip>
@@ -84,8 +84,11 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
     PdbMaxBead maxBead;
 
     size_t curFrame = 0;
+    const auto frameInterval = global().analyzeFrameInterval;
 
     LOG(STEP) << "Start reading " << _snapshotFilepath;
+    if(frameInterval != 1) LOG(INFO) << "Frame interval is " << frameInterval;
+
     string line;
     while(maxFrames == 0 || curFrame < maxFrames) {
         getline(is, line);
@@ -99,9 +102,15 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         snapshots.emplace_back(0);
         snapshots.back().getFromOutput(is, iss);
 
+        // Skip frames
+        if(curFrame % frameInterval) {
+            snapshots.pop_back();
+            continue;
+        }
+
         maxBead.renew(snapshots.back());
     }
-    LOG(STEP) << "Reading complete. " << curFrame << " frames to be processed.";
+    LOG(STEP) << "Reading complete. " << snapshots.size() << " frames to be processed.";
 
     // close input stream
     is.close();

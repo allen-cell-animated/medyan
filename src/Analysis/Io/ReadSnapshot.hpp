@@ -1,5 +1,5 @@
-#ifndef MEDYAN_ANALYSIS_IO_READ_SNAPSHOT_H
-#define MEDYAN_ANALYSIS_IO_READ_SNAPSHOT_H
+#ifndef MEDYAN_ANALYSIS_IO_ReadSnapshot_hpp
+#define MEDYAN_ANALYSIS_IO_ReadSnapshot_hpp
 
 #include <string>
 
