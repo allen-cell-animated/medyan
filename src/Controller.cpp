@@ -32,6 +32,7 @@
 #include "BranchingPoint.h"
 #include "Bubble.h"
 #include "MTOC.h"
+#include "ChemManager.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
@@ -202,6 +203,7 @@ void Controller::initialize(string inputFile,
 	ForceFieldManager* _ffm = _mController.getForceFieldManager();
 
     string concenname = _outputDirectory + "concentration.traj";
+
     _outputs.push_back(new Concentrations(concenname, &_subSystem, ChemData));
 
     if(SysParams::CParams.dissTracking){
@@ -264,6 +266,7 @@ void Controller::initialize(string inputFile,
 //    //Set up Turnover output if any
 //    string turnover = _outputDirectory + "Turnover.traj";
 //    _outputs.push_back(new FilamentTurnoverTimes(turnover, &_subSystem));
+
 
 #endif
 
@@ -445,9 +448,11 @@ void Controller::setupSpecialStructures(SystemParser& p) {
         MTOC* mtoc = _subSystem.addTrackable<MTOC>();
 
         //create the bubble in top part of grid, centered in x,y
+
         floatingpoint bcoordx = GController::getSize()[0] / 2;
         floatingpoint bcoordy = GController::getSize()[1] / 2;
         floatingpoint bcoordz = GController::getSize()[2] * 5 / 6;
+
 
         vector<floatingpoint> bcoords = {bcoordx, bcoordy, bcoordz};
         Bubble* b = _subSystem.addTrackable<Bubble>(&_subSystem, bcoords, SType.mtocBubbleType);
@@ -473,7 +478,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
             floatingpoint d = twoPointDistance(coord1, coord2);
             vector<floatingpoint> tau = twoPointDirection(coord1, coord2);
 
-            int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
+            int numSegment = static_cast<int>(std::round(d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType]));
 
             // check how many segments can fit between end-to-end of the filament
             Filament *f = _subSystem.addTrackable<Filament>(&_subSystem, SType.mtocFilamentType,
@@ -758,9 +763,11 @@ void Controller::executeSpecialProtocols() {
 
         pinLowerBoundaryFilaments();
     }
+    
 }
 
 void Controller::updatePositions() {
+
 	chrono::high_resolution_clock::time_point minsp, minep;
     //NEED TO UPDATE CYLINDERS FIRST
 	minsp = chrono::high_resolution_clock::now();
@@ -782,12 +789,72 @@ void Controller::updatePositions() {
 //    for(auto m : _subSystem->getMovables()) m->updatePosition();
 	int count = 0;
 	for(auto m : Movable::getMovableList()) m->updatePosition();
+    
+    //update bubble
+    if(SysParams::Chemistry().makeAFM) updateBubblePositions();
 
 
     minep = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> compartment_update2(minep - minsp);
     updatepositionmovable += compartment_update2.count();
 }
+
+void Controller::updateBubblePositions() {
+    
+    //update bubble again based on time
+    for(auto b : Bubble::getBubbles()) b->updatePositionManually();
+    
+    if(SysParams::Chemistry().makeRateDepend && tau() - tp > 1) {
+        tp+=1;
+        
+        for(auto &filament : Filament::getFilaments()) {
+            double deltaL;
+            double numCyl = 0;
+            for (auto cylinder : filament->getCylinderVector()){
+                
+                deltaL += cylinder->getMCylinder()->getLength() -
+                cylinder->getMCylinder()->getEqLength();
+                numCyl += 1;
+            }
+            
+            //print last
+            Cylinder* cylinder = filament->getCylinderVector().back();
+            deltaL += cylinder->getMCylinder()->getLength() -
+            cylinder->getMCylinder()->getEqLength();
+            numCyl += 1;
+            
+            double k = cylinder->getMCylinder()->getStretchingConst();
+            
+            //if the filament tension is higher than threshold, regardless of sign
+            if(k*deltaL/numCyl > SysParams::Chemistry().makeRateDependForce ||
+               -k*deltaL/numCyl > SysParams::Chemistry().makeRateDependForce ){
+                
+                Cylinder* pCyl = filament->getCylinderVector().back();
+                for(auto &r : pCyl->getCCylinder()->getInternalReactions()) {
+                    if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
+                        float newrate = 5 * SysParams::Chemistry().originalPolyPlusRate;
+                        r->setBareRate(newrate);
+                        r->recalcRateVolumeFactor();
+                        r->updatePropensity();
+                    }
+                }
+            }
+            //else, set it back to orginal rate
+            else{
+                Cylinder* pCyl = filament->getCylinderVector().back();
+                for(auto &r : pCyl->getCCylinder()->getInternalReactions()) {
+                    if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
+                        float newrate = SysParams::Chemistry().originalPolyPlusRate;
+                        r->setBareRate(newrate);
+                        r->recalcRateVolumeFactor();
+                        r->updatePropensity();
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
@@ -1191,19 +1258,7 @@ void Controller::run() {
             tauLastNeighborList += tau() - oldTau;
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
-#ifdef CUDAACCL
-            //@{
-    size_t free, total;
-    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
-    cudaFree(0);
-    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
-    std::cout<<"Free VRAM before CUDA operations in bytes "<<free<<". Total VRAM in bytes "
-             <<total<<endl;
-            auto cvars = CUDAcommon::getCUDAvars();
-            cvars.memincuda = free;
-            CUDAcommon::cudavars = cvars;
-    //@}
-#endif
+
             //run mcontroller, update system
             if(tauLastMinimization >= _minimizationTime/factor) {
 
@@ -1260,6 +1315,7 @@ void Controller::run() {
                 mins = chrono::high_resolution_clock::now();
                 updatePositions();
 
+
                 #ifdef OPTIMOUT
                 cout<<"Position updated"<<endl;
 				#endif
@@ -1288,6 +1344,7 @@ void Controller::run() {
 	            rxnratetime += elapsed_rxn3.count();
 
             }
+
             //output snapshot
             if(tauLastSnapshot >= _snapshotTime) {
                 mins = chrono::high_resolution_clock::now();
@@ -1336,7 +1393,6 @@ void Controller::run() {
             chrono::duration<floatingpoint> elapsed_runspl2(mine - mins);
             specialtime += elapsed_runspl2.count();
             oldTau = tau();
-
 #ifdef CUDAACCL
 
             //reset CUDA context

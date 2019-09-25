@@ -95,6 +95,10 @@ public:
     
     ///Update bubble position
     virtual void updatePosition();
+    
+    void updatePositionManually();
+    double iter = 1;
+    int currentStep = 1;
 
 };
 

@@ -178,7 +178,7 @@ void SystemParser::readChemParams() {
 
             vector<string> lineVector = split<string>(line);
             //the vector size can be 5 for PINLOWERBOUNDARYFILAMENTS
-            if(lineVector.size() > 5) {
+            if(lineVector.size() > 7) {
                 cout <<
                      "There was an error parsing input file at Chemistry parameters. Exiting."
                      << endl;
@@ -193,6 +193,28 @@ void SystemParser::readChemParams() {
                 if(lineVector[1] == "MAKEFILAMENTSSTATIC") {
                     CParams.makeFilamentsStatic = true;
                     CParams.makeFilamentsStaticTime = atof(lineVector[2].c_str());
+                }
+                
+            }
+            else if (lineVector.size() == 4) {
+                if(lineVector[1]  == "RATEDEPEND") {
+                    CParams.makeRateDepend = true;
+                    CParams.makeRateDependTime = atof(lineVector[2].c_str());
+                    CParams.makeRateDependForce = atof(lineVector[3].c_str());
+                }
+            }
+            else if (lineVector.size() == 7) {
+                if(lineVector[1]  == "AFM") {
+                    CParams.makeAFM = true;
+                    //displacement of each pull
+                    CParams.AFMStep1 = atof(lineVector[2].c_str());
+                    CParams.AFMStep2 = atof(lineVector[3].c_str());
+                    //change dispalcement from 1 to 2
+                    CParams.IterChange = atof(lineVector[4].c_str());
+                    //total step of each AFM pull
+                    CParams.StepTotal = atof(lineVector[5].c_str());
+                    //time between each pull
+                    CParams.StepTime = atof(lineVector[6].c_str());
                 }
             }
         }

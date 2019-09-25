@@ -187,11 +187,27 @@ struct ChemParams {
     /// This passivates any unbinding reactions, resulting in permanently
     /// bound linkers for the rest of simulation.
     bool makeLinkersStatic = false;
+
     floatingpoint makeLinkersStaticTime = 0.0;
 
     bool dissTracking = false;
     bool eventTracking = false;
     int linkerbindingskip = 2;
+    
+    
+    /// Make (de)polymerization depends on stress
+    bool makeRateDepend = false;
+    double makeRateDependTime = 0.0;
+    double makeRateDependForce = 0.0;
+    
+    /// Make (de)polymerization depends on stress
+    bool makeAFM = false;
+    double AFMStep1 = 0.0;
+    double AFMStep2 = 0.0;
+    double IterChange = 0.0;
+    double StepTotal = 0.0;
+    double StepTime = 0.0;
+    float originalPolyPlusRate;
     
 
     //@}

@@ -48,6 +48,7 @@ BubbleFF::BubbleFF (string type, string mtoc) {
     if (mtoc == "ATTACHMENTHARMONIC") {
         _bubbleInteractionVector.emplace_back(
         new MTOCAttachment<MTOCAttachmentHarmonic>());
+
     }
     else if(mtoc == "") {}
     else {
@@ -74,9 +75,9 @@ void BubbleFF::whoIsCulprit() {
     
     cout << "Culprit interaction = " << _culpritInteraction->getName() << endl;
     
-    cout << "Printing the culprit bubble..." << endl;
-    if(_culpritInteraction->_bubbleCulprit != nullptr)
-        _culpritInteraction->_bubbleCulprit->printSelf();
+//    cout << "Printing the culprit bubble..." << endl;
+//    if(_culpritInteraction->_bubbleCulprit != nullptr)
+//        _culpritInteraction->_bubbleCulprit->printSelf();
     
 //    cout << "Printing the other culprit structure..." << endl;
 //    if(_culpritInteraction->_otherCulprit != nullptr)

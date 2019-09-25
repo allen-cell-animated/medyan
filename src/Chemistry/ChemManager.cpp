@@ -252,6 +252,8 @@ void ChemManager::genFilReactionTemplates() {
             //SECOND SPECIES MUST BE PLUS OR MINUS END
             reactant = reactants[1];
             if(reactant.find("PLUSEND") != string::npos) {
+                
+                SysParams::CParams.originalPolyPlusRate = get<2>(r);
 
                 //look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));

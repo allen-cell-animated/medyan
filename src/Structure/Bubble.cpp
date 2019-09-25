@@ -17,6 +17,7 @@
 #include "Bead.h"
 
 #include "SysParams.h"
+#include "CUDAcommon.h"
 
 Bubble::Bubble(SubSystem* ps, vector<floatingpoint> coordinates, short type)
 
@@ -41,7 +42,40 @@ Bubble::Bubble(SubSystem* ps, vector<floatingpoint> coordinates, short type)
 
 void Bubble::updatePosition() {
     
+
     coordinate = _bead->vcoordinate();
+}
+
+void Bubble::updatePositionManually() {
+    //if reaching the desire position
+    if(iter > SysParams::Chemistry().StepTotal) {
+        iter = 1;
+        currentStep++;
+    }
+    //All position updates will be finished in 1 second
+    //Step displacement is 1 /StepTotal
+    if(tau() > (currentStep * SysParams::Chemistry().StepTime + iter * 1 / SysParams::Chemistry().StepTotal)){
+        floatingpoint *bcoord, *coord, step;
+        
+        if(currentStep > SysParams::Chemistry().IterChange){
+            step = SysParams::Chemistry().AFMStep2;
+        }
+        else{
+            step = SysParams::Chemistry().AFMStep1;
+        }
+        /*
+        coord = Bead::getDbData().coords.data();
+        bcoord = &coord[3 * _bead->_dbIndex];
+        bcoord[2] = coordinate[2] + step;
+        
+        vector<double> newcoord = {coordinate[0], coordinate[1], coordinate[2] + step};
+        coordinate = newcoord;
+        _bead->coordinate() = newcoord;
+         */
+        coordinate[2] += step;
+        iter++;
+    }
+
 }
 
 void Bubble::printSelf() {

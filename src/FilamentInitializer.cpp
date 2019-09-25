@@ -93,7 +93,9 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
             nextPointProjection(firstPoint,(floatingpoint)lenFilaments *
                                 SysParams::Geometry().cylinderSize[filamentType] - 0.01,
                                 direction);
-
+            
+            //check if lower than initial bubble Z (make it 975)
+            if(firstPoint[2] > 975 || secondPoint[2] > 975) continue;
             //check if these points are outside bubbles
             bool inBubble = false;
             for(auto bb : Bubble::getBubbles()) {
@@ -225,8 +227,10 @@ FilamentData MTOCFilamentDist::createFilaments(Boundary* b, int numFilaments,
     int filamentCounter = 0;
     while (filamentCounter < numFilaments) {
         
+
         floatingpoint l = Rand::randfloatingpoint(0,2 * M_PI);
         floatingpoint h = Rand::randfloatingpoint(-M_PI/2, M_PI/2);
+
         
         vector<floatingpoint> point1;
         point1.push_back(_coordMTOC[0] + _radius * cos(l) * cos(h));
