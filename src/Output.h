@@ -246,6 +246,24 @@ public:
 };
 
 
+/// Print mech energy changes by HRMD
+class HRMD : public Output {
+    
+    ChemSim* _cs;
+    
+public:
+    HRMD(string outputFileName, SubSystem* s, ChemSim* cs)
+    
+    : Output(outputFileName, s), _cs(cs) {}
+    
+    ~HRMD() {}
+    
+    virtual void print(int snapshot);
+};
+
+
+
+
 // Print cm graph
 class CMGraph : public Output {
 
@@ -328,6 +346,44 @@ public:
     
     ~LinkerBindingEvents() {}
     
+    virtual void print(int snapshot);
+};
+
+
+class HessianMatrix : public Output {
+    
+    ForceFieldManager* _ffm;
+    
+public:
+    HessianMatrix(string outputFileName, SubSystem* s, ForceFieldManager* ffm)
+    
+    : Output(outputFileName, s), _ffm(ffm) {}
+    
+    ~HessianMatrix() {}
+    
+    virtual void print(int snapshot);
+};
+
+
+
+
+
+class Datadump : public Output {
+
+    ChemSim* _cs;
+
+public:
+    Datadump(string outputFileName, SubSystem* s, ChemistryData chemData)
+
+            : Output(outputFileName, s), _chemData(chemData),
+            _outputFileName(outputFileName){}
+
+    ~Datadump() {}
+
+	ChemistryData _chemData; ///< chemistry data of this system
+	string _outputFileName;
+
+public:
     virtual void print(int snapshot);
 };
 

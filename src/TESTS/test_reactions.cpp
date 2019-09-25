@@ -29,13 +29,13 @@ void rspecies_callback (RSpecies *r, int delta){
 }
 
 void reaction_callback (ReactionBase *r){
-    r->setRate(0.05);
+    r->setBareRate(0.05);
 }
 
 struct ReactionCallback {
     void operator() (ReactionBase *r){
         ++_count;
-        r->setRate(1.05);
+        r->setBareRate(1.05);
     }
     int _count;
 };
@@ -357,7 +357,7 @@ TEST(ReactionTest, ReactionSignaling) {
     RCB.block();
     
     boost::signals2::connection clambda =
-    rxn.connect([](ReactionBase *r){r->setRate(2.05);});
+    rxn.connect([](ReactionBase *r){r->setBareRate(2.05);});
     ConnectionBlock Rlambda (clambda, false); 
     rxn.emitSignal();
     EXPECT_FLOAT_EQ(2.05, rxn.getRate());
@@ -368,7 +368,7 @@ TEST(ReactionTest, ReactionSignaling) {
     EXPECT_FLOAT_EQ(0.05, rxn.getRate());
     rcb.block();
     
-    auto c = rxn.connect([](ReactionBase *r){r->setRate(3.05);});
+    auto c = rxn.connect([](ReactionBase *r){r->setBareRate(3.05);});
     rxn.emitSignal();
     EXPECT_FLOAT_EQ(3.05, rxn.getRate());
     c.disconnect(); // this permanently disconnects the signal vs blocking
@@ -389,7 +389,7 @@ TEST(ReactionTest, ReactionCloning) {
     
     ReactionBase* r1 = C1->addInternal<Reaction,1,1>({ADiff1,BDiff1}, 100.0);
 #ifdef REACTION_SIGNALING
-    auto c = r1->connect([](ReactionBase *r){r->setRate(9.0);});
+    auto c = r1->connect([](ReactionBase *r){r->setBareRate(9.0);});
 #endif
     
     ///Clone, check if valid

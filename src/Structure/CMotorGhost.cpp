@@ -29,7 +29,7 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
     SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(
                         SysParams::Chemistry().motorBoundIndex[_filamentType]);
 //    //@{
-    /*SpeciesBound* BL1 = _cc1->getCMonomer(_position1)->speciesBound(
+/*    SpeciesBound* BL1 = _cc1->getCMonomer(_position1)->speciesBound(
             SysParams::Chemistry().linkerBoundIndex[_filamentType]);
     SpeciesBound* BL2 = _cc2->getCMonomer(_position2)->speciesBound(
             SysParams::Chemistry().linkerBoundIndex[_filamentType]);
@@ -37,29 +37,31 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
             SysParams::Chemistry().brancherBoundIndex[_filamentType]);
     SpeciesBound* BB2 = _cc2->getCMonomer(_position2)->speciesBound(
             SysParams::Chemistry().brancherBoundIndex[_filamentType]);*/
+
 //    SpeciesBound* BM1 = _cc1->getCMonomer(_position1)->speciesBound(
 //            SysParams::Chemistry().motorBoundIndex[_filamentType]);
 //    SpeciesBound* BM2 = _cc2->getCMonomer(_position2)->speciesBound(
 //            SysParams::Chemistry().motorBoundIndex[_filamentType]);
+
     /*SpeciesBound* sl1 = _cc1->getCMonomer(_position1)->speciesLinker(0);
     SpeciesBound* sl2 = _cc2->getCMonomer(_position2)->speciesLinker(0);
     SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesBrancher(0);
-    SpeciesBound* sb2 = _cc2->getCMonomer(_position2)->speciesBrancher(0);*/
-//    std::cout<<"Motor "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "<<cc2->getCylinder()->getID()<<" "<<
-//             ""<<_position2<<" MotorType "<<motorType<< endl;
-//    cout<<"Motor cIndices "<<cc1->getCylinder()->_dcIndex<<" "<<cc2->getCylinder()
-//    ->_dcIndex<<endl;
+    SpeciesBound* sb2 = _cc2->getCMonomer(_position2)->speciesBrancher(0);
+    std::cout<<"Motor "<<cc1->getCylinder()->getStableIndex()<<" "<<_position1<<" "
+    <<cc2->getCylinder()->getStableIndex()<<" "<<
+    <<_position2<<" MotorType "<<motorType<< endl;
+    cout<<"Motor ID "<<cc1->getCylinder()->getId()<<" "<<cc2->getCylinder()->getId()<<endl;*/
 //        std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "<<BM2->getN()<<endl;
 //        std::cout<<"Linker "<<sl1->getN()<<" "<<sl2->getN()<<" BOUND "<<BL1->getN()<<" "<<BL2->getN()<<endl;
 //        std::cout<<"Brancher "<<sb1->getN()<<" "<<sb2->getN()<<" BOUND "<<BB1->getN()<<" "<<BB2->getN()<<endl;
 //    for(auto c:Cylinder::getCylinders()){
-//        std::cout<<c->getID()<<" "<<c->getMCylinder()->getLength()<<" ";
+//        std::cout<<c->getId()<<" "<<c->getMCylinder()->getLength()<<" ";
 //    }
 //    std::cout<<endl;
 //    //@}
 #ifdef DETAILEDOUTPUT
-    std::cout<<"Chosen sites Cyl1 "<<cc1->getCylinder()->getID()<<" bs1 "<<_position1<<" "
-            "Cyl2 "<<cc2->getCylinder()->getID()<<" bs2 "<<_position2<<endl;
+    std::cout<<"Chosen sites Cyl1 "<<cc1->getCylinder()->getId()<<" bs1 "<<_position1<<" "
+            "Cyl2 "<<cc2->getCylinder()->getId()<<" bs2 "<<_position2<<endl;
 #endif
     /*std::cout<<"Motor binding "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "
              <<cc2->getCylinder()->getID()<<" "<<_position2<<" MotorType "<<motorType<< endl;
@@ -84,6 +86,10 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
 }
 
 CMotorGhost::~CMotorGhost() {
+    #ifdef CHECKRXN
+	cout<<"Remove cross mID destructor "<<_pMotorGhost->getId()<<" Cylinders "
+	<<_cc1->getCylinder()->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<_offRxn<<endl;
+    #endif
     
     //remove the off reaction
     _cc1->removeCrossCylinderReaction(_cc2, _offRxn);
@@ -125,9 +131,16 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     //Attach the callback to the off reaction, add it
     MotorUnbindingCallback mcallback(_pMotorGhost, ps);
     ConnectionBlock rcb(offRxn->connect(mcallback,false));
-    
+	#ifdef CHECKRXN
+	cout<<"Add cross mID "<<_pMotorGhost->getId()<<" Cylinders "<<_cc1->getCylinder()
+			->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<_offRxn<<endl;
+	#endif
     _cc1->addCrossCylinderReaction(_cc2, offRxn);
     setOffReaction(offRxn);
+    #ifdef CHECKRXN
+    cout<<"create MG off rxn "<<offRxn<<"with RNode "<<offRxn->getRnode()<<" with mID "
+    <<_pMotorGhost->getId()<<" Id "<<offRxn->getId()<<endl;
+	#endif
 }
 
 void CMotorGhost::moveMotorHead(CCylinder* cc,
@@ -202,9 +215,16 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
     //attach signal
     MotorUnbindingCallback mcallback(_pMotorGhost, ps);
     ConnectionBlock rcb(newOffRxn->connect(mcallback,false));
-    
+    #ifdef CHECKRXN
+	cout<<"Remove cross mID "<<_pMotorGhost->getId()<<" Cylinders "<<_cc1->getCylinder()
+			->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<_offRxn<<" Id " <<_offRxn->getId()<<endl;
+    #endif
     //remove old reaction, add new one
     _cc1->removeCrossCylinderReaction(_cc2, _offRxn);
+	#ifdef CHECKRXN
+	cout<<"Add cross mID "<<_pMotorGhost->getId()<<" Cylinders "<<_cc1->getCylinder()
+			->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<newOffRxn<<endl;
+	#endif
     _cc1->addCrossCylinderReaction(_cc2, newOffRxn);
     
     //set new unbinding reaction
@@ -254,6 +274,10 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
                           ({smNew, smOther, sbd, seNew, seOther}, _offRate);
         
         //remove old off reaction
+        #ifdef CHECKRXN
+	    cout<<"Remove cross mID "<<_pMotorGhost->getId()<<" Cylinders "<<_cc1->getCylinder()
+			    ->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<_offRxn<<" Id " <<_offRxn->getId()<<endl;
+        #endif
         _cc1->removeCrossCylinderReaction(_cc2, _offRxn);
         
         //set new ccylinders
@@ -274,7 +298,11 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
         //create new reaction
         newOffRxn = new Reaction<LMUNBINDINGREACTANTS, LMUNBINDINGPRODUCTS>
                          ({smOther, smNew, sbd, seNew, seOther}, _offRate);
-        
+
+        #ifdef CHECKRXN
+        cout<<"Remove cross mID "<<_pMotorGhost->getId()<<" Cylinders "<<_cc1->getCylinder()
+                ->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<_offRxn<<" Id " <<_offRxn->getId()<<endl;
+		#endif
         //remove old off reaction
         _cc1->removeCrossCylinderReaction(_cc2, _offRxn);
         
@@ -298,7 +326,10 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
     MotorUnbindingCallback mcallback(_pMotorGhost, ps);
     
     ConnectionBlock rcb(newOffRxn->connect(mcallback,false));
-
+	#ifdef CHECKRXN
+	cout<<"Add cross mID "<<_pMotorGhost->getId()<<" Cylinders "<<_cc1->getCylinder()
+			->getId()<<" "<<_cc2->getCylinder()->getId()<<" offRxn "<<newOffRxn<<endl;
+	#endif
     //add new
     _cc1->addCrossCylinderReaction(_cc2, newOffRxn);
     

@@ -57,10 +57,12 @@ public:
         //set species
         setFirstSpecies(rhs._firstSpecies);
         setSecondSpecies(rhs._secondSpecies);
-        
+
         //set reaction
         setOffReaction(rhs._offRxn);
-        
+        #ifdef CHECKRXN
+        cout<<"Clone new _offRxn "<<_offRxn<<" with Id "<<_offRxn->getId()<<endl;
+		#endif
         //set rates
         setOnRate(rhs._onRate);
         setOffRate(rhs._offRate);

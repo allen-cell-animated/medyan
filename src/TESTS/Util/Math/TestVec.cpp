@@ -56,8 +56,8 @@ TEST_CASE("Vec and RefVec tests", "[Vec]") {
         {
             Vec3f v3f { 0.0f, 1.0f, 2.0f };
             std::vector<double> vv3d { 6.0, 7.0, 8.0, -1.0, -2.0, -3.0 };
-            auto v3d_1 = RefVec< 3, double, std::vector<double> >(&vv3d, 0); //  6  7  8
-            auto v3d_2 = makeRefVec< 3 >(vv3d.data() + 3);                   // -1 -2 -3
+            auto v3d_1 = RefVec< 3, std::vector<double> >(vv3d, 0); //  6  7  8
+            auto v3d_2 = makeRefVec< 3 >(vv3d.data() + 3);          // -1 -2 -3
 
             v3f = v3d_1;
             CHECK(v3f[1] == Approx(7.0f));
@@ -69,9 +69,9 @@ TEST_CASE("Vec and RefVec tests", "[Vec]") {
         {
             std::vector<float> vv3f { 0.0f, 1.0f, 2.0f };
             std::vector<double> vv3d { 6.0, 7.0, 8.0, -1.0, -2.0, -3.0 };
-            auto v3f = makeRefVec< 3 >(vv3f.data());                         //  0  1  2
-            auto v3d_1 = RefVec< 3, double, std::vector<double> >(&vv3d, 0); //  6  7  8
-            auto v3d_2 = makeRefVec< 3 >(vv3d.data() + 3);                   // -1 -2 -3
+            auto v3f = makeRefVec< 3 >(vv3f.data());                //  0  1  2
+            auto v3d_1 = RefVec< 3, std::vector<double> >(vv3d, 0); //  6  7  8
+            auto v3d_2 = makeRefVec< 3 >(vv3d.data() + 3);          // -1 -2 -3
 
             v3f = v3d_1;
             CHECK(v3f[1] == Approx(7.0f));
@@ -316,13 +316,29 @@ TEST_CASE("VecArray tests", "[VecArray]") {
         CHECK((*v3f_i     )[0] == Approx(1.0f));
     }
 
-    SECTION("Element popping") {
+    SECTION("Modifiers") {
+        // Check popping
         v3f.pop_back();
         CHECK(v3f.size() == 4);
         CHECK(v3f.size_raw() == 12);
+
+        // Check resize
+        v3f.resize(5);
+        REQUIRE(v3f.size() == 5);
+        REQUIRE(v3f.size_raw() == 15);
+
     }
 
     SECTION("Arithmetics") {
+        // Dot product
         CHECK(dot(v3f, v3f) == Approx(90.0f));
+
+        // Increment and decrement
+        VecArray< 3, float > v3f1 {{ 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f }};
+        VecArray< 3, float > v3f2 {{ 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f }};
+        v3f1 += v3f2;
+        CHECK(v3f1[0][1] == Approx(2.2f));
+        v3f1 -= v3f2;
+        CHECK(v3f1[1][1] == Approx(5.0f));
     }
 }

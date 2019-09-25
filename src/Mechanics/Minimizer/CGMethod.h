@@ -18,6 +18,7 @@
 
 #include "common.h"
 #include "CUDAcommon.h"
+#include "Mechanics/Minimizer/MinimizationTypes.hpp"
 
 //FORWARD DECLARATIONS
 class ForceFieldManager;
@@ -39,12 +40,12 @@ protected:
     chrono::high_resolution_clock::time_point tbegin, tend;
 
     ///< Data vectors for calculation
-    floatingpoint *coord;  ///<bead coordinates (length 3*N)
-    floatingpoint *coordlineSearch; ///coords used during line search
+    [[deprecated]] floatingpoint *coord;  ///<bead coordinates (length 3*N)
+    [[deprecated]] floatingpoint *coordlineSearch; ///coords used during line search
 
-    floatingpoint *force=NULL; ///< bead forces (length 3*N)
-    floatingpoint *forceAux=NULL; ///< auxiliary force calculations (length 3*N)
-    floatingpoint *forceAuxPrev=NULL; ///<auxiliary force calculation previously (length
+    [[deprecated]] floatingpoint *force=NULL; ///< bead forces (length 3*N)
+    [[deprecated]] floatingpoint *forceAux=NULL; ///< auxiliary force calculations (length 3*N)
+    [[deprecated]] floatingpoint *forceAuxPrev=NULL; ///<auxiliary force calculation previously (length
     // 3*N)
 //    cylinder* cylindervec;
 
@@ -62,7 +63,7 @@ protected:
     //@{
     /// Parameter used in backtracking line search
     const floatingpoint LAMBDAREDUCE = 0.5;     ///< Lambda reduction parameter for backtracking
-    floatingpoint LAMBDATOL = 1e-4;       ///< Lambda tolerance parameter
+    floatingpoint LAMBDATOL = 1e-8;       ///< Lambda tolerance parameter
 
     const floatingpoint SAFELAMBDAREDUCE = 0.9;  ///< Lambda reduction parameter for conservative backtracking
 
@@ -164,9 +165,6 @@ protected:
     /// Move beads in search direction by d
     void moveBeads(floatingpoint d);
 
-    /// Create moved beads during line search
-    void moveBeadslineSearch(floatingpoint d);
-
     /// shift the gradient by d
     void shiftGradient(floatingpoint d);
 
@@ -188,13 +186,17 @@ protected:
     /// A simple backtracking search method that computes an optimal
     /// energy change and compares the backtracked energy to it
     floatingpoint backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
-                                                          floatingpoint LAMBDAMAX, bool *gpu_safestate);
+                                         floatingpoint maxForce,
+                                         floatingpoint LAMBDAMAX,
+                                         floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                                         bool *gpu_safestate);
     
     /// The safemode backtracking search, returns the first energy decrease
     ///@note - The most robust linesearch method, but very slow
 
-    floatingpoint safeBacktrackingLineSearch(ForceFieldManager& FFM,
-    		floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool *gpu_safestate);
+    floatingpoint safeBacktrackingLineSearch(
+        ForceFieldManager& FFM, floatingpoint MAXDIST, floatingpoint maxForce,
+        floatingpoint LAMBDAMAX, bool *gpu_safestate);
 
     void setLAMBDATOL(int maxF_order){
 
@@ -220,48 +222,18 @@ protected:
 
     /// Print forces on all beads
     void printForces();
-
-    /// Initialize data arrays
-    inline void allocate(long numBeadsx3, long Ncyl) {
-
-//        coord = new floatingpoint[numBeadsx3];
-        force = new floatingpoint[numBeadsx3];
-        forceAux = new floatingpoint[numBeadsx3];
-        forceAuxPrev = new floatingpoint[numBeadsx3];
-	    coordlineSearch = new floatingpoint[numBeadsx3];
-
-        for(int i =0; i < numBeadsx3; i++){
-        	force[i] = 0.0;
-        	forceAux[i]=0.0;
-        	forceAuxPrev[i]=0.0;
-	        coordlineSearch[i] = 0.0;
-        }
-    }
-
-    ///Deallocation of CG arrays
-    inline void deallocate() {
-//        coord = CUDAcommon::serlvars.coord;
-//        delete [] coord;
-        if(force != NULL) {
-            delete[] force;
-            delete[] forceAux;
-            delete[] forceAuxPrev;
-            delete[] coordlineSearch;
-        }
-    }
-
+    
 public:
-    static long N; ///< Number of beads in the system, set before each minimization
-    static long Ncyl;
-
+    [[deprecated]] static long N; ///< Number of beads in the system, set before each minimization
+    
     virtual ~CGMethod() {};
 
     /// Minimize the system
-    virtual void minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                          floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit) = 0;
+    virtual MinimizationResult minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
+                          floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+                          floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                          bool steplimit) = 0;
 
-    //Checks to make sure none of the coordinates are NaN or Inf
-    inline void checkcoord_forces();
 };
 
 

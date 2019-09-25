@@ -28,12 +28,14 @@ void Compartment::SIMDcoordinates_section(){
 
     //setting size to the number of maximum binding sites per cylinder * number of
     // cylinders in compartment.
-    int N = _cylinders.size() * SysParams::Chemistry().maxbindingsitespercylinder;
+    int N = getCylinders().size() * SysParams::Chemistry().maxbindingsitespercylinder;
     if(N) {
 //        Cyldcindexvec.resize(_cylinders.size());
-        CylcIDvec.resize(_cylinders.size());
+        CylcIDvec.resize(getCylinders().size());
 
         short _filamentType = 0;
+        uint32_t _fID = 0;
+        uint32_t _fpos = 0;
         bool checkftype = false;
         if (SysParams::Chemistry().numFilaments > 1)
             checkftype = true;
@@ -43,49 +45,82 @@ void Compartment::SIMDcoordinates_section(){
         //Loop through all filament Types
         for(short filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
           //Loop through cylinders in the compartment
-            for (auto cyl:_cylinders) {
+            for (auto cyl:getCylinders()) {
               //clear partitioned coordiante vectors
                 for(short i =0; i < 27; i++) {
                     partitionedcoordx[i].clear();
                     partitionedcoordy[i].clear();
                     partitionedcoordz[i].clear();
                     cindex_bs_section[i].clear();
+                    finfo_bs_section[i].clear();
                 }
 
-                int cindex = cyl->_dcIndex;
-                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
+                int cindex = cyl->getStableIndex();
 
-                _filamentType = cylinderstruct.type;
+                _filamentType = Cylinder::getDbDataConst().value[cindex].type;
+                _fID = Cylinder::getDbDataConst().value[cindex].filamentId;
+                _fpos = Cylinder::getDbDataConst().value[cindex].positionOnFilament -
+                        Cylinder::getDbDataConst().value[cindex].filamentFirstEntry;
+
+                //packed integer containing filament ID and filament position.
+                //Assumes you don't have 127 (2^7 -1) cylinders
+                uint32_t cylfinfo = (_fID<< 7);
+                cylfinfo = cylfinfo | _fpos;
+
                 //Only consider cylinders that are filType
-                 if (checkftype && _filamentType != filType) continue;
+                if (checkftype && _filamentType != filType) continue;
 
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
-//            uint32_t shiftedindex = (i << 4);
-                uint32_t shiftedindex = (cyl->_dcIndex << 4);
+                auto x1 = cyl->getFirstBead()->vcoordinate();
+                auto x2 = cyl->getSecondBead()->vcoordinate();
+//            uint32_t shiftedindex = (i << SysParams::Chemistry().shiftbybits);
+                uint32_t shiftedindex = (cyl->getStableIndex() << SysParams::Chemistry().shiftbybits);
 
 //                Cyldcindexvec[i] = cyl->_dcIndex;
-                CylcIDvec[i] = cyl->getID();
+                CylcIDvec[i] = cyl->getId();
                 uint32_t j = 0;
-                float cylsizesquared = SysParams::Geometry().cylinderSize[_filamentType]
-                                      * SysParams::Geometry().cylinderSize[_filamentType];
-                float maxmp = sqrt(twoPointDistancesquared(x1,x2)/cylsizesquared);
+                if(cyl->isMinusEnd() == false) {
+                    float cylsizesquared = SysParams::Geometry().cylinderSize[_filamentType]
+                                           *
+                                           SysParams::Geometry().cylinderSize[_filamentType];
+                    float maxmp = sqrt(twoPointDistancesquared(x1, x2) / cylsizesquared);
 
-                for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                    for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                         it !=
+                         SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
 
-                    auto mp = (float) *it /
-                              SysParams::Geometry().cylinderNumMon[_filamentType];
+                        auto mp = (float) *it /
+                                  SysParams::Geometry().cylinderNumMon[_filamentType];
 
-                    if(mp <= maxmp){
-                      auto coord = midPointCoordinate(x1, x2, mp);
-                      //last 4 bits are binding site while first 12 bits are cylinder index.
-                      uint32_t index = shiftedindex | j;
-                      int pindices[3];
-                      getpartition3Dindex(pindices, coord);
-                      addcoordtopartitons(pindices, coord, index);
+                        if (mp <= maxmp) {
+                            auto coord = midPointCoordinate(x1, x2, mp);
+                            //last 4 bits are binding site while first 12 bits are cylinder index.
+                            uint32_t index = shiftedindex | j;
+                            int pindices[3];
+                            getpartition3Dindex(pindices, coord);
+                            addcoordtopartitons(pindices, coord, index, cylfinfo);
+                        }
+                        j++;
                     }
-                    j++;
+                }
+                else{
+                    /* If it is the minus end Cylinder, add the binding sites that are
+                     * species Filament*/
+                    for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                         it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                         auto sf = Cylinder::getDbDataConst().value[cindex]
+                                .chemCylinder->getCMonomer(*it)->activeSpeciesFilament();
+                         if(sf !=-1){
+                             auto mp = (float) *it /
+                                       SysParams::Geometry().cylinderNumMon[_filamentType];
+                             auto coord = midPointCoordinate(x1, x2, mp);
+                             //last 4 bits are binding site while first 12 bits are cylinder index.
+                             uint32_t index = shiftedindex | j;
+                             int pindices[3];
+                             getpartition3Dindex(pindices, coord);
+                             addcoordtopartitons(pindices, coord, index, cylfinfo);
+                         }
+                         j++;
+                    }
                 }
             }
 
@@ -96,7 +131,7 @@ void Compartment::SIMDcoordinates_section(){
             for (short i = 0; i < 27; i++) {
 //            cout<<partitionedcoordx[i].size()<<" ";
                 bscoords_section[filType*27 + i].init_coords(partitionedcoordx[i],
-                        partitionedcoordy[i], partitionedcoordz[i], cindex_bs_section[i]);
+                        partitionedcoordy[i], partitionedcoordz[i], cindex_bs_section[i], finfo_bs_section[i]);
             }
 //        cout<<endl;
         }
@@ -125,7 +160,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
             _coords[1] + SysParams::Geometry().compartmentSizeY/2 - searchdist,
             _coords[2] + SysParams::Geometry().compartmentSizeZ/2 - searchdist};
 
-    int N = _cylinders.size() * maxnbs;
+    int N = getCylinders().size() * maxnbs;
     //Paritioned coordinates are created for each unique filamentType
 	  bscoords_section_linker.resize(SysParams::Chemistry().numFilaments * 27);
 
@@ -136,71 +171,135 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                 partitionedcoordy[i].clear();
                 partitionedcoordz[i].clear();
                 cindex_bs_section[i].clear();
+                finfo_bs_section[i].clear();
             }
 
 //            Cyldcindexvec.resize(_cylinders.size());
             short _filamentType = 0;
+            uint32_t _fID = 0;
+            uint32_t _fpos = 0;
+
+
             bool checkftype = false;
             if (SysParams::Chemistry().numFilaments > 1)
                         checkftype = true;
-            unsigned int i = 0;
-            for (auto cyl:_cylinders) {
-                uint32_t cindex = cyl->_dcIndex;
-                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
+//            unsigned int i = 0;
+            for (auto cyl:getCylinders()) {
+                uint32_t cindex = cyl->getStableIndex();
 
-                _filamentType = cylinderstruct.type;
+                _filamentType = Cylinder::getDbData().value[cindex].type;
+                _filamentType = Cylinder::getDbDataConst().value[cindex].type;
+                _fID = Cylinder::getDbDataConst().value[cindex].filamentId;
+                _fpos = Cylinder::getDbDataConst().value[cindex].positionOnFilament-
+                        Cylinder::getDbDataConst().value[cindex].filamentFirstEntry;
+
+
+                //packed integer containing filament ID and filament position.
+                //Assumes you don't have 127 (2^7 -1) cylinders in the same filament
+                uint32_t cylfinfo = (_fID<< 7);
+                cylfinfo = cylfinfo | _fpos;
+
                 //Consider only cylinders of filamentType fType
                 if (checkftype && _filamentType != filType) continue;
 
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
-//            uint16_t shiftedindex = (i << 4);
-                uint32_t shiftedindex = (cindex << 4);
+                auto x1 = cyl->getFirstBead()->vcoordinate();
+                auto x2 = cyl->getSecondBead()->vcoordinate();
+//            uint16_t shiftedindex = (i << SysParams::Chemistry().shiftbybits);
+                uint32_t shiftedindex = (cindex << SysParams::Chemistry().shiftbybits);
 //                Cyldcindexvec[i] = cindex;
-                i++;
+//                i++;
                 uint32_t j = 0;
-                for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-                    bool state = false;
-                    if (isvectorizedgather)
-                        state = checkoccupancy(boundstate, bstatepos, maxnbs * cindex + j);
-                    else
-                        state = checkoccupancy(cyl, *it, _filamentType, bstatepos);
-                    if (state) {
-                        auto mp = (float) *it /
-                                  SysParams::Geometry().cylinderNumMon[_filamentType];
-                        float cylsizesquared = SysParams::Geometry().cylinderSize[_filamentType]
-                                            * SysParams::Geometry().cylinderSize[_filamentType];
-                        float maxmp = sqrt(twoPointDistancesquared(x1,x2)/cylsizesquared);
-                        if(mp <= maxmp){
-                          auto coord = midPointCoordinate(x1, x2, mp);
-                          //last 4 bits are binding site while first 12 bits are cylinder index.
-                          uint32_t index = shiftedindex | j;
-                          int pindices[3];
-                          if (rMaxvsCmpSize) {
-                              getpartitionindex<true>(pindices, coord, coord_bounds);
-                              addcoordtorMaxbasedpartitons<true>(pindices, coord, index);
-                          } else {
-                              getpartitionindex<false>(pindices, coord, coord_bounds);
-                              addcoordtorMaxbasedpartitons<false>(pindices, coord, index);
-                          }
+                int dBI = SysParams::Chemistry().linkerbindingskip-1;
+                if(cyl->isMinusEnd() == false) {
+                    for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                         it < SysParams::Chemistry().bindingSites[_filamentType].end();
+                         it=it+dBI) {
+                        bool state = false;
+                        if (isvectorizedgather)
+                            state = checkoccupancy(boundstate, bstatepos,
+                                                   maxnbs * cindex + j);
+                        else
+                            state = checkoccupancy(cyl, *it, _filamentType, bstatepos);
+                        if (state) {
+                            auto mp = (float) *it /
+                                      SysParams::Geometry().cylinderNumMon[_filamentType];
+                            float cylsizesquared =
+                                    SysParams::Geometry().cylinderSize[_filamentType]
+                                    * SysParams::Geometry().cylinderSize[_filamentType];
+                            float maxmp = sqrt(
+                                    twoPointDistancesquared(x1, x2) / cylsizesquared);
+                            if (mp <= maxmp) {
+                                auto coord = midPointCoordinate(x1, x2, mp);
+                                //last 4 bits are binding site while first 12 bits are cylinder index.
+                                uint32_t index = shiftedindex | j;
+                                int pindices[3];
+                                if (rMaxvsCmpSize) {
+                                    getpartitionindex<true>(pindices, coord, coord_bounds);
+                                    addcoordtorMaxbasedpartitons<true>(pindices, coord,
+                                                                       index,
+                                                                       cylfinfo);
+                                } else {
+                                    getpartitionindex<false>(pindices, coord, coord_bounds);
+                                    addcoordtorMaxbasedpartitons<false>(pindices, coord,
+                                                                        index,
+                                                                        cylfinfo);
+                                }
+                            }
                         }
+                        j+=dBI;
                     }
-                    j++;
+                }
+                else{
+                    /* If it is the minus end Cylinder, add the binding sites that are
+                     * species Filament*/
+                    for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                         it < SysParams::Chemistry().bindingSites[_filamentType].end();
+                         it=it+dBI) {
+                        auto sf = Cylinder::getDbDataConst().value[cindex]
+                                .chemCylinder->getCMonomer(*it)->activeSpeciesFilament();
+                        if(sf !=-1){
+                            bool state = false;
+                            if (isvectorizedgather)
+                                state = checkoccupancy(boundstate, bstatepos,
+                                                       maxnbs * cindex + j);
+                            else
+                                state = checkoccupancy(cyl, *it, _filamentType, bstatepos);
+                            if (state) {
+                                auto mp = (float) *it /
+                                          SysParams::Geometry().cylinderNumMon[_filamentType];
+                                auto coord = midPointCoordinate(x1, x2, mp);
+                                //last 4 bits are binding site while first 12 bits are cylinder index.
+                                uint32_t index = shiftedindex | j;
+                                int pindices[3];
+                                if (rMaxvsCmpSize) {
+                                    getpartitionindex<true>(pindices, coord, coord_bounds);
+                                    addcoordtorMaxbasedpartitons<true>(pindices, coord,
+                                                                       index,
+                                                                       cylfinfo);
+                                } else {
+                                    getpartitionindex<false>(pindices, coord, coord_bounds);
+                                    addcoordtorMaxbasedpartitons<false>(pindices, coord,
+                                                                        index,
+                                                                        cylfinfo);
+                                }
+                            }
+                        }
+                        j+=dBI;
+                    }
                 }
             }
 //        cout<<endl;
 //    assert(k<65536);
             //Create input vector for SIMD calculations
 //        cout<<"Linker coord size ";
-
             for (short i = 0; i < 27; i++) {
                 bscoords_section_linker[filType * 27 + i].init_coords(partitionedcoordx[i],
                                                                       partitionedcoordy[i],
                                                                       partitionedcoordz[i],
-                                                                      cindex_bs_section[i]);
+                                                                      cindex_bs_section[i],
+                                                                      finfo_bs_section[i]);
             }
-        }
+        }//if(N)
         else{
             for (short i = 0; i < 27; i++) {
                     bscoords_section_linker[filType * 27 + i].resize(0);
@@ -218,6 +317,7 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
         partitionedcoordy[i].clear();
         partitionedcoordz[i].clear();
         cindex_bs_section[i].clear();
+        finfo_bs_section[i].clear();
     }
 
     //setting size to the number of maximum binding sites per cylinder * number of
@@ -240,7 +340,7 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
             _coords[1] + SysParams::Geometry().compartmentSizeY/2 - searchdist,
             _coords[2] + SysParams::Geometry().compartmentSizeZ/2 - searchdist};
 
-    int N = _cylinders.size() * maxnbs;
+    int N = getCylinders().size() * maxnbs;
 	bscoords_section_motor.resize(SysParams::Chemistry().numFilaments * 27);
     for (short filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
         if (N) {
@@ -249,59 +349,153 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                 partitionedcoordy[i].clear();
                 partitionedcoordz[i].clear();
                 cindex_bs_section[i].clear();
+                finfo_bs_section[i].clear();
             }
 
 //            Cyldcindexvec.resize(_cylinders.size());
 
             short _filamentType = 0;
+            uint32_t _fID = 0;
+            uint32_t _fpos = 0;
+
             bool checkftype = false;
             if (SysParams::Chemistry().numFilaments > 1)
                 checkftype = true;
             unsigned int i = 0;
 
-            for (auto cyl:_cylinders) {
-                uint32_t cindex = cyl->_dcIndex;
-                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
+            for (auto cyl:getCylinders()) {
+                uint32_t cindex = cyl->getStableIndex();
 
-                _filamentType = cylinderstruct.type;
+                _filamentType = Cylinder::getDbDataConst().value[cindex].type;
+                _fID = Cylinder::getDbDataConst().value[cindex].filamentId;
+                _fpos = Cylinder::getDbDataConst().value[cindex].positionOnFilament-
+                        Cylinder::getDbDataConst().value[cindex].filamentFirstEntry;
+
+                //packed integer containing filament ID and filament position.
+                //Assumes you don't have 127 (2^7 -1) cylinders
+                uint32_t cylfinfo = (_fID<< 7);
+                cylfinfo = cylfinfo | _fpos;
+
                 if (checkftype && _filamentType != filType) continue;
 
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
+                auto x1 = cyl->getFirstBead()->vcoordinate();
+                auto x2 = cyl->getSecondBead()->vcoordinate();
 //                uint16_t shiftedindex = (i << 4);
-                uint32_t shiftedindex = (cindex << 4);
+                uint32_t shiftedindex = (cindex << SysParams::Chemistry().shiftbybits);
 //                Cyldcindexvec[i] = cindex;
                 i++;
                 uint32_t j = 0;
-                for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-                    bool state = false;
-                    if (isvectorizedgather)
-                        state = checkoccupancy(boundstate, bstatepos, maxnbs * cindex + j);
-                    else
-                        state = checkoccupancy(cyl, *it, _filamentType, bstatepos);
-                    if (state) {
-                        auto mp = (float) *it /
-                                  SysParams::Geometry().cylinderNumMon[_filamentType];
-                        auto coord = midPointCoordinate(x1, x2, mp);
-                        //last 4 bits are binding site while first 12 bits are cylinder index.
-                        uint32_t index = shiftedindex | j;
-                        //split and crosscheck
+                if(cyl->isMinusEnd() == false) {
+                    for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                         it !=
+                         SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                        bool state = false;
+                        if (isvectorizedgather)
+                            state = checkoccupancy(boundstate, bstatepos,
+                                                   maxnbs * cindex + j);
+                        else
+                            state = checkoccupancy(cyl, *it, _filamentType, bstatepos);
+                        if (state) {
+                            auto mp = (float) *it /
+                                      SysParams::Geometry().cylinderNumMon[_filamentType];
+                            auto coord = midPointCoordinate(x1, x2, mp);
+                            //last 4 bits are binding site while first 12 bits are cylinder index.
+                            uint32_t index = shiftedindex | j;
+                            //split and crosscheck
 //						cout<<index<<" ";
-                        int pindices[3];
-                        if (rMaxvsCmpSize) {
-                            getpartitionindex<true>(pindices, coord, coord_bounds);
-                            addcoordtorMaxbasedpartitons<true>(pindices, coord, index);
-                        } else {
-                            getpartitionindex<false>(pindices, coord, coord_bounds);
-                            addcoordtorMaxbasedpartitons<false>(pindices, coord, index);
-                        }
+                            int pindices[3];
+                            if (rMaxvsCmpSize) {
+                                getpartitionindex<true>(pindices, coord, coord_bounds);
+                                addcoordtorMaxbasedpartitons<true>(pindices, coord, index,
+                                                                   cylfinfo);
+                            } else {
+                                getpartitionindex<false>(pindices, coord, coord_bounds);
+                                addcoordtorMaxbasedpartitons<false>(pindices, coord, index,
+                                                                    cylfinfo);
+                            }
 /*                        getpartition3Dindex(pindices, coord, coord_bounds);
                         addcoordtopartitons_smallrmax(pindices, coord, index);
                         getpartition3Dindex(pindices, coord);
                         addcoordtopartitons(pindices, coord, index);*/
+                        }
+                        j++;
                     }
-                    j++;
+                }
+                else{
+                    /* If it is the minus end Cylinder, add the binding sites that are
+                     * species Filament*/
+                    for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                         it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                        auto sf = Cylinder::getDbDataConst().value[cindex]
+                                .chemCylinder->getCMonomer(*it)->activeSpeciesFilament();
+                        if(sf !=-1){
+                            bool state = false;
+                            if (isvectorizedgather)
+                                state = checkoccupancy(boundstate, bstatepos,
+                                                       maxnbs * cindex + j);
+                            else
+                                state = checkoccupancy(cyl, *it, _filamentType, bstatepos);
+                            if (state) {
+                                auto mp = (float) *it /
+                                          SysParams::Geometry().cylinderNumMon[_filamentType];
+                                auto coord = midPointCoordinate(x1, x2, mp);
+                                //last 4 bits are binding site while first 12 bits are cylinder index.
+                                uint32_t index = shiftedindex | j;
+                                int pindices[3];
+                                if (rMaxvsCmpSize) {
+                                    getpartitionindex<true>(pindices, coord, coord_bounds);
+                                    addcoordtorMaxbasedpartitons<true>(pindices, coord,
+                                                                       index,
+                                                                       cylfinfo);
+                                } else {
+                                    getpartitionindex<false>(pindices, coord, coord_bounds);
+                                    addcoordtorMaxbasedpartitons<false>(pindices, coord,
+                                                                        index,
+                                                                        cylfinfo);
+                                }
+                            }
+                        }
+                        /*else{
+                            cout<<twoPointDistance(x1,x2)<<endl;
+                            for(int mon =0;mon<40;mon++){
+                                auto sfx = Cylinder::getDbDataConst().value[cindex]
+                                        .chemCylinder->getCMonomer(mon)
+                                        ->activeSpeciesFilament();
+                                cout<<sfx<<" ";
+                            }
+                            cout<<endl;
+                            //PlusEnd
+                            cout<<"Plus End "<<endl;
+                            short numPlusEndSpecies = SysParams::Chemistry().numPlusEndSpecies[_filamentType];
+                            for(int mon =0;mon<40;mon++){
+                                for(int i = 0; i < numPlusEndSpecies; i++) {
+                                    SpeciesFilament *s = Cylinder::getDbDataConst().value[cindex]
+                                            .chemCylinder->getCMonomer(mon)
+                                            ->speciesPlusEnd(i);
+                                    cout<<s->getN()<<" ";
+                                }
+                                cout<<"|";
+                            }
+                            cout<<endl;
+                            //MinusEnd
+                            cout<<"Minus End "<<endl;
+                            short numMinusEndSpecies = SysParams::Chemistry()
+                                    .numMinusEndSpecies[_filamentType];
+                            for(int mon =0;mon<40;mon++){
+                                for(int i = 0; i < numMinusEndSpecies; i++) {
+                                    SpeciesFilament *s = Cylinder::getDbDataConst().value[cindex]
+                                            .chemCylinder->getCMonomer(mon)
+                                            ->speciesMinusEnd(i);
+                                    cout<<s->getN()<<" ";
+                                }
+                                cout<<"|";
+                            }
+                            cout<<endl;
+                            cout<<sf<<endl;
+                            cout<<"----------"<<endl;
+                        }*/
+                        j++;
+                    }
                 }
             }
 //            cout<<endl;
@@ -313,10 +507,12 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                 bscoords_section_motor[filType * 27 + i].init_coords(partitionedcoordx[i],
                                                                      partitionedcoordy[i],
                                                                      partitionedcoordz[i],
-                                                                     cindex_bs_section[i]);
+                                                                     cindex_bs_section[i],
+                                                                     finfo_bs_section[i]);
             }
 
-        } else {
+        } //if(N)
+        else {
             for (short i = 0; i < 27; i++)
                 bscoords_section_motor[filType * 27 + i].resize(0);
         }
@@ -370,11 +566,13 @@ void Compartment::getpartitionindex<false>(int (&indices)[3], vector<floatingpoi
     }
 }
 
-void Compartment::addcoord(vector<floatingpoint> coord, uint32_t index, short i){
+void Compartment::addcoord(vector<floatingpoint> coord, uint32_t index, uint32_t
+cylfinfo, short i){
     partitionedcoordx[i].push_back(coord[0]);
     partitionedcoordy[i].push_back(coord[1]);
     partitionedcoordz[i].push_back(coord[2]);
     cindex_bs_section[i].push_back(index);
+    finfo_bs_section[i].push_back(cylfinfo);
 }
 
 void Compartment::deallocateSIMDcoordinates(){
@@ -383,6 +581,7 @@ void Compartment::deallocateSIMDcoordinates(){
 		partitionedcoordy[i].clear();
 		partitionedcoordz[i].clear();
 		cindex_bs_section[i].clear();
+        finfo_bs_section[i].clear();
 		bscoords_section_linker[i].resize(0);
 		bscoords_section_motor[i].resize(0);
 	}
@@ -406,111 +605,111 @@ bool Compartment::checkoccupancy(Cylinder* cyl, short it, short _filamentType,
 }
 
 void Compartment::addcoordtopartitons(int (&pindices)[3], vector<floatingpoint> coord, uint32_t
-                                    index){
-    addcoord(coord, index, 0);
+index, uint32_t cylfinfo){
+    addcoord(coord, index, cylfinfo, 0);
 
     if(pindices[0] ==0 && pindices[1] == 0 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 18);
-        addcoord(coord, index, 14);
-        addcoord(coord, index, 16);
+        addcoord(coord, index, cylfinfo, 18);
+        addcoord(coord, index, cylfinfo, 14);
+        addcoord(coord, index, cylfinfo, 16);
         //Vertex
-        addcoord(coord, index, 26);
+        addcoord(coord, index, cylfinfo, 26);
     }
     else if(pindices[0] ==0 && pindices[1] == 0 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 18);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 7);
+        addcoord(coord, index, cylfinfo, 18);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 7);
         //Vertex
-        addcoord(coord, index, 24);
+        addcoord(coord, index, cylfinfo, 24);
     }
     else if(pindices[0] ==0 && pindices[1] == 1 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 16);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 16);
         //Vertex
-        addcoord(coord, index, 19);
+        addcoord(coord, index, cylfinfo, 19);
     }
     else if(pindices[0] ==0 && pindices[1] == 1 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 13);
-        addcoord(coord, index, 7);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 13);
+        addcoord(coord, index, cylfinfo, 7);
         //Vertex
-        addcoord(coord, index, 21);
+        addcoord(coord, index, cylfinfo, 21);
     }
     else if(pindices[0] ==1 && pindices[1] == 0 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 8);
-        addcoord(coord, index, 14);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 8);
+        addcoord(coord, index, cylfinfo, 14);
         //Vertex
-        addcoord(coord, index, 22);
+        addcoord(coord, index, cylfinfo, 22);
     }
     else if(pindices[0] ==1 && pindices[1] == 0 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 15);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 15);
         //Vertex
-        addcoord(coord, index, 20);
+        addcoord(coord, index, cylfinfo, 20);
 
     }
     else if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 17);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 8);
+        addcoord(coord, index, cylfinfo, 17);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 8);
         //Vertex
-        addcoord(coord, index, 23);
+        addcoord(coord, index, cylfinfo, 23);
     }
     else if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 17);
-        addcoord(coord, index, 15);
-        addcoord(coord, index, 13);
+        addcoord(coord, index, cylfinfo, 17);
+        addcoord(coord, index, cylfinfo, 15);
+        addcoord(coord, index, cylfinfo, 13);
         //Vertex
-        addcoord(coord, index, 25);
+        addcoord(coord, index, cylfinfo, 25);
     }
 }
 
 void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<floatingpoint> coord,
-                                uint16_t index){
-    addcoord(coord, index, 0);
+                                                uint16_t index, uint32_t cylfinfo){
+    addcoord(coord, index, cylfinfo, 0);
     //111
     if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 1) {
         return;
@@ -518,258 +717,258 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
     //000
     if(pindices[0] ==0 && pindices[1] == 0 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 18);
-        addcoord(coord, index, 14);
-        addcoord(coord, index, 16);
+        addcoord(coord, index, cylfinfo, 18);
+        addcoord(coord, index, cylfinfo, 14);
+        addcoord(coord, index, cylfinfo, 16);
         //Vertex
-        addcoord(coord, index, 26);
+        addcoord(coord, index, cylfinfo, 26);
     }
-    //001
+        //001
     else if(pindices[0] ==0 && pindices[1] == 0 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 4);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 4);
         //Edge
-        addcoord(coord, index, 18);
+        addcoord(coord, index, cylfinfo, 18);
         //Vertex
     }
-    //002
+        //002
     else if(pindices[0] ==0 && pindices[1] == 0 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 18);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 7);
+        addcoord(coord, index, cylfinfo, 18);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 7);
         //Vertex
-        addcoord(coord, index, 24);
+        addcoord(coord, index, cylfinfo, 24);
     }
-    //010
+        //010
     else if(pindices[0] ==0 && pindices[1] == 1 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 16);
+        addcoord(coord, index, cylfinfo, 16);
         //Vertex
     }
-    //011
+        //011
     else if(pindices[0] ==0 && pindices[1] == 1 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 5);
+        addcoord(coord, index, cylfinfo, 5);
         //Edge
         //Vertex
     }
-    //012
+        //012
     else if(pindices[0] ==0 && pindices[1] == 1 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 7);
+        addcoord(coord, index, cylfinfo, 7);
         //Vertex
     }
-    //020
+        //020
     else if(pindices[0] ==0 && pindices[1] == 2 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 16);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 16);
         //Vertex
-        addcoord(coord, index, 19);
+        addcoord(coord, index, cylfinfo, 19);
     }
-    //021
+        //021
     else if(pindices[0] ==0 && pindices[1] == 2 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 5);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 5);
         //Edge
-        addcoord(coord, index, 9);
+        addcoord(coord, index, cylfinfo, 9);
         //Vertex
     }
-    //022
+        //022
     else if(pindices[0] ==0 && pindices[1] == 2 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 13);
-        addcoord(coord, index, 7);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 13);
+        addcoord(coord, index, cylfinfo, 7);
         //Vertex
-        addcoord(coord, index, 21);
+        addcoord(coord, index, cylfinfo, 21);
     }
-    //100
+        //100
     else if(pindices[0] ==1 && pindices[1] == 0 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 4);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 4);
         //Edge
-        addcoord(coord, index, 14);
+        addcoord(coord, index, cylfinfo, 14);
         //Vertex
     }
-    //101
+        //101
     else if(pindices[0] ==1 && pindices[1] == 0 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 4);
+        addcoord(coord, index, cylfinfo, 4);
         //Edge
         //Vertex
     }
-    //102
+        //102
     else if(pindices[0] ==1 && pindices[1] == 0 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 4);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 4);
         //Edge
-        addcoord(coord, index, 12);
+        addcoord(coord, index, cylfinfo, 12);
         //Vertex
     }
-    //110
+        //110
     else if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
         //Vertex
     }
-    //112
+        //112
     else if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
         //Vertex
     }
-    //120
+        //120
     else if(pindices[0] ==1 && pindices[1] == 2 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 3);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 3);
         //Edge
-        addcoord(coord, index, 11);
+        addcoord(coord, index, cylfinfo, 11);
         //Vertex
     }
-    //121
+        //121
     else if(pindices[0] ==1 && pindices[1] == 2 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 3);
+        addcoord(coord, index, cylfinfo, 3);
         //Edge
         //Vertex
     }
-    //122
+        //122
     else if(pindices[0] ==1 && pindices[1] == 2 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 3);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 3);
         //Edge
-        addcoord(coord, index, 13);
+        addcoord(coord, index, cylfinfo, 13);
         //Vertex
     }
-    //200
+        //200
     else if(pindices[0] ==2 && pindices[1] == 0 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 8);
-        addcoord(coord, index, 14);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 8);
+        addcoord(coord, index, cylfinfo, 14);
         //Vertex
-        addcoord(coord, index, 22);
+        addcoord(coord, index, cylfinfo, 22);
     }
-    //201
+        //201
     else if(pindices[0] ==2 && pindices[1] == 0 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 4);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 4);
         //Edge
-        addcoord(coord, index, 10);
+        addcoord(coord, index, cylfinfo, 10);
         //Vertex
     }
-    //202
+        //202
     else if(pindices[0] ==2 && pindices[1] == 0 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 15);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 15);
         //Vertex
-        addcoord(coord, index, 20);
+        addcoord(coord, index, cylfinfo, 20);
 
     }
-    //210
+        //210
     else if(pindices[0] ==2 && pindices[1] == 1 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 8);
+        addcoord(coord, index, cylfinfo, 8);
         //Vertex
 
     }
-    //211
+        //211
     else if(pindices[0] ==2 && pindices[1] == 1 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 6);
+        addcoord(coord, index, cylfinfo, 6);
         //Edge
         //Vertex
     }
-    //212
+        //212
     else if(pindices[0] ==2 && pindices[1] == 1 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 6);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 6);
         //Edge
-        addcoord(coord, index, 15);
+        addcoord(coord, index, cylfinfo, 15);
         //Vertex
     }
-    //220
+        //220
     else if(pindices[0] ==2 && pindices[1] == 2 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 17);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 8);
+        addcoord(coord, index, cylfinfo, 17);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 8);
         //Vertex
-        addcoord(coord, index, 23);
+        addcoord(coord, index, cylfinfo, 23);
     }
-    //221
+        //221
     else if(pindices[0] ==2 && pindices[1] == 2 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 3);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 3);
         //Edge
-        addcoord(coord, index, 17);
+        addcoord(coord, index, cylfinfo, 17);
         //Vertex
     }
-    //222
+        //222
     else if(pindices[0] ==2 && pindices[1] == 2 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 17);
-        addcoord(coord, index, 15);
-        addcoord(coord, index, 13);
+        addcoord(coord, index, cylfinfo, 17);
+        addcoord(coord, index, cylfinfo, 15);
+        addcoord(coord, index, cylfinfo, 13);
         //Vertex
-        addcoord(coord, index, 25);
+        addcoord(coord, index, cylfinfo, 25);
     }
 }
 
@@ -779,8 +978,8 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<float
 //if rMax+Cylsize/2+delta is lesser than CmpSize/2
 template<>
 void Compartment::addcoordtorMaxbasedpartitons<true>(int (&pindices)[3], vector<floatingpoint>
-        coord, uint32_t index){
-    addcoord(coord, index, 0);
+coord, uint32_t index, uint32_t cylfinfo){
+    addcoord(coord, index, cylfinfo, 0);
     //111
     if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 1) {
         return;
@@ -788,719 +987,726 @@ void Compartment::addcoordtorMaxbasedpartitons<true>(int (&pindices)[3], vector<
     //000
     if(pindices[0] ==0 && pindices[1] == 0 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 18);
-        addcoord(coord, index, 14);
-        addcoord(coord, index, 16);
+        addcoord(coord, index, cylfinfo, 18);
+        addcoord(coord, index, cylfinfo, 14);
+        addcoord(coord, index, cylfinfo, 16);
         //Vertex
-        addcoord(coord, index, 26);
+        addcoord(coord, index, cylfinfo, 26);
     }
         //001
     else if(pindices[0] ==0 && pindices[1] == 0 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 4);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 4);
         //Edge
-        addcoord(coord, index, 18);
+        addcoord(coord, index, cylfinfo, 18);
         //Vertex
     }
         //002
     else if(pindices[0] ==0 && pindices[1] == 0 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 18);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 7);
+        addcoord(coord, index, cylfinfo, 18);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 7);
         //Vertex
-        addcoord(coord, index, 24);
+        addcoord(coord, index, cylfinfo, 24);
     }
         //010
     else if(pindices[0] ==0 && pindices[1] == 1 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 16);
+        addcoord(coord, index, cylfinfo, 16);
         //Vertex
     }
         //011
     else if(pindices[0] ==0 && pindices[1] == 1 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 5);
+        addcoord(coord, index, cylfinfo, 5);
         //Edge
         //Vertex
     }
         //012
     else if(pindices[0] ==0 && pindices[1] == 1 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 7);
+        addcoord(coord, index, cylfinfo, 7);
         //Vertex
     }
         //020
     else if(pindices[0] ==0 && pindices[1] == 2 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 16);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 16);
         //Vertex
-        addcoord(coord, index, 19);
+        addcoord(coord, index, cylfinfo, 19);
     }
         //021
     else if(pindices[0] ==0 && pindices[1] == 2 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 5);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 5);
         //Edge
-        addcoord(coord, index, 9);
+        addcoord(coord, index, cylfinfo, 9);
         //Vertex
     }
         //022
     else if(pindices[0] ==0 && pindices[1] == 2 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 13);
-        addcoord(coord, index, 7);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 13);
+        addcoord(coord, index, cylfinfo, 7);
         //Vertex
-        addcoord(coord, index, 21);
+        addcoord(coord, index, cylfinfo, 21);
     }
         //100
     else if(pindices[0] ==1 && pindices[1] == 0 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 4);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 4);
         //Edge
-        addcoord(coord, index, 14);
+        addcoord(coord, index, cylfinfo, 14);
         //Vertex
     }
         //101
     else if(pindices[0] ==1 && pindices[1] == 0 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 4);
+        addcoord(coord, index, cylfinfo, 4);
         //Edge
         //Vertex
     }
         //102
     else if(pindices[0] ==1 && pindices[1] == 0 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 4);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 4);
         //Edge
-        addcoord(coord, index, 12);
+        addcoord(coord, index, cylfinfo, 12);
         //Vertex
     }
         //110
     else if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
         //Vertex
     }
         //112
     else if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
         //Vertex
     }
         //120
     else if(pindices[0] ==1 && pindices[1] == 2 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 3);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 3);
         //Edge
-        addcoord(coord, index, 11);
+        addcoord(coord, index, cylfinfo, 11);
         //Vertex
     }
         //121
     else if(pindices[0] ==1 && pindices[1] == 2 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 3);
+        addcoord(coord, index, cylfinfo, 3);
         //Edge
         //Vertex
     }
         //122
     else if(pindices[0] ==1 && pindices[1] == 2 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 3);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 3);
         //Edge
-        addcoord(coord, index, 13);
+        addcoord(coord, index, cylfinfo, 13);
         //Vertex
     }
         //200
     else if(pindices[0] ==2 && pindices[1] == 0 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 8);
-        addcoord(coord, index, 14);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 8);
+        addcoord(coord, index, cylfinfo, 14);
         //Vertex
-        addcoord(coord, index, 22);
+        addcoord(coord, index, cylfinfo, 22);
     }
         //201
     else if(pindices[0] ==2 && pindices[1] == 0 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 4);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 4);
         //Edge
-        addcoord(coord, index, 10);
+        addcoord(coord, index, cylfinfo, 10);
         //Vertex
     }
         //202
     else if(pindices[0] ==2 && pindices[1] == 0 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 15);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 15);
         //Vertex
-        addcoord(coord, index, 20);
+        addcoord(coord, index, cylfinfo, 20);
 
     }
         //210
     else if(pindices[0] ==2 && pindices[1] == 1 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 8);
+        addcoord(coord, index, cylfinfo, 8);
         //Vertex
 
     }
         //211
     else if(pindices[0] ==2 && pindices[1] == 1 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 6);
+        addcoord(coord, index, cylfinfo, 6);
         //Edge
         //Vertex
     }
         //212
     else if(pindices[0] ==2 && pindices[1] == 1 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 6);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 6);
         //Edge
-        addcoord(coord, index, 15);
+        addcoord(coord, index, cylfinfo, 15);
         //Vertex
     }
         //220
     else if(pindices[0] ==2 && pindices[1] == 2 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 17);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 8);
+        addcoord(coord, index, cylfinfo, 17);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 8);
         //Vertex
-        addcoord(coord, index, 23);
+        addcoord(coord, index, cylfinfo, 23);
     }
         //221
     else if(pindices[0] ==2 && pindices[1] == 2 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 3);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 3);
         //Edge
-        addcoord(coord, index, 17);
+        addcoord(coord, index, cylfinfo, 17);
         //Vertex
     }
         //222
     else if(pindices[0] ==2 && pindices[1] == 2 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 17);
-        addcoord(coord, index, 15);
-        addcoord(coord, index, 13);
+        addcoord(coord, index, cylfinfo, 17);
+        addcoord(coord, index, cylfinfo, 15);
+        addcoord(coord, index, cylfinfo, 13);
         //Vertex
-        addcoord(coord, index, 25);
+        addcoord(coord, index, cylfinfo, 25);
     }
 }
 
 //if rMax+Cylsize/2+delta is greater than CmpSize/2
 template<>
 void Compartment::addcoordtorMaxbasedpartitons<false>(int (&pindices)[3], vector<floatingpoint>
-        coord, uint32_t index){
-    addcoord(coord, index, 0);
+coord, uint32_t index, uint32_t cylfinfo){
+
+/*#ifdef MOTORBIASCHECK
+	for(int part = 0; part < 27; part++){
+		addcoord(coord, index, cylfinfo, part);
+	}
+	return;
+#endif*/
+    addcoord(coord, index, cylfinfo, 0);
     //111
     if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 1) {
         for(int part = 1; part < 27; part++){
-            addcoord(coord, index, part);
+            addcoord(coord, index, cylfinfo, part);
         }
         return;
     }
     //000
     if(pindices[0] ==0 && pindices[1] == 0 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 18);
-        addcoord(coord, index, 14);
-        addcoord(coord, index, 16);
+        addcoord(coord, index, cylfinfo, 18);
+        addcoord(coord, index, cylfinfo, 14);
+        addcoord(coord, index, cylfinfo, 16);
         //Vertex
-        addcoord(coord, index, 26);
+        addcoord(coord, index, cylfinfo, 26);
     }
         //001
     else if(pindices[0] ==0 && pindices[1] == 0 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 4);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 4);
         //Edge
-        addcoord(coord, index, 7);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 14);
-        addcoord(coord, index, 16);
-        addcoord(coord, index, 18);
+        addcoord(coord, index, cylfinfo, 7);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 14);
+        addcoord(coord, index, cylfinfo, 16);
+        addcoord(coord, index, cylfinfo, 18);
         //Vertex
-        addcoord(coord, index, 24);
-        addcoord(coord, index, 26);
+        addcoord(coord, index, cylfinfo, 24);
+        addcoord(coord, index, cylfinfo, 26);
     }
         //002
     else if(pindices[0] ==0 && pindices[1] == 0 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 18);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 7);
+        addcoord(coord, index, cylfinfo, 18);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 7);
         //Vertex
-        addcoord(coord, index, 24);
+        addcoord(coord, index, cylfinfo, 24);
     }
         //010
     else if(pindices[0] ==0 && pindices[1] == 1 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 5);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 5);
         //Edge
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 14);
-        addcoord(coord, index, 16);
-        addcoord(coord, index, 18);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 14);
+        addcoord(coord, index, cylfinfo, 16);
+        addcoord(coord, index, cylfinfo, 18);
         //Vertex
-        addcoord(coord, index, 19);
-        addcoord(coord, index, 26);
+        addcoord(coord, index, cylfinfo, 19);
+        addcoord(coord, index, cylfinfo, 26);
     }
         //011
     else if(pindices[0] ==0 && pindices[1] == 1 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 5);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 5);
         //Edge
-        addcoord(coord, index, 7);
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 13);
-        addcoord(coord, index, 14);
-        addcoord(coord, index, 16);
-        addcoord(coord, index, 18);
+        addcoord(coord, index, cylfinfo, 7);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 13);
+        addcoord(coord, index, cylfinfo, 14);
+        addcoord(coord, index, cylfinfo, 16);
+        addcoord(coord, index, cylfinfo, 18);
         //Vertex
-        addcoord(coord, index, 19);
-        addcoord(coord, index, 21);
-        addcoord(coord, index, 24);
-        addcoord(coord, index, 26);
+        addcoord(coord, index, cylfinfo, 19);
+        addcoord(coord, index, cylfinfo, 21);
+        addcoord(coord, index, cylfinfo, 24);
+        addcoord(coord, index, cylfinfo, 26);
     }
         //012
     else if(pindices[0] ==0 && pindices[1] == 1 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 5);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 5);
         //Edge
-        addcoord(coord, index, 7);
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 13);
-        addcoord(coord, index, 18);
+        addcoord(coord, index, cylfinfo, 7);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 13);
+        addcoord(coord, index, cylfinfo, 18);
         //Vertex
-        addcoord(coord, index, 24);
-        addcoord(coord, index, 21);
+        addcoord(coord, index, cylfinfo, 24);
+        addcoord(coord, index, cylfinfo, 21);
     }
         //020
     else if(pindices[0] ==0 && pindices[1] == 2 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 16);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 16);
         //Vertex
-        addcoord(coord, index, 19);
+        addcoord(coord, index, cylfinfo, 19);
     }
         //021
     else if(pindices[0] ==0 && pindices[1] == 2 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 5);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 5);
         //Edge
-        addcoord(coord, index, 7);
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 13);
-        addcoord(coord, index, 16);
+        addcoord(coord, index, cylfinfo, 7);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 13);
+        addcoord(coord, index, cylfinfo, 16);
         //Vertex
-        addcoord(coord, index, 19);
-        addcoord(coord, index, 21);
+        addcoord(coord, index, cylfinfo, 19);
+        addcoord(coord, index, cylfinfo, 21);
     }
         //022
     else if(pindices[0] ==0 && pindices[1] == 2 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 13);
-        addcoord(coord, index, 7);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 13);
+        addcoord(coord, index, cylfinfo, 7);
         //Vertex
-        addcoord(coord, index, 21);
+        addcoord(coord, index, cylfinfo, 21);
     }
         //100
     else if(pindices[0] ==1 && pindices[1] == 0 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 6);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 6);
         //Edge
-        addcoord(coord, index, 8);
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 14);
-        addcoord(coord, index, 16);
-        addcoord(coord, index, 18);
+        addcoord(coord, index, cylfinfo, 8);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 14);
+        addcoord(coord, index, cylfinfo, 16);
+        addcoord(coord, index, cylfinfo, 18);
         //Vertex
-        addcoord(coord, index, 22);
-        addcoord(coord, index, 26);
+        addcoord(coord, index, cylfinfo, 22);
+        addcoord(coord, index, cylfinfo, 26);
     }
         //101
     else if(pindices[0] ==1 && pindices[1] == 0 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 6);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 6);
         //Edge
-        addcoord(coord, index, 7);
-        addcoord(coord, index, 8);
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 14);
-        addcoord(coord, index, 15);
-        addcoord(coord, index, 16);
-        addcoord(coord, index, 18);
+        addcoord(coord, index, cylfinfo, 7);
+        addcoord(coord, index, cylfinfo, 8);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 14);
+        addcoord(coord, index, cylfinfo, 15);
+        addcoord(coord, index, cylfinfo, 16);
+        addcoord(coord, index, cylfinfo, 18);
         //Vertex
-        addcoord(coord, index, 20);
-        addcoord(coord, index, 22);
-        addcoord(coord, index, 24);
-        addcoord(coord, index, 26);
+        addcoord(coord, index, cylfinfo, 20);
+        addcoord(coord, index, cylfinfo, 22);
+        addcoord(coord, index, cylfinfo, 24);
+        addcoord(coord, index, cylfinfo, 26);
     }
         //102
     else if(pindices[0] ==1 && pindices[1] == 0 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 6);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 6);
         //Edge
-        addcoord(coord, index, 7);
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 15);
-        addcoord(coord, index, 18);
+        addcoord(coord, index, cylfinfo, 7);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 15);
+        addcoord(coord, index, cylfinfo, 18);
         //Vertex
-        addcoord(coord, index, 20);
-        addcoord(coord, index, 24);
+        addcoord(coord, index, cylfinfo, 20);
+        addcoord(coord, index, cylfinfo, 24);
     }
         //110
     else if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 6);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 6);
         //Edge
-        addcoord(coord, index, 8);
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 14);
-        addcoord(coord, index, 16);
-        addcoord(coord, index, 17);
-        addcoord(coord, index, 18);
+        addcoord(coord, index, cylfinfo, 8);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 14);
+        addcoord(coord, index, cylfinfo, 16);
+        addcoord(coord, index, cylfinfo, 17);
+        addcoord(coord, index, cylfinfo, 18);
         //Vertex
-        addcoord(coord, index, 19);
-        addcoord(coord, index, 22);
-        addcoord(coord, index, 23);
-        addcoord(coord, index, 26);
+        addcoord(coord, index, cylfinfo, 19);
+        addcoord(coord, index, cylfinfo, 22);
+        addcoord(coord, index, cylfinfo, 23);
+        addcoord(coord, index, cylfinfo, 26);
     }
         //112
     else if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 6);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 6);
         //Edge
-        addcoord(coord, index, 7);
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 13);
-        addcoord(coord, index, 15);
-        addcoord(coord, index, 17);
-        addcoord(coord, index, 18);
+        addcoord(coord, index, cylfinfo, 7);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 13);
+        addcoord(coord, index, cylfinfo, 15);
+        addcoord(coord, index, cylfinfo, 17);
+        addcoord(coord, index, cylfinfo, 18);
         //Vertex
-        addcoord(coord, index, 20);
-        addcoord(coord, index, 21);
-        addcoord(coord, index, 24);
-        addcoord(coord, index, 25);
+        addcoord(coord, index, cylfinfo, 20);
+        addcoord(coord, index, cylfinfo, 21);
+        addcoord(coord, index, cylfinfo, 24);
+        addcoord(coord, index, cylfinfo, 25);
     }
         //120
     else if(pindices[0] ==1 && pindices[1] == 2 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 6);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 6);
         //Edge
-        addcoord(coord, index, 8);
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 16);
-        addcoord(coord, index, 17);
+        addcoord(coord, index, cylfinfo, 8);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 16);
+        addcoord(coord, index, cylfinfo, 17);
         //Vertex
-        addcoord(coord, index, 19);
-        addcoord(coord, index, 23);
+        addcoord(coord, index, cylfinfo, 19);
+        addcoord(coord, index, cylfinfo, 23);
     }
         //121
     else if(pindices[0] ==1 && pindices[1] == 2 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 6);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 6);
         //Edge
-        addcoord(coord, index, 7);
-        addcoord(coord, index, 8);
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 13);
-        addcoord(coord, index, 15);
-        addcoord(coord, index, 16);
-        addcoord(coord, index, 17);
+        addcoord(coord, index, cylfinfo, 7);
+        addcoord(coord, index, cylfinfo, 8);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 13);
+        addcoord(coord, index, cylfinfo, 15);
+        addcoord(coord, index, cylfinfo, 16);
+        addcoord(coord, index, cylfinfo, 17);
         //Vertex
-        addcoord(coord, index, 19);
-        addcoord(coord, index, 21);
-        addcoord(coord, index, 23);
-        addcoord(coord, index, 25);
+        addcoord(coord, index, cylfinfo, 19);
+        addcoord(coord, index, cylfinfo, 21);
+        addcoord(coord, index, cylfinfo, 23);
+        addcoord(coord, index, cylfinfo, 25);
     }
         //122
     else if(pindices[0] ==1 && pindices[1] == 2 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 5);
-        addcoord(coord, index, 6);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 5);
+        addcoord(coord, index, cylfinfo, 6);
         //Edge
-        addcoord(coord, index, 7);
-        addcoord(coord, index, 9);
-        addcoord(coord, index, 13);
-        addcoord(coord, index, 15);
-        addcoord(coord, index, 17);
+        addcoord(coord, index, cylfinfo, 7);
+        addcoord(coord, index, cylfinfo, 9);
+        addcoord(coord, index, cylfinfo, 13);
+        addcoord(coord, index, cylfinfo, 15);
+        addcoord(coord, index, cylfinfo, 17);
         //Vertex
-        addcoord(coord, index, 21);
-        addcoord(coord, index, 25);
+        addcoord(coord, index, cylfinfo, 21);
+        addcoord(coord, index, cylfinfo, 25);
     }
         //200
     else if(pindices[0] ==2 && pindices[1] == 0 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 8);
-        addcoord(coord, index, 14);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 8);
+        addcoord(coord, index, cylfinfo, 14);
         //Vertex
-        addcoord(coord, index, 22);
+        addcoord(coord, index, cylfinfo, 22);
     }
         //201
     else if(pindices[0] ==2 && pindices[1] == 0 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 4);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 4);
         //Edge
-        addcoord(coord, index, 8);
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 14);
-        addcoord(coord, index, 15);
+        addcoord(coord, index, cylfinfo, 8);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 14);
+        addcoord(coord, index, cylfinfo, 15);
         //Vertex
-        addcoord(coord, index, 20);
-        addcoord(coord, index, 22);
+        addcoord(coord, index, cylfinfo, 20);
+        addcoord(coord, index, cylfinfo, 22);
     }
         //202
     else if(pindices[0] ==2 && pindices[1] == 0 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 1);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 15);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 15);
         //Vertex
-        addcoord(coord, index, 20);
+        addcoord(coord, index, cylfinfo, 20);
 
     }
         //210
     else if(pindices[0] ==2 && pindices[1] == 1 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 6);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 6);
         //Edge
-        addcoord(coord, index, 8);
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 14);
-        addcoord(coord, index, 17);
+        addcoord(coord, index, cylfinfo, 8);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 14);
+        addcoord(coord, index, cylfinfo, 17);
         //Vertex
-        addcoord(coord, index, 22);
-        addcoord(coord, index, 23);
+        addcoord(coord, index, cylfinfo, 22);
+        addcoord(coord, index, cylfinfo, 23);
     }
         //211
     else if(pindices[0] ==2 && pindices[1] == 1 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 6);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 6);
         //Edge
-        addcoord(coord, index, 8);
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 13);
-        addcoord(coord, index, 14);
-        addcoord(coord, index, 15);
-        addcoord(coord, index, 17);
+        addcoord(coord, index, cylfinfo, 8);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 13);
+        addcoord(coord, index, cylfinfo, 14);
+        addcoord(coord, index, cylfinfo, 15);
+        addcoord(coord, index, cylfinfo, 17);
         //Vertex
-        addcoord(coord, index, 20);
-        addcoord(coord, index, 22);
-        addcoord(coord, index, 23);
-        addcoord(coord, index, 25);
+        addcoord(coord, index, cylfinfo, 20);
+        addcoord(coord, index, cylfinfo, 22);
+        addcoord(coord, index, cylfinfo, 23);
+        addcoord(coord, index, cylfinfo, 25);
     }
         //212
     else if(pindices[0] ==2 && pindices[1] == 1 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 4);
-        addcoord(coord, index, 6);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 4);
+        addcoord(coord, index, cylfinfo, 6);
         //Edge
-        addcoord(coord, index, 10);
-        addcoord(coord, index, 12);
-        addcoord(coord, index, 13);
-        addcoord(coord, index, 15);
-        addcoord(coord, index, 17);
+        addcoord(coord, index, cylfinfo, 10);
+        addcoord(coord, index, cylfinfo, 12);
+        addcoord(coord, index, cylfinfo, 13);
+        addcoord(coord, index, cylfinfo, 15);
+        addcoord(coord, index, cylfinfo, 17);
         //Vertex
-        addcoord(coord, index, 20);
-        addcoord(coord, index, 25);
+        addcoord(coord, index, cylfinfo, 20);
+        addcoord(coord, index, cylfinfo, 25);
     }
         //220
     else if(pindices[0] ==2 && pindices[1] == 2 && pindices[2] == 0){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 2);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 2);
         //Edge
-        addcoord(coord, index, 17);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 8);
+        addcoord(coord, index, cylfinfo, 17);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 8);
         //Vertex
-        addcoord(coord, index, 23);
+        addcoord(coord, index, cylfinfo, 23);
     }
         //221
     else if(pindices[0] ==2 && pindices[1] == 2 && pindices[2] == 1){
         //Plane
-        addcoord(coord, index, 1);
-        addcoord(coord, index, 2);
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 3);
+        addcoord(coord, index, cylfinfo, 1);
+        addcoord(coord, index, cylfinfo, 2);
+        addcoord(coord, index, cylfinfo, 6);
+        addcoord(coord, index, cylfinfo, 3);
         //Edge
-        addcoord(coord, index, 8);
-        addcoord(coord, index, 11);
-        addcoord(coord, index, 13);
-        addcoord(coord, index, 15);
-        addcoord(coord, index, 17);
+        addcoord(coord, index, cylfinfo, 8);
+        addcoord(coord, index, cylfinfo, 11);
+        addcoord(coord, index, cylfinfo, 13);
+        addcoord(coord, index, cylfinfo, 15);
+        addcoord(coord, index, cylfinfo, 17);
         //Vertex
-        addcoord(coord, index, 23);
-        addcoord(coord, index, 25);
+        addcoord(coord, index, cylfinfo, 23);
+        addcoord(coord, index, cylfinfo, 25);
     }
         //222
     else if(pindices[0] ==2 && pindices[1] == 2 && pindices[2] == 2){
         //Plane
-        addcoord(coord, index, 6);
-        addcoord(coord, index, 3);
-        addcoord(coord, index, 1);
+        addcoord(coord, index,cylfinfo,  6);
+        addcoord(coord, index, cylfinfo, 3);
+        addcoord(coord, index, cylfinfo, 1);
         //Edge
-        addcoord(coord, index, 17);
-        addcoord(coord, index, 15);
-        addcoord(coord, index, 13);
+        addcoord(coord, index, cylfinfo, 17);
+        addcoord(coord, index, cylfinfo, 15);
+        addcoord(coord, index, cylfinfo, 13);
         //Vertex
-        addcoord(coord, index, 25);
+        addcoord(coord, index, cylfinfo, 25);
     }
 }
 
@@ -1550,21 +1756,6 @@ void Compartment::getSlicedVolumeArea() {
     //  - The unit normal vector of triangles
     // ASSUMPTIONS:
     //  - This compartment is a CUBE
-//    size_t numTriangle = _triangles.size();
-//    if(numTriangle) {
-//        double sumArea = 0.0;
-//        array<double, 3> sumNormal {};
-//        array<double, 3> sumPos {};
-//        for(Triangle* t: _triangles) {
-//            double area = t->getGTriangle()->getArea();
-//            vectorIncrease(sumNormal, vectorMultiply(t->getGTriangle()->getUnitNormal(), area));
-//            vectorIncrease(sumPos, vectorMultiply(t->coordinate, area));
-//            sumArea += area;
-//        }
-//        double oneOverSumArea = 1.0 / sumArea;
-//        vectorExpand(sumNormal, oneOverSumArea);
-//        vectorExpand(sumPos, oneOverSumArea);
-//
     //get compartment sizes in X,Y and the radius of cylinder
     auto sizex = SysParams::Geometry().compartmentSizeX;
     auto sizey = SysParams::Geometry().compartmentSizeY;
@@ -1747,7 +1938,7 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
 
     vector<ReactionBase*> rxns;
 
-//    cout << "This compartment: x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
+    // cout << "This compartment: x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
 
     for(auto &sp_this : _species.species()) {
         int molecule = sp_this->getMolecule();
@@ -1758,14 +1949,14 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
             // Scale the diffusion rate according to the contacting areas
             size_t idxFwd = _neighborIndex.at(C), idxBwd = C->_neighborIndex.at(this);
             double scaleFactor = 0.5 * (_partialArea[idxFwd] + C->_partialArea[idxBwd]) / GController::getCompartmentArea()[idxFwd / 2];
+
             //double scaleFactor = 1.0;
-//            cout << "To neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] << ", z = " << C->_coords[2] <<endl;
-//            cout << "scaleFactor = " << scaleFactor << endl;
+            // cout << "To neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] << ", z = " << C->_coords[2] <<endl;
+            // cout << "scaleFactor = " << scaleFactor << endl;
 
             float actualDiffRate = diff_rate * scaleFactor;
             float volumeFrac = getVolumeFrac();
-//            cout << "VolumeFraction = " << volumeFrac << endl;
-
+            // cout << "VolumeFraction = " << volumeFrac << endl;
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
             //Diffusion reaction from "this" compartment to C.
             ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour}, actualDiffRate, false, volumeFrac);
@@ -1854,6 +2045,7 @@ void Compartment::removeAllDiffusionReactions(ChemSim* chem) {
 
 void Compartment::transferSpecies(int i) {
     //i axis
+    //-1 all directions
     //0 X
     //1 Y
     //2 Z
@@ -1865,15 +2057,16 @@ void Compartment::transferSpecies(int i) {
         auto ncoord=neighbor->coordinates();
 
         if(neighbor->isActivated()){
-            if(i==3)
+            if(i < 0 || i == 3)
                 activeNeighbors.push_back(neighbor);
             else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
                 activeNeighbors.push_back(neighbor);
-        }}
+        }
+    }
 
     assert(activeNeighbors.size() != 0
            && "Cannot transfer species to another compartment... no neighbors are active");
-    if(i<3 && activeNeighbors.size()>1){
+    if(i >= 0 && i<3 && activeNeighbors.size()>1){
         cout<<"Error transferring species along an axis. More than 1 neighbor. Exiting. "<< endl;
         exit(EXIT_FAILURE);
     }
@@ -1926,6 +2119,7 @@ void Compartment::transferSpecies(int i) {
 
 void Compartment::shareSpecies(int i) {
     //i axis
+    //-1 all directions
     //0 X
     //1 Y
     //2 Z
@@ -1935,16 +2129,17 @@ void Compartment::shareSpecies(int i) {
 
     for(auto &neighbor : _neighbours){
         auto ncoord=neighbor->coordinates();
-    if(neighbor->isActivated()){
-        if(i==3)
-            activeNeighbors.push_back(neighbor);
-        else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
-        activeNeighbors.push_back(neighbor);
-    }}
+        if(neighbor->isActivated()){
+            if(i < 0 || i == 3)
+                activeNeighbors.push_back(neighbor);
+            else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
+                activeNeighbors.push_back(neighbor);
+        }
+    }
 
     assert(activeNeighbors.size() != 0
            && "Cannot share species to another compartment... no neighbors are active");
-    if(i<3 && activeNeighbors.size()>1){
+    if(i >= 0 && i<3 && activeNeighbors.size()>1){
         cout<<"Error sharing species along an axis. More than 1 neighbor. Exiting."<< endl;
         exit(EXIT_FAILURE);
     }
@@ -2011,17 +2206,16 @@ void Compartment::activate(ChemSim* chem) {
                     if(rs1->getN()>0 && r->isPassivated()){
                         r->activateReaction();
                     }
+                }
+            }
         }
     }
-        }
-    }
-
 }
 
 void Compartment::deactivate(ChemSim* chem) {
 
     //assert no cylinders in this compartment
-    assert((_cylinders.size() == 0)
+    assert((getCylinders().size() == 0)
            && "Compartment cannot be deactivated when containing active cylinders.");
 
     assert(_activated && "Compartment is already deactivated.");

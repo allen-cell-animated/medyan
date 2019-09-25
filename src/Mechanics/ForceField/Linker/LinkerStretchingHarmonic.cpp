@@ -187,9 +187,8 @@ void LinkerStretchingHarmonic::checkforculprit() {
 }
 
 #endif
-floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord,
-        floatingpoint *f, int *beadSet, floatingpoint *kstr, floatingpoint *eql,
-        floatingpoint *pos1, floatingpoint *pos2) {
+floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, int *beadSet,
+        floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2) {
 
         int n = LinkerStretching<LinkerStretchingHarmonic>::n;
         int nint = Linker::getLinkers().size();
@@ -341,19 +340,19 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, floatingpoi
             stretchforce[i] = f0/invL;
 
 	        #ifdef CHECKFORCES_INF_NAN
-	        if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)||checkNaN_INF(f3,0,2)
-	           ||checkNaN_INF(f4,0,2)){
+	        if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)
+	                ||checkNaN_INF<floatingpoint>(f3,0,2) ||checkNaN_INF<floatingpoint>(f4,0,2)){
 		        cout<<"Linker Force becomes infinite. Printing data "<<endl;
 
 		        auto l = Linker::getLinkers()[i];
 		        auto cyl1 = l->getFirstCylinder();
 		        auto cyl2 = l->getSecondCylinder();
-		        cout<<"Cylinder IDs "<<cyl1->getID()<<" "<<cyl2->getID()<<" with cIndex "
-		            <<cyl1->_dcIndex<<" "<<cyl2->_dcIndex<<" and bIndex "
-		            <<cyl1->getFirstBead()->_dbIndex<<" "
-		            <<cyl1->getSecondBead()->_dbIndex<<" "
-		            <<cyl2->getFirstBead()->_dbIndex<<" "
-		            <<cyl2->getSecondBead()->_dbIndex<<endl;
+		        cout<<"Cylinder IDs "<<cyl1->getId()<<" "<<cyl2->getId()<<" with cIndex "
+		            <<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex()<<" and bIndex "
+		            <<cyl1->getFirstBead()->getStableIndex()<<" "
+		            <<cyl1->getSecondBead()->getStableIndex()<<" "
+		            <<cyl2->getFirstBead()->getStableIndex()<<" "
+		            <<cyl2->getSecondBead()->getStableIndex()<<endl;
 
 		        cout<<"Printing coords"<<endl;
 		        cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;

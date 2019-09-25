@@ -77,10 +77,10 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
             auto cin = neighbors[ni];
             if(!cin->isFullLength()||
                cin->getBranchingCylinder() == ci) continue;
-            beadSet[n * (Cumnc)] = ci->getFirstBead()->_dbIndex;
-            beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->_dbIndex;
-            beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->_dbIndex;
-            beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->_dbIndex;
+            beadSet[n * (Cumnc)] = ci->getFirstBead()->getStableIndex();
+            beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->getStableIndex();
+            beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->getStableIndex();
+            beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->getStableIndex();
 
             //Get KRepuls based on filament type
             if(ci->getType() != cin->getType()){
@@ -182,7 +182,7 @@ void CylinderExclVolume<CVolumeInteractionType>::deallocate() {
 
 
 template <class CVolumeInteractionType>
-floatingpoint CylinderExclVolume<CVolumeInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint CylinderExclVolume<CVolumeInteractionType>::computeEnergy(floatingpoint *coord) {
 
 
     floatingpoint U_ii=0.0f;
@@ -221,10 +221,8 @@ floatingpoint CylinderExclVolume<CVolumeInteractionType>::computeEnergy(floating
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
 #endif
-    if (d == 0.0f)
-        U_ii = _FFType.energy(coord, f, beadSet, krep);
-    else
-        U_ii = _FFType.energy(coord, f, beadSet, krep, d);
+
+    U_ii = _FFType.energy(coord, beadSet, krep);
 
 #ifdef CUDATIMETRACK
     floatingpoint U_i[1];
@@ -295,7 +293,7 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(floatingpoint *co
 }
 
 ///Template specializations
-template floatingpoint CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template floatingpoint CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(floatingpoint *coord);
 template void CylinderExclVolume<CylinderExclVolRepulsion>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void CylinderExclVolume<CylinderExclVolRepulsion>::vectorize();
 template void CylinderExclVolume<CylinderExclVolRepulsion>::deallocate();

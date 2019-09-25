@@ -14,10 +14,15 @@
 #include <algorithm>
 #include <cstdlib>
 
-#include "dist_moduleV2/dist_out.h"
+/*#include "dist_moduleV2/dist_out.h"
 #include "dist_moduleV2/dist_coords.h"
 
-#include "dist_moduleV2/dist_cuda_simple.cuh"
+#include "dist_moduleV2/dist_cuda_simple.cuh"*/
+
+#include "dist_out.h"
+#include "dist_coords.h"
+
+#include "dist_cuda_simple.cuh"
 
 #define gpuAssert( condition ) { if( (condition) != 0 ) { fprintf( stderr, "\n FAILURE %s in %s, line %d\n", cudaGetErrorString(condition), __FILE__, __LINE__ ); exit( 1 ); } }
 

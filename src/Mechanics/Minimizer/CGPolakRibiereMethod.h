@@ -27,8 +27,9 @@ class PolakRibiere : public CGMethod
 {
 public:
     
-    virtual void minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                          floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit);
+    virtual MinimizationResult minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
+                          floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+                          floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY, bool steplimit);
 protected:
 	chrono::high_resolution_clock::time_point tbegin, tend;
 #ifdef CUDAACCL

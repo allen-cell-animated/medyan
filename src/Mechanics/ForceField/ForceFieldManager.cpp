@@ -18,6 +18,9 @@
 #include "cross_check.h"
 #include <algorithm>
 
+#include "Structure/Bead.h"
+#include "Structure/Cylinder.h"
+
 ForceField* ForceFieldManager::_culpritForceField = nullptr;
 
 void ForceFieldManager::vectorizeAllForceFields() {
@@ -123,10 +126,10 @@ void ForceFieldManager::cleanupAllForceFields() {
 #endif
 }
 
-floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoint *f,
-		floatingpoint d, bool verbose) {
-#ifdef CUDATIMETRACK
+template< bool stretched >
+floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbose) const {
     chrono::high_resolution_clock::time_point tbegin, tend;
+#ifdef CUDATIMETRACK
 //    CUDAcommon::cudatime.TcomputeE = 0.0;
     CUDAcommon::cudatime.TveccomputeE.clear();
     CUDAcommon::cudatime.Ecount++;
@@ -170,7 +173,6 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoi
     CUDAcommon::handleerror(cudaMemcpy(cuda_lambda, CUDAcommon::cudavars.gpu_lambda,  sizeof(floatingpoint),
                                        cudaMemcpyDeviceToHost));
 
-    std::cout<<"Lambda used CUDA "<<cuda_lambda[0]<<" SERL "<<d<<endl;
 #endif
     short count = 0;
     CUDAcommon::tmin.computeenergycalls++;
@@ -180,11 +182,7 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoi
 	    CUDAcommon::tmin.computeenerycallsnonzero++;*/
     for (auto &ff : _forceFields) {
         tbegin = chrono::high_resolution_clock::now();
-//	    #ifdef MOVEBEADSLINESEARCH
-        floatingpoint tempEnergy = ff->computeEnergy(coord, f, 0.0);
-/*		#else
-		floatingpoint tempEnergy = ff->computeEnergy(coord, f, d);
-		#endif*/
+        auto tempEnergy = ff->computeEnergy(coord, stretched);
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
 //        cout<<ff->getName()<<" "<<tempEnergy<<"pN.nm"<<" ";
@@ -193,7 +191,7 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoi
         else
             CUDAcommon::tmin.individualenergies.push_back(elapsed_energy.count());
 
-		    if(areEqual(d,0.0)){
+		    if(!stretched){
 			    if(CUDAcommon::tmin.individualenergieszero.size() == _forceFields.size())
 				    CUDAcommon::tmin.individualenergieszero[count] += elapsed_energy.count();
 			    else
@@ -219,7 +217,7 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoi
         if (tempEnergy <= -1) {
 
             //if this is the current energy, exit ungracefully
-            if (d == 0.0) {
+            if (!stretched) {
 
                 cout << "Energy = " << tempEnergy << endl;
 
@@ -232,7 +230,7 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoi
                 return numeric_limits<floatingpoint>::infinity();
             }
                 //if this is a minimization try, just return infinity
-            else {cout<<"Returning infintie energy "<<ff->getName()<<" d "<<d<<endl;
+            else {cout<<"Returning infintie energy "<<ff->getName()<<endl;
                 return numeric_limits<floatingpoint>::infinity();}
         }
         else energy += tempEnergy;
@@ -319,8 +317,32 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoi
 //        std::cout<<x<<" ";
 //    std::cout<<endl;
 #endif
+
     return energy;
+    
 }
+
+
+
+
+EnergyReport ForceFieldManager::computeEnergyHRMD(floatingpoint *coord) const {
+    EnergyReport result;
+    result.total = 0.0;
+    for (auto &ff : _forceFields) {
+        auto tempEnergy = ff->computeEnergy(coord);
+        // convert to units of kT
+        tempEnergy = tempEnergy / kT; // TODO: Energy unit conversion might happen outside
+        result.individual.push_back({ff->getName(), tempEnergy});
+        result.total += tempEnergy;
+    }
+    return result;
+}
+
+
+
+
+template floatingpoint ForceFieldManager::computeEnergy< false >(floatingpoint *, bool) const;
+template floatingpoint ForceFieldManager::computeEnergy< true >(floatingpoint *, bool) const;
 
 void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
     //reset to zero
@@ -333,7 +355,7 @@ void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
     tbegin = chrono::high_resolution_clock::now();
 #endif
     //@{
-    for (int i = 0; i < CGMethod::N; i++)
+    for (int i = 0; i < Bead::getDbData().forces.size_raw(); i++)
         f[i] = 0.0;
     //@}
 #ifdef CUDATIMETRACK
@@ -428,11 +450,18 @@ void ForceFieldManager::computeLoadForces() {
         b->lfim = 0;
     }
 }
+void ForceFieldManager::computeLoadForce(Cylinder* c, ForceField::LoadForceEnd end) const {
+    auto  b          = (end == ForceField::LoadForceEnd::Plus ? c->getSecondBead() : c->getFirstBead());
+    auto& loadForces = (end == ForceField::LoadForceEnd::Plus ? b->loadForcesP     : b->loadForcesM   );
+    auto& lfi        = (end == ForceField::LoadForceEnd::Plus ? b->lfip            : b->lfim          );
 
-void ForceFieldManager::copyForces(floatingpoint *fprev, floatingpoint *f) {
+    // reset
+    std::fill(loadForces.begin(), loadForces.end(), 0.0);
 
-    for (int i = 0; i < CGMethod::N; i++)
-        fprev[i] = f[i];
+    for(auto& f : _forceFields) f->computeLoadForce(c, end);
+
+    // reset lfi
+    lfi = 0;
 }
 
 void ForceFieldManager::printculprit(floatingpoint* force){
@@ -522,4 +551,47 @@ void ForceFieldManager::assignallforcemags() {
 
     for (auto &ff : _forceFields)
         ff->assignforcemags();
+}
+
+
+void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta){
+    // store the minimization time and initialize the matrix
+    tauVector.push_back(tau());
+    vector<vector<floatingpoint> > HessianMatrix(total_DOF, vector<floatingpoint>(total_DOF));
+    // loop through all the coordinates
+    for(auto i = 0; i < total_DOF; i++){
+
+        // create new vectors for the foorces and coordinates
+        vector<floatingpoint> forces_copy_p(total_DOF);
+        vector<floatingpoint> coord_copy_p(total_DOF);
+        
+        vector<floatingpoint> forces_copy_m(total_DOF);
+        vector<floatingpoint> coord_copy_m(total_DOF);
+
+        // copy coordinates to new vector
+        for(auto l = 0; l< coord_copy_p.size(); l++){
+            coord_copy_p[l] = coord[l];
+            coord_copy_m[l] = coord[l];
+        }
+
+        // perturb the coordinate i
+        coord_copy_p[i] += delta;
+        coord_copy_m[i] -= delta;
+
+        // calculate the new forces based on perturbation
+        computeForces(coord_copy_p.data(), forces_copy_p.data());
+        computeForces(coord_copy_m.data(), forces_copy_m.data());
+
+        for(auto j = 0; j < total_DOF; j++){
+
+            // store the central difference numerical derivative of the force on each coordinate j
+            HessianMatrix[i][j] = -(forces_copy_p[j] - forces_copy_m[j]) / (2 * delta);
+        }
+
+    }
+
+    // store the matrix
+    hessianVector.push_back(HessianMatrix);
+
+
 }

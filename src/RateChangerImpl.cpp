@@ -27,9 +27,23 @@ float BrownianRatchet::changeRate(float bareRate, floatingpoint force) {
     return newRate;
 }
 
+float BrownianRatchet::getRateChangeFactor(floatingpoint force) {
+
+    force = min<floatingpoint>(force, (floatingpoint)100.0); //ceiling
+
+    return exp( - force * _x / kT);
+}
+
+
 float LinkerCatchSlip::changeRate(float bareRate, floatingpoint force) {
     
     return bareRate * (_a1 * exp(- force * _x1 / kT) +
+                       _a2 * exp(  force * _x2 / kT));
+}
+
+float LinkerCatchSlip::getRateChangeFactor(floatingpoint force) {
+
+    return (_a1 * exp(- force * _x1 / kT) +
                        _a2 * exp(  force * _x2 / kT));
 }
 
@@ -40,6 +54,11 @@ float LinkerSlip::changeRate(float bareRate, floatingpoint force) {
     return newRate;
 }
 
+float LinkerSlip::getRateChangeFactor(floatingpoint force) {
+
+    return exp( force * _x / kT);
+}
+
 float BranchSlip::changeRate(float bareRate, floatingpoint force) {
 
     floatingpoint newRate = bareRate * exp( force * _x / kT);
@@ -47,8 +66,17 @@ float BranchSlip::changeRate(float bareRate, floatingpoint force) {
     return newRate;
 }
 
+float BranchSlip::getRateChangeFactor( floatingpoint force) {
+
+    return exp( force * _x / kT);
+}
+
 float MotorCatch::numBoundHeads(float onRate, float offRate,
                                 floatingpoint force, int numHeads) {
+
+/*	#ifdef MOTORBIASCHECK
+	return numHeads;
+	#endif*/
 
 #ifdef PLOSFEEDBACK
     return min<floatingpoint >((floatingpoint)numHeads, numHeads * _dutyRatio + _gamma *
@@ -78,7 +106,14 @@ float MotorCatch::changeRate(float onRate, float offRate,
 #endif
     
     floatingpoint newRate = k_0 * factor;
+
     return newRate;
+
+/*    #ifdef MOTORBIASCHECK
+    return k_0;
+	#else
+    return newRate;
+	#endif*/
 }
 
 float MotorStall::changeRate(float onRate, float offRate,
@@ -89,11 +124,18 @@ float MotorStall::changeRate(float onRate, float offRate,
     float k_0 = ((1 - _dutyRatio) / _dutyRatio) * onRate * _stepFrac;
 
 #if defined(PLOSFEEDBACK) || defined(PLOSSTALLFEEDBACK)
-    floatingpoint newRate =  max(0.0f, k_0 * (_F0 - force/numHeads)
+    floatingpoint newRate =  max((floatingpoint(0.0)), k_0 * (_F0 - force/numHeads)
                           / (_F0 + (force / (numHeads * _alpha))));
 #else
     floatingpoint newRate =  max<floatingpoint>((floatingpoint)0.0, k_0 * (_F0 - force)
                                / (_F0 + (force / (_alpha))));
 #endif
+
     return newRate;
+
+/*    #ifdef MOTORBIASCHECK
+    return max((floatingpoint(0.0)), k_0);
+    #else
+    return newRate;
+    #endif*/
 }

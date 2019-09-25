@@ -26,10 +26,10 @@
 
 template <class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::assignforcemags() {
-    for(auto m: MotorGhost::getMotorGhosts()){
-        //Using += to ensure that the stretching forces are additive.
-        m->getMMotorGhost()->stretchForce = stretchforce[m->_dbIndex];
-    }
+    // for(auto m: MotorGhost::getMotorGhosts()){
+    //     //Using += to ensure that the stretching forces are additive.
+    //     m->getMMotorGhost()->stretchForce = stretchforce[m->getIndex()];
+    // }
 #ifdef CUDAACCL
     floatingpoint stretchforce[MotorGhost::getMotorGhosts().size()];
     CUDAcommon::handleerror(cudaMemcpy(stretchforce, gpu_Mstretchforce,
@@ -55,11 +55,11 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
     int i = 0;
 
     for (auto m: MotorGhost::getMotorGhosts()) {
-        m->_dbIndex = i;
-        beadSet[n * i] = m->getFirstCylinder()->getFirstBead()->_dbIndex;
-        beadSet[n * i + 1] = m->getFirstCylinder()->getSecondBead()->_dbIndex;
-        beadSet[n * i + 2] = m->getSecondCylinder()->getFirstBead()->_dbIndex;
-        beadSet[n * i + 3] = m->getSecondCylinder()->getSecondBead()->_dbIndex;
+        /* Haoran 03/18/2019 m->getIndex() = i; */
+        beadSet[n * i] = m->getFirstCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 1] = m->getFirstCylinder()->getSecondBead()->getStableIndex();
+        beadSet[n * i + 2] = m->getSecondCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 3] = m->getSecondCylinder()->getSecondBead()->getStableIndex();
 
         kstr[i] = m->getMMotorGhost()->getStretchingConstant();
         eql[i] = m->getMMotorGhost()->getEqLength();
@@ -150,7 +150,7 @@ template<class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
     for(auto m: MotorGhost::getMotorGhosts()){
         //Using += to ensure that the stretching forces are additive.
-        m->getMMotorGhost()->stretchForce += stretchforce[m->_dbIndex];
+        m->getMMotorGhost()->stretchForce += stretchforce[m->getIndex()];
 //        std::cout<<m->getMMotorGhost()->stretchForce<<endl;
 //        cout<<stretchforce[m->_dbIndex]<<" ";
     }
@@ -176,7 +176,7 @@ void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
 
 
 template <class MStretchingInteractionType>
-floatingpoint MotorGhostStretching<MStretchingInteractionType>::computeEnergy(floatingpoint* coord, floatingpoint *f, floatingpoint d){
+floatingpoint MotorGhostStretching<MStretchingInteractionType>::computeEnergy(floatingpoint* coord){
     floatingpoint U_ii=0.0;
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -218,10 +218,7 @@ floatingpoint MotorGhostStretching<MStretchingInteractionType>::computeEnergy(fl
     tbegin = chrono::high_resolution_clock::now();
 #endif
 
-    if (d == 0.0)
-        U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2);
-    else
-        U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2, d);
+    U_ii = _FFType.energy(coord, beadSet, kstr, eql, pos1, pos2);
 
 #ifdef CUDATIMETRACK
     floatingpoint U_i[1], U_ii=0.0;
@@ -293,7 +290,7 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(floatingpoi
 
 
 ///Temlate specializations
-template floatingpoint MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template floatingpoint MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(floatingpoint *coord);
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::vectorize();
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::deallocate();

@@ -86,14 +86,14 @@ void BubbleFF::whoIsCulprit() {
 }
 
 
-floatingpoint BubbleFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
-
-	floatingpoint U= 0.0;
-	floatingpoint U_i=0.0;
+floatingpoint BubbleFF::computeEnergy(floatingpoint *coord, bool stretched) {
+    
+    floatingpoint U= 0.0;
+    floatingpoint U_i=0.0;
     
     for (auto &interaction : _bubbleInteractionVector) {
         
-        U_i = interaction->computeEnergy(coord, f, d);
+        U_i = interaction->computeEnergy(coord, stretched);
         
         if(U_i <= -1) {
             //set culprit and return
@@ -122,6 +122,10 @@ void BubbleFF::computeLoadForces() {
     
     for (auto &interaction : _bubbleInteractionVector)
         interaction->computeLoadForces();
+}
+void BubbleFF::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
+    for(const auto& interaction : _bubbleInteractionVector)
+        interaction->computeLoadForce(c, end);
 }
 
 vector<NeighborList*> BubbleFF::getNeighborLists() {

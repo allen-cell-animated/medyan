@@ -31,29 +31,34 @@ CLinker::CLinker(short linkerType, Compartment* c,
     SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(
                         SysParams::Chemistry().linkerBoundIndex[_filamentType]);
 ////    //@{
-//    SpeciesBound* BL1 = _cc1->getCMonomer(_position1)->speciesBound(
-//            SysParams::Chemistry().linkerBoundIndex[_filamentType]);
-//    SpeciesBound* BL2 = _cc2->getCMonomer(_position2)->speciesBound(
-//            SysParams::Chemistry().linkerBoundIndex[_filamentType]);
-//    SpeciesBound* BB1 = _cc1->getCMonomer(_position1)->speciesBound(
-//            SysParams::Chemistry().brancherBoundIndex[_filamentType]);
-//    SpeciesBound* BB2 = _cc2->getCMonomer(_position2)->speciesBound(
-//            SysParams::Chemistry().brancherBoundIndex[_filamentType]);
-//    SpeciesBound* BM1 = _cc1->getCMonomer(_position1)->speciesBound(
-//            SysParams::Chemistry().motorBoundIndex[_filamentType]);
-//    SpeciesBound* BM2 = _cc2->getCMonomer(_position2)->speciesBound(
-//            SysParams::Chemistry().motorBoundIndex[_filamentType]);
-//    SpeciesBound* sm1 = _cc1->getCMonomer(_position1)->speciesMotor(0);
-//    SpeciesBound* sm2 = _cc2->getCMonomer(_position2)->speciesMotor(0);
-//    SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesBrancher(0);
-//    SpeciesBound* sb2 = _cc2->getCMonomer(_position2)->speciesBrancher(0);
-//    std::cout<<"Linker "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "<<cc2->getCylinder()->getID()<<" "<<
-//            ""<<_position2<<" linkerType "<<linkerType<<endl;
-//	cout<<"Linker cIndices "<<cc1->getCylinder()->_dcIndex<<" "<<cc2->getCylinder()
-//			->_dcIndex<<endl;
-//    std::cout<<"Species Bound "<<se1->getN()<<" "<<se2->getN()<<endl;
+    /*SpeciesBound* BL1 = _cc1->getCMonomer(_position1)->speciesBound(
+            SysParams::Chemistry().linkerBoundIndex[_filamentType]);
+    SpeciesBound* BL2 = _cc2->getCMonomer(_position2)->speciesBound(
+            SysParams::Chemistry().linkerBoundIndex[_filamentType]);
+    SpeciesBound* BB1 = _cc1->getCMonomer(_position1)->speciesBound(
+            SysParams::Chemistry().brancherBoundIndex[_filamentType]);
+    SpeciesBound* BB2 = _cc2->getCMonomer(_position2)->speciesBound(
+            SysParams::Chemistry().brancherBoundIndex[_filamentType]);
+    SpeciesBound* BM1 = _cc1->getCMonomer(_position1)->speciesBound(
+            SysParams::Chemistry().motorBoundIndex[_filamentType]);
+    SpeciesBound* BM2 = _cc2->getCMonomer(_position2)->speciesBound(
+            SysParams::Chemistry().motorBoundIndex[_filamentType]);
+    SpeciesBound* sm1 = _cc1->getCMonomer(_position1)->speciesMotor(0);
+    SpeciesBound* sm2 = _cc2->getCMonomer(_position2)->speciesMotor(0);
+    SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesBrancher(0);
+    SpeciesBound* sb2 = _cc2->getCMonomer(_position2)->speciesBrancher(0);
+    std::cout<<"Linker "<<cc1->getCylinder()->getStableIndex()<<" "<<_position1<<" "
+                                                                        ""<<cc2->getCylinder()->getStableIndex()<<" "<<
+            ""<<_position2<<" linkerType "<<linkerType<<endl;
+	cout<<"Linker cIndices "<<cc1->getCylinder()->getId()<<" "<<cc2->getCylinder()
+			->getId()<<endl;
+    std::cout<<"Species Bound "<<se1->getN()<<" "<<se2->getN()<<endl;
+    cout<<"isMinusEnd "<<_cc1->getCylinder()->isMinusEnd()<<" "<<_cc2->getCylinder()
+    ->isMinusEnd()<<endl;*/
+
    /* std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "
                                                                                  ""<<BM2->getN()<<endl;*/
+
 //    std::cout<<"Linker "<<sl1->getN()<<" "<<sl2->getN()<<" BOUND "<<BL1->getN()<<" "<<BL2->getN()<<endl;
     /*std::cout<<"Brancher "<<sb1->getN()<<" "<<sb2->getN()<<" BOUND "<<BB1->getN()<<"
     "<<BB2->getN()<<endl;*/
@@ -66,8 +71,8 @@ CLinker::CLinker(short linkerType, Compartment* c,
 //    //@}
 
 #ifdef DETAILEDOUTPUT
-    std::cout<<"Chosen sites Cyl1 "<<cc1->getCylinder()->getID()<<" bs1 "<<_position1<<" "
-            "Cyl2 "<<cc2->getCylinder()->getID()<<" bs2 "<<_position2<<endl;
+    std::cout<<"Chosen sites Cyl1 "<<cc1->getCylinder()->getId()<<" bs1 "<<_position1<<" "
+            "Cyl2 "<<cc2->getCylinder()->getId()<<" bs2 "<<_position2<<endl;
 #endif
 
     //mark species

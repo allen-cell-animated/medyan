@@ -177,7 +177,7 @@ void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, 
         exit(EXIT_FAILURE);
 }
 #endif
-floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, int *beadSet,
                                           floatingpoint *kstr, floatingpoint *eql){
 
 
@@ -273,13 +273,13 @@ void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, 
         f1[2] +=  f0 * ( coord2[2] - coord1[2] );
 
         #ifdef CHECKFORCES_INF_NAN
-        if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)){
+        if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)){
             cout<<"Filament Stretching Force becomes infinite. Printing data "<<endl;
 
             auto cyl = Cylinder::getCylinders()[i];
-            cout<<"Cylinder ID "<<cyl->getID()<<" with cindex "<<cyl->_dcIndex<<
-            " and bIndex "<< cyl->getFirstBead()->_dbIndex<<" "<<cyl->getSecondBead()
-            ->_dbIndex<<endl;
+            cout<<"Cylinder ID "<<cyl->getId()<<" with cindex "<<cyl->getStableIndex()<<
+            " and bIndex "<< cyl->getFirstBead()->getStableIndex()<<" "<<cyl->getSecondBead()
+            ->getStableIndex()<<endl;
 
             cout<<"Printing coords"<<endl;
             cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;

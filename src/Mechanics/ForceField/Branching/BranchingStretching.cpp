@@ -38,9 +38,9 @@ void BranchingStretching<BStretchingInteractionType>::vectorize() {
 
     for (auto b: BranchingPoint::getBranchingPoints()) {
 
-        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->_dbIndex;
-        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->_dbIndex;
-        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->_dbIndex;
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getStableIndex();
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getStableIndex();
 
         kstr[i] = b->getMBranchingPoint()->getStretchingConstant();
         eql[i] = b->getMBranchingPoint()->getEqLength();
@@ -101,7 +101,7 @@ void BranchingStretching<BStretchingInteractionType>::deallocate() {
 
 
 template <class BStretchingInteractionType>
-floatingpoint BranchingStretching<BStretchingInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint BranchingStretching<BStretchingInteractionType>::computeEnergy(floatingpoint *coord) {
 
 
     floatingpoint U_ii=(floatingpoint)0.0;
@@ -122,10 +122,9 @@ floatingpoint BranchingStretching<BStretchingInteractionType>::computeEnergy(flo
 //    }
 #endif
 #ifdef SERIAL
-    if (d == 0.0)
-        U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos);
-    else
-        U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos, d);
+
+    U_ii = _FFType.energy(coord, beadSet, kstr, eql, pos);
+
 #endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
     floatingpoint U_i[1];
@@ -170,7 +169,7 @@ void BranchingStretching<BStretchingInteractionType>::computeForces(floatingpoin
 }
 ///Template specializations
 template floatingpoint
-BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(floatingpoint *coord);
 template void BranchingStretching<BranchingStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void BranchingStretching<BranchingStretchingHarmonic>::vectorize();
 template void BranchingStretching<BranchingStretchingHarmonic>::deallocate();

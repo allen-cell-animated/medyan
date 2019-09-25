@@ -1624,7 +1624,6 @@ void ChemManager::genFilBindingReactions() {
                 SysParams::LUBBareRate=temp;
                 rMin = get<4>(r);
                 rMax = get<5>(r);
-
                 ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate, false, C->getVolumeFrac(), -numDiffusingReactant);
                 rxn->setReactionType(ReactionType::LINKERBINDING);
                 // Dissipation
@@ -2085,7 +2084,6 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
                         << endl;
                         exit(EXIT_FAILURE);
                     }
-
                     //add a single binding species with name sl + bound
                     protoCompartment.addSpeciesPairBinding(SpeciesNamesDB::genBindingName(sl, bound));
                 }

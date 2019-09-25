@@ -4,8 +4,11 @@
 
 #ifndef MEDYAN_CUDAcommon_h
 #define MEDYAN_CUDAcommon_h
+
 #include <vector>
 #include <list>
+
+#include "dist_moduleV2/dist_driver.h"
 #include "FilamentStretchingHarmonic.h"
 #include "FilamentBendingHarmonic.h"
 #include "FilamentBendingCosine.h"
@@ -21,7 +24,8 @@
 #include "common.h"
 #include "string.h"
 #include "MathFunctions.h"
-#include "dist_moduleV2/dist_driver.h"
+#include "Structure/Bead.h"
+
 using namespace mathfunc;
 struct bin{
     int binID;
@@ -31,7 +35,7 @@ struct bin{
     int binstencilID[27] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
                           -1,-1,-1,-1,-1,-1};
 };
-    struct cylinder{
+    struct [[deprecated]] cylinder{
         int filamentID = -1;
         int filamentposition = -1;
         int bindices[2];
@@ -42,14 +46,7 @@ struct bin{
         int ID = -1;
         int availbscount = -1;
     };
-struct SERLvars{
-    floatingpoint *coord = NULL;
-    cylinder *cylindervec = NULL;
-    CCylinder **ccylindervec = NULL;
-    Cylinder **cylinderpointervec = NULL;
-    uint N = 6000;
 
-};
 template <uint D>
 dist::dOut<D> SIMDoutvar(const uint dim, uint N1, std::initializer_list<float> params) {
 
@@ -269,8 +266,6 @@ struct CUDAtime {
 #endif
 class CUDAcommon{
 public:
-    static SERLvars serlvars;
-    static const SERLvars& getSERLvars(){return serlvars;}
     static Callbacktime ctime;
 	static Callbackcount ccount;
 	static PolyPlusEndTemplatetime ppendtime;
@@ -278,7 +273,6 @@ public:
 	static motorwalking mwalk;
 
 #ifdef CUDAACCL
-    static CUDAvars cudavars;
     static CylCylNLvars cylcylnlvars;
     static SERLtime serltime;
     static CUDAtime cudatime;

@@ -30,9 +30,8 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::deallocate() {
 
 
 template <class BRepulsionInteractionType>
-floatingpoint BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy
-(floatingpoint* coord, floatingpoint *f, floatingpoint d) {
-
+floatingpoint BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(floatingpoint* coord, bool stretched) {
+    
     floatingpoint U = 0.0;
     floatingpoint U_i=0.0;
     
@@ -49,12 +48,7 @@ floatingpoint BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy
             Bead* bd1 = bb->getBead();
             Bead* bd2 = bbo->getBead();
             
-            if (d == 0.0)
-            U_i =  _FFType.energy(
-                                  bd1, bd2, radius1, radius2, kRep, screenLength);
-            else
-            U_i = _FFType.energy(
-                                 bd1, bd2, radius1, radius2, kRep, screenLength, d);
+            U_i = _FFType.energy(bd1, bd2, radius1, radius2, kRep, screenLength, stretched);
             
             if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                || U_i != U_i || U_i < -1.0) {
@@ -119,9 +113,8 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces(floatingpoi
 //}
 
 ///Template specializations
-template floatingpoint BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
-template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForces(floatingpoint
-        *coord, floatingpoint *f);
+template floatingpoint BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeEnergy(floatingpoint *coord, bool stretched);
+template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForces(floatingpoint *coord, floatingpoint *f);
 //template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForcesAux(floatingpoint *coord, floatingpoint *f);
 template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::vectorize();
 template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::deallocate();

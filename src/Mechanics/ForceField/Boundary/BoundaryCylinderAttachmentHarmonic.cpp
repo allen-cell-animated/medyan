@@ -20,22 +20,23 @@
 
 using namespace mathfunc;
 
-floatingpoint BoundaryCylinderAttachmentHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                                                  floatingpoint *kattr, floatingpoint *pins) {
+floatingpoint BoundaryCylinderAttachmentHarmonic::energy(
+    floatingpoint *coord, int *beadSet,
+    floatingpoint *kattr, const std::vector< Vec< 3, floatingpoint > >& pins
+) const {
     
 
     int n = BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::n;
     int nint = Bead::getPinnedBeads().size();
 
-    floatingpoint *coord1, *pin1, distsq, U_i;
+    floatingpoint U_i;
     floatingpoint U = 0;
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        pin1 = &pins[3 * beadSet[n * i]];
+        const auto coord1 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[n * i]);
 
-        distsq = twoPointDistancesquared(coord1, pin1);
+        const auto distsq = distance2(coord1, pins[i]);
         U_i = 0.5 * kattr[i] * distsq;
 
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
@@ -89,31 +90,19 @@ floatingpoint BoundaryCylinderAttachmentHarmonic::energy(floatingpoint *coord, f
     return U;
 }
 
-void BoundaryCylinderAttachmentHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                                                floatingpoint *kattr, floatingpoint *pins) {
+void BoundaryCylinderAttachmentHarmonic::forces(
+    floatingpoint *coord, floatingpoint *f, int *beadSet,
+    floatingpoint *kattr, const std::vector< Vec< 3, floatingpoint > >& pins
+) const {
     
     int n = BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::n;
     int nint = Bead::getPinnedBeads().size();
 
-    floatingpoint *coord1, *pin1, *dir, dist, f0;
-    floatingpoint *force1;
-    dir = new floatingpoint[3];
-
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        force1 = &f[3 * beadSet[n * i]];
-        pin1 = &pins[3 * beadSet[n * i]];
+        const auto coord1 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[n * i]);
+        auto       force1 = makeRefVec< 3, floatingpoint >(f     + 3 * beadSet[n * i]);
 
-        dist = twoPointDistance(coord1, pin1);
-        if(areEqual(dist, 0.0)) return;
-
-        twoPointDirection(dir, coord1, pin1);
-        f0 = kattr[i] * dist;
-
-        force1[0] = f0 * dir[0];
-        force1[1] = f0 * dir[1];
-        force1[2] = f0 * dir[2];
+        force1 += kattr[i] * (pins[i] - coord1);
     }
-    delete dir;
 }

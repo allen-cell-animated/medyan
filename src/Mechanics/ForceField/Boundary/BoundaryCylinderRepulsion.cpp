@@ -13,6 +13,8 @@
 
 #include "BoundaryCylinderRepulsion.h"
 
+#include <algorithm> // max
+
 #include "BoundaryCylinderRepulsionExp.h"
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"
@@ -76,16 +78,16 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
 //            auto neighbor = _neighborList->getNeighbors(be)[ni];
             /*std::cout<<"Boundary with cindex "<<neighbor->_dcIndex<<" and ID "
                     ""<<neighbor->getID()<<" with bindices "<<neighbor->getFirstBead()
-                    ->_dbIndex<<" "<<neighbor->getSecondBead()->_dbIndex<<endl;*/
+                    ->getIndex()<<" "<<neighbor->getSecondBead()->getIndex()<<endl;*/
             if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
             {
-                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->_dbIndex;
+                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->getStableIndex();
                 beadSet[cumnn+idx] = bindex;
                 krep[cumnn+idx] = be->getRepulsionConst();
                 slen[cumnn+idx] = be->getScreeningLength();
                 idx++;
             }
-            bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->_dbIndex;
+            bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->getStableIndex();
             beadSet[cumnn+idx] = bindex;
             krep[cumnn+idx] = be->getRepulsionConst();
             slen[cumnn+idx] = be->getScreeningLength();
@@ -93,9 +95,9 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
 
 
 //            if (_neighborList->getNeighbors(be)[ni]->isPlusEnd())
-//            {bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->_dbIndex;check=true;}
+//            {bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->getIndex();check=true;}
 //            else if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
-//            {bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->_dbIndex;check=true;}
+//            {bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->getIndex();check=true;}
 //                if(check){
 //                    beadSet[cumnn+idx] = bindex;
 //                    krep[cumnn+idx] = be->getRepulsionConst();
@@ -208,8 +210,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
 }
 
 template <class BRepulsionInteractionType>
-floatingpoint BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy
-        (floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(floatingpoint *coord) {
     floatingpoint U_ii=0.0;
 
 //    std::cout<<"Total boundary nint "<<nint<<endl;
@@ -248,12 +249,9 @@ floatingpoint BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnerg
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
 #endif
-    if (d == 0.0) {
-        U_ii = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors);
-    }
-    else {
-        U_ii = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors, d);
-    }
+
+    U_ii = _FFType.energy(coord, beadSet, krep, slen, nneighbors);
+
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
@@ -324,6 +322,46 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(floatin
 #endif
 }
 
+namespace {
+
+template< typename InteractionType >
+void boundaryCylinderRepulsionLoadForce(
+    const InteractionType& interaction, floatingpoint kRep, floatingpoint screenLen,
+    const Bead& bo, Bead& bd, typename BoundaryCylinderRepulsion< InteractionType >::LoadForceEnd end,
+    BoundaryElement* be
+) {
+    using LoadForceEnd = typename BoundaryCylinderRepulsion< InteractionType >::LoadForceEnd;
+
+    auto& loadForces = (end == LoadForceEnd::Plus ? bd.loadForcesP : bd.loadForcesM);
+    auto& lfi        = (end == LoadForceEnd::Plus ? bd.lfip        : bd.lfim       );
+
+    // Direction of polymerization
+    const auto dir = normalizedVector(bd.coordinate() - bo.coordinate());
+
+    // Array of coordinate values to update
+    const auto monSize = SysParams::Geometry().monomerSize   [bd.getType()];
+    const auto cylSize = SysParams::Geometry().cylinderNumMon[bd.getType()];
+
+    for (int i = 0; i < cylSize; i++) {
+
+        const auto newCoord = bd.coordinate() + (i * monSize) * dir;
+
+        // Projection magnitude ratio on the direction of the cylinder
+        // (Effective monomer size) = (monomer size) * proj
+        const auto proj = std::max< floatingpoint >(-dot(vector2Vec< 3 >(be->normal(vec2Vector(newCoord))), dir), 0.0);
+        const auto loadForce = interaction.loadForces(be->distance(vec2Vector(newCoord)), kRep, screenLen);
+
+        // The load force stored in bead also considers effective monomer size.
+        loadForces[i] += proj * loadForce;
+    }
+
+    //reset lfi
+    lfi = 0;
+
+} // void boundaryRepulsionLoadForce(...)
+
+} // namespace (anonymous)
+
 template <class BRepulsionInteractionType>
 void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
 //    std::cout<<"BOUNDARY REPULSION LOAD FORCES DOES NOT USE VECTORIZED FORCES/COORDINATES"<<endl;
@@ -336,79 +374,49 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
 
 
             //potential acts on second cylinder bead unless this is a minus end
-            Bead* bd;
-            Bead* bo;
             if(c->isPlusEnd()) {
-
-                bd = c->getSecondBead();
-                bo = c->getFirstBead();
-
-                ///this normal is in the direction of polymerization
-                auto normal = normalizeVector(twoPointDirection(bo->coordinate, bd->coordinate));
-
-                //array of coordinate values to update
-                auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
-                auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
-
-                bd->lfip = 0;
-                for (int i = 0; i < cylSize; i++) {
-
-                    auto newCoord = vector<floatingpoint>{bd->coordinate[0] + i * normal[0] * monSize,
-                                                   bd->coordinate[1] + i * normal[1] * monSize,
-                                                   bd->coordinate[2] + i * normal[2] * monSize};
-
-                    // Projection magnitude ratio on the direction of the cylinder
-                    // (Effective monomer size) = (monomer size) * proj
-                    floatingpoint proj = -dotProduct(be->normal(newCoord), normal);
-                    if(proj < 0.0) proj = 0.0;
-
-                    floatingpoint loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
-                    // The load force stored in bead also considers effective monomer size.
-                    bd->loadForcesP[bd->lfip++] += proj * loadForce;
-                }
-                //reset lfi
-                bd->lfip = 0;
+                boundaryCylinderRepulsionLoadForce(
+                    _FFType, kRep, screenLength,
+                    *c->getFirstBead(), *c->getSecondBead(), LoadForceEnd::Plus,
+                    be
+                );
             }
 
             if(c->isMinusEnd()) {
-
-                bd = c->getFirstBead();
-                bo = c->getSecondBead();
-
-                ///this normal is in the direction of polymerization
-                auto normal = normalizeVector(twoPointDirection(bo->coordinate, bd->coordinate));
-
-                //array of coordinate values to update
-                auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
-                auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
-
-                bd->lfim = 0;
-                for (int i = 0; i < cylSize; i++) {
-
-                    auto newCoord = vector<floatingpoint>{bd->coordinate[0] + i * normal[0] * monSize,
-                                                   bd->coordinate[1] + i * normal[1] * monSize,
-                                                   bd->coordinate[2] + i * normal[2] * monSize};
-
-                    // Projection magnitude ratio on the direction of the cylinder
-                    // (Effective monomer size) = (monomer size) * proj
-                    floatingpoint proj = -dotProduct(be->normal(newCoord), normal);
-                    if(proj < 0.0) proj = 0.0;
-                    floatingpoint loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
-                    // The load force stored in bead also considers effective monomer size.
-                    bd->loadForcesM[bd->lfim++] += proj * loadForce;
-                }
-                //reset lfi
-                bd->lfim = 0;
+                boundaryCylinderRepulsionLoadForce(
+                    _FFType, kRep, screenLength,
+                    *c->getSecondBead(), *c->getFirstBead(), LoadForceEnd::Minus,
+                    be
+                );
             }
 
         }
 
     }
 }
+template< typename InteractionType >
+void BoundaryCylinderRepulsion< InteractionType >::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
+    for (auto be : BoundaryElement::getBoundaryElements()) {
 
-///Template specializations
-template floatingpoint BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeLoadForces();
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::vectorize();
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::deallocate();
+        for(auto cyl : _neighborList->getNeighbors(be)) if(c == cyl) {
+
+            floatingpoint kRep = be->getRepulsionConst();
+            floatingpoint screenLength = be->getScreeningLength();
+
+            boundaryCylinderRepulsionLoadForce(
+                _FFType, kRep, screenLength,
+                (end == LoadForceEnd::Plus ? *c->getFirstBead() : *c->getSecondBead()),
+                (end == LoadForceEnd::Plus ? *c->getSecondBead() : *c->getFirstBead()),
+                end,
+                be
+            );
+
+            break;
+
+        }
+
+    }
+}
+
+// Explicit template instantiations
+template class BoundaryCylinderRepulsion< BoundaryCylinderRepulsionExp >;

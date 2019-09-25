@@ -36,7 +36,7 @@ NVCC = nvcc -std=c++11
 # Flags used by compiler and linker
 DEBUG = -g
 FAST_CXX = -Os -ffast-math -fno-finite-math-only -flto -funroll-loops -DNDEBUG -mtune=native -march=native # -Xpreprocessor -fopenmp # -mavx2
-#FAST_CXX = -Og -march=native -mtune=native
+#FAST_CXX = -g -march=native -mtune=native
 
 # Compiling flags
 DEPFLAGS = -MMD -MP
@@ -92,18 +92,23 @@ CPPFLAGS += -DDYNAMICRATES
 CPPFLAGS += -DSERIAL
 #neighbors list calculations
 #CPPFLAGS += -DNLORIGINAL
-CPPFLAGS += -DNLSTENCILLIST
-CPPFLAGS += -DHYBRID_NLSTENCILLIST
+#CPPFLAGS += -DNLSTENCILLIST
+#CPPFLAGS += -DHYBRID_NLSTENCILLIST
 CPPFLAGS += -DSIMDBINDINGSEARCH
 #CPPFLAGS += -DDEBUGCONSTANTSEED
 #Boost memory macros
 CPPFLAGS += -DBOOST_MEM_POOL
 CPPFLAGS += -DBOOL_POOL_NSIZE=65536
-CPPFLAGS += -DNPROCS=8
+CPPFLAGS += -DNPROCS=1
 CPPFLAGS += -DPLOSFEEDBACK
 CPPFLAGS += -DCHECKFORCES_INF_NAN
 #if compiling the testing suite
 #CPPFLAGS += -DTESTING
+#CPPFLAGS += -DOPTIMOUT
+#CPPFLAGS += -DSLOWDOWNINITIALCYCLE
+#CPPFLAGS += -DCHECKRXN
+#CPPFLAGS += -DCROSSCHECK_MOTOR
+#CPPFLAGS += -DMOTORBIASCHECK
 
 #Detailed chemistry macros.
 #FOR ALL STANDARD FUNCTIONALITY, NONE OF THESE SHOULD BE TURNED OFF!!!
@@ -140,8 +145,6 @@ CPPFLAGS_CXX = $(CPPFLAGS)
 #
 ##################################################
 
-all: MEDYAN
-
 # Build main program
 MEDYAN: $(OBJECTS)
 ifeq ($(USING_CUDA), true)
@@ -168,6 +171,8 @@ endif
 
 # Add empty dependency for dependencies
 %.d: ;
+
+all: MEDYAN medyan_test
 
 clean:
 	\find . -name "*.d" -delete

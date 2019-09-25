@@ -27,11 +27,11 @@
 template <class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::assignforcemags() {
 
-    for(auto l:Linker::getLinkers()){
-        //Using += to ensure that the stretching forces are additive.
-        l->getMLinker()->stretchForce = stretchforce[l->_dbIndex];
+    // for(auto l:Linker::getLinkers()){
+    //     //Using += to ensure that the stretching forces are additive.
+    //     l->getMLinker()->stretchForce = stretchforce[l->getIndex()];
 
-    }
+    // }
 
 
 #ifdef CUDAACCL
@@ -58,11 +58,11 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
     int i = 0;
 
     for (auto l: Linker::getLinkers()) {
-        l->_dbIndex = i;
-        beadSet[n * i] = l->getFirstCylinder()->getFirstBead()->_dbIndex;
-        beadSet[n * i + 1] = l->getFirstCylinder()->getSecondBead()->_dbIndex;
-        beadSet[n * i + 2] = l->getSecondCylinder()->getFirstBead()->_dbIndex;
-        beadSet[n * i + 3] = l->getSecondCylinder()->getSecondBead()->_dbIndex;
+        /* Haoran 03/18/2019 l->getIndex() = i; */
+        beadSet[n * i] = l->getFirstCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 1] = l->getFirstCylinder()->getSecondBead()->getStableIndex();
+        beadSet[n * i + 2] = l->getSecondCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i + 3] = l->getSecondCylinder()->getSecondBead()->getStableIndex();
 
         kstr[i] = l->getMLinker()->getStretchingConstant();
         eql[i] = l->getMLinker()->getEqLength();
@@ -146,7 +146,7 @@ template<class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::deallocate() {
     for(auto l:Linker::getLinkers()){
         //Using += to ensure that the stretching forces are additive.
-        l->getMLinker()->stretchForce += stretchforce[l->_dbIndex];
+        l->getMLinker()->stretchForce += stretchforce[l->getIndex()];
     }
     delete [] stretchforce;
     delete [] beadSet;
@@ -170,7 +170,7 @@ void LinkerStretching<LStretchingInteractionType>::deallocate() {
 
 
 template <class LStretchingInteractionType>
-floatingpoint LinkerStretching<LStretchingInteractionType>::computeEnergy(floatingpoint* coord, floatingpoint *f, floatingpoint d){
+floatingpoint LinkerStretching<LStretchingInteractionType>::computeEnergy(floatingpoint* coord){
 
     floatingpoint U_ii;
     U_ii = 0.0;
@@ -211,10 +211,7 @@ floatingpoint LinkerStretching<LStretchingInteractionType>::computeEnergy(floati
     tbegin = chrono::high_resolution_clock::now();
 #endif
 
-    if (d == 0.0)
-        U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2);
-    else
-        U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2, d);
+    U_ii = _FFType.energy(coord, beadSet, kstr, eql, pos1, pos2);
 
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
@@ -283,7 +280,7 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(floatingpoint *
 
 
 ///Temlate specializations
-template floatingpoint LinkerStretching<LinkerStretchingHarmonic>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template floatingpoint LinkerStretching<LinkerStretchingHarmonic>::computeEnergy(floatingpoint *coord);
 template void LinkerStretching<LinkerStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void LinkerStretching<LinkerStretchingHarmonic>::vectorize();
 template void LinkerStretching<LinkerStretchingHarmonic>::deallocate();

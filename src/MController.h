@@ -22,6 +22,8 @@
 #include "ForceFieldManager.h"
 
 #include "Parser.h"
+#include "Structure/SubSystem.h"
+#include "Util/Io/Log.hpp"
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -52,7 +54,26 @@ private:
 
 public:
     /// Constructor which sets a subsystem pointer
-    MController(SubSystem* s) {_subSystem = s; }
+    MController(SubSystem* s) {
+        _subSystem = s;
+
+        if(_subSystem->getCylinderLoadForceFunc()) {
+            LOG(WARNING) << "The cylinder load force function has already been set.";
+        }
+        else {
+            _subSystem->setCylinderLoadForceFunc([this](Cylinder* c, ForceFieldTypes::LoadForceEnd end) {
+                _FFManager.computeLoadForce(c, end);
+            });
+        }
+    }
+    ~MController() {
+        if(_subSystem->getCylinderLoadForceFunc()) {
+            _subSystem->setCylinderLoadForceFunc(nullptr);
+        }
+        else {
+            LOG(WARNING) << "The cylinder load force function has already been deleted.";
+        }
+    }
     
     /// Initialze the force fields and minimizers used
     void initialize(MechanicsFFType forceFields, MechanicsAlgorithm Minimizers) {
@@ -61,15 +82,13 @@ public:
     }
 
     /// Run a minimization on the system using the chosen algorithm
-    void run(bool steplimit = true) {  _minimizerAlgorithms[0]->equlibrate(_FFManager, steplimit); }
+    auto run(bool steplimit = true) { return _minimizerAlgorithms[0]->equlibrate(_FFManager, steplimit); }
 
-
-    floatingpoint getEnergy(){
     
-        return _minimizerAlgorithms[0]->getEnergy(_FFManager,0.0);
-        
+    ForceFieldManager* getForceFieldManager(){
+        return &_FFManager;
     }
-    
+
 };
 
 #endif

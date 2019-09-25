@@ -17,7 +17,9 @@ Most other functions/variables below should be considered private to the module.
 #include <thread>
 #include <mutex>
 
-#include "dist_moduleV2/dist_simd_utils.h"
+//#include "dist_moduleV2/dist_simd_utils.h"
+
+#include "dist_simd_utils.h"
 
 namespace dist {
 
@@ -128,9 +130,10 @@ namespace dist {
 			uvec8_f c_vxi(&c.x[i]);
 			uvec8_f c_vyi(&c.y[i]);
 			uvec8_f c_vzi(&c.z[i]);
+			uvec8_i c_finfo(&c.filinfo[i]);
 			
 			for(uint j = jstart; j < jend; ++j){
-				dist_simd_ij(out, c.indices, c_vxi, c_vyi, c_vzi, c, i, j, tag);
+				dist_simd_ij(out, c.indices, c_vxi, c_vyi, c_vzi, c_finfo, c, i, j, tag);
 			}
 		}
 	
@@ -171,9 +174,11 @@ namespace dist {
 			uvec8_f c1_vxi(&c1.x[i]);
 			uvec8_f c1_vyi(&c1.y[i]);
 			uvec8_f c1_vzi(&c1.z[i]);
+			uvec8_i c1_finfo(&c1.filinfo[i]);
 			
 			for(uint j = 0; j < jend; ++j){
-				dist_simd_ij(out, c1.indices, c1_vxi, c1_vyi, c1_vzi, c2, i, j, tag);
+				dist_simd_ij(out, c1.indices, c1_vxi, c1_vyi, c1_vzi, c1_finfo, c2, i, j,
+						tag);
 			}
 		}
 

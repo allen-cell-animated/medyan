@@ -15,6 +15,7 @@
 #define MEDYAN_Minimizer_h
 
 #include "common.h"
+#include "Mechanics/Minimizer/MinimizationTypes.hpp"
 
 //FORWARD DECLARATIONS
 class ForceFieldManager;
@@ -26,14 +27,14 @@ class ForceFieldManager;
  */
 class Minimizer {
 public:
+
+    virtual ~Minimizer() = default;
+
     /// Equilibrate a system based on given configuration and force-fields
     /// @param FFM - The force field manager of this system. @see ForceFieldManager.
     /// @param stepLimit - If there is a limit for the number of equlibration steps.
-    void virtual equlibrate(ForceFieldManager &FFM, bool stepLimit) = 0;
+    virtual MinimizationResult equlibrate(ForceFieldManager &FFM, bool stepLimit) = 0;
 
-	floatingpoint virtual getEnergy(ForceFieldManager &FFM, floatingpoint d) = 0;
-    
-    
     
 };
 

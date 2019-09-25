@@ -21,7 +21,7 @@
 
 using namespace mathfunc;
 
-floatingpoint BubbleCylinderRepulsionExp::energy(floatingpoint *coord, floatingpoint *f, int *beadSet, int *bubbleSet,
+floatingpoint BubbleCylinderRepulsionExp::energy(floatingpoint *coord, int *beadSet, int *bubbleSet,
                                                  floatingpoint *krep, floatingpoint *slen, floatingpoint *radius, int *nneighbors) {
     
     int nb, nc;
@@ -86,11 +86,10 @@ floatingpoint BubbleCylinderRepulsionExp::energy(floatingpoint *coord, floatingp
 
             coord1 = &coord[3 * beadSet[Cumnc + ic]];
             f1 = &f[3 * beadSet[Cumnc + ic]];
-//            double dist = twoPointDistanceStretched(b1->coordinate, b1->force,
-//                                                    b2->coordinate, b2->force, d);
-	        floatingpoint dist = twoPointDistanceStretched(coordb, fb, coord1, f1, d);
-	        floatingpoint effd = dist - bradius;
-
+//            double dist = twoPointDistanceStretched(b1->vcoordinate(), b1->force,
+//                                                    b2->vcoordinate(), b2->force, d);
+            floatingpoint dist = twoPointDistanceStretched(coordb, fb, coord1, f1, d);
+            floatingpoint effd = dist - bradius;
 
             R = -effd / slen[Cumnc + ic];
             U_i = krep[Cumnc + ic] * exp(R);
@@ -115,7 +114,7 @@ void BubbleCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f, 
 
     
     //get norm
-//    auto norm = normalizeVector(twoPointDirection(b1->coordinate, b2->coordinate));
+//    auto norm = normalizeVector(twoPointDirection(b1->vcoordinate(), b2->vcoordinate()));
     
     int nb, nc;
 	floatingpoint *coord1, *coordb, *fb, *f1, R, f0, invL;
@@ -183,10 +182,10 @@ void BubbleCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f, 
 //}
 
 floatingpoint BubbleCylinderRepulsionExp::loadForces(Bead* b1, Bead* b2, floatingpoint radius,
-                                              floatingpoint kRep, floatingpoint screenLength) {
+                                              floatingpoint kRep, floatingpoint screenLength) const {
     
     //get dist
-    floatingpoint dist = twoPointDistance(b1->coordinate, b2->coordinate);
+    floatingpoint dist = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
     
     floatingpoint effd = dist - radius;
     

@@ -191,7 +191,7 @@ void BranchingStretchingHarmonic::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-floatingpoint BranchingStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BranchingStretchingHarmonic::energy(floatingpoint *coord, int *beadSet,
                                            floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos){
 
     int n = BranchingStretching<BranchingStretchingHarmonic>::n;
@@ -329,18 +329,18 @@ void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f,
         stretchforce[i] = f0/invL;
 
         #ifdef CHECKFORCES_INF_NAN
-        if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)||checkNaN_INF(f3,0,2)){
+        if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)||checkNaN_INF<floatingpoint>(f3,0,2)){
             cout<<"Branching Stretching Force becomes infinite. Printing data "<<endl;
 
             auto b = BranchingPoint::getBranchingPoints()[i];
             auto cyl1 = b->getFirstCylinder();
             auto cyl2 = b->getSecondCylinder();
-            cout<<"Cylinder IDs "<<cyl1->getID()<<" "<<cyl2->getID()<<" with cIndex "
-                <<cyl1->_dcIndex<<" "<<cyl2->_dcIndex<<" and bIndex "
-                <<cyl1->getFirstBead()->_dbIndex<<" "
-                <<cyl1->getSecondBead()->_dbIndex<<" "
-                <<cyl2->getFirstBead()->_dbIndex<<" "
-                <<cyl2->getSecondBead()->_dbIndex<<endl;
+            cout<<"Cylinder IDs "<<cyl1->getId()<<" "<<cyl2->getId()<<" with cIndex "
+                <<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex()<<" and bIndex "
+                <<cyl1->getFirstBead()->getStableIndex()<<" "
+                <<cyl1->getSecondBead()->getStableIndex()<<" "
+                <<cyl2->getFirstBead()->getStableIndex()<<" "
+                <<cyl2->getSecondBead()->getStableIndex()<<endl;
 
             cout<<"Printing coords"<<endl;
             cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
