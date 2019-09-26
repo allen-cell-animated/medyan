@@ -82,5 +82,21 @@ public:
                                               int lenFilaments);
 };
 
+/// An implementation of FilamentInitialzer that creates a random AFM configuration
+class AFMFilamentDist : public FilamentInitializer {
+    
+private:
+    vector<double> _coordAFM; ///< Coordinates of the AFM Bubble to make filaments around
+    double _radius;            ///< Radius of the AFM Bubble
+    
+public:
+    ///Constructor sets parameters of AFM
+    AFMFilamentDist(vector<double> coord, double radius)
+    : _coordAFM(coord), _radius(radius) {}
+    
+    FilamentData createFilaments(Boundary* b, int numFilaments,
+                                 int filamentType,
+                                 int lenFilaments);
+};
 
 #endif

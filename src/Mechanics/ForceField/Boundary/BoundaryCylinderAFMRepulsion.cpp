@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v4.0
+//               Dynamics of Active Networks, v3.1
 //
-//  Copyright (2015-2018)  Papoian Lab, University of Maryland
+//  Copyright (2015-2016)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -11,21 +11,22 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "BoundaryCylinderRepulsion.h"
+#include "BoundaryCylinderAFMRepulsion.h"
 
-#include <algorithm> // max
-
-#include "BoundaryCylinderRepulsionExp.h"
+#include "BoundaryCylinderAFMRepulsionExp.h"
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"
 
 #include "Bead.h"
+#include "Bubble.h"
 #include "Cylinder.h"
 
 #include "MathFunctions.h"
 #include "cross_check.h"
+#ifdef CUDAACCL
 #include "CUDAcommon.h"
 #include "BoundaryCylinderRepulsionCUDA.h"
+#endif
 #include "CGMethod.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
@@ -34,7 +35,7 @@
 using namespace mathfunc;
 
 template <class BRepulsionInteractionType>
-void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
+void BoundaryCylinderAFMRepulsion<BRepulsionInteractionType>::vectorize() {
 
     //count interactions
     nint = 0;
@@ -47,10 +48,10 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
             nint++;
         }
     }
-    CUDAcommon::tmin.numinteractions[9] += nint;
+
     beadSet = new int[n * nint];
-    krep = new floatingpoint[nint];
-    slen = new floatingpoint[nint];
+    krep = new double[nint];
+    slen = new double[nint];
     auto beList = BoundaryElement::getBoundaryElements();
 
     int nbe = BoundaryElement::getBoundaryElements().size();
@@ -59,9 +60,9 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
     int bindex = 0;
 
     nneighbors = new int[nbe];//stores number of interactions per boundary element.
-    floatingpoint *beListplane;
+    double *beListplane;
     int *nintvec;
-    beListplane = new floatingpoint[4 * nbe];
+    beListplane = new double[4 * nbe];
     nintvec = new int[nbe];//stores cumulative number of nneighbors.
 
     int cumnn=0;
@@ -75,19 +76,19 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
 
         for (ni = 0; ni < nn; ni++) {
 //            auto check=false;
-//            auto neighbor = _neighborList->getNeighbors(be)[ni];
+            auto neighbor = _neighborList->getNeighbors(be)[ni];
             /*std::cout<<"Boundary with cindex "<<neighbor->_dcIndex<<" and ID "
                     ""<<neighbor->getID()<<" with bindices "<<neighbor->getFirstBead()
-                    ->getIndex()<<" "<<neighbor->getSecondBead()->getIndex()<<endl;*/
+                    ->_dbIndex<<" "<<neighbor->getSecondBead()->_dbIndex<<endl;*/
             if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
             {
-                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->getStableIndex();
+                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->_dbIndex;
                 beadSet[cumnn+idx] = bindex;
                 krep[cumnn+idx] = be->getRepulsionConst();
                 slen[cumnn+idx] = be->getScreeningLength();
                 idx++;
             }
-            bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->getStableIndex();
+            bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->_dbIndex;
             beadSet[cumnn+idx] = bindex;
             krep[cumnn+idx] = be->getRepulsionConst();
             slen[cumnn+idx] = be->getScreeningLength();
@@ -95,9 +96,9 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
 
 
 //            if (_neighborList->getNeighbors(be)[ni]->isPlusEnd())
-//            {bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->getIndex();check=true;}
+//            {bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->_dbIndex;check=true;}
 //            else if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
-//            {bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->getIndex();check=true;}
+//            {bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->_dbIndex;check=true;}
 //                if(check){
 //                    beadSet[cumnn+idx] = bindex;
 //                    krep[cumnn+idx] = be->getRepulsionConst();
@@ -108,9 +109,10 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
         nneighbors[i]=idx;
         cumnn+=idx;
         nintvec[i] = cumnn;
+
 #ifdef CUDAACCL
         if(dynamic_cast<PlaneBoundaryElement*>(beList[i])) {
-            floatingpoint *x = new floatingpoint[4];
+            double *x = new double[4];
             beList[i]->elementeqn(x);
             beListplane[4 * i] = x[0];
             beListplane[4 * i +1] = x[1];
@@ -124,6 +126,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
         }
 #endif
     }
+
 #ifdef CUDAACCL
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -137,26 +140,26 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
     CUDAcommon::handleerror(cudaMemcpyAsync(gpu_beadSet, beadSet, n * nint * sizeof(int),
                                         cudaMemcpyHostToDevice, stream));
 
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_krep, nint * sizeof(floatingpoint)));
-    CUDAcommon::handleerror(cudaMemcpyAsync(gpu_krep, krep, nint * sizeof(floatingpoint),
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_krep, nint * sizeof(double)));
+    CUDAcommon::handleerror(cudaMemcpyAsync(gpu_krep, krep, nint * sizeof(double),
                                         cudaMemcpyHostToDevice, stream));
 
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_slen, nint * sizeof(floatingpoint)));
-    CUDAcommon::handleerror(cudaMemcpyAsync(gpu_slen, slen, nint * sizeof(floatingpoint),
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_slen, nint * sizeof(double)));
+    CUDAcommon::handleerror(cudaMemcpyAsync(gpu_slen, slen, nint * sizeof(double),
                                         cudaMemcpyHostToDevice, stream));
 
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_nintperbe, nbe * sizeof(int)));
     CUDAcommon::handleerror(cudaMemcpyAsync(gpu_nintperbe, nintvec, nbe * sizeof(int),
                                         cudaMemcpyHostToDevice, stream));
 
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_beListplane, 4 * nbe * sizeof(floatingpoint)));
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_beListplane, 4 * nbe * sizeof(double)));
     CUDAcommon::handleerror(cudaMemcpyAsync(gpu_beListplane, beListplane, 4 * nbe * sizeof
-                                                                                        (floatingpoint), cudaMemcpyHostToDevice));
+                                                                                        (double), cudaMemcpyHostToDevice));
 
     //PINNED memory to accelerate data transfer speed
-//    CUDAcommon::handleerror(cudaHostAlloc((void**)&U_i, sizeof(floatingpoint), cudaHostAllocDefault), "cudaHOstAlloc",
+//    CUDAcommon::handleerror(cudaHostAlloc((void**)&U_i, sizeof(double), cudaHostAllocDefault), "cudaHOstAlloc",
 //                            "BoundaryCylinderRepulsion.cu");
-//    CUDAcommon::handleerror(cudaMalloc((void **) &gU, sizeof(floatingpoint)), "cudaMalloc", "BoundaryCylinderRepulsion.cu");
+//    CUDAcommon::handleerror(cudaMalloc((void **) &gU, sizeof(double)), "cudaMalloc", "BoundaryCylinderRepulsion.cu");
     vector<int> params;
     params.push_back(int(n));
     params.push_back(nint);
@@ -174,7 +177,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
 //    CUDAcommon::handleerror(cudaDeviceSynchronize(),"BoundaryCylinderRepulsion.cu",
 //                            "vectorizeFF");
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
+    chrono::duration<double> elapsed_run(tend - tbegin);
     CUDAcommon::cudatime.TvecvectorizeFF.push_back(elapsed_run.count());
     CUDAcommon::cudatime.TvectorizeFF += elapsed_run.count();
 #endif
@@ -184,7 +187,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
 }
 
 template<class BRepulsionInteractionType>
-void BoundaryCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
+void BoundaryCylinderAFMRepulsion<BRepulsionInteractionType>::deallocate() {
 
     delete [] beadSet;
     delete [] krep;
@@ -210,23 +213,23 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
 }
 
 template <class BRepulsionInteractionType>
-floatingpoint BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(floatingpoint *coord) {
-    floatingpoint U_ii=0.0;
-
+double BoundaryCylinderAFMRepulsion<BRepulsionInteractionType>::computeEnergy(double *coord, double *f, double d) {
+    double U_i[1], U_ii;
+    double* gU_i;
+    U_ii = 0.0;
 //    std::cout<<"Total boundary nint "<<nint<<endl;
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
 #endif
 #ifdef CUDAACCL
-    floatingpoint* gU_i;
 //    std::cout<<"Boundary nint "<<nint<<endl;
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
 #endif
     //has to be changed to accomodate aux force
-    floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
-    floatingpoint * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
-    floatingpoint * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
+    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
+    double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
 
 //    if(d == 0.0){
 //        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_slen, gpu_nintperbe, gpu_beListplane,
@@ -240,7 +243,7 @@ floatingpoint BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnerg
 //    CUDAcommon::handleerror(cudaDeviceSynchronize(),"BoundaryCylinderRepulsion.cu",
 //                            "computeEnergy");
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
+    chrono::duration<double> elapsed_run(tend - tbegin);
     CUDAcommon::cudatime.TveccomputeE.push_back(elapsed_run.count());
     CUDAcommon::cudatime.TcomputeE += elapsed_run.count();
 #endif
@@ -249,12 +252,15 @@ floatingpoint BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnerg
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
 #endif
-
-    U_ii = _FFType.energy(coord, beadSet, krep, slen, nneighbors);
-
+    if (d == 0.0) {
+        U_ii = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors);
+    }
+    else {
+        U_ii = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors, d);
+    }
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
+    chrono::duration<double> elapsed_runs(tend - tbegin);
     CUDAcommon::serltime.TveccomputeE.push_back(elapsed_runs.count());
     CUDAcommon::serltime.TcomputeE += elapsed_runs.count();
     CUDAcommon::serltime.TcomputeEiter += elapsed_runs.count();
@@ -264,7 +270,7 @@ floatingpoint BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnerg
 }
 
 template <class BRepulsionInteractionType>
-void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
+void BoundaryCylinderAFMRepulsion<BRepulsionInteractionType>::computeForces(double *coord, double *f) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
@@ -272,8 +278,8 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(floatin
 
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
-    floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
-    floatingpoint * gpu_force;
+    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    double * gpu_force;
 
     if(cross_checkclass::Aux){
         gpu_force=CUDAcommon::getCUDAvars().gpu_forceAux;
@@ -287,12 +293,12 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(floatin
     }
 
     //TODO remove this later need not copy forces back to CPU.
-//    CUDAcommon::handleerror(cudaMemcpy(F_i, gpu_force, 3 * Bead::getBeads().size() *sizeof(floatingpoint),
+//    CUDAcommon::handleerror(cudaMemcpy(F_i, gpu_force, 3 * Bead::getBeads().size() *sizeof(double),
 //                                       cudaMemcpyDeviceToHost),"cuda data transfer", "BoundaryCylinderRepulsion.cu");
 #endif
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
+    chrono::duration<double> elapsed_run(tend - tbegin);
     CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
     CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
     tbegin = chrono::high_resolution_clock::now();
@@ -302,13 +308,13 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(floatin
 #endif
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
+    chrono::duration<double> elapsed_runs(tend - tbegin);
     CUDAcommon::serltime.TveccomputeF.push_back(elapsed_runs.count());
     CUDAcommon::serltime.TcomputeF += elapsed_runs.count();
 #endif
 #ifdef DETAILEDOUTPUT
-    floatingpoint maxF = 0.0;
-    floatingpoint mag = 0.0;
+    double maxF = 0.0;
+    double mag = 0.0;
     for(int i = 0; i < CGMethod::N/3; i++) {
         mag = 0.0;
         for(int j = 0; j < 3; j++)
@@ -322,107 +328,122 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(floatin
 #endif
 }
 
-
-namespace {
-
-
-template< typename InteractionType >
-void boundaryCylinderRepulsionLoadForce(
-    const InteractionType& interaction, floatingpoint kRep, floatingpoint screenLen,
-    const Bead& bo, Bead& bd, typename BoundaryCylinderRepulsion< InteractionType >::LoadForceEnd end,
-    BoundaryElement* be
-) {
-    using LoadForceEnd = typename BoundaryCylinderRepulsion< InteractionType >::LoadForceEnd;
-
-    auto& loadForces = (end == LoadForceEnd::Plus ? bd.loadForcesP : bd.loadForcesM);
-    auto& lfi        = (end == LoadForceEnd::Plus ? bd.lfip        : bd.lfim       );
-
-    // Direction of polymerization
-    const auto dir = normalizedVector(bd.coordinate() - bo.coordinate());
-
-    // Array of coordinate values to update
-    const auto monSize = SysParams::Geometry().monomerSize   [bd.getType()];
-    const auto cylSize = SysParams::Geometry().cylinderNumMon[bd.getType()];
-
-    for (int i = 0; i < cylSize; i++) {
-
-        const auto newCoord = bd.coordinate() + (i * monSize) * dir;
-
-        // Projection magnitude ratio on the direction of the cylinder
-        // (Effective monomer size) = (monomer size) * proj
-        const auto proj = std::max< floatingpoint >(-dot(vector2Vec< 3 >(be->normal(vec2Vector(newCoord))), dir), 0.0);
-        const auto loadForce = interaction.loadForces(be->distance(vec2Vector(newCoord)), kRep, screenLen);
-
-        // The load force stored in bead also considers effective monomer size.
-        loadForces[i] += proj * loadForce;
-    }
-
-    //reset lfi
-    lfi = 0;
-
-} // void boundaryRepulsionLoadForce(...)
-
-} // namespace (anonymous)
-
 template <class BRepulsionInteractionType>
-void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
+void BoundaryCylinderAFMRepulsion<BRepulsionInteractionType>::computeLoadForces() {
 //    std::cout<<"BOUNDARY REPULSION LOAD FORCES DOES NOT USE VECTORIZED FORCES/COORDINATES"<<endl;
+    double r, z, dz;
     for (auto be: BoundaryElement::getBoundaryElements()) {
 
         for(auto &c : _neighborList->getNeighbors(be)) {
 
-
-            floatingpoint kRep = be->getRepulsionConst();
-            floatingpoint screenLength = be->getScreeningLength();
+            double kRep = be->getRepulsionConst();
+            double screenLength = be->getScreeningLength();
 
 
             //potential acts on second cylinder bead unless this is a minus end
+            Bead* bd;
+            Bead* bo;
             if(c->isPlusEnd()) {
-                boundaryCylinderRepulsionLoadForce(
-                    _FFType, kRep, screenLength,
-                    *c->getFirstBead(), *c->getSecondBead(), LoadForceEnd::Plus,
-                    be
-                );
 
+                bd = c->getSecondBead();
+                bo = c->getFirstBead();
+
+                ///this normal is in the direction of polymerization
+                auto normal = normalizeVector(twoPointDirection(bo->coordinate, bd->coordinate));
+
+                //array of coordinate values to update
+                auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
+                auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
+
+                bd->lfip = 0;
+                for (int i = 0; i < cylSize; i++) {
+
+                    auto newCoord = vector<double>{bd->coordinate[0] + i * normal[0] * monSize,
+                                                   bd->coordinate[1] + i * normal[1] * monSize,
+                                                   bd->coordinate[2] + i * normal[2] * monSize};
+
+                    // Projection magnitude ratio on the direction of the cylinder
+                    // (Effective monomer size) = (monomer size) * proj
+                    double proj = -dotProduct(be->normal(newCoord), normal);
+                    
+                    //recheck the upper plane based on bubble position
+                    r = be->distance(newCoord);
+                    for (auto bb : Bubble::getBubbles()){
+                        z = bb->coordinate[2] - 25;
+                    }
+                    dz = z - newCoord[2];
+                    
+                    if(dz < r){
+                        r = dz;
+                        proj = -dotProduct(vector<double>{0.0,0.0,-1.0}, normal);
+                    }
+                    
+                    if(proj < 0.0) proj = 0.0;
+
+                    double loadForce = _FFType.loadForces(r, kRep, screenLength);
+                    // The load force stored in bead also considers effective monomer size.
+                    bd->loadForcesP[bd->lfip++] += proj * loadForce;
+                    //bd->loadForcesP[bd->lfip++] += loadForce;
+                }
+                //reset lfi
+                bd->lfip = 0;
             }
 
             if(c->isMinusEnd()) {
-                boundaryCylinderRepulsionLoadForce(
-                    _FFType, kRep, screenLength,
-                    *c->getSecondBead(), *c->getFirstBead(), LoadForceEnd::Minus,
-                    be
-                );
 
+                bd = c->getFirstBead();
+                bo = c->getSecondBead();
+
+                ///this normal is in the direction of polymerization
+                auto normal = normalizeVector(twoPointDirection(bo->coordinate, bd->coordinate));
+
+                //array of coordinate values to update
+                auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
+                auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
+
+
+                bd->lfim = 0;
+                for (int i = 0; i < cylSize; i++) {
+
+                    auto newCoord = vector<double>{bd->coordinate[0] + i * normal[0] * monSize,
+                                                   bd->coordinate[1] + i * normal[1] * monSize,
+                                                   bd->coordinate[2] + i * normal[2] * monSize};
+
+                    // Projection magnitude ratio on the direction of the cylinder
+                    // (Effective monomer size) = (monomer size) * proj
+                    double proj = -dotProduct(be->normal(newCoord), normal);
+                    
+                    //recheck the upper plane based on bubble position
+                    r = be->distance(newCoord);
+                    for (auto bb : Bubble::getBubbles()){
+                        z = bb->coordinate[2] - 25;
+                    }
+                    dz = z - newCoord[2];
+                    
+                    if(dz < r){
+                        r = dz;
+                        proj = -dotProduct(vector<double>{0.0,0.0,-1.0}, normal);
+                    }
+                    
+                    if(proj < 0.0) proj = 0.0;
+                    
+                    double loadForce = _FFType.loadForces(r, kRep, screenLength);
+                    // The load force stored in bead also considers effective monomer size.
+                    bd->loadForcesM[bd->lfim++] += proj * loadForce;
+                    //bd->loadForcesM[bd->lfim++] += loadForce;
+                }
+                //reset lfi
+                bd->lfim = 0;
             }
 
         }
 
     }
 }
-template< typename InteractionType >
-void BoundaryCylinderRepulsion< InteractionType >::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
-    for (auto be : BoundaryElement::getBoundaryElements()) {
 
-        for(auto cyl : _neighborList->getNeighbors(be)) if(c == cyl) {
-
-            floatingpoint kRep = be->getRepulsionConst();
-            floatingpoint screenLength = be->getScreeningLength();
-
-            boundaryCylinderRepulsionLoadForce(
-                _FFType, kRep, screenLength,
-                (end == LoadForceEnd::Plus ? *c->getFirstBead() : *c->getSecondBead()),
-                (end == LoadForceEnd::Plus ? *c->getSecondBead() : *c->getFirstBead()),
-                end,
-                be
-            );
-
-
-            break;
-
-        }
-
-    }
-}
-
-// Explicit template instantiations
-template class BoundaryCylinderRepulsion< BoundaryCylinderRepulsionExp >;
+///Template specializations
+template double BoundaryCylinderAFMRepulsion<BoundaryCylinderAFMRepulsionExp>::computeEnergy(double *coord, double *f, double d);
+template void BoundaryCylinderAFMRepulsion<BoundaryCylinderAFMRepulsionExp>::computeForces(double *coord, double *f);
+template void BoundaryCylinderAFMRepulsion<BoundaryCylinderAFMRepulsionExp>::computeLoadForces();
+template void BoundaryCylinderAFMRepulsion<BoundaryCylinderAFMRepulsionExp>::vectorize();
+template void BoundaryCylinderAFMRepulsion<BoundaryCylinderAFMRepulsionExp>::deallocate();

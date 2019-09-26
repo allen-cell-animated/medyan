@@ -25,11 +25,14 @@
 #include "MTOCBending.h"
 #include "MTOCBendingCosine.h"
 
+#include "AFMAttachment.h"
+#include "AFMAttachmentHarmonic.h"
+
 #include "Bubble.h"
 #include "Bead.h"
 #include "Component.h"
 
-BubbleFF::BubbleFF (string type, string mtoc) {
+BubbleFF::BubbleFF (string type, string mtoc, string afm) {
     
     //general bubble interactions
     if (type == "REPULSIONEXP") {
@@ -53,6 +56,17 @@ BubbleFF::BubbleFF (string type, string mtoc) {
     else if(mtoc == "") {}
     else {
         cout << "MTOC FF not recognized. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
+    
+    //specifically for MTOC
+    if (afm == "ATTACHMENTHARMONIC") {
+        _bubbleInteractionVector.emplace_back(
+        new AFMAttachment<AFMAttachmentHarmonic>());
+    }
+    else if(afm == "") {}
+    else {
+        cout << "AFM FF not recognized. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
 }

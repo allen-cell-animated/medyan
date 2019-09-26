@@ -36,6 +36,13 @@ Bubble::Bubble(SubSystem* ps, vector<floatingpoint> coordinates, short type)
       _MTOCBendingK = SysParams::Mechanics().MTOCBendingK[_type];
     }
           
+      if(SysParams::Mechanics().AFMBendingK.size() == 0){
+          _AFMBendingK = 0.0;
+      }
+      else{
+          _AFMBendingK = SysParams::Mechanics().AFMBendingK[_type];
+      }
+          
     //set up bead
     _bead = _ps->addTrackable<Bead>(coordinates, this, 0);
 }

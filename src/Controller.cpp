@@ -32,6 +32,7 @@
 #include "BranchingPoint.h"
 #include "Bubble.h"
 #include "MTOC.h"
+#include "AFM.h"
 #include "ChemManager.h"
 
 #include "SysParams.h"
@@ -442,6 +443,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
     SpecialSetupType SType = p.readSpecialSetupType();
 
     //set up a MTOC if desired
+<<<<<<< HEAD
     //For now, uses 20 filaments
     if(SType.mtoc) {
 
@@ -457,15 +459,78 @@ void Controller::setupSpecialStructures(SystemParser& p) {
         vector<floatingpoint> bcoords = {bcoordx, bcoordy, bcoordz};
         Bubble* b = _subSystem.addTrackable<Bubble>(&_subSystem, bcoords, SType.mtocBubbleType);
 
+=======
+    if(SType.mtoc){
+        MTOC* mtoc = _subSystem->addTrackable<MTOC>();
+        
+        //create the bubble in top part of grid, centered in x,y
+        double bcoordx = GController::getSize()[0] / 2;
+        double bcoordy = GController::getSize()[1] / 2;
+        double bcoordz = GController::getSize()[2] * 5 / 6;
+        
+        vector<double> bcoords = {bcoordx, bcoordy, bcoordz};
+        Bubble* b = _subSystem->addTrackable<Bubble>(_subSystem, bcoords, SType.mtocBubbleType);
+        
+>>>>>>> ad94434360fec1fdcea94cf90da010761cb7815c
         mtoc->setBubble(b);
-
+        
         FilamentInitializer *init = new MTOCFilamentDist(bcoords,
                                                          SysParams::Mechanics().BubbleRadius[SType.mtocBubbleType]);
+<<<<<<< HEAD
 
         auto filaments = init->createFilaments(_subSystem.getBoundary(),
+=======
+        
+        auto filaments = init->createFilaments(_subSystem->getBoundary(),
+>>>>>>> ad94434360fec1fdcea94cf90da010761cb7815c
                                                SType.mtocNumFilaments,
                                                SType.mtocFilamentType,
                                                SType.mtocFilamentLength);
+        //add filaments
+        filamentData fil=get<0>(filaments);
+        for (auto it: fil) {
+            
+            auto coord1 = get<1>(it);
+            auto coord2 = get<2>(it);
+            
+            vector<vector<double>> coords = {coord1, coord2};
+            
+            double d = twoPointDistance(coord1, coord2);
+            vector<double> tau = twoPointDirection(coord1, coord2);
+            
+            int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
+            
+            // check how many segments can fit between end-to-end of the filament
+            Filament *f = _subSystem->addTrackable<Filament>(_subSystem, SType.mtocFilamentType,
+                                                             coords, numSegment + 1, "ARC");
+            
+            mtoc->addFilament(f);
+            
+        }
+        cout << "MTOC is set." << endl;
+        
+    }
+    else if(SType.afm) {
+
+        AFM* afm = _subSystem->addTrackable<AFM>();
+
+        //create a bubble in top part of grid, centered in x,y
+        double bcoordx = GController::getSize()[0] / 2;
+        double bcoordy = GController::getSize()[1] / 2;
+        //set up the height of the AFM bubble
+        double bcoordz = 1250;
+
+        vector<double> bcoords = {bcoordx, bcoordy, bcoordz};
+        Bubble* b = _subSystem->addTrackable<Bubble>(_subSystem, bcoords, SType.afmBubbleType);
+
+        afm->setBubble(b);
+
+        FilamentInitializer *init = new AFMFilamentDist(bcoords, SysParams::Mechanics().BubbleRadius[SType.afmBubbleType]);
+
+        auto filaments = init->createFilaments(_subSystem->getBoundary(),
+                                               SType.afmNumFilaments,
+                                               SType.afmFilamentType,
+                                               SType.afmFilamentLength);
         //add filaments
         filamentData fil=get<0>(filaments);
         for (auto it: fil) {
@@ -478,14 +543,21 @@ void Controller::setupSpecialStructures(SystemParser& p) {
             floatingpoint d = twoPointDistance(coord1, coord2);
             vector<floatingpoint> tau = twoPointDirection(coord1, coord2);
 
-            int numSegment = static_cast<int>(std::round(d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType]));
+            int numSegment = static_cast<int>(std::round(d / SysParams::Geometry().cylinderSize[SType.afmFilamentType]));
 
             // check how many segments can fit between end-to-end of the filament
+<<<<<<< HEAD
             Filament *f = _subSystem.addTrackable<Filament>(&_subSystem, SType.mtocFilamentType,
+=======
+
+
+            Filament *f = _subSystem->addTrackable<Filament>(_subSystem, SType.afmFilamentType,
+>>>>>>> ad94434360fec1fdcea94cf90da010761cb7815c
                                                              coords, numSegment + 1, "ARC");
 
-            mtoc->addFilament(f);
+            afm->addFilament(f);
         }
+        cout << "AFM is set." << endl;
     }
     cout << "Done." << endl;
 }
@@ -801,8 +873,10 @@ void Controller::updatePositions() {
 
 void Controller::updateBubblePositions() {
     
-    //update bubble again based on time
-    for(auto b : Bubble::getBubbles()) b->updatePositionManually();
+    //update AFM bubble again based on time
+    for(auto b : Bubble::getBubbles()) {
+        if(b->isAFM()) b->updatePositionManually();
+    }
     
     if(SysParams::Chemistry().makeRateDepend && tau() - tp > 1) {
         tp+=1;
