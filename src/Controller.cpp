@@ -443,7 +443,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
     SpecialSetupType SType = p.readSpecialSetupType();
 
     //set up a MTOC if desired
-<<<<<<< HEAD
+
     //For now, uses 20 filaments
     if(SType.mtoc) {
 
@@ -459,30 +459,15 @@ void Controller::setupSpecialStructures(SystemParser& p) {
         vector<floatingpoint> bcoords = {bcoordx, bcoordy, bcoordz};
         Bubble* b = _subSystem.addTrackable<Bubble>(&_subSystem, bcoords, SType.mtocBubbleType);
 
-=======
-    if(SType.mtoc){
-        MTOC* mtoc = _subSystem->addTrackable<MTOC>();
-        
-        //create the bubble in top part of grid, centered in x,y
-        double bcoordx = GController::getSize()[0] / 2;
-        double bcoordy = GController::getSize()[1] / 2;
-        double bcoordz = GController::getSize()[2] * 5 / 6;
-        
-        vector<double> bcoords = {bcoordx, bcoordy, bcoordz};
-        Bubble* b = _subSystem->addTrackable<Bubble>(_subSystem, bcoords, SType.mtocBubbleType);
-        
->>>>>>> ad94434360fec1fdcea94cf90da010761cb7815c
+
         mtoc->setBubble(b);
         
         FilamentInitializer *init = new MTOCFilamentDist(bcoords,
                                                          SysParams::Mechanics().BubbleRadius[SType.mtocBubbleType]);
-<<<<<<< HEAD
+
 
         auto filaments = init->createFilaments(_subSystem.getBoundary(),
-=======
-        
-        auto filaments = init->createFilaments(_subSystem->getBoundary(),
->>>>>>> ad94434360fec1fdcea94cf90da010761cb7815c
+
                                                SType.mtocNumFilaments,
                                                SType.mtocFilamentType,
                                                SType.mtocFilamentLength);
@@ -546,14 +531,10 @@ void Controller::setupSpecialStructures(SystemParser& p) {
             int numSegment = static_cast<int>(std::round(d / SysParams::Geometry().cylinderSize[SType.afmFilamentType]));
 
             // check how many segments can fit between end-to-end of the filament
-<<<<<<< HEAD
-            Filament *f = _subSystem.addTrackable<Filament>(&_subSystem, SType.mtocFilamentType,
-=======
 
 
-            Filament *f = _subSystem->addTrackable<Filament>(_subSystem, SType.afmFilamentType,
->>>>>>> ad94434360fec1fdcea94cf90da010761cb7815c
-                                                             coords, numSegment + 1, "ARC");
+
+            Filament *f = _subSystem->addTrackable<Filament>(_subSystem, SType.afmFilamentType, coords, numSegment + 1, "ARC");
 
             afm->addFilament(f);
         }

@@ -264,17 +264,12 @@ FilamentData AFMFilamentDist::createFilaments(Boundary* b, int numFilaments,
         floatingpoint h = Rand::randfloatingpoint(-M_PI/2, M_PI/2);
 
         
-<<<<<<< HEAD
+
         vector<floatingpoint> point1;
-        point1.push_back(_coordMTOC[0] + _radius * cos(l) * cos(h));
-        point1.push_back(_coordMTOC[1] + _radius * sin(h));
-        point1.push_back(_coordMTOC[2] + _radius * sin(l) * cos(h));
-=======
-        vector<double> point1;
         point1.push_back(_coordAFM[0] + _radius * cos(l) * cos(h));
         point1.push_back(_coordAFM[1] + _radius * sin(h));
         point1.push_back(_coordAFM[2] + _radius * sin(l) * cos(h));
->>>>>>> ad94434360fec1fdcea94cf90da010761cb7815c
+
         
         // get projection outward from the AFM
         auto dir = normalizeVector(twoPointDirection(_coordAFM, point1));

@@ -718,9 +718,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MType.MTOCFFType = lineVector[1];
             }
         }
-<<<<<<< HEAD
 
-=======
         else if (line.find("AFMFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -734,8 +732,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MType.AFMFFType = lineVector[1];
             }
         }
-        
->>>>>>> ad94434360fec1fdcea94cf90da010761cb7815c
+
         else {}
     }
     return MType;
@@ -1909,14 +1906,10 @@ FilamentSetup SystemParser::readFilamentSetup() {
         }
         else if(line.find("NUMFILAMENTS") != string::npos &&
                 line.find("NUMFILAMENTSPECIES") == string::npos &&
-<<<<<<< HEAD
-                line.find("MTOCNUMFILAMENTS") == string::npos) {
 
-=======
                 line.find("MTOCNUMFILAMENTS") == string::npos &&
                 line.find("AFMNUMFILAMENTS") == string::npos) {
-            
->>>>>>> ad94434360fec1fdcea94cf90da010761cb7815c
+
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout << "Error reading number of filaments. Exiting." << endl;
@@ -1927,14 +1920,11 @@ FilamentSetup SystemParser::readFilamentSetup() {
             else {}
         }
         else if(line.find("FILAMENTLENGTH") != string::npos &&
-<<<<<<< HEAD
-                line.find("MTOCFILAMENTLENGTH") == string::npos) {
 
-=======
                 line.find("MTOCFILAMENTLENGTH") == string::npos &&
                 line.find("AFMFILAMENTLENGTH") == string::npos) {
             
->>>>>>> ad94434360fec1fdcea94cf90da010761cb7815c
+
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout << "Error reading filament length. Exiting." << endl;
