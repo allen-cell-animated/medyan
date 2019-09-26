@@ -115,8 +115,13 @@ SpeciesBound* CMonomer::speciesBrancher(int index) {
 }
 
 SpeciesBound* CMonomer::speciesCaMKIIer(int index) {
-    short offset = _speciesBoundIndex[_filamentType][SPECIESCAMKIIER];
-    return _speciesBound[index + offset];
+	short offset = _speciesBoundIndex[_filamentType][SPECIESCAMKIIER];
+	return _speciesBound[index + offset];
+}
+
+SpeciesBound* CMonomer::speciesCaMKIIDummyCylinder(int index) {
+	short offset = _speciesBoundIndex[_filamentType][SPECIESCAMKIIDUMMYCYLINDER];
+	return _speciesBound[index + offset];
 }
 
 
@@ -195,6 +200,17 @@ short CMonomer::activeSpeciesCaMKIIer() {
     for(int i = 0; i < numCaMKIIerSpecies; i++) {
         SpeciesBound* s = _speciesBound[i + offset];
         if(s != nullptr && areEqual(s->getN(), 1.0)) return i;
+    }
+    return -1;
+}
+
+short CMonomer::activeSpeciesCaMKIIDummyCylinder() {
+    short numCaMKIIDummyCylinderSpecies = SysParams::Chemistry().numCaMKIIDummyCylinderSpecies[_filamentType];
+    short offset = _speciesBoundIndex[_filamentType][SPECIESCAMKIIDUMMYCYLINDER];
+
+    for(int i = 0; i < numCaMKIIDummyCylinderSpecies; i++) {
+        SpeciesBound* s = _speciesBound[i + offset];
+        if(s != nullptr && areEqual(s->getN(), 0.0)) return i;
     }
     return -1;
 }

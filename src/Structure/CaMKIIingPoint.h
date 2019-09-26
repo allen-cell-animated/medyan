@@ -60,33 +60,46 @@ private:
     static Database<CaMKIIingPoint*> _camkiiingPoints; ///< Collection in SubSystem
 
     ///Helper to get coordinate
-    void updateCoordinate();
+    void updateCoordinate(vector<double> *coordinate);
     
     void updateCaMKIIingPointCoM();
 
 
 public:
-    vector<double> coordinate; ///< coordinate of midpoint,
+	/*
+	 * The "coordinate" in CaMKIIingPoint is a pointer
+	 * while
+	 * the "coordinate" in BranchingPoint is a value.
+	 *
+	 * This coordinate basically points to the bead that creates the CaMKIIingPoint.
+	 */
+    vector<double> *coordinate; ///< coordinate of midpoint,
                                ///< updated with updatePosition()
     
     CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double position);
     virtual ~CaMKIIingPoint()  noexcept;
 
-    //@{
-    ///Get attached bonds tuples <cylinders, short> (a cylinder and a position)
-    tuple<Cylinder*, double> getBond(int n) { return _bonds.at(n);}
-    Cylinder* getCylinder(int n) { return get<0>(getBond(n));}
-    void addBond(Cylinder* c, short pos);
-    Cylinder* getFirstCylinder() { return get<0>(_bonds.at(0));}
-    Cylinder* getSecondCylinder() { return get<0>(_bonds.at(1));} //TODO fix
-    int getCoordinationNumber() { return _bonds.size(); }
-    CaMKIICylinder* getCaMKIICylinder() {return _camkiiCylinder.get();}
-    void setCaMKIICylinder(CaMKIICylinder* CaMKIIcylinder) {
-      _camkiiCylinder = unique_ptr<CaMKIICylinder>(CaMKIIcylinder);
-    }
+	//@{
+	///Get attached bonds tuples <cylinders, short> (a cylinder and a position)
+	tuple<Cylinder *, double> getBond(int n) { return _bonds.at(n); }
 
-    vector<tuple<Cylinder*, double>> getBonds() {return _bonds;}
-    //@}
+	Cylinder *getCylinder(int n) { return get<0>(getBond(n)); }
+
+	void addBond(Cylinder *c, short pos);
+
+	Cylinder *getFirstCylinder() { return get<0>(_bonds.at(0)); }
+
+	Cylinder *getSecondCylinder() { return get<0>(_bonds.at(1)); } //TODO fix
+	int getCoordinationNumber() { return _bonds.size(); }
+
+	CaMKIICylinder *getCaMKIICylinder() { return _camkiiCylinder.get(); }
+
+	void setCaMKIICylinder(CaMKIICylinder *CaMKIIcylinder) {
+		_camkiiCylinder = unique_ptr<CaMKIICylinder>(CaMKIIcylinder);
+	}
+
+	vector<tuple<Cylinder *, double>> &getBonds() { return _bonds; }
+	//@}
     
     
     /// Set chem camkii point
@@ -138,10 +151,11 @@ public:
     
     virtual void printSelf();
     
-    /// Count the number of camkiier species with a given name in the system
-    static species_copy_t countSpecies(const string& name);
+    /// Count the number of camkiier species and dummy species with a given name in the system
+	static species_copy_t countSpecies(const string& name);
+	static species_copy_t countDummySpecies(const string& name);
 
-    void removeRandomBond();
+	void removeRandomBond();
 
     void updateReactionRates();
 };

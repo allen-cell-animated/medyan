@@ -94,6 +94,7 @@ public:
     SpeciesBound* speciesMotor    (int index);
     SpeciesBound* speciesBrancher (int index);
     SpeciesBound* speciesCaMKIIer (int index);
+    SpeciesBound* speciesCaMKIIDummyCylinder (int index);
     //@}
     
     //@{
@@ -108,6 +109,7 @@ public:
     short activeSpeciesMotor();
     short activeSpeciesBrancher();
     short activeSpeciesCaMKIIer();
+    short activeSpeciesCaMKIIDummyCylinder();
     //@
     
     /// Check the consistency of the CMonomer for debugging.

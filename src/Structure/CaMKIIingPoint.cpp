@@ -30,12 +30,11 @@
 using namespace mathfunc;
 
 CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double position)
-    : Trackable(true), _camkiiType(camkiiType), _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()), coordinate(3,0.0) {
+    : Trackable(true), _camkiiType(camkiiType), _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()) {
 
 	assert(camkiiType == 0);
 
     int pos = int(position * SysParams::Geometry().cylinderNumMon[cylinder->getType()]);
-    //std::cout<<c1->getID()<<" "<<c2->getID()<<" "<<pos<<endl;
 
 #ifdef CHEMISTRY
     _cCaMKIIingPoint = unique_ptr<CCaMKIIingPoint>(
@@ -50,50 +49,52 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double posi
 
     addBond(cylinder, pos);
 
+    vector<double> _tmp_coordinate(3, 0.0);
+
     //Find compartment
-    updateCoordinate();
-    try {_compartment = GController::getCompartment(coordinate);}
+    updateCoordinate(&_tmp_coordinate);
+    try {_compartment = GController::getCompartment(_tmp_coordinate);}
     catch (exception& e) {
       cout << e.what();
       printSelf();
       exit(EXIT_FAILURE);
     }
 
-    Bead* b1 = _subSystem->addTrackable<Bead>(coordinate, nullptr, 0);
+    Bead* b1 = _subSystem->addTrackable<Bead>(_tmp_coordinate, nullptr, 0);
+    coordinate = &b1->coordinate;
     setCaMKIICylinder(_subSystem->addTrackable<CaMKIICylinder>(this, b1, _filType, 0));
     _camkiiCylinder->addToFilamentBindingManagers();
 }
 
-void CaMKIIingPoint::addBond(Cylinder* c, short pos){
-  _cCaMKIIingPoint->addBond(c->getCCylinder(), pos);
-  _bonds.push_back(tuple<Cylinder*, short>(c, pos));
+void CaMKIIingPoint::addBond(Cylinder *c, short pos) {
+	_cCaMKIIingPoint->addBond(c->getCCylinder(), pos);
+	_bonds.push_back(tuple<Cylinder *, short>(c, pos));
 }
 
-void CaMKIIingPoint::updateCoordinate(){
+void CaMKIIingPoint::updateCoordinate(vector<double> *coordinate) {
 
-  //Calculate the midpoint coordinate
-  vector<double> temp(3, 0.0);
-		for (int i=0; i<_bonds.size(); i++) {
-		 Cylinder *bond = get<0>(_bonds[i]);
-		 auto pos = get<1>(_bonds[i]);
-		 double position = double(pos)/double(SysParams::Geometry().cylinderNumMon[bond->getType()]);
-		 auto mp = midPointCoordinate(bond->_b1->coordinate, bond->_b2->coordinate, position);
-		 temp[0] += mp[0];
-		 temp[1] += mp[1];
-		 temp[2] += mp[2];
+	//Calculate the midpoint coordinate
+	vector<double> temp(3, 0.0);
+	for (int i = 0; i < _bonds.size(); i++) {
+		Cylinder *bond = get<0>(_bonds[i]);
+		auto pos = get<1>(_bonds[i]);
+		double position = double(pos) / double(SysParams::Geometry().cylinderNumMon[bond->getType()]);
+		auto mp = midPointCoordinate(bond->_b1->coordinate, bond->_b2->coordinate, position);
+		temp[0] += mp[0];
+		temp[1] += mp[1];
+		temp[2] += mp[2];
 	}
 
-		// Set the CaMKII coordinates
-	for (int i=0;i<3;i++) {
-    coordinate[i] = temp[i] / _bonds.size();
-    //Constraints the coordinates inside the box
-    if (coordinate[i] > GController::getSize()[i]) { coordinate[i] = GController::getSize()[i] - 1E-5; }
-    if (coordinate[i] < 0.0) { coordinate[i] = 0.0 + 1E-5; }
-  }
-  //cout<< "====== Original cylinder coordinates: " << get<0>(_bonds[0])->_b1->coordinate[0] << " " << get<0>(_bonds[0])->_b1->coordinate[1] << " " << get<0>(_bonds[0])->_b1->coordinate[2] <<endl;
-  //cout<< "====== Original cylinder coordinates: " << get<0>(_bonds[0])->_b2->coordinate[0] << " " << get<0>(_bonds[0])->_b2->coordinate[1] << " " << get<0>(_bonds[0])->_b2->coordinate[2] <<endl;
-  //cout<< "====== Temp cylinder coordinates: " << temp[0] << " " << temp[1] << " " << temp[2] << " bondsize=" << _bonds.size() << " " << get<1>(_bonds[0]) <<endl;
-  //cout<< "====== Updated CaMKIIingPoint Coordinates: " << coordinate[0] << " " << coordinate[1] << " " << coordinate[2] <<endl;
+	// Set the CaMKII coordinates
+	for (int i = 0; i < 3; i++) {
+		(*coordinate)[i] = temp[i] / _bonds.size();
+		//Constraints the coordinates inside the box
+		if ((*coordinate)[i] > GController::getSize()[i])
+			(*coordinate)[i] = GController::getSize()[i] - 1E-5;
+
+		if ((*coordinate)[i] < 0.0)
+			(*coordinate)[i] = 0.0 + 1E-5;
+	}
 }
 
 CaMKIIingPoint::~CaMKIIingPoint() noexcept {
@@ -117,12 +118,14 @@ void CaMKIIingPoint::updatePosition() {
 //	assert(_bonds.size() == 1);
 
 #endif
+
+	assert(coordinate != nullptr);
     //Find compartment
-    updateCoordinate();
+    updateCoordinate(coordinate);
     
     Compartment* c;
     
-    try {c = GController::getCompartment(coordinate);}
+    try {c = GController::getCompartment(*coordinate);}
     catch (exception& e) {
         cout << e.what();
         
@@ -150,7 +153,7 @@ void CaMKIIingPoint::printSelf() {
     
     cout << "CaMKIIingPoint: ptr = " << this << endl;
     cout << "CaMKIIing type = " << _camkiiType << ", CaMKII ID = " << _camkiiID << endl;
-    cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
+    cout << "Coordinates = " << (*coordinate)[0] << ", " << (*coordinate)[1] << ", " << (*coordinate)[2] << endl;
     
     cout << "Position on mother cylinder (double) = " << get<1>(_bonds.at(0)) << endl;
     cout << "Birth time = " << _birthTime << endl;
@@ -186,6 +189,32 @@ species_copy_t CaMKIIingPoint::countSpecies(const string& name) {
     }
     return copyNum;
 }
+
+species_copy_t CaMKIIingPoint::countDummySpecies(const string& name) {
+
+	/*
+	 * This function counts the total number of the dummy cylinder species in the system.
+	 * In case of multiple type of CaMKII, sname and name as in countSpecies(const string& name) should be implemented.
+	 */
+
+	species_copy_t copyNum = 0;
+
+	for(auto b : _camkiiingPoints.getElements()) {
+
+		auto c = b->getCaMKIICylinder();
+
+		for(int i = 0; i < c->getCCylinder()->getSize(); i++) {
+			auto m = c->getCCylinder()->getCMonomer(i);
+
+			//CaMKII species
+			const int activeIndex = m->activeSpeciesCaMKIIDummyCylinder();
+
+			if(activeIndex != -1) copyNum++;
+		}
+	}
+	return copyNum;
+}
+
 
 void CaMKIIingPoint::removeRandomBond() {
 	assert(_bonds.size() > 1);

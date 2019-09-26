@@ -28,7 +28,7 @@
 using namespace mathfunc;
 
 CaMKIICylinder::CaMKIICylinder(CaMKIIingPoint *camkiiPoint, Bead* b1, short type, int position):
-Cylinder(nullptr, b1, b1, type, position, false, false, false), _camkiiPoint(camkiiPoint){
+    Cylinder(nullptr, b1, b1, type, position, false, false, false), _camkiiPoint(camkiiPoint){
     _camkiiPoint = camkiiPoint;
 };
 

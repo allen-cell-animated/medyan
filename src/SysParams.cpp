@@ -431,8 +431,17 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
         cout << "Must set a bubble cutoff for mechanical equilibration. Exiting." << endl;
         return false;
     }
-    
-    
+
+
+    /*
+     * TODO: Once the mechanical parameters for CaMKII are defined, we should revisit this.
+     * TODO: Since we are in mechanical step, why are we checking the cylinder in here?
+     * TODO: GParams and CParams should not be here.
+     * TODO: We are bypassing this filter for now.
+     */
+    if(true)
+        return true;
+
     ///Cylinder and monomer lengths specified
     if(GParams.cylinderSize.size() != CParams.numFilaments) {
         

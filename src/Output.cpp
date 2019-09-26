@@ -157,7 +157,7 @@ void BasicSnapshot::print(int snapshot) {
 									  camkii->getCoordinationNumber()<< endl;
         
         //print coordinates
-        auto x = camkii->coordinate;
+        auto x = *(camkii->coordinate);
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
     }
 
@@ -803,8 +803,14 @@ void Chemistry::print(int snapshot) {
             auto copyNum = CaMKIIingPoint::countSpecies(sb);
             _outputFile << sb << ":CAMKIIER " << copyNum << endl;
         }
+
     }
-    
+
+    for(auto sb : _chemData.speciesCaMKIIDummyCylinder[CAMKII_CYLINDER_FILAMENT_TYPE]) {
+        auto copyNum = CaMKIIingPoint::countDummySpecies(sb);
+        _outputFile << sb << ":CAMKIIDUMMYCYLINDER " << copyNum << endl;
+    }
+
     _outputFile <<endl;
 }
 

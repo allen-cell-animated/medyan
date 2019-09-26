@@ -125,6 +125,7 @@ struct ChemParams {
     vector<short> numMotorSpecies    = {};
     vector<short> numBrancherSpecies = {};
     vector<short> numCaMKIIerSpecies = {};
+    vector<short> numCaMKIIDummyCylinderSpecies = {};
     //@}
 
     /// Number of different filament types

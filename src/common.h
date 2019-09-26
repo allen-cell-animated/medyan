@@ -55,6 +55,7 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 #define SPECIESMOTOR          2
 #define SPECIESBRANCHER       3
 #define SPECIESCAMKIIER       4
+#define SPECIESCAMKIIDUMMYCYLINDER       5
 //@}
 
 //@{

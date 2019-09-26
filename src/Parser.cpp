@@ -126,10 +126,13 @@ void SystemParser::readChemParams() {
         if (line.find("NUMCAMKIIERSPECIES") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            
+
             if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numCaMKIIerSpecies.push_back(atoi(lineVector[i].c_str()));
+                for(int i = 1; i < lineVector.size(); i++) {
+                    int readValue = atoi(lineVector[i].c_str());
+					CParams.numCaMKIIerSpecies.push_back(readValue);
+					CParams.numCaMKIIDummyCylinderSpecies.resize(MAX_FILAMENT_TYPES, readValue);
+				}
             }
         }
 
@@ -231,6 +234,8 @@ void SystemParser::readChemParams() {
         //push to CParams
         CParams.bindingSites.push_back(tempBindingSites);
     }
+
+    CParams.bindingSites.resize(MAX_FILAMENT_TYPES, vector<short>(0, 0));
     
     //set system parameters
     SysParams::CParams = CParams;
@@ -1601,6 +1606,15 @@ void SystemParser::readGeoParams() {
         }
         else {}
     }
+
+    /*
+     * These parameters are resized to accommodate the dummy cylinder in CaMKII.
+     */
+	cylinderSize.resize(MAX_FILAMENT_TYPES, 3.0);
+	monomerSize.resize(MAX_FILAMENT_TYPES, 1.0);
+	cylinderSize[CAMKII_CYLINDER_FILAMENT_TYPE] = 1.0;
+	monomerSize[CAMKII_CYLINDER_FILAMENT_TYPE] = 1.0;
+
     //set geometry parameters and return
     GParams.nDim = nDim;
     GParams.cylinderSize = cylinderSize;
@@ -1614,20 +1628,22 @@ void SystemParser::readGeoParams() {
     }
     
     for(int i = 0; i < GParams.cylinderSize.size(); i++) {
-        
+
+    	// This filter should only be applied to non-CaMKII cylinders.
+        if(i != CAMKII_CYLINDER_FILAMENT_TYPE) {
 #ifdef CHEMISTRY
-        if(cylinderSize[i] / monomerSize[i] < SysParams::Geometry().minCylinderNumMon) {
-            cout <<
-            "With chemistry, cylinder size specified is too short. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
+			if (cylinderSize[i] / monomerSize[i] < SysParams::Geometry().minCylinderNumMon) {
+				cout <<
+					 "With chemistry, cylinder size specified is too short. Exiting."
+					 << endl;
+				exit(EXIT_FAILURE);
+			}
 #endif
+		}
+
         GParams.cylinderNumMon.push_back(int(cylinderSize[i] / monomerSize[i]));
-        
-        GParams.minCylinderSize.push_back(
-        SysParams::Geometry().minCylinderNumMon * GParams.monomerSize[i]);
-        
+
+        GParams.minCylinderSize.push_back(SysParams::Geometry().minCylinderNumMon * GParams.monomerSize[i]);
     }
         
     if(gridTemp.size() >= 1) GParams.NX = gridTemp[0];
@@ -2100,8 +2116,10 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 else {
                     allSpeciesNames.push_back(lineVector[1]);
                 }
-                
-                chem.speciesCaMKIIer[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+
+				chem.speciesCaMKIIer[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+
+				chem.speciesCaMKIIDummyCylinder[CAMKII_CYLINDER_FILAMENT_TYPE].push_back(lineVector[1]+"D");
             }
             else {}
         }

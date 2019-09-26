@@ -141,8 +141,9 @@ void ChemManager::setupBindingSites() {
 
 void ChemManager::configCMonomer() {
     
-    for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
-    
+//    for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
+	for(int filType = 0; filType < MAX_FILAMENT_TYPES; filType++) {
+
         //set up static CMonomer things
         CMonomer::_numFSpecies[filType] = _chemData.speciesFilament[filType].size() +
                                         _chemData.speciesPlusEnd[filType].size()  +
@@ -152,8 +153,9 @@ void ChemManager::configCMonomer() {
                                         _chemData.speciesLinker[filType].size()    +
                                         _chemData.speciesMotor[filType].size()     +
                                         _chemData.speciesBrancher[filType].size()  +
-                                        _chemData.speciesCaMKIIer[filType].size();
-        
+                                        _chemData.speciesCaMKIIer[filType].size()  +
+                                        _chemData.speciesCaMKIIDummyCylinder[filType].size();
+
         //set up species offsets
         short o1 = _chemData.speciesFilament[filType].size();
         short o2 = o1 + _chemData.speciesPlusEnd[filType].size();
@@ -161,7 +163,8 @@ void ChemManager::configCMonomer() {
         short o3 = _chemData.speciesBound[filType].size(); //Linker
         short o4 = o3 + _chemData.speciesLinker[filType].size(); //Motor
         short o5 = o4 + _chemData.speciesMotor[filType].size(); //Brancher
-        short o6 = o5 + _chemData.speciesBrancher[filType].size(); //CaMKII
+        short o6 = o5 + _chemData.speciesBrancher[filType].size(); //CaMKIIer
+        short o7 = o6 + _chemData.speciesCaMKIIer[filType].size(); //CaMKIIDummyCylinder
 
         //create offset vector for filament
         CMonomer::_speciesFilamentIndex[filType].insert(
@@ -169,7 +172,7 @@ void ChemManager::configCMonomer() {
         
         //create offset vector for bound
         CMonomer::_speciesBoundIndex[filType].insert(
-        CMonomer::_speciesBoundIndex[filType].end(), {0,o3,o4,o5,o6});
+        CMonomer::_speciesBoundIndex[filType].end(), {0,o3,o4,o5,o6,o7});
     }
 }
 
@@ -239,7 +242,14 @@ void ChemManager::initCMonomer(CMonomer* m, short filamentType, Compartment* c) 
          *               1            0               0
          *               1            0               1
          */
+        // TODO: Eventually, this line should be removed.
         sca->getRSpecies().setUpperLimitForN(2);
+    }
+    for (auto &ca : _chemData.speciesCaMKIIDummyCylinder[filamentType]) {
+        SpeciesCaMKIIDummyCylinder* sca =
+                c->addSpeciesCaMKIIDummyCylinder(SpeciesNamesDB::genUniqueFilName(ca));
+        m->_speciesBound[bIndex] = sca;
+        bIndex++;
     }
 }
 
