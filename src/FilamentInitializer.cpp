@@ -220,18 +220,18 @@ FilamentData MTOCFilamentDist::createFilaments(Boundary* b, int numFilaments,
                                                int filamentType,
                                                int lenFilaments) {
     
-    vector<tuple<short, vector<double>, vector<double>>> filaments;
-    vector<tuple<string, short, vector<vector<double>>>> dummy;
-    vector<vector<double>> dummy3;
-    vector<tuple<string, short, vector<double>>> dummy2;
+    vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> filaments;
+    vector<tuple<string, short, vector<vector<floatingpoint>>>> dummy;
+    vector<vector<floatingpoint>> dummy3;
+    vector<tuple<string, short, vector<floatingpoint>>> dummy2;
     int filamentCounter = 0;
     while (filamentCounter < numFilaments) {
         
 
-        double l = Rand::randDouble(0,2 * M_PI);
-        double h = Rand::randDouble(-M_PI/2, M_PI/2);
+        floatingpoint l = Rand::randfloatingpoint(0,2 * M_PI);
+        floatingpoint h = Rand::randfloatingpoint(-M_PI/2, M_PI/2);
         
-        vector<double> point1;
+        vector<floatingpoint> point1;
         point1.push_back(_coordMTOC[0] + _radius * cos(l) * cos(h));
         point1.push_back(_coordMTOC[1] + _radius * sin(h));
         point1.push_back(_coordMTOC[2] + _radius * sin(l) * cos(h));
