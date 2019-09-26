@@ -15,6 +15,7 @@
 
 #include "SubSystem.h"
 #include "Bead.h"
+#include "Structure/Special/AFM.h"
 
 #include "SysParams.h"
 #include "CUDAcommon.h"
@@ -74,6 +75,10 @@ void Bubble::updatePositionManually() {
         _bead->coordinate()[2] += step;
 
         coordinate[2] += step;
+
+        // Update boundary element coordinate
+        static_cast<AFM*>(getParent())->getPlaneBoundaryElement()->updateCoords(_bead->vcoordinate());
+
         iter++;
     }
 

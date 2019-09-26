@@ -29,6 +29,7 @@
 #include "Cylinder.h"
 #include "Linker.h"
 #include "MotorGhost.h"
+#include "Structure/BoundaryElementImpl.h"
 #include "BranchingPoint.h"
 #include "Bubble.h"
 #include "MTOC.h"
@@ -478,15 +479,15 @@ void Controller::setupSpecialStructures(SystemParser& p) {
             auto coord1 = get<1>(it);
             auto coord2 = get<2>(it);
             
-            vector<vector<double>> coords = {coord1, coord2};
+            vector<vector<floatingpoint>> coords = {coord1, coord2};
             
-            double d = twoPointDistance(coord1, coord2);
-            vector<double> tau = twoPointDirection(coord1, coord2);
+            floatingpoint d = twoPointDistance(coord1, coord2);
+            vector<floatingpoint> tau = twoPointDirection(coord1, coord2);
             
             int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
             
             // check how many segments can fit between end-to-end of the filament
-            Filament *f = _subSystem->addTrackable<Filament>(_subSystem, SType.mtocFilamentType,
+            Filament *f = _subSystem.addTrackable<Filament>(&_subSystem, SType.mtocFilamentType,
                                                              coords, numSegment + 1, "ARC");
             
             mtoc->addFilament(f);
@@ -497,22 +498,26 @@ void Controller::setupSpecialStructures(SystemParser& p) {
     }
     else if(SType.afm) {
 
-        AFM* afm = _subSystem->addTrackable<AFM>();
+        AFM* afm = _subSystem.addTrackable<AFM>();
 
         //create a bubble in top part of grid, centered in x,y
-        double bcoordx = GController::getSize()[0] / 2;
-        double bcoordy = GController::getSize()[1] / 2;
+        floatingpoint bcoordx = GController::getSize()[0] / 2;
+        floatingpoint bcoordy = GController::getSize()[1] / 2;
         //set up the height of the AFM bubble
-        double bcoordz = 1250;
+        floatingpoint bcoordz = 1250;
 
-        vector<double> bcoords = {bcoordx, bcoordy, bcoordz};
-        Bubble* b = _subSystem->addTrackable<Bubble>(_subSystem, bcoords, SType.afmBubbleType);
+        vector<floatingpoint> bcoords = {bcoordx, bcoordy, bcoordz};
+        Bubble* b = _subSystem.addTrackable<Bubble>(&_subSystem, bcoords, SType.afmBubbleType);
+
+        PlaneBoundaryElement* afmpbe = _subSystem.addTrackable<PlaneBoundaryElement>(bcoords, vector<floatingpoint>{0,0,-1}, SysParams::Boundaries().BoundaryK,
+                                   SysParams::Boundaries().BScreenLength);
 
         afm->setBubble(b);
+        afm->setPlaneBoundaryElement(afmpbe);
 
         FilamentInitializer *init = new AFMFilamentDist(bcoords, SysParams::Mechanics().BubbleRadius[SType.afmBubbleType]);
 
-        auto filaments = init->createFilaments(_subSystem->getBoundary(),
+        auto filaments = init->createFilaments(_subSystem.getBoundary(),
                                                SType.afmNumFilaments,
                                                SType.afmFilamentType,
                                                SType.afmFilamentLength);
@@ -534,7 +539,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
 
 
 
-            Filament *f = _subSystem->addTrackable<Filament>(_subSystem, SType.afmFilamentType, coords, numSegment + 1, "ARC");
+            Filament *f = _subSystem.addTrackable<Filament>(&_subSystem, SType.afmFilamentType, coords, numSegment + 1, "ARC");
 
             afm->addFilament(f);
         }

@@ -19,6 +19,7 @@
 #include "Database.h"
 #include "Trackable.h"
 #include "Composite.h"
+#include "Structure/BoundaryElementImpl.h"
 
 //FORWARD DECLARATIONS
 class Bubble;
@@ -39,6 +40,7 @@ class AFM : public Composite, public Trackable, public Database< AFM, false > {
 private:
     Bubble* _bubble; ///< A bubble that physically represents the AFM bubble
     vector<Filament*> _filaments; ///< An ordered vector of filaments in the AFM bubble
+    PlaneBoundaryElement* _pbe;
     
 public:
     ///Constructor
@@ -47,6 +49,10 @@ public:
     //@{
     ///Setters
     void setBubble(Bubble* b);
+    void setPlaneBoundaryElement(PlaneBoundaryElement* pbe) {
+        _pbe = pbe;
+        addChild(unique_ptr<Component>(pbe));
+    }
     
     void addFilament(Filament* f) {_filaments.push_back(f);}
     //@}
@@ -54,6 +60,7 @@ public:
     //@{
     ///Getters
     Bubble* getBubble() {return _bubble;}
+    auto getPlaneBoundaryElement() const { return _pbe; }
     const vector<Filament*>& getFilaments() {return _filaments;}
     //@}
     

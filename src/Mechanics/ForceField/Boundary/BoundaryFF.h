@@ -34,8 +34,6 @@ private:
     vector<unique_ptr<BoundaryInteractions>>
     _boundaryInteractionVector; ///< Vector of initialized boundary element interactions
     
-    bool isSet = false;
-    
 protected:
     /// The culprit in the case of an error
     BoundaryInteractions* _culpritInteraction;

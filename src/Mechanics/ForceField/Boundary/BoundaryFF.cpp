@@ -19,9 +19,6 @@
 #include "BoundaryCylinderRepulsionIn.h"
 #include "BoundaryCylinderRepulsionExpIn.h"
 
-#include "BoundaryCylinderAFMRepulsion.h"
-#include "BoundaryCylinderAFMRepulsionExp.h"
-
 #include "BoundaryBubbleRepulsion.h"
 #include "BoundaryBubbleRepulsionExp.h"
 
@@ -45,37 +42,14 @@ BoundaryFF::BoundaryFF (string type) {
     else if(type == "REPULSIONEXPIN") {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>());
-/*        _boundaryInteractionVector.emplace_back(
-        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());*/
+        _boundaryInteractionVector.emplace_back(
+        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
     }
-    for(auto b : Bubble::getBubbles()){
-        if(b->isAFM()){
-            _boundaryInteractionVector.emplace_back(
-            new BoundaryCylinderAFMRepulsion<BoundaryCylinderAFMRepulsionExp>());
-            isSet = true;
-            continue;
-        }
+    else {
+        cout << "Boundary FF not recognized. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
 
-    }
-    if(!isSet){
-        if (type == "REPULSIONEXP") {
-            _boundaryInteractionVector.emplace_back(
-            new BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>());
-
-    //        _boundaryInteractionVector.emplace_back(
-    //        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
-        }
-        else if(type == "REPULSIONEXPIN") {
-            _boundaryInteractionVector.emplace_back(
-            new BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>());
-            _boundaryInteractionVector.emplace_back(
-            new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
-        }
-        else {
-            cout << "Boundary FF not recognized. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-    }
     //if pinning to boundaries
     if(SysParams::Mechanics().pinBoundaryFilaments) {
         _boundaryInteractionVector.emplace_back(

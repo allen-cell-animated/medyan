@@ -86,12 +86,12 @@ public:
 class AFMFilamentDist : public FilamentInitializer {
     
 private:
-    vector<double> _coordAFM; ///< Coordinates of the AFM Bubble to make filaments around
-    double _radius;            ///< Radius of the AFM Bubble
+    vector<floatingpoint> _coordAFM; ///< Coordinates of the AFM Bubble to make filaments around
+    floatingpoint _radius;            ///< Radius of the AFM Bubble
     
 public:
     ///Constructor sets parameters of AFM
-    AFMFilamentDist(vector<double> coord, double radius)
+    AFMFilamentDist(vector<floatingpoint> coord, floatingpoint radius)
     : _coordAFM(coord), _radius(radius) {}
     
     FilamentData createFilaments(Boundary* b, int numFilaments,
