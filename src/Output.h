@@ -368,6 +368,8 @@ class HessianMatrix : public Output {
     
     ForceFieldManager* _ffm;
     
+    int counter = 0;
+    
 public:
     HessianMatrix(string outputFileName, SubSystem* s, ForceFieldManager* ffm)
     

@@ -105,7 +105,8 @@ struct MechParams {
     bool hessTracking = false;
     float hessDelta = 0.0001;
     bool denseEstimation = true;
-    int hessSkip = 20;
+
+    int hessSkip = 1;
     
     int sameFilBindSkip = 2;
 
