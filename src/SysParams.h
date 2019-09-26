@@ -68,23 +68,13 @@ struct MechParams {
 
     //@{
     /// Bubble parameter
-<<<<<<< HEAD
     vector<floatingpoint> BubbleK = {};
     vector<floatingpoint> BubbleRadius = {};
     vector<floatingpoint> BubbleScreenLength = {};
 	vector<floatingpoint> MTOCBendingK = {};
-
+    vector<floatingpoint> AFMBendingK = {};
 
 	floatingpoint BubbleCutoff = 0.0;
-=======
-    vector<double> BubbleK = {};
-    vector<double> BubbleRadius = {};
-    vector<double> BubbleScreenLength = {};
-    vector<double> MTOCBendingK = {};
-    vector<double> AFMBendingK = {};
-    
-    double BubbleCutoff = 0.0;
->>>>>>> ad94434360fec1fdcea94cf90da010761cb7815c
 
     ///If using more than one bubble
     short numBubbleTypes = 1;
