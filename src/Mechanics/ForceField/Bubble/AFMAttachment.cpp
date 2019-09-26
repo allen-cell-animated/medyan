@@ -23,108 +23,40 @@
 
 template <class AFMInteractionType>
 void AFMAttachment<AFMInteractionType>::vectorize() {
-    
-    if(AFM::getAFMs().size() > 1) {
-        cout << "Should not have more than 1 AFM" << endl;
-        exit(EXIT_FAILURE);
-    }
-    
+
+    numInteractions_ = 0;
+    for(auto afm : AFM::getAFMs()) numInteractions_ += afm->getFilaments().size();
+
+    beadSet_.resize(2 * numInteractions_);
+    radii_.resize(numInteractions_);
+    kstr_.resize(numInteractions_);
+
+    int ci = 0;
     for(auto afm : AFM::getAFMs()) {
-        beadSet = new int[n * afm->getFilaments().size() + 1];
-        kstr = new double[n * Cylinder::getCylinders().size() + 1];
-        
-        beadSet[0] = afm->getBubble()->getBead()->_dbIndex;
-        kstr[0] = 0;
-        
-        int i = 1;
-        
+
         for (int fIndex = 0; fIndex < afm->getFilaments().size(); fIndex++) {
-            Filament *f = afm->getFilaments()[fIndex];
-            
-            beadSet[n * i] = f->getMinusEndCylinder()->getFirstBead()->_dbIndex;
-            
-            kstr[n * i] = f->getMinusEndCylinder()->getMCylinder()->getStretchingConst();
-            
-            i++;
+            const auto f = afm->getFilaments()[fIndex];
+
+            beadSet_[2*ci    ] = afm->getBubble()->getBead()->getStableIndex();
+            beadSet_[2*ci + 1] = f->getMinusEndCylinder()->getFirstBead()->getStableIndex();
+
+            radii_[ci] = afm->getBubble()->getRadius();
+
+            kstr_[ci] = f->getMinusEndCylinder()->getMCylinder()->getStretchingConst();
+
+            ci++;
         }
     }
 }
 
 template <class AFMInteractionType>
-void AFMAttachment<AFMInteractionType>::deallocate() {
-    
-    delete [] beadSet;
-    delete [] kstr;
-}
-
-
-template <class AFMInteractionType>
-double AFMAttachment<AFMInteractionType>::computeEnergy(double* coord, double *f, double d) {
-    
-    double U = 0.0;
-    double U_i=0.0;
-    
-    //TO DO, for loop may be removed
-    
-    for(auto afm : AFM::getAFMs()) {
-        
-        //        Bead* b1 = afm->getBubble()->getBead();
-        //
-        //        for(int fIndex = 0; fIndex < afm->getFilaments().size(); fIndex++) {
-        //
-        //            Filament *f = afm->getFilaments()[fIndex];
-        //
-        //            Cylinder* c = f->getMinusEndCylinder();
-        //
-        //            Bead* b2 = c->getFirstBead();
-        //            double kStretch = c->getMCylinder()->getStretchingConst();
-        double radius = afm->getBubble()->getRadius();
-        
-        if (d == 0.0)
-            U_i = _FFType.energy(coord, f, beadSet, kstr, radius);
-        else
-            U_i = _FFType.energy(coord, f, beadSet, kstr, radius, d);
-    }
-    
-    return U_i;
-    
-    //            if(fabs(U_i) == numeric_limits<double>::infinity()
-    //               || U_i != U_i || U_i < -1.0) {
-    //
-    //                //set culprits and return
-    //                _otherCulprit = f;
-    //                _bubbleCulprit = afm->getBubble();
-    //
-    //                return -1;
-    //            }
-    //            else
-    //                U += U_i;
-    //        }
-    //    }
-    //    return U;
-    
+floatingpoint AFMAttachment<AFMInteractionType>::computeEnergy(floatingpoint *coord, bool stretched) {
+    return _FFType.energy(coord, numInteractions_, beadSet_.data(), kstr_.data(), radii_.data());
 }
 
 template <class AFMInteractionType>
-void AFMAttachment<AFMInteractionType>::computeForces(double *coord, double *f) {
-    
-    for(auto afm : AFM::getAFMs()) {
-        //
-        //        Bead* b1 = afm->getBubble()->getBead();
-        //
-        //        for(int fIndex = 0; fIndex < afm->getFilaments().size(); fIndex++) {
-        //
-        //            Filament *f = afm->getFilaments()[fIndex];
-        //
-        //            Cylinder* c = f->getMinusEndCylinder();
-        //
-        //            Bead* b2 = c->getFirstBead();
-        //            double kStretch = c->getMCylinder()->getStretchingConst();
-        double radius = afm->getBubble()->getRadius();
-        _FFType.forces(coord, f, beadSet, kstr, radius);
-        //        }
-    }
-    
+void AFMAttachment<AFMInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
+    _FFType.forces(coord, f, numInteractions_, beadSet_.data(), kstr_.data(), radii_.data());
 }
 
 
@@ -152,8 +84,8 @@ void AFMAttachment<AFMInteractionType>::computeForces(double *coord, double *f) 
 //}
 
 ///Template specializations
-template double AFMAttachment<AFMAttachmentHarmonic>::computeEnergy(double *coord, double *f, double d);
-template void AFMAttachment<AFMAttachmentHarmonic>::computeForces(double *coord, double *f);
+template floatingpoint AFMAttachment<AFMAttachmentHarmonic>::computeEnergy(floatingpoint *coord, bool stretched);
+template void AFMAttachment<AFMAttachmentHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 //template void AFMAttachment<AFMAttachmentHarmonic>::computeForcesAux(double *coord, double *f);
 template void AFMAttachment<AFMAttachmentHarmonic>::vectorize();
 template void AFMAttachment<AFMAttachmentHarmonic>::deallocate();

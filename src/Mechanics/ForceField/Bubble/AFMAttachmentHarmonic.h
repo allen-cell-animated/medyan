@@ -23,14 +23,20 @@ class Bead;
 class AFMAttachmentHarmonic {
     
 public:
-    double energy(double *coord, double *f, int *beadSet,
-                  double *kstr, double radius);
-    double energy(double *coord, double *f, int *beadSet,
-                  double *kstr, double radius, double d);
-    void forces(double *coord, double *f, int *beadSet,
-                double *kstr, double radius);
-    
-    //void forcesAux(Bead*, Bead*, double, double);
+    floatingpoint energy(
+        floatingpoint *coord,
+        int numInteractions, int *beadSet, floatingpoint *kstr, const floatingpoint* radii
+    ) const;
+
+    [[deprecated]] floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                  floatingpoint *kstr, floatingpoint radius, floatingpoint d);
+
+    void forces(
+        floatingpoint *coord, floatingpoint* f,
+        int numInteractions, int *beadSet, floatingpoint *kstr, const floatingpoint* radii
+    ) const;
+
+    //void forcesAux(Bead*, Bead*, floatingpoint, floatingpoint);
 };
 
 #endif

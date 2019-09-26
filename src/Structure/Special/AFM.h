@@ -34,18 +34,15 @@ class Filament;
  *  and is only mechanically relevant for now, but may be extended to have chemical
  *  properties in the future.
  */
-class AFM : public Composite, public Trackable {
+class AFM : public Composite, public Trackable, public Database< AFM, false > {
     
 private:
     Bubble* _bubble; ///< A bubble that physically represents the AFM bubble
     vector<Filament*> _filaments; ///< An ordered vector of filaments in the AFM bubble
     
-    int _ID; ///< Unique identifier
-    
-    static Database<AFM*> _afms; ///< Collection of beads in SubSystem
 public:
     ///Constructor
-    AFM() : Trackable(), _ID(_afms.getID()) {}
+    AFM() : Trackable() {}
     
     //@{
     ///Setters
@@ -62,17 +59,18 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _afms.addElement(this);}
-    virtual void removeFromSubSystem() {_afms.removeElement(this);}
+    // Does nothing
+    virtual void addToSubSystem() { }
+    virtual void removeFromSubSystem() { }
     //@}
     
     /// Get all instances of this class from the SubSystem
     static const vector<AFM*>& getAFMs() {
-        return _afms.getElements();
+        return getElements();
     }
     /// Get the number of AFMs in this system
     static int numAFMs() {
-        return _afms.countElements();
+        return getElements().size();
     }
     
     virtual void printSelf();

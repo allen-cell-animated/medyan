@@ -32,12 +32,14 @@ class AFMAttachment : public BubbleInteractions {
     
 private:
     AFMInteractionType _FFType;
-    
-    int *beadSet;
+
+    int numInteractions_ = 0;
+    std::vector< int > beadSet_;
     ///Array describing the constants in calculation
-    double *kstr;
-    double *pos1;
-    double *pos2;
+    std::vector< floatingpoint > radii_;
+    std::vector< floatingpoint > kstr_;
+    floatingpoint *pos1;
+    floatingpoint *pos2;
     
     
 public:
@@ -47,10 +49,10 @@ public:
     const static int n = 1;
     
     virtual void vectorize();
-    virtual void deallocate();
+    virtual void deallocate() {}
     
-    virtual double computeEnergy(double *coord, double *f, double d);
-    virtual void computeForces(double *coord, double *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) override;
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     //virtual void computeForcesAux(double *coord, double *f);
     
     virtual void computeLoadForces() {return;}

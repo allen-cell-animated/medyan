@@ -31,7 +31,7 @@ void AFM::printSelf() {
     cout << endl;
     
     cout << "AFM: ptr = " << this << endl;
-    cout << "AFM ID = " << _ID << endl;
+    cout << "AFM ID = " << getId() << endl;
     
     cout << endl;
     cout << "Bubble information..." << endl;
@@ -40,7 +40,3 @@ void AFM::printSelf() {
     
     cout << endl;
 }
-
-
-Database<AFM*> AFM::_afms;
-

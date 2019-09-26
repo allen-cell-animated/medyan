@@ -70,15 +70,9 @@ void Bubble::updatePositionManually() {
         else{
             step = SysParams::Chemistry().AFMStep1;
         }
-        /*
-        coord = Bead::getDbData().coords.data();
-        bcoord = &coord[3 * _bead->_dbIndex];
-        bcoord[2] = coordinate[2] + step;
-        
-        vector<double> newcoord = {coordinate[0], coordinate[1], coordinate[2] + step};
-        coordinate = newcoord;
-        _bead->coordinate() = newcoord;
-         */
+
+        _bead->coordinate()[2] += step;
+
         coordinate[2] += step;
         iter++;
     }
