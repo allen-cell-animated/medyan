@@ -11,8 +11,8 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "BoundaryCylinderRepulsionExp.h"
-#include "BoundaryCylinderRepulsion.h"
+#include "BoundaryCylinderRepulsionExpIn.h"
+#include "BoundaryCylinderRepulsionIn.h"
 
 #include "BoundaryElement.h"
 #include "Bead.h"
@@ -29,7 +29,7 @@
 #endif
 using namespace mathfunc;
 #ifdef CUDAACCL
-void BoundaryCylinderRepulsionExp::deallocate(){
+void BoundaryCylinderRepulsionExpIn::deallocate(){
     //    if(!(CUDAcommon::getCUDAvars().conservestreams))
     //        CUDAcommon::handleerror(cudaStreamDestroy(stream));
     CUDAcommon::handleerror(cudaFree(gU_i));
@@ -47,7 +47,7 @@ void BoundaryCylinderRepulsionExp::deallocate(){
     //    std::cout<<"Memory allocated 0 . Memory freed "<<allocmem/1024<<endl;
     //@}
 }
-void BoundaryCylinderRepulsionExp::optimalblocksnthreads( int nint, cudaStream_t
+void BoundaryCylinderRepulsionExpIn::optimalblocksnthreads( int nint, cudaStream_t
                                                          stream_pass){
     //    //CUDA stream create
     //    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
@@ -118,7 +118,7 @@ void BoundaryCylinderRepulsionExp::optimalblocksnthreads( int nint, cudaStream_t
     }
     
 }
-floatingpoint* BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
+floatingpoint* BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
                                                     int* nintvec, floatingpoint* beListplane, int *params) {
     //    if(blocksnthreadse[1]>0) {
     //
@@ -138,7 +138,7 @@ floatingpoint* BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, floati
     //        return NULL;
 }
 
-floatingpoint* BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
+floatingpoint* BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
                                                     int* nintvec, floatingpoint* beListplane, floatingpoint *z,int *params) {
     
     //    if(blocksnthreadse[1]>0) {
@@ -183,7 +183,7 @@ floatingpoint* BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, floati
         return gU_sum;
     }
 }
-void BoundaryCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
+void BoundaryCylinderRepulsionExpIn::forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
                                           int* nintvec, floatingpoint* beListplane, int *params) {
     if (blocksnthreadsf[1] > 0) {
         //        BoundaryCylinderRepulsionExpforces << < blocksnthreadsf[0], blocksnthreadsf[1], (3 * blocksnthreadsf[1]) *
@@ -196,7 +196,7 @@ void BoundaryCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f
         CUDAcommon::handleerror(cudaGetLastError(),"BoundaryCylinderRepulsionExpforces", "BoundaryCylinderRepulsionExp.cu");
     }
 }
-void BoundaryCylinderRepulsionExp::checkforculprit() {
+void BoundaryCylinderRepulsionExpIn::checkforculprit() {
     CUDAcommon::printculprit("BoundaryCylinderRepulsion","BoundaryCylinderRepulsionExp");
     Cylinder *c;
     BoundaryElement* be;
@@ -209,7 +209,7 @@ void BoundaryCylinderRepulsionExp::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-floatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, int *beadSet,
+floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, int *beadSet,
                                                    floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
     
     int nb, nc;
@@ -260,7 +260,7 @@ floatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, int *be
     return U;
 }
 
-floatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                                    floatingpoint *krep, floatingpoint *slen, int *nneighbors, floatingpoint d) {
     
     int nb, nc;
@@ -312,7 +312,7 @@ floatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, floatin
 
 
 
-void BoundaryCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+void BoundaryCylinderRepulsionExpIn::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                           floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
     int nb, nc;
     floatingpoint *coord1, R, r, f0;
@@ -361,7 +361,7 @@ void BoundaryCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f
         Cumnc+=nc;
     }}
 
-floatingpoint BoundaryCylinderRepulsionExp::loadForces(floatingpoint r, floatingpoint kRep, floatingpoint screenLength) const {
+floatingpoint BoundaryCylinderRepulsionExpIn::loadForces(floatingpoint r, floatingpoint kRep, floatingpoint screenLength) const {
     
     floatingpoint R = -r/screenLength + 100.0 / screenLength;
     return kRep * exp(R)/screenLength;
