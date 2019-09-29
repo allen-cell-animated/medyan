@@ -107,8 +107,8 @@ struct MechParams {
     bool denseEstimation = true;
 
     int hessSkip = 1;
-    
     int sameFilBindSkip = 2;
+    int cylThresh = 0.0;
 
 
 };

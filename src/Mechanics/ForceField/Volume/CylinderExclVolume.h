@@ -43,6 +43,9 @@ private:
     int *beadSet;
     floatingpoint *krep;
     int nint = 0;
+    
+    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>> cylEnergies = _FFType.cylEnergies;
+    
 #ifdef CUDAACCL
     int * gpu_beadSet = NULL;
     floatingpoint * gpu_krep = NULL;

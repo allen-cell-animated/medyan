@@ -50,6 +50,8 @@ public:
     /// Get the name of this interaction
     virtual const string getName() = 0;
 
+    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>> cylEnergies;
+    
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     //setter to store HNeighborList pointer.
     virtual void setHNeighborList(HybridCylinderCylinderNL* Hnl) = 0;

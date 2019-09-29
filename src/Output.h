@@ -396,6 +396,22 @@ public:
 };
 
 
+class CylinderEnergies : public Output {
+    
+    ForceFieldManager* _ffm;
+    
+public:
+    CylinderEnergies(string outputFileName, SubSystem* s, ForceFieldManager* ffm)
+    
+    : Output(outputFileName, s), _ffm(ffm) {}
+    
+    ~CylinderEnergies() {}
+    
+    virtual void print(int snapshot);
+};
+
+
+
 
 
 

@@ -30,13 +30,15 @@ class Cylinder;
 class CylinderVolumeFF : public ForceField {
 
 private:
-    vector <unique_ptr<CylinderVolumeInteractions>>
-    _cylinderVolInteractionVector;  ///< Vector of initialized volume interactions
-
+    
 protected:
     CylinderVolumeInteractions* _culpritInteraction; ///< Culprit in case of error
 
 public:
+    
+    vector <unique_ptr<CylinderVolumeInteractions>>
+    _cylinderVolInteractionVector;  ///< Vector of initialized volume interactions
+    
     /// Initialize the volume forcefields
     CylinderVolumeFF(string& interaction);
 

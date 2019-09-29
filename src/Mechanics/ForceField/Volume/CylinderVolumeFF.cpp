@@ -71,11 +71,27 @@ floatingpoint CylinderVolumeFF::computeEnergy(floatingpoint *coord, bool stretch
             return -1;
         }
         else U += U_i;
+        /*
+        cout<< "I'm here"<<endl;
+        cout<<"u_i is "<< U_i<<endl;
+        if(U_i > SysParams::Mechanics().cylThresh){
+            cout<< "I'm here now"<<endl;
+        vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>> cylEnergies =  interaction->getCylEnergies();
+            cout<<"size is "<<cylEnergies.size()<<endl;
+            for(int i = 0; i < cylEnergies.size(); i++){
 
-
+                tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint> cyl = cylEnergies[i];
+                cout << get<0>(cyl) << " " << get<1>(cyl) << " " << get<2>(cyl) << " " << get<3>(cyl) << " " << get<4>(cyl) <<  endl;
+            };
+            
+            
+        };
+         */
     }
 
     return U;
+    
+    
 }
 
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)

@@ -36,6 +36,10 @@
 #include "CController.h"
 #include "ChemSimImpl.h"
 
+#include "CylinderVolumeFF.h"
+#include "CylinderExclVolume.h"
+#include "CylinderVolumeInteractions.h"
+
 #include <Eigen/Core>
 
 using namespace mathfunc;
@@ -1408,4 +1412,19 @@ void HessianSpectra::print(int snapshot){
 }
 
 
+void CylinderEnergies::print(int snapshot){
+    
+    CylinderVolumeFF* cvFF =  dynamic_cast<CylinderVolumeFF*>(_ffm->_forceFields.at(4));
+    
+    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>> cylEnergies = cvFF->_cylinderVolInteractionVector.at(0)->cylEnergies;
 
+    
+
+    for(int i = 0; i < cylEnergies.size(); i++){
+
+        tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint> cyl = cylEnergies[i];
+        cout << get<0>(cyl) << " " << get<1>(cyl) << " " << get<2>(cyl) << " " << get<3>(cyl) << " " << get<4>(cyl) <<  endl;
+    }
+
+        
+}

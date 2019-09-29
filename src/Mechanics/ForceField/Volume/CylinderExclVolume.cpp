@@ -110,7 +110,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
 
 //    blocksnthreads.push_back(int(numInteractions/THREADSPERBLOCK + 1));
 //    if(blocksnthreads[0]==1) blocksnthreads.push_back( numInteractions);
-////    if(blocksnthreads[0]==1) blocksnthreads.push_back( 32*(int(numInteractions/32 +1)) );
+//   if(blocksnthreads[0]==1) blocksnthreads.push_back( 32*(int(numInteractions/32 +1)) );
 //    else blocksnthreads.push_back(THREADSPERBLOCK);
 
     //CUDA stream create

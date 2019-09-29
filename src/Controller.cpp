@@ -244,6 +244,10 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new HessianSpectra(hessianspectra, &_subSystem, _ffm));
         
         
+    //Set up CylinderEnergies if hessiantracking is enabled
+    string cylinderenergies = _outputDirectory + "cylinderenergies.traj";
+    _outputs.push_back(new CylinderEnergies(cylinderenergies, &_subSystem, _ffm));
+        
     }
 
     //Set up CMGraph output
