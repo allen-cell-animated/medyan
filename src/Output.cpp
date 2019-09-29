@@ -1416,7 +1416,7 @@ void CylinderEnergies::print(int snapshot){
     
     CylinderVolumeFF* cvFF =  dynamic_cast<CylinderVolumeFF*>(_ffm->_forceFields.at(4));
     
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>> cylEnergies = cvFF->_cylinderVolInteractionVector.at(0)->cylEnergies;
+    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>> cylEnergies = cvFF->_cylinderVolInteractionVector.at(0)->getCylEnergies();
 
     
 
