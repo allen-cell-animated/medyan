@@ -341,6 +341,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSe
 	floatingpoint *vec_B = new floatingpoint[3];
 	floatingpoint *vec_C = new floatingpoint[3];
 
+    vector<tuple<floatingpoint,floatingpoint,floatingpoint,floatingpoint,floatingpoint>> tempCylEnergies;
 	int nint = CylinderExclVolume<CylinderExclVolRepulsion>::numInteractions;
     
 	int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
@@ -501,7 +502,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSe
 			}
 			else {
 				U += U_i;
-            cylEnergies.push_back(make_tuple(*c1,*c2,*c3,*c4,U_i));
+            tempCylEnergies.push_back(make_tuple(*c1,*c2,*c3,*c4,U_i));
 				continue;
 			}
 
@@ -578,13 +579,15 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSe
 		}
 			//add energy to total energy and move on to the next interaction.
 		else
-            cylEnergies.push_back(make_tuple(*c1,*c2,*c3,*c4,U_i));
+            tempCylEnergies.push_back(make_tuple(*c1,*c2,*c3,*c4,U_i));
 			U += U_i;
 
 //        }
 	}
     
-    
+    if(U > SysParams::Mechanics().cylThresh){
+        cylEnergies.push_back(make_tuple(tau(), tempCylEnergies.size(), tempCylEnergies));
+    }
     
 	delete [] newc2;
 	delete [] cp;

@@ -34,10 +34,13 @@ public:
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep);
     
     //returns vec of cyl cyl interaction energies if they are above  cylthresh
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>> getCylEnergies(){ return cylEnergies;};
+    vector<tuple<floatingpoint, int, vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>>>> getCylEnergies(){ return cylEnergies;};
     
+    void clearCylEnergies(){
+        cylEnergies.clear();
+    }
     // c1 c2 c3 c4 energy
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>> cylEnergies;
+    vector<tuple<floatingpoint, int, vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>>>> cylEnergies;
 
 private:
     

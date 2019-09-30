@@ -1416,15 +1416,24 @@ void CylinderEnergies::print(int snapshot){
     
     CylinderVolumeFF* cvFF =  dynamic_cast<CylinderVolumeFF*>(_ffm->_forceFields.at(4));
     
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>> cylEnergies = cvFF->_cylinderVolInteractionVector.at(0)->getCylEnergies();
+    vector<tuple<floatingpoint, int, vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>>>> cylEnergies = cvFF->_cylinderVolInteractionVector.at(0)->getCylEnergies();
 
     
-
-    for(int i = 0; i < cylEnergies.size(); i++){
-
-        tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint> cyl = cylEnergies[i];
-        cout << get<0>(cyl) << " " << get<1>(cyl) << " " << get<2>(cyl) << " " << get<3>(cyl) << " " << get<4>(cyl) <<  endl;
+    for(auto i = 0; i < cylEnergies.size(); i += 2){
+        
+        tuple<floatingpoint, int, vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>>> tempVec = cylEnergies[i];
+        
+        _outputFile<< get<0>(tempVec) << "     "<< get<1>(tempVec) <<endl;
+        
+        vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>> dataVec = get<2>(tempVec);
+        
+        for(auto j = 0; j < dataVec.size(); j++){
+            _outputFile<<get<0>(dataVec[j])<< "     "<<get<1>(dataVec[j])<< "     "<<get<2>(dataVec[j])<< "     "<<get<3>(dataVec[j])<< "     "<<get<4>(dataVec[j])<<endl;
+        }
+    
     }
+    _outputFile<<endl;
+    cvFF->_cylinderVolInteractionVector.at(0)->clearCylEnergies();
 
         
 }
