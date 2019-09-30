@@ -57,6 +57,7 @@ private:
     
     vector<Output*> _outputs; ///< Vector of specified outputs
     
+    RockingSnapshot* _rSnapShot;
     floatingpoint _runTime;          ///< Total desired runtime for simulation
 
     floatingpoint _snapshotTime;     ///< Desired time for each snapshot

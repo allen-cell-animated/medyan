@@ -434,4 +434,21 @@ public:
     virtual void print(int snapshot);
 };
 
+
+/// Print basic information about all Filament, Linker,
+/// MotorGhost, and BranchingPoint
+class RockingSnapshot : public Output {
+    
+    ForceFieldManager* _ffm;
+
+    
+public:
+    RockingSnapshot(string outputFileName, SubSystem* s, ForceFieldManager *ffm) : Output(outputFileName, s), _ffm(ffm) {}
+    ~RockingSnapshot() {}
+    
+    virtual void print(int snapshot);
+};
+
+
+
 #endif
