@@ -218,6 +218,10 @@ void Controller::initialize(string inputFile,
     string hrmdsnapname = _outputDirectory + "HRMD.traj";
     _outputs.push_back(new HRMD(hrmdsnapname, &_subSystem, _cs));
         
+    //Set up CylinderEnergies if hessiantracking is enabled
+    string cylinderenergies = _outputDirectory + "cylinderenergies.traj";
+    _outputs.push_back(new CylinderEnergies(cylinderenergies, &_subSystem, _ffm));
+        
     }
 
     if(SysParams::CParams.eventTracking){
@@ -243,10 +247,6 @@ void Controller::initialize(string inputFile,
     string hessianspectra = _outputDirectory + "hessianspectra.traj";
     _outputs.push_back(new HessianSpectra(hessianspectra, &_subSystem, _ffm));
         
-        
-    //Set up CylinderEnergies if hessiantracking is enabled
-    string cylinderenergies = _outputDirectory + "cylinderenergies.traj";
-    _outputs.push_back(new CylinderEnergies(cylinderenergies, &_subSystem, _ffm));
         
     }
 

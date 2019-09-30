@@ -44,7 +44,7 @@ private:
     floatingpoint *krep;
     int nint = 0;
     
-    virtual vector<tuple<floatingpoint, int, vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>>>> getCylEnergies() {
+    virtual vector<tuple<floatingpoint, int, vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>>>> getCylEnergies() {
         return _FFType.getCylEnergies();
     };
     

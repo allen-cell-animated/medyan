@@ -1416,19 +1416,33 @@ void CylinderEnergies::print(int snapshot){
     
     CylinderVolumeFF* cvFF =  dynamic_cast<CylinderVolumeFF*>(_ffm->_forceFields.at(4));
     
-    vector<tuple<floatingpoint, int, vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>>>> cylEnergies = cvFF->_cylinderVolInteractionVector.at(0)->getCylEnergies();
+    vector<tuple<floatingpoint, int, vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>>>> cylEnergies = cvFF->_cylinderVolInteractionVector.at(0)->getCylEnergies();
 
-    
-    for(auto i = 0; i < cylEnergies.size(); i += 2){
+    // need to change so it doesn't include every energy calculation, only before and after
+    for(auto i = 0; i < cylEnergies.size(); i ++){
         
-        tuple<floatingpoint, int, vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>>> tempVec = cylEnergies[i];
+        tuple<floatingpoint, int, vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>>> tempVec = cylEnergies[i];
         
         _outputFile<< get<0>(tempVec) << "     "<< get<1>(tempVec) <<endl;
         
-        vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>> dataVec = get<2>(tempVec);
+        vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>> dataVec = get<2>(tempVec);
         
         for(auto j = 0; j < dataVec.size(); j++){
-            _outputFile<<get<0>(dataVec[j])<< "     "<<get<1>(dataVec[j])<< "     "<<get<2>(dataVec[j])<< "     "<<get<3>(dataVec[j])<< "     "<<get<4>(dataVec[j])<<endl;
+            floatingpoint* cyl1 = get<0>(dataVec[j]);
+            floatingpoint* cyl2 = get<1>(dataVec[j]);
+            floatingpoint* cyl3 = get<2>(dataVec[j]);
+            floatingpoint* cyl4 = get<3>(dataVec[j]);
+            floatingpoint energy = get<4>(dataVec[j]);
+            floatingpoint meanx = (*cyl1 + *cyl2 + *cyl3 + *cyl4) / 3;
+            floatingpoint meany = (*(cyl1+1) + *(cyl2+1) + *(cyl3+1) + *(cyl4+1)) / 3;
+            floatingpoint meanz = (*(cyl1+2) + *(cyl2+2) + *(cyl3+2) + *(cyl4+2)) / 3;
+            _outputFile<<meanx<< "     "<<meany<< "     "<<meanz<< "     "<<energy<<endl;
+                                        
+            /*_outputFile<<*(cyl1)<< "     "<<*(cyl1 + 1)<< "     "<<*(cyl1 + 2)<< "     "
+            <<*(cyl2)<< "     "<<*(cyl2 + 1)<< "     "<<*(cyl2 + 2)<< "     "
+            <<*(cyl3)<< "     "<<*(cyl3 + 1)<< "     "<<*(cyl3 + 2)<< "     "
+            <<*(cyl4)<< "     "<<*(cyl4 + 1)<< "     "<<*(cyl4 + 2)<< "     "<< energy<<endl;*/
+            
         }
     
     }

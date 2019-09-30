@@ -50,7 +50,7 @@ public:
     /// Get the name of this interaction
     virtual const string getName() = 0;
 
-    virtual  vector<tuple<floatingpoint, int, vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint>>>> getCylEnergies() = 0;
+    virtual  vector<tuple<floatingpoint, int, vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>>>> getCylEnergies() = 0;
     
     virtual void clearCylEnergies() = 0;
     
