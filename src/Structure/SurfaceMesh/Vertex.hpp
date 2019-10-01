@@ -5,7 +5,7 @@
 
 #include "common.h"
 
-#include "Bead.h"
+#include "Structure/Bead.h"
 
 #include "Structure/SurfaceMesh/Edge.hpp"
 #include "Structure/SurfaceMesh/MVoronoiCell.h"

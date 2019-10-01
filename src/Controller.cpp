@@ -1550,6 +1550,14 @@ void Controller::run() {
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runout2(mine - mins);
                 outputtime += elapsed_runout2.count();
+
+                // Print thread pool stats
+                {
+                    const auto stats = _subSystem.tp->getUsageStats();
+                    LOG(INFO) << "Thread pool up time: " << stats.totalUpTime
+                        << "; work time: " << stats.totalWorkTime
+                        << "; usage rate: " << stats.timeUsageRate;
+                }
             }
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
