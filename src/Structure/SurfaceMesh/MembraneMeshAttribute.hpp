@@ -437,9 +437,11 @@ struct MembraneMeshAttribute {
 
         const auto& coords = Bead::getDbData().coords;
 
+        auto& tp = *mesh.getMetaAttribute().s->tp; // The thread pool object
+
         // Calculate angles and triangle areas with derivative
         // Calculate triangle cone volumes
-        for(size_t ti = 0; ti < numTriangles; ++ti) {
+        poolForkJoinFixedSize(tp, (size_t)0, numTriangles, (size_t)200, [&](size_t ti) {
             auto& ta = mesh.getTriangleAttribute(ti);
 
             const auto& hei = ta.cachedHalfEdgeIndex;
@@ -505,13 +507,13 @@ struct MembraneMeshAttribute {
             tag.coneVolume = dot(c[0], r0) / 6.0;
             // The derivative of cone volume will be accumulated to each vertex
 
-        }
+        });
 
         const auto& cvt = mesh.getMetaAttribute().cachedVertexTopo;
 
         // Calculate vertex 1-ring area and local curvature with derivative
         // Calculate derivative of volume on vertices
-        for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
+        poolForkJoinFixedSize(tp, (size_t)0, numVertices, (size_t)150, [&](size_t vi) { if(!mesh.isVertexOnBorder(vi)) {
             auto& va = mesh.getVertexAttribute(vi);
             auto& vag = va.gVertex;
             const coordinate_type ci (coords[va.cachedCoordIndex]);
@@ -658,7 +660,7 @@ struct MembraneMeshAttribute {
             // Also the derivative of curvature on central vertex
             vag.dCurv = t1 * (0.5 / dVolume2);
 
-        } // End loop vertices (V cells)
+        }}); // End loop vertices (V cells)
 
     } // updateGeometryValueWithDerivative(...)
 
