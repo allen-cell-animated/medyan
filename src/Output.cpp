@@ -1460,7 +1460,7 @@ void RockingSnapshot::print(int snapshot) {
     int numT = 100;
     float omega = 3.14159;
     float delT = 2*3.14159 / numT;
-    float A = 30;
+    float A = 15;
     
     for(auto t=0; t< numT; t++){
         
