@@ -742,12 +742,27 @@ void Controller::executeSpecialProtocols() {
         pinBoundaryFilaments();
     }
 
-    //Qin
     if(SysParams::Mechanics().pinLowerBoundaryFilaments &&
        tau() >= SysParams::Mechanics().pinTime) {
 
         pinLowerBoundaryFilaments();
     }
+    
+    //Manually update motor binding rate
+    if(tau() >= SysParams::DRParams.manualCharStartTime){
+        for(auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
+            for(auto &rxn : C->getInternalReactionContainer().reactions()){
+                auto factor = SysParams::DRParams.manualMotorBindingRate;
+                rxn->setRateMulFactor(factor, ReactionBase::MotorBindingManualFactor);
+                rxn->updatePropensity();
+            }
+        }
+        //It only needs to be called once
+        SysParams::DRParams.manualCharStartTime = 1000000.0;
+    }
+    
+    //setRateMulFactor
+    
 }
 
 void Controller::updatePositions() {

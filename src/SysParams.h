@@ -292,6 +292,11 @@ struct DyRateParams {
     float manualMinusPolyRate = 1.0;
     /// Minusend Depolymerization Rate Ratio
     float manualMinusDepolyRate = 1.0;
+    /// Motor Binding Rate and Walking Rate Ratio
+    float manualMotorBindingRate = 1.0;
+    /// Motor Unbinding Rate Ratio
+    float manualMotorUnbindingRate = 1.0;
+    
 };
 
 /// Static class that holds all simulation parameters,

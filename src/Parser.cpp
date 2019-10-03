@@ -1434,6 +1434,23 @@ void SystemParser::readDyRateParams() {
             }
             else {}
         }
+        // Manual Rate Changer for Motor
+        else if (line.find("MANUALMOTORBINDINGRATIO") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                DRParams.manualMotorBindingRate = atof((lineVector[1].c_str()));
+            }
+            else {}
+        }
+        else if (line.find("MANUALMOTORUNBINDINGRATIO") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                DRParams.manualMotorUnbindingRate = atof((lineVector[1].c_str()));
+            }
+            else {}
+        }
     }
 
     //set system parameters
