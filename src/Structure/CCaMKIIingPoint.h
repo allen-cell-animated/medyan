@@ -40,6 +40,8 @@ private:
 
     ReactionBase *_offRxnBinding, *_offRxnBundling;
 
+    SpeciesBound *getSpeciesCaMKIIDummyCylinder() const;
+
 public:
     /// Default constructor and destructor
     /// @param pos - monomer index on first cylinder
@@ -95,8 +97,8 @@ public:
         _cc1 = cc;
     };
 
-    void createOffReactionBinding(ReactionBase *onRxn, SubSystem *ps);
-    void createOffReactionBundling(ReactionBase *onRxn, SubSystem *ps);
+    void createOffReactionBinding(SubSystem *ps);
+    void createOffReactionBundling(SubSystem *ps);
 
 
     ReactionBase *getOffRxnBinding() {
@@ -115,6 +117,8 @@ public:
         _offRxnBundling = p;
     }
     void addBond(CCylinder* cc, short pos);
+	void removeBond(CCylinder* cc, short pos);
+	void removeBond(tuple<Cylinder*, short> );
 };
 
 #endif

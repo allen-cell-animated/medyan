@@ -233,21 +233,12 @@ void ChemManager::initCMonomer(CMonomer* m, short filamentType, Compartment* c) 
         c->addSpeciesCaMKIIer(SpeciesNamesDB::genUniqueFilName(ca));
         m->_speciesBound[bIndex] = sca;
         bIndex++;
-
-        /*
-         * Reason: We want to set the maximum number of species ("getUpperLimitForN()") correctly for CaMKII unbundling.
-         * We originally should have two species to work. However, MEDYAN does not allow us to do so.
-         * As a result, we are setting it manually.
-         * Example: CA:CAMKIIER  + CEA:BOUND <-> CA:CAMKIIER
-         *               1            0               0
-         *               1            0               1
-         */
-        // TODO: Eventually, this line should be removed.
-        sca->getRSpecies().setUpperLimitForN(2);
     }
     for (auto &ca : _chemData.speciesCaMKIIDummyCylinder[filamentType]) {
         SpeciesCaMKIIDummyCylinder* sca =
                 c->addSpeciesCaMKIIDummyCylinder(SpeciesNamesDB::genUniqueFilName(ca));
+        // TODO: Set this number to max coordination number
+        sca->getRSpecies().setUpperLimitForN(20);
         m->_speciesBound[bIndex] = sca;
         bIndex++;
     }

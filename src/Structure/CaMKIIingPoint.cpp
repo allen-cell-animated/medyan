@@ -47,23 +47,25 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double posi
     _mCaMKIIingPoint->setCaMKIIingPoint(this);
 #endif
 
-    addBond(cylinder, pos);
 
     vector<double> _tmp_coordinate(3, 0.0);
-
-    //Find compartment
-    updateCoordinate(&_tmp_coordinate);
-    try {_compartment = GController::getCompartment(_tmp_coordinate);}
-    catch (exception& e) {
-      cout << e.what();
-      printSelf();
-      exit(EXIT_FAILURE);
-    }
 
     Bead* b1 = _subSystem->addTrackable<Bead>(_tmp_coordinate, nullptr, 0);
     coordinate = &b1->coordinate;
     setCaMKIICylinder(_subSystem->addTrackable<CaMKIICylinder>(this, b1, _filType, 0));
     _camkiiCylinder->addToFilamentBindingManagers();
+
+	addBond(cylinder, pos);
+
+	//Find compartment
+	updateCoordinate(coordinate);
+	try {_compartment = GController::getCompartment(*coordinate);}
+	catch (exception& e) {
+		cout << e.what();
+		printSelf();
+		exit(EXIT_FAILURE);
+	}
+
 }
 
 void CaMKIIingPoint::addBond(Cylinder *c, short pos) {
@@ -98,7 +100,9 @@ void CaMKIIingPoint::updateCoordinate(vector<double> *coordinate) {
 }
 
 CaMKIIingPoint::~CaMKIIingPoint() noexcept {
-  //TODO: _subSystem->removeTrackable<unique_ptr<CaMKIICylinder>>(_camkiiCylinder);
+	//TODO: _subSystem->removeTrackable<unique_ptr<CaMKIICylinder>>(_camkiiCylinder);
+
+
 }
 
 void CaMKIIingPoint::updatePosition() {
@@ -155,7 +159,7 @@ void CaMKIIingPoint::printSelf() {
     cout << "CaMKIIing type = " << _camkiiType << ", CaMKII ID = " << _camkiiID << endl;
     cout << "Coordinates = " << (*coordinate)[0] << ", " << (*coordinate)[1] << ", " << (*coordinate)[2] << endl;
     
-    cout << "Position on mother cylinder (double) = " << get<1>(_bonds.at(0)) << endl;
+    cout << "Position on mother cylinder (short) = " << get<1>(_bonds.at(0)) << endl;
     cout << "Birth time = " << _birthTime << endl;
     
     cout << endl;
@@ -221,27 +225,18 @@ void CaMKIIingPoint::removeRandomBond() {
 
 	size_t sz = _bonds.size();
 	size_t index = Rand::randInteger(0, sz-1);
-	tuple<Cylinder*, double> &bondToRemove = _bonds[index];
+	tuple<Cylinder*, short> &bondToRemove = _bonds[index];
+
 	assert(this->getCCaMKIIingPoint()->getOffReaction() == this->getCCaMKIIingPoint()->getOffRxnBundling());
 
-	//if bond in position 0, move the off reaction
-	if(index == 0) {
-		auto offRxn = this->getCCaMKIIingPoint()->getOffReaction();
-		{ // just for assertion purposes
-			// checking the existence of the internal reaction
-			auto temp_set = get<0>(bondToRemove)->getCCylinder()->getInternalReactions();
-			assert(temp_set.find(offRxn) != temp_set.end());
-		}
-		get<0>(bondToRemove)->getCCylinder()->removeInternalReaction(offRxn);
-		get<0>(_bonds[1])->getCCylinder()->addInternalReaction(offRxn);
+	_cCaMKIIingPoint->removeBond(get<0>(bondToRemove)->getCCylinder(), get<1>(bondToRemove));
 
-		assert(offRxn->getRnode() != nullptr);
-	}
 	_bonds.erase(_bonds.begin() + index);
 }
 
 void CaMKIIingPoint::updateReactionRates() {
 
+	return;
 	//get the unbinding reaction
 	ReactionBase* offRxn = getCCaMKIIingPoint()->getOffReaction();
 

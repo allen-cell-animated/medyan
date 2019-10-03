@@ -576,6 +576,7 @@ struct CaMKIIingPointUnbindingCallback {
         cout<<"========== CaMKII Unbinding CallBack "; //Carlos verbose prints
         cout<< "ID: " << _camkiiingPoint->getID() << " Coord:" << _camkiiingPoint->getCoordinationNumber() << endl; //Carlos verbose prints
         //remove the camkiiing point
+        _camkiiingPoint->getCCaMKIIingPoint()->removeBond(_camkiiingPoint->getBond(0));
         _ps->removeTrackable<CaMKIICylinder>(_camkiiingPoint->getCaMKIICylinder());
         _ps->removeTrackable<CaMKIIingPoint>(_camkiiingPoint);
         delete _camkiiingPoint;

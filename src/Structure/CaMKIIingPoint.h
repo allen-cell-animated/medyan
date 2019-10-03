@@ -45,7 +45,7 @@ private:
     unique_ptr<CaMKIICylinder> _camkiiCylinder; ///< Pointer to CaMKIICylinder
 
 
-    vector<tuple<Cylinder*, double>> _bonds;
+    vector<tuple<Cylinder*, short>> _bonds;
 
     short _camkiiType; ///< Integer specifying the type
     
@@ -81,7 +81,7 @@ public:
 
 	//@{
 	///Get attached bonds tuples <cylinders, short> (a cylinder and a position)
-	tuple<Cylinder *, double> getBond(int n) { return _bonds.at(n); }
+	tuple<Cylinder *, short> getBond(int n) { return _bonds.at(n); }
 
 	Cylinder *getCylinder(int n) { return get<0>(getBond(n)); }
 
@@ -98,7 +98,7 @@ public:
 		_camkiiCylinder = unique_ptr<CaMKIICylinder>(CaMKIIcylinder);
 	}
 
-	vector<tuple<Cylinder *, double>> &getBonds() { return _bonds; }
+	vector<tuple<Cylinder *, short>> &getBonds() { return _bonds; }
 	//@}
     
     
@@ -114,7 +114,7 @@ public:
 
     //@{
     /// Position management
-    double getPosition() {return get<1>(_bonds.at(0));} //TODO fix later
+    short getPosition() {return get<1>(_bonds.at(0));} //TODO fix later
     //void setPosition(double position) {_position = position;}
     //@}
     
