@@ -347,7 +347,15 @@ void MotorGhost::updateReactionRates() {
 			            r->setRateMulFactor(0.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
             	}
             	else{
-		            r->setRateMulFactor(1.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
+                    floatingpoint factor;
+                    
+                    //If reaching a threshold time for manual motor binding rate changer
+                    if(tau() > SysParams::DynamicRates().manualCharStartTime){
+                        factor = SysParams::DynamicRates().manualMotorBindingRate;
+                    }
+                    else factor = 1.0f;
+                    
+		            r->setRateMulFactor(factor, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
 		            float newRate =
 				            _walkingChangers[_motorType]->
 						            changeRate(_cMotorGhost->getOnRate(),
@@ -376,7 +384,15 @@ void MotorGhost::updateReactionRates() {
 			            r->setRateMulFactor(0.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
 
 	            }else{
-		            r->setRateMulFactor(1.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
+                    floatingpoint factor;
+                    
+                    //If reaching a threshold time for manual motor binding rate changer
+                    if(tau() > SysParams::DynamicRates().manualCharStartTime){
+                        factor = SysParams::DynamicRates().manualMotorBindingRate;
+                    }
+                    else factor = 1.0f;
+                    
+		            r->setRateMulFactor(factor, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
 		            float newRate =
 				            _walkingChangers[_motorType]->
 						            changeRate(_cMotorGhost->getOnRate(),
@@ -425,7 +441,15 @@ void MotorGhost::updateReactionRates() {
 			            r->setRateMulFactor(0.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
 
 	            }else {
-		            r->setRateMulFactor(1.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
+                    floatingpoint factor;
+                    
+                    //If reaching a threshold time for manual motor binding rate changer
+                    if(tau() > SysParams::DynamicRates().manualCharStartTime){
+                        factor = SysParams::DynamicRates().manualMotorBindingRate;
+                    }
+                    else factor = 1.0f;
+                    
+		            r->setRateMulFactor(factor, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
 		            if(r->isPassivated()) {r->activateReaction();}
 		            float newRate =
 				            _walkingChangers[_motorType]->
@@ -455,7 +479,15 @@ void MotorGhost::updateReactionRates() {
 			            r->setRateMulFactor(0.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
 	            }
 	            else{
-		            r->setRateMulFactor(1.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
+                    floatingpoint factor;
+                    
+                    //If reaching a threshold time for manual motor binding rate changer
+                    if(tau() > SysParams::DynamicRates().manualCharStartTime){
+                        factor = SysParams::DynamicRates().manualMotorBindingRate;
+                    }
+                    else factor = 1.0f;
+                    
+		            r->setRateMulFactor(factor, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
 	            	if(r->isPassivated()) {r->activateReaction();}
 		            float newRate =
 				            _walkingChangers[_motorType]->

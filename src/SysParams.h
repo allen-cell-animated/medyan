@@ -284,6 +284,8 @@ struct DyRateParams {
     /// Option for manual (de)polymerization rate changer
     /// Start time
     double manualCharStartTime = 100000.0;
+    /// Start time used for Controller.cpp
+    auto manualCharStartTimeController = manualCharStartTime;
     /// Plusend Polymerization Rate Ratio
     float manualPlusPolyRate = 1.0;
     /// Plusend Depolymerization Rate Ratio

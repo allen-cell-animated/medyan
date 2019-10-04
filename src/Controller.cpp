@@ -749,7 +749,7 @@ void Controller::executeSpecialProtocols() {
     }
     
     //Manually update motor binding rate
-    if(tau() >= SysParams::DRParams.manualCharStartTime){
+    if(tau() >= SysParams::DRParams.manualCharStartTimeController){
         for(auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
             for(auto &rxn : C->getInternalReactionContainer().reactions()){
                 auto factor = SysParams::DRParams.manualMotorBindingRate;
@@ -758,7 +758,7 @@ void Controller::executeSpecialProtocols() {
             }
         }
         //It only needs to be called once
-        SysParams::DRParams.manualCharStartTime = 1000000.0;
+        SysParams::DRParams.manualCharStartTimeController = 1000000.0;
     }
     
     //setRateMulFactor
