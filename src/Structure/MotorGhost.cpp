@@ -520,9 +520,17 @@ void MotorGhost::updateReactionRates() {
         #endif
         
         //change the rate
+        floatingpoint factor;
+        
+        //If reaching a threshold time for manual motor unbinding rate changer
+        if(tau() > SysParams::DynamicRates().manualCharStartTime){
+            factor = SysParams::DynamicRates().manualMotorUnbindingRate;
+        }
+        else factor = 1.0f;
+        
         float newRate =
         _unbindingChangers[_motorType]->
-        changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(), _numHeads, force);
+        changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate()*factor, _numHeads, force);
 #ifdef DETAILEDOUTPUT
         std::cout<<"Motor UB f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
                 ""<<coordinate[1]<<" "

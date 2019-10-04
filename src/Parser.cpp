@@ -1399,6 +1399,7 @@ void SystemParser::readDyRateParams() {
 
             if (lineVector.size() >= 2) {
                 DRParams.manualCharStartTime = atof((lineVector[1].c_str()));
+                DRParams.manualCharStartTimeController = atof((lineVector[1].c_str()));
             }
             else {}
         }
