@@ -1290,6 +1290,10 @@ void Controller::run() {
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runout2(mine - mins);
                 outputtime += elapsed_runout2.count();
+                cout<< "Chemistry time for run=" << chemistrytime <<endl;
+                cout << "Minimization time for run=" << minimizationtime <<endl;
+                cout<< "Neighbor list + Bmgr time for run="<<nltime<<endl;
+                cout<<"rxnrate time for run="<<rxnratetime<<endl;
             }
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
