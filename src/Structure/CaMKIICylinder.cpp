@@ -94,8 +94,18 @@ void CaMKIICylinder::updatePosition() {
         
         //clone and set new ccylinder
         CCylinder* clone = _cCylinder->clone(c);
-//        _cCylinder->removeAllInternalReactions();
         setCCylinder(clone);
+
+        assert(getCaMKIIPointParent()->getCoordinationNumber() > 0);
+
+        const auto cpoint = getCaMKIIPointParent()->getCCaMKIIingPoint();
+        if(getCaMKIIPointParent()->getCoordinationNumber() == 1) {
+            cpoint->setOffRxnBinding(cpoint->getOffReaction());
+            cpoint->setOffRxnBundling(nullptr);
+        } else {
+            cpoint->setOffRxnBinding(nullptr);
+            cpoint->setOffRxnBundling(cpoint->getOffReaction());
+        }
 
 
         auto newCCylinder = _cCylinder.get();

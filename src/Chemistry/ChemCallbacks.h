@@ -602,14 +602,22 @@ struct CaMKIIingPointUnbundlingCallback {
             // passivate unbundling reaction
 			r->passivateReaction();
 
-			auto offRxnBinding = _camkiiingPoint->getCCaMKIIingPoint()->getOffRxnBinding();
+            ReactionBase *offRxnBinding = _camkiiingPoint->getCCaMKIIingPoint()->getOffRxnBinding();
+
+			if(offRxnBinding == nullptr) {
+			    _camkiiingPoint->getCCaMKIIingPoint()->createOffReactionBinding(_ps);
+                ReactionBase *offRxn = _camkiiingPoint->getCCaMKIIingPoint()->getOffRxnBinding();
+                _camkiiingPoint->getCCaMKIIingPoint()->setOffReaction(offRxn);
+                offRxnBinding = offRxn;
+			}
 
 			offRxnBinding->activateReaction();
 
 			get<0>(_camkiiingPoint->getBonds()[0])->getCCylinder()->removeInternalReaction(r);
             get<0>(_camkiiingPoint->getBonds()[0])->getCCylinder()->addInternalReaction(offRxnBinding);
-			assert(_camkiiingPoint->getCoordinationNumber() < 4 );
             _camkiiingPoint->getCCaMKIIingPoint()->setOffReaction(offRxnBinding);
+
+            _camkiiingPoint->getCCaMKIIingPoint()->setOffRxnBundling(nullptr);
         }
 
         _camkiiingPoint->updateReactionRates();

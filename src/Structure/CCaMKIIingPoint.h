@@ -38,6 +38,8 @@ private:
     
     short _camkiiType; ///< CaMKIIing point type
 
+    // These pointers are only handles to the off-reactions and they are not constructed.
+    // As a result, they do not need to be released.
     ReactionBase *_offRxnBinding, *_offRxnBundling;
 
     SpeciesBound *getSpeciesCaMKIIDummyCylinder() const;

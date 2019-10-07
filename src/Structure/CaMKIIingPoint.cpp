@@ -227,8 +227,6 @@ void CaMKIIingPoint::removeRandomBond() {
 	size_t index = Rand::randInteger(0, sz-1);
 	tuple<Cylinder*, short> &bondToRemove = _bonds[index];
 
-	assert(this->getCCaMKIIingPoint()->getOffReaction() == this->getCCaMKIIingPoint()->getOffRxnBundling());
-
 	_cCaMKIIingPoint->removeBond(get<0>(bondToRemove)->getCCylinder(), get<1>(bondToRemove));
 
 	_bonds.erase(_bonds.begin() + index);

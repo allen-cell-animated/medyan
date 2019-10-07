@@ -113,7 +113,7 @@ void CCaMKIIingPoint::createOffReactionBinding(SubSystem *ps) {
 	ConnectionBlock rcb(offRxn->connect(bcallback,false));
 
 	setOffReaction(offRxn);
-	_cc1->addInternalReaction(offRxn);
+	_pCaMKIIingPoint->getCaMKIICylinder()->getCCylinder()->addInternalReaction(offRxn);
 	_offRxnBinding = offRxn;
 }
 
@@ -132,17 +132,15 @@ void CCaMKIIingPoint::createOffReactionBundling(SubSystem *ps) {
 	_offRxnBinding->passivateReaction();
 
 	auto bonds = _pCaMKIIingPoint->getBonds();
-	//for(int i=0;i<bonds.size();i++) {
 
-	int i=0;
-	auto cc = get<0>(bonds[i])->getCCylinder();
+	auto cc = _pCaMKIIingPoint->getCaMKIICylinder()->getCCylinder();
 	cc->removeInternalReaction(_offRxn);
 	cc->addInternalReaction(offRxn);
-	//}
 
 	_offRxnBundling = offRxn;
 	setOffReaction(_offRxnBundling);
 
+	_offRxnBinding = nullptr;
 
 	//add the unbinding reaction and callback
 	CaMKIIingPointUnbundlingCallback bcallback(_pCaMKIIingPoint, ps);
@@ -180,5 +178,7 @@ void CCaMKIIingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
 
     assert(_offRxn->isPassivated() == false);
 
-    cout << "========== CaMKII OffReaction created " <<  "  _offRxnBinding: "<< _offRxnBinding << "  _offRxnBundling: " << _offRxnBundling <<"  _offRxn: " <<_offRxn << "  isPassivated: " << _offRxnBinding->isPassivated() << " " << ((_offRxnBundling != NULL) ? _offRxnBundling->isPassivated() : true) << " " << _offRxn->isPassivated() << endl;
+#ifdef DEBUG
+    cerr << "========== CaMKII OffReaction created " <<  "  _offRxnBinding: "<< _offRxnBinding << "  _offRxnBundling: " << _offRxnBundling <<"  _offRxn: " <<_offRxn << "  isPassivated: " << ((_offRxnBinding != NULL) ? _offRxnBinding->isPassivated() : true) << " " << ((_offRxnBundling != NULL) ? _offRxnBundling->isPassivated() : true) << " " << _offRxn->isPassivated() << endl;
+#endif
 }
