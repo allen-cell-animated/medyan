@@ -94,8 +94,6 @@ CCaMKIIingPoint::~CCaMKIIingPoint() {
    // TODO: July 1st, 2019 - Check whether removeInternalReaction is appropriate here!
 	_cc1->removeInternalReaction(_offRxn);
 
-
-
 }
 
 void CCaMKIIingPoint::createOffReactionBinding(SubSystem *ps) {

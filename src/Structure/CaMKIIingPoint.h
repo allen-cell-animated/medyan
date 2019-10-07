@@ -41,7 +41,7 @@ class CaMKIIingPoint : public Component, public Trackable, public Movable {
     
 private:
     unique_ptr<MCaMKIIingPoint> _mCaMKIIingPoint; ///< Pointer to mech camkii point
-	  unique_ptr<CCaMKIIingPoint> _cCaMKIIingPoint; ///< Pointer to chem camkii point
+    unique_ptr<CCaMKIIingPoint> _cCaMKIIingPoint; ///< Pointer to chem camkii point
     unique_ptr<CaMKIICylinder> _camkiiCylinder; ///< Pointer to CaMKIICylinder
 
 
@@ -107,8 +107,8 @@ public:
         _cCaMKIIingPoint = unique_ptr<CCaMKIIingPoint>(cCaMKIIingPoint);
     }
     /// Get chem camkii point
-    CCaMKIIingPoint* getCCaMKIIingPoint() {return _cCaMKIIingPoint.get();}
-    
+	CCaMKIIingPoint* getCCaMKIIingPoint() {return _cCaMKIIingPoint.get();}
+
     /// Get mech camkii point
     MCaMKIIingPoint* getMCaMKIIingPoint() {return _mCaMKIIingPoint.get();}
 

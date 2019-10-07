@@ -16,8 +16,8 @@
 #include <iostream>
 #include "Cylinder.h"
 
-//FORWARD DECLARATIONS
-class CaMKIIingPoint;
+#include "CaMKIIingPoint.h"
+
 
 /// A container to store a CaMKII Cylinder
 /*!

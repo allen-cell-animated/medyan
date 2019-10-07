@@ -169,7 +169,7 @@ void Cylinder::updatePosition() {
         auto oldCompartment = _compartment;
         auto newCompartment = c;
 #endif
-        
+
         //remove from old compartment, add to new
         _compartment->removeCylinder(this);
         _compartment = c;

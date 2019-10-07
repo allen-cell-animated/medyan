@@ -25,6 +25,7 @@
 #include "GController.h"
 #include "MathFunctions.h"
 
+
 using namespace mathfunc;
 
 CaMKIICylinder::CaMKIICylinder(CaMKIIingPoint *camkiiPoint, Bead* b1, short type, int position):
@@ -93,10 +94,12 @@ void CaMKIICylinder::updatePosition() {
         
         //clone and set new ccylinder
         CCylinder* clone = _cCylinder->clone(c);
+//        _cCylinder->removeAllInternalReactions();
         setCCylinder(clone);
-        
+
+
         auto newCCylinder = _cCylinder.get();
-        
+
         //Add new ccylinder to binding managers
         for(auto &manager : newCompartment->getFilamentBindingManagers())
             manager->addPossibleBindings(newCCylinder);
