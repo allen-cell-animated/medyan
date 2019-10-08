@@ -322,11 +322,10 @@ void BranchingDihedralCosine::forces(
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
 
-	double *coord1, *coord2, *coord3, *coord4, N1, N2, n1n2, f0, NN1, NN2, X, D, Y, position;
+	double *coord1, *coord2, *coord3, *coord4;
 	floatingpoint *f1, *f2, *f3, *f4;
 	double force1[3], force2[3], force3[3], force4[3];
 
-	double n2x, n1y, xd, yd, xx, xy, yy, XD, X1, X2, Y1, Y2, D1, D2, YD;
 	coord1 = new double[3];
 	coord2 = new double[3];
 	coord3 = new double[3];
@@ -503,6 +502,20 @@ void BranchingDihedralCosine::forces(
                 <<cyl2->getFirstBead()->getStableIndex()<<" "
                 <<cyl2->getSecondBead()->getStableIndex()<<endl;
 
+	        cout<<"Parent filament binding fraction "<<alpha<<endl;
+	        cout<<"Parent filament binding position "<<mp[0]<<" "<<mp[1]<<" "<<mp[2]<<endl;
+	        cout<<"ax-bz"<<ax<<" "<<ay<<" "<<az<<" "<<bx<<" "<<by<<" "<<bz<<endl;
+	        cout<<"rasq "<<rasq<<" rbsq "<<rbsq<<" rgsq "<<rgsq<<" rg "<<rg<<endl;
+	        cout<<"rginv "<<rginv<<" ra2inv "<<ra2inv<<" rb2inv "<<rb2inv<<endl;
+	        cout<<"c "<<c<<" s "<<s<<endl;
+	        cout<<"fg "<<fg<<" hg "<<hg<<" fga "<<fga<<" hgb "<<hgb<<" gaa "<<gaa<<" gbb "
+	                                                                               ""<<gbb<<endl;
+	        cout<<"dtfx-z "<<dtfx<<" "<<dtfy<<" "<<dtfz<<endl;
+	        cout<<"dtgx-z "<<dtgx<<" "<<dtgy<<" "<<dtgz<<endl;
+	        cout<<"dthx-z "<<dthx<<" "<<dthy<<" "<<dthz<<endl;
+	        cout<<"df "<<df<<endl;
+	        cout<<"s(x-z)2 "<<sx2<<" "<<sy2<<" "<<sz2<<endl;
+	        
             cout<<"Printing coords"<<endl;
             cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
             cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
@@ -688,7 +701,6 @@ dataType BranchingDihedralCosine::energyininteractionperturbed(
 	dataType c,s;
 	dataType p, df1, ddf1;
 	dataType fg, fga, gaa, gbb, hg, hgb;
-	dataType dtfx, dtfy, dtfz, dtgx, dtgy, dtgz, dthx, dthy, dthz, df, sx2, sy2, sz2;
 	//@}
 
 	for(int j = 0; j < 3; j++){

@@ -1233,6 +1233,7 @@ void Controller::run() {
 	            cout<<endl;
 
 #endif
+                cout << "Current simulation time = "<< tau() << endl;
 
                 mins = chrono::high_resolution_clock::now();
                 Bead::rearrange();

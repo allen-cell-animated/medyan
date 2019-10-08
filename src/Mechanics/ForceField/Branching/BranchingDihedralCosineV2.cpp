@@ -315,6 +315,21 @@ void BranchingDihedralCosineV2::forces(
 			    <<cyl2->getFirstBead()->getStableIndex()<<" "
 			    <<cyl2->getSecondBead()->getStableIndex()<<endl;
 
+			cout<<"Parent filament binding fraction "<<alpha<<endl;
+			cout<<"Parent filament binding position "<<mp[0]<<" "<<mp[1]<<" "<<mp[2]<<endl;
+			cout<<"ax-bz"<<ax<<" "<<ay<<" "<<az<<" "<<bx<<" "<<by<<" "<<bz<<endl;
+			cout<<"rasq "<<rasq<<" rbsq "<<rbsq<<" rgsq "<<rgsq<<" rg "<<rg<<endl;
+			cout<<"rginv "<<rginv<<" ra2inv "<<ra2inv<<" rb2inv "<<rb2inv<<endl;
+			cout<<"c "<<c<<" s "<<s<<endl;
+			cout<<"fg "<<fg<<" hg "<<hg<<" fga "<<fga<<" hgb "<<hgb<<" gaa "<<gaa<<" gbb "
+			                                                                       ""<<gbb<<endl;
+			cout<<"dtfx-z "<<dtfx<<" "<<dtfy<<" "<<dtfz<<endl;
+			cout<<"dtgx-z "<<dtgx<<" "<<dtgy<<" "<<dtgz<<endl;
+			cout<<"dthx-z "<<dthx<<" "<<dthy<<" "<<dthz<<endl;
+			cout<<"df "<<df<<endl;
+			cout<<"s(x-z)2 "<<sx2<<" "<<sy2<<" "<<sz2<<endl;
+
+
 			cout<<"Printing coords"<<endl;
 			cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
 			cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
