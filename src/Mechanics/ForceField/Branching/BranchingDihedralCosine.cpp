@@ -361,6 +361,8 @@ void BranchingDihedralCosine::forces(
 		    coord4[j] = coord[3 * beadSet[n * i + 3]+ j];
 	    }
 
+	    midPointCoordinate<double>(mp, coord1, coord2, pos[i]);
+
         f1 = &f[3 * beadSet[n * i]];
         f2 = &f[3 * beadSet[n * i + 1]];
         f3 = &f[3 * beadSet[n * i + 2]];
@@ -515,7 +517,7 @@ void BranchingDihedralCosine::forces(
 	        cout<<"dthx-z "<<dthx<<" "<<dthy<<" "<<dthz<<endl;
 	        cout<<"df "<<df<<endl;
 	        cout<<"s(x-z)2 "<<sx2<<" "<<sy2<<" "<<sz2<<endl;
-	        
+
             cout<<"Printing coords"<<endl;
             cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
             cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
