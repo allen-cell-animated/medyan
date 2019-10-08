@@ -139,6 +139,8 @@ void BranchingDihedralCosineV2::forces(
 			coord4[j] = coord[3 * beadSet[n * i + 3]+ j];
 		}
 
+		midPointCoordinate<double>(mp, coord1, coord2, pos[i]);
+
 		f1 = &f[3 * beadSet[n * i]];
 		f2 = &f[3 * beadSet[n * i + 1]];
 		f3 = &f[3 * beadSet[n * i + 2]];
