@@ -23,7 +23,9 @@
 
 #include "BranchingDihedral.h"
 #include "BranchingDihedralCosine.h"
+#include "Mechanics/ForceField/Branching/BranchingDihedralCosineV2.h"
 #include "Mechanics/ForceField/Branching/BranchingDihedralQuadratic.hpp"
+#include "Mechanics/ForceField/Branching/BranchingDihedralQuadraticV2.h"
 
 #include "BranchingPosition.h"
 #include "BranchingPositionCosine.h"
@@ -56,9 +58,26 @@ BranchingFF::BranchingFF(string& stretching, string& bending,
     if(dihedral == "COSINE")
         _branchingInteractionVector.emplace_back(
                 new BranchingDihedral<BranchingDihedralCosine>());
+    else if(dihedral == "COSINEV2")
+        _branchingInteractionVector.emplace_back(
+                new BranchingDihedral<BranchingDihedralCosineV2 >());
     else if(dihedral == "QUADRATIC")
         _branchingInteractionVector.emplace_back(
             new BranchingDihedral< BranchingDihedralQuadratic >());
+    else if(dihedral == "QUADRATICV2")
+        _branchingInteractionVector.emplace_back(
+                new BranchingDihedral< BranchingDihedralQuadraticV2 >());
+    /*else if (dihedral == "TESTALL"){
+    	_branchingInteractionVector.emplace_back(
+                new BranchingDihedral<BranchingDihedralCosine >());
+    	_branchingInteractionVector.emplace_back(
+                new BranchingDihedral<BranchingDihedralCosineV2 >());
+    	_branchingInteractionVector.emplace_back(
+            new BranchingDihedral< BranchingDihedralQuadratic >());
+    	_branchingInteractionVector.emplace_back(
+            new BranchingDihedral< BranchingDihedralQuadraticV2 >());
+
+    }*/
     else if(dihedral == "") {}
     else {
         LOG(ERROR) << "Branching dihedral FF " << dihedral << " not recognized.";
@@ -132,7 +151,7 @@ floatingpoint BranchingFF::computeEnergy(floatingpoint *coord, bool stretched) {
 
     }
     
-    
+//    cout<<"-------"<<endl;
     return U;
 }
 

@@ -93,7 +93,7 @@ float MotorCatch::changeRate(float onRate, float offRate,
     
     //calculate new rate
 #ifdef PLOSFEEDBACK
-    floatingpoint k_0 = _beta * onRate /numBoundHeads(onRate, offRate, force, numHeads);
+    floatingpoint k_0 = _beta * offRate /numBoundHeads(onRate, offRate, force, numHeads);
 
     floatingpoint factor = exp(-force / (numBoundHeads(onRate, offRate, force, numHeads) * _F0));
 #else

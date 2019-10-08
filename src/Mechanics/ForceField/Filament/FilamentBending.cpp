@@ -19,6 +19,7 @@
 #include "Cylinder.h"
 #include "Bead.h"
 #include "CGMethod.h"
+#include "SysParams.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
@@ -36,6 +37,8 @@ void FilamentBending<FBendingInteractionType>::vectorize() {
     eqt = new floatingpoint[_numInteractions];
 
     int i = 0;
+
+    int istr = 0;
 
     for (auto f: Filament::getFilaments()) {
 
@@ -115,6 +118,7 @@ void FilamentBending<FBendingInteractionType>::deallocate() {
     delete [] beadSet;
     delete [] kbend;
     delete [] eqt;
+
 #ifdef CUDAACCL
     if(!(CUDAcommon::getCUDAvars().conservestreams))
         CUDAcommon::handleerror(cudaStreamDestroy(stream));

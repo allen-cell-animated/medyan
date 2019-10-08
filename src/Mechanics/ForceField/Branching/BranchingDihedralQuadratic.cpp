@@ -9,7 +9,12 @@
 #include "Structure/BranchingPoint.h"
 #include "Util/Io/Log.hpp"
 #include "Util/Math/Vec.hpp"
-
+//This version uses a the following vectors to determine dihedral angles.
+//b1 = c2 - mp;
+//b2 = c3 - mp;
+//b3 = c4 - c3;
+//n1 = b1 x b2;
+//n2 = b3 x b2;
 using namespace mathfunc;
 using V3 = Vec< 3, floatingpoint >;
 
@@ -79,15 +84,14 @@ floatingpoint BranchingDihedralQuadratic::energy(
 
         U += U_i;
     } // End loop interactions
-
+//	cout<<"Quadratic   "<<U<<endl;
     return U;
 
 } // floatingpoint energy(...)
 
 void BranchingDihedralQuadratic::forces(
     const floatingpoint *coord, floatingpoint *f, size_t nint,
-    const unsigned int *beadSet, const floatingpoint *kdih, const floatingpoint *pos
-) const {
+    const unsigned int *beadSet, const floatingpoint *kdih, const floatingpoint *pos) const {
 
     // Beads per interaction
     constexpr std::uint_fast8_t bpi = 4;

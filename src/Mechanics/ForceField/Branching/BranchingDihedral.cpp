@@ -15,6 +15,8 @@
 
 #include "Mechanics/ForceField/Branching/BranchingDihedralCosine.h"
 #include "Mechanics/ForceField/Branching/BranchingDihedralQuadratic.hpp"
+#include "Mechanics/ForceField/Branching/BranchingDihedralCosineV2.h"
+#include "Mechanics/ForceField/Branching/BranchingDihedralQuadraticV2.h"
 
 #include "BranchingPoint.h"
 #include "Cylinder.h"
@@ -91,6 +93,8 @@ void BranchingDihedral<BDihedralInteractionType>::deallocate() {
 
 template <class BDihedralInteractionType>
 floatingpoint BranchingDihedral<BDihedralInteractionType>::computeEnergy(floatingpoint *coord) {
+
+//    _FFType.testdihedral();
 
     floatingpoint U_ii=(floatingpoint)0.0;
 
@@ -170,4 +174,6 @@ template floatingpoint BranchingDihedral<BranchingDihedralCosine>::computeEnergy
 template void BranchingDihedral<BranchingDihedralCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void BranchingDihedral<BranchingDihedralCosine>::vectorize();
 template void BranchingDihedral<BranchingDihedralCosine>::deallocate();
+template class BranchingDihedral< BranchingDihedralCosineV2 >;
 template class BranchingDihedral< BranchingDihedralQuadratic >;
+template class BranchingDihedral< BranchingDihedralQuadraticV2 >;

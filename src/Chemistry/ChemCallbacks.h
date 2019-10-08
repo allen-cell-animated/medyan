@@ -832,6 +832,7 @@ struct MotorBindingCallback {
         
         floatingpoint pos1 = floatingpoint(get<1>(site[0])) / cylinderSize;
         floatingpoint pos2 = floatingpoint(get<1>(site[1])) / cylinderSize;
+
         
         MotorGhost* m = _ps->addTrackable<MotorGhost>(c1, c2, motorType, pos1, pos2, _onRate, _offRate);
         
