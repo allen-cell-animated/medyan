@@ -28,6 +28,16 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
                             floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
                             bool steplimit){
 
+	#ifdef TRACKDIDNOTMINIMIZE
+	SysParams::Mininimization().beta.clear();
+	SysParams::Mininimization().Lambda.clear();
+	SysParams::Mininimization().Energyvec.clear();
+	SysParams::Mininimization().TotalE.clear();
+	SysParams::Mininimization().maxF.clear();
+	SysParams::Mininimization().safeModeORnot.clear();
+	SysParams::Mininimization().tempEnergyvec.clear();
+	#endif
+
     MinimizationResult result;
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbeginTot, tendTot;
@@ -558,8 +568,13 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     _safeMode = false;
 #ifdef OPTIMOUT
 std::cout<<"----------------------------------------"<<endl;
-    std::cout<<"maxF "<<maxF()<<endl;
+    std::cout<<"maxF "<<maxForce<<endl;
 #endif
+
+	#ifdef TRACKDIDNOTMINIMIZE
+	SysParams::Mininimization().maxF.push_back(maxForce);
+	#endif
+
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_other(tend - tbegin);
 	CUDAcommon::tmin.tother+= elapsed_other.count();
@@ -611,6 +626,10 @@ std::cout<<"----------------------------------------"<<endl;
 	    chrono::duration<floatingpoint> elapsed_lambda(tend - tbegin);
 	    CUDAcommon::tmin.findlambda+= elapsed_lambda.count();
 	    ////@@@@} FIND LAMBDA
+
+	    #ifdef TRACKDIDNOTMINIMIZE
+	    SysParams::Mininimization().Lambda.push_back(lambda);
+	    #endif
 
 #ifdef CUDATIMETRACK_MACRO
         tLend= chrono::high_resolution_clock::now();
@@ -686,6 +705,7 @@ std::cout<<"----------------------------------------"<<endl;
 #ifdef CUDATIMETRACK
         tbegin = chrono::high_resolution_clock::now();
 #endif
+
         //Polak-Ribieri update
         beta = max<floatingpoint>((floatingpoint)0.0, (newGrad - prevGrad) /
         curGrad);
@@ -698,6 +718,12 @@ std::cout<<"----------------------------------------"<<endl;
 	    chrono::duration<floatingpoint> elapsed_other4(tend - tbegin);
 	    CUDAcommon::tmin.tother+= elapsed_other4.count();
         //@@@} OTHER
+
+	    #ifdef TRACKDIDNOTMINIMIZE
+	    SysParams::Mininimization().beta.push_back(beta);
+	    SysParams::Mininimization().safeModeORnot.push_back(_safeMode);
+	    SysParams::Mininimization().maxF.push_back(maxForce);
+		#endif
 
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
@@ -807,7 +833,36 @@ std::cout<<"----------------------------------------"<<endl;
             CUDAcommon::handleerror(cudaStreamSynchronize(*strm));
 #endif
         cout << endl;
+
+	    #ifdef TRACKDIDNOTMINIMIZE
+	    auto tempparams = SysParams::Mininimization();
+	    cout<<"maxForce Lambda Beta SafeModestatus TotalE Evec (";
+	    auto interactionnames = FFM.getinteractionnames();
+	    for(auto x:interactionnames)
+		    cout<<x<<", ";
+	    cout<<")"<<endl;
+	    for(auto i = 0; i < tempparams.maxF.size(); i++){
+		    cout<<tempparams.maxF[i]<<" "<<tempparams.Lambda[i]<<" "<<tempparams
+				    .beta[i]<<" "<<tempparams.safeModeORnot[i]<<" "<<tempparams.TotalE[i]<<" ";
+		    for(auto j:tempparams.Energyvec[i]){
+			    cout<<j<<" ";
+		    }
+		    cout<<endl;
+	    }
+	    cout<<"------------------"<<endl;
+	    #endif
     }
+
+	#ifdef TRACKDIDNOTMINIMIZE
+	SysParams::Mininimization().beta.clear();
+	SysParams::Mininimization().Lambda.clear();
+	SysParams::Mininimization().Energyvec.clear();
+	SysParams::Mininimization().TotalE.clear();
+	SysParams::Mininimization().maxF.clear();
+	SysParams::Mininimization().safeModeORnot.clear();
+	SysParams::Mininimization().tempEnergyvec.clear();
+	#endif
+
 #if defined(CROSSCHECK) || defined(CUDAACCL)
     cross_checkclass::Aux=false;
 #endif

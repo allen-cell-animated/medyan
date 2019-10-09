@@ -88,6 +88,10 @@ floatingpoint FilamentFF::computeEnergy(floatingpoint *coord, bool stretched) {
             return -1;
         }
         else U += U_i;
+        #ifdef TRACKDIDNOTMINIMIZE
+        if(!stretched)
+            SysParams::Mininimization().tempEnergyvec.push_back(U_i);
+        #endif
         
 #ifdef DETAILEDOUTPUT
         std::cout<<getName()<<" "<<U_i<<endl;
@@ -143,4 +147,12 @@ void FilamentFF::computeForces(floatingpoint *coord, floatingpoint *f) {
     }
     //TODO remove later
 //    delete F_i;
+}
+
+vector<string> FilamentFF::getinteractionnames(){
+	vector<string> temp;
+	for (auto &interaction : _filamentInteractionVector) {
+		temp.push_back(interaction->getName());
+	}
+    return temp;
 }

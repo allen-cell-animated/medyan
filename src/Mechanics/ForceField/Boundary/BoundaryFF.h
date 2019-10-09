@@ -56,6 +56,8 @@ public:
     virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
     
     virtual vector<NeighborList*> getNeighborLists();
+
+    virtual vector<string> getinteractionnames();
 };
 
 #endif

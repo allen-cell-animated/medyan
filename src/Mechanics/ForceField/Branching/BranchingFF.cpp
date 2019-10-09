@@ -147,7 +147,11 @@ floatingpoint BranchingFF::computeEnergy(floatingpoint *coord, bool stretched) {
             return -1;
         }
         else U += U_i;
-        
+
+	    #ifdef TRACKDIDNOTMINIMIZE
+	    if(!stretched)
+		    SysParams::Mininimization().tempEnergyvec.push_back(U_i);
+	    #endif
 
     }
     
@@ -160,3 +164,12 @@ void BranchingFF::computeForces(floatingpoint *coord, floatingpoint *f) {
     for (auto &interaction : _branchingInteractionVector)
         interaction->computeForces(coord, f);
 }
+
+vector<string> BranchingFF::getinteractionnames(){
+    vector<string> temp;
+    for (auto &interaction : _branchingInteractionVector) {
+        temp.push_back(interaction->getName());
+    }
+    return temp;
+}
+

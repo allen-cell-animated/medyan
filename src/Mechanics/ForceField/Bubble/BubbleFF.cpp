@@ -101,6 +101,11 @@ floatingpoint BubbleFF::computeEnergy(floatingpoint *coord, bool stretched) {
             return -1;
         }
         else U += U_i;
+
+        #ifdef TRACKDIDNOTMINIMIZE
+        if(!stretched)
+            SysParams::Mininimization().tempEnergyvec.push_back(U_i);
+        #endif
         
     }
     return U;
@@ -140,3 +145,12 @@ vector<NeighborList*> BubbleFF::getNeighborLists() {
     
     return neighborLists;
 }
+
+vector<string> BubbleFF::getinteractionnames(){
+    vector<string> temp;
+    for (auto &interaction : _bubbleInteractionVector) {
+        temp.push_back(interaction->getName());
+    }
+    return temp;
+}
+

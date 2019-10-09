@@ -176,10 +176,10 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
 #endif
     short count = 0;
     CUDAcommon::tmin.computeenergycalls++;
-/*    if(areEqual(d,0.0))
-    	CUDAcommon::tmin.computeenerycallszero++;
-    else
-	    CUDAcommon::tmin.computeenerycallsnonzero++;*/
+    #ifdef TRACKDIDNOTMINIMIZE
+    if(!stretched)
+        SysParams::Mininimization().tempEnergyvec.clear();
+	#endif
     for (auto &ff : _forceFields) {
         tbegin = chrono::high_resolution_clock::now();
         auto tempEnergy = ff->computeEnergy(coord, stretched);
@@ -317,13 +317,15 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
 //        std::cout<<x<<" ";
 //    std::cout<<endl;
 #endif
-
+    if(!stretched) {
+        #ifdef TRACKDIDNOTMINIMIZE
+        SysParams::Mininimization().Energyvec.push_back(SysParams::Mininimization()
+        .tempEnergyvec);
+        #endif
+    }
     return energy;
     
 }
-
-
-
 
 EnergyReport ForceFieldManager::computeEnergyHRMD(floatingpoint *coord) const {
     EnergyReport result;

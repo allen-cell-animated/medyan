@@ -20,6 +20,18 @@
 #include "common.h"
 #include "Parser.h"
 
+//Did not minimize structure
+#ifdef TRACKDIDNOTMINIMIZE
+struct MinimizationParams{
+    vector<floatingpoint> maxF;
+    vector<floatingpoint> TotalE;
+    vector<vector<floatingpoint>> Energyvec;
+    vector<floatingpoint> Lambda;
+    vector<floatingpoint> beta;
+    vector<bool> safeModeORnot;
+    vector<floatingpoint> tempEnergyvec;
+};
+#endif
 /// Struct to hold mechanical parameters for the system
 struct MechParams {
 
@@ -311,6 +323,9 @@ public:
     static GeoParams GParams;     ///< The geometry parameters
     static BoundParams BParams;   ///< The boundary parameters
     static DyRateParams DRParams; ///< The dynamic rate parameters
+    #ifdef TRACKDIDNOTMINIMIZE
+    static MinimizationParams MinParams;
+	#endif
 
 public:
     //@{
@@ -346,6 +361,9 @@ public:
     static bool checkDyRateParameters(DynamicRateType& dy);
     static bool checkGeoParameters();
     //@}
+    #ifdef TRACKDIDNOTMINIMIZE
+    static MinimizationParams& Mininimization() { return MinParams;}
+	#endif
 
 };
 

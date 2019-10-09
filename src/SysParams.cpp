@@ -509,6 +509,6 @@ ChemParams   SysParams::CParams;
 GeoParams    SysParams::GParams;
 BoundParams  SysParams::BParams;
 DyRateParams SysParams::DRParams;
-
-
-
+#ifdef TRACKDIDNOTMINIMIZE
+MinimizationParams SysParams::MinParams;
+#endif

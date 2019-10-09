@@ -1219,6 +1219,9 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 	CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
 	CUDAcommon::tmin.computeenergyzero+= elapsed_energy.count();
 
+	#ifdef TRACKDIDNOTMINIMIZE
+	SysParams::Mininimization().TotalE.push_back(currentEnergy);
+	#endif
 
     if(ForceFieldManager::_culpritForceField != nullptr){
         endMinimization();
@@ -1358,6 +1361,10 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(
 	chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
 	CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
 	CUDAcommon::tmin.computeenergyzero+= elapsed_energy.count();
+
+	#ifdef TRACKDIDNOTMINIMIZE
+	SysParams::Mininimization().TotalE.push_back(currentEnergy);
+	#endif
 
     if(ForceFieldManager::_culpritForceField != nullptr){
         endMinimization();
