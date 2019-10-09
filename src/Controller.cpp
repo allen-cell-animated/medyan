@@ -1292,8 +1292,12 @@ void Controller::run() {
                 outputtime += elapsed_runout2.count();
                 cout<< "Chemistry time for run=" << chemistrytime <<endl;
                 cout << "Minimization time for run=" << minimizationtime <<endl;
-                cout<< "Neighbor list + Bmgr time for run="<<nltime<<endl;
+                cout<< "Neighbor-list+Bmgr-time for run="<<nltime<<endl;
+                cout<<"update-position time for run="<<updateposition<<endl;
+                
                 cout<<"rxnrate time for run="<<rxnratetime<<endl;
+                cout<<"Output time for run="<<outputtime<<endl;
+                cout<<"Special time for run="<<specialtime<<endl;
             }
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);

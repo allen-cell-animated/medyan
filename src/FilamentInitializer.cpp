@@ -16,6 +16,7 @@
 #include "Boundary.h"
 #include "Bubble.h"
 #include "Bead.h"
+#include "SubSystem.h"
 
 #include "MathFunctions.h"
 #include "GController.h"
@@ -224,14 +225,23 @@ FilamentData MTOCFilamentDist::createFilaments(Boundary* b, int numFilaments,
     vector<tuple<string, short, vector<floatingpoint>>> dummy2;
     int filamentCounter = 0;
     while (filamentCounter < numFilaments) {
-        
+
+
         floatingpoint l = Rand::randfloatingpoint(0,2 * M_PI);
         floatingpoint h = Rand::randfloatingpoint(-M_PI/2, M_PI/2);
+        
         
         vector<floatingpoint> point1;
         point1.push_back(_coordMTOC[0] + _radius * cos(l) * cos(h));
         point1.push_back(_coordMTOC[1] + _radius * sin(h));
-        point1.push_back(_coordMTOC[2] + _radius * sin(l) * cos(h));
+                
+        // add restrictions to MTOC filament position in Cylinder boundary condition
+        if(b->getShape() == BoundaryShape::Cylinder){
+            point1.push_back(_coordMTOC[2]);
+        }
+        else{
+            point1.push_back(_coordMTOC[2] + _radius * sin(l) * cos(h));
+        }
         
         // get projection outward from the MTOC
         auto dir = normalizeVector(twoPointDirection(_coordMTOC, point1));
