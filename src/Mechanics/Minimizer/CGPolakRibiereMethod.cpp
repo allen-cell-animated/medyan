@@ -836,7 +836,7 @@ std::cout<<"----------------------------------------"<<endl;
 
 	    #ifdef TRACKDIDNOTMINIMIZE
 	    auto tempparams = SysParams::Mininimization();
-	    cout<<"maxForce Lambda Beta SafeModestatus TotalE Evec (";
+	    cout<<"Obegin maxForce Lambda Beta SafeModestatus TotalE Evec (";
 	    auto interactionnames = FFM.getinteractionnames();
 	    for(auto x:interactionnames)
 		    cout<<x<<", ";
@@ -849,7 +849,7 @@ std::cout<<"----------------------------------------"<<endl;
 		    }
 		    cout<<endl;
 	    }
-	    cout<<"------------------"<<endl;
+	    cout<<"Oend ------------------"<<endl;
 	    #endif
     }
 
@@ -861,6 +861,15 @@ std::cout<<"----------------------------------------"<<endl;
 	SysParams::Mininimization().maxF.clear();
 	SysParams::Mininimization().safeModeORnot.clear();
 	SysParams::Mininimization().tempEnergyvec.clear();
+	FFM.computeEnergy(Bead::getDbData().coords.data(), false);
+	if(SysParams::Mininimization().branchanglevec.size()) {
+		cout << "Branch-angles ";
+		for (auto angle:SysParams::Mininimization().branchanglevec)
+			cout << angle << " ";
+		cout << endl;
+	}
+	SysParams::Mininimization().branchanglevec.clear();
+
 	#endif
 
 #if defined(CROSSCHECK) || defined(CUDAACCL)

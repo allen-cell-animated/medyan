@@ -30,6 +30,8 @@ struct MinimizationParams{
     vector<floatingpoint> beta;
     vector<bool> safeModeORnot;
     vector<floatingpoint> tempEnergyvec;
+    bool branchangledepositstatus = false;
+    vector<floatingpoint> branchanglevec;
 };
 #endif
 /// Struct to hold mechanical parameters for the system
