@@ -827,11 +827,12 @@ dataType BranchingDihedralCosine::energyininteractionperturbed(
 
 void BranchingDihedralCosine::testdihedral(){
 
-	vector<float> coord ={100, 100, 100, 100, 100, 300, 100, 200, 200, 80, 200, 300};
-	vector<float> force={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+	vector<floatingpoint> coord ={100, 100, 100, 100, 100, 300, 100, 200, 200, 80, 200,
+							   300};
+	vector<floatingpoint> force={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
 	vector<unsigned int> beadSet ={0, 1, 2, 3};
-	vector<float> kdih ={50.0};
-	vector<float> pos = {0.5};
+	vector<floatingpoint> kdih ={50.0};
+	vector<floatingpoint> pos = {0.5};
 	int nint = 1;
 	cout<<"---Test begins----"<<endl;
 	floatingpoint U = energy(coord.data(), nint, beadSet.data(), kdih.data(), pos.data());

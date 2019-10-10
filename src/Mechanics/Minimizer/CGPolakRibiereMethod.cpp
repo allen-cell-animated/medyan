@@ -616,6 +616,9 @@ std::cout<<"----------------------------------------"<<endl;
         chrono::high_resolution_clock::time_point tLbegin, tLend;
         tLbegin = chrono::high_resolution_clock::now();
 #endif
+	    #ifdef TRACKDIDNOTMINIMIZE
+	    SysParams::Mininimization().safeModeORnot.push_back(_safeMode);
+	    #endif
 		//@@@{ STEP 6 FIND LAMBDA
 	    tbegin = chrono::high_resolution_clock::now();
         bool *dummy = nullptr;
@@ -721,7 +724,6 @@ std::cout<<"----------------------------------------"<<endl;
 
 	    #ifdef TRACKDIDNOTMINIMIZE
 	    SysParams::Mininimization().beta.push_back(beta);
-	    SysParams::Mininimization().safeModeORnot.push_back(_safeMode);
 	    SysParams::Mininimization().maxF.push_back(maxForce);
 		#endif
 
