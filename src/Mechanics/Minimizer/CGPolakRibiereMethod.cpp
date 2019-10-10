@@ -840,12 +840,15 @@ std::cout<<"----------------------------------------"<<endl;
 	#ifdef TRACKDIDNOTMINIMIZE
 	if(numIter) {
 		auto tempparams = SysParams::Mininimization();
+		cout<<tempparams.maxF.size()<<" "<<tempparams.Lambda.size()<<" "<<tempparams
+				.beta.size()<<" "<<tempparams.safeModeORnot.size()<<endl;
+
 		cout << "Obegin maxForce Lambda Beta SafeModestatus TotalE Evec (";
 		auto interactionnames = FFM.getinteractionnames();
 		for (auto x:interactionnames)
 			cout << x << ", ";
 		cout << ")" << endl;
-		for (auto i = 0; i < tempparams.maxF.size(); i++) {
+		for (auto i = 0; i < tempparams.maxF.size()-1; i++) {
 			cout << tempparams.maxF[i] << " " << tempparams.Lambda[i] << " " << tempparams
 					.beta[i] << " " << tempparams.safeModeORnot[i] << " "
 			     << tempparams.TotalE[i] << " ";
@@ -854,6 +857,7 @@ std::cout<<"----------------------------------------"<<endl;
 			}
 			cout << endl;
 		}
+		cout<<"End maxF "<<tempparams.maxF[tempparams.maxF.size()-1]<<endl;
 		cout << "Oend ------------------" << endl;
 	}
 	#endif
