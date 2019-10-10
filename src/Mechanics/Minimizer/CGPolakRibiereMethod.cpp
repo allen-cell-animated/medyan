@@ -838,21 +838,24 @@ std::cout<<"----------------------------------------"<<endl;
     }
 
 	#ifdef TRACKDIDNOTMINIMIZE
-	auto tempparams = SysParams::Mininimization();
-	cout<<"Obegin maxForce Lambda Beta SafeModestatus TotalE Evec (";
-	auto interactionnames = FFM.getinteractionnames();
-	for(auto x:interactionnames)
-		cout<<x<<", ";
-	cout<<")"<<endl;
-	for(auto i = 0; i < tempparams.maxF.size(); i++){
-		cout<<tempparams.maxF[i]<<" "<<tempparams.Lambda[i]<<" "<<tempparams
-				.beta[i]<<" "<<tempparams.safeModeORnot[i]<<" "<<tempparams.TotalE[i]<<" ";
-		for(auto j:tempparams.Energyvec[i]){
-			cout<<j<<" ";
+	if(numIter) {
+		auto tempparams = SysParams::Mininimization();
+		cout << "Obegin maxForce Lambda Beta SafeModestatus TotalE Evec (";
+		auto interactionnames = FFM.getinteractionnames();
+		for (auto x:interactionnames)
+			cout << x << ", ";
+		cout << ")" << endl;
+		for (auto i = 0; i < tempparams.maxF.size(); i++) {
+			cout << tempparams.maxF[i] << " " << tempparams.Lambda[i] << " " << tempparams
+					.beta[i] << " " << tempparams.safeModeORnot[i] << " "
+			     << tempparams.TotalE[i] << " ";
+			for (auto j:tempparams.Energyvec[i]) {
+				cout << j << " ";
+			}
+			cout << endl;
 		}
-		cout<<endl;
+		cout << "Oend ------------------" << endl;
 	}
-	cout<<"Oend ------------------"<<endl;
 	#endif
 
 	#ifdef TRACKDIDNOTMINIMIZE
