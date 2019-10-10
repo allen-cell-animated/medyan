@@ -835,25 +835,25 @@ std::cout<<"----------------------------------------"<<endl;
             CUDAcommon::handleerror(cudaStreamSynchronize(*strm));
 #endif
         cout << endl;
-
-	    #ifdef TRACKDIDNOTMINIMIZE
-	    auto tempparams = SysParams::Mininimization();
-	    cout<<"Obegin maxForce Lambda Beta SafeModestatus TotalE Evec (";
-	    auto interactionnames = FFM.getinteractionnames();
-	    for(auto x:interactionnames)
-		    cout<<x<<", ";
-	    cout<<")"<<endl;
-	    for(auto i = 0; i < tempparams.maxF.size(); i++){
-		    cout<<tempparams.maxF[i]<<" "<<tempparams.Lambda[i]<<" "<<tempparams
-				    .beta[i]<<" "<<tempparams.safeModeORnot[i]<<" "<<tempparams.TotalE[i]<<" ";
-		    for(auto j:tempparams.Energyvec[i]){
-			    cout<<j<<" ";
-		    }
-		    cout<<endl;
-	    }
-	    cout<<"Oend ------------------"<<endl;
-	    #endif
     }
+
+	#ifdef TRACKDIDNOTMINIMIZE
+	auto tempparams = SysParams::Mininimization();
+	cout<<"Obegin maxForce Lambda Beta SafeModestatus TotalE Evec (";
+	auto interactionnames = FFM.getinteractionnames();
+	for(auto x:interactionnames)
+		cout<<x<<", ";
+	cout<<")"<<endl;
+	for(auto i = 0; i < tempparams.maxF.size(); i++){
+		cout<<tempparams.maxF[i]<<" "<<tempparams.Lambda[i]<<" "<<tempparams
+				.beta[i]<<" "<<tempparams.safeModeORnot[i]<<" "<<tempparams.TotalE[i]<<" ";
+		for(auto j:tempparams.Energyvec[i]){
+			cout<<j<<" ";
+		}
+		cout<<endl;
+	}
+	cout<<"Oend ------------------"<<endl;
+	#endif
 
 	#ifdef TRACKDIDNOTMINIMIZE
 	SysParams::Mininimization().beta.clear();

@@ -1419,8 +1419,6 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(
                 lambda = MAXDIST / maxForce;
                 sconvergencecheck = true;
             }
-/*            cout<<"Safe energyChange "<<energyChange<<" maxF"<<maxF()<<" MAXDIST "
-                                                                       ""<<MAXDIST<<endl;*/
         }
 
 #endif
