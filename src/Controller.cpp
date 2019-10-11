@@ -294,6 +294,7 @@ void Controller::initialize(string inputFile,
     setupInitialNetwork(p);
 
     //setup special structures
+    p.readSpecialParams();
     setupSpecialStructures(p);
 
     SysParams::INITIALIZEDSTATUS = true;
@@ -1341,7 +1342,7 @@ void Controller::run() {
             mine= chrono::high_resolution_clock::now();
             chrono::duration<floatingpoint> whilel(mine - minwhile);
             whileloop += whilel.count();
-            cout<<"while loop for run="<<whileloop<<endl;
+            //cout<<"while loop for run="<<whileloop<<endl;
 #ifdef CUDAACCL
 
             //reset CUDA context

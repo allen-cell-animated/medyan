@@ -363,6 +363,7 @@ public:
     void readGeoParams();
     void readBoundParams();
     void readDyRateParams();
+    void readSpecialParams();
     //@}
     
     //@{

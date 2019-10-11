@@ -216,19 +216,26 @@ FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilament
 }
 
 FilamentData MTOCFilamentDist::createFilaments(Boundary* b, int numFilaments,
-                                                            int filamentType,
-                                                            int lenFilaments) {
+                                               int filamentType,
+                                               int lenFilaments) {
     
     vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> filaments;
     vector<tuple<string, short, vector<vector<floatingpoint>>>> dummy;
     vector<vector<floatingpoint>> dummy3;
     vector<tuple<string, short, vector<floatingpoint>>> dummy2;
     int filamentCounter = 0;
+    
+    auto theta1 = SysParams::SpecialInputs().mtocTheta1;
+    auto theta2 = SysParams::SpecialInputs().mtocTheta2;
+    auto phi1 = SysParams::SpecialInputs().mtocPhi1;
+    auto phi2 = SysParams::SpecialInputs().mtocPhi2;
+
+
     while (filamentCounter < numFilaments) {
+        
 
-
-        floatingpoint l = Rand::randfloatingpoint(0,2 * M_PI);
-        floatingpoint h = Rand::randfloatingpoint(-M_PI/2, M_PI/2);
+        floatingpoint l = Rand::randfloatingpoint(theta1 * 2 * M_PI,theta2 * 2 * M_PI);
+        floatingpoint h = Rand::randfloatingpoint(phi1 * M_PI - M_PI/2, phi2 * M_PI - M_PI/2);
         
         
         vector<floatingpoint> point1;
