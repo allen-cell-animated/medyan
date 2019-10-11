@@ -140,6 +140,7 @@ public:
     floatingpoint specialtime = 0.0;
     floatingpoint updatepositioncylinder = 0.0;
     floatingpoint updatepositionmovable=0.0;
+    floatingpoint rxnratetime = 0.0;
 
     Controller();
     ~Controller() {};

@@ -1101,6 +1101,7 @@ void Controller::run() {
         chrono::duration<floatingpoint> elapsed_runspl(mine - mins);
         specialtime += elapsed_runspl.count();
         while(tau() <= _runTime) {
+            auto minwhile = chrono::high_resolution_clock::now();
             //run ccontroller
             #ifdef OPTIMOUT
             cout<<"Starting chemistry"<<endl;
@@ -1241,9 +1242,10 @@ void Controller::run() {
                 minimizationResult = _mController.run();
                 mine= chrono::high_resolution_clock::now();
 
-                #ifdef OPTIMOUT
+                
                 chrono::duration<floatingpoint> elapsed_runm3(mine - mins);
                 minimizationtime += elapsed_runm3.count();
+                #ifdef OPTIMOUT
                 std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
 				#endif
 
@@ -1335,7 +1337,11 @@ void Controller::run() {
             chrono::duration<floatingpoint> elapsed_runspl2(mine - mins);
             specialtime += elapsed_runspl2.count();
             oldTau = tau();
-
+            
+            mine= chrono::high_resolution_clock::now();
+            chrono::duration<floatingpoint> whilel(mine - minwhile);
+            whileloop += whilel.count();
+            cout<<"while loop for run="<<whileloop<<endl;
 #ifdef CUDAACCL
 
             //reset CUDA context
