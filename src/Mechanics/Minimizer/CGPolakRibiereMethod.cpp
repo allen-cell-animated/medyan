@@ -36,6 +36,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 	SysParams::Mininimization().maxF.clear();
 	SysParams::Mininimization().safeModeORnot.clear();
 	SysParams::Mininimization().tempEnergyvec.clear();
+	SysParams::Mininimization().gradientvec.clear();
 	#endif
 
     MinimizationResult result;
@@ -710,6 +711,8 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
 
         //Polak-Ribieri update
+        //Max(0,betaPR) allows us to reset the direction under non-ideal circumstances.
+        //The direction is reset of steepest descent direction (-gk).
         beta = max<floatingpoint>((floatingpoint)0.0, (newGrad - prevGrad) /
         curGrad);
 //        cout<<"lambda "<<lambda<<" beta "<<beta<<endl;
@@ -761,8 +764,28 @@ std::cout<<"----------------------------------------"<<endl;
         tbegin = chrono::high_resolution_clock::now();
 #endif
         //direction reset if not downhill, or no progress made
+        //For any iteration "k"
+        //"force" are the conjugate gradient direction (dk)
+        //"forceAux" are the force/steepest descent direction (-gk)
+        //<-gk+1,dk+1> < 0 => gk and dk are at acute angles with one another
+        /*Note: Gradient and conjugate direction should be at obtuse angles for effective
+         * descent*/
+        //curGrad = newGrad => gk+1.gk+1 and gk.gk are equal. Gradient has not
+        // changed in magnitude.
+        //Note: -grad E = ForceAux = -gk. Descent direction = dk = Force
+	    #ifdef TRACKDIDNOTMINIMIZE
+	    vector<floatingpoint>gradlocal;
+	    gradlocal.push_back(CGMethod::allFDotFA());
+	    gradlocal.push_back(curGrad);
+	    gradlocal.push_back(newGrad);
+	    gradlocal.push_back(prevGrad);
+
+	    SysParams::Mininimization().gradientvec.push_back(gradlocal);
+		#endif
+
         Ms_issafestate = CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad);
         if(Ms_issafestate && Ms_isminimizationstate ) {
+	        //The direction is reset of steepest descent direction (-gk).
             shiftGradient(0.0);
             _safeMode = true;
 #ifdef DETAILEDOUTPUT_LAMBDA
@@ -840,18 +863,20 @@ std::cout<<"----------------------------------------"<<endl;
 	#ifdef TRACKDIDNOTMINIMIZE
 	if(numIter) {
 		auto tempparams = SysParams::Mininimization();
-		cout<<tempparams.maxF.size()<<" "<<tempparams.Lambda.size()<<" "<<tempparams
-				.beta.size()<<" "<<tempparams.safeModeORnot.size()<<endl;
+//		cout<<tempparams.maxF.size()<<" "<<tempparams.Lambda.size()<<" "<<tempparams
+//				.beta.size()<<" "<<tempparams.safeModeORnot.size()<<endl;
 
-		cout << "Obegin maxForce Lambda Beta SafeModestatus TotalE Evec (";
+		cout << "Obegin maxForce Lambda Beta SafeModestatus FDotFA curGrad NewGrad prevGrad TotalE Evec (";
 		auto interactionnames = FFM.getinteractionnames();
 		for (auto x:interactionnames)
 			cout << x << ", ";
 		cout << ")" << endl;
 		for (auto i = 0; i < tempparams.maxF.size()-1; i++) {
 			cout << tempparams.maxF[i] << " " << tempparams.Lambda[i] << " " << tempparams
-					.beta[i] << " " << tempparams.safeModeORnot[i] << " "
-			     << tempparams.TotalE[i] << " ";
+					.beta[i] << " " << tempparams.safeModeORnot[i] <<" ";
+			for(auto j:tempparams.gradientvec[i])
+				cout<< j <<" ";
+			cout << tempparams.TotalE[i] << " ";
 			for (auto j:tempparams.Energyvec[i]) {
 				cout << j << " ";
 			}
@@ -870,7 +895,9 @@ std::cout<<"----------------------------------------"<<endl;
 	SysParams::Mininimization().maxF.clear();
 	SysParams::Mininimization().safeModeORnot.clear();
 	SysParams::Mininimization().tempEnergyvec.clear();
+	SysParams::Mininimization().gradientvec.clear();
 	FFM.computeEnergy(Bead::getDbData().coords.data(), false);
+
 	if(SysParams::Mininimization().branchanglevec.size()) {
 		cout << "Branch-angles ";
 		for (auto angle:SysParams::Mininimization().branchanglevec)

@@ -1274,6 +1274,7 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
                     ""<<idealEnergyChange<<endl;
 #endif
             //return if ok
+            //Armijo conditon
             if(energyChange <= idealEnergyChange) {
                 sconvergencecheck = true;}
             else

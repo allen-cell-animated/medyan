@@ -32,6 +32,7 @@ struct MinimizationParams{
     vector<floatingpoint> tempEnergyvec;
     bool branchangledepositstatus = false;
     vector<floatingpoint> branchanglevec;
+    vector<vector<floatingpoint>> gradientvec;
 };
 #endif
 /// Struct to hold mechanical parameters for the system
