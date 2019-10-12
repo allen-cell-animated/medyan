@@ -1266,6 +1266,7 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
         //@{ Lambda phase 2
         if(!(sconvergencecheck)){
             floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA();
+            floatingpoint maximumEnergyChange = idealEnergyChange*0.6/BACKTRACKSLOPE;
             floatingpoint energyChange = energyLambda - currentEnergy;
 #ifdef DETAILEDOUTPUT_LAMBDA
             std::cout<<"BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA"
@@ -1275,7 +1276,7 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 #endif
             //return if ok
             //Armijo conditon
-            if(energyChange <= idealEnergyChange) {
+            if(energyChange <= idealEnergyChange && energyChange >=maximumEnergyChange) {
                 sconvergencecheck = true;}
             else
                 //reduce lambda

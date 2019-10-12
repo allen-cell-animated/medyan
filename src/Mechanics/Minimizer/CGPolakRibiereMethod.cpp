@@ -783,8 +783,8 @@ std::cout<<"----------------------------------------"<<endl;
 	    SysParams::Mininimization().gradientvec.push_back(gradlocal);
 		#endif
 
-        Ms_issafestate = CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad ||
-        abs(prevGrad/newGrad)<0.1);
+        Ms_issafestate = CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad) ||
+        abs(prevGrad/newGrad)<0.1;
         if(Ms_issafestate && Ms_isminimizationstate ) {
 	        //The direction is reset of steepest descent direction (-gk).
             shiftGradient(0.0);
