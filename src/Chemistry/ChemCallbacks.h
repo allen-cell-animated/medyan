@@ -575,6 +575,10 @@ struct CaMKIIingPointUnbindingCallback {
     void operator() (ReactionBase *r) {
         cout<<"========== CaMKII Unbinding CallBack "; //Carlos verbose prints
         cout<< "ID: " << _camkiiingPoint->getID() << " Coord:" << _camkiiingPoint->getCoordinationNumber() << endl; //Carlos verbose prints
+
+        // Removing the internal reaction of the CaMKII cylinder
+        _camkiiingPoint->getCaMKIICylinder()->getCCylinder()->removeInternalReaction(r);
+
         //remove the camkiiing point
         _camkiiingPoint->getCCaMKIIingPoint()->removeBond(_camkiiingPoint->getBond(0));
         _ps->removeTrackable<CaMKIICylinder>(_camkiiingPoint->getCaMKIICylinder());
@@ -597,13 +601,16 @@ struct CaMKIIingPointUnbundlingCallback {
         cout<< "ID: " << _camkiiingPoint->getID() << " Coord:" << _camkiiingPoint->getCoordinationNumber()<< "-->"; //Carlos verbose prints
         _camkiiingPoint->removeRandomBond();
         cout<< _camkiiingPoint->getCoordinationNumber() <<endl;
-        if(_camkiiingPoint->getCoordinationNumber() == 1) {
+        if(_camkiiingPoint->getCoordinationNumber() == 1L) {
 
             // passivate unbundling reaction
 			r->passivateReaction();
 
+			// Getting a handler to the current off-reaction
             ReactionBase *offRxnBinding = _camkiiingPoint->getCCaMKIIingPoint()->getOffRxnBinding();
 
+            // Creating an off-reaction if the off-reaction does not exist
+            // due to CaMKII moving between compartments
 			if(offRxnBinding == nullptr) {
 			    _camkiiingPoint->getCCaMKIIingPoint()->createOffReactionBinding(_ps);
                 ReactionBase *offRxn = _camkiiingPoint->getCCaMKIIingPoint()->getOffRxnBinding();
@@ -611,12 +618,17 @@ struct CaMKIIingPointUnbundlingCallback {
                 offRxnBinding = offRxn;
 			}
 
+			// Reactivating the unbinding reaction
 			offRxnBinding->activateReaction();
 
-			get<0>(_camkiiingPoint->getBonds()[0])->getCCylinder()->removeInternalReaction(r);
-            get<0>(_camkiiingPoint->getBonds()[0])->getCCylinder()->addInternalReaction(offRxnBinding);
+			// Removing the current off-reaction from the internal list in CaMKII cylinder
+//			get<0>(_camkiiingPoint->getBonds()[0])->getCCylinder()->removeInternalReaction(r);
+			_camkiiingPoint->getCaMKIICylinder()->getCCylinder()->removeInternalReaction(r);
+//            get<0>(_camkiiingPoint->getBonds()[0])->getCCylinder()->addInternalReaction(offRxnBinding);
+			_camkiiingPoint->getCaMKIICylinder()->getCCylinder()->addInternalReaction(offRxnBinding);
             _camkiiingPoint->getCCaMKIIingPoint()->setOffReaction(offRxnBinding);
 
+            // Removing the unbundling reaction
             _camkiiingPoint->getCCaMKIIingPoint()->setOffRxnBundling(nullptr);
         }
 
@@ -823,7 +835,6 @@ struct CaMKIIBundlingCallback {
             cp->addBond(c1, pos1);
             cout<< "(b2) ID: " << cp->getID() << " Coord:" << cp->getCoordinationNumber()<< " CaMKIItype:" << camkiiType <<endl; //Carlos verbose prints
         }
-        assert(cp->getCoordinationNumber()<=4);
 
 //TODO CJY make sure isn't needed before cleaning
 #if 0
@@ -954,7 +965,6 @@ struct CaMKIIBundlingCallback {
 
         //create off reaction
         auto cCaMKIIer = cp->getCCaMKIIingPoint();
-        assert(cp->getCoordinationNumber() < 4 );
         cCaMKIIer->setRates(_onRate, _offRate);
         cCaMKIIer->createOffReaction(r, _ps);
         cCaMKIIer->getOffReaction()->setBareRate(SysParams::CaMKIIUnbundlingBareRate[camkiiType]);

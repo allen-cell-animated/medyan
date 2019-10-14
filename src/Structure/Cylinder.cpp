@@ -118,8 +118,10 @@ Cylinder::~Cylinder() noexcept {
 //	/error message
 //	for b in _bonds
 
-#if 1
+#if 0
+    cerr << "=======================BEFORE REMOVE CYLINDER==============" << endl;
 	for (auto camkii : CaMKIIingPoint::getCaMKIIingPoints()) {
+        cerr << "=== CaMKII " << camkii->getID() << ": (Coord number = " << camkii->getCoordinationNumber() << ") " << endl;
 		for(auto v : camkii->getBonds()) {
 //			vector<tuple<Cylinder*, double>>
 			Cylinder *c = get<0>(v);
@@ -137,11 +139,35 @@ Cylinder::~Cylinder() noexcept {
 			}
 		}
 	}
+	cerr << "==========================================================" << endl;
 #endif
 
     //remove from compartment
     _compartment->removeCylinder(this);
-    
+
+#if 0
+	cerr << "=======================AFTER REMOVE CYLINDER==============" << endl;
+	for (auto camkii : CaMKIIingPoint::getCaMKIIingPoints()) {
+		cerr << "=== CaMKII " << camkii->getID() << ": (Coord number = " << camkii->getCoordinationNumber() << ") " << endl;
+		for(auto v : camkii->getBonds()) {
+//			vector<tuple<Cylinder*, double>>
+			Cylinder *c = get<0>(v);
+			if(c == this) {
+				//TODO: Solve this error caused by cylinder missing after filament depolymerization
+				cerr << "We find camkii cylinder in removal.\n";
+				for(int i=0;i<10;i++) {
+					for(int j=0;j<6;j++) {
+						auto x = c->getCCylinder()->getCMonomer(i)->speciesBound(j);
+						cerr << "For monomer index " << i << " speciesBound index " << j << " : "
+							 << x->getFullName() << "  N: " << x->getN() << endl;
+					}
+				}
+				exit(1);
+			}
+		}
+	}
+	cerr << "==========================================================" << endl;
+#endif
 }
 
 /// Get filament type

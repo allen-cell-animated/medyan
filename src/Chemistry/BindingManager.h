@@ -346,7 +346,7 @@ friend class ChemManager;
 private:
 	float _rMin; ///< Minimum reaction range
 	float _rMax; ///< Maximum reaction range
-	int _maxCoordination;
+	size_t _maxCoordination;
 
 	///possible bindings at current state
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;

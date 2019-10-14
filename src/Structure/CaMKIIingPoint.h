@@ -79,6 +79,9 @@ public:
     CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double position);
     virtual ~CaMKIIingPoint()  noexcept;
 
+    CaMKIIingPoint(const CaMKIIingPoint &rhs) = delete;
+    CaMKIIingPoint& operator=(CaMKIIingPoint const&) = delete;
+
 	//@{
 	///Get attached bonds tuples <cylinders, short> (a cylinder and a position)
 	tuple<Cylinder *, short> getBond(int n) { return _bonds.at(n); }
@@ -90,7 +93,7 @@ public:
 	Cylinder *getFirstCylinder() { return get<0>(_bonds.at(0)); }
 
 	Cylinder *getSecondCylinder() { return get<0>(_bonds.at(1)); } //TODO fix
-	int getCoordinationNumber() { return _bonds.size(); }
+	size_t getCoordinationNumber() { return _bonds.size(); }
 
 	CaMKIICylinder *getCaMKIICylinder() { return _camkiiCylinder.get(); }
 

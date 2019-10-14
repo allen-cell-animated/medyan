@@ -99,7 +99,7 @@ void CaMKIICylinder::updatePosition() {
         assert(getCaMKIIPointParent()->getCoordinationNumber() > 0);
 
         const auto cpoint = getCaMKIIPointParent()->getCCaMKIIingPoint();
-        if(getCaMKIIPointParent()->getCoordinationNumber() == 1) {
+        if(getCaMKIIPointParent()->getCoordinationNumber() == 1L) {
             cpoint->setOffRxnBinding(cpoint->getOffReaction());
             cpoint->setOffRxnBundling(nullptr);
         } else {

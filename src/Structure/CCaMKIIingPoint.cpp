@@ -26,7 +26,7 @@ CCaMKIIingPoint::CCaMKIIingPoint(short camkiiType, Compartment* c,
     		_offRxnBundling(nullptr) {
 //    Code block moved to addBond
 //    //Find species on cylinder that should be marked
-    SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesCaMKIIer(camkiiType);
+	SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesCaMKIIer(camkiiType);
     SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(
                         SysParams::Chemistry().camkiierBindingBoundIndex[_filamentType]);
 //
@@ -39,7 +39,7 @@ CCaMKIIingPoint::CCaMKIIingPoint(short camkiiType, Compartment* c,
 //		   "Major bug: CaMKIIer didn't bind to the site.");
 //
 //    //attach this camkiipoint to the species
-    setFirstSpecies(sb1);
+//    setFirstSpecies(sfs);
 
 }
 
@@ -92,7 +92,7 @@ void CCaMKIIingPoint::removeBond(tuple<Cylinder*, short> input) {
 CCaMKIIingPoint::~CCaMKIIingPoint() {
 
    // TODO: July 1st, 2019 - Check whether removeInternalReaction is appropriate here!
-	_cc1->removeInternalReaction(_offRxn);
+//	_pCaMKIIingPoint->getCaMKIICylinder()->getCCylinder()->removeInternalReaction(_offRxn);
 
 }
 
@@ -131,8 +131,6 @@ void CCaMKIIingPoint::createOffReactionBundling(SubSystem *ps) {
 
 	_offRxnBinding->passivateReaction();
 
-	auto bonds = _pCaMKIIingPoint->getBonds();
-
 	auto cc = _pCaMKIIingPoint->getCaMKIICylinder()->getCCylinder();
 	cc->removeInternalReaction(_offRxn);
 	cc->addInternalReaction(offRxn);
@@ -160,11 +158,13 @@ void CCaMKIIingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
     // TODO: This reaction needs to be implemented for unbinding and unbundling mix.
     // Currently it only implements unbinding.
 
-    assert(_pCaMKIIingPoint->getCoordinationNumber() != 0);
+    cerr << "==== MILLAD: " << __FUNCTION__ << " - 1 - BONDS SIZE: " << getCaMKIIingPoint()->getCoordinationNumber() << "  --- ID: " << _pCaMKIIingPoint->getID() << endl;
 
-    if(_pCaMKIIingPoint->getCoordinationNumber() == 1) {
+    assert(_pCaMKIIingPoint->getCoordinationNumber() != 0L);
+
+    if(_pCaMKIIingPoint->getCoordinationNumber() == 1L) {
 		createOffReactionBinding(ps);
-    } else if(_pCaMKIIingPoint->getCoordinationNumber() == 2){
+    } else if(_pCaMKIIingPoint->getCoordinationNumber() == 2L){
 		createOffReactionBundling(ps);
 //    } else {
 //        auto bonds = _pCaMKIIingPoint->getBonds();
@@ -174,11 +174,15 @@ void CCaMKIIingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
 //        }
     }
 
+	cerr << "==== MILLAD: " << __FUNCTION__ << " - 2 - BONDS SIZE: " << getCaMKIIingPoint()->getCoordinationNumber() << "  --- ID: " << _pCaMKIIingPoint->getID() << endl;
     _pCaMKIIingPoint->updateReactionRates();
+	cerr << "==== MILLAD: " << __FUNCTION__ << " - 3 - BONDS SIZE: " << getCaMKIIingPoint()->getCoordinationNumber() << "  --- ID: " << _pCaMKIIingPoint->getID() << endl;
 
     assert(_offRxn->isPassivated() == false);
+	cerr << "==== MILLAD: " << __FUNCTION__ << " - 4 - BONDS SIZE: " << getCaMKIIingPoint()->getCoordinationNumber() << "  --- ID: " << _pCaMKIIingPoint->getID() << endl;
 
 #ifdef DEBUG
     cerr << "========== CaMKII OffReaction created " <<  "  _offRxnBinding: "<< _offRxnBinding << "  _offRxnBundling: " << _offRxnBundling <<"  _offRxn: " <<_offRxn << "  isPassivated: " << ((_offRxnBinding != NULL) ? _offRxnBinding->isPassivated() : true) << " " << ((_offRxnBundling != NULL) ? _offRxnBundling->isPassivated() : true) << " " << _offRxn->isPassivated() << endl;
 #endif
+	cerr << "==== MILLAD: " << __FUNCTION__ << " - 5 - BONDS SIZE: " << getCaMKIIingPoint()->getCoordinationNumber() << "  --- ID: " << _pCaMKIIingPoint->getID() << endl;
 }
