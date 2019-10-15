@@ -338,7 +338,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             }
             ++resSeq;
 
-            if(idx == bondFrame) {
+            if(shouldMakePsf) {
                 const auto& tlist = eachMembrane.getMembraneInfo().triangleVertexIndexList;
                 for(const auto& t : tlist) {
                     for(size_t i = 0; i < 3; ++i) {
