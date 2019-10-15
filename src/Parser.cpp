@@ -1126,6 +1126,12 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
                 MAlgorithm.lambdarunningaverageprobability = atof(lineVector[1].c_str());
             }
         }
+        else if (line.find("LINESEARCHALGORITHM")!= string::npos){
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() == 2) {
+                MAlgorithm.linesearchalgorithm = (lineVector[1].c_str());
+            }
+        }
     }
     return MAlgorithm;
 }

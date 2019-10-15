@@ -67,7 +67,9 @@ protected:
 
     const floatingpoint SAFELAMBDAREDUCE = 0.9;  ///< Lambda reduction parameter for conservative backtracking
 
-    const floatingpoint BACKTRACKSLOPE = 0.4;   ///< Backtracking slope
+    floatingpoint BACKTRACKSLOPE = 0.4;   ///< Backtracking slope
+
+    const floatingpoint QUADTOL = 0.1;
     //@}
 
 
@@ -146,10 +148,10 @@ protected:
     /// For use in minimization
 
 
-    floatingpoint allFDotF();
-    floatingpoint allFADotFA();
-    floatingpoint allFADotFAP();
-    floatingpoint allFDotFA();
+    double allFDotF();
+	double allFADotFA();
+	double allFADotFAP();
+	double allFDotFA();
     
     /// Get the max force in the system
     floatingpoint maxF();
@@ -166,7 +168,7 @@ protected:
     void moveBeads(floatingpoint d);
 
     /// shift the gradient by d
-    void shiftGradient(floatingpoint d);
+    void shiftGradient(double d);
 
     void setgradients(){
         FADotFA = allFADotFA();
@@ -198,10 +200,21 @@ protected:
         ForceFieldManager& FFM, floatingpoint MAXDIST, floatingpoint maxForce,
         floatingpoint LAMBDAMAX, bool *gpu_safestate);
 
+    ///Quadratic line search introduced from LAMMPS based on Dennis and Schnabel
+    floatingpoint quadraticLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
+                                         floatingpoint maxForce,
+                                         floatingpoint LAMBDAMAX,
+                                         floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                                         bool *gpu_safestate);
+
     void setLAMBDATOL(int maxF_order){
 
         int orderdimension = 3; ///1000s of nm
-        int LAMBDATOLorder = -(6-orderdimension) - maxF_order;
+        //Float gives you a minimum of 9 sig figs. If you operate in a 10^3nm system, the
+        // decimal part can go upto 10^-6. In our system, Lambda*F_i should not be
+        // greater than 10^-6. We would like to be cautious and ensure that all numbers
+        // have  to the order of 10^-3. Hence, O(Lambda*F_i) >= 10^-(9-3-3) = 10^-3
+        int LAMBDATOLorder = -(9-orderdimension -3) - maxF_order;
         LAMBDATOL = 1;
         if(LAMBDATOLorder > 0){
             for(int i =0; i < LAMBDATOLorder; i ++)
@@ -211,12 +224,15 @@ protected:
             for(int i =0; i > LAMBDATOLorder; i --)
                 LAMBDATOL *= 0.1;
         }
-
+		//Since, wthe force threshold are in 10^0 of pN at the lowest range, our lambda
+		// should be in the order of 10^-5.
         LAMBDATOL = max<floatingpoint>(1e-8, LAMBDATOL);
-        LAMBDATOL = min<floatingpoint>(1e-1, LAMBDATOL);
+        LAMBDATOL = min<floatingpoint>(1e-5, LAMBDATOL);
 
 //        cout<<"maxF order "<<maxF_order<<" lambdatol "<<LAMBDATOL<<endl;
     }
+
+    void setBACKTRACKSLOPE(floatingpoint _btslope){BACKTRACKSLOPE = _btslope;}
 
     //@}
 
@@ -232,6 +248,7 @@ public:
     virtual MinimizationResult minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                           floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
                           floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                          string _LINESEARCHALGORITHM,
                           bool steplimit) = 0;
 
 };

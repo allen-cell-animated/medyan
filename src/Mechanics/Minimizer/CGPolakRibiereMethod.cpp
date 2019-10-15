@@ -26,6 +26,7 @@
 MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                             floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
                             floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                            string _LINESEARCHALGORITHM,
                             bool steplimit){
 
 	#ifdef TRACKDIDNOTMINIMIZE
@@ -271,8 +272,6 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     Ms_isminimizationstate = true;
     Ms_issafestate = false;
     Ms_isminimizationstate = maxForce > GRADTOL;
-
-    //
     //
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;
@@ -604,7 +603,7 @@ std::cout<<"----------------------------------------"<<endl;
 	    CUDAcommon::tmin.tother+= elapsed_other2.count();
 	    //@@@} OTHER
 
-        floatingpoint beta, newGrad, prevGrad;
+        double beta, newGrad, prevGrad;
 //        std::cout<<"SERL maxF "<<maxF()<<endl;
 
         numIter++;
@@ -623,9 +622,17 @@ std::cout<<"----------------------------------------"<<endl;
 		//@@@{ STEP 6 FIND LAMBDA
 	    tbegin = chrono::high_resolution_clock::now();
         bool *dummy = nullptr;
-	    lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX, dummy)
-                           : backtrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
-                                                    LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
+        if(_LINESEARCHALGORITHM == "backtracking") {
+	        lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX, dummy)
+	                           : backtrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
+	                           		LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
+        }
+        else {
+	        lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX, dummy)
+	                           : quadraticLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
+	                                                 LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
+        }
+
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_lambda(tend - tbegin);
 	    CUDAcommon::tmin.findlambda+= elapsed_lambda.count();
@@ -713,7 +720,7 @@ std::cout<<"----------------------------------------"<<endl;
         //Polak-Ribieri update
         //Max(0,betaPR) allows us to reset the direction under non-ideal circumstances.
         //The direction is reset of steepest descent direction (-gk).
-        beta = max<floatingpoint>((floatingpoint)0.0, (newGrad - prevGrad) /
+        beta = max<floatingpoint>((double)0.0, (newGrad - prevGrad) /
         curGrad);
 //        cout<<"lambda "<<lambda<<" beta "<<beta<<endl;
         if(Ms_isminimizationstate)
@@ -906,7 +913,6 @@ std::cout<<"----------------------------------------"<<endl;
 		cout << endl;
 	}
 	SysParams::Mininimization().branchanglevec.clear();
-
 	#endif
 
 #if defined(CROSSCHECK) || defined(CUDAACCL)

@@ -21,6 +21,7 @@
 MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                                    floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
                                    floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                                   string _LINESEARCHALGORITHM,
                                    bool steplimit) {
     
     MinimizationResult result;
