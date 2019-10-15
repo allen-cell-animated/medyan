@@ -567,6 +567,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
     _safeMode = false;
 #ifdef OPTIMOUT
+    floatingpoint lambdatime = 0.0;
 std::cout<<"----------------------------------------"<<endl;
     std::cout<<"maxF "<<maxForce<<endl;
 #endif
@@ -636,6 +637,7 @@ std::cout<<"----------------------------------------"<<endl;
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_lambda(tend - tbegin);
 	    CUDAcommon::tmin.findlambda+= elapsed_lambda.count();
+	    lambdatime += elapsed_lambda.count();
 	    ////@@@@} FIND LAMBDA
 
 	    #ifdef TRACKDIDNOTMINIMIZE
@@ -1011,6 +1013,7 @@ std::cout<<"----------------------------------------"<<endl;
 
 #ifdef OPTIMOUT
     std::cout<<"End Minimization************"<<endl;
+	cout<<"Time taken for lambda "<<lambdatime<<endl;
 #endif
     FFM.cleanupAllForceFields();
 	tend = chrono::high_resolution_clock::now();
