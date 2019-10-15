@@ -107,8 +107,7 @@ int main(int argc, char **argv) {
         {
             string inputFilePath = cmdRes.inputDirectory + "/snapshot.traj";
             string pdbFilePath = cmdRes.outputDirectory + "/snapshot.pdb";
-            string psfFilePath = cmdRes.outputDirectory + "/snapshot.psf";
-            analysis::SnapshotReader sr(inputFilePath, pdbFilePath, psfFilePath);
+            analysis::SnapshotReader sr(inputFilePath, pdbFilePath, cmdRes.outputDirectory, "snapshot");
             sr.readAndConvertToVmd();
         }
         break;

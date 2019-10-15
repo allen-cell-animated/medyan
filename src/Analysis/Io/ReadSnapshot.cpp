@@ -117,18 +117,30 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
 
     // Write to pdb
     PdbGenerator pg(_pdbFilepath);
-    PsfGenerator psfGen(_psfFilepath); // To generate bond connections for a fixed topology
-
-    LOG(STEP) << "Writing to " << _pdbFilepath << " and " << _psfFilepath;
-    psfGen.genHeader();
-    psfGen.genNatom(maxBead.maxBead);
 
     const size_t bondFrame = global().analyzeMembraneBondFrame;
+    const bool   allBonds  = global().analyzeMembraneBondAllFrames;
 
     size_t numSnapshots = snapshots.size();
     for(size_t idx = 0; idx < numSnapshots; ++idx) {
         if (idx % 20 == 0) LOG(INFO) << "Generating model " << idx;
         pg.genModel(idx + 1);
+
+        // Psf generation for fixed topology
+        const bool shouldMakePsf = (allBonds || bondFrame == idx);
+        std::unique_ptr< PsfGenerator > psfGen;
+        if(shouldMakePsf) {
+            const auto psfFilename = [&]() {
+                std::ostringstream oss;
+                oss << psfFileDir_ << '/' << psfFilenameMain_ << '-'
+                    << std::setfill('0') << std::setw(6) << idx
+                    << ".psf";
+                return oss.str();
+            }();
+            psfGen = std::make_unique< PsfGenerator >(psfFilename);
+            psfGen->genHeader();
+            psfGen->genNatom(maxBead.maxBead);
+        }
 
         char chain;
         size_t atomSerial; // Pdb file atom number
@@ -162,8 +174,8 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                         atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                         eachCoord[0], eachCoord[1], eachCoord[2]
                     );
-                    if(idx == bondFrame) {
-                        psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                    if(shouldMakePsf) {
+                        psfGen->genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
                     }
                 }
                 while(atomCount < maxBead.filament[i]) {
@@ -175,8 +187,8 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                         atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                         allCoords.back()[0], allCoords.back()[1], allCoords.back()[2]
                     );
-                    if(idx == bondFrame) {
-                        psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                    if(shouldMakePsf) {
+                        psfGen->genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
                     }
                 }
 
@@ -191,8 +203,8 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                     pg.genAtom(
                         atomSerial, " CA ", ' ', "ARG", chain, resSeq
                     );
-                    if(idx == bondFrame) {
-                        psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                    if(shouldMakePsf) {
+                        psfGen->genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
                     }
                 }
             }
@@ -215,8 +227,8 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                     atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                     eachCoord[0], eachCoord[1], eachCoord[2]
                 );
-                if(idx == bondFrame) {
-                    psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                if(shouldMakePsf) {
+                    psfGen->genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
                 }
             }
             ++resSeq; // Separate bonds
@@ -230,8 +242,8 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                 pg.genAtom(
                     atomSerial, " CA ", ' ', "ARG", chain, resSeq
                 );
-                if(idx == bondFrame) {
-                    psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                if(shouldMakePsf) {
+                    psfGen->genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
                 }
             }
             ++resSeq; // Separate bonds
@@ -252,8 +264,8 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                     atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                     eachCoord[0], eachCoord[1], eachCoord[2]
                 );
-                if(idx == bondFrame) {
-                    psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                if(shouldMakePsf) {
+                    psfGen->genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
                 }
             }
             ++resSeq; // Separate bonds
@@ -267,8 +279,8 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                 pg.genAtom(
                     atomSerial, " CA ", ' ', "ARG", chain, resSeq
                 );
-                if(idx == bondFrame) {
-                    psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                if(shouldMakePsf) {
+                    psfGen->genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
                 }
             }
             ++resSeq;
@@ -320,8 +332,8 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                     atomSerial, " CA ", ' ', "ARG", chain, 1/* resSeq */, ' ',
                     v[0], v[1], v[2]
                 );
-                if(idx == bondFrame) {
-                    psfGen.genAtom(atomId, "", 1/* resSeq */, "ARG", "CA", "CA");
+                if(shouldMakePsf) {
+                    psfGen->genAtom(atomId, "", 1/* resSeq */, "ARG", "CA", "CA");
                 }
             }
             ++resSeq;
@@ -351,22 +363,22 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             pg.genAtom(
                 atomSerial, " CA ", ' ', "ARG", chain, resSeq
             );
-            if(idx == bondFrame) {
-                psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+            if(shouldMakePsf) {
+                psfGen->genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
             }
         }
 
         // Generating bond
-        if(idx == bondFrame) {
+        if(shouldMakePsf) {
             size_t numBonds = bondList.size();
-            psfGen.genNbond(numBonds);
-            psfGen.genBondStart();
+            psfGen->genNbond(numBonds);
+            psfGen->genBondStart();
 
             for(const auto& bond : bondList) {
-                psfGen.genBond(bond.first, bond.second);
+                psfGen->genBond(bond.first, bond.second);
             }
 
-            psfGen.genBondEnd();
+            psfGen->genBondEnd();
             LOG(INFO) << "Bond info generated.";
         }
 

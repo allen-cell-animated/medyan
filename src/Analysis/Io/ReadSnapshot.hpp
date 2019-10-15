@@ -10,11 +10,12 @@ class SnapshotReader {
 private:
     std::string _snapshotFilepath;
     std::string _pdbFilepath;
-    std::string _psfFilepath;
+    std::string psfFileDir_;
+    std::string psfFilenameMain_;
 
 public:
-    SnapshotReader(const std::string& snapshotFilepath, const std::string& pdbFilepath, const std::string& psfFilepath):
-        _snapshotFilepath(snapshotFilepath), _pdbFilepath(pdbFilepath), _psfFilepath(psfFilepath) {}
+    SnapshotReader(const std::string& snapshotFilepath, const std::string& pdbFilepath, const std::string& psfFileDir, const std::string& psfFilenameMain):
+        _snapshotFilepath(snapshotFilepath), _pdbFilepath(pdbFilepath), psfFileDir_(psfFileDir), psfFilenameMain_(psfFilenameMain) {}
 
     void readAndConvertToVmd(const size_t maxFrames=0); // 0 means no limit on max frames
 };

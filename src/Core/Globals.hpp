@@ -22,6 +22,7 @@ struct GlobalVar {
 
     // Analyze specific
     std::size_t analyzeMembraneBondFrame = 0;
+    bool        analyzeMembraneBondAllFrames = false; // If it is set to true, it overrides the specific bond frame info.
     int analyzeFrameInterval = 1; // must be >= 1
 
 };
