@@ -568,6 +568,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     _safeMode = false;
 #ifdef OPTIMOUT
     floatingpoint lambdatime = 0.0;
+    int safestatuscount = 0;
 std::cout<<"----------------------------------------"<<endl;
     std::cout<<"maxF "<<maxForce<<endl;
 #endif
@@ -595,7 +596,6 @@ std::cout<<"----------------------------------------"<<endl;
 		    //set the floor of lambda (lowest lambda allowed based on maxf
 		    int maxForder = static_cast<int>(floor(log10(maxForce)));
 		    if (maxForder < 0) maxForder--;
-
 		    CGMethod::setLAMBDATOL(maxForder);
 	    }
 
@@ -798,6 +798,7 @@ std::cout<<"----------------------------------------"<<endl;
 	        //The direction is reset of steepest descent direction (-gk).
             shiftGradient(0.0);
             _safeMode = true;
+            safestatuscount++;
 #ifdef DETAILEDOUTPUT_LAMBDA
             std::cout<<"SERL FDOTFA "<<CGMethod::allFDotFA()<<" curGrad "<<curGrad<<" "
                     "newGrad "<<newGrad<<endl;
@@ -1014,6 +1015,7 @@ std::cout<<"----------------------------------------"<<endl;
 #ifdef OPTIMOUT
     std::cout<<"End Minimization************"<<endl;
 	cout<<"Time taken for lambda "<<lambdatime<<endl;
+	cout<<"Safestatuscount "<<safestatuscount<<endl;
 #endif
     FFM.cleanupAllForceFields();
 	tend = chrono::high_resolution_clock::now();
