@@ -662,6 +662,18 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
         //@@@{ STEP7 OTHER
 		if(Ms_isminimizationstate) {
+#ifdef TRACKDIDNOTMINIMIZE
+			//Backup coordinate
+			const std::size_t num = Bead::getDbData().coords.size_raw();
+			Bead::getDbData().coords_bckup.resize(num);
+			Bead::getDbData().forces_bckup.resize(num);
+
+			for(size_t i = 0; i < num; ++i) {
+				Bead::getDbData().coords_bckup.value[i] = Bead::getDbData().coords.value[i];
+				Bead::getDbData().forces_bckup.value[i] = Bead::getDbData().forces.value[i];
+			}
+
+#endif
 			tbegin = chrono::high_resolution_clock::now();
 	        //SERIAL VERSION
 	        moveBeads(lambda);
@@ -722,8 +734,29 @@ std::cout<<"----------------------------------------"<<endl;
         //Polak-Ribieri update
         //Max(0,betaPR) allows us to reset the direction under non-ideal circumstances.
         //The direction is reset of steepest descent direction (-gk).
-        beta = max<floatingpoint>((double)0.0, (newGrad - prevGrad) /
-        curGrad);
+        double betaPR = max<double>((double)0.0,(newGrad - prevGrad) / curGrad);
+	    double betaFR = max<double>((double)0.0,newGrad/ curGrad);
+		//Efficient hybrid Conjugate gradient techniques, Eq 21
+
+		if(betaPR == 0.0)
+			beta = betaFR;
+	    else if(betaPR < 1.25*betaFR)
+	    	beta = betaPR;
+	    else
+	    	beta = betaFR;
+
+	    //Global convergence properties of conjugate gradient methods for optimization Eq
+	    // 3.8
+	    //A SURVEY OF NONLINEAR CONJUGATE GRADIENT METHODS Section 9.
+	    //Allows for negative beta values.
+	    /*double betaPR = (newGrad - prevGrad) / curGrad;
+	    double betaFR = newGrad/ curGrad;
+	    beta = max<double>(-betaFR, min<double>(betaPR, betaFR));
+		cout<<"betaPR "<<betaPR<<" betaFR "<<betaFR<<" beta "<<beta<<endl;*/
+
+//	    cout<<"newGrad "<<newGrad<<" prevGrad "<<prevGrad<<" curGrad "
+//	    <<curGrad<<" beta "<<beta<<endl;
+
 //        cout<<"lambda "<<lambda<<" beta "<<beta<<endl;
         if(Ms_isminimizationstate)
             //shift gradient
@@ -792,13 +825,20 @@ std::cout<<"----------------------------------------"<<endl;
 	    SysParams::Mininimization().gradientvec.push_back(gradlocal);
 		#endif
 
-        Ms_issafestate = CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad) ||
-        abs(prevGrad/newGrad)<0.1;
+        Ms_issafestate = CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad);
+//        ||        abs(prevGrad/newGrad)<0.1;
         if(Ms_issafestate && Ms_isminimizationstate ) {
 	        //The direction is reset of steepest descent direction (-gk).
             shiftGradient(0.0);
             _safeMode = true;
             safestatuscount++;
+#ifdef TRACKDIDNOTMINIMIZE
+            cout<<"newGrad "<<newGrad<<" prevGrad "<<prevGrad<<" curGrad "<<curGrad<<endl;
+            cout<<"beta "<<beta<<endl;
+            cout<<"FDotFA<0 "<<(CGMethod::allFDotFA() <= 0)<<" curGrad==newGrad "<<
+            areEqual(curGrad, newGrad)<<" abs(prevGrad/newGrad)<0.1 "<<(abs(prevGrad/newGrad)<0.1)<<endl;
+	        calculateEvsalpha(FFM, lambda);
+#endif
 #ifdef DETAILEDOUTPUT_LAMBDA
             std::cout<<"SERL FDOTFA "<<CGMethod::allFDotFA()<<" curGrad "<<curGrad<<" "
                     "newGrad "<<newGrad<<endl;
@@ -1041,4 +1081,24 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
 
     return result;
+}
+
+void PolakRibiere::calculateEvsalpha(ForceFieldManager &FFM, floatingpoint lambda){
+	cout<<"Printing Evslambda information "<<endl;
+	cout<<"chosen lambda "<<lambda<<endl;
+	for(floatingpoint alpha=0;alpha<1;alpha=alpha+1e-3){
+		cout<<alpha<<" ";
+	}
+	cout<<endl;
+	for(floatingpoint alpha=0.0;alpha<1;alpha=alpha+1e-3){
+		//moveBeads
+		const std::size_t num = Bead::getDbData().coords_bckup.size_raw();
+		for(size_t i = 0; i < num; ++i)
+			Bead::getDbData().coordsStr.value[i] = Bead::getDbData().coords_bckup
+					.value[i] + alpha * Bead::getDbData().forces_bckup.value[i];
+		floatingpoint energy = FFM.computeEnergy(Bead::getDbData().coordsStr.data());
+		cout<<energy<<" ";
+	}
+	cout<<endl;
+//	exit(EXIT_FAILURE);
 }

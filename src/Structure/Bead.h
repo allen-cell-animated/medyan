@@ -42,6 +42,8 @@ struct BeadData {
     vec_array_type forces; // currently the search dir in cg method
     vec_array_type forcesAux; // real force
     vec_array_type forcesAuxP; // prev real force
+    vec_array_type coords_bckup;//back up coord
+    vec_array_type forces_bckup;
 
     void push_back(
         const vec_type& coord,
