@@ -50,7 +50,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     //number of steps
     int N;
     if(steplimit) {
-        int beadMaxStep = 5 * Bead::numBeads();
+        int beadMaxStep = 3 * Bead::numBeads();
         N = (beadMaxStep > _MINNUMSTEPS ? beadMaxStep : _MINNUMSTEPS);
     }
     else
@@ -121,12 +121,15 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     //TODO Comment during SERIAL_CUDACROSSCHECK @{
     bool *Mc_isminimizationstate;
     bool *Mc_issafestate;
+    bool *M_ETolstate;
 //    @}
 
     Mc_isminimizationstate = new bool[1];
     Mc_issafestate = new bool[1];
+    M_ETolstate = new bool[1];
     Mc_isminimizationstate[0] = false;//points to address of Mmh_stop
     Mc_issafestate[0] = false;//points to address of Msh_stop
+    M_ETolstate[0] = false;
 #endif
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -272,7 +275,8 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     Ms_isminimizationstate = true;
     Ms_issafestate = false;
     Ms_isminimizationstate = maxForce > GRADTOL;
-    //
+	floatingpoint RelEngDiff = 2*ETOTALTOL;//Make initial value above tolerance.
+	//
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;
     long i = 0;
@@ -580,10 +584,11 @@ std::cout<<"----------------------------------------"<<endl;
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_other(tend - tbegin);
 	CUDAcommon::tmin.tother+= elapsed_other.count();
+
     //@@@} STEP 4 OTHER
 #ifdef SERIAL
     while (/* Iteration criterion */  numIter < N &&
-           /* Gradient tolerance  */  (Ms_isminimizationstate )) {
+           /* Gradient tolerance  */  (Ms_isminimizationstate ) && M_ETolstate) {
 
 //#ifdef CUDATIMETRACK_MACRO
 //        chrono::high_resolution_clock::time_point tbeginiter, tenditer;
@@ -619,19 +624,21 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
 	    #ifdef TRACKDIDNOTMINIMIZE
 	    SysParams::Mininimization().safeModeORnot.push_back(_safeMode);
-	    #endif
+		#endif
+
 		//@@@{ STEP 6 FIND LAMBDA
+		prevlambda = lambda;
 	    tbegin = chrono::high_resolution_clock::now();
         bool *dummy = nullptr;
-        if(_LINESEARCHALGORITHM == "backtracking") {
-	        lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX, dummy)
+        if(_LINESEARCHALGORITHM == "BACKTRACKING") {
+	        lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX, dummy, M_ETolstate)
 	                           : backtrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
-	                           		LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
+	                           		LAMBDARUNNINGAVERAGEPROBABILITY, dummy, M_ETolstate);
         }
         else {
-	        lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX, dummy)
+	        lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX, dummy, M_ETolstate)
 	                           : quadraticLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
-	                                                 LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
+	                                                 LAMBDARUNNINGAVERAGEPROBABILITY, dummy, M_ETolstate);
         }
 
 	    tend = chrono::high_resolution_clock::now();
@@ -737,7 +744,7 @@ std::cout<<"----------------------------------------"<<endl;
         double betaPR = max<double>((double)0.0,(newGrad - prevGrad) / curGrad);
 	    double betaFR = max<double>((double)0.0,newGrad/ curGrad);
 		//Efficient hybrid Conjugate gradient techniques, Eq 21
-
+		prevbeta = beta;
 		if(betaPR == 0.0)
 			beta = betaFR;
 	    else if(betaPR < 1.25*betaFR)
@@ -831,10 +838,11 @@ std::cout<<"----------------------------------------"<<endl;
 	        //The direction is reset of steepest descent direction (-gk).
             shiftGradient(0.0);
             _safeMode = true;
-            safestatuscount++;
+	        safestatuscount++;
 #ifdef TRACKDIDNOTMINIMIZE
+
             cout<<"newGrad "<<newGrad<<" prevGrad "<<prevGrad<<" curGrad "<<curGrad<<endl;
-            cout<<"beta "<<beta<<endl;
+            cout<<"beta "<<beta<<" prevbeta "<<prevbeta<<endl;
             cout<<"FDotFA<0 "<<(CGMethod::allFDotFA() <= 0)<<" curGrad==newGrad "<<
             areEqual(curGrad, newGrad)<<" abs(prevGrad/newGrad)<0.1 "<<(abs(prevGrad/newGrad)<0.1)<<endl;
 	        calculateEvsalpha(FFM, lambda);
@@ -844,6 +852,11 @@ std::cout<<"----------------------------------------"<<endl;
                     "newGrad "<<newGrad<<endl;
             std::cout<<"Shift Gradient 0.0"<<endl;
 #endif
+        }
+		//Create back up coordinates to go to in case Energy minimization fails at an
+		// undeisrable state.
+        if(maxForce < 5*GRADTOL && numIter > N/2){
+	        copycoordsifminimumE();
         }
 
 #ifdef CUDATIMETRACK
@@ -861,8 +874,9 @@ std::cout<<"----------------------------------------"<<endl;
         chrono::duration<floatingpoint> elapsed_runs1b(tend - tbegin);
         s1 += elapsed_runs1b.count();
 #endif
-    }
+    }// End minimization
 #endif //SERIAL
+
 #ifdef OPTIMOUT
     std::cout<<"SERL Total number of iterations "<<numIter<<endl;
 #endif
@@ -909,13 +923,15 @@ std::cout<<"----------------------------------------"<<endl;
             CUDAcommon::handleerror(cudaStreamSynchronize(*strm));
 #endif
         cout << endl;
+        //Copy back coordinates that correspond to minimum energy
+        copybackupcoordinates();
     }
+
+
 
 	#ifdef TRACKDIDNOTMINIMIZE
 	if(numIter) {
 		auto tempparams = SysParams::Mininimization();
-//		cout<<tempparams.maxF.size()<<" "<<tempparams.Lambda.size()<<" "<<tempparams
-//				.beta.size()<<" "<<tempparams.safeModeORnot.size()<<endl;
 
 		cout << "Obegin maxForce Lambda Beta SafeModestatus FDotFA curGrad NewGrad prevGrad TotalE Evec (";
 		auto interactionnames = FFM.getinteractionnames();
@@ -1028,6 +1044,7 @@ std::cout<<"----------------------------------------"<<endl;
     //TODO Comment during SERIAL_CUDACROSSCHECK @{
     delete [] Mc_isminimizationstate;
     delete [] Mc_issafestate;
+    delete [] M_ETolstate;
     //@}
 #endif
     //TODO make sure it calculates stretchforce in CUDA.
@@ -1085,19 +1102,19 @@ std::cout<<"----------------------------------------"<<endl;
 
 void PolakRibiere::calculateEvsalpha(ForceFieldManager &FFM, floatingpoint lambda){
 	cout<<"Printing Evslambda information "<<endl;
-	cout<<"chosen lambda "<<lambda<<endl;
-	for(floatingpoint alpha=0;alpha<1;alpha=alpha+1e-3){
-		cout<<alpha<<" ";
-	}
-	cout<<endl;
-	for(floatingpoint alpha=0.0;alpha<1;alpha=alpha+1e-3){
+	cout<<"chosen lambda "<<lambda<<" prev lambda "<<prevlambda<<endl;
+//	for(floatingpoint alpha=0.0;alpha<0.1;alpha=alpha+1e-4    ){
+//		cout<<alpha<<" ";
+//	}
+//	cout<<endl;
+	for(floatingpoint alpha=0.0;alpha<8e-4;alpha=alpha+1e-4){
 		//moveBeads
 		const std::size_t num = Bead::getDbData().coords_bckup.size_raw();
 		for(size_t i = 0; i < num; ++i)
 			Bead::getDbData().coordsStr.value[i] = Bead::getDbData().coords_bckup
 					.value[i] + alpha * Bead::getDbData().forces_bckup.value[i];
 		floatingpoint energy = FFM.computeEnergy(Bead::getDbData().coordsStr.data());
-		cout<<energy<<" ";
+		cout<<alpha<<" "<<energy<<" ";
 	}
 	cout<<endl;
 //	exit(EXIT_FAILURE);

@@ -850,6 +850,8 @@ if(true) {
 }
 
 void CGMethod::endMinimization() {
+	//flush vector
+	Bead::getDbData().coords_minE.resize(0);
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
@@ -1176,7 +1178,7 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
 floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
                                                floatingpoint maxForce, floatingpoint LAMBDAMAX,
                                                 floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
-                                                 bool *gpu_safestate) {
+                                                 bool *gpu_safestate, bool *M_ETolstate) {
 
     //@{ Lambda phase 1
     floatingpoint lambda;
@@ -1202,9 +1204,6 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 	    lambda = min<floatingpoint>(min<floatingpoint >(LAMBDAMAX, MAXDIST / maxForce), ravg);
     else
 	    lambda = min(LAMBDAMAX, MAXDIST / maxForce);
-	   /* cout<<"lambda old "<<lambda<<" lambda max "<<LAMBDAMAX<<" maxdist/f "
-	    <<MAXDIST/f<<" ravg "<<ravg<<endl;*/
-
 
     //@} Lambda phase 1
 #ifdef DETAILEDOUTPUT_LAMBDA
@@ -1235,7 +1234,8 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
     std::cout<<"Total Energy CE pN.nm CUDA "<<cuda_energy[0]<<" SERL "<<currentEnergy<<endl;
     std::cout<<endl;
 #endif
-
+	floatingpoint energyChange = (floatingpoint)0.0;
+	floatingpoint energyLambda = (floatingpoint)0.0;
     int iter = 0;
     while(!(cconvergencecheck[0])||!(sconvergencecheck)) {
 //    	cout<<"starting with lambda "<<lambda<<endl;
@@ -1246,7 +1246,7 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 
         tbegin = chrono::high_resolution_clock::now();
 	    stretchBeads(lambda);
-        floatingpoint energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
+        energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
 	    CUDAcommon::tmin.computeenerycallsnonzero++;
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
@@ -1267,8 +1267,11 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
         //@{ Lambda phase 2
         if(!(sconvergencecheck)){
             floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA();
+//            cout<<"ideal "<<idealEnergyChange<<endl;
+            if(idealEnergyChange>0)
+            	exit(EXIT_FAILURE);
 //            floatingpoint maximumEnergyChange = idealEnergyChange*0.6/BACKTRACKSLOPE;
-            floatingpoint energyChange = energyLambda - currentEnergy;
+            energyChange = energyLambda - currentEnergy;
 //	        cout << "Ideal " << idealEnergyChange << " bt energy " << energyChange << endl;
 #ifdef DETAILEDOUTPUT_LAMBDA
             std::cout<<"BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA"
@@ -1334,14 +1337,16 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
         	headpos++;
 
 	    //@}
-//	    cout<<"backtrack lambda "<<lambda<<endl;
+	//Set ETolstate to true if the energy change at a nonzero lambda is < ETOTALTOL
+	if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0)
+		M_ETolstate[0] = true;
         return lambda;
 
 }
 
 floatingpoint CGMethod::safeBacktrackingLineSearch(
     ForceFieldManager& FFM, floatingpoint MAXDIST, floatingpoint maxForce,
-    floatingpoint LAMBDAMAX, bool *gpu_safestate) {
+    floatingpoint LAMBDAMAX, bool *gpu_safestate, bool *M_ETolstate) {
 
     //reset safe mode
     _safeMode = false;
@@ -1383,16 +1388,17 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(
     std::cout<<"Total Energy CE pN.nm CUDA "<<cuda_energy[0]<<" SERL "<<currentEnergy<<endl;
     std::cout<<endl;
 #endif
-    int iter =0;
+	floatingpoint energyChange = (floatingpoint)0.0;
+	floatingpoint energyLambda = (floatingpoint)0.0;
+	int iter =0;
     //safe backtracking loop
-//    std::cout<<"safe z"<<endl;
     while(!(cconvergencecheck[0])||!(sconvergencecheck)) {
         //new energy when moved by lambda
         iter++;
 
 	    tbegin = chrono::high_resolution_clock::now();
 	    stretchBeads(lambda);
-        floatingpoint energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
+        energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
 	    CUDAcommon::tmin.computeenerycallsnonzero++;
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
@@ -1410,7 +1416,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(
 
 #ifdef SERIAL
         if(!(sconvergencecheck)){
-            floatingpoint energyChange = energyLambda - currentEnergy;
+            energyChange = energyLambda - currentEnergy;
 
             //return if ok
             if(energyChange <= 0.0) sconvergencecheck = true;
@@ -1433,6 +1439,9 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(
 #ifdef SERIAL
         delete [] cconvergencecheck;
 #endif
+	//Set ETolstate to true if the energy change at a nonzero lambda is < ETOTALTOL
+        if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0)
+        	M_ETolstate[0] = true;
         return lambda;
 
 }
@@ -1440,7 +1449,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(
 floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
                                                floatingpoint maxForce, floatingpoint LAMBDAMAX,
                                                floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
-                                               bool *gpu_safestate) {
+                                               bool *gpu_safestate, bool *M_ETolstate) {
 
 	//@{ Lambda phase 1
 	floatingpoint lambda;
@@ -1486,6 +1495,8 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 	FDotFAprev = FDotFA;
 	floatingpoint lambdaprev = 0.0;
 	int iter = 0;
+	floatingpoint energyChange = (floatingpoint)0.0;
+	floatingpoint energyLambda = (floatingpoint)0.0;
 
 	while(!(cconvergencecheck[0])||!(sconvergencecheck)) {
 //		cout<<"starting with lambda "<<lambda<<endl;
@@ -1497,7 +1508,7 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 		if(!(sconvergencecheck)){
 
 			stretchBeads(lambda);
-			floatingpoint energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
+			energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
 	//Step1: Calculate Forces & Dot products
 			FFM.computeForces(Bead::getDbData().coordsStr.data(), Bead::getDbData()
 					.forcesAux.data());
@@ -1525,7 +1536,7 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 				CUDAcommon::tmin.computeenergy += elapsed_energy.count();
 				CUDAcommon::tmin.computeenergynonzero += elapsed_energy.count();
 
-				floatingpoint energyChange = energyLambdaquad - currentEnergy;
+				energyChange = energyLambdaquad - currentEnergy;
 //				cout << "Ideal " << idealEnergyChange << " quad energy " << energyChange <<endl;
 				//if it satisfies, set lambda to lambdaquad and return.
 				if (energyChange <= idealEnergyChange) {
@@ -1567,9 +1578,9 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 #ifdef SERIAL
 	delete [] cconvergencecheck;
 #endif
-//	cout<<"quadratic lambda "<<lambda<<" LAMBDATOL "<<LAMBDATOL<<" BACKTRACKSLOPE "
-//	<<BACKTRACKSLOPE<<endl;
-//	cout<<"---------------------"<<endl;
+	//Set ETolstate to true if the energy change at a nonzero lambda is < ETOTALTOL
+	if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0)
+		M_ETolstate[0] = true;
 	return lambda;
 
 }

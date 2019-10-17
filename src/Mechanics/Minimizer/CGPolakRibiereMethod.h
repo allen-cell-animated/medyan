@@ -33,6 +33,8 @@ public:
                           bool steplimit);
 protected:
 	chrono::high_resolution_clock::time_point tbegin, tend;
+	floatingpoint prevlambda = 0;
+	floatingpoint prevbeta = 0;
 
 	void calculateEvsalpha(ForceFieldManager &FFM, floatingpoint lambda);
 #ifdef CUDAACCL

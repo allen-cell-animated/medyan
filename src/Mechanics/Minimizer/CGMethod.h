@@ -70,8 +70,12 @@ protected:
     floatingpoint BACKTRACKSLOPE = 0.4;   ///< Backtracking slope
 
     const floatingpoint QUADTOL = 0.1;
-    //@}
+    const floatingpoint ETOTALTOL = 1e-7;//Relative energy change tolerance.
 
+    //additional parameters to help store additional parameters
+    floatingpoint minimumE = (floatingpoint) 1e10;
+    floatingpoint TotalEnergy = (floatingpoint)0.0;
+    //@}
 
     // Track the past 100 lambdas.
     //@{
@@ -191,21 +195,21 @@ protected:
                                          floatingpoint maxForce,
                                          floatingpoint LAMBDAMAX,
                                          floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
-                                         bool *gpu_safestate);
+                                         bool *gpu_safestate, bool *ETolstate);
     
     /// The safemode backtracking search, returns the first energy decrease
     ///@note - The most robust linesearch method, but very slow
 
     floatingpoint safeBacktrackingLineSearch(
         ForceFieldManager& FFM, floatingpoint MAXDIST, floatingpoint maxForce,
-        floatingpoint LAMBDAMAX, bool *gpu_safestate);
+        floatingpoint LAMBDAMAX, bool *gpu_safestate, bool *ETolstate);
 
     ///Quadratic line search introduced from LAMMPS based on Dennis and Schnabel
     floatingpoint quadraticLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
                                          floatingpoint maxForce,
                                          floatingpoint LAMBDAMAX,
                                          floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
-                                         bool *gpu_safestate);
+                                         bool *gpu_safestate, bool *ETolstate);
 
     void setLAMBDATOL(int maxF_order){
 
@@ -233,6 +237,27 @@ protected:
     }
 
     void setBACKTRACKSLOPE(floatingpoint _btslope){BACKTRACKSLOPE = _btslope;}
+
+    void copycoordsifminimumE(){
+    	if(TotalEnergy < minimumE){
+    		//update minimum energy
+    		minimumE = TotalEnergy;
+    		//take backup of coordinates.
+		    const std::size_t num = Bead::getDbData().coords.size_raw();
+		    Bead::getDbData().coords_minE.resize(num);
+		    for(size_t i = 0; i < num; ++i) {
+			    Bead::getDbData().coords_minE.value[i] = Bead::getDbData().coords.value[i];
+		    }
+    	}
+    }
+
+    void copybackupcoordinates(){
+	    const std::size_t num = Bead::getDbData().coords.size_raw();
+	    for(size_t i = 0; i < num; ++i) {
+		    Bead::getDbData().coords.value[i] = Bead::getDbData().coords_minE.value[i];
+	    }
+
+    }
 
     //@}
 
