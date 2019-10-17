@@ -1548,7 +1548,7 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 			}
 			else{
 				//check if normal backtracking works
-				floatingpoint energyChange = energyLambda - currentEnergy;
+				energyChange = energyLambda - currentEnergy;
 //				cout << "Ideal " << idealEnergyChange << " bt energy " << energyChange << endl;
 				//if it satisfies, set lambda to lambdaquad and return.
 				if (energyChange <= idealEnergyChange) {

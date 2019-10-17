@@ -275,7 +275,6 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     Ms_isminimizationstate = true;
     Ms_issafestate = false;
     Ms_isminimizationstate = maxForce > GRADTOL;
-	floatingpoint RelEngDiff = 2*ETOTALTOL;//Make initial value above tolerance.
 	//
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;
@@ -588,7 +587,7 @@ std::cout<<"----------------------------------------"<<endl;
     //@@@} STEP 4 OTHER
 #ifdef SERIAL
     while (/* Iteration criterion */  numIter < N &&
-           /* Gradient tolerance  */  (Ms_isminimizationstate ) && M_ETolstate) {
+           /* Gradient tolerance  */  (Ms_isminimizationstate ) && !M_ETolstate[0]) {
 
 //#ifdef CUDATIMETRACK_MACRO
 //        chrono::high_resolution_clock::time_point tbeginiter, tenditer;
@@ -896,6 +895,15 @@ std::cout<<"----------------------------------------"<<endl;
     std::cout<<"Slice time "<<elapsed_runslice2.count()<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
+    if (M_ETolstate[0]){
+    	cout<<endl;
+
+    	cout<<"WARNING: Minimization exited when Energy Tolerance was reached"<<endl;
+	    cout << "Maximum force in system = " << maxF() << endl;
+	    cout << "System energy..." << endl;
+	    FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+    }
+
     if (numIter >= N) {
 #ifdef CUDAACCL
 
