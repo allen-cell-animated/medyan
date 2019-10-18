@@ -141,6 +141,11 @@ Cylinder::~Cylinder() noexcept {
 	#endif
     //remove from compartment
     _cellElement.manager->removeElement(_cellElement);
+
+    for(auto cyl:getCylinders()){
+    	cout<<"After remove, Cylinder ID = "<<cyl->getId()<<endl;
+    	cyl->printSelf();
+    }
     
 }
 
@@ -204,7 +209,7 @@ void Cylinder::updatePosition() {
 			CUDAcommon::tmin.timecylinderupdate += compartment_update.count();
 			CUDAcommon::tmin.callscylinderupdate++;
 
-            cout<<"move Cmp Cylinder ID "<<getId()<<endl;
+            cout<<"move Cmp Cylinder ID = "<<getId()<<endl;
             printSelf();
 		}
 #endif

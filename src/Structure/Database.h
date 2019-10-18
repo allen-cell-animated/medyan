@@ -19,6 +19,8 @@
 #include <utility> // forward
 #include <vector>
 
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 // DatabaseData stores the data that has the same indexing with the internal
 // Database structure.
@@ -65,7 +67,7 @@ public:
             // Move the data from the last element to the current position
             _elems[_index] = _elems.back();
             // Updata _index of the original last element
-            _elems[_index] -> _index = _index;
+            _elems[_index]->_index = _index;
         }
 
         // Pop the last element
