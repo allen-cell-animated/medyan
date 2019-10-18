@@ -445,6 +445,8 @@ void SubSystem::vectorizeCylinder() {
         auto x2 = cyl->getSecondBead()->vcoordinate();
         vector<floatingpoint> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
         cylsqmagnitudevector[cyl->getStableIndex()] = sqmagnitude(X1X2);
+
+//        fil->printSelf();
         auto cc = cyl->getCCylinder();
         int idx = 0;
         for (auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();

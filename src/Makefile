@@ -35,7 +35,8 @@ NVCC = nvcc -std=c++11
 
 # Flags used by compiler and linker
 DEBUG = -g
-FAST_CXX = -Os -ffast-math -fno-finite-math-only -flto -funroll-loops -DNDEBUG -mtune=native -march=native # -Xpreprocessor -fopenmp # -mavx2
+FAST_CXX = -O2 -ffast-math -fno-finite-math-only -flto -funroll-loops -DNDEBUG -mtune=native
+ -march=native # -Xpreprocessor -fopenmp # -mavx2
 #FAST_CXX = -g -march=native -mtune=native
 
 # Compiling flags

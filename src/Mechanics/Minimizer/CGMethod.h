@@ -252,11 +252,12 @@ protected:
     }
 
     void copybackupcoordinates(){
-	    const std::size_t num = Bead::getDbData().coords.size_raw();
-	    for(size_t i = 0; i < num; ++i) {
-		    Bead::getDbData().coords.value[i] = Bead::getDbData().coords_minE.value[i];
+    	if(Bead::getDbData().coords.size()) {
+		    const std::size_t num = Bead::getDbData().coords.size_raw();
+		    for (size_t i = 0; i < num; ++i) {
+			    Bead::getDbData().coords.value[i] = Bead::getDbData().coords_minE.value[i];
+		    }
 	    }
-
     }
 
     //@}

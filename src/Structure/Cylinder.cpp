@@ -129,10 +129,10 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 
     // Update the stored data
     updateData();
-
 }
 
 Cylinder::~Cylinder() noexcept {
+	cout<<"Removing Cylinder ID = "<<getId()<<endl;
 	#ifdef CROSSCHECK_IDX
 	cout<<"cindex "<<getStableIndex()<<" removed from ID "<<getId()<<" with bindices "
 	<<_b1->getStableIndex()<<" "<<_b2->getStableIndex()<<" and bID "<<_b1->getId()<<" "
@@ -203,6 +203,9 @@ void Cylinder::updatePosition() {
 			chrono::duration<floatingpoint> compartment_update(mine - mins);
 			CUDAcommon::tmin.timecylinderupdate += compartment_update.count();
 			CUDAcommon::tmin.callscylinderupdate++;
+
+            cout<<"move Cmp Cylinder ID "<<getId()<<endl;
+            printSelf();
 		}
 #endif
 
@@ -317,6 +320,7 @@ void Cylinder::printSelf() {
 
     cout << "Cylinder: ptr = " << this << endl;
     cout << "Cylinder ID = " << getId() << endl;
+    cout << "Stable Index = "<< getStableIndex() << endl;
     cout << "Parent ptr = " << getParent() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
 

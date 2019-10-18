@@ -1338,8 +1338,12 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 
 	    //@}
 	//Set ETolstate to true if the energy change at a nonzero lambda is < ETOTALTOL
-	if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0)
+	if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0) {
 		M_ETolstate[0] = true;
+		cout<<"Setting value to true "<<lambda<<" energyLambda "<<energyLambda
+		<<" currentEnergy "<<currentEnergy<<" energyChange "<<energyChange<<" "<<2*abs
+		(energyChange)/ (energyLambda+currentEnergy)<<" "<<ETOTALTOL<<endl;
+	}
         return lambda;
 
 }
@@ -1440,8 +1444,12 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(
         delete [] cconvergencecheck;
 #endif
 	//Set ETolstate to true if the energy change at a nonzero lambda is < ETOTALTOL
-        if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0)
-        	M_ETolstate[0] = true;
+        if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0) {
+	        M_ETolstate[0] = true;
+	        cout<<"Setting value to true "<<lambda<<" energyLambda "<<energyLambda
+	            <<" currentEnergy "<<currentEnergy<<" energyChange "<<energyChange<<" "<<2*abs
+			        (energyChange)/ (energyLambda+currentEnergy)<<" "<<ETOTALTOL<<endl;
+        }
         return lambda;
 
 }
@@ -1579,8 +1587,13 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 	delete [] cconvergencecheck;
 #endif
 	//Set ETolstate to true if the energy change at a nonzero lambda is < ETOTALTOL
-	if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0)
+	if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0) {
 		M_ETolstate[0] = true;
+		cout << "Setting value to true " << lambda << " energyLambda " << energyLambda
+		     << " currentEnergy " << currentEnergy << " energyChange " << energyChange
+		     << " " << 2 * abs
+				(energyChange) / (energyLambda + currentEnergy) << " " << ETOTALTOL << endl;
+	}
 	return lambda;
 
 }

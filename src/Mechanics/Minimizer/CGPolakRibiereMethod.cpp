@@ -60,10 +60,19 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     tbegin = chrono::high_resolution_clock::now();
     startMinimization();//TODO needs to be hostallocdefault and MemCpyAsync followed by CudaStreamSynchronize
 
+	for(auto cyl:Cylinder::getCylinders()){
+		cout<<"After start minimization  Cylinder ID = "<<cyl->getId()<<endl;
+		cyl->printSelf();
+	}
+
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
     FFM.vectorizeAllForceFields();//each forcefield needs to use hostallocdefault and MemCpyAsync followed by CudaStreamSynchronize
+	for(auto cyl:Cylinder::getCylinders()){
+		cout<<"After vectorizeFF  Cylinder ID = "<<cyl->getId()<<endl;
+		cyl->printSelf();
+	}
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
@@ -275,6 +284,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     Ms_isminimizationstate = true;
     Ms_issafestate = false;
     Ms_isminimizationstate = maxForce > GRADTOL;
+    bool ETOLexittstatus = false;
 	//
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;
@@ -584,10 +594,15 @@ std::cout<<"----------------------------------------"<<endl;
 	chrono::duration<floatingpoint> elapsed_other(tend - tbegin);
 	CUDAcommon::tmin.tother+= elapsed_other.count();
 
+	for(auto cyl:Cylinder::getCylinders()){
+		cout<<"before while minimization  Cylinder ID = "<<cyl->getId()<<endl;
+		cyl->printSelf();
+	}
+
     //@@@} STEP 4 OTHER
 #ifdef SERIAL
     while (/* Iteration criterion */  numIter < N &&
-           /* Gradient tolerance  */  (Ms_isminimizationstate ) && !M_ETolstate[0]) {
+           /* Gradient tolerance  */  (Ms_isminimizationstate ) && !ETOLexittstatus) {
 
 //#ifdef CUDATIMETRACK_MACRO
 //        chrono::high_resolution_clock::time_point tbeginiter, tenditer;
@@ -703,6 +718,11 @@ std::cout<<"----------------------------------------"<<endl;
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
 	    CUDAcommon::tmin.computeforces+= elapsed_force.count();
+
+	    if(M_ETolstate[0] && maxForce <= 2.5*GRADTOL){
+		    ETOLexittstatus = true;
+	    } else
+	    	M_ETolstate[0] = false;
         ///@@@}
 #ifdef DETAILEDOUTPUT
         std::cout<<"MB printing beads & forces L "<<lambda<<endl;
@@ -854,8 +874,8 @@ std::cout<<"----------------------------------------"<<endl;
         }
 		//Create back up coordinates to go to in case Energy minimization fails at an
 		// undeisrable state.
-        if(maxForce < 5*GRADTOL && numIter > N/2){
-	        copycoordsifminimumE();
+        if(maxForce < 10*GRADTOL && numIter > N/2){
+	        //copycoordsifminimumE();
         }
 
 #ifdef CUDATIMETRACK
@@ -875,6 +895,11 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
     }// End minimization
 #endif //SERIAL
+
+	for(auto cyl:Cylinder::getCylinders()){
+		cout<<"After while minimization  Cylinder ID = "<<cyl->getId()<<endl;
+		cyl->printSelf();
+	}
 
 #ifdef OPTIMOUT
     std::cout<<"SERL Total number of iterations "<<numIter<<endl;
@@ -932,7 +957,7 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
         cout << endl;
         //Copy back coordinates that correspond to minimum energy
-        copybackupcoordinates();
+//        copybackupcoordinates();
     }
 
 
@@ -990,6 +1015,10 @@ std::cout<<"----------------------------------------"<<endl;
     cvars.streamvec.clear();
     CUDAcommon::cudavars = cvars;
 #endif
+	for(auto cyl:Cylinder::getCylinders()){
+		cout<<"Before final energy, force minimization  Cylinder ID = "<<cyl->getId()<<endl;
+		cyl->printSelf();
+	}
 
     result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
 
@@ -1059,9 +1088,18 @@ std::cout<<"----------------------------------------"<<endl;
 #ifdef CUDAACCL
     FFM.assignallforcemags();
 #endif
+	for(auto cyl:Cylinder::getCylinders()){
+		cout<<"Before end minimization  Cylinder ID = "<<cyl->getId()<<endl;
+		cyl->printSelf();
+	}
     //@ STEP 11 END MINIMIZATION
 	tbegin = chrono::high_resolution_clock::now();
     endMinimization();
+
+	for(auto cyl:Cylinder::getCylinders()){
+		cout<<"After end minimization  Cylinder ID = "<<cyl->getId()<<endl;
+		cyl->printSelf();
+	}
 
 #ifdef CUDATIMETRACK
     tendII= chrono::high_resolution_clock::now();
@@ -1087,6 +1125,11 @@ std::cout<<"----------------------------------------"<<endl;
 	chrono::duration<floatingpoint> elapsed_end(tend - tbegin);
 	CUDAcommon::tmin.endminimization+= elapsed_end.count();
 	//@} END MINIMIZTION
+
+	for(auto cyl:Cylinder::getCylinders()){
+		cout<<"After FFcleanup  Cylinder ID = "<<cyl->getId()<<endl;
+		cyl->printSelf();
+	}
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;
     for(auto b:Bead::getBeads()){
