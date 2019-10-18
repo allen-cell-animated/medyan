@@ -35,7 +35,7 @@ class CCaMKIIingPoint : public CBound {
     
 private:
     CaMKIIingPoint* _pCaMKIIingPoint; ///< Pointer to parent
-    
+
     short _camkiiType; ///< CaMKIIing point type
 
     // These pointers are only handles to the off-reactions and they are not constructed.
@@ -91,8 +91,9 @@ public:
     }
     /// Get parent
     CaMKIIingPoint* getCaMKIIingPoint() {return _pCaMKIIingPoint;}
-    
+
     virtual void createOffReaction(ReactionBase* onRxn, SubSystem* ps);
+    void createOffReactionCaMKII(ReactionBase* onRxn, SubSystem* ps, FilamentBindingManager *fm);
 
     void setConnectedCCylinder(CCylinder* cc){
         //TODO - implement the case with multiple bonds
@@ -100,7 +101,7 @@ public:
     };
 
     void createOffReactionBinding(SubSystem *ps);
-    void createOffReactionBundling(SubSystem *ps);
+    void createOffReactionBundling(SubSystem *ps, FilamentBindingManager *fm);
 
 
     ReactionBase *getOffRxnBinding() {

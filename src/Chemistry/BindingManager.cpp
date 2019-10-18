@@ -523,6 +523,12 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite
 
 	updateBindingReaction(oldN, newN);
 
+	size_t s1 = _possibleBindings.size();
+	updateAllPossibleBindings();
+	size_t s2 = _possibleBindings.size();
+	if((s2 - s1 > 1) || (s2-s1 < 0) ) {
+		cerr << "======MILLAD: ERROR in size of possible size. --- " << __FILE__ << "   " << __LINE__ << "  " << __FUNCTION__ << endl;
+	}
 }
 
 void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc) {

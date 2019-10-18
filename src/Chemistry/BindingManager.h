@@ -452,6 +452,15 @@ public:
     float getRMin() {return _rMin;}
     float getRMax() {return _rMax;}
     //@}
+
+    //@{
+    /// Getter for the max coordination number
+    size_t getMaxCoordinationNumber() {return _maxCoordination;}
+    //@}
+
+    size_t getPossibleBindingSize() {
+		return _possibleBindings.size();
+	}
 };
 
 /// Manager for Linker binding.

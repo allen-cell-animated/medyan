@@ -240,19 +240,22 @@ species_copy_t CaMKIIingPoint::countDummySpecies(const string& name) {
 }
 
 
-void CaMKIIingPoint::removeRandomBond() {
+tuple<Cylinder*, short> CaMKIIingPoint::removeRandomBond() {
 	cerr << "==== MILLAD: " << __FUNCTION__ << "   ADDR: " << (void*)this << " --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
 	assert(_bonds.size() > 1);
 
 	size_t sz = _bonds.size();
 	size_t index = (size_t) Rand::randInteger(0, sz-1);
 	cerr << "=== MILLAD INDEX : " << index << " out of " << sz << endl;
-	tuple<Cylinder*, short> &bondToRemove = _bonds[index];
+	tuple<Cylinder*, short> bondToRemove = _bonds[index];
 
 	_cCaMKIIingPoint->removeBond(get<0>(bondToRemove)->getCCylinder(), get<1>(bondToRemove));
 
+
 	_bonds.erase(_bonds.begin() + index);
 	cerr << "==== MILLAD: " << __FUNCTION__ << " --- AFTER --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
+
+	return bondToRemove;
 }
 
 void CaMKIIingPoint::updateReactionRates() {

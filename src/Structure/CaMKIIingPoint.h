@@ -158,7 +158,7 @@ public:
 	static species_copy_t countSpecies(const string& name);
 	static species_copy_t countDummySpecies(const string& name);
 
-	void removeRandomBond();
+	tuple<Cylinder*, short> removeRandomBond();
 
     void updateReactionRates();
 };

@@ -568,7 +568,7 @@ struct CaMKIIingPointUnbindingCallback {
     
     SubSystem* _ps;
     CaMKIIingPoint* _camkiiingPoint;
-    
+
     CaMKIIingPointUnbindingCallback(CaMKIIingPoint* b, SubSystem* ps)
     : _ps(ps), _camkiiingPoint(b) {}
     
@@ -592,14 +592,17 @@ struct CaMKIIingPointUnbundlingCallback {
 
     SubSystem* _ps;
     CaMKIIingPoint* _camkiiingPoint;
+    CaMKIIBundlingManager* _bManager;
 
-    CaMKIIingPointUnbundlingCallback(CaMKIIingPoint* b, SubSystem* ps)
-            : _ps(ps), _camkiiingPoint(b) {}
+    CaMKIIingPointUnbundlingCallback(CaMKIIingPoint* b, SubSystem* ps, CaMKIIBundlingManager* bManager)
+            : _ps(ps), _camkiiingPoint(b), _bManager(bManager) {}
 
     void operator() (ReactionBase *r) {
         cout<<"========== CaMKII Unbundling CallBack "; //Carlos verbose prints
         cout<< "ID: " << _camkiiingPoint->getID() << " Coord:" << _camkiiingPoint->getCoordinationNumber()<< "-->"; //Carlos verbose prints
-        _camkiiingPoint->removeRandomBond();
+        auto bond = _camkiiingPoint->removeRandomBond();
+        // Adding the cylinder assigned to the removed bond?
+//        _bManager->addPossibleBindings(get<0>(bond)->getCCylinder(), get<1>(bond));
         cout<< _camkiiingPoint->getCoordinationNumber() <<endl;
         if(_camkiiingPoint->getCoordinationNumber() == 1L) {
 
@@ -630,6 +633,9 @@ struct CaMKIIingPointUnbundlingCallback {
 
             // Removing the unbundling reaction
             _camkiiingPoint->getCCaMKIIingPoint()->setOffRxnBundling(nullptr);
+
+        } else if(_camkiiingPoint->getCoordinationNumber() == _bManager->getMaxCoordinationNumber()-1 ) {
+            _bManager->addPossibleBindings(_camkiiingPoint->getCaMKIICylinder()->getCCylinder());
         }
 
         _camkiiingPoint->updateReactionRates();
@@ -653,131 +659,89 @@ struct CaMKIIBindingCallback {
     : _ps(ps), _bManager(bManager), _onRate(onRate), _offRate(offRate) {}
 
     void operator() (ReactionBase *r) {
-        CaMKIIingPoint* b;
-        cout<<"========== CaMKII Binding CallBack "; //Carlos verbose prints
+        CaMKIIingPoint *b;
+        cout << "========== CaMKII Binding CallBack "; //Carlos verbose prints
         float frate;
         short camkiiType = _bManager->getBoundInt();
 
         //choose a random binding site from manager
         auto site = _bManager->chooseBindingSite();
         //get info from site
-        Cylinder* c1 = get<0>(site)->getCylinder();
+        Cylinder *c1 = get<0>(site)->getCylinder();
         short filType = c1->getType();
 
         double pos = double(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
-        if(SysParams::RUNSTATE==true){
-        //Get a position and direction of a new filament
-        auto x1 = c1->getFirstBead()->coordinate;
-        auto x2 = c1->getSecondBead()->coordinate;
+        if (SysParams::RUNSTATE == true) {
+            //Get a position and direction of a new filament
+            auto x1 = c1->getFirstBead()->coordinate;
+            auto x2 = c1->getSecondBead()->coordinate;
 
-        //get original direction of cylinder
-        auto p= midPointCoordinate(x1, x2, pos);
-        vector<double> n = twoPointDirection(x1, x2);
+            //get original direction of cylinder
+            auto p = midPointCoordinate(x1, x2, pos);
+            vector<double> n = twoPointDirection(x1, x2);
 
-        //get camkii projection
+            //get camkii projection
 #ifdef MECHANICS
-        //use mechanical parameters
-        double l, t;
-        if(SysParams::Mechanics().CaMKIIStretchingL.size() != 0) {
-            l = SysParams::Mechanics().CaMKIIStretchingL[camkiiType];
-            t = SysParams::Mechanics().CaMKIIBendingTheta[camkiiType];
-        }
-        else {
+            //use mechanical parameters
+            double l, t;
+            if (SysParams::Mechanics().CaMKIIStretchingL.size() != 0) {
+                l = SysParams::Mechanics().CaMKIIStretchingL[camkiiType];
+//            t = SysParams::Mechanics().CaMKIIBendingTheta[camkiiType];
+                t = M_PI_2;
+            } else {
 //            cout << "CaMKIIing initialization cannot occur unless mechanical parameters are specified."
 //            << " Using default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
 //            << endl;
-            l = 10.0;
-            t = 1.22;
-        }
-#else
-        cout << "CaMKIIing initialization cannot occur unless mechanics is enabled. Using"
-        << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
-        << endl;
-        double l = 10.0;
-        double t = 1.22;
-#endif
-        double s = SysParams::Geometry().monomerSize[filType];
-
-        auto camkiiPosDir = camkiiProjection(n, p, l, s, t);
-        auto bd = get<0>(camkiiPosDir); auto bp = get<1>(camkiiPosDir);
-
-//        //create a new filament
-//        Filament* f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
-//
-//        //mark first cylinder
-//        Cylinder* c = f->getCylinderVector().front();
-//        c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
-//
-//        //create new camkii
-//            CMonomer* x=c->getCCylinder()->getCMonomer(0);
-//            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-//                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
-//                auto yy =c->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(camkiiType);
-//                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
-//                //std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-//                            }
-//            //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
-//        vector<Cylinder*> cy{c1,c};
-            
-        	b= _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos);
-          cout << "ID: " << b->getID() << endl; //Carlos verbose prints
-            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-//                auto xx =c1->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
-//                auto yy =c1->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(camkiiType);
-//                auto zz =c1->getCCylinder()->getCMonomer(p)->speciesFilament(0);
-
-                //std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+                l = 10.0;
+                t = M_PI_2;
             }
-            //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
-        frate=_offRate;
-        }
-        else
-        {
-            CCylinder* c; auto check = false;
-        vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
-            for(auto T:BrT){
-                CCylinder* cx=get<0>(get<0>(T));
-                double p = double(get<1>(get<0>(T)))/ double(SysParams::Geometry().cylinderNumMon[filType]);
-                if(cx->getCylinder()->getID()==c1->getID() && p==pos){
-                    c=get<0>(get<1>(T));
+#else
+			cout << "CaMKIIing initialization cannot occur unless mechanics is enabled. Using"
+			<< " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
+			<< endl;
+			double l = 10.0;
+			double t = 1.22;
+#endif
+            double s = SysParams::Geometry().monomerSize[filType];
+
+            // initial position of CaMKIIingPoint
+            auto cp = camkiiProjection(n, p, l);
+
+            b = _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos);
+            cout << "ID: " << b->getID() << endl; //Carlos verbose prints
+            frate = _offRate;
+        } else {
+            CCylinder *c;
+            auto check = false;
+            vector<tuple<tuple<CCylinder *, short>, tuple<CCylinder *, short>>> BrT = _bManager->getbtuple();
+            for (auto T:BrT) {
+                CCylinder *cx = get<0>(get<0>(T));
+                double p = double(get<1>(get<0>(T))) / double(SysParams::Geometry().cylinderNumMon[filType]);
+                if (cx->getCylinder()->getID() == c1->getID() && p == pos) {
+                    c = get<0>(get<1>(T));
                     check = true;
                     break;
                 }
-            } if(check) {
-//                auto cyl = c->getCylinder();
-                //std::cout<<twoPointDistance(cyl->getFirstBead()->coordinate,cyl->getSecondBead()->coordinate)<<" ";
-            //std::cout<<c->getCylinder()->getID()<<endl;
-                CMonomer* x=c->getCMonomer(0);
-                for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-//                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
-//                    auto yy =c->getCMonomer(p)->speciesCaMKIIer(camkiiType);
- //                   auto zz =c->getCMonomer(p)->speciesFilament(0);
-                    //std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-                }
-                //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
-                vector<Cylinder*> cy{c1,c->getCylinder()};
-                b= _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos);
-
-                x=c->getCMonomer(0);
-                for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-//                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
-//                    auto yy =c->getCMonomer(p)->speciesCaMKIIer(camkiiType);
-//                    auto zz =c->getCMonomer(p)->speciesFilament(0);
-                    //std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-                }
-                //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
-            frate=0.0;
             }
-            else
-                cout<<"CaMKIIer Error. Cannot find binding Site in the list. Cannot complete restart. Exiting." <<endl;
-                //exit(EXIT_FAILURE);
+            if (check) {
+                CMonomer *x = c->getCMonomer(0);
+                vector<Cylinder *> cy{c1, c->getCylinder()};
+                b = _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos);
+
+                x = c->getCMonomer(0);
+                frate = 0.0;
+            } else {
+                cout << "CaMKIIer Error. Cannot find binding Site in the list. Cannot complete restart. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
         }
 
         //create off reaction
         auto cCaMKIIer = b->getCCaMKIIingPoint();
 
         cCaMKIIer->setRates(_onRate, frate);
-        cCaMKIIer->createOffReaction(r, _ps);
+        cCaMKIIer->createOffReactionCaMKII(r, _ps, nullptr);
         cCaMKIIer->getOffReaction()->setBareRate(SysParams::CaMKIIUnbindingBareRate[camkiiType]);
     }
 };
@@ -966,7 +930,7 @@ struct CaMKIIBundlingCallback {
         //create off reaction
         auto cCaMKIIer = cp->getCCaMKIIingPoint();
         cCaMKIIer->setRates(_onRate, _offRate);
-        cCaMKIIer->createOffReaction(r, _ps);
+        cCaMKIIer->createOffReactionCaMKII(r, _ps, _bManager);
         cCaMKIIer->getOffReaction()->setBareRate(SysParams::CaMKIIUnbundlingBareRate[camkiiType]);
         _bManager->updateCaMKIIPossibleBindings(cp->getCaMKIICylinder()->getCCylinder());
     }
