@@ -717,11 +717,12 @@ std::cout<<"----------------------------------------"<<endl;
 	        tbegin = chrono::high_resolution_clock::now();
 	        FFM.computeForces(Bead::getDbData().coords.data(),
 	                          Bead::getDbData().forcesAux.data());//split and synchronize
-	        maxForce = maxF();
 	        tend = chrono::high_resolution_clock::now();
 	        chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
 	        CUDAcommon::tmin.computeforces += elapsed_force.count();
         }
+
+	    maxForce = maxF();
 
 	    if(M_ETolstate[0] && maxForce <= 2.5*GRADTOL){
 		    ETOLexittstatus = true;
