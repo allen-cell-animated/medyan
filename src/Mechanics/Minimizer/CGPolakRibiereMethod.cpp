@@ -875,7 +875,7 @@ std::cout<<"----------------------------------------"<<endl;
 		//Create back up coordinates to go to in case Energy minimization fails at an
 		// undeisrable state.
         if(maxForce < 10*GRADTOL && numIter > N/2){
-	        //copycoordsifminimumE();
+	        copycoordsifminimumE(maxForce);
         }
 
 #ifdef CUDATIMETRACK
@@ -923,7 +923,7 @@ std::cout<<"----------------------------------------"<<endl;
     if (M_ETolstate[0]){
     	cout<<endl;
 
-    	cout<<"WARNING: Minimization exited when Energy Tolerance was reached"<<endl;
+    	cout<<"WARNING: Minimization exited when Energy Tolerance was reached at N = " << N << " steps." << endl;
 	    cout << "Maximum force in system = " << maxF() << endl;
 	    cout << "System energy..." << endl;
 	    FFM.computeEnergy(Bead::getDbData().coords.data(), true);
@@ -940,10 +940,6 @@ std::cout<<"----------------------------------------"<<endl;
         cout << "WARNING: Did not minimize in N = " << N << " steps." << endl;
         cout << "Maximum force in system = " << maxF() << endl;
 
-        cout << "Culprit ..." << endl;
-        auto b = maxBead();
-        if(b != nullptr) b->getParent()->printSelf();
-
 #ifdef CUDAACCL
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.clear();
@@ -957,8 +953,13 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
         cout << endl;
         //Copy back coordinates that correspond to minimum energy
-//        copybackupcoordinates();
+        copybackupcoordinates();
+
+	    cout << "Culprit ..." << endl;
+	    auto b = maxBead();
+	    if(b != nullptr) b->getParent()->printSelf();
     }
+	Bead::getDbData().coords_minE.resize(0);
 
 
 

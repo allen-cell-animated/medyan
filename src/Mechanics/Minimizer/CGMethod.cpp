@@ -1340,10 +1340,14 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 	//Set ETolstate to true if the energy change at a nonzero lambda is < ETOTALTOL
 	if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0) {
 		M_ETolstate[0] = true;
-		cout<<"Setting value to true "<<lambda<<" energyLambda "<<energyLambda
+/*		cout<<"Setting value to true "<<lambda<<" energyLambda "<<energyLambda
 		<<" currentEnergy "<<currentEnergy<<" energyChange "<<energyChange<<" "<<2*abs
-		(energyChange)/ (energyLambda+currentEnergy)<<" "<<ETOTALTOL<<endl;
+		(energyChange)/ (energyLambda+currentEnergy)<<" "<<ETOTALTOL<<endl;*/
 	}
+	if(lambda > 0)
+		TotalEnergy = energyLambda;
+	else
+		TotalEnergy = currentEnergy;
         return lambda;
 
 }
@@ -1446,10 +1450,14 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(
 	//Set ETolstate to true if the energy change at a nonzero lambda is < ETOTALTOL
         if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0) {
 	        M_ETolstate[0] = true;
-	        cout<<"Setting value to true "<<lambda<<" energyLambda "<<energyLambda
+/*	        cout<<"Setting value to true "<<lambda<<" energyLambda "<<energyLambda
 	            <<" currentEnergy "<<currentEnergy<<" energyChange "<<energyChange<<" "<<2*abs
-			        (energyChange)/ (energyLambda+currentEnergy)<<" "<<ETOTALTOL<<endl;
+			        (energyChange)/ (energyLambda+currentEnergy)<<" "<<ETOTALTOL<<endl;*/
         }
+	if(lambda > 0)
+		TotalEnergy = energyLambda;
+	else
+		TotalEnergy = currentEnergy;
         return lambda;
 
 }
@@ -1589,11 +1597,15 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 	//Set ETolstate to true if the energy change at a nonzero lambda is < ETOTALTOL
 	if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0) {
 		M_ETolstate[0] = true;
-		cout << "Setting value to true " << lambda << " energyLambda " << energyLambda
+/*		cout << "Setting value to true " << lambda << " energyLambda " << energyLambda
 		     << " currentEnergy " << currentEnergy << " energyChange " << energyChange
 		     << " " << 2 * abs
-				(energyChange) / (energyLambda + currentEnergy) << " " << ETOTALTOL << endl;
+				(energyChange) / (energyLambda + currentEnergy) << " " << ETOTALTOL << endl;*/
 	}
+	if(lambda > 0)
+		TotalEnergy = energyLambda;
+	else
+		TotalEnergy = currentEnergy;
 	return lambda;
 
 }

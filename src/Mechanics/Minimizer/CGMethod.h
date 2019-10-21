@@ -75,6 +75,7 @@ protected:
     //additional parameters to help store additional parameters
     floatingpoint minimumE = (floatingpoint) 1e10;
     floatingpoint TotalEnergy = (floatingpoint)0.0;
+    floatingpoint maxForcebackup = (floatingpoint)0.0;
     //@}
 
     // Track the past 100 lambdas.
@@ -238,10 +239,12 @@ protected:
 
     void setBACKTRACKSLOPE(floatingpoint _btslope){BACKTRACKSLOPE = _btslope;}
 
-    void copycoordsifminimumE(){
-    	if(TotalEnergy < minimumE){
+    void copycoordsifminimumE(floatingpoint maxForce){
+
+    	if(TotalEnergy <= minimumE){
     		//update minimum energy
     		minimumE = TotalEnergy;
+    		maxForcebackup = maxForce;
     		//take backup of coordinates.
 		    const std::size_t num = Bead::getDbData().coords.size_raw();
 		    Bead::getDbData().coords_minE.resize(num);
@@ -252,7 +255,11 @@ protected:
     }
 
     void copybackupcoordinates(){
-    	if(Bead::getDbData().coords.size()) {
+
+    	if(Bead::getDbData().coords_minE.size()) {
+		    cout<<"Copying coorinates with the lowest energy during minimization "<<endl;
+		    cout<<"Energy = "<<minimumE<<" pN.nm"<<endl;
+		    cout<<"MaxForce = "<<maxForcebackup<<" pN "<<endl;
 		    const std::size_t num = Bead::getDbData().coords.size_raw();
 		    for (size_t i = 0; i < num; ++i) {
 			    Bead::getDbData().coords.value[i] = Bead::getDbData().coords_minE.value[i];
