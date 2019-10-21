@@ -60,19 +60,19 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     tbegin = chrono::high_resolution_clock::now();
     startMinimization();//TODO needs to be hostallocdefault and MemCpyAsync followed by CudaStreamSynchronize
 
-	for(auto cyl:Cylinder::getCylinders()){
+/*	for(auto cyl:Cylinder::getCylinders()){
 		cout<<"After start minimization  Cylinder ID = "<<cyl->getId()<<endl;
 		cyl->printSelf();
-	}
+	}*/
 
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
     FFM.vectorizeAllForceFields();//each forcefield needs to use hostallocdefault and MemCpyAsync followed by CudaStreamSynchronize
-	for(auto cyl:Cylinder::getCylinders()){
+/*	for(auto cyl:Cylinder::getCylinders()){
 		cout<<"After vectorizeFF  Cylinder ID = "<<cyl->getId()<<endl;
 		cyl->printSelf();
-	}
+	}*/
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
@@ -594,10 +594,10 @@ std::cout<<"----------------------------------------"<<endl;
 	chrono::duration<floatingpoint> elapsed_other(tend - tbegin);
 	CUDAcommon::tmin.tother+= elapsed_other.count();
 
-	for(auto cyl:Cylinder::getCylinders()){
+/*	for(auto cyl:Cylinder::getCylinders()){
 		cout<<"before while minimization  Cylinder ID = "<<cyl->getId()<<endl;
 		cyl->printSelf();
-	}
+	}*/
 
     //@@@} STEP 4 OTHER
 #ifdef SERIAL
@@ -896,10 +896,10 @@ std::cout<<"----------------------------------------"<<endl;
     }// End minimization
 #endif //SERIAL
 
-	for(auto cyl:Cylinder::getCylinders()){
+/*	for(auto cyl:Cylinder::getCylinders()){
 		cout<<"After while minimization  Cylinder ID = "<<cyl->getId()<<endl;
 		cyl->printSelf();
-	}
+	}*/
 
 #ifdef OPTIMOUT
     std::cout<<"SERL Total number of iterations "<<numIter<<endl;
@@ -964,7 +964,7 @@ std::cout<<"----------------------------------------"<<endl;
 
 	#ifdef TRACKDIDNOTMINIMIZE
 	if(numIter) {
-		auto tempparams = SysParams::Mininimization();
+		/*auto tempparams = SysParams::Mininimization();
 
 		cout << "Obegin maxForce Lambda Beta SafeModestatus FDotFA curGrad NewGrad prevGrad TotalE Evec (";
 		auto interactionnames = FFM.getinteractionnames();
@@ -983,7 +983,7 @@ std::cout<<"----------------------------------------"<<endl;
 			cout << endl;
 		}
 		cout<<"End maxF "<<tempparams.maxF[tempparams.maxF.size()-1]<<endl;
-		cout << "Oend ------------------" << endl;
+		cout << "Oend ------------------" << endl;*/
 	}
 	#endif
 
@@ -1015,10 +1015,10 @@ std::cout<<"----------------------------------------"<<endl;
     cvars.streamvec.clear();
     CUDAcommon::cudavars = cvars;
 #endif
-	for(auto cyl:Cylinder::getCylinders()){
+/*	for(auto cyl:Cylinder::getCylinders()){
 		cout<<"Before final energy, force minimization  Cylinder ID = "<<cyl->getId()<<endl;
 		cyl->printSelf();
-	}
+	}*/
 
     result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
 
@@ -1088,18 +1088,18 @@ std::cout<<"----------------------------------------"<<endl;
 #ifdef CUDAACCL
     FFM.assignallforcemags();
 #endif
-	for(auto cyl:Cylinder::getCylinders()){
+/*	for(auto cyl:Cylinder::getCylinders()){
 		cout<<"Before end minimization  Cylinder ID = "<<cyl->getId()<<endl;
 		cyl->printSelf();
-	}
+	}*/
     //@ STEP 11 END MINIMIZATION
 	tbegin = chrono::high_resolution_clock::now();
     endMinimization();
 
-	for(auto cyl:Cylinder::getCylinders()){
+/*	for(auto cyl:Cylinder::getCylinders()){
 		cout<<"After end minimization  Cylinder ID = "<<cyl->getId()<<endl;
 		cyl->printSelf();
-	}
+	}*/
 
 #ifdef CUDATIMETRACK
     tendII= chrono::high_resolution_clock::now();
@@ -1126,10 +1126,10 @@ std::cout<<"----------------------------------------"<<endl;
 	CUDAcommon::tmin.endminimization+= elapsed_end.count();
 	//@} END MINIMIZTION
 
-	for(auto cyl:Cylinder::getCylinders()){
+/*	for(auto cyl:Cylinder::getCylinders()){
 		cout<<"After FFcleanup  Cylinder ID = "<<cyl->getId()<<endl;
 		cyl->printSelf();
-	}
+	}*/
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;
     for(auto b:Bead::getBeads()){

@@ -132,7 +132,6 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 }
 
 Cylinder::~Cylinder() noexcept {
-	cout<<"Removing Cylinder ID = "<<getId()<<endl;
 	#ifdef CROSSCHECK_IDX
 	cout<<"cindex "<<getStableIndex()<<" removed from ID "<<getId()<<" with bindices "
 	<<_b1->getStableIndex()<<" "<<_b2->getStableIndex()<<" and bID "<<_b1->getId()<<" "
@@ -141,11 +140,6 @@ Cylinder::~Cylinder() noexcept {
 	#endif
     //remove from compartment
     _cellElement.manager->removeElement(_cellElement);
-
-    for(auto cyl:getCylinders()){
-    	cout<<"After remove, Cylinder ID = "<<cyl->getId()<<endl;
-    	cyl->printSelf();
-    }
     
 }
 
@@ -209,8 +203,6 @@ void Cylinder::updatePosition() {
 			CUDAcommon::tmin.timecylinderupdate += compartment_update.count();
 			CUDAcommon::tmin.callscylinderupdate++;
 
-            cout<<"move Cmp Cylinder ID = "<<getId()<<endl;
-            printSelf();
 		}
 #endif
 

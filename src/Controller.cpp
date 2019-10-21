@@ -757,7 +757,6 @@ void Controller::updatePositions() {
     //Reset Cylinder update position state
     Cylinder::setpositionupdatedstate = false;
     for(auto c : Cylinder::getCylinders()) {
-    	c->printSelf();
 	    c->updatePosition();
     }
 #ifdef OPTIMOUT
@@ -1122,10 +1121,10 @@ void Controller::run() {
             chemistrytime += elapsed_runchem.count();
             SysParams::DURINGCHEMISTRY = false;
 
-            for(auto cyl:Cylinder::getCylinders()){
+/*            for(auto cyl:Cylinder::getCylinders()){
                 cout<<"After chemistry  Cylinder ID = "<<cyl->getId()<<endl;
                 cyl->printSelf();
-            }
+            }*/
 
             //Printing walking reaction
             /*auto mwalk = CUDAcommon::mwalk;
@@ -1246,10 +1245,10 @@ void Controller::run() {
                 Bead::rearrange();
                 Cylinder::updateAllData();
 
-	            for(auto cyl:Cylinder::getCylinders()){
+/*	            for(auto cyl:Cylinder::getCylinders()){
 		            cout<<"After rearrange  Cylinder ID = "<<cyl->getId()<<endl;
 		            cyl->printSelf();
-	            }
+	            }*/
 
                 minimizationResult = _mController.run();
                 mine= chrono::high_resolution_clock::now();
@@ -1259,10 +1258,10 @@ void Controller::run() {
                 minimizationtime += elapsed_runm3.count();
                 std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
 				#endif
-                for(auto cyl:Cylinder::getCylinders()){
+/*                for(auto cyl:Cylinder::getCylinders()){
                     cout<<"After minimization  Cylinder ID = "<<cyl->getId()<<endl;
                     cyl->printSelf();
-                }
+                }*/
                 //update position
                 mins = chrono::high_resolution_clock::now();
                 updatePositions();
@@ -1294,10 +1293,10 @@ void Controller::run() {
 	            chrono::duration<floatingpoint> elapsed_rxn3(mine - mins);
 	            rxnratetime += elapsed_rxn3.count();
 
-	            for(auto cyl:Cylinder::getCylinders()){
+/*	            for(auto cyl:Cylinder::getCylinders()){
 	                cout<<"After position + update rate Cylinder ID = "<<cyl->getId()<<endl;
 	                cyl->printSelf();
-	            }
+	            }*/
 
             }
             //output snapshot
@@ -1339,10 +1338,10 @@ void Controller::run() {
 #ifdef OPTIMOUT
                 cout<<"update NeighborLists"<<endl;
 #endif
-                for(auto cyl:Cylinder::getCylinders()){
+/*                for(auto cyl:Cylinder::getCylinders()){
                     cout<<"After updateNeighborLists Cylinder ID = "<<cyl->getId()<<endl;
                     cyl->printSelf();
-                }
+                }*/
             }
             //Special protocols
             mins = chrono::high_resolution_clock::now();

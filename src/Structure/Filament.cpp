@@ -256,8 +256,8 @@ void Filament::extendPlusEnd(short plusEnd) {
     
     _deltaPlusEnd++;
 
-    cout<<"Extend minus End Cylinder ID = "<<cBack->getId()<<endl;
-    cBack->printSelf();
+/*    cout<<"Extend minus End Cylinder ID = "<<cBack->getId()<<endl;
+    cBack->printSelf();*/
 
     mine = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_time2(mine - mins);
@@ -314,8 +314,8 @@ void Filament::extendMinusEnd(short minusEnd) {
     
     _deltaMinusEnd++;
 
-    cout<<"Extend plus End Cylinder ID = "<<cFront->getId()<<endl;
-    cFront->printSelf();
+/*    cout<<"Extend plus End Cylinder ID = "<<cFront->getId()<<endl;
+    cFront->printSelf();*/
 }
 
 //Depolymerize front at runtime
@@ -323,8 +323,8 @@ void Filament::retractPlusEnd() {
     
     Cylinder* retCylinder = _cylinderVector.back();
 
-    cout<<"Ret plus End Cylinder ID = "<<retCylinder->getId()<<endl;
-    retCylinder->printSelf();
+/*    cout<<"Ret plus End Cylinder ID = "<<retCylinder->getId()<<endl;
+    retCylinder->printSelf();*/
 
     _cylinderVector.pop_back();
     
@@ -358,8 +358,8 @@ void Filament::retractMinusEnd() {
     
     Cylinder* retCylinder = _cylinderVector.front();
 
-    cout<<"Ret minus End Cylinder ID = "<<retCylinder->getId()<<endl;
-    retCylinder->printSelf();
+/*    cout<<"Ret minus End Cylinder ID = "<<retCylinder->getId()<<endl;
+    retCylinder->printSelf();*/
 
     _cylinderVector.pop_front();
     
@@ -426,8 +426,8 @@ void Filament::polymerizePlusEnd() {
 
     _polyPlusEnd++;
 
-    cout<<"Poly plus End Cylinder ID = "<<cBack->getId()<<endl;
-    cBack->printSelf();
+/*    cout<<"Poly plus End Cylinder ID = "<<cBack->getId()<<endl;
+    cBack->printSelf();*/
 
 }
 
@@ -464,8 +464,8 @@ void Filament::polymerizeMinusEnd() {
 
     _polyMinusEnd++;
 
-    cout<<"Poly minus End Cylinder ID = "<<cFront->getId()<<endl;
-    cFront->printSelf();
+/*    cout<<"Poly minus End Cylinder ID = "<<cFront->getId()<<endl;
+    cFront->printSelf();*/
 
 }
 
@@ -501,8 +501,8 @@ void Filament::depolymerizePlusEnd() {
     
     _depolyPlusEnd++;
 
-    cout<<"DePoly plus End Cylinder ID = "<<cBack->getId()<<endl;
-    cBack->printSelf();
+/*    cout<<"DePoly plus End Cylinder ID = "<<cBack->getId()<<endl;
+    cBack->printSelf();*/
 
 }
 
@@ -537,8 +537,8 @@ void Filament::depolymerizeMinusEnd() {
 #endif
 
     _depolyMinusEnd++;
-    cout<<"DePoly minus End Cylinder ID = "<<cFront->getId()<<endl;
-    cFront->printSelf();
+/*    cout<<"DePoly minus End Cylinder ID = "<<cFront->getId()<<endl;
+    cFront->printSelf();*/
 }
 
 
