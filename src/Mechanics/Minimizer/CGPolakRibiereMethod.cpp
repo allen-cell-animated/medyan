@@ -643,6 +643,7 @@ std::cout<<"----------------------------------------"<<endl;
 		//@@@{ STEP 6 FIND LAMBDA
 		prevlambda = lambda;
 	    tbegin = chrono::high_resolution_clock::now();
+	    bool copysafeMode = _safeMode;
         bool *dummy = nullptr;
         if(_LINESEARCHALGORITHM == "BACKTRACKING") {
 	        lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX, dummy, M_ETolstate)
@@ -713,12 +714,14 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
         ///@@@{ STEP 8 compute new forces
         //QUADRATIC line search calculates forceAux internally.
+        if(copysafeMode || _LINESEARCHALGORITHM == "BACKTRACKING") {
 	        tbegin = chrono::high_resolution_clock::now();
 	        FFM.computeForces(Bead::getDbData().coords.data(),
 	                          Bead::getDbData().forcesAux.data());//split and synchronize
 	        tend = chrono::high_resolution_clock::now();
 	        chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
 	        CUDAcommon::tmin.computeforces += elapsed_force.count();
+        }
 
 	    maxForce = maxF();
 
