@@ -1469,7 +1469,6 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 
 	//@{ Lambda phase 1
 	floatingpoint lambda;
-	sconvergencecheck = true;
 	sconvergencecheck = false;
 	cconvergencecheck = new bool[1];
 	cconvergencecheck[0] = true;
@@ -1551,9 +1550,6 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 				if (energyChange <= idealEnergyChange) {
 					sconvergencecheck = true;
 					lambda = lambdaquad;
-					stretchBeads(lambda);
-					FFM.computeForces(Bead::getDbData().coordsStr.data(), Bead::getDbData()
-							.forcesAux.data());
 				}
 				else
 					Energyi_1 = energyLambdaquad;
@@ -1582,9 +1578,6 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 			if(lambda <= 0.0 || lambda <= LAMBDATOL) {
 				sconvergencecheck = true;
 				lambda = 0.0;
-				stretchBeads(lambda);
-				FFM.computeForces(Bead::getDbData().coordsStr.data(), Bead::getDbData()
-						.forcesAux.data());
 			}
 		}
 		//@{ Lambda phase 2

@@ -713,14 +713,12 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
         ///@@@{ STEP 8 compute new forces
         //QUADRATIC line search calculates forceAux internally.
-        if(_LINESEARCHALGORITHM == "BACKTRACKING") {
 	        tbegin = chrono::high_resolution_clock::now();
 	        FFM.computeForces(Bead::getDbData().coords.data(),
 	                          Bead::getDbData().forcesAux.data());//split and synchronize
 	        tend = chrono::high_resolution_clock::now();
 	        chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
 	        CUDAcommon::tmin.computeforces += elapsed_force.count();
-        }
 
 	    maxForce = maxF();
 
