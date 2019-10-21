@@ -69,7 +69,7 @@ protected:
 
     floatingpoint BACKTRACKSLOPE = 0.4;   ///< Backtracking slope
 
-    const floatingpoint QUADTOL = 0.1;
+    const floatingpoint QUADTOL = 0.1; // Used in Quadratic line search
     const floatingpoint ETOTALTOL = 1e-7;//Relative energy change tolerance.
 
     //additional parameters to help store additional parameters

@@ -712,12 +712,16 @@ std::cout<<"----------------------------------------"<<endl;
         s1 += elapsed_runs1.count();
 #endif
         ///@@@{ STEP 8 compute new forces
-	    tbegin = chrono::high_resolution_clock::now();
-        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());//split and synchronize
-        maxForce = maxF();
-	    tend = chrono::high_resolution_clock::now();
-	    chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
-	    CUDAcommon::tmin.computeforces+= elapsed_force.count();
+        //QUADRATIC line search calculates forceAux internally.
+        if(_LINESEARCHALGORITHM == "BACKTRACKING") {
+	        tbegin = chrono::high_resolution_clock::now();
+	        FFM.computeForces(Bead::getDbData().coords.data(),
+	                          Bead::getDbData().forcesAux.data());//split and synchronize
+	        maxForce = maxF();
+	        tend = chrono::high_resolution_clock::now();
+	        chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
+	        CUDAcommon::tmin.computeforces += elapsed_force.count();
+        }
 
 	    if(M_ETolstate[0] && maxForce <= 2.5*GRADTOL){
 		    ETOLexittstatus = true;

@@ -1480,8 +1480,6 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 	}
 
 	//calculate initial guess for lambda
-//	cout<<"------------------"<<endl;
-//	cout<<"maxForce "<<maxForce<<endl;
 	floatingpoint lambdacap = min(LAMBDAMAX, MAXDIST / maxForce);
 	lambda = lambdacap;
 
@@ -1517,12 +1515,8 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 	while(!(cconvergencecheck[0])||!(sconvergencecheck)) {
 //		cout<<"starting with lambda "<<lambda<<endl;
 		iter++;
-		//TODO let each forcefield calculate energy IFF conv state = false. That will help
-		// them avoid unnecessary iterations.
-		//let each forcefield also add energies to two different energy variables
 	// @{ Lambda phase 2
 		if(!(sconvergencecheck)){
-
 			stretchBeads(lambda);
 			energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
 	//Step1: Calculate Forces & Dot products
@@ -1534,9 +1528,8 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 	//Step3: Calculate Lambdaquad
 			floatingpoint relerr = fabs(1.0-(0.5*(lambda-lambdaprev)*(FDotFAnext+FDotFAprev)
 					+energyLambda) /Energyi_1);
-//			cout<<"relerror "<<relerr<<endl;
+
 			floatingpoint lambdaquad = lambda - FDotFAprev*(lambda-lambdaprev)/Del_FDotFA;
-//			cout<<"lambdaquad "<<lambdaquad<<endl;
 
 	//Step 4. Test if the energy given by alphaquad is within the acceptable range
 	//prescribed by Armijo condition on alpha
@@ -1558,6 +1551,9 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 				if (energyChange <= idealEnergyChange) {
 					sconvergencecheck = true;
 					lambda = lambdaquad;
+					stretchBeads(lambda);
+					FFM.computeForces(Bead::getDbData().coordsStr.data(), Bead::getDbData()
+							.forcesAux.data());
 				}
 				else
 					Energyi_1 = energyLambdaquad;
@@ -1586,6 +1582,9 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 			if(lambda <= 0.0 || lambda <= LAMBDATOL) {
 				sconvergencecheck = true;
 				lambda = 0.0;
+				stretchBeads(lambda);
+				FFM.computeForces(Bead::getDbData().coordsStr.data(), Bead::getDbData()
+						.forcesAux.data());
 			}
 		}
 		//@{ Lambda phase 2
