@@ -652,15 +652,7 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
         //columns of evectors matrix are the normalized eigenvectors
         evectors = eigs.eigenvectors(numEigs);
     };
-    int k_keep = 0;
-    for(auto k = 0; k < evalues.size(); k++){
-        if(evalues.real()[k]>0 && abs(evalues.real()[k]) < (evalues.real()[k_keep])){
-            k_keep = k;
-        }
-    };
-    
-    keeperEigenVector = evectors.col(k_keep).real();
-
+  
     chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_veceigs(t2 - t1);
     Eigen::VectorXcd IPRI(evectors.cols());

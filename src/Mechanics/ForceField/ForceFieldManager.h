@@ -97,8 +97,7 @@ public:
     Eigen::VectorXcd evalues;
     Eigen::MatrixXcd evectors;
     vector<floatingpoint> tauVector;
-    
-    Eigen::VectorXd keeperEigenVector;
+
 
 #ifdef CUDAACCL
         cudaStream_t  streamF = NULL;
