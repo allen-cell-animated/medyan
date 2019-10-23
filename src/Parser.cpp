@@ -1010,13 +1010,13 @@ void SystemParser::readMechParams() {
         if (line.find("HESSIANTRACKING:") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 3) {
+            if(lineVector.size() != 4) {
                 cout <<
                 "There was an error parsing input file at Chemistry algorithm. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 3) {
+            else if (lineVector.size() == 4) {
                 MParams.hessTracking = true;
                 //MParams.hessDelta = atof(lineVector[1].c_str());
                 MParams.hessSkip = atof(lineVector[1].c_str());
@@ -1025,6 +1025,12 @@ void SystemParser::readMechParams() {
                     MParams.denseEstimation = true;
                 }else{
                     MParams.denseEstimation = false;
+                }
+                int rocksnapbool = atoi(lineVector[3].c_str());
+                if(rocksnapbool == 1){
+                    MParams.rockSnapBool = true;
+                }else{
+                    MParams.rockSnapBool = false;
                 }
                 
             }

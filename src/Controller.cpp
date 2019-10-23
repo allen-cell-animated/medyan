@@ -247,9 +247,7 @@ void Controller::initialize(string inputFile,
     string hessianspectra = _outputDirectory + "hessianspectra.traj";
     _outputs.push_back(new HessianSpectra(hessianspectra, &_subSystem, _ffm));
         
-    //Set up RockingSnapshot if hessiantracking is enabled
-    string rockingsnaphot = _outputDirectory + "rockingsnapshot.traj";
-    _rSnapShot = new RockingSnapshot(rockingsnaphot, &_subSystem, _ffm);
+    
 
         
         
@@ -1448,10 +1446,29 @@ void Controller::run() {
     //print last snapshots
     for(auto o: _outputs) o->print(i);
     
+    
+    
+    
+    
     // rockingsnapshot with last snapshot
-    if(SysParams::MParams.hessTracking){
-    _rSnapShot->print(i);
+    if(SysParams::MParams.rockSnapBool){
+    //Set up RockingSnapshot if hessiantracking is enabled
+        ForceFieldManager* _ffm =  _mController.getForceFieldManager();
+        Eigen::VectorXcd evalues = _ffm->evalues;
+        for(auto k = 0; k < evalues.size(); k++){
+
+            string rockingsnaphot = _outputDirectory + "rockingsnapshot_" + to_string(evalues.real()[k]) +".traj";
+            _rSnapShot = new RockingSnapshot(rockingsnaphot, &_subSystem, _ffm, k);
+            _rSnapShot->savePositions();
+            _rSnapShot->print(i);
+            _rSnapShot->resetPositions();
+            
+         
+        }
+           
+        
     };
+    
 	resetCounters();
 	#ifdef OPTIMOUT
     chk2 = chrono::high_resolution_clock::now();

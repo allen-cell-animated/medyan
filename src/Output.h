@@ -440,13 +440,20 @@ public:
 class RockingSnapshot : public Output {
     
     ForceFieldManager* _ffm;
-
+    
+    int k;
     
 public:
-    RockingSnapshot(string outputFileName, SubSystem* s, ForceFieldManager *ffm) : Output(outputFileName, s), _ffm(ffm) {}
+    RockingSnapshot(string outputFileName, SubSystem* s, ForceFieldManager *ffm, int k) : Output(outputFileName, s), _ffm(ffm), k(k){}
     ~RockingSnapshot() {}
     
+    deque<floatingpoint> savedPositions;
+    
     virtual void print(int snapshot);
+    
+    void savePositions();
+    
+    void resetPositions();
 };
 
 

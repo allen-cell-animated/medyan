@@ -1452,7 +1452,55 @@ void CylinderEnergies::print(int snapshot){
         
 }
 
+void RockingSnapshot::savePositions(){
+    
+    for(auto &filament : Filament::getFilaments()) {
+        
+        //print coordinates
+        for (auto cylinder : filament->getCylinderVector()){
+        
+        savedPositions.push_back(cylinder->getFirstBead()->coordinate()[0]);
+        savedPositions.push_back(cylinder->getFirstBead()->coordinate()[1]);
+        savedPositions.push_back(cylinder->getFirstBead()->coordinate()[2]);
+            
+        }
+        
+        savedPositions.push_back(filament->getCylinderVector().back()->getSecondBead()->coordinate()[0]);
+        savedPositions.push_back(filament->getCylinderVector().back()->getSecondBead()->coordinate()[1]);
+        savedPositions.push_back(filament->getCylinderVector().back()->getSecondBead()->coordinate()[2]);
+        
+    }
+}
 
+void RockingSnapshot::resetPositions(){
+    
+    for(auto &filament : Filament::getFilaments()) {
+        
+        //print coordinates
+        for (auto cylinder : filament->getCylinderVector()){
+        
+            cylinder->getFirstBead()->coordinate()[0] = savedPositions.front();
+            
+            savedPositions.pop_front();
+            
+            cylinder->getFirstBead()->coordinate()[1] = savedPositions.front();
+            savedPositions.pop_front();
+            
+            cylinder->getFirstBead()->coordinate()[2] = savedPositions.front();
+            savedPositions.pop_front();
+        }
+        
+        filament->getCylinderVector().back()->getSecondBead()->coordinate()[0] = savedPositions.front();
+            savedPositions.pop_front();
+        filament->getCylinderVector().back()->getSecondBead()->coordinate()[1] = savedPositions.front();
+            savedPositions.pop_front();
+        filament->getCylinderVector().back()->getSecondBead()->coordinate()[2] = savedPositions.front();
+            savedPositions.pop_front();
+        
+    }
+    
+    
+}
 void RockingSnapshot::print(int snapshot) {
     
     _outputFile.precision(10);
@@ -1461,11 +1509,12 @@ void RockingSnapshot::print(int snapshot) {
     float omega = 3.14159;
     float delT = 2*3.14159 / numT;
     float A = 15;
+    Eigen::VectorXd keeperEigenVector = _ffm->evectors.col(k).real();;
     
-    for(auto t=0; t< numT; t++){
+    for(auto t = 0; t < numT ; t++){
         
         
-        float alpha = A * sin(omega * t*delT);
+        float alpha = A * sin(omega * t * delT);
     
         // print first line (snapshot number, time, number of filaments,
         // linkers, motors, branchers, bubbles)
@@ -1475,7 +1524,7 @@ void RockingSnapshot::print(int snapshot) {
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
         Bubble::numBubbles() << endl;
-        Eigen::VectorXd keeperEigenVector = _ffm->keeperEigenVector;
+        
         
         for(auto &filament : Filament::getFilaments()) {
             
@@ -1500,8 +1549,6 @@ void RockingSnapshot::print(int snapshot) {
                 
                 auto x = cylinder->getFirstBead()->coordinate();
                 
-  
-                //_outputFile<<x[0] + delx1 <<" "<<x[1] + delx2 <<" "<<x[2] + delx3 <<" ";
                 _outputFile<<x[0] <<" "<<x[1]  <<" "<<x[2]  <<" ";
 
                 
@@ -1523,15 +1570,6 @@ void RockingSnapshot::print(int snapshot) {
             //_outputFile<<x[0] + delx1 <<" "<<x[1] + delx2 <<" "<<x[2] + delx3 <<" ";
             _outputFile<<x[0] <<" "<<x[1]  <<" "<<x[2]  <<" ";
 
-            /*
-            auto x = filament->getCylinderVector().back()->getSecondBead()->vcoordinate();
-            int idx = filament->getCylinderVector().back()->getSecondBead()->getStableIndex();
-            floatingpoint delx1 = alpha*keeperEigenVector(3*idx);
-            floatingpoint delx2 = alpha*keeperEigenVector(3*idx+1);
-            floatingpoint delx3 = alpha*keeperEigenVector(3*idx+2);
-
-            _outputFile<<x[0] + delx1 <<" "<<x[1] + delx2 <<" "<<x[2] + delx3 <<" ";
-             */
             
             _outputFile << endl;
         }
@@ -1579,24 +1617,7 @@ void RockingSnapshot::print(int snapshot) {
             _outputFile << endl;
         }
         
-        //DEPRECATED AS OF 9/8/16
-        //    //collect diffusing motors
-        //    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
-        //
-        //        int ID   = get<0>(md);
-        //        int type = get<1>(md);
-        //
-        //        auto firstPoint = get<2>(md);
-        //        auto secondPoint = get<3>(md);
-        //
-        //        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
-        //
-        //        //print coordinates
-        //        _outputFile<<firstPoint[0]<<" "<<firstPoint[1]<<" "<<firstPoint[2] << " ";
-        //        _outputFile<<secondPoint[0]<<" "<<secondPoint[1]<<" "<<secondPoint[2];
-        //
-        //        _outputFile << endl;
-        //    }
+    
         
         for(auto &branch : BranchingPoint::getBranchingPoints()) {
             
