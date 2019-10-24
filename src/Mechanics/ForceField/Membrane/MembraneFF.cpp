@@ -70,6 +70,11 @@ MembraneFF::MembraneFF (const string& stretching, const string& stretchingAccu, 
         cout << "Membrane bending FF not recognized. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
+
+    // Always add the protective force field
+    _membraneInteractionVector.emplace_back(
+        new MembraneTriangleProtect< MembraneTriangleProtectFene >()
+    );
 }
 
 void MembraneFF::whoIsCulprit() {
