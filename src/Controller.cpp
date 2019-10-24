@@ -104,6 +104,25 @@ void pinMembraneBorderVertices() {
     pinned = true;
 } // pinMembraneBorderVertices()
 
+// F is a callable, which takes a coordinate and returns whether it is in the region
+template< typename F >
+void pinInitialFilamentWith(F&& inRegion) {
+    // Only pin once
+    static bool pinned = false;
+    if(pinned) return;
+
+    for(auto b : Bead::getBeads()) {
+        if(b->usage == Bead::BeadUsage::Filament) {
+            if(inRegion(b->coordinate())) {
+                b->pinnedPosition = b->vcoordinate();
+                b->addAsPinned();
+            }
+        }
+    }
+
+    pinned = true;
+}
+
 } // namespace
 
 Controller::Controller() :
@@ -984,6 +1003,10 @@ void Controller::executeSpecialProtocols() {
 
     if(SysParams::Mechanics().pinMembraneBorderVertices) {
         pinMembraneBorderVertices();
+    }
+
+    if(SysParams::Mechanics().pinInitialFilamentBelowZ) {
+        pinInitialFilamentWith([](auto&& c) { return c[2] < SysParams::Mechanics().pinInitialFilamentBelowZValue; });
     }
 }
 

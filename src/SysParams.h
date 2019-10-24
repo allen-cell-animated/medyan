@@ -113,6 +113,10 @@ struct MechParams {
 
     // pin membrane border vertices, using pinK
     bool pinMembraneBorderVertices = false;
+
+    // pin initial filament beads, using pinK
+    bool pinInitialFilamentBelowZ = false;
+    floatingpoint pinInitialFilamentBelowZValue = 0.0;
     //@}
 
     //vectorization
