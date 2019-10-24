@@ -109,6 +109,25 @@ void pinMembraneBorderVertices() {
     pinned = true;
 } // pinMembraneBorderVertices()
 
+// F is a callable, which takes a coordinate and returns whether it is in the region
+template< typename F >
+void pinInitialFilamentWith(F&& inRegion) {
+    // Only pin once
+    static bool pinned = false;
+    if(pinned) return;
+
+    for(auto b : Bead::getBeads()) {
+        if(b->usage == Bead::BeadUsage::Filament) {
+            if(inRegion(b->coordinate())) {
+                b->pinnedPosition = b->vcoordinate();
+                b->addAsPinned();
+            }
+        }
+    }
+
+    pinned = true;
+}
+
 } // namespace
 
 Controller::Controller() :
@@ -990,6 +1009,10 @@ void Controller::executeSpecialProtocols() {
     if(SysParams::Mechanics().pinMembraneBorderVertices) {
         pinMembraneBorderVertices();
     }
+
+    if(SysParams::Mechanics().pinInitialFilamentBelowZ) {
+        pinInitialFilamentWith([](auto&& c) { return c[2] < SysParams::Mechanics().pinInitialFilamentBelowZValue; });
+    }
 }
 
 void Controller::updatePositions() {
@@ -1558,6 +1581,14 @@ void Controller::run() {
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runout2(mine - mins);
                 outputtime += elapsed_runout2.count();
+
+                // Print thread pool stats
+                {
+                    const auto stats = _subSystem.tp->getUsageStats();
+                    LOG(INFO) << "Thread pool up time: " << stats.totalUpTime
+                        << "; work time: " << stats.totalWorkTime
+                        << "; usage rate: " << stats.timeUsageRate;
+                }
             }
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);

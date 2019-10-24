@@ -15,7 +15,7 @@
 #include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/MembraneHierarchy.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshAttribute.hpp"
-#include "Structure/SurfaceMesh/MMembrane.h"
+#include "Structure/SurfaceMesh/MMembrane.hpp"
 #include "Structure/SurfaceMesh/SurfaceMesh.hpp"
 
 /******************************************************************************

@@ -1207,6 +1207,19 @@ void SystemParser::readMechParams() {
                     MParams.pinK = std::stod(lineVector[2]);
                 }
             }
+            else if(lineVector[1] == "PIN_INITIAL_FILAMENT_BELOW_Z") {
+                if(lineVector.size() != 4) {
+                    LOG(ERROR) << "Error parameter specification for pinning filament beads below z";
+                    LOG(INFO) << "PIN_INITIAL_FILAMENT_BELOW_Z <pin-k> <z-max>";
+                    throw std::runtime_error("Error pinning initial filament beads");
+                }
+
+                else {
+                    MParams.pinInitialFilamentBelowZ      = true;
+                    MParams.pinK                          = std::stod(lineVector[2]);
+                    MParams.pinInitialFilamentBelowZValue = std::stod(lineVector[3]);
+                }
+            }
             else if (lineVector.size() == 5) {
 
                 //Qin

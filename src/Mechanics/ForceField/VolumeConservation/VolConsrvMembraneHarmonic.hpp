@@ -1,5 +1,5 @@
-#ifndef MEDYAN_Mechanics_ForceField_VolumeConservation_MembraneHarmonic_Hpp
-#define MEDYAN_Mechanics_ForceField_VolumeConservation_MembraneHarmonic_Hpp
+#ifndef MEDYAN_Mechanics_ForceField_VolumeConservation_VolConsrvMembraneHarmonic_hpp
+#define MEDYAN_Mechanics_ForceField_VolumeConservation_VolConsrvMembraneHarmonic_hpp
 
 #include "MathFunctions.h"
 

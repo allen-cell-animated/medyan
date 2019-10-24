@@ -38,7 +38,7 @@ using namespace mathfunc;
 #    include "MembraneStretching.hpp"
 #    include "MembraneStretchingImpl.hpp"
 #    include "Bending.hpp"
-#    include "BendingHelfrich.hpp"
+#    include "MembraneBendingHelfrich.hpp"
 
 namespace {
     using VertexData = tuple<array<double, 3>, vector<size_t>>;

@@ -1,3 +1,14 @@
+# 4.1 (Released 2019)
+
+## Breaking changes
+
+## New features
+- Added a thread pool implementation, which may facilitate multi-threading computations.
+
+## Refactoring and optimizations
+
+## Bug fixes
+
 # 4.0 (Released 2019-07-05)
 
 ## New features

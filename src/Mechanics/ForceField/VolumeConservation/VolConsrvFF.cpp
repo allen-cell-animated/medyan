@@ -14,7 +14,7 @@
 #include "Mechanics/ForceField/VolumeConservation/VolumeConservationFF.h"
 
 #include "Mechanics/ForceField/VolumeConservation/VolConsrvMembrane.hpp"
-#include "Mechanics/ForceField/VolumeConservation/MembraneHarmonic.hpp"
+#include "Mechanics/ForceField/VolumeConservation/VolConsrvMembraneHarmonic.hpp"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
 

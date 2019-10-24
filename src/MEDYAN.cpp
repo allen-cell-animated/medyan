@@ -69,7 +69,7 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 
 #include "common.h"
 
-#include "Analysis/Io/read_snapshot.h"
+#include "Analysis/Io/ReadSnapshot.hpp"
 #include "Controller.h"
 #include "Core/Globals.hpp"
 #include "MedyanArgs.hpp"
@@ -120,8 +120,7 @@ int main(int argc, char **argv) {
         {
             string inputFilePath = cmdRes.inputDirectory + "/snapshot.traj";
             string pdbFilePath = cmdRes.outputDirectory + "/snapshot.pdb";
-            string psfFilePath = cmdRes.outputDirectory + "/snapshot.psf";
-            analysis::SnapshotReader sr(inputFilePath, pdbFilePath, psfFilePath);
+            analysis::SnapshotReader sr(inputFilePath, pdbFilePath, cmdRes.outputDirectory, "snapshot");
             sr.readAndConvertToVmd();
         }
         break;

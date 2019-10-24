@@ -2,12 +2,14 @@
 #define MEDYAN_Util_ThreadPool_hpp
 
 #include <atomic>
+#include <chrono>
 #include <condition_variable>
 #include <cstddef> // size_t
 #include <functional>
 #include <future>
 #include <memory> // unique_ptr
 #include <mutex>
+#include <ostream>
 #include <queue>
 #include <thread>
 #include <type_traits>
@@ -34,6 +36,10 @@
 //   [ ] priority queues
 //   [ ] thread idle/contention stats and recommendations
 //   [ ] automatic load balancing
+//
+// Notes:
+//   - The thread vector is not thread-safe, so no interface is provided for
+//     managing the number of threads.
 
 class ThreadPool {
 private:
@@ -72,11 +78,84 @@ private:
         std::unique_ptr< Base_ > f_;
     };
 
-    template< typename IntegralType >
-    struct ScopeCounter_ {
-        std::atomic< IntegralType >& c;
-        ScopeCounter_(std::atomic< IntegralType >& c) : c(c) { ++c; }
-        ~ScopeCounter_() { --c; }
+    // Wrapper of std::thread to allow for storing meta data of the working thread
+    class WorkingThread_ {
+    private:
+
+        using TimePoint_ = std::chrono::time_point<std::chrono::steady_clock>;
+
+        template< typename IntegralType >
+        struct ScopeCounter_ {
+            std::atomic< IntegralType >& c;
+            ScopeCounter_(std::atomic< IntegralType >& c) : c(c) { ++c; }
+            ~ScopeCounter_() { --c; }
+        };
+
+        struct ScopeTimer_ {
+            double& t;
+            TimePoint_ start;
+            ScopeTimer_(double& t) : t(t), start(std::chrono::steady_clock::now()) {}
+            ~ScopeTimer_() {
+                using namespace std::chrono;
+                t += duration_cast<duration<double>>(steady_clock::now() - start).count();
+            }
+        };
+
+    public:
+        WorkingThread_(ThreadPool* whichPool) :
+            t_(&WorkingThread_::work_, this, whichPool),
+            timeInit_(std::chrono::steady_clock::now())
+        {}
+        WorkingThread_(WorkingThread_&&) = default;
+
+        ~WorkingThread_() { t_.join(); }
+
+        // Accessors (could be non-thread-safe)
+        auto getTimeInit() const { return timeInit_; }
+        auto getDurWork() const { return durWork_; }
+
+    private:
+
+        // Working thread
+        // Note:
+        //   - The thread pool must ensure that it outlives all the working threads.
+        void work_(ThreadPool* p) {
+            while(true) {
+                FuncWrapper_ f;
+                bool queuePopped = false;
+
+                {
+                    std::unique_lock< std::mutex > lk(p->meQueue_);
+                    p->cvWork_.wait(
+                        lk,
+                        [&] {
+                            queuePopped = p->tryPop_(f);
+                            return queuePopped || p->done_;
+                        }
+                    );
+                }
+
+                if(p->done_) return;
+                if(queuePopped) {
+                    ScopeCounter_<int> sc(p->numWorkingThreads_);
+                    ScopeTimer_        st(durWork_);
+                    f();
+                }
+
+            }
+        }
+
+        std::thread t_;
+
+        // Time measurements
+        TimePoint_ timeInit_; // should not be changed after initialization, to make it thread-safe
+        double durWork_ = 0.0; // Total duration for working, in seconds
+    };
+
+    struct UsageStats_ {
+        double totalUpTime = 0.0;
+        double totalWorkTime = 0.0;
+        double timeUsageRate = 0.0;
     };
 
 public:
@@ -86,7 +165,7 @@ public:
         // Create working threads
         threads_.reserve(numThreads);
         for(int i = 0; i < numThreads; ++i) {
-            threads_.emplace_back(&ThreadPool::work_, this);
+            threads_.emplace_back(this);
         }
     }
 
@@ -94,7 +173,6 @@ public:
     ~ThreadPool() {
         done_ = true;
         cvWork_.notify_all();
-        for(auto& t : threads_) t.join();
     }
 
     // Submit a new task
@@ -134,33 +212,27 @@ public:
         return queue_.size();
     }
 
-private:
+    auto getUsageStats() {
+        using namespace std::chrono;
 
-    // Working thread
-    void work_() {
-        while(true) {
-            FuncWrapper_ f;
-            bool queuePopped = false;
+        UsageStats_ res;
 
-            {
-                std::unique_lock< std::mutex > lk(meQueue_);
-                cvWork_.wait(
-                    lk,
-                    [&, this] {
-                        queuePopped = tryPop_(f);
-                        return queuePopped || done_;
-                    }
-                );
+        const auto curTime = steady_clock::now();
+        {
+            std::lock_guard< std::mutex > guard(meThreads_);
+            for(const auto& t : threads_) {
+                res.totalUpTime += duration_cast<duration<double>>(curTime - t.getTimeInit()).count();
+                res.totalWorkTime += t.getDurWork();
             }
-
-            if(done_) return;
-            if(queuePopped) {
-                ScopeCounter_<int> c(numWorkingThreads_);
-                f();
-            }
-
         }
+        if(res.totalUpTime) {
+            res.timeUsageRate = res.totalWorkTime / res.totalUpTime;
+        }
+
+        return res;
     }
+
+private:
 
     // Utility function for popping the queue:
     // If the queue is empty, then return false
@@ -175,13 +247,18 @@ private:
         return true;
     }
 
+    // Member variables
+    //---------------------------------
+    // Note: The ordering of the following elements is important
+
     std::atomic_bool done_ {false};
 
     std::condition_variable cvWork_;
     std::mutex              meQueue_;
+    std::mutex              meThreads_;
 
-    std::queue< FuncWrapper_ > queue_; // not thread-safe
-    std::vector< std::thread > threads_; // not thread-safe
+    std::queue< FuncWrapper_ >    queue_; // not thread-safe
+    std::vector< WorkingThread_ > threads_; // not thread-safe
 
     // Stats
     std::atomic_int numWorkingThreads_ {0};

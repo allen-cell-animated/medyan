@@ -4,7 +4,7 @@
 #include "Structure/SurfaceMesh/Vertex.hpp"
 #include "Structure/SurfaceMesh/MVoronoiCell.h"
 
-#include "Mechanics/ForceField/Membrane/BendingHelfrich.hpp"
+#include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
 
 // Using the Helfrich Hamiltonian of mean curvature in Voronoi cells
 template< typename InteractionType >

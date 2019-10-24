@@ -50,7 +50,16 @@ inline auto medyanInitFromCommandLine(int argc, char** argv) {
 
         Command* cmdAnalyze = cmdMain.addCommand("analyze", "Analyze simulation output",
             [] { medyan::globalMutable().mode = medyan::GlobalVar::RunMode::Analysis; });
-        cmdAnalyze->addOptionWithVar(0, "bond-frame", "frame", "Frame of membrane topology information", false, medyan::globalMutable().analyzeMembraneBondFrame);
+        cmdAnalyze->addOption(0, "bond-frame", "frame", "Frame of membrane topology information", false,
+            [&](const std::string& arg) {
+                if(arg == "all") {
+                    medyan::globalMutable().analyzeMembraneBondAllFrames = true;
+                } else {
+                    VariableWrite< size_t >{"bond-frame"}(medyan::globalMutable().analyzeMembraneBondFrame, arg);
+                }
+            }
+        );
+        cmdAnalyze->addOptionWithVar(0, "frame-interval", "int", "Interval of frames", false, medyan::globalMutable().analyzeFrameInterval);
         cmdAnalyze->addHelp();
 
         try {

@@ -2,14 +2,14 @@
 #define MEDYAN_Structure_SurfaceMesh_Triangle_Hpp
 
 #include "common.h"
-#include "Database.h"
-#include "Trackable.h"
-#include "Movable.h"
-//#include "Reactable.h"
-#include "DynamicNeighbor.h"
 #include "MathFunctions.h"
+//#include "Reactable.h"
 #include "Structure/CellList.hpp"
+#include "Structure/Database.h"
+#include "Structure/DynamicNeighbor.h"
+#include "Structure/Movable.h"
 #include "Structure/SurfaceMesh/MTriangle.hpp"
+#include "Structure/Trackable.h"
 
 // Forward declarations
 class Compartment;
