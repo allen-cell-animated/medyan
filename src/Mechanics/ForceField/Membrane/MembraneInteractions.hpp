@@ -18,6 +18,8 @@ protected:
 public:
     virtual ~MembraneInteractions() = default;
 
+    virtual void vectorize() {}
+
     /// Compute the energy of this interaction
     virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) = 0; // d is the stretching parameter along the force
     /// Compute forces of this interaction

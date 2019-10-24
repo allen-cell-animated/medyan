@@ -17,6 +17,9 @@
 #include "common.h"
 
 #include "Mechanics/ForceField/ForceField.h"
+#include "Mechanics/ForceField/Membrane/MembraneBending.hpp"
+#include "Mechanics/ForceField/Membrane/MembraneStretching.hpp"
+#include "Mechanics/ForceField/Membrane/MembraneTriangleProtect.hpp"
 
 //FORWARD DECLARATIONS
 class MembraneInteractions;
@@ -34,7 +37,11 @@ public:
     /// Constructor, intializes stretching and bending forces
     MembraneFF(const string& stretching, const string& stretchingAccu, const string& bending);
 
-    virtual void vectorize() override {}
+    virtual void vectorize() override {
+        for(const auto& mi : _membraneInteractionVector) {
+            mi->vectorize();
+        }
+    }
     virtual void cleanup() override {}
 
     virtual string getName() {return "Membrane";}
