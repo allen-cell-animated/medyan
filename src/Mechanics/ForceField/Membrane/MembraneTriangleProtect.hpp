@@ -27,7 +27,7 @@ struct MembraneTriangleProtectFene {
         if(area >= minArea) return;
 
         const auto relDiff = area / minArea - 1;
-        const auto deda = -k * relDiff / ((1 - relDiff * relDiff) * minArea);
+        const auto deda = k * relDiff / ((1 - relDiff * relDiff) * minArea);
 
         for(int i = 0; i < forces.size(); ++i) forces[i] -= deda * (*dArea[i]);
     }
@@ -64,9 +64,9 @@ private:
 public:
     // Parameters
     //---------------------------------
-    const double k           = 1.0;
-    const double minRelArea  = 0.1;
-    const double warnRelArea = 0.05;
+    const double k           = 1000.0;
+    const double minRelArea  = 0.35;
+    const double warnRelArea = 0.35;
 
     virtual void vectorize() override {
         beadIndices_.clear();

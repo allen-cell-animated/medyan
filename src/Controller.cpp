@@ -1298,6 +1298,9 @@ void Controller::run() {
     // update neighorLists before and after minimization. Need excluded volume
     // interactions.
 	_subSystem.resetNeighborLists();
+
+    // Initial special protocols need to be executed before energy minimization
+    executeSpecialProtocols();
     auto minimizationResult = _mController.run(false);
     membraneAdaptiveRemesh();
     mine= chrono::high_resolution_clock::now();
