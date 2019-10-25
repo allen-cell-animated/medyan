@@ -1304,6 +1304,9 @@ void Controller::run() {
     // interactions.
 	_subSystem.resetNeighborLists();
     displayCopySystem();
+
+    // Initial special protocols need to be executed before energy minimization
+    executeSpecialProtocols();
     auto minimizationResult = _mController.run(false);
     membraneAdaptiveRemesh();
     displayCopySystem();

@@ -73,7 +73,7 @@ MembraneFF::MembraneFF (const string& stretching, const string& stretchingAccu, 
 
     // Always add the protective force field
     _membraneInteractionVector.emplace_back(
-        new MembraneTriangleProtect< MembraneTriangleProtectFene >()
+        new MembraneTriangleProtect< MembraneTriangleProtectFene, true >()
     );
 }
 
