@@ -273,7 +273,7 @@ protected:
     void copybackupcoordinates(){
 
     	if(Bead::getDbData().coords_minE.size()) {
-		    cout<<"Copying coorinates with the lowest energy during minimization "<<endl;
+		    cout<<"Copying coordinates with the lowest energy during minimization "<<endl;
 		    cout<<"Energy = "<<minimumE<<" pN.nm"<<endl;
 		    cout<<"MaxForce = "<<maxForcebackup<<" pN "<<endl;
 		    const std::size_t num = Bead::getDbData().coords.size_raw();
