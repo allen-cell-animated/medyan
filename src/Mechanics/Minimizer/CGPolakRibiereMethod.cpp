@@ -119,7 +119,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     // (as opposed to finding lambda)
     bool Ms_isminimizationstate, Ms_issafestate;
     int numIter = 0;
-    floatingpoint lambda;
+    floatingpoint lambda = 0.0;
 #ifdef CUDAACCL
     volatile bool *Mc_isminimizationstate;
     volatile bool *Mc_issafestate;
@@ -651,8 +651,9 @@ std::cout<<"----------------------------------------"<<endl;
 	                           		LAMBDARUNNINGAVERAGEPROBABILITY, dummy, M_ETolstate);
         }
         else {
-	        lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX, dummy, M_ETolstate)
-	                           : quadraticLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
+	        lambda = _safeMode ? safeBacktrackingLineSearchV2(FFM, MAXDIST, maxForce,
+	        		LAMBDAMAX, dummy, M_ETolstate)
+	                           : quadraticLineSearchV2(FFM, MAXDIST, maxForce, LAMBDAMAX,
 	                                                 LAMBDARUNNINGAVERAGEPROBABILITY, dummy, M_ETolstate);
         }
 
@@ -684,7 +685,7 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
         //@@@{ STEP7 OTHER
 		if(Ms_isminimizationstate) {
-#ifdef TRACKDIDNOTMINIMIZE
+#if defined(TRACKDIDNOTMINIMIZE)||defined(EVSALPHA)
 			//Backup coordinate
 			const std::size_t num = Bead::getDbData().coords.size_raw();
 			Bead::getDbData().coords_bckup.resize(num);
@@ -694,6 +695,8 @@ std::cout<<"----------------------------------------"<<endl;
 				Bead::getDbData().coords_bckup.value[i] = Bead::getDbData().coords.value[i];
 				Bead::getDbData().forces_bckup.value[i] = Bead::getDbData().forces.value[i];
 			}
+			/*calculateEvsalpha(FFM, lambda, LAMBDAMAX, allFDotFA());
+			cout<<endl;*/
 
 #endif
 			tbegin = chrono::high_resolution_clock::now();
@@ -713,15 +716,12 @@ std::cout<<"----------------------------------------"<<endl;
         s1 += elapsed_runs1.count();
 #endif
         ///@@@{ STEP 8 compute new forces
-        //QUADRATIC line search calculates forceAux internally.
-        if(copysafeMode || _LINESEARCHALGORITHM == "BACKTRACKING") {
 	        tbegin = chrono::high_resolution_clock::now();
 	        FFM.computeForces(Bead::getDbData().coords.data(),
 	                          Bead::getDbData().forcesAux.data());//split and synchronize
 	        tend = chrono::high_resolution_clock::now();
 	        chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
 	        CUDAcommon::tmin.computeforces += elapsed_force.count();
-        }
 
 	    maxForce = maxF();
 
@@ -864,13 +864,14 @@ std::cout<<"----------------------------------------"<<endl;
             shiftGradient(0.0);
             _safeMode = true;
 	        safestatuscount++;
-#ifdef TRACKDIDNOTMINIMIZE
+#if defined(TRACKDIDNOTMINIMIZE)||defined(EVSALPHA)
 
             cout<<"newGrad "<<newGrad<<" prevGrad "<<prevGrad<<" curGrad "<<curGrad<<endl;
             cout<<"beta "<<beta<<" prevbeta "<<prevbeta<<endl;
             cout<<"FDotFA<0 "<<(CGMethod::allFDotFA() <= 0)<<" curGrad==newGrad "<<
             areEqual(curGrad, newGrad)<<" abs(prevGrad/newGrad)<0.1 "<<(abs(prevGrad/newGrad)<0.1)<<endl;
-	        calculateEvsalpha(FFM, lambda);
+	        calculateEvsalpha(FFM, lambda, LAMBDAMAX, allFDotFA());
+	        cout<<endl;
 #endif
 #ifdef DETAILEDOUTPUT_LAMBDA
             std::cout<<"SERL FDOTFA "<<CGMethod::allFDotFA()<<" curGrad "<<curGrad<<" "
@@ -1005,13 +1006,6 @@ std::cout<<"----------------------------------------"<<endl;
 	SysParams::Mininimization().gradientvec.clear();
 	FFM.computeEnergy(Bead::getDbData().coords.data(), false);
 
-	if(SysParams::Mininimization().branchanglevec.size()) {
-		cout << "Branch-angles ";
-		for (auto angle:SysParams::Mininimization().branchanglevec)
-			cout << angle << " ";
-		cout << endl;
-	}
-	SysParams::Mininimization().branchanglevec.clear();
 	#endif
 
 #if defined(CROSSCHECK) || defined(CUDAACCL)
@@ -1158,22 +1152,44 @@ std::cout<<"----------------------------------------"<<endl;
     return result;
 }
 
-void PolakRibiere::calculateEvsalpha(ForceFieldManager &FFM, floatingpoint lambda){
+void PolakRibiere::calculateEvsalpha(ForceFieldManager &FFM, floatingpoint lambda,
+		floatingpoint LAMBDAMAX, floatingpoint FDotFA){
 	cout<<"Printing Evslambda information "<<endl;
 	cout<<"chosen lambda "<<lambda<<" prev lambda "<<prevlambda<<endl;
 //	for(floatingpoint alpha=0.0;alpha<0.1;alpha=alpha+1e-4    ){
 //		cout<<alpha<<" ";
 //	}
 //	cout<<endl;
-	for(floatingpoint alpha=0.0;alpha<8e-4;alpha=alpha+1e-4){
+	floatingpoint energyzerolambda = FFM.computeEnergy(Bead::getDbData().coords_bckup.data());
+	cout<<"Energy zero lambda "<<energyzerolambda<<" "<<endl;
+	cout<<"Lambda = [";
+	for(floatingpoint alpha=LAMBDAMAX;alpha>=1e-4;alpha=alpha*LAMBDAREDUCE){
+		cout<<alpha<<" ";
+	}
+	cout<<"];"<<endl;
+	int count = 0;
+	bool exityes = false;
+	cout<<"Energy = [";
+	for(floatingpoint alpha=LAMBDAMAX;alpha>=1e-4;alpha=alpha*LAMBDAREDUCE){
 		//moveBeads
 		const std::size_t num = Bead::getDbData().coords_bckup.size_raw();
+		Bead::getDbData().coordsStr.resize(num);
 		for(size_t i = 0; i < num; ++i)
 			Bead::getDbData().coordsStr.value[i] = Bead::getDbData().coords_bckup
 					.value[i] + alpha * Bead::getDbData().forces_bckup.value[i];
 		floatingpoint energy = FFM.computeEnergy(Bead::getDbData().coordsStr.data());
-		cout<<alpha<<" "<<energy<<" ";
+		cout<<energy<<" ";
+		if(count > 10)
+			exityes = true;
+		count++;
 	}
-	cout<<endl;
+	cout<<"];"<<endl;
+	cout<<"Armijo = [";
+	for(floatingpoint alpha=LAMBDAMAX;alpha>=1e-4;alpha=alpha*LAMBDAREDUCE){
+		cout<<energyzerolambda-BACKTRACKSLOPE * alpha * FDotFA<<" ";
+	}
+	cout<<"];"<<endl;
+	if(exityes)
+		exit(EXIT_SUCCESS);
 //	exit(EXIT_FAILURE);
 }

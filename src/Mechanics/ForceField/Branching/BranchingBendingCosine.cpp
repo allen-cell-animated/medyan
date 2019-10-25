@@ -231,12 +231,6 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, int *beadSet,
             floatingpoint cosAminusB = cosA*cos(eqt[i]) + sinA*sin(eqt[i]);
             U_i = kbend[i] *(1-cosAminusB);
 
-            #ifdef TRACKDIDNOTMINIMIZE
-            floatingpoint pi = 3.14159265358979323846264338327950288419716939937510582097494459230781640628620899;
-	        if(SysParams::Mininimization().branchangledepositstatus){
-                SysParams::Mininimization().branchanglevec.push_back(acos(cosA)*180/pi);
-            }
-            #endif
         }
 
         /*phi = safeacos(l1l2 / L1L2);

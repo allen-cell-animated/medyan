@@ -130,15 +130,6 @@ void BranchingFF::whoIsCulprit() {
 
 floatingpoint BranchingFF::computeEnergy(floatingpoint *coord, bool stretched) {
 
-    #ifdef TRACKDIDNOTMINIMIZE
-    if(!stretched) {
-        SysParams::Mininimization().branchanglevec.clear();
-        SysParams::Mininimization().branchangledepositstatus = true;
-    }
-    else
-        SysParams::Mininimization().branchangledepositstatus = false;
-    #endif
-
     floatingpoint U = 0.0;
     floatingpoint U_i=0.0;
 

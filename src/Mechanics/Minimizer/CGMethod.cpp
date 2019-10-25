@@ -1462,6 +1462,143 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(
 
 }
 
+floatingpoint CGMethod::safeBacktrackingLineSearchV2(ForceFieldManager& FFM, floatingpoint MAXDIST,
+                                              floatingpoint maxForce, floatingpoint LAMBDAMAX,
+                                              bool *gpu_safestate, bool *M_ETolstate) {
+
+	//reset safe mode
+	_safeMode = false;
+	//@{ Lambda phase 1
+	floatingpoint lambda;
+	sconvergencecheck = true;
+#ifdef SERIAL //SERIAL
+	sconvergencecheck = false;
+#endif
+#ifdef SERIAL
+	//return zero if no forces
+	if(maxForce == 0.0) {
+		lambda = 0.0;
+#ifdef DETAILEDOUTPUT_LAMBDA
+		std::cout<<"initial_lambda_serial "<<lambda<<endl;
+#endif
+		return lambda;
+	}
+	lambda = min(LAMBDAMAX, MAXDIST / maxForce);
+
+	//@} Lambda phase 1
+#ifdef DETAILEDOUTPUT_LAMBDA
+	std::cout<<"SL lambdamax "<<LAMBDAMAX<<" serial_lambda "<<lambda<<" fmax "<<maxForce<<" state "<<sconvergencecheck<<endl;
+#endif
+#endif
+	tbegin = chrono::high_resolution_clock::now();
+	floatingpoint currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data());
+	CUDAcommon::tmin.computeenerycallszero++;
+	tend = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
+	CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
+	CUDAcommon::tmin.computeenergyzero+= elapsed_energy.count();
+
+	#ifdef TRACKDIDNOTMINIMIZE
+	SysParams::Mininimization().TotalE.push_back(currentEnergy);
+	#endif
+
+	if(ForceFieldManager::_culpritForceField != nullptr){
+		endMinimization();
+		FFM.printculprit(Bead::getDbData().forces.data());
+	}
+#ifdef DETAILEDOUTPUT_ENERGY
+	CUDAcommon::handleerror(cudaDeviceSynchronize());
+    floatingpoint cuda_energy[1];
+    CUDAcommon::handleerror(cudaMemcpy(cuda_energy, CUDAcommon::cudavars.gpu_energy,  sizeof(floatingpoint),
+                                       cudaMemcpyDeviceToHost));
+    std::cout<<"Total Energy CE pN.nm CUDA "<<cuda_energy[0]<<" SERL "<<currentEnergy<<endl;
+    std::cout<<endl;
+#endif
+	floatingpoint energyChange = (floatingpoint)0.0;
+	floatingpoint energyLambda = (floatingpoint)0.0;
+	floatingpoint prevEnergy = (floatingpoint) 0.0;
+	floatingpoint prevLambda = (floatingpoint) 0.0;
+
+	floatingpoint firstLambda = (floatingpoint) 0.0;
+	floatingpoint firstEnergy = (floatingpoint) 0.0;
+	int iter = 0;
+	while(!(sconvergencecheck)) {
+		iter++;
+		tbegin = chrono::high_resolution_clock::now();
+		stretchBeads(lambda);
+		energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
+		CUDAcommon::tmin.computeenerycallsnonzero++;
+		tend = chrono::high_resolution_clock::now();
+		chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
+		CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
+		CUDAcommon::tmin.computeenergynonzero+= elapsed_energy.count();
+
+		if(iter==1) {
+			firstEnergy = energyLambda;
+			firstLambda = lambda;
+		}
+
+#ifdef DETAILEDOUTPUT_ENERGY
+		CUDAcommon::handleerror(cudaDeviceSynchronize());
+        floatingpoint cuda_energy[1];
+        CUDAcommon::handleerror(cudaMemcpy(cuda_energy, CUDAcommon::cudavars.gpu_energy,  sizeof(floatingpoint),
+                                           cudaMemcpyDeviceToHost));
+        std::cout<<"Total Energy EL pN.nm CUDA "<<cuda_energy[0]<<" SERL "
+                ""<<energyLambda<<endl;
+        std::cout<<endl;
+#endif
+
+#ifdef SERIAL
+		//@{ Lambda phase 2
+		if(!(sconvergencecheck)){
+			floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA();
+			if(idealEnergyChange>0)
+				exit(EXIT_FAILURE);
+			energyChange = energyLambda - currentEnergy;
+#ifdef DETAILEDOUTPUT_LAMBDA
+			std::cout<<"BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA"
+                    " "<<allFDotFA()<<endl;
+            std::cout<<"SL energyChange "<<energyChange<<" idealEnergyChange "
+                    ""<<idealEnergyChange<<endl;
+#endif
+			//return if ok
+			//Armijo conditon
+			if(energyChange <= idealEnergyChange) {
+				sconvergencecheck = true;}
+			else {
+				prevLambda = lambda;
+				prevEnergy = energyLambda;
+				//reduce lambda
+				lambda *= LAMBDAREDUCE;
+			}
+
+			if(lambda <= 0.0 || lambda <= LAMBDATOL) {
+				sconvergencecheck = true;
+			}
+#ifdef DETAILEDOUTPUT_LAMBDA
+			std::cout<<"SL2 BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA "
+                                                                                <<allFDotFA()<<endl;
+            std::cout<<"SL2 energyChange "<<energyChange<<" idealEnergyChange "
+                    ""<<idealEnergyChange
+                     <<" lambda "<<lambda<<" state "<<sconvergencecheck<<endl;
+#endif
+		}
+#endif
+	}
+
+	//Safemode checks
+	if(lambda <= 0.0 || lambda <= LAMBDATOL){
+		if(prevEnergy < currentEnergy)
+			lambda =  prevLambda;
+		else if(firstEnergy > 0 && firstEnergy < currentEnergy)
+			lambda = firstLambda;
+		else
+			lambda = MAXDIST / maxForce;
+
+	}
+	return lambda;
+}
+
 floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
                                                floatingpoint maxForce, floatingpoint LAMBDAMAX,
                                                floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
@@ -1607,3 +1744,238 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 	return lambda;
 
 }
+
+floatingpoint CGMethod::quadraticLineSearchV2(ForceFieldManager& FFM, floatingpoint MAXDIST,
+                                            floatingpoint maxForce, floatingpoint LAMBDAMAX,
+                                            floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                                            bool *gpu_safestate, bool *M_ETolstate) {
+
+	#ifdef SERIAL
+	//@{ Lambda phase 1
+	floatingpoint lambda;
+	sconvergencecheck = false;
+	//return zero if no forces
+	if(maxForce == 0.0) {
+		lambda = 0.0;
+		return lambda;
+	}
+
+	//calculate first lambda
+	lambda = min(LAMBDAMAX, MAXDIST / maxForce);
+
+	//@} Lambda phase 1
+	tbegin = chrono::high_resolution_clock::now();
+	floatingpoint currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data());
+	CUDAcommon::tmin.computeenerycallszero++;
+	tend = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
+	CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
+	CUDAcommon::tmin.computeenergyzero+= elapsed_energy.count();
+
+	#ifdef TRACKDIDNOTMINIMIZE
+	SysParams::Mininimization().TotalE.push_back(currentEnergy);
+	#endif
+
+	if(ForceFieldManager::_culpritForceField != nullptr){
+		endMinimization();
+		FFM.printculprit(Bead::getDbData().forces.data());
+	}
+	floatingpoint energyChange = (floatingpoint)0.0;
+	floatingpoint energyLambda = (floatingpoint)0.0;
+	floatingpoint prevEnergy = (floatingpoint) 0.0;
+	floatingpoint prevLambda = (floatingpoint) 0.0;
+	vector<floatingpoint> lambdavec;
+	vector<floatingpoint> energyvec;
+
+	int iter = 0;
+	while(!(sconvergencecheck)) {
+
+		iter++;
+
+		tbegin = chrono::high_resolution_clock::now();
+		stretchBeads(lambda);
+		energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
+		CUDAcommon::tmin.computeenerycallsnonzero++;
+		tend = chrono::high_resolution_clock::now();
+		chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
+		CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
+		CUDAcommon::tmin.computeenergynonzero+= elapsed_energy.count();
+
+		//@{ Lambda phase 2
+		if(!(sconvergencecheck)){
+			floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA();
+
+			if(idealEnergyChange>0) {
+				cout<<"Ideal Energy Change is positive. Exiting."<<endl;
+				exit(EXIT_FAILURE);
+			}
+
+			energyChange = energyLambda - currentEnergy;
+
+			//return if ok
+			//Armijo conditon
+			if(energyChange <= idealEnergyChange)
+				sconvergencecheck = true;
+			else {
+				prevLambda = lambda;
+				prevEnergy = energyLambda;
+				//reduce lambda
+				lambda *= LAMBDAREDUCE;
+			}
+
+			if(lambda <= 0.0 || lambda <= LAMBDATOL) {
+				sconvergencecheck = true;
+				lambda = 0.0;
+				lambdavec.push_back(lambda);
+				energyvec.push_back(currentEnergy);
+			}
+			else if(sconvergencecheck){
+				lambdavec.push_back(lambda);
+				energyvec.push_back(energyLambda);
+			}
+			else{
+				lambdavec.push_back(prevLambda);
+				energyvec.push_back(prevEnergy);
+			}
+		}
+	}
+
+	// Try quadratic optimization
+
+	if(lambda > 0.0 && iter > 1 && energyLambda < currentEnergy){
+		bool quadstatus = false;
+		int i = 0;
+		for(i=lambdavec.size()-1; i >=1; i--){
+			if(energyLambda < energyvec[i]){
+				quadstatus = true;
+			}
+		}
+		if(quadstatus) {
+			vector<floatingpoint> quadlambdavec;
+			vector<floatingpoint> quadenergyvec;
+			quadlambdavec.push_back(floatingpoint(0.0));
+			quadlambdavec.push_back(lambda);
+			quadlambdavec.push_back(lambdavec[i]);
+			quadenergyvec.push_back(currentEnergy);
+			quadenergyvec.push_back(energyLambda);
+			quadenergyvec.push_back(energyvec[i]);
+			floatingpoint lambdaquad = quadraticoptimization(FFM,
+			                                                 quadlambdavec, quadenergyvec);
+//			cout <<"Quad "<< lambda << " " << lambdaquad << endl;
+			if(lambdaquad <= 0.0 || lambdaquad <= LAMBDATOL)
+				lambda = 0.0;
+			else
+				lambda = lambdaquad;
+		}
+	}
+
+
+	//Set ETolstate to true if the energy change at a nonzero lambda is < ETOTALTOL
+	if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0) {
+		M_ETolstate[0] = true;
+	}
+	if(lambda > 0)
+		TotalEnergy = energyLambda;
+	else
+		TotalEnergy = currentEnergy;
+	return lambda;
+	#endif
+}
+
+floatingpoint CGMethod::quadraticoptimization(ForceFieldManager& FFM, const vector<floatingpoint>&
+                            lambdavec, const vector<floatingpoint>& energyvec){
+
+	floatingpoint x0, x1, x2, y0, y1, y2;
+	x0 = lambdavec[0];
+	x1 = lambdavec[1];
+	x2 = lambdavec[2];
+	y0 = energyvec[0];
+	y1 = energyvec[1];
+	y2 = energyvec[2];
+	double btlambda = lambdavec[1];
+	double lambdaquad = lambdavec[1];
+	double energyQuad = 0.0;
+	//Mq(l) = a*l*l + b*l +c;
+	//Refer quadratic optimization doc.
+	int iter = 0;
+//	cout<<"btlambda "<<btlambda<<endl;
+	while(true) {
+/*		cout<<"Trial t"<<iter<<"Lambda = ["<<x0<<" "<<x1<<" "<<x2<<"];t"<<iter<<"Energies = ["<<
+		y0<<" "<<y1<<" "<<y2<<"];"<<endl;*/
+		iter++;
+		double d = (x0-x1)*(x0-x2)*(x1-x2);
+		double a = y0 * (x1 - x2) - y1 * (x0 - x2) + y2 * (x0 - x1);
+		double b = -(y0 * (x1 + x2) * (x1 - x2) - y1 * (x0 + x2) * (x0 - x2) +
+		             y2 * (x0 + x1) * (x0 - x1));
+/*		double c = y0 * x1 * x2 * (x1 - x2) - y1 * x0 * x2 * (x0 - x2) +
+		           y2 * x0 * x1 * (x0 - x1);
+
+		cout<<"Mq"<<iter-1<<" = "<<a/d<<"*x.*x + "<<b/d<<"*x + "<<c/d<<";"<<endl;
+		cout<<"-b/2a = "<<-b/(2*a)<<";"<<endl;*/
+
+		lambdaquad = -b/(2*a);
+//		cout<<"["<<abs(lambdaquad-x1)/x1<<" "<<LAMBDAQUADTOL<<"];"<<endl;
+
+
+		//Check if lambda has converged
+		if (abs(lambdaquad-x1)/x1 < LAMBDAQUADTOL) {
+			return lambdaquad;
+		}
+		else if(a/d < 0){
+			cout<<"WARNING! Quadratic model does not have a minima. Returning "
+		 "BACKTRACKING Lambda "<<endl;
+			return btlambda;
+		}
+		//else compute Energy at lambdaquad
+		else {
+			stretchBeads(lambdaquad);
+			energyQuad = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
+//			cout<<"["<<abs(energyQuad-y1)/y1<<" "<<LAMBDAQUADTOL<<"];"<<endl;
+			if(abs(energyQuad-y1)/y1 < LAMBDAQUADTOL){
+				return lambdaquad;
+			}
+
+			//Determine points to use in next iteration.
+			//determine if lambdaquad is to the left or right of x1
+			if(lambdaquad<x1){
+				if(energyQuad<y0 && energyQuad<y1){
+					x1 = lambdaquad;
+					y1 = energyQuad;
+				}
+				else{
+//					if(energyQuad<y0 && energyQuad>y1){
+					x0 = lambdaquad;
+					y0 = energyQuad;
+				}
+/*				else{
+					cout<<"WARNING! Unreasonable lambdaquad during quadratic optimization"
+		                    ". Returning BACKTRACKING lambda"<<endl;
+					return btlambda;
+				}*/
+			}
+			else if(x1 < lambdaquad){
+				if(energyQuad<y1 && energyQuad<y2){
+					x1 = lambdaquad;
+					y1 = energyQuad;
+				}
+				else {
+//					if(energyQuad>y1 && energyQuad<y2){
+					x2 = lambdaquad;
+					y2 = energyQuad;
+				}
+/*				else{
+					cout<<"WARNING! Unreasonable lambdaquad during quadratic optimization"
+					      ". Returning BACKTRACKING lambda"<<endl;
+					return btlambda;
+				}*/
+			}
+			else{
+				cout<<"WARNING! Lambda out of range. Returning quadlambda from "
+		                "previous iteration"<<endl;
+					return x1;
+				}
+		}
+	}
+
+}
+

@@ -36,7 +36,8 @@ protected:
 	floatingpoint prevlambda = 0;
 	floatingpoint prevbeta = 0;
 
-	void calculateEvsalpha(ForceFieldManager &FFM, floatingpoint lambda);
+	void calculateEvsalpha(ForceFieldManager &FFM, floatingpoint lambda, floatingpoint
+	LAMBDAMAX, floatingpoint FDotFA);
 #ifdef CUDAACCL
     cudaStream_t stream_shiftsafe = NULL, stream_dotcopy = NULL;
     cudaStream_t stream1 = NULL, stream2 = NULL, stream3 = NULL;

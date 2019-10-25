@@ -30,8 +30,6 @@ struct MinimizationParams{
     vector<floatingpoint> beta;
     vector<bool> safeModeORnot;
     vector<floatingpoint> tempEnergyvec;
-    bool branchangledepositstatus = false;
-    vector<floatingpoint> branchanglevec;
     vector<vector<floatingpoint>> gradientvec;
 };
 #endif

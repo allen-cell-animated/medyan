@@ -71,6 +71,8 @@ protected:
 
     const floatingpoint QUADTOL = 0.1; // Used in Quadratic line search
     const floatingpoint ETOTALTOL = 1e-7;//Relative energy change tolerance.
+    const floatingpoint LAMBDAQUADTOL = 1e-3; //if values change less than 0.1% between
+    // successive runs, consider it converged.
 
     //additional parameters to help store additional parameters
     floatingpoint minimumE = (floatingpoint) 1e10;
@@ -211,6 +213,20 @@ protected:
                                          floatingpoint LAMBDAMAX,
                                          floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
                                          bool *gpu_safestate, bool *ETolstate);
+
+	floatingpoint safeBacktrackingLineSearchV2(ForceFieldManager& FFM, floatingpoint
+										 MAXDIST, floatingpoint maxForce, floatingpoint
+										 LAMBDAMAX, bool *gpu_safestate, bool *M_ETolstate);
+
+	floatingpoint quadraticLineSearchV2(ForceFieldManager& FFM, floatingpoint MAXDIST,
+	                                  floatingpoint maxForce,
+	                                  floatingpoint LAMBDAMAX,
+	                                  floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+	                                  bool *gpu_safestate, bool *ETolstate);
+
+	floatingpoint quadraticoptimization(ForceFieldManager& FFM, const
+	vector<floatingpoint>& lambdavec,
+			const vector<floatingpoint>&  energyvec);
 
     void setLAMBDATOL(int maxF_order){
 

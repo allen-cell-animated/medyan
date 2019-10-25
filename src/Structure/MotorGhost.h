@@ -56,6 +56,16 @@ friend struct UpdateMotorIDCallback;
 friend struct MotorBindingCallback;
 friend struct MotorUnbindingCallback;
 
+#ifdef COLLECTMOTORDATA
+struct MotorGhostData{
+    vector<int> ID;
+    vector<int> Nwalkingsteps;
+    vector<float> Lifetime;
+    vector<float> Energyvec;
+};
+
+static vector<MotorGhostData> _motorGhostdatavec;
+#endif
 private:
 
     chrono::high_resolution_clock::time_point mins, mine;
@@ -95,6 +105,8 @@ private:
     static vector<MotorRateChanger*> _unbindingChangers;
     ///For dynamic rate walking
     static vector<MotorRateChanger*> _walkingChangers;
+
+
 
 public:
     #ifdef MOTORBIASCHECK
