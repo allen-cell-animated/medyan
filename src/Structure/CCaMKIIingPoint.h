@@ -42,6 +42,10 @@ private:
     // As a result, they do not need to be released.
     ReactionBase *_offRxnBinding, *_offRxnBundling;
 
+    // The corresponding diffusing species
+    // For example: "CD" as diffusing CaMKII
+    string diffusingSpeciesName;
+
     SpeciesBound *getSpeciesCaMKIIDummyCylinder() const;
 
 public:
@@ -100,7 +104,7 @@ public:
         _cc1 = cc;
     };
 
-    void createOffReactionBinding(SubSystem *ps);
+    void createOffReactionBinding(ReactionBase* onRxn, SubSystem *ps);
     void createOffReactionBundling(SubSystem *ps, FilamentBindingManager *fm);
 
 
@@ -122,6 +126,10 @@ public:
     void addBond(CCylinder* cc, short pos);
 	void removeBond(CCylinder* cc, short pos);
 	void removeBond(tuple<Cylinder*, short> );
+
+	/// Set compartment
+	void setCompartment(Compartment* c) {_compartment = c;}
+
 };
 
 #endif

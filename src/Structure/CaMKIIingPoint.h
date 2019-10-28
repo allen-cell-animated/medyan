@@ -126,10 +126,10 @@ public:
     virtual int getType() {return _camkiiType;}
     int getID() {return _camkiiID;}
     //@}
-    
-    /// Get compartment
-    Compartment* getCompartment() {return _compartment;}
-    
+
+	/// Get compartment
+	Compartment* getCompartment() {return _compartment;}
+
     /// Get the birth time
     float getBirthTime() {return _birthTime;}
     

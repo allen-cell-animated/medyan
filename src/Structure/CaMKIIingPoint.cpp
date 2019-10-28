@@ -32,8 +32,6 @@ using namespace mathfunc;
 CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double position)
     : Trackable(true), _camkiiType(camkiiType), _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()) {
 
-	cerr << "==== MILLAD: " << __FUNCTION__ << "   ADDR: " << (void*)this << " --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
-
 	assert(camkiiType == 0);
 
     int pos = int(position * SysParams::Geometry().cylinderNumMon[cylinder->getType()]);
@@ -72,20 +70,16 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double posi
 		printSelf();
 		exit(EXIT_FAILURE);
 	}
-	cerr << "==== MILLAD: " << __FUNCTION__ << " --- AFTER --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
+	_cCaMKIIingPoint->setCompartment(_compartment);
 
 }
 
 void CaMKIIingPoint::addBond(Cylinder *c, short pos) {
-	cerr << "==== MILLAD: " << __FUNCTION__ << "   ADDR: " << (void*)this << " --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
 	_cCaMKIIingPoint->addBond(c->getCCylinder(), pos);
 	_bonds.push_back(tuple<Cylinder *, short>(c, pos));
-	cerr << "==== MILLAD: " << __FUNCTION__ << " --- AFTER --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
 }
 
 void CaMKIIingPoint::updateCoordinate(vector<double> *coordinate) {
-
-	cerr << "==== MILLAD: " << __FUNCTION__ << "   ADDR: " << (void*)this << " --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
 
 	//Calculate the midpoint coordinate
 	vector<double> temp(3, 0.0);
@@ -109,18 +103,13 @@ void CaMKIIingPoint::updateCoordinate(vector<double> *coordinate) {
 		if ((*coordinate)[i] < 0.0)
 			(*coordinate)[i] = 0.0 + 1E-5;
 	}
-	cerr << "==== MILLAD: " << __FUNCTION__ << " --- AFTER --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
 }
 
 CaMKIIingPoint::~CaMKIIingPoint() noexcept {
 	//TODO: _subSystem->removeTrackable<unique_ptr<CaMKIICylinder>>(_camkiiCylinder);
-
-	cerr << "==== MILLAD: " << __FUNCTION__ << "   ADDR: " << (void*)this << " --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
-
 }
 
 void CaMKIIingPoint::updatePosition() {
-	cerr << "==== MILLAD: " << __FUNCTION__ << "   ADDR: " << (void*)this << " --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
 
 #ifdef CHEMISTRY
     //update ccylinders
@@ -150,7 +139,6 @@ void CaMKIIingPoint::updatePosition() {
         
         printSelf();
 
-		cerr << "==== MILLAD: " << __FUNCTION__ << " --- AFTER --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
         exit(EXIT_FAILURE);
     }
     
@@ -165,12 +153,10 @@ void CaMKIIingPoint::updatePosition() {
         _cCaMKIIingPoint->setFirstSpecies(firstSpecies);
 #endif
     }
-	cerr << "==== MILLAD: " << __FUNCTION__ << " --- AFTER --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
 }
-            
+
 void CaMKIIingPoint::printSelf() {
 
-	cerr << "==== MILLAD: " << __FUNCTION__ << "   ADDR: " << (void*)this << " --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
     cout << endl;
     
     cout << "CaMKIIingPoint: ptr = " << this << endl;
@@ -195,7 +181,6 @@ void CaMKIIingPoint::printSelf() {
     //getCylinder(1)->printSelf();
     
     cout << endl;
-	cerr << "==== MILLAD: " << __FUNCTION__ << " --- AFTER --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
 }
             
 species_copy_t CaMKIIingPoint::countSpecies(const string& name) {
@@ -221,6 +206,7 @@ species_copy_t CaMKIIingPoint::countDummySpecies(const string& name) {
 	 * In case of multiple type of CaMKII, sname and name as in countSpecies(const string& name) should be implemented.
 	 */
 
+#if 0
 	species_copy_t copyNum = 0;
 
 	for(auto b : _camkiiingPoints.getElements()) {
@@ -237,29 +223,39 @@ species_copy_t CaMKIIingPoint::countDummySpecies(const string& name) {
 		}
 	}
 	return copyNum;
+#endif
+
+	species_copy_t copyNum = 0;
+
+	for(auto b : _camkiiingPoints.getElements()) {
+
+		auto s = b->getCCaMKIIingPoint()->getFirstSpecies();
+		string sname = SpeciesNamesDB::removeUniqueFilName(s->getName());
+
+		if(sname == name)
+            copyNum += s->getN();
+	}
+	return copyNum;
+
 }
 
 
 tuple<Cylinder*, short> CaMKIIingPoint::removeRandomBond() {
-	cerr << "==== MILLAD: " << __FUNCTION__ << "   ADDR: " << (void*)this << " --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
 	assert(_bonds.size() > 1);
 
 	size_t sz = _bonds.size();
 	size_t index = (size_t) Rand::randInteger(0, sz-1);
-	cerr << "=== MILLAD INDEX : " << index << " out of " << sz << endl;
 	tuple<Cylinder*, short> bondToRemove = _bonds[index];
 
 	_cCaMKIIingPoint->removeBond(get<0>(bondToRemove)->getCCylinder(), get<1>(bondToRemove));
 
 
 	_bonds.erase(_bonds.begin() + index);
-	cerr << "==== MILLAD: " << __FUNCTION__ << " --- AFTER --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
 
 	return bondToRemove;
 }
 
 void CaMKIIingPoint::updateReactionRates() {
-	cerr << "==== MILLAD: " << __FUNCTION__ << "   ADDR: " << (void*)this << " --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
 
 	//get the unbinding reaction
 	ReactionBase* offRxn = getCCaMKIIingPoint()->getOffReaction();
@@ -274,7 +270,6 @@ void CaMKIIingPoint::updateReactionRates() {
 	offRxn->updatePropensity();
 //	assert(offRxn->isPassivated() == true);
 
-	cerr << "==== MILLAD: " << __FUNCTION__ << " --- AFTER --- ID: " << getID() << "  SIZE: " << _bonds.size() << endl;
 }
 
 

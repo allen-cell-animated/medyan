@@ -615,7 +615,7 @@ struct CaMKIIingPointUnbundlingCallback {
             // Creating an off-reaction if the off-reaction does not exist
             // due to CaMKII moving between compartments
 			if(offRxnBinding == nullptr) {
-			    _camkiiingPoint->getCCaMKIIingPoint()->createOffReactionBinding(_ps);
+			    _camkiiingPoint->getCCaMKIIingPoint()->createOffReactionBinding(nullptr, _ps);
                 ReactionBase *offRxn = _camkiiingPoint->getCCaMKIIingPoint()->getOffRxnBinding();
                 _camkiiingPoint->getCCaMKIIingPoint()->setOffReaction(offRxn);
                 offRxnBinding = offRxn;

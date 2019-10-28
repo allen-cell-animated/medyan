@@ -645,7 +645,6 @@ int CaMKIIBundlingManager::checkLengthOfPossibleBindingInternal(unordered_multim
 				counter++;
 		}
 	}
-	cerr << "=========== MILLAD: checkLengthOfPossibleBindingInternal " << counter << "    " << intersection.size() << endl;
 	return intersection.size();
 }
 

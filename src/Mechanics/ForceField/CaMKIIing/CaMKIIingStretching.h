@@ -22,11 +22,11 @@
 class CaMKIIingPoint;
 
 /// Represents an interaction fixing a Cylinder anchored by a CaMKIIingPoint on the parent.
-template <class BStretchingInteractionType>
+template <class CStretchingInteractionType>
 class CaMKIIingStretching : public CaMKIIingInteractions {
     
 private:
-    BStretchingInteractionType _FFType;
+    CStretchingInteractionType _FFType;
     
 public:
     virtual double computeEnergy(double d);
