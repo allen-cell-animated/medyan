@@ -75,30 +75,6 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 	floatingpoint lambdatime = 0.0;
 	int safestatuscount = 0;
 #endif
-	for (int TRIAL = 0; TRIAL < 2; TRIAL++) {
-		if (TRIAL == 0) {
-			_LINESEARCHALGORITHM = "BACKTRACKING";
-			#ifdef TRACKDIDNOTMINIMIZE
-			//Backup coordinate
-			const std::size_t num = Bead::getDbData().coords.size_raw();
-			Bead::getDbData().coords_bckup.resize(num);
-			Bead::getDbData().forces_bckup.resize(num);
-
-			for (size_t i = 0; i < num; ++i) {
-				Bead::getDbData().coords_bckup.value[i] = Bead::getDbData().coords.value[i];
-				Bead::getDbData().forces_bckup.value[i] = Bead::getDbData().forces.value[i];
-			}
-			#endif
-		}
-		else {
-			_LINESEARCHALGORITHM = "QUADRATIC";
-			const std::size_t num = Bead::getDbData().coords.size_raw();
-
-			for (size_t i = 0; i < num; ++i) {
-				Bead::getDbData().coords.value[i] = Bead::getDbData().coords_bckup.value[i];
-				Bead::getDbData().forces.value[i] = Bead::getDbData().forces_bckup.value[i];
-			}
-		}
 
 #ifdef CUDAACCL
 	cross_checkclass::Aux=false;
@@ -618,7 +594,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 			//@@@} STEP 4 OTHER
 #ifdef SERIAL
 			while (/* Iteration criterion */  numIter < N &&
-			                                  /* Gradient tolerance  */  (Ms_isminimizationstate) &&
+			/* Gradient tolerance  */  (Ms_isminimizationstate) &&
 			                                  !ETOLexittstatus) {
 
 //#ifdef CUDATIMETRACK_MACRO
@@ -795,7 +771,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 				tbegin = chrono::high_resolution_clock::now();
 #endif
 
-				//Polak-Ribieri update
+				//Polak-Ribiere update
 				//Max(0,betaPR) allows us to reset the direction under non-ideal circumstances.
 				//The direction is reset of steepest descent direction (-gk).
 				double betaPR = max<double>((double) 0.0, (newGrad - prevGrad) / curGrad);
@@ -896,9 +872,9 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 					shiftGradient(0.0);
 					_safeMode = true;
 					safestatuscount++;
-#if defined(TRACKDIDNOTMINIMIZE) || defined(EVSALPHA)
+#ifdef EVSALPHA
 
-/*					cout << "newGrad " << newGrad << " prevGrad " << prevGrad << " curGrad "
+					cout << "newGrad " << newGrad << " prevGrad " << prevGrad << " curGrad "
 					     << curGrad << endl;
 					cout << "beta " << beta << " prevbeta " << prevbeta << endl;
 					cout << "FDotFA<0 " << (CGMethod::allFDotFA() <= 0)
@@ -907,12 +883,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 					     areEqual(curGrad, newGrad) << " abs(prevGrad/newGrad)<0.1 "
 					     << (abs(prevGrad / newGrad) < 0.1) << endl;
 					calculateEvsalpha(FFM, lambda, LAMBDAMAX, allFDotFA());
-					cout << endl;*/
-#endif
-#ifdef DETAILEDOUTPUT_LAMBDA
-					std::cout<<"SERL FDOTFA "<<CGMethod::allFDotFA()<<" curGrad "<<curGrad<<" "
-							"newGrad "<<newGrad<<endl;
-					std::cout<<"Shift Gradient 0.0"<<endl;
+					cout << endl;
 #endif
 				}
 				//Create back up coordinates to go to in case Energy minimization fails at an
@@ -999,6 +970,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 			auto b = maxBead();
 			if (b != nullptr) b->getParent()->printSelf();
 		}
+		// Reset backup coordinates with minimum Energy
 		Bead::getDbData().coords_minE.resize(0);
 
 
@@ -1006,13 +978,6 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 	#ifdef TRACKDIDNOTMINIMIZE
 	if(numIter) {
 		auto tempparams = SysParams::Mininimization();
-		cout<<_LINESEARCHALGORITHM<<"Energy ";
-		for (auto i = 0; i < tempparams.maxF.size()-1; i++) {
-			cout << tempparams.TotalE[i] << " ";
-		}
-		cout<<endl;
-
-/*		auto tempparams = SysParams::Mininimization();
 
 		cout << "Obegin maxForce Lambda Beta SafeModestatus FDotFA curGrad NewGrad prevGrad TotalE Evec (";
 		auto interactionnames = FFM.getinteractionnames();
@@ -1031,7 +996,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 			cout << endl;
 		}
 		cout<<"End maxF "<<tempparams.maxF[tempparams.maxF.size()-1]<<endl;
-		cout << "Oend ------------------" << endl;*/
+		cout << "Oend ------------------" << endl;
 	}
 	#endif
 
@@ -1056,10 +1021,6 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     cvars.streamvec.clear();
     CUDAcommon::cudavars = cvars;
 #endif
-/*	for(auto cyl:Cylinder::getCylinders()){
-		cout<<"Before final energy, force minimization  Cylinder ID = "<<cyl->getId()<<endl;
-		cyl->printSelf();
-	}*/
 
     result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
 
@@ -1133,8 +1094,6 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 		#ifdef OPTIMOUT
 		cout<<"Safestatuscount "<<safestatuscount<<endl;
 		#endif
-
-	}//TRIAL
 
     //@ STEP 11 END MINIMIZATION
 	tbegin = chrono::high_resolution_clock::now();
