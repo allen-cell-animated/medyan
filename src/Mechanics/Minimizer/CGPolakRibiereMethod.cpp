@@ -668,7 +668,9 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 				tend = chrono::high_resolution_clock::now();
 				chrono::duration<floatingpoint> elapsed_lambda(tend - tbegin);
 				CUDAcommon::tmin.findlambda += elapsed_lambda.count();
+				#ifdef OPTIMOUT
 				lambdatime += elapsed_lambda.count();
+				#endif
 				////@@@@} FIND LAMBDA
 
 #ifdef TRACKDIDNOTMINIMIZE
@@ -871,7 +873,9 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 					//The direction is reset of steepest descent direction (-gk).
 					shiftGradient(0.0);
 					_safeMode = true;
+					#ifdef OPTIMOUT
 					safestatuscount++;
+					#endif
 #ifdef EVSALPHA
 
 					cout << "newGrad " << newGrad << " prevGrad " << prevGrad << " curGrad "
@@ -1090,10 +1094,9 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #ifdef CUDAACCL
     FFM.assignallforcemags();
 #endif
-
-		#ifdef OPTIMOUT
+    #ifdef OPTIMOUT
 		cout<<"Safestatuscount "<<safestatuscount<<endl;
-		#endif
+	#endif
 
     //@ STEP 11 END MINIMIZATION
 	tbegin = chrono::high_resolution_clock::now();
