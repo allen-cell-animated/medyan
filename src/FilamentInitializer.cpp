@@ -94,9 +94,7 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
             nextPointProjection(firstPoint,(floatingpoint)lenFilaments *
                                 SysParams::Geometry().cylinderSize[filamentType] - 0.01,
                                 direction);
-            
-            //check if lower than initial bubble Z (make it 975)
-            if(firstPoint[2] > 975 || secondPoint[2] > 975) continue;
+
             //check if these points are outside bubbles
             bool inBubble = false;
             for(auto bb : Bubble::getBubbles()) {
