@@ -253,6 +253,9 @@ struct MechanicsFFType {
     /// MTOC Type
     string MTOCFFType = "";
     
+    /// AFM Type
+    string AFMFFType = "";
+    
 };
 
 ///Struct to hold dynamic rate changer type
@@ -280,7 +283,7 @@ struct SpecialSetupType {
     
     ///MTOC configuration
     bool mtoc = false;
-    
+
     //@{
     ///MTOC Parameters
     short mtocFilamentType = 0;
@@ -289,6 +292,16 @@ struct SpecialSetupType {
     short mtocBubbleType   = 0;
     //@}
     
+    ///AFM configuration
+    bool afm = false;
+    
+    //@{
+    ///MTOC Parameters
+    short afmFilamentType = 0;
+    int afmNumFilaments   = 0;
+    int afmFilamentLength = 0;
+    short afmBubbleType   = 0;
+    //@}
     vector<float> mtocInputCoordXYZ = {};
 };
 

@@ -113,6 +113,7 @@ private:
     /// ID of filament
     int _filID;
 
+
 public:
     using DatabaseType = Database< Cylinder, true, CylinderInfoData >;
 
@@ -213,16 +214,19 @@ public:
 
     virtual void printSelf();
 
+                                       
+    void setFilID(int filID){
+       _filID = filID;
+    };
+
+    int getFilID(){
+       return _filID;
+    };
+
     /// Returns whether a cylinder is within a certain distance from another
     /// Uses the closest point between the two cylinders
     virtual bool within(Cylinder* other, floatingpoint dist);
-    void setFilID(int filID){
-        _filID = filID;
-    };
 
-    int getFilID() const {
-        return _filID;
-    }
 
     static floatingpoint timecylinder1;
 	static floatingpoint timecylinder2;

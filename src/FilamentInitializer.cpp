@@ -253,6 +253,41 @@ FilamentData MTOCFilamentDist::createFilaments(Boundary* b, int numFilaments,
         // get projection outward from the MTOC
         auto dir = normalizeVector(twoPointDirection(_coordMTOC, point1));
         auto point2 = nextPointProjection(point1,
+                                          SysParams::Geometry().cylinderSize[filamentType]*lenFilaments - 0.01, dir);
+        
+        filaments.emplace_back(filamentType, point1, point2);
+        
+        filamentCounter++;
+    }
+    
+    return make_tuple(filaments,dummy,dummy2, dummy3);
+}
+FilamentData AFMFilamentDist::createFilaments(Boundary* b, int numFilaments,
+                                                            int filamentType,
+                                                            int lenFilaments) {
+    
+    vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> filaments;
+    vector<tuple<string, short, vector<vector<floatingpoint>>>> dummy;
+    vector<vector<floatingpoint>> dummy3;
+    vector<tuple<string, short, vector<floatingpoint>>> dummy2;
+    int filamentCounter = 0;
+    while (filamentCounter < numFilaments) {
+        
+
+        floatingpoint l = Rand::randfloatingpoint(0,2 * M_PI);
+        floatingpoint h = Rand::randfloatingpoint(-M_PI/2, M_PI/2);
+
+        
+
+        vector<floatingpoint> point1;
+        point1.push_back(_coordAFM[0] + _radius * cos(l) * cos(h));
+        point1.push_back(_coordAFM[1] + _radius * sin(h));
+        point1.push_back(_coordAFM[2] + _radius * sin(l) * cos(h));
+
+        
+        // get projection outward from the AFM
+        auto dir = normalizeVector(twoPointDirection(_coordAFM, point1));
+        auto point2 = nextPointProjection(point1,
             SysParams::Geometry().cylinderSize[filamentType]*lenFilaments - 0.01, dir);
         
         //check if these points are outside bubbles
