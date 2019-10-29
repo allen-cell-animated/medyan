@@ -1148,6 +1148,10 @@ void ChemManager::genFilBindingReactions() {
             int motorIndex = 0;
 
             for(auto &r: _chemData.branchingReactions[filType]) {
+                
+                //filament creation is not allowed in partially activated compartments
+                //that volume fraction < threshold, be careful with teh threshold
+                if(C->getVolumeFrac() < 0.5) continue;
 
                 vector<Species*> reactantSpecies;
                 vector<Species*> productSpecies;
@@ -2591,6 +2595,10 @@ void ChemManager::genNucleationReactions() {
 
             //go through reactions, add each
             for(auto &r: _chemData.nucleationReactions[filType]) {
+                
+                //filament creation is not allowed in partially activated compartments
+                //that volume fraction < threshold, be careful with the threshold
+                if(C->getVolumeFrac() < 0.5) continue;
 
                 vector<Species*> reactantSpecies;
 

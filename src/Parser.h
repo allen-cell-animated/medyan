@@ -288,6 +288,8 @@ struct SpecialSetupType {
     int mtocFilamentLength = 0;
     short mtocBubbleType   = 0;
     //@}
+    
+    vector<float> mtocInputCoordXYZ = {};
 };
 
 /// Struct to hold chem setup information
@@ -361,6 +363,7 @@ public:
     void readGeoParams();
     void readBoundParams();
     void readDyRateParams();
+    void readSpecialParams();
     //@}
     
     //@{

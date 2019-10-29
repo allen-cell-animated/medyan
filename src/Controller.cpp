@@ -297,6 +297,7 @@ void Controller::initialize(string inputFile,
     setupInitialNetwork(p);
 
     //setup special structures
+    p.readSpecialParams();
     setupSpecialStructures(p);
 
     SysParams::INITIALIZEDSTATUS = true;
@@ -436,11 +437,12 @@ void Controller::setupSpecialStructures(SystemParser& p) {
     if(SType.mtoc) {
 
         MTOC* mtoc = _subSystem.addTrackable<MTOC>();
+        
+        //set MTOC coordinates based on input
+        floatingpoint bcoordx = SType.mtocInputCoordXYZ[0];
+        floatingpoint bcoordy = SType.mtocInputCoordXYZ[1];
+        floatingpoint bcoordz = SType.mtocInputCoordXYZ[2];
 
-        //create the bubble in top part of grid, centered in x,y
-        floatingpoint bcoordx = GController::getSize()[0] / 2;
-        floatingpoint bcoordy = GController::getSize()[1] / 2;
-        floatingpoint bcoordz = GController::getSize()[2] * 5 / 6;
 
         vector<floatingpoint> bcoords = {bcoordx, bcoordy, bcoordz};
         Bubble* b = _subSystem.addTrackable<Bubble>(&_subSystem, bcoords, SType.mtocBubbleType);
@@ -1103,6 +1105,7 @@ void Controller::run() {
         chrono::duration<floatingpoint> elapsed_runspl(mine - mins);
         specialtime += elapsed_runspl.count();
         while(tau() <= _runTime) {
+            auto minwhile = chrono::high_resolution_clock::now();
             //run ccontroller
             #ifdef OPTIMOUT
             cout<<"Starting chemistry"<<endl;
@@ -1243,9 +1246,10 @@ void Controller::run() {
                 minimizationResult = _mController.run();
                 mine= chrono::high_resolution_clock::now();
 
-                #ifdef OPTIMOUT
+                
                 chrono::duration<floatingpoint> elapsed_runm3(mine - mins);
                 minimizationtime += elapsed_runm3.count();
+                #ifdef OPTIMOUT
                 std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
 				#endif
 
@@ -1292,6 +1296,14 @@ void Controller::run() {
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runout2(mine - mins);
                 outputtime += elapsed_runout2.count();
+                cout<< "Chemistry time for run=" << chemistrytime <<endl;
+                cout << "Minimization time for run=" << minimizationtime <<endl;
+                cout<< "Neighbor-list+Bmgr-time for run="<<nltime<<endl;
+                cout<<"update-position time for run="<<updateposition<<endl;
+                
+                cout<<"rxnrate time for run="<<rxnratetime<<endl;
+                cout<<"Output time for run="<<outputtime<<endl;
+                cout<<"Special time for run="<<specialtime<<endl;
             }
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
@@ -1329,7 +1341,11 @@ void Controller::run() {
             chrono::duration<floatingpoint> elapsed_runspl2(mine - mins);
             specialtime += elapsed_runspl2.count();
             oldTau = tau();
-
+            
+            mine= chrono::high_resolution_clock::now();
+            chrono::duration<floatingpoint> whilel(mine - minwhile);
+            whileloop += whilel.count();
+            //cout<<"while loop for run="<<whileloop<<endl;
 #ifdef CUDAACCL
 
             //reset CUDA context
