@@ -1,13 +1,19 @@
-# 4.1 (Released 2019)
-
-## Breaking changes
+# 4.1 (Released 2019-10-29)
 
 ## New features
 - Added a thread pool implementation, which may facilitate multi-threading computations.
+- Add `MTOCFILAMENTCOORD` in system input file to specify MTOC filaments initialization region. It takes 4 parameters between 0 to 1, which specifies the angle l and h ranges in the MTOC filament initializer.
 
 ## Refactoring and optimizations
+- Refactored the Database: The `Database` class now manages
 
 ## Bug fixes
+- Fixed motor stretch force not reset before minimization.
+- Distance between the boundary and the filaments can be negative now.
+- Cylinder neighbor list for volume exclusion will generate multiple neighbor list if there is more than one filament type.
+- Filament creation by nucleation and branching is not allowed in partially activated compartment with volume fraction < 0.5. It potentially prevents the infinite while loop during filament creation.
+- Fixed `BoundaryCylinderRepulsionIn` force field.
+- Fixed `MTOCAttachment` potential.
 
 # 4.0 (Released 2019-07-05)
 
