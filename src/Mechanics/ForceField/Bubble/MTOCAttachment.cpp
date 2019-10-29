@@ -56,7 +56,8 @@ void MTOCAttachment<MTOCInteractionType>::vectorize() {
             		->getStableIndex();
 			//The MTOC attachment constant is the same as stretching constant
             kstr[interaction_counter] = f->getMinusEndCylinder()->getMCylinder()->getStretchingConst();
-
+            radiusvec[interaction_counter] = mtoc->getBubble()->getRadius();
+            
 	        interaction_counter++;
         }
     }

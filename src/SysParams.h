@@ -314,6 +314,15 @@ struct DyRateParams {
     float manualMinusDepolyRate = 1.0;
 };
 
+struct SpecialParams {
+    
+    /// Parameters for initializing MTOC attached filaments
+    float mtocTheta1 = 0.0;
+    float mtocTheta2 = 1.0;
+    float mtocPhi1 = 0.0;
+    float mtocPhi2 = 1.0;
+};
+
 /// Static class that holds all simulation parameters,
 /// initialized by the SystemParser
 class SysParams {
@@ -331,7 +340,8 @@ public:
     static GeoParams GParams;     ///< The geometry parameters
     static BoundParams BParams;   ///< The boundary parameters
     static DyRateParams DRParams; ///< The dynamic rate parameters
-
+    static SpecialParams SParams; ///< Other parameters
+    
 public:
     //@{
 #ifdef NLSTENCILLIST
@@ -357,6 +367,7 @@ public:
     static const GeoParams& Geometry() {return GParams;}
     static const BoundParams& Boundaries() {return BParams;}
     static const DyRateParams& DynamicRates() {return DRParams;}
+    static const SpecialParams& SpecialInputs() {return SParams;}
     //@}
 
     //@{

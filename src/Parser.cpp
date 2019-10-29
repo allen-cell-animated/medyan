@@ -1745,10 +1745,49 @@ SpecialSetupType SystemParser::readSpecialSetupType() {
                 SType.afmBubbleType = atoi(lineVector[1].c_str());
             }
         }
+        else if (line.find("MTOCXYZCOORD") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 4) {
+                cout <<
+                "Coordinates of MTOC must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 4) {
+                SType.mtocInputCoordXYZ.push_back(stof(lineVector[1].c_str()));
+                SType.mtocInputCoordXYZ.push_back(stof(lineVector[2].c_str()));
+                SType.mtocInputCoordXYZ.push_back(stof(lineVector[3].c_str()));
+            }
+        }
     }
     return SType;
 }
 
+void SystemParser::readSpecialParams() {
+    
+    SpecialParams SParams;
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    string line;
+    
+    if (line.find("MTOCFILAMENTCOORD") != string::npos) {
+        vector<string> lineVector = split<string>(line);
+        if(lineVector.size() != 5) {
+            cout << "4 coordinates of MTOC filaments must be specified. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+        else if (lineVector.size() == 5) {
+            SParams.mtocTheta1 = stof(lineVector[1].c_str());
+            SParams.mtocTheta2 = stof(lineVector[2].c_str());
+            SParams.mtocPhi1 = stof(lineVector[3].c_str());
+            SParams.mtocPhi2 = stof(lineVector[4].c_str());
+        }
+    }
+
+    SysParams::SParams = SParams;
+    
+}
 
 void SystemParser::readGeoParams() {
 
