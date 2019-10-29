@@ -36,8 +36,8 @@ BoundaryFF::BoundaryFF (string type) {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>());
 
-//        _boundaryInteractionVector.emplace_back(
-//        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
+        _boundaryInteractionVector.emplace_back(
+            new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
     }
     else if(type == "REPULSIONEXPIN") {
         _boundaryInteractionVector.emplace_back(
