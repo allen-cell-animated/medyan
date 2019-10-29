@@ -1267,9 +1267,10 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
         //@{ Lambda phase 2
         if(!(sconvergencecheck)){
             floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA();
-//            cout<<"ideal "<<idealEnergyChange<<endl;
-            if(idealEnergyChange>0)
-            	exit(EXIT_FAILURE);
+            if(lambda<0 || idealEnergyChange>0) {
+            	sconvergencecheck = true;
+            	lambda=0.0;
+            }
 //            floatingpoint maximumEnergyChange = idealEnergyChange*0.6/BACKTRACKSLOPE;
             energyChange = energyLambda - currentEnergy;
 //	        cout << "Ideal " << idealEnergyChange << " bt energy " << energyChange << endl;
@@ -1283,14 +1284,14 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
             //Armijo conditon
             if(energyChange <= idealEnergyChange) {
                 sconvergencecheck = true;}
-            else
-                //reduce lambda
-                lambda *= LAMBDAREDUCE;
+            else {
+	            //reduce lambda
+	            lambda *= LAMBDAREDUCE;
+            }
 
             if(lambda <= 0.0 || lambda <= LAMBDATOL) {
                 sconvergencecheck = true;
                 lambda = 0.0;
-
             }
 #ifdef DETAILEDOUTPUT_LAMBDA
             std::cout<<"SL2 BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA "
@@ -1552,8 +1553,10 @@ floatingpoint CGMethod::safeBacktrackingLineSearchV2(ForceFieldManager& FFM, flo
 		//@{ Lambda phase 2
 		if(!(sconvergencecheck)){
 			floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA();
-			if(idealEnergyChange>0)
+			if(idealEnergyChange>0){
+				cout<<"Ideal Energy Change > 0. Exiting."<<endl;
 				exit(EXIT_FAILURE);
+			}
 			energyChange = energyLambda - currentEnergy;
 #ifdef DETAILEDOUTPUT_LAMBDA
 			std::cout<<"BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA"
