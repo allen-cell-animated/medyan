@@ -22,6 +22,7 @@
 #include "GController.h"
 #include "SysParams.h"
 #include "CUDAcommon.h"
+#include "Rand.h"
 /*#include <boost/range/counting_range.hpp>
 #include <thrust/execution_policy.h>
 #include <thrust/system/omp/execution_policy.h>
@@ -308,7 +309,6 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 			chrono::duration<floatingpoint> elapsed_countsites(minefind - minsfind);
 			SIMDcountbs += elapsed_countsites.count();
 		}
-
 //		checkoccupancySIMD(idvec);
 	}
 }
@@ -385,12 +385,6 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
                             it->second.end());
 	                it++;
                 }
-	            /*	    for(auto it = range.first; it != range.second;){
-			if (it->second == t) {
-				m->_mpossibleBindingsstencilvecuint[idx][idx2].erase(it++);
-			}
-			else ++it;
-		}*/
             }
             //remove from the reverse map.
             m->_reversepossibleBindingsstencilvecuint[idx][idx2][t].clear();
@@ -402,38 +396,6 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
     }
 //	checkoccupancySIMD(idvec);
 }
-//Deprecated
-/*void HybridBindingSearchManager::checkoccupancy(short idvec[2]){
-    short idx = idvec[0];
-    short idx2 = idvec[1];
-    auto pbs = _possibleBindingsstencilvecuint[idx][idx2];
-    for(auto pair = pbs.begin(); pair != pbs.end(); pair++){
-        auto leg1 = pair->first;
-        auto leg2 = pair->second;
-        CCylinder* ccyl1 = get<0>(leg1);
-        short bs1 = get<1>(leg1);
-        CCylinder* ccyl2 = get<0>(leg2);
-        short bs2 = get<1>(leg2);
-        bool state1 = areEqual(ccyl1->getCMonomer(bs1)->speciesBound(
-                SysParams::Chemistry().motorBoundIndex[0])->getN(), 1.0);
-        bool state2 = areEqual(ccyl2->getCMonomer(bs2)->speciesBound(
-                SysParams::Chemistry().motorBoundIndex[0])->getN(), 1.0);
-        if(state1 != true || state2 != true){
-            std::cout<<"OOPS occupied species exist "<<state1<<" "<<state2<<endl;
-            SpeciesBound* sm1 = ccyl1->getCMonomer(bs1)->speciesMotor(0);
-            SpeciesBound* sm2 = ccyl2->getCMonomer(bs2)->speciesMotor(0);
-            SpeciesBound* BM1 = ccyl1->getCMonomer(bs1)->speciesBound(
-                    SysParams::Chemistry().motorBoundIndex[0]);
-            SpeciesBound* BM2 = ccyl2->getCMonomer(bs2)->speciesBound(
-                    SysParams::Chemistry().motorBoundIndex[0]);
-            std::cout<<"Cmp "<<_compartment->coordinates()[0]<<" "<<_compartment->coordinates()
-            [1]<<" "<<_compartment->coordinates()[2]<<" Motor "<<ccyl1->getCylinder()->getId()<<" "<<bs1<<" "
-                    ""<<ccyl2->getCylinder()->getId()<<" "<<
-                     ""<<bs2<< endl;
-            std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "<<BM2->getN()<<endl;
-        }
-    }
-}*/
 
 void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
 
@@ -958,60 +920,42 @@ void HybridBindingSearchManager::gatherCylindercIndexV3(dist::dOut<D,SELF>&
 bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
 
     const auto& cylinderInfoData = Cylinder::getDbData().value;
-
+	unsigned int count64 = 0;//counter to bits in random integer
+	bitset<64> randInt = 0;
     for(uint pid = first; pid < last; pid++) {
 	    uint32_t t1 = bspairsoutS.dout[2 * (D - 1)][pid];
 	    uint32_t t2 = bspairsoutS.dout[2 * (D - 1) + 1][pid];
-//	    if(false) {
-//
-//		    uint32_t cIndex1 = t1 >> 4;
-//		    uint32_t cIndex2 = t2 >> 4;
-//
-//        const auto& cylinder1 = cylinderInfoData[cIndex1];
-//        const auto& cylinder2 = cylinderInfoData[cIndex2];
-//
-//		    /*short _filType1 = cylinder1.type;
-//			short _filType2 = cylinder2.type;
-//
-//			auto fpairs = _filamentIDvec[idvec[0]].data();
-//
-//			//Check if the filament type pair matches that of the binding manager.
-//			//Commented as it is already taken care in the SIMD function call
-//			if ((fpairs[0] == _filType1 && fpairs[1] ==_filType2)||
-//				(fpairs[1] == _filType1 && fpairs[0] ==_filType2)) {*/
-//
-//		    //Checks to make sure sites on a filament that are less than two cylinders away are
-//		    // not added.
-//            bool neighborcondition = (
-//                cylinder1.filamentId == cylinder2.filamentId &&
-//                abs(cylinder1.positionOnFilament - cylinder2.positionOnFilament) <=2
-//            );
-//		    if (!neighborcondition) {
-//
-///*			    short bsite1 = mask & site1;
-//			    short bsite2 = mask & site2;
-//
-//			    uint32_t t1 = cIndex1 << SysParams::Chemistry().shiftbybits | bsite1;
-//			    uint32_t t2 = cIndex2 << SysParams::Chemistry().shiftbybits | bsite2;
-//
-//				uint32_t t1 = site1;
-//				uint32_t t2 = site2;*/
-//
-//			    //unordered map
-//			    _possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
-//
-//			    _reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(
-//					    t1);
-//		    }
-////	    }
-//	    }
+
 		if(SELF == true){
 			_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
 
 			_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
 		}
 		else {
-			if(t1>t2) {
+			//Generate random number of 64 bits
+			if(count64 == 0) {
+				randInt = bitset<64>(Rand::randInteger64bit());
+//				cout<<randInt<<endl;
+			}
+			if(randInt[count64]){
+				_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+
+				_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
+			}
+			else{
+				nCmp->getHybridBindingSearchManager()
+						->_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
+				nCmp->getHybridBindingSearchManager()
+						->_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+			}
+			//Keep count
+			count64++;
+//			cout<<count64<<" "<<first<<" "<<last<<endl;
+			//reset if you reach 64 bits
+			if(count64>63)
+				count64=0;
+
+			/*if(t1>t2) {
 				_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
 
 				_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
@@ -1021,7 +965,7 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
 				->_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
 				nCmp->getHybridBindingSearchManager()
 				->_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
-			}
+			}*/
 		}
     }
 }
@@ -1149,14 +1093,4 @@ floatingpoint HybridBindingSearchManager::SIMDcountbs = 0.0;
 floatingpoint HybridBindingSearchManager::HYBDappendtime = 0.0;
 floatingpoint HybridBindingSearchManager::SIMDV3appendtime = 0.0;
 floatingpoint HybridBindingSearchManager::findtimeV3 = 0.0;
-
-/*///Template specializations
-template void HybridBindingSearchManager::calculatebspairsself<1,true>();
-template void HybridBindingSearchManager::calculatebspairsself<1,false>();
-template void HybridBindingSearchManager::calculatebspairsself<2,true>();
-template void HybridBindingSearchManager::calculatebspairsself<2,false>();
-template void HybridBindingSearchManager::calculatebspairsself<3,true>();
-template void HybridBindingSearchManager::calculatebspairsself<3,false>();
-template void HybridBindingSearchManager::calculatebspairsself<4,true>();
-template void HybridBindingSearchManager::calculatebspairsself<4,false>();*/
 #endif
