@@ -1,13 +1,37 @@
-# 4.1 (Released 2019)
-
-## Breaking changes
+# 4.1.0 (Released 2019-10-29)
 
 ## New features
-- Added a thread pool implementation, which may facilitate multi-threading computations.
+- Added a thread pool implementation, which may facilitate multi-threading computations (fd69e22).
+- Added new MTOC functions (e286a3d).
+- Added AFM pulling simulation (b581d1a).
+- Added mechanical Hessian analysis (b581d1a).
+- Added branching dihedral quadratic force field (37b6173).
+- Added a cell list data structure for elements contained in the compartments (586f8f5).
+- Used a double linked list data structure instead of `std::unordered_set` for `Reactable`s and `Movable`s (0f32b73).
+- The dissipation tracking can now have higher resolution, reflecting the mechanical energy change for every force field (5e7eed8).
 
 ## Refactoring and optimizations
+- Refactored the `Database` class (bc0222c, 3c71316).
+- Removed stretched energy computations (ee6220f).
+- Various improvements on the restarting procedure (0f32b73).
 
 ## Bug fixes
+- Fixed motor stretch force not reset before minimization.
+- Distance between the boundary and the filaments can be negative now.
+- Cylinder neighbor list for volume exclusion will generate multiple neighbor list if there is more than one filament type.
+- Filament creation by nucleation and branching is not allowed in partially activated compartment with volume fraction < 0.5. It potentially prevents the infinite while loop during filament creation.
+- Fixed `BoundaryCylinderRepulsionIn` force field.
+- Fixed `MTOCAttachment` potential.
+- Fixed mechanochemical feedback on motor initialization under `PLOSFEEDBACK` version (1fcd9cf).
+- Fixed cases where 2 ends a motor binds on the same binding site.
+- Fixed compartment transfer/share axis (befaf74).
+- Fixed the way of counting number of interactions for filament bending (75bc733).
+- Fixed the newly created filament not having mechanochemical feedback (9dc5d27).
+- Fixed the problem that the type `floatingpoint` cannot be aliased to `double` (87fad88).
+- Fixed `dist_avx.h` not compatible with AVX mode (ce314fa).
+- Fixed the issue with changing number of binding sites per cylinder in SIMD binding search (9a39874).
+- Fixed the boundary pinning force field (49e254b).
+- Fixed minor portability issues on different compilers (eb10ca1).
 
 # 4.0 (Released 2019-07-05)
 
