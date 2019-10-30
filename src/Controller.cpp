@@ -1721,7 +1721,7 @@ void Controller::run() {
         cout << "Dynamic neighbor " << SubSystem::timedneighbor << endl;
         cout << "Neighbor " << SubSystem::timeneighbor << endl;
         cout << "Trackable " << SubSystem::timetrackable << endl;
-        cout << "Done with simulation!" << endl;
+
         cout << "-------------" << endl;
         cout << "Filament extendPlusEnd 1 " << Filament::FilextendPlusendtimer1 << endl;
         cout << "Filament extendPlusEnd 2 " << Filament::FilextendPlusendtimer2 << endl;
@@ -1745,6 +1745,7 @@ void Controller::run() {
              << CUDAcommon::ppendtime.rxntempate4 << endl;
     }
 	#endif
+    cout << "Done with simulation!" << endl;
 #ifdef CUDAACCL
     cudaDeviceReset();
 #endif
