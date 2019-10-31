@@ -32,6 +32,9 @@
 - Fixed the issue with changing number of binding sites per cylinder in SIMD binding search (9a39874).
 - Fixed the boundary pinning force field (49e254b).
 - Fixed minor portability issues on different compilers (eb10ca1).
+- Fixed ending simulation message not displayed when simulation finishes (4a2f610).
+- `PLOSFEEDBACK` is now turned off by default (3ff0837).
+- Fixed the documents for MEDYAN 4.0 speed up comparison (3ff0837).
 
 # 4.0 (Released 2019-07-05)
 
