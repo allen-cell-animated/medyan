@@ -938,13 +938,13 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 			cout << endl;
 
 			cout << "WARNING: Minimization exited when Energy Tolerance was reached at N = "
-			     << N << " steps." << endl;
+			     << numIter << " steps." << endl;
 			cout << "Maximum force in system = " << maxF() << endl;
 			cout << "System energy..." << endl;
 			FFM.computeEnergy(Bead::getDbData().coords.data(), true);
 		}
 
-		if (numIter >= N) {
+		else if (numIter >= N) {
 #ifdef CUDAACCL
 
 
