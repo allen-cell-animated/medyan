@@ -10,7 +10,7 @@
 #include <vector>
 #include <utility>
 
-#include "Util/Environment.h"
+#include "Util/Environment.hpp"
 
 namespace medyan {
 namespace logger {
@@ -35,6 +35,9 @@ namespace logger {
  * since it is less efficient than the standard output methods.
  */
 
+
+// Log level definition
+//-----------------------------------------------------------------------------
 enum class LogLevel: int {
     Debug   = 0,
     Info    = 1,
@@ -44,6 +47,21 @@ enum class LogLevel: int {
     Error   = 5,
     Fatal   = 6
 };
+
+// Converts log level to string
+constexpr const char* literal(LogLevel lv) {
+    switch(lv) {
+
+    case LogLevel::Debug:   return "Debug";
+    case LogLevel::Info:    return "Info";
+    case LogLevel::Step:    return "Step";
+    case LogLevel::Note:    return "Note";
+    case LogLevel::Warning: return "Warning";
+    case LogLevel::Error:   return "Error";
+    case LogLevel::Fatal:   return "Fatal";
+    }
+}
+
 
 class LoggerLevelFlag {
     int _flag = 0;
@@ -136,13 +154,24 @@ public:
         if(itManaged != _osManaged.end()) _osManaged.erase(itManaged);
     }
 
-    /// Default logger
-    static Logger& getDefaultLogger() {
-        static Logger l;
-        return l;
+    // Default settings
+    void defaultInitialization() {
+
+        auto& scrn = attachOstream(&std::cout, false);
+#ifdef NDEBUG
+        scrn.disp.turnOnAtLeast(LogLevel::Info);
+#else
+        scrn.disp.turnOnAtLeast(LogLevel::Debug);
+#endif
+        if(!(ioEnv().stdoutRedirected && settings.supressColorIfRedirected)) scrn.dispColor.turnOnAtLeast(LogLevel::Debug);
+        scrn.dispTime.turnOnAtLeast(LogLevel::Note);
+        scrn.dispFile.turnOnAtLeast(LogLevel::Warning);
+        scrn.dispLine.turnOnAtLeast(LogLevel::Error);
+        scrn.dispFunc.turnOnAtLeast(LogLevel::Error);
+        scrn.dispLevel.turnOnAtLeast(LogLevel::Debug);
+        scrn.flushLevel.turnOnAtLeast(LogLevel::Debug);
     }
-    /// Default initialization. Returns whether the file is successfully opened.
-    static void defaultLoggerInitialization();
+
 private:
     /// The actual stringstream
     std::ostringstream _oss;
@@ -153,6 +182,18 @@ private:
     /// Managed ostreams. will be destroyed when instance of this class is going out of scope
     std::vector<std::unique_ptr<std::ostream>> _osManaged;
 };
+
+// Default logger
+inline Logger& defaultLogger() {
+    struct DefaultLogger {
+        Logger l;
+        DefaultLogger() {
+            l.defaultInitialization();
+        }
+    };
+    static DefaultLogger dl;
+    return dl.l;
+}
 
 namespace internal {
 /// This is the class that prints the log when destructed.
@@ -219,7 +260,7 @@ private:
 #define MEDYAN_LOG_GEN_ERROR(whichLogger)   MEDYAN_WRITE_LOG(whichLogger, ::medyan::logger::LogLevel::Error)
 #define MEDYAN_LOG_GEN_FATAL(whichLogger)   MEDYAN_WRITE_LOG(whichLogger, ::medyan::logger::LogLevel::Fatal)
 
-#define MEDYAN_LOG_GEN(logLevel) MEDYAN_LOG_GEN_##logLevel(::medyan::logger::Logger::getDefaultLogger())
+#define MEDYAN_LOG_GEN(logLevel) MEDYAN_LOG_GEN_##logLevel(::medyan::logger::defaultLogger())
 
 /// User interface
 #define LOG(logLevel) MEDYAN_LOG_GEN(logLevel)

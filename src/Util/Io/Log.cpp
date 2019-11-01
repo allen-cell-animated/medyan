@@ -16,42 +16,7 @@ namespace logger {
 
 namespace {
 
-// Internal configuration
-bool stdoutRedirected = false;
-bool stderrRedirected = false;
-
 // Helper functions
-void initializeTerminal() {
-#ifdef PLATFORM_UNIX_LIKE
-    // Detect redirection
-    stdoutRedirected = !isatty(STDOUT_FILENO);
-    stderrRedirected = !isatty(STDERR_FILENO);
-#elif defined(PLATFORM_WINDOWS)
-    // Detect redirection and set VT mode
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    if(hOut == INVALID_HANDLE_VALUE) {
-        stdoutRedirected = true;
-    } else {
-        DWORD mode = 0;
-        stdoutRedirected = !GetConsoleMode(hOut, &mode);
-        if(!stdoutRedirected) {
-            mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-            SetConsoleMode(hOut, mode);
-        }
-    }
-    HANDLE hErr = GetStdHandle(STD_ERROR_HANDLE);
-    if(hErr == INVALID_HANDLE_VALUE) {
-        stderrRedirected = true;
-    } else {
-        DWORD mode = 0;
-        stderrRedirected = !GetConsoleMode(hErr, &mode);
-        if(!stderrRedirected) {
-            mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-            SetConsoleMode(hErr, mode);
-        }
-    }
-#endif
-}
 
 std::string timeLiteralGeneration() {
     using namespace std::chrono;
@@ -92,16 +57,6 @@ struct LogLevelHash {
 
 } // namespace
 
-// Mapping log level to string. Notice that we no longer need to supply hash since c++14.
-const std::unordered_map<LogLevel, const char*, LogLevelHash> logLevelLiteral {
-    {LogLevel::Debug,   "Debug"},
-    {LogLevel::Info,    "Info"},
-    {LogLevel::Step,    "Step"},
-    {LogLevel::Note,    "Note"},
-    {LogLevel::Warning, "Warning"},
-    {LogLevel::Error,   "Error"},
-    {LogLevel::Fatal,   "Fatal"}
-};
 
 // Level color codes. Notice that we no longer need to supply hash since c++14.
 const std::unordered_map<LogLevel, const char*, LogLevelHash> logLevelColorAnsi {
@@ -115,29 +70,6 @@ const std::unordered_map<LogLevel, const char*, LogLevelHash> logLevelColorAnsi 
 };
 constexpr const char * resetAnsi = "\033[0m";
 
-
-void Logger::defaultLoggerInitialization() {
-    Logger& l = getDefaultLogger();
-
-    // Detect output redirection, set console environment, etc.
-    initializeTerminal();
-
-    LoggerOstreamContainer& scrn = l.attachOstream(&std::cout, false);
-#ifdef NDEBUG
-    scrn.disp.turnOnAtLeast(LogLevel::Info);
-#else
-    scrn.disp.turnOnAtLeast(LogLevel::Debug);
-#endif
-    if(!(stdoutRedirected && l.settings.supressColorIfRedirected)) scrn.dispColor.turnOnAtLeast(LogLevel::Debug);
-    scrn.dispTime.turnOnAtLeast(LogLevel::Warning);
-    scrn.dispFile.turnOnAtLeast(LogLevel::Warning);
-    scrn.dispLine.turnOnAtLeast(LogLevel::Error);
-    scrn.dispFunc.turnOnAtLeast(LogLevel::Error);
-    scrn.dispLevel.turnOnAtLeast(LogLevel::Note);
-    scrn.dispLevel.turnOn(LogLevel::Debug);
-    scrn.flushLevel.turnOnAtLeast(LogLevel::Debug);
-
-}
 
 namespace internal {
 
@@ -165,7 +97,7 @@ void LogWriter::logDispatch() {
                     << (settings.spaceAfterDelimiter? " ": "");
             }
             if(eachOs.dispLevel.isOnWith(_lv)) {
-                finalOss << settings.delimiterBefore << logLevelLiteral.find(_lv)->second << settings.delimiterAfter
+                finalOss << settings.delimiterBefore << literal(_lv) << settings.delimiterAfter
                     << (settings.spaceAfterDelimiter? " ": "");
             }
             if(eachOs.dispFile.isOnWith(_lv)) {
