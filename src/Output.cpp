@@ -40,6 +40,8 @@
 #include "CController.h"
 #include "ChemSimImpl.h"
 
+#include <Eigen/Core>
+
 using namespace mathfunc;
 
 void BasicSnapshot::print(int snapshot) {
@@ -860,6 +862,92 @@ void CMGraph::print(int snapshot) {
 }
 
 
+void TMGraph::print(int snapshot) {
+    
+    //_outputFile.precision(10);
+    
+    // print first line (snapshot number, time)
+    
+    _outputFile << snapshot << " " << tau() << endl;
+    
+    vector<tuple<vector<int>,floatingpoint>> filIDVec;
+    
+    for(auto &linker : Linker::getLinkers()) {
+        
+        int fid1 = linker->getFirstCylinder()->getFilID();
+        int fid2 = linker->getSecondCylinder()->getFilID();
+        vector<int> pair;
+        pair.push_back(fid1);
+        pair.push_back(fid2);
+        
+        floatingpoint tension = abs(linker->getMLinker()->stretchForce);
+        
+        sort(pair.begin(),pair.end());
+        filIDVec.push_back(make_tuple(pair,tension));
+        
+        
+        
+    }
+    
+    for(auto &motor : MotorGhost::getMotorGhosts()) {
+        
+        int fid1 = motor->getFirstCylinder()->getFilID();
+        int fid2 = motor->getSecondCylinder()->getFilID();
+        vector<int> pair;
+        pair.push_back(fid1);
+        pair.push_back(fid2);
+        
+        floatingpoint tension = abs(motor->getMMotorGhost()->stretchForce);
+        
+        sort(pair.begin(),pair.end());
+        filIDVec.push_back(make_tuple(pair,tension));
+        
+        
+        
+    }
+    
+    vector<vector<int>> uniqueFilIDVec;
+    vector<tuple<vector<int>,floatingpoint>> uniqueFilIDVecSum;
+    
+    for(auto j : filIDVec){
+        
+        vector<int> i = get<0>(j);
+        
+        if(find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) != uniqueFilIDVec.end()) {
+            
+            int ind = find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) - uniqueFilIDVec.begin();
+            
+            get<1>(uniqueFilIDVecSum.at(ind)) +=  get<1>(j);
+
+            
+        } else {
+            
+            vector<int> pbVec;
+            pbVec.push_back(i[0]);
+            pbVec.push_back(i[1]);
+            //pbVec.push_back(get<1>(j));
+            
+            uniqueFilIDVecSum.push_back(make_tuple(pbVec,get<1>(j)));
+            uniqueFilIDVec.push_back(i);
+        }
+        
+    }
+    
+    for(auto i: uniqueFilIDVecSum){
+        _outputFile<< get<0>(i)[0] <<" "<<  get<0>(i)[1] << " "  << get<1>(i) << " ";
+    }
+    
+    
+    
+    _outputFile<<endl<<endl;
+    
+}
+
+
+
+
+
+
 
 void ReactionOut::print(int snapshot) {
 
@@ -1196,7 +1284,7 @@ void HessianMatrix::print(int snapshot){
     vector<floatingpoint> tauVector = _ffm-> tauVector;
     // Outputs a sparse representation of the Hessian matrix, where only elements with appreciable size (>0.00001) are
     // output along with their indices.  Currently this outputs for each minimization, however to reduce the file size this could be changed.
-    for(auto k = 0; k < hVec.size(); k++){
+    for(auto k = 0; k < hVec.size(); k+= SysParams::Mechanics().hessSkip){
         vector<vector<floatingpoint > > hMat = hVec[k];
         int total_DOF = hMat.size();
         vector<tuple<int, int, floatingpoint>> elements;
@@ -1215,6 +1303,34 @@ void HessianMatrix::print(int snapshot){
     _outputFile<<endl;
     };
     // This clears the vectors storing the matrices to reduce the amount of memory needed.  
-    _ffm->clearHessian();
+    _ffm->clearHessian(0);
 }
+
+
+void HessianSpectra::print(int snapshot){
+    _outputFile.precision(10);
+    vector<Eigen::VectorXcd > evaluesVector = _ffm-> evaluesVector;
+    vector<Eigen::VectorXcd > IPRIVector = _ffm-> IPRIVector;
+    vector<Eigen::VectorXcd > IPRIIVector = _ffm-> IPRIIVector;
+    vector<floatingpoint> tauVector = _ffm-> tauVector;
+    
+    // Outputs the eigenvalues obtained from each Hessian matrix
+    for(auto k = 0; k < evaluesVector.size(); k++){
+        
+        _outputFile <<tauVector[k] << "     "<< evaluesVector[k].size()<< endl;
+
+        for(auto i = 0; i< evaluesVector[k].size(); i++){
+            _outputFile<<evaluesVector[k].real()[i]<< "     "<<IPRIVector[k].real()[i]<< "     "<<IPRIIVector[k].real()[i]<<endl;
+        }
+        
+        
+        _outputFile<<endl;
+    };
+    // This clears the vectors storing the matrices to reduce the amount of memory needed.
+    _ffm->clearHessian(1);
+}
+
+
+
+
 

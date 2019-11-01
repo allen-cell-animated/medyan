@@ -40,16 +40,25 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
         if(!ci->isFullLength()) continue;
         //do not calculate exvol for a non full length cylinder
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
-        auto neighbors = _HneighborList->getNeighborsstencil(_HnlID, ci);
+        for (int ID = 0; ID < _HnlIDvec.size(); ID ++){
+            auto neighbors = _HneighborList->getNeighborsstencil(_HnlIDvec[ID], ci);
+            for(auto &cn : neighbors)
+            {
+                if(!cn->isFullLength()||
+                   cn->getBranchingCylinder() == ci) continue;
+                nint++;
+            }
+        }
 #else
         auto neighbors = _neighborList->getNeighbors(ci);
-#endif
+
         for(auto &cn : neighbors)
         {
             if(!cn->isFullLength()||
                cn->getBranchingCylinder() == ci) continue;
             nint++;
         }
+#endif
     }
 
     numInteractions = nint;
@@ -66,10 +75,38 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
         auto ci = Cylinder::getCylinders()[i];
         if(!ci->isFullLength()) continue;
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
-        auto neighbors = _HneighborList->getNeighborsstencil(_HnlID, ci);
+        
+        for (int ID = 0; ID < _HnlIDvec.size(); ID ++){
+            auto neighbors = _HneighborList->getNeighborsstencil(_HnlIDvec[ID], ci);
+            int nn = neighbors.size();
+            //        std::cout<<"Cylinder "<<i<<" "<<nn<<endl;
+            for (int ni = 0; ni < nn; ni++) {
+                
+                auto cin = neighbors[ni];
+                if(!cin->isFullLength()||
+                   cin->getBranchingCylinder() == ci) continue;
+                beadSet[n * (Cumnc)] = ci->getFirstBead()->getStableIndex();
+                beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->getStableIndex();
+                beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->getStableIndex();
+                beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->getStableIndex();
+                
+                //Get KRepuls based on filament type
+                if(ci->getType() != cin->getType()){
+                    auto ki = ci->getMCylinder()->getExVolConst();
+                    auto kin = cin->getMCylinder()->getExVolConst();
+                    krep[Cumnc] = max(ki, kin);
+                }
+                else{
+                    krep[Cumnc] = ci->getMCylinder()->getExVolConst();
+                }
+                
+                Cumnc++;
+            }
+        }
+                
 #else
         auto neighbors = _neighborList->getNeighbors(ci);
-#endif
+        
         int nn = neighbors.size();
 //        std::cout<<"Cylinder "<<i<<" "<<nn<<endl;
         for (int ni = 0; ni < nn; ni++) {
@@ -95,6 +132,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
             Cumnc++;
             //std::cout<<"CV"<<ci->getID()<<" "<<cin->getID()<<endl;
         }
+#endif
     }
     //CUDA
 #ifdef CUDAACCL

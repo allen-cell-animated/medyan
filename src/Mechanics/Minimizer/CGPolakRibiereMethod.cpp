@@ -17,6 +17,7 @@
 #include "ForceFieldManager.h"
 #include "Composite.h"
 #include "Output.h"
+#include "Bubble.h"
 #include "cross_check.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
@@ -47,6 +48,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     //@@@{ STEP 1: Start minimization
     tbegin = chrono::high_resolution_clock::now();
     startMinimization();//TODO needs to be hostallocdefault and MemCpyAsync followed by CudaStreamSynchronize
+
 
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
@@ -80,6 +82,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 	//Output energy
 //	cout<<"Energy before minimization"<<endl;
 //	FFM.computeEnergy(coord, force, 0.0, true);
+
 #ifdef SERIAL // SERIAL
 	//@@@{ STEP 3: COPY FORCES
 	tbegin = chrono::high_resolution_clock::now();
@@ -94,10 +97,12 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 	CUDAcommon::tmin.copyforces+= elapsed_copy.count();
     //@@@}
 #endif
+    
     //M as the first letter in variables signifies that it is used by minimizer
     // (as opposed to finding lambda)
     bool Ms_isminimizationstate, Ms_issafestate;
     int numIter = 0;
+
     floatingpoint lambda;
 #ifdef CUDAACCL
     volatile bool *Mc_isminimizationstate;
@@ -105,6 +110,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     Ms_isminimizationstate = false;
     Ms_issafestate = false;
 #endif
+
 #ifdef SERIAL
     //TODO Comment during SERIAL_CUDACROSSCHECK @{
     bool *Mc_isminimizationstate;
@@ -115,6 +121,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     Mc_issafestate = new bool[1];
     Mc_isminimizationstate[0] = false;//points to address of Mmh_stop
     Mc_issafestate[0] = false;//points to address of Msh_stop
+
 #endif
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -253,6 +260,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 
 #ifdef SERIAL //SERIAL
 	//@@@{ STEP 4 OTHER
+
     //FIND MAXIMUM ERROR BETWEEN CUDA AND VECTORIZED FORCES{
     //VECTORIZED. Prep for Polak{
 	tbegin = chrono::high_resolution_clock::now();
@@ -276,6 +284,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
     //
 #endif
+
 #ifdef CUDATIMETRACK_MACRO
     CUDAcommon::cudatime.Tlambda = 0.0;
     CUDAcommon::cudatime.Ecount = 0;
@@ -564,6 +573,7 @@ std::cout<<"----------------------------------------"<<endl;
 	chrono::duration<floatingpoint> elapsed_other(tend - tbegin);
 	CUDAcommon::tmin.tother+= elapsed_other.count();
     //@@@} STEP 4 OTHER
+
 #ifdef SERIAL
     while (/* Iteration criterion */  numIter < N &&
            /* Gradient tolerance  */  (Ms_isminimizationstate )) {
@@ -592,6 +602,7 @@ std::cout<<"----------------------------------------"<<endl;
 //        std::cout<<"SERL maxF "<<maxF()<<endl;
 
         numIter++;
+
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_LAMBDA)
         std::cout<<"SL safestate "<<_safeMode<<endl;
 #endif
@@ -654,6 +665,7 @@ std::cout<<"----------------------------------------"<<endl;
 	    chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
 	    CUDAcommon::tmin.computeforces+= elapsed_force.count();
         ///@@@}
+
 #ifdef DETAILEDOUTPUT
         std::cout<<"MB printing beads & forces L "<<lambda<<endl;
         long i = 0;
@@ -669,15 +681,17 @@ std::cout<<"----------------------------------------"<<endl;
         }
         std::cout<<"MB printed beads & forces"<<endl;
 #endif
+
 #ifdef CUDATIMETRACK
         tbegin = chrono::high_resolution_clock::now();
 #endif
         //@@@{ STEP 9 OTHER
-	    tbegin= chrono::high_resolution_clock::now();
+
         //compute direction
 //        std::cout<<"serial"<<endl;
         newGrad = CGMethod::allFADotFA();
         prevGrad = CGMethod::allFADotFAP();
+
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runs2a(tend - tbegin);
@@ -686,6 +700,7 @@ std::cout<<"----------------------------------------"<<endl;
 #ifdef CUDATIMETRACK
         tbegin = chrono::high_resolution_clock::now();
 #endif
+
         //Polak-Ribieri update
         beta = max<floatingpoint>((floatingpoint)0.0, (newGrad - prevGrad) /
         curGrad);
@@ -732,17 +747,15 @@ std::cout<<"----------------------------------------"<<endl;
 #ifdef CUDATIMETRACK
         tbegin = chrono::high_resolution_clock::now();
 #endif
+
         //direction reset if not downhill, or no progress made
         Ms_issafestate = CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad);
         if(Ms_issafestate && Ms_isminimizationstate ) {
             shiftGradient(0.0);
             _safeMode = true;
-#ifdef DETAILEDOUTPUT_LAMBDA
-            std::cout<<"SERL FDOTFA "<<CGMethod::allFDotFA()<<" curGrad "<<curGrad<<" "
-                    "newGrad "<<newGrad<<endl;
-            std::cout<<"Shift Gradient 0.0"<<endl;
-#endif
+
         }
+
 
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
@@ -752,8 +765,10 @@ std::cout<<"----------------------------------------"<<endl;
 #ifdef CUDATIMETRACK
         tbegin = chrono::high_resolution_clock::now();
 #endif
+
         curGrad = newGrad;
         Ms_isminimizationstate = maxForce > GRADTOL;
+
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runs1b(tend - tbegin);
@@ -780,6 +795,7 @@ std::cout<<"----------------------------------------"<<endl;
     std::cout<<"Slice time "<<elapsed_runslice2.count()<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
+
     if (numIter >= N) {
 #ifdef CUDAACCL
 
@@ -808,18 +824,11 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
         cout << endl;
     }
-#if defined(CROSSCHECK) || defined(CUDAACCL)
-    cross_checkclass::Aux=false;
-#endif
-#ifdef CUDAACCL
-    cvars = CUDAcommon::getCUDAvars();
-    cvars.streamvec.clear();
-    CUDAcommon::cudavars = cvars;
-#endif
 
     result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
 
     //final force calculation
+
     FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
@@ -838,48 +847,19 @@ std::cout<<"----------------------------------------"<<endl;
     CUDAcommon::cudatime.TcomputeF += elapsed_run2.count();
 #endif
 
-#ifdef CUDAACCL
-    FFM.CUDAcopyForces(*Msp1, CUDAcommon::getCUDAvars().gpu_forceAux,CUDAcommon::getCUDAvars().gpu_force);
-    //copy back forces and calculate load forces in CPU.
-#endif
-#ifdef ALLSYNC
-    cudaDeviceSynchronize();
-#endif
+
 #ifdef SERIAL
     Bead::getDbData().forcesAux = Bead::getDbData().forces;
 
 #endif
-#ifdef CUDAACCL
-    CUDAcommon::handleerror(cudaFreeHost(Mmh_stop));
-    CUDAcommon::handleerror(cudaFree(Mmg_stop1));
-    CUDAcommon::handleerror(cudaFree(Mmg_stop2));
-    CUDAcommon::handleerror(cudaFree(Msg_stop1));
-    CUDAcommon::handleerror(cudaFree(Msg_stop2));
-    CUDAcommon::handleerror(cudaFree(gpu_GRADTOL));
-    CUDAcommon::handleerror(cudaFreeHost(Msh_stop));
-    CUDAcommon::handleerror(cudaStreamSynchronize(Ms1));
-    CUDAcommon::handleerror(cudaStreamSynchronize(Ms2));
-    CUDAcommon::handleerror(cudaStreamSynchronize(Ms3));
-    CUDAcommon::handleerror(cudaStreamSynchronize(Ms4));
-    if(!(CUDAcommon::getCUDAvars().conservestreams)) {
-        CUDAcommon::handleerror(cudaStreamDestroy(Ms1));
-        CUDAcommon::handleerror(cudaStreamDestroy(Ms2));
-        CUDAcommon::handleerror(cudaStreamDestroy(Ms3));
-        CUDAcommon::handleerror(cudaStreamDestroy(Ms4));
-        CUDAcommon::handleerror(cudaEventDestroy(Me1));
-        CUDAcommon::handleerror(cudaEventDestroy(Me2));
-        CUDAcommon::handleerror(cudaEventDestroy(event_safe));
-        CUDAcommon::handleerror(cudaEventDestroy(event_dot));
-        CUDAcommon::handleerror(cudaStreamDestroy(stream_dotcopy));
-        CUDAcommon::handleerror(cudaStreamDestroy(stream_shiftsafe));
-    }
-#endif
+
 #ifdef SERIAL
     //TODO Comment during SERIAL_CUDACROSSCHECK @{
     delete [] Mc_isminimizationstate;
     delete [] Mc_issafestate;
     //@}
 #endif
+
     //TODO make sure it calculates stretchforce in CUDA.
 #ifdef CUDAACCL
     FFM.assignallforcemags();
@@ -894,6 +874,7 @@ std::cout<<"----------------------------------------"<<endl;
     std::cout<<"Slice time "<<elapsed_runslice4.count()<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
+
     FFM.computeLoadForces();
 
     // compute the Hessian matrix at this point if the feature is enabled
@@ -906,10 +887,12 @@ std::cout<<"----------------------------------------"<<endl;
     std::cout<<"End Minimization************"<<endl;
 #endif
     FFM.cleanupAllForceFields();
+
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_end(tend - tbegin);
 	CUDAcommon::tmin.endminimization+= elapsed_end.count();
 	//@} END MINIMIZTION
+
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;
     for(auto b:Bead::getBeads()){
@@ -918,6 +901,7 @@ std::cout<<"----------------------------------------"<<endl;
     }
     std::cout<<"printed beads & forces"<<endl;
 #endif
+
 
 #ifdef CUDATIMETRACK
     tendII= chrono::high_resolution_clock::now();
@@ -929,4 +913,5 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
 
     return result;
+
 }

@@ -213,7 +213,7 @@ bool ChemNRMImpl::makeStep() {
     ReactionBase* react = rn->getReaction();
     string HRCDID = react->getHRCDID();
     string testString = "DNT";
-    if(HRCDID != testString){
+    if((HRCDID != testString) || (react->getReactionType() == 1)){
         _dt->updateDelGChem(react);
         }
     }
