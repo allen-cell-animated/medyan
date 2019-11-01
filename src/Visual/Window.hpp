@@ -6,7 +6,7 @@
 #include <stdexcept> // runtime_error
 #include <vector>
 
-#include "Util/Environment.h"
+#include "Util/Environment.hpp"
 #include "Util/Io/Log.hpp"
 #include "Visual/Camera.hpp"
 #include "Visual/Common.hpp"

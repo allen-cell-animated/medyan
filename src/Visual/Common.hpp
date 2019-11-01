@@ -1,7 +1,7 @@
 #ifndef MEDYAN_Visual_Common_Hpp
 #define MEDYAN_Visual_Common_Hpp
 
-#include "Util/Environment.h"
+#include "Util/Environment.hpp"
 
 #ifdef VISUAL
     #ifdef PLATFORM_WINDOWS
