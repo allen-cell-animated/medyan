@@ -68,11 +68,6 @@ inline auto medyanInitFromCommandLine(int argc, char** argv) {
     // Post processing
     //-------------------------------------------------------------------------
 
-    // Initialize the logger
-    //---------------------------------
-    ::medyan::logger::Logger::defaultLoggerInitialization();
-    // TODO remove logger initialization here
-
     // Number of threads
     //---------------------------------
     // The actual number of threads will also be affected by the result of
