@@ -99,7 +99,7 @@ public:
     AFMFilamentDist(vector<floatingpoint> coord, floatingpoint radius)
     : _coordAFM(coord), _radius(radius) {}
     
-    FilamentData createFilaments(Boundary* b, int numFilaments,
+    FilamentData createFilaments(const MembraneRegion<Membrane>& mr, int numFilaments,
                                  int filamentType,
                                  int lenFilaments);
 };

@@ -26,7 +26,7 @@ void AFM::setBubble(Bubble* b) {
     addChild(unique_ptr<Component>(b));
 }
 
-void AFM::printSelf() {
+void AFM::printSelf() const {
     
     cout << endl;
     

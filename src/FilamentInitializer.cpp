@@ -275,7 +275,7 @@ FilamentData MTOCFilamentDist::createFilaments(const MembraneRegion<Membrane>& m
     
     return make_tuple(filaments,dummy,dummy2, dummy3);
 }
-FilamentData AFMFilamentDist::createFilaments(Boundary* b, int numFilaments,
+FilamentData AFMFilamentDist::createFilaments(const MembraneRegion<Membrane>& mr, int numFilaments,
                                                             int filamentType,
                                                             int lenFilaments) {
     
@@ -284,6 +284,9 @@ FilamentData AFMFilamentDist::createFilaments(Boundary* b, int numFilaments,
     vector<vector<floatingpoint>> dummy3;
     vector<tuple<string, short, vector<floatingpoint>>> dummy2;
     int filamentCounter = 0;
+
+    Boundary* b = mr.getBoundary();
+
     while (filamentCounter < numFilaments) {
         
 
