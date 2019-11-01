@@ -155,6 +155,7 @@ struct ChemParams {
     vector<short> camkiierBoundIndex = vector<short>(MAX_FILAMENT_TYPES);
     vector<short> camkiierBindingBoundIndex = vector<short>(MAX_FILAMENT_TYPES);
     vector<short> camkiierBundlingBoundIndex = vector<short>(MAX_FILAMENT_TYPES);
+    vector<short> camkiierDummyCylinderBoundIndex = vector<short>(MAX_FILAMENT_TYPES);
     vector<short> linkerBoundIndex   = vector<short>(MAX_FILAMENT_TYPES);
     vector<short> motorBoundIndex    = vector<short>(MAX_FILAMENT_TYPES);
     

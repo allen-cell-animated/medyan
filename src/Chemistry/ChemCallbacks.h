@@ -142,7 +142,54 @@ struct UpdateCaMKIIerBundlingCallback {
                 //update binding sites
                 if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
 
-                else /* -1 */manager->removePossibleBindings(cc, _bindingSite);
+                else /* -1 */ {
+                    manager->removePossibleBindings(cc, _bindingSite);
+
+                    cout << "---------------============----------" << endl;
+                    for(auto ccc : Cylinder::getCylinders()) {
+                        if(dynamic_cast<CaMKIICylinder*>(ccc)) {
+                            cout << "========MILLAD: " << ccc->getCCylinder() << endl;
+                        }
+                    }
+                    cout << "---------------============----------" << endl;
+                }
+            }
+        }
+    }
+};
+
+struct UpdateCaMKIIerDummyCylinderCallback {
+
+    Cylinder* _cylinder; ///< cylinder to update
+
+    short _bindingSite;  ///< binding site to update
+
+    //Constructor, sets members
+    UpdateCaMKIIerDummyCylinderCallback(Cylinder* cylinder, short bindingSite)
+
+            : _cylinder(cylinder), _bindingSite(bindingSite) {}
+
+    //callback
+    void operator() (RSpecies *r, int delta) {
+        if(!dynamic_cast<CaMKIICylinder*>(_cylinder))
+            return;
+
+        const int n = r->getN();
+
+        //update this cylinder
+        Compartment* c = _cylinder->getCompartment();
+
+        for(auto &manager : c->getFilamentBindingManagers()) {
+
+            if(dynamic_cast<CaMKIIBundlingManager*>(manager.get())) {
+
+                CCylinder* cc = _cylinder->getCCylinder();
+
+                if(delta == -1 && n == 0) {
+                    manager->removePossibleBindings(cc, _bindingSite);
+                    cerr << "====== MILLAD: Removing CaMKIICylinder from PossibleCylinders " << _cylinder << "  " << _cylinder->getCCylinder()
+                         << endl;
+                }
             }
         }
     }
@@ -581,6 +628,7 @@ struct CaMKIIingPointUnbindingCallback {
 
         //remove the camkiiing point
         _camkiiingPoint->getCCaMKIIingPoint()->removeBond(_camkiiingPoint->getBond(0));
+        cerr << "====== MILLAD: Removing CaMKIICylinder " << _camkiiingPoint->getCaMKIICylinder()  << "   " << _camkiiingPoint->getCaMKIICylinder()->getCCylinder() << endl;
         _ps->removeTrackable<CaMKIICylinder>(_camkiiingPoint->getCaMKIICylinder());
         _ps->removeTrackable<CaMKIIingPoint>(_camkiiingPoint);
         delete _camkiiingPoint;

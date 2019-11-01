@@ -585,6 +585,8 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
 	int oldN = _bindingSpecies->getN();
 	int newN = numBindingSites();
 
+	cerr << "============ MILLAD: old and new N: " << oldN << "  " << newN << "   " << oldN - newN << endl;
+
 	updateBindingReaction(oldN, newN);
 
 	//remove all neighbors which have this binding site pair
@@ -605,6 +607,9 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
 	//remove, update affected
 	for(auto m : affectedManagers) {
 
+        int _oldNOther = m->_bindingSpecies->getN();
+        int _newNOther = m->numBindingSites();
+
 		for (auto it = m->_possibleBindings.begin(); it != m->_possibleBindings.end(); ) {
 
 			if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
@@ -622,7 +627,8 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
 
 
 void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc) {
-	if(cc->getType() == _filamentType) {
+	//TODO: TODO_UMD IMPORTANT!!!!!! Check whether this is correct
+    if(cc->getType() != CAMKII_CYLINDER_FILAMENT_TYPE) {
 		for (auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
 			 bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
 			removePossibleBindings(cc, *bit);
