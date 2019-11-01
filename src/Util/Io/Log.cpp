@@ -100,23 +100,24 @@ void LogWriter::logDispatch() {
                 finalOss << settings.delimiterBefore << literal(_lv) << settings.delimiterAfter
                     << (settings.spaceAfterDelimiter? " ": "");
             }
-            if(eachOs.dispFile.isOnWith(_lv)) {
-                finalOss << settings.delimiterBefore << "File " << _curFile << settings.delimiterAfter
-                    << (settings.spaceAfterDelimiter? " ": "");
-            }
-            if(eachOs.dispLine.isOnWith(_lv)) {
-                finalOss << settings.delimiterBefore << "Line " << _curLine << settings.delimiterAfter
-                    << (settings.spaceAfterDelimiter? " ": "");
-            }
-            if(eachOs.dispFunc.isOnWith(_lv)) {
-                finalOss << settings.delimiterBefore << "Function " << _curFunc << settings.delimiterAfter
-                    << (settings.spaceAfterDelimiter? " ": "");
-            }
 
             // Attach log content
             finalOss << _oss.str();
 
             // Suffix generation
+            if(eachOs.dispFile.isOnWith(_lv)) {
+                finalOss << (settings.spaceAfterDelimiter? " ": "")
+                    << settings.delimiterBefore << "File " << _curFile << settings.delimiterAfter;;
+            }
+            if(eachOs.dispLine.isOnWith(_lv)) {
+                finalOss << (settings.spaceAfterDelimiter? " ": "")
+                    << settings.delimiterBefore << "Line " << _curLine << settings.delimiterAfter;
+            }
+            if(eachOs.dispFunc.isOnWith(_lv)) {
+                finalOss << (settings.spaceAfterDelimiter? " ": "")
+                    << settings.delimiterBefore << "Function " << _curFunc << settings.delimiterAfter;
+            }
+
             if(eachOs.dispColor.isOnWith(_lv)) {
                 finalOss << resetAnsi;
             }
