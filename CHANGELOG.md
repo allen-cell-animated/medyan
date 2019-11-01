@@ -1,3 +1,12 @@
+# ?.?.? (Released TBD)
+
+## New features
+
+## Refactoring and optimizations
+- Refactored the logger (a2c69f9).
+
+## Bug fixes
+
 # 4.1.0 (Released 2019-10-29)
 
 ## New features
