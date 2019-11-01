@@ -26,10 +26,9 @@
 #include "Rand.h"
 #include "../GController.h"
 
-
 using namespace mathfunc;
 
-CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double position)
+CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double position, vector<double> &cp)
     : Trackable(true), _camkiiType(camkiiType), _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()) {
 
 	assert(camkiiType == 0);
@@ -48,7 +47,8 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double posi
 #endif
 
 
-    vector<double> _tmp_coordinate(3, 0.0);
+//    vector<double> _tmp_coordinate(3, 0.0);
+    vector<double> &_tmp_coordinate = cp;
 
     // Creating and initializing CaMKII cylinder
     Bead* b1 = _subSystem->addTrackable<Bead>(_tmp_coordinate, nullptr, 0);
@@ -63,7 +63,7 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double posi
 	addBond(cylinder, pos);
 
 	//Find compartment
-	updateCoordinate(coordinate);
+//	updateCoordinate(coordinate);
 	try {_compartment = GController::getCompartment(*coordinate);}
 	catch (exception& e) {
 		cout << e.what();
@@ -80,6 +80,9 @@ void CaMKIIingPoint::addBond(Cylinder *c, short pos) {
 }
 
 void CaMKIIingPoint::updateCoordinate(vector<double> *coordinate) {
+
+    cerr << "=======MILLAD: updateCoordinate should not be called!" << endl;
+    exit(1);
 
 	//Calculate the midpoint coordinate
 	vector<double> temp(3, 0.0);
@@ -129,7 +132,7 @@ void CaMKIIingPoint::updatePosition() {
 
 	assert(coordinate != nullptr);
     //Find compartment
-    updateCoordinate(coordinate);
+//    updateCoordinate(coordinate);
     
     Compartment* c;
     

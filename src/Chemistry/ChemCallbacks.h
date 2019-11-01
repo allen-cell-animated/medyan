@@ -671,43 +671,45 @@ struct CaMKIIBindingCallback {
         short filType = c1->getType();
 
         double pos = double(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
-        if (SysParams::RUNSTATE == true) {
-            //Get a position and direction of a new filament
-            auto x1 = c1->getFirstBead()->coordinate;
-            auto x2 = c1->getSecondBead()->coordinate;
 
-            //get original direction of cylinder
-            auto p = midPointCoordinate(x1, x2, pos);
-            vector<double> n = twoPointDirection(x1, x2);
+        //Get a position and direction of a new filament
+        auto x1 = c1->getFirstBead()->coordinate;
+        auto x2 = c1->getSecondBead()->coordinate;
 
-            //get camkii projection
+        //get original direction of cylinder
+        auto p = midPointCoordinate(x1, x2, pos);
+        vector<double> n = twoPointDirection(x1, x2);
+
+        //get camkii projection
 #ifdef MECHANICS
-            //use mechanical parameters
-            double l, t;
-            if (SysParams::Mechanics().CaMKIIStretchingL.size() != 0) {
-                l = SysParams::Mechanics().CaMKIIStretchingL[camkiiType];
+        //use mechanical parameters
+        double l, t;
+        if (SysParams::Mechanics().CaMKIIStretchingL.size() != 0) {
+            l = SysParams::Mechanics().CaMKIIStretchingL[camkiiType];
 //            t = SysParams::Mechanics().CaMKIIBendingTheta[camkiiType];
-                t = M_PI_2;
-            } else {
+            t = M_PI_2;
+        } else {
 //            cout << "CaMKIIing initialization cannot occur unless mechanical parameters are specified."
 //            << " Using default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
 //            << endl;
-                l = 10.0;
-                t = M_PI_2;
-            }
+            l = 10.0;
+            t = M_PI_2;
+        }
 #else
-			cout << "CaMKIIing initialization cannot occur unless mechanics is enabled. Using"
+        cout << "CaMKIIing initialization cannot occur unless mechanics is enabled. Using"
 			<< " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
 			<< endl;
 			double l = 10.0;
 			double t = 1.22;
 #endif
-            double s = SysParams::Geometry().monomerSize[filType];
+        double s = SysParams::Geometry().monomerSize[filType];
 
-            // initial position of CaMKIIingPoint
-            auto cp = camkiiProjection(n, p, l);
+        // initial position of CaMKIIingPoint
+        auto cp = camkiiProjection(n, p, l);
 
-            b = _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos);
+        if (SysParams::RUNSTATE == true) {
+
+            b = _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos, cp);
             cout << "ID: " << b->getID() << endl; //Carlos verbose prints
             frate = _offRate;
         } else {
@@ -726,7 +728,7 @@ struct CaMKIIBindingCallback {
             if (check) {
                 CMonomer *x = c->getCMonomer(0);
                 vector<Cylinder *> cy{c1, c->getCylinder()};
-                b = _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos);
+                b = _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos, cp);
 
                 x = c->getCMonomer(0);
                 frate = 0.0;

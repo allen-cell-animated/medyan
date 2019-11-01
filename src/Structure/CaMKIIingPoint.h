@@ -76,7 +76,7 @@ public:
     vector<double> *coordinate; ///< coordinate of midpoint,
                                ///< updated with updatePosition()
     
-    CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double position);
+    CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double position, vector<double> &cp);
     virtual ~CaMKIIingPoint()  noexcept;
 
     CaMKIIingPoint(const CaMKIIingPoint &rhs) = delete;

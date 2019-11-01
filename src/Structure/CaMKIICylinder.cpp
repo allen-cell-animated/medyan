@@ -37,6 +37,7 @@ CaMKIICylinder::CaMKIICylinder(CaMKIIingPoint *camkiiPoint, Bead* b1, short type
 
 CaMKIICylinder::~CaMKIICylinder() noexcept {
     //remove from compartment
+    //TODO: check if this is called when unbinding happens
     _compartment->removeCylinder(this);
 
 }
