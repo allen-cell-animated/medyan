@@ -75,6 +75,7 @@ private:
 
     DissipationTracker* _dt;   ///< dissipation tracking object
     
+    
     //@{
     /// Same parameter set as timestep, but in terms of chemical
     /// reaction steps. Useful for small runs and debugging.
@@ -122,7 +123,10 @@ private:
     void ControlfrontbackEndComp();
     /// Update the positions of all elements in the system
     void updatePositions();
+    
+    void updateBubblePositions();
 
+    
 #ifdef DYNAMICRATES
     /// Update the reaction rates of all elements in the system
     void updateReactionRates();
@@ -145,6 +149,9 @@ private:
     /// Helper function to remesh the membranes
     void membraneAdaptiveRemesh() const;
     
+    double tp = SysParams::Chemistry().makeRateDependTime;
+    double threforce = SysParams::Chemistry().makeRateDependForce;
+    
 public:
     floatingpoint chemistrytime = 0.0;
     floatingpoint minimizationtime = 0.0;
@@ -158,6 +165,7 @@ public:
     floatingpoint specialtime = 0.0;
     floatingpoint updatepositioncylinder = 0.0;
     floatingpoint updatepositionmovable=0.0;
+    floatingpoint whileloop = 0.0;
 
     Controller();
     ~Controller() {};

@@ -372,7 +372,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                     if (c.filamentId == ncylinder.filamentId) {
                         auto distsep = fabs(c.positionOnFilament - ncylinder.positionOnFilament);
                         //if not cross filament, check if not neighboring
-                        if (distsep <= 2) continue;
+                        if (distsep <= SysParams::Mechanics().sameFilBindSkip) continue;
                     }
 
                     //Loop through all the distance bounds and add to neighborlist

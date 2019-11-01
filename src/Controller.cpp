@@ -30,6 +30,7 @@
 #include "Cylinder.h"
 #include "Linker.h"
 #include "MotorGhost.h"
+#include "Structure/BoundaryElementImpl.h"
 #include "BranchingPoint.h"
 #include "Bubble.h"
 #include "MTOC.h"
@@ -37,6 +38,8 @@
 #include "Structure/SurfaceMesh/MembraneHierarchy.hpp"
 #include "Structure/SurfaceMesh/MembraneRegion.hpp"
 #include "Structure/SurfaceMesh/SurfaceMeshGeneratorPreset.hpp"
+#include "AFM.h"
+#include "ChemManager.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
@@ -280,6 +283,7 @@ void Controller::initialize(string inputFile,
 	ForceFieldManager* _ffm = _mController.getForceFieldManager();
 
     string concenname = _outputDirectory + "concentration.traj";
+
     _outputs.push_back(new Concentrations(concenname, &_subSystem, ChemData));
 
     if(SysParams::CParams.dissTracking){
@@ -316,11 +320,21 @@ void Controller::initialize(string inputFile,
     //Set up HessianMatrix if hessiantracking is enabled
     string hessianmatrix = _outputDirectory + "hessianmatrix.traj";
     _outputs.push_back(new HessianMatrix(hessianmatrix, &_subSystem, _ffm));
+        
+    //Set up HessianSpectra if hessiantracking is enabled
+    string hessianspectra = _outputDirectory + "hessianspectra.traj";
+    _outputs.push_back(new HessianSpectra(hessianspectra, &_subSystem, _ffm));
+        
+        
     }
 
     //Set up CMGraph output
     string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
     _outputs.push_back(new CMGraph(cmgraphsnapname, &_subSystem));
+    
+    //Set up TMGraph output
+    string tmgraphsnapname = _outputDirectory + "TMGraph.traj";
+    _outputs.push_back(new TMGraph(tmgraphsnapname, &_subSystem));
 
 
     //Set up datadump output if any
@@ -332,6 +346,7 @@ void Controller::initialize(string inputFile,
 //    //Set up Turnover output if any
 //    string turnover = _outputDirectory + "Turnover.traj";
 //    _outputs.push_back(new FilamentTurnoverTimes(turnover, &_subSystem));
+
 
 #endif
 
@@ -398,6 +413,7 @@ void Controller::initialize(string inputFile,
     setupInitialNetwork(p);
 
     //setup special structures
+    p.readSpecialParams();
     setupSpecialStructures(p);
 
     SysParams::INITIALIZEDSTATUS = true;
@@ -629,28 +645,82 @@ void Controller::setupSpecialStructures(SystemParser& p) {
     SpecialSetupType SType = p.readSpecialSetupType();
 
     //set up a MTOC if desired
+
     //For now, uses 20 filaments
     if(SType.mtoc) {
 
         MTOC* mtoc = _subSystem.addTrackable<MTOC>();
+        
+        //set MTOC coordinates based on input
+        floatingpoint bcoordx = SType.mtocInputCoordXYZ[0];
+        floatingpoint bcoordy = SType.mtocInputCoordXYZ[1];
+        floatingpoint bcoordz = SType.mtocInputCoordXYZ[2];
 
-        //create the bubble in top part of grid, centered in x,y
-        floatingpoint bcoordx = GController::getSize()[0] / 2;
-        floatingpoint bcoordy = GController::getSize()[1] / 2;
-        floatingpoint bcoordz = GController::getSize()[2] * 5 / 6;
 
         vector<floatingpoint> bcoords = {bcoordx, bcoordy, bcoordz};
         Bubble* b = _subSystem.addTrackable<Bubble>(&_subSystem, bcoords, SType.mtocBubbleType);
 
-        mtoc->setBubble(b);
 
+        mtoc->setBubble(b);
+        
         FilamentInitializer *init = new MTOCFilamentDist(bcoords,
                                                          SysParams::Mechanics().BubbleRadius[SType.mtocBubbleType]);
 
+
         auto filaments = init->createFilaments(_subSystem.getBoundary(),
+
                                                SType.mtocNumFilaments,
                                                SType.mtocFilamentType,
                                                SType.mtocFilamentLength);
+        //add filaments
+        filamentData fil=get<0>(filaments);
+        for (auto it: fil) {
+            
+            auto coord1 = get<1>(it);
+            auto coord2 = get<2>(it);
+            
+            vector<vector<floatingpoint>> coords = {coord1, coord2};
+            
+            floatingpoint d = twoPointDistance(coord1, coord2);
+            vector<floatingpoint> tau = twoPointDirection(coord1, coord2);
+            
+            int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
+            
+            // check how many segments can fit between end-to-end of the filament
+            Filament *f = _subSystem.addTrackable<Filament>(&_subSystem, SType.mtocFilamentType,
+                                                             coords, numSegment + 1, "ARC");
+            
+            mtoc->addFilament(f);
+            
+        }
+        cout << "MTOC is set." << endl;
+        
+    }
+    else if(SType.afm) {
+
+        AFM* afm = _subSystem.addTrackable<AFM>();
+
+        //create a bubble in top part of grid, centered in x,y
+        floatingpoint bcoordx = GController::getSize()[0] / 2;
+        floatingpoint bcoordy = GController::getSize()[1] / 2;
+        //set up the height of the AFM bubble
+        floatingpoint bcoordz = 1250;
+
+        vector<floatingpoint> bcoords = {bcoordx, bcoordy, bcoordz};
+        Bubble* b = _subSystem.addTrackable<Bubble>(&_subSystem, bcoords, SType.afmBubbleType);
+
+        PlaneBoundaryElement* afmpbe = _subSystem.addTrackable<PlaneBoundaryElement>(bcoords, vector<floatingpoint>{0,0,-1}, SysParams::Boundaries().BoundaryK,
+                                   SysParams::Boundaries().BScreenLength);
+
+        afm->setBubble(b);
+        afm->setPlaneBoundaryElement(afmpbe);
+
+        FilamentInitializer *init = new AFMFilamentDist(bcoords, SysParams::Mechanics().BubbleRadius[SType.afmBubbleType]);
+
+        auto filaments = init->createFilaments(_subSystem.getBoundary(),
+                                               SType.afmNumFilaments,
+                                               SType.afmFilamentType,
+                                               SType.afmFilamentLength);
         //add filaments
         filamentData fil=get<0>(filaments);
         for (auto it: fil) {
@@ -663,14 +733,17 @@ void Controller::setupSpecialStructures(SystemParser& p) {
             floatingpoint d = twoPointDistance(coord1, coord2);
             vector<floatingpoint> tau = twoPointDirection(coord1, coord2);
 
-            int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
+            int numSegment = static_cast<int>(std::round(d / SysParams::Geometry().cylinderSize[SType.afmFilamentType]));
 
             // check how many segments can fit between end-to-end of the filament
-            Filament *f = _subSystem.addTrackable<Filament>(&_subSystem, SType.mtocFilamentType,
-                                                             coords, numSegment + 1, "ARC");
 
-            mtoc->addFilament(f);
+
+
+            Filament *f = _subSystem.addTrackable<Filament>(&_subSystem, SType.afmFilamentType, coords, numSegment + 1, "ARC");
+
+            afm->addFilament(f);
         }
+        cout << "AFM is set." << endl;
     }
     cout << "Done." << endl;
 }
@@ -1011,6 +1084,7 @@ void Controller::executeSpecialProtocols() {
 }
 
 void Controller::updatePositions() {
+
 	chrono::high_resolution_clock::time_point minsp, minep;
     //NEED TO UPDATE CYLINDERS FIRST
 	minsp = chrono::high_resolution_clock::now();
@@ -1032,12 +1106,74 @@ void Controller::updatePositions() {
 //    for(auto m : _subSystem->getMovables()) m->updatePosition();
 	int count = 0;
 	for(auto m : Movable::getMovableList()) m->updatePosition();
+    
+    //update bubble
+    if(SysParams::Chemistry().makeAFM) updateBubblePositions();
 
 
     minep = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> compartment_update2(minep - minsp);
     updatepositionmovable += compartment_update2.count();
 }
+
+void Controller::updateBubblePositions() {
+    
+    //update AFM bubble again based on time
+    for(auto b : Bubble::getBubbles()) {
+        if(b->isAFM()) b->updatePositionManually();
+    }
+    
+    if(SysParams::Chemistry().makeRateDepend && tau() - tp > 1) {
+        tp+=1;
+        
+        for(auto &filament : Filament::getFilaments()) {
+            double deltaL;
+            double numCyl = 0;
+            for (auto cylinder : filament->getCylinderVector()){
+                
+                deltaL += cylinder->getMCylinder()->getLength() -
+                cylinder->getMCylinder()->getEqLength();
+                numCyl += 1;
+            }
+            
+            //print last
+            Cylinder* cylinder = filament->getCylinderVector().back();
+            deltaL += cylinder->getMCylinder()->getLength() -
+            cylinder->getMCylinder()->getEqLength();
+            numCyl += 1;
+            
+            double k = cylinder->getMCylinder()->getStretchingConst();
+            
+            //if the filament tension is higher than threshold, regardless of sign
+            if(k*deltaL/numCyl > SysParams::Chemistry().makeRateDependForce ||
+               -k*deltaL/numCyl > SysParams::Chemistry().makeRateDependForce ){
+                
+                Cylinder* pCyl = filament->getCylinderVector().back();
+                for(auto &r : pCyl->getCCylinder()->getInternalReactions()) {
+                    if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
+                        float newrate = 5 * SysParams::Chemistry().originalPolyPlusRate;
+                        r->setBareRate(newrate);
+                        r->recalcRateVolumeFactor();
+                        r->updatePropensity();
+                    }
+                }
+            }
+            //else, set it back to orginal rate
+            else{
+                Cylinder* pCyl = filament->getCylinderVector().back();
+                for(auto &r : pCyl->getCCylinder()->getInternalReactions()) {
+                    if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
+                        float newrate = SysParams::Chemistry().originalPolyPlusRate;
+                        r->setBareRate(newrate);
+                        r->recalcRateVolumeFactor();
+                        r->updatePropensity();
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
@@ -1378,6 +1514,7 @@ void Controller::run() {
         chrono::duration<floatingpoint> elapsed_runspl(mine - mins);
         specialtime += elapsed_runspl.count();
         while(tau() <= _runTime) {
+            auto minwhile = chrono::high_resolution_clock::now();
             //run ccontroller
             #ifdef OPTIMOUT
             cout<<"Starting chemistry"<<endl;
@@ -1459,19 +1596,7 @@ void Controller::run() {
             tauLastNeighborList += tau() - oldTau;
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
-#ifdef CUDAACCL
-            //@{
-    size_t free, total;
-    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
-    cudaFree(0);
-    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
-    std::cout<<"Free VRAM before CUDA operations in bytes "<<free<<". Total VRAM in bytes "
-             <<total<<endl;
-            auto cvars = CUDAcommon::getCUDAvars();
-            cvars.memincuda = free;
-            CUDAcommon::cudavars = cvars;
-    //@}
-#endif
+
             //run mcontroller, update system
             if(tauLastMinimization >= _minimizationTime/factor) {
 
@@ -1523,9 +1648,10 @@ void Controller::run() {
 
                 mine= chrono::high_resolution_clock::now();
 
-                #ifdef OPTIMOUT
+                
                 chrono::duration<floatingpoint> elapsed_runm3(mine - mins);
                 minimizationtime += elapsed_runm3.count();
+                #ifdef OPTIMOUT
                 std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
 				#endif
 
@@ -1565,6 +1691,7 @@ void Controller::run() {
 	            rxnratetime += elapsed_rxn3.count();
 
             }
+
             //output snapshot
             if(tauLastSnapshot >= _snapshotTime) {
                 mins = chrono::high_resolution_clock::now();
@@ -1584,6 +1711,14 @@ void Controller::run() {
                         << "; work time: " << stats.totalWorkTime
                         << "; usage rate: " << stats.timeUsageRate;
                 }
+                cout<< "Chemistry time for run=" << chemistrytime <<endl;
+                cout << "Minimization time for run=" << minimizationtime <<endl;
+                cout<< "Neighbor-list+Bmgr-time for run="<<nltime<<endl;
+                cout<<"update-position time for run="<<updateposition<<endl;
+                
+                cout<<"rxnrate time for run="<<rxnratetime<<endl;
+                cout<<"Output time for run="<<outputtime<<endl;
+                cout<<"Special time for run="<<specialtime<<endl;
             }
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
@@ -1621,7 +1756,6 @@ void Controller::run() {
             chrono::duration<floatingpoint> elapsed_runspl2(mine - mins);
             specialtime += elapsed_runspl2.count();
             oldTau = tau();
-
 #ifdef CUDAACCL
 
             //reset CUDA context
@@ -1885,7 +2019,7 @@ void Controller::run() {
         cout << "Dynamic neighbor " << SubSystem::timedneighbor << endl;
         cout << "Neighbor " << SubSystem::timeneighbor << endl;
         cout << "Trackable " << SubSystem::timetrackable << endl;
-        cout << "Done with simulation!" << endl;
+
         cout << "-------------" << endl;
         cout << "Filament extendPlusEnd 1 " << Filament::FilextendPlusendtimer1 << endl;
         cout << "Filament extendPlusEnd 2 " << Filament::FilextendPlusendtimer2 << endl;
@@ -1909,6 +2043,7 @@ void Controller::run() {
              << CUDAcommon::ppendtime.rxntempate4 << endl;
     }
 	#endif
+    cout << "Done with simulation!" << endl;
 #ifdef CUDAACCL
     cudaDeviceReset();
 #endif

@@ -550,6 +550,6 @@ ChemParams   SysParams::CParams;
 GeoParams    SysParams::GParams;
 BoundParams  SysParams::BParams;
 DyRateParams SysParams::DRParams;
-
+SpecialParams SysParams::SParams;
 
 

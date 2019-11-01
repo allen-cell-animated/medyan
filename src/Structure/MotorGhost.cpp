@@ -90,11 +90,12 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     auto x4 = _c2->getSecondBead()->vcoordinate();
 #ifdef PLOSFEEDBACK
     _mMotorGhost = unique_ptr<MMotorGhost>(
-    new MMotorGhost(motorType, _numBoundHeads, position1, position2, x1, x2, x3, x4));
+    new MMotorGhost(motorType, _numHeads, position1, position2, x1, x2, x3, x4));
     _mMotorGhost->setMotorGhost(this);
 #else
+    //Using _numBoundHeads vs _numHeads as the argument to the constructor here - Cal edit to produce realistic dissipation values
     _mMotorGhost = unique_ptr<MMotorGhost>(
-            new MMotorGhost(motorType, _numHeads, position1, position2, x1, x2, x3, x4));
+            new MMotorGhost(motorType, _numBoundHeads, position1, position2, x1, x2, x3, x4));
     _mMotorGhost->setMotorGhost(this);
 #endif
 #endif
@@ -287,7 +288,7 @@ void MotorGhost::updateReactionRates() {
 	    if((c1struct.filamentId == c2struct.filamentId)) {
 	    	auto c1posonFil = c1struct.positionOnFilament;
 		    auto c2posonFil = c2struct.positionOnFilament;
-		    consider_passivation = abs(c1posonFil - c2posonFil) <= 3;
+            consider_passivation = abs(c1posonFil - c2posonFil) <= SysParams::Mechanics().sameFilBindSkip + 1;
 		    //A distance of 3 or lesser between two cylinders on the same filament is not
 		    // acceptable.
 		    isc1leftofc2 = c1posonFil < c2posonFil;

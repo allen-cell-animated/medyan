@@ -535,6 +535,7 @@ void CGMethod::startMinimization() {
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
 #endif
+
 	long Ncyl = Cylinder::getCylinders().size();
 #ifdef CROSSCHECK_IDX
 if(true) {
@@ -600,6 +601,7 @@ if(true) {
 
     }
 #endif
+
 
 
 #ifdef CUDATIMETRACK
@@ -850,6 +852,7 @@ if(true) {
 }
 
 void CGMethod::endMinimization() {
+
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
@@ -863,58 +866,11 @@ void CGMethod::endMinimization() {
 //    CUDAcommon::handleerror(cudaMemcpy(forceAux, CUDAcommon::getCUDAvars().gpu_forceAux, N *
 //                            sizeof(floatingpoint), cudaMemcpyDeviceToHost));
 
-    #endif
+#endif
+
 
 //    deallocate();
-#ifdef CUDAACCL
-    bool deletecndn = true;
-#ifdef CUDAACCL_NLS
-    deletecndn = false;
-#endif
-    if(deletecndn) {
-        CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_coord));
-        CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_cylindervec));
-    }
-    CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_force));
-    CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_forceAux));
-    CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_forceAuxP));
-    CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_lambda));
-    CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_energy));
-//    CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gculpritID));
 
-    CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_btstate));
-    CUDAcommon::handleerror(cudaFree(gpu_initlambdalocal));
-//    CUDAcommon::handleerror(cudaFreeHost(CUDAcommon::getCUDAvars().culpritFF));
-    CUDAcommon::handleerror(cudaFreeHost(CUDAcommon::getCUDAvars().culpritID));
-    CUDAcommon::handleerror(cudaFreeHost(CUDAcommon::getCUDAvars().culpritFF));
-    CUDAcommon::handleerror(cudaFreeHost(CUDAcommon::getCUDAvars().culpritinteraction));
-    CUDAcommon::handleerror(cudaFree(gpu_g));
-//    CUDAcommon::handleerror(cudaFree(gSum));
-//    CUDAcommon::handleerror(cudaFree(gSum2));
-    CUDAcommon::handleerror(cudaFree(gpu_fmax));
-    CUDAcommon::handleerror(cudaFree(gpu_FDotF));
-    CUDAcommon::handleerror(cudaFree(gpu_FADotFA));
-    CUDAcommon::handleerror(cudaFree(gpu_FADotFAP));
-    CUDAcommon::handleerror(cudaFree(gpu_FDotFA));
-    CUDAcommon::handleerror(cudaFreeHost(convergencecheck));
-    CUDAcommon::handleerror(cudaFree(g_currentenergy));
-    //PING PONG SAFEBACKTRACKING AND BACKTRACKING
-    CUDAcommon::handleerror(cudaFree(g_stop1));
-    CUDAcommon::handleerror(cudaFree(g_stop2));
-    CUDAcommon::handleerror(cudaFreeHost(h_stop));
-    //@
-//    CUDAcommon::handleerror(cudaFree(gpu_convergencecheck));
-
-
-    CUDAcommon::handleerror(cudaFree(gpu_nint));
-    CUDAcommon::handleerror(cudaFree(gpu_state));
-    CUDAcommon::handleerror(cudaFree(gpu_mutexlock));
-    blocksnthreads.clear();
-    if(!(CUDAcommon::getCUDAvars().conservestreams))
-        CUDAcommon::handleerror(cudaStreamDestroy(stream_startmin));
-
-    //TODO cross check later
-//    CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().motorparams));
 
 //    CUDAcommon::getCUDAvars().gpu_coord = NULL;
 //    CUDAcommon::getCUDAvars().gpu_force = NULL;
@@ -942,13 +898,14 @@ void CGMethod::endMinimization() {
 //    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
 //    fprintf(stdout,"\t### Available VRAM : %g Mo/ %g Mo(total)\n\n",
 //            free/1e6, total/1e6);
-#endif
+
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
     CUDAcommon::cudatime.Tstartmin = elapsed_run.count();
     std::cout<<"end min time taken (s) "<<elapsed_run.count()<<endl;
 #endif
+
 }
 
 #ifdef CUDAACCL
@@ -1313,7 +1270,7 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
         if(headpos==maxprevlambdacount-1) {
 	        headpos = 0;
 	        floatingpoint temp = Rand::randfloatingpoint(0,1);
-	        if( temp >= LAMBDARUNNINGAVERAGEPROBABILITY) {
+	        if( temp > 1-LAMBDARUNNINGAVERAGEPROBABILITY) {
 		        runningaveragestatus = true;
 //		        cout<<"running lambda turned off "<<endl;
 	        }
