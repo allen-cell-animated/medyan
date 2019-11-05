@@ -2,6 +2,7 @@
 #define MEDYAN_Mechanics_ForceField_Membrane_MembraneStretching_Hpp
 
 #include "Mechanics/ForceField/Membrane/MembraneInteractions.hpp"
+#include "utility.h"
 
 enum class MembraneStretchingAccumulationType {
     ByTriangle, ByVertex
@@ -12,12 +13,16 @@ class MembraneStretching: public MembraneInteractions {
 private:
     Impl _impl;
 
+    // Force buffer
+    std::vector< floatingpoint > forceBuffer_;
+
 public:
     virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) override;
     virtual void computeForces(const floatingpoint* coord, floatingpoint* force) override;
 
     virtual string getName() const override { return "Membrane Stretching"; }
-    
+
+    const auto& getForceBuffer() const { return forceBuffer_; }
 };
 
 // Specialization declarations

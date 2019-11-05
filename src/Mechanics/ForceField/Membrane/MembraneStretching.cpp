@@ -91,7 +91,16 @@ floatingpoint MembraneStretching< Impl, accuType >::computeEnergy(const floating
 
 template< typename Impl, MembraneStretchingAccumulationType accuType >
 void MembraneStretching< Impl, accuType >::computeForces(const floatingpoint* coord, floatingpoint* force) {
-    
+
+    // Configure force buffer
+    constexpr bool useForceBuffer = true;
+    const std::size_t dof = Bead::getDbDataConst().coords.size_raw();
+
+    if (useForceBuffer) {
+        forceBuffer_.assign(dof, 0.0);
+    }
+    floatingpoint* const f = useForceBuffer ? forceBuffer_.data() : force;
+
     for (auto m: Membrane::getMembranes()) {
 
         Membrane::MembraneMeshAttributeType::cacheIndices(m->getMesh());
@@ -114,12 +123,12 @@ void MembraneStretching< Impl, accuType >::computeForces(const floatingpoint* co
 
 #ifdef __cpp_if_constexpr
                     _impl.forces(
-                        force + 3 * va.cachedCoordIndex,
+                        f + 3 * va.cachedCoordIndex,
                         area, va.gVertex.dAstar / 3, kElastic, eqArea
                     );
 #else
                     implForces(_impl,
-                        force + 3 * va.cachedCoordIndex,
+                        f + 3 * va.cachedCoordIndex,
                         area, va.gVertex.dAstar / 3, kElastic, eqArea
                     );
 #endif
@@ -130,12 +139,12 @@ void MembraneStretching< Impl, accuType >::computeForces(const floatingpoint* co
                         const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborAstar / 3;
 #ifdef __cpp_if_constexpr
                         _impl.forces(
-                            force + 3 * va.cachedCoordIndex,
+                            f + 3 * va.cachedCoordIndex,
                             area, dArea, kElastic, eqArea
                         );
 #else
                         implForces(_impl,
-                            force + 3 * va.cachedCoordIndex,
+                            f + 3 * va.cachedCoordIndex,
                             area, dArea, kElastic, eqArea
                         );
 #endif
@@ -153,12 +162,12 @@ void MembraneStretching< Impl, accuType >::computeForces(const floatingpoint* co
                         const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
 #ifdef __cpp_if_constexpr
                         _impl.forces(
-                            force + 3 * ta.cachedCoordIndex[i],
+                            f + 3 * ta.cachedCoordIndex[i],
                             area, dArea, kElastic, eqArea
                         );
 #else
                         implForces(_impl,
-                            force + 3 * ta.cachedCoordIndex[i],
+                            f + 3 * ta.cachedCoordIndex[i],
                             area, dArea, kElastic, eqArea
                         );
 #endif
@@ -178,12 +187,12 @@ void MembraneStretching< Impl, accuType >::computeForces(const floatingpoint* co
                 
 #ifdef __cpp_if_constexpr
                     _impl.forces(
-                        force + 3 * va.cachedCoordIndex,
+                        f + 3 * va.cachedCoordIndex,
                         va.gVertex.dAstar / 3, tension
                     );
 #else
                     implForces(_impl,
-                        force + 3 * va.cachedCoordIndex,
+                        f + 3 * va.cachedCoordIndex,
                         0.0, va.gVertex.dAstar / 3, tension, 0.0
                     );
 #endif
@@ -194,12 +203,12 @@ void MembraneStretching< Impl, accuType >::computeForces(const floatingpoint* co
                         const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborAstar / 3;
 #ifdef __cpp_if_constexpr
                         _impl.forces(
-                            force + 3 * va.cachedCoordIndex,
+                            f + 3 * va.cachedCoordIndex,
                             dArea, tension
                         );
 #else
                         implForces(_impl,
-                            force + 3 * va.cachedCoordIndex,
+                            f + 3 * va.cachedCoordIndex,
                             0.0, dArea, tension, 0.0
                         );
 #endif
@@ -216,12 +225,12 @@ void MembraneStretching< Impl, accuType >::computeForces(const floatingpoint* co
                         const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
 #ifdef __cpp_if_constexpr
                         _impl.forces(
-                            force + 3 * ta.cachedCoordIndex[i],
+                            f + 3 * ta.cachedCoordIndex[i],
                             dArea, tension
                         );
 #else
                         implForces(_impl,
-                            force + 3 * ta.cachedCoordIndex[i],
+                            f + 3 * ta.cachedCoordIndex[i],
                             0.0, dArea, tension, 0.0
                         );
 #endif
@@ -231,6 +240,15 @@ void MembraneStretching< Impl, accuType >::computeForces(const floatingpoint* co
 
         } // end if (Impl ...)
     }
+
+    if(useForceBuffer) {
+        std::transform(
+            force, force + dof, forceBuffer_.begin(),
+            force,
+            std::plus<>{}
+        );
+    }
+
 }
 
 
