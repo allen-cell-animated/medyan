@@ -1,16 +1,3 @@
-
-//------------------------------------------------------------------
-//  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
-//
-//  Copyright (2017-2018)  Papoian Lab, University of Maryland
-//
-//                 ALL RIGHTS RESERVED
-//
-//  See the MEDYAN web page for more information:
-//  http://www.medyan.org
-//------------------------------------------------------------------
-
 #include "Mechanics/ForceField/Volume/TriangleBeadExclVolume.hpp"
 
 #include <algorithm> // max
@@ -76,6 +63,15 @@ floatingpoint TriangleBeadExclVolume< InteractionType >::computeEnergy(const flo
 template< typename InteractionType >
 void TriangleBeadExclVolume< InteractionType >::computeForces(const floatingpoint* coord, floatingpoint* force) {
 
+    // Configure force buffer
+    constexpr bool useForceBuffer = true;
+    const std::size_t dof = Bead::getDbDataConst().coords.size_raw();
+
+    if(useForceBuffer) {
+        forceBuffer_.assign(dof, 0.0);
+    }
+    floatingpoint* const f = useForceBuffer ? forceBuffer_.data() : force;
+
     for(auto t: Triangle::getTriangles()) {
 
         auto& mesh = t->getParent()->getMesh();
@@ -99,10 +95,10 @@ void TriangleBeadExclVolume< InteractionType >::computeForces(const floatingpoin
         if(_neighborList->hasNeighborMech(t)) for(auto b : _neighborList->getNeighborsMech(t)) {
 
             _FFType.forces(
-                force + 3 * vi0,
-                force + 3 * vi1,
-                force + 3 * vi2,
-                force + 3 * b->getStableIndex(),
+                f + 3 * vi0,
+                f + 3 * vi1,
+                f + 3 * vi2,
+                f + 3 * b->getStableIndex(),
                 static_cast<Vec3>(makeVec<3>(coord + 3 * vi0)),
                 static_cast<Vec3>(makeVec<3>(coord + 3 * vi1)),
                 static_cast<Vec3>(makeVec<3>(coord + 3 * vi2)),
@@ -110,6 +106,15 @@ void TriangleBeadExclVolume< InteractionType >::computeForces(const floatingpoin
                 area, dArea0, dArea1, dArea2, kExVol);
         }
     }
+
+    if(useForceBuffer) {
+        std::transform(
+            force, force + dof, forceBuffer_.begin(),
+            force,
+            std::plus<>{}
+        );
+    }
+
 }
 
 namespace {

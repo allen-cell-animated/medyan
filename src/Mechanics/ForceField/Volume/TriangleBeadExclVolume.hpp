@@ -1,20 +1,8 @@
-
-//------------------------------------------------------------------
-//  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
-//
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
-//
-//                 ALL RIGHTS RESERVED
-//
-//  See the MEDYAN web page for more information:
-//  http://www.medyan.org
-//------------------------------------------------------------------
-
-#ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleBeadExclVolume_Hpp
-#define MEDYAN_Mechanics_ForceField_Volume_TriangleBeadExclVolume_Hpp
+#ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleBeadExclVolume_hpp
+#define MEDYAN_Mechanics_ForceField_Volume_TriangleBeadExclVolume_hpp
 
 #include <memory> // unique_ptr
+#include <vector>
 
 #include "Mechanics/ForceField/Volume/TriangleBeadVolumeInteractions.hpp"
 #include "Structure/NeighborListImpl.h"
@@ -32,6 +20,9 @@ class TriangleBeadExclVolume : public TriangleBeadVolumeInteractions {
 private:
     InteractionType _FFType;
     std::unique_ptr<TriangleFilBeadNL> _neighborList;  ///< Neighbor list of triangle-bead
+
+    // Force buffer
+    std::vector< floatingpoint > forceBuffer_;
 
 public:
     ///Constructor
@@ -54,6 +45,9 @@ public:
     virtual NeighborList* getNeighborList() override { return _neighborList.get(); }
     
     virtual const string getName() override {return "Triangle Bead Excluded Volume";}
+
+    // Force buffer
+    const auto& getForceBuffer() const { return forceBuffer_; }
 };
 
 #endif
