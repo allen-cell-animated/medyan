@@ -6,14 +6,14 @@
 #include <vector>
 
 #include "common.h" // floatingpoint
-#include "Mechanics/ForceField/Membrane/MembraneInteractions.hpp"
+#include "Mechanics/ForceField/ForceField.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/MVoronoiCell.h"
 #include "Structure/SurfaceMesh/Vertex.hpp"
 
 /// Represents a Filament bending interaction
 template< typename InteractionType >
-class MembraneBending : public MembraneInteractions {
+class MembraneBending : public ForceField {
 
 private:
     InteractionType _FFType;
@@ -22,7 +22,7 @@ private:
     std::vector<floatingpoint> forceBuffer_;
 
 public:
-    virtual floatingpoint computeEnergy(const floatingpoint *coord, bool stretched) override {
+    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) override {
         double U = 0;
         double U_i;
 
@@ -54,7 +54,7 @@ public:
         return U;
     }
 
-    virtual void computeForces(const floatingpoint *coord, floatingpoint *force) override {
+    virtual void computeForces(floatingpoint *coord, floatingpoint *force) override {
 
         // Configure force buffer
         constexpr bool useForceBuffer = true;
@@ -111,10 +111,17 @@ public:
         }
     }
 
-    virtual string getName() const override { return "Membrane Bending"; }
+    virtual string getName() override { return "Membrane Bending"; }
 
     // Force buffer accessor
     const auto& getForceBuffer() const { return forceBuffer_; }
+
+    // Useless overrides
+    virtual void vectorize() override {}
+    virtual void cleanup() override {}
+    virtual void computeLoadForces() override {}
+    virtual void whoIsCulprit() override {}
+    virtual std::vector<NeighborList*> getNeighborLists() override { return std::vector<NeighborList*>(); }
 };
 
 #endif

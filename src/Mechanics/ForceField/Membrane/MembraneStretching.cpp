@@ -37,7 +37,7 @@ void implForces(const Impl& impl, floatingpoint* force, double area, const mathf
 #endif // ifdef __cpp_if_constexpr
 
 template< typename Impl, MembraneStretchingAccumulationType accuType >
-floatingpoint MembraneStretching< Impl, accuType >::computeEnergy(const floatingpoint* coord, bool stretched) {
+floatingpoint MembraneStretching< Impl, accuType >::computeEnergy(floatingpoint* coord, bool stretched) {
     double U = 0;
     double U_i;
 
@@ -90,7 +90,7 @@ floatingpoint MembraneStretching< Impl, accuType >::computeEnergy(const floating
 }
 
 template< typename Impl, MembraneStretchingAccumulationType accuType >
-void MembraneStretching< Impl, accuType >::computeForces(const floatingpoint* coord, floatingpoint* force) {
+void MembraneStretching< Impl, accuType >::computeForces(floatingpoint* coord, floatingpoint* force) {
 
     // Configure force buffer
     constexpr bool useForceBuffer = true;

@@ -5,7 +5,7 @@
 #include <type_traits>
 #include <vector>
 
-#include "Mechanics/ForceField/Membrane/MembraneInteractions.hpp"
+#include "Mechanics/ForceField/ForceField.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Util/Io/Log.hpp"
 #include "Util/Math/Vec.hpp"
@@ -34,7 +34,7 @@ struct MembraneTriangleProtectFene {
 };
 
 template< typename Impl, bool warn = false >
-class MembraneTriangleProtect: public MembraneInteractions {
+class MembraneTriangleProtect: public ForceField {
 private:
     using Mems_     = decltype(Membrane::getMembranes());
     using VecDArea_ = decltype(GHalfEdge::dTriangleArea);
@@ -97,7 +97,7 @@ public:
         }
     }
 
-    virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) override {
+    virtual floatingpoint computeEnergy(floatingpoint* coord, bool stretched) override {
         floatingpoint e = 0.0;
 
         for(std::size_t ti = 0; ti < beadIndices_.size(); ++ti) {
@@ -112,7 +112,7 @@ public:
 
         return e;
     }
-    virtual void computeForces(const floatingpoint* coord, floatingpoint* force) override {
+    virtual void computeForces(floatingpoint* coord, floatingpoint* force) override {
         for(std::size_t ti = 0; ti < beadIndices_.size(); ++ti) {
 
             if(warn && *allArea_[ti] < initArea_[ti] * warnRelArea) {
@@ -127,8 +127,13 @@ public:
         }
     }
 
-    virtual string getName() const override { return "Membrane Triangle Protect"; }
+    virtual string getName() override { return "Membrane Triangle Protect"; }
 
+    // Useless overrides
+    virtual void cleanup() override {}
+    virtual void computeLoadForces() override {}
+    virtual void whoIsCulprit() override {}
+    virtual std::vector<NeighborList*> getNeighborLists() override { return std::vector<NeighborList*>(); }
 };
 
 
