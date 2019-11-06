@@ -77,7 +77,7 @@ floatingpoint MembraneStretching< Impl, accuType >::computeEnergy(floatingpoint*
            || U_i != U_i || U_i < -1.0) { // (U_i != U_i) => (U_i == NaN)
             
             //set culprit and return
-            _membraneCulprit = m;
+            membraneCulprit_ = m;
             
             return -1;
         }

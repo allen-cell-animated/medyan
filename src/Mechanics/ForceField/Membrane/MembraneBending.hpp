@@ -18,6 +18,9 @@ class MembraneBending : public ForceField {
 private:
     InteractionType _FFType;
 
+    // Culprit membrane
+    const Membrane* membraneCulprit_ = nullptr;
+
     // Force buffer
     std::vector<floatingpoint> forceBuffer_;
 
@@ -43,7 +46,7 @@ public:
                 }
 
             if (fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i || U_i < -1.0) {
-                _membraneCulprit = m;
+                membraneCulprit_ = m;
                 return -1;
             }
             else
@@ -113,6 +116,15 @@ public:
 
     virtual string getName() override { return "Membrane Bending"; }
 
+    virtual void whoIsCulprit() override {
+        if(membraneCulprit_) {
+            LOG(INFO) << "Printing culprit membrane...";
+            membraneCulprit_->printSelf();
+        } else {
+            LOG(ERROR) << "Membrane culprit is not set.";
+        }
+    }
+
     // Force buffer accessor
     const auto& getForceBuffer() const { return forceBuffer_; }
 
@@ -120,7 +132,6 @@ public:
     virtual void vectorize() override {}
     virtual void cleanup() override {}
     virtual void computeLoadForces() override {}
-    virtual void whoIsCulprit() override {}
     virtual std::vector<NeighborList*> getNeighborLists() override { return std::vector<NeighborList*>(); }
 };
 
