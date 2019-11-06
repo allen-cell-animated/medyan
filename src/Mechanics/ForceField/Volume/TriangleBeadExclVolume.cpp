@@ -16,7 +16,7 @@ using namespace mathfunc;
 #include "Util/Math/RayTriangleIntersect.hpp"
 
 template< typename InteractionType >
-floatingpoint TriangleBeadExclVolume< InteractionType >::computeEnergy(const floatingpoint* coord, bool stretched) {
+floatingpoint TriangleBeadExclVolume< InteractionType >::computeEnergy(floatingpoint* coord, bool stretched) {
     
     double U = 0;
     double U_i;
@@ -61,7 +61,7 @@ floatingpoint TriangleBeadExclVolume< InteractionType >::computeEnergy(const flo
 }
 
 template< typename InteractionType >
-void TriangleBeadExclVolume< InteractionType >::computeForces(const floatingpoint* coord, floatingpoint* force) {
+void TriangleBeadExclVolume< InteractionType >::computeForces(floatingpoint* coord, floatingpoint* force) {
 
     // Configure force buffer
     constexpr bool useForceBuffer = true;
@@ -169,7 +169,7 @@ void exclVolLoadForce(
 } // namespace (anonymous)
 
 template< typename InteractionType >
-void TriangleBeadExclVolume< InteractionType >::computeLoadForces() const {
+void TriangleBeadExclVolume< InteractionType >::computeLoadForces() {
 
     for(auto t: Triangle::getTriangles()) {
 

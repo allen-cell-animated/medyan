@@ -112,11 +112,17 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
             _subSystem->addNeighborList(nl);
     }
 
-    auto triangleCylinderVolumeFF = new TriangleBeadVolumeFF(forceFields.MemBeadVolumeFFType);
-    _FFManager._forceFields.push_back(triangleCylinderVolumeFF);
-    for(auto nl : triangleCylinderVolumeFF->getNeighborLists()) {
-        if(nl != nullptr)
-            _subSystem->addNeighborList(nl);
+    {
+        auto allTriBeadVolFF = TriangleBeadVolumeFFFactory{}(
+            forceFields.MemBeadVolumeFFType
+        );
+        for(auto& ff : allTriBeadVolFF) {
+            auto ffp = ff.release();
+            _FFManager._forceFields.push_back(ffp);
+            for(auto nl : ffp->getNeighborLists()) {
+                if(nl) _subSystem->addNeighborList(nl);
+            }
+        }
     }
     
     auto boundaryFF = new BoundaryFF(forceFields.BoundaryFFType);

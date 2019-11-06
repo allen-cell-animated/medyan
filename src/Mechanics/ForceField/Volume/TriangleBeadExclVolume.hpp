@@ -2,24 +2,30 @@
 #define MEDYAN_Mechanics_ForceField_Volume_TriangleBeadExclVolume_hpp
 
 #include <memory> // unique_ptr
+#include <string>
 #include <vector>
 
-#include "Mechanics/ForceField/Volume/TriangleBeadVolumeInteractions.hpp"
+#include "Mechanics/ForceField/ForceField.h"
 #include "Structure/NeighborListImpl.h"
+#include "Structure/Bead.h"
+#include "Structure/SurfaceMesh/Triangle.hpp"
 #include "SysParams.h"
+#include "Util/Io/Log.hpp"
 
 //FORWARD DECLARATIONS
-class Triangle;
 class Cylinder;
-class Bead;
 
 /// Represents an excuded volume interaction between a triangle and a cylinder (bead).
 template < typename InteractionType >
-class TriangleBeadExclVolume : public TriangleBeadVolumeInteractions {
+class TriangleBeadExclVolume : public ForceField {
     
 private:
     InteractionType _FFType;
     std::unique_ptr<TriangleFilBeadNL> _neighborList;  ///< Neighbor list of triangle-bead
+
+    // Culprit elements
+    const Triangle* triangleCulprit_ = nullptr;
+    const Bead*     beadCulprit_     = nullptr;
 
     // Force buffer
     std::vector< floatingpoint > forceBuffer_;
@@ -33,21 +39,31 @@ public:
         ))
     { }
 
-    virtual void vectorize() override {}
+    virtual floatingpoint computeEnergy(floatingpoint* coord, bool stretched) override;
+    virtual void computeForces(floatingpoint* coord, floatingpoint* force) override;
 
-    virtual floatingpoint computeEnergy(const floatingpoint* coord, bool stretched) override;
-    virtual void computeForces(const floatingpoint* coord, floatingpoint* force) override;
-
-    virtual void computeLoadForces() const override;
+    virtual void computeLoadForces() override;
     virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
 
     /// Get the neighbor list for this interaction
-    virtual NeighborList* getNeighborList() override { return _neighborList.get(); }
-    
-    virtual const string getName() override {return "Triangle Bead Excluded Volume";}
+    virtual std::vector<NeighborList*> getNeighborList() override {
+        return { _neighborList.get() };
+    }
+
+    virtual std::string getName() override {return "Triangle Bead Excluded Volume";}
+
+    virtual void whoIsCulprit() override {
+        LOG(INFO) << "Printing the culprit triangle and bead...";
+        triangleCulprit_->printSelf();
+        beadCulprit_    ->printSelf();
+    }
 
     // Force buffer
     const auto& getForceBuffer() const { return forceBuffer_; }
+
+    // Useless overrides
+    virtual void vectorize() override {}
+    virtual void cleanup() override {}
 };
 
 #endif
