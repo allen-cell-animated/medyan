@@ -46,7 +46,7 @@ public:
     virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
 
     /// Get the neighbor list for this interaction
-    virtual std::vector<NeighborList*> getNeighborList() override {
+    virtual std::vector<NeighborList*> getNeighborLists() override {
         return { _neighborList.get() };
     }
 
