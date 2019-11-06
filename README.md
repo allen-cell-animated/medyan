@@ -1,4 +1,4 @@
-# README #
+# MEDYAN
 
 Welcome to Papoian Lab’s *Mechanochemical Dynamics of Active Networks* software package.
 
@@ -6,7 +6,7 @@ Copyright 2015-2019, Papoian lab at the University of Maryland.
 
 For more general information about the code, visit the [code webpage](http://www.medyan.org) or the [Papoian lab page](http://papoian.chem.umd.edu/). 
 
-This code is distributed under the license found in this directory, `license.txt`.
+This code is distributed under [the license](license.txt) found in this directory, `license.txt`.
 
 The main authors of the code are the following:
 
@@ -26,19 +26,22 @@ Active developers of the code are the following:
 | Carlos Floyd            | csfloyd@umd.edu   |
 
 
-All general correspondence about the code and its applications should be directed to Garegin Papoian. All developer and more specific code, installation, and usage correspondence should be directed to Active developers.
+All general correspondence about the code and its applications should be directed to Garegin Papoian. All developer and more specific code, installation, and usage correspondence should be directed to Active developers via email or the issue tracker.
 
 This MEDYAN distribution has the following files and directories:
 
-    *File/Dir*              *Description*
-    README.md               Current file
-    license.txt             Code licensing information
-    src                     All source files
-    restart                 Restart scripts
-    docs                    Documentation files
-    examples                A packaged example
-    visual                  Visualization scripts
-    papers                  Relevant papers 
+| File/Dir        | Description                 |
+|-----------------|-----------------------------|
+| docs            | Documentation files         |
+| examples        | A packaged example          |
+| external        | External libraries used by MEDYAN |
+| license.txt     | Code licensing information  |
+| papers          | Relevant papers             |
+| projects        | Configured build files      |
+| README.md       | Current file                |
+| restart         | Restart scripts             |
+| src             | All source files            |
+| visual          | Visualization scripts       |
 
 See the following documentation for details:
 
