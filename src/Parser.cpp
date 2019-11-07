@@ -1965,6 +1965,34 @@ void SystemParser::readSpecialParams() {
     
 }
 
+void SystemParser::readSimulParams() {
+    auto& sp = SysParams::simulParamsMut();
+
+    _inputFile.clear();
+    _inputFile.seekg(0);
+
+    std::string line;
+    while(getline(_inputFile, line)) {
+        const auto hashPos = line.find('#');
+
+        if(line.find("TRACK_FORCES") < hashPos) {
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                LOG(ERROR) << "1 value (on/off) is required as the argument for this option";
+                throw std::runtime_error("Invalid number of arguments for TRACK_FORCES");
+            }
+            else {
+                if(lineVector[1] == "on") sp.trackForces = true;
+                else if(lineVector[1] == "off") sp.trackForces = false;
+                else {
+                    LOG(ERROR) << "Unrecognized argument " << lineVector[1] << " for TRACK_FORCES";
+                    throw std::runtime_error("Invalid argument for TRACK_FORCES");
+                }
+            }
+        }
+    }
+}
+
 void SystemParser::readGeoParams() {
 
     _inputFile.clear();

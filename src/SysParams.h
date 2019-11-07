@@ -360,6 +360,14 @@ friend class ChemManager;
 friend class SubSystem;
 friend class Cylinder;
 
+public:
+    // Parameters for simulation procedure only
+    struct SimulParams {
+
+        // Output and tracking
+        bool trackForces = false;
+    };
+
 #ifdef TESTING ///Public access if testing only
 public:
 #endif
@@ -369,6 +377,7 @@ public:
     static BoundParams BParams;   ///< The boundary parameters
     static DyRateParams DRParams; ///< The dynamic rate parameters
     static SpecialParams SParams; ///< Other parameters
+    static SimulParams simulParams_;
     
 public:
     //@{
@@ -396,6 +405,9 @@ public:
     static const BoundParams& Boundaries() {return BParams;}
     static const DyRateParams& DynamicRates() {return DRParams;}
     static const SpecialParams& SpecialInputs() {return SParams;}
+    static const auto& simulParams() { return simulParams_; }
+
+    static auto& simulParamsMut() { return simulParams_; }
     //@}
 
     //@{

@@ -27,9 +27,6 @@ private:
     const Triangle* triangleCulprit_ = nullptr;
     const Bead*     beadCulprit_     = nullptr;
 
-    // Force buffer
-    std::vector< floatingpoint > forceBuffer_;
-
 public:
     ///Constructor
     TriangleBeadExclVolume() :
@@ -57,9 +54,6 @@ public:
         triangleCulprit_->printSelf();
         beadCulprit_    ->printSelf();
     }
-
-    // Force buffer
-    const auto& getForceBuffer() const { return forceBuffer_; }
 
     // Useless overrides
     virtual void vectorize() override {}

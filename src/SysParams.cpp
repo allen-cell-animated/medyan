@@ -551,5 +551,5 @@ GeoParams    SysParams::GParams;
 BoundParams  SysParams::BParams;
 DyRateParams SysParams::DRParams;
 SpecialParams SysParams::SParams;
-
+SysParams::SimulParams  SysParams::simulParams_;
 

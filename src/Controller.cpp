@@ -164,6 +164,8 @@ void Controller::initialize(string inputFile,
     //snapshot type output
     cout << endl;
 
+    p.readSimulParams();
+
     //trajectory-style data
     _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.traj", &_subSystem));
     _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj", &_subSystem));
@@ -213,6 +215,11 @@ void Controller::initialize(string inputFile,
     LOG(STEP) << "Initializing mechanics...";
     _mController.initialize(MTypes, MAlgorithm);
     LOG(INFO) << "Done.";
+
+    // Force output
+    if(SysParams::simulParams().trackForces) {
+        _outputs.push_back(new ForcesOutput(_outputDirectory + "forces-output.traj", &_subSystem, _mController.getForceFieldManager()));
+    }
 
 #endif
 
@@ -335,6 +342,8 @@ void Controller::initialize(string inputFile,
     //Set up TMGraph output
     string tmgraphsnapname = _outputDirectory + "TMGraph.traj";
     _outputs.push_back(new TMGraph(tmgraphsnapname, &_subSystem));
+
+
 
 
     //Set up datadump output if any

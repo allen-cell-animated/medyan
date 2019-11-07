@@ -42,6 +42,7 @@
 
 #include <Eigen/Core>
 
+using namespace std;
 using namespace mathfunc;
 
 void BasicSnapshot::print(int snapshot) {
@@ -1124,6 +1125,23 @@ void LinkerBindingEvents::print(int snapshot) {
     dt->clearLinkerBindingData();
 
 
+}
+
+void ForcesOutput::print(int snapshot) {
+    // snapshot serial
+    _outputFile << snapshot << ' ' << tau() << '\n';
+
+    // force field forces
+    for(auto ff : ffm_->_forceFields) {
+        const auto& fb = ff->getForceBuffer();
+        _outputFile
+            << ff->getName() << '\n'
+            << fb.size() << "  ";
+        for(const auto& x : fb) _outputFile << x << ' ';
+        _outputFile << '\n';
+    }
+
+    _outputFile << endl;
 }
 
 

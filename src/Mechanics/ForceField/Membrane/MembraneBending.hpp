@@ -21,9 +21,6 @@ private:
     // Culprit membrane
     const Membrane* membraneCulprit_ = nullptr;
 
-    // Force buffer
-    std::vector<floatingpoint> forceBuffer_;
-
 public:
     virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) override {
         double U = 0;
@@ -124,9 +121,6 @@ public:
             LOG(ERROR) << "Membrane culprit is not set.";
         }
     }
-
-    // Force buffer accessor
-    const auto& getForceBuffer() const { return forceBuffer_; }
 
     // Useless overrides
     virtual void vectorize() override {}
