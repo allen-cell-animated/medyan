@@ -22,7 +22,7 @@
 #include "BranchingFF.h"
 #include "BubbleFF.h"
 #include "CylinderVolumeFF.h"
-#include "Mechanics/ForceField/Membrane/MembraneFF.h"
+#include "Mechanics/ForceField/Membrane/MembraneFF.hpp"
 #include "Mechanics/ForceField/VolumeConservation/VolumeConservationFF.h"
 #include "TriangleBeadVolumeFF.hpp"
 
@@ -79,11 +79,15 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
                         forceFields.BrBendingType,
                         forceFields.BrDihedralType,
                         forceFields.BrPositionType));
-    
-    _FFManager._forceFields.push_back(
-        new MembraneFF(forceFields.MemStretchingFFType,
-                       forceFields.MemStretchingAccuType,
-                       forceFields.MemBendingFFType));
+
+    {
+        auto allMembraneFF = MembraneFFFactory{}(
+            forceFields.MemStretchingFFType,
+            forceFields.MemStretchingAccuType,
+            forceFields.MemBendingFFType
+        );
+        for(auto& ff : allMembraneFF) _FFManager._forceFields.push_back(ff.release());
+    }
 
     _FFManager._forceFields.push_back(
         new VolumeConservationFF(forceFields.VolumeConservationFFType)
@@ -108,11 +112,17 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
             _subSystem->addNeighborList(nl);
     }
 
-    auto triangleCylinderVolumeFF = new TriangleBeadVolumeFF(forceFields.MemBeadVolumeFFType);
-    _FFManager._forceFields.push_back(triangleCylinderVolumeFF);
-    for(auto nl : triangleCylinderVolumeFF->getNeighborLists()) {
-        if(nl != nullptr)
-            _subSystem->addNeighborList(nl);
+    {
+        auto allTriBeadVolFF = TriangleBeadVolumeFFFactory{}(
+            forceFields.MemBeadVolumeFFType
+        );
+        for(auto& ff : allTriBeadVolFF) {
+            auto ffp = ff.release();
+            _FFManager._forceFields.push_back(ffp);
+            for(auto nl : ffp->getNeighborLists()) {
+                if(nl) _subSystem->addNeighborList(nl);
+            }
+        }
     }
     
     auto boundaryFF = new BoundaryFF(forceFields.BoundaryFFType);

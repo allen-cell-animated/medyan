@@ -11,44 +11,38 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleBeadVolumeFF_Hpp
-#define MEDYAN_Mechanics_ForceField_Volume_TriangleBeadVolumeFF_Hpp
+#ifndef MEDYAN_Mechanics_ForceField_Volume_TriangleBeadVolumeFF_hpp
+#define MEDYAN_Mechanics_ForceField_Volume_TriangleBeadVolumeFF_hpp
 
+#include <stdexcept>
+#include <string>
 #include <vector>
 
 #include "common.h"
-
 #include "Mechanics/ForceField/ForceField.h"
+#include "Mechanics/ForceField/Volume/TriangleBeadExclVolRepulsion.hpp"
+#include "Mechanics/ForceField/Volume/TriangleBeadExclVolume.hpp"
 
-//FORWARD DECLARATIONS
-class TriangleBeadVolumeInteractions;
+struct TriangleBeadVolumeFFFactory {
+    auto operator()(
+        const std::string& type
+    ) const {
+        using namespace std;
 
-/// An implementation of the ForceField class that calculates
-/// Triangle vs bead volume interactions.
-class TriangleBeadVolumeFF : public ForceField {
-    
-private:
-    std::vector< std::unique_ptr< TriangleBeadVolumeInteractions > >
-        _triangleBeadVolInteractionVector;  ///< Vector of initialized volume interactions
-    
-    TriangleBeadVolumeInteractions* _culpritInteraction; ///< Culprit in case of error
-public:
-    /// Initialize the volume forcefields
-    TriangleBeadVolumeFF(string& interaction);
+        vector< unique_ptr< ForceField > > res;
 
-    virtual void vectorize() override;
-    virtual void cleanup() override { }
+        if (type == "REPULSION")
+            res.emplace_back(
+                new TriangleBeadExclVolume <TriangleBeadExclVolRepulsion>());
+        else if(type == "") {}
+        else {
+            LOG(ERROR) << "Volume FF " << type << " is not recognized.";
+            throw runtime_error("Volume FF type not recognized");
+        }
 
-    virtual string getName() override {return "Triangle Bead Volume";}
-    virtual void whoIsCulprit() override;
+        return res;
+    }
 
-    virtual floatingpoint computeEnergy(floatingpoint* coord, bool stretched) override;
-    virtual void computeForces(floatingpoint* coord, floatingpoint* f) override;
-
-    virtual void computeLoadForces() override;
-    virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
-
-    virtual vector<NeighborList*> getNeighborLists() override;
 };
 
 #endif
