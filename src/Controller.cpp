@@ -179,6 +179,7 @@ void Controller::initialize(string inputFile,
     //add br force out and local diffussing species concentration
     _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", &_subSystem));
     //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", &_subSystem));
+    _outputs.push_back(new IndicesOutput(_outputDirectory + "indices.traj", &_subSystem));
 
     //Always read geometry, check consistency
     p.readGeoParams();

@@ -405,6 +405,11 @@ private:
     const ForceFieldManager* ffm_;
 };
 
+struct IndicesOutput : public Output {
+    IndicesOutput(std::string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
+    virtual void print(int snapshot) override;
+};
+
 
 
 
