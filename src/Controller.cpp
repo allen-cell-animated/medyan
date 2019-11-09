@@ -1293,6 +1293,10 @@ void Controller::membraneAdaptiveRemesh() const {
         // Update necessary geometry for the system
         m->updateGeometryValueForSystem();
     }
+
+    for(auto t : Triangle::getTriangles()) {
+        t->updatePosition();
+    }
 }
 
 void Controller::run() {
@@ -1439,6 +1443,7 @@ void Controller::run() {
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
     membraneAdaptiveRemesh();
+    _subSystem.resetNeighborLists(); // TODO: resolve workaround
     Bead::rearrange();
     Cylinder::updateAllData();
     invalidateMembraneMeshIndexCache();
@@ -1650,6 +1655,7 @@ void Controller::run() {
                 mins = chrono::high_resolution_clock::now();
                 // Membrane remeshing
                 membraneAdaptiveRemesh();
+                _subSystem.resetNeighborLists(); // TODO: resolve workaround
 
                 invalidateMembraneMeshIndexCache();
                 Bead::rearrange();
@@ -1824,6 +1830,7 @@ void Controller::run() {
             if(stepsLastMinimization >= _minimizationSteps) {
                 // Membrane remeshing
                 membraneAdaptiveRemesh();
+                _subSystem.resetNeighborLists(); // TODO: resolve workaround
 
                 invalidateMembraneMeshIndexCache();
                 Bead::rearrange();
