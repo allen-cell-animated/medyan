@@ -1438,6 +1438,7 @@ void Controller::run() {
 #ifdef MECHANICS
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
+    membraneAdaptiveRemesh();
     Bead::rearrange();
     Cylinder::updateAllData();
     invalidateMembraneMeshIndexCache();
@@ -1448,7 +1449,6 @@ void Controller::run() {
     // Initial special protocols need to be executed before energy minimization
     executeSpecialProtocols();
     auto minimizationResult = _mController.run(false);
-    membraneAdaptiveRemesh();
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runm2(mine - mins);
     minimizationtime += elapsed_runm2.count();
@@ -1648,13 +1648,13 @@ void Controller::run() {
 #endif
 
                 mins = chrono::high_resolution_clock::now();
+                // Membrane remeshing
+                membraneAdaptiveRemesh();
+
                 invalidateMembraneMeshIndexCache();
                 Bead::rearrange();
                 Cylinder::updateAllData();
                 minimizationResult = _mController.run();
-
-                // Membrane remeshing
-                membraneAdaptiveRemesh();
 
                 mine= chrono::high_resolution_clock::now();
 
@@ -1822,13 +1822,13 @@ void Controller::run() {
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
             if(stepsLastMinimization >= _minimizationSteps) {
+                // Membrane remeshing
+                membraneAdaptiveRemesh();
+
                 invalidateMembraneMeshIndexCache();
                 Bead::rearrange();
                 Cylinder::updateAllData();
                 _mController.run();
-
-                // Membrane remeshing
-                membraneAdaptiveRemesh();
 
                 updatePositions();
                 
