@@ -1132,7 +1132,8 @@ void ForcesOutput::print(int snapshot) {
     _outputFile << snapshot << ' ' << tau() << '\n';
 
     // Print coordinates
-    _outputFile << "Coordinates\n";
+    _outputFile << "Coordinates\n"
+        << Bead::getDbDataConst().coords.size_raw() << "  ";
     for(const auto& x : Bead::getDbDataConst().coords.value) {
         _outputFile << x << ' ';
     }
