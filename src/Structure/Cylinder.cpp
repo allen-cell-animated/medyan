@@ -218,8 +218,20 @@ void Cylinder::updatePosition() {
         auto newCCylinder = _cCylinder.get();
         
         //Add new ccylinder to binding managers
-        for(auto &manager : newCompartment->getFilamentBindingManagers())
-            manager->addPossibleBindings(newCCylinder);
+        for(auto &manager : newCompartment->getFilamentBindingManagers()) {
+            if(dynamic_cast<CaMKIIBundlingManager*>(manager.get()) != nullptr) {
+                int count = Cylinder::getCylinders().size();
+                int bef = manager->numBindingSites();
+                manager->addPossibleBindings(newCCylinder);
+                int aft = manager->numBindingSites();
+
+                cerr << "========MILLAD: Cylinder::UpdatePosition  " << newCCylinder->getCylinder() << "  " << newCCylinder << "  " <<
+                     (dynamic_cast<CaMKIICylinder *>(newCCylinder->getCylinder()) == NULL ? "normal" : "camkii_cylinder") << " count: "
+                     << count << "  before: " << bef << "  after: " << aft << endl;
+            } else {
+                manager->addPossibleBindings(newCCylinder);
+            }
+        }
     }
 #endif
     

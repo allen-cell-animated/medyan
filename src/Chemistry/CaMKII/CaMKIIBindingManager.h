@@ -128,7 +128,7 @@ private:
 //    static vector<CaMKIIingPointCylinderNL*> _neighborLists;
 
 
-	bool checkMaxCoordinationNum(CCylinder* cc);
+	bool checkCoordinationNum(CCylinder *cc);
 
 public:
 	CaMKIIBundlingManager(ReactionBase* reaction,
@@ -163,6 +163,7 @@ public:
 	int checkLengthOfPossibleBindingInternal(unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> &mm1,
 											 unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> &mm2);
 
+	// TODO: REMOVE THIS DEBUGGING FUNCTION
 	// This function checks whether two possible bindings are the same for one update operation.
 	void checkLengthOfPossibleBinding() {
 #if 0

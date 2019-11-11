@@ -221,7 +221,7 @@ CaMKIIBundlingManager::CaMKIIBundlingManager(ReactionBase* reaction,
 	_bindingSpecies = _compartment->findSpeciesByName(name);
 }
 
-bool CaMKIIBundlingManager::checkMaxCoordinationNum(CCylinder* cc) {
+bool CaMKIIBundlingManager::checkCoordinationNum(CCylinder *cc) {
 	auto dc = dynamic_cast<CaMKIICylinder*>(cc->getCylinder());
 	CaMKIIingPoint *cp;
 	if (dc) {
@@ -233,32 +233,35 @@ bool CaMKIIBundlingManager::checkMaxCoordinationNum(CCylinder* cc) {
 
 void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
 
-	// Run the function is input cylinder (cc) is normal or CaMKII cylinder.
+	// Run the function if input cylinder (cc) is normal or CaMKII cylinder.
 	if(cc->getType() != _filamentType && cc->getType() != CAMKII_CYLINDER_FILAMENT_TYPE) return;
 
-	// checkType is the type of the binding cylinder.
+	// otherCylinderType is the type of the binding cylinder.
 	// If the cylinder is a CaMKII cylinder, the binding cylinder is a normal cylinder and vice versa
-	short checkType = _filamentType;
+	short otherCylinderType;
 	if(cc->getType() == _filamentType) {
-		checkType = CAMKII_CYLINDER_FILAMENT_TYPE;
+		otherCylinderType = CAMKII_CYLINDER_FILAMENT_TYPE;
 	} else {
-		//If it is called with CaMKII only execute this script once (when the bindingSite is 0)
-		if (bindingSite!=0) return;
+		//If it is called with CaMKII, only execute this script once (when the bindingSite is 0)
+		otherCylinderType = _filamentType;
+		assert(bindingSite == 0);
 	}
 
 	//if we change other managers copy number
 	vector<CaMKIIBundlingManager*> affectedManagers;
 
+	cerr << "======MILLAD: _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder()): " << _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder()).size() << endl;
+
 	//add valid binding sites
 	for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
 		Cylinder *c = cc->getCylinder();
 
-		if (cn->getType() != checkType) continue;
+		if (cn->getType() != otherCylinderType) continue;
 
 		// Assign correct description to cylinders
 		Cylinder *camkii_c;
 		Cylinder *filament_c;
-		if (checkType == CAMKII_CYLINDER_FILAMENT_TYPE) {
+		if (otherCylinderType == CAMKII_CYLINDER_FILAMENT_TYPE) {
 			camkii_c = cn;
 			filament_c = c;
 		} else {
@@ -269,9 +272,9 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite
 		CCylinder *filament_cc = filament_c->getCCylinder();
 
 		//Check that the CaMKII coordination number is less than the maximum
-		if (checkMaxCoordinationNum(camkii_cc)) continue;
+		if (checkCoordinationNum(camkii_cc)) continue;
 
-		if (checkType == CAMKII_CYLINDER_FILAMENT_TYPE) {
+		if (otherCylinderType == CAMKII_CYLINDER_FILAMENT_TYPE) {
 			// It was called with a regular cylinder
 			// If the binding site of this cylinder is not free, then continue
 			if (!areEqual(filament_cc->getCMonomer(bindingSite)->speciesBound(
@@ -329,20 +332,20 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite
 
 	updateBindingReaction(oldN, newN);
 
-	size_t s1 = _possibleBindings.size();
-	auto _old_bindings = _possibleBindings;
-	//updateAllPossibleBindings();
-	size_t s2 = _possibleBindings.size();
-	for(auto a : _possibleBindings) {
-		volatile auto i = get<0>(a.first)->getCylinder()->getID();
-	}
-//    if((s2 - s1 > 1) || (s2-s1 < 0) ) {
-	if((s2 - s1) != 0 ) {
-		cerr << "======MILLAD: ERROR in size of possible size. --- " << __FILE__ << "   " << __LINE__ << "  " << __FUNCTION__ << "   " << s1 << "  " << s2 << endl;
-		for(auto a : _possibleBindings) {
-			cerr << "=======MILLAD: NULL Cylinder ID: " << get<0>(a.first)->getCylinder()->getID() << endl;
-		}
-	}
+//	size_t s1 = _possibleBindings.size();
+//	auto _old_bindings = _possibleBindings;
+//	//updateAllPossibleBindings();
+//	size_t s2 = _possibleBindings.size();
+//	for(auto a : _possibleBindings) {
+//		volatile auto i = get<0>(a.first)->getCylinder()->getID();
+//	}
+////    if((s2 - s1 > 1) || (s2-s1 < 0) ) {
+//	if((s2 - s1) != 0 ) {
+//		cerr << "======MILLAD: ERROR in size of possible size. --- " << __FILE__ << "   " << __LINE__ << "  " << __FUNCTION__ << "   " << s1 << "  " << s2 << endl;
+//		for(auto a : _possibleBindings) {
+//			cerr << "=======MILLAD: NULL Cylinder ID: " << get<0>(a.first)->getCylinder()->getID() << endl;
+//		}
+//	}
 }
 
 void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc) {
@@ -362,20 +365,22 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
 	// Run the function is input cylinder (cc) is normal or CaMKII cylinder.
 	if(cc->getType() != _filamentType && cc->getType() != CAMKII_CYLINDER_FILAMENT_TYPE) return;
 
-	// checkType is the type of the binding cylinder.
+	// otherCylinderType is the type of the binding cylinder.
 	// If the cylinder is a CaMKII cylinder, the binding cylinder is a normal cylinder and viceversa
-	short checkType = _filamentType;
+	short otherCylinderType;
 	if(cc->getType() == _filamentType) {
-		checkType = CAMKII_CYLINDER_FILAMENT_TYPE;
+		otherCylinderType = CAMKII_CYLINDER_FILAMENT_TYPE;
 	} else {
 		//If it is called with CaMKII only execute this script once (when the bindingSite is 0)
-		if (bindingSite!=0) return;
+		otherCylinderType = _filamentType;
+		assert(bindingSite == 0);
 	}
 
 	if(cc->getType() == CAMKII_CYLINDER_FILAMENT_TYPE) {
 		//Remove all the tuples that have this value as a key
 		auto t = tuple<CCylinder*, short>(cc, bindingSite);
 		_possibleBindings.erase(t);
+		cerr << "======MILLAD:  CaMKIIBundlingManager::removePossibleBindings" << cc << endl;
 	} else {
 		//Remove all the tuples that have this as a value
 		for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); ) {
@@ -398,7 +403,8 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
 	//remove all neighbors which have this binding site pair
 	for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
 
-		if (cn->getType() != _filamentType && cn->getType() != CAMKII_CYLINDER_FILAMENT_TYPE) continue;
+//		if (cn->getType() != _filamentType && cn->getType() != CAMKII_CYLINDER_FILAMENT_TYPE) continue;
+		if(cn->getType() != otherCylinderType) continue;
 
 		if(cn->getCompartment() != _compartment) {
 
@@ -433,7 +439,6 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
 
 
 void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc) {
-	//TODO: TODO_UMD IMPORTANT!!!!!! Check whether this is correct
 	if(cc->getType() == CAMKII_CYLINDER_FILAMENT_TYPE) {
 		removePossibleBindings(cc, 0);
 	} else {
@@ -446,7 +451,7 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc) {
 }
 
 void CaMKIIBundlingManager::updateCaMKIIPossibleBindings(CCylinder* cc) {
-	if (checkMaxCoordinationNum(cc)) removePossibleBindings(cc);
+	if (checkCoordinationNum(cc)) removePossibleBindings(cc);
 }
 
 
@@ -490,7 +495,7 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
 
 		// skip if parent coordination number isn't between >=1 and <6 (MAX coordination number SysParams::Chemistry().maxcamkii_coord_number)
 		// now re add valid binding sites
-		if (checkMaxCoordinationNum(cc)) continue;
+		if (checkCoordinationNum(cc)) continue;
 
 
 		// loop through neighbors

@@ -43,8 +43,22 @@ CaMKIICylinder::~CaMKIICylinder() noexcept {
 }
 
 void CaMKIICylinder::addToFilamentBindingManagers() {
-    for (auto &manager : _compartment->getFilamentBindingManagers())
-        manager->addPossibleBindings(_cCylinder.get());
+    for (auto &manager : _compartment->getFilamentBindingManagers()) {
+//        manager->addPossibleBindings(_cCylinder.get());
+
+        if(dynamic_cast<CaMKIIBundlingManager*>(manager.get()) != nullptr) {
+            int count = Cylinder::getCylinders().size();
+            int bef = manager->numBindingSites();
+            manager->addPossibleBindings(_cCylinder.get());
+            int aft = manager->numBindingSites();
+
+            cerr << "========MILLAD: Cylinder::UpdatePosition  " << _cCylinder.get() << "  " <<
+                 (dynamic_cast<CaMKIICylinder *>(_cCylinder->getCylinder()) == NULL ? "normal" : "camkii_cylinder") << " count: "
+                 << count << "  before: " << bef << "  after: " << aft << endl;
+        } else {
+            manager->addPossibleBindings(_cCylinder.get());
+        }
+    }
 }
 
 void CaMKIICylinder::removeFromFilamentBindingManagers() {
@@ -112,8 +126,22 @@ void CaMKIICylinder::updatePosition() {
 
 
         //Add new ccylinder to binding managers
-        for(auto &manager : newCompartment->getFilamentBindingManagers())
-			manager->addPossibleBindings(newCCylinder);
+        for(auto &manager : newCompartment->getFilamentBindingManagers()) {
+//            manager->addPossibleBindings(newCCylinder);
+
+            if(dynamic_cast<CaMKIIBundlingManager*>(manager.get()) != nullptr) {
+                int count = Cylinder::getCylinders().size();
+                int bef = manager->numBindingSites();
+                manager->addPossibleBindings(newCCylinder);
+                int aft = manager->numBindingSites();
+
+                cerr << "========MILLAD: CaMKIICylinder::UpdatePosition  " << newCCylinder << "  " <<
+                     (dynamic_cast<CaMKIICylinder *>(newCCylinder->getCylinder()) == NULL ? "normal" : "camkii_cylinder") << " count: "
+                     << count << "  before: " << bef << "  after: " << aft << endl;
+            } else {
+                manager->addPossibleBindings(newCCylinder);
+            }
+        }
 
 		for(auto &manager : newCompartment->getFilamentBindingManagers()) {
 			if(dynamic_cast<CaMKIIBundlingManager*>(manager.get()) == nullptr) continue;
