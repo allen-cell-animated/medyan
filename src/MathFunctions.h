@@ -304,12 +304,10 @@ namespace mathfunc {
                                                            const vector<double>& p,
                                                            double l, double m, double theta);
 
-    /// Function to create an initial CaMKIIing point, given an
-    /// initial normal vector and point.
-    /// @param l - the distance of the camkii from the original point
-    /// @return a vector describing the initial CaMKIIing position
-    vector<double> camkiiProjection(const vector<double>& n, const vector<double>& p, double l);
-    
 }
+
+#ifdef CAMKII_ENABLED
+#include "CaMKII/CaMKIIMathFunctions.h"
+#endif
 
 #endif

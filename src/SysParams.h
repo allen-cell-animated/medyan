@@ -259,6 +259,9 @@ class SysParams {
 friend class Controller;
 friend class SystemParser;
 friend class ChemManager;
+#ifdef CAMKII_ENABLED
+friend class CaMKIIChemManager;
+#endif
     
 #ifdef TESTING ///Public access if testing only
 public:

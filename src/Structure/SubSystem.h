@@ -36,7 +36,9 @@ class Cylinder;
 class Linker;
 class MotorGhost;
 class BranchingPoint;
+#ifdef CAMKII_ENABLED
 class CaMKIIingPoint;
+#endif
 
 class CompartmentGrid;
 

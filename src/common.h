@@ -40,7 +40,9 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 
 ///Num filament types maximum
 #define MAX_FILAMENT_TYPES 10
+#ifdef CAMKII_ENABLED
 #define CAMKII_CYLINDER_FILAMENT_TYPE (MAX_FILAMENT_TYPES-1)
+#endif
 
 //@{
 /// Constant Species index identifiers
@@ -54,8 +56,10 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 #define SPECIESLINKER         1
 #define SPECIESMOTOR          2
 #define SPECIESBRANCHER       3
+#ifdef CAMKII_ENABLED
 #define SPECIESCAMKIIER       4
 #define SPECIESCAMKIIDUMMYCYLINDER       5
+#endif
 //@}
 
 //@{
@@ -106,6 +110,7 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 #define BUNBINDINGREACTANTS   1
 #define BUNBINDINGPRODUCTS    2
 
+#ifdef CAMKII_ENABLED
 /// CaMKII binding
 #define CAMKIIBINDINGREACTANTS     2
 #define CAMKIIBINDINGPRODUCTS      1
@@ -121,6 +126,7 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 /// CaMKII unbundling
 #define CAMKIIUNBUNDLINGGREACTANTS 1
 #define CAMKIIUNBUNDLINGPRODUCTS   2
+#endif
 //@}
 
 #endif

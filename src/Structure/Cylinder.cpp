@@ -23,7 +23,10 @@
 
 #include "GController.h"
 #include "MathFunctions.h"
+
+#ifdef CAMKII_ENABLED
 #include "CaMKIIingPoint.h"
+#endif
 
 using namespace mathfunc;
 
@@ -297,8 +300,10 @@ void Cylinder::printSelf() {
     if(_minusEnd) cout << "Is a minus end." << endl;
     
     if(_branchingCylinder != nullptr) cout << "Has a branching cylinder." << endl;
+#ifdef CAMKII_ENABLED
     if(_camkiiingCylinder != nullptr) cout << "Has a camkiiing cylinder." << endl;
-    
+#endif
+
     cout << "Position = " << _position << endl;
     
     cout << endl;

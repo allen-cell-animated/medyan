@@ -26,9 +26,10 @@
 class Cylinder;
 class Bubble;
 class BoundaryElement;
+#ifdef CAMKII_ENABLED
 class CaMKIIingPoint;
 class CaMKIICylinder;
-
+#endif
 
 /// An implementation of NeighborList for Cylinder-Cylinder interactions
 /// This can be a half or full list depending on the usage.

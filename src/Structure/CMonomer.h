@@ -29,6 +29,9 @@ class CMonomer {
     
 friend class ChemManager;
 friend class CCylinder;
+#ifdef CAMKII_ENABLED
+friend class CaMKIIChemManager;
+#endif
 
 private:
     //@{
@@ -93,8 +96,11 @@ public:
     SpeciesBound* speciesLinker   (int index);
     SpeciesBound* speciesMotor    (int index);
     SpeciesBound* speciesBrancher (int index);
+
+#ifdef CAMKII_ENABLED
     SpeciesBound* speciesCaMKIIer (int index);
     SpeciesBound* speciesCaMKIIDummyCylinder (int index);
+#endif
     //@}
     
     //@{
@@ -108,8 +114,10 @@ public:
     short activeSpeciesLinker();
     short activeSpeciesMotor();
     short activeSpeciesBrancher();
+#ifdef CAMKII_ENABLED
     short activeSpeciesCaMKIIer();
     short activeSpeciesCaMKIIDummyCylinder();
+#endif
     //@
     
     /// Check the consistency of the CMonomer for debugging.
