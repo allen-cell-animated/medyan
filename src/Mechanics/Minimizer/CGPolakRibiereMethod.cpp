@@ -47,7 +47,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 
     //@@@{ STEP 1: Start minimization
     tbegin = chrono::high_resolution_clock::now();
-    startMinimization();//TODO needs to be hostallocdefault and MemCpyAsync followed by CudaStreamSynchronize
+    startMinimization(GRADTOL);//TODO needs to be hostallocdefault and MemCpyAsync followed by CudaStreamSynchronize
 
 
 #ifdef ALLSYNC
@@ -267,7 +267,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     floatingpoint curGrad = CGMethod::allFDotF();
     Ms_isminimizationstate = true;
     Ms_issafestate = false;
-    Ms_isminimizationstate = maxForce > GRADTOL;
+    Ms_isminimizationstate = !Bead::forcesBelowTolerance();
 
     //
     //
@@ -767,7 +767,7 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
 
         curGrad = newGrad;
-        Ms_isminimizationstate = maxForce > GRADTOL;
+        Ms_isminimizationstate = !Bead::forcesBelowTolerance();
 
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();

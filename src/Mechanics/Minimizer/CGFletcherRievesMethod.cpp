@@ -33,7 +33,7 @@ MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoin
             N = numeric_limits<int>::max();
         }
 
-        startMinimization();
+        startMinimization(GRADTOL);
         FFM.vectorizeAllForceFields();
 
         FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
@@ -47,7 +47,7 @@ MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoin
 
         int numIter = 0;
         while (/* Iteration criterion */  numIter < N &&
-               /* Gradient tolerance  */  maxForce > GRADTOL) {
+               /* Gradient tolerance  */  !Bead::forcesBelowTolerance()) {
             numIter++;
             floatingpoint lambda, beta, newGrad;
 
