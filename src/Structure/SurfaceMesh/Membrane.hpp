@@ -154,8 +154,9 @@ public:
      * The function will search through the whole meshwork, so it might not be efficient.
      */
     template< typename VecType, std::enable_if_t< VecType::vec_size == 3 >* = nullptr >
-    double signedDistance(const VecType& p) const {
-        if(!isClosed()) throw std::runtime_error("Membrane is not closed while trying to find signed distance field.");
+    double signedDistance(const VecType& p, bool allowOpen = false) const {
+        if(!allowOpen && !isClosed())
+            throw std::runtime_error("Membrane is not closed while trying to find signed distance field.");
         return MembraneMeshAttributeType::signedDistance(mesh_, p);
     }
     /**
