@@ -3,20 +3,20 @@
 
 #include <array>
 #include <limits> // numeric_limits
+#include <memory>
 #include <stdexcept> // runtime_error
 #include <vector>
-#include <memory>
 
-#include "Database.h"
-#include "Trackable.h"
 #include "Composite.h"
-
 #include "MathFunctions.h"
+#include "Structure/Database.h"
 #include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/MembraneHierarchy.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/MMembrane.hpp"
 #include "Structure/SurfaceMesh/SurfaceMesh.hpp"
+#include "Structure/Trackable.h"
+#include "SysParams.h"
 
 /******************************************************************************
 Topologically, the membrane is represented by a 2d surface with 2 sides (which
@@ -39,11 +39,11 @@ public:
 
 private:
 
-    MeshType _mesh;
+    MeshType mesh_;
 
-    unique_ptr<MMembrane> _mMembrane; // pointer to mechanical membrane object
+    unique_ptr<MMembrane> mMembrane_; // pointer to mechanical membrane object
 
-    short _memType; // Membrane type
+    short memType_; // Membrane type
 
     SubSystem* _subSystem; // SubSystem pointer
 
@@ -56,18 +56,52 @@ public:
         short membraneType,
         const std::vector< coordinate_type >& vertexCoordinateList,
         const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
-    );
+    ) : Trackable(false, false, false, false),
+        mesh_(typename MembraneMeshAttributeType::MetaAttribute{s, this}),
+        _subSystem(s), memType_(membraneType) {
+        
+        // Build the meshwork topology using vertex and triangle information
+        mesh_.init<typename MeshType::VertexTriangleInitializer>(
+            vertexCoordinateList.size(),
+            triangleVertexIndexList,
+            typename MembraneMeshAttributeType::AttributeInitializerInfo{ vertexCoordinateList }
+        );
+
+        // Update geometry
+        updateGeometryValue<false>();
+
+        initMMembrane();
+
+        // Add to membrane hierarchy (must have updated geometry)
+        HierarchyType::addMembrane(this);
+    }
 
     ~Membrane() {
         HierarchyType::removeMembrane(this);
     }
 
     /// Get vector of triangles/edges/vertices that this membrane contains.
-    const auto& getMesh() const { return _mesh; }
-    auto&       getMesh()       { return _mesh; }
+    const auto& getMesh() const { return mesh_; }
+    auto&       getMesh()       { return mesh_; }
 
     // Helper function to initialize MMembrane
-    void initMMembrane();
+    void initMMembrane() {
+#ifdef MECHANICS
+        // Calculate the total area and volume to set the equilibrium area and volume
+        double area = 0.0;
+        double volume = 0.0;
+        for(const auto& t : mesh_.getTriangles()) {
+            area += t.attr.gTriangle.area;
+            volume += t.attr.gTriangle.coneVolume;
+        }
+
+        mMembrane_ = std::make_unique<MMembrane>(memType_);
+        mMembrane_->setEqArea(
+            area * SysParams::Mechanics().MemEqAreaFactor[memType_]
+        );
+        mMembrane_->setEqVolume(volume);
+#endif
+    } // void initMMembrane()
 
     // SubSystem management, inherited from Trackable
     virtual void addToSubSystem()override { }
@@ -82,25 +116,35 @@ public:
         return getElements().size();
     }
 
-    //@{
     /// Implements Component
     // Get type
-    int getType()override { return _memType; }
+    int getType() override { return memType_; }
     // Print self information
-    virtual void printSelf()const override;
-    //@}
+    virtual void printSelf() const override {
+        using namespace std;
+
+        cout << endl;
+
+        cout << "Membrane Id = " << getId() << endl;
+        cout << "Membrane type = " << memType_ << endl;
+        cout << "Number of vertices, edges, half edges, triangles, borders =\n  "
+            << mesh_.numVertices() << ' ' << mesh_.numEdges() << ' ' << mesh_.numHalfEdges() << ' '
+            << mesh_.numTriangles() << ' ' << mesh_.numBorders() << endl;
+
+        cout << endl;
+    }
 
     /**************************************************************************
     Geometric
     **************************************************************************/
     template< bool stretched = false > void updateGeometryValue() {
-        MembraneMeshAttributeType::template updateGeometryValue<stretched>(_mesh);
+        MembraneMeshAttributeType::template updateGeometryValue<stretched>(mesh_);
     }
     void updateGeometryValueWithDerivative() {
-        MembraneMeshAttributeType::updateGeometryValueWithDerivative(_mesh);
+        MembraneMeshAttributeType::updateGeometryValueWithDerivative(mesh_);
     }
     void updateGeometryValueForSystem() {
-        MembraneMeshAttributeType::updateGeometryValueForSystem(_mesh);
+        MembraneMeshAttributeType::updateGeometryValueForSystem(mesh_);
     }
 
     /**
@@ -112,7 +156,7 @@ public:
     template< typename VecType, std::enable_if_t< VecType::vec_size == 3 >* = nullptr >
     double signedDistance(const VecType& p) const {
         if(!isClosed()) throw std::runtime_error("Membrane is not closed while trying to find signed distance field.");
-        return MembraneMeshAttributeType::signedDistance(_mesh, p);
+        return MembraneMeshAttributeType::signedDistance(mesh_, p);
     }
     /**
      * Use signed distance or other methods to judge whether a point is inside membrane.
@@ -121,19 +165,19 @@ public:
     template< typename VecType, std::enable_if_t< VecType::vec_size == 3 >* = nullptr >
     bool contains(const VecType& p) const {
         if(!isClosed()) throw std::runtime_error("Membrane is not closed while trying to find signed distance field.");
-        return MembraneMeshAttributeType::contains(_mesh, p);
+        return MembraneMeshAttributeType::contains(mesh_, p);
     }
 
     /**************************************************************************
     Topological
     **************************************************************************/
-    bool isClosed() const { return _mesh.isClosed(); }
+    bool isClosed() const { return mesh_.isClosed(); }
 
     /**************************************************************************
     Mechanics
     **************************************************************************/
     // Get mech membrane
-    MMembrane* getMMembrane() { return _mMembrane.get(); }
+    MMembrane* getMMembrane() { return mMembrane_.get(); }
 
 
 };
