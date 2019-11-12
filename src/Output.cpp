@@ -42,6 +42,7 @@
 
 #include <Eigen/Core>
 
+using namespace std;
 using namespace mathfunc;
 
 void BasicSnapshot::print(int snapshot) {
@@ -1124,6 +1125,64 @@ void LinkerBindingEvents::print(int snapshot) {
     dt->clearLinkerBindingData();
 
 
+}
+
+void ForcesOutput::print(int snapshot) {
+    // snapshot serial
+    _outputFile << snapshot << ' ' << tau() << '\n';
+
+    // Print coordinates
+    _outputFile << "Coordinates\n"
+        << Bead::getDbDataConst().coords.size_raw() << "  ";
+    for(const auto& x : Bead::getDbDataConst().coords.value) {
+        _outputFile << x << ' ';
+    }
+    _outputFile << '\n';
+
+    // force field forces
+    for(auto ff : ffm_->_forceFields) {
+        const auto& fb = ff->getForceBuffer();
+        _outputFile
+            << ff->getName() << '\n'
+            << fb.size() << "  ";
+        for(const auto& x : fb) _outputFile << x << ' ';
+        _outputFile << '\n';
+    }
+
+    _outputFile << endl;
+}
+
+void IndicesOutput::print(int snapshot) {
+    // snapshot serial
+    _outputFile << snapshot << ' ' << tau() << '\n';
+
+    // Filaments
+    for(auto f : Filament::getFilaments()) {
+        _outputFile << "FILAMENT "
+            << f->getId() << ' '
+            << f->getType() << ' '
+            << f->getCylinderVector().size() + 1 << '\n';
+        for(auto c : f->getCylinderVector())
+            _outputFile << c->getFirstBead()->getStableIndex() << ' ';
+        _outputFile << f->getCylinderVector().back()->getSecondBead()->getStableIndex()
+            << '\n';
+    }
+
+    // Membranes
+    for(auto m : Membrane::getMembranes()) {
+        const auto& mesh = m->getMesh();
+        _outputFile << "MEMBRANE "
+            << m->getId() << ' '
+            << m->getType() << ' '
+            << mesh.numVertices() << ' '
+            << mesh.numTriangles() << '\n';
+        for(const auto& v : mesh.getVertices()) {
+            _outputFile << v.attr.vertex->getStableIndex() << ' ';
+        }
+        _outputFile << '\n';
+    }
+
+    _outputFile << std::endl;
 }
 
 

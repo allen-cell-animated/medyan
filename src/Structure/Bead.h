@@ -43,18 +43,23 @@ struct BeadData {
     vec_array_type forcesAux; // real force
     vec_array_type forcesAuxP; // prev real force
 
+    std::vector< floatingpoint > forceTols;
+
     void push_back(
         const vec_type& coord,
         const vec_type& coordStr,
         const vec_type& force,
         const vec_type& forceAux,
-        const vec_type& forceAuxP
+        const vec_type& forceAuxP,
+        floatingpoint forceTol
     ) {
         coords.push_back(coord);
         coordsStr.push_back(coordStr);
         forces.push_back(force);
         forcesAux.push_back(forceAux);
         forcesAuxP.push_back(forceAuxP);
+
+        forceTols.push_back(forceTol);
     }
 
     void set_content(
@@ -63,13 +68,16 @@ struct BeadData {
         const vec_type& coordStr,
         const vec_type& force,
         const vec_type& forceAux,
-        const vec_type& forceAuxP
+        const vec_type& forceAuxP,
+        floatingpoint forceTol
     ) {
         coords    [pos] = coord;
         coordsStr [pos] = coordStr;
         forces    [pos] = force;
         forcesAux [pos] = forceAux;
         forcesAuxP[pos] = forceAuxP;
+
+        forceTols [pos] = forceTol;
     }
 
     void move_content(std::size_t from, std::size_t to) {
@@ -78,6 +86,8 @@ struct BeadData {
         forces    [to] = forces    [from];
         forcesAux [to] = forcesAux [from];
         forcesAuxP[to] = forcesAuxP[from];
+
+        forceTols [to] = forceTols [from];
     }
 
     void resize(size_t size) {
@@ -86,8 +96,37 @@ struct BeadData {
         forces    .resize(size);
         forcesAux .resize(size);
         forcesAuxP.resize(size);
+
+        forceTols .resize(size);
     }
 
+};
+
+// Functor to check whether the forces satisfy the force constraint
+struct ForcesBelowTolerance {
+    struct Result {
+        bool value;
+    };
+
+    // Overloading operator(), to compare force magnitudes with tolerances.
+    // If forces.size() > tol.size(), the behavior is undefined
+    template< typename F1, typename F2 >
+    auto operator()(const mathfunc::VecArray< 3, F1 >& forces, const std::vector< F2 >& tol) const {
+        using namespace mathfunc;
+        using namespace std;
+
+        bool belowTol = true;
+        const auto numBeads = forces.size();
+        for(size_t i = 0; i < numBeads; ++i) {
+            const auto tolI = tol[i];
+            if(magnitude2(forces[i]) >= tolI * tolI) {
+                belowTol = false;
+                break;
+            }
+        }
+
+        return Result { belowTol };
+    }
 };
 
 /// Represents a single coordinate between [Cylinders](@ref Cylinder), and holds forces
@@ -161,12 +200,14 @@ public:
     auto force()         { return getDbData().forces    [getStableIndex()]; }
     auto forceAux()      { return getDbData().forcesAux [getStableIndex()]; }
     auto forceAuxP()     { return getDbData().forcesAuxP[getStableIndex()]; }
+    auto& forceTol()     { return getDbData().forceTols [getStableIndex()]; }
 
     auto coordinate()    const { return getDbDataConst().coords    [getStableIndex()]; }
     auto coordinateStr() const { return getDbDataConst().coordsStr [getStableIndex()]; }
     auto force()         const { return getDbDataConst().forces    [getStableIndex()]; }
     auto forceAux()      const { return getDbDataConst().forcesAux [getStableIndex()]; }
     auto forceAuxP()     const { return getDbDataConst().forcesAuxP[getStableIndex()]; }
+    const auto& forceTol() const { return getDbDataConst().forceTols[getStableIndex()]; }
 
     // Temporary compromise
     auto vcoordinate()    const { return mathfunc::vec2Vector(coordinate()   ); }
@@ -320,6 +361,17 @@ public:
         //Add this bead as the child
         parent->addChild(unique_ptr<Component>(this));
     }
+
+    // Helper function to determine whether bead forces are below tolerances
+    // Note:
+    //   - The caller must ensure that the bead data is contiguous (without holes)
+    static bool forcesBelowTolerance() {
+        return ForcesBelowTolerance {}(
+            getDbDataConst().forcesAux,
+            getDbDataConst().forceTols
+        ).value;
+    }
+
 
 private:
     Compartment* _compartment = nullptr; ///< Pointer to the compartment that this bead is in

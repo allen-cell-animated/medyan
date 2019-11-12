@@ -97,7 +97,7 @@ public:
     //     size to the to-be-deleted items with indices smaller than the final
     //     size.
     //   - Adjust the size to the final size
-    template< size_t n, typename Retargeter > // The retargeter must implement operation()(from, to)
+    template< size_t n, typename Retargeter > // The retargeter must implement operator()(from, to)
     void erase(const std::array< size_t, n >& indices, Retargeter&& r) {
         // isDeleted[i]: whether _value[finalSize + i] should be deleted. initialized to false
         std::array< bool, n > isDeleted {};

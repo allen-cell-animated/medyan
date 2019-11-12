@@ -397,6 +397,7 @@ public:
     void readBoundParams();
     void readDyRateParams();
     void readSpecialParams();
+    void readSimulParams();
     //@}
     
     //@{

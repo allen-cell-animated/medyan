@@ -169,6 +169,8 @@ void Controller::initialize(string inputFile,
     //snapshot type output
     cout << endl;
 
+    p.readSimulParams();
+
     //trajectory-style data
     _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.traj", &_subSystem));
     _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj", &_subSystem));
@@ -182,6 +184,7 @@ void Controller::initialize(string inputFile,
     //add br force out and local diffussing species concentration
     _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", &_subSystem));
     //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", &_subSystem));
+    _outputs.push_back(new IndicesOutput(_outputDirectory + "indices.traj", &_subSystem));
 
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -218,6 +221,11 @@ void Controller::initialize(string inputFile,
     LOG(STEP) << "Initializing mechanics...";
     _mController.initialize(MTypes, MAlgorithm);
     LOG(INFO) << "Done.";
+
+    // Force output
+    if(SysParams::simulParams().trackForces) {
+        _outputs.push_back(new ForcesOutput(_outputDirectory + "forces-output.traj", &_subSystem, _mController.getForceFieldManager()));
+    }
 
 #endif
 
@@ -340,6 +348,8 @@ void Controller::initialize(string inputFile,
     //Set up TMGraph output
     string tmgraphsnapname = _outputDirectory + "TMGraph.traj";
     _outputs.push_back(new TMGraph(tmgraphsnapname, &_subSystem));
+
+
 
 
     //Set up datadump output if any
@@ -1288,6 +1298,10 @@ void Controller::membraneAdaptiveRemesh() const {
         // Update necessary geometry for the system
         m->updateGeometryValueForSystem();
     }
+
+    for(auto t : Triangle::getTriangles()) {
+        t->updatePosition();
+    }
 }
 
 void Controller::run() {
@@ -1433,6 +1447,8 @@ void Controller::run() {
 #ifdef MECHANICS
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
+    membraneAdaptiveRemesh();
+    _subSystem.resetNeighborLists(); // TODO: resolve workaround
     Bead::rearrange();
     Cylinder::updateAllData();
     invalidateMembraneMeshIndexCache();
@@ -1444,7 +1460,6 @@ void Controller::run() {
     // Initial special protocols need to be executed before energy minimization
     executeSpecialProtocols();
     auto minimizationResult = _mController.run(false);
-    membraneAdaptiveRemesh();
     displayCopySystem();
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runm2(mine - mins);
@@ -1645,13 +1660,15 @@ void Controller::run() {
 #endif
 
                 mins = chrono::high_resolution_clock::now();
+                // Membrane remeshing
+                membraneAdaptiveRemesh();
+                _subSystem.resetNeighborLists(); // TODO: resolve workaround
+
                 invalidateMembraneMeshIndexCache();
                 Bead::rearrange();
                 Cylinder::updateAllData();
                 minimizationResult = _mController.run();
 
-                // Membrane remeshing
-                membraneAdaptiveRemesh();
                 displayCopySystem();
 
                 mine= chrono::high_resolution_clock::now();
@@ -1820,13 +1837,15 @@ void Controller::run() {
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
             if(stepsLastMinimization >= _minimizationSteps) {
+                // Membrane remeshing
+                membraneAdaptiveRemesh();
+                _subSystem.resetNeighborLists(); // TODO: resolve workaround
+
                 invalidateMembraneMeshIndexCache();
                 Bead::rearrange();
                 Cylinder::updateAllData();
                 _mController.run();
 
-                // Membrane remeshing
-                membraneAdaptiveRemesh();
                 displayCopySystem();
 
                 updatePositions();

@@ -34,7 +34,7 @@ MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoi
             N = numeric_limits<int>::max();
         }
 
-        startMinimization();
+        startMinimization(GRADTOL);
         FFM.vectorizeAllForceFields();
 
         FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
@@ -45,7 +45,7 @@ MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoi
 
         int numIter = 0;
         while (/* Iteration criterion */  numIter < N &&
-               /* Gradient tolerance  */  maxForce > GRADTOL) {
+               /* Gradient tolerance  */  !Bead::forcesBelowTolerance()) {
 
             numIter++;
             floatingpoint lambda;
