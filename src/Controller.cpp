@@ -1443,6 +1443,7 @@ void Controller::run() {
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
     membraneAdaptiveRemesh();
+    invalidateMembraneMeshIndexCache();
     _subSystem.resetNeighborLists(); // TODO: resolve workaround
     Bead::rearrange();
     Cylinder::updateAllData();
@@ -1655,6 +1656,7 @@ void Controller::run() {
                 mins = chrono::high_resolution_clock::now();
                 // Membrane remeshing
                 membraneAdaptiveRemesh();
+                invalidateMembraneMeshIndexCache();
                 _subSystem.resetNeighborLists(); // TODO: resolve workaround
 
                 invalidateMembraneMeshIndexCache();
@@ -1830,6 +1832,7 @@ void Controller::run() {
             if(stepsLastMinimization >= _minimizationSteps) {
                 // Membrane remeshing
                 membraneAdaptiveRemesh();
+                invalidateMembraneMeshIndexCache();
                 _subSystem.resetNeighborLists(); // TODO: resolve workaround
 
                 invalidateMembraneMeshIndexCache();
