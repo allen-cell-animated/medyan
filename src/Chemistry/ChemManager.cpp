@@ -48,9 +48,8 @@ void ChemManager::setupBindingSites() {
             }
         }
 
-#ifdef CAMKII_ENABLED
         CaMKIIChemManager::setupBindingSites(_chemData, filType);
-#endif
+
 
         if(_chemData.L_BINDING_INDEX[filType] != "") {
             
@@ -95,9 +94,7 @@ void ChemManager::setupBindingSites() {
             SysParams::CParams.linkerBoundIndex[filType]   != SysParams::CParams.motorBoundIndex[filType])
             SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.motorBoundIndex[filType]);
 
-#ifdef CAMKII_ENABLED
         CaMKIIChemManager::setupBindingSitesInitCylinders(filType);
-#endif
     }
 }
 
@@ -116,10 +113,9 @@ void ChemManager::configCMonomer() {
                                         _chemData.speciesMotor[filType].size()     +
                                         _chemData.speciesBrancher[filType].size();
 
-#ifdef CAMKII_ENABLED
+        //set up static CMonomer things for CaMKII
         CMonomer::_numBSpecies[filType] +=  _chemData.speciesCaMKIIer[filType].size()  +
                                             _chemData.speciesCaMKIIDummyCylinder[filType].size();
-#endif
 
         //set up species offsets
         short o1 = _chemData.speciesFilament[filType].size();
@@ -129,10 +125,9 @@ void ChemManager::configCMonomer() {
         short o4 = o3 + _chemData.speciesLinker[filType].size(); //Motor
         short o5 = o4 + _chemData.speciesMotor[filType].size(); //Brancher
 
-#ifdef CAMKII_ENABLED
+        //set up species offsets for CaMKII
         short o6 = o5 + _chemData.speciesBrancher[filType].size(); //CaMKIIer
         short o7 = o6 + _chemData.speciesCaMKIIer[filType].size(); //CaMKIIDummyCylinder
-#endif
 
         //create offset vector for filament
         CMonomer::_speciesFilamentIndex[filType].insert(
@@ -142,10 +137,9 @@ void ChemManager::configCMonomer() {
         CMonomer::_speciesBoundIndex[filType].insert(
         CMonomer::_speciesBoundIndex[filType].end(), {0,o3,o4,o5});
 
-#ifdef CAMKII_ENABLED
+        //create offset vector for CaMKII
         CMonomer::_speciesBoundIndex[filType].push_back(o6);
         CMonomer::_speciesBoundIndex[filType].push_back(o7);
-#endif
     }
 }
 
@@ -202,9 +196,7 @@ void ChemManager::initCMonomer(CMonomer* m, short filamentType, Compartment* c) 
         bIndex++;
     }
 
-#ifdef CAMKII_ENABLED
     CaMKIIChemManager::initCMonomerCaMKII(_chemData, m, filamentType, c, bIndex);
-#endif
 }
 
 void ChemManager::genFilReactionTemplates() {
@@ -1394,10 +1386,8 @@ void ChemManager::genFilBindingReactions() {
             }
 
 
-#ifdef CAMKII_ENABLED
             CaMKIIChemManager::genFilBindingReactionsCaMKII(_subSystem, _chemData, filType, grid, C,
                     managerIndex, camkiiIndex);
-#endif
 
 
             for(auto &r: _chemData.linkerReactions[filType]) {
@@ -1893,9 +1883,7 @@ void ChemManager::genFilBindingReactions() {
         }
 
 
-#ifdef CAMKII_ENABLED
         CaMKIIChemManager::initializeManagers(_subSystem, C0, filType);
-#endif
 
     }
 }
@@ -2068,9 +2056,7 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
     
     }
 
-#ifdef CAMKII_ENABLED
     CaMKIIChemManager::genSpeciesCaMKII(_chemData, protoCompartment);
-#endif
 
 }
 

@@ -937,9 +937,7 @@ public:
     ~SpeciesPairBinding () noexcept {};
 };
 
-#ifdef CAMKII_ENABLED
 #include "CaMKII/CaMKIISpecies.h"
-#endif
 
 /// Print self into an iostream
 ostream& operator<<(ostream& os, const Species& s);

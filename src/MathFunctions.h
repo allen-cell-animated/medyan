@@ -306,8 +306,6 @@ namespace mathfunc {
 
 }
 
-#ifdef CAMKII_ENABLED
 #include "CaMKII/CaMKIIMathFunctions.h"
-#endif
 
 #endif

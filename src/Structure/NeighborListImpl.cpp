@@ -18,9 +18,7 @@
 #include "Cylinder.h"
 #include "Bubble.h"
 #include "BoundaryElement.h"
-#ifdef CAMKII_ENABLED
 #include "CaMKIIingPoint.h"
-#endif
 
 #include "GController.h"
 #include "MathFunctions.h"

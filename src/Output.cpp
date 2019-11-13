@@ -24,9 +24,7 @@
 #include "Linker.h"
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
-#ifdef CAMKII_ENABLED
 #include "CaMKIIingPoint.h"
-#endif
 #include "Bubble.h"
 
 #include "Boundary.h"
@@ -49,9 +47,7 @@ void BasicSnapshot::print(int snapshot) {
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
-#ifdef CAMKII_ENABLED
         CaMKIIingPoint::numCaMKIIingPoints() << " " <<
-#endif
         Bubble::numBubbles() << endl;
     
     for(auto &filament : Filament::getFilaments()) {
@@ -191,9 +187,7 @@ void BirthTimes::print(int snapshot) {
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
-#ifdef CAMKII_ENABLED
         CaMKIIingPoint::numCaMKIIingPoints() << " " <<
-#endif
         Bubble::numBubbles() << endl;
     
     for(auto &filament : Filament::getFilaments()) {
@@ -301,9 +295,7 @@ void Forces::print(int snapshot) {
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
-#ifdef CAMKII_ENABLED
         CaMKIIingPoint::numCaMKIIingPoints() << " " <<
-#endif
         Bubble::numBubbles() << endl;
     
     for(auto &filament : Filament::getFilaments()) {
@@ -415,9 +407,7 @@ void Tensions::print(int snapshot) {
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
-#ifdef CAMKII_ENABLED
         CaMKIIingPoint::numCaMKIIingPoints() << " " <<
-#endif
         Bubble::numBubbles() << endl;;
     
     for(auto &filament : Filament::getFilaments()) {
@@ -541,9 +531,7 @@ void WallTensions::print(int snapshot) {
     Linker::numLinkers() << " " <<
     MotorGhost::numMotorGhosts() << " " <<
     BranchingPoint::numBranchingPoints() << " " <<
-#ifdef CAMKII_ENABLED
     CaMKIIingPoint::numCaMKIIingPoints() << " " <<
-#endif
     Bubble::numBubbles() << endl;;
     
     for(auto &filament : Filament::getFilaments()) {
@@ -655,9 +643,7 @@ void Types::print(int snapshot) {
     Linker::numLinkers() << " " <<
     MotorGhost::numMotorGhosts() << " " <<
     BranchingPoint::numBranchingPoints() << " " <<
-#ifdef CAMKII_ENABLED
     CaMKIIingPoint::numCaMKIIingPoints() << " " <<
-#endif
     Bubble::numBubbles() << endl;;
     
     for(auto &filament : Filament::getFilaments()) {
@@ -812,22 +798,18 @@ void Chemistry::print(int snapshot) {
             _outputFile << sb << ":BRANCHER " << copyNum << endl;
         }
 
-#ifdef CAMKII_ENABLED
         for(auto sb : _chemData.speciesCaMKIIer[filType]) {
             
             auto copyNum = CaMKIIingPoint::countSpecies(sb);
             _outputFile << sb << ":CAMKIIER " << copyNum << endl;
         }
-#endif
 
     }
 
-#ifdef CAMKII_ENABLED
     for(auto sb : _chemData.speciesCaMKIIDummyCylinder[CAMKII_CYLINDER_FILAMENT_TYPE]) {
         auto copyNum = CaMKIIingPoint::countDummySpecies(sb);
         _outputFile << sb << ":CAMKIIDUMMYCYLINDER " << copyNum << endl;
     }
-#endif
 
     _outputFile <<endl;
 }

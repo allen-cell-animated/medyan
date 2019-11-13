@@ -477,8 +477,6 @@ public:
 
 
 // CaMKII include header file for binding managers
-#ifdef CAMKII_ENABLED
 #include "CaMKII/CaMKIIBindingManager.h"
-#endif
 
 #endif

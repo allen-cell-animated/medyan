@@ -24,9 +24,7 @@
 #include "GController.h"
 #include "MathFunctions.h"
 
-#ifdef CAMKII_ENABLED
 #include "CaMKIIingPoint.h"
-#endif
 
 using namespace mathfunc;
 
@@ -219,18 +217,20 @@ void Cylinder::updatePosition() {
         
         //Add new ccylinder to binding managers
         for(auto &manager : newCompartment->getFilamentBindingManagers()) {
-            if(dynamic_cast<CaMKIIBundlingManager*>(manager.get()) != nullptr) {
-                int count = Cylinder::getCylinders().size();
-                int bef = manager->numBindingSites();
-                manager->addPossibleBindings(newCCylinder);
-                int aft = manager->numBindingSites();
+			manager->addPossibleBindings(newCCylinder);
 
-                cerr << "========MILLAD: Cylinder::UpdatePosition  " << newCCylinder->getCylinder() << "  " << newCCylinder << "  " <<
-                     (dynamic_cast<CaMKIICylinder *>(newCCylinder->getCylinder()) == NULL ? "normal" : "camkii_cylinder") << " count: "
-                     << count << "  before: " << bef << "  after: " << aft << endl;
-            } else {
-                manager->addPossibleBindings(newCCylinder);
-            }
+//            if(dynamic_cast<CaMKIIBundlingManager*>(manager.get()) != nullptr) {
+//                int count = Cylinder::getCylinders().size();
+//                int bef = manager->numBindingSites();
+//                manager->addPossibleBindings(newCCylinder);
+//                int aft = manager->numBindingSites();
+//
+//                cerr << "========MILLAD: Cylinder::UpdatePosition  " << newCCylinder->getCylinder() << "  " << newCCylinder << "  " <<
+//                     (dynamic_cast<CaMKIICylinder *>(newCCylinder->getCylinder()) == NULL ? "normal" : "camkii_cylinder") << " count: "
+//                     << count << "  before: " << bef << "  after: " << aft << endl;
+//            } else {
+//                manager->addPossibleBindings(newCCylinder);
+//            }
         }
     }
 #endif
@@ -312,9 +312,7 @@ void Cylinder::printSelf() {
     if(_minusEnd) cout << "Is a minus end." << endl;
     
     if(_branchingCylinder != nullptr) cout << "Has a branching cylinder." << endl;
-#ifdef CAMKII_ENABLED
     if(_camkiiingCylinder != nullptr) cout << "Has a camkiiing cylinder." << endl;
-#endif
 
     cout << "Position = " << _position << endl;
     

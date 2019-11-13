@@ -110,9 +110,7 @@ public:
 class CaMKIIBundlingManager : public FilamentBindingManager {
 
 	friend class ChemManager;
-#ifdef CAMKII_ENABLED
 	friend class CaMKIIChemManager;
-#endif
 
 private:
 	float _rMin; ///< Minimum reaction range

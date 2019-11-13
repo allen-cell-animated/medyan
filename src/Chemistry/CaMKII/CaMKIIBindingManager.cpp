@@ -250,8 +250,6 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite
 	//if we change other managers copy number
 	vector<CaMKIIBundlingManager*> affectedManagers;
 
-	cerr << "======MILLAD: _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder()): " << _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder()).size() << endl;
-
 	//add valid binding sites
 	for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
 		Cylinder *c = cc->getCylinder();
@@ -380,7 +378,6 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
 		//Remove all the tuples that have this value as a key
 		auto t = tuple<CCylinder*, short>(cc, bindingSite);
 		_possibleBindings.erase(t);
-		cerr << "======MILLAD:  CaMKIIBundlingManager::removePossibleBindings" << cc << endl;
 	} else {
 		//Remove all the tuples that have this as a value
 		for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); ) {
@@ -395,8 +392,6 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
 
 	int oldN = _bindingSpecies->getN();
 	int newN = numBindingSites();
-
-	cerr << "============ MILLAD: old and new N: " << oldN << "  " << newN << "   " << oldN - newN << endl;
 
 	updateBindingReaction(oldN, newN);
 

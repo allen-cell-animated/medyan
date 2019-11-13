@@ -90,8 +90,6 @@ private:
     vector<vector<unique_ptr<FilamentReactionTemplate>>>(MAX_FILAMENT_TYPES);
 };
 
-#ifdef CAMKII_ENABLED
 #include "CaMKII/CaMKIIChemManager.h"
-#endif
 
 #endif

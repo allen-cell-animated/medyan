@@ -864,8 +864,6 @@ struct FilamentDestructionCallback {
 #endif
 
 
-#ifdef CAMKII_ENABLED
 #include "CaMKII/CaMKIIChemCallbacks.h"
-#endif
 
 #endif

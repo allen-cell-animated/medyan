@@ -79,18 +79,13 @@ public:
     /// direction. Using all this, two constructors for beads and cylinders are called.
     /// @param nucleation - this filament was nucleated at runtime by a non-branching, non-camkiiing  species
     /// @param branching - this filament was branched at runtime from an existing filament
-#ifdef CAMKII_ENABLED
     /// @param camkiiing - this filament was camkiied at runtime from an existing filament
-#endif
 	Filament(SubSystem* s, short filamentType,
                            vector<double>& position,
                            vector<double>& direction,
                            bool nucleation = false,
-                           bool branch = false
-#ifdef CAMKII_ENABLED
-                           ,bool camkii = false
-#endif
-                           );
+                           bool branch = false,
+                           bool camkii = false);
     
     /// This constructor is called to create a filament at startup. It creates a filament
     /// with a number of beads numBeads. Filaments starts and ends in the point

@@ -393,7 +393,6 @@ public:
         return sp;
     }
 
-#ifdef CAMKII_ENABLED
     /// Add a camkiier species to this compartment
     /// @param args - any number of SpeciesCaMKIIer objects
     template<typename ...Args>
@@ -415,7 +414,6 @@ public:
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;
     }
-#endif
 
     /// Add a single binding species to this compartment
     /// @param args - any number of SpeciesSingleBinding objects
