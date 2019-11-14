@@ -16,6 +16,15 @@
 
 struct MembraneFFFactory {
 
+    enum class CurvatureRequirement {
+        curv, curv2
+    };
+
+    struct Result {
+        std::vector< std::unique_ptr< ForceField > > forceFields;
+        CurvatureRequirement curvReq;
+    };
+
     auto operator()(
         const std::string& stretchingType,
         const std::string& stretchingAccuType,
@@ -23,15 +32,15 @@ struct MembraneFFFactory {
     ) const {
         using namespace std;
 
-        vector< unique_ptr< ForceField > > res;
+        Result res;
 
         if (stretchingType == "HARMONIC")
             if(stretchingAccuType == "TRIANGLE")
-                res.emplace_back(
+                res.forceFields.emplace_back(
                     new MembraneStretching< MembraneStretchingHarmonic, MembraneStretchingAccumulationType::ByTriangle >()
                 );
             else if(stretchingAccuType == "VERTEX")
-                res.emplace_back(
+                res.forceFields.emplace_back(
                     new MembraneStretching< MembraneStretchingHarmonic, MembraneStretchingAccumulationType::ByVertex >()
                 );
             else {
@@ -41,11 +50,11 @@ struct MembraneFFFactory {
 
         else if(stretchingType == "LINEAR")
             if(stretchingAccuType == "TRIANGLE")
-                res.emplace_back(
+                res.forceFields.emplace_back(
                     new MembraneStretching< MembraneStretchingLinear, MembraneStretchingAccumulationType::ByTriangle >()
                 );
             else if(stretchingAccuType == "VERTEX")
-                res.emplace_back(
+                res.forceFields.emplace_back(
                     new MembraneStretching< MembraneStretchingLinear, MembraneStretchingAccumulationType::ByVertex >()
                 );
             else {
@@ -61,8 +70,12 @@ struct MembraneFFFactory {
         }
         
         if (bendingType == "HELFRICH")
-            res.emplace_back(
+            res.forceFields.emplace_back(
                 new MembraneBending<MembraneBendingHelfrich>()
+            );
+        else if(bendingType == "HELFRICH_QUADRATIC")
+            res.forceFields.emplace_back(
+                new MembraneBending<MembraneBendingHelfrichQuadratic>()
             );
         else if(bendingType == "") {}
         else {
@@ -71,7 +84,7 @@ struct MembraneFFFactory {
         }
 
         // Always add the protective force field
-        res.emplace_back(
+        res.forceFields.emplace_back(
             new MembraneTriangleProtect< MembraneTriangleProtectFene, true >()
         );
 

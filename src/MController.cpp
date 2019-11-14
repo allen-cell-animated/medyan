@@ -81,6 +81,7 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
                         forceFields.BrPositionType));
 
     {
+        // TODO
         auto allMembraneFF = MembraneFFFactory{}(
             forceFields.MemStretchingFFType,
             forceFields.MemStretchingAccuType,

@@ -3,10 +3,12 @@
 
 #include <algorithm> // transform
 #include <functional> // plus
+#include <type_traits> // is_same
 #include <vector>
 
 #include "common.h" // floatingpoint
 #include "Mechanics/ForceField/ForceField.h"
+#include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/MVoronoiCell.h"
 #include "Structure/SurfaceMesh/Vertex.hpp"
@@ -16,7 +18,7 @@ template< typename InteractionType >
 class MembraneBending : public ForceField {
 
 private:
-    InteractionType _FFType;
+    InteractionType bending_;
 
     // Culprit membrane
     const Membrane* membraneCulprit_ = nullptr;
@@ -34,12 +36,20 @@ public:
             for (const auto &v : mesh.getVertices())
                 if (v.numTargetingBorderHalfEdges == 0) {
                     const auto kBending = v.attr.vertex->getMVoronoiCell()->getBendingModulus();
-                    const auto eqCurv = v.attr.vertex->getMVoronoiCell()->getEqCurv();
 
                     const auto area = (stretched ? v.attr.gVertexS.astar : v.attr.gVertex.astar) / 3;
-                    const auto curv = stretched ? v.attr.gVertexS.curv : v.attr.gVertex.curv;
 
-                    U_i += _FFType.energy(area, curv, kBending, eqCurv);
+                    if constexpr(std::is_same_v< InteractionType, MembraneBendingHelfrich >) {
+                        const auto eqCurv = v.attr.vertex->getMVoronoiCell()->getEqCurv();
+                        const auto curv = stretched ? v.attr.gVertexS.curv : v.attr.gVertex.curv;
+
+                        U_i += bending_.energy(area, curv, kBending, eqCurv);
+                    }
+                    else {
+                        const auto curv2 = stretched ? v.attr.gVertexS.curv2 : v.attr.gVertex.curv;
+
+                        U_i += bending_.energy(area, curv2, kBending);
+                    }
                 }
 
             if (fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i || U_i < -1.0) {
@@ -82,21 +92,44 @@ public:
 
                     const auto area = va.gVertex.astar / 3;
                     const auto curv = va.gVertex.curv;
+                    const auto curv2 = va.gVertex.curv2;
 
-                    _FFType.forces(
-                        f + 3 * va.cachedCoordIndex,
-                        area, va.gVertex.dAstar / 3,
-                        curv, va.gVertex.dCurv,
-                        kBending, eqCurv);
+                    if constexpr(std::is_same_v< InteractionType, MembraneBendingHelfrich >) {
+                        bending_.forces(
+                            f + 3 * va.cachedCoordIndex,
+                            area, va.gVertex.dAstar / 3,
+                            curv, va.gVertex.dCurv,
+                            kBending, eqCurv
+                        );
+                    }
+                    else {
+                        bending_.forces(
+                            f + 3 * va.cachedCoordIndex,
+                            area, va.gVertex.dAstar / 3,
+                            curv2, va.gVertex.dCurv2,
+                            kBending
+                        );
+                    }
 
                     for (size_t i = 0; i < va.cachedDegree; ++i) {
                         const size_t hei_o = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + i];
                         const size_t vn_i = cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i];
                         const auto &dArea = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborAstar / 3;
-                        const auto &dCurv = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv;
-                        _FFType.forces(
-                            f + 3 * vn_i,
-                            area, dArea, curv, dCurv, kBending, eqCurv);
+
+                        if constexpr(std::is_same_v< InteractionType, MembraneBendingHelfrich >) {
+                            const auto& dCurv = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv;
+                            bending_.forces(
+                                f + 3 * vn_i,
+                                area, dArea, curv, dCurv, kBending, eqCurv
+                            );
+                        }
+                        else {
+                            const auto& dCurv2 = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv2;
+                            bending_.forces(
+                                f + 3 * vn_i,
+                                area, dArea, curv2, dCurv2, kBending
+                            );
+                        }
                     }
                 }
 
