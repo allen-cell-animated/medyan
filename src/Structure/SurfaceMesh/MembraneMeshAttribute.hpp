@@ -1,5 +1,5 @@
-#ifndef MEDYAN_Structure_SurfaceMesh_MembraneMeshAttribute_Hpp
-#define MEDYAN_Structure_SurfaceMesh_MembraneMeshAttribute_Hpp
+#ifndef MEDYAN_Structure_SurfaceMesh_MembraneMeshAttribute_hpp
+#define MEDYAN_Structure_SurfaceMesh_MembraneMeshAttribute_hpp
 
 #include <algorithm> // max
 #include <array>
@@ -139,6 +139,38 @@ struct MembraneMeshAttribute {
 
     struct AttributeInitializerInfo {
         std::vector< coordinate_type > vertexCoordinateList;
+    };
+
+    enum class GeometryCurvaturePolicy {
+        // Computes the signed curvature.
+        //
+        // This is generally needed when curvature is used in linear cases,
+        // such as the bending energy when spontaneous curvature is non-zero.
+        //
+        // The default implementation is
+        //         ∇ Area ⋅ ∇ Vol
+        //   H = ------------------
+        //        2 ∇ Vol ⋅ ∇ Vol
+        //
+        // where ∇ acts on the vertex of interest.
+        //
+        // The signed curvature will be stored in the curv variable, and their
+        // derivatives will be stored in curv related places.
+        withSign,
+
+        // Computes the squared curvature.
+        //
+        // This is generally used when curvature is used in quadratic cases,
+        // such as the bending energy when spontaneous curvature is zero.
+        //
+        // The default implementation is
+        //           (∇ Area)^2
+        //   H^2 = -------------
+        //          4 (∇ Vol)^2
+        //
+        // The square of the curvature will be stored in the curv2 variable, and
+        // their derivatives will be stored related to curv2.
+        squared
     };
 
     // Mesh element modification (not used in initialization/finalization)
@@ -322,7 +354,10 @@ struct MembraneMeshAttribute {
     // and signed distance.
     // This function uses cached indexing to enhance performance, so a valid
     // cache is needed in this function.
-    template< bool stretched > static void updateGeometryValue(MeshType& mesh) {
+    template<
+        bool stretched,
+        GeometryCurvaturePolicy curvPol = GeometryCurvaturePolicy::withSign
+    > static void updateGeometryValue(MeshType& mesh) {
         using namespace mathfunc;
 
         cacheIndices(mesh);
@@ -416,7 +451,12 @@ struct MembraneMeshAttribute {
 
             const auto dVolume2 = magnitude2(vag.dVolume);
 
-            vag.curv = 0.5 * dot(vag.dAstar, vag.dVolume) / dVolume2;
+            if(curvPol == GeometryCurvaturePolicy::withSign) {
+                vag.curv = 0.5 * dot(vag.dAstar, vag.dVolume) / dVolume2;
+            }
+            else {
+                vag.curv2 = 0.25 * magnitude2(vag.dAstar) / dVolume2;
+            }
         }});
     } // void updateGeometryValue(...)
 
@@ -424,7 +464,9 @@ struct MembraneMeshAttribute {
     // the membrane force calculation.
     // This function uses cached indexing to enhance performance, so a valid
     // cache is needed in this function.
-    static void updateGeometryValueWithDerivative(MeshType& mesh) {
+    template<
+        GeometryCurvaturePolicy curvPol = GeometryCurvaturePolicy::withSign
+    > static void updateGeometryValueWithDerivative(MeshType& mesh) {
         using namespace mathfunc;
 
         cacheIndices(mesh);
@@ -527,6 +569,9 @@ struct MembraneMeshAttribute {
             // K * A = d AStar (on center vertex), where the choice of A could be different.
             // Here the we use Vector Area for the A above, i.e. AVec = |d Vol (on center vertex)|
             //
+            //-----------------------------------------------------------------
+            // Signed curvature implementation
+            //
             // We choose the following implementation (see star_perp_sq_mean_curvature of Surface Evolver):
             //
             //        (1/2) d AStar  dot  d Vol
@@ -548,6 +593,23 @@ struct MembraneMeshAttribute {
             //          (1/2) t1 + (1/2) t2 - 2 H t3
             //   DH = --------------------------------
             //                d Vol  dot  d Vol
+            //
+            //-----------------------------------------------------------------
+            // Squared curvature implementation
+            //
+            //             (1/2) D(∇ A_star) ∇ A_star - 2 H^2 D(∇ Vol) ∇ Vol
+            //   D(H^2) = ---------------------------------------------------
+            //                                (∇ Vol)^2
+            //
+            // And D can operate on center or neighbor vertices.
+            //
+            // An additional intermediate variable would be
+            //   t4 = D(∇ A_star) ∇ A_star  (D on both central and neighbor vertices)
+            // then
+            //
+            //             (1/2) t4 - 2 H^2 t3
+            //   D(H^2) = ---------------------
+            //                  (∇ Vol)^2
 
             // derivative of curvature will be calculated in the next loop
             for(size_t i = 0; i < va.cachedDegree; ++i) {
@@ -580,7 +642,12 @@ struct MembraneMeshAttribute {
 
             const auto dVolume2 = magnitude2(vag.dVolume);
 
-            vag.curv = 0.5 * dot(vag.dAstar, vag.dVolume) / dVolume2;
+            if(curvPol == GeometryCurvaturePolicy::withSign) {
+                vag.curv = 0.5 * dot(vag.dAstar, vag.dVolume) / dVolume2;
+            }
+            else {
+                vag.curv2 = 0.25 * magnitude2(vag.dAstar) / dVolume2;
+            }
             // Derivative will be processed later.
 
             // Calculate derivative of curvature
@@ -639,26 +706,51 @@ struct MembraneMeshAttribute {
                 const auto vec_lr = c_right - c_left;
 
                 // Compute t1_n, t2_n and t3_n
-                const Vec3 t1_n {
-                    dot(dDAstar_n[0], vag.dVolume),
-                    dot(dDAstar_n[1], vag.dVolume),
-                    dot(dDAstar_n[2], vag.dVolume)
-                };
-                const Vec3 t2_n = (1.0 / 6) * cross(vec_lr, vag.dAstar);
                 const Vec3 t3_n = (1.0 / 6) * cross(vec_lr, vag.dVolume);
 
-                // Derivative of curvature
-                mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv = (0.5 * (t1_n + t2_n) - (2 * vag.curv) * t3_n) / dVolume2;
+                if(curvPol == GeometryCurvaturePolicy::withSign) {
+                    const Vec3 t1_n {
+                        dot(dDAstar_n[0], vag.dVolume),
+                        dot(dDAstar_n[1], vag.dVolume),
+                        dot(dDAstar_n[2], vag.dVolume)
+                    };
+                    const Vec3 t2_n = (1.0 / 6) * cross(vec_lr, vag.dAstar);
+
+                    // Derivative of curvature
+                    mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv = (0.5 * (t1_n + t2_n) - (2 * vag.curv) * t3_n) / dVolume2;
+                }
+                else {
+                    const Vec3 t4_n {
+                        dot(dDAstar_n[0], vag.dAstar),
+                        dot(dDAstar_n[1], vag.dAstar),
+                        dot(dDAstar_n[2], vag.dAstar)
+                    };
+
+                    // Derivative of curvature squared
+                    mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv2 = (0.5 * t4_n - (2 * vag.curv2) * t3_n) / dVolume2;
+                }
+            } // End loop neighbor vertices
+
+            if(curvPol == GeometryCurvaturePolicy::withSign) {
+                const Vec3 t1 {
+                    dot(dDAstar[0], vag.dVolume),
+                    dot(dDAstar[1], vag.dVolume),
+                    dot(dDAstar[2], vag.dVolume)
+                };
+
+                // Also the derivative of curvature on central vertex
+                vag.dCurv = t1 * (0.5 / dVolume2);
             }
+            else {
+                const Vec3 t4 {
+                    dot(dDAstar[0], vag.dAstar),
+                    dot(dDAstar[1], vag.dAstar),
+                    dot(dDAstar[2], vag.dAstar)
+                };
 
-            const Vec3 t1 {
-                dot(dDAstar[0], vag.dVolume),
-                dot(dDAstar[1], vag.dVolume),
-                dot(dDAstar[2], vag.dVolume)
-            };
-
-            // Also the derivative of curvature on central vertex
-            vag.dCurv = t1 * (0.5 / dVolume2);
+                // Derivative of curvature squared on central vertex
+                vag.dCurv2 = t4 * (0.5 / dVolume2);
+            }
 
         }}); // End loop vertices (V cells)
 

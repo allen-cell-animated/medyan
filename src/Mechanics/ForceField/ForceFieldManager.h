@@ -48,6 +48,9 @@ friend class CGMethod;
 public:
     vector<ForceField*> _forceFields; ///< All forcefields in the system
 
+    // Requirement for geometry computation
+    ForceFieldTypes::GeometryCurvRequirement geoCurvReq = ForceFieldTypes::GeometryCurvRequirement::curv;
+
     static ForceField* _culpritForceField;
 
     /// Vectorize all interactions involved in calculation

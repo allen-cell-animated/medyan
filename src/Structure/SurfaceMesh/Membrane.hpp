@@ -137,11 +137,18 @@ public:
     /**************************************************************************
     Geometric
     **************************************************************************/
-    template< bool stretched = false > void updateGeometryValue() {
-        MembraneMeshAttributeType::template updateGeometryValue<stretched>(mesh_);
+    template<
+        bool stretched = false,
+        MembraneMeshAttributeType::GeometryCurvaturePolicy curvPol
+            = MembraneMeshAttributeType::GeometryCurvaturePolicy::withSign
+    > void updateGeometryValue() {
+        MembraneMeshAttributeType::template updateGeometryValue<stretched, curvPol>(mesh_);
     }
-    void updateGeometryValueWithDerivative() {
-        MembraneMeshAttributeType::updateGeometryValueWithDerivative(mesh_);
+    template<
+        MembraneMeshAttributeType::GeometryCurvaturePolicy curvPol
+            = MembraneMeshAttributeType::GeometryCurvaturePolicy::withSign
+    > void updateGeometryValueWithDerivative() {
+        MembraneMeshAttributeType::template updateGeometryValueWithDerivative<curvPol>(mesh_);
     }
     void updateGeometryValueForSystem() {
         MembraneMeshAttributeType::updateGeometryValueForSystem(mesh_);
