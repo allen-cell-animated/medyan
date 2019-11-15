@@ -12,17 +12,16 @@
 #include "Mechanics/ForceField/Membrane/MembraneStretching.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneStretchingImpl.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneTriangleProtect.hpp"
+#include "Mechanics/ForceField/Types.hpp"
 #include "Util/Io/Log.hpp"
 
 struct MembraneFFFactory {
 
-    enum class CurvatureRequirement {
-        curv, curv2
-    };
+    using CurvRequirement = ForceFieldTypes::GeometryCurvRequirement;
 
     struct Result {
         std::vector< std::unique_ptr< ForceField > > forceFields;
-        CurvatureRequirement curvReq;
+        CurvRequirement curvReq = CurvRequirement::curv;
     };
 
     auto operator()(
@@ -69,14 +68,18 @@ struct MembraneFFFactory {
             throw std::runtime_error("Membrane stretching FF type not recognized");
         }
         
-        if (bendingType == "HELFRICH")
+        if (bendingType == "HELFRICH") {
             res.forceFields.emplace_back(
                 new MembraneBending<MembraneBendingHelfrich>()
             );
-        else if(bendingType == "HELFRICH_QUADRATIC")
+            res.curvReq = CurvRequirement::curv;
+        }
+        else if(bendingType == "HELFRICH_QUADRATIC") {
             res.forceFields.emplace_back(
                 new MembraneBending<MembraneBendingHelfrichQuadratic>()
             );
+            res.curvReq = CurvRequirement::curv2;
+        }
         else if(bendingType == "") {}
         else {
             cout << "Membrane bending FF type " << bendingType << " is not recognized." << endl;

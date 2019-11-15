@@ -1,5 +1,5 @@
-#ifndef MEDYAN_Structure_SurfaceMesh_MembraneMeshAttribute_Hpp
-#define MEDYAN_Structure_SurfaceMesh_MembraneMeshAttribute_Hpp
+#ifndef MEDYAN_Structure_SurfaceMesh_MembraneMeshAttribute_hpp
+#define MEDYAN_Structure_SurfaceMesh_MembraneMeshAttribute_hpp
 
 #include <algorithm> // max
 #include <array>
