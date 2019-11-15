@@ -46,7 +46,7 @@ public:
                         U_i += bending_.energy(area, curv, kBending, eqCurv);
                     }
                     else {
-                        const auto curv2 = stretched ? v.attr.gVertexS.curv2 : v.attr.gVertex.curv;
+                        const auto curv2 = stretched ? v.attr.gVertexS.curv2 : v.attr.gVertex.curv2;
 
                         U_i += bending_.energy(area, curv2, kBending);
                     }
