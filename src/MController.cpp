@@ -81,12 +81,13 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
                         forceFields.BrPositionType));
 
     {
-        auto allMembraneFF = MembraneFFFactory{}(
+        auto membraneFFRes = MembraneFFFactory{}(
             forceFields.MemStretchingFFType,
             forceFields.MemStretchingAccuType,
             forceFields.MemBendingFFType
         );
-        for(auto& ff : allMembraneFF) _FFManager._forceFields.push_back(ff.release());
+        for(auto& ff : membraneFFRes.forceFields) _FFManager._forceFields.push_back(ff.release());
+        _FFManager.geoCurvReq = membraneFFRes.curvReq;
     }
 
     _FFManager._forceFields.push_back(

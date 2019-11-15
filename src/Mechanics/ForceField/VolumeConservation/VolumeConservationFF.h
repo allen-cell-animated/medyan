@@ -40,15 +40,15 @@ public:
     virtual void vectorize() override {}
     virtual void cleanup() override {}
 
-    virtual string getName() { return "Volume conservation"; }
-    virtual void whoIsCulprit();
+    virtual string getName() override { return "Volume conservation"; }
+    virtual void whoIsCulprit() override;
 
     virtual floatingpoint computeEnergy(floatingpoint* coord, bool stretched) override;
     virtual void computeForces(floatingpoint* coord, floatingpoint* f) override;
     
-    virtual void computeLoadForces() {}
+    virtual void computeLoadForces() override {}
     
-    virtual vector<NeighborList*> getNeighborLists() { return vector<NeighborList*>{}; }
+    virtual vector<NeighborList*> getNeighborLists() override { return vector<NeighborList*>{}; }
 };
 
 #endif

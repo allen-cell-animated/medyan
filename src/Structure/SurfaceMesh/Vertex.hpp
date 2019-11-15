@@ -4,9 +4,7 @@
 #include <memory> // unique_ptr
 
 #include "common.h"
-
 #include "Structure/Bead.h"
-
 #include "Structure/SurfaceMesh/Edge.hpp"
 #include "Structure/SurfaceMesh/MVoronoiCell.h"
 #include "Structure/SurfaceMesh/Triangle.hpp"
@@ -35,22 +33,30 @@ class Vertex:
     friend class Membrane; // Membrane class can manage id of this vertex
 
 private:
-    size_t _topoIndex; // Index in the meshwork topology.
+    std::size_t topoIndex_; // Index in the meshwork topology.
 
-    unique_ptr<MVoronoiCell> _mVoronoiCell; // pointer to Voronoi cell mechanical information
-
-    size_t _membraneVertexIdx; // The index of this in the _vertexVector of the parent membrane
+    std::unique_ptr<MVoronoiCell> mVertex_; // pointer to Voronoi cell mechanical information
 
 public:
     using vertex_db_type = Database< Vertex, false >;
 
     ///Main constructor
-    Vertex(const Bead::coordinate_type& v, Composite* parent, size_t topoIndex);
+    Vertex(const Bead::coordinate_type& v, Composite* parent, size_t topoIndex)
+        : Bead(mathfunc::vec2Vector(v), parent, 0), topoIndex_(topoIndex)
+    {
+#ifdef MECHANICS
+        // eqArea cannot be obtained at this moment
+        mVertex_ = std::make_unique<MVoronoiCell>(getType());
+#endif
 
-    void setTopoIndex(size_t index) { _topoIndex = index; }
+        usage = Bead::BeadUsage::Membrane;
+    }
+
+
+    void setTopoIndex(size_t index) { topoIndex_ = index; }
     
     // Get mech Voronoi cell
-    MVoronoiCell* getMVoronoiCell() { return _mVoronoiCell.get(); }
+    MVoronoiCell* getMVoronoiCell() { return mVertex_.get(); }
 
     /// Get all instances of this class from the SubSystem
     static const auto& getVertices() {
@@ -59,15 +65,6 @@ public:
     static size_t numVertices() {
         return vertex_db_type::getElements().size();
     }
-
-    size_t getMembraneVertexIdx()const { return _membraneVertexIdx; }
-
-    //@{
-    /// SubSystem management, inherited from Bead: Trackable
-    // Incremental to the functions in Bead class.
-    virtual void addToSubSystem()override {}
-    virtual void removeFromSubSystem()override {}
-    //@}
 
 };
 

@@ -48,7 +48,7 @@ DEPENDS := $(SOURCES_TEST:.cpp=.d) $(SOURCES_CPP:.cpp=.d)
 
 #CPP COMPILER CHOICE AND FLAGS
 CC  = g++ -xc
-CXX = g++ -std=c++14
+CXX = g++ -std=c++17
 NVCC = nvcc -std=c++11
 
 # Flags used by compiler and linker

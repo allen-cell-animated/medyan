@@ -12,9 +12,17 @@
 #include "Mechanics/ForceField/Membrane/MembraneStretching.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneStretchingImpl.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneTriangleProtect.hpp"
+#include "Mechanics/ForceField/Types.hpp"
 #include "Util/Io/Log.hpp"
 
 struct MembraneFFFactory {
+
+    using CurvRequirement = ForceFieldTypes::GeometryCurvRequirement;
+
+    struct Result {
+        std::vector< std::unique_ptr< ForceField > > forceFields;
+        CurvRequirement curvReq = CurvRequirement::curv;
+    };
 
     auto operator()(
         const std::string& stretchingType,
@@ -23,15 +31,15 @@ struct MembraneFFFactory {
     ) const {
         using namespace std;
 
-        vector< unique_ptr< ForceField > > res;
+        Result res;
 
         if (stretchingType == "HARMONIC")
             if(stretchingAccuType == "TRIANGLE")
-                res.emplace_back(
+                res.forceFields.emplace_back(
                     new MembraneStretching< MembraneStretchingHarmonic, MembraneStretchingAccumulationType::ByTriangle >()
                 );
             else if(stretchingAccuType == "VERTEX")
-                res.emplace_back(
+                res.forceFields.emplace_back(
                     new MembraneStretching< MembraneStretchingHarmonic, MembraneStretchingAccumulationType::ByVertex >()
                 );
             else {
@@ -41,11 +49,11 @@ struct MembraneFFFactory {
 
         else if(stretchingType == "LINEAR")
             if(stretchingAccuType == "TRIANGLE")
-                res.emplace_back(
+                res.forceFields.emplace_back(
                     new MembraneStretching< MembraneStretchingLinear, MembraneStretchingAccumulationType::ByTriangle >()
                 );
             else if(stretchingAccuType == "VERTEX")
-                res.emplace_back(
+                res.forceFields.emplace_back(
                     new MembraneStretching< MembraneStretchingLinear, MembraneStretchingAccumulationType::ByVertex >()
                 );
             else {
@@ -60,10 +68,18 @@ struct MembraneFFFactory {
             throw std::runtime_error("Membrane stretching FF type not recognized");
         }
         
-        if (bendingType == "HELFRICH")
-            res.emplace_back(
+        if (bendingType == "HELFRICH") {
+            res.forceFields.emplace_back(
                 new MembraneBending<MembraneBendingHelfrich>()
             );
+            res.curvReq = CurvRequirement::curv;
+        }
+        else if(bendingType == "HELFRICH_QUADRATIC") {
+            res.forceFields.emplace_back(
+                new MembraneBending<MembraneBendingHelfrichQuadratic>()
+            );
+            res.curvReq = CurvRequirement::curv2;
+        }
         else if(bendingType == "") {}
         else {
             cout << "Membrane bending FF type " << bendingType << " is not recognized." << endl;
@@ -71,7 +87,7 @@ struct MembraneFFFactory {
         }
 
         // Always add the protective force field
-        res.emplace_back(
+        res.forceFields.emplace_back(
             new MembraneTriangleProtect< MembraneTriangleProtectFene, true >()
         );
 

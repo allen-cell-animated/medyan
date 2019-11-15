@@ -29,12 +29,26 @@
 
 namespace {
 
-template< bool stretched > void updateGeometryValue() {
-    for(auto m : Membrane::getMembranes()) m->updateGeometryValue<stretched>();
+using CurvPol = Membrane::MembraneMeshAttributeType::GeometryCurvaturePolicy;
+using CurvReq = ForceFieldTypes::GeometryCurvRequirement;
+
+template< bool stretched, CurvPol curvPol >
+void updateGeometryValue() {
+    for(auto m : Membrane::getMembranes()) m->updateGeometryValue< stretched, curvPol >();
+}
+template< bool stretched >
+void updateGeometryValue(CurvReq curvReq) {
+    if(curvReq == CurvReq::curv) updateGeometryValue< stretched, CurvPol::withSign >();
+    else                         updateGeometryValue< stretched, CurvPol::squared  >();
 }
 
+template< CurvPol curvPol >
 void updateGeometryValueWithDerivative() {
-    for(auto m : Membrane::getMembranes()) m->updateGeometryValueWithDerivative();
+    for(auto m : Membrane::getMembranes()) m->updateGeometryValueWithDerivative< curvPol >();
+}
+void updateGeometryValueWithDerivative(CurvReq curvReq) {
+    if(curvReq == CurvReq::curv) updateGeometryValueWithDerivative< CurvPol::withSign >();
+    else                         updateGeometryValueWithDerivative< CurvPol::squared  >();
 }
 
 void prepareForceSharedData() {
@@ -217,7 +231,7 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
 #endif
 
     // Compute geometry
-    updateGeometryValue< stretched >();
+    updateGeometryValue< stretched >(this->geoCurvReq);
 
     for (auto &ff : _forceFields) {
         tbegin = chrono::high_resolution_clock::now();
@@ -404,7 +418,7 @@ void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
 #endif
 
     // compute geometry
-    updateGeometryValueWithDerivative();
+    updateGeometryValueWithDerivative(this->geoCurvReq);
 
     //recompute
 //    floatingpoint *F_i = new floatingpoint[CGMethod::N];
