@@ -40,6 +40,7 @@ protected:
     SubSystem* _subSystem = nullptr;
 
 public:
+    string _outputFileName;
     /// Constructor, which opens the output file
     Output(string outputFileName, SubSystem* s) {
         _outputFile.open(outputFileName);
@@ -51,6 +52,7 @@ public:
         cout << "Opening file " << outputFileName << endl;
 
         _subSystem = s;
+        _outputFileName = outputFileName;
     }
     /// Destructor, which closes the output file
     ~Output() {_outputFile.close();}
@@ -365,9 +367,6 @@ public:
 };
 
 
-
-
-
 class Datadump : public Output {
 
     ChemSim* _cs;
@@ -375,16 +374,32 @@ class Datadump : public Output {
 public:
     Datadump(string outputFileName, SubSystem* s, ChemistryData chemData)
 
-            : Output(outputFileName, s), _chemData(chemData),
-            _outputFileName(outputFileName){}
+            : Output(outputFileName, s), _chemData(chemData) {}
 
     ~Datadump() {}
 
 	ChemistryData _chemData; ///< chemistry data of this system
-	string _outputFileName;
 
 public:
     virtual void print(int snapshot);
 };
 
+
+
+class TwoFilament : public Output {
+
+    ChemSim* _cs;
+
+public:
+    TwoFilament(string outputFileName, SubSystem* s, ChemistryData chemData)
+
+            : Output(outputFileName, s), _chemData(chemData){}
+
+    ~TwoFilament() {}
+
+    ChemistryData _chemData; ///< chemistry data of this system
+
+public:
+    virtual void print(int snapshot);
+};
 #endif

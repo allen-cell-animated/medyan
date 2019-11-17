@@ -248,8 +248,11 @@ void Controller::initialize(string inputFile,
     //Set up datadump output if any
 #ifdef RESTARTDEV
 	    string datadumpname = _outputDirectory + "datadump.traj";
-	    _outputs.push_back(new Datadump(datadumpname, _subSystem, ChemData));
+	    _outputs.push_back(new Datadump(datadumpname, &_subSystem, ChemData));
 #endif
+
+    string twofilamentname = _outputDirectory + "twofilament.traj";
+    _outputs.push_back(new TwoFilament(twofilamentname, &_subSystem, ChemData));
 
 //    //Set up Turnover output if any
 //    string turnover = _outputDirectory + "Turnover.traj";
@@ -1245,11 +1248,6 @@ void Controller::run() {
                 Bead::rearrange();
                 Cylinder::updateAllData();
 
-/*	            for(auto cyl:Cylinder::getCylinders()){
-		            cout<<"After rearrange  Cylinder ID = "<<cyl->getId()<<endl;
-		            cyl->printSelf();
-	            }*/
-
                 minimizationResult = _mController.run();
                 mine= chrono::high_resolution_clock::now();
 
@@ -1258,10 +1256,7 @@ void Controller::run() {
                 minimizationtime += elapsed_runm3.count();
                 std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
 				#endif
-/*                for(auto cyl:Cylinder::getCylinders()){
-                    cout<<"After minimization  Cylinder ID = "<<cyl->getId()<<endl;
-                    cyl->printSelf();
-                }*/
+
                 //update position
                 mins = chrono::high_resolution_clock::now();
                 updatePositions();
@@ -1293,11 +1288,6 @@ void Controller::run() {
 	            chrono::duration<floatingpoint> elapsed_rxn3(mine - mins);
 	            rxnratetime += elapsed_rxn3.count();
 
-/*	            for(auto cyl:Cylinder::getCylinders()){
-	                cout<<"After position + update rate Cylinder ID = "<<cyl->getId()<<endl;
-	                cyl->printSelf();
-	            }*/
-
             }
             //output snapshot
             if(tauLastSnapshot >= _snapshotTime) {
@@ -1311,6 +1301,15 @@ void Controller::run() {
                 chrono::duration<floatingpoint> elapsed_runout2(mine - mins);
                 outputtime += elapsed_runout2.count();
             }
+            //Print two filament sliding rate
+/*            else{
+                for(auto o: _outputs){
+                    auto foundpos = o->_outputFileName.find("twofilament.traj");
+                    if(foundpos != string::npos)
+                        o->print(i);
+                }
+
+            }*/
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
 	        resetCounters();
@@ -1338,10 +1337,6 @@ void Controller::run() {
 #ifdef OPTIMOUT
                 cout<<"update NeighborLists"<<endl;
 #endif
-/*                for(auto cyl:Cylinder::getCylinders()){
-                    cout<<"After updateNeighborLists Cylinder ID = "<<cyl->getId()<<endl;
-                    cyl->printSelf();
-                }*/
             }
             //Special protocols
             mins = chrono::high_resolution_clock::now();

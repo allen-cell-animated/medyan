@@ -30,6 +30,7 @@ CLinker::CLinker(short linkerType, Compartment* c,
                         SysParams::Chemistry().linkerBoundIndex[_filamentType]);
     SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(
                         SysParams::Chemistry().linkerBoundIndex[_filamentType]);
+
 ////    //@{
     /*SpeciesBound* BL1 = _cc1->getCMonomer(_position1)->speciesBound(
             SysParams::Chemistry().linkerBoundIndex[_filamentType]);

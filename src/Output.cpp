@@ -352,7 +352,6 @@ void Forces::print(int snapshot) {
     _outputFile <<endl;
 }
 
-
 void Tensions::print(int snapshot) {
 
     _outputFile.precision(10);
@@ -454,7 +453,6 @@ void Tensions::print(int snapshot) {
     _outputFile <<endl;
 }
 
-
 void WallTensions::print(int snapshot) {
 
     _outputFile.precision(10);
@@ -553,7 +551,6 @@ void WallTensions::print(int snapshot) {
     _outputFile <<endl;
 }
 
-
 void Types::print(int snapshot) {
 
     _outputFile.precision(10);
@@ -645,7 +642,6 @@ void Types::print(int snapshot) {
 
     _outputFile <<endl;
 }
-
 
 void Chemistry::print(int snapshot) {
 
@@ -739,7 +735,6 @@ void MotorWalkLengths::print(int snapshot) {
     MotorGhost::getWalkLengths()->clearValues();
 }
 
-
 void LinkerLifetimes::print(int snapshot) {
 
     _outputFile.precision(3);
@@ -753,7 +748,6 @@ void LinkerLifetimes::print(int snapshot) {
     //clear list
     Linker::getLifetimes()->clearValues();
 }
-
 
 void FilamentTurnoverTimes::print(int snapshot) {
 
@@ -795,8 +789,6 @@ void HRCD::print(int snapshot) {
 
 }
 
-
-
 void HRMD::print(int snapshot) {
     DissipationTracker* dt = _cs->getDT();
        // print first line (snapshot number, time)
@@ -831,9 +823,6 @@ void HRMD::print(int snapshot) {
     _outputFile<<endl<<endl;
     
 }
-
-
-
 
 void PlusEnd::print(int snapshot) {
 
@@ -872,6 +861,7 @@ void PlusEnd::print(int snapshot) {
     _outputFile << endl;
 
 }
+
 void CMGraph::print(int snapshot) {
 
     // print first line (snapshot number, time)
@@ -931,8 +921,6 @@ void CMGraph::print(int snapshot) {
 
 }
 
-
-
 void ReactionOut::print(int snapshot) {
 
     _outputFile.precision(10);
@@ -984,7 +972,6 @@ void ReactionOut::print(int snapshot) {
     _outputFile << endl;
 
 }
-
 
 void BRForces::print(int snapshot) {
 
@@ -1084,7 +1071,6 @@ void MotorWalkingEvents::print(int snapshot) {
 
 }
 
-
 void LinkerUnbindingEvents::print(int snapshot) {
     DissipationTracker* dt = _cs->getDT();
     vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> linkerUnbindingData = dt->getLinkerUnbindingData();
@@ -1097,7 +1083,6 @@ void LinkerUnbindingEvents::print(int snapshot) {
 
 }
 
-
 void LinkerBindingEvents::print(int snapshot) {
     DissipationTracker* dt = _cs->getDT();
     vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> linkerBindingData = dt->getLinkerBindingData();
@@ -1109,7 +1094,6 @@ void LinkerBindingEvents::print(int snapshot) {
 
 
 }
-
 
 void Datadump::print(int snapshot) {
     _outputFile.close();
@@ -1261,7 +1245,6 @@ void Datadump::print(int snapshot) {
 	_outputFile <<endl;
 }
 
-
 void HessianMatrix::print(int snapshot){
     _outputFile.precision(10);
     vector<vector<vector<floatingpoint > > > hVec = _ffm->hessianVector;
@@ -1288,5 +1271,37 @@ void HessianMatrix::print(int snapshot){
     };
     // This clears the vectors storing the matrices to reduce the amount of memory needed.  
     _ffm->clearHessian();
+}
+
+void TwoFilament::print(int snapshot){
+    _outputFile.precision(10);
+
+    vector<vector<floatingpoint>> coordfil1;
+    vector<vector<floatingpoint>> coordfil2;
+    int count = 0;
+    for(auto &filament : Filament::getFilaments()) {
+        for (auto cylinder : filament->getCylinderVector()){
+            auto x = cylinder->getFirstBead()->vcoordinate();
+            if(count == 0){
+                coordfil1.push_back(x);
+            }
+            else {
+                coordfil2.push_back(x);
+            }
+        }
+        count++;
+    }
+    if(coordfil1.size() != coordfil1.size()) {
+        cout << "Sizes do not match! Exiting. Reinitialize with same number of beads in "
+                "each filament" << endl;
+        exit(EXIT_FAILURE);
+    }
+    auto Nbeads = coordfil1.size();
+    double avgdis = 0;
+    for(auto i = 0; i < Nbeads; i ++){
+        avgdis += twoPointDistance(coordfil1[Nbeads-1],coordfil2[i]);
+        avgdis += twoPointDistance(coordfil1[0],coordfil2[i]);
+    }
+    _outputFile << tau()<< " "<<avgdis/(2*Nbeads)<<endl;
 }
 
