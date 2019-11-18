@@ -1279,15 +1279,14 @@ void TwoFilament::print(int snapshot){
     vector<vector<floatingpoint>> coordfil1;
     vector<vector<floatingpoint>> coordfil2;
     int count = 0;
+
     for(auto &filament : Filament::getFilaments()) {
         for (auto cylinder : filament->getCylinderVector()){
             auto x = cylinder->getFirstBead()->vcoordinate();
-            if(count == 0){
-                coordfil1.push_back(x);
-            }
-            else {
-                coordfil2.push_back(x);
-            }
+            if(count == 0)
+            	coordfil1.push_back(x);
+            else
+            	coordfil2.push_back(x);
         }
         count++;
     }
@@ -1297,11 +1296,12 @@ void TwoFilament::print(int snapshot){
         exit(EXIT_FAILURE);
     }
     auto Nbeads = coordfil1.size();
-    double avgdis = 0;
+    double avgdissq = 0;
     for(auto i = 0; i < Nbeads; i ++){
-        avgdis += twoPointDistance(coordfil1[Nbeads-1],coordfil2[i]);
-        avgdis += twoPointDistance(coordfil1[0],coordfil2[i]);
+    	auto c1 = coordfil1[Nbeads-1-i];
+    	auto c2 = coordfil2[i];
+    	avgdissq += twoPointDistancesquared(c1, c2);
     }
-    _outputFile << tau()<< " "<<avgdis/(2*Nbeads)<<endl;
+    _outputFile << tau()<< " "<<sqrt(avgdissq)<<endl;
 }
 
