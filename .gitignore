@@ -24,3 +24,7 @@ MEDYAN
 
 *.traj
 
+# CLion
+.idea
+CMakeLists.txt
+
