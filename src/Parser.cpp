@@ -333,6 +333,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             }
             else if (lineVector.size() == 2) {
                 CAlgorithm.runTime = atof(lineVector[1].c_str());
+                SysParams::CParams.runTime = CAlgorithm.runTime;
             }
         }
         if (line.find("RUNSTEPS:") != string::npos) {
@@ -1010,13 +1011,13 @@ void SystemParser::readMechParams() {
         if (line.find("HESSIANTRACKING:") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 4) {
+            if(lineVector.size() != 5) {
                 cout <<
                 "There was an error parsing input file at Chemistry algorithm. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 4) {
+            else if (lineVector.size() == 5) {
                 MParams.hessTracking = true;
                 //MParams.hessDelta = atof(lineVector[1].c_str());
                 MParams.hessSkip = atof(lineVector[1].c_str());
@@ -1031,6 +1032,12 @@ void SystemParser::readMechParams() {
                     MParams.rockSnapBool = true;
                 }else{
                     MParams.rockSnapBool = false;
+                }
+                int hessmatprintbool = atoi(lineVector[4].c_str());
+                if(hessmatprintbool == 1){
+                    MParams.hessMatrixPrintBool = true;
+                }else{
+                    MParams.hessMatrixPrintBool = false;
                 }
                 
             }

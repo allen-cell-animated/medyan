@@ -97,6 +97,8 @@ public:
     Eigen::VectorXcd evalues;
     Eigen::MatrixXcd evectors;
     vector<floatingpoint> tauVector;
+    
+    int hessCounter;
 
 
 #ifdef CUDAACCL

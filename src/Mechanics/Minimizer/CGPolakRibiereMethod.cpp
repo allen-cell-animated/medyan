@@ -898,8 +898,12 @@ std::cout<<"----------------------------------------"<<endl;
 
     // compute the Hessian matrix at this point if the feature is enabled
     if(SysParams::Mechanics().hessTracking){
-        int total_DOF = Bead::getDbData().coords.size_raw();
-        FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, SysParams::Mechanics().hessDelta);
+        if(FFM.hessCounter % SysParams::Mechanics().hessSkip == 0 || tau() > SysParams::Chemistry().runTime){
+            int total_DOF = Bead::getDbData().coords.size_raw();
+            FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, SysParams::Mechanics().hessDelta);
+        }
+        
+        FFM.hessCounter += 1;
     }
 
 #ifdef OPTIMOUT

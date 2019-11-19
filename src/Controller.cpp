@@ -218,7 +218,7 @@ void Controller::initialize(string inputFile,
     string hrmdsnapname = _outputDirectory + "HRMD.traj";
     _outputs.push_back(new HRMD(hrmdsnapname, &_subSystem, _cs));
         
-    //Set up CylinderEnergies if hessiantracking is enabled
+    //Set up CylinderEnergies if dissipation tracking is enabled
     string cylinderenergies = _outputDirectory + "cylinderenergies.traj";
     _outputs.push_back(new CylinderEnergies(cylinderenergies, &_subSystem, _ffm));
         
@@ -239,18 +239,14 @@ void Controller::initialize(string inputFile,
     }
 
     if(SysParams::MParams.hessTracking){
-    //Set up HessianMatrix if hessiantracking is enabled
-    string hessianmatrix = _outputDirectory + "hessianmatrix.traj";
-    _outputs.push_back(new HessianMatrix(hessianmatrix, &_subSystem, _ffm));
-        
+        if(SysParams::MParams.hessMatrixPrintBool){
+        //Set up HessianMatrix if hessiantracking is enabled
+        string hessianmatrix = _outputDirectory + "hessianmatrix.traj";
+        _outputs.push_back(new HessianMatrix(hessianmatrix, &_subSystem, _ffm));
+        }
     //Set up HessianSpectra if hessiantracking is enabled
     string hessianspectra = _outputDirectory + "hessianspectra.traj";
     _outputs.push_back(new HessianSpectra(hessianspectra, &_subSystem, _ffm));
-        
-    
-
-        
-        
     }
 
     //Set up CMGraph output
