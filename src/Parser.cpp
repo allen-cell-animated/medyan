@@ -1022,10 +1022,10 @@ void SystemParser::readMechParams() {
                 //MParams.hessDelta = atof(lineVector[1].c_str());
                 MParams.hessSkip = atof(lineVector[1].c_str());
                 int dense = atoi(lineVector[2].c_str());
-                if(dense == 0){
-                    MParams.denseEstimation = true;
+                if(dense == 1){
+                    MParams.denseEstimationBool = true;
                 }else{
-                    MParams.denseEstimation = false;
+                    MParams.denseEstimationBool = false;
                 }
                 int rocksnapbool = atoi(lineVector[3].c_str());
                 if(rocksnapbool == 1){

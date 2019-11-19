@@ -614,9 +614,9 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
     chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_vecmat(t1 - t0);
     
-    bool denseEstimation = SysParams::Mechanics().denseEstimation;
+    bool denseEstimationBool = SysParams::Mechanics().denseEstimationBool;
     
-    if(denseEstimation){
+    if(denseEstimationBool){
     
         Eigen::MatrixXd denseHessMatSym;
         denseHessMatSym = Eigen::MatrixXd(hessMatSym);
