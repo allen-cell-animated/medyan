@@ -37,7 +37,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     nint = 0;
 
     for(auto ci : Cylinder::getCylinders()) {
-        if(!ci->isFullLength()) continue;
+        //if(!ci->isFullLength()) continue;
         //do not calculate exvol for a non full length cylinder
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         auto neighbors = _HneighborList->getNeighborsstencil(_HnlID, ci);
@@ -46,8 +46,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
 #endif
         for(auto &cn : neighbors)
         {
-            if(!cn->isFullLength()||
-               cn->getBranchingCylinder() == ci) continue;
+            //if(!cn->isFullLength()|| cn->getBranchingCylinder() == ci) continue;
             nint++;
         }
     }
@@ -64,7 +63,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     int Cumnc=0;
     for (i = 0; i < nc; i++) {
         auto ci = Cylinder::getCylinders()[i];
-        if(!ci->isFullLength()) continue;
+        //if(!ci->isFullLength()) continue;
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         auto neighbors = _HneighborList->getNeighborsstencil(_HnlID, ci);
 #else
@@ -75,8 +74,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
         for (int ni = 0; ni < nn; ni++) {
 
             auto cin = neighbors[ni];
-            if(!cin->isFullLength()||
-               cin->getBranchingCylinder() == ci) continue;
+            //if(!cin->isFullLength()|| cin->getBranchingCylinder() == ci) continue;
             beadSet[n * (Cumnc)] = ci->getFirstBead()->getStableIndex();
             beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->getStableIndex();
             beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->getStableIndex();
