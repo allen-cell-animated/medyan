@@ -1433,9 +1433,9 @@ void CylinderEnergies::print(int snapshot){
             floatingpoint* cyl3 = get<2>(dataVec[j]);
             floatingpoint* cyl4 = get<3>(dataVec[j]);
             floatingpoint energy = get<4>(dataVec[j]);
-            floatingpoint meanx = (*cyl1 + *cyl2 + *cyl3 + *cyl4) / 3;
-            floatingpoint meany = (*(cyl1+1) + *(cyl2+1) + *(cyl3+1) + *(cyl4+1)) / 3;
-            floatingpoint meanz = (*(cyl1+2) + *(cyl2+2) + *(cyl3+2) + *(cyl4+2)) / 3;
+            floatingpoint meanx = (*cyl1 + *cyl2 + *cyl3 + *cyl4) / 4;
+            floatingpoint meany = (*(cyl1+1) + *(cyl2+1) + *(cyl3+1) + *(cyl4+1)) / 4;
+            floatingpoint meanz = (*(cyl1+2) + *(cyl2+2) + *(cyl3+2) + *(cyl4+2)) / 4;
             _outputFile<<meanx<< "     "<<meany<< "     "<<meanz<< "     "<<energy<<endl;
                                         
             /*_outputFile<<*(cyl1)<< "     "<<*(cyl1 + 1)<< "     "<<*(cyl1 + 2)<< "     "
@@ -1446,7 +1446,9 @@ void CylinderEnergies::print(int snapshot){
         }
     
     }
-    _outputFile<<endl;
+    if(cylEnergies.size()>0){
+        _outputFile<<endl;}
+    
     cvFF->_cylinderVolInteractionVector.at(0)->clearCylEnergies();
 
         

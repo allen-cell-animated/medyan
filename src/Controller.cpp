@@ -1462,7 +1462,7 @@ void Controller::run() {
             _rSnapShot->savePositions();
             _rSnapShot->print(i);
             _rSnapShot->resetPositions();
-            
+            _rSnapShot->~RockingSnapshot();
          
         }
            
