@@ -74,9 +74,6 @@ struct UpdateCaMKIIerBundlingCallback {
 
 	//callback
 	void operator() (RSpecies *r, int delta) {
-		if(delta != 1 && delta != -1)
-			cerr <<"========== CaMKIIBundlingManager CallBack ---- delta = " << delta <<endl; //Carlos verbose prints
-
 		//update this cylinder
 		Compartment* c = _cylinder->getCompartment();
 
@@ -89,46 +86,10 @@ struct UpdateCaMKIIerBundlingCallback {
 				CCylinder* cc = _cylinder->getCCylinder();
 
 				//update binding sites
-				if(delta == +1) {
-//					int bef = manager->numBindingSites();
-					manager->addPossibleBindings(cc, _bindingSite);
-//					int aft = manager->numBindingSites();
-
-//					cerr << "========MILLAD: UpdateCaMKIIerBundlingCallback ADDING  " << cc << "  " <<
-//					(dynamic_cast<CaMKIICylinder*>(_cylinder) == NULL ? "normal" : "camkii_cylinder") << " count: " << count << "  before: " << bef << "  after: " << aft;
-
-//					cerr << "---------------============----------" << endl;
-//					for(auto ccc : Cylinder::getCylinders()) {
-//						if(dynamic_cast<CaMKIICylinder*>(ccc)) {
-//							cerr << "========MILLAD: UpdateCaMKIIerBundlingCallback List CCylinder: " << ccc->getCCylinder() << endl;
-//						}
-//					}
-//					cerr << "---------------============----------" << endl;
-				}
-
-				else /* -1 */ {
-//					int bef = manager->numBindingSites();
-					manager->removePossibleBindings(cc, _bindingSite);
-//					int aft = manager->numBindingSites();
-
-//					cerr << "========MILLAD: UpdateCaMKIIerBundlingCallback REMOVING  " << cc << "  " <<
-//						 (dynamic_cast<CaMKIICylinder*>(_cylinder) == NULL ? "normal" : "camkii_cylinder") << " count: " << count << "  before: " << bef << "  after: " << aft;
-
-
-//					cerr << "---------------============----------" << endl;
-//					for(auto ccc : Cylinder::getCylinders()) {
-//						if(dynamic_cast<CaMKIICylinder*>(ccc)) {
-//							cerr << "========MILLAD: UpdateCaMKIIerBundlingCallback List CCylinder: " << ccc->getCCylinder() << endl;
-//						}
-//					}
-//					cerr << "---------------============----------" << endl;
-				}
+				if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
+				else /* -1 */ manager->removePossibleBindings(cc, _bindingSite);
 			}
 		}
-
-//		count = Cylinder::getCylinders().size();
-//
-//		cerr << "  UPDATED count: " << count << endl;
 
 	}
 };
@@ -160,11 +121,7 @@ struct UpdateCaMKIIerDummyCylinderCallback {
 
 				CCylinder* cc = _cylinder->getCCylinder();
 
-				if(delta == -1 && n == 0) {
-					manager->removePossibleBindings(cc, _bindingSite);
-//					cerr << "====== MILLAD: Removing CaMKIICylinder from PossibleCylinders " << _cylinder << "  " << _cylinder->getCCylinder()
-//						 << endl;
-				}
+				if(delta == -1 && n == 0) manager->removePossibleBindings(cc, _bindingSite);
 			}
 		}
 	}
@@ -185,15 +142,16 @@ struct CaMKIIingPointUnbindingCallback {
 			: _ps(ps), _camkiiingPoint(b) {}
 
 	void operator() (ReactionBase *r) {
-//		cerr<<"========== CaMKII Unbinding CallBack "; //Carlos verbose prints
-//		cerr<< "ID: " << _camkiiingPoint->getID() << " Coord:" << _camkiiingPoint->getCoordinationNumber() << endl; //Carlos verbose prints
+#ifdef DEBUG
+		cout << "========== CaMKII Unbinding CallBack ID: " << _camkiiingPoint->getID(); //Carlos verbose prints
+		cout << " Coord:" << _camkiiingPoint->getCoordinationNumber() << endl; //Carlos verbose prints
+#endif
 
 		// Removing the internal reaction of the CaMKII cylinder
 		_camkiiingPoint->getCaMKIICylinder()->getCCylinder()->removeInternalReaction(r);
 
 		//remove the camkiiing point
 		_camkiiingPoint->getCCaMKIIingPoint()->removeBond(_camkiiingPoint->getBond(0));
-//		cerr << "====== MILLAD: Removing CaMKIICylinder " << _camkiiingPoint->getCaMKIICylinder()  << "   " << _camkiiingPoint->getCaMKIICylinder()->getCCylinder() << endl;
 		_ps->removeTrackable<CaMKIICylinder>(_camkiiingPoint->getCaMKIICylinder());
 		_ps->removeTrackable<CaMKIIingPoint>(_camkiiingPoint);
 		delete _camkiiingPoint;
@@ -211,11 +169,12 @@ struct CaMKIIingPointUnbundlingCallback {
 			: _ps(ps), _camkiiingPoint(b), _bManager(bManager) {}
 
 	void operator() (ReactionBase *r) {
-//		cerr<<"========== CaMKII Unbundling CallBack "; //Carlos verbose prints
-//		cerr<< "ID: " << _camkiiingPoint->getID() << " Coord:" << _camkiiingPoint->getCoordinationNumber()<< "-->"; //Carlos verbose prints
+#ifdef DEBUG
+		cout << "========== CaMKII Unbundling CallBack "; //Carlos verbose prints
+		cout << "ID: " << _camkiiingPoint->getID() << " Coord:" << _camkiiingPoint->getCoordinationNumber() << endl; //Carlos verbose prints
+#endif
 		auto bond = _camkiiingPoint->removeRandomBond();
 		// Adding the cylinder assigned to the removed bond?
-//        _bManager->addPossibleBindings(get<0>(bond)->getCCylinder(), get<1>(bond));
 		if(_camkiiingPoint->getCoordinationNumber() == 1L) {
 
 			// passivate unbundling reaction
@@ -227,6 +186,7 @@ struct CaMKIIingPointUnbundlingCallback {
 			// Creating an off-reaction if the off-reaction does not exist
 			// due to CaMKII moving between compartments
 			if(offRxnBinding == nullptr) {
+				_camkiiingPoint->getCCaMKIIingPoint()->setOffRate(_camkiiingPoint->getCCaMKIIingPoint()->getOffRateBinding());
 				_camkiiingPoint->getCCaMKIIingPoint()->createOffReactionBinding(nullptr, _ps);
 				ReactionBase *offRxn = _camkiiingPoint->getCCaMKIIingPoint()->getOffRxnBinding();
 				_camkiiingPoint->getCCaMKIIingPoint()->setOffReaction(offRxn);
@@ -237,9 +197,7 @@ struct CaMKIIingPointUnbundlingCallback {
 			offRxnBinding->activateReaction();
 
 			// Removing the current off-reaction from the internal list in CaMKII cylinder
-//			get<0>(_camkiiingPoint->getBonds()[0])->getCCylinder()->removeInternalReaction(r);
 			_camkiiingPoint->getCaMKIICylinder()->getCCylinder()->removeInternalReaction(r);
-//            get<0>(_camkiiingPoint->getBonds()[0])->getCCylinder()->addInternalReaction(offRxnBinding);
 			_camkiiingPoint->getCaMKIICylinder()->getCCylinder()->addInternalReaction(offRxnBinding);
 			_camkiiingPoint->getCCaMKIIingPoint()->setOffReaction(offRxnBinding);
 
@@ -320,7 +278,11 @@ struct CaMKIIBindingCallback {
 
 		if (SysParams::RUNSTATE == true) {
 
+#ifdef DEBUG
+			cout << "========== CaMKII Binding CallBack " << endl; //Carlos verbose prints
+#endif
 			b = _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos, cp);
+
 			frate = _offRate;
 		} else {
 			CCylinder *c;
@@ -338,6 +300,9 @@ struct CaMKIIBindingCallback {
 			if (check) {
 				CMonomer *x = c->getCMonomer(0);
 				vector<Cylinder *> cy{c1, c->getCylinder()};
+#ifdef DEBUG
+				cout << "========== CaMKII Binding CallBack " << endl; //Carlos verbose prints
+#endif
 				b = _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos, cp);
 
 				x = c->getCMonomer(0);
@@ -352,9 +317,11 @@ struct CaMKIIBindingCallback {
 		//create off reaction
 		auto cCaMKIIer = b->getCCaMKIIingPoint();
 
+		cCaMKIIer->setOffRateBinding(frate);
 		cCaMKIIer->setRates(_onRate, frate);
 		cCaMKIIer->createOffReactionCaMKII(r, _ps, nullptr);
 		cCaMKIIer->getOffReaction()->setBareRate(SysParams::CaMKIIUnbindingBareRate[camkiiType]);
+
 	}
 };
 
@@ -375,9 +342,8 @@ struct CaMKIIBundlingCallback {
 			: _ps(ps), _bManager(bManager), _onRate(onRate), _offRate(offRate) {}
 
 	void operator() (ReactionBase *r) {
-		CaMKIIingPoint* cp;
+
 		// TODO CAMKII either find cp from NN or to get the one the reaction was on it
-//        float frate;
 		short camkiiType = _bManager->getBoundInt();
 
 		//choose a random binding site from manager
@@ -397,17 +363,30 @@ struct CaMKIIBundlingCallback {
 		if((!b1 && !b2) || (b1 && b2))
 			return;
 
+		CaMKIIingPoint* cp;
 		if(b1) {
 			cp = dynamic_cast<CaMKIICylinder *>(c1)->getCaMKIIPointParent();
+
+#ifdef DEBUG
+			cout << "========== CaMKII Bundling CallBack - "; //Carlos verbose prints
+			cout << "ID: " << cp->getID() << " Coord:" << cp->getCoordinationNumber() << endl; //Carlos verbose prints
+#endif
 
 			// cp should be CaMKIIPoint
 			cp->addBond(c2, pos2);
 		} else {
 			cp = dynamic_cast<CaMKIICylinder *>(c2)->getCaMKIIPointParent();
 
+#ifdef DEBUG
+			cout << "========== CaMKII Bundling CallBack - "; //Carlos verbose prints
+			cout << "ID: " << cp->getID() << " Coord:" << cp->getCoordinationNumber() << endl; //Carlos verbose prints
+#endif
+
 			// cp should be CaMKIIPoint
 			cp->addBond(c1, pos1);
 		}
+
+
 
 //TODO CJY make sure isn't needed before cleaning
 #if 0

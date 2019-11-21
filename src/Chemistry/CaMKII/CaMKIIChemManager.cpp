@@ -43,8 +43,6 @@ void CaMKIIChemManager::setupBindingSites(ChemistryData &_chemData, int filType)
 			exit(EXIT_FAILURE);
 		} else {
 			SysParams::CParams.camkiierBundlingBoundIndex[filType] = it - _chemData.speciesBound[filType].begin();
-			SysParams::CParams.camkiierDummyCylinderBoundIndex[CAMKII_CYLINDER_FILAMENT_TYPE] =
-					it - _chemData.speciesBound[filType].begin();
 		}
 	}
 

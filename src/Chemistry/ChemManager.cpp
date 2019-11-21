@@ -2678,10 +2678,6 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
         if (filType == CAMKII_CYLINDER_FILAMENT_TYPE) {
             UpdateCaMKIIerDummyCylinderCallback camkiidummycylindercallback(c, 0);
 
-            // TODO: TODO_UMD cd is not equal to cd2. Check!
-            // TODO: Iterate over all CaMKII types
-            Species* cd = cc->getCMonomer(0)->speciesBound(
-                    SysParams::CParams.camkiierDummyCylinderBoundIndex[filType]);
             Species* cd2 = cc->getCMonomer(0)->speciesCaMKIIDummyCylinder(0);
 
             ConnectionBlock rcdcamkii(cd2->connect(camkiidummycylindercallback,false));

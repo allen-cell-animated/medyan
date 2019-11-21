@@ -24,6 +24,12 @@ CCaMKIIingPoint::CCaMKIIingPoint(short camkiiType, Compartment* c,
     : CBound(cc1->getType(), c, cc1, cc2, position, 0), _camkiiType(camkiiType),
     		_offRxnBinding(nullptr),
     		_offRxnBundling(nullptr) {
+
+	/*
+	 * _pCaMKIIingPoint is initialized on the constructor of CaMKIIingPoint class.
+	 *
+	 */
+
 //    Code block moved to addBond
 //    //Find species on cylinder that should be marked
 	SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesCaMKIIer(camkiiType);
@@ -56,11 +62,20 @@ void CCaMKIIingPoint::addBond(CCylinder* cc, short pos){
 	assert(areEqual(sb1->getN(), 0) && areEqual(se1->getN(), 1) &&
 		   "Major bug: CaMKIIer binding to an occupied site.");
 
+	cout<<"====== JAMES: Before: ";
+	cc->getCMonomer(pos)->print();
+	cout << endl;
+//	cout<<cc->getCylinder()->getID()<<" "<<pos<<" "<<sb1->getN()<<" "<<se1->getN()<<endl;
+
 	sb1->up();
 	se1->down();
 
 	// Increasing N for the dummy cylinder species
 	scad->up();
+
+	cout<<"====== JAMES: After : ";
+	cc->getCMonomer(pos)->print();
+	cout << endl;
 
 	assert(areEqual(sb1->getN(), 1) && areEqual(se1->getN(), 0) &&
 		   "Major bug: CaMKIIer didn't bind to the site.");
@@ -78,9 +93,16 @@ void CCaMKIIingPoint::removeBond(CCylinder* cc, short pos) {
 	assert(areEqual(camkiier->getN(), 1) && areEqual(camkii_bindingsite->getN(), 0)
 		   && "Major bug: CaMKIIer unbundling on a free site.");
 
+	cout<<"====== JAMES: Before: ";
+	cc->getCMonomer(pos)->print();
+	cout << endl;
+
 	camkiier->down();
 	camkii_bindingsite->up();
 
+	cout<<"====== JAMES: After : ";
+	cc->getCMonomer(pos)->print();
+	cout << endl;
 }
 
 void CCaMKIIingPoint::removeBond(tuple<Cylinder*, short> input) {
@@ -98,8 +120,6 @@ CCaMKIIingPoint::~CCaMKIIingPoint() {
 
 void CCaMKIIingPoint::createOffReactionBinding(ReactionBase* onRxn, SubSystem *ps) {
 	SpeciesBound *scad = getSpeciesCaMKIIDummyCylinder();
-//	this->getCompartment()->findSpeciesByName();
-//	string lname = SpeciesNamesDB::genBindingName(linkerName, name);
 
 	// Recording the corresponding diffusing species name
 	// for unbinding reaction re-creation in future
@@ -178,25 +198,15 @@ void CCaMKIIingPoint::createOffReactionCaMKII(ReactionBase* onRxn, SubSystem* ps
 
 	assert(_pCaMKIIingPoint->getCoordinationNumber() != 0L);
 
-	if(_pCaMKIIingPoint->getCoordinationNumber() == 1L) {
+	if(_pCaMKIIingPoint->getCoordinationNumber() == 1L)
 		createOffReactionBinding(onRxn, ps);
-	} else if(_pCaMKIIingPoint->getCoordinationNumber() == 2L){
+	else if(_pCaMKIIingPoint->getCoordinationNumber() == 2L)
 		createOffReactionBundling(ps, fm);
-//    } else {
-//        auto bonds = _pCaMKIIingPoint->getBonds();
-//        for(int i=0;i<bonds.size();i++) {
-//			auto cc = get<0>(bonds[i])->getCCylinder();
-//			cc->addInternalReaction(_offRxnBundling);
-//        }
-	}
+
 
 	_pCaMKIIingPoint->updateReactionRates();
 
 	assert(_offRxn->isPassivated() == false);
-
-#ifdef DEBUG
-	cerr << "========== CaMKII OffReaction created " <<  "  _offRxnBinding: "<< _offRxnBinding << "  _offRxnBundling: " << _offRxnBundling <<"  _offRxn: " <<_offRxn << "  isPassivated: " << ((_offRxnBinding != NULL) ? _offRxnBinding->isPassivated() : true) << " " << ((_offRxnBundling != NULL) ? _offRxnBundling->isPassivated() : true) << " " << _offRxn->isPassivated() << endl;
-#endif
 }
 
 void CCaMKIIingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){

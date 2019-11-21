@@ -330,6 +330,10 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite
 
 	updateBindingReaction(oldN, newN);
 
+	/*
+	 * For debugging purposes of CaMKII
+	 *
+	 */
 //	size_t s1 = _possibleBindings.size();
 //	auto _old_bindings = _possibleBindings;
 //	//updateAllPossibleBindings();

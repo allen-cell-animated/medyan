@@ -41,8 +41,9 @@ private:
     // These pointers are only handles to the off-reactions and they are not constructed.
     // As a result, they do not need to be released.
     ReactionBase *_offRxnBinding, *_offRxnBundling;
+	double _offRateBinding;
 
-    // The corresponding diffusing species
+	// The corresponding diffusing species
     // For example: "CD" as diffusing CaMKII
     string diffusingSpeciesName;
 
@@ -123,6 +124,10 @@ public:
     void setOffRxnBundling(ReactionBase *p) {
         _offRxnBundling = p;
     }
+
+	float getOffRateBinding() {return _offRateBinding;}
+	void  setOffRateBinding(float offRate) {_offRateBinding = offRate;}
+
     void addBond(CCylinder* cc, short pos);
 	void removeBond(CCylinder* cc, short pos);
 	void removeBond(tuple<Cylinder*, short> );
