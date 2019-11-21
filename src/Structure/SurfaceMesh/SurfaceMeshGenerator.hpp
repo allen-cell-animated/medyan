@@ -434,14 +434,6 @@ private:
     }
 };
 
-// static variable definition (declaration in C++17, and should be removed)
-template< typename Float >
-constexpr typename MarchingTetrahedraGenerator<Float>::small_size_t
-MarchingTetrahedraGenerator<Float>::_tetraVertexLocalIndex[6][4];
-template< typename Float >
-constexpr typename MarchingTetrahedraGenerator<Float>::small_size_t
-MarchingTetrahedraGenerator<Float>::_tetraEdgeLocalIndex[6][6];
-
 } // namespace mesh_gen
 
 #endif
