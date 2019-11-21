@@ -223,7 +223,7 @@ private:
 
     MetaAttribute _meta;
 
-    int _genus = 0; // Genus of the surface. Currently it is not tracked.
+    int genus_ = 0; // Genus of the surface. Currently it is not tracked.
 
     // Element accessor
     template< typename Element, std::enable_if_t<std::is_same<Element, Triangle>::value, void>* = nullptr>
@@ -342,7 +342,7 @@ private:
         });
         _borders[to].attr.setIndex(to);
     }
-    template< typename Element > struct ElementRetargeter {
+    template< typename Element > struct ElementRetargeter_ {
         SurfaceTriangularMesh& mesh;
 
         void operator()(size_t from, size_t to) {
@@ -352,11 +352,11 @@ private:
 
     template< typename Element > void _removeElement(size_t index) {
         Attribute::template removeElement< Element >(*this, index);
-        _getElements<Element>().erase(index, ElementRetargeter<Element>{*this});
+        _getElements<Element>().erase(index, ElementRetargeter_<Element>{*this});
     }
     template< typename Element, size_t n > void _removeElements(const std::array< size_t, n >& indices) {
         for(size_t i : indices) Attribute::template removeElement< Element >(*this, i);
-        _getElements<Element>().erase(indices, ElementRetargeter<Element>{*this});
+        _getElements<Element>().erase(indices, ElementRetargeter_<Element>{*this});
     }
 
     template< typename Element > void _clearElement() {

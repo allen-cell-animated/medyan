@@ -809,12 +809,18 @@ struct MembraneMeshAttribute {
                     mesh.getTriangleAttribute(ea.cachedPolygonIndex[1]).gTriangle.unitNormal
                 );
             }
+            else if(ea.cachedPolygonType[0] == PolygonType::Triangle) {
+                ea.gEdge.pseudoUnitNormal = mesh.getTriangleAttribute(ea.cachedPolygonIndex[0]).gTriangle.unitNormal;
+            }
+            else if(ea.cachedPolygonType[1] == PolygonType::Triangle) {
+                ea.gEdge.pseudoUnitNormal = mesh.getTriangleAttribute(ea.cachedPolygonIndex[1]).gTriangle.unitNormal;
+            }
         }
 
         const auto& cvt = mesh.getMetaAttribute().cachedVertexTopo;
 
         // Calculate vertex pseudo unit normal
-        for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
+        for(size_t vi = 0; vi < numVertices; ++vi) {
             auto& va = mesh.getVertexAttribute(vi);
             auto& vag = va.gVertex;
 
@@ -823,11 +829,13 @@ struct MembraneMeshAttribute {
 
             for(size_t i = 0; i < va.cachedDegree; ++i) {
                 const size_t hei = cvt[mesh.getMetaAttribute().cachedVertexOffsetTargetingHE(vi) + i];
-                const size_t ti0 = cvt[mesh.getMetaAttribute().cachedVertexOffsetPolygon(vi) + i];
+                if(mesh.getHalfEdges()[hei].polygonType == MeshType::HalfEdge::PolygonType::Triangle) {
+                    const size_t ti0 = cvt[mesh.getMetaAttribute().cachedVertexOffsetPolygon(vi) + i];
 
-                const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
+                    const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
 
-                vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
+                    vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
+                }
             }
 
             normalize(vag.pseudoUnitNormal);
