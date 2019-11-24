@@ -52,35 +52,24 @@ CCaMKIIingPoint::CCaMKIIingPoint(short camkiiType, Compartment* c,
 void CCaMKIIingPoint::addBond(CCylinder* cc, short pos){
 
 	//Find species on cylinder that should be marked
-	SpeciesBound *sb1 = cc->getCMonomer(pos)->speciesCaMKIIer(_camkiiType);
-	SpeciesBound *se1 = cc->getCMonomer(pos)->speciesBound(
+	SpeciesBound *camkiier = cc->getCMonomer(pos)->speciesCaMKIIer(_camkiiType);
+	SpeciesBound *camkii_bindingsite = cc->getCMonomer(pos)->speciesBound(
 			SysParams::Chemistry().camkiierBindingBoundIndex[_filamentType]);
 
-	SpeciesBound *scad = getSpeciesCaMKIIDummyCylinder();
+	SpeciesBound *camkii_species_dummy_cylinder = getSpeciesCaMKIIDummyCylinder();
 
 	//mark species
-	assert(areEqual(sb1->getN(), 0) && areEqual(se1->getN(), 1) &&
+	assert(areEqual(camkiier->getN(), 0) && areEqual(camkii_bindingsite->getN(), 1) &&
 		   "Major bug: CaMKIIer binding to an occupied site.");
 
-	cout<<"====== JAMES: Before: ";
-	cc->getCMonomer(pos)->print();
-	cout << endl;
-//	cout<<cc->getCylinder()->getID()<<" "<<pos<<" "<<sb1->getN()<<" "<<se1->getN()<<endl;
-
-	sb1->up();
-	se1->down();
+	camkiier->up();
+	camkii_bindingsite->down();
 
 	// Increasing N for the dummy cylinder species
-	scad->up();
+	camkii_species_dummy_cylinder->up();
 
-	cout<<"====== JAMES: After : ";
-	cc->getCMonomer(pos)->print();
-	cout << endl;
-
-	assert(areEqual(sb1->getN(), 1) && areEqual(se1->getN(), 0) &&
+	assert(areEqual(camkiier->getN(), 1) && areEqual(camkii_bindingsite->getN(), 0) &&
 		   "Major bug: CaMKIIer didn't bind to the site.");
-
-
 
 };
 
@@ -93,16 +82,9 @@ void CCaMKIIingPoint::removeBond(CCylinder* cc, short pos) {
 	assert(areEqual(camkiier->getN(), 1) && areEqual(camkii_bindingsite->getN(), 0)
 		   && "Major bug: CaMKIIer unbundling on a free site.");
 
-	cout<<"====== JAMES: Before: ";
-	cc->getCMonomer(pos)->print();
-	cout << endl;
-
 	camkiier->down();
 	camkii_bindingsite->up();
 
-	cout<<"====== JAMES: After : ";
-	cc->getCMonomer(pos)->print();
-	cout << endl;
 }
 
 void CCaMKIIingPoint::removeBond(tuple<Cylinder*, short> input) {
@@ -113,8 +95,7 @@ void CCaMKIIingPoint::removeBond(tuple<Cylinder*, short> input) {
 
 CCaMKIIingPoint::~CCaMKIIingPoint() {
 
-   // TODO: July 1st, 2019 - Check whether removeInternalReaction is appropriate here!
-//	_pCaMKIIingPoint->getCaMKIICylinder()->getCCylinder()->removeInternalReaction(_offRxn);
+   // The removeInternalReaction has been moved to this callback: CaMKIIingPointUnbindingCallback.
 
 }
 

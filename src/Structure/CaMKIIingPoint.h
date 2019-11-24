@@ -47,6 +47,8 @@ private:
 
     vector<tuple<Cylinder*, short>> _bonds;
 
+    double _position;
+
     short _camkiiType; ///< Integer specifying the type
     
     int _camkiiID;     ///< Integer ID of this specific
@@ -117,7 +119,7 @@ public:
 
     //@{
     /// Position management
-    short getPosition() {return get<1>(_bonds.at(0));} //TODO fix later
+    double getPosition() {return _position;} 
     //void setPosition(double position) {_position = position;}
     //@}
     

@@ -333,15 +333,15 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
     
     updateBindingReaction(oldN, newN);
 
-    size_t s1 = _possibleBindings.size();
-    auto _old_bindings = _possibleBindings;
-    updateAllPossibleBindings();
-
-    size_t s2 = _possibleBindings.size();
-//    if((s2 - s1 > 1) || (s2-s1 < 0) ) {
-    if((s2 - s1) != 0 ) {
-        cerr << "======MILLAD: LINKER_ERROR in size of possible size. --- " << __FILE__ << "   " << __LINE__ << "  " << __FUNCTION__ << "   " << s1 << "  " << s2 << endl;
-    }
+//    size_t s1 = _possibleBindings.size();
+//    auto _old_bindings = _possibleBindings;
+//    updateAllPossibleBindings();
+//
+//    size_t s2 = _possibleBindings.size();
+////    if((s2 - s1 > 1) || (s2-s1 < 0) ) {
+//    if((s2 - s1) != 0 ) {
+//        cerr << "======MILLAD: LINKER_ERROR in size of possible size. --- " << __FILE__ << "   " << __LINE__ << "  " << __FUNCTION__ << "   " << s1 << "  " << s2 << endl;
+//    }
 }
 
 void LinkerBindingManager::addPossibleBindings(CCylinder* cc) {

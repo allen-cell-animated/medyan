@@ -33,6 +33,8 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double posi
 
 	assert(camkiiType == 0);
 
+	_position = position;
+
     int pos = int(position * SysParams::Geometry().cylinderNumMon[cylinder->getType()]);
 
 #ifdef CHEMISTRY

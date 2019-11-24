@@ -229,7 +229,7 @@ struct CaMKIIBindingCallback {
 			: _ps(ps), _bManager(bManager), _onRate(onRate), _offRate(offRate) {}
 
 	void operator() (ReactionBase *r) {
-		CaMKIIingPoint *b;
+		CaMKIIingPoint *camkii;
 		float frate;
 		short camkiiType = _bManager->getBoundInt();
 
@@ -278,10 +278,11 @@ struct CaMKIIBindingCallback {
 
 		if (SysParams::RUNSTATE == true) {
 
+			camkii = _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos, cp);
+
 #ifdef DEBUG
-			cout << "========== CaMKII Binding CallBack " << endl; //Carlos verbose prints
+			cout << "========== CaMKII Binding CallBack - ID: " << camkii->getID() << endl; //Carlos verbose prints
 #endif
-			b = _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos, cp);
 
 			frate = _offRate;
 		} else {
@@ -300,10 +301,12 @@ struct CaMKIIBindingCallback {
 			if (check) {
 				CMonomer *x = c->getCMonomer(0);
 				vector<Cylinder *> cy{c1, c->getCylinder()};
+
+				camkii = _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos, cp);
+
 #ifdef DEBUG
-				cout << "========== CaMKII Binding CallBack " << endl; //Carlos verbose prints
+				cout << "========== CaMKII Binding CallBack - ID: " << camkii->getID() << endl; //Carlos verbose prints
 #endif
-				b = _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos, cp);
 
 				x = c->getCMonomer(0);
 				frate = 0.0;
@@ -315,7 +318,7 @@ struct CaMKIIBindingCallback {
 		}
 
 		//create off reaction
-		auto cCaMKIIer = b->getCCaMKIIingPoint();
+		auto cCaMKIIer = camkii->getCCaMKIIingPoint();
 
 		cCaMKIIer->setOffRateBinding(frate);
 		cCaMKIIer->setRates(_onRate, frate);
