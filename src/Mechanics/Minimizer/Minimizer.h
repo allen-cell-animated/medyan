@@ -27,6 +27,9 @@ class ForceFieldManager;
  */
 class Minimizer {
 public:
+
+    virtual ~Minimizer() = default;
+
     /// Equilibrate a system based on given configuration and force-fields
     /// @param FFM - The force field manager of this system. @see ForceFieldManager.
     /// @param stepLimit - If there is a limit for the number of equlibration steps.

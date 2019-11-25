@@ -210,47 +210,49 @@ void BoundaryCylinderRepulsionExp::checkforculprit() {
 }
 #endif
 floatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, int *beadSet,
-                                            floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
-
+                                                   floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
+    
     int nb, nc;
+
     floatingpoint *coord1, R, r, U_i;
     floatingpoint U = 0.0;
+
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
-
-//    for (int ib = 0; ib < nb; ib++) {
-//        auto be = beList[ib];
-//        be->printSelf();
-//    }
-
+    
+    //    for (int ib = 0; ib < nb; ib++) {
+    //        auto be = beList[ib];
+    //        be->printSelf();
+    //    }
+    
     for (int ib = 0; ib < nb; ib++) {
-
+        
         auto be = beList[ib];
         nc = nneighbors[ib];
-
+        
         for (int ic = 0; ic < nc; ic++) {
-
+            
             coord1 = &coord[3 * beadSet[Cumnc + ic]];
             r = be->distance(coord1);
 
             R = -r / slen[Cumnc + ic];
             U_i = krep[Cumnc + ic] * exp(R);
-//            floatingpoint *var;
-//            var = new floatingpoint[4];
-//            be->elementeqn(var);
-//            std::cout<<"SL "<<Cumnc + ic<<" "<<krep[Cumnc + ic]<<" "<<R<<" Coord "<<coord1[0]<<" "<<coord1[1]<<" "
-//            <<coord1[2]<<" Plane "<<var[0] <<" "<<var[1]<<" "<<var[2]<<" "<<var[3]<<endl;
-//            delete var;
-//            std::cout<<r<<" "<<U_i<<endl;
+            //            floatingpoint *var;
+            //            var = new floatingpoint[4];
+            //            be->elementeqn(var);
+            //            std::cout<<"SL "<<Cumnc + ic<<" "<<krep[Cumnc + ic]<<" "<<R<<" Coord "<<coord1[0]<<" "<<coord1[1]<<" "
+            //            <<coord1[2]<<" Plane "<<var[0] <<" "<<var[1]<<" "<<var[2]<<" "<<var[3]<<endl;
+            //            delete var;
+            //            std::cout<<r<<" "<<U_i<<endl;
             if (fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                 || U_i != U_i || U_i < -1.0) {
-
+                
                 //set culprit and return
                 BoundaryInteractions::_boundaryElementCulprit = be;
                 ///TODO
                 //BoundaryInteractions::_otherCulprit;
-
+                
                 return -1;
             }
             U += U_i;
@@ -261,46 +263,49 @@ floatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, int *be
 }
 
 floatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                                            floatingpoint *krep, floatingpoint *slen, int *nneighbors, floatingpoint d) {
-
+                                                   floatingpoint *krep, floatingpoint *slen, int *nneighbors, floatingpoint d) {
+    
     int nb, nc;
+
     floatingpoint *coord1, R, r, U_i;
-	floatingpoint *force1;
+    floatingpoint *force1;
     floatingpoint U = 0.0;
+
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
-
+    
     for (int ib = 0; ib < nb; ib++) {
-
+        
         auto be = beList[ib];
         nc = nneighbors[ib];
-
+        
         for(int ic = 0; ic < nc; ic++) {
-
+            
             coord1 = &coord[3 * beadSet[Cumnc + ic]];
             force1 = &f[3 * beadSet[Cumnc + ic]];
 
             r = be->stretchedDistance(coord1, force1, d);
+            
 
             R = -r / slen[Cumnc + ic];
-
-//            std::cout<<r<<" "<<krep[Cumnc+ic]<<endl;
+            
+            //            std::cout<<r<<" "<<krep[Cumnc+ic]<<endl;
             U_i = krep[Cumnc + ic] * exp(R);
-//            floatingpoint *var;
-//            var = new floatingpoint[4];
-//            be->elementeqn(var);
-//            std::cout<<"SLZ "<<Cumnc + ic<<" "<<krep[Cumnc + ic]<<" "<<R<<" Coord "<<coord1[0]<<" "
-//                    <<coord1[1]<<" "<<coord1[2]<<" Plane "<<var[0] <<" "<<var[1]<<" "<<var[2]<<" "<<var[3]<<endl;
-//            delete var;
+            //            floatingpoint *var;
+            //            var = new floatingpoint[4];
+            //            be->elementeqn(var);
+            //            std::cout<<"SLZ "<<Cumnc + ic<<" "<<krep[Cumnc + ic]<<" "<<R<<" Coord "<<coord1[0]<<" "
+            //                    <<coord1[1]<<" "<<coord1[2]<<" Plane "<<var[0] <<" "<<var[1]<<" "<<var[2]<<" "<<var[3]<<endl;
+            //            delete var;
             if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                || U_i != U_i || U_i < -1.0) {
-
+                
                 //set culprit and return
                 BoundaryInteractions::_boundaryElementCulprit = be;
                 ///TODO
                 //BoundaryInteractions::_otherCulprit;
-
+                
                 return -1;
             }
             U += U_i;
@@ -315,19 +320,20 @@ floatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, floatin
 void BoundaryCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                           floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
     int nb, nc;
+
     floatingpoint *coord1, R, r, f0;
-	floatingpoint *force1;
-//    floatingpoint *forcecopy;
-//    forcecopy = new floatingpoint[CGMethod::N];
-//    for(auto iter=0;iter<CGMethod::N;iter++)
-//        forcecopy[iter]=0.0;
+    floatingpoint *force1;
+    //    floatingpoint *forcecopy;
+    //    forcecopy = new floatingpoint[CGMethod::N];
+    //    for(auto iter=0;iter<CGMethod::N;iter++)
+    //        forcecopy[iter]=0.0;
 
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
     int Cumnc=0;
-
+    
     for (int ib = 0; ib < nb; ib++) {
-
+        
         auto be = beList[ib];
         nc = nneighbors[ib];
         for(int ic = 0; ic < nc; ic++) {
@@ -344,7 +350,7 @@ void BoundaryCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f
 #ifdef CHECKFORCES_INF_NAN
             if(checkNaN_INF<floatingpoint>(force1, 0, 2)){
                 cout<<"Boundary Cylinder Force becomes infinite. Printing data "<<endl;
-
+                
                 cout<<"Printing coords"<<endl;
                 cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
                 cout<<"Printing force"<<endl;
@@ -356,14 +362,16 @@ void BoundaryCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f
                 exit(EXIT_FAILURE);
             }
 #endif
-
+            
         }
         Cumnc+=nc;
     }}
 
-floatingpoint BoundaryCylinderRepulsionExp::loadForces(floatingpoint r, floatingpoint kRep, floatingpoint screenLength) const {
 
+floatingpoint BoundaryCylinderRepulsionExp::loadForces(floatingpoint r, floatingpoint kRep, floatingpoint screenLength) const {
+    
     floatingpoint R = -r/screenLength;
     return kRep * exp(R)/screenLength;
-
+    
 }
+

@@ -831,7 +831,9 @@ void BoundaryCylinderNL::updateNeighbors(BoundaryElement* be) {
     //loop through beads, add as neighbor
     for (auto &c : Cylinder::getCylinders()) {
 
+
         floatingpoint dist = be->distance(c->coordinate);
+
         //If within range, add it
         if(dist < _rMax) _list[be].push_back(c);
     }

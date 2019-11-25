@@ -1097,7 +1097,7 @@ floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord,
 
 	U_i = krep[i] * (deltas * deltat/9.0) * (Termset1 + Termset2 + Termset3 + Termset4);
 
-	cout<<"Numerical result "<<U_i<<endl;
+	//cout<<"Numerical result "<<U_i<<endl;
 	return U_i;
 }
 
@@ -1256,7 +1256,7 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 		cout<<"Cylinder Exclusion Force becomes infinite. Printing data "<<endl;
 
 		short found = 0;
-		Cylinder *cyl1, *cyl2;
+		Cylinder *cyl1 = nullptr, *cyl2 = nullptr;
 		for(auto cyl:Cylinder::getCylinders()){
 			auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
 			auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
