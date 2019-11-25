@@ -21,6 +21,12 @@
 #include "Structure/Bead.h"
 #include "Structure/Cylinder.h"
 
+
+
+
+
+
+
 ForceField* ForceFieldManager::_culpritForceField = nullptr;
 
 void ForceFieldManager::vectorizeAllForceFields() {
@@ -557,7 +563,14 @@ void ForceFieldManager::assignallforcemags() {
 void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta){
     // store the minimization time and initialize the matrix
     tauVector.push_back(tau());
-    vector<vector<floatingpoint> > HessianMatrix(total_DOF, vector<floatingpoint>(total_DOF));
+    
+    chrono::high_resolution_clock::time_point t0 = chrono::high_resolution_clock::now();
+    
+    vector<vector<floatingpoint> > hessianMatrix(total_DOF, vector<floatingpoint>(total_DOF));
+    
+    vector<Triplet> tripletList;
+    
+    
     // loop through all the coordinates
     for(auto i = 0; i < total_DOF; i++){
 
@@ -584,14 +597,101 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
 
         for(auto j = 0; j < total_DOF; j++){
 
-            // store the central difference numerical derivative of the force on each coordinate j
-            HessianMatrix[i][j] = -(forces_copy_p[j] - forces_copy_m[j]) / (2 * delta);
+            // store the derivative of the force on each coordinate j
+            float h_i_j = -(forces_copy_p[j] - forces_copy_m[j]) / (2 * delta);
+            hessianMatrix[i][j] = h_i_j;
+            tripletList.push_back(Triplet(i,j,h_i_j));
+
         }
 
     }
+    
+    // create symmetrized sparse matrix object
+    Eigen::SparseMatrix<double> hessMat(total_DOF, total_DOF), hessMatSym;
+    hessMat.setFromTriplets(tripletList.begin(), tripletList.end());
+    hessMatSym = 0.5*(Eigen::SparseMatrix<double>(hessMat.transpose()) + hessMat);
+    
+    chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_vecmat(t1 - t0);
+    
+    bool denseEstimation = SysParams::Mechanics().denseEstimation;
+    
+    if(denseEstimation){
+    
+        Eigen::MatrixXd denseHessMatSym;
+        denseHessMatSym = Eigen::MatrixXd(hessMatSym);
+        Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> denseESolver(denseHessMatSym);
+        evalues = denseESolver.eigenvalues().real();
+        evectors = denseESolver.eigenvectors().real();
+    
+    }else{
+        
+        Spectra::SparseSymShiftSolve<double> op(hessMatSym);
+        //Spectra::SparseSymMatProd<double> op(hessMatSym);
+        int numEigs = total_DOF - 1;
+        Spectra::SymEigsShiftSolver<double, Spectra::SMALLEST_ALGE, Spectra::SparseSymShiftSolve<double>> eigs(&op, numEigs, total_DOF, 10000);
+        //Spectra::SymEigsSolver<double, Spectra::LARGEST_MAGN, Spectra::SparseSymMatProd<double>> eigs(&op, numEigs, numEigs+1);
+        /*
+        if(evectors.size()!=0){
+            //const Eigen::Matrix<double, Eigen::Dynamic, 1> init_vec = evectors.col(0).real();
+            const Eigen::Matrix<double, Eigen::Dynamic, 1> init_vec = evectors.real().rowwise().sum();
+            if(init_vec.size() == total_DOF){
+                const double * arg = init_vec.data();
+                eigs.init(arg);
+                //eigs.init();
+            }else{
+                eigs.init();
+            };
+        }else{
+            eigs.init();
+        }*/
+        
+        eigs.init();
+        int nconv = eigs.compute();
+        evalues = eigs.eigenvalues();
+        //columns of evectors matrix are the normalized eigenvectors
+        evectors = eigs.eigenvectors(numEigs);
+    };
+    
+    chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_veceigs(t2 - t1);
+    Eigen::VectorXcd IPRI(evectors.cols());
+    Eigen::VectorXcd IPRII(evectors.cols());
 
-    // store the matrix
-    hessianVector.push_back(HessianMatrix);
+    // compute participation ratios
+    for(auto i = 0; i<evectors.cols(); i++){
+        floatingpoint RI = 0.0;
+        Eigen::VectorXd col = evectors.col(i).cwiseAbs2();
+        RI = pow(col.norm(),2);
+        floatingpoint RII = 0.0;
+        for(auto j = 0; j < evectors.rows()/3; j++){
+            floatingpoint temp = 0.0;
+            for(auto k =0; k< 3; k ++){
+                temp += pow(evectors(3*j+k,i).real(),2);
+            }
+            RII += pow(temp,2);
+        }
+        IPRI(i) = RI;
+        IPRII(i) = RII;
+    }
+    
+    
+    chrono::high_resolution_clock::time_point t3 = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_vecPR(t3 - t2);
+    
+    cout<<"DOF is "<<total_DOF<<endl;
+    std::cout<<"Matrix time "<<elapsed_vecmat.count()<<endl;
+    std::cout<<"Compute time "<<elapsed_veceigs.count()<<endl;
+    std::cout<<"PR time "<<elapsed_vecPR.count()<<endl;
+
+
+    // store the full matrix in list
+    hessianVector.push_back(hessianMatrix);
+    
+    // store the eigenvalues in list
+    IPRIVector.push_back(IPRI);
+    IPRIIVector.push_back(IPRII);
+    evaluesVector.push_back(evalues);
 
 
 }

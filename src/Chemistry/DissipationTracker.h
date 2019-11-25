@@ -156,7 +156,9 @@ public:
         
         // get the number of products
         int N = re->getN();
+        int sigma = N - M;
         
+        float volFrac = re->getVolumeFrac();
         
         // for a vector of stoichiometric coefficients, assumed to be 1 for all
         vector<int> reacNu(M,1);
@@ -190,6 +192,8 @@ public:
         if(reType==0) {
             // Regular Reaction
             delGZero =  re->getGNumber();
+            delGZero -= sigma*log(volFrac);
+            
             delG = delGGenChem(delGZero, reacN, reacNu, prodN, prodNu);
             
         } else if(reType==1){
@@ -202,6 +206,8 @@ public:
             // Polymerization Plus End
             
             delGZero = re->getGNumber();
+            delGZero += log(volFrac);
+            
             species_copy_t nMon = reacN[0];
             delG = delGPolyChem(delGZero,nMon,"P");
             
@@ -210,6 +216,8 @@ public:
             // Polymerization Minus End
             
             delGZero = re->getGNumber();
+            delGZero += log(volFrac);
+            
             species_copy_t nMon = reacN[0];
             delG = delGPolyChem(delGZero,nMon,"P");
             
@@ -218,6 +226,8 @@ public:
             // Depolymerization Plus End
             
             delGZero = re->getGNumber();
+            delGZero -= log(volFrac);
+            
             species_copy_t nMon = prodN[0];
             delG = delGPolyChem(delGZero,nMon,"D");
             
@@ -225,6 +235,8 @@ public:
             // Depolymerization Minus End
             
             delGZero = re->getGNumber();
+            delGZero -= log(volFrac);
+            
             species_copy_t nMon = prodN[0];
             delG = delGPolyChem(delGZero,nMon,"D");
             
@@ -232,6 +244,8 @@ public:
         } else if(reType==6){
             // Linker Binding
             delGZero=re->getGNumber();
+            delGZero += log(volFrac);
+            
             species_copy_t nMon = reacN[1];
             delG = delGPolyChem(delGZero,nMon,"P");
             
@@ -239,6 +253,7 @@ public:
             
         } else if(reType==7){
             // Motor Binding
+            // need to implement volFrac change here
             floatingpoint rn=re->getGNumber();
             
             floatingpoint nh1 = SysParams::Chemistry().motorNumHeadsMin[0];
@@ -246,11 +261,14 @@ public:
             floatingpoint nh = (nh1+nh2)/2.0;
             
             delG = delGMyoChem(nh,rn);
+            delG += log(volFrac);
             
             
         } else if(reType==8){
             // Linker Unbinding
             delGZero=re->getGNumber();
+            delGZero -= log(volFrac);
+            
             species_copy_t nMon = prodN[0];
             delG = delGPolyChem(delGZero,nMon,"D");
             
@@ -271,7 +289,7 @@ public:
             
             delG = delGMyoChem(nh,rn);
             delG = -delG;
-            
+            delG -= log(volFrac);
             
         } else if(reType==10){
             // Motor Walking Forward
@@ -296,6 +314,8 @@ public:
             numP.push_back(Filament::countSpecies(0,prodNames[0]));
             
             delGZero = (re->getGNumber());
+            delGZero -= sigma*log(volFrac);
+            
             delG = delGGenChem(delGZero, numR, reacNu, numP, prodNu);
             
         } else if(reType==13){

@@ -45,12 +45,22 @@ private:
     
     short _type;     ///< The type of bubble
     
+
     floatingpoint _radius;       ///< The radius of this bubble
     floatingpoint _kRepuls;      ///< Repulsion constant for bubble-bubble and bubble-cylinder interactions
     floatingpoint _screenLength; ///< Screening length for a repulsive potential
     floatingpoint _MTOCBendingK; ///< use for MTOC-MT bending force field
+    floatingpoint _AFMBendingK; ///< use for AFM-filament bending force field
+    
+    
+    int _ID;        ///< Identifier
+    
+
+
     
     bool _isMTOC = false;   ///< If representing a MTOC
+    
+    bool _isAFM = false;    ///< If representing a AFM
     
 public:
     vector<floatingpoint> coordinate; ///< Current coordinates of bubble,
@@ -61,10 +71,13 @@ public:
 
     //@{
     /// Getters
+
     floatingpoint getRadius() {return _radius;}
     floatingpoint getRepulsionConst() {return _kRepuls;}
     floatingpoint getScreeningLength() {return _screenLength;}
 	floatingpoint getMTOCBendingK() {return _MTOCBendingK;}
+    floatingpoint getAFMBendingK() {return _AFMBendingK;}
+
     
     Bead* getBead() {return _bead;}
     
@@ -73,6 +86,9 @@ public:
     
     void setAsMTOC() {_isMTOC = true;}
     bool isMTOC() {return _isMTOC;}
+    
+    void setAsAFM() {_isAFM = true;}
+    bool isAFM() {return _isAFM;}
 
     /// Print bubble information
     virtual void printSelf();
@@ -95,6 +111,10 @@ public:
     
     ///Update bubble position
     virtual void updatePosition();
+    
+    void updatePositionManually();
+    double iter = 1;
+    int currentStep = 1;
 
 };
 
