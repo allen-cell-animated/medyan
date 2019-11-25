@@ -328,7 +328,7 @@ The following chemical parameters can be set. It should be noted that the number
        
        \noindent \texttt{DISSIPATIONTRACKING} -- ON -- Switches on the dissipation tracking feature \\
        
-       \noindent \texttt{DIFBINDING} -- int -- Switches on the different binding tracking feature to allow motors to have more binding spots per cylinder than linkers.  Currently only supported for the original neighborlist implementation, not the SIMD or hybrid neighborlist.  The specified integer is the number of binding sites that the cross-linkers will skip before accepting a possible binding site. \\
+       \noindent \texttt{LINKERBINDINGSKIP} -- int -- Switches on the different binding tracking feature to allow motors to have more binding spots per cylinder than linkers.  The specified integer is the number of binding sites that the cross-linkers will skip before accepting a possible binding site. \\
        
        \noindent \texttt{EVENTTRACKING} -- ON -- Switches on the event tracking feature \\
        
@@ -755,6 +755,18 @@ The high resolution chemical dissipation file gives the cumulative changes in th
 \texttt{chemenergy1 chemenergy2 ... }\newline
 
 Here the \texttt{chemenergy} fields are cumulative changes in Gibbs free energy owing to this reaction.  
+
+
+\subsubsection{HRMD.traj}
+The high resolution mechanical dissipation file gives the cumulative values of $\Delta G_{mech}$ and $\Delta G_{mech, \ diss}$, with contributions from each force field specified separately.  
+  The format of the output file is:\newline
+
+\noindent\texttt{chemstepnumber time }\newline
+\texttt{ForceField1 ForceField2 ... }\newline
+\texttt{mechenergy1 mechenergy2 ... }\newline
+\texttt{mechdiss1 mechdiss2 ... }\newline
+
+Here the \texttt{mechenergy1} fields are cumulative net changes in mechanical energy owing to force field 1, and the mechdiss1 are cumulative changes in mechanical energy during energy minimization owing to force field 1.  The difference between these two quantities is explained in accompanying material.  Summing across the rows of the \texttt{mechenergy} and \texttt{mechdiss} lines will give the corresponding values found at that time point in the \texttt{dissipation.traj} file.  When parsing this file, note that the \texttt{Excluded Volume} force field consists of two words whereas the other force fields (e.g. \texttt{Bubble}) consist of only one word.   
 
 \subsubsection{CMGraph.traj}
 The connectivity-based mapping output gives information which can be used to construct a weighted graph, in which filaments are nodes and the weighted edges between them represent the number of cross-linkers connecting them.  The format of the output file is:\newline
