@@ -37,8 +37,9 @@ double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double d) {
             //TODO: Implement or remove CAMKIIingCylinder
             //TODO: UMD_Trip: skip CaMKII and its bound filaments from exclusion volume
             if(!cn->isFullLength() ||
-               cn->getBranchingCylinder() == ci ||
-               cn->getCaMKIIingCylinder() == ci) continue;
+               cn->getBranchingCylinder() == ci
+//               || cn->getCaMKIIingCylinder() == ci
+               ) continue;
             
             Bead* b1 = ci->getFirstBead();
             Bead* b2 = ci->getSecondBead();
@@ -81,8 +82,9 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces() {
             //do not calculate exvol for a branching cylinder
             //do not calculate exvol for a camkiiing cylinder
             if(!cn->isFullLength() ||
-               cn->getBranchingCylinder() == ci ||
-               cn->getCaMKIIingCylinder() == ci) continue;
+               cn->getBranchingCylinder() == ci
+//               || cn->getCaMKIIingCylinder() == ci
+               ) continue;
             
             Bead* b1 = ci->getFirstBead();
             Bead* b2 = ci->getSecondBead();
@@ -109,8 +111,9 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForcesAux() {
             //do not calculate exvol for a branching cylinder
             //do not calculate exvol for a camkiiing cylinder
             if(!cn->isFullLength() ||
-               cn->getBranchingCylinder() == ci ||
-               cn->getCaMKIIingCylinder() == ci) continue;
+               cn->getBranchingCylinder() == ci
+//               || cn->getCaMKIIingCylinder() == ci
+               ) continue;
             
             Bead* b1 = ci->getFirstBead();
             Bead* b2 = ci->getSecondBead();
