@@ -41,11 +41,13 @@ private:
     // These pointers are only handles to the off-reactions and they are not constructed.
     // As a result, they do not need to be released.
     ReactionBase *_offRxnBinding, *_offRxnBundling;
+    // This is to remember the binding off-reaction (unbinding) rate to be used when
+    // creating the reaction during the unbundling chemical callback.
 	double _offRateBinding;
 
 	// The corresponding diffusing species
     // For example: "CD" as diffusing CaMKII
-    string diffusingSpeciesName;
+    string _diffusingSpeciesName;
 
     SpeciesBound *getSpeciesCaMKIIDummyCylinder() const;
 
@@ -60,7 +62,7 @@ public:
     /// Copy constructor, standard
     CCaMKIIingPoint(const CCaMKIIingPoint& rhs, Compartment* c)
         : CBound(rhs._filamentType, c, rhs._cc1, rhs._cc2, rhs._position1, rhs._position2),
-        _pCaMKIIingPoint(rhs._pCaMKIIingPoint),
+        _pCaMKIIingPoint(rhs._pCaMKIIingPoint), _diffusingSpeciesName(rhs._diffusingSpeciesName),
         _camkiiType(rhs._camkiiType), _offRxnBinding(rhs._offRxnBinding), _offRxnBundling(rhs._offRxnBundling) {
 
 		//set species

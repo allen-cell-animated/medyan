@@ -56,13 +56,13 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double posi
     Bead* b1 = _subSystem->addTrackable<Bead>(_tmp_coordinate, nullptr, 0);
     coordinate = &b1->coordinate;
     setCaMKIICylinder(_subSystem->addTrackable<CaMKIICylinder>(this, b1, _filType, 0));
+	addBond(cylinder, pos);
     _camkiiCylinder->addToFilamentBindingManagers();
 
     // Setting the first species to CaMKII dummy cylinder species
 	SpeciesBound* sfs = _camkiiCylinder->getCCylinder()->getCMonomer(0)->speciesCaMKIIDummyCylinder(camkiiType);
     _cCaMKIIingPoint->setFirstSpecies(sfs);
 
-	addBond(cylinder, pos);
 
 	//Find compartment
 //	updateCoordinate(coordinate);
@@ -79,6 +79,7 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double posi
 void CaMKIIingPoint::addBond(Cylinder *c, short pos) {
 	_cCaMKIIingPoint->addBond(c->getCCylinder(), pos);
 	_bonds.push_back(tuple<Cylinder *, short>(c, pos));
+
 }
 
 void CaMKIIingPoint::updateCoordinate(vector<double> *coordinate) {
@@ -245,15 +246,18 @@ species_copy_t CaMKIIingPoint::countDummySpecies(const string& name) {
 }
 
 
-tuple<Cylinder*, short> CaMKIIingPoint::removeRandomBond() {
+tuple<Cylinder*, short> CaMKIIingPoint::removeRandomBond(CaMKIIBundlingManager* _bManager) {
 	assert(_bonds.size() > 1);
 
 	size_t sz = _bonds.size();
 	size_t index = (size_t) Rand::randInteger(0, sz-1);
 	tuple<Cylinder*, short> bondToRemove = _bonds[index];
 
-	_cCaMKIIingPoint->removeBond(get<0>(bondToRemove)->getCCylinder(), get<1>(bondToRemove));
+	// Adding back the rest of cylinders of the filament to possible binding before
+	// adding back the corresponding cylinder.
+	_bManager->addAllCylindersOfFilamentToCaMKIIPossibleBindings(get<0>(bondToRemove), this);
 
+	_cCaMKIIingPoint->removeBond(get<0>(bondToRemove)->getCCylinder(), get<1>(bondToRemove));
 
 	_bonds.erase(_bonds.begin() + index);
 

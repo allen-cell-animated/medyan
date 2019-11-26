@@ -108,10 +108,10 @@ void CCaMKIIingPoint::createOffReactionBinding(ReactionBase* onRxn, SubSystem *p
 	if(onRxn != nullptr) {
 		RSpecies **rs = onRxn->rspecies();
 		sfb = &(rs[SPECIESCaMKII_BINDING_INDEX]->getSpecies());
-		diffusingSpeciesName = sfb->getName();
+		_diffusingSpeciesName = sfb->getName();
 	} else {
-		assert(diffusingSpeciesName.size() != 0);
-		sfb = this->getCompartment()->findSpeciesByName(diffusingSpeciesName);
+		assert(_diffusingSpeciesName.size() != 0);
+		sfb = this->getCompartment()->findSpeciesByName(_diffusingSpeciesName);
 	}
 
 

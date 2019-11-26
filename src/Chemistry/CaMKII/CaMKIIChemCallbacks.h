@@ -173,7 +173,9 @@ struct CaMKIIingPointUnbundlingCallback {
 		cout << "========== CaMKII Unbundling CallBack "; //Carlos verbose prints
 		cout << "ID: " << _camkiiingPoint->getID() << " Coord:" << _camkiiingPoint->getCoordinationNumber() << endl; //Carlos verbose prints
 #endif
-		auto bond = _camkiiingPoint->removeRandomBond();
+
+		auto bond = _camkiiingPoint->removeRandomBond(_bManager);
+
 		// Adding the cylinder assigned to the removed bond?
 		if(_camkiiingPoint->getCoordinationNumber() == 1L) {
 
@@ -377,6 +379,7 @@ struct CaMKIIBundlingCallback {
 
 			// cp should be CaMKIIPoint
 			cp->addBond(c2, pos2);
+			_bManager->removeAllCylindersOfFilamentFromCaMKIIPossibleBindings(c2, cp);
 		} else {
 			cp = dynamic_cast<CaMKIICylinder *>(c2)->getCaMKIIPointParent();
 
@@ -387,6 +390,7 @@ struct CaMKIIBundlingCallback {
 
 			// cp should be CaMKIIPoint
 			cp->addBond(c1, pos1);
+			_bManager->removeAllCylindersOfFilamentFromCaMKIIPossibleBindings(c1, cp);
 		}
 
 

@@ -119,7 +119,7 @@ public:
 
     //@{
     /// Position management
-    double getPosition() {return _position;} 
+    double getPosition() {return _position;}
     //void setPosition(double position) {_position = position;}
     //@}
     
@@ -160,7 +160,7 @@ public:
 	static species_copy_t countSpecies(const string& name);
 	static species_copy_t countDummySpecies(const string& name);
 
-	tuple<Cylinder*, short> removeRandomBond();
+	tuple<Cylinder*, short> removeRandomBond(CaMKIIBundlingManager* _bManager);
 
     void updateReactionRates();
 };

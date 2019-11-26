@@ -8,6 +8,7 @@
 
 #include "common.h"
 
+#include "Filament.h"
 #include "NeighborListImpl.h"
 #include "ReactionBase.h"
 
@@ -128,6 +129,12 @@ private:
 
 	bool checkCoordinationNum(CCylinder *cc);
 
+	// A function to find all the filaments that are connected to a CaMKII
+	void getAllFilamentsOfCaMKII(CaMKIIingPoint *cp, unordered_set<Filament*> &s);
+
+	void addPossibleBindingsNormal(CCylinder* normal_cc, short bindingSite, CaMKIIingPoint *inputCaMKII=nullptr);
+	void addPossibleBindingsCaMKII(CCylinder* cc, short bindingSite);
+
 public:
 	CaMKIIBundlingManager(ReactionBase* reaction,
 						  Compartment* compartment,
@@ -231,6 +238,20 @@ public:
 	size_t getPossibleBindingSize() {
 		return _possibleBindings.size();
 	}
+
+
+
+	/*
+	 * Removing all cylinders of a filament from CaMKII PossibleBinding
+	 */
+	void removeAllCylindersOfFilamentFromCaMKIIPossibleBindings(Filament *f, CaMKIIingPoint *p);
+	void removeAllCylindersOfFilamentFromCaMKIIPossibleBindings(Cylinder *c, CaMKIIingPoint *p);
+
+	/*
+	 * Adding all cylinders of a filament to CaMKII PossibleBinding
+	 */
+	void addAllCylindersOfFilamentToCaMKIIPossibleBindings(Filament *f, CaMKIIingPoint *p);
+	void addAllCylindersOfFilamentToCaMKIIPossibleBindings(Cylinder *c, CaMKIIingPoint *p);
 };
 
 #endif //MEDYAN_CAMKII_BindingManager_h
