@@ -433,7 +433,7 @@ struct BranchingCallback {
 //                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
                 //std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
                             }
-            std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
+//            std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
             
         b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
             

@@ -67,6 +67,7 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
         
     //set the branching cylinder
     _c1->setBranchingCylinder(_c2);
+    _c1->setMotherCylinder(_c2);
 }
 
 BranchingPoint::~BranchingPoint() noexcept {
@@ -151,6 +152,7 @@ BranchingPoint::~BranchingPoint() noexcept {
 #endif
     //reset branching cylinder
     _c1->setBranchingCylinder(nullptr);
+    _c1->setMotherCylinder(nullptr);
 }
 
 void BranchingPoint::updatePosition() {

@@ -279,17 +279,16 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                     
                     if(dist > _rMax || dist < _rMin) continue;
 
-		    //auto bc1 = cc->getCylinder()->getBranchingCylinder(); //Yossi
-                    //auto bc2 = ccn->getCylinder()->getBranchingCylinder(); //Yossi
-		    auto bc3 = cc->getCylinder()->getMotherCylinder(); //Carlos
-		    auto bc4 = ccn->getCylinder()->getMotherCylinder(); //Carlos
 
-		    if(bc3 || bc4) {
-		 
- 		    continue;} //Yossi
-		                   
+					/*
+					 * CJY : Excluding Linker connection between the first segment of
+					 * 		 daughter filament and the first segment of its mother filament.
+					 * 		 (Search distance might exclude this already.)
+					 */
+					auto bc1 = cc->getCylinder()->getMotherCylinder(); //Carlos
+					auto bc2 = ccn->getCylinder()->getMotherCylinder(); //Carlos
+					if(bc1 || bc2) continue; //Yossi
 
-                    
  
                     auto t1 = tuple<CCylinder*, short>(cc, bindingSite);
                     auto t2 = tuple<CCylinder*, short>(ccn, *it);
@@ -466,14 +465,15 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                             double dist = twoPointDistance(m1,m2);
                             
                             if(dist > _rMax || dist < _rMin) continue;
-			    
-			    //auto bc1 = cc->getCylinder()->getBranchingCylinder(); //Carlos
-		            //auto bc2 = ccn->getCylinder()->getBranchingCylinder(); //Carlos
-			    auto bc3 = cc->getCylinder()->getMotherCylinder(); //Carlos
-		            auto bc4 = ccn->getCylinder()->getMotherCylinder(); //Carlos
 
-		    	    if(bc3 || bc4) {
- 		            continue;} //Carlos
+                            /*
+                             * CJY : Excluding Linker connection between the first segment of
+                             * 		 daughter filament and the first segment of its mother filament.
+                             * 		 (Search distance might exclude this already.)
+                             */
+							auto bc1 = cc->getCylinder()->getMotherCylinder(); //Carlos
+							auto bc2 = ccn->getCylinder()->getMotherCylinder(); //Carlos
+							if(bc1 || bc2) continue; //Carlos
 		                   
                             
                             auto t1 = tuple<CCylinder*, short>(cc, *it1);
