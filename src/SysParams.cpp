@@ -434,10 +434,11 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
 
 
     /*
-     * TODO: Once the mechanical parameters for CaMKII are defined, we should revisit this.
-     * TODO: Since we are in mechanical step, why are we checking the cylinder in here?
-     * TODO: GParams and CParams should not be here.
-     * TODO: We are bypassing this filter for now.
+     * TODO: Rewrite the cylinder and monomer length checks
+     * Once the mechanical parameters for CaMKII are defined, we should revisit this.
+     * Since we are in mechanical step, why are we checking the cylinder in here?
+     * GParams and CParams should not be here.
+     * We are bypassing this filter for now.
      */
     if(true)
         return true;

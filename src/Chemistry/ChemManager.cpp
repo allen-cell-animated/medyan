@@ -115,7 +115,7 @@ void ChemManager::configCMonomer() {
 
         //set up static CMonomer things for CaMKII
         CMonomer::_numBSpecies[filType] +=  _chemData.speciesCaMKIIer[filType].size()  +
-                                            _chemData.speciesCaMKIIDummyCylinder[filType].size();
+                                            _chemData.speciesCaMKIICylinder[filType].size();
 
         //set up species offsets
         short o1 = _chemData.speciesFilament[filType].size();
@@ -127,7 +127,7 @@ void ChemManager::configCMonomer() {
 
         //set up species offsets for CaMKII
         short o6 = o5 + _chemData.speciesBrancher[filType].size(); //CaMKIIer
-        short o7 = o6 + _chemData.speciesCaMKIIer[filType].size(); //CaMKIIDummyCylinder
+        short o7 = o6 + _chemData.speciesCaMKIIer[filType].size(); //CaMKIICylinder
 
         //create offset vector for filament
         CMonomer::_speciesFilamentIndex[filType].insert(
@@ -2676,11 +2676,11 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
         }
 
         if (filType == CAMKII_CYLINDER_FILAMENT_TYPE) {
-            UpdateCaMKIIerDummyCylinderCallback camkiidummycylindercallback(c, 0);
+            UpdateCaMKIIerCylinderCallback camkiicylinderspeciescallback(c, 0);
 
-            Species* cd2 = cc->getCMonomer(0)->speciesCaMKIIDummyCylinder(0);
+            Species* cd2 = cc->getCMonomer(0)->speciesCaMKIICylinder(0);
 
-            ConnectionBlock rcdcamkii(cd2->connect(camkiidummycylindercallback,false));
+            ConnectionBlock rcdcamkii(cd2->connect(camkiicylinderspeciescallback,false));
         }
 
 

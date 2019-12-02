@@ -21,18 +21,9 @@
 
 /// A container to store a CaMKII Cylinder
 /*!
- *  TODO CaMKII update doc:
- *  Cylinder class is used to manage and store a MCylinder and CCylinder.
- *  Upon intialization, both of these components are created.
- *
- *  Extending the Movable class, the positions of all instances 
- *  can be updated by the SubSystem.
- *
- *  Extending the Reactable class, the reactions associated with 
- *  all instances can be updated by the SubSystem.
- *
- *  Extending the DynamicNeighbor class, all instances can be 
- *  kept in [NeighborLists](@ref NeighborList).
+ *  CaMKIICylinder class is used to manage and store the species CaMKII cylinder,
+ *  off reactions, and the real position of CaMKII to be used in force field, and
+ *  [NeighborLists](@ref NeighborList).
  */
 class CaMKIICylinder : public Cylinder {
 
@@ -40,12 +31,11 @@ protected:
 	CaMKIIingPoint *_camkiiPoint;
 	void updateCoordinate() override;
 	void updatePosition() override;
-	bool within(Cylinder* other, double dist) override;
 
 
 public:
 	/// Constructor, initializes a cylinder
-	// composte is set to NULL and we use only one bead
+	/// composite is set to NULL and we use only one bead
 	CaMKIICylinder(CaMKIIingPoint *camkiiPoint, Bead* b1, short type, int position);
 	CaMKIIingPoint* getCaMKIIPointParent() {
 		return _camkiiPoint;

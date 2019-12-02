@@ -17,7 +17,7 @@
 #include "MathFunctions.h"
 #include "GController.h"
 #include "SysParams.h"
-#include "../Structure/CaMKIICylinder.h"
+#include "Structure/CaMKII/CaMKIICylinder.h"
 
 
 //CAMKII Binding
@@ -223,9 +223,8 @@ CaMKIIBundlingManager::CaMKIIBundlingManager(ReactionBase* reaction,
 
 bool CaMKIIBundlingManager::checkCoordinationNum(CCylinder *cc) {
 	auto dc = dynamic_cast<CaMKIICylinder*>(cc->getCylinder());
-	CaMKIIingPoint *cp;
 	if (dc) {
-		cp = dc->getCaMKIIPointParent();
+		CaMKIIingPoint *cp = dc->getCaMKIIPointParent();
 		return (cp->getCoordinationNumber() >= _maxCoordination);
 	}
 	return false;
@@ -318,25 +317,6 @@ void CaMKIIBundlingManager::addPossibleBindingsNormal(CCylinder* normal_cc, shor
 	int newN = numBindingSites();
 
 	updateBindingReaction(oldN, newN);
-
-	/*
-	 * For debugging purposes of CaMKII
-	 *
-	 */
-//	size_t s1 = _possibleBindings.size();
-//	auto _old_bindings = _possibleBindings;
-//	//updateAllPossibleBindings();
-//	size_t s2 = _possibleBindings.size();
-//	for(auto a : _possibleBindings) {
-//		volatile auto i = get<0>(a.first)->getCylinder()->getID();
-//	}
-////    if((s2 - s1 > 1) || (s2-s1 < 0) ) {
-//	if((s2 - s1) != 0 ) {
-//		cerr << "======MILLAD: ERROR in size of possible size. --- " << __FILE__ << "   " << __LINE__ << "  " << __FUNCTION__ << "   " << s1 << "  " << s2 << endl;
-//		for(auto a : _possibleBindings) {
-//			cerr << "=======MILLAD: NULL Cylinder ID: " << get<0>(a.first)->getCylinder()->getID() << endl;
-//		}
-//	}
 }
 
 void CaMKIIBundlingManager::addPossibleBindingsCaMKII(CCylinder* cc, short bindingSite) {
@@ -412,25 +392,6 @@ void CaMKIIBundlingManager::addPossibleBindingsCaMKII(CCylinder* cc, short bindi
 	int newN = numBindingSites();
 
 	updateBindingReaction(oldN, newN);
-
-	/*
-	 * For debugging purposes of CaMKII
-	 *
-	 */
-//	size_t s1 = _possibleBindings.size();
-//	auto _old_bindings = _possibleBindings;
-//	//updateAllPossibleBindings();
-//	size_t s2 = _possibleBindings.size();
-//	for(auto a : _possibleBindings) {
-//		volatile auto i = get<0>(a.first)->getCylinder()->getID();
-//	}
-////    if((s2 - s1 > 1) || (s2-s1 < 0) ) {
-//	if((s2 - s1) != 0 ) {
-//		cerr << "======MILLAD: ERROR in size of possible size. --- " << __FILE__ << "   " << __LINE__ << "  " << __FUNCTION__ << "   " << s1 << "  " << s2 << endl;
-//		for(auto a : _possibleBindings) {
-//			cerr << "=======MILLAD: NULL Cylinder ID: " << get<0>(a.first)->getCylinder()->getID() << endl;
-//		}
-//	}
 }
 
 
@@ -453,8 +414,6 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc) {
 	} else {
 		addPossibleBindings(cc, 0);
 	}
-
-	checkLengthOfPossibleBinding();
 }
 
 void CaMKIIBundlingManager::addAllCylindersOfFilamentToCaMKIIPossibleBindings(Filament *f, CaMKIIingPoint *p) {
@@ -568,8 +527,6 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc) {
 			 bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
 			removePossibleBindings(cc, *bit);
 	}
-
-	checkLengthOfPossibleBinding();
 }
 
 void CaMKIIBundlingManager::updateCaMKIIPossibleBindings(CCylinder* cc) {
@@ -721,8 +678,20 @@ bool CaMKIIBundlingManager::isConsistent() {
 }
 
 
+tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>> CaMKIIBundlingManager::chooseBindingSites() {
+//		checkLengthOfPossibleBinding();
+
+	assert((_possibleBindings.size() != 0)
+		   && "Major bug: CaMKIIing manager should not have zero binding \
+                  sites when called to choose a binding site.");
+	int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
+	auto site = _possibleBindings.begin();
+	advance(site, randomIndex);
+	return *site;
+}
 
 
-//vector<CaMKIIingPointCylinderNL*> CaMKIIBundlingManager::_neighborLists; //TODO fix the type on NL
-vector<CylinderCylinderNL*> CaMKIIBundlingManager::_neighborLists; //TODO fix the type on NL
+
+
+vector<CylinderCylinderNL*> CaMKIIBundlingManager::_neighborLists;
 

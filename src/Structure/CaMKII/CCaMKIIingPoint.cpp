@@ -30,23 +30,14 @@ CCaMKIIingPoint::CCaMKIIingPoint(short camkiiType, Compartment* c,
 	 *
 	 */
 
-//    Code block moved to addBond
-//    //Find species on cylinder that should be marked
+
+	// Find species on cylinder that should be marked
 	SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesCaMKIIer(camkiiType);
     SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(
                         SysParams::Chemistry().camkiierBindingBoundIndex[_filamentType]);
-//
-//    //mark species
-    assert(areEqual(sb1->getN(), 0) && areEqual(se1->getN(), 1) && "Major bug: CaMKIIer binding to an occupied site.");
-//
-//    sb1->up(); se1->down();
-//
-//	assert(areEqual(sb1->getN(), 1) && areEqual(se1->getN(), 0) &&
-//		   "Major bug: CaMKIIer didn't bind to the site.");
-//
-//    //attach this camkiipoint to the species
-//    setFirstSpecies(sfs);
 
+    // mark species
+    assert(areEqual(sb1->getN(), 0) && areEqual(se1->getN(), 1) && "Major bug: CaMKIIer binding to an occupied site.");
 }
 
 void CCaMKIIingPoint::addBond(CCylinder* cc, short pos){
@@ -56,7 +47,7 @@ void CCaMKIIingPoint::addBond(CCylinder* cc, short pos){
 	SpeciesBound *camkii_bindingsite = cc->getCMonomer(pos)->speciesBound(
 			SysParams::Chemistry().camkiierBindingBoundIndex[_filamentType]);
 
-	SpeciesBound *camkii_species_dummy_cylinder = getSpeciesCaMKIIDummyCylinder();
+	SpeciesBound *camkii_species_cylinder = getSpeciesCaMKIICylinder();
 
 	//mark species
 	assert(areEqual(camkiier->getN(), 0) && areEqual(camkii_bindingsite->getN(), 1) &&
@@ -65,8 +56,8 @@ void CCaMKIIingPoint::addBond(CCylinder* cc, short pos){
 	camkiier->up();
 	camkii_bindingsite->down();
 
-	// Increasing N for the dummy cylinder species
-	camkii_species_dummy_cylinder->up();
+	// Increasing N for the cylinder species
+	camkii_species_cylinder->up();
 
 	assert(areEqual(camkiier->getN(), 1) && areEqual(camkii_bindingsite->getN(), 0) &&
 		   "Major bug: CaMKIIer didn't bind to the site.");
@@ -100,10 +91,10 @@ CCaMKIIingPoint::~CCaMKIIingPoint() {
 }
 
 void CCaMKIIingPoint::createOffReactionBinding(ReactionBase* onRxn, SubSystem *ps) {
-	SpeciesBound *scad = getSpeciesCaMKIIDummyCylinder();
+	SpeciesBound *scad = getSpeciesCaMKIICylinder();
 
 	// Recording the corresponding diffusing species name
-	// for unbinding reaction re-creation in future
+	// to recreate the unbinding reaction in the future
 	Species *sfb;
 	if(onRxn != nullptr) {
 		RSpecies **rs = onRxn->rspecies();
@@ -129,13 +120,14 @@ void CCaMKIIingPoint::createOffReactionBinding(ReactionBase* onRxn, SubSystem *p
 	CaMKIIingPointUnbindingCallback bcallback(_pCaMKIIingPoint, ps);
 	ConnectionBlock rcb(offRxn->connect(bcallback,false));
 
+	// Setting the current off reaction to the binding off reaction pointer
 	setOffReaction(offRxn);
 	_pCaMKIIingPoint->getCaMKIICylinder()->getCCylinder()->addInternalReaction(offRxn);
 	_offRxnBinding = offRxn;
 }
 
 void CCaMKIIingPoint::createOffReactionBundling(SubSystem *ps, FilamentBindingManager *fm) {
-	SpeciesBound *scad = getSpeciesCaMKIIDummyCylinder();
+	SpeciesBound *scad = getSpeciesCaMKIICylinder();
 
 	//create the reaction species
 	vector<Species*> os = {scad};
@@ -165,18 +157,15 @@ void CCaMKIIingPoint::createOffReactionBundling(SubSystem *ps, FilamentBindingMa
 
 }
 
-SpeciesBound *CCaMKIIingPoint::getSpeciesCaMKIIDummyCylinder() const {
-	// This variable is the position of species CaMKII Dummy cylinder (speciesCaMKIIDummyCylinder) on CaMKII cylinder.
-	short positionOfCaMKIIDummyC = 0;
+SpeciesBound *CCaMKIIingPoint::getSpeciesCaMKIICylinder() const {
+	// This variable is the position of species CaMKII cylinder (speciesCaMKIICylinder) on CaMKII cylinder.
+	short positionOfCaMKIIC = 0;
 	CCylinder* camkii_cc = _pCaMKIIingPoint->getCaMKIICylinder()->getCCylinder();
-	SpeciesBound *scad = camkii_cc->getCMonomer(positionOfCaMKIIDummyC)->speciesCaMKIIDummyCylinder(_camkiiType);
+	SpeciesBound *scad = camkii_cc->getCMonomer(positionOfCaMKIIC)->speciesCaMKIICylinder(_camkiiType);
 	return scad;
 }
 
 void CCaMKIIingPoint::createOffReactionCaMKII(ReactionBase* onRxn, SubSystem* ps, FilamentBindingManager *fm) {
-	// TODO: This reaction needs to be implemented for unbinding and unbundling mix.
-	// Currently it only implements unbinding.
-
 	assert(_pCaMKIIingPoint->getCoordinationNumber() != 0L);
 
 	if(_pCaMKIIingPoint->getCoordinationNumber() == 1L)

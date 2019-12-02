@@ -15,7 +15,7 @@
 
 #include "CaMKIIingStretchingHarmonic.h"
 
-#include "CaMKIIingPoint.h"
+#include "Structure/CaMKII/CaMKIIingPoint.h"
 #include "Cylinder.h"
 #include "Bead.h"
 
@@ -39,7 +39,7 @@ double CaMKIIingStretching<CStretchingInteractionType>::computeEnergy(double d) 
 
             double kStretch = point->getMCaMKIIingPoint()->getStretchingConstant();
             double eqLength = point->getMCaMKIIingPoint()->getEqLength();
-            double position = point->getPosition();
+            double position = 1.0*get<1>(bond)/SysParams::Geometry().cylinderNumMon[b->getType()];
             if (d == 0.0)
                 U_i = _FFType.energy(b1, b2, b3, position, kStretch, eqLength);
             else
@@ -71,7 +71,7 @@ void CaMKIIingStretching<CStretchingInteractionType>::computeForces() {
 
 			double kStretch = point->getMCaMKIIingPoint()->getStretchingConstant();
 			double eqLength = point->getMCaMKIIingPoint()->getEqLength();
-			double position = point->getPosition();
+			double position = 1.0*get<1>(bond)/SysParams::Geometry().cylinderNumMon[b->getType()];
 
 			_FFType.forces(b1, b2, b3, position, kStretch, eqLength);
 		}
@@ -93,7 +93,7 @@ void CaMKIIingStretching<CStretchingInteractionType>::computeForcesAux() {
 
             double kStretch = point->getMCaMKIIingPoint()->getStretchingConstant();
             double eqLength = point->getMCaMKIIingPoint()->getEqLength();
-            double position = point->getPosition();
+			double position = 1.0*get<1>(bond)/SysParams::Geometry().cylinderNumMon[b->getType()];
             _FFType.forcesAux(b1, b2, b3, position, kStretch, eqLength);
         }
     }

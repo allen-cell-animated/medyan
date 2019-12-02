@@ -168,10 +168,9 @@ public:
 	int checkLengthOfPossibleBindingInternal(unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> &mm1,
 											 unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> &mm2);
 
-	// TODO: REMOVE THIS DEBUGGING FUNCTION
-	// This function checks whether two possible bindings are the same for one update operation.
+	// This function checks whether possible bindings are the same before
+	// and after updateAllPossibleBindings.
 	void checkLengthOfPossibleBinding() {
-#if 0
 		auto _poss_1st = _possibleBindings;
         auto len1=_possibleBindings.size();
         updateAllPossibleBindings();
@@ -185,23 +184,10 @@ public:
 			   && "Minor bug: CaMKIIing manager was not correctly updated when it reached this point (len1 == len2).");
 		assert((len1 == checkLength)
 			   && "Minor bug: CaMKIIing manager was not correctly updated when it reached this point (len1 == checkLength).");
-#endif
 	}
 
 	/// Choose a random binding site based on current state
-	tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>> chooseBindingSites() {
-		checkLengthOfPossibleBinding();
-
-		assert((_possibleBindings.size() != 0)
-			   && "Major bug: CaMKIIing manager should not have zero binding \
-                  sites when called to choose a binding site.");
-		int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
-		auto it = _possibleBindings.begin();
-		advance(it, randomIndex);
-		auto b = tuple<CCylinder*, short>(it->second);
-		auto a = it->first;
-		return tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>> (a,b);
-	}
+	tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>> chooseBindingSites();
 
 	virtual bool isConsistent();
 	/// ARAVIND ADDED FEB 17 2016. append possible bindings.

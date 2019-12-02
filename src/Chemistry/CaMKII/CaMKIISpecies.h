@@ -38,7 +38,7 @@ public:
 		return new SpeciesCaMKIIer(*this);
 	}
 
-	/// Return the full name of this Species in a string format (e.g. "Arp2/3{CaMKIIer}"
+	/// Return the full name of this Species in a string format
 	virtual string getFullName() const {return getName() + "{CaMKIIer}";}
 
 	/// Default destructor
@@ -46,47 +46,47 @@ public:
 };
 
 
-class SpeciesCaMKIIDummyCylinder : public SpeciesBound {
+class SpeciesCaMKIICylinder : public SpeciesBound {
 
 public:
 	/// Default constructor
-	SpeciesCaMKIIDummyCylinder() : SpeciesBound() {}
+	SpeciesCaMKIICylinder() : SpeciesBound() {}
 
 	/// The main constructor
 	/// @param name - Example, "G-Actin" or "Arp2/3"
 	/// @param n - copy number
-	SpeciesCaMKIIDummyCylinder (const string &name, species_copy_t n=0, species_copy_t ulim=1)
+	SpeciesCaMKIICylinder (const string &name, species_copy_t n=0, species_copy_t ulim=1)
 			:  SpeciesBound(name, n, ulim) {};
 
 	/// Copy constructor
-	SpeciesCaMKIIDummyCylinder(const SpeciesCaMKIIDummyCylinder &rhs)  : SpeciesBound(rhs) {}
+	SpeciesCaMKIICylinder(const SpeciesCaMKIICylinder &rhs)  : SpeciesBound(rhs) {}
 
 	/// Move constructor
-	SpeciesCaMKIIDummyCylinder (SpeciesCaMKIIDummyCylinder &&rhs) noexcept : SpeciesBound(move(rhs)){
+	SpeciesCaMKIICylinder (SpeciesCaMKIICylinder &&rhs) noexcept : SpeciesBound(move(rhs)){
 	}
 
 	/// Regular Assignment
-	SpeciesCaMKIIDummyCylinder& operator=(const SpeciesCaMKIIDummyCylinder& rhs)  {
+	SpeciesCaMKIICylinder& operator=(const SpeciesCaMKIICylinder& rhs)  {
 		SpeciesBound::operator=(rhs);
 		return *this;
 	}
 
 	/// Move assignment
-	SpeciesCaMKIIDummyCylinder& operator=(SpeciesCaMKIIDummyCylinder&& rhs)
+	SpeciesCaMKIICylinder& operator=(SpeciesCaMKIICylinder&& rhs)
 	{
 		SpeciesBound::operator=(move(rhs));
 		return *this;
 	}
 
-	virtual SpeciesCaMKIIDummyCylinder* clone() {
-		return new SpeciesCaMKIIDummyCylinder(*this);
+	virtual SpeciesCaMKIICylinder* clone() {
+		return new SpeciesCaMKIICylinder(*this);
 	}
 
-	/// Return the full name of this Species in a string format (e.g. "Arp2/3{CaMKIIer}"
-	virtual string getFullName() const {return getName() + "{CaMKIIDummyCylinder}";}
+	/// Return the full name of this Species in a string format
+	virtual string getFullName() const {return getName() + "{CaMKIICylinderSpecies}";}
 
 	/// Default destructor
-	~SpeciesCaMKIIDummyCylinder () noexcept {};
+	~SpeciesCaMKIICylinder () noexcept {};
 };
 
 

@@ -40,7 +40,7 @@
 #include "Linker.h"
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
-#include "CaMKIIingPoint.h"
+#include "Structure/CaMKII/CaMKIIingPoint.h"
 #include "Bubble.h"
 #include "MTOC.h"
 

@@ -47,9 +47,7 @@ public:
     //@}
     
     /// Set parent
-    void setCaMKIIingPoint(CaMKIIingPoint* CaMKIIingPoint) {
-        _pCaMKIIingPoint = CaMKIIingPoint;
-    }
+    void setCaMKIIingPoint(CaMKIIingPoint* CaMKIIingPoint) {_pCaMKIIingPoint = CaMKIIingPoint;}
     /// Get parent
     CaMKIIingPoint* getCaMKIIingPoint() {return _pCaMKIIingPoint;}
     

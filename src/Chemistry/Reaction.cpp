@@ -113,8 +113,6 @@ void DiffusionReaction::updatePropensityImpl() {
 template <unsigned short M, unsigned short N>
 void* Reaction<M,N>::operator new(size_t size) {
     void *ptr = boost::fast_pool_allocator<Reaction<M,N>>::allocate();
-    ((Reaction<M,N>*) ptr)->__M = M;
-    ((Reaction<M,N>*) ptr)->__N = N;
     return ptr;
 }
 
@@ -158,24 +156,25 @@ template void* Reaction<2,4>::operator new(size_t size);
 template void Reaction<2,4>::operator delete(void* ptr);
 template void* Reaction<2,5>::operator new(size_t size);
 template void Reaction<2,5>::operator delete(void* ptr);
-template void* Reaction<2,6>::operator new(size_t size); //added for CaMKII
-template void Reaction<2,6>::operator delete(void* ptr); //added for CaMKII
 template void* Reaction<4,0>::operator new(size_t size);
 template void Reaction<4,0>::operator delete(void* ptr);
 template void* Reaction<5,2>::operator new(size_t size);
 template void Reaction<5,2>::operator delete(void* ptr);
 template void* Reaction<4,2>::operator new(size_t size);
 template void Reaction<4,2>::operator delete(void* ptr);
-template void* Reaction<6,2>::operator new(size_t size); //added for CaMKII
-template void Reaction<6,2>::operator delete(void* ptr); //added for CaMKII
 #endif
 
-//CaMKII
-template void Reaction<1,0>::updatePropensityImpl();
-template Reaction<1,0>* Reaction<1,0>::cloneImpl(SpeciesPtrContainerVector const&);
-template void Reaction<1,0>::passivateReactionImpl();
+
+//CaMKII - Added for CaMKII purposes
+#ifdef BOOST_MEM_POOL
 template void* Reaction<1,0>::operator new(size_t size);
 template void Reaction<1,0>::operator delete(void* ptr);
+template void* Reaction<2,6>::operator new(size_t size);
+template void Reaction<2,6>::operator delete(void* ptr);
+template void* Reaction<6,2>::operator new(size_t size);
+template void Reaction<6,2>::operator delete(void* ptr);
+#endif
+
 
 
 template void Reaction<1,1>::updatePropensityImpl();
@@ -237,12 +236,6 @@ template void Reaction<2,5>::activateReactionUnconditionalImpl();
 template void Reaction<2,5>::passivateReactionImpl();
 template Reaction<2,5>* Reaction<2,5>::cloneImpl(const SpeciesPtrContainerVector &spcv);
 
-//added for CaMKII
-template void Reaction<2,6>::updatePropensityImpl();
-template void Reaction<2,6>::activateReactionUnconditionalImpl();
-template void Reaction<2,6>::passivateReactionImpl();
-template Reaction<2,6>* Reaction<2,6>::cloneImpl(const SpeciesPtrContainerVector &spcv);
-
 template void Reaction<4,0>::updatePropensityImpl();
 template void Reaction<4,0>::activateReactionUnconditionalImpl();
 template void Reaction<4,0>::passivateReactionImpl();
@@ -258,10 +251,22 @@ template void Reaction<4,2>::activateReactionUnconditionalImpl();
 template void Reaction<4,2>::passivateReactionImpl();
 template Reaction<4,2>* Reaction<4,2>::cloneImpl(const SpeciesPtrContainerVector &spcv);
 
+
+//CaMKII - Added for CaMKII purposes
+template void Reaction<1,0>::updatePropensityImpl();
+template void Reaction<1,0>::activateReactionUnconditionalImpl();
+template void Reaction<1,0>::passivateReactionImpl();
+template Reaction<1,0>* Reaction<1,0>::cloneImpl(const SpeciesPtrContainerVector &spcv);
+
+//added for CaMKII
+template void Reaction<2,6>::updatePropensityImpl();
+template void Reaction<2,6>::activateReactionUnconditionalImpl();
+template void Reaction<2,6>::passivateReactionImpl();
+template Reaction<2,6>* Reaction<2,6>::cloneImpl(const SpeciesPtrContainerVector &spcv);
+
 //added for CaMKII
 template void Reaction<6,2>::updatePropensityImpl();
 template void Reaction<6,2>::activateReactionUnconditionalImpl();
 template void Reaction<6,2>::passivateReactionImpl();
 template Reaction<6,2>* Reaction<6,2>::cloneImpl(const SpeciesPtrContainerVector &spcv);
-
 

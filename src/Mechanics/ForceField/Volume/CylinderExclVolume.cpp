@@ -32,10 +32,7 @@ double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double d) {
         for(auto &cn : _neighborList->getNeighbors(ci)) {
             
             //do not calculate exvol for a branching cylinder
-            //do not calculate exvol for a camkiiing cylinder,
             //Since b3 == b4 for CaMKII cylinder we expect the exclusion energy should be 0
-            //TODO: Implement or remove CAMKIIingCylinder
-            //TODO: UMD_Trip: skip CaMKII and its bound filaments from exclusion volume
             if(!cn->isFullLength() ||
                cn->getBranchingCylinder() == ci
 //               || cn->getCaMKIIingCylinder() == ci

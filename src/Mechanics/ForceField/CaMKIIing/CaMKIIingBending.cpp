@@ -15,7 +15,7 @@
 
 #include "CaMKIIingBendingCosine.h"
 
-#include "CaMKIIingPoint.h"
+#include "Structure/CaMKII/CaMKIIingPoint.h"
 #include "Cylinder.h"
 #include "Bead.h"
 

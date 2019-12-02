@@ -18,7 +18,7 @@
 #include "Cylinder.h"
 #include "Bubble.h"
 #include "BoundaryElement.h"
-#include "CaMKIIingPoint.h"
+#include "Structure/CaMKII/CaMKIIingPoint.h"
 
 #include "GController.h"
 #include "MathFunctions.h"

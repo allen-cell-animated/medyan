@@ -24,16 +24,12 @@
 #include "SysParams.h"
 #include "MathFunctions.h"
 #include "Rand.h"
-#include "../GController.h"
+#include "GController.h"
 
 using namespace mathfunc;
 
 CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double position, vector<double> &cp)
     : Trackable(true), _camkiiType(camkiiType), _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()) {
-
-	assert(camkiiType == 0);
-
-	_position = position;
 
     int pos = int(position * SysParams::Geometry().cylinderNumMon[cylinder->getType()]);
 
@@ -49,23 +45,25 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double posi
 #endif
 
 
-//    vector<double> _tmp_coordinate(3, 0.0);
-    vector<double> &_tmp_coordinate = cp;
-
     // Creating and initializing CaMKII cylinder
-    Bead* b1 = _subSystem->addTrackable<Bead>(_tmp_coordinate, nullptr, 0);
+    Bead* b1 = _subSystem->addTrackable<Bead>(cp, nullptr, 0);
+
+    // Always point the coordinate of the first bead
     coordinate = &b1->coordinate;
+
+    // Creating the CaMKII cylinder
     setCaMKIICylinder(_subSystem->addTrackable<CaMKIICylinder>(this, b1, _filType, 0));
+
+    // Add the first bond to the CaMKII
 	addBond(cylinder, pos);
     _camkiiCylinder->addToFilamentBindingManagers();
 
-    // Setting the first species to CaMKII dummy cylinder species
-	SpeciesBound* sfs = _camkiiCylinder->getCCylinder()->getCMonomer(0)->speciesCaMKIIDummyCylinder(camkiiType);
+    // Setting the first species to CaMKII cylinder species
+	SpeciesBound* sfs = _camkiiCylinder->getCCylinder()->getCMonomer(0)->speciesCaMKIICylinder(camkiiType);
     _cCaMKIIingPoint->setFirstSpecies(sfs);
 
 
 	//Find compartment
-//	updateCoordinate(coordinate);
 	try {_compartment = GController::getCompartment(*coordinate);}
 	catch (exception& e) {
 		cout << e.what();
@@ -82,61 +80,15 @@ void CaMKIIingPoint::addBond(Cylinder *c, short pos) {
 
 }
 
-void CaMKIIingPoint::updateCoordinate(vector<double> *coordinate) {
-
-    cerr << "=======MILLAD: updateCoordinate should not be called!" << endl;
-    exit(1);
-
-	//Calculate the midpoint coordinate
-	vector<double> temp(3, 0.0);
-	for (size_t i = 0; i < _bonds.size(); i++) {
-		Cylinder *bond = get<0>(_bonds[i]);
-		auto pos = get<1>(_bonds[i]);
-		double position = double(pos) / double(SysParams::Geometry().cylinderNumMon[bond->getType()]);
-		auto mp = midPointCoordinate(bond->_b1->coordinate, bond->_b2->coordinate, position);
-		temp[0] += mp[0];
-		temp[1] += mp[1];
-		temp[2] += mp[2];
-	}
-
-	// Set the CaMKII coordinates
-	for (size_t i = 0; i < 3; i++) {
-		(*coordinate)[i] = temp[i] / _bonds.size();
-		//Constraints the coordinates inside the box
-		if ((*coordinate)[i] > GController::getSize()[i])
-			(*coordinate)[i] = GController::getSize()[i] - 1E-5;
-
-		if ((*coordinate)[i] < 0.0)
-			(*coordinate)[i] = 0.0 + 1E-5;
-	}
-}
-
 CaMKIIingPoint::~CaMKIIingPoint() noexcept {
-	//TODO: _subSystem->removeTrackable<unique_ptr<CaMKIICylinder>>(_camkiiCylinder);
+	// removeTrackable of CaMKIICylinder is moved to CaMKIIingPointUnbindingCallback.
 }
 
 void CaMKIIingPoint::updatePosition() {
 
-#ifdef CHEMISTRY
-    //update ccylinders
-//    for (size_t i=0; i<_bonds.size(); i++)
-//        _cCaMKIIingPoint->setConnectedCCylinder(getCylinder(i)->getCCylinder());
-//	_cCaMKIIingPoint->setConnectedCCylinder(get<0>(_bonds[0])->getCCylinder());
-
-//	auto ccyl=get<0>(_bonds[0]);
-//	if(ccyl == nullptr){
-//	    //A cylinder was removed
-//	    cerr << "CC1 is NULL\n";
-//		exit(1);
-//	}
-//	assert(_bonds.size() == 1);
-
-#endif
-
 	assert(coordinate != nullptr);
+
     //Find compartment
-//    updateCoordinate(coordinate);
-    
     Compartment* c;
     
     try {c = GController::getCompartment(*coordinate);}
@@ -190,8 +142,13 @@ void CaMKIIingPoint::printSelf() {
 }
             
 species_copy_t CaMKIIingPoint::countSpecies(const string& name) {
-	// TODO: make countSpecies count for numbers of CA species on cylinder from bonds
-    species_copy_t copyNum = 0;
+
+	/*
+	 * This function counts the total number of the CaMKII cylinder species in the system.
+	 * In case of multiple type of CaMKII, sname and name as in countSpecies(const string& name) should be implemented.
+	 */
+
+	species_copy_t copyNum = 0;
 
     for(auto b : _camkiiingPoints.getElements()) {
 
@@ -199,37 +156,17 @@ species_copy_t CaMKIIingPoint::countSpecies(const string& name) {
         string sname = SpeciesNamesDB::removeUniqueFilName(s->getName());
 
         if(sname == (name + "D"))
-//            copyNum += s->getN();
 			copyNum += 1;
     }
     return copyNum;
 }
 
-species_copy_t CaMKIIingPoint::countDummySpecies(const string& name) {
+species_copy_t CaMKIIingPoint::countCaMKIICylinderSpecies(const string &name) {
 
 	/*
-	 * This function counts the total number of the dummy cylinder species in the system.
+	 * This function counts the total number of the CaMKII cylinder species in the system.
 	 * In case of multiple type of CaMKII, sname and name as in countSpecies(const string& name) should be implemented.
 	 */
-
-#if 0
-	species_copy_t copyNum = 0;
-
-	for(auto b : _camkiiingPoints.getElements()) {
-
-		auto c = b->getCaMKIICylinder();
-
-		for(int i = 0; i < c->getCCylinder()->getSize(); i++) {
-			auto m = c->getCCylinder()->getCMonomer(i);
-
-			//CaMKII species
-			const int activeIndex = m->activeSpeciesCaMKIIDummyCylinder();
-
-			if(activeIndex != -1) copyNum++;
-		}
-	}
-	return copyNum;
-#endif
 
 	species_copy_t copyNum = 0;
 
@@ -253,8 +190,8 @@ tuple<Cylinder*, short> CaMKIIingPoint::removeRandomBond(CaMKIIBundlingManager* 
 	size_t index = (size_t) Rand::randInteger(0, sz-1);
 	tuple<Cylinder*, short> bondToRemove = _bonds[index];
 
-	// Adding back the rest of cylinders of the filament to possible binding before
-	// adding back the corresponding cylinder.
+	// Adding back the rest of cylinders of the filament to possible binding
+	// before adding back the corresponding cylinder.
 	_bManager->addAllCylindersOfFilamentToCaMKIIPossibleBindings(get<0>(bondToRemove), this);
 
 	_cCaMKIIingPoint->removeBond(get<0>(bondToRemove)->getCCylinder(), get<1>(bondToRemove));
@@ -269,7 +206,7 @@ void CaMKIIingPoint::updateReactionRates() {
 	//get the unbinding reaction
 	ReactionBase* offRxn = getCCaMKIIingPoint()->getOffReaction();
 
-	//change the rate
+	// The propensity of off reaction depends on the coordination number as tracked by species CaMKII cylinder.
 	float newRate = offRxn->getBareRate();
 	if(SysParams::RUNSTATE==false)
 		newRate=0.0;
@@ -277,8 +214,6 @@ void CaMKIIingPoint::updateReactionRates() {
 	offRxn->setRate(newRate);
 	offRxn->activateReaction();
 	offRxn->updatePropensity();
-//	assert(offRxn->isPassivated() == true);
-
 }
 
 

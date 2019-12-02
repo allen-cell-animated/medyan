@@ -407,9 +407,9 @@ public:
     /// Add a camkiier species to this compartment
     /// @param args - any number of SpeciesCaMKIIer objects
     template<typename ...Args>
-    SpeciesCaMKIIDummyCylinder* addSpeciesCaMKIIDummyCylinder(Args&& ...args) {
-        SpeciesCaMKIIDummyCylinder *sp =
-                (SpeciesCaMKIIDummyCylinder*)(_species.addSpecies<SpeciesCaMKIIDummyCylinder>(forward<Args>(args)...));
+    SpeciesCaMKIICylinder* addSpeciesCaMKIICylinder(Args &&...args) {
+        SpeciesCaMKIICylinder *sp =
+                (SpeciesCaMKIICylinder*)(_species.addSpecies<SpeciesCaMKIICylinder>(forward<Args>(args)...));
         sp->setParent(this);
         _diffusion_rates[sp->getMolecule()]=-1.0;
         return sp;

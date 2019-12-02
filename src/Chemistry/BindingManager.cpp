@@ -28,7 +28,7 @@
 #include "MathFunctions.h"
 #include "GController.h"
 #include "SysParams.h"
-#include "../Structure/CaMKIICylinder.h"
+#include "Structure/CaMKII/CaMKIICylinder.h"
 
 using namespace mathfunc;
 

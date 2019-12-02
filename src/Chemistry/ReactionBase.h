@@ -101,7 +101,6 @@ protected:
     CBound* _cBound = nullptr; ///< CBound that is attached to this reaction
     
 public:
-	unsigned short __M=-1, __N=-1;
     /// The main constructor:
     /// @param rate - the rate constant for this ReactionBase
     ReactionBase (float rate, bool isProtoCompartment);

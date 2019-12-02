@@ -131,7 +131,7 @@ void SystemParser::readChemParams() {
                 for(int i = 1; i < lineVector.size(); i++) {
                     int readValue = atoi(lineVector[i].c_str());
 					CParams.numCaMKIIerSpecies.push_back(readValue);
-					CParams.numCaMKIIDummyCylinderSpecies.resize(MAX_FILAMENT_TYPES, readValue);
+					CParams.numCaMKIICylinderSpecies.resize(MAX_FILAMENT_TYPES, readValue);
 				}
             }
         }
@@ -1608,7 +1608,7 @@ void SystemParser::readGeoParams() {
     }
 
     /*
-     * These parameters are resized to accommodate the dummy cylinder in CaMKII.
+     * These parameters are resized to accommodate the CaMKII cylinder in CaMKII.
      */
 	cylinderSize.resize(MAX_FILAMENT_TYPES, 3.0);
 	monomerSize.resize(MAX_FILAMENT_TYPES, 1.0);
@@ -1629,17 +1629,17 @@ void SystemParser::readGeoParams() {
     
     for(int i = 0; i < GParams.cylinderSize.size(); i++) {
 
+#ifdef CHEMISTRY
     	// This filter should only be applied to non-CaMKII cylinders.
         if(i != CAMKII_CYLINDER_FILAMENT_TYPE) {
-#ifdef CHEMISTRY
 			if (cylinderSize[i] / monomerSize[i] < SysParams::Geometry().minCylinderNumMon) {
 				cout <<
 					 "With chemistry, cylinder size specified is too short. Exiting."
 					 << endl;
 				exit(EXIT_FAILURE);
 			}
-#endif
 		}
+#endif
 
         GParams.cylinderNumMon.push_back(int(cylinderSize[i] / monomerSize[i]));
 
@@ -1843,7 +1843,6 @@ BubbleSetup SystemParser::readBubbleSetup() {
                 boundVector.emplace_back(boundType, type, coord3);
             }
         }
-        //aravind Feb 19, 2016. Parase Linkers, Motors. James CaMKII jli013
         else if(lineVector.size()==5) {
             vector<double> coord1;
             vector<vector<double>> coord3;
@@ -1863,7 +1862,7 @@ BubbleSetup SystemParser::readBubbleSetup() {
             }
         }
     }
-      tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>>,vector<tuple<string, short, vector<double>>> , vector<vector<double>> > returnVector=make_tuple(filamentVector,boundVector,branchVector, camkiiVector, staticVector);
+    auto returnVector=make_tuple(filamentVector,boundVector,branchVector, camkiiVector, staticVector);
     return returnVector;
 }
 
@@ -2119,7 +2118,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
 
 				chem.speciesCaMKIIer[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
 
-				chem.speciesCaMKIIDummyCylinder[CAMKII_CYLINDER_FILAMENT_TYPE].push_back(lineVector[1]+"D");
+				chem.speciesCaMKIICylinder[CAMKII_CYLINDER_FILAMENT_TYPE].push_back(lineVector[1]+"D");
             }
             else {}
         }

@@ -43,6 +43,8 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 
 /// CaMKII filament type constant
 #define CAMKII_CYLINDER_FILAMENT_TYPE (MAX_FILAMENT_TYPES-1)
+/// The upper limit for the maximum coordination number a CaMKII (used by species CaMKII cylinder)
+#define CAMKII_MAX_COORD_NUMBER_UPPER_LIMIT 20
 
 //@{
 /// Constant Species index identifiers
@@ -59,7 +61,7 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 
 /// CAMKII-related constants
 #define SPECIESCAMKIIER					4
-#define SPECIESCAMKIIDUMMYCYLINDER		5
+#define SPECIESCAMKIICYLINDER		5
 //@}
 
 //@{

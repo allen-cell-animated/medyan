@@ -167,7 +167,7 @@ struct ChemistryData {
     vector<vector<string>> speciesMotor;
     vector<vector<string>> speciesBrancher;
     vector<vector<string>> speciesCaMKIIer;
-    vector<vector<string>> speciesCaMKIIDummyCylinder;
+    vector<vector<string>> speciesCaMKIICylinder;
     //@}
     
     //@{
@@ -204,7 +204,7 @@ struct ChemistryData {
       speciesMotor(MAX_FILAMENT_TYPES),
       speciesBrancher(MAX_FILAMENT_TYPES),
 	  speciesCaMKIIer(MAX_FILAMENT_TYPES),
-	  speciesCaMKIIDummyCylinder(MAX_FILAMENT_TYPES),
+	  speciesCaMKIICylinder(MAX_FILAMENT_TYPES),
 
       B_BINDING_INDEX(MAX_FILAMENT_TYPES),
       CaMKII_BINDING_INDEX(MAX_FILAMENT_TYPES),

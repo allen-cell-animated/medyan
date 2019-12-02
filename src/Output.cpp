@@ -24,7 +24,7 @@
 #include "Linker.h"
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
-#include "CaMKIIingPoint.h"
+#include "Structure/CaMKII/CaMKIIingPoint.h"
 #include "Bubble.h"
 
 #include "Boundary.h"
@@ -806,9 +806,9 @@ void Chemistry::print(int snapshot) {
 
     }
 
-    for(auto sb : _chemData.speciesCaMKIIDummyCylinder[CAMKII_CYLINDER_FILAMENT_TYPE]) {
-        auto copyNum = CaMKIIingPoint::countDummySpecies(sb);
-        _outputFile << sb << ":CAMKIIDUMMYCYLINDER " << copyNum << endl;
+    for(auto sb : _chemData.speciesCaMKIICylinder[CAMKII_CYLINDER_FILAMENT_TYPE]) {
+        auto copyNum = CaMKIIingPoint::countCaMKIICylinderSpecies(sb);
+        _outputFile << sb << ":CAMKIIBONDS " << copyNum << endl;
     }
 
     _outputFile <<endl;

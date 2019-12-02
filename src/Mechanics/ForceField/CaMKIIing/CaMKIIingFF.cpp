@@ -25,7 +25,7 @@
 #include "CaMKIIingPosition.h"
 #include "CaMKIIingPositionCosine.h"
 
-#include "CaMKIIingPoint.h"
+#include "Structure/CaMKII/CaMKIIingPoint.h"
 
 CaMKIIingFF::CaMKIIingFF(string& stretching, string& bending,
                          string& dihedral, string& position)

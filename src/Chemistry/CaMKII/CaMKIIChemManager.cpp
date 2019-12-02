@@ -72,11 +72,10 @@ void CaMKIIChemManager::initCMonomerCaMKII(ChemistryData &_chemData, CMonomer *m
 		m->_speciesBound[bIndex] = sca;
 		bIndex++;
 	}
-	for (auto &ca : _chemData.speciesCaMKIIDummyCylinder[filamentType]) {
-		SpeciesCaMKIIDummyCylinder *sca =
-				c->addSpeciesCaMKIIDummyCylinder(SpeciesNamesDB::genUniqueFilName(ca));
-		// TODO: Set this number to max coordination number
-		sca->getRSpecies().setUpperLimitForN(20);
+	for (auto &ca : _chemData.speciesCaMKIICylinder[filamentType]) {
+		SpeciesCaMKIICylinder *sca =
+				c->addSpeciesCaMKIICylinder(SpeciesNamesDB::genUniqueFilName(ca));
+		sca->getRSpecies().setUpperLimitForN(CAMKII_MAX_COORD_NUMBER_UPPER_LIMIT);
 		m->_speciesBound[bIndex] = sca;
 		bIndex++;
 	}
@@ -256,6 +255,7 @@ void CaMKIIChemManager::genFilBindingReactionsCaMKII(SubSystem *_subSystem, Chem
 		ConnectionBlock rcb(rxn->connect(camkiicallback, false));
 	}
 
+
 	for (auto &r: _chemData.camkiibundlingReactions[filType]) {
 
 		vector<Species *> reactantSpecies;
@@ -274,7 +274,7 @@ void CaMKIIChemManager::genFilBindingReactionsCaMKII(SubSystem *_subSystem, Chem
 		string camkiierName;
 
 		//FIRST PRODUCT SPECIES MUST BE CAMKIIER
-		short camkiierInt;
+		short camkiierProductInt, camkiierReactantInt;
 
 		auto product = products[0];
 		if (product.find("CAMKIIER") != string::npos) {
@@ -288,7 +288,7 @@ void CaMKIIChemManager::genFilBindingReactionsCaMKII(SubSystem *_subSystem, Chem
 				camkiierName = name;
 
 				//get position of iterator
-				camkiierInt = distance(_chemData.speciesCaMKIIer[filType].begin(), it);
+				camkiierProductInt = distance(_chemData.speciesCaMKIIer[filType].begin(), it);
 			} else {
 				cout <<
 					 "A camkiier species that was included in a CaMKII bundling reaction was not initialized. Exiting."
@@ -309,17 +309,18 @@ void CaMKIIChemManager::genFilBindingReactionsCaMKII(SubSystem *_subSystem, Chem
 			//Look up species, make sure in list
 			string name = reactant.substr(0, reactant.find(":"));
 			auto it = find(_chemData.speciesCaMKIIer[filType].begin(), _chemData.speciesCaMKIIer[filType].end(), name);
-			int position = 0;
 
 			if (it != _chemData.speciesCaMKIIer[filType].end()) {
 
 				camkiierName = name;
 
 				//get position of iterator
-				position = distance(_chemData.speciesCaMKIIer[filType].begin(), it);
-				if (position >= SysParams::CParams.camkiierBundlingBoundIndex[filType]) {
+				camkiierReactantInt = distance(_chemData.speciesCaMKIIer[filType].begin(), it);
+
+				// The product and reactant should be the same.
+				if (camkiierProductInt != camkiierReactantInt) {
 					cout <<
-						 "First species listed in a CaMKII bundling reaction must be the camkiier. Exiting."
+						 "First species listed in a CaMKII bundling reaction must be the same camkiier as the product. Exiting."
 						 << endl;
 					exit(EXIT_FAILURE);
 				}
@@ -378,7 +379,7 @@ void CaMKIIChemManager::genFilBindingReactionsCaMKII(SubSystem *_subSystem, Chem
 		float offRate = get<3>(r);
 		auto temp = SysParams::CaMKIIUnbundlingBareRate;
 		if (temp.size() > 0)
-			temp[camkiierInt] = offRate;
+			temp[camkiierProductInt] = offRate;
 		else
 			temp.push_back(offRate);
 		SysParams::CaMKIIUnbundlingBareRate = temp;
@@ -391,7 +392,7 @@ void CaMKIIChemManager::genFilBindingReactionsCaMKII(SubSystem *_subSystem, Chem
 		C->addInternalReaction(rxn);
 
 		//create manager
-		CaMKIIBundlingManager *bManager = new CaMKIIBundlingManager(rxn, C, camkiierInt, camkiierName,
+		CaMKIIBundlingManager *bManager = new CaMKIIBundlingManager(rxn, C, camkiierProductInt, camkiierName,
 																	filType, rMax, rMin, maxCoordination);
 		C->addFilamentBindingManager(bManager);
 
@@ -420,14 +421,6 @@ void CaMKIIChemManager::initializeManagers(SubSystem *_subSystem, Compartment *C
 
 			CaMKIIBundlingManager::_neighborLists.push_back(nl);
 			_subSystem->addNeighborList(nl);
-
-//				auto nl2 =
-//				new CaMKIIingPointCylinderNL(bManager->getRMax() + SysParams::Geometry().cylinderSize[filType],
-//						max(bManager->getRMin() - SysParams::Geometry().cylinderSize[filType], 0.0), true);
-//
-//				//add to subsystem and manager
-//                CaMKIIBundlingManager::_neighborLists.push_back(nl2);
-//                _subSystem->addNeighborList(nl2);
 		}
 	}
 

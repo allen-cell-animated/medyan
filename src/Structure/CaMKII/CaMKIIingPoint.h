@@ -44,10 +44,8 @@ private:
     unique_ptr<CCaMKIIingPoint> _cCaMKIIingPoint; ///< Pointer to chem camkii point
     unique_ptr<CaMKIICylinder> _camkiiCylinder; ///< Pointer to CaMKIICylinder
 
-
+	// This holds the bonds of a CaMKII.
     vector<tuple<Cylinder*, short>> _bonds;
-
-    double _position;
 
     short _camkiiType; ///< Integer specifying the type
     
@@ -61,19 +59,13 @@ private:
     
     static Database<CaMKIIingPoint*> _camkiiingPoints; ///< Collection in SubSystem
 
-    ///Helper to get coordinate
-    void updateCoordinate(vector<double> *coordinate);
-    
-    void updateCaMKIIingPointCoM();
-
-
 public:
 	/*
 	 * The "coordinate" in CaMKIIingPoint is a pointer
 	 * while
 	 * the "coordinate" in BranchingPoint is a value.
 	 *
-	 * This coordinate basically points to the bead that creates the CaMKIIingPoint.
+	 * The CaMKIIingPoint coordinate points to the bead that creates the CaMKIIingPoint.
 	 */
     vector<double> *coordinate; ///< coordinate of midpoint,
                                ///< updated with updatePosition()
@@ -94,7 +86,7 @@ public:
 
 	Cylinder *getFirstCylinder() { return get<0>(_bonds.at(0)); }
 
-	Cylinder *getSecondCylinder() { return get<0>(_bonds.at(1)); } //TODO fix
+	Cylinder *getSecondCylinder() { return get<0>(_bonds.at(1)); } //TODO Remove this deprecated function
 	size_t getCoordinationNumber() { return _bonds.size(); }
 
 	CaMKIICylinder *getCaMKIICylinder() { return _camkiiCylinder.get(); }
@@ -119,8 +111,11 @@ public:
 
     //@{
     /// Position management
-    double getPosition() {return _position;}
-    //void setPosition(double position) {_position = position;}
+    /// This method should be removed eventually. It is a DEPRECATED method.
+    double getPosition() {
+		assert(false && "==== CAMKII: DEPRECATED Method - There is not a single position associated with a CaMKIIPoint. Every bond is associated with a position. ");
+		return 0;
+	}
     //@}
     
     //@{
@@ -156,10 +151,13 @@ public:
     
     virtual void printSelf();
     
-    /// Count the number of camkiier species and dummy species with a given name in the system
+    /// Count the number of camkiier species and species with a given name in the system
 	static species_copy_t countSpecies(const string& name);
-	static species_copy_t countDummySpecies(const string& name);
+	static species_copy_t countCaMKIICylinderSpecies(const string &name);
 
+	/// Chooses a bond randomly and removes it.
+	/// The random process is using the random number generator of MEDYAN.
+	// TODO: For the implementations of the mechanicochemical feedback of CaMKII, change this routine.
 	tuple<Cylinder*, short> removeRandomBond(CaMKIIBundlingManager* _bManager);
 
     void updateReactionRates();

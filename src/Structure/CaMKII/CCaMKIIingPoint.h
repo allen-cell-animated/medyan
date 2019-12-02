@@ -45,11 +45,11 @@ private:
     // creating the reaction during the unbundling chemical callback.
 	double _offRateBinding;
 
-	// The corresponding diffusing species
+	// The corresponding diffusing species for future use of CaMKII
     // For example: "CD" as diffusing CaMKII
     string _diffusingSpeciesName;
 
-    SpeciesBound *getSpeciesCaMKIIDummyCylinder() const;
+    SpeciesBound *getSpeciesCaMKIICylinder() const;
 
 public:
     /// Default constructor and destructor
@@ -80,15 +80,8 @@ public:
     
     /// Clone, calls copy constructor
     virtual CCaMKIIingPoint* clone(Compartment* c) {
-        
         CCaMKIIingPoint* cb = new CCaMKIIingPoint(*this, c);
         _offRxn = nullptr;
-//        if(cb->_offRxn == NULL || _offRxn != NULL) {
-//        	cerr << "Off reaction is NULL at " << __FILE__ << " (" << __LINE__
-//        	<< ") - cb->offRxn == NULL (" << (cb->_offRxn == NULL) << ") _offRxn != NULL ("
-//        	<< (_offRxn != NULL) << ")" << endl;
-//        	exit(1);
-//        }
         return cb;
     }
     
@@ -96,36 +89,19 @@ public:
     void setCaMKIIingPoint(CaMKIIingPoint* CaMKIIingPoint) {
         _pCaMKIIingPoint = CaMKIIingPoint;
     }
-    /// Get parent
-    CaMKIIingPoint* getCaMKIIingPoint() {return _pCaMKIIingPoint;}
 
     virtual void createOffReaction(ReactionBase* onRxn, SubSystem* ps);
     void createOffReactionCaMKII(ReactionBase* onRxn, SubSystem* ps, FilamentBindingManager *fm);
-
-    void setConnectedCCylinder(CCylinder* cc){
-        //TODO - implement the case with multiple bonds
-        _cc1 = cc;
-    };
 
     void createOffReactionBinding(ReactionBase* onRxn, SubSystem *ps);
     void createOffReactionBundling(SubSystem *ps, FilamentBindingManager *fm);
 
 
-    ReactionBase *getOffRxnBinding() {
-        return _offRxnBinding;
-    }
-    ReactionBase *getOffRxnBundling() {
+    ReactionBase *getOffRxnBinding() { return _offRxnBinding;}
+    ReactionBase *getOffRxnBundling() { return _offRxnBundling;}
 
-        return _offRxnBundling;
-    }
-
-    void setOffRxnBinding(ReactionBase *p) {
-        _offRxnBinding = p;
-    }
-
-    void setOffRxnBundling(ReactionBase *p) {
-        _offRxnBundling = p;
-    }
+    void setOffRxnBinding(ReactionBase *p) {_offRxnBinding = p;}
+    void setOffRxnBundling(ReactionBase *p) {_offRxnBundling = p;}
 
 	float getOffRateBinding() {return _offRateBinding;}
 	void  setOffRateBinding(float offRate) {_offRateBinding = offRate;}
