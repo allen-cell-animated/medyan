@@ -14,12 +14,12 @@
 
 SOURCES_TEST             := $(shell find ./TESTS -name '*.cpp')
 SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './TESTS/*' ! -path './dist_moduleV2/*')
-#SOURCES_CPP              += ./dist_moduleV2/dist_avx_par.cpp  ./dist_moduleV2/dist_bench.cpp  ./dist_moduleV2/dist_example.cpp  ./dist_moduleV2/dist_mod_vars.cpp
+SOURCES_CPP              += ./dist_moduleV2/dist_avx_par.cpp  ./dist_moduleV2/dist_bench.cpp  ./dist_moduleV2/dist_example.cpp  ./dist_moduleV2/dist_mod_vars.cpp
 SOURCES_CPP_WITHOUT_MAIN := $(filter-out ./MEDYAN.cpp,$(SOURCES_CPP))
 SOURCES_CU               := $(shell find . -name '*.cu'  ! -path './TESTS/*' ! -path './dist_moduleV2/*')
 SOURCES                   = $(SOURCES_CPP) $(SOURCES_CU)
 HEADERS                  := $(shell find . -name '*.h' ! -path './dist_moduleV2/*')
-#HEADERS                  += ./dist_moduleV2/umesimd/UMESimd.h
+HEADERS                  += ./dist_moduleV2/umesimd/UMESimd.h
 
 OBJECTS_TEST             := $(SOURCES_TEST:.cpp=.o)
 OBJECTS_CPP              := $(SOURCES_CPP:.cpp=.o)
@@ -92,8 +92,8 @@ CPPFLAGS += -DDYNAMICRATES
 CPPFLAGS += -DSERIAL
 #neighbors list calculations
 #CPPFLAGS += -DNLORIGINAL
-CPPFLAGS += -DHYBRID_NLSTENCILLIST
-#CPPFLAGS += -DSIMDBINDINGSEARCH
+#CPPFLAGS += -DHYBRID_NLSTENCILLIST
+CPPFLAGS += -DSIMDBINDINGSEARCH
 #Boost memory macros
 CPPFLAGS += -DBOOST_MEM_POOL
 CPPFLAGS += -DBOOL_POOL_NSIZE=65536
