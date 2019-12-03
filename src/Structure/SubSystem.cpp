@@ -19,10 +19,13 @@
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"
 #include <vector>
+#include "Cylinder.h"
+#ifdef SIMDBINDINGEARCH
 #include "dist_moduleV2/dist_driver.h"
 #include "dist_moduleV2/dist_coords.h"
 #include "dist_moduleV2/dist_common.h"
-#include "Cylinder.h"
+#endif
+
 using namespace mathfunc;
 void SubSystem::resetNeighborLists() {
 #ifdef CUDAACCL_NL

@@ -34,88 +34,90 @@
 
 vector<short> HybridBindingSearchManager::HNLIDvec;
 using namespace mathfunc;
+
+void HybridBindingSearchManager::setbindingsearchparameter
+		(FilamentBindingManager* fmanager, short bstatepos, short ftype1, short
+		ftype2, float rMax, float rMin){
+
+	unordered_map<uint32_t, vector<uint32_t>> tempuint;
+	unordered_map<uint32_t, vector<uint32_t>> rtempuint;
+	int tempNbind;
+
+	bool isfound = false;
+	vector<short> ftypepairs;
+	if(ftype1 < ftype2)
+		ftypepairs = {ftype1,ftype2};
+	else
+		ftypepairs = {ftype2, ftype1};
+	for(short idx = 0; idx < totaluniquefIDpairs; idx++){
+		vector<short> fIDpair = _filamentIDvec[idx];
+		if(fIDpair[0] != ftypepairs[0] || fIDpair[1] != ftypepairs[1]) continue;
+		else {
+			isfound = true;
+			_rMaxsqvec[idx].push_back(rMax *rMax);
+			_rMinsqvec[idx].push_back(rMin *rMin);
+			fManagervec[idx].push_back(fmanager);
+
+			_possibleBindingsstencilvecuint[idx].push_back(tempuint);
+			_reversepossibleBindingsstencilvecuint[idx].push_back(rtempuint);
+			bstateposvec[idx].push_back(bstatepos);
+			Nbindingpairs[idx].push_back(tempNbind);
+			break;
+		}
+	}
+	if(isfound == false){
+		vector<unordered_map<uint32_t, vector<uint32_t>>> temp2uint;
+		vector<unordered_map<uint32_t, vector<uint32_t>>> rtemp2uint;
+
+		vector<int> tempNbind2={0};
+		temp2uint.push_back(tempuint);
+		rtemp2uint.push_back(rtempuint);
+
+		Nbindingpairs.push_back(tempNbind2);
+		vector<float> localrmaxsq ={rMax * rMax};
+		vector<float> localrminsq = {rMin * rMin};
+		vector<FilamentBindingManager*> localfmanager;
+		vector<short> localbstateposvec = {bstatepos};
+		_rMaxsqvec.push_back(localrmaxsq);
+		_rMinsqvec.push_back(localrminsq);
+		localfmanager.push_back(fmanager);
+		fManagervec.push_back(localfmanager);
+		_filamentIDvec.push_back(ftypepairs);
+		_possibleBindingsstencilvecuint.push_back(temp2uint);
+		_reversepossibleBindingsstencilvecuint.push_back(rtemp2uint);
+		bstateposvec.push_back(localbstateposvec);
+		vector<floatingpoint> bs1, bs2;
+		vector<float> minvec = {(float)*(SysParams::Chemistry().bindingSites[ftypepairs[0]]
+				.begin())/ SysParams::Geometry().cylinderNumMon[ftypepairs[0]],
+		                        (float)*(SysParams::Chemistry().bindingSites[ftypepairs[1]]
+				                        .begin())/ SysParams::Geometry().cylinderNumMon[ftypepairs[1]]};
+		vector<float> maxvec = {(float)*(SysParams::Chemistry().bindingSites[ftypepairs[0]]
+				                                 .end() -1)/ SysParams::Geometry().cylinderNumMon[ftypepairs[0]],
+		                        (float)*(SysParams::Chemistry().bindingSites[ftypepairs[1]]
+				                                 .end() -1)/ SysParams::Geometry().cylinderNumMon[ftypepairs[1]]};
+		for(auto it1 = SysParams::Chemistry().bindingSites[ftypepairs[0]].begin();
+		    it1 != SysParams::Chemistry().bindingSites[ftypepairs[0]].end(); it1++) {
+			bs1.push_back((float)*it1 / SysParams::Geometry().cylinderNumMon[ftypepairs[0]]);
+		}
+		for(auto it1 = SysParams::Chemistry().bindingSites[ftypepairs[1]].begin();
+		    it1 != SysParams::Chemistry().bindingSites[ftypepairs[1]].end(); it1++) {
+			bs2.push_back((float)*it1 / SysParams::Geometry().cylinderNumMon[ftypepairs[1]]);
+		}
+		minparamcyl2.push_back(minvec);
+		maxparamcyl2.push_back(maxvec);
+		bindingsites1.push_back(bs1);
+		bindingsites2.push_back(bs1);
+		totaluniquefIDpairs++;
+	}
+}
+
 HybridBindingSearchManager::HybridBindingSearchManager(Compartment* compartment){
 	mask = (1 << SysParams::Chemistry().shiftbybits) - 1;
     _compartment = compartment;
     totaluniquefIDpairs = 0;
 }
 
-void HybridBindingSearchManager::setbindingsearchparameter
-        (FilamentBindingManager* fmanager, short bstatepos, short ftype1, short
-        ftype2, float rMax, float rMin){
-
-    unordered_map<uint32_t, vector<uint32_t>> tempuint;
-    unordered_map<uint32_t, vector<uint32_t>> rtempuint;
-    int tempNbind;
-
-    bool isfound = false;
-    vector<short> ftypepairs;
-    if(ftype1 < ftype2)
-        ftypepairs = {ftype1,ftype2};
-    else
-        ftypepairs = {ftype2, ftype1};
-    for(short idx = 0; idx < totaluniquefIDpairs; idx++){
-        vector<short> fIDpair = _filamentIDvec[idx];
-        if(fIDpair[0] != ftypepairs[0] || fIDpair[1] != ftypepairs[1]) continue;
-        else {
-            isfound = true;
-            _rMaxsqvec[idx].push_back(rMax *rMax);
-            _rMinsqvec[idx].push_back(rMin *rMin);
-            fManagervec[idx].push_back(fmanager);
-
-            _possibleBindingsstencilvecuint[idx].push_back(tempuint);
-            _reversepossibleBindingsstencilvecuint[idx].push_back(rtempuint);
-            bstateposvec[idx].push_back(bstatepos);
-            Nbindingpairs[idx].push_back(tempNbind);
-            break;
-        }
-    }
-    if(isfound == false){
-        vector<unordered_map<uint32_t, vector<uint32_t>>> temp2uint;
-        vector<unordered_map<uint32_t, vector<uint32_t>>> rtemp2uint;
-
-        vector<int> tempNbind2={0};
-        temp2uint.push_back(tempuint);
-        rtemp2uint.push_back(rtempuint);
-
-        Nbindingpairs.push_back(tempNbind2);
-        vector<float> localrmaxsq ={rMax * rMax};
-        vector<float> localrminsq = {rMin * rMin};
-        vector<FilamentBindingManager*> localfmanager;
-        vector<short> localbstateposvec = {bstatepos};
-        _rMaxsqvec.push_back(localrmaxsq);
-        _rMinsqvec.push_back(localrminsq);
-        localfmanager.push_back(fmanager);
-        fManagervec.push_back(localfmanager);
-        _filamentIDvec.push_back(ftypepairs);
-        _possibleBindingsstencilvecuint.push_back(temp2uint);
-        _reversepossibleBindingsstencilvecuint.push_back(rtemp2uint);
-        bstateposvec.push_back(localbstateposvec);
-        vector<floatingpoint> bs1, bs2;
-        vector<float> minvec = {(float)*(SysParams::Chemistry().bindingSites[ftypepairs[0]]
-                                .begin())/ SysParams::Geometry().cylinderNumMon[ftypepairs[0]],
-                                (float)*(SysParams::Chemistry().bindingSites[ftypepairs[1]]
-                                .begin())/ SysParams::Geometry().cylinderNumMon[ftypepairs[1]]};
-        vector<float> maxvec = {(float)*(SysParams::Chemistry().bindingSites[ftypepairs[0]]
-                                .end() -1)/ SysParams::Geometry().cylinderNumMon[ftypepairs[0]],
-                                (float)*(SysParams::Chemistry().bindingSites[ftypepairs[1]]
-                                 .end() -1)/ SysParams::Geometry().cylinderNumMon[ftypepairs[1]]};
-        for(auto it1 = SysParams::Chemistry().bindingSites[ftypepairs[0]].begin();
-            it1 != SysParams::Chemistry().bindingSites[ftypepairs[0]].end(); it1++) {
-            bs1.push_back((float)*it1 / SysParams::Geometry().cylinderNumMon[ftypepairs[0]]);
-        }
-        for(auto it1 = SysParams::Chemistry().bindingSites[ftypepairs[1]].begin();
-            it1 != SysParams::Chemistry().bindingSites[ftypepairs[1]].end(); it1++) {
-            bs2.push_back((float)*it1 / SysParams::Geometry().cylinderNumMon[ftypepairs[1]]);
-        }
-        minparamcyl2.push_back(minvec);
-        maxparamcyl2.push_back(maxvec);
-        bindingsites1.push_back(bs1);
-        bindingsites2.push_back(bs1);
-        totaluniquefIDpairs++;
-    }
-}
-
+#ifdef SIMDBINDINGSEARCH
 void HybridBindingSearchManager::initializeSIMDvars(){
 	short count = 0;
 	for (short idx = 0; idx < totaluniquefIDpairs; idx++) {
@@ -161,6 +163,218 @@ dist::dOut<1,false>& HybridBindingSearchManager::getdOut(short dOutID){
 	}
 }
 
+template <uint D, bool SELF, bool LinkerorMotor>
+void HybridBindingSearchManager::calculatebspairsLMselfV3(dist::dOut<D, SELF>&
+bspairsoutSself, short idvec[2]) {
+
+	auto filTypepairs =_filamentIDvec[idvec[0]];
+	auto boundstate = SysParams::Mechanics().speciesboundvec;
+
+	minsfind = chrono::high_resolution_clock::now();
+	int C1size = _compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]).size();
+
+	if (C1size > 0) {
+		bspairsoutSself.reset_counters();
+
+		if(filTypepairs[0] == filTypepairs[1]) {
+			if (C1size >= switchfactor * dist::get_simd_size(t_avx))
+				dist::find_distances(bspairsoutSself,
+				                     _compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]),
+				                     t_avx);
+			else
+				dist::find_distances(bspairsoutSself,
+				                     _compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]), t_serial);
+		}
+		else{
+			int C2size = _compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[1]).size();
+			if (C1size >= switchfactor * dist::get_simd_size(t_avx) &&
+			    C2size >= switchfactor * dist::get_simd_size(t_avx)) {
+
+				dist::find_distances(bspairsoutSself,
+				                     _compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]),
+				                     _compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[1]),
+				                     t_avx);
+
+			} else {
+
+				dist::find_distances(bspairsoutSself,
+				                     _compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]),
+				                     _compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[1]), t_serial);
+
+			}
+
+		}
+
+		minefind = chrono::high_resolution_clock::now();
+		chrono::duration<floatingpoint> elapsed_runfind(minefind - minsfind);
+		findtimeV3 += elapsed_runfind.count();
+
+
+		//MERGE INTO single vector
+		//@{
+		if (true) {
+			uint N = bspairsoutSself.counter[D - 1];
+//		cout<<" Contacts found by SIMD Self "<<N<<endl;
+			minsfind = chrono::high_resolution_clock::now();
+			if (nthreads == 1)
+				gatherCylindercIndexV3<D, SELF, LinkerorMotor>
+						(bspairsoutSself, 0, N, idvec, _compartment);
+
+			minefind = chrono::high_resolution_clock::now();
+			chrono::duration<floatingpoint> elapsed_append(minefind - minsfind);
+			SIMDV3appendtime += elapsed_append.count();
+		}
+	}
+	//@}
+}
+
+template<uint D, bool SELF, bool LinkerorMotor>
+void HybridBindingSearchManager::calculatebspairsLMenclosedV3(dist::dOut<D,SELF>&
+bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
+
+
+	auto filTypepairs =_filamentIDvec[idvec[0]];
+	auto boundstate = SysParams::Mechanics().speciesboundvec;
+	auto upnstencilvec = _compartment->getuniquepermuteneighborsstencil();
+	short i =0;
+
+	for(auto ncmp: _compartment->getuniquepermuteNeighbours()) {
+
+		short pos = upnstencilvec[i];
+		/*Note. There is hard coded  referencing of complimentary sub volumes. For example,
+		 * the top plane of a compartment has paritioned_volume_ID 1 and the bottom plane
+		 * (complimentary) is 2. So, if permuting through C1 and C2, and if C2 is on top of C1,
+		 * C2's stencil ID in C1 is 14 (Hard Coded in GController.cpp). C1 will compare
+		 * paritioned_volume_ID 1 with C2's paritioned_volume_ID 2*/
+		int C1size = _compartment->getSIMDcoordsV3<LinkerorMotor>
+				(partitioned_volume_ID[pos], filTypepairs[0]).size();
+		int C2size = ncmp->getSIMDcoordsV3<LinkerorMotor>
+				(partitioned_volume_ID[pos] + 1, filTypepairs[1]).size();
+
+		if (C1size > 0 && C2size > 0) {
+
+			minsfind = chrono::high_resolution_clock::now();
+
+			bspairsoutS.reset_counters();
+			if (C1size >= switchfactor * dist::get_simd_size(t_avx) &&
+			    C2size >= switchfactor * dist::get_simd_size(t_avx)) {
+
+				dist::find_distances(bspairsoutS,
+				                     _compartment->getSIMDcoordsV3<LinkerorMotor>
+						                     (partitioned_volume_ID[pos], filTypepairs[0]),
+				                     ncmp->getSIMDcoordsV3<LinkerorMotor>
+						                     (partitioned_volume_ID[pos] + 1, filTypepairs[1]), t_avx);
+
+			} else {
+
+				dist::find_distances(bspairsoutS,
+				                     _compartment->getSIMDcoordsV3<LinkerorMotor>
+						                     (partitioned_volume_ID[pos], filTypepairs[0]),
+				                     ncmp->getSIMDcoordsV3<LinkerorMotor>
+						                     (partitioned_volume_ID[pos] + 1, filTypepairs[1]),
+				                     t_serial);
+
+			}
+
+			minefind = chrono::high_resolution_clock::now();
+			chrono::duration<floatingpoint> elapsed_runfind(minefind - minsfind);
+			findtimeV3 += elapsed_runfind.count();
+
+			i++;
+
+			//MERGE INTO single vector
+			//@{
+			if (true) {
+				minsfind = chrono::high_resolution_clock::now();
+				uint N = bspairsoutS.counter[D-1];
+				if (nthreads == 1)
+					gatherCylindercIndexV3<D, SELF, LinkerorMotor>
+							(bspairsoutS, 0, N, idvec, ncmp);
+				else {
+					std::vector<std::thread> threads_avx;
+					uint nt = nthreads;
+					threads_avx.reserve(nt);
+					uint prev = 0;
+					uint frac = N / nt;
+					uint next = frac + N % nt;
+					for (uint i = 0; i < nt; ++i) {
+						threads_avx.push_back(std::thread
+								                      (&HybridBindingSearchManager::gatherCylindercIndexV3<D, SELF, LinkerorMotor>,
+								                       this, std::ref(bspairsoutS), prev, next, idvec, ncmp));
+						prev = next;
+						next = min(N, prev + frac);
+					}
+
+					//Join
+					for (auto &t : threads_avx)
+						t.join();
+					threads_avx.clear();
+				}//else
+				minefind = chrono::high_resolution_clock::now();
+				chrono::duration<floatingpoint> elapsed_append(minefind - minsfind);
+				SIMDV3appendtime += elapsed_append.count();
+			}
+
+		}
+		//@}
+	}
+}
+
+template <uint D, bool SELF, bool LinkerorMotor>
+void HybridBindingSearchManager::gatherCylindercIndexV3(dist::dOut<D,SELF>&
+bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
+
+	const auto& cylinderInfoData = Cylinder::getDbData().value;
+	unsigned int count64 = 0;//counter to bits in random integer
+	bitset<64> randInt = 0;
+	for(uint pid = first; pid < last; pid++) {
+		uint32_t t1 = bspairsoutS.dout[2 * (D - 1)][pid];
+		uint32_t t2 = bspairsoutS.dout[2 * (D - 1) + 1][pid];
+
+		if(SELF == true){
+			_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+
+			_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
+		}
+		else {
+			//Generate random number of 64 bits
+			if(count64 == 0) {
+				randInt = bitset<64>(Rand::randInteger64bit());
+//				cout<<randInt<<endl;
+			}
+			if(randInt[count64]){
+				_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+
+				_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
+			}
+			else{
+				nCmp->getHybridBindingSearchManager()
+						->_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
+				nCmp->getHybridBindingSearchManager()
+						->_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+			}
+			//Keep count
+			count64++;
+//			cout<<count64<<" "<<first<<" "<<last<<endl;
+			//reset if you reach 64 bits
+			if(count64>63)
+				count64=0;
+
+			/*if(t1>t2) {
+				_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+
+				_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
+			}
+			else{
+				nCmp->getHybridBindingSearchManager()
+				->_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
+				nCmp->getHybridBindingSearchManager()
+				->_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+			}*/
+		}
+	}
+}
+#endif
 void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
                                  CCylinder* cc, short bindingSite) {
 	if (SysParams::INITIALIZEDSTATUS ) {
@@ -485,6 +699,9 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
     }
 }
 
+
+
+
 void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
 
 	#ifdef MOTORBIASCHECK
@@ -757,219 +974,6 @@ void HybridBindingSearchManager::updateAllBindingReactions() {
 	}
 }
 
-
-template <uint D, bool SELF, bool LinkerorMotor>
-void HybridBindingSearchManager::calculatebspairsLMselfV3(dist::dOut<D, SELF>&
-bspairsoutSself, short idvec[2]) {
-
-	auto filTypepairs =_filamentIDvec[idvec[0]];
-	auto boundstate = SysParams::Mechanics().speciesboundvec;
-
-	minsfind = chrono::high_resolution_clock::now();
-	int C1size = _compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]).size();
-
-	if (C1size > 0) {
-		bspairsoutSself.reset_counters();
-
-		if(filTypepairs[0] == filTypepairs[1]) {
-			if (C1size >= switchfactor * dist::get_simd_size(t_avx))
-				dist::find_distances(bspairsoutSself,
-						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]),
-						        t_avx);
-			else
-				dist::find_distances(bspairsoutSself,
-						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]), t_serial);
-		}
-		else{
-			int C2size = _compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[1]).size();
-			if (C1size >= switchfactor * dist::get_simd_size(t_avx) &&
-			    C2size >= switchfactor * dist::get_simd_size(t_avx)) {
-
-				dist::find_distances(bspairsoutSself,
-						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]),
-						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[1]),
-						        t_avx);
-
-			} else {
-
-				dist::find_distances(bspairsoutSself,
-						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[0]),
-						_compartment->getSIMDcoordsV3<LinkerorMotor>(0, filTypepairs[1]), t_serial);
-
-			}
-
-		}
-
-	minefind = chrono::high_resolution_clock::now();
-	chrono::duration<floatingpoint> elapsed_runfind(minefind - minsfind);
-	findtimeV3 += elapsed_runfind.count();
-
-
-	//MERGE INTO single vector
-	//@{
-	if (true) {
-		uint N = bspairsoutSself.counter[D - 1];
-//		cout<<" Contacts found by SIMD Self "<<N<<endl;
-		minsfind = chrono::high_resolution_clock::now();
-		if (nthreads == 1)
-			gatherCylindercIndexV3<D, SELF, LinkerorMotor>
-			        (bspairsoutSself, 0, N, idvec, _compartment);
-
-		minefind = chrono::high_resolution_clock::now();
-		chrono::duration<floatingpoint> elapsed_append(minefind - minsfind);
-		SIMDV3appendtime += elapsed_append.count();
-	}
-	}
-    //@}
-}
-
-template<uint D, bool SELF, bool LinkerorMotor>
-void HybridBindingSearchManager::calculatebspairsLMenclosedV3(dist::dOut<D,SELF>&
-bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
-
-
-	auto filTypepairs =_filamentIDvec[idvec[0]];
-    auto boundstate = SysParams::Mechanics().speciesboundvec;
-    auto upnstencilvec = _compartment->getuniquepermuteneighborsstencil();
-    short i =0;
-
-    for(auto ncmp: _compartment->getuniquepermuteNeighbours()) {
-
-	    short pos = upnstencilvec[i];
-	/*Note. There is hard coded  referencing of complimentary sub volumes. For example,
-	 * the top plane of a compartment has paritioned_volume_ID 1 and the bottom plane
-	 * (complimentary) is 2. So, if permuting through C1 and C2, and if C2 is on top of C1,
-	 * C2's stencil ID in C1 is 14 (Hard Coded in GController.cpp). C1 will compare
-	 * paritioned_volume_ID 1 with C2's paritioned_volume_ID 2*/
-	    int C1size = _compartment->getSIMDcoordsV3<LinkerorMotor>
-	            (partitioned_volume_ID[pos], filTypepairs[0]).size();
-	    int C2size = ncmp->getSIMDcoordsV3<LinkerorMotor>
-	            (partitioned_volume_ID[pos] + 1, filTypepairs[1]).size();
-
-	    if (C1size > 0 && C2size > 0) {
-
-		    minsfind = chrono::high_resolution_clock::now();
-
-	    	bspairsoutS.reset_counters();
-	    	if (C1size >= switchfactor * dist::get_simd_size(t_avx) &&
-	    	C2size >= switchfactor * dist::get_simd_size(t_avx)) {
-
-	    		dist::find_distances(bspairsoutS,
-	    				_compartment->getSIMDcoordsV3<LinkerorMotor>
-	    				        (partitioned_volume_ID[pos], filTypepairs[0]),
-	    		        ncmp->getSIMDcoordsV3<LinkerorMotor>
-	    		                (partitioned_volume_ID[pos] + 1, filTypepairs[1]), t_avx);
-
-		    } else {
-
-			    dist::find_distances(bspairsoutS,
-			    		_compartment->getSIMDcoordsV3<LinkerorMotor>
-			    		        (partitioned_volume_ID[pos], filTypepairs[0]),
-			    		ncmp->getSIMDcoordsV3<LinkerorMotor>
-			    		        (partitioned_volume_ID[pos] + 1, filTypepairs[1]),
-			    		        t_serial);
-
-		    }
-
-		    minefind = chrono::high_resolution_clock::now();
-		    chrono::duration<floatingpoint> elapsed_runfind(minefind - minsfind);
-		    findtimeV3 += elapsed_runfind.count();
-
-		    i++;
-
-	    //MERGE INTO single vector
-	    //@{
-	    if (true) {
-		    minsfind = chrono::high_resolution_clock::now();
-		    uint N = bspairsoutS.counter[D-1];
-		    if (nthreads == 1)
-			    gatherCylindercIndexV3<D, SELF, LinkerorMotor>
-			            (bspairsoutS, 0, N, idvec, ncmp);
-		    else {
-			    std::vector<std::thread> threads_avx;
-			    uint nt = nthreads;
-			    threads_avx.reserve(nt);
-			    uint prev = 0;
-			    uint frac = N / nt;
-			    uint next = frac + N % nt;
-			    for (uint i = 0; i < nt; ++i) {
-				    threads_avx.push_back(std::thread
-					(&HybridBindingSearchManager::gatherCylindercIndexV3<D, SELF, LinkerorMotor>,
-					        this, std::ref(bspairsoutS), prev, next, idvec, ncmp));
-				    prev = next;
-				    next = min(N, prev + frac);
-			    }
-
-			    //Join
-			    for (auto &t : threads_avx)
-				    t.join();
-			    threads_avx.clear();
-		    }//else
-		    minefind = chrono::high_resolution_clock::now();
-		    chrono::duration<floatingpoint> elapsed_append(minefind - minsfind);
-		    SIMDV3appendtime += elapsed_append.count();
-	    }
-
-	    }
-	    //@}
-    }
-}
-
-template <uint D, bool SELF, bool LinkerorMotor>
-void HybridBindingSearchManager::gatherCylindercIndexV3(dist::dOut<D,SELF>&
-bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
-
-    const auto& cylinderInfoData = Cylinder::getDbData().value;
-	unsigned int count64 = 0;//counter to bits in random integer
-	bitset<64> randInt = 0;
-    for(uint pid = first; pid < last; pid++) {
-	    uint32_t t1 = bspairsoutS.dout[2 * (D - 1)][pid];
-	    uint32_t t2 = bspairsoutS.dout[2 * (D - 1) + 1][pid];
-
-		if(SELF == true){
-			_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
-
-			_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
-		}
-		else {
-			//Generate random number of 64 bits
-			if(count64 == 0) {
-				randInt = bitset<64>(Rand::randInteger64bit());
-//				cout<<randInt<<endl;
-			}
-			if(randInt[count64]){
-				_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
-
-				_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
-			}
-			else{
-				nCmp->getHybridBindingSearchManager()
-						->_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
-				nCmp->getHybridBindingSearchManager()
-						->_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
-			}
-			//Keep count
-			count64++;
-//			cout<<count64<<" "<<first<<" "<<last<<endl;
-			//reset if you reach 64 bits
-			if(count64>63)
-				count64=0;
-
-			/*if(t1>t2) {
-				_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
-
-				_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
-			}
-			else{
-				nCmp->getHybridBindingSearchManager()
-				->_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
-				nCmp->getHybridBindingSearchManager()
-				->_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
-			}*/
-		}
-    }
-}
-
 void HybridBindingSearchManager::addtoHNeighborList(){
     HNLIDvec.resize(totaluniquefIDpairs);
     for(short idx = 0; idx < totaluniquefIDpairs; idx++) {
@@ -1061,6 +1065,7 @@ void HybridBindingSearchManager::clearPossibleBindingsstencil(short idvec[2]){
 
 HybridCylinderCylinderNL* HybridBindingSearchManager::_HneighborList;
 bool initialized = false;
+#ifdef SIMDBINDINGSEARCH
 //D = 1
 //dist::dOut<1U,false> HybridBindingSearchManager::bspairslinker;
 dist::dOut<1U,true> HybridBindingSearchManager::bspairslinkerself;
@@ -1081,6 +1086,7 @@ dist::dOut<1U,false> HybridBindingSearchManager::bspairs2_D2;*/
 
 
 short HybridBindingSearchManager::Totallinkermotor = 0;
+#endif
 floatingpoint HybridBindingSearchManager::SIMDtime = 0.0;
 floatingpoint HybridBindingSearchManager::HYBDtime = 0.0;
 floatingpoint HybridBindingSearchManager::findtime = 0.0;

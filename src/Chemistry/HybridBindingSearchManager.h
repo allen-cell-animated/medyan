@@ -12,7 +12,9 @@
 //------------------------------------------------------------------
 #ifndef MEDYAN_HybridBindingSearchManager_h
 #define MEDYAN_HybridBindingSearchManager_h
-
+#ifdef SIMDBINDINGSEARCH
+#include "dist_moduleV2/dist_driver.h"
+#endif
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 #include <unordered_map>
 #include <unordered_set>
@@ -28,7 +30,6 @@
 #include "SysParams.h"
 #include "Rand.h"
 #include "BindingManager.h"
-#include "dist_moduleV2/dist_driver.h"
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -43,6 +44,7 @@ class HybridBindingSearchManager {
     friend class ChemManager;
 
 private:
+
     static const uint switchfactor  = 10;
 
     chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD,
@@ -90,8 +92,10 @@ private:
     //static neighbor list
     static HybridCylinderCylinderNL* _HneighborList;
 
-    //SIMD variables
     unsigned mask = 0;
+
+    #ifdef SIMDBINDINGSEARCH
+    //SIMD variables
     static const dist::tag_simd<dist::simd_avx_par,  float>  t_avx_par;
     static const dist::tag_simd<dist::simd_avx,  float>   t_avx;
     static const dist::tag_simd<dist::simd_no,   float>   t_serial;
@@ -118,6 +122,7 @@ private:
     vector<bool> filID_fpos_pairM;
     vector<vector<bool>> pairvaluespecieslinker;
     vector<vector<bool>> pairvaluespeciesmotor;
+	#endif
 
     /*Partitioned volume refers to partitioning compartment volume in to smaller sub
 volumes namely self(1), halves(6), quarters(12) and 1/8ths(8). The position in the
@@ -132,6 +137,8 @@ volumes namely self(1), halves(6), quarters(12) and 1/8ths(8). The position in t
  * paritioned_volume_ID 1 with C2's paritioned_volume_ID 2*/
     uint partitioned_volume_ID[27] = {27, 27, 27, 27, 5, 7, 19, 9, 21, 27, 27, 27, 27, 0, 1,
                                       11, 3, 13, 27, 27, 27, 27, 27, 15, 23, 17, 25};
+
+#ifdef SIMDBINDINGSEARCH
 
     template <uint D, bool SELF, bool LinkerorMotor>
     void calculatebspairsLMselfV3(dist::dOut<D, SELF>& bspairs, short idvec[2]);
@@ -195,8 +202,9 @@ volumes namely self(1), halves(6), quarters(12) and 1/8ths(8). The position in t
             exit(EXIT_FAILURE);
         }
     }*/
+#endif
 
-   void countNpairsfound(short idvec[2]);
+    void countNpairsfound(short idvec[2]);
 
    #ifdef MOTORBIASCHECK
    size_t addcounts = 0;
@@ -325,9 +333,11 @@ public:
     #endif
 };
 
+#ifdef SIMDBINDINGSEARCH
 template<>
 dist::dOut<1,true>& HybridBindingSearchManager::getdOut(short dOutID);
 template<>
 dist::dOut<1,false>& HybridBindingSearchManager::getdOut(short dOutID);
+#endif
 #endif
 #endif
