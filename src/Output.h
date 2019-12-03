@@ -385,7 +385,7 @@ public:
 };
 
 
-
+//Temporary output for a test case of two filaments. deprecated.
 class TwoFilament : public Output {
 
     ChemSim* _cs;

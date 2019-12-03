@@ -868,55 +868,118 @@ void CMGraph::print(int snapshot) {
 
     _outputFile << snapshot << " " << tau() << endl;
 
-    vector<vector<int>> filIDVec;
+    vector<vector<int>> filIDVecL;
+	vector<vector<int>> filIDVecM;
+	vector<vector<int>> filIDVecB;
 
+	map<uint64_t, array<int, 3>> filpaircounter;
+
+	//Get filament pairs involved in each linker
     for(auto &linker : Linker::getLinkers()) {
 
         int fid1 = linker->getFirstCylinder()->getFilID();
         int fid2 = linker->getSecondCylinder()->getFilID();
-        vector<int> pair;
-        pair.push_back(fid1);
-        pair.push_back(fid2);
+	    vector<int> pair;
+        if(fid1<fid2) {
+	        pair.push_back(fid1);
+	        pair.push_back(fid2);
+        }
+        else{
+	        pair.push_back(fid2);
+	        pair.push_back(fid1);
+        }
 
-        sort(pair.begin(),pair.end());
-        filIDVec.push_back(pair);
-
-
-
+        filIDVecL.push_back(pair);
     }
 
-    vector<vector<int>> uniqueFilIDVec;
-    vector<vector<int>> uniqueFilIDVecCounts;
+	//Get filament pairs involved in each motor
+	for(auto &motor : MotorGhost::getMotorGhosts()) {
 
-    for(auto i : filIDVec){
+		int fid1 = motor->getFirstCylinder()->getFilID();
+		int fid2 = motor->getSecondCylinder()->getFilID();
+		vector<int> pair;
+		if(fid1<fid2) {
+			pair.push_back(fid1);
+			pair.push_back(fid2);
+		}
+		else{
+			pair.push_back(fid2);
+			pair.push_back(fid1);
+		}
+		filIDVecM.push_back(pair);
+	}
+
+	//Get mother and daughter filament pairs involved in each brancher
+	for(auto &brancher : BranchingPoint::getBranchingPoints()) {
+
+		int fid1 = brancher->getFirstCylinder()->getFilID();
+		int fid2 = brancher->getSecondCylinder()->getFilID();
+		vector<int> pair;
+		if(fid1<fid2) {
+			pair.push_back(fid1);
+			pair.push_back(fid2);
+		}
+		else{
+			pair.push_back(fid2);
+			pair.push_back(fid1);
+		}
+		filIDVecB.push_back(pair);
+	}
+
+	vector<vector<int>> uniqueFilIDVec;
+    vector<array<int, 3>> uniqueFilIDVecCounts;
+
+    for(auto i : filIDVecL){
 
         if(find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) != uniqueFilIDVec.end()) {
 
             int ind = find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) - uniqueFilIDVec.begin();
 
-            uniqueFilIDVecCounts.at(ind).at(2) ++ ;
-
+            uniqueFilIDVecCounts.at(ind)[0]++;
 
         } else {
-
-            vector<int> pbVec;
-            pbVec.push_back(i[0]);
-            pbVec.push_back(i[1]);
-            pbVec.push_back(1);
-
+            array<int, 3> pbVec={1,0,0};
             uniqueFilIDVecCounts.push_back(pbVec);
             uniqueFilIDVec.push_back(i);
-
         }
-
     }
 
+    for(auto i : filIDVecM){
+
+        if(find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) != uniqueFilIDVec.end()) {
+
+            int ind = find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) - uniqueFilIDVec.begin();
+
+            uniqueFilIDVecCounts.at(ind)[1]++;
+
+        } else {
+            array<int, 3> pbVec={0,1,0};
+            uniqueFilIDVecCounts.push_back(pbVec);
+            uniqueFilIDVec.push_back(i);
+        }
+    }
+
+    for(auto i : filIDVecB){
+
+        if(find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) != uniqueFilIDVec.end()) {
+
+            int ind = find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) - uniqueFilIDVec.begin();
+
+            uniqueFilIDVecCounts.at(ind)[2]++;
+
+        } else {
+            array<int, 3> pbVec={0,0,1};
+            uniqueFilIDVecCounts.push_back(pbVec);
+            uniqueFilIDVec.push_back(i);
+        }
+    }
+
+    int count = 0;
     for(auto i: uniqueFilIDVecCounts){
-        _outputFile<< i[0] <<" "<<  i[1] << " "  << i[2]<< " ";
+        _outputFile<<uniqueFilIDVec.at(count)[0]<<" "<<uniqueFilIDVec.at(count)[1]<<" "<<
+        i[0] <<" "<< i[1] << " " << i[2]<< " ";
+        count++;
     }
-
-
-
     _outputFile<<endl<<endl;
 
 }

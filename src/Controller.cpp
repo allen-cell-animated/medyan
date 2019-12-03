@@ -251,8 +251,8 @@ void Controller::initialize(string inputFile,
 	    _outputs.push_back(new Datadump(datadumpname, &_subSystem, ChemData));
 #endif
 
-    string twofilamentname = _outputDirectory + "twofilament.traj";
-    _outputs.push_back(new TwoFilament(twofilamentname, &_subSystem, ChemData));
+//    string twofilamentname = _outputDirectory + "twofilament.traj";
+//    _outputs.push_back(new TwoFilament(twofilamentname, &_subSystem, ChemData));
 
 //    //Set up Turnover output if any
 //    string turnover = _outputDirectory + "Turnover.traj";

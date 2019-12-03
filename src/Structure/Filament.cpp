@@ -42,7 +42,13 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<floatingpoint>
                    const vector<floatingpoint>& direction, bool nucleation, bool branch)
 
     : Trackable(), _subSystem(s), _filType(filamentType) {
- 
+
+    if(getId() >= SysParams::Chemistry().maxStableIndex) {
+        LOG(ERROR) << "Filament ID assigned ("<< getId()<<
+                   ") equals/exceeds the maximum permissible value "
+                   "("<<SysParams::Chemistry().maxStableIndex<<").". Exiting.";
+        throw std::logic_error("Max value reached");
+    }
     //create beads
     Bead* b1 = _subSystem->addTrackable<Bead>(position, this, 0);
     
