@@ -28,7 +28,9 @@
 #include "SysParams.h"
 #include "Rand.h"
 #include "BindingManager.h"
+#ifdef SIMDBINDINGSEARCH
 #include "dist_moduleV2/dist_driver.h"
+#endif
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -92,6 +94,7 @@ private:
 
     //SIMD variables
     unsigned mask = 0;
+#ifdef SIMDBINDINGSEARCH
     static constexpr dist::tag_simd<dist::simd_avx_par,  float>  t_avx_par {};
     static constexpr dist::tag_simd<dist::simd_avx,  float>   t_avx {};
     static constexpr dist::tag_simd<dist::simd_no,   float>   t_serial {};
@@ -111,7 +114,7 @@ private:
     static dist::dOut<1U,true> bspairsmotorself;
     static dist::dOut<1U,false> bspairslinker2;
     static dist::dOut<1U,false> bspairsmotor2;
-
+#endif
     vector<uint32_t> pairslinker;
     vector<uint32_t> pairsmotor;
     vector<bool> filID_fpos_pairL;
@@ -133,6 +136,7 @@ volumes namely self(1), halves(6), quarters(12) and 1/8ths(8). The position in t
     uint partitioned_volume_ID[27] = {27, 27, 27, 27, 5, 7, 19, 9, 21, 27, 27, 27, 27, 0, 1,
                                       11, 3, 13, 27, 27, 27, 27, 27, 15, 23, 17, 25};
 
+#ifdef SIMDBINDINGSEARCH
     template <uint D, bool SELF, bool LinkerorMotor>
     void calculatebspairsLMselfV3(dist::dOut<D, SELF>& bspairs, short idvec[2]);
 
@@ -195,7 +199,7 @@ volumes namely self(1), halves(6), quarters(12) and 1/8ths(8). The position in t
             exit(EXIT_FAILURE);
         }
     }*/
-
+#endif
    void countNpairsfound(short idvec[2]);
 
    #ifdef MOTORBIASCHECK
@@ -325,9 +329,11 @@ public:
     #endif
 };
 
+#ifdef SIMDBINDINGSEARCH
 template<>
 dist::dOut<1,true>& HybridBindingSearchManager::getdOut(short dOutID);
 template<>
 dist::dOut<1,false>& HybridBindingSearchManager::getdOut(short dOutID);
+#endif
 #endif
 #endif

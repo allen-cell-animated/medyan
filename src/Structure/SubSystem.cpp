@@ -19,9 +19,11 @@
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"
 #include <vector>
+#ifdef SIMDBINDINGSEARCH
 #include "dist_moduleV2/dist_driver.h"
 #include "dist_moduleV2/dist_coords.h"
 #include "dist_moduleV2/dist_common.h"
+#endif
 #include "Cylinder.h"
 using namespace mathfunc;
 void SubSystem::resetNeighborLists() {
