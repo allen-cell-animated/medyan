@@ -308,7 +308,4 @@ public:
     
     : MotorStall(motorType, filamentType, charForce, 0.33, 0.3){}
 };
-
-
-
 #endif

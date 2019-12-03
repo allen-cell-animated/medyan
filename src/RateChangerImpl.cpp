@@ -77,7 +77,7 @@ float MotorCatch::numBoundHeads(float onRate, float offRate,
 /*	#ifdef MOTORBIASCHECK
 	return numHeads;
 	#endif*/
-
+    _dutyRatio = onRate/(onRate+offRate);
 #ifdef PLOSFEEDBACK
     return min<floatingpoint >((floatingpoint)numHeads, numHeads * _dutyRatio + _gamma *
     force);
@@ -120,6 +120,7 @@ float MotorStall::changeRate(float onRate, float offRate,
                              floatingpoint numHeads, floatingpoint force) {
 //    cout<<"onRate "<<onRate<<endl;
 //    return onRate*10;
+    _dutyRatio = onRate/(onRate+offRate);
     //determine k_0
     float k_0 = ((1 - _dutyRatio) / _dutyRatio) * onRate * _stepFrac;
 
