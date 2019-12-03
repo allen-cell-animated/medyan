@@ -868,117 +868,67 @@ void CMGraph::print(int snapshot) {
 
     _outputFile << snapshot << " " << tau() << endl;
 
-    vector<vector<int>> filIDVecL;
-	vector<vector<int>> filIDVecM;
-	vector<vector<int>> filIDVecB;
-
+	//key stores concatenated filID value.
+	//value stores count of linkers, motors and branchers connecting two filament IDs.
 	map<uint64_t, array<int, 3>> filpaircounter;
+	int shiftbybits;
 
 	//Get filament pairs involved in each linker
     for(auto &linker : Linker::getLinkers()) {
 
-        int fid1 = linker->getFirstCylinder()->getFilID();
-        int fid2 = linker->getSecondCylinder()->getFilID();
-	    vector<int> pair;
-        if(fid1<fid2) {
-	        pair.push_back(fid1);
-	        pair.push_back(fid2);
-        }
-        else{
-	        pair.push_back(fid2);
-	        pair.push_back(fid1);
-        }
+	    uint32_t fid1 = linker->getFirstCylinder()->getFilID();
+	    uint32_t fid2 = linker->getSecondCylinder()->getFilID();
+	    shiftbybits = sizeof(fid1)*8;
+	    uint64_t tempkey;
 
-        filIDVecL.push_back(pair);
+        if(fid1<fid2)
+	        tempkey = fid1<<shiftbybits|fid2;
+        else
+	        tempkey = fid2<<shiftbybits|fid1;
+
+        filpaircounter[tempkey][0] = filpaircounter[tempkey][0]+1;
     }
 
 	//Get filament pairs involved in each motor
 	for(auto &motor : MotorGhost::getMotorGhosts()) {
 
-		int fid1 = motor->getFirstCylinder()->getFilID();
-		int fid2 = motor->getSecondCylinder()->getFilID();
-		vector<int> pair;
-		if(fid1<fid2) {
-			pair.push_back(fid1);
-			pair.push_back(fid2);
-		}
-		else{
-			pair.push_back(fid2);
-			pair.push_back(fid1);
-		}
-		filIDVecM.push_back(pair);
+		uint32_t fid1 = motor->getFirstCylinder()->getFilID();
+		uint32_t fid2 = motor->getSecondCylinder()->getFilID();
+		shiftbybits = sizeof(fid1)*8;
+		uint64_t tempkey;
+
+		if(fid1<fid2)
+			tempkey = fid1<<shiftbybits|fid2;
+		else
+			tempkey = fid2<<shiftbybits|fid1;
+
+		filpaircounter[tempkey][1] = filpaircounter[tempkey][1]+1;
 	}
 
 	//Get mother and daughter filament pairs involved in each brancher
 	for(auto &brancher : BranchingPoint::getBranchingPoints()) {
 
-		int fid1 = brancher->getFirstCylinder()->getFilID();
-		int fid2 = brancher->getSecondCylinder()->getFilID();
-		vector<int> pair;
-		if(fid1<fid2) {
-			pair.push_back(fid1);
-			pair.push_back(fid2);
-		}
-		else{
-			pair.push_back(fid2);
-			pair.push_back(fid1);
-		}
-		filIDVecB.push_back(pair);
+		uint32_t fid1 = brancher->getFirstCylinder()->getFilID();
+		uint32_t fid2 = brancher->getSecondCylinder()->getFilID();
+		shiftbybits = sizeof(fid1)*8;
+		uint64_t tempkey;
+
+		if(fid1<fid2)
+			tempkey = fid1<<shiftbybits|fid2;
+		else
+			tempkey = fid2<<shiftbybits|fid1;
+
+		filpaircounter[tempkey][2] = filpaircounter[tempkey][2]+1;
 	}
 
-	vector<vector<int>> uniqueFilIDVec;
-    vector<array<int, 3>> uniqueFilIDVecCounts;
-
-    for(auto i : filIDVecL){
-
-        if(find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) != uniqueFilIDVec.end()) {
-
-            int ind = find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) - uniqueFilIDVec.begin();
-
-            uniqueFilIDVecCounts.at(ind)[0]++;
-
-        } else {
-            array<int, 3> pbVec={1,0,0};
-            uniqueFilIDVecCounts.push_back(pbVec);
-            uniqueFilIDVec.push_back(i);
-        }
-    }
-
-    for(auto i : filIDVecM){
-
-        if(find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) != uniqueFilIDVec.end()) {
-
-            int ind = find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) - uniqueFilIDVec.begin();
-
-            uniqueFilIDVecCounts.at(ind)[1]++;
-
-        } else {
-            array<int, 3> pbVec={0,1,0};
-            uniqueFilIDVecCounts.push_back(pbVec);
-            uniqueFilIDVec.push_back(i);
-        }
-    }
-
-    for(auto i : filIDVecB){
-
-        if(find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) != uniqueFilIDVec.end()) {
-
-            int ind = find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) - uniqueFilIDVec.begin();
-
-            uniqueFilIDVecCounts.at(ind)[2]++;
-
-        } else {
-            array<int, 3> pbVec={0,0,1};
-            uniqueFilIDVecCounts.push_back(pbVec);
-            uniqueFilIDVec.push_back(i);
-        }
-    }
-
-    int count = 0;
-    for(auto i: uniqueFilIDVecCounts){
-        _outputFile<<uniqueFilIDVec.at(count)[0]<<" "<<uniqueFilIDVec.at(count)[1]<<" "<<
-        i[0] <<" "<< i[1] << " " << i[2]<< " ";
-        count++;
+	uint64_t mask = (1 << shiftbybits) - 1;
+    for(auto const& i: filpaircounter){
+    	uint64_t tempkey = i.first;
+    	auto tempvalue = i.second;
+    	auto fID1 = tempkey >> shiftbybits;
+    	auto fID2 = mask & tempkey;
+        _outputFile<<fID1<<" "<<fID2<<" "<<
+        tempvalue[0] <<" "<< tempvalue[1] << " " << tempvalue[2]<< " ";
     }
     _outputFile<<endl<<endl;
 
