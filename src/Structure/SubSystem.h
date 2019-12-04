@@ -43,7 +43,9 @@
 #include "Util/ThreadPool.hpp"
 
 #include <initializer_list>
+#ifdef SIMDBINDINGSEARCH
 #include "dist_moduleV2/dist_common.h"
+#endif
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
