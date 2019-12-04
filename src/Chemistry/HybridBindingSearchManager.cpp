@@ -113,6 +113,7 @@ void HybridBindingSearchManager::setbindingsearchparameter
 
 HybridBindingSearchManager::HybridBindingSearchManager(Compartment* compartment){
 	mask = (1 << SysParams::Chemistry().shiftbybits) - 1;
+
     _compartment = compartment;
     totaluniquefIDpairs = 0;
 }

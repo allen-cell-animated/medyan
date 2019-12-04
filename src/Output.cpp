@@ -878,13 +878,20 @@ void CMGraph::print(int snapshot) {
 
 	    uint32_t fid1 = linker->getFirstCylinder()->getFilID();
 	    uint32_t fid2 = linker->getSecondCylinder()->getFilID();
+
 	    shiftbybits = sizeof(fid1)*8;
 	    uint64_t tempkey;
 
-        if(fid1<fid2)
-	        tempkey = fid1<<shiftbybits|fid2;
-        else
-	        tempkey = fid2<<shiftbybits|fid1;
+	    if(fid1<fid2) {
+		    tempkey = fid1;
+		    tempkey = tempkey << shiftbybits;
+		    tempkey = tempkey|fid2;
+	    }
+	    else {
+		    tempkey = fid2;
+		    tempkey = tempkey << shiftbybits;
+		    tempkey = tempkey|fid1;
+	    }
 
         filpaircounter[tempkey][0] = filpaircounter[tempkey][0]+1;
     }
@@ -894,14 +901,20 @@ void CMGraph::print(int snapshot) {
 
 		uint32_t fid1 = motor->getFirstCylinder()->getFilID();
 		uint32_t fid2 = motor->getSecondCylinder()->getFilID();
+
 		shiftbybits = sizeof(fid1)*8;
 		uint64_t tempkey;
 
-		if(fid1<fid2)
-			tempkey = fid1<<shiftbybits|fid2;
-		else
-			tempkey = fid2<<shiftbybits|fid1;
-
+		if(fid1<fid2) {
+			tempkey = fid1;
+			tempkey = tempkey << shiftbybits;
+			tempkey = tempkey|fid2;
+		}
+		else {
+			tempkey = fid2;
+			tempkey = tempkey << shiftbybits;
+			tempkey = tempkey|fid1;
+		}
 		filpaircounter[tempkey][1] = filpaircounter[tempkey][1]+1;
 	}
 
@@ -910,23 +923,29 @@ void CMGraph::print(int snapshot) {
 
 		uint32_t fid1 = brancher->getFirstCylinder()->getFilID();
 		uint32_t fid2 = brancher->getSecondCylinder()->getFilID();
+
 		shiftbybits = sizeof(fid1)*8;
 		uint64_t tempkey;
 
-		if(fid1<fid2)
-			tempkey = fid1<<shiftbybits|fid2;
-		else
-			tempkey = fid2<<shiftbybits|fid1;
-
+		if(fid1<fid2) {
+			tempkey = fid1;
+			tempkey = tempkey << shiftbybits;
+			tempkey = tempkey|fid2;
+		}
+		else {
+			tempkey = fid2;
+			tempkey = tempkey << shiftbybits;
+			tempkey = tempkey|fid1;
+		}
 		filpaircounter[tempkey][2] = filpaircounter[tempkey][2]+1;
 	}
 
-	uint64_t mask = (1 << shiftbybits) - 1;
+	uint64_t mask = (uint64_t(1) << 32) - 1;
     for(auto const& i: filpaircounter){
     	uint64_t tempkey = i.first;
     	auto tempvalue = i.second;
-    	auto fID1 = tempkey >> shiftbybits;
-    	auto fID2 = mask & tempkey;
+    	uint64_t fID1 = tempkey >> shiftbybits;
+    	uint64_t fID2 = mask & tempkey;
         _outputFile<<fID1<<" "<<fID2<<" "<<
         tempvalue[0] <<" "<< tempvalue[1] << " " << tempvalue[2]<< " ";
     }
