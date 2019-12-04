@@ -46,7 +46,7 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<floatingpoint>
     if(getId() >= SysParams::Chemistry().maxStableIndex) {
         LOG(ERROR) << "Filament ID assigned ("<< getId()<<
                    ") equals/exceeds the maximum permissible value "
-                   "("<<SysParams::Chemistry().maxStableIndex<<").". Exiting.";
+                   "("<<SysParams::Chemistry().maxStableIndex<<"). Exiting."<<endl;
         throw std::logic_error("Max value reached");
     }
     //create beads
