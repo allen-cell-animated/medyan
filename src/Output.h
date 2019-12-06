@@ -20,7 +20,7 @@
 
 #include "Parser.h"
 #include "DissipationTracker.h"
-
+#include "ForceFieldManager.h"
 
 ///FORWARD DECLARATIONS
 class CompartmentGrid;

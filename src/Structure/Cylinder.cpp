@@ -50,85 +50,75 @@ void Cylinder::updateCoordinate() {
     Cylinder::getDbData().value[getStableIndex()].coord = 0.5 * (_b1->coordinate() + _b2->coordinate());
 }
 
-
 Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int position,
-                   bool extensionFront, bool extensionBack, bool initialization)
+                   bool extensionFront, bool extensionBack, bool initialization,
+                   floatingpoint eqLength)
 
-    : Trackable(true, true, true, false),
-      _b1(b1), _b2(b2), _type(type), _position(position),
-      DatabaseType(CylinderInfoData::CylinderInfo {}) {
+		: Trackable(true, true, true, false),
+		  _b1(b1), _b2(b2), _type(type), _position(position),
+		  DatabaseType(CylinderInfoData::CylinderInfo {}) {
 
-    #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
-        if(getStableIndex() >= SysParams::Chemistry().maxStableIndex) {
-            LOG(ERROR) << "Total number of cylinders initialized("<< getStableIndex()<<
-            ") equals/exceeds the maximum ("<<SysParams::Chemistry().maxStableIndex<<")."
-                          "Check number of binding sites to continue to use "
-                          "HYBRID_NLSTENCILLIST or SIMDBINDINGSEARCH. If not, shift to "
-                          "other binding search algorithms. Exiting.";
-            throw std::logic_error("Max value reached");
-        }
+	#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
+	if(getStableIndex() >= SysParams::Chemistry().maxStableIndex) {
+
+		LOG(ERROR) << "Total number of cylinders initialized("<< getStableIndex()<<
+		            ") equals/exceeds the maximum ("<<SysParams::Chemistry()
+		            .maxStableIndex<<")."
+					"Check number of binding sites to continue to use "
+					"HYBRID_NLSTENCILLIST or SIMDBINDINGSEARCH. If not, shift to "
+					"other binding search algorithms. Exiting.";
+		throw std::logic_error("Max value reached");
+	}
 	#endif
 
-    parent->addChild(unique_ptr<Component>(this));
+	parent->addChild(unique_ptr<Component>(this));
 	//@{
 
-    //Set coordinate
-    updateCoordinate();
+	//Set coordinate
+	updateCoordinate();
 
-    Compartment* compartment;
-    try {compartment = GController::getCompartment(coordinate);}
-    catch (exception& e) {
-        cout << e.what() << endl;
-        exit(EXIT_FAILURE);
-    }
+	Compartment* compartment;
+	try {compartment = GController::getCompartment(coordinate);}
+	catch (exception& e) {
+		cout << e.what() << endl;
+		exit(EXIT_FAILURE);
+	}
 
-    //add to compartment
-    _cellElement.manager = compartment->cylinderCell.manager;
-    _cellElement.manager->addElement(this, _cellElement, compartment->cylinderCell);
+	//add to compartment
+	_cellElement.manager = compartment->cylinderCell.manager;
+	_cellElement.manager->addElement(this, _cellElement, compartment->cylinderCell);
 
-    //@}
+	//@}
+	if(SysParams::RUNSTATE) {
+		eqLength = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
+		#ifdef CHEMISTRY
+		_cCylinder = unique_ptr<CCylinder>(new CCylinder(compartment, this));
+		_cCylinder->setCylinder(this);
+
+		//init using chem manager
+		_chemManager->initializeCCylinder(_cCylinder.get(), extensionFront,
+		                                  extensionBack, initialization);
+		#endif
+	}
 #ifdef MECHANICS
-          //set eqLength according to cylinder size
-          
-    floatingpoint eqLength  = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
-    if(!SysParams::RUNSTATE) //RESTARTPHASE
-    {
-        int nummonomers = (int) round(eqLength/ SysParams::Geometry().monomerSize[type]);
-        floatingpoint tpd = eqLength;
-              
-        if(nummonomers ==0){
-            eqLength = SysParams::Geometry().monomerSize[type];
-        }
-        else{
-            eqLength = (nummonomers) * SysParams::Geometry().monomerSize[type];
-            floatingpoint mindis = abs(tpd - eqLength);
-
-            for(auto i=nummonomers-1;i<=min(nummonomers+1, SysParams::Geometry().cylinderNumMon[type]);i++){
-                if(mindis > abs(tpd - i * SysParams::Geometry().monomerSize[type]))
-                {
-                    eqLength = i * SysParams::Geometry().monomerSize[type];
-                    mindis = abs(tpd - eqLength);
-                }
-            }
-        }
-        
-    
-    }
-    _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
-    _mCylinder->setCylinder(this);
-#endif
-    
-#ifdef CHEMISTRY
-    _cCylinder = unique_ptr<CCylinder>(new CCylinder(compartment, this));
-    _cCylinder->setCylinder(this);
-
-    //init using chem manager
-    _chemManager->initializeCCylinder(_cCylinder.get(), extensionFront,
-                                      extensionBack, initialization);
+	_mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
+	_mCylinder->setCylinder(this);
 #endif
 
-    // Update the stored data
-    updateData();
+	// Update the stored data
+	updateData();
+}
+
+void Cylinder::initializerestart(int nummonomers, int firstmonomer, int lastmonomer, bool
+									minusendstatus, bool plusendstatus){
+	if(SysParams::RUNSTATE){
+		LOG(ERROR) << "initializerestart Function from Filament class can only be called "
+		              "during restart phase. Exiting.";
+		throw std::logic_error("Illegal function call pattern");
+	}
+	_chemManager->initializeCCylinder(_cCylinder.get(), false,
+	                                  false, true, nummonomers, firstmonomer,
+	                                  lastmonomer, minusendstatus, plusendstatus);
 }
 
 Cylinder::~Cylinder() noexcept {

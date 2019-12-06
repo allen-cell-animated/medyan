@@ -74,10 +74,20 @@ public:
     virtual void initializeSystem(ChemSim* chem);
     
     ///Initializer for chem cylinders, based on the given simulation
-    virtual void initializeCCylinder(CCylinder* cc,
-                                     bool extensionFront,
-                                     bool extensionBack,
-                                     bool initialization);
+//    virtual void initializeCCylinder(CCylinder* cc,
+//                                     bool extensionFront,
+//                                     bool extensionBack,
+//                                     bool initialization);
+
+	virtual void initializeCCylinder(CCylinder* cc,
+	                                      bool extensionFront,
+	                                      bool extensionBack,
+	                                      bool initialization,
+	                                      int nummonomers = -1,
+	                                      int firstmonomer = -1,
+	                                      int lastmonomer = -1,
+	                                      bool minusendstatus = false,
+	                                      bool plusendstatus = false);
     
     /// Update the copy numbers of all species in the chemical network
     /// @note - this only sets the copy number if the simulation time

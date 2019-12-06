@@ -62,7 +62,7 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<floatingpoint>
         
     Bead* b2 = _subSystem->addTrackable<Bead>(pos2, this, 1);
     
-    //create cylinder
+    //create cylindera
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b1, b2, _filType, 0);
     
     c0->setPlusEnd(true);
@@ -136,6 +136,8 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<vector<floatin
     }
 }
 
+
+
 Filament::~Filament() {
     
     //remove cylinders, beads from system
@@ -202,6 +204,36 @@ void Filament::extendMinusEnd(vector<floatingpoint>& coordinates) {
 
     // set cylinder's filID
     c0->setFilID(getId());
+
+}
+
+//Initialize for restart
+void Filament::initializerestart(deque<Cylinder*> cylinderVector, vector<restartCylData>&
+_rCDatavec) {
+
+    if(SysParams::RUNSTATE){
+        LOG(ERROR) << "initializerestart Function from Filament class can only be called "
+                      "during restart phase. Exiting.";
+        throw std::logic_error("Illegal function call pattern");
+    }
+
+	//set plus end marker
+    _plusEndPosition = getPlusEndCylinder()->getSecondBead()->getPosition();
+
+    for(auto cyl:cylinderVector) {
+	    _cylinderVector.push_back(cyl);
+        auto rcdata = _rCDatavec[cyl->getStableIndex()];
+        cyl->initializerestart( rcdata.totalmonomers, rcdata.endmonomerpos[0],
+        		rcdata.endmonomerpos[1], rcdata.endstatusvec[0], rcdata.endstatusvec[1]);
+    }
+
+	// update reaction rates
+	if(const auto& loadForceFunc = _subSystem->getCylinderLoadForceFunc()) {
+		loadForceFunc(_cylinderVector.back(), ForceFieldTypes::LoadForceEnd::Plus);
+		_cylinderVector.back()->updateReactionRates();
+		loadForceFunc(_cylinderVector.front(), ForceFieldTypes::LoadForceEnd::Minus);
+		_cylinderVector.front()->updateReactionRates();
+	}
 
 }
 

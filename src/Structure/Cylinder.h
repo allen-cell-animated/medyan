@@ -134,7 +134,8 @@ public:
     Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int position,
              bool extensionFront = false,
              bool extensionBack  = false,
-             bool initialization = false);
+             bool initialization = false,
+             floatingpoint eqLength = -1.0);
 
     virtual ~Cylinder() noexcept;
 
@@ -223,6 +224,10 @@ public:
     int getFilID() const {
         return _filID;
     }
+
+    //Function to initialize Cylinders properly during restart
+	void initializerestart(int nummonomers, int firstmonomer, int lastmonomer, bool
+    minusendstatus, bool plusendstatus);
 
     static floatingpoint timecylinder1;
 	static floatingpoint timecylinder2;

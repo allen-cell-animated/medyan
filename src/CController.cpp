@@ -76,12 +76,6 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem, Dissipa
     
     CCylinder::_chemSim = _chemSim;
     Cylinder::_chemManager = _chemManager;
-    
-
-    
-    
-    
-    
 }
 
 bool CController::run(floatingpoint time) {

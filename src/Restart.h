@@ -24,7 +24,6 @@
 #include <random>
 #include <chrono>
 
-
 #include "Parser.h"
 #include "Output.h"
 #include "SubSystem.h"
@@ -46,10 +45,10 @@
 #include "MathFunctions.h"
 #include "MController.h"
 #include "Cylinder.h"
+#include "RestartParams.h"
 #include <unordered_set>
 #include <unordered_map>
 #include 	<tuple>
-#include <vector>
 #include <algorithm>
 using namespace mathfunc;
 
@@ -57,13 +56,6 @@ using namespace mathfunc;
 class SubSystem;
 class Cylinder;
 class FilamentBindingManager;
-
-/*Structures to store data parsed from Restartfile*/
-struct restartBeadData{
-	vector<unsigned int> bidvec;
-	vector<float> coordvec;
-	vector<float> forceAuxvec;
-};
 
 class Restart {
 private:
@@ -84,7 +76,9 @@ private:
 
 	fstream _inputFile; ///< input file being used
 	restartBeadData _rBData;
-    
+	vector<restartFilData> _rFDatavec;
+    vector<restartCylData> _rCDatavec;
+
     //gives angle and delta
     vector<floatingpoint> getAngleDeltaPos(vector<floatingpoint>leg, vector<floatingpoint> site1, vector<floatingpoint> site2){
         vector<floatingpoint> returnVector;
@@ -100,7 +94,7 @@ private:
         returnVector.push_back(len1);
         returnVector.push_back(len3);
         return returnVector; }
-    
+
     // Goes through single cylinder filaments and decides the appropriate way to activate them.
     void reassignsinglecylfil(bool flag){ //flag 0 - linker/motor, 1-brancher.
         for(auto x:Cylinder::getCylinders()){
@@ -189,7 +183,7 @@ private:
                     //append with other binding sites.
                     while(ObSite.back() < SysParams::Geometry().cylinderNumMon[filType] && ObSite.size() < bSitecyl.size())
                         ObSite.push_back(ObSite.back() + deltaBinding);
-                    
+
                     for(auto i = ObSite.size(); i < bSitecyl.size(); i++){
                         if(ObSite.front() - deltaBinding >0){
                             ObSite.push_back(ObSite.back());
@@ -199,7 +193,7 @@ private:
                             ObSite.at(0)  =ObSite.at(0)- deltaBinding;
                         }
                     }
-                    
+
                     //get COM
                     short mean1 = 0;short mean2 = 0;
                     for(auto i = 0; i < bSitecyl.size(); i++)
@@ -212,7 +206,7 @@ private:
                         //exit(EXIT_FAILURE);
                     }
                     else if(abs(mean1-mean2)!=0 && vecpos == branchcylIDs.end()){
-                        
+
                         orginal_bSite = bSite;
                     //move COM to get the necessary translation.
                         for(auto i = 0; i < bSite.size(); i++){
@@ -224,7 +218,7 @@ private:
                                 vector<short> test;
                                 for(mm=0;mm<=bSitecyl.size();mm++){
                                     test.push_back(abs(bSitecyl[mm]-bSite[i]));}
-                                
+
                                 for(mm=0;mm<=bSitecyl.size();mm++){
                                     if(test[mm]<test[lo])
                                         lo=mm;}
@@ -247,7 +241,7 @@ private:
                         //get the first and last Beads
                         short minus = SysParams::Geometry().cylinderNumMon[filType] - nummonomers + mean1 - mean2;
                         short plus  = SysParams::Geometry().cylinderNumMon[filType] -1 + mean1 - mean2;
-                        
+
                         //check if minus < 0 or plus > cylinder monomer limit
                         //if yes, force minus end and plus end to be in the range
                         if(minus < 0){
@@ -268,12 +262,12 @@ private:
                             }
                             cout << endl;
                         }
-                        
+
                         m1 = cc->getCMonomer(minus);
                         m1->speciesMinusEnd(0)->up();
                         m1 = cc->getCMonomer(plus);
                         m1->speciesPlusEnd(0)->up();
-                        
+
                         for(int i = 0; i < cc->getSize(); i++) {
                             if(i>minus && i <plus){ //first CMonomer should be MinusEnd
                                 if(cc->getCMonomer(i)->speciesFilament(0)->getN() == 0)
@@ -304,15 +298,15 @@ private:
                     }
                     }// ELSE (IF x->Size > = CYLSIZE)
             }//IF scfmap.size()
-            
+
         } //FOR Cylinders
-        
+
     }//reassign ENDS.
-    
-    
+
+
 //cross checks to see linker and motor binding sites have the same distance between them as linker, adds to heap.
     void crosschecklinkermotor(){
-        
+
         short brows=boundVector.size();
         for(int iter=0;iter<=brows-1;iter++){
             vector<tuple<CCylinder*, short>> map;
@@ -445,7 +439,7 @@ private:
             }
     }
     }
-    
+
     //Increases copy number of diffusing species corresponding to bound species in each Compartment by number of events.
     void setdiffspeciesnumber(vector<string> rxnspecies, Cylinder* c){
         int counter=0;
@@ -461,7 +455,7 @@ private:
                 "Restart file reaction numbers do not match with diffusing species number."
                 << endl;
                 exit(EXIT_FAILURE);
-                
+
             }
             events=events+(c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().getN();
             (c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(events);
@@ -526,14 +520,14 @@ public:
                 if(dis<=0.00001){
                     b->setstaticstate(true);
                 }}}
-        
+
 //STEP #2 . updating _possbileBindings of Linkers in each compartment.
         //Filter through probable sites in unsortedpairings by making sure the distance between binding sites
         //in them is the same as bound species bond length
         crosschecklinkermotor();
         crosscheckBranchers();
     }
-    
+
     void addtoHeaplinkermotor(){
 //STEP #2. ADD bound Linkers And Motors in inputfile into possible bindings.
         boundVector=get<1>(filaments);
@@ -633,7 +627,7 @@ public:
                                     //d = round(angdeltapos.at(2)*_numMonPerCyl/SysParams::Geometry().cylinderSize[filamentType]); //THIS IS THE CORRECT WAY. TEMPORARILY DEPRECATED.
                                     else{
 //                                        d = SysParams::Geometry().cylinderNumMon[filamentType] -_numMonPerCyl + round(angdeltapos.at(2)*SysParams::Geometry().cylinderNumMon[filamentType]/angdeltapos.at(3));
-                          
+
                                         d = SysParams::Geometry().cylinderNumMon[filamentType] -_numMonPerCyl + round(angdeltapos.at(2)*_numMonPerCyl/angdeltapos.at(3));
 //
                                     }
@@ -684,14 +678,14 @@ public:
                     }//@IF
                 }//@for brows
             }}//@Cylinders
-        
+
         //STEP #2 Substep. Check single cylinder filaments to make sure CMonomers are activated appropriately.
         //MinusEnd Cylinders are activated by default with the right most monomer pointing towards the plusEnd.
         reassignsinglecylfil(0);
         }
-    
+
     void addtoHeapbranchers(){
- 
+
         vector<tuple<string, short, vector<floatingpoint>>> branchVector=get<2>(filaments);
         int iter;
         auto brows=branchVector.size();
@@ -748,11 +742,11 @@ public:
                         else if(x->isMinusEnd()&& 0.25>=angdeltapos.at(2)/cylsize){
 
                             auto f = (Filament*)(x->getParent());
-                            
+
                             if(f->getCylinderVector().size()==1){
                                 _bunsortedpairings.insert({iter,make_tuple(x->getCCylinder(),0)});
                                 branchcylIDs.push_back(x->getId());
-                                
+
                                 auto cc = x->getCCylinder();
                                 int nummonomers = min((int) round(x->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filamentType]),SysParams::Geometry().cylinderNumMon[filamentType]);
                                 //TURN DOWN OLD MINUS AND PLUS END
@@ -764,13 +758,13 @@ public:
                                 //get the first and last Beads
                                 short minus = 0 ;
                                 short plus  = nummonomers -1 ;
-                                
+
                                 m1 = cc->getCMonomer(minus);
                                 if(m1->speciesMinusEnd(0)->getN()!=0)
                                     m1->speciesMinusEnd(0)->down();
                                 m1 = cc->getCMonomer(plus);
                                 m1->speciesPlusEnd(0)->up();
-                            
+
                                 for(int i = 0; i < cc->getSize(); i++) {
                                     if(i>=minus && i <plus){ //first CMonomer should be MinusEnd
                                         if(cc->getCMonomer(i)->speciesFilament(0)->getN() == 0)
@@ -815,12 +809,12 @@ public:
                 }//@ brows
             }//@ Cylinders
         }//@ Compartment
-        
+
         //STEP #2 Substep. Check single cylinder filaments to make sure CMonomers are activated appropriately.
         //MinusEnd Cylinders are activated by default with the right most monomer pointing towards the plusEnd.
         reassignsinglecylfil(1);
     }
-    
+
     void crosscheckBranchers(){
         //Step 3A. Sort through, update possible bindings, fire reaction one by one, handle callback.
         vector<tuple<string, short, vector<floatingpoint>>> branchVector=get<2>(filaments);
@@ -874,7 +868,7 @@ public:
             auto c11=get<0>(map[one])->getCylinder()->getFirstBead()->vcoordinate();
             auto c1=get<0>(map[one])->getCylinder();
             auto c21=get<0>(map[two])->getCylinder()->getFirstBead()->vcoordinate();
-            
+
             for(auto &Mgr:c1->getCompartment()->getFilamentBindingManagers()){
                 if(dynamic_cast<BranchingManager*>(Mgr.get())) {
                     if(Mgr->getBoundName().compare(boundName)==0){

@@ -1147,14 +1147,14 @@ void Datadump::print(int snapshot) {
                              BranchingPoint::numBranchingPoints() << " " <<
                              Bubble::numBubbles() << endl;
     //Bead data
-    _outputFile <<"BEAD DATA: BEADIDX(STABLE) FID COORDX COORDY COORDZ FORCEAUXX "
+    _outputFile <<"BEAD DATA: BEADIDX(STABLE) FID FPOS COORDX COORDY COORDZ FORCEAUXX "
                   "FORCEAUXY FORCEAUXZ"<<endl;
     const auto& beadData = Bead::getDbDataConst();
 
     for(auto b:Bead::getBeads()){
         auto bidx = b->getStableIndex();
         Filament* f = static_cast<Filament*>(b->getParent());
-        _outputFile <<bidx<<" "<<f->getId()<<" "<<beadData.coords.data()
+        _outputFile <<bidx<<" "<<f->getId()<<" "<<b->getPosition()<<" "<<beadData.coords.data()
         [3*bidx]<<" " <<beadData.coords.data()[3*bidx + 1]<<" "
         <<beadData.coords.data()[3*bidx + 2]<<" "<<beadData.forcesAux.data()[3*bidx]<<" "<<
         beadData.forcesAux.data()[3*bidx + 1]<<" "<<beadData.forcesAux.data()[3*bidx + 2]<<endl;
@@ -1169,7 +1169,7 @@ void Datadump::print(int snapshot) {
     }
 	_outputFile <<endl;*/
     //Cylinder data
-    _outputFile <<"CYLINDER DATA: CYLIDX(STABLE) B1_IDX B2_IDX MINUSENDTYPE "
+    _outputFile <<"CYLINDER DATA: CYLIDX(STABLE) FID FTYPE FPOS B1_IDX B2_IDX MINUSENDTYPE "
                   "PLUSENDTYPE MINUSENDMONOMER PLUSENDMONOMER TOTALMONOMERS EQLEN"<<endl;
     const auto& cylinderInfoData = Cylinder::getDbData().value;
 
@@ -1202,16 +1202,19 @@ void Datadump::print(int snapshot) {
             }
 
         /*Cidx minus-end plus-end num-monomers*/
-        _outputFile <<cidx<<" "<<cyl->getFirstBead()->getStableIndex()<<" "
-        <<cyl->getSecondBead()->getStableIndex()<<" "<<minusendtype<<" "<<plusendtype<<" "
-        <<minusendmonomer<<" "<<plusendmonomer<<" "<<(plusendmonomer-minusendmonomer)+1<<" "
-        <<cyl->getMCylinder()->getEqLength()<<endl;
+        _outputFile <<cidx<<" "<<cylinderInfoData[cidx].filamentId<<" "
+                    <<filamentType<<" "<<cylinderInfoData[cidx].positionOnFilament<<" "
+                    <<cyl->getFirstBead()->getStableIndex()<<" "
+                    <<cyl->getSecondBead()->getStableIndex()<<" "<<minusendtype<<" "
+                    <<plusendtype<<" "<<minusendmonomer<<" "<<plusendmonomer<<" "
+                    <<(plusendmonomer-minusendmonomer)+1<<" "
+                    <<cyl->getMCylinder()->getEqLength()<<endl;
     }
 	_outputFile <<endl;
     //Filament Data
-	_outputFile <<"FILAMENT DATA: FILID CYLIDvec"<<endl;
+	_outputFile <<"FILAMENT DATA: FILID FTYPE CYLIDvec"<<endl;
 	for(auto fil : Filament::getFilaments()){
-		_outputFile <<fil->getId()<<" ";
+		_outputFile <<fil->getId()<<" "<<fil->getType()<<" ";
 		for(auto cyl :fil->getCylinderVector()){
 			_outputFile << cyl->getStableIndex()<<" ";
 		}

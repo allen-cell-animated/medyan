@@ -25,6 +25,7 @@
 #include "Histogram.h"
 #include "Trackable.h"
 #include "Composite.h"
+#include "RestartParams.h"
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -233,7 +234,11 @@ public:
     //Aravind 18 Feb 2016.
     vector<vector<floatingpoint>> predefinedFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads);
     //@}
-    
+
+    //To initialize filaments with cylinders during restart.
+	void initializerestart(deque<Cylinder*> cylindervector, vector<restartCylData>&
+	_rCDatavec);
+
     virtual void printSelf();
     
     /// Check the consistency of the filament. For now,

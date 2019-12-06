@@ -55,7 +55,6 @@ void CylinderVolumeFF::cleanup() {
 }
 
 
-
 floatingpoint CylinderVolumeFF::computeEnergy(floatingpoint *coord, bool stretched) {
 
     floatingpoint U= 0.0;
