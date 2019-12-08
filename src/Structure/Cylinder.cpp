@@ -89,12 +89,13 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 	_cellElement.manager->addElement(this, _cellElement, compartment->cylinderCell);
 
 	//@}
+	#ifdef CHEMISTRY
+	_cCylinder = unique_ptr<CCylinder>(new CCylinder(compartment, this));
+	_cCylinder->setCylinder(this);
+	#endif
 	if(SysParams::RUNSTATE) {
 		eqLength = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
 		#ifdef CHEMISTRY
-		_cCylinder = unique_ptr<CCylinder>(new CCylinder(compartment, this));
-		_cCylinder->setCylinder(this);
-
 		//init using chem manager
 		_chemManager->initializeCCylinder(_cCylinder.get(), extensionFront,
 		                                  extensionBack, initialization);

@@ -31,7 +31,6 @@ void Restart::readNetworkSetup() {
 
 				getline(_inputFile, line);
 				while (line.size() > 0) {
-					cout << line << endl;
 					//Split string based on space delimiter
 					vector<string> lineVector = split<string>(line);
 					//Bead ID
@@ -56,7 +55,6 @@ void Restart::readNetworkSetup() {
 
 				getline(_inputFile, line);
 				while (line.size() > 0) {
-					cout << line << endl;
 					restartCylData _rcyldata;
 
 					//Split string based on space delimiter
@@ -74,13 +72,16 @@ void Restart::readNetworkSetup() {
 					//minus end or plus end?
 					_rcyldata.endstatusvec[0] = atoi((lineVector[6]).c_str());
 					_rcyldata.endstatusvec[1] = atoi((lineVector[7]).c_str());
+					//minus/plus end type
+					_rcyldata.endtypevec[0] = atoi((lineVector[8]).c_str());
+					_rcyldata.endtypevec[1] = atoi((lineVector[9]).c_str());
 					//endmonomerpos
-					_rcyldata.endmonomerpos[0] = atoi((lineVector[8]).c_str());
-					_rcyldata.endmonomerpos[1] = atoi((lineVector[9]).c_str());
+					_rcyldata.endmonomerpos[0] = atoi((lineVector[10]).c_str());
+					_rcyldata.endmonomerpos[1] = atoi((lineVector[11]).c_str());
 					//totalmonomers
-					_rcyldata.totalmonomers = atoi((lineVector[10]).c_str());
+					_rcyldata.totalmonomers = atoi((lineVector[12]).c_str());
 					//eqlen
-					_rcyldata.eqlen = atof((lineVector[11]).c_str());
+					_rcyldata.eqlen = atof((lineVector[13]).c_str());
 					//append to the vector
 					_rCDatavec.push_back(_rcyldata);
 
@@ -93,7 +94,6 @@ void Restart::readNetworkSetup() {
 
 				getline(_inputFile, line);
 				while (line.size() > 0) {
-					cout << line << endl;
 					restartFilData _rfildata;
 
 					//Split string based on space delimiter
@@ -103,8 +103,9 @@ void Restart::readNetworkSetup() {
 					//Filament Type
 					_rfildata.filType = atoi((lineVector[1]).c_str());
 					//Cylinder id vec
-					for (auto it = lineVector.begin() + 2; it != lineVector.end(); it++)
-						_rfildata.cylsidvec.push_back(atoi((lineVector[0]).c_str()));
+					for (auto it = lineVector.begin() + 2; it != lineVector.end(); it++) {
+						_rfildata.cylsidvec.push_back(atoi((*it).c_str()));
+					}
 					//append to the vector
 					_rFDatavec.push_back(_rfildata);
 
@@ -119,6 +120,33 @@ void Restart::readNetworkSetup() {
 				getline(_inputFile, line);
 				while (line.size() > 0) {
 					cout << line << endl;
+				}
+			}
+
+			else if (lineVector[0] == "MOTOR") {
+				//Get lines till the line is not empty
+
+				getline(_inputFile, line);
+				while (line.size() > 0) {
+					restartMotorData _rmdata;
+					//Split string based on space delimiter
+					vector<string> lineVector = split<string>(line);
+					//Motor ID
+					_rmdata.motorid = atoi((lineVector[0]).c_str());
+					//Cyl ID1
+					_rmdata.cylid1 = atoi((lineVector[1]).c_str());
+					//Cyl ID2
+					_rmdata.cylid2 = atoi((lineVector[2]).c_str());
+					//pos1
+					_rmdata.pos1 = atof((lineVector[3]).c_str());
+					//pos2
+					_rmdata.pos2 = atof((lineVector[4]).c_str());
+					//pos2
+					_rmdata.eqlen = atof((lineVector[5]).c_str());
+
+					_rMDatavec.push_back(_rmdata);
+					//get next filament data
+					getline(_inputFile, line);
 				}
 			}
 		}
@@ -137,7 +165,7 @@ void Restart::setupInitialNetwork() {
 	// Filament ID. Filaments do not follow stable index protocol and hence need not have
 	// continuous ID values.
 
-	for(auto fil : _rFDatavec) {
+	for(auto &fil : _rFDatavec) {
 		//Create dummy filament
 		fil.filamentpointer = _subSystem->addTrackable<Filament>(_subSystem, fil.filType);
 		//override ID
@@ -152,7 +180,7 @@ void Restart::setupInitialNetwork() {
 		auto filptr = filamentmap[_rBData.filidvec[b]];
 		//Extract part of the vector.
 		vector<floatingpoint> tempcoord(_rBData.coordvec.begin()+3*bID, _rBData.coordvec
-		.begin()+3*bID+2);
+		.begin()+3*bID+3);
 		//Initialize beads
 		_subSystem->addTrackable<Bead>(tempcoord, filptr, _rBData.filpos[b]);
 		//Copy Forces
@@ -168,7 +196,9 @@ void Restart::setupInitialNetwork() {
 		auto _filType = cyl.filtype;
 		//initialize cylinder
 		Cylinder* c0 = _subSystem->addTrackable<Cylinder> (filptr, b1, b2, _filType,
-		                                                   cyl.filpos, false, false, true);
+		                                                   cyl.filpos, false, false,
+		                                                   true, cyl.eqlen);
+		cyl.cylinderpointer = c0;
 		//set minusend or plusend
 		if(cyl.endstatusvec[0])
 			c0->setPlusEnd(true);
@@ -178,10 +208,12 @@ void Restart::setupInitialNetwork() {
 	cout<<"Num cylinders "<<Cylinder::getCylinders().size()<<endl;
 
 	for(auto fil : _rFDatavec) {
-		deque<Cylinder*> cylvector;
+		vector<Cylinder*> cylvector;
 		for(auto cylsid:fil.cylsidvec){
 			cylvector.push_back(_rCDatavec[cylsid].cylinderpointer);
 		}
 		fil.filamentpointer->initializerestart(cylvector, _rCDatavec);
 	}
+
+
 }

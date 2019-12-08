@@ -643,12 +643,7 @@ public:
     ///update all possible binding reactions that could occur using stencil NL
     virtual void updateAllPossibleBindingsstencil();
     virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
-                                               tuple<CCylinder*, short> t2){
-        floatingpoint oldN=numBindingSitesstencil();
-        _possibleBindingsstencil.emplace(t1,t2);
-        floatingpoint newN=numBindingSitesstencil();
-        updateBindingReaction(oldN,newN);
-    }
+                                               tuple<CCylinder*, short> t2);
 	virtual void clearpossibleBindingsstencil();
     virtual int numBindingSitesstencil() {
 

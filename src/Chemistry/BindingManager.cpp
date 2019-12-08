@@ -2122,8 +2122,6 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
     updateBindingReaction(oldN, newN);
 #endif
 }
-
-
 void MotorBindingManager::updateAllPossibleBindingsstencil() {
 #ifdef NLSTENCILLIST
     _possibleBindingsstencil.clear();
@@ -2282,6 +2280,18 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     cout<<"Erroneous function call. Please check compiler macros. Exiting."<<endl;
     exit(EXIT_FAILURE);
 #endif
+}
+void MotorBindingManager::appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
+                                           tuple<CCylinder*, short> t2){
+	#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
+	auto HManager = _compartment->getHybridBindingSearchManager();
+	HManager->appendpossibleBindingsstencil(_idvec, t1, t2);
+	#else
+	floatingpoint oldN=numBindingSitesstencil();
+	_possibleBindingsstencil.emplace(t1,t2);
+	floatingpoint newN=numBindingSitesstencil();
+	updateBindingReaction(oldN,newN);
+	#endif
 }
 void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc) {
 

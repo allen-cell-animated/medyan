@@ -1160,7 +1160,7 @@ void Datadump::print(int snapshot) {
         beadData.forcesAux.data()[3*bidx + 1]<<" "<<beadData.forcesAux.data()[3*bidx + 2]<<endl;
 
     }
-
+    _outputFile <<endl;
     /*for(int bidx = 0; bidx<Bead::rawNumStableElements(); bidx++){
 
         _outputFile <<bidx<<" "<<beadData.coords.data()[3*bidx]<<" "<<beadData.coords.data()[3*bidx + 1]<<" "
@@ -1169,7 +1169,8 @@ void Datadump::print(int snapshot) {
     }
 	_outputFile <<endl;*/
     //Cylinder data
-    _outputFile <<"CYLINDER DATA: CYLIDX(STABLE) FID FTYPE FPOS B1_IDX B2_IDX MINUSENDTYPE "
+    _outputFile <<"CYLINDER DATA: CYLIDX(STABLE) FID FTYPE FPOS B1_IDX B2_IDX "
+				  "MINUSENDSTATUS PLUSENDSTATUS MINUSENDTYPE "
                   "PLUSENDTYPE MINUSENDMONOMER PLUSENDMONOMER TOTALMONOMERS EQLEN"<<endl;
     const auto& cylinderInfoData = Cylinder::getDbData().value;
 
@@ -1183,6 +1184,8 @@ void Datadump::print(int snapshot) {
         short minusendtype = -1;
         short plusendtype = -1;
         short foundstatus = 0; //0 none found, 1 found one end, 2 found both ends
+        bool minusendstatus = true;
+        bool plusendstatus = true;
                 for(int midx = 0; midx<numMonomers; midx++){
                 if(foundstatus ==2)
                     break;
@@ -1200,12 +1203,18 @@ void Datadump::print(int snapshot) {
                     plusendmonomer = midx;
                 }
             }
-
+			if(minusendtype == -1){
+				minusendstatus = false;
+			}
+			if(plusendtype == -1){
+				plusendstatus = false;
+			}
         /*Cidx minus-end plus-end num-monomers*/
         _outputFile <<cidx<<" "<<cylinderInfoData[cidx].filamentId<<" "
                     <<filamentType<<" "<<cylinderInfoData[cidx].positionOnFilament<<" "
                     <<cyl->getFirstBead()->getStableIndex()<<" "
-                    <<cyl->getSecondBead()->getStableIndex()<<" "<<minusendtype<<" "
+                    <<cyl->getSecondBead()->getStableIndex()<<" "
+                    <<minusendstatus<<" "<<plusendstatus<<" "<<minusendtype<<" "
                     <<plusendtype<<" "<<minusendmonomer<<" "<<plusendmonomer<<" "
                     <<(plusendmonomer-minusendmonomer)+1<<" "
                     <<cyl->getMCylinder()->getEqLength()<<endl;

@@ -169,6 +169,7 @@ void Controller::initialize(string inputFile,
     _snapshotTime = CAlgorithm.snapshotTime;
     _minimizationTime = CAlgorithm.minimizationTime;
     _neighborListTime = CAlgorithm.neighborListTime;
+    _datadumpTime = CAlgorithm.datadumpTime;
 
     //if run time was not set, look for runsteps parameters
     _runSteps = CAlgorithm.runSteps;
@@ -248,7 +249,7 @@ void Controller::initialize(string inputFile,
     //Set up datadump output if any
 #ifdef RESTARTDEV
 	    string datadumpname = _outputDirectory + "datadump.traj";
-	    _outputs.push_back(new Datadump(datadumpname, &_subSystem, ChemData));
+        _outputdump.push_back(new Datadump(datadumpname, &_subSystem, ChemData));
 #endif
 
 //    string twofilamentname = _outputDirectory + "twofilament.traj";
@@ -890,6 +891,7 @@ void Controller::run() {
     floatingpoint tauLastMinimization = 0;
     floatingpoint tauLastNeighborList = 0;
     floatingpoint oldTau = 0;
+    floatingpoint tauDatadump = 0;
 
     long stepsLastSnapshot = 0;
     long stepsLastMinimization = 0;
@@ -1019,6 +1021,7 @@ void Controller::run() {
     }
 #ifdef CHEMISTRY
     tauLastSnapshot = tau();
+    tauDatadump = tau();
     oldTau = 0;
 #endif
 
@@ -1080,9 +1083,12 @@ void Controller::run() {
 
 #ifdef CHEMISTRY
     tauLastSnapshot = tau();
+    tauDatadump = tau();
     oldTau = 0;
 #endif
     for(auto o: _outputs) o->print(0);
+    for(auto o: _outputdump) o->print(0);
+
     resetCounters();
 
     cout << "Starting simulation..." << endl;
@@ -1188,6 +1194,7 @@ void Controller::run() {
             tauLastSnapshot += tau() - oldTau;
             tauLastMinimization += tau() - oldTau;
             tauLastNeighborList += tau() - oldTau;
+            tauDatadump += tau() - oldTau;
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
 #ifdef CUDAACCL
@@ -1300,6 +1307,10 @@ void Controller::run() {
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runout2(mine - mins);
                 outputtime += elapsed_runout2.count();
+            }
+            if(tauDatadump >= _datadumpTime) {
+                for (auto o: _outputdump) o->print(0);
+                tauDatadump = 0.0;
             }
             //Print two filament sliding rate
 /*            else{

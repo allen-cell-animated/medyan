@@ -53,7 +53,7 @@ private:
     /// Deque of cylinders
     /// @note - the "front" of this deck is the minus end of the filament.
     deque<Cylinder*> _cylinderVector;
-    
+
     SubSystem* _subSystem; ///< SubSystem pointer
     
     short _filType; ///< Filament type
@@ -236,7 +236,7 @@ public:
     //@}
 
     //To initialize filaments with cylinders during restart.
-	void initializerestart(deque<Cylinder*> cylindervector, vector<restartCylData>&
+	void initializerestart(vector<Cylinder*> cylindervector, vector<restartCylData>&
 	_rCDatavec);
 
     virtual void printSelf();

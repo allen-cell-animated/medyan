@@ -70,6 +70,7 @@ struct ChemistryAlgorithm {
     floatingpoint runTime = 0.0;
     
     floatingpoint snapshotTime = 0.0;
+    floatingpoint datadumpTime = 1000.0;
     
     floatingpoint minimizationTime = 0.0;
     floatingpoint neighborListTime = 0.0;

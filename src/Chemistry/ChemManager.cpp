@@ -3069,10 +3069,11 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
         //Check if this is the first cylinder
         if(!f->getCylinderVector().empty()) {
 
+            //remove plus end from last, add to this.
+            lastcc = f->getCylinderVector().back()->getCCylinder();
+
             if(SysParams::RUNSTATE){
 
-                //remove plus end from last, add to this.
-                lastcc = f->getCylinderVector().back()->getCCylinder();
                 CMonomer* m1 = lastcc->getCMonomer(lastcc->getSize() - 1);
                 m1->speciesPlusEnd(0)->down();
                 //fill last cylinder with default filament value

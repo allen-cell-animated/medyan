@@ -78,6 +78,7 @@ private:
 	restartBeadData _rBData;
 	vector<restartFilData> _rFDatavec;
     vector<restartCylData> _rCDatavec;
+    vector<restartMotorData> _rMDatavec;
 
     //gives angle and delta
     vector<floatingpoint> getAngleDeltaPos(vector<floatingpoint>leg, vector<floatingpoint> site1, vector<floatingpoint> site2){

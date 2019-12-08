@@ -35,8 +35,10 @@ struct restartCylData{
 	unsigned int filtype;
 	unsigned int filpos;
 	unsigned int beadsidpairvec[2];
-	unsigned int endstatusvec[2];
+	bool endstatusvec[2];
+	unsigned int endtypevec[2];
 	unsigned int endmonomerpos[2];
+
 	unsigned int totalmonomers;
 	floatingpoint eqlen;
 	Cylinder* cylinderpointer;
@@ -48,6 +50,16 @@ struct restartFilData{
 	unsigned int filType;
 	vector<unsigned int> cylsidvec;
 	Filament* filamentpointer;
+};
+
+/*stores MotorData*/
+struct restartMotorData{
+	unsigned int motorid;
+	unsigned int cylid1;
+	unsigned int cylid2;
+	float pos1;
+	float pos2;
+	float eqlen;
 };
 
 #endif

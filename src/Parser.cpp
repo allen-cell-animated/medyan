@@ -361,6 +361,19 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
                 CAlgorithm.snapshotTime = atof(lineVector[1].c_str());
             }
         }
+        if (line.find("DATADUMPTIME:") != string::npos) {
+
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CAlgorithm.datadumpTime = atof(lineVector[1].c_str());
+            }
+        }
         if (line.find("SNAPSHOTSTEPS:") != string::npos) {
 
             vector<string> lineVector = split<string>(line);

@@ -208,24 +208,24 @@ void Filament::extendMinusEnd(vector<floatingpoint>& coordinates) {
 }
 
 //Initialize for restart
-void Filament::initializerestart(deque<Cylinder*> cylinderVector, vector<restartCylData>&
-_rCDatavec) {
+void Filament::initializerestart(vector<Cylinder*> cylinderVector,
+        vector<restartCylData>& _rCDatavec) {
 
     if(SysParams::RUNSTATE){
         LOG(ERROR) << "initializerestart Function from Filament class can only be called "
                       "during restart phase. Exiting.";
         throw std::logic_error("Illegal function call pattern");
     }
-
-	//set plus end marker
-    _plusEndPosition = getPlusEndCylinder()->getSecondBead()->getPosition();
-
     for(auto cyl:cylinderVector) {
-	    _cylinderVector.push_back(cyl);
         auto rcdata = _rCDatavec[cyl->getStableIndex()];
         cyl->initializerestart( rcdata.totalmonomers, rcdata.endmonomerpos[0],
-        		rcdata.endmonomerpos[1], rcdata.endstatusvec[0], rcdata.endstatusvec[1]);
+                                rcdata.endmonomerpos[1], rcdata.endstatusvec[0],
+                                rcdata.endstatusvec[1]);
+	    _cylinderVector.push_back(cyl);
     }
+
+    //set plus end marker
+    _plusEndPosition = getPlusEndCylinder()->getSecondBead()->getPosition();
 
 	// update reaction rates
 	if(const auto& loadForceFunc = _subSystem->getCylinderLoadForceFunc()) {
