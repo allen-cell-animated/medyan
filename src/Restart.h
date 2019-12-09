@@ -75,6 +75,7 @@ private:
     int  _numChemSteps=0;
 
 	fstream _inputFile; ///< input file being used
+	restartSystemData _rsystemdata;
 	restartBeadData _rBData;
 	vector<restartFilData> _rFDatavec;
     vector<restartCylData> _rCDatavec;

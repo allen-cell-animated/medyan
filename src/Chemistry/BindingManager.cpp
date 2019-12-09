@@ -2285,7 +2285,7 @@ void MotorBindingManager::appendpossibleBindingsstencil(tuple<CCylinder*, short>
                                            tuple<CCylinder*, short> t2){
 	#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 	auto HManager = _compartment->getHybridBindingSearchManager();
-	HManager->appendpossibleBindingsstencil(_idvec, t1, t2);
+//	HManager->appendpossibleBindingsstencil(_idvec, t1, t2);
 	#else
 	floatingpoint oldN=numBindingSitesstencil();
 	_possibleBindingsstencil.emplace(t1,t2);

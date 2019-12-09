@@ -2996,7 +2996,8 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                                       bool extensionBack,
                                       bool initialization, int nummonomers, int
                                       firstmonomer, int lastmonomer, bool minusendstatus,
-                                      bool plusendstatus) {
+                                      bool plusendstatus, short minusendtype, short
+                                      plusendtype) {
 
     mins = chrono::high_resolution_clock::now();
     //get some related objects
@@ -3098,12 +3099,16 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
 
                 if(minusendstatus){
                     CMonomer *m2 = cc->getCMonomer(firstmonomer);
-                    m2->speciesMinusEnd(0)->up();
+                    //minusendtype should have valid ( not -1 ) values if minusendstatus
+                    // is non-negative.
+                    m2->speciesMinusEnd(minusendtype)->up();
                     start = start+1;
                 }
                 if(plusendstatus) {
                     CMonomer *m2 = cc->getCMonomer(lastmonomer);
-                    m2->speciesPlusEnd(0)->up();
+	                //plusendtype should have valid ( not -1 ) values if minusendstatus
+	                // is non-negative.
+                    m2->speciesPlusEnd(plusendtype)->up();
                     end = end -1;
                 }
 
@@ -3147,18 +3152,19 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                 }
                 if(plusendstatus) {
                     CMonomer *m2 = cc->getCMonomer(lastmonomer);
-                    m2->speciesPlusEnd(0)->up();
+	                //plusendtype should have valid ( not -1 ) values if minusendstatus
+	                // is non-negative.
+	                m2->speciesPlusEnd(plusendtype)->up();
                     end = end -1;
                 }
 
-                //fill with default filament value 0-nummonomers-2
-                for(int i = SysParams::Geometry().cylinderNumMon[filType] - nummonomers + 1;
-                        i < cc->getSize() - 1; i++) {
-                    cc->getCMonomer(i)->speciesFilament(0)->up();
+	            //fill new cylinder with default filament value (start-end)
+	            for(int i = start; i <= end; i++) {
+		            cc->getCMonomer(i)->speciesFilament(0)->up();
 
-                    for(auto j : SysParams::CParams.bindingIndices[filType])
-                        cc->getCMonomer(i)->speciesBound(j)->up();
-                }
+		            for(auto j : SysParams::CParams.bindingIndices[filType])
+			            cc->getCMonomer(i)->speciesBound(j)->up();
+	            }
 #else
                 CMonomer* m2 = cc->getCMonomer(0);
                 m2->speciesMinusEnd(0)->up();

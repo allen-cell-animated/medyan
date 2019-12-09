@@ -19,6 +19,16 @@
 
 
 using namespace std;
+
+struct restartSystemData{
+	floatingpoint time = 0.0;
+	int Nfil = -1;
+	int Ncyl = -1;
+	int Nbead = -1;
+	int Nlink = -1;
+	int Nmotor = -1;
+	int Nbranch = -1;
+};
 /*Structures to store data parsed from Restartfile*/
 struct restartBeadData{
 	vector<unsigned int> bsidvec; //stableid

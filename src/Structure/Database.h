@@ -127,7 +127,8 @@ template< typename T, bool stableIndexing, typename DatabaseData = DatabaseDataD
 
 // Specialization for unstable indexing
 template< typename T, typename DatabaseData >
-class Database< T, false, DatabaseData > : public DatabaseBase<T>, public DatabaseDataManager<DatabaseData> {
+class Database< T, false, DatabaseData > : public DatabaseBase<T>,
+                                           public DatabaseDataManager<DatabaseData> {
 
 public:
 
@@ -153,7 +154,8 @@ public:
 
 // Specialization for stable indexing
 template< typename T, typename DatabaseData >
-class Database< T, true, DatabaseData > : public DatabaseBase<T>, public DatabaseDataManager<DatabaseData> {
+class Database< T, true, DatabaseData > : public DatabaseBase<T>,
+                                          public DatabaseDataManager<DatabaseData> {
     static std::vector<T*> _stableElems;
     static std::vector<std::size_t> _deletedIndices;
 

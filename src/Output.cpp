@@ -1141,7 +1141,10 @@ void Datadump::print(int snapshot) {
 	Cylinder::updateAllData();
     Cylinder::rearrange();
     _outputFile << snapshot << " " << tau() << endl;
+    _outputFile <<"NFIL NCYL NBEAD NLINK NMOTOR NBRANCH NBUBBLE"<<endl;
     _outputFile << Filament::numFilaments() << " " <<
+                             Cylinder::numCylinders()<<" "<<
+                             Bead::numBeads()<<" "<<
                              Linker::numLinkers() << " " <<
                              MotorGhost::numMotorGhosts() << " " <<
                              BranchingPoint::numBranchingPoints() << " " <<
@@ -1199,6 +1202,7 @@ void Datadump::print(int snapshot) {
 
                 if(p != -1) {
                     plusendtype = p;
+                    cout<<"PENDTYPE "<<p<<endl;
                     foundstatus++;
                     plusendmonomer = midx;
                 }

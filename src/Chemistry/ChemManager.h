@@ -87,7 +87,9 @@ public:
 	                                      int firstmonomer = -1,
 	                                      int lastmonomer = -1,
 	                                      bool minusendstatus = false,
-	                                      bool plusendstatus = false);
+	                                      bool plusendstatus = false,
+	                                      short minusendtype = -1,
+	                                      short plusendtype = -1);
     
     /// Update the copy numbers of all species in the chemical network
     /// @note - this only sets the copy number if the simulation time

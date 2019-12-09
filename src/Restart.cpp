@@ -26,26 +26,49 @@ void Restart::readNetworkSetup() {
 		if(line.find("#") != string::npos) { continue; }
 		vector<string> lineVector = split<string>(line);
 		if(line.size()>0) {
+			if(lineVector[0] == "NFIL"){
+				getline(_inputFile, line);
+				//Split string based on space delimiter
+				vector<string> lineVector = split<string>(line);
+				_rsystemdata.Nfil = atoi(((lineVector[0]).c_str()));
+				_rsystemdata.Ncyl = atoi(((lineVector[1]).c_str()));
+				_rsystemdata.Nbead = atoi(((lineVector[2]).c_str()));
+				_rsystemdata.Nlink = atoi(((lineVector[3]).c_str()));
+				_rsystemdata.Nmotor = atoi(((lineVector[4]).c_str()));
+				_rsystemdata.Nbranch = atoi(((lineVector[5]).c_str()));
+				//resize data structures
+				_rBData.bsidvec.resize(_rsystemdata.Nbead);
+				_rBData.filidvec.resize(_rsystemdata.Nbead);
+				_rBData.filpos.resize(_rsystemdata.Nbead);
+				_rBData.coordvec.resize(3*_rsystemdata.Nbead);
+				_rBData.forceAuxvec.resize(3*_rsystemdata.Nbead);
+			}
 			if (lineVector[0] == "BEAD") {
 			//Get lines till the line is not empty
-
 				getline(_inputFile, line);
 				while (line.size() > 0) {
 					//Split string based on space delimiter
 					vector<string> lineVector = split<string>(line);
-					//Bead ID
-					_rBData.bsidvec.push_back(atoi(((lineVector[0]).c_str())));
+					//Bead stable ID
+					auto beadstableid = atoi(((lineVector[0]).c_str()));
+					_rBData.bsidvec[beadstableid] = beadstableid;
 					//Filament ID
-					_rBData.filidvec.push_back(atoi(lineVector[1].c_str()));
+					_rBData.filidvec[beadstableid] = (atoi(lineVector[1].c_str()));
 					//Filament pos
-					_rBData.filpos.push_back(atoi(lineVector[2].c_str()));
+					_rBData.filpos[beadstableid] = (atoi(lineVector[2].c_str()));
 					//Copy coords & forces
+					short dim = 0;
 					for (auto it = lineVector.begin() + 3;
-					     it != lineVector.begin() + 6; it++)
-						_rBData.coordvec.push_back(atof((*it).c_str()));
+					     it != lineVector.begin() + 6; it++) {
+						_rBData.coordvec[3 * beadstableid + dim] = (atof((*it).c_str()));
+						dim++;
+					}
+					dim = 0;
 					for (auto it = lineVector.begin() + 6;
-					     it != lineVector.begin() + 9; it++)
-						_rBData.forceAuxvec.push_back(atof((*it).c_str()));
+					     it != lineVector.begin() + 9; it++){
+						_rBData.forceAuxvec[3 * beadstableid + dim] = (atof((*it).c_str()));
+						dim++;
+					}
 
 					getline(_inputFile, line);
 				}
@@ -215,5 +238,9 @@ void Restart::setupInitialNetwork() {
 		fil.filamentpointer->initializerestart(cylvector, _rCDatavec);
 	}
 
-
+	for(auto cyl:Cylinder::getCylinders()){
+		cout<<cyl->getId()<<" k "<<cyl->getMCylinder()->getStretchingConst()<<" eqLen "
+																	  ""<<cyl->getMCylinder()
+		->getEqLength()<<endl;
+	}
 }

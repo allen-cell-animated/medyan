@@ -578,6 +578,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 	std::cout << "----------------------------------------" << endl;
 	std::cout << "maxF " << maxForce << endl;
 #endif
+	FFM.computeEnergy(Bead::getDbData().coords.data(), true);
 
 	#ifdef TRACKDIDNOTMINIMIZE
 	SysParams::Mininimization().maxF.push_back(maxForce);

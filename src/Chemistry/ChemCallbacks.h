@@ -107,6 +107,10 @@ struct UpdateBrancherBindingCallback {
     }
 };
 
+
+/// In scenarios where you have multiple linkers in the system, they cannot bind to the
+// same binding site simultaneously. If linker type x is bound to a site, no other linker
+// (of any type) can bind to it till this one unbinds.
 struct UpdateLinkerBindingCallback {
     
     Cylinder* _cylinder; ///< cylinder to update
@@ -627,8 +631,6 @@ struct BranchingCallback {
 	    CUDAcommon::ccount.cBranchingCallback++;
     }
 };
-
-
 
 /// Callback to unbind a Linker from a Filament
 struct LinkerUnbindingCallback {
