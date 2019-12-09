@@ -439,8 +439,6 @@ void CaMKIIChemManager::genSpeciesCaMKII(ChemistryData &_chemData, Compartment& 
 
 				auto sb_bound = products[0].substr(0, products[0].find(":"));
 
-				cout << reactants.size() << " " << products.size() << endl;
-
 				//basic check because we have not yet checked reactions
 				if (reactants.size() != CAMKIIBINDINGREACTANTS ||
 					products.size() != CAMKIIBINDINGPRODUCTS) {
@@ -477,8 +475,6 @@ void CaMKIIChemManager::genSpeciesCaMKII(ChemistryData &_chemData, Compartment& 
 				auto products = get<1>(rb);
 
 				auto sb_bound = products[0].substr(0, products[0].find(":"));
-
-				cout << reactants.size() << " " << products.size() << endl;
 
 				//basic check because we have not yet checked reactions
 				if (reactants.size() != CAMKIIBUNDLINGREACTANTS ||

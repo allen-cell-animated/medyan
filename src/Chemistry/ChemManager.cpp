@@ -1948,7 +1948,7 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
 
                 auto sb_bound = products[0].substr(0, products[0].find(":"));
                 
-                cout << reactants.size() << " " << products.size() << endl;
+//                cout << reactants.size() << " " << products.size() << endl;
                 
                 //basic check because we have not yet checked reactions
                 if(reactants.size() != BRANCHINGREACTANTS ||

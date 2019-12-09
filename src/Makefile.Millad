@@ -22,7 +22,7 @@ OBJECTS := $(SOURCES:.cpp=.o)
 #CPP COMPILER CHOICE AND FLAGS
 #CXX = /usr/bin/g++ -std=c++11
 # CXX = /usr/bin/g++ -std=c++11 -static -pthread -Wl,--whole-archive -lpthread -Wl,--no-whole-archive #added jl135, for Rice Workstation only
-CXX = g++ -std=c++11 
+CXX = g++ -std=c++11 -static -pthread
 #-pthread
 DEBUG = -O0 -g3 -DDEBUG 
 DEBUG += -DRAND_STATIC_SEED=130105219
@@ -94,8 +94,6 @@ CPPFLAGS += -DREACTION_SIGNALING
 
 #Species signaling
 CPPFLAGS += -DRSPECIES_SIGNALING
-
-CPPFLAGS += -DCAMKII_ENABLED
 
 ################MAKEFILE OPTIONS###################
 #

@@ -2571,7 +2571,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
 
         else if(line.find("CAMKIIBINDINGREACTION") != string::npos) {
             
-            cout << line << endl;
+            cout << "CaMKII binding reaction(s) is (are) included in the simulations." << endl;
             cout <<"CAMKIIBINDINGREACTION: ";
             
             vector<string> reactants;
@@ -2610,7 +2610,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
         }
         
         else if(line.find("CAMKIIBUNDLINGREACTION") != string::npos) {
-            cout << line << endl;
+
+            cout << "CaMKII bundling reaction(s) is (are) included in the simulations." << endl;
             cout <<"CAMKIIBUNDLINGREACTION: ";
             
             vector<string> reactants;
