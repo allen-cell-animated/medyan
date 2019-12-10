@@ -1202,7 +1202,6 @@ void Datadump::print(int snapshot) {
 
                 if(p != -1) {
                     plusendtype = p;
-                    cout<<"PENDTYPE "<<p<<endl;
                     foundstatus++;
                     plusendmonomer = midx;
                 }

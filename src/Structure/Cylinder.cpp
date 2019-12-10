@@ -111,7 +111,8 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 }
 
 void Cylinder::initializerestart(int nummonomers, int firstmonomer, int lastmonomer, bool
-									minusendstatus, bool plusendstatus){
+									minusendstatus, bool plusendstatus, short
+									minusendtype, short plusendtype){
 	if(SysParams::RUNSTATE){
 		LOG(ERROR) << "initializerestart Function from Filament class can only be called "
 		              "during restart phase. Exiting.";
@@ -119,7 +120,8 @@ void Cylinder::initializerestart(int nummonomers, int firstmonomer, int lastmono
 	}
 	_chemManager->initializeCCylinder(_cCylinder.get(), false,
 	                                  false, true, nummonomers, firstmonomer,
-	                                  lastmonomer, minusendstatus, plusendstatus);
+	                                  lastmonomer, minusendstatus, plusendstatus,
+	                                  minusendtype, plusendtype);
 }
 
 Cylinder::~Cylinder() noexcept {

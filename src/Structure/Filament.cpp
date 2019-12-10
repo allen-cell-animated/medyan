@@ -220,7 +220,8 @@ void Filament::initializerestart(vector<Cylinder*> cylinderVector,
         auto rcdata = _rCDatavec[cyl->getStableIndex()];
         cyl->initializerestart( rcdata.totalmonomers, rcdata.endmonomerpos[0],
                                 rcdata.endmonomerpos[1], rcdata.endstatusvec[0],
-                                rcdata.endstatusvec[1]);
+                                rcdata.endstatusvec[1], rcdata.endtypevec[0],
+                                rcdata.endtypevec[1]);
 	    _cylinderVector.push_back(cyl);
     }
 

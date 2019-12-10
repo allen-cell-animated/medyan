@@ -158,7 +158,6 @@ void CylinderCylinderNL::initializeBinGrid() {
 //    //Initial parameters of system
     auto _nDim = SysParams::Geometry().nDim;
     floatingpoint searchdist = 1.125 * (_rMax);
-    std::cout<<"searchdist "<<searchdist<<" rMax "<<_rMax<<endl;
     _binSize = {searchdist, searchdist, searchdist};
     if(_nDim >=1) {
         _size.push_back(int(SysParams::Geometry().NX * SysParams::Geometry()

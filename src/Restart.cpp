@@ -222,6 +222,7 @@ void Restart::setupInitialNetwork() {
 		                                                   cyl.filpos, false, false,
 		                                                   true, cyl.eqlen);
 		cyl.cylinderpointer = c0;
+
 		//set minusend or plusend
 		if(cyl.endstatusvec[0])
 			c0->setPlusEnd(true);
@@ -236,11 +237,5 @@ void Restart::setupInitialNetwork() {
 			cylvector.push_back(_rCDatavec[cylsid].cylinderpointer);
 		}
 		fil.filamentpointer->initializerestart(cylvector, _rCDatavec);
-	}
-
-	for(auto cyl:Cylinder::getCylinders()){
-		cout<<cyl->getId()<<" k "<<cyl->getMCylinder()->getStretchingConst()<<" eqLen "
-																	  ""<<cyl->getMCylinder()
-		->getEqLength()<<endl;
 	}
 }

@@ -226,8 +226,9 @@ public:
     }
 
     //Function to initialize Cylinders properly during restart
-	void initializerestart(int nummonomers, int firstmonomer, int lastmonomer, bool
-    minusendstatus, bool plusendstatus);
+	void initializerestart(int nummonomers, int firstmonomer, int lastmonomer,
+						bool minusendstatus, bool plusendstatus, short minusendtype,
+						short plusendtype);
 
     static floatingpoint timecylinder1;
 	static floatingpoint timecylinder2;

@@ -72,7 +72,7 @@ protected:
 
     string _boundName; ///< String name of bound chemical value
 
-    short _filamentType; ///< The filament type to operate on
+    vector<short> _filamentIDvec; ///< The filament type to operate on
 
     Species* _bindingSpecies; ///< The binding species that this manager tracks.
                               ///< Resposible for all copy number changes
@@ -125,10 +125,11 @@ public:
     FilamentBindingManager(ReactionBase* reaction,
                            Compartment* compartment,
                            short boundInt, string boundName,
-                           short filamentType)
+                           vector<short> filamentIDvec)
 
     : _bindingReaction(reaction), _compartment(compartment),
-      _boundInt(boundInt), _boundName(boundName), _filamentType(filamentType) {
+      _boundInt(boundInt), _boundName(boundName),
+      _filamentIDvec(filamentIDvec){
 
 #if !defined(REACTION_SIGNALING) || !defined(RSPECIES_SIGNALING)
         cout << "Any filament binding reaction relies on reaction and species signaling. Please"
@@ -176,7 +177,7 @@ public:
     virtual bool isConsistent() = 0;
 
     ///get the filament that the species binds to aravind June 30, 2016.
-    short getfilamentType() {return _filamentType;}
+    vector<short> getfilamentTypes() {return _filamentIDvec;}
 
     ///aravind, June 30,2016.
     vector<string> getrxnspecies(){return _bindingReaction->getreactantspecies();}
@@ -248,7 +249,7 @@ public:
     BranchingManager(ReactionBase* reaction,
                      Compartment* compartment,
                      short boundInt, string boundName,
-                     short filamentType,
+                     vector<short> _filamentIDvec,
                      NucleationZoneType zone = NucleationZoneType::ALL,
                      floatingpoint nucleationDistance = numeric_limits<floatingpoint>::infinity());
     ~BranchingManager() {}
@@ -401,9 +402,8 @@ private:
     float _rMax; ///< Maximum reaction range
 	float _rMinsq = _rMin * _rMin; ///< Minimum reaction range squared
 	float _rMaxsq = _rMax * _rMax; ///< Maximum reaction range squared
-    floatingpoint minparamcyl2;
-    floatingpoint maxparamcyl2;
-    vector<floatingpoint> bindingsites;
+    vector<floatingpoint> bindingsites1;
+	vector<floatingpoint> bindingsites2;
     static short HNLID;
     static short _idvec[2];
     int dBInt = 1;
@@ -426,7 +426,7 @@ public:
                          Compartment* compartment,
                          short boundInt,
                          string boundName,
-                         short filamentType,
+                         vector<short> _filamentIDvec,
                          float rMax, float rMin);
 
     ~LinkerBindingManager() {}
@@ -560,9 +560,8 @@ private:
     float _rMax; ///< Maximum reaction range
 	float _rMinsq = _rMin * _rMin; ///< Minimum reaction range squared
 	float _rMaxsq = _rMax * _rMax; ///< Maximum reaction range squared
-	floatingpoint minparamcyl2;
-	floatingpoint maxparamcyl2;
-    vector<floatingpoint> bindingsites;
+    vector<floatingpoint> bindingsites1;
+    vector<floatingpoint> bindingsites2;
     static short HNLID;
     static short _idvec[2];
     //possible bindings at current state. updated according to neighbor list
@@ -586,7 +585,7 @@ public:
                         Compartment* compartment,
                         short boundInt,
                         string boundName,
-                        short filamentType,
+                        vector<short> _filamentIDvec,
                         float rMax, float rMin);
 
     ~MotorBindingManager() {}

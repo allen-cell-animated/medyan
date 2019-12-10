@@ -1388,9 +1388,10 @@ void ChemManager::genFilBindingReactions() {
 
                 C->addInternalReaction(rxn);
 
+                vector<short> filTypevec = {short(filType), short(filType)};
                 //create manager
-                BranchingManager* bManager = new BranchingManager(rxn, C, brancherInt, brancherName, filType,
-                                                                  nucleationZone, nucleationDist);
+                BranchingManager* bManager = new BranchingManager(rxn, C, brancherInt,
+                        brancherName, filTypevec, nucleationZone, nucleationDist);
                 C->addFilamentBindingManager(bManager);
 
                 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
@@ -1633,9 +1634,10 @@ void ChemManager::genFilBindingReactions() {
 
                 C->addInternalReaction(rxn);
 
+                vector<short> filTypevec = {short(filType), short(filType)};
                 //create manager
                 LinkerBindingManager* lManager = new LinkerBindingManager(rxn, C, linkerInt, linkerName,
-                                                                          filType, rMax, rMin);
+                                                                          filTypevec, rMax, rMin);
 
                 C->addFilamentBindingManager(lManager);
 
@@ -1890,9 +1892,10 @@ void ChemManager::genFilBindingReactions() {
 
                 C->addInternalReaction(rxn);
 
+                vector<short> filTypevec = {short(filType), short(filType)};
                 //create manager
                 MotorBindingManager* mManager = new MotorBindingManager(rxn, C, motorInt, motorName,
-                                                                        filType, rMax, rMin);
+                                                                        filTypevec, rMax, rMin);
                 C->addFilamentBindingManager(mManager);
 
                 mManager->setNLIndex(motorIndex++);
@@ -3106,7 +3109,7 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                 }
                 if(plusendstatus) {
                     CMonomer *m2 = cc->getCMonomer(lastmonomer);
-	                //plusendtype should have valid ( not -1 ) values if minusendstatus
+	                //plusendtype should have valid ( not -1 ) values if plusendstatus
 	                // is non-negative.
                     m2->speciesPlusEnd(plusendtype)->up();
                     end = end -1;
@@ -3147,12 +3150,14 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
 
                 if(minusendstatus){
                     CMonomer *m2 = cc->getCMonomer(firstmonomer);
-                    m2->speciesMinusEnd(0)->up();
+                    //minusendtype should have valid ( not -1 ) values if minusendstatus
+                    // is non-negative.
+                    m2->speciesMinusEnd(minusendtype)->up();
                     start = start+1;
                 }
                 if(plusendstatus) {
                     CMonomer *m2 = cc->getCMonomer(lastmonomer);
-	                //plusendtype should have valid ( not -1 ) values if minusendstatus
+	                //plusendtype should have valid ( not -1 ) values if plusendstatus
 	                // is non-negative.
 	                m2->speciesPlusEnd(plusendtype)->up();
                     end = end -1;
