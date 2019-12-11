@@ -27,9 +27,10 @@
 #include "HybridBindingSearchManager.h"
 #include "Composite.h"
 #include "ChemSim.h"
-
+#ifdef SIMDBINDINGSEARCH
 #include "dist_moduleV2/dist_driver.h"
 #include "dist_moduleV2/dist_coords.h"
+#endif
 #include "MathFunctions.h"
 #include "Structure/CellList.hpp"
 
@@ -532,6 +533,7 @@ public:
         return _bindingsearchManagers;
     }
 #endif
+#ifdef SIMDBINDINGSEARCH
     dist::Coords bscoords;
     vector<dist::Coords> bscoords_section;
 	vector<dist::Coords> bscoords_section_linker;
@@ -547,7 +549,7 @@ public:
         else
             return bscoords_section_motor[filamentType*27 + i];
     }
-#ifdef SIMDBINDINGSEARCH
+
     /*Each compartment is partitioned into 27 sub-volumes. Binding sites are allocated
     to relevant sub-volumes. It is worth noting that the 27 volumes  can be overlapping.
     Binding distance determines if the volumes are overlapping or not.*/
