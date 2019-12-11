@@ -119,7 +119,10 @@ public:
     MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
                floatingpoint position1 = 0.5, floatingpoint position2 = 0.5,
                floatingpoint onRate = 0.0, floatingpoint offRate = 0.0);
-    
+
+    void initializerestart(floatingpoint eqLength){ _mMotorGhost->initializerestart
+                (eqLength);};
+
     virtual ~MotorGhost() noexcept;
     
     ///Helper to get coordinate

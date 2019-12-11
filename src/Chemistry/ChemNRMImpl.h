@@ -281,6 +281,9 @@ public:
     
     /// Remove Reaction *r from the network
     virtual void removeReaction(ReactionBase *r);
+
+    //sets global time to restart time when called.
+    virtual void initializerestart(floatingpoint restarttime);
     
     /// A pure function (without sideeffects), which returns a random time tau, drawn
     /// from the exponential distribution, with the propensity given by a.
@@ -340,6 +343,9 @@ private:
     /// Returns true if successful, and false if the heap is exchausted and there no
     /// more reactions to fire
     bool makeStep();
+
+    //sets glocal time to specified value. To be used only during restart.
+    void setTime(floatingpoint timepoint){ _t=timepoint; syncGlobalTime();}
 private:
     unordered_map<ReactionBase*, unique_ptr<RNodeNRM>> _map_rnodes; ///< The database of RNodeNRM objects,
                                                                     ///< representing the reaction network

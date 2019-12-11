@@ -176,6 +176,9 @@ public:
     
     /// Remove ReactionBase *r from the network
     virtual void removeReaction(ReactionBase *r);
+
+    //sets global time to restart time when called.
+    virtual void initializerestart(floatingpoint restarttime);
     
     /// Unconditionally compute the total propensity associated with the network.
     floatingpoint computeTotalA();
@@ -246,6 +249,9 @@ private:
     /// Returns true if successful, and false if the heap is exchausted and there no
     /// more reactions to fire
     bool makeStep();
+
+    //sets glocal time to specified value. To be used only during restart.
+    void setTime(floatingpoint timepoint){ _t=timepoint; syncGlobalTime();}
 private:
     #ifdef DEBUGCONSTANTSEED
     map<ReactionBase*, unique_ptr<RNodeGillespie>> _map_rnodes;

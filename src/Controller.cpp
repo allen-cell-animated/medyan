@@ -904,19 +904,12 @@ void Controller::run() {
 //RESTART PHASE BEGINS
     if(SysParams::RUNSTATE==false){
         cout<<"RESTART PHASE BEINGS."<<endl;
-//    Commented in 2019    _restart = new Restart(&_subSystem, filaments,_chemData);
-//Step 1. Turn off diffusion, passivate filament reactions and empty binding managers.
-//        _restart->settorestartphase();
-        cout<<"Turned off Diffusion, filament reactions."<<endl;
-//Step 2. Add bound species to their respective binding managers. Turn off unbinding, update propensities.
-        //_restart->addtoHeaplinkermotor();
-        _restart->addtoHeapbranchers();
-        _restart->addtoHeaplinkermotor();
-        cout<<"Bound species added to reaction heap."<<endl;
-//Step 2A. Turn off diffusion, passivate filament reactions and empty binding managers.
+        cout<<"Turned off Diffusion, and filament reactions."<<endl;
+//Step 2A. Turn off diffusion, passivate filament reactions and add reactions to heap.
         _restart->settorestartphase();
+        cout<<"Bound species added to reaction heap."<<endl;
 //Step 3. ############ RUN LINKER/MOTOR REACTIONS TO BIND BRANCHERS, LINKERS, MOTORS AT RESPECTIVE POSITIONS.#######
-        cout<<"Reactions to be fired "<<_restart->getnumchemsteps()<<endl;
+        cout<<"Number of reactions to be fired "<<_restart->getnumchemsteps()<<endl;
         _cController.runSteps(_restart->getnumchemsteps());
         cout<<"Reactions fired! Displaying heap"<<endl;
 //Step 4. Display the number of reactions yet to be fired. Should be zero.
@@ -925,22 +918,25 @@ void Controller::run() {
                 int numsites = 0;
 #ifdef NLORIGINAL
                 numsites = Mgr->numBindingSites();
-#endif
-#ifdef NLSTENCILLIST
+#else
                 numsites = Mgr->numBindingSitesstencil();
 #endif
                 if(numsites == 0)
                     cout<< numsites<<" ";
                 else{
-                    cout<<endl;
-                    cout<<"Few reactions are not fired! Cannot restart this trajectory. Exiting ..."<<endl;
+                    cout<<numsites<<endl;
+                    cout<<"Few reactions were not fired! Cannot restart this trajectory. "
+						  "Exiting ..."<<endl;
                     exit(EXIT_FAILURE);
                 }
             }}
         cout<<endl;
+        //sets
+        _restart->CBoundinitializerestart();
         _restart->redistributediffusingspecies();
         cout<<"Diffusion rates restored, diffusing molecules redistributed."<<endl;
-
+        _cController.initializerestart(_restart->getrestartime());
+        cout<<"Tau reset to "<<tau()<<endl;
 //Step 4.5. re-add pin positions
         SystemParser p(_inputFile);
         FilamentSetup filSetup = p.readFilamentSetup();
@@ -1014,8 +1010,6 @@ void Controller::run() {
 #endif
         cout<< "Restart procedures completed. Starting original Medyan framework"<<endl;
         cout << "---" << endl;
-        resetglobaltime();
-        _cController.restart();
         cout << "Current simulation time = "<< tau() << endl;
         //restart phase ends
     }

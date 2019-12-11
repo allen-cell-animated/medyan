@@ -385,8 +385,8 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 		   #endif
 /*		cout<<"Adding Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
 			<<bindingSite<<" manager indices "<<idvec[0]<<" "<<idvec[1]<<endl;*/
-		short idx = idvec[0];
-		short idx2 = idvec[1];
+			short idx = idvec[0];
+			short idx2 = idvec[1];
 
 		auto fIDpair = _filamentIDvec[idx].data();
 		short bstatepos = bstateposvec[idx][idx2];
@@ -511,15 +511,9 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 			}
 
 			//Calculate N
-			minsfind = chrono::high_resolution_clock::now();
-			for (short idx = 0; idx < totaluniquefIDpairs; idx++) {
-				int countbounds = _rMaxsqvec[idx].size();
-				for (short idx2 = 0; idx2 < countbounds; idx2++) {
-					short idvec[2] = {idx, idx2};
-					countNpairsfound(idvec);
-					fManagervec[idx][idx2]->updateBindingReaction(Nbindingpairs[idx][idx2]);
-				}
-			}
+			countNpairsfound(idvec);
+			fManagervec[idx][idx2]->updateBindingReaction(Nbindingpairs[idx][idx2]);
+
 			minefind = chrono::high_resolution_clock::now();
 			chrono::duration<floatingpoint> elapsed_countsites(minefind - minsfind);
 			SIMDcountbs += elapsed_countsites.count();
@@ -610,6 +604,36 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
         }
     }
 //	checkoccupancySIMD(idvec);
+}
+
+void HybridBindingSearchManager::appendPossibleBindingsstencil(short idvec[2],
+																CCylinder* ccyl1,
+																CCylinder* ccyl2,
+																short site1,
+																short site2){
+	short idx = idvec[0];
+	short idx2 = idvec[1];
+	short _filamentType = ccyl1->getType();
+	short _nfilamentType = ccyl2->getType();
+	uint32_t shiftedIndex1 = ccyl1->getCylinder()->getStableIndex();
+	shiftedIndex1 = shiftedIndex1 << SysParams::Chemistry().shiftbybits;
+	uint32_t pos1 = find(SysParams::Chemistry().bindingSites[_filamentType].begin(),
+	                     SysParams::Chemistry().bindingSites[_filamentType].end(), site1)
+	                - SysParams::Chemistry().bindingSites[_filamentType].begin();
+	uint32_t t1 = shiftedIndex1|pos1;
+
+	uint32_t shiftedIndex2 = ccyl2->getCylinder()->getStableIndex();
+	shiftedIndex2 = shiftedIndex2 << SysParams::Chemistry().shiftbybits;
+	uint32_t pos2 = find(SysParams::Chemistry().bindingSites[_nfilamentType].begin(),
+	                     SysParams::Chemistry().bindingSites[_nfilamentType].end(), site2)
+	                - SysParams::Chemistry().bindingSites[_nfilamentType].begin();
+	uint32_t t2 = shiftedIndex2|pos2;
+	_possibleBindingsstencilvecuint[idx][idx2][t1].push_back(t2);
+	_reversepossibleBindingsstencilvecuint[idx][idx2][t2].push_back(t1);
+
+	countNpairsfound(idvec);
+	fManagervec[idx][idx2]->updateBindingReaction(Nbindingpairs[idx][idx2]);
+
 }
 
 void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){

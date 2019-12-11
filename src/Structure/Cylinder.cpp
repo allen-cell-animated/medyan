@@ -114,7 +114,7 @@ void Cylinder::initializerestart(int nummonomers, int firstmonomer, int lastmono
 									minusendstatus, bool plusendstatus, short
 									minusendtype, short plusendtype){
 	if(SysParams::RUNSTATE){
-		LOG(ERROR) << "initializerestart Function from Filament class can only be called "
+		LOG(ERROR) << "initializerestart Function from Cylinder class can only be called "
 		              "during restart phase. Exiting.";
 		throw std::logic_error("Illegal function call pattern");
 	}

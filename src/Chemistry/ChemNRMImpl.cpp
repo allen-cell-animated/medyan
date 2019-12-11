@@ -118,13 +118,11 @@ void RNodeNRM::generateNewRandTau() {
     else
         newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #endif
+//    cout<<"Propensity of rxn "<<_a<<" tau "<<newTau<<endl;
     setTau(newTau);
-//    std::cout<<"generating R and Tau reaction"<<endl;
-//    printSelf();
 }
 
 void RNodeNRM::activateReaction() {
-//    std::cout<<"activate Reaction"<<endl;
     generateNewRandTau();
     updateHeap();
 }
@@ -143,6 +141,19 @@ void ChemNRMImpl::initialize() {
         rn->getReaction()->activateReaction();
     }
 }
+
+void ChemNRMImpl::initializerestart(floatingpoint restarttime){
+
+    if(SysParams::RUNSTATE){
+        LOG(ERROR) << "initializerestart Function from ChemSimpleGillespieImpl class can "
+                      "only be called "
+                      "during restart phase. Exiting.";
+        throw std::logic_error("Illegal function call pattern");
+    }
+
+    setTime(restarttime);
+}
+
 
 ChemNRMImpl::~ChemNRMImpl() {
     _map_rnodes.clear();
@@ -183,21 +194,10 @@ bool ChemNRMImpl::makeStep() {
         return false;
     }
 
-//    if(rn->getReaction()->getReactionType() == ReactionType::LINKERBINDING) {
-//
-//        cout << "Stopping to check linker rxn." << endl;
-//    }
-
     floatingpoint t_prev = _t;
 
     _t=tau_top;
     syncGlobalTime();
-    //std::cout<<"------------"<<endl;
-//    rn->printSelf();
-//    cout<<"b4_1 "<<Rand::chemistrycounter<<" "<<Rand::intcounter<<" "
-//																""<<Rand::floatcounter<<endl;
-    //std::cout<<"------------"<<endl;
-
     // if dissipation tracking is enabled and the reaction is supported, then compute the change in Gibbs free energy and store it
     if(SysParams::Chemistry().dissTracking){
     ReactionBase* react = rn->getReaction();
@@ -207,7 +207,6 @@ bool ChemNRMImpl::makeStep() {
         _dt->updateDelGChem(react);
         }
     }
-
     rn->makeStep();
 	#ifdef DEBUGCONSTANTSEED
     cout<<"tau "<<_t<<endl;
@@ -218,8 +217,7 @@ bool ChemNRMImpl::makeStep() {
         //std::cout<<"Update R and Tau for fired reaction"<<endl;
         rn->generateNewRandTau();
         rn->updateHeap();
-//	    cout<<"b4_2 "<<Rand::chemistrycounter<<" "<<Rand::intcounter<<" "
-//	                                                                  ""<<Rand::floatcounter<<endl;
+
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     }
 #endif

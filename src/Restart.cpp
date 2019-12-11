@@ -20,12 +20,17 @@ void Restart::readNetworkSetup() {
 	_inputFile.seekg(0);
 
 	string line;
+	//get first line
+	getline(_inputFile, line);
+	vector<string> lineVector = split<string>(line);
+	_rsystemdata.time = atof(((lineVector[1]).c_str()));
 	//get line
 	while(getline(_inputFile, line)) {
 		//Continue if commented
 		if(line.find("#") != string::npos) { continue; }
 		vector<string> lineVector = split<string>(line);
 		if(line.size()>0) {
+
 			if(lineVector[0] == "NFIL"){
 				getline(_inputFile, line);
 				//Split string based on space delimiter
@@ -69,7 +74,6 @@ void Restart::readNetworkSetup() {
 						_rBData.forceAuxvec[3 * beadstableid + dim] = (atof((*it).c_str()));
 						dim++;
 					}
-
 					getline(_inputFile, line);
 				}
 			}
@@ -138,11 +142,33 @@ void Restart::readNetworkSetup() {
 			}
 
 			else if (lineVector[0] == "LINKER") {
-			//Get lines till the line is not empty
+				//Get lines till the line is not empty
 
 				getline(_inputFile, line);
 				while (line.size() > 0) {
-					cout << line << endl;
+					restartLinkerData _rldata;
+					//Split string based on space delimiter
+					vector<string> lineVector = split<string>(line);
+					//Motor ID
+					_rldata.linkerid = atoi((lineVector[0]).c_str());
+					//Linker Type
+					_rldata.linkerType = short(atoi((lineVector[1]).c_str()));
+					//Cyl ID1
+					_rldata.cylid1 = atoi((lineVector[2]).c_str());
+					//Cyl ID2
+					_rldata.cylid2 = atoi((lineVector[3]).c_str());
+					//pos1
+					_rldata.pos1 = atoi((lineVector[4]).c_str());
+					//pos2
+					_rldata.pos2 = atoi((lineVector[5]).c_str());
+					//eqlen
+					_rldata.eqlen = atof((lineVector[6]).c_str());
+					//diffusing species name
+					_rldata.diffusingspeciesname = lineVector[7];
+
+					_rLDatavec.push_back(_rldata);
+					//get next filament data
+					getline(_inputFile, line);
 				}
 			}
 
@@ -156,18 +182,51 @@ void Restart::readNetworkSetup() {
 					vector<string> lineVector = split<string>(line);
 					//Motor ID
 					_rmdata.motorid = atoi((lineVector[0]).c_str());
+					//Motor Type
+					_rmdata.motorType = short(atoi((lineVector[1]).c_str()));
 					//Cyl ID1
-					_rmdata.cylid1 = atoi((lineVector[1]).c_str());
+					_rmdata.cylid1 = atoi((lineVector[2]).c_str());
 					//Cyl ID2
-					_rmdata.cylid2 = atoi((lineVector[2]).c_str());
+					_rmdata.cylid2 = atoi((lineVector[3]).c_str());
 					//pos1
-					_rmdata.pos1 = atof((lineVector[3]).c_str());
+					_rmdata.pos1 = atoi((lineVector[4]).c_str());
 					//pos2
-					_rmdata.pos2 = atof((lineVector[4]).c_str());
-					//pos2
-					_rmdata.eqlen = atof((lineVector[5]).c_str());
+					_rmdata.pos2 = atoi((lineVector[5]).c_str());
+					//eqlen
+					_rmdata.eqlen = atof((lineVector[6]).c_str());
+					//diffusing species name
+					_rmdata.diffusingspeciesname = lineVector[7];
 
 					_rMDatavec.push_back(_rmdata);
+					//get next filament data
+					getline(_inputFile, line);
+				}
+			}
+
+			else if (lineVector[0] == "BRANCHER") {
+				//Get lines till the line is not empty
+
+				getline(_inputFile, line);
+				while (line.size() > 0) {
+					restartBrancherData _rbdata;
+					//Split string based on space delimiter
+					vector<string> lineVector = split<string>(line);
+					//Brancher ID
+					_rbdata.branchid = atoi((lineVector[0]).c_str());
+					//Brancher Type
+					_rbdata.branchType = short(atoi((lineVector[1]).c_str()));
+					//Cyl ID1
+					_rbdata.cylid1 = atoi((lineVector[2]).c_str());
+					//Cyl ID2
+					_rbdata.cylid2 = atoi((lineVector[3]).c_str());
+					//pos1
+					_rbdata.pos1 = atoi((lineVector[4]).c_str());
+					//eqlen
+					_rbdata.eqlen = atof((lineVector[5]).c_str());
+					//diffusing species name
+					_rbdata.diffusingspeciesname = lineVector[7];
+
+					_rBDatavec.push_back(_rbdata);
 					//get next filament data
 					getline(_inputFile, line);
 				}
@@ -196,6 +255,7 @@ void Restart::setupInitialNetwork() {
 		//add to map
 		filamentmap[fil.filid] = fil.filamentpointer;
 	}
+	cout<<endl;
 	cout<<"Num filaments "<<Filament::getFilaments().size()<<endl;
 
 	for(unsigned int b=0;b<_rBData.bsidvec.size();b++){
@@ -237,5 +297,163 @@ void Restart::setupInitialNetwork() {
 			cylvector.push_back(_rCDatavec[cylsid].cylinderpointer);
 		}
 		fil.filamentpointer->initializerestart(cylvector, _rCDatavec);
+	}
+}
+
+void Restart::addtoHeapLinkerMotorBrancher(){
+//STEP #2. ADD bound Linkers And Motors in inputfile into possible bindings.
+	//set total number of reactions to fire.
+	_numChemSteps = _rMDatavec.size() + _rLDatavec.size() + _rBDatavec.size();
+	//Motors
+	for(auto m:_rMDatavec) {
+		int cidx1 = m.cylid1;
+		int cidx2 = m.cylid2;
+		int site1 = m.pos1;
+		int site2 = m.pos2;
+		Cylinder *c1 = _rCDatavec[cidx1].cylinderpointer;
+		Cylinder *c2 = _rCDatavec[cidx2].cylinderpointer;
+		if (c1->getId() > c2->getId()) {
+			for (auto &Mgr:c1->getCompartment()->getFilamentBindingManagers()) {
+				if (dynamic_cast<MotorBindingManager *>(Mgr.get())) {
+					setdiffspeciesnumber(m.diffusingspeciesname,c1);
+					#ifdef NLORIGINAL
+					Mgr->appendpossibleBindings(c1->getCCylinder(),
+					                                   c2->getCCylinder(), site1, site2);
+					#else
+					Mgr->appendpossibleBindingsstencil(m.motorType, c1->getCCylinder(),
+					                                   c2->getCCylinder(), site1, site2);
+					#endif
+				}
+			}
+		}
+		else{
+			for (auto &Mgr:c2->getCompartment()->getFilamentBindingManagers()) {
+				if (dynamic_cast<MotorBindingManager *>(Mgr.get())) {
+					setdiffspeciesnumber(m.diffusingspeciesname,c2);
+					#ifdef NLORIGINAL
+					Mgr->appendpossibleBindings(c2->getCCylinder(),
+					                                   c1->getCCylinder(), site2, site1);
+					#else
+					Mgr->appendpossibleBindingsstencil(m.motorType, c2->getCCylinder(),
+					                                   c1->getCCylinder(), site2, site1);
+					#endif
+				}
+			}
+		}
+	}
+	//Linkers
+	for(auto l:_rLDatavec) {
+		int cidx1 = l.cylid1;
+		int cidx2 = l.cylid2;
+		int site1 = l.pos1;
+		int site2 = l.pos2;
+		Cylinder *c1 = _rCDatavec[cidx1].cylinderpointer;
+		Cylinder *c2 = _rCDatavec[cidx2].cylinderpointer;
+		if (c1->getId() > c2->getId()) {
+			for (auto &Mgr:c1->getCompartment()->getFilamentBindingManagers()) {
+				if (dynamic_cast<LinkerBindingManager *>(Mgr.get())) {
+					setdiffspeciesnumber(l.diffusingspeciesname,c1);
+					#ifdef NLORIGINAL
+					Mgr->appendpossibleBindings(c1->getCCylinder(),
+					                                   c2->getCCylinder(), site1, site2);
+					#else
+					Mgr->appendpossibleBindingsstencil(l.linkerType, c1->getCCylinder(),
+					                                   c2->getCCylinder(), site1, site2);
+					#endif
+				}
+			}
+		}
+		else{
+			for (auto &Mgr:c2->getCompartment()->getFilamentBindingManagers()) {
+				if (dynamic_cast<LinkerBindingManager *>(Mgr.get())) {
+					setdiffspeciesnumber(l.diffusingspeciesname,c2);
+					#ifdef NLORIGINAL
+					Mgr->appendpossibleBindings(c2->getCCylinder(),
+					                                   c1->getCCylinder(), site2, site1);
+					#else
+					Mgr->appendpossibleBindingsstencil(l.linkerType, c2->getCCylinder(),
+					                                   c1->getCCylinder(), site2, site1);
+					#endif
+				}
+			}
+		}
+	}
+	//Brancher
+	for(auto b:_rBDatavec) {
+		int cidx1 = b.cylid1;
+		int cidx2 = b.cylid2;
+		int site1 = b.pos1;
+		Cylinder *c1 = _rCDatavec[cidx1].cylinderpointer;
+		Cylinder *c2 = _rCDatavec[cidx2].cylinderpointer;
+			for (auto &Mgr:c1->getCompartment()->getFilamentBindingManagers()) {
+				if (dynamic_cast<BranchingManager *>(Mgr.get())) {
+					setdiffspeciesnumber(b.diffusingspeciesname,c1);
+					#ifdef NLORIGINAL
+					Mgr->appendpossibleBindings(c1->getCCylinder(),
+					                                   c2->getCCylinder(), site1, site2);
+					#else
+					Mgr->appendpossibleBindingsstencil(b.branchType, c1->getCCylinder(),
+					                                   c2->getCCylinder(), site1, 0);
+					#endif
+				}
+			}
+	}
+}
+
+void Restart::CBoundinitializerestart(){
+	//linkers
+	for(auto l:Linker::getLinkers()) {
+		int c1 = l->getFirstCylinder()->getStableIndex();
+		int c2 = l->getSecondCylinder()->getStableIndex();
+		short pos1 = l->getFirstPosition();
+		short pos2 = l->getSecondPosition();
+		for(auto &rldata: _rLDatavec){
+			if(rldata.restartcompletion) {
+				int rc1 = rldata.cylid1;
+				int rc2 = rldata.cylid2;
+				short rpos1 = rldata.pos1;
+				short rpos2 = rldata.pos2;
+				if(rc1 == c1 && rc2 == c2 && rpos1 == pos1 && rpos2 == pos2){
+					l->initializerestart(rldata.eqlen);
+					rldata.restartcompletion = true;
+				}
+			}
+		}
+	}
+	//motors
+	for(auto m:MotorGhost::getMotorGhosts()) {
+		int c1 = m->getFirstCylinder()->getStableIndex();
+		int c2 = m->getSecondCylinder()->getStableIndex();
+		short pos1 = m->getFirstPosition();
+		short pos2 = m->getSecondPosition();
+		for(auto &rmdata: _rMDatavec){
+			if(rmdata.restartcompletion) {
+				int rc1 = rmdata.cylid1;
+				int rc2 = rmdata.cylid2;
+				short rpos1 = rmdata.pos1;
+				short rpos2 = rmdata.pos2;
+				if(rc1 == c1 && rc2 == c2 && rpos1 == pos1 && rpos2 == pos2){
+					m->initializerestart(rmdata.eqlen);
+					rmdata.restartcompletion = true;
+				}
+			}
+		}
+	}
+	//brancher
+	for(auto b:BranchingPoint::getBranchingPoints()) {
+		int c1 = b->getFirstCylinder()->getStableIndex();
+		int c2 = b->getSecondCylinder()->getStableIndex();
+		short pos1 = b->getPosition();
+		for(auto &rbdata: _rLDatavec){
+			if(rbdata.restartcompletion) {
+				int rc1 = rbdata.cylid1;
+				int rc2 = rbdata.cylid2;
+				short rpos1 = rbdata.pos1;
+				if(rc1 == c1 && rc2 == c2 && rpos1 == pos1){
+					b->initializerestart(rbdata.eqlen);
+					rbdata.restartcompletion = true;
+				}
+			}
+		}
 	}
 }

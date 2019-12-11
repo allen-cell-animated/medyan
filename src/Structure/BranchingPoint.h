@@ -135,6 +135,9 @@ public:
     /// Update the reaction rates, inherited from Reactable
     virtual void updateReactionRates();
 
+    void initializerestart(floatingpoint eqLength){ _mBranchingPoint->initializerestart
+                (eqLength);};
+
 
 };
 

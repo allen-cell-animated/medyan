@@ -44,7 +44,10 @@ public:
     /// After all initial reactions have been added via addReaction(...) method,
     /// invoke initialize() prior to invoking run()
     void initialize();
-    
+
+    //necessary to call during restart to reset global time to necessary time.
+    void initializerestart(floatingpoint time);
+
     /// Add Reaction *r to the chemical network which needs to be simulated
     void addReaction(ReactionBase *r);
     

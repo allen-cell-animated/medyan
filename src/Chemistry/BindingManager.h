@@ -159,7 +159,9 @@ public:
     virtual int numBindingSites() = 0;
 
     /// ARAVIND ADDED FEB 17 2016. append possible bindings.
-    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2)=0;
+    virtual void appendpossibleBindings(short boundInt, short bountCCylinder* ccyl1,
+    		CCylinder* ccyl2,
+    		short site1, short site2)=0;
 
     virtual void clearpossibleBindings()=0;
 #endif
@@ -187,8 +189,8 @@ public:
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite) = 0;
     ///update all possible binding reactions that could occur using stencil NL
     virtual void updateAllPossibleBindingsstencil() = 0;
-    virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
-                                               tuple<CCylinder*, short> t2)=0;
+    virtual void appendpossibleBindingsstencil(short boundInt, CCylinder* ccyl1, CCylinder* ccyl2, short site1,
+                                               short site2)=0;
     virtual void clearpossibleBindingsstencil()=0;
     virtual int numBindingSitesstencil() = 0;
     virtual void removePossibleBindingsstencil(CCylinder* cc) = 0;
@@ -289,20 +291,8 @@ public:
         return *it;
     }
     /// ARAVIND ADDED FEB 17 2016. append possible bindings to be used for restart
-    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2){
-        floatingpoint oldN=numBindingSites();
-        _possibleBindings.insert(t1);
-        _branchrestarttuple.push_back(make_tuple(t1,t2));
-//        _branchCylinder=(get<0>(t2));
-        floatingpoint newN=numBindingSites();
-        updateBindingReaction(oldN,newN);}
-
-    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1){
-        floatingpoint oldN=numBindingSites();
-        _possibleBindings.insert(t1);
-//        _branchCylinder=(get<0>(t2));
-        floatingpoint newN=numBindingSites();
-        updateBindingReaction(oldN,newN);}
+    virtual void appendpossibleBindings(short boundInt, CCylinder* ccyl1, CCylinder* ccyl2, short site1,
+                                        short site2);
 
     virtual void clearpossibleBindings() {
         floatingpoint oldN=numBindingSites();
@@ -323,25 +313,8 @@ public:
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite);
     ///update all possible binding reactions that could occur using stencil NL
     virtual void updateAllPossibleBindingsstencil();
-    virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
-                                               tuple<CCylinder*, short> t2){
-#ifdef NLSTENCILLIST
-        floatingpoint oldN=numBindingSitesstencil();
-        _possibleBindingsstencil.insert(t1);
-        _branchrestarttuple.push_back(make_tuple(t1,t2));
-//        _branchCylinder=(get<0>(t2));
-        floatingpoint newN=numBindingSitesstencil();
-        updateBindingReaction(oldN,newN);
-#else
-
-#endif
-    }
-    virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1){
-        floatingpoint oldN=numBindingSitesstencil();
-        _possibleBindingsstencil.insert(t1);
-//        _branchCylinder=(get<0>(t2));
-        double newN=numBindingSitesstencil();
-        updateBindingReaction(oldN,newN);}
+    virtual void appendpossibleBindingsstencil(short boundInt, CCylinder* ccyl1, CCylinder* ccyl2, short site1,
+                                               short site2);
     virtual void clearpossibleBindingsstencil() {
         floatingpoint oldN=numBindingSitesstencil();
         _possibleBindingsstencil.clear();
@@ -454,8 +427,8 @@ public:
     }
 
     /// ARAVIND ADDED FEB 17 2016. append possible bindings.
-    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*,
-            short> t2);
+    virtual void appendpossibleBindings(short boundInt, CCylinder* ccyl1, CCylinder* ccyl2, short site1,
+                                        short site2);
 
     //get possible bindings.
     virtual unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> getpossibleBindings(){
@@ -485,18 +458,10 @@ public:
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite);
     ///update all possible binding reactions that could occur using stencil NL
     virtual void updateAllPossibleBindingsstencil();
-    virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
-                                               tuple<CCylinder*, short> t2){
-        floatingpoint oldN=numBindingSitesstencil();
-        _possibleBindingsstencil.emplace(t1,t2);
-        floatingpoint newN=numBindingSitesstencil();
-        updateBindingReaction(oldN,newN);
-    }
+    virtual void appendpossibleBindingsstencil(short boundInt, CCylinder* ccyl1, CCylinder* ccyl2, short site1,
+                                               short site2);
     virtual void clearpossibleBindingsstencil();
-    virtual int numBindingSitesstencil() {
-
-        return _possibleBindingsstencil.size();
-    }
+    virtual int numBindingSitesstencil();
     virtual unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
     getpossibleBindingsstencil(){
         return _possibleBindingsstencil;
@@ -612,8 +577,8 @@ public:
     }
 
     /// ARAVIND ADDED FEB 22 2016. append possible bindings.
-    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*,
-            short> t2);
+    virtual void appendpossibleBindings(short boundInt, CCylinder* ccyl1, CCylinder* ccyl2, short site1,
+    		short site2);
     //get possible bindings.
     virtual unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> getpossibleBindings(){
         return _possibleBindings;
@@ -641,13 +606,10 @@ public:
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite);
     ///update all possible binding reactions that could occur using stencil NL
     virtual void updateAllPossibleBindingsstencil();
-    virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
-                                               tuple<CCylinder*, short> t2);
+    virtual void appendpossibleBindingsstencil(short boundInt, CCylinder* ccyl1,
+                                               CCylinder* ccyl2, short site1, short site2);
 	virtual void clearpossibleBindingsstencil();
-    virtual int numBindingSitesstencil() {
-
-        return _possibleBindingsstencil.size();
-    }
+    virtual int numBindingSitesstencil();
     virtual unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
     getpossibleBindingsstencil(){
         return _possibleBindingsstencil;

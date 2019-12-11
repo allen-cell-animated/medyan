@@ -63,6 +63,19 @@ void ChemGillespieImpl::initialize() {
     _a_total = computeTotalA();
 }
 
+void ChemGillespieImpl::initializerestart(floatingpoint restarttime){
+
+    if(SysParams::RUNSTATE){
+        LOG(ERROR) << "initializerestart Function from ChemSimpleGillespieImpl class can "
+                      "only be called "
+                      "during restart phase. Exiting.";
+        throw std::logic_error("Illegal function call pattern");
+    }
+
+    setTime(restarttime);
+}
+
+
 
 ChemGillespieImpl::~ChemGillespieImpl() noexcept{
     _map_rnodes.clear();

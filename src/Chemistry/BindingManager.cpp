@@ -229,6 +229,16 @@ void BranchingManager::updateAllPossibleBindings() {
 
     updateBindingReaction(oldN, newN);
 }
+
+void BranchingManager::appendpossibleBindings(CCylinder* ccyl1, CCylinder* ccyl2, short site1,
+                            short site2){
+	floatingpoint oldN=numBindingSites();
+	auto t1 = make_tuple(ccyl1, site1);
+	auto t2 = make_tuple(ccyl2, site2);
+	_possibleBindings.insert(t1);
+	_branchrestarttuple.push_back(make_tuple(t1,t2));
+	floatingpoint newN=numBindingSites();
+	updateBindingReaction(oldN,newN);}
 #endif
 bool BranchingManager::isConsistent() {
 #ifdef NLORIGINAL
@@ -427,6 +437,17 @@ void BranchingManager::updateAllPossibleBindingsstencil() {
 
     updateBindingReaction(oldN, newN);
     /*std::cout<<"Branching consistency "<<isConsistent()<<endl;*/
+}
+void BranchingManager::appendpossibleBindingsstencil(short boundInt, CCylinder* ccyl1, CCylinder* ccyl2, short site1,
+                                   short site2){
+    if(boundInt != _boundInt) return;
+	floatingpoint oldN=numBindingSitesstencil();
+	auto t1 = make_tuple(ccyl1, site1);
+	auto t2 = make_tuple(ccyl2, site2);
+	_possibleBindingsstencil.insert(t1);
+	_branchrestarttuple.push_back(make_tuple(t1,t2));
+	floatingpoint newN=numBindingSitesstencil();
+	updateBindingReaction(oldN,newN);
 }
 void BranchingManager::removePossibleBindingsstencil(CCylinder* cc) {
 
@@ -1011,13 +1032,22 @@ vector<tuple<CCylinder*, short>> LinkerBindingManager::chooseBindingSites() {
     advance(it, randomIndex);
     return vector<tuple<CCylinder*, short>>{it->first, it->second};
 }
-void LinkerBindingManager::appendpossibleBindings(tuple<CCylinder*, short> t1,
-                                                  tuple<CCylinder*,
-                                                          short> t2){
-    floatingpoint oldN=numBindingSites();
-    _possibleBindings.emplace(t1,t2);
-    floatingpoint newN=numBindingSites();
-    updateBindingReaction(oldN,newN);
+void LinkerBindingManager::appendpossibleBindings(short boundInt, CCylinder* ccyl1,
+                                                  CCylinder* ccyl2, short site1, short site2){
+	short _filamentType = ccyl1->getType();
+	short _nfilamentType = ccyl2->getType();
+
+	bool cndn1 = _filamentType == _filamentIDvec[0] && _nfilamentType == _filamentIDvec[1];
+	bool cndn2 = _filamentType == _filamentIDvec[1] && _nfilamentType == _filamentIDvec[0];
+
+	if(!cndn1 && !cndn2 && boundInt != _boundInt) return;
+
+	auto t1 = make_tuple(ccyl1, site1);
+	auto t2 = make_tuple(ccyl2, site2);
+	floatingpoint oldN=numBindingSites();
+	_possibleBindings.emplace(t1,t2);
+	floatingpoint newN=numBindingSites();
+	updateBindingReaction(oldN,newN);
 }
 #endif
 //Deprecated. Used to compare stencil based search with original search.
@@ -1182,7 +1212,6 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
 	}
 #endif
 }
-
 void LinkerBindingManager::updateAllPossibleBindingsstencil() {
 #ifdef NLSTENCILLIST
     _possibleBindingsstencil.clear();
@@ -1355,7 +1384,29 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     exit(EXIT_FAILURE);
 #endif
 }
+void LinkerBindingManager::appendpossibleBindingsstencil(short boundInt, CCylinder* ccyl1,
+                                                        CCylinder* ccyl2, short site1, short site2){
 
+	short _filamentType = ccyl1->getType();
+	short _nfilamentType = ccyl2->getType();
+
+	bool cndn1 = _filamentType == _filamentIDvec[0] && _nfilamentType == _filamentIDvec[1];
+	bool cndn2 = _filamentType == _filamentIDvec[1] && _nfilamentType == _filamentIDvec[0];
+
+	if(!cndn1 && !cndn2 && boundInt != _boundInt) return;
+
+	#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
+	auto HManager = _compartment->getHybridBindingSearchManager();
+	HManager->appendPossibleBindingsstencil(_idvec, ccyl1, ccyl2, site1, site2);
+	#else
+	auto t1 = make_tuple(ccyl1, site1);
+	auto t2 = make_tuple(ccyl2, site2);
+	floatingpoint oldN=numBindingSitesstencil();
+	_possibleBindingsstencil.emplace(t1,t2);
+	floatingpoint newN=numBindingSitesstencil();
+	updateBindingReaction(oldN,newN);
+	#endif
+}
 void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc) {
 
 	short _filamentType = cc->getType();
@@ -1505,7 +1556,6 @@ vector<tuple<CCylinder*, short>> LinkerBindingManager::chooseBindingSitesstencil
     return vector<tuple<CCylinder*, short>>{it->first, it->second};
 #endif
 }
-
 void LinkerBindingManager::clearpossibleBindingsstencil() {
     #ifdef NLSTENCILLIST
     floatingpoint oldN=numBindingSitesstencil();
@@ -1515,6 +1565,15 @@ void LinkerBindingManager::clearpossibleBindingsstencil() {
     auto HManager = _compartment->getHybridBindingSearchManager();
     HManager->clearPossibleBindingsstencil(_idvec);
     #endif
+}
+int LinkerBindingManager::numBindingSitesstencil() {
+#ifdef NLSTENCILLSIT
+    return _possibleBindingsstencil.size();
+#else
+    auto HManager = _compartment->getHybridBindingSearchManager();
+    return HManager->numBindingSitesstencil(_idvec);
+#endif
+
 }
 #endif
 #ifdef CUDAACCL_NL
@@ -2001,8 +2060,18 @@ vector<tuple<CCylinder*, short>> MotorBindingManager::chooseBindingSites() {
     return vector<tuple<CCylinder*, short>>{it->first, it->second};
 }
 
-void MotorBindingManager::appendpossibleBindings(tuple<CCylinder*, short> t1,
-                                                 tuple<CCylinder*, short> t2){
+void MotorBindingManager::appendpossibleBindings(short boundInt, CCylinder* ccyl1,
+                                                 CCylinder* ccyl2, short site1, short site2){
+	short _filamentType = ccyl1->getType();
+	short _nfilamentType = ccyl2->getType();
+
+	bool cndn1 = _filamentType == _filamentIDvec[0] && _nfilamentType == _filamentIDvec[1];
+	bool cndn2 = _filamentType == _filamentIDvec[1] && _nfilamentType == _filamentIDvec[0];
+
+	if(!cndn1 && !cndn2 && boundInt != _boundInt) return;
+
+	auto t1 = make_tuple(ccyl1, site1);
+	auto t2 = make_tuple(ccyl2, site2);
     floatingpoint oldN=numBindingSites();
     _possibleBindings.emplace(t1,t2);
     floatingpoint newN=numBindingSites();
@@ -2355,12 +2424,23 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     exit(EXIT_FAILURE);
 #endif
 }
-void MotorBindingManager::appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
-                                           tuple<CCylinder*, short> t2){
+void MotorBindingManager::appendpossibleBindingsstencil(short boundInt, CCylinder* ccyl1,
+		CCylinder* ccyl2, short site1, short site2){
+
+	short _filamentType = ccyl1->getType();
+	short _nfilamentType = ccyl2->getType();
+
+	bool cndn1 = _filamentType == _filamentIDvec[0] && _nfilamentType == _filamentIDvec[1];
+	bool cndn2 = _filamentType == _filamentIDvec[1] && _nfilamentType == _filamentIDvec[0];
+
+	if(!cndn1 && !cndn2 && boundInt != _boundInt) return;
+
 	#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 	auto HManager = _compartment->getHybridBindingSearchManager();
-//	HManager->appendpossibleBindingsstencil(_idvec, t1, t2);
+	HManager->appendPossibleBindingsstencil(_idvec, ccyl1, ccyl2, site1, site2);
 	#else
+	auto t1 = make_tuple(ccyl1, site1);
+	auto t2 = make_tuple(ccyl2, site2);
 	floatingpoint oldN=numBindingSitesstencil();
 	_possibleBindingsstencil.emplace(t1,t2);
 	floatingpoint newN=numBindingSitesstencil();
@@ -2528,6 +2608,15 @@ void MotorBindingManager::clearpossibleBindingsstencil() {
 
     #endif
 }
+int MotorBindingManager::numBindingSitesstencil() {
+#ifdef NLSTENCILLSIT
+    return _possibleBindingsstencil.size();
+#else
+    auto HManager = _compartment->getHybridBindingSearchManager();
+    return HManager->numBindingSitesstencil(_idvec);
+#endif
+
+}
 #endif
 #ifdef CUDAACCL_NL
 void MotorBindingManager::assigncudavars() {
@@ -2564,3 +2653,4 @@ short LinkerBindingManager::HNLID;
 short MotorBindingManager::HNLID;
 short LinkerBindingManager::_idvec[2];
 short MotorBindingManager::_idvec[2];
+

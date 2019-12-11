@@ -54,6 +54,8 @@ public:
     /// Get parent
     BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
 
+    void initializerestart(floatingpoint eqLength);
+
     floatingpoint stretchForce = 0.0; ///< Stretching force of brancher at current state
     floatingpoint bendingForce = 0.0;
     floatingpoint dihedralForce = 0.0;

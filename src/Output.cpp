@@ -1234,39 +1234,51 @@ void Datadump::print(int snapshot) {
 	}
 	_outputFile <<endl;
 	//Linker Data
-	_outputFile <<"LINKER DATA: LINKERID CYL1_IDX CYL2_IDX POS1 POS2 EQLEN"<<endl;
+	_outputFile <<"LINKER DATA: LINKERID LINKERTYPE CYL1_IDX CYL2_IDX POS1 POS2 "
+               "EQLEN DIFFUSINGSPECIESNAME"<<endl;
 	for(auto l :Linker::getLinkers()){
 		Cylinder* cyl1 = l->getFirstCylinder();
 		Cylinder* cyl2 = l->getSecondCylinder();
-		float pos1 = l->getFirstPosition();
-		float pos2 = l->getSecondPosition();
-		_outputFile <<l->getId()<<" "<<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex
-		()<<" "<<pos1<<" "<<pos2<<" "<<l->getMLinker()->getEqLength()<<endl;
+		float pos1 = l->getFirstPosition()*SysParams::Geometry()
+		        .cylinderNumMon[cyl1->getType()];
+		float pos2 = l->getSecondPosition()*SysParams::Geometry()
+                .cylinderNumMon[cyl2->getType()];
+		_outputFile <<l->getId()<<" "<<l->getType()<<" "<<cyl1->getStableIndex()<<" "
+		                        <<cyl2->getStableIndex()<<" "<<pos1<<" "<<pos2<<" "
+		                        <<l->getMLinker()->getEqLength()<<" "<<l->getCLinker()
+		                        ->getDiffusingSpecies()->getName()<<endl;
 	}
 	_outputFile <<endl;
 	//MOTOR Data
-	_outputFile <<"MOTOR DATA: MOTORID CYL1_IDX CYL2_IDX POS1 POS2 EQLEN"<<endl;
+	_outputFile <<"MOTOR DATA: MOTORID MOTORTYPE CYL1_IDX CYL2_IDX POS1 POS2 EQLEN DIFFUSINGSPECIESNAME"<<endl;
 	for(auto l :MotorGhost::getMotorGhosts()){
 		Cylinder* cyl1 = l->getFirstCylinder();
 		Cylinder* cyl2 = l->getSecondCylinder();
-		float pos1 = l->getFirstPosition();
-		float pos2 = l->getSecondPosition();
-		_outputFile <<l->getId()<<" "<<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex
-				()<<" "<<pos1<<" "<<pos2<<" "<<l->getMMotorGhost()->getEqLength()<<endl;
+        float pos1 = l->getFirstPosition()*SysParams::Geometry()
+                .cylinderNumMon[cyl1->getType()];
+        float pos2 = l->getSecondPosition()*SysParams::Geometry()
+                .cylinderNumMon[cyl2->getType()];
+		_outputFile <<l->getId()<<" "<<l->getType()<<" "<<cyl1->getStableIndex()<<" "
+		            <<cyl2->getStableIndex()<<" "<<pos1<<" "<<pos2<<" "
+		            <<l->getMMotorGhost()->getEqLength()<<" "<<l->getCMotorGhost()
+				->getDiffusingSpecies()->getName()<<endl;
 	}
 	_outputFile <<endl;
 	//Brancher Data
-	_outputFile <<"BRANCHING DATA: BRANCHID CYL1_IDX CYL2_IDX POS1 EQLEN"<<endl;
+	_outputFile <<"BRANCHING DATA: BRANCHID BRANCHTYPE CYL1_IDX CYL2_IDX POS1 EQLEN DIFFUSINGSPECIESNAME"<<endl;
 	for(auto l :BranchingPoint::getBranchingPoints()){
 		Cylinder* cyl1 = l->getFirstCylinder();
 		Cylinder* cyl2 = l->getSecondCylinder();
-		float pos1 = l->getPosition();
-		_outputFile <<l->getId()<<" "<<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex
-				()<<" "<<pos1<<" "<<l->getMBranchingPoint()->getEqLength()<<endl;
+		float pos1 = l->getPosition()*SysParams::Geometry()
+                .cylinderNumMon[cyl1->getType()];
+		_outputFile <<l->getId()<<" "<<l->getType()<<" "<<cyl1->getStableIndex()<<" "
+		            <<cyl2->getStableIndex()<<" "<<pos1<<" "
+		            <<l->getMBranchingPoint()->getEqLength()<<" "<<l->getCBranchingPoint()
+				->getDiffusingSpecies()->getName()<<endl;
 	}
 	_outputFile <<endl;
 	//Compartment Data
-	_outputFile <<"COMPARTMENT DATA: CMPID DIFFUSINGSPECIES"
+	_outputFile <<"COMPARTMENT DATA: CMPID DIFFUSINGSPECIES "
 			   "COPYNUM"<<endl;
 	for(auto cmp:_subSystem->getCompartmentGrid()->getCompartments()){
 		_outputFile <<cmp->getId()<<" ";

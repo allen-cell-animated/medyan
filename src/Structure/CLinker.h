@@ -19,6 +19,7 @@
 #include "CBound.h"
 
 #define SPECIESL_BINDING_INDEX 1
+#define SPECIESL_DIFFUSING_INDEX_OFFRXN 2
 
 //FORWARD DECLARATIONS
 class Linker;
@@ -80,6 +81,12 @@ public:
     
     /// Create the off reaction for this Linker
     virtual void createOffReaction(ReactionBase* onRxn, SubSystem* ps);
+
+    Species* getDiffusingSpecies(){
+        RSpecies** rs = _offRxn->rspecies();
+        Species* sfb = &(rs[SPECIESL_DIFFUSING_INDEX_OFFRXN]->getSpecies());
+        return sfb;
+    }
     
 };
 

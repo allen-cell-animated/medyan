@@ -18,6 +18,18 @@ void ChemSimpleGillespieImpl::initialize() {
     resetTime();
 }
 
+void ChemSimpleGillespieImpl::initializerestart(floatingpoint restarttime){
+
+    if(SysParams::RUNSTATE){
+        LOG(ERROR) << "initializerestart Function from ChemSimpleGillespieImpl class can "
+                      "only be called "
+                      "during restart phase. Exiting.";
+        throw std::logic_error("Illegal function call pattern");
+    }
+
+    setTime(restarttime);
+}
+
 
 ChemSimpleGillespieImpl::~ChemSimpleGillespieImpl() noexcept {
     _reactions.clear();

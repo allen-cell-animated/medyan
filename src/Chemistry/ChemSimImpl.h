@@ -39,7 +39,9 @@ public:
     /// After all initial reactions have been added via addReaction(...) method, invoke
     /// initialize() prior to invoking run()
     virtual void initialize() = 0;
-    
+
+    /// Set time during restart
+    virtual void initializerestart(floatingpoint time) = 0;
     /// Add Reaction *r to the chemical network which needs to be simulated
     virtual void addReaction(ReactionBase *r) = 0;
     

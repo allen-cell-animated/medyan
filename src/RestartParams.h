@@ -65,11 +65,38 @@ struct restartFilData{
 /*stores MotorData*/
 struct restartMotorData{
 	unsigned int motorid;
+	short motorType;
 	unsigned int cylid1;
 	unsigned int cylid2;
-	float pos1;
-	float pos2;
+	short pos1;
+	short pos2;
 	float eqlen;
+	string diffusingspeciesname;
+	bool restartcompletion = false;
+};
+
+/*stores LinkerData*/
+struct restartLinkerData{
+	unsigned int linkerid;
+	short linkerType;
+	unsigned int cylid1;
+	unsigned int cylid2;
+	short pos1;
+	short pos2;
+	float eqlen;
+	string diffusingspeciesname;
+	bool restartcompletion = false;
+};
+/*stores BrancherData*/
+struct restartBrancherData{
+	unsigned int branchid;
+	short branchType;
+	unsigned int cylid1;
+	unsigned int cylid2;
+	short pos1;
+	float eqlen;
+	string diffusingspeciesname;
+	bool restartcompletion = false;
 };
 
 #endif

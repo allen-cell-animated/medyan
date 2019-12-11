@@ -20,6 +20,7 @@
 #include "Compartment.h"
 
 #define SPECIESB_BINDING_INDEX 0
+#define SPECIESB_DIFFUSING_INDEX_OFFRXN 2
 
 //FORWARD DECLARATIONS
 class BranchingPoint;
@@ -80,6 +81,12 @@ public:
     BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
     
     virtual void createOffReaction(ReactionBase* onRxn, SubSystem* ps);
+
+    Species* getDiffusingSpecies(){
+        RSpecies** rs = _offRxn->rspecies();
+        Species* sfb = &(rs[SPECIESB_DIFFUSING_INDEX_OFFRXN]->getSpecies());
+        return sfb;
+    }
 };
 
 #endif

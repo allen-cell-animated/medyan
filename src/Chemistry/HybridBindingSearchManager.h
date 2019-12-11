@@ -230,6 +230,12 @@ public:
     void addPossibleBindingsstencil(short idvec[2], CCylinder* cc, short bindingSite);
     void removePossibleBindingsstencil(short idvec[2], CCylinder* cc, short bindingSite);
 
+    void appendPossibleBindingsstencil(short idvec[2],
+                                  CCylinder* ccyl1,
+                                  CCylinder* ccyl2,
+                                  short site1,
+                                  short site2);
+
     ///update all possible binding reactions that could occur using stencil NL
     void updateAllPossibleBindingsstencilSIMDV3();
     void updateAllPossibleBindingsstencilHYBD();
@@ -287,6 +293,11 @@ public:
         removecounts = 0;
         choosecounts = 0;
         #endif
+    }
+
+    int numBindingSitesstencil(short idvec[2]) {
+
+        return Nbindingpairs[idvec[0]][idvec[1]];
     }
 
     /*static void setdOut(){
