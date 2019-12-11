@@ -47,7 +47,7 @@ namespace dist {
 		vector<int> indices(N);
 		uint q=0;
 		generate(indices.begin(),indices.end(),[&q](){return q++;});
-		random_shuffle(indices.begin(),indices.end());
+		std::shuffle(indices.begin(),indices.end(), mt);
 	
 		Coords coords(x,y,z,indices,finfo);
 		dOut<2U> out(N, {5.0f, 12.0f, 6.0f, 13.0f});
@@ -88,12 +88,12 @@ namespace dist {
 		vector<int> indices1(N1);
 		uint q1=0;
 		generate(indices1.begin(),indices1.end(),[&q1](){return q1++;});
-		random_shuffle(indices1.begin(),indices1.end());
+		std::shuffle(indices1.begin(),indices1.end(), mt);
 		
 		vector<int> indices2(N2);
 		uint q2=0;
 		generate(indices2.begin(),indices2.end(),[&q2](){return q2++;});
-		random_shuffle(indices2.begin(),indices2.end());
+		std::shuffle(indices2.begin(),indices2.end(), mt);
 		
 		// We are done with generating fake coordinates in two distinct compartments
 		//The next few lines below do the distance calculations
@@ -131,7 +131,7 @@ namespace dist {
 		vector<int> indices(N);
 		uint q=0;
 		generate(indices.begin(),indices.end(),[&q](){return q++;});
-		random_shuffle(indices.begin(),indices.end());
+		std::shuffle(indices.begin(),indices.end(), mt);
 	
 		Coords coords(x,y,z,indices,finfo);
 		dOut<2U> out(N, {5.0f, 12.0f, 6.0f, 13.0f});
@@ -331,12 +331,12 @@ namespace dist {
 		vector<int> indices1(N1);
 		uint q1=0;
 		generate(indices1.begin(),indices1.end(),[&q1](){return q1++;});
-		random_shuffle(indices1.begin(),indices1.end());
+		std::shuffle(indices1.begin(),indices1.end(), mt);
 		
 		vector<int> indices2(N2);
 		uint q2=0;
 		generate(indices2.begin(),indices2.end(),[&q2](){return q2++;});
-		random_shuffle(indices2.begin(),indices2.end());
+		std::shuffle(indices2.begin(),indices2.end(), mt);
 		
 		// We are done with generating fake coordinates in two distinct compartments
 		//The next few lines below do the distance calculations
