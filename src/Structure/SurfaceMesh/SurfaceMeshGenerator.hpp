@@ -7,6 +7,7 @@
 #include <type_traits> // integral_constant, enable_if
 #include <vector>
 
+#include "Util/Environment.hpp"
 #include "Util/Math/Vec.hpp"
 
 namespace mesh_gen {
@@ -345,7 +346,12 @@ private:
     static constexpr small_size_t _numTetraEdgesPerCuboid = 7; // index = 0bxyz - 1
 
     // Local vertex index [local tetra idx (6)][vertex idx (4)]
+#ifdef COMPILER_GCC
+    // Compiler bug: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=92625
+    static constexpr std::uint_fast16_t _tetraVertexLocalIndex[6][4] {
+#else
     static constexpr small_size_t _tetraVertexLocalIndex[6][4] {
+#endif
         {0b000, 0b100, 0b110, 0b111},
         {0b000, 0b110, 0b010, 0b111},
         {0b000, 0b010, 0b011, 0b111},
@@ -357,7 +363,12 @@ private:
     // Value:  0b  xyz                  xyz
     //             ^ starting position  ^ edge direction (positive)
     // Real index in cuboid = 0bxyz(direction) - 1
+#ifdef COMPILER_GCC
+    // Compiler bug: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=92625
+    static constexpr std::uint_fast16_t _tetraEdgeLocalIndex[6][6] {
+#else
     static constexpr small_size_t _tetraEdgeLocalIndex[6][6] {
+#endif
         {0b000'100, 0b000'110, 0b000'111, 0b100'010, 0b100'011, 0b110'001},
         {0b000'110, 0b000'010, 0b000'111, 0b010'100, 0b110'001, 0b010'101},
         {0b000'010, 0b000'011, 0b000'111, 0b010'001, 0b010'101, 0b011'100},
