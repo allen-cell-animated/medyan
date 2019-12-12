@@ -208,6 +208,7 @@ bool ChemNRMImpl::makeStep() {
         }
     }
     rn->makeStep();
+
 	#ifdef DEBUGCONSTANTSEED
     cout<<"tau "<<_t<<endl;
 	#endif

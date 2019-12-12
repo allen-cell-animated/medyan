@@ -1265,7 +1265,8 @@ void Datadump::print(int snapshot) {
 	}
 	_outputFile <<endl;
 	//Brancher Data
-	_outputFile <<"BRANCHING DATA: BRANCHID BRANCHTYPE CYL1_IDX CYL2_IDX POS1 EQLEN DIFFUSINGSPECIESNAME"<<endl;
+	_outputFile <<"BRANCHING DATA: BRANCHID BRANCHTYPE CYL1_IDX CYL2_IDX POS1 EQLEN "
+               "DIFFUSINGBRNACHSPECIESNAME DIFFUSINGACTINSPECIESNAME"<<endl;
 	for(auto l :BranchingPoint::getBranchingPoints()){
 		Cylinder* cyl1 = l->getFirstCylinder();
 		Cylinder* cyl2 = l->getSecondCylinder();
@@ -1274,7 +1275,8 @@ void Datadump::print(int snapshot) {
 		_outputFile <<l->getId()<<" "<<l->getType()<<" "<<cyl1->getStableIndex()<<" "
 		            <<cyl2->getStableIndex()<<" "<<pos1<<" "
 		            <<l->getMBranchingPoint()->getEqLength()<<" "<<l->getCBranchingPoint()
-				->getDiffusingSpecies()->getName()<<endl;
+				->getDiffusingBranchSpecies()->getName()<<" "<<l->getCBranchingPoint()
+				->getDiffusingActinSpeciesName()<<endl;
 	}
 	_outputFile <<endl;
 	//Compartment Data
@@ -1302,6 +1304,67 @@ void Datadump::print(int snapshot) {
 		_outputFile <<name<<" "<<copyNum<<" ";
 	}
 	_outputFile <<endl;
+
+	//TALLY
+	_outputFile<<"TALLY OF SPECIES: SPECIESNAME COPYNUM"<<endl;
+
+    // all diffusing and bulk species
+    for(auto sd : _chemData.speciesDiffusing) {
+
+        string name = get<0>(sd);
+        auto copyNum = _subSystem->getCompartmentGrid()->countDiffusingSpecies(name);
+
+        _outputFile << name << ":DIFFUSING " << copyNum << endl;
+    }
+
+    for(auto sb : _chemData.speciesBulk) {
+
+        string name = get<0>(sb);
+        auto copyNum = _subSystem->getCompartmentGrid()->countBulkSpecies(name);
+
+        _outputFile << name << ":BULK " << copyNum << endl;
+    }
+
+    for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
+
+        for(auto sf : _chemData.speciesFilament[filType]) {
+
+            auto copyNum = Filament::countSpecies(filType, sf);
+            _outputFile << sf << ":FILAMENT " << copyNum << endl;
+        }
+
+        for(auto sp : _chemData.speciesPlusEnd[filType]) {
+
+            auto copyNum = Filament::countSpecies(filType, sp);
+            _outputFile << sp << ":PLUSEND " << copyNum << endl;
+        }
+
+        for(auto sm : _chemData.speciesMinusEnd[filType]) {
+
+            auto copyNum = Filament::countSpecies(filType, sm);
+            _outputFile << sm << ":MINUSEND " << copyNum << endl;
+        }
+
+        for(auto sl : _chemData.speciesLinker[filType]) {
+
+            auto copyNum = Linker::countSpecies(sl);
+            _outputFile << sl << ":LINKER " << copyNum << endl;
+        }
+
+        for(auto sm : _chemData.speciesMotor[filType]) {
+
+            auto copyNum = MotorGhost::countSpecies(sm);
+            _outputFile << sm << ":MOTOR " << copyNum << endl;
+        }
+
+        for(auto sb : _chemData.speciesBrancher[filType]) {
+
+            auto copyNum = BranchingPoint::countSpecies(sb);
+            _outputFile << sb << ":BRANCHER " << copyNum << endl;
+        }
+    }
+
+    _outputFile <<endl;
 }
 
 void HessianMatrix::print(int snapshot){

@@ -628,6 +628,7 @@ void HybridBindingSearchManager::appendPossibleBindingsstencil(short idvec[2],
 	                     SysParams::Chemistry().bindingSites[_nfilamentType].end(), site2)
 	                - SysParams::Chemistry().bindingSites[_nfilamentType].begin();
 	uint32_t t2 = shiftedIndex2|pos2;
+
 	_possibleBindingsstencilvecuint[idx][idx2][t1].push_back(t2);
 	_reversepossibleBindingsstencilvecuint[idx][idx2][t2].push_back(t1);
 
@@ -1069,8 +1070,10 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
 	    ccyl1 = cylinderInfoData[cIndex1].chemCylinder;
 	    ccyl2 = cylinderInfoData[cIndex2].chemCylinder;
 
-	    short bindingSite1 = SysParams::Chemistry().bindingSites[fpairs[0]][bsitepos1];
-	    short bindingSite2 = SysParams::Chemistry().bindingSites[fpairs[1]][bsitepos2];
+	    short bindingSite1 = SysParams::Chemistry().bindingSites[ccyl1->getType
+			    ()][bsitepos1];
+	    short bindingSite2 = SysParams::Chemistry().bindingSites[ccyl2->getType
+			    ()][bsitepos2];
 
 	    tuple<CCylinder *, short> t1 = make_tuple(ccyl1, bindingSite1);
 	    tuple<CCylinder *, short> t2 = make_tuple(ccyl2, bindingSite2);

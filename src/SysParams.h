@@ -339,6 +339,8 @@ public:
     static long long exvolcounterz[3];
     ///Const getter
     static bool RUNSTATE; //0 refers to restart phase and 1 refers to run phase.
+    static bool USECHEMCOPYNUM; // if set to 0, restart file copy numbers are used. If
+    // not, chemistry file copy numbers are used.
     static bool INITIALIZEDSTATUS; // true refers to sucessful initialization. false
     static bool DURINGCHEMISTRY; //true if MEDYAN is running chemistry, false otherwise.
     // corresponds to an on-going initialization state.

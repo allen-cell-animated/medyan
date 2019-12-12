@@ -24,7 +24,7 @@
 template<unsigned short M, unsigned short N>
     void Reaction<M,N>::updatePropensityImpl() {
 
-    /*bool case1 = _rnode!=nullptr;
+/*    bool case1 = _rnode!=nullptr;
     bool case2 = !_passivated;
     cout<<"updatePropensityImpl status "<<case1<<" "<<case2<<endl;*/
     //just update the rnode if not passivated

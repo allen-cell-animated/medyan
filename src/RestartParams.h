@@ -95,8 +95,26 @@ struct restartBrancherData{
 	unsigned int cylid2;
 	short pos1;
 	float eqlen;
-	string diffusingspeciesname;
+	string diffusingspeciesnamebranch;
+	string diffusingspeciesnameactin;
 	bool restartcompletion = false;
+};
+/*stores data on Diffusing species in any given compartment*/
+struct restartCompartmentDiffusingData{
+	int id;
+	vector<string> speciesnamevec;
+	vector<int> copynumvec;
+
+};
+
+struct restartBulkData{
+	vector<string>speciesnamevec;
+	vector<int>copynumvec;
+};
+
+struct restartcopynumberrallyData{
+	vector<string> speciesnamevec;
+	vector<int> copynumvec;
 };
 
 #endif

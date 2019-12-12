@@ -1846,7 +1846,17 @@ FilamentSetup SystemParser::readFilamentSetup() {
                 FSetup.filamentType = atoi(lineVector[1].c_str());
             else {}
         }
-        else if (line.find("RESTARTPHASE") != string::npos){SysParams::RUNSTATE=false;}
+        else if (line.find("RESTARTPHASE") != string::npos){SysParams::RUNSTATE=false;
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "Error reading restart params. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2){
+                if(lineVector[1].find("USECHEMCOPYNUM"))
+                SysParams::USECHEMCOPYNUM = true;
+            }
+        }
         else if(line.find("PROJECTIONTYPE")!=string::npos){
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {

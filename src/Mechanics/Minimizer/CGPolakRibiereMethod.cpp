@@ -94,9 +94,6 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 	CUDAcommon::tmin.computeforces += elapsed_force.count();
 	//@@@}
 
-	//Output energy
-//	cout<<"Energy before minimization"<<endl;
-//	FFM.computeEnergy(coord, force, 0.0, true);
 #ifdef SERIAL // SERIAL
 	//@@@{ STEP 3: COPY FORCES
 	tbegin = chrono::high_resolution_clock::now();
@@ -578,7 +575,6 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 	std::cout << "----------------------------------------" << endl;
 	std::cout << "maxF " << maxForce << endl;
 #endif
-	FFM.computeEnergy(Bead::getDbData().coords.data(), true);
 
 	#ifdef TRACKDIDNOTMINIMIZE
 	SysParams::Mininimization().maxF.push_back(maxForce);

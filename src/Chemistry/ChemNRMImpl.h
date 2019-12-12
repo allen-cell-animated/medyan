@@ -319,8 +319,9 @@ public:
         for(int i = 0; i < steps; i++) {
             
             bool success = makeStep();
-            if(!success)
+            if(!success) {
                 return false;
+            }
         }
         return true;
     }

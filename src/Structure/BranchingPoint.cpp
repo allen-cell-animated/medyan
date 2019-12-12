@@ -106,7 +106,10 @@ BranchingPoint::~BranchingPoint() noexcept {
     //mark the free species instead
     else {
         //find the free species
-        Species* speciesFilament = m->speciesFilament(m->activeSpeciesPlusEnd());
+        string speciesName = _cBranchingPoint->getDiffusingActinSpeciesName();
+        Species* freeMonomer = _compartment->findSpeciesByName(speciesName);
+        //Commented out on Dec 11, 2019. Found an alternate way that is more robust.
+        /*Species* speciesFilament = m->speciesFilament(m->activeSpeciesPlusEnd());
         
         string speciesName = SpeciesNamesDB::removeUniqueFilName(speciesFilament->getName());
         string speciesFirstChar = speciesName.substr(0,1);
@@ -128,9 +131,10 @@ BranchingPoint::~BranchingPoint() noexcept {
         //diffusing, remove all but first char
         else if(dfMonomer != nullptr) freeMonomer = dfMonomer;
         //bulk, remove all but first char
-        else if(bfMonomer != nullptr) freeMonomer = bfMonomer;
+        else if(bfMonomer != nullptr) freeMonomer = bfMonomer;*/
+
         //could not find. exit ungracefully
-        else {
+        if(freeMonomer == nullptr) {
             cout << "In unbranching reaction, could not find corresponding " <<
                     "diffusing species of filament species " << speciesName <<
                     ". Exiting." << endl;

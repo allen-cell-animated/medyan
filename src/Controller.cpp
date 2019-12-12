@@ -416,6 +416,8 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         cout << "Total cylinders " << Cylinder::getCylinders().size() << endl;
     }
     else{
+        cout<<endl;
+	    cout<<"RESTART PHASE BEINGS."<<endl;
         //Create the restart pointer
         const string inputfileName = _inputDirectory + FSetup.inputFile;
         _restart = new Restart(&_subSystem, _chemData, inputfileName);
@@ -903,10 +905,9 @@ void Controller::run() {
     chk1 = chrono::high_resolution_clock::now();
 //RESTART PHASE BEGINS
     if(SysParams::RUNSTATE==false){
-        cout<<"RESTART PHASE BEINGS."<<endl;
-        cout<<"Turned off Diffusion, and filament reactions."<<endl;
 //Step 2A. Turn off diffusion, passivate filament reactions and add reactions to heap.
         _restart->settorestartphase();
+	    cout<<"Turned off Diffusion, and filament reactions."<<endl;
         cout<<"Bound species added to reaction heap."<<endl;
 //Step 3. ############ RUN LINKER/MOTOR REACTIONS TO BIND BRANCHERS, LINKERS, MOTORS AT RESPECTIVE POSITIONS.#######
         cout<<"Number of reactions to be fired "<<_restart->getnumchemsteps()<<endl;
@@ -933,7 +934,8 @@ void Controller::run() {
         cout<<endl;
         //sets
         _restart->CBoundinitializerestart();
-        _restart->redistributediffusingspecies();
+        _restart->restartupdateCopyNumbers();
+
         cout<<"Diffusion rates restored, diffusing molecules redistributed."<<endl;
         _cController.initializerestart(_restart->getrestartime());
         cout<<"Tau reset to "<<tau()<<endl;
@@ -1243,8 +1245,6 @@ void Controller::run() {
 	            cout<<endl;
 
 #endif
-                cout << "Current simulation time = "<< tau() << endl;
-
                 mins = chrono::high_resolution_clock::now();
                 Bead::rearrange();
                 Cylinder::updateAllData();

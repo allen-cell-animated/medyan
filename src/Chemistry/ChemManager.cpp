@@ -2175,27 +2175,33 @@ void ChemManager::updateCopyNumbers() {
                 //find the species, increase copy number
                 Species* species = randomCompartment->findSpeciesByName(name);
 
-                species->up();
-                species->updateReactantPropensities();
+                //If user requests to use different copy numbers mentioned in chem file
+                // during restart in place of those in restart file, do not do anything
+                // in restart phase.
+                if(SysParams::USECHEMCOPYNUM && SysParams::RUNSTATE == false){
+                    species->updateReactantPropensities();
+                    copyNumber = 0;
+                }
+                else {
+                    species->up();
+                    species->updateReactantPropensities();
+                    copyNumber--;
 
-                copyNumber--;
-
-                //set zero copy number
-                if(copyNumber == 0) get<1>(s) = 0;
+                    //set zero copy number
+                    if (copyNumber == 0) get<1>(s) = 0;
+                }
             }
 
             //Change copy number if moveboundary is defined and if species is NOT past
             // removal.
-            if(tsaxis >=0) {
+            if(tsaxis >=0 && SysParams::RUNSTATE) {
                 if (tsaxis < 3 && get<1>(s) != -1 &&
-                    cpynummanipulationType ==
-                    "BASECONC") {
+                    cpynummanipulationType == "BASECONC") {
                     //set the coordinate that will help you find the necessary Base compartment
                     floatingpoint distancetocompare = 0.0;
                     if (SysParams::Boundaries().planestomove == 2 &&
                         cpynummanipulationType != "NONE") {
-                        cout
-                                << "Cannot set base concentration if both end planes are mobile as"
+                        cout << "Cannot set base concentration if both end planes are mobile as"
                                    " specified in BOUNDARYMOVE. Exiting." << endl;
                         exit(EXIT_FAILURE);
                     }
@@ -2243,7 +2249,8 @@ void ChemManager::updateCopyNumbers() {
             }
         }
 
-        if(tau() >= removalTime && !areEqual(removalTime,0.0) && get<1>(s) != -1) {
+        if(SysParams::RUNSTATE && tau() >= removalTime && !areEqual(removalTime,0.0) &&
+        get<1>(s) != -1) {
 
             ///remove species from all compartments
             for(auto C : grid->getCompartments()) {
@@ -2270,7 +2277,16 @@ void ChemManager::updateCopyNumbers() {
         auto cpynummanipulationType = get<5>(s);
         auto holdmolarity = get<6>(s);
         floatingpoint factor = Boundary::systemvolume * 6.023*1e-7;
-        if(tau() >= releaseTime && copyNumber != 0) {
+        //If system is being restarted, do not update Copynumbers
+        if(SysParams::RUNSTATE == 0){
+            //activate reactions
+            //find the species, set copy number
+            Species* species = grid->findSpeciesBulkByName(name);
+            species->setN(0);
+            species->activateReactantReactions();
+
+        }
+        if(SysParams::RUNSTATE && tau() >= releaseTime && copyNumber != 0) {
 
             //find the species, set copy number
             Species* species = grid->findSpeciesBulkByName(name);
@@ -2283,7 +2299,7 @@ void ChemManager::updateCopyNumbers() {
             get<1>(s) = 0;
         }
         //if copy number changes with concentration
-        if(tau() >= releaseTime && cpynummanipulationType != "NONE"){
+        if(SysParams::RUNSTATE && tau() >= releaseTime && cpynummanipulationType != "NONE"){
             //find the species, set copy number
             if(cpynummanipulationType == "BULKCONC") {
                 int updatedcpynumber = (int)(holdmolarity * factor);
@@ -2295,7 +2311,7 @@ void ChemManager::updateCopyNumbers() {
             }
 
         }
-        if(tau() >= removalTime && !areEqual(removalTime,0.0) && get<1>(s) != -1) {
+        if(SysParams::RUNSTATE && tau() >= removalTime && !areEqual(removalTime,0.0) && get<1>(s) != -1) {
 
             Species* species = grid->findSpeciesBulkByName(name);
 

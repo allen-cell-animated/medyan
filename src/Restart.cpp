@@ -203,9 +203,8 @@ void Restart::readNetworkSetup() {
 				}
 			}
 
-			else if (lineVector[0] == "BRANCHER") {
+			else if (lineVector[0] == "BRANCHING") {
 				//Get lines till the line is not empty
-
 				getline(_inputFile, line);
 				while (line.size() > 0) {
 					restartBrancherData _rbdata;
@@ -224,15 +223,72 @@ void Restart::readNetworkSetup() {
 					//eqlen
 					_rbdata.eqlen = atof((lineVector[5]).c_str());
 					//diffusing species name
-					_rbdata.diffusingspeciesname = lineVector[7];
+					_rbdata.diffusingspeciesnamebranch = lineVector[6];
+					_rbdata.diffusingspeciesnameactin = lineVector[7];
 
 					_rBDatavec.push_back(_rbdata);
 					//get next filament data
 					getline(_inputFile, line);
 				}
 			}
+			/* parse diffusing species copy number in each compartment*/
+			if (lineVector[0] == "COMPARTMENT") {
+				//Get lines till the line is not empty
+				getline(_inputFile, line);
+				while (line.size() > 0) {
+					restartCompartmentDiffusingData _rcddata;
+					//Split string based on space delimiter
+					vector<string> lineVector = split<string>(line);
+
+					_rcddata.id = atoi((lineVector[0]).c_str());
+					//Copy species name
+					for (auto n = 1; n < lineVector.size(); n = n + 2)
+						_rcddata.speciesnamevec.push_back(lineVector[n].c_str());
+					//Copy species copy number
+					for (auto n = 2; n < lineVector.size(); n = n + 2)
+						_rcddata.copynumvec.push_back(atoi(lineVector[n].c_str()));
+
+					_rCmpDDatavec.push_back(_rcddata);
+					//get next filament data
+					getline(_inputFile, line);
+				}
+			}
+
+			/* parse bulk species copy number*/
+			if (lineVector[0] == "BULKSPECIES") {
+				//Get lines till the line is not empty
+				getline(_inputFile, line);
+				while (line.size() > 0) {
+					vector<string> lineVector = split<string>(line);
+					for (auto n = 0; n < lineVector.size(); n = n + 2)
+						_rbdata.speciesnamevec.push_back(lineVector[n].c_str());
+					//Copy species copy number
+					for (auto n = 1; n < lineVector.size(); n = n + 2)
+						_rbdata.copynumvec.push_back(atoi(lineVector[n].c_str()));
+					//get next bulkspecies data
+					getline(_inputFile, line);
+				}
+			}
+
+			/* parse total copy number of each species*/
+			if (lineVector[0] == "TALLY") {
+				//Get lines till the line is not empty
+				getline(_inputFile, line);
+				string delimiter = ":";
+				while (line.size() > 0) {
+					vector<string> lineVector = split<string>(line);
+					auto pos = lineVector[0].find(delimiter);
+					_rbdata.speciesnamevec.push_back(lineVector[0].substr(0,pos));
+					_rbdata.copynumvec.push_back(atoi(lineVector[1].c_str()));
+					//get next bulkspecies data
+					getline(_inputFile, line);
+				}
+			}
 		}
 	}
+	cout<<"numMotors="<<_rMDatavec.size()<<endl;
+	cout<<"numLinkers="<<_rLDatavec.size()<<endl;
+	cout<<"numBranchers="<<_rBDatavec.size()<<endl;
 }
 
 void Restart::setupInitialNetwork() {
@@ -387,7 +443,8 @@ void Restart::addtoHeapLinkerMotorBrancher(){
 		Cylinder *c2 = _rCDatavec[cidx2].cylinderpointer;
 			for (auto &Mgr:c1->getCompartment()->getFilamentBindingManagers()) {
 				if (dynamic_cast<BranchingManager *>(Mgr.get())) {
-					setdiffspeciesnumber(b.diffusingspeciesname,c1);
+					setdiffspeciesnumber(b.diffusingspeciesnamebranch,c1);
+					setdiffspeciesnumber(b.diffusingspeciesnameactin,c1);
 					#ifdef NLORIGINAL
 					Mgr->appendpossibleBindings(c1->getCCylinder(),
 					                                   c2->getCCylinder(), site1, site2);
@@ -405,15 +462,19 @@ void Restart::CBoundinitializerestart(){
 	for(auto l:Linker::getLinkers()) {
 		int c1 = l->getFirstCylinder()->getStableIndex();
 		int c2 = l->getSecondCylinder()->getStableIndex();
-		short pos1 = l->getFirstPosition();
-		short pos2 = l->getSecondPosition();
+		short ftype1 = l->getFirstCylinder()->getType();
+		short ftype2 = l->getSecondCylinder()->getType();
+		short pos1 = l->getFirstPosition()*SysParams::Geometry().cylinderNumMon[ftype1];
+		short pos2 = l->getSecondPosition()*SysParams::Geometry().cylinderNumMon[ftype2];
 		for(auto &rldata: _rLDatavec){
-			if(rldata.restartcompletion) {
+			if(!rldata.restartcompletion) {
 				int rc1 = rldata.cylid1;
 				int rc2 = rldata.cylid2;
 				short rpos1 = rldata.pos1;
 				short rpos2 = rldata.pos2;
-				if(rc1 == c1 && rc2 == c2 && rpos1 == pos1 && rpos2 == pos2){
+				bool cndn1 = rc1 == c1 && rc2 == c2 && rpos1 == pos1 && rpos2 == pos2;
+				bool cndn2 = rc1 == c2 && rc2 == c1 && rpos1 == pos2 && rpos2 == pos1;
+				if(cndn1 || cndn2){
 					l->initializerestart(rldata.eqlen);
 					rldata.restartcompletion = true;
 				}
@@ -424,15 +485,19 @@ void Restart::CBoundinitializerestart(){
 	for(auto m:MotorGhost::getMotorGhosts()) {
 		int c1 = m->getFirstCylinder()->getStableIndex();
 		int c2 = m->getSecondCylinder()->getStableIndex();
-		short pos1 = m->getFirstPosition();
-		short pos2 = m->getSecondPosition();
+		short ftype1 = m->getFirstCylinder()->getType();
+		short ftype2 = m->getSecondCylinder()->getType();
+		short pos1 = m->getFirstPosition()*SysParams::Geometry().cylinderNumMon[ftype1];
+		short pos2 = m->getSecondPosition()*SysParams::Geometry().cylinderNumMon[ftype2];
 		for(auto &rmdata: _rMDatavec){
-			if(rmdata.restartcompletion) {
+			if(!rmdata.restartcompletion) {
 				int rc1 = rmdata.cylid1;
 				int rc2 = rmdata.cylid2;
 				short rpos1 = rmdata.pos1;
 				short rpos2 = rmdata.pos2;
-				if(rc1 == c1 && rc2 == c2 && rpos1 == pos1 && rpos2 == pos2){
+				bool cndn1 = rc1 == c1 && rc2 == c2 && rpos1 == pos1 && rpos2 == pos2;
+				bool cndn2 = rc1 == c2 && rc2 == c1 && rpos1 == pos2 && rpos2 == pos1;
+				if(cndn1 || cndn2){
 					m->initializerestart(rmdata.eqlen);
 					rmdata.restartcompletion = true;
 				}
@@ -443,9 +508,10 @@ void Restart::CBoundinitializerestart(){
 	for(auto b:BranchingPoint::getBranchingPoints()) {
 		int c1 = b->getFirstCylinder()->getStableIndex();
 		int c2 = b->getSecondCylinder()->getStableIndex();
-		short pos1 = b->getPosition();
+		short ftype1 = b->getFirstCylinder()->getType();
+		short pos1 = b->getPosition()*SysParams::Geometry().cylinderNumMon[ftype1];
 		for(auto &rbdata: _rLDatavec){
-			if(rbdata.restartcompletion) {
+			if(!rbdata.restartcompletion) {
 				int rc1 = rbdata.cylid1;
 				int rc2 = rbdata.cylid2;
 				short rpos1 = rbdata.pos1;

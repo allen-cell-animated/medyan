@@ -21,6 +21,7 @@
 
 #define SPECIESB_BINDING_INDEX 0
 #define SPECIESB_DIFFUSING_INDEX_OFFRXN 2
+#define SPECIESA_DIFFUSING_INDEX_ONRXN 1
 
 //FORWARD DECLARATIONS
 class BranchingPoint;
@@ -38,7 +39,8 @@ private:
     BranchingPoint* _pBranchingPoint; ///< Pointer to parent
     
     short _branchType; ///< Branching point type
-    
+
+    string diffusingactinspeciesname;
 public:
     /// Default constructor and destructor
     /// @param pos - monomer index on first cylinder
@@ -82,7 +84,11 @@ public:
     
     virtual void createOffReaction(ReactionBase* onRxn, SubSystem* ps);
 
-    Species* getDiffusingSpecies(){
+    string getDiffusingActinSpeciesName(){
+        return diffusingactinspeciesname;
+    }
+
+    Species* getDiffusingBranchSpecies(){
         RSpecies** rs = _offRxn->rspecies();
         Species* sfb = &(rs[SPECIESB_DIFFUSING_INDEX_OFFRXN]->getSpecies());
         return sfb;

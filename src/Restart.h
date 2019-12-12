@@ -82,7 +82,9 @@ private:
     vector<restartMotorData> _rMDatavec;
     vector<restartLinkerData> _rLDatavec;
     vector<restartBrancherData> _rBDatavec;
-
+    vector<restartCompartmentDiffusingData> _rCmpDDatavec;
+	restartBulkData _rbdata;
+    restartcopynumberrallyData _rtallydata;
     //gives angle and delta
     vector<floatingpoint> getAngleDeltaPos(vector<floatingpoint>leg, vector<floatingpoint> site1, vector<floatingpoint> site2){
         vector<floatingpoint> returnVector;
@@ -377,7 +379,10 @@ public:
         //Set copy number of diffusing species in each compartment to 0.
         for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
             for(auto sd : _chemData.speciesDiffusing) {
-                (C->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(0);}}
+                (C->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(0);}
+            for(auto sd : _chemData.speciesBulk) {
+                (C->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(0);}
+        }
 //Step #3. Add filament coordinates to be held static during minimization **** NEEEDS TO BE EDITED***
         // coordinates to keep static
         vector<vector<floatingpoint>> staticbeads=get<3>(filaments);
@@ -404,27 +409,59 @@ public:
 
     void CBoundinitializerestart();
 
-    void redistributediffusingspecies(){
-        int numCmprts=(_subSystem->getCompartmentGrid()->getCompartments()).size();
-        vector<floatingpoint> eventVec;
-        int counter=0;
-        for(int it=0;it<CopyNumbers.size();it++)
-            eventVec.push_back(ceil(CopyNumbers[it]/numCmprts));
-        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
-            counter=0;
-            for(auto sd : _chemData.speciesDiffusing) {
-                if(CopyNumbers[counter]>0)
-                {(C->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(std::min(eventVec[counter],CopyNumbers[counter]));
-                    CopyNumbers[counter]=CopyNumbers[counter]-eventVec[counter];}
-                else
-                    (C->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(0);
-                counter++;}}
-        counter=0;
-        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-            for(auto &it: C->getDiffusionReactionContainer().reactions())
-            {it->setBareRate(temp_diffrate_vector[counter]);
-                counter++;}
-            C->getDiffusionReactionContainer().updatePropensityComprtment();}
+    void restartupdateCopyNumbers(){
+    	// If user requests to use restart file copy numbers after restart.
+    	if(SysParams::RUNSTATE == false && SysParams::USECHEMCOPYNUM == false) {
+		    //Loop through restart data
+		    // Find corresponding compartment and add species to it.
+		    for (auto &Cmp:_subSystem->getCompartmentGrid()->getCompartments()) {
+			    auto cdiffdata = _rCmpDDatavec[Cmp->getId()];
+			    auto diffspeciesnamevec = cdiffdata.speciesnamevec;
+			    auto diffspeciescpyvec = cdiffdata.copynumvec;
+			    if (Cmp->getId() == cdiffdata.id) {
+				    for (auto count = 0; count < diffspeciesnamevec.size(); count++) {
+					    Species *sp = Cmp->findSpeciesByName(diffspeciesnamevec[count]);
+					    if (sp != nullptr) {
+						    sp->getRSpecies().setN(diffspeciescpyvec[count]);
+					    } else {
+						    LOG(ERROR) << "Cannot find diffusing species of name "
+						               << diffspeciesnamevec[count]
+						               << " in Compartment ID " << Cmp->getId()
+						               << ". Check chemistry input file. Exiting" << endl;
+						    throw std::logic_error("Restart unsuccessful!");
+					    }
+				    }
+			    }
+		    }
+		    int counter = 0;
+		    for (auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+			    for (auto &it: C->getDiffusionReactionContainer().reactions()) {
+				    it->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
+			    }
+			    C->getDiffusionReactionContainer().updatePropensityComprtment();
+		    }
+		    //Bulk Species
+		    for (auto &s : _chemData.speciesBulk) {
+
+		    }
+	    }
+	    checktallyofcopynumbers();
+    }
+
+    void checktallyofcopynumbers(){
+        for(int i =0; i < _rtallydata.copynumvec.size(); i++){
+            string name = _rtallydata.speciesnamevec.at(i);
+            auto copyNum = _subSystem->getCompartmentGrid()->countDiffusingSpecies(name);
+            if(_rtallydata.copynumvec[i] != copyNum){
+                LOG(ERROR) << "Species copy number does not tally. Species name "
+                           << name << " requires total copy number " << _rtallydata.copynumvec[i]
+                           << "during restart but current state only has "<<copyNum
+                           <<" molecules.. Check chemistry input file. Exiting"
+                           << endl;
+                throw std::logic_error("Restart unsuccessful!");
+            }
+        }
+
     }
 };
 #endif
