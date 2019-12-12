@@ -6,13 +6,16 @@
 #include <stdexcept> // runtime_error
 #include <vector>
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_STATIC
+#include "stb/stb_image_write.h"
+
 #include "Util/Environment.hpp"
 #include "Util/Io/Log.hpp"
 #include "Visual/Camera.hpp"
 #include "Visual/Common.hpp"
 #include "Visual/Shader.hpp"
 #include "Visual/ShaderSrc.hpp"
-#include "Visual/SharedData.hpp"
 #include "Visual/VisualElement.hpp"
 
 #ifdef VISUAL
@@ -73,6 +76,9 @@ public:
         int width = 1200;
         int height = 800;
 
+        int snapshotWidth = 3840;
+        int snapshotHeight = 2160;
+
         // Model, view, perspective...
         Transformation trans;
 
@@ -82,6 +88,7 @@ public:
         bool mouseLeftAlreadyPressed = false;
         double mouseLastX;
         double mouseLastY;
+        bool nextSnapshotRendering = false;
     };
 
     VisualContext() {
@@ -93,6 +100,7 @@ public:
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        // glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
 
         // Window initializing
         window_ = glfwCreateWindow(windowStates_.width, windowStates_.height, "MEDYAN", NULL, NULL);
@@ -154,20 +162,33 @@ public:
             if(fov < 0.01f) fov = 0.01f;
             if(fov > 3.13f) fov = 3.13f;
         };
+        const auto keyCallback = [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+            auto ws = static_cast< WindowStates* >(glfwGetWindowUserPointer(window));
+            if(key == GLFW_KEY_F && action == GLFW_PRESS) {
+                ws->nextSnapshotRendering = true;
+            }
+        };
 
         glfwSetFramebufferSizeCallback(window_, framebufferSizeCallback);
         glfwSetCursorPosCallback(window_, cursorPositionCallback);
         glfwSetScrollCallback(window_, scrollCallback);
+        glfwSetKeyCallback(window_, keyCallback);
+
+        // Set up framebuffer
+        initFramebuffer_();
 
     } // VisualContext()
 
     ~VisualContext() {
+        destroyFramebuffer_();
+
         glfwTerminate();
     }
 
     auto window() const { return window_; }
     auto&       windowStates()       { return windowStates_; }
     const auto& windowStates() const { return windowStates_; }
+    auto offscreenFramebuffer() const { return offscreenFbo_; }
 
     // Helper function to process window inputs
     void processInput() {
@@ -207,8 +228,41 @@ public:
     }
 
 private:
+
+    void initFramebuffer_() {
+        glGenFramebuffers(1, &offscreenFbo_);
+        glBindFramebuffer(GL_FRAMEBUFFER, offscreenFbo_);
+
+        glGenRenderbuffers(1, &offscreenRbo_);
+        glBindRenderbuffer(GL_RENDERBUFFER, offscreenRbo_);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, windowStates_.snapshotWidth, windowStates_.snapshotHeight);
+
+        glGenRenderbuffers(1, &offscreenColorRenderBuffer_);
+        glBindRenderbuffer(GL_RENDERBUFFER, offscreenColorRenderBuffer_);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, windowStates_.snapshotWidth, windowStates_.snapshotHeight);
+
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, offscreenRbo_);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, offscreenColorRenderBuffer_);
+
+        if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            LOG(ERROR) << "Framebuffer is not complete.";
+        }
+    }
+
+    void destroyFramebuffer_() {
+        glDeleteFramebuffers(1, &offscreenFbo_);
+        glDeleteRenderbuffers(1, &offscreenRbo_);
+        glDeleteRenderbuffers(1, &offscreenColorRenderBuffer_);
+    }
+
+    // Member variables
     GLFWwindow* window_;
     WindowStates windowStates_;
+
+    // Framebuffer and attachments
+    unsigned int offscreenFbo_;
+    unsigned int offscreenRbo_;
+    unsigned int offscreenColorRenderBuffer_;
 }; // VisualContext
 
 
@@ -331,11 +385,18 @@ struct VisualDisplay {
             auto& ws = vc.windowStates();
 
             // rendering
-            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            const bool offscreen = ws.nextSnapshotRendering;
+            ws.nextSnapshotRendering = false;
+            glBindFramebuffer(GL_FRAMEBUFFER, offscreen ? vc.offscreenFramebuffer() : 0);
+            const auto width  = offscreen ? ws.snapshotWidth  : ws.width;
+            const auto height = offscreen ? ws.snapshotHeight : ws.height;
+
+            glViewport(0, 0, width, height);
+            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // transform
-            ws.trans.projection = glm::perspective(ws.trans.fov, (float)ws.width / (float)ws.height, ws.trans.zNear, ws.trans.zFar);
+            ws.trans.projection = glm::perspective(ws.trans.fov, (float)width / (float)height, ws.trans.zNear, ws.trans.zFar);
             ws.trans.model      = glm::mat4(1.0f);
             glm::mat3 modelInvTrans3(glm::transpose(glm::inverse(ws.trans.model)));
 
@@ -425,6 +486,18 @@ struct VisualDisplay {
                 }
             } // End loop visual presets
             glBindVertexArray(0);
+
+            // Output offscreen render results
+            if(offscreen) {
+                std::vector< std::uint8_t > data(width * height * 4); // 8-bit color
+                glReadBuffer(GL_COLOR_ATTACHMENT0);
+                glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+                LOG(NOTE) << "data:\n[ "
+                    << +data[0] << ' ' << +data[1] << ' ' << +data[2] << " ...\n  "
+                    << +data[data.size() - 3] << ' ' << +data[data.size() - 2] << ' ' << +data[data.size() - 1] << " ]";
+
+                stbi_write_png("./snapshot.png", width, height, 4, data.data(), 4 * width);
+            }
 
             // check
             glfwSwapBuffers(vc.window());

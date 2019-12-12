@@ -19,7 +19,6 @@
 #include "SysParams.h"
 #include "Visual/Render/PathExtrude.hpp"
 #include "Visual/Render/Sphere.hpp"
-#include "Visual/SharedData.hpp"
 #include "Visual/VisualElement.hpp"
 #include "Visual/Window.hpp"
 
