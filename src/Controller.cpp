@@ -1008,6 +1008,7 @@ void Controller::run() {
 #ifdef DYNAMICRATES
         updateReactionRates();
 #endif
+        delete _restart;
         cout<< "Restart procedures completed. Starting original Medyan framework"<<endl;
         cout << "---" << endl;
         cout << "Current simulation time = "<< tau() << endl;
