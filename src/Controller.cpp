@@ -247,10 +247,8 @@ void Controller::initialize(string inputFile,
 
 
     //Set up datadump output if any
-#ifdef RESTARTDEV
 	    string datadumpname = _outputDirectory + "datadump.traj";
         _outputdump.push_back(new Datadump(datadumpname, &_subSystem, ChemData));
-#endif
 
 //    string twofilamentname = _outputDirectory + "twofilament.traj";
 //    _outputs.push_back(new TwoFilament(twofilamentname, &_subSystem, ChemData));
