@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <memory> // weak_ptr
 
+#include "VisualSystemRawData.hpp"
+
 //-----------------------------------------------------------------------------
 // Visualization helper transforms the system related data to actual OpenGL
 // recognized data according to the settings.

@@ -468,6 +468,10 @@ struct VisualDisplay {
                             vp.shader.setFloat("material.shininess", ve->profile.colorShininess);
                         }
 
+                        if(&vp == &vpLight && (ve->profile.flag & Profile::targetMembrane)) {
+                            // TODO sort triangles
+                        }
+
                         glBindVertexArray(ve->state.vao);
 
                         glPolygonMode(GL_FRONT_AND_BACK, ve->profile.polygonMode);
@@ -492,9 +496,6 @@ struct VisualDisplay {
                 std::vector< std::uint8_t > data(width * height * 4); // 8-bit color
                 glReadBuffer(GL_COLOR_ATTACHMENT0);
                 glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
-                LOG(NOTE) << "data:\n[ "
-                    << +data[0] << ' ' << +data[1] << ' ' << +data[2] << " ...\n  "
-                    << +data[data.size() - 3] << ' ' << +data[data.size() - 2] << ' ' << +data[data.size() - 1] << " ]";
 
                 stbi_write_png("./snapshot.png", width, height, 4, data.data(), 4 * width);
             }

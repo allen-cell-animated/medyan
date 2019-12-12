@@ -28,31 +28,8 @@ std::weak_ptr< VisualDisplay > vdWeak;
 
 namespace {
 
-struct SystemDataForVisual {
-    struct MembraneIndex {
-        std::vector< size_t > vertexIndices; // Vertex indexing in bead data
-        std::vector< std::array< size_t, 3 > > triangleVertexIndices; // Index for this membrane only (start from 0)
-    };
-
-    std::mutex me;
-
-    sys_data_update::FlagType updated;
-
-    mathfunc::Vec< 3, size_t > compartmentNum;
-    mathfunc::Vec3             compartmentSize;
-
-    BeadData copiedBeadData;
-
-    std::vector< MembraneIndex > membraneIndices;
-    std::vector< std::vector< size_t > > filamentIndices; // [Filament Idx][Bead position in filament]
-
-    std::vector< std::array< mathfunc::Vec3, 2 > > linkerCoords;
-    std::vector< std::array< mathfunc::Vec3, 2 > > motorCoords;
-    std::vector< std::array< mathfunc::Vec3, 2 > > brancherCoords;
-};
-
 // Shared data
-SystemDataForVisual sdfv;
+visual::SystemRawData sdfv;
 
 // This function tranforms the extracted system data to the actual gl
 // compatible data structures according to the settings.
@@ -488,109 +465,7 @@ void helper() {
 } // namespace (anonymous)
 
 void copySystemDataAndRunHelper(sys_data_update::FlagType update) {
-    {
-        std::lock_guard< std::mutex > guard(sdfv.me);
-
-        if(update & (sys_data_update::BeadPosition | sys_data_update::BeadConnection)) {
-            // Copy bead data
-            sdfv.copiedBeadData = Bead::getDbDataConst();
-        }
-
-        if(update & (sys_data_update::BeadConnection)) {
-
-            // Extract membrane indexing
-            sdfv.membraneIndices.clear();
-            for(const Membrane* m : Membrane::getMembranes()) {
-                const auto& mesh = m->getMesh();
-
-                sdfv.membraneIndices.emplace_back();
-                auto& mi = sdfv.membraneIndices.back();
-
-                mi.vertexIndices.reserve(mesh.numVertices());
-                for(const auto& v : mesh.getVertices()) {
-                    mi.vertexIndices.push_back(v.attr.vertex->Bead::getStableIndex());
-                }
-
-                mi.triangleVertexIndices.reserve(mesh.numTriangles());
-                for(const auto& t : mesh.getTriangles()) {
-                    size_t vIndex = 0; // 0, 1, 2
-                    mi.triangleVertexIndices.emplace_back();
-                    mesh.forEachHalfEdgeInPolygon(t, [&](size_t hei) {
-                        mi.triangleVertexIndices.back()[vIndex] = mesh.target(hei);
-                        ++vIndex;
-                    });
-                }
-            }
-
-            // Extract filament indexing
-            sdfv.filamentIndices.clear();
-            for(Filament* f : Filament::getFilaments()) {
-                sdfv.filamentIndices.emplace_back();
-                auto& fi = sdfv.filamentIndices.back();
-
-                const auto& cylinders = f->getCylinderVector(); // TODO make f const Filament*
-                fi.reserve(cylinders.size() + 1);
-                for(Cylinder* c : cylinders)
-                    fi.push_back(c->getFirstBead()->getStableIndex()); // TODO make c const Cylinder*
-                fi.push_back(cylinders.back()->getSecondBead()->getStableIndex());
-            }
-
-            // Extract motors, linkers and branchers
-            sdfv.linkerCoords.clear();
-            for(Linker* l : Linker::getLinkers()) {
-                sdfv.linkerCoords.emplace_back();
-                const auto pos0 = l->getFirstPosition();
-                sdfv.linkerCoords.back()[0]
-                    = l->getFirstCylinder()->getFirstBead()->coordinate() * (1 - pos0)
-                    + l->getFirstCylinder()->getSecondBead()->coordinate() * pos0;
-                const auto pos1 = l->getSecondPosition();
-                sdfv.linkerCoords.back()[1]
-                    = l->getSecondCylinder()->getFirstBead()->coordinate() * (1 - pos1)
-                    + l->getSecondCylinder()->getSecondBead()->coordinate() * pos1;
-            }
-            sdfv.motorCoords.clear();
-            for(MotorGhost* l : MotorGhost::getMotorGhosts()) {
-                sdfv.motorCoords.emplace_back();
-                const auto pos0 = l->getFirstPosition();
-                sdfv.motorCoords.back()[0]
-                    = l->getFirstCylinder()->getFirstBead()->coordinate() * (1 - pos0)
-                    + l->getFirstCylinder()->getSecondBead()->coordinate() * pos0;
-                const auto pos1 = l->getSecondPosition();
-                sdfv.motorCoords.back()[1]
-                    = l->getSecondCylinder()->getFirstBead()->coordinate() * (1 - pos1)
-                    + l->getSecondCylinder()->getSecondBead()->coordinate() * pos1;
-            }
-            sdfv.brancherCoords.clear();
-            for(BranchingPoint* l : BranchingPoint::getBranchingPoints()) {
-                sdfv.brancherCoords.emplace_back();
-                const auto pos = l->getPosition();
-                sdfv.brancherCoords.back()[0]
-                    = l->getFirstCylinder()->getFirstBead()->coordinate() * (1 - pos)
-                    + l->getFirstCylinder()->getSecondBead()->coordinate() * pos;
-                sdfv.brancherCoords.back()[1]
-                    = l->getSecondCylinder()->getFirstBead()->coordinate();
-            }
-
-        } // End update bead connection
-
-        if(update & (sys_data_update::Compartment)) {
-            sdfv.compartmentNum = {
-                static_cast< size_t >(SysParams::Geometry().NX),
-                static_cast< size_t >(SysParams::Geometry().NY),
-                static_cast< size_t >(SysParams::Geometry().NZ)
-            };
-            sdfv.compartmentSize = {
-                SysParams::Geometry().compartmentSizeX,
-                SysParams::Geometry().compartmentSizeY,
-                SysParams::Geometry().compartmentSizeZ
-            };
-
-        }
-
-        // Save updated
-        sdfv.updated = update;
-
-    } // ~lock_guard
+    visual::copySystemData(sdfv, update);
 
     // Launch helper thread (may use thread pool)
     std::thread(helper).detach();
