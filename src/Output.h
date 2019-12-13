@@ -280,6 +280,20 @@ public:
 };
 
 
+// Print tm graph
+class TMGraph : public Output {
+
+public:
+    TMGraph(string outputFileName, SubSystem* s)
+
+    : Output(outputFileName, s) {}
+
+    ~TMGraph() {}
+
+    virtual void print(int snapshot);
+};
+
+
 
 // Print boundary repulsion force
 class BRForces : public Output {
@@ -352,6 +366,7 @@ public:
 };
 
 
+
 class HessianMatrix : public Output {
     
     ForceFieldManager* _ffm;
@@ -363,6 +378,21 @@ public:
     
     ~HessianMatrix() {}
     
+    virtual void print(int snapshot);
+};
+
+
+class HessianSpectra : public Output {
+
+    ForceFieldManager* _ffm;
+
+public:
+    HessianSpectra(string outputFileName, SubSystem* s, ForceFieldManager* ffm)
+
+    : Output(outputFileName, s), _ffm(ffm) {}
+
+    ~HessianSpectra() {}
+
     virtual void print(int snapshot);
 };
 

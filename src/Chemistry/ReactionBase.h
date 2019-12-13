@@ -142,7 +142,7 @@ public:
         if(_ratemulfactors[type] == 0.0){
             _rate = _rate_bare;
             _ratemulfactors[type] = factor;
-            for(uint i = 0; i < RateMulFactorType::RATEMULFACTSIZE; i++)
+            for(unsigned i = 0; i < RateMulFactorType::RATEMULFACTSIZE; i++)
                 _rate *= _ratemulfactors[i];
         } else {
             _rate = _rate * factor / _ratemulfactors[type];
@@ -295,7 +295,7 @@ public:
         else if(_rate_bare == 0.0){
             _rate_bare = a;
             _rate = _rate_bare;
-            for(uint i = 0; i < RateMulFactorType::RATEMULFACTSIZE; i++)
+            for(unsigned i = 0; i < RateMulFactorType::RATEMULFACTSIZE; i++)
                 _rate *= _ratemulfactors[i];
         }
         else{

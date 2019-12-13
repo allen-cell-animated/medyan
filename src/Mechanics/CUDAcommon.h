@@ -26,23 +26,25 @@
 #include "Structure/Bead.h"
 #ifdef SIMDBINDINGSEARCH
 #include "dist_moduleV2/dist_driver.h"
+
 template <uint D>
 dist::dOut<D> SIMDoutvar(const uint dim, uint N1, std::initializer_list<float> params) {
 
-	if (dim == 1) {
-		dist::dOut<1> out_serialdim(N1, params);
-		return out_serialdim;
-	}
-	else if (dim == 2) {
-		dist::dOut<2> out_serialdim(N1, params);
-		return out_serialdim;
-	}
-	else if (dim == 3){
-		dist::dOut<3> out_serialdim(N1, params);
-		return out_serialdim;
-	}
+    if (dim == 1) {
+        dist::dOut<1> out_serialdim(N1, params);
+        return out_serialdim;
+    }
+    else if (dim == 2) {
+        dist::dOut<2> out_serialdim(N1, params);
+        return out_serialdim;
+    }
+    else if (dim == 3){
+        dist::dOut<3> out_serialdim(N1, params);
+        return out_serialdim;
+    }
 }
 #endif
+
 using namespace mathfunc;
 struct bin{
     int binID;

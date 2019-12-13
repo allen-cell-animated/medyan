@@ -17,6 +17,7 @@
 #include "ForceFieldManager.h"
 #include "Composite.h"
 #include "Output.h"
+#include "Bubble.h"
 #include "cross_check.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
@@ -58,6 +59,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 	//@@@{ STEP 1: Start minimization
 	tbegin = chrono::high_resolution_clock::now();
 	startMinimization();//TODO needs to be hostallocdefault and MemCpyAsync followed by CudaStreamSynchronize
+
 
 #ifdef ALLSYNC
 	cudaDeviceSynchronize();
@@ -292,6 +294,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
 	//
 #endif
+
 #ifdef CUDATIMETRACK_MACRO
 	CUDAcommon::cudatime.Tlambda = 0.0;
 	CUDAcommon::cudatime.Ecount = 0;
@@ -582,13 +585,9 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_other(tend - tbegin);
-	CUDAcommon::tmin.tother += elapsed_other.count();
+	CUDAcommon::tmin.tother+= elapsed_other.count();
+    //@@@} STEP 4 OTHER
 
-/*	for(auto cyl:Cylinder::getCylinders()){
-		cout<<"before while minimization  Cylinder ID = "<<cyl->getId()<<endl;
-		cyl->printSelf();
-	}*/
-			//@@@} STEP 4 OTHER
 #ifdef SERIAL
 			while (/* Iteration criterion */  numIter < N &&
 			/* Gradient tolerance  */  (Ms_isminimizationstate) &&
@@ -752,6 +751,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 				}
 				std::cout<<"MB printed beads & forces"<<endl;
 #endif
+
 #ifdef CUDATIMETRACK
 				tbegin = chrono::high_resolution_clock::now();
 #endif
@@ -1099,7 +1099,6 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 	tbegin = chrono::high_resolution_clock::now();
     endMinimization();
 
-
 #ifdef CUDATIMETRACK
     tendII= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runslice4(tendII - tbeginII);
@@ -1122,10 +1121,12 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 
 
     FFM.cleanupAllForceFields();
+
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_end(tend - tbegin);
 	CUDAcommon::tmin.endminimization+= elapsed_end.count();
 	//@} END MINIMIZTION
+
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;
     for(auto b:Bead::getBeads()){
@@ -1134,6 +1135,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     }
     std::cout<<"printed beads & forces"<<endl;
 #endif
+
 
 #ifdef CUDATIMETRACK
     tendII= chrono::high_resolution_clock::now();
@@ -1145,6 +1147,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
 
     return result;
+
 }
 
 void PolakRibiere::calculateEvsalpha(ForceFieldManager &FFM, floatingpoint lambda,

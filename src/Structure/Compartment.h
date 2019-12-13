@@ -510,7 +510,6 @@ public:
         return _bindingsearchManagers;
     }
 #endif
-
 #ifdef SIMDBINDINGSEARCH
     dist::Coords bscoords;
     vector<dist::Coords> bscoords_section;

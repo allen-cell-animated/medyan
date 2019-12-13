@@ -26,6 +26,7 @@
 template <class MTOCInteractionType>
 void MTOCAttachment<MTOCInteractionType>::vectorize() {
 
+
 	//get total number of interactions
 	uint nint = 0;
 	for(auto mtoc : MTOC::getMTOCs()) {
@@ -37,6 +38,13 @@ void MTOCAttachment<MTOCInteractionType>::vectorize() {
 	radiusvec = new floatingpoint[nint];
 	//Get the interactions
 	uint interaction_counter = 0;
+
+    if(MTOC::getMTOCs().size() > 1) {
+        cout << "Should not have more than 1 MTOC" << endl;
+        exit(EXIT_FAILURE);
+    }
+    
+
     for(auto mtoc : MTOC::getMTOCs()) {
 
         for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
@@ -48,7 +56,8 @@ void MTOCAttachment<MTOCInteractionType>::vectorize() {
             		->getStableIndex();
 			//The MTOC attachment constant is the same as stretching constant
             kstr[interaction_counter] = f->getMinusEndCylinder()->getMCylinder()->getStretchingConst();
-
+            radiusvec[interaction_counter] = mtoc->getBubble()->getRadius();
+            
 	        interaction_counter++;
         }
     }

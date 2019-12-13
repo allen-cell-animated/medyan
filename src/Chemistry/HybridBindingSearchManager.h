@@ -92,13 +92,12 @@ private:
     //static neighbor list
     static HybridCylinderCylinderNL* _HneighborList;
 
-    unsigned mask = 0;
-
-    #ifdef SIMDBINDINGSEARCH
     //SIMD variables
-    static const dist::tag_simd<dist::simd_avx_par,  float>  t_avx_par;
-    static const dist::tag_simd<dist::simd_avx,  float>   t_avx;
-    static const dist::tag_simd<dist::simd_no,   float>   t_serial;
+    unsigned mask = 0;
+#ifdef SIMDBINDINGSEARCH
+    static constexpr dist::tag_simd<dist::simd_avx_par,  float>  t_avx_par {};
+    static constexpr dist::tag_simd<dist::simd_avx,  float>   t_avx {};
+    static constexpr dist::tag_simd<dist::simd_no,   float>   t_serial {};
     bool initialized = false;
 
     //listing 12 variables, to support upto 8 distance pairs calculations.
@@ -115,14 +114,13 @@ private:
     static dist::dOut<1U,true> bspairsmotorself;
     static dist::dOut<1U,false> bspairslinker2;
     static dist::dOut<1U,false> bspairsmotor2;
-
+#endif
     vector<uint32_t> pairslinker;
     vector<uint32_t> pairsmotor;
     vector<bool> filID_fpos_pairL;
     vector<bool> filID_fpos_pairM;
     vector<vector<bool>> pairvaluespecieslinker;
     vector<vector<bool>> pairvaluespeciesmotor;
-	#endif
 
     /*Partitioned volume refers to partitioning compartment volume in to smaller sub
 volumes namely self(1), halves(6), quarters(12) and 1/8ths(8). The position in the
@@ -203,8 +201,7 @@ volumes namely self(1), halves(6), quarters(12) and 1/8ths(8). The position in t
         }
     }*/
 #endif
-
-    void countNpairsfound(short idvec[2]);
+   void countNpairsfound(short idvec[2]);
 
    #ifdef MOTORBIASCHECK
    size_t addcounts = 0;

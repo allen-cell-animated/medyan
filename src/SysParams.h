@@ -85,7 +85,7 @@ struct MechParams {
     vector<floatingpoint> BubbleRadius = {};
     vector<floatingpoint> BubbleScreenLength = {};
 	vector<floatingpoint> MTOCBendingK = {};
-
+    vector<floatingpoint> AFMBendingK = {};
 
 	floatingpoint BubbleCutoff = 0.0;
 
@@ -117,6 +117,10 @@ struct MechParams {
     // parameters controlling the calculation of the Hessian matrix
     bool hessTracking = false;
     float hessDelta = 0.0001;
+    bool denseEstimation = true;
+    int hessSkip = 20;
+
+    int sameFilBindSkip = 2;
 
 
 };
@@ -196,12 +200,28 @@ struct ChemParams {
     /// This passivates any unbinding reactions, resulting in permanently
     /// bound linkers for the rest of simulation.
     bool makeLinkersStatic = false;
+
     floatingpoint makeLinkersStaticTime = 0.0;
 
     bool dissTracking = false;
     bool eventTracking = false;
     int linkerbindingskip = 2;
     
+
+    /// Make (de)polymerization depends on stress
+    bool makeRateDepend = false;
+    double makeRateDependTime = 0.0;
+    double makeRateDependForce = 0.0;
+
+    /// Make (de)polymerization depends on stress
+    bool makeAFM = false;
+    double AFMStep1 = 0.0;
+    double AFMStep2 = 0.0;
+    double IterChange = 0.0;
+    double StepTotal = 0.0;
+    double StepTime = 0.0;
+    float originalPolyPlusRate;
+
 
     //@}
 #ifdef CUDAACCL_NL
@@ -307,6 +327,15 @@ struct DyRateParams {
     float manualMinusDepolyRate = 1.0;
 };
 
+struct SpecialParams {
+
+    /// Parameters for initializing MTOC attached filaments
+    float mtocTheta1 = 0.0;
+    float mtocTheta2 = 1.0;
+    float mtocPhi1 = 0.0;
+    float mtocPhi2 = 1.0;
+};
+
 /// Static class that holds all simulation parameters,
 /// initialized by the SystemParser
 class SysParams {
@@ -328,6 +357,8 @@ public:
     static MinimizationParams MinParams;
 	#endif
 
+    static SpecialParams SParams; ///< Other parameters
+
 public:
     //@{
 #ifdef NLSTENCILLIST
@@ -344,7 +375,7 @@ public:
     static bool INITIALIZEDSTATUS; // true refers to sucessful initialization. false
     static bool DURINGCHEMISTRY; //true if MEDYAN is running chemistry, false otherwise.
     // corresponds to an on-going initialization state.
-    static int numthreads;
+    [[deprecated]] static int numthreads;
     //aravind July11,2016
     static vector<float> MUBBareRate;
     static vector<float> LUBBareRate;
@@ -355,6 +386,7 @@ public:
     static const GeoParams& Geometry() {return GParams;}
     static const BoundParams& Boundaries() {return BParams;}
     static const DyRateParams& DynamicRates() {return DRParams;}
+    static const SpecialParams& SpecialInputs() {return SParams;}
     //@}
 
     //@{

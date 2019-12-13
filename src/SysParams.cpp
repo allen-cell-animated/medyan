@@ -513,3 +513,6 @@ DyRateParams SysParams::DRParams;
 #ifdef TRACKDIDNOTMINIMIZE
 MinimizationParams SysParams::MinParams;
 #endif
+SpecialParams SysParams::SParams;
+
+

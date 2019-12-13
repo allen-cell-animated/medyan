@@ -37,7 +37,7 @@ private:
     BubbleInteractions* _culpritInteraction;
 public:
     /// Initialize the forcefields
-    BubbleFF(string type, string mtoc);
+    BubbleFF(string type, string mtoc, string afm);
     
     virtual void vectorize();
     virtual void cleanup();
