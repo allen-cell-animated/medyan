@@ -1,5 +1,5 @@
-#ifndef MEDYAN_Structure_SurfaceMesh_MembraneMeshTriangleQuality_hpp
-#define MEDYAN_Structure_SurfaceMesh_MembraneMeshTriangleQuality_hpp
+#ifndef MEDYAN_Structure_SurfaceMesh_MeshTriangleQuality_hpp
+#define MEDYAN_Structure_SurfaceMesh_MeshTriangleQuality_hpp
 
 #include <limits>
 #include <type_traits> // enable_if, is_floating_point
@@ -7,16 +7,17 @@
 #include "MathFunctions.h"
 
 enum class TriangleQualityCriteria {
-    RadiusRatio     // Circumradius / (2 * Inradius), range [1, inf)
+    radiusRatio     // Circumradius / (2 * Inradius), range [1, inf)
 };
 template< TriangleQualityCriteria > struct TriangleQuality;
-template<> struct TriangleQuality< TriangleQualityCriteria::RadiusRatio > {
-    static constexpr double best = 1.0;
+template<> struct TriangleQuality< TriangleQualityCriteria::radiusRatio > {
+    static constexpr double best  = 1.0;
     static constexpr double worst = std::numeric_limits<double>::infinity();
-    static constexpr bool better(double q1, double q2) { return q1 < q2; }
+
+    static constexpr bool better   (double q1, double q2) { return q1 < q2; }
     static constexpr auto betterOne(double q1, double q2) { return better(q1, q2) ? q1 : q2; }
-    static constexpr bool worse(double q1, double q2) { return q1 > q2; }
-    static constexpr auto worseOne(double q1, double q2) { return worse(q1, q2) ? q1 : q2; }
+    static constexpr bool worse    (double q1, double q2) { return q1 > q2; }
+    static constexpr auto worseOne (double q1, double q2) { return worse(q1, q2) ? q1 : q2; }
     static constexpr auto improvement(double q0, double q1) { return q0 / q1; }
 
     template<
@@ -37,9 +38,9 @@ template<> struct TriangleQuality< TriangleQualityCriteria::RadiusRatio > {
     template<
         typename F0, typename F1, typename F2,
         std::enable_if_t<
-            std::is_floating_point< F0 >::value &&
-            std::is_floating_point< F1 >::value &&
-            std::is_floating_point< F2 >::value
+            std::is_floating_point_v< F0 > &&
+            std::is_floating_point_v< F1 > &&
+            std::is_floating_point_v< F2 >
         >* = nullptr
     > auto operator()(F0 d0, F1 d1, F2 d2) const {
         const auto p = 0.5 * (d0 + d1 + d2);

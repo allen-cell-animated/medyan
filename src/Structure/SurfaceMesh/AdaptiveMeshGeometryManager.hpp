@@ -26,7 +26,7 @@ template< typename Mesh > struct GeometryManager {
     static void computeAllVertexNormals(Mesh& mesh) {
         const size_t numVertices = mesh.getVertices().size();
 
-        for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
+        for(size_t vi = 0; vi < numVertices; ++vi) {
             Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
         }
     }

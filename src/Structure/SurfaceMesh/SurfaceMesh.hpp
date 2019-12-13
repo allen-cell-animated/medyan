@@ -182,7 +182,7 @@ public:
         VertexAttribute attr;
     };
     struct HalfEdge {
-        enum class PolygonType { Triangle, Border };
+        enum class PolygonType { triangle, border };
 
         PolygonType polygonType;
         size_t polygonIndex;
@@ -253,8 +253,8 @@ private:
     void _registerEdge(size_t ei, size_t hei0, size_t hei1) {
         _edges[ei].halfEdgeIndex = hei0;
         _edges[ei].numBorderHalfEdges =
-            static_cast<std::uint_fast8_t>(_halfEdges[hei0].polygonType == HalfEdge::PolygonType::Border) +
-            static_cast<std::uint_fast8_t>(_halfEdges[hei1].polygonType == HalfEdge::PolygonType::Border);
+            static_cast<std::uint_fast8_t>(_halfEdges[hei0].polygonType == HalfEdge::PolygonType::border) +
+            static_cast<std::uint_fast8_t>(_halfEdges[hei1].polygonType == HalfEdge::PolygonType::border);
         _halfEdges[hei0].oppositeHalfEdgeIndex = hei1;
         _halfEdges[hei0].edgeIndex = ei;
         _halfEdges[hei1].oppositeHalfEdgeIndex = hei0;
@@ -303,11 +303,11 @@ private:
         _halfEdges[opposite(to)].oppositeHalfEdgeIndex = to;
 
         switch(_halfEdges[to].polygonType) {
-        case HalfEdge::PolygonType::Triangle:
+        case HalfEdge::PolygonType::triangle:
             if(_triangles[triangle(to)].halfEdgeIndex == from)
                 _triangles[triangle(to)].halfEdgeIndex = to;
             break;
-        case HalfEdge::PolygonType::Border:
+        case HalfEdge::PolygonType::border:
             if(_borders[polygon(to)].halfEdgeIndex == from)
                 _borders[polygon(to)].halfEdgeIndex = to;
             break;
@@ -441,7 +441,7 @@ public:
                     const size_t hei = mesh._halfEdges.insert();
                     HalfEdge& he = mesh._halfEdges[hei];
                     hai.push_back({true});
-                    he.polygonType = HalfEdge::PolygonType::Triangle;
+                    he.polygonType = HalfEdge::PolygonType::triangle;
                     he.polygonIndex = ti;
                     he.targetVertexIndex = t[i];
                     he.nextHalfEdgeIndex = (i == 2 ? hei - 2 : hei + 1);
@@ -532,7 +532,7 @@ public:
 
                 // Method of associating a new border half edge with vertices, edges and the border
                 const auto registerBorderHalfEdge = [&mesh](size_t hei_b, size_t hei_in, size_t bi) {
-                    mesh._halfEdges[hei_b].polygonType = HalfEdge::PolygonType::Border;
+                    mesh._halfEdges[hei_b].polygonType = HalfEdge::PolygonType::border;
                     mesh._halfEdges[hei_b].polygonIndex = bi;
                     mesh._halfEdges[hei_b].targetVertexIndex = mesh.target(mesh.prev(hei_in));
                     mesh._registerEdge(mesh.edge(hei_in), hei_in, hei_b);
@@ -742,15 +742,15 @@ public:
             halfEdges[hei2_o].targetVertexIndex = vi;
             halfEdges[hei1_o].targetVertexIndex = vi;
             halfEdges[hei3_o].targetVertexIndex = vi;
-            halfEdges[hei0_o].polygonType = HalfEdge::PolygonType::Triangle;
-            halfEdges[hei2_o].polygonType = HalfEdge::PolygonType::Triangle;
-            halfEdges[hei1_o].polygonType = HalfEdge::PolygonType::Triangle;
-            halfEdges[hei3_o].polygonType = HalfEdge::PolygonType::Triangle;
+            halfEdges[hei0_o].polygonType = HalfEdge::PolygonType::triangle;
+            halfEdges[hei2_o].polygonType = HalfEdge::PolygonType::triangle;
+            halfEdges[hei1_o].polygonType = HalfEdge::PolygonType::triangle;
+            halfEdges[hei3_o].polygonType = HalfEdge::PolygonType::triangle;
 
             halfEdges[hei1].targetVertexIndex = vi1;
             halfEdges[hei3].targetVertexIndex = vi3;
-            halfEdges[hei1].polygonType = HalfEdge::PolygonType::Triangle;
-            halfEdges[hei3].polygonType = HalfEdge::PolygonType::Triangle;
+            halfEdges[hei1].polygonType = HalfEdge::PolygonType::triangle;
+            halfEdges[hei3].polygonType = HalfEdge::PolygonType::triangle;
 
             vertices[vi].degree = 4;
             vertices[vi].numTargetingBorderHalfEdges = 0;

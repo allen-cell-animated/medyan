@@ -801,18 +801,18 @@ struct MembraneMeshAttribute {
             // pseudo unit normal
             using PolygonType = typename MeshType::HalfEdge::PolygonType;
             if(
-                ea.cachedPolygonType[0] == PolygonType::Triangle &&
-                ea.cachedPolygonType[1] == PolygonType::Triangle
+                ea.cachedPolygonType[0] == PolygonType::triangle &&
+                ea.cachedPolygonType[1] == PolygonType::triangle
             ) {
                 ea.gEdge.pseudoUnitNormal = normalizedVector(
                     mesh.getTriangleAttribute(ea.cachedPolygonIndex[0]).gTriangle.unitNormal +
                     mesh.getTriangleAttribute(ea.cachedPolygonIndex[1]).gTriangle.unitNormal
                 );
             }
-            else if(ea.cachedPolygonType[0] == PolygonType::Triangle) {
+            else if(ea.cachedPolygonType[0] == PolygonType::triangle) {
                 ea.gEdge.pseudoUnitNormal = mesh.getTriangleAttribute(ea.cachedPolygonIndex[0]).gTriangle.unitNormal;
             }
-            else if(ea.cachedPolygonType[1] == PolygonType::Triangle) {
+            else if(ea.cachedPolygonType[1] == PolygonType::triangle) {
                 ea.gEdge.pseudoUnitNormal = mesh.getTriangleAttribute(ea.cachedPolygonIndex[1]).gTriangle.unitNormal;
             }
         }
@@ -829,7 +829,7 @@ struct MembraneMeshAttribute {
 
             for(size_t i = 0; i < va.cachedDegree; ++i) {
                 const size_t hei = cvt[mesh.getMetaAttribute().cachedVertexOffsetTargetingHE(vi) + i];
-                if(mesh.getHalfEdges()[hei].polygonType == MeshType::HalfEdge::PolygonType::Triangle) {
+                if(mesh.getHalfEdges()[hei].polygonType == MeshType::HalfEdge::PolygonType::triangle) {
                     const size_t ti0 = cvt[mesh.getMetaAttribute().cachedVertexOffsetPolygon(vi) + i];
 
                     const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
@@ -1002,7 +1002,6 @@ struct MembraneMeshAttribute {
 
     // Vertex unit normals (Adaptive attribute) used in adaptive remeshing
     // Requires
-    //   - The vertex is not on the border
     //   - Unit normals in triangles (geometric)
     //   - Angles in halfedges (geometric)
     static void adaptiveComputeVertexNormal(MeshType& mesh, size_t vi) {
@@ -1013,9 +1012,11 @@ struct MembraneMeshAttribute {
         vaa.unitNormal = {0.0, 0.0, 0.0};
 
         mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
-            const size_t ti0 = mesh.triangle(hei);
-            const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
-            vaa.unitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
+            if(mesh.polygonType(hei) == MeshType::HalfEdge::PolygonType::triangle) {
+                const size_t ti0 = mesh.triangle(hei);
+                const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
+                vaa.unitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
+            }
         });
 
         mathfunc::normalize(vaa.unitNormal);

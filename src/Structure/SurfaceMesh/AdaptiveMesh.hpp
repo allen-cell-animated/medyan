@@ -35,7 +35,7 @@ Until all criteria are met or maximum iterations reached
 #include "Structure/SurfaceMesh/AdaptiveMeshVertexRelocation.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshCheck.hpp"
-#include "Structure/SurfaceMesh/MembraneMeshTriangleQuality.hpp"
+#include "Structure/SurfaceMesh/MeshTriangleQuality.hpp"
 
 namespace adaptive_mesh {
 
@@ -351,7 +351,7 @@ public:
 template< typename Mesh, TriangleQualityCriteria c > class EdgeCollapseManager {
 public:
     using TriangleQualityType = TriangleQuality< c >;
-    using CoordinateType = typename Mesh::AttributeType::coordinate_type;
+    using CoordinateType      = typename Mesh::AttributeType::coordinate_type;
 
     enum class State {
         Success,
@@ -361,18 +361,18 @@ public:
     };
 
 private:
-    size_t _minDegree;
-    size_t _maxDegree;
+    size_t minDegree_;
+    size_t maxDegree_;
     double _minQualityImprovement; // If smaller than 1, then some degradation is allowed.
     double _minDotNormal; // Coplanarness requirement after collapse
 
-    struct PrequalifyResult {
+    struct PrequalifyResult_ {
         double qBefore, qAfter;
         double minCosDihedral;
     };
     // Prequalify the collapse
     // hei is the direction of collapsing (source gets removed, and target is preserved)
-    static auto _prequalify(const Mesh& mesh, size_t hei) {
+    static auto prequalify_(const Mesh& mesh, size_t hei) {
         using namespace mathfunc;
 
         const auto hei_o = mesh.opposite(hei); // targeting vi1
@@ -451,14 +451,14 @@ private:
             } while(chei != hei_o);
         }
 
-        return PrequalifyResult{ qBefore, qAfter, minCosDihedral };
+        return PrequalifyResult_{ qBefore, qAfter, minCosDihedral };
     }
 
 public:
 
     // Constructor
     EdgeCollapseManager(size_t minDegree, size_t maxDegree, double minQualityImprovement, double minDotNormal) :
-        _minDegree(minDegree), _maxDegree(maxDegree), _minQualityImprovement(minQualityImprovement), _minDotNormal(minDotNormal) {}
+        minDegree_(minDegree), maxDegree_(maxDegree), _minQualityImprovement(minQualityImprovement), _minDotNormal(minDotNormal) {}
 
     // Returns whether the edge is collapsed
     // Requires
@@ -483,24 +483,24 @@ public:
         if(mesh.isEdgeOnBorder(ei)) return State::InvalidTopo;
 
         if(
-            mesh.degree(vi0) + mesh.degree(vi2) - 4 > _maxDegree ||
-            mesh.degree(vi0) + mesh.degree(vi2) - 4 < _minDegree ||
+            mesh.degree(vi0) + mesh.degree(vi2) - 4 > maxDegree_ ||
+            mesh.degree(vi0) + mesh.degree(vi2) - 4 < minDegree_ ||
             (mesh.isVertexOnBorder(vi0) && mesh.isVertexOnBorder(vi2)) ||
-            mesh.degree(vi1) <= _minDegree ||
-            mesh.degree(vi3) <= _minDegree
+            mesh.degree(vi1) <= minDegree_ ||
+            mesh.degree(vi3) <= minDegree_
         ) return State::InvalidTopo;
 
         // Check triangle quality constraints
         // Calculate previous triangle qualities around a vertex
         // if v0 is removed
-        const auto prequalifyResult0 = _prequalify(mesh, hei_o);
+        const auto prequalifyResult0 = prequalify_(mesh, hei_o);
         const double q0Before = prequalifyResult0.qBefore;
         const double q0After  = prequalifyResult0.qAfter;
         const auto imp0 = TriangleQualityType::improvement(q0Before, q0After);
         const double minCosDihedral0 = prequalifyResult0.minCosDihedral;
 
         // if v2 is removed
-        const auto prequalifyResult2 = _prequalify(mesh, hei);
+        const auto prequalifyResult2 = prequalify_(mesh, hei);
         const double q2Before = prequalifyResult2.qBefore;
         const double q2After  = prequalifyResult2.qAfter;
         const auto imp2 = TriangleQualityType::improvement(q2Before, q2After);
@@ -684,11 +684,10 @@ template< typename Mesh >
 class MeshAdapter {
 public:
     using GeometryManagerType = GeometryManager< Mesh >;
-    using CoordinateType = typename Mesh::AttributeType::coordinate_type;
+    using CoordinateType      = typename Mesh::AttributeType::coordinate_type;
 
-    static constexpr auto vertexRelaxationType = VertexRelaxationType::GlobalElastic;
-    static constexpr auto optimalVertexLocationMethod = OptimalVertexLocationMethod::Barycenter;
-    static constexpr auto triangleQualityCriteria = TriangleQualityCriteria::RadiusRatio;
+    static constexpr auto optimalVertexLocationMethod    = OptimalVertexLocationMethod::barycenter;
+    static constexpr auto triangleQualityCriteria        = TriangleQualityCriteria::radiusRatio;
     static constexpr auto edgeSplitVertexInsertionMethod = EdgeSplitVertexInsertionMethod::AvgCurv;
 
     struct Parameter {
@@ -728,7 +727,7 @@ private:
     size_t _mainLoopSoftMaxIter; // Maximum iterations of the main loop if topology changes can be reduced to 0
     size_t _mainLoopHardMaxIter; // Maximum iterations of the main loop (hard cap)
 
-    void _computeSizeMeasures(Mesh& mesh) const {
+    void computeSizeMeasures_(Mesh& mesh) const {
         GeometryManagerType::computeAllTriangleNormals(mesh);
         GeometryManagerType::computeAllAngles(mesh);
         GeometryManagerType::computeAllVertexNormals(mesh);
@@ -760,13 +759,26 @@ public:
 
         size_t mainLoopIter = 0;
         while(true) {
-            _computeSizeMeasures(mesh);
+            // This outer loop does the following in sequence:
+            //
+            // 1. Update the desired sizes of all the edges, based on the
+            //    size criteria.
+            // 2. Perform vertex insertion/deletion operations according to the
+            //    desired size. The geometry should be updated.
+            // 3. Relocate the vertices to local optimum iteratively. The
+            //    geometry should be updated.
+
+            computeSizeMeasures_(mesh);
 
             bool sizeMeasureSatisfied = true;
 
             size_t countTopoModified;
             size_t iter = 0;
             do {
+                // The inner loop traverses the meshwork multiple times to
+                // check for elements that do not satisfy the size criteria,
+                // and try to fix them by vertex insertion/deletion operations.
+
                 countTopoModified = 0;
                 for(size_t ei = 0; ei < mesh.getEdges().size(); /* No increment here */) {
                     const size_t hei0 = mesh.getEdges()[ei].halfEdgeIndex;
