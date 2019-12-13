@@ -25,7 +25,7 @@ public:
     using HierarchyType = MembraneHierarchy< MemType >;
 
 private:
-    Boundary* _boundary = nullptr; ///< The boundary of the playground
+    Boundary* boundary_ = nullptr; ///< The boundary of the playground
     std::vector<HierarchyType*> _hierOut; ///< Outer limit. A point is inside the region if it is in at least 1 of the membranes.
     std::vector<HierarchyType*> _hierIn;  ///< Inner limit. A point is inside the region if it is not in any of the membranes.
 
@@ -47,9 +47,9 @@ public:
     }
 
     /// Construct the region with the boundary
-    MembraneRegion(Boundary* b): _boundary(b) {}
+    MembraneRegion(Boundary* b): boundary_(b) {}
     MembraneRegion(Boundary* b, HierarchyType* parentOfExcluded)
-        : _boundary(b)
+        : boundary_(b)
     {
         const auto n = parentOfExcluded->numberOfChildren();
         _hierIn.reserve(n);
@@ -64,13 +64,13 @@ public:
         /**************************************************************************
         This function checks whether a certain point is in the region. If a point
         is in the region, it must satisfy all of the following.
-            - within _boundary if specified
+            - within boundary_ if specified
             - in any of the membranes in _hierOut
             - not in any of the membranes in _hierIn
         **************************************************************************/
-        if(_boundary) {
+        if(boundary_) {
             auto p = mathfunc::vec2Vector(point);
-            if(!_boundary->within(p)) return false;
+            if(!boundary_->within(p)) return false;
         }
 
         if(!_hierOut.empty()) {
@@ -94,7 +94,7 @@ public:
     /**************************************************************************
     Getters and Setters
     **************************************************************************/
-    Boundary* getBoundary()const { return _boundary; }
+    Boundary* getBoundary()const { return boundary_; }
     const std::vector<HierarchyType*>& getHierOut()const { return _hierOut; }
     const std::vector<HierarchyType*>& getHierIn ()const { return _hierIn;  }
 

@@ -3,8 +3,8 @@
 
 #include <unordered_map>
 #include <unordered_set>
-#include "Structure/SurfaceMesh/MembraneMeshTriangleQuality.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/MeshTriangleQuality.hpp"
 #include "Util/Io/Log.hpp"
 
 namespace membrane_mesh_check {
@@ -204,8 +204,8 @@ struct MembraneMeshDihedralCheck {
 
             using PolygonType = MeshType::HalfEdge::PolygonType;
             if(
-                mesh.getHalfEdges()[hei].polygonType   == PolygonType::Triangle &&
-                mesh.getHalfEdges()[hei_o].polygonType == PolygonType::Triangle
+                mesh.getHalfEdges()[hei].polygonType   == PolygonType::triangle &&
+                mesh.getHalfEdges()[hei_o].polygonType == PolygonType::triangle
             ) {
                 const size_t t0 = mesh.triangle(hei);
                 const size_t t1 = mesh.triangle(mesh.opposite(hei));
@@ -333,8 +333,8 @@ struct MembraneMeshQualityReport {
 
             using PolygonType = MeshType::HalfEdge::PolygonType;
             if(
-                mesh.getHalfEdges()[hei].polygonType   == PolygonType::Triangle &&
-                mesh.getHalfEdges()[hei_o].polygonType == PolygonType::Triangle
+                mesh.getHalfEdges()[hei].polygonType   == PolygonType::triangle &&
+                mesh.getHalfEdges()[hei_o].polygonType == PolygonType::triangle
             ) {
                 const size_t t0 = mesh.triangle(hei);
                 const size_t t1 = mesh.triangle(mesh.opposite(hei));
