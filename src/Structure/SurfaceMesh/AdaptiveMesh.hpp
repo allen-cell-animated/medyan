@@ -114,11 +114,11 @@ public:
         // Currently the edge connects v0 and v2.
         // If the edge flips, the connection would be between v1 and v3.
 
-        const size_t ti0 = mesh.triangle(hei);
-        const size_t ti1 = mesh.triangle(hei_o);
-
         // Check if topo constraint is satisfied.
         if(mesh.isEdgeOnBorder(ei)) return State::InvalidTopo;
+
+        const size_t ti0 = mesh.triangle(hei);
+        const size_t ti1 = mesh.triangle(hei_o);
 
         if(
             mesh.degree(vi0) <= minDegree_ ||
@@ -193,7 +193,11 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::MidP
     }
 };
 template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgCurv > {
+    static constexpr double maxRadiusDistanceRatio = 1e6;
+    static constexpr double maxRadiusDistanceRatio2 = maxRadiusDistanceRatio * maxRadiusDistanceRatio;
+
     size_t v0, v1;
+
     // Requires
     //   - Vertex unit normal
     template< typename Mesh >
@@ -216,7 +220,7 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgC
 
         CoordinateType res0, res1;
 
-        if(std::abs(r0) == std::numeric_limits<double>::infinity()) {
+        if(std::abs(r0 * r0 / mag2_r) > maxRadiusDistanceRatio2) {
             res0 = 0.5 * (c0 + c1);
         } else {
             // Compute vector from center of sphere to mid point
@@ -230,7 +234,7 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgC
             res0 = c0 + r0 * un0 + ro0 * (std::abs(r0) / mag_ro0);
         }
 
-        if(std::abs(r1) == std::numeric_limits<double>::infinity()) {
+        if(std::abs(r1 * r1 / mag2_r) > maxRadiusDistanceRatio2) {
             res1 = 0.5 * (c0 + c1);
         } else {
             // Compute vector from center of sphere to mid point
@@ -254,13 +258,13 @@ template<
     EdgeSplitVertexInsertionMethod m
 > class EdgeSplitManager {
 public:
-    using EdgeFlipManagerType = EdgeFlipManager< Mesh, c >;
+    using EdgeFlipManagerType          = EdgeFlipManager< Mesh, c >;
     using EdgeSplitVertexInsertionType = EdgeSplitVertexInsertion< m >;
-    using CoordinateType = typename Mesh::AttributeType::coordinate_type;
+    using CoordinateType               = typename Mesh::AttributeType::coordinate_type;
     enum class State {
-        Success,
-        InvalidTopo,
-        NotLongestEdge
+        success,
+        invalidTopo,
+        notLongestEdge
     };
 
 private:
@@ -296,13 +300,13 @@ public:
 
         // Check topology constraints
         // Currently does not support insertion on border edges, but we may also implement that in the future.
-        if(mesh.isEdgeOnBorder(ei)) return State::InvalidTopo;
+        if(mesh.isEdgeOnBorder(ei)) return State::invalidTopo;
 
         // A new vertex with degree 4 will always be introduced
         if(
             mesh.degree(vi1) >= maxDegree_ ||
             mesh.degree(vi3) >= maxDegree_
-        ) return State::InvalidTopo;
+        ) return State::invalidTopo;
 
         // Check whether the current edge is the longest in the triangle
         const CoordinateType c0 (mesh.getVertexAttribute(vi0).getCoordinate());
@@ -317,7 +321,7 @@ public:
         if( !(
             l2_e >= l2_01 && l2_e >= l2_12 &&
             l2_e >= l2_23 && l2_e >= l2_30
-        )) return State::NotLongestEdge;
+        )) return State::notLongestEdge;
 
         // All checks passed. Do the splitting.
         typename Mesh::template VertexInsertionOnEdge< EdgeSplitVertexInsertionType > {}(mesh, ei, [](
@@ -347,7 +351,7 @@ public:
         efm.tryFlip(mesh, ei2);
         efm.tryFlip(mesh, ei3);
 
-        return State::Success;
+        return State::success;
 
     }
 };
@@ -822,7 +826,7 @@ public:
 
                     if(length2 >= 2 * eqLength2) { // Too long
                         sizeMeasureSatisfied = false;
-                        if(_edgeSplitManager.trySplit(mesh, ei, _edgeFlipManager) == decltype(_edgeSplitManager)::State::Success) {
+                        if(_edgeSplitManager.trySplit(mesh, ei, _edgeFlipManager) == decltype(_edgeSplitManager)::State::success) {
                             // Edge splitting happened. Will check edge ei again next round
                             ++countTopoModified;
                         }
