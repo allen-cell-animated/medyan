@@ -27,6 +27,7 @@ Until all criteria are met or maximum iterations reached
 #include <algorithm> // max min
 #include <cstdint>
 #include <limits>
+#include <optional>
 #include <stdexcept>
 #include <vector>
 
@@ -77,9 +78,9 @@ public:
     };
 
 private:
-    size_t _minDegree;
-    size_t _maxDegree;
-    double _minDotNormal; // To assess whether triangles are coplanar.
+    size_t minDegree_;
+    size_t maxDegree_;
+    double minDotNormal_; // To assess whether triangles are coplanar.
 
 public:
 
@@ -89,7 +90,10 @@ public:
     //   - maxDegree: maximum number of neighbors of any vertex
     //   - minDotNormal: minimum dot product required between neighboring triangles. Range (-1, 1)
     EdgeFlipManager(size_t minDegree, size_t maxDegree, double minDotNormal) :
-        _minDegree(minDegree), _maxDegree(maxDegree), _minDotNormal(minDotNormal) {}
+        minDegree_(minDegree),
+        maxDegree_(maxDegree),
+        minDotNormal_(minDotNormal)
+    {}
 
     // Returns whether the edge is flipped.
     // Requires
@@ -117,17 +121,17 @@ public:
         if(mesh.isEdgeOnBorder(ei)) return State::InvalidTopo;
 
         if(
-            mesh.degree(vi0) <= _minDegree ||
-            mesh.degree(vi2) <= _minDegree ||
-            mesh.degree(vi1) >= _maxDegree ||
-            mesh.degree(vi3) >= _maxDegree
+            mesh.degree(vi0) <= minDegree_ ||
+            mesh.degree(vi2) <= minDegree_ ||
+            mesh.degree(vi1) >= maxDegree_ ||
+            mesh.degree(vi3) >= maxDegree_
         ) return State::InvalidTopo;
 
         // Check if the current triangles are coplanar.
         if(dot(
             mesh.getTriangleAttribute(ti0).gTriangle.unitNormal,
             mesh.getTriangleAttribute(ti1).gTriangle.unitNormal
-        ) < _minDotNormal) return State::NonCoplanar;
+        ) < minDotNormal_) return State::NonCoplanar;
 
         // Check if the target triangles are coplanar.
         const CoordinateType c0 (mesh.getVertexAttribute(vi0).getCoordinate());
@@ -139,7 +143,7 @@ public:
         const auto n231 = cross(c3 - c2, c1 - c2);
         const auto mag_n231 = magnitude(n231);
         if(mag_n013 == 0.0 || mag_n231 == 0.0) return State::BadQuality; // Degenerate case
-        if(dot(n013, n231) < _minDotNormal * mag_n013 * mag_n231) return State::NonCoplanar;
+        if(dot(n013, n231) < minDotNormal_ * mag_n013 * mag_n231) return State::NonCoplanar;
 
         // Check whether triangle quality can be improved.
         const auto q012 = TriangleQualityType{}(c0, c1, c2);
@@ -163,7 +167,7 @@ public:
                     Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
                 });
             }
-            for(auto vi : vis) if(!mesh.isVertexOnBorder(vi)) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+            for(auto vi : vis) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
         });
 
         // Does not change the edge preferrable length
@@ -260,12 +264,12 @@ public:
     };
 
 private:
-    size_t _maxDegree;
+    size_t maxDegree_;
 
 public:
 
     // Constructor
-    EdgeSplitManager(size_t maxDegree) : _maxDegree(maxDegree) {}
+    EdgeSplitManager(size_t maxDegree) : maxDegree_(maxDegree) {}
 
     // Returns whether a new vertex is inserted.
     // Requires
@@ -296,8 +300,8 @@ public:
 
         // A new vertex with degree 4 will always be introduced
         if(
-            mesh.degree(vi1) >= _maxDegree ||
-            mesh.degree(vi3) >= _maxDegree
+            mesh.degree(vi1) >= maxDegree_ ||
+            mesh.degree(vi3) >= maxDegree_
         ) return State::InvalidTopo;
 
         // Check whether the current edge is the longest in the triangle
@@ -328,7 +332,7 @@ public:
                     Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
                 });
             }
-            for(auto vi : vis) if(!mesh.isVertexOnBorder(vi)) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+            for(auto vi : vis) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
 
             // Set preferrable length of edges to be the same as before
             const auto eqLength = mesh.getEdgeAttribute(eis[0]).aEdge.eqLength;
@@ -354,26 +358,28 @@ public:
     using CoordinateType      = typename Mesh::AttributeType::coordinate_type;
 
     enum class State {
-        Success,
-        InvalidTopo,
-        NonCoplanar,
-        BadQuality
+        success,
+        invalidTopo,
+        notSuitable,
+        badQuality
     };
 
 private:
     size_t minDegree_;
     size_t maxDegree_;
-    double _minQualityImprovement; // If smaller than 1, then some degradation is allowed.
-    double _minDotNormal; // Coplanarness requirement after collapse
+    double minQualityImprovement_; // If smaller than 1, then some degradation is allowed.
+    double minDotNormal_; // Coplanarness requirement after collapse
 
     struct PrequalifyResult_ {
-        double qBefore, qAfter;
-        double minCosDihedral;
+        bool   suitable = true; // If this is false, then other values might be undefined
+        double qualityImproved; // The improvement of the worst quality after collapsing
     };
-    // Prequalify the collapse
+    // Prequalify the collapse, when the edge is not on the border
     // hei is the direction of collapsing (source gets removed, and target is preserved)
-    static auto prequalify_(const Mesh& mesh, size_t hei) {
+    auto prequalify_(const Mesh& mesh, size_t hei) const {
         using namespace mathfunc;
+
+        PrequalifyResult_ res;
 
         const auto hei_o = mesh.opposite(hei); // targeting vi1
         const auto hei_n = mesh.next(hei);
@@ -382,6 +388,13 @@ private:
 
         const auto vi0 = mesh.target(hei); // preserved
         const auto vi1 = mesh.target(hei_o); // to be removed
+
+        if(mesh.isVertexOnBorder(vi1)) {
+            // Removing border vertex would change the shape of the border.
+            res.suitable = false;
+            return res;
+        }
+
         const CoordinateType c0 (mesh.getVertexAttribute(vi0).getCoordinate());
         const CoordinateType c1 (mesh.getVertexAttribute(vi1).getCoordinate());
 
@@ -389,14 +402,17 @@ private:
         const auto ti1 = mesh.triangle(hei_o);
 
         double qBefore = TriangleQualityType::best;
-        double qAfter = TriangleQualityType::best;
+        double qAfter  = TriangleQualityType::best;
         double minCosDihedral = 1.0; // Coplanar case (best)
 
         {
-            auto chei = hei_o;
-            Vec3 lastUnitNormal = mesh.getTriangleAttribute(mesh.triangle(mesh.opposite(hei_n))).gTriangle.unitNormal;
+            auto chei = hei_o; // chei should always target vi1
+            std::optional<Vec3> lastUnitNormal;
+            if(mesh.polygonType(mesh.opposite(hei_n)) == Mesh::HalfEdge::PolygonType::triangle) {
+                lastUnitNormal = mesh.getTriangleAttribute(mesh.triangle(mesh.opposite(hei_n))).gTriangle.unitNormal;
+            }
             do {
-                const auto ti = mesh.triangle(chei);
+                const auto ti = mesh.triangle(chei); // valid because vi1 is not on the border
                 const auto chei_po = mesh.opposite(mesh.prev(chei));
                 const auto vn = mesh.target(mesh.next(chei));
                 const auto vp = mesh.target(mesh.prev(chei));
@@ -426,18 +442,25 @@ private:
                     } else {
                         n_0np *= (1.0 / mag_n_0np);
                         // Dihedral angle with last triangle
-                        minCosDihedral = std::min(
-                            minCosDihedral,
-                            dot(n_0np, lastUnitNormal)
-                        );
+                        if(lastUnitNormal.has_value()) {
+                            minCosDihedral = std::min(
+                                minCosDihedral,
+                                dot(n_0np, *lastUnitNormal)
+                            );
+                        }
                         lastUnitNormal = n_0np;
                         // Dihedral angle with outside triangle
-                        minCosDihedral = std::min(
-                            minCosDihedral,
-                            dot(n_0np, mesh.getTriangleAttribute(mesh.triangle(chei_po)).gTriangle.unitNormal)
-                        );
+                        if(mesh.polygonType(chei_po) == Mesh::HalfEdge::PolygonType::triangle) {
+                            minCosDihedral = std::min(
+                                minCosDihedral,
+                                dot(n_0np, mesh.getTriangleAttribute(mesh.triangle(chei_po)).gTriangle.unitNormal)
+                            );
+                        }
                         // Special dihedral angle
-                        if(chei == hei_ono) {
+                        if(
+                            chei == hei_ono &&
+                            mesh.polygonType(hei_opo) == Mesh::HalfEdge::PolygonType::triangle
+                        ) {
                             minCosDihedral = std::min(
                                 minCosDihedral,
                                 dot(n_0np, mesh.getTriangleAttribute(mesh.triangle(hei_opo)).gTriangle.unitNormal)
@@ -451,14 +474,24 @@ private:
             } while(chei != hei_o);
         }
 
-        return PrequalifyResult_{ qBefore, qAfter, minCosDihedral };
+        if(minCosDihedral < minDotNormal_) {
+            res.suitable = false;
+            return res;
+        }
+
+        res.qualityImproved = TriangleQualityType::improvement(qBefore, qAfter);
+        return res;
     }
 
 public:
 
     // Constructor
     EdgeCollapseManager(size_t minDegree, size_t maxDegree, double minQualityImprovement, double minDotNormal) :
-        minDegree_(minDegree), maxDegree_(maxDegree), _minQualityImprovement(minQualityImprovement), _minDotNormal(minDotNormal) {}
+        minDegree_(minDegree),
+        maxDegree_(maxDegree),
+        minQualityImprovement_(minQualityImprovement),
+        minDotNormal_(minDotNormal)
+    {}
 
     // Returns whether the edge is collapsed
     // Requires
@@ -480,7 +513,7 @@ public:
 
         // Check topology constraints
         // Currently does not allow collapsing of border edges, but we may also implement that in the future
-        if(mesh.isEdgeOnBorder(ei)) return State::InvalidTopo;
+        if(mesh.isEdgeOnBorder(ei)) return State::invalidTopo;
 
         if(
             mesh.degree(vi0) + mesh.degree(vi2) - 4 > maxDegree_ ||
@@ -488,38 +521,39 @@ public:
             (mesh.isVertexOnBorder(vi0) && mesh.isVertexOnBorder(vi2)) ||
             mesh.degree(vi1) <= minDegree_ ||
             mesh.degree(vi3) <= minDegree_
-        ) return State::InvalidTopo;
+        ) return State::invalidTopo;
 
         // Check triangle quality constraints
         // Calculate previous triangle qualities around a vertex
         // if v0 is removed
-        const auto prequalifyResult0 = prequalify_(mesh, hei_o);
-        const double q0Before = prequalifyResult0.qBefore;
-        const double q0After  = prequalifyResult0.qAfter;
-        const auto imp0 = TriangleQualityType::improvement(q0Before, q0After);
-        const double minCosDihedral0 = prequalifyResult0.minCosDihedral;
-
+        const auto pr0 = prequalify_(mesh, hei_o);
         // if v2 is removed
-        const auto prequalifyResult2 = prequalify_(mesh, hei);
-        const double q2Before = prequalifyResult2.qBefore;
-        const double q2After  = prequalifyResult2.qAfter;
-        const auto imp2 = TriangleQualityType::improvement(q2Before, q2After);
-        const double minCosDihedral2 = prequalifyResult2.minCosDihedral;
+        const auto pr2 = prequalify_(mesh, hei);
 
-        if(imp0 < _minQualityImprovement && imp2 < _minQualityImprovement) return State::BadQuality;
-        if(
-            (imp0 > imp2 && minCosDihedral0 < _minDotNormal) ||
-            (imp0 <= imp2 && minCosDihedral2 < _minDotNormal)
-        ) return State::NonCoplanar;
+        // Choose the best result
+        const auto worseThan = [](const PrequalifyResult_& pr0, const PrequalifyResult_& pr1) {
+            return (
+                (!pr0.suitable && pr1.suitable) ||
+                (
+                    pr0.suitable == pr1.suitable &&
+                    pr0.qualityImproved < pr1.qualityImproved
+                )
+            );
+        };
+        const auto& [prChosen, heiChosen] = worseThan(pr0, pr2) ?
+            std::tuple(pr2, hei) :
+            std::tuple(pr0, hei_o);
 
-        auto attributeSetter = [](
+        if(!prChosen.suitable) return State::notSuitable;
+        if(prChosen.qualityImproved < minQualityImprovement_) return State::badQuality;
+
+        const auto attributeSetter = [](
             Mesh& mesh, size_t hei_begin, size_t hei_end, size_t ov0
         ) {
             // Invalidate mesh index cache
             mesh.getMetaAttribute().cacheValid = false;
 
             for(size_t hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
-                const size_t hei1_n = mesh.next(hei1);
                 const size_t ti = mesh.triangle(hei1);
                 Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
                 mesh.forEachHalfEdgeInTriangle(ti, [&](size_t hei) {
@@ -527,27 +561,21 @@ public:
                 });
             }
 
-            if(!mesh.isVertexOnBorder(ov0)) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, ov0);
+            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, ov0);
             const auto v_first = mesh.target(mesh.opposite(hei_begin));
-            if(!mesh.isVertexOnBorder(v_first)) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, v_first);
+            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, v_first);
             for(size_t hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
                 const auto vi = mesh.target(mesh.next(hei1));
-                if(!mesh.isVertexOnBorder(vi))
-                    Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+                Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
             }
         };
 
-        if(imp0 > imp2) {
-            // Remove v0, collapse onto v2
-            typename Mesh::EdgeCollapse {}(mesh, hei_o, attributeSetter);
-        } else {
-            // Remove v2, collapse onto v0
-            typename Mesh::EdgeCollapse {}(mesh, hei, attributeSetter);
-        }
+        // Do the collapse
+        typename Mesh::EdgeCollapse {}(mesh, heiChosen, attributeSetter);
 
         // Does not update edge preferred lengths
 
-        return State::Success;
+        return State::success;
     }
 };
 
@@ -721,7 +749,7 @@ private:
 
     EdgeFlipManager< Mesh, triangleQualityCriteria > _edgeFlipManager;
     EdgeSplitManager< Mesh, triangleQualityCriteria, edgeSplitVertexInsertionMethod > _edgeSplitManager;
-    EdgeCollapseManager< Mesh, triangleQualityCriteria > _edgeCollapseManager;
+    EdgeCollapseManager< Mesh, triangleQualityCriteria > edgeCollapseManager_;
 
     size_t _samplingAdjustmentMaxIter; // Maximum number of scans used in sampling.
     size_t _mainLoopSoftMaxIter; // Maximum iterations of the main loop if topology changes can be reduced to 0
@@ -743,7 +771,7 @@ public:
         ),
         _edgeFlipManager(param.minDegree, param.maxDegree, param.edgeFlipMinDotNormal),
         _edgeSplitManager(param.maxDegree),
-        _edgeCollapseManager(
+        edgeCollapseManager_(
             param.minDegree,
             param.maxDegree,
             param.edgeCollapseMinQualityImprovement,
@@ -794,16 +822,18 @@ public:
 
                     if(length2 >= 2 * eqLength2) { // Too long
                         sizeMeasureSatisfied = false;
-                        if(_edgeSplitManager.trySplit(mesh, ei, _edgeFlipManager) == decltype(_edgeSplitManager)::State::Success)
+                        if(_edgeSplitManager.trySplit(mesh, ei, _edgeFlipManager) == decltype(_edgeSplitManager)::State::Success) {
                             // Edge splitting happened. Will check edge ei again next round
                             ++countTopoModified;
+                        }
                         else
                             ++ei;
                     } else if(2 * length2 <= eqLength2) { // Too short
                         sizeMeasureSatisfied = false;
-                        if(_edgeCollapseManager.tryCollapse(mesh, ei) == decltype(_edgeCollapseManager)::State::Success)
+                        if(edgeCollapseManager_.tryCollapse(mesh, ei) == decltype(edgeCollapseManager_)::State::success) {
                             // Edge collapsing happened. The edge at ei will be different next round
                             ++countTopoModified;
+                        }
                         else
                             ++ei;
                     } else { // Check passed
