@@ -63,8 +63,8 @@ public:
     using GeometryManagerType = GeometryManager< Mesh >;
 
 private:
-    size_t _maxIterRelocation;
-    size_t _maxIter; // each iteration: (relocation + edge flipping)
+    size_t maxIterRelocation_;
+    size_t maxIter_; // each iteration: (relocation + edge flipping)
 
     // Returns number of edges flipped
     template< typename EdgeFlipManagerType >
@@ -82,7 +82,7 @@ private:
 public:
     // Constructor
     DirectVertexRelocationManager(size_t maxIterRelocation, size_t maxIter)
-        : _maxIterRelocation(maxIterRelocation), _maxIter(maxIter) {}
+        : maxIterRelocation_(maxIterRelocation), maxIter_(maxIter) {}
 
     template< typename EdgeFlipManagerType >
     void operator()(Mesh& mesh, const EdgeFlipManagerType& efm) const {
@@ -97,7 +97,7 @@ public:
             ++iter;
 
             // Move vertices
-            for(size_t iterRelo = 0; iterRelo < _maxIterRelocation; ++iterRelo) {
+            for(size_t iterRelo = 0; iterRelo < maxIterRelocation_; ++iterRelo) {
                 for(size_t i = 0; i < numVertices; ++i) if(!mesh.isVertexOnBorder(i)) {
                     // const auto coordOriginal = mesh.getVertexAttribute(i).getCoordinate();
                     const auto target = OptimalVertexLocationType{}(mesh, i);
@@ -120,7 +120,7 @@ public:
 
             // Try flipping
             flippingCount = edgeFlipping_(mesh, efm);
-        } while(flippingCount && iter < _maxIter);
+        } while(flippingCount && iter < maxIter_);
     }
 };
 
