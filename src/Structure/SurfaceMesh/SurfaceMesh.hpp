@@ -6,6 +6,7 @@
 #include <cstddef> // ptrdiff_t
 #include <cstdint> // uint_fast8_t
 #include <iterator>
+#include <optional>
 #include <sstream>
 #include <stdexcept> // runtime_error
 #include <string>
@@ -389,10 +390,12 @@ public:
             size_t numVertices;
             std::vector< std::array< size_t, 3 > > triangleVertexIndexList;
             typename Attribute::AttributeInitializerInfo attributeInitializerInfo;
+
+            // Optional information
+            std::optional< std::vector< std::vector< std::size_t > > > borderVertexIndexList;
         };
 
-        class PathologicalTopologyError : public std::runtime_error {
-        public:
+        struct PathologicalTopologyError : public std::runtime_error {
             PathologicalTopologyError(const std::string& what_arg) : std::runtime_error("Pathological Topology: " + what_arg) {}
         };
 
@@ -595,6 +598,17 @@ public:
             }
 
             info.attributeInitializerInfo = Attribute::extract(mesh);
+
+            // Extract border lists
+            info.borderVertexIndexList.emplace(mesh.numBorders());
+            for(size_t bi = 0; bi < mesh.numBorders(); ++bi) {
+                mesh.forEachHalfEdgeInPolygon(
+                    mesh._borders[bi],
+                    [&](size_t hei) {
+                        (*info.borderVertexIndexList)[bi].push_back(mesh.target(hei));
+                    }
+                );
+            }
 
             return info;
         }

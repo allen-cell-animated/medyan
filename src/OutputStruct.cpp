@@ -299,10 +299,10 @@ void OutputStructMembrane::getFromSystemWithoutChildren() {
     _id = _membrane->getId();
     _type = _membrane->getType();
 
-    _memInfo = _membrane->getMesh().extract< Initializer >();
-    _numVertices = _memInfo.attributeInitializerInfo.vertexCoordinateList.size();
-    _numTriangles = _memInfo.triangleVertexIndexList.size();
-        
+    memInfo_ = _membrane->getMesh().extract< Initializer >();
+    _numVertices = memInfo_.attributeInitializerInfo.vertexCoordinateList.size();
+    _numTriangles = memInfo_.triangleVertexIndexList.size();
+    numBorders_ = (memInfo_.borderVertexIndexList.has_value() ? memInfo_.borderVertexIndexList->size() : 0);
 }
 
 void OutputStructMembrane::outputFromSystem(std::ostream& os) {
@@ -315,18 +315,28 @@ void OutputStructMembrane::outputFromStoredWithoutChildren(std::ostream& os) {
         << _id << " "
         << _type << " "
         << _numVertices << ' '
-        << _numTriangles << '\n';
+        << _numTriangles << ' '
+        << numBorders_ << '\n';
 
     // print coordinates
-    for(const auto& it : _memInfo.attributeInitializerInfo.vertexCoordinateList) {
+    for(const auto& it : memInfo_.attributeInitializerInfo.vertexCoordinateList) {
         for(floatingpoint value : it) os << value << ' ';
         os << '\n';
     }
 
-    // print neighbor indices
-    for(const auto& it : _memInfo.triangleVertexIndexList) {
+    // print triangles
+    for(const auto& it : memInfo_.triangleVertexIndexList) {
         for(size_t value : it) os << value << ' ';
         os << '\n';
+    }
+
+    // print borders
+    if(const auto& blist = memInfo_.borderVertexIndexList; blist.has_value()) {
+        for(const auto& border : *blist) {
+            os << border.size() << ' '; // First number is the number of vertices
+            for(auto v : border) os << v << ' ';
+            os << '\n';
+        }
     }
 }
 
@@ -334,17 +344,21 @@ void OutputStructMembrane::getFromOutput(std::istream& is, std::istringstream& i
     iss >> _id
         >> _type
         >> _numVertices
-        >> _numTriangles;
+        >> _numTriangles
+        >> numBorders_;
 
-    _memInfo.attributeInitializerInfo.vertexCoordinateList.reserve(_numVertices);
-    _memInfo.triangleVertexIndexList.reserve(_numTriangles);
+    memInfo_.attributeInitializerInfo.vertexCoordinateList.reserve(_numVertices);
+    memInfo_.triangleVertexIndexList.reserve(_numTriangles);
+    memInfo_.borderVertexIndexList.emplace();
+    memInfo_.borderVertexIndexList->reserve(numBorders_);
+
     for(size_t i = 0; i < _numVertices; ++i) {
         std::string nextLine;
         std::getline(is, nextLine);
         std::istringstream newIss(nextLine);
 
-        _memInfo.attributeInitializerInfo.vertexCoordinateList.emplace_back();
-        auto& coord = _memInfo.attributeInitializerInfo.vertexCoordinateList.back();
+        memInfo_.attributeInitializerInfo.vertexCoordinateList.emplace_back();
+        auto& coord = memInfo_.attributeInitializerInfo.vertexCoordinateList.back();
 
         // Record coordinates
         for(floatingpoint& value: coord)
@@ -355,12 +369,27 @@ void OutputStructMembrane::getFromOutput(std::istream& is, std::istringstream& i
         std::getline(is, nextLine);
         std::istringstream newIss(nextLine);
 
-        _memInfo.triangleVertexIndexList.emplace_back();
-        auto& indices = _memInfo.triangleVertexIndexList.back();
+        memInfo_.triangleVertexIndexList.emplace_back();
+        auto& indices = memInfo_.triangleVertexIndexList.back();
 
         // Record indices
-        for(size_t& value: indices)
+        for(size_t& value : indices) {
             newIss >> value;
+        }
+    }
+    for(size_t i = 0; i < numBorders_; ++i) {
+        std::string nextLine;
+        std::getline(is, nextLine);
+        std::istringstream newIss(nextLine);
+
+        // First number is the number of vertices on this border
+        size_t nv; newIss >> nv;
+
+        auto& indices = memInfo_.borderVertexIndexList->emplace_back(nv);
+
+        for(size_t& value : indices) {
+            newIss >> value;
+        }
     }
 }
 

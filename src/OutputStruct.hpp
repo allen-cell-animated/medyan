@@ -204,7 +204,7 @@ public:
 
     size_t getNumVertices()const { return _numVertices; }
     size_t getNumTriangles()const { return _numTriangles; }
-    const MembraneInfo& getMembraneInfo()const { return _memInfo; }
+    const MembraneInfo& getMembraneInfo()const { return memInfo_; }
 
     Membrane* getMembrane()const { return _membrane; }
 
@@ -215,8 +215,9 @@ private:
     int _type;
     size_t _numVertices;
     size_t _numTriangles;
+    size_t numBorders_ = 0;
 
-    MembraneInfo _memInfo;
+    MembraneInfo memInfo_;
 
     /// Non data
     Membrane* _membrane;

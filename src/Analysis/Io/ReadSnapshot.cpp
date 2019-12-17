@@ -351,6 +351,20 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                         }
                     }
                 }
+                const auto& blist = eachMembrane.getMembraneInfo().borderVertexIndexList;
+                if(blist.has_value()) {
+                    for(const auto& b : *blist) {
+                        for(size_t i = 0; i < b.size(); ++i) {
+                            size_t i_next = (i+1) % b.size();
+                            if(b[i] < b[i_next]) {
+                                bondList.emplace_back(
+                                    atomIdSoFar + b[i] + 1,
+                                    atomIdSoFar + b[i_next] + 1
+                                );
+                            }
+                        }
+                    }
+                } // end if blist has value
             }
 
         }
