@@ -378,7 +378,7 @@ private:
     };
 
     // Parameters
-    Float                           _minPositionShift = 1e-3; // The position will have a minimal shift from either end
+    Float                           _minPositionShift = 1e-5; // The position will have a minimal shift from either end
     coordinate_type                 _cuboidSize;
     std::array< std::size_t, 3 >    _numCuboids;
     coordinate_type                 _boundingBoxOrigin;

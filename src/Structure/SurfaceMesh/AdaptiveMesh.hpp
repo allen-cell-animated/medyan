@@ -58,9 +58,9 @@ constexpr double size_measure_curvature_resolution = 0.30; // cos of which shoul
 constexpr double size_measure_max = 60; // Related to the resolution of the system
 constexpr size_t size_measure_diffuse_iter = 4;
 // Main loop
-constexpr size_t mesh_adaptation_topology_max_iter = 8; // Max times of scanning all the edges for sampling adjustment
+constexpr size_t mesh_adaptation_topology_max_iter = 10; // Max times of scanning all the edges for sampling adjustment
 constexpr size_t mesh_adaptation_soft_max_iter = 8;
-constexpr size_t mesh_adaptation_hard_max_iter = 25;
+constexpr size_t mesh_adaptation_hard_max_iter = 20;
 
 // Implementation
 //-------------------------------------
