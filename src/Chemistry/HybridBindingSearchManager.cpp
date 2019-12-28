@@ -375,7 +375,6 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
 		}
 	}
 }
-#endif
 template <uint D, bool SELF, bool LinkerorMotor>
 void HybridBindingSearchManager::calculatebspairsLMselfV3(dist::dOut<D, SELF>&
 bspairsoutSself, short idvec[2]) {
