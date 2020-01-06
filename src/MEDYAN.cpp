@@ -102,10 +102,11 @@ int main(int argc, char **argv) {
     case GlobalVar::RunMode::Simulation:
         //initialize and run system
         {
-            Controller c;
-            c.initialize(cmdRes.inputFile, cmdRes.inputDirectory, cmdRes.outputDirectory, tp);
-
-            std::thread mainThread(&Controller::run, &c);
+            std::thread simul([&]{
+                Controller c;
+                c.initialize(cmdRes.inputFile, cmdRes.inputDirectory, cmdRes.outputDirectory, tp);
+                c.run();
+            });
 #ifdef VISUAL
             {
                 auto vd = std::make_shared< visual::VisualDisplay >();
@@ -113,7 +114,7 @@ int main(int argc, char **argv) {
                 vd->run();
             }
 #endif // VISUAL
-            mainThread.join();
+            simul.join();
         }
         break;
     case GlobalVar::RunMode::Analysis:
