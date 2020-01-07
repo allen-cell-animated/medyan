@@ -9,7 +9,18 @@
 #include "Util/Io/Log.hpp"
 #include "utility.h" // rdtsc
 
+enum class MedyanRunMode {
+    simulation,
+    test
+};
+
 struct MedyanCmdInitResult {
+
+    // Remaining arguments
+    int argpNext = 0; // If the parsing is complete, this points to invalid location
+
+    // Run mode
+    MedyanRunMode runMode = MedyanRunMode::simulation;
 
     // File and directories
     std::string inputFile;
@@ -35,20 +46,45 @@ inline auto medyanInitFromCommandLine(int argc, char** argv) {
     {
         Command cmdMain("MEDYAN", "");
 
-        cmdMain.addOptionWithVar('s', "", "file", "System input file", true, res.inputFile);
-        cmdMain.addOptionWithVar('i', "", "path", "Input directory", true, res.inputDirectory);
-        cmdMain.addOptionWithVar('o', "", "path", "Output directory", true, res.outputDirectory);
-        cmdMain.addOption(0, "seed-fixed", "seed", "Fixed random generator seed", false,
+        cmdMain.addOption(makeOptionWithVar('s', "", "file", "System input file", false, res.inputFile));
+        cmdMain.addOption(makeOptionWithVar('i', "", "path", "Input directory", false, res.inputDirectory));
+        cmdMain.addOption(makeOptionWithVar('o', "", "path", "Output directory", false, res.outputDirectory));
+        cmdMain.addOption(Option(0, "seed-fixed", "seed", "Fixed random generator seed", false,
             [&](const std::string& arg) {
                 res.rngSeedFixed = true;
                 VariableWrite<unsigned long long>{std::string("seed")}(res.rngSeed, arg);
             }
-        );
-        cmdMain.addOptionWithVar('t', "", "int", "Thread count (0 for auto)", false, res.numThreads);
+        ));
+        cmdMain.addOption(makeOptionWithVar('t', "", "int", "Thread count (0 for auto)", false, res.numThreads));
         cmdMain.addHelp();
 
+        // Add test command
+        auto& cmdTest = cmdMain.addCommand(
+            "test", "Run MEDYAN tests.",
+            [&] { res.runMode = MedyanRunMode::test; }
+        );
+        cmdTest.setTerminating(true);
+
+        // Add validation
+        cmdMain.setValidation([&] {
+            if(res.runMode == MedyanRunMode::simulation) {
+                if(res.inputFile.empty()) {
+                    throw ValidationError("Must specify the system input file (-s)");
+                }
+                if(res.inputDirectory.empty()) {
+                    throw ValidationError("Must specify the input directory (-i)");
+                }
+                if(res.outputDirectory.empty()) {
+                    throw ValidationError("Must specify the output directory (-o)");
+                }
+            }
+        });
+
         try {
-            cmdMain.parse(argc, argv);
+
+            cmdMain.ruleCheck();
+            res.argpNext = cmdMain.parse(argc, argv);
+
         } catch (const CommandLogicError& e) {
             std::cerr << e.what() << std::endl;
             // Internal error, no help message generated.

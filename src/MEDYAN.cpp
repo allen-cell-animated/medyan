@@ -67,6 +67,9 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 
 #include "common.h"
 
+#define CATCH_CONFIG_RUNNER
+#include "catch2/catch.hpp"
+
 #include "Controller.h"
 #include "MedyanArgs.hpp"
 #include "Util/ThreadPool.hpp"
@@ -84,14 +87,27 @@ int main(int argc, char **argv) {
 
     auto cmdRes = medyanInitFromCommandLine(argc, argv);
 
-    // Initialize the thread pool for use in MEDYAN
-    ThreadPool tp(cmdRes.numThreads);
+    int returnCode = 0;
 
-    //initialize and run system
-    Controller c;
-    c.initialize(cmdRes.inputFile, cmdRes.inputDirectory, cmdRes.outputDirectory, tp);
-    c.run();
+    switch(cmdRes.runMode) {
 
-    return 0;
+    case MedyanRunMode::simulation:
+        {
+            // Initialize the thread pool for use in MEDYAN
+            ThreadPool tp(cmdRes.numThreads);
+
+            //initialize and run system
+            Controller c;
+            c.initialize(cmdRes.inputFile, cmdRes.inputDirectory, cmdRes.outputDirectory, tp);
+            c.run();
+        }
+        break;
+
+    case MedyanRunMode::test:
+        returnCode = Catch::Session().run(argc - (cmdRes.argpNext - 1), argv + (cmdRes.argpNext - 1));
+        break;
+    }
+
+    return returnCode;
 }
 
