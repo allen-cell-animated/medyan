@@ -131,6 +131,8 @@ private:
     ///Helper function to pin filaments near the boundary
     void pinBoundaryFilaments();
     void pinLowerBoundaryFilaments();
+    void pinSideBoundaryFilaments();
+    floatingpoint pinTimePrevious = 0.0;
     
     double tp = SysParams::Chemistry().makeRateDependTime;
     double threforce = SysParams::Chemistry().makeRateDependForce;

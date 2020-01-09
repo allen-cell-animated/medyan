@@ -61,6 +61,12 @@ BoundaryFF::BoundaryFF (string type) {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>());
     }
+    
+    //if pining to the side boundary
+    if(SysParams::Mechanics().pinSideBoundaryFilaments) {
+        _boundaryInteractionVector.emplace_back(
+        new BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>());
+    }
 }
 
 void BoundaryFF::vectorize() {

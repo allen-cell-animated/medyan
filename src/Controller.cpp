@@ -825,6 +825,12 @@ void Controller::executeSpecialProtocols() {
         pinLowerBoundaryFilaments();
     }
     
+    if(SysParams::Mechanics().pinSideBoundaryFilaments &&
+       tau() >= SysParams::Mechanics().pinTime) {
+        
+        pinSideBoundaryFilaments();
+    }
+    
 }
 
 void Controller::updatePositions() {
@@ -1016,6 +1022,38 @@ void Controller::pinLowerBoundaryFilaments() {
                 b->addAsPinned();
             }
         }
+    }
+}
+
+void Controller::pinSideBoundaryFilaments() {
+    
+    //renew pinned filament list everytime
+    if(tau() > pinTimePrevious + SysParams::Mechanics().pinResidueTime){
+        //loop through beads, check if within pindistance
+        for(auto b : Bead::getBeads()) {
+            
+            //check if within Z range
+            if (b->coordinate()[2] < SysParams::Mechanics().pinZLower || b->coordinate()[2] > SysParams::Mechanics().pinZUpper) continue;
+            
+            //check if within pin range, use index to limit the number of pin
+            auto index = Rand::randfloatingpoint(0,1);
+            if (_subSystem.getBoundary()->sidedistance(b->vcoordinate()) > SysParams::Mechanics().pinDistance || index >= SysParams::Mechanics().pinFraction || b->isPinned()) continue;
+            
+            //pin all beads besides plus end and minus end cylinder
+            Filament* f = (Filament*) b->getParent();
+            Cylinder* plusEndC = f->getPlusEndCylinder();
+            Cylinder* minusEndC = f->getMinusEndCylinder();
+            
+            if((plusEndC->getSecondBead() != b) ||
+               (minusEndC->getFirstBead() != b)) {
+                
+                b->pinnedPosition = b->vcoordinate();
+                b->addAsPinned();
+            }
+        }
+        
+        pinTimePrevious = tau();
+    
     }
 }
 

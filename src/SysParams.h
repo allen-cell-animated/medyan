@@ -84,14 +84,21 @@ struct MechParams {
     //@{
     /// SPECIAL MECHANICAL PROTOCOLS
 
-    bool pinLowerBoundaryFilaments = false;
-    floatingpoint pinFraction = 1.0; //test
-
     ///To pin filaments on boundary via an attractive potential
     bool pinBoundaryFilaments = false;
-    floatingpoint pinDistance = 250; ///< 250nm pinning distance for now
+    floatingpoint pinDistance = 250; ///< Pin bead if with distance
     floatingpoint pinK = 0.0;       ///< Tethered stiffness
-    floatingpoint pinTime = 0.0;    ///< Time at which to pin the filaments
+    floatingpoint pinTime = 0.0;    ///< Time at which to start pinning the filaments
+    
+    bool pinSideBoundaryFilaments = false;
+    floatingpoint pinResidueTime = 0.0; ///< Time before renewing the pin
+    floatingpoint pinZLower = 0.0;
+    floatingpoint pinZUpper = 10000.0;
+    floatingpoint pinFraction = 1.0;
+    
+    bool pinLowerBoundaryFilaments = false;
+    
+    
     //@}
 
     //vectorization
