@@ -8,7 +8,7 @@
 
 Edge::Edge(Membrane* parent, size_t topoIndex):
     Trackable(),
-    _parent(parent), _topoIndex{topoIndex} {
+    parent_(parent), topoIndex_{topoIndex} {
     
     // Set coordinate and add to compartment
     updateCoordinate();
@@ -29,8 +29,8 @@ Edge::~Edge() {
 }
 
 void Edge::updateCoordinate() {
-    const auto& mesh = _parent->getMesh();
-    const size_t hei0 = mesh.getEdges()[_topoIndex].halfEdgeIndex;
+    const auto& mesh = parent_->getMesh();
+    const size_t hei0 = mesh.getEdges()[topoIndex_].halfEdgeIndex;
     const size_t hei1 = mesh.opposite(hei0);
     const size_t v0 = mesh.target(hei0);
     const size_t v1 = mesh.target(hei1);
