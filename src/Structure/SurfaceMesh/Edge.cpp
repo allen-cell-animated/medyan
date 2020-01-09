@@ -12,22 +12,20 @@ Edge::Edge(Membrane* parent, size_t topoIndex):
     
     // Set coordinate and add to compartment
     updateCoordinate();
-    if(medyan::global().mode == medyan::GlobalVar::RunMode::Simulation) {
-        Compartment* compartment;
-        try { compartment = GController::getCompartment(mathfunc::vec2Vector(coordinate)); }
-        catch (exception& e) {
-            cout << e.what() << endl;
-            printSelf();
-            exit(EXIT_FAILURE);
-        }
-        _cellElement.manager = compartment->edgeCell.manager;
-        _cellElement.manager->addElement(this, _cellElement, compartment->edgeCell);
+
+    Compartment* compartment;
+    try { compartment = GController::getCompartment(mathfunc::vec2Vector(coordinate)); }
+    catch (exception& e) {
+        cout << e.what() << endl;
+        printSelf();
+        exit(EXIT_FAILURE);
     }
+    _cellElement.manager = compartment->edgeCell.manager;
+    _cellElement.manager->addElement(this, _cellElement, compartment->edgeCell);
 }
 
 Edge::~Edge() {
-    if(medyan::global().mode == medyan::GlobalVar::RunMode::Simulation)
-        _cellElement.manager->removeElement(_cellElement);
+    _cellElement.manager->removeElement(_cellElement);
 }
 
 void Edge::updateCoordinate() {
