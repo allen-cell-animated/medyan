@@ -10,7 +10,19 @@
 #include "Util/Io/Log.hpp"
 #include "utility.h" // rdtsc
 
+enum class MedyanRunMode {
+    simulation,
+    analyze,
+    test
+};
+
 struct MedyanCmdInitResult {
+
+    // Remaining arguments
+    int argpNext = 0; // If the parsing is complete, this points to invalid location
+
+    // Run mode
+    MedyanRunMode runMode = MedyanRunMode::simulation;
 
     // File and directories
     std::string inputFile;
@@ -36,21 +48,24 @@ inline auto medyanInitFromCommandLine(int argc, char** argv) {
     {
         Command cmdMain("MEDYAN", "");
 
-        cmdMain.addOptionWithVar('s', "", "file", "System input file", true, res.inputFile);
-        cmdMain.addOptionWithVar('i', "", "path", "Input directory", true, res.inputDirectory);
-        cmdMain.addOptionWithVar('o', "", "path", "Output directory", true, res.outputDirectory);
-        cmdMain.addOption(0, "seed-fixed", "seed", "Fixed random generator seed", false,
+        cmdMain.addOption(makeOptionWithVar('s', "", "file", "System input file", false, res.inputFile));
+        cmdMain.addOption(makeOptionWithVar('i', "", "path", "Input directory", false, res.inputDirectory));
+        cmdMain.addOption(makeOptionWithVar('o', "", "path", "Output directory", false, res.outputDirectory));
+        cmdMain.addOption(Option(0, "seed-fixed", "seed", "Fixed random generator seed", false,
             [&](const std::string& arg) {
                 res.rngSeedFixed = true;
                 VariableWrite<unsigned long long>{std::string("seed")}(res.rngSeed, arg);
             }
-        );
-        cmdMain.addOptionWithVar('t', "", "int", "Thread count (0 for auto)", false, res.numThreads);
+        ));
+        cmdMain.addOption(makeOptionWithVar('t', "", "int", "Thread count (0 for auto)", false, res.numThreads));
         cmdMain.addHelp();
 
-        Command* cmdAnalyze = cmdMain.addCommand("analyze", "Analyze simulation output",
-            [] { medyan::globalMutable().mode = medyan::GlobalVar::RunMode::Analysis; });
-        cmdAnalyze->addOption(0, "bond-frame", "frame", "Frame of membrane topology information", false,
+        // Add analyze command
+        Command& cmdAnalyze = cmdMain.addCommand(
+            "analyze", "Analyze simulation output",
+            [&] { res.runMode = MedyanRunMode::analyze; }
+        );
+        cmdAnalyze.addOption(Option(0, "bond-frame", "frame", "Frame of membrane topology information", false,
             [&](const std::string& arg) {
                 if(arg == "all") {
                     medyan::globalMutable().analyzeMembraneBondAllFrames = true;
@@ -58,12 +73,37 @@ inline auto medyanInitFromCommandLine(int argc, char** argv) {
                     VariableWrite< size_t >{"bond-frame"}(medyan::globalMutable().analyzeMembraneBondFrame, arg);
                 }
             }
+        ));
+        cmdAnalyze.addOption(makeOptionWithVar(0, "frame-interval", "int", "Interval of frames", false, medyan::globalMutable().analyzeFrameInterval));
+        cmdAnalyze.addHelp();
+
+        // Add test command
+        auto& cmdTest = cmdMain.addCommand(
+            "test", "Run MEDYAN tests.",
+            [&] { res.runMode = MedyanRunMode::test; }
         );
-        cmdAnalyze->addOptionWithVar(0, "frame-interval", "int", "Interval of frames", false, medyan::globalMutable().analyzeFrameInterval);
-        cmdAnalyze->addHelp();
+        cmdTest.setTerminating(true);
+
+        // Add validation
+        cmdMain.setValidation([&] {
+            if(res.runMode == MedyanRunMode::simulation) {
+                if(res.inputFile.empty()) {
+                    throw ValidationError("Must specify the system input file (-s)");
+                }
+                if(res.inputDirectory.empty()) {
+                    throw ValidationError("Must specify the input directory (-i)");
+                }
+                if(res.outputDirectory.empty()) {
+                    throw ValidationError("Must specify the output directory (-o)");
+                }
+            }
+        });
 
         try {
-            cmdMain.parse(argc, argv);
+
+            cmdMain.ruleCheck();
+            res.argpNext = cmdMain.parse(argc, argv);
+
         } catch (const CommandLogicError& e) {
             std::cerr << e.what() << std::endl;
             // Internal error, no help message generated.

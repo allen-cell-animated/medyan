@@ -36,23 +36,21 @@ Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
     if(SysParams::RUNSTATE)
         parent->addChild(unique_ptr<Component>(this));
           
-    if(medyan::global().mode == medyan::GlobalVar::RunMode::Simulation) {
-        loadForcesP = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
-        loadForcesM = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
+    loadForcesP = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
+    loadForcesM = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
 
-        //Find compartment
-        try {_compartment = GController::getCompartment(v);}
-        catch (exception& e) {
-            
-            cout << e.what() << endl;
-            
-            printSelf();
-            
-            //also print parent info
-            getParent()->printSelf();
-            
-            exit(EXIT_FAILURE);
-        }
+    //Find compartment
+    try {_compartment = GController::getCompartment(v);}
+    catch (exception& e) {
+        
+        cout << e.what() << endl;
+        
+        printSelf();
+        
+        //also print parent info
+        getParent()->printSelf();
+        
+        exit(EXIT_FAILURE);
     }
 
 }

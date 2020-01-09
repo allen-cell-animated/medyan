@@ -8,31 +8,29 @@
 
 Edge::Edge(Membrane* parent, size_t topoIndex):
     Trackable(),
-    _parent(parent), _topoIndex{topoIndex} {
+    parent_(parent), topoIndex_{topoIndex} {
     
     // Set coordinate and add to compartment
     updateCoordinate();
-    if(medyan::global().mode == medyan::GlobalVar::RunMode::Simulation) {
-        Compartment* compartment;
-        try { compartment = GController::getCompartment(mathfunc::vec2Vector(coordinate)); }
-        catch (exception& e) {
-            cout << e.what() << endl;
-            printSelf();
-            exit(EXIT_FAILURE);
-        }
-        _cellElement.manager = compartment->edgeCell.manager;
-        _cellElement.manager->addElement(this, _cellElement, compartment->edgeCell);
+
+    Compartment* compartment;
+    try { compartment = GController::getCompartment(mathfunc::vec2Vector(coordinate)); }
+    catch (exception& e) {
+        cout << e.what() << endl;
+        printSelf();
+        exit(EXIT_FAILURE);
     }
+    _cellElement.manager = compartment->edgeCell.manager;
+    _cellElement.manager->addElement(this, _cellElement, compartment->edgeCell);
 }
 
 Edge::~Edge() {
-    if(medyan::global().mode == medyan::GlobalVar::RunMode::Simulation)
-        _cellElement.manager->removeElement(_cellElement);
+    _cellElement.manager->removeElement(_cellElement);
 }
 
 void Edge::updateCoordinate() {
-    const auto& mesh = _parent->getMesh();
-    const size_t hei0 = mesh.getEdges()[_topoIndex].halfEdgeIndex;
+    const auto& mesh = parent_->getMesh();
+    const size_t hei0 = mesh.getEdges()[topoIndex_].halfEdgeIndex;
     const size_t hei1 = mesh.opposite(hei0);
     const size_t v0 = mesh.target(hei0);
     const size_t v1 = mesh.target(hei1);

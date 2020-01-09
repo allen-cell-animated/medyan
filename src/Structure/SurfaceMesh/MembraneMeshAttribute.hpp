@@ -125,7 +125,7 @@ struct MembraneMeshAttribute {
 
         size_t vertexMaxDegree;
 
-        // A vertex has indeterminant number of neighbors, so the cache structure needs to be determined at run-time.
+        // A vertex has undetermined number of neighbors, so the cache structure needs to be determined at run-time.
         std::vector< size_t > cachedVertexTopo;
         size_t cachedVertexTopoSize() const { return vertexMaxDegree * 5; }
         size_t cachedVertexOffsetNeighborCoord(size_t idx) const { return cachedVertexTopoSize() * idx; }

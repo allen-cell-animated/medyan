@@ -26,8 +26,8 @@ class Edge:
 
 private:
 
-    Membrane* _parent;
-    size_t _topoIndex; // Index in the meshwork topology.
+    Membrane* parent_;
+    size_t topoIndex_; // Index in the meshwork topology.
 
     void updateCoordinate(); // helper function to update coordiante of this edge
 
@@ -37,8 +37,8 @@ public:
     Edge(Membrane *parent, size_t topoIndex);
     ~Edge();
 
-    Membrane* getParent()const { return _parent; }
-    void setTopoIndex(size_t index) { _topoIndex = index; }
+    Membrane* getParent()const { return parent_; }
+    void setTopoIndex(size_t index) { topoIndex_ = index; }
 
     mathfunc::Vec< 3, floatingpoint > coordinate; // Coordinate of the mid point, updated with updateCoordiante()
 

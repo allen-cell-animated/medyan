@@ -17,21 +17,11 @@
       <Configuration>VisualRelease</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="TestDebug|x64">
-      <Configuration>TestDebug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="TestRelease|x64">
-      <Configuration>TestRelease</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Condition="!$(Configuration.Contains('Test'))" Include="..\..\src\**\*.cpp" Exclude="..\..\src\TESTS\**\*.cpp" />
-    <ClCompile Condition="$(Configuration.Contains('Test'))" Include="..\..\src\**\*.cpp" Exclude="..\..\src\MEDYAN.cpp" />
+    <ClCompile Include="..\..\src\**\*.cpp" />
     <ClCompile Condition="$(Configuration.Contains('Visual'))" Include="..\..\external\glad\src\glad.c" />
-    <ClInclude Condition="!$(Configuration.Contains('Test'))" Include="..\..\src\**\*.h;..\..\src\**\*.hpp" Exclude="..\..\src\TESTS\**\*.h" />
-    <ClInclude Condition="$(Configuration.Contains('Test'))" Include="..\..\src\**\*.h;..\..\src\**\*.hpp" />
+    <ClInclude Include="..\..\src\**\*.h;..\..\src\**\*.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -135,23 +125,6 @@
         %(AdditionalDependencies)
       </AdditionalDependencies>
     </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="$(Configuration.Contains('Test'))">
-    <ClCompile>
-      <AdditionalIncludeDirectories>
-        $(SolutionDir)..\..\src\TESTS;
-        %(AdditionalIncludeDirectories)
-      </AdditionalIncludeDirectories>
-      <!-- PreprocessorDefinitions>
-        TESTING;%(PreprocessorDefinitions)
-      </PreprocessorDefinitions -->
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-    </ClCompile>
-    <!-- Link>
-      <AdditionalLibraryDirectories>%USERPROFILE%\lib\gtest\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gtest.lib;gtest_main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Console</SubSystem>
-    </Link -->
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
