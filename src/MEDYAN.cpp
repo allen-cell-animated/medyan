@@ -65,11 +65,11 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
  
  */
 
-#include "common.h"
 
 #define CATCH_CONFIG_RUNNER
 #include "catch2/catch.hpp"
 
+#include "common.h"
 #include "Controller.h"
 #include "MedyanArgs.hpp"
 #include "Util/ThreadPool.hpp"
