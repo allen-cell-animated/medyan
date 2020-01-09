@@ -6,11 +6,6 @@
 namespace medyan {
 
 struct GlobalVar {
-    enum class RunMode {
-        Simulation,
-        Analysis
-    } mode; ///< The core mode at which the program runs
-
     // Analyze specific
     std::size_t analyzeMembraneBondFrame = 0;
     bool        analyzeMembraneBondAllFrames = false; // If it is set to true, it overrides the specific bond frame info.
