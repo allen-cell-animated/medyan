@@ -89,7 +89,7 @@ void Command::ruleCheck()const {
 
     // Recursively check all subcommands
     for(const auto& sc : subcommands_) {
-        sc.ruleCheck();
+        sc->ruleCheck();
     }
 }
 
@@ -130,13 +130,13 @@ int Command::parse_(std::vector<std::string>& feed, size_t argp) {
             // if no positional argument shows up, check if the argument is a subcommand
             auto cmdMatch = std::find_if(
                 subcommands_.begin(), subcommands_.end(),
-                [&thisArg](const Command& sc) { return sc.getName() == thisArg; }
+                [&thisArg](const std::unique_ptr<Command>& sc) { return sc->getName() == thisArg; }
             );
             if(state_._posArgCount == 0 && cmdMatch != subcommands_.end()) {
                 // hand over the parsing to the subcommand
-                cmdMatch->occur();
-                if(cmdMatch->activate()) cmdMatch->activate()();
-                return cmdMatch->parse_(feed, argp + 1);
+                (*cmdMatch)->occur();
+                (*cmdMatch)->activate();
+                return (*cmdMatch)->parse_(feed, argp + 1);
             }
         }
 
@@ -149,8 +149,8 @@ int Command::parse_(std::vector<std::string>& feed, size_t argp) {
                 p->options_.begin(), p->options_.end(),
                 shortNameMatch
             );
-            while(shortOpMatch == p->options_.end() && p->_parent) {
-                p = p->_parent;
+            while(shortOpMatch == p->options_.end() && p->parent_) {
+                p = p->parent_;
                 shortOpMatch = std::find_if(
                     p->options_.begin(), p->options_.end(),
                     shortNameMatch
@@ -167,7 +167,7 @@ int Command::parse_(std::vector<std::string>& feed, size_t argp) {
                 if(thisArg.length() > 2) {
                     // Use the rest as argument
                     std::string content = thisArg.substr(2);
-                    shortOpMatch->activate()(content);
+                    shortOpMatch->activate(*this, content);
                 } else {
                     // Use the next as argument
                     if(argp + 1 == feed.size()) {
@@ -175,11 +175,11 @@ int Command::parse_(std::vector<std::string>& feed, size_t argp) {
                         throw ParsingError(std::string("Argument required for option -") + shortName);
                     } else {
                         ++argp;
-                        shortOpMatch->activate()(feed[argp]);
+                        shortOpMatch->activate(*this, feed[argp]);
                     }
                 }
             } else {
-                shortOpMatch->activate()("");
+                shortOpMatch->activate(*this, "");
                 if(thisArg.length() > 2) {
                     // Prepare the rest for next round
                     thisArg = '-' + thisArg.substr(2);
@@ -208,8 +208,8 @@ int Command::parse_(std::vector<std::string>& feed, size_t argp) {
                 p->options_.begin(), p->options_.end(),
                 longNameMatch
             );
-            while(longOpMatch == p->options_.end() && p->_parent) {
-                p = p->_parent;
+            while(longOpMatch == p->options_.end() && p->parent_) {
+                p = p->parent_;
                 longOpMatch = std::find_if(
                     p->options_.begin(), p->options_.end(),
                     longNameMatch
@@ -226,7 +226,7 @@ int Command::parse_(std::vector<std::string>& feed, size_t argp) {
                 if(eqIdx != std::string::npos) {
                     // Use everything after '=' as the argument
                     std::string content = thisArg.substr(eqIdx + 1);
-                    longOpMatch->activate()(content);
+                    longOpMatch->activate(*this, content);
                 } else {
                     // Use the next as argument
                     if(argp + 1 == feed.size()) {
@@ -234,11 +234,11 @@ int Command::parse_(std::vector<std::string>& feed, size_t argp) {
                         throw ParsingError(std::string("Argument required for option --") + longName);
                     } else {
                         ++argp;
-                        longOpMatch->activate()(feed[argp]);
+                        longOpMatch->activate(*this, feed[argp]);
                     }
                 }
             } else {
-                longOpMatch->activate()("");
+                longOpMatch->activate(*this, "");
                 if(eqIdx != std::string::npos)
                     throw ParsingError(std::string("Option --") + longName + std::string(" should not take variable"));
             }
@@ -273,8 +273,8 @@ void Command::validate_() const {
 
     // Recursively validate subcommands
     for(const auto& sc : subcommands_) {
-        if(sc.state_._occurenceCount)
-            sc.validate_();
+        if(sc->state_._occurenceCount)
+            sc->validate_();
     }
 }
 
@@ -317,7 +317,7 @@ void Command::printUsage(std::ostream& os)const {
     if(subcommands_.size()) {
         os << "\nCommands:\n";
         for(const auto& sc : subcommands_)
-            usagePairFormatter(sc.getName(), sc.getDescription(), os);
+            usagePairFormatter(sc->getName(), sc->getDescription(), os);
     }
 
     // Section of option

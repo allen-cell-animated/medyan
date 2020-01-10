@@ -50,7 +50,7 @@ inline auto medyanInitFromCommandLine(int argc, char** argv) {
         cmdMain.addOption(makeOptionWithVar('i', "", "path", "Input directory", false, res.inputDirectory));
         cmdMain.addOption(makeOptionWithVar('o', "", "path", "Output directory", false, res.outputDirectory));
         cmdMain.addOption(Option(0, "seed-fixed", "seed", "Fixed random generator seed", false,
-            [&](const std::string& arg) {
+            [&](const Command&, const std::string& arg) {
                 res.rngSeedFixed = true;
                 VariableWrite<unsigned long long>{std::string("seed")}(res.rngSeed, arg);
             }
