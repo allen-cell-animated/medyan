@@ -14,6 +14,7 @@
 namespace cmdparse {
 
 // Forward decl
+class Command;
 template< typename T > struct VariableWrite;
 template< typename T > struct VectorAppend;
 
@@ -78,15 +79,43 @@ private:
         size_t _occurenceCount = 0;
     } state_;
 
-    std::function<void(const std::string&)> activate_;
+    std::function<void(const Command &, const std::string &)> activateFunc_;
 
 public:
 
-    Option(char shortName, const std::string& longName, const std::string& description, bool required, const std::function<void()>& activateWithoutVar) :
-        _short(shortName), _long(longName), _description(description), _hasVariable(false), _variableName(), _required(required),
-        activate_([activateWithoutVar](const std::string&) { activateWithoutVar(); }) {}
-    Option(char shortName, const std::string& longName, const std::string& variableName, const std::string& description, bool required, const std::function<void(const std::string&)>& activate):
-        _short(shortName), _long(longName), _description(description), _hasVariable(true), _variableName(variableName), _required(required), activate_(activate) {}
+    template< typename ActivateFuncWithoutVar > // void(const Command&)
+    Option(
+        char                     shortName,
+        const std::string&       longName,
+        const std::string&       description,
+        bool                     required,
+        ActivateFuncWithoutVar&& act
+    ) :
+        _short(shortName),
+        _long(longName),
+        _description(description),
+        _hasVariable(false),
+        _variableName(),
+        _required(required),
+        activateFunc_([act](const Command& cmd, const std::string&) { act(cmd); })
+    {}
+    template< typename ActivateFuncWithVar > // void(const Command&, const std::string&)
+    Option(
+        char                  shortName,
+        const std::string&    longName,
+        const std::string&    variableName,
+        const std::string&    description,
+        bool                  required,
+        ActivateFuncWithVar&& act
+    ):
+        _short(shortName),
+        _long(longName),
+        _description(description),
+        _hasVariable(true),
+        _variableName(variableName),
+        _required(required),
+        activateFunc_(std::forward<ActivateFuncWithVar>(act))
+    {}
 
     Option(Option&&) = default;
 
@@ -103,18 +132,18 @@ public:
     void occur() { ++state_._occurenceCount; }
     size_t getOccurenceCount()const { return state_._occurenceCount; }
 
-    const auto& activate() const { return activate_; }
+    void activate(const Command& cmd, const std::string& var) const { return activateFunc_(cmd, var); }
 };
 
 // Option factory
 inline Option makeOptionAsFlag(char shortName, const std::string& longName, const std::string& description, bool required) {
     // Add an option without argument
-    return Option(shortName, longName, description, required, []{});
+    return Option(shortName, longName, description, required, [](const Command&){});
 }
 
 template< typename T >
 inline Option makeOptionWithVar(char shortName, const std::string& longName, const std::string& variableName, const std::string& description, bool required, T& var) {
-    return Option(shortName, longName, variableName, description, required, [variableName, &var](const std::string& arg) {
+    return Option(shortName, longName, variableName, description, required, [variableName, &var](const Command&, const std::string& arg) {
         VariableWrite<T>{variableName}(var, arg);
         // Caveat: if () is used instead of {}, then T(a)(b, c) will be considered as the definition of variable a with type T initialized with (b, c).
     });
@@ -132,10 +161,10 @@ private:
                                // immediately end parsing, ignoring the rest of
                                // the arguments.
 
-    std::vector<std::unique_ptr<PosArg>> _posArgs;
-    std::vector<Option>  options_;
-    std::vector<Command> subcommands_;
-    Command* _parent = nullptr;
+    std::vector<std::unique_ptr<PosArg>>  _posArgs;
+    std::vector<Option>                   options_;
+    std::vector<std::unique_ptr<Command>> subcommands_;
+    Command* parent_ = nullptr;
 
     std::function<void()> userValidation_;
 
@@ -154,18 +183,31 @@ private:
         size_t _occurenceCount = 0;
     } state_;
 
-    std::function<void()> activate_;
+    std::function< void() > activateFunc_;
 
     // Private constructor, allowing parent assignment and name inheriting
-    Command(Command* parent, const std::string& inheritedName, const std::string& name, const std::string& description, const std::function<void()>& activate) :
-        _name(name), _inheritedName(inheritedName), _description(description), _parent(parent), activate_(activate) {}
+    template< typename ActivateFunc > // void()
+    Command(
+        Command*           parent,
+        const std::string& inheritedName,
+        const std::string& name,
+        const std::string& description,
+        ActivateFunc&&     activateFunc
+    ) :
+        _name(name),
+        _inheritedName(inheritedName),
+        _description(description),
+        parent_(parent),
+        activateFunc_(activateFunc)
+    {}
 
 public:
 
 
     // Public constructor, where parent and inheritedName are default
-    Command(const std::string& name, const std::string& description, const std::function<void()>& activate) :
-        _name(name), _description(description), activate_(activate) {}
+    template< typename ActivateFunc > // void()
+    Command(const std::string& name, const std::string& description, ActivateFunc&& activateFunc) :
+        _name(name), _description(description), activateFunc_(activateFunc) {}
     Command(const std::string& name, const std::string& description) :
         _name(name), _description(description) {}
 
@@ -174,15 +216,15 @@ public:
     // Check validity of specified rules. Recursively check for subcommands.
     void ruleCheck() const;
 
-    const std::string& getName()const { return _name; }
-    std::string getFullName()const { return _inheritedName + ' ' + _name; }
-    const std::string& getDescription()const { return _description; }
+    const auto& getName()        const { return _name; }
+    auto        getFullName()    const { return _inheritedName + ' ' + _name; }
+    const auto& getDescription() const { return _description; }
 
     void setTerminating(bool b) { terminating_ = b; }
 
     void occur() { ++state_._occurenceCount; }
 
-    const auto& activate() const { return activate_; }
+    void activate() const { if(activateFunc_) activateFunc_(); }
 
     // Specification
     template< typename... Args >
@@ -211,19 +253,19 @@ public:
     }
     Option& addHelp() {
         // Auxilliary for
-        return addOption(Option('h', "help", "Print usage and exit", false, [this] {
-            printUsage();
+        return addOption(Option('h', "help", "Print usage and exit", false, [](const Command& cmd) {
+            cmd.printUsage();
             std::exit(EXIT_SUCCESS);
         }));
     }
     template< typename... Args >
     Command& addCommand(Args&&... args) {
-        subcommands_.push_back(Command(
+        subcommands_.emplace_back(new Command(
             this,
             (_inheritedName.length() ? _inheritedName + ' ' + _name : _name),
             std::forward<Args>(args)...
         ));
-        return subcommands_.back();
+        return *subcommands_.back();
     }
     Command& addCommandSimple(const std::string& name, const std::string& description) {
         return addCommand(name, description, []{});
@@ -236,7 +278,7 @@ public:
     // States will be changed in this function
     int parse(int argc, char** argv) {
         occur();
-        if(activate_) activate_();
+        activate();
 
         std::vector<std::string> inputFeed(argc);
         for(size_t i = 0; i < argc; ++i) inputFeed[i] = argv[i];
@@ -248,7 +290,7 @@ public:
     }
 
     // Auxilliary function that prints usage help message
-    void printUsage(std::ostream& os = std::cout)const;
+    void printUsage(std::ostream& os = std::cout) const;
 };
 
 // Helper functions
