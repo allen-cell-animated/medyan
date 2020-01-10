@@ -207,12 +207,16 @@ public:
     }
     
     const vector<floatingpoint>& getPinPosition() { return pinnedPosition;}
-    // Remove all pinned beads.
-    void resetAllPinned() {
-
-        _isPinned = false;
+        
+    /// Reset _isPinned to false
+    static void removeAllPinned() {
+        
+        for (auto b : Bead::getPinnedBeads()) b->_isPinned = false;
+        
         _pinnedBeads.clear();
+        
     }
+        
     /// Get all pinned beads from subsystem
     static const vector<Bead*>& getPinnedBeads() {
         
