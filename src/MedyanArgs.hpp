@@ -66,7 +66,7 @@ inline auto medyanInitFromCommandLine(int argc, char** argv) {
             [&] { res.runMode = MedyanRunMode::analyze; }
         );
         cmdAnalyze.addOption(Option(0, "bond-frame", "frame", "Frame of membrane topology information", false,
-            [&](const std::string& arg) {
+            [&](const Command&, const std::string& arg) {
                 if(arg == "all") {
                     medyan::globalMutable().analyzeMembraneBondAllFrames = true;
                 } else {
