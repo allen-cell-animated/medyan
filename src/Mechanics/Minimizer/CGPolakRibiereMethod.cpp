@@ -310,6 +310,8 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 	std::cout<<"Slice time "<<elapsed_runslice1.count()<<endl;
 	tbeginII = chrono::high_resolution_clock::now();
 #endif
+
+	//CUDA based minimization begins
 #ifdef CUDAACCL
 	while (/* Iteration criterion */  numIter < N &&
 		   /* Gradient tolerance  */  (Mc_isminimizationstate[0])) {
@@ -563,7 +565,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
 	std::cout<<"CUDA Total number of iterations "<<numIter<<endl;
 #endif //CUDAACCL
-
+//CUDA based minimization ends
 #ifdef CUDATIMETRACK_MACRO
 	floatingpoint s1 = 0.0;
 	floatingpoint s2,s3,s4;

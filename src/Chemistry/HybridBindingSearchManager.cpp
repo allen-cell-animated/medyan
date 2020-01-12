@@ -396,7 +396,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 		short HNLID = HNLIDvec[idx];
 		short complimentaryfID;
 
-		if (_filamentType != fIDpair[0] || _filamentType != fIDpair[1]) return;
+		if (_filamentType != fIDpair[0] && _filamentType != fIDpair[1]) return;
 		else if (_filamentType == fIDpair[0]) complimentaryfID = fIDpair[1];
 		else complimentaryfID = fIDpair[0];
 

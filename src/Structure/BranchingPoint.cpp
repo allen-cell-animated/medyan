@@ -106,7 +106,7 @@ BranchingPoint::~BranchingPoint() noexcept {
     //mark the free species instead
     else {
         //find the free species
-        string speciesName = _cBranchingPoint->getDiffusingActinSpeciesName();
+        string speciesName = diffusingactinspeciesname;
         Species* freeMonomer = _compartment->findSpeciesByName(speciesName);
         //Commented out on Dec 11, 2019. Found an alternate way that is more robust.
         /*Species* speciesFilament = m->speciesFilament(m->activeSpeciesPlusEnd());

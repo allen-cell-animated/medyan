@@ -143,9 +143,6 @@ MotorGhost::~MotorGhost() noexcept {
 }
 
 void MotorGhost::updatePosition() {
-#ifdef CROSSCHECK_IDX
-    cout<<"MG position begin"<<endl;
-#endif
 #ifdef CHEMISTRY
     //update ccylinders
     _cMotorGhost->setFirstCCylinder(_c1->getCCylinder());
@@ -228,9 +225,6 @@ void MotorGhost::updatePosition() {
 #endif
 
 #endif
-#ifdef CROSSCHECK_IDX
-	cout<<"MG position end"<<endl;
-#endif
 }
 
 /// @note - This function updates forward walking rates using the
@@ -240,17 +234,6 @@ void MotorGhost::updatePosition() {
 /// Updates unbinding rates based on the stretch force. Does not
 /// consider compression forces, only stretching.
 void MotorGhost::updateReactionRates() {
-
-#ifdef CROSSCHECK_IDX
-    auto b1 = _c1->getFirstBead();
-    auto b2 = _c1->getSecondBead();
-    auto b3 = _c2->getFirstBead();
-    auto b4 = _c2->getSecondBead();
-    cout<<"MG mID "<<getId()<<" "<<_c1->getId()<<" "<<_c2->getId()<<" "<<_position1<<" "
-        <<_position2<<" cindex "<<_c1->getStableIndex()<<" "<<_c2->getStableIndex()<<" bID "<<b1->getId
-            ()<<" "<<b2->getId()<<" bindex "<<b1->getStableIndex()<<" "<<b2->getStableIndex()<<" "
-            <<b3->getStableIndex()<<" "<<b4->getStableIndex()<<endl;
-#endif
 
     //current force
     floatingpoint force = max<floatingpoint>((floatingpoint)0.0,

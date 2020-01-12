@@ -59,7 +59,7 @@ void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
 	if (SysParams::INITIALIZEDSTATUS ) {
 		short complimentaryfID;
 		short _filamentType = cc->getType();
-		if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1])
+		if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
 			return;
 		else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
 		else complimentaryfID = _filamentIDvec[0];
@@ -134,7 +134,7 @@ void BranchingManager::removePossibleBindings(CCylinder* cc, short bindingSite) 
 
     short complimentaryfID;
     short _filamentType = cc->getType();
-    if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1]) return;
+    if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1]) return;
 
     //remove tuple which has this ccylinder
     _possibleBindings.erase(tuple<CCylinder*, short>(cc, bindingSite));
@@ -168,7 +168,8 @@ void BranchingManager::updateAllPossibleBindings() {
     for(auto &c : _compartment->getCylinders()) {
 
         short _filamentType = c->getType();
-        if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1]) return;
+        if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
+        	return;
 
         auto cc = c->getCCylinder();
         int j = -1;
@@ -291,7 +292,7 @@ void BranchingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSi
 	if (SysParams::INITIALIZEDSTATUS ) {
     short complimentaryfID;
     short _filamentType = cc->getType();
-    if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1]) return;
+    if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1]) return;
     else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
     else complimentaryfID = _filamentIDvec[0];
 
@@ -363,7 +364,8 @@ void BranchingManager::updateAllPossibleBindingsstencil() {
     for(auto &c : _compartment->getCylinders()) {
 
         short _filamentType = c->getType();
-        if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1]) return;
+        if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
+        	return;
 
         auto cc = c->getCCylinder();
         int j = -1;
@@ -461,7 +463,7 @@ void BranchingManager::removePossibleBindingsstencil(CCylinder* cc) {
 void BranchingManager::removePossibleBindingsstencil(CCylinder* cc, short bindingSite) {
 
   short _filamentType = cc->getType();
-  if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1]) return;
+  if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1]) return;
 
     //remove tuple which has this ccylinder
     _possibleBindingsstencil.erase(tuple<CCylinder*, short>(cc, bindingSite));
@@ -598,7 +600,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
 	if (SysParams::INITIALIZEDSTATUS ) {
 		short complimentaryfID;
 		short _filamentType = cc->getType();
-		if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1])
+		if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
 			return;
 		else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
 		else complimentaryfID = _filamentIDvec[0];
@@ -723,7 +725,7 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
 
     short complimentaryfID;
     short _filamentType = cc->getType();
-    if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1]) return;
+    if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1]) return;
     else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
     else complimentaryfID = _filamentIDvec[0];
 
@@ -806,7 +808,7 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
 void LinkerBindingManager::removePossibleBindings(CCylinder* cc) {
 
     short _filamentType = cc->getType();
-    if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1]) return;
+    if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1]) return;
 
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
         bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++){
@@ -850,7 +852,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
 
       short _filamentType = c->getType();
       short complimentaryfID;
-      if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1]) return;
+      if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1]) return;
       else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
       else complimentaryfID = _filamentIDvec[0];
 
@@ -1070,7 +1072,7 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
 	if (SysParams::INITIALIZEDSTATUS ) {
 		short complimentaryfID;
 		short _filamentType = cc->getType();
-		if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1])
+		if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
 			return;
 		else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
 		else complimentaryfID = _filamentIDvec[0];
@@ -1212,7 +1214,8 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
 	    short complimentaryfID;
 
 	    short _filamentType = c.type;
-	    if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1]) return;
+	    if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
+	    	return;
 	    else if (_filamentType == _filamentIDvec[0])
 		    complimentaryfID = _filamentIDvec[1];
 	    else
@@ -1384,7 +1387,7 @@ void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bi
 
 	short _filamentType = cc->getType();
     short complimentaryfID;
-    if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1]) return;
+    if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1]) return;
     else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
     else complimentaryfID = _filamentIDvec[0];
 
@@ -1616,7 +1619,7 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
 
 		short complimentaryfID;
 		short _filamentType = cc->getType();
-		if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1])
+		if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
 			return;
 		else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
 		else complimentaryfID = _filamentIDvec[0];
@@ -1744,7 +1747,7 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSit
 
     short complimentaryfID;
     short _filamentType = cc->getType();
-    if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1]) return;
+    if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1]) return;
     else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
     else complimentaryfID = _filamentIDvec[0];
 
@@ -1863,7 +1866,8 @@ void MotorBindingManager::updateAllPossibleBindings() {
 
         short _filamentType = c->getType();
         short complimentaryfID;
-        if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1]) return;
+        if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
+        	return;
         else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
         else complimentaryfID = _filamentIDvec[0];
 
@@ -2060,7 +2064,7 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
 	if (SysParams::INITIALIZEDSTATUS ) {
 		short complimentaryfID;
 		short _filamentType = cc->getType();
-		if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1])
+		if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
 			return;
 		else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
 		else complimentaryfID = _filamentIDvec[0];
@@ -2203,7 +2207,8 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 
         short _filamentType = c.type;
         short complimentaryfID;
-        if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1]) return;
+        if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
+        	return;
         else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
         else complimentaryfID = _filamentIDvec[0];
         short nbs1 = SysParams::Chemistry().bindingSites[_filamentType].size();
@@ -2379,7 +2384,7 @@ void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bin
 
     short _filamentType = cc->getType();
     short complimentaryfID;
-    if (_filamentType != _filamentIDvec[0] || _filamentType != _filamentIDvec[1]) return;
+    if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1]) return;
     else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
     else complimentaryfID = _filamentIDvec[0];
 

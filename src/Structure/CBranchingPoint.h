@@ -40,7 +40,7 @@ private:
     
     short _branchType; ///< Branching point type
 
-    string diffusingactinspeciesname;
+    string diffusingactinspeciesname="";
 public:
     /// Default constructor and destructor
     /// @param pos - monomer index on first cylinder

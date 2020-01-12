@@ -63,7 +63,7 @@ void Compartment::SIMDcoordinates_section(){
                         Cylinder::getDbDataConst().value[cindex].filamentFirstEntry;
 
                 //packed integer containing filament ID and filament position.
-                //Assumes you don't have 127 (2^7 -1) cylinders
+                //Assumes you don't have 127 (2^7 -1) binding sites
                 uint32_t cylfinfo = (_fID<< 7);
                 cylfinfo = cylfinfo | _fpos;
 

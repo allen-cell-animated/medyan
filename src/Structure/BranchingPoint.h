@@ -64,6 +64,8 @@ private:
 
     ///For dynamic rate unbinding
     static vector<BranchRateChanger*> _unbindingChangers;
+
+    string diffusingactinspeciesname = "";
     
 public:
     vector<floatingpoint> coordinate; ///< coordinate of midpoint,
@@ -138,6 +140,8 @@ public:
     void initializerestart(floatingpoint eqLength){ _mBranchingPoint->initializerestart
                 (eqLength);};
 
+    void setdiffusingactinspeciesname(string _diffusingactinspeciesname){
+        diffusingactinspeciesname = _diffusingactinspeciesname; }
 
 };
 

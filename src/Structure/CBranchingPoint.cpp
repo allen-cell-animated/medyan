@@ -77,6 +77,7 @@ void CBranchingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
     RSpecies** rs = onRxn->rspecies();
 
     diffusingactinspeciesname = rs[SPECIESA_DIFFUSING_INDEX_ONRXN]->getSpecies().getName();
+    getBranchingPoint()->setdiffusingactinspeciesname(diffusingactinspeciesname);
 
     Species* sfb = &(rs[SPECIESB_BINDING_INDEX]->getSpecies());
     

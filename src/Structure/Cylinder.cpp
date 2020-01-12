@@ -125,12 +125,7 @@ void Cylinder::initializerestart(int nummonomers, int firstmonomer, int lastmono
 }
 
 Cylinder::~Cylinder() noexcept {
-	#ifdef CROSSCHECK_IDX
-	cout<<"cindex "<<getStableIndex()<<" removed from ID "<<getId()<<" with bindices "
-	<<_b1->getStableIndex()<<" "<<_b2->getStableIndex()<<" and bID "<<_b1->getId()<<" "
-																		 ""<<_b2->getId()
-																		 <<endl;
-	#endif
+
     //remove from compartment
     _cellElement.manager->removeElement(_cellElement);
     
