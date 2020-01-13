@@ -2284,7 +2284,7 @@ void ChemManager::updateCopyNumbers() {
         auto holdmolarity = get<6>(s);
         floatingpoint factor = Boundary::systemvolume * 6.023*1e-7;
         //If system is being restarted, do not update Copynumbers
-        if(SysParams::RUNSTATE == 0){
+        if(SysParams::RUNSTATE == false){
             //activate reactions
             //find the species, set copy number
             Species* species = grid->findSpeciesBulkByName(name);

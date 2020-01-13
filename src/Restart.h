@@ -143,7 +143,10 @@ public:
 // purposes.
         for(auto sd : _chemData.speciesDiffusing) {
             string name = get<0>(sd);
-            CopyNumbers.push_back(_subSystem->getCompartmentGrid()->countDiffusingSpecies(name));}
+	        CopyNumbers.push_back(get<1>(sd));
+            //CopyNumbers.push_back(_subSystem->getCompartmentGrid()
+            //->countDiffusingSpecies(name));
+            }
         //Set copy number of diffusing species in each compartment to 0.
         for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
             for(auto sd : _chemData.speciesDiffusing) {
