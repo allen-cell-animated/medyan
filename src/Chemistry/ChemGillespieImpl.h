@@ -237,6 +237,12 @@ public:
     
     /// Prints all RNodes in the reaction network
     virtual void printReactions() const;
+
+    /// Cross checks all reactions in the network for firing time.
+    virtual bool crosschecktau() const {
+        LOG(WARNING)<<"Cannot check for tau in reactions in ChemGillespieImpl.h"<<endl;
+        return true;
+    };
     
 private:
 

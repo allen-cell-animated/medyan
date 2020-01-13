@@ -328,6 +328,9 @@ public:
     
     /// Prints all RNodes in the reaction network
     virtual void printReactions() const;
+
+    /// Cross checks all reactions in the network for firing time.
+    virtual bool crosschecktau() const;
     
 private:
     /// This is a somewhat complex subroutine which implements the main part of the
@@ -346,7 +349,8 @@ private:
     bool makeStep();
 
     //sets glocal time to specified value. To be used only during restart.
-    void setTime(floatingpoint timepoint){ _t=timepoint; syncGlobalTime();}
+    void setTime(floatingpoint timepoint){ _t=timepoint; syncGlobalTime();
+    cout<<"Time set to "<<_t<<" with Global time "<<tau()<<endl;}
 private:
     unordered_map<ReactionBase*, unique_ptr<RNodeNRM>> _map_rnodes; ///< The database of RNodeNRM objects,
                                                                     ///< representing the reaction network

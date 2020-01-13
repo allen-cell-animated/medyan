@@ -63,6 +63,9 @@ public:
     /// Mainly used for debugging: print chemical reactions in the network at
     /// this moment
     void printReactions();
+
+    /// Cross checks all reactions in the network for firing time.
+    bool crosschecktau();
     
     vector<floatingpoint> getEnergy();
     

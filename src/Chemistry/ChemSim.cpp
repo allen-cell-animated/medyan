@@ -53,6 +53,10 @@ void ChemSim::printReactions() {
     return _pimpl->printReactions();
 }
 
+bool ChemSim::crosschecktau(){
+    return _pimpl->crosschecktau();
+}
+
 //Dissipation
 vector<floatingpoint> ChemSim::getEnergy(){
     vector<floatingpoint> returnvec;

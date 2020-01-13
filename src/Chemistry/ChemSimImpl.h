@@ -57,6 +57,8 @@ public:
     /// Mainly used for debugging: print chemical reactions in the network at
     /// this moment
     virtual void printReactions() const = 0;
+
+    virtual bool crosschecktau() const = 0;
     
     DissipationTracker * _dt = nullptr;
     

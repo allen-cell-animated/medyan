@@ -74,6 +74,8 @@ public:
     
     ///Remove set of reactions at runtime, specified by input
     void removeReactions();
+
+    bool crosschecktau();
     
     vector<floatingpoint> getEnergy();
     

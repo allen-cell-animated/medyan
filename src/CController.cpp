@@ -107,6 +107,10 @@ bool CController::runSteps(int steps) {
     return _chemSim->runSteps(steps);
 }
 
+bool CController::crosschecktau(){
+    return _chemSim->crosschecktau();
+}
+
 vector<floatingpoint> CController::getEnergy(){
     return _chemSim->getEnergy();};
 

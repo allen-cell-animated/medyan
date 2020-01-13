@@ -221,11 +221,11 @@ void Controller::initialize(string inputFile,
     string hrcdsnapname = _outputDirectory + "HRCD.traj";
 
     _outputs.push_back(new HRCD(hrcdsnapname, &_subSystem, _cs));
-        
+
     //Set up HRMD output if dissipation tracking is enabled
     string hrmdsnapname = _outputDirectory + "HRMD.traj";
     _outputs.push_back(new HRMD(hrmdsnapname, &_subSystem, _cs));
-        
+
     }
 
     if(SysParams::CParams.eventTracking){
@@ -246,18 +246,18 @@ void Controller::initialize(string inputFile,
     //Set up HessianMatrix if hessiantracking is enabled
     string hessianmatrix = _outputDirectory + "hessianmatrix.traj";
     _outputs.push_back(new HessianMatrix(hessianmatrix, &_subSystem, _ffm));
-        
+
     //Set up HessianSpectra if hessiantracking is enabled
     string hessianspectra = _outputDirectory + "hessianspectra.traj";
     _outputs.push_back(new HessianSpectra(hessianspectra, &_subSystem, _ffm));
-        
-        
+
+
     }
 
     //Set up CMGraph output
     string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
     _outputs.push_back(new CMGraph(cmgraphsnapname, &_subSystem));
-    
+
     //Set up TMGraph output
     string tmgraphsnapname = _outputDirectory + "TMGraph.traj";
     _outputs.push_back(new TMGraph(tmgraphsnapname, &_subSystem));
@@ -457,7 +457,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
     if(SType.mtoc) {
 
         MTOC* mtoc = _subSystem.addTrackable<MTOC>();
-        
+
         //set MTOC coordinates based on input
         floatingpoint bcoordx = SType.mtocInputCoordXYZ[0];
         floatingpoint bcoordy = SType.mtocInputCoordXYZ[1];
@@ -469,7 +469,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
 
 
         mtoc->setBubble(b);
-        
+
         FilamentInitializer *init = new MTOCFilamentDist(bcoords,
                                                          SysParams::Mechanics().BubbleRadius[SType.mtocBubbleType]);
 
@@ -482,26 +482,26 @@ void Controller::setupSpecialStructures(SystemParser& p) {
         //add filaments
         filamentData fil=get<0>(filaments);
         for (auto it: fil) {
-            
+
             auto coord1 = get<1>(it);
             auto coord2 = get<2>(it);
-            
+
             vector<vector<floatingpoint>> coords = {coord1, coord2};
-            
+
             floatingpoint d = twoPointDistance(coord1, coord2);
             vector<floatingpoint> tau = twoPointDirection(coord1, coord2);
-            
+
             int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
-            
+
             // check how many segments can fit between end-to-end of the filament
             Filament *f = _subSystem.addTrackable<Filament>(&_subSystem, SType.mtocFilamentType,
                                                              coords, numSegment + 1, "ARC");
-            
+
             mtoc->addFilament(f);
-            
+
         }
         cout << "MTOC is set." << endl;
-        
+
     }
     else if(SType.afm) {
 
@@ -828,7 +828,7 @@ void Controller::executeSpecialProtocols() {
 
         pinLowerBoundaryFilaments();
     }
-    
+
 }
 
 void Controller::updatePositions() {
@@ -855,7 +855,7 @@ void Controller::updatePositions() {
 //    for(auto m : _subSystem->getMovables()) m->updatePosition();
 	int count = 0;
 	for(auto m : Movable::getMovableList()) m->updatePosition();
-    
+
     //update bubble
     if(SysParams::Chemistry().makeAFM) updateBubblePositions();
 
@@ -866,37 +866,37 @@ void Controller::updatePositions() {
 }
 
 void Controller::updateBubblePositions() {
-    
+
     //update AFM bubble again based on time
     for(auto b : Bubble::getBubbles()) {
         if(b->isAFM()) b->updatePositionManually();
     }
-    
+
     if(SysParams::Chemistry().makeRateDepend && tau() - tp > 1) {
         tp+=1;
-        
+
         for(auto &filament : Filament::getFilaments()) {
             double deltaL;
             double numCyl = 0;
             for (auto cylinder : filament->getCylinderVector()){
-                
+
                 deltaL += cylinder->getMCylinder()->getLength() -
                 cylinder->getMCylinder()->getEqLength();
                 numCyl += 1;
             }
-            
+
             //print last
             Cylinder* cylinder = filament->getCylinderVector().back();
             deltaL += cylinder->getMCylinder()->getLength() -
             cylinder->getMCylinder()->getEqLength();
             numCyl += 1;
-            
+
             double k = cylinder->getMCylinder()->getStretchingConst();
-            
+
             //if the filament tension is higher than threshold, regardless of sign
             if(k*deltaL/numCyl > SysParams::Chemistry().makeRateDependForce ||
                -k*deltaL/numCyl > SysParams::Chemistry().makeRateDependForce ){
-                
+
                 Cylinder* pCyl = filament->getCylinderVector().back();
                 for(auto &r : pCyl->getCCylinder()->getInternalReactions()) {
                     if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
@@ -1070,13 +1070,15 @@ void Controller::run() {
                 }
             }}
         cout<<endl;
+        _cController.initializerestart(_restart->getrestartime());
+        cout<<"Tau reset to "<<tau()<<endl;
         //sets
         _restart->CBoundinitializerestart();
         _restart->restartupdateCopyNumbers();
 
         cout<<"Diffusion rates restored, diffusing molecules redistributed."<<endl;
-        _cController.initializerestart(_restart->getrestartime());
-        cout<<"Tau reset to "<<tau()<<endl;
+
+
 //Step 4.5. re-add pin positions
         SystemParser p(_inputFile);
         FilamentSetup filSetup = p.readFilamentSetup();
@@ -1153,6 +1155,10 @@ void Controller::run() {
         cout << "---" << endl;
         cout << "Current simulation time = "<< tau() << endl;
         //restart phase ends
+
+
+        //Crosscheck tau to make sure heap is ordered accurately.
+        _cController.crosschecktau();
     }
 #ifdef CHEMISTRY
     tauLastSnapshot = tau();
@@ -1380,7 +1386,7 @@ void Controller::run() {
                 minimizationResult = _mController.run();
                 mine= chrono::high_resolution_clock::now();
 
-                
+
                 chrono::duration<floatingpoint> elapsed_runm3(mine - mins);
                 minimizationtime += elapsed_runm3.count();
                 #ifdef OPTIMOUT
@@ -1436,7 +1442,7 @@ void Controller::run() {
                 cout << "Minimization time for run=" << minimizationtime <<endl;
                 cout<< "Neighbor-list+Bmgr-time for run="<<nltime<<endl;
                 cout<<"update-position time for run="<<updateposition<<endl;
-                
+
                 cout<<"rxnrate time for run="<<rxnratetime<<endl;
                 cout<<"Output time for run="<<outputtime<<endl;
                 cout<<"Special time for run="<<specialtime<<endl;

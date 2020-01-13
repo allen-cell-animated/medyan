@@ -111,7 +111,11 @@ void RNodeNRM::generateNewRandTau() {
     reComputePropensity();//calculated new _a
 
 #ifdef TRACK_ZERO_COPY_N
-    newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
+    auto t1 = _chem_nrm.generateTau(_a);
+    auto t2 = _chem_nrm.getTime();
+    newTau = t1 + t2;
+/*    cout<<"Rxnbase "<<_react<<" Global time "<<t2<<" "<<tau()<<" lag time "<<t1
+        <<" firing time "<<newTau<<endl;*/
 #else
     if(_a<1.0e-10) // numeric_limits< floatingpoint >::min()
         newTau = numeric_limits<floatingpoint>::infinity();
@@ -311,4 +315,18 @@ void ChemNRMImpl::printReactions() const {
         auto rn = x.second.get();
         rn->printSelf();
     }
+}
+
+bool ChemNRMImpl::crosschecktau() const {
+    bool status = true;
+    for (auto &x : _map_rnodes){
+        auto rn = x.second.get();
+        if(rn->getTau() <= tau()) {
+            rn->printSelf();
+            status = false;
+            LOG(WARNING) << "Tau in reaction is smaller than current time "<<endl;
+            exit(EXIT_FAILURE);
+        }
+    }
+    return status;
 }
