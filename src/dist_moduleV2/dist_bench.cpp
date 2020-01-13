@@ -1,3 +1,4 @@
+#ifdef SIMDBINDINGSEARCH
 #include <random>
 #include <iostream>
 #include <chrono>
@@ -128,3 +129,4 @@ namespace dist {
 	}
 
 } // end-of-namespace dist
+#endif
