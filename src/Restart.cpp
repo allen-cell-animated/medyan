@@ -224,7 +224,10 @@ void Restart::readNetworkSetup() {
 					_rbdata.eqlen = atof((lineVector[5]).c_str());
 					//diffusing species name
 					_rbdata.diffusingspeciesnamebranch = lineVector[6];
-					_rbdata.diffusingspeciesnameactin = lineVector[7];
+					if(lineVector.size() == 8 )
+						_rbdata.diffusingspeciesnameactin = lineVector[7];
+					else
+						_rbdata.diffusingspeciesnameactin = "A";
 
 					_rBDatavec.push_back(_rbdata);
 					//get next filament data

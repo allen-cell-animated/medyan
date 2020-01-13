@@ -84,10 +84,6 @@ public:
     
     virtual void createOffReaction(ReactionBase* onRxn, SubSystem* ps);
 
-    string getDiffusingActinSpeciesName(){
-        return diffusingactinspeciesname;
-    }
-
     Species* getDiffusingBranchSpecies(){
         RSpecies** rs = _offRxn->rspecies();
         Species* sfb = &(rs[SPECIESB_DIFFUSING_INDEX_OFFRXN]->getSpecies());

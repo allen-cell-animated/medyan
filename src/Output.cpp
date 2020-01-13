@@ -1365,8 +1365,7 @@ void Datadump::print(int snapshot) {
 		_outputFile <<l->getId()<<" "<<l->getType()<<" "<<cyl1->getStableIndex()<<" "
 		            <<cyl2->getStableIndex()<<" "<<pos1<<" "
 		            <<l->getMBranchingPoint()->getEqLength()<<" "<<l->getCBranchingPoint()
-				->getDiffusingBranchSpecies()->getName()<<" "<<l->getCBranchingPoint()
-				->getDiffusingActinSpeciesName()<<endl;
+				->getDiffusingBranchSpecies()->getName()<<" "<<l->getdiffusingactinspeciesname()<<endl;
 	}
 	_outputFile <<endl;
 	//Compartment Data

@@ -143,6 +143,9 @@ public:
     void setdiffusingactinspeciesname(string _diffusingactinspeciesname){
         diffusingactinspeciesname = _diffusingactinspeciesname; }
 
+    string getdiffusingactinspeciesname(){
+        return diffusingactinspeciesname; }
+
 };
 
 #endif
