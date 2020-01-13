@@ -32,23 +32,7 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
     }
     
     //Check all species for consistency
-    if(chem.speciesBulk.size() != CParams.numBulkSpecies) {
-        
-        cout << "Number of bulk species in chemistry input does not "
-             << "match the system file. Check these parameters. Exiting."
-        <<endl;
-        
-        return false;
-    }
-    if(chem.speciesDiffusing.size() != CParams.numDiffusingSpecies) {
 
-        cout << "Number of diffusing species in chemistry input does not "
-             << "match the system file. Check these parameters. Exiting."
-        <<endl;
-        
-        return false;
-    }
-    
     if(CParams.numFilamentSpecies.size() < CParams.numFilaments) {
         cout << "Must provide at least one filament species for every filament. Exiting."
         << endl;
@@ -64,12 +48,6 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
     if(CParams.numMinusEndSpecies.size() < CParams.numFilaments) {
         cout << "Must provide at least one minus end species for every filament. Exiting."
         << endl;
-        return false;
-    }
-    //at least one bound
-    if(CParams.numBoundSpecies.size() < CParams.numFilaments) {
-        cout << "Must provide at least one bound species for every filament, " <<
-                "which is an empty binding site. Exiting." << endl;
         return false;
     }
     
@@ -102,12 +80,9 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
             
             return false;
         }
-        if(CParams.numBoundSpecies.size() != 0 &&
-           chem.speciesBound[filType].size() != CParams.numBoundSpecies[filType]) {
+        if(chem.speciesBound[filType].size() == 0) {
             
-            cout << "Number of bound species in chemistry input does not "
-            << "match the system file. Check these parameters. Exiting."
-            <<endl;
+            cout << "Must provide at least one bound species for every filament, " << "which is an empty binding site. Exiting." << endl;
             
             return false;
         }
