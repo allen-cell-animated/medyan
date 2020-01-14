@@ -603,8 +603,6 @@ struct BranchingCallback {
                     break;
                 }}
             if(check){
-
-                
             b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
                 
             frate=0.0;
