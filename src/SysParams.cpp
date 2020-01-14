@@ -31,126 +31,57 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         exit(EXIT_FAILURE);
     }
     
-    //Check all species for consistency
-    if(chem.speciesBulk.size() != CParams.numBulkSpecies) {
-        
-        cout << "Number of bulk species in chemistry input does not "
-             << "match the system file. Check these parameters. Exiting."
-        <<endl;
-        
-        return false;
-    }
-    if(chem.speciesDiffusing.size() != CParams.numDiffusingSpecies) {
-
-        cout << "Number of diffusing species in chemistry input does not "
-             << "match the system file. Check these parameters. Exiting."
-        <<endl;
-        
-        return false;
-    }
-    
-    if(CParams.numFilamentSpecies.size() < CParams.numFilaments) {
-        cout << "Must provide at least one filament species for every filament. Exiting."
-        << endl;
-        return false;
-        
-    }
-    if(CParams.numPlusEndSpecies.size() < CParams.numFilaments) {
-        cout << "Must provide at least one plus end species for every filament. Exiting."
-        << endl;
-        return false;
-        
-    }
-    if(CParams.numMinusEndSpecies.size() < CParams.numFilaments) {
-        cout << "Must provide at least one minus end species for every filament. Exiting."
-        << endl;
-        return false;
-    }
-    //at least one bound
-    if(CParams.numBoundSpecies.size() < CParams.numFilaments) {
-        cout << "Must provide at least one bound species for every filament, " <<
-                "which is an empty binding site. Exiting." << endl;
-        return false;
-    }
-    
     for(auto filType = 0; filType < CParams.numFilaments; filType++) {
     
-        if(CParams.numFilamentSpecies.size() != 0 &&
-           chem.speciesFilament[filType].size() != CParams.numFilamentSpecies[filType]) {
+        if(chem.speciesFilament[filType].size() == 0) {
             
-            cout << "Number of filament species in chemistry input does not "
-            << "match the system file. Check these parameters. Exiting."
+            cout << "At least one filament species is required for each filament type. Exiting."
             <<endl;
             
             return false;
         }
-        if(CParams.numPlusEndSpecies.size() != 0 &&
-           chem.speciesPlusEnd[filType].size() != CParams.numPlusEndSpecies[filType]) {
-            
-            cout << "Number of plus end species in chemistry input does not "
-            << "match the system file. Check these parameters. Exiting."
-            <<endl;
-            
-            return false;
-        }
-        if(CParams.numMinusEndSpecies.size() != 0 &&
-           chem.speciesMinusEnd[filType].size()  != CParams.numMinusEndSpecies[filType]) {
-            
-            cout << "Number of minus end species in chemistry input does not "
-            << "match the system file. Check these parameters. Exiting."
-            <<endl;
-            
-            return false;
-        }
-        if(CParams.numBoundSpecies.size() != 0 &&
-           chem.speciesBound[filType].size() != CParams.numBoundSpecies[filType]) {
-            
-            cout << "Number of bound species in chemistry input does not "
-            << "match the system file. Check these parameters. Exiting."
-            <<endl;
-            
-            return false;
-        }
-        if(CParams.numLinkerSpecies.size() != 0 &&
-           chem.speciesLinker[filType].size() != CParams.numLinkerSpecies[filType]) {
-            
-            cout << "Number of linker species in chemistry input does not "
-            << "match the system file. Check these parameters. Exiting."
-            <<endl;
-            
-            return false;
-        }
-        if(CParams.numMotorSpecies.size() != 0 &&
-           chem.speciesMotor[filType].size() != CParams.numMotorSpecies[filType]) {
-            
-            cout << "Number of motor species in chemistry input does not "
-            << "match the system file. Check these parameters. Exiting."
-            <<endl;
-            
-            return false;
-        }
-        if(CParams.numBrancherSpecies.size() != 0 &&
-           chem.speciesBrancher[filType].size() != CParams.numBrancherSpecies[filType]) {
-            
-            cout << "Number of brancher species in chemistry input does not "
-            << "match the system file. Check these parameters. Exiting."
-            <<endl;
-            
-            return false;
+        else{
+            CParams.numFilamentSpecies.push_back(chem.speciesFilament[filType].size());
         }
         
-        //plus and minus end consistency
-        if(CParams.numPlusEndSpecies[filType] < CParams.numFilamentSpecies[filType]) {
-            cout << "There must be a plus end for every filament species on each filament. Exiting."
-            << endl;
+        if(chem.speciesPlusEnd[filType].size() == 0) {
+            
+            cout << "At least one plus end species is required for each filament type. Exiting."
+            <<endl;
+    
             return false;
         }
-        if(CParams.numMinusEndSpecies[filType] < CParams.numFilamentSpecies[filType]) {
-            cout << "There must be a minus end for every filament species on each filament. Exiting."
-            << endl;
+        else{
+            CParams.numPlusEndSpecies.push_back(chem.speciesPlusEnd[filType].size());
+        }
+        
+        if(chem.speciesMinusEnd[filType].size() == 0) {
+            
+            cout << "At least one minus end species is required for each filament type. Exiting."
+            <<endl;
+            
             return false;
         }
+        else{
+            CParams.numMinusEndSpecies.push_back(chem.speciesMinusEnd[filType].size());
+        }
+        
+        if(chem.speciesBound[filType].size() == 0) {
+            
+            cout << "At one plus end species is required for each filament type. Exiting."
+            <<endl;
+            
+            return false;
+        }
+        else{
+            CParams.numBoundSpecies.push_back(chem.speciesBound[filType].size());
+        }
+        
+        CParams.numLinkerSpecies.push_back(chem.speciesLinker[filType].size());
+        CParams.numMotorSpecies.push_back(chem.speciesMotor[filType].size());
+        CParams.numBrancherSpecies.push_back(chem.speciesBrancher[filType].size());
 
+        
         //check if binding sites are valid
         if(chem.B_BINDING_INDEX[filType] == "" && chem.speciesBrancher[filType].size() != 0) {
             cout << "A brancher binding site must be set for every filament type. Exiting."

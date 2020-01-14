@@ -1194,6 +1194,7 @@ void Controller::run() {
         resetglobaltime();
         _cController.restart();
         cout << "Current simulation time = "<< tau() << endl;
+        cout << endl;
         //restart phase ends
     }
 #ifdef CHEMISTRY
@@ -1457,6 +1458,7 @@ void Controller::run() {
             if(tauLastSnapshot >= _snapshotTime) {
                 mins = chrono::high_resolution_clock::now();
                 cout << "Current simulation time = "<< tau() << endl;
+                cout << endl;
                 for(auto o: _outputs) o->print(i);
                 resetCounters();
                 i++;
@@ -1464,6 +1466,7 @@ void Controller::run() {
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runout2(mine - mins);
                 outputtime += elapsed_runout2.count();
+                cout<< "Running time profiler: " << endl;
                 cout<< "Chemistry time for run=" << chemistrytime <<endl;
                 cout << "Minimization time for run=" << minimizationtime <<endl;
                 cout<< "Neighbor-list+Bmgr-time for run="<<nltime<<endl;
@@ -1579,6 +1582,7 @@ void Controller::run() {
 
             if(stepsLastSnapshot >= _snapshotSteps) {
                 cout << "Current simulation time = "<< tau() << endl;
+                cout << endl;
                 for(auto o: _outputs) o->print(i);
                 resetCounters();
                 i++;
@@ -1615,6 +1619,7 @@ void Controller::run() {
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_run(chk2-chk1);
     cout<< "Chemistry time for run=" << chemistrytime <<endl;
+    cout<< "Simulation time profiler: " << endl;
     cout << "Minimization time for run=" << minimizationtime <<endl;
     cout<< "Neighbor-list+Bmgr-time for run="<<nltime<<endl;
     cout<< "Neighbor-list time for run="<<nl2time<<endl;
