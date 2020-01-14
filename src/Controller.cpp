@@ -1076,6 +1076,7 @@ void Controller::run() {
         _restart->CBoundinitializerestart();
         _restart->restartupdateCopyNumbers();
 
+
         cout<<"Diffusion rates restored, diffusing molecules redistributed."<<endl;
 
 
@@ -1155,7 +1156,6 @@ void Controller::run() {
         cout << "---" << endl;
         cout << "Current simulation time = "<< tau() << endl;
         //restart phase ends
-
 
         //Crosscheck tau to make sure heap is ordered accurately.
         _cController.crosschecktau();

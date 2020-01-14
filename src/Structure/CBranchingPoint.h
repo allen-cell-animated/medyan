@@ -63,6 +63,8 @@ public:
           //set rates
           setOnRate(rhs._onRate);
           setOffRate(rhs._offRate);
+          setdiffusingactinspeciesname(rhs.getdiffusingactinspeciesname());
+
     }
     
     /// Assignment is not allowed
@@ -88,6 +90,12 @@ public:
         RSpecies** rs = _offRxn->rspecies();
         Species* sfb = &(rs[SPECIESB_DIFFUSING_INDEX_OFFRXN]->getSpecies());
         return sfb;
+    }
+
+    string getdiffusingactinspeciesname() const { return diffusingactinspeciesname;}
+
+    void setdiffusingactinspeciesname(string _diffusingactinspeciesname) {
+        diffusingactinspeciesname = _diffusingactinspeciesname;
     }
 };
 

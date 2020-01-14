@@ -169,7 +169,7 @@ public:
     void resetTime() {_t=0.0; syncGlobalTime(); }
     
     /// Sets global time variable to ChemGillespieImpl's global time
-    void syncGlobalTime() {global_time=_t;}
+    void syncGlobalTime() {global_time=_t; }
             
     /// Add ReactionBase *r to the network
     virtual void addReaction(ReactionBase *r);
