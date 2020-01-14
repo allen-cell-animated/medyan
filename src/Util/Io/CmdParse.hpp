@@ -8,47 +8,47 @@
 #include <sstream> // string format
 #include <stdexcept> // custom exception
 #include <string>
-#include <utility> // forward
+#include <utility> // forward, move
 #include <vector>
 
 namespace cmdparse {
 
 // Forward decl
+class Command;
 template< typename T > struct VariableWrite;
 template< typename T > struct VectorAppend;
 
 // Exceptions
-class CommandLogicError : public std::logic_error {
-public:
+struct CommandLogicError : std::logic_error {
     CommandLogicError( const std::string& what_arg ) : std::logic_error("Command logic error: " + what_arg) {}
 };
-class ParsingError : public std::runtime_error {
-public:
+struct ParsingError : std::runtime_error {
     ParsingError( const std::string& what_arg ) : std::runtime_error("Parsing error: " + what_arg) {}
 };
-class ValidationError : public std::runtime_error {
-public:
+struct ValidationError : std::runtime_error {
     ValidationError( const std::string& what_arg ) : std::runtime_error("Validation error: " + what_arg) {}
 };
 
 // Positional argument
 class PosArg {
 private:
-    const char * const _name;
-    const std::string _description;
-    const bool _required;
-    const bool _list;
+    const char* _name;
+    std::string _description;
+    bool _required;
+    bool _list;
 
     struct State {
         size_t _occurenceCount = 0;
-    } _state;
+    } state_;
+
+    std::function<void(const std::string&)> activate_;
 
 public:
 
-    const std::function<void(const std::string&)> activate;
-
     PosArg(const char* name, const std::string& description, bool required, bool list, const std::function<void(const std::string&)>& activate) :
-        _name(name), _description(description), _required(required), _list(list), activate(activate) {}
+        _name(name), _description(description), _required(required), _list(list), activate_(activate) {}
+
+    PosArg(PosArg&&) = default;
 
     bool isList() const { return _list; }
     bool isRequired()const { return _required; }
@@ -56,35 +56,68 @@ public:
     const char* getName()const { return _name; }
     const std::string& getDescription()const { return _description; }
 
-    void occur() { ++_state._occurenceCount; }
-    size_t getOccurenceCount()const { return _state._occurenceCount; }
+    void occur() { ++state_._occurenceCount; }
+    size_t getOccurenceCount()const { return state_._occurenceCount; }
+
+    const auto& activate() const { return activate_; }
 
 };
 
 class Option {
 private:
 
-    const char _short = 0; // without "-". 0 for no short name
-    const std::string _long; // without "--". "" for no long name
-    const std::string _description;
+    char _short = 0; // without "-". 0 for no short name
+    std::string _long; // without "--". "" for no long name
+    std::string _description;
 
-    const bool _hasVariable;
-    const std::string _variableName; // Useless if _hasVariable is false
+    bool _hasVariable;
+    std::string _variableName; // Useless if _hasVariable is false
 
-    const bool _required;
+    bool _required;
 
     struct State {
         size_t _occurenceCount = 0;
-    } _state;
+    } state_;
+
+    std::function<void(const Command &, const std::string &)> activateFunc_;
+
 public:
 
-    const std::function<void(const std::string&)> activate;
+    template< typename ActivateFuncWithoutVar > // void(const Command&)
+    Option(
+        char                     shortName,
+        const std::string&       longName,
+        const std::string&       description,
+        bool                     required,
+        ActivateFuncWithoutVar&& act
+    ) :
+        _short(shortName),
+        _long(longName),
+        _description(description),
+        _hasVariable(false),
+        _variableName(),
+        _required(required),
+        activateFunc_([act](const Command& cmd, const std::string&) { act(cmd); })
+    {}
+    template< typename ActivateFuncWithVar > // void(const Command&, const std::string&)
+    Option(
+        char                  shortName,
+        const std::string&    longName,
+        const std::string&    variableName,
+        const std::string&    description,
+        bool                  required,
+        ActivateFuncWithVar&& act
+    ):
+        _short(shortName),
+        _long(longName),
+        _description(description),
+        _hasVariable(true),
+        _variableName(variableName),
+        _required(required),
+        activateFunc_(std::forward<ActivateFuncWithVar>(act))
+    {}
 
-    Option(char shortName, const std::string& longName, const std::string& description, bool required, const std::function<void()>& activateWithoutVar) :
-        _short(shortName), _long(longName), _description(description), _hasVariable(false), _variableName(), _required(required),
-        activate([activateWithoutVar](const std::string&) { activateWithoutVar(); }) {}
-    Option(char shortName, const std::string& longName, const std::string& variableName, const std::string& description, bool required, const std::function<void(const std::string&)>& activate):
-        _short(shortName), _long(longName), _description(description), _hasVariable(true), _variableName(variableName), _required(required), activate(activate) {}
+    Option(Option&&) = default;
 
     char getShortName()const { return _short; }
     const std::string& getLongName()const { return _long; }
@@ -96,32 +129,50 @@ public:
     bool hasVariable()const { return _hasVariable; }
     bool isRequired()const { return _required; }
 
-    void occur() { ++_state._occurenceCount; }
-    size_t getOccurenceCount()const { return _state._occurenceCount; }
+    void occur() { ++state_._occurenceCount; }
+    size_t getOccurenceCount()const { return state_._occurenceCount; }
+
+    void activate(const Command& cmd, const std::string& var) const { return activateFunc_(cmd, var); }
 };
+
+// Option factory
+inline Option makeOptionAsFlag(char shortName, const std::string& longName, const std::string& description, bool required) {
+    // Add an option without argument
+    return Option(shortName, longName, description, required, [](const Command&){});
+}
+
+template< typename T >
+inline Option makeOptionWithVar(char shortName, const std::string& longName, const std::string& variableName, const std::string& description, bool required, T& var) {
+    return Option(shortName, longName, variableName, description, required, [variableName, &var](const Command&, const std::string& arg) {
+        VariableWrite<T>{variableName}(var, arg);
+        // Caveat: if () is used instead of {}, then T(a)(b, c) will be considered as the definition of variable a with type T initialized with (b, c).
+    });
+}
 
 
 class Command {
 private:
 
-    const std::string _name;
-    const std::string _inheritedName;
-    const std::string _description;
+    std::string _name;
+    std::string _inheritedName;
+    std::string _description;
 
-    std::vector<std::unique_ptr<PosArg>> _posArgs;
-    std::vector<std::unique_ptr<Option>> _options;
-    std::vector<std::unique_ptr<Command>> _subcommands;
-    Command* const _parent = nullptr;
+    bool terminating_ = false; // When this is true, the command will
+                               // immediately end parsing, ignoring the rest of
+                               // the arguments.
 
-    std::function<void()> _userValidation;
+    std::vector<std::unique_ptr<PosArg>>  _posArgs;
+    std::vector<Option>                   options_;
+    std::vector<std::unique_ptr<Command>> subcommands_;
+    Command* parent_ = nullptr;
 
-    // Check validity of specified rules. Recursive check for subcommands.
-    void _ruleCheck()const;
+    std::function<void()> userValidation_;
+
     // Real parsing function
-    void _parse(std::vector<std::string>& feed, size_t argp);
+    int parse_(std::vector<std::string>& feed, size_t argp);
     void _parsePosArg(const std::string& arg); // helper
     // Internal validation. Recursive check for invoked subcommands.
-    void _validate()const;
+    void validate_() const;
 
     // State variable
     struct State {
@@ -130,27 +181,50 @@ private:
         size_t _posArgIndex = 0; // The index for the next positional argument.
                                  // Normally same with _posArgCount except on arg list.
         size_t _occurenceCount = 0;
-    } _state;
+    } state_;
+
+    std::function< void() > activateFunc_;
 
     // Private constructor, allowing parent assignment and name inheriting
-    Command(Command* parent, const std::string& inheritedName, const std::string& name, const std::string& description, const std::function<void()>& activate) :
-        _name(name), _inheritedName(inheritedName), _description(description), _parent(parent), activate(activate) {}
+    template< typename ActivateFunc > // void()
+    Command(
+        Command*           parent,
+        const std::string& inheritedName,
+        const std::string& name,
+        const std::string& description,
+        ActivateFunc&&     activateFunc
+    ) :
+        _name(name),
+        _inheritedName(inheritedName),
+        _description(description),
+        parent_(parent),
+        activateFunc_(activateFunc)
+    {}
 
 public:
 
-    const std::function<void()> activate;
 
     // Public constructor, where parent and inheritedName are default
-    Command(const std::string& name, const std::string& description, const std::function<void()>& activate) :
-        _name(name), _description(description), activate(activate) {}
+    template< typename ActivateFunc > // void()
+    Command(const std::string& name, const std::string& description, ActivateFunc&& activateFunc) :
+        _name(name), _description(description), activateFunc_(activateFunc) {}
     Command(const std::string& name, const std::string& description) :
         _name(name), _description(description) {}
 
-    const std::string& getName()const { return _name; }
-    std::string getFullName()const { return _inheritedName + ' ' + _name; }
-    const std::string& getDescription()const { return _description; }
+    Command(Command&&) = default;
 
-    void occur() { ++_state._occurenceCount; }
+    // Check validity of specified rules. Recursively check for subcommands.
+    void ruleCheck() const;
+
+    const auto& getName()        const { return _name; }
+    auto        getFullName()    const { return _inheritedName + ' ' + _name; }
+    const auto& getDescription() const { return _description; }
+
+    void setTerminating(bool b) { terminating_ = b; }
+
+    void occur() { ++state_._occurenceCount; }
+
+    void activate() const { if(activateFunc_) activateFunc_(); }
 
     // Specification
     template< typename... Args >
@@ -172,61 +246,51 @@ public:
             VectorAppend<T>(std::string(name))(var, arg);
         });
     }
-    template< typename... Args >
-    Option* addOption(Args&&... args) {
-        _options.emplace_back(new Option(std::forward<Args>(args)...));
-        return _options.back().get();
+
+    Option& addOption(Option&& op) {
+        options_.push_back(std::move(op));
+        return options_.back();
     }
-    Option* addOptionAsFlag(char shortName, const std::string& longName, const std::string& description, bool required) {
-        // Add an option without argument
-        return addOption(shortName, longName, description, required, []{});
-    }
-    template< typename T >
-    Option* addOptionWithVar(char shortName, const std::string& longName, const std::string& variableName, const std::string& description, bool required, T& var) {
-        return addOption(shortName, longName, variableName, description, required, [variableName, &var](const std::string& arg) {
-            VariableWrite<T>{variableName}(var, arg);
-            // Caveat: if () is used instead of {}, then T(a)(b, c) will be considered as the definition of variable a with type T initialized with (b, c).
-        });
-    }
-    Option* addHelp() {
+    Option& addHelp() {
         // Auxilliary for
-        return addOption('h', "help", "Print usage and exit", false, [this] {
-            printUsage();
+        return addOption(Option('h', "help", "Print usage and exit", false, [](const Command& cmd) {
+            cmd.printUsage();
             std::exit(EXIT_SUCCESS);
-        });
+        }));
     }
     template< typename... Args >
-    Command* addCommand(Args&&... args) {
-        _subcommands.emplace_back(new Command(
+    Command& addCommand(Args&&... args) {
+        subcommands_.emplace_back(new Command(
             this,
             (_inheritedName.length() ? _inheritedName + ' ' + _name : _name),
             std::forward<Args>(args)...
         ));
-        return _subcommands.back().get();
+        return *subcommands_.back();
     }
-    Command* addCommandSimple(const std::string& name, const std::string& description) {
+    Command& addCommandSimple(const std::string& name, const std::string& description) {
         return addCommand(name, description, []{});
     }
 
-    void setValidation(const std::function<void()>& validation) { _userValidation = validation; }
+    template< typename Func > // Must be void()
+    void setValidation(Func&& validation) { userValidation_ = std::forward<Func>(validation); }
 
     // The parsing function used only by the root command.
     // States will be changed in this function
-    void parse(int argc, char** argv) {
+    int parse(int argc, char** argv) {
         occur();
-        if(activate) activate();
-
-        _ruleCheck();
+        activate();
 
         std::vector<std::string> inputFeed(argc);
         for(size_t i = 0; i < argc; ++i) inputFeed[i] = argv[i];
-        _parse(inputFeed, 1);
+        int argpNext = parse_(inputFeed, 1);
 
-        _validate();
+        validate_();
+
+        return argpNext;
     }
 
     // Auxilliary function that prints usage help message
-    void printUsage(std::ostream& os = std::cout)const;
+    void printUsage(std::ostream& os = std::cout) const;
 };
 
 // Helper functions

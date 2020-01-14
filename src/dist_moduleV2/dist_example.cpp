@@ -4,6 +4,9 @@ AUTHOR: G.A. Papoian, Date: Nov 22, 2018
 Example functions for various scenarios how to run find_distances(...)
 */
 
+
+#ifdef SIMDBINDINGSEARCH
+
 #include <random>
 #include <iostream>
 #include <iterator>
@@ -379,3 +382,5 @@ namespace dist {
 		
 	}
 } // end-of-namespace dist
+
+#endif

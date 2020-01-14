@@ -3117,6 +3117,8 @@
 		AEC5484A225D3799007CB7E9 /* Special */ = {
 			isa = PBXGroup;
 			children = (
+				233303F223CD15710005050F /* AFM.cpp */,
+				233303F323CD15720005050F /* AFM.h */,
 				AEC5484B225D3799007CB7E9 /* MTOC.h */,
 				AEC5484C225D3799007CB7E9 /* MTOC.cpp */,
 				239E292A23C7CB9D00847127 /* AFM.cpp */,
@@ -3194,6 +3196,7 @@
 				AEC54919225D3799007CB7E9 /* CylinderVolumeInteractions.h in Headers */,
 				AEC548F5225D3799007CB7E9 /* BranchingInteractions.h in Headers */,
 				AEC548FA225D3799007CB7E9 /* BranchingDihedral.h in Headers */,
+				2333040423CD15AC0005050F /* BranchingDihedralQuadratic.hpp in Headers */,
 				AEC5498B225D3799007CB7E9 /* DRController.h in Headers */,
 				AEC548B0225D3799007CB7E9 /* LinkerFF.h in Headers */,
 				AEC54877225D3799007CB7E9 /* log.h in Headers */,
@@ -3204,7 +3207,9 @@
 				AEC54910225D3799007CB7E9 /* MotorGhostInteractions.h in Headers */,
 				AEC548E5225D3799007CB7E9 /* BranchingBendingCosine.h in Headers */,
 				AEC54954225D3799007CB7E9 /* CLinker.h in Headers */,
+				233303FF23CD15A40005050F /* AFMAttachment.h in Headers */,
 				AEC5497C225D3799007CB7E9 /* Linker.h in Headers */,
+				2333040023CD15A40005050F /* AFMAttachmentHarmonic.h in Headers */,
 				AEC5491A225D3799007CB7E9 /* CylinderExclVolRepulsion.h in Headers */,
 				AEC5494A225D3799007CB7E9 /* CBound.h in Headers */,
 				AEC54985225D3799007CB7E9 /* MMotorGhost.h in Headers */,
@@ -3293,6 +3298,7 @@
 				AEC548D7225D3799007CB7E9 /* MTOCBendingCosine.h in Headers */,
 				AEC54891225D3799007CB7E9 /* ReactionContainer.h in Headers */,
 				AEC548F9225D3799007CB7E9 /* BranchingBending.h in Headers */,
+				233303F623CD15720005050F /* AFM.h in Headers */,
 				AEC548F8225D3799007CB7E9 /* BranchingBendingCosineCUDA.h in Headers */,
 				AEC54980225D3799007CB7E9 /* NeighborListImpl.h in Headers */,
 				AEC5494E225D3799007CB7E9 /* HybridNeighborList.h in Headers */,
@@ -3312,6 +3318,7 @@
 				AEC5492A225D3799007CB7E9 /* Minimizer.h in Headers */,
 				AEC54943225D3799007CB7E9 /* CMotorGhost.h in Headers */,
 				AEC5495F225D3799007CB7E9 /* Cylinder.h in Headers */,
+				2333040923CD15C50005050F /* Environment.hpp in Headers */,
 				AEC5487D225D3799007CB7E9 /* Parser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3405,6 +3412,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F41AAC822B176880073835F /* dist_mod_vars.cpp in Sources */,
+				233303F823CD15870005050F /* Reactable.cpp in Sources */,
 				1F41AAC722B1767D0073835F /* dist_example.cpp in Sources */,
 				1F41AAC622B176740073835F /* dist_bench.cpp in Sources */,
 				1F41AAC522B1766D0073835F /* dist_avx_par.cpp in Sources */,
@@ -3426,6 +3434,7 @@
 				AEC5494C225D3799007CB7E9 /* MMotorGhost.cpp in Sources */,
 				AEC5493F225D3799007CB7E9 /* Controller.cpp in Sources */,
 				AEC54968225D3799007CB7E9 /* CMonomer.cpp in Sources */,
+				2333040223CD15A40005050F /* AFMAttachment.cpp in Sources */,
 				AEC548AF225D3799007CB7E9 /* LinkerInteractions.cpp in Sources */,
 				AEC54932225D3799007CB7E9 /* FilamentInitializer.cpp in Sources */,
 				239E293B23C7CC4A00847127 /* AFMAttachmentHarmonic.cpp in Sources */,
@@ -3462,6 +3471,7 @@
 				AEC54907225D3799007CB7E9 /* FilamentInteractions.cpp in Sources */,
 				AEC548C8225D3799007CB7E9 /* BoundaryBubbleRepulsionExp.cpp in Sources */,
 				AEC5491B225D3799007CB7E9 /* CylinderExclVolRepulsion.cpp in Sources */,
+				2333040823CD15C50005050F /* Environment.cpp in Sources */,
 				AEC548E6225D3799007CB7E9 /* BranchingStretching.cpp in Sources */,
 				AEC54872225D3799007CB7E9 /* common.cpp in Sources */,
 				AEC548C7225D3799007CB7E9 /* BoundaryCylinderRepulsionExpIn.cpp in Sources */,
@@ -3502,6 +3512,7 @@
 				AEC548F3225D3799007CB7E9 /* BranchingPosition.cpp in Sources */,
 				AEC548DD225D3799007CB7E9 /* MTOCBendingCosine.cpp in Sources */,
 				AEC54917225D3799007CB7E9 /* cross_check.cpp in Sources */,
+				233303F723CD15830005050F /* Movable.cpp in Sources */,
 				AEC548DE225D3799007CB7E9 /* MTOCAttachment.cpp in Sources */,
 				AEC54923225D3799007CB7E9 /* CGMethod.cpp in Sources */,
 				AEC548BA225D3799007CB7E9 /* BoundaryCylinderRepulsionIn.cpp in Sources */,
@@ -3529,12 +3540,15 @@
 				AEC548BD225D3799007CB7E9 /* BoundaryBubbleRepulsion.cpp in Sources */,
 				AEC5496D225D3799007CB7E9 /* Boundary.cpp in Sources */,
 				AEC5486F225D3799007CB7E9 /* MController.cpp in Sources */,
+				233303FE23CD15A40005050F /* AFMAttachmentHarmonic.cpp in Sources */,
+				2333040323CD15AA0005050F /* BranchingDihedralQuadratic.cpp in Sources */,
 				AEC54880225D3799007CB7E9 /* Component.cpp in Sources */,
 				AEC54928225D3799007CB7E9 /* CGSteepestDescent.cpp in Sources */,
 				AEC548D3225D3799007CB7E9 /* BubbleCylinderRepulsion.cpp in Sources */,
 				AEC5488D225D3799007CB7E9 /* ReactionTemplate.cpp in Sources */,
 				AEC548C9225D3799007CB7E9 /* BoundaryCylinderRepulsion.cpp in Sources */,
 				AEC54939225D3799007CB7E9 /* Rand.cpp in Sources */,
+				2333040A23CD17B40005050F /* Restart.cpp in Sources */,
 				AEC5489A225D3799007CB7E9 /* ChemManager.cpp in Sources */,
 				AEC548B8225D3799007CB7E9 /* BoundaryFF.cpp in Sources */,
 			);

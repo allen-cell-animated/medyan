@@ -20,6 +20,7 @@ void Bin::addCylinder(Cylinder* c) {_cylinders.insert(c);}
 void Bin::removeCylinder(Cylinder* c) {
     auto it = _cylinders.find(c);
     if(it != _cylinders.end()) _cylinders.erase(it);
+    updatecindices();
 }
 void Bin::updatecindices(){
     cindicesvector.clear();
