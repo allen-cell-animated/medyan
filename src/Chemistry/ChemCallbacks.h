@@ -531,7 +531,7 @@ struct BranchingCallback {
         site = _bManager->chooseBindingSitesstencil();
 #endif
         
-        //get info from site
+        //get info of mother filament from site
         Cylinder* c1 = get<0>(site)->getCylinder();
         short filType = c1->getType();
         
@@ -576,7 +576,7 @@ struct BranchingCallback {
         auto branchPosDir = branchProjection(n, p, l, s, t);
         auto bd = get<0>(branchPosDir); auto bp = get<1>(branchPosDir);
         
-        //create a new filament
+        //create a new daughter filament
         Filament* f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
         
         //mark first cylinder
@@ -584,7 +584,6 @@ struct BranchingCallback {
         c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
         
         //create new branch
-            
         b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
             
         frate=_offRate;
@@ -593,9 +592,13 @@ struct BranchingCallback {
         {
             CCylinder* c = nullptr; auto check = false;
             vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
+            cout<<"Looking for cylinder with Id "<<c1->getId()<<" and pos "<<pos<<endl;
             for(auto T:BrT){
+            	//Mother cylinder
                 CCylinder* cx=get<0>(get<0>(T));
+                //Mother binding site
                 floatingpoint p = floatingpoint(get<1>(get<0>(T)))/ floatingpoint(SysParams::Geometry().cylinderNumMon[filType]);
+                cout<<"Branch tuple "<<cx->getCylinder()->getId()<<" "<<p<<endl;
                 if(cx->getCylinder()->getId()==c1->getId() && p==pos){
                     c=get<0>(get<1>(T));
                     check = true;
@@ -610,7 +613,8 @@ struct BranchingCallback {
             }
             else {
                 b = nullptr;
-                cout<<"Brancher Error. Cannot find binding Site in the list. Cannot complete restart. Exiting." <<endl;
+                LOG(ERROR)<<"Brancher Error. Cannot find binding Site in the list. Cannot "
+					  "complete restart. Exiting." <<endl;
                 exit(EXIT_FAILURE);
             }
         }
