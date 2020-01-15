@@ -66,6 +66,9 @@ private:
 
     floatingpoint _minimizationTime;  ///< Frequency of mechanical minimization
     floatingpoint _neighborListTime;  ///< Frequency of neighbor list updates
+    floatingpoint _slowedminimizationcutoffTime = 10.0; //Time cut off for slowed
+    // minimization
+    // frequency
     
     DissipationTracker* _dt;   ///< dissipation tracking object
     

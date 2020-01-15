@@ -1071,6 +1071,9 @@ void Controller::run() {
             }}
         cout<<endl;
         _cController.initializerestart(_restart->getrestartime());
+	    #ifdef SLOWDOWNINITIALCYCLE
+	    _slowedminimizationcutoffTime += _restart->getrestartime();
+		#endif
         cout<<"Tau reset to "<<tau()<<endl;
         //sets
         _restart->CBoundinitializerestart();
@@ -1260,7 +1263,7 @@ void Controller::run() {
             mins = chrono::high_resolution_clock::now();
             float factor = 1.0;
 #ifdef SLOWDOWNINITIALCYCLE
-            if(tau() <=10.0)
+            if(tau() <=_slowedminimizationcutoffTime)
             	factor = 10.0;
 #endif
             floatingpoint chemistryTime = _minimizationTime/factor;
