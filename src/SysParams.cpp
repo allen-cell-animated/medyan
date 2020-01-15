@@ -157,31 +157,31 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     short totalNumLinkers = sum(CParams.numLinkerSpecies);
     
     if(mech.LStretchingType != "" &&
-       MParams.LStretchingK.size() != totalNumLinkers) {
+       MParams.LStretchingK.size() != totalNumLinkers && totalNumLinkers > 0) {
         cout << "Number of linker stretching constants does not match the number of"
              << " linker species in system. Exiting." << endl;
         return false;
     }
     if(mech.LBendingType != "" &&
-       MParams.LBendingK.size() != totalNumLinkers) {
+       MParams.LBendingK.size() != totalNumLinkers && totalNumLinkers > 0) {
         cout << "Number of linker bending constants does not match the number of"
              << " linker species in system. Exiting." << endl;
         return false;
     }
     if(mech.LBendingType != "" &&
-       MParams.LBendingTheta.size() != totalNumLinkers) {
+       MParams.LBendingTheta.size() != totalNumLinkers && totalNumLinkers > 0) {
         cout << "Number of linker bending angles does not match the number of"
              << " linker species in system. Exiting." << endl;
         return false;
     }
     if(mech.LTwistingType != "" &&
-       MParams.LTwistingK.size() != totalNumLinkers) {
+       MParams.LTwistingK.size() != totalNumLinkers && totalNumLinkers > 0) {
         cout << "Number of linker twisting constants does not match the number of"
         << " linker species in system. Exiting." << endl;
         return false;
     }
     if(mech.LTwistingType != "" &&
-       MParams.LTwistingPhi.size() != totalNumLinkers) {
+       MParams.LTwistingPhi.size() != totalNumLinkers && totalNumLinkers > 0) {
         cout << "Number of linker twisting angles does not match the number of"
              << " linker species in system. Exiting." << endl;
         return false;
@@ -191,31 +191,31 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     short totalNumMotors = sum(CParams.numMotorSpecies);
     
     if(mech.MStretchingType != "" &&
-       MParams.MStretchingK.size() != totalNumMotors) {
+       MParams.MStretchingK.size() != totalNumMotors && totalNumMotors > 0) {
         cout << "Number of motor stretching constants does not match the number of"
              << " motor species in system. Exiting." << endl;
         return false;
     }
     if(mech.MBendingType != "" &&
-       MParams.MBendingK.size() != totalNumMotors) {
+       MParams.MBendingK.size() != totalNumMotors && totalNumMotors > 0) {
         cout << "Number of motor bending constants does not match the number of"
              << " motor species in system. Exiting." << endl;
         return false;
     }
     if(mech.MBendingType != "" &&
-       MParams.MBendingTheta.size() != totalNumMotors) {
+       MParams.MBendingTheta.size() != totalNumMotors && totalNumMotors > 0) {
         cout << "Number of motor bending angles does not match the number of"
              << " motor species in system. Exiting." << endl;
         return false;
     }
     if(mech.MTwistingType != "" &&
-       MParams.MTwistingK.size() != totalNumMotors) {
+       MParams.MTwistingK.size() != totalNumMotors && totalNumMotors > 0) {
         cout << "Number of motor twisting constants does not match the number of"
              << " motor species in system. Exiting." << endl;
         return false;
     }
     if(mech.MTwistingType != "" &&
-       MParams.MTwistingPhi.size() != totalNumMotors) {
+       MParams.MTwistingPhi.size() != totalNumMotors && totalNumMotors > 0) {
         cout << "Number of motor twisting angles does not match the number of"
              << " motor species in system. Exiting." << endl;
         return false;
@@ -225,38 +225,39 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     //BRANCHINGPOINT
     short totalNumBranchers = sum(CParams.numBrancherSpecies);
     
+
     if(mech.BrStretchingType != "" &&
-       MParams.BrStretchingK.size() != totalNumBranchers) {
+       MParams.BrStretchingK.size() != totalNumBranchers && totalNumBranchers > 0) {
         cout << "Number of branching point stretching constants does not match the number of"
              << " brancher species in system. Exiting." << endl;
         return false;
     }
     if(mech.BrStretchingType != "" &&
-       MParams.BrStretchingL.size() != totalNumBranchers) {
+       MParams.BrStretchingL.size() != totalNumBranchers && totalNumBranchers > 0) {
         cout << "Number of branching point stretching length does not match the number of"
              << " brancher species in system. Exiting." << endl;
         return false;
     }
     if(mech.BrBendingType != "" &&
-       MParams.BrBendingK.size() != totalNumBranchers) {
+       MParams.BrBendingK.size() != totalNumBranchers && totalNumBranchers > 0) {
         cout << "Number of branching point bending constants does not match the number of"
              << " brancher species in system. Exiting." << endl;
         return false;
     }
     if(mech.BrBendingType != "" &&
-       MParams.BrBendingTheta.size() != totalNumBranchers) {
+       MParams.BrBendingTheta.size() != totalNumBranchers && totalNumBranchers > 0) {
         cout << "Number of branching point bending angles does not match the number of"
              << " brancher species in system. Exiting." << endl;
         return false;
     }
     if(mech.BrDihedralType != "" &&
-       MParams.BrDihedralK.size() != totalNumBranchers) {
+       MParams.BrDihedralK.size() != totalNumBranchers && totalNumBranchers > 0) {
         cout << "Number of branching point dihedral constants does not match the number of"
              << " brancher species in system. Exiting." << endl;
         return false;
     }
     if(mech.BrPositionType != "" &&
-       MParams.BrPositionK.size() != totalNumBranchers) {
+       MParams.BrPositionK.size() != totalNumBranchers && totalNumBranchers > 0) {
         cout << "Number of branching point position constants does not match the number of"
              << " brancher species in system. Exiting." << endl;
         return false;
@@ -343,20 +344,20 @@ bool SysParams::checkDyRateParameters(DynamicRateType& dy) {
     }
     
     if(dy.dLUnbindingType.size() != sum(CParams.numLinkerSpecies) &&
-       !dy.dLUnbindingType.empty()) {
+       !dy.dLUnbindingType.empty() && sum(CParams.numLinkerSpecies) > 0){
         cout << "Number of linker dynamic rate unbinding forms must" <<
                 " match the number of species. Exiting." << endl;
         return false;
     }
     
     if(dy.dMUnbindingType.size() != sum(CParams.numMotorSpecies) &&
-       !dy.dMUnbindingType.empty()) {
+       !dy.dMUnbindingType.empty() && sum(CParams.numMotorSpecies) > 0) {
         cout << "Number of motor dynamic rate unbinding forms must" <<
                 " match the number of species. Exiting." << endl;
         return false;
     }
     if(dy.dMWalkingType.size() != sum(CParams.numMotorSpecies) &&
-       !dy.dMWalkingType.empty()) {
+       !dy.dMWalkingType.empty() && sum(CParams.numMotorSpecies) > 0) {
         cout << "Number of motor dynamic rate walking forms must" <<
                 " match the number of species. Exiting." << endl;
         return false;
