@@ -599,7 +599,7 @@ struct BranchingCallback {
                 //Mother binding site
                 floatingpoint p = floatingpoint(get<1>(get<0>(T)))/ floatingpoint(SysParams::Geometry().cylinderNumMon[filType]);
 //	            cout<<"Branch tuple "<<cx->getCylinder()->getId()<<" "<<p<<endl;
-                if(cx->getCylinder()->getId()==c1->getId() && p==pos){
+                if(cx->getCylinder()->getId()==c1->getId() && abs(p-pos)/pos < 0.01){
                     c=get<0>(get<1>(T));
                     check = true;
                     break;
