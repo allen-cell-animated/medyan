@@ -222,7 +222,7 @@ struct GeoParams {
 
     //@{
     /// Geometry parameter
-    short nDim = 0;
+    short nDim = 3;
 
     int NX = 0;
     int NY = 0;
