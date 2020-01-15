@@ -240,6 +240,17 @@ void BranchingManager::appendpossibleBindings(CCylinder* ccyl1, CCylinder* ccyl2
 	_branchrestarttuple.push_back(make_tuple(t1,t2));
 	floatingpoint newN=numBindingSites();
 	updateBindingReaction(oldN,newN);}
+
+	void BranchingManager::printbindingsites(){
+	cout<<"BINDINGSITES: CYL1(SIDX) SITE1"<<endl;
+    for(auto it2 = _possibleBindings.begin();it2!=_possibleBindings.end();
+        it2++) {
+        auto cyl1 = get<0>(*it2)->getCylinder();
+        auto bs1 = get<1>(*it2);
+        cout<<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex()<<" "<<pos1<<endl;
+    }
+
+}
 #endif
 bool BranchingManager::isConsistent() {
 #ifdef NLORIGINAL
@@ -520,6 +531,16 @@ void BranchingManager::crosscheck(){
         cout<<"Branching. All binding site pairs are not found in Stencil list"<<endl;
         exit(EXIT_FAILURE);
     }
+}
+void BranchingManager::printbindingsitesstencil(){
+	cout<<"BINDINGSITES: CYL1(SIDX) SITE1"<<endl;
+    for(auto it2 = _possibleBindingsstencil.begin();it2!=_possibleBindingsstencil.end();
+        it2++) {
+        auto cyl1 = get<0>(*it2)->getCylinder();
+        auto bs1 = get<1>(*it2);
+        cout<<cyl1->getStableIndex()<<" "<<bs1<<endl;
+    }
+
 }
 #endif
 #ifdef CUDAACCL_NL
@@ -1051,6 +1072,19 @@ void LinkerBindingManager::appendpossibleBindings(short boundInt, CCylinder* ccy
 	floatingpoint newN=numBindingSites();
 	updateBindingReaction(oldN,newN);
 }
+
+void LinkerBindingManager::printbindingsites() {
+	cout<<"BINDINGSITES: CYL1(SIDX) CYL2(SIDX) SITE1 SITE2"<<endl;
+	for(auto it1 = _possibleBindings.begin();it1!=_possibleBindings.end();
+	it1++) {
+		auto cyl1 = get<0>(it1->first)->getCylinder();
+		auto bs1 = get<1>(it1->first);
+		auto cyl2 = get<0>(it1->second)->getCylinder();
+		auto bs2 = get<1>(it1->second);
+		cout<<cyl1->getStableIndex()<<" "
+		                      <<cyl2->getStableIndex()<<" "<<bs1<<" "<<bs2<<endl;
+	}
+}
 #endif
 //Deprecated. Used to compare stencil based search with original search.
 bool LinkerBindingManager::isConsistent() {
@@ -1537,6 +1571,24 @@ int LinkerBindingManager::numBindingSitesstencil() {
     return HManager->numBindingSitesstencil(_idvec);
 #endif
 
+}
+
+void LinkerBindingManager::printbindingsitesstencil() {
+#ifdef NLSTENCILLSIT
+	cout<<"BINDINGSITES: CYL1(SIDX) CYL2(SIDX) SITE1 SITE2"<<endl;
+	for(auto it1 = _possibleBindingsstencil.begin();it1!=_possibleBindingsstencil.end();
+	it1++) {
+		auto cyl1 = get<0>(it1->first)->getCylinder();
+		auto bs1 = get<1>(it1->first);
+		auto cyl2 = get<0>(it1->second)->getCylinder();
+		auto bs2 = get<1>(it1->second);
+		cout<<cyl1->getStableIndex()<<" "
+		                      <<cyl2->getStableIndex()<<" "<<bs1<<" "<<bs2<<endl;
+	}
+#else
+	auto HManager = _compartment->getHybridBindingSearchManager();
+	HManager->printbindingsitesstencil(_idvec);
+#endif
 }
 #endif
 #ifdef CUDAACCL_NL
@@ -2041,6 +2093,19 @@ void MotorBindingManager::appendpossibleBindings(short boundInt, CCylinder* ccyl
     floatingpoint newN=numBindingSites();
     updateBindingReaction(oldN,newN);
 }
+
+void MotorBindingManager::printbindingsites() {
+	cout<<"BINDINGSITES: CYL1(SIDX) CYL2(SIDX) SITE1 SITE2"<<endl;
+	for(auto it1 = _possibleBindings.begin();it1!=_possibleBindings.end();
+	    it1++) {
+		auto cyl1 = get<0>(it1->first)->getCylinder();
+		auto bs1 = get<1>(it1->first);
+		auto cyl2 = get<0>(it1->second)->getCylinder();
+		auto bs2 = get<1>(it1->second);
+		cout<<cyl1->getStableIndex()<<" "
+		    <<cyl2->getStableIndex()<<" "<<bs1<<" "<<bs2<<endl;
+	}
+}
 #endif
 //Deprecated.
 bool MotorBindingManager::isConsistent() {
@@ -2533,6 +2598,24 @@ int MotorBindingManager::numBindingSitesstencil() {
     return HManager->numBindingSitesstencil(_idvec);
 #endif
 
+}
+
+void MotorBindingManager::printbindingsitesstencil() {
+	#ifdef NLSTENCILLSIT
+	cout<<"BINDINGSITES: CYL1(SIDX) CYL2(SIDX) SITE1 SITE2"<<endl;
+	for(auto it1 = _possibleBindingsstencil.begin();it1!=_possibleBindingsstencil.end();
+	    it1++) {
+		auto cyl1 = get<0>(it1->first)->getCylinder();
+		auto bs1 = get<1>(it1->first);
+		auto cyl2 = get<0>(it1->second)->getCylinder();
+		auto bs2 = get<1>(it1->second);
+		cout<<cyl1->getStableIndex()<<" "
+		    <<cyl2->getStableIndex()<<" "<<bs1<<" "<<bs2<<endl;
+	}
+	#else
+	auto HManager = _compartment->getHybridBindingSearchManager();
+	HManager->printbindingsitesstencil(_idvec);
+	#endif
 }
 #endif
 #ifdef CUDAACCL_NL

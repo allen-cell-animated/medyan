@@ -164,6 +164,8 @@ public:
     		short site1, short site2)=0;
 
     virtual void clearpossibleBindings()=0;
+
+    virtual void printbindingsites() = 0;
 #endif
     ///Get the bound species integer index
     short getBoundInt() {return _boundInt;}
@@ -198,6 +200,7 @@ public:
     virtual void crosscheck(){};
     virtual void replacepairPossibleBindingsstencil
             (unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _pbs) =0;
+    virtual void printbindingsitesstencil() = 0;
     virtual void setHNLID(short id, short idvec[2]) = 0;
 #endif
     void updateBindingReaction(int newN) {
@@ -303,6 +306,7 @@ public:
         return _possibleBindings;
     }
 
+    virtual void printbindingsites();
 #endif
     virtual bool isConsistent();
     vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> getbtuple() {
@@ -346,6 +350,8 @@ public:
     virtual void replacepairPossibleBindingsstencil
             (unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>){};
     virtual void setHNLID(short id, short idvec[2]){};
+
+    virtual void printbindingsitesstencil();
 #endif
 
 #ifdef CUDAACCL_NL
@@ -444,6 +450,8 @@ public:
 
         /// Choose random binding sites based on current state
     vector<tuple<CCylinder*, short>> chooseBindingSites();
+
+    virtual void printbindingsites();
 #endif
     //@{
     /// Getters for distances
@@ -483,6 +491,8 @@ public:
         _idvec[0] = idvec[0];
         _idvec[1] = idvec[1];
     };
+
+    virtual void printbindingsitesstencil();
 #endif
 
 #ifdef CUDAACCL_NL
@@ -593,6 +603,8 @@ public:
 
     /// Choose random binding sites based on current state
     vector<tuple<CCylinder*, short>> chooseBindingSites();
+
+    virtual void printbindingsites();
 #endif
     //@{
     /// Getters for distances
@@ -631,6 +643,7 @@ public:
         _idvec[0] = idvec[0];
         _idvec[1] = idvec[1];
     };
+    virtual void printbindingsitesstencil();
 #endif
 
 #ifdef CUDAACCL_NL

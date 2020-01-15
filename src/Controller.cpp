@@ -1052,6 +1052,7 @@ void Controller::run() {
         _cController.runSteps(_restart->getnumchemsteps());
         cout<<"Reactions fired! Displaying heap"<<endl;
 //Step 4. Display the number of reactions yet to be fired. Should be zero.
+        bool exitstatus = 0;
         for(auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
             for(auto &Mgr:C->getFilamentBindingManagers()){
                 int numsites = 0;
@@ -1063,13 +1064,44 @@ void Controller::run() {
                 if(numsites == 0)
                     cout<< numsites<<" ";
                 else{
-                    cout<<numsites<<endl;
-                    cout<<"Few reactions were not fired! Cannot restart this trajectory. "
-						  "Exiting ..."<<endl;
-                    exit(EXIT_FAILURE);
+                    cout<<endl;
+                    LOG(ERROR)<<"Num binding sites "<<numsites<<endl;
+                    string mgrname ="";
+                    if(dynamic_cast<BranchingManager*>(Mgr.get()))
+                        mgrname = " BRANCHING ";
+                    else if (dynamic_cast<LinkerBindingManager*>(Mgr.get()))
+                        mgrname = " LINKER ";
+                    else
+                        mgrname = " MOTOR ";
+                    LOG(ERROR)<<"Printing "<<mgrname<<" binding sites that were not "
+                                                      "chosen"<<endl;
+                    #ifdef NLORIGINAL
+                    Mgr->printbindingsites();
+					#else
+                	Mgr->printbindingsitesstencil();
+					#endif
+                	exitstatus = true;
                 }
             }}
         cout<<endl;
+        if(exitstatus) {
+            cout << "Few reactions were not fired! Cannot restart this trajectory. "
+                    "Exiting after printing diffusing species in each compartment..." <<
+                    endl;
+
+            cout<< "COMPARTMENT DATA: CMPID DIFFUSINGSPECIES COPYNUM"<<endl;
+            for(auto cmp:_subSystem.getCompartmentGrid()->getCompartments()){
+                cout <<cmp->getId()<<" ";
+                for(auto sd : _chemData.speciesDiffusing) {
+                    string name = get<0>(sd);
+                    auto s = cmp->findSpeciesByName(name);
+                    auto copyNum = s->getN();
+                    cout <<name<<" "<<copyNum<<" ";
+                }
+                cout <<endl;
+            }
+            exit(EXIT_FAILURE);
+        }
         _cController.initializerestart(_restart->getrestartime());
 	    #ifdef SLOWDOWNINITIALCYCLE
 	    _slowedminimizationcutoffTime += _restart->getrestartime();

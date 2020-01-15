@@ -1089,6 +1089,30 @@ void HybridBindingSearchManager::clearPossibleBindingsstencil(short idvec[2]){
 	fManagervec[idx][idx2]->updateBindingReaction(Nbindingpairs[idx][idx2]);
 }
 
+void HybridBindingSearchManager::printbindingsitesstencil(short idvec[2]) {
+	cout<<"BINDINGSITES: CYL1(SIDX) CYL2(SIDX) SITE1 SITE2"<<endl;
+	short idx = idvec[0];
+	short idx2 = idvec[1];
+
+	auto pbs = _possibleBindingsstencilvecuint[idx][idx2];
+
+	for (auto pair = pbs.begin(); pair != pbs.end(); pair++) {
+
+		//Key
+		uint32_t leg1 = pair->first;
+		vector<uint32_t> leg2 = pair->second;
+
+		uint32_t cIndex1 = leg1 >> SysParams::Chemistry().shiftbybits;
+		uint32_t bsite1 = mask & leg1;
+		//Values
+		for (auto V:leg2) {
+			uint32_t cIndex2 = V >> SysParams::Chemistry().shiftbybits;
+			uint32_t bsite2 = mask & V;
+			cout<<cIndex1<<" "<<cIndex2<<" "<<bsite1<<" "<<bsite2<<endl;
+		}
+	}
+}
+
 HybridCylinderCylinderNL* HybridBindingSearchManager::_HneighborList;
 bool initialized = false;
 #ifdef SIMDBINDINGSEARCH

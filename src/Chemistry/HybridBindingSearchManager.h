@@ -267,6 +267,8 @@ public:
         }
     }
 
+    void printbindingsitesstencil(short idvec[2]);
+
 #ifdef MOTORBIASCHECK
     size_t getbindingsize(short idvec[2]){
                 return Nbindingpairs[idvec[0]][idvec[1]];
