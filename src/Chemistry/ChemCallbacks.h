@@ -592,13 +592,13 @@ struct BranchingCallback {
         {
             CCylinder* c = nullptr; auto check = false;
             vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
-	        cout<<"Looking for cylinder with Id "<<c1->getId()<<" and pos "<<pos<<endl;
+//	        cout<<"Looking for cylinder with Id "<<c1->getId()<<" and pos "<<pos<<endl;
             for(auto T:BrT){
             	//Mother cylinder
                 CCylinder* cx=get<0>(get<0>(T));
                 //Mother binding site
                 floatingpoint p = floatingpoint(get<1>(get<0>(T)))/ floatingpoint(SysParams::Geometry().cylinderNumMon[filType]);
-	            cout<<"Branch tuple "<<cx->getCylinder()->getId()<<" "<<p<<endl;
+//	            cout<<"Branch tuple "<<cx->getCylinder()->getId()<<" "<<p<<endl;
                 if(cx->getCylinder()->getId()==c1->getId() && p==pos){
                     c=get<0>(get<1>(T));
                     check = true;

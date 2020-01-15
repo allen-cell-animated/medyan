@@ -96,6 +96,8 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 	CUDAcommon::tmin.computeforces += elapsed_force.count();
 	//@@@}
 
+	FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+
 #ifdef SERIAL // SERIAL
 	//@@@{ STEP 3: COPY FORCES
 	tbegin = chrono::high_resolution_clock::now();
