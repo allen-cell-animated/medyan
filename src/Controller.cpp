@@ -1065,6 +1065,10 @@ void Controller::run() {
                     cout<< numsites<<" ";
                 else{
                     cout<<endl;
+                    LOG(ERROR)<<"Compartment ID "<<C->getId()<<" COORDS "
+                                <<C->coordinates()[0] << " "
+                                <<C->coordinates()[1] << " "
+                                <<C->coordinates()[2] << endl;
                     LOG(ERROR)<<"Num binding sites "<<numsites<<endl;
                     string mgrname ="";
                     if(dynamic_cast<BranchingManager*>(Mgr.get()))
