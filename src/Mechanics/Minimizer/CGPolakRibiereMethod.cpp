@@ -23,6 +23,9 @@
 #include "nvToolsExt.h"
 #endif
 #include "Structure/Bead.h"
+#ifdef ADDITIONALINFO
+#include "MotorGhostInteractions.h"
+#endif
 
 MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                             floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
@@ -95,8 +98,34 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 	chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
 	CUDAcommon::tmin.computeforces += elapsed_force.count();
 	//@@@}
-
+	#ifdef ADDITIONALINFO
 	FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+	if(SysParams::RUNSTATE == false){
+	int counter = 0;
+	auto individualenergiesvec = MotorGhostInteractions::individualenergies;
+	auto tpdistvec = MotorGhostInteractions::tpdistvec;
+	auto eqlvec = MotorGhostInteractions::eqlvec;
+	auto kstrvec = MotorGhostInteractions::kstrvec;
+	for(auto l :MotorGhost::getMotorGhosts()) {
+		Cylinder *cyl1 = l->getFirstCylinder();
+		Cylinder *cyl2 = l->getSecondCylinder();
+		float pos1 = l->getFirstPosition() * SysParams::Geometry()
+				.cylinderNumMon[cyl1->getType()];
+		float pos2 = l->getSecondPosition() * SysParams::Geometry()
+				.cylinderNumMon[cyl2->getType()];
+		cout << l->getId() << " " << l->getType() << " " << cyl1->getStableIndex() << " "
+		     << cyl2->getStableIndex() << " " << pos1 << " " << pos2 << " "
+		     << l->getMMotorGhost()->getEqLength() << " " << l->getCMotorGhost()
+				     ->getDiffusingSpecies()->getName() << " " << l->getNumHeads() << " "
+		     << l->getnumBoundHeads() << " " << kstrvec[counter] << " " <<
+		     eqlvec[counter] << " " << tpdistvec[counter] << " "
+		                                                     ""
+		     << individualenergiesvec[counter] << endl;
+
+		counter++;
+	}
+	}
+	#endif
 
 #ifdef SERIAL // SERIAL
 	//@@@{ STEP 3: COPY FORCES
