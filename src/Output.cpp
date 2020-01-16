@@ -38,6 +38,8 @@
 
 #include <Eigen/Core>
 
+#include "MotorGhostInteractions.h"
+
 using namespace mathfunc;
 
 void BasicSnapshot::print(int snapshot) {
@@ -1336,7 +1338,13 @@ void Datadump::print(int snapshot) {
 	_outputFile <<endl;
 	//MOTOR Data
 	_outputFile <<"MOTOR DATA: MOTORID MOTORTYPE CYL1_IDX CYL2_IDX POS1 POS2 EQLEN "
-               "DIFFUSINGSPECIESNAME NUMHEADS NUMBOUNDHEADS"<<endl;
+               "DIFFUSINGSPECIESNAME NUMHEADS NUMBOUNDHEADS KSTR EQL TPD U_I"<<endl;
+	int counter = 0;
+	auto individualenergiesvec = MotorGhostInteractions::individualenergies;
+	auto tpdistvec = MotorGhostInteractions::tpdistvec;
+	auto eqlvec = MotorGhostInteractions::eqlvec;
+	auto kstrvec = MotorGhostInteractions::kstrvec;
+
 	for(auto l :MotorGhost::getMotorGhosts()){
 		Cylinder* cyl1 = l->getFirstCylinder();
 		Cylinder* cyl2 = l->getSecondCylinder();
