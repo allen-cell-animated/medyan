@@ -174,7 +174,7 @@ public:
     float getBirthTime() {return _birthTime;}
     
     // get num heads
-    int getNumHeads(){return _numHeads;}
+    int getNumHeads()const {return _numHeads;}
     
     //@{
     /// SubSystem management, inherited from Trackable
@@ -221,7 +221,7 @@ public:
     /// Count the number of motor species with a given name in the system
     static species_copy_t countSpecies(const string& name);
 
-    floatingpoint getnumBoundHeads(){return _numBoundHeads;}
+    floatingpoint getnumBoundHeads()const {return _numBoundHeads;}
 };
 
 #endif

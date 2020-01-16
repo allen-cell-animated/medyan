@@ -1106,22 +1106,26 @@ void Controller::run() {
             }
             exit(EXIT_FAILURE);
         }
+///STEP 5. Reset time to required restart time.
         _cController.initializerestart(_restart->getrestartime());
 	    #ifdef SLOWDOWNINITIALCYCLE
 	    _slowedminimizationcutoffTime += _restart->getrestartime();
 		#endif
         cout<<"Tau reset to "<<tau()<<endl;
+///STEP 6. Reinitialize CBound eqlen, numHeads and numBoundHeads values as required by
+/// datadump
         //sets
         _restart->CBoundinitializerestart();
+///STEP 7. Assign copynumbers based on Chemistry input file or the datadump file as
+// required by the user.
         _restart->restartupdateCopyNumbers();
-        _restart->crosscheck();
         _restart->crosscheck();
 
 
         cout<<"Diffusion rates restored, diffusing molecules redistributed."<<endl;
 
 
-//Step 4.5. re-add pin positions
+//Step 8. re-add pin positions
         SystemParser p(_inputFile);
         FilamentSetup filSetup = p.readFilamentSetup();
 
@@ -1129,7 +1133,7 @@ void Controller::run() {
             PinRestartParser ppin(_inputDirectory + filSetup.pinRestartFile);
             ppin.resetPins();}
 
-//Step 5. run mcontroller, update system, turn off restart state.
+//Step 9. run mcontroller, update system, turn off restart state.
         updatePositions();
         updateNeighborLists();
 
@@ -1149,7 +1153,7 @@ void Controller::run() {
         updatePositions();
         updateNeighborLists();
 
-//Step 6. Set Off rates back to original value.
+//Step 10. Set Off rates back to original value.
         for(auto LL : Linker::getLinkers())
         {
             LL->getCLinker()->setOffRate(LL->getCLinker()->getOffReaction()->getBareRate());
