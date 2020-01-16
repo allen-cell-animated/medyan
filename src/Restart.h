@@ -139,7 +139,13 @@ public:
                 x->getCCylinder()->passivatefilreactions();
                 x->getCCylinder()->passivatefilcrossreactions();
             }}
-//Step #1b. Get copynumber of diffusing species. This is used later for book keeping
+//Step #1b. Passivate general reactions.
+	    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+		    for(auto& rxn : C->getInternalReactionContainer().reactions()) {
+		    	if(rxn->getReactionType() == ReactionType::REGULAR)
+		    		rxn->passivateReaction();
+		    }}
+//Step #1c. Get copynumber of diffusing species. This is used later for book keeping
 // purposes.
         for(auto sd : _chemData.speciesDiffusing) {
             string name = get<0>(sd);

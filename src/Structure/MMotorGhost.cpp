@@ -32,8 +32,10 @@ MMotorGhost::MMotorGhost(int motorType, int numBoundHeads, floatingpoint positio
 
 void MMotorGhost::initializerestart(int motorType, floatingpoint eqLength,
 		floatingpoint numBoundHeads){
-    if(numBoundHeads > 0)
-        _kStretch = SysParams::Mechanics().MStretchingK[motorType] * numBoundHeads;
+    if(numBoundHeads > 0) {
+	    if(!SysParams::Mechanics().MStretchingK.empty())
+	    	_kStretch = SysParams::Mechanics().MStretchingK[motorType] * numBoundHeads;
+    }
     if(SysParams::RUNSTATE){
         LOG(ERROR) << "initializerestart Function from MMotorGhost class can only be "
                       "called "

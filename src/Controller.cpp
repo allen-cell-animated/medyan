@@ -1201,6 +1201,13 @@ void Controller::run() {
                 x->getCCylinder()->activatefilreactions();
                 x->getCCylinder()->activatefilcrossreactions();
             }}
+
+//Step 7b. Activate general reactions.
+        for(auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
+            for(auto& rxn : C->getInternalReactionContainer().reactions()) {
+                if(rxn->getReactionType() == ReactionType::REGULAR)
+                    rxn->activateReaction();
+            }}
         cout<<"Unbinding rates of bound species restored. filament reactions activated"<<endl;
 //@
 #ifdef CHEMISTRY
