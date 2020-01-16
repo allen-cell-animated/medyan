@@ -918,6 +918,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #ifdef OPTIMOUT
 		std::cout << "SERL Total number of iterations " <<_LINESEARCHALGORITHM<<" "<<
 		numIter << endl;
+
 #endif
 #ifdef CUDATIMETRACK_MACRO
 		std::cout<<"SERL Energy time taken (s) "<<CUDAcommon::serltime.TcomputeE<<" for total "
@@ -1028,6 +1029,9 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
 
     result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+	cout<<"Energy after minimization"<<endl;
+	FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+	cout<<endl;
 
     //final force calculation
     FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());

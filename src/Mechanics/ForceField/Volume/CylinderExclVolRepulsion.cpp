@@ -578,6 +578,16 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSe
 		else
 			U += U_i;
 
+
+/*		if(U_i > 100) {
+			cout<<"bidx "<<beadSet[n*i]<<" "<<beadSet[n*i + 1]<<" "
+							<<beadSet[n*i + 2]<<" "<< beadSet[n*i + 3]<<endl;
+			cout<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<endl;
+			cout<<c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
+			cout<<"Exvol Energy "<<U_i<<endl;
+			cout << "high energy" << endl;
+		}*/
+
 //        }
 	}
 	delete [] newc2;

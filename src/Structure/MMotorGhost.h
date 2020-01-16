@@ -48,7 +48,8 @@ public:
                 const vector<floatingpoint>& coord11, const vector<floatingpoint>& coord12,
                 const vector<floatingpoint>& coord21, const vector<floatingpoint>& coord22);
 
-    void initializerestart(floatingpoint eqLength);
+    void initializerestart(int motorType, floatingpoint eqLength,
+                           floatingpoint numBoundHeads);
     
     //@{
     /// Getter for constants

@@ -234,5 +234,7 @@ public:
         }
 
     }
+
+    bool crosscheck();
 };
 #endif

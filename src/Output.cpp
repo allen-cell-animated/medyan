@@ -1038,11 +1038,6 @@ void TMGraph::print(int snapshot) {
 }
 
 
-
-
-
-
-
 void ReactionOut::print(int snapshot) {
 
     _outputFile.precision(10);
@@ -1340,7 +1335,8 @@ void Datadump::print(int snapshot) {
 	}
 	_outputFile <<endl;
 	//MOTOR Data
-	_outputFile <<"MOTOR DATA: MOTORID MOTORTYPE CYL1_IDX CYL2_IDX POS1 POS2 EQLEN DIFFUSINGSPECIESNAME"<<endl;
+	_outputFile <<"MOTOR DATA: MOTORID MOTORTYPE CYL1_IDX CYL2_IDX POS1 POS2 EQLEN "
+               "DIFFUSINGSPECIESNAME NUMHEADS NUMBOUNDHEADS"<<endl;
 	for(auto l :MotorGhost::getMotorGhosts()){
 		Cylinder* cyl1 = l->getFirstCylinder();
 		Cylinder* cyl2 = l->getSecondCylinder();
@@ -1351,7 +1347,8 @@ void Datadump::print(int snapshot) {
 		_outputFile <<l->getId()<<" "<<l->getType()<<" "<<cyl1->getStableIndex()<<" "
 		            <<cyl2->getStableIndex()<<" "<<pos1<<" "<<pos2<<" "
 		            <<l->getMMotorGhost()->getEqLength()<<" "<<l->getCMotorGhost()
-				->getDiffusingSpecies()->getName()<<endl;
+				->getDiffusingSpecies()->getName()<<" "<<l->getNumHeads()<<" "
+				<<l->getnumBoundHeads()<<endl;
 	}
 	_outputFile <<endl;
 	//Brancher Data
@@ -1454,6 +1451,14 @@ void Datadump::print(int snapshot) {
     }
 
     _outputFile <<endl;
+
+	_outputFile <<"ENERGYDATA "<< endl;
+	auto minresult = _subSystem->prevMinResult.energiesAfter;
+	for(auto eachenergy: minresult.individual){
+		_outputFile <<eachenergy.name<<" "<<eachenergy.energy*kT<<endl;
+	}
+
+	_outputFile <<endl;
 }
 
 void HessianMatrix::print(int snapshot){

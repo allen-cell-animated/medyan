@@ -1114,6 +1114,8 @@ void Controller::run() {
         //sets
         _restart->CBoundinitializerestart();
         _restart->restartupdateCopyNumbers();
+        _restart->crosscheck();
+        _restart->crosscheck();
 
 
         cout<<"Diffusion rates restored, diffusing molecules redistributed."<<endl;
@@ -1134,7 +1136,7 @@ void Controller::run() {
         mins = chrono::high_resolution_clock::now();
         cout<<"Minimizing energy"<<endl;
 
-        _mController.run(false);
+        _subSystem.prevMinResult = _mController.run(false);
 #ifdef OPTIMOUT
         mine= chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runm(mine - mins);
@@ -1151,6 +1153,10 @@ void Controller::run() {
         for(auto LL : Linker::getLinkers())
         {
             LL->getCLinker()->setOffRate(LL->getCLinker()->getOffReaction()->getBareRate());
+            cout<<"L "<<LL->getId()<<" "<<LL->getMLinker()->getEqLength()<<" "
+                << LL->getCLinker()->getOffRate()<<" "
+                <<LL->getCLinker()->getOffReaction()->getBareRate()<<" "
+                    <<LL->getMLinker()->stretchForce<<endl;
             /*LL->getCLinker()->getOffReaction()->setRate(LL->getCLinker()->getOffReaction
 			        ()->getBareRate());*/
             LL->updateReactionRates();
@@ -1163,8 +1169,13 @@ void Controller::run() {
             /*MM->getCMotorGhost()->getOffReaction()->setRate(MM->getCMotorGhost()
 		                                                             ->getOffReaction()
 		                                                             ->getBareRate());*/
+            MM->getCMotorGhost()->setOffRate(MM->getCMotorGhost()->getOffReaction()->getBareRate());
             MM->updateReactionRates();
             MM->getCMotorGhost()->getOffReaction()->updatePropensity();
+            cout<<"M "<<MM->getId()<<" "<<MM->getMMotorGhost()->getEqLength()<<" "
+                << MM->getCMotorGhost()->getOffRate()<<" "
+                <<MM->getCMotorGhost()->getOffReaction()->getBareRate()<<" "
+                <<MM->getMMotorGhost()->stretchForce<<endl;
         }
         int dummy=0;
         for (auto BB: BranchingPoint::getBranchingPoints()) {
@@ -1174,6 +1185,10 @@ void Controller::run() {
 		                                                                 ->getOffReaction
 		                                                                 ()->getBareRate
 		                                                                 ());*/
+            cout<<"B "<<BB->getId()<<" "<<BB->getMBranchingPoint()->getEqLength()<<" "
+                << BB->getCBranchingPoint()->getOffRate()<<" "
+                <<BB->getCBranchingPoint()->getOffReaction()->getBareRate()<<endl;
+
             BB->getCBranchingPoint()->getOffReaction()->updatePropensity();
         }
 //STEP 7: Get cylinders, activate filament reactions.
@@ -1212,6 +1227,7 @@ void Controller::run() {
     // interactions.
 	_subSystem.resetNeighborLists();
     auto minimizationResult = _mController.run(false);
+    _subSystem.prevMinResult = minimizationResult;
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runm2(mine - mins);
     minimizationtime += elapsed_runm2.count();
@@ -1423,6 +1439,7 @@ void Controller::run() {
                 Cylinder::updateAllData();
 
                 minimizationResult = _mController.run();
+                _subSystem.prevMinResult = minimizationResult;
                 mine= chrono::high_resolution_clock::now();
 
 

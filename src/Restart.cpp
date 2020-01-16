@@ -196,6 +196,12 @@ void Restart::readNetworkSetup() {
 					_rmdata.eqlen = atof((lineVector[6]).c_str());
 					//diffusing species name
 					_rmdata.diffusingspeciesname = lineVector[7];
+					if(lineVector.size()>8) {
+						//numHeads
+						_rmdata.numHeads = atoi((lineVector[8]).c_str());
+						//numBoundHeads
+						_rmdata.numBoundHeads = atof((lineVector[9]).c_str());
+					}
 
 					_rMDatavec.push_back(_rmdata);
 					//get next filament data
@@ -315,7 +321,7 @@ void Restart::setupInitialNetwork() {
 		filamentmap[fil.filid] = fil.filamentpointer;
 	}
 	cout<<endl;
-	cout<<"Num filaments "<<Filament::getFilaments().size()<<endl;
+	cout<<"Num filaments Created "<<Filament::getFilaments().size()<<endl;
 
 	for(unsigned int b=0;b<_rBData.bsidvec.size();b++){
 		auto bID = _rBData.bsidvec[b];
@@ -327,9 +333,9 @@ void Restart::setupInitialNetwork() {
 		_subSystem->addTrackable<Bead>(tempcoord, filptr, _rBData.filpos[b]);
 		//Copy Forces
 		for(unsigned int dim = 0; dim < 3; dim++)
-			Bead::getDbData().forcesAux.data()[3*b+dim] = _rBData.coordvec.data()[3*bID+dim];
+			Bead::getDbData().forcesAux.data()[3*b+dim] = _rBData.forceAuxvec.data()[3*bID+dim];
 	}
-	cout<<"Num beads "<<Bead::getBeads().size()<<endl;
+	cout<<"Num beads Created "<<Bead::getBeads().size()<<endl;
 
 	for(auto &cyl : _rCDatavec){
 		auto b1 = Bead::getBeads()[cyl.beadsidpairvec[0]];
@@ -348,7 +354,7 @@ void Restart::setupInitialNetwork() {
 		else if(cyl.endstatusvec[1])
 			c0->setMinusEnd(true);
 	}
-	cout<<"Num cylinders "<<Cylinder::getCylinders().size()<<endl;
+	cout<<"Num cylinders Created "<<Cylinder::getCylinders().size()<<endl;
 
 	for(auto fil : _rFDatavec) {
 		vector<Cylinder*> cylvector;
@@ -501,7 +507,7 @@ void Restart::CBoundinitializerestart(){
 				bool cndn1 = rc1 == c1 && rc2 == c2 && rpos1 == pos1 && rpos2 == pos2;
 				bool cndn2 = rc1 == c2 && rc2 == c1 && rpos1 == pos2 && rpos2 == pos1;
 				if(cndn1 || cndn2){
-					m->initializerestart(rmdata.eqlen);
+					m->initializerestart(rmdata.eqlen, rmdata.numHeads, rmdata.numBoundHeads);
 					rmdata.restartcompletion = true;
 				}
 			}
@@ -525,4 +531,46 @@ void Restart::CBoundinitializerestart(){
 			}
 		}
 	}
+}
+
+bool Restart::crosscheck(){
+	//Filament data
+	for(auto &fil : _rFDatavec) {
+		auto filptr = fil.filamentpointer;
+		short counter = 0;
+		auto cylsidvec = fil.cylsidvec;
+		bool status = true;
+		int startindex = 0;
+		for(auto cylinfil:filptr->getCylinderVector()) {
+			if(counter == 0){
+				startindex = cylinfil->getPosition();
+			}
+			int currindex = cylinfil->getPosition();
+			if(abs(startindex-currindex) != counter ){
+				LOG(ERROR) << "Cylinder position does not match" << endl;
+				LOG(ERROR) << startindex<<" "<<currindex<<endl;
+				status = false;
+				break;
+			}
+			if (cylinfil->getStableIndex() != cylsidvec[counter]) {
+				LOG(ERROR) << "Cylinder sidx does not match" << endl;
+				status = false;
+				break;
+			}
+			counter++;
+		}
+		if(!status){
+			cout<<"Datadump dictates Fil "<<fil.filid<<" be comprised of cylinder "
+			                                           "sidx ";
+			for(auto c:cylsidvec)
+				cout<<c<<" ";
+			cout<<endl;
+			cout<<"But Fil "<<filptr->getId()<<" is comprised of cylinder sidx ";
+			for(auto c:filptr->getCylinderVector())
+				cout<<c->getStableIndex()<<" ";
+			cout<<endl;
+		}
+	}
+	//Cylinder data
+	return true;
 }

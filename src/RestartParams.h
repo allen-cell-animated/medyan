@@ -73,6 +73,8 @@ struct restartMotorData{
 	float eqlen;
 	string diffusingspeciesname;
 	bool restartcompletion = false;
+	int numHeads = 0;
+	floatingpoint numBoundHeads = 0;
 };
 
 /*stores LinkerData*/

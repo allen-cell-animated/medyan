@@ -120,8 +120,14 @@ public:
                floatingpoint position1 = 0.5, floatingpoint position2 = 0.5,
                floatingpoint onRate = 0.0, floatingpoint offRate = 0.0);
 
-    void initializerestart(floatingpoint eqLength){ _mMotorGhost->initializerestart
-                (eqLength);};
+    void initializerestart(floatingpoint eqLength, int numHeads, floatingpoint
+    numBoundHeads){
+    	if(numHeads > 0)
+    		_numHeads = numHeads;
+    	if(numBoundHeads > 0)
+    		_numBoundHeads = numBoundHeads;
+    	_mMotorGhost->initializerestart(_motorType, eqLength, _numBoundHeads);
+    };
 
     virtual ~MotorGhost() noexcept;
     
@@ -214,6 +220,8 @@ public:
     
     /// Count the number of motor species with a given name in the system
     static species_copy_t countSpecies(const string& name);
+
+    floatingpoint getnumBoundHeads(){return _numBoundHeads;}
 };
 
 #endif
