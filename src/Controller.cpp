@@ -1195,14 +1195,14 @@ void Controller::run() {
 
             BB->getCBranchingPoint()->getOffReaction()->updatePropensity();
         }
-//STEP 7: Get cylinders, activate filament reactions.
+//STEP 11: Get cylinders, activate filament reactions.
         for(auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
             for(auto x : C->getCylinders()) {
                 x->getCCylinder()->activatefilreactions();
                 x->getCCylinder()->activatefilcrossreactions();
             }}
 
-//Step 7b. Activate general reactions.
+//Step 11b. Activate general reactions.
         for(auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
             for(auto& rxn : C->getInternalReactionContainer().reactions()) {
                 if(rxn->getReactionType() == ReactionType::REGULAR)

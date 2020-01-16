@@ -1356,7 +1356,11 @@ void Datadump::print(int snapshot) {
 		            <<cyl2->getStableIndex()<<" "<<pos1<<" "<<pos2<<" "
 		            <<l->getMMotorGhost()->getEqLength()<<" "<<l->getCMotorGhost()
 				->getDiffusingSpecies()->getName()<<" "<<l->getNumHeads()<<" "
-				<<l->getnumBoundHeads()<<endl;
+				<<l->getnumBoundHeads()<<" "<<kstrvec[counter]<<" "<<
+				eqlvec[counter]<<" "<<tpdistvec[counter]<<" "
+											  ""<<individualenergiesvec[counter]<<endl;
+
+		counter++;
 	}
 	_outputFile <<endl;
 	//Brancher Data
