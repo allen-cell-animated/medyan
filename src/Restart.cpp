@@ -509,10 +509,15 @@ void Restart::CBoundinitializerestart(){
 				if(cndn1 || cndn2){
 					m->initializerestart(rmdata.eqlen, rmdata.numHeads, rmdata.numBoundHeads);
 					rmdata.restartcompletion = true;
+					cout<<rmdata.numBoundHeads<<" "<<m->getnumBoundHeads()<<endl;
+				}
+				else{
+					LOG(ERROR)<<"Motor not found!"<<endl;
 				}
 			}
 		}
 	}
+	cout<<endl;
 	//brancher
 	for(auto b:BranchingPoint::getBranchingPoints()) {
 		int c1 = b->getFirstCylinder()->getStableIndex();
