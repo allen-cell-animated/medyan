@@ -41,7 +41,7 @@ cmake \
     $medyan_cmake_boost \
     $medyan_cmake_additional_link_dirs \
     $medyan_cmake_rpath \
-    .. $medyan_vcpkg_cmake_toolchain
+    .. "-DCMAKE_TOOLCHAIN_FILE=$medyan_vcpkg_cmake_toolchain"
 
 # Build medyan
 echo "Building medyan..."
