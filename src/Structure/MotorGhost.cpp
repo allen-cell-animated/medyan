@@ -198,32 +198,34 @@ void MotorGhost::updatePosition() {
     }
     
 #ifdef MECHANICS
-    auto x1 = _c1->getFirstBead()->vcoordinate();
-    auto x2 = _c1->getSecondBead()->vcoordinate();
-    auto x3 = _c2->getFirstBead()->vcoordinate();
-    auto x4 = _c2->getSecondBead()->vcoordinate();
-    
-    auto m1 = midPointCoordinate(x1, x2, _position1);
-    auto m2 = midPointCoordinate(x3, x4, _position2);
-    
-    _mMotorGhost->setLength(twoPointDistance(m1, m2));
-    
-    //update the spring constant, based on numboundheads
-    //current force
-    floatingpoint force = max((floatingpoint)0.0, _mMotorGhost->stretchForce);
-    
-    //update number of bound heads
-    if(!_unbindingChangers.empty())
-        _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, force, _numHeads);
-    else
-        _numBoundHeads = _numHeads;
-    
-#ifdef PLOSFEEDBACK
-    _mMotorGhost->setStretchingConstant(_motorType, _numHeads);
-#else
-    _mMotorGhost->setStretchingConstant(_motorType, _numBoundHeads);
-#endif
+if(SysParams::RUNSTATE) {
+	auto x1 = _c1->getFirstBead()->vcoordinate();
+	auto x2 = _c1->getSecondBead()->vcoordinate();
+	auto x3 = _c2->getFirstBead()->vcoordinate();
+	auto x4 = _c2->getSecondBead()->vcoordinate();
 
+	auto m1 = midPointCoordinate(x1, x2, _position1);
+	auto m2 = midPointCoordinate(x3, x4, _position2);
+
+	_mMotorGhost->setLength(twoPointDistance(m1, m2));
+
+	//update the spring constant, based on numboundheads
+	//current force
+	floatingpoint force = max((floatingpoint) 0.0, _mMotorGhost->stretchForce);
+
+	//update number of bound heads
+	if (!_unbindingChangers.empty())
+		_numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate,
+		                                                               force, _numHeads);
+	else
+		_numBoundHeads = _numHeads;
+
+#ifdef PLOSFEEDBACK
+	_mMotorGhost->setStretchingConstant(_motorType, _numHeads);
+#else
+	_mMotorGhost->setStretchingConstant(_motorType, _numBoundHeads);
+#endif
+}
 #endif
 }
 
