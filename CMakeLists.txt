@@ -112,7 +112,7 @@ endif()
 #######################################
 
 # boost
-if(NOT ${MEDYAN_BOOST_INSTALL_MODE})
+if("${MEDYAN_BOOST_INSTALL_MODE}" STREQUAL "")
     # Default boost install using vcpkg
 
 elseif("${MEDYAN_BOOST_INSTALL_MODE}" STREQUAL "find")
