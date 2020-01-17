@@ -14,8 +14,6 @@ SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './dist_moduleV
 SOURCES_CPP              += ./dist_moduleV2/dist_avx_par.cpp  ./dist_moduleV2/dist_bench.cpp  ./dist_moduleV2/dist_example.cpp  ./dist_moduleV2/dist_mod_vars.cpp
 SOURCES_CU               := $(shell find . -name '*.cu'  ! -path './dist_moduleV2/*')
 SOURCES                   = $(SOURCES_CPP) $(SOURCES_CU)
-HEADERS                  := $(shell find . -name '*.h' ! -path './dist_moduleV2/*')
-HEADERS                  += ./dist_moduleV2/umesimd/UMESimd.h
 
 OBJECTS_CPP              := $(SOURCES_CPP:.cpp=.o)
 OBJECTS_CU               := $(SOURCES_CU:.cu=.o)
