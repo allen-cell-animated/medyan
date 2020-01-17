@@ -318,7 +318,7 @@ floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoin
 
 void BranchingDihedralCosine::forces(
     floatingpoint *coord, floatingpoint *f, size_t nint,
-    unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos){
+    unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos, floatingpoint *stretchforce){
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
 
@@ -488,6 +488,10 @@ void BranchingDihedralCosine::forces(
 	    f4[0] += Lforce4[0];
 	    f4[1] += Lforce4[1];
 	    f4[2] += Lforce4[2];
+
+	    stretchforce[3*i] = Lforce3[0];
+	    stretchforce[3*i + 1] = Lforce3[1];
+	    stretchforce[3*i + 2] = Lforce3[2];
 		//@
         #ifdef CHECKFORCES_INF_NAN
         if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)
@@ -833,10 +837,11 @@ void BranchingDihedralCosine::testdihedral(){
 	vector<unsigned int> beadSet ={0, 1, 2, 3};
 	vector<floatingpoint> kdih ={50.0};
 	vector<floatingpoint> pos = {0.5};
+	vector<floatingpoint> stretchForce ={0.0, 0.0, 0.0};
 	int nint = 1;
 	cout<<"---Test begins----"<<endl;
 	floatingpoint U = energy(coord.data(), nint, beadSet.data(), kdih.data(), pos.data());
-	forces(coord.data(), force.data(), nint, beadSet
-	.data(), kdih.data(), pos.data());
+	forces(coord.data(), force.data(), nint, beadSet.data(), kdih.data(), pos.data(),
+			stretchForce.data());
 	cout<<"---Test ends----"<<endl;
 }

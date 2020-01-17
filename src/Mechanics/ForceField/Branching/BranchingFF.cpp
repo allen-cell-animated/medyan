@@ -99,7 +99,8 @@ void BranchingFF::vectorize() {
     //Reset stretching forces to 0.
     for(auto b:BranchingPoint::getBranchingPoints()){
         //Using += to ensure that the stretching forces are additive.
-        b->getMBranchingPoint()->stretchForce = 0.0;
+        for(short j =0; j < 3; j++)
+        b->getMBranchingPoint()->branchForce[j] = 0.0;
     }
 
 

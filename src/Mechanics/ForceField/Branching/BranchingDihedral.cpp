@@ -34,6 +34,7 @@ void BranchingDihedral<BDihedralInteractionType>::vectorize() {
     beadSet.resize(n * BranchingPoint::getBranchingPoints().size());
     kdih = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
     pos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
+    stretchforce = new floatingpoint[3*BranchingPoint::getBranchingPoints().size()];
 
     int i = 0;
 
@@ -46,6 +47,8 @@ void BranchingDihedral<BDihedralInteractionType>::vectorize() {
 
         kdih[i] = b->getMBranchingPoint()->getDihedralConstant();
         pos[i] = b->getPosition();
+        for(int j = 0; j < 3; j++)
+            stretchforce[3*i + j] = 0.0;
         i++;
     }
     //CUDA
@@ -79,6 +82,13 @@ void BranchingDihedral<BDihedralInteractionType>::vectorize() {
 
 template<class BDihedralInteractionType>
 void BranchingDihedral<BDihedralInteractionType>::deallocate() {
+    for(auto b:BranchingPoint::getBranchingPoints()){
+        //Using += to ensure that the stretching forces are additive.
+
+        for(int j = 0; j < 3; j++)
+            b->getMBranchingPoint()->branchForce[j] += stretchforce[3*b->getIndex() + j];
+    }
+    delete [] stretchforce;
     delete [] kdih;
     delete [] pos;
 #ifdef CUDAACCL
@@ -162,9 +172,8 @@ void BranchingDihedral<BDihedralInteractionType>::computeForces(floatingpoint *c
     }
 #endif
 #ifdef SERIAL
-
-
-    _FFType.forces(coord, f, BranchingPoint::getBranchingPoints().size(), beadSet.data(), kdih, pos);
+    _FFType.forces(coord, f, BranchingPoint::getBranchingPoints().size(), beadSet.data(),
+            kdih, pos, stretchforce);
 
 #endif
 }

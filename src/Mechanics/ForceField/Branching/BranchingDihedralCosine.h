@@ -30,7 +30,8 @@ public:
                   floatingpoint *kdih, floatingpoint *pos, floatingpoint d);
 
     void forces(floatingpoint *coord, floatingpoint *f, size_t nint,
-        unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos);
+        unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos,
+        floatingpoint *stretchforce);
 
 	void forcesNumericalinteraction(floatingpoint *coord, floatingpoint *f, size_t nint,
 			unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos, int

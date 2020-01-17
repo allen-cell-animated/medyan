@@ -101,7 +101,7 @@ floatingpoint BranchingDihedralCosineV2::energy(
 
 void BranchingDihedralCosineV2::forces(
 		floatingpoint *coord, floatingpoint *f, size_t nint,
-		unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos){
+		unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos, floatingpoint *stretchforce){
 
 	int n = BranchingDihedral<BranchingDihedralCosineV2>::n;
 
@@ -301,6 +301,10 @@ void BranchingDihedralCosineV2::forces(
 		f4[0] += Fc4[0];
 		f4[1] += Fc4[1];
 		f4[2] += Fc4[2];
+
+		stretchforce[3*i] = Fc3[0];
+		stretchforce[3*i + 1] = Fc3[1];
+		stretchforce[3*i + 2] = Fc3[2];
 		//@
 		#ifdef CHECKFORCES_INF_NAN
 		if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)

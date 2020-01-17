@@ -56,9 +56,12 @@ public:
 
     void initializerestart(floatingpoint eqLength);
 
-    floatingpoint stretchForce = 0.0; ///< Stretching force of brancher at current state
-    floatingpoint bendingForce = 0.0;
-    floatingpoint dihedralForce = 0.0;
+    floatingpoint branchForce[3] = {0.0, 0.0, 0.0};
+
+//    floatingpoint stretchForce [3] = {0.0, 0.0, 0.0}; ///< Stretching force of brancher at current state
+//    floatingpoint bendingForce [3] = {0.0, 0.0, 0.0};
+//    floatingpoint positionForce[3] = {0.0, 0.0, 0.0};
+//    floatingpoint dihedralForce[3] = {0.0, 0.0, 0.0};
     
 private:
     floatingpoint _eqLength;  ///< Equilibrium length
