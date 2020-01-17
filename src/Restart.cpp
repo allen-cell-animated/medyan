@@ -350,9 +350,9 @@ void Restart::setupInitialNetwork() {
 
 		//set minusend or plusend
 		if(cyl.endstatusvec[0])
-			c0->setPlusEnd(true);
-		else if(cyl.endstatusvec[1])
 			c0->setMinusEnd(true);
+		else if(cyl.endstatusvec[1])
+			c0->setPlusEnd(true);
 	}
 	cout<<"Num cylinders Created "<<Cylinder::getCylinders().size()<<endl;
 
@@ -511,7 +511,6 @@ void Restart::CBoundinitializerestart(){
 					foundstatus = true;
 					m->initializerestart(rmdata.eqlen, rmdata.numHeads, rmdata.numBoundHeads);
 					rmdata.restartcompletion = true;
-					cout<<"NBH "<<rmdata.numBoundHeads<<" "<<m->getnumBoundHeads()<<endl;
 				}
 			}
 		}

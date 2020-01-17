@@ -221,6 +221,8 @@ void Filament::initializerestart(vector<Cylinder*> cylinderVector,
                       "during restart phase. Exiting.";
         throw std::logic_error("Illegal function call pattern");
     }
+    if(_cylinderVector.size())
+        cout<<_cylinderVector.size()<<endl;
     for(auto cyl:cylinderVector) {
         auto rcdata = _rCDatavec[cyl->getStableIndex()];
         cyl->initializerestart( rcdata.totalmonomers, rcdata.endmonomerpos[0],
