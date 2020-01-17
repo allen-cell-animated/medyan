@@ -498,6 +498,7 @@ void Restart::CBoundinitializerestart(){
 		short ftype2 = m->getSecondCylinder()->getType();
 		short pos1 = m->getFirstPosition()*SysParams::Geometry().cylinderNumMon[ftype1];
 		short pos2 = m->getSecondPosition()*SysParams::Geometry().cylinderNumMon[ftype2];
+		bool foundstatus = false;
 		for(auto &rmdata: _rMDatavec){
 			if(!rmdata.restartcompletion) {
 				int rc1 = rmdata.cylid1;
@@ -507,15 +508,15 @@ void Restart::CBoundinitializerestart(){
 				bool cndn1 = rc1 == c1 && rc2 == c2 && rpos1 == pos1 && rpos2 == pos2;
 				bool cndn2 = rc1 == c2 && rc2 == c1 && rpos1 == pos2 && rpos2 == pos1;
 				if(cndn1 || cndn2){
+					foundstatus = true;
 					m->initializerestart(rmdata.eqlen, rmdata.numHeads, rmdata.numBoundHeads);
 					rmdata.restartcompletion = true;
-					cout<<rmdata.numBoundHeads<<" "<<m->getnumBoundHeads()<<endl;
-				}
-				else{
-					LOG(ERROR)<<"Motor not found!"<<endl;
+					cout<<"NBH "<<rmdata.numBoundHeads<<" "<<m->getnumBoundHeads()<<endl;
 				}
 			}
 		}
+		if(!foundstatus)
+			LOG(ERROR)<<"Motor not found!"<<endl;
 	}
 	cout<<endl;
 	//brancher
