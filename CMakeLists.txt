@@ -104,7 +104,7 @@ else()
 endif()
 
 if(MEDYAN_ADDITIONAL_LINK_DIRS)
-    target_link_libraries(medyan PRIVATE ${MEDYAN_ADDITIONAL_LINK_DIRS})
+    target_link_directories(medyan PRIVATE ${MEDYAN_ADDITIONAL_LINK_DIRS})
 endif()
 
 # RPath specification
