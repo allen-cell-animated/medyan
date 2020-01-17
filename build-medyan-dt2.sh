@@ -4,6 +4,17 @@
 
 medyan_root_dir=$(X= cd -- "$(dirname -- "$0")" && pwd -P)
 
+# Install git for vcpkg (requires >= 2.7.0)
+if [ "$(git version | cut -d\".\" -f2)" -lt 7 ]; then
+    (
+        cd $medyan_root_dir/scripts/.build &&
+        wget https://github.com/git/git/archive/v2.25.0.zip -O git.zip &&
+        unzip -qq git.zip &&
+        make -j10 &&
+        make install
+    ) && export PATH="~/bin:$PATH"
+fi
+
 # Set up variables
 export MEDYAN_BOOST_INSTALL_MODE="manual"
 export MEDYAN_BOOST_INCLUDE_DIR="$BOOST_INCLUDE"
