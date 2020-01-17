@@ -96,11 +96,19 @@ target_compile_definitions(medyan PRIVATE
 )
 
 # Additional link directories
-if(${MEDYAN_ADDITIONAL_LINK_DIRS})
+if(MSVC)
+else()
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
+    find_package(Threads REQUIRED)
+    target_link_libraries(medyan PRIVATE Threads::Threads)
+endif()
+
+if(MEDYAN_ADDITIONAL_LINK_DIRS)
     target_link_libraries(medyan PRIVATE ${MEDYAN_ADDITIONAL_LINK_DIRS})
 endif()
+
 # RPath specification
-if(${MEDYAN_RPATH})
+if(MEDYAN_RPATH)
     set_target_properties(medyan PROPERTIES
         BUILD_RPATH ${MEDYAN_RPATH}
     )
