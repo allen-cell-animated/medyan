@@ -1157,12 +1157,11 @@ void Controller::run() {
         for(auto LL : Linker::getLinkers())
         {
             LL->getCLinker()->setOffRate(LL->getCLinker()->getOffReaction()->getBareRate());
-            cout<<"L "<<LL->getId()<<" "<<LL->getMLinker()->getEqLength()<<" "
+            /*cout<<"L "<<LL->getId()<<" "<<LL->getMLinker()->getEqLength()<<" "
                 << LL->getCLinker()->getOffRate()<<" "
                 <<LL->getCLinker()->getOffReaction()->getBareRate()<<" "
-                    <<LL->getMLinker()->stretchForce<<endl;
-            /*LL->getCLinker()->getOffReaction()->setRate(LL->getCLinker()->getOffReaction
-			        ()->getBareRate());*/
+                    <<LL->getMLinker()->stretchForce<<endl;*/
+
             LL->updateReactionRates();
             LL->getCLinker()->getOffReaction()->updatePropensity();
 
@@ -1170,28 +1169,23 @@ void Controller::run() {
         for(auto MM : MotorGhost::getMotorGhosts())
         {
             MM->getCMotorGhost()->setOffRate(MM->getCMotorGhost()->getOffReaction()->getBareRate());
-            /*MM->getCMotorGhost()->getOffReaction()->setRate(MM->getCMotorGhost()
-		                                                             ->getOffReaction()
-		                                                             ->getBareRate());*/
+
             MM->getCMotorGhost()->setOffRate(MM->getCMotorGhost()->getOffReaction()->getBareRate());
             MM->updateReactionRates();
             MM->getCMotorGhost()->getOffReaction()->updatePropensity();
-            cout<<"M "<<MM->getId()<<" "<<MM->getMMotorGhost()->getEqLength()<<" "
+            /*cout<<"M "<<MM->getId()<<" "<<MM->getMMotorGhost()->getEqLength()<<" "
                 << MM->getCMotorGhost()->getOffRate()<<" "
                 <<MM->getCMotorGhost()->getOffReaction()->getBareRate()<<" "
-                <<MM->getMMotorGhost()->stretchForce<<endl;
+                <<MM->getMMotorGhost()->stretchForce<<endl;*/
         }
         int dummy=0;
         for (auto BB: BranchingPoint::getBranchingPoints()) {
             dummy++;
             BB->getCBranchingPoint()->setOffRate(BB->getCBranchingPoint()->getOffReaction()->getBareRate());
-            /*BB->getCBranchingPoint()->getOffReaction()->setRate(BB->getCBranchingPoint()
-		                                                                 ->getOffReaction
-		                                                                 ()->getBareRate
-		                                                                 ());*/
-            cout<<"B "<<BB->getId()<<" "<<BB->getMBranchingPoint()->getEqLength()<<" "
+
+            /*cout<<"B "<<BB->getId()<<" "<<BB->getMBranchingPoint()->getEqLength()<<" "
                 << BB->getCBranchingPoint()->getOffRate()<<" "
-                <<BB->getCBranchingPoint()->getOffReaction()->getBareRate()<<endl;
+                <<BB->getCBranchingPoint()->getOffReaction()->getBareRate()<<endl;*/
 
             BB->getCBranchingPoint()->getOffReaction()->updatePropensity();
         }
