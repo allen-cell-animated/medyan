@@ -1,6 +1,11 @@
 #!/bin/sh -e
 
-# The build script for Deepthought2 HPC cluster
+# The configuration script for Deepthought2 HPC cluster
+#
+# Before using this script, the following modules need to be loaded
+#   gcc/9.1.0
+#   boost
+#   cmake/3.13.2
 
 medyan_root_dir=$(X= cd -- "$(dirname -- "$0")" && pwd -P)
 
@@ -27,4 +32,4 @@ export MEDYAN_ADDITIONAL_LINK_DIRS="$GCC_ROOTDIR/lib64"
 export MEDYAN_RPATH="$GCC_ROOTDIR/lib64"
 
 # Run the script
-$medyan_root_dir/build-medyan.sh
+$medyan_root_dir/conf.sh
