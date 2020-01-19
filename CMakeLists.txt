@@ -1,5 +1,15 @@
 cmake_minimum_required(VERSION 3.12)
 
+#######################################
+# Configurations
+#######################################
+
+# vcpkg triplet config
+if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
+    set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING "")
+endif()
+
+
 project(medyan)
 
 #######################################
@@ -26,6 +36,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(MSVC)
+    set(CMAKE_CXX_FLAGS "/arch:AVX2")
 else()
     set(CMAKE_CXX_FLAGS "-Wall -Wextra -ffast-math -fno-finite-math-only -mtune=native -march=native")
     set(CMAKE_CXX_FLAGS_DEBUG "-g")
