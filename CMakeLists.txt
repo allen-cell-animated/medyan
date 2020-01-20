@@ -36,7 +36,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(MSVC)
-    set(CMAKE_CXX_FLAGS "/arch:AVX2")
+    set(CMAKE_CXX_FLAGS "/arch:AVX2 /MP /EHsc")
 else()
     set(CMAKE_CXX_FLAGS "-Wall -Wextra -ffast-math -fno-finite-math-only -mtune=native -march=native")
     set(CMAKE_CXX_FLAGS_DEBUG "-g")
@@ -102,6 +102,12 @@ target_compile_definitions(medyan PRIVATE
     CHECKFORCES_INF_NAN
 )
 
+if(MSVC)
+    target_compile_definitions(medyan PRIVATE
+        _USE_MATH_DEFINES  # Enable math macros like M_PI
+    )
+endif()
+
 # Additional link directories
 if(MSVC)
 else()
@@ -119,6 +125,11 @@ if(MEDYAN_RPATH)
     set_target_properties(medyan PROPERTIES
         BUILD_RPATH ${MEDYAN_RPATH}
     )
+endif()
+
+# Build tool specific
+if(MSVC)
+    set_directory_properties(PROPERTY VS_STARTUP_PROJECT "medyan")
 endif()
 
 
