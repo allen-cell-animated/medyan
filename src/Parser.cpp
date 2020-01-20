@@ -1474,6 +1474,16 @@ void SystemParser::readDyRateParams() {
             }
             else {}
         }
+        else if (line.find("DBUNBINDINGF") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRParams.dBranchUnbindingCharForce.push_back(
+                            atof((lineVector[i].c_str())));
+            }
+            else {}
+        }
         /// Manual Rate Changer
         // It takes 5 inputs as start_time, plusend_poly, plusend_depoly, minusend_poly, minusend_depoly
         // Currently it applies type 0 to all filament types

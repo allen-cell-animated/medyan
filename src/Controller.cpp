@@ -1157,19 +1157,16 @@ void Controller::run() {
         for(auto LL : Linker::getLinkers())
         {
             LL->getCLinker()->setOffRate(LL->getCLinker()->getOffReaction()->getBareRate());
+            LL->updateReactionRates();
+            LL->getCLinker()->getOffReaction()->updatePropensity();
             /*cout<<"L "<<LL->getId()<<" "<<LL->getMLinker()->getEqLength()<<" "
                 << LL->getCLinker()->getOffRate()<<" "
                 <<LL->getCLinker()->getOffReaction()->getBareRate()<<" "
                     <<LL->getMLinker()->stretchForce<<endl;*/
 
-            LL->updateReactionRates();
-            LL->getCLinker()->getOffReaction()->updatePropensity();
-
         }
         for(auto MM : MotorGhost::getMotorGhosts())
         {
-            MM->getCMotorGhost()->setOffRate(MM->getCMotorGhost()->getOffReaction()->getBareRate());
-
             MM->getCMotorGhost()->setOffRate(MM->getCMotorGhost()->getOffReaction()->getBareRate());
             MM->updateReactionRates();
             MM->getCMotorGhost()->getOffReaction()->updatePropensity();
@@ -1182,12 +1179,11 @@ void Controller::run() {
         for (auto BB: BranchingPoint::getBranchingPoints()) {
             dummy++;
             BB->getCBranchingPoint()->setOffRate(BB->getCBranchingPoint()->getOffReaction()->getBareRate());
-
+            BB->updateReactionRates();
+            BB->getCBranchingPoint()->getOffReaction()->updatePropensity();
             /*cout<<"B "<<BB->getId()<<" "<<BB->getMBranchingPoint()->getEqLength()<<" "
                 << BB->getCBranchingPoint()->getOffRate()<<" "
                 <<BB->getCBranchingPoint()->getOffReaction()->getBareRate()<<endl;*/
-
-            BB->getCBranchingPoint()->getOffReaction()->updatePropensity();
         }
 //STEP 11: Get cylinders, activate filament reactions.
         for(auto C : _subSystem.getCompartmentGrid()->getCompartments()) {

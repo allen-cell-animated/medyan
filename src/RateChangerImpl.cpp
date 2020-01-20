@@ -71,6 +71,18 @@ float BranchSlip::getRateChangeFactor( floatingpoint force) {
     return exp( force * _x / kT);
 }
 
+float BranchSlipF::changeRate(float bareRate, floatingpoint force) {
+
+	floatingpoint newRate = bareRate * exp( force/_F0);
+
+	return newRate;
+}
+
+float BranchSlipF::getRateChangeFactor( floatingpoint force) {
+
+	return exp( force / _F0);
+}
+
 float MotorCatch::numBoundHeads(float onRate, float offRate,
                                 floatingpoint force, int numHeads) {
 

@@ -124,6 +124,25 @@ public:
     virtual float getRateChangeFactor(floatingpoint force);
 };
 
+
+///A slip bond implementation of the BrancherRateChanger.
+/// Uses k = k0 * exp(-F/F0) to change unbinding rate k based on unbinding force at F=0,
+// (k0) and characteristic unbinding force F0.
+class BranchSlipF : public BranchRateChanger {
+
+private:
+	floatingpoint _F0; ///< The characteristic length for this function
+
+public:
+	BranchSlipF(short branchType, floatingpoint charForce)
+
+			: BranchRateChanger(branchType), _F0(charForce) {}
+
+	virtual float changeRate(float bareRate, floatingpoint force);
+
+	virtual float getRateChangeFactor(floatingpoint force);
+};
+
 ///A catch bond implementation of the MotorRateChanger
 ///Used for a motor unbinding when under stress
 ///Adopted from the results of Erdmann et al. 2013.

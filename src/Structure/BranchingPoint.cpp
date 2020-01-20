@@ -251,9 +251,6 @@ void BranchingPoint::printSelf() {
     cout << endl;
 }
             
-            
-
-            
 species_copy_t BranchingPoint::countSpecies(const string& name) {
     
     species_copy_t copyNum = 0;

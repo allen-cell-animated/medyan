@@ -314,6 +314,10 @@ struct DyRateParams {
     /// Option for dynamic branching point unbinding rate
     vector<floatingpoint> dBranchUnbindingCharLength = {};
 
+    /// Option for addinh dynamics branching point unbinding rate based on a
+    // characteristic Force.
+    vector<floatingpoint> dBranchUnbindingCharForce = {};
+
     /// Option for manual (de)polymerization rate changer
     /// Start time
     double manualCharStartTime = 100000.0;
