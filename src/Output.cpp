@@ -1338,7 +1338,7 @@ void Datadump::print(int snapshot) {
 	_outputFile <<endl;
 	//MOTOR Data
 	_outputFile <<"MOTOR DATA: MOTORID MOTORTYPE CYL1_IDX CYL2_IDX POS1 POS2 EQLEN "
-               "DIFFUSINGSPECIESNAME NUMHEADS NUMBOUNDHEADS KSTR EQL TPD U_I"<<endl;
+               "DIFFUSINGSPECIESNAME NUMHEADS NUMBOUNDHEADS"<<endl;
 	int counter = 0;
 	auto individualenergiesvec = MotorGhostInteractions::individualenergies;
 	auto tpdistvec = MotorGhostInteractions::tpdistvec;
@@ -1356,9 +1356,7 @@ void Datadump::print(int snapshot) {
 		            <<cyl2->getStableIndex()<<" "<<pos1<<" "<<pos2<<" "
 		            <<l->getMMotorGhost()->getEqLength()<<" "<<l->getCMotorGhost()
 				->getDiffusingSpecies()->getName()<<" "<<l->getNumHeads()<<" "
-				<<l->getnumBoundHeads()<<" "<<kstrvec[counter]<<" "<<
-				eqlvec[counter]<<" "<<tpdistvec[counter]<<" "
-											  ""<<individualenergiesvec[counter]<<endl;
+				<<l->getnumBoundHeads()<<endl;
 
 		counter++;
 	}
