@@ -321,7 +321,7 @@ void Restart::setupInitialNetwork() {
 		filamentmap[fil.filid] = fil.filamentpointer;
 	}
 	cout<<endl;
-	cout<<"Num filaments Created "<<Filament::getFilaments().size()<<endl;
+	cout<<"Num filaments created "<<Filament::getFilaments().size()<<endl;
 
 	for(unsigned int b=0;b<_rBData.bsidvec.size();b++){
 		auto bID = _rBData.bsidvec[b];
@@ -335,7 +335,7 @@ void Restart::setupInitialNetwork() {
 		for(unsigned int dim = 0; dim < 3; dim++)
 			Bead::getDbData().forcesAux.data()[3*b+dim] = _rBData.forceAuxvec.data()[3*bID+dim];
 	}
-	cout<<"Num beads Created "<<Bead::getBeads().size()<<endl;
+	cout<<"Num beads created "<<Bead::getBeads().size()<<endl;
 
 	for(auto &cyl : _rCDatavec){
 		auto b1 = Bead::getBeads()[cyl.beadsidpairvec[0]];
@@ -354,7 +354,7 @@ void Restart::setupInitialNetwork() {
 		else if(cyl.endstatusvec[1])
 			c0->setPlusEnd(true);
 	}
-	cout<<"Num cylinders Created "<<Cylinder::getCylinders().size()<<endl;
+	cout<<"Num cylinders created "<<Cylinder::getCylinders().size()<<endl;
 
 	for(auto fil : _rFDatavec) {
 		vector<Cylinder*> cylvector;
