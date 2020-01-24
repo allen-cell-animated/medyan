@@ -589,17 +589,19 @@ struct BranchingCallback {
 		         _ps->getBoundary()->distance(pos2) <
 		         SysParams::Boundaries().BoundaryCutoff / 4.0) {
 			     outsideCutoff = true;
+
+
+			     //create a new daughter filament
+			     Filament *f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true,
+			                                               true);
+
+			     //mark first cylinder
+			     Cylinder *c = f->getCylinderVector().front();
+			     c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
+
+			     //create new branch
+			     b = _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
 		     }
-
-		     //create a new daughter filament
-		     Filament *f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
-
-		     //mark first cylinder
-		     Cylinder *c = f->getCylinderVector().front();
-		     c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
-
-		     //create new branch
-		     b = _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
 	     }
             
         frate=_offRate;
