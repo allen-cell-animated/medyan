@@ -568,23 +568,39 @@ struct BranchingCallback {
         floatingpoint t = 1.22;
 #endif
         floatingpoint s = SysParams::Geometry().monomerSize[filType];
-	        //n direction vector of mother filament
-	        //p coordinate of brancher
-	        //l stretching equilibrium length
-	        //s monomer size
-	        //t bending theta.
-        auto branchPosDir = branchProjection(n, p, l, s, t);
-        auto bd = get<0>(branchPosDir); auto bp = get<1>(branchPosDir);
-        
-        //create a new daughter filament
-        Filament* f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
-        
-        //mark first cylinder
-        Cylinder* c = f->getCylinderVector().front();
-        c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
-        
-        //create new branch
-        b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
+	        bool outsideCutoff = false;
+
+	     while(outsideCutoff == false) {
+		     //n direction vector of mother filament
+		     //p coordinate of brancher
+		     //l stretching equilibrium length
+		     //s monomer size
+		     //t bending theta.
+		     auto branchPosDir = branchProjection(n, p, l, s, t);
+		     auto bd = get<0>(branchPosDir);
+		     auto bp = get<1>(branchPosDir);
+
+		     //Check if the branch will be within boundary
+		     auto projlength = SysParams::Geometry().cylinderSize[filType] / 10;
+		     auto pos2 = nextPointProjection(bp, projlength, bd);
+		     //check if within cutoff of boundary
+		     if (_ps->getBoundary()->distance(bp) <
+		         SysParams::Boundaries().BoundaryCutoff / 4.0 &&
+		         _ps->getBoundary()->distance(pos2) <
+		         SysParams::Boundaries().BoundaryCutoff / 4.0) {
+			     outsideCutoff = true;
+		     }
+
+		     //create a new daughter filament
+		     Filament *f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
+
+		     //mark first cylinder
+		     Cylinder *c = f->getCylinderVector().front();
+		     c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
+
+		     //create new branch
+		     b = _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
+	     }
             
         frate=_offRate;
         }
@@ -922,22 +938,7 @@ struct MotorWalkingCallback {
 
         floatingpoint oldpos = floatingpoint(_oldPosition) / cylinderSize;
         floatingpoint newpos = floatingpoint(_newPosition) / cylinderSize;
-#ifdef CROSSCHECK
-        auto sb = SysParams::Chemistry().motorBoundIndex[0];
-	    CMonomer* monomernew = cc->getCMonomer(_newPosition);
-
-	    cout<<"mw before speciesMotor E-0/B-1 "<<sm1->getN()<<" "
-	    <<monomernew->speciesMotor(_motorType)->getN()<<endl;
-	    cout<<"mw before speciesBound E-1/B-0 "<<monomer->speciesBound(sb)->getN()
-	    <<" "<<monomernew->speciesBound(sb)->getN()<<endl;
-#endif
 	    m->moveMotorHead(_c, oldpos, newpos, _boundType, _ps);
-#ifdef CROSSCHECK
-	    cout<<"mw after speciesMotor E-0/B-1 "<<sm1->getN()<<" "<<
-	    monomernew->speciesMotor(_motorType)->getN()<<endl;
-	    cout<<"mw after speciesBound E-1/B-0 "<<monomer->speciesBound(sb)->getN()
-	        <<" "<<monomernew->speciesBound(sb)->getN()<<endl;
-#endif
         
 #ifdef DYNAMICRATES
         //reset the associated reactions
