@@ -503,7 +503,7 @@ vector<floatingpoint> GController::getRandomCenterCoordinates(Compartment* c) {
     vector<floatingpoint> coords;
     coords.push_back(coordsCompartment[0] + _compartmentSize[0] * Rand::randfloatingpoint(-1,1) / 2);
     coords.push_back(coordsCompartment[1] + _compartmentSize[1] * Rand::randfloatingpoint(-1,1) / 2);
-    coords.push_back(coordsCompartment[2] + _compartmentSize[2] * Rand::randfloatingpoint(-0.4,0.4) / 2);
+    coords.push_back(coordsCompartment[2] + _compartmentSize[2] * Rand::randfloatingpoint(-1,1) / 2);
     
     return coords;
 }
