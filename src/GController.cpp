@@ -526,11 +526,14 @@ vector<floatingpoint> GController::getRandomCoordinates() {
 vector<floatingpoint> GController::getRandomCenterCoordinates() {
 
     vector<floatingpoint> coords;
+    auto bboundsinit = SysParams::Boundaries().fraccompartmentspan;
+    coords.push_back(Rand::randfloatingpoint(bboundsinit[0][0],
+                                             bboundsinit[1][0]) * _grid[0] * _compartmentSize[0]);
+    coords.push_back(Rand::randfloatingpoint(bboundsinit[0][1],
+                                             bboundsinit[1][1]) * _grid[1] * _compartmentSize[1]);
+    coords.push_back(Rand::randfloatingpoint(bboundsinit[0][2],
+                                             bboundsinit[1][2]) * _grid[2] * _compartmentSize[2]);
 
-    coords.push_back(Rand::randfloatingpoint(0,1) * _grid[0] * _compartmentSize[0]);
-    coords.push_back(Rand::randfloatingpoint(0,1) * _grid[1] * _compartmentSize[1]);
-    coords.push_back(Rand::randfloatingpoint(0.3,0.7) * _grid[2] * _compartmentSize[2]);
-    
     return coords;
 }
 
