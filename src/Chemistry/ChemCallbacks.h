@@ -1061,11 +1061,11 @@ struct FilamentCreationCallback {
 
         if(_ps->getBoundary()->getShape() == BoundaryShape::Cylinder) {
             while(true) {
-                position = GController::getRandomCenterCoordinates(c);
+                position = GController::getRandomCoordinates(c);
                 
                 //getting random numbers between -1 and 1
                 
-                direction = {Rand::randfloatingpoint(-1,1), Rand::randfloatingpoint(-1,1), 0};
+                direction = {Rand::randfloatingpoint(-1,1), Rand::randfloatingpoint(-1,1),  Rand::randfloatingpoint(-1,1)};
                 normalize(direction);
                 
                 auto npp = nextPointProjection(position,

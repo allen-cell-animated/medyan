@@ -47,7 +47,7 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
             floatingpoint directionX = Rand::randfloatingpoint(-1,1);
             floatingpoint directionY = Rand::randfloatingpoint(-1,1);
 
-            floatingpoint directionZ = 0;
+            floatingpoint directionZ = Rand::randfloatingpoint(-1,1);;
             vector<floatingpoint> direction = normalizeVector({directionX, directionY, directionZ});
 
             vector<floatingpoint> secondPoint =
@@ -64,10 +64,10 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
                     inBubble = true;
             }
 
-            //check if within cutoff of boundary
+            //check if too close to the boundary
             bool outsideCutoff = false;
-            if(b->distance(firstPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0 ||
-               b->distance(secondPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0) {
+            if(b->distance(firstPoint) < 125 ||
+               b->distance(secondPoint) < 125 ) {
                 outsideCutoff = true;
             }
 
