@@ -26,7 +26,7 @@ As the command line input provides different information from the input files, t
 
 We should limit the ability to change these global variables everywhere. To achieve that without adding `get`/`set` functions for every variable, we can put the global variables in a struct, and use this struct as a private static member of another class. The class could provide two accessors, one for const access and one for non-const access. The code might look like the follows.
 
-```
+```C++
 struct RuntimeGlobalVariableContainer {
     int some_integer;
     std::string some_string;
@@ -179,7 +179,7 @@ Options:
     --option-3=<val>    Description 3
 ```
 
-The parser should provide an auxillary function that generates the formatted help message with the given specification. By convention, `-h` and `--help` options should be added to every command and subcommand to generate the help message and exit the program. Also the help message should be printed on parsing errors of the associated subcommand.
+The parser should provide an auxiliary function that generates the formatted help message with the given specification. By convention, `-h` and `--help` options should be added to every command and subcommand to generate the help message and exit the program. Also the help message should be printed on parsing errors of the associated subcommand.
 
 The subcommand help message should contain the chain of all parent command names. For example,
 ```

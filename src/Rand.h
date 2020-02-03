@@ -14,8 +14,10 @@
 #ifndef MEDYAN_Rand_h
 #define MEDYAN_Rand_h
 
-#include <stdio.h>
+#include <cmath>
+#include <limits>
 #include <random>
+#include <type_traits>
 
 #include "common.h"
 
@@ -50,5 +52,54 @@ public:
         return x;
     }
 };
+
+// Safe exponential distribution
+//
+// Generates exponential distribution safely:
+//   - Precondition: λ is not negative (not checked)
+//   - if λ is zero: return infinity
+//   - if λ is positive: set the λ for the specified exponential distribution,
+//     and generate a random number which is not infinity.
+//
+// Inputs:
+//   - d:      the exponential distribution object
+//   - lambda: the exponential distribution parameter
+//   - g:      the random number generator
+//
+// Output:
+//   - The generated random number with type ExpDist::result_type
+//
+// Note:
+//   - When λ = 0, the input distribution and generator are not touched.
+//   - When λ > 0, the generator can be used 1 or more times.
+//
+// Background:
+//   - std::exponential_distribution requires that λ > 0, though most
+//     implementations would return ∞ when λ = 0.
+//   - Some implementations of std::exponential_distribution returns infinity
+//     when λ is positive. See
+//     http://open-std.org/JTC1/SC22/WG21/docs/lwg-active.html#2524
+//-----------------------------------------------------------------------------
+template< typename ExpDist, typename FloatLambda, typename Generator >
+inline auto safeExpDist(
+    ExpDist&    d,
+    FloatLambda lambda,
+    Generator&  g
+) {
+    using ResType = typename ExpDist::result_type;
+
+    ResType res;
+    if(lambda == 0) {
+        res = std::numeric_limits< ResType >::infinity();
+    } else {
+        // Set d's parameter
+        d.param(typename ExpDist::param_type( lambda ));
+
+        // Generate non-inf random number
+        do res = d(g); while(std::isinf(res));
+    }
+
+    return res;
+}
 
 #endif

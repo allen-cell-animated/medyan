@@ -1,0 +1,12 @@
+site_name: MEDYAN
+site_description: Mechanochemical Dynamics of Active Networks
+repo_url: https://bitbucket.org/jkomianos/medyan/
+edit_uri: src/master/docs/
+theme: readthedocs
+
+nav:
+- Home: 'index.md'
+- Guide:
+    - Installation: "guide/installation.md"
+- Manual:
+    - Predefined Macro: "manual/predefined-macro.md"

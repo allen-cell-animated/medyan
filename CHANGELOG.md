@@ -1,11 +1,20 @@
-# ?.?.? (Released TBD)
+# 4.1.1 (Released 2020-01-30)
 
 ## New features
+- The system input file no longer requires species number of types specification (b887ba2).
+- Rearranged examples and added new ones (48993f8).
 
 ## Refactoring and optimizations
 - Refactored the logger (a2c69f9).
+- Integrated the tests (8de0a0f).
+- Increased readability of on-screen outputs.
+- `Makefile` default optimization changed from `-Os` to `-O2` (b8468c3).
 
 ## Bug fixes
+- Fixed distribution generation in chemistry algorithm (5897eed).
+- Fixed bugs related to SIMD macros (13fe728).
+- Fixed volume exclusion not including short filaments (d0961d4).
+- Fixed Myosin motor duty ratio calculation. Now it is based on binding/unbinding rates. (6f57531)
 
 # 4.1.0 (Released 2019-10-29)
 
