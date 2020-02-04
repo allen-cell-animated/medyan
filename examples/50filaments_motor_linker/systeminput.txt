@@ -14,7 +14,7 @@
 
 NX:                          2
 NY:                          2
-NZ:                          2
+NZ:                          1
 
 # Define network boundary geometry (CUBIC, SPHERICAL, CYLINDER)
 

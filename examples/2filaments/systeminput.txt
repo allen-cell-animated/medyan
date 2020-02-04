@@ -14,7 +14,7 @@
 
 NX:                          2
 NY:                          2
-NZ:                          2
+NZ:                          4
 
 # Define network boundary geometry (CUBIC, SPHERICAL, CYLINDER)
 
@@ -27,7 +27,7 @@ BOUNDARYDIAMETER:
 
 ### 2. Set total running time 
 
-RUNTIME:                     1000.0
+RUNTIME:                     100.0
 
 ### 3. Output simulation results every SNAPSHOTTIME
 
@@ -43,18 +43,18 @@ CHEMISTRYFILE:               chemistryinput.txt
 # filament length (in number of cylinders)
 # FILAMENTTYPE: use 0 if only one type of filaments
 
-NUMFILAMENTS:                30 
+NUMFILAMENTS:                0
 FILAMENTLENGTH:              1
 FILAMENTTYPE:                0
 
 # Option 2: Initialize by setting input filament file
 
-FILAMENTFILE:	
+FILAMENTFILE:                AFB2.txt
 
 
 ####################################################
 ### PART II: Force field information
-### Based on: actin filament, non-muscle myosin IIA,
+### Based on: actin filament, non-muscle myosin II,
 ### 	      alpha-actinin, Arp2/3
 ### Changes not recommended unless using a different
 ### species or have a different parameter source

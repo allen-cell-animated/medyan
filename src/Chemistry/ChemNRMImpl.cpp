@@ -152,21 +152,10 @@ ChemNRMImpl::~ChemNRMImpl() {
 
 floatingpoint ChemNRMImpl::generateTau(floatingpoint a){
 
-#if defined(_MSC_VER) && defined(_DEBUG) // MSVC requires the parameter to be positive
-    if(a == 0.0) {
-        _exp_distr.param(exponential_distribution<floatingpoint>::param_type(numeric_limits<floatingpoint>::min()));
-        return numeric_limits<floatingpoint>::infinity();
-    }
-#endif
-
-    exponential_distribution<floatingpoint>::param_type pm(a);
-
-    _exp_distr.param(pm);
-
 	#ifdef DEBUGCONSTANTSEED
 	Rand::chemistrycounter++;
 	#endif
-    return _exp_distr(Rand::eng);
+    return safeExpDist(_exp_distr, a, Rand::eng);
 }
 
 bool ChemNRMImpl::makeStep() {

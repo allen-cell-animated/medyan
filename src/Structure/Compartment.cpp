@@ -589,8 +589,8 @@ void Compartment::deallocateSIMDcoordinates(){
 		partitionedcoordz[i].clear();
 		cindex_bs_section[i].clear();
         finfo_bs_section[i].clear();
-		bscoords_section_linker[i].resize(0);
-		bscoords_section_motor[i].resize(0);
+		if(bscoords_section_linker.size() > 0) bscoords_section_linker[i].resize(0);
+		if(bscoords_section_motor.size() > 0) bscoords_section_motor[i].resize(0);
 	}
 
 }

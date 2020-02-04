@@ -434,7 +434,8 @@ void HybridCylinderCylinderNL::removeNeighbor(Neighbor* n) {
         for (int idx2 = 0; idx2 < countbounds; idx2++) {
             auto HNLID = HNLIDvec[idx][idx2];
 /*            std::cout << "Removing neighbors of cylinder with cindex " <<
-                          cylinder->_dcIndex<<" and ID "<<cylinder->getID() << " from NL " << HNLID << endl;*/
+                          cylinder->getStableIndex()<<" and ID "<<cylinder->getId() <<
+                          " from NL " <<HNLID << endl;*/
             //Remove from NeighborList
             _list4mbinvec[HNLID].erase(cylinder);
             //Remove from bin
@@ -448,14 +449,18 @@ void HybridCylinderCylinderNL::removeNeighbor(Neighbor* n) {
                 auto cit = find(it->second.begin(), it->second.end(), cylinder);
                 {
                     if (cit != it->second.end()) {
+/*                        cout<<"Deleted "<<*(cit)<<" from list corresponding to cylinder "
+                        <<it->first<<" from position "<<cit-it->second.begin()<<endl;*/
                         it->second.erase(cit);
-//                        std::cout << it->first->getID() << " ";
                     }
                 }
             }
+
 //            std::cout<<endl;
         }
     }
+
+
 
 }
 
