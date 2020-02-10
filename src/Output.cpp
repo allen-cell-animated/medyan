@@ -823,6 +823,22 @@ void HRMD::print(int snapshot) {
         }
         
     }
+    _outputFile<<endl;
+    //Print mech energies before and after minimization
+    // write row of mech energy
+    auto HRMDMechEnergyMat = dt->getHRMDmat();
+    for(auto i = 0; i < HRMDMechEnergyMat.size(); i++){
+        for(auto j = 0; j < HRMDMechEnergyMat[i].size(); j++) {
+            cout<<get<1>(HRMDMechEnergyMat[i][j]) << "     ";
+            _outputFile << get<1>(HRMDMechEnergyMat[i][j]) << "     ";
+        }
+        cout<<endl;
+        _outputFile<<endl;
+    }
+    cout<<endl;
+    _outputFile<<endl;
+
+    dt->clearHRMDMats();
     
     _outputFile<<endl<<endl;
     

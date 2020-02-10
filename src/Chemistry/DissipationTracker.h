@@ -93,6 +93,7 @@ private:
     
     // vector of HRMD element
     vector<tuple<string, floatingpoint>> HRMDVec2;
+    vector<vector<tuple<string, floatingpoint>>> HRMDMat;
     
     // vector of motor walking data
     vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> motorData;
@@ -413,13 +414,20 @@ public:
     vector<tuple<string, floatingpoint>> getCumHRMDMechDiss(){
         return cumHRMDMechDiss;
     }
-    
+
+    //get HRMD mat
+    vector<vector<tuple<string, floatingpoint>>> getHRMDmat(){
+        return HRMDMat;
+    }
     //  used to determine if minization should proceed
     floatingpoint getCurrentStress(){
         return GMid-G1;
     };
+
+
+    //
     
-    // set the value of G1
+    // set the value of G1 - before chemistry
     void setG1(const EnergyReport& report){
         HRMDVec1.clear();
         
@@ -433,14 +441,13 @@ public:
       
     }
     
-    // set the value of G2
+    // set the value of G2 - after minimization
     void setG2(const EnergyReport& report){
         HRMDVec2.clear();
         for(auto i = 0; i < report.individual.size(); i++){
             HRMDVec2.push_back(make_tuple(report.individual[i].name, report.individual[i].energy));
         };
-        
-        
+        HRMDMat.push_back(HRMDVec2);
         G2 = report.total;
     }
     
@@ -450,8 +457,7 @@ public:
         for(auto i = 0; i < report.individual.size(); i++){
             HRMDVecMid.push_back(make_tuple(report.individual[i].name, report.individual[i].energy));
         };
-        
-        
+        HRMDMat.push_back(HRMDVecMid);
         GMid = report.total;
     }
     
@@ -592,6 +598,10 @@ public:
     
     void clearLinkerBindingData(){
         linkerBindingData.clear();
+    }
+
+    void clearHRMDMats(){
+        HRMDMat.clear();
     }
 };
 
