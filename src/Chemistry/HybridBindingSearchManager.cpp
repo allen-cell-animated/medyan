@@ -328,14 +328,21 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
 	const auto& cylinderInfoData = Cylinder::getDbData().value;
 	unsigned int count64 = 0;//counter to bits in random integer
 	bitset<64> randInt = 0;
+	short idx = idvec[0];
+	short idx2 = idvec[1];
+	auto &nCmppbs = nCmp->getHybridBindingSearchManager()
+			->_possibleBindingsstencilvecuint;
+	auto &nCmprpbs = nCmp->getHybridBindingSearchManager()
+			->_reversepossibleBindingsstencilvecuint;
+
 	for(uint pid = first; pid < last; pid++) {
 		uint32_t t1 = bspairsoutS.dout[2 * (D - 1)][pid];
 		uint32_t t2 = bspairsoutS.dout[2 * (D - 1) + 1][pid];
 
 		if(SELF == true){
-			_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+			_possibleBindingsstencilvecuint[idx][idx2][t1].push_back(t2);
 
-			_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
+			_reversepossibleBindingsstencilvecuint[idx][idx2][t2].push_back(t1);
 		}
 		else {
 			//Generate random number of 64 bits
@@ -344,15 +351,13 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
 //				cout<<randInt<<endl;
 			}
 			if(randInt[count64]){
-				_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+				_possibleBindingsstencilvecuint[idx][idx2][t1].push_back(t2);
 
-				_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
+				_reversepossibleBindingsstencilvecuint[idx][idx2][t2].push_back(t1);
 			}
 			else{
-				nCmp->getHybridBindingSearchManager()
-						->_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);
-				nCmp->getHybridBindingSearchManager()
-						->_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
+				nCmppbs[idx][idx2][t2].push_back(t1);
+				nCmprpbs[idx][idx2][t1].push_back(t2);
 			}
 			//Keep count
 			count64++;

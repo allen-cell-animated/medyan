@@ -247,8 +247,10 @@ void SubSystem::resetNeighborLists() {
 }
 void SubSystem::updateBindingManagers() {
 #ifdef OPTIMOUT
-	chrono::high_resolution_clock::time_point mins, mine;
+	chrono::high_resolution_clock::time_point mins, mine, minsinit, mineinit,
+			startonetimecost, endonetimecost;
 	mins = chrono::high_resolution_clock::now();
+
 #endif
 #ifdef CUDAACCL_NL
 	if(SysParams::Chemistry().numFilaments > 1) {
@@ -343,20 +345,24 @@ void SubSystem::updateBindingManagers() {
 
 	//SIMD cylinder update
 #ifdef SIMDBINDINGSEARCH
+	startonetimecost = chrono::high_resolution_clock::now();
 	if(!initialize) {
 			_compartmentGrid->getCompartments()[0]->getHybridBindingSearchManager()
 			->initializeSIMDvars();
 		initialize = true;
 	}
+	endonetimecost = chrono::high_resolution_clock::now();
 	//Generate binding site coordinates in each compartment and seggregate them into
 	// different spatial sub-sections.
 	for(auto C : _compartmentGrid->getCompartments()) {
 		C->SIMDcoordinates4linkersearch_section(1);
 		C->SIMDcoordinates4motorsearch_section(1);
 	}
+
 	//Empty the existing binding pair list
 	for (auto C : _compartmentGrid->getCompartments())
 		C->getHybridBindingSearchManager()->resetpossibleBindings();
+
 	minsSIMD = chrono::high_resolution_clock::now();
 	HybridBindingSearchManager::findtimeV3 = 0.0;
 	HybridBindingSearchManager::SIMDV3appendtime = 0.0;
@@ -375,6 +381,8 @@ void SubSystem::updateBindingManagers() {
 
 #ifdef OPTIMOUT
 	mineSIMD = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_onetimecost(endonetimecost -
+	startonetimecost);
 	chrono::duration<floatingpoint> elapsed_runSIMDV3(mineSIMD - minsSIMD);
 	cout << "SIMDV3 time " << elapsed_runSIMDV3.count() << endl;
 	cout << "findV3 time " << HybridBindingSearchManager::findtimeV3 << endl;
@@ -384,7 +392,7 @@ void SubSystem::updateBindingManagers() {
 #ifdef OPTIMOUT
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_orig(mine - mins);
-    std::cout<<"BMgr update time "<<elapsed_orig.count()<<endl;
+    std::cout<<"BMgr-update time "<<elapsed_orig.count() - elapsed_onetimecost.count()<<endl;
 #endif
 
 //free memory

@@ -348,8 +348,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
     // neighboring bins are given a particular ID.nbinstencil stores the set of such
     // neighbors that is close to bin of interest. Bins close to the boundary will have
     // < 27 elements in the stencilID vector.
-    short ftype1 = c.type; //cylinder type and filament type is one and the
-    // same.
+    short ftype1 = c.type; //cylinder type and filament type is one and the same.
     float _largestrMax = sqrt(_largestrMaxsq);
     for (auto &bin : _neighboringBins) {
             bool isbinneeded = _binGrid->iswithincutoff(c.coord,
@@ -399,6 +398,14 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                             Cylinder *Ncylinder = Cylinder::getStableElement(ncindex);
                             _list4mbinvec[HNLID][currcylinder].push_back(Ncylinder);
 
+                            //Full list was needed to remove possible bindings. To remove
+                            // by value, we had to look for keys that might have the
+                            // removing <cyl,bs>. In HybridBindingSearchManager
+                            // implementation, that has been circumvented by storing a
+                            // two way list. One has all the keys and the other has all
+                            // the values.
+
+                            // that this current bindingsite might be part of
                             //if runtime, add to other list as well if full
                             /* if (runtime && _fullstatusvec[idx][idx2]) {
                                 _list4mbinvec[HNLID][Ncylinder].push_back(currcylinder);

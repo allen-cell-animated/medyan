@@ -829,13 +829,10 @@ void HRMD::print(int snapshot) {
     auto HRMDMechEnergyMat = dt->getHRMDmat();
     for(auto i = 0; i < HRMDMechEnergyMat.size(); i++){
         for(auto j = 0; j < HRMDMechEnergyMat[i].size(); j++) {
-            cout<<get<1>(HRMDMechEnergyMat[i][j]) << "     ";
             _outputFile << get<1>(HRMDMechEnergyMat[i][j]) << "     ";
         }
-        cout<<endl;
         _outputFile<<endl;
     }
-    cout<<endl;
     _outputFile<<endl;
 
     dt->clearHRMDMats();
