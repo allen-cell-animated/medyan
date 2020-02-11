@@ -140,7 +140,8 @@ void FilamentStretchingHarmonicandBendingHarmonic::energy(floatingpoint *coord, 
 }
 
 void FilamentStretchingHarmonicandBendingHarmonic::forces(floatingpoint *coord, floatingpoint *f, size_t nint, int *beadSet,
-                                                          floatingpoint *kbend, floatingpoint *eqt){
+                                                          floatingpoint *kbend,
+                                                          floatingpoint *kstr,  floatingpoint *eql, floatingpoint *eqt){
 
 	int n = FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::n;
 

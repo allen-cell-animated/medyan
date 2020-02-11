@@ -269,7 +269,7 @@ public:
 	static floatingpoint timetrackable;
 
     // The pointer to the thread pool
-    ThreadPool* tp = nullptr;
+    static ThreadPool* tp;
 
 	MinimizationResult prevMinResult;
 

@@ -28,6 +28,7 @@ private:
 
 	// Cache of vectorized data
 	std::size_t _numInteractions;
+	std::size_t _strnumInteractions;
 	int *beadSet;
 	///Array describing the constants in calculation
 	floatingpoint *kbend;
@@ -38,7 +39,12 @@ private:
 	floatingpoint *eqlsansbending;
 	floatingpoint *kstr;
 	floatingpoint *eql;
-	floatingpoint *totalenergy;
+	floatingpoint *totalenergy;//Will have 3 entries. The total of stretching, bending
+	// and sum of stretching + bending
+
+/*	void precomputevars(floatingpoint *coord, int *beadSet, int *beadSetcylsansbending,
+			floatingpoint* cyllength, floatingpoint *cyllengthsansbending, floatingpoint
+			*hingedotproduct);*/
 
 public:
 

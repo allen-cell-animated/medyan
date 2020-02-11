@@ -22,8 +22,10 @@
 
 using namespace mathfunc;
 
-void FilamentStretchingHarmonicandBendingCosine::forces(floatingpoint *coord, floatingpoint *f, size_t nint, int *beadSet,
-                                   floatingpoint *kbend, floatingpoint *eqt){
+void FilamentStretchingHarmonicandBendingCosine::forces(floatingpoint *coord,
+                                   floatingpoint *f, size_t nint, int *beadSet,
+                                   floatingpoint *kstr, floatingpoint *kbend,
+                                   floatingpoint *eql, floatingpoint *eqt){
 
 	int n = FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::n;
 
@@ -102,6 +104,20 @@ void FilamentStretchingHarmonicandBendingCosine::forces(floatingpoint *coord, fl
 		force3[2] +=  k *( (coord2[2] - coord1[2])*A -
 		                   (coord3[2] - coord2[2])*C );
 
+		//Stretching forces
+
+        floatingpoint f0right = kstr[i] * ( L2 - eql[i] ) * invL2;
+
+        //Cylinder 2
+        force3[0] +=  f0right * ( coord2[0] - coord3[0] );
+        force3[1] +=  f0right * ( coord2[1] - coord3[1] );
+        force3[2] +=  f0right * ( coord2[2] - coord3[2] );
+
+        // force i-1
+        force2[0] +=  f0right * ( coord3[0] - coord2[0] );
+        force2[1] +=  f0right * ( coord3[1] - coord2[1] );
+        force2[2] +=  f0right * ( coord3[2] - coord2[2] );
+
 		#ifdef CHECKFORCES_INF_NAN
 		if(checkNaN_INF<floatingpoint>(force1, 0, 2)||checkNaN_INF<floatingpoint>(force2,0,2)
 		   ||checkNaN_INF<floatingpoint>(force3,0,2)){
@@ -155,6 +171,63 @@ void FilamentStretchingHarmonicandBendingCosine::forces(floatingpoint *coord, fl
 	}
 }
 
+void FilamentStretchingHarmonicandBendingCosine::forces(floatingpoint *coord, floatingpoint *f,
+                                        int *beadSetsansbending, floatingpoint *kstrsansbending,
+                                        floatingpoint *eqlsansbending,
+                                        const int startID, const int endID, int threadID){
+
+    int n = FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::nstr;
+
+    floatingpoint *coord1, *coord2, dist;
+    floatingpoint *force1, *force2, f0, invL;
+
+    for(int i = startID; i < endID; i += 1) {
+
+        coord1 = &coord[3 * beadSetsansbending[n * i]];
+        coord2 = &coord[3 * beadSetsansbending[n * i + 1]];
+        force1 = &f[3 * beadSetsansbending[n * i]];
+        force2 = &f[3 * beadSetsansbending[n * i + 1]];
+        dist = twoPointDistance(coord1, coord2);
+        invL = 1 / dist;
+        f0 = kstrsansbending[i] * ( dist - eqlsansbending[i] ) * invL;
+
+        force2[0] +=  f0 * ( coord1[0] - coord2[0] );
+        force2[1] +=  f0 * ( coord1[1] - coord2[1] );
+        force2[2] +=  f0 * ( coord1[2] - coord2[2] );
+
+        // force i-1
+        force1[0] +=  f0 * ( coord2[0] - coord1[0] );
+        force1[1] +=  f0 * ( coord2[1] - coord1[1] );
+        force1[2] +=  f0 * ( coord2[2] - coord1[2] );
+
+        #ifdef CHECKFORCES_INF_NAN
+        if(checkNaN_INF<floatingpoint>(force1, 0, 2)||checkNaN_INF<floatingpoint>(force2,
+                0,2)){
+            cout<<"Filament Stretching Force becomes infinite. Printing data "<<endl;
+
+            auto cyl = Cylinder::getCylinders()[i];
+            cout<<"Cylinder ID "<<cyl->getId()<<" with cindex "<<cyl->getStableIndex()<<
+            " and bIndex "<< cyl->getFirstBead()->getStableIndex()<<" "<<cyl->getSecondBead()
+            ->getStableIndex()<<endl;
+
+            cout<<"Printing coords"<<endl;
+            cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
+            cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
+            cout<<"Printing force"<<endl;
+            cout<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<endl;
+            cout<<force2[0]<<" "<<force2[1]<<" "<<force2[2]<<endl;
+	        cout<<"Printing binary Coords"<<endl;
+	        printvariablebinary(coord1,0,2);
+	        printvariablebinary(coord2,0,2);
+	        cout<<"Printing binary Force"<<endl;
+	        printvariablebinary(force1,0,2);
+	        printvariablebinary(force1,0,2);
+            exit(EXIT_FAILURE);
+        }
+        #endif
+    }
+}
+
 void FilamentStretchingHarmonicandBendingCosine::energy(floatingpoint *coord,
 		std::size_t nint, int *beadSet, floatingpoint *kstr, floatingpoint *kbend,
 		floatingpoint *eql, floatingpoint *eqt, floatingpoint* totalenergy, const int
@@ -193,7 +266,7 @@ void FilamentStretchingHarmonicandBendingCosine::energy(floatingpoint *coord,
 		//Option 1 ignore eqt as it is always 0.
 		if(areEqual(eqt[i],0.0))
 			U_ibend = kbend[i] * (1 - x);
-			//Option 2 Need to calculate Cos(A-B).
+		//Option 2 Need to calculate Cos(A-B).
 		else{
 			floatingpoint cosA = x;
 			floatingpoint sinA = max<floatingpoint>(sqrt(1-cosA*cosA),(floatingpoint)0.0);
@@ -201,23 +274,12 @@ void FilamentStretchingHarmonicandBendingCosine::energy(floatingpoint *coord,
 			U_ibend = kbend[i] *(1-cosAminusB);
 		}
 
+		floatingpoint Usum = U_istr + U_ibend;
+
 		//Check if stretching energy is infinite
-		if(fabs(U_istr) == numeric_limits<floatingpoint>::infinity()
-		   || U_istr != U_istr || U_istr < -1.0) {
+		if(fabs(Usum) == numeric_limits<floatingpoint>::infinity()
+		   || Usum != Usum || Usum < -1.0) {
 
-			//set culprit and return
-
-			FilamentInteractions::_filamentCulprit = (Filament*)(Cylinder::getCylinders()[i]->getParent());
-
-			totalenergy[3*threadID] = -1.0;
-			totalenergy[3*threadID + 1] = -1.0;
-			totalenergy[3*threadID + 2] = -1.0;
-			return;
-		}
-
-		//Check if bending energy is infinite
-		if(fabs(U_ibend) == numeric_limits<floatingpoint>::infinity()
-		   || U_ibend != U_ibend || U_ibend < -1.0) {
 			for(auto cyl:Cylinder::getCylinders()){
 				auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
 				auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
@@ -237,6 +299,9 @@ void FilamentStretchingHarmonicandBendingCosine::energy(floatingpoint *coord,
 		Ubend += U_ibend;
 		Ustr += U_istr;
 	}
+		//First two entries are for stretching energies. Stretching energies from
+		// cylinders 2 to N are stored in indices 0 while stretching from cylinder 1 is
+		// stored in index 1.
 		totalenergy[3*threadID] = Ustr;
 		totalenergy[3*threadID + 2] = Ubend;
 }
@@ -275,7 +340,9 @@ void FilamentStretchingHarmonicandBendingCosine::energy(floatingpoint *coord, in
 
 		U += U_i;
 	}
-
+	//First two entries are for stretching energies. Stretching energies from
+	// cylinders 2 to N are stored in indices 0 while stretching from cylinder 1 is
+	// stored in index 1.
 	totalenergy[3*threadID + 1] = U;
 	return;
 

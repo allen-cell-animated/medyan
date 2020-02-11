@@ -26,6 +26,8 @@
 #include "dist_moduleV2/dist_common.h"
 #endif
 
+
+
 using namespace mathfunc;
 void SubSystem::resetNeighborLists() {
 #ifdef CUDAACCL_NL
@@ -892,3 +894,4 @@ floatingpoint SubSystem::HYBDtime  = 0.0;
 floatingpoint SubSystem::timeneighbor  = 0.0;
 floatingpoint SubSystem::timedneighbor  = 0.0;
 floatingpoint SubSystem::timetrackable  = 0.0;
+ThreadPool* SubSystem::tp = nullptr;

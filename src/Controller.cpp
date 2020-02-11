@@ -68,7 +68,7 @@ void Controller::initialize(string inputFile,
                             ThreadPool& tp) {
 
     // Set up the thread pool reference in the subsystem
-    _subSystem.tp = &tp;
+    SubSystem::tp = &tp;
 
     SysParams::INITIALIZEDSTATUS = false;
     //general check of macros

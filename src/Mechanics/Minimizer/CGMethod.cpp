@@ -461,6 +461,7 @@ floatingpoint CGMethod::maxF() {
 					Bead::getDbData().forcesAux[3*bidx + 2]<<endl;
 				cout<<"Printing culprit Bead information"<<endl;
 				(Bead::getStableElement(bidx))->printSelf();
+				break;
 			}
 			counter++;
 		}

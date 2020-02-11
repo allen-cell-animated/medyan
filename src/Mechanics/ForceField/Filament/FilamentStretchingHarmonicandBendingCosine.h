@@ -31,8 +31,15 @@ public:
 	            floatingpoint *eqlsansbending, floatingpoint* totalenergy, const int startID,
 	            const int endID, int threadID);
 
-	void forces(floatingpoint *coord, floatingpoint *f, std::size_t nint, int *beadSet,
-	            floatingpoint *kbend, floatingpoint *eqt);
+	void forces(floatingpoint *coord,
+	            floatingpoint *f, size_t nint, int *beadSet,
+	            floatingpoint *kstr, floatingpoint *kbend,
+	            floatingpoint *eql, floatingpoint *eqt);
+
+	void forces(floatingpoint *coord,  floatingpoint *f,
+				int *beadSetsansbending, floatingpoint *kstrsansbending,
+				floatingpoint *eqlsansbending,
+				const int startID, const int endID, int threadID);
 };
 
 #endif

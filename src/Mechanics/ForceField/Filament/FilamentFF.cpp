@@ -20,6 +20,9 @@
 #include "FilamentBendingHarmonic.h"
 #include "FilamentBendingCosine.h"
 
+#include "FilamentStretchingandBending.h"
+#include "FilamentStretchingHarmonicandBendingCosine.h"
+
 #include "Filament.h"
 //TODO remove later
 #include "CGMethod.h"
@@ -27,7 +30,13 @@
 
 FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting) {
 
-    if (stretching == "HARMONIC")
+
+    if(stretching == "HARMONIC" && bending == "COSINE")
+        _filamentInteractionVector.emplace_back(
+                new FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>
+                        ());
+
+    else if (stretching == "HARMONIC")
         _filamentInteractionVector.emplace_back(
                 new FilamentStretching<FilamentStretchingHarmonic>());
     else if(stretching == "") {}

@@ -20,10 +20,32 @@
 #include "Bead.h"
 #include "CGMethod.h"
 #include "SysParams.h"
+#include "SubSystem.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
 #include "cross_check.h"
+
+/*template <class FBendingInteractionType>
+void FilamentStretchingandBending<FBendingInteractionType>::precomputevars(
+        floatingpoint *coord, int *beadSet, int *beadSetcylsansbending,
+        floatingpoint* cyllength, floatingpoint *cyllengthsansbending, floatingpoint *hingedotproduct){
+
+    floatingpoint *coord1, *coord2, *coord3;
+    for (auto f: Filament::getFilaments()) {
+        auto cyl = *f->getCylinderVector().begin();
+        coord1 = &coord[3 * cyl->getFirstBead()->getStableIndex()];
+        coord2 = &coord[3 * cyl->getFirstBead()->getStableIndex()];
+        sqrt(scalarProduct(coord1,coord2));
+
+        for (auto it = f->getCylinderVector().begin()+1;
+             it != f->getCylinderVector().end(); it++){
+
+
+        }
+
+    }
+}*/
 template <class FBendingInteractionType>
 void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
 
@@ -32,14 +54,17 @@ void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
 	for(auto f : Filament::getFilaments())
 		if(f->getCylinderVector().size() > 1) _numInteractions += f->getCylinderVector().size() - 1;
 
-	totalenergy = new floatingpoint[3*SysParams::numthreads];
+	totalenergy = new floatingpoint[3*SubSystem::tp->numThreads()];
 	totalenergy[0] = (floatingpoint)0.0;
 	totalenergy[1] = (floatingpoint)0.0;
 	totalenergy[2] = (floatingpoint)0.0;
-	std::size_t _strnumInteractions = Filament::getFilaments().size();
+	// The first cylinder in each filament is not considered in the hybrid stretching
+	// bending paradigm. Need a function to calculate energies seperately for those
+	// cylinders.
+	_strnumInteractions = Filament::getFilaments().size();
 
 	cout<<"Str NumInt Method  1 "<<Cylinder::getCylinders().size()<<" Method 2 "
-	                                                                ""<<_strnumInteractions+_numInteractions<<endl;
+		<<_strnumInteractions+_numInteractions<<endl;
 	beadSetcylsansbending = new int[nstr * _strnumInteractions];
 	kstrsansbending = new floatingpoint[_strnumInteractions];
 	eqlsansbending = new floatingpoint[_strnumInteractions];
@@ -114,14 +139,19 @@ floatingpoint FilamentStretchingandBending<FStretchingandBendingInteractionType>
 	_FFType.energy(coord, _numInteractions, beadSet, kstr, kbend, eql, eqt, totalenergy,
 	               startID, _numInteractions, threadID);
 
-	cout<<"Str Method 2 "<<totalenergy[0] + totalenergy[1]<<endl;
-	cout<<"Bend Method 1 "<<U_ii<<endl;
-	cout<<"Bend Method 2 "<<totalenergy[2]<<endl;
+/*    cout<<"Str Method 2= "<<totalenergy[0] + totalenergy[1]<<endl;
+    cout<<"Bend Method 2= "<<totalenergy[2]<<endl;*/
 
-	cout<<SysParams::numthreads<<endl;
+    _FFType.energy(coord, beadSetcylsansbending, kstrsansbending, eqlsansbending, totalenergy,
+            startID, _strnumInteractions, threadID);
+
+/*	cout<<"Str Method 2= "<<totalenergy[0] + totalenergy[1]<<endl;
+	cout<<"Bend Method 2= "<<totalenergy[2]<<endl;*/
+
+//	cout<<SubSystem::tp->numThreads()<<endl;
 #endif
 	floatingpoint U = (floatingpoint) 0.0;
-	for(int t = 0 ; t < SysParams::numthreads; t++){
+	for(int t = 0 ; t < SubSystem::tp->numThreads(); t++){
 		for(int j = 0; j <3;j++) {
 			if(totalenergy[3*t+j] >= (floatingpoint) 0.0)
 				U +=  totalenergy[3*t+j];
@@ -138,7 +168,11 @@ floatingpoint FilamentStretchingandBending<FStretchingandBendingInteractionType>
 void FilamentStretchingandBending<FStretchingandBendingInteractionType>::computeForces
 (floatingpoint *coord, floatingpoint *f) {
 #ifdef SERIAL
-	_FFType.forces(coord, f, _numInteractions, beadSet, kbend, eqt);
+	_FFType.forces(coord, f, _numInteractions, beadSet, kstr, kbend, eql, eqt);
+     const int startID = 0;
+     int threadID = 0;
+	_FFType.forces(coord, f, beadSetcylsansbending, kstrsansbending, eqlsansbending, startID,
+	        _strnumInteractions, threadID);
 #endif
 #ifdef DETAILEDOUTPUT
 	floatingpoint maxF = 0.0;
