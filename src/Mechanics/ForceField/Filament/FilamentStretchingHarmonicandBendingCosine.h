@@ -40,6 +40,28 @@ public:
 				int *beadSetsansbending, floatingpoint *kstrsansbending,
 				floatingpoint *eqlsansbending,
 				const int startID, const int endID, int threadID);
+
+    void energy(floatingpoint *coord, std::size_t nint, int * cylSet,
+                floatingpoint *cyllengthset, floatingpoint *cylbenddotproduct,
+                floatingpoint *kstr, floatingpoint *kbend, floatingpoint *eql,
+                floatingpoint *eqt, floatingpoint* totalenergy,
+                const int startID, const int endID, int threadID);
+
+    void energy(floatingpoint *coord, int * cylSetcylsansbending,
+                floatingpoint *cyllengthset, floatingpoint *kstrsansbending,
+                floatingpoint *eqlsansbending, floatingpoint* totalenergy, const int startID,
+                const int endID, int threadID);
+
+    void forces(floatingpoint *coord, floatingpoint *f, size_t nint, int *beadSet,
+                int *cylSet, floatingpoint *cyllengthset, floatingpoint *cylbenddotproduct,
+                 floatingpoint *kstr, floatingpoint *kbend,
+                floatingpoint *eql, floatingpoint *eqt);
+
+    void forces(floatingpoint *coord,  floatingpoint *f,  int *beadSet,
+                int * cylSetcylsansbending, floatingpoint *cyllengthset,
+                int *beadSetsansbending, floatingpoint *kstrsansbending,
+                floatingpoint *eqlsansbending,
+                const int startID, const int endID, int threadID);
 };
 
 #endif

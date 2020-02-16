@@ -1564,6 +1564,7 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 		if(!(sconvergencecheck)){
 			stretchBeads(lambda);
 			energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
+            CUDAcommon::tmin.computeenerycallsnonzero++;
 	//Step1: Calculate Forces & Dot products
 			FFM.computeForces(Bead::getDbData().coordsStr.data(), Bead::getDbData()
 					.forcesAux.data());
@@ -1839,6 +1840,7 @@ floatingpoint CGMethod::quadraticoptimization(ForceFieldManager& FFM, const vect
 		else {
 			stretchBeads(lambdaquad);
 			energyQuad = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
+            CUDAcommon::tmin.computeenerycallsnonzero++;
 //			cout<<"["<<abs(energyQuad-y1)/y1<<" "<<LAMBDAQUADTOL<<"];"<<endl;
 			if(abs(energyQuad-y1)/y1 < LAMBDAQUADTOL){
 				return lambdaquad;

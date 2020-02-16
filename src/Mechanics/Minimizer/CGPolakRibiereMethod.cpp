@@ -626,11 +626,6 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 			/* Gradient tolerance  */  (Ms_isminimizationstate) &&
 			                                  !ETOLexittstatus) {
 
-//#ifdef CUDATIMETRACK_MACRO
-//        chrono::high_resolution_clock::time_point tbeginiter, tenditer;
-//        tbeginiter = chrono::high_resolution_clock::now();
-//#endif
-
 				//@@@{ STEP 5 OTHER
 				tbegin = chrono::high_resolution_clock::now();
 				if (std::is_same<floatingpoint, float>::value) {
@@ -995,6 +990,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
 			cout << "System energy..." << endl;
 			FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+			CUDAcommon::tmin.computeenerycallszero++;
 #ifdef CUDAACCL
 			for(auto strm:CUDAcommon::getCUDAvars().streamvec)
 				CUDAcommon::handleerror(cudaStreamSynchronize(*strm));
@@ -1062,6 +1058,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
 	cout<<"Energy after minimization"<<endl;
 	FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+	CUDAcommon::tmin.computeenerycallszero++;
 	cout<<endl;
 
     //final force calculation

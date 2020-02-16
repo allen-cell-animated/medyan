@@ -334,10 +334,12 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
 }
 
 EnergyReport ForceFieldManager::computeEnergyHRMD(floatingpoint *coord) const {
+    CUDAcommon::tmin.computeenerycallszero++;
     EnergyReport result;
     result.total = 0.0;
     for (auto &ff : _forceFields) {
         auto tempEnergy = ff->computeEnergy(coord);
+
         // convert to units of kT
         tempEnergy = tempEnergy / kT; // TODO: Energy unit conversion might happen outside
         result.individual.push_back({ff->getName(), tempEnergy});

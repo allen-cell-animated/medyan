@@ -25,27 +25,36 @@
 #include "nvToolsExt.h"
 #endif
 #include "cross_check.h"
+using namespace mathfunc;
 
-/*template <class FBendingInteractionType>
+template <class FBendingInteractionType>
 void FilamentStretchingandBending<FBendingInteractionType>::precomputevars(
-        floatingpoint *coord, int *beadSet, int *beadSetcylsansbending,
-        floatingpoint* cyllength, floatingpoint *cyllengthsansbending, floatingpoint *hingedotproduct){
+		floatingpoint *coord, floatingpoint *cyllengthset,
+		floatingpoint *cylbenddotproduct){
 
     floatingpoint *coord1, *coord2, *coord3;
+    int cylcount = 0;
+    int dotproductcount = 0;
     for (auto f: Filament::getFilaments()) {
         auto cyl = *f->getCylinderVector().begin();
         coord1 = &coord[3 * cyl->getFirstBead()->getStableIndex()];
-        coord2 = &coord[3 * cyl->getFirstBead()->getStableIndex()];
-        sqrt(scalarProduct(coord1,coord2));
+        coord2 = &coord[3 * cyl->getSecondBead()->getStableIndex()];
+	    cyllengthset[cylcount] = twoPointDistance(coord1,coord2);
+        cylcount++;
 
         for (auto it = f->getCylinderVector().begin()+1;
              it != f->getCylinderVector().end(); it++){
-
-
+        	coord3 = &coord[3 * (*it)->getSecondBead()->getStableIndex()];
+	        cyllengthset[cylcount] = twoPointDistance(coord2,coord3);
+	        cylcount++;
+	        cylbenddotproduct[dotproductcount] = scalarProduct(coord1,coord2,coord2,coord3);
+	        dotproductcount++;
+        	coord1 = coord2;
+        	coord2 = coord3;
         }
-
     }
-}*/
+}
+
 template <class FBendingInteractionType>
 void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
 
@@ -62,9 +71,9 @@ void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
 	// bending paradigm. Need a function to calculate energies seperately for those
 	// cylinders.
 	_strnumInteractions = Filament::getFilaments().size();
-
-	cout<<"Str NumInt Method  1 "<<Cylinder::getCylinders().size()<<" Method 2 "
-		<<_strnumInteractions+_numInteractions<<endl;
+    //These two numbers should match
+/*	cout<<"Str NumInt Method  1 "<<Cylinder::getCylinders().size()<<" Method 2 "
+		<<_strnumInteractions+_numInteractions<<endl;*/
 	beadSetcylsansbending = new int[nstr * _strnumInteractions];
 	kstrsansbending = new floatingpoint[_strnumInteractions];
 	eqlsansbending = new floatingpoint[_strnumInteractions];
@@ -75,9 +84,18 @@ void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
 	kbend = new floatingpoint[_numInteractions];
 	eqt = new floatingpoint[_numInteractions];
 
+	//Testing Cylset stores IDs
+	cylSet = new int[2*_numInteractions];
+	cylSetcylsansbending = new int[_strnumInteractions];
+    auto Totalcyl = Cylinder::getCylinders().size();
+	cyllengthset = new floatingpoint[Totalcyl];
+    cylbenddotproduct = new floatingpoint[_numInteractions];
+
 	int i = 0;
 
 	int istr = 0;
+
+	int cylcount = 0;
 
 	for (auto f: Filament::getFilaments()) {
 
@@ -86,6 +104,8 @@ void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
 		beadSetcylsansbending[nstr * istr + 1] = cyl->getSecondBead()->getStableIndex();
 		kstrsansbending[istr] = cyl->getMCylinder()->getStretchingConst();
 		eqlsansbending[istr] = cyl->getMCylinder()->getEqLength();
+		cylSetcylsansbending[istr] = cylcount;
+		cylcount++;
 		istr++;
 
 		if (f->getCylinderVector().size() > 1){
@@ -98,6 +118,10 @@ void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
 				beadSet[n * i + 1] = (*it)->getFirstBead()->getStableIndex();
 				beadSet[n * i + 2] = (*it)->getSecondBead()->getStableIndex();
 
+                cylSet[ncylperint * i] = cylcount - 1;
+                cylSet[ncylperint * i + 1] = cylcount;
+				cylcount++;
+
 				kbend[i] = (*it)->getMCylinder()->getBendingConst();
 				eqt[i]  = (*it)->getMCylinder()->getEqTheta();
 
@@ -108,6 +132,9 @@ void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
 			}
 		}
 	}
+	cout<<"Ncyl "<<cylcount<<" "<<Cylinder::getCylinders().size()<<" "
+                                                                ""<<2*_numInteractions<<endl;
+	cout<<endl;
 }
 
 template<class FBendingInteractionType>
@@ -123,6 +150,11 @@ void FilamentStretchingandBending<FBendingInteractionType>::deallocate() {
 	delete [] kstrsansbending;
 	delete [] eqlsansbending;
 	delete [] totalenergy;
+
+	delete [] cylSetcylsansbending;
+	delete [] cylSet;
+	delete [] cyllengthset;
+	delete [] cylbenddotproduct;
 }
 
 //Needs to have a return value.
@@ -136,19 +168,18 @@ floatingpoint FilamentStretchingandBending<FStretchingandBendingInteractionType>
 
 	const int startID = 0;
 	int threadID = 0;
-	_FFType.energy(coord, _numInteractions, beadSet, kstr, kbend, eql, eqt, totalenergy,
+	precomputevars(coord, cyllengthset, cylbenddotproduct);
+    _FFType.energy(coord, _numInteractions, cylSet, cyllengthset, cylbenddotproduct,
+            kstr, kbend, eql, eqt, totalenergy, startID, _numInteractions, threadID);
+    _FFType.energy(coord, cylSetcylsansbending, cyllengthset, kstrsansbending,
+           eqlsansbending, totalenergy, startID, _strnumInteractions, threadID);
+
+	/*_FFType.energy(coord, _numInteractions, beadSet, kstr, kbend, eql, eqt, totalenergy,
 	               startID, _numInteractions, threadID);
 
-/*    cout<<"Str Method 2= "<<totalenergy[0] + totalenergy[1]<<endl;
-    cout<<"Bend Method 2= "<<totalenergy[2]<<endl;*/
-
     _FFType.energy(coord, beadSetcylsansbending, kstrsansbending, eqlsansbending, totalenergy,
-            startID, _strnumInteractions, threadID);
+            startID, _strnumInteractions, threadID);*/
 
-/*	cout<<"Str Method 2= "<<totalenergy[0] + totalenergy[1]<<endl;
-	cout<<"Bend Method 2= "<<totalenergy[2]<<endl;*/
-
-//	cout<<SubSystem::tp->numThreads()<<endl;
 #endif
 	floatingpoint U = (floatingpoint) 0.0;
 	for(int t = 0 ; t < SubSystem::tp->numThreads(); t++){
@@ -168,6 +199,7 @@ floatingpoint FilamentStretchingandBending<FStretchingandBendingInteractionType>
 void FilamentStretchingandBending<FStretchingandBendingInteractionType>::computeForces
 (floatingpoint *coord, floatingpoint *f) {
 #ifdef SERIAL
+
 	_FFType.forces(coord, f, _numInteractions, beadSet, kstr, kbend, eql, eqt);
      const int startID = 0;
      int threadID = 0;
@@ -196,9 +228,15 @@ template floatingpoint FilamentStretchingandBending<FilamentStretchingHarmonican
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::vectorize();
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::deallocate();
+template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::precomputevars(
+		floatingpoint *coord, floatingpoint *cyllengthset,
+		floatingpoint *cylbenddotproduct);
 
 
 template floatingpoint FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::computeEnergy(floatingpoint *coord);
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::vectorize();
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::deallocate();
+template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::precomputevars(
+		floatingpoint *coord, floatingpoint *cyllengthset,
+		floatingpoint *cylbenddotproduct);

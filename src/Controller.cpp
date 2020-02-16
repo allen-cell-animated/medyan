@@ -1495,10 +1495,10 @@ void Controller::run() {
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runout2(mine - mins);
                 outputtime += elapsed_runout2.count();
-                cout<< "Chemistry time for run=" << chemistrytime <<endl;
-                cout << "Minimization time for run=" << minimizationtime <<endl;
-                cout<< "Neighbor-list+Bmgr-time for run="<<nltime<<endl;
-                cout<<"update-position time for run="<<updateposition<<endl;
+                cout<< "Chemistry time for cycle=" << chemistrytime <<endl;
+                cout << "Minimization time for cycle=" << minimizationtime <<endl;
+                cout<< "Neighbor-list+Bmgr-time for cycle="<<nltime<<endl;
+                cout<<"update-position time for cycle="<<updateposition<<endl;
 
                 cout<<"rxnrate time for run="<<rxnratetime<<endl;
                 cout<<"Output time for run="<<outputtime<<endl;

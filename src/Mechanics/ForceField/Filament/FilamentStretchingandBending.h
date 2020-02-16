@@ -42,9 +42,13 @@ private:
 	floatingpoint *totalenergy;//Will have 3 entries. The total of stretching, bending
 	// and sum of stretching + bending
 
-/*	void precomputevars(floatingpoint *coord, int *beadSet, int *beadSetcylsansbending,
-			floatingpoint* cyllength, floatingpoint *cyllengthsansbending, floatingpoint
-			*hingedotproduct);*/
+	int *cylSet;
+	int *cylSetcylsansbending;
+	floatingpoint *cyllengthset;
+	floatingpoint *cylbenddotproduct;
+
+	void precomputevars(floatingpoint *coord, floatingpoint *cyllengthset,
+	                    floatingpoint *cylbenddotproduct);
 
 public:
 
@@ -52,6 +56,7 @@ public:
 	///For filaments, this is a 3-bead potential
 	const static int n = 3;
 	const static int nstr = 2;
+	const static int ncylperint = 2;
 
 	virtual void vectorize();
 	virtual void deallocate();
