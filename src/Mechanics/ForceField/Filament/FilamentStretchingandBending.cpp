@@ -32,7 +32,36 @@ void FilamentStretchingandBending<FBendingInteractionType>::precomputevars(
 		floatingpoint *coord, floatingpoint *cyllengthset,
 		floatingpoint *cylbenddotproduct){
 
+    int cylcount = 0;
+    int hingecount = 0;
     floatingpoint *coord1, *coord2, *coord3;
+    bool fetchcoordsstatus = true;
+    for(auto b = 0; b < Bead::getBeads().size()-1;  b++){
+        if(fetchcoordsstatus) {
+            coord1 = &coord[3 * beadSetall[b]];
+            coord2 = &coord[3 * beadSetall[b + 1]];
+        }
+        else{
+            coord1 = coord2;
+            coord2 = coord3;
+        }
+        if (beadpaircyllengthstatus[b]) {
+            cyllengthset[cylcount] = twoPointDistance(coord1, coord2);
+            cylcount++;
+        }
+        fetchcoordsstatus = true;
+        if(beadtriplethingestatus[b]) {
+            coord3 = &coord[3 * beadSetall[b + 2]];
+            cylbenddotproduct[hingecount] = scalarProduct(coord1, coord2, coord2, coord3);
+            hingecount++;
+            //If there are connections between b+1, b+2, and b+3.
+            if (beadtriplethingestatus[b + 1]) {
+                fetchcoordsstatus = false;
+            }
+        }
+    }
+
+    /*floatingpoint *coord1, *coord2, *coord3;
     int cylcount = 0;
     int dotproductcount = 0;
     for (auto f: Filament::getFilaments()) {
@@ -52,7 +81,7 @@ void FilamentStretchingandBending<FBendingInteractionType>::precomputevars(
         	coord1 = coord2;
         	coord2 = coord3;
         }
-    }
+    }*/
 }
 
 template <class FBendingInteractionType>
@@ -87,9 +116,17 @@ void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
 	//Testing Cylset stores IDs
 	cylSet = new int[2*_numInteractions];
 	cylSetcylsansbending = new int[_strnumInteractions];
+
+	//Datasets to help calculate precomputed vars.
     auto Totalcyl = Cylinder::getCylinders().size();
+    auto Totalbeads = Bead::getBeads().size();
+    beadSetall = new int[Totalbeads];
+    beadpaircyllengthstatus = new bool[Totalbeads];
+    beadtriplethingestatus  = new bool[Totalbeads];
 	cyllengthset = new floatingpoint[Totalcyl];
     cylbenddotproduct = new floatingpoint[_numInteractions];
+    int beadcount = 0;
+    int hingecount = 0;
 
 	int i = 0;
 
@@ -105,6 +142,13 @@ void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
 		kstrsansbending[istr] = cyl->getMCylinder()->getStretchingConst();
 		eqlsansbending[istr] = cyl->getMCylinder()->getEqLength();
 		cylSetcylsansbending[istr] = cylcount;
+		beadSetall[beadcount] = beadSetcylsansbending[nstr * istr];
+//        cout<<beadcount<<endl;
+		beadcount++;
+        beadpaircyllengthstatus[beadcount-1] = 1;
+//        cout<<beadcount-1<<endl;
+		beadSetall[beadcount] = beadSetcylsansbending[nstr * istr + 1];
+		beadcount++;
 		cylcount++;
 		istr++;
 
@@ -122,6 +166,14 @@ void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
                 cylSet[ncylperint * i + 1] = cylcount;
 				cylcount++;
 
+				beadSetall[beadcount] = beadSet[n * i + 2];
+				beadpaircyllengthstatus[beadcount-1] = 1;
+//                cout<<beadcount-1<<endl;
+				beadcount++;
+
+                beadtriplethingestatus[hingecount] = 1;
+                hingecount++;
+
 				kbend[i] = (*it)->getMCylinder()->getBendingConst();
 				eqt[i]  = (*it)->getMCylinder()->getEqTheta();
 
@@ -131,10 +183,27 @@ void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
 				i++;
 			}
 		}
+		beadpaircyllengthstatus[beadcount-1] = 0;
+//        cout<<beadcount-1<<" end"<< endl;
+        beadtriplethingestatus[hingecount] = 0;
+        beadtriplethingestatus[hingecount+1] = 0;
+        hingecount = hingecount + 2;
 	}
+	/*for(auto f:Filament::getFilaments()){
+	    cout<<f->getCylinderVector().size()<<" ";
+	}
+	cout<<endl;
+	for(int i = 0;i < Totalbeads-1; i++){
+	    cout<<beadpaircyllengthstatus[i]<<" ";
+	}
+	cout<<endl;
+    for(int i = 0;i < Totalbeads-1; i++){
+        cout<<beadtriplethingestatus[i]<<" ";
+    }
+    cout<<endl;
 	cout<<"Ncyl "<<cylcount<<" "<<Cylinder::getCylinders().size()<<" "
                                                                 ""<<2*_numInteractions<<endl;
-	cout<<endl;
+	cout<<endl;*/
 }
 
 template<class FBendingInteractionType>
@@ -155,6 +224,9 @@ void FilamentStretchingandBending<FBendingInteractionType>::deallocate() {
 	delete [] cylSet;
 	delete [] cyllengthset;
 	delete [] cylbenddotproduct;
+	delete [] beadSetall;
+	delete [] beadpaircyllengthstatus;
+	delete [] beadtriplethingestatus;
 }
 
 //Needs to have a return value.

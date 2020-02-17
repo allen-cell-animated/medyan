@@ -41,11 +41,15 @@ private:
 	floatingpoint *eql;
 	floatingpoint *totalenergy;//Will have 3 entries. The total of stretching, bending
 	// and sum of stretching + bending
+	int *cylSet;//Informs which element in cyllength set to consider.
+	int *cylSetcylsansbending;//Informs which element in cyllength set to consider.
 
-	int *cylSet;
-	int *cylSetcylsansbending;
+	int *beadSetall;//element i helps determine position in coord array to look at.
+	bool *beadpaircyllengthstatus;//element i informs if beads i and i+1 form a bond.
+	bool *beadtriplethingestatus;//element i informs if bead i, i+1, and i+2 form a hinge.
 	floatingpoint *cyllengthset;
 	floatingpoint *cylbenddotproduct;
+
 
 	void precomputevars(floatingpoint *coord, floatingpoint *cyllengthset,
 	                    floatingpoint *cylbenddotproduct);
