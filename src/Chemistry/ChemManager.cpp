@@ -1149,10 +1149,14 @@ void ChemManager::genFilBindingReactions() {
             int motorIndex = 0;
 
             for(auto &r: _chemData.branchingReactions[filType]) {
+
+/*                cout<<"Considering compartment "<<C->getId()<<" coords "<<C->coordinates
+                ()[0]<<" "<<C->coordinates()[1]<<" "<<C->coordinates()[2]<<" volFrac "<<
+                C->getVolumeFrac()<<endl;*/
                 
                 //filament creation is not allowed in partially activated compartments
                 //that volume fraction < threshold, be careful with teh threshold
-                if(C->getVolumeFrac() < 0.5) continue;
+//                if(C->getVolumeFrac() < 0.5) continue;
 
                 vector<Species*> reactantSpecies;
                 vector<Species*> productSpecies;

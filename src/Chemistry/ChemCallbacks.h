@@ -581,8 +581,11 @@ struct BranchingCallback {
         constexpr int triesWarning    = 10;
         bool inboundary = false;
         frate=_offRate;
+        float cutofffactor = pow(c1->getCompartment()->getVolumeFrac(),1.0/3.0);
+        floatingpoint boundary_cutoff_distance = cutofffactor*SysParams::Boundaries()
+                .BoundaryCutoff/4.0 ;
 
-	    while(inboundary == false) {
+            while(inboundary == false) {
 
 	     	// We try to find a point at t radians with mother filament. We have triesShiftParam
 	     	//number of trials to find an appropriate one. If not, we choose a random
@@ -590,17 +593,15 @@ struct BranchingCallback {
 	     	// radians.
 	     	const double theta = (tries >= triesShiftParam ? Rand::randfloatingpoint(0.1, 3.04) : t);
 	     	auto branchPosDir = branchProjection(n, p, l, s, theta);
-	     	auto bd = get<0>(branchPosDir);
-	     	auto bp = get<1>(branchPosDir);
+	     	auto bd = get<0>(branchPosDir);//branch direction
+	     	auto bp = get<1>(branchPosDir);//branch position
 
 		    //Check if the branch will be within boundary
 		    auto projlength = SysParams::Geometry().cylinderSize[filType] / 10;
 		    auto pos2 = nextPointProjection(bp, projlength, bd);
 		    //check if within cutoff of boundary
-		    if (_ps->getBoundary()->distance(bp) >=
-		        SysParams::Boundaries().BoundaryCutoff / 4.0 &&
-		        _ps->getBoundary()->distance(pos2) >=
-		        SysParams::Boundaries().BoundaryCutoff / 4.0) {
+		    if (_ps->getBoundary()->distance(bp) >= boundary_cutoff_distance &&
+		        _ps->getBoundary()->distance(pos2) >= boundary_cutoff_distance) {
                 inboundary = true;
 
         	     //create a new daughter filament
@@ -627,13 +628,14 @@ struct BranchingCallback {
         {
             CCylinder* c = nullptr; auto check = false;
             vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
-//	        cout<<"Looking for cylinder with Id "<<c1->getId()<<" and pos "<<pos<<endl;
+/*	        cout<<"Looking for cylinder with Idx "<<c1->getStableIndex()<<" and pos "
+                                                                   ""<<pos<<endl;*/
             for(auto T:BrT){
             	//Mother cylinder
                 CCylinder* cx=get<0>(get<0>(T));
                 //Mother binding site
                 floatingpoint p = floatingpoint(get<1>(get<0>(T)))/ floatingpoint(SysParams::Geometry().cylinderNumMon[filType]);
-//	            cout<<"Branch tuple "<<cx->getCylinder()->getId()<<" "<<p<<endl;
+//	            cout<<"Branch tuple "<<cx->getCylinder()->getStableIndex()<<" "<<p<<endl;
                 if(cx->getCylinder()->getId()==c1->getId() && abs(p-pos)/pos < 0.01){
                     c=get<0>(get<1>(T));
                     check = true;

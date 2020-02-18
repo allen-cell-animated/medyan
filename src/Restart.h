@@ -80,6 +80,8 @@ private:
     //Increases copy number of diffusing species corresponding to bound species in each Compartment by number of events.
     void setdiffspeciesnumber(string diffusingspeciesname, Cylinder* c){
         int counter=0;
+//        cout<<"Trying to find "<<diffusingspeciesname<<" in Cmp "<<c->getCompartment()
+//        ->getId()<<endl;
         for(auto sd : _chemData.speciesDiffusing) {
             int events=0;
             if(diffusingspeciesname.compare(get<0>(sd))==0){
@@ -94,6 +96,8 @@ private:
 
             }
             events=events+(c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().getN();
+            /*cout<<"Cmp "<<c->getCompartment()->getId()<<" diffusing species "
+                <<diffusingspeciesname<<"copy number set to "<<events<<endl;*/
             (c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(events);
             c->getCompartment()->getDiffusionReactionContainer().updatePropensityComprtment();
             counter++;

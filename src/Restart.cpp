@@ -450,7 +450,10 @@ void Restart::addtoHeapLinkerMotorBrancher(){
 		int site1 = b.pos1;
 		Cylinder *c1 = _rCDatavec[cidx1].cylinderpointer;
 		Cylinder *c2 = _rCDatavec[cidx2].cylinderpointer;
-			for (auto &Mgr:c1->getCompartment()->getFilamentBindingManagers()) {
+/*		cout<<"c1 idx "<<c1->getStableIndex()<<endl;
+		cout<<"c1 cmp "<<c1->getCompartment()->getId()<<", c2 cmp "<<c2->getCompartment()
+		->getId()<<endl;*/
+        for (auto &Mgr:c1->getCompartment()->getFilamentBindingManagers()) {
 				if (dynamic_cast<BranchingManager *>(Mgr.get())) {
 					setdiffspeciesnumber(b.diffusingspeciesnamebranch,c1);
 					setdiffspeciesnumber(b.diffusingspeciesnameactin,c1);

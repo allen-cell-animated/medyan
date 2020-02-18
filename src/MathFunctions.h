@@ -1343,7 +1343,7 @@ inline auto vec2Vector(const VecType& a) {
     /// @param m - the size of the branch projection
     /// @param theta - the angle of branching
     /// @return a vector describing the initial branching direction and point
-    tuple<vector<floatingpoint>, vector<floatingpoint>> branchProjection(const vector<floatingpoint> &n,
+    tuple<vector<floatingpoint>, vector<floatingpoint>> branchProjection(                                                                      const vector<floatingpoint> &n,
                                                            const vector<floatingpoint> &p,
                                                            floatingpoint l, floatingpoint m, floatingpoint theta);
 
