@@ -1107,7 +1107,7 @@ void Controller::run() {
             exit(EXIT_FAILURE);
         }
 ///STEP 5. Reset time to required restart time.
-        _cController.initializerestart(_restart->getrestartime());
+        _cController.initializerestart(_restart->getrestartime(),_minimizationTime);
 	    #ifdef SLOWDOWNINITIALCYCLE
 	    _slowedminimizationcutoffTime += _restart->getrestartime();
 		#endif

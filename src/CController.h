@@ -64,7 +64,7 @@ public:
     ///@param chemInitializer - a string defining the chemical manager used
     void initialize(string& chemAlgorithm, ChemistryData& chem, DissipationTracker* dt);
 
-    void initializerestart(floatingpoint restartime);
+    void initializerestart(floatingpoint restartime, floatingpoint _minimizationTime);
     
     ///Run chemistry for a given amount of time
     bool run(floatingpoint time);

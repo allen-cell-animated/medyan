@@ -2139,6 +2139,28 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
     }
 }
 
+void ChemManager::restartreleaseandremovaltime(floatingpoint _minimizationTime){
+
+    //look at copy number for each species
+    for(auto &s : _chemData.speciesDiffusing) {
+
+        auto name = get<0>(s);
+        auto copyNumber = get<1>(s);
+        auto releaseTime = get<3>(s);
+        auto removalTime = get<4>(s);
+        if(tau()-releaseTime >= _minimizationTime) {
+            //set zero copy number
+            get<1>(s) = 0;
+        }
+        if(tau()-removalTime >= _minimizationTime && !areEqual(removalTime,0.0) &&
+           get<1>(s) != -1) {
+            ///set as removed by marking copy number to -1
+            get<1>(s) = -1;
+        }
+    }
+
+}
+
 void ChemManager::updateCopyNumbers() {
     //Special protocol if move boundary protocol exists
     int tsaxis = SysParams::Boundaries().transfershareaxis;

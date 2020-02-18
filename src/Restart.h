@@ -221,6 +221,23 @@ public:
 		    for (auto &s : _chemData.speciesBulk) {
 
 		    }
+		    //Set diffusing species copy numbers to 0.
+            for(auto &s : _chemData.speciesDiffusing) {
+
+                auto name = get<0>(s);
+                auto copyNumber = get<1>(s);
+                auto releaseTime = get<3>(s);
+                if (tau() >= releaseTime)
+                    get<1>(s) = 0;
+            }
+/*            for(auto &s : _chemData.speciesDiffusing) {
+
+                auto name = get<0>(s);
+                auto copyNumber = get<1>(s);
+                auto releaseTime = get<3>(s);
+                cout<<name<<" "<<copyNumber<<endl;
+            }*/
+
 	    }
 	    checktallyofcopynumbers();
     }

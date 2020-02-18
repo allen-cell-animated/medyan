@@ -97,7 +97,8 @@ public:
     ///         function is called at every set of chemical steps to check
     ///         if molecules should be released at the current time.
     virtual void updateCopyNumbers();
-    
+
+    virtual void restartreleaseandremovaltime(floatingpoint _minimizationTime);
     
 private:
     //DATA MEMBERS

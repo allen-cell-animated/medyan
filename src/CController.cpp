@@ -78,7 +78,7 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem, Dissipa
     Cylinder::_chemManager = _chemManager;
 }
 
-void CController::initializerestart(floatingpoint time){
+void CController::initializerestart(floatingpoint time, floatingpoint _minimizationTime){
     if(SysParams::RUNSTATE){
         LOG(ERROR) << "initializerestart Function from CController class can "
                       "only be called "
@@ -87,6 +87,8 @@ void CController::initializerestart(floatingpoint time){
     }
 	_chemSim->initialize();
     _chemSim->initializerestart(time);
+    //update copy numbers
+    _chemManager->restartreleaseandremovaltime(_minimizationTime);
 }
 
 bool CController::run(floatingpoint time) {
