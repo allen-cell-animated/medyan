@@ -3,31 +3,23 @@
 # As outlined in the install guide, the following
 # libraries and compilers are needed:
 #
-#	GCC 4.7 and above
+#	GCC 5 and above
 #	Boost 1.49 and above
-#
-#   If running unit tests, googletest is needed.
 #
 # Tweak the following compiler and library options
 # for your given system.
 ##################################################
 
-SOURCES_TEST             := $(shell find ./TESTS -name '*.cpp')
-SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './TESTS/*' ! -path './dist_moduleV2/*')
+SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './dist_moduleV2/*')
 SOURCES_CPP              += ./dist_moduleV2/dist_avx_par.cpp  ./dist_moduleV2/dist_bench.cpp  ./dist_moduleV2/dist_example.cpp  ./dist_moduleV2/dist_mod_vars.cpp
-SOURCES_CPP_WITHOUT_MAIN := $(filter-out ./MEDYAN.cpp,$(SOURCES_CPP))
-SOURCES_CU               := $(shell find . -name '*.cu'  ! -path './TESTS/*' ! -path './dist_moduleV2/*')
+SOURCES_CU               := $(shell find . -name '*.cu'  ! -path './dist_moduleV2/*')
 SOURCES                   = $(SOURCES_CPP) $(SOURCES_CU)
-HEADERS                  := $(shell find . -name '*.h' ! -path './dist_moduleV2/*')
-HEADERS                  += ./dist_moduleV2/umesimd/UMESimd.h
 
-OBJECTS_TEST             := $(SOURCES_TEST:.cpp=.o)
 OBJECTS_CPP              := $(SOURCES_CPP:.cpp=.o)
 OBJECTS_CU               := $(SOURCES_CU:.cu=.o)
-OBJECTS_CPP_WITHOUT_MAIN := $(SOURCES_CPP_WITHOUT_MAIN:.cpp=.o)
 OBJECTS                   = $(OBJECTS_CPP) $(OBJECTS_CU)
 
-DEPENDS := $(SOURCES_TEST:.cpp=.d) $(SOURCES_CPP:.cpp=.d)
+DEPENDS := $(SOURCES_CPP:.cpp=.d)
 
 #CPP COMPILER CHOICE AND FLAGS
 CXX = g++ -std=c++14
@@ -35,7 +27,7 @@ NVCC = nvcc -std=c++11
 
 # Flags used by compiler and linker
 DEBUG = -g
-FAST_CXX = -Os -ffast-math -fno-finite-math-only -flto -funroll-loops -DNDEBUG -mtune=native -march=native # -Xpreprocessor -fopenmp # -mavx2
+FAST_CXX = -O2 -ffast-math -fno-finite-math-only -flto -funroll-loops -DNDEBUG -mtune=native -march=native # -Xpreprocessor -fopenmp # -mavx2
 #FAST_CXX = -g -march=native -mtune=native
 
 # Compiling flags
@@ -146,10 +138,6 @@ else
 	$(CXX) $(LDFLAGS_CXX) -o MEDYAN $(OBJECTS) $(LDLIBS)
 endif
 
-# Build test
-medyan_test: $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST)
-	$(CXX) $(LDFLAGS_CXX) -o $@ $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST) $(LDLIBS)
-
 # Compile to object and generate dependency
 %.o: %.cpp
 %.o: %.cpp %.d
@@ -165,12 +153,12 @@ endif
 # Add empty dependency for dependencies
 %.d: ;
 
-all: MEDYAN medyan_test
+all: MEDYAN
 
 clean:
 	\find . -name "*.d" -delete
 	\find . -name '*.o' -delete
-	\rm -f MEDYAN medyan_test
+	\rm -f MEDYAN
 
 .PRECIOUS: %.d
 
