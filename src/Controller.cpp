@@ -193,6 +193,13 @@ void Controller::initialize(string inputFile,
         LOG(FATAL) << "Need to specify a chemical input file. Exiting.";
         exit(EXIT_FAILURE);
     }
+    
+#ifdef CHEMISTRY
+    SysParams::addChemParameters(ChemData);
+    
+    if(!SysParams::checkChemParameters(ChemData))
+        exit(EXIT_FAILURE);
+#endif
 
     // create the dissiption tracking object
     _dt = new DissipationTracker(&_mController);
@@ -296,10 +303,7 @@ void Controller::initialize(string inputFile,
     //Check consistency of all chemistry and mechanics parameters
     cout << "---" << endl;
     LOG(STEP) << "Checking cross-parameter consistency...";
-#ifdef CHEMISTRY
-    if(!SysParams::checkChemParameters(ChemData))
-        exit(EXIT_FAILURE);
-#endif
+    //Chemistry is checked in advance
 #ifdef MECHANICS
     if(!SysParams::checkMechParameters(MTypes))
         exit(EXIT_FAILURE);

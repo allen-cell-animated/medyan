@@ -380,6 +380,8 @@ public:
     static bool checkDyRateParameters(DynamicRateType& dy);
     static bool checkGeoParameters();
     //@}
+    
+    static void addChemParameters(ChemistryData& chem);
 
 };
 
