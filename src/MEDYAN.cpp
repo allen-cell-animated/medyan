@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
     auto cmdRes = medyanInitFromCommandLine(argc, argv);
 
     // Initialize the thread pool for use in MEDYAN
-    ThreadPool tp(cmdRes.numThreads);
+    ThreadPool tp(cmdRes.numThreads - 1);
 
     //initialize and run system
     Controller c;
