@@ -1409,6 +1409,10 @@ void HessianSpectra::print(int snapshot){
     };
     // This clears the vectors storing the matrices to reduce the amount of memory needed.
     _ffm->clearHessian(1);
+    
+    if(!SysParams::Mechanics().hessMatrixPrintBool){
+        _ffm->clearHessian(0);
+    };
 }
 
 
