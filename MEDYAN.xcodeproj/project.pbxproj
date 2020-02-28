@@ -42,13 +42,10 @@
 		AEC54871225D3799007CB7E9 /* BubbleInitializer.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC546D5225D3798007CB7E9 /* BubbleInitializer.h */; };
 		AEC54872225D3799007CB7E9 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEC546D6225D3798007CB7E9 /* common.cpp */; };
 		AEC54873225D3799007CB7E9 /* SysParams.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC546D7225D3798007CB7E9 /* SysParams.h */; };
-		AEC54874225D3799007CB7E9 /* profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEC546D9225D3798007CB7E9 /* profiler.cpp */; };
 		AEC54875225D3799007CB7E9 /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEC546DB225D3798007CB7E9 /* log.cpp */; };
 		AEC54876225D3799007CB7E9 /* cmdparse.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC546DC225D3798007CB7E9 /* cmdparse.h */; };
 		AEC54877225D3799007CB7E9 /* log.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC546DD225D3798007CB7E9 /* log.h */; };
 		AEC54878225D3799007CB7E9 /* cmdparse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEC546DE225D3798007CB7E9 /* cmdparse.cpp */; };
-		AEC54879225D3799007CB7E9 /* environment.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC546DF225D3798007CB7E9 /* environment.h */; };
-		AEC5487A225D3799007CB7E9 /* profiler.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC546E0225D3798007CB7E9 /* profiler.h */; };
 		AEC5487B225D3799007CB7E9 /* FilamentInitializer.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC546E1225D3798007CB7E9 /* FilamentInitializer.h */; };
 		AEC5487C225D3799007CB7E9 /* MathFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AEC546E2225D3798007CB7E9 /* MathFunctions.cpp */; };
 		AEC5487D225D3799007CB7E9 /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC546E3225D3798007CB7E9 /* Parser.h */; };
@@ -966,13 +963,10 @@
 		AEC546D5225D3798007CB7E9 /* BubbleInitializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BubbleInitializer.h; sourceTree = "<group>"; };
 		AEC546D6225D3798007CB7E9 /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
 		AEC546D7225D3798007CB7E9 /* SysParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SysParams.h; sourceTree = "<group>"; };
-		AEC546D9225D3798007CB7E9 /* profiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = profiler.cpp; sourceTree = "<group>"; };
 		AEC546DB225D3798007CB7E9 /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = log.cpp; sourceTree = "<group>"; };
 		AEC546DC225D3798007CB7E9 /* cmdparse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cmdparse.h; sourceTree = "<group>"; };
 		AEC546DD225D3798007CB7E9 /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = log.h; sourceTree = "<group>"; };
 		AEC546DE225D3798007CB7E9 /* cmdparse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cmdparse.cpp; sourceTree = "<group>"; };
-		AEC546DF225D3798007CB7E9 /* environment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = environment.h; sourceTree = "<group>"; };
-		AEC546E0225D3798007CB7E9 /* profiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = profiler.h; sourceTree = "<group>"; };
 		AEC546E1225D3798007CB7E9 /* FilamentInitializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentInitializer.h; sourceTree = "<group>"; };
 		AEC546E2225D3798007CB7E9 /* MathFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathFunctions.cpp; sourceTree = "<group>"; };
 		AEC546E3225D3798007CB7E9 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
@@ -2682,53 +2676,53 @@
 		AEC546CE225D3798007CB7E9 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				1FC2A372230C52A100927043 /* Restart.cpp */,
-				1F41A7B122B06A070073835F /* dist_moduleV2 */,
-				AEC546CF225D3798007CB7E9 /* CController.h */,
-				AEC546D1225D3798007CB7E9 /* Composite.h */,
-				AEC546D2225D3798007CB7E9 /* SysParams.cpp */,
-				AEC546D3225D3798007CB7E9 /* MController.cpp */,
-				AEC546D4225D3798007CB7E9 /* MEDYAN.cpp */,
-				AEC546D5225D3798007CB7E9 /* BubbleInitializer.h */,
-				AEC546D6225D3798007CB7E9 /* common.cpp */,
-				AEC546D7225D3798007CB7E9 /* SysParams.h */,
-				AEC546D8225D3798007CB7E9 /* util */,
-				AEC546E1225D3798007CB7E9 /* FilamentInitializer.h */,
-				AEC546E2225D3798007CB7E9 /* MathFunctions.cpp */,
-				AEC546E3225D3798007CB7E9 /* Parser.h */,
-				AEC546E4225D3798007CB7E9 /* MathFunctions.h */,
-				AEC546E6225D3798007CB7E9 /* Component.cpp */,
-				AEC546E7225D3798007CB7E9 /* Chemistry */,
-				AEC54707225D3798007CB7E9 /* TESTS */,
-				AEC54713225D3798007CB7E9 /* DRController.cpp */,
-				AEC54714225D3798007CB7E9 /* Mechanics */,
-				AEC5479F225D3798007CB7E9 /* Output.h */,
-				AEC547A0225D3798007CB7E9 /* GController.cpp */,
-				AEC547A1225D3798007CB7E9 /* Output.cpp */,
-				AEC547A2225D3798007CB7E9 /* CController.cpp */,
-				AEC547A3225D3798007CB7E9 /* Visitor.h */,
-				AEC547A4225D3798007CB7E9 /* FilamentInitializer.cpp */,
-				AEC547A5225D3798007CB7E9 /* Controller.h */,
-				AEC547A6225D3798007CB7E9 /* Composite.cpp */,
-				AEC547A7225D3798007CB7E9 /* RateChangerImpl.cpp */,
-				AEC547A8225D3798007CB7E9 /* GController.h */,
-				AEC547A9225D3798007CB7E9 /* Restart.h */,
-				AEC547AA225D3798007CB7E9 /* common.h */,
-				AEC547AB225D3798007CB7E9 /* Rand.cpp */,
-				AEC547AC225D3798007CB7E9 /* ControllerCUDA.h */,
-				AEC547AD225D3798007CB7E9 /* Rand.h */,
-				AEC547AE225D3798007CB7E9 /* Histogram.h */,
 				AEC547AF225D3798007CB7E9 /* BubbleInitializer.cpp */,
+				AEC546D5225D3798007CB7E9 /* BubbleInitializer.h */,
+				AEC547A2225D3798007CB7E9 /* CController.cpp */,
+				AEC546CF225D3798007CB7E9 /* CController.h */,
+				AEC546E7225D3798007CB7E9 /* Chemistry */,
+				AEC546D6225D3798007CB7E9 /* common.cpp */,
+				AEC547AA225D3798007CB7E9 /* common.h */,
+				AEC546E6225D3798007CB7E9 /* Component.cpp */,
 				AEC547B0225D3798007CB7E9 /* Component.h */,
+				AEC547A6225D3798007CB7E9 /* Composite.cpp */,
+				AEC546D1225D3798007CB7E9 /* Composite.h */,
 				AEC547B1225D3798007CB7E9 /* Controller.cpp */,
-				AEC547B2225D3798007CB7E9 /* RateChanger.h */,
-				AEC5481F225D3799007CB7E9 /* utility.h */,
-				AEC54820225D3799007CB7E9 /* Structure */,
-				AEC54867225D3799007CB7E9 /* utility.cpp */,
-				AEC54868225D3799007CB7E9 /* MController.h */,
-				AEC54869225D3799007CB7E9 /* Parser.cpp */,
-				AEC5486A225D3799007CB7E9 /* RateChangerImpl.h */,
+				AEC547A5225D3798007CB7E9 /* Controller.h */,
+				AEC547AC225D3798007CB7E9 /* ControllerCUDA.h */,
+				1F41A7B122B06A070073835F /* dist_moduleV2 */,
+				AEC54713225D3798007CB7E9 /* DRController.cpp */,
 				AEC5486B225D3799007CB7E9 /* DRController.h */,
+				AEC547A4225D3798007CB7E9 /* FilamentInitializer.cpp */,
+				AEC546E1225D3798007CB7E9 /* FilamentInitializer.h */,
+				AEC547A0225D3798007CB7E9 /* GController.cpp */,
+				AEC547A8225D3798007CB7E9 /* GController.h */,
+				AEC547AE225D3798007CB7E9 /* Histogram.h */,
+				AEC546E2225D3798007CB7E9 /* MathFunctions.cpp */,
+				AEC546E4225D3798007CB7E9 /* MathFunctions.h */,
+				AEC546D3225D3798007CB7E9 /* MController.cpp */,
+				AEC54868225D3799007CB7E9 /* MController.h */,
+				AEC54714225D3798007CB7E9 /* Mechanics */,
+				AEC546D4225D3798007CB7E9 /* MEDYAN.cpp */,
+				AEC547A1225D3798007CB7E9 /* Output.cpp */,
+				AEC5479F225D3798007CB7E9 /* Output.h */,
+				AEC54869225D3799007CB7E9 /* Parser.cpp */,
+				AEC546E3225D3798007CB7E9 /* Parser.h */,
+				AEC547AB225D3798007CB7E9 /* Rand.cpp */,
+				AEC547AD225D3798007CB7E9 /* Rand.h */,
+				AEC547B2225D3798007CB7E9 /* RateChanger.h */,
+				AEC547A7225D3798007CB7E9 /* RateChangerImpl.cpp */,
+				AEC5486A225D3799007CB7E9 /* RateChangerImpl.h */,
+				1FC2A372230C52A100927043 /* Restart.cpp */,
+				AEC547A9225D3798007CB7E9 /* Restart.h */,
+				AEC54820225D3799007CB7E9 /* Structure */,
+				AEC546D2225D3798007CB7E9 /* SysParams.cpp */,
+				AEC546D7225D3798007CB7E9 /* SysParams.h */,
+				AEC54707225D3798007CB7E9 /* TESTS */,
+				AEC546D8225D3798007CB7E9 /* util */,
+				AEC54867225D3799007CB7E9 /* utility.cpp */,
+				AEC5481F225D3799007CB7E9 /* utility.h */,
+				AEC547A3225D3798007CB7E9 /* Visitor.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -2738,10 +2732,7 @@
 			children = (
 				2333040523CD15C40005050F /* Environment.cpp */,
 				2333040623CD15C50005050F /* Environment.hpp */,
-				AEC546D9225D3798007CB7E9 /* profiler.cpp */,
 				AEC546DA225D3798007CB7E9 /* io */,
-				AEC546DF225D3798007CB7E9 /* environment.h */,
-				AEC546E0225D3798007CB7E9 /* profiler.h */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -3180,7 +3171,6 @@
 				AEC54988225D3799007CB7E9 /* MController.h in Headers */,
 				AEC5490D225D3799007CB7E9 /* ForceField.h in Headers */,
 				AEC548F6225D3799007CB7E9 /* BranchingPosition.h in Headers */,
-				AEC5487A225D3799007CB7E9 /* profiler.h in Headers */,
 				AEC5489F225D3799007CB7E9 /* ChemSimpleGillespieImpl.h in Headers */,
 				AEC54919225D3799007CB7E9 /* CylinderVolumeInteractions.h in Headers */,
 				AEC548F5225D3799007CB7E9 /* BranchingInteractions.h in Headers */,
@@ -3274,7 +3264,6 @@
 				AEC548DB225D3799007CB7E9 /* BubbleCylinderRepulsionExp.h in Headers */,
 				AEC5495E225D3799007CB7E9 /* Movable.h in Headers */,
 				AEC548AD225D3799007CB7E9 /* cross_check.h in Headers */,
-				AEC54879225D3799007CB7E9 /* environment.h in Headers */,
 				AEC5498A225D3799007CB7E9 /* RateChangerImpl.h in Headers */,
 				AEC5490F225D3799007CB7E9 /* MotorGhostStretchingHarmonicCUDA.h in Headers */,
 				AEC548F0225D3799007CB7E9 /* BranchingPositionCosine.h in Headers */,
@@ -3438,7 +3427,6 @@
 				AEC548BB225D3799007CB7E9 /* BoundaryCylinderRepulsionExp.cpp in Sources */,
 				AEC54878225D3799007CB7E9 /* cmdparse.cpp in Sources */,
 				AEC548E3225D3799007CB7E9 /* BubbleCylinderRepulsionExp.cpp in Sources */,
-				AEC54874225D3799007CB7E9 /* profiler.cpp in Sources */,
 				23BE6E87230B646D00AAB8E8 /* (null) in Sources */,
 				AEC5492F225D3799007CB7E9 /* Output.cpp in Sources */,
 				AEC54989225D3799007CB7E9 /* Parser.cpp in Sources */,
@@ -3675,7 +3663,7 @@
 					"DYNAMICRATES=1",
 					"SERIAL=1",
 					"CHECKFORCES_INF_NAN=1",
-					"SIMDBINDINGSEARCH=1",
+					"HYBRID_NLSTENCILLIST=1",
 					"MOVEBEADSLINESEARCH=1",
 					"NPROCS=8",
 				);
@@ -3757,7 +3745,7 @@
 					"DYNAMICRATES=1",
 					"SERIAL=1",
 					"CHECKFORCES_INF_NAN=1",
-					"SIMDBINDINGSEARCH=1",
+					"HYBRID_NLSTENCILLIST=1",
 					"MOVEBEADSLINESEARCH=1",
 					"NPROCS=8",
 				);
