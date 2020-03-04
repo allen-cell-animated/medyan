@@ -1659,9 +1659,10 @@ void Controller::run() {
     //print last snapshots
     for(auto o: _outputs) o->print(i);
 	resetCounters();
-	#ifdef OPTIMOUT
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_run(chk2-chk1);
+    cout << "Time elapsed for run: dt=" << elapsed_run.count() << endl;
+	#ifdef OPTIMOUT
     cout<< "Chemistry time for run=" << chemistrytime <<endl;
     cout << "Minimization time for run=" << minimizationtime <<endl;
     cout<< "Neighbor-list+Bmgr-time for run="<<nltime<<endl;

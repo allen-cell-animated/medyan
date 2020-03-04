@@ -347,13 +347,17 @@ void SubSystem::updateBindingManagers() {
 
 	//SIMD cylinder update
 #ifdef SIMDBINDINGSEARCH
+#ifdef OPTIMOUT
 	startonetimecost = chrono::high_resolution_clock::now();
+#endif
 	if(!initialize) {
 			_compartmentGrid->getCompartments()[0]->getHybridBindingSearchManager()
 			->initializeSIMDvars();
 		initialize = true;
 	}
+#ifdef OPTIMOUt
 	endonetimecost = chrono::high_resolution_clock::now();
+#endif
 	//Generate binding site coordinates in each compartment and seggregate them into
 	// different spatial sub-sections.
 	for(auto C : _compartmentGrid->getCompartments()) {
