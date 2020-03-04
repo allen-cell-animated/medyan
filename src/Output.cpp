@@ -765,7 +765,7 @@ void FilamentTurnoverTimes::print(int snapshot) {
 }
 
 void Dissipation::print(int snapshot) {
-
+    _outputFile.precision(16);
     // print first line (snapshot number, time)
     _outputFile << snapshot << " " << tau() << endl;
     vector<floatingpoint> energies;
@@ -776,6 +776,7 @@ void Dissipation::print(int snapshot) {
 }
 
 void HRCD::print(int snapshot) {
+    _outputFile.precision(16);
     DissipationTracker* dt = _cs->getDT();
     vector<tuple<string, floatingpoint>> hrcdvec = dt->getHRCDVec();
     // print first line (snapshot number, time)
@@ -794,6 +795,7 @@ void HRCD::print(int snapshot) {
 }
 
 void HRMD::print(int snapshot) {
+    _outputFile.precision(16);
     DissipationTracker* dt = _cs->getDT();
        // print first line (snapshot number, time)
     
@@ -1193,38 +1195,61 @@ void Concentrations::print(int snapshot) {
 
 void MotorWalkingEvents::print(int snapshot) {
     DissipationTracker* dt = _cs->getDT();
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> motorData = dt->getMotorData();
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+    floatingpoint>> motorData = dt->getMotorWalkingData();
     for(auto i = 0; i < motorData.size(); i++){
-        tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint> line = motorData[i];
-        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line) <<endl;
+
+        tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+        floatingpoint> line = motorData[i];
+        //ID coordx coordy coordz birthtime walktime
+        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line)
+                                   <<"     "<<get<4>(line) <<"     "<<get<5>(line) <<endl;
     }
     dt->clearMotorData();
-
-
 }
 
 void LinkerUnbindingEvents::print(int snapshot) {
     DissipationTracker* dt = _cs->getDT();
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> linkerUnbindingData = dt->getLinkerUnbindingData();
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+    floatingpoint>>
+    linkerUnbindingData = dt->getLinkerUnbindingData();
     for(auto i = 0; i < linkerUnbindingData.size(); i++){
-        tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint> line = linkerUnbindingData[i];
-        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line) <<endl;
+        //ID coordx coordy coordz birthtime unbindingtime
+        tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+        floatingpoint> line = linkerUnbindingData[i];
+        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line)
+                   <<"     "<<get<4>(line) <<"     "<<get<5>(line) <<endl;
     }
     dt->clearLinkerUnbindingData();
+}
 
-
+void MotorUnbindingEvents::print(int snapshot) {
+    DissipationTracker* dt = _cs->getDT();
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+            floatingpoint>>
+            motorUnbindingData = dt->getMotorUnbindingData();
+    for(auto i = 0; i < motorUnbindingData.size(); i++){
+        //ID coordx coordy coordz birthtime unbindingtime
+        tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+                floatingpoint> line = motorUnbindingData[i];
+        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line)
+                   <<"     "<<get<4>(line) <<"     "<<get<5>(line) <<endl;
+    }
+    dt->clearMotorUnbindingData();
 }
 
 void LinkerBindingEvents::print(int snapshot) {
     DissipationTracker* dt = _cs->getDT();
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> linkerBindingData = dt->getLinkerBindingData();
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint>>
+    linkerBindingData = dt->getLinkerBindingData();
     for(auto i = 0; i < linkerBindingData.size(); i++){
-        tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint> line = linkerBindingData[i];
-        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line) <<endl;
+        //ID coordx coordy coordz birthtime
+        tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint> line =
+                linkerBindingData[i];
+        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line)
+                   <<"     "<<get<4>(line) <<endl;
     }
     dt->clearLinkerBindingData();
-
-
 }
 
 void Datadump::print(int snapshot) {

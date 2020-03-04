@@ -96,13 +96,24 @@ private:
     vector<vector<tuple<string, floatingpoint>>> HRMDMat;
     
     // vector of motor walking data
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> motorData;
+    //ID, birthtime, walktime, xcoord, ycoord, zcoord,
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+    floatingpoint>> motorWalkData;
+
+    // vector of motor unbinding data
+    //ID, birthtime, deathtime, xcoord, ycoord, zcoord,
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+            floatingpoint>> motorUnbindingData;
     
     // vector of linker unbinding data
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> linkerUnbindingData;
+    //ID, birthtime, deathtime, xcoord, ycoord, zcoord,
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+    floatingpoint>> linkerUnbindingData;
     
     // vector of linker binding data
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> linkerBindingData;
+    //ID, birthtime, xcoord, ycoord, zcoord,
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint>>
+    linkerBindingData;
     
 public:
     
@@ -291,6 +302,7 @@ public:
             delG = delGMyoChem(nh,rn);
             delG = -delG;
             delG -= log(volFrac);
+            recordMotorUnbinding(m);
             
         } else if(reType==10){
             // Motor Walking Forward
@@ -549,34 +561,58 @@ public:
         return HRCDVec;
     }
     
-    // store the space time information of a motor walking event to motorData
+    // store the space time information of a motor walking event to motorWalkData
     void recordWalk(MotorGhost* m){
         vector<floatingpoint> mcoords = m->coordinate;
         mcoords.insert(mcoords.begin(), tau());
-        motorData.push_back(make_tuple(mcoords[0], mcoords[1], mcoords[2], mcoords[3]));
-        
+        //ID birthtime, walktime, coordx coordy coordz
+        motorWalkData.push_back(make_tuple(m->getId(), m->getBirthTime(), mcoords[0],
+                mcoords[1], mcoords[2], mcoords[3]));
+
     
     }
     
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> getMotorData(){
-        return motorData;
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+    floatingpoint>>
+    getMotorWalkingData(){
+        return motorWalkData;
     }
     
     void clearMotorData(){
-        motorData.clear();
+        motorWalkData.clear();
+    }
+
+    void clearMotorUnbindingData(){
+        motorUnbindingData.clear();
     }
     
     // store the space time information of a linker unbinding event to linkerUnbindingData
     void recordLinkerUnbinding(Linker* l){
         vector<floatingpoint> lcoords = l->coordinate;
         lcoords.insert(lcoords.begin(), tau());
-        linkerUnbindingData.push_back(make_tuple(lcoords[0], lcoords[1], lcoords[2], lcoords[3]));
-        
-  
+        linkerUnbindingData.push_back(make_tuple(l->getId(), l->getBirthTime(), lcoords[0],
+                lcoords[1], lcoords[2],lcoords[3]));
+    }
+
+    // store the space time information of a linker unbinding event to motorUnbindingData
+    void recordMotorUnbinding(MotorGhost* m){
+        vector<floatingpoint> mcoords = m->coordinate;
+        mcoords.insert(mcoords.begin(), tau());
+        //ID birthtime unbindtime coordx coordy coordz
+        motorUnbindingData.push_back(make_tuple(m->getId(), m->getBirthTime(), mcoords[0],
+                                                 mcoords[1], mcoords[2], mcoords[3]));
     }
     
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> getLinkerUnbindingData(){
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+    floatingpoint>>
+    getLinkerUnbindingData(){
         return linkerUnbindingData;
+    }
+
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+            floatingpoint>>
+    getMotorUnbindingData(){
+        return motorUnbindingData;
     }
     
     void clearLinkerUnbindingData(){
@@ -587,12 +623,14 @@ public:
     void recordLinkerBinding(Linker* l){
         vector<floatingpoint> lcoords = l->coordinate;
         lcoords.insert(lcoords.begin(), tau());
-        linkerBindingData.push_back(make_tuple(lcoords[0], lcoords[1], lcoords[2], lcoords[3]));
+        linkerBindingData.push_back(make_tuple(l->getId(), lcoords[0], lcoords[1],
+                lcoords[2], lcoords[3]));
         
 
     }
     
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> getLinkerBindingData(){
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint>>
+    getLinkerBindingData(){
         return linkerBindingData;
     }
     

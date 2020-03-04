@@ -350,6 +350,19 @@ public:
     virtual void print(int snapshot);
 };
 
+class MotorUnbindingEvents : public Output {
+
+    ChemSim* _cs;
+
+public:
+    MotorUnbindingEvents(string outputFileName, SubSystem* s, ChemSim* cs)
+
+            : Output(outputFileName, s), _cs(cs) {}
+
+    ~MotorUnbindingEvents() {}
+
+    virtual void print(int snapshot);
+};
 
 class LinkerBindingEvents : public Output {
     
