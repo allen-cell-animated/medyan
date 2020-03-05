@@ -452,16 +452,13 @@ floatingpoint CGMethod::maxF() {
 		floatingpoint mag2Max = 0.0;
 		int counter = 0;
 		for(auto x : Bead::getDbData().forcesAux) {
-			mag2Max = std::max(mag2Max, mathfunc::magnitude2(x));
+			mag2Max = mathfunc::magnitude2(x);
 			if(fabs(mag2Max) == numeric_limits<floatingpoint>::infinity()
 			   || mag2Max != mag2Max || mag2Max < -1.0) {
-				int bidx = counter/3;
-				cout<<"Printing bead forceAux "<<Bead::getDbData().forcesAux[3*bidx]<<" "
-					<<Bead::getDbData().forcesAux[3*bidx + 1]<<" "<<
-					Bead::getDbData().forcesAux[3*bidx + 2]<<endl;
+				int bidx = counter;
+				cout<<"Printing bead forceAux "<<x<<endl;
 				cout<<"Printing culprit Bead information"<<endl;
 				(Bead::getStableElement(bidx))->printSelf();
-				break;
 			}
 			counter++;
 		}
