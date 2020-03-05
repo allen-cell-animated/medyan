@@ -342,9 +342,10 @@ void MotorGhost::updateReactionRates() {
 		            if(SysParams::RUNSTATE==false){
 			            newRate=0.0;}
 #ifdef DETAILEDOUTPUT
-		            std::cout<<"Motor WF1 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
+                    std::cout<<"Motor WF1 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
                         ""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
                          forceDotDirectionC2<<" NH "<<_numHeads<<endl;
+
 #endif
 		            r->setBareRate(newRate);
 	            }/*if(consider_passivation && isc1leftofc2)*/

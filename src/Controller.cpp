@@ -1499,6 +1499,7 @@ void Controller::run() {
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runout2(mine - mins);
                 outputtime += elapsed_runout2.count();
+#ifdef OPTIMOUT
                 cout<< "Chemistry time for cycle=" << chemistrytime <<endl;
                 cout << "Minimization time for cycle=" << minimizationtime <<endl;
                 cout<< "Neighbor-list+Bmgr-time for cycle="<<nltime<<endl;
@@ -1507,6 +1508,7 @@ void Controller::run() {
                 cout<<"rxnrate time for run="<<rxnratetime<<endl;
                 cout<<"Output time for run="<<outputtime<<endl;
                 cout<<"Special time for run="<<specialtime<<endl;
+#endif
             }
             if(tauDatadump >= _datadumpTime) {
                 for (auto o: _outputdump) o->print(0);
