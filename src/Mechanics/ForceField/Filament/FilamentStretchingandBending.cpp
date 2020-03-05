@@ -92,7 +92,7 @@ void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
 	for(auto f : Filament::getFilaments())
 		if(f->getCylinderVector().size() > 1) _numInteractions += f->getCylinderVector().size() - 1;
 
-	totalenergy = new floatingpoint[3*SubSystem::tp->numThreads()];
+	totalenergy = new floatingpoint[3*numthreads];
 	totalenergy[0] = (floatingpoint)0.0;
 	totalenergy[1] = (floatingpoint)0.0;
 	totalenergy[2] = (floatingpoint)0.0;
@@ -234,8 +234,6 @@ template <class FStretchingandBendingInteractionType>
 floatingpoint FilamentStretchingandBending<FStretchingandBendingInteractionType>::
         computeEnergy(floatingpoint *coord){
 
-	floatingpoint U_ii=0.0;
-
 #ifdef SERIAL
 
 	const int startID = 0;
@@ -254,7 +252,7 @@ floatingpoint FilamentStretchingandBending<FStretchingandBendingInteractionType>
 
 #endif
 	floatingpoint U = (floatingpoint) 0.0;
-	for(int t = 0 ; t < SubSystem::tp->numThreads(); t++){
+	for(int t = 0 ; t < numthreads; t++){
 		for(int j = 0; j <3;j++) {
 			if(totalenergy[3*t+j] >= (floatingpoint) 0.0)
 				U +=  totalenergy[3*t+j];

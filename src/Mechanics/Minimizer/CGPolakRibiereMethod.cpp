@@ -1054,13 +1054,13 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     cvars.streamvec.clear();
     CUDAcommon::cudavars = cvars;
 #endif
-
-    result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+	result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+#ifdef OPTIMOUT
 	cout<<"Energy after minimization"<<endl;
 	FFM.computeEnergy(Bead::getDbData().coords.data(), true);
 	CUDAcommon::tmin.computeenerycallszero++;
 	cout<<endl;
-
+#endif
     //final force calculation
     FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
 #ifdef ALLSYNC

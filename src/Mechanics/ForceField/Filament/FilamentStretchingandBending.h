@@ -25,6 +25,7 @@ class FilamentStretchingandBending : public FilamentInteractions {
 
 private:
 	FStretchingandBendingInteractionType _FFType;
+	const int numthreads = 1;
 
 	// Cache of vectorized data
 	std::size_t _numInteractions;
