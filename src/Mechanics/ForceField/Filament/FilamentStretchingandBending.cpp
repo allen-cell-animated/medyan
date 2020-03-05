@@ -93,9 +93,8 @@ void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
 		if(f->getCylinderVector().size() > 1) _numInteractions += f->getCylinderVector().size() - 1;
 
 	totalenergy = new floatingpoint[3*numthreads];
-	totalenergy[0] = (floatingpoint)0.0;
-	totalenergy[1] = (floatingpoint)0.0;
-	totalenergy[2] = (floatingpoint)0.0;
+	for(int i = 0; i < 3*numthreads; i++)
+	    totalenergy[i] = (floatingpoint)0.0;
 	// The first cylinder in each filament is not considered in the hybrid stretching
 	// bending paradigm. Need a function to calculate energies seperately for those
 	// cylinders.
