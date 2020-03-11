@@ -243,6 +243,8 @@ private:
 } // namespace medyan
 
 /// Exposed macro
+#undef ERROR // Fuck <windows.h>
+
 #if defined(COMPILER_CLANG) || defined(COMPILER_GCC)
     #define MEDYAN_LOG_FUNC __PRETTY_FUNCTION__
 #elif defined(COMPILER_MSVC)
