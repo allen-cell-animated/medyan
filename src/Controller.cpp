@@ -1505,9 +1505,9 @@ void Controller::run() {
                 cout<< "Neighbor-list+Bmgr-time for cycle="<<nltime<<endl;
                 cout<<"update-position time for cycle="<<updateposition<<endl;
 
-                cout<<"rxnrate time for run="<<rxnratetime<<endl;
-                cout<<"Output time for run="<<outputtime<<endl;
-                cout<<"Special time for run="<<specialtime<<endl;
+                cout<<"rxnrate time for cycle="<<rxnratetime<<endl;
+                cout<<"Output time for cycle="<<outputtime<<endl;
+                cout<<"Special time for cycle="<<specialtime<<endl;
 #endif
             }
             if(tauDatadump >= _datadumpTime) {
