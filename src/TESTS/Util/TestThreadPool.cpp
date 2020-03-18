@@ -3,7 +3,6 @@
 #include "catch2/catch.hpp"
 
 #include "Util/ThreadPool.hpp"
-#include "Util/ThreadUtil.hpp"
 
 TEST_CASE("Thread Pool test", "[ThreadPool]") {
     using namespace std;
@@ -67,28 +66,6 @@ TEST_CASE("Thread Pool test", "[ThreadPool]") {
         }
         for(auto& fut : futs) sum += fut.get();
         CHECK(sum == 50005000);
-
-    }
-}
-
-TEST_CASE("Thread Pool utility test", "[ThreadPool][ThreadUtil]") {
-    using namespace std;
-
-    SECTION("Fixed size algorithm") {
-        size_t numThreads = 4;
-
-        ThreadPool tp(numThreads);
-
-        SECTION("void function") {
-            atomic_int sum {0};
-            poolForkJoinFixedSize(tp, 1, 10001, 120, [&](int i) { sum += i; });
-            CHECK(sum == 50005000);
-        }
-
-        SECTION("accumulator") {
-            int sum = poolForkJoinAccumulateFixedSize(tp, 1, 10001, 120, [](int i) { return i; });
-            CHECK(sum == 50005000);
-        }
 
     }
 }
