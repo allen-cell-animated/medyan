@@ -8,12 +8,12 @@ An unordered edge contains 2 vertices.
 */
 
 #include "common.h"
+#include "Database.h"
+#include "Trackable.h"
+#include "DynamicNeighbor.h"
 #include "MathFunctions.h"
+#include "Movable.h"
 #include "Structure/CellList.hpp"
-#include "Structure/Database.h"
-#include "Structure/DynamicNeighbor.h"
-#include "Structure/Movable.h"
-#include "Structure/Trackable.h"
 
 // Forward declarations
 class Compartment;

@@ -389,7 +389,7 @@ struct MembraneMeshAttribute {
         });
 
         // Calculate triangle area and cone volume
-        poolForkJoinFixedSize(tp, (size_t)0, numTriangles, (size_t)200, [&](size_t ti) {
+        for(size_t ti = 0; ti < numTriangles; ++ti) {
             auto& ta = mesh.getTriangleAttribute(ti);
             auto& tag = ta.template getGTriangle<stretched>();
             const auto& c0 = coords[ta.cachedCoordIndex[0]];
@@ -403,12 +403,12 @@ struct MembraneMeshAttribute {
 
             // cone volume
             tag.coneVolume = dot(c0, cp) / 6;
-        });
+        }
 
         const auto& cvt = mesh.getMetaAttribute().cachedVertexTopo;
 
         // Calculate vertex 1-ring area and local curvature
-        poolForkJoinFixedSize(tp, (size_t)0, numVertices, (size_t)150, [&](size_t vi) { if(!mesh.isVertexOnBorder(vi)) {
+        for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
             auto& va = mesh.getVertexAttribute(vi);
             auto& vag = va.template getGVertex<stretched>();
             const coordinate_type ci (coords[va.cachedCoordIndex]);
@@ -429,8 +429,8 @@ struct MembraneMeshAttribute {
             //               d Vol   dot  d Vol
 
             for(size_t i = 0; i < va.cachedDegree; ++i) {
-                const size_t ti0    = cvt[mesh.getMetaAttribute().cachedVertexOffsetPolygon(vi) + i];
-                const size_t hei_n  = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
+                const size_t ti0 = cvt[mesh.getMetaAttribute().cachedVertexOffsetPolygon(vi) + i];
+                const size_t hei_n = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
                 const size_t hei_on = cvt[mesh.getMetaAttribute().cachedVertexOffsetOuterHE(vi) + (i + 1) % va.cachedDegree];
                 const coordinate_type cn      (coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]]);
                 const coordinate_type c_right (coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + 1) % va.cachedDegree]]);
@@ -457,7 +457,7 @@ struct MembraneMeshAttribute {
             else {
                 vag.curv2 = 0.25 * magnitude2(vag.dAstar) / dVolume2;
             }
-        }});
+        }
     } // void updateGeometryValue(...)
 
     // This function updates the geometry value with derivatives necessary in
