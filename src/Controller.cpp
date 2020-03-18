@@ -140,10 +140,9 @@ Controller::Controller() :
 void Controller::initialize(string inputFile,
                             string inputDirectory,
                             string outputDirectory,
-                            ThreadPool& tp) {
+                            int numThreads) {
 
-    // Set up the thread pool reference in the subsystem
-    _subSystem.tp = &tp;
+    // Notice: numThreads is not used currently.
 
     SysParams::INITIALIZEDSTATUS = false;
     //general check of macros
@@ -276,6 +275,13 @@ void Controller::initialize(string inputFile,
         LOG(FATAL) << "Need to specify a chemical input file. Exiting.";
         exit(EXIT_FAILURE);
     }
+    
+#ifdef CHEMISTRY
+    SysParams::addChemParameters(ChemData);
+    
+    if(!SysParams::checkChemParameters(ChemData))
+        exit(EXIT_FAILURE);
+#endif
 
     // create the dissiption tracking object
     _dt = new DissipationTracker(&_mController);
@@ -378,10 +384,7 @@ void Controller::initialize(string inputFile,
     //Check consistency of all chemistry and mechanics parameters
     cout << "---" << endl;
     LOG(STEP) << "Checking cross-parameter consistency...";
-#ifdef CHEMISTRY
-    if(!SysParams::checkChemParameters(ChemData))
-        exit(EXIT_FAILURE);
-#endif
+    //Chemistry is checked in advance
 #ifdef MECHANICS
     if(!SysParams::checkMechParameters(MTypes))
         exit(EXIT_FAILURE);

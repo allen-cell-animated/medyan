@@ -74,7 +74,6 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "Controller.h"
 #include "Core/Globals.hpp"
 #include "MedyanArgs.hpp"
-#include "Util/ThreadPool.hpp"
 
 using namespace medyan;
 
@@ -97,12 +96,14 @@ int main(int argc, char **argv) {
 
     case MedyanRunMode::simulation:
         {
-            // Initialize the thread pool for use in MEDYAN
-            ThreadPool tp(cmdRes.numThreads);
 
             //initialize and run system
             Controller c;
-            c.initialize(cmdRes.inputFile, cmdRes.inputDirectory, cmdRes.outputDirectory, tp);
+            c.initialize(
+                cmdRes.inputFile,
+                cmdRes.inputDirectory,
+                cmdRes.outputDirectory,
+                cmdRes.numThreads);
             c.run();
         }
         break;
