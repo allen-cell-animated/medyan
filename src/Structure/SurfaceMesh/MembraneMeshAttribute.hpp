@@ -16,7 +16,6 @@
 #include "Structure/SurfaceMesh/Triangle.hpp"
 #include "Structure/SurfaceMesh/Vertex.hpp"
 #include "Util/Io/Log.hpp"
-#include "Util/ThreadUtil.hpp"
 
 /******************************************************************************
 Implements the attributes of the meshwork used by the membrane, mainly
@@ -372,10 +371,8 @@ struct MembraneMeshAttribute {
 
         const auto& coords = stretched ? Bead::getDbDataConst().coordsStr : Bead::getDbDataConst().coords;
 
-        auto& tp = *mesh.getMetaAttribute().s->tp; // The thread pool object
-
         // Calculate angles stored in half edges
-        poolForkJoinFixedSize(tp, (size_t)0, numHalfEdges, (size_t)200, [&](size_t hei) {
+        for(size_t hei = 0; hei < numHalfEdges; ++hei) {
             // The angle is (c0, c1, c2)
             auto& hea = mesh.getHalfEdgeAttribute(hei);
             auto& heag = hea.template getGHalfEdge<stretched>();
@@ -386,7 +383,7 @@ struct MembraneMeshAttribute {
             const auto cp = cross(c0 - c1, c2 - c1);
             const auto dp =   dot(c0 - c1, c2 - c1);
             heag.cotTheta = dp / magnitude(cp);
-        });
+        }
 
         // Calculate triangle area and cone volume
         for(size_t ti = 0; ti < numTriangles; ++ti) {
