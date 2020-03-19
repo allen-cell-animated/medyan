@@ -34,98 +34,34 @@ void SystemParser::readChemParams() {
 
         if(line.find("#") != string::npos) { continue; }
 
-        if (line.find("NUMBULKSPECIES") != string::npos) {
+    //        if (line.find("NUMBULKSPECIES") != string::npos) {
+    //
+    //            vector<string> lineVector = split<string>(line);
+    //            if(lineVector.size() > 2) {
+    //                cout <<
+    //                     "There was an error parsing input file at Chemistry parameters. Exiting."
+    //                     << endl;
+    //                exit(EXIT_FAILURE);
+    //            }
+    //            else if (lineVector.size() == 2) {
+    //                CParams.numBulkSpecies = atof(lineVector[1].c_str());
+    //            }
+    //        }
+    //
+    //        if (line.find("NUMDIFFUSINGSPECIES") != string::npos) {
+    //
+    //            vector<string> lineVector = split<string>(line);
+    //            if(lineVector.size() > 2) {
+    //                cout <<
+    //                     "There was an error parsing input file at Chemistry parameters. Exiting."
+    //                     << endl;
+    //                exit(EXIT_FAILURE);
+    //            }
+    //            else if (lineVector.size() == 2) {
+    //                CParams.numDiffusingSpecies = atof(lineVector[1].c_str());
+    //            }
+    //        }
 
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry parameters. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CParams.numBulkSpecies = atof(lineVector[1].c_str());
-            }
-        }
-
-        if (line.find("NUMDIFFUSINGSPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry parameters. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CParams.numDiffusingSpecies = atof(lineVector[1].c_str());
-            }
-        }
-
-        if (line.find("NUMFILAMENTSPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numFilamentSpecies.push_back(atoi(lineVector[i].c_str()));
-            }
-        }
-
-        if (line.find("NUMPLUSENDSPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numPlusEndSpecies.push_back(atoi(lineVector[i].c_str()));
-            }
-        }
-        if (line.find("NUMMINUSENDSPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numMinusEndSpecies.push_back(atoi(lineVector[i].c_str()));
-            }
-        }
-        if (line.find("NUMBOUNDSPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numBoundSpecies.push_back(atoi(lineVector[i].c_str()));
-            }
-        }
-        if (line.find("NUMLINKERSPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numLinkerSpecies.push_back(atoi(lineVector[i].c_str()));
-            }
-        }
-        if (line.find("NUMMOTORSPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numMotorSpecies.push_back(atoi(lineVector[i].c_str()));
-            }
-        }
-        if (line.find("NUMBRANCHERSPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numBrancherSpecies.push_back(atoi(lineVector[i].c_str()));
-            }
-        }
         if (line.find("NUMFILAMENTTYPES") != string::npos) {
 
             vector<string> lineVector = split<string>(line);

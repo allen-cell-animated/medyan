@@ -16,7 +16,6 @@
 #include "Structure/SurfaceMesh/Triangle.hpp"
 #include "Structure/SurfaceMesh/Vertex.hpp"
 #include "Util/Io/Log.hpp"
-#include "Util/ThreadUtil.hpp"
 
 /******************************************************************************
 Implements the attributes of the meshwork used by the membrane, mainly
@@ -372,10 +371,8 @@ struct MembraneMeshAttribute {
 
         const auto& coords = stretched ? Bead::getDbDataConst().coordsStr : Bead::getDbDataConst().coords;
 
-        auto& tp = *mesh.getMetaAttribute().s->tp; // The thread pool object
-
         // Calculate angles stored in half edges
-        poolForkJoinFixedSize(tp, (size_t)0, numHalfEdges, (size_t)200, [&](size_t hei) {
+        for(size_t hei = 0; hei < numHalfEdges; ++hei) {
             // The angle is (c0, c1, c2)
             auto& hea = mesh.getHalfEdgeAttribute(hei);
             auto& heag = hea.template getGHalfEdge<stretched>();
@@ -386,10 +383,10 @@ struct MembraneMeshAttribute {
             const auto cp = cross(c0 - c1, c2 - c1);
             const auto dp =   dot(c0 - c1, c2 - c1);
             heag.cotTheta = dp / magnitude(cp);
-        });
+        }
 
         // Calculate triangle area and cone volume
-        poolForkJoinFixedSize(tp, (size_t)0, numTriangles, (size_t)200, [&](size_t ti) {
+        for(size_t ti = 0; ti < numTriangles; ++ti) {
             auto& ta = mesh.getTriangleAttribute(ti);
             auto& tag = ta.template getGTriangle<stretched>();
             const auto& c0 = coords[ta.cachedCoordIndex[0]];
@@ -403,12 +400,12 @@ struct MembraneMeshAttribute {
 
             // cone volume
             tag.coneVolume = dot(c0, cp) / 6;
-        });
+        }
 
         const auto& cvt = mesh.getMetaAttribute().cachedVertexTopo;
 
         // Calculate vertex 1-ring area and local curvature
-        poolForkJoinFixedSize(tp, (size_t)0, numVertices, (size_t)150, [&](size_t vi) { if(!mesh.isVertexOnBorder(vi)) {
+        for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
             auto& va = mesh.getVertexAttribute(vi);
             auto& vag = va.template getGVertex<stretched>();
             const coordinate_type ci (coords[va.cachedCoordIndex]);
@@ -429,8 +426,8 @@ struct MembraneMeshAttribute {
             //               d Vol   dot  d Vol
 
             for(size_t i = 0; i < va.cachedDegree; ++i) {
-                const size_t ti0    = cvt[mesh.getMetaAttribute().cachedVertexOffsetPolygon(vi) + i];
-                const size_t hei_n  = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
+                const size_t ti0 = cvt[mesh.getMetaAttribute().cachedVertexOffsetPolygon(vi) + i];
+                const size_t hei_n = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
                 const size_t hei_on = cvt[mesh.getMetaAttribute().cachedVertexOffsetOuterHE(vi) + (i + 1) % va.cachedDegree];
                 const coordinate_type cn      (coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]]);
                 const coordinate_type c_right (coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + 1) % va.cachedDegree]]);
@@ -457,7 +454,7 @@ struct MembraneMeshAttribute {
             else {
                 vag.curv2 = 0.25 * magnitude2(vag.dAstar) / dVolume2;
             }
-        }});
+        }
     } // void updateGeometryValue(...)
 
     // This function updates the geometry value with derivatives necessary in
@@ -479,11 +476,9 @@ struct MembraneMeshAttribute {
 
         const auto& coords = Bead::getDbData().coords;
 
-        auto& tp = *mesh.getMetaAttribute().s->tp; // The thread pool object
-
         // Calculate angles and triangle areas with derivative
         // Calculate triangle cone volumes
-        poolForkJoinFixedSize(tp, (size_t)0, numTriangles, (size_t)200, [&](size_t ti) {
+        for(size_t ti = 0; ti < numTriangles; ++ti) {
             auto& ta = mesh.getTriangleAttribute(ti);
 
             const auto& hei = ta.cachedHalfEdgeIndex;
@@ -549,13 +544,13 @@ struct MembraneMeshAttribute {
             tag.coneVolume = dot(c[0], r0) / 6.0;
             // The derivative of cone volume will be accumulated to each vertex
 
-        });
+        }
 
         const auto& cvt = mesh.getMetaAttribute().cachedVertexTopo;
 
         // Calculate vertex 1-ring area and local curvature with derivative
         // Calculate derivative of volume on vertices
-        poolForkJoinFixedSize(tp, (size_t)0, numVertices, (size_t)150, [&](size_t vi) { if(!mesh.isVertexOnBorder(vi)) {
+        for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
             auto& va = mesh.getVertexAttribute(vi);
             auto& vag = va.gVertex;
             const coordinate_type ci (coords[va.cachedCoordIndex]);
@@ -752,7 +747,7 @@ struct MembraneMeshAttribute {
                 vag.dCurv2 = t4 * (0.5 / dVolume2);
             }
 
-        }}); // End loop vertices (V cells)
+        } // End loop vertices (V cells)
 
     } // updateGeometryValueWithDerivative(...)
 

@@ -40,7 +40,6 @@
 #include "HybridNeighborList.h"
 #include "HybridNeighborListImpl.h"
 #include "Mechanics/ForceField/Types.hpp"
-#include "Util/ThreadPool.hpp"
 
 #include <initializer_list>
 #ifdef SIMDBINDINGSEARCH
@@ -268,9 +267,6 @@ public:
 	static floatingpoint timeneighbor;
 	static floatingpoint timedneighbor;
 	static floatingpoint timetrackable;
-
-    // The pointer to the thread pool
-    ThreadPool* tp = nullptr;
 
 private:
 	chrono::high_resolution_clock::time_point minsN, mineN, minsT,mineT;

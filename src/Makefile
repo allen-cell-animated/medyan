@@ -30,8 +30,6 @@ SOURCES_CPP              += ./dist_moduleV2/dist_avx_par.cpp  ./dist_moduleV2/di
 SOURCES_C                := $(GLAD_SOURCE)
 SOURCES_CU               := $(shell find . -name '*.cu'  ! -path './dist_moduleV2/*')
 SOURCES                   = $(SOURCES_CPP) $(SOURCES_CU) $(SOURCES_C)
-HEADERS                  := $(shell find . -name '*.h' ! -path './dist_moduleV2/*')
-HEADERS                  += ./dist_moduleV2/umesimd/UMESimd.h
 
 OBJECTS_CPP              := $(SOURCES_CPP:.cpp=.o)
 OBJECTS_CU               := $(SOURCES_CU:.cu=.o)
