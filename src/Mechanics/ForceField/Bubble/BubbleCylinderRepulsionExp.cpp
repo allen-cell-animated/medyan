@@ -33,14 +33,14 @@ floatingpoint BubbleCylinderRepulsionExp::energy(floatingpoint *coord, int *bead
     //loop through bubbles
     for (int ib = 0; ib < nb; ib++) {
 
-        coordb = &coord[3 * bubbleSet[ib]];
+        coordb = &coord[bubbleSet[ib]];
         auto be = bbList[ib];
         nc = nneighbors[ib];
         auto bradius = radius[ib];
 
         for (int ic = 0; ic < nc; ic++) {
 
-            coord1 = &coord[3 * beadSet[Cumnc + ic]];
+            coord1 = &coord[beadSet[Cumnc + ic]];
 	        floatingpoint dist = twoPointDistance(coordb, coord1);
 	        floatingpoint effd = dist - bradius;
 
@@ -78,16 +78,16 @@ floatingpoint BubbleCylinderRepulsionExp::energy(floatingpoint *coord, floatingp
     //loop through bubbles
     for (int ib = 0; ib < nb; ib++) {
 
-        coordb = &coord[3 * bubbleSet[ib]];
-        fb = &f[3 * bubbleSet[ib]];
+        coordb = &coord[bubbleSet[ib]];
+        fb = &f[bubbleSet[ib]];
         auto be = bbList[ib];
         nc = nneighbors[ib];
         auto bradius = radius[ib];
 
         for (int ic = 0; ic < nc; ic++) {
 
-            coord1 = &coord[3 * beadSet[Cumnc + ic]];
-            f1 = &f[3 * beadSet[Cumnc + ic]];
+            coord1 = &coord[beadSet[Cumnc + ic]];
+            f1 = &f[beadSet[Cumnc + ic]];
 //            double dist = twoPointDistanceStretched(b1->vcoordinate(), b1->force,
 //                                                    b2->vcoordinate(), b2->force, d);
             floatingpoint dist = twoPointDistanceStretched(coordb, fb, coord1, f1, d);
@@ -128,16 +128,16 @@ void BubbleCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f, 
     //loop through bubbles
     for (int ib = 0; ib < nb; ib++) {
 
-        coordb = &coord[3 * bubbleSet[ib]];
-        fb = &f[3 * bubbleSet[ib]];
+        coordb = &coord[bubbleSet[ib]];
+        fb = &f[bubbleSet[ib]];
         nc = nneighbors[ib];
         auto bradius = radius[ib];
 
 
         for (int ic = 0; ic < nc; ic++) {
 
-            coord1 = &coord[3 * beadSet[Cumnc + ic]];
-            f1 = &f[3 * beadSet[Cumnc + ic]];
+            coord1 = &coord[beadSet[Cumnc + ic]];
+            f1 = &f[beadSet[Cumnc + ic]];
 	        floatingpoint dist = twoPointDistance(coordb, coord1);
             invL = 1 / dist;
 	        floatingpoint effd = dist - bradius;

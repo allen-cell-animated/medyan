@@ -48,7 +48,7 @@ public:
     const static int n = 2;
 	static int numInteractions;
     
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&) override;
     virtual void deallocate();
 
     virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) override;

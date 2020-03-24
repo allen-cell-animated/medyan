@@ -35,7 +35,7 @@ LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
     }
 }
 
-void LinkerFF::vectorize() {
+void LinkerFF::vectorize(const FFCoordinateStartingIndex& si) {
     //Reset stretching forces to 0.
     
     for(auto l:Linker::getLinkers()){
@@ -44,7 +44,7 @@ void LinkerFF::vectorize() {
     }
 
     for (auto &interaction : _linkerInteractionVector)
-        interaction->vectorize();
+        interaction->vectorize(si);
 }
 
 void LinkerFF::cleanup() {

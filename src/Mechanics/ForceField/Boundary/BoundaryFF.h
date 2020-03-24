@@ -42,7 +42,7 @@ public:
     /// Initialize the forcefields (repulsion, attraction, etc)
     BoundaryFF(string type);
     
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&);
     virtual void cleanup();
 
     virtual string getName() {return "Boundary";}

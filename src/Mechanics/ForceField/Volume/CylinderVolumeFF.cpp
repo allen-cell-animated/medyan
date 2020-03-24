@@ -42,10 +42,10 @@ void CylinderVolumeFF::whoIsCulprit() {
     cout << endl;
 }
 
-void CylinderVolumeFF::vectorize() {
+void CylinderVolumeFF::vectorize(const FFCoordinateStartingIndex& si) {
 
     for (auto &interaction : _cylinderVolInteractionVector)
-        interaction->vectorize();
+        interaction->vectorize(si);
 }
 
 void CylinderVolumeFF::cleanup() {

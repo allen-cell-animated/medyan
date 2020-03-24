@@ -26,7 +26,7 @@
 #include "Mechanics/CUDAcommon.h"
 
 template <class BPositionInteractionType>
-void BranchingPosition<BPositionInteractionType>::vectorize() {
+void BranchingPosition<BPositionInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
     CUDAcommon::tmin.numinteractions[7] += BranchingPoint::getBranchingPoints().size();
     beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
     kpos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
@@ -36,9 +36,9 @@ void BranchingPosition<BPositionInteractionType>::vectorize() {
 
     for (auto b: BranchingPoint::getBranchingPoints()) {
 
-        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getStableIndex();
-        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getStableIndex();
-        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
 
         kpos[i] = b->getMBranchingPoint()->getPositionConstant();
         pos[i] = b->getPosition();

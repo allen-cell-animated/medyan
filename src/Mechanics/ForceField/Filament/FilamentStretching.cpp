@@ -22,7 +22,7 @@
 #endif
 
 template <class FStretchingInteractionType>
-void FilamentStretching<FStretchingInteractionType>::vectorize() {
+void FilamentStretching<FStretchingInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
     CUDAcommon::tmin.numinteractions[0] += Cylinder::getCylinders().size();
     beadSet = new int[n * Cylinder::getCylinders().size()];
     kstr = new floatingpoint[Cylinder::getCylinders().size()];
@@ -31,8 +31,8 @@ void FilamentStretching<FStretchingInteractionType>::vectorize() {
     int i = 0;
 
     for (auto c: Cylinder::getCylinders()) {
-        beadSet[n * i] = c->getFirstBead()->getStableIndex();
-        beadSet[n * i + 1] = c->getSecondBead()->getStableIndex();
+        beadSet[n * i] = c->getFirstBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 1] = c->getSecondBead()->getIndex() * 3 + si.bead;
         kstr[i] = c->getMCylinder()->getStretchingConst();
         eql[i] = c->getMCylinder()->getEqLength();
 /*        std::cout<<"Filstretching with cindex "<<c->_dcIndex<<" and ID "

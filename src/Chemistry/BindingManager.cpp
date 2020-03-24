@@ -1112,7 +1112,6 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
     floatingpoint* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
-    const auto& coords = Bead::getDbDataConst().coords;
 
     const auto& cylinderInfoData = Cylinder::getDbData().value;
 
@@ -1139,8 +1138,8 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
 
         if(c.type != _filamentType) {
             continue;}
-        const auto& x1 = coords[c.beadIndices[0]];
-        const auto& x2 = coords[c.beadIndices[1]];
+        const auto& x1 = Bead::getStableElement(c.beadIndices[0])->coord;
+        const auto& x2 = Bead::getStableElement(c.beadIndices[1])->coord;
         floatingpoint X1X2[3] ={x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
 
         int* cnindices = ncindices[i].data();
@@ -1154,8 +1153,8 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
             if(c.type != cn.type){
                 continue;}
 
-            const auto& x3 = coords[cn.beadIndices[0]];
-            const auto& x4 = coords[cn.beadIndices[1]];
+            const auto& x3 = Bead::getStableElement(cn.beadIndices[0])->coord;
+            const auto& x4 = Bead::getStableElement(cn.beadIndices[1])->coord;
             floatingpoint X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
             floatingpoint X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
             floatingpoint X1X3squared = sqmagnitude(X1X3);
@@ -2053,7 +2052,6 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
     floatingpoint* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
-    const auto& coords = Bead::getDbDataConst().coords;
 
     const auto& cylinderInfoData = Cylinder::getDbData().value;
 
@@ -2085,8 +2083,8 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
         if(c.type != _filamentType) {
             continue;}
 
-        const auto& x1 = coords[c.beadIndices[0]];
-        const auto& x2 = coords[c.beadIndices[1]];
+        const auto& x1 = Bead::getStableElement(c.beadIndices[0])->coord;
+        const auto& x2 = Bead::getStableElement(c.beadIndices[1])->coord;
         floatingpoint X1X2[3] ={x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
         int* cnindices = ncindices[i].data();
         for(int arraycount = 0; arraycount < ncindices[i].size();arraycount++){
@@ -2099,8 +2097,8 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
             if(c.type != cn.type){
                  continue;}
 
-            const auto& x3 = coords[cn.beadIndices[0]];
-            const auto& x4 = coords[cn.beadIndices[1]];
+            const auto& x3 = Bead::getStableElement(cn.beadIndices[0])->coord;
+            const auto& x4 = Bead::getStableElement(cn.beadIndices[1])->coord;
             floatingpoint X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
             floatingpoint X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
             floatingpoint X1X3squared = sqmagnitude(X1X3);

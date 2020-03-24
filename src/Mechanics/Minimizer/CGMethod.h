@@ -15,6 +15,7 @@
 #define MEDYAN_CGMethod_h
 
 #include <cmath>
+#include <vector>
 
 #include "common.h"
 #include "CUDAcommon.h"
@@ -34,20 +35,17 @@ class Bead;
  */
 class CGMethod {
 
+public:
+    ///< Data vectors for calculation
+    std::vector< floatingpoint > coord;  // All coordinates
+    std::vector< floatingpoint > coordLineSearch; // Temporary coords used during line search
 
+    std::vector< floatingpoint > force; // Negative gradient of energy
+    std::vector< floatingpoint > forcePrev; // Previous force
+    std::vector< floatingpoint > searchDir; // The search direction in conjugate gradient method
 
 protected:
     chrono::high_resolution_clock::time_point tbegin, tend;
-
-    ///< Data vectors for calculation
-    [[deprecated]] floatingpoint *coord;  ///<bead coordinates (length 3*N)
-    [[deprecated]] floatingpoint *coordlineSearch; ///coords used during line search
-
-    [[deprecated]] floatingpoint *force=NULL; ///< bead forces (length 3*N)
-    [[deprecated]] floatingpoint *forceAux=NULL; ///< auxiliary force calculations (length 3*N)
-    [[deprecated]] floatingpoint *forceAuxPrev=NULL; ///<auxiliary force calculation previously (length
-    // 3*N)
-//    cylinder* cylindervec;
 
 //Gradients
 	floatingpoint FADotFA = 0.0;
@@ -145,14 +143,15 @@ protected:
     bool *h_stop, sconvergencecheck;
     /// For use in minimization
 
+    void calcCoordLineSearch(floatingpoint d);
 
-    floatingpoint allFDotF();
-    floatingpoint allFADotFA();
-    floatingpoint allFADotFAP();
-    floatingpoint allFDotFA();
+    floatingpoint searchDirDotSearchDir() const;
+    floatingpoint forceDotForce() const;
+    floatingpoint forceDotForcePrev() const;
+    floatingpoint searchDirDotForce() const;
     
     /// Get the max force in the system
-    floatingpoint maxF();
+    floatingpoint maxF() const;
     
     /// Get bead with the max force in the system
     Bead* maxBead();
@@ -163,14 +162,14 @@ protected:
     void endMinimization();
 
     /// Move beads in search direction by d
-    void moveBeads(floatingpoint d);
+    void moveAlongSearchDir(floatingpoint d);
 
     /// shift the gradient by d
-    void shiftGradient(floatingpoint d);
+    void shiftSearchDir(floatingpoint d);
 
     void setgradients(){
-        FADotFA = allFADotFA();
-	    FADotFAP = allFADotFAP();
+        FADotFA = forceDotForce();
+	    FADotFAP = forceDotForcePrev();
     }
     //@}
 
@@ -221,7 +220,7 @@ protected:
     //@}
 
     /// Print forces on all beads
-    void printForces();
+    [[deprecated]] void printForces();
     
 public:
     [[deprecated]] static long N; ///< Number of beads in the system, set before each minimization

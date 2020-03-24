@@ -15,6 +15,7 @@
 
 #include "ForceFieldManager.h"
 #include "Composite.h"
+#include "Mechanics/Minimizer/CGMethodDataCopy.hpp"
 #include "Output.h"
 #include "Structure/Bead.h"
 MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
@@ -34,16 +35,16 @@ MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoin
         }
 
         startMinimization();
-        FFM.vectorizeAllForceFields();
+        FFM.vectorizeAllForceFields(initCGMethodData(*this));
 
-        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
-        Bead::getDbData().forcesAux = Bead::getDbData().forces;
+        FFM.computeForces(coord.data(), force.data());
+        searchDir = force;
         auto maxForce = maxF();
 
-        result.energiesBefore = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+        result.energiesBefore = FFM.computeEnergyHRMD(coord.data());
 
         //compute first gradient
-        floatingpoint curGrad = CGMethod::allFDotF();
+        floatingpoint curGrad = searchDirDotSearchDir();
 
         int numIter = 0;
         while (/* Iteration criterion */  numIter < N &&
@@ -58,24 +59,24 @@ MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoin
             		LAMBDAMAX, dummy)
                                : backtrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
                                        LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
-            moveBeads(lambda);
+            moveAlongSearchDir(lambda);
 
             //compute new forces
-            FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());
+            FFM.computeForces(coord.data(), force.data());
             maxForce = maxF();
 
             //compute direction
-            newGrad = CGMethod::allFADotFA();
+            newGrad = forceDotForce();
 
             //Fletcher-Rieves update
             beta = newGrad / curGrad;
 
             //shift gradient
-            shiftGradient(beta);
+            shiftSearchDir(beta);
 
             //direction reset if not downhill or no progress made
-            if (CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad)) {
-                shiftGradient(0.0);
+            if (searchDirDotForce() <= 0 || areEqual(curGrad, newGrad)) {
+                shiftSearchDir(0.0);
                 _safeMode = true;
             }
 
@@ -93,17 +94,20 @@ MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoin
             if (b != nullptr) b->getParent()->printSelf();
 
             cout << "System energy..." << endl;
-            FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+            FFM.computeEnergy(coord.data(), true);
 
             cout << endl;
         }
 
-        result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+        result.energiesAfter = FFM.computeEnergyHRMD(coord.data());
 
         //final force calculation
-        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
-        Bead::getDbData().forcesAux = Bead::getDbData().forces;
+        FFM.computeForces(coord.data(), force.data());
+        searchDir = force;
         FFM.computeLoadForces();
+
+        // Copy the data back to the system
+        copyFromCGMethodData(*this);
         endMinimization();
 
         FFM.cleanupAllForceFields();

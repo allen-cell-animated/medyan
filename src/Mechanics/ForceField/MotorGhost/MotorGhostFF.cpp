@@ -46,7 +46,7 @@ void MotorGhostFF::whoIsCulprit() {
     cout << endl;
 }
 
-void MotorGhostFF::vectorize() {
+void MotorGhostFF::vectorize(const FFCoordinateStartingIndex& si) {
     //Reset stretching forces to 0.
     for(auto m:MotorGhost::getMotorGhosts()){
         //Using += to ensure that the stretching forces are additive.
@@ -55,7 +55,7 @@ void MotorGhostFF::vectorize() {
 
 
     for (auto &interaction : _motorGhostInteractionVector)
-        interaction->vectorize();
+        interaction->vectorize(si);
 }
 
 void MotorGhostFF::cleanup() {

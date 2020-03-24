@@ -29,7 +29,7 @@
 
 ForceField* ForceFieldManager::_culpritForceField = nullptr;
 
-void ForceFieldManager::vectorizeAllForceFields() {
+void ForceFieldManager::vectorizeAllForceFields(const FFCoordinateStartingIndex& si) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     CUDAcommon::cudatime.TvectorizeFF = 0.0;
@@ -43,7 +43,7 @@ void ForceFieldManager::vectorizeAllForceFields() {
 #endif
 
     for (auto &ff : _forceFields)
-        ff->vectorize();
+        ff->vectorize(si);
 
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
@@ -361,10 +361,9 @@ void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
     CUDAcommon::serltime.TveccomputeF.clear();
     tbegin = chrono::high_resolution_clock::now();
 #endif
-    //@{
-    for (int i = 0; i < Bead::getDbData().forces.size_raw(); i++)
-        f[i] = 0.0;
-    //@}
+
+    std::fill(force.begin(), force.end(), 0.0);
+
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
@@ -471,7 +470,7 @@ void ForceFieldManager::computeLoadForce(Cylinder* c, ForceField::LoadForceEnd e
     lfi = 0;
 }
 
-void ForceFieldManager::printculprit(floatingpoint* force){
+void ForceFieldManager::printculprit(){
 
     /*cout<<"Printing cylinder data overall"<<endl;
     if(true) {

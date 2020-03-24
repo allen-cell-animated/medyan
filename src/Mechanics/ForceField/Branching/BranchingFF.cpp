@@ -76,7 +76,7 @@ BranchingFF::BranchingFF(string& stretching, string& bending,
 
 }
 
-void BranchingFF::vectorize() {
+void BranchingFF::vectorize(const FFCoordinateStartingIndex& si) {
     //Reset stretching forces to 0.
     for(auto b:BranchingPoint::getBranchingPoints()){
         //Using += to ensure that the stretching forces are additive.
@@ -85,7 +85,7 @@ void BranchingFF::vectorize() {
 
 
     for (auto &interaction : _branchingInteractionVector) {
-        interaction->vectorize();
+        interaction->vectorize(si);
     }
 }
 

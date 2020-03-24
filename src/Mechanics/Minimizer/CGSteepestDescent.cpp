@@ -15,6 +15,7 @@
 
 #include "ForceFieldManager.h"
 #include "Composite.h"
+#include "Mechanics/Minimizer/CGMethodDataCopy.hpp"
 #include "Output.h"
 #include "Structure/Bead.h"
 
@@ -35,13 +36,13 @@ MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoi
         }
 
         startMinimization();
-        FFM.vectorizeAllForceFields();
+        FFM.vectorizeAllForceFields(initCGMethodData(*this));
 
-        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
-        Bead::getDbData().forcesAux = Bead::getDbData().forces;
+        FFM.computeForces(coord.data(), force.data());
+        searchDir = force;
         auto maxForce = maxF();
 
-        result.energiesBefore = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+        result.energiesBefore = FFM.computeEnergyHRMD(coord.data());
 
         int numIter = 0;
         while (/* Iteration criterion */  numIter < N &&
@@ -54,14 +55,14 @@ MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoi
             bool *dummy = nullptr;
             lambda = backtrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
                     LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
-            moveBeads(lambda);
+            moveAlongSearchDir(lambda);
 
             //compute new forces
-            FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());
+            FFM.computeForces(coord.data(), force.data());
             maxForce = maxF();
 
             //shift gradient
-            shiftGradient(0.0);
+            shiftSearchDir(0.0);
         }
 
         if (numIter >= N) {
@@ -75,17 +76,18 @@ MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoi
             if (b != nullptr) b->getParent()->printSelf();
 
             cout << "System energy..." << endl;
-            FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+            FFM.computeEnergy(coord.data(), true);
 
             cout << endl;
         }
 
-        result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+        result.energiesAfter = FFM.computeEnergyHRMD(coord.data());
 
         //final force calculation
-        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
-        Bead::getDbData().forcesAux = Bead::getDbData().forces;
+        FFM.computeForces(coord.data(), force.data());
+        searchDir = force;
         FFM.computeLoadForces();
+        copyFromCGMethodData(*this);
         endMinimization();
 
         FFM.cleanupAllForceFields();

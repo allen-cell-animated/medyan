@@ -38,9 +38,9 @@ void BranchingStretching<BStretchingInteractionType>::vectorize() {
 
     for (auto b: BranchingPoint::getBranchingPoints()) {
 
-        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getStableIndex();
-        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getStableIndex();
-        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
 
         kstr[i] = b->getMBranchingPoint()->getStretchingConstant();
         eql[i] = b->getMBranchingPoint()->getEqLength();

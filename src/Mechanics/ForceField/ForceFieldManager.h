@@ -51,7 +51,7 @@ public:
     static ForceField* _culpritForceField;
 
     /// Vectorize all interactions involved in calculation
-    void vectorizeAllForceFields();
+    void vectorizeAllForceFields(const FFCoordinateStartingIndex&);
     /// Deallocation of vectorized memory
     void cleanupAllForceFields();
 
@@ -87,7 +87,7 @@ public:
     
     vector<floatingpoint> HRMDenergies;
     
-    void printculprit(floatingpoint* force);
+    void printculprit();
     
     vector<vector<vector<floatingpoint>>> hessianVector;
     

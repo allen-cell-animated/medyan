@@ -24,7 +24,7 @@
 #endif
 #include "cross_check.h"
 template <class FBendingInteractionType>
-void FilamentBending<FBendingInteractionType>::vectorize() {
+void FilamentBending<FBendingInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
 
     // Count number of interactions
     _numInteractions = 0;
@@ -45,9 +45,9 @@ void FilamentBending<FBendingInteractionType>::vectorize() {
                  it != f->getCylinderVector().end(); it++){
 
                 auto it2 = it - 1;
-                beadSet[n * i] = (*it2)->getFirstBead()->getStableIndex();
-                beadSet[n * i + 1] = (*it)->getFirstBead()->getStableIndex();
-                beadSet[n * i + 2] = (*it)->getSecondBead()->getStableIndex();
+                beadSet[n * i] = (*it2)->getFirstBead()->getIndex() * 3 + si.bead;
+                beadSet[n * i + 1] = (*it)->getFirstBead()->getIndex() * 3 + si.bead;
+                beadSet[n * i + 2] = (*it)->getSecondBead()->getIndex() * 3 + si.bead;
 //                std::cout<<f->getCylinderVector().size()<<" "<<(*it2)->getFirstBead()
 //                        ->getIndex()<<" "<<(*it)->getFirstBead()
 //                        ->getIndex()<<" "<<(*it)->getSecondBead()->getIndex()<<endl;

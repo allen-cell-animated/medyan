@@ -231,7 +231,7 @@ floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, int *
         
         for (int ic = 0; ic < nc; ic++) {
             
-            coord1 = &coord[3 * beadSet[Cumnc + ic]];
+            coord1 = &coord[beadSet[Cumnc + ic]];
             r = be->distance(coord1);
             
             R = -r / slen[Cumnc + ic] + 100.0 / slen[Cumnc + ic];
@@ -278,8 +278,8 @@ floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, float
         
         for(int ic = 0; ic < nc; ic++) {
             
-            coord1 = &coord[3 * beadSet[Cumnc + ic]];
-            force1 = &f[3 * beadSet[Cumnc + ic]];
+            coord1 = &coord[beadSet[Cumnc + ic]];
+            force1 = &f[beadSet[Cumnc + ic]];
             
             r = be->stretchedDistance(coord1, force1, d);
             
@@ -331,8 +331,8 @@ void BoundaryCylinderRepulsionExpIn::forces(floatingpoint *coord, floatingpoint 
         auto be = beList[ib];
         nc = nneighbors[ib];
         for(int ic = 0; ic < nc; ic++) {
-            coord1 = &coord[3 * beadSet[ Cumnc + ic]];
-            force1 = &f[3 * beadSet[ Cumnc + ic]];
+            coord1 = &coord[beadSet[ Cumnc + ic]];
+            force1 = &f[beadSet[ Cumnc + ic]];
             r = be->distance(coord1);
             auto norm = be->normal(coord1);
             

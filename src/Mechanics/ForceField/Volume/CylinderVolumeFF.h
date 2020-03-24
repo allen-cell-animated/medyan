@@ -40,7 +40,7 @@ public:
     /// Initialize the volume forcefields
     CylinderVolumeFF(string& interaction);
 
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&) override;
     virtual void cleanup();
 
     virtual string getName() {return "Excluded Volume";}

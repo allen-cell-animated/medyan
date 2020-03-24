@@ -1221,15 +1221,13 @@ void Datadump::print(int snapshot) {
     //Bead data
     _outputFile <<"BEAD DATA: BEADIDX(STABLE) FID COORDX COORDY COORDZ FORCEAUXX "
                   "FORCEAUXY FORCEAUXZ"<<endl;
-    const auto& beadData = Bead::getDbDataConst();
 
     for(auto b:Bead::getBeads()){
         auto bidx = b->getStableIndex();
         Filament* f = static_cast<Filament*>(b->getParent());
-        _outputFile <<bidx<<" "<<f->getId()<<" "<<beadData.coords.data()
-        [3*bidx]<<" " <<beadData.coords.data()[3*bidx + 1]<<" "
-        <<beadData.coords.data()[3*bidx + 2]<<" "<<beadData.forcesAux.data()[3*bidx]<<" "<<
-        beadData.forcesAux.data()[3*bidx + 1]<<" "<<beadData.forcesAux.data()[3*bidx + 2]<<endl;
+        _outputFile <<bidx<<" "<<f->getId()<<" "
+            << b->coord[0] << ' ' << b->coord[1] << ' ' << b->coord[2] << ' '
+            << b->force[0] << ' ' << b->force[1] << ' ' << b->force[2] << endl;
 
     }
 

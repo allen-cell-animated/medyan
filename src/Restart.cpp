@@ -57,7 +57,7 @@ void Restart::setupInitialNetwork() {
 		_subSystem->addTrackable<Bead>(tempcoord,nullptr,0);
 		//Copy Forces
 		for(unsigned int dim = 0; dim < 3; dim++)
-			Bead::getDbData().forcesAux.data()[3*b+dim] = _rBData.coordvec.data()
+			Bead::getStableElement(b)->force[dim] = _rBData.coordvec.data()
 					[3*bID+dim];
 	}
 	cout<<"Num beads "<<Bead::getBeads().size()<<endl;

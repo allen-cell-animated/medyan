@@ -71,10 +71,10 @@ BubbleFF::BubbleFF (string type, string mtoc, string afm) {
     }
 }
 
-void BubbleFF::vectorize() {
+void BubbleFF::vectorize(const FFCoordinateStartingIndex& si) {
 
     for (auto &interaction : _bubbleInteractionVector)
-    interaction->vectorize();
+        interaction->vectorize(si);
 }
 
 void BubbleFF::cleanup() {
