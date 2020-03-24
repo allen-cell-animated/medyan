@@ -351,7 +351,7 @@ EnergyReport ForceFieldManager::computeEnergyHRMD(floatingpoint *coord) const {
 template floatingpoint ForceFieldManager::computeEnergy< false >(floatingpoint *, bool) const;
 template floatingpoint ForceFieldManager::computeEnergy< true >(floatingpoint *, bool) const;
 
-void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
+void ForceFieldManager::computeForces(floatingpoint *coord, vector< floatingpoint >& force) {
     //reset to zero
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -396,7 +396,7 @@ void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
     CUDAcommon::tmin.computeforcescalls++;
     for (auto &ff : _forceFields) {
         tbegin = chrono::high_resolution_clock::now();
-        ff->computeForces(coord, f);
+        ff->computeForces(coord, force.data());
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
         if(CUDAcommon::tmin.individualforces.size() == _forceFields.size())
@@ -592,8 +592,8 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
         coord_copy_m[i] -= delta;
 
         // calculate the new forces based on perturbation
-        computeForces(coord_copy_p.data(), forces_copy_p.data());
-        computeForces(coord_copy_m.data(), forces_copy_m.data());
+        computeForces(coord_copy_p.data(), forces_copy_p);
+        computeForces(coord_copy_m.data(), forces_copy_m);
 
         for(auto j = 0; j < total_DOF; j++){
 

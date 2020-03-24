@@ -34,7 +34,7 @@ floatingpoint BubbleBubbleRepulsionExp::energy(
 }
 
 void BubbleBubbleRepulsionExp::forces(
-    const floatingpoint* coord, floatingpoint* force
+    const floatingpoint* coord, floatingpoint* force,
     size_t i1, size_t i2, floatingpoint r1, floatingpoint r2,
     floatingpoint kRep, floatingpoint screenLength) {
 

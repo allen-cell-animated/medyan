@@ -25,7 +25,7 @@
 #endif
 
 template <class BStretchingInteractionType>
-void BranchingStretching<BStretchingInteractionType>::vectorize() {
+void BranchingStretching<BStretchingInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
 
     CUDAcommon::tmin.numinteractions[4] += BranchingPoint::getBranchingPoints().size();
     beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
@@ -171,5 +171,5 @@ void BranchingStretching<BStretchingInteractionType>::computeForces(floatingpoin
 template floatingpoint
 BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(floatingpoint *coord);
 template void BranchingStretching<BranchingStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BranchingStretching<BranchingStretchingHarmonic>::vectorize();
+template void BranchingStretching<BranchingStretchingHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void BranchingStretching<BranchingStretchingHarmonic>::deallocate();

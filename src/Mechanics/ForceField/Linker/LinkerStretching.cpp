@@ -282,7 +282,7 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(floatingpoint *
 ///Temlate specializations
 template floatingpoint LinkerStretching<LinkerStretchingHarmonic>::computeEnergy(floatingpoint *coord);
 template void LinkerStretching<LinkerStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void LinkerStretching<LinkerStretchingHarmonic>::vectorize();
+template void LinkerStretching<LinkerStretchingHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void LinkerStretching<LinkerStretchingHarmonic>::deallocate();
 template void LinkerStretching<LinkerStretchingHarmonic>::assignforcemags();
 

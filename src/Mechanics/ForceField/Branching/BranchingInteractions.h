@@ -17,6 +17,7 @@
 #include <iostream>
 
 #include "common.h"
+#include "Mechanics/ForceField/Types.hpp"
 
 //FORWARD DECLARATIONS
 class BranchingPoint;

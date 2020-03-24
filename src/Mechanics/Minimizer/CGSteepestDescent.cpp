@@ -38,7 +38,7 @@ MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoi
         startMinimization();
         FFM.vectorizeAllForceFields(initCGMethodData(*this));
 
-        FFM.computeForces(coord.data(), force.data());
+        FFM.computeForces(coord.data(), force);
         searchDir = force;
         auto maxForce = maxF();
 
@@ -58,7 +58,7 @@ MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoi
             moveAlongSearchDir(lambda);
 
             //compute new forces
-            FFM.computeForces(coord.data(), force.data());
+            FFM.computeForces(coord.data(), force);
             maxForce = maxF();
 
             //shift gradient
@@ -84,7 +84,7 @@ MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoi
         result.energiesAfter = FFM.computeEnergyHRMD(coord.data());
 
         //final force calculation
-        FFM.computeForces(coord.data(), force.data());
+        FFM.computeForces(coord.data(), force);
         searchDir = force;
         FFM.computeLoadForces();
         copyFromCGMethodData(*this);

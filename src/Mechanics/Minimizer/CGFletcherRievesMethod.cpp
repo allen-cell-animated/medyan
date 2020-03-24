@@ -37,7 +37,7 @@ MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoin
         startMinimization();
         FFM.vectorizeAllForceFields(initCGMethodData(*this));
 
-        FFM.computeForces(coord.data(), force.data());
+        FFM.computeForces(coord.data(), force);
         searchDir = force;
         auto maxForce = maxF();
 
@@ -62,7 +62,7 @@ MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoin
             moveAlongSearchDir(lambda);
 
             //compute new forces
-            FFM.computeForces(coord.data(), force.data());
+            FFM.computeForces(coord.data(), force);
             maxForce = maxF();
 
             //compute direction
@@ -102,7 +102,7 @@ MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoin
         result.energiesAfter = FFM.computeEnergyHRMD(coord.data());
 
         //final force calculation
-        FFM.computeForces(coord.data(), force.data());
+        FFM.computeForces(coord.data(), force);
         searchDir = force;
         FFM.computeLoadForces();
 

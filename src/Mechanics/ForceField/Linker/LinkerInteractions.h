@@ -15,6 +15,7 @@
 #define MEDYAN_LinkerInteractions_h
 
 #include "common.h"
+#include "Mechanics/ForceField/Types.hpp"
 
 //FORWARD DECLARATIONS
 class Linker;

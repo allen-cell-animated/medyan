@@ -74,7 +74,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
     //@@@{ STEP 2: COMPUTE FORCES
 	tbegin = chrono::high_resolution_clock::now();
-    FFM.computeForces(coord.data(), force.data()); //split and synchronize in the end
+    FFM.computeForces(coord.data(), force); //split and synchronize in the end
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
 	CUDAcommon::tmin.computeforces+= elapsed_force.count();
@@ -419,7 +419,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
 
         //compute new forces
-        FFM.computeForces(coord.data(), force.data());//split and synchronize
+        FFM.computeForces(coord.data(), force);//split and synchronize
 #ifdef DETAILEDOUTPUT
         std::cout<<"MB printing beads & forces L "<<lambda<<endl;
         long i = 0;
@@ -659,7 +659,7 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
         ///@@@{ STEP 8 compute new forces
 	    tbegin = chrono::high_resolution_clock::now();
-        FFM.computeForces(coord.data(), force.data());//split and synchronize
+        FFM.computeForces(coord.data(), force);//split and synchronize
         maxForce = maxF();
 	    tend = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
@@ -829,7 +829,7 @@ std::cout<<"----------------------------------------"<<endl;
 
     //final force calculation
 
-    FFM.computeForces(coord.data(), force.data());
+    FFM.computeForces(coord.data(), force);
     searchDir = force;
 #ifdef ALLSYNC
     cudaDeviceSynchronize();

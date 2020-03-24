@@ -87,7 +87,7 @@ void AFMAttachment<AFMInteractionType>::computeForces(floatingpoint *coord, floa
 template floatingpoint AFMAttachment<AFMAttachmentHarmonic>::computeEnergy(floatingpoint *coord, bool stretched);
 template void AFMAttachment<AFMAttachmentHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 //template void AFMAttachment<AFMAttachmentHarmonic>::computeForcesAux(double *coord, double *f);
-template void AFMAttachment<AFMAttachmentHarmonic>::vectorize();
+template void AFMAttachment<AFMAttachmentHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void AFMAttachment<AFMAttachmentHarmonic>::deallocate();
 
 

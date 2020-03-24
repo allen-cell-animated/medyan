@@ -62,5 +62,5 @@ void BoundaryCylinderAttachment<BAttachmentInteractionType>::computeForces(float
 ///Template specializations
 template floatingpoint BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeEnergy(floatingpoint *coord);
 template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::vectorize();
+template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::deallocate();

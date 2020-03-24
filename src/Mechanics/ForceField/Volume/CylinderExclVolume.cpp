@@ -327,5 +327,5 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(floatingpoint *co
 ///Template specializations
 template floatingpoint CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(floatingpoint *coord);
 template void CylinderExclVolume<CylinderExclVolRepulsion>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void CylinderExclVolume<CylinderExclVolRepulsion>::vectorize();
+template void CylinderExclVolume<CylinderExclVolRepulsion>::vectorize(const FFCoordinateStartingIndex&);
 template void CylinderExclVolume<CylinderExclVolRepulsion>::deallocate();

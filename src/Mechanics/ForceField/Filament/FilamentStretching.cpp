@@ -242,6 +242,6 @@ void FilamentStretching<FStretchingInteractionType>::computeForces(floatingpoint
 ///Temlate specializations
 template floatingpoint FilamentStretching<FilamentStretchingHarmonic>::computeEnergy(floatingpoint *coord);
 template void FilamentStretching<FilamentStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void FilamentStretching<FilamentStretchingHarmonic>::vectorize();
+template void FilamentStretching<FilamentStretchingHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void FilamentStretching<FilamentStretchingHarmonic>::deallocate();
 //template void FilamentStretching<FilamentStretchingHarmonic>::whoisCulprit();

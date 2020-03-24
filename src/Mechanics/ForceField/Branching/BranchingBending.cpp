@@ -149,5 +149,5 @@ void BranchingBending<BBendingInteractionType>::computeForces(floatingpoint *coo
 ///Template specializations
 template floatingpoint BranchingBending<BranchingBendingCosine>::computeEnergy(floatingpoint *coord);
 template void BranchingBending<BranchingBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BranchingBending<BranchingBendingCosine>::vectorize();
+template void BranchingBending<BranchingBendingCosine>::vectorize(const FFCoordinateStartingIndex&);
 template void BranchingBending<BranchingBendingCosine>::deallocate();

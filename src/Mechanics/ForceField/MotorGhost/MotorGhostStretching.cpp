@@ -292,7 +292,7 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(floatingpoi
 ///Temlate specializations
 template floatingpoint MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(floatingpoint *coord);
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void MotorGhostStretching<MotorGhostStretchingHarmonic>::vectorize();
+template void MotorGhostStretching<MotorGhostStretchingHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::deallocate();
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::assignforcemags();
 

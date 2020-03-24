@@ -69,7 +69,7 @@ public:
     
     
     /// Compute the forces of all force fields 
-    void computeForces(floatingpoint *coord, floatingpoint *f);
+    void computeForces(floatingpoint *coord, std::vector< floatingpoint >& force);
     
     // compute the Hessian matrix if the feature is enabled
     void computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta);

@@ -168,6 +168,6 @@ void BranchingDihedral<BDihedralInteractionType>::computeForces(floatingpoint *c
 // Template instantiations
 template floatingpoint BranchingDihedral<BranchingDihedralCosine>::computeEnergy(floatingpoint *coord);
 template void BranchingDihedral<BranchingDihedralCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BranchingDihedral<BranchingDihedralCosine>::vectorize();
+template void BranchingDihedral<BranchingDihedralCosine>::vectorize(const FFCoordinateStartingIndex&);
 template void BranchingDihedral<BranchingDihedralCosine>::deallocate();
 template class BranchingDihedral< BranchingDihedralQuadratic >;

@@ -16,6 +16,7 @@
 #define MEDYAN_MotorGhostInteractions_h
 
 #include "common.h"
+#include "Mechanics/ForceField/Types.hpp"
 
 //FORWARD DECLARATIONS
 class MotorGhost;

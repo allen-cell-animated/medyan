@@ -160,5 +160,5 @@ void BranchingPosition<BPositionInteractionType>::computeForces(floatingpoint *c
 ///Template specializations
 template floatingpoint BranchingPosition<BranchingPositionCosine>::computeEnergy(floatingpoint *coord);
 template void BranchingPosition<BranchingPositionCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BranchingPosition<BranchingPositionCosine>::vectorize();
+template void BranchingPosition<BranchingPositionCosine>::vectorize(const FFCoordinateStartingIndex&);
 template void BranchingPosition<BranchingPositionCosine>::deallocate();

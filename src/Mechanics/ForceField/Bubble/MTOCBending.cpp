@@ -151,7 +151,7 @@ void MTOCBending<MTOCInteractionType>::computeForces(floatingpoint *coord, float
 template floatingpoint MTOCBending<MTOCBendingCosine>::computeEnergy(floatingpoint *coord, bool stretched);
 template void MTOCBending<MTOCBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
 //template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux(floatingpoint *coord, floatingpoint *f);
-template void MTOCBending<MTOCBendingCosine>::vectorize();
+template void MTOCBending<MTOCBendingCosine>::vectorize(const FFCoordinateStartingIndex&);
 template void MTOCBending<MTOCBendingCosine>::deallocate();
 
 

@@ -120,6 +120,6 @@ int MTOCAttachment<MTOCInteractionType>::numInteractions;
 template floatingpoint MTOCAttachment<MTOCAttachmentHarmonic>::computeEnergy(floatingpoint *coord, bool stretched);
 template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 //template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux(double *coord, double *f);
-template void MTOCAttachment<MTOCAttachmentHarmonic>::vectorize();
+template void MTOCAttachment<MTOCAttachmentHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void MTOCAttachment<MTOCAttachmentHarmonic>::deallocate();
 

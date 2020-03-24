@@ -97,6 +97,6 @@ void BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeForces(floatingp
 ///Template specializations
 template floatingpoint BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeEnergy(floatingpoint *coord);
 template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::vectorize();
+template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::vectorize(const FFCoordinateStartingIndex&);
 template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::deallocate();
 

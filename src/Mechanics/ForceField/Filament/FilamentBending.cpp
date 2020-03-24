@@ -239,11 +239,11 @@ void FilamentBending<FBendingInteractionType>::computeForces(floatingpoint *coor
 ///Template specializations
 template floatingpoint FilamentBending<FilamentBendingHarmonic>::computeEnergy(floatingpoint *coord);
 template void FilamentBending<FilamentBendingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void FilamentBending<FilamentBendingHarmonic>::vectorize();
+template void FilamentBending<FilamentBendingHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void FilamentBending<FilamentBendingHarmonic>::deallocate();
 
 
 template floatingpoint FilamentBending<FilamentBendingCosine>::computeEnergy(floatingpoint *coord);
 template void FilamentBending<FilamentBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void FilamentBending<FilamentBendingCosine>::vectorize();
+template void FilamentBending<FilamentBendingCosine>::vectorize(const FFCoordinateStartingIndex&);
 template void FilamentBending<FilamentBendingCosine>::deallocate();
