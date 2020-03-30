@@ -32,126 +32,42 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         exit(EXIT_FAILURE);
     }
     
-    //Check all species for consistency
-    if(chem.speciesBulk.size() != CParams.numBulkSpecies) {
-        
-        cout << "Number of bulk species in chemistry input does not "
-             << "match the system file. Check these parameters. Exiting."
-        <<endl;
-        
-        return false;
-    }
-    if(chem.speciesDiffusing.size() != CParams.numDiffusingSpecies) {
-
-        cout << "Number of diffusing species in chemistry input does not "
-             << "match the system file. Check these parameters. Exiting."
-        <<endl;
-        
-        return false;
-    }
-    
-    if(CParams.numFilamentSpecies.size() < CParams.numFilaments) {
-        cout << "Must provide at least one filament species for every filament. Exiting."
-        << endl;
-        return false;
-        
-    }
-    if(CParams.numPlusEndSpecies.size() < CParams.numFilaments) {
-        cout << "Must provide at least one plus end species for every filament. Exiting."
-        << endl;
-        return false;
-        
-    }
-    if(CParams.numMinusEndSpecies.size() < CParams.numFilaments) {
-        cout << "Must provide at least one minus end species for every filament. Exiting."
-        << endl;
-        return false;
-    }
-    //at least one bound
-    if(CParams.numBoundSpecies.size() < CParams.numFilaments) {
-        cout << "Must provide at least one bound species for every filament, " <<
-                "which is an empty binding site. Exiting." << endl;
-        return false;
-    }
-    
     for(auto filType = 0; filType < CParams.numFilaments; filType++) {
     
-        if(CParams.numFilamentSpecies.size() != 0 &&
-           chem.speciesFilament[filType].size() != CParams.numFilamentSpecies[filType]) {
+        if(chem.speciesFilament[filType].size() == 0) {
             
-            cout << "Number of filament species in chemistry input does not "
-            << "match the system file. Check these parameters. Exiting."
+            cout << "At least one filament species is required for each filament type. Exiting."
             <<endl;
             
-            return false;
-        }
-        if(CParams.numPlusEndSpecies.size() != 0 &&
-           chem.speciesPlusEnd[filType].size() != CParams.numPlusEndSpecies[filType]) {
-            
-            cout << "Number of plus end species in chemistry input does not "
-            << "match the system file. Check these parameters. Exiting."
-            <<endl;
-            
-            return false;
-        }
-        if(CParams.numMinusEndSpecies.size() != 0 &&
-           chem.speciesMinusEnd[filType].size()  != CParams.numMinusEndSpecies[filType]) {
-            
-            cout << "Number of minus end species in chemistry input does not "
-            << "match the system file. Check these parameters. Exiting."
-            <<endl;
-            
-            return false;
-        }
-        if(CParams.numBoundSpecies.size() != 0 &&
-           chem.speciesBound[filType].size() != CParams.numBoundSpecies[filType]) {
-            
-            cout << "Number of bound species in chemistry input does not "
-            << "match the system file. Check these parameters. Exiting."
-            <<endl;
-            
-            return false;
-        }
-        if(CParams.numLinkerSpecies.size() != 0 &&
-           chem.speciesLinker[filType].size() != CParams.numLinkerSpecies[filType]) {
-            
-            cout << "Number of linker species in chemistry input does not "
-            << "match the system file. Check these parameters. Exiting."
-            <<endl;
-            
-            return false;
-        }
-        if(CParams.numMotorSpecies.size() != 0 &&
-           chem.speciesMotor[filType].size() != CParams.numMotorSpecies[filType]) {
-            
-            cout << "Number of motor species in chemistry input does not "
-            << "match the system file. Check these parameters. Exiting."
-            <<endl;
-            
-            return false;
-        }
-        if(CParams.numBrancherSpecies.size() != 0 &&
-           chem.speciesBrancher[filType].size() != CParams.numBrancherSpecies[filType]) {
-            
-            cout << "Number of brancher species in chemistry input does not "
-            << "match the system file. Check these parameters. Exiting."
-            <<endl;
-            
-            return false;
-        }
-        
-        //plus and minus end consistency
-        if(CParams.numPlusEndSpecies[filType] < CParams.numFilamentSpecies[filType]) {
-            cout << "There must be a plus end for every filament species on each filament. Exiting."
-            << endl;
-            return false;
-        }
-        if(CParams.numMinusEndSpecies[filType] < CParams.numFilamentSpecies[filType]) {
-            cout << "There must be a minus end for every filament species on each filament. Exiting."
-            << endl;
             return false;
         }
 
+        if(chem.speciesPlusEnd[filType].size() == 0) {
+            
+            cout << "At least one plus end species is required for each filament type. Exiting."
+            <<endl;
+    
+            return false;
+        }
+
+        if(chem.speciesMinusEnd[filType].size() == 0) {
+            
+            cout << "At least one minus end species is required for each filament type. Exiting."
+            <<endl;
+            
+            return false;
+        }
+
+        
+        if(chem.speciesBound[filType].size() == 0) {
+            
+            cout << "At one plus end species is required for each filament type. Exiting."
+            <<endl;
+            
+            return false;
+        }
+
+        
         //check if binding sites are valid
         if(chem.B_BINDING_INDEX[filType] == "" && chem.speciesBrancher[filType].size() != 0) {
             cout << "A brancher binding site must be set for every filament type. Exiting."
@@ -202,6 +118,25 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
     return true;
 }
 
+void SysParams::addChemParameters(ChemistryData& chem){
+    for(auto filType = 0; filType < CParams.numFilaments; filType++) {
+        CParams.numFilamentSpecies.push_back(chem.speciesFilament[filType].size());
+            
+        CParams.numPlusEndSpecies.push_back(chem.speciesPlusEnd[filType].size());
+            
+        CParams.numMinusEndSpecies.push_back(chem.speciesMinusEnd[filType].size());
+            
+        CParams.numBoundSpecies.push_back(chem.speciesBound[filType].size());
+        
+        CParams.numLinkerSpecies.push_back(chem.speciesLinker[filType].size());
+        
+        CParams.numMotorSpecies.push_back(chem.speciesMotor[filType].size());
+        
+        CParams.numBrancherSpecies.push_back(chem.speciesBrancher[filType].size());
+    }
+    
+}
+
 bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     
     //check ff and associated parameters for consistency
@@ -227,31 +162,31 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     short totalNumLinkers = sum(CParams.numLinkerSpecies);
     
     if(mech.LStretchingType != "" &&
-       MParams.LStretchingK.size() != totalNumLinkers) {
+       MParams.LStretchingK.size() != totalNumLinkers && totalNumLinkers > 0) {
         cout << "Number of linker stretching constants does not match the number of"
              << " linker species in system. Exiting." << endl;
         return false;
     }
     if(mech.LBendingType != "" &&
-       MParams.LBendingK.size() != totalNumLinkers) {
+       MParams.LBendingK.size() != totalNumLinkers && totalNumLinkers > 0) {
         cout << "Number of linker bending constants does not match the number of"
              << " linker species in system. Exiting." << endl;
         return false;
     }
     if(mech.LBendingType != "" &&
-       MParams.LBendingTheta.size() != totalNumLinkers) {
+       MParams.LBendingTheta.size() != totalNumLinkers && totalNumLinkers > 0) {
         cout << "Number of linker bending angles does not match the number of"
              << " linker species in system. Exiting." << endl;
         return false;
     }
     if(mech.LTwistingType != "" &&
-       MParams.LTwistingK.size() != totalNumLinkers) {
+       MParams.LTwistingK.size() != totalNumLinkers && totalNumLinkers > 0) {
         cout << "Number of linker twisting constants does not match the number of"
         << " linker species in system. Exiting." << endl;
         return false;
     }
     if(mech.LTwistingType != "" &&
-       MParams.LTwistingPhi.size() != totalNumLinkers) {
+       MParams.LTwistingPhi.size() != totalNumLinkers && totalNumLinkers > 0) {
         cout << "Number of linker twisting angles does not match the number of"
              << " linker species in system. Exiting." << endl;
         return false;
@@ -261,31 +196,31 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     short totalNumMotors = sum(CParams.numMotorSpecies);
     
     if(mech.MStretchingType != "" &&
-       MParams.MStretchingK.size() != totalNumMotors) {
+       MParams.MStretchingK.size() != totalNumMotors && totalNumMotors > 0) {
         cout << "Number of motor stretching constants does not match the number of"
              << " motor species in system. Exiting." << endl;
         return false;
     }
     if(mech.MBendingType != "" &&
-       MParams.MBendingK.size() != totalNumMotors) {
+       MParams.MBendingK.size() != totalNumMotors && totalNumMotors > 0) {
         cout << "Number of motor bending constants does not match the number of"
              << " motor species in system. Exiting." << endl;
         return false;
     }
     if(mech.MBendingType != "" &&
-       MParams.MBendingTheta.size() != totalNumMotors) {
+       MParams.MBendingTheta.size() != totalNumMotors && totalNumMotors > 0) {
         cout << "Number of motor bending angles does not match the number of"
              << " motor species in system. Exiting." << endl;
         return false;
     }
     if(mech.MTwistingType != "" &&
-       MParams.MTwistingK.size() != totalNumMotors) {
+       MParams.MTwistingK.size() != totalNumMotors && totalNumMotors > 0) {
         cout << "Number of motor twisting constants does not match the number of"
              << " motor species in system. Exiting." << endl;
         return false;
     }
     if(mech.MTwistingType != "" &&
-       MParams.MTwistingPhi.size() != totalNumMotors) {
+       MParams.MTwistingPhi.size() != totalNumMotors && totalNumMotors > 0) {
         cout << "Number of motor twisting angles does not match the number of"
              << " motor species in system. Exiting." << endl;
         return false;
@@ -295,38 +230,39 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     //BRANCHINGPOINT
     short totalNumBranchers = sum(CParams.numBrancherSpecies);
     
+
     if(mech.BrStretchingType != "" &&
-       MParams.BrStretchingK.size() != totalNumBranchers) {
+       MParams.BrStretchingK.size() != totalNumBranchers && totalNumBranchers > 0) {
         cout << "Number of branching point stretching constants does not match the number of"
              << " brancher species in system. Exiting." << endl;
         return false;
     }
     if(mech.BrStretchingType != "" &&
-       MParams.BrStretchingL.size() != totalNumBranchers) {
+       MParams.BrStretchingL.size() != totalNumBranchers && totalNumBranchers > 0) {
         cout << "Number of branching point stretching length does not match the number of"
              << " brancher species in system. Exiting." << endl;
         return false;
     }
     if(mech.BrBendingType != "" &&
-       MParams.BrBendingK.size() != totalNumBranchers) {
+       MParams.BrBendingK.size() != totalNumBranchers && totalNumBranchers > 0) {
         cout << "Number of branching point bending constants does not match the number of"
              << " brancher species in system. Exiting." << endl;
         return false;
     }
     if(mech.BrBendingType != "" &&
-       MParams.BrBendingTheta.size() != totalNumBranchers) {
+       MParams.BrBendingTheta.size() != totalNumBranchers && totalNumBranchers > 0) {
         cout << "Number of branching point bending angles does not match the number of"
              << " brancher species in system. Exiting." << endl;
         return false;
     }
     if(mech.BrDihedralType != "" &&
-       MParams.BrDihedralK.size() != totalNumBranchers) {
+       MParams.BrDihedralK.size() != totalNumBranchers && totalNumBranchers > 0) {
         cout << "Number of branching point dihedral constants does not match the number of"
              << " brancher species in system. Exiting." << endl;
         return false;
     }
     if(mech.BrPositionType != "" &&
-       MParams.BrPositionK.size() != totalNumBranchers) {
+       MParams.BrPositionK.size() != totalNumBranchers && totalNumBranchers > 0) {
         cout << "Number of branching point position constants does not match the number of"
              << " brancher species in system. Exiting." << endl;
         return false;
@@ -413,20 +349,20 @@ bool SysParams::checkDyRateParameters(DynamicRateType& dy) {
     }
     
     if(dy.dLUnbindingType.size() != sum(CParams.numLinkerSpecies) &&
-       !dy.dLUnbindingType.empty()) {
+       !dy.dLUnbindingType.empty() && sum(CParams.numLinkerSpecies) > 0){
         cout << "Number of linker dynamic rate unbinding forms must" <<
                 " match the number of species. Exiting." << endl;
         return false;
     }
     
     if(dy.dMUnbindingType.size() != sum(CParams.numMotorSpecies) &&
-       !dy.dMUnbindingType.empty()) {
+       !dy.dMUnbindingType.empty() && sum(CParams.numMotorSpecies) > 0) {
         cout << "Number of motor dynamic rate unbinding forms must" <<
                 " match the number of species. Exiting." << endl;
         return false;
     }
     if(dy.dMWalkingType.size() != sum(CParams.numMotorSpecies) &&
-       !dy.dMWalkingType.empty()) {
+       !dy.dMWalkingType.empty() && sum(CParams.numMotorSpecies) > 0) {
         cout << "Number of motor dynamic rate walking forms must" <<
                 " match the number of species. Exiting." << endl;
         return false;

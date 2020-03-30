@@ -207,12 +207,12 @@ struct ChemParams {
     bool eventTracking = false;
     int linkerbindingskip = 2;
     
-
+    
     /// Make (de)polymerization depends on stress
     bool makeRateDepend = false;
     double makeRateDependTime = 0.0;
     double makeRateDependForce = 0.0;
-
+    
     /// Make (de)polymerization depends on stress
     bool makeAFM = false;
     double AFMStep1 = 0.0;
@@ -221,7 +221,7 @@ struct ChemParams {
     double StepTotal = 0.0;
     double StepTime = 0.0;
     float originalPolyPlusRate;
-
+    
 
     //@}
 #ifdef CUDAACCL_NL
@@ -235,7 +235,7 @@ struct GeoParams {
 
     //@{
     /// Geometry parameter
-    short nDim = 0;
+    short nDim = 3;
 
     int NX = 0;
     int NY = 0;
@@ -332,7 +332,7 @@ struct DyRateParams {
 };
 
 struct SpecialParams {
-
+    
     /// Parameters for initializing MTOC attached filaments
     float mtocTheta1 = 0.0;
     float mtocTheta2 = 1.0;
@@ -362,7 +362,7 @@ public:
 	#endif
 
     static SpecialParams SParams; ///< Other parameters
-
+    
 public:
     //@{
 #ifdef NLSTENCILLIST
@@ -400,6 +400,8 @@ public:
     static bool checkDyRateParameters(DynamicRateType& dy);
     static bool checkGeoParameters();
     //@}
+
+    static void addChemParameters(ChemistryData& chem);
     #ifdef TRACKDIDNOTMINIMIZE
     static MinimizationParams& Mininimization() { return MinParams;}
 	#endif

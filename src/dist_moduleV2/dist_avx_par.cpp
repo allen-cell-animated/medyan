@@ -10,6 +10,8 @@ A multithreaded versio of the code for both AVX and AVX2 calculations.
 
 //#include "dist_moduleV2/dist_avx_par.h"
 
+#ifdef SIMDBINDINGSEARCH
+
 #include "dist_avx_par.h"
 
 namespace dist {
@@ -305,3 +307,5 @@ namespace dist {
 	template void kernel_dist_simd_avx_par(dOut<2U,true> &out, Coords &c1, Coords &c2);
 	template void kernel_dist_simd_avx_par(dOut<2U,false> &out, Coords &c1, Coords &c2);
 }
+
+#endif
