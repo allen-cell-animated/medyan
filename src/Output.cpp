@@ -826,6 +826,7 @@ void HRMD::print(int snapshot) {
         
     }
     _outputFile<<endl;
+    #ifdef PRINTENERGYBEFOREANDAFTER
     //Print mech energies before and after minimization
     // write row of mech energy
     auto HRMDMechEnergyMat = dt->getHRMDmat();
@@ -836,7 +837,7 @@ void HRMD::print(int snapshot) {
         _outputFile<<endl;
     }
     _outputFile<<endl;
-
+    #endif
     dt->clearHRMDMats();
     
     _outputFile<<endl<<endl;
