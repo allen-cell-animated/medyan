@@ -191,41 +191,41 @@ public:
     void CBoundinitializerestart();
 
     void restartupdateCopyNumbers(){
-    	// If user requests to use restart file copy numbers after restart.
-    	if(SysParams::RUNSTATE == false && SysParams::USECHEMCOPYNUM == false) {
-		    //Loop through restart data
-		    // Find corresponding compartment and add species to it.
-		    for (auto &Cmp:_subSystem->getCompartmentGrid()->getCompartments()) {
-			    auto cdiffdata = _rCmpDDatavec[Cmp->getId()];
-			    auto diffspeciesnamevec = cdiffdata.speciesnamevec;
-			    auto diffspeciescpyvec = cdiffdata.copynumvec;
-			    if (Cmp->getId() == cdiffdata.id) {
-				    for (auto count = 0; count < diffspeciesnamevec.size(); count++) {
-					    Species *sp = Cmp->findSpeciesByName(diffspeciesnamevec[count]);
-					    if (sp != nullptr) {
-						    sp->getRSpecies().setN(diffspeciescpyvec[count]);
-					    } else {
-						    LOG(ERROR) << "Cannot find diffusing species of name "
-						               << diffspeciesnamevec[count]
-						               << " in Compartment ID " << Cmp->getId()
-						               << ". Check chemistry input file. Exiting" << endl;
-						    throw std::logic_error("Restart unsuccessful!");
-					    }
-				    }
-			    }
-		    }
-		    int counter = 0;
-		    for (auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
-			    for (auto &it: C->getDiffusionReactionContainer().reactions()) {
-				    it->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
-			    }
-			    C->getDiffusionReactionContainer().updatePropensityComprtment();
-		    }
-		    //Bulk Species
-		    for (auto &s : _chemData.speciesBulk) {
+        // If user requests to use restart file copy numbers after restart.
+        if(SysParams::RUNSTATE == false && SysParams::USECHEMCOPYNUM == false) {
+            //Loop through restart data
+            // Find corresponding compartment and add species to it.
+            for (auto &Cmp:_subSystem->getCompartmentGrid()->getCompartments()) {
+                auto cdiffdata = _rCmpDDatavec[Cmp->getId()];
+                auto diffspeciesnamevec = cdiffdata.speciesnamevec;
+                auto diffspeciescpyvec = cdiffdata.copynumvec;
+                if (Cmp->getId() == cdiffdata.id) {
+                    for (auto count = 0; count < diffspeciesnamevec.size(); count++) {
+                        Species *sp = Cmp->findSpeciesByName(diffspeciesnamevec[count]);
+                        if (sp != nullptr) {
+                            sp->getRSpecies().setN(diffspeciescpyvec[count]);
+                        } else {
+                            LOG(ERROR) << "Cannot find diffusing species of name "
+                                        << diffspeciesnamevec[count]
+                                        << " in Compartment ID " << Cmp->getId()
+                                        << ". Check chemistry input file. Exiting" << endl;
+                            throw std::logic_error("Restart unsuccessful!");
+                        }
+                    }
+                }
+            }
+            int counter = 0;
+            for (auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+                for (auto &it: C->getDiffusionReactionContainer().reactions()) {
+                    it->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
+                }
+                C->getDiffusionReactionContainer().updatePropensityComprtment();
+            }
+            //Bulk Species
+            for (auto &s : _chemData.speciesBulk) {
 
-		    }
-		    //Set diffusing species copy numbers to 0.
+            }
+            //Set diffusing species copy numbers to 0.
             for(auto &s : _chemData.speciesDiffusing) {
 
                 auto name = get<0>(s);
@@ -234,7 +234,7 @@ public:
                 if (tau() >= releaseTime)
                     get<1>(s) = 0;
             }
-/*            for(auto &s : _chemData.speciesDiffusing) {
+    /*            for(auto &s : _chemData.speciesDiffusing) {
 
                 auto name = get<0>(s);
                 auto copyNumber = get<1>(s);
@@ -242,8 +242,8 @@ public:
                 cout<<name<<" "<<copyNumber<<endl;
             }*/
 
-	    }
-	    checktallyofcopynumbers();
+        }
+        checktallyofcopynumbers();
     }
 
     void checktallyofcopynumbers(){

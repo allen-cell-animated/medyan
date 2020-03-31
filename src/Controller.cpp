@@ -236,21 +236,21 @@ void Controller::initialize(string inputFile,
     }
 
     if(SysParams::CParams.eventTracking){
-    //Set up MotorWalkingEvents if event tracking is enabled
-    string motorwalkingevents = _outputDirectory + "motorwalkingevents.traj";
-    _outputs.push_back(new MotorWalkingEvents(motorwalkingevents, &_subSystem, _cs));
+        //Set up MotorWalkingEvents if event tracking is enabled
+        string motorwalkingevents = _outputDirectory + "motorwalkingevents.traj";
+        _outputs.push_back(new MotorWalkingEvents(motorwalkingevents, &_subSystem, _cs));
 
-    //Set up motorunbindingevents if event tracking is enabled
-    string motorunbindingevents = _outputDirectory + "motorunbindingevents.traj";
-    _outputs.push_back(new MotorUnbindingEvents(motorunbindingevents, &_subSystem, _cs));
+        //Set up motorunbindingevents if event tracking is enabled
+        string motorunbindingevents = _outputDirectory + "motorunbindingevents.traj";
+        _outputs.push_back(new MotorUnbindingEvents(motorunbindingevents, &_subSystem, _cs));
 
-    //Set up LinkerUnbindingEvents if event tracking is enabled
-    string linkerunbindingevents = _outputDirectory + "linkerunbindingevents.traj";
-    _outputs.push_back(new LinkerUnbindingEvents(linkerunbindingevents, &_subSystem, _cs));
+        //Set up LinkerUnbindingEvents if event tracking is enabled
+        string linkerunbindingevents = _outputDirectory + "linkerunbindingevents.traj";
+        _outputs.push_back(new LinkerUnbindingEvents(linkerunbindingevents, &_subSystem, _cs));
 
-    //Set up LinkerBindingEvents if event tracking is enabled
-    string linkerbindingevents = _outputDirectory + "linkerbindingevents.traj";
-    _outputs.push_back(new LinkerBindingEvents(linkerbindingevents, &_subSystem, _cs));
+        //Set up LinkerBindingEvents if event tracking is enabled
+        string linkerbindingevents = _outputDirectory + "linkerbindingevents.traj";
+        _outputs.push_back(new LinkerBindingEvents(linkerbindingevents, &_subSystem, _cs));
     }
 
     if(SysParams::MParams.hessTracking){

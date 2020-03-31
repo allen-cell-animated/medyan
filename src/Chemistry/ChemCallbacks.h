@@ -537,91 +537,91 @@ struct BranchingCallback {
         
         floatingpoint pos = floatingpoint(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
 
-        if(SysParams::RUNSTATE==true){
+        if(SysParams::RUNSTATE==true) {
 
-        //Get a position and direction of a new filament
-        auto x1 = c1->getFirstBead()->vcoordinate();
-        auto x2 = c1->getSecondBead()->vcoordinate();
-        
-        //get original direction of cylinder
-        auto p= midPointCoordinate(x1, x2, pos);
-        vector<floatingpoint> n = twoPointDirection(x1, x2);
-        
-        //get branch projection
+            //Get a position and direction of a new filament
+            auto x1 = c1->getFirstBead()->vcoordinate();
+            auto x2 = c1->getSecondBead()->vcoordinate();
+            
+            //get original direction of cylinder
+            auto p= midPointCoordinate(x1, x2, pos);
+            vector<floatingpoint> n = twoPointDirection(x1, x2);
+            
+            //get branch projection
 #ifdef MECHANICS
-        //use mechanical parameters
-        floatingpoint l, t;
-        if(SysParams::Mechanics().BrStretchingL.size() != 0) {
-            l = SysParams::Mechanics().BrStretchingL[branchType];
-            t = SysParams::Mechanics().BrBendingTheta[branchType];
-        }
-        else {
-            cout << "Branching initialization cannot occur unless mechanical parameters are specified."
-            << " Using default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
-            << endl;
-            l = 10.0;
-            t = 1.22;
-        }
+            //use mechanical parameters
+            floatingpoint l, t;
+            if(SysParams::Mechanics().BrStretchingL.size() != 0) {
+                l = SysParams::Mechanics().BrStretchingL[branchType];
+                t = SysParams::Mechanics().BrBendingTheta[branchType];
+            }
+            else {
+                cout << "Branching initialization cannot occur unless mechanical parameters are specified."
+                << " Using default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
+                << endl;
+                l = 10.0;
+                t = 1.22;
+            }
 #else
-        cout << "Branching initialization cannot occur unless mechanics is enabled. Using"
-        << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
-        << endl;
-        floatingpoint l = 10.0;
-        floatingpoint t = 1.22;
+            cout << "Branching initialization cannot occur unless mechanics is enabled. Using"
+            << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
+            << endl;
+            floatingpoint l = 10.0;
+            floatingpoint t = 1.22;
 #endif
-        floatingpoint s = SysParams::Geometry().monomerSize[filType];
+            floatingpoint s = SysParams::Geometry().monomerSize[filType];
 
-        //n direction vector of mother filament
-        //p coordinate of brancher
-        //l stretching equilibrium length
-        //s monomer size
-        //t bending theta.
-        int tries = 0;
-        constexpr int triesShiftParam = 10;
-        constexpr int triesWarning    = 10;
-        bool inboundary = false;
-        frate=_offRate;
-        float cutofffactor = pow(c1->getCompartment()->getVolumeFrac(),1.0/3.0);
-        floatingpoint boundary_cutoff_distance = cutofffactor*SysParams::Boundaries()
-                .BoundaryCutoff/4.0 ;
+            //n direction vector of mother filament
+            //p coordinate of brancher
+            //l stretching equilibrium length
+            //s monomer size
+            //t bending theta.
+            int tries = 0;
+            constexpr int triesShiftParam = 10;
+            constexpr int triesWarning    = 10;
+            bool inboundary = false;
+            frate=_offRate;
+            float cutofffactor = pow(c1->getCompartment()->getVolumeFrac(),1.0/3.0);
+            floatingpoint boundary_cutoff_distance = cutofffactor*SysParams::Boundaries()
+                    .BoundaryCutoff/4.0 ;
 
             while(inboundary == false) {
 
-	     	// We try to find a point at t radians with mother filament. We have triesShiftParam
-	     	//number of trials to find an appropriate one. If not, we choose a random
-	     	//theta and let minimization algorithm take care of bringing it back to t
-	     	// radians.
-	     	const double theta = (tries >= triesShiftParam ? Rand::randfloatingpoint(0.1, 3.04) : t);
-	     	auto branchPosDir = branchProjection(n, p, l, s, theta);
-	     	auto bd = get<0>(branchPosDir);//branch direction
-	     	auto bp = get<1>(branchPosDir);//branch position
+                // We try to find a point at t radians with mother filament. We have triesShiftParam
+                //number of trials to find an appropriate one. If not, we choose a random
+                //theta and let minimization algorithm take care of bringing it back to t
+                // radians.
+                const double theta = (tries >= triesShiftParam ? Rand::randfloatingpoint(0.1, 3.04) : t);
+                auto branchPosDir = branchProjection(n, p, l, s, theta);
+                auto bd = get<0>(branchPosDir);//branch direction
+                auto bp = get<1>(branchPosDir);//branch position
 
-		    //Check if the branch will be within boundary
-		    auto projlength = SysParams::Geometry().cylinderSize[filType] / 10;
-		    auto pos2 = nextPointProjection(bp, projlength, bd);
-		    //check if within cutoff of boundary
-		    if (_ps->getBoundary()->distance(bp) >= boundary_cutoff_distance &&
-		        _ps->getBoundary()->distance(pos2) >= boundary_cutoff_distance) {
-                inboundary = true;
+                //Check if the branch will be within boundary
+                auto projlength = SysParams::Geometry().cylinderSize[filType] / 10;
+                auto pos2 = nextPointProjection(bp, projlength, bd);
+                //check if within cutoff of boundary
+                if (_ps->getBoundary()->distance(bp) >= boundary_cutoff_distance &&
+                    _ps->getBoundary()->distance(pos2) >= boundary_cutoff_distance) {
+                    inboundary = true;
 
-        	     //create a new daughter filament
-		        Filament *f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true,
-			                                               true);
+                        //create a new daughter filament
+                    Filament *f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true,
+                                                                true);
 
-			    //mark first cylinder
-			    Cylinder *c = f->getCylinderVector().front();
-			    c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
+                    //mark first cylinder
+                    Cylinder *c = f->getCylinderVector().front();
+                    c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
 
-			    //create new branch
-			    b = _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
-		    }
+                    //create new branch
+                    b = _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
+                }
 
-            ++tries;
-            if(tries >= triesWarning && inboundary == false)
-                LOG(WARNING) << "Cannot find a branching point in region. Trial " << tries << ": "
-                             << "dir (" << bd[0] << ' ' << bd[1] << ' ' << bd[2] << ") "
-                             << "pos (" << bp[0] << ' ' << bp[1] << ' ' << bp[2] << ')';
-	    }
+                ++tries;
+                if(tries >= triesWarning && inboundary == false)
+                    LOG(WARNING) << "Cannot find a branching point in region. Trial " << tries << ": "
+                                    << "dir (" << bd[0] << ' ' << bd[1] << ' ' << bd[2] << ") "
+                                    << "pos (" << bp[0] << ' ' << bp[1] << ' ' << bp[2] << ')';
+            }
 
         }
         else

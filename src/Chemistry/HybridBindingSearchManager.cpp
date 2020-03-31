@@ -35,80 +35,81 @@
 vector<short> HybridBindingSearchManager::HNLIDvec;
 using namespace mathfunc;
 
-void HybridBindingSearchManager::setbindingsearchparameter
-		(FilamentBindingManager* fmanager, short bstatepos, short ftype1, short
-		ftype2, float rMax, float rMin){
+void HybridBindingSearchManager::setbindingsearchparameter(
+	FilamentBindingManager* fmanager,
+	short bstatepos, short ftype1, short ftype2, float rMax, float rMin
+) {
 
-	unordered_map<uint32_t, vector<uint32_t>> tempuint;
-	unordered_map<uint32_t, vector<uint32_t>> rtempuint;
-	int tempNbind;
+    unordered_map<uint32_t, vector<uint32_t>> tempuint;
+    unordered_map<uint32_t, vector<uint32_t>> rtempuint;
+    int tempNbind;
 
-	bool isfound = false;
-	vector<short> ftypepairs;
-	if(ftype1 < ftype2)
-		ftypepairs = {ftype1,ftype2};
-	else
-		ftypepairs = {ftype2, ftype1};
-	for(short idx = 0; idx < totaluniquefIDpairs; idx++){
-		vector<short> fIDpair = _filamentIDvec[idx];
-		if(fIDpair[0] != ftypepairs[0] || fIDpair[1] != ftypepairs[1]) continue;
-		else {
-			isfound = true;
-			_rMaxsqvec[idx].push_back(rMax *rMax);
-			_rMinsqvec[idx].push_back(rMin *rMin);
-			fManagervec[idx].push_back(fmanager);
+    bool isfound = false;
+    vector<short> ftypepairs;
+    if(ftype1 < ftype2)
+        ftypepairs = {ftype1,ftype2};
+    else
+        ftypepairs = {ftype2, ftype1};
+    for(short idx = 0; idx < totaluniquefIDpairs; idx++){
+        vector<short> fIDpair = _filamentIDvec[idx];
+        if(fIDpair[0] != ftypepairs[0] || fIDpair[1] != ftypepairs[1]) continue;
+        else {
+            isfound = true;
+            _rMaxsqvec[idx].push_back(rMax *rMax);
+            _rMinsqvec[idx].push_back(rMin *rMin);
+            fManagervec[idx].push_back(fmanager);
 
-			_possibleBindingsstencilvecuint[idx].push_back(tempuint);
-			_reversepossibleBindingsstencilvecuint[idx].push_back(rtempuint);
-			bstateposvec[idx].push_back(bstatepos);
-			Nbindingpairs[idx].push_back(tempNbind);
-			break;
-		}
-	}
-	if(isfound == false){
-		vector<unordered_map<uint32_t, vector<uint32_t>>> temp2uint;
-		vector<unordered_map<uint32_t, vector<uint32_t>>> rtemp2uint;
+            _possibleBindingsstencilvecuint[idx].push_back(tempuint);
+            _reversepossibleBindingsstencilvecuint[idx].push_back(rtempuint);
+            bstateposvec[idx].push_back(bstatepos);
+            Nbindingpairs[idx].push_back(tempNbind);
+            break;
+        }
+    }
+    if(isfound == false){
+        vector<unordered_map<uint32_t, vector<uint32_t>>> temp2uint;
+        vector<unordered_map<uint32_t, vector<uint32_t>>> rtemp2uint;
 
-		vector<int> tempNbind2={0};
-		temp2uint.push_back(tempuint);
-		rtemp2uint.push_back(rtempuint);
+        vector<int> tempNbind2={0};
+        temp2uint.push_back(tempuint);
+        rtemp2uint.push_back(rtempuint);
 
-		Nbindingpairs.push_back(tempNbind2);
-		vector<float> localrmaxsq ={rMax * rMax};
-		vector<float> localrminsq = {rMin * rMin};
-		vector<FilamentBindingManager*> localfmanager;
-		vector<short> localbstateposvec = {bstatepos};
-		_rMaxsqvec.push_back(localrmaxsq);
-		_rMinsqvec.push_back(localrminsq);
-		localfmanager.push_back(fmanager);
-		fManagervec.push_back(localfmanager);
-		_filamentIDvec.push_back(ftypepairs);
-		_possibleBindingsstencilvecuint.push_back(temp2uint);
-		_reversepossibleBindingsstencilvecuint.push_back(rtemp2uint);
-		bstateposvec.push_back(localbstateposvec);
-		vector<floatingpoint> bs1, bs2;
-		vector<float> minvec = {(float)*(SysParams::Chemistry().bindingSites[ftypepairs[0]]
-				.begin())/ SysParams::Geometry().cylinderNumMon[ftypepairs[0]],
-		                        (float)*(SysParams::Chemistry().bindingSites[ftypepairs[1]]
-				                        .begin())/ SysParams::Geometry().cylinderNumMon[ftypepairs[1]]};
-		vector<float> maxvec = {(float)*(SysParams::Chemistry().bindingSites[ftypepairs[0]]
-				                                 .end() -1)/ SysParams::Geometry().cylinderNumMon[ftypepairs[0]],
-		                        (float)*(SysParams::Chemistry().bindingSites[ftypepairs[1]]
-				                                 .end() -1)/ SysParams::Geometry().cylinderNumMon[ftypepairs[1]]};
-		for(auto it1 = SysParams::Chemistry().bindingSites[ftypepairs[0]].begin();
-		    it1 != SysParams::Chemistry().bindingSites[ftypepairs[0]].end(); it1++) {
-			bs1.push_back((float)*it1 / SysParams::Geometry().cylinderNumMon[ftypepairs[0]]);
-		}
-		for(auto it1 = SysParams::Chemistry().bindingSites[ftypepairs[1]].begin();
-		    it1 != SysParams::Chemistry().bindingSites[ftypepairs[1]].end(); it1++) {
-			bs2.push_back((float)*it1 / SysParams::Geometry().cylinderNumMon[ftypepairs[1]]);
-		}
-		minparamcyl2.push_back(minvec);
-		maxparamcyl2.push_back(maxvec);
-		bindingsites1.push_back(bs1);
-		bindingsites2.push_back(bs1);
-		totaluniquefIDpairs++;
-	}
+        Nbindingpairs.push_back(tempNbind2);
+        vector<float> localrmaxsq ={rMax * rMax};
+        vector<float> localrminsq = {rMin * rMin};
+        vector<FilamentBindingManager*> localfmanager;
+        vector<short> localbstateposvec = {bstatepos};
+        _rMaxsqvec.push_back(localrmaxsq);
+        _rMinsqvec.push_back(localrminsq);
+        localfmanager.push_back(fmanager);
+        fManagervec.push_back(localfmanager);
+        _filamentIDvec.push_back(ftypepairs);
+        _possibleBindingsstencilvecuint.push_back(temp2uint);
+        _reversepossibleBindingsstencilvecuint.push_back(rtemp2uint);
+        bstateposvec.push_back(localbstateposvec);
+        vector<floatingpoint> bs1, bs2;
+        vector<float> minvec = {(float)*(SysParams::Chemistry().bindingSites[ftypepairs[0]]
+                .begin())/ SysParams::Geometry().cylinderNumMon[ftypepairs[0]],
+                                (float)*(SysParams::Chemistry().bindingSites[ftypepairs[1]]
+                                        .begin())/ SysParams::Geometry().cylinderNumMon[ftypepairs[1]]};
+        vector<float> maxvec = {(float)*(SysParams::Chemistry().bindingSites[ftypepairs[0]]
+                                                    .end() -1)/ SysParams::Geometry().cylinderNumMon[ftypepairs[0]],
+                                (float)*(SysParams::Chemistry().bindingSites[ftypepairs[1]]
+                                                    .end() -1)/ SysParams::Geometry().cylinderNumMon[ftypepairs[1]]};
+        for(auto it1 = SysParams::Chemistry().bindingSites[ftypepairs[0]].begin();
+            it1 != SysParams::Chemistry().bindingSites[ftypepairs[0]].end(); it1++) {
+            bs1.push_back((float)*it1 / SysParams::Geometry().cylinderNumMon[ftypepairs[0]]);
+        }
+        for(auto it1 = SysParams::Chemistry().bindingSites[ftypepairs[1]].begin();
+            it1 != SysParams::Chemistry().bindingSites[ftypepairs[1]].end(); it1++) {
+            bs2.push_back((float)*it1 / SysParams::Geometry().cylinderNumMon[ftypepairs[1]]);
+        }
+        minparamcyl2.push_back(minvec);
+        maxparamcyl2.push_back(maxvec);
+        bindingsites1.push_back(bs1);
+        bindingsites2.push_back(bs1);
+        totaluniquefIDpairs++;
+    }
 }
 
 HybridBindingSearchManager::HybridBindingSearchManager(Compartment* compartment){
@@ -617,29 +618,29 @@ void HybridBindingSearchManager::appendPossibleBindingsstencil(short idvec[2],
 																CCylinder* ccyl2,
 																short site1,
 																short site2){
-	short idx = idvec[0];
-	short idx2 = idvec[1];
-	short _filamentType = ccyl1->getType();
-	short _nfilamentType = ccyl2->getType();
-	uint32_t shiftedIndex1 = ccyl1->getCylinder()->getStableIndex();
-	shiftedIndex1 = shiftedIndex1 << SysParams::Chemistry().shiftbybits;
-	uint32_t pos1 = find(SysParams::Chemistry().bindingSites[_filamentType].begin(),
-	                     SysParams::Chemistry().bindingSites[_filamentType].end(), site1)
-	                - SysParams::Chemistry().bindingSites[_filamentType].begin();
-	uint32_t t1 = shiftedIndex1|pos1;
+    short idx = idvec[0];
+    short idx2 = idvec[1];
+    short _filamentType = ccyl1->getType();
+    short _nfilamentType = ccyl2->getType();
+    uint32_t shiftedIndex1 = ccyl1->getCylinder()->getStableIndex();
+    shiftedIndex1 = shiftedIndex1 << SysParams::Chemistry().shiftbybits;
+    uint32_t pos1 = find(SysParams::Chemistry().bindingSites[_filamentType].begin(),
+                            SysParams::Chemistry().bindingSites[_filamentType].end(), site1)
+                    - SysParams::Chemistry().bindingSites[_filamentType].begin();
+    uint32_t t1 = shiftedIndex1|pos1;
 
-	uint32_t shiftedIndex2 = ccyl2->getCylinder()->getStableIndex();
-	shiftedIndex2 = shiftedIndex2 << SysParams::Chemistry().shiftbybits;
-	uint32_t pos2 = find(SysParams::Chemistry().bindingSites[_nfilamentType].begin(),
-	                     SysParams::Chemistry().bindingSites[_nfilamentType].end(), site2)
-	                - SysParams::Chemistry().bindingSites[_nfilamentType].begin();
-	uint32_t t2 = shiftedIndex2|pos2;
+    uint32_t shiftedIndex2 = ccyl2->getCylinder()->getStableIndex();
+    shiftedIndex2 = shiftedIndex2 << SysParams::Chemistry().shiftbybits;
+    uint32_t pos2 = find(SysParams::Chemistry().bindingSites[_nfilamentType].begin(),
+                            SysParams::Chemistry().bindingSites[_nfilamentType].end(), site2)
+                    - SysParams::Chemistry().bindingSites[_nfilamentType].begin();
+    uint32_t t2 = shiftedIndex2|pos2;
 
-	_possibleBindingsstencilvecuint[idx][idx2][t1].push_back(t2);
-	_reversepossibleBindingsstencilvecuint[idx][idx2][t2].push_back(t1);
+    _possibleBindingsstencilvecuint[idx][idx2][t1].push_back(t2);
+    _reversepossibleBindingsstencilvecuint[idx][idx2][t2].push_back(t1);
 
-	countNpairsfound(idvec);
-	fManagervec[idx][idx2]->updateBindingReaction(Nbindingpairs[idx][idx2]);
+    countNpairsfound(idvec);
+    fManagervec[idx][idx2]->updateBindingReaction(Nbindingpairs[idx][idx2]);
 
 }
 
@@ -1095,27 +1096,27 @@ void HybridBindingSearchManager::clearPossibleBindingsstencil(short idvec[2]){
 }
 
 void HybridBindingSearchManager::printbindingsitesstencil(short idvec[2]) {
-	cout<<"BINDINGSITES: CYL1(SIDX) CYL2(SIDX) SITE1 SITE2"<<endl;
-	short idx = idvec[0];
-	short idx2 = idvec[1];
+    cout<<"BINDINGSITES: CYL1(SIDX) CYL2(SIDX) SITE1 SITE2"<<endl;
+    short idx = idvec[0];
+    short idx2 = idvec[1];
 
-	auto pbs = _possibleBindingsstencilvecuint[idx][idx2];
+    auto pbs = _possibleBindingsstencilvecuint[idx][idx2];
 
-	for (auto pair = pbs.begin(); pair != pbs.end(); pair++) {
+    for (auto pair = pbs.begin(); pair != pbs.end(); pair++) {
 
-		//Key
-		uint32_t leg1 = pair->first;
-		vector<uint32_t> leg2 = pair->second;
+        //Key
+        uint32_t leg1 = pair->first;
+        vector<uint32_t> leg2 = pair->second;
 
-		uint32_t cIndex1 = leg1 >> SysParams::Chemistry().shiftbybits;
-		uint32_t bsite1 = mask & leg1;
-		//Values
-		for (auto V:leg2) {
-			uint32_t cIndex2 = V >> SysParams::Chemistry().shiftbybits;
-			uint32_t bsite2 = mask & V;
-			cout<<cIndex1<<" "<<cIndex2<<" "<<bsite1<<" "<<bsite2<<endl;
-		}
-	}
+        uint32_t cIndex1 = leg1 >> SysParams::Chemistry().shiftbybits;
+        uint32_t bsite1 = mask & leg1;
+        //Values
+        for (auto V:leg2) {
+            uint32_t cIndex2 = V >> SysParams::Chemistry().shiftbybits;
+            uint32_t bsite2 = mask & V;
+            cout<<cIndex1<<" "<<cIndex2<<" "<<bsite1<<" "<<bsite2<<endl;
+        }
+    }
 }
 
 HybridCylinderCylinderNL* HybridBindingSearchManager::_HneighborList;
