@@ -171,134 +171,134 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
 #ifdef  CUDAACCL
 #ifdef CUDATIMETRACK
-    //    chrono::high_resolution_clock::time_point tbegin, tend;
-        tbegin = chrono::high_resolution_clock::now();
+//    chrono::high_resolution_clock::time_point tbegin, tend;
+    tbegin = chrono::high_resolution_clock::now();
 #endif
 #ifdef ALLSYNC
-        cudaDeviceSynchronize();
+    cudaDeviceSynchronize();
 #endif
-        for(auto strm:CUDAcommon::getCUDAvars().streamvec)
-            CUDAcommon::handleerror(cudaStreamSynchronize(*strm));
+    for(auto strm:CUDAcommon::getCUDAvars().streamvec)
+        CUDAcommon::handleerror(cudaStreamSynchronize(*strm));
 
 #ifdef CUDATIMETRACK
-        tend= chrono::high_resolution_clock::now();
-        chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-        CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
-        CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
+    tend= chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
+    CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
+    CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
 #endif
 #ifdef CUDATIMETRACK
 
-        //Reset lambda time tracker.
-        CUDAcommon::cudatime.Tlambda = 0.0;
+    //Reset lambda time tracker.
+    CUDAcommon::cudatime.Tlambda = 0.0;
 #endif
 
-        if(!(CUDAcommon::getCUDAvars().conservestreams) || stream1 == NULL)
-            CUDAcommon::handleerror(cudaStreamCreate(&stream1));
-        if(!(CUDAcommon::getCUDAvars().conservestreams) || stream1 == NULL)
-            CUDAcommon::handleerror(cudaStreamCreate(&stream2));
-        if(!(CUDAcommon::getCUDAvars().conservestreams) || stream1 == NULL)
-            CUDAcommon::handleerror(cudaStreamCreate(&stream3));
-        FFM.CUDAcopyForces(stream1, CUDAcommon::getCUDAvars().gpu_forceAux,CUDAcommon::getCUDAvars().gpu_force);//pass a
-        // stream
+    if(!(CUDAcommon::getCUDAvars().conservestreams) || stream1 == NULL)
+        CUDAcommon::handleerror(cudaStreamCreate(&stream1));
+    if(!(CUDAcommon::getCUDAvars().conservestreams) || stream1 == NULL)
+        CUDAcommon::handleerror(cudaStreamCreate(&stream2));
+    if(!(CUDAcommon::getCUDAvars().conservestreams) || stream1 == NULL)
+        CUDAcommon::handleerror(cudaStreamCreate(&stream3));
+    FFM.CUDAcopyForces(stream1, CUDAcommon::getCUDAvars().gpu_forceAux,CUDAcommon::getCUDAvars().gpu_force);//pass a
+    // stream
 #ifdef ALLSYNC
-        cudaDeviceSynchronize();
+    cudaDeviceSynchronize();
 #endif
-        FFM.CUDAcopyForces(stream2, CUDAcommon::getCUDAvars().gpu_forceAuxP,CUDAcommon::getCUDAvars().gpu_force);//pass a
-        // stream
+    FFM.CUDAcopyForces(stream2, CUDAcommon::getCUDAvars().gpu_forceAuxP,CUDAcommon::getCUDAvars().gpu_force);//pass a
+    // stream
 #ifdef ALLSYNC
-        cudaDeviceSynchronize();
+    cudaDeviceSynchronize();
 #endif
-        floatingpoint *gpu_GRADTOL;
-        floatingpoint gradtol[1];
-        gradtol[0]= GRADTOL;
-        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_GRADTOL, sizeof(floatingpoint)));
-        CUDAcommon::handleerror(cudaMemcpy(gpu_GRADTOL, gradtol, sizeof(floatingpoint), cudaMemcpyHostToDevice));
-        CGMethod::CUDAallFDotF(stream3);//curGrad //pass a stream
+    floatingpoint *gpu_GRADTOL;
+    floatingpoint gradtol[1];
+    gradtol[0]= GRADTOL;
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_GRADTOL, sizeof(floatingpoint)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_GRADTOL, gradtol, sizeof(floatingpoint), cudaMemcpyHostToDevice));
+    CGMethod::CUDAallFDotF(stream3);//curGrad //pass a stream
 
-        //synchronize streams
-        CUDAcommon::handleerror(cudaStreamSynchronize(stream1));
-        CUDAcommon::handleerror(cudaStreamSynchronize(stream2));
-        CUDAcommon::handleerror(cudaStreamSynchronize(stream3));
-        if(!(CUDAcommon::getCUDAvars().conservestreams)) {
-            CUDAcommon::handleerror(cudaStreamDestroy(stream1));
-            CUDAcommon::handleerror(cudaStreamDestroy(stream2));
-            CUDAcommon::handleerror(cudaStreamDestroy(stream3));
-        }
+    //synchronize streams
+    CUDAcommon::handleerror(cudaStreamSynchronize(stream1));
+    CUDAcommon::handleerror(cudaStreamSynchronize(stream2));
+    CUDAcommon::handleerror(cudaStreamSynchronize(stream3));
+    if(!(CUDAcommon::getCUDAvars().conservestreams)) {
+        CUDAcommon::handleerror(cudaStreamDestroy(stream1));
+        CUDAcommon::handleerror(cudaStreamDestroy(stream2));
+        CUDAcommon::handleerror(cudaStreamDestroy(stream3));
+    }
+//PING PONG
+    bool  *Mmh_stop, *Mmg_stop1, *Mmg_stop2, *Mmg_s1, *Mmg_s2, *Mmg_ss;//minimization state
+    bool  *Msh_stop, *Msg_stop1, *Msg_stop2, *Msg_s1, *Msg_s2, *Msg_ss;//safe state
+
     //PING PONG
-        bool  *Mmh_stop, *Mmg_stop1, *Mmg_stop2, *Mmg_s1, *Mmg_s2, *Mmg_ss;//minimization state
-        bool  *Msh_stop, *Msg_stop1, *Msg_stop2, *Msg_s1, *Msg_s2, *Msg_ss;//safe state
+    //minimization state
+    cudaMalloc(&Mmg_stop1, sizeof(bool));
+    cudaMalloc(&Mmg_stop2, sizeof(bool));
+    cudaHostAlloc(&Mmh_stop, sizeof(bool), cudaHostAllocDefault);
+    //safe state
+    cudaMalloc(&Msg_stop1, sizeof(bool));
+    cudaMalloc(&Msg_stop2, sizeof(bool));
+    cudaHostAlloc(&Msh_stop, sizeof(bool), cudaHostAllocDefault);
+    //@
 
-        //PING PONG
-        //minimization state
-        cudaMalloc(&Mmg_stop1, sizeof(bool));
-        cudaMalloc(&Mmg_stop2, sizeof(bool));
-        cudaHostAlloc(&Mmh_stop, sizeof(bool), cudaHostAllocDefault);
-        //safe state
-        cudaMalloc(&Msg_stop1, sizeof(bool));
-        cudaMalloc(&Msg_stop2, sizeof(bool));
-        cudaHostAlloc(&Msh_stop, sizeof(bool), cudaHostAllocDefault);
-        //@
+    if(!(CUDAcommon::getCUDAvars().conservestreams) || Ms1 == NULL)
+        CUDAcommon::handleerror(cudaStreamCreate(&Ms1));
+    if(!(CUDAcommon::getCUDAvars().conservestreams) || Ms2 == NULL)
+        CUDAcommon::handleerror(cudaStreamCreate(&Ms2));
+    if(!(CUDAcommon::getCUDAvars().conservestreams) || Ms3 == NULL)
+        CUDAcommon::handleerror(cudaStreamCreate(&Ms3));
+    if(!(CUDAcommon::getCUDAvars().conservestreams) || Ms4 == NULL)
+        CUDAcommon::handleerror(cudaStreamCreate(&Ms4));
+    if(!(CUDAcommon::getCUDAvars().conservestreams) || Me1 == NULL)
+        CUDAcommon::handleerror(cudaEventCreate(&Me1));
+    if(!(CUDAcommon::getCUDAvars().conservestreams) || Me2 == NULL)
+        CUDAcommon::handleerror(cudaEventCreate(&Me2));
+    if(!(CUDAcommon::getCUDAvars().conservestreams) || stream_shiftsafe == NULL)
+        CUDAcommon::handleerror(cudaStreamCreate(&stream_shiftsafe));
+    if(!(CUDAcommon::getCUDAvars().conservestreams) || stream_dotcopy == NULL)
+        CUDAcommon::handleerror(cudaStreamCreate(&stream_dotcopy));
+    if(!(CUDAcommon::getCUDAvars().conservestreams) || event_safe == NULL)
+        CUDAcommon::handleerror(cudaEventCreate(&event_safe));
+    if(!(CUDAcommon::getCUDAvars().conservestreams) || event_dot == NULL)
+        CUDAcommon::handleerror(cudaEventCreate(&event_dot));
 
-        if(!(CUDAcommon::getCUDAvars().conservestreams) || Ms1 == NULL)
-            CUDAcommon::handleerror(cudaStreamCreate(&Ms1));
-        if(!(CUDAcommon::getCUDAvars().conservestreams) || Ms2 == NULL)
-            CUDAcommon::handleerror(cudaStreamCreate(&Ms2));
-        if(!(CUDAcommon::getCUDAvars().conservestreams) || Ms3 == NULL)
-            CUDAcommon::handleerror(cudaStreamCreate(&Ms3));
-        if(!(CUDAcommon::getCUDAvars().conservestreams) || Ms4 == NULL)
-            CUDAcommon::handleerror(cudaStreamCreate(&Ms4));
-        if(!(CUDAcommon::getCUDAvars().conservestreams) || Me1 == NULL)
-            CUDAcommon::handleerror(cudaEventCreate(&Me1));
-        if(!(CUDAcommon::getCUDAvars().conservestreams) || Me2 == NULL)
-            CUDAcommon::handleerror(cudaEventCreate(&Me2));
-        if(!(CUDAcommon::getCUDAvars().conservestreams) || stream_shiftsafe == NULL)
-            CUDAcommon::handleerror(cudaStreamCreate(&stream_shiftsafe));
-        if(!(CUDAcommon::getCUDAvars().conservestreams) || stream_dotcopy == NULL)
-            CUDAcommon::handleerror(cudaStreamCreate(&stream_dotcopy));
-        if(!(CUDAcommon::getCUDAvars().conservestreams) || event_safe == NULL)
-            CUDAcommon::handleerror(cudaEventCreate(&event_safe));
-        if(!(CUDAcommon::getCUDAvars().conservestreams) || event_dot == NULL)
-            CUDAcommon::handleerror(cudaEventCreate(&event_dot));
+    Mmh_stop[0] = true; //Minimizationstate //Yes = Minimize. No = Don't minimize.
+    Msh_stop[0] = false; //safe state
+    Mc_isminimizationstate = Mmh_stop;//points to address of Mmh_stop
+    Mc_issafestate = Msh_stop;//points to address of Msh_stop
 
-        Mmh_stop[0] = true; //Minimizationstate //Yes = Minimize. No = Don't minimize.
-        Msh_stop[0] = false; //safe state
-        Mc_isminimizationstate = Mmh_stop;//points to address of Mmh_stop
-        Mc_issafestate = Msh_stop;//points to address of Msh_stop
+    Msp1 = &Ms1;
+    Msp2 = &Ms2;
+    Mep1 = &Me1;
+    Mep2 = &Me2;
+    Mmg_s1 = Mmg_stop1;
+    Mmg_s2 = Mmg_stop2;
+    Msg_s1 = Msg_stop1;
+    Msg_s2 = Msg_stop2;
+//set Mmg_stop1, Mmg_stop2 to true and Msg_stop1, Msg_stop2 to false.
 
-        Msp1 = &Ms1;
-        Msp2 = &Ms2;
-        Mep1 = &Me1;
-        Mep2 = &Me2;
-        Mmg_s1 = Mmg_stop1;
-        Mmg_s2 = Mmg_stop2;
-        Msg_s1 = Msg_stop1;
-        Msg_s2 = Msg_stop2;
-    //set Mmg_stop1, Mmg_stop2 to true and Msg_stop1, Msg_stop2 to false.
-
-    // stick to single stream going forward.
-    //@CUDA Get minimizaton state{
-        //calculate MAXF and allFDotFA
-        CGMethod::CUDAinitializePolak(*Msp1, Mmg_s1, Mmg_s2, Msg_s1, Msg_s2);
+// stick to single stream going forward.
+//@CUDA Get minimizaton state{
+    //calculate MAXF and allFDotFA
+    CGMethod::CUDAinitializePolak(*Msp1, Mmg_s1, Mmg_s2, Msg_s1, Msg_s2);
 #ifdef ALLSYNC
-        cudaDeviceSynchronize();
+    cudaDeviceSynchronize();
 #endif
-        CGMethod::CUDAgetPolakvars(*Msp1, gpu_GRADTOL, Mmg_s1, Mmg_s2, Mc_isminimizationstate);
+    CGMethod::CUDAgetPolakvars(*Msp1, gpu_GRADTOL, Mmg_s1, Mmg_s2, Mc_isminimizationstate);
 #ifdef ALLSYNC
-        cudaDeviceSynchronize();
+    cudaDeviceSynchronize();
 #endif
-        CUDAcommon::handleerror(cudaEventRecord(*Mep1, *Msp1));
-        CUDAcommon::handleerror(cudaGetLastError(),"CUDAgetPolakvars", "CGPolakRibiereMethod.cu");
+    CUDAcommon::handleerror(cudaEventRecord(*Mep1, *Msp1));
+    CUDAcommon::handleerror(cudaGetLastError(),"CUDAgetPolakvars", "CGPolakRibiereMethod.cu");
 #ifdef SERIAL_CUDACROSSCHECK
-        CUDAcommon::handleerror(cudaDeviceSynchronize());
-        std::cout<<"FMAX SERL "<<maxF()<<endl;
+    CUDAcommon::handleerror(cudaDeviceSynchronize());
+    std::cout<<"FMAX SERL "<<maxF()<<endl;
 #endif
 #ifdef ALLSYNC
-        cudaDeviceSynchronize();
+    cudaDeviceSynchronize();
 #endif
-        //Copy to host
-        CUDAcommon::handleerror(cudaStreamWaitEvent(Ms3, *Mep1, 0));
-        cudaMemcpyAsync(Mmh_stop, Mmg_s2, sizeof(bool), cudaMemcpyDeviceToHost, Ms3);
-    //@}
+    //Copy to host
+    CUDAcommon::handleerror(cudaStreamWaitEvent(Ms3, *Mep1, 0));
+    cudaMemcpyAsync(Mmh_stop, Mmg_s2, sizeof(bool), cudaMemcpyDeviceToHost, Ms3);
+//@}
 #endif
 
 #ifdef SERIAL //SERIAL
@@ -622,389 +622,389 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     //@@@} STEP 4 OTHER
 
 #ifdef SERIAL
-            while (/* Iteration criterion */  numIter < N &&
-            /* Gradient tolerance  */  (Ms_isminimizationstate) &&
-                                              !ETOLexittstatus) {
+    while (/* Iteration criterion */  numIter < N &&
+    /* Gradient tolerance  */  (Ms_isminimizationstate) &&
+                                        !ETOLexittstatus) {
 
-                //@@@{ STEP 5 OTHER
-                tbegin = chrono::high_resolution_clock::now();
-                if (std::is_same<floatingpoint, float>::value) {
-                    //set the floor of lambda (lowest lambda allowed based on maxf
-                    int maxForder = static_cast<int>(floor(log10(maxForce)));
-                    if (maxForder < 0) maxForder--;
-                    CGMethod::setLAMBDATOL(maxForder);
-                }
+        //@@@{ STEP 5 OTHER
+        tbegin = chrono::high_resolution_clock::now();
+        if (std::is_same<floatingpoint, float>::value) {
+            //set the floor of lambda (lowest lambda allowed based on maxf
+            int maxForder = static_cast<int>(floor(log10(maxForce)));
+            if (maxForder < 0) maxForder--;
+            CGMethod::setLAMBDATOL(maxForder);
+        }
 
-                tend = chrono::high_resolution_clock::now();
-                chrono::duration<floatingpoint> elapsed_other2(tend - tbegin);
-                CUDAcommon::tmin.tother += elapsed_other2.count();
-                //@@@} OTHER
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_other2(tend - tbegin);
+        CUDAcommon::tmin.tother += elapsed_other2.count();
+        //@@@} OTHER
 
-                double beta, newGrad, prevGrad;
+        double beta, newGrad, prevGrad;
 //        std::cout<<"SERL maxF "<<maxF()<<endl;
 
-                numIter++;
+        numIter++;
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_LAMBDA)
-                std::cout<<"SL safestate "<<_safeMode<<endl;
+        std::cout<<"SL safestate "<<_safeMode<<endl;
 #endif
 #ifdef CUDATIMETRACK_MACRO
-                CUDAcommon::serltime.TcomputeEiter = 0.0;
-                CUDAcommon::cudatime.TcomputeEiter = 0.0;
-                chrono::high_resolution_clock::time_point tLbegin, tLend;
-                tLbegin = chrono::high_resolution_clock::now();
+        CUDAcommon::serltime.TcomputeEiter = 0.0;
+        CUDAcommon::cudatime.TcomputeEiter = 0.0;
+        chrono::high_resolution_clock::time_point tLbegin, tLend;
+        tLbegin = chrono::high_resolution_clock::now();
 #endif
 #ifdef TRACKDIDNOTMINIMIZE
-                SysParams::Mininimization().safeModeORnot.push_back(_safeMode);
+        SysParams::Mininimization().safeModeORnot.push_back(_safeMode);
 #endif
 
-                //@@@{ STEP 6 FIND LAMBDA
-                prevlambda = lambda;
-                tbegin = chrono::high_resolution_clock::now();
-                bool copysafeMode = _safeMode;
-                bool *dummy = nullptr;
-                if (_LINESEARCHALGORITHM == "BACKTRACKING") {
-                    lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce,
-                                                                    LAMBDAMAX, dummy,
-                                                                    M_ETolstate)
-                                       : backtrackingLineSearch(FFM, MAXDIST, maxForce,
-                                                                LAMBDAMAX,
-                                                                LAMBDARUNNINGAVERAGEPROBABILITY,
-                                                                dummy, M_ETolstate);
-                } else if (_LINESEARCHALGORITHM == "QUADRATIC") {
-                    lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce,
-                                                                    LAMBDAMAX, dummy,
-                                                                    M_ETolstate)
-                                       : quadraticLineSearchV2(FFM, MAXDIST, maxForce,
-                                                               LAMBDAMAX,
-                                                               LAMBDARUNNINGAVERAGEPROBABILITY,
-                                                               dummy, M_ETolstate);
-                } else {
-                    lambda = _safeMode ? safeBacktrackingLineSearchV2(FFM, MAXDIST,
-                                                                      maxForce,
-                                                                      LAMBDAMAX, dummy,
-                                                                      M_ETolstate)
-                                       : quadraticLineSearchV2(FFM, MAXDIST, maxForce,
-                                                               LAMBDAMAX,
-                                                               LAMBDARUNNINGAVERAGEPROBABILITY,
-                                                               dummy, M_ETolstate);
-                }
+        //@@@{ STEP 6 FIND LAMBDA
+        prevlambda = lambda;
+        tbegin = chrono::high_resolution_clock::now();
+        bool copysafeMode = _safeMode;
+        bool *dummy = nullptr;
+        if (_LINESEARCHALGORITHM == "BACKTRACKING") {
+            lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce,
+                                                            LAMBDAMAX, dummy,
+                                                            M_ETolstate)
+                                : backtrackingLineSearch(FFM, MAXDIST, maxForce,
+                                                        LAMBDAMAX,
+                                                        LAMBDARUNNINGAVERAGEPROBABILITY,
+                                                        dummy, M_ETolstate);
+        } else if (_LINESEARCHALGORITHM == "QUADRATIC") {
+            lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce,
+                                                            LAMBDAMAX, dummy,
+                                                            M_ETolstate)
+                                : quadraticLineSearchV2(FFM, MAXDIST, maxForce,
+                                                        LAMBDAMAX,
+                                                        LAMBDARUNNINGAVERAGEPROBABILITY,
+                                                        dummy, M_ETolstate);
+        } else {
+            lambda = _safeMode ? safeBacktrackingLineSearchV2(FFM, MAXDIST,
+                                                                maxForce,
+                                                                LAMBDAMAX, dummy,
+                                                                M_ETolstate)
+                                : quadraticLineSearchV2(FFM, MAXDIST, maxForce,
+                                                        LAMBDAMAX,
+                                                        LAMBDARUNNINGAVERAGEPROBABILITY,
+                                                        dummy, M_ETolstate);
+        }
 
-                tend = chrono::high_resolution_clock::now();
-                chrono::duration<floatingpoint> elapsed_lambda(tend - tbegin);
-                CUDAcommon::tmin.findlambda += elapsed_lambda.count();
-                #ifdef OPTIMOUT
-                lambdatime += elapsed_lambda.count();
-                #endif
-                ////@@@@} FIND LAMBDA
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_lambda(tend - tbegin);
+        CUDAcommon::tmin.findlambda += elapsed_lambda.count();
+        #ifdef OPTIMOUT
+        lambdatime += elapsed_lambda.count();
+        #endif
+        ////@@@@} FIND LAMBDA
 
 #ifdef TRACKDIDNOTMINIMIZE
-                SysParams::Mininimization().Lambda.push_back(lambda);
+        SysParams::Mininimization().Lambda.push_back(lambda);
 #endif
 
 #ifdef CUDATIMETRACK_MACRO
-                tLend= chrono::high_resolution_clock::now();
-                chrono::duration<floatingpoint> elapsed_runiter(tLend - tLbegin);
-                std::cout<<"SERL Iter "<<numIter<<" Lambda Time taken (s) "<<elapsed_runiter.count() - CUDAcommon::cudatime.TcomputeEiter<<endl;
+        tLend= chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_runiter(tLend - tLbegin);
+        std::cout<<"SERL Iter "<<numIter<<" Lambda Time taken (s) "<<elapsed_runiter.count() - CUDAcommon::cudatime.TcomputeEiter<<endl;
 #endif
 
 #ifdef SERIAL_CUDACROSSCHECK
-                CUDAcommon::handleerror(cudaDeviceSynchronize());
-                floatingpoint cuda_lambda[1];
-                CUDAcommon::handleerror(cudaMemcpy(cuda_lambda, CUDAcommon::cudavars.gpu_lambda,  sizeof(floatingpoint),
-                                                   cudaMemcpyDeviceToHost));
-                std::cout<<"Lambda CUDA "<<cuda_lambda[0]<<" SERL "<<lambda<<endl;
+        CUDAcommon::handleerror(cudaDeviceSynchronize());
+        floatingpoint cuda_lambda[1];
+        CUDAcommon::handleerror(cudaMemcpy(cuda_lambda, CUDAcommon::cudavars.gpu_lambda,  sizeof(floatingpoint),
+                                            cudaMemcpyDeviceToHost));
+        std::cout<<"Lambda CUDA "<<cuda_lambda[0]<<" SERL "<<lambda<<endl;
 #endif
 #ifdef CUDATIMETRACK
-                tbegin = chrono::high_resolution_clock::now();
+        tbegin = chrono::high_resolution_clock::now();
 #endif
-                //@@@{ STEP7 OTHER
-                if (Ms_isminimizationstate) {
+        //@@@{ STEP7 OTHER
+        if (Ms_isminimizationstate) {
 #if defined(TRACKDIDNOTMINIMIZE) || defined(EVSALPHA)
-                    //Backup coordinate
-                    /*const std::size_t num = Bead::getDbData().coords.size_raw();
-                    Bead::getDbData().coords_bckup.resize(num);
-                    Bead::getDbData().forces_bckup.resize(num);
+            //Backup coordinate
+            /*const std::size_t num = Bead::getDbData().coords.size_raw();
+            Bead::getDbData().coords_bckup.resize(num);
+            Bead::getDbData().forces_bckup.resize(num);
 
-                    for (size_t i = 0; i < num; ++i) {
-                        Bead::getDbData().coords_bckup.value[i] = Bead::getDbData().coords.value[i];
-                        Bead::getDbData().forces_bckup.value[i] = Bead::getDbData().forces.value[i];
-                    }
-                    calculateEvsalpha(FFM, lambda, LAMBDAMAX, allFDotFA());
-                    cout<<endl;*/
+            for (size_t i = 0; i < num; ++i) {
+                Bead::getDbData().coords_bckup.value[i] = Bead::getDbData().coords.value[i];
+                Bead::getDbData().forces_bckup.value[i] = Bead::getDbData().forces.value[i];
+            }
+            calculateEvsalpha(FFM, lambda, LAMBDAMAX, allFDotFA());
+            cout<<endl;*/
 
 #endif
-                    tbegin = chrono::high_resolution_clock::now();
-                    //SERIAL VERSION
-                    moveBeads(lambda);
-                    tend = chrono::high_resolution_clock::now();
-                    chrono::duration<floatingpoint> elapsed_other3(tend - tbegin);
-                    CUDAcommon::tmin.tother += elapsed_other3.count();
-                }
-                //@@@} OTHER
+            tbegin = chrono::high_resolution_clock::now();
+            //SERIAL VERSION
+            moveBeads(lambda);
+            tend = chrono::high_resolution_clock::now();
+            chrono::duration<floatingpoint> elapsed_other3(tend - tbegin);
+            CUDAcommon::tmin.tother += elapsed_other3.count();
+        }
+        //@@@} OTHER
 #if defined(CROSSCHECK) || defined(CUDAACCL)
-                cross_checkclass::Aux=true;
+        cross_checkclass::Aux=true;
 #endif
 #ifdef CUDATIMETRACK
-                tend = chrono::high_resolution_clock::now();
-                chrono::duration<floatingpoint> elapsed_runs1(tend - tbegin);
-                s1 += elapsed_runs1.count();
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_runs1(tend - tbegin);
+        s1 += elapsed_runs1.count();
 #endif
-                ///@@@{ STEP 8 compute new forces
-                tbegin = chrono::high_resolution_clock::now();
-                FFM.computeForces(Bead::getDbData().coords.data(),
-                                  Bead::getDbData().forcesAux.data());//split and synchronize
-                tend = chrono::high_resolution_clock::now();
-                chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
-                CUDAcommon::tmin.computeforces += elapsed_force.count();
+        ///@@@{ STEP 8 compute new forces
+        tbegin = chrono::high_resolution_clock::now();
+        FFM.computeForces(Bead::getDbData().coords.data(),
+                            Bead::getDbData().forcesAux.data());//split and synchronize
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
+        CUDAcommon::tmin.computeforces += elapsed_force.count();
 
-                maxForce = maxF();
+        maxForce = maxF();
 
-                if (M_ETolstate[0] && maxForce <= 2.5 * GRADTOL) {
-                    ETOLexittstatus = true;
-                } else
-                    M_ETolstate[0] = false;
-                ///@@@}
+        if (M_ETolstate[0] && maxForce <= 2.5 * GRADTOL) {
+            ETOLexittstatus = true;
+        } else
+            M_ETolstate[0] = false;
+        ///@@@}
 #ifdef DETAILEDOUTPUT
-                std::cout<<"MB printing beads & forces L "<<lambda<<endl;
-                long i = 0;
-                long index = 0;
-                for(auto b:Bead::getBeads()){
-                    index = 3 * b->getStableIndex();
+        std::cout<<"MB printing beads & forces L "<<lambda<<endl;
+        long i = 0;
+        long index = 0;
+        for(auto b:Bead::getBeads()){
+            index = 3 * b->getStableIndex();
 
-                    std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
-                            ""<<coord[index + 2]<<" "
-                            ""<<forceAux[index]<<" "
-                            ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-                            b->getStableIndex()<<endl;
-                }
-                std::cout<<"MB printed beads & forces"<<endl;
+            std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
+                    ""<<coord[index + 2]<<" "
+                    ""<<forceAux[index]<<" "
+                    ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
+                    b->getStableIndex()<<endl;
+        }
+        std::cout<<"MB printed beads & forces"<<endl;
 #endif
 
 #ifdef CUDATIMETRACK
-                tbegin = chrono::high_resolution_clock::now();
+        tbegin = chrono::high_resolution_clock::now();
 #endif
-                //@@@{ STEP 9 OTHER
-                tbegin = chrono::high_resolution_clock::now();
-                //compute direction
+        //@@@{ STEP 9 OTHER
+        tbegin = chrono::high_resolution_clock::now();
+        //compute direction
 //        std::cout<<"serial"<<endl;
-                newGrad = CGMethod::allFADotFA();
-                prevGrad = CGMethod::allFADotFAP();
+        newGrad = CGMethod::allFADotFA();
+        prevGrad = CGMethod::allFADotFAP();
 #ifdef CUDATIMETRACK
-                tend = chrono::high_resolution_clock::now();
-                chrono::duration<floatingpoint> elapsed_runs2a(tend - tbegin);
-                s2 += elapsed_runs2a.count();
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_runs2a(tend - tbegin);
+        s2 += elapsed_runs2a.count();
 #endif
 #ifdef CUDATIMETRACK
-                tbegin = chrono::high_resolution_clock::now();
+        tbegin = chrono::high_resolution_clock::now();
 #endif
 
-                //Polak-Ribiere update
-                //Max(0,betaPR) allows us to reset the direction under non-ideal circumstances.
-                //The direction is reset of steepest descent direction (-gk).
-                double betaPR = max<double>((double) 0.0, (newGrad - prevGrad) / curGrad);
-                double betaFR = max<double>((double) 0.0, newGrad / curGrad);
-                //Efficient hybrid Conjugate gradient techniques, Eq 21
-                prevbeta = beta;
-                if (betaPR == 0.0)
-                    beta = betaFR;
-                else if (betaPR < 1.25 * betaFR)
-                    beta = betaPR;
-                else
-                    beta = betaFR;
+        //Polak-Ribiere update
+        //Max(0,betaPR) allows us to reset the direction under non-ideal circumstances.
+        //The direction is reset of steepest descent direction (-gk).
+        double betaPR = max<double>((double) 0.0, (newGrad - prevGrad) / curGrad);
+        double betaFR = max<double>((double) 0.0, newGrad / curGrad);
+        //Efficient hybrid Conjugate gradient techniques, Eq 21
+        prevbeta = beta;
+        if (betaPR == 0.0)
+            beta = betaFR;
+        else if (betaPR < 1.25 * betaFR)
+            beta = betaPR;
+        else
+            beta = betaFR;
 
-                //Global convergence properties of conjugate gradient methods for optimization Eq
-                // 3.8
-                //A SURVEY OF NONLINEAR CONJUGATE GRADIENT METHODS Section 9.
-                //Allows for negative beta values.
-                /*double betaPR = (newGrad - prevGrad) / curGrad;
-                double betaFR = newGrad/ curGrad;
-                beta = max<double>(-betaFR, min<double>(betaPR, betaFR));
-                cout<<"betaPR "<<betaPR<<" betaFR "<<betaFR<<" beta "<<beta<<endl;*/
+        //Global convergence properties of conjugate gradient methods for optimization Eq
+        // 3.8
+        //A SURVEY OF NONLINEAR CONJUGATE GRADIENT METHODS Section 9.
+        //Allows for negative beta values.
+        /*double betaPR = (newGrad - prevGrad) / curGrad;
+        double betaFR = newGrad/ curGrad;
+        beta = max<double>(-betaFR, min<double>(betaPR, betaFR));
+        cout<<"betaPR "<<betaPR<<" betaFR "<<betaFR<<" beta "<<beta<<endl;*/
 
 //	    cout<<"newGrad "<<newGrad<<" prevGrad "<<prevGrad<<" curGrad "
 //	    <<curGrad<<" beta "<<beta<<endl;
 
 //        cout<<"lambda "<<lambda<<" beta "<<beta<<endl;
-                if (Ms_isminimizationstate)
-                    //shift gradient
-                    shiftGradient(beta);
+        if (Ms_isminimizationstate)
+            //shift gradient
+            shiftGradient(beta);
 
-                tend = chrono::high_resolution_clock::now();
-                chrono::duration<floatingpoint> elapsed_other4(tend - tbegin);
-                CUDAcommon::tmin.tother += elapsed_other4.count();
-                //@@@} OTHER
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_other4(tend - tbegin);
+        CUDAcommon::tmin.tother += elapsed_other4.count();
+        //@@@} OTHER
 
 #ifdef TRACKDIDNOTMINIMIZE
-                SysParams::Mininimization().beta.push_back(beta);
-                SysParams::Mininimization().maxF.push_back(maxForce);
+        SysParams::Mininimization().beta.push_back(beta);
+        SysParams::Mininimization().maxF.push_back(maxForce);
 #endif
 
 #ifdef CUDATIMETRACK
-                tend = chrono::high_resolution_clock::now();
-                chrono::duration<floatingpoint> elapsed_runs3a(tend - tbegin);
-                s3 += elapsed_runs3a.count();
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_runs3a(tend - tbegin);
+        s3 += elapsed_runs3a.count();
 #endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_BETA)
-                std::cout<<"Shift Gradient "<<beta<<endl;
-                CUDAcommon::handleerror(cudaDeviceSynchronize(),"CGPolakRibiereMethod.cu","CGPolakRibiereMethod.cu");
-                std::cout<<"Beta serial "<<beta<<endl;
-                std::cout<<"newGrad "<<newGrad<<" prevGrad "<<prevGrad<<" curGrad "<<curGrad<<endl;
+        std::cout<<"Shift Gradient "<<beta<<endl;
+        CUDAcommon::handleerror(cudaDeviceSynchronize(),"CGPolakRibiereMethod.cu","CGPolakRibiereMethod.cu");
+        std::cout<<"Beta serial "<<beta<<endl;
+        std::cout<<"newGrad "<<newGrad<<" prevGrad "<<prevGrad<<" curGrad "<<curGrad<<endl;
 #endif
 #ifdef CUDATIMETRACK
-                tbegin = chrono::high_resolution_clock::now();
+        tbegin = chrono::high_resolution_clock::now();
 #endif
 #ifdef CUDATIMETRACK
-                tbegin = chrono::high_resolution_clock::now();
+        tbegin = chrono::high_resolution_clock::now();
 #endif
 
-                //@@@{ STEP 10 vectorized copy
-                tbegin = chrono::high_resolution_clock::now();
-                Bead::getDbData().forcesAuxP = Bead::getDbData().forcesAux;
-                tend = chrono::high_resolution_clock::now();
-                chrono::duration<floatingpoint> elapsed_copy2(tend - tbegin);
-                CUDAcommon::tmin.copyforces += elapsed_copy2.count();
-                //@@@}
+        //@@@{ STEP 10 vectorized copy
+        tbegin = chrono::high_resolution_clock::now();
+        Bead::getDbData().forcesAuxP = Bead::getDbData().forcesAux;
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_copy2(tend - tbegin);
+        CUDAcommon::tmin.copyforces += elapsed_copy2.count();
+        //@@@}
 #ifdef CUDATIMETRACK
-                tend = chrono::high_resolution_clock::now();
-                chrono::duration<floatingpoint> elapsed_runs2b(tend - tbegin);
-                s2 += elapsed_runs2b.count();
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_runs2b(tend - tbegin);
+        s2 += elapsed_runs2b.count();
 #endif
 #ifdef CUDATIMETRACK
-                tbegin = chrono::high_resolution_clock::now();
+        tbegin = chrono::high_resolution_clock::now();
 #endif
-                //direction reset if not downhill, or no progress made
-                //For any iteration "k"
-                //"force" are the conjugate gradient direction (dk)
-                //"forceAux" are the force/steepest descent direction (-gk)
-                //<-gk+1,dk+1> < 0 => gk and dk are at acute angles with one another
-                /*Note: Gradient and conjugate direction should be at obtuse angles for effective
-                 * descent*/
-                //curGrad = newGrad => gk+1.gk+1 and gk.gk are equal. Gradient has not
-                // changed in magnitude.
-                //Note: -grad E = ForceAux = -gk. Descent direction = dk = Force
+        //direction reset if not downhill, or no progress made
+        //For any iteration "k"
+        //"force" are the conjugate gradient direction (dk)
+        //"forceAux" are the force/steepest descent direction (-gk)
+        //<-gk+1,dk+1> < 0 => gk and dk are at acute angles with one another
+        /*Note: Gradient and conjugate direction should be at obtuse angles for effective
+            * descent*/
+        //curGrad = newGrad => gk+1.gk+1 and gk.gk are equal. Gradient has not
+        // changed in magnitude.
+        //Note: -grad E = ForceAux = -gk. Descent direction = dk = Force
 #ifdef TRACKDIDNOTMINIMIZE
-                vector<floatingpoint>gradlocal;
-                gradlocal.push_back(CGMethod::allFDotFA());
-                gradlocal.push_back(curGrad);
-                gradlocal.push_back(newGrad);
-                gradlocal.push_back(prevGrad);
+        vector<floatingpoint>gradlocal;
+        gradlocal.push_back(CGMethod::allFDotFA());
+        gradlocal.push_back(curGrad);
+        gradlocal.push_back(newGrad);
+        gradlocal.push_back(prevGrad);
 
-                SysParams::Mininimization().gradientvec.push_back(gradlocal);
+        SysParams::Mininimization().gradientvec.push_back(gradlocal);
 #endif
 
-                Ms_issafestate = CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad);
+        Ms_issafestate = CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad);
 //        ||        abs(prevGrad/newGrad)<0.1;
-                if (Ms_issafestate && Ms_isminimizationstate) {
-                    //The direction is reset of steepest descent direction (-gk).
-                    shiftGradient(0.0);
-                    _safeMode = true;
-                    #ifdef OPTIMOUT
-                    safestatuscount++;
-                    #endif
+        if (Ms_issafestate && Ms_isminimizationstate) {
+            //The direction is reset of steepest descent direction (-gk).
+            shiftGradient(0.0);
+            _safeMode = true;
+            #ifdef OPTIMOUT
+            safestatuscount++;
+            #endif
 #ifdef EVSALPHA
 
-                    cout << "newGrad " << newGrad << " prevGrad " << prevGrad << " curGrad "
-                         << curGrad << endl;
-                    cout << "beta " << beta << " prevbeta " << prevbeta << endl;
-                    cout << "FDotFA<0 " << (CGMethod::allFDotFA() <= 0)
-                         << " curGrad==newGrad "
-                         <<
-                         areEqual(curGrad, newGrad) << " abs(prevGrad/newGrad)<0.1 "
-                         << (abs(prevGrad / newGrad) < 0.1) << endl;
-                    calculateEvsalpha(FFM, lambda, LAMBDAMAX, allFDotFA());
-                    cout << endl;
+            cout << "newGrad " << newGrad << " prevGrad " << prevGrad << " curGrad "
+                    << curGrad << endl;
+            cout << "beta " << beta << " prevbeta " << prevbeta << endl;
+            cout << "FDotFA<0 " << (CGMethod::allFDotFA() <= 0)
+                    << " curGrad==newGrad "
+                    <<
+                    areEqual(curGrad, newGrad) << " abs(prevGrad/newGrad)<0.1 "
+                    << (abs(prevGrad / newGrad) < 0.1) << endl;
+            calculateEvsalpha(FFM, lambda, LAMBDAMAX, allFDotFA());
+            cout << endl;
 #endif
-                }
-                //Create back up coordinates to go to in case Energy minimization fails at an
-                // undeisrable state.
-                if (maxForce < 10 * GRADTOL && numIter > N / 2) {
-                    copycoordsifminimumE(maxForce);
-                }
+        }
+        //Create back up coordinates to go to in case Energy minimization fails at an
+        // undeisrable state.
+        if (maxForce < 10 * GRADTOL && numIter > N / 2) {
+            copycoordsifminimumE(maxForce);
+        }
 
 #ifdef CUDATIMETRACK
-                tend = chrono::high_resolution_clock::now();
-                chrono::duration<floatingpoint> elapsed_runs3b(tend - tbegin);
-                s3 += elapsed_runs3b.count();
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_runs3b(tend - tbegin);
+        s3 += elapsed_runs3b.count();
 #endif
 #ifdef CUDATIMETRACK
-                tbegin = chrono::high_resolution_clock::now();
+        tbegin = chrono::high_resolution_clock::now();
 #endif
-                curGrad = newGrad;
-                Ms_isminimizationstate = maxForce > GRADTOL;
+        curGrad = newGrad;
+        Ms_isminimizationstate = maxForce > GRADTOL;
 #ifdef CUDATIMETRACK
-                tend = chrono::high_resolution_clock::now();
-                chrono::duration<floatingpoint> elapsed_runs1b(tend - tbegin);
-                s1 += elapsed_runs1b.count();
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_runs1b(tend - tbegin);
+        s1 += elapsed_runs1b.count();
 #endif
-            }// End minimization
+    }// End minimization
 #endif //SERIAL
 
 #ifdef OPTIMOUT
-        std::cout << "SERL Total number of iterations " <<_LINESEARCHALGORITHM<<" "<<
-        numIter << endl;
+    std::cout << "SERL Total number of iterations " <<_LINESEARCHALGORITHM<<" "<<
+    numIter << endl;
 
 #endif
 #ifdef CUDATIMETRACK_MACRO
-        std::cout<<"SERL Energy time taken (s) "<<CUDAcommon::serltime.TcomputeE<<" for total "
-                "iters "<<CUDAcommon::serltime.Ecount<<endl;
-        std::cout<<"SERL Force time taken (s) "<<CUDAcommon::serltime.TcomputeF<<endl;
-        std::cout<<"SERL Energy time per iter (s/iter) "<<CUDAcommon::serltime.TcomputeE/
-                                                          (floatingpoint(CUDAcommon::serltime.Ecount))
-                 <<endl;
-        std::cout<<"SERL Split Times Iter "<<numIter<<" "<<s1<<" "<<s2<<" "<<s3<<" "<<s4<<endl;
-        std::cout<<"SERL Add "<<s1+s2+s3+s4<<endl;
+    std::cout<<"SERL Energy time taken (s) "<<CUDAcommon::serltime.TcomputeE<<" for total "
+            "iters "<<CUDAcommon::serltime.Ecount<<endl;
+    std::cout<<"SERL Force time taken (s) "<<CUDAcommon::serltime.TcomputeF<<endl;
+    std::cout<<"SERL Energy time per iter (s/iter) "<<CUDAcommon::serltime.TcomputeE/
+                                                        (floatingpoint(CUDAcommon::serltime.Ecount))
+                <<endl;
+    std::cout<<"SERL Split Times Iter "<<numIter<<" "<<s1<<" "<<s2<<" "<<s3<<" "<<s4<<endl;
+    std::cout<<"SERL Add "<<s1+s2+s3+s4<<endl;
 #endif
 #ifdef CUDATIMETRACK
-        tendII= chrono::high_resolution_clock::now();
-        chrono::duration<floatingpoint> elapsed_runslice2(tendII - tbeginII);
-        std::cout<<"Slice time "<<elapsed_runslice2.count()<<endl;
-        tbeginII = chrono::high_resolution_clock::now();
+    tendII= chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_runslice2(tendII - tbeginII);
+    std::cout<<"Slice time "<<elapsed_runslice2.count()<<endl;
+    tbeginII = chrono::high_resolution_clock::now();
 #endif
-        if (M_ETolstate[0]) {
-            cout << endl;
+    if (M_ETolstate[0]) {
+        cout << endl;
 
-            cout << "WARNING: Minimization exited when Energy Tolerance was reached at N = "
-                 << numIter << " steps." << endl;
-            cout << "Maximum force in system = " << maxF() << endl;
-            cout << "System energy..." << endl;
-            #ifdef ADDITIONALINFO
-            FFM.computeEnergy(Bead::getDbData().coords.data(), true);
-            #endif
-        }
+        cout << "WARNING: Minimization exited when Energy Tolerance was reached at N = "
+                << numIter << " steps." << endl;
+        cout << "Maximum force in system = " << maxF() << endl;
+        cout << "System energy..." << endl;
+        #ifdef ADDITIONALINFO
+        FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+        #endif
+    }
 
-        else if (numIter >= N) {
+    else if (numIter >= N) {
 #ifdef CUDAACCL
 
 
 #endif
-            //TODO think about integrating CUDA version here
-            cout << endl;
+        //TODO think about integrating CUDA version here
+        cout << endl;
 
-            cout << "WARNING: Did not minimize in N = " << N << " steps." << endl;
-            cout << "Maximum force in system = " << maxF() << endl;
+        cout << "WARNING: Did not minimize in N = " << N << " steps." << endl;
+        cout << "Maximum force in system = " << maxF() << endl;
 
 #ifdef CUDAACCL
-            auto cvars = CUDAcommon::getCUDAvars();
-            cvars.streamvec.clear();
-            CUDAcommon::cudavars = cvars;
+        auto cvars = CUDAcommon::getCUDAvars();
+        cvars.streamvec.clear();
+        CUDAcommon::cudavars = cvars;
 #endif
-            cout << "System energy..." << endl;
-            FFM.computeEnergy(Bead::getDbData().coords.data(), true);
-            CUDAcommon::tmin.computeenerycallszero++;
+        cout << "System energy..." << endl;
+        FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+        CUDAcommon::tmin.computeenerycallszero++;
 #ifdef CUDAACCL
-            for(auto strm:CUDAcommon::getCUDAvars().streamvec)
-                CUDAcommon::handleerror(cudaStreamSynchronize(*strm));
+        for(auto strm:CUDAcommon::getCUDAvars().streamvec)
+            CUDAcommon::handleerror(cudaStreamSynchronize(*strm));
 #endif
-            cout << endl;
-            //Copy back coordinates that correspond to minimum energy
-            copybackupcoordinates();
+        cout << endl;
+        //Copy back coordinates that correspond to minimum energy
+        copybackupcoordinates();
 
-            cout << "Culprit ..." << endl;
-            auto b = maxBead();
-            if (b != nullptr) b->getParent()->printSelf();
-        }
-        // Reset backup coordinates with minimum Energy
-        Bead::getDbData().coords_minE.resize(0);
+        cout << "Culprit ..." << endl;
+        auto b = maxBead();
+        if (b != nullptr) b->getParent()->printSelf();
+    }
+    // Reset backup coordinates with minimum Energy
+    Bead::getDbData().coords_minE.resize(0);
 
 
 
