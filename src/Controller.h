@@ -29,7 +29,6 @@
 class SubSystem;
 class Cylinder;
 class FilamentBindingManager;
-class ThreadPool;
 
 /// Used to initialize, manage, and run an entire simulation.
 
@@ -162,7 +161,7 @@ public:
     void initialize(string inputFile,
                     string inputDirectory,
                     string outputDirectory,
-                    ThreadPool& tp);
+                    int numThreads);
     ///Run the simulation
     void run();
 };
