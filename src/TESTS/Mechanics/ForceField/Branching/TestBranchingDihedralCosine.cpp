@@ -4,12 +4,12 @@
 
 #include "catch2/catch.hpp"
 
-#include "Mechanics/ForceField/Branching/BranchingDihedralCosine.hpp"
+#include "Mechanics/ForceField/Branching/BranchingDihedralCosine.h"
 #include "TESTS/Mechanics/ForceField/TestFFCommon.hpp"
 
 using namespace test_ff_common;
 
-TEST_CASE("Force field: Branching Dihedral Quadratic", "[ForceField]") {
+TEST_CASE("Force field: Branching Dihedral Cosine", "[ForceField]") {
     // The test case checks whether energy and force are consistent
 
     using namespace std;
