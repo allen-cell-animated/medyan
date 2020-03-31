@@ -267,6 +267,8 @@ public:
 	static floatingpoint timedneighbor;
 	static floatingpoint timetrackable;
 
+    MinimizationResult prevMinResult;
+
 private:
 	chrono::high_resolution_clock::time_point minsN, mineN, minsT,mineT;
     floatingpoint _energy = 0; ///< Energy of this subsystem

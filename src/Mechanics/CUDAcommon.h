@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <list>
+
 #include "FilamentStretchingHarmonic.h"
 #include "FilamentBendingHarmonic.h"
 #include "FilamentBendingCosine.h"

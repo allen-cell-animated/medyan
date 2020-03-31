@@ -57,6 +57,8 @@ public:
     /// Length management
     void setLength(floatingpoint l){_currentLength = l;}
     floatingpoint getLength() {return _currentLength;}
+
+    void initializerestart(floatingpoint eqLength);
     //@}
     
 private:

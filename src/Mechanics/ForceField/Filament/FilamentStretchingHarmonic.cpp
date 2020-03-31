@@ -11,6 +11,7 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
+
 #include "FilamentStretchingHarmonic.h"
 #include "FilamentStretching.h"
 #include "FilamentStretchingHarmonicCUDA.h"
@@ -177,6 +178,9 @@ void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, 
         exit(EXIT_FAILURE);
 }
 #endif
+//E(coord)
+//Coord_new = Coord + lambda * Force
+//E(coord_new)
 floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, int *beadSet,
                                           floatingpoint *kstr, floatingpoint *eql){
 
@@ -195,7 +199,6 @@ floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, int *bead
         dist = twoPointDistance(coord1, coord2) - eql[i];
 
         U_i = 0.5 * kstr[i] * dist * dist;
-//        std::cout<<"S "<<i<<" "<<dist<<" "<<U_i<<endl;
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
@@ -211,6 +214,7 @@ floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, int *bead
     return U;
 }
 
+//E(coord, force, lambda)
 floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
                                           floatingpoint *kstr, floatingpoint *eql, floatingpoint d){
 

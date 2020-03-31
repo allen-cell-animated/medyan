@@ -31,6 +31,7 @@ void BranchingPosition<BPositionInteractionType>::vectorize() {
     beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
     kpos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
     pos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
+    stretchforce = new floatingpoint[3*BranchingPoint::getBranchingPoints().size()];
 
     int i = 0;
 
@@ -42,6 +43,8 @@ void BranchingPosition<BPositionInteractionType>::vectorize() {
 
         kpos[i] = b->getMBranchingPoint()->getPositionConstant();
         pos[i] = b->getPosition();
+        for(int j = 0; j < 3; j++)
+            stretchforce[3*i + j] = 0.0;
 
         i++;
     }
@@ -73,6 +76,14 @@ void BranchingPosition<BPositionInteractionType>::vectorize() {
 
 template<class BPositionInteractionType>
 void BranchingPosition<BPositionInteractionType>::deallocate() {
+
+    for(auto b:BranchingPoint::getBranchingPoints()){
+        //Using += to ensure that the stretching forces are additive.
+
+        for(int j = 0; j < 3; j++)
+            b->getMBranchingPoint()->branchForce[j] += stretchforce[3*b->getIndex() + j];
+    }
+    delete [] stretchforce;
     delete [] beadSet;
     delete [] kpos;
     delete [] pos;
@@ -151,7 +162,7 @@ void BranchingPosition<BPositionInteractionType>::computeForces(floatingpoint *c
 #endif
 #ifdef SERIAL
 
-    _FFType.forces(coord, f, beadSet, kpos, pos);
+    _FFType.forces(coord, f, beadSet, kpos, pos, stretchforce);
 
 #endif
 }
