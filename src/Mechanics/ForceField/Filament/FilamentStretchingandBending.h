@@ -63,7 +63,7 @@ public:
 	const static int nstr = 2;
 	const static int ncylperint = 2;
 
-	virtual void vectorize();
+	virtual void vectorize(const FFCoordinateStartingIndex&) override;
 	virtual void deallocate();
 
 	virtual floatingpoint computeEnergy(floatingpoint *coord) override;

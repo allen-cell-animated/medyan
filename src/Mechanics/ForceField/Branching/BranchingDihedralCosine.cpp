@@ -716,10 +716,10 @@ dataType BranchingDihedralCosine::energyininteractionperturbed(
     //@}
 
     for(int j = 0; j < 3; j++){
-        coord1[j] = coord[3 * beadSet[n * i]+ j];
-        coord2[j] = coord[3 * beadSet[n * i + 1]+ j];
-        coord3[j] = coord[3 * beadSet[n * i + 2]+ j];
-        coord4[j] = coord[3 * beadSet[n * i + 3]+ j];
+        coord1[j] = coord[beadSet[n * i]+ j];
+        coord2[j] = coord[beadSet[n * i + 1]+ j];
+        coord3[j] = coord[beadSet[n * i + 2]+ j];
+        coord4[j] = coord[beadSet[n * i + 3]+ j];
     }
 
     if(perturbcoord != -1 && perturbaxis != -1){
@@ -840,7 +840,7 @@ void BranchingDihedralCosine::testdihedral(){
 	vector<floatingpoint> coord ={100, 100, 100, 100, 100, 300, 100, 200, 200, 80, 200,
 							   300};
 	vector<floatingpoint> force={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-	vector<unsigned int> beadSet ={0, 1, 2, 3};
+	vector<unsigned int> beadSet ={0, 3, 6, 9};
 	vector<floatingpoint> kdih ={50.0};
 	vector<floatingpoint> pos = {0.5};
 	vector<floatingpoint> stretchForce ={0.0, 0.0, 0.0};

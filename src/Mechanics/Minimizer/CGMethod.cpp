@@ -432,16 +432,13 @@ floatingpoint CGMethod::maxF() const {
 
 Bead* CGMethod::maxBead() {
 
-    // Note: this function is not safe, as it implies that Bead coordinates
-    //       start from index 0.
-
     floatingpoint maxF = 0.0;
     floatingpoint currentF;
     std::size_t index = 0;
 #ifdef SERIAL
     const auto numBeads = Bead::numBeads();
     for (size_t i = 0; i < numBeads; ++i) {
-        currentF = std::abs(force[i]);
+        currentF = mathfunc::magnitude(Bead::getBeads()[i]->force);
         if(currentF > maxF) {
             index = i;
             maxF = currentF;
@@ -471,7 +468,7 @@ Bead* CGMethod::maxBead() {
 //        std::cout<<"CPU and GPU codes do not point to same bead with maxF."<<endl;
 #endif
 
-    return Bead::getBeads()[index / 3];
+    return Bead::getBeads()[index];
 }
 
 void CGMethod::moveAlongSearchDir(floatingpoint d)
@@ -756,8 +753,7 @@ void CGMethod::startMinimization() {
 }
 
 void CGMethod::endMinimization() {
-	//flush vector
-	Bead::getDbData().coords_minE.resize(0);
+
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
@@ -1349,7 +1345,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearchV2(ForceFieldManager& FFM, flo
 #endif
 #endif
 	tbegin = chrono::high_resolution_clock::now();
-	floatingpoint currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data());
+	floatingpoint currentEnergy = FFM.computeEnergy(coord.data());
 	CUDAcommon::tmin.computeenerycallszero++;
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
@@ -1362,7 +1358,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearchV2(ForceFieldManager& FFM, flo
 
 	if(ForceFieldManager::_culpritForceField != nullptr){
 		endMinimization();
-		FFM.printculprit(Bead::getDbData().forces.data());
+		FFM.printculprit();
 	}
 #ifdef DETAILEDOUTPUT_ENERGY
 	CUDAcommon::handleerror(cudaDeviceSynchronize());
@@ -1383,8 +1379,8 @@ floatingpoint CGMethod::safeBacktrackingLineSearchV2(ForceFieldManager& FFM, flo
 	while(!(sconvergencecheck)) {
 		iter++;
 		tbegin = chrono::high_resolution_clock::now();
-		stretchBeads(lambda);
-		energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
+		moveAlongSearchDir(lambda);
+		energyLambda = FFM.computeEnergy<true>(coordLineSearch.data());
 		CUDAcommon::tmin.computeenerycallsnonzero++;
 		tend = chrono::high_resolution_clock::now();
 		chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
@@ -1409,7 +1405,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearchV2(ForceFieldManager& FFM, flo
 #ifdef SERIAL
 		//@{ Lambda phase 2
 		if(!(sconvergencecheck)){
-			floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA();
+			floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * searchDirDotForce();
 			if(idealEnergyChange>0){
 				cout<<"Ideal Energy Change > 0. Exiting."<<endl;
 				exit(EXIT_FAILURE);
@@ -1417,7 +1413,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearchV2(ForceFieldManager& FFM, flo
 			energyChange = energyLambda - currentEnergy;
 #ifdef DETAILEDOUTPUT_LAMBDA
 			std::cout<<"BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA"
-                    " "<<allFDotFA()<<endl;
+                    " "<<searchDirDotForce()<<endl;
             std::cout<<"SL energyChange "<<energyChange<<" idealEnergyChange "
                     ""<<idealEnergyChange<<endl;
 #endif
@@ -1437,7 +1433,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearchV2(ForceFieldManager& FFM, flo
 			}
 #ifdef DETAILEDOUTPUT_LAMBDA
 			std::cout<<"SL2 BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA "
-                                                                                <<allFDotFA()<<endl;
+                                                                                <<searchDirDotForce()<<endl;
             std::cout<<"SL2 energyChange "<<energyChange<<" idealEnergyChange "
                     ""<<idealEnergyChange
                      <<" lambda "<<lambda<<" state "<<sconvergencecheck<<endl;
@@ -1481,7 +1477,7 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 
 	//@} Lambda phase 1
 	tbegin = chrono::high_resolution_clock::now();
-	floatingpoint currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data());
+	floatingpoint currentEnergy = FFM.computeEnergy(coord.data());
 	floatingpoint Energyi_1 = currentEnergy;
 	CUDAcommon::tmin.computeenerycallszero++;
 	tend = chrono::high_resolution_clock::now();
@@ -1495,10 +1491,10 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 
 	if(ForceFieldManager::_culpritForceField != nullptr){
 		endMinimization();
-		FFM.printculprit(Bead::getDbData().forces.data());
+		FFM.printculprit();
 	}
 
-	double FDotFA = allFDotFA();
+	double FDotFA = searchDirDotForce();
 	double FDotFAprev = FDotFA;
 	double FDotFAnext;
 	double Del_FDotFA;
@@ -1513,13 +1509,12 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 		iter++;
 	// @{ Lambda phase 2
 		if(!(sconvergencecheck)){
-			stretchBeads(lambda);
-			energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
+			moveAlongSearchDir(lambda);
+			energyLambda = FFM.computeEnergy<true>(coordLineSearch.data());
             CUDAcommon::tmin.computeenerycallsnonzero++;
 	//Step1: Calculate Forces & Dot products
-			FFM.computeForces(Bead::getDbData().coordsStr.data(), Bead::getDbData()
-					.forcesAux.data());
-			FDotFAnext = allFDotFA();
+			FFM.computeForces(coordLineSearch.data(), force);
+			FDotFAnext = searchDirDotForce();
 			Del_FDotFA = FDotFAnext - FDotFAprev;
 			floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * FDotFA;
 	//Step3: Calculate Lambdaquad
@@ -1533,9 +1528,8 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 			if(relerr <= QUADTOL && lambdaquad > 0 && lambdaquad < lambdacap &&
 			lambdaquad > LAMBDATOL) {
 				tbegin = chrono::high_resolution_clock::now();
-				stretchBeads(lambdaquad);
-				floatingpoint energyLambdaquad = FFM.computeEnergy<true>(Bead::getDbData()
-						.coordsStr.data());
+				moveAlongSearchDir(lambdaquad);
+				floatingpoint energyLambdaquad = FFM.computeEnergy<true>(coordLineSearch.data());
 				CUDAcommon::tmin.computeenerycallsnonzero++;
 				tend = chrono::high_resolution_clock::now();
 				chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
@@ -1548,9 +1542,8 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 				if (energyChange <= idealEnergyChange) {
 					sconvergencecheck = true;
 					lambda = lambdaquad;
-					stretchBeads(lambda);
-					FFM.computeForces(Bead::getDbData().coordsStr.data(), Bead::getDbData()
-							.forcesAux.data());
+					moveAlongSearchDir(lambda);
+					FFM.computeForces(coordLineSearch.data(), force);
 				}
 				else
 					Energyi_1 = energyLambdaquad;
@@ -1579,9 +1572,8 @@ floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoin
 			if(lambda <= 0.0 || lambda <= LAMBDATOL) {
 				sconvergencecheck = true;
 				lambda = 0.0;
-				stretchBeads(lambda);
-				FFM.computeForces(Bead::getDbData().coordsStr.data(), Bead::getDbData()
-						.forcesAux.data());
+				moveAlongSearchDir(lambda);
+				FFM.computeForces(coordLineSearch.data(), force);
 			}
 		}
 		//@{ Lambda phase 2
@@ -1626,7 +1618,7 @@ floatingpoint CGMethod::quadraticLineSearchV2(ForceFieldManager& FFM, floatingpo
 
 	//@} Lambda phase 1
 	tbegin = chrono::high_resolution_clock::now();
-	floatingpoint currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data());
+	floatingpoint currentEnergy = FFM.computeEnergy(coord.data());
 	CUDAcommon::tmin.computeenerycallszero++;
 	tend = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
@@ -1639,7 +1631,7 @@ floatingpoint CGMethod::quadraticLineSearchV2(ForceFieldManager& FFM, floatingpo
 
 	if(ForceFieldManager::_culpritForceField != nullptr){
 		endMinimization();
-		FFM.printculprit(Bead::getDbData().forces.data());
+		FFM.printculprit();
 	}
 	floatingpoint energyChange = (floatingpoint)0.0;
 	floatingpoint energyLambda = (floatingpoint)0.0;
@@ -1654,8 +1646,8 @@ floatingpoint CGMethod::quadraticLineSearchV2(ForceFieldManager& FFM, floatingpo
 		iter++;
 
 		tbegin = chrono::high_resolution_clock::now();
-		stretchBeads(lambda);
-		energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
+		moveAlongSearchDir(lambda);
+		energyLambda = FFM.computeEnergy<true>(coordLineSearch.data());
 		CUDAcommon::tmin.computeenerycallsnonzero++;
 		tend = chrono::high_resolution_clock::now();
 		chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
@@ -1664,7 +1656,7 @@ floatingpoint CGMethod::quadraticLineSearchV2(ForceFieldManager& FFM, floatingpo
 
 		//@{ Lambda phase 2
 		if(!(sconvergencecheck)){
-			floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA();
+			floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * searchDirDotForce();
 
 			if(idealEnergyChange>0) {
 				cout<<"Ideal Energy Change is positive. Exiting."<<endl;
@@ -1789,8 +1781,8 @@ floatingpoint CGMethod::quadraticoptimization(ForceFieldManager& FFM, const vect
 		}
 		//else compute Energy at lambdaquad
 		else {
-			stretchBeads(lambdaquad);
-			energyQuad = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
+			moveAlongSearchDir(lambdaquad);
+			energyQuad = FFM.computeEnergy<true>(coordLineSearch.data());
             CUDAcommon::tmin.computeenerycallsnonzero++;
 //			cout<<"["<<abs(energyQuad-y1)/y1<<" "<<LAMBDAQUADTOL<<"];"<<endl;
 			if(abs(energyQuad-y1)/y1 < LAMBDAQUADTOL){

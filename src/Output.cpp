@@ -1313,7 +1313,7 @@ void Datadump::print(int snapshot) {
         short foundstatus = 0; //0 none found, 1 found one end, 2 found both ends
         bool minusendstatus = true;
         bool plusendstatus = true;
-                for(int midx = 0; midx<numMonomers; midx++){
+        for(int midx = 0; midx<numMonomers; midx++){
                 if(foundstatus ==2)
                     break;
                 short m = ccyl->getCMonomer(midx)->activeSpeciesMinusEnd();

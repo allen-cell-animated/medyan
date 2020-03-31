@@ -15,6 +15,7 @@
 #define MEDYAN_CGMethod_h
 
 #include <cmath>
+#include <utility> // move
 #include <vector>
 
 #include "common.h"
@@ -39,6 +40,7 @@ public:
     ///< Data vectors for calculation
     std::vector< floatingpoint > coord;  // All coordinates
     std::vector< floatingpoint > coordLineSearch; // Temporary coords used during line search
+    std::vector< floatingpoint > coordMinE; // Temporary coords used to record position for minimumE
 
     std::vector< floatingpoint > force; // Negative gradient of energy
     std::vector< floatingpoint > forcePrev; // Previous force
@@ -261,24 +263,18 @@ protected:
     		minimumE = TotalEnergy;
     		maxForcebackup = maxForce;
     		//take backup of coordinates.
-		    const std::size_t num = Bead::getDbData().coords.size_raw();
-		    Bead::getDbData().coords_minE.resize(num);
-		    for(size_t i = 0; i < num; ++i) {
-			    Bead::getDbData().coords_minE.value[i] = Bead::getDbData().coords.value[i];
-		    }
+            coordMinE = coord;
     	}
     }
 
     void copybackupcoordinates(){
 
-    	if(Bead::getDbData().coords_minE.size()) {
+    	if(coordMinE.size()) {
 		    cout<<"Copying coordinates with the lowest energy during minimization "<<endl;
 		    cout<<"Energy = "<<minimumE<<" pN.nm"<<endl;
 		    cout<<"MaxForce = "<<maxForcebackup<<" pN "<<endl;
-		    const std::size_t num = Bead::getDbData().coords.size_raw();
-		    for (size_t i = 0; i < num; ++i) {
-			    Bead::getDbData().coords.value[i] = Bead::getDbData().coords_minE.value[i];
-		    }
+            coord = std::move(coordMinE);
+            coordMinE.clear();
 	    }
     }
 

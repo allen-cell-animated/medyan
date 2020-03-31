@@ -31,6 +31,11 @@ public:
                           floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
                           floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY, string _LINESEARCHALGORITHM,
                           bool steplimit);
+
+    // For debug purposes used with calculateEvsalpha
+    std::vector< floatingpoint > coordBackup;
+    std::vector< floatingpoint > forceBackup;
+
 protected:
 	chrono::high_resolution_clock::time_point tbegin, tend;
 	floatingpoint prevlambda = 0;

@@ -316,8 +316,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     long i = 0;
     long index = 0;
     for(auto b:Bead::getBeads()){
-        index = 3 * b->getStableIndex();
-        std::cout<<b->getId()<<" "<< b->coordinate() <<" "
+        std::cout<<b->getId()<<" "<< b->coord <<" "
                 "" << b->force <<endl;
     }
     std::cout<<"printed beads & forces"<<endl;
@@ -463,17 +462,19 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         //compute new forces
         FFM.computeForces(coord.data(), force);//split and synchronize
 #ifdef DETAILEDOUTPUT
+        // wARNING This output is no longer safe because it assumes bead
+        // coordinates start with index 0
         std::cout<<"MB printing beads & forces L "<<lambda<<endl;
         long i = 0;
         long index = 0;
         for(auto b:Bead::getBeads()){
-            index = 3 * b->getStableIndex();
+            index = 3 * b->getIndex();
 
             std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                     ""<<coord[index + 2]<<" "
                     ""<<forceAux[index]<<" "
                     ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-                    b->getStableIndex()<<endl;
+                    b->getIndex()<<endl;
         }
         std::cout<<"MB printed beads & forces"<<endl;
 #endif
@@ -720,16 +721,10 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         if (Ms_isminimizationstate) {
 #if defined(TRACKDIDNOTMINIMIZE) || defined(EVSALPHA)
             //Backup coordinate
-            /*const std::size_t num = Bead::getDbData().coords.size_raw();
-            Bead::getDbData().coords_bckup.resize(num);
-            Bead::getDbData().forces_bckup.resize(num);
-
-            for (size_t i = 0; i < num; ++i) {
-                Bead::getDbData().coords_bckup.value[i] = Bead::getDbData().coords.value[i];
-                Bead::getDbData().forces_bckup.value[i] = Bead::getDbData().forces.value[i];
-            }
-            calculateEvsalpha(FFM, lambda, LAMBDAMAX, allFDotFA());
-            cout<<endl;*/
+            coordBackup = coord;
+            forceBackup = force;
+            calculateEvsalpha(FFM, lambda, LAMBDAMAX, searchDirDotForce());
+            cout<<endl;
 
 #endif
             tbegin = chrono::high_resolution_clock::now();
@@ -763,17 +758,19 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
             M_ETolstate[0] = false;
         ///@@@}
 #ifdef DETAILEDOUTPUT
+        // wARNING This output is no longer safe because it assumes bead
+        // coordinates start with index 0
         std::cout<<"MB printing beads & forces L "<<lambda<<endl;
         long i = 0;
         long index = 0;
         for(auto b:Bead::getBeads()){
-            index = 3 * b->getStableIndex();
+            index = 3 * b->getIndex();
 
             std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                     ""<<coord[index + 2]<<" "
                     ""<<forceAux[index]<<" "
                     ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-                    b->getStableIndex()<<endl;
+                    b->getIndex()<<endl;
         }
         std::cout<<"MB printed beads & forces"<<endl;
 #endif
@@ -903,12 +900,12 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
             cout << "newGrad " << newGrad << " prevGrad " << prevGrad << " curGrad "
                     << curGrad << endl;
             cout << "beta " << beta << " prevbeta " << prevbeta << endl;
-            cout << "FDotFA<0 " << (CGMethod::allFDotFA() <= 0)
+            cout << "FDotFA<0 " << (searchDirDotForce() <= 0)
                     << " curGrad==newGrad "
                     <<
                     areEqual(curGrad, newGrad) << " abs(prevGrad/newGrad)<0.1 "
                     << (abs(prevGrad / newGrad) < 0.1) << endl;
-            calculateEvsalpha(FFM, lambda, LAMBDAMAX, allFDotFA());
+            calculateEvsalpha(FFM, lambda, LAMBDAMAX, searchDirDotForce());
             cout << endl;
 #endif
         }
@@ -965,7 +962,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         cout << "Maximum force in system = " << maxF() << endl;
         cout << "System energy..." << endl;
         #ifdef ADDITIONALINFO
-        FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+        FFM.computeEnergy(coord.data(), true);
         #endif
     }
 
@@ -1000,9 +997,6 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         auto b = maxBead();
         if (b != nullptr) b->getParent()->printSelf();
     }
-    // Reset backup coordinates with minimum Energy
-    Bead::getDbData().coords_minE.resize(0);
-
 
 
     #ifdef TRACKDIDNOTMINIMIZE
@@ -1039,7 +1033,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     SysParams::Mininimization().safeModeORnot.clear();
     SysParams::Mininimization().tempEnergyvec.clear();
     SysParams::Mininimization().gradientvec.clear();
-    FFM.computeEnergy(Bead::getDbData().coords.data(), false);
+    FFM.computeEnergy(coord.data(), false);
 
     #endif
 
@@ -1162,7 +1156,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;
     for(auto b:Bead::getBeads()){
-        std::cout<<b->getId()<<" "<< b->coordinate() <<" "
+        std::cout<<b->getId()<<" "<< b->coord <<" "
                 ""<<b->force <<endl;
     }
     std::cout<<"printed beads & forces"<<endl;
@@ -1190,7 +1184,7 @@ void PolakRibiere::calculateEvsalpha(ForceFieldManager &FFM, floatingpoint lambd
 //		cout<<alpha<<" ";
 //	}
 //	cout<<endl;
-    floatingpoint energyzerolambda = FFM.computeEnergy(Bead::getDbData().coords_bckup.data());
+    floatingpoint energyzerolambda = FFM.computeEnergy(coordBackup.data());
     cout<<"Energy zero lambda "<<energyzerolambda<<" "<<endl;
     cout<<"Lambda = [";
     for(floatingpoint alpha=LAMBDAMAX;alpha>=1e-4;alpha=alpha*LAMBDAREDUCE){
@@ -1202,12 +1196,11 @@ void PolakRibiere::calculateEvsalpha(ForceFieldManager &FFM, floatingpoint lambd
     cout<<"Energy = [";
     for(floatingpoint alpha=LAMBDAMAX;alpha>=1e-4;alpha=alpha*LAMBDAREDUCE){
         //moveBeads
-        const std::size_t num = Bead::getDbData().coords_bckup.size_raw();
-        Bead::getDbData().coordsStr.resize(num);
+        const auto num = coordBackup.size();
+        coordLineSearch.resize(num);
         for(size_t i = 0; i < num; ++i)
-            Bead::getDbData().coordsStr.value[i] = Bead::getDbData().coords_bckup
-                    .value[i] + alpha * Bead::getDbData().forces_bckup.value[i];
-        floatingpoint energy = FFM.computeEnergy(Bead::getDbData().coordsStr.data());
+            coordLineSearch[i] = coordBackup[i] + alpha * forceBackup[i];
+        floatingpoint energy = FFM.computeEnergy<true>(coordLineSearch.data());
         cout<<energy<<" ";
         if(count > 10)
             exityes = true;
