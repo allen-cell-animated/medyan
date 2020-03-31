@@ -295,7 +295,7 @@ void FilamentStretchingandBending<FStretchingandBendingInteractionType>::compute
 ///Template specializations
 template floatingpoint FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::computeEnergy(floatingpoint *coord);
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::vectorize();
+template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::deallocate();
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::precomputevars(
 		floatingpoint *coord, floatingpoint *cyllengthset,
@@ -304,7 +304,7 @@ template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingH
 
 template floatingpoint FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::computeEnergy(floatingpoint *coord);
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::vectorize();
+template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::vectorize(const FFCoordinateStartingIndex&);
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::deallocate();
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::precomputevars(
 		floatingpoint *coord, floatingpoint *cyllengthset,

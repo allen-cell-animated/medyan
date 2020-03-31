@@ -20,7 +20,7 @@ template< size_t dim, typename Float, typename Container >
 inline void fillNormalRand(mathfunc::VecArray< dim, Float, Container >& v, Float mean, Float stddev) {
     fillNormalRand(v.value.begin(), v.value.end(), mean, stddev);
 }
-template< size_t dim, typename Float, typename Container >
+template< typename Float >
 inline void fillNormalRand(std::vector< Float >& v, Float mean, Float stddev) {
     fillNormalRand(v.begin(), v.end(), mean, stddev);
 }
