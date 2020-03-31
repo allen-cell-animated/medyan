@@ -61,12 +61,12 @@ TEST_CASE("Force field: Branching Dihedral Cosine", "[ForceField]") {
 
     // Prepare functions
     //---------------------------------
-    const auto calcEnergy = [&](VA3& c) {
+    const auto calcEnergy = [&](const VA3& c) {
         return BranchingDihedralCosine {}.energy(
             c.data(), nint, beadSet.data(), kdih.data(), pos.data()
         );
     };
-    const auto calcForce = [&](VA3& c, VA3& f) {
+    const auto calcForce = [&](const VA3& c, VA3& f) {
         BranchingDihedralCosine {}.forces(
             c.data(), f.data(), nint, beadSet.data(), kdih.data(), pos.data(), nullptr
         );
