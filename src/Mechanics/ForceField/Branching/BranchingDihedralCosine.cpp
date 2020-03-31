@@ -489,9 +489,12 @@ void BranchingDihedralCosine::forces(
         f4[1] += Lforce4[1];
         f4[2] += Lforce4[2];
 
-        stretchforce[3*i] = Lforce3[0];
-        stretchforce[3*i + 1] = Lforce3[1];
-        stretchforce[3*i + 2] = Lforce3[2];
+        if(stretchforce) {
+            stretchforce[3*i] = Lforce3[0];
+            stretchforce[3*i + 1] = Lforce3[1];
+            stretchforce[3*i + 2] = Lforce3[2];
+        }
+
         //@
         #ifdef CHECKFORCES_INF_NAN
         if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)
