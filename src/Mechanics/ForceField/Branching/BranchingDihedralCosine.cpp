@@ -208,12 +208,14 @@ void BranchingDihedralCosine::checkforculprit() {
 //n1 = b1 x b2;
 //n2 = b3 x b2;
 floatingpoint BranchingDihedralCosine::energy(
-    floatingpoint *coord, size_t nint,
-    unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos){
+    const floatingpoint *coord, size_t nint,
+    unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos
+) const {
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
 
-    floatingpoint *coord1, *coord2, *coord3, *coord4, n1n2, U_i;
+    const floatingpoint *coord1, *coord2, *coord3, *coord4;
+    floatingpoint n1n2, U_i;
     floatingpoint *mp = new floatingpoint[3];
     floatingpoint *n1 = new floatingpoint[3];
     floatingpoint *n2 = new floatingpoint[3];
@@ -317,8 +319,9 @@ floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoin
 }
 
 void BranchingDihedralCosine::forces(
-    floatingpoint *coord, floatingpoint *f, size_t nint,
-    unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos, floatingpoint *stretchforce){
+    const floatingpoint *coord, floatingpoint *f, size_t nint,
+    unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos, floatingpoint *stretchforce
+) const {
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
 
