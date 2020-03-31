@@ -26,6 +26,7 @@ class Rand {
     
 private:
     static uniform_int_distribution<int> _int_distr;
+    static uniform_int_distribution<uint64_t> _uint64_t_distr;
 
 public:
     static mt19937 eng;
@@ -50,6 +51,10 @@ public:
         int y =_int_distr(eng);
         int x = low + (y % (high - low + 1));
         return x;
+    }
+
+    static inline uint64_t randInteger64bit(){
+        return _uint64_t_distr(eng);
     }
 };
 

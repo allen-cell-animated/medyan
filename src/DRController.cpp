@@ -47,6 +47,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
     //branching point unbinding changer
     int branchIndex = 0;
     int charLengthIndexbr = 0;
+    int charFIndexbr = 0;
     
     if(sum(SysParams::Chemistry().numBrancherSpecies) !=0) {
         
@@ -64,6 +65,21 @@ void DRController::initialize(DynamicRateType& drTypes) {
                 //add the rate changer
                 BranchingPoint::_unbindingChangers.push_back(new BranchSlip(branchIndex, x1));
                 charLengthIndexbr += 1;
+            }
+            else if(changer == "SLIPF"){
+                //if user did not specify enough parameters, return
+                if(charFIndexbr >= SysParams::DynamicRates().dBranchUnbindingCharForce
+                                                .size() )
+                    return;
+
+                //get the param
+                floatingpoint x1 = SysParams::DynamicRates()
+                        .dBranchUnbindingCharForce[charLengthIndexbr];
+
+                //add the rate changer
+                BranchingPoint::_unbindingChangers.push_back(new BranchSlipF(branchIndex, x1));
+                charFIndexbr += 1;
+
             }
             else {
                 cout << "Branching point unbinding rate changing form not recognized. Exiting." << endl;

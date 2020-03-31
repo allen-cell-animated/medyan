@@ -205,7 +205,7 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, size_t nint,
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
-            //set culprit and return TODO
+            //set culprit and return
             FilamentInteractions::_filamentCulprit = (Filament*)(Cylinder::getCylinders()[i]->getParent());
 
             return -1;

@@ -53,6 +53,7 @@ struct MechanicsAlgorithm {
     floatingpoint maxDistance = 1.0;
     floatingpoint lambdaMax = 1.0;
     floatingpoint lambdarunningaverageprobability = 0.0;
+    string linesearchalgorithm = "BACKTRACKING";
     
     /// Not yet used
     string MD = "";
@@ -69,6 +70,7 @@ struct ChemistryAlgorithm {
     floatingpoint runTime = 0.0;
     
     floatingpoint snapshotTime = 0.0;
+    floatingpoint datadumpTime = 1000.0;
     
     floatingpoint minimizationTime = 0.0;
     floatingpoint neighborListTime = 0.0;

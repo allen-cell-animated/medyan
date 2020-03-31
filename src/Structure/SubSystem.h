@@ -269,7 +269,9 @@ public:
 	static floatingpoint timetrackable;
 
     // The pointer to the thread pool
-    ThreadPool* tp = nullptr;
+    static ThreadPool* tp;
+
+	MinimizationResult prevMinResult;
 
 private:
 	chrono::high_resolution_clock::time_point minsN, mineN, minsT,mineT;

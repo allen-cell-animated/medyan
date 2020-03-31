@@ -782,7 +782,6 @@ void ChemManager::genFilReactionTemplates() {
             //add reaction
             if(type == ReactionType::MOTORWALKINGFORWARD) {
 
-
                 _filRxnTemplates[filType].emplace_back(
                 new MotorWalkPTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r),_dt));
             } else {
@@ -1150,10 +1149,14 @@ void ChemManager::genFilBindingReactions() {
             int motorIndex = 0;
 
             for(auto &r: _chemData.branchingReactions[filType]) {
+
+/*                cout<<"Considering compartment "<<C->getId()<<" coords "<<C->coordinates
+                ()[0]<<" "<<C->coordinates()[1]<<" "<<C->coordinates()[2]<<" volFrac "<<
+                C->getVolumeFrac()<<endl;*/
                 
                 //filament creation is not allowed in partially activated compartments
                 //that volume fraction < threshold, be careful with teh threshold
-                if(C->getVolumeFrac() < 0.5) continue;
+//                if(C->getVolumeFrac() < 0.5) continue;
 
                 vector<Species*> reactantSpecies;
                 vector<Species*> productSpecies;
@@ -1395,9 +1398,10 @@ void ChemManager::genFilBindingReactions() {
 
                 C->addInternalReaction(rxn);
 
+                vector<short> filTypevec = {short(filType), short(filType)};
                 //create manager
-                BranchingManager* bManager = new BranchingManager(rxn, C, brancherInt, brancherName, filType,
-                                                                  nucleationZone, nucleationDist);
+                BranchingManager* bManager = new BranchingManager(rxn, C, brancherInt,
+                        brancherName, filTypevec, nucleationZone, nucleationDist);
                 C->addFilamentBindingManager(bManager);
 
                 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
@@ -1640,9 +1644,10 @@ void ChemManager::genFilBindingReactions() {
 
                 C->addInternalReaction(rxn);
 
+                vector<short> filTypevec = {short(filType), short(filType)};
                 //create manager
                 LinkerBindingManager* lManager = new LinkerBindingManager(rxn, C, linkerInt, linkerName,
-                                                                          filType, rMax, rMin);
+                                                                          filTypevec, rMax, rMin);
 
                 C->addFilamentBindingManager(lManager);
 
@@ -1897,9 +1902,10 @@ void ChemManager::genFilBindingReactions() {
 
                 C->addInternalReaction(rxn);
 
+                vector<short> filTypevec = {short(filType), short(filType)};
                 //create manager
                 MotorBindingManager* mManager = new MotorBindingManager(rxn, C, motorInt, motorName,
-                                                                        filType, rMax, rMin);
+                                                                        filTypevec, rMax, rMin);
                 C->addFilamentBindingManager(mManager);
 
                 mManager->setNLIndex(motorIndex++);
@@ -2137,6 +2143,28 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
     }
 }
 
+void ChemManager::restartreleaseandremovaltime(floatingpoint _minimizationTime){
+
+    //look at copy number for each species
+    for(auto &s : _chemData.speciesDiffusing) {
+
+        auto name = get<0>(s);
+        auto copyNumber = get<1>(s);
+        auto releaseTime = get<3>(s);
+        auto removalTime = get<4>(s);
+        if(tau()-releaseTime >= _minimizationTime) {
+            //set zero copy number
+            get<1>(s) = 0;
+        }
+        if(tau()-removalTime >= _minimizationTime && !areEqual(removalTime,0.0) &&
+           get<1>(s) != -1) {
+            ///set as removed by marking copy number to -1
+            get<1>(s) = -1;
+        }
+    }
+
+}
+
 void ChemManager::updateCopyNumbers() {
     //Special protocol if move boundary protocol exists
     int tsaxis = SysParams::Boundaries().transfershareaxis;
@@ -2179,27 +2207,33 @@ void ChemManager::updateCopyNumbers() {
                 //find the species, increase copy number
                 Species* species = randomCompartment->findSpeciesByName(name);
 
-                species->up();
-                species->updateReactantPropensities();
+                //If user requests to use different copy numbers mentioned in chem file
+                // during restart in place of those in restart file, do not do anything
+                // in restart phase.
+                if(SysParams::USECHEMCOPYNUM && SysParams::RUNSTATE == false){
+                    species->updateReactantPropensities();
+                    copyNumber = 0;
+                }
+                else {
+                    species->up();
+                    species->updateReactantPropensities();
+                    copyNumber--;
 
-                copyNumber--;
-
-                //set zero copy number
-                if(copyNumber == 0) get<1>(s) = 0;
+                    //set zero copy number
+                    if (copyNumber == 0) get<1>(s) = 0;
+                }
             }
 
             //Change copy number if moveboundary is defined and if species is NOT past
             // removal.
-            if(tsaxis >=0) {
+            if(tsaxis >=0 && SysParams::RUNSTATE) {
                 if (tsaxis < 3 && get<1>(s) != -1 &&
-                    cpynummanipulationType ==
-                    "BASECONC") {
+                    cpynummanipulationType == "BASECONC") {
                     //set the coordinate that will help you find the necessary Base compartment
                     floatingpoint distancetocompare = 0.0;
                     if (SysParams::Boundaries().planestomove == 2 &&
                         cpynummanipulationType != "NONE") {
-                        cout
-                                << "Cannot set base concentration if both end planes are mobile as"
+                        cout << "Cannot set base concentration if both end planes are mobile as"
                                    " specified in BOUNDARYMOVE. Exiting." << endl;
                         exit(EXIT_FAILURE);
                     }
@@ -2247,7 +2281,8 @@ void ChemManager::updateCopyNumbers() {
             }
         }
 
-        if(tau() >= removalTime && !areEqual(removalTime,0.0) && get<1>(s) != -1) {
+        if(SysParams::RUNSTATE && tau() >= removalTime && !areEqual(removalTime,0.0) &&
+        get<1>(s) != -1) {
 
             ///remove species from all compartments
             for(auto C : grid->getCompartments()) {
@@ -2274,7 +2309,16 @@ void ChemManager::updateCopyNumbers() {
         auto cpynummanipulationType = get<5>(s);
         auto holdmolarity = get<6>(s);
         floatingpoint factor = Boundary::systemvolume * 6.023*1e-7;
-        if(tau() >= releaseTime && copyNumber != 0) {
+        //If system is being restarted, do not update Copynumbers
+        if(SysParams::RUNSTATE == false){
+            //activate reactions
+            //find the species, set copy number
+            Species* species = grid->findSpeciesBulkByName(name);
+            species->setN(0);
+            species->activateReactantReactions();
+
+        }
+        if(SysParams::RUNSTATE && tau() >= releaseTime && copyNumber != 0) {
 
             //find the species, set copy number
             Species* species = grid->findSpeciesBulkByName(name);
@@ -2287,7 +2331,7 @@ void ChemManager::updateCopyNumbers() {
             get<1>(s) = 0;
         }
         //if copy number changes with concentration
-        if(tau() >= releaseTime && cpynummanipulationType != "NONE"){
+        if(SysParams::RUNSTATE && tau() >= releaseTime && cpynummanipulationType != "NONE"){
             //find the species, set copy number
             if(cpynummanipulationType == "BULKCONC") {
                 int updatedcpynumber = (int)(holdmolarity * factor);
@@ -2299,7 +2343,7 @@ void ChemManager::updateCopyNumbers() {
             }
 
         }
-        if(tau() >= removalTime && !areEqual(removalTime,0.0) && get<1>(s) != -1) {
+        if(SysParams::RUNSTATE && tau() >= removalTime && !areEqual(removalTime,0.0) && get<1>(s) != -1) {
 
             Species* species = grid->findSpeciesBulkByName(name);
 
@@ -2820,12 +2864,21 @@ void ChemManager::initializeSystem(ChemSim* chemSim) {
 }
 
 
-void ChemManager::initializeCCylinder(CCylinder* cc,
-                                      bool extensionFront,
-                                      bool extensionBack,
-                                      bool initialization) {
+void ChemManager::initializeCCylinder(
+    CCylinder* cc,
+    bool extensionFront,
+    bool extensionBack,
+    bool initialization,
+    int nummonomers,
+    int firstmonomer,
+    int lastmonomer,
+    bool minusendstatus,
+    bool plusendstatus,
+    short minusendtype,
+    short plusendtype
+) {
 
-	mins = chrono::high_resolution_clock::now();
+    mins = chrono::high_resolution_clock::now();
     //get some related objects
     Compartment* C = cc->getCompartment();
     Cylinder* c = cc->getCylinder();
@@ -2852,20 +2905,20 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             UpdateLinkerBindingCallback lcallback(c, i);
 
             Species* ls = cc->getCMonomer(i)->speciesBound(
-                          SysParams::CParams.linkerBoundIndex[filType]);
+                    SysParams::CParams.linkerBoundIndex[filType]);
             ConnectionBlock rcbl(ls->connect(lcallback,false));
 
             UpdateMotorBindingCallback mcallback(c, i);
 
             Species* ms = cc->getCMonomer(i)->speciesBound(
-                          SysParams::CParams.motorBoundIndex[filType]);
+                    SysParams::CParams.motorBoundIndex[filType]);
             ConnectionBlock rcbm(ms->connect(mcallback,false));
         }
     }
 
-	mine = chrono::high_resolution_clock::now();
-	chrono::duration<floatingpoint> elapsed_time1(mine - mins);
-	tchemmanager1 += elapsed_time1.count();
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_time1(mine - mins);
+    tchemmanager1 += elapsed_time1.count();
 
 
     //get last ccylinder
@@ -2873,57 +2926,42 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
 
     //extension of front
     if(extensionFront) {
-	    mins = chrono::high_resolution_clock::now();
+        mins = chrono::high_resolution_clock::now();
         lastcc = f->getCylinderVector().back()->getCCylinder();
         for(auto &r : _filRxnTemplates[filType]) r->addReaction(lastcc, cc);
-	    mine = chrono::high_resolution_clock::now();
-	    chrono::duration<floatingpoint> elapsed_time2(mine - mins);
-	    tchemmanager2 += elapsed_time2.count();
+        mine = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_time2(mine - mins);
+        tchemmanager2 += elapsed_time2.count();
     }
-    //extension of back
+        //extension of back
     else if(extensionBack) {
-	    mins = chrono::high_resolution_clock::now();
+        mins = chrono::high_resolution_clock::now();
         lastcc = f->getCylinderVector().front()->getCCylinder();
         for(auto &r : _filRxnTemplates[filType]) r->addReaction(cc, lastcc);
-	    mine = chrono::high_resolution_clock::now();
-	    chrono::duration<floatingpoint> elapsed_time2(mine - mins);
-	    tchemmanager2 += elapsed_time2.count();
+        mine = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_time2(mine - mins);
+        tchemmanager2 += elapsed_time2.count();
     }
 
-    //Base case, initialization
+        //Base case, initialization
     else if (initialization) {
-		mins = chrono::high_resolution_clock::now();
+        mins = chrono::high_resolution_clock::now();
         //Check if this is the first cylinder
         if(!f->getCylinderVector().empty()) {
 
             //remove plus end from last, add to this.
             lastcc = f->getCylinderVector().back()->getCCylinder();
-            CMonomer* m1 = lastcc->getCMonomer(lastcc->getSize() - 1);
-            m1->speciesPlusEnd(0)->down();
 
-            //fill last cylinder with default filament value
-            m1->speciesFilament(0)->up();
+            if(SysParams::RUNSTATE){
 
-            for(auto j : SysParams::CParams.bindingIndices[filType])
-                m1->speciesBound(j)->up();
+                CMonomer* m1 = lastcc->getCMonomer(lastcc->getSize() - 1);
+                m1->speciesPlusEnd(0)->down();
+                //fill last cylinder with default filament value
+                m1->speciesFilament(0)->up();
 
-            if(!SysParams::RUNSTATE){
-#ifdef MECHANICS
-                int nummonomers = min((int) round(c->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
-                CMonomer* m2 = cc->getCMonomer(nummonomers - 1);
+                for(auto j : SysParams::CParams.bindingIndices[filType])
+                    m1->speciesBound(j)->up();
 
-                m2->speciesPlusEnd(0)->up();
-
-                //fill new cylinder with default filament value
-                for(int i = 0; i < nummonomers - 1; i++) {
-                    cc->getCMonomer(i)->speciesFilament(0)->up();
-
-                    for(auto j : SysParams::CParams.bindingIndices[filType])
-                        cc->getCMonomer(i)->speciesBound(j)->up();
-                }
-#endif
-            }
-            else{
                 CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
                 m2->speciesPlusEnd(0)->up();
                 //fill new cylinder with default filament value
@@ -2934,18 +2972,43 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                         cc->getCMonomer(i)->speciesBound(j)->up();
                 }
             }
+            else{
+                int start = firstmonomer;
+                int end = lastmonomer;
+
+                if(minusendstatus){
+                    CMonomer *m2 = cc->getCMonomer(firstmonomer);
+                    //minusendtype should have valid ( not -1 ) values if minusendstatus
+                    // is non-negative.
+                    m2->speciesMinusEnd(minusendtype)->up();
+                    start = start+1;
+                }
+                if(plusendstatus) {
+                    CMonomer *m2 = cc->getCMonomer(lastmonomer);
+	                //plusendtype should have valid ( not -1 ) values if plusendstatus
+	                // is non-negative.
+                    m2->speciesPlusEnd(plusendtype)->up();
+                    end = end -1;
+                }
+
+                //fill new cylinder with default filament value (start-end)
+                for(int i = start; i <= end; i++) {
+                    cc->getCMonomer(i)->speciesFilament(0)->up();
+
+                    for(auto j : SysParams::CParams.bindingIndices[filType])
+                        cc->getCMonomer(i)->speciesBound(j)->up();
+                }
+            }
 
             for(auto &r : _filRxnTemplates[filType]) r->addReaction(lastcc, cc);
         }
-        //this is first one
+            //this is first one
         else {
-
-            //set back and front
-            CMonomer* m1 = cc->getCMonomer(cc->getSize() - 1);
-            m1->speciesPlusEnd(0)->up();
-
-
             if(SysParams::RUNSTATE){
+                //set back and front
+                CMonomer* m1 = cc->getCMonomer(cc->getSize() - 1);
+                m1->speciesPlusEnd(0)->up();
+
                 CMonomer* m2 = cc->getCMonomer(0);
                 m2->speciesMinusEnd(0)->up();
                 //fill with default filament value
@@ -2955,22 +3018,34 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                     for(auto j : SysParams::CParams.bindingIndices[filType])
                         cc->getCMonomer(i)->speciesBound(j)->up();
                 }
-
-
             }
             else {
 #ifdef MECHANICS
+	            int start = firstmonomer;
+	            int end = lastmonomer;
 
-                int nummonomers = min((int) round(c->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
-                CMonomer* m1 = cc->getCMonomer(SysParams::Geometry().cylinderNumMon[filType] - nummonomers);
-                m1->speciesMinusEnd(0)->up();
-                //fill with default filament value
-                for(int i = SysParams::Geometry().cylinderNumMon[filType] - nummonomers + 1; i < cc->getSize() - 1; i++) {
-                    cc->getCMonomer(i)->speciesFilament(0)->up();
-
-                    for(auto j : SysParams::CParams.bindingIndices[filType])
-                        cc->getCMonomer(i)->speciesBound(j)->up();
+                if(minusendstatus){
+                    CMonomer *m2 = cc->getCMonomer(firstmonomer);
+                    //minusendtype should have valid ( not -1 ) values if minusendstatus
+                    // is non-negative.
+                    m2->speciesMinusEnd(minusendtype)->up();
+                    start = start+1;
                 }
+                if(plusendstatus) {
+                    CMonomer *m2 = cc->getCMonomer(lastmonomer);
+	                //plusendtype should have valid ( not -1 ) values if plusendstatus
+	                // is non-negative.
+	                m2->speciesPlusEnd(plusendtype)->up();
+                    end = end -1;
+                }
+
+	            //fill new cylinder with default filament value (start-end)
+	            for(int i = start; i <= end; i++) {
+		            cc->getCMonomer(i)->speciesFilament(0)->up();
+
+		            for(auto j : SysParams::CParams.bindingIndices[filType])
+			            cc->getCMonomer(i)->speciesBound(j)->up();
+	            }
 #else
                 CMonomer* m2 = cc->getCMonomer(0);
                 m2->speciesMinusEnd(0)->up();
@@ -2985,20 +3060,20 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
 #endif
             }
         }
-	    mine = chrono::high_resolution_clock::now();
-	    chrono::duration<floatingpoint> elapsed_time3(mine - mins);
-	    tchemmanager3 += elapsed_time3.count();
+        mine = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_time3(mine - mins);
+        tchemmanager3 += elapsed_time3.count();
 
     }
 
 
-	mins = chrono::high_resolution_clock::now();
+    mins = chrono::high_resolution_clock::now();
     //Add all reaction templates to this cylinder
     for(auto &r : _filRxnTemplates[filType]) { r->addReaction(cc); }
 
-	mine = chrono::high_resolution_clock::now();
-	chrono::duration<floatingpoint> elapsed_time4(mine - mins);
-	tchemmanager4 += elapsed_time4.count();
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_time4(mine - mins);
+    tchemmanager4 += elapsed_time4.count();
 }
 
 floatingpoint ChemManager::tchemmanager1 = 0.0;

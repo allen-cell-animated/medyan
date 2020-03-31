@@ -14,6 +14,7 @@
 #include "SysParams.h"
 bool SysParams::RUNSTATE=true;
 bool SysParams::INITIALIZEDSTATUS=false;
+bool SysParams::USECHEMCOPYNUM=false;
 bool SysParams::DURINGCHEMISTRY=false;
 int SysParams::numthreads=0;
 int SysParams::exvolcounter[3] = {0,0,0};
@@ -445,6 +446,9 @@ ChemParams   SysParams::CParams;
 GeoParams    SysParams::GParams;
 BoundParams  SysParams::BParams;
 DyRateParams SysParams::DRParams;
+#ifdef TRACKDIDNOTMINIMIZE
+MinimizationParams SysParams::MinParams;
+#endif
 SpecialParams SysParams::SParams;
 
 

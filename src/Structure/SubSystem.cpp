@@ -19,12 +19,15 @@
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"
 #include <vector>
-#ifdef SIMDBINDINGSEARCH
+#include "Cylinder.h"
+#ifdef SIMDBINDINGEARCH
 #include "dist_moduleV2/dist_driver.h"
 #include "dist_moduleV2/dist_coords.h"
 #include "dist_moduleV2/dist_common.h"
 #endif
-#include "Cylinder.h"
+
+
+
 using namespace mathfunc;
 void SubSystem::resetNeighborLists() {
 #ifdef CUDAACCL_NL
@@ -246,8 +249,10 @@ void SubSystem::resetNeighborLists() {
 }
 void SubSystem::updateBindingManagers() {
 #ifdef OPTIMOUT
-	chrono::high_resolution_clock::time_point mins, mine;
+	chrono::high_resolution_clock::time_point mins, mine, minsinit, mineinit,
+			startonetimecost, endonetimecost;
 	mins = chrono::high_resolution_clock::now();
+
 #endif
 #ifdef CUDAACCL_NL
 	if(SysParams::Chemistry().numFilaments > 1) {
@@ -342,20 +347,28 @@ void SubSystem::updateBindingManagers() {
 
 	//SIMD cylinder update
 #ifdef SIMDBINDINGSEARCH
+#ifdef OPTIMOUT
+	startonetimecost = chrono::high_resolution_clock::now();
+#endif
 	if(!initialize) {
 			_compartmentGrid->getCompartments()[0]->getHybridBindingSearchManager()
 			->initializeSIMDvars();
 		initialize = true;
 	}
+#ifdef OPTIMOUt
+	endonetimecost = chrono::high_resolution_clock::now();
+#endif
 	//Generate binding site coordinates in each compartment and seggregate them into
 	// different spatial sub-sections.
 	for(auto C : _compartmentGrid->getCompartments()) {
 		C->SIMDcoordinates4linkersearch_section(1);
 		C->SIMDcoordinates4motorsearch_section(1);
 	}
+
 	//Empty the existing binding pair list
 	for (auto C : _compartmentGrid->getCompartments())
 		C->getHybridBindingSearchManager()->resetpossibleBindings();
+
 	minsSIMD = chrono::high_resolution_clock::now();
 	HybridBindingSearchManager::findtimeV3 = 0.0;
 	HybridBindingSearchManager::SIMDV3appendtime = 0.0;
@@ -374,6 +387,8 @@ void SubSystem::updateBindingManagers() {
 
 #ifdef OPTIMOUT
 	mineSIMD = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_onetimecost(endonetimecost -
+	startonetimecost);
 	chrono::duration<floatingpoint> elapsed_runSIMDV3(mineSIMD - minsSIMD);
 	cout << "SIMDV3 time " << elapsed_runSIMDV3.count() << endl;
 	cout << "findV3 time " << HybridBindingSearchManager::findtimeV3 << endl;
@@ -383,7 +398,7 @@ void SubSystem::updateBindingManagers() {
 #ifdef OPTIMOUT
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_orig(mine - mins);
-    std::cout<<"BMgr update time "<<elapsed_orig.count()<<endl;
+    std::cout<<"BMgr-update time "<<elapsed_orig.count() - elapsed_onetimecost.count()<<endl;
 #endif
 
 //free memory
@@ -447,6 +462,8 @@ void SubSystem::vectorizeCylinder() {
         auto x2 = cyl->getSecondBead()->vcoordinate();
         vector<floatingpoint> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
         cylsqmagnitudevector[cyl->getStableIndex()] = sqmagnitude(X1X2);
+
+//        fil->printSelf();
         auto cc = cyl->getCCylinder();
         int idx = 0;
         for (auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
@@ -881,3 +898,4 @@ floatingpoint SubSystem::HYBDtime  = 0.0;
 floatingpoint SubSystem::timeneighbor  = 0.0;
 floatingpoint SubSystem::timedneighbor  = 0.0;
 floatingpoint SubSystem::timetrackable  = 0.0;
+ThreadPool* SubSystem::tp = nullptr;

@@ -64,6 +64,8 @@ private:
 
     ///For dynamic rate unbinding
     static vector<BranchRateChanger*> _unbindingChangers;
+
+    string diffusingactinspeciesname = "";
     
 public:
     vector<floatingpoint> coordinate; ///< coordinate of midpoint,
@@ -135,6 +137,14 @@ public:
     /// Update the reaction rates, inherited from Reactable
     virtual void updateReactionRates();
 
+    void initializerestart(floatingpoint eqLength){ _mBranchingPoint->initializerestart
+                (eqLength);};
+
+    void setdiffusingactinspeciesname(string _diffusingactinspeciesname){
+        diffusingactinspeciesname = _diffusingactinspeciesname; }
+
+    string getdiffusingactinspeciesname(){
+        return diffusingactinspeciesname; }
 
 };
 
