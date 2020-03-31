@@ -53,6 +53,10 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize(const FFCoordin
     stretchforce = new floatingpoint[MotorGhost::getMotorGhosts().size()];
 
     int i = 0;
+    #ifdef ADDITIONALINFO
+    MotorGhostInteractions::kstrvec.clear();
+    MotorGhostInteractions::eqlvec.clear();
+    #endif
 
     for (auto m: MotorGhost::getMotorGhosts()) {
         /* Haoran 03/18/2019 m->getIndex() = i; */
@@ -66,6 +70,10 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize(const FFCoordin
         pos1[i] = m->getFirstPosition();
         pos2[i] = m->getSecondPosition();
         stretchforce[i] = 0.0;
+        #ifdef ADDITIONALINFO
+        MotorGhostInteractions::kstrvec.push_back(kstr[i]);
+        MotorGhostInteractions::eqlvec.push_back(eql[i]);
+		#endif
 
         i++;
     }

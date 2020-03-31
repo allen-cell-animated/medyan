@@ -526,7 +526,6 @@ public:
         else
             return bscoords_section_motor[filamentType*27 + i];
     }
-
     /*Each compartment is partitioned into 27 sub-volumes. Binding sites are allocated
     to relevant sub-volumes. It is worth noting that the 27 volumes  can be overlapping.
     Binding distance determines if the volumes are overlapping or not.*/

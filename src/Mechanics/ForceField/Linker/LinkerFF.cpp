@@ -81,6 +81,11 @@ floatingpoint LinkerFF::computeEnergy(floatingpoint *coord, bool stretched) {
         }
         else U += U_i;
 
+        #ifdef TRACKDIDNOTMINIMIZE
+        if(!stretched)
+            SysParams::Mininimization().tempEnergyvec.push_back(U_i);
+        #endif
+
     }
     return U;
 }
@@ -90,5 +95,14 @@ void LinkerFF::computeForces(floatingpoint *coord, floatingpoint *f) {
     for (auto &interaction : _linkerInteractionVector)
         interaction->computeForces(coord, f);
 }
+
+vector<string> LinkerFF::getinteractionnames(){
+    vector<string> temp;
+    for (auto &interaction : _linkerInteractionVector) {
+        temp.push_back(interaction->getName());
+    }
+    return temp;
+}
+
 
 

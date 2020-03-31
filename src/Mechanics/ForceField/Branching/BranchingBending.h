@@ -35,6 +35,7 @@ private:
     ///Array describing the constants in calculation
     floatingpoint *kbend;
     floatingpoint *eqt;
+    floatingpoint *stretchforce;
 #ifdef CUDAACCL
     int * gpu_beadSet;
     floatingpoint * gpu_kbend;

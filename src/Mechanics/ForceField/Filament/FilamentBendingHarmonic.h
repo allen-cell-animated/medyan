@@ -23,6 +23,7 @@ class Bead;
 class FilamentBendingHarmonic {
     
 public:
+
     floatingpoint energy(floatingpoint *coord, std::size_t nint, int *beadSet,
                   floatingpoint *kbend, floatingpoint *eqt);
     

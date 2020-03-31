@@ -31,6 +31,7 @@ void BranchingBending<BBendingInteractionType>::vectorize(const FFCoordinateStar
     beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
     kbend = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
     eqt = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
+    stretchforce = new floatingpoint[3*BranchingPoint::getBranchingPoints().size()];
 
     int i = 0;
 
@@ -43,6 +44,8 @@ void BranchingBending<BBendingInteractionType>::vectorize(const FFCoordinateStar
 
         kbend[i] = b->getMBranchingPoint()->getStretchingConstant();
         eqt[i] = b->getMBranchingPoint()->getEqTheta();
+        for(int j = 0; j < 3; j++)
+            stretchforce[3*i + j] = 0.0;
         i++;
     }
     //CUDA
@@ -73,6 +76,14 @@ void BranchingBending<BBendingInteractionType>::vectorize(const FFCoordinateStar
 
 template<class BBendingInteractionType>
 void BranchingBending<BBendingInteractionType>::deallocate() {
+
+    for(auto b:BranchingPoint::getBranchingPoints()){
+        //Using += to ensure that the stretching forces are additive.
+
+        for(int j = 0; j < 3; j++)
+            b->getMBranchingPoint()->branchForce[j] += stretchforce[3*b->getIndex() + j];
+    }
+    delete [] stretchforce;
     delete [] beadSet;
     delete [] kbend;
     delete [] eqt;
@@ -140,8 +151,7 @@ void BranchingBending<BBendingInteractionType>::computeForces(floatingpoint *coo
 #endif
 #ifdef SERIAL
 
-
-    _FFType.forces(coord, f, beadSet, kbend, eqt);
+    _FFType.forces(coord, f, beadSet, kbend, eqt, stretchforce);
 
 #endif
 }

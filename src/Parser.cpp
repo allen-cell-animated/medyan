@@ -319,6 +319,19 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
                 CAlgorithm.snapshotTime = atof(lineVector[1].c_str());
             }
         }
+        if (line.find("DATADUMPTIME:") != string::npos) {
+
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CAlgorithm.datadumpTime = atof(lineVector[1].c_str());
+            }
+        }
         if (line.find("SNAPSHOTSTEPS:") != string::npos) {
 
             vector<string> lineVector = split<string>(line);
@@ -1126,6 +1139,12 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
                 MAlgorithm.lambdarunningaverageprobability = atof(lineVector[1].c_str());
             }
         }
+        else if (line.find("LINESEARCHALGORITHM")!= string::npos){
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() == 2) {
+                MAlgorithm.linesearchalgorithm = (lineVector[1].c_str());
+            }
+        }
     }
     return MAlgorithm;
 }
@@ -1387,6 +1406,16 @@ void SystemParser::readDyRateParams() {
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
                     DRParams.dBranchUnbindingCharLength.push_back(
+                            atof((lineVector[i].c_str())));
+            }
+            else {}
+        }
+        else if (line.find("DBUNBINDINGF") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRParams.dBranchUnbindingCharForce.push_back(
                             atof((lineVector[i].c_str())));
             }
             else {}
@@ -1923,7 +1952,17 @@ FilamentSetup SystemParser::readFilamentSetup() {
                 FSetup.filamentType = atoi(lineVector[1].c_str());
             else {}
         }
-        else if (line.find("RESTARTPHASE") != string::npos){SysParams::RUNSTATE=false;}
+        else if (line.find("RESTARTPHASE") != string::npos){SysParams::RUNSTATE=false;
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "Error reading restart params. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2){
+                if(lineVector[1].find("USECHEMCOPYNUM"))
+                SysParams::USECHEMCOPYNUM = true;
+            }
+        }
         else if(line.find("PROJECTIONTYPE")!=string::npos){
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {

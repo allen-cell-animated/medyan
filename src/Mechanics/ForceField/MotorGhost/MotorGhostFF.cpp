@@ -81,6 +81,10 @@ floatingpoint MotorGhostFF::computeEnergy(floatingpoint *coord, bool stretched) 
         }
         else U += U_i;
 
+        #ifdef TRACKDIDNOTMINIMIZE
+        if(!stretched)
+            SysParams::Mininimization().tempEnergyvec.push_back(U_i);
+        #endif
     }
     return U;
 }
@@ -90,4 +94,13 @@ void MotorGhostFF::computeForces(floatingpoint *coord, floatingpoint *f) {
     for (auto &interaction : _motorGhostInteractionVector)
         interaction->computeForces(coord, f);
 }
+
+vector<string> MotorGhostFF::getinteractionnames(){
+	vector<string> temp;
+	for (auto &interaction : _motorGhostInteractionVector) {
+		temp.push_back(interaction->getName());
+	}
+    return temp;
+}
+
 

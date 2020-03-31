@@ -39,8 +39,22 @@ void ChemSim::initialize() {
     return _pimpl->initialize();
 }
 
+void ChemSim::initializerestart(floatingpoint time){
+    if(SysParams::RUNSTATE){
+        LOG(ERROR) << "initializerestart Function from CController class can "
+                      "only be called "
+                      "during restart phase. Exiting.";
+        throw std::logic_error("Illegal function call pattern");
+    }
+    _pimpl->initializerestart(time);
+}
+
 void ChemSim::printReactions() {
     return _pimpl->printReactions();
+}
+
+bool ChemSim::crosschecktau(){
+    return _pimpl->crosschecktau();
 }
 
 //Dissipation

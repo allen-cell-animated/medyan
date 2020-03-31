@@ -44,6 +44,11 @@ public:
     virtual const string getName() = 0;
     /// Assign stretchforces for RateChangerImpl.
     virtual void assignforcemags(){};
+
+    static vector<floatingpoint> individualenergies;
+	static vector<floatingpoint> tpdistvec;
+	static vector<floatingpoint> eqlvec;
+	static vector<floatingpoint> kstrvec;
 };
 
 #endif

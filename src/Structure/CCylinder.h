@@ -44,6 +44,7 @@ class ChemManager;
 class CCylinder {
     
 friend class CController;
+friend class ChemManager;
     
 private:
     #ifdef DEBUGCONSTANTSEED
@@ -76,6 +77,10 @@ private:
     short _size = 0; ///< Maximum length
     
     static ChemSim* _chemSim;   ///< A pointer to the ChemSim, initialized by CController
+
+    bool initialized = false;//CCylinder is completely self-consistent only after
+    // initializeCCylinder function is called from ChemManager. This variable will help
+    // us track whether a CCylinder has been initialized properly.
     
 public:
     /// Default constructor, sets compartment and cylinder
@@ -168,6 +173,8 @@ public:
     short getType();
 
     int getId();
+
+    bool isinitialized(){return initialized;}
     
 };
 

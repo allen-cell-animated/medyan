@@ -23,7 +23,9 @@
 
 #include "BranchingDihedral.h"
 #include "BranchingDihedralCosine.h"
+#include "Mechanics/ForceField/Branching/BranchingDihedralCosineV2.h"
 #include "Mechanics/ForceField/Branching/BranchingDihedralQuadratic.hpp"
+#include "Mechanics/ForceField/Branching/BranchingDihedralQuadraticV2.h"
 
 #include "BranchingPosition.h"
 #include "BranchingPositionCosine.h"
@@ -56,9 +58,26 @@ BranchingFF::BranchingFF(string& stretching, string& bending,
     if(dihedral == "COSINE")
         _branchingInteractionVector.emplace_back(
                 new BranchingDihedral<BranchingDihedralCosine>());
+    else if(dihedral == "COSINEV2")
+        _branchingInteractionVector.emplace_back(
+                new BranchingDihedral<BranchingDihedralCosineV2 >());
     else if(dihedral == "QUADRATIC")
         _branchingInteractionVector.emplace_back(
             new BranchingDihedral< BranchingDihedralQuadratic >());
+    else if(dihedral == "QUADRATICV2")
+        _branchingInteractionVector.emplace_back(
+                new BranchingDihedral< BranchingDihedralQuadraticV2 >());
+    /*else if (dihedral == "TESTALL"){
+    	_branchingInteractionVector.emplace_back(
+                new BranchingDihedral<BranchingDihedralCosine >());
+    	_branchingInteractionVector.emplace_back(
+                new BranchingDihedral<BranchingDihedralCosineV2 >());
+    	_branchingInteractionVector.emplace_back(
+            new BranchingDihedral< BranchingDihedralQuadratic >());
+    	_branchingInteractionVector.emplace_back(
+            new BranchingDihedral< BranchingDihedralQuadraticV2 >());
+
+    }*/
     else if(dihedral == "") {}
     else {
         LOG(ERROR) << "Branching dihedral FF " << dihedral << " not recognized.";
@@ -80,7 +99,8 @@ void BranchingFF::vectorize(const FFCoordinateStartingIndex& si) {
     //Reset stretching forces to 0.
     for(auto b:BranchingPoint::getBranchingPoints()){
         //Using += to ensure that the stretching forces are additive.
-        b->getMBranchingPoint()->stretchForce = 0.0;
+        for(short j =0; j < 3; j++)
+        b->getMBranchingPoint()->branchForce[j] = 0.0;
     }
 
 
@@ -113,6 +133,7 @@ floatingpoint BranchingFF::computeEnergy(floatingpoint *coord, bool stretched) {
 
     floatingpoint U = 0.0;
     floatingpoint U_i=0.0;
+
     for (auto &interaction : _branchingInteractionVector) {
 #ifdef SERIAL_CUDACROSSCHECK
         CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
@@ -128,11 +149,15 @@ floatingpoint BranchingFF::computeEnergy(floatingpoint *coord, bool stretched) {
             return -1;
         }
         else U += U_i;
-        
+
+	    #ifdef TRACKDIDNOTMINIMIZE
+	    if(!stretched)
+		    SysParams::Mininimization().tempEnergyvec.push_back(U_i);
+	    #endif
 
     }
     
-    
+//    cout<<"-------"<<endl;
     return U;
 }
 
@@ -141,3 +166,12 @@ void BranchingFF::computeForces(floatingpoint *coord, floatingpoint *f) {
     for (auto &interaction : _branchingInteractionVector)
         interaction->computeForces(coord, f);
 }
+
+vector<string> BranchingFF::getinteractionnames(){
+    vector<string> temp;
+    for (auto &interaction : _branchingInteractionVector) {
+        temp.push_back(interaction->getName());
+    }
+    return temp;
+}
+

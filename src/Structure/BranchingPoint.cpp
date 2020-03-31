@@ -106,7 +106,12 @@ BranchingPoint::~BranchingPoint() noexcept {
     //mark the free species instead
     else {
         //find the free species
-        Species* speciesFilament = m->speciesFilament(m->activeSpeciesPlusEnd());
+        string speciesName2 = _cBranchingPoint->getdiffusingactinspeciesname();
+        string speciesName = diffusingactinspeciesname;
+        cout<<speciesName<<" "<<speciesName2<<endl;
+        Species* freeMonomer = _compartment->findSpeciesByName(speciesName);
+        //Commented out on Dec 11, 2019. Found an alternate way that is more robust.
+        /*Species* speciesFilament = m->speciesFilament(m->activeSpeciesPlusEnd());
         
         string speciesName = SpeciesNamesDB::removeUniqueFilName(speciesFilament->getName());
         string speciesFirstChar = speciesName.substr(0,1);
@@ -128,9 +133,10 @@ BranchingPoint::~BranchingPoint() noexcept {
         //diffusing, remove all but first char
         else if(dfMonomer != nullptr) freeMonomer = dfMonomer;
         //bulk, remove all but first char
-        else if(bfMonomer != nullptr) freeMonomer = bfMonomer;
+        else if(bfMonomer != nullptr) freeMonomer = bfMonomer;*/
+
         //could not find. exit ungracefully
-        else {
+        if(freeMonomer == nullptr) {
             cout << "In unbranching reaction, could not find corresponding " <<
                     "diffusing species of filament species " << speciesName <<
                     ". Exiting." << endl;
@@ -193,24 +199,28 @@ void BranchingPoint::updateReactionRates() {
         if(_unbindingChangers.empty()) return;
                 
         //current force on branching point, use the total force
-        floatingpoint fs = _mBranchingPoint->stretchForce;
-        floatingpoint fb = _mBranchingPoint->bendingForce;
-        floatingpoint fd = _mBranchingPoint->dihedralForce;
-        floatingpoint ft = fs + fb + fd;
-        floatingpoint force = max<floatingpoint>((floatingpoint)0.0, ft);
+
+        floatingpoint fbranch =
+                sqrt(_mBranchingPoint->branchForce[0]*_mBranchingPoint->branchForce[0]
+                + _mBranchingPoint->branchForce[1]*_mBranchingPoint->branchForce[1]
+                + _mBranchingPoint->branchForce[2]*_mBranchingPoint->branchForce[2]);
+
+        floatingpoint force = max<floatingpoint>((floatingpoint)0.0, fbranch);
                 
         //get the unbinding reaction
         ReactionBase* offRxn = _cBranchingPoint->getOffReaction();
                 
         //change the rate
-        float factor = _unbindingChangers[_branchType]->getRateChangeFactor(force);
-        if(SysParams::RUNSTATE==false)
-            offRxn->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
-        else
-            offRxn->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
 
-        offRxn->setRateMulFactor(factor, ReactionBase::MECHANOCHEMICALFACTOR);
-        offRxn->updatePropensity();    
+            if (SysParams::RUNSTATE == false)
+                offRxn->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
+            else
+                offRxn->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
+            if(_unbindingChangers.size() > 0) {
+                float factor = _unbindingChangers[_branchType]->getRateChangeFactor(force);
+                offRxn->setRateMulFactor(factor, ReactionBase::MECHANOCHEMICALFACTOR);
+                offRxn->updatePropensity();
+            }
 }
             
 void BranchingPoint::printSelf() {
@@ -240,9 +250,6 @@ void BranchingPoint::printSelf() {
     
     cout << endl;
 }
-            
-            
-
             
 species_copy_t BranchingPoint::countSpecies(const string& name) {
     

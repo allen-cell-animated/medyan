@@ -225,14 +225,6 @@ public:
         cout << endl;
     }
 
-    //To be used exclusively within restart protocol.
-    void overrideParentInfo(Composite* parent, int p){
-        //set position in the filament
-        _position  = p;
-        //Add this bead as the child
-        parent->addChild(unique_ptr<Component>(this));
-    }
-
 private:
     Compartment* _compartment = nullptr; ///< Pointer to the compartment that this bead is in
     

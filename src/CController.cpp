@@ -76,12 +76,19 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem, Dissipa
     
     CCylinder::_chemSim = _chemSim;
     Cylinder::_chemManager = _chemManager;
-    
+}
 
-    
-    
-    
-    
+void CController::initializerestart(floatingpoint time, floatingpoint _minimizationTime){
+    if(SysParams::RUNSTATE){
+        LOG(ERROR) << "initializerestart Function from CController class can "
+                      "only be called "
+                      "during restart phase. Exiting.";
+        throw std::logic_error("Illegal function call pattern");
+    }
+	_chemSim->initialize();
+    _chemSim->initializerestart(time);
+    //update copy numbers
+    _chemManager->restartreleaseandremovaltime(_minimizationTime);
 }
 
 bool CController::run(floatingpoint time) {
@@ -93,10 +100,6 @@ bool CController::run(floatingpoint time) {
     return _chemSim->run(time);
 }
 
-//aravind June 29,2016.
-void CController::restart(){
- _chemSim->initialize();
-}
 bool CController::runSteps(int steps) {
     
     //update copy numbers
@@ -104,6 +107,10 @@ bool CController::runSteps(int steps) {
     
     //run the steps
     return _chemSim->runSteps(steps);
+}
+
+bool CController::crosschecktau(){
+    return _chemSim->crosschecktau();
 }
 
 vector<floatingpoint> CController::getEnergy(){

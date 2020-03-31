@@ -21,8 +21,9 @@ class Bead;
 
 /// A cosine potential used by the [FilamentBending](@ref FilamentBending) template.
 class FilamentBendingCosine {
-    
+
 public:
+
     floatingpoint energy(floatingpoint *coord, std::size_t nint, int *beadSet,
                   floatingpoint *kbend, floatingpoint *eqt);
     

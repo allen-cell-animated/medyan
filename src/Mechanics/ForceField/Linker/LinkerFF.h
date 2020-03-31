@@ -54,6 +54,8 @@ public:
     virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
     //Assigns stretchforces for ratechangeimpl
     virtual void assignforcemags();
+
+    virtual vector<string> getinteractionnames();
     
 };
 

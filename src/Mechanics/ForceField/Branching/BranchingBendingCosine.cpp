@@ -230,6 +230,7 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, int *beadSet,
             floatingpoint sinA = max<floatingpoint>(sqrt(1-cosA*cosA),(floatingpoint)0.0);
             floatingpoint cosAminusB = cosA*cos(eqt[i]) + sinA*sin(eqt[i]);
             U_i = kbend[i] *(1-cosAminusB);
+
         }
 
         /*phi = safeacos(l1l2 / L1L2);
@@ -320,7 +321,7 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint
 }
 
 void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                                    floatingpoint *kbend, floatingpoint *eqt){
+                                    floatingpoint *kbend, floatingpoint *eqt, floatingpoint *stretchforce){
 
 
     int n = BranchingBending<BranchingBendingCosine>::n;
@@ -403,12 +404,20 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
                           (coord2[2] - coord1[2])*B );
 
         //force on j, k*(-A*l1 + 2*C*l2):
-        force3[0] += k *((coord1[0] - coord2[0])*A +
+        floatingpoint f3x = k *((coord1[0] - coord2[0])*A +
                          (coord4[0] - coord3[0])*C );
-        force3[1] += k *((coord1[1] - coord2[1])*A +
+	    floatingpoint f3y = k *((coord1[1] - coord2[1])*A +
                          (coord4[1] - coord3[1])*C );
-        force3[2] += k *((coord1[2] - coord2[2])*A +
+	    floatingpoint f3z = k *((coord1[2] - coord2[2])*A +
                          (coord4[2] - coord3[2])*C );
+
+	    force3[0] += f3x;
+	    force3[1] += f3y;
+	    force3[2] += f3z;
+
+	    stretchforce[3*i] = f3x;
+	    stretchforce[3*i + 1] = f3y;
+	    stretchforce[3*i + 2] = f3z;
 
         //force on j+1, k*(A*l1 - 2*C*l2):
         force4[0] += k *((-coord1[0] + coord2[0])*A -
@@ -417,6 +426,8 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
                          (coord4[1] - coord3[1])*C );
         force4[2] += k *((-coord1[2] + coord2[2])*A -
                          (coord4[2] - coord3[2])*C );
+
+
 
         #ifdef CHECKFORCES_INF_NAN
         if(checkNaN_INF<floatingpoint>(force1, 0, 2)||checkNaN_INF<floatingpoint>(force2,0,2)||checkNaN_INF<floatingpoint>(force3,0,2)

@@ -121,6 +121,8 @@ public:
     struct bin *gpu_binGrid;
     cudaStream_t  stream_NL;
 #endif
+    //While Excluded volume neighborlist is not a full list, linker and motor
+    // neighborlists are.
     CylinderCylinderNL(float rMax, float rMin = 0.0, bool full = false, short ID = 0)
             : NeighborList(rMax, rMin), _full(full) {
 #ifdef NLSTENCILLIST
