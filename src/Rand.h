@@ -53,7 +53,7 @@ public:
         return x;
     }
 
-    static inline uint64_t randInteger64bit(){
+    static inline uint64_t randUInt64bit() {
         return _uint64_t_distr(eng);
     }
 };

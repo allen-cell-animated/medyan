@@ -348,7 +348,7 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
 		else {
 			//Generate random number of 64 bits
 			if(count64 == 0) {
-				randInt = bitset<64>(Rand::randInteger64bit());
+				randInt = bitset<64>(Rand::randUInt64bit());
 //				cout<<randInt<<endl;
 			}
 			if(randInt[count64]){
