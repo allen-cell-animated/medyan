@@ -146,12 +146,12 @@ void Controller::initialize(string inputFile,
 
     if(_subSystem.getBoundary()->getShape() == BoundaryShape::Cylinder){
         for(auto C : _subSystem.getCompartmentGrid()->getCompartments()){
-            C->getSlicedVolumeArea();
+            C->computeSlicedVolumeArea(Compartment::SliceMethod::cylinderBoundary);
         }
     }
     else{
         for(auto C : _subSystem.getCompartmentGrid()->getCompartments()){
-            C->getNonSlicedVolumeArea();
+            C->computeNonSlicedVolumeArea();
         }
     }
     //Calculate surface area and volume for reaction rate scaling
