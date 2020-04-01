@@ -1290,8 +1290,8 @@ void Controller::run() {
     tauDatadump = tau();
     oldTau = 0;
 #endif
-    for(auto o: _outputs) o->print(0);
-    for(auto o: _outputdump) o->print(0);
+    for(auto& o: _outputs) o->print(0);
+    for(auto& o: _outputdump) o->print(0);
 
     resetCounters();
 
@@ -1387,7 +1387,7 @@ void Controller::run() {
             mins = chrono::high_resolution_clock::now();
             if(var) {
                 short counter = 0;
-                for(auto o: _outputs) { o->print(i); }
+                for(auto& o: _outputs) { o->print(i); }
                 resetCounters();
                 break;
             }
@@ -1496,7 +1496,7 @@ void Controller::run() {
             if(tauLastSnapshot >= _snapshotTime) {
                 mins = chrono::high_resolution_clock::now();
                 cout << "Current simulation time = "<< tau() << endl;
-                for(auto o: _outputs) o->print(i);
+                for(auto& o: _outputs) o->print(i);
                 resetCounters();
                 i++;
                 tauLastSnapshot = 0.0;
@@ -1515,7 +1515,7 @@ void Controller::run() {
 #endif
             }
             if(tauDatadump >= _datadumpTime) {
-                for (auto o: _outputdump) o->print(0);
+                for (auto& o: _outputdump) o->print(0);
                 tauDatadump = 0.0;
             }
 #elif defined(MECHANICS)
@@ -1595,7 +1595,7 @@ void Controller::run() {
         while(totalSteps <= _runSteps) {
             //run ccontroller
             if(!_cController.runSteps(_minimizationSteps)) {
-                for(auto o: _outputs) o->print(i);
+                for(auto& o: _outputs) o->print(i);
                 resetCounters();
                 break;
             }
@@ -1624,7 +1624,7 @@ void Controller::run() {
 
             if(stepsLastSnapshot >= _snapshotSteps) {
                 cout << "Current simulation time = "<< tau() << endl;
-                for(auto o: _outputs) o->print(i);
+                for(auto& o: _outputs) o->print(i);
                 resetCounters();
                 i++;
                 stepsLastSnapshot = 0;
@@ -1654,7 +1654,7 @@ void Controller::run() {
     }
 
     //print last snapshots
-    for(auto o: _outputs) o->print(i);
+    for(auto& o: _outputs) o->print(i);
 	resetCounters();
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_run(chk2-chk1);
