@@ -404,8 +404,8 @@ private:
     floatingpoint minparamcyl2;
     floatingpoint maxparamcyl2;
     vector<floatingpoint> bindingsites;
-    static short HNLID;
-    static short _idvec[2];
+    short HNLID = 1000;
+    short _Hbsmidvec[2]= {1000,1000};
     int dBInt = 1;
     int dBI = SysParams::Chemistry().linkerbindingskip-1;
 
@@ -515,8 +515,8 @@ public:
     }
     virtual void setHNLID(short id, short idvec[2]){
         HNLID = id;
-        _idvec[0] = idvec[0];
-        _idvec[1] = idvec[1];
+        _Hbsmidvec[0] = idvec[0];
+        _Hbsmidvec[1] = idvec[1];
     };
 #endif
 
@@ -563,8 +563,8 @@ private:
 	floatingpoint minparamcyl2;
 	floatingpoint maxparamcyl2;
     vector<floatingpoint> bindingsites;
-    static short HNLID;
-    static short _idvec[2];
+    short HNLID = 1000;//Tells which HneighborList to use
+    short _Hbsmidvec[2] = {1000, 1000};//Tells position in HybridBindingSearchManager
     //possible bindings at current state. updated according to neighbor list
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
     _possibleBindings;
@@ -672,8 +672,8 @@ public:
     }
     virtual void setHNLID(short id, short idvec[2]){
         HNLID = id;
-        _idvec[0] = idvec[0];
-        _idvec[1] = idvec[1];
+        _Hbsmidvec[0] = idvec[0];
+        _Hbsmidvec[1] = idvec[1];
     };
 #endif
 

@@ -1867,10 +1867,10 @@ void ChemManager::genFilBindingReactions() {
                 floatingpoint offRate = get<3>(r);
                 //aravind June 24, 2016.
                 auto temp=SysParams::MUBBareRate;
-                if(temp.size()>0)
-                    temp[motorInt]=offRate;
-                else
-                    temp.push_back(offRate);
+                if(temp.size()<=motorInt){
+                    temp.resize(motorInt+1);
+                }
+                temp[motorInt]=offRate;
                 SysParams::MUBBareRate=temp;
                 rMin = get<4>(r);
                 rMax = get<5>(r);
@@ -1958,15 +1958,40 @@ void ChemManager::genFilBindingReactions() {
         }
 #endif
     } //Loop through Filament types
+    //@@@ Defn:
+    //1. BindingManager ->defined for each rxn
+    //2. HybridBindingSearchManager -> defined for each compartment
+    //3. HybridNeighborList -> defined for each unique distance pair.
+
+    //@@@Current information
+    //HybridNeighborList<=======HybridBindingSearchManager=====>BindingManager
+
+    //@@@Missing connections
+    //1. BindingManager=====X_WHICH_ID_TO_USE?_X=>>>>HybridNeighborList
+    //2. BindingManager=====X_WHICH_ID_TO_USE?_X=>>>>HybridBindingSearchManager
+
+    //At this point, HybridBindingSearchManager has access to individual BindingManagers
+    // and an instance of HybridNeighborList.
+    //A. HybridNeighborList has no information on distances for which
+    // Neighborlists should be computed. Once that is done, HybridBindingSearchManager needs
+    // to know which neighborlist ID within HybridNeighborlist to access.
+    //B. Each BindingManager needs to have access to both HybridNeighborList ID and also
+    // needs to know it's position in the BindingManager matrix.
+
     #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 	Compartment *C0 = grid->getCompartments()[0];
-	//status checks if there are linker and motor binding reactions for this
-	// filamentType
+	//status checks if there are linker and motor binding reactions for all filament Types
 	if (status) {
-		HybridBindingSearchManager::_HneighborList = _subSystem->getHNeighborList();
-		auto Hmanager = C0->getHybridBindingSearchManager();
-		Hmanager->addtoHNeighborList();
-	}
+        HybridBindingSearchManager::_HneighborList = _subSystem->getHNeighborList();
+        auto Hmanager = C0->getHybridBindingSearchManager();
+        //A is accomplished with a single call to addtoHNeighborList
+        Hmanager->addtoHNeighborList();
+        //B is accomplished by looping through all HybridBindingSeachManagers and copying
+        // back necessary information.
+        for (auto C : grid->getCompartments()) {
+            C->getHybridBindingSearchManager()->copyInfotoBindingManagers();
+        }
+    }
 	_subSystem->initializeHNeighborList();
 	#endif
 }

@@ -238,6 +238,7 @@ public:
                                    float rMin = 0.0);
 
     void addtoHNeighborList();
+    void copyInfotoBindingManagers();
 
     vector<Cylinder*> getHNeighbors(Cylinder* c, short HNLID){
         return _HneighborList->getNeighborsstencil(HNLID, c);

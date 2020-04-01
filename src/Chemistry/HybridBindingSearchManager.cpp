@@ -1039,15 +1039,27 @@ void HybridBindingSearchManager::addtoHNeighborList(){
         float maxrMaxsq = *max_element(temprMaxsq.begin(), temprMaxsq.end());
         float minrMinsq = *min_element(temprMinsq.begin(), temprMinsq.end());
 	    HNLIDvec[idx] = _HneighborList->setneighborsearchparameters(ftypepair[0], ftypepair[1],
-	                                                       false, true, localmaxcylsize + sqrt(maxrMaxsq),
+	                                                       /*uniquestatus*/false,
+	                                                       /*fullstatus*/ true,
+	                                                        localmaxcylsize + sqrt(maxrMaxsq),
 	                                                       max( sqrt(minrMinsq) - localmaxcylsize,float(0.0)));
 
+/*        for(short idx2 = 0; idx2<temprMaxsq.size();idx2++) {
+            short idvec[2] = {idx, idx2};
+            fManagervec[idx][idx2]->setHNLID(HNLIDvec[idx], idvec);
+        }*/
+    }
+}
+
+void HybridBindingSearchManager::copyInfotoBindingManagers(){
+    for(short idx = 0; idx < totaluniquefIDpairs; idx++) {
+        vector<float> temprMaxsq = _rMaxsqvec[idx];
         for(short idx2 = 0; idx2<temprMaxsq.size();idx2++) {
             short idvec[2] = {idx, idx2};
             fManagervec[idx][idx2]->setHNLID(HNLIDvec[idx], idvec);
         }
     }
-}
+};
 
 vector<tuple<CCylinder*, short>>
 HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){

@@ -1000,7 +1000,7 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc) {
 void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSite) {
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     auto HManager = _compartment->getHybridBindingSearchManager();
-    HManager->addPossibleBindingsstencil(_idvec,cc,bindingSite);
+    HManager->addPossibleBindingsstencil(_Hbsmidvec,cc,bindingSite);
 #else
     if(cc->getType() != _filamentType) return;
 
@@ -1259,9 +1259,9 @@ void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc) {
 void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bindingSite) {
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     auto HManager = _compartment->getHybridBindingSearchManager();
-    HManager->removePossibleBindingsstencil(_idvec, cc, bindingSite);
+    HManager->removePossibleBindingsstencil(_Hbsmidvec, cc, bindingSite);
 /*    for(auto C:SubSystem::getstaticgrid()->getCompartments()){
-        C->getHybridBindingSearchManager()->checkoccupancySIMD(_idvec);
+        C->getHybridBindingSearchManager()->checkoccupancySIMD(_Hbsmidvec);
     }*/
 #else
 
@@ -1396,7 +1396,7 @@ void LinkerBindingManager::crosscheck(){
 vector<tuple<CCylinder*, short>> LinkerBindingManager::chooseBindingSitesstencil() {
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     auto HManager = _compartment->getHybridBindingSearchManager();
-    return HManager->chooseBindingSitesstencil(_idvec);
+    return HManager->chooseBindingSitesstencil(_Hbsmidvec);
 #else
     assert((_possibleBindingsstencil.size() != 0)
            && "Major bug: Linker binding manager should not have zero binding \
@@ -1418,7 +1418,7 @@ void LinkerBindingManager::clearpossibleBindingsstencil() {
         updateBindingReaction(oldN,0);
     #else
     auto HManager = _compartment->getHybridBindingSearchManager();
-    HManager->clearPossibleBindingsstencil(_idvec);
+    HManager->clearPossibleBindingsstencil(_Hbsmidvec);
     #endif
 }
 #endif
@@ -1936,10 +1936,9 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc) {
 }
 void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSite) {
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
-//    cout<<"Adding "<<cc->getCylinder()->getID()<<" "<<bindingSite<<endl;
     auto HManager = _compartment->getHybridBindingSearchManager();
-    HManager->addPossibleBindingsstencil(_idvec,cc,bindingSite);
-//    HManager->checkoccupancySIMD(_idvec);
+    HManager->addPossibleBindingsstencil(_Hbsmidvec,cc,bindingSite);
+//    HManager->checkoccupancySIMD(_Hbsmidvec);
 #else
     if(cc->getType() != _filamentType) return;
 
@@ -2205,9 +2204,9 @@ void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bin
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 //    cout<<"Removing "<<cc->getCylinder()->getID()<<" "<<bindingSite<<endl;
     auto HManager = _compartment->getHybridBindingSearchManager();
-        HManager->removePossibleBindingsstencil(_idvec, cc, bindingSite);
+        HManager->removePossibleBindingsstencil(_Hbsmidvec, cc, bindingSite);
 /*    for(auto C:SubSystem::getstaticgrid()->getCompartments()){
-        C->getHybridBindingSearchManager()->checkoccupancySIMD(_idvec);
+        C->getHybridBindingSearchManager()->checkoccupancySIMD(_Hbsmidvec);
     }*/
 #else
 
@@ -2341,7 +2340,7 @@ void MotorBindingManager::crosscheck(){
 vector<tuple<CCylinder*, short>> MotorBindingManager::chooseBindingSitesstencil() {
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     auto HManager = _compartment->getHybridBindingSearchManager();
-    return HManager->chooseBindingSitesstencil(_idvec);
+    return HManager->chooseBindingSitesstencil(_Hbsmidvec);
 #else
     assert((_possibleBindingsstencil.size() != 0)
            && "Major bug: Linker binding manager should not have zero binding \
@@ -2363,7 +2362,7 @@ void MotorBindingManager::clearpossibleBindingsstencil() {
         updateBindingReaction(oldN,0);
     #else
     auto HManager = _compartment->getHybridBindingSearchManager();
-    HManager->clearPossibleBindingsstencil(_idvec);
+    HManager->clearPossibleBindingsstencil(_Hbsmidvec);
 
     #endif
 }
@@ -2399,7 +2398,8 @@ SubSystem* FilamentBindingManager::_subSystem = 0;
 
 vector<CylinderCylinderNL*> LinkerBindingManager::_neighborLists;
 vector<CylinderCylinderNL*> MotorBindingManager::_neighborLists;
-short LinkerBindingManager::HNLID;
-short MotorBindingManager::HNLID;
-short LinkerBindingManager::_idvec[2];
-short MotorBindingManager::_idvec[2];
+//[[deprecated]]
+//short LinkerBindingManager::HNLID;
+//short MotorBindingManager::HNLID;
+//short LinkerBindingManager::_idvec[2];
+//short MotorBindingManager::_idvec[2];
