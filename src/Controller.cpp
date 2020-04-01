@@ -166,19 +166,19 @@ void Controller::initialize(string inputFile,
     p.readSimulParams();
 
     //trajectory-style data
-    _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.traj", &_subSystem));
-    _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj", &_subSystem));
-    _outputs.push_back(new Forces(_outputDirectory + "forces.traj", &_subSystem));
-    _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", &_subSystem));
+    _outputs.push_back(make_unique<BasicSnapshot>(_outputDirectory + "snapshot.traj", &_subSystem));
+    _outputs.push_back(make_unique<BirthTimes>(_outputDirectory + "birthtimes.traj", &_subSystem));
+    _outputs.push_back(make_unique<Forces>(_outputDirectory + "forces.traj", &_subSystem));
+    _outputs.push_back(make_unique<Tensions>(_outputDirectory + "tensions.traj", &_subSystem));
 
-    _outputs.push_back(new PlusEnd(_outputDirectory + "plusend.traj", &_subSystem));
+    _outputs.push_back(make_unique<PlusEnd>(_outputDirectory + "plusend.traj", &_subSystem));
     //ReactionOut should be the last one in the output list
     //Otherwise incorrect deltaMinusEnd or deltaPlusEnd values may be genetrated.
-    _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", &_subSystem));
+    _outputs.push_back(make_unique<ReactionOut>(_outputDirectory + "monomers.traj", &_subSystem));
     //add br force out and local diffussing species concentration
-    _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", &_subSystem));
-    //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", &_subSystem));
-    _outputs.push_back(new IndicesOutput(_outputDirectory + "indices.traj", &_subSystem));
+    _outputs.push_back(make_unique<BRForces>(_outputDirectory + "repulsion.traj", &_subSystem));
+    //_outputs.push_back(make_unique<PinForces>(_outputDirectory + "pinforce.traj", &_subSystem));
+    _outputs.push_back(make_unique<IndicesOutput>(_outputDirectory + "indices.traj", &_subSystem));
 
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -290,7 +290,7 @@ void Controller::initialize(string inputFile,
 
     //Set up chemistry output if any
     string chemsnapname = _outputDirectory + "chemistry.traj";
-    _outputs.push_back(new Chemistry(chemsnapname, &_subSystem, ChemData,
+    _outputs.push_back(make_unique<Chemistry>(chemsnapname, &_subSystem, ChemData,
                                      _subSystem.getCompartmentGrid()));
 
     ChemSim* _cs = _cController.getCS();
@@ -298,70 +298,72 @@ void Controller::initialize(string inputFile,
 
     string concenname = _outputDirectory + "concentration.traj";
 
-    _outputs.push_back(new Concentrations(concenname, &_subSystem, ChemData));
+    _outputs.push_back(make_unique<Concentrations>(concenname, &_subSystem, ChemData));
 
     if(SysParams::CParams.dissTracking){
-    //Set up dissipation output if dissipation tracking is enabled
-    string disssnapname = _outputDirectory + "dissipation.traj";
-    _outputs.push_back(new Dissipation(disssnapname, &_subSystem, _cs));
+        //Set up dissipation output if dissipation tracking is enabled
+        string disssnapname = _outputDirectory + "dissipation.traj";
+        _outputs.push_back(make_unique<Dissipation>(disssnapname, &_subSystem, _cs));
 
-    //Set up HRCD output if dissipation tracking is enabled
-    string hrcdsnapname = _outputDirectory + "HRCD.traj";
+        //Set up HRCD output if dissipation tracking is enabled
+        string hrcdsnapname = _outputDirectory + "HRCD.traj";
 
-    _outputs.push_back(new HRCD(hrcdsnapname, &_subSystem, _cs));
-        
-    //Set up HRMD output if dissipation tracking is enabled
-    string hrmdsnapname = _outputDirectory + "HRMD.traj";
-    _outputs.push_back(new HRMD(hrmdsnapname, &_subSystem, _cs));
-        
+        _outputs.push_back(make_unique<HRCD>(hrcdsnapname, &_subSystem, _cs));
+
+        //Set up HRMD output if dissipation tracking is enabled
+        string hrmdsnapname = _outputDirectory + "HRMD.traj";
+        _outputs.push_back(make_unique<HRMD>(hrmdsnapname, &_subSystem, _cs));
+
     }
 
     if(SysParams::CParams.eventTracking){
-    //Set up MotorWalkingEvents if event tracking is enabled
-    string motorwalkingevents = _outputDirectory + "motorwalkingevents.traj";
-    _outputs.push_back(new MotorWalkingEvents(motorwalkingevents, &_subSystem, _cs));
+        //Set up MotorWalkingEvents if event tracking is enabled
+        string motorwalkingevents = _outputDirectory + "motorwalkingevents.traj";
+        _outputs.push_back(make_unique<MotorWalkingEvents>(motorwalkingevents, &_subSystem, _cs));
 
-    //Set up LinkerUnbindingEvents if event tracking is enabled
-    string linkerunbindingevents = _outputDirectory + "linkerunbindingevents.traj";
-    _outputs.push_back(new LinkerUnbindingEvents(linkerunbindingevents, &_subSystem, _cs));
+        //Set up motorunbindingevents if event tracking is enabled
+        string motorunbindingevents = _outputDirectory + "motorunbindingevents.traj";
+        _outputs.push_back(make_unique<MotorUnbindingEvents>(motorunbindingevents, &_subSystem, _cs));
 
-    //Set up LinkerBindingEvents if event tracking is enabled
-    string linkerbindingevents = _outputDirectory + "linkerbindingevents.traj";
-    _outputs.push_back(new LinkerBindingEvents(linkerbindingevents, &_subSystem, _cs));
+        //Set up LinkerUnbindingEvents if event tracking is enabled
+        string linkerunbindingevents = _outputDirectory + "linkerunbindingevents.traj";
+        _outputs.push_back(make_unique<LinkerUnbindingEvents>(linkerunbindingevents, &_subSystem, _cs));
+
+        //Set up LinkerBindingEvents if event tracking is enabled
+        string linkerbindingevents = _outputDirectory + "linkerbindingevents.traj";
+        _outputs.push_back(make_unique<LinkerBindingEvents>(linkerbindingevents, &_subSystem, _cs));
     }
 
     if(SysParams::MParams.hessTracking){
-    //Set up HessianMatrix if hessiantracking is enabled
-    string hessianmatrix = _outputDirectory + "hessianmatrix.traj";
-    _outputs.push_back(new HessianMatrix(hessianmatrix, &_subSystem, _ffm));
-        
-    //Set up HessianSpectra if hessiantracking is enabled
-    string hessianspectra = _outputDirectory + "hessianspectra.traj";
-    _outputs.push_back(new HessianSpectra(hessianspectra, &_subSystem, _ffm));
-        
-        
+        //Set up HessianMatrix if hessiantracking is enabled
+        string hessianmatrix = _outputDirectory + "hessianmatrix.traj";
+        _outputs.push_back(make_unique<HessianMatrix>(hessianmatrix, &_subSystem, _ffm));
+
+        //Set up HessianSpectra if hessiantracking is enabled
+        string hessianspectra = _outputDirectory + "hessianspectra.traj";
+        _outputs.push_back(make_unique<HessianSpectra>(hessianspectra, &_subSystem, _ffm));
+
     }
 
     //Set up CMGraph output
     string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
-    _outputs.push_back(new CMGraph(cmgraphsnapname, &_subSystem));
+    _outputs.push_back(make_unique<CMGraph>(cmgraphsnapname, &_subSystem));
     
     //Set up TMGraph output
     string tmgraphsnapname = _outputDirectory + "TMGraph.traj";
-    _outputs.push_back(new TMGraph(tmgraphsnapname, &_subSystem));
-
-
+    _outputs.push_back(make_unique<TMGraph>(tmgraphsnapname, &_subSystem));
 
 
     //Set up datadump output if any
-#ifdef RESTARTDEV
-	    string datadumpname = _outputDirectory + "datadump.traj";
-	    _outputs.push_back(new Datadump(datadumpname, _subSystem, ChemData));
-#endif
+    string datadumpname = _outputDirectory + "datadump.traj";
+    _outputdump.push_back(make_unique<Datadump>(datadumpname, &_subSystem, ChemData));
+
+//    string twofilamentname = _outputDirectory + "twofilament.traj";
+//    _outputs.push_back(make_unique<TwoFilament>(twofilamentname, &_subSystem, ChemData));
 
 //    //Set up Turnover output if any
 //    string turnover = _outputDirectory + "Turnover.traj";
-//    _outputs.push_back(new FilamentTurnoverTimes(turnover, &_subSystem));
+//    _outputs.push_back(make_unique<FilamentTurnoverTimes>(turnover, &_subSystem));
 
 
 #endif

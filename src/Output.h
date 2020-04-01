@@ -53,7 +53,7 @@ public:
         _subSystem = s;
     }
     /// Destructor, which closes the output file
-    ~Output() {_outputFile.close();}
+    virtual ~Output() {_outputFile.close();}
 
     /// To be implemented in sub classes
     virtual void print(int snapshot) = 0;

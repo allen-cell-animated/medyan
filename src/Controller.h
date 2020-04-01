@@ -59,9 +59,10 @@ private:
     
     string _inputDirectory;   ///< Input directory being used
     string _outputDirectory;  ///< Output directory being used
-    
-    vector<Output*> _outputs; ///< Vector of specified outputs
-    
+
+    vector<std::unique_ptr< Output >> _outputs; ///< Vector of specified outputs
+    vector<std::unique_ptr< Output >> _outputdump; ///<Vector of outputs that correspond to a datadump
+
     floatingpoint _runTime;          ///< Total desired runtime for simulation
 
     floatingpoint _snapshotTime;     ///< Desired time for each snapshot
