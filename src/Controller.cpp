@@ -1514,7 +1514,9 @@ void Controller::run() {
     tauLastSnapshot = tau();
     oldTau = 0;
 #endif
-    for(auto o: _outputs) o->print(0);
+    for(auto& o: _outputs) o->print(0);
+    for(auto& o: _outputdump) o->print(0);
+
     resetCounters();
 
     cout << "Starting simulation..." << endl;
@@ -1604,7 +1606,7 @@ void Controller::run() {
             mins = chrono::high_resolution_clock::now();
             if(var) {
                 short counter = 0;
-                for(auto o: _outputs) { o->print(i); }
+                for(auto& o: _outputs) { o->print(i); }
                 resetCounters();
                 break;
             }
@@ -1718,23 +1720,28 @@ void Controller::run() {
             //output snapshot
             if(tauLastSnapshot >= _snapshotTime) {
                 mins = chrono::high_resolution_clock::now();
-                for(auto o: _outputs) o->print(i);
+                cout << "Current simulation time = "<< tau() << endl;
+                for(auto& o: _outputs) o->print(i);
                 resetCounters();
                 i++;
                 tauLastSnapshot = 0.0;
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runout2(mine - mins);
                 outputtime += elapsed_runout2.count();
-                cout<< "Running time profiler: " << endl;
-                cout<< "Chemistry time for run = " << chemistrytime <<endl;
-                cout << "Minimization time for run = " << minimizationtime <<endl;
-                cout<<"Dynamic rate time for run = "<<rxnratetime<<endl;
-                cout<< "Other = "<<nltime + outputtime + specialtime <<endl;
-                
-                cout << endl;
-                cout << "Current simulation time = "<< tau() << endl;
-                cout << "CPU time elapsed = " << chemistrytime + minimizationtime + rxnratetime + nltime + outputtime + specialtime<< endl;
-                cout << endl;
+#ifdef OPTIMOUT
+                cout<< "Chemistry time for cycle=" << chemistrytime <<endl;
+                cout << "Minimization time for cycle=" << minimizationtime <<endl;
+                cout<< "Neighbor-list+Bmgr-time for cycle="<<nltime<<endl;
+                cout<<"update-position time for cycle="<<updateposition<<endl;
+
+                cout<<"rxnrate time for cycle="<<rxnratetime<<endl;
+                cout<<"Output time for cycle="<<outputtime<<endl;
+                cout<<"Special time for cycle="<<specialtime<<endl;
+#endif
+            }
+            if(tauDatadump >= _datadumpTime) {
+                for (auto& o: _outputdump) o->print(0);
+                tauDatadump = 0.0;
             }
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
@@ -1813,7 +1820,7 @@ void Controller::run() {
         while(totalSteps <= _runSteps) {
             //run ccontroller
             if(!_cController.runSteps(_minimizationSteps)) {
-                for(auto o: _outputs) o->print(i);
+                for(auto& o: _outputs) o->print(i);
                 resetCounters();
                 break;
             }
@@ -1852,8 +1859,7 @@ void Controller::run() {
             if(stepsLastSnapshot >= _snapshotSteps) {
                 cout << endl;
                 cout << "Current simulation time = "<< tau() << endl;
-                cout << endl;
-                for(auto o: _outputs) o->print(i);
+                for(auto& o: _outputs) o->print(i);
                 resetCounters();
                 i++;
                 stepsLastSnapshot = 0;
@@ -1883,7 +1889,7 @@ void Controller::run() {
     }
 
     //print last snapshots
-    for(auto o: _outputs) o->print(i);
+    for(auto& o: _outputs) o->print(i);
 	resetCounters();
     
     cout<< "Running time profiler: " << endl;
