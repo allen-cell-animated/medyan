@@ -1519,7 +1519,7 @@ void Controller::run() {
                 tauDatadump = 0.0;
             }
 #elif defined(MECHANICS)
-            for(auto o: _outputs) o->print(i);
+            for(auto& o: _outputs) o->print(i);
 	        resetCounters();
             i++;
 #endif
@@ -1630,7 +1630,7 @@ void Controller::run() {
                 stepsLastSnapshot = 0;
             }
 #elif defined(MECHANICS)
-            for(auto o: _outputs) o->print(i);
+            for(auto& o: _outputs) o->print(i);
             resetCounters();
             i++;
 #endif
