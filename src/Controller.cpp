@@ -229,7 +229,7 @@ void Controller::initialize(string inputFile,
 
     if(_subSystem.getBoundary()->getShape() == BoundaryShape::Cylinder){
         for(auto C : _subSystem.getCompartmentGrid()->getCompartments()){
-            C->computeSlicedVolumeArea(Compartment::SliceMethod::CylinderBoundary);
+            C->computeSlicedVolumeArea(Compartment::SliceMethod::cylinderBoundary);
         }
     }
     else{
@@ -525,7 +525,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             c->boundaryInteresting = true;
 
             // Update partial activate status
-            c->computeSlicedVolumeArea(Compartment::SliceMethod::Membrane);
+            c->computeSlicedVolumeArea(Compartment::SliceMethod::membrane);
             _cController.updateActivation(c, Compartment::ActivateReason::Membrane);
 
         } else if( ! _regionInMembrane->contains(vector2Vec<3, floatingpoint>(c->coordinates()))) {
@@ -1017,7 +1017,7 @@ void Controller::updateActiveCompartments() {
             const auto& ts = c->getTriangles();
             if(!ts.empty()) {
                 // Update partial activate status
-                c->computeSlicedVolumeArea(Compartment::SliceMethod::Membrane);
+                c->computeSlicedVolumeArea(Compartment::SliceMethod::membrane);
                 _cController.updateActivation(c, Compartment::ActivateReason::Membrane);
 
                 // No matter whether the compartment is interesting before, mark it as interesting

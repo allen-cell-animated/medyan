@@ -61,7 +61,7 @@ class Compartment : public Composite {
 
 public:
     enum class SliceMethod {
-        Membrane, CylinderBoundary
+        membrane, cylinderBoundary
     };
     enum class ActivateReason {
         Whole, Membrane

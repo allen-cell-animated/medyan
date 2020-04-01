@@ -1758,7 +1758,7 @@ void Compartment::computeNonSlicedVolumeArea() {
 void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
 
     switch(sliceMethod) {
-    case SliceMethod::Membrane:
+    case SliceMethod::membrane:
         {
             // The calculation requires the
             //  - The position calculation of triangles
@@ -1801,7 +1801,7 @@ void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
         }
         break;
 
-    case SliceMethod::CylinderBoundary:
+    case SliceMethod::cylinderBoundary:
         {
 
             // The calculation requires the
