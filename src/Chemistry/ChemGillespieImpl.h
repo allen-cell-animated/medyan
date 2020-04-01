@@ -142,7 +142,7 @@ public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0
     ///and the number of reactions to 0
     ChemGillespieImpl() :
-        ChemSimImpl(), _exp_distr(),
+        ChemSimImpl(),
         _uniform_distr(), _a_total(0),_n_reacts(0) { resetTime(); }
     
     /// Copying is not allowed

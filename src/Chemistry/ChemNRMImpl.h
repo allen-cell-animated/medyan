@@ -247,8 +247,8 @@ public:
     /// of reactions to 0
     ChemNRMImpl() :
         ChemSimImpl(),
-        _exp_distr(), _n_reacts(0) { resetTime(); }
-
+        _n_reacts(0) { resetTime(); }
+    
     /// Copying is not allowed
     ChemNRMImpl(const ChemNRMImpl &rhs) = delete;
     
