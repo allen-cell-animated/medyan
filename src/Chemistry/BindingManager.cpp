@@ -56,64 +56,64 @@ _nucleationZone(zone), _nucleationDistance(nucleationDistance) {
 #ifdef NLORIGINAL
 void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
 
-	if (SysParams::INITIALIZEDSTATUS ) {
-		short complimentaryfID;
-		short _filamentType = cc->getType();
-		if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
-			return;
-		else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
-		else complimentaryfID = _filamentIDvec[0];
+    if (SysParams::INITIALIZEDSTATUS ) {
+        short complimentaryfID;
+        short _filamentType = cc->getType();
+        if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
+            return;
+        else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
+        else complimentaryfID = _filamentIDvec[0];
 
-		bool inZone = true;
-		//see if in nucleation zone
-		if (_nucleationZone != NucleationZoneType::ALL) {
+        bool inZone = true;
+        //see if in nucleation zone
+        if (_nucleationZone != NucleationZoneType::ALL) {
 
-			auto mp = (float) bindingSite /
-			          SysParams::Geometry().cylinderNumMon[_filamentType];
+            auto mp = (float) bindingSite /
+                      SysParams::Geometry().cylinderNumMon[_filamentType];
 
-			auto x1 = cc->getCylinder()->getFirstBead()->vcoordinate();
-			auto x2 = cc->getCylinder()->getSecondBead()->vcoordinate();
+            auto x1 = cc->getCylinder()->getFirstBead()->vcoordinate();
+            auto x2 = cc->getCylinder()->getSecondBead()->vcoordinate();
 
-			auto coord = midPointCoordinate(x1, x2, mp);
+            auto coord = midPointCoordinate(x1, x2, mp);
 
-			//set nucleation zone
-			if (_subSystem->getBoundary()->distance(coord) < _nucleationDistance) {
+            //set nucleation zone
+            if (_subSystem->getBoundary()->distance(coord) < _nucleationDistance) {
 
-				//if top boundary, check if we are above the center coordinate in z
-				if (_nucleationZone == NucleationZoneType::TOPBOUNDARY) {
+                //if top boundary, check if we are above the center coordinate in z
+                if (_nucleationZone == NucleationZoneType::TOPBOUNDARY) {
 
-					if (coord[2] >= GController::getCenter()[2])
-						inZone = true;
-					else
-						inZone = false;
-				}
-					//add SIDEBOUNDARY that check the distance to the side of cylinder
-				else if (_nucleationZone == NucleationZoneType::SIDEBOUNDARY) {
-					if (_subSystem->getBoundary()->sidedistance(coord) <
-					    _nucleationDistance)
-						inZone = true;
-					else
-						inZone = false;
-				} else inZone = true;
-			} else
-				inZone = false;
-		}
+                    if (coord[2] >= GController::getCenter()[2])
+                        inZone = true;
+                    else
+                        inZone = false;
+                }
+                    //add SIDEBOUNDARY that check the distance to the side of cylinder
+                else if (_nucleationZone == NucleationZoneType::SIDEBOUNDARY) {
+                    if (_subSystem->getBoundary()->sidedistance(coord) <
+                        _nucleationDistance)
+                        inZone = true;
+                    else
+                        inZone = false;
+                } else inZone = true;
+            } else
+                inZone = false;
+        }
 
-		//add valid site
-		if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
-				SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(),
-		             (floatingpoint) 1.0) &&
-		    inZone) {
+        //add valid site
+        if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
+                SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(),
+                     (floatingpoint) 1.0) &&
+            inZone) {
 
-			auto t = tuple<CCylinder *, short>(cc, bindingSite);
-			_possibleBindings.insert(t);
-		}
+            auto t = tuple<CCylinder *, short>(cc, bindingSite);
+            _possibleBindings.insert(t);
+        }
 
-		int oldN = _bindingSpecies->getN();
-		int newN = numBindingSites();
+        int oldN = _bindingSpecies->getN();
+        int newN = numBindingSites();
 
-		updateBindingReaction(oldN, newN);
-	}
+        updateBindingReaction(oldN, newN);
+    }
 }
 
 void BranchingManager::addPossibleBindings(CCylinder* cc) {
