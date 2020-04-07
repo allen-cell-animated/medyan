@@ -24,11 +24,13 @@
 /// The Fletcher-Rieves method for conjugate gradient minimization
 class FletcherRieves : public CGMethod {
 public:
-    virtual MinimizationResult minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                            floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
-                            floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
-                            string _LINESEARCHALGORITHM,
-                            bool steplimit);
+    virtual MinimizationResult minimize(
+        ForceFieldManager &FFM, floatingpoint GRADTOL,
+        floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+        floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+        string _LINESEARCHALGORITHM,
+        bool steplimit
+    ) override;
 };
 
 #endif

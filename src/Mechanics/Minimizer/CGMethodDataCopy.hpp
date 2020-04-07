@@ -8,21 +8,27 @@
 #include "Structure/Bead.h"
 
 // Copies all the system data to the CGMethod data vector
-inline FFCoordinateStartingIndex initCGMethodData(CGMethod& cg) {
+inline FFCoordinateStartingIndex initCGMethodData(
+    CGMethod& cg,
+    floatingpoint defaultGradTol
+) {
     FFCoordinateStartingIndex si {};
     std::size_t curIdx = 0;
     cg.coord.clear();
+    cg.forceTol.clear();
 
     //---------------------------------
     // Copy all the coordinate information here
+    // Also initializes the force tolerance vector
 
     // Bead coord
     si.bead = curIdx;
-    cg.coord.reserve(3 * Bead::getBeads().size());
+    cg.coord.reserve(cg.coord.size() + 3 * Bead::getBeads().size());
     for(auto pb : Bead::getBeads()) {
         cg.coord.insert(cg.coord.end(), pb->coord.begin(), pb->coord.end());
         curIdx += 3;
     }
+    cg.forceTol.resize(cg.coord.size(), defaultGradTol);
 
     // Vertex coord
     si.vertex = curIdx;
@@ -30,6 +36,7 @@ inline FFCoordinateStartingIndex initCGMethodData(CGMethod& cg) {
 
     // Membrane 2d coord
     si.mem2d = curIdx;
+    // Add things for membrane 2d coordinates here
 
     //---------------------------------
     // Initialize the rest of cg data

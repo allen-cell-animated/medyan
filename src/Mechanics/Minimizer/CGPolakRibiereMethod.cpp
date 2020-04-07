@@ -28,11 +28,13 @@
 #include "MotorGhostInteractions.h"
 #endif
 
-MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                            floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
-                            floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
-                            string _LINESEARCHALGORITHM,
-                            bool steplimit) {
+MinimizationResult PolakRibiere::minimize(
+    ForceFieldManager &FFM, floatingpoint GRADTOL,
+    floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+    floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+    string _LINESEARCHALGORITHM,
+    bool steplimit
+) {
 
     #ifdef TRACKDIDNOTMINIMIZE
     SysParams::Mininimization().beta.clear();
@@ -68,7 +70,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
-    FFM.vectorizeAllForceFields(initCGMethodData(*this));
+    FFM.vectorizeAllForceFields(initCGMethodData(*this, GRADTOL));
 
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
@@ -132,6 +134,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     tbegin = chrono::high_resolution_clock::now();
     searchDir = forcePrev = force;
     auto maxForce = maxF();
+    bool isForceBelowTol = forceBelowTolerance();
 
     result.energiesBefore = FFM.computeEnergyHRMD(coord.data());
 
@@ -308,7 +311,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     floatingpoint curGrad = searchDirDotSearchDir();
     Ms_isminimizationstate = true;
     Ms_issafestate = false;
-    Ms_isminimizationstate = maxForce > GRADTOL;
+    Ms_isminimizationstate = isForceBelowTol;
     bool ETOLexittstatus = false;
     //
 #ifdef DETAILEDOUTPUT
@@ -752,8 +755,9 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         CUDAcommon::tmin.computeforces += elapsed_force.count();
 
         maxForce = maxF();
+        isForceBelowTol = forceBelowTolerance();
 
-        if (M_ETolstate[0] && maxForce <= 2.5 * GRADTOL) {
+        if (M_ETolstate[0] && forceBelowRelaxedTolerance(2.5)) {
             ETOLexittstatus = true;
         } else
             M_ETolstate[0] = false;
@@ -912,7 +916,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         }
         //Create back up coordinates to go to in case Energy minimization fails at an
         // undeisrable state.
-        if (maxForce < 10 * GRADTOL && numIter > N / 2) {
+        if (forceBelowRelaxedTolerance(10) && numIter > N / 2) {
             copycoordsifminimumE(maxForce);
         }
 
@@ -925,7 +929,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         tbegin = chrono::high_resolution_clock::now();
 #endif
         curGrad = newGrad;
-        Ms_isminimizationstate = maxForce > GRADTOL;
+        Ms_isminimizationstate = isForceBelowTol;
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runs1b(tend - tbegin);

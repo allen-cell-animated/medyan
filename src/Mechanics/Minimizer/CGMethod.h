@@ -42,9 +42,10 @@ public:
     std::vector< floatingpoint > coordLineSearch; // Temporary coords used during line search
     std::vector< floatingpoint > coordMinE; // Temporary coords used to record position for minimumE
 
-    std::vector< floatingpoint > force; // Negative gradient of energy
+    std::vector< floatingpoint > force; // Negative gradient
     std::vector< floatingpoint > forcePrev; // Previous force
-    std::vector< floatingpoint > searchDir; // The search direction in conjugate gradient method
+    std::vector< floatingpoint > searchDir; // The current search direction in conjugate gradient method
+    std::vector< floatingpoint > forceTol; // The force tolerance (in each dimension); must be positive
 
 protected:
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -160,7 +161,22 @@ protected:
     double forceDotForce() const;
     double forceDotForcePrev() const;
     double searchDirDotForce() const;
-    
+
+    // Check whether the force is no larger than tolerance in every dimension
+    bool forceBelowTolerance() const {
+        for(std::size_t i = 0; i < force.size(); ++i) {
+            if(std::abs(force[i]) > forceTol[i]) return false;
+        }
+        return true;
+    }
+    // Check whether the force is no larger than a relatex tolerance in every dimension
+    bool forceBelowRelaxedTolerance(floatingpoint factor) const {
+        for(std::size_t i = 0; i < force.size(); ++i) {
+            if(std::abs(force[i]) > factor * forceTol[i]) return false;
+        }
+        return true;
+    }
+
     /// Get the max force in the system
     floatingpoint maxF() const;
     

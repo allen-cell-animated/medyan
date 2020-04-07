@@ -19,11 +19,13 @@
 #include "Output.h"
 #include "Structure/Bead.h"
 
-MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                                   floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
-                                   floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
-                                   string _LINESEARCHALGORITHM,
-                                   bool steplimit) {
+MinimizationResult SteepestDescent::minimize(
+    ForceFieldManager &FFM, floatingpoint GRADTOL,
+    floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+    floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+    string _LINESEARCHALGORITHM,
+    bool steplimit
+) {
     
     MinimizationResult result;
 
@@ -36,18 +38,19 @@ MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoi
             N = numeric_limits<int>::max();
         }
 
-        startMinimization();
-        FFM.vectorizeAllForceFields(initCGMethodData(*this));
+    startMinimization();
+    FFM.vectorizeAllForceFields(initCGMethodData(*this, GRADTOL));
 
-        FFM.computeForces(coord.data(), force);
-        searchDir = force;
-        auto maxForce = maxF();
+    FFM.computeForces(coord.data(), force);
+    searchDir = force;
+    auto maxForce = maxF();
+    bool isForceBelowTol = forceBelowTolerance();
 
-        result.energiesBefore = FFM.computeEnergyHRMD(coord.data());
+    result.energiesBefore = FFM.computeEnergyHRMD(coord.data());
 
         int numIter = 0;
         while (/* Iteration criterion */  numIter < N &&
-               /* Gradient tolerance  */  maxForce > GRADTOL) {
+               /* Gradient tolerance  */  isForceBelowTol) {
 
             numIter++;
             floatingpoint lambda;
@@ -58,13 +61,14 @@ MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoi
                     LAMBDARUNNINGAVERAGEPROBABILITY, dummy, dummy);
             moveAlongSearchDir(lambda);
 
-            //compute new forces
-            FFM.computeForces(coord.data(), force);
-            maxForce = maxF();
+        //compute new forces
+        FFM.computeForces(coord.data(), force);
+        maxForce = maxF();
+        isForceBelowTol = forceBelowTolerance();
 
-            //shift gradient
-            shiftSearchDir(0.0);
-        }
+        //shift gradient
+        shiftSearchDir(0.0);
+    }
 
         if (numIter >= N) {
             cout << endl;
@@ -82,16 +86,16 @@ MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoi
             cout << endl;
         }
 
-        result.energiesAfter = FFM.computeEnergyHRMD(coord.data());
+    result.energiesAfter = FFM.computeEnergyHRMD(coord.data());
 
-        //final force calculation
-        FFM.computeForces(coord.data(), force);
-        searchDir = force;
-        FFM.computeLoadForces();
-        copyFromCGMethodData(*this);
-        endMinimization();
+    //final force calculation
+    FFM.computeForces(coord.data(), force);
+    searchDir = force;
+    FFM.computeLoadForces();
+    copyFromCGMethodData(*this);
+    endMinimization();
 
-        FFM.cleanupAllForceFields();
+    FFM.cleanupAllForceFields();
 
     return result;
 }

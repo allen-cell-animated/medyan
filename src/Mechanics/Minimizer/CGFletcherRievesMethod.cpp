@@ -18,11 +18,13 @@
 #include "Mechanics/Minimizer/CGMethodDataCopy.hpp"
 #include "Output.h"
 #include "Structure/Bead.h"
-MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                                  floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
-                                  floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
-                                  string _LINESEARCHALGORITHM,
-                                  bool steplimit) {
+MinimizationResult FletcherRieves::minimize(
+    ForceFieldManager &FFM, floatingpoint GRADTOL,
+    floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+    floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+    string _LINESEARCHALGORITHM,
+    bool steplimit
+) {
 
     MinimizationResult result;
 
@@ -35,21 +37,22 @@ MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoin
             N = numeric_limits<int>::max();
         }
 
-        startMinimization();
-        FFM.vectorizeAllForceFields(initCGMethodData(*this));
+    startMinimization();
+    FFM.vectorizeAllForceFields(initCGMethodData(*this, GRADTOL));
 
-        FFM.computeForces(coord.data(), force);
-        searchDir = force;
-        auto maxForce = maxF();
+    FFM.computeForces(coord.data(), force);
+    searchDir = force;
+    auto maxForce = maxF();
+    bool isForceBelowTol = forceBelowTolerance();
 
-        result.energiesBefore = FFM.computeEnergyHRMD(coord.data());
+    result.energiesBefore = FFM.computeEnergyHRMD(coord.data());
 
-        //compute first gradient
-        floatingpoint curGrad = searchDirDotSearchDir();
+    //compute first gradient
+    floatingpoint curGrad = searchDirDotSearchDir();
 
         int numIter = 0;
         while (/* Iteration criterion */  numIter < N &&
-               /* Gradient tolerance  */  maxForce > GRADTOL) {
+               /* Gradient tolerance  */  isForceBelowTol) {
             numIter++;
             floatingpoint lambda, beta, newGrad;
 
@@ -60,29 +63,30 @@ MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoin
             		LAMBDAMAX, dummy, dummy)
                                : backtrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
                                        LAMBDARUNNINGAVERAGEPROBABILITY, dummy, dummy);
-            moveAlongSearchDir(lambda);
+        moveAlongSearchDir(lambda);
 
-            //compute new forces
-            FFM.computeForces(coord.data(), force);
-            maxForce = maxF();
+        //compute new forces
+        FFM.computeForces(coord.data(), force);
+        maxForce = maxF();
+        isForceBelowTol = forceBelowTolerance();
 
-            //compute direction
-            newGrad = forceDotForce();
+        //compute direction
+        newGrad = forceDotForce();
 
-            //Fletcher-Rieves update
-            beta = newGrad / curGrad;
+        //Fletcher-Rieves update
+        beta = newGrad / curGrad;
 
-            //shift gradient
-            shiftSearchDir(beta);
+        //shift gradient
+        shiftSearchDir(beta);
 
-            //direction reset if not downhill or no progress made
-            if (searchDirDotForce() <= 0 || areEqual(curGrad, newGrad)) {
-                shiftSearchDir(0.0);
-                _safeMode = true;
-            }
-
-            curGrad = newGrad;
+        //direction reset if not downhill or no progress made
+        if (searchDirDotForce() <= 0 || areEqual(curGrad, newGrad)) {
+            shiftSearchDir(0.0);
+            _safeMode = true;
         }
+
+        curGrad = newGrad;
+    }
 
         if (numIter >= N) {
             cout << endl;
@@ -100,18 +104,18 @@ MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoin
             cout << endl;
         }
 
-        result.energiesAfter = FFM.computeEnergyHRMD(coord.data());
+    result.energiesAfter = FFM.computeEnergyHRMD(coord.data());
 
-        //final force calculation
-        FFM.computeForces(coord.data(), force);
-        searchDir = force;
-        FFM.computeLoadForces();
+    //final force calculation
+    FFM.computeForces(coord.data(), force);
+    searchDir = force;
+    FFM.computeLoadForces();
 
-        // Copy the data back to the system
-        copyFromCGMethodData(*this);
-        endMinimization();
+    // Copy the data back to the system
+    copyFromCGMethodData(*this);
+    endMinimization();
 
-        FFM.cleanupAllForceFields();
+    FFM.cleanupAllForceFields();
 
     return result;
 }
