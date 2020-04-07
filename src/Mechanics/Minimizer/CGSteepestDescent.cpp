@@ -21,6 +21,7 @@
 MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                                    floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
                                    floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                                   string _LINESEARCHALGORITHM,
                                    bool steplimit) {
     
     MinimizationResult result;
@@ -53,7 +54,7 @@ MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoi
             //find lambda by line search, move beads
             bool *dummy = nullptr;
             lambda = backtrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
-                    LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
+                    LAMBDARUNNINGAVERAGEPROBABILITY, dummy, dummy);
             moveBeads(lambda);
 
             //compute new forces

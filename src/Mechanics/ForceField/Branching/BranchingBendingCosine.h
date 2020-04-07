@@ -30,7 +30,7 @@ public:
                   floatingpoint *kbend, floatingpoint *eqt, floatingpoint d);
 
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                floatingpoint *kbend, floatingpoint *eqt);
+                floatingpoint *kbend, floatingpoint *eqt, floatingpoint *stretchforce);
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint);
 

@@ -349,6 +349,7 @@ vector<ReactionBase*> CCylinder::getAllReactions() {
 void CCylinder::printCCylinder()
 {
     cout << "Compartment:" << _compartment << endl;
+    cout << "CCylinder: ptr = " << this << endl;
     
     cout << "Composition of CCylinder: " << endl;
     for (auto &m : _monomers){

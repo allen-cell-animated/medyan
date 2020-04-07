@@ -52,7 +52,7 @@ FilamentData RandomFilamentDist::createFilaments(const MembraneRegion<Membrane>&
             floatingpoint directionX = Rand::randfloatingpoint(-1,1);
             floatingpoint directionY = Rand::randfloatingpoint(-1,1);
 
-            floatingpoint directionZ = 0;
+            floatingpoint directionZ = Rand::randfloatingpoint(-1,1);
             vector<floatingpoint> direction = normalizeVector({directionX, directionY, directionZ});
 
             vector<floatingpoint> secondPoint =

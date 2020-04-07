@@ -35,7 +35,11 @@
 using namespace std;
 
 ///floatingpoint typedef
+#if FLOAT_PRECISION
+typedef float floatingpoint;
+#else
 typedef double floatingpoint;
+#endif
 typedef double doubleprecision;
 
 namespace detail {

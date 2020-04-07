@@ -147,8 +147,9 @@ public:
     
     /// Count the number of linker species with a given name in the system
     static species_copy_t countSpecies(const string& name);
-    
-    
+
+    void initializerestart(floatingpoint eqLength){ _mLinker->initializerestart
+                (eqLength);};
     
 };
 

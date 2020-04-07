@@ -74,6 +74,8 @@ public:
 
 protected:
     std::vector< floatingpoint > forceBuffer_;
+    //get interaction names
+    virtual vector<string> getinteractionnames() = 0;
 };
 
 #endif

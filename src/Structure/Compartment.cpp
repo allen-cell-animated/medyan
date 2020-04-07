@@ -70,7 +70,7 @@ void Compartment::SIMDcoordinates_section(){
                         Cylinder::getDbDataConst().value[cindex].filamentFirstEntry;
 
                 //packed integer containing filament ID and filament position.
-                //Assumes you don't have 127 (2^7 -1) cylinders
+                //Assumes you don't have 127 (2^7 -1) binding sites
                 uint32_t cylfinfo = (_fID<< 7);
                 cylfinfo = cylfinfo | _fpos;
 
@@ -1825,164 +1825,225 @@ void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
             auto lowy = y - sizey / 2;
             auto upy = y + sizey / 2;
 
-            float pleft, pright, plow, pup, lleft, lright, llow, lup, VolumeIn;
-            vector<float> edge;
-            // edge_index = intersection points at left = 1, at right = 2, at low = 4 and at up = 5 in 2D;
-            vector<int> edge_index;
+            float pleft, pright, plow, pup, lleft, lright, llow, lup;
+            vector<float> edge; //left0,right1,low2,up3
 
-            //1. find intersection points at left or right edges
-            //if at lower or upper phase
-            if(y < r){
-                pleft = r - sqrt(r * r - (leftx - r) * (leftx - r));
-                pright = r - sqrt(r * r - (rightx - r) * (rightx - r));
+            // find intersections for 4 edges of a compartment
+            // if no intersection for an edge, write -1
+            pleft = r - sqrt(r * r - (leftx - r) * (leftx - r));
 
-                //if the intersection is not inside the compartment, use the full compartlent size
-                if(pleft > upy || pleft < lowy) lleft = sizey;
-                else{
-                    lleft = upy - pleft;
-                    edge.push_back(lleft);
-                    edge_index.push_back(1);
-                }
+            if(pleft > upy || pleft < lowy) {
 
-                if(pright > upy || pright < lowy) lright = sizey;
-                else{
-                    lright = upy - pright;
-                    edge.push_back(lright);
-                    edge_index.push_back(2);
-
-                }
-            }
-            else if(y > r){
                 pleft = r + sqrt(r * r - (leftx - r) * (leftx - r));
+
+                if(pleft > upy || pleft < lowy) edge.push_back(-1);
+                else edge.push_back(pleft);
+            }
+            else edge.push_back(pleft);
+
+
+            pright = r - sqrt(r * r - (rightx - r) * (rightx - r));
+
+            if(pright > upy || pright < lowy){
+
                 pright = r + sqrt(r * r - (rightx - r) * (rightx - r));
 
-                //if the intersection is not inside the compartment, use the full compartlent size
-                if(pleft > upy || pleft < lowy) lleft = sizey;
-                else{
-                    lleft = pleft - lowy;
-                    edge.push_back(lleft);
-                    edge_index.push_back(1);
-                }
-
-                if(pright > upy || pright < lowy) lright = sizey;
-                else{
-                    lright = pright - lowy;
-                    edge.push_back(lright);
-                    edge_index.push_back(2);
-                }
+                if(pright > upy || pright < lowy) edge.push_back(-1);
+                else edge.push_back(pright);
             }
-            else {
-                cout<<"Even number of compartments in X or Y direction is not yet supportted."<<endl;
-            }
+            else edge.push_back(pright);
 
-            //1. find intersection points at lower or upper edges
-            //if at left or right phase
-            if(x < r){
-                plow = r - sqrt(r * r - (lowy - r) * (lowy - r));
-                pup = r - sqrt(r * r - (upy - r) * (upy - r));
 
-                //if the intersection is not inside the compartment, use the full compartlent size
-                if(plow > rightx || plow < leftx) llow = sizex;
-                else{
-                    llow = rightx - plow;
-                    edge.push_back(llow);
-                    edge_index.push_back(4);
-                }
+            plow = r - sqrt(r * r - (lowy - r) * (lowy - r));
 
-                if(pup > rightx || pup < leftx) lup = sizex;
-                else{
-                    lup = rightx - pup;
-                    edge.push_back(lup);
-                    edge_index.push_back(5);
-                }
-            }
-            else if (x > r){
+            if(plow > rightx || plow < leftx){
+
                 plow = r + sqrt(r * r - (lowy - r) * (lowy - r));
+
+                if(plow > rightx || plow < leftx) edge.push_back(-1);
+                else edge.push_back(plow);
+            }
+            else edge.push_back(plow);
+
+            pup = r - sqrt(r * r - (upy - r) * (upy - r));
+
+            if(pup > rightx || pup < leftx){
+
                 pup = r + sqrt(r * r - (upy - r) * (upy - r));
 
-                //if the intersection is not inside the compartment, use the full compartlent size
-                if(plow > rightx || plow < leftx) llow = sizex;
-                else{
-                    llow = plow - leftx;
-                    edge.push_back(llow);
-                    edge_index.push_back(4);
-                }
-
-                if(pup > rightx || pup < leftx) lup = sizex;
-                else{
-                    lup = pup - leftx;
-                    edge.push_back(lup);
-                    edge_index.push_back(5);
-                }
+                if(pup > rightx || pup < leftx) edge.push_back(-1);
+                else edge.push_back(pup);
             }
-            else{
-                cout<<"Even number of compartments in X or Y direction is not yet supportted."<<endl;
+            else edge.push_back(pup);
+
+            vector<int> internum;
+
+            for(int i=0; i < 4; i++){
+                //if intersections are opposite
+                if(edge[i] > -0.5) internum.push_back(i);
             }
 
-            _partialArea = {{lleft * sizez, lright * sizez, llow * sizez, lup * sizez, sizex * sizey, sizex * sizey}};
+            //3 intersections -> two of them are the same vertex, remove the extra one
+            if(internum.size() < 4 && internum.size() > 2){
 
-            if(!areEqual(sizex,sizey))
-                cout << "Volume calculation requires X dimension and Y dimension to be the same." << endl;
+                if(internum[0] == 0 && internum[1] == 1) internum.erase(internum.end()-1);
+                else internum.erase(internum.begin());
 
-            float totalVol = sizex * sizey * sizez;
+            }
 
-            //there are either 2 intersection points or 0 intersection points
-            if(edge.size() == 2 && edge_index.size() == 2){
-                //case 1, trapezoid
-                if(abs(edge_index[0] - edge_index[1]) == 1)
-                    _volumeFrac = 0.5 * (edge[0] + edge[1]) * sizex * sizez / totalVol;
-                else if(edge_index[0] - edge_index[1] == 0)
-                    cout <<"Intersection points are at the same edge!" << endl;
-                //case 2, trangle
+
+            float distsq = (x - r) * (x - r) + (y - r) * (y - r);
+            float totalVol = sizex * sizey;
+            float fraction_i;
+
+            //internum = 0 if no intersection
+            if(internum.size() < 1){
+                //outside network
+                if(distsq > r * r){
+                    lleft = 0;
+                    lright = 0;
+                    llow = 0;
+                    lup = 0;
+                    _volumeFrac = 0.0;
+                }
+                    //inside network
                 else{
-                    if(x < r && y < r){
-                        if(edge_index[0] == 2 || edge_index[1] == 2)
-                            _volumeFrac = 0.5 * edge[0] * edge[1] * sizez / totalVol;
-                        else
-                            _volumeFrac = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
-                    }
-                    else if(x > r && y < r){
-                        if(edge_index[0] == 1 || edge_index[1] == 1)
-                            _volumeFrac = 0.5 * edge[0] * edge[1] * sizez / totalVol;
-                        else
-                            _volumeFrac = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
-                    }
-                    else if(x < r && y > r){
-                        if(edge_index[0] == 2 || edge_index[1] == 2)
-                            _volumeFrac = 0.5 * edge[0] * edge[1] * sizez /totalVol;
-                        else
-                            _volumeFrac = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
-                    }
-                    else if(x > r && y > r){
-                        if(edge_index[0] == 1 || edge_index[1] == 1)
-                            _volumeFrac = 0.5 * edge[0] * edge[1] * sizez / totalVol;
-                        else
-                            _volumeFrac = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
-                    }
+                    lleft = sizey;
+                    lright = sizey;
+                    llow = sizex;
+                    lup = sizex;
+                    _volumeFrac = 1.0;
                 }
             }
-            //case 3, no intersections.
-            else if(edge.size() == 0 && edge_index.size() == 0){
-                _volumeFrac = sizex * sizey * sizez / totalVol;
-            }
-            //case 4, two intersections points are the two vertices
-            else if(edge.size() == 4 && edge_index.size() == 4){
+                //internum = 4 if both intersection are vertices
+            else if (internum.size() > 3){
+                lleft = sizey;
+                lright = sizey;
+                llow = sizex;
+                lup = sizex;
                 _volumeFrac = 0.5;
             }
-            //case 5, only one intersection point is a vertex
-            else if(edge.size() == 3 && edge_index.size() == 3){
-                float a1;
-                for(int i=0; i < 3; i++){
-                    if(!areEqual(edge[i], 0.0) && !areEqual(edge[i], sizex))
-                        a1 = edge[i];
+            else {
+                //1. intersect left0 and lower2 planes
+                if(internum[0] == 0 && internum[1] == 2){
+                    fraction_i = 0.5 * (edge[0] - lowy) * (edge[2] - leftx) / totalVol;
+
+                    if(distsq < r * r) {
+                        _volumeFrac = 1 - fraction_i;
+                        lleft = upy - edge[0];
+                        lright = sizey;
+                        llow = rightx - edge[2];
+                        lup = sizex;
+                    }
+                    else{
+                        _volumeFrac = fraction_i;
+                        lleft = edge[0] - lowy;
+                        lright = sizey;
+                        llow = edge[2] - leftx;
+                        lup = sizex;
+                    }
                 }
-                _volumeFrac = 0.5 * a1 * sizex * sizez / totalVol;
+                    //2. intersect left0 and right1 planes
+                else if(internum[0] == 0 && internum[1] == 1){
+                    fraction_i = 0.5 * (edge[0] - lowy + edge[1] - lowy) * sizex / totalVol;
+
+                    if(y > r) {
+                        _volumeFrac = fraction_i;
+                        lleft = edge[0] - lowy;
+                        lright = edge[1] - lowy;
+                        llow = sizex;
+                        lup = sizex;
+                    }
+                    else{
+                        _volumeFrac = 1 - fraction_i;
+                        lleft = upy - edge[0];
+                        lright = upy - edge[1];
+                        llow = sizex;
+                        lup = sizex;
+                    }
+                }
+                    //3. intersect left0 and upper3 planes
+                else if(internum[0] == 0 && internum[1] == 3){
+                    fraction_i = 0.5 * (upy - edge[0]) * (edge[3] - leftx) / totalVol;
+
+                    if(distsq < r * r) {
+                        _volumeFrac = 1 - fraction_i;
+                        lleft = edge[0] - lowy;
+                        lright = sizey;
+                        llow = sizex;
+                        lup = rightx - edge[3];
+                    }
+                    else{
+                        _volumeFrac = fraction_i;
+                        lleft = upy - edge[0];
+                        lright = sizey;
+                        llow = sizex;
+                        lup = edge[3] - leftx;
+                    }
+                }
+                    //4. intersect lower2 and right1 planes
+                else if(internum[0] == 1 && internum[1] == 2){
+                    fraction_i = 0.5 * (edge[1] - lowy) * (rightx - edge[2]) / totalVol;
+
+                    if(distsq < r * r) {
+                        _volumeFrac = 1 - fraction_i;
+                        lleft = sizey;
+                        lright = upy - edge[1];
+                        llow = edge[2] - leftx;
+                        lup = sizex;
+                    }
+                    else{
+                        _volumeFrac = fraction_i;
+                        lleft = sizey;
+                        lright = edge[1] - lowy;
+                        llow = rightx - edge[2];
+                        lup = sizex;
+
+                    }
+                }
+                    //5. intersect right1 and up3 planes
+                else if(internum[0] == 1 && internum[1] == 3){
+                    fraction_i = 0.5 * (upy - edge[1]) * (rightx - edge[3]) / totalVol;
+
+                    if(distsq < r * r) {
+                        _volumeFrac = 1 - fraction_i;
+                        lleft = sizey;
+                        lright = edge[1] - lowy;
+                        llow = sizex;
+                        lup = edge[3] - leftx;
+                    }
+                    else{
+                        _volumeFrac = fraction_i;
+                        lleft = sizey;
+                        lright = upy - edge[1];
+                        llow = sizex;
+                        lup = rightx - edge[3];
+
+                    }
+                }
+                    //6. intersect lower2 and up3 planes (internum[0] == 2 && internum[1] == 3)
+                else {
+                    fraction_i = 0.5 * (edge[2] - leftx + edge[3] - leftx) * sizey / totalVol;
+
+                    if(x > r) {
+                        _volumeFrac = fraction_i;
+                        lleft = sizey;
+                        lright = sizey;
+                        llow = edge[2] - leftx;
+                        lup = edge[3] - leftx;
+                    }
+                    else{
+                        _volumeFrac = 1 - fraction_i;
+                        lleft = sizey;
+                        lright = sizey;
+                        llow = rightx - edge[2];
+                        lup = rightx - edge[3];
+                    }
+                }
             }
-            else{
-                cout <<"There are "<< edge.size() <<" intersection points for this compartment:"<< endl;
-                cout << "x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
-                cout << "Something goes wrong!" << endl;
-            }
+
+
+            _partialArea = {{lleft * sizez, lright * sizez, llow * sizez, lup * sizez, _volumeFrac * sizex * sizey, _volumeFrac * sizex * sizey}};
         }
         break;
     }

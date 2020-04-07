@@ -14,3 +14,8 @@
 #include "MotorGhostInteractions.h"
 
 MotorGhost* MotorGhostInteractions::_motorCulprit;
+
+vector<floatingpoint> MotorGhostInteractions::individualenergies;
+vector<floatingpoint> MotorGhostInteractions::tpdistvec;
+vector<floatingpoint> MotorGhostInteractions::eqlvec;
+vector<floatingpoint> MotorGhostInteractions::kstrvec;

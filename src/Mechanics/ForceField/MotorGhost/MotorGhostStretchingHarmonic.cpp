@@ -233,6 +233,12 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f
 floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, int *beadSet,
                                             floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2) {
 
+	#ifdef ADDITIONALINFO
+	MotorGhostInteractions::individualenergies.clear();
+	MotorGhostInteractions::tpdistvec.clear();
+
+	#endif
+
     int n = MotorGhostStretching<MotorGhostStretchingHarmonic>::n;
     int nint = MotorGhost::getMotorGhosts().size();
 
@@ -253,7 +259,9 @@ floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, int *be
         midPointCoordinate(v1, coord1, coord2, pos1[i]);
         midPointCoordinate(v2, coord3, coord4, pos2[i]);
 
-        dist = twoPointDistance(v1, v2) - eql[i];
+        auto tpd = twoPointDistance(v1, v2);
+
+        dist = tpd - eql[i];
         U_i = 0.5 * kstr[i] * dist * dist;
 
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
@@ -264,7 +272,10 @@ floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, int *be
 
             return -1;
         }
-
+#ifdef ADDITIONALINFO
+	    MotorGhostInteractions::individualenergies.push_back(U_i);
+	    MotorGhostInteractions::tpdistvec.push_back(tpd);
+#endif
         U += U_i;
 //        std::cout<<U_i<<endl;
     }

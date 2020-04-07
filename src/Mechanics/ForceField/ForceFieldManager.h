@@ -101,6 +101,14 @@ public:
     Eigen::MatrixXcd evectors;
     vector<floatingpoint> tauVector;
 
+    vector<string> getinteractionnames(){
+        vector<string> temp;
+        for (auto &ff : _forceFields)
+            for(auto names:ff->getinteractionnames())
+            	temp.push_back(names);
+        return temp;
+    }
+
 #ifdef CUDAACCL
         cudaStream_t  streamF = NULL;
     /// CUDA Copy forces from f to fprev

@@ -29,9 +29,15 @@ public:
     
     virtual MinimizationResult minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                           floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
-                          floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY, bool steplimit);
+                          floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY, string _LINESEARCHALGORITHM,
+                          bool steplimit);
 protected:
 	chrono::high_resolution_clock::time_point tbegin, tend;
+	floatingpoint prevlambda = 0;
+	floatingpoint prevbeta = 0;
+
+	void calculateEvsalpha(ForceFieldManager &FFM, floatingpoint lambda, floatingpoint
+	LAMBDAMAX, floatingpoint FDotFA);
 #ifdef CUDAACCL
     cudaStream_t stream_shiftsafe = NULL, stream_dotcopy = NULL;
     cudaStream_t stream1 = NULL, stream2 = NULL, stream3 = NULL;
