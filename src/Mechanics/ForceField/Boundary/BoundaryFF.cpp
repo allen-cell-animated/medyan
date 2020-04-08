@@ -66,10 +66,10 @@ BoundaryFF::BoundaryFF (string type) {
     }
 }
 
-void BoundaryFF::vectorize() {
+void BoundaryFF::vectorize(const FFCoordinateStartingIndex& si) {
     
     for (auto &interaction : _boundaryInteractionVector)
-        interaction->vectorize();
+        interaction->vectorize(si);
 }
 
 void BoundaryFF::cleanup() {

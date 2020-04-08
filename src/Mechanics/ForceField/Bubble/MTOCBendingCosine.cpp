@@ -31,11 +31,11 @@ floatingpoint MTOCBendingCosine::energy(floatingpoint *coord, int *beadSet,
     for(auto mtoc : MTOC::getMTOCs()) {
         int nint = mtoc->getFilaments().size();
         
-        coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC
+        coord1 = &coord[beadSet[0]]; //coordinate of MTOC
         
         for(int i = 0; i < nint; i+=1){
-            coord2 = &coord[3 * beadSet[n * i + 1]];
-            coord3 = &coord[3 * beadSet[n * i + 2]];
+            coord2 = &coord[beadSet[n * i + 1]];
+            coord3 = &coord[beadSet[n * i + 2]];
             
             L1 = sqrt(scalarProduct(coord1, coord2,
                                     coord1, coord2));
@@ -79,11 +79,11 @@ floatingpoint MTOCBendingCosine::energy(floatingpoint *coord, floatingpoint *f, 
     for(auto mtoc : MTOC::getMTOCs()) {
         int nint = mtoc->getFilaments().size();
         
-        coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC
+        coord1 = &coord[beadSet[0]]; //coordinate of MTOC
         
         for(int i = 0; i < nint; i+=1){
-            coord2 = &coord[3 * beadSet[n * i + 1]];
-            coord3 = &coord[3 * beadSet[n * i + 2]];
+            coord2 = &coord[beadSet[n * i + 1]];
+            coord3 = &coord[beadSet[n * i + 2]];
             
             
             L1 = sqrt(scalarProduct(coord1, coord2,
@@ -127,15 +127,15 @@ void MTOCBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *bead
         floatingpoint *coord1, *coord2, *coord3, *force1, *force2, *force3,
         L1, L2, l1l2, invL1, invL2, A,B,C, k;
         
-        coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC
-        force1 = &f[3 * beadSet[0]];
+        coord1 = &coord[beadSet[0]]; //coordinate of MTOC
+        force1 = &f[beadSet[0]];
         
         for(int i = 0; i < nint; i+=1){
-            coord2 = &coord[3 * beadSet[n * i + 1]];
-            coord3 = &coord[3 * beadSet[n * i + 2]];
+            coord2 = &coord[beadSet[n * i + 1]];
+            coord3 = &coord[beadSet[n * i + 2]];
             
-            force2 = &f[3 * beadSet[n * i + 1]];
-            force3 = &f[3 * beadSet[n * i + 2]];
+            force2 = &f[beadSet[n * i + 1]];
+            force3 = &f[beadSet[n * i + 2]];
             
             L1 = sqrt(scalarProduct(coord1, coord2,
                                     coord1, coord2));

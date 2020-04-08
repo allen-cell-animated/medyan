@@ -41,7 +41,7 @@ public:
     
     /// Produce a vectorized version of interaction data
     /// Could include constants, positions, neighbors list data, etc
-    virtual void vectorize() = 0;
+    virtual void vectorize(const FFCoordinateStartingIndex&) = 0;
     /// Cleanup all vectorized data
     virtual void cleanup() = 0;
     

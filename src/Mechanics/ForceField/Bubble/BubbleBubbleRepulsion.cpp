@@ -19,8 +19,8 @@
 #include "Bead.h"
 
 template <class BRepulsionInteractionType>
-void BubbleBubbleRepulsion<BRepulsionInteractionType>::vectorize() {
-    //cout << "Add later!" <<endl;
+void BubbleBubbleRepulsion<BRepulsionInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
+    beadStartIdx_ = si.bead;
 }
 
 template <class BRepulsionInteractionType>
@@ -45,10 +45,10 @@ floatingpoint BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(fl
             floatingpoint radius1 = bb->getRadius();
             floatingpoint radius2 = bbo->getRadius();
             
-            Bead* bd1 = bb->getBead();
-            Bead* bd2 = bbo->getBead();
+            const auto bi1 = bb->getBead()->getIndex() * 3 + beadStartIdx_;
+            const auto bi2 = bbo->getBead()->getIndex() * 3 + beadStartIdx_;
             
-            U_i = _FFType.energy(bd1, bd2, radius1, radius2, kRep, screenLength, stretched);
+            U_i = _FFType.energy(coord, bi1, bi2, radius1, radius2, kRep, screenLength);
             
             if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                || U_i != U_i || U_i < -1.0) {
@@ -80,10 +80,10 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces(floatingpoi
             floatingpoint radius1 = bb->getRadius();
             floatingpoint radius2 = bbo->getRadius();
             
-            Bead* bd1 = bb->getBead();
-            Bead* bd2 = bbo->getBead();
+            const auto bi1 = bb->getBead()->getIndex() * 3 + beadStartIdx_;
+            const auto bi2 = bbo->getBead()->getIndex() * 3 + beadStartIdx_;
             
-            _FFType.forces(bd1, bd2, radius1, radius2, kRep, screenLength);
+            _FFType.forces(coord, f, bi1, bi2, radius1, radius2, kRep, screenLength);
             
         }
     }
@@ -116,6 +116,6 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces(floatingpoi
 template floatingpoint BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeEnergy(floatingpoint *coord, bool stretched);
 template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForces(floatingpoint *coord, floatingpoint *f);
 //template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForcesAux(floatingpoint *coord, floatingpoint *f);
-template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::vectorize();
+template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::vectorize(const FFCoordinateStartingIndex&);
 template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::deallocate();
 

@@ -25,4 +25,11 @@ struct EnergyReport {
     std::vector< EachEnergy > individual;
 };
 
+// This information is used in the force field vectorization
+struct FFCoordinateStartingIndex {
+    std::size_t bead = 0;
+    std::size_t vertex = 0;
+    std::size_t mem2d = 0;
+};
+
 #endif

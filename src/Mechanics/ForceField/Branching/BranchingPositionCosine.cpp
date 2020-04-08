@@ -200,9 +200,9 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, int *beadSet
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
 
         midPointCoordinate(mp, coord1, coord2, pos[i]);
         X = sqrt(scalarProduct(mp, coord2, mp, coord2));
@@ -265,12 +265,12 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
 
         midPointCoordinateStretched(mp, coord1, f1, coord2, f2, pos[i], d);
         X = sqrt(scalarProductStretched(mp, vzero, coord2, f2, mp, vzero, coord2, f2, d));
@@ -332,12 +332,12 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
 
         midPointCoordinate(mp, coord1, coord2, pos[i]);
         X = sqrt(scalarProduct(mp, coord2, mp, coord2));

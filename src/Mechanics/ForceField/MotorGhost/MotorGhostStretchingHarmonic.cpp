@@ -251,10 +251,10 @@ floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, int *be
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
         midPointCoordinate(v1, coord1, coord2, pos1[i]);
         midPointCoordinate(v2, coord3, coord4, pos2[i]);
@@ -303,15 +303,15 @@ floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, floatin
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
-        f4 = &f[3 * beadSet[n * i + 3]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
+        f4 = &f[beadSet[n * i + 3]];
 
         midPointCoordinateStretched(v1, coord1, f1, coord2, f2, pos1[i], d);
         midPointCoordinateStretched(v2, coord3, f3, coord4, f4, pos2[i], d);
@@ -359,10 +359,10 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
         midPointCoordinate(v1, coord1, coord2, pos1[i]);
         midPointCoordinate(v2, coord3, coord4, pos2[i]);
@@ -373,10 +373,10 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f
 
         f0 = kstr[i] * ( dist - eql[i] ) * invL;
 
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
-        f4 = &f[3 * beadSet[n * i + 3]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
+        f4 = &f[beadSet[n * i + 3]];
 
         //force on i
         f1[0] +=   -f0 * ( v1[0] - v2[0] ) * (1 - pos1[i]);

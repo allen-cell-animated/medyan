@@ -50,7 +50,7 @@ public:
     ///this is a 4-bead potential
     const static int n = 4;
     
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&) override;
     virtual void deallocate();
     
     virtual floatingpoint computeEnergy(floatingpoint *coord) override;

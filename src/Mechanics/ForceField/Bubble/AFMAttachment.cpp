@@ -22,7 +22,7 @@
 #include "Bead.h"
 
 template <class AFMInteractionType>
-void AFMAttachment<AFMInteractionType>::vectorize() {
+void AFMAttachment<AFMInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
 
     numInteractions_ = 0;
     for(auto afm : AFM::getAFMs()) numInteractions_ += afm->getFilaments().size();
@@ -37,8 +37,8 @@ void AFMAttachment<AFMInteractionType>::vectorize() {
         for (int fIndex = 0; fIndex < afm->getFilaments().size(); fIndex++) {
             const auto f = afm->getFilaments()[fIndex];
 
-            beadSet_[2*ci    ] = afm->getBubble()->getBead()->getStableIndex();
-            beadSet_[2*ci + 1] = f->getMinusEndCylinder()->getFirstBead()->getStableIndex();
+            beadSet_[2*ci    ] = afm->getBubble()->getBead()->getIndex() * 3 + si.bead;
+            beadSet_[2*ci + 1] = f->getMinusEndCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
 
             radii_[ci] = afm->getBubble()->getRadius();
 
@@ -87,7 +87,7 @@ void AFMAttachment<AFMInteractionType>::computeForces(floatingpoint *coord, floa
 template floatingpoint AFMAttachment<AFMAttachmentHarmonic>::computeEnergy(floatingpoint *coord, bool stretched);
 template void AFMAttachment<AFMAttachmentHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 //template void AFMAttachment<AFMAttachmentHarmonic>::computeForcesAux(double *coord, double *f);
-template void AFMAttachment<AFMAttachmentHarmonic>::vectorize();
+template void AFMAttachment<AFMAttachmentHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void AFMAttachment<AFMAttachmentHarmonic>::deallocate();
 
 

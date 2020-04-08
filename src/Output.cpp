@@ -1265,15 +1265,13 @@ void Datadump::print(int snapshot) {
     //Bead data
     _outputFile <<"BEAD DATA: BEADIDX(STABLE) FID FPOS COORDX COORDY COORDZ FORCEAUXX "
                   "FORCEAUXY FORCEAUXZ"<<endl;
-    const auto& beadData = Bead::getDbDataConst();
 
     for(auto b:Bead::getBeads()){
         auto bidx = b->getStableIndex();
         Filament* f = static_cast<Filament*>(b->getParent());
-        _outputFile <<bidx<<" "<<f->getId()<<" "<<b->getPosition()<<" "<<beadData.coords.data()
-        [3*bidx]<<" " <<beadData.coords.data()[3*bidx + 1]<<" "
-        <<beadData.coords.data()[3*bidx + 2]<<" "<<beadData.forcesAux.data()[3*bidx]<<" "<<
-        beadData.forcesAux.data()[3*bidx + 1]<<" "<<beadData.forcesAux.data()[3*bidx + 2]<<endl;
+        _outputFile <<bidx<<" "<<f->getId()<<" "<<b->getPosition()<<" "
+            << b->coord[0] << ' ' << b->coord[1] << ' ' << b->coord[2] << ' '
+            << b->force[0] << ' ' << b->force[1] << ' ' << b->force[2] << endl;
 
     }
     _outputFile <<endl;
@@ -1302,7 +1300,7 @@ void Datadump::print(int snapshot) {
         short foundstatus = 0; //0 none found, 1 found one end, 2 found both ends
         bool minusendstatus = true;
         bool plusendstatus = true;
-                for(int midx = 0; midx<numMonomers; midx++){
+        for(int midx = 0; midx<numMonomers; midx++){
                 if(foundstatus ==2)
                     break;
                 short m = ccyl->getCMonomer(midx)->activeSpeciesMinusEnd();

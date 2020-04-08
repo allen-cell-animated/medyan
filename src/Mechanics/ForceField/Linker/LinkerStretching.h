@@ -64,7 +64,7 @@ public:
     LinkerStretching () {}
     ~LinkerStretching () {}
 
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&) override;
     virtual void deallocate();
     
     

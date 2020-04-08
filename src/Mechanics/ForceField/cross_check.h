@@ -66,12 +66,12 @@ inline bool crosscheckforces(floatingpoint* force){
             //        if(force[idx+2]!=b->force[2])
             //            std::cout<<"2"<<endl;
             
-            if(force[idx]==b->forceAux()[0] && force[idx+1]==b->forceAux()[1] && force[idx+2]==b->forceAux()[2])
+            if(force[idx]==b->force[0] && force[idx+1]==b->force[1] && force[idx+2]==b->force[2])
                 state=true;
             else{
                 state=false;
                 std::cout<<"vectorized "<<force[idx]<<" "<<force[idx+1]<<" "<<force[idx+2]<<endl;
-                std::cout<<"old way "<< b->forceAux() <<endl;
+                std::cout<<"old way "<< b->force <<endl;
                 exit(EXIT_FAILURE);
             }
         }
