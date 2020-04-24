@@ -258,9 +258,9 @@ void Controller::initialize(string inputFile,
         string hessianmatrix = _outputDirectory + "hessianmatrix.traj";
         _outputs.push_back(new HessianMatrix(hessianmatrix, &_subSystem, _ffm));
         }
-    //Set up HessianSpectra if hessiantracking is enabled
-    string hessianspectra = _outputDirectory + "hessianspectra.traj";
-    _outputs.push_back(new HessianSpectra(hessianspectra, &_subSystem, _ffm));
+        //Set up HessianSpectra if hessiantracking is enabled
+        string hessianspectra = _outputDirectory + "hessianspectra.traj";
+        _outputs.push_back(new HessianSpectra(hessianspectra, &_subSystem, _ffm));
     }
 
     //Set up CMGraph output
@@ -445,6 +445,10 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         _restart->readNetworkSetup();
         _restart->setupInitialNetwork();
     }
+    
+    if(SysParams::MParams.hessTracking){
+        _mController.getForceFieldManager()->setPrevBeadMap();
+    };
 }
 
 void Controller::setupSpecialStructures(SystemParser& p) {

@@ -876,10 +876,15 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
 
     FFM.computeLoadForces();
+    
 
     // compute the Hessian matrix at this point if the feature is enabled
     if(SysParams::Mechanics().hessTracking){
         if(FFM.hessCounter % SysParams::Mechanics().hessSkip == 0 || tau() > SysParams::Chemistry().runTime){
+            
+            if(tau() > 0.0){
+                FFM.computeProjections(Bead::getDbData().coords);
+            };
             int total_DOF = Bead::getDbData().coords.size_raw();
             FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, SysParams::Mechanics().hessDelta);
         }

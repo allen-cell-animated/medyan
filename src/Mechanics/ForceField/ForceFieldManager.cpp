@@ -696,3 +696,87 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
 
 
 }
+
+
+void ForceFieldManager::setCurrBeadMap(){
+    currBeadMap.clear();
+    for(auto b:Bead::getBeads()){
+        currBeadMap[b] = std::make_tuple(b->getStableIndex(), b->getId());
+    }
+}
+
+void ForceFieldManager::setPrevBeadMap(){
+    prevBeadMap.clear();
+    for(auto b:Bead::getBeads()){
+        prevBeadMap[b] = std::make_tuple(b->getStableIndex(), b->getId());
+    }
+    prevCoords = Bead::getDbData().coords;
+}
+
+void ForceFieldManager::computeProjections(mathfunc::VecArray< 3, floatingpoint > currCoords){
+    
+    floatingpoint* pCoord = prevCoords.data();
+    floatingpoint* cCoord = currCoords.data();
+    
+    // set displacement vector to zeros
+    Eigen::VectorXcd disp(evectors.rows());
+    for(auto i =0; i<evectors.rows(); i++){
+        disp(i) = 0.0;
+    }
+    cout<<"Length of disp is "<<disp.rows()<<endl;
+    
+    // set the current beads
+    setCurrBeadMap();
+    
+    // loop through the current map
+    for(const std::pair<Bead*, tuple<int,int>> c : currBeadMap){
+        
+        // find the key in the previous map
+        std::unordered_map<Bead*,tuple<int,int>>::const_iterator p = prevBeadMap.find(c.first);
+        
+        // if it's in the old map get the displacements
+        if(p != prevBeadMap.end()){
+            tuple<int,int> curr = c.second;
+            tuple<int,int> prev = p->second;
+            int currInd = get<0>(curr);
+            int prevInd = get<0>(prev);
+            floatingpoint cx = cCoord[3*currInd];
+            floatingpoint px = pCoord[3*prevInd];
+            floatingpoint cy = cCoord[3*currInd + 1];
+            floatingpoint py = pCoord[3*prevInd + 1];
+            floatingpoint cz = cCoord[3*currInd + 2];
+            floatingpoint pz = pCoord[3*prevInd + 2];
+            disp(3*prevInd) = cx - px;
+            disp(3*prevInd + 1) = cy - py;
+            disp(3*prevInd + 2) = cz - pz;
+        };
+    };
+    
+    // normalize the displacement vector
+    disp = disp.normalized();
+    
+    // store the projections in a vector
+    Eigen::VectorXcd proj(evectors.cols());
+    for(auto i = 0; i < evectors.cols(); i++){
+        proj(i) = disp.dot(evectors.col(i));
+    }
+    
+    // test that you can reconstruct disp from the projections
+    /*
+    Eigen::VectorXcd testDisp(evectors.rows());
+    for(auto i =0; i<evectors.rows(); i++){
+        testDisp(i) = 0.0;
+    }
+    for(auto i = 0; i < evectors.cols(); i++){
+        testDisp += proj(i) * evectors.col(i);
+    }
+    for(auto i =0; i<evectors.rows(); i++){
+        cout<<testDisp(i).real()<<" "<<disp(i).real()<<endl;
+    }
+    */
+    
+    // need to reset the prevCoords with current coords
+    prevCoords = currCoords;
+   
+    
+}
