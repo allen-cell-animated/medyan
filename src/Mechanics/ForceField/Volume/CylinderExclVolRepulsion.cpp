@@ -1299,6 +1299,20 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 		cout<<"Printing infinite energy contributions "<<endl;
 		cout<<"a "<<a<<" b "<<b<<" c "<<c<<" d "<<d<<" e "<<e<<" f "<<F<<endl;
 
+		cout<<"Printing results of numerical integrations"<<endl;
+		//0     4/r^6
+		//1     4s/r^6
+		//2     4s*s/r^6
+		//3     4*s*t/r^6
+		//4     4*t/r^6
+		//5     4*t*t/r^6
+		cout<<"\\int\\int ds.dt.4/r^6 "<<integration[0]<<endl;
+		cout<<"\\int\\int ds.dt.4s/r^6 "<<integration[1]<<endl;
+		cout<<"\\int\\int ds.dt.4s^2/r^6 "<<integration[2]<<endl;
+		cout<<"\\int\\int ds.dt.4st/r^6 "<<integration[3]<<endl;
+		cout<<"\\int\\int ds.dt.4t/r^6 "<<integration[4]<<endl;
+		cout<<"\\int\\int ds.dt.4t^2/r^6 "<<integration[5]<<endl;
+
 		exit(EXIT_FAILURE);
 	}
 	else{

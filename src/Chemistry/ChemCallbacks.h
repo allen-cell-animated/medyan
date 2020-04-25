@@ -754,13 +754,10 @@ struct LinkerBindingCallback {
         
         //create off reaction
         auto cLinker = l->getCLinker();
-        //aravind June 24, 2016.
-        if(SysParams::RUNSTATE==false)
-            f=0.0;
-        else
-            f=_offRate;
+        f=_offRate;
         //@
-        cLinker->setRates(_onRate, f);
+        cLinker->setRates(_onRate, f);//offRate during restart is controlled by
+        // RESTARTPHASESWITCH option in setRateMulFactor
         cLinker->createOffReaction(r, _ps);
         
         if(SysParams::Chemistry().eventTracking){
@@ -884,12 +881,13 @@ struct MotorBindingCallback {
         //create off reaction
         auto cMotorGhost = m->getCMotorGhost();
         //aravind June 24, 2016.
-        if(SysParams::RUNSTATE==false){
-        f=0.0;
-        }
-        else
-            f=_offRate;
+//        if(SysParams::RUNSTATE==false){
+//        f=0.0;
+//        }
+//        else
+//            f=_offRate;
         //@
+        f = _offRate;
         cMotorGhost->setRates(_onRate, f);
         cMotorGhost->createOffReaction(r, _ps);
         

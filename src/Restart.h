@@ -95,9 +95,15 @@ private:
                 exit(EXIT_FAILURE);
 
             }
+/*            if(events > 0) {
+                cout << "Cmp " << c->getCompartment()->getId() << " diffusing species "
+                     << diffusingspeciesname << "copy number set to " << events +
+                        (c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().getN()
+                     <<" from "<< (c->getCompartment()->findSpeciesByName(get<0>(sd)))
+                     ->getRSpecies().getN()<<endl;
+            }*/
             events=events+(c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().getN();
-            /*cout<<"Cmp "<<c->getCompartment()->getId()<<" diffusing species "
-                <<diffusingspeciesname<<"copy number set to "<<events<<endl;*/
+
             (c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(events);
             c->getCompartment()->getDiffusionReactionContainer().updatePropensityComprtment();
             counter++;

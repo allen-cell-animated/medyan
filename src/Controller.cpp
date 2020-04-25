@@ -1055,6 +1055,7 @@ void Controller::run() {
         _restart->settorestartphase();
 	    cout<<"Turned off Diffusion, and filament reactions."<<endl;
         cout<<"Bound species added to reaction heap."<<endl;
+
 //Step 3. ############ RUN LINKER/MOTOR REACTIONS TO BIND BRANCHERS, LINKERS, MOTORS AT RESPECTIVE POSITIONS.#######
         cout<<"Number of reactions to be fired "<<_restart->getnumchemsteps()<<endl;
         _cController.runSteps(_restart->getnumchemsteps());
@@ -1155,6 +1156,7 @@ void Controller::run() {
         minimizationtime += elapsed_runm.count();
         std::cout<<"Time taken for minimization "<<elapsed_runm.count()<<endl;
 #endif
+        //DO NOT MOVE THIS LINE
         SysParams::RUNSTATE=true;
 
         //reupdate positions and neighbor lists

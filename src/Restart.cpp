@@ -460,10 +460,10 @@ void Restart::addtoHeapLinkerMotorBrancher(){
 					#ifdef NLORIGINAL
 					Mgr->appendpossibleBindings(c1->getCCylinder(),
 					                                   c2->getCCylinder(), site1, site2);
-					#else
+                    #else
 					Mgr->appendpossibleBindingsstencil(b.branchType, c1->getCCylinder(),
 					                                   c2->getCCylinder(), site1, 0);
-					#endif
+                    #endif
 				}
 			}
 	}

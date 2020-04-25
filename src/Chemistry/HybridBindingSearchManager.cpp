@@ -1038,7 +1038,7 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
     const auto& cylinderInfoData = Cylinder::getDbData().value;
 
     assert((pbsSize!= 0)
-           && "Major bug: Linker binding manager should not have zero binding \
+           && "Major bug: Linker/Motor binding manager should not have zero binding \
                    sites when called to choose a binding site.");
     if(true) {
 	    uint randomIndex = Rand::randInteger(1, pbsSize);

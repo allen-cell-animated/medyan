@@ -93,8 +93,6 @@ int main(int argc, char **argv) {
 
     case MedyanRunMode::simulation:
         {
-            // Initialize the thread pool for use in MEDYAN
-            ThreadPool tp(cmdRes.numThreads);
     // Initialize the thread pool for use in MEDYAN
     ThreadPool tp(cmdRes.numThreads - 1);
 

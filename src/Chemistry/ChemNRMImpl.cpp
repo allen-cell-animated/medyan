@@ -182,6 +182,7 @@ bool ChemNRMImpl::makeStep() {
     RNodeNRM *rn = _heap.top()._rn;
     floatingpoint tau_top = rn->getTau();
     if(tau_top==numeric_limits<floatingpoint>::infinity()){
+
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
         return false;
     }

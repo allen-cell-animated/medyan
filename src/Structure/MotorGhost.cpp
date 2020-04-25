@@ -278,9 +278,6 @@ void MotorGhost::updateReactionRates() {
 		    // acceptable.
 		    isc1leftofc2 = c1posonFil < c2posonFil;
 	    }
-/*#ifdef MOTORBIASCHECK
-	    consider_passivation = false;
-#endif*/
 
         auto mp1 = midPointCoordinate(x1, x2, _position1);
         auto mp2 = midPointCoordinate(x3, x4, _position2);
@@ -305,6 +302,10 @@ void MotorGhost::updateReactionRates() {
         for(auto r : s1->getRSpecies().reactantReactions()) {
             
             if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
+                if (SysParams::RUNSTATE == false)
+                    r->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
+                else
+                    r->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
 
             	if(consider_passivation && isc1leftofc2){
 		            #ifdef CROSSCHECK_MOTOR
@@ -339,8 +340,8 @@ void MotorGhost::updateReactionRates() {
 						            changeRate(_cMotorGhost->getOnRate(),
 						                       _cMotorGhost->getOffRate(),
 						                       _numHeads, max<floatingpoint>((floatingpoint)0.0, forceDotDirectionC1));
-		            if(SysParams::RUNSTATE==false){
-			            newRate=0.0;}
+/*		            if(SysParams::RUNSTATE==false){
+			            newRate=0.0;}*/
 #ifdef DETAILEDOUTPUT
                     std::cout<<"Motor WF1 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
                         ""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
@@ -350,8 +351,13 @@ void MotorGhost::updateReactionRates() {
 		            r->setBareRate(newRate);
 	            }/*if(consider_passivation && isc1leftofc2)*/
 	            r->updatePropensity();
+
             }/*MOTORWALKINGFORWARD*/
             else if(r->getReactionType() == ReactionType::MOTORWALKINGBACKWARD) {
+                if (SysParams::RUNSTATE == false)
+                    r->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
+                else
+                    r->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
 
 	            if(consider_passivation && !isc1leftofc2) {
 
@@ -370,7 +376,8 @@ void MotorGhost::updateReactionRates() {
 						                       _cMotorGhost->getOffRate(),
 						                       _numHeads, max<floatingpoint>((floatingpoint)0.0, -forceDotDirectionC1));
 
-		            if(SysParams::RUNSTATE==false){ newRate=0.0;}
+/*		            if(SysParams::RUNSTATE==false){
+		                newRate=0.0;}*/
 #ifdef DETAILEDOUTPUT
 		            std::cout<<"Motor WB1 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
                         ""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
@@ -384,6 +391,10 @@ void MotorGhost::updateReactionRates() {
         for(auto r : s2->getRSpecies().reactantReactions()) {
             
             if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
+                if (SysParams::RUNSTATE == false)
+                    r->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
+                else
+                    r->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
 
 	            if(consider_passivation && !isc1leftofc2) {
 		            #ifdef CROSSCHECK_MOTOR
@@ -421,13 +432,19 @@ void MotorGhost::updateReactionRates() {
 						                       _numHeads,
 						                       max<floatingpoint>((floatingpoint) 0.0,
 						                                          forceDotDirectionC2));
-		            if (SysParams::RUNSTATE == false) { newRate = 0.0; }
+/*		            if (SysParams::RUNSTATE == false) {
+		                newRate = 0.0; }*/
 
 		            r->setBareRate(newRate);
 	            }
 	            r->updatePropensity();
+
             }/*MOTORWALKINGFORWARD*/
             else if(r->getReactionType() == ReactionType::MOTORWALKINGBACKWARD) {
+                if (SysParams::RUNSTATE == false)
+                    r->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
+                else
+                    r->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
 
 	            if(consider_passivation && isc1leftofc2) {
 		            auto c2firstbindingsite = float(*(SysParams::Chemistry()
@@ -444,12 +461,13 @@ void MotorGhost::updateReactionRates() {
 						            changeRate(_cMotorGhost->getOnRate(),
 						                       _cMotorGhost->getOffRate(),
 						                       _numHeads, max<floatingpoint>((floatingpoint)0.0, -forceDotDirectionC2));
-		            if(SysParams::RUNSTATE==false)
-		            { newRate=0.0;}
+/*		            if(SysParams::RUNSTATE==false)
+		            { newRate=0.0;}*/
 
 		            r->setBareRate(newRate);
 	            }
 	            r->updatePropensity();
+
             }
         }
     }
@@ -459,6 +477,11 @@ void MotorGhost::updateReactionRates() {
 
         //get the unbinding reaction
         ReactionBase* offRxn = _cMotorGhost->getOffReaction();
+
+        if (SysParams::RUNSTATE == false)
+            offRxn->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
+        else
+            offRxn->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
         
         //change the rate
         float newRate =
