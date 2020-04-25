@@ -231,20 +231,21 @@ void BranchingManager::updateAllPossibleBindings() {
     updateBindingReaction(oldN, newN);
 }
 
-void BranchingManager::appendpossibleBindings(CCylinder* ccyl1, CCylinder* ccyl2, short site1,
-                            short site2){
-	floatingpoint oldN=numBindingSites();
-	auto t1 = make_tuple(ccyl1, site1);
-	auto t2 = make_tuple(ccyl2, site2);
-	_possibleBindings.insert(t1);
-	_branchrestarttuple.push_back(make_tuple(t1,t2));
-	floatingpoint newN=numBindingSites();
-	updateBindingReaction(oldN,newN);}
+void BranchingManager::appendpossibleBindings(
+    CCylinder* ccyl1, CCylinder* ccyl2,
+    short site1, short site2
+) {
+    floatingpoint oldN=numBindingSites();
+    auto t1 = make_tuple(ccyl1, site1);
+    auto t2 = make_tuple(ccyl2, site2);
+    _possibleBindings.insert(t1);
+    _branchrestarttuple.push_back(make_tuple(t1,t2));
+    floatingpoint newN=numBindingSites();
+    updateBindingReaction(oldN,newN);}
 
-	void BranchingManager::printbindingsites(){
-	cout<<"BINDINGSITES: CYL1(SIDX) SITE1"<<endl;
-    for(auto it2 = _possibleBindings.begin();it2!=_possibleBindings.end();
-        it2++) {
+    void BranchingManager::printbindingsites(){
+    cout<<"BINDINGSITES: CYL1(SIDX) SITE1"<<endl;
+    for(auto it2 = _possibleBindings.begin(); it2!=_possibleBindings.end(); it2++) {
         auto cyl1 = get<0>(*it2)->getCylinder();
         auto bs1 = get<1>(*it2);
         cout<<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex()<<" "<<pos1<<endl;
@@ -630,114 +631,114 @@ _rMin(rMin), _rMax(rMax) {
 #ifdef NLORIGINAL
 void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
 
-	if (SysParams::INITIALIZEDSTATUS ) {
-		short complimentaryfID;
-		short _filamentType = cc->getType();
-		if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
-			return;
-		else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
-		else complimentaryfID = _filamentIDvec[0];
+    if (SysParams::INITIALIZEDSTATUS ) {
+        short complimentaryfID;
+        short _filamentType = cc->getType();
+        if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
+            return;
+        else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
+        else complimentaryfID = _filamentIDvec[0];
 
-		//if we change other managers copy number
-		vector<LinkerBindingManager *> affectedManagers;
+        //if we change other managers copy number
+        vector<LinkerBindingManager *> affectedManagers;
 
-		//add valid binding sites
-		if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(SysParams::Chemistry()
-				                                                        .linkerBoundIndex[_filamentType])->getN(),
-		             (floatingpoint) 1.0)) {
+        //add valid binding sites
+        if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(SysParams::Chemistry()
+                                                                        .linkerBoundIndex[_filamentType])->getN(),
+                        (floatingpoint) 1.0)) {
 
-			//loop through neighbors
-			//now re add valid based on CCNL
-			vector<Cylinder *> nList = _neighborLists[_nlIndex]->getNeighbors(
-					cc->getCylinder());
-			for (auto cn : nList) {
-				Cylinder *c = cc->getCylinder();
+            //loop through neighbors
+            //now re add valid based on CCNL
+            vector<Cylinder *> nList = _neighborLists[_nlIndex]->getNeighbors(
+                    cc->getCylinder());
+            for (auto cn : nList) {
+                Cylinder *c = cc->getCylinder();
 
-				if (cn->getParent() == c->getParent()) continue;
-				short _nfilamentType = cn->getType();
-				if (_nfilamentType != complimentaryfID) return;
-				if (c->getId() < cn->getId()) continue;
+                if (cn->getParent() == c->getParent()) continue;
+                short _nfilamentType = cn->getType();
+                if (_nfilamentType != complimentaryfID) return;
+                if (c->getId() < cn->getId()) continue;
 
-				auto ccn = cn->getCCylinder();
-				dBInt = 2;
-				for (auto it = SysParams::Chemistry().bindingSites[_nfilamentType].begin();
-				     it !=
-				     SysParams::Chemistry().bindingSites[_nfilamentType].end(); it++) {
-					// DifBind
-					if (dBInt % dBI != 0) {
-						dBInt += 1;
-						continue;
-					} else {
-						dBInt = 1;
-					}
+                auto ccn = cn->getCCylinder();
+                dBInt = 2;
+                for (auto it = SysParams::Chemistry().bindingSites[_nfilamentType].begin();
+                        it !=
+                        SysParams::Chemistry().bindingSites[_nfilamentType].end(); it++) {
+                    // DifBind
+                    if (dBInt % dBI != 0) {
+                        dBInt += 1;
+                        continue;
+                    } else {
+                        dBInt = 1;
+                    }
 
-					if (areEqual(ccn->getCMonomer(*it)->speciesBound(
-							SysParams::Chemistry().linkerBoundIndex[_nfilamentType])->getN(),
-					             (floatingpoint) 1.0)) {
+                    if (areEqual(ccn->getCMonomer(*it)->speciesBound(
+                            SysParams::Chemistry().linkerBoundIndex[_nfilamentType])->getN(),
+                                    (floatingpoint) 1.0)) {
 
-						//check distances..
-						auto mp1 = (float) bindingSite /
-						           SysParams::Geometry().cylinderNumMon[_filamentType];
-						auto mp2 = (float) *it /
-						           SysParams::Geometry().cylinderNumMon[_nfilamentType];
+                        //check distances..
+                        auto mp1 = (float) bindingSite /
+                                    SysParams::Geometry().cylinderNumMon[_filamentType];
+                        auto mp2 = (float) *it /
+                                    SysParams::Geometry().cylinderNumMon[_nfilamentType];
 
-						auto x1 = c->getFirstBead()->vcoordinate();
-						auto x2 = c->getSecondBead()->vcoordinate();
-						auto x3 = cn->getFirstBead()->vcoordinate();
-						auto x4 = cn->getSecondBead()->vcoordinate();
+                        auto x1 = c->getFirstBead()->vcoordinate();
+                        auto x2 = c->getSecondBead()->vcoordinate();
+                        auto x3 = cn->getFirstBead()->vcoordinate();
+                        auto x4 = cn->getSecondBead()->vcoordinate();
 
-						auto m1 = midPointCoordinate(x1, x2, mp1);
-						auto m2 = midPointCoordinate(x3, x4, mp2);
+                        auto m1 = midPointCoordinate(x1, x2, mp1);
+                        auto m2 = midPointCoordinate(x3, x4, mp2);
 
-						floatingpoint distSq = twoPointDistancesquared(m1, m2);
+                        floatingpoint distSq = twoPointDistancesquared(m1, m2);
 
-						if (distSq > _rMaxsq || distSq < _rMinsq) continue;
+                        if (distSq > _rMaxsq || distSq < _rMinsq) continue;
 
-						auto t1 = tuple<CCylinder *, short>(cc, bindingSite);
-						auto t2 = tuple<CCylinder *, short>(ccn, *it);
+                        auto t1 = tuple<CCylinder *, short>(cc, bindingSite);
+                        auto t2 = tuple<CCylinder *, short>(ccn, *it);
 
-						//add in correct order
-						if (c->getId() > cn->getId()) {
-							_possibleBindings.emplace(t1, t2);
-							_reversePossibleBindings[t2].push_back(t1);
-						} else {
-							//add in this compartment
-							if (cn->getCompartment() == _compartment) {
+                        //add in correct order
+                        if (c->getId() > cn->getId()) {
+                            _possibleBindings.emplace(t1, t2);
+                            _reversePossibleBindings[t2].push_back(t1);
+                        } else {
+                            //add in this compartment
+                            if (cn->getCompartment() == _compartment) {
 
-								_possibleBindings.emplace(t1, t2);
-								_reversePossibleBindings[t2].push_back(t1);
-							}
-								//add in other
-							else {
-								auto m = (LinkerBindingManager *) cn->getCompartment()->
-										getFilamentBindingManagers()[_mIndex].get();
+                                _possibleBindings.emplace(t1, t2);
+                                _reversePossibleBindings[t2].push_back(t1);
+                            }
+                                //add in other
+                            else {
+                                auto m = (LinkerBindingManager *) cn->getCompartment()->
+                                        getFilamentBindingManagers()[_mIndex].get();
 
-								affectedManagers.push_back(m);
+                                affectedManagers.push_back(m);
 
-								m->_possibleBindings.emplace(t2, t1);
-								m->_reversePossibleBindings[t1].push_back(t2);
-							}
-						}
-					}
-				}
-			}
-		}
+                                m->_possibleBindings.emplace(t2, t1);
+                                m->_reversePossibleBindings[t1].push_back(t2);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-		//update affected
-		for (auto m : affectedManagers) {
+        //update affected
+        for (auto m : affectedManagers) {
 
-			int oldNOther = m->_bindingSpecies->getN();
-			int newNOther = m->numBindingSites();
+            int oldNOther = m->_bindingSpecies->getN();
+            int newNOther = m->numBindingSites();
 
-			m->updateBindingReaction(oldNOther, newNOther);
-		}
+            m->updateBindingReaction(oldNOther, newNOther);
+        }
 
-		//update this manager
-		int oldN = _bindingSpecies->getN();
-		int newN = numBindingSites();
+        //update this manager
+        int oldN = _bindingSpecies->getN();
+        int newN = numBindingSites();
 
-		updateBindingReaction(oldN, newN);
-	}
+        updateBindingReaction(oldN, newN);
+    }
 }
 
 void LinkerBindingManager::addPossibleBindings(CCylinder* cc) {
@@ -1139,85 +1140,85 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
 //                (cc->getCylinder(),HNLID);
 //#else
 
-			Neighbors = _neighborLists[_nlIndex]->getNeighborsstencil(cc->getCylinder());
+            Neighbors = _neighborLists[_nlIndex]->getNeighborsstencil(cc->getCylinder());
 //#endif
-			for (auto cn : Neighbors) {
+            for (auto cn : Neighbors) {
 
-				Cylinder *c = cc->getCylinder();
+                Cylinder *c = cc->getCylinder();
 
-				if (cn->getParent() == c->getParent()) continue;
-				if (cn->getType() != complimentaryfID) continue;
+                if (cn->getParent() == c->getParent()) continue;
+                if (cn->getType() != complimentaryfID) continue;
 
-				auto ccn = cn->getCCylinder();
+                auto ccn = cn->getCCylinder();
 
-				for (auto it = SysParams::Chemistry().bindingSites[complimentaryfID].begin();
-				     it !=
-				     SysParams::Chemistry().bindingSites[complimentaryfID].end(); it++) {
+                for (auto it = SysParams::Chemistry().bindingSites[complimentaryfID].begin();
+                        it !=
+                        SysParams::Chemistry().bindingSites[complimentaryfID].end(); it++) {
 
-					if (areEqual(ccn->getCMonomer(*it)->speciesBound(
-							SysParams::Chemistry().linkerBoundIndex[complimentaryfID])->getN(),
-					             (floatingpoint) 1.0)) {
+                    if (areEqual(ccn->getCMonomer(*it)->speciesBound(
+                            SysParams::Chemistry().linkerBoundIndex[complimentaryfID])->getN(),
+                                    (floatingpoint) 1.0)) {
 
-						//check distances..
-						auto mp1 = (float) bindingSite /
-						           SysParams::Geometry().cylinderNumMon[_filamentType];
-						auto mp2 = (float) *it /
-						           SysParams::Geometry().cylinderNumMon[complimentaryfID];
+                        //check distances..
+                        auto mp1 = (float) bindingSite /
+                                    SysParams::Geometry().cylinderNumMon[_filamentType];
+                        auto mp2 = (float) *it /
+                                    SysParams::Geometry().cylinderNumMon[complimentaryfID];
 
-						auto x1 = c->getFirstBead()->vcoordinate();
-						auto x2 = c->getSecondBead()->vcoordinate();
-						auto x3 = cn->getFirstBead()->vcoordinate();
-						auto x4 = cn->getSecondBead()->vcoordinate();
+                        auto x1 = c->getFirstBead()->vcoordinate();
+                        auto x2 = c->getSecondBead()->vcoordinate();
+                        auto x3 = cn->getFirstBead()->vcoordinate();
+                        auto x4 = cn->getSecondBead()->vcoordinate();
 
-						auto m1 = midPointCoordinate(x1, x2, mp1);
-						auto m2 = midPointCoordinate(x3, x4, mp2);
+                        auto m1 = midPointCoordinate(x1, x2, mp1);
+                        auto m2 = midPointCoordinate(x3, x4, mp2);
 
-						floatingpoint distsq = twoPointDistancesquared(m1, m2);
+                        floatingpoint distsq = twoPointDistancesquared(m1, m2);
 
-						if (distsq > _rMaxsq || distsq < _rMinsq) continue;
+                        if (distsq > _rMaxsq || distsq < _rMinsq) continue;
 
-						auto t1 = tuple<CCylinder *, short>(cc, bindingSite);
-						auto t2 = tuple<CCylinder *, short>(ccn, *it);
+                        auto t1 = tuple<CCylinder *, short>(cc, bindingSite);
+                        auto t2 = tuple<CCylinder *, short>(ccn, *it);
 
-						//add in correct order
-						if (c->getId() > cn->getId())
-							_possibleBindingsstencil.emplace(t1, t2);
-						else {
-							//add in this compartment
-							if (cn->getCompartment() == _compartment) {
+                        //add in correct order
+                        if (c->getId() > cn->getId())
+                            _possibleBindingsstencil.emplace(t1, t2);
+                        else {
+                            //add in this compartment
+                            if (cn->getCompartment() == _compartment) {
 
-								_possibleBindingsstencil.emplace(t2, t1);
-							}
-								//add in other
-							else {
-								auto m = (LinkerBindingManager *) cn->getCompartment()->
-										getFilamentBindingManagers()[_mIndex].get();
+                                _possibleBindingsstencil.emplace(t2, t1);
+                            }
+                                //add in other
+                            else {
+                                auto m = (LinkerBindingManager *) cn->getCompartment()->
+                                        getFilamentBindingManagers()[_mIndex].get();
 
-								affectedManagers.push_back(m);
+                                affectedManagers.push_back(m);
 
-								m->_possibleBindingsstencil.emplace(t2, t1);
-							}
-						}
-					}
-				}
-			}
-		}
+                                m->_possibleBindingsstencil.emplace(t2, t1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-		//update affected
-		for (auto m : affectedManagers) {
+        //update affected
+        for (auto m : affectedManagers) {
 
-			int oldNOther = m->_bindingSpecies->getN();
-			int newNOther = m->numBindingSitesstencil();
+            int oldNOther = m->_bindingSpecies->getN();
+            int newNOther = m->numBindingSitesstencil();
 
-			m->updateBindingReaction(oldNOther, newNOther);
-		}
+            m->updateBindingReaction(oldNOther, newNOther);
+        }
 
-		//update this manager
-		int oldN = _bindingSpecies->getN();
-		int newN = numBindingSitesstencil();
+        //update this manager
+        int oldN = _bindingSpecies->getN();
+        int newN = numBindingSitesstencil();
 
-		updateBindingReaction(oldN, newN);
-	}
+        updateBindingReaction(oldN, newN);
+    }
 #endif
 }
 void LinkerBindingManager::updateAllPossibleBindingsstencil() {
@@ -1256,19 +1257,19 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
         int cindex = cindexvec[i];
         const auto& c = cylinderInfoData[cindex];
 
-		int nbs1, nbs2;
-	    short complimentaryfID;
+        int nbs1, nbs2;
+        short complimentaryfID;
 
-	    short _filamentType = c.type;
-	    if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
-	    	return;
-	    else if (_filamentType == _filamentIDvec[0])
-		    complimentaryfID = _filamentIDvec[1];
-	    else
-		    complimentaryfID = _filamentIDvec[0];
+        short _filamentType = c.type;
+        if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
+            return;
+        else if (_filamentType == _filamentIDvec[0])
+            complimentaryfID = _filamentIDvec[1];
+        else
+            complimentaryfID = _filamentIDvec[0];
 
-	    nbs1 = SysParams::Chemistry().bindingSites[_filamentType].size();
-	    nbs2 = SysParams::Chemistry().bindingSites[complimentaryfID].size();
+        nbs1 = SysParams::Chemistry().bindingSites[_filamentType].size();
+        nbs2 = SysParams::Chemistry().bindingSites[complimentaryfID].size();
 
         const auto& x1 = coords[c.beadIndices[0]];
         const auto& x2 = coords[c.beadIndices[1]];
@@ -1278,8 +1279,8 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
         for(int arraycount = 0; arraycount < ncindices[i].size();arraycount++){
             int cnindex = cnindices[arraycount];
             const auto& cn = cylinderInfoData[cnindex];
-//            if(c.ID < cn.ID) {counter++; continue;} commented as the above vector does
-// not contain ncs that will fail this cndn.
+            // if(c.ID < cn.ID) {counter++; continue;} commented as the above vector does
+            // not contain ncs that will fail this cndn.
             if(c.filamentId == cn.filamentId){
                 continue;}
             if(cn.type != complimentaryfID){
@@ -1299,17 +1300,17 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                 //now re add valid binding sites
                 if (areEqual(boundstate[1][maxnbs * cindex + posfil], (floatingpoint)1.0)) {
 
-                	floatingpoint mp1, minparamcyl2, maxparamcyl2;
-	                if (_filamentType == _filamentIDvec[0]){
-		                mp1 = bindingsites1.at(posfil);
-		                minparamcyl2 = bindingsites2.front();
-		                maxparamcyl2 = bindingsites2.back();
-	                }
-	                else {
-		                mp1 = bindingsites2.at(posfil);
-		                minparamcyl2 = bindingsites1.front();
-		                maxparamcyl2 = bindingsites1.back();
-	                }
+                    floatingpoint mp1, minparamcyl2, maxparamcyl2;
+                    if (_filamentType == _filamentIDvec[0]){
+                        mp1 = bindingsites1.at(posfil);
+                        minparamcyl2 = bindingsites2.front();
+                        maxparamcyl2 = bindingsites2.back();
+                    }
+                    else {
+                        mp1 = bindingsites2.at(posfil);
+                        minparamcyl2 = bindingsites1.front();
+                        maxparamcyl2 = bindingsites1.back();
+                    }
 
                     floatingpoint A = X3X4squared;
                     floatingpoint B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
@@ -1356,18 +1357,18 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                         if (areEqual(boundstate[1][maxnbs * cnindex + posCfil], (floatingpoint)1.0)) {
 
                             //check distances..
-	                        floatingpoint mp2;
-	                        if (complimentaryfID == _filamentIDvec[0])
-		                        mp2 = bindingsites1.at(posCfil);
-	                        else
-		                        mp2 = bindingsites2.at(posCfil);
+                            floatingpoint mp2;
+                            if (complimentaryfID == _filamentIDvec[0])
+                                mp2 = bindingsites1.at(posCfil);
+                            else
+                                mp2 = bindingsites2.at(posCfil);
                             if(!status2) {
                                 if (mp2 < maxveca[0] || mp2 > maxveca[1])
                                     continue;
                             }
                             if(!status1){
                                 if (mp2 > minveca[0] && mp2 < minveca[1])
-                                	continue;
+                                    continue;
                             }
 
                             auto it1 = SysParams::Chemistry()
@@ -1679,116 +1680,116 @@ _rMin(rMin), _rMax(rMax) {
 #ifdef NLORIGINAL
 void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
 
-	if (SysParams::INITIALIZEDSTATUS ) {
+    if (SysParams::INITIALIZEDSTATUS ) {
 
-		short complimentaryfID;
-		short _filamentType = cc->getType();
-		if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
-			return;
-		else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
-		else complimentaryfID = _filamentIDvec[0];
+        short complimentaryfID;
+        short _filamentType = cc->getType();
+        if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
+            return;
+        else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
+        else complimentaryfID = _filamentIDvec[0];
 
-		//if we change other managers copy number
-		vector<MotorBindingManager *> affectedManagers;
+        //if we change other managers copy number
+        vector<MotorBindingManager *> affectedManagers;
 
-		//add valid binding sites
-		if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
-				SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(),
-		             (floatingpoint) 1.0)) {
+        //add valid binding sites
+        if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
+                SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(),
+                        (floatingpoint) 1.0)) {
 
-			//loop through neighbors
-			//now re add valid based on CCNL
-			vector<Cylinder *> nList = _neighborLists[_nlIndex]->getNeighbors(
-					cc->getCylinder());
+            //loop through neighbors
+            //now re add valid based on CCNL
+            vector<Cylinder *> nList = _neighborLists[_nlIndex]->getNeighbors(
+                    cc->getCylinder());
 
-			//loop through neighbors
-			//now re add valid based on CCNL
-			for (auto cn : nList) {
+            //loop through neighbors
+            //now re add valid based on CCNL
+            for (auto cn : nList) {
 
-				Cylinder *c = cc->getCylinder();
+                Cylinder *c = cc->getCylinder();
 
-				if (cn->getParent() == c->getParent()) continue;
+                if (cn->getParent() == c->getParent()) continue;
 
-				short _nfilamentType = cn->getType();
-				if (_nfilamentType != complimentaryfID) return;
-				if (c->getId() < cn->getId()) continue;
+                short _nfilamentType = cn->getType();
+                if (_nfilamentType != complimentaryfID) return;
+                if (c->getId() < cn->getId()) continue;
 
-				auto ccn = cn->getCCylinder();
+                auto ccn = cn->getCCylinder();
 
-				for (auto it = SysParams::Chemistry().bindingSites[complimentaryfID].begin();
-				     it !=
-				     SysParams::Chemistry().bindingSites[complimentaryfID].end(); it++) {
+                for (auto it = SysParams::Chemistry().bindingSites[complimentaryfID].begin();
+                        it !=
+                        SysParams::Chemistry().bindingSites[complimentaryfID].end(); it++) {
 
-					if (areEqual(ccn->getCMonomer(*it)->speciesBound(
-							SysParams::Chemistry().motorBoundIndex[complimentaryfID])->getN(),
-					             (floatingpoint) 1.0)) {
+                    if (areEqual(ccn->getCMonomer(*it)->speciesBound(
+                            SysParams::Chemistry().motorBoundIndex[complimentaryfID])->getN(),
+                                    (floatingpoint) 1.0)) {
 
-						//check distances..
-						auto mp1 = (float) bindingSite /
-						           SysParams::Geometry().cylinderNumMon[_filamentType];
-						auto mp2 = (float) *it /
-						           SysParams::Geometry().cylinderNumMon[complimentaryfID];
+                        //check distances..
+                        auto mp1 = (float) bindingSite /
+                                    SysParams::Geometry().cylinderNumMon[_filamentType];
+                        auto mp2 = (float) *it /
+                                    SysParams::Geometry().cylinderNumMon[complimentaryfID];
 
-						auto x1 = c->getFirstBead()->vcoordinate();
-						auto x2 = c->getSecondBead()->vcoordinate();
-						auto x3 = cn->getFirstBead()->vcoordinate();
-						auto x4 = cn->getSecondBead()->vcoordinate();
+                        auto x1 = c->getFirstBead()->vcoordinate();
+                        auto x2 = c->getSecondBead()->vcoordinate();
+                        auto x3 = cn->getFirstBead()->vcoordinate();
+                        auto x4 = cn->getSecondBead()->vcoordinate();
 
-						auto m1 = midPointCoordinate(x1, x2, mp1);
-						auto m2 = midPointCoordinate(x3, x4, mp2);
+                        auto m1 = midPointCoordinate(x1, x2, mp1);
+                        auto m2 = midPointCoordinate(x3, x4, mp2);
 
-						floatingpoint distSq = twoPointDistancesquared(m1, m2);
+                        floatingpoint distSq = twoPointDistancesquared(m1, m2);
 
-						if (distSq > _rMaxsq || distSq < _rMinsq) continue;
+                        if (distSq > _rMaxsq || distSq < _rMinsq) continue;
 
-						auto t1 = tuple<CCylinder *, short>(cc, bindingSite);
-						auto t2 = tuple<CCylinder *, short>(ccn, *it);
+                        auto t1 = tuple<CCylinder *, short>(cc, bindingSite);
+                        auto t2 = tuple<CCylinder *, short>(ccn, *it);
 
-						//add in correct order
-						if (c->getId() > cn->getId()) {
-							_possibleBindings.emplace(t1, t2);
-							_reversePossibleBindings[t2].push_back(t1);
+                        //add in correct order
+                        if (c->getId() > cn->getId()) {
+                            _possibleBindings.emplace(t1, t2);
+                            _reversePossibleBindings[t2].push_back(t1);
 
-						} else {
-							//add in this compartment
-							if (cn->getCompartment() == _compartment) {
-								_possibleBindings.emplace(t1, t2);
-								_reversePossibleBindings[t2].push_back(t1);
+                        } else {
+                            //add in this compartment
+                            if (cn->getCompartment() == _compartment) {
+                                _possibleBindings.emplace(t1, t2);
+                                _reversePossibleBindings[t2].push_back(t1);
 
-							}
-								//add in other
-							else {
+                            }
+                                //add in other
+                            else {
 
-								auto m = (MotorBindingManager *) cn->getCompartment()->
-										getFilamentBindingManagers()[_mIndex].get();
+                                auto m = (MotorBindingManager *) cn->getCompartment()->
+                                        getFilamentBindingManagers()[_mIndex].get();
 
-								affectedManagers.push_back(m);
+                                affectedManagers.push_back(m);
 
-								m->_possibleBindings.emplace(t2, t1);
-								m->_reversePossibleBindings[t1].push_back(t2);
+                                m->_possibleBindings.emplace(t2, t1);
+                                m->_reversePossibleBindings[t1].push_back(t2);
 
-							}
-						}
-					}
-				}
-			}
-		}
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-		//update affected
-		for (auto m : affectedManagers) {
+        //update affected
+        for (auto m : affectedManagers) {
 
-			int oldNOther = m->_bindingSpecies->getN();
-			int newNOther = m->numBindingSites();
+            int oldNOther = m->_bindingSpecies->getN();
+            int newNOther = m->numBindingSites();
 
-			m->updateBindingReaction(oldNOther, newNOther);
-		}
+            m->updateBindingReaction(oldNOther, newNOther);
+        }
 
-		//update this manager
-		int oldN = _bindingSpecies->getN();
-		int newN = numBindingSites();
+        //update this manager
+        int oldN = _bindingSpecies->getN();
+        int newN = numBindingSites();
 
-		updateBindingReaction(oldN, newN);
-	}
+        updateBindingReaction(oldN, newN);
+    }
 }
 
 void MotorBindingManager::addPossibleBindings(CCylinder* cc) {
@@ -2138,105 +2139,105 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
     HManager->addPossibleBindingsstencil(_idvec,cc,bindingSite);
 //    HManager->checkoccupancySIMD(_idvec);
 #else
-	if (SysParams::INITIALIZEDSTATUS ) {
-		short complimentaryfID;
-		short _filamentType = cc->getType();
-		if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
-			return;
-		else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
-		else complimentaryfID = _filamentIDvec[0];
+    if (SysParams::INITIALIZEDSTATUS ) {
+        short complimentaryfID;
+        short _filamentType = cc->getType();
+        if (_filamentType != _filamentIDvec[0] && _filamentType != _filamentIDvec[1])
+            return;
+        else if (_filamentType == _filamentIDvec[0]) complimentaryfID = _filamentIDvec[1];
+        else complimentaryfID = _filamentIDvec[0];
 
-		//if we change other managers copy number
-		vector<MotorBindingManager *> affectedManagers;
+        //if we change other managers copy number
+        vector<MotorBindingManager *> affectedManagers;
 
-		//add valid binding sites
-		if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
-				SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(),
-		             (floatingpoint) 1.0)) {
+        //add valid binding sites
+        if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
+                SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(),
+                        (floatingpoint) 1.0)) {
 
-			//loop through neighbors
-			//now re add valid based on CCNL
-			vector<Cylinder *> Neighbors;
+            //loop through neighbors
+            //now re add valid based on CCNL
+            vector<Cylinder *> Neighbors;
 
-			Neighbors = _neighborLists[_nlIndex]->getNeighborsstencil(cc->getCylinder());
-			for (auto cn : Neighbors) {
+            Neighbors = _neighborLists[_nlIndex]->getNeighborsstencil(cc->getCylinder());
+            for (auto cn : Neighbors) {
 
-				Cylinder *c = cc->getCylinder();
+                Cylinder *c = cc->getCylinder();
 
-				if (cn->getParent() == c->getParent()) continue;
-				if (cn->getType() != complimentaryfID) continue;
+                if (cn->getParent() == c->getParent()) continue;
+                if (cn->getType() != complimentaryfID) continue;
 
-				auto ccn = cn->getCCylinder();
+                auto ccn = cn->getCCylinder();
 
-				for (auto it = SysParams::Chemistry().bindingSites[complimentaryfID].begin();
-				     it !=
-				     SysParams::Chemistry().bindingSites[complimentaryfID].end(); it++) {
+                for (auto it = SysParams::Chemistry().bindingSites[complimentaryfID].begin();
+                        it !=
+                        SysParams::Chemistry().bindingSites[complimentaryfID].end(); it++) {
 
-					if (areEqual(ccn->getCMonomer(*it)->speciesBound(
-							SysParams::Chemistry().motorBoundIndex[complimentaryfID])->getN(),
-					             (floatingpoint) 1.0f)) {
+                    if (areEqual(ccn->getCMonomer(*it)->speciesBound(
+                            SysParams::Chemistry().motorBoundIndex[complimentaryfID])->getN(),
+                                    (floatingpoint) 1.0f)) {
 
-						//check distances..
-						auto mp1 = (float) bindingSite /
-						           SysParams::Geometry().cylinderNumMon[_filamentType];
-						auto mp2 = (float) *it /
-						           SysParams::Geometry().cylinderNumMon[complimentaryfID];
+                        //check distances..
+                        auto mp1 = (float) bindingSite /
+                                    SysParams::Geometry().cylinderNumMon[_filamentType];
+                        auto mp2 = (float) *it /
+                                    SysParams::Geometry().cylinderNumMon[complimentaryfID];
 
-						auto x1 = c->getFirstBead()->vcoordinate();
-						auto x2 = c->getSecondBead()->vcoordinate();
-						auto x3 = cn->getFirstBead()->vcoordinate();
-						auto x4 = cn->getSecondBead()->vcoordinate();
+                        auto x1 = c->getFirstBead()->vcoordinate();
+                        auto x2 = c->getSecondBead()->vcoordinate();
+                        auto x3 = cn->getFirstBead()->vcoordinate();
+                        auto x4 = cn->getSecondBead()->vcoordinate();
 
-						auto m1 = midPointCoordinate(x1, x2, mp1);
-						auto m2 = midPointCoordinate(x3, x4, mp2);
+                        auto m1 = midPointCoordinate(x1, x2, mp1);
+                        auto m2 = midPointCoordinate(x3, x4, mp2);
 
-						floatingpoint distsq = twoPointDistancesquared(m1, m2);
+                        floatingpoint distsq = twoPointDistancesquared(m1, m2);
 
-						if (distsq > _rMaxsq || distsq < _rMinsq) continue;
+                        if (distsq > _rMaxsq || distsq < _rMinsq) continue;
 
-						auto t1 = tuple<CCylinder *, short>(cc, bindingSite);
-						auto t2 = tuple<CCylinder *, short>(ccn, *it);
+                        auto t1 = tuple<CCylinder *, short>(cc, bindingSite);
+                        auto t2 = tuple<CCylinder *, short>(ccn, *it);
 
-						//add in correct order
-						if (c->getId() > cn->getId()) {
-							_possibleBindingsstencil.emplace(t1, t2);
-						} else {
-							//add in this compartment
-							if (cn->getCompartment() == _compartment) {
+                        //add in correct order
+                        if (c->getId() > cn->getId()) {
+                            _possibleBindingsstencil.emplace(t1, t2);
+                        } else {
+                            //add in this compartment
+                            if (cn->getCompartment() == _compartment) {
 
-								_possibleBindingsstencil.emplace(t2, t1);
-							}
-								//add in other
-							else {
+                                _possibleBindingsstencil.emplace(t2, t1);
+                            }
+                                //add in other
+                            else {
 
-								auto m = (MotorBindingManager *) cn->getCompartment()->
-										getFilamentBindingManagers()[_mIndex].get();
+                                auto m = (MotorBindingManager *) cn->getCompartment()->
+                                        getFilamentBindingManagers()[_mIndex].get();
 
-								affectedManagers.push_back(m);
+                                affectedManagers.push_back(m);
 
-								m->_possibleBindingsstencil.emplace(t2, t1);
-							}
-						}
-					}
-				}
-			}
-		}
+                                m->_possibleBindingsstencil.emplace(t2, t1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-		//update affected
-		for (auto m : affectedManagers) {
+        //update affected
+        for (auto m : affectedManagers) {
 
-			int oldNOther = m->_bindingSpecies->getN();
-			int newNOther = m->numBindingSitesstencil();
+            int oldNOther = m->_bindingSpecies->getN();
+            int newNOther = m->numBindingSitesstencil();
 
-			m->updateBindingReaction(oldNOther, newNOther);
-		}
+            m->updateBindingReaction(oldNOther, newNOther);
+        }
 
-		//update this manager
-		int oldN = _bindingSpecies->getN();
-		int newN = numBindingSitesstencil();
+        //update this manager
+        int oldN = _bindingSpecies->getN();
+        int newN = numBindingSitesstencil();
 
-		updateBindingReaction(oldN, newN);
-	}
+        updateBindingReaction(oldN, newN);
+    }
 #endif
 }
 void MotorBindingManager::updateAllPossibleBindingsstencil() {

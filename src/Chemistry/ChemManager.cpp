@@ -2864,13 +2864,19 @@ void ChemManager::initializeSystem(ChemSim* chemSim) {
 }
 
 
-void ChemManager::initializeCCylinder(CCylinder* cc,
-                                      bool extensionFront,
-                                      bool extensionBack,
-                                      bool initialization, int nummonomers, int
-                                      firstmonomer, int lastmonomer, bool minusendstatus,
-                                      bool plusendstatus, short minusendtype, short
-                                      plusendtype) {
+void ChemManager::initializeCCylinder(
+    CCylinder* cc,
+    bool extensionFront,
+    bool extensionBack,
+    bool initialization,
+    int nummonomers,
+    int firstmonomer,
+    int lastmonomer,
+    bool minusendstatus,
+    bool plusendstatus,
+    short minusendtype,
+    short plusendtype
+) {
 
     mins = chrono::high_resolution_clock::now();
     //get some related objects

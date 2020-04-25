@@ -322,177 +322,177 @@ void BranchingDihedralCosine::forces(
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
 
-	double *coord1, *coord2, *coord3, *coord4;
-	floatingpoint *f1, *f2, *f3, *f4;
-	double force1[3], force2[3], force3[3], force4[3];
+    double *coord1, *coord2, *coord3, *coord4;
+    floatingpoint *f1, *f2, *f3, *f4;
+    double force1[3], force2[3], force3[3], force4[3];
 
-	coord1 = new double[3];
-	coord2 = new double[3];
-	coord3 = new double[3];
-	coord4 = new double[3];
+    coord1 = new double[3];
+    coord2 = new double[3];
+    coord3 = new double[3];
+    coord4 = new double[3];
 
-	double *mp = new double[3];
-	double *n1 = new double[3];
-	double *n2 = new double[3];
-	double *zero = new double[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
+    double *mp = new double[3];
+    double *n1 = new double[3];
+    double *n2 = new double[3];
+    double *zero = new double[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
 
-	//@{
-	double Lforce1[3], Lforce2[3], Lforce3[3], Lforce4[3], Lforcemp[3];
-	double vb1x, vb1y, vb1z, vb2x, vb2y, vb2z, vb3x, vb3y, vb3z;
-	double vb2xm, vb2ym, vb2zm;
-	double ax, ay, az, bx, by, bz;
-	double rasq, rbsq, rgsq, rg, rginv, ra2inv, rb2inv, rabinv;
-	double c,s;
-	double p, df1, ddf1;
-	double fg, fga, gaa, gbb, hg, hgb;
-	double dtfx, dtfy, dtfz, dtgx, dtgy, dtgz, dthx, dthy, dthz, df, sx2, sy2,
-			sz2;
+    //@{
+    double Lforce1[3], Lforce2[3], Lforce3[3], Lforce4[3], Lforcemp[3];
+    double vb1x, vb1y, vb1z, vb2x, vb2y, vb2z, vb3x, vb3y, vb3z;
+    double vb2xm, vb2ym, vb2zm;
+    double ax, ay, az, bx, by, bz;
+    double rasq, rbsq, rgsq, rg, rginv, ra2inv, rb2inv, rabinv;
+    double c,s;
+    double p, df1, ddf1;
+    double fg, fga, gaa, gbb, hg, hgb;
+    double dtfx, dtfy, dtfz, dtgx, dtgy, dtgz, dthx, dthy, dthz, df, sx2, sy2,
+            sz2;
 
-//  double *Nforce;
-//  Nforce = new double[12];
-	//@}
+    //  double *Nforce;
+    //  Nforce = new double[12];
+    //@}
 
     for(int i = 0; i < nint; i += 1) {
 
-	    for(int j = 0; j < 3; j++){
-		    coord1[j] = coord[3 * beadSet[n * i]+ j];
-		    coord2[j] = coord[3 * beadSet[n * i + 1]+ j];
-		    coord3[j] = coord[3 * beadSet[n * i + 2]+ j];
-		    coord4[j] = coord[3 * beadSet[n * i + 3]+ j];
-	    }
+        for(int j = 0; j < 3; j++){
+            coord1[j] = coord[3 * beadSet[n * i]+ j];
+            coord2[j] = coord[3 * beadSet[n * i + 1]+ j];
+            coord3[j] = coord[3 * beadSet[n * i + 2]+ j];
+            coord4[j] = coord[3 * beadSet[n * i + 3]+ j];
+        }
 
-	    midPointCoordinate<double>(mp, coord1, coord2, pos[i]);
+        midPointCoordinate<double>(mp, coord1, coord2, pos[i]);
 
         f1 = &f[3 * beadSet[n * i]];
         f2 = &f[3 * beadSet[n * i + 1]];
         f3 = &f[3 * beadSet[n * i + 2]];
         f4 = &f[3 * beadSet[n * i + 3]];
 
-	    //@ LAMMPS version test
-	    // 1st bond
-	    vb1x = coord2[0] - mp[0];
-	    vb1y = coord2[1] - mp[1];
-	    vb1z = coord2[2] - mp[2];
+        //@ LAMMPS version test
+        // 1st bond
+        vb1x = coord2[0] - mp[0];
+        vb1y = coord2[1] - mp[1];
+        vb1z = coord2[2] - mp[2];
 
-	    // 2nd bond
-	    vb2x = coord3[0] - mp[0];
-	    vb2y = coord3[1] - mp[1];
-	    vb2z = coord3[2] - mp[2];
+        // 2nd bond
+        vb2x = coord3[0] - mp[0];
+        vb2y = coord3[1] - mp[1];
+        vb2z = coord3[2] - mp[2];
 
-	    vb2xm = -vb2x;
-	    vb2ym = -vb2y;
-	    vb2zm = -vb2z;
+        vb2xm = -vb2x;
+        vb2ym = -vb2y;
+        vb2zm = -vb2z;
 
-	    // 3rd bond
-	    vb3x = coord4[0] - coord3[0];
-	    vb3y = coord4[1] - coord3[1];
-	    vb3z = coord4[2] - coord3[2];
+        // 3rd bond
+        vb3x = coord4[0] - coord3[0];
+        vb3y = coord4[1] - coord3[1];
+        vb3z = coord4[2] - coord3[2];
 
-	    // c,s calculation
+        // c,s calculation
 
-	    ax = vb1y*vb2zm - vb1z*vb2ym;
-	    ay = vb1z*vb2xm - vb1x*vb2zm;
-	    az = vb1x*vb2ym - vb1y*vb2xm;
-	    bx = vb3y*vb2zm - vb3z*vb2ym;
-	    by = vb3z*vb2xm - vb3x*vb2zm;
-	    bz = vb3x*vb2ym - vb3y*vb2xm;
+        ax = vb1y*vb2zm - vb1z*vb2ym;
+        ay = vb1z*vb2xm - vb1x*vb2zm;
+        az = vb1x*vb2ym - vb1y*vb2xm;
+        bx = vb3y*vb2zm - vb3z*vb2ym;
+        by = vb3z*vb2xm - vb3x*vb2zm;
+        bz = vb3x*vb2ym - vb3y*vb2xm;
 
-      //|b1x-b2|
-	    rasq = ax*ax + ay*ay + az*az;
-      //|b3x-b2|
-	    rbsq = bx*bx + by*by + bz*bz;
-      //|b2|^2
-	    rgsq = vb2xm*vb2xm + vb2ym*vb2ym + vb2zm*vb2zm;
-      //|b2|
-	    rg = sqrt(rgsq);
+        //|b1x-b2|
+        rasq = ax*ax + ay*ay + az*az;
+        //|b3x-b2|
+        rbsq = bx*bx + by*by + bz*bz;
+        //|b2|^2
+        rgsq = vb2xm*vb2xm + vb2ym*vb2ym + vb2zm*vb2zm;
+        //|b2|
+        rg = sqrt(rgsq);
 
-	    rginv = ra2inv = rb2inv = 0.0;
-	    if (rg > 0) rginv = 1.0/rg;//1/|-b2|
-	    if (rasq > 0) ra2inv = 1.0/rasq;//1/|b1x-b2|
-	    if (rbsq > 0) rb2inv = 1.0/rbsq;//1/|b3x-b2|
-	    rabinv = sqrt(ra2inv*rb2inv);//1/|b1x-b2||b3x-b2|
+        rginv = ra2inv = rb2inv = 0.0;
+        if (rg > 0) rginv = 1.0/rg;//1/|-b2|
+        if (rasq > 0) ra2inv = 1.0/rasq;//1/|b1x-b2|
+        if (rbsq > 0) rb2inv = 1.0/rbsq;//1/|b3x-b2|
+        rabinv = sqrt(ra2inv*rb2inv);//1/|b1x-b2||b3x-b2|
 
-	    c = (ax*bx + ay*by + az*bz)*rabinv;//(b1x-b2).(b3x-b2)/|b1x-b2||b3x-b2|
-	    s = rg*rabinv*(ax*vb3x + ay*vb3y + az*vb3z);//|b2|((b1x-b2).b3)/|b1x-b2||b3x-b2|=cos<n1,b3>/sin<b1,b2>
+        c = (ax*bx + ay*by + az*bz)*rabinv;//(b1x-b2).(b3x-b2)/|b1x-b2||b3x-b2|
+        s = rg*rabinv*(ax*vb3x + ay*vb3y + az*vb3z);//|b2|((b1x-b2).b3)/|b1x-b2||b3x-b2|=cos<n1,b3>/sin<b1,b2>
 
-	    if (c > 1.0) c = 1.0;
-	    if (c < -1.0) c = -1.0;
+        if (c > 1.0) c = 1.0;
+        if (c < -1.0) c = -1.0;
 
-	    ddf1 = c;
-	    df1 = s;
+        ddf1 = c;
+        df1 = s;
 
-	    p = 1.0 - c;
+        p = 1.0 - c;
 
-	    fg = vb1x*vb2xm + vb1y*vb2ym + vb1z*vb2zm;//b1.-b2
-	    hg = vb3x*vb2xm + vb3y*vb2ym + vb3z*vb2zm;//b3.-b2
-	    fga = fg*ra2inv*rginv;//(b1.-b2)/(|b1x-b2||-b2|)
-	    hgb = hg*rb2inv*rginv;//(b3.-b2)/(|b3x-b2||-b2|)
-	    gaa = -ra2inv*rg;//-|-b2|/|b1x-b2|
-	    gbb = rb2inv*rg;//|-b2|/|b3x-b2|
+        fg = vb1x*vb2xm + vb1y*vb2ym + vb1z*vb2zm;//b1.-b2
+        hg = vb3x*vb2xm + vb3y*vb2ym + vb3z*vb2zm;//b3.-b2
+        fga = fg*ra2inv*rginv;//(b1.-b2)/(|b1x-b2||-b2|)
+        hgb = hg*rb2inv*rginv;//(b3.-b2)/(|b3x-b2||-b2|)
+        gaa = -ra2inv*rg;//-|-b2|/|b1x-b2|
+        gbb = rb2inv*rg;//|-b2|/|b3x-b2|
 
-	    dtfx = gaa*ax;//-|-b2|(b1x-b2_x)/|b1x-b2|=-|-b2|(n1cap_x)
-	    dtfy = gaa*ay;//-|-b2|(b1x-b2_y)/|b1x-b2|=-|-b2|(n1cap_y)
-	    dtfz = gaa*az;//-|-b2|(b1x-b2_z)/|b1x-b2|=-|-b2|(n1cap_z)
-	    dtgx = fga*ax - hgb*bx;//-|-b2||n1cap_x|-(b3.-b2)(b3x-b2_x)/(|b3x-b2||-b2|)=-|-b2||n1cap_x|-(b3.-b2)n2cap_x/|-b2|
-	    dtgy = fga*ay - hgb*by;//-|-b2||n1cap_y|-(b3.-b2)(b3x-b2_y)/(|b3x-b2||-b2|)=-|-b2||n1cap_y|-(b3.-b2)n2cap_y/|-b2|
-	    dtgz = fga*az - hgb*bz;//-|-b2||n1cap_z|-(b3.-b2)(b3x-b2_z)/(|b3x-b2||-b2|)=-|-b2||n1cap_z|-(b3.-b2)n2cap_z/|-b2|
-	    dthx = gbb*bx;//|-b2|(b3x-b2_x)/|b3x-b2|=|-b2|(n2cap_x)
-	    dthy = gbb*by;//|-b2|(b3x-b2_y)/|b3x-b2|=|-b2|(n2cap_y)
-	    dthz = gbb*bz;//|-b2|(b3x-b2_z)/|b3x-b2|=|-b2|(n2cap_z)
+        dtfx = gaa*ax;//-|-b2|(b1x-b2_x)/|b1x-b2|=-|-b2|(n1cap_x)
+        dtfy = gaa*ay;//-|-b2|(b1x-b2_y)/|b1x-b2|=-|-b2|(n1cap_y)
+        dtfz = gaa*az;//-|-b2|(b1x-b2_z)/|b1x-b2|=-|-b2|(n1cap_z)
+        dtgx = fga*ax - hgb*bx;//-|-b2||n1cap_x|-(b3.-b2)(b3x-b2_x)/(|b3x-b2||-b2|)=-|-b2||n1cap_x|-(b3.-b2)n2cap_x/|-b2|
+        dtgy = fga*ay - hgb*by;//-|-b2||n1cap_y|-(b3.-b2)(b3x-b2_y)/(|b3x-b2||-b2|)=-|-b2||n1cap_y|-(b3.-b2)n2cap_y/|-b2|
+        dtgz = fga*az - hgb*bz;//-|-b2||n1cap_z|-(b3.-b2)(b3x-b2_z)/(|b3x-b2||-b2|)=-|-b2||n1cap_z|-(b3.-b2)n2cap_z/|-b2|
+        dthx = gbb*bx;//|-b2|(b3x-b2_x)/|b3x-b2|=|-b2|(n2cap_x)
+        dthy = gbb*by;//|-b2|(b3x-b2_y)/|b3x-b2|=|-b2|(n2cap_y)
+        dthz = gbb*bz;//|-b2|(b3x-b2_z)/|b3x-b2|=|-b2|(n2cap_z)
 
-	    df = -kdih[i] * df1;//-Kd.s
+        df = -kdih[i] * df1;//-Kd.s
 
-	    sx2 = df*dtgx;//-Kd cos<n1,b3>/sin<b1,b2>(-|-b2||n1cap_x|-(b3.-b2)n2cap_x/|-b2|)
-	    sy2 = df*dtgy;
-	    sz2 = df*dtgz;
+        sx2 = df*dtgx;//-Kd cos<n1,b3>/sin<b1,b2>(-|-b2||n1cap_x|-(b3.-b2)n2cap_x/|-b2|)
+        sy2 = df*dtgy;
+        sz2 = df*dtgz;
 
-	    Lforce2[0] = df*dtfx;
-	    Lforce2[1] = df*dtfy;
-	    Lforce2[2] = df*dtfz;
+        Lforce2[0] = df*dtfx;
+        Lforce2[1] = df*dtfy;
+        Lforce2[2] = df*dtfz;
 
-	    Lforcemp[0] = sx2 - Lforce2[0];
-	    Lforcemp[1] = sy2 - Lforce2[1];
-	    Lforcemp[2] = sz2 - Lforce2[2];
+        Lforcemp[0] = sx2 - Lforce2[0];
+        Lforcemp[1] = sy2 - Lforce2[1];
+        Lforcemp[2] = sz2 - Lforce2[2];
 
-	    Lforce4[0] = df*dthx;
-	    Lforce4[1] = df*dthy;
-	    Lforce4[2] = df*dthz;
+        Lforce4[0] = df*dthx;
+        Lforce4[1] = df*dthy;
+        Lforce4[2] = df*dthz;
 
-	    Lforce3[0] = -sx2 - Lforce4[0];
-	    Lforce3[1] = -sy2 - Lforce4[1];
-	    Lforce3[2] = -sz2 - Lforce4[2];
+        Lforce3[0] = -sx2 - Lforce4[0];
+        Lforce3[1] = -sy2 - Lforce4[1];
+        Lforce3[2] = -sz2 - Lforce4[2];
 
-	    double alpha = pos[i];
+        double alpha = pos[i];
 
-	    Lforce1[0] = (1-alpha) * Lforcemp[0];
-	    Lforce1[1] = (1-alpha) * Lforcemp[1];
-	    Lforce1[2] = (1-alpha) * Lforcemp[2];
+        Lforce1[0] = (1-alpha) * Lforcemp[0];
+        Lforce1[1] = (1-alpha) * Lforcemp[1];
+        Lforce1[2] = (1-alpha) * Lforcemp[2];
 
-	    Lforce2[0] += (alpha) * Lforcemp[0];
-	    Lforce2[1] += (alpha) * Lforcemp[1];
-	    Lforce2[2] += (alpha) * Lforcemp[2];
+        Lforce2[0] += (alpha) * Lforcemp[0];
+        Lforce2[1] += (alpha) * Lforcemp[1];
+        Lforce2[2] += (alpha) * Lforcemp[2];
 
-	    //Add to force vector
-	    f1[0] += Lforce1[0];
-	    f1[1] += Lforce1[1];
-	    f1[2] += Lforce1[2];
+        //Add to force vector
+        f1[0] += Lforce1[0];
+        f1[1] += Lforce1[1];
+        f1[2] += Lforce1[2];
 
-	    f2[0] += Lforce2[0];
-	    f2[1] += Lforce2[1];
-	    f2[2] += Lforce2[2];
+        f2[0] += Lforce2[0];
+        f2[1] += Lforce2[1];
+        f2[2] += Lforce2[2];
 
-	    f3[0] += Lforce3[0];
-	    f3[1] += Lforce3[1];
-	    f3[2] += Lforce3[2];
+        f3[0] += Lforce3[0];
+        f3[1] += Lforce3[1];
+        f3[2] += Lforce3[2];
 
-	    f4[0] += Lforce4[0];
-	    f4[1] += Lforce4[1];
-	    f4[2] += Lforce4[2];
+        f4[0] += Lforce4[0];
+        f4[1] += Lforce4[1];
+        f4[2] += Lforce4[2];
 
-	    stretchforce[3*i] = Lforce3[0];
-	    stretchforce[3*i + 1] = Lforce3[1];
-	    stretchforce[3*i + 2] = Lforce3[2];
-		//@
+        stretchforce[3*i] = Lforce3[0];
+        stretchforce[3*i + 1] = Lforce3[1];
+        stretchforce[3*i + 2] = Lforce3[2];
+        //@
         #ifdef CHECKFORCES_INF_NAN
         if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)
         ||checkNaN_INF<floatingpoint>(f3,0,2) ||checkNaN_INF<floatingpoint>(f4,0,2)){
@@ -508,19 +508,19 @@ void BranchingDihedralCosine::forces(
                 <<cyl2->getFirstBead()->getStableIndex()<<" "
                 <<cyl2->getSecondBead()->getStableIndex()<<endl;
 
-	        cout<<"Parent filament binding fraction "<<alpha<<endl;
-	        cout<<"Parent filament binding position "<<mp[0]<<" "<<mp[1]<<" "<<mp[2]<<endl;
-	        cout<<"ax-bz"<<ax<<" "<<ay<<" "<<az<<" "<<bx<<" "<<by<<" "<<bz<<endl;
-	        cout<<"rasq "<<rasq<<" rbsq "<<rbsq<<" rgsq "<<rgsq<<" rg "<<rg<<endl;
-	        cout<<"rginv "<<rginv<<" ra2inv "<<ra2inv<<" rb2inv "<<rb2inv<<endl;
-	        cout<<"c "<<c<<" s "<<s<<endl;
-	        cout<<"fg "<<fg<<" hg "<<hg<<" fga "<<fga<<" hgb "<<hgb<<" gaa "<<gaa<<" gbb "
-	                                                                               ""<<gbb<<endl;
-	        cout<<"dtfx-z "<<dtfx<<" "<<dtfy<<" "<<dtfz<<endl;
-	        cout<<"dtgx-z "<<dtgx<<" "<<dtgy<<" "<<dtgz<<endl;
-	        cout<<"dthx-z "<<dthx<<" "<<dthy<<" "<<dthz<<endl;
-	        cout<<"df "<<df<<endl;
-	        cout<<"s(x-z)2 "<<sx2<<" "<<sy2<<" "<<sz2<<endl;
+            cout<<"Parent filament binding fraction "<<alpha<<endl;
+            cout<<"Parent filament binding position "<<mp[0]<<" "<<mp[1]<<" "<<mp[2]<<endl;
+            cout<<"ax-bz"<<ax<<" "<<ay<<" "<<az<<" "<<bx<<" "<<by<<" "<<bz<<endl;
+            cout<<"rasq "<<rasq<<" rbsq "<<rbsq<<" rgsq "<<rgsq<<" rg "<<rg<<endl;
+            cout<<"rginv "<<rginv<<" ra2inv "<<ra2inv<<" rb2inv "<<rb2inv<<endl;
+            cout<<"c "<<c<<" s "<<s<<endl;
+            cout<<"fg "<<fg<<" hg "<<hg<<" fga "<<fga<<" hgb "<<hgb<<" gaa "<<gaa<<" gbb "
+                                                                                    ""<<gbb<<endl;
+            cout<<"dtfx-z "<<dtfx<<" "<<dtfy<<" "<<dtfz<<endl;
+            cout<<"dtgx-z "<<dtgx<<" "<<dtgy<<" "<<dtgz<<endl;
+            cout<<"dthx-z "<<dthx<<" "<<dthy<<" "<<dthz<<endl;
+            cout<<"df "<<df<<endl;
+            cout<<"s(x-z)2 "<<sx2<<" "<<sy2<<" "<<sz2<<endl;
 
             cout<<"Printing coords"<<endl;
             cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
@@ -544,31 +544,31 @@ void BranchingDihedralCosine::forces(
             printvariablebinary(f4,0,2);
             exit(EXIT_FAILURE);
         }
-		#endif
+        #endif
 
-	    /*forcesNumericalinteraction(coord, f, nint, beadSet, kdih, pos,i, Nforce);
-      //@ Calculate EmagerrorLvsN
-          double Mmags[4];
-          Mmags[0] = sqrt(force1[0]*force1[0] + force1[1]*force1[1]+force1[2]*force1[2]);
-          Mmags[1] = sqrt(force2[0]*force2[0] + force2[1]*force2[1]+force2[2]*force2[2]);
-          Mmags[2] = sqrt(force3[0]*force3[0] + force3[1]*force3[1]+force3[2]*force3[2]);
-          Mmags[3] = sqrt(force4[0]*force4[0] + force4[1]*force4[1]+force4[2]*force4[2]);
+        /*forcesNumericalinteraction(coord, f, nint, beadSet, kdih, pos,i, Nforce);
+        //@ Calculate EmagerrorLvsN
+            double Mmags[4];
+            Mmags[0] = sqrt(force1[0]*force1[0] + force1[1]*force1[1]+force1[2]*force1[2]);
+            Mmags[1] = sqrt(force2[0]*force2[0] + force2[1]*force2[1]+force2[2]*force2[2]);
+            Mmags[2] = sqrt(force3[0]*force3[0] + force3[1]*force3[1]+force3[2]*force3[2]);
+            Mmags[3] = sqrt(force4[0]*force4[0] + force4[1]*force4[1]+force4[2]*force4[2]);
 
-          double Lmags[4];
-          Lmags[0] = sqrt(Lforce1[0]*Lforce1[0] + Lforce1[1]*Lforce1[1]+Lforce1[2]*Lforce1[2]);
-          Lmags[1] = sqrt(Lforce2[0]*Lforce2[0] + Lforce2[1]*Lforce2[1]+Lforce2[2]*Lforce2[2]);
-          Lmags[2] = sqrt(Lforce3[0]*Lforce3[0] + Lforce3[1]*Lforce3[1]+Lforce3[2]*Lforce3[2]);
-          Lmags[3] = sqrt(Lforce4[0]*Lforce4[0] + Lforce4[1]*Lforce4[1]+Lforce4[2]*Lforce4[2]);
+            double Lmags[4];
+            Lmags[0] = sqrt(Lforce1[0]*Lforce1[0] + Lforce1[1]*Lforce1[1]+Lforce1[2]*Lforce1[2]);
+            Lmags[1] = sqrt(Lforce2[0]*Lforce2[0] + Lforce2[1]*Lforce2[1]+Lforce2[2]*Lforce2[2]);
+            Lmags[2] = sqrt(Lforce3[0]*Lforce3[0] + Lforce3[1]*Lforce3[1]+Lforce3[2]*Lforce3[2]);
+            Lmags[3] = sqrt(Lforce4[0]*Lforce4[0] + Lforce4[1]*Lforce4[1]+Lforce4[2]*Lforce4[2]);
 
 
-          double Nmags[4];
-          Nmags[0] = sqrt(Nforce[0]*Nforce[0] + Nforce[1]*Nforce[1]+Nforce[2]*Nforce[2]);
-          Nmags[1] = sqrt(Nforce[3]*Nforce[3] + Nforce[4]*Nforce[4]+Nforce[5]*Nforce[5]);
-          Nmags[2] = sqrt(Nforce[6]*Nforce[6] + Nforce[7]*Nforce[7]+Nforce[8]*Nforce[8]);
-          Nmags[3] = sqrt(Nforce[9]*Nforce[9] + Nforce[10]*Nforce[10]+Nforce[11]*Nforce[11]);
+            double Nmags[4];
+            Nmags[0] = sqrt(Nforce[0]*Nforce[0] + Nforce[1]*Nforce[1]+Nforce[2]*Nforce[2]);
+            Nmags[1] = sqrt(Nforce[3]*Nforce[3] + Nforce[4]*Nforce[4]+Nforce[5]*Nforce[5]);
+            Nmags[2] = sqrt(Nforce[6]*Nforce[6] + Nforce[7]*Nforce[7]+Nforce[8]*Nforce[8]);
+            Nmags[3] = sqrt(Nforce[9]*Nforce[9] + Nforce[10]*Nforce[10]+Nforce[11]*Nforce[11]);
 
-          //Normalize vectors
-          for(int axis = 0; axis <3; axis++){
+            //Normalize vectors
+            for(int axis = 0; axis <3; axis++){
             force1[axis] = force1[axis]/Mmags[0];
             force2[axis] = force2[axis]/Mmags[1];
             force3[axis] = force3[axis]/Mmags[2];
@@ -578,59 +578,59 @@ void BranchingDihedralCosine::forces(
             Lforce3[axis] = Lforce3[axis]/Lmags[2];
             Lforce4[axis] = Lforce4[axis]/Lmags[3];
             for(int fvec =0; fvec < 4; fvec++){
-              Nforce[3*fvec + axis] = Nforce[3*fvec + axis]/Nmags[fvec];
+                Nforce[3*fvec + axis] = Nforce[3*fvec + axis]/Nmags[fvec];
             }
-          }
+            }
 
-          //Calculate dotProduct
-          FdirerrorMvsN[0] += abs(1 - (force1[0]*Nforce[0] + force1[1]*Nforce[1] +
-          		force1[2]*Nforce[2]));
-          FdirerrorMvsN[1] += abs(1 - (force2[0]*Nforce[3] + force2[1]*Nforce[4] +
-          		force2[2]*Nforce[5]));
-          FdirerrorMvsN[2] += abs(1 - (force3[0]*Nforce[6] + force3[1]*Nforce[7] +
-          		force3[2]*Nforce[8]));
-          FdirerrorMvsN[3] += abs(1 - (force4[0]*Nforce[9] + force4[1]*Nforce[10] +
-          		force4[2]*Nforce[11]));
+            //Calculate dotProduct
+            FdirerrorMvsN[0] += abs(1 - (force1[0]*Nforce[0] + force1[1]*Nforce[1] +
+                force1[2]*Nforce[2]));
+            FdirerrorMvsN[1] += abs(1 - (force2[0]*Nforce[3] + force2[1]*Nforce[4] +
+                force2[2]*Nforce[5]));
+            FdirerrorMvsN[2] += abs(1 - (force3[0]*Nforce[6] + force3[1]*Nforce[7] +
+                force3[2]*Nforce[8]));
+            FdirerrorMvsN[3] += abs(1 - (force4[0]*Nforce[9] + force4[1]*Nforce[10] +
+                force4[2]*Nforce[11]));
 
-          double t1, t2, t3, t4;
-          t1 = (Lforce1[0]*Nforce[0] + Lforce1[1]*Nforce[1] + Lforce1[2]*Nforce[2]);
-          t2 = Lforce2[0]*Nforce[3] + Lforce2[1]*Nforce[4] + Lforce2[2]*Nforce[5];
-          t3 = Lforce3[0]*Nforce[6] + Lforce3[1]*Nforce[7] + Lforce3[2]*Nforce[8];
-          t4 = Lforce4[0]*Nforce[9] + Lforce4[1]*Nforce[10] + Lforce4[2]*Nforce[11];
-//          cout<<t1<<" "<<t2<<" "<<t3<<" "<<t4<<endl;
+            double t1, t2, t3, t4;
+            t1 = (Lforce1[0]*Nforce[0] + Lforce1[1]*Nforce[1] + Lforce1[2]*Nforce[2]);
+            t2 = Lforce2[0]*Nforce[3] + Lforce2[1]*Nforce[4] + Lforce2[2]*Nforce[5];
+            t3 = Lforce3[0]*Nforce[6] + Lforce3[1]*Nforce[7] + Lforce3[2]*Nforce[8];
+            t4 = Lforce4[0]*Nforce[9] + Lforce4[1]*Nforce[10] + Lforce4[2]*Nforce[11];
+    //          cout<<t1<<" "<<t2<<" "<<t3<<" "<<t4<<endl;
 
-          FdirerrorLvsN[0] += abs(1 - t1);
-          FdirerrorLvsN[1] += abs(1 - t2);
-          FdirerrorLvsN[2] += abs(1 - t3);
-          FdirerrorLvsN[3] += abs(1 - t4);
+            FdirerrorLvsN[0] += abs(1 - t1);
+            FdirerrorLvsN[1] += abs(1 - t2);
+            FdirerrorLvsN[2] += abs(1 - t3);
+            FdirerrorLvsN[3] += abs(1 - t4);
 
-          for(int comp =0; comp < 4; comp++){
+            for(int comp =0; comp < 4; comp++){
             FmagerrorMvsN[comp] += abs(Nmags[comp] - Mmags[comp])/Nmags[comp];
             FmagerrorLvsN[comp] += abs(Nmags[comp] - Lmags[comp])/Nmags[comp];
-          }
-	    counterF++;
-      //@}
+            }
+        counterF++;
+        //@}
 
     }
     if(counterF>0){
-	cout<<"----------------"<<endl;
-	if(true) {
-		cout << "Forces MAG relative error counter " << counterF << endl;
-		cout << "MEDYAN vs LAMMPS" << endl;
-		for (int comp = 0; comp < 4; comp++) {
-			cout << "f" << comp + 1 << " " << FmagerrorMvsN[comp] / counterF << " "
-			     << FmagerrorLvsN[comp] / counterF << endl;
-		}
-	}
-	if(false) {
-		cout << "Forces DIR relative error counter " << counterF << endl;
-		cout << "MEDYAN vs LAMMPS" << endl;
-		for (int comp = 0; comp < 4; comp++) {
-			cout << "f" << comp << " " << FdirerrorMvsN[comp] / counterF << " "
-			     << FdirerrorLvsN[comp] / counterF << endl;
-		}
-	}*/
-	}
+    cout<<"----------------"<<endl;
+    if(true) {
+        cout << "Forces MAG relative error counter " << counterF << endl;
+        cout << "MEDYAN vs LAMMPS" << endl;
+        for (int comp = 0; comp < 4; comp++) {
+            cout << "f" << comp + 1 << " " << FmagerrorMvsN[comp] / counterF << " "
+                    << FmagerrorLvsN[comp] / counterF << endl;
+        }
+    }
+    if(false) {
+        cout << "Forces DIR relative error counter " << counterF << endl;
+        cout << "MEDYAN vs LAMMPS" << endl;
+        for (int comp = 0; comp < 4; comp++) {
+            cout << "f" << comp << " " << FdirerrorMvsN[comp] / counterF << " "
+                    << FdirerrorLvsN[comp] / counterF << endl;
+        }
+    }*/
+    }
 
     delete [] coord1;
     delete [] coord2;
@@ -642,7 +642,7 @@ void BranchingDihedralCosine::forces(
     delete [] n2;
     delete [] zero;
 
-//    delete [] Nforce;
+    //    delete [] Nforce;
 
 }
 
@@ -650,34 +650,34 @@ void BranchingDihedralCosine::forcesNumericalinteraction(
 		floatingpoint *coord, floatingpoint *f, size_t nint,
 		unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos, int interactionID, double *Nforce)
 		{
-	int i = interactionID;
+    int i = interactionID;
 
-	int n = BranchingDihedral<BranchingDihedralCosine>::n;
+    int n = BranchingDihedral<BranchingDihedralCosine>::n;
 
-		double delta = 0.001;
+    double delta = 0.001;
 
-		double Ucurr = energyininteractionperturbed(coord, nint, beadSet,
+    double Ucurr = energyininteractionperturbed(coord, nint, beadSet,
 		                                                   kdih, pos, i, -1, -1, delta);
 //		cout<<i<<" Ucurr "<<Ucurr<<endl;
 
 		//perturb x y z of each of the 4 coordinates
 		//Calculate energy
-		for(int perturbcoord = 0; perturbcoord<4; perturbcoord++){
-			for(int perturbaxis = 0;perturbaxis<3;perturbaxis++){
-				double Upert = energyininteractionperturbed(coord, nint, beadSet,
-						kdih, pos, i, perturbcoord, perturbaxis, delta);
+    for(int perturbcoord = 0; perturbcoord<4; perturbcoord++){
+        for(int perturbaxis = 0;perturbaxis<3;perturbaxis++){
+            double Upert = energyininteractionperturbed(coord, nint, beadSet,
+                    kdih, pos, i, perturbcoord, perturbaxis, delta);
 
 //				cout<<i<<" Upert "<<Upert<<endl;
-				//Calculate slope
-				double slope = -(Upert - Ucurr)/delta;
-				// Assign as force
-				Nforce[3*perturbcoord + perturbaxis] = slope;
-			}
-		}
-		/*cout<<"forcesN ";
-		for(int i = 0; i < 12;i++)
-			cout<<Nforce[i]<<" ";
-		cout<<endl;*/
+            //Calculate slope
+            double slope = -(Upert - Ucurr)/delta;
+            // Assign as force
+            Nforce[3*perturbcoord + perturbaxis] = slope;
+        }
+    }
+    /*cout<<"forcesN ";
+    for(int i = 0; i < 12;i++)
+        cout<<Nforce[i]<<" ";
+    cout<<endl;*/
 }
 
 template <class dataType>
@@ -686,147 +686,147 @@ dataType BranchingDihedralCosine::energyininteractionperturbed(
 		unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos, int
 		interactionID, int perturbcoord, int perturbaxis, double delta){
 
-	int i = interactionID;
+    int i = interactionID;
 
-	int n = BranchingDihedral<BranchingDihedralCosine>::n;
+    int n = BranchingDihedral<BranchingDihedralCosine>::n;
 
-	dataType *coord1, *coord2, *coord3, *coord4, n1n2, U_i;
-	coord1 = new dataType[3];
-	coord2 = new dataType[3];
-	coord3 = new dataType[3];
-	coord4 = new dataType[3];
-	dataType *mp = new dataType[3];
-	dataType *n1 = new dataType[3];
-	dataType *n2 = new dataType[3];
+    dataType *coord1, *coord2, *coord3, *coord4, n1n2, U_i;
+    coord1 = new dataType[3];
+    coord2 = new dataType[3];
+    coord3 = new dataType[3];
+    coord4 = new dataType[3];
+    dataType *mp = new dataType[3];
+    dataType *n1 = new dataType[3];
+    dataType *n2 = new dataType[3];
 
-	//@{
-	dataType vb1x, vb1y, vb1z, vb2x, vb2y, vb2z, vb3x, vb3y, vb3z;
-	dataType vb2xm, vb2ym, vb2zm;
-	dataType ax, ay, az, bx, by, bz;
-	dataType rasq, rbsq, rgsq, rg, rginv, ra2inv, rb2inv, rabinv;
-	dataType c,s;
-	dataType p, df1, ddf1;
-	dataType fg, fga, gaa, gbb, hg, hgb;
-	//@}
+    //@{
+    dataType vb1x, vb1y, vb1z, vb2x, vb2y, vb2z, vb3x, vb3y, vb3z;
+    dataType vb2xm, vb2ym, vb2zm;
+    dataType ax, ay, az, bx, by, bz;
+    dataType rasq, rbsq, rgsq, rg, rginv, ra2inv, rb2inv, rabinv;
+    dataType c,s;
+    dataType p, df1, ddf1;
+    dataType fg, fga, gaa, gbb, hg, hgb;
+    //@}
 
-	for(int j = 0; j < 3; j++){
-		coord1[j] = coord[3 * beadSet[n * i]+ j];
-		coord2[j] = coord[3 * beadSet[n * i + 1]+ j];
-		coord3[j] = coord[3 * beadSet[n * i + 2]+ j];
-		coord4[j] = coord[3 * beadSet[n * i + 3]+ j];
-	}
+    for(int j = 0; j < 3; j++){
+        coord1[j] = coord[3 * beadSet[n * i]+ j];
+        coord2[j] = coord[3 * beadSet[n * i + 1]+ j];
+        coord3[j] = coord[3 * beadSet[n * i + 2]+ j];
+        coord4[j] = coord[3 * beadSet[n * i + 3]+ j];
+    }
 
-	if(perturbcoord != -1 && perturbaxis != -1){
-		if(perturbcoord == 0){
-			if(perturbaxis == 0)
-				coord1[0] += delta;
-			else if(perturbaxis == 1)
-				coord1[1] += delta;
-			else
-				coord1[2] += delta;
-		}
-		else if(perturbcoord == 1){
-			if(perturbaxis == 0)
-				coord2[0] += delta;
-			else if(perturbaxis == 1)
-				coord2[1] += delta;
-			else
-				coord2[2] += delta;
-		}
-		else if(perturbcoord == 2){
-			if(perturbaxis == 0)
-				coord3[0] += delta;
-			else if(perturbaxis == 1)
-				coord3[1] += delta;
-			else
-				coord3[2] += delta;
-		}
-		else if(perturbcoord == 3){
-			if(perturbaxis == 0)
-				coord4[0] += delta;
-			else if(perturbaxis == 1)
-				coord4[1] += delta;
-			else
-				coord4[2] += delta;
-		}
-	}
+    if(perturbcoord != -1 && perturbaxis != -1){
+        if(perturbcoord == 0){
+            if(perturbaxis == 0)
+                coord1[0] += delta;
+            else if(perturbaxis == 1)
+                coord1[1] += delta;
+            else
+                coord1[2] += delta;
+        }
+        else if(perturbcoord == 1){
+            if(perturbaxis == 0)
+                coord2[0] += delta;
+            else if(perturbaxis == 1)
+                coord2[1] += delta;
+            else
+                coord2[2] += delta;
+        }
+        else if(perturbcoord == 2){
+            if(perturbaxis == 0)
+                coord3[0] += delta;
+            else if(perturbaxis == 1)
+                coord3[1] += delta;
+            else
+                coord3[2] += delta;
+        }
+        else if(perturbcoord == 3){
+            if(perturbaxis == 0)
+                coord4[0] += delta;
+            else if(perturbaxis == 1)
+                coord4[1] += delta;
+            else
+                coord4[2] += delta;
+        }
+    }
 
-	dataType alpha = pos[i];
-	dataType beta = 1 - alpha;
-	mp[0] = (coord1[0] * beta + alpha * coord2[0]);
-	mp[1] = (coord1[1] * beta + alpha * coord2[1]);
-	mp[2] = (coord1[2] * beta + alpha * coord2[2]);
+    dataType alpha = pos[i];
+    dataType beta = 1 - alpha;
+    mp[0] = (coord1[0] * beta + alpha * coord2[0]);
+    mp[1] = (coord1[1] * beta + alpha * coord2[1]);
+    mp[2] = (coord1[2] * beta + alpha * coord2[2]);
 
-	//@ LAMMPS version test
-	// 1st bond
-	vb1x = coord2[0] - mp[0];
-	vb1y = coord2[1] - mp[1];
-	vb1z = coord2[2] - mp[2];
+    //@ LAMMPS version test
+    // 1st bond
+    vb1x = coord2[0] - mp[0];
+    vb1y = coord2[1] - mp[1];
+    vb1z = coord2[2] - mp[2];
 
-	// 2nd bond
-	vb2x = coord3[0] - mp[0];
-	vb2y = coord3[1] - mp[1];
-	vb2z = coord3[2] - mp[2];
+    // 2nd bond
+    vb2x = coord3[0] - mp[0];
+    vb2y = coord3[1] - mp[1];
+    vb2z = coord3[2] - mp[2];
 
-	vb2xm = -vb2x;
-	vb2ym = -vb2y;
-	vb2zm = -vb2z;
+    vb2xm = -vb2x;
+    vb2ym = -vb2y;
+    vb2zm = -vb2z;
 
-	// 3rd bond
-	vb3x = coord4[0] - coord3[0];
-	vb3y = coord4[1] - coord3[1];
-	vb3z = coord4[2] - coord3[2];
+    // 3rd bond
+    vb3x = coord4[0] - coord3[0];
+    vb3y = coord4[1] - coord3[1];
+    vb3z = coord4[2] - coord3[2];
 
-	// c,s calculation
+    // c,s calculation
 
-	ax = vb1y*vb2zm - vb1z*vb2ym;
-	ay = vb1z*vb2xm - vb1x*vb2zm;
-	az = vb1x*vb2ym - vb1y*vb2xm;
-	bx = vb3y*vb2zm - vb3z*vb2ym;
-	by = vb3z*vb2xm - vb3x*vb2zm;
-	bz = vb3x*vb2ym - vb3y*vb2xm;
+    ax = vb1y*vb2zm - vb1z*vb2ym;
+    ay = vb1z*vb2xm - vb1x*vb2zm;
+    az = vb1x*vb2ym - vb1y*vb2xm;
+    bx = vb3y*vb2zm - vb3z*vb2ym;
+    by = vb3z*vb2xm - vb3x*vb2zm;
+    bz = vb3x*vb2ym - vb3y*vb2xm;
 
-	rasq = ax*ax + ay*ay + az*az;
-	rbsq = bx*bx + by*by + bz*bz;
-	rgsq = vb2xm*vb2xm + vb2ym*vb2ym + vb2zm*vb2zm;
-	rg = sqrt(rgsq);
+    rasq = ax*ax + ay*ay + az*az;
+    rbsq = bx*bx + by*by + bz*bz;
+    rgsq = vb2xm*vb2xm + vb2ym*vb2ym + vb2zm*vb2zm;
+    rg = sqrt(rgsq);
 
-	rginv = ra2inv = rb2inv = 0.0;
-	if (rg > 0) rginv = 1.0/rg;
-	if (rasq > 0) ra2inv = 1.0/rasq;
-	if (rbsq > 0) rb2inv = 1.0/rbsq;
-	rabinv = sqrt(ra2inv*rb2inv);
+    rginv = ra2inv = rb2inv = 0.0;
+    if (rg > 0) rginv = 1.0/rg;
+    if (rasq > 0) ra2inv = 1.0/rasq;
+    if (rbsq > 0) rb2inv = 1.0/rbsq;
+    rabinv = sqrt(ra2inv*rb2inv);
 
-	c = (ax*bx + ay*by + az*bz)*rabinv;
-	s = rg*rabinv*(ax*vb3x + ay*vb3y + az*vb3z);
+    c = (ax*bx + ay*by + az*bz)*rabinv;
+    s = rg*rabinv*(ax*vb3x + ay*vb3y + az*vb3z);
 
-	if (c > 1.0) c = 1.0;
-	if (c < -1.0) c = -1.0;
+    if (c > 1.0) c = 1.0;
+    if (c < -1.0) c = -1.0;
 
-	ddf1 = c;
-	df1 = s;
+    ddf1 = c;
+    df1 = s;
 
-	p = 1.0 - c;
-	U_i = kdih[i] * p;
+    p = 1.0 - c;
+    U_i = kdih[i] * p;
 
-	if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-		   || U_i != U_i || U_i < -1.0) {
+    if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
+            || U_i != U_i || U_i < -1.0) {
 
-		//set culprit and return
-		BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
+        //set culprit and return
+        BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
 
-		return -1;
-	}
-	delete [] coord1;
-	delete [] coord2;
-	delete [] coord3;
-	delete [] coord4;
+        return -1;
+    }
+    delete [] coord1;
+    delete [] coord2;
+    delete [] coord3;
+    delete [] coord4;
 
-	delete [] mp;
-	delete [] n1;
-	delete [] n2;
+    delete [] mp;
+    delete [] n1;
+    delete [] n2;
 
-	return U_i;
+    return U_i;
 }
 
 void BranchingDihedralCosine::testdihedral(){
