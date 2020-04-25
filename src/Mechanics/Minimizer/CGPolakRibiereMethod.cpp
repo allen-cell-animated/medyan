@@ -967,9 +967,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
                 << numIter << " steps." << endl;
         cout << "Maximum force in system = " << maxF() << endl;
         cout << "System energy..." << endl;
-        #ifdef ADDITIONALINFO
         FFM.computeEnergy(Bead::getDbData().coords.data(), true);
-        #endif
     }
 
     else if (numIter >= N) {
