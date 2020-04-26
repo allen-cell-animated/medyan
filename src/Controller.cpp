@@ -261,6 +261,10 @@ void Controller::initialize(string inputFile,
         //Set up HessianSpectra if hessiantracking is enabled
         string hessianspectra = _outputDirectory + "hessianspectra.traj";
         _outputs.push_back(new HessianSpectra(hessianspectra, &_subSystem, _ffm));
+        
+        //Set up Projections if hessiantracking is enabled
+        string projections = _outputDirectory + "projections.traj";
+        _outputs.push_back(new Projections(projections, &_subSystem, _ffm));
     }
 
     //Set up CMGraph output

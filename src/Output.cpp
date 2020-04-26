@@ -1415,6 +1415,31 @@ void HessianSpectra::print(int snapshot){
     };
 }
 
+void Projections::print(int snapshot){
+    _outputFile.precision(10);
+
+    vector<floatingpoint> tauVector = _ffm-> tauVector;
+    vector<Eigen::VectorXcd > projectionsVector = _ffm -> projectionsVector;
+    
+    // Outputs the eigenvalues obtained from each Hessian matrix
+    for(auto k = 0; k < projectionsVector.size(); k++){
+        
+        _outputFile <<tauVector[k] << "     "<< projectionsVector[k].size()<< endl;
+        
+        for(auto i = 0; i< projectionsVector[k].size(); i++){
+            _outputFile<<projectionsVector[k].real()[i]<< endl;
+        }
+        
+        
+        _outputFile<<endl;
+    };
+    
+    // This clears the vectors storing the matrices to reduce the amount of memory needed.
+    _ffm->clearHessian(2);
+    
+
+}
+
 
 void CylinderEnergies::print(int snapshot){
     

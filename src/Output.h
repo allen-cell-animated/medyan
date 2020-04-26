@@ -396,6 +396,20 @@ public:
     virtual void print(int snapshot);
 };
 
+class Projections : public Output {
+    
+    ForceFieldManager* _ffm;
+    
+public:
+    Projections(string outputFileName, SubSystem* s, ForceFieldManager* ffm)
+    
+    : Output(outputFileName, s), _ffm(ffm) {}
+    
+    ~Projections() {}
+    
+    virtual void print(int snapshot);
+};
+
 
 class CylinderEnergies : public Output {
     

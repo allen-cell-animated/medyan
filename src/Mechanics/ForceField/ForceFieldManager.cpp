@@ -699,6 +699,7 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
 
 
 void ForceFieldManager::setCurrBeadMap(){
+    prevBeadMap = currBeadMap;
     currBeadMap.clear();
     for(auto b:Bead::getBeads()){
         currBeadMap[b] = std::make_tuple(b->getStableIndex(), b->getId());
@@ -723,11 +724,11 @@ void ForceFieldManager::computeProjections(mathfunc::VecArray< 3, floatingpoint 
     for(auto i =0; i<evectors.rows(); i++){
         disp(i) = 0.0;
     }
-    cout<<"Length of disp is "<<disp.rows()<<endl;
     
     // set the current beads
     setCurrBeadMap();
     
+
     // loop through the current map
     for(const std::pair<Bead*, tuple<int,int>> c : currBeadMap){
         
@@ -774,6 +775,8 @@ void ForceFieldManager::computeProjections(mathfunc::VecArray< 3, floatingpoint 
         cout<<testDisp(i).real()<<" "<<disp(i).real()<<endl;
     }
     */
+    
+    projectionsVector.push_back(proj);
     
     // need to reset the prevCoords with current coords
     prevCoords = currCoords;

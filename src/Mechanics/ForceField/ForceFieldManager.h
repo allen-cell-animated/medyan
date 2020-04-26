@@ -84,12 +84,15 @@ public:
     
     void clearHessian(int a){
         if(a == 0){
-        hessianVector.clear();
+            hessianVector.clear();
+        }else if(a==1){
+            evaluesVector.clear();
+            IPRIVector.clear();
+            IPRIIVector.clear();
+            
         }else{
-        evaluesVector.clear();
-        IPRIVector.clear();
-        IPRIIVector.clear();
-        tauVector.clear();
+            projectionsVector.clear();
+            tauVector.clear();
         };
     }
     
