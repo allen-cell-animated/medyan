@@ -161,8 +161,7 @@ public:
     ///Initialize the system, given an input and output directory
     void initialize(string inputFile,
                     string inputDirectory,
-                    string outputDirectory,
-                    ThreadPool& tp);
+                    string outputDirectory);
     ///Run the simulation
     void run();
 };

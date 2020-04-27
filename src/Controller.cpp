@@ -64,11 +64,10 @@ Controller::Controller() :
 
 void Controller::initialize(string inputFile,
                             string inputDirectory,
-                            string outputDirectory,
-                            ThreadPool& tp) {
+                            string outputDirectory) {
 
     // Set up the thread pool reference in the subsystem
-    _subSystem.tp = &tp;
+//    _subSystem.tp = &tp;
 
     SysParams::INITIALIZEDSTATUS = false;
     //general check of macros
@@ -1317,6 +1316,19 @@ void Controller::run() {
         chrono::duration<floatingpoint> elapsed_runspl(mine - mins);
         specialtime += elapsed_runspl.count();
         while(tau() <= _runTime) {
+#ifdef BRANCHING_CROSSCHECK
+            cout<<"Printing Branch details, N="<<BranchingPoint::getBranchingPoints()
+            .size()<<endl;
+            for(auto b :BranchingPoint::getBranchingPoints()){
+		Cylinder* cyl1 = b->getFirstCylinder();
+		Cylinder* cyl2 = b->getSecondCylinder();
+		float pos1 = b->getPosition()*SysParams::Geometry()
+                .cylinderNumMon[cyl1->getType()];
+		cout <<b->getId()<<" "<<b->getCBranchingPoint()->getDiffusingBranchSpecies()
+		->getName()<<" "<<b->getdiffusingactinspeciesname()<<endl;
+	}
+#endif
+
             auto minwhile = chrono::high_resolution_clock::now();
             //run ccontroller
             #ifdef OPTIMOUT

@@ -94,11 +94,11 @@ int main(int argc, char **argv) {
     case MedyanRunMode::simulation:
         {
     // Initialize the thread pool for use in MEDYAN
-    ThreadPool tp(cmdRes.numThreads - 1);
+    //ThreadPool tp(cmdRes.numThreads - 1);
 
             //initialize and run system
             Controller c;
-            c.initialize(cmdRes.inputFile, cmdRes.inputDirectory, cmdRes.outputDirectory, tp);
+            c.initialize(cmdRes.inputFile, cmdRes.inputDirectory, cmdRes.outputDirectory);
             c.run();
         }
         break;
