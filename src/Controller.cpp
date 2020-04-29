@@ -1341,29 +1341,19 @@ void Controller::run() {
         polyplusend += filament->getPolyPlusEnd();
         depolyminusend += filament->getDepolyMinusEnd();
         depolyplusend += filament->getDepolyPlusEnd();
-	    //print first line (Filament ID, type, length, left_delta, right_delta)
-//        cout <<"FILAMENT " << filament->getId() << " " <<
-//        filament->getType() << " " <<
-//        filament->getCylinderVector().size() + 1 << " " <<
-//        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << "\n"<<
-//        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << " " <<
-//        filament->getPolyMinusEnd() << " " << filament->getPolyPlusEnd() << " " <<
-//        filament->getDepolyMinusEnd() << " " << filament->getDepolyPlusEnd() << " " <<
-//        filament->getNucleation() << " " << endl;
-//	    cout << "SEVERING " << filament->getSevering() << endl;
-//	    if (filament->getNewID().size() == 0) {
-//	        cout << "-1";
-//	    }
-//	    else {
-//	        for (int i = 0; i < filament->getNewID().size(); ++i) {
-//	            cout << filament->getNewID()[i] << " ";
-//	        }
-//	    }
-//	    cout << endl;
 	}
 	cout<<"DeltaMinusEnd "<<deltaminusend<<" DeltaPlusEnd "<<deltaplusend<<
 	" PolyMinusEnd "<<polyminusend<<" PolyPlusEnd "<<polyplusend<<
 	" DepolyMinusEnd "<<depolyminusend<<" DepolyPlusEnd "<<depolyplusend<<endl;
+cout<<"Printing diffusion reactions "<<endl;
+            for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
+                C->getDiffusionReactionContainer().updatePropensityComprtment();
+                cout << C->getId() << " ";
+                for (auto &it: C->getDiffusionReactionContainer().reactions()) {
+                    cout << it->getRate() << " ";
+                }
+                cout << endl;
+            }
 #endif
 
             auto minwhile = chrono::high_resolution_clock::now();

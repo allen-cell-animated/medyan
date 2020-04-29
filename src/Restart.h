@@ -134,8 +134,13 @@ public:
         for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
             for(auto &it: C->getDiffusionReactionContainer().reactions())
             {temp_diffrate_vector.push_back(it->getRate());
-                it->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);}
+                it->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
+            }
             C->getDiffusionReactionContainer().updatePropensityComprtment();
+            for (auto &it: C->getDiffusionReactionContainer().reactions()) {
+                cout<<it->getRate()<<" ";
+            }
+            cout<<endl;
             for(auto &Mgr:C->getFilamentBindingManagers()){
 #ifdef NLORIGINAL
                 Mgr->clearpossibleBindings();
@@ -226,6 +231,10 @@ public:
                     it->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
                 }
                 C->getDiffusionReactionContainer().updatePropensityComprtment();
+                for (auto &it: C->getDiffusionReactionContainer().reactions()) {
+                    cout<<it->getRate()<<" ";
+                }
+                cout<<endl;
             }
             //Bulk Species
             for (auto &s : _chemData.speciesBulk) {
