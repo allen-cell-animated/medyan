@@ -2349,7 +2349,7 @@ void ChemManager::updateCopyNumbers() {
 
             species->setN(0);
 
-            //activate reactions
+            //passivate reactions
             species->passivateReactantReactions();
 
             ///set as removed by marking copy number to -1

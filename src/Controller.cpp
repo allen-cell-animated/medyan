@@ -1353,6 +1353,15 @@ cout<<"Printing diffusion reactions "<<endl;
                     cout << it->getRate() << " ";
                 }
                 cout << endl;
+
+            }
+            for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
+                cout<<C->getId()<<" ";
+                for (auto &it: C->getDiffusionReactionContainer().reactions()) {
+                        cout <<it->isPassivated()<<" ";
+                }
+                cout << endl;
+
             }
 #endif
 

@@ -137,10 +137,6 @@ public:
                 it->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
             }
             C->getDiffusionReactionContainer().updatePropensityComprtment();
-            for (auto &it: C->getDiffusionReactionContainer().reactions()) {
-                cout<<it->getRate()<<" ";
-            }
-            cout<<endl;
             for(auto &Mgr:C->getFilamentBindingManagers()){
 #ifdef NLORIGINAL
                 Mgr->clearpossibleBindings();
@@ -214,6 +210,17 @@ public:
                     for (auto count = 0; count < diffspeciesnamevec.size(); count++) {
                         Species *sp = Cmp->findSpeciesByName(diffspeciesnamevec[count]);
                         if (sp != nullptr) {
+                            auto currcopynumber = sp->getRSpecies().getN();
+                            auto temptargetcopynumber = diffspeciescpyvec[count];
+                            //setN
+                            while(currcopynumber > temptargetcopynumber) {
+                                sp->down();
+                                currcopynumber = sp->getN();
+                            }
+                            while(currcopynumber < temptargetcopynumber) {
+                                sp->up();
+                                currcopynumber = sp->getN();
+                            }
                             sp->getRSpecies().setN(diffspeciescpyvec[count]);
                         } else {
                             LOG(ERROR) << "Cannot find diffusing species of name "
@@ -230,11 +237,6 @@ public:
                 for (auto &it: C->getDiffusionReactionContainer().reactions()) {
                     it->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
                 }
-                C->getDiffusionReactionContainer().updatePropensityComprtment();
-                for (auto &it: C->getDiffusionReactionContainer().reactions()) {
-                    cout<<it->getRate()<<" ";
-                }
-                cout<<endl;
             }
             //Bulk Species
             for (auto &s : _chemData.speciesBulk) {
