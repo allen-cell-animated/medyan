@@ -1327,6 +1327,43 @@ void Controller::run() {
 		cout <<b->getId()<<" "<<b->getCBranchingPoint()->getDiffusingBranchSpecies()
 		->getName()<<" "<<b->getdiffusingactinspeciesname()<<endl;
 	}
+	cout<<"Printing chemistry event details "<<endl;
+            int deltaminusend = 0;
+            int deltaplusend = 0;
+            int polyplusend = 0;
+            int polyminusend =0;
+            int depolyplusend = 0;
+            int depolyminusend = 0;
+	for(auto &filament : Filament::getFilaments()) {
+        deltaminusend += filament->getDeltaMinusEnd();
+        deltaplusend += filament->getDeltaPlusEnd();
+        polyminusend += filament->getPolyMinusEnd();
+        polyplusend += filament->getPolyPlusEnd();
+        depolyminusend += filament->getDepolyMinusEnd();
+        depolyplusend += filament->getDepolyPlusEnd();
+	    //print first line (Filament ID, type, length, left_delta, right_delta)
+//        cout <<"FILAMENT " << filament->getId() << " " <<
+//        filament->getType() << " " <<
+//        filament->getCylinderVector().size() + 1 << " " <<
+//        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << "\n"<<
+//        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << " " <<
+//        filament->getPolyMinusEnd() << " " << filament->getPolyPlusEnd() << " " <<
+//        filament->getDepolyMinusEnd() << " " << filament->getDepolyPlusEnd() << " " <<
+//        filament->getNucleation() << " " << endl;
+//	    cout << "SEVERING " << filament->getSevering() << endl;
+//	    if (filament->getNewID().size() == 0) {
+//	        cout << "-1";
+//	    }
+//	    else {
+//	        for (int i = 0; i < filament->getNewID().size(); ++i) {
+//	            cout << filament->getNewID()[i] << " ";
+//	        }
+//	    }
+//	    cout << endl;
+	}
+	cout<<"DeltaMinusEnd "<<deltaminusend<<" DeltaPlusEnd "<<deltaplusend<<
+	" PolyMinusEnd "<<polyminusend<<" PolyPlusEnd "<<polyplusend<<
+	" DepolyMinusEnd "<<depolyminusend<<" DepolyPlusEnd "<<depolyplusend<<endl;
 #endif
 
             auto minwhile = chrono::high_resolution_clock::now();
