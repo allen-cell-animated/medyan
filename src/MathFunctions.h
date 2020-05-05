@@ -1381,7 +1381,8 @@ inline auto vec2Vector(const VecType& a) {
     template <class dataType>
     inline bool checkNaN_INF(dataType *x, int startpoint, int endpoint){
         for(int i = startpoint; i <= endpoint; i++){
-            if(isnan(x[i])||isinf(x[i])||abs(x[i])>1e15)
+            if(fabs(x[i]) == numeric_limits<floatingpoint>::infinity()||isnan(fabs(x[i]))
+            ||isinf(fabs(x[i]))||fabs(x[i])>1e15)
                 return true;
         }
         return false;
