@@ -56,6 +56,14 @@ struct CylinderInfoData {
     void set_content(std::size_t pos, CylinderInfo c) { value[pos] = c; }
     void move_content(std::size_t from, std::size_t to) { value[to] = value[from]; }
     void resize(std::size_t size) { value.resize(size); }
+    void settodummy(std::size_t pos){
+        CCylinder* dummyCCyl = nullptr;
+        auto infinity = numeric_limits<floatingpoint>::infinity();
+        auto maxsize_t = numeric_limits<size_t>::max();
+        CylinderInfo ctemp{-1000, -1000, -1000, -1000, {maxsize_t, maxsize_t},
+                           {infinity, infinity, infinity}, -1000, -1000, dummyCCyl};
+        set_content(pos, ctemp);
+    }
 };
 
 /// A container to store a MCylinder and CCylinder.

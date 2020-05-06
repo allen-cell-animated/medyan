@@ -1345,7 +1345,7 @@ void Controller::run() {
 	cout<<"DeltaMinusEnd "<<deltaminusend<<" DeltaPlusEnd "<<deltaplusend<<
 	" PolyMinusEnd "<<polyminusend<<" PolyPlusEnd "<<polyplusend<<
 	" DepolyMinusEnd "<<depolyminusend<<" DepolyPlusEnd "<<depolyplusend<<endl;
-cout<<"Printing diffusion reactions "<<endl;
+	cout<<"Printing diffusion reactions "<<endl;
             for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
                 C->getDiffusionReactionContainer().updatePropensityComprtment();
                 cout << C->getId() << " ";
