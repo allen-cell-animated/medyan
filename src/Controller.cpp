@@ -1364,7 +1364,6 @@ void Controller::run() {
 
             }
 #endif
-
             auto minwhile = chrono::high_resolution_clock::now();
             //run ccontroller
             #ifdef OPTIMOUT
@@ -1385,42 +1384,6 @@ void Controller::run() {
             chrono::duration<floatingpoint> elapsed_runchem(mine - mins);
             chemistrytime += elapsed_runchem.count();
             SysParams::DURINGCHEMISTRY = false;
-
-/*            for(auto cyl:Cylinder::getCylinders()){
-                cout<<"After chemistry  Cylinder ID = "<<cyl->getId()<<endl;
-                cyl->printSelf();
-            }*/
-
-            //Printing walking reaction
-            /*auto mwalk = CUDAcommon::mwalk;
-            cout<<"Motor-Walking statistics"<<endl;
-            cout<<"MW C2C "<<mwalk.contracttocontract<<endl;
-            cout<<"MW S2S "<<mwalk.stretchtostretch<<endl;
-            cout<<"MW E2E "<<mwalk.equibtoequib<<endl;
-            cout<<"MW C2S "<<mwalk.contracttostretch<<endl;
-            cout<<"MW S2C "<<mwalk.stretchtocontract<<endl;
-            cout<<"MW E2C "<<mwalk.equibtocontract<<endl;
-            cout<<"MW E2S "<<mwalk.equibtostretch<<endl;
-			//reset counters
-            CUDAcommon::mwalk.contracttocontract = 0;
-	        CUDAcommon::mwalk.stretchtocontract = 0;
-	        CUDAcommon::mwalk.contracttostretch = 0;
-	        CUDAcommon::mwalk.stretchtostretch = 0;
-	        CUDAcommon::mwalk.equibtoequib = 0;
-	        CUDAcommon::mwalk.equibtostretch = 0;
-	        CUDAcommon::mwalk.equibtocontract = 0;*/
-
-            //Printing stretch forces
-/*            cout<<"Motor-forces ";
-            for(auto m: MotorGhost::getMotorGhosts()){
-                std::cout<<m->getMMotorGhost()->stretchForce<<" ";
-            }
-            cout<<endl;
-            cout<<"Linker-forces ";
-            for(auto l: Linker::getLinkers()){
-                std::cout<<l->getMLinker()->stretchForce<<" ";
-            }
-            cout<<endl;*/
 #ifdef OPTIMOUT
 	        auto mtimex = CUDAcommon::tmin;
 	        cout<<"motorbinding calls "<<mtimex.motorbindingcalls<<endl;
@@ -1493,11 +1456,43 @@ void Controller::run() {
 	            cout<<endl;
 
 #endif
+	            //check before rearrange
+#ifdef CROSSCHECK_CYLINDER
+                const auto& cylinderInfoData = Cylinder::getDbData().value;
+                for(auto cyl:Cylinder::getCylinders()){
+                    auto cindex = cyl->getStableIndex();
+                    const auto& c = cylinderInfoData[cindex];
+                    if(c.filamentId == -1000){
+                        cout<<"You have a cylinder pointing to the wrong location in "
+                              "cylinderInfoData"<<endl;
+                        auto fil = static_cast<Filament*>(cyl->getParent());
+                        cout<<"Filament Id "<<fil->getId()<<" "<<c.filamentId<<endl;
+                        cout<<"Cylinder Id "<<cyl->getId()<<" "<<c.id<<endl;
+                        cout<<"StableIndex"<<cindex<<endl;
 
+                    }
+                }
+#endif
                 mins = chrono::high_resolution_clock::now();
                 Bead::rearrange();
                 Cylinder::updateAllData();
 
+                //check after rearrange
+#ifdef CROSSCHECK_CYLINDER
+                for(auto cyl:Cylinder::getCylinders()){
+                    auto cindex = cyl->getStableIndex();
+                    const auto& c = cylinderInfoData[cindex];
+                    if(c.filamentId == -1000){
+                        cout<<"You have a cylinder pointing to the wrong location in "
+                              "cylinderInfoData"<<endl;
+                        auto fil = static_cast<Filament*>(cyl->getParent());
+                        cout<<"Filament Id "<<fil->getId()<<" "<<c.filamentId<<endl;
+                        cout<<"Cylinder Id "<<cyl->getId()<<" "<<c.id<<endl;
+                        cout<<"StableIndex"<<cindex<<endl;
+
+                    }
+                }
+#endif
                 minimizationResult = _mController.run();
                 _subSystem.prevMinResult = minimizationResult;
                 mine= chrono::high_resolution_clock::now();
@@ -1540,8 +1535,8 @@ void Controller::run() {
 	            mine= chrono::high_resolution_clock::now();
 	            chrono::duration<floatingpoint> elapsed_rxn3(mine - mins);
 	            rxnratetime += elapsed_rxn3.count();
-
             }
+
 
             //output snapshot
             if(tauLastSnapshot >= _snapshotTime) {

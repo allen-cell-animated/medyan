@@ -355,7 +355,7 @@ void SubSystem::updateBindingManagers() {
 			->initializeSIMDvars();
 		initialize = true;
 	}
-#ifdef OPTIMOUt
+#ifdef OPTIMOUT
 	endonetimecost = chrono::high_resolution_clock::now();
 #endif
 	//Generate binding site coordinates in each compartment and seggregate them into
