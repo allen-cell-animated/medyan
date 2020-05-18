@@ -71,10 +71,10 @@ struct MechParams {
     vector<floatingpoint> BubbleK = {};
     vector<floatingpoint> BubbleRadius = {};
     vector<floatingpoint> BubbleScreenLength = {};
-	vector<floatingpoint> MTOCBendingK = {};
+    vector<floatingpoint> MTOCBendingK = {};
     vector<floatingpoint> AFMBendingK = {};
 
-	floatingpoint BubbleCutoff = 0.0;
+    floatingpoint BubbleCutoff = 0.0;
 
     ///If using more than one bubble
     short numBubbleTypes = 1;
@@ -100,14 +100,16 @@ struct MechParams {
     floatingpoint* cylsqmagnitudevector;
     vector<int> ncylvec;
     vector<int>bsoffsetvec;
-    
+
     // parameters controlling the calculation of the Hessian matrix
     bool hessTracking = false;
+    bool rockSnapBool = false;
     float hessDelta = 0.0001;
     bool denseEstimation = true;
-    int hessSkip = 20;
-    
+    bool hessMatrixPrintBool = false;
+    int hessSkip = 1;
     int sameFilBindSkip = 2;
+    int cylThresh = 0.0;
 
 
 };
@@ -193,13 +195,14 @@ struct ChemParams {
     bool dissTracking = false;
     bool eventTracking = false;
     int linkerbindingskip = 2;
-    
-    
+    float runTime = 0.0;
+
+
     /// Make (de)polymerization depends on stress
     bool makeRateDepend = false;
     double makeRateDependTime = 0.0;
     double makeRateDependForce = 0.0;
-    
+
     /// Make (de)polymerization depends on stress
     bool makeAFM = false;
     double AFMStep1 = 0.0;
@@ -208,7 +211,7 @@ struct ChemParams {
     double StepTotal = 0.0;
     double StepTime = 0.0;
     float originalPolyPlusRate;
-    
+
 
     //@}
 #ifdef CUDAACCL_NL
@@ -277,7 +280,7 @@ struct BoundParams {
     int planestomove = -1; //tracks if both (2), left/bottom/front (1), or
     // right/top/back(0) planes should be moved.
     vector<vector<floatingpoint>> fraccompartmentspan = { { 0, 0, 0 },
-                                                   { 0.999, 0.999, 0.999 } };
+                                                          { 0.999, 0.999, 0.999 } };
 
 };
 
@@ -315,7 +318,7 @@ struct DyRateParams {
 };
 
 struct SpecialParams {
-    
+
     /// Parameters for initializing MTOC attached filaments
     float mtocTheta1 = 0.0;
     float mtocTheta2 = 1.0;
@@ -326,14 +329,14 @@ struct SpecialParams {
 /// Static class that holds all simulation parameters,
 /// initialized by the SystemParser
 class SysParams {
-friend class Controller;
-friend class SystemParser;
-friend class ChemManager;
-friend class SubSystem;
-friend class Cylinder;
+    friend class Controller;
+    friend class SystemParser;
+    friend class ChemManager;
+    friend class SubSystem;
+    friend class Cylinder;
 
 #ifdef TESTING ///Public access if testing only
-public:
+    public:
 #endif
     static MechParams MParams;    ///< The mechanical parameters
     static ChemParams CParams;    ///< The chemistry parameters
@@ -341,7 +344,7 @@ public:
     static BoundParams BParams;   ///< The boundary parameters
     static DyRateParams DRParams; ///< The dynamic rate parameters
     static SpecialParams SParams; ///< Other parameters
-    
+
 public:
     //@{
 #ifdef NLSTENCILLIST
@@ -377,6 +380,8 @@ public:
     static bool checkDyRateParameters(DynamicRateType& dy);
     static bool checkGeoParameters();
     //@}
+
+    static void addChemParameters(ChemistryData& chem);
 
 };
 
