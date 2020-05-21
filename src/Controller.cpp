@@ -233,8 +233,8 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new HRMD(hrmdsnapname, &_subSystem, _cs));
         
     //Set up CylinderEnergies if dissipation tracking is enabled
-    string cylinderenergies = _outputDirectory + "cylinderenergies.traj";
-    _outputs.push_back(new CylinderEnergies(cylinderenergies, &_subSystem, _ffm));
+    //string cylinderenergies = _outputDirectory + "cylinderenergies.traj";
+    //_outputs.push_back(new CylinderEnergies(cylinderenergies, &_subSystem, _ffm));
         
     }
 
