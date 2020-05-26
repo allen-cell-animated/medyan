@@ -6,6 +6,7 @@
 #include "Mechanics/ForceField/Types.hpp"
 #include "Mechanics/Minimizer/CGMethod.h"
 #include "Structure/Bead.h"
+#include "Structure/SurfaceMesh/Vertex.hpp"
 
 // Copies all the system data to the CGMethod data vector
 inline FFCoordinateStartingIndex initCGMethodData(
@@ -32,7 +33,12 @@ inline FFCoordinateStartingIndex initCGMethodData(
 
     // Vertex coord
     si.vertex = curIdx;
-    // Add things for vertices here
+    cg.coord.reserve(cg.coord.size() + 3 * Vertex::getVertices().size());
+    for(auto pv : Vertex::getVertices()) {
+        cg.coord.insert(cg.coord.end(), pv->coord.begin(), pv->coord.end());
+        curIdx += 3;
+    }
+    cg.forceTol.resize(cg.coord.size(), defaultGradTol * 0.1); // FUTURE: change const factor to a variable
 
     // Membrane 2d coord
     si.mem2d = curIdx;
@@ -67,6 +73,11 @@ inline void copyFromCGMethodData(const CGMethod& cg) {
     }
 
     // Vertex
+    for(auto pv : Vertex::getVertices()) {
+        std::copy(cg.coord.begin() + curIdx, cg.coord.begin() + curIdx + 3, pv->coord.begin());
+        std::copy(cg.force.begin() + curIdx, cg.force.begin() + curIdx + 3, pv->force.begin());
+        curIdx += 3;
+    }
 
     // Membrane 2d coord
 

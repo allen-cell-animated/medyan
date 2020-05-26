@@ -498,20 +498,6 @@ void CGMethod::printForces()
 }
 
 void CGMethod::startMinimization(floatingpoint gradTol) {
-    // Reset bead force tolerances
-    for(auto b : Bead::getBeads()) {
-        switch(b->usage) {
-
-        case Bead::BeadUsage::Filament:
-        case Bead::BeadUsage::Bubble:
-            b->forceTol() = gradTol;
-            break;
-
-        case Bead::BeadUsage::Membrane:
-            b->forceTol() = 0.05 * gradTol;
-            break;
-        }
-    }
 
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;

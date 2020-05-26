@@ -37,7 +37,7 @@ struct MembraneMeshAttribute {
         using coordinate_ref_type  = Vertex::coordinate_ref_type;
         using coordinate_cref_type = Vertex::coordinate_cref_type;
 
-        Vertex* vertex;
+        std::unique_ptr< Vertex > vertex;
 
         GVertex gVertex;
         GVertex gVertexS; // stretched version (temporary)
@@ -175,12 +175,13 @@ struct MembraneMeshAttribute {
     // Mesh element modification (not used in initialization/finalization)
     template< typename VertexInsertionMethod >
     static void newVertex(MeshType& mesh, size_t v, const VertexInsertionMethod& op) {
-        const auto& meta = mesh.getMetaAttribute();
-        mesh.getVertexAttribute(v).vertex = meta.s->template addTrackable<Vertex>(op.coordinate(mesh, v), meta.m, v);
+        mesh.getVertexAttribute(v).vertex = std::make_unique< Vertex >(
+            op.coordinate(mesh, v), v);
     }
     template< typename Operation >
     static void newEdge(MeshType& mesh, size_t e, const Operation& op) {
-        mesh.getEdgeAttribute(e).edge.reset(mesh.getMetaAttribute().s->template addTrackable<Edge>(mesh.getMetaAttribute().m, e));
+        mesh.getEdgeAttribute(e).edge.reset(
+            mesh.getMetaAttribute().s->template addTrackable<Edge>(mesh.getMetaAttribute().m, e));
     }
     template< typename Operation >
     static void newHalfEdge(MeshType& mesh, size_t he, const Operation& op) {
@@ -197,8 +198,7 @@ struct MembraneMeshAttribute {
 
     template< typename Element, std::enable_if_t<std::is_same<Element, typename MeshType::Vertex>::value, void>* = nullptr >
     static void removeElement(MeshType& mesh, size_t i) {
-        mesh.getMetaAttribute().s->template removeTrackable<Vertex>(mesh.getVertexAttribute(i).vertex);
-        mesh.getMetaAttribute().m->removeChild(mesh.getVertexAttribute(i).vertex);
+        // Do nothing
     }
     template< typename Element, std::enable_if_t<std::is_same<Element, typename MeshType::Edge>::value, void>* = nullptr >
     static void removeElement(MeshType& mesh, size_t i) {
@@ -218,6 +218,9 @@ struct MembraneMeshAttribute {
     }
 
     // Mesh index caching
+    //
+    // The purpose of this function is to reduce pointer chasing while
+    // traversing the mesh structure.
     template< bool forceUpdate = false >
     static void cacheIndices(MeshType& mesh) {
 
@@ -322,7 +325,8 @@ struct MembraneMeshAttribute {
     static void init(MeshType& mesh, const AttributeInitializerInfo& info) {
         const MetaAttribute& meta = mesh.getMetaAttribute();
         for(size_t i = 0; i < mesh.getVertices().size(); ++i) {
-            mesh.getVertexAttribute(i).vertex = meta.s->template addTrackable<Vertex>(info.vertexCoordinateList[i], meta.m, i);
+            mesh.getVertexAttribute(i).vertex = std::make_unique(
+                info.vertexCoordinateList[i], i);
         }
         for(size_t i = 0; i < mesh.getEdges().size(); ++i) {
             mesh.getEdgeAttribute(i).edge.reset(meta.s->template addTrackable<Edge>(meta.m, i));
@@ -339,7 +343,8 @@ struct MembraneMeshAttribute {
 
         info.vertexCoordinateList.reserve(numVertices);
         for(size_t i = 0; i < numVertices; ++i) {
-            info.vertexCoordinateList.push_back(static_cast<coordinate_type>(mesh.getVertexAttribute(i).vertex->coordinate()));
+            info.vertexCoordinateList.push_back(
+                static_cast<coordinate_type>(mesh.getVertexAttribute(i).vertex->coord));
         }
 
         return info;
@@ -881,9 +886,9 @@ struct MembraneMeshAttribute {
                 mesh.target(hei0), mesh.target(hei1), mesh.target(hei2)
             };
             const coordinate_type c[] {
-                static_cast<coordinate_type>(mesh.getVertexAttribute(vi[0]).vertex->coordinate()),
-                static_cast<coordinate_type>(mesh.getVertexAttribute(vi[1]).vertex->coordinate()),
-                static_cast<coordinate_type>(mesh.getVertexAttribute(vi[2]).vertex->coordinate())
+                static_cast<coordinate_type>(mesh.getVertexAttribute(vi[0]).vertex->coord),
+                static_cast<coordinate_type>(mesh.getVertexAttribute(vi[1]).vertex->coord),
+                static_cast<coordinate_type>(mesh.getVertexAttribute(vi[2]).vertex->coord)
             };
 
             const auto r01 = c[1] - c[0];
@@ -967,9 +972,9 @@ struct MembraneMeshAttribute {
         const size_t vi0 = mesh.target(hei);
         const size_t vi1 = mesh.target(mesh.next(hei));
         const size_t vi2 = mesh.target(mesh.prev(hei));
-        const auto c0 = mesh.getVertexAttribute(vi0).vertex->coordinate();
-        const auto c1 = mesh.getVertexAttribute(vi1).vertex->coordinate();
-        const auto c2 = mesh.getVertexAttribute(vi2).vertex->coordinate();
+        const auto& c0 = mesh.getVertexAttribute(vi0).vertex->coord;
+        const auto& c1 = mesh.getVertexAttribute(vi1).vertex->coord;
+        const auto& c2 = mesh.getVertexAttribute(vi2).vertex->coord;
         auto& tag = mesh.getTriangleAttribute(ti).gTriangle;
 
         const auto cp = mathfunc::cross(c1 - c0, c2 - c0);
@@ -984,9 +989,9 @@ struct MembraneMeshAttribute {
         const size_t vi0 = mesh.target(mesh.prev(hei));
         const size_t vi1 = mesh.target(hei);
         const size_t vi2 = mesh.target(mesh.next(hei));
-        const auto c0 = mesh.getVertexAttribute(vi0).vertex->coordinate();
-        const auto c1 = mesh.getVertexAttribute(vi1).vertex->coordinate();
-        const auto c2 = mesh.getVertexAttribute(vi2).vertex->coordinate();
+        const auto& c0 = mesh.getVertexAttribute(vi0).vertex->coord;
+        const auto& c1 = mesh.getVertexAttribute(vi1).vertex->coord;
+        const auto& c2 = mesh.getVertexAttribute(vi2).vertex->coord;
         auto& heag = mesh.getHalfEdgeAttribute(hei).gHalfEdge;
 
         const auto cp = mathfunc::cross(c0 - c1, c2 - c1);

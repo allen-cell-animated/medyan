@@ -28,28 +28,23 @@ class Vertex:
                  // the base class Bead should also be added to its own collection,
                  // i.e. both the bead and the vertex collection should both have the collection.
     public Database< Vertex, false >
-    {
+{
     
-    friend class Membrane; // Membrane class can manage id of this vertex
-
 private:
     std::size_t topoIndex_; // Index in the meshwork topology.
 
     std::unique_ptr<MVoronoiCell> mVertex_; // pointer to Voronoi cell mechanical information
 
 public:
-    using vertex_db_type = Database< Vertex, false >;
+    using DatabaseType = Database< Vertex, false >;
 
     ///Main constructor
-    Vertex(const Bead::coordinate_type& v, Composite* parent, size_t topoIndex)
-        : Bead(mathfunc::vec2Vector(v), parent, 0), topoIndex_(topoIndex)
+    Vertex(const Bead::coordinate_type& v, size_t topoIndex)
+        : Bead(mathfunc::vec2Vector(v), nullptr, 0), topoIndex_(topoIndex)
     {
-#ifdef MECHANICS
         // eqArea cannot be obtained at this moment
         mVertex_ = std::make_unique<MVoronoiCell>(getType());
-#endif
 
-        usage = Bead::BeadUsage::Membrane;
     }
 
 
@@ -60,11 +55,14 @@ public:
 
     /// Get all instances of this class from the SubSystem
     static const auto& getVertices() {
-        return vertex_db_type::getElements();
+        return DatabaseType::getElements();
     }
     static size_t numVertices() {
-        return vertex_db_type::getElements().size();
+        return DatabaseType::getElements().size();
     }
+
+    mathfunc::Vec< 3, floatingpoint > coord;
+    mathfunc::Vec< 3, floatingpoint > force;
 
 };
 

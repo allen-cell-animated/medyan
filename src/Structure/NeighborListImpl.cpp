@@ -1118,7 +1118,7 @@ void TriangleFilBeadNL::addNeighbor(Neighbor* n) {
         const Vec< 3, floatingpoint > v1 (mesh.getVertexAttribute(mesh.target(hei1)).getCoordinate());
         const Vec< 3, floatingpoint > v2 (mesh.getVertexAttribute(mesh.target(hei2)).getCoordinate());
 
-        for(auto b : Bead::getBeads()) if(b->usage == Bead::BeadUsage::Filament) {
+        for(auto b : Bead::getBeads()) if(b->usage == Bead::BeadUsage::filament) {
             const auto dist = trianglePointDistance(
                 v0, v1, v2,
                 b->coordinate()
@@ -1135,7 +1135,7 @@ void TriangleFilBeadNL::addNeighbor(Neighbor* n) {
         }
     }
     else if(Bead* b = dynamic_cast<Bead*>(n)) {
-        if(b->usage == Bead::BeadUsage::Filament) {
+        if(b->usage == Bead::BeadUsage::filament) {
 
             for(auto t : Triangle::getTriangles()) {
                 const auto& mesh = t->getParent()->getMesh();
@@ -1192,7 +1192,7 @@ void TriangleFilBeadNL::reset() {
         Membrane::MembraneMeshAttributeType::cacheIndices(mesh);
         const auto& bi = mesh.getTriangleAttribute(t->getTopoIndex()).cachedCoordIndex;
 
-        for(auto b : Bead::getBeads()) if(b->usage == Bead::BeadUsage::Filament) {
+        for(auto b : Bead::getBeads()) if(b->usage == Bead::BeadUsage::filament) {
             const auto dist = trianglePointDistance(
                 coords[bi[0]], coords[bi[1]], coords[bi[2]],
                 b->coordinate()

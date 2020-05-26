@@ -160,6 +160,7 @@ public:
     virtual void cleanup() override {}
     virtual void computeLoadForces() override {}
     virtual std::vector<NeighborList*> getNeighborLists() override { return std::vector<NeighborList*>(); }
+    virtual vector<std::string> getinteractionnames() override { return { getName() }; }
 };
 
 #endif
