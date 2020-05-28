@@ -99,10 +99,10 @@ private:
     /// For now, only [Bubbles](@ref Bubble) and [Filaments](@ref Filament)
     /// can be initialized before the simulation begins. Any other elements
     /// should be initialized in this function.
-    void setupInitialNetwork(SimulConfig&);
+    void setupInitialNetwork(medyan::SimulConfig&);
     
     /// Setup any special structures needed
-    void setupSpecialStructures(SimulConfig&);
+    void setupSpecialStructures(medyan::SimulConfig&);
     
     ///RUNTIME HELPER FUNCTIONS
     

@@ -1545,12 +1545,12 @@ DyRateParams::DynamicRateType SystemParser::readDynamicRateType(std::istream& is
 }
 
 
-BoundaryParams::BoundaryType SystemParser::readBoundaryType(std::istream& is) {
+BoundParams::BoundaryType SystemParser::readBoundaryType(std::istream& is) {
 
     is.clear();
     is.seekg(0);
 
-    BoundaryParams::BoundaryType BType;
+    BoundParams::BoundaryType BType;
 
     string line;
     while(getline(is, line)) {

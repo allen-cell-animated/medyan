@@ -28,151 +28,6 @@
 #include "utility.h"
 
 
-/// Struct to hold Species and Reaction information
-/// @note - all filament-related reactions and species are 2D vectors corresponding
-///         to the filament type specified in the input file.
-struct ChemistryData {
-
-    /// Reaction happening between SpeciesBulk and SpeciesDiffusing ONLY
-    vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>> genReactions = {};
-
-    /// Reaction happening between SpeciesBulk ONLY
-    vector<tuple<vector<string>, vector<string>, floatingpoint>> bulkReactions = {};
-
-    /// Filament nucleation reaction
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint>>> nucleationReactions;
-
-    //@{
-    /// Filament reactions
-    /*!
-        *  All Filament reactions are held using a vector containing a tuple with the 
-        *  string of reactants, string of products, and the reaction rate.
-        */
-    /// Polymerization reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> polymerizationReactions;
-    /// Depolymerization reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> depolymerizationReactions;
-    /// Aging reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> agingReactions;
-    /// Destruction reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint>>> destructionReactions;
-
-    /// Branching reactions
-    /// This reaction also contains the off rate, and a string
-    /// specifying the nucleation zone and relevant distance parameter
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string, floatingpoint>>> branchingReactions;
-
-    /// Severing reactions
-    vector<vector<tuple<string, floatingpoint>>> severingReactions;
-    //@}
-
-    //@{
-    /// Cross Filament binding and unbinding reactions
-    /*!
-        *  All cross Filament reactions are held using a vector containing a tuple with 
-        *  the string of reactants, string of products, the reaction rate, and binding 
-        *  range.
-        */
-    /// Linker reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint, string>>> linkerReactions;
-    /// MotorGhost reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint, string>>> motorReactions;
-    //@}
-
-    /// MotorGhost walking reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> motorWalkingReactions;
-
-    /// SpeciesBulk parsed, in the form of a tuple which contains the name and
-    /// initial copy number, release time, removal time, CONST/REG qualifier, TARGET TYPE
-    /// (TOTCONC/FREECONC) and Target CONCENTRATION (needed in move boundary)
-    vector<tuple<string, int, floatingpoint, floatingpoint, string, string, floatingpoint>> speciesBulk =
-            {};
-
-
-    /// SpeicesDiffusing parsed, in the form of a tuple which contains name,
-    /// initial copy number in reaction volume, the rate of diffusion, release time,
-    /// removal time, AVG/REG qualifier, and number of events to average if applicable.
-    vector<tuple<string, int, floatingpoint, floatingpoint, floatingpoint, string, int, string, floatingpoint>>
-            speciesDiffusing = {};
-
-    //@{
-    /// Filament species parsed
-    vector<vector<string>> speciesFilament;
-    vector<vector<string>> speciesPlusEnd;
-    vector<vector<string>> speciesMinusEnd;
-    
-    vector<vector<string>> speciesBound;
-    vector<vector<string>> speciesLinker;
-    vector<vector<string>> speciesMotor;
-    vector<vector<string>> speciesBrancher;
-    //@}
-    
-    //@{
-    /// Binding sites parsed
-    vector<string> B_BINDING_INDEX;
-    vector<string> L_BINDING_INDEX;
-    vector<string> M_BINDING_INDEX;
-    //@}
-    
-    ///Constructor initializes memory of vector members
-    ChemistryData()
-    
-    : nucleationReactions(MAX_FILAMENT_TYPES),
-      polymerizationReactions(MAX_FILAMENT_TYPES),
-      depolymerizationReactions(MAX_FILAMENT_TYPES),
-      agingReactions(MAX_FILAMENT_TYPES),
-      destructionReactions(MAX_FILAMENT_TYPES),
-    
-      branchingReactions(MAX_FILAMENT_TYPES),
-      severingReactions(MAX_FILAMENT_TYPES),
-      linkerReactions(MAX_FILAMENT_TYPES),
-      motorReactions(MAX_FILAMENT_TYPES),
-      motorWalkingReactions(MAX_FILAMENT_TYPES),
-    
-      speciesFilament(MAX_FILAMENT_TYPES),
-      speciesPlusEnd(MAX_FILAMENT_TYPES),
-      speciesMinusEnd(MAX_FILAMENT_TYPES),
-      speciesBound(MAX_FILAMENT_TYPES),
-      speciesLinker(MAX_FILAMENT_TYPES),
-      speciesMotor(MAX_FILAMENT_TYPES),
-      speciesBrancher(MAX_FILAMENT_TYPES),
-    
-      B_BINDING_INDEX(MAX_FILAMENT_TYPES),
-      L_BINDING_INDEX(MAX_FILAMENT_TYPES),
-      M_BINDING_INDEX(MAX_FILAMENT_TYPES) {}
-    
-};
-
-
-/// Struct to hold Filament setup information
-struct FilamentSetup {
-    
-    string inputFile = "";
-    
-    ///If want a random distribution, used if inputFile is left blank
-    int numFilaments = 0;
-    ///Filament length, in number of cylinders
-    int filamentLength = 1;
-    ///Filament type to create
-    short filamentType = 0;
-    ///Filament projection type.
-    string projectionType="STRAIGHT";
-    
-    ///For resetting pin positions in restart phase
-    string pinRestartFile = "";
-};
-
-/// Struct to hold Bubble setup information
-struct BubbleSetup {
-    
-    std::filesystem::path inputFile;
-    
-    ///If want a random distribution, used if inputFile is left blank
-    int numBubbles = 0;
-    ///Bubble type to create
-    short bubbleType = 0;
-};
-
 /// A general parser
 /*!
  *  A parser object, when initialized, opens an input file. Upon destruction, it 
@@ -217,9 +72,9 @@ struct SystemParser {
     
     //@{
     /// Type parser
-    static MechParams::MechanicsFFType   readMechanicsFFType(std::istream&);
-    static DyRateParams::DynamicRateType readDynamicRateType(std::istream&);
-    static BoundaryParams::BoundaryType  readBoundaryType(std::istream&);
+    static MechParams::MechanicsFFType     readMechanicsFFType(std::istream&);
+    static DyRateParams::DynamicRateType   readDynamicRateType(std::istream&);
+    static BoundParams::BoundaryType       readBoundaryType(std::istream&);
     static SpecialParams::SpecialSetupType readSpecialSetupType(std::istream&);
     //@}
     

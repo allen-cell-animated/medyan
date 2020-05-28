@@ -53,29 +53,29 @@ struct SimulConfig {
 
     // Read system configuration from input
     void readSystemConfig(std::istream& is) {
-        conf.geoParams      = SystemParser::readGeoParams(is);
-        conf.boundParams    = SystemParser::readBoundParams(is);
-        conf.mechParams     = SystemParser::readMechParams(is);
-        conf.chemParams     = SystemParser::readChemParams(is);
-        conf.dyRateParams   = SystemParser::readDyRateParams(is);
-        conf.bubbleSetup    = SystemParser::readBubbleSetup(is);
-        conf.filamentSetup  = SystemParser::readFilamentSetup(is);
-        conf.specialParams  = SystemParser::readSpecialParams(is);
+        geoParams      = SystemParser::readGeoParams(is);
+        boundParams    = SystemParser::readBoundParams(is);
+        mechParams     = SystemParser::readMechParams(is);
+        chemParams     = SystemParser::readChemParams(is);
+        dyRateParams   = SystemParser::readDyRateParams(is);
+        bubbleSetup    = SystemParser::readBubbleSetup(is);
+        filamentSetup  = SystemParser::readFilamentSetup(is);
+        specialParams  = SystemParser::readSpecialParams(is);
     }
 
     // Read chemistry input
     void readChemistryConfig(std::istream& is) {
-        conf.chemistryData = ChemistryParser::readChemistryInput(is);
+        chemistryData = ChemistryParser::readChemistryInput(is);
     }
 
     // Read bubble input
     void readBubbleConfig(std::istream& is) {
-        conf.bubbleData = BubbleParser::readBubbles(is);
+        bubbleData = BubbleParser::readBubbles(is);
     }
 
     // Read filament input
     void readFilamentConfig(std::istream& is) {
-        conf.filamentData = FilamentParser::readFilaments(is);
+        filamentData = FilamentParser::readFilaments(is);
     }
 };
 
