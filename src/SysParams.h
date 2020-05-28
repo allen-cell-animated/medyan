@@ -14,6 +14,7 @@
 #ifndef MEDYAN_SysParams_h
 #define MEDYAN_SysParams_h
 
+#include <filesystem>
 #include <vector>
 #include <list>
 
@@ -35,6 +36,73 @@ struct MinimizationParams{
 #endif
 /// Struct to hold mechanical parameters for the system
 struct MechParams {
+
+    /// Struct to hold the ForceField types
+    struct MechanicsFFType {
+        
+        //@{
+        /// FilamentFF type
+        string FStretchingType = "";
+        string FBendingType    = "";
+        string FTwistingType   = "";
+        //@}
+        
+        //@{
+        /// LinkerFF type
+        string LStretchingType = "";
+        string LBendingType    = "";
+        string LTwistingType   = "";
+        //@}
+        
+        //@{
+        /// MotorFF type
+        string MStretchingType = "";
+        string MBendingType    = "";
+        string MTwistingType   = "";
+        //@}
+        
+        //@{
+        /// BranchingFF type
+        string BrStretchingType = "";
+        string BrBendingType    = "";
+        string BrDihedralType   = "";
+        string BrPositionType   = "";
+        //@}
+        
+        /// VolumeFF type
+        string VolumeFFType = "";
+        
+        /// BoundaryFF Type
+        string BoundaryFFType = "";
+        
+        /// Bubble Type
+        string BubbleFFType = "";
+        
+        /// MTOC Type
+        string MTOCFFType = "";
+        
+        /// AFM Type
+        string AFMFFType = "";
+        
+    };
+
+    /// Struct to hold mechanics algorithm information
+    struct MechanicsAlgorithm {
+        string ConjugateGradient = "";
+        
+        /// Tolerance and cg parameters
+        floatingpoint gradientTolerance = 1.0;
+        floatingpoint maxDistance = 1.0;
+        floatingpoint lambdaMax = 1.0;
+        floatingpoint lambdarunningaverageprobability = 0.0;
+        string linesearchalgorithm = "BACKTRACKING";
+        
+        /// Not yet used
+        string MD = "";
+    };
+
+    MechanicsFFType       mechanicsFFType;
+    MechanicsAlgorithm    mechanicsAlgorithm;
 
     //@{
     /// Filament parameter
@@ -127,6 +195,44 @@ struct MechParams {
 
 /// Struct to hold chemistry parameters for the system
 struct ChemParams {
+
+    /// Struct to hold chemistry algorithm information
+    struct ChemistryAlgorithm {
+        
+        string algorithm = "";
+        
+        //@{
+        /// User can specify total run time of the simulation, as well as
+        /// frequency of snapshots, neighbor list updates and minimizations.
+        floatingpoint runTime = 0.0;
+        
+        floatingpoint snapshotTime = 0.0;
+        floatingpoint datadumpTime = 1000.0;
+        
+        floatingpoint minimizationTime = 0.0;
+        floatingpoint neighborListTime = 0.0;
+        //@}
+        
+        //@{
+        /// Can also specify a frequency in terms of number of chemical reaction steps
+        /// Useful for smaller systems and debugging
+        int runSteps = 0;
+        
+        int snapshotSteps = 0;
+        
+        int minimizationSteps = 0;
+        int neighborListSteps = 0;
+        //@}
+    };
+
+    /// Struct to hold chem setup information
+    struct ChemistrySetup {
+        
+        std::filesystem::path inputFile;
+    };
+
+    ChemistryAlgorithm chemistryAlgorithm;
+    ChemistrySetup     chemistrySetup;
 
     //@{
     /// Number of general species
@@ -268,6 +374,16 @@ struct GeoParams {
 /// Struct to hold Boundary parameters for the system
 struct BoundParams {
 
+    /// Struct to hold the parameters of the Boundary
+    struct BoundaryType {
+        
+        string boundaryShape = "";
+        vector<string> boundaryMove = {};
+        //string scaleDiffusion = "";
+    };
+
+    BoundaryType  boundaryType;
+
     //@{
     /// Mechanical parameter
     floatingpoint BoundaryK = 0;
@@ -296,6 +412,27 @@ struct BoundParams {
 
 /// Struct to hold dynamic rate changing parameters
 struct DyRateParams {
+
+    ///Struct to hold dynamic rate changer type
+    struct DynamicRateType {
+        
+        ///Polymerization rate changing
+        vector<string> dFPolymerizationType = {};
+        
+        ///Linker rate changing
+        vector<string> dLUnbindingType = {};
+        
+        //@{
+        ///Motor rate changing
+        vector<string> dMUnbindingType = {};
+        vector<string> dMWalkingType = {};
+
+        //Qin----
+        vector<string> dBUnbindingType = {};
+        //@}
+    };
+
+    DynamicRateType dynamicRateType;
 
     /// Option for dynamic polymerization rate of filaments
     vector<floatingpoint> dFilPolymerizationCharLength = {};
@@ -332,13 +469,49 @@ struct DyRateParams {
 };
 
 struct SpecialParams {
-    
+
+    /// Struct to hold any special setup types
+    struct SpecialSetupType {
+        
+        ///MTOC configuration
+        bool mtoc = false;
+
+        //@{
+        ///MTOC Parameters
+        short mtocFilamentType = 0;
+        int mtocNumFilaments   = 0;
+        int mtocFilamentLength = 0;
+        short mtocBubbleType   = 0;
+        //@}
+        
+        ///AFM configuration
+        bool afm = false;
+        
+        //@{
+        ///MTOC Parameters
+        short afmFilamentType = 0;
+        int afmNumFilaments   = 0;
+        int afmFilamentLength = 0;
+        short afmBubbleType   = 0;
+        //@}
+        vector<float> mtocInputCoordXYZ = {};
+    };
+
+    SpecialSetupType specialSetupType;
+
     /// Parameters for initializing MTOC attached filaments
     float mtocTheta1 = 0.0;
     float mtocTheta2 = 1.0;
     float mtocPhi1 = 0.0;
     float mtocPhi2 = 1.0;
 };
+
+using BubbleData = vector<tuple<short, vector<floatingpoint>>>;
+using FilamentData = tuple<
+    vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>>,
+    vector<tuple<string, short, vector<vector<floatingpoint>>>>,
+    vector<tuple<string, short, vector<floatingpoint>>>,
+    vector<vector<floatingpoint>> >;
 
 /// Static class that holds all simulation parameters,
 /// initialized by the SystemParser
@@ -396,8 +569,8 @@ public:
     //@{
     //Check for consistency of parameters. Done at runtime by the Controller.
     static bool checkChemParameters(ChemistryData& chem);
-    static bool checkMechParameters(MechanicsFFType& mech);
-    static bool checkDyRateParameters(DynamicRateType& dy);
+    static bool checkMechParameters(MechParams::MechanicsFFType& mech);
+    static bool checkDyRateParameters(DyRateParams::DynamicRateType& dy);
     static bool checkGeoParameters();
     //@}
 

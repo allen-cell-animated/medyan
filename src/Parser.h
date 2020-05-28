@@ -15,6 +15,7 @@
 #define MEDYAN_Parser_h
 
 #include <vector>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -23,70 +24,9 @@
 #include <ios>
 
 #include "common.h"
+#include "SysParams.h"
 #include "utility.h"
 
-/// Struct to hold output types;
-struct OutputTypes {
-    
-    //@{
-    /// Possible output type
-    
-    /// A basic snapshot
-    bool basicSnapshot = false;
-    /// Birth times
-    bool birthTimes = false;
-    /// Forces
-    bool forces = false;
-    /// Tensions
-    bool tensions = false;
-    /// Chemistry
-    bool chemistry = false;
-    //@}
-};
-
-/// Struct to hold mechanics algorithm information
-struct MechanicsAlgorithm {
-    string ConjugateGradient = "";
-    
-    /// Tolerance and cg parameters
-    floatingpoint gradientTolerance = 1.0;
-    floatingpoint maxDistance = 1.0;
-    floatingpoint lambdaMax = 1.0;
-    floatingpoint lambdarunningaverageprobability = 0.0;
-    string linesearchalgorithm = "BACKTRACKING";
-    
-    /// Not yet used
-    string MD = "";
-};
-
-/// Struct to hold chemistry algorithm information
-struct ChemistryAlgorithm {
-    
-    string algorithm = "";
-    
-    //@{
-    /// User can specify total run time of the simulation, as well as
-    /// frequency of snapshots, neighbor list updates and minimizations.
-    floatingpoint runTime = 0.0;
-    
-    floatingpoint snapshotTime = 0.0;
-    floatingpoint datadumpTime = 1000.0;
-    
-    floatingpoint minimizationTime = 0.0;
-    floatingpoint neighborListTime = 0.0;
-    //@}
-    
-    //@{
-    /// Can also specify a frequency in terms of number of chemical reaction steps
-    /// Useful for smaller systems and debugging
-    int runSteps = 0;
-    
-    int snapshotSteps = 0;
-    
-    int minimizationSteps = 0;
-    int neighborListSteps = 0;
-    //@}
-};
 
 /// Struct to hold Species and Reaction information
 /// @note - all filament-related reactions and species are 2D vectors corresponding
@@ -203,115 +143,6 @@ struct ChemistryData {
     
 };
 
-/// Struct to hold the parameters of the Boundary
-struct BoundaryType {
-    
-    string boundaryShape = "";
-    vector<string> boundaryMove = {};
-    //string scaleDiffusion = "";
-};
-
-/// Struct to hold the ForceField types
-struct MechanicsFFType {
-    
-    //@{
-    /// FilamentFF type
-    string FStretchingType = "";
-    string FBendingType    = "";
-    string FTwistingType   = "";
-    //@}
-    
-    //@{
-    /// LinkerFF type
-    string LStretchingType = "";
-    string LBendingType    = "";
-    string LTwistingType   = "";
-    //@}
-    
-    //@{
-    /// MotorFF type
-    string MStretchingType = "";
-    string MBendingType    = "";
-    string MTwistingType   = "";
-    //@}
-    
-    //@{
-    /// BranchingFF type
-    string BrStretchingType = "";
-    string BrBendingType    = "";
-    string BrDihedralType   = "";
-    string BrPositionType   = "";
-    //@}
-    
-    /// VolumeFF type
-    string VolumeFFType = "";
-    
-    /// BoundaryFF Type
-    string BoundaryFFType = "";
-    
-    /// Bubble Type
-    string BubbleFFType = "";
-    
-    /// MTOC Type
-    string MTOCFFType = "";
-    
-    /// AFM Type
-    string AFMFFType = "";
-    
-};
-
-///Struct to hold dynamic rate changer type
-struct DynamicRateType {
-    
-    ///Polymerization rate changing
-    vector<string> dFPolymerizationType = {};
-    
-    ///Linker rate changing
-    vector<string> dLUnbindingType = {};
-    
-    //@{
-    ///Motor rate changing
-    vector<string> dMUnbindingType = {};
-    vector<string> dMWalkingType = {};
-
-    //Qin----
-    vector<string> dBUnbindingType = {};
-    //@}
-};
-
-
-/// Struct to hold any special setup types
-struct SpecialSetupType {
-    
-    ///MTOC configuration
-    bool mtoc = false;
-
-    //@{
-    ///MTOC Parameters
-    short mtocFilamentType = 0;
-    int mtocNumFilaments   = 0;
-    int mtocFilamentLength = 0;
-    short mtocBubbleType   = 0;
-    //@}
-    
-    ///AFM configuration
-    bool afm = false;
-    
-    //@{
-    ///MTOC Parameters
-    short afmFilamentType = 0;
-    int afmNumFilaments   = 0;
-    int afmFilamentLength = 0;
-    short afmBubbleType   = 0;
-    //@}
-    vector<float> mtocInputCoordXYZ = {};
-};
-
-/// Struct to hold chem setup information
-struct ChemistrySetup {
-    
-    string inputFile = "";
-};
 
 /// Struct to hold Filament setup information
 struct FilamentSetup {
@@ -334,7 +165,7 @@ struct FilamentSetup {
 /// Struct to hold Bubble setup information
 struct BubbleSetup {
     
-    string inputFile = "";
+    std::filesystem::path inputFile;
     
     ///If want a random distribution, used if inputFile is left blank
     int numBubbles = 0;
@@ -365,86 +196,68 @@ public:
 };
 
 /// To parse a system input file, initialized by the Controller.
-class SystemParser : public Parser{
-public:
-    SystemParser(string inputFileName) : Parser(inputFileName) {}
-    ~SystemParser() {}
+struct SystemParser {
     
     //@{
     /// Parameter parser. Reads input directly into system parameters
     /// @note - does not check for correctness and consistency here.
-    void readMechParams();
-    void readChemParams();
-    void readGeoParams();
-    void readBoundParams();
-    void readDyRateParams();
-    void readSpecialParams();
+    static MechParams    readMechParams(std::istream&);
+    static ChemParams    readChemParams(std::istream&);
+    static GeoParams     readGeoParams(std::istream&);
+    static BoundParams   readBoundParams(std::istream&);
+    static DyRateParams  readDyRateParams(std::istream&);
+    static SpecialParams readSpecialParams(std::istream&);
     //@}
     
     //@{
     /// Algorithm parser
-    MechanicsAlgorithm readMechanicsAlgorithm();
-    ChemistryAlgorithm readChemistryAlgorithm();
+    static MechParams::MechanicsAlgorithm readMechanicsAlgorithm(std::istream&);
+    static ChemParams::ChemistryAlgorithm readChemistryAlgorithm(std::istream&);
     //@}
     
     //@{
     /// Type parser
-    MechanicsFFType readMechanicsFFType();
-    DynamicRateType readDynamicRateType();
-    BoundaryType readBoundaryType();
-    SpecialSetupType readSpecialSetupType();
+    static MechParams::MechanicsFFType   readMechanicsFFType(std::istream&);
+    static DyRateParams::DynamicRateType readDynamicRateType(std::istream&);
+    static BoundaryParams::BoundaryType  readBoundaryType(std::istream&);
+    static SpecialParams::SpecialSetupType readSpecialSetupType(std::istream&);
     //@}
     
     /// Read Filament information
-    FilamentSetup readFilamentSetup();
+    static FilamentSetup readFilamentSetup(std::istream&);
     
     /// Read Bubble information
-    BubbleSetup readBubbleSetup();
+    static BubbleSetup readBubbleSetup(std::istream&);
     
     /// Chemistry information
-    ChemistrySetup readChemistrySetup();
+    static ChemParams::ChemistrySetup readChemistrySetup(std::istream&);
 };
 
 /// Used to parse initial Filament information, initialized by the Controller.
-class FilamentParser : public Parser {
-    
-public:
-    FilamentParser(string inputFileName) : Parser(inputFileName) {}
-    ~FilamentParser() {}
-    
+struct FilamentParser {
+  
     /// Reads filament input file. Returns a vector of tuples containing
     /// filament type and positions (start and end points).
     /// @note - Does not check for coordinate correctness.
-     tuple< vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> , vector<tuple<string, short, vector<vector<floatingpoint>>>> ,
-            vector<tuple<string, short, vector<floatingpoint>>> , vector<vector<floatingpoint>> >  readFilaments();
+    static FilamentData readFilaments(std::istream&);
 };
 
 /// Used to parse initial Bubble information, initialized by the Controller.
-class BubbleParser : public Parser {
-    
-public:
-    BubbleParser(string inputFileName) : Parser(inputFileName) {}
-    ~BubbleParser() {}
-    
+struct BubbleParser {    
     /// Reads bubble input file. Returns a vector of tuples containing
     /// bubble type and position.
     /// @note - Does not check for coordinate correctness.
-    vector<tuple<short, vector<floatingpoint>>> readBubbles();
+    static BubbleData readBubbles(std::istream&);
 };
 
 
 /// Used to parse all chemical information, initialized by the Controller.
-class ChemistryParser: public Parser {
-    
-public:
-    ChemistryParser(string inputFileName) : Parser(inputFileName) {}
-    ~ChemistryParser() {}
-    
+struct ChemistryParser {
     /// Reads chemical reactions and species from input file. Returns a
     /// ChemistryData struct containing this data
     /// @note - this does not check for consistency and correctness, the only
     ///         sanity check here is that there are no duplicate species names.
-    ChemistryData readChemistryInput();
+    static ChemistryData readChemistryInput(std::istream&);
 };
 
 

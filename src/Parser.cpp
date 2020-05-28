@@ -18,15 +18,18 @@
 
 #include "SysParams.h"
 
-void SystemParser::readChemParams() {
+ChemParams SystemParser::readChemParams(std::istream& is) {
 
     ChemParams CParams;
 
-    _inputFile.clear();
-    _inputFile.seekg(0);
+    CParams.chemistryAlgorithm = readChemistryAlgorithm(is);
+    CParams.chemistrySetup = readChemistrySetup(is);
+
+    is.clear();
+    is.seekg(0);
 
     string line;
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 
@@ -250,18 +253,18 @@ void SystemParser::readChemParams() {
 //	cout<<"shiftbybits "<<CParams.shiftbybits<<" maxbindingsitespercylinder "<<CParams
 //	.maxbindingsitespercylinder<<endl;
 	//set system parameters
-    SysParams::CParams = CParams;
+    return CParams;
 }
 
-ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
+ChemParams::ChemistryAlgorithm SystemParser::readChemistryAlgorithm(std::istream& is) {
 
-    _inputFile.clear();
-    _inputFile.seekg(0);
+    is.clear();
+    is.seekg(0);
 
-    ChemistryAlgorithm CAlgorithm;
+    ChemParams::ChemistryAlgorithm CAlgorithm;
 
     string line;
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 
@@ -401,15 +404,15 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
     return CAlgorithm;
 }
 
-ChemistrySetup SystemParser::readChemistrySetup() {
+ChemParams::ChemistrySetup SystemParser::readChemistrySetup(std::istream& is) {
 
-    _inputFile.clear();
-    _inputFile.seekg(0);
+    is.clear();
+    is.seekg(0);
 
-    ChemistrySetup CSetup;
+    ChemParams::ChemistrySetup CSetup;
 
     string line;
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 
@@ -434,15 +437,15 @@ ChemistrySetup SystemParser::readChemistrySetup() {
     return CSetup;
 }
 
-MechanicsFFType SystemParser::readMechanicsFFType() {
+MechParams::MechanicsFFType SystemParser::readMechanicsFFType(std::istream& is) {
 
-    MechanicsFFType MType;
+    MechParams::MechanicsFFType MType;
 
-    _inputFile.clear();
-    _inputFile.seekg(0);
+    is.clear();
+    is.seekg(0);
 
     string line;
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 
@@ -687,15 +690,17 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
     return MType;
 }
 
-void SystemParser::readMechParams() {
-
+MechParams SystemParser::readMechParams(std::istream& is) {
     MechParams MParams;
 
-    _inputFile.clear();
-    _inputFile.seekg(0);
+    MParams.mechanicsFFType = readMechanicsFFType(is);
+    MParams.mechanicsAlgorithm = readMechanicsAlgorithm(is);
+
+    is.clear();
+    is.seekg(0);
 
     string line;
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 
@@ -1072,19 +1077,19 @@ void SystemParser::readMechParams() {
         }
         else {}
     }
-    //Set system parameters
-    SysParams::MParams = MParams;
+
+    return MParams;
 }
 
-MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
+MechParams::MechanicsAlgorithm SystemParser::readMechanicsAlgorithm(std::istream& is) {
 
-    _inputFile.clear();
-    _inputFile.seekg(0);
+    is.clear();
+    is.seekg(0);
 
-    MechanicsAlgorithm MAlgorithm;
+    MechParams::MechanicsAlgorithm MAlgorithm;
 
     string line;
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 
@@ -1149,16 +1154,18 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
     return MAlgorithm;
 }
 
-void SystemParser::readBoundParams() {
+BoundParams SystemParser::readBoundParams(std::istream& is) {
 
     BoundParams BParams;
 
-    _inputFile.clear();
-    _inputFile.seekg(0);
+    BParams.boundaryType = readBoundaryType(is);
+
+    is.clear();
+    is.seekg(0);
     vector<int> leftfrontbottom = {0,0,0};
     vector<int> rightbacktop = {0,0,0};
     string line;
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 
@@ -1328,18 +1335,20 @@ void SystemParser::readBoundParams() {
     }
 //    std::cout<<BParams.transfershareaxis<<" "<<BParams.planestomove<<endl;
     //Set system parameters
-    SysParams::BParams = BParams;
+    return BParams;
 }
 
-void SystemParser::readDyRateParams() {
+DyRateParams SystemParser::readDyRateParams(std::istream& is) {
 
     DyRateParams DRParams;
 
-    _inputFile.clear();
-    _inputFile.seekg(0);
+    DRParams.dynamicRateType = readDynamicRateType(is);
+
+    is.clear();
+    is.seekg(0);
 
     string line;
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 
@@ -1465,19 +1474,18 @@ void SystemParser::readDyRateParams() {
         }
     }
 
-    //set system parameters
-    SysParams::DRParams = DRParams;
+    return DRParams;
 }
 
-DynamicRateType SystemParser::readDynamicRateType() {
+DyRateParams::DynamicRateType SystemParser::readDynamicRateType(std::istream& is) {
 
-    DynamicRateType DRType;
+    DyRateParams::DynamicRateType DRType;
 
-    _inputFile.clear();
-    _inputFile.seekg(0);
+    is.clear();
+    is.seekg(0);
 
     string line;
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 
@@ -1537,15 +1545,15 @@ DynamicRateType SystemParser::readDynamicRateType() {
 }
 
 
-BoundaryType SystemParser::readBoundaryType() {
+BoundaryParams::BoundaryType SystemParser::readBoundaryType(std::istream& is) {
 
-    _inputFile.clear();
-    _inputFile.seekg(0);
+    is.clear();
+    is.seekg(0);
 
-    BoundaryType BType;
+    BoundaryParams::BoundaryType BType;
 
     string line;
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 
@@ -1587,15 +1595,15 @@ BoundaryType SystemParser::readBoundaryType() {
     return BType;
 }
 
-SpecialSetupType SystemParser::readSpecialSetupType() {
+SpecialParams::SpecialSetupType SystemParser::readSpecialSetupType(std::istream& is) {
 
-    SpecialSetupType SType;
+    SpecialParams::SpecialSetupType SType;
 
-    _inputFile.clear();
-    _inputFile.seekg(0);
+    is.clear();
+    is.seekg(0);
 
     string line;
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 
@@ -1727,15 +1735,16 @@ SpecialSetupType SystemParser::readSpecialSetupType() {
     return SType;
 }
 
-void SystemParser::readSpecialParams() {
+SpecialParams SystemParser::readSpecialParams(std::istream& is) {
     
     SpecialParams SParams;
     
-    _inputFile.clear();
-    _inputFile.seekg(0);
+    is.clear();
+    is.seekg(0);
     
     string line;
-    
+
+    // FIXME: "line" is empty, so the next find will always be false
     if (line.find("MTOCFILAMENTCOORD") != string::npos) {
         vector<string> lineVector = split<string>(line);
         if(lineVector.size() != 5) {
@@ -1750,14 +1759,13 @@ void SystemParser::readSpecialParams() {
         }
     }
 
-    SysParams::SParams = SParams;
+    return SParams;
     
 }
 
-void SystemParser::readGeoParams() {
-
-    _inputFile.clear();
-    _inputFile.seekg(0);
+GeoParams SystemParser::readGeoParams(std::istream& is) {
+    is.clear();
+    is.seekg(0);
 
     GeoParams GParams;
 
@@ -1769,7 +1777,7 @@ void SystemParser::readGeoParams() {
 
     //find grid size lines
     string line;
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 
@@ -1882,18 +1890,18 @@ void SystemParser::readGeoParams() {
     GParams.largestCylinderSize = 0;
     for(auto l:GParams.cylinderSize)
         GParams.largestCylinderSize = max(GParams.largestCylinderSize, l);
-    SysParams::GParams = GParams;
+    return GParams;
 }
 
-FilamentSetup SystemParser::readFilamentSetup() {
+FilamentSetup SystemParser::readFilamentSetup(std::istream& is) {
 
-    _inputFile.clear();
-    _inputFile.seekg(0);
+    is.clear();
+    is.seekg(0);
 
     FilamentSetup FSetup;
 
     string line;
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 
@@ -1987,15 +1995,15 @@ FilamentSetup SystemParser::readFilamentSetup() {
     return FSetup;
 }
 
-BubbleSetup SystemParser::readBubbleSetup() {
+BubbleSetup SystemParser::readBubbleSetup(std::istream& is) {
 
-    _inputFile.clear();
-    _inputFile.seekg(0);
+    is.clear();
+    is.seekg(0);
 
     BubbleSetup BSetup;
 
     string line;
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 
@@ -2036,9 +2044,9 @@ BubbleSetup SystemParser::readBubbleSetup() {
     }
     return BSetup;
 }
-    tuple< vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> , vector<tuple<string, short, vector<vector<floatingpoint>>>> , vector<tuple<string, short, vector<floatingpoint>>> , vector<vector<floatingpoint>> > FilamentParser::readFilaments() {
-    _inputFile.clear();
-    _inputFile.seekg(0);
+FilamentData FilamentParser::readFilaments(std::istream& is) {
+    is.clear();
+    is.seekg(0);
      vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> filamentVector;
      vector<vector<vector<floatingpoint>>> linkerVector;
      vector<vector<vector<floatingpoint>>> motorVector;
@@ -2047,7 +2055,7 @@ BubbleSetup SystemParser::readBubbleSetup() {
      vector<tuple<string, short, vector<floatingpoint>>> branchVector;
      string line;
     
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 
@@ -2108,15 +2116,15 @@ BubbleSetup SystemParser::readBubbleSetup() {
     return returnVector;
 }
 
-vector<tuple<short, vector<floatingpoint>>> BubbleParser::readBubbles() {
+vector<tuple<short, vector<floatingpoint>>> BubbleParser::readBubbles(std::istream& is) {
     
-    _inputFile.clear();
-    _inputFile.seekg(0);
+    is.clear();
+    is.seekg(0);
     
     vector<tuple<short, vector<floatingpoint>>> returnVector;
     string line;
 
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 
@@ -2135,17 +2143,17 @@ vector<tuple<short, vector<floatingpoint>>> BubbleParser::readBubbles() {
     return returnVector;
 }
 
-ChemistryData ChemistryParser::readChemistryInput() {
+ChemistryData ChemistryParser::readChemistryInput(std::istream& is) {
 
-    _inputFile.clear();
-    _inputFile.seekg(0);
+    is.clear();
+    is.seekg(0);
 
     ///To keep track of duplicate names
     vector<string> allSpeciesNames;
 
     ChemistryData chem; string line;
 
-    while(getline(_inputFile, line)) {
+    while(getline(is, line)) {
 
         if(line.find("#") != string::npos) { continue; }
 

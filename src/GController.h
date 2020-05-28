@@ -86,7 +86,7 @@ public:
     
     /// Initialize and return a boundary based on input parameters
     /// Used at system initialization.
-    Boundary* initializeBoundary(BoundaryType& BType);
+    Boundary* initializeBoundary(BoundaryParams::BoundaryType& BType);
     
     /// Set compartments in compartment grid as active based on boundary.
     /// Used at system initialization.

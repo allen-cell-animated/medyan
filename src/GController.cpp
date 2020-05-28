@@ -297,9 +297,9 @@ CompartmentGrid* GController::initializeGrid() {
     return _compartmentGrid;
 }
 
-Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
+Boundary* GController::initializeBoundary(BoundaryParams::BoundaryType& BTypes) {
 
-    BoundaryType type;
+    BoundaryParams::BoundaryType type;
     vector<BoundaryMove> move;
     for(auto bm:BTypes.boundaryMove){
         if(bm == "NONE") move.push_back(BoundaryMove::None);

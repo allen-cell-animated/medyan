@@ -21,7 +21,7 @@
 #include "Cylinder.h"
 #include "BranchingPoint.h"
 
-void DRController::initialize(DynamicRateType& drTypes) {
+void DRController::initialize(DyRateParams::DynamicRateType& drTypes) {
     
     //filament polymerization changer
     int filamentIndex = 0;
