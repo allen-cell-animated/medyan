@@ -18,7 +18,7 @@
 
 #include "SysParams.h"
 
-ChemParams SystemParser::readChemParams(std::istream& is) {
+ChemParams SystemParser::readChemParams(std::istream& is, const GeoParams& geoParams) {
 
     ChemParams CParams;
 
@@ -225,14 +225,14 @@ ChemParams SystemParser::readChemParams(std::istream& is) {
 
         vector<short> tempBindingSites;
 
-        int deltaBinding = SysParams::Geometry().cylinderNumMon[i] /
+        int deltaBinding = geoParams.cylinderNumMon[i] /
                            CParams.numBindingSites[i];
 
         int firstBindingSite = deltaBinding / 2 + 1;
         int bindingCount = firstBindingSite;
 
         //add all other binding sites
-        while(bindingCount < SysParams::Geometry().cylinderNumMon[i]) {
+        while(bindingCount < geoParams.cylinderNumMon[i]) {
             tempBindingSites.push_back(bindingCount);
             bindingCount += deltaBinding;
         }
@@ -1154,7 +1154,7 @@ MechParams::MechanicsAlgorithm SystemParser::readMechanicsAlgorithm(std::istream
     return MAlgorithm;
 }
 
-BoundParams SystemParser::readBoundParams(std::istream& is) {
+BoundParams SystemParser::readBoundParams(std::istream& is, const GeoParams& geoParams) {
 
     BoundParams BParams;
 
@@ -1183,8 +1183,7 @@ BoundParams SystemParser::readBoundParams(std::istream& is) {
             }
                 //Default value to be compartment size
             else {
-                BParams.BoundaryCutoff =
-                        SysParams::Geometry().compartmentSizeX;
+                BParams.BoundaryCutoff = geoParams.compartmentSizeX;
             }
         }
         else if (line.find("BOUNDARYINTERACTIONK") != string::npos) {
@@ -1861,7 +1860,7 @@ GeoParams SystemParser::readGeoParams(std::istream& is) {
     for(int i = 0; i < GParams.cylinderSize.size(); i++) {
 
 #ifdef CHEMISTRY
-        if(cylinderSize[i] / monomerSize[i] < SysParams::Geometry().minCylinderNumMon) {
+        if(cylinderSize[i] / monomerSize[i] < GParams.minCylinderNumMon) {
             cout <<
                  "With chemistry, cylinder size specified is too short. Exiting."
                  << endl;
@@ -1871,7 +1870,7 @@ GeoParams SystemParser::readGeoParams(std::istream& is) {
         GParams.cylinderNumMon.push_back(int(cylinderSize[i] / monomerSize[i]));
 
         GParams.minCylinderSize.push_back(
-                SysParams::Geometry().minCylinderNumMon * GParams.monomerSize[i]);
+                GParams.minCylinderNumMon * GParams.monomerSize[i]);
 
     }
 
@@ -2143,7 +2142,7 @@ vector<tuple<short, vector<floatingpoint>>> BubbleParser::readBubbles(std::istre
     return returnVector;
 }
 
-ChemistryData ChemistryParser::readChemistryInput(std::istream& is) {
+ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemParams& chemParams) {
 
     is.clear();
     is.seekg(0);
@@ -2488,7 +2487,7 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is) {
             float gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
-            if(SysParams::Chemistry().dissTracking){
+            if(chemParams.dissTracking){
             string dissString = lineVector[1].c_str();
             istringstream iss(dissString);
             string token;
@@ -2602,7 +2601,7 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is) {
             float gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
-            if(SysParams::Chemistry().dissTracking){
+            if(chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;
@@ -2657,7 +2656,7 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is) {
             floatingpoint gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
-            if(SysParams::Chemistry().dissTracking){
+            if(chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;
@@ -2714,7 +2713,7 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is) {
             floatingpoint gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
-            if(SysParams::Chemistry().dissTracking){
+            if(chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;
@@ -2771,7 +2770,7 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is) {
             floatingpoint gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
-            if(SysParams::Chemistry().dissTracking){
+            if(chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;
@@ -2829,7 +2828,7 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is) {
             floatingpoint gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
-            if(SysParams::Chemistry().dissTracking){
+            if(chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;
@@ -2884,7 +2883,7 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is) {
             floatingpoint gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
-            if(SysParams::Chemistry().dissTracking){
+            if(chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;

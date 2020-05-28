@@ -57,9 +57,9 @@ struct SystemParser {
     /// Parameter parser. Reads input directly into system parameters
     /// @note - does not check for correctness and consistency here.
     static MechParams    readMechParams(std::istream&);
-    static ChemParams    readChemParams(std::istream&);
+    static ChemParams    readChemParams(std::istream&, const GeoParams&);
     static GeoParams     readGeoParams(std::istream&);
-    static BoundParams   readBoundParams(std::istream&);
+    static BoundParams   readBoundParams(std::istream&, const GeoParams&);
     static DyRateParams  readDyRateParams(std::istream&);
     static SpecialParams readSpecialParams(std::istream&);
     //@}
@@ -112,7 +112,7 @@ struct ChemistryParser {
     /// ChemistryData struct containing this data
     /// @note - this does not check for consistency and correctness, the only
     ///         sanity check here is that there are no duplicate species names.
-    static ChemistryData readChemistryInput(std::istream&);
+    static ChemistryData readChemistryInput(std::istream&, const ChemParams&);
 };
 
 

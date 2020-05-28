@@ -54,9 +54,9 @@ struct SimulConfig {
     // Read system configuration from input
     void readSystemConfig(std::istream& is) {
         geoParams      = SystemParser::readGeoParams(is);
-        boundParams    = SystemParser::readBoundParams(is);
+        boundParams    = SystemParser::readBoundParams(is, geoParams);
         mechParams     = SystemParser::readMechParams(is);
-        chemParams     = SystemParser::readChemParams(is);
+        chemParams     = SystemParser::readChemParams(is, geoParams);
         dyRateParams   = SystemParser::readDyRateParams(is);
         bubbleSetup    = SystemParser::readBubbleSetup(is);
         filamentSetup  = SystemParser::readFilamentSetup(is);
@@ -65,7 +65,7 @@ struct SimulConfig {
 
     // Read chemistry input
     void readChemistryConfig(std::istream& is) {
-        chemistryData = ChemistryParser::readChemistryInput(is);
+        chemistryData = ChemistryParser::readChemistryInput(is, chemParams);
     }
 
     // Read bubble input
