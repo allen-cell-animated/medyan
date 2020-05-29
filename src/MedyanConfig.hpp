@@ -49,7 +49,7 @@ inline void readSystemConfig(SimulConfig& sc, std::istream& is) {
     sc.geoParams      = SystemParser::readGeoParams(is);
     sc.boundParams    = SystemParser::readBoundParams(is);
     sc.mechParams     = SystemParser::readMechParams(is);
-    sc.chemParams     = SystemParser::readChemParams(is, geoParams);
+    sc.chemParams     = SystemParser::readChemParams(is, sc.geoParams);
     sc.dyRateParams   = SystemParser::readDyRateParams(is);
     sc.bubbleSetup    = SystemParser::readBubbleSetup(is);
     sc.filamentSetup  = SystemParser::readFilamentSetup(is);
@@ -58,7 +58,7 @@ inline void readSystemConfig(SimulConfig& sc, std::istream& is) {
 
 // Read chemistry input
 inline void readChemistryConfig(SimulConfig& sc, std::istream& is) {
-    sc.chemistryData = ChemistryParser::readChemistryInput(is, chemParams);
+    sc.chemistryData = ChemistryParser::readChemistryInput(is, sc.chemParams);
 }
 
 // Read bubble input

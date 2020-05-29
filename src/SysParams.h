@@ -666,6 +666,8 @@ using FilamentData = tuple<
     vector<tuple<string, short, vector<floatingpoint>>>,
     vector<vector<floatingpoint>> >;
 
+namespace medyan {
+
 // Definition of simulation configuration
 struct SimulConfig {
 
@@ -695,6 +697,8 @@ struct SimulConfig {
     FilamentData   filamentData;
 
 };
+
+} // namespace medyan
 
 /// Static class that holds all simulation parameters,
 /// initialized by the SystemParser

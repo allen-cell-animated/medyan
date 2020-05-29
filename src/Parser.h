@@ -88,20 +88,20 @@ struct SExpr {
     using ListType   = std::vector< SExpr >;
 
     struct Car {
-        SExpr operator(const StringType&) const {
+        SExpr operator()(const StringType&) const {
             LOG(ERROR) << "Expected cons in Car, but got a string.";
             throw std::runtime_error("Invalid argument in Car");
         }
-        SExpr operator(const ListType& l) const {
+        SExpr operator()(const ListType& l) const {
             return SExpr { l[0] };
         }
     };
     struct Cdr {
-        SExpr operator(const StringType&) const {
+        SExpr operator()(const StringType&) const {
             LOG(ERROR) << "Expected cons in Cdr, but got a string.";
             throw std::runtime_error("Invalid argument in Cdr");
         }
-        SExpr operator(const ListType& l) const {
+        SExpr operator()(const ListType& l) const {
             if(l.empty()) {
                 LOG(ERROR) << "Expected cons in Cdr, but got an empty list.";
                 throw std::runtime_error("Invalid argument in Cdr");
@@ -119,10 +119,10 @@ struct SExpr {
 };
 
 inline SExpr car(const SExpr& se) {
-    return std::visit(SExpr::Car, se.data);
+    return std::visit(SExpr::Car{}, se.data);
 }
 inline SExpr cdr(const SExpr& se) {
-    return std::visit(SExpr::Cdr, se.data);
+    return std::visit(SExpr::Cdr{}, se.data);
 }
 
 
