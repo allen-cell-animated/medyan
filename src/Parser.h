@@ -18,8 +18,10 @@
 #include <cctype> // isspace
 #include <filesystem>
 #include <fstream>
+#include <functional>
 #include <iterator>
 #include <list>
+#include <map>
 #include <stdexcept>
 #include <string>
 #include <sstream>
@@ -30,25 +32,26 @@
 #include "SysParams.h"
 #include "utility.h"
 
+namespace medyan {
+
 // A tokenizer for input files
 //
 // This extends the input config to s-expressions, which allows more
 // extensibility, but it does not include the lisp syntax
 //
 // The input file will be treated as a list of s-expressions. For backwards
-// compatibility, several special specifications exist:
+// compatibility and simplicity, several special specifications exist:
 //   - All symbols are parsed as strings.
 //   - '#' and ';' both start a line comment.
 //   - If a top level (not within any parentheses) token is not a parenthesis,
 //     an implicit pair of parentheses will be added before the token and
 //     before the next closest top level line break or end of input.
 //   - Double quotation mark is parsed as string, but nested quotations,
-//     escapings are not allowed. Line comment marker in a string stay as it
-//     is.
+//     escapings are not allowed. Line comment marker in a quoted string stay
+//     has no effect.
+//   - cons that is not a list is currently not supported.
 //   - Evaluation is currently not supported.
 //   - Most syntactic sugar is currently not supported.
-
-namespace medyan {
 
 struct ConfigFileToken {
     enum class Type {
@@ -84,23 +87,55 @@ struct SExpr {
     using StringType = std::string;
     using ListType   = std::vector< SExpr >;
 
+    struct Car {
+        SExpr operator(const StringType&) const {
+            LOG(ERROR) << "Expected cons in Car, but got a string.";
+            throw std::runtime_error("Invalid argument in Car");
+        }
+        SExpr operator(const ListType& l) const {
+            return SExpr { l[0] };
+        }
+    };
+    struct Cdr {
+        SExpr operator(const StringType&) const {
+            LOG(ERROR) << "Expected cons in Cdr, but got a string.";
+            throw std::runtime_error("Invalid argument in Cdr");
+        }
+        SExpr operator(const ListType& l) const {
+            if(l.empty()) {
+                LOG(ERROR) << "Expected cons in Cdr, but got an empty list.";
+                throw std::runtime_error("Invalid argument in Cdr");
+            }
+            else {
+                return SExpr { ListType(l.begin() + 1, l.end()) };
+            }
+        }
+    };
+
     std::variant<
         StringType,
         ListType
     > data;
 };
 
+inline SExpr car(const SExpr& se) {
+    return std::visit(SExpr::Car, se.data);
+}
+inline SExpr cdr(const SExpr& se) {
+    return std::visit(SExpr::Cdr, se.data);
+}
+
+
+inline bool isTokenSpecialChar(char x) {
+    return std::isspace(x) ||
+        x == '#' || x == ';' ||
+        x == '(' || x == ')' ||
+        x == '"';
+}
 
 // Tokenize and the input file.
-// Comments are removed.
 inline std::list< ConfigFileToken > tokenizeConfigFile(const std::string& str) {
     const auto len = str.length();
-    const auto isSpecialChar = [](char x) {
-        return std::isspace(x) ||
-            x == '#' || x == ';' ||
-            x == '(' || x == ')' ||
-            x == '"';
-    };
 
     std::list< ConfigFileToken > tokens;
 
@@ -141,7 +176,7 @@ inline std::list< ConfigFileToken > tokenizeConfigFile(const std::string& str) {
         }
         else {
             int j = i + 1;
-            while(j < len && !isSpecialChar(str[j])) ++j;
+            while(j < len && !isTokenSpecialChar(str[j])) ++j;
 
             // Now j points to either the end of string, or the next special char
             tokens.push_back({ConfigFileToken::Type::string, str.substr(i, j-i)});
@@ -164,9 +199,9 @@ inline void outputConfigTokens(std::ostream& os, const std::list< ConfigFileToke
                 content.end()
             );
 
-            // Check whether spaces exist
+            // Check special characters exist
             const bool hasSpace = (
-                std::find_if(content.begin(), content.end(), [](char x) { return std::isspace(x); })
+                std::find_if(content.begin(), content.end(), isTokenSpecialChar)
                     != content.end());
 
             if(
@@ -302,6 +337,104 @@ inline SExpr lexConfigTokens(const list< ConfigFileToken >& tokens) {
     return se;
 }
 
+// Build tokens from s-expression
+// No comment or line break will be created
+inline list< ConfigFileToken > buildConfigTokens(const SExpr& se) {
+    using namespace std;
+    using TokenList = list< ConfigFileToken >;
+
+    TokenList tokens;
+
+    struct TokenBuildVisitor {
+        TokenList& theList;
+        void operator()(const SExpr::StringType& str) const {
+            theList.push_back({ ConfigFileToken::Type::string, str });
+        }
+        void operator()(const SExpr::ListType& seList) const {
+            theList.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisLeft));
+            for(const auto& eachSE : seList) {
+                visit(TokenBuildVisitor{theList}, eachSE.data);
+            }
+            theList.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisRight));
+        }
+    };
+
+    visit(TokenBuildVisitor{ tokens }, se.data);
+    return tokens;
+}
+
+
+// Key-value parser
+//
+// Treats an input s-expression as a list of key-value pairs and parse by
+// matching keywords
+//
+// Features:
+//   - Convert system input (s-expression) to params
+//   - Build formatted tokens (for output) from params
+template< typename Params >
+struct KeyValueParser {
+
+    enum class UnknownKeyAction {
+        ignore, warn, error
+    };
+    using ParserFunc = std::function< void(Params&, const SExpr::ListType&) >;
+
+    // Two data structures are required for the parser to work.
+    //   - A dictionary to match keywords to the appropriate function for
+    //     parsing the arguments
+    //   - A list which instructs how an input file should be generated from
+    //     system params
+    std::map< std::string, ParserFunc > dict;
+    std::vector< std::string > tokenBuildList;
+
+    void parse(
+        Params&       params,
+        const SExpr&  se,
+        bool          unknownKeyAction = UnknownKeyAction::ignore
+    ) const {
+        using namespace std;
+        using SES = SExpr::StringType;
+        using SEL = SExpr::ListType;
+
+        // se must be a list type, or an exception will be thrown
+        for(const SExpr& eachList : get<SEL>(se.data)) {
+            // eachList.data must be a list type, or an exception will be thrown
+            // eachList contains the (key arg1 arg2 ...) data
+
+            const SES key = get<SES>(car(eachList).data);
+            const SEL keyAndArgs = get<SEL>(eachList.data);
+
+            // Check against the parsing dictionary
+            if(auto it = dict.find(key); it == dict.end()) {
+                switch(unknownKeyAction) {
+                case UnknownKeyAction::ignore:
+                    break;
+                case UnknownKeyAction::warn:
+                    LOG(WARNING) << "In the input file, "
+                        << key << " cannot be recognized.";
+                    break;
+                case UnknownKeyAction::error:
+                    LOG(ERROR) << "In the input file, "
+                        << key << " cannot be recognized.";
+                    throw runtime_error("Unknown key in parser");
+                }
+            }
+            else {
+                // Execute the settings
+                (*it)(params, keyAndArgs);
+            }
+        }
+    }
+
+    auto buildTokens() const {
+        std::list< ConfigFileToken > res;
+
+
+        return res;
+    }
+};
+
 } // namespace medyan
 
 /// A general parser
@@ -335,7 +468,7 @@ struct SystemParser {
     static MechParams    readMechParams(std::istream&);
     static ChemParams    readChemParams(std::istream&, const GeoParams&);
     static GeoParams     readGeoParams(std::istream&);
-    static BoundParams   readBoundParams(std::istream&, const GeoParams&);
+    static BoundParams   readBoundParams(std::istream&);
     static DyRateParams  readDyRateParams(std::istream&);
     static SpecialParams readSpecialParams(std::istream&);
     //@}

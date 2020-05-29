@@ -666,6 +666,36 @@ using FilamentData = tuple<
     vector<tuple<string, short, vector<floatingpoint>>>,
     vector<vector<floatingpoint>> >;
 
+// Definition of simulation configuration
+struct SimulConfig {
+
+    // The MetaParams class, used to store the source of config file, etc
+    struct MetaParams {
+        std::filesystem::path systemInputFile;
+
+        // Directory of other input files
+        std::filesystem::path inputDirectory;
+    };
+
+    MetaParams     metaParams;
+
+    // Parameters from the system input
+    MechParams     mechParams;
+    ChemParams     chemParams;
+    GeoParams      geoParams;
+    BoundParams    boundParams;
+    DyRateParams   dyRateParams;
+    SpecialParams  specialParams;
+    BubbleSetup    bubbleSetup;
+    FilamentSetup  filamentSetup;
+
+    // Parameters from other inputs
+    ChemistryData  chemistryData;
+    BubbleData     bubbleData;
+    FilamentData   filamentData;
+
+};
+
 /// Static class that holds all simulation parameters,
 /// initialized by the SystemParser
 class SysParams {

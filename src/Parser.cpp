@@ -1154,7 +1154,7 @@ MechParams::MechanicsAlgorithm SystemParser::readMechanicsAlgorithm(std::istream
     return MAlgorithm;
 }
 
-BoundParams SystemParser::readBoundParams(std::istream& is, const GeoParams& geoParams) {
+BoundParams SystemParser::readBoundParams(std::istream& is) {
 
     BoundParams BParams;
 
@@ -1178,12 +1178,8 @@ BoundParams SystemParser::readBoundParams(std::istream& is, const GeoParams& geo
                      << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 2) {
-                BParams.BoundaryCutoff = atof((lineVector[1].c_str()));
-            }
-                //Default value to be compartment size
             else {
-                BParams.BoundaryCutoff = geoParams.compartmentSizeX;
+                BParams.BoundaryCutoff = atof((lineVector[1].c_str()));
             }
         }
         else if (line.find("BOUNDARYINTERACTIONK") != string::npos) {

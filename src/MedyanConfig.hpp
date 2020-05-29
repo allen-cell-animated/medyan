@@ -12,6 +12,22 @@ Features:
   - Generating config input files
   - GUI config display (future)
   - GUI config interactive modification (very future)
+
+Documentation:
+
+  Data structures
+  ---------------
+    medyan::SimulConfig
+
+      All the simulation configuration is stored in an object of this type.
+
+
+  Functions
+  ---------
+    SimulConfig readSimulConfig(systemInputFile, inputDirectory)
+
+      Read from configuration file recursively.
+
 */
 
 #include <filesystem>
@@ -23,61 +39,37 @@ Features:
 
 namespace medyan {
 
-// Definition of simulation configuration
-struct SimulConfig {
 
-    // The MetaParams class, used to store the source of config file, etc
-    struct MetaParams {
-        std::filesystem::path systemInputFile;
+//---------------------------------
+// Read from input
+//---------------------------------
 
-        // Directory of other input files
-        std::filesystem::path inputDirectory;
-    };
+// Read system configuration from input
+inline void readSystemConfig(SimulConfig& sc, std::istream& is) {
+    sc.geoParams      = SystemParser::readGeoParams(is);
+    sc.boundParams    = SystemParser::readBoundParams(is);
+    sc.mechParams     = SystemParser::readMechParams(is);
+    sc.chemParams     = SystemParser::readChemParams(is, geoParams);
+    sc.dyRateParams   = SystemParser::readDyRateParams(is);
+    sc.bubbleSetup    = SystemParser::readBubbleSetup(is);
+    sc.filamentSetup  = SystemParser::readFilamentSetup(is);
+    sc.specialParams  = SystemParser::readSpecialParams(is);
+}
 
-    MetaParams     metaParams;
+// Read chemistry input
+inline void readChemistryConfig(SimulConfig& sc, std::istream& is) {
+    sc.chemistryData = ChemistryParser::readChemistryInput(is, chemParams);
+}
 
-    // Parameters from the system input
-    MechParams     mechParams;
-    ChemParams     chemParams;
-    GeoParams      geoParams;
-    BoundParams    boundParams;
-    DyRateParams   dyRateParams;
-    SpecialParams  specialParams;
-    BubbleSetup    bubbleSetup;
-    FilamentSetup  filamentSetup;
+// Read bubble input
+inline void readBubbleConfig(SimulConfig& sc, std::istream& is) {
+    sc.bubbleData = BubbleParser::readBubbles(is);
+}
 
-    // Parameters from other inputs
-    ChemistryData  chemistryData;
-    BubbleData     bubbleData;
-    FilamentData   filamentData;
-
-    // Read system configuration from input
-    void readSystemConfig(std::istream& is) {
-        geoParams      = SystemParser::readGeoParams(is);
-        boundParams    = SystemParser::readBoundParams(is, geoParams);
-        mechParams     = SystemParser::readMechParams(is);
-        chemParams     = SystemParser::readChemParams(is, geoParams);
-        dyRateParams   = SystemParser::readDyRateParams(is);
-        bubbleSetup    = SystemParser::readBubbleSetup(is);
-        filamentSetup  = SystemParser::readFilamentSetup(is);
-        specialParams  = SystemParser::readSpecialParams(is);
-    }
-
-    // Read chemistry input
-    void readChemistryConfig(std::istream& is) {
-        chemistryData = ChemistryParser::readChemistryInput(is, chemParams);
-    }
-
-    // Read bubble input
-    void readBubbleConfig(std::istream& is) {
-        bubbleData = BubbleParser::readBubbles(is);
-    }
-
-    // Read filament input
-    void readFilamentConfig(std::istream& is) {
-        filamentData = FilamentParser::readFilaments(is);
-    }
-};
+// Read filament input
+inline void readFilamentConfig(SimulConfig& sc, std::istream& is) {
+    sc.filamentData = FilamentParser::readFilaments(is);
+}
 
 // Read simulation configuration from file
 inline SimulConfig readSimulConfig(
@@ -106,7 +98,7 @@ inline SimulConfig readSimulConfig(
     // Read system input
     {
         ReadFile file(systemInputFile);
-        conf.readSystemConfig(file.ifs);
+        readSystemConfig(conf, file.ifs);
     }
 
     // Read chemistry input
@@ -116,19 +108,19 @@ inline SimulConfig readSimulConfig(
     }
     else {
         ReadFile file(inputDirectory / conf.chemParams.chemistrySetup.inputFile);
-        conf.readChemistryConfig(file.ifs);
+        readChemistryConfig(conf, file.ifs);
     }
 
     // Read bubble input
     if(!conf.bubbleSetup.inputFile.empty()) {
         ReadFile file(inputDirectory / conf.bubbleSetup.inputFile);
-        conf.readBubbleConfig(file.ifs);
+        readBubbleConfig(conf, file.ifs);
     }
 
     // Read filament input
     if(!conf.filamentSetup.inputFile.empty()) {
         ReadFile file(inputDirectory / conf.filamentSetup.inputFile);
-        conf.readFilamentConfig(file.ifs);
+        readFilamentConfig(conf, file.ifs);
     }
 
     return conf;
