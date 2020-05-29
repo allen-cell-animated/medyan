@@ -13,7 +13,6 @@
 
 #include "GController.h"
 
-#include "Parser.h"
 #include "SubSystem.h"
 #include "CompartmentGrid.h"
 #include "BoundaryImpl.h"

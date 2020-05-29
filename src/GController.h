@@ -17,8 +17,7 @@
 #include <vector>
 
 #include "common.h"
-
-#include "Parser.h"
+#include "SysParams.h"
 
 /// An exception to be thrown when an index/coordinate is out of bounds of the grid
 class OutOfBoundsException : public exception {

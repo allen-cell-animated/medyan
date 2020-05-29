@@ -21,7 +21,6 @@
 #include "Minimizer.h"
 #include "ForceFieldManager.h"
 
-#include "Parser.h"
 #include "Structure/SubSystem.h"
 #include "Util/Io/Log.hpp"
 

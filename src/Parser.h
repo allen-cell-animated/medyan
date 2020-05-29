@@ -71,6 +71,7 @@ struct ConfigFileToken {
         case Type::parenthesisRight: return ")";
         case Type::lineBreak:        return "\n";
         case Type::unknown:          return "";
+        default:                     return "";
         }
     }
 
@@ -94,6 +95,12 @@ struct SExpr {
 // Comments are removed.
 inline std::list< ConfigFileToken > tokenizeConfigFile(const std::string& str) {
     const auto len = str.length();
+    const auto isSpecialChar = [](char x) {
+        return std::isspace(x) ||
+            x == '#' || x == ';' ||
+            x == '(' || x == ')' ||
+            x == '"';
+    };
 
     std::list< ConfigFileToken > tokens;
 
@@ -111,6 +118,7 @@ inline std::list< ConfigFileToken > tokenizeConfigFile(const std::string& str) {
 
             // Now j points to either the end of string, or the next line break
             tokens.push_back({ConfigFileToken::Type::comment, str.substr(i, j-i)});
+            i = j - 1;
         }
         else if(a == '(') {
             tokens.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisLeft));
@@ -130,6 +138,14 @@ inline std::list< ConfigFileToken > tokenizeConfigFile(const std::string& str) {
                 LOG(ERROR) << "Quotation marks do not match";
                 throw std::runtime_error("Quotation marks do not match.");
             }
+        }
+        else {
+            int j = i + 1;
+            while(j < len && !isSpecialChar(str[j])) ++j;
+
+            // Now j points to either the end of string, or the next special char
+            tokens.push_back({ConfigFileToken::Type::string, str.substr(i, j-i)});
+            i = j - 1;
         }
     }
 
@@ -207,20 +223,13 @@ inline SExpr lexConfigTokensList(
 
     while(tokenIter != tokens.cend()) {
         if(tokenIter->type == ConfigFileToken::Type::string) {
-            if(depth == 0) {
-                // Implicit parentheses assumed
-                get<VS>(se.data).push_back(
-                    lexConfigTokensList(tokens, tokenIter, depth + 1, true)
-                );
-            } else {
-                // Add to the current list
-                get<VS>(se.data).push_back(
-                    SExpr { tokenIter->content }
-                );
-                ++tokenIter;
-            }
+            // Add to the current list
+            get<VS>(se.data).push_back(
+                SExpr { tokenIter->content }
+            );
+            ++tokenIter;
         }
-        if(tokenIter->type == ConfigFileToken::Type::parenthesisLeft) {
+        else if(tokenIter->type == ConfigFileToken::Type::parenthesisLeft) {
             get<VS>(se.data).push_back(
                 lexConfigTokensList(tokens, ++tokenIter, depth + 1, false)
             );
@@ -240,6 +249,9 @@ inline SExpr lexConfigTokensList(
                 // End current list
                 ++tokenIter;
                 return se;
+            }
+            else {
+                ++tokenIter;
             }
         }
         else {
@@ -265,18 +277,26 @@ inline SExpr lexConfigTokens(const list< ConfigFileToken >& tokens) {
 
     auto tokenIter = tokens.cbegin();
     for(auto tokenIter = tokens.cbegin(); tokenIter != tokens.cend(); ) {
-        if(
-            tokenIter->type == ConfigFileToken::Type::parenthesisLeft ||
-            tokenIter->type == ConfigFileToken::Type::parenthesisRight ||
-            tokenIter->type == ConfigFileToken::Type::string
-        ) {
+
+        if (tokenIter->type == ConfigFileToken::Type::string) {
+            // Implicit parentheses assumed
             get<VS>(se.data).push_back(
-                lexConfigTokensList(tokens, tokenIter, 0, 0);
-            )
+                lexConfigTokensList(tokens, tokenIter, 1, true)
+            );
+        }
+        else if (tokenIter->type == ConfigFileToken::Type::parenthesisLeft) {
+            get<VS>(se.data).push_back(
+                lexConfigTokensList(tokens, ++tokenIter, 1, false)
+            );
+        }
+        else if (tokenIter->type == ConfigFileToken::Type::parenthesisRight) {
+            LOG(ERROR) << "Unexpected ')'.";
+            throw runtime_error("Unmatched parentheses");
         }
         else {
             ++tokenIter;
         }
+
     }
 
     return se;
