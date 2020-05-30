@@ -59,7 +59,6 @@ inline std::string readFileToString(std::filesystem::path file) {
     return ss.str();
 }
 
-
 // Read chemistry input
 inline void readChemistryConfig(SimulConfig& sc, std::istream& is) {
     sc.chemistryData = ChemistryParser::readChemistryInput(is, sc.chemParams);

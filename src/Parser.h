@@ -624,6 +624,7 @@ struct SystemParser {
 
         initParser.parse(conf, se);
     }
+
     void outputSystemInput(std::ostream& os, const SimulConfig& conf) const {
         std::list< ConfigFileToken > tokens;
         tokens.splice(tokens.end(), headerParser.buildTokens(conf));
@@ -675,22 +676,6 @@ public:
         cout << "Loading file " << inputFileName << endl;
     }
     ~Parser() {_inputFile.close();}
-};
-
-/// To parse a system input file, initialized by the Controller.
-struct SystemParser {
-    
-    //@{
-    /// Parameter parser. Reads input directly into system parameters
-    /// @note - does not check for correctness and consistency here.
-    static SpecialParams readSpecialParams(std::istream&);
-    //@}
-    
-    //@{
-    /// Type parser
-    static SpecialParams::SpecialSetupType readSpecialSetupType(std::istream&);
-    //@}
-    
 };
 
 /// Used to parse initial Filament information, initialized by the Controller.

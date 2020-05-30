@@ -2271,179 +2271,6 @@ void SystemParser::initDyRateParser() {
 
 }
 
-} // namespace medyan
-
-
-SpecialParams::SpecialSetupType SystemParser::readSpecialSetupType(std::istream& is) {
-
-    SpecialParams::SpecialSetupType SType;
-
-    is.clear();
-    is.seekg(0);
-
-    string line;
-    while(getline(is, line)) {
-
-        if(line.find("#") != string::npos) { continue; }
-
-        if (line.find("SPECIALSETUP") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 3) {
-                cout <<
-                     "There was an error parsing input file at special setup types. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector[1] == "MTOC") SType.mtoc = true;
-            else if (lineVector[1] == "AFM") SType.afm = true;
-        }
-        else if (line.find("MTOCFILAMENTTYPE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                     "A filament type to connect to an MTOC must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                SType.mtocFilamentType = atoi(lineVector[1].c_str());
-            }
-        }
-        else if (line.find("MTOCNUMFILAMENTS") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                     "A number of filaments to connect to an MTOC must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                SType.mtocNumFilaments = atoi(lineVector[1].c_str());
-            }
-        }
-        else if (line.find("MTOCFILAMENTLENGTH") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                     "A filament length for filaments connected to an MTOC must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                SType.mtocFilamentLength = atoi(lineVector[1].c_str());
-            }
-        }
-
-        else if (line.find("MTOCBUBBLETYPE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                     "A bubble type to connect to an MTOC must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                SType.mtocBubbleType = atoi(lineVector[1].c_str());
-            }
-        }
-        
-        else if (line.find("AFMFILAMENTTYPE") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "A filament type to connect to an AFM must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                SType.afmFilamentType = atoi(lineVector[1].c_str());
-            }
-        }
-        else if (line.find("AFMNUMFILAMENTS") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "A number of filaments to connect to an AFM must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                SType.afmNumFilaments = atoi(lineVector[1].c_str());
-            }
-        }
-        else if (line.find("AFMFILAMENTLENGTH") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "A filament length for filaments connected to an AFM must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                SType.afmFilamentLength = atoi(lineVector[1].c_str());
-            }
-        }
-        
-        else if (line.find("AFMBUBBLETYPE") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "A bubble type to connect to an MTOC must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                SType.afmBubbleType = atoi(lineVector[1].c_str());
-            }
-        }
-        else if (line.find("MTOCXYZCOORD") != string::npos) {
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 4) {
-                cout <<
-                "Coordinates of MTOC must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 4) {
-                SType.mtocInputCoordXYZ.push_back(stof(lineVector[1].c_str()));
-                SType.mtocInputCoordXYZ.push_back(stof(lineVector[2].c_str()));
-                SType.mtocInputCoordXYZ.push_back(stof(lineVector[3].c_str()));
-            }
-        }
-    }
-    return SType;
-}
-
-SpecialParams SystemParser::readSpecialParams(std::istream& is) {
-    
-    SpecialParams SParams;
-    
-    is.clear();
-    is.seekg(0);
-    
-    string line;
-
-    // FIXME: "line" is empty, so the next find will always be false
-    if (line.find("MTOCFILAMENTCOORD") != string::npos) {
-        vector<string> lineVector = split<string>(line);
-        if(lineVector.size() != 5) {
-            cout << "4 coordinates of MTOC filaments must be specified. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        else if (lineVector.size() == 5) {
-            SParams.mtocTheta1 = stof(lineVector[1].c_str());
-            SParams.mtocTheta2 = stof(lineVector[2].c_str());
-            SParams.mtocPhi1 = stof(lineVector[3].c_str());
-            SParams.mtocPhi2 = stof(lineVector[4].c_str());
-        }
-    }
-
-    return SParams;
-    
-}
-
-namespace medyan {
-
 void SystemParser::initGeoParser() {
     using namespace std;
 
@@ -2878,6 +2705,209 @@ void SystemParser::initInitParser() {
                 res.push_back(sc.filamentSetup.pinRestartFile);
             }
             return res;
+        }
+    );
+    initParser.addEmptyLine();
+
+    initParser.addComment("# Special setup types");
+    initParser.addStringArgsWithAliases(
+        "SPECIALSETUP", { "SPECIALSETUP:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() > 3) {
+                cout <<
+                     "There was an error parsing input file at special setup types. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector[1] == "MTOC") sc.specialParams.specialSetupType.mtoc = true;
+            else if (lineVector[1] == "AFM") sc.specialParams.specialSetupType.afm = true;
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            if(sc.specialParams.specialSetupType.mtoc) res.push_back({ "MTOC" });
+            if(sc.specialParams.specialSetupType.afm) res.push_back({ "AFM" });
+            return res;
+        }
+    );
+    initParser.addStringArgsWithAliases(
+        "MTOCFILAMENTTYPE", { "MTOCFILAMENTTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "A filament type to connect to an MTOC must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.specialParams.specialSetupType.mtocFilamentType = atoi(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.specialParams.specialSetupType.mtocFilamentType) };
+        }
+    );
+    initParser.addStringArgsWithAliases(
+        "MTOCNUMFILAMENTS", { "MTOCNUMFILAMENTS:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "A number of filaments to connect to an MTOC must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.specialParams.specialSetupType.mtocNumFilaments = atoi(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.specialParams.specialSetupType.mtocNumFilaments) };
+        }
+    );
+    initParser.addStringArgsWithAliases(
+        "MTOCFILAMENTLENGTH", { "MTOCFILAMENTLENGTH:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "A filament length for filaments connected to an MTOC must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.specialParams.specialSetupType.mtocFilamentLength = atoi(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.specialParams.specialSetupType.mtocFilamentLength) };
+        }
+    );
+    initParser.addStringArgsWithAliases(
+        "MTOCBUBBLETYPE", { "MTOCBUBBLETYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "A bubble type to connect to an MTOC must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.specialParams.specialSetupType.mtocBubbleType = atoi(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.specialParams.specialSetupType.mtocBubbleType) };
+        }
+    );
+    initParser.addStringArgsWithAliases(
+        "AFMFILAMENTTYPE", { "AFMFILAMENTTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                    "A filament type to connect to an AFM must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.specialParams.specialSetupType.afmFilamentType = atoi(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.specialParams.specialSetupType.afmFilamentType) };
+        }
+    );
+    initParser.addStringArgsWithAliases(
+        "AFMNUMFILAMENTS", { "AFMNUMFILAMENTS:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                "A number of filaments to connect to an AFM must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.specialParams.specialSetupType.afmNumFilaments = atoi(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.specialParams.specialSetupType.afmNumFilaments) };
+        }
+    );
+    initParser.addStringArgsWithAliases(
+        "AFMFILAMENTLENGTH", { "AFMFILAMENTLENGTH:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                "A filament length for filaments connected to an AFM must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.specialParams.specialSetupType.afmFilamentLength = atoi(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.specialParams.specialSetupType.afmFilamentLength) };
+        }
+    );
+    initParser.addStringArgsWithAliases(
+        "AFMBUBBLETYPE", { "AFMBUBBLETYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                "A bubble type to connect to an MTOC must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.specialParams.specialSetupType.afmBubbleType = atoi(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.specialParams.specialSetupType.afmBubbleType) };
+        }
+    );
+    initParser.addStringArgsWithAliases(
+        "MTOCXYZCOORD", { "MTOCXYZCOORD:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.specialParams.specialSetupType.mtocInputCoordXYZ.clear();
+            if(lineVector.size() != 4) {
+                cout <<
+                "Coordinates of MTOC must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 4) {
+                sc.specialParams.specialSetupType.mtocInputCoordXYZ.push_back(stof(lineVector[1].c_str()));
+                sc.specialParams.specialSetupType.mtocInputCoordXYZ.push_back(stof(lineVector[2].c_str()));
+                sc.specialParams.specialSetupType.mtocInputCoordXYZ.push_back(stof(lineVector[3].c_str()));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            if(const auto& xyz = sc.specialParams.specialSetupType.mtocInputCoordXYZ; !xyz.empty()) {
+                res.push_back({
+                    to_string(xyz[0]),
+                    to_string(xyz[1]),
+                    to_string(xyz[2])
+                });
+            }
+            return res;
+        }
+    );
+    initParser.addEmptyLine();
+
+    initParser.addComment("# Special setup parameters");
+    initParser.addStringArgsWithAliases(
+        "MTOCFILAMENTCOORD", { "MTOCFILAMENTCOORD:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 5) {
+                cout << "4 coordinates of MTOC filaments must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 5) {
+                sc.specialParams.mtocTheta1 = stof(lineVector[1].c_str());
+                sc.specialParams.mtocTheta2 = stof(lineVector[2].c_str());
+                sc.specialParams.mtocPhi1 = stof(lineVector[3].c_str());
+                sc.specialParams.mtocPhi2 = stof(lineVector[4].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> {
+                to_string(sc.specialParams.mtocTheta1),
+                to_string(sc.specialParams.mtocTheta2),
+                to_string(sc.specialParams.mtocPhi1),
+                to_string(sc.specialParams.mtocPhi2)
+            };
         }
     );
 
