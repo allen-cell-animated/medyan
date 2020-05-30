@@ -449,7 +449,9 @@ struct KeyValueParser {
         std::list< ConfigFileToken > res;
 
         for(const auto& eachTokenBuild : tokenBuildList) {
+            res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisLeft));
             res.splice(res.end(), eachTokenBuild(params));
+            res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisRight));
         }
         return res;
     }
@@ -573,15 +575,23 @@ struct KeyValueParser {
 };
 
 struct SystemParser {
+    // Preferably, for one input file, only one parser is needed.
+    // However, currently, some parsing rules require the results from parsed
+    // params in the same file, and therefore multiple parsing passes are
+    // needed.
+    // So it is natural to write each set of parsing rules in a separate
+    // parser.
     KeyValueParser< SimulConfig >
         headerParser,
         geoParser,
-        boundParser;
+        boundParser,
+        mechParser;
 
     SystemParser() {
         initInputHeader();
         initGeoParser();
         initBoundParser();
+        initMechParser();
         // TODO
     }
 
@@ -597,12 +607,15 @@ struct SystemParser {
         boundParser.parse(conf, se);
         boundPostProcessing(conf);
 
+        mechParser.parse(conf, se);
+
     }
     void outputSystemInput(std::ostream& os, const SimulConfig& conf) const {
         std::list< ConfigFileToken > tokens;
         tokens.splice(tokens.end(), headerParser.buildTokens(conf));
         tokens.splice(tokens.end(), geoParser.buildTokens(conf));
         tokens.splice(tokens.end(), boundParser.buildTokens(conf));
+        tokens.splice(tokens.end(), mechParser.buildTokens(conf));
 
         outputConfigTokens(os, tokens);
     }
@@ -611,6 +624,7 @@ struct SystemParser {
     void initInputHeader();
     void initGeoParser();
     void initBoundParser();
+    void initMechParser();
 
     // Post processing and validation
     void geoPostProcessing(SimulConfig&) const;
@@ -648,7 +662,6 @@ struct SystemParser {
     //@{
     /// Parameter parser. Reads input directly into system parameters
     /// @note - does not check for correctness and consistency here.
-    static MechParams    readMechParams(std::istream&);
     static ChemParams    readChemParams(std::istream&, const GeoParams&);
     static DyRateParams  readDyRateParams(std::istream&);
     static SpecialParams readSpecialParams(std::istream&);
@@ -656,13 +669,11 @@ struct SystemParser {
     
     //@{
     /// Algorithm parser
-    static MechParams::MechanicsAlgorithm readMechanicsAlgorithm(std::istream&);
     static ChemParams::ChemistryAlgorithm readChemistryAlgorithm(std::istream&);
     //@}
     
     //@{
     /// Type parser
-    static MechParams::MechanicsFFType     readMechanicsFFType(std::istream&);
     static DyRateParams::DynamicRateType   readDynamicRateType(std::istream&);
     static SpecialParams::SpecialSetupType readSpecialSetupType(std::istream&);
     //@}

@@ -449,21 +449,145 @@ ChemParams::ChemistrySetup SystemParser::readChemistrySetup(std::istream& is) {
     return CSetup;
 }
 
-MechParams::MechanicsFFType SystemParser::readMechanicsFFType(std::istream& is) {
+namespace medyan {
 
-    MechParams::MechanicsFFType MType;
+void SystemParser::initMechParser() {
+    using namespace std;
 
-    is.clear();
-    is.seekg(0);
+    mechParser.addComment("##################################################");
+    mechParser.addComment("### Mechanical parameters");
+    mechParser.addComment("##################################################");
+    mechParser.addEmptyLine();
 
-    string line;
-    while(getline(is, line)) {
+    mechParser.addComment("###### Mechanical algorithm ######");
+    mechParser.addEmptyLine();
 
-        if(line.find("#") != string::npos) { continue; }
+    mechParser.addStringArgsWithAliases(
+        "CONJUGATEGRADIENT", { "CONJUGATEGRADIENT:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "A conjugate gradient method must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.mechParams.mechanicsAlgorithm.ConjugateGradient = lineVector[1];
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            if(const auto& s = sc.mechParams.mechanicsAlgorithm.ConjugateGradient; !s.empty()) {
+                res.push_back({ s });
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "MD", {},
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout << "A Mechanics algorithm must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.mechParams.mechanicsAlgorithm.MD = lineVector[1];
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            if(const auto& s = sc.mechParams.mechanicsAlgorithm.MD; !s.empty()) {
+                res.push_back({ s });
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "GRADIENTTOLERANCE", { "GRADIENTTOLERANCE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() == 2) {
+                sc.mechParams.mechanicsAlgorithm.gradientTolerance = atof(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& x = sc.mechParams.mechanicsAlgorithm.gradientTolerance; x) {
+                res.push_back(x);
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "MAXDISTANCE", { "MAXDISTANCE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() == 2) {
+                sc.mechParams.mechanicsAlgorithm.maxDistance = atof(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& x = sc.mechParams.mechanicsAlgorithm.maxDistance; x) {
+                res.push_back(x);
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "LAMBDAMAX", { "LAMBDAMAX:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() == 2) {
+                sc.mechParams.mechanicsAlgorithm.lambdaMax = atof(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& x = sc.mechParams.mechanicsAlgorithm.lambdaMax; x) {
+                res.push_back(x);
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "LAMBDARUNNINGAVERAGEPROBABILITY", { "LAMBDARUNNINGAVERAGEPROBABILITY:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() == 2) {
+                sc.mechParams.mechanicsAlgorithm.lambdarunningaverageprobability = atof(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& x = sc.mechParams.mechanicsAlgorithm.lambdarunningaverageprobability; x) {
+                res.push_back(x);
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "LINESEARCHALGORITHM", { "LINESEARCHALGORITHM:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() == 2) {
+                sc.mechParams.mechanicsAlgorithm.linesearchalgorithm = lineVector[1];
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            if(const auto& s = sc.mechParams.mechanicsAlgorithm.linesearchalgorithm; !s.empty()) {
+                res.push_back({ s });
+            }
+            return res;
+        }
+    );
+    mechParser.addEmptyLine();
 
-        if (line.find("FSTRETCHINGFFTYPE") != string::npos) {
+    mechParser.addComment("###### Force fields ######");
+    mechParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
+    mechParser.addComment("### Actin filaments ");
+    mechParser.addEmptyLine();
+
+    mechParser.addComment("# Stretching: Popov et al, 2016, PLoS Comp Biol");
+    mechParser.addStringArgsWithAliases(
+        "FSTRETCHINGFFTYPE", { "FSTRETCHINGFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
                      "There was an error parsing input file at Filament stretching FF type. Exiting."
@@ -471,12 +595,40 @@ MechParams::MechanicsFFType SystemParser::readMechanicsFFType(std::istream& is) 
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.FStretchingType = lineVector[1];
+                sc.mechParams.mechanicsFFType.FStretchingType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.FStretchingType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-        else if (line.find("FBENDINGFFTYPE") != string::npos) {
+    );
+    mechParser.addStringArgsWithAliases(
+        "FSTRETCHINGK", { "FSTRETCHINGK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.FStretchingK.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.FStretchingK.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.FStretchingK) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
+    mechParser.addComment("# Bending: Ott et al, 1993, Phys Rev E");
+    mechParser.addStringArgsWithAliases(
+        "FBENDINGFFTYPE", { "FBENDINGFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
                      "There was an error parsing input file at Filament bending FF type. Exiting."
@@ -484,12 +636,57 @@ MechParams::MechanicsFFType SystemParser::readMechanicsFFType(std::istream& is) 
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.FBendingType = lineVector[1];
+                sc.mechParams.mechanicsFFType.FBendingType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.FBendingType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-        else if (line.find("FTWISTINGFFTYPE") != string::npos) {
+    );
+    mechParser.addStringArgsWithAliases(
+        "FBENDINGK", { "FBENDINGK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.FBendingK.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.FBendingK.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.FBendingK) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "FBENDINGTHETA", { "FBENDINGTHETA:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.FBendingTheta.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.FBendingTheta.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.FBendingTheta) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
+    mechParser.addComment("# Twisting: Currently not implemented");
+    mechParser.addStringArgsWithAliases(
+        "FTWISTINGFFTYPE", { "FTWISTINGFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
                      "There was an error parsing input file at Filament twisting FF type. Exiting."
@@ -497,12 +694,59 @@ MechParams::MechanicsFFType SystemParser::readMechanicsFFType(std::istream& is) 
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.FTwistingType = lineVector[1];
+                sc.mechParams.mechanicsFFType.FTwistingType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.FTwistingType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-        else if (line.find("LSTRETCHINGFFTYPE") != string::npos) {
+    );
+    mechParser.addStringArgsWithAliases(
+        "FTWISTINGK", { "FTWISTINGK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.FTwistingK.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.FTwistingK.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.FTwistingK) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "FTWISTINGPHI", { "FTWISTINGPHI:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.FTwistingPhi.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.FTwistingPhi.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.FTwistingPhi) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
+    mechParser.addComment("### Linkers");
+    mechParser.addEmptyLine();
+    mechParser.addComment("# Stretching: Didonna et al, Phys Rev E, 2007");
+    mechParser.addStringArgsWithAliases(
+        "LSTRETCHINGFFTYPE", { "LSTRETCHINGFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
                      "There was an error parsing input file at Linker stretching FF type. Exiting."
@@ -510,12 +754,39 @@ MechParams::MechanicsFFType SystemParser::readMechanicsFFType(std::istream& is) 
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.LStretchingType = lineVector[1];
+                sc.mechParams.mechanicsFFType.LStretchingType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.LStretchingType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-        else if (line.find("LBENDINGFFTYPE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    mechParser.addStringArgsWithAliases(
+        "LSTRETCHINGK", { "LSTRETCHINGK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.LStretchingK.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.LStretchingK.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.LStretchingK) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addEmptyLine();
+    mechParser.addComment("# Bending/Twisting: not implemented");
+    mechParser.addStringArgsWithAliases(
+        "LBENDINGFFTYPE", { "LBENDINGFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
                      "There was an error parsing input file at Linker bending FF type. Exiting."
@@ -523,12 +794,54 @@ MechParams::MechanicsFFType SystemParser::readMechanicsFFType(std::istream& is) 
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.LBendingType = lineVector[1];
+                sc.mechParams.mechanicsFFType.LBendingType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.LBendingType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-        else if (line.find("LTWISTINGFFTYPE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    mechParser.addStringArgsWithAliases(
+        "LBENDINGK", { "LBENDINGK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.LBendingK.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.LBendingK.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.LBendingK) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "LBENDINGTHETA", { "LBENDINGTHETA:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.LBendingTheta.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.LBendingTheta.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.LBendingTheta) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "LTWISTINGFFTYPE", { "LTWISTINGFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
                      "There was an error parsing input file at Linker twisting FF type. Exiting."
@@ -536,12 +849,59 @@ MechParams::MechanicsFFType SystemParser::readMechanicsFFType(std::istream& is) 
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.LTwistingType = lineVector[1];
+                sc.mechParams.mechanicsFFType.LTwistingType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.LTwistingType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-        else if (line.find("MSTRETCHINGFFTYPE") != string::npos) {
+    );
+    mechParser.addStringArgsWithAliases(
+        "LTWISTINGK", { "LTWISTINGK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.LTwistingK.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.LTwistingK.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.LTwistingK) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "LTWISTINGPHI", { "LTWISTINGPHI:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.LTwistingPhi.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.LTwistingPhi.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.LTwistingPhi) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
+    mechParser.addComment("### Myosin motors");
+    mechParser.addEmptyLine();
+    mechParser.addComment("# Stretching: Vilfan, Biophys J, 2010");
+    mechParser.addStringArgsWithAliases(
+        "MSTRETCHINGFFTYPE", { "MSTRETCHINGFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
                      "There was an error parsing input file at Motor stretching FF type. Exiting."
@@ -549,12 +909,39 @@ MechParams::MechanicsFFType SystemParser::readMechanicsFFType(std::istream& is) 
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.MStretchingType = lineVector[1];
+                sc.mechParams.mechanicsFFType.MStretchingType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.MStretchingType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-        else if (line.find("MBENDINGFFTYPE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    mechParser.addStringArgsWithAliases(
+        "MSTRETCHINGK", { "MSTRETCHINGK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.MStretchingK.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.MStretchingK.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.MStretchingK) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addEmptyLine();
+    mechParser.addComment("# Bending/Twisting: not implemented");
+    mechParser.addStringArgsWithAliases(
+        "MBENDINGFFTYPE", { "MBENDINGFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
                      "There was an error parsing input file at Motor bending FF type. Exiting."
@@ -562,12 +949,54 @@ MechParams::MechanicsFFType SystemParser::readMechanicsFFType(std::istream& is) 
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.MBendingType = lineVector[1];
+                sc.mechParams.mechanicsFFType.MBendingType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.MBendingType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-        else if (line.find("MTWISTINGFFTYPE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    mechParser.addStringArgsWithAliases(
+        "MBENDINGK", { "MBENDINGK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.MBendingK.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.MBendingK.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.MBendingK) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "MBENDINGTHETA", { "MBENDINGTHETA:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.MBendingTheta.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.MBendingTheta.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.MBendingTheta) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "MTWISTINGFFTYPE", { "MTWISTINGFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
                      "There was an error parsing input file at Motor twisting FF type. Exiting."
@@ -575,64 +1004,253 @@ MechParams::MechanicsFFType SystemParser::readMechanicsFFType(std::istream& is) 
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.MTwistingType = lineVector[1];
+                sc.mechParams.mechanicsFFType.MTwistingType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.MTwistingType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-        if (line.find("BRSTRETCHINGFFTYPE") != string::npos) {
+    );
+    mechParser.addStringArgsWithAliases(
+        "MTWISTINGK", { "MTWISTINGK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.MTwistingK.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.MTwistingK.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.MTwistingK) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "MTWISTINGPHI", { "MTWISTINGPHI:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.MTwistingPhi.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.MTwistingPhi.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.MTwistingPhi) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
+    mechParser.addComment("### Arp2/3 brancher");
+    mechParser.addComment("# 4 force fields: Popov et al, Plos Comp Biol, 2016");
+    mechParser.addComment("# No reliable literature values for this FF");
+    mechParser.addEmptyLine();
+    mechParser.addStringArgsWithAliases(
+        "BRSTRETCHINGFFTYPE", { "BRSTRETCHINGFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
-                     "There was an error parsing input file at Branch stretching FF type. Exiting."
+                     "There was an error parsing input file at Brancher stretching FF type. Exiting."
                      << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.BrStretchingType = lineVector[1];
+                sc.mechParams.mechanicsFFType.BrStretchingType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.BrStretchingType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-        else if (line.find("BRBENDINGFFTYPE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    mechParser.addStringArgsWithAliases(
+        "BRSTRETCHINGK", { "BRSTRETCHINGK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.BrStretchingK.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.BrStretchingK.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.BrStretchingK) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "BRSTRETCHINGL", { "BRSTRETCHINGL:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.BrStretchingL.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.BrStretchingL.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.BrStretchingL) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addEmptyLine();
+    mechParser.addStringArgsWithAliases(
+        "BRBENDINGFFTYPE", { "BRBENDINGFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
-                     "There was an error parsing input file at Branch bending FF type. Exiting."
+                     "There was an error parsing input file at Brancher bending FF type. Exiting."
                      << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.BrBendingType = lineVector[1];
+                sc.mechParams.mechanicsFFType.BrBendingType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.BrBendingType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-        else if (line.find("BRDIHEDRALFFTYPE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    mechParser.addStringArgsWithAliases(
+        "BRBENDINGK", { "BRBENDINGK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.BrBendingK.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.BrBendingK.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.BrBendingK) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "BRBENDINGTHETA", { "BRBENDINGTHETA:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.BrBendingTheta.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.BrBendingTheta.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.BrBendingTheta) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addEmptyLine();
+    mechParser.addStringArgsWithAliases(
+        "BRDIHEDRALFFTYPE", { "BRDIHEDRALFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
-                     "There was an error parsing input file at Branch dihedral FF type. Exiting."
+                     "There was an error parsing input file at Brancher dihedral FF type. Exiting."
                      << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.BrDihedralType = lineVector[1];
+                sc.mechParams.mechanicsFFType.BrDihedralType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.BrDihedralType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-        else if (line.find("BRPOSITIONFFTYPE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    mechParser.addStringArgsWithAliases(
+        "BRDIHEDRALK", { "BRDIHEDRALK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.BrDihedralK.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.BrDihedralK.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.BrDihedralK) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addEmptyLine();
+    mechParser.addStringArgsWithAliases(
+        "BRPOSITIONFFTYPE", { "BRPOSITIONFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
-                     "There was an error parsing input file at Branch position FF type. Exiting."
+                     "There was an error parsing input file at Brancher position FF type. Exiting."
                      << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.BrPositionType = lineVector[1];
+                sc.mechParams.mechanicsFFType.BrPositionType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.BrPositionType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-        else if (line.find("BOUNDARYFFTYPE") != string::npos) {
+    );
+    mechParser.addStringArgsWithAliases(
+        "BRPOSITIONK", { "BRPOSITIONK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.BrPositionK.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.BrPositionK.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.BrPositionK) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
+    mechParser.addComment("### Boundary");
+    mechParser.addComment("# Boundary repulsion force field. Parameters are set in the boundary section.");
+    mechParser.addStringArgsWithAliases(
+        "BOUNDARYFFTYPE", { "BOUNDARYFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
                      "There was an error parsing input file at Boundary FF type. Exiting."
@@ -640,12 +1258,24 @@ MechParams::MechanicsFFType SystemParser::readMechanicsFFType(std::istream& is) 
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.BoundaryFFType = lineVector[1];
+                sc.mechParams.mechanicsFFType.BoundaryFFType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.BoundaryFFType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-        else if (line.find("VOLUMEFFTYPE") != string::npos) {
+    );
+    mechParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
+    mechParser.addComment("### Volume exclusion: Popov et al, 2016, PLoS Comp Biol");
+    mechParser.addEmptyLine();
+    mechParser.addStringArgsWithAliases(
+        "VOLUMEFFTYPE", { "VOLUMEFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
                      "There was an error parsing input file at Volume FF type. Exiting."
@@ -653,12 +1283,60 @@ MechParams::MechanicsFFType SystemParser::readMechanicsFFType(std::istream& is) 
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.VolumeFFType = lineVector[1];
+                sc.mechParams.mechanicsFFType.VolumeFFType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.VolumeFFType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-        else if (line.find("BUBBLEFFTYPE") != string::npos) {
+    );
+    mechParser.addStringArgsWithAliases(
+        "VOLUMEK", { "VOLUMEK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.VolumeK.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.VolumeK.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.VolumeK) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "VOLUMECUTOFF", { "VOLUMECUTOFF:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "Error reading Volume cutoff. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else {
+                sc.mechParams.VolumeCutoff = stod(lineVector[1]);
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            if(sc.mechParams.VolumeCutoff) {
+                res.push_back({ to_string(sc.mechParams.VolumeCutoff) });
+            }
+            return res;
+        }
+    );
+    mechParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
+    mechParser.addComment("### Bubble interactions");
+    mechParser.addStringArgsWithAliases(
+        "BUBBLEFFTYPE", { "BUBBLEFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
                      "There was an error parsing input file at Bubble FF type. Exiting."
@@ -666,12 +1344,113 @@ MechParams::MechanicsFFType SystemParser::readMechanicsFFType(std::istream& is) 
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.BubbleFFType = lineVector[1];
+                sc.mechParams.mechanicsFFType.BubbleFFType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.BubbleFFType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-        else if (line.find("MTOCFFTYPE") != string::npos) {
+    );
+    mechParser.addStringArgsWithAliases(
+        "BUBBLEINTERACTIONK", { "BUBBLEINTERACTIONK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.BubbleK.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.BubbleK.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.BubbleK) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "BUBBLESCREENLENGTH", { "BUBBLESCREENLENGTH:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.BubbleScreenLength.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.BubbleScreenLength.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.BubbleScreenLength) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "BUBBLECUTOFF", { "BUBBLECUTOFF:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "Error reading Bubble cutoff. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else {
+                sc.mechParams.BubbleCutoff = stod(lineVector[1]);
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            if(sc.mechParams.BubbleCutoff) {
+                res.push_back({ to_string(sc.mechParams.BubbleCutoff) });
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "BUBBLERADIUS", { "BUBBLERADIUS:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.BubbleRadius.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.BubbleRadius.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.BubbleRadius) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addStringArgsWithAliases(
+        "NUMBUBBLETYPES", { "NUMBUBBLETYPES:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "Error reading number of Bubble types. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else {
+                sc.mechParams.numBubbleTypes = atoi(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            if(sc.mechParams.numBubbleTypes) {
+                res.push_back({ to_string(sc.mechParams.numBubbleTypes) });
+            }
+            return res;
+        }
+    );
 
-            vector<string> lineVector = split<string>(line);
+    mechParser.addComment("### MTOC");
+    mechParser.addStringArgsWithAliases(
+        "MTOCFFTYPE", { "MTOCFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
                      "There was an error parsing input file at MTOC FF type. Exiting."
@@ -679,399 +1458,153 @@ MechParams::MechanicsFFType SystemParser::readMechanicsFFType(std::istream& is) 
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.MTOCFFType = lineVector[1];
+                sc.mechParams.mechanicsFFType.MTOCFFType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.MTOCFFType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
+    );
+    mechParser.addStringArgsWithAliases(
+        "MTOCBENDINGK", { "MTOCBENDINGK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.MTOCBendingK.clear();
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.mechParams.MTOCBendingK.push_back(atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.MTOCBendingK) {
+                res.push_back(to_string(k));
+            }
+            return res;
+        }
+    );
+    mechParser.addEmptyLine();
 
-        else if (line.find("AFMFFTYPE") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
+    mechParser.addComment("### AFM bead");
+    mechParser.addStringArgsWithAliases(
+        "AFMFFTYPE", { "AFMFFTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at AFM FF type. Exiting."
-                << endl;
+                     "There was an error parsing input file at AFM FF type. Exiting."
+                     << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.AFMFFType = lineVector[1];
+                sc.mechParams.mechanicsFFType.AFMFFType = lineVector[1];
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(const auto& s = sc.mechParams.mechanicsFFType.AFMFFType; !s.empty()) {
+                res.push_back(s);
+            }
+            return res;
         }
-
-        else {}
-    }
-    return MType;
-}
-
-MechParams SystemParser::readMechParams(std::istream& is) {
-    MechParams MParams;
-
-    MParams.mechanicsFFType = readMechanicsFFType(is);
-    MParams.mechanicsAlgorithm = readMechanicsAlgorithm(is);
-
-    is.clear();
-    is.seekg(0);
-
-    string line;
-    while(getline(is, line)) {
-
-        if(line.find("#") != string::npos) { continue; }
-
-        //Filament stretching
-        if (line.find("FSTRETCHINGK") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
+    );
+    mechParser.addStringArgsWithAliases(
+        "AFMBENDINGK", { "AFMBENDINGK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.mechParams.AFMBendingK.clear();
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.FStretchingK.push_back(atof((lineVector[i].c_str())));
+                    sc.mechParams.AFMBendingK.push_back(atof((lineVector[i].c_str())));
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& k : sc.mechParams.AFMBendingK) {
+                res.push_back(to_string(k));
+            }
+            return res;
         }
+    );
+    mechParser.addEmptyLine();
 
-            //Filament bending
-        else if (line.find("FBENDINGK") != string::npos) {
+    mechParser.addComment("###### Protocols ######");
+    mechParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.FBendingK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        else if (line.find("FBENDINGTHETA") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.FBendingTheta.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-
-            //Filament twisting
-        else if (line.find("FTWISTINGK") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.FTwistingK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        else if (line.find("FTWISTINGPHI") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.FTwistingPhi.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-
-        //Linker stretching
-        if (line.find("LSTRETCHINGK") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.LStretchingK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-
-            //Linker bending
-        else if (line.find("LBENDINGK") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.LBendingK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        else if (line.find("LBENDINGTHETA") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.LBendingTheta.push_back(atof((lineVector[i].c_str())));
-            }
-
-        }
-
-            //Linker twisting
-        else if (line.find("LTWISTINGK") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.LTwistingK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        else if (line.find("LTWISTINGPHI") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.LTwistingPhi.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-
-        //Motor stretching
-        if (line.find("MSTRETCHINGK") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.MStretchingK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-
-            //Motor bending
-        else if (line.find("MBENDINGK") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.MBendingK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        else if (line.find("MBENDINGTHETA") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.MBendingTheta.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-
-            //Motor twisting
-        else if (line.find("MTWISTINGK") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.LTwistingK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        else if (line.find("MTWISTINGPHI") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.MTwistingK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-
-        //Branch stretching
-        if (line.find("BRSTRETCHINGK") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BrStretchingK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        else if (line.find("BRSTRETCHINGL") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BrStretchingL.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-
-
-            //Branch bending
-        else if (line.find("BRBENDINGK") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BrBendingK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        else if (line.find("BRBENDINGTHETA") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BrBendingTheta.push_back(atof((lineVector[i].c_str())));
-            }
-
-        }
-
-            //Branch dihedral
-        else if (line.find("BRDIHEDRALK") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BrDihedralK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-            //Branch position
-        else if (line.find("BRPOSITIONK") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BrPositionK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-
-            //Volume parameter
-        else if (line.find("VOLUMEK") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.VolumeK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-
-        else if (line.find("VOLUMECUTOFF") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                     "Error reading Volume cutoff. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.VolumeCutoff = atoi(lineVector[1].c_str());
-            }
-        }
-
-            //Bubble parameter
-        else if (line.find("BUBBLEINTERACTIONK") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BubbleK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        else if (line.find("BUBBLESCREENLENGTH") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BubbleScreenLength.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        else if (line.find("BUBBLECUTOFF") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                     "Error reading Bubble cutoff. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.BubbleCutoff = atoi(lineVector[1].c_str());
-            }
-        }
-        else if (line.find("BUBBLERADIUS") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BubbleRadius.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        else if (line.find("NUMBUBBLETYPES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                     "Error reading number of Bubble types. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.numBubbleTypes = atoi(lineVector[1].c_str());
-            }
-        }
-        else if (line.find("MTOCBENDINGK") != string::npos){
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                MParams.MTOCBendingK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        else if (line.find("AFMBENDINGK") != string::npos){
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.AFMBendingK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        
-        if (line.find("HESSIANTRACKING:") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
+    mechParser.addComment("# Hessian tracking");
+    mechParser.addStringArgsWithAliases(
+        "HESSIANTRACKING", { "HESSIANTRACKING:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() != 3) {
                 cout <<
-                "There was an error parsing input file at Chemistry algorithm. Exiting."
+                "There was an error parsing input file at Hessian tracking. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
-                MParams.hessTracking = true;
-                //MParams.hessDelta = atof(lineVector[1].c_str());
-                MParams.hessSkip = atof(lineVector[1].c_str());
+                sc.mechParams.hessTracking = true;
+                //sc.mechParams.hessDelta = atof(lineVector[1].c_str());
+                sc.mechParams.hessSkip = atof(lineVector[1].c_str());
                 int dense = atoi(lineVector[2].c_str());
                 if(dense == 0){
-                    MParams.denseEstimation = true;
+                    sc.mechParams.denseEstimation = true;
                 }else{
-                    MParams.denseEstimation = false;
+                    sc.mechParams.denseEstimation = false;
                 }
                 
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            if(sc.mechParams.hessTracking) {
+                res.push_back({
+                    to_string(sc.mechParams.hessSkip),
+                    to_string(sc.mechParams.denseEstimation ? 0 : 1)
+                });
+            }
+            return res;
         }
-        
-        if (line.find("SAMEFILBINDINGSKIP:") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
+    );
+    mechParser.addEmptyLine();
+
+    mechParser.addComment("# Same filament binding skip");
+    mechParser.addStringArgsWithAliases(
+        "SAMEFILBINDINGSKIP", { "SAMEFILBINDINGSKIP:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() != 2) {
                 cout <<
-                "There was an error parsing input file at Chemistry algorithm. Exiting."
+                "There was an error parsing input file at same filament binding skip. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.sameFilBindSkip = atoi(lineVector[1].c_str());
-                
+                sc.mechParams.sameFilBindSkip = atoi(lineVector[1].c_str());
             }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { sc.mechParams.sameFilBindSkip };
         }
-        
+    );
+    mechParser.addEmptyLine();
 
-        if (line.find("SPECIALPROTOCOL") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
+    mechParser.addComment("# Special protocols");
+    mechParser.addStringArgsWithAliases(
+        "SPECIALPROTOCOL", { "SPECIALPROTOCOL:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector[1] == "PINBOUNDARYFILAMENTS") {
                 if(lineVector.size() > 5) {
                     cout <<
-                         "There was an error parsing input file at Chemistry parameters. Exiting."
+                         "There was an error parsing input file at pinning boundary filaments. Exiting."
                          << endl;
                     exit(EXIT_FAILURE);
                 }
 
                 else{
-                    MParams.pinBoundaryFilaments = true;
-                    MParams.pinK = atof(lineVector[2].c_str());
-                    MParams.pinDistance = atof(lineVector[3].c_str());
-                    MParams.pinTime = atof(lineVector[4].c_str());
+                    sc.mechParams.pinBoundaryFilaments = true;
+                    sc.mechParams.pinK = atof(lineVector[2].c_str());
+                    sc.mechParams.pinDistance = atof(lineVector[3].c_str());
+                    sc.mechParams.pinTime = atof(lineVector[4].c_str());
                 }
 
             }
@@ -1080,93 +1613,27 @@ MechParams SystemParser::readMechParams(std::istream& is) {
                 //Qin
                 if(lineVector[1] == "PINLOWERBOUNDARYFILAMENTS") {
 
-                    MParams.pinLowerBoundaryFilaments = true;
-                    MParams.pinK = atof(lineVector[2].c_str());
-                    MParams.pinTime = atof(lineVector[3].c_str());
-                    MParams.pinFraction = atof(lineVector[4].c_str());
+                    sc.mechParams.pinLowerBoundaryFilaments = true;
+                    sc.mechParams.pinK = atof(lineVector[2].c_str());
+                    sc.mechParams.pinTime = atof(lineVector[3].c_str());
+                    sc.mechParams.pinFraction = atof(lineVector[4].c_str());
                 }
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            if(sc.mechParams.pinBoundaryFilaments) {
+                res.push_back({ "PINBOUNDARYFILAMENTS", to_string(pinK), to_string(pinDistance), to_string(pinTime) });
+            }
+            if(sc.mechParams.pinLowerBoundaryFilaments) {
+                res.push_back({ "PINLOWERBOUNDARYFILAMENTS", to_string(pinK), to_string(pinTime), to_string(pinFraction) });
+            }
+            return res;
         }
-        else {}
-    }
+    );
+    mechParser.addEmptyLine();
 
-    return MParams;
 }
-
-MechParams::MechanicsAlgorithm SystemParser::readMechanicsAlgorithm(std::istream& is) {
-
-    is.clear();
-    is.seekg(0);
-
-    MechParams::MechanicsAlgorithm MAlgorithm;
-
-    string line;
-    while(getline(is, line)) {
-
-        if(line.find("#") != string::npos) { continue; }
-
-        if (line.find("CONJUGATEGRADIENT") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                     "A conjugate gradient method must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MAlgorithm.ConjugateGradient = lineVector[1];
-            }
-        }
-        else if (line.find("MD") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout << "A Mechanics algorithm must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MAlgorithm.MD = lineVector[1];
-            }
-        }
-        else if (line.find("GRADIENTTOLERANCE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() == 2) {
-                MAlgorithm.gradientTolerance = atof(lineVector[1].c_str());
-            }
-        }
-        else if (line.find("MAXDISTANCE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() == 2) {
-                MAlgorithm.maxDistance = atof(lineVector[1].c_str());
-            }
-        }
-        else if (line.find("LAMBDAMAX") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() == 2) {
-                MAlgorithm.lambdaMax = atof(lineVector[1].c_str());
-            }
-        }
-        else if (line.find("LAMBDARUNNINGAVERAGEPROBABILITY") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() == 2) {
-                MAlgorithm.lambdarunningaverageprobability = atof(lineVector[1].c_str());
-            }
-        }
-        else if (line.find("LINESEARCHALGORITHM")!= string::npos){
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() == 2) {
-                MAlgorithm.linesearchalgorithm = (lineVector[1].c_str());
-            }
-        }
-    }
-    return MAlgorithm;
-}
-
-namespace medyan {
 
 void SystemParser::initBoundParser() {
     using namespace std;
