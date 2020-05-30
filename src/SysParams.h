@@ -682,9 +682,9 @@ struct SimulConfig {
     MetaParams     metaParams;
 
     // Parameters from the system input
+    GeoParams      geoParams;
     MechParams     mechParams;
     ChemParams     chemParams;
-    GeoParams      geoParams;
     BoundParams    boundParams;
     DyRateParams   dyRateParams;
     SpecialParams  specialParams;
@@ -704,7 +704,6 @@ struct SimulConfig {
 /// initialized by the SystemParser
 class SysParams {
 friend class Controller;
-friend class SystemParser;
 friend class ChemManager;
 friend class SubSystem;
 friend class Cylinder;

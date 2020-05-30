@@ -18,6 +18,18 @@
 
 #include "SysParams.h"
 
+namespace medyan {
+
+void SystemParser::initInputHeader() {
+    headerParser.addComment("##################################################");
+    headerParser.addComment("### Important notes:");
+    headerParser.addComment("### 1. Units in MEDYAN are nm, second, pN, and pN*nm");
+    headerParser.addComment("##################################################");
+    headerParser.addEmptyString();
+}
+
+} // namespace medyan
+
 ChemParams SystemParser::readChemParams(std::istream& is, const GeoParams& geoParams) {
 
     ChemParams CParams;
@@ -1758,135 +1770,236 @@ SpecialParams SystemParser::readSpecialParams(std::istream& is) {
     
 }
 
-GeoParams SystemParser::readGeoParams(std::istream& is) {
-    is.clear();
-    is.seekg(0);
+namespace medyan {
 
-    GeoParams GParams;
+void SystemParser::initGeoParser() {
+    using namespace std;
 
-    vector<floatingpoint> gridTemp;
-    vector<floatingpoint> compartmentTemp;
-    vector<floatingpoint> monomerSize = {};
-    vector<floatingpoint> cylinderSize = {};
-    short nDim = 0;
+    geoParser.addComment("##################################################");
+    geoParser.addComment("### Geometric parameters");
+    geoParser.addComment("##################################################");
+    geoParser.addEmptyString();
 
-    //find grid size lines
-    string line;
-    while(getline(is, line)) {
+    geoParser.addComment("### Set network sizes and shape");
+    geoParser.addComment("# Set the number of compartments in x, y and z directions");
+    geoParser.addComment("# Network size = compartment size (500nm by default) * (NX, NY, NZ)");
+    geoParser.addEmptyString();
 
-        if(line.find("#") != string::npos) { continue; }
-
-        if (line.find("NX") != string::npos
-            || line.find("NY") != string::npos
-            || line.find("NZ") != string::npos) {
-
-
-            vector<string> lineVector = split<string>(line);
+    geoParser.addStringArgsWithAliases(
+        "NX", { "NX:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout << "There was an error parsing input file at grid dimensions. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if(lineVector.size() == 2)
-                gridTemp.push_back(atof((lineVector[1].c_str())));
+                sc.geoParams.NX = stoi(lineVector[1]);
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector< string > res;
+            if(sc.geoParams.NX) res.push_back(to_string(sc.geoParams.NX));
+            return res;
         }
+    );
+    geoParser.addStringArgsWithAliases(
+        "NY", { "NY:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() > 2) {
+                cout << "There was an error parsing input file at grid dimensions. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if(lineVector.size() == 2)
+                sc.geoParams.NY = stoi(lineVector[1]);
+            else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector< string > res;
+            if(sc.geoParams.NY) res.push_back(to_string(sc.geoParams.NY));
+            return res;
+        }
+    );
+    geoParser.addStringArgsWithAliases(
+        "NZ", { "NZ:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() > 2) {
+                cout << "There was an error parsing input file at grid dimensions. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if(lineVector.size() == 2)
+                sc.geoParams.NZ = stoi(lineVector[1]);
+            else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector< string > res;
+            if(sc.geoParams.NZ) res.push_back(to_string(sc.geoParams.NZ));
+            return res;
+        }
+    );
+    geoParser.addEmptyString();
 
-        else if (line.find("COMPARTMENTSIZEX") != string::npos
-                 || line.find("COMPARTMENTSIZEY") != string::npos
-                 || line.find("COMPARTMENTSIZEZ") != string::npos) {
-            
-            
-            vector<string> lineVector = split<string>(line);
+    geoParser.addComment("### The compartment size");
+    geoParser.addComment("# Based on Kuramoto length, see Popov et al., PLoS Comp Biol, 2016 ");
+    geoParser.addComment("# Some chemical reaction rates are scaled based on compartment size");
+    geoParser.addEmptyString();
+
+    geoParser.addStringArgsWithAliases(
+        "COMPARTMENTSIZEX", { "COMPARTMENTSIZEX:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout << "There was an error parsing input file at compartment size. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 2)
-                compartmentTemp.push_back(atof((lineVector[1].c_str())));
+            else if(lineVector.size() == 2)
+                sc.geoParams.compartmentSizeX = stod(lineVector[1]);
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector< string > res;
+            if(sc.geoParams.compartmentSizeX) res.push_back(to_string(sc.geoParams.compartmentSizeX));
+            return res;
         }
+    );
+    geoParser.addStringArgsWithAliases(
+        "COMPARTMENTSIZEY", { "COMPARTMENTSIZEY:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() > 2) {
+                cout << "There was an error parsing input file at compartment size. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if(lineVector.size() == 2)
+                sc.geoParams.compartmentSizeY = stod(lineVector[1]);
+            else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector< string > res;
+            if(sc.geoParams.compartmentSizeY) res.push_back(to_string(sc.geoParams.compartmentSizeY));
+            return res;
+        }
+    );
+    geoParser.addStringArgsWithAliases(
+        "COMPARTMENTSIZEZ", { "COMPARTMENTSIZEZ:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() > 2) {
+                cout << "There was an error parsing input file at compartment size. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if(lineVector.size() == 2)
+                sc.geoParams.compartmentSizeZ = stod(lineVector[1]);
+            else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector< string > res;
+            if(sc.geoParams.compartmentSizeZ) res.push_back(to_string(sc.geoParams.compartmentSizeZ));
+            return res;
+        }
+    );
+    geoParser.addEmptyString();
 
-        else if(line.find("MONOMERSIZE") != string::npos) {
+    geoParser.addComment("### Cylinder setup");
+    geoParser.addComment("### Changes not recommended");
+    geoParser.addEmptyString();
 
-            vector<string> lineVector = split<string>(line);
-
+    geoParser.addStringArgsWithAliases(
+        "MONOMERSIZE", { "MONOMERSIZE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.geoParams.monomerSize.clear();
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    monomerSize.push_back(atof((lineVector[i].c_str())));
+                    sc.geoParams.monomerSize.push_back(atof((lineVector[i].c_str())));
             }
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector< string > res;
+            for(const auto& s : sc.geoParams.monomerSize)
+                res.push_back(to_string(s));
+            return res;
         }
-
-        else if(line.find("CYLINDERSIZE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    geoParser.addStringArgsWithAliases(
+        "CYLINDERSIZE", { "CYLINDERSIZE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.geoParams.cylinderSize.clear();
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    cylinderSize.push_back(atof((lineVector[i].c_str())));
+                    sc.geoParams.cylinderSize.push_back(atof((lineVector[i].c_str())));
             }
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector< string > res;
+            for(const auto& s : sc.geoParams.cylinderSize)
+                res.push_back(to_string(s));
+            return res;
         }
+    );
+    geoParser.addEmptyString();
 
-        else if(line.find("NDIM") != string::npos) {
+    geoParser.addComment("### Simulation dimension");
+    geoParser.addComment("### DO NOT CHANGE");
+    geoParser.addEmptyString();
 
-            vector<string> lineVector = split<string>(line);
+    geoParser.addStringArgsWithAliases(
+        "NDIM", { "NDIM:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  2) {
                 cout << "Number of dimensions needs to be specified. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 2) {
-                nDim = short(atoi(lineVector[1].c_str()));
+            else {
+                sc.geoParams.nDim = short(atoi(lineVector[1].c_str()));
             }
-            else {}
+        },
+        [] (const SimulConfig& sc) {
+            return vector< string > { to_string(sc.geoParams.nDim) };
         }
-        else {}
-    }
-    //set geometry parameters and return
-    GParams.nDim = nDim;
-    GParams.cylinderSize = cylinderSize;
-    GParams.monomerSize = monomerSize;
+    );
+    geoParser.addEmptyString();
+}
 
-    if(GParams.cylinderSize.size() != GParams.monomerSize.size()) {
+void SystemParser::geoPostProcessing(SimulConfig& sc) const {
+    using namespace std;
+
+    if(sc.geoParams.cylinderSize.size() != sc.geoParams.monomerSize.size()) {
 
         cout << "Must specify an equivalent number of cylinder and monomer sizes. Exiting."
              << endl;
         exit(EXIT_FAILURE);
     }
 
-    for(int i = 0; i < GParams.cylinderSize.size(); i++) {
+    for(int i = 0; i < sc.geoParams.cylinderSize.size(); i++) {
 
 #ifdef CHEMISTRY
-        if(cylinderSize[i] / monomerSize[i] < GParams.minCylinderNumMon) {
+        if(sc.geoParams.cylinderSize[i] / sc.geoParams.monomerSize[i] < sc.geoParams.minCylinderNumMon) {
             cout <<
                  "With chemistry, cylinder size specified is too short. Exiting."
                  << endl;
             exit(EXIT_FAILURE);
         }
 #endif
-        GParams.cylinderNumMon.push_back(int(cylinderSize[i] / monomerSize[i]));
+        sc.geoParams.cylinderNumMon.push_back(int(sc.geoParams.cylinderSize[i] / sc.geoParams.monomerSize[i]));
 
-        GParams.minCylinderSize.push_back(
-                GParams.minCylinderNumMon * GParams.monomerSize[i]);
+        sc.geoParams.minCylinderSize.push_back(
+                sc.geoParams.minCylinderNumMon * sc.geoParams.monomerSize[i]);
 
     }
 
-    if(gridTemp.size() >= 1) GParams.NX = gridTemp[0];
-    if(gridTemp.size() >= 2) GParams.NY = gridTemp[1];
-    if(gridTemp.size() >= 3) GParams.NZ = gridTemp[2];
-
-    if(compartmentTemp.size() >= 1) GParams.compartmentSizeX = compartmentTemp[0];
-    if(compartmentTemp.size() >= 2) GParams.compartmentSizeY = compartmentTemp[1];
-    if(compartmentTemp.size() >= 3) GParams.compartmentSizeZ = compartmentTemp[2];
-
     //find max compartment side
-    GParams.largestCompartmentSide = max(GParams.compartmentSizeX,
-                                     max(GParams.compartmentSizeY, GParams.compartmentSizeZ));
+    sc.geoParams.largestCompartmentSide = max({
+        sc.geoParams.compartmentSizeX,
+        sc.geoParams.compartmentSizeY,
+        sc.geoParams.compartmentSizeZ
+    });
     //find max Cylinder size
-    GParams.largestCylinderSize = 0;
-    for(auto l:GParams.cylinderSize)
-        GParams.largestCylinderSize = max(GParams.largestCylinderSize, l);
-    return GParams;
+    sc.geoParams.largestCylinderSize = 0;
+    for(auto l : sc.geoParams.cylinderSize)
+        sc.geoParams.largestCylinderSize = max(sc.geoParams.largestCylinderSize, l);
+
 }
+
+} // namespace medyan
+
 
 FilamentSetup SystemParser::readFilamentSetup(std::istream& is) {
 

@@ -44,17 +44,21 @@ namespace medyan {
 // Read from input
 //---------------------------------
 
-// Read system configuration from input
-inline void readSystemConfig(SimulConfig& sc, std::istream& is) {
-    sc.geoParams      = SystemParser::readGeoParams(is);
-    sc.boundParams    = SystemParser::readBoundParams(is);
-    sc.mechParams     = SystemParser::readMechParams(is);
-    sc.chemParams     = SystemParser::readChemParams(is, sc.geoParams);
-    sc.dyRateParams   = SystemParser::readDyRateParams(is);
-    sc.bubbleSetup    = SystemParser::readBubbleSetup(is);
-    sc.filamentSetup  = SystemParser::readFilamentSetup(is);
-    sc.specialParams  = SystemParser::readSpecialParams(is);
+inline std::string readFileToString(std::filesystem::path file) {
+    using namespace std;
+
+    ifstream ifs(file);
+    if(!ifs.is_open()) {
+        LOG(ERROR) << "There was an error reading file " << file;
+        throw std::runtime_error("Cannot open input file.");
+    }
+    LOG(INFO) << "Loading file " << file;
+
+    stringstream ss;
+    ss << ifs.rdbuf(); // Read the file
+    return ss.str();
 }
+
 
 // Read chemistry input
 inline void readChemistryConfig(SimulConfig& sc, std::istream& is) {
@@ -97,8 +101,8 @@ inline SimulConfig readSimulConfig(
 
     // Read system input
     {
-        ReadFile file(systemInputFile);
-        readSystemConfig(conf, file.ifs);
+        SystemParser sp;
+        sp.parseSystemInput(conf, readFileToString(systemInputFile));
     }
 
     // Read chemistry input

@@ -81,6 +81,10 @@ struct ConfigFileToken {
     static auto makeDefault(Type type) {
         return ConfigFileToken { type, defaultContent(type) };
     }
+
+    static auto makeString(std::string s) {
+        return ConfigFileToken { Type::string, std::move(s) };
+    }
 };
 
 struct SExpr {
@@ -123,6 +127,18 @@ inline SExpr car(const SExpr& se) {
 }
 inline SExpr cdr(const SExpr& se) {
     return std::visit(SExpr::Cdr{}, se.data);
+}
+inline std::vector< std::string > getStringVector(const SExpr::ListType& sel) {
+    // Precondition:
+    //   - Every element in sel is of string type
+    using namespace std;
+
+    vector< string > res;
+    res.reserve(sel.size());
+    for(const auto& eachSE : sel) {
+        res.push_back(get< SExpr::StringType >(eachSE.data));
+    }
+    return res;
 }
 
 
@@ -167,7 +183,7 @@ inline std::list< ConfigFileToken > tokenizeConfigFile(const std::string& str) {
 
             // Now j points to either end of string, or the next double quotation
             if(j < len) {
-                tokens.push_back({ConfigFileToken::Type::string, str.substr(i+1, j-i-1)});
+                tokens.push_back(ConfigFileToken::makeString(str.substr(i+1, j-i-1)));
                 i = j;
             } else {
                 LOG(ERROR) << "Quotation marks do not match";
@@ -179,7 +195,7 @@ inline std::list< ConfigFileToken > tokenizeConfigFile(const std::string& str) {
             while(j < len && !isTokenSpecialChar(str[j])) ++j;
 
             // Now j points to either the end of string, or the next special char
-            tokens.push_back({ConfigFileToken::Type::string, str.substr(i, j-i)});
+            tokens.push_back(ConfigFileToken::makeString(str.substr(i, j-i)));
             i = j - 1;
         }
     }
@@ -348,7 +364,7 @@ inline list< ConfigFileToken > buildConfigTokens(const SExpr& se) {
     struct TokenBuildVisitor {
         TokenList& theList;
         void operator()(const SExpr::StringType& str) const {
-            theList.push_back({ ConfigFileToken::Type::string, str });
+            theList.push_back(ConfigFileToken::makeString( str ));
         }
         void operator()(const SExpr::ListType& seList) const {
             theList.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisLeft));
@@ -379,6 +395,7 @@ struct KeyValueParser {
         ignore, warn, error
     };
     using ParserFunc = std::function< void(Params&, const SExpr::ListType&) >;
+    using TokenBuildFunc = std::function< std::list< ConfigFileToken >(const Params&) >;
 
     // Two data structures are required for the parser to work.
     //   - A dictionary to match keywords to the appropriate function for
@@ -386,7 +403,7 @@ struct KeyValueParser {
     //   - A list which instructs how an input file should be generated from
     //     system params
     std::map< std::string, ParserFunc > dict;
-    std::vector< std::string > tokenBuildList;
+    std::vector< TokenBuildFunc > tokenBuildList;
 
     void parse(
         Params&       params,
@@ -427,12 +444,138 @@ struct KeyValueParser {
         }
     }
 
-    auto buildTokens() const {
+    auto buildTokens(const Params& params) const {
         std::list< ConfigFileToken > res;
 
+        for(const auto& eachTokenBuild : tokenBuildList) {
+            res.splice(res.end(), eachTokenBuild(params));
 
+            // line break is automatically added for each item
+            res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak));
+        }
         return res;
     }
+
+    // Handy functions
+    //---------------------------------
+    template<
+        typename FuncParse, // void(Params&, const vector<string>&), including key
+        typename FuncBuild  // vector<string>(const Param&), excluding key
+    >
+    void addStringArgs(
+        std::string name,
+        FuncParse&& funcParse,
+        FuncBuild&& funcBuild
+    ) {
+        using namespace std;
+
+        return addStringArgsWithAliases(
+            move(name),
+            {},
+            forward<FuncParse>(funcParse),
+            forward<FuncBuild>(funcBuild)
+        );
+    }
+
+    // With alias
+    template<
+        typename FuncParse, // void(Params&, const vector<string>&), including key
+        typename FuncBuild  // vector<string>(const Param&), excluding key
+    >
+    void addStringArgsWithAliases(
+        std::string name,
+        std::vector< std::string > aliases,
+        FuncParse&& funcParse,
+        FuncBuild&& funcBuild
+    ) {
+        using namespace std;
+
+        const auto insertResult = dict.insert({
+            name,
+            [funcParse] (Params& params, const SExpr::ListType& keyAndArgs) {
+                funcParse(params, getStringVector(keyAndArgs));
+            }
+        });
+        // Insert for aliases
+        for(auto& alias : aliases) {
+            dict.insert({ move(alias), insertResult->first->second });
+        }
+
+        tokenBuildList.push_back(
+            [funcBuild] (const Params& params) {
+                list< ConfigFileToken > res {
+                    ConfigFileToken::makeString(name)
+                };
+                vector<string> tempResult = funcBuild(params);
+                for(auto& s : tempResult) {
+                    res.push_back(ConfigFileToken::makeString(move(s)));
+                }
+                return res;
+            }
+        );
+    }
+
+    void addComment(std::string comment) {
+        // The comment must start with valid comment specifiers such as ';'
+        tokenBuildList.push_back(
+            [comment{ std::move(comment) }] (const Params&) {
+                return std::list< ConfigFileToken > {
+                    ConfigFileToken {
+                        ConfigFileToken::Type::comment,
+                        comment
+                    }
+                };
+            }
+        );
+    }
+    void addEmptyString() {
+        tokenBuildList.push_back(
+            [] (const Params&) {
+                return std::list< ConfigFileToken > {
+                    ConfigFileToken::makeString("");
+                };
+            }
+        );
+    }
+
+};
+
+struct SystemParser {
+    KeyValueParser< SimulConfig >
+        headerParser,
+        geoParser;
+
+    SystemParser() {
+        initInputHeader();
+        initGeoParser();
+        // TODO
+    }
+
+    parseSystemInput(SimulConfig& conf, std::string input) const {
+        const auto se =
+            lexConfigTokensList(
+                tokenizeConfigFile(
+                    std::move(input)));
+
+        geoParser.parse(conf, se);
+        geoPostProcessing();
+
+    }
+    void outputSystemInput(std::ostream& os, const SimulConfig& conf) const {
+        std::list< ConfigFileToken > tokens;
+        tokens.splice(tokens.end(), headerParser.buildTokens(conf));
+        tokens.splice(tokens.end(), geoParser.buildTokens(conf));
+
+        outputConfigTokens(os, tokens);
+    }
+
+    // Adding parsing
+    void initInputHeader();
+    void initGeoParser();
+
+    // Post processing and validation
+    void geoPostProcessing(SimulConfig&) const;
+
 };
 
 } // namespace medyan
@@ -467,7 +610,6 @@ struct SystemParser {
     /// @note - does not check for correctness and consistency here.
     static MechParams    readMechParams(std::istream&);
     static ChemParams    readChemParams(std::istream&, const GeoParams&);
-    static GeoParams     readGeoParams(std::istream&);
     static BoundParams   readBoundParams(std::istream&);
     static DyRateParams  readDyRateParams(std::istream&);
     static SpecialParams readSpecialParams(std::istream&);
