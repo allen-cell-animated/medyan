@@ -449,9 +449,7 @@ struct KeyValueParser {
         std::list< ConfigFileToken > res;
 
         for(const auto& eachTokenBuild : tokenBuildList) {
-            res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisLeft));
             res.splice(res.end(), eachTokenBuild(params));
-            res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisRight));
         }
         return res;
     }
@@ -520,6 +518,7 @@ struct KeyValueParser {
                 if constexpr(
                     is_same_v< invoke_result_t< FuncBuild, const Params& >, vector<string> >
                 ) {
+                    res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisLeft));
                     res.push_back(ConfigFileToken::makeString(name));
 
                     vector<string> tempResult = funcBuild(params);
@@ -527,17 +526,20 @@ struct KeyValueParser {
                         res.push_back(ConfigFileToken::makeString(move(s)));
                     }
 
+                    res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisRight));
                     res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak));
 
                 } else {
                     vector<vector<string>> tempResult = funcBuild(params);
                     for(auto& eachVS : tempResult) {
+                        res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisLeft));
                         res.push_back(ConfigFileToken::makeString(name));
 
                         for(auto& s : eachVS) {
                             res.push_back(ConfigFileToken::makeString(move(s)));
                         }
 
+                        res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisRight));
                         res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak));
                     }
                 }

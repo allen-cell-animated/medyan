@@ -511,7 +511,7 @@ void SystemParser::initMechParser() {
         [] (const SimulConfig& sc) {
             vector<string> res;
             if(const auto& x = sc.mechParams.mechanicsAlgorithm.gradientTolerance; x) {
-                res.push_back(x);
+                res.push_back(to_string(x));
             }
             return res;
         }
@@ -526,7 +526,7 @@ void SystemParser::initMechParser() {
         [] (const SimulConfig& sc) {
             vector<string> res;
             if(const auto& x = sc.mechParams.mechanicsAlgorithm.maxDistance; x) {
-                res.push_back(x);
+                res.push_back(to_string(x));
             }
             return res;
         }
@@ -541,7 +541,7 @@ void SystemParser::initMechParser() {
         [] (const SimulConfig& sc) {
             vector<string> res;
             if(const auto& x = sc.mechParams.mechanicsAlgorithm.lambdaMax; x) {
-                res.push_back(x);
+                res.push_back(to_string(x));
             }
             return res;
         }
@@ -556,7 +556,7 @@ void SystemParser::initMechParser() {
         [] (const SimulConfig& sc) {
             vector<string> res;
             if(const auto& x = sc.mechParams.mechanicsAlgorithm.lambdarunningaverageprobability; x) {
-                res.push_back(x);
+                res.push_back(to_string(x));
             }
             return res;
         }
@@ -1446,6 +1446,7 @@ void SystemParser::initMechParser() {
             return res;
         }
     );
+    mechParser.addEmptyLine();
 
     mechParser.addComment("### MTOC");
     mechParser.addStringArgsWithAliases(
@@ -1583,7 +1584,7 @@ void SystemParser::initMechParser() {
             }
         },
         [] (const SimulConfig& sc) {
-            return vector<string> { sc.mechParams.sameFilBindSkip };
+            return vector<string> { to_string(sc.mechParams.sameFilBindSkip) };
         }
     );
     mechParser.addEmptyLine();
@@ -1623,10 +1624,20 @@ void SystemParser::initMechParser() {
         [] (const SimulConfig& sc) {
             vector<vector<string>> res;
             if(sc.mechParams.pinBoundaryFilaments) {
-                res.push_back({ "PINBOUNDARYFILAMENTS", to_string(pinK), to_string(pinDistance), to_string(pinTime) });
+                res.push_back({
+                    "PINBOUNDARYFILAMENTS",
+                    to_string(sc.mechParams.pinK),
+                    to_string(sc.mechParams.pinDistance),
+                    to_string(sc.mechParams.pinTime)
+                });
             }
             if(sc.mechParams.pinLowerBoundaryFilaments) {
-                res.push_back({ "PINLOWERBOUNDARYFILAMENTS", to_string(pinK), to_string(pinTime), to_string(pinFraction) });
+                res.push_back({
+                    "PINLOWERBOUNDARYFILAMENTS",
+                    to_string(sc.mechParams.pinK),
+                    to_string(sc.mechParams.pinTime),
+                    to_string(sc.mechParams.pinFraction)
+                });
             }
             return res;
         }
