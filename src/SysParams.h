@@ -232,7 +232,7 @@ struct ChemParams {
     /// Struct to hold chem setup information
     struct ChemistrySetup {
         
-        std::filesystem::path inputFile;
+        std::filesystem::path inputFile; // relative path only
     };
 
     ChemistryAlgorithm chemistryAlgorithm;

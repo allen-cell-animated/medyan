@@ -28,55 +28,220 @@ void SystemParser::initInputHeader() {
     headerParser.addEmptyLine();
 }
 
-} // namespace medyan
+void SystemParser::initChemParser() {
+    using namespace std;
 
-ChemParams SystemParser::readChemParams(std::istream& is, const GeoParams& geoParams) {
+    chemParser.addComment("##################################################");
+    chemParser.addComment("### Chemistry parameters");
+    chemParser.addComment("##################################################");
+    chemParser.addEmptyLine();
 
-    ChemParams CParams;
+    chemParser.addComment("###### Chemistry algorithm ######");
+    chemParser.addEmptyLine();
 
-    CParams.chemistryAlgorithm = readChemistryAlgorithm(is);
-    CParams.chemistrySetup = readChemistrySetup(is);
+    chemParser.addStringArgsWithAliases(
+        "CALGORITHM", { "CALGORITHM:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.chemParams.chemistryAlgorithm.algorithm = lineVector[1];
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { sc.chemParams.chemistryAlgorithm.algorithm };
+        }
+    );
+    chemParser.addStringArgsWithAliases(
+        "RUNTIME", { "RUNTIME:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() > 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.chemParams.chemistryAlgorithm.runTime = atof(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.runTime) };
+        }
+    );
+    chemParser.addStringArgsWithAliases(
+        "RUNSTEPS", { "RUNSTEPS:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() > 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.chemParams.chemistryAlgorithm.runSteps = atoi(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.runSteps) };
+        }
+    );
+    chemParser.addStringArgsWithAliases(
+        "SNAPSHOTTIME", { "SNAPSHOTTIME:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() > 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.chemParams.chemistryAlgorithm.snapshotTime = atof(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.snapshotTime) };
+        }
+    );
+    chemParser.addStringArgsWithAliases(
+        "DATADUMPTIME", { "DATADUMPTIME:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() > 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.chemParams.chemistryAlgorithm.datadumpTime = atof(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.datadumpTime) };
+        }
+    );
+    chemParser.addStringArgsWithAliases(
+        "SNAPSHOTSTEPS", { "SNAPSHOTSTEPS:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() > 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.chemParams.chemistryAlgorithm.snapshotSteps = atoi(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.snapshotSteps) };
+        }
+    );
+    chemParser.addStringArgsWithAliases(
+        "MINIMIZATIONTIME", { "MINIMIZATIONTIME:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.chemParams.chemistryAlgorithm.minimizationTime = atof(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.minimizationTime) };
+        }
+    );
+    chemParser.addStringArgsWithAliases(
+        "MINIMIZATIONSTEPS", { "MINIMIZATIONSTEPS:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.chemParams.chemistryAlgorithm.minimizationSteps = atoi(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.minimizationSteps) };
+        }
+    );
+    chemParser.addStringArgsWithAliases(
+        "NEIGHBORLISTTIME", { "NEIGHBORLISTTIME:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.chemParams.chemistryAlgorithm.neighborListTime = atof(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.neighborListTime) };
+        }
+    );
+    chemParser.addStringArgsWithAliases(
+        "NEIGHBORLISTSTEPS", { "NEIGHBORLISTSTEPS:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.chemParams.chemistryAlgorithm.neighborListSteps = atoi(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.neighborListSteps) };
+        }
+    );
+    chemParser.addEmptyLine();
 
-    is.clear();
-    is.seekg(0);
+    chemParser.addComment("###### Chemistry setup ######");
+    chemParser.addEmptyLine();
+    chemParser.addStringArgsWithAliases(
+        "CHEMISTRYFILE", { "CHEMISTRYFILE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() > 2) {
+                cout << "Error reading chemistry input file. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
 
-    string line;
-    while(getline(is, line)) {
+            else if (lineVector.size() == 2)
+                sc.chemParams.chemistrySetup.inputFile = lineVector[1];
 
-        if(line.find("#") != string::npos) { continue; }
+            else if(lineVector.size() < 2) {
+                cout << "Must specify a chemistry input file. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { string{sc.chemParams.chemistrySetup.inputFile} };
+        }
+    );
+    chemParser.addEmptyLine();
 
-    //        if (line.find("NUMBULKSPECIES") != string::npos) {
-    //
-    //            vector<string> lineVector = split<string>(line);
-    //            if(lineVector.size() > 2) {
-    //                cout <<
-    //                     "There was an error parsing input file at Chemistry parameters. Exiting."
-    //                     << endl;
-    //                exit(EXIT_FAILURE);
-    //            }
-    //            else if (lineVector.size() == 2) {
-    //                CParams.numBulkSpecies = atof(lineVector[1].c_str());
-    //            }
-    //        }
-    //
-    //        if (line.find("NUMDIFFUSINGSPECIES") != string::npos) {
-    //
-    //            vector<string> lineVector = split<string>(line);
-    //            if(lineVector.size() > 2) {
-    //                cout <<
-    //                     "There was an error parsing input file at Chemistry parameters. Exiting."
-    //                     << endl;
-    //                exit(EXIT_FAILURE);
-    //            }
-    //            else if (lineVector.size() == 2) {
-    //                CParams.numDiffusingSpecies = atof(lineVector[1].c_str());
-    //            }
-    //        }
+    chemParser.addComment("###### Numbers and protocols ######");
+    chemParser.addEmptyLine();
 
-        if (line.find("NUMFILAMENTTYPES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
+    chemParser.addComment("### Numbers");
+    chemParser.addStringArgsWithAliases(
+        "NUMFILAMENTTYPES", { "NUMFILAMENTTYPES:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout <<
                      "There was an error parsing input file at Chemistry parameters. Exiting."
@@ -84,50 +249,100 @@ ChemParams SystemParser::readChemParams(std::istream& is, const GeoParams& geoPa
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CParams.numFilaments = atoi(lineVector[1].c_str());
+                sc.chemParams.numFilaments = atoi(lineVector[1].c_str());
             }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.chemParams.numFilaments) };
         }
-
-        if (line.find("NUMBINDINGSITES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
+    );
+    chemParser.addStringArgsWithAliases(
+        "NUMBINDINGSITES", { "NUMBINDINGSITES:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numBindingSites.push_back(atoi(lineVector[i].c_str()));
+                    sc.chemParams.numBindingSites.push_back(atoi(lineVector[i].c_str()));
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(auto x : sc.chemParams.numBindingSites) {
+                res.push_back(to_string(x));
+            }
+            return res;
         }
-        if (line.find("NUMMOTORHEADSMIN") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
+    );
+    chemParser.addStringArgsWithAliases(
+        "NUMMOTORHEADSMIN", { "NUMMOTORHEADSMIN:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    CParams.motorNumHeadsMin.push_back(atoi(lineVector[i].c_str()));
+                    sc.chemParams.motorNumHeadsMin.push_back(atoi(lineVector[i].c_str()));
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(auto x : sc.chemParams.motorNumHeadsMin) {
+                res.push_back(to_string(x));
+            }
+            return res;
         }
-        if (line.find("NUMMOTORHEADSMAX") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
+    );
+    chemParser.addStringArgsWithAliases(
+        "NUMMOTORHEADSMAX", { "NUMMOTORHEADSMAX:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    CParams.motorNumHeadsMax.push_back(atoi(lineVector[i].c_str()));
+                    sc.chemParams.motorNumHeadsMax.push_back(atoi(lineVector[i].c_str()));
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(auto x : sc.chemParams.motorNumHeadsMax) {
+                res.push_back(to_string(x));
+            }
+            return res;
         }
-        if (line.find("MOTORSTEPSIZE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
+    );
+    chemParser.addStringArgsWithAliases(
+        "MOTORSTEPSIZE", { "MOTORSTEPSIZE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    CParams.motorStepSize.push_back(atof(lineVector[i].c_str()));
+                    sc.chemParams.motorStepSize.push_back(atof(lineVector[i].c_str()));
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(auto x : sc.chemParams.motorStepSize) {
+                res.push_back(to_string(x));
+            }
+            return res;
         }
+    );
+    chemParser.addStringArgsWithAliases(
+        "LINKERBINDINGSKIP", { "LINKERBINDINGSKIP:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.chemParams.linkerbindingskip = atoi(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.chemParams.linkerbindingskip) };
+        }
+    );
+    chemParser.addEmptyLine();
 
-        if (line.find("SPECIALPROTOCOL") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    chemParser.addComment("### Special protocols");
+    chemParser.addStringArgsWithAliases(
+        "SPECIALPROTOCOL", { "SPECIALPROTOCOL:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             //the vector size can be 5 for PINLOWERBOUNDARYFILAMENTS
             if(lineVector.size() > 7) {
                 cout <<
@@ -136,43 +351,72 @@ ChemParams SystemParser::readChemParams(std::istream& is, const GeoParams& geoPa
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
-
                 if(lineVector[1] == "MAKELINKERSSTATIC") {
-                    CParams.makeLinkersStatic = true;
-                    CParams.makeLinkersStaticTime = atof(lineVector[2].c_str());
+                    sc.chemParams.makeLinkersStatic = true;
+                    sc.chemParams.makeLinkersStaticTime = atof(lineVector[2].c_str());
                 }
                 if(lineVector[1] == "MAKEFILAMENTSSTATIC") {
-                    CParams.makeFilamentsStatic = true;
-                    CParams.makeFilamentsStaticTime = atof(lineVector[2].c_str());
+                    sc.chemParams.makeFilamentsStatic = true;
+                    sc.chemParams.makeFilamentsStaticTime = atof(lineVector[2].c_str());
                 }
                 
             }
             else if (lineVector.size() == 4) {
                 if(lineVector[1]  == "RATEDEPEND") {
-                    CParams.makeRateDepend = true;
-                    CParams.makeRateDependTime = atof(lineVector[2].c_str());
-                    CParams.makeRateDependForce = atof(lineVector[3].c_str());
+                    sc.chemParams.makeRateDepend = true;
+                    sc.chemParams.makeRateDependTime = atof(lineVector[2].c_str());
+                    sc.chemParams.makeRateDependForce = atof(lineVector[3].c_str());
                 }
             }
             else if (lineVector.size() == 7) {
                 if(lineVector[1]  == "AFM") {
-                    CParams.makeAFM = true;
+                    sc.chemParams.makeAFM = true;
                     //displacement of each pull
-                    CParams.AFMStep1 = atof(lineVector[2].c_str());
-                    CParams.AFMStep2 = atof(lineVector[3].c_str());
+                    sc.chemParams.AFMStep1 = atof(lineVector[2].c_str());
+                    sc.chemParams.AFMStep2 = atof(lineVector[3].c_str());
                     //change dispalcement from 1 to 2
-                    CParams.IterChange = atof(lineVector[4].c_str());
+                    sc.chemParams.IterChange = atof(lineVector[4].c_str());
                     //total step of each AFM pull
-                    CParams.StepTotal = atof(lineVector[5].c_str());
+                    sc.chemParams.StepTotal = atof(lineVector[5].c_str());
                     //time between each pull
-                    CParams.StepTime = atof(lineVector[6].c_str());
+                    sc.chemParams.StepTime = atof(lineVector[6].c_str());
                 }
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            if(sc.chemParams.makeLinkersStatic) {
+                res.push_back({ "MAKELINKERSSTATIC", to_string(sc.chemParams.makeLinkersStaticTime) });
+            }
+            if(sc.chemParams.makeFilamentsStatic) {
+                res.push_back({ "MAKEFILAMENTSSTATIC", to_string(sc.chemParams.makeFilamentsStaticTime) });
+            }
+            if(sc.chemParams.makeRateDepend) {
+                res.push_back({
+                    "RATEDEPEND",
+                    to_string(sc.chemParams.makeRateDependTime),
+                    to_string(sc.chemParams.makeRateDependForce)
+                });
+            }
+            if(sc.chemParams.makeAFM) {
+                res.push_back({
+                    "AFM",
+                    to_string(sc.chemParams.AFMStep1),
+                    to_string(sc.chemParams.AFMStep2),
+                    to_string(sc.chemParams.IterChange),
+                    to_string(sc.chemParams.StepTotal),
+                    to_string(sc.chemParams.StepTime)
+                });
+            }
+            return res;
         }
+    );
+    chemParser.addEmptyLine();
 
-        if (line.find("DISSIPATIONTRACKING:") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    chemParser.addComment("### Dissipation tracking");
+    chemParser.addStringArgsWithAliases(
+        "DISSIPATIONTRACKING", { "DISSIPATIONTRACKING:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() != 2) {
                 cout <<
                 "There was an error parsing input file at Chemistry algorithm. Exiting."
@@ -180,20 +424,16 @@ ChemParams SystemParser::readChemParams(std::istream& is, const GeoParams& geoPa
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-
-                const char * testStr1 = "ON";
-                const char * testStr2 = lineVector[1].c_str();
-                if(strcmp(testStr1, testStr2) == 0){
-                    CParams.dissTracking = true;
-
-                }
-
+                sc.chemParams.dissTracking = (lineVector[1] == "ON");
             }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { sc.chemParams.dissTracking ? "ON" : "OFF" };
         }
-
-        if (line.find("EVENTTRACKING:") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    chemParser.addStringArgsWithAliases(
+        "EVENTTRACKING", { "EVENTTRACKING:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() != 2) {
                 cout <<
                 "There was an error parsing input file at Chemistry algorithm. Exiting."
@@ -201,255 +441,56 @@ ChemParams SystemParser::readChemParams(std::istream& is, const GeoParams& geoPa
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-
-                const char * testStr1 = "ON";
-                const char * testStr2 = lineVector[1].c_str();
-                if(strcmp(testStr1, testStr2) == 0){
-                    CParams.eventTracking = true;
-
-                }
-
+                sc.chemParams.eventTracking = (lineVector[1] == "ON");
             }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { sc.chemParams.eventTracking ? "ON" : "OFF" };
         }
+    );
+    chemParser.addEmptyLine();
 
-        if (line.find("LINKERBINDINGSKIP:") != string::npos) {
+}
 
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "There was an error parsing input file at Chemistry algorithm. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CParams.linkerbindingskip = atoi(lineVector[1].c_str());
-
-            }
-        }
-
-    }
+void SystemParser::chemPostProcessing(SimulConfig& sc) const {
+    sc.chemParams.bindingSites.clear();
 
     //Figure out the binding sites
-    for(int i = 0; i < CParams.numBindingSites.size(); i++) {
+    for(int i = 0; i < sc.chemParams.numBindingSites.size(); i++) {
 
-        CParams.maxbindingsitespercylinder = max(CParams.maxbindingsitespercylinder,
-                                                 CParams.numBindingSites[i]);
+        sc.chemParams.maxbindingsitespercylinder = max(sc.chemParams.maxbindingsitespercylinder,
+                                                 sc.chemParams.numBindingSites[i]);
 
         vector<short> tempBindingSites;
 
-        int deltaBinding = geoParams.cylinderNumMon[i] /
-                           CParams.numBindingSites[i];
+        int deltaBinding = sc.geoParams.cylinderNumMon[i] /
+                           sc.chemParams.numBindingSites[i];
 
         int firstBindingSite = deltaBinding / 2 + 1;
         int bindingCount = firstBindingSite;
 
         //add all other binding sites
-        while(bindingCount < geoParams.cylinderNumMon[i]) {
+        while(bindingCount < sc.geoParams.cylinderNumMon[i]) {
             tempBindingSites.push_back(bindingCount);
             bindingCount += deltaBinding;
         }
 
 
-        //push to CParams
-        CParams.bindingSites.push_back(tempBindingSites);
+        //push to sc.chemParams
+        sc.chemParams.bindingSites.push_back(tempBindingSites);
     }
+
     //Find the maximum allowed Cindex and shift operator
-    auto np2 = mathfunc::nextPowerOf2(uint32_t(CParams
+    auto np2 = mathfunc::nextPowerOf2(uint32_t(sc.chemParams
             .maxbindingsitespercylinder));
 
-    if(np2 == CParams.maxbindingsitespercylinder)
+    if(np2 == sc.chemParams.maxbindingsitespercylinder)
         np2 *= 2;
 
-	CParams.shiftbybits = log2(np2);
-    CParams.maxStableIndex = numeric_limits<uint32_t>::max()/CParams.shiftbybits -1;
-//	cout<<"shiftbybits "<<CParams.shiftbybits<<" maxbindingsitespercylinder "<<CParams
-//	.maxbindingsitespercylinder<<endl;
-	//set system parameters
-    return CParams;
+	sc.chemParams.shiftbybits = log2(np2);
+    sc.chemParams.maxStableIndex = numeric_limits<uint32_t>::max()/sc.chemParams.shiftbybits -1;
+
 }
-
-ChemParams::ChemistryAlgorithm SystemParser::readChemistryAlgorithm(std::istream& is) {
-
-    is.clear();
-    is.seekg(0);
-
-    ChemParams::ChemistryAlgorithm CAlgorithm;
-
-    string line;
-    while(getline(is, line)) {
-
-        if(line.find("#") != string::npos) { continue; }
-
-
-        if (line.find("CALGORITHM") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CAlgorithm.algorithm = lineVector[1];
-            }
-        }
-
-        if (line.find("RUNTIME:") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CAlgorithm.runTime = atof(lineVector[1].c_str());
-            }
-        }
-        if (line.find("RUNSTEPS:") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CAlgorithm.runSteps = atoi(lineVector[1].c_str());
-            }
-        }
-        if (line.find("SNAPSHOTTIME:") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CAlgorithm.snapshotTime = atof(lineVector[1].c_str());
-            }
-        }
-        if (line.find("DATADUMPTIME:") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CAlgorithm.datadumpTime = atof(lineVector[1].c_str());
-            }
-        }
-        if (line.find("SNAPSHOTSTEPS:") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CAlgorithm.snapshotSteps = atoi(lineVector[1].c_str());
-            }
-        }
-        if (line.find("MINIMIZATIONTIME:") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CAlgorithm.minimizationTime = atof(lineVector[1].c_str());
-            }
-        }
-        if (line.find("MINIMIZATIONSTEPS:") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CAlgorithm.minimizationSteps = atoi(lineVector[1].c_str());
-            }
-        }
-        if (line.find("NEIGHBORLISTTIME:") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CAlgorithm.neighborListTime = atof(lineVector[1].c_str());
-            }
-        }
-        if (line.find("NEIGHBORLISTSTEPS:") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CAlgorithm.neighborListSteps = atoi(lineVector[1].c_str());
-            }
-        }
-    }
-    return CAlgorithm;
-}
-
-ChemParams::ChemistrySetup SystemParser::readChemistrySetup(std::istream& is) {
-
-    is.clear();
-    is.seekg(0);
-
-    ChemParams::ChemistrySetup CSetup;
-
-    string line;
-    while(getline(is, line)) {
-
-        if(line.find("#") != string::npos) { continue; }
-
-        if(line.find("CHEMISTRYFILE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout << "Error reading chemistry input file. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-
-            else if (lineVector.size() == 2)
-                CSetup.inputFile = lineVector[1];
-
-            else if(lineVector.size() < 2) {
-                cout << "Must specify a chemistry input file. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-    }
-
-    return CSetup;
-}
-
-namespace medyan {
 
 void SystemParser::initMechParser() {
     using namespace std;

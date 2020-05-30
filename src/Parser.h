@@ -587,13 +587,15 @@ struct SystemParser {
         headerParser,
         geoParser,
         boundParser,
-        mechParser;
+        mechParser,
+        chemParser;
 
     SystemParser() {
         initInputHeader();
         initGeoParser();
         initBoundParser();
         initMechParser();
+        initChemParser();
         // TODO
     }
 
@@ -611,6 +613,8 @@ struct SystemParser {
 
         mechParser.parse(conf, se);
 
+        chemParser.parse(conf, se);
+        chemPostProcessing(conf);
     }
     void outputSystemInput(std::ostream& os, const SimulConfig& conf) const {
         std::list< ConfigFileToken > tokens;
@@ -618,6 +622,7 @@ struct SystemParser {
         tokens.splice(tokens.end(), geoParser.buildTokens(conf));
         tokens.splice(tokens.end(), boundParser.buildTokens(conf));
         tokens.splice(tokens.end(), mechParser.buildTokens(conf));
+        tokens.splice(tokens.end(), chemParser.buildTokens(conf));
 
         outputConfigTokens(os, tokens);
     }
@@ -627,10 +632,12 @@ struct SystemParser {
     void initGeoParser();
     void initBoundParser();
     void initMechParser();
+    void initChemParser();
 
     // Post processing and validation
     void geoPostProcessing(SimulConfig&) const;
     void boundPostProcessing(SimulConfig&) const;
+    void chemPostProcessing(SimulConfig&) const;
 
 };
 
@@ -664,14 +671,8 @@ struct SystemParser {
     //@{
     /// Parameter parser. Reads input directly into system parameters
     /// @note - does not check for correctness and consistency here.
-    static ChemParams    readChemParams(std::istream&, const GeoParams&);
     static DyRateParams  readDyRateParams(std::istream&);
     static SpecialParams readSpecialParams(std::istream&);
-    //@}
-    
-    //@{
-    /// Algorithm parser
-    static ChemParams::ChemistryAlgorithm readChemistryAlgorithm(std::istream&);
     //@}
     
     //@{
@@ -686,8 +687,6 @@ struct SystemParser {
     /// Read Bubble information
     static BubbleSetup readBubbleSetup(std::istream&);
     
-    /// Chemistry information
-    static ChemParams::ChemistrySetup readChemistrySetup(std::istream&);
 };
 
 /// Used to parse initial Filament information, initialized by the Controller.
