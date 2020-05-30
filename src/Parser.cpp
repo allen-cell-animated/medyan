@@ -2670,160 +2670,221 @@ void SystemParser::geoPostProcessing(SimulConfig& sc) const {
 
 }
 
-} // namespace medyan
+void SystemParser::initInitParser() {
+    initParser.addComment("##################################################");
+    initParser.addComment("### Initial network setup");
+    initParser.addComment("##################################################");
+    initParser.addEmptyLine();
 
+    initParser.addComment("# Initial bubble setup from external input");
+    initParser.addStringArgsWithAliases(
+        "BUBBLEFILE", { "BUBBLEFILE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() > 2) {
+                cout << "Error reading bubble input file. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                sc.bubbleSetup.inputFile = lineVector[1];
+            else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(!sc.bubbleSetup.inputFile.empty()) {
+                res.push_back( sc.bubbleSetup.inputFile.string() );
+            }
+            return res;
+        }
+    );
+    initParser.addEmptyLine();
 
-FilamentSetup SystemParser::readFilamentSetup(std::istream& is) {
+    initParser.addComment("# Generate initial bubbles");
+    initParser.addStringArgsWithAliases(
+        "NUMBUBBLES", { "NUMBUBBLES:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() > 2) {
+                cout << "Error reading number of bubbles. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                sc.bubbleSetup.numBubbles = atoi(lineVector[1].c_str());
+            else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(sc.bubbleSetup.numBubbles) {
+                res.push_back( to_string(sc.bubbleSetup.numBubbles) );
+            }
+            return res;
+        }
+    );
+    initParser.addStringArgsWithAliases(
+        "BUBBLETYPE", { "BUBBLETYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() > 2) {
+                cout << "Error reading bubble type. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                sc.bubbleSetup.bubbleType = atoi(lineVector[1].c_str());
+            else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(sc.bubbleSetup.bubbleType) {
+                res.push_back( to_string(sc.bubbleSetup.bubbleType) );
+            }
+            return res;
+        }
+    );
+    initParser.addEmptyLine();
 
-    is.clear();
-    is.seekg(0);
-
-    FilamentSetup FSetup;
-
-    string line;
-    while(getline(is, line)) {
-
-        if(line.find("#") != string::npos) { continue; }
-
-        if(line.find("FILAMENTFILE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    initParser.addComment("# Initial filament setup from external input");
+    initParser.addStringArgsWithAliases(
+        "FILAMENTFILE", { "FILAMENTFILE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout << "Error reading filament input file. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                FSetup.inputFile = lineVector[1];
+                sc.filamentSetup.inputFile = lineVector[1];
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(!sc.filamentSetup.inputFile.empty()) {
+                res.push_back( sc.filamentSetup.inputFile.string() );
+            }
+            return res;
         }
-        else if(line.find("NUMFILAMENTS") != string::npos &&
-                line.find("NUMFILAMENTSPECIES") == string::npos &&
+    );
+    initParser.addEmptyLine();
 
-                line.find("MTOCNUMFILAMENTS") == string::npos &&
-                line.find("AFMNUMFILAMENTS") == string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    initParser.addComment("# Generate initial filaments");
+    initParser.addStringArgsWithAliases(
+        "NUMFILAMENTS", { "NUMFILAMENTS:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout << "Error reading number of filaments. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                FSetup.numFilaments = atoi(lineVector[1].c_str());
+                sc.filamentSetup.numFilaments = atoi(lineVector[1].c_str());
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(sc.filamentSetup.numFilaments) {
+                res.push_back( to_string(sc.filamentSetup.numFilaments) );
+            }
+            return res;
         }
-        else if(line.find("FILAMENTLENGTH") != string::npos &&
-
-                line.find("MTOCFILAMENTLENGTH") == string::npos &&
-                line.find("AFMFILAMENTLENGTH") == string::npos) {
-            
-
-            vector<string> lineVector = split<string>(line);
+    );
+    initParser.addStringArgsWithAliases(
+        "FILAMENTLENGTH", { "FILAMENTLENGTH:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout << "Error reading filament length. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                FSetup.filamentLength = atoi(lineVector[1].c_str());
+                sc.filamentSetup.filamentLength = atoi(lineVector[1].c_str());
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(sc.filamentSetup.filamentLength) {
+                res.push_back( to_string(sc.filamentSetup.filamentLength) );
+            }
+            return res;
         }
-        else if(line.find("FILAMENTTYPE") != string::npos &&
-                line.find("NUMFILAMENTTYPES") == string::npos &&
-                line.find("MTOCFILAMENTTYPE") == string::npos &&
-                line.find("MTOCFILAMENTTYPE") == string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    initParser.addStringArgsWithAliases(
+        "FILAMENTTYPE", { "FILAMENTTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout << "Error reading filament type. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                FSetup.filamentType = atoi(lineVector[1].c_str());
+                sc.filamentSetup.filamentType = atoi(lineVector[1].c_str());
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(sc.filamentSetup.filamentType) {
+                res.push_back( to_string(sc.filamentSetup.filamentType) );
+            }
+            return res;
         }
-        else if (line.find("RESTARTPHASE") != string::npos){SysParams::RUNSTATE=false;
-            vector<string> lineVector = split<string>(line);
+    );
+    initParser.addStringArgsWithAliases(
+        "PROJECTIONTYPE", { "PROJECTIONTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() > 2) {
+                cout << "Error reading filament projection type. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                sc.filamentSetup.projectionType = lineVector[1];
+            else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(!sc.filamentSetup.projectionType.empty()) {
+                res.push_back( projectionType );
+            }
+            return res;
+        }
+    );
+    initParser.addEmptyLine();
+
+    initParser.addComment("# Restart settings");
+    initParser.addStringArgsWithAliases(
+        "RESTARTPHASE", { "RESTARTPHASE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout << "Error reading restart params. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2){
                 if(lineVector[1].find("USECHEMCOPYNUM"))
-                SysParams::USECHEMCOPYNUM = true;
+                sc.filamentSetup.USECHEMCOPYNUM = true;
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(sc.filamentSetup.USECHEMCOPYNUM) {
+                res.push_back("USECHEMCOPYNUM");
+            }
+            return res;
         }
-        else if(line.find("PROJECTIONTYPE")!=string::npos){
-            vector<string> lineVector = split<string>(line);
+    );
+    initParser.addStringArgsWithAliases(
+        "PINRESTARTFILE", { "PINRESTARTFILE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
                 cout << "Error reading filament projection type. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                FSetup.projectionType = lineVector[1];
+                sc.filamentSetup.pinRestartFile = lineVector[1];
             else {}
-        }
-        else if(line.find("PINRESTARTFILE")!=string::npos){
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout << "Error reading filament projection type. Exiting." << endl;
-                exit(EXIT_FAILURE);
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            if(!sc.filamentSetup.pinRestartFile.empty()) {
+                res.push_back(sc.filamentSetup.pinRestartFile);
             }
-            else if (lineVector.size() == 2)
-                FSetup.pinRestartFile = lineVector[1];
-            else {}
+            return res;
         }
-    }
-    return FSetup;
+    );
+
 }
 
-BubbleSetup SystemParser::readBubbleSetup(std::istream& is) {
+} // namespace medyan
 
-    is.clear();
-    is.seekg(0);
-
-    BubbleSetup BSetup;
-
-    string line;
-    while(getline(is, line)) {
-
-        if(line.find("#") != string::npos) { continue; }
-
-        if(line.find("BUBBLEFILE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout << "Error reading bubble input file. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                BSetup.inputFile = lineVector[1];
-            else {}
-        }
-        else if(line.find("NUMBUBBLES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout << "Error reading number of bubbles. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                BSetup.numBubbles = atoi(lineVector[1].c_str());
-            else {}
-        }
-        else if(line.find("BUBBLETYPE") != string::npos &&
-                line.find("NUMBUBBLETYPES") == string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout << "Error reading bubble type. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                BSetup.bubbleType = atoi(lineVector[1].c_str());
-            else {}
-        }
-    }
-    return BSetup;
-}
 FilamentData FilamentParser::readFilaments(std::istream& is) {
     is.clear();
     is.seekg(0);

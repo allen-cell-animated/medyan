@@ -513,7 +513,7 @@ struct SpecialParams {
 /// Struct to hold Filament setup information
 struct FilamentSetup {
     
-    string inputFile = "";
+    std::filesystem::path inputFile;
     
     ///If want a random distribution, used if inputFile is left blank
     int numFilaments = 0;
@@ -523,7 +523,10 @@ struct FilamentSetup {
     short filamentType = 0;
     ///Filament projection type.
     string projectionType="STRAIGHT";
-    
+
+    bool USECHEMCOPYNUM = false; // if set to 0, restart file copy numbers are used. If
+        // not, chemistry file copy numbers are used.
+
     ///For resetting pin positions in restart phase
     string pinRestartFile = "";
 };
@@ -731,10 +734,9 @@ public:
     static int exvolcounter[3]; //positions 0, 1, and 2 correspond to parallel,
     // in-plane and regular cases.
     static long long exvolcounterz[3];
-    ///Const getter
+
+    inline static FilamentSetup filamentSetup;
     static bool RUNSTATE; //0 refers to restart phase and 1 refers to run phase.
-    static bool USECHEMCOPYNUM; // if set to 0, restart file copy numbers are used. If
-    // not, chemistry file copy numbers are used.
     static bool INITIALIZEDSTATUS; // true refers to sucessful initialization. false
     static bool DURINGCHEMISTRY; //true if MEDYAN is running chemistry, false otherwise.
     // corresponds to an on-going initialization state.

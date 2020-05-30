@@ -85,6 +85,7 @@ void Controller::initialize(string inputFile,
     //Parse input, get parameters
     _inputFile = inputFile;
     auto simulConfig = readSimulConfig(inputFile, inputDirectory);
+    SysParams::filamentSetup = simulConfig.filamentSetup;
 
     //snapshot type output
     cout << endl;
@@ -420,7 +421,7 @@ void Controller::setupInitialNetwork(SimulConfig& simulConfig) {
         cout<<endl;
 	    cout<<"RESTART PHASE BEINGS."<<endl;
         //Create the restart pointer
-        const string inputfileName = _inputDirectory + FSetup.inputFile;
+        const string inputfileName = _inputDirectory + FSetup.inputFile.string();
         _restart = new Restart(&_subSystem, _chemData, inputfileName);
         //read set up.
         _restart->readNetworkSetup();

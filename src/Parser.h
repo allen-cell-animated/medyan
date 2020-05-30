@@ -589,7 +589,8 @@ struct SystemParser {
         boundParser,
         mechParser,
         chemParser,
-        dyRateParser;
+        dyRateParser,
+        initParser;
 
     SystemParser() {
         initInputHeader();
@@ -598,6 +599,7 @@ struct SystemParser {
         initMechParser();
         initChemParser();
         initDyRateParser();
+        initInitParser();
         // TODO
     }
 
@@ -619,6 +621,8 @@ struct SystemParser {
         chemPostProcessing(conf);
 
         dyRateParser.parse(conf, se);
+
+        initParser.parse(conf, se);
     }
     void outputSystemInput(std::ostream& os, const SimulConfig& conf) const {
         std::list< ConfigFileToken > tokens;
@@ -628,6 +632,7 @@ struct SystemParser {
         tokens.splice(tokens.end(), mechParser.buildTokens(conf));
         tokens.splice(tokens.end(), chemParser.buildTokens(conf));
         tokens.splice(tokens.end(), dyRateParser.buildTokens(conf));
+        tokens.splice(tokens.end(), initParser.buildTokens(conf));
 
         outputConfigTokens(os, tokens);
     }
@@ -639,6 +644,7 @@ struct SystemParser {
     void initMechParser();
     void initChemParser();
     void initDyRateParser();
+    void initInitParser();
 
     // Post processing and validation
     void geoPostProcessing(SimulConfig&) const;
@@ -684,12 +690,6 @@ struct SystemParser {
     /// Type parser
     static SpecialParams::SpecialSetupType readSpecialSetupType(std::istream&);
     //@}
-    
-    /// Read Filament information
-    static FilamentSetup readFilamentSetup(std::istream&);
-    
-    /// Read Bubble information
-    static BubbleSetup readBubbleSetup(std::istream&);
     
 };
 
