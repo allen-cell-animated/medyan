@@ -450,9 +450,6 @@ struct KeyValueParser {
 
         for(const auto& eachTokenBuild : tokenBuildList) {
             res.splice(res.end(), eachTokenBuild(params));
-
-            // line break is automatically added for each item
-            res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak));
         }
         return res;
     }

@@ -1197,6 +1197,7 @@ void SystemParser::initBoundParser() {
     boundParser.addEmptyLine();
 
     boundParser.addComment("# Define how network boundary moves");
+    boundParser.addComment("# Usage: BOUNDARYMOVE LEFT/RIGHT/BOTTOM/TOP/FRONT/BACK");
     boundParser.addComment("# Changes are not recommended.");
     boundParser.addEmptyLine();
 
@@ -1432,7 +1433,7 @@ void SystemParser::initBoundParser() {
     boundParser.addEmptyLine();
 }
 
-void SystemParser::boundPostProcessing(SimulConfig& sc) {
+void SystemParser::boundPostProcessing(SimulConfig& sc) const {
 
     if(const auto& bm = sc.boundParams.boundaryType.boundaryMove; !bm.empty()) {
         vector<int> leftfrontbottom = {0,0,0};
