@@ -230,7 +230,7 @@ void SystemParser::initChemParser() {
             }
         },
         [] (const SimulConfig& sc) {
-            return vector<string> { string{sc.chemParams.chemistrySetup.inputFile} };
+            return vector<string> { sc.chemParams.chemistrySetup.inputFile.string() };
         }
     );
     chemParser.addEmptyLine();
