@@ -406,9 +406,9 @@ struct KeyValueParser {
     std::vector< TokenBuildFunc > tokenBuildList;
 
     void parse(
-        Params&       params,
-        const SExpr&  se,
-        bool          unknownKeyAction = UnknownKeyAction::ignore
+        Params&          params,
+        const SExpr&     se,
+        UnknownKeyAction unknownKeyAction = UnknownKeyAction::ignore
     ) const {
         using namespace std;
         using SES = SExpr::StringType;
@@ -439,7 +439,7 @@ struct KeyValueParser {
             }
             else {
                 // Execute the settings
-                (*it)(params, keyAndArgs);
+                (it->second)(params, keyAndArgs);
             }
         }
     }
@@ -498,11 +498,11 @@ struct KeyValueParser {
         });
         // Insert for aliases
         for(auto& alias : aliases) {
-            dict.insert({ move(alias), insertResult->first->second });
+            dict.insert({ move(alias), insertResult.first->second });
         }
 
         tokenBuildList.push_back(
-            [funcBuild] (const Params& params) {
+            [funcBuild, name] (const Params& params) {
                 list< ConfigFileToken > res {
                     ConfigFileToken::makeString(name)
                 };
@@ -532,7 +532,7 @@ struct KeyValueParser {
         tokenBuildList.push_back(
             [] (const Params&) {
                 return std::list< ConfigFileToken > {
-                    ConfigFileToken::makeString("");
+                    ConfigFileToken::makeString("")
                 };
             }
         );
@@ -551,14 +551,14 @@ struct SystemParser {
         // TODO
     }
 
-    parseSystemInput(SimulConfig& conf, std::string input) const {
+    void parseSystemInput(SimulConfig& conf, std::string input) const {
         const auto se =
-            lexConfigTokensList(
+            lexConfigTokens(
                 tokenizeConfigFile(
                     std::move(input)));
 
         geoParser.parse(conf, se);
-        geoPostProcessing();
+        geoPostProcessing(conf);
 
     }
     void outputSystemInput(std::ostream& os, const SimulConfig& conf) const {
