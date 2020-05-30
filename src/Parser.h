@@ -25,6 +25,7 @@
 #include <stdexcept>
 #include <string>
 #include <sstream>
+#include <type_traits>
 #include <variant>
 #include <vector>
 
@@ -227,7 +228,7 @@ inline void outputConfigTokens(std::ostream& os, const std::list< ConfigFileToke
                 os << ' ';
             }
 
-            if(hasSpace) {
+            if(hasSpace || content.empty()) {
                 os << '"' << content << '"';
             } else {
                 os << content;
@@ -458,9 +459,15 @@ struct KeyValueParser {
 
     // Handy functions
     //---------------------------------
+
+    // Template parameters
+    //   - FuncParse: void(Params&, const vector<string>&), including key
+    //   - FuncBuild:
+    //     vector<string>(const Param&), excluding key, OR
+    //     vector<vector<string>>(const Param&), excluding key (for repeating items)
     template<
-        typename FuncParse, // void(Params&, const vector<string>&), including key
-        typename FuncBuild  // vector<string>(const Param&), excluding key
+        typename FuncParse,
+        typename FuncBuild
     >
     void addStringArgs(
         std::string name,
@@ -478,9 +485,14 @@ struct KeyValueParser {
     }
 
     // With alias
+    // Template parameters
+    //   - FuncParse: void(Params&, const vector<string>&), including key
+    //   - FuncBuild:
+    //     vector<string>(const Param&), excluding key, OR
+    //     vector<vector<string>>(const Param&), excluding key (for repeating items)
     template<
-        typename FuncParse, // void(Params&, const vector<string>&), including key
-        typename FuncBuild  // vector<string>(const Param&), excluding key
+        typename FuncParse,
+        typename FuncBuild
     >
     void addStringArgsWithAliases(
         std::string name,
@@ -503,13 +515,34 @@ struct KeyValueParser {
 
         tokenBuildList.push_back(
             [funcBuild, name] (const Params& params) {
-                list< ConfigFileToken > res {
-                    ConfigFileToken::makeString(name)
-                };
-                vector<string> tempResult = funcBuild(params);
-                for(auto& s : tempResult) {
-                    res.push_back(ConfigFileToken::makeString(move(s)));
+
+                list< ConfigFileToken > res;
+
+                if constexpr(
+                    is_same_v< invoke_result_t< FuncBuild, const Params& >, vector<string> >
+                ) {
+                    res.push_back(ConfigFileToken::makeString(name));
+
+                    vector<string> tempResult = funcBuild(params);
+                    for(auto& s : tempResult) {
+                        res.push_back(ConfigFileToken::makeString(move(s)));
+                    }
+
+                    res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak));
+
+                } else {
+                    vector<vector<string>> tempResult = funcBuild(params);
+                    for(auto& eachVS : tempResult) {
+                        res.push_back(ConfigFileToken::makeString(name));
+
+                        for(auto& s : eachVS) {
+                            res.push_back(ConfigFileToken::makeString(move(s)));
+                        }
+
+                        res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak));
+                    }
                 }
+
                 return res;
             }
         );
@@ -519,20 +552,22 @@ struct KeyValueParser {
         // The comment must start with valid comment specifiers such as ';'
         tokenBuildList.push_back(
             [comment{ std::move(comment) }] (const Params&) {
-                return std::list< ConfigFileToken > {
+                std::list< ConfigFileToken > res {
                     ConfigFileToken {
                         ConfigFileToken::Type::comment,
                         comment
                     }
                 };
+                res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak));
+                return res;
             }
         );
     }
-    void addEmptyString() {
+    void addEmptyLine() {
         tokenBuildList.push_back(
             [] (const Params&) {
                 return std::list< ConfigFileToken > {
-                    ConfigFileToken::makeString("")
+                    ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak)
                 };
             }
         );
@@ -543,11 +578,13 @@ struct KeyValueParser {
 struct SystemParser {
     KeyValueParser< SimulConfig >
         headerParser,
-        geoParser;
+        geoParser,
+        boundParser;
 
     SystemParser() {
         initInputHeader();
         initGeoParser();
+        initBoundParser();
         // TODO
     }
 
@@ -560,21 +597,27 @@ struct SystemParser {
         geoParser.parse(conf, se);
         geoPostProcessing(conf);
 
+        boundParser.parse(conf, se);
+        boundPostProcessing(conf);
+
     }
     void outputSystemInput(std::ostream& os, const SimulConfig& conf) const {
         std::list< ConfigFileToken > tokens;
         tokens.splice(tokens.end(), headerParser.buildTokens(conf));
         tokens.splice(tokens.end(), geoParser.buildTokens(conf));
+        tokens.splice(tokens.end(), boundParser.buildTokens(conf));
 
         outputConfigTokens(os, tokens);
     }
 
-    // Adding parsing
+    // Add parsing rules
     void initInputHeader();
     void initGeoParser();
+    void initBoundParser();
 
     // Post processing and validation
     void geoPostProcessing(SimulConfig&) const;
+    void boundPostProcessing(SimulConfig&) const;
 
 };
 
@@ -610,7 +653,6 @@ struct SystemParser {
     /// @note - does not check for correctness and consistency here.
     static MechParams    readMechParams(std::istream&);
     static ChemParams    readChemParams(std::istream&, const GeoParams&);
-    static BoundParams   readBoundParams(std::istream&);
     static DyRateParams  readDyRateParams(std::istream&);
     static SpecialParams readSpecialParams(std::istream&);
     //@}
@@ -625,7 +667,6 @@ struct SystemParser {
     /// Type parser
     static MechParams::MechanicsFFType     readMechanicsFFType(std::istream&);
     static DyRateParams::DynamicRateType   readDynamicRateType(std::istream&);
-    static BoundParams::BoundaryType       readBoundaryType(std::istream&);
     static SpecialParams::SpecialSetupType readSpecialSetupType(std::istream&);
     //@}
     

@@ -25,7 +25,7 @@ void SystemParser::initInputHeader() {
     headerParser.addComment("### Important notes:");
     headerParser.addComment("### 1. Units in MEDYAN are nm, second, pN, and pN*nm");
     headerParser.addComment("##################################################");
-    headerParser.addEmptyString();
+    headerParser.addEmptyLine();
 }
 
 } // namespace medyan
@@ -1166,24 +1166,87 @@ MechParams::MechanicsAlgorithm SystemParser::readMechanicsAlgorithm(std::istream
     return MAlgorithm;
 }
 
-BoundParams SystemParser::readBoundParams(std::istream& is) {
+namespace medyan {
 
-    BoundParams BParams;
+void SystemParser::initBoundParser() {
+    using namespace std;
 
-    BParams.boundaryType = readBoundaryType(is);
+    boundParser.addComment("##################################################");
+    boundParser.addComment("### Boundary parameters");
+    boundParser.addComment("##################################################");
+    boundParser.addEmptyLine();
 
-    is.clear();
-    is.seekg(0);
-    vector<int> leftfrontbottom = {0,0,0};
-    vector<int> rightbacktop = {0,0,0};
-    string line;
-    while(getline(is, line)) {
+    boundParser.addComment("# Define network boundary geometry (CUBIC, SPHERICAL, CYLINDER)");
+    boundParser.addEmptyLine();
 
-        if(line.find("#") != string::npos) { continue; }
+    boundParser.addStringArgsWithAliases(
+        "BOUNDARYSHAPE", { "BOUNDARYSHAPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout << "A boundary shape needs to be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else {
+                sc.boundParams.boundaryType.boundaryShape = lineVector[1];
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { sc.boundParams.boundaryType.boundaryShape };
+        }
+    );
+    boundParser.addEmptyLine();
 
-        if (line.find("BOUNDARYCUTOFF") != string::npos) {
+    boundParser.addComment("# Define how network boundary moves");
+    boundParser.addComment("# Changes are not recommended.");
+    boundParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
+    boundParser.addStringArgsWithAliases(
+        "BOUNDARYMOVE", { "BOUNDARYMOVE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout << "A boundary move type needs to be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else {
+                sc.boundParams.boundaryType.boundaryMove.push_back(lineVector[1]);
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            for(const auto& s : sc.boundParams.boundaryType.boundaryMove) {
+                res.push_back({s});
+            }
+            return res;
+        }
+    );
+    boundParser.addEmptyLine();
+
+    boundParser.addComment("# Set diameter for SPHERICAL or CYLINDER type");
+    boundParser.addComment("# CUBIC: No need to set, boundary is the same as network size");
+    boundParser.addEmptyLine();
+
+    boundParser.addStringArgsWithAliases(
+        "BOUNDARYDIAMETER", { "BOUNDARYDIAMETER:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() == 2) {
+                sc.boundParams.diameter = atof((lineVector[1].c_str()));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return sc.boundParams.diameter ?
+                vector<string> { to_string(sc.boundParams.diameter) } :
+                vector<string> {};
+        }
+    );
+    boundParser.addEmptyLine();
+
+    boundParser.addComment("### Boundary interactions ");
+    boundParser.addComment("# Repulsion: Popov et al, 2016, PLoS Comp Biol");
+    boundParser.addEmptyLine();
+
+    boundParser.addStringArgsWithAliases(
+        "BOUNDARYCUTOFF", { "BOUNDARYCUTOFF:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() != 2) {
                 cout <<
                      "There was an error parsing input file at Boundary parameters. Exiting."
@@ -1191,94 +1254,96 @@ BoundParams SystemParser::readBoundParams(std::istream& is) {
                 exit(EXIT_FAILURE);
             }
             else {
-                BParams.BoundaryCutoff = atof((lineVector[1].c_str()));
+                sc.boundParams.BoundaryCutoff = atof((lineVector[1].c_str()));
             }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.boundParams.BoundaryCutoff) };
         }
-        else if (line.find("BOUNDARYINTERACTIONK") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    boundParser.addStringArgsWithAliases(
+        "BOUNDARYINTERACTIONK", { "BOUNDARYINTERACTIONK:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() != 2) {
                 cout <<
                      "There was an error parsing input file at Boundary parameters. Exiting."
                      << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 2) {
-                BParams.BoundaryK = atof((lineVector[1].c_str()));
+            else {
+                sc.boundParams.BoundaryK = atof((lineVector[1].c_str()));
             }
-            else {}
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.boundParams.BoundaryK) };
         }
-        else if (line.find("BOUNDARYSCREENLENGTH") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    boundParser.addStringArgsWithAliases(
+        "BOUNDARYSCREENLENGTH", { "BOUNDARYSCREENLENGTH:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() != 2) {
                 cout <<
                      "There was an error parsing input file at Boundary parameters. Exiting."
                      << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 2) {
-                BParams.BScreenLength = atof((lineVector[1].c_str()));
+            else {
+                sc.boundParams.BScreenLength = atof((lineVector[1].c_str()));
             }
-            else {}
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.boundParams.BScreenLength) };
         }
-        else if (line.find("BOUNDARYDIAMETER") != string::npos) {
+    );
+    boundParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() == 2) {
-                BParams.diameter = atof((lineVector[1].c_str()));
-            }
-            else {}
-        }
-        else if (line.find("BMOVESPEED") != string::npos) {
+    boundParser.addComment("# Set boundary move parameters");
+    boundParser.addComment("# Changes are not recommended.");
+    boundParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
+    boundParser.addStringArgsWithAliases(
+        "BMOVESPEED", { "BMOVESPEED:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if (lineVector.size() == 2) {
-                BParams.moveSpeed = atof((lineVector[1].c_str()));
+                sc.boundParams.moveSpeed = atof((lineVector[1].c_str()));
             }
-            else {}
+        },
+        [] (const SimulConfig& sc) {
+            return sc.boundParams.moveSpeed ?
+                vector<string> { to_string(sc.boundParams.moveSpeed) } :
+                vector<string> {};
         }
-        else if (line.find("BMOVESTARTTIME") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    boundParser.addStringArgsWithAliases(
+        "BMOVESTARTTIME", { "BMOVESTARTTIME:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if (lineVector.size() == 2) {
-                BParams.moveStartTime = atof((lineVector[1].c_str()));
+                sc.boundParams.moveStartTime = atof((lineVector[1].c_str()));
             }
-            else {}
+        },
+        [] (const SimulConfig& sc) {
+            return sc.boundParams.moveStartTime ?
+                vector<string> { to_string(sc.boundParams.moveStartTime) } :
+                vector<string> {};
         }
-        else if (line.find("BMOVEENDTIME") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    boundParser.addStringArgsWithAliases(
+        "BMOVEENDTIME", { "BMOVEENDTIME:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if (lineVector.size() == 2) {
-                BParams.moveEndTime = atof((lineVector[1].c_str()));
+                sc.boundParams.moveEndTime = atof((lineVector[1].c_str()));
             }
-            else {}
+        },
+        [] (const SimulConfig& sc) {
+            return sc.boundParams.moveEndTime ?
+                vector<string> { to_string(sc.boundParams.moveEndTime) } :
+                vector<string> {};
         }
-        else if(line.find("BOUNDARYMOVE") != string::npos){
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout << "A boundary move type needs to be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                //set planes to move and transfershare axis
-                if(lineVector[1] == "LEFT")
-                    leftfrontbottom[0] = 1;
-                else if(lineVector[1] == "BOTTOM")
-                    leftfrontbottom[1] = 1;
-                else if(lineVector[1] == "FRONT")
-                    leftfrontbottom[2] = 1;
-                else if(lineVector[1] == "RIGHT")
-                    rightbacktop[0] = 1;
-                else if(lineVector[1] == "TOP")
-                    rightbacktop[1] = 1;
-                else if(lineVector[1] == "BACK")
-                    rightbacktop[2] = 1;
-            }
-        }
-        else if(line.find("TRANSFERSHAREAXIS") != string::npos){
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 3) {
+    );
+    boundParser.addStringArgsWithAliases(
+        "TRANSFERSHAREAXIS", { "TRANSFERSHAREAXIS:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 3) {
                 cout <<
                      "There was an error parsing input file at Chemistry parameters. Exiting."
                      << endl;
@@ -1288,13 +1353,13 @@ BoundParams SystemParser::readBoundParams(std::istream& is) {
             else{
                 cout<<"TRANSFERSHARE AXIS "<<lineVector[2]<<endl;
                 if(lineVector[2]=="X")
-                    BParams.transfershareaxis=0;
+                    sc.boundParams.transfershareaxis=0;
                 else if(lineVector[2]=="Y")
-                    BParams.transfershareaxis=1;
+                    sc.boundParams.transfershareaxis=1;
                 else if(lineVector[2]=="Z")
-                    BParams.transfershareaxis=2;
+                    sc.boundParams.transfershareaxis=2;
                 else if(lineVector[2]=="RADIAL") {
-                    BParams.transfershareaxis = 3;
+                    sc.boundParams.transfershareaxis = 3;
                     cout<<"RADIAL transfer not implemented. Change paramters. Exiting"
                             "."<<endl;
                     exit(EXIT_FAILURE);
@@ -1302,11 +1367,40 @@ BoundParams SystemParser::readBoundParams(std::istream& is) {
                 else{
                     cout << "There was an error parsing input file at Chemistry parameters. Exiting."
                          << endl;
-                    exit(EXIT_FAILURE);}
+                    exit(EXIT_FAILURE);
+                }
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            switch(sc.boundParams.transfershareaxis) {
+                // TODO: figure out the 1st element
+            case 0:
+                res.push_back({ "???", "X" });
+                break;
+            case 1:
+                res.push_back({ "???", "Y" });
+                break;
+            case 2:
+                res.push_back({ "???", "Z" });
+                break;
+            case 3:
+                res.push_back({ "???", "RADIAL" });
+                break;
+            }
+            return res;
         }
-        else if(line.find("FILCREATIONBOUNDS") != string::npos){
-            vector<string> lineVector = split<string>(line);
+    );
+    boundParser.addEmptyLine();
+
+    boundParser.addComment("# Set filament creation bounds.");
+    boundParser.addComment("# Changes are not recommended.");
+    boundParser.addEmptyLine();
+
+    boundParser.addStringArgsWithAliases(
+        "FILCREATIONBOUNDS", { "FILCREATIONBOUNDS:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            sc.boundParams.fraccompartmentspan.clear();
             if(lineVector.size()!=7) {
                 cout << "FILCREATIONBOUNDS should have 6 elements. Exiting." << endl;
                 exit(EXIT_FAILURE);
@@ -1321,29 +1415,61 @@ BoundParams SystemParser::readBoundParams(std::istream& is) {
                 for(int i = 4;i<7;i++)
                     tempvec.push_back(atof((lineVector[i].c_str())));
                 tempbounds.push_back(tempvec);
-                tempvec.clear();
-                BParams.fraccompartmentspan = tempbounds;
+                sc.boundParams.fraccompartmentspan = tempbounds;
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            if(const auto& frac = sc.boundParams.fraccompartmentspan; !frac.empty()) {
+                res.push_back({
+                    to_string(frac[0][0]), to_string(frac[0][1]), to_string(frac[0][2]),
+                    to_string(frac[1][0]), to_string(frac[1][1]), to_string(frac[1][2])
+                });
+            }
+            return res;
+        }
+    );
+    boundParser.addEmptyLine();
+}
+
+void SystemParser::boundPostProcessing(SimulConfig& sc) {
+
+    if(const auto& bm = sc.boundParams.boundaryType.boundaryMove; !bm.empty()) {
+        vector<int> leftfrontbottom = {0,0,0};
+        vector<int> rightbacktop = {0,0,0};
+
+        for(const auto& eachBM : bm) {
+            if(eachBM == "LEFT")
+                leftfrontbottom[0] = 1;
+            else if(eachBM == "BOTTOM")
+                leftfrontbottom[1] = 1;
+            else if(eachBM == "FRONT")
+                leftfrontbottom[2] = 1;
+            else if(eachBM == "RIGHT")
+                rightbacktop[0] = 1;
+            else if(eachBM == "TOP")
+                rightbacktop[1] = 1;
+            else if(eachBM == "BACK")
+                rightbacktop[2] = 1;
         }
 
-        else {}
+        for(int i = 0; i < 3; i++){
+            int addthemup = leftfrontbottom[i] + rightbacktop[i];
+            if(addthemup > 0)
+                sc.boundParams.transfershareaxis = i;
+            if(addthemup == 2)
+                sc.boundParams.planestomove = 2;
+            else if(leftfrontbottom[i] == 1)
+                sc.boundParams.planestomove = 1;
+            else if(rightbacktop[i] == 1)
+                sc.boundParams.planestomove = 0;
+        }
     }
 
-    for(int i = 0; i < 3; i++){
-        int addthemup = leftfrontbottom[i] + rightbacktop[i];
-        if(addthemup > 0)
-            BParams.transfershareaxis = i;
-        if(addthemup == 2)
-            BParams.planestomove = 2;
-        else if(leftfrontbottom[i] == 1)
-            BParams.planestomove = 1;
-        else if(rightbacktop[i] == 1)
-            BParams.planestomove = 0;
-    }
-//    std::cout<<BParams.transfershareaxis<<" "<<BParams.planestomove<<endl;
-    //Set system parameters
-    return BParams;
 }
+
+} // namespace medyan
+
 
 DyRateParams SystemParser::readDyRateParams(std::istream& is) {
 
@@ -1552,56 +1678,6 @@ DyRateParams::DynamicRateType SystemParser::readDynamicRateType(std::istream& is
 }
 
 
-BoundParams::BoundaryType SystemParser::readBoundaryType(std::istream& is) {
-
-    is.clear();
-    is.seekg(0);
-
-    BoundParams::BoundaryType BType;
-
-    string line;
-    while(getline(is, line)) {
-
-        if(line.find("#") != string::npos) { continue; }
-
-        if (line.find("BOUNDARYSHAPE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout << "A boundary shape needs to be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                BType.boundaryShape = lineVector[1];
-            }
-        }
-        else if (line.find("BOUNDARYMOVE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout << "A boundary move type needs to be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                BType.boundaryMove.push_back(lineVector[1]);
-            }
-        }
-        //add Compartment Scaling
-        //else if (line.find("DIFFUSIONSCALE") != string::npos) {
-
-        //  vector<string> lineVector = split<string>(line);
-        //  if(lineVector.size() != 2) {
-        //      cout << "Diffusion scaling needs to be specified. Exiting." << endl;
-        //      exit(EXIT_FAILURE);
-        //  }
-        //  else if (lineVector.size() == 2) {
-        //      BType.scaleDiffusion = lineVector[1];
-        //  }
-        //}
-    }
-    return BType;
-}
-
 SpecialParams::SpecialSetupType SystemParser::readSpecialSetupType(std::istream& is) {
 
     SpecialParams::SpecialSetupType SType;
@@ -1778,12 +1854,12 @@ void SystemParser::initGeoParser() {
     geoParser.addComment("##################################################");
     geoParser.addComment("### Geometric parameters");
     geoParser.addComment("##################################################");
-    geoParser.addEmptyString();
+    geoParser.addEmptyLine();
 
     geoParser.addComment("### Set network sizes and shape");
     geoParser.addComment("# Set the number of compartments in x, y and z directions");
     geoParser.addComment("# Network size = compartment size (500nm by default) * (NX, NY, NZ)");
-    geoParser.addEmptyString();
+    geoParser.addEmptyLine();
 
     geoParser.addStringArgsWithAliases(
         "NX", { "NX:" },
@@ -1836,12 +1912,12 @@ void SystemParser::initGeoParser() {
             return res;
         }
     );
-    geoParser.addEmptyString();
+    geoParser.addEmptyLine();
 
     geoParser.addComment("### The compartment size");
     geoParser.addComment("# Based on Kuramoto length, see Popov et al., PLoS Comp Biol, 2016 ");
     geoParser.addComment("# Some chemical reaction rates are scaled based on compartment size");
-    geoParser.addEmptyString();
+    geoParser.addEmptyLine();
 
     geoParser.addStringArgsWithAliases(
         "COMPARTMENTSIZEX", { "COMPARTMENTSIZEX:" },
@@ -1894,11 +1970,11 @@ void SystemParser::initGeoParser() {
             return res;
         }
     );
-    geoParser.addEmptyString();
+    geoParser.addEmptyLine();
 
     geoParser.addComment("### Cylinder setup");
     geoParser.addComment("### Changes not recommended");
-    geoParser.addEmptyString();
+    geoParser.addEmptyLine();
 
     geoParser.addStringArgsWithAliases(
         "MONOMERSIZE", { "MONOMERSIZE:" },
@@ -1934,11 +2010,11 @@ void SystemParser::initGeoParser() {
             return res;
         }
     );
-    geoParser.addEmptyString();
+    geoParser.addEmptyLine();
 
     geoParser.addComment("### Simulation dimension");
     geoParser.addComment("### DO NOT CHANGE");
-    geoParser.addEmptyString();
+    geoParser.addEmptyLine();
 
     geoParser.addStringArgsWithAliases(
         "NDIM", { "NDIM:" },
@@ -1955,7 +2031,7 @@ void SystemParser::initGeoParser() {
             return vector< string > { to_string(sc.geoParams.nDim) };
         }
     );
-    geoParser.addEmptyString();
+    geoParser.addEmptyLine();
 }
 
 void SystemParser::geoPostProcessing(SimulConfig& sc) const {
