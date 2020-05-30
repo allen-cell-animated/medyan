@@ -56,6 +56,9 @@ void SystemParser::initChemParser() {
             return vector<string> { sc.chemParams.chemistryAlgorithm.algorithm };
         }
     );
+    chemParser.addEmptyLine();
+
+    chemParser.addComment("# Use either time mode or step mode");
     chemParser.addStringArgsWithAliases(
         "RUNTIME", { "RUNTIME:" },
         [] (SimulConfig& sc, const vector<string>& lineVector) {
@@ -71,23 +74,6 @@ void SystemParser::initChemParser() {
         },
         [] (const SimulConfig& sc) {
             return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.runTime) };
-        }
-    );
-    chemParser.addStringArgsWithAliases(
-        "RUNSTEPS", { "RUNSTEPS:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.chemistryAlgorithm.runSteps = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.runSteps) };
         }
     );
     chemParser.addStringArgsWithAliases(
@@ -108,6 +94,40 @@ void SystemParser::initChemParser() {
         }
     );
     chemParser.addStringArgsWithAliases(
+        "MINIMIZATIONTIME", { "MINIMIZATIONTIME:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.chemParams.chemistryAlgorithm.minimizationTime = atof(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.minimizationTime) };
+        }
+    );
+    chemParser.addStringArgsWithAliases(
+        "NEIGHBORLISTTIME", { "NEIGHBORLISTTIME:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.chemParams.chemistryAlgorithm.neighborListTime = atof(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.neighborListTime) };
+        }
+    );
+    chemParser.addStringArgsWithAliases(
         "DATADUMPTIME", { "DATADUMPTIME:" },
         [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() > 2) {
@@ -122,6 +142,24 @@ void SystemParser::initChemParser() {
         },
         [] (const SimulConfig& sc) {
             return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.datadumpTime) };
+        }
+    );
+    chemParser.addEmptyLine();
+    chemParser.addStringArgsWithAliases(
+        "RUNSTEPS", { "RUNSTEPS:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() > 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                sc.chemParams.chemistryAlgorithm.runSteps = atoi(lineVector[1].c_str());
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.runSteps) };
         }
     );
     chemParser.addStringArgsWithAliases(
@@ -142,23 +180,6 @@ void SystemParser::initChemParser() {
         }
     );
     chemParser.addStringArgsWithAliases(
-        "MINIMIZATIONTIME", { "MINIMIZATIONTIME:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.chemistryAlgorithm.minimizationTime = atof(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.minimizationTime) };
-        }
-    );
-    chemParser.addStringArgsWithAliases(
         "MINIMIZATIONSTEPS", { "MINIMIZATIONSTEPS:" },
         [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() != 2) {
@@ -173,23 +194,6 @@ void SystemParser::initChemParser() {
         },
         [] (const SimulConfig& sc) {
             return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.minimizationSteps) };
-        }
-    );
-    chemParser.addStringArgsWithAliases(
-        "NEIGHBORLISTTIME", { "NEIGHBORLISTTIME:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.chemistryAlgorithm.neighborListTime = atof(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.neighborListTime) };
         }
     );
     chemParser.addStringArgsWithAliases(
