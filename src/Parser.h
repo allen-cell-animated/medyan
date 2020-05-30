@@ -588,7 +588,8 @@ struct SystemParser {
         geoParser,
         boundParser,
         mechParser,
-        chemParser;
+        chemParser,
+        dyRateParser;
 
     SystemParser() {
         initInputHeader();
@@ -596,6 +597,7 @@ struct SystemParser {
         initBoundParser();
         initMechParser();
         initChemParser();
+        initDyRateParser();
         // TODO
     }
 
@@ -615,6 +617,8 @@ struct SystemParser {
 
         chemParser.parse(conf, se);
         chemPostProcessing(conf);
+
+        dyRateParser.parse(conf, se);
     }
     void outputSystemInput(std::ostream& os, const SimulConfig& conf) const {
         std::list< ConfigFileToken > tokens;
@@ -623,6 +627,7 @@ struct SystemParser {
         tokens.splice(tokens.end(), boundParser.buildTokens(conf));
         tokens.splice(tokens.end(), mechParser.buildTokens(conf));
         tokens.splice(tokens.end(), chemParser.buildTokens(conf));
+        tokens.splice(tokens.end(), dyRateParser.buildTokens(conf));
 
         outputConfigTokens(os, tokens);
     }
@@ -633,6 +638,7 @@ struct SystemParser {
     void initBoundParser();
     void initMechParser();
     void initChemParser();
+    void initDyRateParser();
 
     // Post processing and validation
     void geoPostProcessing(SimulConfig&) const;
@@ -671,13 +677,11 @@ struct SystemParser {
     //@{
     /// Parameter parser. Reads input directly into system parameters
     /// @note - does not check for correctness and consistency here.
-    static DyRateParams  readDyRateParams(std::istream&);
     static SpecialParams readSpecialParams(std::istream&);
     //@}
     
     //@{
     /// Type parser
-    static DyRateParams::DynamicRateType   readDynamicRateType(std::istream&);
     static SpecialParams::SpecialSetupType readSpecialSetupType(std::istream&);
     //@}
     

@@ -1992,214 +1992,286 @@ void SystemParser::boundPostProcessing(SimulConfig& sc) const {
 
 }
 
+void SystemParser::initDyRateParser() {
+    using namespace std;
+
+    dyRateParser.addComment("##################################################");
+    dyRateParser.addComment("### Dynamic rate parameters");
+    dyRateParser.addComment("##################################################");
+    dyRateParser.addEmptyLine();
+
+    dyRateParser.addComment("# Brownian ratchet model");
+    dyRateParser.addComment("# Footer et al, PNAS, 2007");
+    dyRateParser.addEmptyLine();
+    dyRateParser.addStringArgsWithAliases(
+        "DFPOLYMERIZATIONTYPE", { "DFPOLYMERIZATIONTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.dyRateParams.dynamicRateType.dFPolymerizationType.push_back(lineVector[i]);
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return sc.dyRateParams.dynamicRateType.dFPolymerizationType;
+        }
+    );
+    dyRateParser.addStringArgsWithAliases(
+        "DFPOLYMERIZATIONLEN", { "DFPOLYMERIZATIONLEN:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.dyRateParams.dFilPolymerizationCharLength.push_back(
+                            atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& x : sc.dyRateParams.dFilPolymerizationCharLength) {
+                res.push_back(to_string(x));
+            }
+            return res;
+        }
+    );
+    dyRateParser.addEmptyLine();
+
+    dyRateParser.addComment("# Motor catch-bond model");
+    dyRateParser.addComment("# Erdmann et al, JCP, 2013");
+    dyRateParser.addEmptyLine();
+    dyRateParser.addStringArgsWithAliases(
+        "DMUNBINDINGTYPE", { "DMUNBINDINGTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.dyRateParams.dynamicRateType.dMUnbindingType.push_back(lineVector[i]);
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return sc.dyRateParams.dynamicRateType.dMUnbindingType;
+        }
+    );
+    dyRateParser.addStringArgsWithAliases(
+        "DMUNBINDINGFORCE", { "DMUNBINDINGFORCE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.dyRateParams.dMotorUnbindingCharForce.push_back(
+                            atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& x : sc.dyRateParams.dMotorUnbindingCharForce) {
+                res.push_back(to_string(x));
+            }
+            return res;
+        }
+    );
+    dyRateParser.addEmptyLine();
+
+    dyRateParser.addComment("# Motor walking");
+    dyRateParser.addComment("# Komianos & Papoian, PRX, 2018");
+    dyRateParser.addComment("# Tunable parameters based on different studies");
+    dyRateParser.addComment("# recommended values 24pN - 100 pN");
+    dyRateParser.addEmptyLine();
+    dyRateParser.addStringArgsWithAliases(
+        "DMWALKINGTYPE", { "DMWALKINGTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.dyRateParams.dynamicRateType.dMWalkingType.push_back(lineVector[i]);
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return sc.dyRateParams.dynamicRateType.dMWalkingType;
+        }
+    );
+    dyRateParser.addStringArgsWithAliases(
+        "DMWALKINGFORCE", { "DMWALKINGFORCE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.dyRateParams.dMotorWalkingCharForce.push_back(
+                            atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& x : sc.dyRateParams.dMotorWalkingCharForce) {
+                res.push_back(to_string(x));
+            }
+            return res;
+        }
+    );
+    dyRateParser.addEmptyLine();
+
+    dyRateParser.addComment("# Linker slip-bond model");
+    dyRateParser.addComment("# Ferrer et al, PNAS, 2008");
+    dyRateParser.addEmptyLine();
+    dyRateParser.addStringArgsWithAliases(
+        "DLUNBINDINGTYPE", { "DLUNBINDINGTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.dyRateParams.dynamicRateType.dLUnbindingType.push_back(lineVector[i]);
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return sc.dyRateParams.dynamicRateType.dLUnbindingType;
+        }
+    );
+    dyRateParser.addStringArgsWithAliases(
+        "DLUNBINDINGLEN", { "DLUNBINDINGLEN:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.dyRateParams.dLinkerUnbindingCharLength.push_back(
+                            atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& x : sc.dyRateParams.dLinkerUnbindingCharLength) {
+                res.push_back(to_string(x));
+            }
+            return res;
+        }
+    );
+    dyRateParser.addStringArgsWithAliases(
+        "DLUNBINDINGAMP", { "DLUNBINDINGAMP:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.dyRateParams.dLinkerUnbindingAmplitude.push_back(
+                            atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& x : sc.dyRateParams.dLinkerUnbindingAmplitude) {
+                res.push_back(to_string(x));
+            }
+            return res;
+        }
+    );
+    dyRateParser.addEmptyLine();
+
+    dyRateParser.addComment("# Brancher slip-bond model");
+    dyRateParser.addComment("# Source unclear.");
+    dyRateParser.addEmptyLine();
+    dyRateParser.addStringArgsWithAliases(
+        "DBUNBINDINGTYPE", { "DBUNBINDINGTYPE:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.dyRateParams.dynamicRateType.dBUnbindingType.push_back(lineVector[i]);
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return sc.dyRateParams.dynamicRateType.dBUnbindingType;
+        }
+    );
+    dyRateParser.addStringArgsWithAliases(
+        "DBUNBINDINGLEN", { "DBUNBINDINGLEN:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.dyRateParams.dBranchUnbindingCharLength.push_back(
+                            atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& x : sc.dyRateParams.dBranchUnbindingCharLength) {
+                res.push_back(to_string(x));
+            }
+            return res;
+        }
+    );
+    dyRateParser.addStringArgsWithAliases(
+        "DBUNBINDINGF", { "DBUNBINDINGF:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    sc.dyRateParams.dBranchUnbindingCharForce.push_back(
+                            atof((lineVector[i].c_str())));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            for(const auto& x : sc.dyRateParams.dBranchUnbindingCharForce) {
+                res.push_back(to_string(x));
+            }
+            return res;
+        }
+    );
+    dyRateParser.addEmptyLine();
+
+    /// Manual Rate Changer
+    // It takes 5 inputs as start_time, plusend_poly, plusend_depoly, minusend_poly, minusend_depoly
+    // Currently it applies type 0 to all filament types
+    dyRateParser.addComment("### Manual rate changer.");
+    dyRateParser.addComment("# Do not change unless you know what you are doing.");
+    dyRateParser.addEmptyLine();
+    dyRateParser.addStringArgsWithAliases(
+        "MANUALSTARTTIME", { "MANUALSTARTTIME:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                sc.dyRateParams.manualCharStartTime = atof((lineVector[1].c_str()));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.dyRateParams.manualCharStartTime) };
+        }
+    );
+    dyRateParser.addStringArgsWithAliases(
+        "MANUALPLUSPOLYRATIO", { "MANUALPLUSPOLYRATIO:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                sc.dyRateParams.manualPlusPolyRate = atof((lineVector[1].c_str()));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.dyRateParams.manualPlusPolyRate) };
+        }
+    );
+    dyRateParser.addStringArgsWithAliases(
+        "MANUALPLUSDEPOLYRATIO", { "MANUALPLUSDEPOLYRATIO:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                sc.dyRateParams.manualPlusDepolyRate = atof((lineVector[1].c_str()));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.dyRateParams.manualPlusDepolyRate) };
+        }
+    );
+    dyRateParser.addStringArgsWithAliases(
+        "MANUALMINUSPOLYRATIO", { "MANUALMINUSPOLYRATIO:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                sc.dyRateParams.manualMinusPolyRate = atof((lineVector[1].c_str()));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.dyRateParams.manualMinusPolyRate) };
+        }
+    );
+    dyRateParser.addStringArgsWithAliases(
+        "MANUALMINUSDEPOLYRATIO", { "MANUALMINUSDEPOLYRATIO:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if (lineVector.size() >= 2) {
+                sc.dyRateParams.manualMinusDepolyRate = atof((lineVector[1].c_str()));
+            }
+        },
+        [] (const SimulConfig& sc) {
+            return vector<string> { to_string(sc.dyRateParams.manualMinusDepolyRate) };
+        }
+    );
+    dyRateParser.addEmptyLine();
+
+}
+
 } // namespace medyan
-
-
-DyRateParams SystemParser::readDyRateParams(std::istream& is) {
-
-    DyRateParams DRParams;
-
-    DRParams.dynamicRateType = readDynamicRateType(is);
-
-    is.clear();
-    is.seekg(0);
-
-    string line;
-    while(getline(is, line)) {
-
-        if(line.find("#") != string::npos) { continue; }
-
-        if (line.find("DFPOLYMERIZATIONLEN") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    DRParams.dFilPolymerizationCharLength.push_back(
-                            atof((lineVector[i].c_str())));
-            }
-        }
-
-        else if (line.find("DMUNBINDINGFORCE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    DRParams.dMotorUnbindingCharForce.push_back(
-                            atof((lineVector[i].c_str())));
-            }
-            else {}
-        }
-
-        else if (line.find("DMWALKINGFORCE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    DRParams.dMotorWalkingCharForce.push_back(
-                            atof((lineVector[i].c_str())));
-            }
-            else {}
-        }
-
-        else if (line.find("DLUNBINDINGLEN") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    DRParams.dLinkerUnbindingCharLength.push_back(
-                            atof((lineVector[i].c_str())));
-            }
-            else {}
-        }
-
-        else if (line.find("DLUNBINDINGAMP") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    DRParams.dLinkerUnbindingAmplitude.push_back(
-                            atof((lineVector[i].c_str())));
-            }
-            else {}
-        }
-        else if (line.find("DBUNBINDINGLEN") != string::npos) {
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    DRParams.dBranchUnbindingCharLength.push_back(
-                            atof((lineVector[i].c_str())));
-            }
-            else {}
-        }
-        else if (line.find("DBUNBINDINGF") != string::npos) {
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    DRParams.dBranchUnbindingCharForce.push_back(
-                            atof((lineVector[i].c_str())));
-            }
-            else {}
-        }
-        /// Manual Rate Changer
-        // It takes 5 inputs as start_time, plusend_poly, plusend_depoly, minusend_poly, minusend_depoly
-        // Currently it applies type 0 to all filament types
-        else if (line.find("MANUALSTARTTIME") != string::npos) {
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                DRParams.manualCharStartTime = atof((lineVector[1].c_str()));
-            }
-            else {}
-        }
-        else if (line.find("MANUALPLUSPOLYRATIO") != string::npos) {
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                DRParams.manualPlusPolyRate = atof((lineVector[1].c_str()));
-            }
-            else {}
-        }
-        else if (line.find("MANUALPLUSDEPOLYRATIO") != string::npos) {
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                DRParams.manualPlusDepolyRate = atof((lineVector[1].c_str()));
-            }
-            else {}
-        }
-        else if (line.find("MANUALMINUSPOLYRATIO") != string::npos) {
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                DRParams.manualMinusPolyRate = atof((lineVector[1].c_str()));
-            }
-            else {}
-        }
-        else if (line.find("MANUALMINUSDEPOLYRATIO") != string::npos) {
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                DRParams.manualMinusDepolyRate = atof((lineVector[1].c_str()));
-            }
-            else {}
-        }
-    }
-
-    return DRParams;
-}
-
-DyRateParams::DynamicRateType SystemParser::readDynamicRateType(std::istream& is) {
-
-    DyRateParams::DynamicRateType DRType;
-
-    is.clear();
-    is.seekg(0);
-
-    string line;
-    while(getline(is, line)) {
-
-        if(line.find("#") != string::npos) { continue; }
-
-        if (line.find("DFPOLYMERIZATIONTYPE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    DRType.dFPolymerizationType.push_back(lineVector[i]);
-            }
-        }
-
-        else if (line.find("DMUNBINDINGTYPE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    DRType.dMUnbindingType.push_back(lineVector[i]);
-            }
-        }
-
-        else if (line.find("DMWALKINGTYPE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    DRType.dMWalkingType.push_back(lineVector[i]);
-            }
-        }
-
-        else if (line.find("DLUNBINDINGTYPE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    DRType.dLUnbindingType.push_back(lineVector[i]);
-            }
-        }
-
-            //adding branching dy type
-        else if (line.find("DBUNBINDINGTYPE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    DRType.dBUnbindingType.push_back(lineVector[i]);
-            }
-        }
-
-    }
-    return DRType;
-}
 
 
 SpecialParams::SpecialSetupType SystemParser::readSpecialSetupType(std::istream& is) {
