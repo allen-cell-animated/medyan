@@ -2660,7 +2660,7 @@ void SystemParser::initInitParser() {
         [] (const SimulConfig& sc) {
             vector<string> res;
             if(!sc.filamentSetup.projectionType.empty()) {
-                res.push_back( projectionType );
+                res.push_back( sc.filamentSetup.projectionType );
             }
             return res;
         }
