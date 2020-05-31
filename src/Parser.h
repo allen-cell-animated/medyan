@@ -36,7 +36,7 @@
 
 namespace medyan {
 
-// A tokenizer for input files
+// Tokenizer and lexer for input files
 //
 // This extends the input config to s-expressions, which allows more
 // extensibility, but it does not include the lisp syntax

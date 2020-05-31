@@ -84,7 +84,14 @@ void Controller::initialize(string inputFile,
 
     //Parse input, get parameters
     _inputFile = inputFile;
-    auto simulConfig = readSimulConfig(inputFile, inputDirectory);
+    auto simulConfig = SimulConfigHelper{}.getFromInput(inputFile, inputDirectory);
+    SysParams::GParams = simulConfig.geoParams;
+    if(!SysParams::checkGeoParameters()) exit(EXIT_FAILURE);
+    SysParams::BParams = simulConfig.boundParams;
+    SysParams::MParams = simulConfig.mechParams;
+    SysParams::CParams = simulConfig.chemParams;
+    SysParams::DRParams = simulConfig.dyRateParams;
+    SysParams::SParams = simulConfig.specialParams;
     SysParams::filamentSetup = simulConfig.filamentSetup;
 
     //snapshot type output
@@ -104,10 +111,6 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(make_unique<BRForces>(_outputDirectory + "repulsion.traj", &_subSystem));
     //_outputs.push_back(make_unique<PinForces>(_outputDirectory + "pinforce.traj", &_subSystem));
 
-    //Always read geometry, check consistency
-    SysParams::GParams = simulConfig.geoParams;
-    if(!SysParams::checkGeoParameters()) exit(EXIT_FAILURE);
-
     //CALLING ALL CONTROLLERS TO INITIALIZE
     //Initialize geometry controller
     cout << "---" << endl;
@@ -119,15 +122,11 @@ void Controller::initialize(string inputFile,
     cout << "---" << endl;
     LOG(STEP) << "Initializing boundary...";
 
-    SysParams::BParams = simulConfig.boundParams;
-
     //initialize
     _gController.initializeBoundary(simulConfig.boundParams.boundaryType);
     LOG(INFO) << "Done.";
 
 #ifdef MECHANICS
-
-    SysParams::MParams = simulConfig.mechParams;
 
     //Initialize Mechanical controller
     cout << "---" << endl;
@@ -155,9 +154,6 @@ void Controller::initialize(string inputFile,
     }
     //Calculate surface area and volume for reaction rate scaling
 
-
-    //read parameters
-    SysParams::CParams = simulConfig.chemParams;
 
     //Initialize chemical controller
     cout << "---" << endl;
@@ -278,8 +274,6 @@ void Controller::initialize(string inputFile,
 #ifdef DYNAMICRATES
     cout << "---" << endl;
     LOG(STEP) << "Initializing dynamic rates...";
-    //read dynamic rate parameters
-    SysParams::DRParams = simulConfig.dyRateParams;
 
     //init controller
     _drController.initialize(simulConfig.dyRateParams.dynamicRateType);
@@ -306,7 +300,6 @@ void Controller::initialize(string inputFile,
     setupInitialNetwork(simulConfig);
 
     //setup special structures
-    SysParams::SParams = simulConfig.specialParams;
     setupSpecialStructures(simulConfig);
 
     SysParams::INITIALIZEDSTATUS = true;
@@ -1111,7 +1104,7 @@ void Controller::run() {
 
 
 //Step 8. re-add pin positions
-        auto simulConfig = readSimulConfig(_inputFile, _inputDirectory);
+        auto simulConfig = SimulConfigHelper{}.getFromInput(_inputFile, _inputDirectory);
         auto& filSetup = simulConfig.filamentSetup;
 
         if(SysParams::Mechanics().pinBoundaryFilaments){
