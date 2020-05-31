@@ -59,10 +59,6 @@ inline std::string readFileToString(std::filesystem::path file) {
     return ss.str();
 }
 
-// Read chemistry input
-inline void readChemistryConfig(SimulConfig& sc, std::istream& is) {
-    sc.chemistryData = ChemistryParser::readChemistryInput(is, sc.chemParams);
-}
 
 // Read bubble input
 inline void readBubbleConfig(SimulConfig& sc, std::istream& is) {
@@ -101,7 +97,7 @@ inline SimulConfig readSimulConfig(
     // Read system input
     {
         SystemParser sp;
-        sp.parseSystemInput(conf, readFileToString(systemInputFile));
+        sp.parseInput(conf, readFileToString(systemInputFile));
     }
 
     // Read chemistry input
@@ -110,8 +106,11 @@ inline SimulConfig readSimulConfig(
         throw std::runtime_error("No chemistry input file specified.");
     }
     else {
-        ReadFile file(inputDirectory / conf.chemParams.chemistrySetup.inputFile);
-        readChemistryConfig(conf, file.ifs);
+        ChemistryParser cp;
+        cp.parseInput(
+            conf,
+            readFileToString(inputDirectory / conf.chemParams.chemistrySetup.inputFile)
+        );
     }
 
     // Read bubble input

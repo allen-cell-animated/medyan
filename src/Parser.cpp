@@ -3014,24 +3014,17 @@ vector<tuple<short, vector<floatingpoint>>> BubbleParser::readBubbles(std::istre
     return returnVector;
 }
 
-ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemParams& chemParams) {
+namespace medyan {
 
-    is.clear();
-    is.seekg(0);
+void ChemistryParser::initChemDataParser() {
+    using namespace std;
 
-    ///To keep track of duplicate names
-    vector<string> allSpeciesNames;
+    chemDataParser.addComment("############################ SPECIES ###########################");
+    chemDataParser.addEmptyLine();
 
-    ChemistryData chem; string line;
-
-    while(getline(is, line)) {
-
-        if(line.find("#") != string::npos) { continue; }
-
-
-        else if(line.find("SPECIESBULK") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    chemDataParser.addStringArgsWithAliases(
+        "SPECIESBULK", { "SPECIESBULK:" },
+        [this] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  6 && lineVector.size() !=  8) {
                 cout << "Error reading a bulk species. Exiting." << endl;
                 exit(EXIT_FAILURE);
@@ -3045,15 +3038,15 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                     exit(EXIT_FAILURE);
                 }
 
-                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
                     cout << "Duplicate species names are not allowed. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
                 else {
-                    allSpeciesNames.push_back(lineVector[1]);
+                    allSpeciesNames.insert(lineVector[1]);
                 }
 
-                chem.speciesBulk.push_back(tuple<string, int, floatingpoint, floatingpoint,
+                sc.chemistryData.speciesBulk.push_back(tuple<string, int, floatingpoint, floatingpoint,
                         string, string, floatingpoint>(lineVector[1], atoi(lineVector[2].c_str()),
                                 atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
                                 lineVector[5], "NONE", 0.0));
@@ -3066,26 +3059,53 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                     exit(EXIT_FAILURE);
                 }
 
-                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
                     cout << "Duplicate species names are not allowed. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
                 else {
-                    allSpeciesNames.push_back(lineVector[1]);
+                    allSpeciesNames.insert(lineVector[1]);
                 }
 
-                chem.speciesBulk.push_back(tuple<string, int, floatingpoint, floatingpoint,
+                sc.chemistryData.speciesBulk.push_back(tuple<string, int, floatingpoint, floatingpoint,
                         string, string, floatingpoint>(lineVector[1], atoi(lineVector[2].c_str()),
                                 atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
                                 lineVector[5],lineVector[6], atof(lineVector[7].c_str())));
             }
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            for(const auto& sb : sc.chemistryData.speciesBulk) {
+                // WTF is 5? Just use named members!
+                if(get<5>(sb) == "NONE") {
+                    res.push_back({
+                        get<0>(sb),
+                        to_string(get<1>(sb)),
+                        to_string(get<2>(sb)),
+                        to_string(get<3>(sb)),
+                        get<4>(sb)
+                    });
+                } else {
+                    res.push_back({
+                        get<0>(sb),
+                        to_string(get<1>(sb)),
+                        to_string(get<2>(sb)),
+                        to_string(get<3>(sb)),
+                        get<4>(sb),
+                        get<5>(sb),
+                        to_string(get<6>(sb))
+                    });
+                }
+            }
+            return res;
         }
-        else if(line.find("SPECIESDIFFUSING") != string::npos) {
+    );
+    chemDataParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
-
-
+    chemDataParser.addStringArgsWithAliases(
+        "SPECIESDIFFUSING", { "SPECIESDIFFUSING:" },
+        [this] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() >  9 || lineVector.size() < 7) {
                 cout << "Error reading a diffusing species. Exiting." << endl;
                 exit(EXIT_FAILURE);
@@ -3099,15 +3119,15 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                     exit(EXIT_FAILURE);
                 }
 
-                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
                     cout << "Duplicate species names are not allowed. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
                 else {
-                    allSpeciesNames.push_back(lineVector[1]);
+                    allSpeciesNames.insert(lineVector[1]);
                 }
                 if(lineVector[6] == "AVG")
-                    chem.speciesDiffusing.push_back(tuple<string, int, floatingpoint, floatingpoint,
+                    sc.chemistryData.speciesDiffusing.push_back(tuple<string, int, floatingpoint, floatingpoint,
                             floatingpoint, string, int, string, floatingpoint>
                     (lineVector[1], atoi(lineVector[2].c_str()),
                      atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
@@ -3122,15 +3142,15 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                     exit(EXIT_FAILURE);
                 }
 
-                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
                     cout << "Duplicate species names are not allowed. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
                 else {
-                    allSpeciesNames.push_back(lineVector[1]);
+                    allSpeciesNames.insert(lineVector[1]);
                 }
                 
-                chem.speciesDiffusing.push_back(tuple<string, int, floatingpoint, floatingpoint,
+                sc.chemistryData.speciesDiffusing.push_back(tuple<string, int, floatingpoint, floatingpoint,
                         floatingpoint, string, int, string, floatingpoint>
                      (lineVector[1], atoi(lineVector[2].c_str()),
                      atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
@@ -3144,15 +3164,15 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                     exit(EXIT_FAILURE);
                 }
 
-                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
                     cout << "Duplicate species names are not allowed. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
                 else {
-                    allSpeciesNames.push_back(lineVector[1]);
+                    allSpeciesNames.insert(lineVector[1]);
                 }
 
-                chem.speciesDiffusing.push_back(tuple<string, int, floatingpoint, floatingpoint,
+                sc.chemistryData.speciesDiffusing.push_back(tuple<string, int, floatingpoint, floatingpoint,
                         floatingpoint, string, int, string, floatingpoint>
                                                         (lineVector[1], atoi(lineVector[2].c_str()),
                                                          atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
@@ -3161,223 +3181,388 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                                                          atof(lineVector[8].c_str())));
             }
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            for(const auto& sd : sc.chemistryData.speciesDiffusing) {
+                // WTF is 5? WTF is 7?
+                if(get<5>(sd) == "AVG") {
+                    res.push_back({
+                        get<0>(sd),
+                        to_string(get<1>(sd)),
+                        to_string(get<2>(sd)),
+                        to_string(get<3>(sd)),
+                        to_string(get<4>(sd)),
+                        get<5>(sd),
+                        to_string(get<6>(sd))
+                    });
+                } else if(get<7>(sd) == "NONE") {
+                    res.push_back({
+                        get<0>(sd),
+                        to_string(get<1>(sd)),
+                        to_string(get<2>(sd)),
+                        to_string(get<3>(sd)),
+                        to_string(get<4>(sd)),
+                        get<5>(sd)
+                    });
+                } else {
+                    res.push_back({
+                        get<0>(sd),
+                        to_string(get<1>(sd)),
+                        to_string(get<2>(sd)),
+                        to_string(get<3>(sd)),
+                        to_string(get<4>(sd)),
+                        get<5>(sd),
+                        get<7>(sd),
+                        to_string(get<8>(sd))
+                    });
+                }
+            }
+            return res;
         }
+    );
+    chemDataParser.addEmptyLine();
 
-        else if(line.find("SPECIESFILAMENT") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    chemDataParser.addStringArgsWithAliases(
+        "SPECIESFILAMENT", { "SPECIESFILAMENT:" },
+        [this] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a filament species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
 
-                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
                     cout << "Duplicate species names are not allowed. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
                 else {
-                    allSpeciesNames.push_back(lineVector[1]);
+                    allSpeciesNames.insert(lineVector[1]);
                 }
 
-                chem.speciesFilament[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+                sc.chemistryData.speciesFilament[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
 
             }
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& sf = sc.chemistryData.speciesFilament;
+            for(int i = 0; i < sf.size(); ++i) {
+                for(const auto& eachS : sf[i]) {
+                    res.push_back({ eachS, to_string(i) });
+                }
+            }
+            return res;
         }
-        else if(line.find("SPECIESBOUND") != string::npos) {
+    );
+    chemDataParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
+    chemDataParser.addStringArgsWithAliases(
+        "SPECIESBOUND", { "SPECIESBOUND:" },
+        [this] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a filament bound species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
 
-                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
                     cout << "Duplicate species names are not allowed. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
                 else {
-                    allSpeciesNames.push_back(lineVector[1]);
+                    allSpeciesNames.insert(lineVector[1]);
                 }
 
-                chem.speciesBound[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+                sc.chemistryData.speciesBound[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+
             }
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& sb = sc.chemistryData.speciesBound;
+            for(int i = 0; i < sb.size(); ++i) {
+                for(const auto& eachS : sb[i]) {
+                    res.push_back({ eachS, to_string(i) });
+                }
+            }
+            return res;
         }
+    );
+    chemDataParser.addEmptyLine();
 
-        else if(line.find("SPECIESLINKER") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    chemDataParser.addStringArgsWithAliases(
+        "SPECIESLINKER", { "SPECIESLINKER:" },
+        [this] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a filament linker species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
 
-                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
                     cout << "Duplicate species names are not allowed. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
                 else {
-                    allSpeciesNames.push_back(lineVector[1]);
+                    allSpeciesNames.insert(lineVector[1]);
                 }
 
-                chem.speciesLinker[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+                sc.chemistryData.speciesLinker[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+
             }
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& ss = sc.chemistryData.speciesLinker;
+            for(int i = 0; i < ss.size(); ++i) {
+                for(const auto& eachS : ss[i]) {
+                    res.push_back({ eachS, to_string(i) });
+                }
+            }
+            return res;
         }
-        else if(line.find("SPECIESMOTOR") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    chemDataParser.addStringArgsWithAliases(
+        "SPECIESMOTOR", { "SPECIESMOTOR:" },
+        [this] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a filament motor species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
 
-                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
                     cout << "Duplicate species names are not allowed. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
                 else {
-                    allSpeciesNames.push_back(lineVector[1]);
+                    allSpeciesNames.insert(lineVector[1]);
                 }
 
-                chem.speciesMotor[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+                sc.chemistryData.speciesMotor[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+
             }
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& ss = sc.chemistryData.speciesMotor;
+            for(int i = 0; i < ss.size(); ++i) {
+                for(const auto& eachS : ss[i]) {
+                    res.push_back({ eachS, to_string(i) });
+                }
+            }
+            return res;
         }
-        else if(line.find("SPECIESBRANCHER") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    chemDataParser.addStringArgsWithAliases(
+        "SPECIESBRANCHER", { "SPECIESBRANCHER:" },
+        [this] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a filament brancher species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
 
-                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
                     cout << "Duplicate species names are not allowed. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
                 else {
-                    allSpeciesNames.push_back(lineVector[1]);
+                    allSpeciesNames.insert(lineVector[1]);
                 }
 
-                chem.speciesBrancher[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+                sc.chemistryData.speciesBrancher[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+
             }
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& ss = sc.chemistryData.speciesBrancher;
+            for(int i = 0; i < ss.size(); ++i) {
+                for(const auto& eachS : ss[i]) {
+                    res.push_back({ eachS, to_string(i) });
+                }
+            }
+            return res;
         }
-        else if(line.find("SPECIESPLUSEND") != string::npos) {
+    );
+    chemDataParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
+    chemDataParser.addStringArgsWithAliases(
+        "SPECIESPLUSEND", { "SPECIESPLUSEND:" },
+        [this] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a filament plus end species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
 
-                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
                     cout << "Duplicate species names are not allowed. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
                 else {
-                    allSpeciesNames.push_back(lineVector[1]);
+                    allSpeciesNames.insert(lineVector[1]);
                 }
 
-                chem.speciesPlusEnd[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+                sc.chemistryData.speciesPlusEnd[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+
             }
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& ss = sc.chemistryData.speciesPlusEnd;
+            for(int i = 0; i < ss.size(); ++i) {
+                for(const auto& eachS : ss[i]) {
+                    res.push_back({ eachS, to_string(i) });
+                }
+            }
+            return res;
         }
-        else if(line.find("SPECIESMINUSEND") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    chemDataParser.addStringArgsWithAliases(
+        "SPECIESMINUSEND", { "SPECIESMINUSEND:" },
+        [this] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a filament minus end species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
 
-                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
                     cout << "Duplicate species names are not allowed. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
                 else {
-                    allSpeciesNames.push_back(lineVector[1]);
+                    allSpeciesNames.insert(lineVector[1]);
                 }
 
-                chem.speciesMinusEnd[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+                sc.chemistryData.speciesMinusEnd[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+
             }
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& ss = sc.chemistryData.speciesMinusEnd;
+            for(int i = 0; i < ss.size(); ++i) {
+                for(const auto& eachS : ss[i]) {
+                    res.push_back({ eachS, to_string(i) });
+                }
+            }
+            return res;
         }
-        else if(line.find("BRANCHERBINDINGSITE") != string::npos) {
+    );
+    chemDataParser.addEmptyLine();
 
-            vector<string> lineVector = split<string>(line);
+    chemDataParser.addStringArgsWithAliases(
+        "BRANCHERBINDINGSITE", { "BRANCHERBINDINGSITE:" },
+        [this] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a brancher binding site. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3)
-                chem.B_BINDING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
+                sc.chemistryData.B_BINDING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& ss = sc.chemistryData.B_BINDING_INDEX;
+            for(int i = 0; i < ss.size(); ++i) {
+                for(const auto& eachS : ss[i]) {
+                    res.push_back({ eachS, to_string(i) });
+                }
+            }
+            return res;
         }
-        else if(line.find("LINKERBINDINGSITE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    chemDataParser.addStringArgsWithAliases(
+        "LINKERBINDINGSITE", { "LINKERBINDINGSITE:" },
+        [this] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a linker binding site. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3)
-                chem.L_BINDING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
+                sc.chemistryData.L_BINDING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& ss = sc.chemistryData.L_BINDING_INDEX;
+            for(int i = 0; i < ss.size(); ++i) {
+                for(const auto& eachS : ss[i]) {
+                    res.push_back({ eachS, to_string(i) });
+                }
+            }
+            return res;
         }
-
-        else if(line.find("MOTORBINDINGSITE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
+    );
+    chemDataParser.addStringArgsWithAliases(
+        "MOTORBINDINGSITE", { "MOTORBINDINGSITE:" },
+        [this] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a motor binding site. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3)
-                chem.M_BINDING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
+                sc.chemistryData.M_BINDING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
             else {}
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& ss = sc.chemistryData.M_BINDING_INDEX;
+            for(int i = 0; i < ss.size(); ++i) {
+                for(const auto& eachS : ss[i]) {
+                    res.push_back({ eachS, to_string(i) });
+                }
+            }
+            return res;
         }
+    );
+    chemDataParser.addEmptyLine();
 
-            //loop through a reaction
-        else if(line.find("GENREACTION") != string::npos) {
+    chemDataParser.addComment("########################### REACTIONS ##########################");
+    chemDataParser.addEmptyLine();
 
+    chemDataParser.addComment("# General reactions");
+    chemDataParser.addStringArgsWithAliases(
+        "GENREACTION", { "GENREACTION:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             vector<string> reactants;
             vector<string> products;
-
-            vector<string> lineVector = split<string>(line);
 
             // check parameters related to dissipation tracking if it is enabled
             float gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
-            if(chemParams.dissTracking){
-            string dissString = lineVector[1].c_str();
-            istringstream iss(dissString);
-            string token;
-            vector<string> dissTokens;
-            dissOffSet = 1;
+            if(sc.chemParams.dissTracking){
+                string dissString = lineVector[1];
+                istringstream iss(dissString);
+                string token;
+                vector<string> dissTokens;
+                dissOffSet = 1;
 
-            while (std::getline(iss, token, ':')) {
-                if (!token.empty())
-                    dissTokens.push_back(token);
-            }
+                while (std::getline(iss, token, ':')) {
+                    if (!token.empty())
+                        dissTokens.push_back(token);
+                }
 
-            gnum = atof(dissTokens[0].c_str());
+                gnum = atof(dissTokens[0].c_str());
 
-            if(dissTokens.size()!=1){
-                HRCDID = dissTokens[1];
-            } else {
-                HRCDID = "NA";
-            }
+                if(dissTokens.size()!=1){
+                    HRCDID = dissTokens[1];
+                } else {
+                    HRCDID = "NA";
+                }
             }
 
 
@@ -3390,7 +3575,7 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                     if(*it != "+")  products.push_back((*it));
                 }
 
-                chem.genReactions.push_back(
+                sc.chemistryData.genReactions.push_back(
                         tuple<vector<string>, vector<string>, floatingpoint, floatingpoint,
                         string>(reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
                 
@@ -3399,14 +3584,38 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                 cout << "Error reading a general reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            for(const auto& r : sc.chemistryData.genReactions) {
+                vector<string> line;
+                line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+
+                const auto& reactants = get<0>(r);
+                const auto& products = get<1>(r);
+                for(int i = 0; i < reactants.size(); ++i) {
+                    if(i) { line.push_back("+"); line.push_back(reactants[i]); }
+                    else  { line.push_back(reactants[i]); }
+                }
+                line.push_back("->");
+                for(int i = 0; i < products.size(); ++i) {
+                    if(i) { line.push_back("+"); line.push_back(products[i]); }
+                    else  { line.push_back(products[i]); }
+                }
+
+                line.push_back(to_string(get<2>(r)));
+            }
+            return res;
         }
+    );
+    chemDataParser.addEmptyLine();
 
-        else if(line.find("BULKREACTION") != string::npos) {
-
+    chemDataParser.addComment("# Bulk reactions");
+    chemDataParser.addStringArgsWithAliases(
+        "BULKREACTION", { "BULKREACTION:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             vector<string> reactants;
             vector<string> products;
-
-            vector<string> lineVector = split<string>(line);
 
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
@@ -3419,7 +3628,7 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                     if(*it != "+")  products.push_back((*it));
                 }
 
-                chem.bulkReactions.push_back(
+                sc.chemistryData.bulkReactions.push_back(
                 tuple<vector<string>, vector<string>, floatingpoint>
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
@@ -3428,14 +3637,37 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                 cout << "Error reading a bulk reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            for(const auto& r : sc.chemistryData.bulkReactions) {
+                vector<string> line;
+
+                const auto& reactants = get<0>(r);
+                const auto& products = get<1>(r);
+                for(int i = 0; i < reactants.size(); ++i) {
+                    if(i) { line.push_back("+"); line.push_back(reactants[i]); }
+                    else  { line.push_back(reactants[i]); }
+                }
+                line.push_back("->");
+                for(int i = 0; i < products.size(); ++i) {
+                    if(i) { line.push_back("+"); line.push_back(products[i]); }
+                    else  { line.push_back(products[i]); }
+                }
+
+                line.push_back(to_string(get<2>(r)));
+            }
+            return res;
         }
+    );
+    chemDataParser.addEmptyLine();
 
-        else if(line.find("NUCLEATIONREACTION") != string::npos) {
-
+    chemDataParser.addComment("# Filament reactions");
+    chemDataParser.addStringArgsWithAliases(
+        "NUCLEATIONREACTION", { "NUCLEATIONREACTION:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             vector<string> reactants;
             vector<string> products;
-
-            vector<string> lineVector = split<string>(line);
 
             int filType = atoi(lineVector[1].c_str());
 
@@ -3450,7 +3682,7 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                     if(*it != "+")  products.push_back((*it));
                 }
 
-                chem.nucleationReactions[filType].push_back(
+                sc.chemistryData.nucleationReactions[filType].push_back(
                 tuple<vector<string>, vector<string>, floatingpoint>
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
             }
@@ -3458,22 +3690,46 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                 cout << "Error reading a nucleation reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& rxns = sc.chemistryData.nucleationReactions;
+            for(int k = 0; k < rxns.size(); ++k) {
+                for(const auto& r : rxns[k]) {
+                    vector<string> line;
+
+                    line.push_back(to_string(k));
+
+                    const auto& reactants = get<0>(r);
+                    const auto& products = get<1>(r);
+                    for(int i = 0; i < reactants.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(reactants[i]); }
+                        else  { line.push_back(reactants[i]); }
+                    }
+                    line.push_back("->");
+                    for(int i = 0; i < products.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(products[i]); }
+                        else  { line.push_back(products[i]); }
+                    }
+
+                    line.push_back(to_string(get<2>(r)));
+                }
+            }
+            return res;
         }
-
-
-        else if(line.find("DEPOLYMERIZATIONREACTION") != string::npos) {
-
+    );
+    chemDataParser.addStringArgsWithAliases(
+        "DEPOLYMERIZATIONREACTION", { "DEPOLYMERIZATIONREACTION:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             vector<string> reactants;
             vector<string> products;
-
-            vector<string> lineVector = split<string>(line);
 
             int filType = atoi(lineVector[2].c_str());
             // check parameters related to dissipation tracking if it is enabled
             float gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
-            if(chemParams.dissTracking){
+            if(sc.chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;
@@ -3505,7 +3761,7 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                     if(*it != "+")  products.push_back((*it));
                 }
 
-                chem.depolymerizationReactions[filType].push_back(
+                sc.chemistryData.depolymerizationReactions[filType].push_back(
                         tuple<vector<string>, vector<string>, floatingpoint,floatingpoint, string>
                                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
                 
@@ -3514,21 +3770,48 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                 cout << "Error reading a depolymerization reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& rxns = sc.chemistryData.depolymerizationReactions;
+            for(int k = 0; k < rxns.size(); ++k) {
+                for(const auto& r : rxns[k]) {
+                    vector<string> line;
+
+                    line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+
+                    line.push_back(to_string(k));
+
+                    const auto& reactants = get<0>(r);
+                    const auto& products = get<1>(r);
+                    for(int i = 0; i < reactants.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(reactants[i]); }
+                        else  { line.push_back(reactants[i]); }
+                    }
+                    line.push_back("->");
+                    for(int i = 0; i < products.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(products[i]); }
+                        else  { line.push_back(products[i]); }
+                    }
+
+                    line.push_back(to_string(get<2>(r)));
+                }
+            }
+            return res;
         }
-
-        else if(line.find("POLYMERIZATIONREACTION") != string::npos) {
-
+    );
+    chemDataParser.addStringArgsWithAliases(
+        "POLYMERIZATIONREACTION", { "POLYMERIZATIONREACTION:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             vector<string> reactants;
             vector<string> products;
 
-            vector<string> lineVector = split<string>(line);
-
             int filType = atoi(lineVector[2].c_str());
             // check parameters related to dissipation tracking if it is enabled
-            floatingpoint gnum = 0.0;
+            float gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
-            if(chemParams.dissTracking){
+            if(sc.chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;
@@ -3553,18 +3836,15 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
             if(arrowIt != lineVector.end()) {
 
                 for(auto it  = lineVector.begin() + 2 + dissOffSet; it != arrowIt; it++) {
-
                     if(*it != "+") reactants.push_back((*it));
                 }
 
                 for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
-
-                    if(*it != "+") products.push_back((*it));
+                    if(*it != "+")  products.push_back((*it));
                 }
 
-
-                chem.polymerizationReactions[filType].push_back(
-                        tuple<vector<string>, vector<string>, floatingpoint,floatingpoint,string>
+                sc.chemistryData.polymerizationReactions[filType].push_back(
+                        tuple<vector<string>, vector<string>, floatingpoint,floatingpoint, string>
                                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
                 
             }
@@ -3572,20 +3852,51 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                 cout << "Error reading a polymerization reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-        }
-        else if(line.find("LINKERREACTION") != string::npos) {
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& rxns = sc.chemistryData.polymerizationReactions;
+            for(int k = 0; k < rxns.size(); ++k) {
+                for(const auto& r : rxns[k]) {
+                    vector<string> line;
 
+                    line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+
+                    line.push_back(to_string(k));
+
+                    const auto& reactants = get<0>(r);
+                    const auto& products = get<1>(r);
+                    for(int i = 0; i < reactants.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(reactants[i]); }
+                        else  { line.push_back(reactants[i]); }
+                    }
+                    line.push_back("->");
+                    for(int i = 0; i < products.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(products[i]); }
+                        else  { line.push_back(products[i]); }
+                    }
+
+                    line.push_back(to_string(get<2>(r)));
+                }
+            }
+            return res;
+        }
+    );
+    chemDataParser.addEmptyLine();
+
+    chemDataParser.addComment("# Linker/motor/branching reactions");
+    chemDataParser.addStringArgsWithAliases(
+        "LINKERREACTION", { "LINKERREACTION:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             vector<string> reactants;
             vector<string> products;
-
-            vector<string> lineVector = split<string>(line);
 
             int filType = atoi(lineVector[2].c_str());
             // check parameters related to dissipation tracking if it is enabled
             floatingpoint gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
-            if(chemParams.dissTracking){
+            if(sc.chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;
@@ -3617,7 +3928,7 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                     if(*it != "+")  products.push_back((*it));
                 }
 
-                chem.linkerReactions[filType].push_back(
+                sc.chemistryData.linkerReactions[filType].push_back(
                         tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint,string>
                                 (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
                                  atof(lineVector[lineVector.size() - 3].c_str()),
@@ -3629,20 +3940,51 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                 cout << "Error reading a linker reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-        }
-        else if(line.find("MOTORREACTION") != string::npos) {
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& rxns = sc.chemistryData.linkerReactions;
+            for(int k = 0; k < rxns.size(); ++k) {
+                for(const auto& r : rxns[k]) {
+                    vector<string> line;
 
+                    line.push_back(to_string(get<6>(r)) + ":" + get<7>(r));
+
+                    line.push_back(to_string(k));
+
+                    const auto& reactants = get<0>(r);
+                    const auto& products = get<1>(r);
+                    for(int i = 0; i < reactants.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(reactants[i]); }
+                        else  { line.push_back(reactants[i]); }
+                    }
+                    line.push_back("<->");
+                    for(int i = 0; i < products.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(products[i]); }
+                        else  { line.push_back(products[i]); }
+                    }
+
+                    line.push_back(to_string(get<2>(r)));
+                    line.push_back(to_string(get<3>(r)));
+                    line.push_back(to_string(get<4>(r)));
+                    line.push_back(to_string(get<5>(r)));
+                }
+            }
+            return res;
+        }
+    );
+    chemDataParser.addStringArgsWithAliases(
+        "MOTORREACTION", { "MOTORREACTION:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             vector<string> reactants;
             vector<string> products;
-
-            vector<string> lineVector = split<string>(line);
 
             int filType = atoi(lineVector[2].c_str());
             // check parameters related to dissipation tracking if it is enabled
             floatingpoint gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
-            if(chemParams.dissTracking){
+            if(sc.chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;
@@ -3674,33 +4016,63 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                     if(*it != "+")  products.push_back((*it));
                 }
 
-                chem.motorReactions[filType].push_back(
+                sc.chemistryData.motorReactions[filType].push_back(
                         tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint,string>
                                 (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
                                  atof(lineVector[lineVector.size() - 3].c_str()),
                                  atof(lineVector[lineVector.size() - 2].c_str()),
-                                 atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
+                                 atof(lineVector[lineVector.size() - 1].c_str()),gnum, HRCDID));
                 
             }
             else {
                 cout << "Error reading a motor reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& rxns = sc.chemistryData.motorReactions;
+            for(int k = 0; k < rxns.size(); ++k) {
+                for(const auto& r : rxns[k]) {
+                    vector<string> line;
+
+                    line.push_back(to_string(get<6>(r)) + ":" + get<7>(r));
+
+                    line.push_back(to_string(k));
+
+                    const auto& reactants = get<0>(r);
+                    const auto& products = get<1>(r);
+                    for(int i = 0; i < reactants.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(reactants[i]); }
+                        else  { line.push_back(reactants[i]); }
+                    }
+                    line.push_back("<->");
+                    for(int i = 0; i < products.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(products[i]); }
+                        else  { line.push_back(products[i]); }
+                    }
+
+                    line.push_back(to_string(get<2>(r)));
+                    line.push_back(to_string(get<3>(r)));
+                    line.push_back(to_string(get<4>(r)));
+                    line.push_back(to_string(get<5>(r)));
+                }
+            }
+            return res;
         }
-
-        else if(line.find("MOTORWALKINGREACTION") != string::npos) {
-
+    );
+    chemDataParser.addStringArgsWithAliases(
+        "MOTORWALKINGREACTION", { "MOTORWALKINGREACTION:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             vector<string> reactants;
             vector<string> products;
-
-            vector<string> lineVector = split<string>(line);
 
             int filType = atoi(lineVector[2].c_str());
             // check parameters related to dissipation tracking if it is enabled
             floatingpoint gnum = 0.0;
             int dissOffSet = 0;
             string HRCDID = "NA";
-            if(chemParams.dissTracking){
+            if(sc.chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;
@@ -3732,7 +4104,7 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                     if(*it != "+")  products.push_back((*it));
                 }
 
-                chem.motorWalkingReactions[filType].push_back(
+                sc.chemistryData.motorWalkingReactions[filType].push_back(
                         tuple<vector<string>, vector<string>, floatingpoint, floatingpoint,string>
                                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
                 
@@ -3741,99 +4113,41 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                 cout << "Error reading a motor walking reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& rxns = sc.chemistryData.motorWalkingReactions;
+            for(int k = 0; k < rxns.size(); ++k) {
+                for(const auto& r : rxns[k]) {
+                    vector<string> line;
+
+                    line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+
+                    line.push_back(to_string(k));
+
+                    const auto& reactants = get<0>(r);
+                    const auto& products = get<1>(r);
+                    for(int i = 0; i < reactants.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(reactants[i]); }
+                        else  { line.push_back(reactants[i]); }
+                    }
+                    line.push_back("->");
+                    for(int i = 0; i < products.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(products[i]); }
+                        else  { line.push_back(products[i]); }
+                    }
+
+                    line.push_back(to_string(get<2>(r)));
+                }
+            }
+            return res;
         }
-
-        else if(line.find("AGINGREACTION") != string::npos) {
-
+    );
+    chemDataParser.addStringArgsWithAliases(
+        "BRANCHINGREACTION", { "BRANCHINGREACTION:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             vector<string> reactants;
             vector<string> products;
-
-            vector<string> lineVector = split<string>(line);
-
-            int filType = atoi(lineVector[2].c_str());
-            // check parameters related to dissipation tracking if it is enabled 
-            floatingpoint gnum = 0.0;
-            int dissOffSet = 0;
-            string HRCDID = "NA";
-            if(chemParams.dissTracking){
-                string dissString = lineVector[1].c_str();
-                istringstream iss(dissString);
-                string token;
-                vector<string> dissTokens;
-                dissOffSet = 1;
-
-                while (std::getline(iss, token, ':')) {
-                    if (!token.empty())
-                        dissTokens.push_back(token);
-                }
-
-                gnum = atof(dissTokens[0].c_str());
-
-                if(dissTokens.size()!=1){
-                    HRCDID = dissTokens[1];
-                } else {
-                    HRCDID = "NA";
-                }
-            }
-
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
-            if(arrowIt != lineVector.end()) {
-
-                for(auto it  = lineVector.begin() + 2 + dissOffSet; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
-
-                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-
-                chem.agingReactions[filType].push_back(
-                        tuple<vector<string>, vector<string>, floatingpoint, floatingpoint,string>
-                                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
-                
-            }
-            else {
-                cout << "Error reading an aging reaction. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-
-        else if(line.find("DESTRUCTIONREACTION") != string::npos) {
-
-            vector<string> reactants;
-            vector<string> products;
-
-            vector<string> lineVector = split<string>(line);
-
-            int filType = atoi(lineVector[1].c_str());
-
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
-            if(arrowIt != lineVector.end()) {
-
-                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
-
-                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-
-                chem.destructionReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, floatingpoint>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
-            }
-            else {
-                cout << "Error reading a destruction reaction. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-
-        else if(line.find("BRANCHINGREACTION") != string::npos) {
-
-            vector<string> reactants;
-            vector<string> products;
-
-            vector<string> lineVector = split<string>(line);
 
             int filType = atoi(lineVector[1].c_str());
 
@@ -3848,7 +4162,7 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                     if(*it != "+")  products.push_back((*it));
                 }
 
-                chem.branchingReactions[filType].push_back(
+                sc.chemistryData.branchingReactions[filType].push_back(
                 tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string, floatingpoint>
                 (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
                                       atof(lineVector[lineVector.size() - 3].c_str()),
@@ -3859,12 +4173,180 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
                 cout << "Error reading a branching reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& rxns = sc.chemistryData.branchingReactions;
+            for(int k = 0; k < rxns.size(); ++k) {
+                for(const auto& r : rxns[k]) {
+                    vector<string> line;
+
+                    line.push_back(to_string(k));
+
+                    const auto& reactants = get<0>(r);
+                    const auto& products = get<1>(r);
+                    for(int i = 0; i < reactants.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(reactants[i]); }
+                        else  { line.push_back(reactants[i]); }
+                    }
+                    line.push_back("<->");
+                    for(int i = 0; i < products.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(products[i]); }
+                        else  { line.push_back(products[i]); }
+                    }
+
+                    line.push_back(to_string(get<2>(r)));
+                    line.push_back(to_string(get<3>(r)));
+                    line.push_back(          get<4>(r) );
+                    line.push_back(to_string(get<5>(r)));
+                }
+            }
+            return res;
         }
+    );
+    chemDataParser.addEmptyLine();
 
-        else if(line.find("SEVERINGREACTION") != string::npos) {
+    chemDataParser.addComment("# Filament aging/destruction/severing");
+    chemDataParser.addStringArgsWithAliases(
+        "AGINGREACTION", { "AGINGREACTION:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            vector<string> reactants;
+            vector<string> products;
 
-            vector<string> lineVector = split<string>(line);
+            int filType = atoi(lineVector[2].c_str());
+            // check parameters related to dissipation tracking if it is enabled 
+            floatingpoint gnum = 0.0;
+            int dissOffSet = 0;
+            string HRCDID = "NA";
+            if(sc.chemParams.dissTracking){
+                string dissString = lineVector[1].c_str();
+                istringstream iss(dissString);
+                string token;
+                vector<string> dissTokens;
+                dissOffSet = 1;
 
+                while (std::getline(iss, token, ':')) {
+                    if (!token.empty())
+                        dissTokens.push_back(token);
+                }
+
+                gnum = atof(dissTokens[0].c_str());
+
+                if(dissTokens.size()!=1){
+                    HRCDID = dissTokens[1];
+                } else {
+                    HRCDID = "NA";
+                }
+            }
+
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
+            if(arrowIt != lineVector.end()) {
+
+                for(auto it  = lineVector.begin() + 2 + dissOffSet; it != arrowIt; it++) {
+                    if(*it != "+") reactants.push_back((*it));
+                }
+
+                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
+                    if(*it != "+")  products.push_back((*it));
+                }
+
+                sc.chemistryData.agingReactions[filType].push_back(
+                        tuple<vector<string>, vector<string>, floatingpoint, floatingpoint,string>
+                                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
+                
+            }
+            else {
+                cout << "Error reading an aging reaction. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& rxns = sc.chemistryData.agingReactions;
+            for(int k = 0; k < rxns.size(); ++k) {
+                for(const auto& r : rxns[k]) {
+                    vector<string> line;
+
+                    line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+
+                    line.push_back(to_string(k));
+
+                    const auto& reactants = get<0>(r);
+                    const auto& products = get<1>(r);
+                    for(int i = 0; i < reactants.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(reactants[i]); }
+                        else  { line.push_back(reactants[i]); }
+                    }
+                    line.push_back("->");
+                    for(int i = 0; i < products.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(products[i]); }
+                        else  { line.push_back(products[i]); }
+                    }
+
+                    line.push_back(to_string(get<2>(r)));
+                }
+            }
+            return res;
+        }
+    );
+    chemDataParser.addStringArgsWithAliases(
+        "DESTRUCTIONREACTION", { "DESTRUCTIONREACTION:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            vector<string> reactants;
+            vector<string> products;
+
+            int filType = atoi(lineVector[1].c_str());
+
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
+            if(arrowIt != lineVector.end()) {
+
+                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
+                    if(*it != "+") reactants.push_back((*it));
+                }
+
+                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
+                    if(*it != "+")  products.push_back((*it));
+                }
+
+                sc.chemistryData.destructionReactions[filType].push_back(
+                tuple<vector<string>, vector<string>, floatingpoint>
+                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
+            }
+            else {
+                cout << "Error reading a destruction reaction. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& rxns = sc.chemistryData.destructionReactions;
+            for(int k = 0; k < rxns.size(); ++k) {
+                for(const auto& r : rxns[k]) {
+                    vector<string> line;
+
+                    line.push_back(to_string(k));
+
+                    const auto& reactants = get<0>(r);
+                    const auto& products = get<1>(r);
+                    for(int i = 0; i < reactants.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(reactants[i]); }
+                        else  { line.push_back(reactants[i]); }
+                    }
+                    line.push_back("->");
+                    for(int i = 0; i < products.size(); ++i) {
+                        if(i) { line.push_back("+"); line.push_back(products[i]); }
+                        else  { line.push_back(products[i]); }
+                    }
+
+                    line.push_back(to_string(get<2>(r)));
+                }
+            }
+            return res;
+        }
+    );
+    chemDataParser.addStringArgsWithAliases(
+        "SEVERINGREACTION", { "SEVERINGREACTION:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             int filType = atoi(lineVector[1].c_str());
 
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "AT");
@@ -3872,18 +4354,36 @@ ChemistryData ChemistryParser::readChemistryInput(std::istream& is, const ChemPa
 
                 auto it = arrowIt + 1;
                 
-                chem.severingReactions[filType].push_back(tuple<string, floatingpoint>
+                sc.chemistryData.severingReactions[filType].push_back(tuple<string, floatingpoint>
                 ((*it), atof(lineVector[lineVector.size() - 1].c_str())));
             }
             else {
                 cout << "Error reading a severing reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-        }
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            const auto& rxns = sc.chemistryData.severingReactions;
+            for(int k = 0; k < rxns.size(); ++k) {
+                for(const auto& r : rxns[k]) {
+                    vector<string> line;
 
-    }
-    return chem;
+                    line.push_back(to_string(k));
+                    line.push_back("AT");
+                    line.push_back(get<0>(r));
+                    line.push_bacK(to_string(get<1>(r)));
+                }
+            }
+            return res;
+        }
+    );
+    chemDataParser.addEmptyLine();
+
 }
+
+} // namespace medyan
+
 
 void PinRestartParser::resetPins() {
 

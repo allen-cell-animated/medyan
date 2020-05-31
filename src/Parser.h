@@ -22,6 +22,7 @@
 #include <iterator>
 #include <list>
 #include <map>
+#include <set>
 #include <stdexcept>
 #include <string>
 #include <sstream>
@@ -600,10 +601,9 @@ struct SystemParser {
         initChemParser();
         initDyRateParser();
         initInitParser();
-        // TODO
     }
 
-    void parseSystemInput(SimulConfig& conf, std::string input) const {
+    void parseInput(SimulConfig& conf, std::string input) const {
         const auto se =
             lexConfigTokens(
                 tokenizeConfigFile(
@@ -625,7 +625,7 @@ struct SystemParser {
         initParser.parse(conf, se);
     }
 
-    void outputSystemInput(std::ostream& os, const SimulConfig& conf) const {
+    void outputInput(std::ostream& os, const SimulConfig& conf) const {
         std::list< ConfigFileToken > tokens;
         tokens.splice(tokens.end(), headerParser.buildTokens(conf));
         tokens.splice(tokens.end(), geoParser.buildTokens(conf));
@@ -652,6 +652,41 @@ struct SystemParser {
     void boundPostProcessing(SimulConfig&) const;
     void chemPostProcessing(SimulConfig&) const;
 
+};
+
+struct ChemistryParser {
+    // Uses SimulConfig instead of ChemistryData, because the parsing uses
+    // information of other parameters
+    KeyValueParser< SimulConfig > chemDataParser;
+
+    // State: this parser is not context-free
+    // Remember species names to keep track of duplicate names
+    std::set<std::string> allSpeciesNames;
+
+    ChemistryParser() {
+        initChemDataParser();
+    }
+
+    void parseInput(SimulConfig& conf, std::string input) const {
+        resetStates();
+
+        const auto se =
+            lexConfigTokens(
+                tokenizeConfigFile(
+                    std::move(input)));
+
+        chemDataParser.parse(conf, se);
+    }
+
+    void outputInput(std::ostream& os, const SimulConfig& conf) const {
+        outputConfigTokens(os, chemDataParser.buildTokens(conf));
+    }
+
+    // Add parsing rules
+    void resetStates() {
+        allSpeciesNames.clear();
+    }
+    void initChemDataParser();
 };
 
 } // namespace medyan
@@ -695,15 +730,6 @@ struct BubbleParser {
     static BubbleData readBubbles(std::istream&);
 };
 
-
-/// Used to parse all chemical information, initialized by the Controller.
-struct ChemistryParser {
-    /// Reads chemical reactions and species from input file. Returns a
-    /// ChemistryData struct containing this data
-    /// @note - this does not check for consistency and correctness, the only
-    ///         sanity check here is that there are no duplicate species names.
-    static ChemistryData readChemistryInput(std::istream&, const ChemParams&);
-};
 
 
 /// Used to parse pin positions if needed upon restart
