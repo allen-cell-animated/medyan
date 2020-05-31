@@ -3477,8 +3477,8 @@ void ChemistryParser::initChemDataParser() {
             vector<vector<string>> res;
             const auto& ss = sc.chemistryData.B_BINDING_INDEX;
             for(int i = 0; i < ss.size(); ++i) {
-                for(const auto& eachS : ss[i]) {
-                    res.push_back({ eachS, to_string(i) });
+                if (!ss[i].empty()) {
+                    res.push_back({ ss[i], to_string(i) });
                 }
             }
             return res;
@@ -3499,8 +3499,8 @@ void ChemistryParser::initChemDataParser() {
             vector<vector<string>> res;
             const auto& ss = sc.chemistryData.L_BINDING_INDEX;
             for(int i = 0; i < ss.size(); ++i) {
-                for(const auto& eachS : ss[i]) {
-                    res.push_back({ eachS, to_string(i) });
+                if (!ss[i].empty()) {
+                    res.push_back({ ss[i], to_string(i) });
                 }
             }
             return res;
@@ -3521,8 +3521,8 @@ void ChemistryParser::initChemDataParser() {
             vector<vector<string>> res;
             const auto& ss = sc.chemistryData.M_BINDING_INDEX;
             for(int i = 0; i < ss.size(); ++i) {
-                for(const auto& eachS : ss[i]) {
-                    res.push_back({ eachS, to_string(i) });
+                if (!ss[i].empty()) {
+                    res.push_back({ ss[i], to_string(i) });
                 }
             }
             return res;
@@ -3589,7 +3589,9 @@ void ChemistryParser::initChemDataParser() {
             vector<vector<string>> res;
             for(const auto& r : sc.chemistryData.genReactions) {
                 vector<string> line;
-                line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+                if(sc.chemParams.dissTracking) {
+                    line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+                }
 
                 const auto& reactants = get<0>(r);
                 const auto& products = get<1>(r);
@@ -3604,6 +3606,8 @@ void ChemistryParser::initChemDataParser() {
                 }
 
                 line.push_back(to_string(get<2>(r)));
+
+                res.push_back(move(line));
             }
             return res;
         }
@@ -3656,6 +3660,8 @@ void ChemistryParser::initChemDataParser() {
                 }
 
                 line.push_back(to_string(get<2>(r)));
+
+                res.push_back(move(line));
             }
             return res;
         }
@@ -3713,6 +3719,8 @@ void ChemistryParser::initChemDataParser() {
                     }
 
                     line.push_back(to_string(get<2>(r)));
+
+                    res.push_back(move(line));
                 }
             }
             return res;
@@ -3778,7 +3786,9 @@ void ChemistryParser::initChemDataParser() {
                 for(const auto& r : rxns[k]) {
                     vector<string> line;
 
-                    line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+                    if(sc.chemParams.dissTracking) {
+                        line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+                    }
 
                     line.push_back(to_string(k));
 
@@ -3795,6 +3805,8 @@ void ChemistryParser::initChemDataParser() {
                     }
 
                     line.push_back(to_string(get<2>(r)));
+
+                    res.push_back(move(line));
                 }
             }
             return res;
@@ -3860,7 +3872,9 @@ void ChemistryParser::initChemDataParser() {
                 for(const auto& r : rxns[k]) {
                     vector<string> line;
 
-                    line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+                    if(sc.chemParams.dissTracking) {
+                        line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+                    }
 
                     line.push_back(to_string(k));
 
@@ -3877,6 +3891,8 @@ void ChemistryParser::initChemDataParser() {
                     }
 
                     line.push_back(to_string(get<2>(r)));
+
+                    res.push_back(move(line));
                 }
             }
             return res;
@@ -3948,7 +3964,9 @@ void ChemistryParser::initChemDataParser() {
                 for(const auto& r : rxns[k]) {
                     vector<string> line;
 
-                    line.push_back(to_string(get<6>(r)) + ":" + get<7>(r));
+                    if(sc.chemParams.dissTracking) {
+                        line.push_back(to_string(get<6>(r)) + ":" + get<7>(r));
+                    }
 
                     line.push_back(to_string(k));
 
@@ -3968,6 +3986,8 @@ void ChemistryParser::initChemDataParser() {
                     line.push_back(to_string(get<3>(r)));
                     line.push_back(to_string(get<4>(r)));
                     line.push_back(to_string(get<5>(r)));
+
+                    res.push_back(move(line));
                 }
             }
             return res;
@@ -4036,7 +4056,9 @@ void ChemistryParser::initChemDataParser() {
                 for(const auto& r : rxns[k]) {
                     vector<string> line;
 
-                    line.push_back(to_string(get<6>(r)) + ":" + get<7>(r));
+                    if(sc.chemParams.dissTracking) {
+                        line.push_back(to_string(get<6>(r)) + ":" + get<7>(r));
+                    }
 
                     line.push_back(to_string(k));
 
@@ -4056,6 +4078,8 @@ void ChemistryParser::initChemDataParser() {
                     line.push_back(to_string(get<3>(r)));
                     line.push_back(to_string(get<4>(r)));
                     line.push_back(to_string(get<5>(r)));
+
+                    res.push_back(move(line));
                 }
             }
             return res;
@@ -4121,7 +4145,9 @@ void ChemistryParser::initChemDataParser() {
                 for(const auto& r : rxns[k]) {
                     vector<string> line;
 
-                    line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+                    if(sc.chemParams.dissTracking) {
+                        line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+                    }
 
                     line.push_back(to_string(k));
 
@@ -4138,6 +4164,8 @@ void ChemistryParser::initChemDataParser() {
                     }
 
                     line.push_back(to_string(get<2>(r)));
+
+                    res.push_back(move(line));
                 }
             }
             return res;
@@ -4199,6 +4227,8 @@ void ChemistryParser::initChemDataParser() {
                     line.push_back(to_string(get<3>(r)));
                     line.push_back(          get<4>(r) );
                     line.push_back(to_string(get<5>(r)));
+
+                    res.push_back(move(line));
                 }
             }
             return res;
@@ -4267,7 +4297,9 @@ void ChemistryParser::initChemDataParser() {
                 for(const auto& r : rxns[k]) {
                     vector<string> line;
 
-                    line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+                    if(sc.chemParams.dissTracking) {
+                        line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+                    }
 
                     line.push_back(to_string(k));
 
@@ -4284,6 +4316,8 @@ void ChemistryParser::initChemDataParser() {
                     }
 
                     line.push_back(to_string(get<2>(r)));
+
+                    res.push_back(move(line));
                 }
             }
             return res;
@@ -4339,6 +4373,8 @@ void ChemistryParser::initChemDataParser() {
                     }
 
                     line.push_back(to_string(get<2>(r)));
+
+                    res.push_back(move(line));
                 }
             }
             return res;
@@ -4372,7 +4408,9 @@ void ChemistryParser::initChemDataParser() {
                     line.push_back(to_string(k));
                     line.push_back("AT");
                     line.push_back(get<0>(r));
-                    line.push_bacK(to_string(get<1>(r)));
+                    line.push_back(to_string(get<1>(r)));
+
+                    res.push_back(move(line));
                 }
             }
             return res;

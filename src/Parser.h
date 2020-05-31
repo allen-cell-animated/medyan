@@ -667,7 +667,7 @@ struct ChemistryParser {
         initChemDataParser();
     }
 
-    void parseInput(SimulConfig& conf, std::string input) const {
+    void parseInput(SimulConfig& conf, std::string input) {
         resetStates();
 
         const auto se =
