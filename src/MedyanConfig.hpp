@@ -158,6 +158,7 @@ struct SimulConfigHelper {
             LOG(NOTE) << "The chemistry input file is not specified in the config."
                 " Using cout as the default output target.";
             chemistryParser.outputInput(cout, conf);
+            LOG(NOTE) << "----- End of chemistry input -----";
         }
         else {
             const auto p = conf.metaParams.inputDirectory / conf.chemParams.chemistrySetup.inputFile;
