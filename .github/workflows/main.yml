@@ -20,6 +20,8 @@ jobs:
         ./conf.sh
     - name: Build with make
       run: |
+        # Use avx2 (default avx512 causes trouble in UMEsimd)
+        sed -i 's/-march=native/-march=avx2/g' CMakeLists.txt
         mkdir -p build
         cd build
         cmake ..
@@ -39,6 +41,8 @@ jobs:
         ./conf.sh
     - name: Build with make
       run: |
+        # Use avx2 (default avx512 causes trouble in UMEsimd)
+        sed -i 's/-march=native/-march=avx2/g' CMakeLists.txt
         mkdir -p build
         cd build
         cmake ..
@@ -71,4 +75,4 @@ jobs:
         & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" .\MEDYAN.sln /property:Configuration=Release /property:Platform=x64
     - name: Run tests
       run: |
-        .\x64\MEDYAN.exe test
+        .\Release\MEDYAN.exe test
