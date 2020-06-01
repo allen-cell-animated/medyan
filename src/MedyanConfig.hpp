@@ -132,14 +132,16 @@ struct SimulConfigHelper {
         return conf;
     }
 
-    // Output configuration to file
-    void generateInput(const SimulConfig& conf) const {
+    // Output configuration to files
+    //
+    // altOstream is used when the file name is not specified.
+    void generateInput(const SimulConfig& conf, std::ostream& altOstream = std::cout) const {
         using namespace std;
 
         // Generate system input
         if(conf.metaParams.systemInputFile.empty()) {
             LOG(NOTE) << "The system input file is not specified in the config."
-                " Using cout as the default output target.";
+                " Using alternative output target.";
             systemParser.outputInput(cout, conf);
             LOG(NOTE) << "----- End of system input -----";
         }
@@ -155,7 +157,7 @@ struct SimulConfigHelper {
         // Generate chemistry input
         if(conf.chemParams.chemistrySetup.inputFile.empty()) {
             LOG(NOTE) << "The chemistry input file is not specified in the config."
-                " Using cout as the default output target.";
+                " Using alternative output target.";
             chemistryParser.outputInput(cout, conf);
             LOG(NOTE) << "----- End of chemistry input -----";
         }
@@ -187,7 +189,9 @@ struct SimulConfigHelper {
 
 
 // Starts an interactive session of the command line configuration generation
-inline void interactiveConfig() {
+//
+// altOstream is used when the file name is not specified.
+inline void interactiveConfig(std::ostream& altOstream = std::cout) {
     using namespace std;
 
     // Auxiliary functions
@@ -195,19 +199,37 @@ inline void interactiveConfig() {
     const auto getInt = [](int def) -> int {
         string line; getline(cin, line);
         if(line.empty()) return def;
-        return stoi(line);
+        while(true) {
+            try {
+                return stoi(line);
+            }
+            catch(const exception& e) {
+                cout << "Invalid input: " << line << ". Please correct it: ";
+                getline(cin, line);
+                if(line.empty()) return def;
+            }
+        }
     };
     const auto getDouble = [](double def) -> double {
         string line; getline(cin, line);
         if(line.empty()) return def;
-        return stod(line);
+        while(true) {
+            try {
+                return stod(line);
+            }
+            catch(const exception& e) {
+                cout << "Invalid input: " << line << ". Please correct it: ";
+                getline(cin, line);
+                if(line.empty()) return def;
+            }
+        }
     };
     const auto getString = [](string def) -> string {
         string line; getline(cin, line);
         if(line.empty()) return def;
         return line;
     };
-    const auto chooseStringAmong = [](vector<string> choices) -> string {
+    const auto chooseStringAmong = [&](vector<string> choices) -> string {
         if(choices.empty()) return "";
         // The first one is default
         auto s = getString(choices[0]);
@@ -215,6 +237,7 @@ inline void interactiveConfig() {
             cout << "Invalid choice: " << s << ". Please correct the input: ";
             s = getString(choices[0]);
         }
+        return s;
     };
     const auto chooseYesNo = [](bool def) -> bool {
         string line;
@@ -288,13 +311,13 @@ inline void interactiveConfig() {
         conf.chemistryData.speciesBound[0].push_back("MEA");
         conf.chemistryData.M_BINDING_INDEX[0] = "MEA";
 
-        conf.chemistryData.motorReactions.push_back({
+        conf.chemistryData.motorReactions[0].push_back({
             { "MEA:BOUND:1", "MEA:BOUND:2", "MD:DIFFUSING" },
             { "MOA:MOTOR:1", "MOA:MOTOR:2" },
             0.2, 1.7, 175.0, 225.0,
             0.0, "NA"
         });
-        conf.chemistryData.motorWalkingReactions.push_back({
+        conf.chemistryData.motorWalkingReactions[0].push_back({
             { "MOA:MOTOR:N", "MEA:BOUND:N+1" },
             { "MOA:MOTOR:N+1", "MEA:BOUND:N" },
             0.2,
@@ -309,7 +332,7 @@ inline void interactiveConfig() {
         conf.chemistryData.speciesBound[0].push_back("LEA");
         conf.chemistryData.L_BINDING_INDEX[0] = "LEA";
 
-        conf.chemistryData.linkerReactions.push_back({
+        conf.chemistryData.linkerReactions[0].push_back({
             { "LEA:BOUND:1", "LEA:BOUND:2", "LD:DIFFUSING" },
             { "LA:LINKER:1", "LA:LINKER:2" },
             0.01, 0.3, 30.0, 40.0,
@@ -332,7 +355,7 @@ inline void interactiveConfig() {
         conf.chemistryData.speciesBound[0].push_back("BEA");
         conf.chemistryData.B_BINDING_INDEX[0] = "BEA";
 
-        conf.chemistryData.branchingReactions.push_back({
+        conf.chemistryData.branchingReactions[0].push_back({
             { "BD:DIFFUSING", "A:DIFFUSING", "BEA:BOUND" },
             { "BA:BRANCHER", "PA:PLUSEND" },
             0.001, 0.01, "ALL", 100.0
@@ -388,22 +411,22 @@ inline void interactiveConfig() {
     });
     cout << "Enable filament polymerization/depolymerization (y/n) (default y): ";
     if(chooseYesNo(true)) {
-        conf.chemistryData.polymerizationReactions.push_back({
+        conf.chemistryData.polymerizationReactions[0].push_back({
             { "A:DIFFUSING", "PA:PLUSEND" },
             { "AF:FILAMENT", "PA:PLUSEND" },
             0.154, 0.0, "NA"
         });
-        conf.chemistryData.polymerizationReactions.push_back({
+        conf.chemistryData.polymerizationReactions[0].push_back({
             { "A:DIFFUSING", "MA:MINUSEND" },
             { "AF:FILAMENT", "MA:MINUSEND" },
             0.017, 0.0, "NA"
         });
-        conf.chemistryData.depolymerizationReactions.push_back({
+        conf.chemistryData.depolymerizationReactions[0].push_back({
             { "AF:FILAMENT", "PA:PLUSEND" },
             { "A:DIFFUSING", "PA:PLUSEND" },
             1.4, 0.0, "NA"
         });
-        conf.chemistryData.depolymerizationReactions.push_back({
+        conf.chemistryData.depolymerizationReactions[0].push_back({
             { "AF:FILAMENT", "MA:MINUSEND" },
             { "A:DIFFUSING", "MA:MINUSEND" },
             0.8, 0.0, "NA"
@@ -462,29 +485,28 @@ inline void interactiveConfig() {
     //---------- dynamic rates ----------
     cout << endl;
     LOG(STEP) << "Dynamic rate parameters";
-    LOG(INFO) << "Dynamic rate model - Brownian Ratchet";
     cout << "Enable Brownian Ratchet (y/n) (default y): ";
     if(chooseYesNo(true)) {
-        conf.dyRateParams.dynamicRateType.dFPolymerizationType = "BROWRATCHET";
+        conf.dyRateParams.dynamicRateType.dFPolymerizationType = { "BROWRATCHET" };
         conf.dyRateParams.dFilPolymerizationCharLength = {2.7};
     }
 
     if(shouldAddMyosin) {
         cout << "Enable motor catch bond (y/n) (default y): ";
         if(chooseYesNo(true)) {
-            conf.dyRateParams.dynamicRateType.dMUnbindingType = "LOWDUTYCATCH";
+            conf.dyRateParams.dynamicRateType.dMUnbindingType = { "LOWDUTYCATCH" };
             conf.dyRateParams.dMotorUnbindingCharForce = {12.62};
         }
         cout << "Enable motor walking stall (y/n) (default y): ";
         if(chooseYesNo(true)) {
-            conf.dyRateParams.dynamicRateType.dMWalkingType = "LOWDUTYSTALL";
+            conf.dyRateParams.dynamicRateType.dMWalkingType = { "LOWDUTYSTALL" };
             conf.dyRateParams.dMotorWalkingCharForce = {90.0};
         }
     }
     if(shouldAddLinker) {
         cout << "Enable linker slip bond (y/n) (default y): ";
         if(chooseYesNo(true)) {
-            conf.dyRateParams.dynamicRateType.dLUnbindingType = "SLIP";
+            conf.dyRateParams.dynamicRateType.dLUnbindingType = { "SLIP" };
             conf.dyRateParams.dLinkerUnbindingCharLength = {0.24};
         }
     }
@@ -502,14 +524,21 @@ inline void interactiveConfig() {
         LOG(INFO) << "Using current directory: " << fileDirectory;
     }
     conf.metaParams.inputDirectory = fileDirectory;
-    cout << "The name of the system input file: "; conf.metaParams.systemInputFile = fileDirectory / getString("");
+    cout << "The name of the system input file: ";
+    {
+        auto fileName = getString("");
+        if(!fileName.empty()) {
+            conf.metaParams.systemInputFile = fileDirectory / fileName;
+        }
+        // If fileName is empty, let systemInputFile be empty as well.
+    }
     cout << "The name of the chemistry input file: "; conf.chemParams.chemistrySetup.inputFile = getString("");
 
     // File generation
     //-------------------------------------------------------------------------
     cout << endl;
     LOG(STEP) << "Configuration complete! Generating files...";
-    helper.generateInput(conf);
+    helper.generateInput(conf, altOstream);
 
 }
 
