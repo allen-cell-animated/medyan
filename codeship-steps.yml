@@ -1,4 +1,0 @@
-- name: build
-  tag: master
-  service: medyan
-  command: sh -c "make && ./MEDYAN test"
