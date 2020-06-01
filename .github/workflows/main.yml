@@ -21,7 +21,7 @@ jobs:
     - name: Build with make
       run: |
         # Use avx2 (default avx512 causes trouble in UMEsimd)
-        sed -i 's/-march=native/-march=avx2/g' CMakeLists.txt
+        sed -i 's/-mtune=native -march=native/-mavx2/g' CMakeLists.txt
         mkdir -p build
         cd build
         cmake ..
@@ -42,7 +42,7 @@ jobs:
     - name: Build with make
       run: |
         # Use avx2 (default avx512 causes trouble in UMEsimd)
-        sed -i 's/-march=native/-march=avx2/g' CMakeLists.txt
+        sed -i 's/-mtune=native -march=native/-mavx2/g' CMakeLists.txt
         mkdir -p build
         cd build
         cmake ..
