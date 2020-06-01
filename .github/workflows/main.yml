@@ -20,7 +20,7 @@ jobs:
         ./conf.sh
     - name: Build with make
       run: |
-        mkdir build
+        mkdir -p build
         cd build
         cmake ..
         make
@@ -39,7 +39,7 @@ jobs:
         ./conf.sh
     - name: Build with make
       run: |
-        mkdir build
+        mkdir -p build
         cd build
         cmake ..
         make
@@ -59,7 +59,7 @@ jobs:
     - name: Build with MSBuild
       working-directory: ${{ github.workspace }}
       run: |
-        mkdir build
+        mkdir -Force build
         cd build
         cmake ..
         make
