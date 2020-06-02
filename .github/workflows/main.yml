@@ -25,7 +25,7 @@ jobs:
         mkdir -p build
         cd build
         cmake ..
-        make
+        make VERBOSE=1
     - name: Run tests
       run: |
         ./MEDYAN test
@@ -42,11 +42,11 @@ jobs:
     - name: Build with make
       run: |
         # Use avx2 (default avx512 causes trouble in UMEsimd)
-        sed -i 's/-mtune=native -march=native/-mavx2/g' CMakeLists.txt
+        sed -i '' -e 's/-mtune=native -march=native/-mavx2/g' CMakeLists.txt
         mkdir -p build
         cd build
         cmake ..
-        make
+        make VERBOSE=1
     - name: Run tests
       run: |
         ./MEDYAN test
@@ -66,7 +66,6 @@ jobs:
         mkdir -Force build
         cd build
         cmake ..
-        make
         # Set up chocolatey profile so that refreshenv is an ps alias
         # $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."   
         # Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
@@ -75,4 +74,4 @@ jobs:
         & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" .\MEDYAN.sln /property:Configuration=Release /property:Platform=x64
     - name: Run tests
       run: |
-        .\Release\MEDYAN.exe test
+        .\Release\medyan.exe test
