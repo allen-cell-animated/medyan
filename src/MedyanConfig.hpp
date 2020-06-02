@@ -231,16 +231,16 @@ struct SimulConfigHelper {
                 switch(overwriteAction) {
 
                 case InputGenOverwriteAction::overwrite:
-                    LOG(WARNING) << "The file " << p << " already exists and will be overwritten.";
+                    LOG(WARNING) << "The file " << p.string() << " already exists and will be overwritten.";
                     break;
 
                 case InputGenOverwriteAction::ignore:
-                    LOG(WARNING) << "The file " << p << " already exists.";
+                    LOG(WARNING) << "The file " << p.string() << " already exists.";
                     useAlt = true;
                     break;
 
                 case InputGenOverwriteAction::confirm:
-                    cout << "The file " << p << " already exists. Overwrite (y/n)? ";
+                    cout << "The file " << p.string() << " already exists. Overwrite (y/n)? ";
                     useAlt = cinYesNo();
                     break;
                 }
@@ -270,16 +270,16 @@ struct SimulConfigHelper {
                     switch(overwriteAction) {
 
                     case InputGenOverwriteAction::overwrite:
-                        LOG(WARNING) << "The file " << p << " already exists and will be overwritten.";
+                        LOG(WARNING) << "The file " << p.string() << " already exists and will be overwritten.";
                         break;
 
                     case InputGenOverwriteAction::ignore:
-                        LOG(WARNING) << "The file " << p << " already exists.";
+                        LOG(WARNING) << "The file " << p.string() << " already exists.";
                         useAlt = true;
                         break;
 
                     case InputGenOverwriteAction::confirm:
-                        cout << "The file " << p << " already exists. Overwrite (y/n)? ";
+                        cout << "The file " << p.string() << " already exists. Overwrite (y/n)? ";
                         useAlt = cinYesNo();
                         break;
                     }
@@ -532,9 +532,9 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
         });
     }
 
-    //---------- force field ----------
+    //---------- mechanics ----------
     cout << endl;
-    LOG(STEP) << "Force field parameters";
+    LOG(STEP) << "Mechanics parameters";
     LOG(INFO) << "Energy minimization time interval:";
     LOG(INFO) << "  Use a lower value if: 1. simulation fails or generates warnings";
     LOG(INFO) << "                        2. has very fast chemical reactions";
@@ -589,9 +589,12 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
     cout << endl;
     LOG(STEP) << "Output files settings";
     cout << "The directory for generated files: "; fileDirectory = cinStringDef("");
-    if(fileDirectory.empty()) {
+    while(fileDirectory.empty()) {
         fileDirectory = filesystem::current_path();
-        LOG(INFO) << "Using current directory: " << fileDirectory;
+        cout << "Will use " << fileDirectory.string() << " to generate files. Proceed (y/n)? ";
+        if(!cinYesNo()) {
+            cout << "The directory for generated files: "; fileDirectory = cinStringDef("");
+        }
     }
     conf.metaParams.inputDirectory = fileDirectory;
     cout << "The name of the system input file: ";
