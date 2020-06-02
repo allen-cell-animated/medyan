@@ -435,13 +435,14 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
     // The interactive session
     //-------------------------------------------------------------------------
 
-    LOG(INFO) << "You are now in the interactive configuration session";
-    LOG(INFO) << "Note that this only provides the very basic configuration of the system."
-        " For more detailed configuration, read the documents and use the configuration file.";
+    LOG(INFO) << "-----------------------------------------------------";
+    LOG(INFO) << "You are now in the interactive configuration session.";
+    LOG(NOTE) << "Note that this only provides the very basic configuration of the system."
+        " For more detailed configuration, read the documents and manually edit the input files.";
 
-    LOG(NOTE) << "##################################################";
-    LOG(NOTE) << " Units in MEDYAN are nm, second, pN, and pN*nm";
-    LOG(NOTE) << "##################################################";
+    LOG(INFO) << "##################################################";
+    LOG(INFO) << "  Units in MEDYAN are nm, second, pN, and pN*nm";
+    LOG(INFO) << "##################################################";
 
     //---------- basics ----------
     cout << endl;
@@ -458,17 +459,18 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
         const auto& s = conf.boundParams.boundaryType.boundaryShape;
         s == "SPHERICAL" || s == "CYLINDER"
     ) {
-        cout << "Diameter of boundary (default 1000): "; conf.boundParams.diameter = cinDoubleDef(1000.0);
+        cout << "Diameter of boundary in nm (default 1000): "; conf.boundParams.diameter = cinDoubleDef(1000.0);
     }
 
     cout << endl;
     LOG(INFO) << "Run time specification";
-    cout << "Total running time (default 1000): "; conf.chemParams.chemistryAlgorithm.runTime = cinDoubleDef(1000.0);
-    cout << "Snapshot output time interval (default 1.0): "; conf.chemParams.chemistryAlgorithm.snapshotTime = cinDoubleDef(1.0);
+    cout << "Total running time in second (default 1000): "; conf.chemParams.chemistryAlgorithm.runTime = cinDoubleDef(1000.0);
+    cout << "Snapshot output time interval in second (default 1.0): "; conf.chemParams.chemistryAlgorithm.snapshotTime = cinDoubleDef(1.0);
 
     cout << endl;
     LOG(INFO) << "Initial filaments (applicable to type 0 filament only)";
     cout << "Number of filaments (default 30): "; conf.filamentSetup.numFilaments = cinIntDef(30);
+    LOG(INFO) << "The cylinder length is " << conf.geoParams.cylinderSize[0] << " nm.";
     cout << "Number of cylinders of each filament (default 1): "; conf.filamentSetup.filamentLength = cinIntDef(1);
 
     //---------- chemistry ----------
@@ -539,7 +541,7 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
     LOG(INFO) << "  Use a lower value if: 1. simulation fails or generates warnings";
     LOG(INFO) << "                        2. has very fast chemical reactions";
     LOG(INFO) << "  Recommend value: 0.001 - 0.05";
-    cout << "Energy minimization interval (default 0.01): ";
+    cout << "Energy minimization interval in second (default 0.01): ";
     conf.chemParams.chemistryAlgorithm.neighborListTime =
         conf.chemParams.chemistryAlgorithm.minimizationTime = cinDoubleDef(0.01);
 
