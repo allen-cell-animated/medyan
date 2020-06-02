@@ -72,6 +72,9 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "common.h"
 #include "Controller.h"
 #include "MedyanArgs.hpp"
+#include "MedyanConfig.hpp"
+
+using namespace medyan;
 
 int main(int argc, char **argv) {
 
@@ -102,6 +105,10 @@ int main(int argc, char **argv) {
                 cmdRes.numThreads);
             c.run();
         }
+        break;
+
+    case MedyanRunMode::config:
+        interactiveConfig();
         break;
 
     case MedyanRunMode::test:
