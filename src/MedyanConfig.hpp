@@ -253,6 +253,7 @@ struct SimulConfigHelper {
             } else {
                 ofstream ofs(p);
                 systemParser.outputInput(ofs, conf);
+                LOG(INFO) << "System input file written to " << p.string() << ".";
             }
         }
 
@@ -293,6 +294,7 @@ struct SimulConfigHelper {
             } else {
                 ofstream ofs(p);
                 chemistryParser.outputInput(ofs, conf);
+                LOG(INFO) << "Chemistry input file written to " << p.string() << ".";
             }
         }
 
@@ -618,6 +620,10 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
         altOstream,
         SimulConfigHelper::InputGenOverwriteAction::confirm
     );
+
+    cout << endl;
+    LOG(INFO) << "Input file generation complete.";
+    LOG(INFO) << "Thanks for using MEDYAN interactive configuration!";
 
 }
 
