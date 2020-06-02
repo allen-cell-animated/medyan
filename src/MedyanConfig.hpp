@@ -241,7 +241,7 @@ struct SimulConfigHelper {
 
                 case InputGenOverwriteAction::confirm:
                     cout << "The file " << p.string() << " already exists. Overwrite (y/n)? ";
-                    useAlt = cinYesNo();
+                    useAlt = !cinYesNo();
                     break;
                 }
             }
@@ -281,7 +281,7 @@ struct SimulConfigHelper {
 
                     case InputGenOverwriteAction::confirm:
                         cout << "The file " << p.string() << " already exists. Overwrite (y/n)? ";
-                        useAlt = cinYesNo();
+                        useAlt = !cinYesNo();
                         break;
                     }
                 }
