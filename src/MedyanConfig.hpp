@@ -506,9 +506,8 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
     }
 
     cout << endl;
-    LOG(INFO) << "  Myosin - Non-muscle mysoin IIA";
-    LOG(INFO) << "  Linker - alpha-actinin crosslinker";
-    LOG(INFO) << "  Bracher - Arp2/3 brancher";
+    LOG(INFO) << "Myosin - Non-muscle mysoin IIA";
+    LOG(INFO) << "  Includes force fields, diffusing/bound species, and binding/unbinding/walking reactions.";
     cout << "Add myosin (y/n) (default y): "; shouldAddMyosin = cinYesNoDef(true);
     if(shouldAddMyosin) {
         cout << "Initial diffusing myosin copy number (default 50): ";
@@ -517,6 +516,9 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
             0, "NONE", 0.0
         });
     }
+
+    LOG(INFO) << "Linker - alpha-actinin crosslinker";
+    LOG(INFO) << "  Includes force fields, diffusing/bound species, and binding/unbinding reactions.";
     cout << "Add linker (y/n) (default y): "; shouldAddLinker = cinYesNoDef(true);
     if(shouldAddLinker) {
         cout << "Initial diffusing linker copy number (default 500): ";
@@ -525,6 +527,9 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
             0, "NONE", 0.0
         });
     }
+
+    LOG(INFO) << "Bracher - Arp2/3 brancher";
+    LOG(INFO) << "  Includes force fields, diffusing/bound species, and binding/unbinding reactions.";
     cout << "Add brancher (y/n) (default y): "; shouldAddBrancher = cinYesNoDef(true);
     if(shouldAddBrancher) {
         cout << "Initial diffusing brancher copy number (default 20): ";
@@ -599,15 +604,10 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
         }
     }
     conf.metaParams.inputDirectory = fileDirectory;
-    cout << "The name of the system input file: ";
-    {
-        auto fileName = cinStringDef("");
-        if(!fileName.empty()) {
-            conf.metaParams.systemInputFile = fileDirectory / fileName;
-        }
-        // If fileName is empty, let systemInputFile be empty as well.
-    }
-    cout << "The name of the chemistry input file: "; conf.chemParams.chemistrySetup.inputFile = cinStringDef("");
+    cout << "The name of the system input file (default system.txt): ";
+    conf.metaParams.systemInputFile = fileDirectory / cinStringDef("system.txt");
+    cout << "The name of the chemistry input file (default chemistry.txt): ";
+    conf.chemParams.chemistrySetup.inputFile = cinStringDef("chemistry.txt");
 
     // File generation
     //-------------------------------------------------------------------------
