@@ -14,8 +14,9 @@
 #include "SysParams.h"
 bool SysParams::RUNSTATE=true;
 bool SysParams::INITIALIZEDSTATUS=false;
+bool SysParams::USECHEMCOPYNUM=false;
 bool SysParams::DURINGCHEMISTRY=false;
-int SysParams::numthreads=0;
+
 int SysParams::exvolcounter[3] = {0,0,0};
 long long SysParams::exvolcounterz[3] = {0,0,0};
 #ifdef NLSTENCILLIST
@@ -40,10 +41,7 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
             
             return false;
         }
-        else{
-            CParams.numFilamentSpecies.push_back(chem.speciesFilament[filType].size());
-        }
-        
+
         if(chem.speciesPlusEnd[filType].size() == 0) {
             
             cout << "At least one plus end species is required for each filament type. Exiting."
@@ -51,10 +49,7 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
     
             return false;
         }
-        else{
-            CParams.numPlusEndSpecies.push_back(chem.speciesPlusEnd[filType].size());
-        }
-        
+
         if(chem.speciesMinusEnd[filType].size() == 0) {
             
             cout << "At least one minus end species is required for each filament type. Exiting."
@@ -62,9 +57,7 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
             
             return false;
         }
-        else{
-            CParams.numMinusEndSpecies.push_back(chem.speciesMinusEnd[filType].size());
-        }
+
         
         if(chem.speciesBound[filType].size() == 0) {
             
@@ -73,13 +66,6 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
             
             return false;
         }
-        else{
-            CParams.numBoundSpecies.push_back(chem.speciesBound[filType].size());
-        }
-        
-        CParams.numLinkerSpecies.push_back(chem.speciesLinker[filType].size());
-        CParams.numMotorSpecies.push_back(chem.speciesMotor[filType].size());
-        CParams.numBrancherSpecies.push_back(chem.speciesBrancher[filType].size());
 
         
         //check if binding sites are valid
@@ -130,6 +116,25 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
     }
 
     return true;
+}
+
+void SysParams::addChemParameters(ChemistryData& chem){
+    for(auto filType = 0; filType < CParams.numFilaments; filType++) {
+        CParams.numFilamentSpecies.push_back(chem.speciesFilament[filType].size());
+            
+        CParams.numPlusEndSpecies.push_back(chem.speciesPlusEnd[filType].size());
+            
+        CParams.numMinusEndSpecies.push_back(chem.speciesMinusEnd[filType].size());
+            
+        CParams.numBoundSpecies.push_back(chem.speciesBound[filType].size());
+        
+        CParams.numLinkerSpecies.push_back(chem.speciesLinker[filType].size());
+        
+        CParams.numMotorSpecies.push_back(chem.speciesMotor[filType].size());
+        
+        CParams.numBrancherSpecies.push_back(chem.speciesBrancher[filType].size());
+    }
+    
 }
 
 bool SysParams::checkMechParameters(MechanicsFFType& mech) {
@@ -441,6 +446,9 @@ ChemParams   SysParams::CParams;
 GeoParams    SysParams::GParams;
 BoundParams  SysParams::BParams;
 DyRateParams SysParams::DRParams;
+#ifdef TRACKDIDNOTMINIMIZE
+MinimizationParams SysParams::MinParams;
+#endif
 SpecialParams SysParams::SParams;
 
 

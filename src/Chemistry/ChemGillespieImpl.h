@@ -169,13 +169,16 @@ public:
     void resetTime() {_t=0.0; syncGlobalTime(); }
     
     /// Sets global time variable to ChemGillespieImpl's global time
-    void syncGlobalTime() {global_time=_t;}
+    void syncGlobalTime() {global_time=_t; }
             
     /// Add ReactionBase *r to the network
     virtual void addReaction(ReactionBase *r);
     
     /// Remove ReactionBase *r from the network
     virtual void removeReaction(ReactionBase *r);
+
+    //sets global time to restart time when called.
+    virtual void initializerestart(floatingpoint restarttime);
     
     /// Unconditionally compute the total propensity associated with the network.
     floatingpoint computeTotalA();
@@ -234,6 +237,12 @@ public:
     
     /// Prints all RNodes in the reaction network
     virtual void printReactions() const;
+
+    /// Cross checks all reactions in the network for firing time.
+    virtual bool crosschecktau() const {
+        LOG(WARNING)<<"Cannot check for tau in reactions in ChemGillespieImpl.h"<<endl;
+        return true;
+    };
     
 private:
 
@@ -246,6 +255,9 @@ private:
     /// Returns true if successful, and false if the heap is exchausted and there no
     /// more reactions to fire
     bool makeStep();
+
+    //sets glocal time to specified value. To be used only during restart.
+    void setTime(floatingpoint timepoint){ _t=timepoint; syncGlobalTime();}
 private:
     #ifdef DEBUGCONSTANTSEED
     map<ReactionBase*, unique_ptr<RNodeGillespie>> _map_rnodes;

@@ -1,11 +1,32 @@
-# ?.?.? (Released TBD)
+# 4.1.2 (Released 2020-06-01)
+
+## Enhancements
+- New building procedure using `CMake` is supported and recommended (a1b28e254).
+- Added a force field that combines filament stretching and bending (772133585).
+- Added quadratic line search in gradient descent method (772133585).
+
+## Bug fixes
+- The copy number of chemical species are now assigned before dynamic rate initialization (7175987be).
+- Fixed branching dihedral force field cosine form (772133585).
+- Myosin duty ratio is now calculated at runtime (772133585).
+
+# 4.1.1 (Released 2020-01-30)
 
 ## New features
+- The system input file no longer requires species number of types specification (b887ba2).
+- Rearranged examples and added new ones (48993f8).
 
 ## Refactoring and optimizations
 - Refactored the logger (a2c69f9).
+- Integrated the tests (8de0a0f).
+- Increased readability of on-screen outputs.
+- `Makefile` default optimization changed from `-Os` to `-O2` (b8468c3).
 
 ## Bug fixes
+- Fixed distribution generation in chemistry algorithm (5897eed).
+- Fixed bugs related to SIMD macros (13fe728).
+- Fixed volume exclusion not including short filaments (d0961d4).
+- Fixed Myosin motor duty ratio calculation. Now it is based on binding/unbinding rates. (6f57531)
 
 # 4.1.0 (Released 2019-10-29)
 

@@ -403,7 +403,7 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, size_
                            (coord2[2] - coord1[2])*B +
                            (coord3[2] - coord2[2])*C );
 
-        //force on i-1, f = k*(A*l - B*l2):
+        //force on i-1, f = k*(A*l1 - B*l2):
         force3[0] +=  k *( (coord2[0] - coord1[0])*A -
                            (coord3[0] - coord2[0])*C );
 

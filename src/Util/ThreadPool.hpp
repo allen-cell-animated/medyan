@@ -16,6 +16,10 @@
 #include <utility>
 #include <vector>
 
+// IMPORTANT
+//   THIS IMPLEMENTATION OF THREAD POOL IS CURRENTLY NOT USED IN THE MAIN CODE
+//
+
 // The implementation for thread pooling in MEDYAN.
 //
 // Purpose: Increase performance by running computational-heavy work on

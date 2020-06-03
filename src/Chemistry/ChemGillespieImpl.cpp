@@ -63,18 +63,29 @@ void ChemGillespieImpl::initialize() {
     _a_total = computeTotalA();
 }
 
+void ChemGillespieImpl::initializerestart(floatingpoint restarttime){
+
+    if(SysParams::RUNSTATE){
+        LOG(ERROR) << "initializerestart Function from ChemSimpleGillespieImpl class can "
+                      "only be called "
+                      "during restart phase. Exiting.";
+        throw std::logic_error("Illegal function call pattern");
+    }
+
+    setTime(restarttime);
+}
+
+
 
 ChemGillespieImpl::~ChemGillespieImpl() noexcept{
     _map_rnodes.clear();
 }
 
 floatingpoint ChemGillespieImpl::generateTau(floatingpoint a) {
-    exponential_distribution<floatingpoint>::param_type pm(a);
-    _exp_distr.param(pm);
     #ifdef DEBUGCONSTANTSEED
     Rand::chemistrycounter++;
     #endif
-    return _exp_distr(Rand::eng);
+    return safeExpDist(_exp_distr, a, Rand::eng);
 
 }
 

@@ -201,6 +201,7 @@ public:
     //constructor
     HybridCylinderCylinderNL() {}
 
+    //Creates bingrid and assigns cylinders to each bin.
     virtual void initializeHybridNeighborList(){
         initializeBinGrid();
         assignallcylinderstobin();

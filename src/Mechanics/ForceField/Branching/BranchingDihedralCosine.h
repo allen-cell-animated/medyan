@@ -21,16 +21,34 @@ class Bead;
 
 /// A cosine potential used by the BranchingDihedralTemplate.
 class BranchingDihedralCosine {
-    
+
 public:
-    floatingpoint energy(floatingpoint *coord, size_t nint,
-        unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos);
-    
+    floatingpoint energy(
+        const floatingpoint *coord, size_t nint,
+        unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos
+    ) const;
+
     [[deprecated]] floatingpoint energy(floatingpoint *coord, floatingpoint *f, unsigned int *beadSet,
                   floatingpoint *kdih, floatingpoint *pos, floatingpoint d);
 
-    void forces(floatingpoint *coord, floatingpoint *f, size_t nint,
-        unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos);
+    void forces(
+        const floatingpoint *coord, floatingpoint *f, size_t nint,
+        unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos,
+        floatingpoint *stretchforce
+    ) const;
+
+	void forcesNumericalinteraction(floatingpoint *coord, floatingpoint *f, size_t nint,
+			unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos, int
+			interactionID, double *Nforce);
+
+	template <class dataType = double>
+	dataType energyininteractionperturbed(floatingpoint *coord, size_t nint,
+	                                           unsigned int *beadSet, floatingpoint *kdih,
+	                                           floatingpoint *pos, int interactionID,
+	                                           const int perturbcoord, const int
+	                                           perturbaxis, double delta);
+
+	void testdihedral();
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint);
 
@@ -52,6 +70,16 @@ public:
     char *gFF, *ginteraction;
     cudaStream_t stream = NULL;
 #endif
+/*private:
+  int counterE = 0;
+  int counterF = 0;
+  double EmagerrorMvsN = 0.0;
+  double FmagerrorMvsN[4] = {0.0, 0.0, 0.0, 0.0};
+  double FdirerrorMvsN[4] = {0.0, 0.0, 0.0, 0.0};
+  //
+  double EmagerrorLvsN  = 0.0;
+  double FmagerrorLvsN[4] = {0.0, 0.0, 0.0, 0.0};
+  double FdirerrorLvsN[4] = {0.0, 0.0, 0.0, 0.0};*/
 };
 
 #endif

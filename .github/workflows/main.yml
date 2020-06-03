@@ -1,0 +1,77 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-ubuntu:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Prepare dependencies
+      run: |
+        ./conf.sh
+    - name: Build with make
+      run: |
+        # Use avx2 (default avx512 causes trouble in UMEsimd)
+        sed -i 's/-mtune=native -march=native/-mavx2/g' CMakeLists.txt
+        mkdir -p build
+        cd build
+        cmake ..
+        make VERBOSE=1
+    - name: Run tests
+      run: |
+        ./MEDYAN test
+
+  build-macos:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Prepare dependencies
+      run: |
+        ./conf.sh
+    - name: Build with make
+      run: |
+        # Use avx2 (default avx512 causes trouble in UMEsimd)
+        sed -i '' -e 's/-mtune=native -march=native/-mavx2/g' CMakeLists.txt
+        mkdir -p build
+        cd build
+        cmake ..
+        make VERBOSE=1
+    - name: Run tests
+      run: |
+        ./MEDYAN test
+
+  build-windows:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Prepare dependencies
+      run: |
+        .\conf.ps1
+    - name: Build with MSBuild
+      working-directory: ${{ github.workspace }}
+      run: |
+        mkdir -Force build
+        cd build
+        cmake ..
+        # Set up chocolatey profile so that refreshenv is an ps alias
+        # $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."   
+        # Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+        # refreshenv
+        # Build solution
+        & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" .\MEDYAN.sln /property:Configuration=Release /property:Platform=x64
+    - name: Run tests
+      run: |
+        .\Release\medyan.exe test

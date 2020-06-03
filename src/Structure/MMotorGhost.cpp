@@ -30,6 +30,22 @@ MMotorGhost::MMotorGhost(int motorType, int numBoundHeads, floatingpoint positio
     _eqLength = twoPointDistance(m1, m2);
 }
 
+void MMotorGhost::initializerestart(int motorType, floatingpoint eqLength,
+		floatingpoint numBoundHeads){
+
+    if(SysParams::RUNSTATE){
+        LOG(ERROR) << "initializerestart Function from MMotorGhost class can only be "
+                      "called "
+                      "during restart phase. Exiting.";
+        throw std::logic_error("Illegal function call pattern");
+    }
+
+    if(numBoundHeads > 0) {
+        if(!SysParams::Mechanics().MStretchingK.empty())
+            _kStretch = SysParams::Mechanics().MStretchingK[motorType] * numBoundHeads;
+    }
+    _eqLength = eqLength;}
+
 void MMotorGhost::setStretchingConstant(int motorType, floatingpoint numBoundHeads) {
     
     if(!SysParams::Mechanics().MStretchingK.empty())

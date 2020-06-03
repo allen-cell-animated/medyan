@@ -111,20 +111,23 @@ void RNodeNRM::generateNewRandTau() {
     reComputePropensity();//calculated new _a
 
 #ifdef TRACK_ZERO_COPY_N
-    newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
+    auto t1 = _chem_nrm.generateTau(_a);
+    auto t2 = _chem_nrm.getTime();
+    newTau = t1 + t2;
 #else
     if(_a<1.0e-10) // numeric_limits< floatingpoint >::min()
         newTau = numeric_limits<floatingpoint>::infinity();
     else
         newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #endif
+//    cout<<"Propensity of rxn "<<_a<<" tau "<<newTau<<endl;
     setTau(newTau);
-//    std::cout<<"generating R and Tau reaction"<<endl;
-//    printSelf();
+
+/*    cout<<"Rxnbase "<<_react<<" Global time "<<t2<<" "<<tau()<<" lag time "<<t1
+        <<" firing time "<<newTau<<" tau set to "<<(*_handle)._tau<<endl;*/
 }
 
 void RNodeNRM::activateReaction() {
-//    std::cout<<"activate Reaction"<<endl;
     generateNewRandTau();
     updateHeap();
 }
@@ -144,19 +147,29 @@ void ChemNRMImpl::initialize() {
     }
 }
 
+void ChemNRMImpl::initializerestart(floatingpoint restarttime){
+
+    if(SysParams::RUNSTATE){
+        LOG(ERROR) << "initializerestart Function from ChemSimpleGillespieImpl class can "
+                      "only be called "
+                      "during restart phase. Exiting.";
+        throw std::logic_error("Illegal function call pattern");
+    }
+
+    setTime(restarttime);
+}
+
+
 ChemNRMImpl::~ChemNRMImpl() {
     _map_rnodes.clear();
 }
 
 floatingpoint ChemNRMImpl::generateTau(floatingpoint a){
-    exponential_distribution<floatingpoint>::param_type pm(a);
-
-    _exp_distr.param(pm);
 
 	#ifdef DEBUGCONSTANTSEED
 	Rand::chemistrycounter++;
 	#endif
-    return _exp_distr(Rand::eng);
+    return safeExpDist(_exp_distr, a, Rand::eng);
 }
 
 bool ChemNRMImpl::makeStep() {
@@ -183,21 +196,10 @@ bool ChemNRMImpl::makeStep() {
         return false;
     }
 
-//    if(rn->getReaction()->getReactionType() == ReactionType::LINKERBINDING) {
-//
-//        cout << "Stopping to check linker rxn." << endl;
-//    }
-
     floatingpoint t_prev = _t;
 
     _t=tau_top;
     syncGlobalTime();
-    //std::cout<<"------------"<<endl;
-//    rn->printSelf();
-//    cout<<"b4_1 "<<Rand::chemistrycounter<<" "<<Rand::intcounter<<" "
-//																""<<Rand::floatcounter<<endl;
-    //std::cout<<"------------"<<endl;
-
     // if dissipation tracking is enabled and the reaction is supported, then compute the change in Gibbs free energy and store it
     if(SysParams::Chemistry().dissTracking){
     ReactionBase* react = rn->getReaction();
@@ -207,13 +209,8 @@ bool ChemNRMImpl::makeStep() {
         _dt->updateDelGChem(react);
         }
     }
-
-    #ifdef CHECKRXN
-    cout<<"rxn"<<endl;
-    rn->printSelf();
-	#endif
-
     rn->makeStep();
+
 	#ifdef DEBUGCONSTANTSEED
     cout<<"tau "<<_t<<endl;
 	#endif
@@ -223,8 +220,7 @@ bool ChemNRMImpl::makeStep() {
         //std::cout<<"Update R and Tau for fired reaction"<<endl;
         rn->generateNewRandTau();
         rn->updateHeap();
-//	    cout<<"b4_2 "<<Rand::chemistrycounter<<" "<<Rand::intcounter<<" "
-//	                                                                  ""<<Rand::floatcounter<<endl;
+
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     }
 #endif
@@ -317,4 +313,18 @@ void ChemNRMImpl::printReactions() const {
         auto rn = x.second.get();
         rn->printSelf();
     }
+}
+
+bool ChemNRMImpl::crosschecktau() const {
+    bool status = true;
+    for (auto &x : _map_rnodes){
+        auto rn = x.second.get();
+        if(rn->getTau() < tau()) {
+            rn->printSelf();
+            status = false;
+            LOG(WARNING) << "Tau in reaction is smaller than current time "<<endl;
+            exit(EXIT_FAILURE);
+        }
+    }
+    return status;
 }
