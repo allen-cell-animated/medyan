@@ -72,6 +72,8 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     #endif
 
     parent->addChild(unique_ptr<Component>(this));
+    //setID
+    _filID = static_cast<Filament*>(parent)->getId();
     //@{
 
     //Set coordinate

@@ -898,6 +898,7 @@ void CMGraph::print(int snapshot) {
 
         uint32_t fid1 = linker->getFirstCylinder()->getFilID();
         uint32_t fid2 = linker->getSecondCylinder()->getFilID();
+        cout<<fid1<<" "<<fid2<<endl;
 
         shiftbybits = sizeof(fid1)*8;
         uint64_t tempkey;
@@ -921,6 +922,7 @@ void CMGraph::print(int snapshot) {
 
         uint32_t fid1 = motor->getFirstCylinder()->getFilID();
         uint32_t fid2 = motor->getSecondCylinder()->getFilID();
+        cout<<fid1<<" "<<fid2<<endl;
 
         shiftbybits = sizeof(fid1)*8;
         uint64_t tempkey;
@@ -943,6 +945,7 @@ void CMGraph::print(int snapshot) {
 
         uint32_t fid1 = brancher->getFirstCylinder()->getFilID();
         uint32_t fid2 = brancher->getSecondCylinder()->getFilID();
+        cout<<fid1<<" "<<fid2<<endl;
 
         shiftbybits = sizeof(fid1)*8;
         uint64_t tempkey;
