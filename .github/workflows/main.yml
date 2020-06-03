@@ -28,7 +28,7 @@ jobs:
         make VERBOSE=1
     - name: Run tests
       run: |
-        ./MEDYAN test
+        ./build/medyan test
 
   build-macos:
 
@@ -49,7 +49,7 @@ jobs:
         make VERBOSE=1
     - name: Run tests
       run: |
-        ./MEDYAN test
+        ./build/medyan test
 
   build-windows:
 
@@ -74,6 +74,4 @@ jobs:
         & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" .\MEDYAN.sln /property:Configuration=Release /property:Platform=x64
     - name: Run tests
       run: |
-        dir .
-        dir .\Release
-        .\Release\medyan.exe test
+        .\build\Release\medyan.exe test
