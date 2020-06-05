@@ -308,6 +308,7 @@ struct DyRateParams {
     vector<floatingpoint> dMotorUnbindingCharForce = {};
 
     /// Option for dynamic walking rate of motors
+    vector<floatingpoint> dMotorWalkingRate = {};
     vector<floatingpoint> dMotorWalkingCharForce = {};
 
     //Qin

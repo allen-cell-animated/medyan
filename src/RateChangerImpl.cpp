@@ -128,6 +128,20 @@ float MotorCatch::changeRate(float onRate, float offRate,
 	#endif*/
 }
 
+float MotorSlip::numBoundHeads(float onRate, float offRate,
+                           floatingpoint force, int numHeads) {
+    
+    return numHeads;
+}
+               
+float MotorSlip::changeRate(float onRate, float offRate,
+                            floatingpoint numHeads, floatingpoint force) {
+   
+   //calculate new rate
+   floatingpoint newRate = onRate * exp(force/_F0);
+   return newRate;
+}
+
 float MotorStall::changeRate(float onRate, float offRate,
                              floatingpoint numHeads, floatingpoint force) {
 //    cout<<"onRate "<<onRate<<endl;
@@ -151,4 +165,14 @@ float MotorStall::changeRate(float onRate, float offRate,
     #else
     return newRate;
     #endif*/
+}
+
+float TwoHeadStall::changeRate(float onRate, float offRate,
+                            floatingpoint numHeads, floatingpoint force) {
+
+    //calculate new rate
+    float k_0 = _walkingRate * _stepFrac;
+    float newRate = k_0 * (1 + force / _F0);
+
+    return newRate;
 }

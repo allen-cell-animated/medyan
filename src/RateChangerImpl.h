@@ -236,6 +236,26 @@ public:
     : MotorCatch(motorType, charForce, 0.33, 1.0){}
 };
 
+/// Motor slip bond is similar to linker
+
+class MotorSlip : public MotorRateChanger {
+    
+private:
+    floatingpoint _F0;  ///< characteristic force
+    floatingpoint _dutyRatio = 1.0;
+    
+public:
+    MotorSlip(short motorType, floatingpoint charForce)
+    
+    : MotorRateChanger(motorType), _F0(charForce) {}
+    
+    virtual float numBoundHeads(float onRate, float offRate,
+                                floatingpoint force, int numHeads);
+    
+    virtual float changeRate(float onRate, float offRate,
+                             floatingpoint numHeads, floatingpoint force);
+    
+};
 
 ///A stall force implementation of the MotorRateChanger.
 ///Used for a motor walking when under stress.
@@ -327,4 +347,34 @@ public:
     
     : MotorStall(motorType, filamentType, charForce, 0.33, 0.3){}
 };
+
+class TwoHeadStall : public MotorRateChanger  {
+    
+private:
+    floatingpoint _F0;            ///< characteristic force
+    float _stepFrac = 1.0; ///< step size of a single head relative to sim
+    float _walkingRate; ///< a walking rate independent of binding rate
+    
+public:
+    TwoHeadStall(short motorType, short filamentType, floatingpoint charForce, floatingpoint walkingRate)
+    
+    : MotorRateChanger(motorType), _F0(charForce), _walkingRate(walkingRate){
+        
+        //calculate rate based on step fraction
+        floatingpoint d_step = SysParams::Chemistry().motorStepSize[_motorType];
+        
+        floatingpoint d_total = (floatingpoint)SysParams::Geometry().cylinderSize[filamentType] /
+        SysParams::Chemistry().numBindingSites[filamentType];
+        
+        _stepFrac = d_step / d_total;
+        
+    }
+    
+    virtual float numBoundHeads(float onRate, float offRate,
+                                floatingpoint force, int numHeads) {return 0.0;}
+    
+    virtual float changeRate(float onRate, float offRate,
+                             floatingpoint numHeads, floatingpoint force);
+};
+
 #endif

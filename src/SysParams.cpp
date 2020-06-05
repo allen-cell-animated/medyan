@@ -420,6 +420,9 @@ bool SysParams::checkDyRateParameters(DynamicRateType& dy) {
         else if(changer == "HIGHDUTYCATCH") {
             numCharForces += 1;
         }
+        else if(changer == "MOTORSLIP") {
+            numCharForces += 1;
+        }
         
     }
     if(numCharForces != SysParams::DynamicRates().

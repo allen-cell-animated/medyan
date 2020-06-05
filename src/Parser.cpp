@@ -1376,6 +1376,18 @@ void SystemParser::readDyRateParams() {
             }
             else {}
         }
+        
+        else if (line.find("DMWALKINGRATE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRParams.dMotorWalkingRate.push_back(
+                            atof((lineVector[i].c_str())));
+            }
+            else {}
+        }
 
         else if (line.find("DLUNBINDINGLEN") != string::npos) {
 

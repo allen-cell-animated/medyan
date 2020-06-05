@@ -134,7 +134,7 @@ public:
 #ifdef NLORIGINAL
                 Mgr->clearpossibleBindings();
 #else
-                Mgr->clearpossibleBindingsstencil();
+                //Mgr->clearpossibleBindingsstencil();
 #endif
             }}
 //STEP #1a: Get cylinders, passivate filament reactions.
