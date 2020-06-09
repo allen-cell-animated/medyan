@@ -62,7 +62,7 @@ namespace {
 			SysParams::GParams.monomerSize.resize(1, 1.0);
             SysParams::CParams.bindingSites.resize(1); // For CCylinder use
 
-            SysParams::MParams.MemBeadVolumeK.resize(1, 1725);
+            SysParams::MParams.MemBeadVolumeK = 1725;
             SysParams::MParams.MemBeadVolumeCutoffMech = 15;
             SysParams::MParams.MemBeadVolumeCutoff = 15;
 
@@ -93,8 +93,6 @@ namespace {
 			SysParams::GParams.cylinderSize.resize(0);
 			SysParams::GParams.monomerSize.resize(0);
             SysParams::CParams.bindingSites.resize(0);
-
-            SysParams::MParams.MemBeadVolumeK.resize(0);
 
             // Remove the triangle
             t->removeFromSubSystem();

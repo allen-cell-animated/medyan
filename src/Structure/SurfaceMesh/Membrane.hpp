@@ -31,9 +31,9 @@ inheriting Composite.
 ******************************************************************************/
 class Membrane: public Composite, public Trackable, public Database< Membrane, false > {
 public:
-    using MembraneMeshAttributeType = MembraneMeshAttribute< SurfaceTriangularMesh >;
+    using MembraneMeshAttributeType = MembraneMeshAttribute< HalfEdgeMesh >;
     using coordinate_type = typename MembraneMeshAttributeType::coordinate_type;
-    using MeshType = SurfaceTriangularMesh< MembraneMeshAttributeType >;
+    using MeshType = HalfEdgeMesh< MembraneMeshAttributeType >;
 
     using HierarchyType = MembraneHierarchy< Membrane >;
 
@@ -86,7 +86,6 @@ public:
 
     // Helper function to initialize MMembrane
     void initMMembrane() {
-#ifdef MECHANICS
         // Calculate the total area and volume to set the equilibrium area and volume
         double area = 0.0;
         double volume = 0.0;
@@ -100,7 +99,6 @@ public:
             area * SysParams::Mechanics().MemEqAreaFactor[memType_]
         );
         mMembrane_->setEqVolume(volume);
-#endif
     } // void initMMembrane()
 
     // SubSystem management, inherited from Trackable

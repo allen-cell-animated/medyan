@@ -11,10 +11,9 @@ Triangle::Triangle(Membrane* parent, size_t topoIndex):
     Trackable(true, false, true, false),
     _parent(parent), _topoIndex{topoIndex} {
 
-#ifdef MECHANICS
-    // eqArea cannot be obtained at this moment
-    _mTriangle = std::make_unique<MTriangle>(getType());
-#endif
+    // Set up mTriangle
+    mTriangle.kArea = SysParams::Mechanics().memAreaK[getType()];
+    // Note: eqArea is not set at this moment and should be set by the creator of the triangle
 
     // Set coordinate and add to compartment
     updateCoordinate();

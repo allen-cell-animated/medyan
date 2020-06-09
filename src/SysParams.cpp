@@ -280,11 +280,6 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
         cout << "Must set a cylinder volume cutoff for mechanical equilibration. Exiting." << endl;
         return false;
     }
-    if(mech.MemBeadVolumeFFType != "" &&
-       MParams.MemBeadVolumeK.size() != CParams.numMembranes) {
-        LOG(ERROR) << "Membrane-bead volume force constants for some membrane types are not set.";
-        return false;
-    }
     if(mech.MemBeadVolumeFFType != "" && MParams.MemBeadVolumeCutoff == 0.0) {
         LOG(ERROR) << "The membrane-bead volume cutoff for load force is not set.";
         return false;
@@ -323,7 +318,7 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     
     // Membrane
     if(mech.MemStretchingFFType == "HARMONIC" &&
-       MParams.MemElasticK.size() != CParams.numMembranes) {
+       MParams.memAreaK.size() != CParams.numMembranes) {
         cout << "Must set a membrane elastic modulus for all membranes. Exiting." << endl;
         return false;
     }

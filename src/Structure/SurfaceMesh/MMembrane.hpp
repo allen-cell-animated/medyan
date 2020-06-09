@@ -22,8 +22,8 @@ private:
 
 public:
     MMembrane(short membraneType) {
-        if(!SysParams::Mechanics().MemElasticK.empty())
-            _kElastic = SysParams::Mechanics().MemElasticK[membraneType];
+        if(!SysParams::Mechanics().memAreaK.empty())
+            _kElastic = SysParams::Mechanics().memAreaK[membraneType];
         if(!SysParams::Mechanics().MemTension.empty())
             _tension = SysParams::Mechanics().MemTension[membraneType];
     }

@@ -258,7 +258,7 @@ struct MechanicsFFType {
 
     /// MembraneFF type
     string MemStretchingFFType     = "";
-    string MemStretchingAccuType   = "";
+    string memTensionFFType        = "";
     string MemBendingFFType        = "";
     string MemBeadVolumeFFType     = "";
 

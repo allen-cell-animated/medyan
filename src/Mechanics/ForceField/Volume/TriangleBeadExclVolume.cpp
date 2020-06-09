@@ -33,7 +33,7 @@ floatingpoint TriangleBeadExclVolume< InteractionType >::computeEnergy(floatingp
         const size_t vi2 = ta.cachedCoordIndex[2];
 
         const auto area = stretched ? ta.gTriangleS.area : ta.gTriangle.area;
-        const double kExVol = t->getMTriangle()->getExVolConst();
+        const double kExVol = SysParams::Mechanics().MemBeadVolumeK;
         
         if(_neighborList->hasNeighborMech(t)) for(auto b : _neighborList->getNeighborsMech(t)) {
 
@@ -90,7 +90,7 @@ void TriangleBeadExclVolume< InteractionType >::computeForces(floatingpoint* coo
         const auto& dArea0 = mesh.getHalfEdgeAttribute(hei0).gHalfEdge.dTriangleArea;
         const auto& dArea1 = mesh.getHalfEdgeAttribute(hei1).gHalfEdge.dTriangleArea;
         const auto& dArea2 = mesh.getHalfEdgeAttribute(hei2).gHalfEdge.dTriangleArea;
-        const double kExVol = t->getMTriangle()->getExVolConst();
+        const double kExVol = SysParams::Mechanics().MemBeadVolumeK;
 
         if(_neighborList->hasNeighborMech(t)) for(auto b : _neighborList->getNeighborsMech(t)) {
 
@@ -183,7 +183,7 @@ void TriangleBeadExclVolume< InteractionType >::computeLoadForces() {
         const Vec3 v2 (mesh.getVertexAttribute(mesh.target(hei2)).getCoordinate());
 
         const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
-        double kExVol = t->getMTriangle()->getExVolConst();
+        double kExVol = SysParams::Mechanics().MemBeadVolumeK;
         
         if(_neighborList->hasNeighbor(t)) for(auto b : _neighborList->getNeighbors(t)) {
 
@@ -230,7 +230,7 @@ void TriangleBeadExclVolume< InteractionType >::computeLoadForce(Cylinder* c, Lo
         const Vec3 v2 (mesh.getVertexAttribute(mesh.target(hei2)).getCoordinate());
 
         const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
-        double kExVol = t->getMTriangle()->getExVolConst();
+        double kExVol = SysParams::Mechanics().MemBeadVolumeK;
 
         exclVolLoadForce(
             _FFType, area, kExVol,

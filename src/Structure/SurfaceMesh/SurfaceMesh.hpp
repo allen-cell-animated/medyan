@@ -159,11 +159,11 @@ public:
 //   - void newHalfEdge(...)
 //   - void newBorder(...)
 //   - void removeElement< Element >(...)
-template< typename Attribute > class SurfaceTriangularMesh {
+template< typename Attribute > class HalfEdgeMesh {
 public:
 
     using AttributeType = Attribute;
-    using MeshType = SurfaceTriangularMesh;
+    using MeshType = HalfEdgeMesh;
 
     using VertexAttribute   = typename Attribute::VertexAttribute;
     using EdgeAttribute     = typename Attribute::EdgeAttribute;
@@ -344,7 +344,7 @@ private:
         _borders[to].attr.setIndex(to);
     }
     template< typename Element > struct ElementRetargeter_ {
-        SurfaceTriangularMesh& mesh;
+        HalfEdgeMesh& mesh;
 
         void operator()(size_t from, size_t to) {
             mesh._retargetElement< Element >(from, to);
@@ -378,10 +378,10 @@ private:
 public:
 
     // Constructors
-    SurfaceTriangularMesh(const MetaAttribute& meta) : _meta(meta) {}
+    HalfEdgeMesh(const MetaAttribute& meta) : _meta(meta) {}
 
     // Destructor
-    ~SurfaceTriangularMesh() {
+    ~HalfEdgeMesh() {
         _clear();
     }
 
@@ -400,7 +400,7 @@ public:
         };
 
         void init(
-            SurfaceTriangularMesh& mesh,
+            HalfEdgeMesh& mesh,
             size_t numVertices,
             const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList,
             const typename Attribute::AttributeInitializerInfo& attributeInitializerInfo
@@ -584,7 +584,7 @@ public:
 
         } // End of function void init(...)
 
-        Info extract(const SurfaceTriangularMesh& mesh) const {
+        Info extract(const HalfEdgeMesh& mesh) const {
             Info info;
             info.numVertices = mesh._vertices.size();
             const size_t numTriangles = mesh._triangles.size();
@@ -715,7 +715,7 @@ public:
         static constexpr int deltaNumVertex = 1;
 
         template< typename AttributeSetter >
-        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex, AttributeSetter&& as)const {
+        void operator()(HalfEdgeMesh& mesh, size_t edgeIndex, AttributeSetter&& as)const {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
@@ -792,9 +792,9 @@ public:
             );
         }
 
-        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex)const {
+        void operator()(HalfEdgeMesh& mesh, size_t edgeIndex)const {
             this->operator()(mesh, edgeIndex, [](
-                SurfaceTriangularMesh& mesh,
+                HalfEdgeMesh& mesh,
                 std::array<size_t, 4> tis,
                 std::array<size_t, 5> vis,
                 std::array<size_t, 4> eis
@@ -811,7 +811,7 @@ public:
         // The target of the halfedge ohei will be preserved
         // Notice that halfedge index (not edge index) is used in this function.
         template< typename AttributeSetter >
-        void operator()(SurfaceTriangularMesh& mesh, size_t ohei, AttributeSetter&& as)const {
+        void operator()(HalfEdgeMesh& mesh, size_t ohei, AttributeSetter&& as)const {
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
 
@@ -870,9 +870,9 @@ public:
             mesh._removeElements<Triangle, 2>({ot0, ot1});
         }
 
-        void operator()(SurfaceTriangularMesh& mesh, size_t ohei)const {
+        void operator()(HalfEdgeMesh& mesh, size_t ohei)const {
             this->operator()(mesh, ohei, [](
-                SurfaceTriangularMesh& mesh,
+                HalfEdgeMesh& mesh,
                 size_t hei_begin, size_t hei_end,
                 size_t ov0
             ) {});
@@ -884,7 +884,7 @@ public:
         static constexpr int deltaNumVertex = 0;
 
         template< typename AttributeSetter >
-        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex, AttributeSetter&& as) const {
+        void operator()(HalfEdgeMesh& mesh, size_t edgeIndex, AttributeSetter&& as) const {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
@@ -929,9 +929,9 @@ public:
 
         }
 
-        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex) const {
+        void operator()(HalfEdgeMesh& mesh, size_t edgeIndex) const {
             this->operator()(mesh, edgeIndex, [](
-                SurfaceTriangularMesh& mesh,
+                HalfEdgeMesh& mesh,
                 std::array<size_t, 2> tis,
                 std::array<size_t, 4> vis
             ) {});
@@ -939,6 +939,6 @@ public:
 
     };
 
-}; // End of class SurfaceTriangularMesh
+}; // End of class HalfEdgeMesh
 
 #endif

@@ -86,7 +86,7 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     {
         auto membraneFFRes = MembraneFFFactory{}(
             forceFields.MemStretchingFFType,
-            forceFields.MemStretchingAccuType,
+            forceFields.memTensionFFType,
             forceFields.MemBendingFFType
         );
         for(auto& ff : membraneFFRes.forceFields) _FFManager._forceFields.push_back(ff.release());

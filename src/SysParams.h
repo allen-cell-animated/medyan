@@ -77,7 +77,7 @@ struct MechParams {
     /// Volume parameter
     vector<floatingpoint> VolumeK                 = {};
     floatingpoint         VolumeCutoff            = 0.0;
-    vector<double> MemBeadVolumeK          = {};
+    double         MemBeadVolumeK          = 0.0;
     double         MemBeadVolumeCutoff     = 0.0;
     double         MemBeadVolumeCutoffMech = 0.0;
     //@}
@@ -98,7 +98,7 @@ struct MechParams {
     
     //@{
     /// Membrane parameter
-    vector<double> MemElasticK     = {};
+    vector<double> memAreaK        = {};
     vector<double> MemEqAreaFactor = {};  // Only used in initialization
     vector<double> MemTension      = {};
     vector<double> MemBendingK     = {};
