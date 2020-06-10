@@ -63,7 +63,7 @@ namespace {
 
 void invalidateMembraneMeshIndexCache() {
     for(auto m : Membrane::getMembranes()) {
-        m->getMesh().getMetaAttribute().cacheValid = false;
+        m->getMesh().metaAttribute().cacheValid = false;
     }
 }
 

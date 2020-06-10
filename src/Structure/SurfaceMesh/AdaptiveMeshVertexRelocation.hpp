@@ -74,7 +74,7 @@ private:
         size_t res = 0;
         const size_t numEdges = mesh.getEdges().size();
         for(size_t i = 0; i < numEdges; ++i) {
-            if(efm.tryFlip(mesh, i) == EdgeFlipManagerType::State::Success) ++res;
+            if(efm.tryFlip(mesh, typename Mesh::EdgeIndex{i}) == EdgeFlipManagerType::State::Success) ++res;
         }
         return res;
     }

@@ -31,7 +31,7 @@ inheriting Composite.
 ******************************************************************************/
 class Membrane: public Composite, public Trackable, public Database< Membrane, false > {
 public:
-    using MembraneMeshAttributeType = MembraneMeshAttribute< HalfEdgeMesh >;
+    using MembraneMeshAttributeType = MembraneMeshAttribute;
     using coordinate_type = typename MembraneMeshAttributeType::coordinate_type;
     using MeshType = HalfEdgeMesh< MembraneMeshAttributeType >;
 

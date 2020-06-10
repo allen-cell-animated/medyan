@@ -99,26 +99,26 @@ public:
     // Requires
     //   - vertex degrees
     //   - triangle unit normal
-    State tryFlip(Mesh& mesh, size_t ei) const {
+    State tryFlip(Mesh& mesh, typename Mesh::EdgeIndex ei) const {
         using namespace mathfunc;
 
-        const size_t hei = mesh.getEdges()[ei].halfEdgeIndex;
-        const size_t hei_o = mesh.opposite(hei);
-        const size_t hei_n = mesh.next(hei);
-        const size_t hei_on = mesh.next(hei_o);
+        const auto hei = mesh.halfEdge(ei);
+        const auto hei_o = mesh.opposite(hei);
+        const auto hei_n = mesh.next(hei);
+        const auto hei_on = mesh.next(hei_o);
 
-        const size_t vi0 = mesh.target(hei);
-        const size_t vi1 = mesh.target(hei_n);
-        const size_t vi2 = mesh.target(hei_o);
-        const size_t vi3 = mesh.target(hei_on);
+        const auto vi0 = mesh.target(hei);
+        const auto vi1 = mesh.target(hei_n);
+        const auto vi2 = mesh.target(hei_o);
+        const auto vi3 = mesh.target(hei_on);
         // Currently the edge connects v0 and v2.
         // If the edge flips, the connection would be between v1 and v3.
 
         // Check if topo constraint is satisfied.
         if(mesh.isEdgeOnBorder(ei)) return State::InvalidTopo;
 
-        const size_t ti0 = mesh.triangle(hei);
-        const size_t ti1 = mesh.triangle(hei_o);
+        const auto ti0 = mesh.triangle(hei);
+        const auto ti1 = mesh.triangle(hei_o);
 
         if(
             mesh.degree(vi0) <= minDegree_ ||
@@ -129,15 +129,15 @@ public:
 
         // Check if the current triangles are coplanar.
         if(dot(
-            mesh.getTriangleAttribute(ti0).gTriangle.unitNormal,
-            mesh.getTriangleAttribute(ti1).gTriangle.unitNormal
+            mesh.attribute(ti0).gTriangle.unitNormal,
+            mesh.attribute(ti1).gTriangle.unitNormal
         ) < minDotNormal_) return State::NonCoplanar;
 
         // Check if the target triangles are coplanar.
-        const CoordinateType c0 (mesh.getVertexAttribute(vi0).getCoordinate());
-        const CoordinateType c1 (mesh.getVertexAttribute(vi1).getCoordinate());
-        const CoordinateType c2 (mesh.getVertexAttribute(vi2).getCoordinate());
-        const CoordinateType c3 (mesh.getVertexAttribute(vi3).getCoordinate());
+        const CoordinateType c0 (mesh.attribute(vi0).getCoordinate());
+        const CoordinateType c1 (mesh.attribute(vi1).getCoordinate());
+        const CoordinateType c2 (mesh.attribute(vi2).getCoordinate());
+        const CoordinateType c3 (mesh.attribute(vi3).getCoordinate());
         const auto n013 = cross(c1 - c0, c3 - c0);
         const auto mag_n013 = magnitude(n013);
         const auto n231 = cross(c3 - c2, c1 - c2);
@@ -155,20 +155,25 @@ public:
         if( !TriangleQualityType::better(qAfter, qBefore) ) return State::BadQuality;
 
         // All checks complete. Do the flip.
-        typename Mesh::EdgeFlip{}(mesh, ei, [](
-            Mesh& mesh, std::array<size_t, 2> tis, std::array<size_t, 4> vis
-        ) {
-            // Invalidate mesh index cache
-            mesh.getMetaAttribute().cacheValid = false;
+        typename Mesh::EdgeFlip{}(
+            mesh, ei,
+            [](
+                Mesh& mesh,
+                std::array<typename Mesh::TriangleIndex, 2> tis,
+                std::array<typename Mesh::VertexIndex, 4> vis
+            ) {
+                // Invalidate mesh index cache
+                mesh.metaAttribute().cacheValid = false;
 
-            for(auto ti : tis) {
-                Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
-                mesh.forEachHalfEdgeInTriangle(ti, [&](size_t hei) {
-                    Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
-                });
+                for(auto ti : tis) {
+                    Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
+                    mesh.forEachHalfEdgeInTriangle(ti, [&](auto hei) {
+                        Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
+                    });
+                }
+                for(auto vi : vis) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
             }
-            for(auto vi : vis) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
-        });
+        );
 
         // Does not change the edge preferrable length
 
@@ -184,11 +189,11 @@ template< EdgeSplitVertexInsertionMethod > struct EdgeSplitVertexInsertion;
 template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::MidPoint > {
     size_t v0, v1;
     template< typename Mesh >
-    auto coordinate(const Mesh& mesh, size_t v) const {
+    auto coordinate(const Mesh& mesh, typename Mesh::VertexIndex v) const {
         using CoordinateType = typename Mesh::AttributeType::coordinate_type;
 
-        const auto c0 = mesh.getVertexAttribute(v0).getCoordinate();
-        const auto c1 = mesh.getVertexAttribute(v1).getCoordinate();
+        const auto c0 = mesh.attribute(typename Mesh::VertexIndex{v0}).getCoordinate();
+        const auto c1 = mesh.attribute(typename Mesh::VertexIndex{v1}).getCoordinate();
         return static_cast<CoordinateType>((c0 + c1) * 0.5);
     }
 };
@@ -201,14 +206,14 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgC
     // Requires
     //   - Vertex unit normal
     template< typename Mesh >
-    auto coordinate(const Mesh& mesh, size_t v) const {
+    auto coordinate(const Mesh& mesh, typename Mesh::VertexIndex v) const {
         using namespace mathfunc;
         using CoordinateType = typename Mesh::AttributeType::coordinate_type;
 
-        const CoordinateType c0 (mesh.getVertexAttribute(v0).getCoordinate());
-        const CoordinateType c1 (mesh.getVertexAttribute(v1).getCoordinate());
-        const auto& un0 = mesh.getVertexAttribute(v0).aVertex.unitNormal;
-        const auto& un1 = mesh.getVertexAttribute(v1).aVertex.unitNormal;
+        const CoordinateType c0 (mesh.attribute(typename Mesh::VertexIndex{v0}).getCoordinate());
+        const CoordinateType c1 (mesh.attribute(typename Mesh::VertexIndex{v1}).getCoordinate());
+        const auto& un0 = mesh.attribute(typename Mesh::VertexIndex{v0}).aVertex.unitNormal;
+        const auto& un1 = mesh.attribute(typename Mesh::VertexIndex{v1}).aVertex.unitNormal;
 
         const auto r = c1 - c0;
         const auto mag2_r = magnitude2(r);
@@ -278,25 +283,25 @@ public:
     // Returns whether a new vertex is inserted.
     // Requires
     //   - Vertex degree
-    State trySplit(Mesh& mesh, size_t ei, const EdgeFlipManagerType& efm) const {
+    State trySplit(Mesh& mesh, typename Mesh::EdgeIndex ei, const EdgeFlipManagerType& efm) const {
         using namespace mathfunc;
 
-        const size_t hei = mesh.getEdges()[ei].halfEdgeIndex;
-        const size_t hei_o = mesh.opposite(hei);
-        const size_t hei_n = mesh.next(hei);
-        const size_t hei_p = mesh.prev(hei);
-        const size_t hei_on = mesh.next(hei_o);
-        const size_t hei_op = mesh.prev(hei_o);
+        const auto hei = mesh.halfEdge(ei);
+        const auto hei_o = mesh.opposite(hei);
+        const auto hei_n = mesh.next(hei);
+        const auto hei_p = mesh.prev(hei);
+        const auto hei_on = mesh.next(hei_o);
+        const auto hei_op = mesh.prev(hei_o);
 
-        const size_t vi0 = mesh.target(hei);
-        const size_t vi1 = mesh.target(hei_n);
-        const size_t vi2 = mesh.target(hei_o);
-        const size_t vi3 = mesh.target(hei_on);
+        const auto vi0 = mesh.target(hei);
+        const auto vi1 = mesh.target(hei_n);
+        const auto vi2 = mesh.target(hei_o);
+        const auto vi3 = mesh.target(hei_on);
 
-        const size_t ei0 = mesh.edge(hei_n); // v0 - v1
-        const size_t ei1 = mesh.edge(hei_p); // v1 - v2
-        const size_t ei2 = mesh.edge(hei_on); // v2 - v3
-        const size_t ei3 = mesh.edge(hei_op); // v3 - v1
+        const auto ei0 = mesh.edge(hei_n); // v0 - v1
+        const auto ei1 = mesh.edge(hei_p); // v1 - v2
+        const auto ei2 = mesh.edge(hei_on); // v2 - v3
+        const auto ei3 = mesh.edge(hei_op); // v3 - v1
 
         // Check topology constraints
         // Currently does not support insertion on border edges, but we may also implement that in the future.
@@ -309,10 +314,10 @@ public:
         ) return State::invalidTopo;
 
         // Check whether the current edge is the longest in the triangle
-        const CoordinateType c0 (mesh.getVertexAttribute(vi0).getCoordinate());
-        const CoordinateType c1 (mesh.getVertexAttribute(vi1).getCoordinate());
-        const CoordinateType c2 (mesh.getVertexAttribute(vi2).getCoordinate());
-        const CoordinateType c3 (mesh.getVertexAttribute(vi3).getCoordinate());
+        const CoordinateType c0 (mesh.attribute(vi0).getCoordinate());
+        const CoordinateType c1 (mesh.attribute(vi1).getCoordinate());
+        const CoordinateType c2 (mesh.attribute(vi2).getCoordinate());
+        const CoordinateType c3 (mesh.attribute(vi3).getCoordinate());
         const auto l2_e = distance2(c0, c2);
         const auto l2_01 = distance2(c0, c1);
         const auto l2_12 = distance2(c1, c2);
@@ -324,26 +329,32 @@ public:
         )) return State::notLongestEdge;
 
         // All checks passed. Do the splitting.
-        typename Mesh::template VertexInsertionOnEdge< EdgeSplitVertexInsertionType > {}(mesh, ei, [](
-            Mesh& mesh, std::array<size_t, 4> tis, std::array<size_t, 5> vis, std::array<size_t, 4> eis
-        ) {
-            // Invalidate mesh index cache
-            mesh.getMetaAttribute().cacheValid = false;
+        typename Mesh::template VertexInsertionOnEdge< EdgeSplitVertexInsertionType > {}(
+            mesh, ei,
+            [](
+                Mesh& mesh,
+                std::array<typename Mesh::TriangleIndex, 4> tis,
+                std::array<typename Mesh::VertexIndex, 5> vis,
+                std::array<typename Mesh::EdgeIndex, 4> eis
+            ) {
+                // Invalidate mesh index cache
+                mesh.metaAttribute().cacheValid = false;
 
-            for(auto ti : tis) {
-                Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
-                mesh.forEachHalfEdgeInTriangle(ti, [&](size_t hei) {
-                    Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
-                });
+                for(auto ti : tis) {
+                    Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
+                    mesh.forEachHalfEdgeInTriangle(ti, [&](auto hei) {
+                        Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
+                    });
+                }
+                for(auto vi : vis) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+
+                // Set preferrable length of edges to be the same as before
+                const auto eqLength = mesh.attribute(eis[0]).aEdge.eqLength;
+                mesh.attribute(eis[1]).aEdge.eqLength = eqLength;
+                mesh.attribute(eis[2]).aEdge.eqLength = eqLength;
+                mesh.attribute(eis[3]).aEdge.eqLength = eqLength;
             }
-            for(auto vi : vis) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
-
-            // Set preferrable length of edges to be the same as before
-            const auto eqLength = mesh.getEdgeAttribute(eis[0]).aEdge.eqLength;
-            mesh.getEdgeAttribute(eis[1]).aEdge.eqLength = eqLength;
-            mesh.getEdgeAttribute(eis[2]).aEdge.eqLength = eqLength;
-            mesh.getEdgeAttribute(eis[3]).aEdge.eqLength = eqLength;
-        });
+        );
 
         // Propose edge flipping on surrounding quad edges
         efm.tryFlip(mesh, ei0);
@@ -380,7 +391,7 @@ private:
     };
     // Prequalify the collapse, when the edge is not on the border
     // hei is the direction of collapsing (source gets removed, and target is preserved)
-    auto prequalify_(const Mesh& mesh, size_t hei) const {
+    auto prequalify_(const Mesh& mesh, typename Mesh::HalfEdgeIndex hei) const {
         using namespace mathfunc;
 
         PrequalifyResult_ res;
@@ -399,8 +410,8 @@ private:
             return res;
         }
 
-        const CoordinateType c0 (mesh.getVertexAttribute(vi0).getCoordinate());
-        const CoordinateType c1 (mesh.getVertexAttribute(vi1).getCoordinate());
+        const CoordinateType c0 (mesh.attribute(vi0).getCoordinate());
+        const CoordinateType c1 (mesh.attribute(vi1).getCoordinate());
 
         const auto ti0 = mesh.triangle(hei);
         const auto ti1 = mesh.triangle(hei_o);
@@ -413,15 +424,15 @@ private:
             auto chei = hei_o; // chei should always target vi1
             std::optional<Vec3> lastUnitNormal;
             if(mesh.polygonType(mesh.opposite(hei_n)) == Mesh::HalfEdge::PolygonType::triangle) {
-                lastUnitNormal = mesh.getTriangleAttribute(mesh.triangle(mesh.opposite(hei_n))).gTriangle.unitNormal;
+                lastUnitNormal = mesh.attribute(mesh.triangle(mesh.opposite(hei_n))).gTriangle.unitNormal;
             }
             do {
                 const auto ti = mesh.triangle(chei); // valid because vi1 is not on the border
                 const auto chei_po = mesh.opposite(mesh.prev(chei));
                 const auto vn = mesh.target(mesh.next(chei));
                 const auto vp = mesh.target(mesh.prev(chei));
-                const CoordinateType cn (mesh.getVertexAttribute(vn).getCoordinate());
-                const CoordinateType cp (mesh.getVertexAttribute(vp).getCoordinate());
+                const CoordinateType cn (mesh.attribute(vn).getCoordinate());
+                const CoordinateType cp (mesh.attribute(vp).getCoordinate());
 
                 // Triangle quality before
                 qBefore = TriangleQualityType::worseOne(
@@ -457,7 +468,7 @@ private:
                         if(mesh.polygonType(chei_po) == Mesh::HalfEdge::PolygonType::triangle) {
                             minCosDihedral = std::min(
                                 minCosDihedral,
-                                dot(n_0np, mesh.getTriangleAttribute(mesh.triangle(chei_po)).gTriangle.unitNormal)
+                                dot(n_0np, mesh.attribute(mesh.triangle(chei_po)).gTriangle.unitNormal)
                             );
                         }
                         // Special dihedral angle
@@ -467,7 +478,7 @@ private:
                         ) {
                             minCosDihedral = std::min(
                                 minCosDihedral,
-                                dot(n_0np, mesh.getTriangleAttribute(mesh.triangle(hei_opo)).gTriangle.unitNormal)
+                                dot(n_0np, mesh.attribute(mesh.triangle(hei_opo)).gTriangle.unitNormal)
                             );
                         }
                     }
@@ -500,18 +511,18 @@ public:
     // Returns whether the edge is collapsed
     // Requires
     //   - <None>
-    State tryCollapse(Mesh& mesh, size_t ei) const {
+    State tryCollapse(Mesh& mesh, typename Mesh::EdgeIndex ei) const {
         using namespace mathfunc;
 
-        const size_t hei = mesh.getEdges()[ei].halfEdgeIndex;
-        const size_t hei_o = mesh.opposite(hei);
-        const size_t hei_n = mesh.next(hei);
-        const size_t hei_on = mesh.next(hei_o);
+        const auto hei = mesh.halfEdge(ei);
+        const auto hei_o = mesh.opposite(hei);
+        const auto hei_n = mesh.next(hei);
+        const auto hei_on = mesh.next(hei_o);
 
-        const size_t vi0 = mesh.target(hei);
-        const size_t vi1 = mesh.target(hei_n);
-        const size_t vi2 = mesh.target(hei_o);
-        const size_t vi3 = mesh.target(hei_on);
+        const auto vi0 = mesh.target(hei);
+        const auto vi1 = mesh.target(hei_n);
+        const auto vi2 = mesh.target(hei_o);
+        const auto vi3 = mesh.target(hei_on);
         // Currently the edge connects v0 and v2.
         // If the edge collapses, v0 and v2 would become one point.
 
@@ -552,15 +563,18 @@ public:
         if(prChosen.qualityImproved < minQualityImprovement_) return State::badQuality;
 
         const auto attributeSetter = [](
-            Mesh& mesh, size_t hei_begin, size_t hei_end, size_t ov0
+            Mesh& mesh,
+            typename Mesh::HalfEdgeIndex hei_begin,
+            typename Mesh::HalfEdgeIndex hei_end,
+            typename Mesh::VertexIndex ov0
         ) {
             // Invalidate mesh index cache
-            mesh.getMetaAttribute().cacheValid = false;
+            mesh.metaAttribute().cacheValid = false;
 
-            for(size_t hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
-                const size_t ti = mesh.triangle(hei1);
+            for(auto hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
+                const auto ti = mesh.triangle(hei1);
                 Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
-                mesh.forEachHalfEdgeInTriangle(ti, [&](size_t hei) {
+                mesh.forEachHalfEdgeInTriangle(ti, [&](auto hei) {
                     Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
                 });
             }
@@ -568,7 +582,7 @@ public:
             Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, ov0);
             const auto v_first = mesh.target(mesh.opposite(hei_begin));
             Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, v_first);
-            for(size_t hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
+            for(auto hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
                 const auto vi = mesh.target(mesh.next(hei1));
                 Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
             }
@@ -593,14 +607,14 @@ template<> struct VertexSizeMeasure< SizeMeasureCriteria::Curvature > {
 
     // Requires
     //   - Vertex unit normal
-    template< typename Mesh > auto vertexSize(Mesh& mesh, size_t vi) const {
+    template< typename Mesh > auto vertexSize(Mesh& mesh, typename Mesh::VertexIndex vi) const {
         using CoordinateType = typename Mesh::AttributeType::coordinate_type;
 
         double minRadiusCurvature = std::numeric_limits<double>::infinity();
-        const auto& un = mesh.getVertexAttribute(vi).aVertex.unitNormal;
-        const CoordinateType ci (mesh.getVertexAttribute(vi).getCoordinate());
-        mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
-            const auto r = mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).getCoordinate() - ci;
+        const auto& un = mesh.attribute(vi).aVertex.unitNormal;
+        const CoordinateType ci (mesh.attribute(vi).getCoordinate());
+        mesh.forEachHalfEdgeTargetingVertex(vi, [&](auto hei) {
+            const auto r = mesh.attribute(mesh.target(mesh.opposite(hei))).getCoordinate() - ci;
             minRadiusCurvature = std::min(
                 std::abs(0.5 * mathfunc::magnitude2(r) / mathfunc::dot(un, r)),
                 minRadiusCurvature
@@ -615,14 +629,14 @@ template< SizeMeasureCriteria... > struct VertexSizeMeasureCombined;
 template< SizeMeasureCriteria c, SizeMeasureCriteria... cs >
 struct VertexSizeMeasureCombined< c, cs... > {
     template< typename Mesh >
-    static auto vertexSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm, const VertexSizeMeasure<cs>&... vsms) {
+    static auto vertexSize(Mesh& mesh, typename Mesh::VertexIndex vi, const VertexSizeMeasure<c>& vsm, const VertexSizeMeasure<cs>&... vsms) {
         return std::min(vsm.vertexSize(mesh, vi), VertexSizeMeasureCombined<cs...>::vertexSize(mesh, vi, vsms...));
     }
 };
 template< SizeMeasureCriteria c >
 struct VertexSizeMeasureCombined< c > {
     template< typename Mesh >
-    static auto vertexSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm) {
+    static auto vertexSize(Mesh& mesh, typename Mesh::VertexIndex vi, const VertexSizeMeasure<c>& vsm) {
         return vsm.vertexSize(mesh, vi);
     }
 };
@@ -635,23 +649,24 @@ private:
     size_t _diffuseIter; // Diffusion iterations used in gradation control
 
     template< SizeMeasureCriteria... cs >
-    auto _vertexSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<cs>&... vsms) const {
+    auto _vertexSize(Mesh& mesh, typename Mesh::VertexIndex vi, const VertexSizeMeasure<cs>&... vsms) const {
         return VertexSizeMeasureCombined<cs...>::vertexSize(mesh, vi, vsms...);
     }
     template< SizeMeasureCriteria... cs >
     void _updateVertexSize(Mesh& mesh, const VertexSizeMeasure<cs>&... vsms) const {
         const size_t numVertices = mesh.getVertices().size();
         for(size_t i = 0; i < numVertices; ++i) {
-            mesh.getVertexAttribute(i).aVertex.size = _vertexSize(mesh, i, vsms...);
+            typename Mesh::VertexIndex vi {i};
+            mesh.attribute(vi).aVertex.size = _vertexSize(mesh, vi, vsms...);
         }
     }
 
     void _diffuseSize(Mesh& mesh) const {
-        const size_t numVertices = mesh.getVertices().size();
+        const size_t numVertices = mesh.numVertices();
 
         // Initialize with max size
         for(size_t i = 0; i < numVertices; ++i) {
-            auto& av = mesh.getVertexAttribute(i).aVertex;
+            auto& av = mesh.attribute(typename Mesh::VertexIndex{i}).aVertex;
             av.size = std::min(av.size, _maxSize);
         }
 
@@ -659,12 +674,13 @@ private:
         // l_new = l_old / 2 + (sum of neighbor l_old) / (2 * numNeighbors)
         for(size_t iter = 0; iter < _diffuseIter; ++iter) {
             for(size_t i = 0; i < numVertices; ++i) {
-                auto& av = mesh.getVertexAttribute(i).aVertex;
-                const size_t deg = mesh.degree(i);
+                typename Mesh::VertexIndex vi {i};
+                auto& av = mesh.attribute(vi).aVertex;
+                const size_t deg = mesh.degree(vi);
     
                 double sumSizeNeighbor = 0.0;
-                mesh.forEachHalfEdgeTargetingVertex(i, [&](size_t hei) {
-                    sumSizeNeighbor += mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).aVertex.size;
+                mesh.forEachHalfEdgeTargetingVertex(vi, [&](auto hei) {
+                    sumSizeNeighbor += mesh.attribute(mesh.target(mesh.opposite(hei))).aVertex.size;
                 });
 
                 av.sizeAux = std::min(
@@ -673,19 +689,20 @@ private:
                 ); // capped by _maxSize
             }
             for(size_t i = 0; i < numVertices; ++i) {
-                auto& av = mesh.getVertexAttribute(i).aVertex;
+                auto& av = mesh.attribute(typename Mesh::VertexIndex{i}).aVertex;
                 av.size = av.sizeAux;
             }
         }
     }
 
     void _updateEdgeEqLength(Mesh& mesh) const {
-        const size_t numEdges = mesh.getEdges().size();
+        const size_t numEdges = mesh.numEdges();
         for(size_t i = 0; i < numEdges; ++i) {
-            auto& l0 = mesh.getEdgeAttribute(i).aEdge.eqLength;
+            typename Mesh::EdgeIndex ei{i};
+            auto& l0 = mesh.attribute(ei).aEdge.eqLength;
             l0 = 0.0;
-            mesh.forEachHalfEdgeInEdge(i, [&](size_t hei) {
-                l0 += 0.5 * mesh.getVertexAttribute(mesh.target(hei)).aVertex.size;
+            mesh.forEachHalfEdgeInEdge(ei, [&](size_t hei) {
+                l0 += 0.5 * mesh.attribute(mesh.target(hei)).aVertex.size;
             });
         }
     }
@@ -812,21 +829,21 @@ public:
                 // and try to fix them by vertex insertion/deletion operations.
 
                 countTopoModified = 0;
-                for(size_t ei = 0; ei < mesh.getEdges().size(); /* No increment here */) {
-                    const size_t hei0 = mesh.getEdges()[ei].halfEdgeIndex;
-                    const size_t v0 = mesh.target(hei0);
-                    const size_t v1 = mesh.target(mesh.opposite(hei0));
+                for(size_t ei = 0; ei < mesh.numEdges(); /* No increment here */) {
+                    const auto hei0 = mesh.getEdges()[ei].halfEdgeIndex;
+                    const auto v0 = mesh.target(hei0);
+                    const auto v1 = mesh.target(mesh.opposite(hei0));
 
-                    const CoordinateType c0 (mesh.getVertexAttribute(v0).getCoordinate());
-                    const CoordinateType c1 (mesh.getVertexAttribute(v1).getCoordinate());
+                    const CoordinateType c0 (mesh.attribute(v0).getCoordinate());
+                    const CoordinateType c1 (mesh.attribute(v1).getCoordinate());
                     const double length2 = distance2(c0, c1);
 
-                    const double eqLength = mesh.getEdgeAttribute(ei).aEdge.eqLength;
+                    const double eqLength = mesh.attribute(typename Mesh::EdgeIndex{ei}).aEdge.eqLength;
                     const double eqLength2 = eqLength * eqLength;
 
                     if(length2 >= 2 * eqLength2) { // Too long
                         sizeMeasureSatisfied = false;
-                        if(_edgeSplitManager.trySplit(mesh, ei, _edgeFlipManager) == decltype(_edgeSplitManager)::State::success) {
+                        if(_edgeSplitManager.trySplit(mesh, typename Mesh::EdgeIndex{ei}, _edgeFlipManager) == decltype(_edgeSplitManager)::State::success) {
                             // Edge splitting happened. Will check edge ei again next round
                             ++countTopoModified;
                         }
@@ -834,7 +851,7 @@ public:
                             ++ei;
                     } else if(2 * length2 <= eqLength2) { // Too short
                         sizeMeasureSatisfied = false;
-                        if(edgeCollapseManager_.tryCollapse(mesh, ei) == decltype(edgeCollapseManager_)::State::success) {
+                        if(edgeCollapseManager_.tryCollapse(mesh, typename Mesh::EdgeIndex{ei}) == decltype(edgeCollapseManager_)::State::success) {
                             // Edge collapsing happened. The edge at ei will be different next round
                             ++countTopoModified;
                         }

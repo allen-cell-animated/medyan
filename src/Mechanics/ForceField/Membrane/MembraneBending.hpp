@@ -80,10 +80,11 @@ public:
             Membrane::MembraneMeshAttributeType::cacheIndices(m->getMesh());
 
             const auto &mesh = m->getMesh();
-            const auto &cvt = mesh.getMetaAttribute().cachedVertexTopo;
+            const auto &cvt = mesh.metaAttribute().cachedVertexTopo;
 
-            const size_t numVertices = mesh.getVertices().size();
-            for (size_t vi = 0; vi < numVertices; ++vi)
+            const size_t numVertices = mesh.numVertices();
+            for (size_t i = 0; i < numVertices; ++i) {
+                decltype(mesh)::VertexIndex vi {i};
                 if (!mesh.isVertexOnBorder(vi)) {
                     const auto &va = mesh.getVertexAttribute(vi);
 
@@ -112,8 +113,8 @@ public:
                     }
 
                     for (size_t i = 0; i < va.cachedDegree; ++i) {
-                        const size_t hei_o = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + i];
-                        const size_t vn_i = cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i];
+                        const size_t hei_o = cvt[mesh.metaAttribute().cachedVertexOffsetLeavingHE(vi) + i];
+                        const size_t vn_i = cvt[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi) + i];
                         const auto &dArea = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborAstar / 3;
 
                         if constexpr(std::is_same_v< InteractionType, MembraneBendingHelfrich >) {
@@ -132,6 +133,7 @@ public:
                         }
                     }
                 }
+            }
 
         } // End for membrane
 
