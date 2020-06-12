@@ -70,7 +70,7 @@ public:
         // Update geometry
         updateGeometryValue<false>();
 
-        initMMembrane();
+        initMechanicParams();
 
         // Add to membrane hierarchy (must have updated geometry)
         HierarchyType::addMembrane(this);
@@ -84,8 +84,9 @@ public:
     const auto& getMesh() const { return mesh_; }
     auto&       getMesh()       { return mesh_; }
 
-    // Helper function to initialize MMembrane
-    void initMMembrane() {
+    // Helper function to initialize MMembrane and other mechanic parameters
+    void initMechanicParams() {
+        // Initialize MMembrane
         // Calculate the total area and volume to set the equilibrium area and volume
         double area = 0.0;
         double volume = 0.0;
@@ -96,10 +97,17 @@ public:
 
         mMembrane_ = std::make_unique<MMembrane>(memType_);
         mMembrane_->setEqArea(
-            area * SysParams::Mechanics().MemEqAreaFactor[memType_]
+            area * SysParams::Mechanics().memEqAreaFactor[memType_]
         );
         mMembrane_->setEqVolume(volume);
-    } // void initMMembrane()
+
+        // Initialize MTriangle
+        for(const auto& t : mesh_.getTriangles()) {
+            t.attr.triangle->mTriangle.eqArea
+                = t.attr.gTriangle.area * SysParams::Mechanics().memEqAreaFactor[memType_];
+        }
+
+    } // void initMechanicParams()
 
     // SubSystem management, inherited from Trackable
     virtual void addToSubSystem()override { }

@@ -323,7 +323,7 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
         return false;
     }
     if(mech.MemStretchingFFType == "HARMONIC" &&
-       MParams.MemEqAreaFactor.size() != CParams.numMembranes) {
+       MParams.memEqAreaFactor.size() != CParams.numMembranes) {
         cout << "Must set a equilibrium area factor for all membranes. Exiting." << endl;
         return false;
     }

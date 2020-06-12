@@ -81,7 +81,7 @@ namespace {
             SysParams::GParams.cylinderNumMon.resize(1, 3);
 
             SysParams::MParams.memAreaK.resize(1, 400);
-            SysParams::MParams.MemEqAreaFactor.resize(1, 1.0);
+            SysParams::MParams.memEqAreaFactor.resize(1, 1.0);
             SysParams::MParams.MemBendingK.resize(1, 100);
             SysParams::MParams.MemEqCurv.resize(1, 0);
 
@@ -92,7 +92,7 @@ namespace {
             SysParams::GParams.cylinderNumMon.resize(0);
 
             SysParams::MParams.memAreaK.resize(0);
-            SysParams::MParams.MemEqAreaFactor.resize(0);
+            SysParams::MParams.memEqAreaFactor.resize(0);
             SysParams::MParams.MemBendingK.resize(0);
             SysParams::MParams.MemEqCurv.resize(0);
 

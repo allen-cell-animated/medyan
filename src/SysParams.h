@@ -99,7 +99,7 @@ struct MechParams {
     //@{
     /// Membrane parameter
     vector<double> memAreaK        = {};
-    vector<double> MemEqAreaFactor = {};  // Only used in initialization
+    vector<double> memEqAreaFactor = {};  // Only used in initialization
     vector<double> MemTension      = {};
     vector<double> MemBendingK     = {};
     vector<double> MemEqCurv       = {};

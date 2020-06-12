@@ -1143,7 +1143,7 @@ void SystemParser::readMechParams() {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() >= 2) {
                 for(size_t i = 1; i < lineVector.size(); ++i)
-                    MParams.MemEqAreaFactor.push_back(atof(lineVector[i].c_str()));
+                    MParams.memEqAreaFactor.push_back(atof(lineVector[i].c_str()));
             }
         }
         else if (line.find("MEM_TENSION") != string::npos) {
