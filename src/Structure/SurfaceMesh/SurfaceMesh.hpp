@@ -40,25 +40,26 @@ All the other elements must have at least one index pointing to a halfedge.
 template< typename T > class DeletableVector {
 
 private:
-    std::vector< T > _value;
+    std::vector< T > value_;
 
 public:
 
     using iterator       = typename std::vector< T >::iterator;
     using const_iterator = typename std::vector< T >::const_iterator;
-    iterator       begin() noexcept       { return _value.begin(); }
-    const_iterator begin() const noexcept { return _value.begin(); }
-    iterator       end() noexcept       { return _value.end(); }
-    const_iterator end() const noexcept { return _value.end(); }
+    iterator       begin() noexcept       { return value_.begin(); }
+    const_iterator begin() const noexcept { return value_.begin(); }
+    iterator       end() noexcept       { return value_.end(); }
+    const_iterator end() const noexcept { return value_.end(); }
 
     // Insert a new element. Returns the new index.
     size_t insert() {
-        _value.emplace_back();
-        return _value.size() - 1;
+        value_.emplace_back();
+        return value_.size() - 1;
     }
 
     //-------------------------------------------------------------------------
     // Remove an element from the container.
+    // Returns the new index of the previous last element.
     // Might change the position of certain elements.
     // If index for deletion is out of range, the behavior is undefined.
     //
@@ -67,17 +68,39 @@ public:
     //   - Otherwise, swap the item with the last one and pop back. (As a result,
     //     the indices pointing to the last element will be INVALIDATED, so the
     //     caller must manually retarget all indices to the last element.)
+    struct EraseResult {
+        std::size_t newSize;
+        std::optional< std::size_t > newIndex;
+
+        template< typename SizeT >
+        auto track(SizeT... oldIndices) const {
+            using IT = std::array< std::size_t, sizeof...(SizeT) >;
+            IT oi = {{ oldIndices ... }};
+            IT res;
+            for(std::size_t i = 0; i < oi.size(); ++i) {
+                if(oi[i] < newSize) res[i] = oi[i];
+                else res[i] = *newIndex; // In this case newIndex must have value
+            }
+            return res;
+        }
+    };
     template< typename Retargeter > // The retargeter must implement operation()(from, to)
-    void erase(size_t index, Retargeter&& r) {
-        const size_t lastIndex = _value.size() - 1;
+    auto erase(size_t index, Retargeter&& r) {
+        EraseResult res {};
+
+        const size_t lastIndex = value_.size() - 1;
         if(index == lastIndex) {
-            _value.pop_back();
+            value_.pop_back();
         } else {
             // Move value from lastIndex to index
-            _value[index] = std::move(_value[lastIndex]);
-            _value.pop_back();
+            value_[index] = std::move(value_[lastIndex]);
+            value_.pop_back();
             r(lastIndex, index);
+            res.newIndex = index;
         }
+
+        res.newSize = value_.size();
+        return res;
     }
 
     //-------------------------------------------------------------------------
@@ -85,6 +108,11 @@ public:
     // This function is needed because deleting one element might invalidate
     // other indices to be removed, so sequential one-by-one deletion is not
     // safe.
+    //
+    // Returns the new indices of previous elements with indices greater than
+    // or equal to the final size.
+    // The i-th value indicates the new index of previously (finalSize + i)-th
+    // component.
     //
     // Invalidates any indices bigger than the final size.
     //
@@ -98,11 +126,31 @@ public:
     //     size to the to-be-deleted items with indices smaller than the final
     //     size.
     //   - Adjust the size to the final size
+    template< std::size_t n >
+    struct EraseNResult {
+        std::size_t newSize;
+        std::array< std::optional< std::size_t >, n > newIndices;
+
+        template< typename SizeT >
+        auto track(SizeT... oldIndices) const {
+            using IT = std::array< std::size_t, sizeof...(SizeT) >;
+            IT oi = {{ oldIndices ... }};
+            IT res;
+            for(std::size_t i = 0; i < oi.size(); ++i) {
+                if(oi[i] < newSize) res[i] = oi[i];
+                else res[i] = *newIndices[oi[i] - newSize]; // In this case the element must have value
+            }
+            return res;
+        }
+    };
     template< size_t n, typename Retargeter > // The retargeter must implement operator()(from, to)
-    void erase(const std::array< size_t, n >& indices, Retargeter&& r) {
-        // isDeleted[i]: whether _value[finalSize + i] should be deleted. initialized to false
+    auto erase(const std::array< size_t, n >& indices, Retargeter&& r) {
+        using namespace std;
+        EraseNResult<n> res {};
+
+        // isDeleted[i]: whether value_[finalSize + i] should be deleted. initialized to false
         std::array< bool, n > isDeleted {};
-        const size_t currentSize = _value.size();
+        const size_t currentSize = value_.size();
         const size_t finalSize = currentSize - n;
 
         // Mark to-be-deleted items with bigger indices as deleted
@@ -117,24 +165,28 @@ public:
                 while(i < n && indices[i] >= finalSize) ++i; // Find (including current i) the next i with small index
                 if(i < n) {
                     // Found. This should always be satisfied.
-                    _value[indices[i]] = std::move(_value[finalSize + indAfterFinal]);
+                    value_[indices[i]] = std::move(value_[finalSize + indAfterFinal]);
                     r(finalSize + indAfterFinal, indices[i]);
+                    res.newIndices[indAfterFinal] = indices[i];
                 }
                 ++i;
             }
         }
 
         // Remove garbage
-        _value.resize(finalSize);
+        value_.resize(finalSize);
+
+        res.newSize = finalSize;
+        return res;
     }
 
-    size_t size() const noexcept { return _value.size(); }
+    size_t size() const noexcept { return value_.size(); }
 
-    T&       operator[](size_t index)       { return _value[index]; }
-    const T& operator[](size_t index) const { return _value[index]; }
+    T&       operator[](size_t index)       { return value_[index]; }
+    const T& operator[](size_t index) const { return value_[index]; }
 
     // This function should only be called during initialization/finalization
-    std::vector< T >& getValue() { return _value; }
+    std::vector< T >& getValue() { return value_; }
 
 };
 
@@ -188,6 +240,8 @@ public:
         IndexType& operator++() { ++index; return *this; }
 
         // Comparison
+        bool operator==(IndexType rhs) const { return index == rhs.index; }
+        bool operator!=(IndexType rhs) const { return !(*this == rhs); }
         bool operator<(std::size_t rhs) const { return index < rhs; }
         bool operator<(IndexType   rhs) const { return index < rhs.index; }
     };
@@ -299,32 +353,29 @@ private:
         element_(hei1).edgeIndex = ei;
     }
 
-    template< typename Operation > size_t newVertex_(const Operation& op) {
+    size_t newVertex_() {
         size_t index = vertices_.insert();
-        Attribute::newVertex(*this, index, op);
+        Attribute::newVertex(*this, index);
         return index;
     }
-    template< typename Operation > size_t newEdge_(const Operation& op) {
+    size_t newEdge_() {
         size_t index = edges_.insert();
-        Attribute::newEdge(*this, index, op);
+        Attribute::newEdge(*this, index);
         return index;
     }
-    size_t newEdge_() { return newEdge_([]{}); }
-    template< typename Operation > size_t newHalfEdge_(const Operation& op) {
+    size_t newHalfEdge_() {
         size_t index = halfEdges_.insert();
-        Attribute::newHalfEdge(*this, index, op);
+        Attribute::newHalfEdge(*this, index);
         return index;
     }
-    size_t newHalfEdge_() { return newHalfEdge_([]{}); }
-    template< typename Operation > size_t newTriangle_(const Operation& op) {
+    size_t newTriangle_() {
         size_t index = triangles_.insert();
-        Attribute::newTriangle(*this, index, op);
+        Attribute::newTriangle(*this, index);
         return index;
     }
-    size_t newTriangle_() { return newTriangle_([]{}); }
-    template< typename Operation > size_t newBorder_(const Operation& op) {
+    size_t newBorder_() {
         size_t index = borders_.insert();
-        Attribute::newBorder(*this, index, op);
+        Attribute::newBorder(*this, index);
         return index;
     }
 
@@ -376,18 +427,18 @@ private:
         element_(to).attr.setIndex(to.index);
     }
 
-    template< typename Element > void removeElement_(size_t index) {
+    template< typename Element > auto removeElement_(size_t index) {
         Attribute::removeElement(*this, IndexType< Element >{index});
-        getElements_<Element>().erase(
+        return getElements_<Element>().erase(
             index,
             [this](size_t from, size_t to) {
                 retargetElement_(IndexType< Element >{from}, IndexType< Element >{to});
             }
         );
     }
-    template< typename Element, size_t n > void removeElements_(const std::array< size_t, n >& indices) {
+    template< typename Element, size_t n > auto removeElements_(const std::array< size_t, n >& indices) {
         for(size_t i : indices) Attribute::removeElement(*this, IndexType< Element >{i});
-        getElements_<Element>().erase(
+        return getElements_<Element>().erase(
             indices,
             [this](size_t from, size_t to) {
                 retargetElement_(IndexType< Element >{from}, IndexType< Element >{to});
@@ -698,6 +749,7 @@ public:
 
     bool isVertexOnBorder(VertexIndex vi) const { return element_(vi).numTargetingBorderHalfEdges >= 1; }
     bool isEdgeOnBorder(EdgeIndex ei) const { return element_(ei).numBorderHalfEdges >= 1; }
+    bool isInTriangle(HalfEdgeIndex hei) const { return polygonType(hei) == HalfEdge::PolygonType::triangle; }
 
     // Mesh neighbor iterators
     template< typename Func > void forEachHalfEdgeTargetingVertex(const Vertex& v, Func&& func) const {
@@ -742,13 +794,26 @@ public:
     //-------------------------------------------------------------------------
 
     // Vertex insertion on edge.
-    // Note: this does not allow vertex insertion on border edges
-    template< typename InsertionMethod >
     struct VertexInsertionOnEdge {
         static constexpr int deltaNumVertex = 1;
 
-        template< typename AttributeSetter >
-        void operator()(HalfEdgeMesh& mesh, EdgeIndex edgeIndex, AttributeSetter&& as)const {
+        struct ChangeInfo {
+
+            VertexIndex viNew;
+
+            // tiOld[0] -> tiNew[0] and tiNew[1]
+            // tiOld[1] -> tiNew[2] and tiNew[3]
+            // Note:
+            //   - New triangles are arranged in the ccw direction
+            //   - If the insertion happens on the border, the border-side info
+            //     is undefined.
+            std::array< TriangleIndex, 2 > tiOld;
+            std::array< TriangleIndex, 4 > tiNew;
+        };
+
+        auto operator()(HalfEdgeMesh& mesh, EdgeIndex edgeIndex)const {
+
+            ChangeInfo res {};
 
             // Get index of current elements
             const auto ohei       = mesh.halfEdge(edgeIndex);
@@ -757,178 +822,294 @@ public:
             const auto ohei_o     = mesh.opposite(ohei);
             const auto ohei_on    = mesh.next(ohei_o);
             const auto ohei_op    = mesh.prev(ohei_o);
-            const auto oti0       = mesh.triangle(ohei);
-            const auto oti2       = mesh.triangle(ohei_o);
+
+            const auto opi0       = mesh.polygon(ohei);
+            const auto opt0       = mesh.polygonType(ohei);
+            const bool ist0       = opt0 == HalfEdge::PolygonType::triangle;
+            const auto opi2       = mesh.polygon(ohei_o);
+            const auto opt2       = mesh.polygonType(ohei_o);
+            const bool ist2       = opt2 == HalfEdge::PolygonType::triangle;
+
             const auto vi0        = mesh.target(ohei);
-            const auto vi1        = mesh.target(ohei_n);
             const auto vi2        = mesh.target(ohei_o);
-            const auto vi3        = mesh.target(ohei_on);
+
+            if(!ist0 && !ist1) {
+                LOG(ERROR) << "During vertex insertion on edge, neither side of the edge is a triangle.";
+                throw std::runtime_error("Invalid edge condition at vertex insertion.");
+            }
 
             // Create new elements
             const InsertionMethod insertionMethod{ vi0, vi2 };
-            const auto vi     = mesh.newVertex_(insertionMethod);
-            const auto ei2    = mesh.newEdge_(insertionMethod); // New edge created by splitting
-            const auto hei0_o = mesh.newHalfEdge_(insertionMethod); // Targeting new vertex, oppositing ohei
-            const auto hei2_o = mesh.newHalfEdge_(insertionMethod); // Targeting new vertex, oppositing ohei_o
-            const auto ei1    = mesh.newEdge_(insertionMethod); // New edge cutting t0
-            const auto hei1   = mesh.newHalfEdge_(insertionMethod); // Leaving new vertex
-            const auto hei1_o = mesh.newHalfEdge_(insertionMethod); // Targeting new vertex
-            const auto ei3    = mesh.newEdge_(insertionMethod); // New edge cutting t2
-            const auto hei3   = mesh.newHalfEdge_(insertionMethod); // Leaving new vertex
-            const auto hei3_o = mesh.newHalfEdge_(insertionMethod); // Targeting new vertex
-            const auto ti1    = mesh.newTriangle_(insertionMethod);
-            const auto ti3    = mesh.newTriangle_(insertionMethod);
+            const auto vi     = mesh.newVertex_();
+            const auto ei2    = mesh.newEdge_(); // New edge created by splitting
+            const auto hei0_o = mesh.newHalfEdge_(); // Targeting new vertex, oppositing ohei
+            const auto hei2_o = mesh.newHalfEdge_(); // Targeting new vertex, oppositing ohei_o
+
+            mesh.element_(vi).degree = 2;
+            mesh.element_(vi).numTargetingBorderHalfEdges = 0;
+
+            if(ist0) {
+                const auto oti0   = TriangleIndex { opi0 };
+                const auto vi1    = mesh.target(ohei_n);
+
+                const auto ei1    = mesh.newEdge_(); // New edge cutting t0
+                const auto hei1   = mesh.newHalfEdge_(); // Leaving new vertex
+                const auto hei1_o = mesh.newHalfEdge_(); // Targeting new vertex
+                const auto ti1    = mesh.newTriangle_();
+
+                mesh.element_(hei1_o).targetVertexIndex = vi;
+                mesh.element_(hei1_o).polygonType = HalfEdge::PolygonType::triangle;
+                mesh.element_(hei1).targetVertexIndex = vi1;
+                mesh.element_(hei1).polygonType = HalfEdge::PolygonType::triangle;
+
+                ++mesh.element_(vi).degree;
+                ++mesh.element_(vi1).degree;
+
+                mesh.registerTriangle_(oti0, ohei,   ohei_n,  hei1_o);
+                mesh.registerTriangle_(ti1,  hei1,   ohei_p,  hei2_o);
+                mesh.registerEdge_(ei1, hei1, hei1_o);
+
+                res.tiOld[0] = oti0;
+                res.tiNew[0] = oti0;
+                res.tiNew[1] = ti1;
+            } else {
+                mesh.element_(ohei_p).nextHalfEdgeIndex = hei2_o;
+                mesh.element_(hei2_0).nextHalfEdgeIndex = ohei;
+                mesh.element_(ohei).prevHalfEdgeIndex = hei2_o;
+                mesh.element_(hei2_o).prevHalfEdgeIndex = ohei_p;
+
+                mesh.element_(hei2_o).polygonIndex = opi0;
+
+                ++mesh.element_(vi).numTargetingBorderHalfEdges;
+            }
+
+            if(ist2) {
+                const auto oti2   = TriangleIndex { opi2 };
+                const auto vi3    = mesh.target(ohei_on);
+
+                const auto ei3    = mesh.newEdge_(); // New edge cutting t2
+                const auto hei3   = mesh.newHalfEdge_(); // Leaving new vertex
+                const auto hei3_o = mesh.newHalfEdge_(); // Targeting new vertex
+                const auto ti3    = mesh.newTriangle_();
+
+                mesh.element_(hei3_o).targetVertexIndex = vi;
+                mesh.element_(hei3_o).polygonType = HalfEdge::PolygonType::triangle;
+                mesh.element_(hei3).targetVertexIndex = vi3;
+                mesh.element_(hei3).polygonType = HalfEdge::PolygonType::triangle;
+
+                ++mesh.element_(vi).degree;
+                ++mesh.element_(vi3).degree;
+
+                mesh.registerTriangle_(oti2, ohei_o, ohei_on, hei3_o);
+                mesh.registerTriangle_(ti3,  hei3,   ohei_op, hei0_o);
+                mesh.registerEdge_(ei3, hei3, hei3_o);
+
+                res.tiOld[1] = oti2;
+                res.tiNew[2] = oti2;
+                res.tiNew[3] = ti3;
+            } else {
+                mesh.element_(ohei_op).nextHalfEdgeIndex = hei0_o;
+                mesh.element_(hei0_0).nextHalfEdgeIndex = ohei_o;
+                mesh.element_(ohei_o).prevHalfEdgeIndex = hei0_o;
+                mesh.element_(hei0_o).prevHalfEdgeIndex = ohei_op;
+
+                mesh.element_(hei0_o).polygonIndex = opi2;
+
+                ++mesh.element_(vi).numTargetingBorderHalfEdges;
+            }
 
             // Adjust vertex and new half edges
             mesh.element_(vi).halfEdgeIndex = hei0_o;
 
             mesh.element_(hei0_o).targetVertexIndex = vi;
             mesh.element_(hei2_o).targetVertexIndex = vi;
-            mesh.element_(hei1_o).targetVertexIndex = vi;
-            mesh.element_(hei3_o).targetVertexIndex = vi;
-            mesh.element_(hei0_o).polygonType = HalfEdge::PolygonType::triangle;
-            mesh.element_(hei2_o).polygonType = HalfEdge::PolygonType::triangle;
-            mesh.element_(hei1_o).polygonType = HalfEdge::PolygonType::triangle;
-            mesh.element_(hei3_o).polygonType = HalfEdge::PolygonType::triangle;
-
-            mesh.element_(hei1).targetVertexIndex = vi1;
-            mesh.element_(hei3).targetVertexIndex = vi3;
-            mesh.element_(hei1).polygonType = HalfEdge::PolygonType::triangle;
-            mesh.element_(hei3).polygonType = HalfEdge::PolygonType::triangle;
-
-            mesh.element_(vi).degree = 4;
-            mesh.element_(vi).numTargetingBorderHalfEdges = 0;
-            ++mesh.element_(vi1).degree;
-            ++mesh.element_(vi3).degree;
-
-            // Adjust triangle
-            mesh.registerTriangle_(oti0, ohei,   ohei_n,  hei1_o);
-            mesh.registerTriangle_(ti1,  hei1,   ohei_p,  hei2_o);
-            mesh.registerTriangle_(oti2, ohei_o, ohei_on, hei3_o);
-            mesh.registerTriangle_(ti3,  hei3,   ohei_op, hei0_o);
+            mesh.element_(hei0_o).polygonType = opt2;
+            mesh.element_(hei2_o).polygonType = opt0;
 
             // Adjust edge
             mesh.registerEdge_(edgeIndex, ohei,   hei0_o);
-            mesh.registerEdge_(ei1,       hei1,   hei1_o);
             mesh.registerEdge_(ei2,       ohei_o, hei2_o);
-            mesh.registerEdge_(ei3,       hei3,   hei3_o);
 
-            // Update attributes of affected elements
-            as(
-                mesh,
-                {oti0, ti1, oti2, ti3},
-                {vi, vi0, vi1, vi2, vi3},
-                {edgeIndex, ei1, ei2, ei3}
-            );
-        }
-
-        void operator()(HalfEdgeMesh& mesh, EdgeIndex edgeIndex)const {
-            this->operator()(mesh, edgeIndex, [](
-                HalfEdgeMesh& mesh,
-                std::array<TriangleIndex, 4> tis,
-                std::array<VertexIndex, 5> vis,
-                std::array<EdgeIndex, 4> eis
-            ) {});
+            res.viNew = vi;
+            return res;
         }
     };
     // Edge collapse
     // Note:
-    //   - This does not allow collapsing of border edges
-    //   - The caller must ensure that at most one vertex can lie on the border
+    //   - If the edge is not border, at most one vertex can lie on the border
     struct EdgeCollapse {
         static constexpr int deltaNumVertex = -1;
 
+        struct ChangeInfo {
+            VertexIndex viTo;
+        };
+
         // The target of the halfedge ohei will be preserved
         // Notice that halfedge index (not edge index) is used in this function.
-        template< typename AttributeSetter >
-        void operator()(HalfEdgeMesh& mesh, HalfEdgeIndex ohei, AttributeSetter&& as)const {
+        auto operator()(HalfEdgeMesh& mesh, EdgeIndex oei)const {
 
             // Preconditions should be handled by the caller
 
+            ChangeInfo res {};
+
+            const auto collapseInnerEdge = [&](
+                MeshType::HalfEdgeIndex ohei,
+                MeshType::HalfEdgeIndex ohei_o
+            ) {
+
+                const auto ohei_n  = mesh.next(ohei);
+                const auto ohei_p  = mesh.prev(ohei);
+                const auto ohei_on = mesh.next(ohei_o);
+                const auto ohei_op = mesh.prev(ohei_o);
+
+                const auto ot0 = mesh.triangle(ohei);
+                const auto ot1 = mesh.triangle(ohei_o);
+                const auto ov0 = mesh.target(ohei); // Will collapse to this vertex
+                const auto ov1 = mesh.target(ohei_o); // Will be removed
+                const auto oei1 = mesh.edge(ohei_n); // Will collapse to this edge
+                const auto oei2 = mesh.edge(ohei_p); // Will be removed
+                const auto oei3 = mesh.edge(ohei_op); // Will collapse on this edge
+                const auto oei4 = mesh.edge(ohei_on); // Will be removed
+
+                // Retarget all halfedges pointing v1 to v0
+                const auto hei_begin = mesh.opposite(ohei_on); // Changed halfedge begin
+                const auto hei_end = mesh.opposite(ohei_n);    // Changed halfedge end
+                for(auto hei1 = hei_begin; hei1 != ohei_p; hei1 = mesh.opposite(mesh.next(hei1))) {
+                    mesh.element_(hei1).targetVertexIndex = ov0;
+                }
+                mesh.element_(ov0).halfEdgeIndex = hei_begin;
+                mesh.element_(mesh.target(ohei_n)).halfEdgeIndex = mesh.opposite(ohei_p);
+                mesh.element_(mesh.target(ohei_on)).halfEdgeIndex = mesh.opposite(ohei_op);
+
+                // Collapse edges
+                mesh.registerEdge_(oei1, mesh.opposite(ohei_n), mesh.opposite(ohei_p));
+                mesh.registerEdge_(oei3, mesh.opposite(ohei_op), mesh.opposite(ohei_on));
+
+                // Adjust vertex degrees
+                mesh.element_(ov0).degree += mesh.element_(ov1).degree - 4;
+                mesh.element_(ov0).numTargetingBorderHalfEdges += mesh.element_(ov1).numTargetingBorderHalfEdges;
+                --mesh.element_(mesh.target(ohei_n)).degree;
+                --mesh.element_(mesh.target(ohei_on)).degree;
+
+                // Remove elements
+                const auto rmv = mesh.removeElement_<Vertex>(ov1.index);
+                mesh.removeElements_<Edge, 3>({oei.index, oei2.index, oei4.index});
+                mesh.removeElements_<HalfEdge, 6>({
+                    ohei.index,   ohei_n.index,  ohei_p.index,
+                    ohei_o.index, ohei_on.index, ohei_op.index
+                });
+                mesh.removeElements_<Triangle, 2>({ot0.index, ot1.index});
+
+                // Record change info
+                res.viTo = rmv.track(ov0)[0];
+            };
+
+            const auto collapseBorderEdge = [&](
+                MeshType::HalfEdgeIndex ohei_t,
+                MeshType::HalfEdgeIndex ohei_b
+            ) {
+                const auto ohei_tn = mesh.next(ohei_t);
+                const auto ohei_tp = mesh.prev(ohei_t);
+                const auto ohei_bn = mesh.next(ohei_b);
+                const auto ohei_bp = mesh.prev(ohei_b);
+
+                const auto ot0 = mesh.triangle(ohei_t);
+                const auto ob1 = BorderIndex{ mesh.polygon(ohei_b) };
+
+                // Edge collapse cannot be done, if the border has only 3 edges
+                if(mesh.next(ohei_bn) == ohei_bp) {
+                    LOG(ERROR) << "In edge collapse, border " << mesh.polygon(ohei_b) << " has only 3 edges.";
+                    throw std::runtime_error("Invalid connection in edge collapse.");
+                }
+
+                const auto ov0 = mesh.target(ohei_t); // Will collapse to this vertex
+                const auto ov1 = mesh.target(ohei_b); // Will be removed
+                const auto oei1 = mesh.edge(ohei_tn); // Will collapse to this edge
+                const auto oei2 = mesh.edge(ohei_tp); // Will be removed
+
+                // Retarget all halfedges pointing v1 to v0
+                const auto hei_begin = mesh.opposite(ohei_bn); // Changed halfedge begin
+                for(auto hei1 = hei_begin; hei1 != ohei_p; hei1 = mesh.opposite(mesh.next(hei1))) {
+                    mesh.element_(hei1).targetVertexIndex = ov0;
+                }
+                mesh.element_(ov0).halfEdgeIndex = mesh.opposite(ohei_tn);
+                mesh.element_(mesh.target(ohei_tn)).halfEdgeIndex = mesh.opposite(ohei_tp);
+
+                // Collapse edges
+                mesh.registerEdge_(oei1, mesh.opposite(ohei_tn), mesh.opposite(ohei_tp));
+
+                // Connect borders
+                mesh.element_(ob1).halfEdgeIndex = ohei_bn;
+                mesh.element_(ohei_bn).prevHalfEdgeIndex = ohei_bp;
+                mesh.element_(ohei_bp).nextHalfEdgeIndex = ohei_bn;
+
+                // Adjust vertex degrees
+                mesh.element_(ov0).degree += mesh.element_(ov1).degree - 3;
+                --mesh.element_(mesh.target(ohei_tn)).degree;
+
+                // Remove elements
+                mesh.removeElement_<Vertex>(ov1.index);
+                mesh.removeElements_<Edge, 2>({oei.index, oei2.index});
+                mesh.removeElements_<HalfEdge, 4>({
+                    ohei_t.index, ohei_tn.index, ohei_tp.index,
+                    ohei_b.index
+                });
+                mesh.removeElement_<Triangle>(ot0.index);
+
+                // Record change info
+                res.viTo = rmv.track(ov0)[0];
+            };
+
             // Get index of current elements
-            const auto oei = mesh.edge(ohei);
-            const auto ohei_n  = mesh.next(ohei);
-            const auto ohei_p  = mesh.prev(ohei);
+            const auto ohei    = mesh.halfEdge(oei);
             const auto ohei_o  = mesh.opposite(ohei);
-            const auto ohei_on = mesh.next(ohei_o);
-            const auto ohei_op = mesh.prev(ohei_o);
-            const auto ot0 = mesh.triangle(ohei);
-            const auto ot1 = mesh.triangle(ohei_o);
-            const auto ov0 = mesh.target(ohei); // Will collapse to this vertex
-            const auto ov1 = mesh.target(ohei_o); // Will be removed
-            const auto oei1 = mesh.edge(ohei_n); // Will collapse to this edge
-            const auto oei2 = mesh.edge(ohei_p); // Will be removed
-            const auto oei3 = mesh.edge(ohei_op); // Will collapse on this edge
-            const auto oei4 = mesh.edge(ohei_on); // Will be removed
+            const auto ist     = mesh.polygonType(ohei)   == HalfEdge::PolygonType::triangle;
+            const auto ist_o   = mesh.polygonType(ohei_o) == HalfEdge::PolygonType::triangle;
 
-            // Retarget all halfedges pointing v1 to v0
-            const auto hei_begin = mesh.opposite(ohei_on); // Changed halfedge begin
-            const auto hei_end = mesh.opposite(ohei_n);    // Changed halfedge end
-            for(auto hei1 = hei_begin; hei1 != ohei_p; hei1 = mesh.opposite(mesh.next(hei1))) {
-                mesh.element_(hei1).targetVertexIndex = ov0;
+            if(ist) {
+                if(ist_o) {
+                    collapseInnerEdge(ohei, ohei_o);
+                }
+                else {
+                    collapseBorderEdge(ohei, ohei_o);
+                }
             }
-            mesh.element_(ov0).halfEdgeIndex = hei_begin;
-            mesh.element_(mesh.target(ohei_n)).halfEdgeIndex = mesh.opposite(ohei_p);
-            mesh.element_(mesh.target(ohei_on)).halfEdgeIndex = mesh.opposite(ohei_op);
+            else {
+                if(ist_o) {
+                    collapseBorderEdge(ohei_o, ohei);
+                }
+                else {
+                    LOG(ERROR) << "During edge collapse, neither side of the edge is a triangle.";
+                    throw std::runtime_error("Invalid edge condition at edge collapse.");
+                }
+            }
 
-            // Collapse edges
-            mesh.registerEdge_(oei1, mesh.opposite(ohei_n), mesh.opposite(ohei_p));
-            mesh.registerEdge_(oei3, mesh.opposite(ohei_op), mesh.opposite(ohei_on));
-
-            // Adjust vertex degrees
-            mesh.element_(ov0).degree += mesh.element_(ov1).degree - 4;
-            mesh.element_(ov0).numTargetingBorderHalfEdges += mesh.element_(ov1).numTargetingBorderHalfEdges;
-            --mesh.element_(mesh.target(ohei_n)).degree;
-            --mesh.element_(mesh.target(ohei_on)).degree;
-
-            // Update attributes for affected elements
-            as(
-                mesh,
-                hei_begin, hei_end, // Range of changed halfedges targeting ov0, ordered clockwise
-                ov0
-            );
-
-            // Remove elements
-            mesh.removeElement_<Vertex>(ov1.index);
-            mesh.removeElements_<Edge, 3>({oei.index, oei2.index, oei4.index});
-            mesh.removeElements_<HalfEdge, 6>({
-                ohei.index,   ohei_n.index,  ohei_p.index,
-                ohei_o.index, ohei_on.index, ohei_op.index
-            });
-            mesh.removeElements_<Triangle, 2>({ot0.index, ot1.index});
+            return res;
         }
 
-        void operator()(HalfEdgeMesh& mesh, HalfEdgeIndex ohei)const {
-            this->operator()(mesh, ohei, [](
-                HalfEdgeMesh& mesh,
-                HalfEdgeIndex hei_begin, HalfEdgeIndex hei_end,
-                VertexIndex ov0
-            ) {});
-        }
     };
     // Edge flip
     // Note: Border edges cannot be flipped
     struct EdgeFlip {
         static constexpr int deltaNumVertex = 0;
 
-        template< typename AttributeSetter >
-        void operator()(HalfEdgeMesh& mesh, EdgeIndex edgeIndex, AttributeSetter&& as) const {
+        void operator()(HalfEdgeMesh& mesh, EdgeIndex edgeIndex) const {
 
             // Preconditions (like topology) should be handled by the caller.
 
             // Get index of current elements
             const auto ohei = mesh.halfEdge(edgeIndex);
-            const size_t ohei_n = mesh.next(ohei);
-            const size_t ohei_p = mesh.prev(ohei);
-            const size_t ohei_o = mesh.opposite(ohei);
-            const size_t ohei_on = mesh.next(ohei_o);
-            const size_t ohei_op = mesh.prev(ohei_o);
-            const size_t ov0 = mesh.target(ohei);
-            const size_t ov1 = mesh.target(ohei_n);
-            const size_t ov2 = mesh.target(ohei_o);
-            const size_t ov3 = mesh.target(ohei_on);
-            const size_t ot0 = mesh.triangle(ohei);
-            const size_t ot1 = mesh.triangle(ohei_o);
+            const auto ohei_n = mesh.next(ohei);
+            const auto ohei_p = mesh.prev(ohei);
+            const auto ohei_o = mesh.opposite(ohei);
+            const auto ohei_on = mesh.next(ohei_o);
+            const auto ohei_op = mesh.prev(ohei_o);
+            const auto ov0 = mesh.target(ohei);
+            const auto ov1 = mesh.target(ohei_n);
+            const auto ov2 = mesh.target(ohei_o);
+            const auto ov3 = mesh.target(ohei_on);
+            const auto ot0 = mesh.triangle(ohei);
+            const auto ot1 = mesh.triangle(ohei_o);
 
             // Retarget vertices
             mesh.element_(ohei).targetVertexIndex = ov1;
@@ -945,21 +1126,6 @@ public:
             mesh.registerTriangle_(ot0, ohei, ohei_p, ohei_on);
             mesh.registerTriangle_(ot1, ohei_o, ohei_op, ohei_n);
 
-            // Update attributes of affected elements
-            as(
-                mesh,
-                {ot0, ot1},
-                {ov0, ov1, ov2, ov3}
-            );
-
-        }
-
-        void operator()(HalfEdgeMesh& mesh, EdgeIndex edgeIndex) const {
-            this->operator()(mesh, edgeIndex, [](
-                HalfEdgeMesh& mesh,
-                std::array<TriangleIndex, 2> tis,
-                std::array<VertexIndex, 4> vis
-            ) {});
         }
 
     };

@@ -155,25 +155,19 @@ public:
         if( !TriangleQualityType::better(qAfter, qBefore) ) return State::BadQuality;
 
         // All checks complete. Do the flip.
-        typename Mesh::EdgeFlip{}(
-            mesh, ei,
-            [](
-                Mesh& mesh,
-                std::array<typename Mesh::TriangleIndex, 2> tis,
-                std::array<typename Mesh::VertexIndex, 4> vis
-            ) {
-                // Invalidate mesh index cache
-                mesh.metaAttribute().cacheValid = false;
+        Mesh::AttributeType::flipEdge(mesh, ei);
 
-                for(auto ti : tis) {
-                    Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
-                    mesh.forEachHalfEdgeInTriangle(ti, [&](auto hei) {
-                        Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
-                    });
-                }
-                for(auto vi : vis) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
-            }
-        );
+        // Set attributes
+        for(auto ti : {ti0, ti1}) {
+            Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
+            mesh.forEachHalfEdgeInTriangle(ti, [&](auto nhei) {
+                Mesh::AttributeType::adaptiveComputeAngle(mesh, nhei);
+            });
+        }
+
+        for(auto vi : {vi0, vi1, vi2, vi3}) {
+            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+        }
 
         // Does not change the edge preferrable length
 
@@ -187,13 +181,13 @@ enum class EdgeSplitVertexInsertionMethod {
 };
 template< EdgeSplitVertexInsertionMethod > struct EdgeSplitVertexInsertion;
 template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::MidPoint > {
-    size_t v0, v1;
+    typename Mesh::VertexIndex v0, v1;
     template< typename Mesh >
-    auto coordinate(const Mesh& mesh, typename Mesh::VertexIndex v) const {
+    auto coordinate(const Mesh& mesh) const {
         using CoordinateType = typename Mesh::AttributeType::coordinate_type;
 
-        const auto c0 = mesh.attribute(typename Mesh::VertexIndex{v0}).getCoordinate();
-        const auto c1 = mesh.attribute(typename Mesh::VertexIndex{v1}).getCoordinate();
+        const auto c0 = mesh.attribute(v0).getCoordinate();
+        const auto c1 = mesh.attribute(v1).getCoordinate();
         return static_cast<CoordinateType>((c0 + c1) * 0.5);
     }
 };
@@ -201,19 +195,19 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgC
     static constexpr double maxRadiusDistanceRatio = 1e6;
     static constexpr double maxRadiusDistanceRatio2 = maxRadiusDistanceRatio * maxRadiusDistanceRatio;
 
-    size_t v0, v1;
+    typename Mesh::VertexIndex v0, v1;
 
     // Requires
     //   - Vertex unit normal
     template< typename Mesh >
-    auto coordinate(const Mesh& mesh, typename Mesh::VertexIndex v) const {
+    auto coordinate(const Mesh& mesh) const {
         using namespace mathfunc;
         using CoordinateType = typename Mesh::AttributeType::coordinate_type;
 
-        const CoordinateType c0 (mesh.attribute(typename Mesh::VertexIndex{v0}).getCoordinate());
-        const CoordinateType c1 (mesh.attribute(typename Mesh::VertexIndex{v1}).getCoordinate());
-        const auto& un0 = mesh.attribute(typename Mesh::VertexIndex{v0}).aVertex.unitNormal;
-        const auto& un1 = mesh.attribute(typename Mesh::VertexIndex{v1}).aVertex.unitNormal;
+        const CoordinateType c0 (mesh.attribute(v0).getCoordinate());
+        const CoordinateType c1 (mesh.attribute(v1).getCoordinate());
+        const auto& un0 = mesh.attribute(v0).aVertex.unitNormal;
+        const auto& un1 = mesh.attribute(v1).aVertex.unitNormal;
 
         const auto r = c1 - c0;
         const auto mag2_r = magnitude2(r);
@@ -301,7 +295,7 @@ public:
         const auto ei0 = mesh.edge(hei_n); // v0 - v1
         const auto ei1 = mesh.edge(hei_p); // v1 - v2
         const auto ei2 = mesh.edge(hei_on); // v2 - v3
-        const auto ei3 = mesh.edge(hei_op); // v3 - v1
+        const auto ei3 = mesh.edge(hei_op); // v3 - v0
 
         // Check topology constraints
         // Currently does not support insertion on border edges, but we may also implement that in the future.
@@ -329,32 +323,32 @@ public:
         )) return State::notLongestEdge;
 
         // All checks passed. Do the splitting.
-        typename Mesh::template VertexInsertionOnEdge< EdgeSplitVertexInsertionType > {}(
+        const auto eqLength = mesh.attribute(ei).aEdge.eqLength;
+        const auto change = Mesh::AttributeType::insertVertexOnEdge(
             mesh, ei,
-            [](
-                Mesh& mesh,
-                std::array<typename Mesh::TriangleIndex, 4> tis,
-                std::array<typename Mesh::VertexIndex, 5> vis,
-                std::array<typename Mesh::EdgeIndex, 4> eis
-            ) {
-                // Invalidate mesh index cache
-                mesh.metaAttribute().cacheValid = false;
-
-                for(auto ti : tis) {
-                    Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
-                    mesh.forEachHalfEdgeInTriangle(ti, [&](auto hei) {
-                        Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
-                    });
-                }
-                for(auto vi : vis) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
-
-                // Set preferrable length of edges to be the same as before
-                const auto eqLength = mesh.attribute(eis[0]).aEdge.eqLength;
-                mesh.attribute(eis[1]).aEdge.eqLength = eqLength;
-                mesh.attribute(eis[2]).aEdge.eqLength = eqLength;
-                mesh.attribute(eis[3]).aEdge.eqLength = eqLength;
-            }
+            EdgeSplitVertexInsertionType { vi0, vi2 }.coordinate(mesh)
         );
+
+        Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, change.viNew);
+
+        mesh.forEachHalfEdgeTargetingVertex(change.viNew, [&](auto nhei) {
+            const auto nti = mesh.triangle(nhei);
+            const auto nei = mesh.edge(nhei);
+
+            Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, nti);
+            mesh.forEachHalfEdgeInTriangle(nti, [&](auto nnhei) {
+                Mesh::AttributeType::adaptiveComputeAngle(mesh, nnhei);
+            });
+
+            // Set preferrable length of edges to be the same as before
+            mesh.attribute(nei).aEdge.eqLength = eqLength;
+        });
+
+        mesh.forEachHalfEdgeTargetingVertex(change.viNew, [&](auto nhei) {
+            const auto nvi = mesh.target(mesh.opposite(nhei));
+
+            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, nvi);
+        });
 
         // Propose edge flipping on surrounding quad edges
         efm.tryFlip(mesh, ei0);
@@ -562,34 +556,29 @@ public:
         if(!prChosen.suitable) return State::notSuitable;
         if(prChosen.qualityImproved < minQualityImprovement_) return State::badQuality;
 
-        const auto attributeSetter = [](
-            Mesh& mesh,
-            typename Mesh::HalfEdgeIndex hei_begin,
-            typename Mesh::HalfEdgeIndex hei_end,
-            typename Mesh::VertexIndex ov0
-        ) {
-            // Invalidate mesh index cache
-            mesh.metaAttribute().cacheValid = false;
+        // Do the collapse
+        const auto change = Mesh::AttributeType::collapseEdge(
+            mesh, ei,
+            mesh.attribute(mesh.target(heiChosen)).vertex->coord
+        );
 
-            for(auto hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
-                const auto ti = mesh.triangle(hei1);
-                Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
-                mesh.forEachHalfEdgeInTriangle(ti, [&](auto hei) {
-                    Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
+        // Set attributes
+        mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](auto nhei) {
+            if(mesh.isInTriangle(nhei)) {
+                const auto nti = mesh.triangle(nhei);
+                Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, nti);
+                mesh.forEachHalfEdgeInTriangle(nti, [&](auto nnhei) {
+                    Mesh::AttributeType::adaptiveComputeAngle(mesh, nnhei);
                 });
             }
+        });
 
-            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, ov0);
-            const auto v_first = mesh.target(mesh.opposite(hei_begin));
-            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, v_first);
-            for(auto hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
-                const auto vi = mesh.target(mesh.next(hei1));
-                Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
-            }
-        };
+        Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, change.viTo);
 
-        // Do the collapse
-        typename Mesh::EdgeCollapse {}(mesh, heiChosen, attributeSetter);
+        mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](auto nhei) {
+            const auto nvi = mesh.target(mesh.opposite(nhei));
+            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, nvi);
+        });
 
         // Does not update edge preferred lengths
 

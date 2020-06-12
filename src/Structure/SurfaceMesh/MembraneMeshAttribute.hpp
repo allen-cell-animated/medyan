@@ -33,9 +33,9 @@ struct MembraneMeshAttribute {
     using MeshType = HalfEdgeMesh< MembraneMeshAttribute >;
 
     struct VertexAttribute {
-        using coordinate_type      = Vertex::coordinate_type;
-        using coordinate_ref_type  = Vertex::coordinate_ref_type;
-        using coordinate_cref_type = Vertex::coordinate_cref_type;
+        using CoordinateType      = Vertex::CoordinateType;
+        using CoordinateRefType   = Vertex::CoordinateType&;
+        using CoordinateCrefType  = const Vertex::CoordinateType&;
 
         std::unique_ptr< Vertex > vertex;
 
@@ -46,7 +46,7 @@ struct MembraneMeshAttribute {
         size_t cachedDegree;
         size_t cachedCoordIndex;
 
-        coordinate_ref_type getCoordinate() const { return vertex->coordinate(); }
+        CoordinateCrefType getCoordinate() const { return vertex->coord; }
 
         template< bool stretched > const GVertex& getGVertex() const { return stretched ? gVertexS : gVertex; }
         template< bool stretched >       GVertex& getGVertex()       { return stretched ? gVertexS : gVertex; }
@@ -134,10 +134,10 @@ struct MembraneMeshAttribute {
         size_t cachedVertexOffsetPolygon      (size_t idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree * 4; }
     };
 
-    using coordinate_type = typename VertexAttribute::coordinate_type;
+    using CoordinateType = typename VertexAttribute::CoordinateType;
 
     struct AttributeInitializerInfo {
-        std::vector< coordinate_type > vertexCoordinateList;
+        std::vector< CoordinateType > vertexCoordinateList;
     };
 
     enum class GeometryCurvaturePolicy {
@@ -172,27 +172,25 @@ struct MembraneMeshAttribute {
         squared
     };
 
+    //-------------------------------------------------------------------------
+    // Basic mesh operations
+    //-------------------------------------------------------------------------
+
     // Mesh element modification (not used in initialization/finalization)
-    template< typename VertexInsertionMethod >
-    static void newVertex(MeshType& mesh, MeshType::VertexIndex v, const VertexInsertionMethod& op) {
-        mesh.attribute(v).vertex = std::make_unique< Vertex >(
-            op.coordinate(mesh, v), v);
+    static void newVertex(MeshType& mesh, MeshType::VertexIndex v) {
+        mesh.attribute(v).vertex = std::make_unique< Vertex >(CoordinateType{}, v.index);
     }
-    template< typename Operation >
-    static void newEdge(MeshType& mesh, MeshType::EdgeIndex e, const Operation& op) {
+    static void newEdge(MeshType& mesh, MeshType::EdgeIndex e) {
         mesh.attribute(e).edge.reset(
             mesh.metaAttribute().s->template addTrackable<Edge>(mesh.metaAttribute().m, e));
     }
-    template< typename Operation >
-    static void newHalfEdge(MeshType& mesh, MeshType::HalfEdgeIndex he, const Operation& op) {
+    static void newHalfEdge(MeshType& mesh, MeshType::HalfEdgeIndex he) {
         // Do nothing
     }
-    template< typename Operation >
-    static void newTriangle(MeshType& mesh, MeshType::TriangleIndex t, const Operation& op) {
+    static void newTriangle(MeshType& mesh, MeshType::TriangleIndex tp) {
         mesh.attribute(t).triangle.reset(mesh.metaAttribute().s->template addTrackable<Triangle>(mesh.metaAttribute().m, t));
     }
-    template< typename Operation >
-    static void newBorder(MeshType& mesh, MeshType::BorderIndex, const Operation& op) {
+    static void newBorder(MeshType& mesh, MeshType::BorderIndex) {
         // Do nothing
     }
 
@@ -339,15 +337,176 @@ struct MembraneMeshAttribute {
         info.vertexCoordinateList.reserve(numVertices);
         for(size_t i = 0; i < numVertices; ++i) {
             info.vertexCoordinateList.push_back(
-                static_cast<coordinate_type>(mesh.attribute(MeshType:VertexIndex{i}).vertex->coord));
+                static_cast<CoordinateType>(mesh.attribute(MeshType:VertexIndex{i}).vertex->coord));
         }
 
         return info;
     }
 
+    // Mesh modifiers
+    //
+    // The HalfEdgeMesh already provides basic mesh operations which handles
+    // the mesh element connections.
+    // In these operations, some attributes of the mesh need to be handled
+    // specifically. For example, in material coordinate system, the
+    // equilibrium area of neighboring triangles after a edge flip need to be
+    // re-distributed.
+    // However, these operations cannot be simply achieved by injecting
+    // behavior (such as passing functions) to the mesh operators of the mesh
+    // connection class (HalfEdgeMesh), because only with full attribute info
+    // can one decide what to do/access/modify before/after the mesh
+    // reconnection.
+    static auto insertVertexOnEdge(
+        MeshType&             mesh,
+        MeshType::EdgeIndex   ei,
+        const CoordinateType& newPos
+    ) {
+        const auto ohei       = mesh.halfEdge(edgeIndex);
+        const auto ohei_o     = mesh.opposite(ohei);
+
+        const auto opt0       = mesh.polygonType(ohei);
+        const bool ist0       = opt0 == HalfEdge::PolygonType::triangle;
+        const auto opt2       = mesh.polygonType(ohei_o);
+        const bool ist2       = opt2 == HalfEdge::PolygonType::triangle;
+
+        // Do the vertex insertion
+        const auto change = MeshType::VertexInsertionOnEdge{}(mesh, ei);
+
+        const auto redisEqArea = [](
+            double& eqArea1, double a1,
+            double& eqArea2, double a2,
+            double totalEqArea
+        ) {
+            // Postcondition: sum of eq areas is equal to the total eq area.
+            eqArea1 = totalEqArea * a1 / (a1 + a2);
+            eqArea2 = totalEqArea * a2 / (a1 + a2);
+        };
+
+        // Set attributes
+        mesh.attribute(change.viNew).vertex->coord = newPos;
+
+        // Redistribute properties
+        if(opt0) {
+            const double a1 = area(mesh, change.tiNew[0]);
+            const double a2 = area(mesh, change.tiNew[1]);
+
+            auto& eqArea1 = mesh.attribute(change.tiNew[0]).triangle->mTriangle.eqArea;
+            auto& eqArea2 = mesh.attribute(change.tiNew[1]).triangle->mTriangle.eqArea;
+            redisEqArea(eqArea1, a1, eqArea2, a2, eqArea1);
+        }
+        if(opt2) {
+            const double a1 = area(mesh, change.tiNew[2]);
+            const double a2 = area(mesh, change.tiNew[3]);
+
+            auto& eqArea1 = mesh.attribute(change.tiNew[2]).triangle->mTriangle.eqArea;
+            auto& eqArea2 = mesh.attribute(change.tiNew[3]).triangle->mTriangle.eqArea;
+            redisEqArea(eqArea1, a1, eqArea2, a2, eqArea1);
+        }
+
+        return change;
+    }
+
+    static auto collapseEdge(
+        MeshType&               mesh,
+        MeshType::EdgeIndex     ei,
+        const std::optional< CoordinateType >& newPos
+    ) {
+        const auto hei = mesh.halfEdge(ei);
+        const auto hei_o = mesh.opposite(hei);
+        const auto vi0 = mesh.target(hei);
+        const auto vi1 = mesh.target(hei_o);
+
+        // Record properties
+        double oldTotalEqArea = 0.0;
+        // Accumulate around two vertices, and subtract triangles on the middle edge
+        const auto addOldTotalEqArea = [&](MeshType::HalfEdgeIndex hei) {
+            if(mesh.isInTriangle(hei)) {
+                oldTotalEqArea += mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea;
+            }
+        };
+        const auto subtractOldTotalEqArea = [&](MeshType::HalfEdgeIndex hei) {
+            if(mesh.isInTriangle(hei)) {
+                oldTotalEqArea -= mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea;
+            }
+        };
+        mesh.forEachHalfEdgeTargetingVertex(vi0, addOldTotalEqArea);
+        mesh.forEachHalfEdgeTargetingVertex(vi1, addOldTotalEqArea);
+        mesh.forEachHalfEdgeInEdge(ei, subtractOldTotalEqArea);
+
+        // Do the edge collapse
+        const auto change = MeshType::EdgeCollapse{}(mesh, hei);
+
+        // Set attributes
+        if(newPos.has_value()) mesh.attribute(change.viTo).vertex->coord = *newPos;
+
+        // Redistribute properties
+        double newTotalArea = 0.0;
+        mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](MeshType::HalfEdgeIndex hei) {
+            if(mesh.isInTriangle(hei)) {
+                newTotalArea += area(mesh, mesh.triangle(hei));
+            }
+        });
+        mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](MeshType::HalfEdgeIndex hei) {
+            if(mesh.isInTriangle(hei)) {
+                mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea
+                    = oldTotalEqArea * area(mesh, mesh.triangle(hei)) / newTotalArea;
+            }
+        });
+
+        return change;
+    }
+
+    static void flipEdge(
+        MeshType&               mesh,
+        MeshType::EdgeIndex     ei,
+    ) {
+        // Precondition:
+        //   - ei is not on the border
+
+        // Record old attributes
+        double oldTotalEqArea = 0.0;
+        mesh.forEachHalfEdgeInEdge(ei, [&](MeshType::HalfEdgeIndex hei) {
+            oldTotalEqArea += mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea;
+        });
+
+        // Do edge flip
+        MeshType::EdgeFlip{}(mesh, ei);
+
+        // Redistribute attributes
+        double newTotalArea = 0.0;
+        mesh.forEachHalfEdgeInEdge(ei, [&](MeshType::HalfEdgeIndex hei) {
+            newTotalArea += area(mesh, mesh.triangle(hei));
+        });
+        mesh.forEachHalfEdgeInEdge(ei, [&](MeshType::HalfEdgeIndex hei) {
+            mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea
+                = oldTotalEqArea * area(mesh, mesh.triangle(hei)) / newTotalArea;
+        });
+
+    }
+
     //-------------------------------------------------------------------------
     // Geometries
     //-------------------------------------------------------------------------
+
+    // Get vertex indices
+    static std::array< MeshType::VertexIndex, 3 > vertexIndices(const MeshType& mesh, MeshType::TriangleIndex ti) {
+        const auto hei0 = mesh.halfEdge(ti);
+        const auto hei1 = mesh.next(hei0);
+        const auto hei2 = mesh.next(hei1);
+        return { mesh.target(hei0), mesh.target(hei1), mesh.target(hei2) };
+    }
+    // Calculate area of triangle
+    static double area(const MeshType& mesh, MeshType::TriangleIndex ti) {
+        using namespace std;
+        using namespace mathfunc;
+        const auto vis = vertexIndices(mesh, ti);
+        const auto& c0 = mesh.attribute(vis[0]).getCoordinate();
+        const auto& c1 = mesh.attribute(vis[1]).getCoordinate();
+        const auto& c2 = mesh.attribute(vis[2]).getCoordinate();
+
+        const auto cp = cross(c1 - c0, c2 - c0);
+        return = magnitude(cp) * 0.5;
+    }
 
     // This function updates geometries necessary for computing membrane energy
     // and signed distance.
@@ -408,7 +567,7 @@ struct MembraneMeshAttribute {
         for(MeshType::VertexIndex vi {}; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
             auto& va = mesh.attribute(vi);
             auto& vag = va.template getGVertex<stretched>();
-            const coordinate_type ci (coords[va.cachedCoordIndex]);
+            const CoordinateType ci (coords[va.cachedCoordIndex]);
 
             // clearing
             vag.astar = 0.0;
@@ -429,8 +588,8 @@ struct MembraneMeshAttribute {
                 const size_t ti0 = cvt[mesh.metaAttribute().cachedVertexOffsetPolygon(vi) + i];
                 const size_t hei_n = cvt[mesh.metaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
                 const size_t hei_on = cvt[mesh.metaAttribute().cachedVertexOffsetOuterHE(vi) + (i + 1) % va.cachedDegree];
-                const coordinate_type cn      (coords[cvt[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]]);
-                const coordinate_type c_right (coords[cvt[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + 1) % va.cachedDegree]]);
+                const CoordinateType cn      (coords[cvt[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]]);
+                const CoordinateType c_right (coords[cvt[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + 1) % va.cachedDegree]]);
 
                 const auto sumCotTheta =
                     mesh.attribute(hei_n).template getGHalfEdge<stretched>().cotTheta
@@ -484,10 +643,10 @@ struct MembraneMeshAttribute {
             const auto& hei = ta.cachedHalfEdgeIndex;
             auto& tag = mesh.attribute(ti).gTriangle;
 
-            const coordinate_type c[] {
-                static_cast<coordinate_type>(coords[ta.cachedCoordIndex[0]]),
-                static_cast<coordinate_type>(coords[ta.cachedCoordIndex[1]]),
-                static_cast<coordinate_type>(coords[ta.cachedCoordIndex[2]])
+            const CoordinateType c[] {
+                static_cast<CoordinateType>(coords[ta.cachedCoordIndex[0]]),
+                static_cast<CoordinateType>(coords[ta.cachedCoordIndex[1]]),
+                static_cast<CoordinateType>(coords[ta.cachedCoordIndex[2]])
             };
 
             const double l2[] {
@@ -553,7 +712,7 @@ struct MembraneMeshAttribute {
         for(MeshType::VertexIndex vi {}; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
             auto& va = mesh.attribute(vi);
             auto& vag = va.gVertex;
-            const coordinate_type ci (coords[va.cachedCoordIndex]);
+            const CoordinateType ci (coords[va.cachedCoordIndex]);
 
             // clearing
             vag.astar = 0.0;
@@ -613,8 +772,8 @@ struct MembraneMeshAttribute {
                 const size_t hei_n = cvt[mesh.metaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
                 const size_t hei_p = cvt[mesh.metaAttribute().cachedVertexOffsetOuterHE(vi) + i];
                 const size_t hei_on = cvt[mesh.metaAttribute().cachedVertexOffsetOuterHE(vi) + (i + 1) % va.cachedDegree];
-                const coordinate_type cn      (coords[cvt[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]]);
-                const coordinate_type c_right (coords[cvt[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + 1) % va.cachedDegree]]);
+                const CoordinateType cn      (coords[cvt[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]]);
+                const CoordinateType c_right (coords[cvt[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + 1) % va.cachedDegree]]);
 
                 const auto sumCotTheta = mesh.attribute(hei_n).gHalfEdge.cotTheta + mesh.attribute(hei_on).gHalfEdge.cotTheta;
 
@@ -653,9 +812,9 @@ struct MembraneMeshAttribute {
                 const size_t hei_n = cvt[mesh.metaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
                 const size_t hei_p = cvt[mesh.metaAttribute().cachedVertexOffsetOuterHE(vi) + i];
                 const size_t hei_on = cvt[mesh.metaAttribute().cachedVertexOffsetOuterHE(vi) + (i + 1) % va.cachedDegree];
-                const coordinate_type cn      (coords[cvt[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]]);
-                const coordinate_type c_left  (coords[cvt[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + va.cachedDegree - 1) % va.cachedDegree]]);
-                const coordinate_type c_right (coords[cvt[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + 1) % va.cachedDegree]]);
+                const CoordinateType cn      (coords[cvt[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]]);
+                const CoordinateType c_left  (coords[cvt[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + va.cachedDegree - 1) % va.cachedDegree]]);
+                const CoordinateType c_right (coords[cvt[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + 1) % va.cachedDegree]]);
 
                 const auto sumCotTheta = mesh.attribute(hei_n).gHalfEdge.cotTheta + mesh.attribute(hei_on).gHalfEdge.cotTheta;
                 const auto& dCotThetaLeft = mesh.attribute(hei_n).gHalfEdge.dCotTheta;
@@ -880,10 +1039,10 @@ struct MembraneMeshAttribute {
             const MeshType::VertexIndex vi[] {
                 mesh.target(hei0), mesh.target(hei1), mesh.target(hei2)
             };
-            const coordinate_type c[] {
-                static_cast<coordinate_type>(mesh.attribute(vi[0]).vertex->coord),
-                static_cast<coordinate_type>(mesh.attribute(vi[1]).vertex->coord),
-                static_cast<coordinate_type>(mesh.attribute(vi[2]).vertex->coord)
+            const CoordinateType c[] {
+                static_cast<CoordinateType>(mesh.attribute(vi[0]).vertex->coord),
+                static_cast<CoordinateType>(mesh.attribute(vi[1]).vertex->coord),
+                static_cast<CoordinateType>(mesh.attribute(vi[2]).vertex->coord)
             };
 
             const auto r01 = c[1] - c[0];
@@ -905,7 +1064,7 @@ struct MembraneMeshAttribute {
                 d = dot(mesh.attribute(ti).gTriangle.unitNormal, r0p);
             } else {
                 // p' is outside the triangle
-                const Vec< 3, typename coordinate_type::float_type > r2 {
+                const Vec< 3, typename CoordinateType::float_type > r2 {
                     distance2(c[1], c[2]),
                     distance2(c[2], c[0]),
                     distance2(c[0], c[1])

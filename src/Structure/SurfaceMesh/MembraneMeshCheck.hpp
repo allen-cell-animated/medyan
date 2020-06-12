@@ -55,27 +55,24 @@ struct MembraneMeshTopologyCheck {
     size_t minDegree;
     size_t maxDegree;
     size_t genus = 0;
-    size_t numBoundaries = 0;
 
     bool operator()(const MeshType& mesh, bool report = false) const {
         bool res = true; // Whether the topology is consistent
 
-        const size_t chi = 2 - 2 * genus - numBoundaries; // Euler characteristic
-
         // Check number of elements
-        const size_t numVertices = mesh.getVertices().size();
-        const size_t numTriangles = mesh.getTriangles().size();
-        const size_t numEdges = mesh.getEdges().size();
-        const size_t numHalfEdges = mesh.getHalfEdges().size();
+        const size_t numVertices = mesh.numVertices();
+        const size_t numTriangles = mesh.numTriangles();
+        const size_t numEdges = mesh.numEdges();
+        const size_t numHalfEdges = mesh.numHalfEdges();
+        const size_t numBorders = mesh.numBorders();
 
-        const size_t chiActual = numTriangles + numVertices - numEdges;
-        if(chiActual != chi) {
+        if(numEdges * 2 != numHalfEdges) {
             res = false;
             if(report) {
-                LOG(ERROR) << "Incorrect Euler characteristic (expected " << chi << "): " << chiActual;
+                LOG(ERROR) << "Incorrect number of edges (" << numEdges << ") vs half edges (" << numHalfEdges << ").";
             }
         }
-        if(!numBoundaries && (numEdges * 2 != numTriangles * 3 || numHalfEdges != numEdges * 2)) {
+        if(!numBorders && (numEdges * 2 != numTriangles * 3 || numHalfEdges != numEdges * 2)) {
             res = false;
             if(report) {
                 LOG(ERROR) << "Incorrect number of elements of a closed surface";

@@ -37,10 +37,11 @@ private:
 
 public:
     using DatabaseType = Database< Vertex, false >;
+    using CoordinateType = mathfunc::Vec< 3, floatingpoint >;
 
     ///Main constructor
-    Vertex(const Bead::coordinate_type& v, size_t topoIndex)
-        : Bead(mathfunc::vec2Vector(v), nullptr, 0), topoIndex_(topoIndex)
+    Vertex(const CoordinateType& v, size_t topoIndex)
+        : coord(v), force{}, topoIndex_(topoIndex)
     {
         // eqArea cannot be obtained at this moment
         mVertex_ = std::make_unique<MVoronoiCell>(getType());
@@ -61,8 +62,8 @@ public:
         return DatabaseType::getElements().size();
     }
 
-    mathfunc::Vec< 3, floatingpoint > coord;
-    mathfunc::Vec< 3, floatingpoint > force;
+    CoordinateType coord;
+    CoordinateType force;
 
 };
 
