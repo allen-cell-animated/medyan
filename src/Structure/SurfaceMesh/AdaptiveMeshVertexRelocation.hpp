@@ -32,22 +32,22 @@ template<> struct OptimalVertexLocation< OptimalVertexLocationMethod::barycenter
     }
 
     template< typename Mesh >
-    auto operator()(const Mesh& mesh, size_t vi) const {
+    auto operator()(const Mesh& mesh, typename Mesh::VertexIndex vi) const {
         using namespace mathfunc;
         using CoordinateType = typename Mesh::AttributeType::coordinate_type;
 
         CoordinateType target {};
-        mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
-            const CoordinateType cn (mesh.getVertexAttribute(mesh.target(mesh.next(hei))).getCoordinate());
-            const CoordinateType cp (mesh.getVertexAttribute(mesh.target(mesh.prev(hei))).getCoordinate());
-            const CoordinateType un (mesh.getTriangleAttribute(mesh.triangle(hei)).gTriangle.unitNormal);
+        mesh.forEachHalfEdgeTargetingVertex(vi, [&](auto hei) {
+            const CoordinateType cn (mesh.attribute(mesh.target(mesh.next(hei))).getCoordinate());
+            const CoordinateType cp (mesh.attribute(mesh.target(mesh.prev(hei))).getCoordinate());
+            const CoordinateType un (mesh.attribute(mesh.triangle(hei)).gTriangle.unitNormal);
             target += findEquilateralTriangle< typename CoordinateType::float_type >(cp, cn, un);
         });
         target *= (1.0 / mesh.degree(vi));
 
         // project onto tangent plane
-        const CoordinateType ci (mesh.getVertexAttribute(vi).getCoordinate());
-        const auto& un = mesh.getVertexAttribute(vi).aVertex.unitNormal;
+        const CoordinateType ci (mesh.attribute(vi).getCoordinate());
+        const auto& un = mesh.attribute(vi).aVertex.unitNormal;
         target -= un * dot(un, target - ci);
 
         return target;
@@ -72,9 +72,9 @@ private:
         // Edge flipping does not change edge id or total number of edges
         // Also the preferred length does not need to be changed
         size_t res = 0;
-        const size_t numEdges = mesh.getEdges().size();
-        for(size_t i = 0; i < numEdges; ++i) {
-            if(efm.tryFlip(mesh, typename Mesh::EdgeIndex{i}) == EdgeFlipManagerType::State::Success) ++res;
+        const size_t numEdges = mesh.numEdges();
+        for(typename Mesh::EdgeIndex i {0}; i < numEdges; ++i) {
+            if(efm.tryFlip(mesh, i) == EdgeFlipManagerType::State::Success) ++res;
         }
         return res;
     }
@@ -98,12 +98,12 @@ public:
 
             // Move vertices
             for(size_t iterRelo = 0; iterRelo < maxIterRelocation_; ++iterRelo) {
-                for(size_t i = 0; i < numVertices; ++i) if(!mesh.isVertexOnBorder(i)) {
-                    // const auto coordOriginal = mesh.getVertexAttribute(i).getCoordinate();
+                for(typename Mesh::VertexIndex i {}; i < numVertices; ++i) if(!mesh.isVertexOnBorder(i)) {
+                    // const auto coordOriginal = mesh.attribute(i).getCoordinate();
                     const auto target = OptimalVertexLocationType{}(mesh, i);
                     /*const auto diff = target - coordOriginal;
                     const auto magDiff = magnitude(diff);*/
-                    mesh.getVertexAttribute(i).getCoordinate() = target;
+                    mesh.attribute(i).getCoordinate() = target;
                 }
             }
 

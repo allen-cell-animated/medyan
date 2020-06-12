@@ -15,12 +15,12 @@ enum class MembraneStretchingType {
 };
 
 template< MembraneStretchingType type >
-class MembraneStretching: public ForceField {
-private:
-    // Culprit membrane
-    const Membrane* membraneCulprit_ = nullptr;
+struct MembraneStretching: public ForceField {
 
-public:
+    const Membrane* membraneCulprit = nullptr;
+
+    virtual void vectorize() override {}
+
     virtual floatingpoint computeEnergy(floatingpoint* coord, bool stretched) override {
         using namespace std;
 
@@ -56,7 +56,7 @@ public:
             if(!isfinite(enMem)) { // (U_i != U_i) => (U_i == NaN)
                 
                 //set culprit and return
-                membraneCulprit_ = m;
+                membraneCulprit = m;
                 
                 return numeric_limits<double>::infinity();
             }
@@ -143,16 +143,15 @@ public:
     virtual string getName() override { return "Membrane Stretching"; }
 
     virtual void whoIsCulprit() override {
-        if(membraneCulprit_) {
+        if(membraneCulprit) {
             LOG(INFO) << "Printing culprit membrane...";
-            membraneCulprit_->printSelf();
+            membraneCulprit->printSelf();
         } else {
             LOG(ERROR) << "Membrane culprit is not set.";
         }
     }
 
     // Useless overrides
-    virtual void vectorize() override {}
     virtual void cleanup() override {}
     virtual void computeLoadForces() override {}
     virtual std::vector<NeighborList*> getNeighborLists() override { return {}; }

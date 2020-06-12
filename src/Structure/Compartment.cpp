@@ -1771,9 +1771,9 @@ void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
                 Vec< 3, floatingpoint > sumPos {};
                 for(Triangle* t: _triangles) {
                     const auto& mesh = t->getParent()->getMesh();
-                    const size_t ti = t->getTopoIndex();
-                    const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
-                    const auto& unitNormal = mesh.getTriangleAttribute(ti).gTriangle.unitNormal;
+                    const Membrane::MeshType::TriangleIndex ti { t->getTopoIndex() };
+                    const auto area = mesh.attribute(ti).gTriangle.area;
+                    const auto& unitNormal = mesh.attribute(ti).gTriangle.unitNormal;
                     sumNormal += unitNormal * area;
                     sumPos += t->coordinate * area;
                     sumArea += area;

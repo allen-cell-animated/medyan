@@ -30,12 +30,12 @@ Edge::~Edge() {
 
 void Edge::updateCoordinate() {
     const auto& mesh = parent_->getMesh();
-    const size_t hei0 = mesh.getEdges()[topoIndex_].halfEdgeIndex;
-    const size_t hei1 = mesh.opposite(hei0);
-    const size_t v0 = mesh.target(hei0);
-    const size_t v1 = mesh.target(hei1);
+    const auto hei0 = mesh.halfEdge(Membrane::MeshType::EdgeIndex{topoIndex_});
+    const auto hei1 = mesh.opposite(hei0);
+    const auto v0 = mesh.target(hei0);
+    const auto v1 = mesh.target(hei1);
 
-    coordinate = 0.5 * (mesh.getVertexAttribute(v0).getCoordinate() + mesh.getVertexAttribute(v1).getCoordinate());
+    coordinate = 0.5 * (mesh.attribute(v0).getCoordinate() + mesh.attribute(v1).getCoordinate());
 }
 
 void Edge::updatePosition() {

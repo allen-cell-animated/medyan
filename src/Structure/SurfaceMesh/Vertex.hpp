@@ -22,11 +22,7 @@ information of its neighbors.
 
 ******************************************************************************/
 
-class Vertex:
-    public Bead, // Inherited from bead to receive full features like coordinate and forces.
-                 // But note that in terms of tracking, when the vertex is added to the system,
-                 // the base class Bead should also be added to its own collection,
-                 // i.e. both the bead and the vertex collection should both have the collection.
+class Vertex :
     public Database< Vertex, false >
 {
     

@@ -5,17 +5,17 @@ namespace adaptive_mesh {
 
 template< typename Mesh > struct GeometryManager {
     static void computeAllTriangleNormals(Mesh& mesh) {
-        const size_t numTriangles = mesh.getTriangles().size();
+        const size_t numTriangles = mesh.numTriangles();
 
-        for(size_t ti = 0; ti < numTriangles; ++ti) {
+        for(typename Mesh::TriangleIndex ti { 0 }; ti < numTriangles; ++ti) {
             Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
         }
     }
 
     static void computeAllAngles(Mesh& mesh) {
-        const size_t numHalfEdges = mesh.getHalfEdges().size();
+        const size_t numHalfEdges = mesh.numHalfEdges();
 
-        for(size_t hei = 0; hei < numHalfEdges; ++hei) {
+        for(typename Mesh::HalfEdgeIndex hei { 0 }; hei < numHalfEdges; ++hei) {
             Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
         }
     }
@@ -24,9 +24,9 @@ template< typename Mesh > struct GeometryManager {
     //   - Unit normals in triangles (geometric)
     //   - Angles in halfedges (geometric)
     static void computeAllVertexNormals(Mesh& mesh) {
-        const size_t numVertices = mesh.getVertices().size();
+        const size_t numVertices = mesh.numVertices();
 
-        for(size_t vi = 0; vi < numVertices; ++vi) {
+        for(typename Mesh::VertexIndex vi = 0; vi < numVertices; ++vi) {
             Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
         }
     }
