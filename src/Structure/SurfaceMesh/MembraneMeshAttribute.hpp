@@ -6,6 +6,7 @@
 #include <limits> // numeric_limits
 #include <memory> // unique_ptr
 #include <stdexcept> // logic_error
+#include <tuple>
 #include <vector>
 
 #include "MathFunctions.h"
@@ -489,13 +490,21 @@ struct MembraneMeshAttribute {
     //-------------------------------------------------------------------------
 
     // Get vertex indices
-    static std::array< MeshType::VertexIndex, 3 > vertexIndices(const MeshType& mesh, MeshType::TriangleIndex ti) {
-        const auto hei0 = mesh.halfEdge(ti);
+    static std::array< MeshType::VertexIndex, 3 > vertexIndices(const MeshType& mesh, const MeshType::Triangle& t) {
+        const auto hei0 = t.halfEdgeIndex;
         const auto hei1 = mesh.next(hei0);
         const auto hei2 = mesh.next(hei1);
         return { mesh.target(hei0), mesh.target(hei1), mesh.target(hei2) };
     }
+    static std::array< MeshType::VertexIndex, 3 > vertexIndices(const MeshType& mesh, MeshType::TriangleIndex ti) {
+        return vertexIndices(mesh, mesh.element(ti));
+    }
     // Calculate area of triangle
+    template< typename VT >
+    static double area(const VT& c0, const VT& c1, const VT& c2) {
+        const auto cp = mathfunc::cross(c1 - c0, c2 - c0);
+        return mathfunc::magnitude(cp) * 0.5;
+    }
     static double area(const MeshType& mesh, MeshType::TriangleIndex ti) {
         using namespace std;
         using namespace mathfunc;
@@ -504,8 +513,24 @@ struct MembraneMeshAttribute {
         const auto& c1 = mesh.attribute(vis[1]).getCoordinate();
         const auto& c2 = mesh.attribute(vis[2]).getCoordinate();
 
-        const auto cp = cross(c1 - c0, c2 - c0);
-        return = magnitude(cp) * 0.5;
+        return area(c0, c1, c2);
+    }
+    // Returns the area and its derivatives on all vertices
+    template< typename VT >
+    static auto areaAndDerivative(const VT& c0, const VT& c1, const VT& c2) {
+        const auto area = area(c0, c1, c2);
+        const auto inv4A = 0.25 / area;
+        const auto r01 = c1 - c0;
+        const auto r02 = c2 - c0;
+        const auto dot_01_02 = mathfunc::dot(r01, r02);
+        const auto dot_01_01 = mathfunc::dot(r01, r01);
+        const auto dot_02_02 = mathfunc::dot(r02, r02);
+        return std::tuple {
+            area,
+            inv4A * ((dot_01_02 - dot_01_01) * r02 + (dot_01_02 - dot_02_02) * r01),
+            inv4A * (dot_02_02 * r01 - dot_01_02 * r02),
+            inv4A * (dot_01_01 * r02 - dot_01_02 * r01)
+        };
     }
 
     // This function updates geometries necessary for computing membrane energy

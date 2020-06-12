@@ -9,7 +9,8 @@
 #include "Mechanics/ForceField/ForceField.h"
 #include "Mechanics/ForceField/Membrane/MembraneBending.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
-#include "Mechanics/ForceField/Membrane/MembraneStretching.hpp"
+#include "Mechanics/ForceField/Membrane/MembraneStretchingGlobal.hpp"
+#include "Mechanics/ForceField/Membrane/MembraneStretchingLocal.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneStretchingImpl.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneTension.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneTriangleProtect.hpp"
@@ -39,14 +40,14 @@ struct MembraneFFFactory {
             //   non-reservior-touching membrane.
             // In normal coordinates, it cannot be modeled without more degrees of freedom.
             res.forceFields.push_back(
-                std::make_unique< MembraneStretching< MembraneStretchingLocalHarmonic > >()
+                std::make_unique< MembraneStretchingLocal >()
             );
         }
         else if(stretchingType == "GLOBAL_HARMONIC") {
             // Assumption: surface tension is uniform on the membrane
             // Only applicable to non-reservior-touching membrane in normal coordinates.
             res.forceFields.push_back(
-                std::make_unique< MembraneStretching< MembraneStretchingGlobalHarmonic > >()
+                std::make_unique< MembraneStretchingGlobal >()
             );
         }
         else if(stretchingType == "") {}

@@ -328,6 +328,7 @@ private:
     auto& element_(EdgeIndex     ei ) { return edges_    [ei.index]; }
     auto& element_(VertexIndex   vi ) { return vertices_ [vi.index]; }
     auto& element_(BorderIndex   bi ) { return borders_  [bi.index]; }
+    // The const version is public
 
     // Meshwork registration helper
     void registerTriangle_(TriangleIndex ti, HalfEdgeIndex hei0, HalfEdgeIndex hei1, HalfEdgeIndex hei2) {
@@ -723,11 +724,17 @@ public:
     const auto& getVertices()  const { return vertices_; }
     const auto& getBorders()   const { return borders_; }
 
+    const auto& element(TriangleIndex ti ) const { return triangles_[ti.index]; }
+    const auto& element(HalfEdgeIndex hei) const { return halfEdges_[hei.index]; }
+    const auto& element(EdgeIndex     ei ) const { return edges_    [ei.index]; }
+    const auto& element(VertexIndex   vi ) const { return vertices_ [vi.index]; }
+    const auto& element(BorderIndex   bi ) const { return borders_  [bi.index]; }
+
     // Attribute accessor
     template< typename TheIndexType >
     auto      & attribute(TheIndexType i)       { return element_(i).attr; }
     template< typename TheIndexType >
-    const auto& attribute(TheIndexType i) const { return element_(i).attr; }
+    const auto& attribute(TheIndexType i) const { return element(i).attr; }
 
     MetaAttribute&       metaAttribute()       noexcept { return _meta; }
     const MetaAttribute& metaAttribute() const noexcept { return _meta; }
