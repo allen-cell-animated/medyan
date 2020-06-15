@@ -8,13 +8,12 @@
 #include <vector>
 
 #include "Composite.h"
-#include "MathFunctions.h"
 #include "Structure/Database.h"
 #include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/MembraneHierarchy.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshAttribute.hpp"
+#include "Structure/SurfaceMesh/MembraneMeshGeometry.hpp"
 #include "Structure/SurfaceMesh/MMembrane.hpp"
-#include "Structure/SurfaceMesh/SurfaceMesh.hpp"
 #include "Structure/Trackable.h"
 #include "SysParams.h"
 
@@ -31,9 +30,9 @@ inheriting Composite.
 ******************************************************************************/
 class Membrane: public Composite, public Trackable, public Database< Membrane, false > {
 public:
-    using MembraneMeshAttributeType = MembraneMeshAttribute;
-    using coordinate_type = typename MembraneMeshAttributeType::coordinate_type;
-    using MeshType = HalfEdgeMesh< MembraneMeshAttributeType >;
+    using MeshAttributeType = MembraneMeshAttribute;
+    using coordinate_type = typename MeshAttributeType::CoordinateType;
+    using MeshType = HalfEdgeMesh< MeshAttributeType >;
 
     using HierarchyType = MembraneHierarchy< Membrane >;
 
@@ -57,14 +56,14 @@ public:
         const std::vector< coordinate_type >& vertexCoordinateList,
         const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
     ) : Trackable(false, false, false, false),
-        mesh_(typename MembraneMeshAttributeType::MetaAttribute{s, this}),
+        mesh_(typename MeshAttributeType::MetaAttribute{s, this}),
         _subSystem(s), memType_(membraneType) {
         
         // Build the meshwork topology using vertex and triangle information
         mesh_.init<typename MeshType::VertexTriangleInitializer>(
             vertexCoordinateList.size(),
             triangleVertexIndexList,
-            typename MembraneMeshAttributeType::AttributeInitializerInfo{ vertexCoordinateList }
+            typename MeshAttributeType::AttributeInitializerInfo{ vertexCoordinateList }
         );
 
         // Update geometry
@@ -143,21 +142,21 @@ public:
     /**************************************************************************
     Geometric
     **************************************************************************/
-    template<
-        bool stretched = false,
-        MembraneMeshAttributeType::GeometryCurvaturePolicy curvPol
-            = MembraneMeshAttributeType::GeometryCurvaturePolicy::withSign
-    > void updateGeometryValue() {
-        MembraneMeshAttributeType::template updateGeometryValue<stretched, curvPol>(mesh_);
+    template< bool stretched = false >
+    void updateGeometryValue(
+        const floatingpoint*           coord,
+        medyan::SurfaceCurvaturePolicy curvPol
+    ) {
+        medyan::updateGeometryValue<stretched>(mesh_, coord, curvPol);
     }
-    template<
-        MembraneMeshAttributeType::GeometryCurvaturePolicy curvPol
-            = MembraneMeshAttributeType::GeometryCurvaturePolicy::withSign
-    > void updateGeometryValueWithDerivative() {
-        MembraneMeshAttributeType::template updateGeometryValueWithDerivative<curvPol>(mesh_);
+    void updateGeometryValueWithDerivative(
+        const floatingpoint*           coord,
+        medyan::SurfaceCurvaturePolicy curvPol
+    ) {
+        medyan::updateGeometryValueWithDerivative(mesh_, coord, curvPol);
     }
     void updateGeometryValueForSystem() {
-        MembraneMeshAttributeType::updateGeometryValueForSystem(mesh_);
+        medyan::updateGeometryValueForSystem(mesh_);
     }
 
     /**
@@ -170,7 +169,7 @@ public:
     double signedDistance(const VecType& p, bool allowOpen = false) const {
         if(!allowOpen && !isClosed())
             throw std::runtime_error("Membrane is not closed while trying to find signed distance field.");
-        return MembraneMeshAttributeType::signedDistance(mesh_, p);
+        return medyan::signedDistance(mesh_, p);
     }
     /**
      * Use signed distance or other methods to judge whether a point is inside membrane.
@@ -179,7 +178,7 @@ public:
     template< typename VecType, std::enable_if_t< VecType::vec_size == 3 >* = nullptr >
     bool contains(const VecType& p) const {
         if(!isClosed()) throw std::runtime_error("Membrane is not closed while trying to find signed distance field.");
-        return MembraneMeshAttributeType::contains(mesh_, p);
+        return medyan::contains(mesh_, p);
     }
 
     /**************************************************************************

@@ -10,11 +10,6 @@
 #include "Mechanics/ForceField/Membrane/MembraneStretchingImpl.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
-enum class MembraneStretchingType {
-    localHarmonic,
-    globalHarmonic
-};
-
 struct MembraneStretchingLocal : public ForceField {
 
     MembraneStretchingHarmonic impl;
@@ -28,7 +23,6 @@ struct MembraneStretchingLocal : public ForceField {
 
     virtual void vectorize(const FFCoordinateStartingIndex& si) override {
         using namespace std;
-        using AT = Membrane::MembraneMeshAttributeType;
 
         vertexSet.clear();
         vertexSet.reserve(Triangle::numElements()); // Might be more than needed
@@ -45,7 +39,7 @@ struct MembraneStretchingLocal : public ForceField {
             const auto& mesh = m->getMesh();
             for(const auto& t : mesh.getTriangles()) {
                 // TODO: check if the triangle fits local/global criteria
-                const auto vis = AT::vertexIndices(mesh, t);
+                const auto vis = medyan::vertexIndices(mesh, t);
                 vertexSet.push_back({
                     mesh.attribute(vis[0]).vertex->getIndex() * 3 + si.vertex,
                     mesh.attribute(vis[1]).vertex->getIndex() * 3 + si.vertex,
@@ -59,14 +53,13 @@ struct MembraneStretchingLocal : public ForceField {
 
     virtual floatingpoint computeEnergy(floatingpoint* coord, bool stretched) override {
         using namespace std;
-        using AT = Membrane::MembraneMeshAttributeType;
 
         double en = 0;
 
         for(size_t i = 0; i < vertexSet.size(); ++i) {
             const auto& vs = vertexSet[i];
             const auto enTriangle = impl.energy(
-                AT::area(
+                medyan::area(
                     makeRefVec<3>(coord + vs[0]),
                     makeRefVec<3>(coord + vs[1]),
                     makeRefVec<3>(coord + vs[2])
@@ -92,14 +85,13 @@ struct MembraneStretchingLocal : public ForceField {
 
     virtual void computeForces(floatingpoint* coord, floatingpoint* force) override {
         using namespace std;
-        using AT = Membrane::MembraneMeshAttributeType;
 
         for(size_t i = 0; i < vertexSet.size(); ++i) {
             const auto& vs = vertexSet[i];
             const auto rv0 = makeRefVec<3>(coord + vs[0]);
             const auto rv1 = makeRefVec<3>(coord + vs[1]);
             const auto rv2 = makeRefVec<3>(coord + vs[2]);
-            const auto [area, da0, da1, da2] = AT::areaAndDerivative(rv0, rv1, rv2);
+            const auto [area, da0, da1, da2] = medyan::areaAndDerivative(rv0, rv1, rv2);
 
             impl.forces(force + vs[0], area, da0, kArea[i], eqArea[i]);
             impl.forces(force + vs[1], area, da1, kArea[i], eqArea[i]);

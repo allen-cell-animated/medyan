@@ -131,9 +131,6 @@ namespace {
         for(Triangle* t: m->getTriangleVector()) {
             t->mTriangle.setEqArea(t->mTriangle.getEqArea() * ratio);
         }
-        for(Vertex* v: m->getVertexVector()) {
-            v->getMVoronoiCell()->setEqArea(v->getMVoronoiCell()->getEqArea() * ratio);
-        }
     }
 }
 

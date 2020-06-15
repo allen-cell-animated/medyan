@@ -754,7 +754,8 @@ public:
 
     size_t degree(VertexIndex vi) const { return element_(vi).degree; }
 
-    bool isVertexOnBorder(VertexIndex vi) const { return element_(vi).numTargetingBorderHalfEdges >= 1; }
+    bool isVertexOnBorder(const Vertex& v) const { return v.numTargetingBorderHalfEdges >= 1; }
+    bool isVertexOnBorder(VertexIndex vi) const { return isVertexOnBorder(element_(vi)); }
     bool isEdgeOnBorder(EdgeIndex ei) const { return element_(ei).numBorderHalfEdges >= 1; }
     bool isInTriangle(HalfEdgeIndex hei) const { return polygonType(hei) == HalfEdge::PolygonType::triangle; }
 

@@ -59,12 +59,11 @@ struct MembraneMeshTopologyCheck {
     bool operator()(const MeshType& mesh, bool report = false) const {
         bool res = true; // Whether the topology is consistent
 
-        // Check number of elements
-        const size_t numVertices = mesh.numVertices();
-        const size_t numTriangles = mesh.numTriangles();
-        const size_t numEdges = mesh.numEdges();
-        const size_t numHalfEdges = mesh.numHalfEdges();
-        const size_t numBorders = mesh.numBorders();
+        const auto numVertices = mesh.numVertices();
+        const auto numTriangles = mesh.numTriangles();
+        const auto numEdges = mesh.numEdges();
+        const auto numHalfEdges = mesh.numHalfEdges();
+        const auto numBorders = mesh.numBorders();
 
         if(numEdges * 2 != numHalfEdges) {
             res = false;

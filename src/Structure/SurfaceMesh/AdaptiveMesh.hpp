@@ -35,7 +35,7 @@ Until all criteria are met or maximum iterations reached
 #include "Structure/SurfaceMesh/AdaptiveMeshGeometryManager.hpp"
 #include "Structure/SurfaceMesh/AdaptiveMeshVertexRelocation.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "Structure/SurfaceMesh/MembraneMeshCheck.hpp"
+#include "Structure/SurfaceMesh/MembraneMeshGeometry.hpp"
 #include "Structure/SurfaceMesh/MeshTriangleQuality.hpp"
 
 namespace adaptive_mesh {
@@ -159,14 +159,14 @@ public:
 
         // Set attributes
         for(auto ti : {ti0, ti1}) {
-            Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
+            medyan::adaptiveComputeTriangleNormal(mesh, ti);
             mesh.forEachHalfEdgeInTriangle(ti, [&](auto nhei) {
-                Mesh::AttributeType::adaptiveComputeAngle(mesh, nhei);
+                medyan::adaptiveComputeAngle(mesh, nhei);
             });
         }
 
         for(auto vi : {vi0, vi1, vi2, vi3}) {
-            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+            medyan::adaptiveComputeVertexNormal(mesh, vi);
         }
 
         // Does not change the edge preferrable length
@@ -329,15 +329,15 @@ public:
             EdgeSplitVertexInsertionType { vi0, vi2 }.coordinate(mesh)
         );
 
-        Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, change.viNew);
+        medyan::adaptiveComputeVertexNormal(mesh, change.viNew);
 
         mesh.forEachHalfEdgeTargetingVertex(change.viNew, [&](auto nhei) {
             const auto nti = mesh.triangle(nhei);
             const auto nei = mesh.edge(nhei);
 
-            Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, nti);
+            medyan::adaptiveComputeTriangleNormal(mesh, nti);
             mesh.forEachHalfEdgeInTriangle(nti, [&](auto nnhei) {
-                Mesh::AttributeType::adaptiveComputeAngle(mesh, nnhei);
+                medyan::adaptiveComputeAngle(mesh, nnhei);
             });
 
             // Set preferrable length of edges to be the same as before
@@ -347,7 +347,7 @@ public:
         mesh.forEachHalfEdgeTargetingVertex(change.viNew, [&](auto nhei) {
             const auto nvi = mesh.target(mesh.opposite(nhei));
 
-            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, nvi);
+            medyan::adaptiveComputeVertexNormal(mesh, nvi);
         });
 
         // Propose edge flipping on surrounding quad edges
@@ -566,18 +566,18 @@ public:
         mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](auto nhei) {
             if(mesh.isInTriangle(nhei)) {
                 const auto nti = mesh.triangle(nhei);
-                Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, nti);
+                medyan::adaptiveComputeTriangleNormal(mesh, nti);
                 mesh.forEachHalfEdgeInTriangle(nti, [&](auto nnhei) {
-                    Mesh::AttributeType::adaptiveComputeAngle(mesh, nnhei);
+                    medyan::adaptiveComputeAngle(mesh, nnhei);
                 });
             }
         });
 
-        Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, change.viTo);
+        medyan::adaptiveComputeVertexNormal(mesh, change.viTo);
 
         mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](auto nhei) {
             const auto nvi = mesh.target(mesh.opposite(nhei));
-            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, nvi);
+            medyan::adaptiveComputeVertexNormal(mesh, nvi);
         });
 
         // Does not update edge preferred lengths

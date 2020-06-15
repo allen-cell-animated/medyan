@@ -8,7 +8,7 @@ template< typename Mesh > struct GeometryManager {
         const size_t numTriangles = mesh.numTriangles();
 
         for(typename Mesh::TriangleIndex ti { 0 }; ti < numTriangles; ++ti) {
-            Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
+            medyan::adaptiveComputeTriangleNormal(mesh, ti);
         }
     }
 
@@ -16,7 +16,7 @@ template< typename Mesh > struct GeometryManager {
         const size_t numHalfEdges = mesh.numHalfEdges();
 
         for(typename Mesh::HalfEdgeIndex hei { 0 }; hei < numHalfEdges; ++hei) {
-            Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
+            medyan::adaptiveComputeAngle(mesh, hei);
         }
     }
 
@@ -27,7 +27,7 @@ template< typename Mesh > struct GeometryManager {
         const size_t numVertices = mesh.numVertices();
 
         for(typename Mesh::VertexIndex vi = 0; vi < numVertices; ++vi) {
-            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+            medyan::adaptiveComputeVertexNormal(mesh, vi);
         }
     }
 }; // End GeometryManager

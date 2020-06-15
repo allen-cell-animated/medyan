@@ -22,29 +22,16 @@
 #include "Structure/Bead.h"
 #include "Structure/Cylinder.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/MembraneMeshGeometry.hpp"
 
 namespace {
 
-using CurvPol = Membrane::MembraneMeshAttributeType::GeometryCurvaturePolicy;
+using CurvPol = medyan::SurfaceCurvaturePolicy;
 using CurvReq = ForceFieldTypes::GeometryCurvRequirement;
 
-template< bool stretched, CurvPol curvPol >
-void updateGeometryValue() {
-    for(auto m : Membrane::getMembranes()) m->updateGeometryValue< stretched, curvPol >();
-}
-template< bool stretched >
-void updateGeometryValue(CurvReq curvReq) {
-    if(curvReq == CurvReq::curv) updateGeometryValue< stretched, CurvPol::withSign >();
-    else                         updateGeometryValue< stretched, CurvPol::squared  >();
-}
-
-template< CurvPol curvPol >
-void updateGeometryValueWithDerivative() {
-    for(auto m : Membrane::getMembranes()) m->updateGeometryValueWithDerivative< curvPol >();
-}
-void updateGeometryValueWithDerivative(CurvReq curvReq) {
-    if(curvReq == CurvReq::curv) updateGeometryValueWithDerivative< CurvPol::withSign >();
-    else                         updateGeometryValueWithDerivative< CurvPol::squared  >();
+constexpr CurvPol getCurvPol(CurvReq curvReq) noexcept {
+    if(curvReq == CurvReq::curv) return CurvPol::withSign;
+    else                         return CurvPol::squared;
 }
 
 } // namespace
@@ -69,6 +56,11 @@ void ForceFieldManager::vectorizeAllForceFields(const FFCoordinateStartingIndex&
     CUDAcommon::cudavars.offset_E=0.0;
     //@}
 #endif
+
+    // Cache membrane indices
+    for(auto m : Membrane::getMembranes()) {
+        medyan::cacheIndicesForFF(m->getMesh(), si);
+    }
 
     for (auto &ff : _forceFields)
         ff->vectorize(si);
@@ -134,6 +126,12 @@ void ForceFieldManager::cleanupAllForceFields() {
 
     for (auto &ff : _forceFields)
         ff->cleanup();
+
+    // Invalidate membrane cache indices
+    for(auto m : Membrane::getMembranes()) {
+        medyan::invalidateIndexCacheForFF(m->getMesh());
+    }
+
 #ifdef CUDAACCL
     if (!(CUDAcommon::getCUDAvars().conservestreams))
         CUDAcommon::handleerror(cudaStreamDestroy(streamF));
@@ -209,8 +207,10 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
 
 #endif
 
-    // Compute geometry
-    updateGeometryValue< stretched >(this->geoCurvReq);
+    // Compute membrane geometry
+    for(auto m : Membrane::getMembranes()) {
+        m->updateGeometryValue< stretched >(coord, getCurvPol(this->geoCurvReq));
+    }
 
     short count = 0;
     CUDAcommon::tmin.computeenergycalls++;
@@ -406,8 +406,10 @@ void ForceFieldManager::computeForces(floatingpoint *coord, vector< floatingpoin
     tbegin = chrono::high_resolution_clock::now();
 #endif
 
-    // compute geometry
-    updateGeometryValueWithDerivative(this->geoCurvReq);
+    // compute membrane geometry with derivatives
+    for(auto m : Membrane::getMembranes()) {
+        m->updateGeometryValueWithDerivative(coord, getCurvPol(this->geoCurvReq));
+    }
 
     //recompute
 //    floatingpoint *F_i = new floatingpoint[CGMethod::N];

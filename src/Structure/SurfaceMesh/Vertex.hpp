@@ -1,17 +1,13 @@
-#ifndef MEDYAN_Structure_SurfaceMesh_Vertex_Hpp
-#define MEDYAN_Structure_SurfaceMesh_Vertex_Hpp
+#ifndef MEDYAN_Structure_SurfaceMesh_Vertex_hpp
+#define MEDYAN_Structure_SurfaceMesh_Vertex_hpp
 
 #include <memory> // unique_ptr
 
-#include "common.h"
-#include "Structure/Bead.h"
-#include "Structure/SurfaceMesh/Edge.hpp"
+#include "MathFunctions.h"
+#include "Structure/Database.h"
 #include "Structure/SurfaceMesh/MVoronoiCell.h"
-#include "Structure/SurfaceMesh/Triangle.hpp"
 
 // Forward declarations
-class Edge;
-class Triangle;
 class Membrane;
 
 /******************************************************************************
@@ -29,27 +25,18 @@ class Vertex :
 private:
     std::size_t topoIndex_; // Index in the meshwork topology.
 
-    std::unique_ptr<MVoronoiCell> mVertex_; // pointer to Voronoi cell mechanical information
-
 public:
     using DatabaseType = Database< Vertex, false >;
     using CoordinateType = mathfunc::Vec< 3, floatingpoint >;
 
     ///Main constructor
     Vertex(const CoordinateType& v, size_t topoIndex)
-        : coord(v), force{}, topoIndex_(topoIndex)
-    {
-        // eqArea cannot be obtained at this moment
-        mVertex_ = std::make_unique<MVoronoiCell>(getType());
-
-    }
+        : coord(v), force{}, topoIndex_(topoIndex), mVertex(0)
+    {}
 
 
     void setTopoIndex(size_t index) { topoIndex_ = index; }
     
-    // Get mech Voronoi cell
-    MVoronoiCell* getMVoronoiCell() { return mVertex_.get(); }
-
     /// Get all instances of this class from the SubSystem
     static const auto& getVertices() {
         return DatabaseType::getElements();
@@ -60,6 +47,8 @@ public:
 
     CoordinateType coord;
     CoordinateType force;
+
+    MVoronoiCell mVertex; // vertex mechanical information
 
 };
 
