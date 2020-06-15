@@ -21,20 +21,28 @@ class TriangleBeadExclVolume : public ForceField {
     
 private:
     InteractionType _FFType;
-    std::unique_ptr<TriangleFilBeadNL> _neighborList;  ///< Neighbor list of triangle-bead
+    std::unique_ptr<TriangleFilBeadNL> neighborList_;  // Neighbor list of triangle-bead
 
     // Culprit elements
     const Triangle* triangleCulprit_ = nullptr;
     const Bead*     beadCulprit_     = nullptr;
 
 public:
+
+    // (temp) stores the bead starting index in the coordinate array
+    std::size_t beadStartingIndex = 0;
+
     ///Constructor
     TriangleBeadExclVolume() :
-        _neighborList(std::make_unique< TriangleFilBeadNL >(
+        neighborList_(std::make_unique< TriangleFilBeadNL >(
             SysParams::Mechanics().MemBeadVolumeCutoff,
             SysParams::Mechanics().MemBeadVolumeCutoffMech
         ))
     { }
+
+    virtual void vectorize(const FFCoordinateStartingIndex& si) override {
+        beadStartingIndex = si.bead;
+    }
 
     virtual floatingpoint computeEnergy(floatingpoint* coord, bool stretched) override;
     virtual void computeForces(floatingpoint* coord, floatingpoint* force) override;
@@ -44,7 +52,7 @@ public:
 
     /// Get the neighbor list for this interaction
     virtual std::vector<NeighborList*> getNeighborLists() override {
-        return { _neighborList.get() };
+        return { neighborList_.get() };
     }
 
     virtual std::string getName() override {return "Triangle Bead Excluded Volume";}
@@ -56,8 +64,8 @@ public:
     }
 
     // Useless overrides
-    virtual void vectorize() override {}
     virtual void cleanup() override {}
+    virtual vector<string> getinteractionnames() override { return { getName() }; }
 };
 
 #endif

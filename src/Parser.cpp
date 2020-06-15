@@ -998,7 +998,7 @@ void SystemParser::readMechParams() {
             vector<string> lineVector = split<string>(line);
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.MemBeadVolumeK.push_back(atof(lineVector[i].c_str()));
+                    MParams.memBeadVolumeK.push_back(atof(lineVector[i].c_str()));
             }
         }
         else if (line.find("MEM_BEAD_VOLUME_CUTOFF") != string::npos) {

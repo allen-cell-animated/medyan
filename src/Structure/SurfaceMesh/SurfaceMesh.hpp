@@ -740,23 +740,23 @@ public:
     const MetaAttribute& metaAttribute() const noexcept { return _meta; }
 
     // Meshwork traverse
-    auto polygonType(HalfEdgeIndex hei) const { return element_(hei).polygonType; }
-    auto opposite(HalfEdgeIndex hei) const { return element_(hei).oppositeHalfEdgeIndex; }
-    auto next(HalfEdgeIndex hei) const { return element_(hei).nextHalfEdgeIndex; }
-    auto prev(HalfEdgeIndex hei) const { return element_(hei).prevHalfEdgeIndex; }
+    auto polygonType(HalfEdgeIndex hei) const { return element(hei).polygonType; }
+    auto opposite(HalfEdgeIndex hei) const { return element(hei).oppositeHalfEdgeIndex; }
+    auto next(HalfEdgeIndex hei) const { return element(hei).nextHalfEdgeIndex; }
+    auto prev(HalfEdgeIndex hei) const { return element(hei).prevHalfEdgeIndex; }
     auto triangle(HalfEdgeIndex hei) const { return TriangleIndex{ polygon(hei) }; }
-    size_t polygon(HalfEdgeIndex hei) const { return element_(hei).polygonIndex; }
-    auto target(HalfEdgeIndex hei) const { return element_(hei).targetVertexIndex; }
-    auto edge(HalfEdgeIndex hei) const { return element_(hei).edgeIndex; }
+    size_t polygon(HalfEdgeIndex hei) const { return element(hei).polygonIndex; }
+    auto target(HalfEdgeIndex hei) const { return element(hei).targetVertexIndex; }
+    auto edge(HalfEdgeIndex hei) const { return element(hei).edgeIndex; }
 
-    auto halfEdge(EdgeIndex ei) const { return element_(ei).halfEdgeIndex; }
-    auto halfEdge(TriangleIndex ti) const { return element_(ti).halfEdgeIndex; }
+    auto halfEdge(EdgeIndex ei) const { return element(ei).halfEdgeIndex; }
+    auto halfEdge(TriangleIndex ti) const { return element(ti).halfEdgeIndex; }
 
-    size_t degree(VertexIndex vi) const { return element_(vi).degree; }
+    size_t degree(VertexIndex vi) const { return element(vi).degree; }
 
     bool isVertexOnBorder(const Vertex& v) const { return v.numTargetingBorderHalfEdges >= 1; }
-    bool isVertexOnBorder(VertexIndex vi) const { return isVertexOnBorder(element_(vi)); }
-    bool isEdgeOnBorder(EdgeIndex ei) const { return element_(ei).numBorderHalfEdges >= 1; }
+    bool isVertexOnBorder(VertexIndex vi) const { return isVertexOnBorder(element(vi)); }
+    bool isEdgeOnBorder(EdgeIndex ei) const { return element(ei).numBorderHalfEdges >= 1; }
     bool isInTriangle(HalfEdgeIndex hei) const { return polygonType(hei) == HalfEdge::PolygonType::triangle; }
 
     // Mesh neighbor iterators
@@ -770,7 +770,7 @@ public:
         } while(hei != hei0);
     }
     template< typename Func > void forEachHalfEdgeTargetingVertex(VertexIndex vi, Func&& func) const {
-        forEachHalfEdgeTargetingVertex(element_(vi), std::forward<Func>(func));
+        forEachHalfEdgeTargetingVertex(element(vi), std::forward<Func>(func));
     }
     template< typename Polygon, typename Func >
     void forEachHalfEdgeInPolygon(const Polygon& p, Func&& func) const {
@@ -786,7 +786,7 @@ public:
         forEachHalfEdgeInPolygon(getElements_< Polygon >()[pi], std::forward<Func>(func));
     }
     template< typename Func > void forEachHalfEdgeInTriangle(TriangleIndex ti, Func&& func) const {
-        forEachHalfEdgeInPolygon< Triangle >(element_(ti), std::forward<Func>(func));
+        forEachHalfEdgeInPolygon< Triangle >(element(ti), std::forward<Func>(func));
     }
     template< typename Func > void forEachHalfEdgeInEdge(const Edge& e, Func&& func) const {
         auto hei0 = e.halfEdgeIndex;
@@ -794,7 +794,7 @@ public:
         func(opposite(hei0));
     }
     template< typename Func > void forEachHalfEdgeInEdge(EdgeIndex ei, Func&& func) const {
-        forEachHalfEdgeInEdge(element_(ei), std::forward<Func>(func));
+        forEachHalfEdgeInEdge(element(ei), std::forward<Func>(func));
     }
 
     //-------------------------------------------------------------------------

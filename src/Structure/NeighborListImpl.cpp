@@ -1184,17 +1184,19 @@ void TriangleFilBeadNL::reset() {
     listBTMech_.clear();
     listTBMech_.clear();
 
-    const auto& coords = Bead::getDbDataConst().coords;
-
     for(auto t: Triangle::getTriangles()) {
 
         auto& mesh = t->getParent()->getMesh();
-        Membrane::MembraneMeshAttributeType::cacheIndices(mesh);
-        const auto& bi = mesh.getTriangleAttribute(t->getTopoIndex()).cachedCoordIndex;
+        const auto vis = medyan::vertexIndices(
+            mesh,
+            Membrane::MeshType::TriangleIndex { t->getTopoIndex() }
+        );
 
         for(auto b : Bead::getBeads()) if(b->usage == Bead::BeadUsage::filament) {
             const auto dist = trianglePointDistance(
-                coords[bi[0]], coords[bi[1]], coords[bi[2]],
+                mesh.attribute(vis[0]).getCoordinate(),
+                mesh.attribute(vis[1]).getCoordinate(),
+                mesh.attribute(vis[2]).getCoordinate(),
                 b->coordinate()
             );
 

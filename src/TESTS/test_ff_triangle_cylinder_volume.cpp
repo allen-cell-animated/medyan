@@ -62,7 +62,7 @@ namespace {
 			SysParams::GParams.monomerSize.resize(1, 1.0);
             SysParams::CParams.bindingSites.resize(1); // For CCylinder use
 
-            SysParams::MParams.MemBeadVolumeK = 1725;
+            SysParams::MParams.memBeadVolumeK = 1725;
             SysParams::MParams.MemBeadVolumeCutoffMech = 15;
             SysParams::MParams.MemBeadVolumeCutoff = 15;
 

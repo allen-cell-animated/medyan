@@ -109,6 +109,7 @@ struct MembraneStretchingLocal : public ForceField {
     virtual void computeLoadForces() override {}
     virtual void whoIsCulprit() override {}
     virtual std::vector<NeighborList*> getNeighborLists() override { return {}; }
+    virtual vector<string> getinteractionnames() override { return { getName() }; }
 };
 
 #endif

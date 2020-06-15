@@ -364,8 +364,6 @@ inline void updateGeometryValueWithDerivative(
     const size_t numVertices = vertices.size();
     const size_t numTriangles = triangles.size();
 
-    const auto& coords = Bead::getDbData().coords;
-
     // Calculate angles and triangle areas with derivative
     // Calculate triangle cone volumes
     for(MT::TriangleIndex ti {}; ti < numTriangles; ++ti) {
