@@ -723,7 +723,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if(lineVector.size() == 2) {
-                MType.VolumeConservationFFType = lineVector[1];
+                MType.volumeConservationFFType = lineVector[1];
             }
         }
         
@@ -1172,7 +1172,7 @@ void SystemParser::readMechParams() {
         else if(line.find("BULK_MODULUS") != string::npos) {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() >= 2) {
-                MParams.BulkModulus = atof(lineVector[1].c_str());
+                MParams.bulkModulus = atof(lineVector[1].c_str());
             }
         }
         

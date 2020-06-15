@@ -106,7 +106,7 @@ struct MechParams {
     //@}
 
     // Water incompressibility
-    double BulkModulus = 0.0;
+    double bulkModulus = 0.0;
 
     
     //@{

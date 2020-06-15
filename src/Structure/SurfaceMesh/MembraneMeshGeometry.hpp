@@ -113,7 +113,7 @@ inline void cacheIndicesForFF(
         const auto vi0 = mesh.target(hei);
         const auto vi1 = mesh.target(mesh.prev(hei));
 
-        auto& ea = mesh.getEdgeAttribute(ei);
+        auto& ea = mesh.attribute(ei);
         ea.cachedCoordIndex[0]   = vci(vi0);
         ea.cachedCoordIndex[1]   = vci(vi1);
         ea.cachedPolygonType[0]  = halfEdges[hei].polygonType;

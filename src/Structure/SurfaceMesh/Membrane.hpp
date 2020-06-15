@@ -40,8 +40,6 @@ private:
 
     MeshType mesh_;
 
-    unique_ptr<MMembrane> mMembrane_; // pointer to mechanical membrane object
-
     short memType_; // Membrane type
 
     SubSystem* _subSystem; // SubSystem pointer
@@ -57,7 +55,10 @@ public:
         const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
     ) : Trackable(false, false, false, false),
         mesh_(typename MeshAttributeType::MetaAttribute{s, this}),
-        _subSystem(s), memType_(membraneType) {
+        _subSystem(s),
+        memType_(membraneType),
+        mMembrane(membraneType)
+    {
         
         // Build the meshwork topology using vertex and triangle information
         mesh_.init<typename MeshType::VertexTriangleInitializer>(
@@ -94,11 +95,8 @@ public:
             volume += t.attr.gTriangle.coneVolume;
         }
 
-        mMembrane_ = std::make_unique<MMembrane>(memType_);
-        mMembrane_->setEqArea(
-            area * SysParams::Mechanics().memEqAreaFactor[memType_]
-        );
-        mMembrane_->setEqVolume(volume);
+        mMembrane.eqArea = area * SysParams::Mechanics().memEqAreaFactor[memType_];
+        mMembrane.eqVolume = volume;
 
         // Initialize MTriangle
         for(const auto& t : mesh_.getTriangles()) {
@@ -186,12 +184,11 @@ public:
     **************************************************************************/
     bool isClosed() const { return mesh_.isClosed(); }
 
-    /**************************************************************************
-    Mechanics
-    **************************************************************************/
-    // Get mech membrane
-    MMembrane* getMMembrane() { return mMembrane_.get(); }
 
+    //-------------------------------------------------------------------------
+    // Membrane data
+    //-------------------------------------------------------------------------
+    MMembrane mMembrane; // Mechanical parameters
 
 };
 

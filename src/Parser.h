@@ -263,7 +263,7 @@ struct MechanicsFFType {
     string MemBeadVolumeFFType     = "";
 
     /// Volume conservation ff type
-    string VolumeConservationFFType = "";
+    string volumeConservationFFType = "";
     
     /// AFM Type
     string AFMFFType = "";

@@ -129,7 +129,7 @@ namespace {
     }
     void resizeEqArea(Membrane *m, double ratio) {
         for(Triangle* t: m->getTriangleVector()) {
-            t->mTriangle.setEqArea(t->mTriangle.getEqArea() * ratio);
+            t->mTriangle.eqArea *= ratio;
         }
     }
 }

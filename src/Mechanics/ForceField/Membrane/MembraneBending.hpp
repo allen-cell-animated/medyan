@@ -117,7 +117,7 @@ struct MembraneBending : public ForceField {
                             );
                         }
                         else {
-                            const auto& dCurv2 = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv2;
+                            const auto& dCurv2 = mesh.attribute(hei_o).gHalfEdge.dNeighborCurv2;
                             impl.forces(
                                 force + 3 * vn_i,
                                 area, dArea, curv2, dCurv2, kBending

@@ -23,7 +23,7 @@
 #include "BubbleFF.h"
 #include "CylinderVolumeFF.h"
 #include "Mechanics/ForceField/Membrane/MembraneFF.hpp"
-#include "Mechanics/ForceField/VolumeConservation/VolumeConservationFF.h"
+#include "Mechanics/ForceField/VolumeConservation/VolConsrvFF.hpp"
 #include "TriangleBeadVolumeFF.hpp"
 
 #include "ConjugateGradient.h"
@@ -93,9 +93,12 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
         _FFManager.geoCurvReq = membraneFFRes.curvReq;
     }
 
-    _FFManager._forceFields.push_back(
-        new VolumeConservationFF(forceFields.VolumeConservationFFType)
-    );
+    {
+        auto volConsrvFFRes = VolumeConservationFFFactory {}(
+            forceFields.volumeConservationFFType
+        );
+        for(auto& ff : volConsrvFFRes) _FFManager._forceFields.push_back(ff.release());
+    }
     
     //These FF's have a neighbor list associated with them
     //add to the subsystem's database of neighbor lists.
