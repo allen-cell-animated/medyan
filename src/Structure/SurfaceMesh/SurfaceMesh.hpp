@@ -745,6 +745,7 @@ public:
     auto next(HalfEdgeIndex hei) const { return element(hei).nextHalfEdgeIndex; }
     auto prev(HalfEdgeIndex hei) const { return element(hei).prevHalfEdgeIndex; }
     auto triangle(HalfEdgeIndex hei) const { return TriangleIndex{ polygon(hei) }; }
+    auto border(HalfEdgeIndex hei) const { return BorderIndex{ polygon(hei) }; }
     size_t polygon(HalfEdgeIndex hei) const { return element(hei).polygonIndex; }
     auto target(HalfEdgeIndex hei) const { return element(hei).targetVertexIndex; }
     auto edge(HalfEdgeIndex hei) const { return element(hei).edgeIndex; }

@@ -23,6 +23,7 @@ struct MembraneStretchingLocal : public ForceField {
 
     virtual void vectorize(const FFCoordinateStartingIndex& si) override {
         using namespace std;
+        using AT = Membrane::MeshAttributeType;
         using MT = Membrane::MeshType;
 
         vertexSet.clear();
@@ -38,35 +39,39 @@ struct MembraneStretchingLocal : public ForceField {
             // included.
 
             const auto& mesh = m->getMesh();
-            for(const auto& t : mesh.getTriangles()) {
-                const auto vis = medyan::vertexIndices(mesh, t);
+            // Only applies for material surface coordinate system
+            if(mesh.metaAttribute().vertexSystem == AT::VertexSystem::material) {
 
-                // Check if the vertices are reservoir touching.
-                const auto onReservoirBorder = [&](MT::VertexIndex vi) {
-                    if(!mesh.isVertexOnBorder(vi)) return false;
-                    bool ret = false;
-                    mesh.forEachHalfEdgeTargetingVertex(vi, [&](MT::HalfEdgeIndex hei) {
-                        if(!mesh.isInTriangle(hei)) {
-                            if(mesh.attribute(mesh.border(hei)).reservoir) {
-                                ret = true;
+                for(const auto& t : mesh.getTriangles()) {
+                    const auto vis = medyan::vertexIndices(mesh, t);
+
+                    // Check if the vertices are reservoir touching.
+                    const auto onReservoirBorder = [&](MT::VertexIndex vi) {
+                        if(!mesh.isVertexOnBorder(vi)) return false;
+                        bool ret = false;
+                        mesh.forEachHalfEdgeTargetingVertex(vi, [&](MT::HalfEdgeIndex hei) {
+                            if(!mesh.isInTriangle(hei)) {
+                                if(mesh.attribute(mesh.border(hei)).reservoir) {
+                                    ret = true;
+                                }
                             }
-                        }
-                    });
-                    return ret;
-                };
+                        });
+                        return ret;
+                    };
 
-                if(
-                    !onReservoirBorder(vis[0]) &&
-                    !onReservoirBorder(vis[1]) &&
-                    !onReservoirBorder(vis[2])
-                ) {
-                    vertexSet.push_back({
-                        mesh.attribute(vis[0]).vertex->getIndex() * 3 + si.vertex,
-                        mesh.attribute(vis[1]).vertex->getIndex() * 3 + si.vertex,
-                        mesh.attribute(vis[2]).vertex->getIndex() * 3 + si.vertex
-                    });
-                    kArea.push_back(t.attr.triangle->mTriangle.kArea);
-                    eqArea.push_back(t.attr.triangle->mTriangle.eqArea);
+                    if(
+                        !onReservoirBorder(vis[0]) &&
+                        !onReservoirBorder(vis[1]) &&
+                        !onReservoirBorder(vis[2])
+                    ) {
+                        vertexSet.push_back({
+                            mesh.attribute(vis[0]).vertex->getIndex() * 3 + si.vertex,
+                            mesh.attribute(vis[1]).vertex->getIndex() * 3 + si.vertex,
+                            mesh.attribute(vis[2]).vertex->getIndex() * 3 + si.vertex
+                        });
+                        kArea.push_back(t.attr.triangle->mTriangle.kArea);
+                        eqArea.push_back(t.attr.triangle->mTriangle.eqArea);
+                    }
                 }
             }
         }

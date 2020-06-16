@@ -33,6 +33,19 @@ struct MembraneMeshAttribute {
 
     using MeshType = HalfEdgeMesh< MembraneMeshAttribute >;
 
+    // If vertices represent fixed coordinates in a material coordinate system,
+    // a vertex represents the location of a specific lipid molecule.
+    // The local area elasticity is usually a necessity in this case.
+    // An exception is the vertices on the border connected to a lipid
+    // reservoir, where the vertices stand for the boundary locations which are
+    // usually fixed in the ambient space.
+    //
+    // If vertices represent fixed coordinates in a normal coordinate system,
+    // a vertex is only a representative point on the surface, where the motion
+    // of the vertex must be in the local normal direction.
+    // Local area elasticity cannot be directly defined on mesh elements.
+    enum class VertexSystem { material, normal };
+
     struct VertexAttribute {
         using CoordinateType      = Vertex::CoordinateType;
         using CoordinateRefType   = Vertex::CoordinateType&;
@@ -115,12 +128,28 @@ struct MembraneMeshAttribute {
         }
     };
     struct BorderAttribute {
+        // Whether this border touches a reservoir.
+        //
+        // If the border is connected to a lipid reservoir, a surface tension
+        // would be applied at this border, and the value is supplied as a
+        // membrane mechanical parameter.
+        // The surface tension must be the same for all borders of a membrane,
+        // to make energy minimization possible.
+        //
+        // If the border is not connected to a lipid reservoir, then it simply
+        // represents the free boundary of the membrane.
+        bool reservoir = false;
+
         void setIndex(size_t index) {}
     };
     struct MetaAttribute {
         SubSystem *s;
         Membrane *m;
 
+        VertexSystem vertexSystem = VertexSystem::material;
+
+        // Cache related
+        //-----------------------------
         bool indexCacheForFFValid = false;
 
         size_t vertexMaxDegree;

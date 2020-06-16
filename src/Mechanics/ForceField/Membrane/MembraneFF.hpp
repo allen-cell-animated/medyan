@@ -9,7 +9,6 @@
 #include "Mechanics/ForceField/ForceField.h"
 #include "Mechanics/ForceField/Membrane/MembraneBending.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
-#include "Mechanics/ForceField/Membrane/MembraneStretchingGlobal.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneStretchingLocal.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneStretchingImpl.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneTension.hpp"
@@ -46,9 +45,10 @@ struct MembraneFFFactory {
         else if(stretchingType == "GLOBAL_HARMONIC") {
             // Assumption: surface tension is uniform on the membrane
             // Only applicable to non-reservior-touching membrane in normal coordinates.
-            res.forceFields.push_back(
-                std::make_unique< MembraneStretchingGlobal >()
-            );
+            LOG(WARNING) << "Currently the force field is not implemented";
+            // res.forceFields.push_back(
+            //     std::make_unique< MembraneStretchingGlobal >()
+            // );
         }
         else if(stretchingType == "") {}
         else {
@@ -60,9 +60,10 @@ struct MembraneFFFactory {
             // In material coordinates, it is applicable to reservior-touching border triangles.
             // In normal corodinates, it is applicable to the whole reservior-touching membrane,
             //   assuming that surface tension is constant globally.
-            res.forceFields.push_back(
-                std::make_unique< MembraneTension >()
-            );
+            LOG(WARNING) << "Currently the force field is not implemented";
+            // res.forceFields.push_back(
+            //     std::make_unique< MembraneTension >()
+            // );
         }
         else if(tensionType == "") {}
         else {

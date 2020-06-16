@@ -87,6 +87,9 @@ void pinBubbles() {
 
 void pinMembraneBorderVertices() {
 
+    LOG(ERROR) << "Membrane vertex pinning is deprecated and should not be used.";
+    return;
+
     // Only pin once
     static bool pinned = false;
     if(pinned) return;
@@ -94,12 +97,9 @@ void pinMembraneBorderVertices() {
     for(auto m : Membrane::getMembranes()) {
         auto& mesh = m->getMesh();
         for(const auto& border : mesh.getBorders()) {
-            mesh.forEachHalfEdgeInPolygon(border, [&](size_t hei) {
+            mesh.forEachHalfEdgeInPolygon(border, [&](auto hei) {
                 const auto vi = mesh.target(hei);
-                Bead* const b = static_cast< Bead* >(mesh.getVertexAttribute(vi).vertex);
 
-                b->pinnedPosition = b->vcoordinate();
-                b->addAsPinned();
             });
         }
     }
