@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Mechanics/ForceField/ForceField.h"
+#include "Mechanics/ForceField/Types.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Util/Io/Log.hpp"
 #include "Util/Math/Vec.hpp"
@@ -45,9 +46,9 @@ private:
         using RVT = decltype(makeRefVec<3>(coordVec));
 
         return std::array< RVT, 3 > {
-            makeRefVec< 3 >(coordVec + 3 * bi[0]),
-            makeRefVec< 3 >(coordVec + 3 * bi[1]),
-            makeRefVec< 3 >(coordVec + 3 * bi[2])
+            makeRefVec< 3 >(coordVec + bi[0]),
+            makeRefVec< 3 >(coordVec + bi[1]),
+            makeRefVec< 3 >(coordVec + bi[2])
         };
     }
 
@@ -55,7 +56,7 @@ private:
     //---------------------------------
     Mems_ mems_ = Membrane::getMembranes();
 
-    std::vector< std::array< std::size_t, 3 > >       beadIndices_;
+    std::vector< std::array< std::size_t, 3 > >       coordIndices_;
     std::vector< std::array< const VecDArea_*, 3 > >  allDArea_;
     std::vector< const double* >                      allArea_;
     std::vector< const double* >                      allAreaS_;
@@ -68,8 +69,10 @@ public:
     const double minRelArea  = 0.35;
     const double warnRelArea = 0.35;
 
-    virtual void vectorize() override {
-        beadIndices_.clear();
+    virtual void vectorize(const FFCoordinateStartingIndex& si) override {
+        using MT = Membrane::MeshType;
+
+        coordIndices_.clear();
         allDArea_.clear();
         allArea_.clear();
         allAreaS_.clear();
@@ -77,16 +80,18 @@ public:
 
         for(const auto m : mems_) {
             const auto& mesh = m->getMesh();
+            medyan::assertValidIndexCacheForFF(mesh);
+
             for(const auto& t : mesh.getTriangles()) {
-                beadIndices_.emplace_back();
+                coordIndices_.emplace_back();
                 allDArea_.emplace_back();
                 {
-                    auto& biBack = beadIndices_.back();
+                    auto& biBack = coordIndices_.back();
                     auto& daBack = allDArea_.back();
                     std::size_t bi = 0;
-                    mesh.forEachHalfEdgeInPolygon(t, [&](std::size_t hei) {
-                        biBack[bi] = mesh.getVertexAttribute(mesh.target(hei)).vertex->getStableIndex();
-                        daBack[bi] = &mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
+                    mesh.forEachHalfEdgeInPolygon(t, [&](MT::HalfEdgeIndex hei) {
+                        biBack[bi] = mesh.attribute(mesh.target(hei)).cachedCoordIndex;
+                        daBack[bi] = &mesh.attribute(hei).gHalfEdge.dTriangleArea;
                         ++bi;
                     });
                 }
@@ -100,7 +105,7 @@ public:
     virtual floatingpoint computeEnergy(floatingpoint* coord, bool stretched) override {
         floatingpoint e = 0.0;
 
-        for(std::size_t ti = 0; ti < beadIndices_.size(); ++ti) {
+        for(std::size_t ti = 0; ti < coordIndices_.size(); ++ti) {
 
             if(warn && !stretched && *allArea_[ti] < initArea_[ti] * warnRelArea) {
                 LOG(WARNING) << "Triangle (" << ti << ") size becomes too small:"
@@ -113,7 +118,7 @@ public:
         return e;
     }
     virtual void computeForces(floatingpoint* coord, floatingpoint* force) override {
-        for(std::size_t ti = 0; ti < beadIndices_.size(); ++ti) {
+        for(std::size_t ti = 0; ti < coordIndices_.size(); ++ti) {
 
             if(warn && *allArea_[ti] < initArea_[ti] * warnRelArea) {
                 LOG(WARNING) << "Triangle (" << ti << ") size becomes too small:"
@@ -121,7 +126,7 @@ public:
             }
 
             Impl::force(
-                biVec(force, beadIndices_[ti]),
+                biVec(force, coordIndices_[ti]),
                 *allArea_[ti], initArea_[ti] * minRelArea, allDArea_[ti], k
             );
         }
@@ -134,6 +139,7 @@ public:
     virtual void computeLoadForces() override {}
     virtual void whoIsCulprit() override {}
     virtual std::vector<NeighborList*> getNeighborLists() override { return std::vector<NeighborList*>(); }
+    virtual std::vector<std::string> getinteractionnames() override { return { getName() }; }
 };
 
 

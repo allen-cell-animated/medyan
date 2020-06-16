@@ -88,10 +88,10 @@ struct MembraneFFFactory {
             throw std::runtime_error("Membrane bending FF type not recognized");
         }
 
-        // Always add the protective force field
-        res.forceFields.emplace_back(
-            new MembraneTriangleProtect< MembraneTriangleProtectFene, true >()
-        );
+        // Currently, do not add the protective force field
+        // res.forceFields.emplace_back(
+        //     new MembraneTriangleProtect< MembraneTriangleProtectFene, true >()
+        // );
 
 
         return res;
