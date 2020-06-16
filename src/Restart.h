@@ -50,6 +50,7 @@
 #include <unordered_map>
 #include 	<tuple>
 #include <algorithm>
+#include "ChemRNode.h"
 using namespace mathfunc;
 
 //FORWARD DECLARATIONS
@@ -236,15 +237,15 @@ public:
             for (auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
                 for (auto &it: C->getDiffusionReactionContainer().reactions()) {
                     it->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
+                    it->updatePropensity();
                 }
             }
             //Bulk Species
             for (auto &s : _chemData.speciesBulk) {
-
+                LOG(ERROR)<<"Bulk species protocols not implemented. Exiting."<<endl;
             }
             //Set diffusing species copy numbers to 0.
             for(auto &s : _chemData.speciesDiffusing) {
-
                 auto name = get<0>(s);
                 auto copyNumber = get<1>(s);
                 auto releaseTime = get<3>(s);

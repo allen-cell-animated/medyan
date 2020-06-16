@@ -36,7 +36,7 @@ void FilamentStretchingandBending<FBendingInteractionType>::precomputevars(
     int hingecount = 0;
     floatingpoint *coord1, *coord2, *coord3;
     bool fetchcoordsstatus = true;
-    for(auto b = 0; b < Bead::getBeads().size()-1;  b++){
+    for(auto b = 0; b < Bead::numElements()-1;  b++){
         if(fetchcoordsstatus) {
             coord1 = &coord[3 * beadSetall[b]];
             coord2 = &coord[3 * beadSetall[b + 1]];

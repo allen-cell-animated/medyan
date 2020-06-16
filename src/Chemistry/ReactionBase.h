@@ -136,6 +136,7 @@ public:
     array<float, RATEMULFACTSIZE> _ratemulfactors;
 
     void setRateMulFactor(float factor, RateMulFactorType type){
+        //Call to this function should always be followed with call to updatePropensity
 
         if(factor == _ratemulfactors[type]) return;
 

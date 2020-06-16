@@ -1057,7 +1057,9 @@ void Controller::run() {
 //Step 3. ############ RUN LINKER/MOTOR REACTIONS TO BIND BRANCHERS, LINKERS, MOTORS AT RESPECTIVE POSITIONS.#######
         cout<<"Number of reactions to be fired "<<_restart->getnumchemsteps()<<endl;
         _cController.runSteps(_restart->getnumchemsteps());
-        cout<<"Reactions fired! Displaying heap"<<endl;
+        cout<<"Reactions fired! Displaying number of reactions that are NOT fired in each"
+              " compartment"
+              ""<<endl;
 //Step 4. Display the number of reactions yet to be fired. Should be zero.
         bool exitstatus = 0;
         for(auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
@@ -1127,8 +1129,6 @@ void Controller::run() {
 // required by the user.
         _restart->restartupdateCopyNumbers();
         _restart->crosscheck();
-
-
         cout<<"Diffusion rates restored, diffusing molecules redistributed."<<endl;
 
 
