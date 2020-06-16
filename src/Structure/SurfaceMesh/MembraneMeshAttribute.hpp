@@ -180,13 +180,13 @@ struct MembraneMeshAttribute {
     }
     static void newEdge(MeshType& mesh, MeshType::EdgeIndex e) {
         mesh.attribute(e).edge.reset(
-            mesh.metaAttribute().s->template addTrackable<Edge>(mesh.metaAttribute().m, e));
+            mesh.metaAttribute().s->addTrackable<Edge>(mesh.metaAttribute().m, e));
     }
     static void newHalfEdge(MeshType& mesh, MeshType::HalfEdgeIndex he) {
         // Do nothing
     }
-    static void newTriangle(MeshType& mesh, MeshType::TriangleIndex tp) {
-        mesh.attribute(t).triangle.reset(mesh.metaAttribute().s->template addTrackable<Triangle>(mesh.metaAttribute().m, t));
+    static void newTriangle(MeshType& mesh, MeshType::TriangleIndex t) {
+        mesh.attribute(t).triangle.reset(mesh.metaAttribute().s->addTrackable<Triangle>(mesh.metaAttribute().m, t));
     }
     static void newBorder(MeshType& mesh, MeshType::BorderIndex) {
         // Do nothing
@@ -214,7 +214,7 @@ struct MembraneMeshAttribute {
     static void init(MeshType& mesh, const AttributeInitializerInfo& info) {
         const MetaAttribute& meta = mesh.metaAttribute();
         for(size_t i = 0; i < mesh.getVertices().size(); ++i) {
-            mesh.attribute(MeshType::VertexIndex{i}).vertex = std::make_unique(
+            mesh.attribute(MeshType::VertexIndex{i}).vertex = std::make_unique<Vertex>(
                 info.vertexCoordinateList[i], i);
         }
         for(size_t i = 0; i < mesh.getEdges().size(); ++i) {
@@ -233,151 +233,10 @@ struct MembraneMeshAttribute {
         info.vertexCoordinateList.reserve(numVertices);
         for(size_t i = 0; i < numVertices; ++i) {
             info.vertexCoordinateList.push_back(
-                static_cast<CoordinateType>(mesh.attribute(MeshType:VertexIndex{i}).vertex->coord));
+                static_cast<CoordinateType>(mesh.attribute(MeshType::VertexIndex{i}).vertex->coord));
         }
 
         return info;
-    }
-
-    // Mesh modifiers
-    //
-    // The HalfEdgeMesh already provides basic mesh operations which handles
-    // the mesh element connections.
-    // In these operations, some attributes of the mesh need to be handled
-    // specifically. For example, in material coordinate system, the
-    // equilibrium area of neighboring triangles after a edge flip need to be
-    // re-distributed.
-    // However, these operations cannot be simply achieved by injecting
-    // behavior (such as passing functions) to the mesh operators of the mesh
-    // connection class (HalfEdgeMesh), because only with full attribute info
-    // can one decide what to do/access/modify before/after the mesh
-    // reconnection.
-    static auto insertVertexOnEdge(
-        MeshType&             mesh,
-        MeshType::EdgeIndex   ei,
-        const CoordinateType& newPos
-    ) {
-        const auto ohei       = mesh.halfEdge(edgeIndex);
-        const auto ohei_o     = mesh.opposite(ohei);
-
-        const auto opt0       = mesh.polygonType(ohei);
-        const bool ist0       = opt0 == HalfEdge::PolygonType::triangle;
-        const auto opt2       = mesh.polygonType(ohei_o);
-        const bool ist2       = opt2 == HalfEdge::PolygonType::triangle;
-
-        // Do the vertex insertion
-        const auto change = MeshType::VertexInsertionOnEdge{}(mesh, ei);
-
-        const auto redisEqArea = [](
-            double& eqArea1, double a1,
-            double& eqArea2, double a2,
-            double totalEqArea
-        ) {
-            // Postcondition: sum of eq areas is equal to the total eq area.
-            eqArea1 = totalEqArea * a1 / (a1 + a2);
-            eqArea2 = totalEqArea * a2 / (a1 + a2);
-        };
-
-        // Set attributes
-        mesh.attribute(change.viNew).vertex->coord = newPos;
-
-        // Redistribute properties
-        if(opt0) {
-            const double a1 = area(mesh, change.tiNew[0]);
-            const double a2 = area(mesh, change.tiNew[1]);
-
-            auto& eqArea1 = mesh.attribute(change.tiNew[0]).triangle->mTriangle.eqArea;
-            auto& eqArea2 = mesh.attribute(change.tiNew[1]).triangle->mTriangle.eqArea;
-            redisEqArea(eqArea1, a1, eqArea2, a2, eqArea1);
-        }
-        if(opt2) {
-            const double a1 = area(mesh, change.tiNew[2]);
-            const double a2 = area(mesh, change.tiNew[3]);
-
-            auto& eqArea1 = mesh.attribute(change.tiNew[2]).triangle->mTriangle.eqArea;
-            auto& eqArea2 = mesh.attribute(change.tiNew[3]).triangle->mTriangle.eqArea;
-            redisEqArea(eqArea1, a1, eqArea2, a2, eqArea1);
-        }
-
-        return change;
-    }
-
-    static auto collapseEdge(
-        MeshType&               mesh,
-        MeshType::EdgeIndex     ei,
-        const std::optional< CoordinateType >& newPos
-    ) {
-        const auto hei = mesh.halfEdge(ei);
-        const auto hei_o = mesh.opposite(hei);
-        const auto vi0 = mesh.target(hei);
-        const auto vi1 = mesh.target(hei_o);
-
-        // Record properties
-        double oldTotalEqArea = 0.0;
-        // Accumulate around two vertices, and subtract triangles on the middle edge
-        const auto addOldTotalEqArea = [&](MeshType::HalfEdgeIndex hei) {
-            if(mesh.isInTriangle(hei)) {
-                oldTotalEqArea += mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea;
-            }
-        };
-        const auto subtractOldTotalEqArea = [&](MeshType::HalfEdgeIndex hei) {
-            if(mesh.isInTriangle(hei)) {
-                oldTotalEqArea -= mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea;
-            }
-        };
-        mesh.forEachHalfEdgeTargetingVertex(vi0, addOldTotalEqArea);
-        mesh.forEachHalfEdgeTargetingVertex(vi1, addOldTotalEqArea);
-        mesh.forEachHalfEdgeInEdge(ei, subtractOldTotalEqArea);
-
-        // Do the edge collapse
-        const auto change = MeshType::EdgeCollapse{}(mesh, hei);
-
-        // Set attributes
-        if(newPos.has_value()) mesh.attribute(change.viTo).vertex->coord = *newPos;
-
-        // Redistribute properties
-        double newTotalArea = 0.0;
-        mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](MeshType::HalfEdgeIndex hei) {
-            if(mesh.isInTriangle(hei)) {
-                newTotalArea += area(mesh, mesh.triangle(hei));
-            }
-        });
-        mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](MeshType::HalfEdgeIndex hei) {
-            if(mesh.isInTriangle(hei)) {
-                mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea
-                    = oldTotalEqArea * area(mesh, mesh.triangle(hei)) / newTotalArea;
-            }
-        });
-
-        return change;
-    }
-
-    static void flipEdge(
-        MeshType&               mesh,
-        MeshType::EdgeIndex     ei,
-    ) {
-        // Precondition:
-        //   - ei is not on the border
-
-        // Record old attributes
-        double oldTotalEqArea = 0.0;
-        mesh.forEachHalfEdgeInEdge(ei, [&](MeshType::HalfEdgeIndex hei) {
-            oldTotalEqArea += mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea;
-        });
-
-        // Do edge flip
-        MeshType::EdgeFlip{}(mesh, ei);
-
-        // Redistribute attributes
-        double newTotalArea = 0.0;
-        mesh.forEachHalfEdgeInEdge(ei, [&](MeshType::HalfEdgeIndex hei) {
-            newTotalArea += area(mesh, mesh.triangle(hei));
-        });
-        mesh.forEachHalfEdgeInEdge(ei, [&](MeshType::HalfEdgeIndex hei) {
-            mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea
-                = oldTotalEqArea * area(mesh, mesh.triangle(hei)) / newTotalArea;
-        });
-
     }
 
 };

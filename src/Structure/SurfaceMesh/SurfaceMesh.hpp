@@ -72,7 +72,7 @@ public:
         std::size_t newSize;
         std::optional< std::size_t > newIndex;
 
-        template< typename SizeT >
+        template< typename... SizeT >
         auto track(SizeT... oldIndices) const {
             using IT = std::array< std::size_t, sizeof...(SizeT) >;
             IT oi = {{ oldIndices ... }};
@@ -131,7 +131,7 @@ public:
         std::size_t newSize;
         std::array< std::optional< std::size_t >, n > newIndices;
 
-        template< typename SizeT >
+        template< typename... SizeT >
         auto track(SizeT... oldIndices) const {
             using IT = std::array< std::size_t, sizeof...(SizeT) >;
             IT oi = {{ oldIndices ... }};
@@ -354,28 +354,28 @@ private:
         element_(hei1).edgeIndex = ei;
     }
 
-    size_t newVertex_() {
-        size_t index = vertices_.insert();
+    auto newVertex_() {
+        const VertexIndex index { vertices_.insert() };
         Attribute::newVertex(*this, index);
         return index;
     }
-    size_t newEdge_() {
-        size_t index = edges_.insert();
+    auto newEdge_() {
+        const EdgeIndex index { edges_.insert() };
         Attribute::newEdge(*this, index);
         return index;
     }
-    size_t newHalfEdge_() {
-        size_t index = halfEdges_.insert();
+    auto newHalfEdge_() {
+        const HalfEdgeIndex index { halfEdges_.insert() };
         Attribute::newHalfEdge(*this, index);
         return index;
     }
-    size_t newTriangle_() {
-        size_t index = triangles_.insert();
+    auto newTriangle_() {
+        const TriangleIndex index { triangles_.insert() };
         Attribute::newTriangle(*this, index);
         return index;
     }
-    size_t newBorder_() {
-        size_t index = borders_.insert();
+    auto newBorder_() {
+        const BorderIndex index { borders_.insert() };
         Attribute::newBorder(*this, index);
         return index;
     }
@@ -422,7 +422,7 @@ private:
         element_(to).attr.setIndex(to.index);
     }
     void retargetElement_(BorderIndex from, BorderIndex to) {
-        forEachHalfEdgeInPolygon< Border >(to, [this, to](HalfEdgeIndex hei) {
+        forEachHalfEdgeInPolygon(element(to), [this, to](HalfEdgeIndex hei) {
             element_(hei).polygonIndex = to.index;
         });
         element_(to).attr.setIndex(to.index);
@@ -528,7 +528,7 @@ public:
                 for(size_t i = 0; i < 3; ++i) {
 
                     // Insert a new half edge
-                    const size_t hei = HalfEdgeIndex{ mesh.halfEdges_.insert() };
+                    const HalfEdgeIndex hei { mesh.halfEdges_.insert() };
                     HalfEdge& he = mesh.element_(hei);
                     hai.push_back({true});
                     he.polygonType = HalfEdge::PolygonType::triangle;
@@ -549,7 +549,7 @@ public:
                             vai[t[i]].leavingHalfEdgeIndices.begin(),
                             vai[t[i]].leavingHalfEdgeIndices.end(),
                             [&mesh, leftVertexIndex](HalfEdgeIndex leavingHalfEdgeIndex) {
-                                return leftVertexIndex == mesh.target(leavingHalfEdgeIndex);
+                                return leftVertexIndex == mesh.target(leavingHalfEdgeIndex).index;
                             }
                         );
                         if(findRes == vai[t[i]].leavingHalfEdgeIndices.end()) {
@@ -616,7 +616,7 @@ public:
                     auto hei_in = hei_b_cur;
                     do {
                         hei_in = mesh.prev(mesh.opposite(hei_in));
-                    } while(!hai[hei_in].isAtBorder);
+                    } while(!hai[hei_in.index].isAtBorder);
                     return hei_in;
                 };
 
@@ -651,7 +651,7 @@ public:
                         registerBorderHalfEdge(hei_b_first, hei_in_cur, bi);
 
                         // Sequentially create border half edges
-                        while( (hei_in_cur = findNextIn(hei_b_cur)) != hei ) {
+                        while( (hei_in_cur = findNextIn(hei_b_cur)).index != hei ) {
                             hei_b_cur.index = mesh.halfEdges_.insert();
                             hai[hei_in_cur.index].oppositeBorderCreated = true;
 
@@ -677,10 +677,10 @@ public:
             const size_t numTriangles = mesh.triangles_.size();
             info.triangleVertexIndexList.resize(numTriangles);
 
-            for(size_t ti = 0; ti < numTriangles; ++ti) {
+            for(TriangleIndex ti {}; ti < numTriangles; ++ti) {
                 size_t i = 0;
-                mesh.forEachHalfEdgeInTriangle(ti, [&mesh, ti, &i, &info](HalfEdgeIndex hei) {
-                    info.triangleVertexIndexList[ti][i++] = mesh.target(hei).index;
+                mesh.forEachHalfEdgeInTriangle(ti, [&](HalfEdgeIndex hei) {
+                    info.triangleVertexIndexList[ti.index][i++] = mesh.target(hei).index;
                 });
             }
 
@@ -842,13 +842,12 @@ public:
             const auto vi0        = mesh.target(ohei);
             const auto vi2        = mesh.target(ohei_o);
 
-            if(!ist0 && !ist1) {
+            if(!ist0 && !ist2) {
                 LOG(ERROR) << "During vertex insertion on edge, neither side of the edge is a triangle.";
                 throw std::runtime_error("Invalid edge condition at vertex insertion.");
             }
 
             // Create new elements
-            const InsertionMethod insertionMethod{ vi0, vi2 };
             const auto vi     = mesh.newVertex_();
             const auto ei2    = mesh.newEdge_(); // New edge created by splitting
             const auto hei0_o = mesh.newHalfEdge_(); // Targeting new vertex, oppositing ohei
@@ -883,7 +882,7 @@ public:
                 res.tiNew[1] = ti1;
             } else {
                 mesh.element_(ohei_p).nextHalfEdgeIndex = hei2_o;
-                mesh.element_(hei2_0).nextHalfEdgeIndex = ohei;
+                mesh.element_(hei2_o).nextHalfEdgeIndex = ohei;
                 mesh.element_(ohei).prevHalfEdgeIndex = hei2_o;
                 mesh.element_(hei2_o).prevHalfEdgeIndex = ohei_p;
 
@@ -918,7 +917,7 @@ public:
                 res.tiNew[3] = ti3;
             } else {
                 mesh.element_(ohei_op).nextHalfEdgeIndex = hei0_o;
-                mesh.element_(hei0_0).nextHalfEdgeIndex = ohei_o;
+                mesh.element_(hei0_o).nextHalfEdgeIndex = ohei_o;
                 mesh.element_(ohei_o).prevHalfEdgeIndex = hei0_o;
                 mesh.element_(hei0_o).prevHalfEdgeIndex = ohei_op;
 
@@ -1010,7 +1009,7 @@ public:
                 mesh.removeElements_<Triangle, 2>({ot0.index, ot1.index});
 
                 // Record change info
-                res.viTo = rmv.track(ov0)[0];
+                res.viTo.index = rmv.track(ov0.index)[0];
             };
 
             const auto collapseBorderEdge = [&](
@@ -1038,7 +1037,7 @@ public:
 
                 // Retarget all halfedges pointing v1 to v0
                 const auto hei_begin = mesh.opposite(ohei_bn); // Changed halfedge begin
-                for(auto hei1 = hei_begin; hei1 != ohei_p; hei1 = mesh.opposite(mesh.next(hei1))) {
+                for(auto hei1 = hei_begin; hei1 != ohei_tp; hei1 = mesh.opposite(mesh.next(hei1))) {
                     mesh.element_(hei1).targetVertexIndex = ov0;
                 }
                 mesh.element_(ov0).halfEdgeIndex = mesh.opposite(ohei_tn);
@@ -1057,7 +1056,7 @@ public:
                 --mesh.element_(mesh.target(ohei_tn)).degree;
 
                 // Remove elements
-                mesh.removeElement_<Vertex>(ov1.index);
+                const auto rmv = mesh.removeElement_<Vertex>(ov1.index);
                 mesh.removeElements_<Edge, 2>({oei.index, oei2.index});
                 mesh.removeElements_<HalfEdge, 4>({
                     ohei_t.index, ohei_tn.index, ohei_tp.index,
@@ -1066,7 +1065,7 @@ public:
                 mesh.removeElement_<Triangle>(ot0.index);
 
                 // Record change info
-                res.viTo = rmv.track(ov0)[0];
+                res.viTo.index = rmv.track(ov0.index)[0];
             };
 
             // Get index of current elements

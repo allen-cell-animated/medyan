@@ -155,7 +155,7 @@ public:
         if( !TriangleQualityType::better(qAfter, qBefore) ) return State::BadQuality;
 
         // All checks complete. Do the flip.
-        Mesh::AttributeType::flipEdge(mesh, ei);
+        medyan::flipEdge(mesh, ei);
 
         // Set attributes
         for(auto ti : {ti0, ti1}) {
@@ -324,7 +324,7 @@ public:
 
         // All checks passed. Do the splitting.
         const auto eqLength = mesh.attribute(ei).aEdge.eqLength;
-        const auto change = Mesh::AttributeType::insertVertexOnEdge(
+        const auto change = medyan::insertVertexOnEdge(
             mesh, ei,
             EdgeSplitVertexInsertionType { vi0, vi2 }.coordinate(mesh)
         );
@@ -557,7 +557,7 @@ public:
         if(prChosen.qualityImproved < minQualityImprovement_) return State::badQuality;
 
         // Do the collapse
-        const auto change = Mesh::AttributeType::collapseEdge(
+        const auto change = medyan::collapseEdge(
             mesh, ei,
             mesh.attribute(mesh.target(heiChosen)).vertex->coord
         );
