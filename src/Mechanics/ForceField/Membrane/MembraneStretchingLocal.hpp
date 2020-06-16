@@ -23,6 +23,7 @@ struct MembraneStretchingLocal : public ForceField {
 
     virtual void vectorize(const FFCoordinateStartingIndex& si) override {
         using namespace std;
+        using MT = Membrane::MeshType;
 
         vertexSet.clear();
         vertexSet.reserve(Triangle::numElements()); // Might be more than needed
@@ -33,20 +34,40 @@ struct MembraneStretchingLocal : public ForceField {
 
         for(auto m : Membrane::getMembranes()) {
             // In area elasticity for each triangle, the triangles with any
-            // vertex touching an open border will not be included.
-            // TODO: add triangle filter
+            // vertex touching an reservoir connecting border will not be
+            // included.
 
             const auto& mesh = m->getMesh();
             for(const auto& t : mesh.getTriangles()) {
-                // TODO: check if the triangle fits local/global criteria
                 const auto vis = medyan::vertexIndices(mesh, t);
-                vertexSet.push_back({
-                    mesh.attribute(vis[0]).vertex->getIndex() * 3 + si.vertex,
-                    mesh.attribute(vis[1]).vertex->getIndex() * 3 + si.vertex,
-                    mesh.attribute(vis[2]).vertex->getIndex() * 3 + si.vertex
-                });
-                kArea.push_back(t.attr.triangle->mTriangle.kArea);
-                eqArea.push_back(t.attr.triangle->mTriangle.eqArea);
+
+                // Check if the vertices are reservoir touching.
+                const auto onReservoirBorder = [&](MT::VertexIndex vi) {
+                    if(!mesh.isVertexOnBorder(vi)) return false;
+                    bool ret = false;
+                    mesh.forEachHalfEdgeTargetingVertex(vi, [&](MT::HalfEdgeIndex hei) {
+                        if(!mesh.isInTriangle(hei)) {
+                            if(mesh.attribute(mesh.border(hei)).reservoir) {
+                                ret = true;
+                            }
+                        }
+                    });
+                    return ret;
+                };
+
+                if(
+                    !onReservoirBorder(vis[0]) &&
+                    !onReservoirBorder(vis[1]) &&
+                    !onReservoirBorder(vis[2])
+                ) {
+                    vertexSet.push_back({
+                        mesh.attribute(vis[0]).vertex->getIndex() * 3 + si.vertex,
+                        mesh.attribute(vis[1]).vertex->getIndex() * 3 + si.vertex,
+                        mesh.attribute(vis[2]).vertex->getIndex() * 3 + si.vertex
+                    });
+                    kArea.push_back(t.attr.triangle->mTriangle.kArea);
+                    eqArea.push_back(t.attr.triangle->mTriangle.eqArea);
+                }
             }
         }
     }
