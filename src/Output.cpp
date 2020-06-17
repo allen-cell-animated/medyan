@@ -1522,7 +1522,7 @@ void Datadump::print(int snapshot) {
                     _outputFile<<fac<<" ";
                 _outputFile<<endl;
                 //Print the reaction
-                _outputFile <<it<<endl;
+                it->printToStream(_outputFile);
             }
         }
     }
