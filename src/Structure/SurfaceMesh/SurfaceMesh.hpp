@@ -379,8 +379,8 @@ private:
     void registerEdge_(EdgeIndex ei, HalfEdgeIndex hei0, HalfEdgeIndex hei1) {
         element_(ei).halfEdgeIndex = hei0;
         element_(ei).numBorderHalfEdges =
-            static_cast<std::uint_fast8_t>(element_(hei0).polygonType == HalfEdge::PolygonType::border) +
-            static_cast<std::uint_fast8_t>(element_(hei1).polygonType == HalfEdge::PolygonType::border);
+            static_cast<std::uint_fast8_t>(element_(hei0).polygonType == PolygonType::border) +
+            static_cast<std::uint_fast8_t>(element_(hei1).polygonType == PolygonType::border);
         element_(hei0).oppositeHalfEdgeIndex = hei1;
         element_(hei0).edgeIndex = ei;
         element_(hei1).oppositeHalfEdgeIndex = hei0;
@@ -424,11 +424,11 @@ private:
         element_(opposite(to)).oppositeHalfEdgeIndex = to;
 
         switch(element_(to).polygonType) {
-        case HalfEdge::PolygonType::triangle:
+        case PolygonType::triangle:
             if(element_(triangle(to)).halfEdgeIndex == from)
                 element_(triangle(to)).halfEdgeIndex = to;
             break;
-        case HalfEdge::PolygonType::border:
+        case PolygonType::border:
             if(borders_[polygon(to)].halfEdgeIndex == from)
                 borders_[polygon(to)].halfEdgeIndex = to;
             break;
@@ -567,7 +567,7 @@ public:
                     const HalfEdgeIndex hei { mesh.halfEdges_.insert() };
                     HalfEdge& he = mesh.element_(hei);
                     hai.push_back({true});
-                    he.polygonType = HalfEdge::PolygonType::triangle;
+                    he.polygonType = PolygonType::triangle;
                     he.polygonIndex = ti;
                     he.targetVertexIndex.index = t[i];
                     he.nextHalfEdgeIndex.index = (i == 2 ? hei.index - 2 : hei.index + 1);
@@ -658,7 +658,7 @@ public:
 
                 // Method of associating a new border half edge with vertices, edges and the border
                 const auto registerBorderHalfEdge = [&mesh](HalfEdgeIndex hei_b, HalfEdgeIndex hei_in, BorderIndex bi) {
-                    mesh.element_(hei_b).polygonType = HalfEdge::PolygonType::border;
+                    mesh.element_(hei_b).polygonType = PolygonType::border;
                     mesh.element_(hei_b).polygonIndex = bi.index;
                     mesh.element_(hei_b).targetVertexIndex = mesh.target(mesh.prev(hei_in));
                     mesh.registerEdge_(mesh.edge(hei_in), hei_in, hei_b);
@@ -794,7 +794,7 @@ public:
     bool isVertexOnBorder(const Vertex& v) const { return v.numTargetingBorderHalfEdges >= 1; }
     bool isVertexOnBorder(VertexIndex vi) const { return isVertexOnBorder(element(vi)); }
     bool isEdgeOnBorder(EdgeIndex ei) const { return element(ei).numBorderHalfEdges >= 1; }
-    bool isInTriangle(HalfEdgeIndex hei) const { return polygonType(hei) == HalfEdge::PolygonType::triangle; }
+    bool isInTriangle(HalfEdgeIndex hei) const { return polygonType(hei) == PolygonType::triangle; }
 
     // Mesh neighbor iterators
     template< typename Func > void forEachHalfEdgeTargetingVertex(const Vertex& v, Func&& func) const {
@@ -870,10 +870,10 @@ public:
 
             const auto opi0       = mesh.polygon(ohei);
             const auto opt0       = mesh.polygonType(ohei);
-            const bool ist0       = opt0 == HalfEdge::PolygonType::triangle;
+            const bool ist0       = opt0 == PolygonType::triangle;
             const auto opi2       = mesh.polygon(ohei_o);
             const auto opt2       = mesh.polygonType(ohei_o);
-            const bool ist2       = opt2 == HalfEdge::PolygonType::triangle;
+            const bool ist2       = opt2 == PolygonType::triangle;
 
             const auto vi0        = mesh.target(ohei);
             const auto vi2        = mesh.target(ohei_o);
@@ -902,9 +902,9 @@ public:
                 const auto ti1    = mesh.newTriangle_();
 
                 mesh.element_(hei1_o).targetVertexIndex = vi;
-                mesh.element_(hei1_o).polygonType = HalfEdge::PolygonType::triangle;
+                mesh.element_(hei1_o).polygonType = PolygonType::triangle;
                 mesh.element_(hei1).targetVertexIndex = vi1;
-                mesh.element_(hei1).polygonType = HalfEdge::PolygonType::triangle;
+                mesh.element_(hei1).polygonType = PolygonType::triangle;
 
                 ++mesh.element_(vi).degree;
                 ++mesh.element_(vi1).degree;
@@ -937,9 +937,9 @@ public:
                 const auto ti3    = mesh.newTriangle_();
 
                 mesh.element_(hei3_o).targetVertexIndex = vi;
-                mesh.element_(hei3_o).polygonType = HalfEdge::PolygonType::triangle;
+                mesh.element_(hei3_o).polygonType = PolygonType::triangle;
                 mesh.element_(hei3).targetVertexIndex = vi3;
-                mesh.element_(hei3).polygonType = HalfEdge::PolygonType::triangle;
+                mesh.element_(hei3).polygonType = PolygonType::triangle;
 
                 ++mesh.element_(vi).degree;
                 ++mesh.element_(vi3).degree;
@@ -1107,8 +1107,8 @@ public:
             // Get index of current elements
             const auto ohei    = mesh.halfEdge(oei);
             const auto ohei_o  = mesh.opposite(ohei);
-            const auto ist     = mesh.polygonType(ohei)   == HalfEdge::PolygonType::triangle;
-            const auto ist_o   = mesh.polygonType(ohei_o) == HalfEdge::PolygonType::triangle;
+            const auto ist     = mesh.polygonType(ohei)   == PolygonType::triangle;
+            const auto ist_o   = mesh.polygonType(ohei_o) == PolygonType::triangle;
 
             if(ist) {
                 if(ist_o) {

@@ -72,10 +72,11 @@ public:
     // assign stretchforces for Linker and Motor. Can be extended to other FFs as well.
     virtual void assignforcemags(){};
 
-protected:
-    std::vector< floatingpoint > forceBuffer_;
     //get interaction names
     virtual vector<string> getinteractionnames() = 0;
+
+protected:
+    std::vector< floatingpoint > forceBuffer_;
 };
 
 #endif

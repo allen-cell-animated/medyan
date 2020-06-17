@@ -145,15 +145,15 @@ inline void cacheIndicesForFF(
             const auto hei_o = mesh.opposite(hei);
             const auto vn = mesh.target(hei_o);
 
-            mesh.metaAttribute().cachedVertexTopo[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]
+            mesh.metaAttribute().cachedVertexTopo[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(vi.index) + i]
                 = vci(vn);
-            mesh.metaAttribute().cachedVertexTopo[mesh.metaAttribute().cachedVertexOffsetTargetingHE  (vi) + i]
+            mesh.metaAttribute().cachedVertexTopo[mesh.metaAttribute().cachedVertexOffsetTargetingHE  (vi.index) + i]
                 = hei.index;
-            mesh.metaAttribute().cachedVertexTopo[mesh.metaAttribute().cachedVertexOffsetLeavingHE    (vi) + i]
+            mesh.metaAttribute().cachedVertexTopo[mesh.metaAttribute().cachedVertexOffsetLeavingHE    (vi.index) + i]
                 = hei_o.index;
-            mesh.metaAttribute().cachedVertexTopo[mesh.metaAttribute().cachedVertexOffsetOuterHE      (vi) + i]
+            mesh.metaAttribute().cachedVertexTopo[mesh.metaAttribute().cachedVertexOffsetOuterHE      (vi.index) + i]
                 = mesh.prev(hei).index;
-            mesh.metaAttribute().cachedVertexTopo[mesh.metaAttribute().cachedVertexOffsetPolygon      (vi) + i]
+            mesh.metaAttribute().cachedVertexTopo[mesh.metaAttribute().cachedVertexOffsetPolygon      (vi.index) + i]
                 = mesh.polygon(hei);
 
             ++i;
@@ -678,7 +678,7 @@ inline void updateGeometryValueForSystem(MembraneMeshAttribute::MeshType& mesh) 
     // Calculate edge pesudo unit normal
     for(MT::EdgeIndex ei {}; ei < numEdges; ++ei) {
         auto& ea = mesh.attribute(ei);
-        const auto hei = mesh.halfEdge(ea);
+        const auto hei = mesh.halfEdge(ei);
         const auto hei_o = mesh.opposite(hei);
 
         // pseudo unit normal
@@ -1037,7 +1037,7 @@ inline auto collapseEdge(
 
 inline void flipEdge(
     MembraneMeshAttribute::MeshType&               mesh,
-    MembraneMeshAttribute::MeshType::EdgeIndex     ei,
+    MembraneMeshAttribute::MeshType::EdgeIndex     ei
 ) {
     using MT = MembraneMeshAttribute::MeshType;
 
