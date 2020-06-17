@@ -640,7 +640,8 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         CUDAcommon::tmin.tother += elapsed_other2.count();
         //@@@} OTHER
 
-        double beta, newGrad, prevGrad;
+        double beta = 0;
+        double newGrad, prevGrad;
 //        std::cout<<"SERL maxF "<<maxF()<<endl;
 
         numIter++;
