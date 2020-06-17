@@ -39,6 +39,7 @@
 #include <Eigen/Core>
 
 #include "MotorGhostInteractions.h"
+#include "CCylinder.h"
 
 using namespace mathfunc;
 
@@ -1508,6 +1509,23 @@ void Datadump::print(int snapshot) {
 	}
 
 	_outputFile <<endl;
+
+    _outputFile <<"MINUSENDPOLYMERIZATIONREACTIONS "<< endl;
+    for(auto fil:Filament::getFilaments()){
+        auto cyl = fil->getCylinderVector().front(); //get Minus Ends
+        for(auto &it:cyl->getCCylinder()->getInternalReactions()){
+            if(it->getReactionType() ==ReactionType::DEPOLYMERIZATIONMINUSEND &&
+            it->isPassivated()){
+                _outputFile<<"Fil "<<cyl->getFilID()<<" Cyl "<<cyl->getStableIndex()
+                            <<" RATEMULFACTORS ";
+                for(auto fac:it->_ratemulfactors)
+                    _outputFile<<fac<<" ";
+                _outputFile<<endl;
+                //Print the reaction
+                _outputFile <<it<<endl;
+            }
+        }
+    }
 }
 
 void HessianMatrix::print(int snapshot){

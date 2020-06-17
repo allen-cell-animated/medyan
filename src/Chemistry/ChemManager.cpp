@@ -2953,7 +2953,8 @@ void ChemManager::initializeCCylinder(
             lastcc = f->getCylinderVector().back()->getCCylinder();
 
             if(SysParams::RUNSTATE){
-
+                //Turn off PlusEnd Species in the previous cylinder  and set it as
+                // SpeciesFilament
                 CMonomer* m1 = lastcc->getCMonomer(lastcc->getSize() - 1);
                 m1->speciesPlusEnd(0)->down();
                 //fill last cylinder with default filament value
@@ -2961,7 +2962,7 @@ void ChemManager::initializeCCylinder(
 
                 for(auto j : SysParams::CParams.bindingIndices[filType])
                     m1->speciesBound(j)->up();
-
+                //Set the end of current cylinder to be Plus End
                 CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
                 m2->speciesPlusEnd(0)->up();
                 //fill new cylinder with default filament value
@@ -2972,7 +2973,7 @@ void ChemManager::initializeCCylinder(
                         cc->getCMonomer(i)->speciesBound(j)->up();
                 }
             }
-            else{
+            else{/*RESTARTPHASE*/
                 int start = firstmonomer;
                 int end = lastmonomer;
 
@@ -2999,7 +3000,7 @@ void ChemManager::initializeCCylinder(
                         cc->getCMonomer(i)->speciesBound(j)->up();
                 }
             }
-
+            //Add cross cylinder reactions.
             for(auto &r : _filRxnTemplates[filType]) r->addReaction(lastcc, cc);
         }
             //this is first one

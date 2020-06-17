@@ -225,6 +225,8 @@ void Filament::initializerestart(vector<Cylinder*> cylinderVector,
         cout<<_cylinderVector.size()<<endl;
     for(auto cyl:cylinderVector) {
         auto rcdata = _rCDatavec[cyl->getStableIndex()];
+        cout<<"Filament "<<getId()<<" "<<"Cylinder "<<cyl->getStableIndex()<<" "<<
+                rcdata.endmonomerpos[0]<<" "<<rcdata.endmonomerpos[1]<<endl;
         cyl->initializerestart( rcdata.totalmonomers, rcdata.endmonomerpos[0],
                                 rcdata.endmonomerpos[1], rcdata.endstatusvec[0],
                                 rcdata.endstatusvec[1], rcdata.endtypevec[0],
