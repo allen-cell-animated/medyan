@@ -207,8 +207,6 @@ inline double area(
     const MembraneMeshAttribute::MeshType&         mesh,
     MembraneMeshAttribute::MeshType::TriangleIndex ti
 ) {
-    using namespace std;
-    using namespace mathfunc;
     const auto vis = vertexIndices(mesh, ti);
     const auto& c0 = mesh.attribute(vis[0]).getCoordinate();
     const auto& c1 = mesh.attribute(vis[1]).getCoordinate();
@@ -233,6 +231,25 @@ inline auto areaAndDerivative(const VT& c0, const VT& c1, const VT& c2) {
         inv4A * (dot_01_01 * r02 - dot_01_02 * r01)
     };
 }
+
+// Returns the tetrahedron volume formed by the triangle and the origin
+template< typename VT >
+inline double coneVolume(const VT& c0, const VT& c1, const VT& c2) {
+    const auto cp = mathfunc::cross(c1 - c0, c2 - c0);
+    return mathfunc::dot(c0, cp) / 6;
+}
+inline double coneVolume(
+    const MembraneMeshAttribute::MeshType&         mesh,
+    MembraneMeshAttribute::MeshType::TriangleIndex ti
+) {
+    const auto vis = vertexIndices(mesh, ti);
+    const auto& c0 = mesh.attribute(vis[0]).getCoordinate();
+    const auto& c1 = mesh.attribute(vis[1]).getCoordinate();
+    const auto& c2 = mesh.attribute(vis[2]).getCoordinate();
+
+    return coneVolume(c0, c1, c2);
+}
+
 
 // This function updates geometries necessary for computing membrane energy
 // and signed distance.
