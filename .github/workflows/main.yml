@@ -59,7 +59,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Prepare dependencies
       run: |
-        $BOOST_ROOT = $BOOST_ROOT_1_72_0
+        $BOOST_ROOT = $Env:BOOST_ROOT_1_72_0
         $MEDYAN_BOOST_INSTALL_MODE = "find"
         .\conf.ps1
     - name: Build with MSBuild
