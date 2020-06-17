@@ -17,7 +17,9 @@ jobs:
     - uses: actions/checkout@v2
     - name: Prepare dependencies
       run: |
-        MEDYAN_BOOST_INSTALL_MODE="find" ./conf.sh
+        export BOOST_ROOT=$BOOST_ROOT_1_72_0
+        export MEDYAN_BOOST_INSTALL_MODE="find"
+        ./conf.sh
     - name: Build with make
       run: |
         # Use avx2 (default avx512 causes trouble in UMEsimd)
@@ -37,7 +39,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Prepare dependencies
       run: |
-        MEDYAN_BOOST_INSTALL_MODE="find" ./conf.sh
+        ./conf.sh
     - name: Build with make
       run: |
         # Use avx2 (default avx512 causes trouble in UMEsimd)
@@ -57,7 +59,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: Prepare dependencies
       run: |
-        $MEDYAN_BOOST_INSTALL_MODE="find"
+        $BOOST_ROOT = $BOOST_ROOT_1_72_0
+        $MEDYAN_BOOST_INSTALL_MODE = "find"
         .\conf.ps1
     - name: Build with MSBuild
       working-directory: ${{ github.workspace }}
