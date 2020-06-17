@@ -51,6 +51,7 @@
 #endif
 #include "Util/Io/Log.hpp"
 #include "Util/Profiler.hpp"
+
 using namespace mathfunc;
 
 Controller::Controller() :
@@ -1228,15 +1229,14 @@ void Controller::run() {
         for(auto fil:Filament::getFilaments()){
             auto cyl = fil->getCylinderVector().front(); //get Minus Ends
             for(auto &it:cyl->getCCylinder()->getInternalReactions()){
-                if(it->getReactionType() ==ReactionType::DEPOLYMERIZATIONMINUSEND &&
-                   it->isPassivated()){
+                if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND &&
+                   !(it->isPassivated()) && it->computePropensity() > 0){
                     cout<<"Fil "<<cyl->getFilID()<<" Cyl "<<cyl->getStableIndex()
                                <<" RATEMULFACTORS ";
                     for(auto fac:it->_ratemulfactors)
                         cout<<fac<<" ";
                     cout<<endl;
-                    //Print the reaction
-                    cout <<it<<endl;
+                    it->getRnode()->printSelf();
                 }
             }
         }

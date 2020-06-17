@@ -40,6 +40,7 @@
 
 #include "MotorGhostInteractions.h"
 #include "CCylinder.h"
+#include "ChemNRMImpl.h"
 
 using namespace mathfunc;
 
@@ -1514,13 +1515,21 @@ void Datadump::print(int snapshot) {
     for(auto fil:Filament::getFilaments()){
         auto cyl = fil->getCylinderVector().front(); //get Minus Ends
         for(auto &it:cyl->getCCylinder()->getInternalReactions()){
-            if(it->getReactionType() ==ReactionType::DEPOLYMERIZATIONMINUSEND &&
-            it->isPassivated()){
+            if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND &&
+            !(it->isPassivated()) && it->computePropensity() > 0){
                 _outputFile<<"Fil "<<cyl->getFilID()<<" Cyl "<<cyl->getStableIndex()
                             <<" RATEMULFACTORS ";
                 for(auto fac:it->_ratemulfactors)
                     _outputFile<<fac<<" ";
                 _outputFile<<endl;
+                auto coord = cyl->getCompartment()->coordinates();
+                std::cout.precision(10);
+                _outputFile << "RNodeNRM: ptr=" << this <<", tau=" <<
+                static_cast<RNodeNRM*>(it->getRnode())->getTau() <<
+                     //	cout << "tau=" << getTau() <<
+                     ", a=" << static_cast<RNodeNRM*>(it->getRnode())->getPropensity()
+                     <<" in Compartment "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<
+                     ", points to Reaction:\n";
                 //Print the reaction
                 it->printToStream(_outputFile);
             }
