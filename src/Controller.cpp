@@ -61,12 +61,6 @@ using namespace mathfunc;
 
 namespace {
 
-void invalidateMembraneMeshIndexCache() {
-    for(auto m : Membrane::getMembranes()) {
-        m->getMesh().metaAttribute().cacheValid = false;
-    }
-}
-
 void pinBubbles() {
 
     // Only pin once
@@ -178,7 +172,7 @@ void Controller::initialize(string inputFile,
     //add br force out and local diffussing species concentration
     _outputs.push_back(make_unique<BRForces>(_outputDirectory + "repulsion.traj", &_subSystem));
     //_outputs.push_back(make_unique<PinForces>(_outputDirectory + "pinforce.traj", &_subSystem));
-    _outputs.push_back(make_unique<IndicesOutput>(_outputDirectory + "indices.traj", &_subSystem));
+    //_outputs.push_back(make_unique<IndicesOutput>(_outputDirectory + "indices.traj", &_subSystem));
 
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -218,7 +212,7 @@ void Controller::initialize(string inputFile,
 
     // Force output
     if(SysParams::simulParams().trackForces) {
-        _outputs.push_back(new ForcesOutput(_outputDirectory + "forces-output.traj", &_subSystem, _mController.getForceFieldManager()));
+        _outputs.push_back(make_unique<ForcesOutput>(_outputDirectory + "forces-output.traj", &_subSystem, _mController.getForceFieldManager()));
     }
 
 #endif
@@ -1424,7 +1418,6 @@ void Controller::run() {
         mins = chrono::high_resolution_clock::now();
         cout<<"Minimizing energy"<<endl;
 
-        invalidateMembraneMeshIndexCache();
         _subSystem.prevMinResult = _mController.run(false);
 #ifdef OPTIMOUT
         mine= chrono::high_resolution_clock::now();
@@ -1514,7 +1507,6 @@ void Controller::run() {
     _subSystem.resetNeighborLists(); // TODO: resolve workaround
     Bead::rearrange();
     Cylinder::updateAllData();
-    invalidateMembraneMeshIndexCache();
     // update neighorLists before and after minimization. Need excluded volume
     // interactions.
 	_subSystem.resetNeighborLists();
@@ -1735,7 +1727,6 @@ void Controller::run() {
                 membraneAdaptiveRemesh();
                 _subSystem.resetNeighborLists(); // TODO: resolve workaround
 
-                invalidateMembraneMeshIndexCache();
                 Bead::rearrange();
                 Cylinder::updateAllData();
 
@@ -1909,7 +1900,6 @@ void Controller::run() {
                 membraneAdaptiveRemesh();
                 _subSystem.resetNeighborLists(); // TODO: resolve workaround
 
-                invalidateMembraneMeshIndexCache();
                 Bead::rearrange();
                 Cylinder::updateAllData();
                 _mController.run();

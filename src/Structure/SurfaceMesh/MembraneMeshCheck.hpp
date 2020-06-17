@@ -1,3 +1,6 @@
+// WARNING: THIS FILE IS CURRENTLY UNUSABLE
+#error "File is not ready to use."
+
 #ifndef MEDYAN_Structure_SurfaceMesh_MembraneMeshCheck_hpp
 #define MEDYAN_Structure_SurfaceMesh_MembraneMeshCheck_hpp
 

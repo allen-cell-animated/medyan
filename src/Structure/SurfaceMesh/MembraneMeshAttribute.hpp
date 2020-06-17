@@ -60,6 +60,7 @@ struct MembraneMeshAttribute {
         size_t cachedDegree;
         size_t cachedCoordIndex;
 
+        CoordinateRefType  getCoordinate()       { return vertex->coord; }
         CoordinateCrefType getCoordinate() const { return vertex->coord; }
 
         template< bool stretched > const GVertex& getGVertex() const { return stretched ? gVertexS : gVertex; }
@@ -180,13 +181,14 @@ struct MembraneMeshAttribute {
     }
     static void newEdge(MeshType& mesh, HalfEdgeMeshConnection::EdgeIndex e) {
         mesh.attribute(e).edge.reset(
-            mesh.metaAttribute().s->addTrackable<Edge>(mesh.metaAttribute().m, e));
+            mesh.metaAttribute().s->addTrackable<Edge>(mesh.metaAttribute().m, e.index));
     }
     static void newHalfEdge(MeshType& mesh, HalfEdgeMeshConnection::HalfEdgeIndex he) {
         // Do nothing
     }
     static void newTriangle(MeshType& mesh, HalfEdgeMeshConnection::TriangleIndex t) {
-        mesh.attribute(t).triangle.reset(mesh.metaAttribute().s->addTrackable<Triangle>(mesh.metaAttribute().m, t));
+        mesh.attribute(t).triangle.reset(
+            mesh.metaAttribute().s->addTrackable<Triangle>(mesh.metaAttribute().m, t.index));
     }
     static void newBorder(MeshType& mesh, HalfEdgeMeshConnection::BorderIndex) {
         // Do nothing
@@ -218,10 +220,12 @@ struct MembraneMeshAttribute {
                 info.vertexCoordinateList[i], i);
         }
         for(size_t i = 0; i < mesh.getEdges().size(); ++i) {
-            mesh.attribute(HalfEdgeMeshConnection::EdgeIndex{i}).edge.reset(meta.s->template addTrackable<Edge>(meta.m, i));
+            mesh.attribute(HalfEdgeMeshConnection::EdgeIndex{i}).edge.reset(
+                meta.s->template addTrackable<Edge>(meta.m, i));
         }
         for(size_t i = 0; i < mesh.getTriangles().size(); ++i) {
-            mesh.attribute(HalfEdgeMeshConnection::TriangleIndex{i}).triangle.reset(meta.s->template addTrackable<Triangle>(meta.m, i));
+            mesh.attribute(HalfEdgeMeshConnection::TriangleIndex{i}).triangle.reset(
+                meta.s->template addTrackable<Triangle>(meta.m, i));
         }
     }
     // Extraction can be done multiple times without allocating/deallocating

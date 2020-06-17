@@ -11,7 +11,6 @@
 #include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneStretchingLocal.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneStretchingImpl.hpp"
-#include "Mechanics/ForceField/Membrane/MembraneTension.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneTriangleProtect.hpp"
 #include "Mechanics/ForceField/Types.hpp"
 #include "Util/Io/Log.hpp"

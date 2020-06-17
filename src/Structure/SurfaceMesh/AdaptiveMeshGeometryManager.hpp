@@ -26,7 +26,7 @@ template< typename Mesh > struct GeometryManager {
     static void computeAllVertexNormals(Mesh& mesh) {
         const size_t numVertices = mesh.numVertices();
 
-        for(typename Mesh::VertexIndex vi = 0; vi < numVertices; ++vi) {
+        for(typename Mesh::VertexIndex vi {0}; vi < numVertices; ++vi) {
             medyan::adaptiveComputeVertexNormal(mesh, vi);
         }
     }

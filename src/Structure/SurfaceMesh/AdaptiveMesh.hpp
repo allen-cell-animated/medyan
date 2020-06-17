@@ -68,7 +68,7 @@ constexpr size_t mesh_adaptation_hard_max_iter = 20;
 template< typename Mesh, TriangleQualityCriteria c > class EdgeFlipManager {
 public:
     using TriangleQualityType = TriangleQuality< c >;
-    using CoordinateType = typename Mesh::AttributeType::coordinate_type;
+    using CoordinateType = typename Mesh::AttributeType::CoordinateType;
 
     enum class State {
         Success,
@@ -181,10 +181,10 @@ enum class EdgeSplitVertexInsertionMethod {
 };
 template< EdgeSplitVertexInsertionMethod > struct EdgeSplitVertexInsertion;
 template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::MidPoint > {
-    typename Mesh::VertexIndex v0, v1;
+    std::size_t v0, v1;
     template< typename Mesh >
     auto coordinate(const Mesh& mesh) const {
-        using CoordinateType = typename Mesh::AttributeType::coordinate_type;
+        using CoordinateType = typename Mesh::AttributeType::CoordinateType;
 
         const auto c0 = mesh.attribute(v0).getCoordinate();
         const auto c1 = mesh.attribute(v1).getCoordinate();
@@ -195,19 +195,19 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgC
     static constexpr double maxRadiusDistanceRatio = 1e6;
     static constexpr double maxRadiusDistanceRatio2 = maxRadiusDistanceRatio * maxRadiusDistanceRatio;
 
-    typename Mesh::VertexIndex v0, v1;
+    std::size_t v0, v1;
 
     // Requires
     //   - Vertex unit normal
     template< typename Mesh >
     auto coordinate(const Mesh& mesh) const {
         using namespace mathfunc;
-        using CoordinateType = typename Mesh::AttributeType::coordinate_type;
+        using CoordinateType = typename Mesh::AttributeType::CoordinateType;
 
-        const CoordinateType c0 (mesh.attribute(v0).getCoordinate());
-        const CoordinateType c1 (mesh.attribute(v1).getCoordinate());
-        const auto& un0 = mesh.attribute(v0).aVertex.unitNormal;
-        const auto& un1 = mesh.attribute(v1).aVertex.unitNormal;
+        const CoordinateType c0 (mesh.attribute(typename Mesh::VertexIndex {v0}).getCoordinate());
+        const CoordinateType c1 (mesh.attribute(typename Mesh::VertexIndex {v1}).getCoordinate());
+        const auto& un0 = mesh.attribute(typename Mesh::VertexIndex {v0}).aVertex.unitNormal;
+        const auto& un1 = mesh.attribute(typename Mesh::VertexIndex {v1}).aVertex.unitNormal;
 
         const auto r = c1 - c0;
         const auto mag2_r = magnitude2(r);
@@ -259,7 +259,7 @@ template<
 public:
     using EdgeFlipManagerType          = EdgeFlipManager< Mesh, c >;
     using EdgeSplitVertexInsertionType = EdgeSplitVertexInsertion< m >;
-    using CoordinateType               = typename Mesh::AttributeType::coordinate_type;
+    using CoordinateType               = typename Mesh::AttributeType::CoordinateType;
     enum class State {
         success,
         invalidTopo,
@@ -326,7 +326,7 @@ public:
         const auto eqLength = mesh.attribute(ei).aEdge.eqLength;
         const auto change = medyan::insertVertexOnEdge(
             mesh, ei,
-            EdgeSplitVertexInsertionType { vi0, vi2 }.coordinate(mesh)
+            EdgeSplitVertexInsertionType { vi0.index, vi2.index }.coordinate(mesh)
         );
 
         medyan::adaptiveComputeVertexNormal(mesh, change.viNew);
@@ -364,7 +364,7 @@ public:
 template< typename Mesh, TriangleQualityCriteria c > class EdgeCollapseManager {
 public:
     using TriangleQualityType = TriangleQuality< c >;
-    using CoordinateType      = typename Mesh::AttributeType::coordinate_type;
+    using CoordinateType      = typename Mesh::AttributeType::CoordinateType;
 
     enum class State {
         success,
@@ -597,7 +597,7 @@ template<> struct VertexSizeMeasure< SizeMeasureCriteria::Curvature > {
     // Requires
     //   - Vertex unit normal
     template< typename Mesh > auto vertexSize(Mesh& mesh, typename Mesh::VertexIndex vi) const {
-        using CoordinateType = typename Mesh::AttributeType::coordinate_type;
+        using CoordinateType = typename Mesh::AttributeType::CoordinateType;
 
         double minRadiusCurvature = std::numeric_limits<double>::infinity();
         const auto& un = mesh.attribute(vi).aVertex.unitNormal;
@@ -690,7 +690,7 @@ private:
             typename Mesh::EdgeIndex ei{i};
             auto& l0 = mesh.attribute(ei).aEdge.eqLength;
             l0 = 0.0;
-            mesh.forEachHalfEdgeInEdge(ei, [&](size_t hei) {
+            mesh.forEachHalfEdgeInEdge(ei, [&](typename Mesh::HalfEdgeIndex hei) {
                 l0 += 0.5 * mesh.attribute(mesh.target(hei)).aVertex.size;
             });
         }
@@ -722,7 +722,7 @@ template< typename Mesh >
 class MeshAdapter {
 public:
     using GeometryManagerType = GeometryManager< Mesh >;
-    using CoordinateType      = typename Mesh::AttributeType::coordinate_type;
+    using CoordinateType      = typename Mesh::AttributeType::CoordinateType;
 
     static constexpr auto optimalVertexLocationMethod    = OptimalVertexLocationMethod::barycenter;
     static constexpr auto triangleQualityCriteria        = TriangleQualityCriteria::radiusRatio;

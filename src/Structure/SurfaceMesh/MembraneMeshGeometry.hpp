@@ -217,15 +217,15 @@ inline double area(
 // Returns the area of triangle and its derivatives on all vertices
 template< typename VT >
 inline auto areaAndDerivative(const VT& c0, const VT& c1, const VT& c2) {
-    const auto area = area(c0, c1, c2);
-    const auto inv4A = 0.25 / area;
+    const auto theArea = area(c0, c1, c2);
+    const auto inv4A = 0.25 / theArea;
     const auto r01 = c1 - c0;
     const auto r02 = c2 - c0;
     const auto dot_01_02 = mathfunc::dot(r01, r02);
     const auto dot_01_01 = mathfunc::dot(r01, r01);
     const auto dot_02_02 = mathfunc::dot(r02, r02);
     return std::tuple {
-        area,
+        theArea,
         inv4A * ((dot_01_02 - dot_01_01) * r02 + (dot_01_02 - dot_02_02) * r01),
         inv4A * (dot_02_02 * r01 - dot_01_02 * r02),
         inv4A * (dot_01_01 * r02 - dot_01_02 * r01)

@@ -38,7 +38,7 @@ MinimizationResult SteepestDescent::minimize(
             N = numeric_limits<int>::max();
         }
 
-    startMinimization();
+    startMinimization(GRADTOL);
     FFM.vectorizeAllForceFields(initCGMethodData(*this, GRADTOL));
 
     FFM.computeForces(coord.data(), force);

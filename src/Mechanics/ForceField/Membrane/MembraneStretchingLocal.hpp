@@ -101,7 +101,7 @@ struct MembraneStretchingLocal : public ForceField {
                 return numeric_limits<double>::infinity();
             }
             else {
-                en += enMem;
+                en += enTriangle;
             }
 
         }

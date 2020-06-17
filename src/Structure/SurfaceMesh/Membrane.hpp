@@ -68,7 +68,7 @@ public:
         );
 
         // Update geometry
-        updateGeometryValue<false>();
+        updateGeometryValueForSystem();
 
         initMechanicParams();
 
@@ -90,19 +90,18 @@ public:
         // Calculate the total area and volume to set the equilibrium area and volume
         double area = 0.0;
         double volume = 0.0;
-        for(const auto& t : mesh_.getTriangles()) {
-            area += t.attr.gTriangle.area;
-            volume += t.attr.gTriangle.coneVolume;
+        for(MeshType::TriangleIndex ti {0}; ti < mesh_.numTriangles(); ++ti) {
+            const auto theArea = medyan::area(mesh_, ti);
+
+            area += theArea;
+            volume += medyan::coneVolume(mesh_, ti);
+
+            mesh_.attribute(ti).triangle->mTriangle.eqArea
+                = theArea * SysParams::Mechanics().memEqAreaFactor[memType_];
         }
 
         mMembrane.eqArea = area * SysParams::Mechanics().memEqAreaFactor[memType_];
         mMembrane.eqVolume = volume;
-
-        // Initialize MTriangle
-        for(const auto& t : mesh_.getTriangles()) {
-            t.attr.triangle->mTriangle.eqArea
-                = t.attr.gTriangle.area * SysParams::Mechanics().memEqAreaFactor[memType_];
-        }
 
     } // void initMechanicParams()
 

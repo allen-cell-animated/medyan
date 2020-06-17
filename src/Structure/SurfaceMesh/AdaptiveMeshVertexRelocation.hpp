@@ -3,7 +3,6 @@
 
 #include "MathFunctions.h"
 #include "Structure/SurfaceMesh/AdaptiveMeshGeometryManager.hpp"
-#include "Structure/SurfaceMesh/MembraneMeshCheck.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
 namespace adaptive_mesh {
@@ -34,7 +33,7 @@ template<> struct OptimalVertexLocation< OptimalVertexLocationMethod::barycenter
     template< typename Mesh >
     auto operator()(const Mesh& mesh, typename Mesh::VertexIndex vi) const {
         using namespace mathfunc;
-        using CoordinateType = typename Mesh::AttributeType::coordinate_type;
+        using CoordinateType = typename Mesh::AttributeType::CoordinateType;
 
         CoordinateType target {};
         mesh.forEachHalfEdgeTargetingVertex(vi, [&](auto hei) {

@@ -11,7 +11,7 @@ struct VolumeConservationMembrane : public ForceField {
 
     VolumeConservationMembraneHarmonic impl;
 
-    virtual void vectorize() override {}
+    virtual void vectorize(const FFCoordinateStartingIndex& si) override {}
 
     virtual string getName() override { return "Volume conservation"; }
 
@@ -48,7 +48,7 @@ struct VolumeConservationMembrane : public ForceField {
         return en;
     }
 
-    virtual void computeForces(floatingpoint* coord, floatingpoint* f) override {
+    virtual void computeForces(floatingpoint* coord, floatingpoint* force) override {
         using namespace std;
         using MT = Membrane::MeshType;
 

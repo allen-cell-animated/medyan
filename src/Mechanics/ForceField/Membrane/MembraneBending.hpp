@@ -48,8 +48,8 @@ struct MembraneBending : public ForceField {
                 }
 
                 if (!isfinite(enVertex)) {
-                    LOG(ERROR) << "In " << getName() << " energy calculation, vertex with index "
-                        << i << " has energy " << enVertex;
+                    LOG(ERROR) << "In " << getName() << " energy calculation, "
+                        << "a vertex has energy " << enVertex;
 
                     return numeric_limits<double>::infinity();
                 }
@@ -135,7 +135,7 @@ struct MembraneBending : public ForceField {
 
 
     // Useless overrides
-    virtual void vectorize() override {}
+    virtual void vectorize(const FFCoordinateStartingIndex& si) override {}
     virtual void cleanup() override {}
     virtual void computeLoadForces() override {}
     virtual void whoIsCulprit() override {}

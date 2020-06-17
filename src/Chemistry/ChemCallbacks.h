@@ -598,6 +598,7 @@ struct BranchingCallback {
                 auto branchPosDir = branchProjection(n, p, l, s, theta);
                 auto bd = get<0>(branchPosDir);//branch direction
                 auto bp = get<1>(branchPosDir);//branch position
+                const auto b2 = vector2Vec< 3, floatingpoint >(bp) + s * vector2Vec< 3, floatingpoint >(bd);
 
                 //Check if the branch will be within boundary
                 auto projlength = SysParams::Geometry().cylinderSize[filType] / 10;

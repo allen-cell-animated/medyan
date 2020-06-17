@@ -274,7 +274,7 @@ void Forces::print(int snapshot) {
         //print force
         for(const auto& v : membrane->getMesh().getVertices()) {
             
-            double forceMag = sqrt(v.attr.vertex->FDotF());
+            const double forceMag = mathfunc::magnitude(v.attr.vertex->force);
             _outputFile << forceMag << " ";
             
         }        
@@ -1185,13 +1185,8 @@ void ForcesOutput::print(int snapshot) {
     // snapshot serial
     _outputFile << snapshot << ' ' << tau() << '\n';
 
-    // Print coordinates
-    _outputFile << "Coordinates\n"
-        << Bead::getDbDataConst().coords.size_raw() << "  ";
-    for(const auto& x : Bead::getDbDataConst().coords.value) {
-        _outputFile << x << ' ';
-    }
-    _outputFile << '\n';
+    LOG(ERROR) << "Force output is currently not usable.";
+    throw std::runtime_error("Forces output not available.");
 
     // force field forces
     for(auto ff : ffm_->_forceFields) {
@@ -1209,6 +1204,9 @@ void ForcesOutput::print(int snapshot) {
 void IndicesOutput::print(int snapshot) {
     // snapshot serial
     _outputFile << snapshot << ' ' << tau() << '\n';
+
+    LOG(ERROR) << "Index output is currently not available.";
+    throw std::runtime_error("Index output not available.");
 
     // Filaments
     for(auto f : Filament::getFilaments()) {
@@ -1231,7 +1229,7 @@ void IndicesOutput::print(int snapshot) {
             << mesh.numVertices() << ' '
             << mesh.numTriangles() << '\n';
         for(const auto& v : mesh.getVertices()) {
-            _outputFile << v.attr.vertex->getStableIndex() << ' ';
+            _outputFile << v.attr.vertex->getIndex() << ' ';
         }
         _outputFile << '\n';
     }

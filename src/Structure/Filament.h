@@ -239,7 +239,7 @@ public:
 	void initializerestart(vector<Cylinder*> cylindervector, vector<restartCylData>&
 	_rCDatavec);
 
-    virtual void printSelf();
+    virtual void printSelf()const;
     
     /// Check the consistency of the filament. For now,
     /// Mainly involves checking chemistry of the constituent cylinders.

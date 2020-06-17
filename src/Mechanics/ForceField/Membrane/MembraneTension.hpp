@@ -1,4 +1,5 @@
 // WARNING: THIS FILE IS NOT USABLE FOR NOW
+#error "File not ready for use."
 
 #ifndef MEDYAN_Mechanics_ForceField_Membrane_MembraneTension_hpp
 #define MEDYAN_Mechanics_ForceField_Membrane_MembraneTension_hpp
