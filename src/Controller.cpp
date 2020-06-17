@@ -1223,6 +1223,23 @@ void Controller::run() {
 
         //Crosscheck tau to make sure heap is ordered accurately.
         _cController.crosschecktau();
+
+        cout <<"MINUSENDPOLYMERIZATIONREACTIONS "<< endl;
+        for(auto fil:Filament::getFilaments()){
+            auto cyl = fil->getCylinderVector().front(); //get Minus Ends
+            for(auto &it:cyl->getCCylinder()->getInternalReactions()){
+                if(it->getReactionType() ==ReactionType::DEPOLYMERIZATIONMINUSEND &&
+                   it->isPassivated()){
+                    cout<<"Fil "<<cyl->getFilID()<<" Cyl "<<cyl->getStableIndex()
+                               <<" RATEMULFACTORS ";
+                    for(auto fac:it->_ratemulfactors)
+                        cout<<fac<<" ";
+                    cout<<endl;
+                    //Print the reaction
+                    cout <<it<<endl;
+                }
+            }
+        }
     }
 #ifdef CHEMISTRY
     tauLastSnapshot = tau();
