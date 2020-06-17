@@ -718,6 +718,7 @@ public:
         for(auto &r : _internal_reactions.reactions()){
 
             auto rClone = r->clone(target->_species);
+            rClone->setVolumeFrac(target->getVolumeFrac());
             target->addInternalReaction(rClone);
         }
     }

@@ -250,9 +250,7 @@ public:
     void setCBound(CBound* cBound) {_cBound = cBound;}
     ///Get CBound
     CBound* getCBound() {return _cBound;}
-    
-    /// Sets the ReactionBase rate to the parameter "rate"
-    [[deprecated]]void setRate(float rate) {_rate=rate;}
+
     
     // Sets the scaled rate based on volume dependence.
     void recalcRateVolumeFactor() {
@@ -276,7 +274,10 @@ public:
     
     /// Getter and setter for compartment volume fraction
     floatingpoint getVolumeFrac()const { return _volumeFrac; }
-    void setVolumeFrac(float volumeFrac) { _volumeFrac = volumeFrac; }
+    void setVolumeFrac(float volumeFrac) {
+        _volumeFrac = volumeFrac;
+        recalcRateVolumeFactor();
+    }
     
     /// Sets the RNode pointer associated with this ReactionBase to rhs. Usually is
     /// called only by the Gillespie-like algorithms.
