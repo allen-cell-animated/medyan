@@ -417,7 +417,7 @@ private:
         {
             auto chei = hei_o; // chei should always target vi1
             std::optional<Vec3> lastUnitNormal;
-            if(mesh.polygonType(mesh.opposite(hei_n)) == Mesh::HalfEdge::PolygonType::triangle) {
+            if(mesh.polygonType(mesh.opposite(hei_n)) == Mesh::PolygonType::triangle) {
                 lastUnitNormal = mesh.attribute(mesh.triangle(mesh.opposite(hei_n))).gTriangle.unitNormal;
             }
             do {
@@ -459,7 +459,7 @@ private:
                         }
                         lastUnitNormal = n_0np;
                         // Dihedral angle with outside triangle
-                        if(mesh.polygonType(chei_po) == Mesh::HalfEdge::PolygonType::triangle) {
+                        if(mesh.polygonType(chei_po) == Mesh::PolygonType::triangle) {
                             minCosDihedral = std::min(
                                 minCosDihedral,
                                 dot(n_0np, mesh.attribute(mesh.triangle(chei_po)).gTriangle.unitNormal)
@@ -468,7 +468,7 @@ private:
                         // Special dihedral angle
                         if(
                             chei == hei_ono &&
-                            mesh.polygonType(hei_opo) == Mesh::HalfEdge::PolygonType::triangle
+                            mesh.polygonType(hei_opo) == Mesh::PolygonType::triangle
                         ) {
                             minCosDihedral = std::min(
                                 minCosDihedral,

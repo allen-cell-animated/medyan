@@ -906,7 +906,7 @@ inline void adaptiveComputeVertexNormal(
     vaa.unitNormal = {0.0, 0.0, 0.0};
 
     mesh.forEachHalfEdgeTargetingVertex(vi, [&](MT::HalfEdgeIndex hei) {
-        if(mesh.polygonType(hei) == MT::HalfEdge::PolygonType::triangle) {
+        if(mesh.polygonType(hei) == MT::PolygonType::triangle) {
             const auto ti0 = mesh.triangle(hei);
             const auto theta = mesh.attribute(hei).gHalfEdge.theta;
             vaa.unitNormal += theta * mesh.attribute(ti0).gTriangle.unitNormal;
@@ -942,9 +942,9 @@ inline auto insertVertexOnEdge(
     const auto ohei_o     = mesh.opposite(ohei);
 
     const auto opt0       = mesh.polygonType(ohei);
-    const bool ist0       = opt0 == MT::HalfEdge::PolygonType::triangle;
+    const bool ist0       = opt0 == MT::PolygonType::triangle;
     const auto opt2       = mesh.polygonType(ohei_o);
-    const bool ist2       = opt2 == MT::HalfEdge::PolygonType::triangle;
+    const bool ist2       = opt2 == MT::PolygonType::triangle;
 
     // Do the vertex insertion
     const auto change = MT::VertexInsertionOnEdge{}(mesh, ei);

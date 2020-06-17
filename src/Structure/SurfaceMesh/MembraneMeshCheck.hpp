@@ -198,7 +198,7 @@ struct MembraneMeshDihedralCheck {
             const size_t hei = mesh.getEdges()[i].halfEdgeIndex;
             const size_t hei_o = mesh.opposite(hei);
 
-            using PolygonType = MeshType::HalfEdge::PolygonType;
+            using PolygonType = MeshType::PolygonType;
             if(
                 mesh.getHalfEdges()[hei].polygonType   == PolygonType::triangle &&
                 mesh.getHalfEdges()[hei_o].polygonType == PolygonType::triangle
@@ -327,7 +327,7 @@ struct MembraneMeshQualityReport {
             const size_t hei = mesh.getEdges()[i].halfEdgeIndex;
             const size_t hei_o = mesh.opposite(hei);
 
-            using PolygonType = MeshType::HalfEdge::PolygonType;
+            using PolygonType = MeshType::PolygonType;
             if(
                 mesh.getHalfEdges()[hei].polygonType   == PolygonType::triangle &&
                 mesh.getHalfEdges()[hei_o].polygonType == PolygonType::triangle

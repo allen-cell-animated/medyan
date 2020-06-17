@@ -79,10 +79,10 @@ struct MembraneMeshAttribute {
 
         // The index of x coordinate of vertices in the vectorized dof array
         // [target of half edge, opposite target]
-        size_t                          cachedCoordIndex[2];
-        MeshType::HalfEdge::PolygonType cachedPolygonType[2];
+        size_t                              cachedCoordIndex[2];
+        HalfEdgeMeshConnection::PolygonType cachedPolygonType[2];
         // [polygon of half edge, opposite polygon]
-        size_t                          cachedPolygonIndex[2];
+        size_t                              cachedPolygonIndex[2];
 
         template< bool stretched > const GEdge& getGEdge() const { return stretched ? gEdgeS : gEdge; }
         template< bool stretched >       GEdge& getGEdge()       { return stretched ? gEdgeS : gEdge; }
@@ -114,11 +114,11 @@ struct MembraneMeshAttribute {
 
         // The index of x coordinate of vertices in the vectorized dof array
         // [target of half edge, next target, prev target]
-        size_t                  cachedCoordIndex[3];
+        size_t                                cachedCoordIndex[3];
         // [half edge, next, prev]
-        MeshType::HalfEdgeIndex cachedHalfEdgeIndex[3];
+        HalfEdgeMeshConnection::HalfEdgeIndex cachedHalfEdgeIndex[3];
         // [edge of half edge, next edge, prev edge]
-        MeshType::EdgeIndex     cachedEdgeIndex[3];
+        HalfEdgeMeshConnection::EdgeIndex     cachedEdgeIndex[3];
 
         template< bool stretched > const GTriangle& getGTriangle() const { return stretched ? gTriangleS : gTriangle; }
         template< bool stretched >       GTriangle& getGTriangle()       { return stretched ? gTriangleS : gTriangle; }
@@ -175,36 +175,36 @@ struct MembraneMeshAttribute {
     //-------------------------------------------------------------------------
 
     // Mesh element modification (not used in initialization/finalization)
-    static void newVertex(MeshType& mesh, MeshType::VertexIndex v) {
+    static void newVertex(MeshType& mesh, HalfEdgeMeshConnection::VertexIndex v) {
         mesh.attribute(v).vertex = std::make_unique< Vertex >(CoordinateType{}, v.index);
     }
-    static void newEdge(MeshType& mesh, MeshType::EdgeIndex e) {
+    static void newEdge(MeshType& mesh, HalfEdgeMeshConnection::EdgeIndex e) {
         mesh.attribute(e).edge.reset(
             mesh.metaAttribute().s->addTrackable<Edge>(mesh.metaAttribute().m, e));
     }
-    static void newHalfEdge(MeshType& mesh, MeshType::HalfEdgeIndex he) {
+    static void newHalfEdge(MeshType& mesh, HalfEdgeMeshConnection::HalfEdgeIndex he) {
         // Do nothing
     }
-    static void newTriangle(MeshType& mesh, MeshType::TriangleIndex t) {
+    static void newTriangle(MeshType& mesh, HalfEdgeMeshConnection::TriangleIndex t) {
         mesh.attribute(t).triangle.reset(mesh.metaAttribute().s->addTrackable<Triangle>(mesh.metaAttribute().m, t));
     }
-    static void newBorder(MeshType& mesh, MeshType::BorderIndex) {
+    static void newBorder(MeshType& mesh, HalfEdgeMeshConnection::BorderIndex) {
         // Do nothing
     }
 
-    static void removeElement(MeshType& mesh, MeshType::VertexIndex i) {
+    static void removeElement(MeshType& mesh, HalfEdgeMeshConnection::VertexIndex i) {
         // Do nothing
     }
-    static void removeElement(MeshType& mesh, MeshType::EdgeIndex i) {
+    static void removeElement(MeshType& mesh, HalfEdgeMeshConnection::EdgeIndex i) {
         mesh.metaAttribute().s->template removeTrackable<Edge>(mesh.attribute(i).edge.get());
     }
-    static void removeElement(MeshType& mesh, MeshType::HalfEdgeIndex i) {
+    static void removeElement(MeshType& mesh, HalfEdgeMeshConnection::HalfEdgeIndex i) {
         // Do nothing
     }
-    static void removeElement(MeshType& mesh, MeshType::TriangleIndex i) {
+    static void removeElement(MeshType& mesh, HalfEdgeMeshConnection::TriangleIndex i) {
         mesh.metaAttribute().s->template removeTrackable<Triangle>(mesh.attribute(i).triangle.get());
     }
-    static void removeElement(MeshType& mesh, MeshType::BorderIndex i) {
+    static void removeElement(MeshType& mesh, HalfEdgeMeshConnection::BorderIndex i) {
         // Do nothing
     }
 
@@ -214,14 +214,14 @@ struct MembraneMeshAttribute {
     static void init(MeshType& mesh, const AttributeInitializerInfo& info) {
         const MetaAttribute& meta = mesh.metaAttribute();
         for(size_t i = 0; i < mesh.getVertices().size(); ++i) {
-            mesh.attribute(MeshType::VertexIndex{i}).vertex = std::make_unique<Vertex>(
+            mesh.attribute(HalfEdgeMeshConnection::VertexIndex{i}).vertex = std::make_unique<Vertex>(
                 info.vertexCoordinateList[i], i);
         }
         for(size_t i = 0; i < mesh.getEdges().size(); ++i) {
-            mesh.attribute(MeshType::EdgeIndex{i}).edge.reset(meta.s->template addTrackable<Edge>(meta.m, i));
+            mesh.attribute(HalfEdgeMeshConnection::EdgeIndex{i}).edge.reset(meta.s->template addTrackable<Edge>(meta.m, i));
         }
         for(size_t i = 0; i < mesh.getTriangles().size(); ++i) {
-            mesh.attribute(MeshType::TriangleIndex{i}).triangle.reset(meta.s->template addTrackable<Triangle>(meta.m, i));
+            mesh.attribute(HalfEdgeMeshConnection::TriangleIndex{i}).triangle.reset(meta.s->template addTrackable<Triangle>(meta.m, i));
         }
     }
     // Extraction can be done multiple times without allocating/deallocating
@@ -233,7 +233,7 @@ struct MembraneMeshAttribute {
         info.vertexCoordinateList.reserve(numVertices);
         for(size_t i = 0; i < numVertices; ++i) {
             info.vertexCoordinateList.push_back(
-                static_cast<CoordinateType>(mesh.attribute(MeshType::VertexIndex{i}).vertex->coord));
+                static_cast<CoordinateType>(mesh.attribute(HalfEdgeMeshConnection::VertexIndex{i}).vertex->coord));
         }
 
         return info;

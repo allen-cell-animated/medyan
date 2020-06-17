@@ -190,6 +190,79 @@ public:
 
 };
 
+
+struct HalfEdgeMeshConnection {
+
+    enum class PolygonType { triangle, border };
+
+    // Forward declarations
+    struct VertexConnection;
+    struct HalfEdgeConnection;
+    struct EdgeConnection;
+    struct TriangleConnection;
+    struct BorderConnection;
+
+    // Wrapper around size_t type, to enhance safety
+    template< typename Element >
+    struct IndexType {
+        std::size_t index = 0;
+
+        // Modifier
+        IndexType& operator++() { ++index; return *this; }
+
+        // Comparison
+        bool operator==(IndexType rhs) const { return index == rhs.index; }
+        bool operator!=(IndexType rhs) const { return !(*this == rhs); }
+        bool operator<(std::size_t rhs) const { return index < rhs; }
+        bool operator<(IndexType   rhs) const { return index < rhs.index; }
+    };
+    using VertexIndex   = IndexType< VertexConnection >;
+    using HalfEdgeIndex = IndexType< HalfEdgeConnection >;
+    using EdgeIndex     = IndexType< EdgeConnection >;
+    using TriangleIndex = IndexType< TriangleConnection >;
+    using BorderIndex   = IndexType< BorderConnection >;
+
+    // The elements should be movable.
+    struct VertexConnection {
+        // Only one HalfEdge targeting the vertex is needed.
+        HalfEdgeIndex halfEdgeIndex;
+
+        // Number of neighbors
+        size_t degree;
+
+        // 0: vertex is inside, 1: vertex is on the border, >=2: pathological
+        std::uint_fast8_t numTargetingBorderHalfEdges;
+    };
+    struct HalfEdgeConnection {
+
+        PolygonType polygonType;
+        size_t      polygonIndex;
+        VertexIndex   targetVertexIndex;
+        HalfEdgeIndex oppositeHalfEdgeIndex;
+        HalfEdgeIndex nextHalfEdgeIndex;
+        HalfEdgeIndex prevHalfEdgeIndex;
+        EdgeIndex     edgeIndex;
+    };
+    struct EdgeConnection {
+        // Only one HalfEdge is needed.
+        HalfEdgeIndex halfEdgeIndex;
+
+        // 0: edge is inside, 1: edge is on the border, 2: pathological
+        std::uint_fast8_t numBorderHalfEdges;
+    };
+    // A triangle is a closed polygon which has exactly 3 half edges.
+    struct TriangleConnection {
+        // Only one HalfEdge is needed.
+        HalfEdgeIndex halfEdgeIndex;
+    };
+    // A border is a closed polygon which might be non-planar, and should have
+    // more than 2 half edges.
+    struct BorderConnection {
+        // Only one half edge is needed
+        HalfEdgeIndex halfEdgeIndex;
+    };
+};
+
 // The Attribute class must implement
 //   - Type VertexAttribute
 //     - void setIndex(size_t)
@@ -214,13 +287,6 @@ public:
 template< typename Attribute > class HalfEdgeMesh {
 public:
 
-    // Forward declarations
-    struct Vertex;
-    struct HalfEdge;
-    struct Edge;
-    struct Triangle;
-    struct Border;
-
     using AttributeType = Attribute;
     using MeshType = HalfEdgeMesh;
 
@@ -231,71 +297,38 @@ public:
     using BorderAttribute   = typename Attribute::BorderAttribute;
     using MetaAttribute     = typename Attribute::MetaAttribute;
 
-    // Wrapper around size_t type, to enhance safety
-    template< typename Element >
-    struct IndexType {
-        std::size_t index = 0;
+    using PolygonType   = HalfEdgeMeshConnection::PolygonType;
 
-        // Modifier
-        IndexType& operator++() { ++index; return *this; }
-
-        // Comparison
-        bool operator==(IndexType rhs) const { return index == rhs.index; }
-        bool operator!=(IndexType rhs) const { return !(*this == rhs); }
-        bool operator<(std::size_t rhs) const { return index < rhs; }
-        bool operator<(IndexType   rhs) const { return index < rhs.index; }
-    };
-    using VertexIndex   = IndexType< Vertex >;
-    using HalfEdgeIndex = IndexType< HalfEdge >;
-    using EdgeIndex     = IndexType< Edge >;
-    using TriangleIndex = IndexType< Triangle >;
-    using BorderIndex   = IndexType< Border >;
+    using VertexIndex   = HalfEdgeMeshConnection::VertexIndex;
+    using HalfEdgeIndex = HalfEdgeMeshConnection::HalfEdgeIndex;
+    using EdgeIndex     = HalfEdgeMeshConnection::EdgeIndex;
+    using TriangleIndex = HalfEdgeMeshConnection::TriangleIndex;
+    using BorderIndex   = HalfEdgeMeshConnection::BorderIndex;
 
     // The elements should be movable.
-    struct Vertex {
-        // Only one HalfEdge targeting the vertex is needed.
-        HalfEdgeIndex halfEdgeIndex;
-
-        // Number of neighbors
-        size_t degree;
-
-        // 0: vertex is inside, 1: vertex is on the border, >=2: pathological
-        std::uint_fast8_t numTargetingBorderHalfEdges;
+    struct Vertex : HalfEdgeMeshConnection::VertexConnection {
+        using ConnectionType = HalfEdgeMeshConnection::VertexConnection;
 
         VertexAttribute attr;
     };
-    struct HalfEdge {
-        enum class PolygonType { triangle, border };
+    struct HalfEdge : HalfEdgeMeshConnection::HalfEdgeConnection {
+        using ConnectionType = HalfEdgeMeshConnection::HalfEdgeConnection;
 
-        PolygonType polygonType;
-        size_t      polygonIndex;
-        VertexIndex   targetVertexIndex;
-        HalfEdgeIndex oppositeHalfEdgeIndex;
-        HalfEdgeIndex nextHalfEdgeIndex;
-        HalfEdgeIndex prevHalfEdgeIndex;
-        EdgeIndex     edgeIndex;
         HalfEdgeAttribute attr;
     };
-    struct Edge {
-        // Only one HalfEdge is needed.
-        HalfEdgeIndex halfEdgeIndex;
-
-        // 0: edge is inside, 1: edge is on the border, 2: pathological
-        std::uint_fast8_t numBorderHalfEdges;
+    struct Edge : HalfEdgeMeshConnection::EdgeConnection {
+        using ConnectionType = HalfEdgeMeshConnection::EdgeConnection;
 
         EdgeAttribute attr;
     };
-    // A triangle is a closed polygon which has exactly 3 half edges.
-    struct Triangle {
-        // Only one HalfEdge is needed.
-        HalfEdgeIndex halfEdgeIndex;
+    struct Triangle : HalfEdgeMeshConnection::TriangleConnection {
+        using ConnectionType = HalfEdgeMeshConnection::TriangleConnection;
+
         TriangleAttribute attr;
     };
-    // A border is a closed polygon which might be non-planar, and should have
-    // more than 2 half edges.
-    struct Border {
-        // Only one half edge is needed
-        HalfEdgeIndex halfEdgeIndex;
+    struct Border : HalfEdgeMeshConnection::BorderConnection {
+        using ConnectionType = HalfEdgeMeshConnection::BorderConnection;
+
         BorderAttribute attr;
     };
 
@@ -429,28 +462,31 @@ private:
     }
 
     template< typename Element > auto removeElement_(size_t index) {
-        Attribute::removeElement(*this, IndexType< Element >{index});
+        using IT = HalfEdgeMeshConnection::IndexType< Element::ConnectionType >;
+        Attribute::removeElement(*this, IT {index});
         return getElements_<Element>().erase(
             index,
             [this](size_t from, size_t to) {
-                retargetElement_(IndexType< Element >{from}, IndexType< Element >{to});
+                retargetElement_(IT {from}, IT {to});
             }
         );
     }
     template< typename Element, size_t n > auto removeElements_(const std::array< size_t, n >& indices) {
-        for(size_t i : indices) Attribute::removeElement(*this, IndexType< Element >{i});
+        using IT = HalfEdgeMeshConnection::IndexType< Element::ConnectionType >;
+        for(size_t i : indices) Attribute::removeElement(*this, IT {i});
         return getElements_<Element>().erase(
             indices,
             [this](size_t from, size_t to) {
-                retargetElement_(IndexType< Element >{from}, IndexType< Element >{to});
+                retargetElement_(IT {from}, IT {to});
             }
         );
     }
 
     template< typename Element > void clearElement_() {
+        using IT = HalfEdgeMeshConnection::IndexType< Element::ConnectionType >;
         auto& elements = getElements_< Element >();
-        for(size_t i = 0; i < elements.size(); ++i)
-            Attribute::template removeElement<Element>(*this, i);
+        for(IT i {0}; i < elements.size(); ++i)
+            Attribute::removeElement(*this, i);
         elements.getValue().clear();
     }
 
