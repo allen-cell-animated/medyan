@@ -62,7 +62,6 @@ jobs:
         $MEDYAN_BOOST_INSTALL_MODE = "manual"
         $MEDYAN_BOOST_INCLUDE_DIR = "$Env:BOOST_ROOT_1_72_0\include"
         $MEDYAN_BOOST_LIBRARY_DIR = "$Env:BOOST_ROOT_1_72_0\lib"
-        $MEDYAN_BOOST_LIBRARIES = "boost_system"
         .\conf.ps1
     - name: Build with MSBuild
       working-directory: ${{ github.workspace }}

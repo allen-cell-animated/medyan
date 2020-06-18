@@ -31,7 +31,7 @@ Among all the external libraries required by `medyan`, `boost` is treated a bit 
 | `MEDYAN_BOOST_INSTALL_MODE` | behavior|
 |-----------------------------|---------|
 | *not set* (default) | Do a fresh boost install. |
-| `manual`            | Manually configure the existing boost library. Additionally, `MEDYAN_BOOST_INCLUDE_DIR`, `MEDYAN_BOOST_LIBRARY_DIR` and `MEDYAN_BOOST_LIBRARIES` are required to locate the boost library. |
+| `manual`            | Manually configure the existing boost library. Additionally, `MEDYAN_BOOST_INCLUDE_DIR` and `MEDYAN_BOOST_LIBRARY_DIR` are required to locate the boost library. |
 | `find`              | Automatically detect existing boost library on the computer using CMake. The build would fail if CMake cannot find boost. |
 
 On MacOS, one can also change the target build system of the CMake from `make` to Xcode project, by setting `MEDYAN_BUILD_TOOL` to be `"Xcode"`.
@@ -60,7 +60,6 @@ And an Xcode project file would be in the `build` directory.
 > $MEDYAN_BOOST_INSTALL_MODE = "manual"
 > $MEDYAN_BOOST_INCLUDE_DIR = "path\to\boost\include"
 > $MEDYAN_BOOST_LIBRARY_DIR = "path\to\boost\lib"
-> $MEDYAN_BOOST_LIBRARIES = "some_boost_lib_1;some_boost_lib_2"
 > .\conf.ps1
 ```
 
