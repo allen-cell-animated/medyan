@@ -73,6 +73,7 @@ public:
     
     /// Copying is not allowed
     SpeciesPtrContainerVector(const SpeciesPtrContainerVector &) = delete;
+    SpeciesPtrContainerVector(SpeciesPtrContainerVector &&)      = default;
     
     /// The equality operator is not allowed
     SpeciesPtrContainerVector& operator=(SpeciesPtrContainerVector &) = delete;
