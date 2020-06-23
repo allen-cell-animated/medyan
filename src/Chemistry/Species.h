@@ -185,9 +185,8 @@ protected: //Variables
         _molecule=SpeciesNamesDB::stringToInt("");
         _rspecies = new RSpeciesReg(*this);
     }
-    
-    /// The constructor for this base class of Species should not be called directly -
-    /// only by the concrete subclasses
+
+public:
     /// @param name - a string for the Species name associated with this Species.
     /// For example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
@@ -201,7 +200,7 @@ protected: //Variables
         //create the appropriate rspecies
         _rspecies = RSpeciesFactory::createRSpecies(*this, n, ulim, type);
     }
-public:
+
     /// Copy constructor
     /// @note The associated RSpecies subpart is not copied, but a new one is created.
     /// This means that the copied destination Species won't be included in any Reaction
