@@ -64,7 +64,7 @@ public:
     }
 #endif
 
-    virtual ~Reaction() noexcept override {
+    virtual ~ReactionDy() noexcept override {
         unregisterInRSpecies_();
     }
 
@@ -194,7 +194,7 @@ public:
 #ifdef TRACK_DEPENDENTS
         for(unsigned short i = 0; i < numReactants_; ++i)
         {
-            auto& rs = rspecies_[i];
+            auto& rs = *rspecies_[i];
             for(auto r : rs.reactantReactions()) {
                 r->unregisterDependent(this);
             }
