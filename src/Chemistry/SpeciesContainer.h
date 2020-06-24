@@ -77,6 +77,7 @@ public:
     
     /// The equality operator is not allowed
     SpeciesPtrContainerVector& operator=(SpeciesPtrContainerVector &) = delete;
+    SpeciesPtrContainerVector& operator=(SpeciesPtrContainerVector &&) = default;
     
     /// Empty the container. All memories are freed.
     virtual void clear() override {_species.clear();}
