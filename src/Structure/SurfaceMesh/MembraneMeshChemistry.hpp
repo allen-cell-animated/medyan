@@ -107,6 +107,30 @@ inline void setSpeciesAndReactions(
     }
 }
 
+// Auxiliary function to do unified operations on all reactions in mesh
+//
+// F has the following signature: void(ReactionDy &)
+template< typename F >
+inline void forEachReactionInMesh(
+    MembraneMeshAttribute::MeshType& mesh,
+    F &&                             f
+) {
+    using MT = MembraneMeshAttribute::MeshType;
+
+    // General reactions
+    for(MT::VertexIndex vi {0}; vi < mesh.numVertices(); ++vi) {
+        for(auto& pr : mesh.attribute(vi).vertex->cVertex.reactions) {
+            f(*pr);
+        }
+    }
+
+    // Diffusion reactions
+    for(MT::HalfEdgeIndex hei {0}; hei < mesh.numHalfEdges(); ++hei) {
+        for(auto& pr : mesh.attribute(hei).halfEdge->cHalfEdge.diffusionReactions) {
+            f(*pr);
+        }
+    }
+}
 
 } // namespace medyan
 

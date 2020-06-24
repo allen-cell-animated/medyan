@@ -18,6 +18,8 @@
 
 #include "Compartment.h"
 #include "ChemSimImpl.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/MembraneMeshChemistry.hpp"
 
 
 //FORWARD DECLARATIONS
@@ -67,7 +69,28 @@ public:
     void initialize(string& chemAlgorithm, ChemistryData& chem, DissipationTracker* dt);
 
     void initializerestart(floatingpoint restartime, floatingpoint _minimizationTime);
-    
+
+    // Things to be done before chemistry simulation
+    void beforeRun() const {
+        // Link all membrane mesh reactions and activate them
+        for(auto m : Membrane::getMembranes()) {
+            medyan::forEachReactionInMesh(m->getMesh(), [this](ReactionDy& r) {
+                _chemSim->addReaction(&r);
+                r.activateReaction();
+            });
+        }
+    }
+    // Things to be done after chemistry simulation
+    void afterRun() const {
+        // Unlink all membrane mesh reactions
+        for(auto m : Membrane::getMembranes()) {
+            medyan::forEachReactionInMesh(m->getMesh(), [this](ReactionDy& r) {
+                r.passivateReaction();
+                _chemSim->removeReaction(&r);
+            });
+        }
+    }
+
     ///Run chemistry for a given amount of time
     bool run(floatingpoint time);
     

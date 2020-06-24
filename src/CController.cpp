@@ -93,20 +93,32 @@ void CController::initializerestart(floatingpoint time, floatingpoint _minimizat
 
 bool CController::run(floatingpoint time) {
     
+    beforeRun();
+
     //update copy numbers
     _chemManager->updateCopyNumbers();
     
     //run the steps
-    return _chemSim->run(time);
+    const auto res = _chemSim->run(time);
+
+    afterRun();
+
+    return res;
 }
 
 bool CController::runSteps(int steps) {
     
+    beforeRun();
+
     //update copy numbers
     _chemManager->updateCopyNumbers();
     
     //run the steps
-    return _chemSim->runSteps(steps);
+    const auto res = _chemSim->runSteps(steps);
+
+    afterRun();
+
+    return res;
 }
 
 bool CController::crosschecktau(){
