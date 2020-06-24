@@ -17,7 +17,7 @@ inline void setSpeciesForVertex(
 
     vs.clear();
     for(const auto& name : info.diffusingSpeciesNames) {
-        vs.addSpecies(name, 0, max_ulim, RSpeciesType::REG);
+        vs.addSpecies< Species >(name, 0, max_ulim, RSpeciesType::REG);
     }
 }
 
