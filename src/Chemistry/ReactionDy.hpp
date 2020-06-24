@@ -170,7 +170,7 @@ public:
     /// Implementation of activateReactionUnconditional()
     virtual void activateReactionUnconditionalImpl() override {
 #ifdef TRACK_DEPENDENTS
-        for(unsigned short i; i < numReactants_; ++i)
+        for(unsigned short i = 0; i < numReactants_; ++i)
         {
             auto& rs = *rspecies_[i];
             for(auto r : rs.reactantReactions()) {
