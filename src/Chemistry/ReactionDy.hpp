@@ -198,7 +198,7 @@ public:
             for(auto r : rs.reactantReactions()) {
                 r->unregisterDependent(this);
             }
-            for(auto r = rs.productReactions()) {
+            for(auto r : rs.productReactions()) {
                 r->unregisterDependent(this);
             }
         }
