@@ -2,21 +2,27 @@
 #define MEDYAN_Structure_SurfaceMesh_Vertex_hpp
 
 #include <memory> // unique_ptr
+#include <vector>
 
+#include "Chemistry/ReactionDy.hpp"
+#include "Chemistry/SpeciesContainer.h"
 #include "MathFunctions.h"
 #include "Structure/Database.h"
 #include "Structure/SurfaceMesh/MVoronoiCell.h"
 
-// Forward declarations
-class Membrane;
+// CVertex represents a cell around a vertex related to chemistry, and owns
+//   - all the diffusing species in the cell
+//   - all reactions with only diffusing species in this cell
+//
+// Note:
+//   - diffusion reactions between the cells will be stored in CHalfEdge
+struct CVertex {
+    using ReactionContainer = std::vector< std::unique_ptr< ReactionDy > >;
 
-/******************************************************************************
+    SpeciesPtrContainerVector species;
+    ReactionContainer         reactions;
+};
 
-The vertex class extends bead,
-but it is exclusively used in 2D surface meshwork, and contains
-information of its neighbors.
-
-******************************************************************************/
 
 class Vertex :
     public Database< Vertex, false >
@@ -49,6 +55,7 @@ public:
     CoordinateType force;
 
     MVoronoiCell mVertex; // vertex mechanical information
+    CVertex      cVertex; // vertex chemical information
 
 };
 

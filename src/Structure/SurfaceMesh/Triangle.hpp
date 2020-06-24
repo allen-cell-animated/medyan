@@ -35,7 +35,7 @@ private:
     size_t _topoIndex; // Index in the meshwork topology.
 
 
-    void updateCoordinate(); // helper function to update coordiante of this triangle
+    void updateCoordinate(); // helper function to update coordinate of this triangle
 
     cell_list::CellListElementUser< Triangle, Compartment > _cellElement;
 

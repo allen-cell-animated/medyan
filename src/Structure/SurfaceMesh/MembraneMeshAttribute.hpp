@@ -14,6 +14,7 @@
 #include "Structure/SurfaceMesh/AdaptiveMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/Edge.hpp"
 #include "Structure/SurfaceMesh/GeometricMeshAttribute.hpp"
+#include "Structure/SurfaceMesh/HalfEdge.hpp"
 #include "Structure/SurfaceMesh/SurfaceMesh.hpp"
 #include "Structure/SurfaceMesh/Triangle.hpp"
 #include "Structure/SurfaceMesh/Vertex.hpp"
@@ -93,6 +94,8 @@ struct MembraneMeshAttribute {
         }
     };
     struct HalfEdgeAttribute {
+        std::unique_ptr< medyan::HalfEdge > halfEdge;
+
         GHalfEdge gHalfEdge;
         GHalfEdge gHalfEdgeS; // stretched version (temporary)
         AdaptiveMeshAttribute::HalfEdgeAttribute aHalfEdge;
@@ -184,7 +187,7 @@ struct MembraneMeshAttribute {
             mesh.metaAttribute().s->addTrackable<Edge>(mesh.metaAttribute().m, e.index));
     }
     static void newHalfEdge(MeshType& mesh, HalfEdgeMeshConnection::HalfEdgeIndex he) {
-        // Do nothing
+        mesh.attribute(he).halfEdge = std::make_unique< medyan::HalfEdge >();
     }
     static void newTriangle(MeshType& mesh, HalfEdgeMeshConnection::TriangleIndex t) {
         mesh.attribute(t).triangle.reset(
