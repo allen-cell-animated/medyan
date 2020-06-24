@@ -130,7 +130,7 @@ public:
      * factors do not apply to all reactions.*/
 
     enum RateMulFactorType {
-        VOLUMEFACTOR, AreaDiffusing, MECHANOCHEMICALFACTOR, MOTORWALKCONSTRAINTFACTOR,
+        VOLUMEFACTOR, diffusionShape, MECHANOCHEMICALFACTOR, MOTORWALKCONSTRAINTFACTOR,
         RESTARTPHASESWITCH, MANUALRATECHANGEFACTOR1, RATEMULFACTSIZE
     };
     array<float, RATEMULFACTSIZE> _ratemulfactors;

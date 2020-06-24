@@ -2076,14 +2076,14 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C, bo
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
 
             ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour}, diff_rate, false, volumeFrac);
-            R->setRateMulFactor(scaleFactor, ReactionBase::AreaDiffusing);
+            R->setRateMulFactor(scaleFactor, ReactionBase::diffusionShape);
             this->addDiffusionReaction(R);
             rxns.push_back(R);
 
             if(!outwardOnly) {
                 // Generate inward diffusion reaction
                 ReactionBase* R = new DiffusionReaction({sp_neighbour, sp_this.get()}, diff_rate, false, C->getVolumeFrac());
-                R->setRateMulFactor(scaleFactor, ReactionBase::AreaDiffusing);
+                R->setRateMulFactor(scaleFactor, ReactionBase::diffusionShape);
                 C->addDiffusionReaction(R);
                 rxns.push_back(R);
             }
@@ -2339,7 +2339,7 @@ void Compartment::updateActivation(ChemSim* chem, ActivateReason reason) {
                     if(sp_this.get() == &r->rspecies()[0]->getSpecies() && sp_neighbor == &r->rspecies()[1]->getSpecies()) {
                         r->setVolumeFrac(volumeFrac);
                         r->recalcRateVolumeFactor();
-                        r->setRateMulFactor(scaleFactor, ReactionBase::AreaDiffusing);
+                        r->setRateMulFactor(scaleFactor, ReactionBase::diffusionShape);
                     }
                 // We also update inward reaction rate here to ensure that neighbors are always on the same page.
                 // Update inward reaction rate
@@ -2347,7 +2347,7 @@ void Compartment::updateActivation(ChemSim* chem, ActivateReason reason) {
                     if(sp_this.get() == &r->rspecies()[1]->getSpecies() && sp_neighbor == &r->rspecies()[0]->getSpecies()) {
                         r->setVolumeFrac(c->getVolumeFrac());
                         r->recalcRateVolumeFactor();
-                        r->setRateMulFactor(scaleFactor, ReactionBase::AreaDiffusing);
+                        r->setRateMulFactor(scaleFactor, ReactionBase::diffusionShape);
                     }
             }
 

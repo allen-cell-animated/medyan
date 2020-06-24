@@ -786,6 +786,7 @@ inline void updateGeometryValueForSystem(MembraneMeshAttribute::MeshType& mesh) 
 
         // clearing
         vag.pseudoUnitNormal = {0.0, 0.0, 0.0};
+        vag.astar = 0.0;
 
         mesh.forEachHalfEdgeTargetingVertex(vi, [&](MT::HalfEdgeIndex hei) {
             if(mesh.isInTriangle(hei)) {

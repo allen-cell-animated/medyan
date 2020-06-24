@@ -55,6 +55,24 @@ inline void setInternalReactionsForVertex(
     }
 }
 
+// Preconditions:
+//   - Species must have been set in the vertex
+//   - Reactions must have been set in the vertex
+//   - 1-ring area around the vertex is updated
+inline void setInternalReactionRatesForVertex(
+    MembraneMeshAttribute::MeshType&             mesh,
+    MembraneMeshAttribute::MeshType::VertexIndex vi
+) {
+    using MT = MembraneMeshAttribute::MeshType;
+
+    const auto& va = mesh.attribute(vi);
+
+    for(auto& r : va.vertex->cVertex.reactions) {
+        // Using "volume frac" as volume
+        r->setVolumeFrac(va.gVertex.astar);
+    }
+}
+
 // Precondition: Species must have been set in the vertices
 inline void setDiffusionForHalfEdge(
     MembraneMeshAttribute::MeshType&               mesh,
@@ -77,6 +95,40 @@ inline void setDiffusionForHalfEdge(
             // where shapeFactor = 0.5 * (cot α + cot β)
             -1
         ));
+    }
+}
+
+// Preconditions:
+//   - Species must have been set in the vertices
+//   - Reactions must have been set in the half edge
+//   - 1-ring areas around the vertices are updated
+//   - cot θ are set in neighbor triangles
+inline void setDiffusionRatesForHalfEdge(
+    MembraneMeshAttribute::MeshType&               mesh,
+    MembraneMeshAttribute::MeshType::HalfEdgeIndex hei
+) {
+    using MT = MembraneMeshAttribute::MeshType;
+
+    const auto hei_o = mesh.opposite(hei);
+    const auto vi    = mesh.target(hei_o);
+
+    double sumCotTheta = 0.0;
+    if(mesh.isInTriangle(hei)) {
+        const auto hei_n = mesh.next(hei);
+        sumCotTheta += mesh.attribute(hei_n).gHalfEdge.cotTheta;
+    }
+    if(mesh.isInTriangle(hei_o)) {
+        const auto hei_on = mesh.next(hei_o);
+        sumCotTheta += mesh.attribute(hei_on).gHalfEdge.cotTheta;
+    }
+
+    for(auto& r : mesh.attribute(hei).halfEdge->cHalfEdge.diffusionReactions) {
+        // Using "volume frac" as volume
+        r->setVolumeFrac(mesh.attribute(vi).gVertex.astar);
+        r->setRateMulFactor(
+            std::max(0.5 * sumCotTheta, 0.0),
+            ReactionBase::RateMulFactorType::diffusionShape
+        );
     }
 }
 
@@ -104,6 +156,28 @@ inline void setSpeciesAndReactions(
     // Diffusion reactions
     for(MT::HalfEdgeIndex hei {0}; hei < mesh.numHalfEdges(); ++hei) {
         setDiffusionForHalfEdge(mesh, hei, info);
+    }
+}
+
+// Preconditions:
+//   - Species must have been set in all vertices
+//   - Reactions must have been set in all half edges
+//   - 1-ring areas around all vertices are updated
+//   - cot θ are set in all triangles
+inline void setReactionRates(
+    MembraneMeshAttribute::MeshType&  mesh
+) {
+    using namespace std;
+    using MT = MembraneMeshAttribute::MeshType;
+
+    // General reactions
+    for(MT::VertexIndex vi {0}; vi < mesh.numVertices(); ++vi) {
+        setInternalReactionRatesForVertex(mesh, vi);
+    }
+
+    // Diffusion reactions
+    for(MT::HalfEdgeIndex hei {0}; hei < mesh.numHalfEdges(); ++hei) {
+        setDiffusionRatesForHalfEdge(mesh, hei);
     }
 }
 

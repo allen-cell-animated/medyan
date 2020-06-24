@@ -515,6 +515,25 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     membraneAdaptiveRemesh();
     updatePositions();
 
+    // Add membrane surface chemistry
+    {
+        MembraneMeshChemistryInfo memChemInfo {
+            // names
+            {"mem-diffu-test-a", "mem-diffu-test-b"},
+            // diffusion
+            { { 0, 1.0 }, { 1, 0.5 } },
+            // internal reactions
+            {
+                { {}, {0}, 0.055 },
+                { {}, {1}, 0.062 },
+                { {0, 1, 1}, {1, 1, 1}, 1.0 }
+            }
+        };
+        for(auto m : Membrane::getMembranes()) {
+            medyan::setSpeciesAndReactions(m->getMesh(), memChemInfo);
+        }
+    }
+
     // Deactivate all the compartments outside membrane, and mark boundaries as interesting
     for(auto c : _subSystem.getCompartmentGrid()->getCompartments()) {
         if(!c->getTriangles().empty()) {
@@ -1195,6 +1214,10 @@ void Controller::updateReactionRates() {
 	for(auto r : Reactable::getReactableList()){
 		r->updateReactionRates();
 		}
+
+    for(auto m : Membrane::getMembranes()) {
+        medyan::setReactionRates(m->getMesh());
+    }
 }
 #endif
 
