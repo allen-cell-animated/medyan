@@ -10,6 +10,49 @@
 
 namespace medyan {
 
+//-----------------------------------------------------------------------------
+// Types
+//
+//     enum class SurfaceCurvaturePolicy
+//
+//-----------------------------------------------------------------------------
+// Functions
+//
+//   - Index caching
+//
+//     void cacheIndicesForFF(mesh, starting index)
+//     void invalidateIndexCacheForFF(mesh)
+//     void assertValidIndexCacheForFF(mesh)
+//
+//   - Index inquiry
+//
+//     array vertexIndices(mesh, triangle)
+//     array vertexIndices(mesh, triangle index)
+//
+//   - Individual element geometry
+//     (c0, c1, c2 are coordinates of triangle vertices)
+//
+//     double area(c0, c1, c2)
+//     double area(mesh, triangle index)
+//     tuple  areaAndDerivative(c0, c1, c2)
+//     double coneVolume(c0, c1, c2)
+//     double coneVolume(mesh, triangle index)
+//     void   adaptiveComputeTriangleNormal(mesh, triangle index)
+//     void   adaptiveComputeAngle(mesh, half edge index)
+//     void   adaptiveComputeVertexNormal(mesh, vertex index)
+//
+//   - All elements geometry
+//
+//     void updateGeometryValue(mesh, coord, curvature policy)
+//     void updateGeometryValueWithDerivative(mesh, coord, curvature policy)
+//     void updateGeometryValueForSystem(mesh)
+//
+//   - Other auxiliary functions
+//
+//     double signedDistance(mesh)
+//     bool   contains(mesh)
+//-----------------------------------------------------------------------------
+
 enum class SurfaceCurvaturePolicy {
     // Computes the signed curvature.
     //
@@ -658,8 +701,11 @@ inline void updateGeometryValueWithDerivative(
 
 // This function updates geometries necessary for MEDYAN system. Currently
 // the system needs
-//   - (pseudo) unit normals
-//   - triangle areas
+//   - (pseudo) unit normals          -- compartment slicing and signed distance
+//   - triangle areas                 -- compartment slicing
+//   - vertex 1-ring areas            -- membrane chemistry
+//   - cot θ                          -- membrane surface diffusion rate
+//
 // This function uses cached indexing to enhance performance, so a valid
 // cache is needed in this function.
 inline void updateGeometryValueForSystem(MembraneMeshAttribute::MeshType& mesh) {
@@ -673,6 +719,21 @@ inline void updateGeometryValueForSystem(MembraneMeshAttribute::MeshType& mesh) 
     const size_t numVertices = vertices.size();
     const size_t numEdges = edges.size();
     const size_t numTriangles = triangles.size();
+
+    // Calculate angles stored in half edges
+    for(MT::HalfEdgeIndex hei {0}; hei < mesh.numHalfEdges(); ++hei) {
+        // The angle is (c0, c1, c2)
+        auto& heag = mesh.attribute(hei).gHalfEdge;
+        const auto& c0 = mesh.attribute(mesh.target(mesh.prev(hei))).vertex->coord;
+        const auto& c1 = mesh.attribute(mesh.target(hei           )).vertex->coord;
+        const auto& c2 = mesh.attribute(mesh.target(mesh.next(hei))).vertex->coord;
+
+        const auto r10 = c0 - c1;
+        const auto r12 = c2 - c1;
+        const auto cp = cross(r10, r12);
+        const auto dp =   dot(r10, r12);
+        heag.cotTheta = dp / magnitude(cp);
+    }
 
     // Calculate triangle unit normal and area
     for(MT::TriangleIndex ti {}; ti < numTriangles; ++ti) {
@@ -719,7 +780,7 @@ inline void updateGeometryValueForSystem(MembraneMeshAttribute::MeshType& mesh) 
     const auto& cvt = mesh.metaAttribute().cachedVertexTopo;
 
     // Calculate vertex pseudo unit normal
-    for(MT::VertexIndex vi {}; vi < numVertices; ++vi) {
+    for(MT::VertexIndex vi {0}; vi < numVertices; ++vi) {
         auto& va = mesh.attribute(vi);
         auto& vag = va.gVertex;
 
@@ -733,6 +794,8 @@ inline void updateGeometryValueForSystem(MembraneMeshAttribute::MeshType& mesh) 
                 const auto theta = mesh.attribute(hei).gHalfEdge.theta;
 
                 vag.pseudoUnitNormal += theta * mesh.attribute(ti0).gTriangle.unitNormal;
+
+                vag.astar += mesh.attribute(ti0).gTriangle.area;
             }
         });
 

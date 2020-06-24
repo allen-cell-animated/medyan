@@ -30,7 +30,7 @@ struct GHalfEdge {
     mathfunc::Vec3d dNeighborAstar; // Derivative (on target vertex) of 1-ring area of source vertex
     mathfunc::Vec3d dNeighborCurv; // Derivative of curv of vertex of source on target
     mathfunc::Vec3d dNeighborCurv2; // Derivative of curv2 of vertex of source on target
-    
+
 };
 
 struct GEdge {
