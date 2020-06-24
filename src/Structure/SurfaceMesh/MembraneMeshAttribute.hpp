@@ -20,6 +20,40 @@
 #include "Structure/SurfaceMesh/Vertex.hpp"
 #include "Util/Io/Log.hpp"
 
+// Forward declarations
+class Membrane;
+
+// Membrane mesh chemistry data
+struct MembraneMeshChemistryInfo {
+    // Note:
+    //   - indices in this struct must correspond to the actual index as is in
+    //     the diffusing species names vector
+
+    struct DiffusionInfo {
+        unsigned speciesIndex = 0;
+
+        // Diffusion coeffecient, with dimension L^2 T^-1
+        double   diffusionCoeff = 0;
+    };
+    struct InternalReactionInfo {
+        std::vector< unsigned > reactantSpeciesIndices;
+        std::vector< unsigned > productSpeciesIndices;
+
+        // Rate constant, with dimension L^(2*(numReactants - 1)) T^-1
+        double rateConstant = 0;
+    };
+
+    // diffusing species
+    std::vector< std::string > diffusingSpeciesNames;
+
+    // diffusion reactions
+    std::vector< DiffusionInfo > diffusion;
+
+    // Internal reactions involving species
+    std::vector< InternalReactionInfo > internalReactions;
+};
+
+
 /******************************************************************************
 Implements the attributes of the meshwork used by the membrane, mainly
 geometric attribute and adaptive mesh attributes.
@@ -151,6 +185,10 @@ struct MembraneMeshAttribute {
         Membrane *m;
 
         VertexSystem vertexSystem = VertexSystem::material;
+
+        // Chemistry information
+        //-----------------------------
+        MembraneMeshChemistryInfo chemInfo;
 
         // Cache related
         //-----------------------------

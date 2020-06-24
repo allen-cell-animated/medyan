@@ -35,7 +35,7 @@ Until all criteria are met or maximum iterations reached
 #include "Structure/SurfaceMesh/AdaptiveMeshGeometryManager.hpp"
 #include "Structure/SurfaceMesh/AdaptiveMeshVertexRelocation.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "Structure/SurfaceMesh/MembraneMeshGeometry.hpp"
+#include "Structure/SurfaceMesh/MembraneMeshModifier.hpp"
 #include "Structure/SurfaceMesh/MeshTriangleQuality.hpp"
 
 namespace adaptive_mesh {
