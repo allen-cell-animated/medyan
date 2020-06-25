@@ -311,7 +311,7 @@ MinimizationResult PolakRibiere::minimize(
     floatingpoint curGrad = searchDirDotSearchDir();
     Ms_isminimizationstate = true;
     Ms_issafestate = false;
-    Ms_isminimizationstate = isForceBelowTol;
+    Ms_isminimizationstate = ! isForceBelowTol;
     bool ETOLexittstatus = false;
     //
 #ifdef DETAILEDOUTPUT
@@ -929,7 +929,7 @@ MinimizationResult PolakRibiere::minimize(
         tbegin = chrono::high_resolution_clock::now();
 #endif
         curGrad = newGrad;
-        Ms_isminimizationstate = isForceBelowTol;
+        Ms_isminimizationstate = ! isForceBelowTol;
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runs1b(tend - tbegin);

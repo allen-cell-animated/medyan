@@ -52,7 +52,7 @@ MinimizationResult FletcherRieves::minimize(
 
         int numIter = 0;
         while (/* Iteration criterion */  numIter < N &&
-               /* Gradient tolerance  */  isForceBelowTol) {
+               /* Gradient tolerance  */  ! isForceBelowTol) {
             numIter++;
             floatingpoint lambda, beta, newGrad;
 
