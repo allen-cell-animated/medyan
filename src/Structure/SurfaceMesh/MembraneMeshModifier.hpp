@@ -95,7 +95,7 @@ inline auto insertVertexOnEdge(
 inline auto collapseEdge(
     MembraneMeshAttribute::MeshType&               mesh,
     MembraneMeshAttribute::MeshType::EdgeIndex     ei,
-    const std::optional< MembraneMeshAttribute::CoordinateType >& newPos
+    std::optional< MembraneMeshAttribute::CoordinateType > newPos
 ) {
     using namespace std;
     using MT = MembraneMeshAttribute::MeshType;

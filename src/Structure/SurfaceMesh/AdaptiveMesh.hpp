@@ -563,7 +563,7 @@ public:
         );
 
         // Set attributes
-        mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](auto nhei) {
+        mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&mesh](auto nhei) {
             if(mesh.isInTriangle(nhei)) {
                 const auto nti = mesh.triangle(nhei);
                 medyan::adaptiveComputeTriangleNormal(mesh, nti);
@@ -575,7 +575,7 @@ public:
 
         medyan::adaptiveComputeVertexNormal(mesh, change.viTo);
 
-        mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](auto nhei) {
+        mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&mesh](auto nhei) {
             const auto nvi = mesh.target(mesh.opposite(nhei));
             medyan::adaptiveComputeVertexNormal(mesh, nvi);
         });
@@ -818,8 +818,8 @@ public:
                 // and try to fix them by vertex insertion/deletion operations.
 
                 countTopoModified = 0;
-                for(size_t ei = 0; ei < mesh.numEdges(); /* No increment here */) {
-                    const auto hei0 = mesh.getEdges()[ei].halfEdgeIndex;
+                for(typename Mesh::EdgeIndex ei {0}; ei < mesh.numEdges(); /* No increment here */) {
+                    const auto hei0 = mesh.halfEdge(ei);
                     const auto v0 = mesh.target(hei0);
                     const auto v1 = mesh.target(mesh.opposite(hei0));
 
@@ -827,12 +827,12 @@ public:
                     const CoordinateType c1 (mesh.attribute(v1).getCoordinate());
                     const double length2 = distance2(c0, c1);
 
-                    const double eqLength = mesh.attribute(typename Mesh::EdgeIndex{ei}).aEdge.eqLength;
+                    const double eqLength = mesh.attribute(ei).aEdge.eqLength;
                     const double eqLength2 = eqLength * eqLength;
 
                     if(length2 >= 2 * eqLength2) { // Too long
                         sizeMeasureSatisfied = false;
-                        if(_edgeSplitManager.trySplit(mesh, typename Mesh::EdgeIndex{ei}, _edgeFlipManager) == decltype(_edgeSplitManager)::State::success) {
+                        if(_edgeSplitManager.trySplit(mesh, ei, _edgeFlipManager) == decltype(_edgeSplitManager)::State::success) {
                             // Edge splitting happened. Will check edge ei again next round
                             ++countTopoModified;
                         }
@@ -840,7 +840,7 @@ public:
                             ++ei;
                     } else if(2 * length2 <= eqLength2) { // Too short
                         sizeMeasureSatisfied = false;
-                        if(edgeCollapseManager_.tryCollapse(mesh, typename Mesh::EdgeIndex{ei}) == decltype(edgeCollapseManager_)::State::success) {
+                        if(edgeCollapseManager_.tryCollapse(mesh, ei) == decltype(edgeCollapseManager_)::State::success) {
                             // Edge collapsing happened. The edge at ei will be different next round
                             ++countTopoModified;
                         }

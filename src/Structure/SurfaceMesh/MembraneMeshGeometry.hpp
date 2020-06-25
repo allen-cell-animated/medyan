@@ -779,8 +779,6 @@ inline void updateGeometryValueForSystem(MembraneMeshAttribute::MeshType& mesh) 
         }
     }
 
-    const auto& cvt = mesh.metaAttribute().cachedVertexTopo;
-
     // Calculate vertex pseudo unit normal
     for(MT::VertexIndex vi {0}; vi < numVertices; ++vi) {
         auto& va = mesh.attribute(vi);
