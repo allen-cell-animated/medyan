@@ -28,7 +28,7 @@ inline auto indicesToSpecies(
 ) {
     vector< Species* > vs(iri.size());
     for(unsigned i = 0; i < iri.size(); ++i) {
-        vs[i] = cv.species.findSpeciesByIndex(i);
+        vs[i] = cv.species.findSpeciesByIndex(iri[i]);
     }
     return vs;
 }

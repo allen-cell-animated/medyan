@@ -260,6 +260,10 @@ struct MembraneMeshAttribute {
             mesh.attribute(HalfEdgeMeshConnection::VertexIndex{i}).vertex = std::make_unique<Vertex>(
                 info.vertexCoordinateList[i], i);
         }
+        for(size_t i = 0; i < mesh.getHalfEdges().size(); ++i) {
+            mesh.attribute(HalfEdgeMeshConnection::HalfEdgeIndex{i}).halfEdge
+                = std::make_unique< medyan::HalfEdge >();
+        }
         for(size_t i = 0; i < mesh.getEdges().size(); ++i) {
             mesh.attribute(HalfEdgeMeshConnection::EdgeIndex{i}).edge.reset(
                 meta.s->template addTrackable<Edge>(meta.m, i));

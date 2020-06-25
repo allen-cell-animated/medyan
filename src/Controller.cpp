@@ -501,9 +501,10 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             it.triangleVertexIndexList
         );
     }
-    cout << "Done. " << membraneData.size() << " membranes created." << endl;
+    LOG(INFO) << "Done. " << membraneData.size() << " membranes created." << endl;
 
     // Create a region inside the membrane
+    LOG(INFO) << "Creating membrane regions...";
     _regionInMembrane = (
         membraneData.empty() ?
         make_unique<MembraneRegion<Membrane>>(_subSystem.getBoundary()) :
@@ -512,10 +513,12 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     _subSystem.setRegionInMembrane(_regionInMembrane.get());
 
     // Optimize the membrane
+    LOG(INFO) << "Optimizing membranes...";
     membraneAdaptiveRemesh();
     updatePositions();
 
     // Add membrane surface chemistry
+    LOG(INFO) << "Adding surface chemistry...";
     {
         MembraneMeshChemistryInfo memChemInfo {
             // names
@@ -530,9 +533,12 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             }
         };
         for(auto m : Membrane::getMembranes()) {
+            m->getMesh().metaAttribute().chemInfo = memChemInfo;
             medyan::setSpeciesAndReactions(m->getMesh(), memChemInfo);
         }
     }
+
+    LOG(INFO) << "Adjusting compartments by membranes...";
 
     // Deactivate all the compartments outside membrane, and mark boundaries as interesting
     for(auto c : _subSystem.getCompartmentGrid()->getCompartments()) {
@@ -578,6 +584,8 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             }
         }
     }
+
+    LOG(INFO) << "Membrane initialization complete.";
 
     /**************************************************************************
     Now starting to add the filaments into the network.

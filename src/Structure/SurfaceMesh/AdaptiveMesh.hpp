@@ -329,8 +329,7 @@ public:
             EdgeSplitVertexInsertionType { vi0.index, vi2.index }.coordinate(mesh)
         );
 
-        medyan::adaptiveComputeVertexNormal(mesh, change.viNew);
-
+        // Update local geometries for adaptive remeshing algorithm
         mesh.forEachHalfEdgeTargetingVertex(change.viNew, [&](auto nhei) {
             const auto nti = mesh.triangle(nhei);
             const auto nei = mesh.edge(nhei);
@@ -344,6 +343,7 @@ public:
             mesh.attribute(nei).aEdge.eqLength = eqLength;
         });
 
+        medyan::adaptiveComputeVertexNormal(mesh, change.viNew);
         mesh.forEachHalfEdgeTargetingVertex(change.viNew, [&](auto nhei) {
             const auto nvi = mesh.target(mesh.opposite(nhei));
 

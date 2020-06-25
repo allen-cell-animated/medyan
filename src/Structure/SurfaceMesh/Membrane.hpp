@@ -96,11 +96,15 @@ public:
             area += theArea;
             volume += medyan::coneVolume(mesh_, ti);
 
-            mesh_.attribute(ti).triangle->mTriangle.eqArea
-                = theArea * SysParams::Mechanics().memEqAreaFactor[memType_];
+            if(memType_ >= 0 && memType_ < SysParams::Mechanics().memEqAreaFactor.size()) {
+                mesh_.attribute(ti).triangle->mTriangle.eqArea
+                    = theArea * SysParams::Mechanics().memEqAreaFactor[memType_];
+            }
         }
 
-        mMembrane.eqArea = area * SysParams::Mechanics().memEqAreaFactor[memType_];
+        if (memType_ >= 0 && memType_ < SysParams::Mechanics().memEqAreaFactor.size()) {
+            mMembrane.eqArea = area * SysParams::Mechanics().memEqAreaFactor[memType_];
+        }
         mMembrane.eqVolume = volume;
 
     } // void initMechanicParams()

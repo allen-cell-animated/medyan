@@ -705,6 +705,7 @@ inline void updateGeometryValueWithDerivative(
 //   - triangle areas                 -- compartment slicing
 //   - vertex 1-ring areas            -- membrane chemistry
 //   - cot θ                          -- membrane surface diffusion rate
+//   - θ                              -- pesudo unit normals
 //
 // This function uses cached indexing to enhance performance, so a valid
 // cache is needed in this function.
@@ -733,6 +734,7 @@ inline void updateGeometryValueForSystem(MembraneMeshAttribute::MeshType& mesh) 
         const auto cp = cross(r10, r12);
         const auto dp =   dot(r10, r12);
         heag.cotTheta = dp / magnitude(cp);
+        heag.theta = M_PI_2 - std::atan(heag.cotTheta);
     }
 
     // Calculate triangle unit normal and area
