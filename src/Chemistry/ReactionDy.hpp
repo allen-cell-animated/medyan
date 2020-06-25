@@ -15,25 +15,34 @@
 
 class ReactionDy : public ReactionBase {
 
+    // Repetitive rspecies
+    struct RepRSpecies {
+        RSpecies*      prs    = nullptr;
+        unsigned short stoich = 1;
+    };
+
 private:
-    std::vector< RSpecies* > rspecies_;
+    std::vector< RepRSpecies > repRSpecies_;
     unsigned short numReactants_ = 0;
     unsigned short numProducts_  = 0;
+    // sum of stoich numbers
+    unsigned short stoichReactants_ = 0;
+    unsigned short stoichProducts_  = 0;
 
     void registerInRSpecies_() {
         for(unsigned short i = 0; i < numReactants_; ++i) {
-            rspecies_[i]->addAsReactant(this);
+            repRSpecies_[i].prs->addAsReactant(this);
         }
         for(unsigned short i = 0; i < numProducts_; ++i) {
-            rspecies_[i + numReactants_]->addAsProduct(this);
+            repRSpecies_[i + numReactants_].prs->addAsProduct(this);
         }
     }
     void unregisterInRSpecies_() {
         for(unsigned short i = 0; i < numReactants_; ++i) {
-            rspecies_[i]->removeAsReactant(this);
+            repRSpecies_[i].prs->removeAsReactant(this);
         }
         for(unsigned short i = 0; i < numProducts_; ++i) {
-            rspecies_[i + numReactants_]->removeAsProduct(this);
+            repRSpecies_[i + numReactants_].prs->removeAsProduct(this);
         }
     }
 
@@ -76,9 +85,9 @@ public:
     virtual vector<ReactionBase*> getAffectedReactions() override {
         unordered_set<ReactionBase*> rxns;
 
-        for(int i = 0; i < rspecies_.size(); i++) {
+        for(int i = 0; i < repRSpecies_.size(); i++) {
 
-            for(auto r : rspecies_[i]->reactantReactions()) {
+            for(auto r : repRSpecies_[i].prs->reactantReactions()) {
                 rxns.insert(r);
             }
         }
@@ -90,26 +99,54 @@ public:
         if(_rnode && !_passivated) _rnode->activateReaction();
     }
 
-    template <typename InputContainer>
+    template <typename SpeciesPtrContainer>
     void initializeSpecies(
-        const InputContainer& reactantSpecies,
-        const InputContainer& productSpecies
+        const SpeciesPtrContainer& reactantSpecies,
+        const SpeciesPtrContainer& productSpecies
     ) {
         using namespace std;
 
         // Unregister this in all RSpecies
         unregisterInRSpecies_();
 
-        numReactants_ = reactantSpecies.size();
-        numProducts_  = productSpecies.size();
+        stoichReactants_ = reactantSpecies.size();
+        stoichProducts_  = productSpecies.size();
 
-        rspecies_.resize(numReactants_ + numProducts_);
-        for(unsigned short i = 0; i < numReactants_; ++i) {
-            rspecies_[i] = &reactantSpecies[i]->getRSpecies();
+        repRSpecies_.clear();
+
+        // Set reactants
+        for(Species* ps : reactantSpecies) {
+            const auto prs = &ps->getRSpecies();
+            if(
+                auto it = find(
+                    repRSpecies_.begin(), repRSpecies_.end(),
+                    [&](const RepRSpecies& rrs) { return rrs.prs == prs; }
+                );
+                it == repRSpecies_.end()
+            ) {
+                repRSpecies_.push_back({ prs, 1 });
+            } else {
+                ++it->stoich;
+            }
         }
-        for(unsigned short i = 0; i < numProducts_; ++i) {
-            rspecies_[i + numReactants_] = &productSpecies[i]->getRSpecies();
+        numReactants_ = repRSpecies_.size();
+
+        // Set products
+        for(Species* ps : productSpecies) {
+            const auto prs = &ps->getRSpecies();
+            if(
+                auto it = find(
+                    repRSpecies_.begin() + numReactants_, repRSpecies_.end(),
+                    [&](const RepRSpecies& rrs) { return rrs.prs == prs; }
+                );
+                it == repRSpecies_.end()
+            ) {
+                repRSpecies_.push_back({ prs, 1 });
+            } else {
+                ++it->stoich;
+            }
         }
+        numProducts_ = repRSpecies_.size() - numReactants_;
         
         //add dependents
         for(auto d : getAffectedReactions())
@@ -119,16 +156,23 @@ public:
         registerInRSpecies_();
     }
         
-    virtual unsigned short getMImpl() const override { return numReactants_; }
-    virtual unsigned short getNImpl() const override { return numProducts_; }
-    virtual unsigned short sizeImpl() const override { return numReactants_ + numProducts_; }
+    virtual unsigned short getMImpl() const override { return stoichReactants_; }
+    virtual unsigned short getNImpl() const override { return stoichProducts_; }
+    virtual unsigned short sizeImpl() const override { return stoichReactants_ + stoichProducts_; }
 
     /// Implementation of getProductOfReactants()
-    virtual floatingpoint getProductOfReactantsImpl() const override
-    {
+    virtual floatingpoint getProductOfReactantsImpl() const override {
         floatingpoint prod = 1;
-        for(unsigned short i = 0; i < numReactants_; ++i)
-            prod *= rspecies_[i]->getN();
+        for(unsigned short i = 0; i < numReactants_; ++i) {
+            const auto& rrs = repRSpecies_[i];
+            auto copyNumber = static_cast<int>(rrs.prs->getN());
+            for(unsigned j = 0; j < rrs.stoich; ++j) {
+                prod *= copyNumber;
+
+                --copyNumber;
+                if(copyNumber <= 0) break;
+            }
+        }
         return prod;
     }
 
@@ -149,9 +193,14 @@ public:
     {
 #ifdef TRACK_UPPER_COPY_N
         floatingpoint prod = 1;
-        for(unsigned short i = 0; i < numProducts_; ++i){
-            auto& rs = *rspecies_[i + numReactants_];
-            prod *= rs.getN() - rs.getUpperLimitForN();
+        for(unsigned short i = 0; i < numProducts_; ++i) {
+            const auto& rrs = repRSpecies_[i + numReactants_];
+            auto       copyNumber    = static_cast<int>(rrs.prs->getN());
+            const auto copyNumberMax = static_cast<int>(rrs.prs->getUpperLimitForN());
+            for(unsigned j = 0; j < rrs.stoich; ++j) {
+                prod *= copyNumber - copyNumberMax;
+                ++copyNumber;
+            }
         }
         return prod;
 #else
@@ -163,8 +212,18 @@ public:
     /// Implementation of makeStep()
     virtual void makeStepImpl() override
     {
-        for(unsigned short i = 0; i < numReactants_; ++i) rspecies_[i]->down();
-        for(unsigned short i = 0; i < numProducts_; ++i) rspecies_[i + numReactants_]->up();
+        for(unsigned short i = 0; i < numReactants_; ++i) {
+            const auto& rrs = repRSpecies_[i];
+            for(unsigned j = 0; j < rrs.stoich; ++j) {
+                rrs.prs->down();
+            }
+        }
+        for(unsigned short i = 0; i < numProducts_; ++i) {
+            const auto& rrs = repRSpecies_[i + numReactants_];
+            for(unsigned j = 0; j < rrs.stoich; ++j) {
+                rrs.prs->up();
+            }
+        }
     }
 
     /// Implementation of activateReactionUnconditional()
@@ -172,7 +231,7 @@ public:
 #ifdef TRACK_DEPENDENTS
         for(unsigned short i = 0; i < numReactants_; ++i)
         {
-            auto& rs = *rspecies_[i];
+            auto& rs = *repRSpecies_[i].prs;
             for(auto r : rs.reactantReactions()) {
                 if(this != r) r->registerNewDependent(this);
             }
@@ -194,7 +253,7 @@ public:
 #ifdef TRACK_DEPENDENTS
         for(unsigned short i = 0; i < numReactants_; ++i)
         {
-            auto& rs = *rspecies_[i];
+            auto& rs = *repRSpecies_[i].prs;
             for(auto r : rs.reactantReactions()) {
                 r->unregisterDependent(this);
             }
@@ -214,20 +273,20 @@ public:
     virtual void printToStream(ostream& os) const override
     {
         unsigned char i=0;
-        auto sit = rspecies_.cbegin();
+        auto sit = repRSpecies_.cbegin();
         auto send = sit + numReactants_;
         for (; sit!=send; ++sit)
         {
-            os << (*sit)->getFullName() << "{" << (*sit)->getN() << "}";
+            os << (*sit).prs->getFullName() << "{" << (*sit).prs->getN() << "}";
             if(i < numReactants_ - 1)
                 os << " + ";
             ++i;
         }
         os << " ---> ";
         i=0;
-        for (auto sit2 = send; sit2 != rspecies_.cend(); ++sit2)
+        for (auto sit2 = send; sit2 != repRSpecies_.cend(); ++sit2)
         {
-            os << (*sit2)->getFullName() << "{" << (*sit2)->getN() << "}";
+            os << (*sit2).prs->getFullName() << "{" << (*sit2).prs->getN() << "}";
             if(i< numProducts_ - 1)
                 os << " + ";
             ++i;
@@ -246,7 +305,10 @@ public:
     /// The type of the pointer is RSpecies**. In conjunction with getM() and
     /// getN(), this pointer can be used to iterate over RSpecies associated with
     /// this reaction.
-    virtual RSpecies** rspecies() override { return &rspecies_[0]; }
+    virtual RSpecies** rspecies() override {
+        LOG(ERROR) << "RSpecies is not stored in a contiguous array in ReactionDy.";
+        throw std::runtime_error("Invalid rspecies() function in ReactionDy");
+    }
 
     virtual bool is_equal(const ReactionBase& other) const override {
         LOG(ERROR) << "Virtual equality comparison of ReactionDy should not be used";
@@ -256,9 +318,9 @@ public:
     /// Implementation of containsSpecies()
     virtual bool containsSpeciesImpl(Species *s) const override
     {
-        auto it = find_if(rspecies_.begin(), rspecies_.end(),
-            [s](const RSpecies *rs){ return (&rs->getSpecies()) == s; });
-        return it != rspecies_.end();
+        auto it = find_if(repRSpecies_.begin(), repRSpecies_.end(),
+            [s](const RepRSpecies& rrs){ return (&rrs.prs->getSpecies()) == s; });
+        return it != repRSpecies_.end();
     }
 
     /// Implementation of  clone()
