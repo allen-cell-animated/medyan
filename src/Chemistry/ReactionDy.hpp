@@ -118,7 +118,7 @@ public:
         for(Species* ps : reactantSpecies) {
             const auto prs = &ps->getRSpecies();
             if(
-                auto it = find(
+                auto it = find_if(
                     repRSpecies_.begin(), repRSpecies_.end(),
                     [&](const RepRSpecies& rrs) { return rrs.prs == prs; }
                 );
@@ -135,7 +135,7 @@ public:
         for(Species* ps : productSpecies) {
             const auto prs = &ps->getRSpecies();
             if(
-                auto it = find(
+                auto it = find_if(
                     repRSpecies_.begin() + numReactants_, repRSpecies_.end(),
                     [&](const RepRSpecies& rrs) { return rrs.prs == prs; }
                 );
