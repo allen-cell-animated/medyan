@@ -13,11 +13,10 @@
 
 #include <iostream>
 #include <chrono>
-#include "Rand.h"
+
 #ifdef BOOST_MEM_POOL
     #include <boost/pool/pool.hpp>
     #include <boost/pool/pool_alloc.hpp>
-    #include <boost/math/special_functions/fpclassify.hpp>
 #endif
 
 #include "ChemNRMImpl.h"
@@ -244,22 +243,19 @@ bool ChemNRMImpl::makeStep() {
 
             floatingpoint a_new = rn_other->getPropensity();
 
-#ifdef TRACK_ZERO_COPY_N
-            //recompute tau
-            tau_new = (a_old/a_new)*(tau_old-_t)+_t;
-#else
-            //recompute tau
-            if(a_new<1.0e-15) // numeric_limits< floatingpoint >::min()
+            // recompute tau
+            if(a_new == 0.0) {
                 tau_new = numeric_limits<floatingpoint>::infinity();
-            else if (a_old<1.0e-15){
+            }
+            else if (a_old == 0.0) {
                 rn_other->generateNewRandTau();
                 tau_new = rn_other->getTau();
             }
-            else{
-                tau_new = (a_old/a_new)*(tau_old-_t)+_t;
+            else {
+                tau_new = (a_old/a_new)*(tau_old-_t) + _t;
             }
-#endif
-            if(boost::math::isnan(tau_new)){tau_new=numeric_limits<floatingpoint>::infinity();}
+
+            if(std::isnan(tau_new)){tau_new=numeric_limits<floatingpoint>::infinity();}
             ///DEBUG
             if(tau_new < _t) {
 
