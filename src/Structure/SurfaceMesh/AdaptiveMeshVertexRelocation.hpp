@@ -123,6 +123,90 @@ public:
     }
 };
 
+//-----------------------------------------------------------------------------
+// Implements the vertex smoothing algorithm according to
+//     Mark Meyer et al. (2003)
+//     Discrete Differential-Geometry Operators for Triangulated 2-Manifolds
+//     Page 18: "An Anisotropic Smoothing Technique"
+//
+// Since the surface mesh is mainly for membranes, which should not preserve
+// any sharp features, we use 1 as the "weight" for vertex smoothing.
+// Therefore, the velocity of a vertex i is
+//     ∂x_i/∂t = − H_i n_i
+// where H_i is the (signed) mean curvature, and n_i is the unit normal vector.
+//
+// Note:
+//   - This function helps denoising the initial mesh, but should not be used
+//     during simulation, because this will change energetics.
+//   - As a result, mechanical/chemical attributes will not be updated during
+//     the process.
+
+// Note:
+//   - Only non-border vertices take part in curvature flow.
+//   - dt has dimension L^2
+inline void meshSmoothingCurvatureFlowStep(
+    Membrane::MeshType& mesh,
+    double              dt
+) {
+    using namespace std;
+    using namespace mathfunc;
+    using MT = Membrane::MeshType;
+    using GM = GeometryManager< MT >;
+    using VV = vector< Vec< 3, floatingpoint > >;
+
+    // Step 1.1. Calculate all angles
+    GM::computeAllAngles(mesh);
+
+    // Step 1.2. Calculate curvature and normal direction
+    VV curv(mesh.numVertices());
+
+    for(MT::VertexIndex vi {0}; vi < mesh.numVertices(); ++vi) {
+        if(!mesh.isVertexOnBorder(vi)) {
+
+            const auto& ci = mesh.attribute(vi).vertex->coord;
+
+            double astar = 0;
+            Vec< 3, floatingpoint > d2x {};
+            mesh.forEachHalfEdgeTargetingVertex(vi, [&](MT::HalfEdgeIndex hei) {
+                const auto ti0    = mesh.triangle(hei);
+                const auto hei_o  = mesh.opposite(hei);
+                const auto hei_n  = mesh.next(hei);
+                const auto hei_on = mesh.next(hei_o);
+                const auto& cn      = mesh.attribute(mesh.target(hei_o )).vertex->coord;
+                const auto& c_right = mesh.attribute(mesh.target(hei_on)).vertex->coord;
+
+                const auto sumCotTheta =
+                    mesh.attribute(hei_n).gHalfEdge.cotTheta
+                    + mesh.attribute(hei_on).gHalfEdge.cotTheta;
+
+                const auto diff = ci - cn;
+
+                astar += medyan::area(ci, cn, c_right);
+                d2x   += (0.5 * sumCotTheta) * (ci - cn);
+            });
+
+            curv[vi.index] = d2x * (1.5 / astar);
+        }
+    }
+
+    // Step 2. Move vertices along curvature vector (times dt)
+    for(MT::VertexIndex vi {0}; vi < mesh.numVertices(); ++vi) {
+        mesh.attribute(vi).vertex->coord -= dt * curv[vi.index];
+    }
+}
+
+inline void meshSmoothing(
+    Membrane::MeshType& mesh
+) {
+    const double dt = 0.01;
+    const unsigned numIter = 1;
+
+    for(unsigned iter = 0; iter < numIter; ++iter) {
+        meshSmoothingCurvatureFlowStep(mesh, dt);
+    }
+}
+
+
 } // namespace adaptive_mesh
 
 #endif
