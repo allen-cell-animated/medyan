@@ -355,6 +355,50 @@ bool Cylinder::within(Cylinder* other, floatingpoint dist) {
     return false;
 }
 
+//adjust the position variable according to the length of cylinder
+//Refer Docs/Design/PartialCylinderAlpha.pdf
+floatingpoint Cylinder::adjustedrelativeposition(floatingpoint _alpha){
+    //Full Length Cylinder
+    if(isFullLength())
+        return _alpha;
+    floatingpoint _alphacorr = (floatingpoint)0.0;
+    auto x1 = _b1->vcoordinate();
+    auto x2 = _b2->vcoordinate();
+    floatingpoint L = twoPointDistance(x1, x2);
+    short filamentType = _type;
+    floatingpoint fullcylinderSize = SysParams::Geometry().cylinderSize[filamentType];
+    //Partial Plus End cylinder
+    if(_plusEnd == true){
+        floatingpoint Lm = (floatingpoint)0.0;//Distance of minus end from 0th monomer.
+        // Both Minus and Plus End at the same time (Filament is one cylinder long)
+        if(_minusEnd == true){
+            int numMonomers = SysParams::Geometry().cylinderNumMon[filamentType];
+            auto monomersize = SysParams::Geometry().monomerSize[filamentType];
+            short minusendmonomer = 0;
+            for(int midx = 0; midx<numMonomers; midx++){
+                short m = _cCylinder->getCMonomer(midx)->activeSpeciesMinusEnd();
+                short p = _cCylinder->getCMonomer(midx)->activeSpeciesPlusEnd();
+                if(m != -1) {
+                    minusendmonomer = midx;
+                    break;
+                }
+            }
+            Lm = minusendmonomer*monomersize;//Distance of minus end from 0th monomer.
+        }
+        _alphacorr = (fullcylinderSize*_alpha - Lm)/L;
+    }
+    //Parital Minus End Cylinder
+    else if(_minusEnd == true){
+        _alphacorr = 1-(1-_alpha)*fullcylinderSize/L;
+    }
+    if(_alphacorr < (floatingpoint)0.0)
+        return (floatingpoint)0.0;
+    else if(_alphacorr > (floatingpoint)1.0)
+        return (floatingpoint)1.0;
+    else
+        return _alphacorr;
+}
+
 vector<FilamentRateChanger*> Cylinder::_polyChanger;
 ChemManager* Cylinder::_chemManager = 0;
 

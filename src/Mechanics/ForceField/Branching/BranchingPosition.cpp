@@ -42,7 +42,7 @@ void BranchingPosition<BPositionInteractionType>::vectorize() {
         beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getStableIndex();
 
         kpos[i] = b->getMBranchingPoint()->getPositionConstant();
-        pos[i] = b->getPosition();
+        pos[i] = b->getFirstCylinder()->adjustedrelativeposition(b->getPosition());
         for(int j = 0; j < 3; j++)
             stretchforce[3*i + j] = 0.0;
 

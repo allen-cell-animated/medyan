@@ -281,8 +281,6 @@ inline auto vec2Vector(const VecType& a) {
                     (v2[2] - v1[2]) * (v2[2] - v1[2]));
     }
 
-
-
     inline floatingpoint twoPointDistance(const vector<floatingpoint> &v1, floatingpoint const *v2) {
 
         return sqrt((*(v2) - v1[0]) * (*(v2) - v1[0]) +
@@ -1417,7 +1415,6 @@ inline auto vec2Vector(const VecType& a) {
                                        const vector<floatingpoint> &p3,
                                        const vector<floatingpoint> &p4,
                                        int i, floatingpoint d);
-
 
 
     float delGGenChem(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);

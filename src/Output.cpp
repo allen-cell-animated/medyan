@@ -90,12 +90,13 @@ void BasicSnapshot::print(int snapshot) {
         auto x =
             midPointCoordinate(linker->getFirstCylinder()->getFirstBead()->vcoordinate(),
                                linker->getFirstCylinder()->getSecondBead()->vcoordinate(),
-                               linker->getFirstPosition());
+                               linker->getFirstCylinder()->adjustedrelativeposition
+                                   (linker->getFirstPosition()));
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
 
         x = midPointCoordinate(linker->getSecondCylinder()->getFirstBead()->vcoordinate(),
                                linker->getSecondCylinder()->getSecondBead()->vcoordinate(),
-                               linker->getSecondPosition());
+                               linker->getSecondCylinder()->adjustedrelativeposition(linker->getSecondPosition()));
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
 
         _outputFile << endl;
@@ -111,12 +112,12 @@ void BasicSnapshot::print(int snapshot) {
         auto x =
             midPointCoordinate(motor->getFirstCylinder()->getFirstBead()->vcoordinate(),
                                motor->getFirstCylinder()->getSecondBead()->vcoordinate(),
-                               motor->getFirstPosition());
+                               motor->getFirstCylinder()->adjustedrelativeposition(motor->getFirstPosition()));
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
 
         x = midPointCoordinate(motor->getSecondCylinder()->getFirstBead()->vcoordinate(),
                                motor->getSecondCylinder()->getSecondBead()->vcoordinate(),
-                               motor->getSecondPosition());
+                               motor->getSecondCylinder()->adjustedrelativeposition(motor->getSecondPosition()));
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
 
         _outputFile << endl;

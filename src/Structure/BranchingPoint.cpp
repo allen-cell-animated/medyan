@@ -31,7 +31,7 @@ void BranchingPoint::updateCoordinate() {
     
     coordinate = midPointCoordinate(_c1->getFirstBead()->vcoordinate(),
                                     _c1->getSecondBead()->vcoordinate(),
-                                    _position);
+                                    _c1->adjustedrelativeposition(_position));
 }
 
 BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,

@@ -35,8 +35,8 @@ void MotorGhost::updateCoordinate() {
     auto x3 = _c2->getFirstBead()->vcoordinate();
     auto x4 = _c2->getSecondBead()->vcoordinate();
     
-    auto m1 = midPointCoordinate(x1, x2, _position1);
-    auto m2 = midPointCoordinate(x3, x4, _position2);
+    auto m1 = midPointCoordinate(x1, x2, _c1->adjustedrelativeposition(_position1));
+    auto m2 = midPointCoordinate(x3, x4, _c2->adjustedrelativeposition(_position2));
     
     coordinate = midPointCoordinate(m1, m2, 0.5);
 }
@@ -204,8 +204,8 @@ if(SysParams::RUNSTATE) {
 	auto x3 = _c2->getFirstBead()->vcoordinate();
 	auto x4 = _c2->getSecondBead()->vcoordinate();
 
-	auto m1 = midPointCoordinate(x1, x2, _position1);
-	auto m2 = midPointCoordinate(x3, x4, _position2);
+	auto m1 = midPointCoordinate(x1, x2, _c1->adjustedrelativeposition(_position1));
+	auto m2 = midPointCoordinate(x3, x4, _c2->adjustedrelativeposition(_position2));
 
 	_mMotorGhost->setLength(twoPointDistance(m1, m2));
 
@@ -279,8 +279,8 @@ void MotorGhost::updateReactionRates() {
 		    isc1leftofc2 = c1posonFil < c2posonFil;
 	    }
 
-        auto mp1 = midPointCoordinate(x1, x2, _position1);
-        auto mp2 = midPointCoordinate(x3, x4, _position2);
+        auto mp1 = midPointCoordinate(x1, x2, _c1->adjustedrelativeposition(_position1));
+        auto mp2 = midPointCoordinate(x3, x4, _c2->adjustedrelativeposition(_position2));
 
         //get component of force in direction of forward walk for C1, C2
         vector<floatingpoint> motorC1Direction =

@@ -242,6 +242,13 @@ public:
 						bool minusendstatus, bool plusendstatus, short minusendtype,
 						short plusendtype);
 
+	//Adjusts the _alpha value for partial cylinders. Determines the ratio of
+	// D(minusend-bindingsite)/D(minusend-plusend) given
+	// _alpha = D(0thmonomer-bindingsite)/D(fullcylinder)
+	//Note. Use this function only to determine mechanical coordinate.
+	//Refer Docs/Design/PartialCylinderAlpha.pdf
+    floatingpoint adjustedrelativeposition(floatingpoint _alpha);
+
     static floatingpoint timecylinder1;
 	static floatingpoint timecylinder2;
 	static floatingpoint timecylinderchem;

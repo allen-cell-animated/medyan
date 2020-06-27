@@ -67,8 +67,8 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 
         kstr[i] = m->getMMotorGhost()->getStretchingConstant();
         eql[i] = m->getMMotorGhost()->getEqLength();
-        pos1[i] = m->getFirstPosition();
-        pos2[i] = m->getSecondPosition();
+        pos1[i] = m->getFirstCylinder()->adjustedrelativeposition(m->getFirstPosition());
+        pos2[i] = m->getSecondCylinder()->adjustedrelativeposition(m->getSecondPosition());
         stretchforce[i] = 0.0;
         #ifdef ADDITIONALINFO
         MotorGhostInteractions::kstrvec.push_back(kstr[i]);
