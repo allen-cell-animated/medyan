@@ -186,6 +186,11 @@ struct MembraneMeshAttribute {
 
         VertexSystem vertexSystem = VertexSystem::material;
 
+        // About mech and chem
+        //-----------------------------
+        bool isMechParamsSet = false;
+        bool isChemParamsSet = false;
+
         // Chemistry information
         //-----------------------------
         MembraneMeshChemistryInfo chemInfo;

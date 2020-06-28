@@ -12,6 +12,7 @@
 #include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/MembraneHierarchy.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshAttribute.hpp"
+#include "Structure/SurfaceMesh/MembraneMeshChemistry.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshGeometry.hpp"
 #include "Structure/SurfaceMesh/MMembrane.hpp"
 #include "Structure/Trackable.h"
@@ -70,8 +71,6 @@ public:
         // Update geometry
         updateGeometryValueForSystem();
 
-        initMechanicParams();
-
         // Add to membrane hierarchy (must have updated geometry)
         HierarchyType::addMembrane(this);
     }
@@ -86,8 +85,9 @@ public:
 
     // Helper function to initialize MMembrane and other mechanic parameters
     void initMechanicParams() {
-        // Initialize MMembrane
-        // Calculate the total area and volume to set the equilibrium area and volume
+        // Initialize MTriangle
+        // Also calculate the total area and volume to set the equilibrium area
+        // and volume for MMembrane
         double area = 0.0;
         double volume = 0.0;
         for(MeshType::TriangleIndex ti {0}; ti < mesh_.numTriangles(); ++ti) {
@@ -102,12 +102,23 @@ public:
             }
         }
 
+        // Initialize MMembrane
         if (memType_ >= 0 && memType_ < SysParams::Mechanics().memEqAreaFactor.size()) {
             mMembrane.eqArea = area * SysParams::Mechanics().memEqAreaFactor[memType_];
         }
         mMembrane.eqVolume = volume;
 
+        // Other mechanical params are initialized automatically
+
+        mesh_.metaAttribute().isMechParamsSet = true;
     } // void initMechanicParams()
+
+    void setChemistry(MembraneMeshChemistryInfo memChemInfo) {
+        mesh_.metaAttribute().chemInfo = std::move(memChemInfo);
+        medyan::setSpeciesAndReactions(mesh_, mesh_.metaAttribute().chemInfo);
+
+        mesh_.metaAttribute().isChemParamsSet = true;
+    }
 
     // SubSystem management, inherited from Trackable
     virtual void addToSubSystem()override { }

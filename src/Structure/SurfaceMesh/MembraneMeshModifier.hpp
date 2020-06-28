@@ -63,31 +63,35 @@ inline auto insertVertexOnEdge(
 
     // Redistribute properties
     //---------------------------------
-    if(ist0) {
-        const double a1 = area(mesh, change.tiNew[0]);
-        const double a2 = area(mesh, change.tiNew[1]);
+    if(mesh.metaAttribute().isMechParamsSet) {
+        if(ist0) {
+            const double a1 = area(mesh, change.tiNew[0]);
+            const double a2 = area(mesh, change.tiNew[1]);
 
-        auto& eqArea1 = mesh.attribute(change.tiNew[0]).triangle->mTriangle.eqArea;
-        auto& eqArea2 = mesh.attribute(change.tiNew[1]).triangle->mTriangle.eqArea;
-        redisEqArea(eqArea1, a1, eqArea2, a2, eqArea1);
+            auto& eqArea1 = mesh.attribute(change.tiNew[0]).triangle->mTriangle.eqArea;
+            auto& eqArea2 = mesh.attribute(change.tiNew[1]).triangle->mTriangle.eqArea;
+            redisEqArea(eqArea1, a1, eqArea2, a2, eqArea1);
+        }
+        if(ist2) {
+            const double a1 = area(mesh, change.tiNew[2]);
+            const double a2 = area(mesh, change.tiNew[3]);
+
+            auto& eqArea1 = mesh.attribute(change.tiNew[2]).triangle->mTriangle.eqArea;
+            auto& eqArea2 = mesh.attribute(change.tiNew[3]).triangle->mTriangle.eqArea;
+            redisEqArea(eqArea1, a1, eqArea2, a2, eqArea1);
+        }
     }
-    if(ist2) {
-        const double a1 = area(mesh, change.tiNew[2]);
-        const double a2 = area(mesh, change.tiNew[3]);
 
-        auto& eqArea1 = mesh.attribute(change.tiNew[2]).triangle->mTriangle.eqArea;
-        auto& eqArea2 = mesh.attribute(change.tiNew[3]).triangle->mTriangle.eqArea;
-        redisEqArea(eqArea1, a1, eqArea2, a2, eqArea1);
+    if(mesh.metaAttribute().isChemParamsSet) {
+        // Relink species and reactions
+        // Currently, all species in the new vertex has 0 copy number
+        setSpeciesForVertex(mesh, change.viNew, mesh.metaAttribute().chemInfo);
+        setInternalReactionsForVertex(mesh, change.viNew, mesh.metaAttribute().chemInfo);
+        mesh.forEachHalfEdgeTargetingVertex(change.viNew, [&](MT::HalfEdgeIndex nhei) {
+            setDiffusionForHalfEdge(mesh, nhei, mesh.metaAttribute().chemInfo);
+            setDiffusionForHalfEdge(mesh, mesh.opposite(nhei), mesh.metaAttribute().chemInfo);
+        });
     }
-
-    // Relink species and reactions
-    // Currently, all species in the new vertex has 0 copy number
-    setSpeciesForVertex(mesh, change.viNew, mesh.metaAttribute().chemInfo);
-    setInternalReactionsForVertex(mesh, change.viNew, mesh.metaAttribute().chemInfo);
-    mesh.forEachHalfEdgeTargetingVertex(change.viNew, [&](MT::HalfEdgeIndex nhei) {
-        setDiffusionForHalfEdge(mesh, nhei, mesh.metaAttribute().chemInfo);
-        setDiffusionForHalfEdge(mesh, mesh.opposite(nhei), mesh.metaAttribute().chemInfo);
-    });
 
     return change;
 }
@@ -119,24 +123,29 @@ inline auto collapseEdge(
             oldTotalEqArea -= mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea;
         }
     };
-    mesh.forEachHalfEdgeTargetingVertex(vi0, addOldTotalEqArea);
-    mesh.forEachHalfEdgeTargetingVertex(vi1, addOldTotalEqArea);
-    mesh.forEachHalfEdgeInEdge(ei, subtractOldTotalEqArea);
+    if(mesh.metaAttribute().isMechParamsSet) {
+        mesh.forEachHalfEdgeTargetingVertex(vi0, addOldTotalEqArea);
+        mesh.forEachHalfEdgeTargetingVertex(vi1, addOldTotalEqArea);
+        mesh.forEachHalfEdgeInEdge(ei, subtractOldTotalEqArea);
+    }
 
     // Move species vector out of vertices
-    auto spe0 = move(mesh.attribute(vi0).vertex->cVertex.species);
-    auto spe1 = move(mesh.attribute(vi1).vertex->cVertex.species);
-    for(unsigned i = 0; i < spe1.size(); ++i) {
-        auto& rs0 = spe0.findSpeciesByIndex(i)->getRSpecies();
-        auto& rs1 = spe1.findSpeciesByIndex(i)->getRSpecies();
-        rs0.setN(
-            rs0.getN() + rs1.getN()
-        );
+    SpeciesPtrContainerVector spe0, spe1;
+    if(mesh.metaAttribute().isChemParamsSet) {
+        spe0 = move(mesh.attribute(vi0).vertex->cVertex.species);
+        spe1 = move(mesh.attribute(vi1).vertex->cVertex.species);
+        for(unsigned i = 0; i < spe1.size(); ++i) {
+            auto& rs0 = spe0.findSpeciesByIndex(i)->getRSpecies();
+            auto& rs1 = spe1.findSpeciesByIndex(i)->getRSpecies();
+            rs0.setN(
+                rs0.getN() + rs1.getN()
+            );
+        }
+        // spe0 now has the sum of copy numbers.
+        // spe1 will be abandoned and destroyed.
+        // spe1 cannot be destroyed right now, because there are still reactions
+        // pointing to it.
     }
-    // spe0 now has the sum of copy numbers.
-    // spe1 will be abandoned and destroyed.
-    // spe1 cannot be destroyed right now, because there are still reactions
-    // pointing to it.
 
     // Do the edge collapse
     //---------------------------------
@@ -148,28 +157,32 @@ inline auto collapseEdge(
 
     // Redistribute properties
     //---------------------------------
-    double newTotalArea = 0.0;
-    mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](MT::HalfEdgeIndex nhei) {
-        if(mesh.isInTriangle(nhei)) {
-            newTotalArea += area(mesh, mesh.triangle(nhei));
-        }
-    });
-    mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](MT::HalfEdgeIndex nhei) {
-        if(mesh.isInTriangle(nhei)) {
-            mesh.attribute(mesh.triangle(nhei)).triangle->mTriangle.eqArea
-                = oldTotalEqArea * area(mesh, mesh.triangle(nhei)) / newTotalArea;
-        }
-    });
+    if(mesh.metaAttribute().isMechParamsSet) {
+        double newTotalArea = 0.0;
+        mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](MT::HalfEdgeIndex nhei) {
+            if(mesh.isInTriangle(nhei)) {
+                newTotalArea += area(mesh, mesh.triangle(nhei));
+            }
+        });
+        mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](MT::HalfEdgeIndex nhei) {
+            if(mesh.isInTriangle(nhei)) {
+                mesh.attribute(mesh.triangle(nhei)).triangle->mTriangle.eqArea
+                    = oldTotalEqArea * area(mesh, mesh.triangle(nhei)) / newTotalArea;
+            }
+        });
+    }
 
-    // Relink species and reactions
-    mesh.attribute(change.viTo).vertex->cVertex.species = move(spe0);
-    setInternalReactionsForVertex(mesh, change.viTo, mesh.metaAttribute().chemInfo);
-    mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](MT::HalfEdgeIndex nhei) {
-        setDiffusionForHalfEdge(mesh, nhei, mesh.metaAttribute().chemInfo);
-        setDiffusionForHalfEdge(mesh, mesh.opposite(nhei), mesh.metaAttribute().chemInfo);
-    });
-    // Now spe0 is empty.
-    // Now spe1 can be safely destroyed.
+    if(mesh.metaAttribute().isChemParamsSet) {
+        // Relink species and reactions
+        mesh.attribute(change.viTo).vertex->cVertex.species = move(spe0);
+        setInternalReactionsForVertex(mesh, change.viTo, mesh.metaAttribute().chemInfo);
+        mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](MT::HalfEdgeIndex nhei) {
+            setDiffusionForHalfEdge(mesh, nhei, mesh.metaAttribute().chemInfo);
+            setDiffusionForHalfEdge(mesh, mesh.opposite(nhei), mesh.metaAttribute().chemInfo);
+        });
+        // Now spe0 is empty.
+        // Now spe1 can be safely destroyed.
+    }
 
     return change;
 }
@@ -186,9 +199,11 @@ inline void flipEdge(
     // Record old attributes
     //---------------------------------
     double oldTotalEqArea = 0.0;
-    mesh.forEachHalfEdgeInEdge(ei, [&](MT::HalfEdgeIndex hei) {
-        oldTotalEqArea += mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea;
-    });
+    if(mesh.metaAttribute().isMechParamsSet) {
+        mesh.forEachHalfEdgeInEdge(ei, [&](MT::HalfEdgeIndex hei) {
+            oldTotalEqArea += mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea;
+        });
+    }
 
     // Do edge flip
     //---------------------------------
@@ -196,20 +211,23 @@ inline void flipEdge(
 
     // Redistribute attributes
     //---------------------------------
-    double newTotalArea = 0.0;
-    mesh.forEachHalfEdgeInEdge(ei, [&](MT::HalfEdgeIndex hei) {
-        newTotalArea += area(mesh, mesh.triangle(hei));
-    });
-    mesh.forEachHalfEdgeInEdge(ei, [&](MT::HalfEdgeIndex hei) {
-        mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea
-            = oldTotalEqArea * area(mesh, mesh.triangle(hei)) / newTotalArea;
-    });
+    if(mesh.metaAttribute().isMechParamsSet) {
+        double newTotalArea = 0.0;
+        mesh.forEachHalfEdgeInEdge(ei, [&](MT::HalfEdgeIndex hei) {
+            newTotalArea += area(mesh, mesh.triangle(hei));
+        });
+        mesh.forEachHalfEdgeInEdge(ei, [&](MT::HalfEdgeIndex hei) {
+            mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea
+                = oldTotalEqArea * area(mesh, mesh.triangle(hei)) / newTotalArea;
+        });
+    }
 
-    // Relink reactions
-    mesh.forEachHalfEdgeInEdge(ei, [&](MT::HalfEdgeIndex hei) {
-        setDiffusionForHalfEdge(mesh, hei, mesh.metaAttribute().chemInfo);
-    });
-
+    if(mesh.metaAttribute().isChemParamsSet) {
+        // Relink reactions
+        mesh.forEachHalfEdgeInEdge(ei, [&](MT::HalfEdgeIndex hei) {
+            setDiffusionForHalfEdge(mesh, hei, mesh.metaAttribute().chemInfo);
+        });
+    }
 }
 
 

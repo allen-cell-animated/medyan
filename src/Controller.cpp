@@ -512,12 +512,15 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     );
     _subSystem.setRegionInMembrane(_regionInMembrane.get());
 
-    // Optimize the membrane
     LOG(INFO) << "Optimizing membranes...";
     membraneAdaptiveRemesh();
     updatePositions();
 
-    // Add membrane surface chemistry
+    LOG(INFO) << "Setting up membrane mechanics...";
+    for(auto m : Membrane::getMembranes()) {
+        m->initMechanicParams();
+    }
+
     LOG(INFO) << "Adding surface chemistry...";
     {
         MembraneMeshChemistryInfo memChemInfo {
