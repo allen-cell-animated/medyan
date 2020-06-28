@@ -124,26 +124,30 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// Implements the vertex smoothing algorithm according to
+// Implements the vertex smoothing algorithm by flow toward smaller surface
+// area.
+//
+// Reference:
 //     Mark Meyer et al. (2003)
 //     Discrete Differential-Geometry Operators for Triangulated 2-Manifolds
 //     Page 18: "An Anisotropic Smoothing Technique"
 //
 // Since the surface mesh is mainly for membranes, which should not preserve
-// any sharp features, we use 1 as the "weight" for vertex smoothing.
+// any sharp features, we use iostropic mesh smoothing.
 // Therefore, the velocity of a vertex i is
-//     ∂x_i/∂t = − H_i n_i
-// where H_i is the (signed) mean curvature, and n_i is the unit normal vector.
+//     ∂x_i/∂t = − Δx_i
+// where Δ is the (integrated) discretized Laplace operator (the cotangent
+// formula).
 //
 // Note:
 //   - This function helps denoising the initial mesh, but should not be used
-//     during simulation, because this will change energetics.
+//     during simulation, because this WILL change energetics.
 //   - As a result, mechanical/chemical attributes will not be updated during
 //     the process.
 
 // Note:
 //   - Only non-border vertices take part in curvature flow.
-//   - dt has dimension L^2
+//   - dt is dimensionless
 inline void meshSmoothingCurvatureFlowStep(
     Membrane::MeshType& mesh,
     double              dt
@@ -165,7 +169,6 @@ inline void meshSmoothingCurvatureFlowStep(
 
             const auto& ci = mesh.attribute(vi).vertex->coord;
 
-            double astar = 0;
             Vec< 3, floatingpoint > d2x {};
             mesh.forEachHalfEdgeTargetingVertex(vi, [&](MT::HalfEdgeIndex hei) {
                 const auto ti0    = mesh.triangle(hei);
@@ -181,11 +184,10 @@ inline void meshSmoothingCurvatureFlowStep(
 
                 const auto diff = ci - cn;
 
-                astar += medyan::area(ci, cn, c_right);
-                d2x   += (0.5 * sumCotTheta) * (ci - cn);
+                d2x += (0.5 * sumCotTheta) * (ci - cn);
             });
 
-            curv[vi.index] = d2x * (1.5 / astar);
+            curv[vi.index] = d2x;
         }
     }
 
@@ -196,11 +198,10 @@ inline void meshSmoothingCurvatureFlowStep(
 }
 
 inline void meshSmoothing(
-    Membrane::MeshType& mesh
+    Membrane::MeshType& mesh,
+    double              dt,
+    unsigned            numIter
 ) {
-    const double dt = 0.01;
-    const unsigned numIter = 1;
-
     for(unsigned iter = 0; iter < numIter; ++iter) {
         meshSmoothingCurvatureFlowStep(mesh, dt);
     }
