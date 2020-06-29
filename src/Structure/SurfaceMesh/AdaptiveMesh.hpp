@@ -718,11 +718,12 @@ public:
     }
 }; // End SizeMesasureManager
 
-template< typename Mesh >
-class MeshAdapter {
+
+class MembraneMeshAdapter {
 public:
-    using GeometryManagerType = GeometryManager< Mesh >;
-    using CoordinateType      = typename Mesh::AttributeType::CoordinateType;
+    using MeshType            = Membrane::MeshType;
+    using GeometryManagerType = GeometryManager< MeshType >;
+    using CoordinateType      = MeshType::AttributeType::CoordinateType;
 
     static constexpr auto optimalVertexLocationMethod    = OptimalVertexLocationMethod::barycenter;
     static constexpr auto triangleQualityCriteria        = TriangleQualityCriteria::radiusRatio;
@@ -754,18 +755,18 @@ public:
     };
 
 private:
-    SizeMeasureManager< Mesh > _sizeMeasureManager;
-    DirectVertexRelocationManager< Mesh, optimalVertexLocationMethod > _directVertexRelocationManager;
+    SizeMeasureManager< MeshType > _sizeMeasureManager;
+    DirectVertexRelocationManager< MeshType, optimalVertexLocationMethod > _directVertexRelocationManager;
 
-    EdgeFlipManager< Mesh, triangleQualityCriteria > _edgeFlipManager;
-    EdgeSplitManager< Mesh, triangleQualityCriteria, edgeSplitVertexInsertionMethod > _edgeSplitManager;
-    EdgeCollapseManager< Mesh, triangleQualityCriteria > edgeCollapseManager_;
+    EdgeFlipManager< MeshType, triangleQualityCriteria > _edgeFlipManager;
+    EdgeSplitManager< MeshType, triangleQualityCriteria, edgeSplitVertexInsertionMethod > _edgeSplitManager;
+    EdgeCollapseManager< MeshType, triangleQualityCriteria > edgeCollapseManager_;
 
     size_t _samplingAdjustmentMaxIter; // Maximum number of scans used in sampling.
     size_t _mainLoopSoftMaxIter; // Maximum iterations of the main loop if topology changes can be reduced to 0
     size_t _mainLoopHardMaxIter; // Maximum iterations of the main loop (hard cap)
 
-    void computeSizeMeasures_(Mesh& mesh) const {
+    void computeSizeMeasures_(MeshType& mesh) const {
         GeometryManagerType::computeAllTriangleNormals(mesh);
         GeometryManagerType::computeAllAngles(mesh);
         GeometryManagerType::computeAllVertexNormals(mesh);
@@ -773,7 +774,7 @@ private:
     }
 public:
     // Constructor
-    MeshAdapter(Parameter param) :
+    MembraneMeshAdapter(Parameter param) :
         _sizeMeasureManager(param.curvatureResolution, param.maxSize, param.diffuseIter),
         _directVertexRelocationManager(
             param.relaxationMaxIterRelocation,
@@ -792,7 +793,7 @@ public:
         _mainLoopHardMaxIter(param.mainLoopHardMaxIter)
     {}
 
-    void adapt(Mesh& mesh) const {
+    void adapt(MeshType& mesh) const {
         using namespace mathfunc;
 
         size_t mainLoopIter = 0;
@@ -806,6 +807,11 @@ public:
             // 3. Relocate the vertices to local optimum iteratively. The
             //    geometry should be updated.
 
+            if(!mesh.metaAttribute().isMechParamsSet) {
+                // Before setting the mech params, we remove some sharp
+                // features introduced by the mesh generation algorithm.
+                meshSmoothing(mesh, 0.01, 5);
+            }
             computeSizeMeasures_(mesh);
 
             bool sizeMeasureSatisfied = true;
@@ -818,7 +824,7 @@ public:
                 // and try to fix them by vertex insertion/deletion operations.
 
                 countTopoModified = 0;
-                for(typename Mesh::EdgeIndex ei {0}; ei < mesh.numEdges(); /* No increment here */) {
+                for(MeshType::EdgeIndex ei {0}; ei < mesh.numEdges(); /* No increment here */) {
                     const auto hei0 = mesh.halfEdge(ei);
                     const auto v0 = mesh.target(hei0);
                     const auto v1 = mesh.target(mesh.opposite(hei0));
@@ -871,8 +877,6 @@ public:
     } // End function adapt(...)
 
 };
-
-using MembraneMeshAdapter = MeshAdapter< typename Membrane::MeshType >;
 
 } // namespace adaptive_mesh
 
