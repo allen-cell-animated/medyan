@@ -536,8 +536,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             }
         };
         for(auto m : Membrane::getMembranes()) {
-            m->getMesh().metaAttribute().chemInfo = memChemInfo;
-            medyan::setSpeciesAndReactions(m->getMesh(), memChemInfo);
+            m->setChemistry(memChemInfo);
         }
     }
 
