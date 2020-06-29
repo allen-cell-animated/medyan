@@ -89,7 +89,7 @@ struct MembraneBending : public ForceField {
 
                     if constexpr(std::is_same_v< InteractionType, MembraneBendingHelfrich >) {
                         impl.forces(
-                            force + 3 * va.cachedCoordIndex,
+                            force + va.cachedCoordIndex,
                             area, va.gVertex.dAstar / 3,
                             curv, va.gVertex.dCurv,
                             kBending, eqCurv
@@ -97,7 +97,7 @@ struct MembraneBending : public ForceField {
                     }
                     else {
                         impl.forces(
-                            force + 3 * va.cachedCoordIndex,
+                            force + va.cachedCoordIndex,
                             area, va.gVertex.dAstar / 3,
                             curv2, va.gVertex.dCurv2,
                             kBending
@@ -112,14 +112,14 @@ struct MembraneBending : public ForceField {
                         if constexpr(std::is_same_v< InteractionType, MembraneBendingHelfrich >) {
                             const auto& dCurv = mesh.attribute(hei_o).gHalfEdge.dNeighborCurv;
                             impl.forces(
-                                force + 3 * vn_i,
+                                force + vn_i,
                                 area, dArea, curv, dCurv, kBending, eqCurv
                             );
                         }
                         else {
                             const auto& dCurv2 = mesh.attribute(hei_o).gHalfEdge.dNeighborCurv2;
                             impl.forces(
-                                force + 3 * vn_i,
+                                force + vn_i,
                                 area, dArea, curv2, dCurv2, kBending
                             );
                         }

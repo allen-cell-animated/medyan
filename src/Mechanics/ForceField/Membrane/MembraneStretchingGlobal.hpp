@@ -135,7 +135,7 @@ struct MembraneStretchingGlobal : public ForceField {
                         const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
 
                         MembraneStretchingHarmonic{}.forces(
-                            f + 3 * ta.cachedCoordIndex[i],
+                            f + ta.cachedCoordIndex[i],
                             ta.gTriangle.area, dArea,
                             ta.triangle->mTriangle.kArea, ta.triangle->mTriangle.eqArea
                         );
@@ -160,7 +160,7 @@ struct MembraneStretchingGlobal : public ForceField {
                         const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
 
                         MembraneStretchingHarmonic{}.forces(
-                            f + 3 * ta.cachedCoordIndex[i],
+                            f + ta.cachedCoordIndex[i],
                             area, dArea, kElastic, eqArea
                         );
                     }

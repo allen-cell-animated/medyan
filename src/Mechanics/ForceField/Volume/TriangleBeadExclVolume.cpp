@@ -38,9 +38,9 @@ floatingpoint TriangleBeadExclVolume< InteractionType >::computeEnergy(floatingp
         if(neighborList_->hasNeighborMech(t)) for(auto b : neighborList_->getNeighborsMech(t)) {
 
             const double enInter = _FFType.energy(
-                static_cast<Vec3d>(makeVec<3>(coord + 3 * vi0)),
-                static_cast<Vec3d>(makeVec<3>(coord + 3 * vi1)),
-                static_cast<Vec3d>(makeVec<3>(coord + 3 * vi2)),
+                static_cast<Vec3d>(makeVec<3>(coord + vi0)),
+                static_cast<Vec3d>(makeVec<3>(coord + vi1)),
+                static_cast<Vec3d>(makeVec<3>(coord + vi2)),
                 static_cast<Vec3d>(makeVec<3>(coord + 3 * b->getIndex() + beadStartingIndex)),
                 area, kExVol);
             
@@ -88,13 +88,13 @@ void TriangleBeadExclVolume< InteractionType >::computeForces(floatingpoint* coo
         if(neighborList_->hasNeighborMech(t)) for(auto b : neighborList_->getNeighborsMech(t)) {
 
             _FFType.forces(
-                force + 3 * vi0,
-                force + 3 * vi1,
-                force + 3 * vi2,
+                force + vi0,
+                force + vi1,
+                force + vi2,
                 force + 3 * b->getIndex() + beadStartingIndex,
-                static_cast<Vec3>(makeVec<3>(coord + 3 * vi0)),
-                static_cast<Vec3>(makeVec<3>(coord + 3 * vi1)),
-                static_cast<Vec3>(makeVec<3>(coord + 3 * vi2)),
+                static_cast<Vec3>(makeVec<3>(coord + vi0)),
+                static_cast<Vec3>(makeVec<3>(coord + vi1)),
+                static_cast<Vec3>(makeVec<3>(coord + vi2)),
                 static_cast<Vec3>(makeVec<3>(coord + 3 * b->getIndex() + beadStartingIndex)),
                 area, dArea0, dArea1, dArea2, kExVol);
         }
