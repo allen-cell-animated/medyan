@@ -139,6 +139,12 @@ inline void setSpeciesAndReactions(
     using namespace std;
     using MT = MembraneMeshAttribute::MeshType;
 
+    // Validate input
+    //---------------------------------
+    if(!validate(info)) {
+        throw std::invalid_argument("Invalid chemistry info");
+    }
+
     // Set species
     //---------------------------------
     for(MT::VertexIndex vi {0}; vi < mesh.numVertices(); ++vi) {

@@ -53,6 +53,52 @@ struct MembraneMeshChemistryInfo {
     std::vector< InternalReactionInfo > internalReactions;
 };
 
+// Returns whether the chemisty info is valid
+inline bool validate(const MembraneMeshChemistryInfo& ci) {
+    bool valid = true;
+
+    const auto ns = ci.diffusingSpeciesNames.size();
+
+    // Check diffusion
+    for(const auto& di : ci.diffusion) {
+        if(di.speciesIndex >= ns) {
+            LOG(ERROR) << "Diffusion species index " << di.speciesIndex
+                << " is out of range.";
+            valid = false;
+        }
+        if(di.diffusionCoeff < 0) {
+            LOG(ERROR) << "Diffusion coefficient " << di.diffusionCoeff
+                << " is unacceptable.";
+            valid = false;
+        }
+    }
+
+    // Check internal reaction
+    for(const auto& iri : ci.internalReactions) {
+        for(auto i : iri.reactantSpeciesIndices) {
+            if(i >= ns) {
+                LOG(ERROR) << "Internal reaction reactant species index " << i
+                    << " is out of range.";
+                valid = false;
+            }
+        }
+        for(auto i : iri.productSpeciesIndices) {
+            if(i >= ns) {
+                LOG(ERROR) << "Internal reaction product species index " << i
+                    << " is out of range.";
+                valid = false;
+            }
+        }
+        if(iri.rateConstant < 0) {
+            LOG(ERROR) << "Internal reaction rate constant " << iri.rateConstant
+                << " is unacceptable.";
+            valid = false;
+        }
+    }
+
+    return valid;
+}
+
 
 /******************************************************************************
 Implements the attributes of the meshwork used by the membrane, mainly
