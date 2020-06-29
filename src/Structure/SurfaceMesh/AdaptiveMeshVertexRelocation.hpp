@@ -101,15 +101,15 @@ private:
         // Set new properties
         if(mesh.metaAttribute().isMechParamsSet) {
             double newTotalArea = 0.0;
-            mesh.forEachHalfEdgeTargetingVertex(vi, [&](MT::HalfEdgeIndex hei) {
+            mesh.forEachHalfEdgeTargetingVertex(vi, [&](MeshType::HalfEdgeIndex hei) {
                 if(mesh.isInTriangle(hei)) {
-                    newTotalArea += area(mesh, mesh.triangle(hei));
+                    newTotalArea += medyan::area(mesh, mesh.triangle(hei));
                 }
             });
-            mesh.forEachHalfEdgeTargetingVertex(vi, [&](MT::HalfEdgeIndex hei) {
+            mesh.forEachHalfEdgeTargetingVertex(vi, [&](MeshType::HalfEdgeIndex hei) {
                 if(mesh.isInTriangle(hei)) {
                     mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea
-                        = oldTotalEqArea * area(mesh, mesh.triangle(hei)) / newTotalArea;
+                        = oldTotalEqArea * medyan::area(mesh, mesh.triangle(hei)) / newTotalArea;
                 }
             });
         }
