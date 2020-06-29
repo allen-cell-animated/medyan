@@ -386,12 +386,6 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
 void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
                                  CCylinder* cc, short bindingSite) {
 	if (SysParams::INITIALIZEDSTATUS ) {
-		  #ifdef MOTORBIASCHECK
-		   addcounts++;
-//		   return;
-		   #endif
-/*		cout<<"Adding Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
-			<<bindingSite<<" manager indices "<<idvec[0]<<" "<<idvec[1]<<endl;*/
 		short idx = idvec[0];
 		short idx2 = idvec[1];
 
@@ -531,12 +525,6 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 
 void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], CCylinder*
                                     cc, short bindingSite) {
-
-    #ifdef MOTORBIASCHECK
-     removecounts++;
-    #endif
-/*	cout<<"Removing Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
-	    <<bindingSite<<" manager indices "<<idvec[0]<<" "<<idvec[1]<<endl;*/
 
     short idx = idvec[0];
     short idx2 = idvec[1];
@@ -733,12 +721,6 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
 }
 
 void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
-
-	#ifdef MOTORBIASCHECK
-	addcounts = 0;
-    removecounts = 0;
-    choosecounts = 0;
-	#endif
 
 	//Delete all entries in the binding pair maps
     for (int idx = 0; idx < totaluniquefIDpairs; idx++){
@@ -1027,9 +1009,6 @@ void HybridBindingSearchManager::addtoHNeighborList(){
 
 vector<tuple<CCylinder*, short>>
 HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
-	#ifdef MOTORBIASCHECK
-	 choosecounts++;
-	 #endif
 
     short idx = idvec[0];
     short idx2 = idvec[1];

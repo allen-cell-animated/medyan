@@ -1436,47 +1436,15 @@ void Controller::run() {
 
             //run mcontroller, update system
             if(tauLastMinimization >= _minimizationTime/factor) {
-
-#ifdef MOTORBIASCHECK
-                cout<<"Hyb-walkID ";
-                for(auto m:MotorGhost::getMotorGhosts())
-                    cout<<m->getId()<<" ";
-                cout<<endl;
-                cout<<"Hyb-walklen ";
-                for(auto m:MotorGhost::getMotorGhosts())
-                    cout<<m->walkingsteps<<" ";
-                cout<<endl;
-                cout<<"Hyb-mstretch ";
-                for(auto m:MotorGhost::getMotorGhosts())
-                    cout<<m->getMMotorGhost()->stretchForce<<" ";
-                cout<<endl;
-                cout<<"Hyb-add ";
-                for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
-                    cout<<C->getHybridBindingSearchManager()->getaddcounts()<<" ";
-                }
-                cout<<endl;
-                cout<<"Hyb-remove ";
-                for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
-                    cout<<C->getHybridBindingSearchManager()->getremovecounts()<<" ";
-                }
-                cout<<endl;
-                cout<<"Hyb-choose ";
-                for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
-                    cout<<C->getHybridBindingSearchManager()->getchoosecounts()<<" ";
-                }
-                cout<<endl;
-                cout<<"Hyb-mwalk ";
-	            for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
-	            	cout<<C->nummotorwalks<<" ";
-	            	C->nummotorwalks = 0;
-	            }
-	            cout<<endl;
-
-#endif
 	            //check before rearrange
 #ifdef CROSSCHECK_CYLINDER
+                int cylcount = 0;
+                int ncyl = Cylinder::getCylinders().size();
+                cout<<"Printing Cylinder IDs in Database b4 rearrange"<<endl;
+
                 const auto& cylinderInfoData = Cylinder::getDbData().value;
                 for(auto cyl:Cylinder::getCylinders()){
+                    cout<<cylcount<<"/"<<ncyl<<" "<<cyl->getId()<<endl;
                     auto cindex = cyl->getStableIndex();
                     const auto& c = cylinderInfoData[cindex];
                     if(c.filamentId == -1000){
@@ -1496,9 +1464,12 @@ void Controller::run() {
 
                 //check after rearrange
 #ifdef CROSSCHECK_CYLINDER
+                cylcount = 0;
+                cout<<"Printing Cylinder IDs in Database aftr rearrange"<<endl;
                 for(auto cyl:Cylinder::getCylinders()){
                     auto cindex = cyl->getStableIndex();
                     const auto& c = cylinderInfoData[cindex];
+                    cout<<cylcount<<"/"<<ncyl<<" "<<cyl->getId()<<" "<<cindex<<endl;
                     if(c.filamentId == -1000){
                         cout<<"You have a cylinder pointing to the wrong location in "
                               "cylinderInfoData"<<endl;

@@ -46,7 +46,9 @@ void Cylinder::updateData() {
 void Cylinder::updateCoordinate() {
     coordinate = midPointCoordinate(_b1->vcoordinate(), _b2->vcoordinate(), 0.5);
     //update the coordiante in cylinder structure.
-
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"Coord calculated"<<getId()<<endl;
+    #endif
     Cylinder::getDbData().value[getStableIndex()].coord = 0.5 * (_b1->coordinate() + _b2->coordinate());
 }
 
@@ -110,6 +112,9 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 
     // Update the stored data
     updateData();
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"Cylinder created "<<getId()<<endl;
+    #endif
 }
 
 void Cylinder::initializerestart(int nummonomers, int firstmonomer, int lastmonomer, bool
@@ -127,6 +132,9 @@ void Cylinder::initializerestart(int nummonomers, int firstmonomer, int lastmono
 }
 
 Cylinder::~Cylinder() noexcept {
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"Cylinder deleted "<<getId()<<endl;
+    #endif
 
     //remove from compartment
     _cellElement.manager->removeElement(_cellElement);
@@ -141,6 +149,9 @@ void Cylinder::updatePosition() {
 
         //check if were still in same compartment, set new position
         updateCoordinate();
+        #ifdef CROSSCHECK_CYLINDER
+        cout<<"Coord updated "<<getId()<<endl;
+        #endif
         Compartment *c;
         try { c = GController::getCompartment(coordinate); }
         catch (exception &e) {
@@ -153,14 +164,17 @@ void Cylinder::updatePosition() {
 
         Compartment* curCompartment = getCompartment();
         if (c != curCompartment) {
-            #ifdef CHECKRXN
-            cout<<"move Cmp Cylinder with ID "<<getId()<<" from Cmp "
-                <<getCompartment()->getId()<<" to Cmp "<<c->getId()<<endl;
+            #ifdef CROSSCHECK_CYLINDER
+            cout<<"Attempt Move cmp"<<getId()<<endl;
             #endif
+
             mins = chrono::high_resolution_clock::now();
 
             //remove from old compartment, add to new
             _cellElement.manager->updateElement(_cellElement, c->cylinderCell);
+            #ifdef CROSSCHECK_CYLINDER
+            cout<<"Complete Move cmp"<<getId()<<endl;
+            #endif
 
 #ifdef CHEMISTRY
 //			auto oldCCylinder = _cCylinder.get();
@@ -180,6 +194,9 @@ void Cylinder::updatePosition() {
             //clone and set new ccylinder
             CCylinder *clone = _cCylinder->clone(c);
             setCCylinder(clone);
+#ifdef CROSSCHECK_CYLINDER
+            cout<<"Clone CCyl"<<getId()<<endl;
+#endif
 
 //			auto newCCylinder = _cCylinder.get();
 
@@ -187,6 +204,9 @@ void Cylinder::updatePosition() {
             auto& data = getDbData().value[getStableIndex()];
             data.compartmentId = c->getId();
             data.chemCylinder = _cCylinder.get();
+#ifdef CROSSCHECK_CYLINDER
+            cout<<"Update CylinderData"<<getId()<<endl;
+#endif
 
             mine = chrono::high_resolution_clock::now();
             chrono::duration<floatingpoint> compartment_update(mine - mins);

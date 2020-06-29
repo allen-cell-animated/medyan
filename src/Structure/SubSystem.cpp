@@ -408,22 +408,6 @@ void SubSystem::updateBindingManagers() {
 		C->deallocateSIMDcoordinates();
 	}
 	#endif
-
-	#ifdef MOTORBIASCHECK
-	cout<<"Cmp-Cylinders ";
-	for(auto C : _compartmentGrid->getCompartments()) {
-		cout<<C->getCylinders().size()<<" ";
-	}
-	cout<<endl;
-	cout<<"Binding sizes ";
-	for (auto C : _compartmentGrid->getCompartments()) {
-		short idvec[2];
-		idvec[0] = 0;
-		idvec[1] = 1;
-		cout<<C->getHybridBindingSearchManager()->getbindingsize(idvec)<<" ";
-	}
-	cout<<endl;
-	#endif
 }
 
 void SubSystem::vectorizeCylinder() {

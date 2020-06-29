@@ -113,11 +113,6 @@ protected:
 
 public:
     short _ID;
-/*    vector<uint16_t> cindex_bs;
-    vector<uint32_t> cID_bs;*/
-#ifdef MOTORBIASCHECK
-    size_t nummotorwalks=0;
-#endif
     cell_list::CellListHeadUser< Cylinder, Compartment > cylinderCell; // Cell of cylinders
 
     /// Default constructor, only takes in number of dimensions
