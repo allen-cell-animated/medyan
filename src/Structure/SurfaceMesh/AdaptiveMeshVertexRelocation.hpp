@@ -54,12 +54,12 @@ template<> struct OptimalVertexLocation< OptimalVertexLocationMethod::barycenter
 };
 
 template<
-    typename Mesh,
     OptimalVertexLocationMethod opt
 > class DirectVertexRelocationManager {
 public:
+    using MeshType = Membrane::MeshType;
     using OptimalVertexLocationType = OptimalVertexLocation< opt >;
-    using GeometryManagerType = GeometryManager< Mesh >;
+    using GeometryManagerType = GeometryManager< MeshType >;
 
 private:
     size_t maxIterRelocation_;
@@ -67,15 +67,52 @@ private:
 
     // Returns number of edges flipped
     template< typename EdgeFlipManagerType >
-    size_t edgeFlipping_(Mesh& mesh, const EdgeFlipManagerType& efm) const {
+    size_t edgeFlipping_(MeshType& mesh, const EdgeFlipManagerType& efm) const {
         // Edge flipping does not change edge id or total number of edges
         // Also the preferred length does not need to be changed
         size_t res = 0;
         const size_t numEdges = mesh.numEdges();
-        for(typename Mesh::EdgeIndex i {0}; i < numEdges; ++i) {
+        for(MeshType::EdgeIndex i {0}; i < numEdges; ++i) {
             if(efm.tryFlip(mesh, i) == EdgeFlipManagerType::State::Success) ++res;
         }
         return res;
+    }
+
+    template< typename VT >
+    void resetVertexCoordinate_(
+        MeshType&             mesh,
+        MeshType::VertexIndex vi,
+        const VT&             newCoord
+    ) const {
+        // Record old properties
+        double oldTotalEqArea = 0;
+        if(mesh.metaAttribute().isMechParamsSet) {
+            mesh.forEachHalfEdgeTargetingVertex(vi, [&](MeshType::HalfEdgeIndex hei) {
+                if(mesh.isInTriangle(hei)) {
+                    const auto ti = mesh.triangle(hei);
+                    oldTotalEqArea += mesh.attribute(ti).triangle->mTriangle.eqArea;
+                }
+            });
+        }
+
+        // Set vertex new coordinate
+        mesh.attribute(vi).getCoordinate() = newCoord;
+
+        // Set new properties
+        if(mesh.metaAttribute().isMechParamsSet) {
+            double newTotalArea = 0.0;
+            mesh.forEachHalfEdgeTargetingVertex(vi, [&](MT::HalfEdgeIndex hei) {
+                if(mesh.isInTriangle(hei)) {
+                    newTotalArea += area(mesh, mesh.triangle(hei));
+                }
+            });
+            mesh.forEachHalfEdgeTargetingVertex(vi, [&](MT::HalfEdgeIndex hei) {
+                if(mesh.isInTriangle(hei)) {
+                    mesh.attribute(mesh.triangle(hei)).triangle->mTriangle.eqArea
+                        = oldTotalEqArea * area(mesh, mesh.triangle(hei)) / newTotalArea;
+                }
+            });
+        }
     }
 
 public:
@@ -84,7 +121,7 @@ public:
         : maxIterRelocation_(maxIterRelocation), maxIter_(maxIter) {}
 
     template< typename EdgeFlipManagerType >
-    void operator()(Mesh& mesh, const EdgeFlipManagerType& efm) const {
+    void operator()(MeshType& mesh, const EdgeFlipManagerType& efm) const {
         using namespace mathfunc;
 
         const size_t numVertices = mesh.getVertices().size();
@@ -97,12 +134,12 @@ public:
 
             // Move vertices
             for(size_t iterRelo = 0; iterRelo < maxIterRelocation_; ++iterRelo) {
-                for(typename Mesh::VertexIndex i {}; i < numVertices; ++i) if(!mesh.isVertexOnBorder(i)) {
+                for(MeshType::VertexIndex i {0}; i < numVertices; ++i) if(!mesh.isVertexOnBorder(i)) {
                     // const auto coordOriginal = mesh.attribute(i).getCoordinate();
                     const auto target = OptimalVertexLocationType{}(mesh, i);
                     /*const auto diff = target - coordOriginal;
                     const auto magDiff = magnitude(diff);*/
-                    mesh.attribute(i).getCoordinate() = target;
+                    resetVertexCoordinate_(mesh, i, target);
                 }
             }
 

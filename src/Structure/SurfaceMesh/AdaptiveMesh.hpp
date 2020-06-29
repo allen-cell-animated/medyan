@@ -756,7 +756,7 @@ public:
 
 private:
     SizeMeasureManager< MeshType > _sizeMeasureManager;
-    DirectVertexRelocationManager< MeshType, optimalVertexLocationMethod > _directVertexRelocationManager;
+    DirectVertexRelocationManager< optimalVertexLocationMethod > _directVertexRelocationManager;
 
     EdgeFlipManager< MeshType, triangleQualityCriteria > _edgeFlipManager;
     EdgeSplitManager< MeshType, triangleQualityCriteria, edgeSplitVertexInsertionMethod > _edgeSplitManager;
