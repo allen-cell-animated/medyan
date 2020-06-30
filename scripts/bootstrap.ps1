@@ -62,7 +62,7 @@ Function Install-VcpkgPackages([bool]$need_boost) {
     $Env:VCPKG_DEFAULT_TRIPLET="x64-windows"
 
     Set-Location $vcpkg_dir
-    .\vcpkg install catch2 eigen3 spectra glfw3 glm
+    .\vcpkg install catch2 eigen3 spectra glfw3 glad glm
     if($need_boost) {
         .\vcpkg install boost
     }

@@ -38,8 +38,8 @@ void copySystemData(
             for(const auto& t : mesh.getTriangles()) {
                 size_t vIndex = 0; // 0, 1, 2
                 mi.triangleVertexIndices.emplace_back();
-                mesh.forEachHalfEdgeInPolygon(t, [&](size_t hei) {
-                    mi.triangleVertexIndices.back()[vIndex] = mesh.target(hei);
+                mesh.forEachHalfEdgeInPolygon(t, [&](auto hei) {
+                    mi.triangleVertexIndices.back()[vIndex] = mesh.target(hei).index;
                     ++vIndex;
                 });
             }
