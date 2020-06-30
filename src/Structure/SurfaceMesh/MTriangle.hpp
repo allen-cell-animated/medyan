@@ -7,19 +7,11 @@ Storing some mechanical properties of the triangle patches
 
 ******************************************************************************/
 
-class MTriangle {
+struct MTriangle {
 
-private:
-
-    double _kExVol; ///< Local excluded volume constant, which describes
-                    ///< excluded volume interactions between triangles and cylinder tips
-
-public:
-    MTriangle(short membraneType);
-
-    void setExVolConst(double kExVol) { _kExVol = kExVol; }
-    double getExVolConst() const { return _kExVol; }
-
+    // Local area elasticity, applicable only in material coordinates
+    double kArea = 0.0;
+    double eqArea = 0.0;
 };
 
 

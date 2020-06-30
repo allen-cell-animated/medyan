@@ -39,7 +39,7 @@ public:
     /// Constructor, intializes stretching, bending, and twisting forces
     FilamentFF(string& stretching, string& bending, string& twisting);
     
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&) override;
     virtual void cleanup();
 
     virtual string getName() {return "Filament";}
@@ -51,6 +51,8 @@ public:
     virtual void computeLoadForces() {return;}
     
     virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
+
+    virtual vector<string> getinteractionnames();
 };
 
 #endif

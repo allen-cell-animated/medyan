@@ -25,30 +25,17 @@
 #include "Structure/Bead.h"
 #include "Structure/Cylinder.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/MembraneMeshGeometry.hpp"
 #include "VisualHelper.hpp"
 
 namespace {
 
-using CurvPol = Membrane::MembraneMeshAttributeType::GeometryCurvaturePolicy;
+using CurvPol = medyan::SurfaceCurvaturePolicy;
 using CurvReq = ForceFieldTypes::GeometryCurvRequirement;
 
-template< bool stretched, CurvPol curvPol >
-void updateGeometryValue() {
-    for(auto m : Membrane::getMembranes()) m->updateGeometryValue< stretched, curvPol >();
-}
-template< bool stretched >
-void updateGeometryValue(CurvReq curvReq) {
-    if(curvReq == CurvReq::curv) updateGeometryValue< stretched, CurvPol::withSign >();
-    else                         updateGeometryValue< stretched, CurvPol::squared  >();
-}
-
-template< CurvPol curvPol >
-void updateGeometryValueWithDerivative() {
-    for(auto m : Membrane::getMembranes()) m->updateGeometryValueWithDerivative< curvPol >();
-}
-void updateGeometryValueWithDerivative(CurvReq curvReq) {
-    if(curvReq == CurvReq::curv) updateGeometryValueWithDerivative< CurvPol::withSign >();
-    else                         updateGeometryValueWithDerivative< CurvPol::squared  >();
+constexpr CurvPol getCurvPol(CurvReq curvReq) noexcept {
+    if(curvReq == CurvReq::curv) return CurvPol::withSign;
+    else                         return CurvPol::squared;
 }
 
 void prepareForceSharedData() {
@@ -77,7 +64,7 @@ void updateMembraneSharedData() {
 
 ForceField* ForceFieldManager::_culpritForceField = nullptr;
 
-void ForceFieldManager::vectorizeAllForceFields() {
+void ForceFieldManager::vectorizeAllForceFields(const FFCoordinateStartingIndex& si) {
     prepareForceSharedData();
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -91,8 +78,13 @@ void ForceFieldManager::vectorizeAllForceFields() {
     //@}
 #endif
 
+    // Cache membrane indices
+    for(auto m : Membrane::getMembranes()) {
+        medyan::cacheIndicesForFF(m->getMesh(), si);
+    }
+
     for (auto &ff : _forceFields)
-        ff->vectorize();
+        ff->vectorize(si);
 
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
@@ -155,6 +147,12 @@ void ForceFieldManager::cleanupAllForceFields() {
 
     for (auto &ff : _forceFields)
         ff->cleanup();
+
+    // Invalidate membrane cache indices
+    for(auto m : Membrane::getMembranes()) {
+        medyan::invalidateIndexCacheForFF(m->getMesh());
+    }
+
 #ifdef CUDAACCL
     if (!(CUDAcommon::getCUDAvars().conservestreams))
         CUDAcommon::handleerror(cudaStreamDestroy(streamF));
@@ -230,9 +228,17 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
 
 #endif
 
-    // Compute geometry
-    updateGeometryValue< stretched >(this->geoCurvReq);
+    // Compute membrane geometry
+    for(auto m : Membrane::getMembranes()) {
+        m->updateGeometryValue< stretched >(coord, getCurvPol(this->geoCurvReq));
+    }
 
+    short count = 0;
+    CUDAcommon::tmin.computeenergycalls++;
+    #ifdef TRACKDIDNOTMINIMIZE
+    if(!stretched)
+        SysParams::Mininimization().tempEnergyvec.clear();
+	#endif
     for (auto &ff : _forceFields) {
         tbegin = chrono::high_resolution_clock::now();
         auto tempEnergy = ff->computeEnergy(coord, stretched);
@@ -351,18 +357,23 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
 //    std::cout<<endl;
 #endif
     updateMembraneSharedData<stretched>();
+    if(!stretched) {
+        #ifdef TRACKDIDNOTMINIMIZE
+        SysParams::Mininimization().Energyvec.push_back(SysParams::Mininimization()
+        .tempEnergyvec);
+        #endif
+    }
     return energy;
     
 }
 
-
-
-
 EnergyReport ForceFieldManager::computeEnergyHRMD(floatingpoint *coord) const {
+    CUDAcommon::tmin.computeenerycallszero++;
     EnergyReport result;
     result.total = 0.0;
     for (auto &ff : _forceFields) {
         auto tempEnergy = ff->computeEnergy(coord);
+
         // convert to units of kT
         tempEnergy = tempEnergy / kT; // TODO: Energy unit conversion might happen outside
         result.individual.push_back({ff->getName(), tempEnergy});
@@ -377,7 +388,7 @@ EnergyReport ForceFieldManager::computeEnergyHRMD(floatingpoint *coord) const {
 template floatingpoint ForceFieldManager::computeEnergy< false >(floatingpoint *, bool) const;
 template floatingpoint ForceFieldManager::computeEnergy< true >(floatingpoint *, bool) const;
 
-void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
+void ForceFieldManager::computeForces(floatingpoint *coord, vector< floatingpoint >& force) {
     //reset to zero
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -387,10 +398,9 @@ void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
     CUDAcommon::serltime.TveccomputeF.clear();
     tbegin = chrono::high_resolution_clock::now();
 #endif
-    //@{
-    for (int i = 0; i < Bead::getDbData().forces.size_raw(); i++)
-        f[i] = 0.0;
-    //@}
+
+    std::fill(force.begin(), force.end(), 0.0);
+
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
@@ -418,8 +428,10 @@ void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
     tbegin = chrono::high_resolution_clock::now();
 #endif
 
-    // compute geometry
-    updateGeometryValueWithDerivative(this->geoCurvReq);
+    // compute membrane geometry with derivatives
+    for(auto m : Membrane::getMembranes()) {
+        m->updateGeometryValueWithDerivative(coord, getCurvPol(this->geoCurvReq));
+    }
 
     //recompute
 //    floatingpoint *F_i = new floatingpoint[CGMethod::N];
@@ -427,7 +439,7 @@ void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
     CUDAcommon::tmin.computeforcescalls++;
     for (auto &ff : _forceFields) {
         tbegin = chrono::high_resolution_clock::now();
-        ff->computeForces(coord, f);
+        ff->computeForces(coord, force.data());
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
         if(CUDAcommon::tmin.individualforces.size() == _forceFields.size())
@@ -503,7 +515,7 @@ void ForceFieldManager::computeLoadForce(Cylinder* c, ForceField::LoadForceEnd e
     lfi = 0;
 }
 
-void ForceFieldManager::printculprit(floatingpoint* force){
+void ForceFieldManager::printculprit(){
 
     /*cout<<"Printing cylinder data overall"<<endl;
     if(true) {
@@ -625,8 +637,8 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
         coord_copy_m[i] -= delta;
 
         // calculate the new forces based on perturbation
-        computeForces(coord_copy_p.data(), forces_copy_p.data());
-        computeForces(coord_copy_m.data(), forces_copy_m.data());
+        computeForces(coord_copy_p.data(), forces_copy_p);
+        computeForces(coord_copy_m.data(), forces_copy_m);
 
         for(auto j = 0; j < total_DOF; j++){
 

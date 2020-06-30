@@ -130,13 +130,12 @@ public:
      * factors do not apply to all reactions.*/
 
     enum RateMulFactorType {
-        VOLUMEFACTOR, AreaDiffusing, MECHANOCHEMICALFACTOR, MOTORWALKCONSTRAINTFACTOR,
+        VOLUMEFACTOR, diffusionShape, MECHANOCHEMICALFACTOR, MOTORWALKCONSTRAINTFACTOR,
         RESTARTPHASESWITCH, MANUALRATECHANGEFACTOR1, RATEMULFACTSIZE
     };
     array<float, RATEMULFACTSIZE> _ratemulfactors;
 
     void setRateMulFactor(float factor, RateMulFactorType type){
-//    	cout<<"set Rate type "<<type<<" "<<factor<<endl;
 
         if(factor == _ratemulfactors[type]) return;
 
@@ -250,9 +249,6 @@ public:
     ///Get CBound
     CBound* getCBound() {return _cBound;}
     
-    /// Sets the ReactionBase rate to the parameter "rate"
-    [[deprecated]]void setRate(float rate) {_rate=rate;}
-    
     // Sets the scaled rate based on volume dependence.
     void recalcRateVolumeFactor() {
         // This can automatically set the "_rate" as scaled value of "rate"
@@ -272,8 +268,11 @@ public:
 
     /// Getter and setter for compartment volume fraction
     floatingpoint getVolumeFrac()const { return _volumeFrac; }
-    void setVolumeFrac(float volumeFrac) { _volumeFrac = volumeFrac; }
-
+    void setVolumeFrac(float volumeFrac) {
+        _volumeFrac = volumeFrac;
+        recalcRateVolumeFactor();
+    }
+    
     /// Sets the RNode pointer associated with this ReactionBase to rhs. Usually is
     /// called only by the Gillespie-like algorithms.
     void setRnode(RNode *rhs) {_rnode=rhs;}

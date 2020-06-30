@@ -20,6 +20,19 @@
 #include "common.h"
 #include "Parser.h"
 
+//Did not minimize structure
+#ifdef TRACKDIDNOTMINIMIZE
+struct MinimizationParams{
+    vector<floatingpoint> maxF;
+    vector<floatingpoint> TotalE;
+    vector<vector<floatingpoint>> Energyvec;
+    vector<floatingpoint> Lambda;
+    vector<floatingpoint> beta;
+    vector<bool> safeModeORnot;
+    vector<floatingpoint> tempEnergyvec;
+    vector<vector<floatingpoint>> gradientvec;
+};
+#endif
 /// Struct to hold mechanical parameters for the system
 struct MechParams {
 
@@ -64,7 +77,7 @@ struct MechParams {
     /// Volume parameter
     vector<floatingpoint> VolumeK                 = {};
     floatingpoint         VolumeCutoff            = 0.0;
-    vector<double> MemBeadVolumeK          = {};
+    double         memBeadVolumeK          = 0.0;
     double         MemBeadVolumeCutoff     = 0.0;
     double         MemBeadVolumeCutoffMech = 0.0;
     //@}
@@ -85,15 +98,15 @@ struct MechParams {
     
     //@{
     /// Membrane parameter
-    vector<double> MemElasticK     = {};
-    vector<double> MemEqAreaFactor = {};  // Only used in initialization
+    vector<double> memAreaK        = {};
+    vector<double> memEqAreaFactor = {};  // Only used in initialization
     vector<double> MemTension      = {};
     vector<double> MemBendingK     = {};
     vector<double> MemEqCurv       = {};
     //@}
 
     // Water incompressibility
-    double BulkModulus = 0.0;
+    double bulkModulus = 0.0;
 
     
     //@{
@@ -131,7 +144,7 @@ struct MechParams {
     float hessDelta = 0.0001;
     bool denseEstimation = true;
     int hessSkip = 20;
-    
+
     int sameFilBindSkip = 2;
 
 
@@ -329,6 +342,10 @@ struct DyRateParams {
     /// Option for dynamic branching point unbinding rate
     vector<floatingpoint> dBranchUnbindingCharLength = {};
 
+    /// Option for addinh dynamics branching point unbinding rate based on a
+    // characteristic Force.
+    vector<floatingpoint> dBranchUnbindingCharForce = {};
+
     /// Option for manual (de)polymerization rate changer
     /// Start time
     double manualCharStartTime = 100000.0;
@@ -376,6 +393,10 @@ public:
     static GeoParams GParams;     ///< The geometry parameters
     static BoundParams BParams;   ///< The boundary parameters
     static DyRateParams DRParams; ///< The dynamic rate parameters
+    #ifdef TRACKDIDNOTMINIMIZE
+    static MinimizationParams MinParams;
+	#endif
+
     static SpecialParams SParams; ///< Other parameters
     static SimulParams simulParams_;
     
@@ -390,6 +411,8 @@ public:
     static long long exvolcounterz[3];
     ///Const getter
     static bool RUNSTATE; //0 refers to restart phase and 1 refers to run phase.
+    static bool USECHEMCOPYNUM; // if set to 0, restart file copy numbers are used. If
+    // not, chemistry file copy numbers are used.
     static bool INITIALIZEDSTATUS; // true refers to sucessful initialization. false
     static bool DURINGCHEMISTRY; //true if MEDYAN is running chemistry, false otherwise.
     // corresponds to an on-going initialization state.
@@ -417,8 +440,11 @@ public:
     static bool checkDyRateParameters(DynamicRateType& dy);
     static bool checkGeoParameters();
     //@}
-    
+
     static void addChemParameters(ChemistryData& chem);
+    #ifdef TRACKDIDNOTMINIMIZE
+    static MinimizationParams& Mininimization() { return MinParams;}
+	#endif
 
 };
 

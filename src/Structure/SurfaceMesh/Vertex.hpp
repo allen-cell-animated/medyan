@@ -1,70 +1,61 @@
-#ifndef MEDYAN_Structure_SurfaceMesh_Vertex_Hpp
-#define MEDYAN_Structure_SurfaceMesh_Vertex_Hpp
+#ifndef MEDYAN_Structure_SurfaceMesh_Vertex_hpp
+#define MEDYAN_Structure_SurfaceMesh_Vertex_hpp
 
 #include <memory> // unique_ptr
+#include <vector>
 
-#include "common.h"
-#include "Structure/Bead.h"
-#include "Structure/SurfaceMesh/Edge.hpp"
+#include "Chemistry/ReactionDy.hpp"
+#include "Chemistry/SpeciesContainer.h"
+#include "MathFunctions.h"
+#include "Structure/Database.h"
 #include "Structure/SurfaceMesh/MVoronoiCell.h"
-#include "Structure/SurfaceMesh/Triangle.hpp"
 
-// Forward declarations
-class Edge;
-class Triangle;
-class Membrane;
+// CVertex represents a cell around a vertex related to chemistry, and owns
+//   - all the diffusing species in the cell
+//   - all reactions with only diffusing species in this cell
+//
+// Note:
+//   - diffusion reactions between the cells will be stored in CHalfEdge
+struct CVertex {
+    using ReactionContainer = std::vector< std::unique_ptr< ReactionDy > >;
 
-/******************************************************************************
+    SpeciesPtrContainerVector species;
+    ReactionContainer         reactions;
+};
 
-The vertex class extends bead,
-but it is exclusively used in 2D surface meshwork, and contains
-information of its neighbors.
 
-******************************************************************************/
-
-class Vertex:
-    public Bead, // Inherited from bead to receive full features like coordinate and forces.
-                 // But note that in terms of tracking, when the vertex is added to the system,
-                 // the base class Bead should also be added to its own collection,
-                 // i.e. both the bead and the vertex collection should both have the collection.
+class Vertex :
     public Database< Vertex, false >
-    {
+{
     
-    friend class Membrane; // Membrane class can manage id of this vertex
-
 private:
     std::size_t topoIndex_; // Index in the meshwork topology.
 
-    std::unique_ptr<MVoronoiCell> mVertex_; // pointer to Voronoi cell mechanical information
-
 public:
-    using vertex_db_type = Database< Vertex, false >;
+    using DatabaseType = Database< Vertex, false >;
+    using CoordinateType = mathfunc::Vec< 3, floatingpoint >;
 
     ///Main constructor
-    Vertex(const Bead::coordinate_type& v, Composite* parent, size_t topoIndex)
-        : Bead(mathfunc::vec2Vector(v), parent, 0), topoIndex_(topoIndex)
-    {
-#ifdef MECHANICS
-        // eqArea cannot be obtained at this moment
-        mVertex_ = std::make_unique<MVoronoiCell>(getType());
-#endif
-
-        usage = Bead::BeadUsage::Membrane;
-    }
+    Vertex(const CoordinateType& v, size_t topoIndex)
+        : coord(v), force{}, topoIndex_(topoIndex), mVertex(0)
+    {}
 
 
     void setTopoIndex(size_t index) { topoIndex_ = index; }
     
-    // Get mech Voronoi cell
-    MVoronoiCell* getMVoronoiCell() { return mVertex_.get(); }
-
     /// Get all instances of this class from the SubSystem
     static const auto& getVertices() {
-        return vertex_db_type::getElements();
+        return DatabaseType::getElements();
     }
     static size_t numVertices() {
-        return vertex_db_type::getElements().size();
+        return DatabaseType::getElements().size();
     }
+
+    CoordinateType coord;
+    CoordinateType force;
+
+    MVoronoiCell mVertex; // vertex mechanical information
+    CVertex      cVertex; // vertex chemical information
 
 };
 

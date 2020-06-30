@@ -8,13 +8,13 @@
 #include <vector>
 
 #include "Composite.h"
-#include "MathFunctions.h"
 #include "Structure/Database.h"
 #include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/MembraneHierarchy.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshAttribute.hpp"
+#include "Structure/SurfaceMesh/MembraneMeshChemistry.hpp"
+#include "Structure/SurfaceMesh/MembraneMeshGeometry.hpp"
 #include "Structure/SurfaceMesh/MMembrane.hpp"
-#include "Structure/SurfaceMesh/SurfaceMesh.hpp"
 #include "Structure/Trackable.h"
 #include "SysParams.h"
 
@@ -31,17 +31,15 @@ inheriting Composite.
 ******************************************************************************/
 class Membrane: public Composite, public Trackable, public Database< Membrane, false > {
 public:
-    using MembraneMeshAttributeType = MembraneMeshAttribute< SurfaceTriangularMesh >;
-    using coordinate_type = typename MembraneMeshAttributeType::coordinate_type;
-    using MeshType = SurfaceTriangularMesh< MembraneMeshAttributeType >;
+    using MeshAttributeType = MembraneMeshAttribute;
+    using coordinate_type = typename MeshAttributeType::CoordinateType;
+    using MeshType = HalfEdgeMesh< MeshAttributeType >;
 
     using HierarchyType = MembraneHierarchy< Membrane >;
 
 private:
 
     MeshType mesh_;
-
-    unique_ptr<MMembrane> mMembrane_; // pointer to mechanical membrane object
 
     short memType_; // Membrane type
 
@@ -57,20 +55,21 @@ public:
         const std::vector< coordinate_type >& vertexCoordinateList,
         const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
     ) : Trackable(false, false, false, false),
-        mesh_(typename MembraneMeshAttributeType::MetaAttribute{s, this}),
-        _subSystem(s), memType_(membraneType) {
+        mesh_(typename MeshAttributeType::MetaAttribute{s, this}),
+        _subSystem(s),
+        memType_(membraneType),
+        mMembrane(membraneType)
+    {
         
         // Build the meshwork topology using vertex and triangle information
         mesh_.init<typename MeshType::VertexTriangleInitializer>(
             vertexCoordinateList.size(),
             triangleVertexIndexList,
-            typename MembraneMeshAttributeType::AttributeInitializerInfo{ vertexCoordinateList }
+            typename MeshAttributeType::AttributeInitializerInfo{ vertexCoordinateList }
         );
 
         // Update geometry
-        updateGeometryValue<false>();
-
-        initMMembrane();
+        updateGeometryValueForSystem();
 
         // Add to membrane hierarchy (must have updated geometry)
         HierarchyType::addMembrane(this);
@@ -84,24 +83,42 @@ public:
     const auto& getMesh() const { return mesh_; }
     auto&       getMesh()       { return mesh_; }
 
-    // Helper function to initialize MMembrane
-    void initMMembrane() {
-#ifdef MECHANICS
-        // Calculate the total area and volume to set the equilibrium area and volume
+    // Helper function to initialize MMembrane and other mechanic parameters
+    void initMechanicParams() {
+        // Initialize MTriangle
+        // Also calculate the total area and volume to set the equilibrium area
+        // and volume for MMembrane
         double area = 0.0;
         double volume = 0.0;
-        for(const auto& t : mesh_.getTriangles()) {
-            area += t.attr.gTriangle.area;
-            volume += t.attr.gTriangle.coneVolume;
+        for(MeshType::TriangleIndex ti {0}; ti < mesh_.numTriangles(); ++ti) {
+            const auto theArea = medyan::area(mesh_, ti);
+
+            area += theArea;
+            volume += medyan::coneVolume(mesh_, ti);
+
+            if(memType_ >= 0 && memType_ < SysParams::Mechanics().memEqAreaFactor.size()) {
+                mesh_.attribute(ti).triangle->mTriangle.eqArea
+                    = theArea * SysParams::Mechanics().memEqAreaFactor[memType_];
+            }
         }
 
-        mMembrane_ = std::make_unique<MMembrane>(memType_);
-        mMembrane_->setEqArea(
-            area * SysParams::Mechanics().MemEqAreaFactor[memType_]
-        );
-        mMembrane_->setEqVolume(volume);
-#endif
-    } // void initMMembrane()
+        // Initialize MMembrane
+        if (memType_ >= 0 && memType_ < SysParams::Mechanics().memEqAreaFactor.size()) {
+            mMembrane.eqArea = area * SysParams::Mechanics().memEqAreaFactor[memType_];
+        }
+        mMembrane.eqVolume = volume;
+
+        // Other mechanical params are initialized automatically
+
+        mesh_.metaAttribute().isMechParamsSet = true;
+    } // void initMechanicParams()
+
+    void setChemistry(MembraneMeshChemistryInfo memChemInfo) {
+        mesh_.metaAttribute().chemInfo = std::move(memChemInfo);
+        medyan::setSpeciesAndReactions(mesh_, mesh_.metaAttribute().chemInfo);
+
+        mesh_.metaAttribute().isChemParamsSet = true;
+    }
 
     // SubSystem management, inherited from Trackable
     virtual void addToSubSystem()override { }
@@ -137,21 +154,21 @@ public:
     /**************************************************************************
     Geometric
     **************************************************************************/
-    template<
-        bool stretched = false,
-        MembraneMeshAttributeType::GeometryCurvaturePolicy curvPol
-            = MembraneMeshAttributeType::GeometryCurvaturePolicy::withSign
-    > void updateGeometryValue() {
-        MembraneMeshAttributeType::template updateGeometryValue<stretched, curvPol>(mesh_);
+    template< bool stretched = false >
+    void updateGeometryValue(
+        const floatingpoint*           coord,
+        medyan::SurfaceCurvaturePolicy curvPol
+    ) {
+        medyan::updateGeometryValue<stretched>(mesh_, coord, curvPol);
     }
-    template<
-        MembraneMeshAttributeType::GeometryCurvaturePolicy curvPol
-            = MembraneMeshAttributeType::GeometryCurvaturePolicy::withSign
-    > void updateGeometryValueWithDerivative() {
-        MembraneMeshAttributeType::template updateGeometryValueWithDerivative<curvPol>(mesh_);
+    void updateGeometryValueWithDerivative(
+        const floatingpoint*           coord,
+        medyan::SurfaceCurvaturePolicy curvPol
+    ) {
+        medyan::updateGeometryValueWithDerivative(mesh_, coord, curvPol);
     }
     void updateGeometryValueForSystem() {
-        MembraneMeshAttributeType::updateGeometryValueForSystem(mesh_);
+        medyan::updateGeometryValueForSystem(mesh_);
     }
 
     /**
@@ -164,7 +181,7 @@ public:
     double signedDistance(const VecType& p, bool allowOpen = false) const {
         if(!allowOpen && !isClosed())
             throw std::runtime_error("Membrane is not closed while trying to find signed distance field.");
-        return MembraneMeshAttributeType::signedDistance(mesh_, p);
+        return medyan::signedDistance(mesh_, p);
     }
     /**
      * Use signed distance or other methods to judge whether a point is inside membrane.
@@ -173,7 +190,7 @@ public:
     template< typename VecType, std::enable_if_t< VecType::vec_size == 3 >* = nullptr >
     bool contains(const VecType& p) const {
         if(!isClosed()) throw std::runtime_error("Membrane is not closed while trying to find signed distance field.");
-        return MembraneMeshAttributeType::contains(mesh_, p);
+        return medyan::contains(mesh_, p);
     }
 
     /**************************************************************************
@@ -181,12 +198,11 @@ public:
     **************************************************************************/
     bool isClosed() const { return mesh_.isClosed(); }
 
-    /**************************************************************************
-    Mechanics
-    **************************************************************************/
-    // Get mech membrane
-    MMembrane* getMMembrane() { return mMembrane_.get(); }
 
+    //-------------------------------------------------------------------------
+    // Membrane data
+    //-------------------------------------------------------------------------
+    MMembrane mMembrane; // Mechanical parameters
 
 };
 

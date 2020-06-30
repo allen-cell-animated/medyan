@@ -34,13 +34,15 @@ private:
     Membrane* _parent; // Pointer to the meshwork it belongs to.
     size_t _topoIndex; // Index in the meshwork topology.
 
-    unique_ptr<MTriangle> _mTriangle; // pointer to mech triangle
 
-    void updateCoordinate(); // helper function to update coordiante of this triangle
+    void updateCoordinate(); // helper function to update coordinate of this triangle
 
     cell_list::CellListElementUser< Triangle, Compartment > _cellElement;
 
 public:
+    // Stores triangle mechanical data
+    MTriangle mTriangle;
+
     mathfunc::Vec< 3, floatingpoint > coordinate; // Coordinate of the center point, updated with updateCoordiante()
 
     Triangle(Membrane *parent, size_t topoIndex);
@@ -49,10 +51,6 @@ public:
     Membrane* getParent()const { return _parent; }
     void setTopoIndex(size_t index) { _topoIndex = index; }
     size_t getTopoIndex() const { return _topoIndex; }
-
-    // Get mech triangle
-    MTriangle*       getMTriangle()       { return _mTriangle.get(); }
-    const MTriangle* getMTriangle() const { return _mTriangle.get(); }
 
     /// Get all instances of this class from the SubSystem
     static const vector<Triangle*>& getTriangles() {

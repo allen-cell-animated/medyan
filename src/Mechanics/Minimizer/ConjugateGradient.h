@@ -36,18 +36,21 @@ private:
     floatingpoint _MAXDIST;   ///< Max distance used to move
     floatingpoint _LAMBDAMAX; ///< Maximum lambda that can be returned
     floatingpoint _LAMBDARUNNINGAVERAGEPROBABILITY = 0.0; //running average probability.
+    string _LINESEARCHALGORITHM;
     
 public:
     /// Constructor sets gradient tolerance parameter
     ConjugateGradient(floatingpoint gradientTolerance,
                       floatingpoint maxDistance,
                       floatingpoint lambdaMax,
-                      floatingpoint lambdarunningaverageprobability)
+                      floatingpoint lambdarunningaverageprobability, string
+                      linesearchalgorithm)
     
         : _GRADTOL(gradientTolerance),
           _MAXDIST(maxDistance),
           _LAMBDAMAX(lambdaMax),
-          _LAMBDARUNNINGAVERAGEPROBABILITY(lambdarunningaverageprobability) {}
+          _LAMBDARUNNINGAVERAGEPROBABILITY(lambdarunningaverageprobability),
+          _LINESEARCHALGORITHM(linesearchalgorithm){}
     
     
     /// This function will minimize the system until the following criterion are met:
@@ -55,7 +58,7 @@ public:
     /// 3) Number of iterations exceeds 5N, unless in initial minimization
     virtual MinimizationResult equlibrate(ForceFieldManager &FFM, bool steplimit) override {
         return _CGType.minimize(FFM, _GRADTOL, _MAXDIST, _LAMBDAMAX,
-                _LAMBDARUNNINGAVERAGEPROBABILITY, steplimit);
+                _LAMBDARUNNINGAVERAGEPROBABILITY, _LINESEARCHALGORITHM, steplimit);
     }
 
 

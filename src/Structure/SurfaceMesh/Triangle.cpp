@@ -11,10 +11,11 @@ Triangle::Triangle(Membrane* parent, size_t topoIndex):
     Trackable(true, false, true, false),
     _parent(parent), _topoIndex{topoIndex} {
 
-#ifdef MECHANICS
-    // eqArea cannot be obtained at this moment
-    _mTriangle = std::make_unique<MTriangle>(getType());
-#endif
+    // Set up mTriangle
+    if(getType() >= 0 && getType() < SysParams::Mechanics().memAreaK.size()) {
+        mTriangle.kArea = SysParams::Mechanics().memAreaK[getType()];
+    }
+    // Note: eqArea is not set at this moment and should be set by the creator of the triangle
 
     // Set coordinate and add to compartment
     updateCoordinate();
@@ -37,17 +38,17 @@ Triangle::~Triangle() {
 
 void Triangle::updateCoordinate() {
     const auto& mesh = _parent->getMesh();
-    const size_t hei0 = mesh.getTriangles()[_topoIndex].halfEdgeIndex;
-    const size_t hei1 = mesh.next(hei0);
-    const size_t hei2 = mesh.next(hei1);
-    const size_t v0 = mesh.target(hei0);
-    const size_t v1 = mesh.target(hei1);
-    const size_t v2 = mesh.target(hei2);
+    const auto hei0 = mesh.halfEdge(Membrane::MeshType::TriangleIndex{_topoIndex});
+    const auto hei1 = mesh.next(hei0);
+    const auto hei2 = mesh.next(hei1);
+    const auto v0 = mesh.target(hei0);
+    const auto v1 = mesh.target(hei1);
+    const auto v2 = mesh.target(hei2);
 
     coordinate = (
-        mesh.getVertexAttribute(v0).getCoordinate()
-        + mesh.getVertexAttribute(v1).getCoordinate()
-        + mesh.getVertexAttribute(v2).getCoordinate()
+        mesh.attribute(v0).getCoordinate()
+        + mesh.attribute(v1).getCoordinate()
+        + mesh.attribute(v2).getCoordinate()
     ) / 3;
 }
 

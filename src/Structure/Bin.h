@@ -173,7 +173,9 @@ public:
 
     void updatecindices();
 
-    vector<int> getcindices(){return cindicesvector;}
+    vector<int> getcindices(){
+        updatecindices();
+        return cindicesvector;}
 
 };
 #endif

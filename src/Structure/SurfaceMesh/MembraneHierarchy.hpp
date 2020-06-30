@@ -93,10 +93,12 @@ public:
     // When new membrane is inserted.
     // This function requires that geometry of the membrane has been updated.
     static void addMembrane(MemType* m, MembraneHierarchy& root) {
+        using MT = Membrane::MeshType;
+
         auto& rootChildren = root.children();
 
         // Pick a point on the membrane and check the containing relationship with other membranes
-        const mathfunc::Vec< 3, floatingpoint > p (m->getMesh().getVertexAttribute(0).getCoordinate());
+        const mathfunc::Vec< 3, floatingpoint > p (m->getMesh().attribute(MT::VertexIndex {0}).getCoordinate());
 
         // Recursively search
         for(auto& childPtr: rootChildren) {
@@ -126,7 +128,7 @@ public:
 
                 MembraneHierarchy* hiePtr = static_cast<MembraneHierarchy*>(childPtr.get());
 
-                const mathfunc::Vec< 3, floatingpoint > hieP (hiePtr->_membrane->getMesh().getVertexAttribute(0).getCoordinate());
+                const mathfunc::Vec< 3, floatingpoint > hieP (hiePtr->_membrane->getMesh().attribute(MT::VertexIndex {0}).getCoordinate());
 
                 if(m->contains(hieP)) { // The child membrane is inside new membrane
 

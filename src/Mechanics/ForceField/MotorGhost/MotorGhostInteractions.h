@@ -16,6 +16,7 @@
 #define MEDYAN_MotorGhostInteractions_h
 
 #include "common.h"
+#include "Mechanics/ForceField/Types.hpp"
 
 //FORWARD DECLARATIONS
 class MotorGhost;
@@ -30,7 +31,7 @@ public:
     static MotorGhost* _motorCulprit;
 
     ///Vectorize the bead interactions for minimization
-    virtual void vectorize() = 0;
+    virtual void vectorize(const FFCoordinateStartingIndex&) = 0;
     ///Deallocate the vectorized data
     virtual void deallocate() = 0;
     
@@ -43,6 +44,11 @@ public:
     virtual const string getName() = 0;
     /// Assign stretchforces for RateChangerImpl.
     virtual void assignforcemags(){};
+
+    static vector<floatingpoint> individualenergies;
+	static vector<floatingpoint> tpdistvec;
+	static vector<floatingpoint> eqlvec;
+	static vector<floatingpoint> kstrvec;
 };
 
 #endif

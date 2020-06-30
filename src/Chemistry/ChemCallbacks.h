@@ -110,6 +110,10 @@ struct UpdateBrancherBindingCallback {
     }
 };
 
+
+/// In scenarios where you have multiple linkers in the system, they cannot bind to the
+// same binding site simultaneously. If linker type x is bound to a site, no other linker
+// (of any type) can bind to it till this one unbinds.
 struct UpdateLinkerBindingCallback {
     
     Cylinder* _cylinder; ///< cylinder to update
@@ -530,12 +534,14 @@ struct BranchingCallback {
         site = _bManager->chooseBindingSitesstencil();
 #endif
         
-        //get info from site
+        //get info of mother filament from site
         Cylinder* c1 = get<0>(site)->getCylinder();
         short filType = c1->getType();
         
-        double pos = double(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
-        if(SysParams::RUNSTATE == true) {
+        floatingpoint pos = floatingpoint(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
+
+        if(SysParams::RUNSTATE==true) {
+
             //Get a position and direction of a new filament
             auto x1 = c1->getFirstBead()->vcoordinate();
             auto x2 = c1->getSecondBead()->vcoordinate();
@@ -547,7 +553,7 @@ struct BranchingCallback {
             //get branch projection
 #ifdef MECHANICS
             //use mechanical parameters
-            double l, t;
+            floatingpoint l, t;
             if(SysParams::Mechanics().BrStretchingL.size() != 0) {
                 l = SysParams::Mechanics().BrStretchingL[branchType];
                 t = SysParams::Mechanics().BrBendingTheta[branchType];
@@ -563,78 +569,100 @@ struct BranchingCallback {
             cout << "Branching initialization cannot occur unless mechanics is enabled. Using"
             << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
             << endl;
-            double l = 10.0;
-            double t = 1.22;
+            floatingpoint l = 10.0;
+            floatingpoint t = 1.22;
 #endif
             floatingpoint s = SysParams::Geometry().monomerSize[filType];
-            
-	        //n direction vector of mother filament
-	        //p coordinate of brancher
-	        //l stretching equilibrium length
-	        //s monomer size
-	        //t bending theta.
+
+            //n direction vector of mother filament
+            //p coordinate of brancher
+            //l stretching equilibrium length
+            //s monomer size
+            //t bending theta.
             int tries = 0;
-            constexpr int triesShiftParam = 3;
-            constexpr int triesWarning    = 3;
+            constexpr int triesShiftParam = 10;
+            constexpr int triesWarning    = 10;
+            bool inboundary = false;
+            frate=_offRate;
+            float cutofffactor = pow(c1->getCompartment()->getVolumeFrac(),1.0/3.0);
+            floatingpoint boundary_cutoff_distance = cutofffactor*SysParams::Boundaries()
+                    .BoundaryCutoff/4.0 ;
 
-            vector< floatingpoint > bd, bp;
-            while(true) {
+            while(inboundary == false) {
+
+                // We try to find a point at t radians with mother filament. We have triesShiftParam
+                //number of trials to find an appropriate one. If not, we choose a random
+                //theta and let minimization algorithm take care of bringing it back to t
+                // radians.
                 const double theta = (tries >= triesShiftParam ? Rand::randfloatingpoint(0.1, 3.04) : t);
-
                 auto branchPosDir = branchProjection(n, p, l, s, theta);
-                bd = get<0>(branchPosDir);
-                bp = get<1>(branchPosDir);
+                auto bd = get<0>(branchPosDir);//branch direction
+                auto bp = get<1>(branchPosDir);//branch position
                 const auto b2 = vector2Vec< 3, floatingpoint >(bp) + s * vector2Vec< 3, floatingpoint >(bd);
 
+                //Check if the branch will be within boundary
+                auto projlength = SysParams::Geometry().cylinderSize[filType] / 10;
+                auto pos2 = nextPointProjection(bp, projlength, bd);
+                //check if within cutoff of boundary
                 auto regionInMembrane = _ps->getRegionInMembrane();
                 if(
-                    regionInMembrane && (
+                    (regionInMembrane && (
                         regionInMembrane->contains(vector2Vec< 3, floatingpoint >(bp)) &&
                         regionInMembrane->contains(b2)
-                    )
-                )
-                    break; // 2 points are both in region
+                    )) ||
+                    (!regionInMembrane && (
+                        _ps->getBoundary()->distance(bp) >= boundary_cutoff_distance &&
+                        _ps->getBoundary()->distance(pos2) >= boundary_cutoff_distance
+                    ))
+                ) {
+                    inboundary = true;
+
+                        //create a new daughter filament
+                    Filament *f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true,
+                                                                true);
+
+                    //mark first cylinder
+                    Cylinder *c = f->getCylinderVector().front();
+                    c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
+
+                    //create new branch
+                    b = _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
+                }
 
                 ++tries;
-                if(tries >= triesWarning)
+                if(tries >= triesWarning && inboundary == false)
                     LOG(WARNING) << "Cannot find a branching point in region. Trial " << tries << ": "
-                        << "dir (" << bd[0] << ' ' << bd[1] << ' ' << bd[2] << ") "
-                        << "pos (" << bp[0] << ' ' << bp[1] << ' ' << bp[2] << ')';
+                                    << "dir (" << bd[0] << ' ' << bd[1] << ' ' << bd[2] << ") "
+                                    << "pos (" << bp[0] << ' ' << bp[1] << ' ' << bp[2] << ')';
             }
-            
-            //create a new filament
-            Filament* f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
-            
-            //mark first cylinder
-            Cylinder* c = f->getCylinderVector().front();
-            c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
-            
-            //create new branch
-            b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
-            frate=_offRate;
+
         }
         else {
             CCylinder* c = nullptr;
             bool check = false;
             vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
-            for(auto T:BrT) {
+/*	        cout<<"Looking for cylinder with Idx "<<c1->getStableIndex()<<" and pos "
+                                                                   ""<<pos<<endl;*/
+            for(auto T:BrT){
+            	//Mother cylinder
                 CCylinder* cx=get<0>(get<0>(T));
+                //Mother binding site
                 floatingpoint p = floatingpoint(get<1>(get<0>(T)))/ floatingpoint(SysParams::Geometry().cylinderNumMon[filType]);
-                if(cx->getCylinder()->getId()==c1->getId() && p==pos){
+//	            cout<<"Branch tuple "<<cx->getCylinder()->getStableIndex()<<" "<<p<<endl;
+                if(cx->getCylinder()->getId()==c1->getId() && abs(p-pos)/pos < 0.01){
                     c=get<0>(get<1>(T));
                     check = true;
                     break;
                 }}
             if(check){
-
-                
             b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
                 
             frate=0.0;
             }
             else {
                 b = nullptr;
-                cout<<"Brancher Error. Cannot find binding Site in the list. Cannot complete restart. Exiting." <<endl;
+                LOG(ERROR)<<"Brancher Error. Cannot find binding Site in the list. Cannot "
+					  "complete restart. Exiting." <<endl;
                 exit(EXIT_FAILURE);
             }
         }
@@ -655,8 +683,6 @@ struct BranchingCallback {
 	    CUDAcommon::ccount.cBranchingCallback++;
     }
 };
-
-
 
 /// Callback to unbind a Linker from a Filament
 struct LinkerUnbindingCallback {
@@ -860,6 +886,7 @@ struct MotorBindingCallback {
         
         floatingpoint pos1 = floatingpoint(get<1>(site[0])) / cylinderSize;
         floatingpoint pos2 = floatingpoint(get<1>(site[1])) / cylinderSize;
+
         
         MotorGhost* m = _ps->addTrackable<MotorGhost>(c1, c2, motorType, pos1, pos2, _onRate, _offRate);
         
@@ -945,22 +972,7 @@ struct MotorWalkingCallback {
 
         floatingpoint oldpos = floatingpoint(_oldPosition) / cylinderSize;
         floatingpoint newpos = floatingpoint(_newPosition) / cylinderSize;
-#ifdef CROSSCHECK
-        auto sb = SysParams::Chemistry().motorBoundIndex[0];
-	    CMonomer* monomernew = cc->getCMonomer(_newPosition);
-
-	    cout<<"mw before speciesMotor E-0/B-1 "<<sm1->getN()<<" "
-	    <<monomernew->speciesMotor(_motorType)->getN()<<endl;
-	    cout<<"mw before speciesBound E-1/B-0 "<<monomer->speciesBound(sb)->getN()
-	    <<" "<<monomernew->speciesBound(sb)->getN()<<endl;
-#endif
 	    m->moveMotorHead(_c, oldpos, newpos, _boundType, _ps);
-#ifdef CROSSCHECK
-	    cout<<"mw after speciesMotor E-0/B-1 "<<sm1->getN()<<" "<<
-	    monomernew->speciesMotor(_motorType)->getN()<<endl;
-	    cout<<"mw after speciesBound E-1/B-0 "<<monomer->speciesBound(sb)->getN()
-	        <<" "<<monomernew->speciesBound(sb)->getN()<<endl;
-#endif
         
 #ifdef DYNAMICRATES
         //reset the associated reactions

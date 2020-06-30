@@ -59,19 +59,25 @@ private:
     
     string _inputDirectory;   ///< Input directory being used
     string _outputDirectory;  ///< Output directory being used
-    
-    vector<Output*> _outputs; ///< Vector of specified outputs
-    
+
+    vector<std::unique_ptr< Output >> _outputs; ///< Vector of specified outputs
+    vector<std::unique_ptr< Output >> _outputdump; ///<Vector of outputs that correspond to a datadump
+
     floatingpoint _runTime;          ///< Total desired runtime for simulation
 
     floatingpoint _snapshotTime;     ///< Desired time for each snapshot
-    
+    floatingpoint _datadumpTime;     ///< Desired time for each datadump
+
     floatingpoint _minimizationTime;  ///< Frequency of mechanical minimization
     floatingpoint _neighborListTime;  ///< Frequency of neighbor list updates
 
     std::unique_ptr<adaptive_mesh::MembraneMeshAdapter> _meshAdapter; ///< Used in adaptive remeshing algorithm
     std::unique_ptr< MembraneRegion< Membrane > > _regionInMembrane; // The region that is inside the outermost membrane
 
+    floatingpoint _slowedminimizationcutoffTime = 10.0; //Time cut off for slowed
+    // minimization
+    // frequency
+    
     DissipationTracker* _dt;   ///< dissipation tracking object
     
     

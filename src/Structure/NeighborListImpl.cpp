@@ -162,7 +162,6 @@ void CylinderCylinderNL::initializeBinGrid() {
 //    //Initial parameters of system
     auto _nDim = SysParams::Geometry().nDim;
     floatingpoint searchdist = 1.125 * (_rMax);
-    std::cout<<"searchdist "<<searchdist<<" rMax "<<_rMax<<endl;
     _binSize = {searchdist, searchdist, searchdist};
     if(_nDim >=1) {
         _size.push_back(int(SysParams::Geometry().NX * SysParams::Geometry()
@@ -1108,18 +1107,19 @@ vector<Cylinder*> BubbleCylinderNL::getNeighbors(Bubble* bb) {
 /// Triangle - Beads (filament)
 
 void TriangleFilBeadNL::addNeighbor(Neighbor* n) {
+    using MT = Membrane::MeshType;
 
     if(Triangle* t = dynamic_cast<Triangle*>(n)) {
         const auto& mesh = t->getParent()->getMesh();
-        const size_t ti = t->getTopoIndex();
-        const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
-        const size_t hei1 = mesh.next(hei0);
-        const size_t hei2 = mesh.next(hei1);
-        const Vec< 3, floatingpoint > v0 (mesh.getVertexAttribute(mesh.target(hei0)).getCoordinate());
-        const Vec< 3, floatingpoint > v1 (mesh.getVertexAttribute(mesh.target(hei1)).getCoordinate());
-        const Vec< 3, floatingpoint > v2 (mesh.getVertexAttribute(mesh.target(hei2)).getCoordinate());
+        const MT::TriangleIndex ti { t->getTopoIndex() };
+        const auto hei0 = mesh.halfEdge(ti);
+        const auto hei1 = mesh.next(hei0);
+        const auto hei2 = mesh.next(hei1);
+        const Vec< 3, floatingpoint > v0 (mesh.attribute(mesh.target(hei0)).getCoordinate());
+        const Vec< 3, floatingpoint > v1 (mesh.attribute(mesh.target(hei1)).getCoordinate());
+        const Vec< 3, floatingpoint > v2 (mesh.attribute(mesh.target(hei2)).getCoordinate());
 
-        for(auto b : Bead::getBeads()) if(b->usage == Bead::BeadUsage::Filament) {
+        for(auto b : Bead::getBeads()) if(b->usage == Bead::BeadUsage::filament) {
             const auto dist = trianglePointDistance(
                 v0, v1, v2,
                 b->coordinate()
@@ -1136,17 +1136,17 @@ void TriangleFilBeadNL::addNeighbor(Neighbor* n) {
         }
     }
     else if(Bead* b = dynamic_cast<Bead*>(n)) {
-        if(b->usage == Bead::BeadUsage::Filament) {
+        if(b->usage == Bead::BeadUsage::filament) {
 
             for(auto t : Triangle::getTriangles()) {
                 const auto& mesh = t->getParent()->getMesh();
-                const size_t ti = t->getTopoIndex();
-                const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
-                const size_t hei1 = mesh.next(hei0);
-                const size_t hei2 = mesh.next(hei1);
-                const Vec< 3, floatingpoint > v0 (mesh.getVertexAttribute(mesh.target(hei0)).getCoordinate());
-                const Vec< 3, floatingpoint > v1 (mesh.getVertexAttribute(mesh.target(hei1)).getCoordinate());
-                const Vec< 3, floatingpoint > v2 (mesh.getVertexAttribute(mesh.target(hei2)).getCoordinate());
+                const MT::TriangleIndex ti { t->getTopoIndex() };
+                const auto hei0 = mesh.halfEdge(ti);
+                const auto hei1 = mesh.next(hei0);
+                const auto hei2 = mesh.next(hei1);
+                const Vec< 3, floatingpoint > v0 (mesh.attribute(mesh.target(hei0)).getCoordinate());
+                const Vec< 3, floatingpoint > v1 (mesh.attribute(mesh.target(hei1)).getCoordinate());
+                const Vec< 3, floatingpoint > v2 (mesh.attribute(mesh.target(hei2)).getCoordinate());
 
                 const auto dist = trianglePointDistance(
                     v0, v1, v2,
@@ -1185,17 +1185,19 @@ void TriangleFilBeadNL::reset() {
     listBTMech_.clear();
     listTBMech_.clear();
 
-    const auto& coords = Bead::getDbDataConst().coords;
-
     for(auto t: Triangle::getTriangles()) {
 
         auto& mesh = t->getParent()->getMesh();
-        Membrane::MembraneMeshAttributeType::cacheIndices(mesh);
-        const auto& bi = mesh.getTriangleAttribute(t->getTopoIndex()).cachedCoordIndex;
+        const auto vis = medyan::vertexIndices(
+            mesh,
+            Membrane::MeshType::TriangleIndex { t->getTopoIndex() }
+        );
 
-        for(auto b : Bead::getBeads()) if(b->usage == Bead::BeadUsage::Filament) {
+        for(auto b : Bead::getBeads()) if(b->usage == Bead::BeadUsage::filament) {
             const auto dist = trianglePointDistance(
-                coords[bi[0]], coords[bi[1]], coords[bi[2]],
+                mesh.attribute(vis[0]).getCoordinate(),
+                mesh.attribute(vis[1]).getCoordinate(),
+                mesh.attribute(vis[2]).getCoordinate(),
                 b->coordinate()
             );
 

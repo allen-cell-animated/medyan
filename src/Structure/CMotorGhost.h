@@ -20,6 +20,7 @@
 
 #define SPECIESM_BINDING_INDEX 1
 #define SPECIESM_UNBINDING_INDEX 2
+#define SPECIESM_DIFFUSING_INDEX_OFFRXN 2
 
 //FORWARD DECLARATIONS
 class MotorGhost;
@@ -105,6 +106,12 @@ public:
                        SubSystem* ps);
     
     void printReaction();
+
+    Species* getDiffusingSpecies(){
+        RSpecies** rs = _offRxn->rspecies();
+        Species* sfb = &(rs[SPECIESM_DIFFUSING_INDEX_OFFRXN]->getSpecies());
+        return sfb;
+    }
 };
 
 #endif

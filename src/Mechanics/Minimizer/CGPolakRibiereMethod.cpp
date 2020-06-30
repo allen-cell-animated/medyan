@@ -16,6 +16,7 @@
 
 #include "ForceFieldManager.h"
 #include "Composite.h"
+#include "Mechanics/Minimizer/CGMethodDataCopy.hpp"
 #include "Output.h"
 #include "Bubble.h"
 #include "cross_check.h"
@@ -23,11 +24,28 @@
 #include "nvToolsExt.h"
 #endif
 #include "Structure/Bead.h"
+#ifdef ADDITIONALINFO
+#include "MotorGhostInteractions.h"
+#endif
 
-MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                            floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
-                            floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
-                            bool steplimit){
+MinimizationResult PolakRibiere::minimize(
+    ForceFieldManager &FFM, floatingpoint GRADTOL,
+    floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+    floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+    string _LINESEARCHALGORITHM,
+    bool steplimit
+) {
+
+    #ifdef TRACKDIDNOTMINIMIZE
+    SysParams::Mininimization().beta.clear();
+    SysParams::Mininimization().Lambda.clear();
+    SysParams::Mininimization().Energyvec.clear();
+    SysParams::Mininimization().TotalE.clear();
+    SysParams::Mininimization().maxF.clear();
+    SysParams::Mininimization().safeModeORnot.clear();
+    SysParams::Mininimization().tempEnergyvec.clear();
+    SysParams::Mininimization().gradientvec.clear();
+    #endif
 
     MinimizationResult result;
 #ifdef CUDATIMETRACK
@@ -38,11 +56,10 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
     //number of steps
     int N;
-    if(steplimit) {
-        int beadMaxStep = 5 * Bead::numBeads();
+    if (steplimit) {
+        int beadMaxStep = 3 * Bead::numBeads();
         N = (beadMaxStep > _MINNUMSTEPS ? beadMaxStep : _MINNUMSTEPS);
-    }
-    else
+    } else
         N = numeric_limits<int>::max();
 
     //@@@{ STEP 1: Start minimization
@@ -53,14 +70,19 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
-    FFM.vectorizeAllForceFields();//each forcefield needs to use hostallocdefault and MemCpyAsync followed by CudaStreamSynchronize
+    FFM.vectorizeAllForceFields(initCGMethodData(*this, GRADTOL));
+
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
     tend = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_vec(tend - tbegin);
-    CUDAcommon::tmin.vectorize+= elapsed_vec.count();
+    CUDAcommon::tmin.vectorize += elapsed_vec.count();
     //@@@} Start Minimization
+#ifdef OPTIMOUT
+    floatingpoint lambdatime = 0.0;
+    int safestatuscount = 0;
+#endif
 
 #ifdef CUDAACCL
     cross_checkclass::Aux=false;
@@ -72,56 +94,79 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     cudaDeviceSynchronize();
 #endif
     //@@@{ STEP 2: COMPUTE FORCES
-	tbegin = chrono::high_resolution_clock::now();
-    FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data()); //split and synchronize in the end
-	tend = chrono::high_resolution_clock::now();
-	chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
-	CUDAcommon::tmin.computeforces+= elapsed_force.count();
-	//@@@}
+    tbegin = chrono::high_resolution_clock::now();
+    FFM.computeForces(coord.data(), force); //split and synchronize in the end
+    tend = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
+    CUDAcommon::tmin.computeforces += elapsed_force.count();
+    //@@@}
+    #ifdef ADDITIONALINFO
+    FFM.computeEnergy(coord.data(), true);
+    if(SysParams::RUNSTATE == false){
+    int counter = 0;
+    auto individualenergiesvec = MotorGhostInteractions::individualenergies;
+    auto tpdistvec = MotorGhostInteractions::tpdistvec;
+    auto eqlvec = MotorGhostInteractions::eqlvec;
+    auto kstrvec = MotorGhostInteractions::kstrvec;
+    for(auto l :MotorGhost::getMotorGhosts()) {
+        Cylinder *cyl1 = l->getFirstCylinder();
+        Cylinder *cyl2 = l->getSecondCylinder();
+        float pos1 = l->getFirstPosition() * SysParams::Geometry()
+                .cylinderNumMon[cyl1->getType()];
+        float pos2 = l->getSecondPosition() * SysParams::Geometry()
+                .cylinderNumMon[cyl2->getType()];
+        cout << l->getId() << " " << l->getType() << " " << cyl1->getStableIndex() << " "
+             << cyl2->getStableIndex() << " " << pos1 << " " << pos2 << " "
+             << l->getMMotorGhost()->getEqLength() << " " << l->getCMotorGhost()
+                     ->getDiffusingSpecies()->getName() << " " << l->getNumHeads() << " "
+             << l->getnumBoundHeads() << " " << kstrvec[counter] << " " <<
+             eqlvec[counter] << " " << tpdistvec[counter] << " "
+                                                             ""
+             << individualenergiesvec[counter] << endl;
 
-	//Output energy
-//	cout<<"Energy before minimization"<<endl;
-//	FFM.computeEnergy(coord, force, 0.0, true);
+        counter++;
+    }
+    }
+    #endif
 
 #ifdef SERIAL // SERIAL
-	//@@@{ STEP 3: COPY FORCES
-	tbegin = chrono::high_resolution_clock::now();
-    Bead::getDbData().forcesAux = Bead::getDbData().forces;
-    Bead::getDbData().forcesAuxP = Bead::getDbData().forces;
+    //@@@{ STEP 3: COPY FORCES
+    tbegin = chrono::high_resolution_clock::now();
+    searchDir = forcePrev = force;
     auto maxForce = maxF();
+    bool isForceBelowTol = forceBelowTolerance();
 
-    result.energiesBefore = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+    result.energiesBefore = FFM.computeEnergyHRMD(coord.data());
 
-	tend = chrono::high_resolution_clock::now();
-	chrono::duration<floatingpoint> elapsed_copy(tend - tbegin);
-	CUDAcommon::tmin.copyforces+= elapsed_copy.count();
+    tend = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_copy(tend - tbegin);
+    CUDAcommon::tmin.copyforces += elapsed_copy.count();
     //@@@}
 #endif
-    
     //M as the first letter in variables signifies that it is used by minimizer
     // (as opposed to finding lambda)
     bool Ms_isminimizationstate, Ms_issafestate;
     int numIter = 0;
-
-    floatingpoint lambda;
+    floatingpoint lambda = 0.0;
 #ifdef CUDAACCL
     volatile bool *Mc_isminimizationstate;
     volatile bool *Mc_issafestate;
     Ms_isminimizationstate = false;
     Ms_issafestate = false;
 #endif
-
 #ifdef SERIAL
     //TODO Comment during SERIAL_CUDACROSSCHECK @{
     bool *Mc_isminimizationstate;
     bool *Mc_issafestate;
+    bool *M_ETolstate;
 //    @}
 
     Mc_isminimizationstate = new bool[1];
     Mc_issafestate = new bool[1];
+    M_ETolstate = new bool[1];
     Mc_isminimizationstate[0] = false;//points to address of Mmh_stop
     Mc_issafestate[0] = false;//points to address of Msh_stop
-
+    M_ETolstate[0] = false;
 #endif
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -259,26 +304,23 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
 
 #ifdef SERIAL //SERIAL
-	//@@@{ STEP 4 OTHER
-
+    //@@@{ STEP 4 OTHER
     //FIND MAXIMUM ERROR BETWEEN CUDA AND VECTORIZED FORCES{
     //VECTORIZED. Prep for Polak{
-	tbegin = chrono::high_resolution_clock::now();
-    floatingpoint curGrad = CGMethod::allFDotF();
+    tbegin = chrono::high_resolution_clock::now();
+    floatingpoint curGrad = searchDirDotSearchDir();
     Ms_isminimizationstate = true;
     Ms_issafestate = false;
-    Ms_isminimizationstate = !Bead::forcesBelowTolerance();
-
-    //
+    Ms_isminimizationstate = ! isForceBelowTol;
+    bool ETOLexittstatus = false;
     //
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;
     long i = 0;
     long index = 0;
     for(auto b:Bead::getBeads()){
-        index = 3 * b->getStableIndex();
-        std::cout<<b->getId()<<" "<< b->coordinate() <<" "
-                "" << b->force() <<endl;
+        std::cout<<b->getId()<<" "<< b->coord <<" "
+                "" << b->force <<endl;
     }
     std::cout<<"printed beads & forces"<<endl;
 #endif
@@ -300,6 +342,8 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     std::cout<<"Slice time "<<elapsed_runslice1.count()<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
+
+    //CUDA based minimization begins
 #ifdef CUDAACCL
     while (/* Iteration criterion */  numIter < N &&
            /* Gradient tolerance  */  (Mc_isminimizationstate[0])) {
@@ -419,19 +463,21 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
 
         //compute new forces
-        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());//split and synchronize
+        FFM.computeForces(coord.data(), force);//split and synchronize
 #ifdef DETAILEDOUTPUT
+        // wARNING This output is no longer safe because it assumes bead
+        // coordinates start with index 0
         std::cout<<"MB printing beads & forces L "<<lambda<<endl;
         long i = 0;
         long index = 0;
         for(auto b:Bead::getBeads()){
-            index = 3 * b->getStableIndex();
+            index = 3 * b->getIndex();
 
             std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                     ""<<coord[index + 2]<<" "
                     ""<<forceAux[index]<<" "
                     ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-                    b->getStableIndex()<<endl;
+                    b->getIndex()<<endl;
         }
         std::cout<<"MB printed beads & forces"<<endl;
 #endif
@@ -553,8 +599,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
     std::cout<<"CUDA Total number of iterations "<<numIter<<endl;
 #endif //CUDAACCL
-
-    numIter = 0;
+//CUDA based minimization ends
 #ifdef CUDATIMETRACK_MACRO
     floatingpoint s1 = 0.0;
     floatingpoint s2,s3,s4;
@@ -566,43 +611,43 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
     _safeMode = false;
 #ifdef OPTIMOUT
-std::cout<<"----------------------------------------"<<endl;
-    std::cout<<"maxF "<<maxF()<<endl;
+    std::cout << "----------------------------------------" << endl;
+    std::cout << "maxF " << maxForce << endl;
 #endif
-	tend = chrono::high_resolution_clock::now();
-	chrono::duration<floatingpoint> elapsed_other(tend - tbegin);
-	CUDAcommon::tmin.tother+= elapsed_other.count();
+
+    #ifdef TRACKDIDNOTMINIMIZE
+    SysParams::Mininimization().maxF.push_back(maxForce);
+    #endif
+
+    tend = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_other(tend - tbegin);
+    CUDAcommon::tmin.tother+= elapsed_other.count();
     //@@@} STEP 4 OTHER
 
 #ifdef SERIAL
     while (/* Iteration criterion */  numIter < N &&
-           /* Gradient tolerance  */  (Ms_isminimizationstate )) {
+    /* Gradient tolerance  */  (Ms_isminimizationstate) &&
+                                        !ETOLexittstatus) {
 
-//#ifdef CUDATIMETRACK_MACRO
-//        chrono::high_resolution_clock::time_point tbeginiter, tenditer;
-//        tbeginiter = chrono::high_resolution_clock::now();
-//#endif
+        //@@@{ STEP 5 OTHER
+        tbegin = chrono::high_resolution_clock::now();
+        if (std::is_same<floatingpoint, float>::value) {
+            //set the floor of lambda (lowest lambda allowed based on maxf
+            int maxForder = static_cast<int>(floor(log10(maxForce)));
+            if (maxForder < 0) maxForder--;
+            CGMethod::setLAMBDATOL(maxForder);
+        }
 
-		//@@@{ STEP 5 OTHER
-	    tbegin = chrono::high_resolution_clock::now();
-	    if(std::is_same<floatingpoint,float>::value) {
-		    //set the floor of lambda (lowest lambda allowed based on maxf
-		    int maxForder = static_cast<int>(floor(log10(maxForce)));
-		    if (maxForder < 0) maxForder--;
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_other2(tend - tbegin);
+        CUDAcommon::tmin.tother += elapsed_other2.count();
+        //@@@} OTHER
 
-		    CGMethod::setLAMBDATOL(maxForder);
-	    }
-
-	    tend = chrono::high_resolution_clock::now();
-	    chrono::duration<floatingpoint> elapsed_other2(tend - tbegin);
-	    CUDAcommon::tmin.tother+= elapsed_other2.count();
-	    //@@@} OTHER
-
-        floatingpoint beta, newGrad, prevGrad;
+        double beta = 0;
+        double newGrad, prevGrad;
 //        std::cout<<"SERL maxF "<<maxF()<<endl;
 
         numIter++;
-
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_LAMBDA)
         std::cout<<"SL safestate "<<_safeMode<<endl;
 #endif
@@ -612,16 +657,53 @@ std::cout<<"----------------------------------------"<<endl;
         chrono::high_resolution_clock::time_point tLbegin, tLend;
         tLbegin = chrono::high_resolution_clock::now();
 #endif
-		//@@@{ STEP 6 FIND LAMBDA
-	    tbegin = chrono::high_resolution_clock::now();
+#ifdef TRACKDIDNOTMINIMIZE
+        SysParams::Mininimization().safeModeORnot.push_back(_safeMode);
+#endif
+
+        //@@@{ STEP 6 FIND LAMBDA
+        prevlambda = lambda;
+        tbegin = chrono::high_resolution_clock::now();
+        bool copysafeMode = _safeMode;
         bool *dummy = nullptr;
-	    lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX, dummy)
-                           : backtrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
-                                                    LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
-	    tend = chrono::high_resolution_clock::now();
-	    chrono::duration<floatingpoint> elapsed_lambda(tend - tbegin);
-	    CUDAcommon::tmin.findlambda+= elapsed_lambda.count();
-	    ////@@@@} FIND LAMBDA
+        if (_LINESEARCHALGORITHM == "BACKTRACKING") {
+            lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce,
+                                                            LAMBDAMAX, dummy,
+                                                            M_ETolstate)
+                                : backtrackingLineSearch(FFM, MAXDIST, maxForce,
+                                                        LAMBDAMAX,
+                                                        LAMBDARUNNINGAVERAGEPROBABILITY,
+                                                        dummy, M_ETolstate);
+        } else if (_LINESEARCHALGORITHM == "QUADRATIC") {
+            lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce,
+                                                            LAMBDAMAX, dummy,
+                                                            M_ETolstate)
+                                : quadraticLineSearchV2(FFM, MAXDIST, maxForce,
+                                                        LAMBDAMAX,
+                                                        LAMBDARUNNINGAVERAGEPROBABILITY,
+                                                        dummy, M_ETolstate);
+        } else {
+            lambda = _safeMode ? safeBacktrackingLineSearchV2(FFM, MAXDIST,
+                                                                maxForce,
+                                                                LAMBDAMAX, dummy,
+                                                                M_ETolstate)
+                                : quadraticLineSearchV2(FFM, MAXDIST, maxForce,
+                                                        LAMBDAMAX,
+                                                        LAMBDARUNNINGAVERAGEPROBABILITY,
+                                                        dummy, M_ETolstate);
+        }
+
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_lambda(tend - tbegin);
+        CUDAcommon::tmin.findlambda += elapsed_lambda.count();
+        #ifdef OPTIMOUT
+        lambdatime += elapsed_lambda.count();
+        #endif
+        ////@@@@} FIND LAMBDA
+
+#ifdef TRACKDIDNOTMINIMIZE
+        SysParams::Mininimization().Lambda.push_back(lambda);
+#endif
 
 #ifdef CUDATIMETRACK_MACRO
         tLend= chrono::high_resolution_clock::now();
@@ -633,20 +715,28 @@ std::cout<<"----------------------------------------"<<endl;
         CUDAcommon::handleerror(cudaDeviceSynchronize());
         floatingpoint cuda_lambda[1];
         CUDAcommon::handleerror(cudaMemcpy(cuda_lambda, CUDAcommon::cudavars.gpu_lambda,  sizeof(floatingpoint),
-                                           cudaMemcpyDeviceToHost));
+                                            cudaMemcpyDeviceToHost));
         std::cout<<"Lambda CUDA "<<cuda_lambda[0]<<" SERL "<<lambda<<endl;
 #endif
 #ifdef CUDATIMETRACK
         tbegin = chrono::high_resolution_clock::now();
 #endif
         //@@@{ STEP7 OTHER
-		if(Ms_isminimizationstate) {
-			tbegin = chrono::high_resolution_clock::now();
-	        //SERIAL VERSION
-	        moveBeads(lambda);
-			tend = chrono::high_resolution_clock::now();
-			chrono::duration<floatingpoint> elapsed_other3(tend - tbegin);
-			CUDAcommon::tmin.tother+= elapsed_other3.count();
+        if (Ms_isminimizationstate) {
+#if defined(TRACKDIDNOTMINIMIZE) || defined(EVSALPHA)
+            //Backup coordinate
+            coordBackup = coord;
+            forceBackup = force;
+            calculateEvsalpha(FFM, lambda, LAMBDAMAX, searchDirDotForce());
+            cout<<endl;
+
+#endif
+            tbegin = chrono::high_resolution_clock::now();
+            //SERIAL VERSION
+	        moveAlongSearchDir(lambda);
+            tend = chrono::high_resolution_clock::now();
+            chrono::duration<floatingpoint> elapsed_other3(tend - tbegin);
+            CUDAcommon::tmin.tother += elapsed_other3.count();
         }
         //@@@} OTHER
 #if defined(CROSSCHECK) || defined(CUDAACCL)
@@ -658,26 +748,34 @@ std::cout<<"----------------------------------------"<<endl;
         s1 += elapsed_runs1.count();
 #endif
         ///@@@{ STEP 8 compute new forces
-	    tbegin = chrono::high_resolution_clock::now();
-        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());//split and synchronize
-        maxForce = maxF();
-	    tend = chrono::high_resolution_clock::now();
-	    chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
-	    CUDAcommon::tmin.computeforces+= elapsed_force.count();
-        ///@@@}
+        tbegin = chrono::high_resolution_clock::now();
+        FFM.computeForces(coord.data(), force);//split and synchronize
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
+        CUDAcommon::tmin.computeforces += elapsed_force.count();
 
+        maxForce = maxF();
+        isForceBelowTol = forceBelowTolerance();
+
+        if (M_ETolstate[0] && forceBelowRelaxedTolerance(2.5)) {
+            ETOLexittstatus = true;
+        } else
+            M_ETolstate[0] = false;
+        ///@@@}
 #ifdef DETAILEDOUTPUT
+        // wARNING This output is no longer safe because it assumes bead
+        // coordinates start with index 0
         std::cout<<"MB printing beads & forces L "<<lambda<<endl;
         long i = 0;
         long index = 0;
         for(auto b:Bead::getBeads()){
-            index = 3 * b->getStableIndex();
+            index = 3 * b->getIndex();
 
             std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                     ""<<coord[index + 2]<<" "
                     ""<<forceAux[index]<<" "
                     ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-                    b->getStableIndex()<<endl;
+                    b->getIndex()<<endl;
         }
         std::cout<<"MB printed beads & forces"<<endl;
 #endif
@@ -686,12 +784,11 @@ std::cout<<"----------------------------------------"<<endl;
         tbegin = chrono::high_resolution_clock::now();
 #endif
         //@@@{ STEP 9 OTHER
-
+        tbegin = chrono::high_resolution_clock::now();
         //compute direction
 //        std::cout<<"serial"<<endl;
-        newGrad = CGMethod::allFADotFA();
-        prevGrad = CGMethod::allFADotFAP();
-
+        newGrad = forceDotForce();
+        prevGrad = forceDotForcePrev();
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runs2a(tend - tbegin);
@@ -701,18 +798,46 @@ std::cout<<"----------------------------------------"<<endl;
         tbegin = chrono::high_resolution_clock::now();
 #endif
 
-        //Polak-Ribieri update
-        beta = max<floatingpoint>((floatingpoint)0.0, (newGrad - prevGrad) /
-        curGrad);
+        //Polak-Ribiere update
+        //Max(0,betaPR) allows us to reset the direction under non-ideal circumstances.
+        //The direction is reset of steepest descent direction (-gk).
+        double betaPR = max<double>((double) 0.0, (newGrad - prevGrad) / curGrad);
+        double betaFR = max<double>((double) 0.0, newGrad / curGrad);
+        //Efficient hybrid Conjugate gradient techniques, Eq 21
+        prevbeta = beta;
+        if (betaPR == 0.0)
+            beta = betaFR;
+        else if (betaPR < 1.25 * betaFR)
+            beta = betaPR;
+        else
+            beta = betaFR;
+
+        //Global convergence properties of conjugate gradient methods for optimization Eq
+        // 3.8
+        //A SURVEY OF NONLINEAR CONJUGATE GRADIENT METHODS Section 9.
+        //Allows for negative beta values.
+        /*double betaPR = (newGrad - prevGrad) / curGrad;
+        double betaFR = newGrad/ curGrad;
+        beta = max<double>(-betaFR, min<double>(betaPR, betaFR));
+        cout<<"betaPR "<<betaPR<<" betaFR "<<betaFR<<" beta "<<beta<<endl;*/
+
+//	    cout<<"newGrad "<<newGrad<<" prevGrad "<<prevGrad<<" curGrad "
+//	    <<curGrad<<" beta "<<beta<<endl;
+
 //        cout<<"lambda "<<lambda<<" beta "<<beta<<endl;
-        if(Ms_isminimizationstate)
+        if (Ms_isminimizationstate)
             //shift gradient
-            shiftGradient(beta);
+            shiftSearchDir(beta);
 
         tend = chrono::high_resolution_clock::now();
-	    chrono::duration<floatingpoint> elapsed_other4(tend - tbegin);
-	    CUDAcommon::tmin.tother+= elapsed_other4.count();
+        chrono::duration<floatingpoint> elapsed_other4(tend - tbegin);
+        CUDAcommon::tmin.tother += elapsed_other4.count();
         //@@@} OTHER
+
+#ifdef TRACKDIDNOTMINIMIZE
+        SysParams::Mininimization().beta.push_back(beta);
+        SysParams::Mininimization().maxF.push_back(maxForce);
+#endif
 
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
@@ -733,11 +858,11 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
 
         //@@@{ STEP 10 vectorized copy
-	    tbegin = chrono::high_resolution_clock::now();
-        Bead::getDbData().forcesAuxP = Bead::getDbData().forcesAux;
-	    tend = chrono::high_resolution_clock::now();
-	    chrono::duration<floatingpoint> elapsed_copy2(tend - tbegin);
-	    CUDAcommon::tmin.copyforces+= elapsed_copy2.count();
+        tbegin = chrono::high_resolution_clock::now();
+        forcePrev = force;
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_copy2(tend - tbegin);
+        CUDAcommon::tmin.copyforces += elapsed_copy2.count();
         //@@@}
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
@@ -747,15 +872,53 @@ std::cout<<"----------------------------------------"<<endl;
 #ifdef CUDATIMETRACK
         tbegin = chrono::high_resolution_clock::now();
 #endif
-
         //direction reset if not downhill, or no progress made
-        Ms_issafestate = CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad);
-        if(Ms_issafestate && Ms_isminimizationstate ) {
-            shiftGradient(0.0);
+        //For any iteration "k"
+        //"force" are the conjugate gradient direction (dk)
+        //"forceAux" are the force/steepest descent direction (-gk)
+        //<-gk+1,dk+1> < 0 => gk and dk are at acute angles with one another
+        /*Note: Gradient and conjugate direction should be at obtuse angles for effective
+            * descent*/
+        //curGrad = newGrad => gk+1.gk+1 and gk.gk are equal. Gradient has not
+        // changed in magnitude.
+        //Note: -grad E = ForceAux = -gk. Descent direction = dk = Force
+#ifdef TRACKDIDNOTMINIMIZE
+        vector<floatingpoint>gradlocal;
+        gradlocal.push_back(searchDirDotForce());
+        gradlocal.push_back(curGrad);
+        gradlocal.push_back(newGrad);
+        gradlocal.push_back(prevGrad);
+
+        SysParams::Mininimization().gradientvec.push_back(gradlocal);
+#endif
+
+        Ms_issafestate = searchDirDotForce() <= 0 || areEqual(curGrad, newGrad);
+        if (Ms_issafestate && Ms_isminimizationstate) {
+            //The direction is reset of steepest descent direction (-gk).
+            shiftSearchDir(0.0);
             _safeMode = true;
+            #ifdef OPTIMOUT
+            safestatuscount++;
+            #endif
+#ifdef EVSALPHA
 
+            cout << "newGrad " << newGrad << " prevGrad " << prevGrad << " curGrad "
+                    << curGrad << endl;
+            cout << "beta " << beta << " prevbeta " << prevbeta << endl;
+            cout << "FDotFA<0 " << (searchDirDotForce() <= 0)
+                    << " curGrad==newGrad "
+                    <<
+                    areEqual(curGrad, newGrad) << " abs(prevGrad/newGrad)<0.1 "
+                    << (abs(prevGrad / newGrad) < 0.1) << endl;
+            calculateEvsalpha(FFM, lambda, LAMBDAMAX, searchDirDotForce());
+            cout << endl;
+#endif
         }
-
+        //Create back up coordinates to go to in case Energy minimization fails at an
+        // undeisrable state.
+        if (forceBelowRelaxedTolerance(10) && numIter > N / 2) {
+            copycoordsifminimumE(maxForce);
+        }
 
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
@@ -765,27 +928,28 @@ std::cout<<"----------------------------------------"<<endl;
 #ifdef CUDATIMETRACK
         tbegin = chrono::high_resolution_clock::now();
 #endif
-
         curGrad = newGrad;
-        Ms_isminimizationstate = !Bead::forcesBelowTolerance();
-
+        Ms_isminimizationstate = ! isForceBelowTol;
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runs1b(tend - tbegin);
         s1 += elapsed_runs1b.count();
 #endif
-    }
+    }// End minimization
 #endif //SERIAL
+
 #ifdef OPTIMOUT
-    std::cout<<"SERL Total number of iterations "<<numIter<<endl;
+    std::cout << "SERL Total number of iterations " <<_LINESEARCHALGORITHM<<" "<<
+    numIter << endl;
+
 #endif
 #ifdef CUDATIMETRACK_MACRO
     std::cout<<"SERL Energy time taken (s) "<<CUDAcommon::serltime.TcomputeE<<" for total "
             "iters "<<CUDAcommon::serltime.Ecount<<endl;
     std::cout<<"SERL Force time taken (s) "<<CUDAcommon::serltime.TcomputeF<<endl;
     std::cout<<"SERL Energy time per iter (s/iter) "<<CUDAcommon::serltime.TcomputeE/
-                                                      (floatingpoint(CUDAcommon::serltime.Ecount))
-             <<endl;
+                                                        (floatingpoint(CUDAcommon::serltime.Ecount))
+                <<endl;
     std::cout<<"SERL Split Times Iter "<<numIter<<" "<<s1<<" "<<s2<<" "<<s3<<" "<<s4<<endl;
     std::cout<<"SERL Add "<<s1+s2+s3+s4<<endl;
 #endif
@@ -795,8 +959,19 @@ std::cout<<"----------------------------------------"<<endl;
     std::cout<<"Slice time "<<elapsed_runslice2.count()<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
+    if (M_ETolstate[0]) {
+        cout << endl;
 
-    if (numIter >= N) {
+        cout << "WARNING: Minimization exited when Energy Tolerance was reached at N = "
+                << numIter << " steps." << endl;
+        cout << "Maximum force in system = " << maxF() << endl;
+        cout << "System energy..." << endl;
+        #ifdef ADDITIONALINFO
+        FFM.computeEnergy(coord.data(), true);
+        #endif
+    }
+
+    else if (numIter >= N) {
 #ifdef CUDAACCL
 
 
@@ -807,29 +982,84 @@ std::cout<<"----------------------------------------"<<endl;
         cout << "WARNING: Did not minimize in N = " << N << " steps." << endl;
         cout << "Maximum force in system = " << maxF() << endl;
 
-        cout << "Culprit ..." << endl;
-        auto b = maxBead();
-        if(b != nullptr) b->getParent()->printSelf();
-
 #ifdef CUDAACCL
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.clear();
         CUDAcommon::cudavars = cvars;
 #endif
         cout << "System energy..." << endl;
-        FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+        FFM.computeEnergy(coord.data(), true);
+        CUDAcommon::tmin.computeenerycallszero++;
 #ifdef CUDAACCL
         for(auto strm:CUDAcommon::getCUDAvars().streamvec)
             CUDAcommon::handleerror(cudaStreamSynchronize(*strm));
 #endif
         cout << endl;
+        //Copy back coordinates that correspond to minimum energy
+        copybackupcoordinates();
+
+        cout << "Culprit ..." << endl;
+        auto b = maxBead();
+        if (b != nullptr) b->getParent()->printSelf();
     }
 
-    result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
 
+    #ifdef TRACKDIDNOTMINIMIZE
+    if(numIter) {
+        auto tempparams = SysParams::Mininimization();
+
+        cout << "Obegin maxForce Lambda Beta SafeModestatus FDotFA curGrad NewGrad prevGrad TotalE Evec (";
+        auto interactionnames = FFM.getinteractionnames();
+        for (auto x:interactionnames)
+            cout << x << ", ";
+        cout << ")" << endl;
+        for (auto i = 0; i < tempparams.maxF.size()-1; i++) {
+            cout << tempparams.maxF[i] << " " << tempparams.Lambda[i] << " " << tempparams
+                    .beta[i] << " " << tempparams.safeModeORnot[i] <<" ";
+            for(auto j:tempparams.gradientvec[i])
+                cout<< j <<" ";
+            cout << tempparams.TotalE[i] << " ";
+            for (auto j:tempparams.Energyvec[i]) {
+                cout << j << " ";
+            }
+            cout << endl;
+        }
+        cout<<"End maxF "<<tempparams.maxF[tempparams.maxF.size()-1]<<endl;
+        cout << "Oend ------------------" << endl;
+    }
+    #endif
+
+    #ifdef TRACKDIDNOTMINIMIZE
+    SysParams::Mininimization().beta.clear();
+    SysParams::Mininimization().Lambda.clear();
+    SysParams::Mininimization().Energyvec.clear();
+    SysParams::Mininimization().TotalE.clear();
+    SysParams::Mininimization().maxF.clear();
+    SysParams::Mininimization().safeModeORnot.clear();
+    SysParams::Mininimization().tempEnergyvec.clear();
+    SysParams::Mininimization().gradientvec.clear();
+    FFM.computeEnergy(coord.data(), false);
+
+    #endif
+
+#if defined(CROSSCHECK) || defined(CUDAACCL)
+    cross_checkclass::Aux=false;
+#endif
+#ifdef CUDAACCL
+    cvars = CUDAcommon::getCUDAvars();
+    cvars.streamvec.clear();
+    CUDAcommon::cudavars = cvars;
+#endif
+    result.energiesAfter = FFM.computeEnergyHRMD(coord.data());
+#ifdef OPTIMOUT
+    cout<<"Energy after minimization"<<endl;
+    FFM.computeEnergy(coord.data(), true);
+    CUDAcommon::tmin.computeenerycallszero++;
+    cout<<endl;
+#endif
     //final force calculation
-
-    FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
+    FFM.computeForces(coord.data(), force);
+    searchDir = force;
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
@@ -847,25 +1077,57 @@ std::cout<<"----------------------------------------"<<endl;
     CUDAcommon::cudatime.TcomputeF += elapsed_run2.count();
 #endif
 
-
-#ifdef SERIAL
-    Bead::getDbData().forcesAux = Bead::getDbData().forces;
-
+#ifdef CUDAACCL
+    FFM.CUDAcopyForces(*Msp1, CUDAcommon::getCUDAvars().gpu_forceAux,CUDAcommon::getCUDAvars().gpu_force);
+    //copy back forces and calculate load forces in CPU.
+#endif
+#ifdef ALLSYNC
+    cudaDeviceSynchronize();
 #endif
 
+#ifdef CUDAACCL
+    CUDAcommon::handleerror(cudaFreeHost(Mmh_stop));
+    CUDAcommon::handleerror(cudaFree(Mmg_stop1));
+    CUDAcommon::handleerror(cudaFree(Mmg_stop2));
+    CUDAcommon::handleerror(cudaFree(Msg_stop1));
+    CUDAcommon::handleerror(cudaFree(Msg_stop2));
+    CUDAcommon::handleerror(cudaFree(gpu_GRADTOL));
+    CUDAcommon::handleerror(cudaFreeHost(Msh_stop));
+    CUDAcommon::handleerror(cudaStreamSynchronize(Ms1));
+    CUDAcommon::handleerror(cudaStreamSynchronize(Ms2));
+    CUDAcommon::handleerror(cudaStreamSynchronize(Ms3));
+    CUDAcommon::handleerror(cudaStreamSynchronize(Ms4));
+    if(!(CUDAcommon::getCUDAvars().conservestreams)) {
+        CUDAcommon::handleerror(cudaStreamDestroy(Ms1));
+        CUDAcommon::handleerror(cudaStreamDestroy(Ms2));
+        CUDAcommon::handleerror(cudaStreamDestroy(Ms3));
+        CUDAcommon::handleerror(cudaStreamDestroy(Ms4));
+        CUDAcommon::handleerror(cudaEventDestroy(Me1));
+        CUDAcommon::handleerror(cudaEventDestroy(Me2));
+        CUDAcommon::handleerror(cudaEventDestroy(event_safe));
+        CUDAcommon::handleerror(cudaEventDestroy(event_dot));
+        CUDAcommon::handleerror(cudaStreamDestroy(stream_dotcopy));
+        CUDAcommon::handleerror(cudaStreamDestroy(stream_shiftsafe));
+    }
+#endif
 #ifdef SERIAL
     //TODO Comment during SERIAL_CUDACROSSCHECK @{
     delete [] Mc_isminimizationstate;
     delete [] Mc_issafestate;
+    delete [] M_ETolstate;
     //@}
 #endif
-
     //TODO make sure it calculates stretchforce in CUDA.
 #ifdef CUDAACCL
     FFM.assignallforcemags();
 #endif
+    #ifdef OPTIMOUT
+        cout<<"Safestatuscount "<<safestatuscount<<endl;
+    #endif
+
     //@ STEP 11 END MINIMIZATION
-	tbegin = chrono::high_resolution_clock::now();
+    tbegin = chrono::high_resolution_clock::now();
+    copyFromCGMethodData(*this);
     endMinimization();
 
 #ifdef CUDATIMETRACK
@@ -874,30 +1136,33 @@ std::cout<<"----------------------------------------"<<endl;
     std::cout<<"Slice time "<<elapsed_runslice4.count()<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
-
     FFM.computeLoadForces();
+
+    #ifdef OPTIMOUT
+    std::cout<<"End Minimization************"<<endl;
+    cout<<"Time taken for lambda "<<lambdatime<<endl;
+    std::cout << "----------------------------------------" << endl;
+    #endif
 
     // compute the Hessian matrix at this point if the feature is enabled
     if(SysParams::Mechanics().hessTracking){
-        int total_DOF = Bead::getDbData().coords.size_raw();
-        FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, SysParams::Mechanics().hessDelta);
+        int total_DOF = coord.size();
+        FFM.computeHessian(coord.data(), force.data(), total_DOF, SysParams::Mechanics().hessDelta);
     }
 
-#ifdef OPTIMOUT
-    std::cout<<"End Minimization************"<<endl;
-#endif
+
     FFM.cleanupAllForceFields();
 
-	tend = chrono::high_resolution_clock::now();
-	chrono::duration<floatingpoint> elapsed_end(tend - tbegin);
-	CUDAcommon::tmin.endminimization+= elapsed_end.count();
-	//@} END MINIMIZTION
+    tend = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_end(tend - tbegin);
+    CUDAcommon::tmin.endminimization+= elapsed_end.count();
+    //@} END MINIMIZTION
 
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;
     for(auto b:Bead::getBeads()){
-        std::cout<<b->getId()<<" "<< b->coordinate() <<" "
-                ""<<b->force() <<endl;
+        std::cout<<b->getId()<<" "<< b->coord <<" "
+                ""<<b->force <<endl;
     }
     std::cout<<"printed beads & forces"<<endl;
 #endif
@@ -914,4 +1179,45 @@ std::cout<<"----------------------------------------"<<endl;
 
     return result;
 
+}
+
+void PolakRibiere::calculateEvsalpha(ForceFieldManager &FFM, floatingpoint lambda,
+        floatingpoint LAMBDAMAX, floatingpoint FDotFA){
+    cout<<"Printing Evslambda information "<<endl;
+    cout<<"chosen lambda "<<lambda<<" prev lambda "<<prevlambda<<endl;
+//	for(floatingpoint alpha=0.0;alpha<0.1;alpha=alpha+1e-4    ){
+//		cout<<alpha<<" ";
+//	}
+//	cout<<endl;
+    floatingpoint energyzerolambda = FFM.computeEnergy(coordBackup.data());
+    cout<<"Energy zero lambda "<<energyzerolambda<<" "<<endl;
+    cout<<"Lambda = [";
+    for(floatingpoint alpha=LAMBDAMAX;alpha>=1e-4;alpha=alpha*LAMBDAREDUCE){
+        cout<<alpha<<" ";
+    }
+    cout<<"];"<<endl;
+    int count = 0;
+    bool exityes = false;
+    cout<<"Energy = [";
+    for(floatingpoint alpha=LAMBDAMAX;alpha>=1e-4;alpha=alpha*LAMBDAREDUCE){
+        //moveBeads
+        const auto num = coordBackup.size();
+        coordLineSearch.resize(num);
+        for(size_t i = 0; i < num; ++i)
+            coordLineSearch[i] = coordBackup[i] + alpha * forceBackup[i];
+        floatingpoint energy = FFM.computeEnergy<true>(coordLineSearch.data());
+        cout<<energy<<" ";
+        if(count > 10)
+            exityes = true;
+        count++;
+    }
+    cout<<"];"<<endl;
+    cout<<"Armijo = [";
+    for(floatingpoint alpha=LAMBDAMAX;alpha>=1e-4;alpha=alpha*LAMBDAREDUCE){
+        cout<<energyzerolambda-BACKTRACKSLOPE * alpha * FDotFA<<" ";
+    }
+    cout<<"];"<<endl;
+    if(exityes)
+        exit(EXIT_SUCCESS);
+//	exit(EXIT_FAILURE);
 }

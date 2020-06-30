@@ -35,7 +35,7 @@ public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0
     ChemSimpleGillespieImpl() :
         ChemSimImpl(),
-        _exp_distr(), _uniform_distr() { resetTime(); }
+        _uniform_distr() { resetTime(); }
     
     /// Copying is not allowed
     ChemSimpleGillespieImpl(const ChemSimpleGillespieImpl &rhs) = delete;
@@ -68,6 +68,9 @@ public:
     
     /// Remove ReactionBase *r from the network
     virtual void removeReaction(ReactionBase *r);
+
+    //sets global time to restart time when called.
+    virtual void initializerestart(floatingpoint restarttime);
     
     /// Compute the total propensity of the reaction network, by adding all individual
     /// reaction propensities
@@ -115,10 +118,19 @@ public:
     
     /// Prints all Reaction objects in the reaction network
     virtual void printReactions() const;
+
+    /// Cross checks all reactions in the network for firing time.
+    virtual bool crosschecktau() const {
+        LOG(WARNING)<<"Cannot check for tau in reactions in ChemGillespieImpl.h"<<endl;
+        return true;
+    };
     
 private:
     /// This subroutine implements the vanilla version of the Gillespie algorithm
     bool makeStep();
+
+    //sets glocal time to specified value. To be used only during restart.
+    void setTime(floatingpoint timepoint){ _t=timepoint; syncGlobalTime();}
 private:
     vector<ReactionBase*> _reactions; ///< The database of Reaction objects,
                                       ///< representing the reaction network

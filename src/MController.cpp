@@ -23,7 +23,7 @@
 #include "BubbleFF.h"
 #include "CylinderVolumeFF.h"
 #include "Mechanics/ForceField/Membrane/MembraneFF.hpp"
-#include "Mechanics/ForceField/VolumeConservation/VolumeConservationFF.h"
+#include "Mechanics/ForceField/VolumeConservation/VolConsrvFF.hpp"
 #include "TriangleBeadVolumeFF.hpp"
 
 #include "ConjugateGradient.h"
@@ -36,19 +36,22 @@ void MController::initializeMinAlgorithm (MechanicsAlgorithm& MAlgorithm) {
         new ConjugateGradient<FletcherRieves>(MAlgorithm.gradientTolerance,
                                               MAlgorithm.maxDistance,
                                               MAlgorithm.lambdaMax,
-                                              MAlgorithm.lambdarunningaverageprobability));
+                                              MAlgorithm.lambdarunningaverageprobability,
+                                              MAlgorithm.linesearchalgorithm));
     else if (MAlgorithm.ConjugateGradient == "POLAKRIBIERE")
         _minimizerAlgorithm.reset(
         new ConjugateGradient<PolakRibiere>(MAlgorithm.gradientTolerance,
                                             MAlgorithm.maxDistance,
                                             MAlgorithm.lambdaMax,
-                                            MAlgorithm.lambdarunningaverageprobability));
+                                            MAlgorithm.lambdarunningaverageprobability,
+                                            MAlgorithm.linesearchalgorithm));
     else if (MAlgorithm.ConjugateGradient == "STEEPESTDESCENT")
         _minimizerAlgorithm.reset(
         new ConjugateGradient<SteepestDescent>(MAlgorithm.gradientTolerance,
                                                MAlgorithm.maxDistance,
                                                MAlgorithm.lambdaMax,
-                                               MAlgorithm.lambdarunningaverageprobability));
+                                               MAlgorithm.lambdarunningaverageprobability,
+                                               MAlgorithm.linesearchalgorithm));
 
     else {
         LOG(FATAL) << "Conjugate gradient method not recognized. Exiting.";
@@ -83,16 +86,19 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     {
         auto membraneFFRes = MembraneFFFactory{}(
             forceFields.MemStretchingFFType,
-            forceFields.MemStretchingAccuType,
+            forceFields.memTensionFFType,
             forceFields.MemBendingFFType
         );
         for(auto& ff : membraneFFRes.forceFields) _FFManager._forceFields.push_back(ff.release());
         _FFManager.geoCurvReq = membraneFFRes.curvReq;
     }
 
-    _FFManager._forceFields.push_back(
-        new VolumeConservationFF(forceFields.VolumeConservationFFType)
-    );
+    {
+        auto volConsrvFFRes = VolumeConservationFFFactory {}(
+            forceFields.volumeConservationFFType
+        );
+        for(auto& ff : volConsrvFFRes) _FFManager._forceFields.push_back(ff.release());
+    }
     
     //These FF's have a neighbor list associated with them
     //add to the subsystem's database of neighbor lists.

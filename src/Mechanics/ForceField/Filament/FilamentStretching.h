@@ -50,7 +50,7 @@ public:
     ///For filaments, this is a 2-bead potential
     const static int n = 2;
     
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&) override;
     virtual void deallocate();
     
     virtual floatingpoint computeEnergy(floatingpoint *coord) override;

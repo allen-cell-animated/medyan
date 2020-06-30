@@ -25,24 +25,27 @@
 #include "Mechanics/CUDAcommon.h"
 
 template <class BBendingInteractionType>
-void BranchingBending<BBendingInteractionType>::vectorize() {
+void BranchingBending<BBendingInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
 
     CUDAcommon::tmin.numinteractions[5] += BranchingPoint::getBranchingPoints().size();
     beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
     kbend = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
     eqt = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
+    stretchforce = new floatingpoint[3*BranchingPoint::getBranchingPoints().size()];
 
     int i = 0;
 
     for (auto b: BranchingPoint::getBranchingPoints()) {
 
-        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getStableIndex();
-        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getStableIndex();
-        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getStableIndex();
-        beadSet[n * i + 3] = b->getSecondCylinder()->getSecondBead()->getStableIndex();
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 3] = b->getSecondCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
 
         kbend[i] = b->getMBranchingPoint()->getStretchingConstant();
         eqt[i] = b->getMBranchingPoint()->getEqTheta();
+        for(int j = 0; j < 3; j++)
+            stretchforce[3*i + j] = 0.0;
         i++;
     }
     //CUDA
@@ -73,6 +76,14 @@ void BranchingBending<BBendingInteractionType>::vectorize() {
 
 template<class BBendingInteractionType>
 void BranchingBending<BBendingInteractionType>::deallocate() {
+
+    for(auto b:BranchingPoint::getBranchingPoints()){
+        //Using += to ensure that the stretching forces are additive.
+
+        for(int j = 0; j < 3; j++)
+            b->getMBranchingPoint()->branchForce[j] += stretchforce[3*b->getIndex() + j];
+    }
+    delete [] stretchforce;
     delete [] beadSet;
     delete [] kbend;
     delete [] eqt;
@@ -140,8 +151,7 @@ void BranchingBending<BBendingInteractionType>::computeForces(floatingpoint *coo
 #endif
 #ifdef SERIAL
 
-
-    _FFType.forces(coord, f, beadSet, kbend, eqt);
+    _FFType.forces(coord, f, beadSet, kbend, eqt, stretchforce);
 
 #endif
 }
@@ -149,5 +159,5 @@ void BranchingBending<BBendingInteractionType>::computeForces(floatingpoint *coo
 ///Template specializations
 template floatingpoint BranchingBending<BranchingBendingCosine>::computeEnergy(floatingpoint *coord);
 template void BranchingBending<BranchingBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BranchingBending<BranchingBendingCosine>::vectorize();
+template void BranchingBending<BranchingBendingCosine>::vectorize(const FFCoordinateStartingIndex&);
 template void BranchingBending<BranchingBendingCosine>::deallocate();

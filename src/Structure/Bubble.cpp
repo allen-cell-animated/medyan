@@ -46,7 +46,7 @@ Bubble::Bubble(SubSystem* ps, vector<floatingpoint> coordinates, short type)
           
     //set up bead
     _bead = _ps->addTrackable<Bead>(coordinates, this, 0);
-    _bead->usage = Bead::BeadUsage::Bubble;
+    _bead->usage = Bead::BeadUsage::bubble;
 }
 
 void Bubble::updatePosition() {

@@ -1,3 +1,15 @@
+# 4.1.2 (Released 2020-06-01)
+
+## Enhancements
+- New building procedure using `CMake` is supported and recommended (a1b28e254).
+- Added a force field that combines filament stretching and bending (772133585).
+- Added quadratic line search in gradient descent method (772133585).
+
+## Bug fixes
+- The copy number of chemical species are now assigned before dynamic rate initialization (7175987be).
+- Fixed branching dihedral force field cosine form (772133585).
+- Myosin duty ratio is now calculated at runtime (772133585).
+
 # 4.1.1 (Released 2020-01-30)
 
 ## New features

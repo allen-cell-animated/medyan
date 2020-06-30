@@ -42,10 +42,10 @@ void CylinderVolumeFF::whoIsCulprit() {
     cout << endl;
 }
 
-void CylinderVolumeFF::vectorize() {
+void CylinderVolumeFF::vectorize(const FFCoordinateStartingIndex& si) {
 
     for (auto &interaction : _cylinderVolInteractionVector)
-        interaction->vectorize();
+        interaction->vectorize(si);
 }
 
 void CylinderVolumeFF::cleanup() {
@@ -53,7 +53,6 @@ void CylinderVolumeFF::cleanup() {
     for (auto &interaction : _cylinderVolInteractionVector)
         interaction->deallocate();
 }
-
 
 
 floatingpoint CylinderVolumeFF::computeEnergy(floatingpoint *coord, bool stretched) {
@@ -72,7 +71,10 @@ floatingpoint CylinderVolumeFF::computeEnergy(floatingpoint *coord, bool stretch
         }
         else U += U_i;
 
-
+        #ifdef TRACKDIDNOTMINIMIZE
+        if(!stretched)
+            SysParams::Mininimization().tempEnergyvec.push_back(U_i);
+        #endif
     }
 
     return U;
@@ -102,3 +104,12 @@ vector<NeighborList*> CylinderVolumeFF::getNeighborLists() {
 
     return neighborLists;
 }
+
+vector<string> CylinderVolumeFF::getinteractionnames(){
+	vector<string> temp;
+	for (auto &interaction : _cylinderVolInteractionVector) {
+		temp.push_back(interaction->getName());
+	}
+    return temp;
+}
+

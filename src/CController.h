@@ -18,6 +18,8 @@
 
 #include "Compartment.h"
 #include "ChemSimImpl.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/MembraneMeshChemistry.hpp"
 
 
 //FORWARD DECLARATIONS
@@ -65,9 +67,30 @@ public:
     ///@param chemAlgorithm - a string defining the chemical algorithm to be used
     ///@param chemInitializer - a string defining the chemical manager used
     void initialize(string& chemAlgorithm, ChemistryData& chem, DissipationTracker* dt);
-    //aravind June 29,2016.
-    void restart();
-    
+
+    void initializerestart(floatingpoint restartime, floatingpoint _minimizationTime);
+
+    // Things to be done before chemistry simulation
+    void beforeRun() const {
+        // Link all membrane mesh reactions and activate them
+        for(auto m : Membrane::getMembranes()) {
+            medyan::forEachReactionInMesh(m->getMesh(), [this](ReactionDy& r) {
+                _chemSim->addReaction(&r);
+                r.activateReaction();
+            });
+        }
+    }
+    // Things to be done after chemistry simulation
+    void afterRun() const {
+        // Unlink all membrane mesh reactions
+        for(auto m : Membrane::getMembranes()) {
+            medyan::forEachReactionInMesh(m->getMesh(), [this](ReactionDy& r) {
+                r.passivateReaction();
+                _chemSim->removeReaction(&r);
+            });
+        }
+    }
+
     ///Run chemistry for a given amount of time
     bool run(floatingpoint time);
     
@@ -76,6 +99,8 @@ public:
     
     ///Remove set of reactions at runtime, specified by input
     void removeReactions();
+
+    bool crosschecktau();
     
     vector<floatingpoint> getEnergy();
     

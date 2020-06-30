@@ -72,7 +72,7 @@ protected:
 
     string _boundName; ///< String name of bound chemical value
 
-    short _filamentType; ///< The filament type to operate on
+    vector<short> _filamentIDvec; ///< The filament type to operate on
 
     Species* _bindingSpecies; ///< The binding species that this manager tracks.
                               ///< Resposible for all copy number changes
@@ -125,10 +125,11 @@ public:
     FilamentBindingManager(ReactionBase* reaction,
                            Compartment* compartment,
                            short boundInt, string boundName,
-                           short filamentType)
+                           vector<short> filamentIDvec)
 
     : _bindingReaction(reaction), _compartment(compartment),
-      _boundInt(boundInt), _boundName(boundName), _filamentType(filamentType) {
+      _boundInt(boundInt), _boundName(boundName),
+      _filamentIDvec(filamentIDvec){
 
 #if !defined(REACTION_SIGNALING) || !defined(RSPECIES_SIGNALING)
         cout << "Any filament binding reaction relies on reaction and species signaling. Please"
@@ -158,9 +159,13 @@ public:
     virtual int numBindingSites() = 0;
 
     /// ARAVIND ADDED FEB 17 2016. append possible bindings.
-    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2)=0;
+    virtual void appendpossibleBindings(short boundInt, short bountCCylinder* ccyl1,
+    		CCylinder* ccyl2,
+    		short site1, short site2)=0;
 
     virtual void clearpossibleBindings()=0;
+
+    virtual void printbindingsites() = 0;
 #endif
     ///Get the bound species integer index
     short getBoundInt() {return _boundInt;}
@@ -176,7 +181,7 @@ public:
     virtual bool isConsistent() = 0;
 
     ///get the filament that the species binds to aravind June 30, 2016.
-    short getfilamentType() {return _filamentType;}
+    vector<short> getfilamentTypes() {return _filamentIDvec;}
 
     ///aravind, June 30,2016.
     vector<string> getrxnspecies(){return _bindingReaction->getreactantspecies();}
@@ -186,8 +191,8 @@ public:
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite) = 0;
     ///update all possible binding reactions that could occur using stencil NL
     virtual void updateAllPossibleBindingsstencil() = 0;
-    virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
-                                               tuple<CCylinder*, short> t2)=0;
+    virtual void appendpossibleBindingsstencil(short boundInt, CCylinder* ccyl1, CCylinder* ccyl2, short site1,
+                                               short site2)=0;
     virtual void clearpossibleBindingsstencil()=0;
     virtual int numBindingSitesstencil() = 0;
     virtual void removePossibleBindingsstencil(CCylinder* cc) = 0;
@@ -195,6 +200,7 @@ public:
     virtual void crosscheck(){};
     virtual void replacepairPossibleBindingsstencil
             (unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _pbs) =0;
+    virtual void printbindingsitesstencil() = 0;
     virtual void setHNLID(short id, short idvec[2]) = 0;
 #endif
     void updateBindingReaction(int newN) {
@@ -248,7 +254,7 @@ public:
     BranchingManager(ReactionBase* reaction,
                      Compartment* compartment,
                      short boundInt, string boundName,
-                     short filamentType,
+                     vector<short> _filamentIDvec,
                      NucleationZoneType zone = NucleationZoneType::ALL,
                      floatingpoint nucleationDistance = numeric_limits<floatingpoint>::infinity());
     ~BranchingManager() {}
@@ -288,20 +294,8 @@ public:
         return *it;
     }
     /// ARAVIND ADDED FEB 17 2016. append possible bindings to be used for restart
-    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2){
-        floatingpoint oldN=numBindingSites();
-        _possibleBindings.insert(t1);
-        _branchrestarttuple.push_back(make_tuple(t1,t2));
-//        _branchCylinder=(get<0>(t2));
-        floatingpoint newN=numBindingSites();
-        updateBindingReaction(oldN,newN);}
-
-    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1){
-        floatingpoint oldN=numBindingSites();
-        _possibleBindings.insert(t1);
-//        _branchCylinder=(get<0>(t2));
-        floatingpoint newN=numBindingSites();
-        updateBindingReaction(oldN,newN);}
+    virtual void appendpossibleBindings(short boundInt, CCylinder* ccyl1, CCylinder* ccyl2, short site1,
+                                        short site2);
 
     virtual void clearpossibleBindings() {
         floatingpoint oldN=numBindingSites();
@@ -312,6 +306,7 @@ public:
         return _possibleBindings;
     }
 
+    virtual void printbindingsites();
 #endif
     virtual bool isConsistent();
     vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> getbtuple() {
@@ -322,25 +317,8 @@ public:
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite);
     ///update all possible binding reactions that could occur using stencil NL
     virtual void updateAllPossibleBindingsstencil();
-    virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
-                                               tuple<CCylinder*, short> t2){
-#ifdef NLSTENCILLIST
-        floatingpoint oldN=numBindingSitesstencil();
-        _possibleBindingsstencil.insert(t1);
-        _branchrestarttuple.push_back(make_tuple(t1,t2));
-//        _branchCylinder=(get<0>(t2));
-        floatingpoint newN=numBindingSitesstencil();
-        updateBindingReaction(oldN,newN);
-#else
-
-#endif
-    }
-    virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1){
-        floatingpoint oldN=numBindingSitesstencil();
-        _possibleBindingsstencil.insert(t1);
-//        _branchCylinder=(get<0>(t2));
-        double newN=numBindingSitesstencil();
-        updateBindingReaction(oldN,newN);}
+    virtual void appendpossibleBindingsstencil(short boundInt, CCylinder* ccyl1, CCylinder* ccyl2, short site1,
+                                               short site2);
     virtual void clearpossibleBindingsstencil() {
         floatingpoint oldN=numBindingSitesstencil();
         _possibleBindingsstencil.clear();
@@ -372,6 +350,8 @@ public:
     virtual void replacepairPossibleBindingsstencil
             (unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>){};
     virtual void setHNLID(short id, short idvec[2]){};
+
+    virtual void printbindingsitesstencil();
 #endif
 
 #ifdef CUDAACCL_NL
@@ -401,9 +381,8 @@ private:
     float _rMax; ///< Maximum reaction range
 	float _rMinsq = _rMin * _rMin; ///< Minimum reaction range squared
 	float _rMaxsq = _rMax * _rMax; ///< Maximum reaction range squared
-    floatingpoint minparamcyl2;
-    floatingpoint maxparamcyl2;
-    vector<floatingpoint> bindingsites;
+    vector<floatingpoint> bindingsites1;
+	vector<floatingpoint> bindingsites2;
     static short HNLID;
     static short _idvec[2];
     int dBInt = 1;
@@ -426,7 +405,7 @@ public:
                          Compartment* compartment,
                          short boundInt,
                          string boundName,
-                         short filamentType,
+                         vector<short> _filamentIDvec,
                          float rMax, float rMin);
 
     ~LinkerBindingManager() {}
@@ -454,8 +433,8 @@ public:
     }
 
     /// ARAVIND ADDED FEB 17 2016. append possible bindings.
-    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*,
-            short> t2);
+    virtual void appendpossibleBindings(short boundInt, CCylinder* ccyl1, CCylinder* ccyl2, short site1,
+                                        short site2);
 
     //get possible bindings.
     virtual unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> getpossibleBindings(){
@@ -471,6 +450,8 @@ public:
 
         /// Choose random binding sites based on current state
     vector<tuple<CCylinder*, short>> chooseBindingSites();
+
+    virtual void printbindingsites();
 #endif
     //@{
     /// Getters for distances
@@ -485,18 +466,10 @@ public:
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite);
     ///update all possible binding reactions that could occur using stencil NL
     virtual void updateAllPossibleBindingsstencil();
-    virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
-                                               tuple<CCylinder*, short> t2){
-        floatingpoint oldN=numBindingSitesstencil();
-        _possibleBindingsstencil.emplace(t1,t2);
-        floatingpoint newN=numBindingSitesstencil();
-        updateBindingReaction(oldN,newN);
-    }
+    virtual void appendpossibleBindingsstencil(short boundInt, CCylinder* ccyl1, CCylinder* ccyl2, short site1,
+                                               short site2);
     virtual void clearpossibleBindingsstencil();
-    virtual int numBindingSitesstencil() {
-
-        return _possibleBindingsstencil.size();
-    }
+    virtual int numBindingSitesstencil();
     virtual unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
     getpossibleBindingsstencil(){
         return _possibleBindingsstencil;
@@ -518,6 +491,8 @@ public:
         _idvec[0] = idvec[0];
         _idvec[1] = idvec[1];
     };
+
+    virtual void printbindingsitesstencil();
 #endif
 
 #ifdef CUDAACCL_NL
@@ -560,9 +535,8 @@ private:
     float _rMax; ///< Maximum reaction range
 	float _rMinsq = _rMin * _rMin; ///< Minimum reaction range squared
 	float _rMaxsq = _rMax * _rMax; ///< Maximum reaction range squared
-	floatingpoint minparamcyl2;
-	floatingpoint maxparamcyl2;
-    vector<floatingpoint> bindingsites;
+    vector<floatingpoint> bindingsites1;
+    vector<floatingpoint> bindingsites2;
     static short HNLID;
     static short _idvec[2];
     //possible bindings at current state. updated according to neighbor list
@@ -586,7 +560,7 @@ public:
                         Compartment* compartment,
                         short boundInt,
                         string boundName,
-                        short filamentType,
+                        vector<short> _filamentIDvec,
                         float rMax, float rMin);
 
     ~MotorBindingManager() {}
@@ -613,8 +587,8 @@ public:
     }
 
     /// ARAVIND ADDED FEB 22 2016. append possible bindings.
-    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*,
-            short> t2);
+    virtual void appendpossibleBindings(short boundInt, CCylinder* ccyl1, CCylinder* ccyl2, short site1,
+    		short site2);
     //get possible bindings.
     virtual unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> getpossibleBindings(){
         return _possibleBindings;
@@ -629,6 +603,8 @@ public:
 
     /// Choose random binding sites based on current state
     vector<tuple<CCylinder*, short>> chooseBindingSites();
+
+    virtual void printbindingsites();
 #endif
     //@{
     /// Getters for distances
@@ -642,18 +618,10 @@ public:
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite);
     ///update all possible binding reactions that could occur using stencil NL
     virtual void updateAllPossibleBindingsstencil();
-    virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
-                                               tuple<CCylinder*, short> t2){
-        floatingpoint oldN=numBindingSitesstencil();
-        _possibleBindingsstencil.emplace(t1,t2);
-        floatingpoint newN=numBindingSitesstencil();
-        updateBindingReaction(oldN,newN);
-    }
+    virtual void appendpossibleBindingsstencil(short boundInt, CCylinder* ccyl1,
+                                               CCylinder* ccyl2, short site1, short site2);
 	virtual void clearpossibleBindingsstencil();
-    virtual int numBindingSitesstencil() {
-
-        return _possibleBindingsstencil.size();
-    }
+    virtual int numBindingSitesstencil();
     virtual unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
     getpossibleBindingsstencil(){
         return _possibleBindingsstencil;
@@ -675,6 +643,7 @@ public:
         _idvec[0] = idvec[0];
         _idvec[1] = idvec[1];
     };
+    virtual void printbindingsitesstencil();
 #endif
 
 #ifdef CUDAACCL_NL

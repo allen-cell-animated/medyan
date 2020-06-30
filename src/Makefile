@@ -90,7 +90,7 @@ LDFLAGS_CXX = $(FAST_CXX)
 # and usage guides for more details.
 #
 ##################################################
-
+CPPFLAGS += -DFLOAT_PRECISION
 #Initialize chemical components of system
 CPPFLAGS += -DCHEMISTRY
 #Initialize mechanical components of system
@@ -112,6 +112,13 @@ CPPFLAGS += -DNPROCS=1
 CPPFLAGS += -DCHECKFORCES_INF_NAN
 #if compiling the testing suite
 #CPPFLAGS += -DTESTING
+#CPPFLAGS += -DOPTIMOUT
+#CPPFLAGS += -DSLOWDOWNINITIALCYCLE
+#CPPFLAGS += -DADDITIONALINFO
+#CPPFLAGS += -DTRACKDIDNOTMINIMIZE
+#CPPFLAGS += -DCHECKRXN
+#CPPFLAGS += -DCROSSCHECK_MOTOR
+#CPPFLAGS += -DMOTORBIASCHECK
 
 #Detailed chemistry macros.
 #FOR ALL STANDARD FUNCTIONALITY, NONE OF THESE SHOULD BE TURNED OFF!!!

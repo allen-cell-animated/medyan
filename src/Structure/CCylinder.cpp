@@ -41,6 +41,7 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
     //copy all internal reactions
     for(auto &r: rhs._internalReactions) {
         ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
+        rxnClone->setVolumeFrac(c->getVolumeFrac());
         
         if(r->getCBound() != nullptr)
             r->getCBound()->setOffReaction(rxnClone);
@@ -57,6 +58,7 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
 
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
+            rxnClone->setVolumeFrac(c->getVolumeFrac());
             
             if(r->getCBound() != nullptr) {
 	            #ifdef CHECKRXN
@@ -83,6 +85,7 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
+            rxnClone->setVolumeFrac(c->getVolumeFrac());
 
             if(r->getCBound() != nullptr) {
                 #ifdef CHECKRXN
@@ -349,6 +352,7 @@ vector<ReactionBase*> CCylinder::getAllReactions() {
 void CCylinder::printCCylinder()
 {
     cout << "Compartment:" << _compartment << endl;
+    cout << "CCylinder: ptr = " << this << endl;
     
     cout << "Composition of CCylinder: " << endl;
     for (auto &m : _monomers){

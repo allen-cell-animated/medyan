@@ -25,27 +25,28 @@
 #endif
 
 template <class BStretchingInteractionType>
-void BranchingStretching<BStretchingInteractionType>::vectorize() {
+void BranchingStretching<BStretchingInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
 
     CUDAcommon::tmin.numinteractions[4] += BranchingPoint::getBranchingPoints().size();
     beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
     kstr = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
     eql = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
     pos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
-    stretchforce = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
+    stretchforce = new floatingpoint[3*BranchingPoint::getBranchingPoints().size()];
 
     int i = 0;
 
     for (auto b: BranchingPoint::getBranchingPoints()) {
 
-        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getStableIndex();
-        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getStableIndex();
-        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
 
         kstr[i] = b->getMBranchingPoint()->getStretchingConstant();
         eql[i] = b->getMBranchingPoint()->getEqLength();
         pos[i] = b->getPosition();
-        stretchforce[i] = 0.0;
+        for(int j = 0; j < 3; j++)
+        	stretchforce[3*i + j] = 0.0;
         i++;
     }
     //CUDA
@@ -81,7 +82,9 @@ void BranchingStretching<BStretchingInteractionType>::deallocate() {
     int i = 0;
     for(auto b:BranchingPoint::getBranchingPoints()){
         //Using += to ensure that the stretching forces are additive.
-        b->getMBranchingPoint()->stretchForce += stretchforce[i];
+
+        for(int j = 0; j < 3; j++)
+            b->getMBranchingPoint()->branchForce[j] += stretchforce[3*b->getIndex() + j];
         i++;
     }
     delete [] stretchforce;
@@ -171,5 +174,5 @@ void BranchingStretching<BStretchingInteractionType>::computeForces(floatingpoin
 template floatingpoint
 BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(floatingpoint *coord);
 template void BranchingStretching<BranchingStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BranchingStretching<BranchingStretchingHarmonic>::vectorize();
+template void BranchingStretching<BranchingStretchingHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void BranchingStretching<BranchingStretchingHarmonic>::deallocate();

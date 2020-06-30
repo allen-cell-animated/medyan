@@ -5,7 +5,7 @@
 MVoronoiCell::MVoronoiCell(short membraneType) {
     
     if(!SysParams::Mechanics().MemBendingK.empty())
-        _kBending = SysParams::Mechanics().MemBendingK[membraneType];
+        kBending = SysParams::Mechanics().MemBendingK[membraneType];
     if(!SysParams::Mechanics().MemEqCurv.empty())
-        _eqCurv = SysParams::Mechanics().MemEqCurv[membraneType];
+        eqCurv = SysParams::Mechanics().MemEqCurv[membraneType];
 }

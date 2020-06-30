@@ -33,102 +33,6 @@
 class Compartment;
 class Filament;
 
-struct BeadData {
-    using vec_type = mathfunc::Vec< 3, floatingpoint >;
-    using vec_array_type = mathfunc::VecArray< 3, floatingpoint >;
-
-    vec_array_type coords;
-    vec_array_type coordsStr; // stretched coordinate
-    vec_array_type forces; // currently the search dir in cg method
-    vec_array_type forcesAux; // real force
-    vec_array_type forcesAuxP; // prev real force
-
-    std::vector< floatingpoint > forceTols;
-
-    void push_back(
-        const vec_type& coord,
-        const vec_type& coordStr,
-        const vec_type& force,
-        const vec_type& forceAux,
-        const vec_type& forceAuxP,
-        floatingpoint forceTol
-    ) {
-        coords.push_back(coord);
-        coordsStr.push_back(coordStr);
-        forces.push_back(force);
-        forcesAux.push_back(forceAux);
-        forcesAuxP.push_back(forceAuxP);
-
-        forceTols.push_back(forceTol);
-    }
-
-    void set_content(
-        std::size_t pos,
-        const vec_type& coord,
-        const vec_type& coordStr,
-        const vec_type& force,
-        const vec_type& forceAux,
-        const vec_type& forceAuxP,
-        floatingpoint forceTol
-    ) {
-        coords    [pos] = coord;
-        coordsStr [pos] = coordStr;
-        forces    [pos] = force;
-        forcesAux [pos] = forceAux;
-        forcesAuxP[pos] = forceAuxP;
-
-        forceTols [pos] = forceTol;
-    }
-
-    void move_content(std::size_t from, std::size_t to) {
-        coords    [to] = coords    [from];
-        coordsStr [to] = coordsStr [from];
-        forces    [to] = forces    [from];
-        forcesAux [to] = forcesAux [from];
-        forcesAuxP[to] = forcesAuxP[from];
-
-        forceTols [to] = forceTols [from];
-    }
-
-    void resize(size_t size) {
-        coords    .resize(size);
-        coordsStr .resize(size);
-        forces    .resize(size);
-        forcesAux .resize(size);
-        forcesAuxP.resize(size);
-
-        forceTols .resize(size);
-    }
-
-};
-
-// Functor to check whether the forces satisfy the force constraint
-struct ForcesBelowTolerance {
-    struct Result {
-        bool value;
-    };
-
-    // Overloading operator(), to compare force magnitudes with tolerances.
-    // If forces.size() > tol.size(), the behavior is undefined
-    template< typename F1, typename F2 >
-    auto operator()(const mathfunc::VecArray< 3, F1 >& forces, const std::vector< F2 >& tol) const {
-        using namespace mathfunc;
-        using namespace std;
-
-        bool belowTol = true;
-        const auto numBeads = forces.size();
-        for(size_t i = 0; i < numBeads; ++i) {
-            const auto tolI = tol[i];
-            if(magnitude2(forces[i]) >= tolI * tolI) {
-                belowTol = false;
-                break;
-            }
-        }
-
-        return Result { belowTol };
-    }
-};
-
 /// Represents a single coordinate between [Cylinders](@ref Cylinder), and holds forces
 /// needed for mechanical equilibration.
 /*!
@@ -145,17 +49,17 @@ struct ForcesBelowTolerance {
  */
 
 class Bead : public Component, public Trackable, public Movable, public DynamicNeighbor,
-    public Database< Bead, true, BeadData > {
+    public Database< Bead, true > {
     
 public:
-    using coordinate_type      = BeadData::vec_type;
-    using coordinate_ref_type  = BeadData::vec_array_type::reference;
-    using coordinate_cref_type = BeadData::vec_array_type::const_reference;
-    using DatabaseType         = Database< Bead, true, BeadData >;
+    using DatabaseType = Database< Bead, true >;
 
-    enum class BeadUsage { Filament, Bubble, Membrane };
+    enum class BeadUsage { filament, bubble };
 
-    BeadUsage usage = BeadUsage::Filament;
+    BeadUsage usage = BeadUsage::filament;
+
+    mathfunc::Vec< 3, floatingpoint > coord;
+    mathfunc::Vec< 3, floatingpoint > force;
 
     ///@note - all vectors are in x,y,z coordinates.
     vector<floatingpoint> coordinateP; ///< Prev coordinates of bead in CG minimization
@@ -195,25 +99,10 @@ public:
     ///Default constructor
     Bead(Composite* parent, int position);
 
-    auto coordinate()    { return getDbData().coords    [getStableIndex()]; }
-    auto coordinateStr() { return getDbData().coordsStr [getStableIndex()]; }
-    auto force()         { return getDbData().forces    [getStableIndex()]; }
-    auto forceAux()      { return getDbData().forcesAux [getStableIndex()]; }
-    auto forceAuxP()     { return getDbData().forcesAuxP[getStableIndex()]; }
-    auto& forceTol()     { return getDbData().forceTols [getStableIndex()]; }
-
-    auto coordinate()    const { return getDbDataConst().coords    [getStableIndex()]; }
-    auto coordinateStr() const { return getDbDataConst().coordsStr [getStableIndex()]; }
-    auto force()         const { return getDbDataConst().forces    [getStableIndex()]; }
-    auto forceAux()      const { return getDbDataConst().forcesAux [getStableIndex()]; }
-    auto forceAuxP()     const { return getDbDataConst().forcesAuxP[getStableIndex()]; }
-    const auto& forceTol() const { return getDbDataConst().forceTols[getStableIndex()]; }
-
+    auto& coordinate() { return coord; }
+    const auto& coordinate() const { return coord; }
     // Temporary compromise
-    auto vcoordinate()    const { return mathfunc::vec2Vector(coordinate()   ); }
-    auto vforce()         const { return mathfunc::vec2Vector(force()        ); }
-    auto vforceAux()      const { return mathfunc::vec2Vector(forceAux()     ); }
-    auto vforceAuxP()     const { return mathfunc::vec2Vector(forceAuxP()    ); }
+    auto vcoordinate() const { return mathfunc::vec2Vector(coord); }
     
     /// Auxilliary coordinate getter
     template< bool stretched > auto getCoordinate() const {
@@ -293,23 +182,14 @@ public:
     //@{
     /// Auxiliary method for CG minimization
     inline double FDotF() {
-        return magnitude2(force());
+        return magnitude2(force);
     }
 //    inline double FDotF() {
 //        return force1[0]*force1[0] +
 //        force1[1]*force1[1] +
 //        force1[2]*force1[2];
 //    }
-    inline double FDotFA() {
-        return dot(force(), forceAux());
-    }
-    inline double FADotFA() {
-        return dot(forceAux(), forceAux());
-    }
     
-    inline double FADotFAP() {
-        return dot(forceAux(), forceAuxP());
-    }
     //Qin add brFDotbrF
     inline floatingpoint brFDotbrF() {
         return brforce[0]*brforce[0] +
@@ -361,17 +241,6 @@ public:
         //Add this bead as the child
         parent->addChild(unique_ptr<Component>(this));
     }
-
-    // Helper function to determine whether bead forces are below tolerances
-    // Note:
-    //   - The caller must ensure that the bead data is contiguous (without holes)
-    static bool forcesBelowTolerance() {
-        return ForcesBelowTolerance {}(
-            getDbDataConst().forcesAux,
-            getDbDataConst().forceTols
-        ).value;
-    }
-
 
 private:
     Compartment* _compartment = nullptr; ///< Pointer to the compartment that this bead is in

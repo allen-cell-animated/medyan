@@ -66,10 +66,10 @@ BoundaryFF::BoundaryFF (string type) {
     }
 }
 
-void BoundaryFF::vectorize() {
+void BoundaryFF::vectorize(const FFCoordinateStartingIndex& si) {
     
     for (auto &interaction : _boundaryInteractionVector)
-        interaction->vectorize();
+        interaction->vectorize(si);
 }
 
 void BoundaryFF::cleanup() {
@@ -113,7 +113,11 @@ floatingpoint BoundaryFF::computeEnergy(floatingpoint *coord, bool stretched) {
             return -1;
         }
         else U += U_i;
-        
+
+        #ifdef TRACKDIDNOTMINIMIZE
+        if(!stretched)
+            SysParams::Mininimization().tempEnergyvec.push_back(U_i);
+        #endif
         
     }
     
@@ -149,3 +153,12 @@ vector<NeighborList*> BoundaryFF::getNeighborLists() {
     
     return neighborLists;
 }
+
+vector<string> BoundaryFF::getinteractionnames(){
+    vector<string> temp;
+    for (auto &interaction : _boundaryInteractionVector) {
+        temp.push_back(interaction->getName());
+    }
+    return temp;
+}
+

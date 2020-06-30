@@ -1,3 +1,6 @@
+// WARNING: THIS FILE IS CURRENTLY UNUSABLE
+#error "File is not ready to use."
+
 #ifndef MEDYAN_Structure_SurfaceMesh_MembraneMeshCheck_hpp
 #define MEDYAN_Structure_SurfaceMesh_MembraneMeshCheck_hpp
 
@@ -55,27 +58,23 @@ struct MembraneMeshTopologyCheck {
     size_t minDegree;
     size_t maxDegree;
     size_t genus = 0;
-    size_t numBoundaries = 0;
 
     bool operator()(const MeshType& mesh, bool report = false) const {
         bool res = true; // Whether the topology is consistent
 
-        const size_t chi = 2 - 2 * genus - numBoundaries; // Euler characteristic
+        const auto numVertices = mesh.numVertices();
+        const auto numTriangles = mesh.numTriangles();
+        const auto numEdges = mesh.numEdges();
+        const auto numHalfEdges = mesh.numHalfEdges();
+        const auto numBorders = mesh.numBorders();
 
-        // Check number of elements
-        const size_t numVertices = mesh.getVertices().size();
-        const size_t numTriangles = mesh.getTriangles().size();
-        const size_t numEdges = mesh.getEdges().size();
-        const size_t numHalfEdges = mesh.getHalfEdges().size();
-
-        const size_t chiActual = numTriangles + numVertices - numEdges;
-        if(chiActual != chi) {
+        if(numEdges * 2 != numHalfEdges) {
             res = false;
             if(report) {
-                LOG(ERROR) << "Incorrect Euler characteristic (expected " << chi << "): " << chiActual;
+                LOG(ERROR) << "Incorrect number of edges (" << numEdges << ") vs half edges (" << numHalfEdges << ").";
             }
         }
-        if(!numBoundaries && (numEdges * 2 != numTriangles * 3 || numHalfEdges != numEdges * 2)) {
+        if(!numBorders && (numEdges * 2 != numTriangles * 3 || numHalfEdges != numEdges * 2)) {
             res = false;
             if(report) {
                 LOG(ERROR) << "Incorrect number of elements of a closed surface";
@@ -202,7 +201,7 @@ struct MembraneMeshDihedralCheck {
             const size_t hei = mesh.getEdges()[i].halfEdgeIndex;
             const size_t hei_o = mesh.opposite(hei);
 
-            using PolygonType = MeshType::HalfEdge::PolygonType;
+            using PolygonType = MeshType::PolygonType;
             if(
                 mesh.getHalfEdges()[hei].polygonType   == PolygonType::triangle &&
                 mesh.getHalfEdges()[hei_o].polygonType == PolygonType::triangle
@@ -331,7 +330,7 @@ struct MembraneMeshQualityReport {
             const size_t hei = mesh.getEdges()[i].halfEdgeIndex;
             const size_t hei_o = mesh.opposite(hei);
 
-            using PolygonType = MeshType::HalfEdge::PolygonType;
+            using PolygonType = MeshType::PolygonType;
             if(
                 mesh.getHalfEdges()[hei].polygonType   == PolygonType::triangle &&
                 mesh.getHalfEdges()[hei_o].polygonType == PolygonType::triangle

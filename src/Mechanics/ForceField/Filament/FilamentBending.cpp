@@ -19,12 +19,13 @@
 #include "Cylinder.h"
 #include "Bead.h"
 #include "CGMethod.h"
+#include "SysParams.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
 #include "cross_check.h"
 template <class FBendingInteractionType>
-void FilamentBending<FBendingInteractionType>::vectorize() {
+void FilamentBending<FBendingInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
 
     // Count number of interactions
     _numInteractions = 0;
@@ -37,6 +38,8 @@ void FilamentBending<FBendingInteractionType>::vectorize() {
 
     int i = 0;
 
+    int istr = 0;
+
     for (auto f: Filament::getFilaments()) {
 
         if (f->getCylinderVector().size() > 1){
@@ -45,9 +48,9 @@ void FilamentBending<FBendingInteractionType>::vectorize() {
                  it != f->getCylinderVector().end(); it++){
 
                 auto it2 = it - 1;
-                beadSet[n * i] = (*it2)->getFirstBead()->getStableIndex();
-                beadSet[n * i + 1] = (*it)->getFirstBead()->getStableIndex();
-                beadSet[n * i + 2] = (*it)->getSecondBead()->getStableIndex();
+                beadSet[n * i] = (*it2)->getFirstBead()->getIndex() * 3 + si.bead;
+                beadSet[n * i + 1] = (*it)->getFirstBead()->getIndex() * 3 + si.bead;
+                beadSet[n * i + 2] = (*it)->getSecondBead()->getIndex() * 3 + si.bead;
 //                std::cout<<f->getCylinderVector().size()<<" "<<(*it2)->getFirstBead()
 //                        ->getIndex()<<" "<<(*it)->getFirstBead()
 //                        ->getIndex()<<" "<<(*it)->getSecondBead()->getIndex()<<endl;
@@ -115,6 +118,7 @@ void FilamentBending<FBendingInteractionType>::deallocate() {
     delete [] beadSet;
     delete [] kbend;
     delete [] eqt;
+
 #ifdef CUDAACCL
     if(!(CUDAcommon::getCUDAvars().conservestreams))
         CUDAcommon::handleerror(cudaStreamDestroy(stream));
@@ -239,11 +243,11 @@ void FilamentBending<FBendingInteractionType>::computeForces(floatingpoint *coor
 ///Template specializations
 template floatingpoint FilamentBending<FilamentBendingHarmonic>::computeEnergy(floatingpoint *coord);
 template void FilamentBending<FilamentBendingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void FilamentBending<FilamentBendingHarmonic>::vectorize();
+template void FilamentBending<FilamentBendingHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void FilamentBending<FilamentBendingHarmonic>::deallocate();
 
 
 template floatingpoint FilamentBending<FilamentBendingCosine>::computeEnergy(floatingpoint *coord);
 template void FilamentBending<FilamentBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void FilamentBending<FilamentBendingCosine>::vectorize();
+template void FilamentBending<FilamentBendingCosine>::vectorize(const FFCoordinateStartingIndex&);
 template void FilamentBending<FilamentBendingCosine>::deallocate();

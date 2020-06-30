@@ -16,7 +16,8 @@
 #define MEDYAN_MMotorGhost_h
 
 #include <vector>
-
+#include "SysParams.h"
+#include "Util/Io/Log.hpp"
 #include "common.h"
 
 //FORWARD DECLARATIONS
@@ -46,6 +47,9 @@ public:
     MMotorGhost(int motorType, int numBoundHeads, floatingpoint position1, floatingpoint position2,
                 const vector<floatingpoint>& coord11, const vector<floatingpoint>& coord12,
                 const vector<floatingpoint>& coord21, const vector<floatingpoint>& coord22);
+
+    void initializerestart(int motorType, floatingpoint eqLength,
+                           floatingpoint numBoundHeads);
     
     //@{
     /// Getter for constants

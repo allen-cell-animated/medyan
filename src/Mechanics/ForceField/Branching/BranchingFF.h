@@ -40,7 +40,7 @@ public:
     BranchingFF(string& stretching, string& bending,
                 string& dihedral, string& position);
     
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&) override;
     virtual void cleanup();
     
     virtual string getName() {return "Branching";}
@@ -52,6 +52,8 @@ public:
     virtual void computeLoadForces() {return;}
     
     virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
+
+    virtual vector<string> getinteractionnames();
 };
 
 #endif

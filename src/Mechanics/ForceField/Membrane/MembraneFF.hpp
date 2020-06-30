@@ -9,7 +9,7 @@
 #include "Mechanics/ForceField/ForceField.h"
 #include "Mechanics/ForceField/Membrane/MembraneBending.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
-#include "Mechanics/ForceField/Membrane/MembraneStretching.hpp"
+#include "Mechanics/ForceField/Membrane/MembraneStretchingLocal.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneStretchingImpl.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneTriangleProtect.hpp"
 #include "Mechanics/ForceField/Types.hpp"
@@ -26,46 +26,48 @@ struct MembraneFFFactory {
 
     auto operator()(
         const std::string& stretchingType,
-        const std::string& stretchingAccuType,
+        const std::string& tensionType,
         const std::string& bendingType
     ) const {
         using namespace std;
 
         Result res;
 
-        if (stretchingType == "HARMONIC")
-            if(stretchingAccuType == "TRIANGLE")
-                res.forceFields.emplace_back(
-                    new MembraneStretching< MembraneStretchingHarmonic, MembraneStretchingAccumulationType::ByTriangle >()
-                );
-            else if(stretchingAccuType == "VERTEX")
-                res.forceFields.emplace_back(
-                    new MembraneStretching< MembraneStretchingHarmonic, MembraneStretchingAccumulationType::ByVertex >()
-                );
-            else {
-                LOG(ERROR) << "Membrane stretching accumulation type " << stretchingAccuType << " is not recognized.";
-                throw std::runtime_error("Membrane stretching accumulation type not recognized");
-            }
-
-        else if(stretchingType == "LINEAR")
-            if(stretchingAccuType == "TRIANGLE")
-                res.forceFields.emplace_back(
-                    new MembraneStretching< MembraneStretchingLinear, MembraneStretchingAccumulationType::ByTriangle >()
-                );
-            else if(stretchingAccuType == "VERTEX")
-                res.forceFields.emplace_back(
-                    new MembraneStretching< MembraneStretchingLinear, MembraneStretchingAccumulationType::ByVertex >()
-                );
-            else {
-                LOG(ERROR) << "Membrane stretching accumulation type " << stretchingAccuType << " is not recognized.";
-                throw std::runtime_error("Membrane stretching accumulation type not recognized");
-            }
-
+        if (stretchingType == "LOCAL_HARMONIC") {
+            // In material coordinates, it is mandatory, and is applicable to
+            //   non-reservior-touching membrane.
+            // In normal coordinates, it cannot be modeled without more degrees of freedom.
+            res.forceFields.push_back(
+                std::make_unique< MembraneStretchingLocal >()
+            );
+        }
+        else if(stretchingType == "GLOBAL_HARMONIC") {
+            // Assumption: surface tension is uniform on the membrane
+            // Only applicable to non-reservior-touching membrane in normal coordinates.
+            LOG(WARNING) << "Currently the force field is not implemented";
+            // res.forceFields.push_back(
+            //     std::make_unique< MembraneStretchingGlobal >()
+            // );
+        }
         else if(stretchingType == "") {}
-
         else {
             LOG(ERROR) << "Membrane stretching FF type " << stretchingType << " is not recognized.";
             throw std::runtime_error("Membrane stretching FF type not recognized");
+        }
+
+        if(tensionType == "CONSTANT") {
+            // In material coordinates, it is applicable to reservior-touching border triangles.
+            // In normal corodinates, it is applicable to the whole reservior-touching membrane,
+            //   assuming that surface tension is constant globally.
+            LOG(WARNING) << "Currently the force field is not implemented";
+            // res.forceFields.push_back(
+            //     std::make_unique< MembraneTension >()
+            // );
+        }
+        else if(tensionType == "") {}
+        else {
+            LOG(ERROR) << "Membrane tension FF type " << tensionType << " is not recognized.";
+            throw std::runtime_error("Membrane tension FF type not recognized");
         }
         
         if (bendingType == "HELFRICH") {
@@ -86,10 +88,10 @@ struct MembraneFFFactory {
             throw std::runtime_error("Membrane bending FF type not recognized");
         }
 
-        // Always add the protective force field
-        res.forceFields.emplace_back(
-            new MembraneTriangleProtect< MembraneTriangleProtectFene, true >()
-        );
+        // Currently, do not add the protective force field
+        // res.forceFields.emplace_back(
+        //     new MembraneTriangleProtect< MembraneTriangleProtectFene, true >()
+        // );
 
 
         return res;

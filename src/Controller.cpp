@@ -66,11 +66,6 @@ void displayCopySystem() {
     visual::copySystemDataAndRunHelper(visual::sys_data_update::BeadPosition | visual::sys_data_update::BeadConnection | visual::sys_data_update::Compartment);
 }
 
-void invalidateMembraneMeshIndexCache() {
-    for(auto m : Membrane::getMembranes()) {
-        m->getMesh().getMetaAttribute().cacheValid = false;
-    }
-}
 
 void pinBubbles() {
 
@@ -92,6 +87,9 @@ void pinBubbles() {
 
 void pinMembraneBorderVertices() {
 
+    LOG(ERROR) << "Membrane vertex pinning is deprecated and should not be used.";
+    return;
+
     // Only pin once
     static bool pinned = false;
     if(pinned) return;
@@ -99,12 +97,9 @@ void pinMembraneBorderVertices() {
     for(auto m : Membrane::getMembranes()) {
         auto& mesh = m->getMesh();
         for(const auto& border : mesh.getBorders()) {
-            mesh.forEachHalfEdgeInPolygon(border, [&](size_t hei) {
+            mesh.forEachHalfEdgeInPolygon(border, [&](auto hei) {
                 const auto vi = mesh.target(hei);
-                Bead* const b = static_cast< Bead* >(mesh.getVertexAttribute(vi).vertex);
 
-                b->pinnedPosition = b->vcoordinate();
-                b->addAsPinned();
             });
         }
     }
@@ -120,7 +115,7 @@ void pinInitialFilamentWith(F&& inRegion) {
     if(pinned) return;
 
     for(auto b : Bead::getBeads()) {
-        if(b->usage == Bead::BeadUsage::Filament) {
+        if(b->usage == Bead::BeadUsage::filament) {
             if(inRegion(b->coordinate())) {
                 b->pinnedPosition = b->vcoordinate();
                 b->addAsPinned();
@@ -171,19 +166,19 @@ void Controller::initialize(string inputFile,
     p.readSimulParams();
 
     //trajectory-style data
-    _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.traj", &_subSystem));
-    _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj", &_subSystem));
-    _outputs.push_back(new Forces(_outputDirectory + "forces.traj", &_subSystem));
-    _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", &_subSystem));
+    _outputs.push_back(make_unique<BasicSnapshot>(_outputDirectory + "snapshot.traj", &_subSystem));
+    _outputs.push_back(make_unique<BirthTimes>(_outputDirectory + "birthtimes.traj", &_subSystem));
+    _outputs.push_back(make_unique<Forces>(_outputDirectory + "forces.traj", &_subSystem));
+    _outputs.push_back(make_unique<Tensions>(_outputDirectory + "tensions.traj", &_subSystem));
 
-    _outputs.push_back(new PlusEnd(_outputDirectory + "plusend.traj", &_subSystem));
+    _outputs.push_back(make_unique<PlusEnd>(_outputDirectory + "plusend.traj", &_subSystem));
     //ReactionOut should be the last one in the output list
     //Otherwise incorrect deltaMinusEnd or deltaPlusEnd values may be genetrated.
-    _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", &_subSystem));
+    _outputs.push_back(make_unique<ReactionOut>(_outputDirectory + "monomers.traj", &_subSystem));
     //add br force out and local diffussing species concentration
-    _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", &_subSystem));
-    //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", &_subSystem));
-    _outputs.push_back(new IndicesOutput(_outputDirectory + "indices.traj", &_subSystem));
+    _outputs.push_back(make_unique<BRForces>(_outputDirectory + "repulsion.traj", &_subSystem));
+    //_outputs.push_back(make_unique<PinForces>(_outputDirectory + "pinforce.traj", &_subSystem));
+    //_outputs.push_back(make_unique<IndicesOutput>(_outputDirectory + "indices.traj", &_subSystem));
 
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -223,7 +218,7 @@ void Controller::initialize(string inputFile,
 
     // Force output
     if(SysParams::simulParams().trackForces) {
-        _outputs.push_back(new ForcesOutput(_outputDirectory + "forces-output.traj", &_subSystem, _mController.getForceFieldManager()));
+        _outputs.push_back(make_unique<ForcesOutput>(_outputDirectory + "forces-output.traj", &_subSystem, _mController.getForceFieldManager()));
     }
 
 #endif
@@ -234,7 +229,7 @@ void Controller::initialize(string inputFile,
 
     if(_subSystem.getBoundary()->getShape() == BoundaryShape::Cylinder){
         for(auto C : _subSystem.getCompartmentGrid()->getCompartments()){
-            C->computeSlicedVolumeArea(Compartment::SliceMethod::CylinderBoundary);
+            C->computeSlicedVolumeArea(Compartment::SliceMethod::cylinderBoundary);
         }
     }
     else{
@@ -262,6 +257,7 @@ void Controller::initialize(string inputFile,
     _snapshotTime = CAlgorithm.snapshotTime;
     _minimizationTime = CAlgorithm.minimizationTime;
     _neighborListTime = CAlgorithm.neighborListTime;
+    _datadumpTime = CAlgorithm.datadumpTime;
 
     //if run time was not set, look for runsteps parameters
     _runSteps = CAlgorithm.runSteps;
@@ -280,10 +276,10 @@ void Controller::initialize(string inputFile,
         LOG(FATAL) << "Need to specify a chemical input file. Exiting.";
         exit(EXIT_FAILURE);
     }
-    
+
 #ifdef CHEMISTRY
     SysParams::addChemParameters(ChemData);
-    
+
     if(!SysParams::checkChemParameters(ChemData))
         exit(EXIT_FAILURE);
 #endif
@@ -295,7 +291,7 @@ void Controller::initialize(string inputFile,
 
     //Set up chemistry output if any
     string chemsnapname = _outputDirectory + "chemistry.traj";
-    _outputs.push_back(new Chemistry(chemsnapname, &_subSystem, ChemData,
+    _outputs.push_back(make_unique<Chemistry>(chemsnapname, &_subSystem, ChemData,
                                      _subSystem.getCompartmentGrid()));
 
     ChemSim* _cs = _cController.getCS();
@@ -303,70 +299,72 @@ void Controller::initialize(string inputFile,
 
     string concenname = _outputDirectory + "concentration.traj";
 
-    _outputs.push_back(new Concentrations(concenname, &_subSystem, ChemData));
+    _outputs.push_back(make_unique<Concentrations>(concenname, &_subSystem, ChemData));
 
     if(SysParams::CParams.dissTracking){
-    //Set up dissipation output if dissipation tracking is enabled
-    string disssnapname = _outputDirectory + "dissipation.traj";
-    _outputs.push_back(new Dissipation(disssnapname, &_subSystem, _cs));
+        //Set up dissipation output if dissipation tracking is enabled
+        string disssnapname = _outputDirectory + "dissipation.traj";
+        _outputs.push_back(make_unique<Dissipation>(disssnapname, &_subSystem, _cs));
 
-    //Set up HRCD output if dissipation tracking is enabled
-    string hrcdsnapname = _outputDirectory + "HRCD.traj";
+        //Set up HRCD output if dissipation tracking is enabled
+        string hrcdsnapname = _outputDirectory + "HRCD.traj";
 
-    _outputs.push_back(new HRCD(hrcdsnapname, &_subSystem, _cs));
-        
-    //Set up HRMD output if dissipation tracking is enabled
-    string hrmdsnapname = _outputDirectory + "HRMD.traj";
-    _outputs.push_back(new HRMD(hrmdsnapname, &_subSystem, _cs));
-        
+        _outputs.push_back(make_unique<HRCD>(hrcdsnapname, &_subSystem, _cs));
+
+        //Set up HRMD output if dissipation tracking is enabled
+        string hrmdsnapname = _outputDirectory + "HRMD.traj";
+        _outputs.push_back(make_unique<HRMD>(hrmdsnapname, &_subSystem, _cs));
+
     }
 
     if(SysParams::CParams.eventTracking){
-    //Set up MotorWalkingEvents if event tracking is enabled
-    string motorwalkingevents = _outputDirectory + "motorwalkingevents.traj";
-    _outputs.push_back(new MotorWalkingEvents(motorwalkingevents, &_subSystem, _cs));
+        //Set up MotorWalkingEvents if event tracking is enabled
+        string motorwalkingevents = _outputDirectory + "motorwalkingevents.traj";
+        _outputs.push_back(make_unique<MotorWalkingEvents>(motorwalkingevents, &_subSystem, _cs));
 
-    //Set up LinkerUnbindingEvents if event tracking is enabled
-    string linkerunbindingevents = _outputDirectory + "linkerunbindingevents.traj";
-    _outputs.push_back(new LinkerUnbindingEvents(linkerunbindingevents, &_subSystem, _cs));
+        //Set up motorunbindingevents if event tracking is enabled
+        string motorunbindingevents = _outputDirectory + "motorunbindingevents.traj";
+        _outputs.push_back(make_unique<MotorUnbindingEvents>(motorunbindingevents, &_subSystem, _cs));
 
-    //Set up LinkerBindingEvents if event tracking is enabled
-    string linkerbindingevents = _outputDirectory + "linkerbindingevents.traj";
-    _outputs.push_back(new LinkerBindingEvents(linkerbindingevents, &_subSystem, _cs));
+        //Set up LinkerUnbindingEvents if event tracking is enabled
+        string linkerunbindingevents = _outputDirectory + "linkerunbindingevents.traj";
+        _outputs.push_back(make_unique<LinkerUnbindingEvents>(linkerunbindingevents, &_subSystem, _cs));
+
+        //Set up LinkerBindingEvents if event tracking is enabled
+        string linkerbindingevents = _outputDirectory + "linkerbindingevents.traj";
+        _outputs.push_back(make_unique<LinkerBindingEvents>(linkerbindingevents, &_subSystem, _cs));
     }
 
     if(SysParams::MParams.hessTracking){
-    //Set up HessianMatrix if hessiantracking is enabled
-    string hessianmatrix = _outputDirectory + "hessianmatrix.traj";
-    _outputs.push_back(new HessianMatrix(hessianmatrix, &_subSystem, _ffm));
-        
-    //Set up HessianSpectra if hessiantracking is enabled
-    string hessianspectra = _outputDirectory + "hessianspectra.traj";
-    _outputs.push_back(new HessianSpectra(hessianspectra, &_subSystem, _ffm));
-        
-        
+        //Set up HessianMatrix if hessiantracking is enabled
+        string hessianmatrix = _outputDirectory + "hessianmatrix.traj";
+        _outputs.push_back(make_unique<HessianMatrix>(hessianmatrix, &_subSystem, _ffm));
+
+        //Set up HessianSpectra if hessiantracking is enabled
+        string hessianspectra = _outputDirectory + "hessianspectra.traj";
+        _outputs.push_back(make_unique<HessianSpectra>(hessianspectra, &_subSystem, _ffm));
+
     }
 
     //Set up CMGraph output
     string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
-    _outputs.push_back(new CMGraph(cmgraphsnapname, &_subSystem));
+    _outputs.push_back(make_unique<CMGraph>(cmgraphsnapname, &_subSystem));
     
     //Set up TMGraph output
     string tmgraphsnapname = _outputDirectory + "TMGraph.traj";
-    _outputs.push_back(new TMGraph(tmgraphsnapname, &_subSystem));
-
-
+    _outputs.push_back(make_unique<TMGraph>(tmgraphsnapname, &_subSystem));
 
 
     //Set up datadump output if any
-#ifdef RESTARTDEV
-	    string datadumpname = _outputDirectory + "datadump.traj";
-	    _outputs.push_back(new Datadump(datadumpname, _subSystem, ChemData));
-#endif
+    string datadumpname = _outputDirectory + "datadump.traj";
+    _outputdump.push_back(make_unique<Datadump>(datadumpname, &_subSystem, ChemData));
+
+//    string twofilamentname = _outputDirectory + "twofilament.traj";
+//    _outputs.push_back(make_unique<TwoFilament>(twofilamentname, &_subSystem, ChemData));
 
 //    //Set up Turnover output if any
 //    string turnover = _outputDirectory + "Turnover.traj";
-//    _outputs.push_back(new FilamentTurnoverTimes(turnover, &_subSystem));
+//    _outputs.push_back(make_unique<FilamentTurnoverTimes>(turnover, &_subSystem));
 
 
 #endif
@@ -509,9 +507,10 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             it.triangleVertexIndexList
         );
     }
-    cout << "Done. " << membraneData.size() << " membranes created." << endl;
+    LOG(INFO) << "Done. " << membraneData.size() << " membranes created." << endl;
 
     // Create a region inside the membrane
+    LOG(INFO) << "Creating membrane regions...";
     _regionInMembrane = (
         membraneData.empty() ?
         make_unique<MembraneRegion<Membrane>>(_subSystem.getBoundary()) :
@@ -519,9 +518,35 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     );
     _subSystem.setRegionInMembrane(_regionInMembrane.get());
 
-    // Optimize the membrane
+    LOG(INFO) << "Optimizing membranes...";
     membraneAdaptiveRemesh();
     updatePositions();
+
+    LOG(INFO) << "Setting up membrane mechanics...";
+    for(auto m : Membrane::getMembranes()) {
+        m->initMechanicParams();
+    }
+
+    LOG(INFO) << "Adding surface chemistry...";
+    {
+        MembraneMeshChemistryInfo memChemInfo {
+            // names
+            {"mem-diffu-test-a", "mem-diffu-test-b"},
+            // diffusion
+            { { 0, 1.0 }, { 1, 0.5 } },
+            // internal reactions
+            {
+                { {}, {0}, 0.055 },
+                { {}, {1}, 0.062 },
+                { {0, 1, 1}, {1, 1, 1}, 1.0 }
+            }
+        };
+        for(auto m : Membrane::getMembranes()) {
+            m->setChemistry(memChemInfo);
+        }
+    }
+
+    LOG(INFO) << "Adjusting compartments by membranes...";
 
     // Deactivate all the compartments outside membrane, and mark boundaries as interesting
     for(auto c : _subSystem.getCompartmentGrid()->getCompartments()) {
@@ -530,7 +555,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             c->boundaryInteresting = true;
 
             // Update partial activate status
-            c->computeSlicedVolumeArea(Compartment::SliceMethod::Membrane);
+            c->computeSlicedVolumeArea(Compartment::SliceMethod::membrane);
             _cController.updateActivation(c, Compartment::ActivateReason::Membrane);
 
         } else if( ! _regionInMembrane->contains(vector2Vec<3, floatingpoint>(c->coordinates()))) {
@@ -567,6 +592,8 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             }
         }
     }
+
+    LOG(INFO) << "Membrane initialization complete.";
 
     /**************************************************************************
     Now starting to add the filaments into the network.
@@ -646,6 +673,8 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         cout << "Total cylinders " << Cylinder::getCylinders().size() << endl;
     }
     else{
+        cout<<endl;
+	    cout<<"RESTART PHASE BEINGS."<<endl;
         //Create the restart pointer
         const string inputfileName = _inputDirectory + FSetup.inputFile;
         _restart = new Restart(&_subSystem, _chemData, inputfileName);
@@ -1022,7 +1051,7 @@ void Controller::updateActiveCompartments() {
             const auto& ts = c->getTriangles();
             if(!ts.empty()) {
                 // Update partial activate status
-                c->computeSlicedVolumeArea(Compartment::SliceMethod::Membrane);
+                c->computeSlicedVolumeArea(Compartment::SliceMethod::membrane);
                 _cController.updateActivation(c, Compartment::ActivateReason::Membrane);
 
                 // No matter whether the compartment is interesting before, mark it as interesting
@@ -1108,8 +1137,9 @@ void Controller::updatePositions() {
 	minsp = chrono::high_resolution_clock::now();
     //Reset Cylinder update position state
     Cylinder::setpositionupdatedstate = false;
-    for(auto c : Cylinder::getCylinders())
-    	c->updatePosition();
+    for(auto c : Cylinder::getCylinders()) {
+	    c->updatePosition();
+    }
 #ifdef OPTIMOUT
     cout<<"Cylinder position updated"<<endl;
 #endif
@@ -1200,6 +1230,10 @@ void Controller::updateReactionRates() {
 	for(auto r : Reactable::getReactableList()){
 		r->updateReactionRates();
 		}
+
+    for(auto m : Membrane::getMembranes()) {
+        medyan::setReactionRates(m->getMesh());
+    }
 }
 #endif
 
@@ -1314,6 +1348,7 @@ void Controller::run() {
     floatingpoint tauLastMinimization = 0;
     floatingpoint tauLastNeighborList = 0;
     floatingpoint oldTau = 0;
+    floatingpoint tauDatadump = 0;
 
     long stepsLastSnapshot = 0;
     long stepsLastMinimization = 0;
@@ -1325,45 +1360,89 @@ void Controller::run() {
     chk1 = chrono::high_resolution_clock::now();
 //RESTART PHASE BEGINS
     if(SysParams::RUNSTATE==false){
-        cout<<"RESTART PHASE BEINGS."<<endl;
-//    Commented in 2019    _restart = new Restart(&_subSystem, filaments,_chemData);
-//Step 1. Turn off diffusion, passivate filament reactions and empty binding managers.
-//        _restart->settorestartphase();
-        cout<<"Turned off Diffusion, filament reactions."<<endl;
-//Step 2. Add bound species to their respective binding managers. Turn off unbinding, update propensities.
-        //_restart->addtoHeaplinkermotor();
-        _restart->addtoHeapbranchers();
-        _restart->addtoHeaplinkermotor();
-        cout<<"Bound species added to reaction heap."<<endl;
-//Step 2A. Turn off diffusion, passivate filament reactions and empty binding managers.
+//Step 2A. Turn off diffusion, passivate filament reactions and add reactions to heap.
         _restart->settorestartphase();
+	    cout<<"Turned off Diffusion, and filament reactions."<<endl;
+        cout<<"Bound species added to reaction heap."<<endl;
 //Step 3. ############ RUN LINKER/MOTOR REACTIONS TO BIND BRANCHERS, LINKERS, MOTORS AT RESPECTIVE POSITIONS.#######
-        cout<<"Reactions to be fired "<<_restart->getnumchemsteps()<<endl;
+        cout<<"Number of reactions to be fired "<<_restart->getnumchemsteps()<<endl;
         _cController.runSteps(_restart->getnumchemsteps());
         cout<<"Reactions fired! Displaying heap"<<endl;
 //Step 4. Display the number of reactions yet to be fired. Should be zero.
+        bool exitstatus = 0;
         for(auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
             for(auto &Mgr:C->getFilamentBindingManagers()){
                 int numsites = 0;
 #ifdef NLORIGINAL
                 numsites = Mgr->numBindingSites();
-#endif
-#ifdef NLSTENCILLIST
+#else
                 numsites = Mgr->numBindingSitesstencil();
 #endif
                 if(numsites == 0)
                     cout<< numsites<<" ";
                 else{
                     cout<<endl;
-                    cout<<"Few reactions are not fired! Cannot restart this trajectory. Exiting ..."<<endl;
-                    exit(EXIT_FAILURE);
+                    LOG(ERROR)<<"Compartment ID "<<C->getId()<<" COORDS "
+                                <<C->coordinates()[0] << " "
+                                <<C->coordinates()[1] << " "
+                                <<C->coordinates()[2] << endl;
+                    LOG(ERROR)<<"Num binding sites "<<numsites<<endl;
+                    string mgrname ="";
+                    if(dynamic_cast<BranchingManager*>(Mgr.get()))
+                        mgrname = " BRANCHING ";
+                    else if (dynamic_cast<LinkerBindingManager*>(Mgr.get()))
+                        mgrname = " LINKER ";
+                    else
+                        mgrname = " MOTOR ";
+                    LOG(ERROR)<<"Printing "<<mgrname<<" binding sites that were not "
+                                                      "chosen"<<endl;
+                    #ifdef NLORIGINAL
+                    Mgr->printbindingsites();
+					#else
+                	Mgr->printbindingsitesstencil();
+					#endif
+                	exitstatus = true;
                 }
             }}
         cout<<endl;
-        _restart->redistributediffusingspecies();
+        if(exitstatus) {
+            cout << "Few reactions were not fired! Cannot restart this trajectory. "
+                    "Exiting after printing diffusing species in each compartment..." <<
+                    endl;
+
+            cout<< "COMPARTMENT DATA: CMPID DIFFUSINGSPECIES COPYNUM"<<endl;
+            for(auto cmp:_subSystem.getCompartmentGrid()->getCompartments()){
+                cout <<cmp->getId()<<" ";
+                for(auto sd : _chemData.speciesDiffusing) {
+                    string name = get<0>(sd);
+                    auto s = cmp->findSpeciesByName(name);
+                    auto copyNum = s->getN();
+                    cout <<name<<" "<<copyNum<<" ";
+                }
+                cout <<endl;
+            }
+            exit(EXIT_FAILURE);
+        }
+///STEP 5. Reset time to required restart time.
+        _cController.initializerestart(_restart->getrestartime(),_minimizationTime);
+	    #ifdef SLOWDOWNINITIALCYCLE
+	    _slowedminimizationcutoffTime += _restart->getrestartime();
+		#endif
+        cout<<"Tau reset to "<<tau()<<endl;
+///STEP 6. Reinitialize CBound eqlen, numHeads and numBoundHeads values as required by
+/// datadump
+        //sets
+        _restart->CBoundinitializerestart();
+///STEP 7. Assign copynumbers based on Chemistry input file or the datadump file as
+// required by the user.
+        _restart->restartupdateCopyNumbers();
+        _restart->crosscheck();
+
+
         cout<<"Diffusion rates restored, diffusing molecules redistributed."<<endl;
 
-//Step 4.5. re-add pin positions
+
+//Step 8. re-add pin positions
         SystemParser p(_inputFile);
         FilamentSetup filSetup = p.readFilamentSetup();
 
@@ -1371,15 +1450,14 @@ void Controller::run() {
             PinRestartParser ppin(_inputDirectory + filSetup.pinRestartFile);
             ppin.resetPins();}
 
-//Step 5. run mcontroller, update system, turn off restart state.
+//Step 9. run mcontroller, update system, turn off restart state.
         updatePositions();
         updateNeighborLists();
 
         mins = chrono::high_resolution_clock::now();
         cout<<"Minimizing energy"<<endl;
 
-        invalidateMembraneMeshIndexCache();
-        _mController.run(false);
+        _subSystem.prevMinResult = _mController.run(false);
 #ifdef OPTIMOUT
         mine= chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runm(mine - mins);
@@ -1392,40 +1470,50 @@ void Controller::run() {
         updatePositions();
         updateNeighborLists();
 
-//Step 6. Set Off rates back to original value.
+//Step 10. Set Off rates back to original value.
         for(auto LL : Linker::getLinkers())
         {
             LL->getCLinker()->setOffRate(LL->getCLinker()->getOffReaction()->getBareRate());
-            /*LL->getCLinker()->getOffReaction()->setRate(LL->getCLinker()->getOffReaction
-			        ()->getBareRate());*/
             LL->updateReactionRates();
             LL->getCLinker()->getOffReaction()->updatePropensity();
+            /*cout<<"L "<<LL->getId()<<" "<<LL->getMLinker()->getEqLength()<<" "
+                << LL->getCLinker()->getOffRate()<<" "
+                <<LL->getCLinker()->getOffReaction()->getBareRate()<<" "
+                    <<LL->getMLinker()->stretchForce<<endl;*/
 
         }
         for(auto MM : MotorGhost::getMotorGhosts())
         {
             MM->getCMotorGhost()->setOffRate(MM->getCMotorGhost()->getOffReaction()->getBareRate());
-            /*MM->getCMotorGhost()->getOffReaction()->setRate(MM->getCMotorGhost()
-		                                                             ->getOffReaction()
-		                                                             ->getBareRate());*/
             MM->updateReactionRates();
             MM->getCMotorGhost()->getOffReaction()->updatePropensity();
+            /*cout<<"M "<<MM->getId()<<" "<<MM->getMMotorGhost()->getEqLength()<<" "
+                << MM->getCMotorGhost()->getOffRate()<<" "
+                <<MM->getCMotorGhost()->getOffReaction()->getBareRate()<<" "
+                <<MM->getMMotorGhost()->stretchForce<<endl;*/
         }
         int dummy=0;
         for (auto BB: BranchingPoint::getBranchingPoints()) {
             dummy++;
             BB->getCBranchingPoint()->setOffRate(BB->getCBranchingPoint()->getOffReaction()->getBareRate());
-            /*BB->getCBranchingPoint()->getOffReaction()->setRate(BB->getCBranchingPoint()
-		                                                                 ->getOffReaction
-		                                                                 ()->getBareRate
-		                                                                 ());*/
+            BB->updateReactionRates();
             BB->getCBranchingPoint()->getOffReaction()->updatePropensity();
+            /*cout<<"B "<<BB->getId()<<" "<<BB->getMBranchingPoint()->getEqLength()<<" "
+                << BB->getCBranchingPoint()->getOffRate()<<" "
+                <<BB->getCBranchingPoint()->getOffReaction()->getBareRate()<<endl;*/
         }
-//STEP 7: Get cylinders, activate filament reactions.
+//STEP 11: Get cylinders, activate filament reactions.
         for(auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
             for(auto x : C->getCylinders()) {
                 x->getCCylinder()->activatefilreactions();
                 x->getCCylinder()->activatefilcrossreactions();
+            }}
+
+//Step 11b. Activate general reactions.
+        for(auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
+            for(auto& rxn : C->getInternalReactionContainer().reactions()) {
+                if(rxn->getReactionType() == ReactionType::REGULAR)
+                    rxn->activateReaction();
             }}
         cout<<"Unbinding rates of bound species restored. filament reactions activated"<<endl;
 //@
@@ -1435,17 +1523,19 @@ void Controller::run() {
 #ifdef DYNAMICRATES
         updateReactionRates();
 #endif
+        delete _restart;
         cout<< "Restart procedures completed. Starting original Medyan framework"<<endl;
         cout << "---" << endl;
-        resetglobaltime();
-        _cController.restart();
-        cout << endl;
         cout << "Current simulation time = "<< tau() << endl;
         cout << endl;
         //restart phase ends
+
+        //Crosscheck tau to make sure heap is ordered accurately.
+        _cController.crosschecktau();
     }
 #ifdef CHEMISTRY
     tauLastSnapshot = tau();
+    tauDatadump = tau();
     oldTau = 0;
 #endif
 
@@ -1456,7 +1546,6 @@ void Controller::run() {
     _subSystem.resetNeighborLists(); // TODO: resolve workaround
     Bead::rearrange();
     Cylinder::updateAllData();
-    invalidateMembraneMeshIndexCache();
     // update neighorLists before and after minimization. Need excluded volume
     // interactions.
 	_subSystem.resetNeighborLists();
@@ -1466,6 +1555,7 @@ void Controller::run() {
     executeSpecialProtocols();
     auto minimizationResult = _mController.run(false);
     displayCopySystem();
+    _subSystem.prevMinResult = minimizationResult;
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runm2(mine - mins);
     minimizationtime += elapsed_runm2.count();
@@ -1517,9 +1607,12 @@ void Controller::run() {
 
 #ifdef CHEMISTRY
     tauLastSnapshot = tau();
+    tauDatadump = tau();
     oldTau = 0;
 #endif
-    for(auto o: _outputs) o->print(0);
+    for(auto& o: _outputs) o->print(0);
+    for(auto& o: _outputdump) o->print(0);
+
     resetCounters();
 
     cout << "Starting simulation..." << endl;
@@ -1550,7 +1643,7 @@ void Controller::run() {
             mins = chrono::high_resolution_clock::now();
             float factor = 1.0;
 #ifdef SLOWDOWNINITIALCYCLE
-            if(tau() <=10.0)
+            if(tau() <=_slowedminimizationcutoffTime)
             	factor = 10.0;
 #endif
             floatingpoint chemistryTime = _minimizationTime/factor;
@@ -1561,6 +1654,11 @@ void Controller::run() {
             chrono::duration<floatingpoint> elapsed_runchem(mine - mins);
             chemistrytime += elapsed_runchem.count();
             SysParams::DURINGCHEMISTRY = false;
+
+/*            for(auto cyl:Cylinder::getCylinders()){
+                cout<<"After chemistry  Cylinder ID = "<<cyl->getId()<<endl;
+                cyl->printSelf();
+            }*/
 
             //Printing walking reaction
             /*auto mwalk = CUDAcommon::mwalk;
@@ -1609,7 +1707,7 @@ void Controller::run() {
             mins = chrono::high_resolution_clock::now();
             if(var) {
                 short counter = 0;
-                for(auto o: _outputs) { o->print(i); }
+                for(auto& o: _outputs) { o->print(i); }
                 resetCounters();
                 break;
             }
@@ -1621,6 +1719,7 @@ void Controller::run() {
             tauLastSnapshot += tau() - oldTau;
             tauLastMinimization += tau() - oldTau;
             tauLastNeighborList += tau() - oldTau;
+            tauDatadump += tau() - oldTau;
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
 
@@ -1669,13 +1768,13 @@ void Controller::run() {
                 membraneAdaptiveRemesh();
                 _subSystem.resetNeighborLists(); // TODO: resolve workaround
 
-                invalidateMembraneMeshIndexCache();
                 Bead::rearrange();
                 Cylinder::updateAllData();
-                minimizationResult = _mController.run();
 
                 displayCopySystem();
 
+                minimizationResult = _mController.run();
+                _subSystem.prevMinResult = minimizationResult;
                 mine= chrono::high_resolution_clock::now();
 
                 
@@ -1725,26 +1824,31 @@ void Controller::run() {
             //output snapshot
             if(tauLastSnapshot >= _snapshotTime) {
                 mins = chrono::high_resolution_clock::now();
-                for(auto o: _outputs) o->print(i);
+                cout << "Current simulation time = "<< tau() << endl;
+                for(auto& o: _outputs) o->print(i);
                 resetCounters();
                 i++;
                 tauLastSnapshot = 0.0;
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runout2(mine - mins);
                 outputtime += elapsed_runout2.count();
-                cout<< "Running time profiler: " << endl;
-                cout<< "Chemistry time for run = " << chemistrytime <<endl;
-                cout << "Minimization time for run = " << minimizationtime <<endl;
-                cout<<"Dynamic rate time for run = "<<rxnratetime<<endl;
-                cout<< "Other = "<<nltime + outputtime + specialtime <<endl;
-                
-                cout << endl;
-                cout << "Current simulation time = "<< tau() << endl;
-                cout << "CPU time elapsed = " << chemistrytime + minimizationtime + rxnratetime + nltime + outputtime + specialtime<< endl;
-                cout << endl;
+#ifdef OPTIMOUT
+                cout<< "Chemistry time for cycle=" << chemistrytime <<endl;
+                cout << "Minimization time for cycle=" << minimizationtime <<endl;
+                cout<< "Neighbor-list+Bmgr-time for cycle="<<nltime<<endl;
+                cout<<"update-position time for cycle="<<updateposition<<endl;
+
+                cout<<"rxnrate time for cycle="<<rxnratetime<<endl;
+                cout<<"Output time for cycle="<<outputtime<<endl;
+                cout<<"Special time for cycle="<<specialtime<<endl;
+#endif
+            }
+            if(tauDatadump >= _datadumpTime) {
+                for (auto& o: _outputdump) o->print(0);
+                tauDatadump = 0.0;
             }
 #elif defined(MECHANICS)
-            for(auto o: _outputs) o->print(i);
+            for(auto& o: _outputs) o->print(i);
 	        resetCounters();
             i++;
 #endif
@@ -1820,7 +1924,7 @@ void Controller::run() {
         while(totalSteps <= _runSteps) {
             //run ccontroller
             if(!_cController.runSteps(_minimizationSteps)) {
-                for(auto o: _outputs) o->print(i);
+                for(auto& o: _outputs) o->print(i);
                 resetCounters();
                 break;
             }
@@ -1839,7 +1943,6 @@ void Controller::run() {
                 membraneAdaptiveRemesh();
                 _subSystem.resetNeighborLists(); // TODO: resolve workaround
 
-                invalidateMembraneMeshIndexCache();
                 Bead::rearrange();
                 Cylinder::updateAllData();
                 _mController.run();
@@ -1859,16 +1962,14 @@ void Controller::run() {
             }
 
             if(stepsLastSnapshot >= _snapshotSteps) {
-                cout << endl;
                 cout << "Current simulation time = "<< tau() << endl;
-                cout << endl;
-                for(auto o: _outputs) o->print(i);
+                for(auto& o: _outputs) o->print(i);
                 resetCounters();
                 i++;
                 stepsLastSnapshot = 0;
             }
 #elif defined(MECHANICS)
-            for(auto o: _outputs) o->print(i);
+            for(auto& o: _outputs) o->print(i);
             resetCounters();
             i++;
 #endif
@@ -1892,25 +1993,13 @@ void Controller::run() {
     }
 
     //print last snapshots
-    for(auto o: _outputs) o->print(i);
+    for(auto& o: _outputs) o->print(i);
 	resetCounters();
-    
-    cout<< "Running time profiler: " << endl;
-    cout<< "Chemistry time for run = " << chemistrytime <<endl;
-    cout << "Minimization time for run = " << minimizationtime <<endl;
-    cout<<"Dynamic rate time for run = "<<rxnratetime<<endl;
-    cout<< "Other = "<<nltime + outputtime + specialtime <<endl;
-    
-    cout << endl;
-    cout << "Current simulation time = "<< tau() << endl;
-    cout << "CPU time elapsed = " << chemistrytime + minimizationtime + rxnratetime + nltime + outputtime + specialtime<< endl;
-    cout << endl;
-    
-	#ifdef OPTIMOUT
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_run(chk2-chk1);
+    cout << "Time elapsed for run: dt=" << elapsed_run.count() << endl;
+	#ifdef OPTIMOUT
     cout<< "Chemistry time for run=" << chemistrytime <<endl;
-    cout<< "Simulation time profiler: " << endl;
     cout << "Minimization time for run=" << minimizationtime <<endl;
     cout<< "Neighbor-list+Bmgr-time for run="<<nltime<<endl;
     cout<< "Neighbor-list time for run="<<nl2time<<endl;

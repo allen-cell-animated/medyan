@@ -186,9 +186,9 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, size_t nint,
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
 
         L1 = sqrt(scalarProduct(coord1, coord2,
                                 coord1, coord2));
@@ -205,7 +205,7 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, size_t nint,
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
-            //set culprit and return TODO
+            //set culprit and return
             FilamentInteractions::_filamentCulprit = (Filament*)(Cylinder::getCylinders()[i]->getParent());
 
             return -1;
@@ -229,13 +229,13 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, floatingpoin
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
 
-        force1 = &f[3 * beadSet[n * i]];
-        force2 = &f[3 * beadSet[n * i + 1]];
-        force3 = &f[3 * beadSet[n * i + 2]];
+        force1 = &f[beadSet[n * i]];
+        force2 = &f[beadSet[n * i + 1]];
+        force3 = &f[beadSet[n * i + 2]];
 
 
         L1 = sqrt(scalarProductStretched(coord1, force1, coord2, force2,
@@ -254,9 +254,9 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, floatingpoin
            || U_i != U_i || U_i < -1.0) {
 
             for(auto cyl:Cylinder::getCylinders()){
-                auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-                auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
-                if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
+                auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
+                auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
+                if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) { // FIXME this is unsafe
                     auto F = dynamic_cast<Filament*>(cyl->getParent());
                     FilamentInteractions::_filamentCulprit = F;
                     break;
@@ -281,13 +281,13 @@ void FilamentBendingHarmonic::forces(floatingpoint *coord, floatingpoint *f, siz
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
 
-        force1 = &f[3 * beadSet[n * i]];
-        force2 = &f[3 * beadSet[n * i + 1]];
-        force3 = &f[3 * beadSet[n * i + 2]];
+        force1 = &f[beadSet[n * i]];
+        force2 = &f[beadSet[n * i + 1]];
+        force3 = &f[beadSet[n * i + 2]];
 
         L1 = sqrt(scalarProduct(coord1, coord2,
                                 coord1, coord2));

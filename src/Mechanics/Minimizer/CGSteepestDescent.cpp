@@ -15,13 +15,17 @@
 
 #include "ForceFieldManager.h"
 #include "Composite.h"
+#include "Mechanics/Minimizer/CGMethodDataCopy.hpp"
 #include "Output.h"
 #include "Structure/Bead.h"
 
-MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                                   floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
-                                   floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
-                                   bool steplimit) {
+MinimizationResult SteepestDescent::minimize(
+    ForceFieldManager &FFM, floatingpoint GRADTOL,
+    floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+    floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+    string _LINESEARCHALGORITHM,
+    bool steplimit
+) {
     
     MinimizationResult result;
 
@@ -34,18 +38,19 @@ MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoi
             N = numeric_limits<int>::max();
         }
 
-        startMinimization(GRADTOL);
-        FFM.vectorizeAllForceFields();
+    startMinimization(GRADTOL);
+    FFM.vectorizeAllForceFields(initCGMethodData(*this, GRADTOL));
 
-        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
-        Bead::getDbData().forcesAux = Bead::getDbData().forces;
-        auto maxForce = maxF();
+    FFM.computeForces(coord.data(), force);
+    searchDir = force;
+    auto maxForce = maxF();
+    bool isForceBelowTol = forceBelowTolerance();
 
-        result.energiesBefore = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+    result.energiesBefore = FFM.computeEnergyHRMD(coord.data());
 
         int numIter = 0;
         while (/* Iteration criterion */  numIter < N &&
-               /* Gradient tolerance  */  !Bead::forcesBelowTolerance()) {
+               /* Gradient tolerance  */  ! isForceBelowTol) {
 
             numIter++;
             floatingpoint lambda;
@@ -53,16 +58,17 @@ MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoi
             //find lambda by line search, move beads
             bool *dummy = nullptr;
             lambda = backtrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
-                    LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
-            moveBeads(lambda);
+                    LAMBDARUNNINGAVERAGEPROBABILITY, dummy, dummy);
+            moveAlongSearchDir(lambda);
 
-            //compute new forces
-            FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());
-            maxForce = maxF();
+        //compute new forces
+        FFM.computeForces(coord.data(), force);
+        maxForce = maxF();
+        isForceBelowTol = forceBelowTolerance();
 
-            //shift gradient
-            shiftGradient(0.0);
-        }
+        //shift gradient
+        shiftSearchDir(0.0);
+    }
 
         if (numIter >= N) {
             cout << endl;
@@ -75,20 +81,21 @@ MinimizationResult SteepestDescent::minimize(ForceFieldManager &FFM, floatingpoi
             if (b != nullptr) b->getParent()->printSelf();
 
             cout << "System energy..." << endl;
-            FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+            FFM.computeEnergy(coord.data(), true);
 
             cout << endl;
         }
 
-        result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+    result.energiesAfter = FFM.computeEnergyHRMD(coord.data());
 
-        //final force calculation
-        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
-        Bead::getDbData().forcesAux = Bead::getDbData().forces;
-        FFM.computeLoadForces();
-        endMinimization();
+    //final force calculation
+    FFM.computeForces(coord.data(), force);
+    searchDir = force;
+    FFM.computeLoadForces();
+    copyFromCGMethodData(*this);
+    endMinimization();
 
-        FFM.cleanupAllForceFields();
+    FFM.cleanupAllForceFields();
 
     return result;
 }

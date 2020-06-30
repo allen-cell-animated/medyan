@@ -26,11 +26,11 @@ public:
     floatingpoint energy(floatingpoint *coord, int *beadSet,
                   floatingpoint *kpos, floatingpoint *pos);
     
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    [[deprecated]] floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                   floatingpoint *kpos, floatingpoint *pos, floatingpoint d);
     
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                floatingpoint *kpos, floatingpoint *pos);
+                floatingpoint *kpos, floatingpoint *pos, floatingpoint *stretchforce);
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint);
     floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kpos, floatingpoint *pos, int *params);

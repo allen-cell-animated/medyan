@@ -33,6 +33,9 @@ class BubbleBubbleRepulsion : public BubbleInteractions {
 private:
     BRepulsionInteractionType _FFType;
     BubbleBubbleNL* _neighborList; ///<Neighbor list of Bubble-Bubble
+
+    std::size_t beadStartIdx_; // The starting index of bead in the vectorization
+
 public:
     
     /// Constructor
@@ -40,7 +43,7 @@ public:
         _neighborList = new BubbleBubbleNL(SysParams::Mechanics().BubbleCutoff);
     }
     
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&) override;
     virtual void deallocate();
     
     virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) override;

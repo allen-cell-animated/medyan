@@ -54,7 +54,7 @@ public:
     static ForceField* _culpritForceField;
 
     /// Vectorize all interactions involved in calculation
-    void vectorizeAllForceFields();
+    void vectorizeAllForceFields(const FFCoordinateStartingIndex&);
     /// Deallocation of vectorized memory
     void cleanupAllForceFields();
 
@@ -72,7 +72,7 @@ public:
     
     
     /// Compute the forces of all force fields 
-    void computeForces(floatingpoint *coord, floatingpoint *f);
+    void computeForces(floatingpoint *coord, std::vector< floatingpoint >& force);
     
     // compute the Hessian matrix if the feature is enabled
     void computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta);
@@ -90,7 +90,7 @@ public:
     
     vector<floatingpoint> HRMDenergies;
     
-    void printculprit(floatingpoint* force);
+    void printculprit();
     
     vector<vector<vector<floatingpoint>>> hessianVector;
     
@@ -100,6 +100,14 @@ public:
     Eigen::VectorXcd evalues;
     Eigen::MatrixXcd evectors;
     vector<floatingpoint> tauVector;
+
+    vector<string> getinteractionnames(){
+        vector<string> temp;
+        for (auto &ff : _forceFields)
+            for(auto names:ff->getinteractionnames())
+            	temp.push_back(names);
+        return temp;
+    }
 
 #ifdef CUDAACCL
         cudaStream_t  streamF = NULL;

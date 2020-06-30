@@ -28,7 +28,8 @@ std::vector<Bead*> Bead::_pinnedBeads;
 Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
 //add brforce, pinforce
     : Trackable(true, false, true, false),
-      DatabaseType(vector2Vec<3>(v), Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, 0.0),
+      coord(vector2Vec<3>(v)),
+      force{},
       coordinateP(v),
       brforce(3, 0), pinforce(3,0),
       _position(position), _birthTime(tau()) {
@@ -58,7 +59,8 @@ Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
 Bead::Bead(Composite* parent, int position)
 //add brforce, pinforce
     : Trackable(true, false, true, false),
-    DatabaseType(Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, Vec<3,floatingpoint>{}, 0.0),
+    coord{},
+    force{},
     coordinateP(3, 0),
     brforce(3, 0), pinforce(3,0), _position(position) {
     
@@ -91,8 +93,7 @@ void Bead::printSelf()const {
     cout << "Bead: ptr = " << this << endl;
     cout << "Coordinates = " << coordinate()[0] << ", " << coordinate()[1] << ", " << coordinate()[2] << endl;
     cout << "Previous coordinates before minimization = " << coordinateP[0] << ", " << coordinateP[1] << ", " << coordinateP[2] << endl;
-    cout << "Forces = " << force()[0] << ", " << force()[1] << ", " << force()[2] << endl;
-    cout << "Auxiliary forces = " << forceAux()[0] << ", " << forceAux()[1] << ", " << forceAux()[2] << endl;
+    cout << "Forces = " << force[0] << ", " << force[1] << ", " << force[2] << endl;
 
     cout << "Position on structure = " << _position << endl;
     cout << "Birth time = " << _birthTime << endl;

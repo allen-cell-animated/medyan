@@ -39,7 +39,7 @@ public:
     /// Initialize the forcefields
     BubbleFF(string type, string mtoc, string afm);
     
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&) override;
     virtual void cleanup();
 
     virtual string getName() {return "Bubble";}
@@ -54,6 +54,8 @@ public:
     virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
     
     virtual vector<NeighborList*> getNeighborLists();
+
+    virtual vector<string> getinteractionnames();
 };
 
 #endif

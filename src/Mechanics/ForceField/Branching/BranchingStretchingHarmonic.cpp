@@ -204,9 +204,9 @@ floatingpoint BranchingStretchingHarmonic::energy(floatingpoint *coord, int *bea
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
 
         midPointCoordinate(v1, coord1, coord2, pos[i]);
         dist = twoPointDistance(v1, coord3) - eql[i];
@@ -244,13 +244,13 @@ floatingpoint BranchingStretchingHarmonic::energy(floatingpoint *coord, floating
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
 
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
 
         midPointCoordinateStretched(v1, coord1, f1, coord2, f2, pos[i], d);
         dist = twoPointDistanceStretched(v1, vzero, coord3, f3, d) - eql[i];
@@ -289,13 +289,13 @@ void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f,
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
 
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
 
 
         midPointCoordinate(v1, coord1, coord2, pos[i]);
@@ -304,14 +304,6 @@ void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f,
         invL = 1 / dist;
         f0 = kstr[i] * ( dist - eql[i]) * invL;
 
-/*        if(isnan(invL)||isinf(invL)||isnan(f0)||isinf(f0)||isnan(kstr[i])||isinf(kstr[i])
-        ||isinf(eql[i])||isnan(eql[i])||isnan(v1[0])||isinf(v1[0])||isnan(v1[1])||isinf
-        (v1[1])||isnan(v1[2])||isinf(v1[2])||isnan(pos[i])||isinf(pos[i])){
-            cout<<"Branching Stretching force error"<<endl;
-
-            cout<<"f0 "<<f0<<" pos "<<pos[i]<<" invL "<<invL<<" v1 "<<v1[0]<<" "
-            <<v1[1]<<" "<<v1[2]<<" kstr "<<kstr[i]<<endl;
-        }*/
 
         f1[0] +=  -f0 * ( coord3[0] - v1[0] ) * (pos[i] - 1);
         f1[1] +=  -f0 * ( coord3[1] - v1[1] ) * (pos[i] - 1);
@@ -326,7 +318,10 @@ void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f,
         f3[0] +=  -f0 * ( coord3[0] - v1[0] );
         f3[1] +=  -f0 * ( coord3[1] - v1[1] );
         f3[2] +=  -f0 * ( coord3[2] - v1[2] );
-        stretchforce[i] = f0/invL;
+
+        stretchforce[3*i] = -f0 * ( coord3[0] - v1[0] );
+        stretchforce[3*i + 1] = -f0 * ( coord3[1] - v1[1] );
+        stretchforce[3*i + 2] = -f0 * ( coord3[2] - v1[2] );
 
         #ifdef CHECKFORCES_INF_NAN
         if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)||checkNaN_INF<floatingpoint>(f3,0,2)){

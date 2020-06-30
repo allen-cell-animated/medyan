@@ -42,7 +42,7 @@ public:
     /// Initialize the forcefields (repulsion, attraction, etc)
     BoundaryFF(string type);
     
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&);
     virtual void cleanup();
 
     virtual string getName() {return "Boundary";}
@@ -56,6 +56,8 @@ public:
     virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
     
     virtual vector<NeighborList*> getNeighborLists();
+
+    virtual vector<string> getinteractionnames();
 };
 
 #endif

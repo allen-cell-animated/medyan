@@ -200,9 +200,9 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, int *beadSet
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
 
         midPointCoordinate(mp, coord1, coord2, pos[i]);
         X = sqrt(scalarProduct(mp, coord2, mp, coord2));
@@ -265,12 +265,12 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
 
         midPointCoordinateStretched(mp, coord1, f1, coord2, f2, pos[i], d);
         X = sqrt(scalarProductStretched(mp, vzero, coord2, f2, mp, vzero, coord2, f2, d));
@@ -319,7 +319,8 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
 }
 
 void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                                     floatingpoint *kpos, floatingpoint *pos){
+                                     floatingpoint *kpos, floatingpoint *pos,
+                                     floatingpoint *stretchforce){
 
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
@@ -331,12 +332,12 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
 
         midPointCoordinate(mp, coord1, coord2, pos[i]);
         X = sqrt(scalarProduct(mp, coord2, mp, coord2));
@@ -403,9 +404,20 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
 
         //bead3
 
-        f3[0] +=  k * ( (1-position)*(coord2[0] - coord1[0]) - xd * C*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) );
-        f3[1] +=  k * ( (1-position)*(coord2[1] - coord1[1]) - xd * C*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) );
-        f3[2] +=  k * ( (1-position)*(coord2[2] - coord1[2]) - xd * C*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
+        floatingpoint f3x =  k * ( (1-position)*(coord2[0] - coord1[0]) - xd * C*
+                (coord3[0] - (1-position)*coord1[0] - position*coord2[0]) );
+        floatingpoint f3y =  k * ( (1-position)*(coord2[1] - coord1[1]) - xd * C*
+                (coord3[1] - (1-position)*coord1[1] - position*coord2[1]) );
+        floatingpoint f3z =  k * ( (1-position)*(coord2[2] - coord1[2]) - xd * C*
+                (coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
+
+        f3[0] += f3x;
+        f3[1] += f3y;
+        f3[2] += f3z;
+
+        stretchforce[3*i] = f3x;
+        stretchforce[3*i + 1] = f3y;
+        stretchforce[3*i + 2] = f3z;
 
 	    #ifdef CHECKFORCES_INF_NAN
 	    if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)||checkNaN_INF<floatingpoint>(f3,0,2)){

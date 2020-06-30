@@ -40,7 +40,7 @@ public:
     /// Constructor, intializes stretching, bending, and twisting forces
     LinkerFF(string& stretching, string& bending, string& twisting );
     
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&) override;
     virtual void cleanup();
 
     virtual string getName() {return "Linker";}
@@ -54,6 +54,8 @@ public:
     virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
     //Assigns stretchforces for ratechangeimpl
     virtual void assignforcemags();
+
+    virtual vector<string> getinteractionnames();
     
 };
 

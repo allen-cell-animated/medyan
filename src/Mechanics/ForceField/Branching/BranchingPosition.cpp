@@ -26,22 +26,25 @@
 #include "Mechanics/CUDAcommon.h"
 
 template <class BPositionInteractionType>
-void BranchingPosition<BPositionInteractionType>::vectorize() {
+void BranchingPosition<BPositionInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
     CUDAcommon::tmin.numinteractions[7] += BranchingPoint::getBranchingPoints().size();
     beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
     kpos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
     pos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
+    stretchforce = new floatingpoint[3*BranchingPoint::getBranchingPoints().size()];
 
     int i = 0;
 
     for (auto b: BranchingPoint::getBranchingPoints()) {
 
-        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getStableIndex();
-        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getStableIndex();
-        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
 
         kpos[i] = b->getMBranchingPoint()->getPositionConstant();
         pos[i] = b->getPosition();
+        for(int j = 0; j < 3; j++)
+            stretchforce[3*i + j] = 0.0;
 
         i++;
     }
@@ -73,6 +76,14 @@ void BranchingPosition<BPositionInteractionType>::vectorize() {
 
 template<class BPositionInteractionType>
 void BranchingPosition<BPositionInteractionType>::deallocate() {
+
+    for(auto b:BranchingPoint::getBranchingPoints()){
+        //Using += to ensure that the stretching forces are additive.
+
+        for(int j = 0; j < 3; j++)
+            b->getMBranchingPoint()->branchForce[j] += stretchforce[3*b->getIndex() + j];
+    }
+    delete [] stretchforce;
     delete [] beadSet;
     delete [] kpos;
     delete [] pos;
@@ -151,7 +162,7 @@ void BranchingPosition<BPositionInteractionType>::computeForces(floatingpoint *c
 #endif
 #ifdef SERIAL
 
-    _FFType.forces(coord, f, beadSet, kpos, pos);
+    _FFType.forces(coord, f, beadSet, kpos, pos, stretchforce);
 
 #endif
 }
@@ -160,5 +171,5 @@ void BranchingPosition<BPositionInteractionType>::computeForces(floatingpoint *c
 ///Template specializations
 template floatingpoint BranchingPosition<BranchingPositionCosine>::computeEnergy(floatingpoint *coord);
 template void BranchingPosition<BranchingPositionCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BranchingPosition<BranchingPositionCosine>::vectorize();
+template void BranchingPosition<BranchingPositionCosine>::vectorize(const FFCoordinateStartingIndex&);
 template void BranchingPosition<BranchingPositionCosine>::deallocate();

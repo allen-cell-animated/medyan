@@ -20,4 +20,6 @@ int Rand::chemistrycounter = 0;
 #else
 std::mt19937 Rand::eng; // Defined with default seed. Must be seeded at initialization.
 #endif
-std::uniform_int_distribution<int> Rand::_int_distr;
+uniform_int_distribution<int> Rand::_int_distr;
+uniform_int_distribution<uint64_t> Rand::_uint64_t_distr;
+

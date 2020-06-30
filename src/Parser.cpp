@@ -323,6 +323,19 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
                 CAlgorithm.snapshotTime = atof(lineVector[1].c_str());
             }
         }
+        if (line.find("DATADUMPTIME:") != string::npos) {
+
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CAlgorithm.datadumpTime = atof(lineVector[1].c_str());
+            }
+        }
         if (line.find("SNAPSHOTSTEPS:") != string::npos) {
 
             vector<string> lineVector = split<string>(line);
@@ -669,7 +682,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MType.MemStretchingFFType = lineVector[1];
             }
         }
-        else if(line.find("MEM_STRETCHING_ACCU_TYPE") != string::npos) {
+        else if(line.find("MEM_TENSION_TYPE") != string::npos) {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout << "There was an error parsing input file at membrane stretching accumulation type. Exiting."
@@ -677,7 +690,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if(lineVector.size() == 2) {
-                MType.MemStretchingAccuType = lineVector[1];
+                MType.memTensionFFType = lineVector[1];
             }
         }
         else if(line.find("MEM_BENDING_FF_TYPE") != string::npos) {
@@ -710,7 +723,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if(lineVector.size() == 2) {
-                MType.VolumeConservationFFType = lineVector[1];
+                MType.volumeConservationFFType = lineVector[1];
             }
         }
         
@@ -985,7 +998,7 @@ void SystemParser::readMechParams() {
             vector<string> lineVector = split<string>(line);
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.MemBeadVolumeK.push_back(atof(lineVector[i].c_str()));
+                    MParams.memBeadVolumeK = stod(lineVector[i]);
             }
         }
         else if (line.find("MEM_BEAD_VOLUME_CUTOFF") != string::npos) {
@@ -1119,18 +1132,18 @@ void SystemParser::readMechParams() {
         
 
         // Membrane parameter
-        else if (line.find("MEM_ELASTIC_K") != string::npos) {
+        else if (line.find("MEM_AREA_K") != string::npos) {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() >= 2) {
                 for(size_t i = 1; i < lineVector.size(); ++i)
-                    MParams.MemElasticK.push_back(atof(lineVector[i].c_str()));
+                    MParams.memAreaK.push_back(atof(lineVector[i].c_str()));
             }
         }
         else if (line.find("MEM_EQ_AREA_FACTOR") != string::npos) {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() >= 2) {
                 for(size_t i = 1; i < lineVector.size(); ++i)
-                    MParams.MemEqAreaFactor.push_back(atof(lineVector[i].c_str()));
+                    MParams.memEqAreaFactor.push_back(atof(lineVector[i].c_str()));
             }
         }
         else if (line.find("MEM_TENSION") != string::npos) {
@@ -1159,7 +1172,7 @@ void SystemParser::readMechParams() {
         else if(line.find("BULK_MODULUS") != string::npos) {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() >= 2) {
-                MParams.BulkModulus = atof(lineVector[1].c_str());
+                MParams.bulkModulus = atof(lineVector[1].c_str());
             }
         }
         
@@ -1300,6 +1313,12 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if (lineVector.size() == 2) {
                 MAlgorithm.lambdarunningaverageprobability = atof(lineVector[1].c_str());
+            }
+        }
+        else if (line.find("LINESEARCHALGORITHM")!= string::npos){
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() == 2) {
+                MAlgorithm.linesearchalgorithm = (lineVector[1].c_str());
             }
         }
     }
@@ -1563,6 +1582,16 @@ void SystemParser::readDyRateParams() {
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
                     DRParams.dBranchUnbindingCharLength.push_back(
+                            atof((lineVector[i].c_str())));
+            }
+            else {}
+        }
+        else if (line.find("DBUNBINDINGF") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRParams.dBranchUnbindingCharForce.push_back(
                             atof((lineVector[i].c_str())));
             }
             else {}
@@ -2127,7 +2156,17 @@ FilamentSetup SystemParser::readFilamentSetup() {
                 FSetup.filamentType = atoi(lineVector[1].c_str());
             else {}
         }
-        else if (line.find("RESTARTPHASE") != string::npos){SysParams::RUNSTATE=false;}
+        else if (line.find("RESTARTPHASE") != string::npos){SysParams::RUNSTATE=false;
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "Error reading restart params. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2){
+                if(lineVector[1].find("USECHEMCOPYNUM"))
+                SysParams::USECHEMCOPYNUM = true;
+            }
+        }
         else if(line.find("PROJECTIONTYPE")!=string::npos){
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {

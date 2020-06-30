@@ -55,7 +55,7 @@ namespace {
 
             SysParams::GParams.cylinderNumMon.resize(1, 3);
 
-            SysParams::MParams.BulkModulus = 2150; // BM of water in pN/nm^2
+            SysParams::MParams.bulkModulus = 2150; // BM of water in pN/nm^2
 
             m = new Membrane(&s, 0, memData);
             m->addToSubSystem();
@@ -93,7 +93,7 @@ namespace {
         }
     }
     void resizeEqVolume(Membrane *m, double ratio) {
-        m->getMMembrane()->setEqVolume(m->getMMembrane()->getEqVolume() * ratio);
+        m->mMembrane.eqVolume *= ratio;
     }
 }
 

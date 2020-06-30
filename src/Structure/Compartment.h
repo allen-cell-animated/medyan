@@ -61,7 +61,7 @@ class Compartment : public Composite {
 
 public:
     enum class SliceMethod {
-        Membrane, CylinderBoundary
+        membrane, cylinderBoundary
     };
     enum class ActivateReason {
         Whole, Membrane
@@ -549,7 +549,6 @@ public:
         else
             return bscoords_section_motor[filamentType*27 + i];
     }
-
     /*Each compartment is partitioned into 27 sub-volumes. Binding sites are allocated
     to relevant sub-volumes. It is worth noting that the 27 volumes  can be overlapping.
     Binding distance determines if the volumes are overlapping or not.*/
@@ -748,6 +747,7 @@ public:
         for(auto &r : _internal_reactions.reactions()){
 
             auto rClone = r->clone(target->_species);
+            rClone->setVolumeFrac(target->getVolumeFrac());
             target->addInternalReaction(rClone);
         }
     }
@@ -848,10 +848,10 @@ public:
     bool boundaryInteresting = false; // A marker indicating this compartment is near a certain boundary
 
     void resetVolumeFrac() { _volumeFrac = 1.0; }
-    floatingpoint getVolumeFrac() const { return _volumeFrac; };
+    floatingpoint getVolumeFrac() const { return _volumeFrac; }
     const array<floatingpoint, 6>& getPartialArea()const { return _partialArea; }
     void setPartialArea(const array<floatingpoint, 6>& partialArea) { _partialArea = partialArea; }
-    
+
 };
 #ifdef SIMDBINDINGSEARCH
 template<>

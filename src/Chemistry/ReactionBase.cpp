@@ -79,13 +79,6 @@ void ReactionBase::printDependents()  {
 
 bool afterchemsiminit = false;
 void ReactionBase::activateReaction() {
-	#ifdef CHECKRXN
-	/*if(afterchemsiminit && false) {
-		cout << "activating " << getReactionType() <<" RNodeNRM ptr "<< _rnode<< endl;
-		_rnode->printSelf();
-//		cout << *this << endl;
-	}*/
-	#endif
 #ifdef TRACK_ZERO_COPY_N
 	if(areEqual(getProductOfReactants(), 0.0)) // One of the reactants is still at zero copy n,
 		// no need to activate yet...
