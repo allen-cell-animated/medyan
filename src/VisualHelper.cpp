@@ -39,6 +39,7 @@ visual::SystemRawData sdfv;
 //   - When called from another thread, the shared_ptr must be copied to avoid
 //     the underlying element being deleted.
 void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
+    using namespace std;
     using namespace mathfunc;
 
     std::lock_guard< std::mutex > guard(ve->me);
@@ -51,51 +52,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
     if(ve->profile.flag & Profile::targetMembrane) {
         // Membrane
         if(ve->profile.flag & Profile::displayForce) {
-            //-----------------------------------------------------------------
-            // Membrane Force
-            //-----------------------------------------------------------------
-            if(sdfv.updated & sys_data_update::BeadPosition) {
-                ve->state.vertexAttribs.clear();
-                ve->state.attribChanged = true;
-                // if(sdfv.updated & sys_data_update::BeadConnection) {
-                //     ve->state.vertexIndices.clear();
-                //     ve->state.indexChanged = true;
-                // }
-                const auto& forces = (ve->profile.flag & Profile::forceUseSearchDir) ? sdfv.copiedBeadData.forces : sdfv.copiedBeadData.forcesAux;
-
-                for(const auto& mi : sdfv.membraneIndices) {
-                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 2 * ve->state.size.vaStride * mi.vertexIndices.size());
-                    for(size_t i : mi.vertexIndices) {
-                        const auto coord = sdfv.copiedBeadData.coords[i];
-                        ve->state.vertexAttribs.push_back(coord[0]);
-                        ve->state.vertexAttribs.push_back(coord[1]);
-                        ve->state.vertexAttribs.push_back(coord[2]);
-                        ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + ve->state.size.vaNormalSize); // dummy normal
-                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.x);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.y);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.z);
-
-                        const auto force = forces[i];
-                        const auto forceTip = force * ve->profile.forceScale + coord;
-                        ve->state.vertexAttribs.push_back(forceTip[0]);
-                        ve->state.vertexAttribs.push_back(forceTip[1]);
-                        ve->state.vertexAttribs.push_back(forceTip[2]);
-                        ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + ve->state.size.vaNormalSize); // dummy normal
-                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.x);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.y);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.z);
-                    }
-                }
-
-                // const auto numBeads = ve->state.vertexAttribs.size() / ve->state.size.vaStride;
-                // if(sdfv.updated & sys_data_update::BeadConnection) {
-                //     ve->state.vertexIndices.resize(numBeads);
-                //     std::iota(ve->state.vertexIndices.begin(), ve->state.vertexIndices.end(), 0u);
-                // }
-
-            }
-            ve->state.eleMode = GL_LINES;
-
+            LOG(WARNING) << "Force display is currently unavaiable.";
         } else {
             //-----------------------------------------------------------------
             // Membrane Shape
@@ -108,14 +65,14 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 //     ve->state.indexChanged = true;
                 // }
 
-                for(const auto& mi : sdfv.membraneIndices) {
+                for(const auto& mi : sdfv.membraneData) {
                     // Update coords
                     ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 3 * ve->state.size.vaStride * mi.triangleVertexIndices.size());
                     for(const auto& t : mi.triangleVertexIndices) {
-                        const decltype(sdfv.copiedBeadData.coords[0]) coord[] {
-                            sdfv.copiedBeadData.coords[mi.vertexIndices[t[0]]],
-                            sdfv.copiedBeadData.coords[mi.vertexIndices[t[1]]],
-                            sdfv.copiedBeadData.coords[mi.vertexIndices[t[2]]]
+                        const Vec3 coord[] {
+                            mi.vertexCoords[t[0]],
+                            mi.vertexCoords[t[1]],
+                            mi.vertexCoords[t[2]]
                         };
                         const auto un = normalizedVector(cross(coord[1] - coord[0], coord[2] - coord[0]));
 
@@ -131,18 +88,6 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                             ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
                         }
                     }
-
-                    // if(sdfv.updated & sys_data_update::BeadConnection) {
-                    //     // update indices
-                    //     ve->state.vertexIndices.reserve(ve->state.vertexIndices.size() + 3 * mi.triangleVertexIndices.size());
-                    //     for(const auto& t : mi.triangleVertexIndices) {
-                    //         ve->state.vertexIndices.push_back(t[0] + curVertexStart);
-                    //         ve->state.vertexIndices.push_back(t[1] + curVertexStart);
-                    //         ve->state.vertexIndices.push_back(t[2] + curVertexStart);
-                    //     }
-                    // }
-
-                    // curVertexStart += mi.vertexIndices.size();
                 }
             }
             ve->state.eleMode = GL_TRIANGLES;
@@ -151,51 +96,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
     else if(ve->profile.flag & Profile::targetFilament) {
         // Filament
         if(ve->profile.flag & Profile::displayForce) {
-            //-----------------------------------------------------------------
-            // Filament Force
-            //-----------------------------------------------------------------
-            if(sdfv.updated & sys_data_update::BeadPosition) {
-                ve->state.vertexAttribs.clear();
-                ve->state.attribChanged = true;
-                // if(sdfv.updated & sys_data_update::BeadConnection) {
-                //     ve->state.vertexIndices.clear();
-                //     ve->state.indexChanged = true;
-                // }
-                const auto& forces = (ve->profile.flag & Profile::forceUseSearchDir) ? sdfv.copiedBeadData.forces : sdfv.copiedBeadData.forcesAux;
-
-                for(const auto& fi : sdfv.filamentIndices) {
-                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 2 * ve->state.size.vaStride * fi.size());
-                    for(size_t i : fi) {
-                        const auto coord = sdfv.copiedBeadData.coords[i];
-                        ve->state.vertexAttribs.push_back(coord[0]);
-                        ve->state.vertexAttribs.push_back(coord[1]);
-                        ve->state.vertexAttribs.push_back(coord[2]);
-                        ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + ve->state.size.vaNormalSize); // dummy normal
-                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.x);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.y);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.z);
-
-                        const auto force = forces[i];
-                        const auto forceTip = force * ve->profile.forceScale + coord;
-                        ve->state.vertexAttribs.push_back(forceTip[0]);
-                        ve->state.vertexAttribs.push_back(forceTip[1]);
-                        ve->state.vertexAttribs.push_back(forceTip[2]);
-                        ve->state.vertexAttribs.resize(ve->state.vertexAttribs.size() + ve->state.size.vaNormalSize); // dummy normal
-                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.x);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.y);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorDiffuse.z);
-                    }
-                }
-
-                // const auto numBeads = ve->state.vertexAttribs.size() / 3; // 3 means coord(xyz);
-                // if(sdfv.updated & sys_data_update::BeadConnection) {
-                //     ve->state.vertexIndices.resize(numBeads);
-                //     std::iota(ve->state.vertexIndices.begin(), ve->state.vertexIndices.end(), 0u);
-                // }
-
-            }
-            ve->state.eleMode = GL_LINES;
-
+            LOG(WARNING) << "Force display is currently unavailable.";
         } else {
             //-----------------------------------------------------------------
             // Filament Shape
@@ -215,15 +116,18 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                     break;
 
                 case Profile::PathMode::Extrude:
-                    for(const auto& fi : sdfv.filamentIndices) {
+                    for(const auto& fi : sdfv.filamentData) {
                         std::vector< mathfunc::Vec3f > genVertices;
                         std::vector< mathfunc::Vec3f > genVertexNormals;
                         std::vector< std::array< size_t, 3 > > genTriInd;
 
+                        const auto nb = fi.beadCoords.size();
+                        vector< size_t > trivial_indices(nb);
+                        iota(begin(trivial_indices), end(trivial_indices), 0);
                         std::tie(genVertices, genVertexNormals, genTriInd) = visual::PathExtrude<float>{
                             ve->profile.pathExtrudeRadius,
                             ve->profile.pathExtrudeSides
-                        }.generate(sdfv.copiedBeadData.coords, fi);
+                        }.generate(fi.beadCoords, trivial_indices);
 
                         // Update coords
                         ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + ve->state.size.vaStride * 3 * genTriInd.size());
@@ -254,15 +158,6 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                             }
                         }
 
-                        // if(sdfv.updated & sys_data_update::BeadConnection) {
-                        //     // Update indices
-                        //     ve->state.vertexIndices.reserve(ve->state.vertexIndices.size() + genTriInd.size());
-                        //     for(auto i : genTriInd) {
-                        //         ve->state.vertexIndices.push_back(i + curVertexStart);
-                        //     }
-                        // }
-
-                        // curVertexStart += genVertices.size();
                     } // End loop filaments
                     break;
 
@@ -275,15 +170,15 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                         };
                         const auto sphereCache = sphereGen.makeCache();
 
-                        for(const auto& fi : sdfv.filamentIndices) {
-                            for(auto bi : fi) {
+                        for(const auto& fi : sdfv.filamentData) {
+                            for(const auto& bc : fi.beadCoords) {
                                 std::vector< Vec< 3, float > > genVertices;
 
                                 std::tie(genVertices, std::ignore) = sphereGen.generate(
                                     {
-                                        static_cast<float>(sdfv.copiedBeadData.coords[bi][0]),
-                                        static_cast<float>(sdfv.copiedBeadData.coords[bi][1]),
-                                        static_cast<float>(sdfv.copiedBeadData.coords[bi][2])
+                                        static_cast<float>(bc[0]),
+                                        static_cast<float>(bc[1]),
+                                        static_cast<float>(bc[2])
                                     },
                                     sphereCache
                                 );
@@ -376,15 +271,6 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                     }
                 }
 
-                // if(sdfv.updated & sys_data_update::BeadConnection) {
-                //     // Update indices
-                //     ve->state.vertexIndices.reserve(ve->state.vertexIndices.size() + genTriInd.size());
-                //     for(auto i : genTriInd) {
-                //         ve->state.vertexIndices.push_back(i + curVertexStart);
-                //     }
-                // }
-
-                // curVertexStart += genVertices.size();
             }
         } // End if updated bead position
         ve->state.eleMode = GL_TRIANGLES;

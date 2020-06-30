@@ -20,23 +20,18 @@ void copySystemData(
     }
 
     if(updated & (raw_data_cat::beadPosition | raw_data_cat::beadConnection)) {
-        // Copy bead data
-        data.copiedBeadData = Bead::getDbDataConst();
-    }
-
-    if(updated & (raw_data_cat::beadConnection)) {
 
         // Extract membrane indexing
-        data.membraneIndices.clear();
+        data.membraneData.clear();
         for(const Membrane* m : Membrane::getMembranes()) {
             const auto& mesh = m->getMesh();
 
-            data.membraneIndices.emplace_back();
-            auto& mi = data.membraneIndices.back();
+            data.membraneData.emplace_back();
+            auto& mi = data.membraneData.back();
 
-            mi.vertexIndices.reserve(mesh.numVertices());
+            mi.vertexCoords.reserve(mesh.numVertices());
             for(const auto& v : mesh.getVertices()) {
-                mi.vertexIndices.push_back(v.attr.vertex->Bead::getStableIndex());
+                mi.vertexCoords.push_back(v.attr.vertex->coord);
             }
 
             mi.triangleVertexIndices.reserve(mesh.numTriangles());
@@ -51,16 +46,16 @@ void copySystemData(
         }
 
         // Extract filament indexing
-        data.filamentIndices.clear();
+        data.filamentData.clear();
         for(Filament* f : Filament::getFilaments()) {
-            data.filamentIndices.emplace_back();
-            auto& fi = data.filamentIndices.back();
+            data.filamentData.emplace_back();
+            auto& fi = data.filamentData.back().beadCoords;
 
-            const auto& cylinders = f->getCylinderVector(); // TODO make f const Filament*
+            const auto& cylinders = f->getCylinderVector();
             fi.reserve(cylinders.size() + 1);
             for(Cylinder* c : cylinders)
-                fi.push_back(c->getFirstBead()->getStableIndex()); // TODO make c const Cylinder*
-            fi.push_back(cylinders.back()->getSecondBead()->getStableIndex());
+                fi.push_back(c->getFirstBead()->coordinate());
+            fi.push_back(cylinders.back()->getSecondBead()->coordinate());
         }
 
         // Extract motors, linkers and branchers

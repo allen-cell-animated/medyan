@@ -1,6 +1,7 @@
 #ifndef MEDYAN_Util_Math_ColorMap_Hpp
 #define MEDYAN_Util_Math_ColorMap_Hpp
 
+#include <algorithm>
 #include <array>
 #include <cmath> // abs
 
@@ -13,15 +14,12 @@ namespace colormap {
 namespace utility {
     // Utility functions used for colormaps
 
-    // Clamp function (use std::clamp in <algorithm> starting C++17)
     template< typename Float >
-    constexpr Float clamp(Float v, Float lo, Float hi) { return (v < lo) ? lo : (v > hi) ? hi : v; }
-
-    template< typename Float >
-    constexpr Float clamp01(Float v) { return clamp(v, (Float)0.0, (Float)1.0); }
+    constexpr Float clamp01(Float v) { return std::clamp(v, (Float)0.0, (Float)1.0); }
 
     template< typename FloatVal, size_t colorDim, typename FloatColor, size_t listSize >
-    constexpr mathfunc::Vec< colorDim, FloatColor >
+    constexpr
+    mathfunc::Vec< colorDim, FloatColor >
     interpolate(FloatVal v, std::array< mathfunc::Vec< colorDim, FloatColor >, listSize > interpList) {
         static_assert(listSize > 1, "Must have at least 2 elements for interpolation");
         const FloatVal interval = static_cast< FloatVal >(1.0) / (listSize - 1);
@@ -54,9 +52,6 @@ struct Jet {
         return utility::interpolate(v, interpList);
     }
 };
-template< typename FloatColor >
-constexpr std::array< mathfunc::Vec< 3, FloatColor >, 9 >
-Jet< FloatColor >::interpList; // remove in C++17
 
 } // namespace colormap
 
