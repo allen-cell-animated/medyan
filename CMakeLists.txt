@@ -97,6 +97,9 @@ target_compile_definitions(medyan PRIVATE
     BOOST_MEM_POOL
     BOOL_POOL_NSIZE=65536
 
+    # Visualization
+    VISUAL
+
     # Debug
     #PLOSFEEDBACK
     CHECKFORCES_INF_NAN
@@ -165,3 +168,10 @@ target_link_libraries(medyan PRIVATE Catch2::Catch2)
 find_package(Eigen3 CONFIG REQUIRED)
 target_link_libraries(medyan PRIVATE Eigen3::Eigen)
 
+# GLFW3
+find_package(glfw3 CONFIG REQUIRED)
+target_link_libraries(medyan PRIVATE glfw)
+
+# glm
+find_package(glm CONFIG REQUIRED)
+target_link_libraries(medyan PRIVATE glm)
