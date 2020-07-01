@@ -69,7 +69,7 @@ inline void setInternalReactionRatesForVertex(
 
     for(auto& r : va.vertex->cVertex.reactions) {
         // Using "volume frac" as volume
-        r->setVolumeFrac(va.gVertex.astar);
+        r->setVolumeFrac(va.gVertex.astar / 3);
     }
 }
 
@@ -124,7 +124,7 @@ inline void setDiffusionRatesForHalfEdge(
 
     for(auto& r : mesh.attribute(hei).halfEdge->cHalfEdge.diffusionReactions) {
         // Using "volume frac" as volume
-        r->setVolumeFrac(mesh.attribute(vi).gVertex.astar);
+        r->setVolumeFrac(mesh.attribute(vi).gVertex.astar / 3);
         r->setRateMulFactor(
             std::max(0.5 * sumCotTheta, 0.0),
             ReactionBase::RateMulFactorType::diffusionShape
