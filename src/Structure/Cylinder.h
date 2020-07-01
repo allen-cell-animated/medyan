@@ -31,6 +31,7 @@
 #include "Bead.h"
 #include "Structure/CellList.hpp"
 #include "Util/Math/Vec.hpp"
+#include <fstream>
 
 //FORWARD DECLARATIONS
 class Filament;
@@ -253,6 +254,7 @@ public:
 	static floatingpoint timecylinder2;
 	static floatingpoint timecylinderchem;
 	static floatingpoint timecylindermech;
+	static ofstream _crosscheckdumpFile;
     //@}
 };
 

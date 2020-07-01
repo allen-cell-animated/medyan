@@ -1438,22 +1438,31 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime/factor) {
 	            //check before rearrange
 #ifdef CROSSCHECK_CYLINDER
+                string crosscheckname = _outputDirectory + "crosscheckcyl.traj";
+                Cylinder::_crosscheckdumpFile.open(crosscheckname);
+                if(!Cylinder::_crosscheckdumpFile.is_open()) {
+                    Cylinder::_crosscheckdumpFile << "There was an error opening file " << crosscheckname
+                         << " for output. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                Cylinder::_crosscheckdumpFile << "Opening file " << crosscheckname << endl;
                 int cylcount = 0;
                 int ncyl = Cylinder::getCylinders().size();
-                cout<<"Printing Cylinder IDs in Database b4 rearrange"<<endl;
+                Cylinder::_crosscheckdumpFile<<"Printing Cylinder IDs in Database b4 rearrange"<<endl;
 
                 const auto& cylinderInfoData = Cylinder::getDbData().value;
                 for(auto cyl:Cylinder::getCylinders()){
-                    cout<<cylcount<<"/"<<ncyl<<" "<<cyl->getId()<<endl;
                     auto cindex = cyl->getStableIndex();
                     const auto& c = cylinderInfoData[cindex];
+                    Cylinder::_crosscheckdumpFile<<cylcount<<"/"<<ncyl<<" "<<cyl->getId()<<" "<<cindex<<endl;
+                    cylcount++;
                     if(c.filamentId == -1000){
-                        cout<<"You have a cylinder pointing to the wrong location in "
+                        Cylinder::_crosscheckdumpFile<<"You have a cylinder pointing to the wrong location in "
                               "cylinderInfoData"<<endl;
                         auto fil = static_cast<Filament*>(cyl->getParent());
-                        cout<<"Filament Id "<<fil->getId()<<" "<<c.filamentId<<endl;
-                        cout<<"Cylinder Id "<<cyl->getId()<<" "<<c.id<<endl;
-                        cout<<"StableIndex"<<cindex<<endl;
+                        Cylinder::_crosscheckdumpFile<<"Filament Id "<<fil->getId()<<" "<<c.filamentId<<endl;
+                        Cylinder::_crosscheckdumpFile<<"Cylinder Id "<<cyl->getId()<<" "<<c.id<<endl;
+                        Cylinder::_crosscheckdumpFile<<"StableIndex"<<cindex<<endl;
 
                     }
                 }
@@ -1465,18 +1474,19 @@ void Controller::run() {
                 //check after rearrange
 #ifdef CROSSCHECK_CYLINDER
                 cylcount = 0;
-                cout<<"Printing Cylinder IDs in Database aftr rearrange"<<endl;
+                Cylinder::_crosscheckdumpFile<<"Printing Cylinder IDs in Database aftr rearrange"<<endl;
                 for(auto cyl:Cylinder::getCylinders()){
                     auto cindex = cyl->getStableIndex();
                     const auto& c = cylinderInfoData[cindex];
-                    cout<<cylcount<<"/"<<ncyl<<" "<<cyl->getId()<<" "<<cindex<<endl;
+                    Cylinder::_crosscheckdumpFile<<cylcount<<"/"<<ncyl<<" "<<cyl->getId()<<" "<<cindex<<endl;
+                    cylcount++;
                     if(c.filamentId == -1000){
-                        cout<<"You have a cylinder pointing to the wrong location in "
+                        Cylinder::_crosscheckdumpFile<<"You have a cylinder pointing to the wrong location in "
                               "cylinderInfoData"<<endl;
                         auto fil = static_cast<Filament*>(cyl->getParent());
-                        cout<<"Filament Id "<<fil->getId()<<" "<<c.filamentId<<endl;
-                        cout<<"Cylinder Id "<<cyl->getId()<<" "<<c.id<<endl;
-                        cout<<"StableIndex"<<cindex<<endl;
+                        Cylinder::_crosscheckdumpFile<<"Filament Id "<<fil->getId()<<" "<<c.filamentId<<endl;
+                        Cylinder::_crosscheckdumpFile<<"Cylinder Id "<<cyl->getId()<<" "<<c.id<<endl;
+                        Cylinder::_crosscheckdumpFile<<"StableIndex"<<cindex<<endl;
 
                     }
                 }
@@ -1495,7 +1505,9 @@ void Controller::run() {
                 //update position
                 mins = chrono::high_resolution_clock::now();
                 updatePositions();
-
+#ifdef CROSSCHECK_CYLINDER
+                Cylinder::_crosscheckdumpFile.close();
+#endif
 
                 #ifdef OPTIMOUT
                 cout<<"Position updated"<<endl;
