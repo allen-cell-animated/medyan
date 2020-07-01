@@ -92,6 +92,8 @@ MinimizationResult SteepestDescent::minimize(
     FFM.computeForces(coord.data(), force);
     searchDir = force;
     FFM.computeLoadForces();
+
+    // Copy the coordinate and force data back to the system
     copyFromCGMethodData(*this);
     endMinimization();
 
