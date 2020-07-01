@@ -360,18 +360,6 @@ struct VisualDisplay {
                 ve->profile.flag = Profile::targetCompartment;
                 ve->profile.colorDiffuse = glm::vec3(0.8f, 0.8f, 0.8f);
             }
-            {
-                auto& ve = newVe();
-                ve->profile.enabled = true;
-                ve->profile.flag = Profile::targetMembrane | Profile::displayForce;
-                ve->profile.colorDiffuse = glm::vec3(0.3f, 0.6f, 0.95f);
-            }
-            {
-                auto& ve = newVe();
-                ve->profile.enabled = true;
-                ve->profile.flag = Profile::targetFilament | Profile::displayForce;
-                ve->profile.colorDiffuse = glm::vec3(0.95f, 0.1f, 0.15f);
-            }
         } // ~lock_guard (vpLine)
 
     } // VisualDisplay()
@@ -415,11 +403,11 @@ struct VisualDisplay {
                         vp.shader.setVec3("CameraPos",  ws.trans.camera.position);
 
                         vp.shader.setVec3("dirLights[0].direction", glm::vec3 {1.0f, 1.0f, 1.0f});
-                        vp.shader.setVec3("dirLights[0].ambient",   glm::vec3 {0.05f, 0.05f, 0.05f});
+                        vp.shader.setVec3("dirLights[0].ambient",   glm::vec3 {0.1f, 0.1f, 0.1f});
                         vp.shader.setVec3("dirLights[0].diffuse",   glm::vec3 {0.3f, 0.3f, 0.3f});
                         vp.shader.setVec3("dirLights[0].specular",  glm::vec3 {0.5f, 0.5f, 0.5f});
                         vp.shader.setVec3("dirLights[1].direction", glm::vec3 {-1.0f, -1.0f, -1.0f});
-                        vp.shader.setVec3("dirLights[1].ambient",   glm::vec3 {0.05f, 0.05f, 0.05f});
+                        vp.shader.setVec3("dirLights[1].ambient",   glm::vec3 {0.1f, 0.1f, 0.1f});
                         vp.shader.setVec3("dirLights[1].diffuse",   glm::vec3 {0.3f, 0.3f, 0.3f});
                         vp.shader.setVec3("dirLights[1].specular",  glm::vec3 {0.5f, 0.5f, 0.5f});
 
@@ -430,30 +418,30 @@ struct VisualDisplay {
                             { 3500.0f, 3500.0f, -500.0f }
                         };
                         vp.shader.setVec3("pointLights[0].position", pointLightPositions[0]);
-                        vp.shader.setVec3("pointLights[0].ambient",  glm::vec3 { 0.0f, 0.0f, 0.0f });
+                        vp.shader.setVec3("pointLights[0].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
                         vp.shader.setVec3("pointLights[0].diffuse",  glm::vec3 { 0.6f, 0.6f, 0.6f });
                         vp.shader.setVec3("pointLights[0].specular", glm::vec3 { 1.0f, 1.0f, 1.0f });
                         vp.shader.setFloat("pointLights[0].constant",  1.0f);
                         vp.shader.setFloat("pointLights[0].linear",    1.4e-4f);
                         vp.shader.setFloat("pointLights[0].quadratic", 7.2e-8f);
                         vp.shader.setVec3("pointLights[1].position", pointLightPositions[1]);
-                        vp.shader.setVec3("pointLights[1].ambient",  glm::vec3 { 0.0f, 0.0f, 0.0f });
+                        vp.shader.setVec3("pointLights[1].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
                         vp.shader.setVec3("pointLights[1].diffuse",  glm::vec3 { 0.6f, 0.6f, 0.6f });
                         vp.shader.setVec3("pointLights[1].specular", glm::vec3 { 1.0f, 1.0f, 1.0f });
                         vp.shader.setFloat("pointLights[1].constant",  1.0f);
                         vp.shader.setFloat("pointLights[1].linear",    1.4e-4f);
                         vp.shader.setFloat("pointLights[1].quadratic", 7.2e-8f);
                         vp.shader.setVec3("pointLights[2].position", pointLightPositions[2]);
-                        vp.shader.setVec3("pointLights[2].ambient",  glm::vec3 { 0.0f, 0.0f, 0.0f });
-                        vp.shader.setVec3("pointLights[2].diffuse",  glm::vec3 { 0.0f, 0.0f, 0.0f });
-                        vp.shader.setVec3("pointLights[2].specular", glm::vec3 { 0.0f, 0.0f, 0.0f });
+                        vp.shader.setVec3("pointLights[2].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
+                        vp.shader.setVec3("pointLights[2].diffuse",  glm::vec3 { 0.1f, 0.1f, 0.1f });
+                        vp.shader.setVec3("pointLights[2].specular", glm::vec3 { 0.2f, 0.2f, 0.2f });
                         vp.shader.setFloat("pointLights[2].constant",  1.0f);
                         vp.shader.setFloat("pointLights[2].linear",    1.4e-4f);
                         vp.shader.setFloat("pointLights[2].quadratic", 7.2e-8f);
                         vp.shader.setVec3("pointLights[3].position", pointLightPositions[3]);
-                        vp.shader.setVec3("pointLights[3].ambient",  glm::vec3 { 0.0f, 0.0f, 0.0f });
-                        vp.shader.setVec3("pointLights[3].diffuse",  glm::vec3 { 0.0f, 0.0f, 0.0f });
-                        vp.shader.setVec3("pointLights[3].specular", glm::vec3 { 0.0f, 0.0f, 0.0f });
+                        vp.shader.setVec3("pointLights[3].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
+                        vp.shader.setVec3("pointLights[3].diffuse",  glm::vec3 { 0.1f, 0.1f, 0.1f });
+                        vp.shader.setVec3("pointLights[3].specular", glm::vec3 { 0.2f, 0.2f, 0.2f });
                         vp.shader.setFloat("pointLights[3].constant",  1.0f);
                         vp.shader.setFloat("pointLights[3].linear",    1.4e-4f);
                         vp.shader.setFloat("pointLights[3].quadratic", 7.2e-8f);
