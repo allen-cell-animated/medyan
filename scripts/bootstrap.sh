@@ -69,7 +69,7 @@ vcpkg_install() {
 
     (
         cd $vcpkg_dir && {
-            ./vcpkg install catch2 eigen3 spectra glfw3 glm
+            ./vcpkg install catch2 eigen3 spectra glfw3 glad glm
             if [ "$need_boost" = true ]; then
                 ./vcpkg install boost
             fi

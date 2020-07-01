@@ -172,6 +172,10 @@ target_link_libraries(medyan PRIVATE Eigen3::Eigen)
 find_package(glfw3 CONFIG REQUIRED)
 target_link_libraries(medyan PRIVATE glfw)
 
+# GLAD
+find_package(glad CONFIG REQUIRED)
+target_link_libraries(medyan PRIVATE glad::glad)
+
 # glm
 find_package(glm CONFIG REQUIRED)
 target_link_libraries(medyan PRIVATE glm)
