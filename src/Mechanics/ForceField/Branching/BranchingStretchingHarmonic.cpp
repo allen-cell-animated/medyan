@@ -336,6 +336,7 @@ void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f,
                 <<cyl1->getSecondBead()->getStableIndex()<<" "
                 <<cyl2->getFirstBead()->getStableIndex()<<" "
                 <<cyl2->getSecondBead()->getStableIndex()<<endl;
+            cyl1->adjustedrelativeposition(pos[i], true);
 
             cout<<"Printing coords"<<endl;
             cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;

@@ -248,7 +248,7 @@ public:
 	// _alpha = D(0thmonomer-bindingsite)/D(fullcylinder)
 	//Note. Use this function only to determine mechanical coordinate.
 	//Refer Docs/Design/PartialCylinderAlpha.pdf
-    floatingpoint adjustedrelativeposition(floatingpoint _alpha);
+    floatingpoint adjustedrelativeposition(floatingpoint _alpha, bool verbose = false);
 
     static floatingpoint timecylinder1;
 	static floatingpoint timecylinder2;

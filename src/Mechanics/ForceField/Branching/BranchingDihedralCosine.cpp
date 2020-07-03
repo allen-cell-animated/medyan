@@ -507,6 +507,7 @@ void BranchingDihedralCosine::forces(
                 <<cyl1->getSecondBead()->getStableIndex()<<" "
                 <<cyl2->getFirstBead()->getStableIndex()<<" "
                 <<cyl2->getSecondBead()->getStableIndex()<<endl;
+            cyl1->adjustedrelativeposition(pos[i], true);
 
             cout<<"Parent filament binding fraction "<<alpha<<endl;
             cout<<"Parent filament binding position "<<mp[0]<<" "<<mp[1]<<" "<<mp[2]<<endl;

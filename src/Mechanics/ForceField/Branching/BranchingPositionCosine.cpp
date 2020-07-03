@@ -432,6 +432,11 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
                 <<cyl1->getSecondBead()->getStableIndex()<<" "
                 <<cyl2->getFirstBead()->getStableIndex()<<" "
                 <<cyl2->getSecondBead()->getStableIndex()<<endl;
+            cyl1->adjustedrelativeposition(pos[i], true);
+            cout<<"Printing intermediate variables"<<endl;
+            cout<<"XD="<<XD<<", xd="<<xd<<", invX="<<invX<<", invD="<<invD<<", A="<<A
+                <<", B="<<B<<", C="<<C<<", cosp="<<cosp<<", sinp="<<sinp
+                <<", sinpminusq="<<sinpminusq<<", position="<<position<<endl;
 
 		    cout<<"Printing coords"<<endl;
 		    cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;

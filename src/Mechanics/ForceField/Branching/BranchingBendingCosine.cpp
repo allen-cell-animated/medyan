@@ -428,7 +428,6 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
                          (coord4[2] - coord3[2])*C );
 
 
-
         #ifdef CHECKFORCES_INF_NAN
         if(checkNaN_INF<floatingpoint>(force1, 0, 2)||checkNaN_INF<floatingpoint>(force2,0,2)||checkNaN_INF<floatingpoint>(force3,0,2)
         ||checkNaN_INF<floatingpoint>(force4,0,2)){
@@ -443,6 +442,10 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
                 <<cyl1->getSecondBead()->getStableIndex()<<" "
                 <<cyl2->getFirstBead()->getStableIndex()<<" "
                 <<cyl2->getSecondBead()->getStableIndex()<<endl;
+
+            cout<<"Printing intermediate variables"<<endl;
+            cout<<"L1="<<L1<<", L2="<<L2<<", l1l2="<<l1l2<<", A="<<A<<", B="<<B
+                <<", C="<<C<<endl;
 
             cout<<"Printing coords"<<endl;
             cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;

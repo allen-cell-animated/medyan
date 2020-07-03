@@ -328,7 +328,7 @@ void CylinderExclVolRepulsion::checkforculprit() {
 
 #endif
 floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSet, floatingpoint *krep) {
-	floatingpoint *c1, *c2, *c3, *c2temp, *c4, *newc2, d;
+	floatingpoint *c1, *c2, *c3, *c2temp, *c4, *newc1, *newc2, d;
 
 	doubleprecision a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
 	doubleprecision ATG1, ATG2, ATG3, ATG4;
@@ -347,6 +347,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSe
 	floatingpoint U_i = 0.0;
 	floatingpoint U = 0.0;
 	newc2 = new floatingpoint[3];
+	newc1 = new floatingpoint[3];
 //    std::cout<<"SERL ecvol nint "<<nint<<endl;
 	for (int i = 0; i < nint; i++) {
 
@@ -446,6 +447,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSe
 			U_i = energyN(coord, beadSet, krep, i);
 			if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
 			   || U_i != U_i || U_i < -1.0) {
+
 				short found = 0;
 				for (auto cyl:Cylinder::getCylinders()) {
 					auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
@@ -591,6 +593,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSe
 //        }
 	}
 	delete [] newc2;
+	delete [] newc1;
 	delete [] cp;
 	delete [] vec_A;
 	delete [] vec_B;
@@ -1009,12 +1012,16 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 }
 
 floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord,
-                                                int *beadSet, floatingpoint *krep, int i) {
-	floatingpoint *c1, *c2, *c3, *c4;
+                                                int *beadSet, floatingpoint *krep, int i,
+                                                bool movebeads) {
+	floatingpoint *c1, *c2, *c3, *c4, *newc1, *newc2;
 
 	doubleprecision a, b, c, d, e, F;
 
 	doubleprecision U_i = 0.0;
+
+	newc2 = new floatingpoint[3];
+	newc1 = new floatingpoint[3];
 
 	int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
 
@@ -1022,6 +1029,18 @@ floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord,
 	c2 = &coord[3 * beadSet[n * i + 1]];
 	c3 = &coord[3 * beadSet[n * i + 2]];
 	c4 = &coord[3 * beadSet[n * i + 3]];
+
+	// Move beads and try if they are in plane
+	if(movebeads && areInPlane(c1, c2, c3, c4)) {
+			cout << "moving out of plane" << endl;
+			//slightly move point
+			movePointOutOfPlane(c1, c2, c3, c4, newc2, 2,
+			                    0.01);
+			movePointOutOfPlane(c1, c2, c3, c4, newc1, 1,
+			                    0.01);
+			c2 = newc2;
+			c1 = newc1;
+	}
 
 	a = scalarProduct(c1, c2, c1, c2);//always positive
 	b = scalarProduct(c3, c4, c3, c4);//always positive
@@ -1092,15 +1111,31 @@ floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord,
 
 	U_i = krep[i] * (deltas * deltat/9.0) * (Termset1 + Termset2 + Termset3 + Termset4);
 
+	delete [] newc1;
+	delete [] newc2;
+
+	if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
+	   || U_i != U_i || U_i < -1.0) {
+		if(!movebeads){
+			movebeads = true;
+			energyN(coord, beadSet, krep, i, movebeads);
+		}
+	}
+
 	//cout<<"Numerical result "<<U_i<<endl;
 	return U_i;
 }
 
 void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
-                                      int *beadSet, floatingpoint *krep, int i) {
-	floatingpoint *c1, *c2, *c3, *c4;
+                                      int *beadSet, floatingpoint *krep, int i,
+                                      bool movebeads) {
+	floatingpoint *c1, *c2, *c3, *c4, *newc1, *newc2;
 	floatingpoint *f1, *f2, *f3, *f4;
 	doubleprecision a, b, c, d, e, F;
+
+
+	newc2 = new floatingpoint[3];
+	newc1 = new floatingpoint[3];
 
 	vector<doubleprecision> vecA, vecB, vecC;
 
@@ -1114,6 +1149,15 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 	c2 = &coord[3 * beadSet[n * i + 1]];
 	c3 = &coord[3 * beadSet[n * i + 2]];
 	c4 = &coord[3 * beadSet[n * i + 3]];
+
+	if (movebeads && areInPlane(c1, c2, c3, c4)) {
+
+		//slightly move point
+		movePointOutOfPlane(c1, c2, c3, c4, newc2, 2, 0.01);
+		movePointOutOfPlane(c1, c2, c3, c4, newc1, 1, 0.01);
+		c2 = newc2;
+		c1 = newc1;
+	}
 
 	f1 = &f[3 * beadSet[n * i]];
 	f2 = &f[3 * beadSet[n * i + 1]];
@@ -1244,76 +1288,86 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 	cout<<f4l[0]<<" "<<f4l[1]<<" "<<f4l[2]<<endl;*/
 
 	delete [] integrandarray;
+	delete [] newc1;
+	delete [] newc2;
 
 	if(checkNaN_INF<doubleprecision>(f1l, 0, 2)||checkNaN_INF<doubleprecision>(f2l,0,2)
 	        ||checkNaN_INF<doubleprecision>(f3l, 0, 2) ||checkNaN_INF<doubleprecision>(f4l,0,2)){
-
-		cout<<"Cylinder Exclusion Force becomes infinite. Printing data "<<endl;
-
-		short found = 0;
-		Cylinder *cyl1 = nullptr, *cyl2 = nullptr;
-		for(auto cyl:Cylinder::getCylinders()){
-			auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-			auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
-			if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
-				cyl1 = cyl;
-				found++;
-				if(found>=2)
-					break;
-			}
-			else if(dbIndex1 == beadSet[n * i + 2] && dbIndex2 == beadSet[n * i + 3]){
-				cyl2 = cyl;
-				found++;
-				if(found>=2)
-					break;
-			}
+		if(!movebeads){
+			movebeads = true;
+			forceN(coord, f, beadSet, krep, i, movebeads);
 		}
-		cout<<"Cylinder IDs "<<cyl1->getId()<<" "<<cyl2->getId()<<" with cIndex "
-		    <<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex()<<" and bIndex "
-		    <<cyl1->getFirstBead()->getStableIndex()<<" "
-		    <<cyl1->getSecondBead()->getStableIndex()<<" "
-		    <<cyl2->getFirstBead()->getStableIndex()<<" "
-		    <<cyl2->getSecondBead()->getStableIndex()<<endl;
+		else {
+			cout << "Cylinder Exclusion Force becomes infinite. Printing data " << endl;
 
-		cout<<"Printing coords"<<endl;
-		cout<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<endl;
-		cout<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<endl;
-		cout<<c3[0]<<" "<<c3[1]<<" "<<c3[2]<<endl;
-		cout<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
-		cout<<"Printing force"<<endl;
-		cout<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<endl;
-		cout<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<endl;
-		cout<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<endl;
-		cout<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
-		cout<<"Printing binary Coords"<<endl;
-		printvariablebinary(c1,0,2);
-		printvariablebinary(c2,0,2);
-		printvariablebinary(c3,0,2);
-		printvariablebinary(c4,0,2);
-		cout<<"Printing binary Force"<<endl;
-		printvariablebinary(f1,0,2);
-		printvariablebinary(f2,0,2);
-		printvariablebinary(f3,0,2);
-		printvariablebinary(f4,0,2);
+			short found = 0;
+			Cylinder *cyl1 = nullptr, *cyl2 = nullptr;
+			for (auto cyl:Cylinder::getCylinders()) {
+				auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
+				auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
+				if (dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
+					cyl1 = cyl;
+					found++;
+					if (found >= 2)
+						break;
+				} else if (dbIndex1 == beadSet[n * i + 2] &&
+				           dbIndex2 == beadSet[n * i + 3]) {
+					cyl2 = cyl;
+					found++;
+					if (found >= 2)
+						break;
+				}
+			}
+			cout << "Cylinder IDs " << cyl1->getId() << " " << cyl2->getId()
+			     << " with cIndex "
+			     << cyl1->getStableIndex() << " " << cyl2->getStableIndex()
+			     << " and bIndex "
+			     << cyl1->getFirstBead()->getStableIndex() << " "
+			     << cyl1->getSecondBead()->getStableIndex() << " "
+			     << cyl2->getFirstBead()->getStableIndex() << " "
+			     << cyl2->getSecondBead()->getStableIndex() << endl;
 
-		cout<<"Printing infinite energy contributions "<<endl;
-		cout<<"a "<<a<<" b "<<b<<" c "<<c<<" d "<<d<<" e "<<e<<" f "<<F<<endl;
+			cout << "Printing coords" << endl;
+			cout << c1[0] << " " << c1[1] << " " << c1[2] << endl;
+			cout << c2[0] << " " << c2[1] << " " << c2[2] << endl;
+			cout << c3[0] << " " << c3[1] << " " << c3[2] << endl;
+			cout << c4[0] << " " << c4[1] << " " << c4[2] << endl;
+			cout << "Printing force" << endl;
+			cout << f1[0] << " " << f1[1] << " " << f1[2] << endl;
+			cout << f2[0] << " " << f2[1] << " " << f2[2] << endl;
+			cout << f3[0] << " " << f3[1] << " " << f3[2] << endl;
+			cout << f4[0] << " " << f4[1] << " " << f4[2] << endl;
+			cout << "Printing binary Coords" << endl;
+			printvariablebinary(c1, 0, 2);
+			printvariablebinary(c2, 0, 2);
+			printvariablebinary(c3, 0, 2);
+			printvariablebinary(c4, 0, 2);
+			cout << "Printing binary Force" << endl;
+			printvariablebinary(f1, 0, 2);
+			printvariablebinary(f2, 0, 2);
+			printvariablebinary(f3, 0, 2);
+			printvariablebinary(f4, 0, 2);
 
-		cout<<"Printing results of numerical integrations"<<endl;
-		//0     4/r^6
-		//1     4s/r^6
-		//2     4s*s/r^6
-		//3     4*s*t/r^6
-		//4     4*t/r^6
-		//5     4*t*t/r^6
-		cout<<"\\int\\int ds.dt.4/r^6 "<<integration[0]<<endl;
-		cout<<"\\int\\int ds.dt.4s/r^6 "<<integration[1]<<endl;
-		cout<<"\\int\\int ds.dt.4s^2/r^6 "<<integration[2]<<endl;
-		cout<<"\\int\\int ds.dt.4st/r^6 "<<integration[3]<<endl;
-		cout<<"\\int\\int ds.dt.4t/r^6 "<<integration[4]<<endl;
-		cout<<"\\int\\int ds.dt.4t^2/r^6 "<<integration[5]<<endl;
+			cout << "Printing infinite energy contributions " << endl;
+			cout << "a " << a << " b " << b << " c " << c << " d " << d << " e " << e
+			     << " f " << F << endl;
 
-		exit(EXIT_FAILURE);
+			cout << "Printing results of numerical integrations" << endl;
+			//0     4/r^6
+			//1     4s/r^6
+			//2     4s*s/r^6
+			//3     4*s*t/r^6
+			//4     4*t/r^6
+			//5     4*t*t/r^6
+			cout << "\\int\\int ds.dt.4/r^6 " << integration[0] << endl;
+			cout << "\\int\\int ds.dt.4s/r^6 " << integration[1] << endl;
+			cout << "\\int\\int ds.dt.4s^2/r^6 " << integration[2] << endl;
+			cout << "\\int\\int ds.dt.4st/r^6 " << integration[3] << endl;
+			cout << "\\int\\int ds.dt.4t/r^6 " << integration[4] << endl;
+			cout << "\\int\\int ds.dt.4t^2/r^6 " << integration[5] << endl;
+
+			exit(EXIT_FAILURE);
+		}
 	}
 	else{
 		for(int dim = 0; dim<3; dim++) {

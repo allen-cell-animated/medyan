@@ -374,7 +374,7 @@ bool Cylinder::within(Cylinder* other, floatingpoint dist) {
 
 //adjust the position variable according to the length of cylinder
 //Refer Docs/Design/PartialCylinderAlpha.pdf
-floatingpoint Cylinder::adjustedrelativeposition(floatingpoint _alpha){
+floatingpoint Cylinder::adjustedrelativeposition(floatingpoint _alpha, bool verbose){
     //Full Length Cylinder
     if(isFullLength())
         return _alpha;
@@ -383,6 +383,7 @@ floatingpoint Cylinder::adjustedrelativeposition(floatingpoint _alpha){
     auto x2 = _b2->vcoordinate();
     floatingpoint L = twoPointDistance(x1, x2);
     short filamentType = _type;
+    short minusendmonomer = 0;
     floatingpoint fullcylinderSize = SysParams::Geometry().cylinderSize[filamentType];
     //Partial Plus End cylinder
     if(_plusEnd == true){
@@ -391,7 +392,6 @@ floatingpoint Cylinder::adjustedrelativeposition(floatingpoint _alpha){
         if(_minusEnd == true){
             int numMonomers = SysParams::Geometry().cylinderNumMon[filamentType];
             auto monomersize = SysParams::Geometry().monomerSize[filamentType];
-            short minusendmonomer = 0;
             for(int midx = 0; midx<numMonomers; midx++){
                 short m = _cCylinder->getCMonomer(midx)->activeSpeciesMinusEnd();
                 short p = _cCylinder->getCMonomer(midx)->activeSpeciesPlusEnd();
@@ -408,6 +408,13 @@ floatingpoint Cylinder::adjustedrelativeposition(floatingpoint _alpha){
     else if(_minusEnd == true){
         _alphacorr = 1-(1-_alpha)*fullcylinderSize/L;
     }
+
+    if(verbose){
+        cout<<"cyl ID "<<getId()<<" minsendstatus "<<_minusEnd<<" <<plusendstatus "
+            <<_plusEnd<<" minusendmonomer "<<minusendmonomer<<" alpha "<<_alpha
+            <<" _alphacorr "<<_alphacorr<<endl;
+    }
+
     if(_alphacorr < (floatingpoint)0.0)
         return (floatingpoint)0.0;
     else if(_alphacorr > (floatingpoint)1.0)
