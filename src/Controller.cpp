@@ -531,18 +531,27 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     {
         MembraneMeshChemistryInfo memChemInfo {
             // names
-            {"mem-diffu-test-a", "mem-diffu-test-b"},
+            {
+                "mem-diffu-test-a"
+                , "mem-diffu-test-b"
+            },
             // diffusion
-            { { 0, 1.0 }, { 1, 0.5 } },
+            {
+                { 0, 36000.0 }
+                , { 1, 18000.0 }
+            },
             // internal reactions
             {
-                { {}, {0}, 0.055 },
-                { {}, {1}, 0.062 },
-                { {0, 1, 1}, {1, 1, 1}, 1.0 }
+                { {}, {0}, 0.055 } // null -> A
+                , { {0}, {}, 0.55 } // A -> null
+                , { {1}, {}, 0.55 + 0 *0.62 } // B -> null
+                , { {0, 1, 1}, {1, 1, 1}, 1000 } // A + 2B -> 3B
             }
         };
         for(auto m : Membrane::getMembranes()) {
             m->setChemistry(memChemInfo);
+            m->getMesh().attribute(Membrane::MeshType::VertexIndex{0}).vertex
+                ->cVertex.species.findSpeciesByIndex(1)->setN(10000);
         }
     }
 
