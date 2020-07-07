@@ -250,6 +250,7 @@ public:
 	//Refer Docs/Design/PartialCylinderAlpha.pdf
     floatingpoint adjustedrelativeposition(floatingpoint _alpha, bool verbose = false);
 
+    vector<floatingpoint> getextrapolatedcoord();
     static floatingpoint timecylinder1;
 	static floatingpoint timecylinder2;
 	static floatingpoint timecylinderchem;

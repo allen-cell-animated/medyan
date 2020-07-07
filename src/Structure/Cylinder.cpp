@@ -423,6 +423,35 @@ floatingpoint Cylinder::adjustedrelativeposition(floatingpoint _alpha, bool verb
         return _alphacorr;
 }
 
+vector<floatingpoint> Cylinder::getextrapolatedcoord(){
+//    short filamentType = _type;
+//    int maxnumMonomers = SysParams::Geometry().cylinderNumMon[filamentType];
+//    short minusendmonomer = 0;
+//    short plusendmonomer = maxnumMonomers-1;
+//    short foundstatus = 0; //0 none found, 1 found one end, 2 found both ends
+//    bool minusendstatus = true;
+//    bool plusendstatus = true;
+//    for(int midx = 0; midx<maxnumMonomers; midx++){
+//        if(foundstatus ==2)
+//            break;
+//        short m = _cCylinder->getCMonomer(midx)->activeSpeciesMinusEnd();
+//        short p = _cCylinder->getCMonomer(midx)->activeSpeciesPlusEnd();
+//        if(m != -1) {
+//            foundstatus++;
+//            minusendmonomer = midx;
+//        }
+//
+//        if(p != -1) {
+//            foundstatus++;
+//            plusendmonomer = midx;
+//        }
+//    }
+//    int numMonomers = (plusendmonomer-minusendmonomer)+1;
+//    floatingpoint deltas = 1/numMonomers;
+//    if(minusendmonomer == 0 )
+
+}
+
 vector<FilamentRateChanger*> Cylinder::_polyChanger;
 ChemManager* Cylinder::_chemManager = 0;
 

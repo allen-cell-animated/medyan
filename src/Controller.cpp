@@ -942,12 +942,15 @@ void Controller::updateReactionRates() {
 #endif
 
 void Controller::updateNeighborLists() {
+    #ifdef CROSSCHECK_CYLINDER
+    string crosscheckNLname = _outputDirectory + "crosscheckNL.traj";
+    HybridNeighborList::_crosscheckdumpFileNL.open(crosscheckNLname);
+    #endif
     chrono::high_resolution_clock::time_point mins, mine;
 
     mins = chrono::high_resolution_clock::now();
     //Full reset of neighbor lists
     _subSystem.resetNeighborLists();
-//	cout<<"updated NeighborLists"<<endl;
     mine = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runnl2(mine - mins);
     nl2time += elapsed_runnl2.count();
@@ -960,9 +963,11 @@ void Controller::updateNeighborLists() {
     mine = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runb(mine - mins);
     bmgrtime += elapsed_runb.count();
-//    std::cout<<"time split "<<elapsed_runnl2.count()<<" "<<elapsed_runbvec.count()<<" "
-//            ""<<elapsed_runb.count()<<endl;
 #endif
+
+    #ifdef CROSSCHECK_CYLINDER
+    HybridNeighborList::_crosscheckdumpFileNL.close();
+    #endif
 }
 
 void Controller::resetCounters() {

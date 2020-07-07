@@ -178,6 +178,13 @@ bspairsoutSself, short idvec[2]) {
 	if (C1size > 0) {
 		bspairsoutSself.reset_counters();
 
+		#ifdef CROSSCHECK_CYLINDER
+			if (C1size >= switchfactor * dist::get_simd_size(t_avx))
+				HybridNeighborList::_crosscheckdumpFileNL << "SELF t_avx" << endl;
+			else
+				HybridNeighborList::_crosscheckdumpFileNL << "SELF t_serial" << endl;
+		#endif
+
 		if(filTypepairs[0] == filTypepairs[1]) {
 			if (C1size >= switchfactor * dist::get_simd_size(t_avx))
 				dist::find_distances(bspairsoutSself,
@@ -214,6 +221,9 @@ bspairsoutSself, short idvec[2]) {
 
 		//MERGE INTO single vector
 		//@{
+		#ifdef CROSSCHECK_CYLINDER
+				HybridNeighborList::_crosscheckdumpFileNL << "SELF gather" << endl;
+		#endif
 		if (true) {
 			uint N = bspairsoutSself.counter[D - 1];
 //		cout<<" Contacts found by SIMD Self "<<N<<endl;
@@ -253,6 +263,16 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
 		int C2size = ncmp->getSIMDcoordsV3<LinkerorMotor>
 				(partitioned_volume_ID[pos] + 1, filTypepairs[1]).size();
 
+		#ifdef CROSSCHECK_CYLINDER
+		if (C1size > 0 && C2size > 0) {
+			if (C1size >= switchfactor * dist::get_simd_size(t_avx) &&
+			    C2size >= switchfactor * dist::get_simd_size(t_avx))
+				HybridNeighborList::_crosscheckdumpFileNL << "ENCLOSED t_avx" << endl;
+			else
+				HybridNeighborList::_crosscheckdumpFileNL << "ENCLOSED t_serial" << endl;
+		}
+		#endif
+
 		if (C1size > 0 && C2size > 0) {
 
 			minsfind = chrono::high_resolution_clock::now();
@@ -286,6 +306,9 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
 
 			//MERGE INTO single vector
 			//@{
+			#ifdef CROSSCHECK_CYLINDER
+			HybridNeighborList::_crosscheckdumpFileNL << "ENCLOSED gather" << endl;
+			#endif
 			if (true) {
 				minsfind = chrono::high_resolution_clock::now();
 				uint N = bspairsoutS.counter[D-1];
@@ -293,6 +316,9 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
 					gatherCylindercIndexV3<D, SELF, LinkerorMotor>
 							(bspairsoutS, 0, N, idvec, ncmp);
 				else {
+					LOG(ERROR)<<"Multiple thread support not available in MEDYAN. Exiting"
+				 "."<<endl;
+
 					std::vector<std::thread> threads_avx;
 					uint nt = nthreads;
 					threads_avx.reserve(nt);

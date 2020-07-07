@@ -351,15 +351,16 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, size_
         force2 = &f[3 * beadSet[n * i + 1]];
         force3 = &f[3 * beadSet[n * i + 2]];
 
-        L1 = sqrt(scalarProduct(coord1, coord2, coord1, coord2));
+        L1 = sqrt(scalarProduct(coord1, coord2, coord1, coord2));//|x1|
         L2 = sqrt(scalarProduct(coord2, coord3, coord2, coord3));
 
         l1l2 = scalarProduct(coord1, coord2, coord2, coord3);
 
         invL1 = 1/L1;
         invL2 = 1/L2;
-        A = invL1*invL2;
-        B = l1l2*invL1*A*A*L2;
+        A = invL1*invL2;//1/|x1||x2|
+        B = l1l2*invL1*A*A*L2;//vec(x1).vec(x2)*(1/|x1|)*(1/|x1||x2|)^2*(|x2|)
+        // = vec(x1).vec(x2)/|x1|^3.|x2|
         C = l1l2*invL2*A*A*L1;
 
         if (areEqual(eqt[i], 0.0)) k = kbend[i];
@@ -388,7 +389,6 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, size_
                            (coord2[1] - coord1[1])*B );
         force1[2] +=  k * ((-coord3[2] + coord2[2])*A +
                            (coord2[2] - coord1[2])*B );
-
 
         //force on i, f = k*(A*(l1-l2) - B*l1 + C*l2):
         force2[0] +=  k *( (coord3[0] - 2*coord2[0] + coord1[0])*A -
