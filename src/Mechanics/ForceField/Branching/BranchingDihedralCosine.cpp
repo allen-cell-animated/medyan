@@ -215,6 +215,7 @@ floatingpoint BranchingDihedralCosine::energy(
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
 
     const floatingpoint *coord1, *coord2, *coord3, *coord4;
+    floatingpoint position;
     floatingpoint n1n2, U_i;
     floatingpoint *mp = new floatingpoint[3];
     floatingpoint *n1 = new floatingpoint[3];
@@ -484,16 +485,17 @@ void BranchingDihedralCosine::forces(
 
         //Special case where the branching point is plus end.
         if(areEqual(pos[i], (floatingpoint)1.0)){
-            //In this scenario, the energy is defined as U1(c2prime, c2, c3, c4). We are trying
+            //In this scenario, the energy is defined as U1(c2, c2prime, c3, c4). We are
+            // trying
             // to get U(c1, c2, c3, c4) from it.
 
             Lforce2prime[0] = df*dtfx;
             Lforce2prime[1] = df*dtfy;
             Lforce2prime[2] = df*dtfz;
 
-            Lforce2[0] = sx2 - Lforce2[0];
-            Lforce2[1] = sy2 - Lforce2[1];
-            Lforce2[2] = sz2 - Lforce2[2];
+            Lforce2[0] = sx2 - Lforce2prime[0];
+            Lforce2[1] = sy2 - Lforce2prime[1];
+            Lforce2[2] = sz2 - Lforce2prime[2];
 
             //Transformation
             double factor = (position-1)/position;
@@ -503,8 +505,8 @@ void BranchingDihedralCosine::forces(
 
             factor = (1/position);
             Lforce2[0] += Lforce2prime[0]*factor;
-            Lforce2[1] += Lforce2prime[0]*factor;
-            Lforce2[2] += Lforce2prime[0]*factor;
+            Lforce2[1] += Lforce2prime[1]*factor;
+            Lforce2[2] += Lforce2prime[2]*factor;
 
         }
         //Default case.

@@ -350,7 +350,7 @@ void BranchingDihedralQuadratic::forces(
         const auto f42 = -e132;
         const auto f43 = -e133;
 
-        //U2(c2prime,c2,c3,c4)
+        //U2(c1,c2prime,c3,c4)
         Vec<3,floatingpoint> force1, force2, force3, force4;
         if(areEqual(pos[i],(floatingpoint) 1.0)){
             force1 = f11 * b1 + f12 * b2 + f13 * b3;

@@ -186,14 +186,16 @@ void BranchingPositionCosine::checkforculprit() {
 }
 #endif
 
-floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, int *beadSet,
-                                       floatingpoint *kpos, floatingpoint *pos){
+floatingpoint BranchingPositionCosine::energy(const floatingpoint *coord,
+                                                unsigned int *beadSet,
+                                                floatingpoint *kpos, floatingpoint *pos) const {
 
 
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, posheta,
+    const floatingpoint *coord1, *coord2, *coord3;
+    floatingpoint X, D, XD, xd, posheta,
     position, U_i;
     floatingpoint *mp = new floatingpoint[3];
     floatingpoint *coord2prime = new floatingpoint[3];
@@ -331,14 +333,15 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
     return U;
 }
 
-void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                                     floatingpoint *kpos, floatingpoint *pos,
-                                     floatingpoint *stretchforce){
+void BranchingPositionCosine::forces(const floatingpoint *coord, floatingpoint *f, unsigned
+                                        int *beadSet, floatingpoint *kpos, floatingpoint *pos,
+                                     floatingpoint *stretchforce) const {
 
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, invX, invD, position, A, B, C, k, posheta;
+    const floatingpoint *coord1, *coord2, *coord3;
+    floatingpoint X, D, XD, xd, invX, invD, position, A, B, C, k, posheta;
 	floatingpoint  *f1, *f2, *f3;
     floatingpoint *mp = new floatingpoint[3];
     floatingpoint *coord2prime = new floatingpoint[3];
@@ -459,6 +462,7 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
 
         //If you had calculated forces on the extended plus end, additional
         // transformations are needed.
+        //Going from U(c1, c2prime, c3) to U(c1, c2, c3)
         if(areEqual(pos[i],(floatingpoint)1.0)){
             floatingpoint factor = (position-1)/position;
             f1[0] += f1tempx + f2tempx*factor;

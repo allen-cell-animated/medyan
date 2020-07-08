@@ -28,7 +28,7 @@
 template <class BPositionInteractionType>
 void BranchingPosition<BPositionInteractionType>::vectorize() {
     CUDAcommon::tmin.numinteractions[7] += BranchingPoint::getBranchingPoints().size();
-    beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
+    beadSet = new unsigned int[n * BranchingPoint::getBranchingPoints().size()];
     kpos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
     pos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
     stretchforce = new floatingpoint[3*BranchingPoint::getBranchingPoints().size()];
