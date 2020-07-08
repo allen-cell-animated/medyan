@@ -4,7 +4,7 @@
 
 #include "catch2/catch.hpp"
 
-#include "Mechanics/ForceField/Branching/BranchingDihedralCosine.hpp"
+#include "Mechanics/ForceField/Branching/BranchingDihedralCosine.h"
 #include "TESTS/Mechanics/ForceField/TestFFCommon.hpp"
 
 using namespace test_ff_common;
@@ -53,6 +53,14 @@ TEST_CASE("Force field: Branching Dihedral Quadratic", "[ForceField]") {
     coords.push_back(V3 { 1.0, 0.0, 0.0 });
     coords.push_back(V3 { 1.5, -1.0, 0.1 });
     pos.push_back(0.4);
+    kdih.push_back(1.0);
+
+    // special case dihedral angle
+    coords.push_back(V3 { 0.0, -1.0, 0.0 });
+    coords.push_back(V3 { 0.0, 1.0, 0.0 });
+    coords.push_back(V3 { 1.0, 0.0, 0.0 });
+    coords.push_back(V3 { 1.5, -1.0, 0.1 });
+    pos.push_back(1.0);
     kdih.push_back(1.0);
 
     const auto nint = kdih.size();

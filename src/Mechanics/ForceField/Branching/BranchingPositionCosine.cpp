@@ -193,18 +193,30 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, int *beadSet
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, posheta, U_i;
+    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, posheta,
+    position, U_i;
     floatingpoint *mp = new floatingpoint[3];
-
+    floatingpoint *coord2prime = new floatingpoint[3];
     floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
         coord1 = &coord[3 * beadSet[n * i]];
         coord2 = &coord[3 * beadSet[n * i + 1]];
+        //If the branching point is at the plus end of the cylinder, we end up with
+        // singularities in energy and force expressions. To avoid it, we will create a
+        // virtual plus end and use that to define vectors.
+        position = pos[i];
+        if(position == 1){
+            position = 0.5;//assign a dummy position and extend plus end to new coordinates.
+            for(int dim = 0; dim < 3; dim++) {
+                coord2prime[dim] = (1 / position) * (coord2[dim] - (1 - position) *
+                                    coord1[dim]);//extended plus end coordinate;
+            }
+            coord2 = &coord2prime[0];
+        }
         coord3 = &coord[3 * beadSet[n * i + 2]];
-
-        midPointCoordinate(mp, coord1, coord2, pos[i]);
+        midPointCoordinate(mp, coord1, coord2, position);
         X = sqrt(scalarProduct(mp, coord2, mp, coord2));
         D = sqrt(scalarProduct(mp, coord3, mp, coord3));
 
@@ -247,6 +259,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, int *beadSet
         U += U_i;
     }
     delete[] mp;
+    delete[] coord2prime;
     return U;
 }
 
@@ -328,18 +341,32 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
     floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, invX, invD, position, A, B, C, k, posheta;
 	floatingpoint  *f1, *f2, *f3;
     floatingpoint *mp = new floatingpoint[3];
-
+    floatingpoint *coord2prime = new floatingpoint[3];
+    floatingpoint f1tempx, f1tempy, f1tempz, f2tempx, f2tempy, f2tempz, f3tempx, f3tempy,
+    f3tempz;
 
     for(int i = 0; i < nint; i += 1) {
 
         coord1 = &coord[3 * beadSet[n * i]];
         coord2 = &coord[3 * beadSet[n * i + 1]];
+        //If the branching point is at the plus end of the cylinder, we end up with
+        // singularities in energy and force expressions. To avoid it, we will create a
+        // virtual plus end and use that to define vectors.
+        position = pos[i];
+        if(areEqual(position, (floatingpoint)1.0)){
+            position = 0.5;//assign a dummy position and extend plus end to new coordinates.
+            for(int dim = 0; dim < 3; dim++) {
+                coord2prime[dim] = (1 / position) * (coord2[dim] - (1 - position) *
+                                                                   coord1[dim]);//extended plus end coordinate;
+            }
+            coord2 = &coord2prime[0];
+        }
         coord3 = &coord[3 * beadSet[n * i + 2]];
         f1 = &f[3 * beadSet[n * i]];
         f2 = &f[3 * beadSet[n * i + 1]];
         f3 = &f[3 * beadSet[n * i + 2]];
 
-        midPointCoordinate(mp, coord1, coord2, pos[i]);
+        midPointCoordinate(mp, coord1, coord2, position);
         X = sqrt(scalarProduct(mp, coord2, mp, coord2));
         D = sqrt(scalarProduct(mp, coord3, mp, coord3));
 
@@ -366,7 +393,6 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
         floatingpoint sinp = sqrt(max<floatingpoint>((1-cosp*cosp),(floatingpoint)0.0));
         floatingpoint sinpminusq = sinp * cos(posheta) - cosp * sin(posheta);
 
-        position = pos[i];
         k = kpos[i] * A * sinpminusq/sinp;
 
 	    /*if(abs(xd/XD - 1.0)<0.001){
@@ -381,43 +407,78 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
 
         k =  kpos[i] * A * sin(dTheta)/sin(theta);*/
 
+	    //If the branching point is NOT bound to plusend, the local force variables
+	    // ftemp1[3], ftemp2[3], ftemp3[3] represent forces on parent_minus, parent_plus
+	    // and offspring_minus ends respectively.
+	    // If the branching point IS bound to plusend, the force variables represent
+	    // forces on parent_minus, parent_extendedplus and offspring_minus ends
+	    // respectively. Under this condition, a transformation is necessary to realize
+	    // the actual forces on the beads of interest.
+
         //bead 1
-        f1[0] +=  k * (1-position)* (- (1-position)*(coord2[0] - coord1[0]) - (coord3[0] - (1-position)*coord1[0] - position*coord2[0])
+        f1tempx =  k * (1-position)* (- (1-position)*(coord2[0] - coord1[0]) - (coord3[0]
+            - (1-position)*coord1[0] - position*coord2[0])
                                      + xd *(B*(1-position)*(coord2[0] - coord1[0]) + C*(coord3[0] - (1-position)*coord1[0] - position*coord2[0])) );
 
-        f1[1] +=  k * (1-position)* (- (1-position)*(coord2[1] - coord1[1]) - (coord3[1] - (1-position)*coord1[1] - position*coord2[1])
+        f1tempy =  k * (1-position)* (- (1-position)*(coord2[1] - coord1[1]) - (coord3[1]
+            - (1-position)*coord1[1] - position*coord2[1])
                                      + xd *(B*(1-position)*(coord2[1] - coord1[1]) + C*(coord3[1] - (1-position)*coord1[1] - position*coord2[1])) );
 
-        f1[2] +=  k * (1-position)* (- (1-position)*(coord2[2] - coord1[2]) - (coord3[2] - (1-position)*coord1[2] - position*coord2[2])
+        f1tempz =  k * (1-position)* (- (1-position)*(coord2[2] - coord1[2]) - (coord3[2]
+            - (1-position)*coord1[2] - position*coord2[2])
                                      + xd *(B*(1-position)*(coord2[2] - coord1[2]) + C*(coord3[2] - (1-position)*coord1[2] - position*coord2[2])) );
 
         //bead 2
-
-        f2[0] +=  k * (- position*(1-position)*(coord2[0] - coord1[0]) + (1-position)*(coord3[0]- (1-position)*coord1[0] - position*coord2[0])
+        f2tempx =  k * (- position*(1-position)*(coord2[0] - coord1[0]) + (1-position)*
+            (coord3[0]- (1-position)*coord1[0] - position*coord2[0])
                        + xd *( (1-position)*B*(1-position)*(coord2[0] - coord1[0]) - position*C*(coord3[0] - (1-position)*coord1[0] - position*coord2[0])) );
 
-        f2[1] +=  k * (- position*(1-position)*(coord2[1] - coord1[1]) + (1-position)*(coord3[1]- (1-position)*coord1[1] - position*coord2[1])
+        f2tempy =  k * (- position*(1-position)*(coord2[1] - coord1[1]) + (1-position)*
+            (coord3[1]- (1-position)*coord1[1] - position*coord2[1])
                        + xd *( (1-position)*B*(1-position)*(coord2[1] - coord1[1]) - position*C*(coord3[1] - (1-position)*coord1[1] - position*coord2[1])) );
 
-        f2[2] +=  k * (- position*(1-position)*(coord2[2] - coord1[2]) + (1-position)*(coord3[2]- (1-position)*coord1[2] - position*coord2[2])
+        f2tempz =  k * (- position*(1-position)*(coord2[2] - coord1[2]) + (1-position)*
+            (coord3[2]- (1-position)*coord1[2] - position*coord2[2])
                        + xd *( (1-position)*B*(1-position)*(coord2[2] - coord1[2]) - position*C*(coord3[2] - (1-position)*coord1[2] - position*coord2[2])) );
 
         //bead3
-
-        floatingpoint f3x =  k * ( (1-position)*(coord2[0] - coord1[0]) - xd * C*
+        f3tempx =  k * ( (1-position)*(coord2[0] - coord1[0]) - xd * C*
                 (coord3[0] - (1-position)*coord1[0] - position*coord2[0]) );
-        floatingpoint f3y =  k * ( (1-position)*(coord2[1] - coord1[1]) - xd * C*
+        f3tempy =  k * ( (1-position)*(coord2[1] - coord1[1]) - xd * C*
                 (coord3[1] - (1-position)*coord1[1] - position*coord2[1]) );
-        floatingpoint f3z =  k * ( (1-position)*(coord2[2] - coord1[2]) - xd * C*
+        f3tempz =  k * ( (1-position)*(coord2[2] - coord1[2]) - xd * C*
                 (coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
 
-        f3[0] += f3x;
-        f3[1] += f3y;
-        f3[2] += f3z;
+        f3[0] += f3tempx;
+        f3[1] += f3tempy;
+        f3[2] += f3tempz;
 
-        stretchforce[3*i] = f3x;
-        stretchforce[3*i + 1] = f3y;
-        stretchforce[3*i + 2] = f3z;
+        stretchforce[3*i] = f3tempx;
+        stretchforce[3*i + 1] = f3tempy;
+        stretchforce[3*i + 2] = f3tempz;
+
+        //If you had calculated forces on the extended plus end, additional
+        // transformations are needed.
+        if(areEqual(pos[i],(floatingpoint)1.0)){
+            floatingpoint factor = (position-1)/position;
+            f1[0] += f1tempx + f2tempx*factor;
+            f1[1] += f1tempy + f2tempy*factor;
+            f1[2] += f1tempz + f2tempz*factor;
+
+            f2[0] += f2tempx*(1/position);
+            f2[1] += f2tempy*(1/position);
+            f2[2] += f2tempz*(1/position);
+        }
+        else{
+            f1[0] += f1tempx;
+            f1[1] += f1tempy;
+            f1[2] += f1tempz;
+
+            f2[0] += f2tempx;
+            f2[1] += f2tempy;
+            f2[2] += f2tempz;
+        }
+
 
 	    #ifdef CHECKFORCES_INF_NAN
 	    if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)||checkNaN_INF<floatingpoint>(f3,0,2)){
@@ -463,4 +524,5 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
 	    #endif
     }
     delete[] mp;
+    delete[] coord2prime;
 }
