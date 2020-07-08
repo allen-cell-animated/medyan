@@ -12,7 +12,8 @@ struct BranchingDihedralQuadratic {
     void forces(
         const floatingpoint *coord, floatingpoint *f, size_t nint,
         const unsigned int *beadSet, const floatingpoint *kdih, const floatingpoint *pos,
-        floatingpoint *stretchforce) const;
+        floatingpoint *stretchforce
+    ) const;
 };
 
 #endif

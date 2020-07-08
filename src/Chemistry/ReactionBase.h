@@ -252,6 +252,7 @@ public:
     CBound* getCBound() {return _cBound;}
 
     
+
     // Sets the scaled rate based on volume dependence.
     void recalcRateVolumeFactor() {
         // This can automatically set the "_rate" as scaled value of "rate"

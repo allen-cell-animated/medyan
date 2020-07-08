@@ -208,12 +208,14 @@ void BranchingDihedralCosine::checkforculprit() {
 //n1 = b1 x b2;
 //n2 = b3 x b2;
 floatingpoint BranchingDihedralCosine::energy(
-    floatingpoint *coord, size_t nint,
-    unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos){
+    const floatingpoint *coord, size_t nint,
+    unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos
+) const {
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
 
-    floatingpoint *coord1, *coord2, *coord3, *coord4, n1n2, U_i, position;
+    const floatingpoint *coord1, *coord2, *coord3, *coord4;
+    floatingpoint n1n2, U_i;
     floatingpoint *mp = new floatingpoint[3];
     floatingpoint *n1 = new floatingpoint[3];
     floatingpoint *n2 = new floatingpoint[3];
@@ -331,8 +333,9 @@ floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoin
 }
 
 void BranchingDihedralCosine::forces(
-    floatingpoint *coord, floatingpoint *f, size_t nint,
-    unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos, floatingpoint *stretchforce){
+    const floatingpoint *coord, floatingpoint *f, size_t nint,
+    unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos, floatingpoint *stretchforce
+) const {
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
 
@@ -543,9 +546,12 @@ void BranchingDihedralCosine::forces(
         f4[1] += Lforce4[1];
         f4[2] += Lforce4[2];
 
-        stretchforce[3*i] = Lforce3[0];
-        stretchforce[3*i + 1] = Lforce3[1];
-        stretchforce[3*i + 2] = Lforce3[2];
+        if(stretchforce) {
+            stretchforce[3*i] = Lforce3[0];
+            stretchforce[3*i + 1] = Lforce3[1];
+            stretchforce[3*i + 2] = Lforce3[2];
+        }
+
         //@
         #ifdef CHECKFORCES_INF_NAN
         if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)

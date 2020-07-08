@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.13)
 
 #######################################
 # Configurations
@@ -149,9 +149,11 @@ elseif("${MEDYAN_BOOST_INSTALL_MODE}" STREQUAL "find")
 
 elseif("${MEDYAN_BOOST_INSTALL_MODE}" STREQUAL "manual")
     # Manually specify boost location
-    target_include_directories(medyan PUBLIC "${MEDYAN_BOOST_INCLUDE_DIR}")
-    target_link_directories(medyan PRIVATE "${MEDYAN_BOOST_LIBRARY_DIR}")
-    target_link_libraries(medyan PRIVATE "${MEDYAN_BOOST_LIBRARIES}")
+    set(BOOST_INCLUDEDIR "${MEDYAN_BOOST_INCLUDE_DIR}")
+    set(BOOST_LIBRARYDIR "${MEDYAN_BOOST_LIBRARY_DIR}")
+    find_package(Boost 1.67.0 REQUIRED)
+    target_include_directories(medyan PUBLIC ${Boost_INCLUDE_DIRS})
+    target_link_libraries(medyan PRIVATE ${Boost_LIBRARIES})
 
 endif()
 

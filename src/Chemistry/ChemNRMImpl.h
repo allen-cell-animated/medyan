@@ -245,8 +245,9 @@ class ChemNRMImpl : public ChemSimImpl {
 public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0 and the number
     /// of reactions to 0
-    ChemNRMImpl() :ChemSimImpl(),
-    _exp_distr(0.0), _n_reacts(0) { resetTime(); }
+    ChemNRMImpl() :
+        ChemSimImpl(),
+        _n_reacts(0) { resetTime(); }
     
     /// Copying is not allowed
     ChemNRMImpl(const ChemNRMImpl &rhs) = delete;

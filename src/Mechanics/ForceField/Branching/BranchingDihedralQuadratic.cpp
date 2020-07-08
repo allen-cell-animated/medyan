@@ -99,7 +99,8 @@ floatingpoint BranchingDihedralQuadratic::energy(
 void BranchingDihedralQuadratic::forces(
     const floatingpoint *coord, floatingpoint *f, size_t nint,
     const unsigned int *beadSet, const floatingpoint *kdih, const floatingpoint *pos,
-    floatingpoint *stretchforce) const {
+    floatingpoint *stretchforce
+) const {
 
     // Beads per interaction
     constexpr std::uint_fast8_t bpi = 4;
@@ -375,9 +376,11 @@ void BranchingDihedralQuadratic::forces(
         f3 += force3;
         f4 += force4;
 
-        for(short j = 0; j < 3; j++)
-            stretchforce[3*i + j] = force3[j];
+        if(stretchforce) {
+            for(short j = 0; j < 3; j++)
+                stretchforce[3*i + j] = force3[j];
+        }
 
     } // End loop interactions
 
-} // void force(...)
+} // void forces(...)

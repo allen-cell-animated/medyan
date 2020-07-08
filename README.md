@@ -1,5 +1,7 @@
 # MEDYAN
 
+[![Build Status](https://github.com/medyan-dev/MEDYAN/workflows/build/badge.svg)](https://github.com/medyan-dev/MEDYAN/actions)
+
 Welcome to Papoian Lab’s *Mechanochemical Dynamics of Active Networks* software package.
 
 Copyright 2015-2019, Papoian lab at the University of Maryland.

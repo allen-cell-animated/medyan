@@ -23,15 +23,19 @@ class Bead;
 class BranchingDihedralCosine {
 
 public:
-    floatingpoint energy(floatingpoint *coord, size_t nint,
-        unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos);
+    floatingpoint energy(
+        const floatingpoint *coord, size_t nint,
+        unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos
+    ) const;
 
     [[deprecated]] floatingpoint energy(floatingpoint *coord, floatingpoint *f, unsigned int *beadSet,
                   floatingpoint *kdih, floatingpoint *pos, floatingpoint d);
 
-    void forces(floatingpoint *coord, floatingpoint *f, size_t nint,
+    void forces(
+        const floatingpoint *coord, floatingpoint *f, size_t nint,
         unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos,
-        floatingpoint *stretchforce);
+        floatingpoint *stretchforce
+    ) const;
 
 	void forcesNumericalinteraction(floatingpoint *coord, floatingpoint *f, size_t nint,
 			unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos, int

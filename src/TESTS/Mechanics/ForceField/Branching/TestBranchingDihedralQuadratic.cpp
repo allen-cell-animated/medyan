@@ -76,7 +76,7 @@ TEST_CASE("Force field: Branching Dihedral Quadratic", "[ForceField]") {
     };
     const auto calcForce = [&](const VA3& c, VA3& f) {
         BranchingDihedralQuadratic {}.forces(
-            c.data(), f.data(), nint, beadSet.data(), kdih.data(), pos.data()
+            c.data(), f.data(), nint, beadSet.data(), kdih.data(), pos.data(), nullptr
         );
     };
 

@@ -9,7 +9,7 @@
 
 using namespace test_ff_common;
 
-TEST_CASE("Force field: Branching Dihedral Quadratic", "[ForceField]") {
+TEST_CASE("Force field: Branching Dihedral Cosine", "[ForceField]") {
     // The test case checks whether energy and force are consistent
 
     using namespace std;
@@ -71,12 +71,12 @@ TEST_CASE("Force field: Branching Dihedral Quadratic", "[ForceField]") {
     //---------------------------------
     const auto calcEnergy = [&](const VA3& c) {
         return BranchingDihedralCosine {}.energy(
-                c.data(), nint, beadSet.data(), kdih.data(), pos.data()
+            c.data(), nint, beadSet.data(), kdih.data(), pos.data()
         );
     };
     const auto calcForce = [&](const VA3& c, VA3& f) {
         BranchingDihedralCosine {}.forces(
-                c.data(), f.data(), nint, beadSet.data(), kdih.data(), pos.data()
+            c.data(), f.data(), nint, beadSet.data(), kdih.data(), pos.data(), nullptr
         );
     };
 
