@@ -462,7 +462,21 @@ void BranchingPositionCosine::forces(const floatingpoint *coord, floatingpoint *
 
         //If you had calculated forces on the extended plus end, additional
         // transformations are needed.
-        //Going from U(c1, c2prime, c3) to U(c1, c2, c3)
+        //Going from Utilda(c1, c2prime, c3) to U(c1, c2, c3)
+        //c1-parent minusend | c2 - parent plusend/bindingsite | c2prime-parent
+        // extendedplusend   | c3 - offspring minusend
+        //[dU(c1,c2,c3)]      [dUtilda(c1,c2prime,c3)]   [dUtilda(c1,c2prime,c3)]   dc2prime
+        //[------------]     =[----------------------] + [----------------------] x --------
+        //[    dc1     ]c2,c3 [        dc1           ]   [        dc2prime      ]      dc1
+        //__________________________________________________________________________________
+        //[dU(c1,c2,c3)]       [dUtilda(c1,c2prime,c3)]   dc2prime
+        //[------------]     = [----------------------] x --------
+        //[    dc2     ]c1,c3  [        dc2prime      ]      dc2
+        //__________________________________________________________________________________
+        //We define c2 = c1 + s(c2prime - c1)
+        // dc2prime    s - 1  | dc2prime    1
+        // -------- = ------- | -------- = ---
+        //   dc1         s    |   dc2       s
         if(areEqual(pos[i],(floatingpoint)1.0)){
             floatingpoint factor = (position-1)/position;
             f1[0] += f1tempx + f2tempx*factor;

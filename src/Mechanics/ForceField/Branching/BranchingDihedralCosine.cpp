@@ -486,8 +486,24 @@ void BranchingDihedralCosine::forces(
         //Special case where the branching point is plus end.
         if(areEqual(pos[i], (floatingpoint)1.0)){
             //In this scenario, the energy is defined as U1(c2, c2prime, c3, c4). We are
-            // trying
-            // to get U(c1, c2, c3, c4) from it.
+            // trying to get U(c1, c2, c3, c4) from it.
+            //c1-parent minusend | c2 - parent plusend/bindingsite | c2prime-parent
+            // extendedplusend   | c3 - offspring minusend         | c4 - offspring plusend
+            //[dU(c1,c2,c3,c4)]             [dUtilda(c2,c2prime,c3,c4)]   dc2prime
+            //[---------------]        =    [-------------------------] x --------
+            //[    dc1        ]c2,c3,c4     [        dc2prime         ]     dc1
+            //______________________________________________________________________________
+            //[dU(c1,c2,c3,c4)]          [   [dUtilda(c2,c2prime,c3,c4)]   dc2prime
+            //[---------------]        = [   [-------------------------] x --------
+            //[    dc2        ]c1,c3,c4  [   [        dc2prime         ]     dc2
+            //                           [
+            //                           [        [dUtilda(c2,c2prime,c3,c4)]
+            //                           [  +     [-------------------------]
+            //                           [        [           dc2           ]
+            //We define c2 = c1 + s(c2prime - c1)
+            // dc2prime    s - 1  | dc2prime    1
+            // -------- = ------- | -------- = ---
+            //   dc1         s    |   dc2       s
 
             Lforce2prime[0] = df*dtfx;
             Lforce2prime[1] = df*dtfy;

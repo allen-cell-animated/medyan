@@ -300,6 +300,25 @@ void BranchingDihedralCosineV2::forces(
             // Fc2 = Fc2prime*(1/p) + Fc2
             // Fc3 = Fc3
             // Fc4 = Fc4
+            //In this scenario, the energy is defined as U1(c2, c2prime, c3, c4). We are
+            // trying to get U(c1, c2, c3, c4) from it.
+            //c1-parent minusend | c2 - parent plusend/bindingsite | c2prime-parent
+            // extendedplusend   | c3 - offspring minusend         | c4 - offspring plusend
+            //[dU(c1,c2,c3,c4)]             [dUtilda(c2,c2prime,c3,c4)]   dc2prime
+            //[---------------]        =    [-------------------------] x --------
+            //[    dc1        ]c2,c3,c4     [        dc2prime         ]     dc1
+            //______________________________________________________________________________
+            //[dU(c1,c2,c3,c4)]          [   [dUtilda(c2,c2prime,c3,c4)]   dc2prime
+            //[---------------]        = [   [-------------------------] x --------
+            //[    dc2        ]c1,c3,c4  [   [        dc2prime         ]     dc2
+            //                           [
+            //                           [        [dUtilda(c2,c2prime,c3,c4)]
+            //                           [  +     [-------------------------]
+            //                           [        [           dc2           ]
+            //We define c2 = c1 + s(c2prime - c1)
+            // dc2prime    s - 1  | dc2prime    1
+            // -------- = ------- | -------- = ---
+            //   dc1         s    |   dc2       s
             double factor = (position - 1)/position;
             Fc1[0] = factor*Fc2prime[0];
             Fc1[1] = factor*Fc2prime[1];
