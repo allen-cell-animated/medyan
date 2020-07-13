@@ -188,6 +188,9 @@ void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
         beadtriplethingestatus[hingecount+1] = 0;
         hingecount = hingecount + 2;
 	}
+	
+	//Precomputing after vectorization is important to ensure accuracy.
+	precomputevars(Bead::getDbData().coords.data(), cyllengthset, cylbenddotproduct);
 	/*for(auto f:Filament::getFilaments()){
 	    cout<<f->getCylinderVector().size()<<" ";
 	}
