@@ -133,12 +133,11 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     Bead::getDbData().forcesAux = Bead::getDbData().forces;
     Bead::getDbData().forcesAuxP = Bead::getDbData().forces;
     auto maxForce = maxF();
-
-    result.energiesBefore = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
-
+    cout<<"maxForce "<<maxForce<<endl;
     tend = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_copy(tend - tbegin);
     CUDAcommon::tmin.copyforces += elapsed_copy.count();
+    result.energiesBefore = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
     //@@@}
 #endif
     //M as the first letter in variables signifies that it is used by minimizer

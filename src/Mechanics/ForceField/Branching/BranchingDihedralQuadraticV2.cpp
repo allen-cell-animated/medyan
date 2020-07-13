@@ -64,7 +64,6 @@ floatingpoint BranchingDihedralQuadraticV2::energy(
         const auto coord4 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 3]);
 
         // Brancher coordinate on the mother filament
-        const auto p = pos[i];
         const auto mp = (1 - p) * coord1 + p * coord2;
 
         // Bonds
