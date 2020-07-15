@@ -33,6 +33,7 @@
 #include "common.h"
 #include "SysParams.h"
 #include "utility.h"
+#include "Util/SExpr.hpp"
 
 namespace medyan {
 
@@ -89,47 +90,7 @@ struct ConfigFileToken {
     }
 };
 
-struct SExpr {
-    using StringType = std::string;
-    using ListType   = std::vector< SExpr >;
 
-    struct Car {
-        SExpr operator()(const StringType&) const {
-            LOG(ERROR) << "Expected cons in Car, but got a string.";
-            throw std::runtime_error("Invalid argument in Car");
-        }
-        SExpr operator()(const ListType& l) const {
-            return SExpr { l[0] };
-        }
-    };
-    struct Cdr {
-        SExpr operator()(const StringType&) const {
-            LOG(ERROR) << "Expected cons in Cdr, but got a string.";
-            throw std::runtime_error("Invalid argument in Cdr");
-        }
-        SExpr operator()(const ListType& l) const {
-            if(l.empty()) {
-                LOG(ERROR) << "Expected cons in Cdr, but got an empty list.";
-                throw std::runtime_error("Invalid argument in Cdr");
-            }
-            else {
-                return SExpr { ListType(l.begin() + 1, l.end()) };
-            }
-        }
-    };
-
-    std::variant<
-        StringType,
-        ListType
-    > data;
-};
-
-inline SExpr car(const SExpr& se) {
-    return std::visit(SExpr::Car{}, se.data);
-}
-inline SExpr cdr(const SExpr& se) {
-    return std::visit(SExpr::Cdr{}, se.data);
-}
 inline std::vector< std::string > getStringVector(const SExpr::ListType& sel) {
     // Precondition:
     //   - Every element in sel is of string type

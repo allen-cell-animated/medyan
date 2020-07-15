@@ -187,4 +187,15 @@ namespace std{
     }
 }
 
+namespace medyan {
+
+// Provide simple interface for overloading functions
+template< typename... Ts >
+struct Overload : Ts... { using Ts::operator()...; };
+
+template< typename... Ts >
+Overload(Ts...) -> Overload< Ts... >;
+
+} // namespace medyan
+
 #endif
