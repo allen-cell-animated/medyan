@@ -22,13 +22,13 @@
 #include "Bead.h"
 
 template <class MTOCInteractionType>
-void MTOCBending<MTOCInteractionType>::vectorize() {
+void MTOCBending<MTOCInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
     //Watch out! Only one MTOC is allowed
     for(auto mtoc : MTOC::getMTOCs()) {
         beadSet = new int[n *  mtoc->getFilaments().size() + 1];
         kbend = new floatingpoint[n *  mtoc->getFilaments().size() + 1];
         
-        beadSet[0] = mtoc->getBubble()->getBead()->getStableIndex();
+        beadSet[0] = mtoc->getBubble()->getBead()->getIndex() * 3 + si.bead;
         kbend[0] = 0.0;
         
         int i = 1;
@@ -36,8 +36,8 @@ void MTOCBending<MTOCInteractionType>::vectorize() {
         for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
             Filament *f = mtoc->getFilaments()[fIndex];
             
-            beadSet[n * i - 1] = f->getMinusEndCylinder()->getFirstBead()->getStableIndex();
-            beadSet[n * i] = f->getMinusEndCylinder()->getSecondBead()->getStableIndex();
+            beadSet[n * i - 1] = f->getMinusEndCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
+            beadSet[n * i] = f->getMinusEndCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
             
             floatingpoint kk = mtoc->getBubble()->getMTOCBendingK();
             kbend[n * i - 1] = kk;
@@ -151,7 +151,7 @@ void MTOCBending<MTOCInteractionType>::computeForces(floatingpoint *coord, float
 template floatingpoint MTOCBending<MTOCBendingCosine>::computeEnergy(floatingpoint *coord, bool stretched);
 template void MTOCBending<MTOCBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
 //template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux(floatingpoint *coord, floatingpoint *f);
-template void MTOCBending<MTOCBendingCosine>::vectorize();
+template void MTOCBending<MTOCBendingCosine>::vectorize(const FFCoordinateStartingIndex&);
 template void MTOCBending<MTOCBendingCosine>::deallocate();
 
 

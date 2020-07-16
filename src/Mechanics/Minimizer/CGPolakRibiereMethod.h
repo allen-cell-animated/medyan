@@ -27,10 +27,17 @@ class PolakRibiere : public CGMethod
 {
 public:
     
-    virtual MinimizationResult minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                          floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
-                          floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY, string _LINESEARCHALGORITHM,
-                          bool steplimit);
+    virtual MinimizationResult minimize(
+        ForceFieldManager &FFM, floatingpoint GRADTOL,
+        floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+        floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY, string _LINESEARCHALGORITHM,
+        bool steplimit
+    ) override;
+
+    // For debug purposes used with calculateEvsalpha
+    std::vector< floatingpoint > coordBackup;
+    std::vector< floatingpoint > forceBackup;
+
 protected:
 	chrono::high_resolution_clock::time_point tbegin, tend;
 	floatingpoint prevlambda = 0;

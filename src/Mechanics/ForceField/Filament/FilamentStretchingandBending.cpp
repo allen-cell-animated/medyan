@@ -38,8 +38,8 @@ void FilamentStretchingandBending<FBendingInteractionType>::precomputevars(
     bool fetchcoordsstatus = true;
     for(auto b = 0; b < Bead::getBeads().size()-1;  b++){
         if(fetchcoordsstatus) {
-            coord1 = &coord[3 * beadSetall[b]];
-            coord2 = &coord[3 * beadSetall[b + 1]];
+            coord1 = &coord[beadSetall[b]];
+            coord2 = &coord[beadSetall[b + 1]];
         }
         else{
             coord1 = coord2;
@@ -51,7 +51,7 @@ void FilamentStretchingandBending<FBendingInteractionType>::precomputevars(
         }
         fetchcoordsstatus = true;
         if(beadtriplethingestatus[b]) {
-            coord3 = &coord[3 * beadSetall[b + 2]];
+            coord3 = &coord[beadSetall[b + 2]];
             cylbenddotproduct[hingecount] = scalarProduct(coord1, coord2, coord2, coord3);
             hingecount++;
             //If there are connections between b+1, b+2, and b+3.
@@ -85,7 +85,7 @@ void FilamentStretchingandBending<FBendingInteractionType>::precomputevars(
 }
 
 template <class FBendingInteractionType>
-void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
+void FilamentStretchingandBending<FBendingInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
 
 	// Count number of interactions
 	_numInteractions = 0;
@@ -136,8 +136,8 @@ void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
 	for (auto f: Filament::getFilaments()) {
 
 		auto cyl = *f->getCylinderVector().begin();
-		beadSetcylsansbending[nstr * istr] = cyl->getFirstBead()->getStableIndex();
-		beadSetcylsansbending[nstr * istr + 1] = cyl->getSecondBead()->getStableIndex();
+		beadSetcylsansbending[nstr * istr] = cyl->getFirstBead()->getIndex() * 3 + si.bead;
+		beadSetcylsansbending[nstr * istr + 1] = cyl->getSecondBead()->getIndex() * 3 + si.bead;
 		kstrsansbending[istr] = cyl->getMCylinder()->getStretchingConst();
 		eqlsansbending[istr] = cyl->getMCylinder()->getEqLength();
 		cylSetcylsansbending[istr] = cylcount;
@@ -157,9 +157,9 @@ void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
 			     it != f->getCylinderVector().end(); it++){
 
 				auto it2 = it - 1;
-				beadSet[n * i] = (*it2)->getFirstBead()->getStableIndex();
-				beadSet[n * i + 1] = (*it)->getFirstBead()->getStableIndex();
-				beadSet[n * i + 2] = (*it)->getSecondBead()->getStableIndex();
+				beadSet[n * i] = (*it2)->getFirstBead()->getIndex() * 3 + si.bead;
+				beadSet[n * i + 1] = (*it)->getFirstBead()->getIndex() * 3 + si.bead;
+				beadSet[n * i + 2] = (*it)->getSecondBead()->getIndex() * 3 + si.bead;
 
                 cylSet[ncylperint * i] = cylcount - 1;
                 cylSet[ncylperint * i + 1] = cylcount;
@@ -295,7 +295,7 @@ void FilamentStretchingandBending<FStretchingandBendingInteractionType>::compute
 ///Template specializations
 template floatingpoint FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::computeEnergy(floatingpoint *coord);
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::vectorize();
+template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::deallocate();
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::precomputevars(
 		floatingpoint *coord, floatingpoint *cyllengthset,
@@ -304,7 +304,7 @@ template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingH
 
 template floatingpoint FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::computeEnergy(floatingpoint *coord);
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::vectorize();
+template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::vectorize(const FFCoordinateStartingIndex&);
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::deallocate();
 template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::precomputevars(
 		floatingpoint *coord, floatingpoint *cyllengthset,

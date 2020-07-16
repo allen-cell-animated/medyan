@@ -549,12 +549,11 @@ auto cross(const VT1& v1, const VT2& v2) {
 // Dot product
 // Always using the size of the 1st operand.
 // Doing dot product on arrays with different sizes leads to undefined behavior.
-template<typename dataType=floatingpoint, typename VA1, typename VA2,
-std::enable_if_t<VA1::element_vec_size ==
-        VA2::element_vec_size>* = nullptr >
+template<
+    typename VA1, typename VA2,
+    std::enable_if_t<VA1::element_vec_size == VA2::element_vec_size>* = nullptr >
 inline auto dot(const VA1& v1, const VA2& v2) {
-//    using res_type = std::common_type_t< typename VA1::float_type, typename VA2::float_type >;
-    using res_type = dataType;
+    using res_type = std::common_type_t< typename VA1::float_type, typename VA2::float_type >;
     res_type res {};
 
     const size_t num = v1.value.size();

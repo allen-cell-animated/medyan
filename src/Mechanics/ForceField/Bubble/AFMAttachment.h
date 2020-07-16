@@ -48,7 +48,7 @@ public:
     ///For AFM, this is a 1-bead potential
     const static int n = 1;
     
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&) override;
     virtual void deallocate() {}
     
     virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) override;

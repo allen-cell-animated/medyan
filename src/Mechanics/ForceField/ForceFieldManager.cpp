@@ -29,7 +29,7 @@
 
 ForceField* ForceFieldManager::_culpritForceField = nullptr;
 
-void ForceFieldManager::vectorizeAllForceFields() {
+void ForceFieldManager::vectorizeAllForceFields(const FFCoordinateStartingIndex& si) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     CUDAcommon::cudatime.TvectorizeFF = 0.0;
@@ -43,7 +43,7 @@ void ForceFieldManager::vectorizeAllForceFields() {
 #endif
 
     for (auto &ff : _forceFields)
-        ff->vectorize();
+        ff->vectorize(si);
 
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
@@ -355,7 +355,7 @@ EnergyReport ForceFieldManager::computeEnergyHRMD(floatingpoint *coord) const {
 template floatingpoint ForceFieldManager::computeEnergy< false >(floatingpoint *, bool) const;
 template floatingpoint ForceFieldManager::computeEnergy< true >(floatingpoint *, bool) const;
 
-void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
+void ForceFieldManager::computeForces(floatingpoint *coord, vector< floatingpoint >& force) {
     //reset to zero
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -365,10 +365,9 @@ void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
     CUDAcommon::serltime.TveccomputeF.clear();
     tbegin = chrono::high_resolution_clock::now();
 #endif
-    //@{
-    for (int i = 0; i < Bead::getDbData().forces.size_raw(); i++)
-        f[i] = 0.0;
-    //@}
+
+    std::fill(force.begin(), force.end(), 0.0);
+
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
@@ -401,7 +400,7 @@ void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
     CUDAcommon::tmin.computeforcescalls++;
     for (auto &ff : _forceFields) {
         tbegin = chrono::high_resolution_clock::now();
-        ff->computeForces(coord, f);
+        ff->computeForces(coord, force.data());
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
         if(CUDAcommon::tmin.individualforces.size() == _forceFields.size())
@@ -475,7 +474,7 @@ void ForceFieldManager::computeLoadForce(Cylinder* c, ForceField::LoadForceEnd e
     lfi = 0;
 }
 
-void ForceFieldManager::printculprit(floatingpoint* force){
+void ForceFieldManager::printculprit(){
 
     /*cout<<"Printing cylinder data overall"<<endl;
     if(true) {
@@ -597,8 +596,8 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
         coord_copy_m[i] -= delta;
 
         // calculate the new forces based on perturbation
-        computeForces(coord_copy_p.data(), forces_copy_p.data());
-        computeForces(coord_copy_m.data(), forces_copy_m.data());
+        computeForces(coord_copy_p.data(), forces_copy_p);
+        computeForces(coord_copy_m.data(), forces_copy_m);
 
         for(auto j = 0; j < total_DOF; j++){
 

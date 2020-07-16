@@ -20,7 +20,7 @@
 #include "Bead.h"
 
 template <class BAttachmentInteractionType>
-void BoundaryCylinderAttachment<BAttachmentInteractionType>::vectorize() {
+void BoundaryCylinderAttachment<BAttachmentInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
     
     //first coord in beadset is bead, then pin position
     beadSet = new int[Bead::getPinnedBeads().size()];
@@ -30,7 +30,7 @@ void BoundaryCylinderAttachment<BAttachmentInteractionType>::vectorize() {
     int i = 0;
     for(auto b : Bead::getPinnedBeads()) {
 
-        beadSet[n * i] = b->getStableIndex();
+        beadSet[n * i] = b->getIndex() * 3 + si.bead;
         kattr[n * i] = SysParams::Mechanics().pinK;
 
         pins[n * i] = mathfunc::vector2Vec< 3, floatingpoint >(b->getPinPosition());
@@ -62,5 +62,5 @@ void BoundaryCylinderAttachment<BAttachmentInteractionType>::computeForces(float
 ///Template specializations
 template floatingpoint BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeEnergy(floatingpoint *coord);
 template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::vectorize();
+template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::deallocate();

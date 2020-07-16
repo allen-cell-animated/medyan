@@ -32,7 +32,7 @@ floatingpoint BoundaryBubbleRepulsionExp::energy(floatingpoint *coord, int *bead
 
         for (int ic = 0; ic < nc; ic++) {
 
-            coord1 = &coord[3 * beadSet[Cumnc + ic]];
+            coord1 = &coord[beadSet[Cumnc + ic]];
             r = be->distance(coord1);
 
             //Boundary-Bubble repulsion only considers the distance between
@@ -74,8 +74,8 @@ floatingpoint BoundaryBubbleRepulsionExp::energy(floatingpoint *coord, floatingp
 
         for (int ic = 0; ic < nc; ic++) {
 
-            coord1 = &coord[3 * beadSet[Cumnc + ic]];
-            force1 = &f[3 * beadSet[Cumnc + ic]];
+            coord1 = &coord[beadSet[Cumnc + ic]];
+            force1 = &f[beadSet[Cumnc + ic]];
 
             r = be->stretchedDistance(coord1, force1, d);
 
@@ -116,8 +116,8 @@ void BoundaryBubbleRepulsionExp::forces(floatingpoint *coord, floatingpoint *f,
         auto be = beList[ib];
         nc = nneighbors[ib];
         for(int ic = 0; ic < nc; ic++) {
-            coord1 = &coord[3 * beadSet[ Cumnc + ic]];
-            force1 = &f[3 * beadSet[ Cumnc + ic]];
+            coord1 = &coord[beadSet[ Cumnc + ic]];
+            force1 = &f[beadSet[ Cumnc + ic]];
             r = be->distance(coord1);
             auto norm = be->normal(coord1);
 

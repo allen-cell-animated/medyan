@@ -32,7 +32,7 @@ template <class CVolumeInteractionType>
 int CylinderExclVolume<CVolumeInteractionType>::numInteractions;
 
 template <class CVolumeInteractionType>
-void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
+void CylinderExclVolume<CVolumeInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
     //count interactions
     nint = 0;
 
@@ -80,10 +80,10 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
                 
                 auto cin = neighbors[ni];
                 if(cin->getBranchingCylinder() == ci) continue;
-                beadSet[n * (Cumnc)] = ci->getFirstBead()->getStableIndex();
-                beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->getStableIndex();
-                beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->getStableIndex();
-                beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->getStableIndex();
+                beadSet[n * (Cumnc)] = ci->getFirstBead()->getIndex()* 3 + si.bead;
+                beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->getIndex()* 3 + si.bead;
+                beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->getIndex()* 3 + si.bead;
+                beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->getIndex()* 3 + si.bead;
                 
                 //Get KRepuls based on filament type
                 if(ci->getType() != cin->getType()){
@@ -108,10 +108,10 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
 
             auto cin = neighbors[ni];
             if(cin->getBranchingCylinder() == ci) continue;
-            beadSet[n * (Cumnc)] = ci->getFirstBead()->getStableIndex();
-            beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->getStableIndex();
-            beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->getStableIndex();
-            beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->getStableIndex();
+            beadSet[n * (Cumnc)] = ci->getFirstBead()->getIndex() * 3 + si.bead;
+            beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->getIndex() * 3 + si.bead;
+            beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->getIndex() * 3 + si.bead;
+            beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->getIndex() * 3 + si.bead;
 
             //Get KRepuls based on filament type
             if(ci->getType() != cin->getType()){
@@ -327,5 +327,5 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(floatingpoint *co
 ///Template specializations
 template floatingpoint CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(floatingpoint *coord);
 template void CylinderExclVolume<CylinderExclVolRepulsion>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void CylinderExclVolume<CylinderExclVolRepulsion>::vectorize();
+template void CylinderExclVolume<CylinderExclVolRepulsion>::vectorize(const FFCoordinateStartingIndex&);
 template void CylinderExclVolume<CylinderExclVolRepulsion>::deallocate();

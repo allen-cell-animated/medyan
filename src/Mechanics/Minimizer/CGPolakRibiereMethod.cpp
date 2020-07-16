@@ -16,6 +16,7 @@
 
 #include "ForceFieldManager.h"
 #include "Composite.h"
+#include "Mechanics/Minimizer/CGMethodDataCopy.hpp"
 #include "Output.h"
 #include "Bubble.h"
 #include "cross_check.h"
@@ -27,11 +28,13 @@
 #include "MotorGhostInteractions.h"
 #endif
 
-MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
-                            floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
-                            floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
-                            string _LINESEARCHALGORITHM,
-                            bool steplimit) {
+MinimizationResult PolakRibiere::minimize(
+    ForceFieldManager &FFM, floatingpoint GRADTOL,
+    floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
+    floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+    string _LINESEARCHALGORITHM,
+    bool steplimit
+) {
 
     #ifdef TRACKDIDNOTMINIMIZE
     SysParams::Mininimization().beta.clear();
@@ -67,7 +70,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
-    FFM.vectorizeAllForceFields();//each forcefield needs to use hostallocdefault and MemCpyAsync followed by CudaStreamSynchronize
+    FFM.vectorizeAllForceFields(initCGMethodData(*this, GRADTOL));
 
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
@@ -92,14 +95,13 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
     //@@@{ STEP 2: COMPUTE FORCES
     tbegin = chrono::high_resolution_clock::now();
-    FFM.computeForces(Bead::getDbData().coords.data(),
-                      Bead::getDbData().forces.data()); //split and synchronize in the end
+    FFM.computeForces(coord.data(), force); //split and synchronize in the end
     tend = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
     CUDAcommon::tmin.computeforces += elapsed_force.count();
     //@@@}
     #ifdef ADDITIONALINFO
-    FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+    FFM.computeEnergy(coord.data(), true);
     if(SysParams::RUNSTATE == false){
     int counter = 0;
     auto individualenergiesvec = MotorGhostInteractions::individualenergies;
@@ -130,11 +132,11 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #ifdef SERIAL // SERIAL
     //@@@{ STEP 3: COPY FORCES
     tbegin = chrono::high_resolution_clock::now();
-    Bead::getDbData().forcesAux = Bead::getDbData().forces;
-    Bead::getDbData().forcesAuxP = Bead::getDbData().forces;
+    searchDir = forcePrev = force;
     auto maxForce = maxF();
+    bool isForceBelowTol = forceBelowTolerance();
 
-    result.energiesBefore = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+    result.energiesBefore = FFM.computeEnergyHRMD(coord.data());
 
     tend = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_copy(tend - tbegin);
@@ -306,10 +308,10 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     //FIND MAXIMUM ERROR BETWEEN CUDA AND VECTORIZED FORCES{
     //VECTORIZED. Prep for Polak{
     tbegin = chrono::high_resolution_clock::now();
-    floatingpoint curGrad = CGMethod::allFDotF();
+    floatingpoint curGrad = searchDirDotSearchDir();
     Ms_isminimizationstate = true;
     Ms_issafestate = false;
-    Ms_isminimizationstate = maxForce > GRADTOL;
+    Ms_isminimizationstate = ! isForceBelowTol;
     bool ETOLexittstatus = false;
     //
 #ifdef DETAILEDOUTPUT
@@ -317,9 +319,8 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     long i = 0;
     long index = 0;
     for(auto b:Bead::getBeads()){
-        index = 3 * b->getStableIndex();
-        std::cout<<b->getId()<<" "<< b->coordinate() <<" "
-                "" << b->force() <<endl;
+        std::cout<<b->getId()<<" "<< b->coord <<" "
+                "" << b->force <<endl;
     }
     std::cout<<"printed beads & forces"<<endl;
 #endif
@@ -462,19 +463,21 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
 
         //compute new forces
-        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());//split and synchronize
+        FFM.computeForces(coord.data(), force);//split and synchronize
 #ifdef DETAILEDOUTPUT
+        // wARNING This output is no longer safe because it assumes bead
+        // coordinates start with index 0
         std::cout<<"MB printing beads & forces L "<<lambda<<endl;
         long i = 0;
         long index = 0;
         for(auto b:Bead::getBeads()){
-            index = 3 * b->getStableIndex();
+            index = 3 * b->getIndex();
 
             std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                     ""<<coord[index + 2]<<" "
                     ""<<forceAux[index]<<" "
                     ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-                    b->getStableIndex()<<endl;
+                    b->getIndex()<<endl;
         }
         std::cout<<"MB printed beads & forces"<<endl;
 #endif
@@ -722,21 +725,15 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         if (Ms_isminimizationstate) {
 #if defined(TRACKDIDNOTMINIMIZE) || defined(EVSALPHA)
             //Backup coordinate
-            /*const std::size_t num = Bead::getDbData().coords.size_raw();
-            Bead::getDbData().coords_bckup.resize(num);
-            Bead::getDbData().forces_bckup.resize(num);
-
-            for (size_t i = 0; i < num; ++i) {
-                Bead::getDbData().coords_bckup.value[i] = Bead::getDbData().coords.value[i];
-                Bead::getDbData().forces_bckup.value[i] = Bead::getDbData().forces.value[i];
-            }
-            calculateEvsalpha(FFM, lambda, LAMBDAMAX, allFDotFA());
-            cout<<endl;*/
+            coordBackup = coord;
+            forceBackup = force;
+            calculateEvsalpha(FFM, lambda, LAMBDAMAX, searchDirDotForce());
+            cout<<endl;
 
 #endif
             tbegin = chrono::high_resolution_clock::now();
             //SERIAL VERSION
-            moveBeads(lambda);
+	        moveAlongSearchDir(lambda);
             tend = chrono::high_resolution_clock::now();
             chrono::duration<floatingpoint> elapsed_other3(tend - tbegin);
             CUDAcommon::tmin.tother += elapsed_other3.count();
@@ -752,31 +749,33 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #endif
         ///@@@{ STEP 8 compute new forces
         tbegin = chrono::high_resolution_clock::now();
-        FFM.computeForces(Bead::getDbData().coords.data(),
-                            Bead::getDbData().forcesAux.data());//split and synchronize
+        FFM.computeForces(coord.data(), force);//split and synchronize
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
         CUDAcommon::tmin.computeforces += elapsed_force.count();
 
         maxForce = maxF();
+        isForceBelowTol = forceBelowTolerance();
 
-        if (M_ETolstate[0] && maxForce <= 2.5 * GRADTOL) {
+        if (M_ETolstate[0] && forceBelowRelaxedTolerance(2.5)) {
             ETOLexittstatus = true;
         } else
             M_ETolstate[0] = false;
         ///@@@}
 #ifdef DETAILEDOUTPUT
+        // wARNING This output is no longer safe because it assumes bead
+        // coordinates start with index 0
         std::cout<<"MB printing beads & forces L "<<lambda<<endl;
         long i = 0;
         long index = 0;
         for(auto b:Bead::getBeads()){
-            index = 3 * b->getStableIndex();
+            index = 3 * b->getIndex();
 
             std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                     ""<<coord[index + 2]<<" "
                     ""<<forceAux[index]<<" "
                     ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-                    b->getStableIndex()<<endl;
+                    b->getIndex()<<endl;
         }
         std::cout<<"MB printed beads & forces"<<endl;
 #endif
@@ -788,8 +787,8 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         tbegin = chrono::high_resolution_clock::now();
         //compute direction
 //        std::cout<<"serial"<<endl;
-        newGrad = CGMethod::allFADotFA();
-        prevGrad = CGMethod::allFADotFAP();
+        newGrad = forceDotForce();
+        prevGrad = forceDotForcePrev();
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runs2a(tend - tbegin);
@@ -828,7 +827,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 //        cout<<"lambda "<<lambda<<" beta "<<beta<<endl;
         if (Ms_isminimizationstate)
             //shift gradient
-            shiftGradient(beta);
+            shiftSearchDir(beta);
 
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_other4(tend - tbegin);
@@ -860,7 +859,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 
         //@@@{ STEP 10 vectorized copy
         tbegin = chrono::high_resolution_clock::now();
-        Bead::getDbData().forcesAuxP = Bead::getDbData().forcesAux;
+        forcePrev = force;
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_copy2(tend - tbegin);
         CUDAcommon::tmin.copyforces += elapsed_copy2.count();
@@ -885,7 +884,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         //Note: -grad E = ForceAux = -gk. Descent direction = dk = Force
 #ifdef TRACKDIDNOTMINIMIZE
         vector<floatingpoint>gradlocal;
-        gradlocal.push_back(CGMethod::allFDotFA());
+        gradlocal.push_back(searchDirDotForce());
         gradlocal.push_back(curGrad);
         gradlocal.push_back(newGrad);
         gradlocal.push_back(prevGrad);
@@ -893,11 +892,10 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         SysParams::Mininimization().gradientvec.push_back(gradlocal);
 #endif
 
-        Ms_issafestate = CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad);
-//        ||        abs(prevGrad/newGrad)<0.1;
+        Ms_issafestate = searchDirDotForce() <= 0 || areEqual(curGrad, newGrad);
         if (Ms_issafestate && Ms_isminimizationstate) {
             //The direction is reset of steepest descent direction (-gk).
-            shiftGradient(0.0);
+            shiftSearchDir(0.0);
             _safeMode = true;
             #ifdef OPTIMOUT
             safestatuscount++;
@@ -907,18 +905,18 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
             cout << "newGrad " << newGrad << " prevGrad " << prevGrad << " curGrad "
                     << curGrad << endl;
             cout << "beta " << beta << " prevbeta " << prevbeta << endl;
-            cout << "FDotFA<0 " << (CGMethod::allFDotFA() <= 0)
+            cout << "FDotFA<0 " << (searchDirDotForce() <= 0)
                     << " curGrad==newGrad "
                     <<
                     areEqual(curGrad, newGrad) << " abs(prevGrad/newGrad)<0.1 "
                     << (abs(prevGrad / newGrad) < 0.1) << endl;
-            calculateEvsalpha(FFM, lambda, LAMBDAMAX, allFDotFA());
+            calculateEvsalpha(FFM, lambda, LAMBDAMAX, searchDirDotForce());
             cout << endl;
 #endif
         }
         //Create back up coordinates to go to in case Energy minimization fails at an
         // undeisrable state.
-        if (maxForce < 10 * GRADTOL && numIter > N / 2) {
+        if (forceBelowRelaxedTolerance(10) && numIter > N / 2) {
             copycoordsifminimumE(maxForce);
         }
 
@@ -931,7 +929,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         tbegin = chrono::high_resolution_clock::now();
 #endif
         curGrad = newGrad;
-        Ms_isminimizationstate = maxForce > GRADTOL;
+        Ms_isminimizationstate = ! isForceBelowTol;
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runs1b(tend - tbegin);
@@ -969,7 +967,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         cout << "Maximum force in system = " << maxF() << endl;
         cout << "System energy..." << endl;
         #ifdef ADDITIONALINFO
-        FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+        FFM.computeEnergy(coord.data(), true);
         #endif
     }
 
@@ -990,7 +988,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         CUDAcommon::cudavars = cvars;
 #endif
         cout << "System energy..." << endl;
-        FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+        FFM.computeEnergy(coord.data(), true);
         CUDAcommon::tmin.computeenerycallszero++;
 #ifdef CUDAACCL
         for(auto strm:CUDAcommon::getCUDAvars().streamvec)
@@ -1004,9 +1002,6 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         auto b = maxBead();
         if (b != nullptr) b->getParent()->printSelf();
     }
-    // Reset backup coordinates with minimum Energy
-    Bead::getDbData().coords_minE.resize(0);
-
 
 
     #ifdef TRACKDIDNOTMINIMIZE
@@ -1043,7 +1038,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     SysParams::Mininimization().safeModeORnot.clear();
     SysParams::Mininimization().tempEnergyvec.clear();
     SysParams::Mininimization().gradientvec.clear();
-    FFM.computeEnergy(Bead::getDbData().coords.data(), false);
+    FFM.computeEnergy(coord.data(), false);
 
     #endif
 
@@ -1055,15 +1050,16 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     cvars.streamvec.clear();
     CUDAcommon::cudavars = cvars;
 #endif
-    result.energiesAfter = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
+    result.energiesAfter = FFM.computeEnergyHRMD(coord.data());
 #ifdef OPTIMOUT
     cout<<"Energy after minimization"<<endl;
-    FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+    FFM.computeEnergy(coord.data(), true);
     CUDAcommon::tmin.computeenerycallszero++;
     cout<<endl;
 #endif
     //final force calculation
-    FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
+    FFM.computeForces(coord.data(), force);
+    searchDir = force;
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
@@ -1088,10 +1084,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
-#ifdef SERIAL
-    Bead::getDbData().forcesAux = Bead::getDbData().forces;
 
-#endif
 #ifdef CUDAACCL
     CUDAcommon::handleerror(cudaFreeHost(Mmh_stop));
     CUDAcommon::handleerror(cudaFree(Mmg_stop1));
@@ -1134,6 +1127,8 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 
     //@ STEP 11 END MINIMIZATION
     tbegin = chrono::high_resolution_clock::now();
+    // Copy the coordinate and force data back to the system
+    copyFromCGMethodData(*this);
     endMinimization();
 
 #ifdef CUDATIMETRACK
@@ -1152,8 +1147,8 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 
     // compute the Hessian matrix at this point if the feature is enabled
     if(SysParams::Mechanics().hessTracking){
-        int total_DOF = Bead::getDbData().coords.size_raw();
-        FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, SysParams::Mechanics().hessDelta);
+        int total_DOF = coord.size();
+        FFM.computeHessian(coord.data(), force.data(), total_DOF, SysParams::Mechanics().hessDelta);
     }
 
 
@@ -1167,8 +1162,8 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;
     for(auto b:Bead::getBeads()){
-        std::cout<<b->getId()<<" "<< b->coordinate() <<" "
-                ""<<b->force() <<endl;
+        std::cout<<b->getId()<<" "<< b->coord <<" "
+                ""<<b->force <<endl;
     }
     std::cout<<"printed beads & forces"<<endl;
 #endif
@@ -1195,7 +1190,7 @@ void PolakRibiere::calculateEvsalpha(ForceFieldManager &FFM, floatingpoint lambd
 //		cout<<alpha<<" ";
 //	}
 //	cout<<endl;
-    floatingpoint energyzerolambda = FFM.computeEnergy(Bead::getDbData().coords_bckup.data());
+    floatingpoint energyzerolambda = FFM.computeEnergy(coordBackup.data());
     cout<<"Energy zero lambda "<<energyzerolambda<<" "<<endl;
     cout<<"Lambda = [";
     for(floatingpoint alpha=LAMBDAMAX;alpha>=1e-4;alpha=alpha*LAMBDAREDUCE){
@@ -1207,12 +1202,11 @@ void PolakRibiere::calculateEvsalpha(ForceFieldManager &FFM, floatingpoint lambd
     cout<<"Energy = [";
     for(floatingpoint alpha=LAMBDAMAX;alpha>=1e-4;alpha=alpha*LAMBDAREDUCE){
         //moveBeads
-        const std::size_t num = Bead::getDbData().coords_bckup.size_raw();
-        Bead::getDbData().coordsStr.resize(num);
+        const auto num = coordBackup.size();
+        coordLineSearch.resize(num);
         for(size_t i = 0; i < num; ++i)
-            Bead::getDbData().coordsStr.value[i] = Bead::getDbData().coords_bckup
-                    .value[i] + alpha * Bead::getDbData().forces_bckup.value[i];
-        floatingpoint energy = FFM.computeEnergy(Bead::getDbData().coordsStr.data());
+            coordLineSearch[i] = coordBackup[i] + alpha * forceBackup[i];
+        floatingpoint energy = FFM.computeEnergy<true>(coordLineSearch.data());
         cout<<energy<<" ";
         if(count > 10)
             exityes = true;

@@ -224,10 +224,10 @@ floatingpoint BranchingDihedralCosine::energy(
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
         midPointCoordinate(mp, coord1, coord2, pos[i]);
 
@@ -279,15 +279,15 @@ floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoin
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
-        f4 = &f[3 * beadSet[n * i + 3]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
+        f4 = &f[beadSet[n * i + 3]];
 
         midPointCoordinateStretched(mp, coord1, f1, coord2, f2, pos[i], d);
 
@@ -358,18 +358,18 @@ void BranchingDihedralCosine::forces(
     for(int i = 0; i < nint; i += 1) {
 
         for(int j = 0; j < 3; j++){
-            coord1[j] = coord[3 * beadSet[n * i]+ j];
-            coord2[j] = coord[3 * beadSet[n * i + 1]+ j];
-            coord3[j] = coord[3 * beadSet[n * i + 2]+ j];
-            coord4[j] = coord[3 * beadSet[n * i + 3]+ j];
+            coord1[j] = coord[beadSet[n * i]+ j];
+            coord2[j] = coord[beadSet[n * i + 1]+ j];
+            coord3[j] = coord[beadSet[n * i + 2]+ j];
+            coord4[j] = coord[beadSet[n * i + 3]+ j];
         }
 
         midPointCoordinate<double>(mp, coord1, coord2, pos[i]);
 
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
-        f4 = &f[3 * beadSet[n * i + 3]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
+        f4 = &f[beadSet[n * i + 3]];
 
         //@ LAMMPS version test
         // 1st bond
@@ -716,10 +716,10 @@ dataType BranchingDihedralCosine::energyininteractionperturbed(
     //@}
 
     for(int j = 0; j < 3; j++){
-        coord1[j] = coord[3 * beadSet[n * i]+ j];
-        coord2[j] = coord[3 * beadSet[n * i + 1]+ j];
-        coord3[j] = coord[3 * beadSet[n * i + 2]+ j];
-        coord4[j] = coord[3 * beadSet[n * i + 3]+ j];
+        coord1[j] = coord[beadSet[n * i]+ j];
+        coord2[j] = coord[beadSet[n * i + 1]+ j];
+        coord3[j] = coord[beadSet[n * i + 2]+ j];
+        coord4[j] = coord[beadSet[n * i + 3]+ j];
     }
 
     if(perturbcoord != -1 && perturbaxis != -1){
@@ -840,7 +840,7 @@ void BranchingDihedralCosine::testdihedral(){
 	vector<floatingpoint> coord ={100, 100, 100, 100, 100, 300, 100, 200, 200, 80, 200,
 							   300};
 	vector<floatingpoint> force={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-	vector<unsigned int> beadSet ={0, 1, 2, 3};
+	vector<unsigned int> beadSet ={0, 3, 6, 9};
 	vector<floatingpoint> kdih ={50.0};
 	vector<floatingpoint> pos = {0.5};
 	vector<floatingpoint> stretchForce ={0.0, 0.0, 0.0};

@@ -204,10 +204,10 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, int *beadSet,
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
         L1 = sqrt(scalarProduct(coord1, coord2,
                                 coord1, coord2));
@@ -265,15 +265,15 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
-        force1 = &f[3 * beadSet[n * i]];
-        force2 = &f[3 * beadSet[n * i + 1]];
-        force3 = &f[3 * beadSet[n * i + 2]];
-        force4 = &f[3 * beadSet[n * i + 3]];
+        force1 = &f[beadSet[n * i]];
+        force2 = &f[beadSet[n * i + 1]];
+        force3 = &f[beadSet[n * i + 2]];
+        force4 = &f[beadSet[n * i + 3]];
 
 
         L1 = sqrt(scalarProductStretched(coord1, force1, coord2, force2,
@@ -335,15 +335,15 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
-        force1 = &f[3 * beadSet[n * i]];
-        force2 = &f[3 * beadSet[n * i + 1]];
-        force3 = &f[3 * beadSet[n * i + 2]];
-        force4 = &f[3 * beadSet[n * i + 3]];
+        force1 = &f[beadSet[n * i]];
+        force2 = &f[beadSet[n * i + 1]];
+        force3 = &f[beadSet[n * i + 2]];
+        force4 = &f[beadSet[n * i + 3]];
 
         L1 = sqrt(scalarProduct(coord1, coord2,
                                 coord1, coord2));

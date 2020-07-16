@@ -350,11 +350,11 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSe
 //    std::cout<<"SERL ecvol nint "<<nint<<endl;
 	for (int i = 0; i < nint; i++) {
 
-		c1 = &coord[3 * beadSet[n * i]];
-		c2 = &coord[3 * beadSet[n * i + 1]];
-		c2temp = &coord[3 * beadSet[n * i + 1]];
-		c3 = &coord[3 * beadSet[n * i + 2]];
-		c4 = &coord[3 * beadSet[n * i + 3]];
+		c1 = &coord[beadSet[n * i]];
+		c2 = &coord[beadSet[n * i + 1]];
+		c2temp = &coord[beadSet[n * i + 1]];
+		c3 = &coord[beadSet[n * i + 2]];
+		c4 = &coord[beadSet[n * i + 3]];
 
 		floatingpoint trialvec[4]={0.01, 0.1, 1.0, 2.7};
 		uint trial = 0;
@@ -448,17 +448,17 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSe
 			   || U_i != U_i || U_i < -1.0) {
 				short found = 0;
 				for (auto cyl:Cylinder::getCylinders()) {
-					auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-					auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
+					auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
+					auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
 					if (dbIndex1 == beadSet[n * i] &&
-					    dbIndex2 == beadSet[n * i + 1]) {
+					    dbIndex2 == beadSet[n * i + 1]) { // FIXME this is unsafe
 						CylinderVolumeInteractions::_cylinderCulprit1 = cyl;
 						found++;
 						if (found >= 2)
 							break;
 					} else if (dbIndex1 == beadSet[n * i + 2] &&
 					           dbIndex2 == beadSet[n * i +
-					                               3]) {
+					                               3]) { // FIXME this is unsafe
 						CylinderVolumeInteractions::_cylinderCulprit2 = cyl;
 						found++;
 						if (found >= 2)
@@ -522,17 +522,17 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSe
 				else {
 					short found = 0;
 					for (auto cyl:Cylinder::getCylinders()) {
-						auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-						auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
+						auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
+						auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
 						if (dbIndex1 == beadSet[n * i] &&
-						    dbIndex2 == beadSet[n * i + 1]) {
+						    dbIndex2 == beadSet[n * i + 1]) { // FIXME this is not safe
 							CylinderVolumeInteractions::_cylinderCulprit1 = cyl;
 							found++;
 							if (found >= 2)
 								break;
 						} else if (dbIndex1 == beadSet[n * i + 2] &&
 						           dbIndex2 == beadSet[n * i +
-						                               3]) {
+						                               3]) { // FIXME this is not safe
 							CylinderVolumeInteractions::_cylinderCulprit2 = cyl;
 							found++;
 							if (found >= 2)
@@ -623,16 +623,16 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 
 	for (int i = 0; i < nint; i++) {
 
-		c1us = &coord[3 * beadSet[n * i]];
-		c2us = &coord[3 * beadSet[n * i +1]];
-		c3us = &coord[3 * beadSet[n * i +2]];
-		c4us = &coord[3 * beadSet[n * i +3]];
+		c1us = &coord[beadSet[n * i]];
+		c2us = &coord[beadSet[n * i +1]];
+		c3us = &coord[beadSet[n * i +2]];
+		c4us = &coord[beadSet[n * i +3]];
 
 		//stretch coords
-		f1 = &f[3 * beadSet[n * i]];
-		f2 = &f[3 * beadSet[n * i + 1]];
-		f3 = &f[3 * beadSet[n * i + 2]];
-		f4 = &f[3 * beadSet[n * i + 3]];
+		f1 = &f[beadSet[n * i]];
+		f2 = &f[beadSet[n * i + 1]];
+		f3 = &f[beadSet[n * i + 2]];
+		f4 = &f[beadSet[n * i + 3]];
 
 		c1[0] = c1us[0] + z * f1[0];
 		c1[1] = c1us[1] + z * f1[1];
@@ -658,16 +658,16 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 			   || U_i != U_i || U_i < -1.0) {
 				short found = 0;
 				for(auto cyl:Cylinder::getCylinders()){
-					auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-					auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
-					if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
+					auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
+					auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
+					if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) { // FIXME this is not safe
 						CylinderVolumeInteractions::_cylinderCulprit1 = cyl;
 						found++;
 						if(found>=2)
 							break;
 					}
 					else if(dbIndex1 == beadSet[n * i + 2] && dbIndex2 == beadSet[n * i +
-					                                                              3]){
+					                                                              3]){ // FIXME this is not safe
 						CylinderVolumeInteractions::_cylinderCulprit2 = cyl;
 						found++;
 						if(found>=2)
@@ -727,16 +727,16 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 		   || U_i != U_i || U_i < -1.0) {
 			short found = 0;
 			for(auto cyl:Cylinder::getCylinders()){
-				auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-				auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
-				if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
+				auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
+				auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
+				if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) { // FIXME this is not safe
 					CylinderVolumeInteractions::_cylinderCulprit1 = cyl;
 					found++;
 					if(found>=2)
 						break;
 				}
 				else if(dbIndex1 == beadSet[n * i + 2] && dbIndex2 == beadSet[n * i +
-				                                                              3]){
+				                                                              3]){ // FIXME this is not safe
 					CylinderVolumeInteractions::_cylinderCulprit2 = cyl;
 					found++;
 					if(found>=2)
@@ -790,16 +790,16 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 	newc2 = new floatingpoint[3];
 	for (int i = 0; i < nint; i++) {
 
-		c1 = &coord[3 * beadSet[n * i]];
-		c2 = &coord[3 * beadSet[n * i + 1]];
-		c3 = &coord[3 * beadSet[n * i + 2]];
-		c4 = &coord[3 * beadSet[n * i + 3]];
+		c1 = &coord[beadSet[n * i]];
+		c2 = &coord[beadSet[n * i + 1]];
+		c3 = &coord[beadSet[n * i + 2]];
+		c4 = &coord[beadSet[n * i + 3]];
 
 		//stretch coords
-		f1 = &f[3 * beadSet[n * i]];
-		f2 = &f[3 * beadSet[n * i + 1]];
-		f3 = &f[3 * beadSet[n * i + 2]];
-		f4 = &f[3 * beadSet[n * i + 3]];
+		f1 = &f[beadSet[n * i]];
+		f2 = &f[beadSet[n * i + 1]];
+		f3 = &f[beadSet[n * i + 2]];
+		f4 = &f[beadSet[n * i + 3]];
 
 		if(false) {
 			//check if in same plane
@@ -1018,10 +1018,10 @@ floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord,
 
 	int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
 
-	c1 = &coord[3 * beadSet[n * i]];
-	c2 = &coord[3 * beadSet[n * i + 1]];
-	c3 = &coord[3 * beadSet[n * i + 2]];
-	c4 = &coord[3 * beadSet[n * i + 3]];
+	c1 = &coord[beadSet[n * i]];
+	c2 = &coord[beadSet[n * i + 1]];
+	c3 = &coord[beadSet[n * i + 2]];
+	c4 = &coord[beadSet[n * i + 3]];
 
 	a = scalarProduct(c1, c2, c1, c2);//always positive
 	b = scalarProduct(c3, c4, c3, c4);//always positive
@@ -1110,15 +1110,15 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 
 	int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
 
-	c1 = &coord[3 * beadSet[n * i]];
-	c2 = &coord[3 * beadSet[n * i + 1]];
-	c3 = &coord[3 * beadSet[n * i + 2]];
-	c4 = &coord[3 * beadSet[n * i + 3]];
+	c1 = &coord[beadSet[n * i]];
+	c2 = &coord[beadSet[n * i + 1]];
+	c3 = &coord[beadSet[n * i + 2]];
+	c4 = &coord[beadSet[n * i + 3]];
 
-	f1 = &f[3 * beadSet[n * i]];
-	f2 = &f[3 * beadSet[n * i + 1]];
-	f3 = &f[3 * beadSet[n * i + 2]];
-	f4 = &f[3 * beadSet[n * i + 3]];
+	f1 = &f[beadSet[n * i]];
+	f2 = &f[beadSet[n * i + 1]];
+	f3 = &f[beadSet[n * i + 2]];
+	f4 = &f[beadSet[n * i + 3]];
 
 	a = scalarProduct(c1, c2, c1, c2);//always positive
 	b = scalarProduct(c3, c4, c3, c4);//always positive
@@ -1253,15 +1253,15 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 		short found = 0;
 		Cylinder *cyl1 = nullptr, *cyl2 = nullptr;
 		for(auto cyl:Cylinder::getCylinders()){
-			auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-			auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
-			if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
+			auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
+			auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
+			if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) { // FIXME this is not safe
 				cyl1 = cyl;
 				found++;
 				if(found>=2)
 					break;
 			}
-			else if(dbIndex1 == beadSet[n * i + 2] && dbIndex2 == beadSet[n * i + 3]){
+			else if(dbIndex1 == beadSet[n * i + 2] && dbIndex2 == beadSet[n * i + 3]){ // FIXME this is not safe
 				cyl2 = cyl;
 				found++;
 				if(found>=2)
