@@ -90,6 +90,12 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
+    #ifdef OPTIMOUT
+    cout<<"Energy before minimization"<<endl;
+    FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+    CUDAcommon::tmin.computeenerycallszero++;
+    cout<<endl;
+    #endif
     //@@@{ STEP 2: COMPUTE FORCES
     tbegin = chrono::high_resolution_clock::now();
     FFM.computeForces(Bead::getDbData().coords.data(),
