@@ -309,7 +309,6 @@ void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f,
         r1y = coord3[1] - v1[1];
         r1z = coord3[2] - v1[2];
 
-
         f1[0] +=  -f0 * ( r1x ) * (pos[i] - 1);
         f1[1] +=  -f0 * ( r1y ) * (pos[i] - 1);
         f1[2] +=  -f0 * ( r1z ) * (pos[i] - 1);

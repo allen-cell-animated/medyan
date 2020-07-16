@@ -23,7 +23,7 @@ class Bead;
 class FilamentStretchingHarmonicandBendingCosine {
 
 public:
-/*	void energy(floatingpoint *coord, std::size_t nint, int *beadSet,
+	void energy(floatingpoint *coord, std::size_t nint, int *beadSet,
 	            floatingpoint *kstr, floatingpoint *kbend, floatingpoint *eql,
 	            floatingpoint *eqt, floatingpoint* totalenergy, const int startID, const
 	            int endID, int threadID);
@@ -39,7 +39,7 @@ public:
 	void forces(floatingpoint *coord,  floatingpoint *f,
 				int *beadSetsansbending, floatingpoint *kstrsansbending,
 				floatingpoint *eqlsansbending,
-				const int startID, const int endID, int threadID);*/
+				const int startID, const int endID, int threadID);
 
     void energy(floatingpoint *coord, std::size_t nint, int * cylSet,
                 floatingpoint *cyllengthset, floatingpoint *cylbenddotproduct,

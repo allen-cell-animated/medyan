@@ -22,7 +22,7 @@
 
 using namespace mathfunc;
 
-/*void FilamentStretchingHarmonicandBendingCosine::forces(floatingpoint *coord,
+void FilamentStretchingHarmonicandBendingCosine::forces(floatingpoint *coord,
                                    floatingpoint *f, size_t nint, int *beadSet,
                                    floatingpoint *kstr, floatingpoint *kbend,
                                    floatingpoint *eql, floatingpoint *eqt){
@@ -343,7 +343,7 @@ void FilamentStretchingHarmonicandBendingCosine::energy(floatingpoint *coord, in
     totalenergy[3*threadID + 1] = U;
     return;
 
-}*/
+}
 
 ///@@@@@{
 void FilamentStretchingHarmonicandBendingCosine::energy(floatingpoint *coord, std::size_t nint, int * cylSet,

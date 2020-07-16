@@ -273,18 +273,18 @@ floatingpoint FilamentStretchingandBending<FStretchingandBendingInteractionType>
 void FilamentStretchingandBending<FStretchingandBendingInteractionType>::computeForces
 (floatingpoint *coord, floatingpoint *f) {
 #ifdef SERIAL
-     const int startID = 0;
+/*     const int startID = 0;
      int threadID = 0;
     _FFType.forces(coord, f, _numhybridInteractions, beadSet, cylSet, cyllengthset, cylbenddotproduct,
          kstr, kbend, eql, eqt);
     _FFType.forces(coord, f,  beadSet, cylSetcylsansbending, cyllengthset, beadSetcylsansbending,
-         kstrsansbending, eqlsansbending, startID, _strnumInteractions, threadID);
+         kstrsansbending, eqlsansbending, startID, _strnumInteractions, threadID);*/
 
-/*	_FFType.forces(coord, f, _numhybridInteractions, beadSet, kstr, kbend, eql, eqt);
+	_FFType.forces(coord, f, _numhybridInteractions, beadSet, kstr, kbend, eql, eqt);
      const int startID = 0;
      int threadID = 0;
 	_FFType.forces(coord, f, beadSetcylsansbending, kstrsansbending, eqlsansbending, startID,
-	        _strnumInteractions, threadID);*/
+	        _strnumInteractions, threadID);
 #endif
 #ifdef DETAILEDOUTPUT
 	floatingpoint maxF = 0.0;
