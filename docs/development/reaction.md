@@ -24,18 +24,13 @@ Below is a brief introduction of what a `Reaction<M,N>` can do, including its co
 
 **(Constructor)** The `ReactionBase` constructor will handle the initialization of reaction rate and factors. The `Reaction<M,N>` constructor will store the address of all the associated species, and then register all other activated reactions that have any reactant species showing up in reactant/product species of this reaction as dependents (ie the change of any species in this reaction will affect the propensities of all the dependent reactions). It also records the address of itself in all associated species.
 
----
-ℹ️ The constructor by default sets the new reaction to be **passivated**.
+> ℹ️ The constructor by default sets the new reaction to be **passivated**.
 
----
 
 **(Destructor)** The `Reaction<M,N>` destructor will unregister itself from all associated species.
 
----
-⚠️ To avoid dangling pointers, the address of each reaction should not be changed during its lifespan.
-<br/>
-⚠️ All the associated species of a reaction should remain valid and have the address unchanged during the reaction's lifespan.
-
----
+> ⚠️ To avoid dangling pointers, the address of each reaction should not be changed during its lifespan.
+>
+> ⚠️ All the associated species of a reaction should remain valid and have the address unchanged during the reaction's lifespan.
 
 TODO: other functions
