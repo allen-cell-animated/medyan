@@ -130,12 +130,14 @@ void Cylinder::initializerestart(int nummonomers, int firstmonomer, int lastmono
 
 Cylinder::~Cylinder() noexcept {
     #ifdef CROSSCHECK_CYLINDER
-    cout<<"Cylinder deleted "<<getId()<<endl;
+    cout<<"Cylinder deleting "<<getId()<<endl;
     #endif
 
     //remove from compartment
     _cellElement.manager->removeElement(_cellElement);
-    
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"Cylinder deleted "<<getId()<<endl;
+    #endif
 }
 
 /// Get filament type
