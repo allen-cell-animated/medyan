@@ -39,8 +39,8 @@ void FilamentStretchingandBending<FBendingInteractionType>::precomputevars(
     if(Bead::numElements() >= 1) {
 	    for (auto b = 0; b < Bead::numElements()-1; b++) {
 		    if (fetchcoordsstatus) {
-			    coord1 = &coord[3 * beadSetall[b]];
-			    coord2 = &coord[3 * beadSetall[b + 1]];
+			    coord1 = &coord[n * beadSetall[b]];
+			    coord2 = &coord[n * beadSetall[b + 1]];
 		    } else {
 			    coord1 = coord2;
 			    coord2 = coord3;
@@ -51,7 +51,7 @@ void FilamentStretchingandBending<FBendingInteractionType>::precomputevars(
 		    }
 		    fetchcoordsstatus = true;
 		    if (beadtriplet_hingestatus[b]) {
-			    coord3 = &coord[3 * beadSetall[b + 2]];
+			    coord3 = &coord[n * beadSetall[b + 2]];
 			    cylbenddotproduct[hingecount] = scalarProduct(coord1, coord2, coord2,
 			                                                  coord3);
 			    hingecount++;
@@ -273,18 +273,19 @@ floatingpoint FilamentStretchingandBending<FStretchingandBendingInteractionType>
 void FilamentStretchingandBending<FStretchingandBendingInteractionType>::computeForces
 (floatingpoint *coord, floatingpoint *f) {
 #ifdef SERIAL
-/*     const int startID = 0;
+	 precomputevars(coord, cyllengthset, cylbenddotproduct);
+     const int startID = 0;
      int threadID = 0;
     _FFType.forces(coord, f, _numhybridInteractions, beadSet, cylSet, cyllengthset, cylbenddotproduct,
          kstr, kbend, eql, eqt);
     _FFType.forces(coord, f,  beadSet, cylSetcylsansbending, cyllengthset, beadSetcylsansbending,
-         kstrsansbending, eqlsansbending, startID, _strnumInteractions, threadID);*/
+         kstrsansbending, eqlsansbending, startID, _strnumInteractions, threadID);
 
-	_FFType.forces(coord, f, _numhybridInteractions, beadSet, kstr, kbend, eql, eqt);
+/*	_FFType.forces(coord, f, _numhybridInteractions, beadSet, kstr, kbend, eql, eqt);
      const int startID = 0;
      int threadID = 0;
 	_FFType.forces(coord, f, beadSetcylsansbending, kstrsansbending, eqlsansbending, startID,
-	        _strnumInteractions, threadID);
+	        _strnumInteractions, threadID);*/
 #endif
 #ifdef DETAILEDOUTPUT
 	floatingpoint maxF = 0.0;
