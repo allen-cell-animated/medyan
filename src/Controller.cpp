@@ -1399,8 +1399,12 @@ void Controller::run() {
             	factor = 10.0;
 #endif
             floatingpoint chemistryTime = _minimizationTime/factor;
-            //1 ms
-//            chemistryTime = 0.001;
+            #ifdef CROSSCHECK_CYLINDER
+            string crosscheckchemname = _outputDirectory + "crosscheckChem.traj";
+            if(CController::_crosscheckdumpFilechem.is_open())
+                CController::_crosscheckdumpFilechem.close();
+            CController::_crosscheckdumpFilechem.open(crosscheckchemname);
+            #endif
             auto var = !_cController.run(chemistryTime);
             mine= chrono::high_resolution_clock::now();
             chrono::duration<floatingpoint> elapsed_runchem(mine - mins);

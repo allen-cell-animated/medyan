@@ -110,7 +110,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     // Update the stored data
     updateData();
     #ifdef CROSSCHECK_CYLINDER
-    cout<<"Cylinder created "<<getId()<<endl;
+    cout<<"Cylinder created "<<getId()<<" "<<getStableIndex()<<endl;
     #endif
 }
 
@@ -130,7 +130,7 @@ void Cylinder::initializerestart(int nummonomers, int firstmonomer, int lastmono
 
 Cylinder::~Cylinder() noexcept {
     #ifdef CROSSCHECK_CYLINDER
-    cout<<"Cylinder deleting "<<getId()<<endl;
+    cout<<"Cylinder deleting "<<getId()<<" "<<getStableIndex()<<endl;
     #endif
 
     //remove from compartment

@@ -202,7 +202,22 @@ bool ChemNRMImpl::makeStep() {
         _dt->updateDelGChem(react);
         }
     }
+    #ifdef CROSSCHECK_CYLINDER
+    auto _react = rn->getReaction();
+    auto _a = rn->getPropensity();
+    Compartment* c = static_cast<Compartment*>(_react->getParent());
+    auto coord = c->coordinates();
+    CController::_crosscheckdumpFilechem << "RNodeNRM: ptr=" << this <<", tau=" <<
+    rn->getTau() <<
+         ", a=" << _a <<" in Compartment "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<
+         ", points to Reaction:\n";
+    CController::_crosscheckdumpFilechem << (*_react);
+    #endif
     rn->makeStep();
+
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Update dependencies"<<endl;
+    #endif
 
 	#ifdef DEBUGCONSTANTSEED
     cout<<"tau "<<_t<<endl;
@@ -274,10 +289,17 @@ bool ChemNRMImpl::makeStep() {
             rn_other->updateHeap();
         }
     }
+
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"emitSignal"<<endl;
+    #endif
 #ifdef REACTION_SIGNALING
     // Send signal
     r->emitSignal();
 #endif
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"----"<<endl;
+    #endif
 //	cout<<"af "<<Rand::chemistrycounter<<" "<<Rand::intcounter<<" "
 //	                                                            ""<<Rand::floatcounter<<endl;
     return true;

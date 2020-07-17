@@ -31,6 +31,9 @@
 #include <thrust/binary_search.h>
 #include <cstdlib>
 #include <thrust/scan.h>*/
+#ifdef CROSSCHECK_CYLINDER
+#include "CController.h"
+#endif
 
 vector<short> HybridBindingSearchManager::HNLIDvec;
 using namespace mathfunc;
@@ -1036,6 +1039,10 @@ void HybridBindingSearchManager::addtoHNeighborList(){
 vector<tuple<CCylinder*, short>>
 HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
 
+	#ifdef CROSSCHECK_CYLINDER
+	CController::_crosscheckdumpFilechem <<"Choosing site"<<endl;
+	#endif
+
     short idx = idvec[0];
     short idx2 = idvec[1];
     auto fpairs = _filamentIDvec[idx].data();
@@ -1073,6 +1080,11 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
 	    short bsitepos1 = mask & site1;
 	    short bsitepos2 = mask & site2;
 
+	    #ifdef CROSSCHECK_CYLINDER
+	    CController::_crosscheckdumpFilechem <<"Chosen cindices, pos "<<cIndex1<<" "
+	                <<cIndex2<<" "<<bsitepos1<<" "<<bsitepos2<<endl;
+	    #endif
+
 	    CCylinder *ccyl1;
 	    CCylinder *ccyl2;
 
@@ -1087,6 +1099,9 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
 	    tuple<CCylinder *, short> t1 = make_tuple(ccyl1, bindingSite1);
 	    tuple<CCylinder *, short> t2 = make_tuple(ccyl2, bindingSite2);
 
+	    #ifdef CROSSCHECK_CYLINDER
+	    CController::_crosscheckdumpFilechem <<"Chosen!"<<endl;
+	    #endif
 	    return vector<tuple<CCylinder *, short>>{t1, t2};
     }
 }
