@@ -125,7 +125,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::vectorize(const FFCoord
 
         }
         nneighbors[idb] = idx;
-        bubbleSet[idb] = bb->getBead()->getIndex() * 3 + si.bead;
+        bubbleSet[idb] = bb->getIndex() * 3 + si.bubble;
         radius[idb] = bb->getRadius();
         cumnn+=idx;
 //        nintvec[idb] = cumnn;
@@ -164,9 +164,14 @@ namespace {
 
 template< typename InteractionType >
 void bubbleCylinderRepulsionLoadForce(
-    const InteractionType& interaction, floatingpoint radius, floatingpoint kRep, floatingpoint screenLen,
-    const Bead& bo, Bead& bd, typename BubbleCylinderRepulsion< InteractionType >::LoadForceEnd end,
-    Bead* bbb
+    const InteractionType& interaction,
+    floatingpoint          radius,
+    floatingpoint          kRep,
+    floatingpoint          screenLen,
+    const Bead&            bo,
+    Bead&                  bd,
+    typename BubbleCylinderRepulsion< InteractionType >::LoadForceEnd end,
+    const Vec< 3, floatingpoint >& bubbleCoord
 ) {
     using LoadForceEnd = typename BubbleCylinderRepulsion< InteractionType >::LoadForceEnd;
 
@@ -186,8 +191,8 @@ void bubbleCylinderRepulsionLoadForce(
 
         // Projection magnitude ratio on the direction of the cylinder
         // (Effective monomer size) = (monomer size) * proj
-        const auto proj = std::max< floatingpoint >(dot(normalizedVector(bbb->coordinate() - newCoord), dir), 0.0);
-        const auto loadForce = interaction.loadForces(bbb, &bd, radius, kRep, screenLen);
+        const auto proj = std::max< floatingpoint >(dot(normalizedVector(bubbleCoord - newCoord), dir), 0.0);
+        const auto loadForce = interaction.loadForces(bubbleCoord, bd.coord, radius, kRep, screenLen);
 
         // The load force stored in bead also considers effective monomer size.
         loadForces[i] += proj * loadForce;
@@ -237,22 +242,20 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
             
             floatingpoint radius = bb->getRadius();
             
-            Bead* bd1 = bb->getBead();
-            
             Cylinder* c = _neighborList->getNeighbors(bb)[ni];
 
             if(c->isPlusEnd()) {
                 bubbleCylinderRepulsionLoadForce(
                     _FFType, radius, kRep, screenLength,
                     *c->getFirstBead(), *c->getSecondBead(), LoadForceEnd::Plus,
-                    bd1
+                    bb->coord
                 );
             }
             if(c->isMinusEnd()) {
                 bubbleCylinderRepulsionLoadForce(
                     _FFType, radius, kRep, screenLength,
                     *c->getSecondBead(), *c->getFirstBead(), LoadForceEnd::Minus,
-                    bd1
+                    bb->coord
                 );
             }
         }
@@ -283,8 +286,6 @@ void BubbleCylinderRepulsion< InteractionType >::computeLoadForce(Cylinder* c, L
             
             floatingpoint radius = bb->getRadius();
             
-            Bead* bd1 = bb->getBead();
-            
             Cylinder* cyl = _neighborList->getNeighbors(bb)[ni];
             if(cyl == c) {
                 bubbleCylinderRepulsionLoadForce(
@@ -292,7 +293,7 @@ void BubbleCylinderRepulsion< InteractionType >::computeLoadForce(Cylinder* c, L
                     (end == LoadForceEnd::Plus ? *c->getFirstBead() : *c->getSecondBead()),
                     (end == LoadForceEnd::Plus ? *c->getSecondBead() : *c->getFirstBead()),
                     end,
-                    bd1
+                    bb->coord
                 );
                 break;
             }

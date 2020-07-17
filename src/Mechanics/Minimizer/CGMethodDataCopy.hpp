@@ -25,6 +25,7 @@
 #include "Mechanics/ForceField/Types.hpp"
 #include "Mechanics/Minimizer/CGMethod.h"
 #include "Structure/Bead.h"
+#include "Structure/Bubble.h"
 
 // Copies all the system data to the CGMethod data vector
 inline FFCoordinateStartingIndex initCGMethodData(
@@ -44,6 +45,15 @@ inline FFCoordinateStartingIndex initCGMethodData(
     si.bead = curIdx;
     cg.coord.reserve(cg.coord.size() + 3 * Bead::getBeads().size());
     for(auto pb : Bead::getBeads()) {
+        cg.coord.insert(cg.coord.end(), pb->coord.begin(), pb->coord.end());
+        curIdx += 3;
+    }
+    cg.forceTol.resize(cg.coord.size(), defaultGradTol);
+
+    // Bubble coord
+    si.bubble = curIdx;
+    cg.coord.reserve(cg.coord.size() + 3 * Bubble::getBubbles().size());
+    for(auto pb : Bubble::getBubbles()) {
         cg.coord.insert(cg.coord.end(), pb->coord.begin(), pb->coord.end());
         curIdx += 3;
     }
@@ -80,6 +90,13 @@ inline void copyFromCGMethodData(const CGMethod& cg) {
 
     // Copy coord and force data to beads
     for(auto pb : Bead::getBeads()) {
+        std::copy(cg.coord.begin() + curIdx, cg.coord.begin() + curIdx + 3, pb->coord.begin());
+        std::copy(cg.force.begin() + curIdx, cg.force.begin() + curIdx + 3, pb->force.begin());
+        curIdx += 3;
+    }
+
+    // Copy coord and force data to bubbles
+    for(auto pb : Bubble::getBubbles()) {
         std::copy(cg.coord.begin() + curIdx, cg.coord.begin() + curIdx + 3, pb->coord.begin());
         std::copy(cg.force.begin() + curIdx, cg.force.begin() + curIdx + 3, pb->force.begin());
         curIdx += 3;

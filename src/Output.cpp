@@ -157,7 +157,7 @@ void BasicSnapshot::print(int snapshot) {
                                     bubble->getType() << endl;
 
         //print coordinates
-        auto x = bubble->coordinate;
+        const auto& x = bubble->coord;
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
     }
 
@@ -252,7 +252,7 @@ void BirthTimes::print(int snapshot) {
                                     bubble->getType() << endl;
 
         //print birth times
-        _outputFile << bubble->getBead()->getBirthTime() << endl;
+        _outputFile << bubble->getBirthTime() << endl;
     }
 
     _outputFile <<endl;
