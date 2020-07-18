@@ -45,19 +45,19 @@ floatingpoint MTOCAttachmentHarmonic::energy(
         if(fabs(U_i) == numeric_limits<double>::infinity()
         || U_i != U_i || U_i < -1.0) {
 	        for(auto mtoc : MTOC::getMTOCs()) {
-		        Bubble* b1 = mtoc->getBubble();
-	        	if(b1->getIndex() * 3 + bubbleStartIndex != beadSet[n*i]) continue;
-		        BubbleInteractions::_bubbleCulprit = mtoc->getBubble();
-		        for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
-			        Filament *f = mtoc->getFilaments()[fIndex];
-			        if(
-						f->getMinusEndCylinder()->getFirstBead()->getIndex() * 3 + beadStartIndex
-						== beadSet[n * i + 1]
-					) {
-				        BubbleInteractions::_otherCulprit = f;
-				        break;
-			        }
-		        }
+                Bubble* b1 = mtoc->getBubble();
+                if(b1->getIndex() * 3 + bubbleStartIndex != beadSet[n*i]) continue;
+                BubbleInteractions::_bubbleCulprit = mtoc->getBubble();
+                for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
+                    Filament *f = mtoc->getFilaments()[fIndex];
+                    if(
+                        f->getMinusEndCylinder()->getFirstBead()->getIndex() * 3 + beadStartIndex
+                        == beadSet[n * i + 1]
+                    ) {
+                        BubbleInteractions::_otherCulprit = f;
+                        break;
+                    }
+                }
 	        }
 	        return -1;
         } else
