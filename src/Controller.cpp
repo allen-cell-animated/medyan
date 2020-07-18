@@ -61,24 +61,6 @@ using namespace mathfunc;
 
 namespace {
 
-void pinBubbles() {
-
-    // Only pin once
-    static bool pinned = false;
-    if(pinned) return;
-
-    //loop through beads, check if within pindistance
-    for(auto bb : Bubble::getBubbles()) {
-
-        Bead* const b = bb->getBead();
-
-        b->pinnedPosition = b->vcoordinate();
-        b->addAsPinned();
-    }
-
-    pinned = true;
-} // pinBubbles()
-
 void pinMembraneBorderVertices() {
 
     LOG(ERROR) << "Membrane vertex pinning is deprecated and should not be used.";
@@ -1109,10 +1091,6 @@ void Controller::executeSpecialProtocols() {
        tau() >= SysParams::Mechanics().pinTime) {
 
         pinLowerBoundaryFilaments();
-    }
-
-    if(SysParams::Mechanics().pinBubbles && tau() >= SysParams::Mechanics().pinTime) {
-        pinBubbles();
     }
 
     if(SysParams::Mechanics().pinMembraneBorderVertices) {

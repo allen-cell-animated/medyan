@@ -52,7 +52,6 @@ BoundaryFF::BoundaryFF (string type) {
 
     //if pinning to boundaries
     if(SysParams::Mechanics().pinBoundaryFilaments ||
-        SysParams::Mechanics().pinBubbles ||
         SysParams::Mechanics().pinMembraneBorderVertices
     ) {
         _boundaryInteractionVector.emplace_back(
