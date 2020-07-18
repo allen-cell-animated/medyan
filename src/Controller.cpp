@@ -91,11 +91,9 @@ void pinInitialFilamentWith(F&& inRegion) {
     if(pinned) return;
 
     for(auto b : Bead::getBeads()) {
-        if(b->usage == Bead::BeadUsage::filament) {
-            if(inRegion(b->coordinate())) {
-                b->pinnedPosition = b->vcoordinate();
-                b->addAsPinned();
-            }
+        if(inRegion(b->coordinate())) {
+            b->pinnedPosition = b->vcoordinate();
+            b->addAsPinned();
         }
     }
 
