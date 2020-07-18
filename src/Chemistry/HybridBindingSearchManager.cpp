@@ -554,6 +554,12 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 
 void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], CCylinder*
                                     cc, short bindingSite) {
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Removing site "<<cc->getCylinder()->getId()
+    <<" "<<cc->getCylinder()->getStableIndex()<<" "<<bindingSite
+    << " with idvec "<<idvec[0]<<" "<<idvec[1]<<endl;
+    #endif
+
 
     short idx = idvec[0];
     short idx2 = idvec[1];
@@ -572,7 +578,15 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
     //Key
     t = t|pos;
 
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Removing by key"<<endl;
+    #endif
+
 	_possibleBindingsstencilvecuint[idx][idx2].erase(t);
+
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Removing by value"<<endl;
+    #endif
 
     //remove all tuples which have this as value
     //Iterate through the reverse map
@@ -593,15 +607,24 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
     //remove from the reverse map.
 	_reversepossibleBindingsstencilvecuint[idx][idx2][t].clear();
 
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Update rxn"<<endl;
+    #endif
+
     countNpairsfound(idvec);
     fManagervec[idx][idx2]->updateBindingReaction(Nbindingpairs[idx][idx2]);
 
     //remove all neighbors which have this binding site pair
     //Go through enclosing compartments to remove all entries with the current cylinder
     // and binding site as values.
+    auto nencl = _compartment->getenclosingNeighbours().size();
     for(auto nc: _compartment->getenclosingNeighbours()){
         if(nc != _compartment) {
             auto m = nc->getHybridBindingSearchManager();
+	        #ifdef CROSSCHECK_CYLINDER
+	        CController::_crosscheckdumpFilechem <<"Remove by value from neighbor "
+												""<<nc->getId()<<" total "<<nencl<<endl;
+	        #endif
 
             //Iterate through the reverse map
             auto keys = m->_reversepossibleBindingsstencilvecuint[idx][idx2][t];//keys that
@@ -621,6 +644,9 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
             }
             //remove from the reverse map.
             m->_reversepossibleBindingsstencilvecuint[idx][idx2][t].clear();
+	        #ifdef CROSSCHECK_CYLINDER
+	        CController::_crosscheckdumpFilechem <<"Update rxn"<<endl;
+	        #endif
 
             m->countNpairsfound(idvec);
             m->fManagervec[idx][idx2]->updateBindingReaction(m->Nbindingpairs[idx][idx2]);
