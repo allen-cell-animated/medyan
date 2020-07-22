@@ -56,7 +56,7 @@ void BoundaryBubbleRepulsion<BRepulsionInteractionType>::vectorize(const FFCoord
 
         for (ni = 0; ni < nn; ni++) {
 
-            bindex = _neighborList->getNeighbors(be)[ni]->getBead()->getIndex() * 3 + si.bead;
+            bindex = _neighborList->getNeighbors(be)[ni]->getIndex() * 3 + si.bubble;
             beadSet[cumnn+idx] = bindex;
             krep[cumnn+idx] = be->getRepulsionConst();
             slen[cumnn+idx] = be->getScreeningLength();

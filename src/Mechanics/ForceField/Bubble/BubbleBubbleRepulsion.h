@@ -34,7 +34,7 @@ private:
     BRepulsionInteractionType _FFType;
     BubbleBubbleNL* _neighborList; ///<Neighbor list of Bubble-Bubble
 
-    std::size_t beadStartIdx_; // The starting index of bead in the vectorization
+    std::size_t bubbleStartIdx_; // The starting index of bead in the vectorization
 
 public:
     

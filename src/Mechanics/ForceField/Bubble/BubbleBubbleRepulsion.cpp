@@ -20,7 +20,7 @@
 
 template <class BRepulsionInteractionType>
 void BubbleBubbleRepulsion<BRepulsionInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
-    beadStartIdx_ = si.bead;
+    bubbleStartIdx_ = si.bubble;
 }
 
 template <class BRepulsionInteractionType>
@@ -45,8 +45,8 @@ floatingpoint BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(fl
             floatingpoint radius1 = bb->getRadius();
             floatingpoint radius2 = bbo->getRadius();
             
-            const auto bi1 = bb->getBead()->getIndex() * 3 + beadStartIdx_;
-            const auto bi2 = bbo->getBead()->getIndex() * 3 + beadStartIdx_;
+            const auto bi1 = bb ->getIndex() * 3 + bubbleStartIdx_;
+            const auto bi2 = bbo->getIndex() * 3 + bubbleStartIdx_;
             
             U_i = _FFType.energy(coord, bi1, bi2, radius1, radius2, kRep, screenLength);
             
@@ -80,8 +80,8 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces(floatingpoi
             floatingpoint radius1 = bb->getRadius();
             floatingpoint radius2 = bbo->getRadius();
             
-            const auto bi1 = bb->getBead()->getIndex() * 3 + beadStartIdx_;
-            const auto bi2 = bbo->getBead()->getIndex() * 3 + beadStartIdx_;
+            const auto bi1 = bb ->getIndex() * 3 + bubbleStartIdx_;
+            const auto bi2 = bbo->getIndex() * 3 + bubbleStartIdx_;
             
             _FFType.forces(coord, f, bi1, bi2, radius1, radius2, kRep, screenLength);
             
@@ -89,28 +89,6 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces(floatingpoi
     }
 }
 
-
-//template <class BRepulsionInteractionType>
-//void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForcesAux(floatingpoint *coord, floatingpoint *f) {
-//
-//    for (auto bb : Bubble::getBubbles()) {
-//
-//        for(auto &bbo : _neighborList->getNeighbors(bb)) {
-//
-//            floatingpoint kRep = bb->getRepulsionConst();
-//            floatingpoint screenLength = bb->getScreeningLength();
-//
-//            floatingpoint radius1 = bb->getRadius();
-//            floatingpoint radius2 = bbo->getRadius();
-//
-//            Bead* bd1 = bb->getBead();
-//            Bead* bd2 = bbo->getBead();
-//
-//            _FFType.forcesAux(bd1, bd2, radius1, radius2, kRep, screenLength);
-//
-//        }
-//    }
-//}
 
 ///Template specializations
 template floatingpoint BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeEnergy(floatingpoint *coord, bool stretched);

@@ -37,7 +37,7 @@ void AFMAttachment<AFMInteractionType>::vectorize(const FFCoordinateStartingInde
         for (int fIndex = 0; fIndex < afm->getFilaments().size(); fIndex++) {
             const auto f = afm->getFilaments()[fIndex];
 
-            beadSet_[2*ci    ] = afm->getBubble()->getBead()->getIndex() * 3 + si.bead;
+            beadSet_[2*ci    ] = afm->getBubble()->getIndex() * 3 + si.bubble;
             beadSet_[2*ci + 1] = f->getMinusEndCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
 
             radii_[ci] = afm->getBubble()->getRadius();
@@ -59,29 +59,6 @@ void AFMAttachment<AFMInteractionType>::computeForces(floatingpoint *coord, floa
     _FFType.forces(coord, f, numInteractions_, beadSet_.data(), kstr_.data(), radii_.data());
 }
 
-
-//template <class AFMInteractionType>
-//void AFMAttachment<AFMInteractionType>::computeForcesAux(double *coord, double *f) {
-//    cout << "AFMAttachment<AFMInteractionType>::computeForcesAux should not be called in vectorized version." << endl;
-//
-//    for(auto afm : AFM::getAFMs()) {
-//
-//        Bead* b1 = afm->getBubble()->getBead();
-//
-//        for(int fIndex = 0; fIndex < afm->getFilaments().size(); fIndex++) {
-//
-//            Filament *f = afm->getFilaments()[fIndex];
-//
-//            Cylinder* c = f->getMinusEndCylinder();
-//
-//            Bead* b2 = c->getFirstBead();
-//            double kStretch = c->getMCylinder()->getStretchingConst();
-//            double radius = afm->getBubble()->getRadius();
-//
-//            _FFType.forcesAux(coord, f, beadSet, kstr);
-//        }
-//    }
-//}
 
 ///Template specializations
 template floatingpoint AFMAttachment<AFMAttachmentHarmonic>::computeEnergy(floatingpoint *coord, bool stretched);

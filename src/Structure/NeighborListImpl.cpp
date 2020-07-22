@@ -913,7 +913,7 @@ void BoundaryBubbleNL::updateNeighbors(BoundaryElement* be) {
     //loop through beads, add as neighbor
     for (auto &b : Bubble::getBubbles()) {
 
-        floatingpoint dist = be->distance(b->coordinate);
+        floatingpoint dist = be->distance(vec2Vector(b->coord));
         //If within range, add it
         if(dist < _rMax) _list[be].push_back(b);
     }
@@ -947,7 +947,7 @@ void BoundaryBubbleNL::addDynamicNeighbor(DynamicNeighbor* n) {
     for(auto it = _list.begin(); it != _list.end(); it++) {
 
         //if within range, add it
-        if(it->first->distance(b->coordinate) < _rMax)
+        if(it->first->distance(vec2Vector(b->coord)) < _rMax)
             it->second.push_back(b);
     }
 }
@@ -991,7 +991,7 @@ void BubbleBubbleNL::updateNeighbors(Bubble* bb) {
     //loop through beads, add as neighbor
     for (auto &bbo : Bubble::getBubbles()) {
 
-        floatingpoint distsq = twoPointDistancesquared(bb->coordinate, bbo->coordinate);
+        floatingpoint distsq = distance2(bb->coord, bbo->coord);
 
         if(bb->getId() <= bbo->getId()) continue;
 
@@ -1049,7 +1049,7 @@ void BubbleCylinderNL::updateNeighbors(Bubble* bb) {
     //loop through beads, add as neighbor
     for (auto &c : Cylinder::getCylinders()) {
 
-        floatingpoint distsq = twoPointDistancesquared(c->coordinate, bb->coordinate);
+        floatingpoint distsq = twoPointDistancesquared(c->coordinate, vec2Vector(bb->coord));
 
         //If within range, add it
         if(distsq < (_rMax * _rMax)) _list[bb].push_back(c);
@@ -1067,7 +1067,7 @@ void BubbleCylinderNL::addNeighbor(Neighbor* n) {
         for(auto it = _list.begin(); it != _list.end(); it++) {
 
             //if within range, add it
-            if(twoPointDistancesquared(it->first->coordinate, c->coordinate) < (_rMax * _rMax))
+            if(twoPointDistancesquared(vec2Vector(it->first->coord), c->coordinate) < (_rMax * _rMax))
                 it->second.push_back(c);
         }
     }

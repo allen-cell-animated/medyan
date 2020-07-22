@@ -163,7 +163,7 @@ void BirthTimes::print(int snapshot) {
                                     bubble->getType() << endl;
 
         //print birth times
-        _outputFile << bubble->getBead()->getBirthTime() << endl;
+        _outputFile << bubble->getBirthTime() << endl;
     }
 
     _outputFile <<endl;

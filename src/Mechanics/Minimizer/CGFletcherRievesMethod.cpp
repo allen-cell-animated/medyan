@@ -111,7 +111,7 @@ MinimizationResult FletcherRieves::minimize(
     searchDir = force;
     FFM.computeLoadForces();
 
-    // Copy the data back to the system
+    // Copy the coordinate and force data back to the system
     copyFromCGMethodData(*this);
     endMinimization();
 
