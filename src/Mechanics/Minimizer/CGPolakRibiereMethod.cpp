@@ -1127,6 +1127,7 @@ MinimizationResult PolakRibiere::minimize(
 
     //@ STEP 11 END MINIMIZATION
     tbegin = chrono::high_resolution_clock::now();
+    // Copy the coordinate and force data back to the system
     copyFromCGMethodData(*this);
     endMinimization();
 

@@ -54,10 +54,6 @@ class Bead : public Component, public Trackable, public Movable, public DynamicN
 public:
     using DatabaseType = Database< Bead, true >;
 
-    enum class BeadUsage { filament, bubble };
-
-    BeadUsage usage = BeadUsage::filament;
-
     mathfunc::Vec< 3, floatingpoint > coord;
     mathfunc::Vec< 3, floatingpoint > force;
 

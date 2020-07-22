@@ -258,7 +258,7 @@ void OutputStructBubble::getFromSystemWithoutChildren() {
     _type = _bubble->getType();
 
     // Store coordinates
-    _coord = vector2Vec<3, floatingpoint>(_bubble->coordinate);
+    _coord = _bubble->coord;
         
 }
 

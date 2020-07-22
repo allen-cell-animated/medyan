@@ -34,6 +34,8 @@ private:
     MTOCInteractionType _FFType;
 
     int *beadSet;
+    std::size_t beadStartIndex_ = 0;
+    std::size_t bubbleStartIndex_ = 0;
     ///Array describing the constants in calculation
     floatingpoint *kstr;
     floatingpoint *radiusvec;

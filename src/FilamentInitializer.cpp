@@ -64,8 +64,8 @@ FilamentData RandomFilamentDist::createFilaments(const MembraneRegion<Membrane>&
             for(auto bb : Bubble::getBubbles()) {
                 auto radius = bb->getRadius();
 
-                if((twoPointDistancesquared(bb->getBead()->vcoordinate(), firstPoint) < (radius * radius)) ||
-                   (twoPointDistancesquared(bb->getBead()->vcoordinate(), secondPoint) < (radius * radius)))
+                if((twoPointDistancesquared(vec2Vector(bb->coord), firstPoint) < (radius * radius)) ||
+                   (twoPointDistancesquared(vec2Vector(bb->coord), secondPoint) < (radius * radius)))
                     inBubble = true;
             }
 
@@ -105,8 +105,8 @@ FilamentData RandomFilamentDist::createFilaments(const MembraneRegion<Membrane>&
             for(auto bb : Bubble::getBubbles()) {
                 auto radius = bb->getRadius();
                 
-                if((twoPointDistancesquared(bb->getBead()->vcoordinate(), firstPoint) < (radius * radius)) ||
-                   (twoPointDistancesquared(bb->getBead()->vcoordinate(), secondPoint) < (radius * radius)))
+                if((twoPointDistancesquared(vec2Vector(bb->coord), firstPoint) < (radius * radius)) ||
+                   (twoPointDistancesquared(vec2Vector(bb->coord), secondPoint) < (radius * radius)))
                     inBubble = true;
             }
 
@@ -311,8 +311,8 @@ FilamentData AFMFilamentDist::createFilaments(const MembraneRegion<Membrane>& mr
         for(auto bb : Bubble::getBubbles()) {
             auto radius = bb->getRadius();
             
-            if((twoPointDistancesquared(bb->getBead()->vcoordinate(), point1) < (radius * radius)) ||
-               (twoPointDistancesquared(bb->getBead()->vcoordinate(), point2) < (radius * radius)))
+            if((twoPointDistancesquared(vec2Vector(bb->coord), point1) < (radius * radius)) ||
+               (twoPointDistancesquared(vec2Vector(bb->coord), point2) < (radius * radius)))
             inBubble = true;
         }
         

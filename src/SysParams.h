@@ -121,9 +121,6 @@ struct MechParams {
     floatingpoint pinK = 0.0;       ///< Tethered stiffness
     floatingpoint pinTime = 0.0;    ///< Time at which to pin the filaments
 
-    // pin bubbles, using pinK and pinTime
-    bool pinBubbles = false;
-
     // pin membrane border vertices, using pinK
     bool pinMembraneBorderVertices = false;
 
