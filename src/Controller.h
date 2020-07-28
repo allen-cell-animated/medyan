@@ -40,6 +40,8 @@ class FilamentBindingManager;
 class Controller {
 
 private:
+    double chemistrytime, minimizationtime, neighborlisttime, bindingmanagertime,
+        positiontime, rxnratetime;
     string _inputFile; ///< System input file
     
     SubSystem *_subSystem; ///< A pointer to the subsystem that this controls
