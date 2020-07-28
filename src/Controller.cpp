@@ -547,12 +547,18 @@ void Controller::executeSpecialProtocols() {
 }
 
 void Controller::updatePositions() {
+    chrono::high_resolution_clock::time_point chkt1, chkt2;
+    chkt1 = chrono::high_resolution_clock::now();
     
     //NEED TO UPDATE CYLINDERS FIRST
     for(auto c : Cylinder::getCylinders()) c->updatePosition();
     
     //update all other moveables
     for(auto m : _subSystem->getMovables()) m->updatePosition();
+    chkt2 = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runchem(chkt2-chkt1);
+    cout<<"Position Time "<<elapsed_runchem.count()<<endl;
+    positiontime += elapsed_runchem.count();
 }
 
 #ifdef DYNAMICRATES
@@ -563,12 +569,22 @@ void Controller::updateReactionRates() {
 #endif
 
 void Controller::updateNeighborLists() {
-    
+    chrono::high_resolution_clock::time_point chkt1, chkt2;
+    chkt1 = chrono::high_resolution_clock::now();
     //Full reset of neighbor lists
     _subSystem->resetNeighborLists();
+    chkt2 = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runnl(chkt2-chkt1);
+    cout<<"NeighborList Time "<<elapsed_runnl.count()<<endl;
+    neighborlisttime += elapsed_runnl.count();
     
 #ifdef CHEMISTRY
+    chkt1 = chrono::high_resolution_clock::now();
     _subSystem->updateBindingManagers();
+    chkt2 = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runbmgr(chkt2-chkt1);
+    cout<<"BindingManager Time "<<elapsed_runbmgr.count()<<endl;
+    bindingmanagertime += elapsed_runbmgr.count();
 #endif
 }
 
@@ -654,6 +670,12 @@ void Controller::run() {
 #endif
     chrono::high_resolution_clock::time_point chk1, chk2;
     chk1 = chrono::high_resolution_clock::now();
+    chemistrytime = 0.0;
+    minimizationtime = 0.0;
+    neighborlisttime = 0.0;
+    bindingmanagertime = 0.0;
+    positiontime = 0.0;
+    rxnratetime = 0.0;
 //RESTART PHASE BEGINS
     if(SysParams::RUNSTATE==false){
         cout<<"RESTART PHASE BEINGS."<<endl;
@@ -779,17 +801,23 @@ void Controller::run() {
     
     //if runtime was specified, use this
     if(!areEqual(_runTime, 0.0)) {
-    
+        chrono::high_resolution_clock::time_point chkt1, chkt2;
+
 #ifdef CHEMISTRY
         //activate/deactivate compartments
         activatedeactivateComp();
         while(tau() <= _runTime) {
             //run ccontroller
+            chkt1 = chrono::high_resolution_clock::now();
             if(!_cController->run(_minimizationTime)) {
                 for(auto o: _outputs) o->print(i);
                 resetCounters();
                 break;
             }
+            chkt2 = chrono::high_resolution_clock::now();
+            chrono::duration<double> elapsed_runchem(chkt2-chkt1);
+            cout<<"Chemistry Time "<<elapsed_runchem.count()<<endl;
+            chemistrytime += elapsed_runchem.count();
             
             //add the last step
             tauLastSnapshot += tau() - oldTau;
@@ -797,14 +825,25 @@ void Controller::run() {
             tauLastNeighborList += tau() - oldTau;
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
+
             //run mcontroller, update system
             if(tauLastMinimization >= _minimizationTime) {
+                chkt1 = chrono::high_resolution_clock::now();
                 _mController->run();
+                chkt2 = chrono::high_resolution_clock::now();
+                chrono::duration<double> elapsed_runmech(chkt2-chkt1);
+                cout<<"Mechanics Time "<<elapsed_runmech.count()<<endl;
+                minimizationtime += elapsed_runmech.count();
                 updatePositions();
-                
+
+                chkt1 = chrono::high_resolution_clock::now();
 #ifdef DYNAMICRATES
                 updateReactionRates();
 #endif
+                chkt2 = chrono::high_resolution_clock::now();
+                chrono::duration<double> elapsed_runrxn(chkt2-chkt1);
+                cout<<"Reaction Rate Time "<<elapsed_runrxn.count()<<endl;
+                rxnratetime += elapsed_runrxn.count();
 
                 tauLastMinimization = 0.0;
             }
@@ -913,6 +952,12 @@ void Controller::run() {
     
     cout << "Time elapsed for run: dt=" << elapsed_run.count() << endl;
     cout << "Total simulation time: dt=" << tau() << endl;
+    cout << "Chemistry time dt="<<chemistrytime<<endl;
+    cout << "Minimization time dt="<<minimizationtime<<endl;
+    cout << "Position time dt="<<positiontime<<endl;
+    cout << "ReactionRate  time dt="<<rxnratetime<<endl;
+    cout << "Neighborlist time dt="<<neighborlisttime<<endl;
+    cout << "BMgr time dt="<< bindingmanagertime<<endl;
     cout << "Done with simulation!" << endl;
 }
 

@@ -275,7 +275,7 @@ private:
 //cross checks to see linker and motor binding sites have the same distance between them as linker, adds to heap.
     void crosschecklinkermotor(){
         
-        short brows=boundVector.size();
+        /*short brows=boundVector.size();
         for(int iter=0;iter<=brows-1;iter++){
             vector<tuple<CCylinder*, short>> map;
             auto range = _unsortedpairings.equal_range(iter);
@@ -375,7 +375,7 @@ private:
                             _numChemSteps++;}}
                 }//@For Mgr
             }
-    }
+    }*/
     }
     
     //Increases copy number of diffusing species corresponding to bound species in each Compartment by number of events.

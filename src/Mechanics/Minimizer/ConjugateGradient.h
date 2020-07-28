@@ -19,6 +19,7 @@
 #include "CGFletcherRievesMethod.h"
 #include "CGPolakRibiereMethod.h"
 #include "CGSteepestDescent.h"
+#include "Minimizer.h"
 
 //FORWARD DECLARATIONS
 class ForceFieldManager;
