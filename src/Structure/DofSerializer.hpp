@@ -1,41 +1,39 @@
-#ifndef MEDYAN_Mechanics_Minimizer_CGMethodDataCopy_hpp
-#define MEDYAN_Mechanics_Minimizer_CGMethodDataCopy_hpp
+#ifndef MEDYAN_Structure_DofSerializer_hpp
+#define MEDYAN_Structure_DofSerializer_hpp
 
 // The file provides functions to do data copy between elements in the system
-// and the vectorized data in the Conjugate Gradient method (CGMethod).
+// and the vectorized data in the mechanics energy/force calculations.
 //
 // Functions:
 //
-//   - initCGMethodData(...)
+//   - serializeDof(...)
 //
 //     Copy the degree-of-freedom data from all system elements (such as the
-//     bead coordinates) to the CGMethod coordinate array, and initialize other
-//     CGMethod arrays like the forces.
+//     bead coordinates) to the coordinate array.
 //
 //     Returns the starting indices of different types of elements, which is
 //     useful when building interactions in force fields.
 //
-//   - copyFromCGMethodData(...)
+//   - deserializeDof(...)
 //
-//     Copy the vectorized coordinate and force data in the CGMethod to all the
-//     element instances in the system.
+//     Copy the vectorized coordinate and force data to all the element
+//     instances in the system.
 
 #include <algorithm>
 
 #include "Mechanics/ForceField/Types.hpp"
-#include "Mechanics/Minimizer/CGMethod.h"
 #include "Structure/Bead.h"
 #include "Structure/Bubble.h"
 
+namespace medyan {
+
 // Copies all the system data to the CGMethod data vector
-inline FFCoordinateStartingIndex initCGMethodData(
-    CGMethod& cg,
-    floatingpoint defaultGradTol
+inline FFCoordinateStartingIndex serializeDof(
+    std::vector< floatingpoint > coord
 ) {
     FFCoordinateStartingIndex si {};
     std::size_t curIdx = 0;
-    cg.coord.clear();
-    cg.forceTol.clear();
+    coord.clear();
 
     //---------------------------------
     // Copy all the coordinate information here
@@ -43,12 +41,11 @@ inline FFCoordinateStartingIndex initCGMethodData(
 
     // Bead coord
     si.bead = curIdx;
-    cg.coord.reserve(cg.coord.size() + 3 * Bead::getBeads().size());
+    coord.reserve(coord.size() + 3 * Bead::getBeads().size());
     for(auto pb : Bead::getBeads()) {
-        cg.coord.insert(cg.coord.end(), pb->coord.begin(), pb->coord.end());
+        coord.insert(coord.end(), pb->coord.begin(), pb->coord.end());
         curIdx += 3;
     }
-    cg.forceTol.resize(cg.coord.size(), defaultGradTol);
 
     // Bubble coord
     si.bubble = curIdx;
@@ -68,14 +65,6 @@ inline FFCoordinateStartingIndex initCGMethodData(
     // Add things for membrane 2d coordinates here
 
     //---------------------------------
-    // Initialize the rest of cg data
-    const auto ndof = cg.coord.size();
-    cg.coordLineSearch.assign(ndof, 0);
-    cg.force.assign(ndof, 0);
-    cg.forcePrev.assign(ndof, 0);
-    cg.searchDir.assign(ndof, 0);
-
-    //---------------------------------
     // Return the starting index information for vectorizing the force fields
     return si;
 }
@@ -85,13 +74,16 @@ inline FFCoordinateStartingIndex initCGMethodData(
 // Note:
 //   - The copying must be in the same order with the initCGMethodData
 //     function.
-inline void copyFromCGMethodData(const CGMethod& cg) {
+inline void deserializeDof(
+    const std::vector< floatingpoint > coord,
+    const std::vector< floatingpoint > force
+) {
     std::size_t curIdx = 0;
 
     // Copy coord and force data to beads
     for(auto pb : Bead::getBeads()) {
-        std::copy(cg.coord.begin() + curIdx, cg.coord.begin() + curIdx + 3, pb->coord.begin());
-        std::copy(cg.force.begin() + curIdx, cg.force.begin() + curIdx + 3, pb->force.begin());
+        std::copy(coord.begin() + curIdx, coord.begin() + curIdx + 3, pb->coord.begin());
+        std::copy(force.begin() + curIdx, force.begin() + curIdx + 3, pb->force.begin());
         curIdx += 3;
     }
 
@@ -106,7 +98,8 @@ inline void copyFromCGMethodData(const CGMethod& cg) {
 
     // Copy coord and force data to Membrane 2d points
 
-    // Do not clear CGMethod data, because it might be useful for debug purposes.
 }
+
+} // namespace medyan
 
 #endif
