@@ -209,7 +209,7 @@ floatingpoint BranchingPositionCosine::energy(const floatingpoint *coord,
         // singularities in energy and force expressions. To avoid it, we will create a
         // virtual plus end and use that to define vectors.
         position = pos[i];
-        if(position == 1){
+        if(areEqual(position, 1.0)){
             position = 0.5;//assign a dummy position and extend plus end to new coordinates.
             for(int dim = 0; dim < 3; dim++) {
                 coord2prime[dim] = (1 / position) * (coord2[dim] - (1 - position) *
