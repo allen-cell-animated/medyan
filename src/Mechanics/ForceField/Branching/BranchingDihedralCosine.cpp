@@ -262,6 +262,8 @@ floatingpoint BranchingDihedralCosine::energy(
             cout<<"Coord2 "<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
             cout<<"Coord2prime "<<coord2prime[0]<<" "<<coord2prime[1]<<" "
                                                                        ""<<coord2prime[2]<<endl;
+            cout<<"Coord3 "<<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
+            cout<<"Coord4 "<<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<endl;
             cout<<"pos "<<pos[i]<<" position "<<position<<endl;
             cout<<"mp "<<mp[0]<<" "<<mp[1]<<" "<<mp[2]<<endl;
             cout<<"n1 "<<n1[0]<<" "<<n1[1]<<" "<<n1[2]<<endl;
