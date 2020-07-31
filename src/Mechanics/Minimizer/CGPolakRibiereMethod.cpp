@@ -16,7 +16,7 @@
 
 #include "ForceFieldManager.h"
 #include "Composite.h"
-#include "Mechanics/Minimizer/CGMethodDataCopy.hpp"
+#include "Mechanics/Minimizer/CGDataCopy.hpp"
 #include "Output.h"
 #include "Bubble.h"
 #include "cross_check.h"
