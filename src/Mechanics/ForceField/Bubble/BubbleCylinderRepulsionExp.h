@@ -15,9 +15,9 @@
 #define MEDYAN_BubbleCylinderRepulsionExp_h
 
 #include <vector>
-#include <cmath>
 
 #include "common.h"
+#include "MathFunctions.h"
 
 //FORWARD DECLARATIONS
 class Bead;
