@@ -257,6 +257,16 @@ floatingpoint BranchingDihedralCosine::energy(
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
+            cout<<"Coord1 "<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
+            coord2 = &coord[3 * beadSet[n * i + 1]];
+            cout<<"Coord2 "<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
+            cout<<"Coord2prime "<<coord2prime[0]<<" "<<coord2prime[1]<<" "
+                                                                       ""<<coord2prime[2]<<endl;
+            cout<<"pos "<<pos[i]<<" position "<<position<<endl;
+            cout<<"mp "<<mp[0]<<" "<<mp[1]<<" "<<mp[2]<<endl;
+            cout<<"n1 "<<n1[0]<<" "<<n1[1]<<" "<<n1[2]<<endl;
+            cout<<"n2 "<<n2[0]<<" "<<n2[1]<<" "<<n2[2]<<endl;
+
             //set culprit and return
             BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
 
