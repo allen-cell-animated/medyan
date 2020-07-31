@@ -17,14 +17,16 @@ jobs:
     - uses: actions/checkout@v2
     - name: Prepare dependencies
       run: |
+        export BOOST_ROOT=$BOOST_ROOT_1_72_0
+        export MEDYAN_BOOST_INSTALL_MODE="find"
+        # Use avx2 (default avx512 causes trouble in UMEsimd)
+        sed -i 's/-mtune=native -march=native/-mavx2/g' CMakeLists.txt
+        # add --no-as-needed to correctly link pthread
+        sed -i -e '/    target_link_libraries(medyan PRIVATE Threads::Threads)/a\' -e '    target_link_options(medyan BEFORE PRIVATE "-Wl,--no-as-needed")' CMakeLists.txt
         ./conf.sh
     - name: Build with make
       run: |
-        # Use avx2 (default avx512 causes trouble in UMEsimd)
-        sed -i 's/-mtune=native -march=native/-mavx2/g' CMakeLists.txt
-        mkdir -p build
         cd build
-        cmake ..
         make VERBOSE=1
     - name: Run tests
       run: |
@@ -38,14 +40,12 @@ jobs:
     - uses: actions/checkout@v2
     - name: Prepare dependencies
       run: |
+        # Use avx2 (default avx512 causes trouble in UMEsimd)
+        sed -i '' -e 's/-mtune=native -march=native/-mavx2/g' CMakeLists.txt
         ./conf.sh
     - name: Build with make
       run: |
-        # Use avx2 (default avx512 causes trouble in UMEsimd)
-        sed -i '' -e 's/-mtune=native -march=native/-mavx2/g' CMakeLists.txt
-        mkdir -p build
         cd build
-        cmake ..
         make VERBOSE=1
     - name: Run tests
       run: |
@@ -59,13 +59,14 @@ jobs:
     - uses: actions/checkout@v2
     - name: Prepare dependencies
       run: |
+        $MEDYAN_BOOST_INSTALL_MODE = "manual"
+        $MEDYAN_BOOST_INCLUDE_DIR = "$Env:BOOST_ROOT_1_72_0\include"
+        $MEDYAN_BOOST_LIBRARY_DIR = "$Env:BOOST_ROOT_1_72_0\lib"
         .\conf.ps1
     - name: Build with MSBuild
       working-directory: ${{ github.workspace }}
       run: |
-        mkdir -Force build
         cd build
-        cmake ..
         # Set up chocolatey profile so that refreshenv is an ps alias
         # $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."   
         # Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"

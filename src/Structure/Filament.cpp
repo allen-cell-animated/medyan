@@ -921,7 +921,7 @@ void arcOutward(vector<floatingpoint>&v1,vector<floatingpoint>&v2, const vector<
     dist=300/dist;
     
     std::transform(tempv1.begin(),tempv1.end(),tempv1.begin(),
-                   std::bind2nd(std::multiplies<floatingpoint>(),dist));
+                   [&](auto x) { return x * dist; });
     std::transform(mid.begin(), mid.end(), tempv1.begin(),
                    std::back_inserter(v1), std::plus<floatingpoint>());
     
@@ -933,7 +933,7 @@ void arcOutward(vector<floatingpoint>&v1,vector<floatingpoint>&v2, const vector<
     dist=100/dist;
     
     std::transform(tempv2.begin(),tempv2.end(),tempv2.begin(),
-                   std::bind2nd(std::multiplies<floatingpoint>(),dist));
+                   [&](auto x) { return x * dist; });
     std::transform(mid3.begin(), mid3.end(), tempv2.begin(),
                    std::back_inserter(v2), std::plus<floatingpoint>());
 }
