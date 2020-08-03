@@ -50,12 +50,11 @@ inline FFCoordinateStartingIndex serializeDof(
 
     // Bubble coord
     si.bubble = curIdx;
-    cg.coord.reserve(cg.coord.size() + 3 * Bubble::getBubbles().size());
+    coord.reserve(coord.size() + 3 * Bubble::getBubbles().size());
     for(auto pb : Bubble::getBubbles()) {
-        cg.coord.insert(cg.coord.end(), pb->coord.begin(), pb->coord.end());
+        coord.insert(coord.end(), pb->coord.begin(), pb->coord.end());
         curIdx += 3;
     }
-    cg.forceTol.resize(cg.coord.size(), defaultGradTol);
 
     // Vertex coord
     si.vertex = curIdx;
@@ -95,8 +94,8 @@ inline void deserializeDof(
 
     // Copy coord and force data to bubbles
     for(auto pb : Bubble::getBubbles()) {
-        std::copy(cg.coord.begin() + curIdx, cg.coord.begin() + curIdx + 3, pb->coord.begin());
-        std::copy(cg.force.begin() + curIdx, cg.force.begin() + curIdx + 3, pb->force.begin());
+        std::copy(coord.begin() + curIdx, coord.begin() + curIdx + 3, pb->coord.begin());
+        std::copy(force.begin() + curIdx, force.begin() + curIdx + 3, pb->force.begin());
         curIdx += 3;
     }
 
