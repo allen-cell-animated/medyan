@@ -58,12 +58,11 @@ inline FFCoordinateStartingIndex serializeDof(
 
     // Vertex coord
     si.vertex = curIdx;
-    cg.coord.reserve(cg.coord.size() + 3 * Vertex::getVertices().size());
+    coord.reserve(coord.size() + 3 * Vertex::getVertices().size());
     for(auto pv : Vertex::getVertices()) {
-        cg.coord.insert(cg.coord.end(), pv->coord.begin(), pv->coord.end());
+        coord.insert(coord.end(), pv->coord.begin(), pv->coord.end());
         curIdx += 3;
     }
-    cg.forceTol.resize(cg.coord.size(), defaultGradTol * 0.1); // FUTURE: change const factor to a variable
 
     // Membrane 2d coord
     si.mem2d = curIdx;
@@ -101,8 +100,8 @@ inline void deserializeDof(
 
     // Vertex
     for(auto pv : Vertex::getVertices()) {
-        std::copy(cg.coord.begin() + curIdx, cg.coord.begin() + curIdx + 3, pv->coord.begin());
-        std::copy(cg.force.begin() + curIdx, cg.force.begin() + curIdx + 3, pv->force.begin());
+        std::copy(coord.begin() + curIdx, coord.begin() + curIdx + 3, pv->coord.begin());
+        std::copy(force.begin() + curIdx, force.begin() + curIdx + 3, pv->force.begin());
         curIdx += 3;
     }
 
