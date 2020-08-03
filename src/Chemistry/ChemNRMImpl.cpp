@@ -210,8 +210,8 @@ bool ChemNRMImpl::makeStep() {
     CController::_crosscheckdumpFilechem << "RNodeNRM: ptr=" << this <<", tau=" <<
     rn->getTau() <<
          ", a=" << _a <<" in Compartment "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<
-         ", points to Reaction:\n";
-    CController::_crosscheckdumpFilechem << (*_react);
+         ", points to Reaction Type "<< _react->getReactionType()<<endl;
+//    CController::_crosscheckdumpFilechem << (*_react);
     #endif
     rn->makeStep();
 
