@@ -29,7 +29,7 @@ namespace medyan {
 
 // Copies all the system data to the CGMethod data vector
 inline FFCoordinateStartingIndex serializeDof(
-    std::vector< floatingpoint > coord
+    std::vector< floatingpoint >& coord
 ) {
     FFCoordinateStartingIndex si {};
     std::size_t curIdx = 0;
@@ -74,8 +74,8 @@ inline FFCoordinateStartingIndex serializeDof(
 //   - The copying must be in the same order with the initCGMethodData
 //     function.
 inline void deserializeDof(
-    const std::vector< floatingpoint > coord,
-    const std::vector< floatingpoint > force
+    const std::vector< floatingpoint >& coord,
+    const std::vector< floatingpoint >& force
 ) {
     std::size_t curIdx = 0;
 
