@@ -1338,54 +1338,6 @@ void Controller::run() {
         chrono::duration<floatingpoint> elapsed_runspl(mine - mins);
         specialtime += elapsed_runspl.count();
         while(tau() <= _runTime) {
-#ifdef BRANCHING_CROSSCHECK
-            cout<<"Printing Branch details, N="<<BranchingPoint::getBranchingPoints()
-            .size()<<endl;
-            for(auto b :BranchingPoint::getBranchingPoints()){
-		Cylinder* cyl1 = b->getFirstCylinder();
-		Cylinder* cyl2 = b->getSecondCylinder();
-		float pos1 = b->getPosition()*SysParams::Geometry()
-                .cylinderNumMon[cyl1->getType()];
-		cout <<b->getId()<<" "<<b->getCBranchingPoint()->getDiffusingBranchSpecies()
-		->getName()<<" "<<b->getdiffusingactinspeciesname()<<endl;
-	}
-	cout<<"Printing chemistry event details "<<endl;
-            int deltaminusend = 0;
-            int deltaplusend = 0;
-            int polyplusend = 0;
-            int polyminusend =0;
-            int depolyplusend = 0;
-            int depolyminusend = 0;
-	for(auto &filament : Filament::getFilaments()) {
-        deltaminusend += filament->getDeltaMinusEnd();
-        deltaplusend += filament->getDeltaPlusEnd();
-        polyminusend += filament->getPolyMinusEnd();
-        polyplusend += filament->getPolyPlusEnd();
-        depolyminusend += filament->getDepolyMinusEnd();
-        depolyplusend += filament->getDepolyPlusEnd();
-	}
-	cout<<"DeltaMinusEnd "<<deltaminusend<<" DeltaPlusEnd "<<deltaplusend<<
-	" PolyMinusEnd "<<polyminusend<<" PolyPlusEnd "<<polyplusend<<
-	" DepolyMinusEnd "<<depolyminusend<<" DepolyPlusEnd "<<depolyplusend<<endl;
-	cout<<"Printing diffusion reactions "<<endl;
-            for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
-                C->getDiffusionReactionContainer().updatePropensityComprtment();
-                cout << C->getId() << " ";
-                for (auto &it: C->getDiffusionReactionContainer().reactions()) {
-                    cout << it->getRate() << " ";
-                }
-                cout << endl;
-
-            }
-            for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
-                cout<<C->getId()<<" ";
-                for (auto &it: C->getDiffusionReactionContainer().reactions()) {
-                        cout <<it->isPassivated()<<" ";
-                }
-                cout << endl;
-
-            }
-#endif
             auto minwhile = chrono::high_resolution_clock::now();
             //run ccontroller
             #ifdef OPTIMOUT
@@ -1455,51 +1407,11 @@ void Controller::run() {
                     exit(EXIT_FAILURE);
                 }
                 Cylinder::_crosscheckdumpFile << "Opening file " << crosscheckname << endl;
-                int cylcount = 0;
-                int ncyl = Cylinder::getCylinders().size();
-                Cylinder::_crosscheckdumpFile<<"Printing Cylinder IDs in Database b4 rearrange"<<endl;
-
-                const auto& cylinderInfoData = Cylinder::getDbData().value;
-                for(auto cyl:Cylinder::getCylinders()){
-                    auto cindex = cyl->getStableIndex();
-                    const auto& c = cylinderInfoData[cindex];
-                    Cylinder::_crosscheckdumpFile<<cylcount<<"/"<<ncyl<<" "<<cyl->getId()<<" "<<cindex<<endl;
-                    cylcount++;
-                    if(c.filamentId == -1000){
-                        Cylinder::_crosscheckdumpFile<<"You have a cylinder pointing to the wrong location in "
-                              "cylinderInfoData"<<endl;
-                        auto fil = static_cast<Filament*>(cyl->getParent());
-                        Cylinder::_crosscheckdumpFile<<"Filament Id "<<fil->getId()<<" "<<c.filamentId<<endl;
-                        Cylinder::_crosscheckdumpFile<<"Cylinder Id "<<cyl->getId()<<" "<<c.id<<endl;
-                        Cylinder::_crosscheckdumpFile<<"StableIndex"<<cindex<<endl;
-
-                    }
-                }
 #endif
                 mins = chrono::high_resolution_clock::now();
                 Bead::rearrange();
                 Cylinder::updateAllData();
 
-                //check after rearrange
-#ifdef CROSSCHECK_CYLINDER
-                cylcount = 0;
-                Cylinder::_crosscheckdumpFile<<"Printing Cylinder IDs in Database aftr rearrange"<<endl;
-                for(auto cyl:Cylinder::getCylinders()){
-                    auto cindex = cyl->getStableIndex();
-                    const auto& c = cylinderInfoData[cindex];
-                    Cylinder::_crosscheckdumpFile<<cylcount<<"/"<<ncyl<<" "<<cyl->getId()<<" "<<cindex<<endl;
-                    cylcount++;
-                    if(c.filamentId == -1000){
-                        Cylinder::_crosscheckdumpFile<<"You have a cylinder pointing to the wrong location in "
-                              "cylinderInfoData"<<endl;
-                        auto fil = static_cast<Filament*>(cyl->getParent());
-                        Cylinder::_crosscheckdumpFile<<"Filament Id "<<fil->getId()<<" "<<c.filamentId<<endl;
-                        Cylinder::_crosscheckdumpFile<<"Cylinder Id "<<cyl->getId()<<" "<<c.id<<endl;
-                        Cylinder::_crosscheckdumpFile<<"StableIndex"<<cindex<<endl;
-
-                    }
-                }
-#endif
                 minimizationResult = _mController.run();
                 _subSystem.prevMinResult = minimizationResult;
                 mine= chrono::high_resolution_clock::now();
