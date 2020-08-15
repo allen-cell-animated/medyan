@@ -82,7 +82,7 @@ public:
     }
 
     /// Run a minimization on the system using the chosen algorithm
-    auto run(bool steplimit = true) const {
+    auto run(bool steplimit = true) {
         // Minimize mechanical energy
         const auto res = _minimizerAlgorithms[0]->equlibrate(_FFManager, steplimit);
 
