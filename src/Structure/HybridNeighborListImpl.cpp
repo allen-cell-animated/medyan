@@ -378,6 +378,24 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                     <<cindicesvec.size()<<endl;
                 #endif
                 int numneighbors = cindicesvec.size();
+                #ifdef CROSSCHECK_CYLINDER
+                if(_crosscheckdumpFileNL.is_open() && SysParams::DURINGCHEMISTRY){
+                    _crosscheckdumpFileNL<<"Cindex in database ";
+                    for (int iter = 0; iter < numneighbors; iter++) {
+                        int ncindex = cindicesvec[iter];
+                        _crosscheckdumpFileNL<<ncindex<<" ";
+                    }
+                    _crosscheckdumpFileNL<<endl;
+                    _crosscheckdumpFileNL<<"Cindex in Cylinder pointer ";
+                    for (int iter = 0; iter < numneighbors; iter++) {
+                        int ncindex = cindicesvec[iter];
+                        const auto& ncylinder = Cylinder::getDbData().value[ncindex];
+                        _crosscheckdumpFileNL<<ncylinder
+                        .chemCylinder->getCylinder()->getStableIndex()<<" ";
+                    }
+                    _crosscheckdumpFileNL<<endl;
+                }
+                #endif
                 for (int iter = 0; iter < numneighbors; iter++) {
                     int ncindex = cindicesvec[iter];
                     const auto& ncylinder = Cylinder::getDbData().value[ncindex];
@@ -436,7 +454,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
             }//is bin needed
         #ifdef CROSSCHECK_CYLINDER
         if(_crosscheckdumpFileNL.is_open())
-            _crosscheckdumpFileNL<<"Done..."<<endl;
+            _crosscheckdumpFileNL<<"Bin Id "<<bin->_ID<<" Done..."<<endl;
         #endif
     }//neighboring bins
     #ifdef CROSSCHECK_CYLINDER
