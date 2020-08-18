@@ -118,7 +118,7 @@ public:
     /// Compute the load forces on the beads. This does not update the force (xyz) vector
     /// contained by Bead, but updates the loadForce vector which contains precalculated
     /// load values based on the bead's directionality of growth in a filament.
-    void computeLoadForces();
+    void computeLoadForces() const;
 
     // Compute the load forces on the bead for a specific cylinder.
     void computeLoadForce(Cylinder* c, ForceField::LoadForceEnd end) const;

@@ -482,7 +482,7 @@ void ForceFieldManager::computeForces(floatingpoint *coord, vector< floatingpoin
 //    delete F_i;
 }
 
-void ForceFieldManager::computeLoadForces() {
+void ForceFieldManager::computeLoadForces() const {
 
     //reset
     for (auto b: Bead::getBeads()) {
