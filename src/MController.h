@@ -81,7 +81,16 @@ public:
     }
 
     /// Run a minimization on the system using the chosen algorithm
-    auto run(bool steplimit = true) { return _minimizerAlgorithm->equlibrate(_FFManager, steplimit); }
+    auto run(bool steplimit = true) {
+        // Minimize mechanical energy
+        const auto res = _minimizerAlgorithm->equlibrate(_FFManager, steplimit);
+
+        // Update load forces, as needed by the chemical rate changer
+        _FFManager.computeLoadForces();
+
+        // Return minimization report
+        return res;
+    }
 
     
     ForceFieldManager* getForceFieldManager(){
