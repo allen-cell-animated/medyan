@@ -943,6 +943,8 @@ void Controller::updateReactionRates() {
 
 void Controller::updateNeighborLists() {
     #ifdef CROSSCHECK_CYLINDER
+    if(HybridNeighborList::_crosscheckdumpFileNL.is_open())
+        HybridNeighborList::_crosscheckdumpFileNL.close();
     string crosscheckNLname = _outputDirectory + "crosscheckNL.traj";
     HybridNeighborList::_crosscheckdumpFileNL.open(crosscheckNLname);
     #endif
@@ -964,10 +966,6 @@ void Controller::updateNeighborLists() {
     chrono::duration<floatingpoint> elapsed_runb(mine - mins);
     bmgrtime += elapsed_runb.count();
 #endif
-
-    #ifdef CROSSCHECK_CYLINDER
-    HybridNeighborList::_crosscheckdumpFileNL.close();
-    #endif
 }
 
 void Controller::resetCounters() {

@@ -354,6 +354,10 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
     // < 27 elements in the stencilID vector.
     short ftype1 = c.type; //cylinder type and filament type is one and the same.
     float _largestrMax = sqrt(_largestrMaxsq);
+    #ifdef CROSSCHECK_CYLINDER
+    if(_crosscheckdumpFileNL.is_open())
+        _crosscheckdumpFileNL<<"#Neighboring bins "<<_neighboringBins.size()<<endl;
+    #endif
     for (auto &bin : _neighboringBins) {
             bool isbinneeded = _binGrid->iswithincutoff(c.coord,
                                                         parentbin->coordinates(),
@@ -362,6 +366,11 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
             nbincount++;
             if (isbinneeded) {
                 auto cindicesvec = bin->getcindices();
+                #ifdef CROSSCHECK_CYLINDER
+                if(_crosscheckdumpFileNL.is_open())
+                    _crosscheckdumpFileNL<<"Cindices obtained in bin "<<bin->_ID<<" n "
+                    <<cindicesvec.size()<<endl;
+                #endif
                 int numneighbors = cindicesvec.size();
                 for (int iter = 0; iter < numneighbors; iter++) {
                     int ncindex = cindicesvec[iter];
@@ -415,10 +424,19 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                                 _list4mbinvec[HNLID][Ncylinder].push_back(currcylinder);
                             }*/
                         }
-                    }
-                }
-            }
-    }
+                    }//go through all neighbor lists and add to relevant ones.
+
+                }//loop through neighboring cylinders
+            }//is bin needed
+        #ifdef CROSSCHECK_CYLINDER
+        if(_crosscheckdumpFileNL.is_open())
+            _crosscheckdumpFileNL<<"Done..."<<endl;
+        #endif
+    }//neighboring bins
+    #ifdef CROSSCHECK_CYLINDER
+    if(_crosscheckdumpFileNL.is_open())
+        _crosscheckdumpFileNL<<"---"<<endl;
+    #endif
 }
 
 vector<Cylinder*> HybridCylinderCylinderNL::getNeighborsstencil(short HNLID, Cylinder*
