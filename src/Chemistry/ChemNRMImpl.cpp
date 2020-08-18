@@ -204,14 +204,21 @@ bool ChemNRMImpl::makeStep() {
     }
     #ifdef CROSSCHECK_CYLINDER
     auto _react = rn->getReaction();
-    auto _a = rn->getPropensity();
-    Compartment* c = static_cast<Compartment*>(_react->getParent());
-    auto coord = c->coordinates();
-    CController::_crosscheckdumpFilechem << "RNodeNRM: ptr=" << this <<", tau=" <<
-    rn->getTau() <<
-         ", a=" << _a <<" in Compartment "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<
-         ", points to Reaction Type "<< _react->getReactionType()<<endl;
+    if(_react->getReactionType()!= ReactionType::DIFFUSION){
+        auto _a = rn->getPropensity();
+        Compartment* c = static_cast<Compartment*>(_react->getParent());
+        auto coord = c->coordinates();
+        CController::_crosscheckdumpFilechem << "RNodeNRM: ptr=" << this <<", tau=" <<
+                                             rn->getTau() <<
+                                             ", a=" << _a <<" in Compartment "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<
+                                             ", points to Reaction Type "<< _react->getReactionType()<<endl;
 //    CController::_crosscheckdumpFilechem << (*_react);
+
+    }
+    else{
+        CController::_crosscheckdumpFilechem << "DIFFUSION "<<endl;
+    }
+
     #endif
     rn->makeStep();
 
