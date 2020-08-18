@@ -321,6 +321,12 @@ Bin* HybridCylinderCylinderNL::getBin(const vector<size_t> &indices) {
 
 void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool runtime){
 
+    #ifdef CROSSCHECK_CYLINDER
+    if(_crosscheckdumpFileNL.is_open())
+        _crosscheckdumpFileNL<<"Updating neighbors for  cylinder ID "<<currcylinder->getId()
+        <<endl;
+    #endif
+
     //clear existing neighbors of currcylinder from all neighborlists
     for(int idx = 0; idx < totaluniquefIDpairs; idx++) {
         int countbounds = _rMaxsqvec[idx].size();
