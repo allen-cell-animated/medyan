@@ -1137,7 +1137,6 @@ MinimizationResult PolakRibiere::minimize(
     std::cout<<"Slice time "<<elapsed_runslice4.count()<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
-    FFM.computeLoadForces();
 
     #ifdef OPTIMOUT
     std::cout<<"End Minimization************"<<endl;
