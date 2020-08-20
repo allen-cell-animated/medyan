@@ -220,6 +220,9 @@ void Cylinder::updatePosition() {
     _mCylinder->setLength(twoPointDistance(_b1->vcoordinate(),
                                            _b2->vcoordinate()));
 #endif
+        #ifdef CROSSCHECK_CYLINDER
+        _crosscheckdumpFile <<"MCylinder updated "<<getId()<<endl;
+        #endif
     }
 }
 

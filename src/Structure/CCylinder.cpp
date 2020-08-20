@@ -33,52 +33,129 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
     : _compartment(c), _pCylinder(rhs._pCylinder), _size(rhs._size) {
         
     CCylinder* rhsPtr = const_cast<CCylinder*>(&rhs);
+    #ifdef CROSSCHECK_CYLINDER
+    Cylinder::_crosscheckdumpFile <<"Clone begin rhs cylinder set "<<getId()<<endl;
+    Cylinder::_crosscheckdumpFile <<"Total monomers "<<rhs._monomers.size()<<getId()<<endl;
+    #endif
         
     //copy all monomers, bounds
     for(auto &m : rhs._monomers)
         _monomers.emplace_back(m->clone(c));
+
+    #ifdef CROSSCHECK_CYLINDER
+    Cylinder::_crosscheckdumpFile <<"Monomers cloned"<<endl;
+    #endif
     
     //copy all internal reactions
+    #ifdef CROSSCHECK_CYLINDER
+    Cylinder::_crosscheckdumpFile <<"Internal rxn count "<<rhs
+        ._crossCylinderReactions.size()<<endl;
+    #endif
     for(auto &r: rhs._internalReactions) {
+        #ifdef CROSSCHECK_CYLINDER
+        Cylinder::_crosscheckdumpFile <<"Internal ReactionType "<<r->getReactionType()
+        <<endl;
+        if(r->getCBound() != nullptr)
+            Cylinder::_crosscheckdumpFile <<"CBound exists"<<endl;
+        else
+            Cylinder::_crosscheckdumpFile <<"CBound DOESNOT exist"<<endl;
+        #endif
         ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
         rxnClone->setVolumeFrac(c->getVolumeFrac());
+        #ifdef CROSSCHECK_CYLINDER
+        Cylinder::_crosscheckdumpFile <<"Internal Reaction cloned."<<endl;
+        #endif
         
         if(r->getCBound() != nullptr)
             r->getCBound()->setOffReaction(rxnClone);
+
+        #ifdef CROSSCHECK_CYLINDER
+        if(r->getCBound() != nullptr)
+            Cylinder::_crosscheckdumpFile <<"OffReaction cloned + set."<<endl;
+        #endif
         
         addInternalReaction(rxnClone);
+        #ifdef CROSSCHECK_CYLINDER
+        Cylinder::_crosscheckdumpFile <<"Internal ReactionAdded."<<endl;
+        #endif
     }
     //copy all cross-cylinder reactions
+    #ifdef CROSSCHECK_CYLINDER
+    Cylinder::_crosscheckdumpFile <<"Cross cylinder rxn count "<<rhs
+    ._crossCylinderReactions.size()<<endl;
+    #endif
     for(auto it = rhs._crossCylinderReactions.begin();
              it != rhs._crossCylinderReactions.end(); it++) {
         for(auto &r : it->second) {
+            #ifdef CROSSCHECK_CYLINDER
+            Cylinder::_crosscheckdumpFile <<"CrossCylinder ReactionType "
+                                            ""<<r->getReactionType()
+                                          <<endl;
+            if(r->getCBound() != nullptr)
+                Cylinder::_crosscheckdumpFile <<"CBound exists"<<endl;
+            else
+                Cylinder::_crosscheckdumpFile <<"CBound DOESNOT exist"<<endl;
+            #endif
 
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
             rxnClone->setVolumeFrac(c->getVolumeFrac());
+            #ifdef CROSSCHECK_CYLINDER
+            Cylinder::_crosscheckdumpFile <<"CrossCylinder Reaction cloned."<<endl;
+            #endif
             
             if(r->getCBound() != nullptr) {
 	            r->getCBound()->setOffReaction(rxnClone);
             }
+            #ifdef CROSSCHECK_CYLINDER
+            if(r->getCBound() != nullptr)
+                Cylinder::_crosscheckdumpFile <<"OffReaction cloned + set."<<endl;
+            #endif
             
             addCrossCylinderReaction(it->first, rxnClone);
+            #ifdef CROSSCHECK_CYLINDER
+            Cylinder::_crosscheckdumpFile <<"CrossCylinder ReactionAdded."<<endl;
+            #endif
         }
     }
     //Copy reacting cylinders, Clone reactions where this cylinder is involved
+    #ifdef CROSSCHECK_CYLINDER
+    Cylinder::_crosscheckdumpFile <<"Reacting cylinder count "<<rhs
+        ._crossCylinderReactions.size()<<endl;
+    #endif
     for(auto &ccyl : rhs._reactingCylinders) {
 
         //clone reactions
         for(auto &r: ccyl->getCrossCylinderReactions()[rhsPtr]) {
+            #ifdef CROSSCHECK_CYLINDER
+            Cylinder::_crosscheckdumpFile <<"Reacting Cylinder ReactionType "
+                                            ""<<r->getReactionType()
+                                          <<endl;
+            if(r->getCBound() != nullptr)
+                Cylinder::_crosscheckdumpFile <<"CBound exists"<<endl;
+            else
+                Cylinder::_crosscheckdumpFile <<"CBound DOESNOT exist"<<endl;
+            #endif
             
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
             rxnClone->setVolumeFrac(c->getVolumeFrac());
+            #ifdef CROSSCHECK_CYLINDER
+            Cylinder::_crosscheckdumpFile <<"ReactingCylinder Reaction cloned."<<endl;
+            #endif
 
             if(r->getCBound() != nullptr) {
                 r->getCBound()->setOffReaction(rxnClone);
             }
+            #ifdef CROSSCHECK_CYLINDER
+            if(r->getCBound() != nullptr)
+                Cylinder::_crosscheckdumpFile <<"OffReaction cloned + set."<<endl;
+            #endif
             
             ccyl->addCrossCylinderReaction(this, rxnClone);
+            #ifdef CROSSCHECK_CYLINDER
+            Cylinder::_crosscheckdumpFile <<"CrossCylinder ReactionAdded."<<endl;
+            #endif
         }
     }
 }

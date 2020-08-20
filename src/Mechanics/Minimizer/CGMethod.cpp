@@ -1887,3 +1887,4 @@ floatingpoint CGMethod::quadraticoptimization(ForceFieldManager& FFM, const vect
 
 }
 
+ofstream CGMethod::_crosscheckdumpMechFile;

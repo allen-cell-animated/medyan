@@ -639,6 +639,9 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
             if (maxForder < 0) maxForder--;
             CGMethod::setLAMBDATOL(maxForder);
         }
+#ifdef CROSSCHECK_CYLINDER
+        CGMethod::_crosscheckdumpMechFile<<"Lambda order set"<<endl;
+#endif
 
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_other2(tend - tbegin);
@@ -694,6 +697,9 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
                                                         LAMBDARUNNINGAVERAGEPROBABILITY,
                                                         dummy, M_ETolstate);
         }
+        #ifdef CROSSCHECK_CYLINDER
+        CGMethod::_crosscheckdumpMechFile<<"Lambda found"<<endl;
+        #endif
 
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_lambda(tend - tbegin);
@@ -746,6 +752,9 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
             chrono::duration<floatingpoint> elapsed_other3(tend - tbegin);
             CUDAcommon::tmin.tother += elapsed_other3.count();
         }
+        #ifdef CROSSCHECK_CYLINDER
+        CGMethod::_crosscheckdumpMechFile<<"Beads moved"<<endl;
+        #endif
         //@@@} OTHER
 #if defined(CROSSCHECK) || defined(CUDAACCL)
         cross_checkclass::Aux=true;
@@ -762,9 +771,13 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_force(tend - tbegin);
         CUDAcommon::tmin.computeforces += elapsed_force.count();
-
+        #ifdef CROSSCHECK_CYLINDER
+        CGMethod::_crosscheckdumpMechFile<<"Compute force set"<<endl;
+        #endif
         maxForce = maxF();
-
+#ifdef CROSSCHECK_CYLINDER
+        CGMethod::_crosscheckdumpMechFile<<"MaxForce calculation"<<endl;
+#endif
         if (M_ETolstate[0] && maxForce <= 2.5 * GRADTOL) {
             ETOLexittstatus = true;
         } else
@@ -817,7 +830,9 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
             beta = betaPR;
         else
             beta = betaFR;
-
+#ifdef CROSSCHECK_CYLINDER
+        CGMethod::_crosscheckdumpMechFile<<"Beta set"<<endl;
+#endif
         //Global convergence properties of conjugate gradient methods for optimization Eq
         // 3.8
         //A SURVEY OF NONLINEAR CONJUGATE GRADIENT METHODS Section 9.
@@ -834,6 +849,10 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         if (Ms_isminimizationstate)
             //shift gradient
             shiftGradient(beta);
+
+        #ifdef CROSSCHECK_CYLINDER
+        CGMethod::_crosscheckdumpMechFile<<"shiftGradient"<<endl;
+        #endif
 
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_other4(tend - tbegin);
@@ -921,11 +940,17 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
             cout << endl;
 #endif
         }
+        #ifdef CROSSCHECK_CYLINDER
+        CGMethod::_crosscheckdumpMechFile<<"safeMode set"<<endl;
+        #endif
         //Create back up coordinates to go to in case Energy minimization fails at an
         // undeisrable state.
         if (maxForce < 10 * GRADTOL && numIter > N / 2) {
             copycoordsifminimumE(maxForce);
         }
+        #ifdef CROSSCHECK_CYLINDER
+        CGMethod::_crosscheckdumpMechFile<<"copycoordsinminimumE"<<endl;
+        #endif
 
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();

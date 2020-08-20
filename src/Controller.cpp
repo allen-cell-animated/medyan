@@ -1227,22 +1227,6 @@ void Controller::run() {
 
         //Crosscheck tau to make sure heap is ordered accurately.
         _cController.crosschecktau();
-
-        cout <<"MINUSENDPOLYMERIZATIONREACTIONS "<< endl;
-        for(auto fil:Filament::getFilaments()){
-            auto cyl = fil->getCylinderVector().front(); //get Minus Ends
-            for(auto &it:cyl->getCCylinder()->getInternalReactions()){
-                if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND &&
-                   !(it->isPassivated()) && it->computePropensity() > 0){
-                    cout<<"Fil "<<cyl->getFilID()<<" Cyl "<<cyl->getStableIndex()
-                               <<" RATEMULFACTORS ";
-                    for(auto fac:it->_ratemulfactors)
-                        cout<<fac<<" ";
-                    cout<<endl;
-                    it->getRnode()->printSelf();
-                }
-            }
-        }
     }
 #ifdef CHEMISTRY
     tauLastSnapshot = tau();
@@ -1405,13 +1389,21 @@ void Controller::run() {
                     exit(EXIT_FAILURE);
                 }
                 Cylinder::_crosscheckdumpFile << "Opening file " << crosscheckname << endl;
+                Cylinder::_crosscheckdumpFile << "NCylinders " << Cylinder::getCylinders
+                ().size() << endl;
 #endif
                 mins = chrono::high_resolution_clock::now();
                 Bead::rearrange();
                 Cylinder::updateAllData();
 
+                string crosscheckmechname = _outputDirectory + "crosscheckmech.traj";
+                CGMethod::_crosscheckdumpMechFile.open(crosscheckmechname);
+
                 minimizationResult = _mController.run();
                 _subSystem.prevMinResult = minimizationResult;
+#ifdef CROSSCHECK_CYLINDER
+                CGMethod::_crosscheckdumpMechFile.close();
+#endif
                 mine= chrono::high_resolution_clock::now();
 
                 
@@ -1634,7 +1626,6 @@ void Controller::run() {
     cout<< "HYBD time for run="<<SubSystem::HYBDtime<<endl;
     cout<< "Bmgr time for run="<<bmgrtime<<endl;
     cout<<"update-position time for run="<<updateposition<<endl;
-
     cout<<"rxnrate time for run="<<rxnratetime<<endl;
     cout<<"Output time for run="<<outputtime<<endl;
     cout<<"Special time for run="<<specialtime<<endl;
