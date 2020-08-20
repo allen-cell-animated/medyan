@@ -23,6 +23,7 @@
 
 #include "Mechanics/ForceField/Types.hpp"
 #include "Structure/Bead.h"
+#include "Structure/Bubble.h"
 
 namespace medyan {
 
@@ -42,6 +43,14 @@ inline FFCoordinateStartingIndex serializeDof(
     si.bead = curIdx;
     coord.reserve(coord.size() + 3 * Bead::getBeads().size());
     for(auto pb : Bead::getBeads()) {
+        coord.insert(coord.end(), pb->coord.begin(), pb->coord.end());
+        curIdx += 3;
+    }
+
+    // Bubble coord
+    si.bubble = curIdx;
+    coord.reserve(coord.size() + 3 * Bubble::getBubbles().size());
+    for(auto pb : Bubble::getBubbles()) {
         coord.insert(coord.end(), pb->coord.begin(), pb->coord.end());
         curIdx += 3;
     }
@@ -72,6 +81,13 @@ inline void deserializeDof(
 
     // Copy coord and force data to beads
     for(auto pb : Bead::getBeads()) {
+        std::copy(coord.begin() + curIdx, coord.begin() + curIdx + 3, pb->coord.begin());
+        std::copy(force.begin() + curIdx, force.begin() + curIdx + 3, pb->force.begin());
+        curIdx += 3;
+    }
+
+    // Copy coord and force data to bubbles
+    for(auto pb : Bubble::getBubbles()) {
         std::copy(coord.begin() + curIdx, coord.begin() + curIdx + 3, pb->coord.begin());
         std::copy(force.begin() + curIdx, force.begin() + curIdx + 3, pb->force.begin());
         curIdx += 3;
