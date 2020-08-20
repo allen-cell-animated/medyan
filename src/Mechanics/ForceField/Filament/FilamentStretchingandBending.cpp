@@ -64,8 +64,6 @@ void FilamentStretchingandBending<FBendingInteractionType>::precomputevars(
 	//Precomputing after vectorization is important to ensure accuracy.
 	precomputevars(Bead::getDbData().coords.data(), cyllengthset, cylbenddotproduct);
 
-	//Precomputing after vectorization is important to ensure accuracy.
-	precomputevars(Bead::getDbData().coords.data(), cyllengthset, cylbenddotproduct);
     /*floatingpoint *coord1, *coord2, *coord3;
     int cylcount = 0;
     int dotproductcount = 0;
