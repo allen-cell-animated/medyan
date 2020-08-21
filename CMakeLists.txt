@@ -46,6 +46,9 @@ endif()
 # Add the executable
 add_executable(medyan ${src_list})
 
+# Create the source groups for source tree with root at CMAKE_CURRENT_SOURCE_DIR.
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${src_list})
+
 # Include paths
 target_include_directories(medyan PUBLIC
     ${src_dir}
