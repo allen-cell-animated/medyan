@@ -41,8 +41,9 @@ jobs:
     - name: Prepare dependencies
       run: |
         brew install pkg-config
-        # Use avx2 (default avx512 causes trouble in UMEsimd)
-        sed -i '' -e 's/-mtune=native -march=native/-mavx2/g' CMakeLists.txt
+        # Use avx
+        # (avx2 is not available on github MacOS environment (Intel(R) Xeon(R) CPU E5-1650 v2 @ 3.50GHz as of the time of commit))
+        sed -i '' -e 's/-mtune=native -march=native/-mavx/g' CMakeLists.txt
         ./conf.sh
     - name: Build with make
       run: |
