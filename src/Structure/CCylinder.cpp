@@ -300,16 +300,25 @@ CCylinder::~CCylinder() {
     
     //Remove all species
     for(auto &m: _monomers) {
-        
+        #ifdef CROSSCHECK_CYLINDER
+        cout<<"Total Filament Species #"<<(CMonomer::_numFSpecies[_pCylinder->getType()])<<endl;
+        #endif
         for(int i = 0; i < CMonomer::_numFSpecies[_pCylinder->getType()]; i++) {
             SpeciesFilament* s = m->speciesFilament(i);
+            #ifdef CROSSCHECK_CYLINDER
+            cout<<"Removing Species Filament "<<s->getFullName()<<endl;
+            #endif
             if(s != nullptr) _compartment->removeSpecies(s);
         }
         #ifdef CROSSCHECK_CYLINDER
         cout<<"CCylinder removed all FilamentSpecies "<<endl;
+        cout<<"Total Bound Species #"<<CMonomer::_numBSpecies[_pCylinder->getType()]<<endl;
         #endif
         for(int i = 0; i < CMonomer::_numBSpecies[_pCylinder->getType()]; i++) {
             SpeciesBound* s = m->speciesBound(i);
+            #ifdef CROSSCHECK_CYLINDER
+            cout<<"Removing Species Bound "<<s->getFullName()<<endl;
+            #endif
             if(s != nullptr) _compartment->removeSpecies(s);
         }
         #ifdef CROSSCHECK_CYLINDER
