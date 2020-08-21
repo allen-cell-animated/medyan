@@ -277,13 +277,26 @@ void CCylinder::removeAllReactingCylinders() {
 }
 
 CCylinder::~CCylinder() {
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"CCylinder deleting "<<endl;
+    cout<<"Total monomers "<<_monomers.size()<<endl;
+    #endif
     
     //Remove all reactions owned by this ccylinder
     removeAllInternalReactions();
-    removeAllCrossCylinderReactions(); 
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"CCylinder removed all InternalReactions "<<endl;
+    #endif
+    removeAllCrossCylinderReactions();
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"CCylinder removed all CrossCylinderReactions "<<endl;
+    #endif
     
     //remove all reactions involving this ccylinder
     removeAllReactingCylinders();
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"CCylinder removed all ReactingCylinders "<<endl;
+    #endif
     
     //Remove all species
     for(auto &m: _monomers) {
@@ -292,10 +305,16 @@ CCylinder::~CCylinder() {
             SpeciesFilament* s = m->speciesFilament(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
+        #ifdef CROSSCHECK_CYLINDER
+        cout<<"CCylinder removed all FilamentSpecies "<<endl;
+        #endif
         for(int i = 0; i < CMonomer::_numBSpecies[_pCylinder->getType()]; i++) {
             SpeciesBound* s = m->speciesBound(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
+        #ifdef CROSSCHECK_CYLINDER
+        cout<<"CCylinder removed all BoundSpecies "<<endl;
+        #endif
     }
 }
 
