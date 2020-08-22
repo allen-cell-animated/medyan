@@ -47,10 +47,18 @@ vcpkg_setup() {
     rebuild=$2
     if [ $required = true ]; then
         if [ ! -d "$vcpkg_dir" -o $rebuild = true ]; then
-            echo "Configuring vcpkg..."
+            echo "Downloading vcpkg..."
             (
                 cd $build_dir &&
-                git clone https://github.com/Microsoft/vcpkg.git &&
+                git clone https://github.com/Microsoft/vcpkg.git
+            )
+
+            echo "Configuring vcpkg..."
+            (
+                if [ "$MEDYAN_SPECIAL_ENVIRONMENT" = "Deepthought2" ]; then
+                    # Deepthought2 has an old curl that does not support --tlsv1.2 option
+                    sed -i 's/--tlsv1.2/--tlsv1/g' "$vcpkg_dir/scripts/bootstrap.sh"
+                fi
                 cd $vcpkg_dir &&
                 ./bootstrap-vcpkg.sh
             )
@@ -59,11 +67,6 @@ vcpkg_setup() {
         fi
     else
         echo "Skipping vcpkg installation."
-    fi
-
-    if [ "$MEDYAN_SPECIAL_ENVIRONMENT" = "Deepthought2" ]; then
-        # Deepthought2 has an old curl that does not support --tlsv1.2 option
-        sed -i 's/--tlsv1.2/--tlsv1/g' "$vcpkg_dir/scripts/bootstrap.sh"
     fi
 
     return 0
