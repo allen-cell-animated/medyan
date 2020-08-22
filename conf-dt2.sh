@@ -30,7 +30,7 @@ if [ "$(curl --version | head -1 | cut -d"." -f2)" -lt 70 ]; then
     (
         mkdir -p "$medyan_root_dir/scripts/.build" &&
         cd $medyan_root_dir/scripts/.build &&
-        wget https://github.com/curl/curl/releases/download/curl-7_72_0/curl-7.72.0.zip &&
+        curl -L https://github.com/curl/curl/releases/download/curl-7_72_0/curl-7.72.0.zip > curl-7.72.0.zip &&
         unzip -qq curl-7.72.0.zip &&
         cd curl-7.72.0 &&
         ./configure --prefix=~/bin &&
