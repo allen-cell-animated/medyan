@@ -60,6 +60,12 @@ vcpkg_setup() {
     else
         echo "Skipping vcpkg installation."
     fi
+
+    if [ "$MEDYAN_SPECIAL_ENVIRONMENT" = "Deepthought2" ]; then
+        # Deepthought2 has an old curl that does not support --tlsv1.2 option
+        sed -i 's/--tlsv1.2/--tlsv1/g' "$vcpkg_dir/scripts/bootstrap.sh"
+    fi
+
     return 0
 }
 
