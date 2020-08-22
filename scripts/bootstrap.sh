@@ -50,7 +50,13 @@ vcpkg_setup() {
             echo "Downloading vcpkg..."
             (
                 cd $build_dir &&
-                git clone https://github.com/Microsoft/vcpkg.git &&
+                git clone https://github.com/Microsoft/vcpkg.git
+            )
+            echo "Configuring vcpkg..."
+            (
+                if [ "$MEDYAN_SPECIAL_ENVIRONMENT" = "Deepthought2" ]; then
+                    sed -i 's/--tlsv1.2//g' "$vcpkg_dir/scripts/bootstrap.sh"
+                fi
                 cd $vcpkg_dir &&
                 ./bootstrap-vcpkg.sh
             )
