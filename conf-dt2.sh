@@ -25,13 +25,14 @@ if [ "$(git version | cut -d"." -f2)" -lt 7 ]; then
 fi
 
 # Install curl (requires >= 7.70.0)
-if [ "$(curl --version | cut -d"." -f2)" -lt 70 ]; then
+if [ "$(curl --version | head -1 | cut -d"." -f2)" -lt 70 ]; then
     echo "curl version is too old. Building a new curl version..."
     (
         mkdir -p "$medyan_root_dir/scripts/.build" &&
         cd $medyan_root_dir/scripts/.build &&
-        git clone https://github.com/curl/curl.git &&
-        cd curl &&
+        wget https://github.com/curl/curl/releases/download/curl-7_72_0/curl-7.72.0.zip &&
+        unzip -qq curl-7.72.0.zip &&
+        cd curl-7.72.0 &&
         ./configure --prefix=~/bin &&
         make -j10 &&
         make install
