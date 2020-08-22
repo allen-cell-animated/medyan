@@ -56,6 +56,7 @@ vcpkg_setup() {
             (
                 cd $vcpkg_dir
                 if [ "$MEDYAN_SPECIAL_ENVIRONMENT" = "Deepthought2" ]; then
+                    # Deepthought2 has old software and is not compatible with the newest version
                     git checkout --force 2019.11
                 fi
                 ./bootstrap-vcpkg.sh
