@@ -24,14 +24,26 @@ if [ "$(git version | cut -d"." -f2)" -lt 7 ]; then
     )
 fi
 
+# Install curl (requires >= 7.70.0)
+if [ "$(curl --version | cut -d"." -f2)" -lt 70 ]; then
+    echo "curl version is too old. Building a new curl version..."
+    (
+        mkdir -p "$medyan_root_dir/scripts/.build" &&
+        cd $medyan_root_dir/scripts/.build &&
+        git clone https://github.com/curl/curl.git &&
+        cd curl &&
+        ./configure --prefix=~/bin &&
+        make -j10 &&
+        make install
+    )
+fi
+
 # Set up variables
 export MEDYAN_BOOST_INSTALL_MODE="manual"
 export MEDYAN_BOOST_INCLUDE_DIR="$BOOST_INCLUDE"
 export MEDYAN_BOOST_LIBRARY_DIR="$BOOST_LIB"
 export MEDYAN_ADDITIONAL_LINK_DIRS="$GCC_ROOTDIR/lib64"
 export MEDYAN_RPATH="$GCC_ROOTDIR/lib64"
-
-export MEDYAN_SPECIAL_ENVIRONMENT="Deepthought2"
 
 # Run the script
 $medyan_root_dir/conf.sh
