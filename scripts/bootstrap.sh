@@ -54,10 +54,10 @@ vcpkg_setup() {
             )
             echo "Configuring vcpkg..."
             (
+                cd $vcpkg_dir
                 if [ "$MEDYAN_SPECIAL_ENVIRONMENT" = "Deepthought2" ]; then
-                    sed -i 's/--tlsv1.2//g' "$vcpkg_dir/scripts/bootstrap.sh"
+                    git checkout --force 2019.11
                 fi
-                cd $vcpkg_dir &&
                 ./bootstrap-vcpkg.sh
             )
         else
