@@ -52,14 +52,13 @@ vcpkg_setup() {
                 cd $build_dir &&
                 git clone https://github.com/Microsoft/vcpkg.git
             )
-
             echo "Configuring vcpkg..."
             (
+                cd $vcpkg_dir
                 if [ "$MEDYAN_SPECIAL_ENVIRONMENT" = "Deepthought2" ]; then
-                    # Deepthought2 has an old curl that does not support --tlsv1.2 option
-                    sed -i 's/--tlsv1.2/--tlsv1/g' "$vcpkg_dir/scripts/bootstrap.sh"
+                    # Deepthought2 has old software and is not compatible with the newest version
+                    git checkout --force 2019.11
                 fi
-                cd $vcpkg_dir &&
                 ./bootstrap-vcpkg.sh
             )
         else
