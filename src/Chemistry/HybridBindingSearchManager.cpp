@@ -31,6 +31,9 @@
 #include <thrust/binary_search.h>
 #include <cstdlib>
 #include <thrust/scan.h>*/
+#ifdef CROSSCHECK_CYLINDER
+#include "CController.h"
+#endif
 
 vector<short> HybridBindingSearchManager::HNLIDvec;
 using namespace mathfunc;
@@ -178,6 +181,13 @@ bspairsoutSself, short idvec[2]) {
 	if (C1size > 0) {
 		bspairsoutSself.reset_counters();
 
+		#ifdef CROSSCHECK_CYLINDER
+			if (C1size >= switchfactor * dist::get_simd_size(t_avx))
+				HybridNeighborList::_crosscheckdumpFileNL << "SELF t_avx" << endl;
+			else
+				HybridNeighborList::_crosscheckdumpFileNL << "SELF t_serial" << endl;
+		#endif
+
 		if(filTypepairs[0] == filTypepairs[1]) {
 			if (C1size >= switchfactor * dist::get_simd_size(t_avx))
 				dist::find_distances(bspairsoutSself,
@@ -214,6 +224,9 @@ bspairsoutSself, short idvec[2]) {
 
 		//MERGE INTO single vector
 		//@{
+		#ifdef CROSSCHECK_CYLINDER
+				HybridNeighborList::_crosscheckdumpFileNL << "SELF gather" << endl;
+		#endif
 		if (true) {
 			uint N = bspairsoutSself.counter[D - 1];
 //		cout<<" Contacts found by SIMD Self "<<N<<endl;
@@ -253,6 +266,16 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
 		int C2size = ncmp->getSIMDcoordsV3<LinkerorMotor>
 				(partitioned_volume_ID[pos] + 1, filTypepairs[1]).size();
 
+		#ifdef CROSSCHECK_CYLINDER
+		if (C1size > 0 && C2size > 0) {
+			if (C1size >= switchfactor * dist::get_simd_size(t_avx) &&
+			    C2size >= switchfactor * dist::get_simd_size(t_avx))
+				HybridNeighborList::_crosscheckdumpFileNL << "ENCLOSED t_avx" << endl;
+			else
+				HybridNeighborList::_crosscheckdumpFileNL << "ENCLOSED t_serial" << endl;
+		}
+		#endif
+
 		if (C1size > 0 && C2size > 0) {
 
 			minsfind = chrono::high_resolution_clock::now();
@@ -286,6 +309,9 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
 
 			//MERGE INTO single vector
 			//@{
+			#ifdef CROSSCHECK_CYLINDER
+			HybridNeighborList::_crosscheckdumpFileNL << "ENCLOSED gather" << endl;
+			#endif
 			if (true) {
 				minsfind = chrono::high_resolution_clock::now();
 				uint N = bspairsoutS.counter[D-1];
@@ -293,6 +319,9 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
 					gatherCylindercIndexV3<D, SELF, LinkerorMotor>
 							(bspairsoutS, 0, N, idvec, ncmp);
 				else {
+					LOG(ERROR)<<"Multiple thread support not available in MEDYAN. Exiting"
+				 "."<<endl;
+
 					std::vector<std::thread> threads_avx;
 					uint nt = nthreads;
 					threads_avx.reserve(nt);
@@ -386,12 +415,6 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
 void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
                                  CCylinder* cc, short bindingSite) {
 	if (SysParams::INITIALIZEDSTATUS ) {
-		  #ifdef MOTORBIASCHECK
-		   addcounts++;
-//		   return;
-		   #endif
-/*		cout<<"Adding Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
-			<<bindingSite<<" manager indices "<<idvec[0]<<" "<<idvec[1]<<endl;*/
 		short idx = idvec[0];
 		short idx2 = idvec[1];
 
@@ -531,12 +554,12 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 
 void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], CCylinder*
                                     cc, short bindingSite) {
-
-    #ifdef MOTORBIASCHECK
-     removecounts++;
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Removing site "<<cc->getCylinder()->getId()
+    <<" "<<cc->getCylinder()->getStableIndex()<<" "<<bindingSite
+    << " with idvec "<<idvec[0]<<" "<<idvec[1]<<endl;
     #endif
-/*	cout<<"Removing Cylinder with Index "<<cc->getCylinder()->getStableIndex()<<" "
-	    <<bindingSite<<" manager indices "<<idvec[0]<<" "<<idvec[1]<<endl;*/
+
 
     short idx = idvec[0];
     short idx2 = idvec[1];
@@ -555,7 +578,15 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
     //Key
     t = t|pos;
 
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Removing by key"<<endl;
+    #endif
+
 	_possibleBindingsstencilvecuint[idx][idx2].erase(t);
+
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Removing by value"<<endl;
+    #endif
 
     //remove all tuples which have this as value
     //Iterate through the reverse map
@@ -576,15 +607,24 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
     //remove from the reverse map.
 	_reversepossibleBindingsstencilvecuint[idx][idx2][t].clear();
 
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Update rxn"<<endl;
+    #endif
+
     countNpairsfound(idvec);
     fManagervec[idx][idx2]->updateBindingReaction(Nbindingpairs[idx][idx2]);
 
     //remove all neighbors which have this binding site pair
     //Go through enclosing compartments to remove all entries with the current cylinder
     // and binding site as values.
+    auto nencl = _compartment->getenclosingNeighbours().size();
     for(auto nc: _compartment->getenclosingNeighbours()){
         if(nc != _compartment) {
             auto m = nc->getHybridBindingSearchManager();
+	        #ifdef CROSSCHECK_CYLINDER
+	        CController::_crosscheckdumpFilechem <<"Remove by value from neighbor "
+												""<<nc->getId()<<" total "<<nencl<<endl;
+	        #endif
 
             //Iterate through the reverse map
             auto keys = m->_reversepossibleBindingsstencilvecuint[idx][idx2][t];//keys that
@@ -604,6 +644,9 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
             }
             //remove from the reverse map.
             m->_reversepossibleBindingsstencilvecuint[idx][idx2][t].clear();
+	        #ifdef CROSSCHECK_CYLINDER
+	        CController::_crosscheckdumpFilechem <<"Update rxn"<<endl;
+	        #endif
 
             m->countNpairsfound(idvec);
             m->fManagervec[idx][idx2]->updateBindingReaction(m->Nbindingpairs[idx][idx2]);
@@ -733,12 +776,6 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
 }
 
 void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
-
-	#ifdef MOTORBIASCHECK
-	addcounts = 0;
-    removecounts = 0;
-    choosecounts = 0;
-	#endif
 
 	//Delete all entries in the binding pair maps
     for (int idx = 0; idx < totaluniquefIDpairs; idx++){
@@ -1027,9 +1064,10 @@ void HybridBindingSearchManager::addtoHNeighborList(){
 
 vector<tuple<CCylinder*, short>>
 HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
-	#ifdef MOTORBIASCHECK
-	 choosecounts++;
-	 #endif
+
+	#ifdef CROSSCHECK_CYLINDER
+	CController::_crosscheckdumpFilechem <<"Choosing site"<<endl;
+	#endif
 
     short idx = idvec[0];
     short idx2 = idvec[1];
@@ -1039,7 +1077,7 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
     const auto& cylinderInfoData = Cylinder::getDbData().value;
 
     assert((pbsSize!= 0)
-           && "Major bug: Linker binding manager should not have zero binding \
+           && "Major bug: Linker/Motor binding manager should not have zero binding \
                    sites when called to choose a binding site.");
     if(true) {
 	    uint randomIndex = Rand::randInteger(1, pbsSize);
@@ -1068,6 +1106,11 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
 	    short bsitepos1 = mask & site1;
 	    short bsitepos2 = mask & site2;
 
+	    #ifdef CROSSCHECK_CYLINDER
+	    CController::_crosscheckdumpFilechem <<"Chosen cindices, pos "<<cIndex1<<" "
+	                <<cIndex2<<" "<<bsitepos1<<" "<<bsitepos2<<endl;
+	    #endif
+
 	    CCylinder *ccyl1;
 	    CCylinder *ccyl2;
 
@@ -1082,6 +1125,9 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
 	    tuple<CCylinder *, short> t1 = make_tuple(ccyl1, bindingSite1);
 	    tuple<CCylinder *, short> t2 = make_tuple(ccyl2, bindingSite2);
 
+	    #ifdef CROSSCHECK_CYLINDER
+	    CController::_crosscheckdumpFilechem <<"Chosen!"<<endl;
+	    #endif
 	    return vector<tuple<CCylinder *, short>>{t1, t2};
     }
 }

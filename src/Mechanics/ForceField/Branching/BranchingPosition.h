@@ -30,7 +30,7 @@ class BranchingPosition : public BranchingInteractions {
 private:
     BStretchingInteractionType _FFType;
     
-    int *beadSet;
+    unsigned int *beadSet;
     
     ///Array describing the constants in calculation
     floatingpoint *kpos;

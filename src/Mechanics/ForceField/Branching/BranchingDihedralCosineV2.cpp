@@ -49,10 +49,11 @@ floatingpoint BranchingDihedralCosineV2::energy(
 
     int n = BranchingDihedral<BranchingDihedralCosineV2>::n;
 
-    floatingpoint *coord1, *coord2, *coord3, *coord4, n1n2, U_i;
+    floatingpoint *coord1, *coord2, *coord3, *coord4, n1n2, U_i, position;
     floatingpoint *mp = new floatingpoint[3];
     floatingpoint *n1 = new floatingpoint[3];
     floatingpoint *n2 = new floatingpoint[3];
+    floatingpoint *coord2prime = new floatingpoint[3];
 
     floatingpoint U = 0.0;
 
@@ -60,6 +61,18 @@ floatingpoint BranchingDihedralCosineV2::energy(
 
         coord1 = &coord[3 * beadSet[n * i]];
         coord2 = &coord[3 * beadSet[n * i + 1]];
+        //If the branching point is at the plus end of the cylinder, we end up with
+        // singularities in energy and force expressions. To avoid it, we will create a
+        // virtual plus end and use that to define vectors.
+        position = pos[i];
+        if(position == 1){
+            position = 0.5;//assign a dummy position and extend plus end to new coordinates.
+            for(int dim = 0; dim < 3; dim++) {
+                coord2prime[dim] = (1 / position) * (coord2[dim] - (1 - position) *
+                                                                   coord1[dim]);//extended plus end coordinate;
+            }
+            coord2 = &coord2prime[0];
+        }
         coord3 = &coord[3 * beadSet[n * i + 2]];
         coord4 = &coord[3 * beadSet[n * i + 3]];
 
@@ -95,7 +108,7 @@ floatingpoint BranchingDihedralCosineV2::energy(
     delete [] mp;
     delete [] n1;
     delete [] n2;
-
+    delete [] coord2prime;
     return U;
 }
 
@@ -119,7 +132,7 @@ void BranchingDihedralCosineV2::forces(
     double *zero = new double[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
 
     //@{
-    double Fc1[3], Fc2[3], Fc3[3], Fc4[3], Fc5[3], Fmp[3];
+    double Fc1[3], Fc2[3], Fc3[3], Fc4[3], Fc5[3], Fmp[3], Fc2prime[3], position;
     double vb1x, vb1y, vb1z, vb2x, vb2y, vb2z, vb3x, vb3y, vb3z;
     double vb2xm, vb2ym, vb2zm;
     double ax, ay, az, bx, by, bz;
@@ -139,7 +152,18 @@ void BranchingDihedralCosineV2::forces(
             coord4[j] = coord[3 * beadSet[n * i + 3]+ j];
         }
 
-        midPointCoordinate<double>(mp, coord1, coord2, pos[i]);
+        //If the branching point is at the plus end of the cylinder, we end up with
+        // singularities in energy and force expressions. To avoid it, we will create a
+        // virtual plus end and use that to define vectors.
+        position = pos[i];
+        if(areEqual(position, 1.0)){
+            position = 0.5;
+            coord2[0] = (1/position)*(coord2[0] - (1-position)*coord1[0]);
+            coord2[1] = (1/position)*(coord2[1] - (1-position)*coord1[1]);
+            coord2[2] = (1/position)*(coord2[2] - (1-position)*coord1[2]);
+        }
+
+        midPointCoordinate<double>(mp, coord1, coord2, position);
 
         f1 = &f[3 * beadSet[n * i]];
         f2 = &f[3 * beadSet[n * i + 1]];
@@ -230,60 +254,137 @@ void BranchingDihedralCosineV2::forces(
         sy2 = df*dtgy;
         sz2 = df*dtgz;
 
-        //Forces calculated are on points c5,c2,mp,c3. c5 = c4-c3+c2;
+        if(areEqual(pos[i], floatingpoint(1.0))) {
+            //Forces calculated are on points c5,c2prime,c2,c3. c5 = c4-c3+c2;
 
-        //I II III IV
-        //c5 c2 mp c3
+            //I II III IV
+            //c5 c2prime c2 c3
 
-        Fc2[0] = df*dtfx;
-        Fc2[1] = df*dtfy;
-        Fc2[2] = df*dtfz;
+            Fc2prime[0] = df*dtfx;
+            Fc2prime[1] = df*dtfy;
+            Fc2prime[2] = df*dtfz;
 
-        Fc5[0] = sx2 - Fc2[0];
-        Fc5[1] = sy2 - Fc2[1];
-        Fc5[2] = sz2 - Fc2[2];
+            Fc5[0] = sx2 - Fc2prime[0];
+            Fc5[1] = sy2 - Fc2prime[1];
+            Fc5[2] = sz2 - Fc2prime[2];
 
-        Fc3[0] = df*dthx;
-        Fc3[1] = df*dthy;
-        Fc3[2] = df*dthz;
+            Fc3[0] = df*dthx;
+            Fc3[1] = df*dthy;
+            Fc3[2] = df*dthz;
 
-        Fmp[0] = -sx2 - Fc3[0];
-        Fmp[1] = -sy2 - Fc3[1];
-        Fmp[2] = -sz2 - Fc3[2];
+            Fc2[0] = -sx2 - Fc3[0];
+            Fc2[1] = -sy2 - Fc3[1];
+            Fc2[2] = -sz2 - Fc3[2];
 
-        //STEP1: Transformation of forces on c5, c2, mp, and c3 TO forces on c2, mp, c3 and c4.
-        // Fc2 = Fc2 + Fc5
-        // F_mp = Fmp
-        // Fc3  = Fc3 - Fc5
-        // Fc4  = Fc5
+            //STEP1: Transformation of forces on c5, c2prime, c2, and c3 TO forces on
+            // c2prime, c2, c3 and c4.
+            // Fc2prime = Fc2prime + Fc5
+            // Fc2 = Fc2
+            // Fc3  = Fc3 - Fc5
+            // Fc4  = Fc5
 
-        Fc2[0] += Fc5[0];
-        Fc2[1] += Fc5[1];
-        Fc2[2] += Fc5[2];
+            Fc2prime[0] += Fc5[0];
+            Fc2prime[1] += Fc5[1];
+            Fc2prime[2] += Fc5[2];
 
-        Fc3[0] += -Fc5[0];
-        Fc3[1] += -Fc5[1];
-        Fc3[2] += -Fc5[2];
+            Fc3[0] += -Fc5[0];
+            Fc3[1] += -Fc5[1];
+            Fc3[2] += -Fc5[2];
 
-        Fc4[0] = Fc5[0];
-        Fc4[1] = Fc5[1];
-        Fc4[2] = Fc5[2];
+            Fc4[0] = Fc5[0];
+            Fc4[1] = Fc5[1];
+            Fc4[2] = Fc5[2];
 
-        // STEP2: Transofmration of forces from c2, mp, c3, c4 TO c1, c2, c3, c4
-        // Fc1 = (1-p) * Fmp
-        // Fc2 = Fc2 + p * Fmp
-        // Fc3 = Fc3
-        // Fc4 = Fc4
+            // STEP2: Transofmration of forces from c2prime, c2, c3, c4 TO c1, c2, c3, c4
+            // Fc1 = Fc2prime*(p-1)/p
+            // Fc2 = Fc2prime*(1/p) + Fc2
+            // Fc3 = Fc3
+            // Fc4 = Fc4
+            //In this scenario, the energy is defined as U1(c2, c2prime, c3, c4). We are
+            // trying to get U(c1, c2, c3, c4) from it.
+            //c1-parent minusend | c2 - parent plusend/bindingsite | c2prime-parent
+            // extendedplusend   | c3 - offspring minusend         | c4 - offspring plusend
+            //[dU(c1,c2,c3,c4)]             [dUtilda(c2,c2prime,c3,c4)]   dc2prime
+            //[---------------]        =    [-------------------------] x --------
+            //[    dc1        ]c2,c3,c4     [        dc2prime         ]     dc1
+            //______________________________________________________________________________
+            //[dU(c1,c2,c3,c4)]          [   [dUtilda(c2,c2prime,c3,c4)]   dc2prime
+            //[---------------]        = [   [-------------------------] x --------
+            //[    dc2        ]c1,c3,c4  [   [        dc2prime         ]     dc2
+            //                           [
+            //                           [        [dUtilda(c2,c2prime,c3,c4)]
+            //                           [  +     [-------------------------]
+            //                           [        [           dc2           ]
+            //We define c2 = c1 + s(c2prime - c1)
+            // dc2prime    s - 1  | dc2prime    1
+            // -------- = ------- | -------- = ---
+            //   dc1         s    |   dc2       s
+            double factor = (position - 1)/position;
+            Fc1[0] = factor*Fc2prime[0];
+            Fc1[1] = factor*Fc2prime[1];
+            Fc1[2] = factor*Fc2prime[2];
 
-        double alpha = pos[i];
+            factor = (1/position);
+            Fc2[0] += factor*Fc2prime[0];
+            Fc2[1] += factor*Fc2prime[1];
+            Fc2[2] += factor*Fc2prime[2];
+        }
+        //Default case
+        else{
+            //Forces calculated are on points c5,c2,mp,c3. c5 = c4-c3+c2;
 
-        Fc1[0] = (1-alpha) * Fmp[0];
-        Fc1[1] = (1-alpha) * Fmp[1];
-        Fc1[2] = (1-alpha) * Fmp[2];
+            //I II III IV
+            //c5 c2 mp c3
 
-        Fc2[0] += (alpha) * Fmp[0];
-        Fc2[1] += (alpha) * Fmp[1];
-        Fc2[2] += (alpha) * Fmp[2];
+            Fc2[0] = df*dtfx;
+            Fc2[1] = df*dtfy;
+            Fc2[2] = df*dtfz;
+
+            Fc5[0] = sx2 - Fc2[0];
+            Fc5[1] = sy2 - Fc2[1];
+            Fc5[2] = sz2 - Fc2[2];
+
+            Fc3[0] = df*dthx;
+            Fc3[1] = df*dthy;
+            Fc3[2] = df*dthz;
+
+            Fmp[0] = -sx2 - Fc3[0];
+            Fmp[1] = -sy2 - Fc3[1];
+            Fmp[2] = -sz2 - Fc3[2];
+
+            //STEP1: Transformation of forces on c5, c2, mp, and c3 TO forces on c2, mp, c3 and c4.
+            // Fc2 = Fc2 + Fc5
+            // F_mp = Fmp
+            // Fc3  = Fc3 - Fc5
+            // Fc4  = Fc5
+
+            Fc2[0] += Fc5[0];
+            Fc2[1] += Fc5[1];
+            Fc2[2] += Fc5[2];
+
+            Fc3[0] += -Fc5[0];
+            Fc3[1] += -Fc5[1];
+            Fc3[2] += -Fc5[2];
+
+            Fc4[0] = Fc5[0];
+            Fc4[1] = Fc5[1];
+            Fc4[2] = Fc5[2];
+
+            // STEP2: Transofmration of forces from c2, mp, c3, c4 TO c1, c2, c3, c4
+            // Fc1 = (1-p) * Fmp
+            // Fc2 = Fc2 + p * Fmp
+            // Fc3 = Fc3
+            // Fc4 = Fc4
+
+            Fc1[0] = (1 - position) * Fmp[0];
+            Fc1[1] = (1 - position) * Fmp[1];
+            Fc1[2] = (1 - position) * Fmp[2];
+
+            Fc2[0] += (position) * Fmp[0];
+            Fc2[1] += (position) * Fmp[1];
+            Fc2[2] += (position) * Fmp[2];
+            Fc2[2] += (position) * Fmp[2];
+        }
 
         //Add to force vector
         f1[0] += Fc1[0];
@@ -321,7 +422,7 @@ void BranchingDihedralCosineV2::forces(
                 <<cyl2->getFirstBead()->getStableIndex()<<" "
                 <<cyl2->getSecondBead()->getStableIndex()<<endl;
 
-            cout<<"Parent filament binding fraction "<<alpha<<endl;
+            cout<<"Parent filament binding fraction "<<position<<endl;
             cout<<"Parent filament binding position "<<mp[0]<<" "<<mp[1]<<" "<<mp[2]<<endl;
             cout<<"ax-bz"<<ax<<" "<<ay<<" "<<az<<" "<<bx<<" "<<by<<" "<<bz<<endl;
             cout<<"rasq "<<rasq<<" rbsq "<<rbsq<<" rgsq "<<rgsq<<" rg "<<rg<<endl;
