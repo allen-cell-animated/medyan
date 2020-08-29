@@ -39,6 +39,8 @@
 #include <Eigen/Core>
 
 #include "MotorGhostInteractions.h"
+#include "CCylinder.h"
+#include "ChemNRMImpl.h"
 
 using namespace mathfunc;
 
@@ -88,12 +90,13 @@ void BasicSnapshot::print(int snapshot) {
         auto x =
             midPointCoordinate(linker->getFirstCylinder()->getFirstBead()->vcoordinate(),
                                linker->getFirstCylinder()->getSecondBead()->vcoordinate(),
-                               linker->getFirstPosition());
+                               linker->getFirstCylinder()->adjustedrelativeposition
+                                   (linker->getFirstPosition()));
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
 
         x = midPointCoordinate(linker->getSecondCylinder()->getFirstBead()->vcoordinate(),
                                linker->getSecondCylinder()->getSecondBead()->vcoordinate(),
-                               linker->getSecondPosition());
+                               linker->getSecondCylinder()->adjustedrelativeposition(linker->getSecondPosition()));
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
 
         _outputFile << endl;
@@ -109,12 +112,12 @@ void BasicSnapshot::print(int snapshot) {
         auto x =
             midPointCoordinate(motor->getFirstCylinder()->getFirstBead()->vcoordinate(),
                                motor->getFirstCylinder()->getSecondBead()->vcoordinate(),
-                               motor->getFirstPosition());
+                               motor->getFirstCylinder()->adjustedrelativeposition(motor->getFirstPosition()));
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
 
         x = midPointCoordinate(motor->getSecondCylinder()->getFirstBead()->vcoordinate(),
                                motor->getSecondCylinder()->getSecondBead()->vcoordinate(),
-                               motor->getSecondPosition());
+                               motor->getSecondCylinder()->adjustedrelativeposition(motor->getSecondPosition()));
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
 
         _outputFile << endl;
@@ -1506,6 +1509,31 @@ void Datadump::print(int snapshot) {
 	}
 
 	_outputFile <<endl;
+
+    _outputFile <<"MINUSENDPOLYMERIZATIONREACTIONS "<< endl;
+    for(auto fil:Filament::getFilaments()){
+        auto cyl = fil->getCylinderVector().front(); //get Minus Ends
+        for(auto &it:cyl->getCCylinder()->getInternalReactions()){
+            if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND &&
+            !(it->isPassivated()) && it->computePropensity() > 0){
+                _outputFile<<"Fil "<<cyl->getFilID()<<" Cyl "<<cyl->getStableIndex()
+                            <<" RATEMULFACTORS ";
+                for(auto fac:it->_ratemulfactors)
+                    _outputFile<<fac<<" ";
+                _outputFile<<endl;
+                auto coord = cyl->getCompartment()->coordinates();
+                std::cout.precision(10);
+                _outputFile << "RNodeNRM: ptr=" << this <<", tau=" <<
+                static_cast<RNodeNRM*>(it->getRnode())->getTau() <<
+                     //	cout << "tau=" << getTau() <<
+                     ", a=" << static_cast<RNodeNRM*>(it->getRnode())->getPropensity()
+                     <<" in Compartment "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<
+                     ", points to Reaction:\n";
+                //Print the reaction
+                it->printToStream(_outputFile);
+            }
+        }
+    }
 }
 
 void HessianMatrix::print(int snapshot){

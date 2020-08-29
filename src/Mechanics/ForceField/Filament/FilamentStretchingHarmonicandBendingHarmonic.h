@@ -51,16 +51,20 @@ public:
 	            floatingpoint *eqlsansbending, floatingpoint* totalenergy, const int startID,
 	            const int endID, int threadID){};
 
-	void forces(floatingpoint *coord, floatingpoint *f, size_t nint, int * cylSet,
+	void forces(floatingpoint *coord, floatingpoint *f, size_t nint, int *beadSet, int *
+				cylSet,
 	            floatingpoint *cyllengthset, floatingpoint *cylbenddotproduct,
 	            floatingpoint *kstr, floatingpoint *kbend,
-	            floatingpoint *eql, floatingpoint *eqt){};
+	            floatingpoint *eql, floatingpoint *eqt){LOG(ERROR)<<"FF not implemented. "
+																 "Exiting"<<endl;};
 
-	void forces(floatingpoint *coord,  floatingpoint *f, int * cylSetcylsansbending,
+	void forces(floatingpoint *coord,  floatingpoint *f, int* beadSet, int *
+				cylSetcylsansbending,
 	            floatingpoint *cyllengthset,
 	            int *beadSetsansbending, floatingpoint *kstrsansbending,
 	            floatingpoint *eqlsansbending,
-	            const int startID, const int endID, int threadID){};
+	            const int startID, const int endID, int threadID){LOG(ERROR)<<"FF not implemented. "
+	                                                                          "Exiting"<<endl;};
 };
 
 #endif

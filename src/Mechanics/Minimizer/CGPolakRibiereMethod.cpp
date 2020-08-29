@@ -93,6 +93,12 @@ MinimizationResult PolakRibiere::minimize(
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
+    #ifdef OPTIMOUT
+    cout<<"Energy before minimization"<<endl;
+    FFM.computeEnergy(Bead::getDbData().coords.data(), true);
+    CUDAcommon::tmin.computeenerycallszero++;
+    cout<<endl;
+    #endif
     //@@@{ STEP 2: COMPUTE FORCES
     tbegin = chrono::high_resolution_clock::now();
     FFM.computeForces(coord.data(), force); //split and synchronize in the end
@@ -136,11 +142,10 @@ MinimizationResult PolakRibiere::minimize(
     auto maxForce = maxF();
     bool isForceBelowTol = forceBelowTolerance();
 
-    result.energiesBefore = FFM.computeEnergyHRMD(coord.data());
-
     tend = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_copy(tend - tbegin);
     CUDAcommon::tmin.copyforces += elapsed_copy.count();
+    result.energiesBefore = FFM.computeEnergyHRMD(coord.data());
     //@@@}
 #endif
     //M as the first letter in variables signifies that it is used by minimizer
@@ -966,9 +971,7 @@ MinimizationResult PolakRibiere::minimize(
                 << numIter << " steps." << endl;
         cout << "Maximum force in system = " << maxF() << endl;
         cout << "System energy..." << endl;
-        #ifdef ADDITIONALINFO
         FFM.computeEnergy(coord.data(), true);
-        #endif
     }
 
     else if (numIter >= N) {

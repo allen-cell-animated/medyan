@@ -255,6 +255,8 @@ void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, 
 
     floatingpoint *coord1, *coord2, dist, invL;
     floatingpoint f0, *f1, *f2;
+    floatingpoint r1x, r1y, r1z;
+    floatingpoint Fr1x, Fr1y, Fr1z;
 
     for(int i = 0; i < nint; i += 1) {
         coord1 = &coord[beadSet[n * i]];
@@ -267,14 +269,23 @@ void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, 
         f1 = &f[beadSet[n * i]];
         f2 = &f[beadSet[n * i + 1]];
 
-        f2[0] +=  f0 * ( coord1[0] - coord2[0] );
-        f2[1] +=  f0 * ( coord1[1] - coord2[1] );
-        f2[2] +=  f0 * ( coord1[2] - coord2[2] );
+        r1x = coord2[0] - coord1[0];
+        r1y = coord2[1] - coord1[1];
+        r1z = coord2[2] - coord1[2];
+
+        //Force along vector r1
+        Fr1x = -f0 * ( r1x );
+        Fr1y = -f0 * ( r1y );
+        Fr1z = -f0 * ( r1z );
+
+        f2[0] +=  Fr1x;
+        f2[1] +=  Fr1y;
+        f2[2] +=  Fr1z;
 
         // force i-1
-        f1[0] +=  f0 * ( coord2[0] - coord1[0] );
-        f1[1] +=  f0 * ( coord2[1] - coord1[1] );
-        f1[2] +=  f0 * ( coord2[2] - coord1[2] );
+        f1[0] +=  -Fr1x;
+        f1[1] +=  -Fr1y;
+        f1[2] +=  -Fr1z;
 
         #ifdef CHECKFORCES_INF_NAN
         if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)){

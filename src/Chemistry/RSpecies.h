@@ -120,7 +120,9 @@ public:
     /// Sets the copy number for this RSpecies. 
     /// @param n should be a non-negative number, but no checking is done in run time
     /// @note The operation does not emit any signals about the copy number change.
-    void setN(species_copy_t n) {_n=n;}
+    void setN(species_copy_t n) {
+        _n=n;
+    }
 
 #ifdef TRACK_UPPER_COPY_N        
     /// Sets the upper limit for the copy number of this RSpecies.
