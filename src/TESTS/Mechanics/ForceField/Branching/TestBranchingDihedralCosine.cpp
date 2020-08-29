@@ -62,10 +62,12 @@ TEST_CASE("Force field: Branching Dihedral Cosine", "[ForceField]") {
     kdih.push_back(1.0);
 
     // special case dihedral angle
-    coords.push_back(V3 { 0.0, -1.0, 0.0 });
-    coords.push_back(V3 { 0.0, 1.0, 0.0 });
-    coords.push_back(V3 { 1.0, 0.0, 0.0 });
-    coords.push_back(V3 { 1.5, -1.0, 0.1 });
+    coords.insert(coords.end(), {
+        0.0, -1.0, 0.0,
+        0.0, 1.0, 0.0,
+        1.0, 0.0, 0.0,
+        1.5, -1.0, 0.1
+    });
     pos.push_back(1.0);
     kdih.push_back(1.0);
 

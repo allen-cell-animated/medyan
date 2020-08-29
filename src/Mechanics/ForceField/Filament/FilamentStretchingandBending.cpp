@@ -190,8 +190,6 @@ void FilamentStretchingandBending<FBendingInteractionType>::vectorize(const FFCo
         hingecount = hingecount + 2;
 //        cout<<hingecount<<endl;
 	}
-	//Precomputing after vectorization is important to ensure accuracy.
-	precomputevars(Bead::getDbData().coords.data(), cyllengthset, cylbenddotproduct);
 
 	/*for(auto f:Filament::getFilaments()){
 	    cout<<f->getCylinderVector().size()<<" ";
