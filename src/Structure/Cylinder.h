@@ -31,6 +31,7 @@
 #include "Bead.h"
 #include "Structure/CellList.hpp"
 #include "Util/Math/Vec.hpp"
+#include <fstream>
 
 //FORWARD DECLARATIONS
 class Filament;
@@ -41,7 +42,7 @@ struct CylinderInfoData {
     struct CylinderInfo {
         int filamentId = -1;
         int positionOnFilament = -1;
-        int filamentFirstEntry = 0;
+        int filamentFirstEntry = 0;//This variable is updated in CylinderInfoData.
         int compartmentId = -1;
         std::size_t beadIndices[2];
         mathfunc::Vec< 3, floatingpoint > coord;
@@ -56,6 +57,14 @@ struct CylinderInfoData {
     void set_content(std::size_t pos, CylinderInfo c) { value[pos] = c; }
     void move_content(std::size_t from, std::size_t to) { value[to] = value[from]; }
     void resize(std::size_t size) { value.resize(size); }
+    void settodummy(std::size_t pos){
+        CCylinder* dummyCCyl = nullptr;
+        auto infinity = numeric_limits<floatingpoint>::infinity();
+        auto maxsize_t = numeric_limits<size_t>::max();
+        CylinderInfo ctemp{-1000, -1000, -1000, -1000, {maxsize_t, maxsize_t},
+                           {infinity, infinity, infinity}, -1000, -1000, dummyCCyl};
+        set_content(pos, ctemp);
+    }
 };
 
 /// A container to store a MCylinder and CCylinder.
@@ -234,10 +243,18 @@ public:
 						bool minusendstatus, bool plusendstatus, short minusendtype,
 						short plusendtype);
 
+	//Adjusts the _alpha value for partial cylinders. Determines the ratio of
+	// D(minusend-bindingsite)/D(minusend-plusend) given
+	// _alpha = D(0thmonomer-bindingsite)/D(fullcylinder)
+	//Note. Use this function only to determine mechanical coordinate.
+	//Refer Docs/Design/PartialCylinderAlpha.pdf
+    floatingpoint adjustedrelativeposition(floatingpoint _alpha, bool verbose = false);
+
     static floatingpoint timecylinder1;
 	static floatingpoint timecylinder2;
 	static floatingpoint timecylinderchem;
 	static floatingpoint timecylindermech;
+	static ofstream _crosscheckdumpFile;
     //@}
 };
 

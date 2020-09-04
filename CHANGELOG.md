@@ -3,6 +3,12 @@
 ## Refactoring
 - Refactor the data structure in the energy minimization, such that it allows for non-coordinate degrees of freedom (9a02e0f6d).
 
+## Enhancements
+- Optimize branching force field calculations (df76443).
+
+## Bug fixes
+- Fix the coordinate calculation for binding sites using the `Cylinder::adjustedrelativeposition` function (dbf7527).
+
 # 4.1.2 (Released 2020-06-01)
 
 ## Enhancements

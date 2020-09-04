@@ -136,6 +136,7 @@ public:
     array<float, RATEMULFACTSIZE> _ratemulfactors;
 
     void setRateMulFactor(float factor, RateMulFactorType type){
+        //Call to this function should always be followed with call to updatePropensity
 
         if(factor == _ratemulfactors[type]) return;
 
@@ -248,7 +249,9 @@ public:
     void setCBound(CBound* cBound) {_cBound = cBound;}
     ///Get CBound
     CBound* getCBound() {return _cBound;}
+
     
+
     // Sets the scaled rate based on volume dependence.
     void recalcRateVolumeFactor() {
         // This can automatically set the "_rate" as scaled value of "rate"

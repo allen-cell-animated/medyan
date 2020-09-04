@@ -30,6 +30,7 @@
 
 using namespace mathfunc;
 void SubSystem::resetNeighborLists() {
+
 #ifdef CUDAACCL_NL
     coord = new floatingpoint[CGMethod::N];
                 coord_com = new floatingpoint[3 * Cylinder::getCylinders().size()];
@@ -309,6 +310,9 @@ void SubSystem::updateBindingManagers() {
 	endresetCUDA();
 #endif
 	vectorizeCylinder();
+	#ifdef CROSSCHECK_CYLINDER
+	HybridNeighborList::_crosscheckdumpFileNL<<"vectorized Cylinder"<<endl;
+    #endif
 	//Version1
 	#ifdef NLORIGINAL
 	for (auto C : _compartmentGrid->getCompartments()){
@@ -351,7 +355,7 @@ void SubSystem::updateBindingManagers() {
 			->initializeSIMDvars();
 		initialize = true;
 	}
-#ifdef OPTIMOUt
+#ifdef OPTIMOUT
 	endonetimecost = chrono::high_resolution_clock::now();
 #endif
 	//Generate binding site coordinates in each compartment and seggregate them into
@@ -360,10 +364,16 @@ void SubSystem::updateBindingManagers() {
 		C->SIMDcoordinates4linkersearch_section(1);
 		C->SIMDcoordinates4motorsearch_section(1);
 	}
+#ifdef CROSSCHECK_CYLINDER
+	HybridNeighborList::_crosscheckdumpFileNL<<"Generated SIMD input files"<<endl;
+#endif
 
 	//Empty the existing binding pair list
 	for (auto C : _compartmentGrid->getCompartments())
 		C->getHybridBindingSearchManager()->resetpossibleBindings();
+#ifdef CROSSCHECK_CYLINDER
+	HybridNeighborList::_crosscheckdumpFileNL<<"Completed reset of binding pair maps"<<endl;
+#endif
 
 	minsSIMD = chrono::high_resolution_clock::now();
 	HybridBindingSearchManager::findtimeV3 = 0.0;
@@ -371,14 +381,26 @@ void SubSystem::updateBindingManagers() {
 	// Update binding sites in SIMD
 	for (auto C : _compartmentGrid->getCompartments()) {
 		C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV3();
+		#ifdef CROSSCHECK_CYLINDER
+		HybridNeighborList::_crosscheckdumpFileNL
+			<<"L/M Update binding pair map in Cmp "<<C->getId()<<endl;
+		#endif
 		for(auto &manager : C->getBranchingManagers()) {
 				manager->updateAllPossibleBindingsstencil();
+			#ifdef CROSSCHECK_CYLINDER
+			HybridNeighborList::_crosscheckdumpFileNL
+				<<"B Update binding pair map in Cmp "<<C->getId()<<endl;
+			#endif
 		}
 	}
 	//UpdateAllBindingReactions
 	for (auto C : _compartmentGrid->getCompartments()) {
 //        cout<<"Cmp ID "<<C->getID()<<endl;
 		C->getHybridBindingSearchManager()->updateAllBindingReactions();
+		#ifdef CROSSCHECK_CYLINDER
+		HybridNeighborList::_crosscheckdumpFileNL
+			<<"Updated binding reaction rates in Cmp "<<C->getId()<<endl;
+		#endif
 	}
 
 #ifdef OPTIMOUT
@@ -403,22 +425,6 @@ void SubSystem::updateBindingManagers() {
 	for(auto C : _compartmentGrid->getCompartments()) {
 		C->deallocateSIMDcoordinates();
 	}
-	#endif
-
-	#ifdef MOTORBIASCHECK
-	cout<<"Cmp-Cylinders ";
-	for(auto C : _compartmentGrid->getCompartments()) {
-		cout<<C->getCylinders().size()<<" ";
-	}
-	cout<<endl;
-	cout<<"Binding sizes ";
-	for (auto C : _compartmentGrid->getCompartments()) {
-		short idvec[2];
-		idvec[0] = 0;
-		idvec[1] = 1;
-		cout<<C->getHybridBindingSearchManager()->getbindingsize(idvec)<<" ";
-	}
-	cout<<endl;
 	#endif
 }
 

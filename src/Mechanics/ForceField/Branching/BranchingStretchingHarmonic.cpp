@@ -285,6 +285,7 @@ void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f,
     floatingpoint *coord1, *coord2, *coord3, dist, invL, f0;
     floatingpoint *f1, *f2, *f3;
     floatingpoint *v1 = new floatingpoint[3];
+    floatingpoint r1x, r1y, r1z;
 
 
     for(int i = 0; i < nint; i += 1) {
@@ -304,24 +305,27 @@ void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f,
         invL = 1 / dist;
         f0 = kstr[i] * ( dist - eql[i]) * invL;
 
+        r1x = coord3[0] - v1[0];
+        r1y = coord3[1] - v1[1];
+        r1z = coord3[2] - v1[2];
 
-        f1[0] +=  -f0 * ( coord3[0] - v1[0] ) * (pos[i] - 1);
-        f1[1] +=  -f0 * ( coord3[1] - v1[1] ) * (pos[i] - 1);
-        f1[2] +=  -f0 * ( coord3[2] - v1[2] ) * (pos[i] - 1);
+        f1[0] +=  -f0 * ( r1x ) * (pos[i] - 1);
+        f1[1] +=  -f0 * ( r1y ) * (pos[i] - 1);
+        f1[2] +=  -f0 * ( r1z ) * (pos[i] - 1);
 
         // force i+1
-        f2[0] +=  f0 * ( coord3[0] - v1[0] ) * pos[i];
-        f2[1] +=  f0 * ( coord3[1] - v1[1] ) * pos[i];
-        f2[2] +=  f0 * ( coord3[2] - v1[2] ) * pos[i];
+        f2[0] +=  f0 * ( r1x ) * pos[i];
+        f2[1] +=  f0 * ( r1y ) * pos[i];
+        f2[2] +=  f0 * ( r1z ) * pos[i];
 
         //force on j
-        f3[0] +=  -f0 * ( coord3[0] - v1[0] );
-        f3[1] +=  -f0 * ( coord3[1] - v1[1] );
-        f3[2] +=  -f0 * ( coord3[2] - v1[2] );
+        f3[0] +=  -f0 * ( r1x );
+        f3[1] +=  -f0 * ( r1y );
+        f3[2] +=  -f0 * ( r1z );
 
-        stretchforce[3*i] = -f0 * ( coord3[0] - v1[0] );
-        stretchforce[3*i + 1] = -f0 * ( coord3[1] - v1[1] );
-        stretchforce[3*i + 2] = -f0 * ( coord3[2] - v1[2] );
+        stretchforce[3*i] = -f0 * ( r1x );
+        stretchforce[3*i + 1] = -f0 * ( r1y );
+        stretchforce[3*i + 2] = -f0 * ( r1z );
 
         #ifdef CHECKFORCES_INF_NAN
         if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)||checkNaN_INF<floatingpoint>(f3,0,2)){
@@ -336,6 +340,7 @@ void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f,
                 <<cyl1->getSecondBead()->getStableIndex()<<" "
                 <<cyl2->getFirstBead()->getStableIndex()<<" "
                 <<cyl2->getSecondBead()->getStableIndex()<<endl;
+            cyl1->adjustedrelativeposition(pos[i], true);
 
             cout<<"Printing coords"<<endl;
             cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;

@@ -149,7 +149,10 @@ Filament::~Filament() {
         
         if(c->isPlusEnd())
             _subSystem->removeTrackable<Bead>(c->getSecondBead());
-        
+
+        #ifdef CROSSCHECK_CYLINDER
+        cout<<"RemoveTrackable Cylinder "<<c->getId()<<" "<<c->getStableIndex() <<endl;
+        #endif
         _subSystem->removeTrackable<Cylinder>(c);
     }
 }
@@ -386,7 +389,10 @@ void Filament::retractPlusEnd() {
     
     _subSystem->removeTrackable<Bead>(retCylinder->getSecondBead());
     removeChild(retCylinder->getSecondBead());
-    
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"RemoveTrackable Cylinder "<<retCylinder->getId()<<" "
+                                                             ""<<retCylinder->getStableIndex()<<endl;
+    #endif
     _subSystem->removeTrackable<Cylinder>(retCylinder);
     removeChild(retCylinder);
     
@@ -421,7 +427,9 @@ void Filament::retractMinusEnd() {
     
     _subSystem->removeTrackable<Bead>(retCylinder->getFirstBead());
     removeChild(retCylinder->getFirstBead());
-    
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"RemoveTrackable Cylinder "<<retCylinder->getId()<<" "<<retCylinder->getStableIndex() <<endl;
+    #endif
     _subSystem->removeTrackable<Cylinder>(retCylinder);
     removeChild(retCylinder);
     

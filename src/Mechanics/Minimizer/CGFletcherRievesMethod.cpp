@@ -39,13 +39,13 @@ MinimizationResult FletcherRieves::minimize(
 
     startMinimization(GRADTOL);
     FFM.vectorizeAllForceFields(initCGMethodData(*this, GRADTOL));
+    result.energiesBefore = FFM.computeEnergyHRMD(coord.data());
 
     FFM.computeForces(coord.data(), force);
     searchDir = force;
     auto maxForce = maxF();
     bool isForceBelowTol = forceBelowTolerance();
 
-    result.energiesBefore = FFM.computeEnergyHRMD(coord.data());
 
     //compute first gradient
     floatingpoint curGrad = searchDirDotSearchDir();

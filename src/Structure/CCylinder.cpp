@@ -51,9 +51,6 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
     //copy all cross-cylinder reactions
     for(auto it = rhs._crossCylinderReactions.begin();
              it != rhs._crossCylinderReactions.end(); it++) {
-        #ifdef CHECKRXN
-        auto ccylpair = it->first;
-		#endif
         for(auto &r : it->second) {
 
             //copy cbound if any
@@ -61,16 +58,6 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             rxnClone->setVolumeFrac(c->getVolumeFrac());
             
             if(r->getCBound() != nullptr) {
-	            #ifdef CHECKRXN
-	            if(dynamic_cast<CMotorGhost*>(r->getCBound())) {
-		            CMotorGhost* cm = dynamic_cast<CMotorGhost*>(r->getCBound());
-		            cout<<"MotorGhost mID "<<cm->getMotorGhost()->getId()
-		                <<" with clone Rxn "<<rxnClone<<" from Rxn "<<r<<" Type "
-                        <<rxnClone->getReactionType()
-		                <<" between "<<rhsPtr->getCylinder()->getId()<<" & "
-		                <<ccylpair->getCylinder()->getId()<<endl;
-	            }
-	            #endif
 	            r->getCBound()->setOffReaction(rxnClone);
             }
             
@@ -88,16 +75,6 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             rxnClone->setVolumeFrac(c->getVolumeFrac());
 
             if(r->getCBound() != nullptr) {
-                #ifdef CHECKRXN
-                if(dynamic_cast<CMotorGhost*>(r->getCBound())) {
-                    CMotorGhost* cm = dynamic_cast<CMotorGhost*>(r->getCBound());
-                    cout<<"MotorGhost mID "<<cm->getMotorGhost()->getId()
-                        <<" with clone Rxn "<<rxnClone<<" from Rxn "<<r<<
-                        " Type "<<rxnClone->getReactionType()
-                        <<" between "<<ccyl->getCylinder()->getId()<<" & "
-	                    <<rhsPtr->getCylinder()->getId()<<endl;
-                }
-				#endif
                 r->getCBound()->setOffReaction(rxnClone);
             }
             
@@ -143,17 +120,6 @@ void CCylinder::addCrossCylinderReaction(CCylinder* other,
     _compartment->addInternalReaction(r);
     _chemSim->addReaction(r);
 
-    #ifdef CHECKRXN
-    if(r->getCBound() != nullptr) {
-        if(dynamic_cast<CMotorGhost*>(r->getCBound())) {
-            CMotorGhost* cm = dynamic_cast<CMotorGhost*>(r->getCBound());
-            cout<<"MotorGhost mID "<<cm->getMotorGhost()->getId()
-                <<" with Rxn "<<r<<" with RNodeNRM "<<r->getRNode()
-                <<" Type "<<r->getReactionType()<<endl;
-        }
-    }
-    #endif
-
     //add to this reaction map
     _crossCylinderReactions[other].insert(r);
     other->addReactingCylinder(this);
@@ -175,14 +141,8 @@ void CCylinder:: removeAllInternalReactions() {
 void CCylinder::removeCrossCylinderReaction(CCylinder* other,
                                             ReactionBase* r) {
 	if (r == nullptr) return;
-    #ifdef CHECKRXN
-    cout<<"Removing cross Cylinder Reaction"<<endl;
-	#endif
     auto it = _crossCylinderReactions[other].find(r);
     if(it != _crossCylinderReactions[other].end()) {
-	    #ifdef CHECKRXN
-    	cout<<"found"<<endl;
-		#endif
        
         //erase the reaction
         _crossCylinderReactions[other].erase(it);
