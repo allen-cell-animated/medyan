@@ -35,6 +35,7 @@
 #include "CController.h"
 #endif
 
+
 vector<short> HybridBindingSearchManager::HNLIDvec;
 using namespace mathfunc;
 
@@ -180,13 +181,12 @@ bspairsoutSself, short idvec[2]) {
 
 	if (C1size > 0) {
 		bspairsoutSself.reset_counters();
-
-		#ifdef CROSSCHECK_CYLINDER
-			if (C1size >= switchfactor * dist::get_simd_size(t_avx))
-				HybridNeighborList::_crosscheckdumpFileNL << "SELF t_avx" << endl;
-			else
-				HybridNeighborList::_crosscheckdumpFileNL << "SELF t_serial" << endl;
-		#endif
+		if(CROSSCHECK_BS_SWITCH){
+            if (C1size >= switchfactor * dist::get_simd_size(t_avx))
+                HybridNeighborList::_crosscheckdumpFileNL << "SELF t_avx" << endl;
+            else
+                HybridNeighborList::_crosscheckdumpFileNL << "SELF t_serial" << endl;
+        }
 
 		if(filTypepairs[0] == filTypepairs[1]) {
 			if (C1size >= switchfactor * dist::get_simd_size(t_avx))
@@ -224,9 +224,8 @@ bspairsoutSself, short idvec[2]) {
 
 		//MERGE INTO single vector
 		//@{
-		#ifdef CROSSCHECK_CYLINDER
-				HybridNeighborList::_crosscheckdumpFileNL << "SELF gather" << endl;
-		#endif
+		if(CROSSCHECK_BS_SWITCH)
+		    HybridNeighborList::_crosscheckdumpFileNL << "SELF gather" << endl;
 		if (true) {
 			uint N = bspairsoutSself.counter[D - 1];
 //		cout<<" Contacts found by SIMD Self "<<N<<endl;
@@ -266,15 +265,13 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
 		int C2size = ncmp->getSIMDcoordsV3<LinkerorMotor>
 				(partitioned_volume_ID[pos] + 1, filTypepairs[1]).size();
 
-		#ifdef CROSSCHECK_CYLINDER
-		if (C1size > 0 && C2size > 0) {
+		if (CROSSCHECK_BS_SWITCH && C1size > 0 && C2size > 0) {
 			if (C1size >= switchfactor * dist::get_simd_size(t_avx) &&
 			    C2size >= switchfactor * dist::get_simd_size(t_avx))
 				HybridNeighborList::_crosscheckdumpFileNL << "ENCLOSED t_avx" << endl;
 			else
 				HybridNeighborList::_crosscheckdumpFileNL << "ENCLOSED t_serial" << endl;
 		}
-		#endif
 
 		if (C1size > 0 && C2size > 0) {
 
@@ -309,9 +306,8 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2]){
 
 			//MERGE INTO single vector
 			//@{
-			#ifdef CROSSCHECK_CYLINDER
-			HybridNeighborList::_crosscheckdumpFileNL << "ENCLOSED gather" << endl;
-			#endif
+            if(CROSSCHECK_BS_SWITCH)
+                HybridNeighborList::_crosscheckdumpFileNL << "ENCLOSED gather" << endl;
 			if (true) {
 				minsfind = chrono::high_resolution_clock::now();
 				uint N = bspairsoutS.counter[D-1];
@@ -554,11 +550,11 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 
 void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], CCylinder*
                                     cc, short bindingSite) {
-    #ifdef CROSSCHECK_CYLINDER
-    CController::_crosscheckdumpFilechem <<"Removing site "<<cc->getCylinder()->getId()
-    <<" "<<cc->getCylinder()->getStableIndex()<<" "<<bindingSite
-    << " with idvec "<<idvec[0]<<" "<<idvec[1]<<endl;
-    #endif
+    if(CROSSCHECK_BS_SWITCH)
+        CController::_crosscheckdumpFilechem <<"Removing site "<<cc->getCylinder()->getId()
+        <<" "<<cc->getCylinder()->getStableIndex()<<" "<<bindingSite
+        << " with idvec "<<idvec[0]<<" "<<idvec[1]<<endl;
+
 
 
     short idx = idvec[0];
@@ -578,15 +574,13 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
     //Key
     t = t|pos;
 
-    #ifdef CROSSCHECK_CYLINDER
-    CController::_crosscheckdumpFilechem <<"Removing by key"<<endl;
-    #endif
+    if(CROSSCHECK_BS_SWITCH)
+        CController::_crosscheckdumpFilechem <<"Removing by key"<<endl;
 
 	_possibleBindingsstencilvecuint[idx][idx2].erase(t);
 
-    #ifdef CROSSCHECK_CYLINDER
-    CController::_crosscheckdumpFilechem <<"Removing by value"<<endl;
-    #endif
+    if(CROSSCHECK_BS_SWITCH)
+        CController::_crosscheckdumpFilechem <<"Removing by value"<<endl;
 
     //remove all tuples which have this as value
     //Iterate through the reverse map
@@ -607,9 +601,8 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
     //remove from the reverse map.
 	_reversepossibleBindingsstencilvecuint[idx][idx2][t].clear();
 
-    #ifdef CROSSCHECK_CYLINDER
-    CController::_crosscheckdumpFilechem <<"Update rxn"<<endl;
-    #endif
+    if(CROSSCHECK_BS_SWITCH)
+        CController::_crosscheckdumpFilechem <<"Update rxn"<<endl;
 
     countNpairsfound(idvec);
     fManagervec[idx][idx2]->updateBindingReaction(Nbindingpairs[idx][idx2]);
@@ -621,10 +614,9 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
     for(auto nc: _compartment->getenclosingNeighbours()){
         if(nc != _compartment) {
             auto m = nc->getHybridBindingSearchManager();
-	        #ifdef CROSSCHECK_CYLINDER
-	        CController::_crosscheckdumpFilechem <<"Remove by value from neighbor "
+	        if(CROSSCHECK_BS_SWITCH)
+	            CController::_crosscheckdumpFilechem <<"Remove by value from neighbor "
 												""<<nc->getId()<<" total "<<nencl<<endl;
-	        #endif
 
             //Iterate through the reverse map
             auto keys = m->_reversepossibleBindingsstencilvecuint[idx][idx2][t];//keys that
@@ -644,9 +636,8 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
             }
             //remove from the reverse map.
             m->_reversepossibleBindingsstencilvecuint[idx][idx2][t].clear();
-	        #ifdef CROSSCHECK_CYLINDER
-	        CController::_crosscheckdumpFilechem <<"Update rxn"<<endl;
-	        #endif
+	        if(CROSSCHECK_BS_SWITCH)
+	            CController::_crosscheckdumpFilechem <<"Update rxn"<<endl;
 
             m->countNpairsfound(idvec);
             m->fManagervec[idx][idx2]->updateBindingReaction(m->Nbindingpairs[idx][idx2]);
@@ -1065,9 +1056,8 @@ void HybridBindingSearchManager::addtoHNeighborList(){
 vector<tuple<CCylinder*, short>>
 HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
 
-	#ifdef CROSSCHECK_CYLINDER
-	CController::_crosscheckdumpFilechem <<"Choosing site"<<endl;
-	#endif
+	if(CROSSCHECK_BS_SWITCH)
+	    CController::_crosscheckdumpFilechem <<"Choosing site"<<endl;
 
     short idx = idvec[0];
     short idx2 = idvec[1];
@@ -1106,10 +1096,9 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
 	    short bsitepos1 = mask & site1;
 	    short bsitepos2 = mask & site2;
 
-	    #ifdef CROSSCHECK_CYLINDER
-	    CController::_crosscheckdumpFilechem <<"Chosen cindices, pos "<<cIndex1<<" "
+	    if(CROSSCHECK_BS_SWITCH)
+	        CController::_crosscheckdumpFilechem <<"Chosen cindices, pos "<<cIndex1<<" "
 	                <<cIndex2<<" "<<bsitepos1<<" "<<bsitepos2<<endl;
-	    #endif
 
 	    CCylinder *ccyl1;
 	    CCylinder *ccyl2;
@@ -1125,9 +1114,8 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
 	    tuple<CCylinder *, short> t1 = make_tuple(ccyl1, bindingSite1);
 	    tuple<CCylinder *, short> t2 = make_tuple(ccyl2, bindingSite2);
 
-	    #ifdef CROSSCHECK_CYLINDER
-	    CController::_crosscheckdumpFilechem <<"Chosen!"<<endl;
-	    #endif
+	    if(CROSSCHECK_BS_SWITCH)
+	        CController::_crosscheckdumpFilechem <<"Chosen!"<<endl;
 	    return vector<tuple<CCylinder *, short>>{t1, t2};
     }
 }
