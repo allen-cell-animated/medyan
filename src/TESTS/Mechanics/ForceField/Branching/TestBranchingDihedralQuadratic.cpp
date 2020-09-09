@@ -61,6 +61,16 @@ TEST_CASE("Force field: Branching Dihedral Quadratic", "[ForceField]") {
     pos.push_back(0.4);
     kdih.push_back(1.0);
 
+    // special case dihedral angle
+    coords.insert(coords.end(), {
+        0.0, -1.0, 0.0,
+        0.0, 1.0, 0.0,
+        1.0, 0.0, 0.0,
+        1.5, -1.0, 0.1
+    });
+    pos.push_back(1.0);
+    kdih.push_back(1.0);
+
     const auto nint = kdih.size();
     vector< unsigned > beadSet(coords.size() / 3);
     std::iota(beadSet.begin(), beadSet.end(), 0u);

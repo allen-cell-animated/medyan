@@ -52,12 +52,18 @@ floatingpoint BranchingDihedralQuadraticV2::energy(
 
     for(size_t i = 0; i < nint; ++i) {
         const auto coord1 = makeRefVec< 3, floatingpoint >(coord + beadSet[bpi * i    ]);
-        const auto coord2 = makeRefVec< 3, floatingpoint >(coord + beadSet[bpi * i + 1]);
+        auto p = pos[i];
+        Vec<3,floatingpoint> coord2;
+        coord2 = makeRefVec< 3, floatingpoint >(coord + beadSet[bpi * i + 1]);
+        if(areEqual(p, 1.0)) {
+            p = (floatingpoint) 0.5;
+            //cplus = cminus +p*(cplus_extended-cminus)
+            coord2 = (1 / p) *(coord2 - (1 - p) * coord1);
+        }
         const auto coord3 = makeRefVec< 3, floatingpoint >(coord + beadSet[bpi * i + 2]);
         const auto coord4 = makeRefVec< 3, floatingpoint >(coord + beadSet[bpi * i + 3]);
 
         // Brancher coordinate on the mother filament
-        const auto p = pos[i];
         const auto mp = (1 - p) * coord1 + p * coord2;
 
         // Bonds
@@ -385,26 +391,62 @@ void BranchingDihedralQuadraticV2::forces(
         const auto fc43 = fc53;
 
         // STEP2: Transofmration of forces from c2, mp, c3, c4 TO c1, c2, c3, c4
+        //Note. In the case where pos[i] =1.0, then this is transformation from
+        // c2prime, c2, c3, c4 TO c1, c2prime, c3, c4
         // Fc1 = (1-p) * Fmp
         // Fc2 = Fc2 + p * Fmp
         // Fc3 = Fc3
         // Fc4 = Fc4
 
         //Force on c1
-        const auto fc11 = (1-p) * fmp1;
-        const auto fc12 = (1-p) * fmp2;
-        const auto fc13 = (1-p) * fmp3;
+        const auto fc11 = (1 - p) * fmp1;
+        const auto fc12 = (1 - p) * fmp2;
+        const auto fc13 = (1 - p) * fmp3;
 
         //Force on c2
-        fc21 += p* fmp1;
-        fc22 += p* fmp2;
-        fc23 += p* fmp3;
+        fc21 += p * fmp1;
+        fc22 += p * fmp2;
+        fc23 += p * fmp3;
 
-        // compute forces
-        const auto force1 = fc11 * b1 + fc12 * b2 + fc13 * b3;
-        const auto force2 = fc21 * b1 + fc22 * b2 + fc23 * b3;
-        const auto force3 = fc31 * b1 + fc32 * b2 + fc33 * b3;
-        const auto force4 = fc41 * b1 + fc42 * b2 + fc43 * b3;
+        Vec<3,floatingpoint> force1, force2, force3, force4;
+        //U2(c1,c2prime,c3,c4)<=>Utilda(c1,c2,c3,c4)
+        if(areEqual(pos[i],(floatingpoint) 1.0)){
+            //In this scenario, the energy is defined as U2(c1, c2prime, c3, c4). We are
+            // trying to get U(c1, c2, c3, c4) from it.
+            //c1-parent minusend | c2 - parent plusend/bindingsite | c2prime-parent
+            // extendedplusend   | c3 - offspring minusend         | c4 - offspring plusend
+            //[dU(c1,c2,c3,c4)]             [dU2(c1,c2prime,c3,c4)]   dc2prime
+            //[---------------]        =    [---------------------] x --------
+            //[    dc2        ]c1,c3,c4     [      dc2prime       ]     dc2
+            //______________________________________________________________________________
+            //[dU(c1,c2,c3,c4)]          [   [dU2(c1,c2prime,c3,c4)]   dc2prime
+            //[---------------]        = [   [---------------------] x --------
+            //[    dc1        ]c2,c3,c4  [   [       c2prime       ]     dc1
+            //                           [
+            //                           [        [dU2(c1,c2prime,c3,c4)]
+            //                           [  +     [---------------------]
+            //                           [        [         dc1         ]
+            //We define c2 = c1 + s(c2prime - c1)
+            // dc2prime    s - 1  | dc2prime    1
+            // -------- = ------- | -------- = ---
+            //   dc1         s    |   dc2       s
+            force1 = fc11 * b1 + fc12 * b2 + fc13 * b3;
+            const auto force2prime = fc21 * b1 + fc22 * b2 + fc23 * b3;
+            force3 = fc31 * b1 + fc32 * b2 + fc33 * b3;
+            force4 = fc41 * b1 + fc42 * b2 + fc43 * b3;
+            const auto factor1 = (p-1)/p;
+            const auto factor2 = (1/p);
+            force1 += force2prime*factor1;
+            force2 = force2prime*factor2;
+        }
+        // Default case. compute forces U(c1, c2, c3, c4)<=>Utilda(c2,mp,c3,c4)
+        else {
+            // compute forces
+            force1 = fc11 * b1 + fc12 * b2 + fc13 * b3;
+            force2 = fc21 * b1 + fc22 * b2 + fc23 * b3;
+            force3 = fc31 * b1 + fc32 * b2 + fc33 * b3;
+            force4 = fc41 * b1 + fc42 * b2 + fc43 * b3;
+        }
 
         // apply forces
         f1 += force1;

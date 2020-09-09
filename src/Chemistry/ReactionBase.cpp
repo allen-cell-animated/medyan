@@ -32,6 +32,7 @@ ReactionBase::ReactionBase (float rate, bool isProtoCompartment, floatingpoint v
 #ifdef REACTION_SIGNALING
     _signal=nullptr;
 #endif
+    //All reactions are generated passivated.
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     _passivated=true;
 #endif

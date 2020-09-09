@@ -50,6 +50,7 @@
 #include <unordered_map>
 #include 	<tuple>
 #include <algorithm>
+#include "ChemRNode.h"
 using namespace mathfunc;
 
 //FORWARD DECLARATIONS
@@ -95,9 +96,15 @@ private:
                 exit(EXIT_FAILURE);
 
             }
+/*            if(events > 0) {
+                cout << "Cmp " << c->getCompartment()->getId() << " diffusing species "
+                     << diffusingspeciesname << "copy number set to " << events +
+                        (c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().getN()
+                     <<" from "<< (c->getCompartment()->findSpeciesByName(get<0>(sd)))
+                     ->getRSpecies().getN()<<endl;
+            }*/
             events=events+(c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().getN();
-            /*cout<<"Cmp "<<c->getCompartment()->getId()<<" diffusing species "
-                <<diffusingspeciesname<<"copy number set to "<<events<<endl;*/
+
             (c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(events);
             c->getCompartment()->getDiffusionReactionContainer().updatePropensityComprtment();
             counter++;
@@ -128,7 +135,8 @@ public:
         for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
             for(auto &it: C->getDiffusionReactionContainer().reactions())
             {temp_diffrate_vector.push_back(it->getRate());
-                it->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);}
+                it->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
+            }
             C->getDiffusionReactionContainer().updatePropensityComprtment();
             for(auto &Mgr:C->getFilamentBindingManagers()){
 #ifdef NLORIGINAL
@@ -203,6 +211,17 @@ public:
                     for (auto count = 0; count < diffspeciesnamevec.size(); count++) {
                         Species *sp = Cmp->findSpeciesByName(diffspeciesnamevec[count]);
                         if (sp != nullptr) {
+                            auto currcopynumber = sp->getRSpecies().getN();
+                            auto temptargetcopynumber = diffspeciescpyvec[count];
+                            //setN
+                            while(currcopynumber > temptargetcopynumber) {
+                                sp->down();
+                                currcopynumber = sp->getN();
+                            }
+                            while(currcopynumber < temptargetcopynumber) {
+                                sp->up();
+                                currcopynumber = sp->getN();
+                            }
                             sp->getRSpecies().setN(diffspeciescpyvec[count]);
                         } else {
                             LOG(ERROR) << "Cannot find diffusing species of name "
@@ -218,16 +237,15 @@ public:
             for (auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
                 for (auto &it: C->getDiffusionReactionContainer().reactions()) {
                     it->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
+                    it->updatePropensity();
                 }
-                C->getDiffusionReactionContainer().updatePropensityComprtment();
             }
             //Bulk Species
             for (auto &s : _chemData.speciesBulk) {
-
+                LOG(ERROR)<<"Bulk species protocols not implemented. Exiting."<<endl;
             }
             //Set diffusing species copy numbers to 0.
             for(auto &s : _chemData.speciesDiffusing) {
-
                 auto name = get<0>(s);
                 auto copyNumber = get<1>(s);
                 auto releaseTime = get<3>(s);

@@ -203,12 +203,6 @@ volumes namely self(1), halves(6), quarters(12) and 1/8ths(8). The position in t
 #endif
    void countNpairsfound(short idvec[2]);
 
-   #ifdef MOTORBIASCHECK
-   size_t addcounts = 0;
-   size_t removecounts = 0;
-   size_t choosecounts = 0;
-   #endif
-
 public:
 
     //constructors
@@ -269,12 +263,6 @@ public:
 
     void printbindingsitesstencil(short idvec[2]);
 
-#ifdef MOTORBIASCHECK
-    size_t getbindingsize(short idvec[2]){
-                return Nbindingpairs[idvec[0]][idvec[1]];
-    }
-#endif
-
     void resetpossibleBindings(){
 
         int idx, idx2;
@@ -287,11 +275,6 @@ public:
             }
         }
 
-        #ifdef MOTORBIASCHECK
-        addcounts = 0;
-        removecounts = 0;
-        choosecounts = 0;
-        #endif
     }
 
     int numBindingSitesstencil(short idvec[2]) {
@@ -336,11 +319,6 @@ public:
     static floatingpoint SIMDV3appendtime;
     static floatingpoint findtimeV3;
 
-    #ifdef MOTORBIASCHECK
-    size_t getaddcounts(){ return addcounts;}
-    size_t getremovecounts(){ return removecounts;}
-    size_t getchoosecounts(){return choosecounts;}
-    #endif
 };
 
 #ifdef SIMDBINDINGSEARCH

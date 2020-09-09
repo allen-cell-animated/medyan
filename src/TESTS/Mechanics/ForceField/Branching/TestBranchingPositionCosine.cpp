@@ -4,88 +4,74 @@
 
 #include "catch2/catch.hpp"
 
-#include "Mechanics/ForceField/Branching/BranchingDihedralCosine.h"
+#include "Mechanics/ForceField/Branching/BranchingPositionCosine.h"
 #include "TESTS/Mechanics/ForceField/TestFFCommon.hpp"
 
 using namespace test_ff_common;
 
-TEST_CASE("Force field: Branching Dihedral Cosine", "[ForceField]") {
+TEST_CASE("Force field: Branching Position Cosine", "[ForceField]") {
     // The test case checks whether energy and force are consistent
 
     using namespace std;
-    using VF = vector< floatingpoint >;
+    using namespace mathfunc;
+    using V3 = Vec< 3, floatingpoint >;
+    using VA3 = VecArray< 3, floatingpoint >;
 
     // Prepare data
     //---------------------------------
-    VF kdih;
-    VF pos;
-    VF coords;
+    vector< floatingpoint > kpos;
+    vector< floatingpoint > pos;
+    VA3 coords;
 
-    // small dihedral angle
-    coords.insert(coords.end(), {
-        0.0, -1.0, 0.0,
-        0.0, 1.0, 0.0,
-        1.0, 0.0, 0.0,
-        1.5, 1.0, 0.1
-    });
+    //
+    coords.push_back(V3 { 0.0, -1.0, 0.0 });
+    coords.push_back(V3 { 0.0, 1.0, 0.0 });
+    coords.push_back(V3 { 1.0, 0.0, 0.0 });
     pos.push_back(0.6);
-    kdih.push_back(1.0);
+    kpos.push_back(1.0);
 
     // 90 deg dihedral angle (<90)
-    coords.insert(coords.end(), {
-        0.0, -1.0, 0.0,
-        0.0, 1.0, 0.0,
-        1.0, 0.0, 0.0,
-        1.5, 0.1, 1.0
-    });
+    coords.push_back(V3 { 0.0, -1.0, 0.0 });
+    coords.push_back(V3 { 0.0, 1.0, 0.0 });
+    coords.push_back(V3 { 1.0, 0.0, 0.0 });
     pos.push_back(0.5);
-    kdih.push_back(1.0);
+    kpos.push_back(1.0);
 
     // 90 deg dihedral angle (>90)
-    coords.insert(coords.end(), {
-        0.0, -1.0, 0.0,
-        0.0, 1.0, 0.0,
-        1.0, 0.0, 0.0,
-        1.5, -0.1, 1.0
-    });
+    coords.push_back(V3 { 0.0, -1.0, 0.0 });
+    coords.push_back(V3 { 0.0, 1.0, 0.0 });
+    coords.push_back(V3 { 1.0, 0.0, 0.0 });
     pos.push_back(0.5);
-    kdih.push_back(1.0);
+    kpos.push_back(1.0);
 
     // large dihedral angle
-    coords.insert(coords.end(), {
-        0.0, -1.0, 0.0,
-        0.0, 1.0, 0.0,
-        1.0, 0.0, 0.0,
-        1.5, -1.0, 0.1
-    });
+    coords.push_back(V3 { 0.0, -1.0, 0.0 });
+    coords.push_back(V3 { 0.0, 1.0, 0.0 });
+    coords.push_back(V3 { 1.0, 0.0, 0.0 });
     pos.push_back(0.4);
-    kdih.push_back(1.0);
+    kpos.push_back(1.0);
 
     // special case dihedral angle
-    coords.insert(coords.end(), {
-        0.0, -1.0, 0.0,
-        0.0, 1.0, 0.0,
-        1.0, 0.0, 0.0,
-        1.5, -1.0, 0.1
-    });
+    coords.push_back(V3 { 0.0, -1.0, 0.0 });
+    coords.push_back(V3 { 0.0, 1.0, 0.0 });
+    coords.push_back(V3 { 1.0, 0.0, 0.0 });
     pos.push_back(1.0);
-    kdih.push_back(1.0);
+    kpos.push_back(1.0);
 
-    const auto nint = kdih.size();
-    vector< unsigned > beadSet(coords.size() / 3);
+    const auto nint = kpos.size();
+    vector< unsigned > beadSet(coords.size());
     std::iota(beadSet.begin(), beadSet.end(), 0u);
-    for(auto& x : beadSet) x *= 3;
 
     // Prepare functions
     //---------------------------------
-    const auto calcEnergy = [&](const VF& c) {
-        return BranchingDihedralCosine {}.energy(
-            c.data(), nint, beadSet.data(), kdih.data(), pos.data()
+    const auto calcEnergy = [&](const VA3& c) {
+        return BranchingPositionCosine {}.energy(
+            c.data(), beadSet.data(), kpos.data(), pos.data()
         );
     };
-    const auto calcForce = [&](const VF& c, VF& f) {
-        BranchingDihedralCosine {}.forces(
-            c.data(), f.data(), nint, beadSet.data(), kdih.data(), pos.data(), nullptr
+    const auto calcForce = [&](const VA3& c, VA3& f) {
+        BranchingPositionCosine {}.forces(
+            c.data(), f.data(), beadSet.data(), kpos.data(), pos.data(), nullptr
         );
     };
 

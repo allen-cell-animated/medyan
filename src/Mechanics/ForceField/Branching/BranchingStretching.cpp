@@ -44,7 +44,7 @@ void BranchingStretching<BStretchingInteractionType>::vectorize(const FFCoordina
 
         kstr[i] = b->getMBranchingPoint()->getStretchingConstant();
         eql[i] = b->getMBranchingPoint()->getEqLength();
-        pos[i] = b->getPosition();
+        pos[i] = b->getFirstCylinder()->adjustedrelativeposition(b->getPosition());
         for(int j = 0; j < 3; j++)
         	stretchforce[3*i + j] = 0.0;
         i++;

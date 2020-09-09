@@ -38,13 +38,16 @@ endif()
 if(MSVC)
     set(CMAKE_CXX_FLAGS "/arch:AVX2 /MP /EHsc")
 else()
-    set(CMAKE_CXX_FLAGS "-Wall -Wextra -ffast-math -fno-finite-math-only -mtune=native -march=native")
+    set(CMAKE_CXX_FLAGS "-Wall -ffast-math -fno-finite-math-only -mtune=native -march=native")
     set(CMAKE_CXX_FLAGS_DEBUG "-g")
     set(CMAKE_CXX_FLAGS_RELEASE "-O2 -funroll-loops -flto")
 endif()
 
 # Add the executable
 add_executable(medyan ${src_list})
+
+# Create the source groups for source tree with root at CMAKE_CURRENT_SOURCE_DIR.
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${src_list})
 
 # Include paths
 target_include_directories(medyan PUBLIC

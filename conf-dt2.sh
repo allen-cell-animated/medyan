@@ -14,6 +14,7 @@ export PATH="~/bin:$PATH"
 if [ "$(git version | cut -d"." -f2)" -lt 7 ]; then
     echo "git version is too old. Building a new git version..."
     (
+        mkdir -p "$medyan_root_dir/scripts/.build" &&
         cd $medyan_root_dir/scripts/.build &&
         wget https://github.com/git/git/archive/v2.25.0.zip -O git.zip &&
         unzip -qq git.zip &&
@@ -29,6 +30,8 @@ export MEDYAN_BOOST_INCLUDE_DIR="$BOOST_INCLUDE"
 export MEDYAN_BOOST_LIBRARY_DIR="$BOOST_LIB"
 export MEDYAN_ADDITIONAL_LINK_DIRS="$GCC_ROOTDIR/lib64"
 export MEDYAN_RPATH="$GCC_ROOTDIR/lib64"
+
+export MEDYAN_SPECIAL_ENVIRONMENT="Deepthought2"
 
 # Run the script
 $medyan_root_dir/conf.sh

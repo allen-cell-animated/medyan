@@ -47,11 +47,18 @@ vcpkg_setup() {
     rebuild=$2
     if [ $required = true ]; then
         if [ ! -d "$vcpkg_dir" -o $rebuild = true ]; then
-            echo "Configuring vcpkg..."
+            echo "Downloading vcpkg..."
             (
                 cd $build_dir &&
-                git clone https://github.com/Microsoft/vcpkg.git &&
-                cd $vcpkg_dir &&
+                git clone https://github.com/Microsoft/vcpkg.git
+            )
+            echo "Configuring vcpkg..."
+            (
+                cd $vcpkg_dir
+                if [ "$MEDYAN_SPECIAL_ENVIRONMENT" = "Deepthought2" ]; then
+                    # Deepthought2 has old software and is not compatible with the newest version
+                    git checkout --force 2019.11
+                fi
                 ./bootstrap-vcpkg.sh
             )
         else
@@ -60,6 +67,7 @@ vcpkg_setup() {
     else
         echo "Skipping vcpkg installation."
     fi
+
     return 0
 }
 

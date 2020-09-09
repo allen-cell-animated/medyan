@@ -108,12 +108,12 @@ void OutputStructLinker::getFromSystemWithoutChildren() {
         vector2Vec<3, floatingpoint>(midPointCoordinate(
             _linker->getFirstCylinder()->getFirstBead()->vcoordinate(),
             _linker->getFirstCylinder()->getSecondBead()->vcoordinate(),
-            _linker->getFirstPosition()
+            _linker->getFirstCylinder()->adjustedrelativeposition(_linker->getFirstPosition())
         )),
         vector2Vec<3, floatingpoint>(midPointCoordinate(
             _linker->getSecondCylinder()->getFirstBead()->vcoordinate(),
             _linker->getSecondCylinder()->getSecondBead()->vcoordinate(),
-            _linker->getSecondPosition()
+            _linker->getSecondCylinder()->adjustedrelativeposition(_linker->getSecondPosition())
         ))
     }};
         
@@ -163,12 +163,12 @@ void OutputStructMotor::getFromSystemWithoutChildren() {
         vector2Vec<3, floatingpoint>(midPointCoordinate(
             _motor->getFirstCylinder()->getFirstBead()->vcoordinate(),
             _motor->getFirstCylinder()->getSecondBead()->vcoordinate(),
-            _motor->getFirstPosition()
+            _motor->getFirstCylinder()->adjustedrelativeposition(_motor->getFirstPosition())
         )),
         vector2Vec<3, floatingpoint>(midPointCoordinate(
             _motor->getSecondCylinder()->getFirstBead()->vcoordinate(),
             _motor->getSecondCylinder()->getSecondBead()->vcoordinate(),
-            _motor->getSecondPosition()
+            _motor->getSecondCylinder()->adjustedrelativeposition(_motor->getSecondPosition())
         ))
     }};
         

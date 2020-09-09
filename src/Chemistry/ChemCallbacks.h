@@ -767,13 +767,10 @@ struct LinkerBindingCallback {
         
         //create off reaction
         auto cLinker = l->getCLinker();
-        //aravind June 24, 2016.
-        if(SysParams::RUNSTATE==false)
-            f=0.0;
-        else
-            f=_offRate;
+        f=_offRate;
         //@
-        cLinker->setRates(_onRate, f);
+        cLinker->setRates(_onRate, f);//offRate during restart is controlled by
+        // RESTARTPHASESWITCH option in setRateMulFactor
         cLinker->createOffReaction(r, _ps);
         
         if(SysParams::Chemistry().eventTracking){
@@ -897,12 +894,13 @@ struct MotorBindingCallback {
         //create off reaction
         auto cMotorGhost = m->getCMotorGhost();
         //aravind June 24, 2016.
-        if(SysParams::RUNSTATE==false){
-        f=0.0;
-        }
-        else
-            f=_offRate;
+//        if(SysParams::RUNSTATE==false){
+//        f=0.0;
+//        }
+//        else
+//            f=_offRate;
         //@
+        f = _offRate;
         cMotorGhost->setRates(_onRate, f);
         cMotorGhost->createOffReaction(r, _ps);
         
@@ -949,9 +947,6 @@ struct MotorWalkingCallback {
 #ifdef OPTIMOUT
 	    CUDAcommon::tmin.motorwalkingcalls++;
 #endif
-#ifdef MOTORBIASCHECK
-	    _c->getCompartment()->nummotorwalks++;
-#endif
 	    mins = chrono::high_resolution_clock::now();
 //        cout<<"Motor walking begins"<<endl;
         //get species
@@ -963,10 +958,6 @@ struct MotorWalkingCallback {
         
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
-
-#ifdef MOTORBIASCHECK
-	    m->walkingsteps++;
-#endif
 
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
 
@@ -1019,9 +1010,6 @@ struct MotorMovingCylinderCallback {
 #ifdef OPTIMOUT
 	    CUDAcommon::tmin.motorwalkingcalls++;
 #endif
-	    #ifdef MOTORBIASCHECK
-	    _oldC->getCompartment()->nummotorwalks++;
-	    #endif
 
 	    mins = chrono::high_resolution_clock::now();
 //        cout<<"Motor moving cylinder begins"<<endl;
@@ -1033,10 +1021,6 @@ struct MotorMovingCylinderCallback {
 
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
-
-	    #ifdef MOTORBIASCHECK
-	    m->walkingsteps++;
-	    #endif
         
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
 /*        cout<<"filament Type "<<filType<<endl;

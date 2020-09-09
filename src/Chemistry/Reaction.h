@@ -79,10 +79,6 @@ template <unsigned short M, unsigned short N>
         /// presumbaly be fixed in the future.
         virtual ~Reaction() noexcept
         {
-	        #ifdef CHECKRXN
-        	cout<<"Deleting reaction "<<this<<" with RNodeNRM "<<this->getRNode()<<" Type "
-        	<<this->getReactionType()<<endl;
-			#endif
             for(auto i=0U; i<M; ++i) _rspecies[i]->removeAsReactant(this);
             for(auto i=M; i<(M+N); ++i) _rspecies[i]->removeAsProduct(this);
         }

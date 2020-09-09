@@ -567,6 +567,18 @@ void BranchingManager::printbindingsitesstencil(){
         auto bs1 = get<1>(*it2);
         cout<<cyl1->getStableIndex()<<" "<<bs1<<endl;
     }
+    cout<<"BRANCHINGRESTARTTUPLE"<<endl;
+    for(auto it2 = _branchrestarttuple.begin();it2!=_branchrestarttuple.end();
+        it2++) {
+        auto t1 = get<0>(*it2);
+        auto t2 = get<1>(*it2);
+        auto cyl1 = get<0>(t1)->getCylinder();
+        auto cyl2 = get<0>(t2)->getCylinder();
+        auto site1 = get<1>(t1);
+        auto site2 = get<1>(t2);
+        cout<<cyl1->getStableIndex()<<" "<<site1<<" "<<cyl2->getStableIndex()<<" "
+                                                                               ""<<site2<<endl;
+    }
 
 }
 #endif

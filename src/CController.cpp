@@ -135,6 +135,8 @@ DissipationTracker* CController::getDT(){
     return _chemSim->getDT();
 };
 
+ofstream CController::_crosscheckdumpFilechem;
+
 
 
 

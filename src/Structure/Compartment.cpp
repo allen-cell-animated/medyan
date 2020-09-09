@@ -1254,12 +1254,6 @@ template<>
 void Compartment::addcoordtorMaxbasedpartitons<false>(int (&pindices)[3], vector<floatingpoint>
 coord, uint32_t index, uint32_t cylfinfo){
 
-/*#ifdef MOTORBIASCHECK
-	for(int part = 0; part < 27; part++){
-		addcoord(coord, index, cylfinfo, part);
-	}
-	return;
-#endif*/
     addcoord(coord, index, cylfinfo, 0);
     //111
     if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 1) {

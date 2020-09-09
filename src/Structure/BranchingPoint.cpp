@@ -31,7 +31,7 @@ void BranchingPoint::updateCoordinate() {
     
     coordinate = midPointCoordinate(_c1->getFirstBead()->vcoordinate(),
                                     _c1->getSecondBead()->vcoordinate(),
-                                    _position);
+                                    _c1->adjustedrelativeposition(_position));
 }
 
 BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
@@ -212,15 +212,15 @@ void BranchingPoint::updateReactionRates() {
                 
         //change the rate
 
-            if (SysParams::RUNSTATE == false)
-                offRxn->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
-            else
-                offRxn->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
-            if(_unbindingChangers.size() > 0) {
-                float factor = _unbindingChangers[_branchType]->getRateChangeFactor(force);
-                offRxn->setRateMulFactor(factor, ReactionBase::MECHANOCHEMICALFACTOR);
-                offRxn->updatePropensity();
-            }
+        if (SysParams::RUNSTATE == false)
+            offRxn->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
+        else
+            offRxn->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
+        if(_unbindingChangers.size() > 0) {
+            float factor = _unbindingChangers[_branchType]->getRateChangeFactor(force);
+            offRxn->setRateMulFactor(factor, ReactionBase::MECHANOCHEMICALFACTOR);
+            offRxn->updatePropensity();
+        }
 }
             
 void BranchingPoint::printSelf()const {

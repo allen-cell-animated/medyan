@@ -60,7 +60,10 @@ void HybridCylinderCylinderNL::unassignbin(Cylinder* cyl, Bin* bin){
 
 void HybridCylinderCylinderNL::updatebin(Cylinder *cyl){
     Bin* _bin;
-//    std::cout<<coordinate[0]<<" "<<coordinate[1]<<" "<<coordinate[2]<<endl;
+#ifdef CROSSCHECK_CYLINDER
+    _crosscheckdumpFileNL<<"Cylinder bin updated "<<cyl->getId()
+                         <<" "<<cyl->getStableIndex()<<endl;
+#endif
     try {_bin = getBin(cyl->coordinate);}
     catch (exception& e) {
         cout << e.what();
@@ -317,6 +320,7 @@ Bin* HybridCylinderCylinderNL::getBin(const vector<size_t> &indices) {
 }
 
 void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool runtime){
+
     //clear existing neighbors of currcylinder from all neighborlists
     for(int idx = 0; idx < totaluniquefIDpairs; idx++) {
         int countbounds = _rMaxsqvec[idx].size();
@@ -483,11 +487,27 @@ void HybridCylinderCylinderNL::reset() {
     updateallcylinderstobin();
     _binGrid->updatecindices();
     for(auto cylinder: Cylinder::getCylinders()) {
+        #ifdef CROSSCHECK_CYLINDER
+        if(_crosscheckdumpFileNL.is_open())
+            _crosscheckdumpFileNL<<"Updating neighbors bin "<<cylinder->getId()
+                                 <<" "<<cylinder->getStableIndex()<<endl;
+        #endif
         updateNeighborsbin(cylinder);
-//        for (int idx = 0; idx < totalhybridNL; idx++) {
-//            tot[idx] += _list4mbinvec[idx][cylinder].size();
-//        }
+        #ifdef CROSSCHECK_CYLINDER
+        if(_crosscheckdumpFileNL.is_open())
+            _crosscheckdumpFileNL<<"Updated neighbors bin "<<cylinder->getId()
+                                 <<" "<<cylinder->getStableIndex()<<endl;
+        for (int idx = 0; idx < totalhybridNL; idx++) {
+            for(auto cn:_list4mbinvec[idx][cylinder])
+                _crosscheckdumpFileNL<<cn->getId()<<" ";
+                _crosscheckdumpFileNL<<"|";
+        }
+        _crosscheckdumpFileNL<<endl;
+        #endif
+
     }
 }
+
+ofstream HybridNeighborList::_crosscheckdumpFileNL;
 
 #endif
