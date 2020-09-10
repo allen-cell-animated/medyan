@@ -8,15 +8,20 @@
 
 namespace visual {
 
-void copySystemData(
+bool copySystemData(
     SystemRawData& data,
     raw_data_cat::Type updated,
     bool ignoreDataInUse
 ) {
     std::unique_lock lk(data.me, std::try_to_lock);
-    if(!lk.owns_lock() && ignoreDataInUse) {
-        // The data is in use, skip copying
-        return;
+    if(!lk.owns_lock()) {
+        if(ignoreDataInUse) {
+            // The data is in use, skip copying
+            return false;
+        } else {
+            // Acquire the lock
+            lk.lock();
+        }
     }
 
     if(updated & (raw_data_cat::beadPosition | raw_data_cat::beadConnection)) {
@@ -113,6 +118,7 @@ void copySystemData(
     // Save updated
     data.updated |= updated;
 
+    return true;
 }
 
 } // namespace visual

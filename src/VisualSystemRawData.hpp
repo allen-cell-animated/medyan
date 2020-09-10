@@ -67,7 +67,9 @@ struct SystemRawData {
 //   - updated: the part of the system that's needs to be updated
 //   - ignoreDataInUse: if set to true, copy would be skipped if the data is
 //     being used by other threads
-void copySystemData(
+//
+// Returns whether the copy is actually successfully made.
+bool copySystemData(
     SystemRawData& data,
     raw_data_cat::Type updated,
     bool ignoreDataInUse = true

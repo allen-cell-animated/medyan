@@ -351,11 +351,11 @@ void helper() {
 } // namespace (anonymous)
 
 void copySystemDataAndRunHelper(sys_data_update::FlagType update) {
-    visual::copySystemData(sdfv, update);
+    if(visual::copySystemData(sdfv, update)) {
 
     // Launch helper thread (may use thread pool)
     std::thread(helper).detach();
-
+    }
 }
 
 } // namespace visual
