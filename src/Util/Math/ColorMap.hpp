@@ -123,7 +123,7 @@ using BwrF = Bwr< float >;
 // Get the color
 template< typename Map, typename FloatVal >
 constexpr auto color(Map, FloatVal v, Extend ex = Extend::clamp) {
-    return interpolate(extend01(v), Map::interpList);
+    return interpolate(extend01(v, ex), Map::interpList);
 }
 
 } // namespace colormap
