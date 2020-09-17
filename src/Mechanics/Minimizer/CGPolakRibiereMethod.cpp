@@ -1007,6 +1007,7 @@ MinimizationResult PolakRibiere::minimize(
     }
     // Reset backup coordinates with minimum Energy
     coordMinE.clear();
+    minimumE = 1e10;
 
 
     #ifdef TRACKDIDNOTMINIMIZE

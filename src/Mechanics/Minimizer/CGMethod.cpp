@@ -755,6 +755,7 @@ void CGMethod::startMinimization() {
 void CGMethod::endMinimization() {
     // Reset backup coordinates with minimum Energy
     coordMinE.clear();
+    minimumE = 1e10;
 
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
