@@ -9,7 +9,7 @@
 #include "Visual/Common.hpp"
 #include "Visual/Shader.hpp"
 
-namespace visual {
+namespace medyan::visual {
 
 struct Profile {
 
@@ -183,6 +183,6 @@ struct VisualPreset {
     } // ~VisualPreset()
 }; // VisualPreset
 
-} // namespace visual
+} // namespace medyan::visual
 
 #endif

@@ -6,7 +6,7 @@
 #include "Util/Io/Log.hpp"
 #include "Visual/Common.hpp"
 
-namespace visual {
+namespace medyan::visual {
 
 // Managing the shader compilation process
 //
@@ -91,7 +91,7 @@ private:
     }
 };
 
-} // namespace visual
+} // namespace medyan::visual
 
 #endif // VISUAL
 

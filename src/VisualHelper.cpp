@@ -22,7 +22,7 @@
 #include "Visual/VisualElement.hpp"
 #include "Visual/Window.hpp"
 
-namespace visual {
+namespace medyan::visual {
 
 std::weak_ptr< VisualDisplay > vdWeak;
 
@@ -358,4 +358,4 @@ void copySystemDataAndRunHelper(sys_data_update::FlagType update) {
     }
 }
 
-} // namespace visual
+} // namespace medyan::visual

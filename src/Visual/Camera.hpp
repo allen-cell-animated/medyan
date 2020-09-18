@@ -4,7 +4,7 @@
 #include "Util/Math/Vec.hpp"
 #include "Visual/Common.hpp"
 
-namespace visual {
+namespace medyan::visual {
 
 // The Camera struct stores the states and parameters of a camera, used in view
 // transformation.
@@ -26,6 +26,6 @@ struct Camera {
 
 };
 
-} // namespace visual
+} // namespace medyan::visual
 
 #endif

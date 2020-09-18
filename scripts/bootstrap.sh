@@ -77,7 +77,7 @@ vcpkg_install() {
 
     (
         cd $vcpkg_dir && {
-            ./vcpkg install catch2 eigen3 spectra glfw3 glad glm
+            ./vcpkg install catch2 eigen3 spectra glfw3 glad glm imgui[opengl3-glad-binding] imgui[glfw-binding]
             if [ "$need_boost" = true ]; then
                 ./vcpkg install boost
             fi

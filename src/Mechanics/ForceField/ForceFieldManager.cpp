@@ -39,18 +39,18 @@ constexpr CurvPol getCurvPol(CurvReq curvReq) noexcept {
 }
 
 void prepareForceSharedData() {
-    visual::copySystemDataAndRunHelper(visual::sys_data_update::BeadPosition | visual::sys_data_update::BeadConnection);
+    medyan::visual::copySystemDataAndRunHelper(medyan::visual::sys_data_update::BeadPosition | medyan::visual::sys_data_update::BeadConnection);
 }
 
 void updateForceSharedData() {
-    visual::copySystemDataAndRunHelper(visual::sys_data_update::BeadPosition);
+    medyan::visual::copySystemDataAndRunHelper(medyan::visual::sys_data_update::BeadPosition);
 }
 
 template< bool stretched >
 void updateMembraneSharedData() {
     // TODO stretched version
     if(!stretched) {
-        visual::copySystemDataAndRunHelper(visual::sys_data_update::BeadPosition);
+        medyan::visual::copySystemDataAndRunHelper(medyan::visual::sys_data_update::BeadPosition);
     }
 }
 

@@ -15,7 +15,7 @@
 // a different thread
 //-----------------------------------------------------------------------------
 
-namespace visual {
+namespace medyan::visual {
 
 struct VisualDisplay;
 extern std::weak_ptr< VisualDisplay > vdWeak;
@@ -34,6 +34,6 @@ namespace sys_data_update {
 
 void copySystemDataAndRunHelper(sys_data_update::FlagType update);
 
-} // namespace visual
+} // namespace medyan::visual
 
 #endif

@@ -1,8 +1,7 @@
 #ifndef MEDYAN_Visual_ShaderSrc_Hpp
 #define MEDYAN_Visual_ShaderSrc_Hpp
 
-namespace visual {
-namespace shader {
+namespace medyan::visual::shader {
 
 constexpr const char* VertexElementLight = R"(
 #version 330 core
@@ -150,7 +149,6 @@ void main() {
 }
 )";
 
-} // namespace shader
-} // namespace visual
+} // namespace medyan::visual::shader
 
 #endif

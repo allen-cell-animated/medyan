@@ -8,7 +8,7 @@
 
 #include "Util/Math/Vec.hpp"
 
-namespace visual {
+namespace medyan::visual {
 
 // This function transforms a path to GL_TRIANGLES compatible vertex coord list
 // and index list.
@@ -101,6 +101,6 @@ struct PathExtrude {
 
 };
 
-} // namespace visual
+} // namespace medyan::visual
 
 #endif

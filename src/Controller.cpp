@@ -64,7 +64,7 @@ using namespace mathfunc;
 namespace {
 
 void displayCopySystem() {
-    visual::copySystemDataAndRunHelper(visual::sys_data_update::BeadPosition | visual::sys_data_update::BeadConnection | visual::sys_data_update::Compartment);
+    medyan::visual::copySystemDataAndRunHelper(medyan::visual::sys_data_update::BeadPosition | medyan::visual::sys_data_update::BeadConnection | medyan::visual::sys_data_update::Compartment);
 }
 
 

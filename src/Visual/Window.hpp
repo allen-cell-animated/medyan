@@ -14,6 +14,7 @@
 #include "Util/Io/Log.hpp"
 #include "Visual/Camera.hpp"
 #include "Visual/Common.hpp"
+#include "Visual/Gui.hpp"
 #include "Visual/Shader.hpp"
 #include "Visual/ShaderSrc.hpp"
 #include "Visual/VisualElement.hpp"
@@ -23,7 +24,7 @@
 // For best portability, the window signal handling could only be done from the
 // main thread (due to MacOS Cocoa framework).
 
-namespace visual {
+namespace medyan::visual {
 
 struct Window {
     GLFWwindow* window;
@@ -271,6 +272,9 @@ struct VisualDisplay {
     // The overall opengl context. Must be at top
     VisualContext vc;
 
+    // The ImGui context. Must be below the opengl context
+    ImguiGuard guard;
+
     // Visual presets
     std::array< VisualPreset, 2 > vps {{
         { GlSize {9, 0, 3, 3, 3, 6, 3}, shader::VertexElementLight, shader::FragElementLight },
@@ -279,7 +283,9 @@ struct VisualDisplay {
     VisualPreset& vpLight = vps[0];
     VisualPreset& vpLine  = vps[1];
 
-    VisualDisplay() {
+    VisualDisplay() :
+        guard(vc.window())
+    {
         // Configure global opengl state
         glEnable(GL_DEPTH_TEST);
 
@@ -488,6 +494,9 @@ struct VisualDisplay {
                 stbi_write_png("./snapshot.png", width, height, 4, data.data(), 4 * width);
             }
 
+            // Update GUI
+            imguiLoopRender();
+
             // check
             glfwSwapBuffers(vc.window());
             glfwPollEvents();
@@ -497,7 +506,7 @@ struct VisualDisplay {
     } // void run() const
 }; // VisualDisplay
 
-} // namespace visual
+} // namespace medyan::visual
 
 #endif // ifdef VISUAL
 

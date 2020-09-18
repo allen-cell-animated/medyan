@@ -15,7 +15,7 @@
     #include <glm/gtc/type_ptr.hpp>
 #endif
 
-namespace visual {
+namespace medyan::visual {
 
 #ifdef VISUAL
 constexpr bool enabled = true;
@@ -23,6 +23,6 @@ constexpr bool enabled = true;
 constexpr bool enabled = false;
 #endif
 
-} // namespace visual
+} // namespace medyan::visual
 
 #endif

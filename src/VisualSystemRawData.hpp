@@ -9,7 +9,7 @@
 #include "Structure/Bead.h"
 #include "Util/Math/Vec.hpp"
 
-namespace visual {
+namespace medyan::visual {
 
 namespace raw_data_cat {
 
@@ -75,6 +75,6 @@ bool copySystemData(
     bool ignoreDataInUse = true
 );
 
-} // namespace visual
+} // namespace medyan::visual
 
 #endif

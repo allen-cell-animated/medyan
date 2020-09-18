@@ -182,3 +182,7 @@ target_link_libraries(medyan PRIVATE glad::glad)
 # glm
 find_package(glm CONFIG REQUIRED)
 target_link_libraries(medyan PRIVATE glm)
+
+# imgui
+find_package(imgui CONFIG REQUIRED)
+target_link_libraries(medyan PRIVATE imgui::imgui)

@@ -8,7 +8,7 @@
 
 #include "Util/Math/Vec.hpp"
 
-namespace visual {
+namespace medyan::visual {
 
 // This function transforms a bead to GL_TRIANGLES compatible vertex coord list
 // and index list.
@@ -114,6 +114,6 @@ struct SphereUv {
 
 };
 
-} // namespace visual
+} // namespace medyan::visual
 
 #endif

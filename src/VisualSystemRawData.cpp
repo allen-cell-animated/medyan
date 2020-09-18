@@ -6,7 +6,7 @@
 #include "Structure/MotorGhost.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
-namespace visual {
+namespace medyan::visual {
 
 bool copySystemData(
     SystemRawData& data,
@@ -121,4 +121,4 @@ bool copySystemData(
     return true;
 }
 
-} // namespace visual
+} // namespace medyan::visual
