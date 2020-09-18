@@ -1005,6 +1005,9 @@ MinimizationResult PolakRibiere::minimize(
         auto b = maxBead();
         if (b != nullptr) b->getParent()->printSelf();
     }
+    // Reset backup coordinates with minimum Energy
+    coordMinE.clear();
+    minimumE = 1e10;
 
 
     #ifdef TRACKDIDNOTMINIMIZE
