@@ -45,6 +45,9 @@ struct ObjectViewSettings {
 
     struct Canvas {
         std::array< float, 4 > bgColor { 0.0f, 0.0f, 0.0f, 0.0f };
+
+        int width = 1200;
+        int height = 800;
     };
 
     // The Camera struct stores the states and parameters of a camera, used in view
@@ -87,6 +90,7 @@ struct ObjectViewSettings {
     struct Control {
         // camera
         float cameraKeyPositionPerFrame = 150.0f;
+        float cameraCursorPositionPerPixel = 2.0f;   // camera move distance per pixel
     };
 
     // Canvas

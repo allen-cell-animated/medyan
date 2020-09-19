@@ -12,7 +12,6 @@
 
 #include "Util/Environment.hpp"
 #include "Util/Io/Log.hpp"
-#include "Visual/Camera.hpp"
 #include "Visual/Common.hpp"
 #include "Visual/Gui.hpp"
 #include "Visual/Shader.hpp"
@@ -60,18 +59,6 @@ inline void replaceBuffer(GLenum target, const std::vector<T>& source) {
 class VisualContext {
 public:
     struct WindowStates {
-        struct Transformation {
-            enum class ProjectionType { Orthographic, Perspective };
-
-            ProjectionType projType = ProjectionType::Perspective;
-            float fov               = glm::radians(45.0f); // perspective
-            float zNear      = 10.0f;
-            float zFar       = 20000.0f;
-            glm::mat4 projection;
-            glm::mat4 model;
-
-            Camera camera;
-        };
 
         // Size
         int width = 1200;
@@ -80,8 +67,6 @@ public:
         int snapshotWidth = 3840;
         int snapshotHeight = 2160;
 
-        // Model, view, perspective...
-        Transformation trans;
 
         // Other states
         float deltaTime = 0.01f;
@@ -91,6 +76,12 @@ public:
         double mouseLastY;
         bool nextSnapshotRendering = false;
     };
+
+
+
+    // Display settings
+    DisplaySettings displaySettings;
+
 
     VisualContext() {
         // GLFW initializing
@@ -105,7 +96,7 @@ public:
         // glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
 
         // Window initializing
-        window_ = glfwCreateWindow(windowStates_.width, windowStates_.height, "MEDYAN", NULL, NULL);
+        window_ = glfwCreateWindow(displaySettings.mainView.canvas.width, displaySettings.mainView.canvas.height, "MEDYAN", NULL, NULL);
         if(window_ == NULL) {
             LOG(ERROR) << "Failed to create GLFW window";
             glfwTerminate();
@@ -120,27 +111,30 @@ public:
             return;
         }
 
-        glViewport(0, 0, windowStates_.width, windowStates_.height);
-        glfwSetWindowUserPointer(window_, &windowStates_);
+        glViewport(0, 0, displaySettings.mainView.canvas.width, displaySettings.mainView.canvas.height);
+        glfwSetWindowUserPointer(window_, this);
 
         // Set window callbacks
         const auto framebufferSizeCallback = [](GLFWwindow* window, int width, int height) {
-            auto ws = static_cast< WindowStates* >(glfwGetWindowUserPointer(window));
-            ws->width = width;
-            ws->height = height;
+            auto& vc = *static_cast< VisualContext* >(glfwGetWindowUserPointer(window));
+            auto& canvas = vc.displaySettings.mainView.canvas;
+            canvas.width = width;
+            canvas.height = height;
             glViewport(0, 0, width, height);
         };
         const auto cursorPositionCallback = [](GLFWwindow* window, double xpos, double ypos) {
-            auto ws = static_cast< WindowStates* >(glfwGetWindowUserPointer(window));
-            auto& camera = ws->trans.camera;
+            auto& vc = *static_cast< VisualContext* >(glfwGetWindowUserPointer(window));
+            auto& ws = vc.windowStates_;
+            auto& camera = vc.displaySettings.mainView.camera;
+            const auto& control = vc.displaySettings.mainView.control;
 
             const int mouseState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
             if(mouseState == GLFW_PRESS) {
-                if(ws->mouseLeftAlreadyPressed) {
+                if(ws.mouseLeftAlreadyPressed) {
                     // Transform
                     const double dist = glm::distance(camera.target, camera.position);
 
-                    camera.position -= (camera.right * float(xpos - ws->mouseLastX) + camera.up * float(ws->mouseLastY - ypos)) * (float)camera.mouseControlSpeed;
+                    camera.position -= (camera.right * float(xpos - ws.mouseLastX) + camera.up * float(ws.mouseLastY - ypos)) * control.cameraCursorPositionPerPixel;
                     camera.position = camera.target + glm::normalize(camera.position - camera.target) * (float)dist;
                     
                     // Update direction
@@ -148,17 +142,17 @@ public:
                     camera.up = glm::normalize(glm::cross(camera.right, camera.target - camera.position));
 
                 } else {
-                    ws->mouseLeftAlreadyPressed = true;
+                    ws.mouseLeftAlreadyPressed = true;
                 }
-                ws->mouseLastX = xpos;
-                ws->mouseLastY = ypos;
+                ws.mouseLastX = xpos;
+                ws.mouseLastY = ypos;
             } else {
-                ws->mouseLeftAlreadyPressed = false;
+                ws.mouseLeftAlreadyPressed = false;
             }
         };
         const auto scrollCallback = [](GLFWwindow* window, double xoffset, double yoffset) {
-            auto ws = static_cast< WindowStates* >(glfwGetWindowUserPointer(window));
-            auto& fov = ws->trans.fov;
+            auto& vc = *static_cast< VisualContext* >(glfwGetWindowUserPointer(window));
+            auto& fov = vc.displaySettings.mainView.projection.fov;
 
             fov -= 0.02 * yoffset;
             if(fov < 0.01f) fov = 0.01f;
@@ -227,10 +221,6 @@ public:
             camera.target += change;
         }
     }
-
-
-    // Display settings
-    DisplaySettings displaySettings;
 
 private:
 

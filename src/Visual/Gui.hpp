@@ -154,6 +154,11 @@ inline void guiMainWindow(DisplaySettings& displaySettings) {
         const auto printView = [](const ObjectViewSettings& viewSettings) {
             ImGui::Text("view");
             ImGui::BulletText(
+                "window size: (%d, %d)",
+                viewSettings.canvas.width,
+                viewSettings.canvas.height
+            );
+            ImGui::BulletText(
                 "camera position: (%.1f, %.1f, %.1f)",
                 viewSettings.camera.position[0],
                 viewSettings.camera.position[1],
