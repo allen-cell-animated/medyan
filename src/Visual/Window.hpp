@@ -101,6 +101,7 @@ public:
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        // The following line is generally useless, but it is fun to see a transparent window.
         // glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
 
         // Window initializing
@@ -194,16 +195,15 @@ public:
     // Helper function to process window inputs
     void processInput() {
 
-        auto& camera = windowStates_.trans.camera;
+        auto& camera = displaySettings.mainView.camera;
 
         const float currentTime = glfwGetTime();
         windowStates_.deltaTime = currentTime - windowStates_.lastTime;
         windowStates_.lastTime = currentTime;
-        const float cameraMove = camera.keyControlSpeed * windowStates_.deltaTime;
+        const float cameraMove = displaySettings.mainView.control.cameraKeyPositionPerFrame * windowStates_.deltaTime;
 
         if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-            LOG(INFO) << "Escape key hit!";
-            glfwSetWindowShouldClose(window_, true);
+            // Do nothing
         }
 
         if(glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS) {
@@ -227,6 +227,10 @@ public:
             camera.target += change;
         }
     }
+
+
+    // Display settings
+    DisplaySettings displaySettings;
 
 private:
 
@@ -386,13 +390,17 @@ struct VisualDisplay {
             const auto height = offscreen ? ws.snapshotHeight : ws.height;
 
             glViewport(0, 0, width, height);
-            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            {
+                const auto& c = vc.displaySettings.mainView.canvas.bgColor;
+                glClearColor(c[0], c[1], c[2], c[3]);
+            }
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // transform
-            ws.trans.projection = glm::perspective(ws.trans.fov, (float)width / (float)height, ws.trans.zNear, ws.trans.zFar);
-            ws.trans.model      = glm::mat4(1.0f);
-            glm::mat3 modelInvTrans3(glm::transpose(glm::inverse(ws.trans.model)));
+            const auto model          = glm::mat4(1.0f);
+            const auto modelInvTrans3 = glm::transpose(glm::inverse(model));
+            const auto view           = vc.displaySettings.mainView.camera.view();
+            const auto projection     = vc.displaySettings.mainView.projection.proj(width, height);
 
             for(auto& vp : vps) {
                 std::lock_guard< std::mutex > guard(vp.veMutex);
@@ -400,13 +408,13 @@ struct VisualDisplay {
                 if(!vp.visualElements.empty()) {
                     glUseProgram(vp.shader.id());
 
-                    vp.shader.setMat4("projection", ws.trans.projection);
-                    vp.shader.setMat4("model",      ws.trans.model);
+                    vp.shader.setMat4("projection",     projection);
+                    vp.shader.setMat4("model",          model);
                     vp.shader.setMat3("modelInvTrans3", modelInvTrans3);
-                    vp.shader.setMat4("view",       ws.trans.camera.view());
+                    vp.shader.setMat4("view",           view);
 
                     if(&vp == &vpLight) {
-                        vp.shader.setVec3("CameraPos",  ws.trans.camera.position);
+                        vp.shader.setVec3("CameraPos",   vc.displaySettings.mainView.camera.position);
 
                         vp.shader.setVec3("dirLights[0].direction", glm::vec3 {1.0f, 1.0f, 1.0f});
                         vp.shader.setVec3("dirLights[0].ambient",   glm::vec3 {0.1f, 0.1f, 0.1f});
@@ -495,7 +503,7 @@ struct VisualDisplay {
             }
 
             // Update GUI
-            imguiLoopRender();
+            imguiLoopRender(vc.displaySettings);
 
             // check
             glfwSwapBuffers(vc.window());
