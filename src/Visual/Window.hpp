@@ -61,9 +61,6 @@ public:
     struct WindowStates {
 
         // Size
-        int width = 1200;
-        int height = 800;
-
         int snapshotWidth = 3840;
         int snapshotHeight = 2160;
 
@@ -159,9 +156,13 @@ public:
             if(fov > 3.13f) fov = 3.13f;
         };
         const auto keyCallback = [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-            auto ws = static_cast< WindowStates* >(glfwGetWindowUserPointer(window));
+            auto& vc = *static_cast< VisualContext* >(glfwGetWindowUserPointer(window));
+            auto& ws = vc.windowStates_;
             if(key == GLFW_KEY_F && action == GLFW_PRESS) {
-                ws->nextSnapshotRendering = true;
+                ws.nextSnapshotRendering = true;
+            }
+            if(key == GLFW_KEY_G && action == GLFW_PRESS) {
+                vc.displaySettings.gui.enabled = !vc.displaySettings.gui.enabled;
             }
         };
 
@@ -376,8 +377,8 @@ struct VisualDisplay {
             const bool offscreen = ws.nextSnapshotRendering;
             ws.nextSnapshotRendering = false;
             glBindFramebuffer(GL_FRAMEBUFFER, offscreen ? vc.offscreenFramebuffer() : 0);
-            const auto width  = offscreen ? ws.snapshotWidth  : ws.width;
-            const auto height = offscreen ? ws.snapshotHeight : ws.height;
+            const auto width  = offscreen ? ws.snapshotWidth  : vc.displaySettings.mainView.canvas.width;
+            const auto height = offscreen ? ws.snapshotHeight : vc.displaySettings.mainView.canvas.height;
 
             glViewport(0, 0, width, height);
             {

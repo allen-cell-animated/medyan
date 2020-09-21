@@ -34,7 +34,7 @@ constexpr auto text(DisplayMode mode) {
 //-------------------------------------
 
 struct GuiSettings {
-    bool enabled = true;
+    bool enabled = false;
 };
 
 //-------------------------------------
