@@ -31,9 +31,9 @@
 #include <thrust/binary_search.h>
 #include <cstdlib>
 #include <thrust/scan.h>*/
-#ifdef CROSSCHECK_CYLINDER
+
 #include "CController.h"
-#endif
+
 
 
 vector<short> HybridBindingSearchManager::HNLIDvec;
@@ -41,8 +41,7 @@ using namespace mathfunc;
 
 void HybridBindingSearchManager::setbindingsearchparameter(
 	FilamentBindingManager* fmanager,
-	short bstatepos, short ftype1, short ftype2, float rMax, float rMin
-) {
+	short bstatepos, short ftype1, short ftype2, float rMax, float rMin) {
 
     unordered_map<uint32_t, vector<uint32_t>> tempuint;
     unordered_map<uint32_t, vector<uint32_t>> rtempuint;
@@ -550,12 +549,11 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 
 void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], CCylinder*
                                     cc, short bindingSite) {
-    if(CROSSCHECK_BS_SWITCH)
-        CController::_crosscheckdumpFilechem <<"Removing site "<<cc->getCylinder()->getId()
-        <<" "<<cc->getCylinder()->getStableIndex()<<" "<<bindingSite
-        << " with idvec "<<idvec[0]<<" "<<idvec[1]<<endl;
-
-
+    if(CROSSCHECK_BS_SWITCH) {
+        CController::_crosscheckdumpFilechem << "Removing site " << cc->getCylinder()->getId()
+                                             << " " << cc->getCylinder()->getStableIndex() << " " << bindingSite
+                                             << " with idvec " << idvec[0] << " " << idvec[1] << endl;
+    }
 
     short idx = idvec[0];
     short idx2 = idvec[1];
