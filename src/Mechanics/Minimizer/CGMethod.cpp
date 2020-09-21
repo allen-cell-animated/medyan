@@ -802,6 +802,8 @@ void CGMethod::startMinimization() {
 void CGMethod::endMinimization() {
 	//flush vector
 	Bead::getDbData().coords_minE.resize(0);
+	//reset minimumE.
+    minimumE = (floatingpoint) 1e10;
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();

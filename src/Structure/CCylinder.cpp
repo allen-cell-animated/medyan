@@ -37,7 +37,6 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
     Cylinder::_crosscheckdumpFile <<"Clone begin rhs cylinder set "<<getId()<<endl;
     Cylinder::_crosscheckdumpFile <<"Total monomers "<<rhs._monomers.size()<<getId()<<endl;
     #endif
-        
     //copy all monomers, bounds
     for(auto &m : rhs._monomers)
         _monomers.emplace_back(m->clone(c));
@@ -49,8 +48,9 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
     //copy all internal reactions
     #ifdef CROSSCHECK_CYLINDER
     Cylinder::_crosscheckdumpFile <<"Internal rxn count "<<rhs
-        ._crossCylinderReactions.size()<<endl;
+        ._internalReactions.size()<<endl;
     #endif
+    unsigned int count = 0;
     for(auto &r: rhs._internalReactions) {
         #ifdef CROSSCHECK_CYLINDER
         Cylinder::_crosscheckdumpFile <<"Internal ReactionType "<<r->getReactionType()
@@ -78,7 +78,9 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
         #ifdef CROSSCHECK_CYLINDER
         Cylinder::_crosscheckdumpFile <<"Internal ReactionAdded."<<endl;
         #endif
+        count++;
     }
+    cout<<"Internal reactions count "<<count<<endl;
     //copy all cross-cylinder reactions
     #ifdef CROSSCHECK_CYLINDER
     Cylinder::_crosscheckdumpFile <<"Cross cylinder rxn count "<<rhs
@@ -121,7 +123,7 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
     //Copy reacting cylinders, Clone reactions where this cylinder is involved
     #ifdef CROSSCHECK_CYLINDER
     Cylinder::_crosscheckdumpFile <<"Reacting cylinder count "<<rhs
-        ._crossCylinderReactions.size()<<endl;
+        ._reactingCylinders.size()<<endl;
     #endif
     for(auto &ccyl : rhs._reactingCylinders) {
 
