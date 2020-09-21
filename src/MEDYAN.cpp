@@ -146,13 +146,12 @@ int main(int argc, char **argv) {
                     cmdRes.numThreads);
                 c.run();
             });
-#ifdef VISUAL
-            {
+
+            if(medyan::visual::enabled) {
                 auto vd = std::make_shared< visual::VisualDisplay >();
                 visual::vdWeak = vd;
                 vd->run();
             }
-#endif // VISUAL
             simul.join();
         }
         break;

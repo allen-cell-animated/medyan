@@ -1,6 +1,7 @@
 #ifndef MEDYAN_Visual_Window_Hpp
 #define MEDYAN_Visual_Window_Hpp
 
+#include <algorithm>
 #include <array>
 #include <iostream> // cout, endl
 #include <stdexcept> // runtime_error
@@ -149,11 +150,15 @@ public:
         };
         const auto scrollCallback = [](GLFWwindow* window, double xoffset, double yoffset) {
             auto& vc = *static_cast< VisualContext* >(glfwGetWindowUserPointer(window));
-            auto& fov = vc.displaySettings.mainView.projection.fov;
+            auto& proj = vc.displaySettings.mainView.projection;
+            auto& fov = proj.fov;
+            auto& scale = proj.scale;
 
             fov -= 0.02 * yoffset;
-            if(fov < 0.01f) fov = 0.01f;
-            if(fov > 3.13f) fov = 3.13f;
+            fov = std::clamp(fov, 0.01f, 3.13f);
+
+            scale -= 0.05 * yoffset;
+            scale = std::clamp(scale, 0.05f, 20.0f);
         };
         const auto keyCallback = [](GLFWwindow* window, int key, int scancode, int action, int mods) {
             auto& vc = *static_cast< VisualContext* >(glfwGetWindowUserPointer(window));

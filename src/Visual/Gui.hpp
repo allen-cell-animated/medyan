@@ -81,6 +81,34 @@ inline void guiColorPicker4Popup(const char* strId, float* pColor) {
     }
 }
 
+inline void guiViewSettings(ObjectViewSettings& viewSettings) {
+    using PT = ObjectViewSettings::Projection::Type;
+
+    guiColorPicker4Popup("background", viewSettings.canvas.bgColor.data());
+    if(ImGui::BeginCombo("projection", text(viewSettings.projection.type), 0)) {
+        for (int i = 0; i < underlying(PT::last_); ++i) {
+
+            const PT proj = static_cast<PT>(i);
+
+            const bool isSelected = (viewSettings.projection.type == proj);
+            if (ImGui::Selectable(text(proj), isSelected)) {
+                viewSettings.projection.type = proj;
+            }
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (isSelected) {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+
+    ImGui::SliderFloat("z near", &viewSettings.projection.zNear, 1.0, 200.0, "%.1f");
+    ImGui::SliderFloat("z far", &viewSettings.projection.zFar, 1000.0, 20000.0, "%.1f");
+    ImGui::SliderFloat("camera key speed", &viewSettings.control.cameraKeyPositionPerFrame, 50.0, 500.0, "%.1f");
+
+}
+
 inline void guiMainWindow(DisplaySettings& displaySettings) {
     // Exceptionally add an extra assert here for people confused about initial Dear ImGui setup
     // Most ImGui functions would normally just crash if the context is missing.
@@ -172,7 +200,9 @@ inline void guiMainWindow(DisplaySettings& displaySettings) {
             );
             ImGui::BulletText("projection: %s", text(viewSettings.projection.type));
             if(viewSettings.projection.type == ObjectViewSettings::Projection::Type::perspective) {
-                ImGui::BulletText("fov: %.1f", viewSettings.projection.fov);
+                ImGui::BulletText("fov: %.2f", viewSettings.projection.fov);
+            } else {
+                ImGui::BulletText("scale: %.1f", viewSettings.projection.scale);
             }
             ImGui::BulletText(
                 "z range: (%.1f, %.1f)",
@@ -185,12 +215,10 @@ inline void guiMainWindow(DisplaySettings& displaySettings) {
         // ImGui::Separator();
     }
 
-    if(ImGui::CollapsingHeader("settings")) {
+    if(ImGui::CollapsingHeader("settings", ImGuiTreeNodeFlags_DefaultOpen)) {
 
-        guiColorPicker4Popup("background", displaySettings.mainView.canvas.bgColor.data());
-        ImGui::Separator();
-
-        ImGui::SliderFloat("camera key speed", &displaySettings.mainView.control.cameraKeyPositionPerFrame, 50.0, 500.0, "%.1f");
+        // main view
+        guiViewSettings(displaySettings.mainView);
     }
 
 

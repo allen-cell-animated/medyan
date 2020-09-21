@@ -65,17 +65,18 @@ struct ObjectViewSettings {
     };
 
     struct Projection {
-        enum class Type { orthographic, perspective };
+        enum class Type { orthographic, perspective, last_ };
 
         Type  type       = Type::perspective;
         float fov        = glm::radians(45.0f); // perspective
+        float scale      = 1.0f;                // orthographic
         float zNear      = 10.0f;
         float zFar       = 5000.0f;
 
         // Helper functions
 
         auto projOrtho(float width, float height) const {
-            return glm::ortho(-width / 2, width / 2, -height / 2, height / 2, zNear, zFar);
+            return glm::ortho(-width * 0.5f * scale, width * 0.5f * scale, -height * 0.5f * scale, height * 0.5f * scale, zNear, zFar);
         }
         auto projPerspective(float width, float height) const {
             return glm::perspective(fov, width / height, zNear, zFar);
@@ -106,6 +107,9 @@ struct ObjectViewSettings {
     Control control;
 };
 
+constexpr auto underlying(ObjectViewSettings::Projection::Type proj) {
+    return static_cast<std::underlying_type_t<ObjectViewSettings::Projection::Type>>(proj);
+}
 constexpr auto text(ObjectViewSettings::Projection::Type proj) {
     switch(proj) {
         case ObjectViewSettings::Projection::Type::orthographic: return "orthographic";
