@@ -14,6 +14,7 @@
 #include "Util/Environment.hpp"
 #include "Util/Io/Log.hpp"
 #include "Visual/Common.hpp"
+#include "Visual/Control.hpp"
 #include "Visual/Gui.hpp"
 #include "Visual/Shader.hpp"
 #include "Visual/ShaderSrc.hpp"
@@ -156,18 +157,14 @@ public:
             const int mouseState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
             if(mouseState == GLFW_PRESS) {
                 if(controlStates.mouseLeftAlreadyPressed) {
-                    // Transform
-                    const double dist = glm::distance(camera.target, camera.position);
-
-                    camera.position -= (
-                        camera.right * float(xpos - controlStates.mouseLastX) +
-                        camera.up    * float(controlStates.mouseLastY - ypos)
-                    ) * control.cameraCursorPositionPerPixel;
-                    camera.position = camera.target + glm::normalize(camera.position - camera.target) * (float)dist;
-                    
-                    // Update direction
-                    camera.right = glm::normalize(glm::cross(camera.target - camera.position, camera.up));
-                    camera.up = glm::normalize(glm::cross(camera.right, camera.target - camera.position));
+                    mouseDragCamera(
+                        vc.displaySettings.mainView.camera,
+                        vc.displayStates.mainView.control.mouseLastX,
+                        vc.displayStates.mainView.control.mouseLastY,
+                        xpos,
+                        ypos,
+                        vc.displaySettings.mainView.control
+                    );
 
                 } else {
                     controlStates.mouseLeftAlreadyPressed = true;

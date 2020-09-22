@@ -90,9 +90,19 @@ struct ObjectViewSettings {
     };
 
     struct Control {
+        enum class CameraMouseMode {
+            none,
+            rotate,
+            pan,
+            last_
+        };
+
         // camera
         float cameraKeyPositionPerFrame = 150.0f;
-        float cameraCursorPositionPerPixel = 2.0f;   // camera move distance per pixel
+
+        CameraMouseMode cameraMouseMode = CameraMouseMode::rotate;
+        float cameraRotatePositionPerCursorPixel = 2.0f;   // camera move distance per pixel (rotate)
+        float cameraPanPositionPerCursorPixel = 2.0f;      // camera move distance per pixel (pan)
 
         // snapshot saving
         std::filesystem::path snapshotFile = "./snapshot.png";
@@ -119,6 +129,17 @@ constexpr auto text(ObjectViewSettings::Projection::Type proj) {
         case ObjectViewSettings::Projection::Type::orthographic: return "orthographic";
         case ObjectViewSettings::Projection::Type::perspective:  return "perspective";
         default:                                                 return "";
+    }
+}
+constexpr auto underlying(ObjectViewSettings::Control::CameraMouseMode mode) {
+    return static_cast<std::underlying_type_t<ObjectViewSettings::Control::CameraMouseMode>>(mode);
+}
+constexpr auto text(ObjectViewSettings::Control::CameraMouseMode mode) {
+    switch(mode) {
+        case ObjectViewSettings::Control::CameraMouseMode::none:   return "none";
+        case ObjectViewSettings::Control::CameraMouseMode::rotate: return "rotate";
+        case ObjectViewSettings::Control::CameraMouseMode::pan:    return "pan";
+        default:                                                   return "";
     }
 }
 

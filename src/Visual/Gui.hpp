@@ -1,6 +1,8 @@
 #ifndef MEDYAN_Visual_Gui_hpp
 #define MEDYAN_Visual_Gui_hpp
 
+#include <type_traits>
+
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -62,8 +64,11 @@ public:
 };
 
 
+//-----------------------------------------------------------------------------
+// Auxiliary functions
+//-----------------------------------------------------------------------------
 
-inline void guiColorPicker4Popup(const char* strId, float* pColor) {
+inline void guiAuxColorPicker4Popup(const char* strId, float* pColor) {
     const bool bgColorPopup = ImGui::ColorButton(
         strId,
         [&] { ImVec4 to; std::memcpy(&to, pColor, sizeof(to)); return to; }(),
@@ -83,18 +88,37 @@ inline void guiColorPicker4Popup(const char* strId, float* pColor) {
     }
 }
 
-inline void guiViewSettings(ObjectViewSettings& viewSettings) {
-    using PT = ObjectViewSettings::Projection::Type;
+// Function to build combo box automatically for an enumeration type.
+//
+// Notes:
+//   - The elements in the enum type must be automatically valued (ie the
+//     values are automatically 0, 1, 2, ...).
+//   - The type must have "last_" as the last element.
+//   - A "text(Enum)" function must be implemented to display the elements.
+template<
+    typename Enum,
+    typename Reselect,              // function void(Enum old, Enum new) to execute when selected
+    std::enable_if_t<
+        std::is_enum_v< Enum > &&
+        std::is_invocable_r_v< void, Reselect, Enum, Enum > // Reselect: (Enum, Enum) -> void
+    >* = nullptr                    // type requirements
+>
+inline void guiAuxEnumComboBox(
+    const char*          name,
+    Enum&                value,
+    Reselect&&           reselect,
+    ImGuiSelectableFlags flags = 0
+) {
+    if(ImGui::BeginCombo(name, text(value), 0)) {
+        for (int i = 0; i < underlying(Enum::last_); ++i) {
 
-    guiColorPicker4Popup("background", viewSettings.canvas.bgColor.data());
-    if(ImGui::BeginCombo("projection", text(viewSettings.projection.type), 0)) {
-        for (int i = 0; i < underlying(PT::last_); ++i) {
+            const Enum valueI = static_cast<Enum>(i);
 
-            const PT proj = static_cast<PT>(i);
-
-            const bool isSelected = (viewSettings.projection.type == proj);
-            if (ImGui::Selectable(text(proj), isSelected)) {
-                viewSettings.projection.type = proj;
+            const bool isSelected = (value == valueI);
+            if (ImGui::Selectable(text(valueI), isSelected, flags)) {
+                const auto oldValue = value;
+                value = valueI;
+                reselect(oldValue, valueI);
             }
 
             // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -104,10 +128,36 @@ inline void guiViewSettings(ObjectViewSettings& viewSettings) {
         }
         ImGui::EndCombo();
     }
+}
+// Where Reselect function is a no-op.
+template<
+    typename Enum,
+    std::enable_if_t< std::is_enum_v< Enum > >* = nullptr     // type requirements
+>
+inline void guiAuxEnumComboBox(
+    const char*          name,
+    Enum&                value,
+    ImGuiSelectableFlags flags = 0
+) {
+    guiAuxEnumComboBox(name, value, [](Enum, Enum) {}, flags);
+}
+
+
+//-----------------------------------------------------------------------------
+// Main GUI functions
+//-----------------------------------------------------------------------------
+
+inline void guiViewSettings(ObjectViewSettings& viewSettings) {
+    using PT = ObjectViewSettings::Projection::Type;
+
+    guiAuxColorPicker4Popup("background", viewSettings.canvas.bgColor.data());
+    guiAuxEnumComboBox("projection", viewSettings.projection.type);
 
     ImGui::SliderFloat("z near", &viewSettings.projection.zNear, 1.0, 200.0, "%.1f");
     ImGui::SliderFloat("z far", &viewSettings.projection.zFar, 1000.0, 20000.0, "%.1f");
     ImGui::SliderFloat("camera key speed", &viewSettings.control.cameraKeyPositionPerFrame, 50.0, 500.0, "%.1f");
+
+    guiAuxEnumComboBox("mouse mode", viewSettings.control.cameraMouseMode);
 
 }
 
@@ -159,18 +209,13 @@ inline void guiMainWindow(
     }
 
     // Main display settings
-    if(ImGui::BeginCombo("display mode", text(displaySettings.displayMode), 0)) {
-        for (int i = 0; i < underlying(DisplayMode::last_); ++i) {
-
-            const DisplayMode mode = static_cast<DisplayMode>(i);
-
-            const bool isSelected = (displaySettings.displayMode == mode);
-            const ImGuiSelectableFlags flags = busy ? ImGuiSelectableFlags_Disabled : 0;
-            if (ImGui::Selectable(text(mode), isSelected, flags)) {
-                if(!isSelected) {
-                    // Do stuff to switch to new display mode
-                    if(mode == DisplayMode::trajectory) {
-                        // push the task for file load
+    guiAuxEnumComboBox(
+        "display mode",
+        displaySettings.displayMode,
+        [&](DisplayMode modeOld, DisplayMode modeNew) {
+            switch(modeNew) {
+                case DisplayMode::trajectory:
+                    if(modeOld != modeNew) {
                         pushAnAsyncTask(
                             displayStates.sync,
                             [&] {
@@ -179,17 +224,11 @@ inline void guiMainWindow(
                             }
                         );
                     }
-                }
-                displaySettings.displayMode = mode;
+                    break;
             }
-
-            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-            if (isSelected) {
-                ImGui::SetItemDefaultFocus();
-            }
-        }
-        ImGui::EndCombo();
-    }
+        },
+        busy ? ImGuiSelectableFlags_Disabled : 0
+    );
 
     ImGui::Spacing();
 
