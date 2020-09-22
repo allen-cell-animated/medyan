@@ -7,6 +7,7 @@
 
 #include "Visual/DisplaySettings.hpp"
 #include "Visual/DisplayStates.hpp"
+#include "Visual/FrameData.hpp"
 
 namespace medyan::visual {
 
@@ -114,6 +115,8 @@ inline void guiMainWindow(
     DisplaySettings& displaySettings,
     DisplayStates  & displayStates
 ) {
+    const bool busy = displayStates.sync.busy.load();
+
     // Exceptionally add an extra assert here for people confused about initial Dear ImGui setup
     // Most ImGui functions would normally just crash if the context is missing.
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing dear imgui context.");
@@ -162,9 +165,20 @@ inline void guiMainWindow(
             const DisplayMode mode = static_cast<DisplayMode>(i);
 
             const bool isSelected = (displaySettings.displayMode == mode);
-            if (ImGui::Selectable(text(mode), isSelected)) {
+            const ImGuiSelectableFlags flags = busy ? ImGuiSelectableFlags_Disabled : 0;
+            if (ImGui::Selectable(text(mode), isSelected, flags)) {
                 if(!isSelected) {
                     // Do stuff to switch to new display mode
+                    if(mode == DisplayMode::trajectory) {
+                        // push the task for file load
+                        pushAnAsyncTask(
+                            displayStates.sync,
+                            [&] {
+                                SyncStates::AtomicBoolGuard guard(displayStates.sync.trajectoryLoad);
+                                readAllFrameDataFromOutput();
+                            }
+                        );
+                    }
                 }
                 displaySettings.displayMode = mode;
             }
@@ -215,6 +229,11 @@ inline void guiMainWindow(
             );
         };
 
+        // busy information
+        if(busy) {
+            ImGui::Text("busy...");
+            ImGui::Separator();
+        }
         // fps information
         ImGui::Text("fps: %.1f", displayStates.timing.fps);
         ImGui::Separator();
@@ -240,8 +259,8 @@ inline void imguiLoopRender(
     DisplaySettings& displaySettings,
     DisplayStates  & displayStates
 ) {
-    ImGui_ImplGlfw_NewFrame();
     ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
     if(displaySettings.gui.enabled) {

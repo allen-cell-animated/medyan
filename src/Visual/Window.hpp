@@ -498,6 +498,8 @@ struct VisualDisplay {
 
             // Update GUI
             imguiLoopRender(vc.displaySettings, vc.displayStates);
+            // Perform async tasks
+            dispatchAnAsyncTask(vc.displayStates.sync);
 
             // check
             glfwSwapBuffers(vc.window());
