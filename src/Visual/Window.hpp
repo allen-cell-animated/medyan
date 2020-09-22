@@ -19,7 +19,6 @@
 #include "Visual/ShaderSrc.hpp"
 #include "Visual/VisualElement.hpp"
 
-#ifdef VISUAL
 
 // For best portability, the window signal handling could only be done from the
 // main thread (due to MacOS Cocoa framework).
@@ -67,18 +66,14 @@ public:
 
 
         // Other states
-        float deltaTime = 0.01f;
-        float lastTime  = 0.0f;
-        bool mouseLeftAlreadyPressed = false;
-        double mouseLastX;
-        double mouseLastY;
         bool nextSnapshotRendering = false;
     };
 
 
 
-    // Display settings
+    // Display settings and states
     DisplaySettings displaySettings;
+    DisplayStates   displayStates;
 
 
     VisualContext() {
@@ -122,17 +117,20 @@ public:
         };
         const auto cursorPositionCallback = [](GLFWwindow* window, double xpos, double ypos) {
             auto& vc = *static_cast< VisualContext* >(glfwGetWindowUserPointer(window));
-            auto& ws = vc.windowStates_;
+            auto& controlStates = vc.displayStates.mainView.control;
             auto& camera = vc.displaySettings.mainView.camera;
             const auto& control = vc.displaySettings.mainView.control;
 
             const int mouseState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
             if(mouseState == GLFW_PRESS) {
-                if(ws.mouseLeftAlreadyPressed) {
+                if(controlStates.mouseLeftAlreadyPressed) {
                     // Transform
                     const double dist = glm::distance(camera.target, camera.position);
 
-                    camera.position -= (camera.right * float(xpos - ws.mouseLastX) + camera.up * float(ws.mouseLastY - ypos)) * control.cameraCursorPositionPerPixel;
+                    camera.position -= (
+                        camera.right * float(xpos - controlStates.mouseLastX) +
+                        camera.up    * float(controlStates.mouseLastY - ypos)
+                    ) * control.cameraCursorPositionPerPixel;
                     camera.position = camera.target + glm::normalize(camera.position - camera.target) * (float)dist;
                     
                     // Update direction
@@ -140,12 +138,12 @@ public:
                     camera.up = glm::normalize(glm::cross(camera.right, camera.target - camera.position));
 
                 } else {
-                    ws.mouseLeftAlreadyPressed = true;
+                    controlStates.mouseLeftAlreadyPressed = true;
                 }
-                ws.mouseLastX = xpos;
-                ws.mouseLastY = ypos;
+                controlStates.mouseLastX = xpos;
+                controlStates.mouseLastY = ypos;
             } else {
-                ws.mouseLeftAlreadyPressed = false;
+                controlStates.mouseLeftAlreadyPressed = false;
             }
         };
         const auto scrollCallback = [](GLFWwindow* window, double xoffset, double yoffset) {
@@ -198,9 +196,9 @@ public:
         auto& camera = displaySettings.mainView.camera;
 
         const float currentTime = glfwGetTime();
-        windowStates_.deltaTime = currentTime - windowStates_.lastTime;
-        windowStates_.lastTime = currentTime;
-        const float cameraMove = displaySettings.mainView.control.cameraKeyPositionPerFrame * windowStates_.deltaTime;
+        const float deltaTime = currentTime - displayStates.timing.glfwTimeLastFrame;
+        displayStates.timing.update(currentTime);
+        const float cameraMove = displaySettings.mainView.control.cameraKeyPositionPerFrame * deltaTime;
 
         if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
             // Do nothing
@@ -499,7 +497,7 @@ struct VisualDisplay {
             }
 
             // Update GUI
-            imguiLoopRender(vc.displaySettings);
+            imguiLoopRender(vc.displaySettings, vc.displayStates);
 
             // check
             glfwSwapBuffers(vc.window());
@@ -511,7 +509,5 @@ struct VisualDisplay {
 }; // VisualDisplay
 
 } // namespace medyan::visual
-
-#endif // ifdef VISUAL
 
 #endif

@@ -6,6 +6,7 @@
 #include <imgui_impl_opengl3.h>
 
 #include "Visual/DisplaySettings.hpp"
+#include "Visual/DisplayStates.hpp"
 
 namespace medyan::visual {
 
@@ -109,7 +110,10 @@ inline void guiViewSettings(ObjectViewSettings& viewSettings) {
 
 }
 
-inline void guiMainWindow(DisplaySettings& displaySettings) {
+inline void guiMainWindow(
+    DisplaySettings& displaySettings,
+    DisplayStates  & displayStates
+) {
     // Exceptionally add an extra assert here for people confused about initial Dear ImGui setup
     // Most ImGui functions would normally just crash if the context is missing.
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing dear imgui context.");
@@ -120,8 +124,8 @@ inline void guiMainWindow(DisplaySettings& displaySettings) {
 
     // We specify a default position/size in case there's no data in the .ini file.
     // We only do it to make the demo applications a little more welcoming, but typically this isn't required.
-    // ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(500, 700), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(400, 600), ImGuiCond_FirstUseEver);
 
     // Main body of the Demo window starts here.
     if (!ImGui::Begin("medyan control", nullptr, windowFlags))
@@ -134,10 +138,10 @@ inline void guiMainWindow(DisplaySettings& displaySettings) {
     // Most "big" widgets share a common width settings by default. See 'Demo->Layout->Widgets Width' for details.
 
     // e.g. Use 2/3 of the space for widgets and 1/3 for labels (default)
-    //ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.65f);
+    // ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.65f);
 
     // e.g. Leave a fixed amount of width for labels (by passing a negative value), the rest goes to widgets.
-    ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
+    // ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
 
     // Menu Bar
     if (ImGui::BeginMenuBar())
@@ -211,8 +215,12 @@ inline void guiMainWindow(DisplaySettings& displaySettings) {
             );
         };
 
+        // fps information
+        ImGui::Text("fps: %.1f", displayStates.timing.fps);
+        ImGui::Separator();
+        // main view information
         printView(displaySettings.mainView);
-        // ImGui::Separator();
+
     }
 
     if(ImGui::CollapsingHeader("settings", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -228,13 +236,16 @@ inline void guiMainWindow(DisplaySettings& displaySettings) {
 
 // Note:
 //   - This should only be used in GLFW main loop
-inline void imguiLoopRender(DisplaySettings& displaySettings) {
+inline void imguiLoopRender(
+    DisplaySettings& displaySettings,
+    DisplayStates  & displayStates
+) {
     ImGui_ImplGlfw_NewFrame();
     ImGui_ImplOpenGL3_NewFrame();
     ImGui::NewFrame();
 
     if(displaySettings.gui.enabled) {
-        guiMainWindow(displaySettings);
+        guiMainWindow(displaySettings, displayStates);
     }
 
     ImGui::Render();
