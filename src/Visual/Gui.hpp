@@ -147,6 +147,26 @@ inline void guiAuxEnumComboBox(
 // Main GUI functions
 //-----------------------------------------------------------------------------
 
+inline void guiHelpWindow(DisplaySettings& displaySettings) {
+    if(!displaySettings.gui.helpWindow) return;
+
+    ImGui::SetNextWindowSize(ImVec2(360, 400), ImGuiCond_FirstUseEver);
+
+    if (ImGui::Begin("help", &displaySettings.gui.helpWindow)) {
+
+        if(ImGui::CollapsingHeader("controls", ImGuiTreeNodeFlags_DefaultOpen)) {
+            ImGui::Text("key controls:");
+            ImGui::BulletText("f: take snapshot of current screen");
+            ImGui::BulletText("g: toggle gui on/off");
+            ImGui::BulletText("w/a/s/d: move camera horizontally");
+        }
+    }
+
+
+    // End of help window, no matter Begin returns true or false.
+    ImGui::End();
+}
+
 inline void guiViewSettings(ObjectViewSettings& viewSettings) {
     using PT = ObjectViewSettings::Projection::Type;
 
@@ -203,6 +223,12 @@ inline void guiMainWindow(
         {
             ImGui::MenuItem("(empty menu)", NULL, false, false);
 
+            ImGui::EndMenu();
+        }
+
+        if(ImGui::BeginMenu("help"))
+        {
+            ImGui::MenuItem("help window", nullptr, &displaySettings.gui.helpWindow, true);
             ImGui::EndMenu();
         }
         ImGui::EndMenuBar();
@@ -304,6 +330,7 @@ inline void imguiLoopRender(
 
     if(displaySettings.gui.enabled) {
         guiMainWindow(displaySettings, displayStates);
+        guiHelpWindow(displaySettings);
     }
 
     ImGui::Render();

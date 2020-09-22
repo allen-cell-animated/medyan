@@ -35,7 +35,11 @@ constexpr auto text(DisplayMode mode) {
 //-------------------------------------
 
 struct GuiSettings {
+    // the master switch
     bool enabled = false;
+
+    // windows switches
+    bool helpWindow = false;
 };
 
 //-------------------------------------
@@ -98,7 +102,7 @@ struct ObjectViewSettings {
         };
 
         // camera
-        float cameraKeyPositionPerFrame = 150.0f;
+        float cameraKeyPositionPerFrame = 200.0f;
 
         CameraMouseMode cameraMouseMode = CameraMouseMode::rotate;
         float cameraRotatePositionPerCursorPixel = 2.0f;   // camera move distance per pixel (rotate)
