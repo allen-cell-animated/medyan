@@ -3,17 +3,15 @@
 
 #include "Util/Environment.hpp"
 
-#ifdef VISUAL
-    #ifdef PLATFORM_WINDOWS
-        #define APIENTRY __stdcall
-    #endif
-    #include <glad/glad.h>
-    #include <GLFW/glfw3.h>
-
-    #include <glm/glm.hpp>
-    #include <glm/gtc/matrix_transform.hpp>
-    #include <glm/gtc/type_ptr.hpp>
+#ifdef PLATFORM_WINDOWS
+    #define APIENTRY __stdcall
 #endif
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace medyan::visual {
 

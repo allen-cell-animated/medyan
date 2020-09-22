@@ -2,6 +2,7 @@
 #define MEDYAN_Visual_DisplaySettings_hpp
 
 #include <array>
+#include <filesystem>
 #include <type_traits>
 
 namespace medyan::visual {
@@ -92,6 +93,9 @@ struct ObjectViewSettings {
         // camera
         float cameraKeyPositionPerFrame = 150.0f;
         float cameraCursorPositionPerPixel = 2.0f;   // camera move distance per pixel
+
+        // snapshot saving
+        std::filesystem::path snapshotFile = "./snapshot.png";
     };
 
     // Canvas

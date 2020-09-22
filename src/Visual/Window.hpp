@@ -25,9 +25,6 @@
 
 namespace medyan::visual {
 
-struct Window {
-    GLFWwindow* window;
-}; // Currently not used
 
 inline void glfwError(int id, const char* description) {
     LOG(ERROR) << description;
@@ -58,15 +55,50 @@ inline void replaceBuffer(GLenum target, const std::vector<T>& source) {
 //     to MacOS Cocoa framework).
 class VisualContext {
 public:
-    struct WindowStates {
+    struct OffscreenBufferGuard {
+        bool bufferBuilt = false;
+        unsigned offscreenFbo = 0;
+        unsigned offscreenRbo = 0;
+        unsigned offscreenColorRbo = 0;
 
-        // Size
-        int snapshotWidth = 3840;
-        int snapshotHeight = 2160;
+        // destructor will deallocate the frame buffers
+        ~OffscreenBufferGuard() {
+            unbuild();
+        }
 
+        // build a new buffer
+        void build(int width, int height) {
+            if(bufferBuilt) unbuild();
 
-        // Other states
-        bool nextSnapshotRendering = false;
+            bufferBuilt = true;
+
+            glGenFramebuffers(1, &offscreenFbo);
+            glBindFramebuffer(GL_FRAMEBUFFER, offscreenFbo);
+
+            glGenRenderbuffers(1, &offscreenRbo);
+            glBindRenderbuffer(GL_RENDERBUFFER, offscreenRbo);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+
+            glGenRenderbuffers(1, &offscreenColorRbo);
+            glBindRenderbuffer(GL_RENDERBUFFER, offscreenColorRbo);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, width, height);
+
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, offscreenRbo);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, offscreenColorRbo);
+
+            if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+                LOG(ERROR) << "Framebuffer is not complete.";
+            }
+        }
+
+        void unbuild() {
+            if(bufferBuilt) {
+                glDeleteFramebuffers(1, &offscreenFbo);
+                glDeleteRenderbuffers(1, &offscreenRbo);
+                glDeleteRenderbuffers(1, &offscreenColorRbo);
+                bufferBuilt = false;
+            }
+        }
     };
 
 
@@ -160,9 +192,8 @@ public:
         };
         const auto keyCallback = [](GLFWwindow* window, int key, int scancode, int action, int mods) {
             auto& vc = *static_cast< VisualContext* >(glfwGetWindowUserPointer(window));
-            auto& ws = vc.windowStates_;
             if(key == GLFW_KEY_F && action == GLFW_PRESS) {
-                ws.nextSnapshotRendering = true;
+                vc.displayStates.mainView.control.snapshotRenderingNextFrame = true;
             }
             if(key == GLFW_KEY_G && action == GLFW_PRESS) {
                 vc.displaySettings.gui.enabled = !vc.displaySettings.gui.enabled;
@@ -174,21 +205,13 @@ public:
         glfwSetScrollCallback(window_, scrollCallback);
         glfwSetKeyCallback(window_, keyCallback);
 
-        // Set up framebuffer
-        initFramebuffer_();
-
     } // VisualContext()
 
     ~VisualContext() {
-        destroyFramebuffer_();
-
         glfwTerminate();
     }
 
     auto window() const { return window_; }
-    auto&       windowStates()       { return windowStates_; }
-    const auto& windowStates() const { return windowStates_; }
-    auto offscreenFramebuffer() const { return offscreenFbo_; }
 
     // Helper function to process window inputs
     void processInput() {
@@ -228,40 +251,9 @@ public:
 
 private:
 
-    void initFramebuffer_() {
-        glGenFramebuffers(1, &offscreenFbo_);
-        glBindFramebuffer(GL_FRAMEBUFFER, offscreenFbo_);
-
-        glGenRenderbuffers(1, &offscreenRbo_);
-        glBindRenderbuffer(GL_RENDERBUFFER, offscreenRbo_);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, windowStates_.snapshotWidth, windowStates_.snapshotHeight);
-
-        glGenRenderbuffers(1, &offscreenColorRenderBuffer_);
-        glBindRenderbuffer(GL_RENDERBUFFER, offscreenColorRenderBuffer_);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, windowStates_.snapshotWidth, windowStates_.snapshotHeight);
-
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, offscreenRbo_);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, offscreenColorRenderBuffer_);
-
-        if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            LOG(ERROR) << "Framebuffer is not complete.";
-        }
-    }
-
-    void destroyFramebuffer_() {
-        glDeleteFramebuffers(1, &offscreenFbo_);
-        glDeleteRenderbuffers(1, &offscreenRbo_);
-        glDeleteRenderbuffers(1, &offscreenColorRenderBuffer_);
-    }
-
     // Member variables
     GLFWwindow* window_;
-    WindowStates windowStates_;
 
-    // Framebuffer and attachments
-    unsigned int offscreenFbo_;
-    unsigned int offscreenRbo_;
-    unsigned int offscreenColorRenderBuffer_;
 }; // VisualContext
 
 
@@ -374,14 +366,16 @@ struct VisualDisplay {
             // input
             vc.processInput();
 
-            auto& ws = vc.windowStates();
-
-            // rendering
-            const bool offscreen = ws.nextSnapshotRendering;
-            ws.nextSnapshotRendering = false;
-            glBindFramebuffer(GL_FRAMEBUFFER, offscreen ? vc.offscreenFramebuffer() : 0);
-            const auto width  = offscreen ? ws.snapshotWidth  : vc.displaySettings.mainView.canvas.width;
-            const auto height = offscreen ? ws.snapshotHeight : vc.displaySettings.mainView.canvas.height;
+            // select frame buffer: on screen display / offscreen snapshot
+            const bool offscreen = vc.displayStates.mainView.control.snapshotRenderingNextFrame;
+            vc.displayStates.mainView.control.snapshotRenderingNextFrame = false;
+            auto width  = vc.displaySettings.mainView.canvas.width;
+            auto height = vc.displaySettings.mainView.canvas.height;
+            VisualContext::OffscreenBufferGuard offscreenBufferGuard;
+            if(offscreen) {
+                offscreenBufferGuard.build(width, height);
+            }
+            glBindFramebuffer(GL_FRAMEBUFFER, offscreen ? offscreenBufferGuard.offscreenFbo : 0);
 
             glViewport(0, 0, width, height);
             {
@@ -493,7 +487,8 @@ struct VisualDisplay {
                 glReadBuffer(GL_COLOR_ATTACHMENT0);
                 glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
 
-                stbi_write_png("./snapshot.png", width, height, 4, data.data(), 4 * width);
+                stbi_write_png(vc.displaySettings.mainView.control.snapshotFile.string().c_str(), width, height, 4, data.data(), 4 * width);
+                LOG(INFO) << "Snapshot saved to " << vc.displaySettings.mainView.control.snapshotFile;
             }
 
             // Update GUI

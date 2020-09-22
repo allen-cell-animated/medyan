@@ -20,6 +20,9 @@ struct ObjectViewStates {
         bool mouseLeftAlreadyPressed = false;
         double mouseLastX = 0;
         double mouseLastY = 0;
+
+        // framebuffer control
+        bool snapshotRenderingNextFrame = false;
     };
 
     Control control;
