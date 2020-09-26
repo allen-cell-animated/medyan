@@ -1697,7 +1697,7 @@ void Controller::run() {
 	    cout<<"Cylinder-Cylinder Repulsion "<<mtime.numinteractions[8]<<endl;
 	    cout<<"Cylinder-Boundary Repulsion "<<mtime.numinteractions[9]<<endl;
     }
-    if(false) {
+    if(true) {
         cout << "Printing callback times" << endl;
         auto ctime = CUDAcommon::ctime;
         auto ccount = CUDAcommon::ccount;
@@ -1788,6 +1788,19 @@ void Controller::run() {
              << CUDAcommon::ppendtime
                      .rxntempate3 << " part4 (Callback) "
              << CUDAcommon::ppendtime.rxntempate4 << endl;
+        cout<<" Displaying chemistry times"<<endl;
+        cout<<"Counts fired for each ReactionType"<<endl;
+        for(auto i = 0; i<17;i++)
+            cout<<CUDAcommon::cdetails.reactioncount[i]<<" ";
+        cout<<endl;
+        cout<<"Time taken for dependency updates for each ReactionType"<<endl;
+        for(auto i = 0; i<17;i++)
+            cout<<CUDAcommon::cdetails.dependencytime[i]<<" ";
+        cout<<endl;
+        cout<<"Total number of dependencies for reactions fired based on ReactionType"<<endl;
+        for(auto i = 0; i<17;i++)
+            cout<<CUDAcommon::cdetails.dependentrxncount[i]<<" ";
+        cout<<endl;
     }
 	#endif
     cout << "Done with simulation!" << endl;

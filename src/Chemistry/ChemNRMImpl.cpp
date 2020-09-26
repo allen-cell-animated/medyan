@@ -24,6 +24,9 @@
 #include "Rand.h"
 #include "CController.h"
 
+#include <chrono>
+#include "CUDAcommon.h"
+
 #ifdef BOOST_MEM_POOL
 #ifdef BOOST_POOL_MEM_RNODENRM
 boost::pool<> allocator_rnodenrm(sizeof(RNodeNRM),BOOL_POOL_NSIZE);
@@ -241,7 +244,8 @@ bool ChemNRMImpl::makeStep() {
 #endif
     // Updating dependencies
     ReactionBase *r = rn->getReaction();
-
+    chrono::high_resolution_clock::time_point mins, mine;
+    mins = chrono::high_resolution_clock::now();
     if(r->updateDependencies()) {
 
         for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
@@ -296,6 +300,15 @@ bool ChemNRMImpl::makeStep() {
             rn_other->updateHeap();
         }
     }
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+#ifdef OPTIMOUT
+    auto rType = rn->getReaction()->getReactionType();
+    CUDAcommon::cdetails.reactioncount[rType]++;
+    CUDAcommon::cdetails.dependencytime[rType]+= elapsed_time.count();
+    CUDAcommon::cdetails.dependentrxncount[rType] += r->dependents().size();
+#endif
+
 
     #ifdef CROSSCHECK_CYLINDER
     CController::_crosscheckdumpFilechem <<"emitSignal"<<endl;
