@@ -1809,6 +1809,8 @@ void Controller::run() {
         for(auto i = 0; i<17;i++)
             cout<<CUDAcommon::cdetails.dependentrxncount[i]<<" ";
         cout<<endl;
+        cout<<"Diffusion passivate vs activate calls"<<endl;
+        cout<<CUDAcommon::cdetails.diffusion_passivate_count<<" "<<CUDAcommon::cdetails.diffusion_activate_count<<endl;
     }
 	#endif
     cout << "Done with simulation!" << endl;

@@ -181,6 +181,8 @@ struct chemdetails{
     int dependentrxncount[17]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     double totaltime[17]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     double emitsignal[17]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    int diffusion_passivate_count = 0;
+    int diffusion_activate_count = 0;
 };
 
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)

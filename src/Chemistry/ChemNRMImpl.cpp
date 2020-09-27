@@ -305,6 +305,16 @@ bool ChemNRMImpl::makeStep() {
 #ifdef OPTIMOUT
     chrono::duration<floatingpoint> elapsed_time(mine - mins);
     auto rType = r->getReactionType();
+    if(rType == 1){
+        auto reactant = r->getReactantCopyNumbers();
+        auto product = r->getProductCopyNumbers();
+        if(reactant[0] == 0){
+            CUDAcommon::cdetails.diffusion_passivate_count++;
+
+        }else if (product[0] == 1){
+            CUDAcommon::cdetails.diffusion_activate_count++;
+        }
+    }
     CUDAcommon::cdetails.reactioncount[rType]++;
     CUDAcommon::cdetails.dependencytime[rType]+= elapsed_time.count();
     CUDAcommon::cdetails.dependentrxncount[rType] += r->dependents().size();

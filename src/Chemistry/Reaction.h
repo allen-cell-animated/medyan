@@ -19,6 +19,7 @@
 #include "ReactionBase.h"
 #include "ChemSim.h"
 
+
 /// Represents a concrete chemical reaction, such as A + B -> C, where M is the number
 /// of reactants and N is the number of products.
 
