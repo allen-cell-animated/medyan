@@ -168,7 +168,8 @@ floatingpoint ChemNRMImpl::generateTau(floatingpoint a){
 }
 
 bool ChemNRMImpl::makeStep() {
-
+    chrono::high_resolution_clock::time_point mins, mine, minsT, mineT, minses, mintes;
+    minsT = chrono::high_resolution_clock::now();
     //try to get a reaction
     if(_heap.empty()) {
         cout << "There are no reactions to fire, returning..." << endl;
@@ -231,7 +232,8 @@ bool ChemNRMImpl::makeStep() {
 
 	#ifdef DEBUGCONSTANTSEED
     cout<<"tau "<<_t<<endl;
-	#endif
+    #endif
+    mins = chrono::high_resolution_clock::now();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
 #endif
@@ -244,8 +246,6 @@ bool ChemNRMImpl::makeStep() {
 #endif
     // Updating dependencies
     ReactionBase *r = rn->getReaction();
-    chrono::high_resolution_clock::time_point mins, mine;
-    mins = chrono::high_resolution_clock::now();
     if(r->updateDependencies()) {
 
         for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
@@ -301,27 +301,36 @@ bool ChemNRMImpl::makeStep() {
         }
     }
     mine = chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+
 #ifdef OPTIMOUT
-    auto rType = rn->getReaction()->getReactionType();
+    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+    auto rType = r->getReactionType();
     CUDAcommon::cdetails.reactioncount[rType]++;
     CUDAcommon::cdetails.dependencytime[rType]+= elapsed_time.count();
     CUDAcommon::cdetails.dependentrxncount[rType] += r->dependents().size();
 #endif
 
-
     #ifdef CROSSCHECK_CYLINDER
     CController::_crosscheckdumpFilechem <<"emitSignal"<<endl;
     #endif
+    minses = chrono::high_resolution_clock::now();
 #ifdef REACTION_SIGNALING
     // Send signal
     r->emitSignal();
 #endif
+    mintes = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_emitsignal(mintes - minses);
+    cout<<elapsed_emitsignal.count()<<endl;
+    CUDAcommon::cdetails.emitsignal[rType]+= elapsed_emitsignal.count();
+
     #ifdef CROSSCHECK_CYLINDER
     CController::_crosscheckdumpFilechem <<"----"<<endl;
     #endif
-//	cout<<"af "<<Rand::chemistrycounter<<" "<<Rand::intcounter<<" "
-//	                                                            ""<<Rand::floatcounter<<endl;
+    mineT = chrono::high_resolution_clock::now();
+#ifdef OPTIMOUT
+    chrono::duration<floatingpoint> elapsed_timetotal(mineT - minsT);
+    CUDAcommon::cdetails.totaltime[rType]+= elapsed_timetotal.count();
+#endif
     return true;
 }
 

@@ -179,6 +179,8 @@ struct chemdetails{
     int reactioncount[17]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     double dependencytime[17]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     int dependentrxncount[17]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    double totaltime[17]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    double emitsignal[17]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 };
 
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)

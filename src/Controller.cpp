@@ -1793,6 +1793,14 @@ void Controller::run() {
         for(auto i = 0; i<17;i++)
             cout<<CUDAcommon::cdetails.reactioncount[i]<<" ";
         cout<<endl;
+        cout<<"Time taken to fire each ReactionType"<<endl;
+        for(auto i = 0; i<17;i++)
+            cout<<CUDAcommon::cdetails.totaltime[i]<<" ";
+        cout<<endl;
+        cout<<"Time taken to emitSignal for each ReactionType"<<endl;
+        for(auto i = 0; i<17;i++)
+            cout<<CUDAcommon::cdetails.emitsignal[i]<<" ";
+        cout<<endl;
         cout<<"Time taken for dependency updates for each ReactionType"<<endl;
         for(auto i = 0; i<17;i++)
             cout<<CUDAcommon::cdetails.dependencytime[i]<<" ";
