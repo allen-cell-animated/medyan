@@ -330,7 +330,6 @@ bool ChemNRMImpl::makeStep() {
 #endif
     mintes = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_emitsignal(mintes - minses);
-    cout<<elapsed_emitsignal.count()<<endl;
     CUDAcommon::cdetails.emitsignal[rType]+= elapsed_emitsignal.count();
 
     #ifdef CROSSCHECK_CYLINDER

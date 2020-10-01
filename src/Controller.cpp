@@ -1051,8 +1051,11 @@ void Controller::run() {
 #endif
     chrono::high_resolution_clock::time_point chk1, chk2, mins, mine;
     chk1 = chrono::high_resolution_clock::now();
+    chrono::high_resolution_clock::time_point minsR, mineR;
 //RESTART PHASE BEGINS
     if(SysParams::RUNSTATE==false){
+
+        minsR = chrono::high_resolution_clock::now();
 //Step 2A. Turn off diffusion, passivate filament reactions and add reactions to heap.
         _restart->settorestartphase();
 	    cout<<"Turned off Diffusion, and filament reactions."<<endl;
@@ -1227,7 +1230,9 @@ void Controller::run() {
 
         //Crosscheck tau to make sure heap is ordered accurately.
         _cController.crosschecktau();
+        mineR = chrono::high_resolution_clock::now();
     }
+    chrono::duration<floatingpoint> elapsed_runRestart(mineR-minsR);
 #ifdef CHEMISTRY
     tauLastSnapshot = tau();
     tauDatadump = tau();
@@ -1617,6 +1622,7 @@ void Controller::run() {
     chrono::duration<floatingpoint> elapsed_run(chk2-chk1);
     cout << "Time elapsed for run: dt=" << elapsed_run.count() << endl;
 	#ifdef OPTIMOUT
+    cout<<"Restart time for run=" << elapsed_runRestart.count()<<endl;
     cout<< "Chemistry time for run=" << chemistrytime <<endl;
     cout << "Minimization time for run=" << minimizationtime <<endl;
     cout<< "Neighbor-list+Bmgr-time for run="<<nltime<<endl;
