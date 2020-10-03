@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <array>
 #include <cmath> // abs
+#include <stdexcept>
+#include <vector>
 
 #include "Util/Math/Vec.hpp"
 
@@ -74,19 +76,36 @@ inline Float extend01(Float v, Extend ex) {
 
 // Color interpolation
 // Precondition: v must be in range [0, 1].
-template< typename FloatVal, size_t colorDim, typename FloatColor, size_t listSize >
+template< typename FloatVal, int colorDim, typename FloatColor, int listSize >
 constexpr
 mathfunc::Vec< colorDim, FloatColor >
 interpolate(FloatVal v, std::array< mathfunc::Vec< colorDim, FloatColor >, listSize > interpList) {
     static_assert(listSize > 1, "Must have at least 2 elements for interpolation");
     const FloatVal interval = static_cast< FloatVal >(1.0) / (listSize - 1);
     const FloatVal normalizedPos = v / interval;
-    const size_t intervalIndex = static_cast< size_t >(normalizedPos);
+    const int intervalIndex = static_cast< int >(normalizedPos);
     if(intervalIndex >= listSize - 1) return interpList[listSize - 1];
 
     return interpList[intervalIndex    ] * static_cast< FloatColor >(intervalIndex + 1 - normalizedPos)
         +  interpList[intervalIndex + 1] * static_cast< FloatColor >(normalizedPos - intervalIndex);
 }
+template< typename FloatVal, int colorDim, typename FloatColor >
+mathfunc::Vec< colorDim, FloatColor >
+interpolate(FloatVal v, const std::vector< mathfunc::Vec< colorDim, FloatColor > >& interpList) {
+    const int listSize = interpList.size();
+    if(listSize <= 1) {
+        throw std::runtime_error("Must have at least 2 elements for interpolation");
+    }
+
+    const FloatVal interval = static_cast< FloatVal >(1.0) / (listSize - 1);
+    const FloatVal normalizedPos = v / interval;
+    const int intervalIndex = static_cast< int >(normalizedPos);
+    if(intervalIndex >= listSize - 1) return interpList[listSize - 1];
+
+    return interpList[intervalIndex    ] * static_cast< FloatColor >(intervalIndex + 1 - normalizedPos)
+        +  interpList[intervalIndex + 1] * static_cast< FloatColor >(normalizedPos - intervalIndex);
+}
+
 
 
 // Define color maps

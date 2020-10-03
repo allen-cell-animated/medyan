@@ -38,7 +38,7 @@ in vec3 Normal;
 in vec3 Color; // Currently not used
 
 struct Material {
-    vec3 diffuse; // also for ambient
+    vec3 diffuse;    // not used
     vec3 specular;
     float shininess;
 };
@@ -94,8 +94,8 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir) {
     vec3 reflectDir = reflect(-lightDir, normal);
     float specularFac = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     // Combine
-    vec3 ambient = light.ambient * material.diffuse;
-    vec3 diffuse = light.diffuse * diffuseFac * material.diffuse;
+    vec3 ambient = light.ambient * Color;
+    vec3 diffuse = light.diffuse * diffuseFac * Color;
     vec3 specular = light.specular * specularFac * material.specular;
     return ambient + diffuse + specular;
 }
@@ -111,8 +111,8 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * distance * distance);
     // Combine
-    vec3 ambient = light.ambient * material.diffuse;
-    vec3 diffuse = light.diffuse * diffuseFac * material.diffuse;
+    vec3 ambient = light.ambient * Color;
+    vec3 diffuse = light.diffuse * diffuseFac * Color;
     vec3 specular = light.specular * specularFac * material.specular;
     return (ambient + diffuse + specular) * attenuation;
 }

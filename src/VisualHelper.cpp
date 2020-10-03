@@ -17,6 +17,7 @@
 #include "Structure/MotorGhost.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "SysParams.h"
+#include "Visual/MeshData.hpp"
 #include "Visual/Render/PathExtrude.hpp"
 #include "Visual/Render/Sphere.hpp"
 #include "Visual/VisualElement.hpp"
@@ -66,28 +67,8 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 // }
 
                 for(const auto& mi : sdfv.membraneData) {
-                    // Update coords
-                    ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + 3 * ve->state.size.vaStride * mi.triangleVertexIndices.size());
-                    for(const auto& t : mi.triangleVertexIndices) {
-                        const Vec3 coord[] {
-                            mi.vertexCoords[t[0]],
-                            mi.vertexCoords[t[1]],
-                            mi.vertexCoords[t[2]]
-                        };
-                        const auto un = normalizedVector(cross(coord[1] - coord[0], coord[2] - coord[0]));
-
-                        for(size_t i = 0; i < 3; ++i) {
-                            ve->state.vertexAttribs.push_back(coord[i][0]);
-                            ve->state.vertexAttribs.push_back(coord[i][1]);
-                            ve->state.vertexAttribs.push_back(coord[i][2]);
-                            ve->state.vertexAttribs.push_back(un[0]);
-                            ve->state.vertexAttribs.push_back(un[1]);
-                            ve->state.vertexAttribs.push_back(un[2]);
-                            ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
-                            ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
-                            ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
-                        }
-                    }
+                    auto membraneMeshData = createMembraneMesh(mi, MembraneDisplaySettings {});
+                    ve->state.vertexAttribs.insert(ve->state.vertexAttribs.end(), membraneMeshData.data.begin(), membraneMeshData.data.end());
                 }
             }
             ve->state.eleMode = GL_TRIANGLES;

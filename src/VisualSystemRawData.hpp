@@ -8,6 +8,7 @@
 
 #include "Structure/Bead.h"
 #include "Util/Math/Vec.hpp"
+#include "Visual/FrameData.hpp"
 
 namespace medyan::visual {
 
@@ -31,10 +32,6 @@ namespace raw_data_cat {
 struct SystemRawData {
     using V3 = mathfunc::Vec3;
 
-    struct MembraneData {
-        std::vector< V3 > vertexCoords;
-        std::vector< std::array< size_t, 3 > > triangleVertexIndices; // Index for this membrane only (start from 0)
-    };
     struct FilamentData {
         std::vector< V3 > beadCoords;
     };
@@ -48,7 +45,7 @@ struct SystemRawData {
     mathfunc::Vec< 3, size_t > compartmentNum;
     mathfunc::Vec3             compartmentSize;
 
-    std::vector< MembraneData > membraneData;
+    std::vector< MembraneFrame > membraneData;
     std::vector< FilamentData > filamentData; // [Filament Idx][Bead position in filament]
 
     std::vector< std::array< mathfunc::Vec3, 2 > > linkerCoords;

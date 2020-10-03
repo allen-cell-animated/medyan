@@ -36,15 +36,15 @@ bool copySystemData(
 
             mi.vertexCoords.reserve(mesh.numVertices());
             for(const auto& v : mesh.getVertices()) {
-                mi.vertexCoords.push_back(v.attr.vertex->coord);
+                mi.vertexCoords.push_back(mathfunc::Vec3f(v.attr.vertex->coord));
             }
 
-            mi.triangleVertexIndices.reserve(mesh.numTriangles());
+            mi.triangles.reserve(mesh.numTriangles());
             for(const auto& t : mesh.getTriangles()) {
                 size_t vIndex = 0; // 0, 1, 2
-                mi.triangleVertexIndices.emplace_back();
+                mi.triangles.emplace_back();
                 mesh.forEachHalfEdgeInPolygon(t, [&](auto hei) {
-                    mi.triangleVertexIndices.back()[vIndex] = mesh.target(hei).index;
+                    mi.triangles.back()[vIndex] = mesh.target(hei).index;
                     ++vIndex;
                 });
             }
