@@ -1649,6 +1649,13 @@ void Controller::run() {
                 .callslinkerupdate<<endl;
         cout<<"move-compartment motor ="<<mtime.timemotorupdate<<" calls "<<mtime
                 .callsmotorupdate<<endl;
+        auto cdetails = CUDAcommon::cdetails;
+        cout<<"Clone internal reactions="<<cdetails.ccylclonetimer[0]<<", calls="<<
+                cdetails.ccylclonecounter[0]<<", rxncounter="<<cdetails.ccylclonerxncounter[0]<<endl;
+        cout<<"Clone crossCylinder reactions="<<cdetails.ccylclonetimer[1]<<", calls="<<
+            cdetails.ccylclonecounter[1]<<", rxncounter="<<cdetails.ccylclonerxncounter[1]<<endl;
+        cout<<"Clone reactingCylinder reactions="<<cdetails.ccylclonetimer[2]<<", calls="<<
+            cdetails.ccylclonecounter[2]<<", rxncounter="<<cdetails.ccylclonerxncounter[2]<<endl;
         cout<<"-----------"<<endl;
 
         cout << "Minimization time for run=" << minimizationtime <<endl;

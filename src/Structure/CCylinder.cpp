@@ -50,6 +50,9 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
     Cylinder::_crosscheckdumpFile <<"Internal rxn count "<<rhs
         ._internalReactions.size()<<endl;
     #endif
+#ifdef OPTIMOUT
+    mins = chrono::high_resolution_clock::now();
+#endif
     unsigned int count = 0;
     for(auto &r: rhs._internalReactions) {
         #ifdef CROSSCHECK_CYLINDER
@@ -80,7 +83,14 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
         #endif
         count++;
     }
-    cout<<"Internal reactions count "<<count<<endl;
+#ifdef OPTIMOUT
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> internalrxn(mine - mins);
+    CUDAcommon::cdetails.ccylclonecounter[0]++;
+    CUDAcommon::cdetails.ccylclonetimer[0] += internalrxn.count();
+    CUDAcommon::cdetails.ccylclonerxncounter[0] += rhs._internalReactions.size();
+    mins = chrono::high_resolution_clock::now();
+#endif
     //copy all cross-cylinder reactions
     #ifdef CROSSCHECK_CYLINDER
     Cylinder::_crosscheckdumpFile <<"Cross cylinder rxn count "<<rhs
@@ -125,6 +135,14 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
     Cylinder::_crosscheckdumpFile <<"Reacting cylinder count "<<rhs
         ._reactingCylinders.size()<<endl;
     #endif
+#ifdef OPTIMOUT
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> crosscyl(mine - mins);
+    CUDAcommon::cdetails.ccylclonecounter[1]++;
+    CUDAcommon::cdetails.ccylclonetimer[1] += crosscyl.count();
+    CUDAcommon::cdetails.ccylclonerxncounter[1] += rhs._crossCylinderReactions.size();
+    mins = chrono::high_resolution_clock::now();
+#endif
     for(auto &ccyl : rhs._reactingCylinders) {
 
         //clone reactions
@@ -160,6 +178,13 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             #endif
         }
     }
+#ifdef OPTIMOUT
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> reactingcyl(mine - mins);
+    CUDAcommon::cdetails.ccylclonecounter[2]++;
+    CUDAcommon::cdetails.ccylclonetimer[2] += reactingcyl.count();
+    CUDAcommon::cdetails.ccylclonerxncounter[2] += rhs._reactingCylinders.size();
+#endif
 }
 
 void CCylinder::addInternalReaction(ReactionBase* r) {
