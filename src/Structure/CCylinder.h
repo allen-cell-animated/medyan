@@ -48,7 +48,7 @@ friend class ChemManager;
     
 private:
 #ifdef OPTIMOUT
-    chrono::high_resolution_clock::time_point mins, mine;
+    chrono::high_resolution_clock::time_point mins, mine, minsi, minei;
 #endif
     #ifdef DEBUGCONSTANTSEED
 	using internalreactiondatatype = unordered_set<ReactionBase*, HashbyId<ReactionBase*>,

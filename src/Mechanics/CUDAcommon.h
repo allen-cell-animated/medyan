@@ -186,6 +186,8 @@ struct chemdetails{
     int ccylclonerxncounter[3] = {0,0,0};
     int ccylclonecounter[3]={0,0,0};
     double ccylclonetimer[3]={0,0,0};
+    double internalrxnclone = 0.0;
+    double internalrxnadd = 0.0;
 };
 
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)

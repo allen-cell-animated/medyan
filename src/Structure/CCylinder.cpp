@@ -63,7 +63,15 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
         else
             Cylinder::_crosscheckdumpFile <<"CBound DOESNOT exist"<<endl;
         #endif
+#ifdef OPTIMOUT
+        minsi = chrono::high_resolution_clock::now();
+#endif
         ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
+#ifdef OPTIMOUT
+        minei = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> irxnclone(mine - mins);
+        CUDAcommon::cdetails.internalrxnclone += irxnclone.count();
+#endif
         rxnClone->setVolumeFrac(c->getVolumeFrac());
         #ifdef CROSSCHECK_CYLINDER
         Cylinder::_crosscheckdumpFile <<"Internal Reaction cloned."<<endl;
@@ -76,8 +84,15 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
         if(r->getCBound() != nullptr)
             Cylinder::_crosscheckdumpFile <<"OffReaction cloned + set."<<endl;
         #endif
-        
+#ifdef OPTIMOUT
+        minsi = chrono::high_resolution_clock::now();
+#endif
         addInternalReaction(rxnClone);
+#ifdef OPTIMOUT
+        minei = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> irxnadd(mine - mins);
+        CUDAcommon::cdetails.internalrxnadd += irxnadd.count();
+#endif
         #ifdef CROSSCHECK_CYLINDER
         Cylinder::_crosscheckdumpFile <<"Internal ReactionAdded."<<endl;
         #endif
