@@ -66,10 +66,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 //     ve->state.indexChanged = true;
                 // }
 
-                for(const auto& mi : sdfv.membraneData) {
-                    auto membraneMeshData = createMembraneMesh(mi, MembraneDisplaySettings {});
-                    ve->state.vertexAttribs.insert(ve->state.vertexAttribs.end(), membraneMeshData.data.begin(), membraneMeshData.data.end());
-                }
+                ve->state.vertexAttribs = createMembraneMeshData(sdfv.membraneData, MembraneDisplaySettings {}).data;
             }
             ve->state.eleMode = GL_TRIANGLES;
         }

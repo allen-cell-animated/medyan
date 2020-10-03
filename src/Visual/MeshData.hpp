@@ -9,19 +9,45 @@
 namespace medyan::visual {
 
 //-------------------------------------
-// Settings (views)
+// Settings (for display)
 //-------------------------------------
 
-struct CylindricalObjectDisplaySettings {
-    int sides = 10;
-};
-
-// The selector is by default choosing all membranes
-struct MembraneDisplaySettings {
+struct SurfaceDisplaySettings {
+    enum class PolygonMode { wireframe, fill };
 
     bool enabled = true;
+    PolygonMode polygonMode = PolygonMode::wireframe;
+};
 
+struct LineDisplaySettings {
+    bool enabled = true;
+};
+
+
+//-------------------------------------
+// Settings (for making mesh data)
+//-------------------------------------
+
+struct MembraneDisplaySettings {
     mathfunc::Vec3f colorFixed { 0.4f, 0.6f, 0.95f };
+
+    SurfaceDisplaySettings surface;
+};
+
+struct FilamentDisplaySettings {
+    enum class PathMode { line, extrude, bead };
+
+    mathfunc::Vec3f colorFixed { 0.95f, 0.1f, 0.15f };
+
+    PathMode pathMode = PathMode::extrude;
+    SurfaceDisplaySettings surface;  // used in "extrude" or "bead" path mode
+    LineDisplaySettings    line;     // used in "line" path mode
+
+    bool isEnabled() const {
+        return pathMode == PathMode::line ?
+            line.enabled :
+            surface.enabled;
+    }
 };
 
 //-------------------------------------
@@ -53,14 +79,12 @@ inline constexpr MeshDataDescriptor meshDataDescriptorLine    { 6, 0, 3, 3, 0, 3
 // Functions
 //-------------------------------------
 
-inline MeshData createMembraneMesh(
-    const MembraneFrame& membrane,
+inline void appendMembraneMeshData(
+    MeshData&                      meshData,
+    const MembraneFrame&           membrane,
     const MembraneDisplaySettings& membraneSettings
 ) {
-    MeshData res;
-    res.descriptor = meshDataDescriptorSurface;
 
-    res.data.reserve(3 * membrane.triangles.size() * res.descriptor.strideSize);
     for(const auto& t : membrane.triangles) {
         const auto& c0 = membrane.vertexCoords[t[0]];
         const auto& c1 = membrane.vertexCoords[t[1]];
@@ -68,19 +92,56 @@ inline MeshData createMembraneMesh(
         const auto un = normalizedVector(cross(c1 - c0, c2 - c0));
 
         for(size_t i = 0; i < 3; ++i) {
-            res.data.push_back(membrane.vertexCoords[t[i]][0]);
-            res.data.push_back(membrane.vertexCoords[t[i]][1]);
-            res.data.push_back(membrane.vertexCoords[t[i]][2]);
-            res.data.push_back(un[0]);
-            res.data.push_back(un[1]);
-            res.data.push_back(un[2]);
-            res.data.push_back(membraneSettings.colorFixed[0]);
-            res.data.push_back(membraneSettings.colorFixed[1]);
-            res.data.push_back(membraneSettings.colorFixed[2]);
+            meshData.data.push_back(membrane.vertexCoords[t[i]][0]);
+            meshData.data.push_back(membrane.vertexCoords[t[i]][1]);
+            meshData.data.push_back(membrane.vertexCoords[t[i]][2]);
+            meshData.data.push_back(un[0]);
+            meshData.data.push_back(un[1]);
+            meshData.data.push_back(un[2]);
+            meshData.data.push_back(membraneSettings.colorFixed[0]);
+            meshData.data.push_back(membraneSettings.colorFixed[1]);
+            meshData.data.push_back(membraneSettings.colorFixed[2]);
         }
     }
 
+}
+
+inline auto createMembraneMeshData(
+    const MembraneFrame& membrane,
+    const MembraneDisplaySettings& membraneSettings
+) {
+    MeshData res;
+    res.descriptor = meshDataDescriptorSurface;
+
+    res.data.reserve(3 * membrane.triangles.size() * res.descriptor.strideSize);
+    appendMembraneMeshData(res, membrane, membraneSettings);
+
     return res;
+}
+
+inline auto createMembraneMeshData(
+    const std::vector<MembraneFrame>& membranes,
+    const MembraneDisplaySettings& membraneSettings
+) {
+    MeshData res;
+    res.descriptor = meshDataDescriptorSurface;
+
+    int numTriangles = 0;
+    for(auto& membrane : membranes) numTriangles += membrane.triangles.size();
+    res.data.reserve(3 * numTriangles * res.descriptor.strideSize);
+    for(auto& membrane : membranes) {
+        appendMembraneMeshData(res, membrane, membraneSettings);
+    }
+
+    return res;
+}
+
+inline void appendFilamentMeshData(
+    MeshData&                      meshData,
+    const FilamentFrame&           filament,
+    const FilamentDisplaySettings& filamentSettings
+) {
+
 }
 
 
