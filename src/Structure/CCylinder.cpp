@@ -69,7 +69,7 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
         ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
 #ifdef OPTIMOUT
         minei = chrono::high_resolution_clock::now();
-        chrono::duration<floatingpoint> irxnclone(mine - mins);
+        chrono::duration<floatingpoint> irxnclone(minei - minsi);
         CUDAcommon::cdetails.internalrxnclone += irxnclone.count();
         CUDAcommon::cdetails.affectedrxns += rxnClone->getAffectedReactions().size();
 #endif
@@ -91,7 +91,7 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
         addInternalReaction(rxnClone);
 #ifdef OPTIMOUT
         minei = chrono::high_resolution_clock::now();
-        chrono::duration<floatingpoint> irxnadd(mine - mins);
+        chrono::duration<floatingpoint> irxnadd(minei - minsi);
         CUDAcommon::cdetails.internalrxnadd += irxnadd.count();
 #endif
         #ifdef CROSSCHECK_CYLINDER
