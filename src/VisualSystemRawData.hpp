@@ -46,7 +46,7 @@ struct SystemRawData {
     mathfunc::Vec3             compartmentSize;
 
     std::vector< MembraneFrame > membraneData;
-    std::vector< FilamentData > filamentData; // [Filament Idx][Bead position in filament]
+    std::vector< FilamentFrame > filamentData;
 
     std::vector< std::array< mathfunc::Vec3, 2 > > linkerCoords;
     std::vector< std::array< mathfunc::Vec3, 2 > > motorCoords;

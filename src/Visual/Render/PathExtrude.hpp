@@ -17,7 +17,7 @@ struct PathExtrude {
     using CoordType = mathfunc::Vec< 3, Float >;
 
     Float radius; // of circumscribing circle
-    std::uint_fast8_t sides;
+    int   sides;
 
     // This function transforms a path to a mesh of tubes
     // Parameters
@@ -40,7 +40,7 @@ struct PathExtrude {
         // Results
         std::vector< CoordType > vertices;      vertices.reserve(numTubeVertices);
         std::vector< CoordType > vertexNormals; vertexNormals.reserve(numTubeVertices);
-        std::vector< std::array< size_t, 3 > > triInd(numTriangles);
+        std::vector< std::array< int, 3 > > triInd(numTriangles);
 
         if(indices.size() < 2)
             return std::make_tuple(vertices, vertexNormals, triInd);
@@ -97,6 +97,15 @@ struct PathExtrude {
         }
 
         return std::make_tuple(vertices, vertexNormals, triInd);
+    }
+
+    // Provide an estimate on the number of triangles returned by "generate"
+    // function.
+    int estimateNumTriangles(int numVertices) const {
+        if(numVertices < 2) return 0;
+
+        const int numSegments = numVertices - 1;
+        return numSegments * sides * 2;
     }
 
 };

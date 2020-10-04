@@ -86,111 +86,8 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 //     ve->state.vertexIndices.clear();
                 //     ve->state.indexChanged = true;
                 // }
+                ve->state.vertexAttribs = createFilamentMeshData(sdfv.filamentData, FilamentDisplaySettings {}).data;
 
-                switch(ve->profile.pathMode) {
-
-                case Profile::PathMode::Line:
-                    // TODO implement it
-                    break;
-
-                case Profile::PathMode::Extrude:
-                    for(const auto& fi : sdfv.filamentData) {
-                        std::vector< mathfunc::Vec3f > genVertices;
-                        std::vector< mathfunc::Vec3f > genVertexNormals;
-                        std::vector< std::array< size_t, 3 > > genTriInd;
-
-                        const auto nb = fi.beadCoords.size();
-                        vector< size_t > trivial_indices(nb);
-                        iota(begin(trivial_indices), end(trivial_indices), 0);
-                        std::tie(genVertices, genVertexNormals, genTriInd) = visual::PathExtrude<float>{
-                            ve->profile.pathExtrudeRadius,
-                            ve->profile.pathExtrudeSides
-                        }.generate(fi.beadCoords, trivial_indices);
-
-                        // Update coords
-                        ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + ve->state.size.vaStride * 3 * genTriInd.size());
-                        const auto numTriangles = genTriInd.size();
-                        for(size_t t = 0; t < numTriangles; ++t) {
-                            const auto& triInds = genTriInd[t];
-                            const mathfunc::Vec3f coord[] {
-                                genVertices[triInds[0]],
-                                genVertices[triInds[1]],
-                                genVertices[triInds[2]]
-                            };
-                            const mathfunc::Vec3f un[] {
-                                genVertexNormals[triInds[0]],
-                                genVertexNormals[triInds[1]],
-                                genVertexNormals[triInds[2]]
-                            };
-
-                            for(size_t i = 0; i < 3; ++i) {
-                                ve->state.vertexAttribs.push_back(coord[i][0]);
-                                ve->state.vertexAttribs.push_back(coord[i][1]);
-                                ve->state.vertexAttribs.push_back(coord[i][2]);
-                                ve->state.vertexAttribs.push_back(un[i][0]);
-                                ve->state.vertexAttribs.push_back(un[i][1]);
-                                ve->state.vertexAttribs.push_back(un[i][2]);
-                                ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
-                                ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
-                                ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
-                            }
-                        }
-
-                    } // End loop filaments
-                    break;
-
-                case Profile::PathMode::Bead:
-                    {
-                        const auto sphereGen = visual::SphereUv<float> {
-                            ve->profile.beadRadius,
-                            ve->profile.beadLongitudeSegs,
-                            ve->profile.beadLatitudeSegs
-                        };
-                        const auto sphereCache = sphereGen.makeCache();
-
-                        for(const auto& fi : sdfv.filamentData) {
-                            for(const auto& bc : fi.beadCoords) {
-                                std::vector< Vec< 3, float > > genVertices;
-
-                                std::tie(genVertices, std::ignore) = sphereGen.generate(
-                                    {
-                                        static_cast<float>(bc[0]),
-                                        static_cast<float>(bc[1]),
-                                        static_cast<float>(bc[2])
-                                    },
-                                    sphereCache
-                                );
-
-                                // Update coords
-                                ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + ve->state.size.vaStride * 3 * sphereCache.triInd.size());
-                                const auto numTriangles = sphereCache.triInd.size();
-                                for(size_t t = 0; t < numTriangles; ++t) {
-                                    const typename decltype(genVertices)::value_type coord[] {
-                                        genVertices[sphereCache.triInd[t][0]],
-                                        genVertices[sphereCache.triInd[t][1]],
-                                        genVertices[sphereCache.triInd[t][2]]
-                                    };
-                                    const auto un = normalizedVector(cross(coord[1] - coord[0], coord[2] - coord[0]));
-
-                                    for(size_t i = 0; i < 3; ++i) {
-                                        ve->state.vertexAttribs.push_back(coord[i][0]);
-                                        ve->state.vertexAttribs.push_back(coord[i][1]);
-                                        ve->state.vertexAttribs.push_back(coord[i][2]);
-                                        ve->state.vertexAttribs.push_back(un[0]);
-                                        ve->state.vertexAttribs.push_back(un[1]);
-                                        ve->state.vertexAttribs.push_back(un[2]);
-                                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
-                                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
-                                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
-                                    }
-                                }
-                            } // End loop beads in a filament
-
-                        } // End loop filaments
-                    }
-                    break;
-
-                } // End switch path mode
             }
             ve->state.eleMode = GL_TRIANGLES;
         }
@@ -213,7 +110,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
             for(const auto& c : coords) {
                 std::vector< mathfunc::Vec3f > genVertices;
                 std::vector< mathfunc::Vec3f > genVertexNormals;
-                std::vector< std::array< size_t, 3 > > genTriInd;
+                std::vector< std::array< int, 3 > > genTriInd;
 
                 std::tie(genVertices, genVertexNormals, genTriInd) = visual::PathExtrude<float>{
                     ve->profile.pathExtrudeRadius,

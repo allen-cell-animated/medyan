@@ -19,21 +19,21 @@ struct SphereUv {
     // ShapeCache stores the coordinates on a unit sphere, as well as the
     // triangle indices
     struct ShapeCache {
-        std::uint_fast8_t longitudeSegs;
-        std::uint_fast8_t latitudeSegs;
+        int longitudeSegs;
+        int latitudeSegs;
         std::vector< CoordType > vertices; // poles at index size() - 2 and size() - 1
-        std::vector< std::array< size_t, 3 > > triInd;
+        std::vector< std::array< int, 3 > > triInd;
     };
 
     Float radius; // of circumscribing sphere
-    std::uint_fast8_t longitudeSegs; // at least 3, about twice of latitudeSegs
-    std::uint_fast8_t latitudeSegs; // at least 2
+    int   longitudeSegs; // at least 3, about twice of latitudeSegs
+    int   latitudeSegs; // at least 2
 
     ShapeCache makeCache() const {
         ShapeCache res { longitudeSegs, latitudeSegs };
 
-        const size_t numVertices = longitudeSegs * (latitudeSegs - 1) + 2; // 2 means polar vertices
-        const size_t numTriangles = longitudeSegs * (2 * latitudeSegs - 2);
+        const int numVertices = longitudeSegs * (latitudeSegs - 1) + 2; // 2 means polar vertices
+        const int numTriangles = longitudeSegs * (2 * latitudeSegs - 2);
 
         res.vertices.resize(numVertices);
         res.triInd.resize(numTriangles);
@@ -57,7 +57,7 @@ struct SphereUv {
         // Register triangles (GL_TRIANGLES)
         // from North pole to South pole
         for(std::uint_fast8_t nTheta = 0; nTheta < latitudeSegs; ++nTheta) {
-            const size_t numPrev = (nTheta == 0 ? 0 : (2 * nTheta - 1) * longitudeSegs);
+            const int numPrev = (nTheta == 0 ? 0 : (2 * nTheta - 1) * longitudeSegs);
             for(std::uint_fast8_t nPhi = 0; nPhi < longitudeSegs; ++nPhi) {
                 if(nTheta == 0) {
                     res.triInd[numPrev + nPhi][0] = numVertices - 2; // North pole
@@ -89,19 +89,18 @@ struct SphereUv {
     //   - cache:   the shape cache
     auto generate(const CoordType& coord, const ShapeCache& cache) const {
         using namespace mathfunc;
-        using std::size_t;
 
         constexpr CoordType e0 = { 1.0, 0.0, 0.0 };
         constexpr CoordType e1 = { 0.0, 1.0, 0.0 };
         const CoordType e2 = cross(e0, e1);
 
-        const size_t numVertices = cache.vertices.size();
+        const int numVertices = cache.vertices.size();
 
         // Results
         std::vector< CoordType > vertices(numVertices); // poles at index nv - 2 and nv - 1
 
         // Calculate vertices
-        for(size_t i = 0; i < numVertices; ++i) {
+        for(int i = 0; i < numVertices; ++i) {
             vertices[i] = coord + radius * (
                 e0 * cache.vertices[i][0] +
                 e1 * cache.vertices[i][1] +
@@ -110,6 +109,11 @@ struct SphereUv {
         }
 
         return std::make_tuple(vertices, cache.triInd);
+    }
+
+    // Finds an estimate of number of triangles returned by "generate".
+    int estimateNumTriangles() const {
+        return longitudeSegs * (2 * latitudeSegs - 2);
     }
 
 };

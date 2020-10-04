@@ -54,13 +54,13 @@ bool copySystemData(
         data.filamentData.clear();
         for(Filament* f : Filament::getFilaments()) {
             data.filamentData.emplace_back();
-            auto& fi = data.filamentData.back().beadCoords;
+            auto& fi = data.filamentData.back().coords;
 
             const auto& cylinders = f->getCylinderVector();
             fi.reserve(cylinders.size() + 1);
             for(Cylinder* c : cylinders)
-                fi.push_back(c->getFirstBead()->coordinate());
-            fi.push_back(cylinders.back()->getSecondBead()->coordinate());
+                fi.push_back(Vec3f(c->getFirstBead()->coordinate()));
+            fi.push_back(Vec3f(cylinders.back()->getSecondBead()->coordinate()));
         }
 
         // Extract motors, linkers and branchers
