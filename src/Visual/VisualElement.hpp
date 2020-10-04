@@ -92,6 +92,12 @@ using ElementProfile = std::variant<
     LinkerProfile
 >;
 
+
+inline auto displayGeometryType(const ElementProfile& profile) {
+    return std::visit([](const auto& actualProfile) { return displayGeometryType(actualProfile.displaySettings); }, profile);
+}
+
+
 inline auto createMeshData(
     const DisplayFrame& frameData,
     const DisplayTypeMap& typeMap,
@@ -122,29 +128,90 @@ inline auto createMeshData(
     );
 }
 
+struct MeshDataFrameInfo {
+    int start = 0;
+    int size = 0;
+};
+struct ProfileWithMeshData {
+    ElementProfile                                   profile;
+    MeshData                                         data;
+    std::optional< std::vector< MeshDataFrameInfo >> frameInfo;
+};
 
-inline auto makeDefaultElementProfiles() {
-    std::vector< ElementProfile > profiles;
+inline auto makeDefaultElementProfileData() {
+    std::vector< ProfileWithMeshData > profiles;
 
-    profiles.push_back(MembraneProfile {});
+    profiles.push_back(ProfileWithMeshData { MembraneProfile {} });
 
-    profiles.push_back(FilamentProfile {});
+    profiles.push_back(ProfileWithMeshData { FilamentProfile {} });
 
     {
         LinkerProfile lp;
         lp.selector.name = "linker";
-        profiles.push_back(std::move(lp));
+        profiles.push_back(ProfileWithMeshData { std::move(lp) } );
     }
     {
         LinkerProfile lp;
         lp.selector.name = "motor";
         lp.displaySettings.colorFixed = mathfunc::Vec3f { 0.1f, 0.1f, 0.99f };
-        profiles.push_back(std::move(lp));
+        profiles.push_back(ProfileWithMeshData { std::move(lp) } );
     }
-
 
     return profiles;
 }
+
+
+// Returns
+//   - The new mesh data created, containing all the frames
+//   - The frame infomation
+inline auto createMeshDataAllFrames(
+    const ElementProfile& profile,
+    const DisplayData&    displayData
+) {
+    MeshData meshData;
+    std::vector< MeshDataFrameInfo > frameInfo;
+
+    meshData.descriptor = displayGeometryType(profile) == DisplayGeometryType::surface ? 
+        meshDataDescriptorSurface :
+        meshDataDescriptorLine;
+
+    const int numFrames = displayData.frames.size();
+    frameInfo.reserve(numFrames);
+    for(int i = 0; i < numFrames; ++i) {
+        const int sizeCur = meshData.data.size();
+        const int sizeInc = std::visit(
+            Overloaded {
+                [&](const MembraneProfile& prof) {
+                    return appendMembraneMeshData(
+                        meshData,
+                        select(displayData.frames[i].membranes, prof.selector),
+                        prof.displaySettings
+                    );
+                },
+                [&](const FilamentProfile& prof) {
+                    return appendFilamentMeshData(
+                        meshData,
+                        select(displayData.frames[i].filaments, prof.selector),
+                        prof.displaySettings
+                    );
+                },
+                [&](const LinkerProfile& prof) {
+                    return appendLinkerMeshData(
+                        meshData,
+                        select(displayData.frames[i].linkers, prof.selector, displayData.displayTypeMap),
+                        prof.displaySettings
+                    );
+                }
+            },
+            profile
+        );
+
+        frameInfo.push_back({ sizeCur, sizeInc });
+    }
+
+    return std::tuple { meshData, frameInfo };
+}
+
 
 struct Profile {
 

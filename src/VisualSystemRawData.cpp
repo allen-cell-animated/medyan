@@ -27,12 +27,12 @@ bool copySystemData(
     if(updated & (raw_data_cat::beadPosition | raw_data_cat::beadConnection)) {
 
         // Extract membrane indexing
-        data.membraneData.clear();
+        data.frameData.membranes.clear();
         for(const Membrane* m : Membrane::getMembranes()) {
             const auto& mesh = m->getMesh();
 
-            data.membraneData.emplace_back();
-            auto& mi = data.membraneData.back();
+            data.frameData.membranes.emplace_back();
+            auto& mi = data.frameData.membranes.back();
 
             mi.vertexCoords.reserve(mesh.numVertices());
             for(const auto& v : mesh.getVertices()) {
@@ -51,10 +51,10 @@ bool copySystemData(
         }
 
         // Extract filament indexing
-        data.filamentData.clear();
+        data.frameData.filaments.clear();
         for(Filament* f : Filament::getFilaments()) {
-            data.filamentData.emplace_back();
-            auto& fi = data.filamentData.back().coords;
+            data.frameData.filaments.emplace_back();
+            auto& fi = data.frameData.filaments.back().coords;
 
             const auto& cylinders = f->getCylinderVector();
             fi.reserve(cylinders.size() + 1);
@@ -64,39 +64,48 @@ bool copySystemData(
         }
 
         // Extract motors, linkers and branchers
-        data.linkerCoords.clear();
+        data.frameData.linkers.clear();
         for(Linker* l : Linker::getLinkers()) {
-            data.linkerCoords.emplace_back();
+            auto& newLinker = data.frameData.linkers.emplace_back();
+
             const auto pos0 = l->getFirstPosition();
-            data.linkerCoords.back()[0]
+            newLinker.coords[0]
                 = l->getFirstCylinder()->getFirstBead()->coordinate() * (1 - pos0)
                 + l->getFirstCylinder()->getSecondBead()->coordinate() * pos0;
             const auto pos1 = l->getSecondPosition();
-            data.linkerCoords.back()[1]
+            newLinker.coords[1]
                 = l->getSecondCylinder()->getFirstBead()->coordinate() * (1 - pos1)
                 + l->getSecondCylinder()->getSecondBead()->coordinate() * pos1;
+            
+            newLinker.type = displayLinkerType(data.displayTypeMap, "linker");
         }
-        data.motorCoords.clear();
+
         for(MotorGhost* l : MotorGhost::getMotorGhosts()) {
-            data.motorCoords.emplace_back();
+            auto& newLinker = data.frameData.linkers.emplace_back();
+
             const auto pos0 = l->getFirstPosition();
-            data.motorCoords.back()[0]
+            newLinker.coords[0]
                 = l->getFirstCylinder()->getFirstBead()->coordinate() * (1 - pos0)
                 + l->getFirstCylinder()->getSecondBead()->coordinate() * pos0;
             const auto pos1 = l->getSecondPosition();
-            data.motorCoords.back()[1]
+            newLinker.coords[1]
                 = l->getSecondCylinder()->getFirstBead()->coordinate() * (1 - pos1)
                 + l->getSecondCylinder()->getSecondBead()->coordinate() * pos1;
+
+            newLinker.type = displayLinkerType(data.displayTypeMap, "motor");
         }
-        data.brancherCoords.clear();
+
         for(BranchingPoint* l : BranchingPoint::getBranchingPoints()) {
-            data.brancherCoords.emplace_back();
+            auto& newLinker = data.frameData.linkers.emplace_back();
+
             const auto pos = l->getPosition();
-            data.brancherCoords.back()[0]
+            newLinker.coords[0]
                 = l->getFirstCylinder()->getFirstBead()->coordinate() * (1 - pos)
                 + l->getFirstCylinder()->getSecondBead()->coordinate() * pos;
-            data.brancherCoords.back()[1]
+            newLinker.coords[1]
                 = l->getSecondCylinder()->getFirstBead()->coordinate();
+
+            newLinker.type = displayLinkerType(data.displayTypeMap, "brancher");
         }
 
     } // End update bead connection

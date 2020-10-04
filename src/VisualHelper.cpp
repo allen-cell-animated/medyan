@@ -29,8 +29,6 @@ std::weak_ptr< VisualDisplay > vdWeak;
 
 namespace {
 
-// Shared data
-visual::SystemRawData sdfv;
 
 // This function tranforms the extracted system data to the actual gl
 // compatible data structures according to the settings.
@@ -50,110 +48,7 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
     // Temporary values
     std::size_t curVertexStart = 0; // current filled vertex index in the final vertex attribute array
 
-    if(ve->profile.flag & Profile::targetMembrane) {
-        // Membrane
-        if(ve->profile.flag & Profile::displayForce) {
-            LOG(WARNING) << "Force display is currently unavaiable.";
-        } else {
-            //-----------------------------------------------------------------
-            // Membrane Shape
-            //-----------------------------------------------------------------
-            if(sdfv.updated & sys_data_update::BeadPosition) {
-                ve->state.vertexAttribs.clear();
-                ve->state.attribChanged = true;
-                // if(sdfv.updated & sys_data_update::BeadConnection) {
-                //     ve->state.vertexIndices.clear();
-                //     ve->state.indexChanged = true;
-                // }
-                vector<const MembraneFrame*> mf;
-                for(auto& d : sdfv.membraneData) mf.push_back(&d);
-                ve->state.vertexAttribs = createMembraneMeshData(move(mf), MembraneDisplaySettings {}).data;
-            }
-            ve->state.eleMode = GL_TRIANGLES;
-        }
-    }
-    else if(ve->profile.flag & Profile::targetFilament) {
-        // Filament
-        if(ve->profile.flag & Profile::displayForce) {
-            LOG(WARNING) << "Force display is currently unavailable.";
-        } else {
-            //-----------------------------------------------------------------
-            // Filament Shape
-            //-----------------------------------------------------------------
-            if(sdfv.updated & sys_data_update::BeadPosition) {
-                ve->state.vertexAttribs.clear();
-                ve->state.attribChanged = true;
-                // if(sdfv.updated & sys_data_update::BeadConnection) {
-                //     ve->state.vertexIndices.clear();
-                //     ve->state.indexChanged = true;
-                // }
-                vector<const FilamentFrame*> ff;
-                for(auto& d : sdfv.filamentData) ff.push_back(&d);
-                ve->state.vertexAttribs = createFilamentMeshData(move(ff), FilamentDisplaySettings {}).data;
-
-            }
-            ve->state.eleMode = GL_TRIANGLES;
-        }
-    }
-    else if(ve->profile.flag & (Profile::targetLinker | Profile::targetMotor | Profile::targetBrancher)) {
-        //-----------------------------------------------------------------
-        // Linker, motor or brancher shape
-        //-----------------------------------------------------------------
-        if(sdfv.updated & sys_data_update::BeadPosition) {
-            ve->state.vertexAttribs.clear();
-            ve->state.attribChanged = true;
-            // if(sdfv.updated & sys_data_update::BeadConnection) {
-            //     ve->state.vertexIndices.clear();
-            //     ve->state.indexChanged = true;
-            // }
-
-            const auto& coords = (ve->profile.flag & Profile::targetLinker) ? sdfv.linkerCoords :
-                                 (ve->profile.flag & Profile::targetMotor ) ? sdfv.motorCoords  :
-                                                                              sdfv.brancherCoords;
-            for(const auto& c : coords) {
-                std::vector< mathfunc::Vec3f > genVertices;
-                std::vector< mathfunc::Vec3f > genVertexNormals;
-                std::vector< std::array< int, 3 > > genTriInd;
-
-                std::tie(genVertices, genVertexNormals, genTriInd) = visual::PathExtrude<float>{
-                    ve->profile.pathExtrudeRadius,
-                    ve->profile.pathExtrudeSides
-                }.generate(c, std::array<size_t, 2>{0, 1});
-
-                // Update coords
-                ve->state.vertexAttribs.reserve(ve->state.vertexAttribs.size() + ve->state.size.vaStride * 3 * genTriInd.size());
-                const auto numTriangles = genTriInd.size();
-                for(size_t t = 0; t < numTriangles; ++t) {
-                    const auto& triInds = genTriInd[t];
-                    const mathfunc::Vec3f coord[] {
-                        genVertices[triInds[0]],
-                        genVertices[triInds[1]],
-                        genVertices[triInds[2]]
-                    };
-                    const mathfunc::Vec3f un[] {
-                        genVertexNormals[triInds[0]],
-                        genVertexNormals[triInds[1]],
-                        genVertexNormals[triInds[2]]
-                    };
-
-                    for(size_t i = 0; i < 3; ++i) {
-                        ve->state.vertexAttribs.push_back(coord[i][0]);
-                        ve->state.vertexAttribs.push_back(coord[i][1]);
-                        ve->state.vertexAttribs.push_back(coord[i][2]);
-                        ve->state.vertexAttribs.push_back(un[i][0]);
-                        ve->state.vertexAttribs.push_back(un[i][1]);
-                        ve->state.vertexAttribs.push_back(un[i][2]);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.x);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.y);
-                        ve->state.vertexAttribs.push_back(ve->profile.colorAmbient.z);
-                    }
-                }
-
-            }
-        } // End if updated bead position
-        ve->state.eleMode = GL_TRIANGLES;
-    }
-    else if(ve->profile.flag & Profile::targetCompartment) {
+    if(ve->profile.flag & Profile::targetCompartment) {
         //-----------------------------------------------------------------
         // Compartments
         //-----------------------------------------------------------------

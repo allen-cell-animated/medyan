@@ -9,6 +9,7 @@
 #include "Structure/Bead.h"
 #include "Util/Math/Vec.hpp"
 #include "Visual/FrameData.hpp"
+#include "Visual/VisualElement.hpp"
 
 namespace medyan::visual {
 
@@ -30,27 +31,20 @@ namespace raw_data_cat {
 // The raw data is updated in the simulation thread with system data.
 // The data can be consumed so that the update state is reset.
 struct SystemRawData {
-    using V3 = mathfunc::Vec3;
-
-    struct FilamentData {
-        std::vector< V3 > beadCoords;
-    };
 
     // Synchronization and states
     std::mutex me;
 
     raw_data_cat::Type updated = raw_data_cat::none; // Should be reset by the consumer
 
+    // meta data
+    DisplayTypeMap             displayTypeMap;
+
     // Data
+    DisplayFrame               frameData;
+
     mathfunc::Vec< 3, size_t > compartmentNum;
     mathfunc::Vec3             compartmentSize;
-
-    std::vector< MembraneFrame > membraneData;
-    std::vector< FilamentFrame > filamentData;
-
-    std::vector< std::array< mathfunc::Vec3, 2 > > linkerCoords;
-    std::vector< std::array< mathfunc::Vec3, 2 > > motorCoords;
-    std::vector< std::array< mathfunc::Vec3, 2 > > brancherCoords;
 
 };
 
@@ -71,6 +65,50 @@ bool copySystemData(
     raw_data_cat::Type updated,
     bool ignoreDataInUse = true
 );
+
+
+// Note:
+//   - This function should only be called on the visual thread.
+inline void updateRealtimeMeshData(
+    std::vector< ProfileWithMeshData >& profileData,
+    SystemRawData&                      rawData
+) {
+    std::lock_guard< std::mutex > rawGuard(rawData.me);
+
+    const auto updateMeshData = [&](MeshData& meshData) {
+        return Overloaded {
+            [&](const MembraneProfile& profile) {
+                if(rawData.updated & raw_data_cat::beadPosition) {
+                    meshData = createMembraneMeshData(
+                        select(rawData.frameData.membranes, profile.selector),
+                        profile.displaySettings
+                    );
+                }
+            },
+            [&](const FilamentProfile& profile) {
+                if(rawData.updated & raw_data_cat::beadPosition) {
+                    meshData = createFilamentMeshData(
+                        select(rawData.frameData.filaments, profile.selector),
+                        profile.displaySettings
+                    );
+                }
+            },
+            [&](const LinkerProfile& profile) {
+                if(rawData.updated & raw_data_cat::beadPosition) {
+                    meshData = createLinkerMeshData(
+                        select(rawData.frameData.linkers, profile.selector, rawData.displayTypeMap),
+                        profile.displaySettings
+                    );
+                }
+            }
+        };
+    };
+
+    for(auto& eachProfileData : profileData) {
+        std::visit(updateMeshData(eachProfileData.data), eachProfileData.profile);
+    }
+}
+
 
 } // namespace medyan::visual
 

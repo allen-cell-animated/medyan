@@ -19,6 +19,7 @@
 #include "Visual/Shader.hpp"
 #include "Visual/ShaderSrc.hpp"
 #include "Visual/VisualElement.hpp"
+#include "VisualSystemRawData.hpp"
 
 
 // For best portability, the window signal handling could only be done from the
@@ -26,26 +27,15 @@
 
 namespace medyan::visual {
 
+// Shared data
+inline SystemRawData sdfv;
+
 
 inline void glfwError(int id, const char* description) {
     LOG(ERROR) << description;
     throw std::runtime_error("Error in GLFW environment");
 }
 
-
-template< typename T >
-inline void replaceBuffer(GLenum target, const std::vector<T>& source) {
-    GLint prevSize;
-    glGetBufferParameteriv(target, GL_BUFFER_SIZE, &prevSize);
-
-    const std::size_t newSize = sizeof(T) * source.size();
-
-    if(newSize > prevSize) {
-        glBufferData(target, newSize, source.data(), GL_DYNAMIC_DRAW);
-    } else {
-        glBufferSubData(target, 0, newSize, source.data());
-    }
-} 
 
 
 // The RAII object for managing visualization context and window
@@ -286,54 +276,6 @@ struct VisualDisplay {
                 return vp.visualElements.back();
             };
 
-            {
-                auto& ve = newVe();
-                ve->profile.enabled = true;
-                ve->profile.flag = Profile::targetMembrane;
-                ve->profile.colorAmbient = glm::vec3(0.4f, 0.6f, 0.95f);
-                ve->profile.colorDiffuse = glm::vec3(0.4f, 0.6f, 0.95f);
-            }
-            {
-                auto& ve = newVe();
-                ve->profile.enabled = true;
-                ve->profile.flag = Profile::targetFilament;
-                ve->profile.pathMode = Profile::PathMode::Extrude;
-                ve->profile.polygonMode = GL_FILL;
-                ve->profile.pathExtrudeRadius = 7.5f;
-                ve->profile.pathExtrudeSides = 15;
-                ve->profile.colorAmbient = glm::vec3(0.95f, 0.1f, 0.15f);
-                ve->profile.colorDiffuse = glm::vec3(0.95f, 0.1f, 0.15f);
-            }
-            {
-                auto& ve = newVe();
-                ve->profile.enabled = true;
-                ve->profile.flag = Profile::targetLinker;
-                ve->profile.polygonMode = GL_FILL;
-                ve->profile.pathExtrudeRadius = 8.0f;
-                ve->profile.pathExtrudeSides = 15;
-                ve->profile.colorAmbient = glm::vec3(0.1f, 0.9f, 0.0f);
-                ve->profile.colorDiffuse = glm::vec3(0.1f, 0.9f, 0.0f);
-            }
-            {
-                auto& ve = newVe();
-                ve->profile.enabled = true;
-                ve->profile.flag = Profile::targetMotor;
-                ve->profile.polygonMode = GL_FILL;
-                ve->profile.pathExtrudeRadius = 7.5f;
-                ve->profile.pathExtrudeSides = 10;
-                ve->profile.colorAmbient = glm::vec3(0.1f, 0.1f, 0.99f);
-                ve->profile.colorDiffuse = glm::vec3(0.1f, 0.1f, 0.99f);
-            }
-            {
-                auto& ve = newVe();
-                ve->profile.enabled = true;
-                ve->profile.flag = Profile::targetBrancher;
-                ve->profile.polygonMode = GL_FILL;
-                ve->profile.pathExtrudeRadius = 10.0f;
-                ve->profile.pathExtrudeSides = 15;
-                ve->profile.colorAmbient = glm::vec3(0.95f, 0.9f, 0.05f);
-                ve->profile.colorDiffuse = glm::vec3(0.95f, 0.9f, 0.05f);
-            }
         } // ~lock_guard (vpLight)
 
         // Setup visual for non-lights
@@ -355,6 +297,9 @@ struct VisualDisplay {
             }
         } // ~lock_guard (vpLine)
 
+        // Setup initial profiles
+        vc.displayStates.realtimeDataStates.profileData = makeDefaultElementProfileData();
+
     } // VisualDisplay()
 
     void run() {
@@ -362,6 +307,9 @@ struct VisualDisplay {
         while (!glfwWindowShouldClose(vc.window())) {
             // input
             vc.processInput();
+
+            // check for update for on realtime raw data
+            updateRealtimeMeshData(vc.displayStates.realtimeDataStates.profileData, sdfv);
 
             // select frame buffer: on screen display / offscreen snapshot
             const bool offscreen = vc.displayStates.mainView.control.snapshotRenderingNextFrame;
@@ -386,6 +334,96 @@ struct VisualDisplay {
             const auto modelInvTrans3 = glm::transpose(glm::inverse(model));
             const auto view           = vc.displaySettings.mainView.camera.view();
             const auto projection     = vc.displaySettings.mainView.projection.proj(width, height);
+
+            // Start to render surface
+            glUseProgram(vpLight.shader.id());
+
+            vpLight.shader.setMat4("projection",     projection);
+            vpLight.shader.setMat4("model",          model);
+            vpLight.shader.setMat3("modelInvTrans3", modelInvTrans3);
+            vpLight.shader.setMat4("view",           view);
+
+            vpLight.shader.setVec3("CameraPos",   vc.displaySettings.mainView.camera.position);
+
+            for(auto& eachProfileData : vc.displayStates.realtimeDataStates.profileData) {
+
+
+                vpLight.shader.setVec3("dirLights[0].direction", glm::vec3 {1.0f, 1.0f, 1.0f});
+                vpLight.shader.setVec3("dirLights[0].ambient",   glm::vec3 {0.1f, 0.1f, 0.1f});
+                vpLight.shader.setVec3("dirLights[0].diffuse",   glm::vec3 {0.3f, 0.3f, 0.3f});
+                vpLight.shader.setVec3("dirLights[0].specular",  glm::vec3 {0.5f, 0.5f, 0.5f});
+                vpLight.shader.setVec3("dirLights[1].direction", glm::vec3 {-1.0f, -1.0f, -1.0f});
+                vpLight.shader.setVec3("dirLights[1].ambient",   glm::vec3 {0.1f, 0.1f, 0.1f});
+                vpLight.shader.setVec3("dirLights[1].diffuse",   glm::vec3 {0.3f, 0.3f, 0.3f});
+                vpLight.shader.setVec3("dirLights[1].specular",  glm::vec3 {0.5f, 0.5f, 0.5f});
+
+                const glm::vec3 pointLightPositions[4] {
+                    { -500.0f, -500.0f, -500.0f },
+                    { -500.0f, 3500.0f, 3500.0f },
+                    { 3500.0f, -500.0f, 3500.0f },
+                    { 3500.0f, 3500.0f, -500.0f }
+                };
+                vpLight.shader.setVec3("pointLights[0].position", pointLightPositions[0]);
+                vpLight.shader.setVec3("pointLights[0].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
+                vpLight.shader.setVec3("pointLights[0].diffuse",  glm::vec3 { 0.6f, 0.6f, 0.6f });
+                vpLight.shader.setVec3("pointLights[0].specular", glm::vec3 { 1.0f, 1.0f, 1.0f });
+                vpLight.shader.setFloat("pointLights[0].constant",  1.0f);
+                vpLight.shader.setFloat("pointLights[0].linear",    1.4e-4f);
+                vpLight.shader.setFloat("pointLights[0].quadratic", 7.2e-8f);
+                vpLight.shader.setVec3("pointLights[1].position", pointLightPositions[1]);
+                vpLight.shader.setVec3("pointLights[1].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
+                vpLight.shader.setVec3("pointLights[1].diffuse",  glm::vec3 { 0.6f, 0.6f, 0.6f });
+                vpLight.shader.setVec3("pointLights[1].specular", glm::vec3 { 1.0f, 1.0f, 1.0f });
+                vpLight.shader.setFloat("pointLights[1].constant",  1.0f);
+                vpLight.shader.setFloat("pointLights[1].linear",    1.4e-4f);
+                vpLight.shader.setFloat("pointLights[1].quadratic", 7.2e-8f);
+                vpLight.shader.setVec3("pointLights[2].position", pointLightPositions[2]);
+                vpLight.shader.setVec3("pointLights[2].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
+                vpLight.shader.setVec3("pointLights[2].diffuse",  glm::vec3 { 0.1f, 0.1f, 0.1f });
+                vpLight.shader.setVec3("pointLights[2].specular", glm::vec3 { 0.2f, 0.2f, 0.2f });
+                vpLight.shader.setFloat("pointLights[2].constant",  1.0f);
+                vpLight.shader.setFloat("pointLights[2].linear",    1.4e-4f);
+                vpLight.shader.setFloat("pointLights[2].quadratic", 7.2e-8f);
+                vpLight.shader.setVec3("pointLights[3].position", pointLightPositions[3]);
+                vpLight.shader.setVec3("pointLights[3].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
+                vpLight.shader.setVec3("pointLights[3].diffuse",  glm::vec3 { 0.1f, 0.1f, 0.1f });
+                vpLight.shader.setVec3("pointLights[3].specular", glm::vec3 { 0.2f, 0.2f, 0.2f });
+                vpLight.shader.setFloat("pointLights[3].constant",  1.0f);
+                vpLight.shader.setFloat("pointLights[3].linear",    1.4e-4f);
+                vpLight.shader.setFloat("pointLights[3].quadratic", 7.2e-8f);
+
+                if(displayGeometryType(eachProfileData.profile) == DisplayGeometryType::surface) {
+
+                    std::visit(
+                        [&](const auto& profile) {
+                            draw(eachProfileData.data, vpLight.shader, profile.displaySettings);
+                        },
+                        eachProfileData.profile
+                    );
+                }
+            }
+
+
+            // start to render line
+            glUseProgram(vpLine.shader.id());
+
+            vpLine.shader.setMat4("projection",     projection);
+            vpLine.shader.setMat4("model",          model);
+            vpLine.shader.setMat3("modelInvTrans3", modelInvTrans3);
+            vpLine.shader.setMat4("view",           view);
+            for(auto& eachProfileData : vc.displayStates.realtimeDataStates.profileData) {
+
+
+                if(displayGeometryType(eachProfileData.profile) == DisplayGeometryType::line) {
+
+                    std::visit(
+                        [&](const auto& profile) {
+                            draw(eachProfileData.data, vpLine.shader, profile.displaySettings);
+                        },
+                        eachProfileData.profile
+                    );
+                }
+            }
 
             for(auto& vp : vps) {
                 std::lock_guard< std::mutex > guard(vp.veMutex);

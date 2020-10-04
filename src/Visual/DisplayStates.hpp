@@ -39,6 +39,10 @@ struct SyncStates {
         ~AtomicBoolGuard() { whichBool.store(false); }
     };
 
+    //---------------------------------
+    // Implementation of one background task
+    //---------------------------------
+
     // the task queue. not thread-safe
     std::queue< std::function< void() > > tasks;
 
@@ -52,48 +56,20 @@ struct SyncStates {
 
 };
 
-// Notes:
-//   - F must be callable with signature void()
-template< typename F >
-inline void pushAnAsyncTask(SyncStates& sync, F&& f) {
-    sync.tasks.push([&sync, f] {
-        // set sync.busy to false on exit
-        struct BusyFalseGuard {
-            std::atomic_bool& busy;
-            BusyFalseGuard(std::atomic_bool& busy) : busy(busy) {}
-            ~BusyFalseGuard() { busy.store(false); }
-        };
-        BusyFalseGuard bfg(sync.busy);
-
-        // execute the task
-        f();
-    });
-}
-
-inline void dispatchAnAsyncTask(SyncStates& sync) {
-    if(!sync.tasks.empty()) {
-        // if not busy, set the state to busy and execute the task
-        // otherwise, do nothing
-        bool expectedBusy = false;
-        if(sync.busy.compare_exchange_strong(expectedBusy, true)) {
-
-            std::thread exe(std::move(sync.tasks.front()));
-            sync.tasks.pop();
-            exe.detach();
-        }
-    }
-}
-
 
 struct DisplayTrajectoryDataStates {
     struct Trajectory {
         DisplayTrajectoryFileSettings inputs;
         DisplayData                   data;
 
-        std::vector< ElementProfile > profiles;
+        std::vector< ProfileWithMeshData > profileData;
     };
 
     std::vector< Trajectory > trajectories;
+};
+
+struct DisplayRealtimeDataStates {
+    std::vector< ProfileWithMeshData > profileData;
 };
 
 
@@ -141,9 +117,52 @@ struct DisplayStates {
     DisplayTrajectoryDataStates trajectoryDataStates;
 
     // The realtime data profiles
-    std::vector< ElementProfile > realtimeDataProfiles;
+    DisplayRealtimeDataStates realtimeDataStates;
 
 };
+
+
+//-------------------------------------
+// Functions
+//-------------------------------------
+
+// Push a task to the background task queue, which will be serially executed.
+// The task will unset the "busy" flag upon exiting.
+//
+// Notes:
+//   - F must be callable with signature void()
+template< typename F >
+inline void pushAnAsyncTask(SyncStates& sync, F&& f) {
+    sync.tasks.push([&sync, f] {
+        // set sync.busy to false on exit
+        struct BusyFalseGuard {
+            std::atomic_bool& busy;
+            BusyFalseGuard(std::atomic_bool& busy) : busy(busy) {}
+            ~BusyFalseGuard() { busy.store(false); }
+        };
+        BusyFalseGuard bfg(sync.busy);
+
+        // execute the task
+        f();
+    });
+}
+
+// Dispatch the first element in the background task queue.
+// Before executing, set the "busy" flag.
+inline void dispatchAnAsyncTask(SyncStates& sync) {
+    if(!sync.tasks.empty()) {
+        // if not busy, set the state to busy and execute the task
+        // otherwise, do nothing
+        bool expectedBusy = false;
+        if(sync.busy.compare_exchange_strong(expectedBusy, true)) {
+
+            std::thread exe(std::move(sync.tasks.front()));
+            sync.tasks.pop();
+            exe.detach();
+        }
+    }
+}
+
 
 } // namespace medyan::visual
 

@@ -97,6 +97,7 @@ inline int displayLinkerType(DisplayTypeMap& displayTypeMap, const std::string& 
         // The name was not found
         const int res = displayTypeMap.linkerTypeName.size();
         displayTypeMap.linkerTypeMap.insert({ name, res });
+        displayTypeMap.linkerTypeName.push_back(name);
         return res;
     }
     else {

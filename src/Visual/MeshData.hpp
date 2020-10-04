@@ -6,11 +6,13 @@
 
 #include <iterator>
 #include <numeric>
+#include <tuple>
 
 #include "Visual/Common.hpp"
 #include "Visual/FrameData.hpp"
 #include "Visual/Render/PathExtrude.hpp"
 #include "Visual/Render/Sphere.hpp"
+#include "Visual/Shader.hpp"
 
 namespace medyan::visual {
 
@@ -131,9 +133,6 @@ struct MeshData {
     // Auxiliary state to indicate that the data is updated.
     // Can be set to false by the downstream pipeline.
     bool updated = true;
-
-    // The GL vertex buffer state
-    GlVertexBufferManager vertexBufferManager;
 };
 
 
@@ -143,15 +142,28 @@ struct MeshData {
 // Settings (for display)
 //-------------------------------------
 
+enum class DisplayGeometryType { surface, line };
+
 struct SurfaceDisplaySettings {
     enum class PolygonMode { wireframe, fill };
 
-    bool enabled = true;
-    PolygonMode polygonMode = PolygonMode::wireframe;
+    bool            enabled = true;
+    PolygonMode     polygonMode = PolygonMode::fill;
+
+    mathfunc::Vec3f colorSpecular { 0.5, 0.5, 0.5 };
+    float           colorShininess = 32.0f;
+
+    GlVertexBufferManager vertexBufferManager;
+
+    SurfaceDisplaySettings() : vertexBufferManager(meshDataDescriptorSurface) {}
 };
 
 struct LineDisplaySettings {
     bool enabled = true;
+
+    GlVertexBufferManager vertexBufferManager;
+
+    LineDisplaySettings() : vertexBufferManager(meshDataDescriptorLine) {}
 };
 
 
@@ -220,20 +232,15 @@ struct LinkerDisplaySettings {
 // Functions (mesh data creation)
 //-------------------------------------
 
-// Auxiliary function to prepare vertex buffer for MeshData
-//
-// Note:
-//   - This function must be used with an OpenGL context.
-inline void prepareVertexBuffer(MeshData& meshData) {
-    meshData.vertexBufferManager.makeBuffer(meshData.descriptor);
-}
 
-
-inline void appendMembraneMeshData(
+// Returns how many numbers added
+inline auto appendMembraneMeshData(
     MeshData&                      meshData,
     const MembraneFrame&           membrane,
     const MembraneDisplaySettings& membraneSettings
 ) {
+
+    const int sizePrev = meshData.data.size();
 
     for(const auto& t : membrane.triangles) {
         const auto& c0 = membrane.vertexCoords[t[0]];
@@ -254,6 +261,23 @@ inline void appendMembraneMeshData(
         }
     }
 
+    const int sizeCur = meshData.data.size();
+    return sizeCur - sizePrev;
+}
+
+// Note:
+//   - This function does not set descriptor.
+inline auto appendMembraneMeshData(
+    MeshData&                         meshData,
+    std::vector<const MembraneFrame*> pMembranes,
+    const MembraneDisplaySettings&    membraneSettings
+) {
+    int numAdded = 0;
+    for(auto pm : pMembranes) {
+        numAdded += appendMembraneMeshData(meshData, *pm, membraneSettings);
+    }
+
+    return numAdded;
 }
 
 // Generate membrane mesh with a selected range of membranes.
@@ -273,12 +297,13 @@ inline auto createMembraneMeshData(
         appendMembraneMeshData(res, *pm, membraneSettings);
     }
 
-    prepareVertexBuffer(res);
     return res;
 }
 
 // Make mesh data for a single filament and append it to the mesh data.
-inline void appendFilamentMeshData(
+//
+// Returns how many numbers added.
+inline auto appendFilamentMeshData(
     MeshData&                      meshData,
     const FilamentFrame&           filament,
     const FilamentDisplaySettings& filamentSettings
@@ -286,6 +311,7 @@ inline void appendFilamentMeshData(
     using PM = FilamentDisplaySettings::PathMode;
     using namespace std;
 
+    const int sizePrev = meshData.data.size();
     const int numBeads = filament.coords.size();
     switch(filamentSettings.pathMode) {
         case PM::line:
@@ -398,8 +424,24 @@ inline void appendFilamentMeshData(
             break;
     } // end switch
 
+    const int sizeCur = meshData.data.size();
+    return sizeCur - sizePrev;
 }
 
+// Note:
+//   - This function does not set descriptor.
+inline auto appendFilamentMeshData(
+    MeshData&                         meshData,
+    std::vector<const FilamentFrame*> pFilaments,
+    const FilamentDisplaySettings&    filamentSettings
+) {
+    int numAdded = 0;
+    for(auto pf : pFilaments) {
+        numAdded += appendFilamentMeshData(meshData, *pf, filamentSettings);
+    }
+
+    return numAdded;
+}
 
 // Generate filament mesh with selected filaments
 //
@@ -464,13 +506,14 @@ inline auto createFilamentMeshData(
         appendFilamentMeshData(res, *pf, filamentSettings);
     }
 
-    prepareVertexBuffer(res);
     return res;
 }
 
 
 // Make mesh data for a single filament and append it to the mesh data.
-inline void appendLinkerMeshData(
+//
+// Returns how many numbers added.
+inline auto appendLinkerMeshData(
     MeshData&                    meshData,
     const LinkerFrame&           linker,
     const LinkerDisplaySettings& linkerSettings
@@ -478,6 +521,7 @@ inline void appendLinkerMeshData(
     using PM = LinkerDisplaySettings::PathMode;
     using namespace std;
 
+    const int sizePrev = meshData.data.size();
     switch(linkerSettings.pathMode) {
         case PM::line:
             {
@@ -538,6 +582,24 @@ inline void appendLinkerMeshData(
 
     } // end switch
 
+    const int sizeCur = meshData.data.size();
+    return sizeCur - sizePrev;
+}
+
+
+// Note:
+//   - This function does not set descriptor.
+inline auto appendLinkerMeshData(
+    MeshData&                       meshData,
+    std::vector<const LinkerFrame*> pLinkers,
+    const LinkerDisplaySettings&    linkerSettings
+) {
+    int numAdded = 0;
+    for(auto pl : pLinkers) {
+        numAdded += appendLinkerMeshData(meshData, *pl, linkerSettings);
+    }
+
+    return numAdded;
 }
 
 
@@ -578,7 +640,6 @@ inline auto createLinkerMeshData(
         appendLinkerMeshData(res, *pl, linkerSettings);
     }
 
-    prepareVertexBuffer(res);
     return res;
 }
 
@@ -602,39 +663,60 @@ inline void replaceBuffer(GLenum target, const std::vector<T>& source) {
     }
 }
 
+inline auto convertToGlm(const mathfunc::Vec3f& vec) {
+    return glm::vec3( vec[0], vec[1], vec[2] );
+}
+
+
 
 // Auxiliary functions to get polygon mode
-inline auto polygonModeGl(SurfaceDisplaySettings settings) {
+inline auto polygonModeGl(const SurfaceDisplaySettings& settings) {
     return settings.polygonMode == SurfaceDisplaySettings::PolygonMode::wireframe ? GL_LINE : GL_FILL;
 }
-inline auto polygonModeGl(LineDisplaySettings settings) {
+inline auto polygonModeGl(const LineDisplaySettings& settings) {
     return GL_LINE;
 }
 
 // Auxiliary functions to get element mode
-inline auto elementModeGl(SurfaceDisplaySettings settings) {
+inline auto elementModeGl(const SurfaceDisplaySettings&) {
     return GL_TRIANGLES;
 }
-inline auto elementModeGl(LineDisplaySettings settings) {
+inline auto elementModeGl(const LineDisplaySettings&) {
     return GL_LINES;
 }
+
+inline auto displayGeometryType(const MembraneDisplaySettings&) {
+    return DisplayGeometryType::surface;
+}
+inline auto displayGeometryType(const FilamentDisplaySettings& settings) {
+    return settings.pathMode == FilamentDisplaySettings::PathMode::line ?
+        DisplayGeometryType::line :
+        DisplayGeometryType::surface;
+}
+inline auto displayGeometryType(const LinkerDisplaySettings& settings) {
+    return settings.pathMode == LinkerDisplaySettings::PathMode::line ?
+        DisplayGeometryType::line :
+        DisplayGeometryType::surface;
+}
+
 
 // Draw elements using the mesh data.
 //
 // Notes:
 //   - This function must be used in an OpenGL context
 inline void draw(
-    const MeshData& meshData,
+    MeshData& meshData,
+    const GlVertexBufferManager& vertexBufferManager,
     GLenum polygonMode,
     GLenum elementMode
 ) {
-    glBindVertexArray(meshData.vertexBufferManager.vao());
+    glBindVertexArray(vertexBufferManager.vao());
 
     glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
 
     // Update data
     if(meshData.updated) {
-        glBindBuffer(GL_ARRAY_BUFFER, meshData.vertexBufferManager.vbo());
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBufferManager.vbo());
         replaceBuffer(GL_ARRAY_BUFFER, meshData.data);
         meshData.updated = false;
     }
@@ -645,9 +727,37 @@ inline void draw(
 
 }
 template< typename GeometryDisplaySettings >
-inline void draw(const MeshData& meshData, GeometryDisplaySettings settings) {
+inline void draw(
+    MeshData&                      meshData,
+    const Shader&                  shader,
+    const GeometryDisplaySettings& settings
+) {
     if(settings.enabled) {
-        draw(meshData, polygonModeGl(settings), elementModeGl(settings));
+        // setting uniform
+        if constexpr(std::is_same_v< GeometryDisplaySettings, SurfaceDisplaySettings >) {
+            shader.setVec3("material.specular", convertToGlm(settings.colorSpecular));
+            shader.setFloat("material.shininess", settings.colorShininess);
+        }
+
+        draw(meshData, settings.vertexBufferManager, polygonModeGl(settings), elementModeGl(settings));
+    }
+}
+
+inline void draw(MeshData& meshData, const Shader& shader, const MembraneDisplaySettings& settings) {
+    draw(meshData, shader, settings.surface);
+}
+inline void draw(MeshData& meshData, const Shader& shader, const FilamentDisplaySettings& settings) {
+    if(settings.pathMode == FilamentDisplaySettings::PathMode::line) {
+        draw(meshData, shader, settings.line);
+    } else {
+        draw(meshData, shader, settings.surface);
+    }
+}
+inline void draw(MeshData& meshData, const Shader& shader, const LinkerDisplaySettings& settings) {
+    if(settings.pathMode == LinkerDisplaySettings::PathMode::line) {
+        draw(meshData, shader, settings.line);
+    } else {
+        draw(meshData, shader, settings.surface);
     }
 }
 
