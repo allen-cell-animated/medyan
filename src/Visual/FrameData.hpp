@@ -3,6 +3,7 @@
 
 #include <array>
 #include <cstddef>
+#include <filesystem>
 #include <fstream>
 #include <unordered_map>
 #include <vector>
@@ -80,6 +81,10 @@ struct DisplayData {
     std::vector< DisplayFrame > frames;
 };
 
+
+struct DisplayTrajectoryFileSettings {
+    std::filesystem::path trajSnapshot = "./snapshot.traj";
+};
 
 //-------------------------------------
 // Functions
@@ -197,20 +202,20 @@ inline DisplayFrame readOneFrameDataFromOutput(
     return res;
 }
 
-inline DisplayData readAllFrameDataFromOutput() {
+inline DisplayData readAllFrameDataFromOutput(
+    const DisplayTrajectoryFileSettings& inputs
+) {
     using namespace std;
 
     DisplayData res;
 
     {
-        // File location
-        string snapshotFilepath("./snapshot.traj");
         // Read snapshot
-        ifstream is(snapshotFilepath);
+        ifstream is(inputs.trajSnapshot);
 
         int curFrame = 0;
 
-        LOG(STEP) << "Start reading " << snapshotFilepath;
+        LOG(STEP) << "Start reading " << inputs.trajSnapshot;
 
         string line;
         while(true) {

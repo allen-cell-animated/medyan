@@ -246,7 +246,12 @@ inline void guiMainWindow(
                             displayStates.sync,
                             [&] {
                                 SyncStates::AtomicBoolGuard guard(displayStates.sync.trajectoryLoad);
-                                readAllFrameDataFromOutput();
+
+                                if(auto& ts = displayStates.trajectoryDataStates.trajectories; ts.empty()) {
+                                    ts.emplace_back();
+                                    ts[0].data = readAllFrameDataFromOutput(ts[0].inputs);
+                                    ts[0].profiles = makeDefaultElementProfiles();
+                                }
                             }
                         );
                     }

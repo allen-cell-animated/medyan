@@ -122,6 +122,30 @@ inline auto createMeshData(
     );
 }
 
+
+inline auto makeDefaultElementProfiles() {
+    std::vector< ElementProfile > profiles;
+
+    profiles.push_back(MembraneProfile {});
+
+    profiles.push_back(FilamentProfile {});
+
+    {
+        LinkerProfile lp;
+        lp.selector.name = "linker";
+        profiles.push_back(std::move(lp));
+    }
+    {
+        LinkerProfile lp;
+        lp.selector.name = "motor";
+        lp.displaySettings.colorFixed = mathfunc::Vec3f { 0.1f, 0.1f, 0.99f };
+        profiles.push_back(std::move(lp));
+    }
+
+
+    return profiles;
+}
+
 struct Profile {
 
     using FlagType = std::uint_fast16_t;

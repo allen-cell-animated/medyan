@@ -6,6 +6,9 @@
 #include <queue>
 #include <thread>
 
+#include "Visual/FrameData.hpp"
+#include "Visual/VisualElement.hpp"
+
 // Unlike DisplaySettings, the DisplayStates structure contains states for
 // display thread that is generally automatically filled internally.
 //
@@ -81,6 +84,19 @@ inline void dispatchAnAsyncTask(SyncStates& sync) {
     }
 }
 
+
+struct DisplayTrajectoryDataStates {
+    struct Trajectory {
+        DisplayTrajectoryFileSettings inputs;
+        DisplayData                   data;
+
+        std::vector< ElementProfile > profiles;
+    };
+
+    std::vector< Trajectory > trajectories;
+};
+
+
 struct DisplayStates {
 
     struct Timing {
@@ -120,6 +136,13 @@ struct DisplayStates {
 
     // task and synchronization
     SyncStates sync;
+
+    // The trajectory data states
+    DisplayTrajectoryDataStates trajectoryDataStates;
+
+    // The realtime data profiles
+    std::vector< ElementProfile > realtimeDataProfiles;
+
 };
 
 } // namespace medyan::visual

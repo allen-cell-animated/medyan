@@ -7,11 +7,137 @@
 #include <iterator>
 #include <numeric>
 
+#include "Visual/Common.hpp"
 #include "Visual/FrameData.hpp"
 #include "Visual/Render/PathExtrude.hpp"
 #include "Visual/Render/Sphere.hpp"
 
 namespace medyan::visual {
+
+//-------------------------------------
+// Data structures
+//-------------------------------------
+
+struct MeshDataDescriptor {
+    int strideSize = 9;
+
+    int positionStart = 0;
+    int positionSize = 3;
+    int normalStart = 3;
+    int normalSize = 3;
+    int colorStart = 6;
+    int colorSize = 3;
+};
+// preset descriptors
+inline constexpr MeshDataDescriptor meshDataDescriptorSurface { 9, 0, 3, 3, 3, 6, 3 };
+inline constexpr MeshDataDescriptor meshDataDescriptorLine    { 6, 0, 3, 3, 0, 3, 3 };
+
+class GlVertexBufferManager {
+private:
+    // vao, vbo, ebo
+    GLuint vao_ = 0;
+    GLuint vbo_ = 0;
+    // GLuint ebo_;
+
+    bool bufferMade_ = false;
+
+public:
+
+    auto vao() const { return vao_; }
+    auto vbo() const { return vbo_; }
+
+    // ctor and dtor
+    GlVertexBufferManager() = default;
+    GlVertexBufferManager(MeshDataDescriptor desc) {
+        makeBuffer(desc);
+    }
+    GlVertexBufferManager(GlVertexBufferManager&& rhs) {
+        bufferMade_ = rhs.bufferMade_;
+        vao_ = rhs.vao_;
+        vbo_ = rhs.vbo_;
+        // unset right hand side
+        rhs.bufferMade_ = false;
+    }
+
+    ~GlVertexBufferManager() {
+        deleteBuffer();
+    }
+
+    void makeBuffer(MeshDataDescriptor desc) {
+        if(bufferMade_) deleteBufferImpl_();
+
+        makeBufferImpl_(desc);
+        bufferMade_ = true;
+    }
+    void deleteBuffer() {
+        if(bufferMade_) {
+            deleteBufferImpl_();
+        }
+        bufferMade_ = false;
+    }
+
+private:
+    // Note: this function does not delete previously built buffer
+    void makeBufferImpl_(MeshDataDescriptor desc) {
+        glGenBuffers(1, &vbo_);
+        // glGenBuffers(1, &ebo);
+        glGenVertexArrays(1, &vao_);
+
+        glBindVertexArray(vao_);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
+
+        // Vertex attribute
+        //---------------------------------------------------------------------
+        GLuint idx = 0;
+        const auto addBlock = [&](int blockOffset, int blockSize, int strideSize) {
+            if(blockSize > 0) {
+                glVertexAttribPointer(
+                    idx,
+                    blockSize,
+                    GL_FLOAT,
+                    GL_FALSE,
+                    strideSize * sizeof(float),
+                    static_cast<const char*>(0) + sizeof(float) * blockOffset
+                );
+                glEnableVertexAttribArray(idx);
+                ++idx;
+            }
+        };
+        // Position
+        addBlock(desc.positionStart, desc.positionSize, desc.strideSize);
+        addBlock(desc.normalStart,   desc.normalSize,   desc.strideSize);
+        addBlock(desc.colorStart,    desc.colorSize,    desc.strideSize);
+
+        // temporarily retarget
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+    }
+
+    // Note: this function does not check for creation
+    void deleteBufferImpl_() {
+        glDeleteVertexArrays(1, &vao_);
+        glDeleteBuffers(1, &vbo_);
+        // glDeleteBuffers(1, &ebo_);
+    }
+};
+
+
+struct MeshData {
+    MeshDataDescriptor descriptor;
+    std::vector< float > data;
+
+    // Auxiliary state to indicate that the data is updated.
+    // Can be set to false by the downstream pipeline.
+    bool updated = true;
+
+    // The GL vertex buffer state
+    GlVertexBufferManager vertexBufferManager;
+};
+
+
+
 
 //-------------------------------------
 // Settings (for display)
@@ -88,34 +214,20 @@ struct LinkerDisplaySettings {
     }
 };
 
-//-------------------------------------
-// Data structures
-//-------------------------------------
-
-struct MeshDataDescriptor {
-    int strideSize = 9;
-
-    int positionStart = 0;
-    int positionSize = 3;
-    int normalStart = 3;
-    int normalSize = 3;
-    int colorStart = 6;
-    int colorSize = 3;
-};
-
-struct MeshData {
-    MeshDataDescriptor descriptor;
-    std::vector< float > data;
-};
-
-// preset descriptors
-inline constexpr MeshDataDescriptor meshDataDescriptorSurface { 9, 0, 3, 3, 3, 6, 3 };
-inline constexpr MeshDataDescriptor meshDataDescriptorLine    { 6, 0, 3, 3, 0, 3, 3 };
 
 
 //-------------------------------------
-// Functions
+// Functions (mesh data creation)
 //-------------------------------------
+
+// Auxiliary function to prepare vertex buffer for MeshData
+//
+// Note:
+//   - This function must be used with an OpenGL context.
+inline void prepareVertexBuffer(MeshData& meshData) {
+    meshData.vertexBufferManager.makeBuffer(meshData.descriptor);
+}
+
 
 inline void appendMembraneMeshData(
     MeshData&                      meshData,
@@ -161,6 +273,7 @@ inline auto createMembraneMeshData(
         appendMembraneMeshData(res, *pm, membraneSettings);
     }
 
+    prepareVertexBuffer(res);
     return res;
 }
 
@@ -351,6 +464,7 @@ inline auto createFilamentMeshData(
         appendFilamentMeshData(res, *pf, filamentSettings);
     }
 
+    prepareVertexBuffer(res);
     return res;
 }
 
@@ -464,8 +578,79 @@ inline auto createLinkerMeshData(
         appendLinkerMeshData(res, *pl, linkerSettings);
     }
 
+    prepareVertexBuffer(res);
     return res;
 }
+
+
+//-------------------------------------
+// Functions (mesh data display)
+//-------------------------------------
+
+// Auxiliary function to replace buffer data in OpenGL
+template< typename T >
+inline void replaceBuffer(GLenum target, const std::vector<T>& source) {
+    GLint prevSize;
+    glGetBufferParameteriv(target, GL_BUFFER_SIZE, &prevSize);
+
+    const auto newSize = sizeof(T) * source.size();
+
+    if(newSize > prevSize) {
+        glBufferData(target, newSize, source.data(), GL_DYNAMIC_DRAW);
+    } else {
+        glBufferSubData(target, 0, newSize, source.data());
+    }
+}
+
+
+// Auxiliary functions to get polygon mode
+inline auto polygonModeGl(SurfaceDisplaySettings settings) {
+    return settings.polygonMode == SurfaceDisplaySettings::PolygonMode::wireframe ? GL_LINE : GL_FILL;
+}
+inline auto polygonModeGl(LineDisplaySettings settings) {
+    return GL_LINE;
+}
+
+// Auxiliary functions to get element mode
+inline auto elementModeGl(SurfaceDisplaySettings settings) {
+    return GL_TRIANGLES;
+}
+inline auto elementModeGl(LineDisplaySettings settings) {
+    return GL_LINES;
+}
+
+// Draw elements using the mesh data.
+//
+// Notes:
+//   - This function must be used in an OpenGL context
+inline void draw(
+    const MeshData& meshData,
+    GLenum polygonMode,
+    GLenum elementMode
+) {
+    glBindVertexArray(meshData.vertexBufferManager.vao());
+
+    glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
+
+    // Update data
+    if(meshData.updated) {
+        glBindBuffer(GL_ARRAY_BUFFER, meshData.vertexBufferManager.vbo());
+        replaceBuffer(GL_ARRAY_BUFFER, meshData.data);
+        meshData.updated = false;
+    }
+
+    // Draw
+    glDrawArrays(elementMode, 0, meshData.data.size() / meshData.descriptor.strideSize);
+    // glDrawElements(ve->state.eleMode, ve->state.vertexIndices.size(), GL_UNSIGNED_INT, (void*)0);
+
+}
+template< typename GeometryDisplaySettings >
+inline void draw(const MeshData& meshData, GeometryDisplaySettings settings) {
+    if(settings.enabled) {
+        draw(meshData, polygonModeGl(settings), elementModeGl(settings));
+    }
+}
+
 
 } // namespace medyan::visual
 
