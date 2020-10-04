@@ -182,7 +182,7 @@ inline DisplayFrame readOneFrameDataFromOutput(
             for(const auto& l : linkerStruct) {
                 LinkerFrame lf;
 
-                lf.id = displayLinkerType(displayTypeMap, supertypeName);
+                lf.type = displayLinkerType(displayTypeMap, supertypeName);
                 for(int i = 0; i < l.getCoords().size(); ++i) {
                     lf.coords[i] = l.getCoords()[i];
                 }

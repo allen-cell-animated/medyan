@@ -66,6 +66,28 @@ struct FilamentDisplaySettings {
     }
 };
 
+struct LinkerDisplaySettings {
+    enum class PathMode { line, extrude };
+
+    mathfunc::Vec3f colorFixed { 0.1f, 0.9f, 0.0f };
+
+    PathMode pathMode = PathMode::extrude;
+
+    // path extrude parameters
+    float  pathExtrudeRadius = 7.5f;
+    int    pathExtrudeSides = 10;
+
+    // display settings
+    SurfaceDisplaySettings surface;  // used in "extrude" or "bead" path mode
+    LineDisplaySettings    line;     // used in "line" path mode
+
+    bool isEnabled() const {
+        return pathMode == PathMode::line ?
+            line.enabled :
+            surface.enabled;
+    }
+};
+
 //-------------------------------------
 // Data structures
 //-------------------------------------
@@ -122,18 +144,21 @@ inline void appendMembraneMeshData(
 
 }
 
+// Generate membrane mesh with a selected range of membranes.
+//
+// The selected membranes should be replaced with a range object with C++20.
 inline auto createMembraneMeshData(
-    const std::vector<MembraneFrame>& membranes,
-    const MembraneDisplaySettings& membraneSettings
+    std::vector<const MembraneFrame*> pMembranes,
+    const MembraneDisplaySettings&    membraneSettings
 ) {
     MeshData res;
     res.descriptor = meshDataDescriptorSurface;
 
     int numTriangles = 0;
-    for(auto& membrane : membranes) numTriangles += membrane.triangles.size();
+    for(auto pm : pMembranes) numTriangles += pm->triangles.size();
     res.data.reserve(3 * numTriangles * res.descriptor.strideSize);
-    for(auto& membrane : membranes) {
-        appendMembraneMeshData(res, membrane, membraneSettings);
+    for(auto pm : pMembranes) {
+        appendMembraneMeshData(res, *pm, membraneSettings);
     }
 
     return res;
@@ -263,9 +288,12 @@ inline void appendFilamentMeshData(
 }
 
 
+// Generate filament mesh with selected filaments
+//
+// The selected membranes should be replaced with a range object with C++20.
 inline auto createFilamentMeshData(
-    const std::vector<FilamentFrame>& filaments,
-    const FilamentDisplaySettings& filamentSettings
+    std::vector<const FilamentFrame*> pFilaments,
+    const FilamentDisplaySettings&    filamentSettings
 ) {
     using PM = FilamentDisplaySettings::PathMode;
 
@@ -277,9 +305,9 @@ inline auto createFilamentMeshData(
             res.descriptor = meshDataDescriptorLine;
             {
                 int numSegments = 0;
-                for(auto& filament : filaments) {
-                    if(filament.coords.size() >= 2) {
-                        numSegments += filament.coords.size() - 1;
+                for(auto pf : pFilaments) {
+                    if(pf->coords.size() >= 2) {
+                        numSegments += pf->coords.size() - 1;
                     }
                 }
                 res.data.reserve(2 * numSegments * res.descriptor.strideSize);
@@ -290,11 +318,11 @@ inline auto createFilamentMeshData(
             res.descriptor = meshDataDescriptorSurface;
             {
                 int numTriangles = 0;
-                for(auto& filament : filaments) {
+                for(auto pf : pFilaments) {
                     numTriangles += PathExtrude<float>{
                         filamentSettings.pathExtrudeRadius,
                         filamentSettings.pathExtrudeSides
-                    }.estimateNumTriangles(filament.coords.size());
+                    }.estimateNumTriangles(pf->coords.size());
                 }
                 res.data.reserve(3 * numTriangles * res.descriptor.strideSize);
             }
@@ -310,8 +338,8 @@ inline auto createFilamentMeshData(
                 }.estimateNumTriangles();
 
                 int numBeads = 0;
-                for(auto& filament : filaments) {
-                    numBeads += filament.coords.size();
+                for(auto pf : pFilaments) {
+                    numBeads += pf->coords.size();
                 }
 
                 res.data.reserve(3 * numTrianglesPerBead * numBeads * res.descriptor.strideSize);
@@ -319,13 +347,125 @@ inline auto createFilamentMeshData(
             break;
     }
 
-    for(auto& filament : filaments) {
-        appendFilamentMeshData(res, filament, filamentSettings);
+    for(auto pf : pFilaments) {
+        appendFilamentMeshData(res, *pf, filamentSettings);
     }
 
     return res;
 }
 
+
+// Make mesh data for a single filament and append it to the mesh data.
+inline void appendLinkerMeshData(
+    MeshData&                    meshData,
+    const LinkerFrame&           linker,
+    const LinkerDisplaySettings& linkerSettings
+) {
+    using PM = LinkerDisplaySettings::PathMode;
+    using namespace std;
+
+    switch(linkerSettings.pathMode) {
+        case PM::line:
+            {
+                meshData.data.push_back(linker.coords[0][0]);
+                meshData.data.push_back(linker.coords[0][1]);
+                meshData.data.push_back(linker.coords[0][2]);
+                meshData.data.push_back(linkerSettings.colorFixed[0]);
+                meshData.data.push_back(linkerSettings.colorFixed[1]);
+                meshData.data.push_back(linkerSettings.colorFixed[2]);
+
+                meshData.data.push_back(linker.coords[1][0]);
+                meshData.data.push_back(linker.coords[1][1]);
+                meshData.data.push_back(linker.coords[1][2]);
+                meshData.data.push_back(linkerSettings.colorFixed[0]);
+                meshData.data.push_back(linkerSettings.colorFixed[1]);
+                meshData.data.push_back(linkerSettings.colorFixed[2]);
+            }
+            break;
+
+        case PM::extrude:
+
+            {
+                vector< int > trivialIndices { 0, 1 };
+                const auto [genVertices, genVertexNormals, genTriInd]
+                    = PathExtrude<float> {
+                        linkerSettings.pathExtrudeRadius,
+                        linkerSettings.pathExtrudeSides
+                    }.generate(linker.coords, trivialIndices);
+
+                const int numTriangles = genTriInd.size();
+                for(int t = 0; t < numTriangles; ++t) {
+                    const auto& triInds = genTriInd[t];
+                    const mathfunc::Vec3f coord[] {
+                        genVertices[triInds[0]],
+                        genVertices[triInds[1]],
+                        genVertices[triInds[2]]
+                    };
+                    const mathfunc::Vec3f un[] {
+                        genVertexNormals[triInds[0]],
+                        genVertexNormals[triInds[1]],
+                        genVertexNormals[triInds[2]]
+                    };
+
+                    for(int i = 0; i < 3; ++i) {
+                        meshData.data.push_back(coord[i][0]);
+                        meshData.data.push_back(coord[i][1]);
+                        meshData.data.push_back(coord[i][2]);
+                        meshData.data.push_back(un[i][0]);
+                        meshData.data.push_back(un[i][1]);
+                        meshData.data.push_back(un[i][2]);
+                        meshData.data.push_back(linkerSettings.colorFixed[0]);
+                        meshData.data.push_back(linkerSettings.colorFixed[1]);
+                        meshData.data.push_back(linkerSettings.colorFixed[2]);
+                    }
+                }
+            }
+            break;
+
+    } // end switch
+
+}
+
+
+// Create linkers given the range of linkers
+//
+// The selected membranes should be replaced with a range object with C++20.
+inline auto createLinkerMeshData(
+    std::vector<const LinkerFrame*> pLinkers,
+    const LinkerDisplaySettings&    linkerSettings
+) {
+    using PM = LinkerDisplaySettings::PathMode;
+
+    MeshData res;
+
+    // reserve space and set descriptor
+    switch(linkerSettings.pathMode) {
+        case PM::line:
+            res.descriptor = meshDataDescriptorLine;
+            {
+                const int numSegments = pLinkers.size();
+                res.data.reserve(2 * numSegments * res.descriptor.strideSize);
+            }
+            break;
+
+        case PM::extrude:
+            res.descriptor = meshDataDescriptorSurface;
+            {
+                const int numTriangles = pLinkers.size() * PathExtrude<float>{
+                    linkerSettings.pathExtrudeRadius,
+                    linkerSettings.pathExtrudeSides
+                }.estimateNumTriangles(2);
+                res.data.reserve(3 * numTriangles * res.descriptor.strideSize);
+            }
+            break;
+    }
+
+    for(auto pl : pLinkers) {
+        appendLinkerMeshData(res, *pl, linkerSettings);
+    }
+
+    return res;
+}
 
 } // namespace medyan::visual
 

@@ -4,12 +4,123 @@
 #include <cstdint>
 #include <memory> // shared_ptr
 #include <mutex>
+#include <optional>
+#include <variant>
 #include <vector>
 
+#include "utility.h" // Overloaded
 #include "Visual/Common.hpp"
+#include "Visual/MeshData.hpp"
 #include "Visual/Shader.hpp"
 
 namespace medyan::visual {
+
+//-------------------------------------
+// Element selectors and profiles
+//-------------------------------------
+
+struct MembraneSelector {
+};
+struct MembraneProfile {
+    // selects all membranes
+    MembraneSelector selector;
+
+    // apply this setting
+    MembraneDisplaySettings displaySettings;
+};
+inline auto select(
+    const std::vector< MembraneFrame >& membranes,
+    const MembraneSelector& selector
+) {
+    std::vector< const MembraneFrame* > res;
+    for(auto& membrane : membranes) {
+        res.push_back(&membrane);
+    }
+    return res;
+}
+
+struct FilamentSelector {
+};
+struct FilamentProfile {
+    // selects all filaments
+    FilamentSelector selector;
+
+    // apply this setting
+    FilamentDisplaySettings displaySettings;
+
+};
+inline auto select(
+    const std::vector< FilamentFrame >& filaments,
+    const FilamentSelector& selector
+) {
+    std::vector< const FilamentFrame* > res;
+    for(auto& filament : filaments) {
+        res.push_back(&filament);
+    }
+    return res;
+}
+
+
+struct LinkerSelector {
+    std::optional< std::string > name;
+};
+struct LinkerProfile {
+    // selector
+    LinkerSelector selector;
+
+    // setting
+    LinkerDisplaySettings displaySettings;
+};
+inline auto select(
+    const std::vector< LinkerFrame >& linkers,
+    const LinkerSelector& selector,
+    const DisplayTypeMap& typeMap
+) {
+    std::vector< const LinkerFrame* > res;
+    for(auto& linker : linkers) {
+        if(!selector.name.has_value() || *selector.name == typeMap.linkerTypeName.at(linker.type)) {
+            res.push_back(&linker);
+        }
+    }
+    return res;
+}
+
+
+using ElementProfile = std::variant<
+    MembraneProfile,
+    FilamentProfile,
+    LinkerProfile
+>;
+
+inline auto createMeshData(
+    const DisplayFrame& frameData,
+    const DisplayTypeMap& typeMap,
+    const ElementProfile& profile
+) {
+    return std::visit(
+        Overloaded {
+            [&](const MembraneProfile& membraneProfile) {
+                return createMembraneMeshData(
+                    select(frameData.membranes, membraneProfile.selector),
+                    membraneProfile.displaySettings
+                );
+            },
+            [&](const FilamentProfile& filamentProfile) {
+                return createFilamentMeshData(
+                    select(frameData.filaments, filamentProfile.selector),
+                    filamentProfile.displaySettings
+                );
+            },
+            [&](const LinkerProfile& linkerProfile) {
+                return createLinkerMeshData(
+                    select(frameData.linkers, linkerProfile.selector, typeMap),
+                    linkerProfile.displaySettings
+                );
+            }
+        },
+        profile
+    );
+}
 
 struct Profile {
 

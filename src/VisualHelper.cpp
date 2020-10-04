@@ -65,8 +65,9 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 //     ve->state.vertexIndices.clear();
                 //     ve->state.indexChanged = true;
                 // }
-
-                ve->state.vertexAttribs = createMembraneMeshData(sdfv.membraneData, MembraneDisplaySettings {}).data;
+                vector<const MembraneFrame*> mf;
+                for(auto& d : sdfv.membraneData) mf.push_back(&d);
+                ve->state.vertexAttribs = createMembraneMeshData(move(mf), MembraneDisplaySettings {}).data;
             }
             ve->state.eleMode = GL_TRIANGLES;
         }
@@ -86,7 +87,9 @@ void prepareVisualElement(const std::shared_ptr< VisualElement >& ve) {
                 //     ve->state.vertexIndices.clear();
                 //     ve->state.indexChanged = true;
                 // }
-                ve->state.vertexAttribs = createFilamentMeshData(sdfv.filamentData, FilamentDisplaySettings {}).data;
+                vector<const FilamentFrame*> ff;
+                for(auto& d : sdfv.filamentData) ff.push_back(&d);
+                ve->state.vertexAttribs = createFilamentMeshData(move(ff), FilamentDisplaySettings {}).data;
 
             }
             ve->state.eleMode = GL_TRIANGLES;
