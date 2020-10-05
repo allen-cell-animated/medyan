@@ -211,9 +211,10 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                 uint32_t j = 0;
                 int dBI = SysParams::Chemistry().linkerbindingskip-1;
                 if(cyl->isMinusEnd() == false) {
-                    for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                         it < SysParams::Chemistry().bindingSites[_filamentType].end();
-                         it=it+dBI) {
+                    for (int itI = 0; itI < SysParams::Chemistry().bindingSites[_filamentType].size(); itI += dBI) {
+
+                        auto it = SysParams::Chemistry().bindingSites[_filamentType].begin() + itI;
+
                         bool state = false;
                         if (isvectorizedgather)
                             state = checkoccupancy(boundstate, bstatepos,
@@ -252,9 +253,10 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                 else{
                     /* If it is the minus end Cylinder, add the binding sites that are
                      * species Filament*/
-                    for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                         it < SysParams::Chemistry().bindingSites[_filamentType].end();
-                         it=it+dBI) {
+                    for (int itI = 0; itI < SysParams::Chemistry().bindingSites[_filamentType].size(); itI += dBI) {
+
+                        auto it = SysParams::Chemistry().bindingSites[_filamentType].begin() + itI;
+
                         auto sf = Cylinder::getDbDataConst().value[cindex]
                                 .chemCylinder->getCMonomer(*it)->activeSpeciesFilament();
                         if(sf !=-1){
