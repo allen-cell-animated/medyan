@@ -208,11 +208,6 @@ struct FilamentDisplaySettings {
     SurfaceDisplaySettings surface;  // used in "extrude" or "bead" path mode
     LineDisplaySettings    line;     // used in "line" path mode
 
-    bool isEnabled() const {
-        return pathMode == PathMode::line ?
-            line.enabled :
-            surface.enabled;
-    }
 };
 
 struct LinkerDisplaySettings {
@@ -230,11 +225,18 @@ struct LinkerDisplaySettings {
     SurfaceDisplaySettings surface;  // used in "extrude" or "bead" path mode
     LineDisplaySettings    line;     // used in "line" path mode
 
-    bool isEnabled() const {
-        return pathMode == PathMode::line ?
-            line.enabled :
-            surface.enabled;
-    }
+};
+
+struct AuxLineDisplaySettings {
+    using Flag = std::uint_fast8_t;
+    inline static constexpr Flag targetCompartmentBorder = 1 << 0;
+    inline static constexpr Flag targetCompartmentAll    = 1 << 1;
+
+    Flag flag = 0;
+
+    mathfunc::Vec3f colorFixed { 1.0f, 1.0f, 1.0f };
+
+    LineDisplaySettings line;
 };
 
 
@@ -243,6 +245,10 @@ struct LinkerDisplaySettings {
 // Functions (mesh data creation)
 //-------------------------------------
 
+// Note that the following functions may be categorized as the following:
+//   - The actual function appending data of each element to the mesh data.
+//   - The function appending data of all selected elements of a frame to existing mesh data.
+//   - The function creating a new mesh data solely for the data of all selected elements of a frame.
 
 // Returns how many numbers added
 inline auto appendMembraneMeshData(
@@ -655,6 +661,87 @@ inline auto createLinkerMeshData(
 }
 
 
+// Returns how many numbers added.
+inline auto appendAuxLineMeshData(
+    MeshData&                       meshData,
+    const DisplayFrame&             frameData,
+    const AuxLineDisplaySettings&   auxLineSettings
+) {
+    const int sizePrev = meshData.data.size();
+
+    if(frameData.compartmentInfo.has_value()) {
+
+        // Function to generate auxiliary lines
+        //
+        // Inputs:
+        //   - fixedAxis: the axis parallel to the line to be drawn. range 0, 1, 2.
+        //   - dax1:      the number of compartments interval along the next axis after fixedAxis.
+        //   - dax2:      the number of compartments interval along the 2nd next axis after fixedAxis.
+        //
+        // Notes:
+        //   - The next axis index are found using the rotation 0 -> 1 -> 2 -> 0.
+        const auto genLineArray = [&](size_t fixedAxis, size_t dax1, size_t dax2) {
+            const int ax1 = (fixedAxis + 1) % 3;
+            const int ax2 = (fixedAxis + 2) % 3;
+            for(size_t x1 = 0; x1 <= frameData.compartmentInfo->number[ax1]; x1 += dax1) {
+                for(size_t x2 = 0; x2 <= frameData.compartmentInfo->number[ax2]; x2 += dax2) {
+                    const auto v1 = frameData.compartmentInfo->size[ax1] * x1;
+                    const auto v2 = frameData.compartmentInfo->size[ax2] * x2;
+                    Vec3f coord0, coord1;
+                    coord0[fixedAxis] = 0;
+                    coord0[ax1] = v1;
+                    coord0[ax2] = v2;
+                    coord0 += frameData.compartmentInfo->offset;
+                    coord1[fixedAxis] = frameData.compartmentInfo->size[fixedAxis] * frameData.compartmentInfo->number[fixedAxis];
+                    coord1[ax1] = v1;
+                    coord1[ax2] = v2;
+                    coord1 += frameData.compartmentInfo->offset;
+
+                    meshData.data.push_back(coord0[0]);
+                    meshData.data.push_back(coord0[1]);
+                    meshData.data.push_back(coord0[2]);
+                    meshData.data.push_back(auxLineSettings.colorFixed[0]);
+                    meshData.data.push_back(auxLineSettings.colorFixed[1]);
+                    meshData.data.push_back(auxLineSettings.colorFixed[2]);
+                    meshData.data.push_back(coord1[0]);
+                    meshData.data.push_back(coord1[1]);
+                    meshData.data.push_back(coord1[2]);
+                    meshData.data.push_back(auxLineSettings.colorFixed[0]);
+                    meshData.data.push_back(auxLineSettings.colorFixed[1]);
+                    meshData.data.push_back(auxLineSettings.colorFixed[2]);
+                }
+            }
+        };
+
+        if(auxLineSettings.flag & AuxLineDisplaySettings::targetCompartmentBorder) {
+            genLineArray(0, frameData.compartmentInfo->number[1], frameData.compartmentInfo->number[2]);
+            genLineArray(1, frameData.compartmentInfo->number[2], frameData.compartmentInfo->number[0]);
+            genLineArray(2, frameData.compartmentInfo->number[0], frameData.compartmentInfo->number[1]);
+        }
+        if(auxLineSettings.flag & AuxLineDisplaySettings::targetCompartmentAll) {
+            genLineArray(0, 1, 1);
+            genLineArray(1, 1, 1);
+            genLineArray(2, 1, 1);
+        }
+    }
+
+    const int sizeCur = meshData.data.size();
+    return sizeCur - sizePrev;
+}
+// Auxiliary lines do not need a selector.
+// The actual "selection" happens inside a mesh.
+
+inline auto createAuxLineMeshData(
+    const DisplayFrame&             frameData,
+    const AuxLineDisplaySettings&   auxLineSettings
+) {
+    MeshData res;
+    res.descriptor = meshDataDescriptorLine;
+    appendAuxLineMeshData(res, frameData, auxLineSettings);
+
+    return res;
+}
+
 //-------------------------------------
 // Functions (mesh data display)
 //-------------------------------------
@@ -693,6 +780,9 @@ inline auto displayGeometryType(const LinkerDisplaySettings& settings) {
     return settings.pathMode == LinkerDisplaySettings::PathMode::line ?
         DisplayGeometryType::line :
         DisplayGeometryType::surface;
+}
+inline auto displayGeometryType(const AuxLineDisplaySettings&) {
+    return DisplayGeometryType::line;
 }
 
 

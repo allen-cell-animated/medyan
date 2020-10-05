@@ -111,15 +111,18 @@ bool copySystemData(
     } // End update bead connection
 
     if(updated & (raw_data_cat::compartment)) {
-        data.compartmentNum = {
-            static_cast< size_t >(SysParams::Geometry().NX),
-            static_cast< size_t >(SysParams::Geometry().NY),
-            static_cast< size_t >(SysParams::Geometry().NZ)
+        auto& compartmentInfo = data.frameData.compartmentInfo;
+        compartmentInfo.emplace();
+
+        compartmentInfo->number = {
+            SysParams::Geometry().NX,
+            SysParams::Geometry().NY,
+            SysParams::Geometry().NZ
         };
-        data.compartmentSize = {
-            SysParams::Geometry().compartmentSizeX,
-            SysParams::Geometry().compartmentSizeY,
-            SysParams::Geometry().compartmentSizeZ
+        compartmentInfo->size = {
+            static_cast< float >(SysParams::Geometry().compartmentSizeX),
+            static_cast< float >(SysParams::Geometry().compartmentSizeY),
+            static_cast< float >(SysParams::Geometry().compartmentSizeZ)
         };
 
     }

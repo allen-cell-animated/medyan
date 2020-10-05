@@ -85,11 +85,16 @@ inline auto select(
     return res;
 }
 
+struct AuxLineProfile {
+    AuxLineDisplaySettings displaySettings;
+};
+
 
 using ElementProfile = std::variant<
     MembraneProfile,
     FilamentProfile,
-    LinkerProfile
+    LinkerProfile,
+    AuxLineProfile
 >;
 
 struct MeshDataFrameInfo {
@@ -128,6 +133,10 @@ inline auto makeDefaultElementProfileData() {
         profiles.push_back(ProfileWithMeshData { std::move(lp) } );
     }
 
+    profiles.push_back(ProfileWithMeshData { AuxLineProfile {
+        { AuxLineDisplaySettings::targetCompartmentBorder }
+    }});
+
     return profiles;
 }
 
@@ -159,6 +168,12 @@ inline auto createMeshData(
                 return createLinkerMeshData(
                     select(frameData.linkers, linkerProfile.selector, typeMap),
                     linkerProfile.displaySettings
+                );
+            },
+            [&](const AuxLineProfile& auxLineProfile) {
+                return createAuxLineMeshData(
+                    frameData,
+                    auxLineProfile.displaySettings
                 );
             }
         },
@@ -205,6 +220,13 @@ inline auto createMeshDataAllFrames(
                     return appendLinkerMeshData(
                         meshData,
                         select(displayData.frames[i].linkers, prof.selector, displayData.displayTypeMap),
+                        prof.displaySettings
+                    );
+                },
+                [&](const AuxLineProfile& prof) {
+                    return appendAuxLineMeshData(
+                        meshData,
+                        displayData.frames[i],
                         prof.displaySettings
                     );
                 }
@@ -309,6 +331,9 @@ inline void draw(MeshData& meshData, std::optional< MeshDataFrameInfo > frameInf
     } else {
         draw(meshData, frameInfo, shader, settings.surface);
     }
+}
+inline void draw(MeshData& meshData, std::optional< MeshDataFrameInfo > frameInfo, const Shader& shader, const AuxLineDisplaySettings& settings) {
+    draw(meshData, frameInfo, shader, settings.line);
 }
 
 

@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <filesystem>
 #include <fstream>
+#include <optional>
 #include <unordered_map>
 #include <vector>
 
@@ -58,6 +59,12 @@ struct PointFrame {
 
 
 struct DisplayFrame {
+    struct CompartmentInfo {
+        mathfunc::Vec< 3, int > number { 2, 2, 2 };
+        mathfunc::Vec3f         size { 500.0f, 500.0f, 500.0f };
+        mathfunc::Vec3f         offset {};
+    };
+
     // meta data
     int serial = 0;
 
@@ -65,6 +72,9 @@ struct DisplayFrame {
     std::vector< MembraneFrame > membranes;
     std::vector< FilamentFrame > filaments;
     std::vector< LinkerFrame >   linkers;
+
+    // other auxiliary optional data
+    std::optional< CompartmentInfo > compartmentInfo;
 };
 
 struct DisplayTypeMap {

@@ -43,9 +43,6 @@ struct SystemRawData {
     // Data
     DisplayFrame               frameData;
 
-    mathfunc::Vec< 3, size_t > compartmentNum;
-    mathfunc::Vec3             compartmentSize;
-
 };
 
 // Function to copy the system data to raw data
@@ -97,6 +94,14 @@ inline void updateRealtimeMeshData(
                 if(rawData.updated & raw_data_cat::beadPosition) {
                     meshData = createLinkerMeshData(
                         select(rawData.frameData.linkers, profile.selector, rawData.displayTypeMap),
+                        profile.displaySettings
+                    );
+                }
+            },
+            [&](const AuxLineProfile& profile) {
+                if(rawData.updated & raw_data_cat::compartment) {
+                    meshData = createAuxLineMeshData(
+                        rawData.frameData,
                         profile.displaySettings
                     );
                 }
