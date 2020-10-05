@@ -1308,11 +1308,6 @@ void Controller::run() {
 
     cout << "Starting simulation..." << endl;
 
-    for(auto c:_subSystem.getCompartmentGrid()->getCompartments()) {
-        c->printSpecies();
-        cout<<"------"<<endl;
-    }
-
     int i = 1;
 
     //if runtime was specified, use this
