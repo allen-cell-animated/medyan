@@ -26,7 +26,7 @@
 #include "Structure/Cylinder.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshGeometry.hpp"
-#include "VisualHelper.hpp"
+#include "VisualSystemRawData.hpp"
 
 namespace {
 
@@ -39,18 +39,18 @@ constexpr CurvPol getCurvPol(CurvReq curvReq) noexcept {
 }
 
 void prepareForceSharedData() {
-    medyan::visual::copySystemDataAndRunHelper(medyan::visual::sys_data_update::BeadPosition | medyan::visual::sys_data_update::BeadConnection);
+    medyan::visual::copySystemData(medyan::visual::raw_data_cat::beadPosition | medyan::visual::raw_data_cat::beadConnection);
 }
 
 void updateForceSharedData() {
-    medyan::visual::copySystemDataAndRunHelper(medyan::visual::sys_data_update::BeadPosition);
+    medyan::visual::copySystemData(medyan::visual::raw_data_cat::beadPosition);
 }
 
 template< bool stretched >
 void updateMembraneSharedData() {
     // TODO stretched version
     if(!stretched) {
-        medyan::visual::copySystemDataAndRunHelper(medyan::visual::sys_data_update::BeadPosition);
+        medyan::visual::copySystemData(medyan::visual::raw_data_cat::beadPosition);
     }
 }
 

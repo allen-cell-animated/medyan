@@ -45,6 +45,11 @@ struct SystemRawData {
 
 };
 
+
+// The global variable for shared data
+inline SystemRawData sdfv;
+
+
 // Function to copy the system data to raw data
 //
 // Note:
@@ -62,6 +67,14 @@ bool copySystemData(
     raw_data_cat::Type updated,
     bool ignoreDataInUse = true
 );
+
+// copy system data to the global shared data
+inline bool copySystemData(
+    raw_data_cat::Type updated,
+    bool ignoreDataInUse = true
+) {
+    return copySystemData(sdfv, updated, ignoreDataInUse);
+}
 
 
 // Note:

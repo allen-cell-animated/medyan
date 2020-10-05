@@ -57,14 +57,14 @@
 #endif
 #include "Util/Io/Log.hpp"
 #include "Util/Profiler.hpp"
-#include "VisualHelper.hpp"
+#include "VisualSystemRawData.hpp"
 
 using namespace mathfunc;
 
 namespace {
 
 void displayCopySystem() {
-    medyan::visual::copySystemDataAndRunHelper(medyan::visual::sys_data_update::BeadPosition | medyan::visual::sys_data_update::BeadConnection | medyan::visual::sys_data_update::Compartment);
+    medyan::visual::copySystemData(medyan::visual::raw_data_cat::beadPosition | medyan::visual::raw_data_cat::beadConnection | medyan::visual::raw_data_cat::compartment);
 }
 
 
