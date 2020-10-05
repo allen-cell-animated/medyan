@@ -107,6 +107,9 @@ inline void updateRealtimeMeshData(
     for(auto& eachProfileData : profileData) {
         std::visit(updateMeshData(eachProfileData.data), eachProfileData.profile);
     }
+
+    // reset updated states
+    rawData.updated = 0;
 }
 
 

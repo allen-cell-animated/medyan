@@ -3,6 +3,7 @@
 
 #include <atomic>
 #include <functional>
+#include <mutex>
 #include <queue>
 #include <thread>
 
@@ -32,12 +33,6 @@ struct ObjectViewStates {
 };
 
 struct SyncStates {
-    // auxiliary struct for atomic bool guard
-    struct AtomicBoolGuard {
-        std::atomic_bool& whichBool;
-        AtomicBoolGuard(std::atomic_bool& whichBool) : whichBool(whichBool) { whichBool.store(true); }
-        ~AtomicBoolGuard() { whichBool.store(false); }
-    };
 
     //---------------------------------
     // Implementation of one background task
@@ -52,7 +47,10 @@ struct SyncStates {
     std::atomic_bool busy { false };
 
     // the individual states for discretion of the main display thread
-    std::atomic_bool trajectoryLoad { false };
+    std::mutex  meTrajectoryLoad;
+    std::queue<
+        std::tuple< DisplayTrajectoryFileSettings, DisplayData >
+    >           trajectoryLoadDock;             // guarded by meTrajectoryLoad
 
 };
 
@@ -63,13 +61,27 @@ struct DisplayTrajectoryDataStates {
         DisplayData                   data;
 
         std::vector< ProfileWithMeshData > profileData;
+
+        Trajectory(Trajectory&&) = default;
     };
 
     std::vector< Trajectory > trajectories;
+
 };
 
 struct DisplayRealtimeDataStates {
     std::vector< ProfileWithMeshData > profileData;
+};
+
+struct TrajectoryPlaybackStates {
+    // Play back states
+    int currentFrame = 0;
+    int previousFrame = 0;
+    int maxFrame = 0;
+    bool isPlaying = true;
+    float lastGlfwTime = 0;
+
+    bool meshDataGenerated = false; // set true by mesh data generation, set false by changing frame
 };
 
 
@@ -115,9 +127,11 @@ struct DisplayStates {
 
     // The trajectory data states
     DisplayTrajectoryDataStates trajectoryDataStates;
-
     // The realtime data profiles
     DisplayRealtimeDataStates realtimeDataStates;
+
+    // Playback states
+    TrajectoryPlaybackStates playback;
 
 };
 
@@ -163,6 +177,45 @@ inline void dispatchAnAsyncTask(SyncStates& sync) {
     }
 }
 
+
+// Background task: read trajectory into DisplayData
+inline void backgroundTaskReadTrajectory(
+    DisplayStates& states,
+    const DisplayTrajectoryFileSettings& inputs
+) {
+    // Read trajectory
+    auto displayData = readAllFrameDataFromOutput(inputs);
+
+    // Add to loading dock
+    std::scoped_lock lk(states.sync.meTrajectoryLoad);
+
+    states.sync.trajectoryLoadDock.push(std::tuple {
+        inputs,
+        std::move(displayData)
+    });
+}
+
+// Visual thread task: append trajectory data from loading dock
+inline void appendTrajectoryDataFromLoadDock(
+    DisplayStates& states
+) {
+    std::unique_lock lk(states.sync.meTrajectoryLoad, std::try_to_lock);
+    if(!lk.owns_lock()) {
+        return;
+    }
+
+    auto& dock = states.sync.trajectoryLoadDock;
+    while(!dock.empty()) {
+        auto [inputs, displayData] = std::move(dock.front());
+        dock.pop();
+
+        states.trajectoryDataStates.trajectories.push_back({
+            std::move(inputs),
+            std::move(displayData),
+            makeDefaultElementProfileData()
+        });
+    }
+}
 
 } // namespace medyan::visual
 

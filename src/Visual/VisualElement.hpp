@@ -92,11 +92,49 @@ using ElementProfile = std::variant<
     LinkerProfile
 >;
 
+struct MeshDataFrameInfo {
+    int start = 0;
+    int size = 0;
+};
+struct ProfileWithMeshData {
+    ElementProfile                                   profile;
+    MeshData                                         data;
+    std::optional< std::vector< MeshDataFrameInfo >> frameInfo;
+};
+
+
+//-------------------------------------
+// Functions for creating mesh data
+//-------------------------------------
+
+
+
+inline auto makeDefaultElementProfileData() {
+    std::vector< ProfileWithMeshData > profiles;
+
+    profiles.push_back(ProfileWithMeshData { MembraneProfile {} });
+
+    profiles.push_back(ProfileWithMeshData { FilamentProfile {} });
+
+    {
+        LinkerProfile lp;
+        lp.selector.name = "linker";
+        profiles.push_back(ProfileWithMeshData { std::move(lp) } );
+    }
+    {
+        LinkerProfile lp;
+        lp.selector.name = "motor";
+        lp.displaySettings.colorFixed = mathfunc::Vec3f { 0.1f, 0.1f, 0.99f };
+        profiles.push_back(ProfileWithMeshData { std::move(lp) } );
+    }
+
+    return profiles;
+}
+
 
 inline auto displayGeometryType(const ElementProfile& profile) {
     return std::visit([](const auto& actualProfile) { return displayGeometryType(actualProfile.displaySettings); }, profile);
 }
-
 
 inline auto createMeshData(
     const DisplayFrame& frameData,
@@ -126,38 +164,6 @@ inline auto createMeshData(
         },
         profile
     );
-}
-
-struct MeshDataFrameInfo {
-    int start = 0;
-    int size = 0;
-};
-struct ProfileWithMeshData {
-    ElementProfile                                   profile;
-    MeshData                                         data;
-    std::optional< std::vector< MeshDataFrameInfo >> frameInfo;
-};
-
-inline auto makeDefaultElementProfileData() {
-    std::vector< ProfileWithMeshData > profiles;
-
-    profiles.push_back(ProfileWithMeshData { MembraneProfile {} });
-
-    profiles.push_back(ProfileWithMeshData { FilamentProfile {} });
-
-    {
-        LinkerProfile lp;
-        lp.selector.name = "linker";
-        profiles.push_back(ProfileWithMeshData { std::move(lp) } );
-    }
-    {
-        LinkerProfile lp;
-        lp.selector.name = "motor";
-        lp.displaySettings.colorFixed = mathfunc::Vec3f { 0.1f, 0.1f, 0.99f };
-        profiles.push_back(ProfileWithMeshData { std::move(lp) } );
-    }
-
-    return profiles;
 }
 
 
@@ -210,6 +216,99 @@ inline auto createMeshDataAllFrames(
     }
 
     return std::tuple { meshData, frameInfo };
+}
+
+
+//-------------------------------------
+// Functions for drawing
+//-------------------------------------
+
+// Auxiliary function to replace buffer data in OpenGL
+template< typename T >
+inline void replaceBuffer(GLenum target, const std::vector<T>& source, int start, int size) {
+    GLint prevSize;
+    glGetBufferParameteriv(target, GL_BUFFER_SIZE, &prevSize);
+
+    const auto newSize = sizeof(T) * size;
+
+    if(newSize > prevSize) {
+        glBufferData(target, newSize, source.data() + start, GL_DYNAMIC_DRAW);
+    } else {
+        glBufferSubData(target, 0, newSize, source.data() + start);
+    }
+}
+template< typename T >
+inline void replaceBuffer(GLenum target, const std::vector<T>& source) {
+    replaceBuffer(target, source, 0, source.size());
+}
+
+
+// Draw elements using the mesh data.
+//
+// Notes:
+//   - This function must be used in an OpenGL context
+inline void draw(
+    MeshData& meshData,
+    std::optional< MeshDataFrameInfo > frameInfo,
+    const GlVertexBufferManager& vertexBufferManager,
+    GLenum polygonMode,
+    GLenum elementMode
+) {
+    glBindVertexArray(vertexBufferManager.vao());
+
+    glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
+
+    // Update data
+    if(meshData.updated || frameInfo.has_value()) {
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBufferManager.vbo());
+        if(frameInfo.has_value()) {
+            replaceBuffer(GL_ARRAY_BUFFER, meshData.data, frameInfo->start, frameInfo->size);
+        } else {
+            replaceBuffer(GL_ARRAY_BUFFER, meshData.data);
+        }
+        meshData.updated = false;
+    }
+
+    // Draw
+    const int numStrides = (frameInfo.has_value() ? frameInfo->size : meshData.data.size()) / meshData.descriptor.strideSize;
+    glDrawArrays(elementMode, 0, numStrides);
+    // glDrawElements(ve->state.eleMode, ve->state.vertexIndices.size(), GL_UNSIGNED_INT, (void*)0);
+
+}
+template< typename GeometryDisplaySettings >
+inline void draw(
+    MeshData&                          meshData,
+    std::optional< MeshDataFrameInfo > frameInfo,
+    const Shader&                      shader,
+    const GeometryDisplaySettings&     settings
+) {
+    if(settings.enabled) {
+        // setting uniform
+        if constexpr(std::is_same_v< GeometryDisplaySettings, SurfaceDisplaySettings >) {
+            shader.setVec3("material.specular", convertToGlm(settings.colorSpecular));
+            shader.setFloat("material.shininess", settings.colorShininess);
+        }
+
+        draw(meshData, frameInfo, settings.vertexBufferManager, polygonModeGl(settings), elementModeGl(settings));
+    }
+}
+
+inline void draw(MeshData& meshData, std::optional< MeshDataFrameInfo > frameInfo, const Shader& shader, const MembraneDisplaySettings& settings) {
+    draw(meshData, frameInfo, shader, settings.surface);
+}
+inline void draw(MeshData& meshData, std::optional< MeshDataFrameInfo > frameInfo, const Shader& shader, const FilamentDisplaySettings& settings) {
+    if(settings.pathMode == FilamentDisplaySettings::PathMode::line) {
+        draw(meshData, frameInfo, shader, settings.line);
+    } else {
+        draw(meshData, frameInfo, shader, settings.surface);
+    }
+}
+inline void draw(MeshData& meshData, std::optional< MeshDataFrameInfo > frameInfo, const Shader& shader, const LinkerDisplaySettings& settings) {
+    if(settings.pathMode == LinkerDisplaySettings::PathMode::line) {
+        draw(meshData, frameInfo, shader, settings.line);
+    } else {
+        draw(meshData, frameInfo, shader, settings.surface);
+    }
 }
 
 

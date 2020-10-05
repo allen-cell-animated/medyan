@@ -16,6 +16,7 @@
 #include "Visual/Common.hpp"
 #include "Visual/Control.hpp"
 #include "Visual/Gui.hpp"
+#include "Visual/Playback.hpp"
 #include "Visual/Shader.hpp"
 #include "Visual/ShaderSrc.hpp"
 #include "Visual/VisualElement.hpp"
@@ -309,7 +310,13 @@ struct VisualDisplay {
             vc.processInput();
 
             // check for update for on realtime raw data
-            updateRealtimeMeshData(vc.displayStates.realtimeDataStates.profileData, sdfv);
+            if(vc.displaySettings.displayMode == DisplayMode::trajectory) {
+                appendTrajectoryDataFromLoadDock(vc.displayStates);
+                playbackUpdateMaxFrames(vc.displayStates);
+                playbackCheckTrajectory(vc.displaySettings, vc.displayStates, glfwGetTime());
+            } else {
+                updateRealtimeMeshData(vc.displayStates.realtimeDataStates.profileData, sdfv);
+            }
 
             // select frame buffer: on screen display / offscreen snapshot
             const bool offscreen = vc.displayStates.mainView.control.snapshotRenderingNextFrame;
@@ -345,61 +352,71 @@ struct VisualDisplay {
 
             vpLight.shader.setVec3("CameraPos",   vc.displaySettings.mainView.camera.position);
 
-            for(auto& eachProfileData : vc.displayStates.realtimeDataStates.profileData) {
+            vpLight.shader.setVec3("dirLights[0].direction", glm::vec3 {1.0f, 1.0f, 1.0f});
+            vpLight.shader.setVec3("dirLights[0].ambient",   glm::vec3 {0.1f, 0.1f, 0.1f});
+            vpLight.shader.setVec3("dirLights[0].diffuse",   glm::vec3 {0.3f, 0.3f, 0.3f});
+            vpLight.shader.setVec3("dirLights[0].specular",  glm::vec3 {0.5f, 0.5f, 0.5f});
+            vpLight.shader.setVec3("dirLights[1].direction", glm::vec3 {-1.0f, -1.0f, -1.0f});
+            vpLight.shader.setVec3("dirLights[1].ambient",   glm::vec3 {0.1f, 0.1f, 0.1f});
+            vpLight.shader.setVec3("dirLights[1].diffuse",   glm::vec3 {0.3f, 0.3f, 0.3f});
+            vpLight.shader.setVec3("dirLights[1].specular",  glm::vec3 {0.5f, 0.5f, 0.5f});
 
+            const glm::vec3 pointLightPositions[4] {
+                { -500.0f, -500.0f, -500.0f },
+                { -500.0f, 3500.0f, 3500.0f },
+                { 3500.0f, -500.0f, 3500.0f },
+                { 3500.0f, 3500.0f, -500.0f }
+            };
+            vpLight.shader.setVec3("pointLights[0].position", pointLightPositions[0]);
+            vpLight.shader.setVec3("pointLights[0].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
+            vpLight.shader.setVec3("pointLights[0].diffuse",  glm::vec3 { 0.6f, 0.6f, 0.6f });
+            vpLight.shader.setVec3("pointLights[0].specular", glm::vec3 { 1.0f, 1.0f, 1.0f });
+            vpLight.shader.setFloat("pointLights[0].constant",  1.0f);
+            vpLight.shader.setFloat("pointLights[0].linear",    1.4e-4f);
+            vpLight.shader.setFloat("pointLights[0].quadratic", 7.2e-8f);
+            vpLight.shader.setVec3("pointLights[1].position", pointLightPositions[1]);
+            vpLight.shader.setVec3("pointLights[1].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
+            vpLight.shader.setVec3("pointLights[1].diffuse",  glm::vec3 { 0.6f, 0.6f, 0.6f });
+            vpLight.shader.setVec3("pointLights[1].specular", glm::vec3 { 1.0f, 1.0f, 1.0f });
+            vpLight.shader.setFloat("pointLights[1].constant",  1.0f);
+            vpLight.shader.setFloat("pointLights[1].linear",    1.4e-4f);
+            vpLight.shader.setFloat("pointLights[1].quadratic", 7.2e-8f);
+            vpLight.shader.setVec3("pointLights[2].position", pointLightPositions[2]);
+            vpLight.shader.setVec3("pointLights[2].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
+            vpLight.shader.setVec3("pointLights[2].diffuse",  glm::vec3 { 0.1f, 0.1f, 0.1f });
+            vpLight.shader.setVec3("pointLights[2].specular", glm::vec3 { 0.2f, 0.2f, 0.2f });
+            vpLight.shader.setFloat("pointLights[2].constant",  1.0f);
+            vpLight.shader.setFloat("pointLights[2].linear",    1.4e-4f);
+            vpLight.shader.setFloat("pointLights[2].quadratic", 7.2e-8f);
+            vpLight.shader.setVec3("pointLights[3].position", pointLightPositions[3]);
+            vpLight.shader.setVec3("pointLights[3].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
+            vpLight.shader.setVec3("pointLights[3].diffuse",  glm::vec3 { 0.1f, 0.1f, 0.1f });
+            vpLight.shader.setVec3("pointLights[3].specular", glm::vec3 { 0.2f, 0.2f, 0.2f });
+            vpLight.shader.setFloat("pointLights[3].constant",  1.0f);
+            vpLight.shader.setFloat("pointLights[3].linear",    1.4e-4f);
+            vpLight.shader.setFloat("pointLights[3].quadratic", 7.2e-8f);
 
-                vpLight.shader.setVec3("dirLights[0].direction", glm::vec3 {1.0f, 1.0f, 1.0f});
-                vpLight.shader.setVec3("dirLights[0].ambient",   glm::vec3 {0.1f, 0.1f, 0.1f});
-                vpLight.shader.setVec3("dirLights[0].diffuse",   glm::vec3 {0.3f, 0.3f, 0.3f});
-                vpLight.shader.setVec3("dirLights[0].specular",  glm::vec3 {0.5f, 0.5f, 0.5f});
-                vpLight.shader.setVec3("dirLights[1].direction", glm::vec3 {-1.0f, -1.0f, -1.0f});
-                vpLight.shader.setVec3("dirLights[1].ambient",   glm::vec3 {0.1f, 0.1f, 0.1f});
-                vpLight.shader.setVec3("dirLights[1].diffuse",   glm::vec3 {0.3f, 0.3f, 0.3f});
-                vpLight.shader.setVec3("dirLights[1].specular",  glm::vec3 {0.5f, 0.5f, 0.5f});
-
-                const glm::vec3 pointLightPositions[4] {
-                    { -500.0f, -500.0f, -500.0f },
-                    { -500.0f, 3500.0f, 3500.0f },
-                    { 3500.0f, -500.0f, 3500.0f },
-                    { 3500.0f, 3500.0f, -500.0f }
-                };
-                vpLight.shader.setVec3("pointLights[0].position", pointLightPositions[0]);
-                vpLight.shader.setVec3("pointLights[0].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
-                vpLight.shader.setVec3("pointLights[0].diffuse",  glm::vec3 { 0.6f, 0.6f, 0.6f });
-                vpLight.shader.setVec3("pointLights[0].specular", glm::vec3 { 1.0f, 1.0f, 1.0f });
-                vpLight.shader.setFloat("pointLights[0].constant",  1.0f);
-                vpLight.shader.setFloat("pointLights[0].linear",    1.4e-4f);
-                vpLight.shader.setFloat("pointLights[0].quadratic", 7.2e-8f);
-                vpLight.shader.setVec3("pointLights[1].position", pointLightPositions[1]);
-                vpLight.shader.setVec3("pointLights[1].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
-                vpLight.shader.setVec3("pointLights[1].diffuse",  glm::vec3 { 0.6f, 0.6f, 0.6f });
-                vpLight.shader.setVec3("pointLights[1].specular", glm::vec3 { 1.0f, 1.0f, 1.0f });
-                vpLight.shader.setFloat("pointLights[1].constant",  1.0f);
-                vpLight.shader.setFloat("pointLights[1].linear",    1.4e-4f);
-                vpLight.shader.setFloat("pointLights[1].quadratic", 7.2e-8f);
-                vpLight.shader.setVec3("pointLights[2].position", pointLightPositions[2]);
-                vpLight.shader.setVec3("pointLights[2].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
-                vpLight.shader.setVec3("pointLights[2].diffuse",  glm::vec3 { 0.1f, 0.1f, 0.1f });
-                vpLight.shader.setVec3("pointLights[2].specular", glm::vec3 { 0.2f, 0.2f, 0.2f });
-                vpLight.shader.setFloat("pointLights[2].constant",  1.0f);
-                vpLight.shader.setFloat("pointLights[2].linear",    1.4e-4f);
-                vpLight.shader.setFloat("pointLights[2].quadratic", 7.2e-8f);
-                vpLight.shader.setVec3("pointLights[3].position", pointLightPositions[3]);
-                vpLight.shader.setVec3("pointLights[3].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
-                vpLight.shader.setVec3("pointLights[3].diffuse",  glm::vec3 { 0.1f, 0.1f, 0.1f });
-                vpLight.shader.setVec3("pointLights[3].specular", glm::vec3 { 0.2f, 0.2f, 0.2f });
-                vpLight.shader.setFloat("pointLights[3].constant",  1.0f);
-                vpLight.shader.setFloat("pointLights[3].linear",    1.4e-4f);
-                vpLight.shader.setFloat("pointLights[3].quadratic", 7.2e-8f);
-
+            const auto drawSurfaceProfileData = [&](auto& eachProfileData) {
                 if(displayGeometryType(eachProfileData.profile) == DisplayGeometryType::surface) {
 
                     std::visit(
                         [&](const auto& profile) {
-                            draw(eachProfileData.data, vpLight.shader, profile.displaySettings);
+                            draw(eachProfileData.data, std::nullopt, vpLight.shader, profile.displaySettings);
                         },
                         eachProfileData.profile
                     );
+                }
+            };
+            if(vc.displaySettings.displayMode == DisplayMode::trajectory) {
+                for(auto& traj : vc.displayStates.trajectoryDataStates.trajectories) {
+                    for(auto& profileData : traj.profileData) {
+                        drawSurfaceProfileData(profileData);
+                    }
+                }
+            }
+            else {
+                for(auto& profileData : vc.displayStates.realtimeDataStates.profileData) {
+                    drawSurfaceProfileData(profileData);
                 }
             }
 
@@ -411,19 +428,31 @@ struct VisualDisplay {
             vpLine.shader.setMat4("model",          model);
             vpLine.shader.setMat3("modelInvTrans3", modelInvTrans3);
             vpLine.shader.setMat4("view",           view);
-            for(auto& eachProfileData : vc.displayStates.realtimeDataStates.profileData) {
 
-
+            const auto drawLineProfileData = [&](auto& eachProfileData) {
                 if(displayGeometryType(eachProfileData.profile) == DisplayGeometryType::line) {
 
                     std::visit(
                         [&](const auto& profile) {
-                            draw(eachProfileData.data, vpLine.shader, profile.displaySettings);
+                            draw(eachProfileData.data, std::nullopt, vpLine.shader, profile.displaySettings);
                         },
                         eachProfileData.profile
                     );
                 }
+            };
+            if(vc.displaySettings.displayMode == DisplayMode::trajectory) {
+                for(auto& traj : vc.displayStates.trajectoryDataStates.trajectories) {
+                    for(auto& profileData : traj.profileData) {
+                        drawLineProfileData(profileData);
+                    }
+                }
             }
+            else {
+                for(auto& profileData : vc.displayStates.realtimeDataStates.profileData) {
+                    drawLineProfileData(profileData);
+                }
+            }
+
 
             for(auto& vp : vps) {
                 std::lock_guard< std::mutex > guard(vp.veMutex);

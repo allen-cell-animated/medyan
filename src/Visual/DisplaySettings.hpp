@@ -148,6 +148,15 @@ constexpr auto text(ObjectViewSettings::Control::CameraMouseMode mode) {
 }
 
 //-------------------------------------
+// Playback settings
+//-------------------------------------
+
+struct TrajectoryPlaybackSettings {
+    float fps = 2;
+
+};
+
+//-------------------------------------
 // All display settings
 //-------------------------------------
 
@@ -159,6 +168,9 @@ struct DisplaySettings {
 
     // Main display
     ObjectViewSettings mainView;
+
+    // Trajectory playback
+    TrajectoryPlaybackSettings playback;
 };
 
 } // namespace medyan::visual

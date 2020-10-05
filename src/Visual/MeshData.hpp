@@ -54,15 +54,26 @@ public:
         makeBuffer(desc);
     }
     GlVertexBufferManager(GlVertexBufferManager&& rhs) {
-        bufferMade_ = rhs.bufferMade_;
-        vao_ = rhs.vao_;
-        vbo_ = rhs.vbo_;
-        // unset right hand side
-        rhs.bufferMade_ = false;
+        swap(*this, rhs);
     }
 
     ~GlVertexBufferManager() {
         deleteBuffer();
+    }
+
+    GlVertexBufferManager& operator=(GlVertexBufferManager&& rhs) {
+        if(this != &rhs) {
+            // clear this
+            deleteBuffer();
+
+            swap(*this, rhs);
+        }
+    }
+
+    friend void swap(GlVertexBufferManager& lhs, GlVertexBufferManager& rhs) {
+        std::swap(lhs.vao_,        rhs.vao_);
+        std::swap(lhs.vbo_,        rhs.vbo_);
+        std::swap(lhs.bufferMade_, rhs.bufferMade_);
     }
 
     void makeBuffer(MeshDataDescriptor desc) {
@@ -648,25 +659,10 @@ inline auto createLinkerMeshData(
 // Functions (mesh data display)
 //-------------------------------------
 
-// Auxiliary function to replace buffer data in OpenGL
-template< typename T >
-inline void replaceBuffer(GLenum target, const std::vector<T>& source) {
-    GLint prevSize;
-    glGetBufferParameteriv(target, GL_BUFFER_SIZE, &prevSize);
-
-    const auto newSize = sizeof(T) * source.size();
-
-    if(newSize > prevSize) {
-        glBufferData(target, newSize, source.data(), GL_DYNAMIC_DRAW);
-    } else {
-        glBufferSubData(target, 0, newSize, source.data());
-    }
-}
 
 inline auto convertToGlm(const mathfunc::Vec3f& vec) {
     return glm::vec3( vec[0], vec[1], vec[2] );
 }
-
 
 
 // Auxiliary functions to get polygon mode
@@ -700,66 +696,6 @@ inline auto displayGeometryType(const LinkerDisplaySettings& settings) {
 }
 
 
-// Draw elements using the mesh data.
-//
-// Notes:
-//   - This function must be used in an OpenGL context
-inline void draw(
-    MeshData& meshData,
-    const GlVertexBufferManager& vertexBufferManager,
-    GLenum polygonMode,
-    GLenum elementMode
-) {
-    glBindVertexArray(vertexBufferManager.vao());
-
-    glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
-
-    // Update data
-    if(meshData.updated) {
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBufferManager.vbo());
-        replaceBuffer(GL_ARRAY_BUFFER, meshData.data);
-        meshData.updated = false;
-    }
-
-    // Draw
-    glDrawArrays(elementMode, 0, meshData.data.size() / meshData.descriptor.strideSize);
-    // glDrawElements(ve->state.eleMode, ve->state.vertexIndices.size(), GL_UNSIGNED_INT, (void*)0);
-
-}
-template< typename GeometryDisplaySettings >
-inline void draw(
-    MeshData&                      meshData,
-    const Shader&                  shader,
-    const GeometryDisplaySettings& settings
-) {
-    if(settings.enabled) {
-        // setting uniform
-        if constexpr(std::is_same_v< GeometryDisplaySettings, SurfaceDisplaySettings >) {
-            shader.setVec3("material.specular", convertToGlm(settings.colorSpecular));
-            shader.setFloat("material.shininess", settings.colorShininess);
-        }
-
-        draw(meshData, settings.vertexBufferManager, polygonModeGl(settings), elementModeGl(settings));
-    }
-}
-
-inline void draw(MeshData& meshData, const Shader& shader, const MembraneDisplaySettings& settings) {
-    draw(meshData, shader, settings.surface);
-}
-inline void draw(MeshData& meshData, const Shader& shader, const FilamentDisplaySettings& settings) {
-    if(settings.pathMode == FilamentDisplaySettings::PathMode::line) {
-        draw(meshData, shader, settings.line);
-    } else {
-        draw(meshData, shader, settings.surface);
-    }
-}
-inline void draw(MeshData& meshData, const Shader& shader, const LinkerDisplaySettings& settings) {
-    if(settings.pathMode == LinkerDisplaySettings::PathMode::line) {
-        draw(meshData, shader, settings.line);
-    } else {
-        draw(meshData, shader, settings.surface);
-    }
-}
 
 
 } // namespace medyan::visual

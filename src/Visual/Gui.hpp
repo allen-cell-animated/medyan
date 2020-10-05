@@ -241,17 +241,11 @@ inline void guiMainWindow(
         [&](DisplayMode modeOld, DisplayMode modeNew) {
             switch(modeNew) {
                 case DisplayMode::trajectory:
-                    if(modeOld != modeNew) {
+                    if(modeOld != modeNew && displayStates.trajectoryDataStates.trajectories.empty()) {
                         pushAnAsyncTask(
                             displayStates.sync,
                             [&] {
-                                SyncStates::AtomicBoolGuard guard(displayStates.sync.trajectoryLoad);
-
-                                // if(auto& ts = displayStates.trajectoryDataStates.trajectories; ts.empty()) {
-                                //     ts.emplace_back();
-                                //     ts[0].data = readAllFrameDataFromOutput(ts[0].inputs);
-                                //     ts[0].profiles = makeDefaultElementProfiles();
-                                // }
+                                backgroundTaskReadTrajectory(displayStates, DisplayTrajectoryFileSettings {});
                             }
                         );
                     }
