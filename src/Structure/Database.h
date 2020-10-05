@@ -41,6 +41,7 @@ struct DatabaseDataDefault {
     void move_from_back(std::size_t) {}
     void move_content(std::size_t from, std::size_t to) {}
     void resize(std::size_t) {}
+    void settodummy(std::size_t) {}
 };
 
 template< typename T >
@@ -219,6 +220,7 @@ public:
     }
     ~Database() {
         // Only mark as deleted
+        db_data_type::getDbData().settodummy(_stableIndex);
         _deletedIndices.push_back(_stableIndex);
     }
 

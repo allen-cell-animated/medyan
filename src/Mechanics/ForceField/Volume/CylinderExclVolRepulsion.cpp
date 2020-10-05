@@ -328,7 +328,7 @@ void CylinderExclVolRepulsion::checkforculprit() {
 
 #endif
 floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSet, floatingpoint *krep) {
-	floatingpoint *c1, *c2, *c3, *c2temp, *c4, *newc2, d;
+	floatingpoint *c1, *c2, *c3, *c2temp, *c4, *newc1, *newc2, d;
 
 	doubleprecision a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
 	doubleprecision ATG1, ATG2, ATG3, ATG4;
@@ -347,14 +347,15 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSe
 	floatingpoint U_i = 0.0;
 	floatingpoint U = 0.0;
 	newc2 = new floatingpoint[3];
+	newc1 = new floatingpoint[3];
 //    std::cout<<"SERL ecvol nint "<<nint<<endl;
 	for (int i = 0; i < nint; i++) {
 
-		c1 = &coord[3 * beadSet[n * i]];
-		c2 = &coord[3 * beadSet[n * i + 1]];
-		c2temp = &coord[3 * beadSet[n * i + 1]];
-		c3 = &coord[3 * beadSet[n * i + 2]];
-		c4 = &coord[3 * beadSet[n * i + 3]];
+		c1 = &coord[beadSet[n * i]];
+		c2 = &coord[beadSet[n * i + 1]];
+		c2temp = &coord[beadSet[n * i + 1]];
+		c3 = &coord[beadSet[n * i + 2]];
+		c4 = &coord[beadSet[n * i + 3]];
 
 		floatingpoint trialvec[4]={0.01, 0.1, 1.0, 2.7};
 		uint trial = 0;
@@ -446,19 +447,20 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSe
 			U_i = energyN(coord, beadSet, krep, i);
 			if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
 			   || U_i != U_i || U_i < -1.0) {
+
 				short found = 0;
 				for (auto cyl:Cylinder::getCylinders()) {
-					auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-					auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
+					auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
+					auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
 					if (dbIndex1 == beadSet[n * i] &&
-					    dbIndex2 == beadSet[n * i + 1]) {
+					    dbIndex2 == beadSet[n * i + 1]) { // FIXME this is unsafe
 						CylinderVolumeInteractions::_cylinderCulprit1 = cyl;
 						found++;
 						if (found >= 2)
 							break;
 					} else if (dbIndex1 == beadSet[n * i + 2] &&
 					           dbIndex2 == beadSet[n * i +
-					                               3]) {
+					                               3]) { // FIXME this is unsafe
 						CylinderVolumeInteractions::_cylinderCulprit2 = cyl;
 						found++;
 						if (found >= 2)
@@ -522,17 +524,17 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSe
 				else {
 					short found = 0;
 					for (auto cyl:Cylinder::getCylinders()) {
-						auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-						auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
+						auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
+						auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
 						if (dbIndex1 == beadSet[n * i] &&
-						    dbIndex2 == beadSet[n * i + 1]) {
+						    dbIndex2 == beadSet[n * i + 1]) { // FIXME this is not safe
 							CylinderVolumeInteractions::_cylinderCulprit1 = cyl;
 							found++;
 							if (found >= 2)
 								break;
 						} else if (dbIndex1 == beadSet[n * i + 2] &&
 						           dbIndex2 == beadSet[n * i +
-						                               3]) {
+						                               3]) { // FIXME this is not safe
 							CylinderVolumeInteractions::_cylinderCulprit2 = cyl;
 							found++;
 							if (found >= 2)
@@ -591,6 +593,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, int *beadSe
 //        }
 	}
 	delete [] newc2;
+	delete [] newc1;
 	delete [] cp;
 	delete [] vec_A;
 	delete [] vec_B;
@@ -623,16 +626,16 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 
 	for (int i = 0; i < nint; i++) {
 
-		c1us = &coord[3 * beadSet[n * i]];
-		c2us = &coord[3 * beadSet[n * i +1]];
-		c3us = &coord[3 * beadSet[n * i +2]];
-		c4us = &coord[3 * beadSet[n * i +3]];
+		c1us = &coord[beadSet[n * i]];
+		c2us = &coord[beadSet[n * i +1]];
+		c3us = &coord[beadSet[n * i +2]];
+		c4us = &coord[beadSet[n * i +3]];
 
 		//stretch coords
-		f1 = &f[3 * beadSet[n * i]];
-		f2 = &f[3 * beadSet[n * i + 1]];
-		f3 = &f[3 * beadSet[n * i + 2]];
-		f4 = &f[3 * beadSet[n * i + 3]];
+		f1 = &f[beadSet[n * i]];
+		f2 = &f[beadSet[n * i + 1]];
+		f3 = &f[beadSet[n * i + 2]];
+		f4 = &f[beadSet[n * i + 3]];
 
 		c1[0] = c1us[0] + z * f1[0];
 		c1[1] = c1us[1] + z * f1[1];
@@ -658,16 +661,16 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 			   || U_i != U_i || U_i < -1.0) {
 				short found = 0;
 				for(auto cyl:Cylinder::getCylinders()){
-					auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-					auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
-					if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
+					auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
+					auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
+					if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) { // FIXME this is not safe
 						CylinderVolumeInteractions::_cylinderCulprit1 = cyl;
 						found++;
 						if(found>=2)
 							break;
 					}
 					else if(dbIndex1 == beadSet[n * i + 2] && dbIndex2 == beadSet[n * i +
-					                                                              3]){
+					                                                              3]){ // FIXME this is not safe
 						CylinderVolumeInteractions::_cylinderCulprit2 = cyl;
 						found++;
 						if(found>=2)
@@ -727,16 +730,16 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 		   || U_i != U_i || U_i < -1.0) {
 			short found = 0;
 			for(auto cyl:Cylinder::getCylinders()){
-				auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-				auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
-				if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
+				auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
+				auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
+				if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) { // FIXME this is not safe
 					CylinderVolumeInteractions::_cylinderCulprit1 = cyl;
 					found++;
 					if(found>=2)
 						break;
 				}
 				else if(dbIndex1 == beadSet[n * i + 2] && dbIndex2 == beadSet[n * i +
-				                                                              3]){
+				                                                              3]){ // FIXME this is not safe
 					CylinderVolumeInteractions::_cylinderCulprit2 = cyl;
 					found++;
 					if(found>=2)
@@ -775,6 +778,8 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 	doubleprecision ATG1, ATG2, ATG3, ATG4;
 	doubleprecision A1, A2, E1, E2, B1, B2, F1, F2, A11, A12, A13, A14;
 	doubleprecision E11, E12, E13, E14, B11, B12, B13, B14, F11, F12, F13, F14;
+    doubleprecision term1, term2, term3, term4, term5, term6, term7, term8, term9,
+        term10, term11, term12;
 
 	//Additional paramteres
 	doubleprecision sqmag_D, sqmag_E;
@@ -790,16 +795,16 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 	newc2 = new floatingpoint[3];
 	for (int i = 0; i < nint; i++) {
 
-		c1 = &coord[3 * beadSet[n * i]];
-		c2 = &coord[3 * beadSet[n * i + 1]];
-		c3 = &coord[3 * beadSet[n * i + 2]];
-		c4 = &coord[3 * beadSet[n * i + 3]];
+		c1 = &coord[beadSet[n * i]];
+		c2 = &coord[beadSet[n * i + 1]];
+		c3 = &coord[beadSet[n * i + 2]];
+		c4 = &coord[beadSet[n * i + 3]];
 
 		//stretch coords
-		f1 = &f[3 * beadSet[n * i]];
-		f2 = &f[3 * beadSet[n * i + 1]];
-		f3 = &f[3 * beadSet[n * i + 2]];
-		f4 = &f[3 * beadSet[n * i + 3]];
+		f1 = &f[beadSet[n * i]];
+		f2 = &f[beadSet[n * i + 1]];
+		f3 = &f[beadSet[n * i + 2]];
+		f4 = &f[beadSet[n * i + 3]];
 
 		if(false) {
 			//check if in same plane
@@ -899,11 +904,11 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 		A1 = AA*AA/(AA*AA + e*e);
 		A2 = AA*AA/(AA*AA + (a + e)*(a + e));
 
+		B1 = BB*BB/(BB*BB + (F - b)*(F - b));
+		B2 = BB*BB/(BB*BB + F*F);
 		E1 = EE*EE/(EE*EE + (a + e - d)*(a + e - d));
 		E2 = EE*EE/(EE*EE + (e - d)*(e - d));
 
-		B1 = BB*BB/(BB*BB + (F - b)*(F - b));
-		B2 = BB*BB/(BB*BB + F*F);
 
 		F1 = FF*FF/(FF*FF + (d + F - b)*(d + F - b));
 		F2 = FF*FF/(FF*FF + (d + F)*(d + F));
@@ -934,51 +939,84 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 
 		doubleprecision f1l[3], f2l[3], f3l[3], f4l[3];
 
-		f1l[0] =  - 0.5*invJJ*( (c2[0] - c1[0] ) *( A13 + E13 + B11*b - F11*b + A11*d -
-		                                            E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*F - 2*U*(b*e - d*F)
-		                                            + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA)
-		                                                              + (E12*(b + c - 2*F))/(2*EE) - A11*F + E11*F - 2*U*F*F + (F12*b)/(2*FF)) ) + (c4[0] - c3[0] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*F - F11*F - 2*U*a*F - 4*U*e*F + 2*U*(d*e - a*F) - (B12*F)/BB) +  (c1[0] - c3[0] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*F + 2*U*(b*e - d*F) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
+		term1 =  A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*
+		    (d - e))/EE + 2*U*d*F - 2*U*(b*e - d*F) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*F))/(2*EE) - A11*F + E11*F - 2*U*F*F + (F12*b)/(2*FF));
+		term2 = B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e +
+		    E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*F - F11*F - 2*U*a*F - 4*U*e*F + 2*U*(d*e - a*F) - (B12*F)/BB;
+		term3 = -A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*
+		    (d - e))/EE - 2*U*d*F + 2*U*(b*e - d*F) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF));
 
-		f1l[1] =  - 0.5*invJJ*( (c2[1] - c1[1] ) *( A13 + E13 + B11*b - F11*b + A11*d -
-		                                            E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*F - 2*U*(b*e - d*F) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*F))/(2*EE) - A11*F + E11*F - 2*U*F*F + (F12*b)/(2*FF)) ) + (c4[1] - c3[1] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*F - F11*F - 2*U*a*F - 4*U*e*F + 2*U*(d*e - a*F) - (B12*F)/BB) +  (c1[1] - c3[1] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*F + 2*U*(b*e - d*F) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
+		term4 =  A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA) +(E12*(b+c-2*F))/(2*EE)
+		    -A11*F+E11*F-2*U*F*F+(F12*b)/(2*FF);
+		term5 = -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))
+		    /EE - B11*F + F11*F + 4*U*e*F - (F12*(d + F))/FF;
+		term6 = A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*
+		    (d - e))/EE + 2*U*d*F - 2*U*(b*e - d*F) + (F12*b)/FF;
 
-		f1l[2] =  - 0.5*invJJ*( (c2[2] - c1[2] ) *( A13 + E13 + B11*b - F11*b + A11*d -
-		                                            E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*F - 2*U*(b*e - d*F) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*F))/(2*EE) - A11*F + E11*F - 2*U*F*F + (F12*b)/(2*FF)) ) + (c4[2] - c3[2] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*F - F11*F - 2*U*a*F - 4*U*e*F + 2*U*(d*e - a*F) - (B12*F)/BB) +  (c1[2] - c3[2] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*F + 2*U*(b*e - d*F) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
+		term7 = -A13 - F13 - B11*b + F11*b - A11*d - E11*d - 2*F11*d + 4*U*c*d - A11*e +
+		    E11*e + 2*U*b*e + (A12*e)/AA + B11*F - F11*F - 2*U*d*F - 4*U*e*F + 2*U*(b*e - d*F) - (F12*b)/FF + (F12*(d + F))/FF;
+		term8 = -B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE +
+		    2*U*a*F - 2*U*(d*e - a*F) + (B12*F)/BB + (F12*(d + F))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF));
+		term9 = -B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE +
+		    2*U*a*F - 2*U*(d*e - a*F) + (B12*F)/BB + (F12*(d + F))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF));
 
-
-		f2l[0] =  - invJJ*( (c2[0] - c1[0] )*( A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA)
-		                                       +(E12*(b+c-2*F))/(2*EE)-A11*F+E11*F-2*U*F*F+(F12*b)/(2*FF) )
-		                    + 0.5*(c4[0] - c3[0])*(-E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e
-		                                           - E11*e - (E12*(d - e))/EE - B11*F + F11*F + 4*U*e*F - (F12*(d + F))/FF)  + 0.5*(c1[0] - c3[0] )* (A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*F - 2*U*(b*e - d*F) + (F12*b)/FF) );
-
-		f2l[1] = - invJJ*( (c2[1] - c1[1] )*( A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA)+
-		                                      (E12*(b+c-2*F))/(2*EE)-A11*F+E11*F-2*U*F*F+(F12*b)/(2*FF) ) + 0.5*(c4[1] - c3[1])*(-E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*F + F11*F + 4*U*e*F - (F12*(d + F))/FF)  + 0.5*(c1[1] - c3[1] )* (A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*F - 2*U*(b*e - d*F) + (F12*b)/FF) );
-
-		f2l[2] = - invJJ*( (c2[2] - c1[2] )*( A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA)+
-		                                      (E12*(b+c-2*F))/(2*EE)-A11*F+E11*F-2*U*F*F+(F12*b)/(2*FF) ) + 0.5*(c4[2] - c3[2])*(-E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*F + F11*F + 4*U*e*F - (F12*(d + F))/FF)  + 0.5*(c1[2] - c3[2] )* (A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*F - 2*U*(b*e - d*F) + (F12*b)/FF) );
-
-		f3l[0] =  - 0.5*invJJ*( (c2[0] - c1[0] )*(-A13 - F13 - B11*b + F11*b - A11*d -
-		                                          E11*d - 2*F11*d + 4*U*c*d - A11*e + E11*e + 2*U*b*e + (A12*e)/AA + B11*F - F11*F - 2*U*d*F - 4*U*e*F + 2*U*(b*e - d*F) - (F12*b)/FF + (F12*(d + F))/FF) + (c4[0] - c3[0] )*(-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*F - 2*U*(d*e - a*F) + (B12*F)/BB + (F12*(d + F))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))) + (c1[0] - c3[0] ) * (-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*F - 2*U*(d*e - a*F) + (B12*F)/BB + (F12*(d + F))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF))) );
-
-		f3l[1] =  - 0.5*invJJ*( (c2[1] - c1[1] )*(-A13 - F13 - B11*b + F11*b - A11*d -
-		                                          E11*d - 2*F11*d + 4*U*c*d - A11*e + E11*e + 2*U*b*e + (A12*e)/AA + B11*F - F11*F - 2*U*d*F - 4*U*e*F + 2*U*(b*e - d*F) - (F12*b)/FF + (F12*(d + F))/FF) + (c4[1] - c3[1] )*(-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*F - 2*U*(d*e - a*F) + (B12*F)/BB + (F12*(d + F))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))) + (c1[1] - c3[1] ) * (-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*F - 2*U*(d*e - a*F) + (B12*F)/BB + (F12*(d + F))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF))) ) ;
-
-		f3l[2] =  - 0.5*invJJ*( (c2[2] - c1[2] )*(-A13 - F13 - B11*b + F11*b - A11*d -
-		                                          E11*d - 2*F11*d + 4*U*c*d - A11*e + E11*e + 2*U*b*e + (A12*e)/AA + B11*F - F11*F - 2*U*d*F - 4*U*e*F + 2*U*(b*e - d*F) - (F12*b)/FF + (F12*(d + F))/FF) + (c4[2] - c3[2] )*(-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*F - 2*U*(d*e - a*F) + (B12*F)/BB + (F12*(d + F))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))) + (c1[2] - c3[2] ) * (-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*F - 2*U*(d*e - a*F) + (B12*F)/BB + (F12*(d + F))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF))) );
+		term10 = -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))
+		    /EE - B11*F + F11*F +4*U*e*F - (F12*(d + F))/FF;
+		term11 = B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/
+		    (2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF);
+		term12 = B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE -
+		    2*U*a*F + 2*U*(d*e - a*F) - (B12*F)/BB - (F12*(d + F))/FF;
 
 
-		f4l[0] =  - invJJ*( 0.5*(c2[0] - c1[0] )*( -E13 + F13 + 2*E11*d + 2*F11*d -
-		                                           4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*F + F11*F +4*U*e*F - (F12*(d + F))/FF ) +
-		                    (c4[0] - c3[0])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e
-		                                     - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))
-		                    + 0.5*(c1[0] - c3[0] )* (B13 + F13 - A11*a
-		                                             + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*F + 2*U*(d*e - a*F) - (B12*F)/BB - (F12*(d + F))/FF) )  ;
+        f1l[0] =  - 0.5*invJJ*( (c2[0] - c1[0] ) *( term1 )
+		                      + (c4[0] - c3[0] ) *( term2 )
+		                      + (c1[0] - c3[0] )* ( term3 ));
 
-		f4l[1] =  - invJJ*( 0.5*(c2[1] - c1[1] )*( -E13 + F13 + 2*E11*d + 2*F11*d -
-		                                           4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*F + F11*F +4*U*e*F - (F12*(d + F))/FF ) + (c4[1] - c3[1])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[1] - c3[1] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*F + 2*U*(d*e - a*F) - (B12*F)/BB - (F12*(d + F))/FF) ) ;
+		f1l[1] =  - 0.5*invJJ*( (c2[1] - c1[1] ) *( term1 )
+							  + (c4[1] - c3[1] ) *( term2 )
+							  + (c1[1] - c3[1] )* ( term3 ));
 
-		f4l[2] =  - invJJ*( 0.5*(c2[2] - c1[2] )*( -E13 + F13 + 2*E11*d + 2*F11*d -
-		                                           4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*F + F11*F +4*U*e*F - (F12*(d + F))/FF ) + (c4[2] - c3[2])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[2] - c3[2] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*F + 2*U*(d*e - a*F) - (B12*F)/BB - (F12*(d + F))/FF) ) ;
+		f1l[2] =  - 0.5*invJJ*( (c2[2] - c1[2] ) *( term1 )
+							  + (c4[2] - c3[2] ) *( term2 )
+							  + (c1[2] - c3[2] )* ( term3 ));
+
+
+		f2l[0] =  - invJJ*( (c2[0] - c1[0] ) *( term4 )
+		              + 0.5*(c4[0] - c3[0] ) *( term5 )
+		              + 0.5*(c1[0] - c3[0] )* ( term6));
+
+		f2l[1] = - invJJ*( (c2[1] - c1[1] ) *( term4 )
+					 + 0.5*(c4[1] - c3[1] ) *( term5 )
+					 + 0.5*(c1[1] - c3[1] )* ( term6 ));
+
+		f2l[2] = - invJJ*( (c2[2] - c1[2]) *( term4 )
+					 + 0.5*(c4[2] - c3[2]) *( term5 )
+					 + 0.5*(c1[2] - c3[2])* ( term6 ));
+
+		f3l[0] =  - 0.5*invJJ*( (c2[0] - c1[0]) *( term7 )
+							  + (c4[0] - c3[0]) *( term8 )
+							  + (c1[0] - c3[0])* ( term9 ));
+
+		f3l[1] =  - 0.5*invJJ*( (c2[1] - c1[1]) *( term7 )
+							  + (c4[1] - c3[1]) *( term8 )
+							  + (c1[1] - c3[1])* ( term9 )) ;
+
+		f3l[2] =  - 0.5*invJJ*( (c2[2] - c1[2]) *( term7 )
+							  + (c4[2] - c3[2]) *( term8 )
+							  + (c1[2] - c3[2])* ( term9 ) );
+
+
+		f4l[0] =  - invJJ*( 0.5*(c2[0] - c1[0]) *( term10 )
+						      + (c4[0] - c3[0]) *( term11 )
+		                  + 0.5*(c1[0] - c3[0])* ( term12 ));
+
+		f4l[1] =  - invJJ*( 0.5*(c2[1] - c1[1]) *( term10 )
+						      + (c4[1] - c3[1]) *( term11 )
+						  + 0.5*(c1[1] - c3[1] )* (term12 ));
+
+		f4l[2] =  - invJJ*( 0.5*(c2[2] - c1[2]) *( term10 )
+							  + (c4[2] - c3[2]) *( term11 )
+						  + 0.5*(c1[2] - c3[2])* ( term12 )) ;
 
 
 		if(checkNaN_INF<doubleprecision>(f1l, 0, 2)||checkNaN_INF<doubleprecision>(f2l,0,2)
@@ -1009,19 +1047,35 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 }
 
 floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord,
-                                                int *beadSet, floatingpoint *krep, int i) {
-	floatingpoint *c1, *c2, *c3, *c4;
+                                                int *beadSet, floatingpoint *krep, int i,
+                                                bool movebeads) {
+	floatingpoint *c1, *c2, *c3, *c4, *newc1, *newc2;
 
 	doubleprecision a, b, c, d, e, F;
 
 	doubleprecision U_i = 0.0;
 
+	newc2 = new floatingpoint[3];
+	newc1 = new floatingpoint[3];
+
 	int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
 
-	c1 = &coord[3 * beadSet[n * i]];
-	c2 = &coord[3 * beadSet[n * i + 1]];
-	c3 = &coord[3 * beadSet[n * i + 2]];
-	c4 = &coord[3 * beadSet[n * i + 3]];
+	c1 = &coord[beadSet[n * i]];
+	c2 = &coord[beadSet[n * i + 1]];
+	c3 = &coord[beadSet[n * i + 2]];
+	c4 = &coord[beadSet[n * i + 3]];
+
+	// Move beads and try if they are in plane
+	if(movebeads && areInPlane(c1, c2, c3, c4)) {
+			cout << "moving out of plane" << endl;
+			//slightly move point
+			movePointOutOfPlane(c1, c2, c3, c4, newc2, 2,
+			                    0.01);
+			movePointOutOfPlane(c1, c2, c3, c4, newc1, 1,
+			                    0.01);
+			c2 = newc2;
+			c1 = newc1;
+	}
 
 	a = scalarProduct(c1, c2, c1, c2);//always positive
 	b = scalarProduct(c3, c4, c3, c4);//always positive
@@ -1092,15 +1146,31 @@ floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord,
 
 	U_i = krep[i] * (deltas * deltat/9.0) * (Termset1 + Termset2 + Termset3 + Termset4);
 
+	delete [] newc1;
+	delete [] newc2;
+
+	if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
+	   || U_i != U_i || U_i < -1.0) {
+		if(!movebeads){
+			movebeads = true;
+			energyN(coord, beadSet, krep, i, movebeads);
+		}
+	}
+
 	//cout<<"Numerical result "<<U_i<<endl;
 	return U_i;
 }
 
 void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
-                                      int *beadSet, floatingpoint *krep, int i) {
-	floatingpoint *c1, *c2, *c3, *c4;
+                                      int *beadSet, floatingpoint *krep, int i,
+                                      bool movebeads) {
+	floatingpoint *c1, *c2, *c3, *c4, *newc1, *newc2;
 	floatingpoint *f1, *f2, *f3, *f4;
 	doubleprecision a, b, c, d, e, F;
+
+
+	newc2 = new floatingpoint[3];
+	newc1 = new floatingpoint[3];
 
 	vector<doubleprecision> vecA, vecB, vecC;
 
@@ -1110,15 +1180,24 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 
 	int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
 
-	c1 = &coord[3 * beadSet[n * i]];
-	c2 = &coord[3 * beadSet[n * i + 1]];
-	c3 = &coord[3 * beadSet[n * i + 2]];
-	c4 = &coord[3 * beadSet[n * i + 3]];
+	c1 = &coord[beadSet[n * i]];
+	c2 = &coord[beadSet[n * i + 1]];
+	c3 = &coord[beadSet[n * i + 2]];
+	c4 = &coord[beadSet[n * i + 3]];
 
-	f1 = &f[3 * beadSet[n * i]];
-	f2 = &f[3 * beadSet[n * i + 1]];
-	f3 = &f[3 * beadSet[n * i + 2]];
-	f4 = &f[3 * beadSet[n * i + 3]];
+	if (movebeads && areInPlane(c1, c2, c3, c4)) {
+
+		//slightly move point
+		movePointOutOfPlane(c1, c2, c3, c4, newc2, 2, 0.01);
+		movePointOutOfPlane(c1, c2, c3, c4, newc1, 1, 0.01);
+		c2 = newc2;
+		c1 = newc1;
+	}
+
+	f1 = &f[beadSet[n * i]];
+	f2 = &f[beadSet[n * i + 1]];
+	f3 = &f[beadSet[n * i + 2]];
+	f4 = &f[beadSet[n * i + 3]];
 
 	a = scalarProduct(c1, c2, c1, c2);//always positive
 	b = scalarProduct(c3, c4, c3, c4);//always positive
@@ -1244,62 +1323,86 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 	cout<<f4l[0]<<" "<<f4l[1]<<" "<<f4l[2]<<endl;*/
 
 	delete [] integrandarray;
+	delete [] newc1;
+	delete [] newc2;
 
 	if(checkNaN_INF<doubleprecision>(f1l, 0, 2)||checkNaN_INF<doubleprecision>(f2l,0,2)
 	        ||checkNaN_INF<doubleprecision>(f3l, 0, 2) ||checkNaN_INF<doubleprecision>(f4l,0,2)){
-
-		cout<<"Cylinder Exclusion Force becomes infinite. Printing data "<<endl;
-
-		short found = 0;
-		Cylinder *cyl1 = nullptr, *cyl2 = nullptr;
-		for(auto cyl:Cylinder::getCylinders()){
-			auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-			auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
-			if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
-				cyl1 = cyl;
-				found++;
-				if(found>=2)
-					break;
-			}
-			else if(dbIndex1 == beadSet[n * i + 2] && dbIndex2 == beadSet[n * i + 3]){
-				cyl2 = cyl;
-				found++;
-				if(found>=2)
-					break;
-			}
+		if(!movebeads){
+			movebeads = true;
+			forceN(coord, f, beadSet, krep, i, movebeads);
 		}
-		cout<<"Cylinder IDs "<<cyl1->getId()<<" "<<cyl2->getId()<<" with cIndex "
-		    <<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex()<<" and bIndex "
-		    <<cyl1->getFirstBead()->getStableIndex()<<" "
-		    <<cyl1->getSecondBead()->getStableIndex()<<" "
-		    <<cyl2->getFirstBead()->getStableIndex()<<" "
-		    <<cyl2->getSecondBead()->getStableIndex()<<endl;
+		else {
+			cout << "Cylinder Exclusion Force becomes infinite. Printing data " << endl;
 
-		cout<<"Printing coords"<<endl;
-		cout<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<endl;
-		cout<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<endl;
-		cout<<c3[0]<<" "<<c3[1]<<" "<<c3[2]<<endl;
-		cout<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
-		cout<<"Printing force"<<endl;
-		cout<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<endl;
-		cout<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<endl;
-		cout<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<endl;
-		cout<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
-		cout<<"Printing binary Coords"<<endl;
-		printvariablebinary(c1,0,2);
-		printvariablebinary(c2,0,2);
-		printvariablebinary(c3,0,2);
-		printvariablebinary(c4,0,2);
-		cout<<"Printing binary Force"<<endl;
-		printvariablebinary(f1,0,2);
-		printvariablebinary(f2,0,2);
-		printvariablebinary(f3,0,2);
-		printvariablebinary(f4,0,2);
+			short found = 0;
+			Cylinder *cyl1 = nullptr, *cyl2 = nullptr;
+			for (auto cyl:Cylinder::getCylinders()) {
+				auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
+				auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
+				if (dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
+					cyl1 = cyl;
+					found++;
+					if (found >= 2)
+						break;
+				} else if (dbIndex1 == beadSet[n * i + 2] &&
+				           dbIndex2 == beadSet[n * i + 3]) {
+					cyl2 = cyl;
+					found++;
+					if (found >= 2)
+						break;
+				}
+			}
+			cout << "Cylinder IDs " << cyl1->getId() << " " << cyl2->getId()
+			     << " with cIndex "
+			     << cyl1->getStableIndex() << " " << cyl2->getStableIndex()
+			     << " and bIndex "
+			     << cyl1->getFirstBead()->getStableIndex() << " "
+			     << cyl1->getSecondBead()->getStableIndex() << " "
+			     << cyl2->getFirstBead()->getStableIndex() << " "
+			     << cyl2->getSecondBead()->getStableIndex() << endl;
 
-		cout<<"Printing infinite energy contributions "<<endl;
-		cout<<"a "<<a<<" b "<<b<<" c "<<c<<" d "<<d<<" e "<<e<<" f "<<F<<endl;
+			cout << "Printing coords" << endl;
+			cout << c1[0] << " " << c1[1] << " " << c1[2] << endl;
+			cout << c2[0] << " " << c2[1] << " " << c2[2] << endl;
+			cout << c3[0] << " " << c3[1] << " " << c3[2] << endl;
+			cout << c4[0] << " " << c4[1] << " " << c4[2] << endl;
+			cout << "Printing force" << endl;
+			cout << f1[0] << " " << f1[1] << " " << f1[2] << endl;
+			cout << f2[0] << " " << f2[1] << " " << f2[2] << endl;
+			cout << f3[0] << " " << f3[1] << " " << f3[2] << endl;
+			cout << f4[0] << " " << f4[1] << " " << f4[2] << endl;
+			cout << "Printing binary Coords" << endl;
+			printvariablebinary(c1, 0, 2);
+			printvariablebinary(c2, 0, 2);
+			printvariablebinary(c3, 0, 2);
+			printvariablebinary(c4, 0, 2);
+			cout << "Printing binary Force" << endl;
+			printvariablebinary(f1, 0, 2);
+			printvariablebinary(f2, 0, 2);
+			printvariablebinary(f3, 0, 2);
+			printvariablebinary(f4, 0, 2);
 
-		exit(EXIT_FAILURE);
+			cout << "Printing infinite energy contributions " << endl;
+			cout << "a " << a << " b " << b << " c " << c << " d " << d << " e " << e
+			     << " f " << F << endl;
+
+			cout << "Printing results of numerical integrations" << endl;
+			//0     4/r^6
+			//1     4s/r^6
+			//2     4s*s/r^6
+			//3     4*s*t/r^6
+			//4     4*t/r^6
+			//5     4*t*t/r^6
+			cout << "\\int\\int ds.dt.4/r^6 " << integration[0] << endl;
+			cout << "\\int\\int ds.dt.4s/r^6 " << integration[1] << endl;
+			cout << "\\int\\int ds.dt.4s^2/r^6 " << integration[2] << endl;
+			cout << "\\int\\int ds.dt.4st/r^6 " << integration[3] << endl;
+			cout << "\\int\\int ds.dt.4t/r^6 " << integration[4] << endl;
+			cout << "\\int\\int ds.dt.4t^2/r^6 " << integration[5] << endl;
+
+			exit(EXIT_FAILURE);
+		}
 	}
 	else{
 		for(int dim = 0; dim<3; dim++) {

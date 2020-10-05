@@ -27,7 +27,7 @@ public:
     floatingpoint energy(floatingpoint *coord, int *beadSet,
                   floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos);
     
-    floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
+    [[deprecated]] floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
                   floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, floatingpoint d);
 
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,

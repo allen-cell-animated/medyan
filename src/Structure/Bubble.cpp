@@ -23,7 +23,9 @@
 Bubble::Bubble(SubSystem* ps, vector<floatingpoint> coordinates, short type)
 
     : Trackable(true, false, true, false), _ps(ps), _type(type),
-      coordinate(coordinates) {
+      coord(vector2Vec< 3, floatingpoint >(coordinates)), force {},
+      birthTime_(tau())
+{
     
     //set up mechanical constants
     _kRepuls = SysParams::Mechanics().BubbleK[_type];
@@ -44,15 +46,8 @@ Bubble::Bubble(SubSystem* ps, vector<floatingpoint> coordinates, short type)
           _AFMBendingK = SysParams::Mechanics().AFMBendingK[_type];
       }
           
-    //set up bead
-    _bead = _ps->addTrackable<Bead>(coordinates, this, 0);
 }
 
-void Bubble::updatePosition() {
-    
-
-    coordinate = _bead->vcoordinate();
-}
 
 void Bubble::updatePositionManually() {
     //if reaching the desire position
@@ -63,7 +58,7 @@ void Bubble::updatePositionManually() {
     //All position updates will be finished in 1 second
     //Step displacement is 1 /StepTotal
     if(tau() > (currentStep * SysParams::Chemistry().StepTime + iter * 1 / SysParams::Chemistry().StepTotal)){
-        floatingpoint *bcoord, *coord, step;
+        floatingpoint step;
         
         if(currentStep > SysParams::Chemistry().IterChange){
             step = SysParams::Chemistry().AFMStep2;
@@ -72,12 +67,10 @@ void Bubble::updatePositionManually() {
             step = SysParams::Chemistry().AFMStep1;
         }
 
-        _bead->coordinate()[2] += step;
-
-        coordinate[2] += step;
+        coord[2] += step;
 
         // Update boundary element coordinate
-        static_cast<AFM*>(getParent())->getPlaneBoundaryElement()->updateCoords(_bead->vcoordinate());
+        static_cast<AFM*>(getParent())->getPlaneBoundaryElement()->updateCoords(vec2Vector(coord));
 
         iter++;
     }
@@ -91,13 +84,9 @@ void Bubble::printSelf() {
     cout << "Bubble: ptr = " << this << endl;
     cout << "Bubble ID = " << getId() << endl;
     cout << "Bubble type = " << _type << endl;
+    cout << "Bubble coord = " << coord << endl;
+    cout << "Bubble force = " << force << endl;
     cout << "Bubble radius = " << _radius << endl;
-    
-    cout << endl;
-    
-    cout << "Bead information..." << endl;
-    
-    _bead->printSelf();
     
     cout << endl;
 }

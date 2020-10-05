@@ -60,10 +60,10 @@ FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting) {
     }
 }
 
-void FilamentFF::vectorize() {
+void FilamentFF::vectorize(const FFCoordinateStartingIndex& si) {
 
     for (auto &interaction : _filamentInteractionVector)
-        interaction->vectorize();
+        interaction->vectorize(si);
 }
 
 void FilamentFF::cleanup() {

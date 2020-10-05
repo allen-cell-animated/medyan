@@ -251,10 +251,10 @@ floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, int *be
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
         midPointCoordinate(v1, coord1, coord2, pos1[i]);
         midPointCoordinate(v2, coord3, coord4, pos2[i]);
@@ -303,15 +303,15 @@ floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, floatin
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
-        f4 = &f[3 * beadSet[n * i + 3]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
+        f4 = &f[beadSet[n * i + 3]];
 
         midPointCoordinateStretched(v1, coord1, f1, coord2, f2, pos1[i], d);
         midPointCoordinateStretched(v2, coord3, f3, coord4, f4, pos2[i], d);
@@ -354,15 +354,17 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f
     floatingpoint *coord1, *coord2, *coord3, *coord4, dist, invL;
     floatingpoint *v1 = new floatingpoint[3];
     floatingpoint *v2 = new floatingpoint[3];
+    floatingpoint mx, my, mz;
+    floatingpoint Fmx, Fmy, Fmz;
 
     floatingpoint f0, *f1, *f2, *f3, *f4;
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
         midPointCoordinate(v1, coord1, coord2, pos1[i]);
         midPointCoordinate(v2, coord3, coord4, pos2[i]);
@@ -373,30 +375,39 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f
 
         f0 = kstr[i] * ( dist - eql[i] ) * invL;
 
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
-        f4 = &f[3 * beadSet[n * i + 3]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
+        f4 = &f[beadSet[n * i + 3]];
+
+        //Motor bond vector
+        mx  = v2[0] - v1[0];
+        my  = v2[1] - v1[1];
+        mz  = v2[2] - v1[2];
+        //Force acting along motor vector
+        Fmx =  -f0 * ( mx );
+        Fmy =  -f0 * ( my );
+        Fmz =  -f0 * ( mz );
 
         //force on i
-        f1[0] +=   -f0 * ( v1[0] - v2[0] ) * (1 - pos1[i]);
-        f1[1] +=   -f0 * ( v1[1] - v2[1] ) * (1 - pos1[i]);
-        f1[2] +=   -f0 * ( v1[2] - v2[2] ) * (1 - pos1[i]);
+        f1[0] +=   -Fmx * (1 - pos1[i]);
+        f1[1] +=   -Fmy * (1 - pos1[i]);
+        f1[2] +=   -Fmz * (1 - pos1[i]);
 
         // force i+1
-        f2[0] +=   -f0 * ( v1[0] - v2[0] ) * (pos1[i]);
-        f2[1] +=   -f0 * ( v1[1] - v2[1] ) * (pos1[i]);
-        f2[2] +=   -f0 * ( v1[2] - v2[2] ) * (pos1[i]);
+        f2[0] +=   -Fmx * (pos1[i]);
+        f2[1] +=   -Fmy * (pos1[i]);
+        f2[2] +=   -Fmz * (pos1[i]);
 
         //force on j
-        f3[0] +=   f0 * ( v1[0] - v2[0] ) * (1 - pos2[i]);
-        f3[1] +=   f0 * ( v1[1] - v2[1] ) * (1 - pos2[i]);
-        f3[2] +=   f0 * ( v1[2] - v2[2] ) * (1 - pos2[i]);
+        f3[0] +=   Fmx * (1 - pos2[i]);
+        f3[1] +=   Fmy * (1 - pos2[i]);
+        f3[2] +=   Fmz * (1 - pos2[i]);
 
         // force j+1
-        f4[0] +=   f0 * ( v1[0] - v2[0] ) * (pos2[i]);
-        f4[1] +=   f0 * ( v1[1] - v2[1] ) * (pos2[i]);
-        f4[2] +=   f0 * ( v1[2] - v2[2] ) * (pos2[i]);
+        f4[0] +=   Fmx * (pos2[i]);
+        f4[1] +=   Fmy * (pos2[i]);
+        f4[2] +=   Fmz * (pos2[i]);
         //asign stretching force
         stretchforce[i] = f0/invL;
 //        MotorGhost::getMotorGhosts()[i]->getMMotorGhost()->stretchForce = f0;

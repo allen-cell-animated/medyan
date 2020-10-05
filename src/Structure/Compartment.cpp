@@ -211,9 +211,10 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                 uint32_t j = 0;
                 int dBI = SysParams::Chemistry().linkerbindingskip-1;
                 if(cyl->isMinusEnd() == false) {
-                    for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                         it < SysParams::Chemistry().bindingSites[_filamentType].end();
-                         it=it+dBI) {
+                    for (int itI = 0; itI < SysParams::Chemistry().bindingSites[_filamentType].size(); itI += dBI) {
+
+                        auto it = SysParams::Chemistry().bindingSites[_filamentType].begin() + itI;
+
                         bool state = false;
                         if (isvectorizedgather)
                             state = checkoccupancy(boundstate, bstatepos,
@@ -252,9 +253,10 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                 else{
                     /* If it is the minus end Cylinder, add the binding sites that are
                      * species Filament*/
-                    for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                         it < SysParams::Chemistry().bindingSites[_filamentType].end();
-                         it=it+dBI) {
+                    for (int itI = 0; itI < SysParams::Chemistry().bindingSites[_filamentType].size(); itI += dBI) {
+
+                        auto it = SysParams::Chemistry().bindingSites[_filamentType].begin() + itI;
+
                         auto sf = Cylinder::getDbDataConst().value[cindex]
                                 .chemCylinder->getCMonomer(*it)->activeSpeciesFilament();
                         if(sf !=-1){
@@ -1247,12 +1249,6 @@ template<>
 void Compartment::addcoordtorMaxbasedpartitons<false>(int (&pindices)[3], vector<floatingpoint>
 coord, uint32_t index, uint32_t cylfinfo){
 
-/*#ifdef MOTORBIASCHECK
-	for(int part = 0; part < 27; part++){
-		addcoord(coord, index, cylfinfo, part);
-	}
-	return;
-#endif*/
     addcoord(coord, index, cylfinfo, 0);
     //111
     if(pindices[0] ==1 && pindices[1] == 1 && pindices[2] == 1) {

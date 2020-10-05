@@ -204,10 +204,10 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, int *beadSet,
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
         L1 = sqrt(scalarProduct(coord1, coord2,
                                 coord1, coord2));
@@ -265,15 +265,15 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
-        force1 = &f[3 * beadSet[n * i]];
-        force2 = &f[3 * beadSet[n * i + 1]];
-        force3 = &f[3 * beadSet[n * i + 2]];
-        force4 = &f[3 * beadSet[n * i + 3]];
+        force1 = &f[beadSet[n * i]];
+        force2 = &f[beadSet[n * i + 1]];
+        force3 = &f[beadSet[n * i + 2]];
+        force4 = &f[beadSet[n * i + 3]];
 
 
         L1 = sqrt(scalarProductStretched(coord1, force1, coord2, force2,
@@ -329,44 +329,57 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
 
     floatingpoint *coord1, *coord2, *coord3, *coord4;
 	floatingpoint  *force1, *force2, *force3, *force4;
-    floatingpoint L1, L2, l1l2, A, B, C, invL1, invL2, k;
-
-//    floatingpoint U = 0;
+    floatingpoint l1l2, A, B, C, invL1, invL2, k;
+    //    floatingpoint L1, L2;
+    floatingpoint L1sq, L2sq, x;
+    floatingpoint r1x, r1y, r1z, r2x, r2y, r2z;
+    floatingpoint Fr1x, Fr1y, Fr1z, Fr2x, Fr2y, Fr2z;
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
-        force1 = &f[3 * beadSet[n * i]];
-        force2 = &f[3 * beadSet[n * i + 1]];
-        force3 = &f[3 * beadSet[n * i + 2]];
-        force4 = &f[3 * beadSet[n * i + 3]];
+        force1 = &f[beadSet[n * i]];
+        force2 = &f[beadSet[n * i + 1]];
+        force3 = &f[beadSet[n * i + 2]];
+        force4 = &f[beadSet[n * i + 3]];
 
-        L1 = sqrt(scalarProduct(coord1, coord2,
-                                coord1, coord2));
-        L2 = sqrt(scalarProduct(coord3, coord4,
-                                coord3, coord4));
+        //Method1
+//        L1 = sqrt(scalarProduct(coord1, coord2,
+//                                coord1, coord2));
+//        L2 = sqrt(scalarProduct(coord3, coord4,
+//                                coord3, coord4));
+//
+////        L1L2 = L1*L2;
+//        l1l2 = scalarProduct(coord1, coord2,
+//                             coord3, coord4);
+//
+//        invL1 = 1/L1;
+//        invL2 = 1/L2;
+//        A = invL1*invL2;
+//        B = l1l2*invL1*A*A*L2;
+//        C = l1l2*invL2*A*A*L1;
 
-//        L1L2 = L1*L2;
-        l1l2 = scalarProduct(coord1, coord2,
-                             coord3, coord4);
+        //Method 2
+        L1sq = (scalarProduct(coord1, coord2, coord1, coord2));
+        L2sq = (scalarProduct(coord3, coord4, coord3, coord4));
 
-        invL1 = 1/L1;
-        invL2 = 1/L2;
-        A = invL1*invL2;
-        B = l1l2*invL1*A*A*L2;
-        C = l1l2*invL2*A*A*L1;
+        l1l2 = scalarProduct(coord1, coord2, coord3, coord4);
+
+        A = 1/sqrt(L1sq*L2sq);
+        x = l1l2*A;
+        B = x/L1sq;
+        C = x/L2sq;
 
         if (areEqual(eqt[i], 0.0)) k = kbend[i];
 
         else{
-            if(abs(abs(l1l2*A) - 1.0)<0.001)
-                l1l2 = 0.999*l1l2;
+            if(abs(abs(x) - 1.0)<0.001)
+                x = 0.999*x;
 
-            floatingpoint x = l1l2 *A;
             if (x < -1.0) x = -1.0;
             else if (x > 1.0) x = 1.0;
 
@@ -386,30 +399,36 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
 
         k =  kbend[i] * sin(dPhi)/sin(phi);*/
 
+        //Bond vectors connecting the 3 beads
+        r1x = coord2[0] - coord1[0];
+        r1y = coord2[1] - coord1[1];
+        r1z = coord2[2] - coord1[2];
+        r2x = coord4[0] - coord3[0];
+        r2y = coord4[1] - coord3[1];
+        r2z = coord4[2] - coord3[2];
+        //Forces acting along the bond vectors, r1 and r2.
+        Fr1x =  k * ( r2x*A - r1x*B );
+        Fr1y =  k * ( r2y*A - r1y*B );
+        Fr1z =  k * ( r2z*A - r1z*B );
+        Fr2x =  k * ( r1x*A - r2x*C );
+        Fr2y =  k * ( r1y*A - r2y*C );
+        Fr2z =  k * ( r1z*A - r2z*C );
+
         //force on i, f = k*(-A*l2 + 2*B*l1):
-        force1[0] += k * ((coord3[0] - coord4[0])*A +
-                          (coord2[0] - coord1[0])*B );
-        force1[1] += k * ((coord3[1] - coord4[1])*A +
-                          (coord2[1] - coord1[1])*B );
-        force1[2] += k * ((coord3[2] - coord4[2])*A +
-                          (coord2[2] - coord1[2])*B );
+        force1[0] += -Fr1x;
+        force1[1] += -Fr1y;
+        force1[2] += -Fr1z;
 
 
         //force on i+1, f = k*(A*l2 - 2*B*l1):
-        force2[0] += k * ((-coord3[0] + coord4[0])*A -
-                          (coord2[0] - coord1[0])*B );
-        force2[1] += k * ((-coord3[1] + coord4[1])*A -
-                          (coord2[1] - coord1[1])*B );
-        force2[2] += k * ((-coord3[2] + coord4[2])*A -
-                          (coord2[2] - coord1[2])*B );
+        force2[0] += Fr1x;
+        force2[1] += Fr1y;
+        force2[2] += Fr1z;
 
         //force on j, k*(-A*l1 + 2*C*l2):
-        floatingpoint f3x = k *((coord1[0] - coord2[0])*A +
-                         (coord4[0] - coord3[0])*C );
-	    floatingpoint f3y = k *((coord1[1] - coord2[1])*A +
-                         (coord4[1] - coord3[1])*C );
-	    floatingpoint f3z = k *((coord1[2] - coord2[2])*A +
-                         (coord4[2] - coord3[2])*C );
+        floatingpoint f3x = -Fr2x;
+	    floatingpoint f3y = -Fr2y;
+	    floatingpoint f3z = -Fr2z;
 
 	    force3[0] += f3x;
 	    force3[1] += f3y;
@@ -420,13 +439,9 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
 	    stretchforce[3*i + 2] = f3z;
 
         //force on j+1, k*(A*l1 - 2*C*l2):
-        force4[0] += k *((-coord1[0] + coord2[0])*A -
-                         (coord4[0] - coord3[0])*C );
-        force4[1] += k *((-coord1[1] + coord2[1])*A -
-                         (coord4[1] - coord3[1])*C );
-        force4[2] += k *((-coord1[2] + coord2[2])*A -
-                         (coord4[2] - coord3[2])*C );
-
+        force4[0] += Fr2x;
+        force4[1] += Fr2y;
+        force4[2] += Fr2z;
 
 
         #ifdef CHECKFORCES_INF_NAN
@@ -443,6 +458,10 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
                 <<cyl1->getSecondBead()->getStableIndex()<<" "
                 <<cyl2->getFirstBead()->getStableIndex()<<" "
                 <<cyl2->getSecondBead()->getStableIndex()<<endl;
+
+            cout<<"Printing intermediate variables"<<endl;
+            cout<<"l1l2="<<l1l2<<", A="<<A<<", B="<<B
+                <<", C="<<C<<endl;
 
             cout<<"Printing coords"<<endl;
             cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;

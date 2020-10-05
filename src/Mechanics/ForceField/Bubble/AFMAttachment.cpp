@@ -22,7 +22,7 @@
 #include "Bead.h"
 
 template <class AFMInteractionType>
-void AFMAttachment<AFMInteractionType>::vectorize() {
+void AFMAttachment<AFMInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
 
     numInteractions_ = 0;
     for(auto afm : AFM::getAFMs()) numInteractions_ += afm->getFilaments().size();
@@ -37,8 +37,8 @@ void AFMAttachment<AFMInteractionType>::vectorize() {
         for (int fIndex = 0; fIndex < afm->getFilaments().size(); fIndex++) {
             const auto f = afm->getFilaments()[fIndex];
 
-            beadSet_[2*ci    ] = afm->getBubble()->getBead()->getStableIndex();
-            beadSet_[2*ci + 1] = f->getMinusEndCylinder()->getFirstBead()->getStableIndex();
+            beadSet_[2*ci    ] = afm->getBubble()->getIndex() * 3 + si.bubble;
+            beadSet_[2*ci + 1] = f->getMinusEndCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
 
             radii_[ci] = afm->getBubble()->getRadius();
 
@@ -60,34 +60,11 @@ void AFMAttachment<AFMInteractionType>::computeForces(floatingpoint *coord, floa
 }
 
 
-//template <class AFMInteractionType>
-//void AFMAttachment<AFMInteractionType>::computeForcesAux(double *coord, double *f) {
-//    cout << "AFMAttachment<AFMInteractionType>::computeForcesAux should not be called in vectorized version." << endl;
-//
-//    for(auto afm : AFM::getAFMs()) {
-//
-//        Bead* b1 = afm->getBubble()->getBead();
-//
-//        for(int fIndex = 0; fIndex < afm->getFilaments().size(); fIndex++) {
-//
-//            Filament *f = afm->getFilaments()[fIndex];
-//
-//            Cylinder* c = f->getMinusEndCylinder();
-//
-//            Bead* b2 = c->getFirstBead();
-//            double kStretch = c->getMCylinder()->getStretchingConst();
-//            double radius = afm->getBubble()->getRadius();
-//
-//            _FFType.forcesAux(coord, f, beadSet, kstr);
-//        }
-//    }
-//}
-
 ///Template specializations
 template floatingpoint AFMAttachment<AFMAttachmentHarmonic>::computeEnergy(floatingpoint *coord, bool stretched);
 template void AFMAttachment<AFMAttachmentHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 //template void AFMAttachment<AFMAttachmentHarmonic>::computeForcesAux(double *coord, double *f);
-template void AFMAttachment<AFMAttachmentHarmonic>::vectorize();
+template void AFMAttachment<AFMAttachmentHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void AFMAttachment<AFMAttachmentHarmonic>::deallocate();
 
 

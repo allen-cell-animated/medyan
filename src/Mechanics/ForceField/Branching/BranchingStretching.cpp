@@ -25,7 +25,7 @@
 #endif
 
 template <class BStretchingInteractionType>
-void BranchingStretching<BStretchingInteractionType>::vectorize() {
+void BranchingStretching<BStretchingInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
 
     CUDAcommon::tmin.numinteractions[4] += BranchingPoint::getBranchingPoints().size();
     beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
@@ -38,13 +38,13 @@ void BranchingStretching<BStretchingInteractionType>::vectorize() {
 
     for (auto b: BranchingPoint::getBranchingPoints()) {
 
-        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getStableIndex();
-        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getStableIndex();
-        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
 
         kstr[i] = b->getMBranchingPoint()->getStretchingConstant();
         eql[i] = b->getMBranchingPoint()->getEqLength();
-        pos[i] = b->getPosition();
+        pos[i] = b->getFirstCylinder()->adjustedrelativeposition(b->getPosition());
         for(int j = 0; j < 3; j++)
         	stretchforce[3*i + j] = 0.0;
         i++;
@@ -174,5 +174,5 @@ void BranchingStretching<BStretchingInteractionType>::computeForces(floatingpoin
 template floatingpoint
 BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(floatingpoint *coord);
 template void BranchingStretching<BranchingStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BranchingStretching<BranchingStretchingHarmonic>::vectorize();
+template void BranchingStretching<BranchingStretchingHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void BranchingStretching<BranchingStretchingHarmonic>::deallocate();

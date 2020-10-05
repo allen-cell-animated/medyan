@@ -61,7 +61,7 @@ public:
     MotorGhostStretching () {}
     ~MotorGhostStretching () {}
     
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&) override;
     virtual void deallocate();
     
     

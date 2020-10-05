@@ -66,7 +66,7 @@ public:
     virtual const string getName() {return "Boundary-Bubble Repulsion";}
 
     //TODO needs implmenetation @{
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&) override;
     virtual void deallocate();
 
     //virtual double computeEnergy(double *coord, double *f, double d)override { return 0.0; }

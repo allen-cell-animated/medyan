@@ -72,7 +72,7 @@ LDFLAGS_CXX = $(FAST_CXX)
 # and usage guides for more details.
 #
 ##################################################
-CPPFLAGS += -DFLOAT_PRECISION
+#CPPFLAGS += -DFLOAT_PRECISION
 #Initialize chemical components of system
 CPPFLAGS += -DCHEMISTRY
 #Initialize mechanical components of system

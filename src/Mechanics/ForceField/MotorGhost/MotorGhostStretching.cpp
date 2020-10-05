@@ -42,7 +42,7 @@ void MotorGhostStretching<MStretchingInteractionType>::assignforcemags() {
 }
 
 template <class MStretchingInteractionType>
-void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
+void MotorGhostStretching<MStretchingInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
 
     CUDAcommon::tmin.numinteractions[3] += MotorGhost::getMotorGhosts().size();
     beadSet = new int[n * MotorGhost::getMotorGhosts().size()];
@@ -60,15 +60,15 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 
     for (auto m: MotorGhost::getMotorGhosts()) {
         /* Haoran 03/18/2019 m->getIndex() = i; */
-        beadSet[n * i] = m->getFirstCylinder()->getFirstBead()->getStableIndex();
-        beadSet[n * i + 1] = m->getFirstCylinder()->getSecondBead()->getStableIndex();
-        beadSet[n * i + 2] = m->getSecondCylinder()->getFirstBead()->getStableIndex();
-        beadSet[n * i + 3] = m->getSecondCylinder()->getSecondBead()->getStableIndex();
+        beadSet[n * i] = m->getFirstCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 1] = m->getFirstCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 2] = m->getSecondCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 3] = m->getSecondCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
 
         kstr[i] = m->getMMotorGhost()->getStretchingConstant();
         eql[i] = m->getMMotorGhost()->getEqLength();
-        pos1[i] = m->getFirstPosition();
-        pos2[i] = m->getSecondPosition();
+        pos1[i] = m->getFirstCylinder()->adjustedrelativeposition(m->getFirstPosition());
+        pos2[i] = m->getSecondCylinder()->adjustedrelativeposition(m->getSecondPosition());
         stretchforce[i] = 0.0;
         #ifdef ADDITIONALINFO
         MotorGhostInteractions::kstrvec.push_back(kstr[i]);
@@ -300,7 +300,7 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(floatingpoi
 ///Temlate specializations
 template floatingpoint MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(floatingpoint *coord);
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void MotorGhostStretching<MotorGhostStretchingHarmonic>::vectorize();
+template void MotorGhostStretching<MotorGhostStretchingHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::deallocate();
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::assignforcemags();
 

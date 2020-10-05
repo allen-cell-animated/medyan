@@ -201,10 +201,10 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, int *beadSe
 
         for(int i = 0; i < nint; i += 1) {
 
-            coord1 = &coord[3 * beadSet[n * i]];
-            coord2 = &coord[3 * beadSet[n * i + 1]];
-            coord3 = &coord[3 * beadSet[n * i + 2]];
-            coord4 = &coord[3 * beadSet[n * i + 3]];
+            coord1 = &coord[beadSet[n * i]];
+            coord2 = &coord[beadSet[n * i + 1]];
+            coord3 = &coord[beadSet[n * i + 2]];
+            coord4 = &coord[beadSet[n * i + 3]];
 
             midPointCoordinate(v1, coord1, coord2, pos1[i]);
             midPointCoordinate(v2, coord3, coord4, pos2[i]);
@@ -245,15 +245,15 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, floatingpoi
 
         for(int i = 0; i < nint; i += 1) {
 
-            coord1 = &coord[3 * beadSet[n * i]];
-            coord2 = &coord[3 * beadSet[n * i + 1]];
-            coord3 = &coord[3 * beadSet[n * i + 2]];
-            coord4 = &coord[3 * beadSet[n * i + 3]];
+            coord1 = &coord[beadSet[n * i]];
+            coord2 = &coord[beadSet[n * i + 1]];
+            coord3 = &coord[beadSet[n * i + 2]];
+            coord4 = &coord[beadSet[n * i + 3]];
 
-            f1 = &f[3 * beadSet[n * i]];
-            f2 = &f[3 * beadSet[n * i + 1]];
-            f3 = &f[3 * beadSet[n * i + 2]];
-            f4 = &f[3 * beadSet[n * i + 3]];
+            f1 = &f[beadSet[n * i]];
+            f2 = &f[beadSet[n * i + 1]];
+            f3 = &f[beadSet[n * i + 2]];
+            f4 = &f[beadSet[n * i + 3]];
 
             midPointCoordinateStretched(v1, coord1, f1, coord2, f2, pos1[i], d);
             midPointCoordinateStretched(v2, coord3, f3, coord4, f4, pos2[i], d);
@@ -293,13 +293,15 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, floatingpoi
         floatingpoint *v2 = new floatingpoint[3];
 
         floatingpoint f0, *f1, *f2, *f3, *f4;
+        floatingpoint lx, ly, lz;
+        floatingpoint Flx, Fly, Flz;
 
         for(int i = 0; i < nint; i += 1) {
 
-            coord1 = &coord[3 * beadSet[n * i]];
-            coord2 = &coord[3 * beadSet[n * i + 1]];
-            coord3 = &coord[3 * beadSet[n * i + 2]];
-            coord4 = &coord[3 * beadSet[n * i + 3]];
+            coord1 = &coord[beadSet[n * i]];
+            coord2 = &coord[beadSet[n * i + 1]];
+            coord3 = &coord[beadSet[n * i + 2]];
+            coord4 = &coord[beadSet[n * i + 3]];
 /*            std::cout<<"Linker beadset "<<beadSet[n * i]<<" "<<beadSet[n * i +1]<<" "
                     ""<<beadSet[n * i +2]<<" " <<beadSet[n * i +3]<<endl;*/
 
@@ -311,30 +313,39 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, floatingpoi
 
             f0 = kstr[i] * ( dist - eql[i] ) * invL;
 
-            f1 = &f[3 * beadSet[n * i]];
-            f2 = &f[3 * beadSet[n * i + 1]];
-            f3 = &f[3 * beadSet[n * i + 2]];
-            f4 = &f[3 * beadSet[n * i + 3]];
+            f1 = &f[beadSet[n * i]];
+            f2 = &f[beadSet[n * i + 1]];
+            f3 = &f[beadSet[n * i + 2]];
+            f4 = &f[beadSet[n * i + 3]];
+
+            //Linker bond vector
+            lx  = v2[0] - v1[0];
+            ly  = v2[1] - v1[1];
+            lz  = v2[2] - v1[2];
+            //Force acting along linker vector
+            Flx =  -f0 * ( lx );
+            Fly =  -f0 * ( ly );
+            Flz =  -f0 * ( lz );
 
             //force on i
-            f1[0] +=   -f0 * ( v1[0] - v2[0] ) * (1 - pos1[i]);
-            f1[1] +=   -f0 * ( v1[1] - v2[1] ) * (1 - pos1[i]);
-            f1[2] +=   -f0 * ( v1[2] - v2[2] ) * (1 - pos1[i]);
+            f1[0] +=   -Flx * (1 - pos1[i]);
+            f1[1] +=   -Fly * (1 - pos1[i]);
+            f1[2] +=   -Flz * (1 - pos1[i]);
 
             // force i+1
-            f2[0] +=   -f0 * ( v1[0] - v2[0] ) * (pos1[i]);
-            f2[1] +=   -f0 * ( v1[1] - v2[1] ) * (pos1[i]);
-            f2[2] +=   -f0 * ( v1[2] - v2[2] ) * (pos1[i]);
+            f2[0] +=   -Flx * (pos1[i]);
+            f2[1] +=   -Fly * (pos1[i]);
+            f2[2] +=   -Flz * (pos1[i]);
 
             //force on j
-            f3[0] +=   f0 * ( v1[0] - v2[0] ) * (1 - pos2[i]);
-            f3[1] +=   f0 * ( v1[1] - v2[1] ) * (1 - pos2[i]);
-            f3[2] +=   f0 * ( v1[2] - v2[2] ) * (1 - pos2[i]);
+            f3[0] +=   Flx * (1 - pos2[i]);
+            f3[1] +=   Fly * (1 - pos2[i]);
+            f3[2] +=   Flz * (1 - pos2[i]);
 
             // force j+1
-            f4[0] +=   f0 * ( v1[0] - v2[0] ) * (pos2[i]);
-            f4[1] +=   f0 * ( v1[1] - v2[1] ) * (pos2[i]);
-            f4[2] +=   f0 * ( v1[2] - v2[2] ) * (pos2[i]);
+            f4[0] +=   Flx * (pos2[i]);
+            f4[1] +=   Fly * (pos2[i]);
+            f4[2] +=   Flz * (pos2[i]);
 
             //assign stretch force
             stretchforce[i] = f0/invL;

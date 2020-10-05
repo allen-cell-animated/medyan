@@ -330,10 +330,10 @@ void Restart::setupInitialNetwork() {
         vector<floatingpoint> tempcoord(_rBData.coordvec.begin()+3*bID, _rBData.coordvec
         .begin()+3*bID+3);
         //Initialize beads
-        _subSystem->addTrackable<Bead>(tempcoord, filptr, _rBData.filpos[b]);
+        auto pBead = _subSystem->addTrackable<Bead>(tempcoord, filptr, _rBData.filpos[b]);
         //Copy Forces
         for(unsigned int dim = 0; dim < 3; dim++)
-            Bead::getDbData().forcesAux.data()[3*b+dim] = _rBData.forceAuxvec.data()[3*bID+dim];
+            pBead->force[dim] = _rBData.forceAuxvec.data()[3*bID+dim];
     }
     cout<<"Num beads created "<<Bead::getBeads().size()<<endl;
 
@@ -358,6 +358,8 @@ void Restart::setupInitialNetwork() {
 
     for(auto fil : _rFDatavec) {
         vector<Cylinder*> cylvector;
+        //Go through cylinder stable indices that should be part of the filament and
+        // append the Cylinder pointer to a vector.
         for(auto cylsid:fil.cylsidvec){
             cylvector.push_back(_rCDatavec[cylsid].cylinderpointer);
         }

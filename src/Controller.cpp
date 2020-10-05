@@ -51,6 +51,7 @@
 #endif
 #include "Util/Io/Log.hpp"
 #include "Util/Profiler.hpp"
+
 using namespace mathfunc;
 
 Controller::Controller() :
@@ -941,12 +942,15 @@ void Controller::updateReactionRates() {
 #endif
 
 void Controller::updateNeighborLists() {
+    #ifdef CROSSCHECK_CYLINDER
+    string crosscheckNLname = _outputDirectory + "crosscheckNL.traj";
+    HybridNeighborList::_crosscheckdumpFileNL.open(crosscheckNLname);
+    #endif
     chrono::high_resolution_clock::time_point mins, mine;
 
     mins = chrono::high_resolution_clock::now();
     //Full reset of neighbor lists
     _subSystem.resetNeighborLists();
-//	cout<<"updated NeighborLists"<<endl;
     mine = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runnl2(mine - mins);
     nl2time += elapsed_runnl2.count();
@@ -959,9 +963,11 @@ void Controller::updateNeighborLists() {
     mine = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runb(mine - mins);
     bmgrtime += elapsed_runb.count();
-//    std::cout<<"time split "<<elapsed_runnl2.count()<<" "<<elapsed_runbvec.count()<<" "
-//            ""<<elapsed_runb.count()<<endl;
 #endif
+
+    #ifdef CROSSCHECK_CYLINDER
+    HybridNeighborList::_crosscheckdumpFileNL.close();
+    #endif
 }
 
 void Controller::resetCounters() {
@@ -1053,10 +1059,13 @@ void Controller::run() {
         _restart->settorestartphase();
 	    cout<<"Turned off Diffusion, and filament reactions."<<endl;
         cout<<"Bound species added to reaction heap."<<endl;
+
 //Step 3. ############ RUN LINKER/MOTOR REACTIONS TO BIND BRANCHERS, LINKERS, MOTORS AT RESPECTIVE POSITIONS.#######
         cout<<"Number of reactions to be fired "<<_restart->getnumchemsteps()<<endl;
         _cController.runSteps(_restart->getnumchemsteps());
-        cout<<"Reactions fired! Displaying heap"<<endl;
+        cout<<"Reactions fired! Displaying number of reactions that are NOT fired in each"
+              " compartment"
+              ""<<endl;
 //Step 4. Display the number of reactions yet to be fired. Should be zero.
         bool exitstatus = 0;
         for(auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
@@ -1126,8 +1135,6 @@ void Controller::run() {
 // required by the user.
         _restart->restartupdateCopyNumbers();
         _restart->crosscheck();
-
-
         cout<<"Diffusion rates restored, diffusing molecules redistributed."<<endl;
 
 
@@ -1153,6 +1160,7 @@ void Controller::run() {
         minimizationtime += elapsed_runm.count();
         std::cout<<"Time taken for minimization "<<elapsed_runm.count()<<endl;
 #endif
+        //DO NOT MOVE THIS LINE
         SysParams::RUNSTATE=true;
 
         //reupdate positions and neighbor lists
@@ -1221,6 +1229,22 @@ void Controller::run() {
 
         //Crosscheck tau to make sure heap is ordered accurately.
         _cController.crosschecktau();
+
+        cout <<"MINUSENDPOLYMERIZATIONREACTIONS "<< endl;
+        for(auto fil:Filament::getFilaments()){
+            auto cyl = fil->getCylinderVector().front(); //get Minus Ends
+            for(auto &it:cyl->getCCylinder()->getInternalReactions()){
+                if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND &&
+                   !(it->isPassivated()) && it->computePropensity() > 0){
+                    cout<<"Fil "<<cyl->getFilID()<<" Cyl "<<cyl->getStableIndex()
+                               <<" RATEMULFACTORS ";
+                    for(auto fac:it->_ratemulfactors)
+                        cout<<fac<<" ";
+                    cout<<endl;
+                    it->getRnode()->printSelf();
+                }
+            }
+        }
     }
 #ifdef CHEMISTRY
     tauLastSnapshot = tau();
@@ -1327,49 +1351,17 @@ void Controller::run() {
             	factor = 10.0;
 #endif
             floatingpoint chemistryTime = _minimizationTime/factor;
-            //1 ms
-//            chemistryTime = 0.001;
+            #ifdef CROSSCHECK_CYLINDER
+            string crosscheckchemname = _outputDirectory + "crosscheckChem.traj";
+            if(CController::_crosscheckdumpFilechem.is_open())
+                CController::_crosscheckdumpFilechem.close();
+            CController::_crosscheckdumpFilechem.open(crosscheckchemname);
+            #endif
             auto var = !_cController.run(chemistryTime);
             mine= chrono::high_resolution_clock::now();
             chrono::duration<floatingpoint> elapsed_runchem(mine - mins);
             chemistrytime += elapsed_runchem.count();
             SysParams::DURINGCHEMISTRY = false;
-
-/*            for(auto cyl:Cylinder::getCylinders()){
-                cout<<"After chemistry  Cylinder ID = "<<cyl->getId()<<endl;
-                cyl->printSelf();
-            }*/
-
-            //Printing walking reaction
-            /*auto mwalk = CUDAcommon::mwalk;
-            cout<<"Motor-Walking statistics"<<endl;
-            cout<<"MW C2C "<<mwalk.contracttocontract<<endl;
-            cout<<"MW S2S "<<mwalk.stretchtostretch<<endl;
-            cout<<"MW E2E "<<mwalk.equibtoequib<<endl;
-            cout<<"MW C2S "<<mwalk.contracttostretch<<endl;
-            cout<<"MW S2C "<<mwalk.stretchtocontract<<endl;
-            cout<<"MW E2C "<<mwalk.equibtocontract<<endl;
-            cout<<"MW E2S "<<mwalk.equibtostretch<<endl;
-			//reset counters
-            CUDAcommon::mwalk.contracttocontract = 0;
-	        CUDAcommon::mwalk.stretchtocontract = 0;
-	        CUDAcommon::mwalk.contracttostretch = 0;
-	        CUDAcommon::mwalk.stretchtostretch = 0;
-	        CUDAcommon::mwalk.equibtoequib = 0;
-	        CUDAcommon::mwalk.equibtostretch = 0;
-	        CUDAcommon::mwalk.equibtocontract = 0;*/
-
-            //Printing stretch forces
-/*            cout<<"Motor-forces ";
-            for(auto m: MotorGhost::getMotorGhosts()){
-                std::cout<<m->getMMotorGhost()->stretchForce<<" ";
-            }
-            cout<<endl;
-            cout<<"Linker-forces ";
-            for(auto l: Linker::getLinkers()){
-                std::cout<<l->getMLinker()->stretchForce<<" ";
-            }
-            cout<<endl;*/
 #ifdef OPTIMOUT
 	        auto mtimex = CUDAcommon::tmin;
 	        cout<<"motorbinding calls "<<mtimex.motorbindingcalls<<endl;
@@ -1405,44 +1397,17 @@ void Controller::run() {
 
             //run mcontroller, update system
             if(tauLastMinimization >= _minimizationTime/factor) {
-
-#ifdef MOTORBIASCHECK
-                cout<<"Hyb-walkID ";
-                for(auto m:MotorGhost::getMotorGhosts())
-                    cout<<m->getId()<<" ";
-                cout<<endl;
-                cout<<"Hyb-walklen ";
-                for(auto m:MotorGhost::getMotorGhosts())
-                    cout<<m->walkingsteps<<" ";
-                cout<<endl;
-                cout<<"Hyb-mstretch ";
-                for(auto m:MotorGhost::getMotorGhosts())
-                    cout<<m->getMMotorGhost()->stretchForce<<" ";
-                cout<<endl;
-                cout<<"Hyb-add ";
-                for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
-                    cout<<C->getHybridBindingSearchManager()->getaddcounts()<<" ";
+	            //check before rearrange
+#ifdef CROSSCHECK_CYLINDER
+                string crosscheckname = _outputDirectory + "crosscheckcyl.traj";
+                Cylinder::_crosscheckdumpFile.open(crosscheckname);
+                if(!Cylinder::_crosscheckdumpFile.is_open()) {
+                    Cylinder::_crosscheckdumpFile << "There was an error opening file " << crosscheckname
+                         << " for output. Exiting." << endl;
+                    exit(EXIT_FAILURE);
                 }
-                cout<<endl;
-                cout<<"Hyb-remove ";
-                for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
-                    cout<<C->getHybridBindingSearchManager()->getremovecounts()<<" ";
-                }
-                cout<<endl;
-                cout<<"Hyb-choose ";
-                for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
-                    cout<<C->getHybridBindingSearchManager()->getchoosecounts()<<" ";
-                }
-                cout<<endl;
-                cout<<"Hyb-mwalk ";
-	            for (auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
-	            	cout<<C->nummotorwalks<<" ";
-	            	C->nummotorwalks = 0;
-	            }
-	            cout<<endl;
-
+                Cylinder::_crosscheckdumpFile << "Opening file " << crosscheckname << endl;
 #endif
-
                 mins = chrono::high_resolution_clock::now();
                 Bead::rearrange();
                 Cylinder::updateAllData();
@@ -1461,7 +1426,9 @@ void Controller::run() {
                 //update position
                 mins = chrono::high_resolution_clock::now();
                 updatePositions();
-
+#ifdef CROSSCHECK_CYLINDER
+                Cylinder::_crosscheckdumpFile.close();
+#endif
 
                 #ifdef OPTIMOUT
                 cout<<"Position updated"<<endl;
@@ -1489,8 +1456,8 @@ void Controller::run() {
 	            mine= chrono::high_resolution_clock::now();
 	            chrono::duration<floatingpoint> elapsed_rxn3(mine - mins);
 	            rxnratetime += elapsed_rxn3.count();
-
             }
+
 
             //output snapshot
             if(tauLastSnapshot >= _snapshotTime) {

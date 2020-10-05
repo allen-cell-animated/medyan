@@ -215,21 +215,35 @@ floatingpoint BranchingDihedralCosine::energy(
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
 
     const floatingpoint *coord1, *coord2, *coord3, *coord4;
+    floatingpoint position;
     floatingpoint n1n2, U_i;
     floatingpoint *mp = new floatingpoint[3];
     floatingpoint *n1 = new floatingpoint[3];
     floatingpoint *n2 = new floatingpoint[3];
+    floatingpoint *coord2prime = new floatingpoint[3];
 
     floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        //If the branching point is at the plus end of the cylinder, we end up with
+        // singularities in energy and force expressions. To avoid it, we will create a
+        // virtual plus end and use that to define vectors.
+        position = pos[i];
+        if(areEqual(position, 1.0)){
+            position = 0.5;//assign a dummy position and extend plus end to new coordinates.
+            for(int dim = 0; dim < 3; dim++) {
+                coord2prime[dim] = (1 / position) * (coord2[dim] - (1 - position) *
+                                                                   coord1[dim]);//extended plus end coordinate;
+            }
+            coord2 = &coord2prime[0];
+        }
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
-        midPointCoordinate(mp, coord1, coord2, pos[i]);
+        midPointCoordinate(mp, coord1, coord2, position);
 
         vectorProduct(n1, mp, coord2, mp, coord3);
         vectorProduct(n2, coord3, coord4, mp, coord3);
@@ -243,6 +257,18 @@ floatingpoint BranchingDihedralCosine::energy(
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
+            cout<<"Coord1 "<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
+            coord2 = &coord[3 * beadSet[n * i + 1]];
+            cout<<"Coord2 "<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
+            cout<<"Coord2prime "<<coord2prime[0]<<" "<<coord2prime[1]<<" "
+                                                                       ""<<coord2prime[2]<<endl;
+            cout<<"Coord3 "<<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
+            cout<<"Coord4 "<<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<endl;
+            cout<<"pos "<<pos[i]<<" position "<<position<<endl;
+            cout<<"mp "<<mp[0]<<" "<<mp[1]<<" "<<mp[2]<<endl;
+            cout<<"n1 "<<n1[0]<<" "<<n1[1]<<" "<<n1[2]<<endl;
+            cout<<"n2 "<<n2[0]<<" "<<n2[1]<<" "<<n2[2]<<endl;
+
             //set culprit and return
             BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
 
@@ -255,6 +281,7 @@ floatingpoint BranchingDihedralCosine::energy(
     delete [] mp;
     delete [] n1;
     delete [] n2;
+    delete [] coord2prime;
 
     return U;
 }
@@ -279,15 +306,15 @@ floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoin
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
-        f4 = &f[3 * beadSet[n * i + 3]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
+        f4 = &f[beadSet[n * i + 3]];
 
         midPointCoordinateStretched(mp, coord1, f1, coord2, f2, pos[i], d);
 
@@ -327,7 +354,7 @@ void BranchingDihedralCosine::forces(
 
     double *coord1, *coord2, *coord3, *coord4;
     floatingpoint *f1, *f2, *f3, *f4;
-    double force1[3], force2[3], force3[3], force4[3];
+    double force1[3], force2[3], force3[3], force4[3], position;
 
     coord1 = new double[3];
     coord2 = new double[3];
@@ -340,7 +367,7 @@ void BranchingDihedralCosine::forces(
     double *zero = new double[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
 
     //@{
-    double Lforce1[3], Lforce2[3], Lforce3[3], Lforce4[3], Lforcemp[3];
+    double Lforce1[3], Lforce2[3], Lforce3[3], Lforce4[3], Lforcemp[3], Lforce2prime[3];
     double vb1x, vb1y, vb1z, vb2x, vb2y, vb2z, vb3x, vb3y, vb3z;
     double vb2xm, vb2ym, vb2zm;
     double ax, ay, az, bx, by, bz;
@@ -358,18 +385,29 @@ void BranchingDihedralCosine::forces(
     for(int i = 0; i < nint; i += 1) {
 
         for(int j = 0; j < 3; j++){
-            coord1[j] = coord[3 * beadSet[n * i]+ j];
-            coord2[j] = coord[3 * beadSet[n * i + 1]+ j];
-            coord3[j] = coord[3 * beadSet[n * i + 2]+ j];
-            coord4[j] = coord[3 * beadSet[n * i + 3]+ j];
+            coord1[j] = coord[beadSet[n * i]+ j];
+            coord2[j] = coord[beadSet[n * i + 1]+ j];
+            coord3[j] = coord[beadSet[n * i + 2]+ j];
+            coord4[j] = coord[beadSet[n * i + 3]+ j];
         }
 
-        midPointCoordinate<double>(mp, coord1, coord2, pos[i]);
+        //If the branching point is at the plus end of the cylinder, we end up with
+        // singularities in energy and force expressions. To avoid it, we will create a
+        // virtual plus end and use that to define vectors.
+        position = pos[i];
+        if(areEqual(position, 1.0)){
+            position = 0.5;
+            coord2[0] = (1/position)*(coord2[0] - (1-position)*coord1[0]);
+            coord2[1] = (1/position)*(coord2[1] - (1-position)*coord1[1]);
+            coord2[2] = (1/position)*(coord2[2] - (1-position)*coord1[2]);
+        }
 
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
-        f4 = &f[3 * beadSet[n * i + 3]];
+        midPointCoordinate<double>(mp, coord1, coord2, position);
+
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
+        f4 = &f[beadSet[n * i + 3]];
 
         //@ LAMMPS version test
         // 1st bond
@@ -449,14 +487,6 @@ void BranchingDihedralCosine::forces(
         sy2 = df*dtgy;
         sz2 = df*dtgz;
 
-        Lforce2[0] = df*dtfx;
-        Lforce2[1] = df*dtfy;
-        Lforce2[2] = df*dtfz;
-
-        Lforcemp[0] = sx2 - Lforce2[0];
-        Lforcemp[1] = sy2 - Lforce2[1];
-        Lforcemp[2] = sz2 - Lforce2[2];
-
         Lforce4[0] = df*dthx;
         Lforce4[1] = df*dthy;
         Lforce4[2] = df*dthz;
@@ -465,15 +495,69 @@ void BranchingDihedralCosine::forces(
         Lforce3[1] = -sy2 - Lforce4[1];
         Lforce3[2] = -sz2 - Lforce4[2];
 
-        double alpha = pos[i];
+        //Special case where the branching point is plus end.
+        if(areEqual(pos[i], (floatingpoint)1.0)){
+            //In this scenario, the energy is defined as U1(c2, c2prime, c3, c4). We are
+            // trying to get U(c1, c2, c3, c4) from it.
+            //c1-parent minusend | c2 - parent plusend/bindingsite | c2prime-parent
+            // extendedplusend   | c3 - offspring minusend         | c4 - offspring plusend
+            //[dU(c1,c2,c3,c4)]             [dUtilda(c2,c2prime,c3,c4)]   dc2prime
+            //[---------------]        =    [-------------------------] x --------
+            //[    dc1        ]c2,c3,c4     [        dc2prime         ]     dc1
+            //______________________________________________________________________________
+            //[dU(c1,c2,c3,c4)]          [   [dUtilda(c2,c2prime,c3,c4)]   dc2prime
+            //[---------------]        = [   [-------------------------] x --------
+            //[    dc2        ]c1,c3,c4  [   [        dc2prime         ]     dc2
+            //                           [
+            //                           [        [dUtilda(c2,c2prime,c3,c4)]
+            //                           [  +     [-------------------------]
+            //                           [        [           dc2           ]
+            //We define c2 = c1 + s(c2prime - c1)
+            // dc2prime    s - 1  | dc2prime    1
+            // -------- = ------- | -------- = ---
+            //   dc1         s    |   dc2       s
 
-        Lforce1[0] = (1-alpha) * Lforcemp[0];
-        Lforce1[1] = (1-alpha) * Lforcemp[1];
-        Lforce1[2] = (1-alpha) * Lforcemp[2];
+            Lforce2prime[0] = df*dtfx;
+            Lforce2prime[1] = df*dtfy;
+            Lforce2prime[2] = df*dtfz;
 
-        Lforce2[0] += (alpha) * Lforcemp[0];
-        Lforce2[1] += (alpha) * Lforcemp[1];
-        Lforce2[2] += (alpha) * Lforcemp[2];
+            Lforce2[0] = sx2 - Lforce2prime[0];
+            Lforce2[1] = sy2 - Lforce2prime[1];
+            Lforce2[2] = sz2 - Lforce2prime[2];
+
+            //Transformation
+            double factor = (position-1)/position;
+            Lforce1[0] = Lforce2prime[0]*factor;
+            Lforce1[1] = Lforce2prime[1]*factor;
+            Lforce1[2] = Lforce2prime[2]*factor;
+
+            factor = (1/position);
+            Lforce2[0] += Lforce2prime[0]*factor;
+            Lforce2[1] += Lforce2prime[1]*factor;
+            Lforce2[2] += Lforce2prime[2]*factor;
+
+        }
+        //Default case.
+        else {
+            //In this scenario, the energy is defined as U2(mp, c2, c3, c4). We are trying
+            // to get U(c1, c2, c3, c4) from it.
+            Lforce2[0] = df*dtfx;
+            Lforce2[1] = df*dtfy;
+            Lforce2[2] = df*dtfz;
+
+            Lforcemp[0] = sx2 - Lforce2[0];
+            Lforcemp[1] = sy2 - Lforce2[1];
+            Lforcemp[2] = sz2 - Lforce2[2];
+
+            //Transformation
+            Lforce1[0] = (1 - position) * Lforcemp[0];
+            Lforce1[1] = (1 - position) * Lforcemp[1];
+            Lforce1[2] = (1 - position) * Lforcemp[2];
+
+            Lforce2[0] += (position) * Lforcemp[0];
+            Lforce2[1] += (position) * Lforcemp[1];
+            Lforce2[2] += (position) * Lforcemp[2];
+        }
 
         //Add to force vector
         f1[0] += Lforce1[0];
@@ -513,8 +597,9 @@ void BranchingDihedralCosine::forces(
                 <<cyl1->getSecondBead()->getStableIndex()<<" "
                 <<cyl2->getFirstBead()->getStableIndex()<<" "
                 <<cyl2->getSecondBead()->getStableIndex()<<endl;
+            cyl1->adjustedrelativeposition(pos[i], true);
 
-            cout<<"Parent filament binding fraction "<<alpha<<endl;
+            cout<<"Parent filament binding fraction "<<position<<endl;
             cout<<"Parent filament binding position "<<mp[0]<<" "<<mp[1]<<" "<<mp[2]<<endl;
             cout<<"ax-bz"<<ax<<" "<<ay<<" "<<az<<" "<<bx<<" "<<by<<" "<<bz<<endl;
             cout<<"rasq "<<rasq<<" rbsq "<<rbsq<<" rgsq "<<rgsq<<" rg "<<rg<<endl;
@@ -716,10 +801,10 @@ dataType BranchingDihedralCosine::energyininteractionperturbed(
     //@}
 
     for(int j = 0; j < 3; j++){
-        coord1[j] = coord[3 * beadSet[n * i]+ j];
-        coord2[j] = coord[3 * beadSet[n * i + 1]+ j];
-        coord3[j] = coord[3 * beadSet[n * i + 2]+ j];
-        coord4[j] = coord[3 * beadSet[n * i + 3]+ j];
+        coord1[j] = coord[beadSet[n * i]+ j];
+        coord2[j] = coord[beadSet[n * i + 1]+ j];
+        coord3[j] = coord[beadSet[n * i + 2]+ j];
+        coord4[j] = coord[beadSet[n * i + 3]+ j];
     }
 
     if(perturbcoord != -1 && perturbaxis != -1){
@@ -840,7 +925,7 @@ void BranchingDihedralCosine::testdihedral(){
 	vector<floatingpoint> coord ={100, 100, 100, 100, 100, 300, 100, 200, 200, 80, 200,
 							   300};
 	vector<floatingpoint> force={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-	vector<unsigned int> beadSet ={0, 1, 2, 3};
+	vector<unsigned int> beadSet ={0, 3, 6, 9};
 	vector<floatingpoint> kdih ={50.0};
 	vector<floatingpoint> pos = {0.5};
 	vector<floatingpoint> stretchForce ={0.0, 0.0, 0.0};

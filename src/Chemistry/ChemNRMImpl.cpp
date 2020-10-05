@@ -51,10 +51,6 @@ void* RNodeNRM::operator new(size_t size) {
 }
 
 void RNodeNRM::operator delete(void* ptr) noexcept {
-#ifdef CHECKRXN
-    cout<<"deleting RNodeNRM "<<ptr<<" with Rxn "<<((RNodeNRM*)ptr)->getReaction()<<" Type "
-    <<((RNodeNRM*)ptr)->getReaction()->getReactionType()<<endl;
-#endif
     boost::fast_pool_allocator<RNodeNRM>::deallocate((RNodeNRM*)ptr);
 }
 #endif
@@ -69,10 +65,6 @@ RNodeNRM::RNodeNRM(ReactionBase *r, ChemNRMImpl &chem_nrm)
 }
 
 RNodeNRM::~RNodeNRM() noexcept {
-	#ifdef CHECKRXN
-	cout<<"deleting RNodeNRM 2 "<<this<<" with Rxn "<<this->getReaction()<<" Type "
-	<<this->getReaction()->getReactionType()<<endl;
-	#endif
     boost_heap *heap = _chem_nrm.getHeap();
     heap->erase(_handle);
     _react->setRnode(nullptr);
@@ -181,6 +173,7 @@ bool ChemNRMImpl::makeStep() {
     RNodeNRM *rn = _heap.top()._rn;
     floatingpoint tau_top = rn->getTau();
     if(tau_top==numeric_limits<floatingpoint>::infinity()){
+
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
         return false;
     }
@@ -208,7 +201,22 @@ bool ChemNRMImpl::makeStep() {
         _dt->updateDelGChem(react);
         }
     }
+    #ifdef CROSSCHECK_CYLINDER
+    auto _react = rn->getReaction();
+    auto _a = rn->getPropensity();
+    Compartment* c = static_cast<Compartment*>(_react->getParent());
+    auto coord = c->coordinates();
+    CController::_crosscheckdumpFilechem << "RNodeNRM: ptr=" << this <<", tau=" <<
+    rn->getTau() <<
+         ", a=" << _a <<" in Compartment "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<
+         ", points to Reaction Type "<< _react->getReactionType()<<endl;
+//    CController::_crosscheckdumpFilechem << (*_react);
+    #endif
     rn->makeStep();
+
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Update dependencies"<<endl;
+    #endif
 
 	#ifdef DEBUGCONSTANTSEED
     cout<<"tau "<<_t<<endl;
@@ -277,29 +285,28 @@ bool ChemNRMImpl::makeStep() {
             rn_other->updateHeap();
         }
     }
+
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"emitSignal"<<endl;
+    #endif
 #ifdef REACTION_SIGNALING
     // Send signal
     r->emitSignal();
 #endif
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"----"<<endl;
+    #endif
 //	cout<<"af "<<Rand::chemistrycounter<<" "<<Rand::intcounter<<" "
 //	                                                            ""<<Rand::floatcounter<<endl;
     return true;
 }
 
 void ChemNRMImpl::addReaction(ReactionBase *r) {
-	#ifdef CHECKRXN
-	cout<<"Adding reaction "<<r<<" with RNodeNRM "<<r->getRNode()<<" Type "
-	    <<r->getReactionType()<<endl;
-	#endif
     _map_rnodes.emplace(r,make_unique<RNodeNRM>(r,*this));
     ++_n_reacts;
 }
 
 void ChemNRMImpl::removeReaction(ReactionBase *r) {
-	#ifdef CHECKRXN
-	cout<<"Removing reaction "<<r<<" with RNodeNRM "<<r->getRNode()<<" Type "
-	<<r->getReactionType()<<endl;
-	#endif
     _map_rnodes.erase(r);
     --_n_reacts;
 }

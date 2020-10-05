@@ -46,7 +46,6 @@ void Cylinder::updateData() {
 void Cylinder::updateCoordinate() {
     coordinate = midPointCoordinate(_b1->vcoordinate(), _b2->vcoordinate(), 0.5);
     //update the coordiante in cylinder structure.
-
     Cylinder::getDbData().value[getStableIndex()].coord = 0.5 * (_b1->coordinate() + _b2->coordinate());
 }
 
@@ -72,6 +71,8 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     #endif
 
     parent->addChild(unique_ptr<Component>(this));
+    //setID
+    _filID = static_cast<Filament*>(parent)->getId();
     //@{
 
     //Set coordinate
@@ -108,6 +109,9 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 
     // Update the stored data
     updateData();
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"Cylinder created "<<getId()<<" "<<getStableIndex()<<endl;
+    #endif
 }
 
 void Cylinder::initializerestart(int nummonomers, int firstmonomer, int lastmonomer, bool
@@ -125,10 +129,15 @@ void Cylinder::initializerestart(int nummonomers, int firstmonomer, int lastmono
 }
 
 Cylinder::~Cylinder() noexcept {
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"Cylinder deleting "<<getId()<<" "<<getStableIndex()<<endl;
+    #endif
 
     //remove from compartment
     _cellElement.manager->removeElement(_cellElement);
-    
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"Cylinder deleted "<<getId()<<endl;
+    #endif
 }
 
 /// Get filament type
@@ -137,8 +146,11 @@ int Cylinder::getType() {return _type;}
 void Cylinder::updatePosition() {
     if(!setpositionupdatedstate) {
 
-        //check if were still in same compartment, set new position
+        //check if Cylinder is still in same compartment, set new position
         updateCoordinate();
+        #ifdef CROSSCHECK_CYLINDER
+        _crosscheckdumpFile <<"Coord updated "<<getId()<<endl;
+        #endif
         Compartment *c;
         try { c = GController::getCompartment(coordinate); }
         catch (exception &e) {
@@ -151,14 +163,17 @@ void Cylinder::updatePosition() {
 
         Compartment* curCompartment = getCompartment();
         if (c != curCompartment) {
-            #ifdef CHECKRXN
-            cout<<"move Cmp Cylinder with ID "<<getId()<<" from Cmp "
-                <<getCompartment()->getId()<<" to Cmp "<<c->getId()<<endl;
+            #ifdef CROSSCHECK_CYLINDER
+            _crosscheckdumpFile <<"Attempt Move cmp "<<getId()<<endl;
             #endif
+
             mins = chrono::high_resolution_clock::now();
 
             //remove from old compartment, add to new
             _cellElement.manager->updateElement(_cellElement, c->cylinderCell);
+            #ifdef CROSSCHECK_CYLINDER
+            _crosscheckdumpFile <<"Complete Move cmp "<<getId()<<endl;
+            #endif
 
 #ifdef CHEMISTRY
 //			auto oldCCylinder = _cCylinder.get();
@@ -178,6 +193,9 @@ void Cylinder::updatePosition() {
             //clone and set new ccylinder
             CCylinder *clone = _cCylinder->clone(c);
             setCCylinder(clone);
+#ifdef CROSSCHECK_CYLINDER
+            _crosscheckdumpFile <<"Clone CCyl "<<getId()<<endl;
+#endif
 
 //			auto newCCylinder = _cCylinder.get();
 
@@ -185,6 +203,9 @@ void Cylinder::updatePosition() {
             auto& data = getDbData().value[getStableIndex()];
             data.compartmentId = c->getId();
             data.chemCylinder = _cCylinder.get();
+#ifdef CROSSCHECK_CYLINDER
+            _crosscheckdumpFile <<"Update CylinderData "<<getId()<<endl;
+#endif
 
             mine = chrono::high_resolution_clock::now();
             chrono::duration<floatingpoint> compartment_update(mine - mins);
@@ -353,6 +374,57 @@ bool Cylinder::within(Cylinder* other, floatingpoint dist) {
     return false;
 }
 
+//adjust the position variable according to the length of cylinder
+//Refer Docs/Design/PartialCylinderAlpha.pdf
+floatingpoint Cylinder::adjustedrelativeposition(floatingpoint _alpha, bool verbose){
+    //Full Length Cylinder
+    if(isFullLength())
+        return _alpha;
+    floatingpoint _alphacorr = (floatingpoint)0.0;
+    auto x1 = _b1->vcoordinate();
+    auto x2 = _b2->vcoordinate();
+    floatingpoint L = twoPointDistance(x1, x2);
+    short filamentType = _type;
+    short minusendmonomer = 0;
+    floatingpoint fullcylinderSize = SysParams::Geometry().cylinderSize[filamentType];
+    //Partial Plus End cylinder
+    if(_plusEnd == true){
+        floatingpoint Lm = (floatingpoint)0.0;//Distance of minus end from 0th monomer.
+        // Both Minus and Plus End at the same time (Filament is one cylinder long)
+        if(_minusEnd == true){
+            int numMonomers = SysParams::Geometry().cylinderNumMon[filamentType];
+            auto monomersize = SysParams::Geometry().monomerSize[filamentType];
+            for(int midx = 0; midx<numMonomers; midx++){
+                short m = _cCylinder->getCMonomer(midx)->activeSpeciesMinusEnd();
+                short p = _cCylinder->getCMonomer(midx)->activeSpeciesPlusEnd();
+                if(m != -1) {
+                    minusendmonomer = midx;
+                    break;
+                }
+            }
+            Lm = minusendmonomer*monomersize;//Distance of minus end from 0th monomer.
+        }
+        _alphacorr = (fullcylinderSize*_alpha - Lm)/L;
+    }
+    //Parital Minus End Cylinder
+    else if(_minusEnd == true){
+        _alphacorr = 1-(1-_alpha)*fullcylinderSize/L;
+    }
+
+    if(verbose){
+        cout<<"cyl ID "<<getId()<<" minsendstatus "<<_minusEnd<<" <<plusendstatus "
+            <<_plusEnd<<" minusendmonomer "<<minusendmonomer<<" alpha "<<_alpha
+            <<" _alphacorr "<<_alphacorr<<endl;
+    }
+
+    if(_alphacorr < (floatingpoint)0.0)
+        return (floatingpoint)0.0;
+    else if(_alphacorr > (floatingpoint)1.0)
+        return (floatingpoint)1.0;
+    else
+        return _alphacorr;
+}
+
 vector<FilamentRateChanger*> Cylinder::_polyChanger;
 ChemManager* Cylinder::_chemManager = 0;
 
@@ -361,3 +433,4 @@ floatingpoint Cylinder::timecylinder1 = 0.0;
 floatingpoint Cylinder::timecylinder2= 0.0;
 floatingpoint Cylinder::timecylinderchem= 0.0;
 floatingpoint Cylinder::timecylindermech= 0.0;
+ofstream Cylinder::_crosscheckdumpFile;
