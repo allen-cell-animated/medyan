@@ -485,9 +485,9 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 				auto ccn = cn->getCCylinder();
 				int k = 0;
 
-				for (auto it = SysParams::Chemistry().bindingSites[_nfilamentType].begin();
-				     it < SysParams::Chemistry().bindingSites[_nfilamentType].end();
-				     it=it+bindingsitestep) {
+				for (int itI = 0; itI < SysParams::Chemistry().bindingSites[_nfilamentType].size(); itI += bindingsitestep) {
+
+					auto it = SysParams::Chemistry().bindingSites[_nfilamentType].begin() + itI;
 
 					bool filstatecheckn = true;
 					if(cn->isMinusEnd()) {
