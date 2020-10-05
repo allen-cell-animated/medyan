@@ -167,6 +167,16 @@ inline void guiHelpWindow(DisplaySettings& displaySettings) {
     ImGui::End();
 }
 
+inline void guiTrajectoryControlPanel(
+    DisplaySettings& displaySettings,
+    DisplayStates&   displayStates
+) {
+    // Playback
+    ImGui::Checkbox("play", &displayStates.playback.isPlaying);
+    ImGui::SliderFloat("speed", &displaySettings.playback.fps, 1, 20, "%.1f");
+    ImGui::SliderInt("playback", &displayStates.playback.currentFrame, 0, displayStates.playback.maxFrame);
+}
+
 inline void guiViewSettings(ObjectViewSettings& viewSettings) {
     using PT = ObjectViewSettings::Projection::Type;
 
@@ -254,6 +264,10 @@ inline void guiMainWindow(
         },
         busy ? ImGuiSelectableFlags_Disabled : 0
     );
+
+    if(displaySettings.displayMode == DisplayMode::trajectory) {
+        guiTrajectoryControlPanel(displaySettings, displayStates);
+    }
 
     ImGui::Spacing();
 
