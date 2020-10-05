@@ -85,14 +85,21 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
     vector<Species*> species;
     for(auto &rs : _rspecies){
         int molec = rs->getSpecies().getMolecule();
-        
-        //check if that species exists in the compartment
-        auto vit = find_if(spcv.species().cbegin(),spcv.species().cend(),
-           [molec](const unique_ptr<Species> &us){return us->getMolecule()==molec;});
-        
-        //if we didn't find it, use the old species
-        if(vit==spcv.species().cend()) species.push_back(&rs->getSpecies());
-        else species.push_back(vit->get());
+        auto speciesptr = &rs->getSpecies();
+        auto status = speciesptr->getsearchwhencloningstatus();
+        //If Species can move across compartment, i.e. the species is in sol-phase, find it in the spcv
+        //If status = false, Species cannot move compartment, i.e. the species is in gel-phase. Just use the old species.
+        if(status) {
+            //check if that species exists in the compartment
+            auto vit = find_if(spcv.species().cbegin(), spcv.species().cend(),
+                               [molec](const unique_ptr<Species> &us) { return us->getMolecule() == molec; });
+
+            //if we didn't find it, use the old species
+            if (vit == spcv.species().cend()) species.push_back(speciesptr);
+            else species.push_back(vit->get());
+        }
+        else
+            species.push_back(speciesptr);
     }
     //Create new reaction, copy ownership of signal
     Reaction* newReaction = new Reaction<M,N>(species, _rate_bare, _isProtoCompartment, _volumeFrac, _rateVolumeDepExp);

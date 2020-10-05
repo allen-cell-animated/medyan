@@ -133,8 +133,9 @@ void ChemManager::initCMonomer(CMonomer* m, short filamentType, Compartment* c) 
 
     int fIndex = 0;
     for(auto &f : _chemData.speciesFilament[filamentType]) {
+        auto temp = SpeciesNamesDB::genUniqueFilName(f);
         SpeciesFilament* sf =
-        c->addSpeciesFilament(SpeciesNamesDB::genUniqueFilName(f));
+        c->addSpeciesFilament(temp);
         m->_speciesFilament[fIndex] = sf;
         fIndex++;
     }

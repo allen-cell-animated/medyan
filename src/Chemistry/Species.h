@@ -177,6 +177,8 @@ protected: //Variables
                          ///< and destroying RSpecies
     Composite *_parent; ///< pointer to the "container" object holding this Species
                         ///< (could be a nullptr)
+    bool _searchwhencloning = false; ///< when cloning a reaction, whether this Species
+                        ///< should be searched in speciesContainer object of the new Compartment
     
     /// Default Constructor; Should not be used by the end users - only internally
     /// By default, creates a RSpeciesReg.
@@ -278,6 +280,7 @@ public:
             ((RSpeciesAvg*)rhs._rspecies)->_numEvents;
         
         _parent = nullptr;
+        _searchwhencloning = rhs._searchwhencloning;
         return *this;
     }
     
@@ -289,6 +292,7 @@ public:
 
         rhs._rspecies = nullptr;
         _parent=rhs._parent;
+        _searchwhencloning = rhs._searchwhencloning;
         return *this;
     }
     
@@ -332,6 +336,9 @@ public:
     
     /// Return the molecule index associated with this Species' (as int)
     int getMolecule() const {return _molecule;}
+
+    /// Return whether this species should be searched or added as is when cloning reaction
+    bool getsearchwhencloningstatus() const {return _searchwhencloning;}
     
 #ifdef RSPECIES_SIGNALING
     /// Return true if this Species emits signals on copy number change
@@ -416,6 +423,8 @@ public:
 
 /// Used for species without spatial information (i.e. well-mixed in the container)
 class SpeciesBulk : public Species {
+protected:
+    bool _searchwhencloning = true;
     
 public:
     /// Default constructor
@@ -463,6 +472,8 @@ public:
 /// the neighboring one (i.e. they are the stochastic analogue of deterministic
 /// reaction-diffusion processes)
 class SpeciesDiffusing : public Species {
+protected:
+    bool _searchwhencloning = true;
 public:
     /// Default constructor
     SpeciesDiffusing()  : Species() {}
@@ -511,6 +522,8 @@ public:
 /// Used for species that can be in a Filament.
 ///These species can not move cross-compartment.
 class SpeciesFilament : public Species {
+protected:
+    bool _searchwhencloning = false;
     
 public:
     /// Default constructor
@@ -557,6 +570,8 @@ public:
 /// These species can not move cross-compartment.
 /// Contains a pointer to a CBound object that this represents.
 class SpeciesBound : public Species {
+protected:
+    bool _searchwhencloning = false;
     
 protected:
     CBound* _cBound = nullptr; ///< CBound object
@@ -613,7 +628,6 @@ public:
 /// These species can not move cross-compartment.
 /// Contains a pointer to a CLinker object that this represents.
 class SpeciesLinker : public SpeciesBound {
-    
 public:
     /// Default constructor
     SpeciesLinker()  : SpeciesBound() {}
@@ -852,6 +866,8 @@ public:
  *  filaments in the local compartment.
  */
 class SpeciesSingleBinding : public Species {
+protected:
+    bool _searchwhencloning = true;
 public:
     /// Default constructor
     SpeciesSingleBinding()  : Species() {}
@@ -901,6 +917,8 @@ public:
  *  binding sites of filaments in the local compartment.
  */
 class SpeciesPairBinding : public Species {
+protected:
+    bool _searchwhencloning = true;
 public:
     /// Default constructor
     SpeciesPairBinding()  : Species() {}
