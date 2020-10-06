@@ -62,6 +62,8 @@ struct DisplayTrajectoryDataStates {
 
         std::vector< ProfileWithMeshData > profileData;
 
+        bool                          displayMasterSwitch = true;
+
         Trajectory(Trajectory&&) = default;
         Trajectory& operator=(Trajectory&&) = default;
     };
@@ -180,16 +182,16 @@ inline void dispatchAnAsyncTask(SyncStates& sync) {
 
 // Background task: read trajectory into DisplayData
 inline void backgroundTaskReadTrajectory(
-    DisplayStates& states,
+    SyncStates&                          states,
     const DisplayTrajectoryFileSettings& inputs
 ) {
     // Read trajectory
     auto displayData = readAllFrameDataFromOutput(inputs);
 
     // Add to loading dock
-    std::scoped_lock lk(states.sync.meTrajectoryLoad);
+    std::scoped_lock lk(states.meTrajectoryLoad);
 
-    states.sync.trajectoryLoadDock.push(std::tuple {
+    states.trajectoryLoadDock.push(std::tuple {
         inputs,
         std::move(displayData)
     });
@@ -229,20 +231,23 @@ inline void updateMeshDataForAllTrajectories(
     int                          frame
 ) {
     for(auto& traj : states.trajectories) {
-        for(auto& profileData : traj.profileData) {
 
-            if(profileData.shouldUpdateMeshData) {
+        if(traj.displayMasterSwitch) {
+            for(auto& profileData : traj.profileData) {
 
-                if(frame < traj.data.frames.size()) {
-                    profileData.data = createMeshData(
-                        traj.data.frames[frame],
-                        traj.data.displayTypeMap,
-                        profileData.profile
-                    );
-                } else {
-                    profileData.data.data.clear();
+                if(profileData.shouldUpdateMeshData) {
+
+                    if(frame < traj.data.frames.size()) {
+                        profileData.data = createMeshData(
+                            traj.data.frames[frame],
+                            traj.data.displayTypeMap,
+                            profileData.profile
+                        );
+                    } else {
+                        profileData.data.data.clear();
+                    }
+                    profileData.shouldUpdateMeshData = false;
                 }
-                profileData.shouldUpdateMeshData = false;
             }
         }
     }

@@ -186,3 +186,7 @@ target_link_libraries(medyan PRIVATE glm)
 # imgui
 find_package(imgui CONFIG REQUIRED)
 target_link_libraries(medyan PRIVATE imgui::imgui)
+
+# native file dialog
+find_package(unofficial-nativefiledialog CONFIG REQUIRED)
+target_link_libraries(medyan PRIVATE unofficial::nativefiledialog::nfd)

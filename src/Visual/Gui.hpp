@@ -1,12 +1,15 @@
 #ifndef MEDYAN_Visual_Gui_hpp
 #define MEDYAN_Visual_Gui_hpp
 
+#include <cstdio>
 #include <type_traits>
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include <imgui_internal.h>
 #include <imgui_stdlib.h>
+#include <nfd.h>
 
 #include "Visual/DisplaySettings.hpp"
 #include "Visual/DisplayStates.hpp"
@@ -61,6 +64,26 @@ public:
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext(context_);
 
+    }
+};
+
+
+class ImguiDisableHelperGuard {
+    bool yesPleaseReallyDisableItForReal_;
+
+public:
+    ImguiDisableHelperGuard(bool forReal) : yesPleaseReallyDisableItForReal_(forReal) {
+        if(yesPleaseReallyDisableItForReal_) {
+            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+        }
+    }
+
+    ~ImguiDisableHelperGuard() {
+        if(yesPleaseReallyDisableItForReal_) {
+            ImGui::PopItemFlag();
+            ImGui::PopStyleVar();
+        }
     }
 };
 
@@ -182,6 +205,22 @@ inline bool guiAuxEnumComboBox(
     return guiAuxEnumComboBox(name, value, [](Enum, Enum) {}, flags);
 }
 
+// select file
+inline void guiAuxSelectFile(std::filesystem::path& file) {
+    nfdchar_t* filepath = nullptr;
+    auto result = NFD_OpenDialog(nullptr, std::filesystem::current_path().string().c_str(), &filepath);
+
+    if ( result == NFD_OKAY ) {
+        file = filepath;
+        std::free(filepath);
+    }
+    else if ( result == NFD_CANCEL ) {
+        // do nothing
+    }
+    else {
+        LOG(ERROR) << "Error: " << NFD_GetError();
+    }
+}
 
 //-----------------------------------------------------------------------------
 // Main GUI functions
@@ -336,6 +375,46 @@ inline void guiProfileWindow(
         {
             ImGui::BeginChild("trajectory pane", ImVec2(200, 0), true);
 
+            if(displaySettings.displayMode == DisplayMode::trajectory) {
+                if(ImGui::CollapsingHeader("new file", ImGuiTreeNodeFlags_Framed)) {
+
+                    static DisplayTrajectoryFileSettings newFile;
+
+                    const auto fileSelection = [&](std::filesystem::path& file, const char* buttonName) {
+                        if(ImGui::Button(buttonName)) {
+                            guiAuxSelectFile(file);
+                        }
+                        if(!file.empty()) {
+                            ImGui::SameLine();
+                            char clearButtonLabelId[128];
+                            std::snprintf(clearButtonLabelId, 128, "x##clear %s", buttonName);
+                            if(ImGui::Button(clearButtonLabelId)) {
+                                file.clear();
+                            }
+
+                            ImGui::TextWrapped(file.string().c_str());
+                        }
+                    };
+
+                    fileSelection(newFile.trajSnapshot, "snapshot.traj");
+
+                    // The "add" button
+                    {
+                        ImguiDisableHelperGuard guard(displayStates.sync.busy.load());
+
+                        if(ImGui::Button("add")) {
+                            pushAnAsyncTask(
+                                displayStates.sync,
+                                // file information is copied but not referenced
+                                [&, file = newFile] {
+                                    backgroundTaskReadTrajectory(displayStates.sync, file);
+                                }
+                            );
+                        }
+                    }
+                }
+            }
+
             if(displaySettings.displayMode == DisplayMode::realtime) {
                 // always select realtime
                 ImGui::Selectable("realtime", true);
@@ -344,10 +423,23 @@ inline void guiProfileWindow(
                 const int numTrajectories = displayStates.trajectoryDataStates.trajectories.size();
                 for (int i = 0; i < numTrajectories; ++i)
                 {
+                    auto& thisTraj = displayStates.trajectoryDataStates.trajectories[i];
+
                     char label[64];
-                    std::sprintf(label, "trajectory %d", i);
-                    if (ImGui::Selectable(label, selectedTrajectoryIndex == i))
+                    std::snprintf(label, 64, "%d %s", i, thisTraj.displayMasterSwitch ? "" : "disabled");
+                    if (ImGui::Selectable(label, selectedTrajectoryIndex == i)) {
                         selectedTrajectoryIndex = i;
+                    }
+
+                    if(ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+                        thisTraj.displayMasterSwitch ^= true;
+                        if(thisTraj.displayMasterSwitch) {
+                            // mark mesh data to be updated
+                            for(auto& profileData : thisTraj.profileData) {
+                                profileData.shouldUpdateMeshData = true;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -361,11 +453,17 @@ inline void guiProfileWindow(
 
             // The function to display all profiles
             const auto displayProfiles = [&](std::vector< ProfileWithMeshData >& vecProfileData) {
+
+                // add profiles
+                if(ImGui::Button("add profile")) {
+                    vecProfileData.emplace_back();
+                }
+
                 const int numProfiles = vecProfileData.size();
 
                 for(int i = 0; i < numProfiles; ++i) {
                     char label[128];
-                    std::sprintf(label, "%d %s", i, elementProfileDisplayName(vecProfileData[i].profile.index()));
+                    std::snprintf(label, 128, "%d %s", i, elementProfileDisplayName(vecProfileData[i].profile.index()));
                     if(ImGui::Selectable(label, selectedProfileIndex == i)) {
                         selectedProfileIndex = i;
                     }
@@ -379,7 +477,7 @@ inline void guiProfileWindow(
                 if(selectedTrajectoryIndex >= 0) {
                     // files
                     if(ImGui::CollapsingHeader("file")) {
-                        ImGui::Text("snapshot file: %s", trajectories[selectedTrajectoryIndex].inputs.trajSnapshot.string().c_str());
+                        ImGui::TextWrapped("snapshot file: %s", trajectories[selectedTrajectoryIndex].inputs.trajSnapshot.string().c_str());
                         if(ImGui::Button("close")) {
                             // close this file
                             trajectories.erase(trajectories.begin() + selectedTrajectoryIndex);
@@ -388,7 +486,9 @@ inline void guiProfileWindow(
 
                     // profiles
                     if(ImGui::CollapsingHeader("profiles", ImGuiTreeNodeFlags_DefaultOpen)) {
-                        displayProfiles(displayStates.trajectoryDataStates.trajectories[selectedTrajectoryIndex].profileData);
+                        if(selectedTrajectoryIndex < displayStates.trajectoryDataStates.trajectories.size()) {
+                            displayProfiles(displayStates.trajectoryDataStates.trajectories[selectedTrajectoryIndex].profileData);
+                        }
                     }
                 }
             }
@@ -412,9 +512,15 @@ inline void guiProfileWindow(
                     selectedProfileIndex    >= 0 && selectedProfileIndex    < displayStates.trajectoryDataStates.trajectories[selectedTrajectoryIndex].profileData.size();
 
                 if(valid) {
-                    auto& profileData = displayStates.trajectoryDataStates.trajectories[selectedTrajectoryIndex].profileData[selectedProfileIndex];
-                    if(guiActiveProfileConfig(profileData.profile)) {
-                        profileData.shouldUpdateMeshData = true;
+                    auto& traj = displayStates.trajectoryDataStates.trajectories[selectedTrajectoryIndex];
+                    if(ImGui::Button("remove profile")) {
+                        traj.profileData.erase(traj.profileData.begin() + selectedProfileIndex);
+                    }
+                    else {
+                        auto& profileData = traj.profileData[selectedProfileIndex];
+                        if(guiActiveProfileConfig(profileData.profile)) {
+                            profileData.shouldUpdateMeshData = true;
+                        }
                     }
                 }
             }
@@ -423,9 +529,14 @@ inline void guiProfileWindow(
                     selectedProfileIndex >= 0 && selectedProfileIndex < displayStates.realtimeDataStates.profileData.size();
 
                 if(valid) {
-                    auto& profileData = displayStates.realtimeDataStates.profileData[selectedProfileIndex];
-                    if(guiActiveProfileConfig(profileData.profile)) {
-                        profileData.shouldUpdateMeshData = true;
+                    if(ImGui::Button("remove profile")) {
+                        displayStates.realtimeDataStates.profileData.erase(displayStates.realtimeDataStates.profileData.begin() + selectedProfileIndex);
+                    }
+                    else {
+                        auto& profileData = displayStates.realtimeDataStates.profileData[selectedProfileIndex];
+                        if(guiActiveProfileConfig(profileData.profile)) {
+                            profileData.shouldUpdateMeshData = true;
+                        }
                     }
                 }
             }
@@ -444,7 +555,7 @@ inline void guiTrajectoryControlPanel(
 ) {
     // Playback
     ImGui::Checkbox("play", &displayStates.playback.isPlaying);
-    ImGui::SliderFloat("speed", &displaySettings.playback.fps, 1, 20, "%.1f");
+    ImGui::SliderFloat("speed", &displaySettings.playback.fps, 1, 24, "%.1f");
     ImGui::SliderInt("playback", &displayStates.playback.currentFrame, 0, displayStates.playback.maxFrame);
 }
 
@@ -529,7 +640,7 @@ inline void guiMainWindow(
                         pushAnAsyncTask(
                             displayStates.sync,
                             [&] {
-                                backgroundTaskReadTrajectory(displayStates, DisplayTrajectoryFileSettings {});
+                                backgroundTaskReadTrajectory(displayStates.sync, DisplayTrajectoryFileSettings {});
                             }
                         );
                     }
@@ -546,7 +657,7 @@ inline void guiMainWindow(
     ImGui::Spacing();
 
 
-    if (ImGui::CollapsingHeader("info")) {
+    if (ImGui::CollapsingHeader("info", ImGuiTreeNodeFlags_DefaultOpen)) {
 
         // Function to print view object information
         const auto printView = [](const ObjectViewSettings& viewSettings) {
@@ -594,7 +705,7 @@ inline void guiMainWindow(
 
     }
 
-    if(ImGui::CollapsingHeader("settings", ImGuiTreeNodeFlags_DefaultOpen)) {
+    if(ImGui::CollapsingHeader("settings")) {
 
         // main view
         guiViewSettings(displaySettings.mainView);

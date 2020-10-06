@@ -378,8 +378,10 @@ struct VisualDisplay {
             };
             if(vc.displaySettings.displayMode == DisplayMode::trajectory) {
                 for(auto& traj : vc.displayStates.trajectoryDataStates.trajectories) {
-                    for(auto& profileData : traj.profileData) {
-                        drawSurfaceProfileData(profileData);
+                    if(traj.displayMasterSwitch) {
+                        for(auto& profileData : traj.profileData) {
+                            drawSurfaceProfileData(profileData);
+                        }
                     }
                 }
             }

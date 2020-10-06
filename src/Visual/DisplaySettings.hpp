@@ -37,7 +37,7 @@ struct GuiSettings {
 
     // windows switches
     bool helpWindow = false;
-    bool profileWindow = false;
+    bool profileWindow = true;
 };
 
 //-------------------------------------
@@ -144,7 +144,7 @@ constexpr auto text(ObjectViewSettings::Control::CameraMouseMode mode) {
 //-------------------------------------
 
 struct TrajectoryPlaybackSettings {
-    float fps = 2;
+    float fps = 6;
 
 };
 
