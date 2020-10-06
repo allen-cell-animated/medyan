@@ -63,6 +63,7 @@ struct DisplayTrajectoryDataStates {
         std::vector< ProfileWithMeshData > profileData;
 
         Trajectory(Trajectory&&) = default;
+        Trajectory& operator=(Trajectory&&) = default;
     };
 
     std::vector< Trajectory > trajectories;

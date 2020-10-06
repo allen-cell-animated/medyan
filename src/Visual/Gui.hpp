@@ -373,12 +373,17 @@ inline void guiProfileWindow(
             };
 
             if(displaySettings.displayMode == DisplayMode::trajectory) {
-                selectedTrajectoryIndex = std::min(selectedTrajectoryIndex, (int)displayStates.trajectoryDataStates.trajectories.size() - 1);
+                auto& trajectories = displayStates.trajectoryDataStates.trajectories;
+                selectedTrajectoryIndex = std::min(selectedTrajectoryIndex, (int)trajectories.size() - 1);
 
                 if(selectedTrajectoryIndex >= 0) {
                     // files
                     if(ImGui::CollapsingHeader("file")) {
-                        // TODO
+                        ImGui::Text("snapshot file: %s", trajectories[selectedTrajectoryIndex].inputs.trajSnapshot.string().c_str());
+                        if(ImGui::Button("close")) {
+                            // close this file
+                            trajectories.erase(trajectories.begin() + selectedTrajectoryIndex);
+                        }
                     }
 
                     // profiles
