@@ -36,7 +36,6 @@ inline void playbackNewFrame(
     }
 
     if(states.currentFrame != states.previousFrame) {
-        states.meshDataGenerated = false;
 
         // Execute functions for the new frame
         func();
@@ -46,6 +45,8 @@ inline void playbackNewFrame(
     }
 }
 
+// Check whether a new frame is issued.
+// If yes, it will mark all mesh data to be updated.
 inline void playbackCheckTrajectory(
     const DisplaySettings& settings,
     DisplayStates&         states,
@@ -58,18 +59,9 @@ inline void playbackCheckTrajectory(
         [&] {
             for(auto& traj : states.trajectoryDataStates.trajectories) {
                 for(auto& profileData : traj.profileData) {
-                    if(states.playback.currentFrame < traj.data.frames.size()) {
-                        profileData.data = createMeshData(
-                            traj.data.frames[states.playback.currentFrame],
-                            traj.data.displayTypeMap,
-                            profileData.profile
-                        );
-                    } else {
-                        profileData.data.data.clear();
-                    }
+                    profileData.shouldUpdateMeshData = true;
                 }
             }
-            states.playback.meshDataGenerated = true;
         }
     );
 }

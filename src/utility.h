@@ -21,6 +21,7 @@
 #include <vector>
 #include <sstream>
 #include <iterator>
+#include <type_traits>
 
 #ifdef CUDAACCL
 #include <cuda.h>
@@ -194,6 +195,16 @@ namespace medyan {
 template< typename... Ts > struct Overloaded : Ts... { using Ts::operator()...; };
 // explicit deduction guide (not needed as of C++20)
 template< typename... Ts > Overloaded(Ts...) -> Overloaded< Ts... >;
+
+// Get underlying value of an enum
+template<
+    typename Enum,
+    std::enable_if_t< std::is_enum_v< Enum > >* = nullptr  // type requirements
+>
+constexpr auto underlying(Enum value) {
+    return static_cast< std::underlying_type_t< Enum > >(value);
+}
+
 
 } // namespace medyan
 

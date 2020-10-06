@@ -19,9 +19,6 @@ enum class DisplayMode {
     last_
 };
 
-constexpr auto underlying(DisplayMode mode) {
-    return static_cast<std::underlying_type_t<DisplayMode>>(mode);
-}
 constexpr auto text(DisplayMode mode) {
     switch(mode) {
         case DisplayMode::realtime:   return "realtime";
@@ -40,6 +37,7 @@ struct GuiSettings {
 
     // windows switches
     bool helpWindow = false;
+    bool profileWindow = false;
 };
 
 //-------------------------------------
@@ -125,18 +123,12 @@ struct ObjectViewSettings {
     Control control;
 };
 
-constexpr auto underlying(ObjectViewSettings::Projection::Type proj) {
-    return static_cast<std::underlying_type_t<ObjectViewSettings::Projection::Type>>(proj);
-}
 constexpr auto text(ObjectViewSettings::Projection::Type proj) {
     switch(proj) {
         case ObjectViewSettings::Projection::Type::orthographic: return "orthographic";
         case ObjectViewSettings::Projection::Type::perspective:  return "perspective";
         default:                                                 return "";
     }
-}
-constexpr auto underlying(ObjectViewSettings::Control::CameraMouseMode mode) {
-    return static_cast<std::underlying_type_t<ObjectViewSettings::Control::CameraMouseMode>>(mode);
 }
 constexpr auto text(ObjectViewSettings::Control::CameraMouseMode mode) {
     switch(mode) {

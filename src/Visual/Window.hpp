@@ -272,12 +272,18 @@ struct VisualDisplay {
             // input
             vc.processInput();
 
-            // check for update for on realtime raw data
+            // check for update for mesh data
             if(vc.displaySettings.displayMode == DisplayMode::trajectory) {
                 appendTrajectoryDataFromLoadDock(vc.displayStates);
                 playbackUpdateMaxFrames(vc.displayStates);
+
+                // check whether updates are needed by new frame.
                 playbackCheckTrajectory(vc.displaySettings, vc.displayStates, glfwGetTime());
+
+                // update mesh data if needed.
+                updateMeshDataForAllTrajectories(vc.displayStates.trajectoryDataStates, vc.displayStates.playback.currentFrame);
             } else {
+                // update mesh data if needed.
                 updateRealtimeMeshData(vc.displayStates.realtimeDataStates.profileData, sdfv);
             }
 

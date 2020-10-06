@@ -81,7 +81,6 @@ struct TrajectoryPlaybackStates {
     bool isPlaying = true;
     float lastGlfwTime = 0;
 
-    bool meshDataGenerated = false; // set true by mesh data generation, set false by changing frame
 };
 
 
@@ -214,6 +213,37 @@ inline void appendTrajectoryDataFromLoadDock(
             std::move(displayData),
             makeDefaultElementProfileData()
         });
+    }
+}
+
+
+// Update all trajectory mesh data that is marked to be updated.
+//
+// Notes:
+//   - This function should be called by the visual thread every frame before
+//     drawing.
+//   - Realtime data is not processed here because that requires syncing.
+inline void updateMeshDataForAllTrajectories(
+    DisplayTrajectoryDataStates& states,
+    int                          frame
+) {
+    for(auto& traj : states.trajectories) {
+        for(auto& profileData : traj.profileData) {
+
+            if(profileData.shouldUpdateMeshData) {
+
+                if(frame < traj.data.frames.size()) {
+                    profileData.data = createMeshData(
+                        traj.data.frames[frame],
+                        traj.data.displayTypeMap,
+                        profileData.profile
+                    );
+                } else {
+                    profileData.data.data.clear();
+                }
+                profileData.shouldUpdateMeshData = false;
+            }
+        }
     }
 }
 

@@ -5,6 +5,8 @@
 #include <memory> // shared_ptr
 #include <mutex>
 #include <optional>
+#include <stdexcept>
+#include <string>
 #include <variant>
 #include <vector>
 
@@ -97,6 +99,43 @@ using ElementProfile = std::variant<
     AuxLineProfile
 >;
 
+template< typename ProfileType >
+constexpr auto profileTypeDisplayName() {
+    if constexpr(std::is_same_v< ProfileType, MembraneProfile >)      { return "membrane"; }
+    else if constexpr(std::is_same_v< ProfileType, FilamentProfile >) { return "filament"; }
+    else if constexpr(std::is_same_v< ProfileType, LinkerProfile >)   { return "linker"; }
+    else if constexpr(std::is_same_v< ProfileType, AuxLineProfile >)  { return "auxiliary"; }
+    else { return ""; }
+}
+
+// Function to get name of variant type at runtime
+template< int current = 0 >
+inline const char* elementProfileDisplayName(int index) {
+    if constexpr(current >= std::variant_size_v< ElementProfile >) {
+        throw std::runtime_error("Element profile index " + std::to_string(current + index) + " out of bounds");
+    }
+    else {
+        return index == 0 ?
+            profileTypeDisplayName< std::variant_alternative_t< current, ElementProfile > >() :
+            elementProfileDisplayName< current + 1 >(index - 1);
+    }
+}
+
+// Function to make profile with certain variant index at runtime.
+//
+// Adapted from https://stackoverflow.com/a/60567091/7120360
+template< int current = 0 >
+inline ElementProfile makeProfileWithIndex(int index) {
+    if constexpr(current >= std::variant_size_v< ElementProfile >) {
+        throw std::runtime_error("Element profile index " + std::to_string(current + index) + " out of bounds");
+    }
+    else {
+        return index == 0 ?
+            ElementProfile { std::in_place_index< current > } :
+            makeProfileWithIndex< current + 1 >(index - 1);
+    }
+}
+
 struct MeshDataFrameInfo {
     int start = 0;
     int size = 0;
@@ -105,6 +144,18 @@ struct ProfileWithMeshData {
     ElementProfile                                   profile;
     MeshData                                         data;
     std::optional< std::vector< MeshDataFrameInfo >> frameInfo;
+
+    // Whether to informs the visualization to update mesh state.
+    // If true, mesh data is outdated, and should be updated.
+    //
+    // It should be set to true by whoever changes the profile or source data.
+    // Examples:
+    //   - Profile modification
+    //   - New frame in playback
+    //   - Updated source data (file load / realtime system data update)
+    //
+    // It should be set to false by the mesh data creation/update function.
+    bool shouldUpdateMeshData = true;
 };
 
 

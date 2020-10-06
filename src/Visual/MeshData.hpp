@@ -48,6 +48,8 @@ public:
     auto vao() const { return vao_; }
     auto vbo() const { return vbo_; }
 
+    auto bufferMade() const { return bufferMade_; }
+
     // ctor and dtor
     GlVertexBufferManager() = default;
     GlVertexBufferManager(MeshDataDescriptor desc) {
@@ -68,9 +70,11 @@ public:
 
             swap(*this, rhs);
         }
+
+        return *this;
     }
 
-    friend void swap(GlVertexBufferManager& lhs, GlVertexBufferManager& rhs) {
+    friend void swap(GlVertexBufferManager& lhs, GlVertexBufferManager& rhs) noexcept {
         std::swap(lhs.vao_,        rhs.vao_);
         std::swap(lhs.vbo_,        rhs.vbo_);
         std::swap(lhs.bufferMade_, rhs.bufferMade_);
@@ -156,7 +160,7 @@ struct MeshData {
 enum class DisplayGeometryType { surface, line };
 
 struct SurfaceDisplaySettings {
-    enum class PolygonMode { wireframe, fill };
+    enum class PolygonMode { wireframe, fill, last_ };
 
     bool            enabled = true;
     PolygonMode     polygonMode = PolygonMode::fill;
@@ -168,6 +172,14 @@ struct SurfaceDisplaySettings {
 
     SurfaceDisplaySettings() : vertexBufferManager(meshDataDescriptorSurface) {}
 };
+
+constexpr auto text(SurfaceDisplaySettings::PolygonMode value) {
+    switch(value) {
+        case SurfaceDisplaySettings::PolygonMode::wireframe: return "wireframe";
+        case SurfaceDisplaySettings::PolygonMode::fill:      return "fill";
+        default:                                             return "";
+    }
+}
 
 struct LineDisplaySettings {
     bool enabled = true;

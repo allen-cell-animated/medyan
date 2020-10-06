@@ -85,45 +85,31 @@ inline void updateRealtimeMeshData(
 ) {
     std::lock_guard< std::mutex > rawGuard(rawData.me);
 
-    const auto updateMeshData = [&](MeshData& meshData) {
-        return Overloaded {
-            [&](const MembraneProfile& profile) {
-                if(rawData.updated & raw_data_cat::beadPosition) {
-                    meshData = createMembraneMeshData(
-                        select(rawData.frameData.membranes, profile.selector),
-                        profile.displaySettings
-                    );
+    const auto shouldUpdateBecauseDataChanged = [&](const ElementProfile& elementProfile) -> bool {
+        return std::visit(
+            Overloaded {
+                [&](const MembraneProfile& profile) {
+                    return rawData.updated & raw_data_cat::beadPosition;
+                },
+                [&](const FilamentProfile& profile) {
+                    return rawData.updated & raw_data_cat::beadPosition;
+                },
+                [&](const LinkerProfile& profile) {
+                    return rawData.updated & raw_data_cat::beadPosition;
+                },
+                [&](const AuxLineProfile& profile) {
+                    return rawData.updated & raw_data_cat::compartment;
                 }
             },
-            [&](const FilamentProfile& profile) {
-                if(rawData.updated & raw_data_cat::beadPosition) {
-                    meshData = createFilamentMeshData(
-                        select(rawData.frameData.filaments, profile.selector),
-                        profile.displaySettings
-                    );
-                }
-            },
-            [&](const LinkerProfile& profile) {
-                if(rawData.updated & raw_data_cat::beadPosition) {
-                    meshData = createLinkerMeshData(
-                        select(rawData.frameData.linkers, profile.selector, rawData.displayTypeMap),
-                        profile.displaySettings
-                    );
-                }
-            },
-            [&](const AuxLineProfile& profile) {
-                if(rawData.updated & raw_data_cat::compartment) {
-                    meshData = createAuxLineMeshData(
-                        rawData.frameData,
-                        profile.displaySettings
-                    );
-                }
-            }
-        };
+            elementProfile
+        );
     };
 
     for(auto& eachProfileData : profileData) {
-        std::visit(updateMeshData(eachProfileData.data), eachProfileData.profile);
+        if(eachProfileData.shouldUpdateMeshData || shouldUpdateBecauseDataChanged(eachProfileData.profile)) {
+            eachProfileData.data = createMeshData(rawData.frameData, rawData.displayTypeMap, eachProfileData.profile);
+            eachProfileData.shouldUpdateMeshData = false;
+        }
     }
 
     // reset updated states

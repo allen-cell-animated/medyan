@@ -6,6 +6,7 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include <imgui_stdlib.h>
 
 #include "Visual/DisplaySettings.hpp"
 #include "Visual/DisplayStates.hpp"
@@ -68,10 +69,25 @@ public:
 // Auxiliary functions
 //-----------------------------------------------------------------------------
 
-inline void guiAuxColorPicker4Popup(const char* strId, float* pColor) {
+// Returns whether the color is changed.
+template<
+    int colorDof,
+    std::enable_if_t< colorDof == 3 || colorDof == 4 >* = nullptr
+>
+inline bool guiAuxColorPickerPopup(
+    const char*        strId, 
+    float*             pColor
+) {
+    bool changed = false;
+
     const bool bgColorPopup = ImGui::ColorButton(
         strId,
-        [&] { ImVec4 to; std::memcpy(&to, pColor, sizeof(to)); return to; }(),
+        ImVec4(
+            pColor[0],
+            pColor[1],
+            pColor[2],
+            colorDof == 3 ? 1.0f : pColor[3]
+        ),
         0
     );
     ImGui::SameLine();
@@ -82,13 +98,28 @@ inline void guiAuxColorPicker4Popup(const char* strId, float* pColor) {
     }
 
     if(ImGui::BeginPopup(strId)) {
-        ImGui::ColorPicker4(strId, pColor, ImGuiColorEditFlags_PickerHueWheel);
+        if(colorDof == 3) {
+            changed = ImGui::ColorPicker3(strId, pColor, ImGuiColorEditFlags_PickerHueWheel);
+        } else {
+            changed = ImGui::ColorPicker4(strId, pColor, ImGuiColorEditFlags_PickerHueWheel);
+        }
 
         ImGui::EndPopup();
     }
+
+    return changed;
+}
+
+inline bool guiAuxColorPicker3Popup(const char* strId, float* pColor) {
+    return guiAuxColorPickerPopup<3>(strId, pColor);
+}
+inline bool guiAuxColorPicker4Popup(const char* strId, float* pColor) {
+    return guiAuxColorPickerPopup<4>(strId, pColor);
 }
 
 // Function to build combo box automatically for an enumeration type.
+//
+// Returns whether a new value is selected.
 //
 // Notes:
 //   - The elements in the enum type must be automatically valued (ie the
@@ -103,12 +134,14 @@ template<
         std::is_invocable_r_v< void, Reselect, Enum, Enum > // Reselect: (Enum, Enum) -> void
     >* = nullptr                    // type requirements
 >
-inline void guiAuxEnumComboBox(
+inline bool guiAuxEnumComboBox(
     const char*          name,
     Enum&                value,
     Reselect&&           reselect,
     ImGuiSelectableFlags flags = 0
 ) {
+    bool changed = false;
+
     if(ImGui::BeginCombo(name, text(value), 0)) {
         for (int i = 0; i < underlying(Enum::last_); ++i) {
 
@@ -119,6 +152,11 @@ inline void guiAuxEnumComboBox(
                 const auto oldValue = value;
                 value = valueI;
                 reselect(oldValue, valueI);
+
+                if(!isSelected) {
+                    // selected one item that was previously not selected
+                    changed = true;
+                }
             }
 
             // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -128,18 +166,20 @@ inline void guiAuxEnumComboBox(
         }
         ImGui::EndCombo();
     }
+
+    return changed;
 }
 // Where Reselect function is a no-op.
 template<
     typename Enum,
     std::enable_if_t< std::is_enum_v< Enum > >* = nullptr     // type requirements
 >
-inline void guiAuxEnumComboBox(
+inline bool guiAuxEnumComboBox(
     const char*          name,
     Enum&                value,
     ImGuiSelectableFlags flags = 0
 ) {
-    guiAuxEnumComboBox(name, value, [](Enum, Enum) {}, flags);
+    return guiAuxEnumComboBox(name, value, [](Enum, Enum) {}, flags);
 }
 
 
@@ -162,6 +202,141 @@ inline void guiHelpWindow(DisplaySettings& displaySettings) {
         }
     }
 
+
+    // End of help window, no matter Begin returns true or false.
+    ImGui::End();
+}
+
+// Functions for profile configuration
+// Returns whether the profile is changed.
+inline bool guiGeometryDisplaySettings(SurfaceDisplaySettings& settings) {
+    bool changed = false;
+
+    changed |= ImGui::Checkbox("enabled", &settings.enabled);
+    changed |= guiAuxEnumComboBox("polygon", settings.polygonMode);
+
+    return changed;
+}
+inline bool guiGeometryDisplaySettings(LineDisplaySettings& settings) {
+    bool changed = false;
+
+    changed |= ImGui::Checkbox("enabled", &settings.enabled);
+
+    return changed;
+}
+
+inline bool guiActiveProfileConfig(MembraneProfile& profile) {
+    bool changed = false;
+
+    changed |= guiGeometryDisplaySettings(profile.displaySettings.surface);
+
+    changed |= guiAuxColorPicker3Popup("fixed color", profile.displaySettings.colorFixed.value.data());
+
+    return changed;
+}
+inline bool guiActiveProfileConfig(FilamentProfile& profile) {
+    bool changed = false;
+
+    if(displayGeometryType(profile.displaySettings) == DisplayGeometryType::line) {
+        changed |= guiGeometryDisplaySettings(profile.displaySettings.line);
+    } else {
+        changed |= guiGeometryDisplaySettings(profile.displaySettings.surface);
+    }
+
+    changed |= guiAuxColorPicker3Popup("fixed color", profile.displaySettings.colorFixed.value.data());
+
+    return changed;
+}
+inline bool guiActiveProfileConfig(LinkerProfile& profile) {
+    bool changed = false;
+
+    if(displayGeometryType(profile.displaySettings) == DisplayGeometryType::line) {
+        changed |= guiGeometryDisplaySettings(profile.displaySettings.line);
+    } else {
+        changed |= guiGeometryDisplaySettings(profile.displaySettings.surface);
+    }
+
+    // selector
+    {
+        // on/off checkbox
+        bool filterOn = profile.selector.name.has_value();
+        const bool filterOnChanged = ImGui::Checkbox(filterOn ? "##filter check" : "filter##filter check", &filterOn);
+        changed |= filterOnChanged;
+
+        if(filterOnChanged) {
+            if(filterOn) profile.selector.name.emplace();
+            else         profile.selector.name.reset();
+        }
+
+        // show text box
+        if(filterOn) {
+            ImGui::SameLine();
+            changed |= ImGui::InputText("filter##filter text", &*profile.selector.name);
+        }
+    }
+
+    // color
+    changed |= guiAuxColorPicker3Popup("fixed color", profile.displaySettings.colorFixed.value.data());
+
+    return changed;
+}
+inline bool guiActiveProfileConfig(AuxLineProfile& profile) {
+    bool changed = false;
+    changed |= guiGeometryDisplaySettings(profile.displaySettings.line);
+    return changed;
+}
+
+// Returns whether the profile is changed
+inline bool guiActiveProfileConfig(ElementProfile& profile) {
+    bool changed = false;
+
+    // Combo box to select target
+    if(ImGui::BeginCombo("target", elementProfileDisplayName(profile.index()), 0)) {
+        for (int i = 0; i < std::variant_size_v< ElementProfile >; ++i) {
+
+            const bool isSelected = (profile.index() == i);
+            if (ImGui::Selectable(elementProfileDisplayName(i), isSelected, 0)) {
+                if(!isSelected) {
+                    // A new profile is chosen
+                    profile = makeProfileWithIndex(i);
+
+                    // Because we selected a profile that was not previously selected
+                    changed = true;
+                }
+            }
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (isSelected) {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+
+    // Display actual settings
+    changed |= std::visit([](auto& actualProfile) { return guiActiveProfileConfig(actualProfile); }, profile);
+
+    return changed;
+}
+
+inline void guiProfileWindow(
+    DisplaySettings& displaySettings,
+    DisplayStates&   displayStates
+) {
+    if(!displaySettings.gui.profileWindow) return;
+
+    ImGui::SetNextWindowSize(ImVec2(600, 300), ImGuiCond_FirstUseEver);
+
+    if (ImGui::Begin("profile", &displaySettings.gui.profileWindow)) {
+
+        if(displaySettings.displayMode == DisplayMode::realtime) {
+            if(displayStates.realtimeDataStates.profileData.size() > 0) {
+                if(guiActiveProfileConfig(displayStates.realtimeDataStates.profileData[0].profile)) {
+                    displayStates.realtimeDataStates.profileData[0].shouldUpdateMeshData = true;
+                }
+            }
+        }
+    }
 
     // End of help window, no matter Begin returns true or false.
     ImGui::End();
@@ -229,10 +404,13 @@ inline void guiMainWindow(
     // Menu Bar
     if (ImGui::BeginMenuBar())
     {
-        if (ImGui::BeginMenu("file"))
-        {
+        if (ImGui::BeginMenu("file")) {
             ImGui::MenuItem("(empty menu)", NULL, false, false);
+            ImGui::EndMenu();
+        }
 
+        if(ImGui::BeginMenu("window")) {
+            ImGui::MenuItem("profile", nullptr, &displaySettings.gui.profileWindow, true);
             ImGui::EndMenu();
         }
 
@@ -343,6 +521,7 @@ inline void imguiLoopRender(
 
     if(displaySettings.gui.enabled) {
         guiMainWindow(displaySettings, displayStates);
+        guiProfileWindow(displaySettings, displayStates);
         guiHelpWindow(displaySettings);
     }
 
