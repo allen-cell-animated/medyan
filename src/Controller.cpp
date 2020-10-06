@@ -1657,7 +1657,7 @@ void Controller::run() {
         cout<<"Clone rxn alone="<<cdetails.internalrxnclone<<endl;
         cout<<"Add cloned reaction="<<cdetails.internalrxnadd<<endl;
         cout<<"Find species to clone="<<cdetails.clonefindspecies<<endl;
-        cout<<"Affected reactions size="<<cdetails.affectedrxns<<endl;
+        cout<<"Get affected reactions="<<cdetails.getaffectedrxns<<endl;
         cout<<"Clone crossCylinder reactions="<<cdetails.ccylclonetimer[1]<<", calls="<<
             cdetails.ccylclonecounter[1]<<", rxncounter="<<cdetails.ccylclonerxncounter[1]<<endl;
         cout<<"Clone reactingCylinder reactions="<<cdetails.ccylclonetimer[2]<<", calls="<<

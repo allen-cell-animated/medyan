@@ -20,8 +20,36 @@
 #include <boost/pool/pool.hpp>
 #include <boost/pool/pool_alloc.hpp>
 #endif
-#include <chrono>
+
 #include "CUDAcommon.h"
+template<unsigned short M, unsigned short N>
+vector<ReactionBase*> Reaction<M,N>::getAffectedReactions(){
+#ifdef OPTIMOUT
+    chrono::high_resolution_clock::time_point mins, mine;
+    mins = chrono::high_resolution_clock::now();
+#endif
+    #ifdef DEBUGCONSTANTSEED
+    unordered_set<ReactionBase*, HashbyId<ReactionBase*>,
+    customEqualId<ReactionBase*>> rxns;
+    #else
+    unordered_set<ReactionBase*> rxns;
+    #endif
+    for(int i = 0; i < M + N; i++) {
+        auto s = _rspecies[i];
+        for(auto it = s->beginReactantReactions();
+        it != s->endReactantReactions(); it++) {
+            ReactionBase* r = (*it);
+            rxns.insert(r);
+        }
+    }
+    rxns.erase(this);
+#ifdef OPTIMOUT
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> getaffectedrxns(mine - mins);
+    CUDAcommon::cdetails.getaffectedrxns += getaffectedrxns.count();
+#endif
+    return vector<ReactionBase*>(rxns.begin(),rxns.end());
+}
 
 template<unsigned short M, unsigned short N>
     void Reaction<M,N>::updatePropensityImpl() {
@@ -59,7 +87,6 @@ template <unsigned short M, unsigned short N>
 
 template <unsigned short M, unsigned short N>
 void Reaction<M,N>::passivateReactionImpl() {
-//    std::cout<<"passivate Rxn "<<M<<" "<<N<<endl;
     if(isPassivated()) return;
 #ifdef TRACK_DEPENDENTS
     for(auto i=0U; i<M; ++i)
@@ -102,8 +129,6 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
             //if we didn't find it, use the old species
             if (vit == spcv.species().cend()){
                 species.push_back(speciesptr);
-                cout<<"RType "<<getReactionType()<<endl;
-                cout<<"F-NOTFOUND "<<speciesptr->getName()<<endl;
             }
             else species.push_back(vit->get());
         }
@@ -122,8 +147,15 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
     mine = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> rxnfindspecies(mine - mins);
     CUDAcommon::cdetails.clonefindspecies += rxnfindspecies.count();
+    //
+    // Note: the new reaction is not an exact clone of the original because
+    //   - The species can be different.
+    //   - The _isProtoCompartment field is directly set to false, regardless of the current reaction.
+    //
+    // Note: the clone has side effects on the current reaction:
+    //   - The _signal will be moved to the new reaction.
     //Create new reaction, copy ownership of signal
-    Reaction* newReaction = new Reaction<M,N>(species, _rate_bare, _isProtoCompartment, _volumeFrac, _rateVolumeDepExp);
+    Reaction* newReaction = new Reaction<M,N>(species, _rate_bare, false, _volumeFrac, _rateVolumeDepExp);
     newReaction->_rate = _rate;
     newReaction->_Id = _Id;
 #ifdef REACTION_SIGNALING

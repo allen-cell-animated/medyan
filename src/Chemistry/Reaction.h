@@ -92,41 +92,19 @@ template <unsigned short M, unsigned short N>
         
         /// Return a list of reactions which rates would be affected if this
         /// reaction were to be executed.
-        virtual vector<ReactionBase*> getAffectedReactions() override
-        {
-	        #ifdef DEBUGCONSTANTSEED
-            unordered_set<ReactionBase*, HashbyId<ReactionBase*>,
-                    customEqualId<ReactionBase*>> rxns;
-			#else
-        	unordered_set<ReactionBase*> rxns;
-			#endif
-            
-            for(int i = 0; i < M + N; i++) {
-              
-                auto s = _rspecies[i];
-                
-                for(auto it = s->beginReactantReactions();
-                         it != s->endReactantReactions(); it++) {
-                    ReactionBase* r = (*it);
-                    rxns.insert(r);
-                }
-            }
-            rxns.erase(this);
-            return vector<ReactionBase*>(rxns.begin(),rxns.end());
-        }
+        virtual vector<ReactionBase*> getAffectedReactions() override;
         
         virtual void updatePropensityImpl() override;
         
     protected:
         /// An implementation method used by the constructor.
         template <typename InputContainer>
-        void initializeSpecies(const InputContainer &species)
-        {
+        void initializeSpecies(const InputContainer &species){
             assert(species.size()==(M+N)
-            && "Reaction<M,N> Ctor: The species number does not match the template M+N");
+                   && "Reaction<M,N> Ctor: The species number does not match the template M+N");
             transform(species.begin(),species.end(),_rspecies.begin(),
                       [](Species *s){return &s->getRSpecies();});
-            
+
             if(!_isProtoCompartment) {
 #ifdef TRACK_DEPENDENTS
                 //add dependents
@@ -136,7 +114,6 @@ template <unsigned short M, unsigned short N>
                 for(auto i=0U; i<M; ++i) _rspecies[i]->addAsReactant(this);
                 for(auto i=M; i<(M+N); ++i) _rspecies[i]->addAsProduct(this);
             }
-
         }
         
         /// Implementation of getM()

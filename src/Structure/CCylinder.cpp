@@ -71,7 +71,6 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
         minei = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> irxnclone(minei - minsi);
         CUDAcommon::cdetails.internalrxnclone += irxnclone.count();
-        CUDAcommon::cdetails.affectedrxns += rxnClone->getAffectedReactions().size();
 #endif
         rxnClone->setVolumeFrac(c->getVolumeFrac());
         #ifdef CROSSCHECK_CYLINDER
