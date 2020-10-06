@@ -93,6 +93,18 @@ template <unsigned short M, unsigned short N>
         /// Return a list of reactions which rates would be affected if this
         /// reaction were to be executed.
         virtual vector<ReactionBase*> getAffectedReactions() override;
+
+        virtual void addDependantReactions() override {
+                for(int i = 0; i < M + N; i++) {
+                    auto s = _rspecies[i];
+                    for(auto it = s->beginReactantReactions();
+                        it != s->endReactantReactions(); it++) {
+                        ReactionBase* r = (*it);
+                        if(r!=this && !r->isPassivated())
+                            _dependents.insert(r);
+                    }
+                }
+        }
         
         virtual void updatePropensityImpl() override;
         
@@ -108,8 +120,9 @@ template <unsigned short M, unsigned short N>
             if(!_isProtoCompartment) {
 #ifdef TRACK_DEPENDENTS
                 //add dependents
-                for(auto &d : getAffectedReactions())
-                    if(!d->isPassivated()) _dependents.insert(d);
+                addDependantReactions();
+/*                for(auto &d : getAffectedReactions())
+                    if(!d->isPassivated()) _dependents.insert(d);*/
 #endif
                 for(auto i=0U; i<M; ++i) _rspecies[i]->addAsReactant(this);
                 for(auto i=M; i<(M+N); ++i) _rspecies[i]->addAsProduct(this);
