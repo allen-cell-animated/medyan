@@ -20,6 +20,8 @@
 #include <boost/pool/pool.hpp>
 #include <boost/pool/pool_alloc.hpp>
 #endif
+#include <chrono>
+#include "CUDAcommon.h"
 
 template<unsigned short M, unsigned short N>
     void Reaction<M,N>::updatePropensityImpl() {
@@ -82,7 +84,10 @@ void Reaction<M,N>::passivateReactionImpl() {
 template <unsigned short M, unsigned short N>
 Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
 {
+    chrono::high_resolution_clock::time_point mins, mine;
+    mins = chrono::high_resolution_clock::now();
     vector<Species*> species;
+
     for(auto &rs : _rspecies){
         int molec = rs->getSpecies().getMolecule();
         auto speciesptr = &rs->getSpecies();
@@ -95,17 +100,28 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
                                [molec](const unique_ptr<Species> &us) { return us->getMolecule() == molec; });
 
             //if we didn't find it, use the old species
-            if (vit == spcv.species().cend()) species.push_back(speciesptr);
+            if (vit == spcv.species().cend()){
+                species.push_back(speciesptr);
+                cout<<"RType "<<getReactionType()<<endl;
+                cout<<"F-NOTFOUND "<<speciesptr->getName()<<endl;
+            }
             else species.push_back(vit->get());
         }
         else{
             //check if that species exists in the compartment
             auto vit = find_if(spcv.species().crbegin(), spcv.species().crend(),
                                [molec](const unique_ptr<Species> &us) { return us->getMolecule() == molec; });
-            if (vit == spcv.species().crend()) species.push_back(speciesptr);
+            if (vit == spcv.species().crend()){
+                cout<<"RType "<<getReactionType()<<endl;
+                species.push_back(speciesptr);
+                cout<<"R-NOTFOUND "<<speciesptr->getName()<<endl;
+            }
             else species.push_back(vit->get());
         }
     }
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> rxnfindspecies(mine - mins);
+    CUDAcommon::cdetails.clonefindspecies += rxnfindspecies.count();
     //Create new reaction, copy ownership of signal
     Reaction* newReaction = new Reaction<M,N>(species, _rate_bare, _isProtoCompartment, _volumeFrac, _rateVolumeDepExp);
     newReaction->_rate = _rate;

@@ -189,6 +189,7 @@ struct chemdetails{
     double internalrxnclone = 0.0;
     double internalrxnadd = 0.0;
     int affectedrxns = 0;
+    double clonefindspecies= 0.0;
 };
 
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)

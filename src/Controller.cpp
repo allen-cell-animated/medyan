@@ -1338,6 +1338,8 @@ void Controller::run() {
             	factor = 10.0;
 #endif
             floatingpoint chemistryTime = _minimizationTime/factor;
+            cout<<"chemistryTime="<<chemistryTime<<" _minimizationTime="<<_minimizationTime
+            <<" factor="<<factor<<" tau()="<<tau()<<" oldTau="<<oldTau<<endl;
             #ifdef CROSSCHECK_CYLINDER
             string crosscheckchemname = _outputDirectory + "crosscheckChem.traj";
             if(CController::_crosscheckdumpFilechem.is_open())
@@ -1654,6 +1656,7 @@ void Controller::run() {
                 cdetails.ccylclonecounter[0]<<", rxncounter="<<cdetails.ccylclonerxncounter[0]<<endl;
         cout<<"Clone rxn alone="<<cdetails.internalrxnclone<<endl;
         cout<<"Add cloned reaction="<<cdetails.internalrxnadd<<endl;
+        cout<<"Find species to clone="<<cdetails.clonefindspecies<<endl;
         cout<<"Affected reactions size="<<cdetails.affectedrxns<<endl;
         cout<<"Clone crossCylinder reactions="<<cdetails.ccylclonetimer[1]<<", calls="<<
             cdetails.ccylclonecounter[1]<<", rxncounter="<<cdetails.ccylclonerxncounter[1]<<endl;
