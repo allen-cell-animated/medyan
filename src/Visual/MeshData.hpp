@@ -201,7 +201,7 @@ struct MembraneDisplaySettings {
 };
 
 struct FilamentDisplaySettings {
-    enum class PathMode { line, extrude, bead };
+    enum class PathMode { line, extrude, bead, last_ };
 
     mathfunc::Vec3f colorFixed { 0.95f, 0.1f, 0.15f };
 
@@ -222,8 +222,17 @@ struct FilamentDisplaySettings {
 
 };
 
+constexpr auto text(FilamentDisplaySettings::PathMode value) {
+    switch(value) {
+        case FilamentDisplaySettings::PathMode::line:    return "line";
+        case FilamentDisplaySettings::PathMode::extrude: return "extrude";
+        case FilamentDisplaySettings::PathMode::bead:    return "bead";
+        default:                                         return "";
+    }
+}
+
 struct LinkerDisplaySettings {
-    enum class PathMode { line, extrude };
+    enum class PathMode { line, extrude, last_ };
 
     mathfunc::Vec3f colorFixed { 0.1f, 0.9f, 0.0f };
 
@@ -238,6 +247,14 @@ struct LinkerDisplaySettings {
     LineDisplaySettings    line;     // used in "line" path mode
 
 };
+
+constexpr auto text(LinkerDisplaySettings::PathMode value) {
+    switch(value) {
+        case LinkerDisplaySettings::PathMode::line:    return "line";
+        case LinkerDisplaySettings::PathMode::extrude: return "extrude";
+        default:                                       return "";
+    }
+}
 
 struct AuxLineDisplaySettings {
     using Flag = std::uint_fast8_t;

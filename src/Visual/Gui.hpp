@@ -205,6 +205,54 @@ inline bool guiAuxEnumComboBox(
     return guiAuxEnumComboBox(name, value, [](Enum, Enum) {}, flags);
 }
 
+// Tristate checkbox
+//
+// State: 0 -> unchecked, 1 -> checked, -1 -> intermediate
+// Clicking the checkbox will never set the state to -1.
+//
+// adapted from https://github.com/ocornut/imgui/issues/2644#issuecomment-507023896
+inline bool guiAuxCheckboxTristate(const char* label, int* pState) {
+    bool clicked = false;
+    if (*pState == -1)
+    {
+        ImGui::PushItemFlag(ImGuiItemFlags_MixedValue, true);
+        bool b = false;
+        clicked = ImGui::Checkbox(label, &b);
+        if (clicked)
+            *pState = 1;
+        ImGui::PopItemFlag();
+    }
+    else
+    {
+        bool b = (*pState != 0);
+        clicked = ImGui::Checkbox(label, &b);
+        if (clicked)
+            *pState = (int)b;
+    }
+    return clicked;
+}
+
+// check box to toggle flags
+//
+// Returns whether the flag is changed.
+template< typename UInt >
+inline bool guiAuxCheckboxFlags(const char* label, UInt& flag, UInt setTo) {
+    const UInt oldFlag     = flag;
+    const bool atLeast1Set = flag & setTo;
+    const bool allSet      = (flag & setTo) == setTo;
+    int        state       = allSet ? 1 : (atLeast1Set ? -1 : 0);
+
+    if(guiAuxCheckboxTristate(label, &state)) {
+        if(state == 1) {
+            flag |= setTo;
+        } else if(state == 0) {
+            flag &= ~setTo;
+        } // cannot be -1
+    }
+
+    return flag != oldFlag;
+}
+
 // select file
 inline void guiAuxSelectFile(std::filesystem::path& file) {
     nfdchar_t* filepath = nullptr;
@@ -276,6 +324,21 @@ inline bool guiActiveProfileConfig(MembraneProfile& profile) {
 inline bool guiActiveProfileConfig(FilamentProfile& profile) {
     bool changed = false;
 
+    // path mode specific
+    changed |= guiAuxEnumComboBox("path mode", profile.displaySettings.pathMode);
+
+    switch(profile.displaySettings.pathMode) {
+        case FilamentDisplaySettings::PathMode::line:
+            break;
+        case FilamentDisplaySettings::PathMode::extrude:
+            changed |= ImGui::SliderFloat("extrude radius", &profile.displaySettings.pathExtrudeRadius, 1.0f, 24.0f, "%.1f");
+            changed |= ImGui::SliderInt("extrude sides", &profile.displaySettings.pathExtrudeSides, 4, 20);
+            break;
+        case FilamentDisplaySettings::PathMode::bead:
+            changed |= ImGui::SliderFloat("bead radius", &profile.displaySettings.beadRadius, 1.0f, 50.0f, "%.1f");
+            break;
+    }
+
     if(displayGeometryType(profile.displaySettings) == DisplayGeometryType::line) {
         changed |= guiGeometryDisplaySettings(profile.displaySettings.line);
     } else {
@@ -288,12 +351,6 @@ inline bool guiActiveProfileConfig(FilamentProfile& profile) {
 }
 inline bool guiActiveProfileConfig(LinkerProfile& profile) {
     bool changed = false;
-
-    if(displayGeometryType(profile.displaySettings) == DisplayGeometryType::line) {
-        changed |= guiGeometryDisplaySettings(profile.displaySettings.line);
-    } else {
-        changed |= guiGeometryDisplaySettings(profile.displaySettings.surface);
-    }
 
     // selector
     {
@@ -314,6 +371,24 @@ inline bool guiActiveProfileConfig(LinkerProfile& profile) {
         }
     }
 
+    // path mode specific
+    changed |= guiAuxEnumComboBox("path mode", profile.displaySettings.pathMode);
+
+    switch(profile.displaySettings.pathMode) {
+        case LinkerDisplaySettings::PathMode::line:
+            break;
+        case LinkerDisplaySettings::PathMode::extrude:
+            changed |= ImGui::SliderFloat("extrude radius", &profile.displaySettings.pathExtrudeRadius, 1.0f, 24.0f, "%.1f");
+            changed |= ImGui::SliderInt("extrude sides", &profile.displaySettings.pathExtrudeSides, 4, 20);
+            break;
+    }
+
+    if(displayGeometryType(profile.displaySettings) == DisplayGeometryType::line) {
+        changed |= guiGeometryDisplaySettings(profile.displaySettings.line);
+    } else {
+        changed |= guiGeometryDisplaySettings(profile.displaySettings.surface);
+    }
+
     // color
     changed |= guiAuxColorPicker3Popup("fixed color", profile.displaySettings.colorFixed.value.data());
 
@@ -321,7 +396,12 @@ inline bool guiActiveProfileConfig(LinkerProfile& profile) {
 }
 inline bool guiActiveProfileConfig(AuxLineProfile& profile) {
     bool changed = false;
+
+    changed |= guiAuxCheckboxFlags("compartment border", profile.displaySettings.flag, AuxLineDisplaySettings::targetCompartmentBorder);
+    changed |= guiAuxCheckboxFlags("compartment grid", profile.displaySettings.flag, AuxLineDisplaySettings::targetCompartmentAll);
+
     changed |= guiGeometryDisplaySettings(profile.displaySettings.line);
+
     return changed;
 }
 
