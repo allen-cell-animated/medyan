@@ -325,16 +325,107 @@ inline void guiProfileWindow(
 ) {
     if(!displaySettings.gui.profileWindow) return;
 
-    ImGui::SetNextWindowSize(ImVec2(600, 300), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(750, 300), ImGuiCond_FirstUseEver);
 
     if (ImGui::Begin("profile", &displaySettings.gui.profileWindow)) {
 
-        if(displaySettings.displayMode == DisplayMode::realtime) {
-            if(displayStates.realtimeDataStates.profileData.size() > 0) {
-                if(guiActiveProfileConfig(displayStates.realtimeDataStates.profileData[0].profile)) {
-                    displayStates.realtimeDataStates.profileData[0].shouldUpdateMeshData = true;
+        static int selectedTrajectoryIndex = -1; // used only in trajectory mode. -1 means not selected
+        static int selectedProfileIndex = -1; // used only when profiles are listed. -1 means not selected
+
+        // left pane, for trajectory list
+        {
+            ImGui::BeginChild("trajectory pane", ImVec2(200, 0), true);
+
+            if(displaySettings.displayMode == DisplayMode::realtime) {
+                // always select realtime
+                ImGui::Selectable("realtime", true);
+            }
+            else {
+                const int numTrajectories = displayStates.trajectoryDataStates.trajectories.size();
+                for (int i = 0; i < numTrajectories; ++i)
+                {
+                    char label[64];
+                    std::sprintf(label, "trajectory %d", i);
+                    if (ImGui::Selectable(label, selectedTrajectoryIndex == i))
+                        selectedTrajectoryIndex = i;
                 }
             }
+
+            ImGui::EndChild();
+        }
+        ImGui::SameLine();
+
+        // middle pane, for trajectory configuration and profiles
+        {
+            ImGui::BeginChild("config pane", ImVec2(250, 0), true);
+
+            // The function to display all profiles
+            const auto displayProfiles = [&](std::vector< ProfileWithMeshData >& vecProfileData) {
+                const int numProfiles = vecProfileData.size();
+
+                for(int i = 0; i < numProfiles; ++i) {
+                    char label[128];
+                    std::sprintf(label, "%d %s", i, elementProfileDisplayName(vecProfileData[i].profile.index()));
+                    if(ImGui::Selectable(label, selectedProfileIndex == i)) {
+                        selectedProfileIndex = i;
+                    }
+                }
+            };
+
+            if(displaySettings.displayMode == DisplayMode::trajectory) {
+                selectedTrajectoryIndex = std::min(selectedTrajectoryIndex, (int)displayStates.trajectoryDataStates.trajectories.size() - 1);
+
+                if(selectedTrajectoryIndex >= 0) {
+                    // files
+                    if(ImGui::CollapsingHeader("file")) {
+                        // TODO
+                    }
+
+                    // profiles
+                    if(ImGui::CollapsingHeader("profiles", ImGuiTreeNodeFlags_DefaultOpen)) {
+                        displayProfiles(displayStates.trajectoryDataStates.trajectories[selectedTrajectoryIndex].profileData);
+                    }
+                }
+            }
+            else {
+                if(ImGui::CollapsingHeader("profiles", ImGuiTreeNodeFlags_DefaultOpen)) {
+                    displayProfiles(displayStates.realtimeDataStates.profileData);
+                }
+            }
+
+            ImGui::EndChild();
+        }
+        ImGui::SameLine();
+
+        // right pane, for profile configuration
+        {
+            ImGui::BeginChild("profile pane", ImVec2(0, 0), true);
+
+            if(displaySettings.displayMode == DisplayMode::trajectory) {
+                const bool valid =
+                    selectedTrajectoryIndex >= 0 && selectedTrajectoryIndex < displayStates.trajectoryDataStates.trajectories.size() &&
+                    selectedProfileIndex    >= 0 && selectedProfileIndex    < displayStates.trajectoryDataStates.trajectories[selectedTrajectoryIndex].profileData.size();
+
+                if(valid) {
+                    auto& profileData = displayStates.trajectoryDataStates.trajectories[selectedTrajectoryIndex].profileData[selectedProfileIndex];
+                    if(guiActiveProfileConfig(profileData.profile)) {
+                        profileData.shouldUpdateMeshData = true;
+                    }
+                }
+            }
+            else {
+                const bool valid =
+                    selectedProfileIndex >= 0 && selectedProfileIndex < displayStates.realtimeDataStates.profileData.size();
+
+                if(valid) {
+                    auto& profileData = displayStates.realtimeDataStates.profileData[selectedProfileIndex];
+                    if(guiActiveProfileConfig(profileData.profile)) {
+                        profileData.shouldUpdateMeshData = true;
+                    }
+                }
+            }
+
+            ImGui::EndChild();
         }
     }
 
