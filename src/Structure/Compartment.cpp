@@ -92,7 +92,8 @@ void Compartment::SIMDcoordinates_section(){
                                   SysParams::Geometry().cylinderNumMon[_filamentType];
 
                         if (mp <= maxmp) {
-                            auto coord = midPointCoordinate(x1, x2, cyl->adjustedrelativeposition(mp));
+//                            auto coord = midPointCoordinate(x1, x2, cyl->adjustedrelativeposition(mp));
+                            auto coord = midPointCoordinate(x1, x2, mp);
                             //last 4 bits are binding site while first 12 bits are cylinder index.
                             uint32_t index = shiftedindex | j;
                             int pindices[3];
@@ -112,7 +113,8 @@ void Compartment::SIMDcoordinates_section(){
                          if(sf !=-1){
                              auto mp = (float) *it /
                                        SysParams::Geometry().cylinderNumMon[_filamentType];
-                             auto coord = midPointCoordinate(x1, x2, cyl->adjustedrelativeposition(mp));
+//                             auto coord = midPointCoordinate(x1, x2, cyl->adjustedrelativeposition(mp));
+                             auto coord = midPointCoordinate(x1, x2, mp);
                              //last 4 bits are binding site while first 12 bits are cylinder index.
                              uint32_t index = shiftedindex | j;
                              int pindices[3];
@@ -229,7 +231,8 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                             float maxmp = sqrt(
                                     twoPointDistancesquared(x1, x2) / cylsizesquared);
                             if (mp <= maxmp) {
-                                auto coord = midPointCoordinate(x1, x2, cyl->adjustedrelativeposition(mp));
+//                                auto coord = midPointCoordinate(x1, x2, cyl->adjustedrelativeposition(mp));
+                                auto coord = midPointCoordinate(x1, x2, mp);
                                 //last 4 bits are binding site while first 12 bits are cylinder index.
                                 uint32_t index = shiftedindex | j;
                                 int pindices[3];
@@ -267,7 +270,8 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
                             if (state) {
                                 auto mp = (float) *it /
                                           SysParams::Geometry().cylinderNumMon[_filamentType];
-                                auto coord = midPointCoordinate(x1, x2, cyl->adjustedrelativeposition(mp));
+//                                auto coord = midPointCoordinate(x1, x2, cyl->adjustedrelativeposition(mp));
+                                auto coord = midPointCoordinate(x1, x2, mp);
                                 //last 4 bits are binding site while first 12 bits are cylinder index.
                                 uint32_t index = shiftedindex | j;
                                 int pindices[3];
@@ -398,7 +402,8 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                         if (state) {
                             auto mp = (float) *it /
                                       SysParams::Geometry().cylinderNumMon[_filamentType];
-                            auto coord = midPointCoordinate(x1, x2, cyl->adjustedrelativeposition(mp));
+//                            auto coord = midPointCoordinate(x1, x2, cyl->adjustedrelativeposition(mp));
+                            auto coord = midPointCoordinate(x1, x2, mp);
                             //last 4 bits are binding site while first 12 bits are cylinder index.
                             uint32_t index = shiftedindex | j;
                             //split and crosscheck
@@ -438,7 +443,8 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                             if (state) {
                                 auto mp = (float) *it /
                                           SysParams::Geometry().cylinderNumMon[_filamentType];
-                                auto coord = midPointCoordinate(x1, x2, cyl->adjustedrelativeposition(mp));
+//                                auto coord = midPointCoordinate(x1, x2, cyl->adjustedrelativeposition(mp));
+                                auto coord = midPointCoordinate(x1, x2, mp);
                                 //last 4 bits are binding site while first 12 bits are cylinder index.
                                 uint32_t index = shiftedindex | j;
                                 int pindices[3];

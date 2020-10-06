@@ -92,7 +92,24 @@ template <unsigned short M, unsigned short N>
         
         /// Return a list of reactions which rates would be affected if this
         /// reaction were to be executed.
-        virtual vector<ReactionBase*> getAffectedReactions() override;
+        virtual vector<ReactionBase*> getAffectedReactions() override{
+#ifdef DEBUGCONSTANTSEED
+            unordered_set<ReactionBase*, HashbyId<ReactionBase*>,
+    customEqualId<ReactionBase*>> rxns;
+#else
+            unordered_set<ReactionBase*> rxns;
+#endif
+            for(int i = 0; i < M + N; i++) {
+                auto s = _rspecies[i];
+                for(auto it = s->beginReactantReactions();
+                    it != s->endReactantReactions(); it++) {
+                    ReactionBase* r = (*it);
+                    rxns.insert(r);
+                }
+            }
+            rxns.erase(this);
+            return vector<ReactionBase*>(rxns.begin(),rxns.end());
+        }
 
         virtual void addDependantReactions() override {
                 for(int i = 0; i < M + N; i++) {

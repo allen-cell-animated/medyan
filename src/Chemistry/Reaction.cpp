@@ -22,34 +22,6 @@
 #endif
 
 #include "CUDAcommon.h"
-template<unsigned short M, unsigned short N>
-vector<ReactionBase*> Reaction<M,N>::getAffectedReactions(){
-#ifdef OPTIMOUT
-    chrono::high_resolution_clock::time_point mins, mine;
-    mins = chrono::high_resolution_clock::now();
-#endif
-    #ifdef DEBUGCONSTANTSEED
-    unordered_set<ReactionBase*, HashbyId<ReactionBase*>,
-    customEqualId<ReactionBase*>> rxns;
-    #else
-    unordered_set<ReactionBase*> rxns;
-    #endif
-    for(int i = 0; i < M + N; i++) {
-        auto s = _rspecies[i];
-        for(auto it = s->beginReactantReactions();
-        it != s->endReactantReactions(); it++) {
-            ReactionBase* r = (*it);
-            rxns.insert(r);
-        }
-    }
-    rxns.erase(this);
-#ifdef OPTIMOUT
-    mine = chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> getaffectedrxns(mine - mins);
-    CUDAcommon::cdetails.getaffectedrxns += getaffectedrxns.count();
-#endif
-    return vector<ReactionBase*>(rxns.begin(),rxns.end());
-}
 
 template<unsigned short M, unsigned short N>
     void Reaction<M,N>::updatePropensityImpl() {

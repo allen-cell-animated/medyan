@@ -75,7 +75,8 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
     auto x4 = _c2->getSecondBead()->vcoordinate();
           
     _mLinker = unique_ptr<MLinker>(
-        new MLinker(linkerType, c1->adjustedrelativeposition(position1), c2->adjustedrelativeposition(position2), x1, x2, x3, x4));
+//        new MLinker(linkerType, c1->adjustedrelativeposition(position1), c2->adjustedrelativeposition(position2), x1, x2, x3, x4));
+            new MLinker(linkerType, position1, position2, x1, x2, x3, x4));
     _mLinker->setLinker(this);
 #endif
 }
