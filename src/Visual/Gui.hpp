@@ -315,6 +315,13 @@ inline bool guiGeometryDisplaySettings(LineDisplaySettings& settings) {
 inline bool guiActiveProfileConfig(MembraneProfile& profile) {
     bool changed = false;
 
+    changed |= guiAuxEnumComboBox("element mode", profile.displaySettings.elementMode);
+
+    if(profile.displaySettings.elementMode == MembraneDisplaySettings::ElementMode::edge) {
+        changed |= ImGui::SliderFloat("edge extrude radius", &profile.displaySettings.edgeExtrudeRadius, 1.0f, 10.0f, "%.1f");
+        changed |= ImGui::SliderInt("edge extrude sides", &profile.displaySettings.edgeExtrudeSides, 4, 20);
+    }
+
     changed |= guiGeometryDisplaySettings(profile.displaySettings.surface);
 
     changed |= guiAuxColorPicker3Popup("fixed color", profile.displaySettings.colorFixed.value.data());
@@ -650,6 +657,16 @@ inline void guiViewSettings(ObjectViewSettings& viewSettings) {
     ImGui::SliderFloat("camera key speed", &viewSettings.control.cameraKeyPositionPerFrame, 50.0, 500.0, "%.1f");
 
     guiAuxEnumComboBox("mouse mode", viewSettings.control.cameraMouseMode);
+
+    guiAuxEnumComboBox("snapshot resolution", viewSettings.control.snapshotResolution);
+    if(viewSettings.control.snapshotResolution == ObjectViewSettings::Control::SnapshotResolution::scaleWithScreen) {
+        ImGui::SliderFloat("snapshot scale", &viewSettings.control.snapshotScale, 0.1f, 10.0f, "%.1f");
+        ImGui::Checkbox("undo scaling orthographic", &viewSettings.control.snapshotUndoScaleOrtho);
+    }
+    else {
+        ImGui::SliderInt("snapshot width", &viewSettings.control.snapshotWidth, 200, 1920);
+        ImGui::SliderInt("snapshot height", &viewSettings.control.snapshotHeight, 150, 1080);
+    }
 
 }
 

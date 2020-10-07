@@ -287,11 +287,32 @@ struct VisualDisplay {
                 updateRealtimeMeshData(vc.displayStates.realtimeDataStates.profileData, sdfv);
             }
 
+            auto& mainViewSettings = vc.displaySettings.mainView;
+            auto& mainViewStates   = vc.displayStates.mainView;
+
             // select frame buffer: on screen display / offscreen snapshot
-            const bool offscreen = vc.displayStates.mainView.control.snapshotRenderingNextFrame;
-            vc.displayStates.mainView.control.snapshotRenderingNextFrame = false;
-            auto width  = vc.displaySettings.mainView.canvas.width;
-            auto height = vc.displaySettings.mainView.canvas.height;
+            const bool offscreen = mainViewStates.control.snapshotRenderingNextFrame;
+            mainViewStates.control.snapshotRenderingNextFrame = false;
+
+            auto width  = mainViewSettings.canvas.width;
+            auto height = mainViewSettings.canvas.height;
+            auto projectionWidth  = mainViewSettings.canvas.width;
+            auto projectionHeight = mainViewSettings.canvas.height;
+            if(offscreen) {
+                std::tie(width, height) = mainViewSettings.control.snapshotSize(width, height);
+                if(
+                    mainViewSettings.projection.type == ObjectViewSettings::Projection::Type::orthographic &&
+                    mainViewSettings.control.snapshotResolution == ObjectViewSettings::Control::SnapshotResolution::scaleWithScreen &&
+                    mainViewSettings.control.snapshotUndoScaleOrtho
+                ) {
+                    // The projection size stay as is.
+                    // so do nothing
+                } else {
+                    projectionWidth = width;
+                    projectionHeight = height;
+                }
+            }
+
             VisualContext::OffscreenBufferGuard offscreenBufferGuard;
             if(offscreen) {
                 offscreenBufferGuard.build(width, height);
@@ -300,7 +321,7 @@ struct VisualDisplay {
 
             glViewport(0, 0, width, height);
             {
-                const auto& c = vc.displaySettings.mainView.canvas.bgColor;
+                const auto& c = mainViewSettings.canvas.bgColor;
                 glClearColor(c[0], c[1], c[2], c[3]);
             }
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -308,8 +329,8 @@ struct VisualDisplay {
             // transform
             const auto model          = glm::mat4(1.0f);
             const auto modelInvTrans3 = glm::transpose(glm::inverse(model));
-            const auto view           = vc.displaySettings.mainView.camera.view();
-            const auto projection     = vc.displaySettings.mainView.projection.proj(width, height);
+            const auto view           = mainViewSettings.camera.view();
+            const auto projection     = mainViewSettings.projection.proj(projectionWidth, projectionHeight);
 
             // Start to render surface
             glUseProgram(shaderSurface.id());
@@ -319,7 +340,7 @@ struct VisualDisplay {
             shaderSurface.setMat3("modelInvTrans3", modelInvTrans3);
             shaderSurface.setMat4("view",           view);
 
-            shaderSurface.setVec3("CameraPos",   vc.displaySettings.mainView.camera.position);
+            shaderSurface.setVec3("CameraPos",   mainViewSettings.camera.position);
 
             shaderSurface.setVec3("dirLights[0].direction", glm::vec3 {1.0f, 1.0f, 1.0f});
             shaderSurface.setVec3("dirLights[0].ambient",   glm::vec3 {0.1f, 0.1f, 0.1f});
@@ -433,8 +454,8 @@ struct VisualDisplay {
                 glReadBuffer(GL_COLOR_ATTACHMENT0);
                 glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
 
-                stbi_write_png(vc.displaySettings.mainView.control.snapshotFile.string().c_str(), width, height, 4, data.data(), 4 * width);
-                LOG(INFO) << "Snapshot saved to " << vc.displaySettings.mainView.control.snapshotFile;
+                stbi_write_png(mainViewSettings.control.snapshotFile.string().c_str(), width, height, 4, data.data(), 4 * width);
+                LOG(INFO) << "Snapshot saved to " << mainViewSettings.control.snapshotFile;
             }
 
             // Update GUI

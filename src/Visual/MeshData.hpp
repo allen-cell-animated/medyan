@@ -4,6 +4,7 @@
 // This file defines the data structure for mesh data stored in the memory,
 // which can then be mapped into GPU memory for drawing.
 
+#include <array>
 #include <iterator>
 #include <numeric>
 #include <tuple>
@@ -195,10 +196,25 @@ struct LineDisplaySettings {
 //-------------------------------------
 
 struct MembraneDisplaySettings {
+    enum class ElementMode { triangle, edge, last_ };
+
+    ElementMode elementMode = ElementMode::triangle;
+
+    float edgeExtrudeRadius = 5.0f; // used only when element mode is "edge".
+    int   edgeExtrudeSides  = 8;
+
     mathfunc::Vec3f colorFixed { 0.4f, 0.6f, 0.95f };
 
     SurfaceDisplaySettings surface;
 };
+constexpr auto text(MembraneDisplaySettings::ElementMode value) {
+    switch(value) {
+        case MembraneDisplaySettings::ElementMode::triangle: return "triangle";
+        case MembraneDisplaySettings::ElementMode::edge:     return "edge";
+        default:                                             return "";
+    }
+}
+
 
 struct FilamentDisplaySettings {
     enum class PathMode { line, extrude, bead, last_ };
@@ -285,26 +301,78 @@ inline auto appendMembraneMeshData(
     const MembraneFrame&           membrane,
     const MembraneDisplaySettings& membraneSettings
 ) {
+    using namespace std;
 
     const int sizePrev = meshData.data.size();
 
-    for(const auto& t : membrane.triangles) {
-        const auto& c0 = membrane.vertexCoords[t[0]];
-        const auto& c1 = membrane.vertexCoords[t[1]];
-        const auto& c2 = membrane.vertexCoords[t[2]];
-        const auto un = normalizedVector(cross(c1 - c0, c2 - c0));
+    switch(membraneSettings.elementMode) {
+        case MembraneDisplaySettings::ElementMode::triangle:
 
-        for(size_t i = 0; i < 3; ++i) {
-            meshData.data.push_back(membrane.vertexCoords[t[i]][0]);
-            meshData.data.push_back(membrane.vertexCoords[t[i]][1]);
-            meshData.data.push_back(membrane.vertexCoords[t[i]][2]);
-            meshData.data.push_back(un[0]);
-            meshData.data.push_back(un[1]);
-            meshData.data.push_back(un[2]);
-            meshData.data.push_back(membraneSettings.colorFixed[0]);
-            meshData.data.push_back(membraneSettings.colorFixed[1]);
-            meshData.data.push_back(membraneSettings.colorFixed[2]);
-        }
+            for(const auto& t : membrane.triangles) {
+                const auto& c0 = membrane.vertexCoords[t[0]];
+                const auto& c1 = membrane.vertexCoords[t[1]];
+                const auto& c2 = membrane.vertexCoords[t[2]];
+                const auto un = normalizedVector(cross(c1 - c0, c2 - c0));
+
+                for(size_t i = 0; i < 3; ++i) {
+                    meshData.data.push_back(membrane.vertexCoords[t[i]][0]);
+                    meshData.data.push_back(membrane.vertexCoords[t[i]][1]);
+                    meshData.data.push_back(membrane.vertexCoords[t[i]][2]);
+                    meshData.data.push_back(un[0]);
+                    meshData.data.push_back(un[1]);
+                    meshData.data.push_back(un[2]);
+                    meshData.data.push_back(membraneSettings.colorFixed[0]);
+                    meshData.data.push_back(membraneSettings.colorFixed[1]);
+                    meshData.data.push_back(membraneSettings.colorFixed[2]);
+                }
+            }
+            break;
+
+        case MembraneDisplaySettings::ElementMode::edge:
+
+            // For each triangle, find all three edges and make a path extrusion for it.
+            //
+            // Currently, each non-border edge will be generated twice, which is redundant.
+            for(const auto& memTriangle : membrane.triangles) {
+                for(int edgeIdx = 0; edgeIdx < 3; ++edgeIdx) {
+                    array< int, 2 > indices { memTriangle[edgeIdx], memTriangle[(edgeIdx + 1) % 3] };
+
+                    const auto [genVertices, genVertexNormals, genTriInd]
+                        = PathExtrude<float> {
+                            membraneSettings.edgeExtrudeRadius,
+                            membraneSettings.edgeExtrudeSides
+                        }.generate(membrane.vertexCoords, indices);
+
+                    const int numDisplayTriangles = genTriInd.size();
+                    for(int t = 0; t < numDisplayTriangles; ++t) {
+                        const auto& triInds = genTriInd[t];
+                        const mathfunc::Vec3f coord[] {
+                            genVertices[triInds[0]],
+                            genVertices[triInds[1]],
+                            genVertices[triInds[2]]
+                        };
+                        const mathfunc::Vec3f un[] {
+                            genVertexNormals[triInds[0]],
+                            genVertexNormals[triInds[1]],
+                            genVertexNormals[triInds[2]]
+                        };
+
+                        for(int i = 0; i < 3; ++i) {
+                            meshData.data.push_back(coord[i][0]);
+                            meshData.data.push_back(coord[i][1]);
+                            meshData.data.push_back(coord[i][2]);
+                            meshData.data.push_back(un[i][0]);
+                            meshData.data.push_back(un[i][1]);
+                            meshData.data.push_back(un[i][2]);
+                            meshData.data.push_back(membraneSettings.colorFixed[0]);
+                            meshData.data.push_back(membraneSettings.colorFixed[1]);
+                            meshData.data.push_back(membraneSettings.colorFixed[2]);
+                        }
+                    }
+                }
+            }
+            break;
+
     }
 
     const int sizeCur = meshData.data.size();

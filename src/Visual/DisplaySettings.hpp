@@ -4,6 +4,7 @@
 #include <array>
 #include <filesystem>
 #include <type_traits>
+#include <utility>
 
 namespace medyan::visual {
 
@@ -98,16 +99,44 @@ struct ObjectViewSettings {
             pan,
             last_
         };
+        enum class SnapshotResolution {
+            scaleWithScreen,
+            manual,
+            last_
+        };
 
         // camera
+        //-----------------------------
         float cameraKeyPositionPerFrame = 200.0f;
 
         CameraMouseMode cameraMouseMode = CameraMouseMode::rotate;
         float cameraRotatePositionPerCursorPixel = 2.0f;   // camera move distance per pixel (rotate)
         float cameraPanPositionPerCursorPixel = 2.0f;      // camera move distance per pixel (pan)
 
-        // snapshot saving
+        // snapshot saving section
+        //-----------------------------
         std::filesystem::path snapshotFile = "./snapshot.png";
+        SnapshotResolution    snapshotResolution = SnapshotResolution::scaleWithScreen;
+        float                 snapshotScale = 1.0f;   // Used with "scale with screen"
+        // Used with "scale with screen".
+        // If set to true, it will undo the scaling when calculating orthographic projection.
+        bool                  snapshotUndoScaleOrtho = true;
+        int                   snapshotWidth = 1920;   // Used with "manual"
+        int                   snapshotHeight = 1080;   // Used with "manual"
+
+        // This function gives the snapshot size in integers (width, height).
+        auto snapshotSize(int screenViewWidth, int screenViewHeight) const {
+            int width, height;
+            if(snapshotResolution == SnapshotResolution::scaleWithScreen) {
+                width = screenViewWidth * snapshotScale;
+                height = screenViewHeight * snapshotScale;
+            } else {
+                width = snapshotWidth;
+                height = snapshotHeight;
+            }
+
+            return std::pair { width, height };
+        }
     };
 
     // Canvas
@@ -136,6 +165,13 @@ constexpr auto text(ObjectViewSettings::Control::CameraMouseMode mode) {
         case ObjectViewSettings::Control::CameraMouseMode::rotate: return "rotate";
         case ObjectViewSettings::Control::CameraMouseMode::pan:    return "pan";
         default:                                                   return "";
+    }
+}
+constexpr auto text(ObjectViewSettings::Control::SnapshotResolution value) {
+    switch(value) {
+        case ObjectViewSettings::Control::SnapshotResolution::scaleWithScreen: return "scale with screen";
+        case ObjectViewSettings::Control::SnapshotResolution::manual:          return "manual";
+        default:                                                               return "";
     }
 }
 
