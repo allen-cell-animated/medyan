@@ -11,6 +11,7 @@
 #include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneStretchingLocal.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneStretchingImpl.hpp"
+#include "Mechanics/ForceField/Membrane/MembraneTension.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneTriangleProtect.hpp"
 #include "Mechanics/ForceField/Types.hpp"
 #include "Util/Io/Log.hpp"
@@ -56,13 +57,22 @@ struct MembraneFFFactory {
         }
 
         if(tensionType == "CONSTANT") {
-            // In material coordinates, it is applicable to reservior-touching border triangles.
-            // In normal corodinates, it is applicable to the whole reservior-touching membrane,
-            //   assuming that surface tension is constant globally.
-            LOG(WARNING) << "Currently the force field is not implemented";
-            // res.forceFields.push_back(
-            //     std::make_unique< MembraneTension >()
+            // In material coordinates, it is applicable to reservior-touching
+            // border triangles.
+            //
+            // In normal or general corodinates, it is applicable to the whole
+            // reservior-touching membrane, assuming that surface tension is
+            // constant globally.
+
+            res.forceFields.push_back(
+                std::make_unique< MembraneTension >()
+            );
+
+            // Enable the protective force field
+            // res.forceFields.emplace_back(
+            //     new MembraneTriangleProtect< MembraneTriangleProtectFene, true >()
             // );
+
         }
         else if(tensionType == "") {}
         else {
@@ -87,11 +97,6 @@ struct MembraneFFFactory {
             cout << "Membrane bending FF type " << bendingType << " is not recognized." << endl;
             throw std::runtime_error("Membrane bending FF type not recognized");
         }
-
-        // Currently, do not add the protective force field
-        // res.forceFields.emplace_back(
-        //     new MembraneTriangleProtect< MembraneTriangleProtectFene, true >()
-        // );
 
 
         return res;
