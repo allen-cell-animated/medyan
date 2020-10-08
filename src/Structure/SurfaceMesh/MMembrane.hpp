@@ -31,8 +31,6 @@ struct MMembrane {
 
     double getKElastic()const { return kElastic; }
 
-    double getTension()const { return tension; }
-    
 };
 
 

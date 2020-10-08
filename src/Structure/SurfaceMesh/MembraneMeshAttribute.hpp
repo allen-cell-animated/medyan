@@ -125,7 +125,11 @@ struct MembraneMeshAttribute {
     // a vertex is only a representative point on the surface, where the motion
     // of the vertex must be in the local normal direction.
     // Local area elasticity cannot be directly defined on mesh elements.
-    enum class VertexSystem { material, normal };
+    //
+    // If vertices represent fixed coordinates in a normal coordinate system,
+    // then the system is similar to the "normal" coordinate case, but without
+    // the requirement for vertices to move only in the normal directions.
+    enum class VertexSystem { material, normal, general };
 
     struct VertexAttribute {
         using CoordinateType      = Vertex::CoordinateType;
