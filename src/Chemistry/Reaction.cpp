@@ -109,9 +109,9 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
             auto vit = find_if(spcv.species().crbegin(), spcv.species().crend(),
                                [molec](const unique_ptr<Species> &us) { return us->getMolecule() == molec; });
             if (vit == spcv.species().crend()){
-                cout<<"RType "<<getReactionType()<<endl;
+//                cout<<"RType "<<getReactionType()<<endl;
                 species.push_back(speciesptr);
-                cout<<"R-NOTFOUND "<<speciesptr->getName()<<endl;
+//                cout<<"R-NOTFOUND "<<speciesptr->getName()<<endl;
             }
             else species.push_back(vit->get());
         }
