@@ -67,6 +67,7 @@ struct DisplayFrame {
 
     // meta data
     int serial = 0;
+    double simulationTime = 0.0;
 
     // frame data
     std::vector< MembraneFrame > membranes;
@@ -140,6 +141,9 @@ inline DisplayFrame readOneFrameDataFromOutput(
 
     OutputStructSnapshot snapshot(frameNumber);
     snapshot.getFromOutput(is, iss);
+
+    // meta data
+    res.simulationTime = snapshot.simulationTime;
 
     // membrane
     {

@@ -24,6 +24,9 @@ bool copySystemData(
         }
     }
 
+    // update simulation time
+    data.frameData.simulationTime = tau();
+
     if(updated & (raw_data_cat::beadPosition | raw_data_cat::beadConnection)) {
 
         // Extract membrane indexing
