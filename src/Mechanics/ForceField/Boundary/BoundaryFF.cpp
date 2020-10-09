@@ -52,7 +52,8 @@ BoundaryFF::BoundaryFF (string type) {
 
     //if pinning to boundaries
     if(SysParams::Mechanics().pinBoundaryFilaments ||
-        SysParams::Mechanics().pinMembraneBorderVertices
+        SysParams::Mechanics().pinMembraneBorderVertices ||
+        SysParams::Mechanics().pinInitialFilamentBelowZ
     ) {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>());
