@@ -431,7 +431,7 @@ void OutputStructSnapshot::getFromSystem() {
 }
 
 void OutputStructSnapshot::getFromSystemWithoutChildren() {
-    _time = tau();
+    simulationTime = tau();
 
     _numFilaments = Filament::numFilaments();
     _numLinkers = Linker::numLinkers();
@@ -501,7 +501,7 @@ void OutputStructSnapshot::outputFromStored(std::ostream& os) {
 
 void OutputStructSnapshot::outputFromStoredWithoutChildren(std::ostream& os) {
     os << _snapshot << " "
-        << _time << " "
+        << simulationTime << " "
         << _numFilaments << " "
         << _numLinkers << " "
         << _numMotorGhosts << " "
@@ -512,7 +512,7 @@ void OutputStructSnapshot::outputFromStoredWithoutChildren(std::ostream& os) {
 
 void OutputStructSnapshot::getFromOutput(std::istream& is, std::istringstream& iss) {
     iss >> _snapshot
-        >> _time
+        >> simulationTime
         >> _numFilaments
         >> _numLinkers
         >> _numMotorGhosts

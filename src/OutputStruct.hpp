@@ -229,8 +229,6 @@ private:
     int _snapshot;
 
     /// Data
-    double _time;
-
     int _numFilaments;
     int _numLinkers;
     int _numMotorGhosts;
@@ -239,6 +237,9 @@ private:
     int _numMembranes;
 
 public:
+    // data
+    double simulationTime = 0;
+
     /// Children data
     std::vector<OutputStructFilament> filamentStruct;
     std::vector<OutputStructLinker>   linkerStruct;
