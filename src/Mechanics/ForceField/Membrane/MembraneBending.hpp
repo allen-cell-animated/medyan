@@ -87,6 +87,8 @@ struct MembraneBending : public ForceField {
                     const auto curv = va.gVertex.curv;
                     const auto curv2 = va.gVertex.curv2;
 
+                    // for the central vertex
+                    // The central vertex is not on the border
                     if constexpr(std::is_same_v< InteractionType, MembraneBendingHelfrich >) {
                         impl.forces(
                             force + va.cachedCoordIndex,
@@ -104,24 +106,35 @@ struct MembraneBending : public ForceField {
                         );
                     }
 
-                    for (size_t n = 0; n < va.cachedDegree; ++n) {
+                    // for neighboring vertices
+                    for (int n = 0; n < va.cachedDegree; ++n) {
+                        // "hei_o" is the half edge index from the center vertex to the neighbor vertex.
                         const MT::HalfEdgeIndex hei_o { cvt[mesh.metaAttribute().cachedVertexOffsetLeavingHE(i) + n] };
+
+                        // "vn" is the neighbor vertex index in the mesh.
+                        // "vn_i" is the index of x-coordinate of vertex vn in the degree-of-freedom-array.
+                        const auto vn = mesh.target(hei_o);
                         const size_t vn_i = cvt[mesh.metaAttribute().cachedVertexOffsetNeighborCoord(i) + n];
+
                         const auto &dArea = mesh.attribute(hei_o).gHalfEdge.dNeighborAstar / 3;
 
-                        if constexpr(std::is_same_v< InteractionType, MembraneBendingHelfrich >) {
-                            const auto& dCurv = mesh.attribute(hei_o).gHalfEdge.dNeighborCurv;
-                            impl.forces(
-                                force + vn_i,
-                                area, dArea, curv, dCurv, kBending, eqCurv
-                            );
-                        }
-                        else {
-                            const auto& dCurv2 = mesh.attribute(hei_o).gHalfEdge.dNeighborCurv2;
-                            impl.forces(
-                                force + vn_i,
-                                area, dArea, curv2, dCurv2, kBending
-                            );
+                        // If the neighbor vertex is on the border, we will ignore force calculations on it.
+                        // The "border vertices" are essentially fixed.
+                        if(!mesh.isVertexOnBorder(vn)) {
+                            if constexpr(std::is_same_v< InteractionType, MembraneBendingHelfrich >) {
+                                const auto& dCurv = mesh.attribute(hei_o).gHalfEdge.dNeighborCurv;
+                                impl.forces(
+                                    force + vn_i,
+                                    area, dArea, curv, dCurv, kBending, eqCurv
+                                );
+                            }
+                            else {
+                                const auto& dCurv2 = mesh.attribute(hei_o).gHalfEdge.dNeighborCurv2;
+                                impl.forces(
+                                    force + vn_i,
+                                    area, dArea, curv2, dCurv2, kBending
+                                );
+                            }
                         }
                     }
                 }

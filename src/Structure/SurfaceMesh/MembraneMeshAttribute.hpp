@@ -252,6 +252,10 @@ struct MembraneMeshAttribute {
         size_t vertexMaxDegree;
 
         // A vertex has undetermined number of neighbors, so the cache structure needs to be determined at run-time.
+        //
+        // Notes:
+        //   - The outer half edge targets the corresponding "neighbor vertex", and is the "prev" of the targeting half edge.
+        //   - The polygon corresponds to the targeting half edge.
         std::vector< size_t > cachedVertexTopo;
         size_t cachedVertexTopoSize() const { return vertexMaxDegree * 5; }
         size_t cachedVertexOffsetNeighborCoord(size_t idx) const { return cachedVertexTopoSize() * idx; }
