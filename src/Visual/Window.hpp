@@ -316,6 +316,7 @@ struct VisualDisplay {
             VisualContext::OffscreenBufferGuard offscreenBufferGuard;
             if(offscreen) {
                 offscreenBufferGuard.build(width, height);
+                LOG(STEP) << "Rendering offscreen...";
             }
             glBindFramebuffer(GL_FRAMEBUFFER, offscreen ? offscreenBufferGuard.offscreenFbo : 0);
 
@@ -454,8 +455,9 @@ struct VisualDisplay {
                 glReadBuffer(GL_COLOR_ATTACHMENT0);
                 glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
 
-                stbi_write_png(mainViewSettings.control.snapshotFile.string().c_str(), width, height, 4, data.data(), 4 * width);
-                LOG(INFO) << "Snapshot saved to " << mainViewSettings.control.snapshotFile;
+                const auto snapshotPngFile = mainViewSettings.control.snapshotPngFile();
+                stbi_write_png(snapshotPngFile.string().c_str(), width, height, 4, data.data(), 4 * width);
+                LOG(INFO) << "Snapshot saved to " << snapshotPngFile;
             }
 
             // Update GUI

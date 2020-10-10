@@ -2,9 +2,13 @@
 #define MEDYAN_Visual_DisplaySettings_hpp
 
 #include <array>
+#include <cstdio>
 #include <filesystem>
+#include <stdexcept>
 #include <type_traits>
 #include <utility>
+
+#include "Util/Io/Log.hpp"
 
 namespace medyan::visual {
 
@@ -115,7 +119,8 @@ struct ObjectViewSettings {
 
         // snapshot saving section
         //-----------------------------
-        std::filesystem::path snapshotFile = "./snapshot.png";
+        std::filesystem::path snapshotSavePath = ".";
+        std::string           snapshotBaseName = "snapshot";
         SnapshotResolution    snapshotResolution = SnapshotResolution::scaleWithScreen;
         float                 snapshotScale = 1.0f;   // Used with "scale with screen"
         // Used with "scale with screen".
@@ -136,6 +141,29 @@ struct ObjectViewSettings {
             }
 
             return std::pair { width, height };
+        }
+
+        // Finds the snapshot file name.
+        //
+        // The file name will be displayed as "baseName-index.ext", where the
+        // index will be displayed with padding zeros.
+        //
+        // The index should be -1 or non-negative, where -1 will not append
+        // "-index" after the base name.
+        auto snapshotPngFile(int index = -1) const {
+            if(index == -1) {
+                return snapshotSavePath / (snapshotBaseName + ".png");
+            }
+            else {
+                if(index < 0 || index > 999999) {
+                    LOG(ERROR) << "Snapshot index " << index << " out of range.";
+                    throw std::runtime_error("Snapshot index out of range");
+                }
+                // 11 chars after base name: "-012345.png"
+                char appendStr[12] {};
+                std::snprintf(appendStr, 12, "-%06d.png", index);
+                return snapshotSavePath / (snapshotBaseName + appendStr);
+            }
         }
     };
 

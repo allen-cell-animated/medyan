@@ -254,9 +254,11 @@ inline bool guiAuxCheckboxFlags(const char* label, UInt& flag, UInt setTo) {
 }
 
 // select file
-inline void guiAuxSelectFile(std::filesystem::path& file) {
+inline void guiAuxSelectFile(std::filesystem::path& file, bool selectDirectory = false) {
     nfdchar_t* filepath = nullptr;
-    auto result = NFD_OpenDialog(nullptr, std::filesystem::current_path().string().c_str(), &filepath);
+    auto result = selectDirectory
+        ? NFD_PickFolder(std::filesystem::current_path().string().c_str(), &filepath)
+        : NFD_OpenDialog(nullptr, std::filesystem::current_path().string().c_str(), &filepath);
 
     if ( result == NFD_OKAY ) {
         file = filepath;
@@ -650,22 +652,32 @@ inline void guiViewSettings(ObjectViewSettings& viewSettings) {
     using PT = ObjectViewSettings::Projection::Type;
 
     guiAuxColorPicker4Popup("background", viewSettings.canvas.bgColor.data());
-    guiAuxEnumComboBox("projection", viewSettings.projection.type);
 
-    ImGui::SliderFloat("z near", &viewSettings.projection.zNear, 1.0, 200.0, "%.1f");
-    ImGui::SliderFloat("z far", &viewSettings.projection.zFar, 1000.0, 20000.0, "%.1f");
-    ImGui::SliderFloat("camera key speed", &viewSettings.control.cameraKeyPositionPerFrame, 50.0, 500.0, "%.1f");
+    if(ImGui::TreeNode("transformation")) {
+        guiAuxEnumComboBox("projection", viewSettings.projection.type);
 
-    guiAuxEnumComboBox("mouse mode", viewSettings.control.cameraMouseMode);
+        ImGui::SliderFloat("z near", &viewSettings.projection.zNear, 1.0, 200.0, "%.1f");
+        ImGui::SliderFloat("z far", &viewSettings.projection.zFar, 1000.0, 20000.0, "%.1f");
+        ImGui::SliderFloat("camera key speed", &viewSettings.control.cameraKeyPositionPerFrame, 50.0, 500.0, "%.1f");
 
-    guiAuxEnumComboBox("snapshot resolution", viewSettings.control.snapshotResolution);
-    if(viewSettings.control.snapshotResolution == ObjectViewSettings::Control::SnapshotResolution::scaleWithScreen) {
-        ImGui::SliderFloat("snapshot scale", &viewSettings.control.snapshotScale, 0.1f, 10.0f, "%.1f");
-        ImGui::Checkbox("undo scaling orthographic", &viewSettings.control.snapshotUndoScaleOrtho);
+        guiAuxEnumComboBox("mouse mode", viewSettings.control.cameraMouseMode);
     }
-    else {
-        ImGui::SliderInt("snapshot width", &viewSettings.control.snapshotWidth, 200, 1920);
-        ImGui::SliderInt("snapshot height", &viewSettings.control.snapshotHeight, 150, 1080);
+
+    if(ImGui::TreeNode("snapshot")) {
+        guiAuxEnumComboBox("snapshot resolution", viewSettings.control.snapshotResolution);
+        if(viewSettings.control.snapshotResolution == ObjectViewSettings::Control::SnapshotResolution::scaleWithScreen) {
+            ImGui::SliderFloat("snapshot scale", &viewSettings.control.snapshotScale, 0.1f, 10.0f, "%.1f");
+            ImGui::Checkbox("undo scaling orthographic", &viewSettings.control.snapshotUndoScaleOrtho);
+        }
+        else {
+            ImGui::SliderInt("snapshot width", &viewSettings.control.snapshotWidth, 200, 1920);
+            ImGui::SliderInt("snapshot height", &viewSettings.control.snapshotHeight, 150, 1080);
+        }
+
+        if(ImGui::Button("snapshot directory")) {
+            guiAuxSelectFile(viewSettings.control.snapshotSavePath, true);
+        }
+        ImGui::TextWrapped("%s", viewSettings.control.snapshotSavePath.string().c_str());
     }
 
 }
