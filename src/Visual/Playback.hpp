@@ -29,7 +29,16 @@ inline void playbackNewFrame(
     float                             glfwTime,
     NewFrameFunc&&                    func
 ) {
-    if(states.isPlaying) {
+    if(states.offscreenRender.has_value()) {
+        if(states.currentFrame < states.offscreenRender->frameRangeHi) {
+            ++states.currentFrame;
+        }
+        else {
+            states.offscreenRender.reset();
+            LOG(STEP) << "Offscreen render complete.";
+        }
+    }
+    else if(states.isPlaying) {
         if(glfwTime >= states.lastGlfwTime + 1.0f / settings.fps) {
             if(states.currentFrame < states.maxFrame) ++states.currentFrame;
         }

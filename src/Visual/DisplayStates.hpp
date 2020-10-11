@@ -77,6 +77,12 @@ struct DisplayRealtimeDataStates {
 };
 
 struct TrajectoryPlaybackStates {
+    struct OffscreenRender {
+        // Frames to render: [lo, hi]
+        int frameRangeLo = 0;
+        int frameRangeHi = 0;
+    };
+
     // Play back states
     int currentFrame = 0;
     int previousFrame = 0;
@@ -84,6 +90,9 @@ struct TrajectoryPlaybackStates {
     bool isPlaying = true;
     float lastGlfwTime = 0;
 
+    // All trajectory offscreen render states
+    // If it has value, will render all frames in range.
+    std::optional< OffscreenRender > offscreenRender;
 };
 
 

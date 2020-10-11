@@ -177,9 +177,32 @@ public:
         };
         const auto keyCallback = [](GLFWwindow* window, int key, int scancode, int action, int mods) {
             auto& vc = *static_cast< VisualContext* >(glfwGetWindowUserPointer(window));
+
+            // Press F to (pay respect) take snapshot.
             if(key == GLFW_KEY_F && action == GLFW_PRESS) {
                 vc.displayStates.mainView.control.snapshotRenderingNextFrame = true;
             }
+
+            // Press P to generate snapshots for all frames.
+            if(key == GLFW_KEY_P && action == GLFW_PRESS) {
+                if(
+                    auto& offscreenRender = vc.displayStates.playback.offscreenRender;
+                    vc.displaySettings.displayMode == DisplayMode::trajectory &&
+                    !offscreenRender.has_value()
+                ) {
+                    offscreenRender.emplace(
+                        TrajectoryPlaybackStates::OffscreenRender {
+                            0,
+                            vc.displayStates.playback.maxFrame
+                        }
+                    );
+                    // Reset the playhead to be the previous frame of the minimum of the range of frames,
+                    // even if the frame does not exist.
+                    vc.displayStates.playback.currentFrame = offscreenRender->frameRangeLo - 1;
+                }
+            }
+
+            // Press G to toggle GUI.
             if(key == GLFW_KEY_G && action == GLFW_PRESS) {
                 vc.displaySettings.gui.enabled = !vc.displaySettings.gui.enabled;
             }
@@ -291,7 +314,9 @@ struct VisualDisplay {
             auto& mainViewStates   = vc.displayStates.mainView;
 
             // select frame buffer: on screen display / offscreen snapshot
-            const bool offscreen = mainViewStates.control.snapshotRenderingNextFrame;
+            const bool offscreen =
+                mainViewStates.control.snapshotRenderingNextFrame ||
+                vc.displayStates.playback.offscreenRender.has_value();
             mainViewStates.control.snapshotRenderingNextFrame = false;
 
             auto width  = mainViewSettings.canvas.width;
@@ -455,7 +480,11 @@ struct VisualDisplay {
                 glReadBuffer(GL_COLOR_ATTACHMENT0);
                 glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
 
-                const auto snapshotPngFile = mainViewSettings.control.snapshotPngFile();
+                int frameIndex = -1;
+                if(vc.displayStates.playback.offscreenRender.has_value()) {
+                    frameIndex = vc.displayStates.playback.currentFrame;
+                }
+                const auto snapshotPngFile = mainViewSettings.control.snapshotPngFile(frameIndex);
                 stbi_write_png(snapshotPngFile.string().c_str(), width, height, 4, data.data(), 4 * width);
                 LOG(INFO) << "Snapshot saved to " << snapshotPngFile;
             }
