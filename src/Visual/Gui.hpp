@@ -661,6 +661,8 @@ inline void guiViewSettings(ObjectViewSettings& viewSettings) {
         ImGui::SliderFloat("camera key speed", &viewSettings.control.cameraKeyPositionPerFrame, 50.0, 500.0, "%.1f");
 
         guiAuxEnumComboBox("mouse mode", viewSettings.control.cameraMouseMode);
+
+        ImGui::TreePop();
     }
 
     if(ImGui::TreeNode("snapshot")) {
@@ -678,6 +680,8 @@ inline void guiViewSettings(ObjectViewSettings& viewSettings) {
             guiAuxSelectFile(viewSettings.control.snapshotSavePath, true);
         }
         ImGui::TextWrapped("%s", viewSettings.control.snapshotSavePath.string().c_str());
+
+        ImGui::TreePop();
     }
 
 }
@@ -814,7 +818,7 @@ inline void guiMainWindow(
 
     }
 
-    if(ImGui::CollapsingHeader("settings")) {
+    if(ImGui::CollapsingHeader("settings", ImGuiTreeNodeFlags_DefaultOpen)) {
 
         // main view
         guiViewSettings(displaySettings.mainView);
