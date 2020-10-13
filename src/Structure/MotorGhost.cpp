@@ -260,7 +260,6 @@ void MotorGhost::updateReactionRates() {
         //WALKING REACTIONS
         Species* s1 = _cMotorGhost->getFirstSpecies();
         Species* s2 = _cMotorGhost->getSecondSpecies();
-//        cout<<getId()<<" "<<_c1->getId()<<" "<<_c2->getId()<<" species Type "<<s1->getName()<<" "<<s1->getFullName()<<endl;
         for(auto r : s1->getRSpecies().reactantReactions()) {
             
             if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {

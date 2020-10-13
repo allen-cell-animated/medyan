@@ -204,7 +204,6 @@ public:
             //Loop through restart data
             // Find corresponding compartment and add species to it.
             for (auto &Cmp:_subSystem->getCompartmentGrid()->getCompartments()) {
-                cout<<"CmpID "<<Cmp->getId()<<endl;
                 auto cdiffdata = _rCmpDDatavec[Cmp->getId()];
                 auto diffspeciesnamevec = cdiffdata.speciesnamevec;
                 auto diffspeciescpyvec = cdiffdata.copynumvec;

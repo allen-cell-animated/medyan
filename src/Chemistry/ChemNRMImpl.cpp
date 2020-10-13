@@ -305,8 +305,6 @@ bool ChemNRMImpl::makeStep() {
 #ifdef OPTIMOUT
     chrono::duration<floatingpoint> elapsed_time(mine - mins);
     auto rType = r->getReactionType();
-    if(rType == ReactionType::FILAMENTCREATION)
-        rn->printSelf();
     if(rType == 1){
         auto reactant = r->getReactantCopyNumbers();
         auto product = r->getProductCopyNumbers();

@@ -72,9 +72,6 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
     cout<<"coordinate Cmp "<<c1coord[0]<<" "<<c1coord[1]<<" "<<c1coord[2]<<" "
 																		   ""<<c2coord[0]<<" "<<c2coord[1]<<" "<<c2coord[2]<<endl;*/
 
-    cc1->printCCylinder();
-    cc2->printCCylinder();
-
     //mark species
     assert(areEqual(sm1->getN(), 0.0) && areEqual(sm2->getN(), 0.0) &&
            areEqual(se1->getN(), 1.0) && areEqual(se2->getN(), 1.0) &&
