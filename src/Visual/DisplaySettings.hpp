@@ -150,6 +150,10 @@ struct ObjectViewSettings {
         //
         // The index should be -1 or non-negative, where -1 will not append
         // "-index" after the base name.
+        //
+        // One can use
+        //   ffmpeg -framerate {frameRate} -i {baseName}-%06d.png -c:v libx264 -vf "scale=ceil(iw/2)*2:ceil(ih/2)*2,format=yuv420p" -crf 18 {output}.mp4
+        // to stitch the images to make a video.
         auto snapshotPngFile(int index = -1) const {
             if(index == -1) {
                 return snapshotSavePath / (snapshotBaseName + ".png");
