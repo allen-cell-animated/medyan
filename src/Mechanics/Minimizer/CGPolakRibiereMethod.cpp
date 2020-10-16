@@ -1180,8 +1180,8 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 
     // compute the Hessian matrix at this point if the feature is enabled
     if(SysParams::Mechanics().hessTracking){
-        if(skipcounter == SysParams::Mechanics().hessSkip){
-            skipcounter = 0;
+        if(skipcounter%SysParams::Mechanics().hessSkip==0){
+            skipcounter = 1;
             int total_DOF = Bead::getDbData().coords.size_raw();
             FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF,
                                SysParams::Mechanics().hessDelta);
