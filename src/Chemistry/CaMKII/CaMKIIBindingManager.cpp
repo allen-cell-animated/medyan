@@ -466,26 +466,26 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite
 //	cout<<"CaMKII Type: "<<cp->getType()<<endl;
 	}
 
-	for(auto C:SubSystem::getstaticgrid()->getCompartments()) {
-		for(auto &mgr:C->getFilamentBindingManagers()) {
-			if(dummymgr = dynamic_cast<CaMKIIBundlingManager*>(mgr.get())) {
-				auto val1 = mgr->_bindingSpecies->getN();
-				auto val2 = mgr->numBindingSites();
-
-//Checking whether the number of binding species is the same as the number of possible binding sites
-//				cout<<"CaMKIIBundlingManager::addPossibleBindings()"<<"Comp "<<C->coordinates()[0]<<" "<<C->coordinates()[1]<<" "<<C->coordinates()[2]
-//									<<" Species "<<mgr->_bindingSpecies->getN()<<" "<<mgr->numBindingSites()
-//									<<"Type "<<mgr->getBoundInt()<<" "<<" isPassivated()"<<
-//									_bindingReaction->isPassivated()<<endl;
-
-				if(val1!=val2){
-					cout<<"Serious copy numbers consistency error"<<endl;
-					auto mgrtemp = static_cast<CaMKIIBundlingManager*>(mgr.get());
-					mgrtemp->printbindingsites();
-				}
-			}
-		}
-	}
+//	for(auto C:SubSystem::getstaticgrid()->getCompartments()) {
+//		for(auto &mgr:C->getFilamentBindingManagers()) {
+//			if(dummymgr = dynamic_cast<CaMKIIBundlingManager*>(mgr.get())) {
+//				auto val1 = mgr->_bindingSpecies->getN();
+//				auto val2 = mgr->numBindingSites();
+//
+////Checking whether the number of binding species is the same as the number of possible binding sites
+////				cout<<"CaMKIIBundlingManager::addPossibleBindings()"<<"Comp "<<C->coordinates()[0]<<" "<<C->coordinates()[1]<<" "<<C->coordinates()[2]
+////									<<" Species "<<mgr->_bindingSpecies->getN()<<" "<<mgr->numBindingSites()
+////									<<"Type "<<mgr->getBoundInt()<<" "<<" isPassivated()"<<
+////									_bindingReaction->isPassivated()<<endl;
+//
+//				if(val1!=val2){
+//					cout<<"Serious copy numbers consistency error"<<endl;
+//					auto mgrtemp = static_cast<CaMKIIBundlingManager*>(mgr.get());
+//					mgrtemp->printbindingsites();
+//				}
+//			}
+//		}
+//	}
 
 }
 
@@ -839,22 +839,22 @@ tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>> CaMKIIBundlingManager:
 
 
 // checking copy numbers consistency, Aravind, jl135; _possibleBindings = _bindingSpecies->get(N) + 1
-	CaMKIIBundlingManager* dummymgr;
-	for(auto C:SubSystem::getstaticgrid()->getCompartments()) {
-		for(auto &mgr:C->getFilamentBindingManagers()) {
-			if(dummymgr = dynamic_cast<CaMKIIBundlingManager*>(mgr.get())) {
-		        auto val1 = mgr->_bindingSpecies->getN();
-		        auto val2 = mgr->numBindingSites();
-		        if(val1+1!=val2){
-		            cout<<"Serious copy numbers consistency error"<<endl;
-		        }
-//// Checking whether the number of binding species is the same as the number of possible binding sites
-//				cout<<"CaMKIIBundlingManager::chooseBindingSites()"<<"Comp "<<C->coordinates()[0]<<" "<<C->coordinates()[1]<<" "<<C->coordinates()[2]
-//									<<" Species "<<mgr->_bindingSpecies->getN()<<" "<<mgr->numBindingSites()
-//									<<"Type "<<mgr->getBoundInt()<<endl;
-			}
-		}
-	}
+//	CaMKIIBundlingManager* dummymgr;
+//	for(auto C:SubSystem::getstaticgrid()->getCompartments()) {
+//		for(auto &mgr:C->getFilamentBindingManagers()) {
+//			if(dummymgr = dynamic_cast<CaMKIIBundlingManager*>(mgr.get())) {
+//		        auto val1 = mgr->_bindingSpecies->getN();
+//		        auto val2 = mgr->numBindingSites();
+//		        if(val1+1!=val2){
+//		            cout<<"Serious copy numbers consistency error"<<endl;
+//		        }
+////// Checking whether the number of binding species is the same as the number of possible binding sites
+////				cout<<"CaMKIIBundlingManager::chooseBindingSites()"<<"Comp "<<C->coordinates()[0]<<" "<<C->coordinates()[1]<<" "<<C->coordinates()[2]
+////									<<" Species "<<mgr->_bindingSpecies->getN()<<" "<<mgr->numBindingSites()
+////									<<"Type "<<mgr->getBoundInt()<<endl;
+//			}
+//		}
+//	}
 
 }
 
