@@ -79,7 +79,7 @@ protected:
     short _filamentType; ///< The filament type to operate on
     
     Species* _bindingSpecies; ///< The binding species that this manager tracks.
-                              ///< Resposible for all copy number changes
+                              ///< Responsible for all copy number changes
     
     short _nlIndex = 0; ///<Index of this manager (for access of neighbor lists)
     short _mIndex = 0;  ///<Index of this manager (for access in other compartments)
@@ -115,6 +115,7 @@ protected:
     }
     
 public:
+
     FilamentBindingManager(ReactionBase* reaction,
                            Compartment* compartment,
                            short boundInt, string boundName,

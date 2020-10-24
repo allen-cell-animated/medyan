@@ -36,6 +36,9 @@ CaMKIIBindingManager::CaMKIIBindingManager(ReactionBase* reaction,
 	string name = rs[C1_RXN_INDEX]->getSpecies().getName();
 
 	_bindingSpecies = _compartment->findSpeciesByName(name);
+
+//	//Aravind
+//	cout<<"Single binding species for CaMKIIBinding "<<name<<" Aravind request, jl135"<<endl;
 }
 
 void CaMKIIBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
@@ -82,6 +85,9 @@ void CaMKIIBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
 	int oldN = _bindingSpecies->getN();
 	int newN = numBindingSites();
 
+//	//Aravind, jl135
+//	cout<<"Before updateBindingReaction "<<__LINE__<<" "<<newN<<" "<<oldN<<endl;
+
 	updateBindingReaction(oldN, newN);
 }
 
@@ -103,6 +109,9 @@ void CaMKIIBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
 
 	int oldN = _bindingSpecies->getN();
 	int newN = numBindingSites();
+
+//	//Aravind, jl135
+//	cout<<"Before updateBindingReaction "<<__LINE__<<" "<<newN<<" "<<oldN<<endl;
 
 	updateBindingReaction(oldN, newN);
 }
@@ -171,6 +180,9 @@ void CaMKIIBindingManager::updateAllPossibleBindings() {
 	int oldN = _bindingSpecies->getN();
 	int newN = numBindingSites();
 
+//	//Aravind, jl135
+//	cout<<"Before updateBindingReaction "<<__LINE__<<" "<<newN<<" "<<oldN<<endl;
+
 	updateBindingReaction(oldN, newN);
 }
 
@@ -218,6 +230,11 @@ CaMKIIBundlingManager::CaMKIIBundlingManager(ReactionBase* reaction,
 	RSpecies** rs = reaction->rspecies();
 	string name = rs[C2_RXN_INDEX]->getSpecies().getName();
 
+
+
+	//cout<<"Single binding species for CaMKIIBundling "<<name<<" Aravind request, jl135"<<endl;
+	//Aravind suggested to clear the possibleBindings to avoid discrepancy between possible bindings and binding species
+	//_possibleBindings.clear();
 	_bindingSpecies = _compartment->findSpeciesByName(name);
 }
 
@@ -243,7 +260,7 @@ void CaMKIIBundlingManager::addPossibleBindingsNormal(CCylinder* normal_cc, shor
 	unordered_set<Filament*> camkiiFilamentSet;
 
 	// otherCylinderType is the type of the binding cylinder.
-	// If the cylinder is a CaMKII cylinder, the binding cylinder is a normal cylinder and vice versa
+	// The cylinder is a normal cylinder, the binding cylinder is a CaMKII cylinder
 	short otherCylinderType;
 	otherCylinderType = CAMKII_CYLINDER_FILAMENT_TYPE;
 
@@ -268,6 +285,10 @@ void CaMKIIBundlingManager::addPossibleBindingsNormal(CCylinder* normal_cc, shor
 
 		CaMKIICylinder *_camk_c = dynamic_cast<CaMKIICylinder*>(camkii_c);
 		auto cp = _camk_c->getCaMKIIPointParent();
+
+		//This is a consistency check for CaMKII type, cabb99 and jl135
+		if (cp->getType() != getBoundInt()) continue;
+
 		unordered_set<Filament*> filament_set;
 		getAllFilamentsOfCaMKII(cp, filament_set);
 
@@ -309,12 +330,18 @@ void CaMKIIBundlingManager::addPossibleBindingsNormal(CCylinder* normal_cc, shor
 		int oldNOther = m->_bindingSpecies->getN();
 		int newNOther = m->numBindingSites();
 
+//		//Aravind, jl135
+//		cout<<"Before updateBindingReaction "<<__LINE__<<" "<<newNOther<<" "<<oldNOther<<endl;
+
 		m->updateBindingReaction(oldNOther, newNOther);
 	}
 
 	//update this manager
 	int oldN = _bindingSpecies->getN();
 	int newN = numBindingSites();
+
+//	//Aravind, jl135
+//	cout<<"Before updateBindingReaction "<<__LINE__<<" "<<newN<<" "<<oldN<<endl;
 
 	updateBindingReaction(oldN, newN);
 }
@@ -324,13 +351,19 @@ void CaMKIIBundlingManager::addPossibleBindingsCaMKII(CCylinder* cc, short bindi
 	unordered_set<Filament*> camkiiFilamentSet;
 
 	// otherCylinderType is the type of the binding cylinder.
-	// If the cylinder is a CaMKII cylinder, the binding cylinder is a normal cylinder and vice versa
+	// The cylinder is a CaMKII cylinder, the binding cylinder is a normal cylinder
 	short otherCylinderType;
 	//If it is called with CaMKII, only execute this script once (when the bindingSite is 0)
 	otherCylinderType = _filamentType;
 	assert(bindingSite == 0);
 
 	CaMKIICylinder *camkii_c = dynamic_cast<CaMKIICylinder*>(cc->getCylinder());
+	//This is a consistency check for CaMKII type, cabb99 and jl135
+	if (getBoundInt() != camkii_c->getCaMKIIPointParent()->getType()){
+		return;
+	}
+
+	//add the CaMKII-attached filaments to a list
 	for(auto bond : camkii_c->getCaMKIIPointParent()->getBonds()) {
 		Filament *f = dynamic_cast<Filament*>(get<0>(bond)->getParent());
 		camkiiFilamentSet.insert(f);
@@ -358,7 +391,7 @@ void CaMKIIBundlingManager::addPossibleBindingsCaMKII(CCylinder* cc, short bindi
 		CCylinder *camkii_cc = camkii_c->getCCylinder();
 		CCylinder *filament_cc = filament_c->getCCylinder();
 
-		//Check that the CaMKII coordination number is less than the maximum
+		//Check that the CaMKII coordination number is less than the maximum, consider moving the *camkii_c and c out of the for loops (Aravind)
 		if (checkCoordinationNum(camkii_cc)) continue;
 
 		// It was called with a CaMKII cylinder, iterate over all possible binding sites of the new cylinder
@@ -381,6 +414,8 @@ void CaMKIIBundlingManager::addPossibleBindingsCaMKII(CCylinder* cc, short bindi
 
 
 			Filament *f = dynamic_cast<Filament*>(filament_cc->getCylinder()->getParent());
+
+			// the below conditional statement is redundant (Aravind). 359 does this previously
 			if (camkiiFilamentSet.find(f) == camkiiFilamentSet.end())
 				_possibleBindings.emplace(t1, t2);
 
@@ -390,6 +425,9 @@ void CaMKIIBundlingManager::addPossibleBindingsCaMKII(CCylinder* cc, short bindi
 	//update this manager
 	int oldN = _bindingSpecies->getN();
 	int newN = numBindingSites();
+
+//	//Aravind, jl135
+//	cout<<"Before updateBindingReaction "<<__LINE__<<" "<<newN<<" "<<oldN<<endl;
 
 	updateBindingReaction(oldN, newN);
 }
@@ -404,6 +442,51 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite
 		addPossibleBindingsCaMKII(cc, bindingSite);
 	else
 		return;
+
+//	//check CaMKII cylinder and regular cylinder type, Aravind, jl135
+//	CaMKIICylinder* dummycamkii;
+//	if((dummycamkii=dynamic_cast<CaMKIICylinder*>(cc->getCylinder()))){
+//	cout<<"CaMKII Cylinder of Type "<<cc->getType()<<endl;
+//	}
+//	else{
+//	cout<<"Regular Cylinder of Type "<<cc->getType()<<endl;
+//	}
+
+// checking copy numbers consistency, Aravind, jl135; _possibleBindings = _bindingSpecies->get(N)
+//	auto x=_compartment->coordinates();
+//	cout<<"Working Compartments "<<x[0]<<" "<<x[1]<<" "<<x[2]<<endl;
+
+	CaMKIIBundlingManager* dummymgr;
+
+	//added by cab99 and jl135
+	if(cc->getType() == CAMKII_CYLINDER_FILAMENT_TYPE)
+	{
+	CaMKIICylinder *camkii_c = dynamic_cast<CaMKIICylinder*>(cc->getCylinder());
+	CaMKIIingPoint *cp = camkii_c->getCaMKIIPointParent();
+//	cout<<"CaMKII Type: "<<cp->getType()<<endl;
+	}
+
+	for(auto C:SubSystem::getstaticgrid()->getCompartments()) {
+		for(auto &mgr:C->getFilamentBindingManagers()) {
+			if(dummymgr = dynamic_cast<CaMKIIBundlingManager*>(mgr.get())) {
+				auto val1 = mgr->_bindingSpecies->getN();
+				auto val2 = mgr->numBindingSites();
+
+//Checking whether the number of binding species is the same as the number of possible binding sites
+//				cout<<"CaMKIIBundlingManager::addPossibleBindings()"<<"Comp "<<C->coordinates()[0]<<" "<<C->coordinates()[1]<<" "<<C->coordinates()[2]
+//									<<" Species "<<mgr->_bindingSpecies->getN()<<" "<<mgr->numBindingSites()
+//									<<"Type "<<mgr->getBoundInt()<<" "<<" isPassivated()"<<
+//									_bindingReaction->isPassivated()<<endl;
+
+				if(val1!=val2){
+					cout<<"Serious copy numbers consistency error"<<endl;
+					auto mgrtemp = static_cast<CaMKIIBundlingManager*>(mgr.get());
+					mgrtemp->printbindingsites();
+				}
+			}
+		}
+	}
+
 }
 
 void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc) {
@@ -447,10 +530,36 @@ void CaMKIIBundlingManager::removeAllCylindersOfFilamentFromCaMKIIPossibleBindin
 	removeAllCylindersOfFilamentFromCaMKIIPossibleBindings(f, p);
 }
 
+//Print binding sites, Aravind
+void CaMKIIBundlingManager::printbindingsites() {
+	cout<<"BINDINGSITES: CYL1(SIDX) CYL2(SIDX) SITE1 SITE2"<<endl;
+	cout<<"Printing "<<_possibleBindings.size()<< " bindingSites"<<endl;
+	for(auto it1 = _possibleBindings.begin();it1!=_possibleBindings.end();
+	it1++) {
+		auto cyl1 = get<0>(it1->first)->getCylinder();
+		auto bs1 = get<1>(it1->first);
+		auto cyl2 = get<0>(it1->second)->getCylinder();
+		auto bs2 = get<1>(it1->second);
+		cout<<cyl1->getID()<<" "
+		                      <<cyl2->getID()<<" "<<bs1<<" "<<bs2<<endl;
+	}
+}
+
+
 void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingSite) {
 
 	// Run the function is input cylinder (cc) is normal or CaMKII cylinder.
 	if(cc->getType() != _filamentType && cc->getType() != CAMKII_CYLINDER_FILAMENT_TYPE) return;
+
+
+//	//check CaMKII cylinder and regular cylinder type, Aravind, jl135
+//	CaMKIICylinder* dummycamkii;
+//	if((dummycamkii=dynamic_cast<CaMKIICylinder*>(cc->getCylinder()))){
+//	cout<<"CaMKII Cylinder of Type "<<cc->getType()<<endl;
+//	}
+//	else{
+//	cout<<"Regular Cylinder of Type "<<cc->getType()<<endl;
+//	}
 
 	// otherCylinderType is the type of the binding cylinder.
 	// If the cylinder is a CaMKII cylinder, the binding cylinder is a normal cylinder and viceversa
@@ -481,6 +590,9 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
 
 	int oldN = _bindingSpecies->getN();
 	int newN = numBindingSites();
+
+//	//Aravind, jl135
+//	cout<<"Before updateBindingReaction "<<__LINE__<<" "<<newN<<" "<<oldN<<endl;
 
 	updateBindingReaction(oldN, newN);
 
@@ -514,8 +626,33 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
 		int oldNOther = m->_bindingSpecies->getN();
 		int newNOther = m->numBindingSites();
 
+//		//Aravind, jl135
+//		cout<<"Before updateBindingReaction "<<__LINE__<<" "<<newNOther<<" "<<oldNOther<<endl;
+
 		m->updateBindingReaction(oldNOther, newNOther);
 	}
+
+//	// checking copy numbers consistency, Aravind, jl135; _possibleBindings = _bindingSpecies->get(N)
+//		CaMKIIBundlingManager* dummymgr;
+//		for(auto C:SubSystem::getstaticgrid()->getCompartments()) {
+//			for(auto &mgr:C->getFilamentBindingManagers()) {
+//				if(dummymgr = dynamic_cast<CaMKIIBundlingManager*>(mgr.get())) {
+//					auto val1 = mgr->_bindingSpecies->getN();
+//					auto val2 = mgr->numBindingSites();
+//					if(val1!=val2){
+//						cout<<"Serious copy numbers consistency error"<<endl;
+//					}
+//
+////Aravind
+//					cout<<"CaMKIIBundlingManager::removePossibleBindings()"<<"Comp "<<C->coordinates()[0]<<" "<<C->coordinates()[1]<<" "<<C->coordinates()[2]
+//										<<" Species "<<mgr->_bindingSpecies->getN()<<" "<<mgr->numBindingSites()
+//										<<" Type "<<mgr->getBoundInt()<<" "<<cc->getType()<<endl;
+//
+//				}
+//			}
+//		}
+
+
 }
 
 
@@ -563,7 +700,6 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
 		if(c->getType() != camkiiFilamentType) continue;
 
 		auto cc = c->getCCylinder();
-		CaMKIIingPoint *cp = nullptr;
 		if (!dynamic_cast<CaMKIICylinder*>(c)) {
 			cerr << "CaMKII - There is a CaMKII cylinder without CaMKIIPoint." << endl;
 			exit(1);
@@ -577,6 +713,10 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
 			camkiiFilamentSet.insert(f);
 		}
 
+		CaMKIIingPoint *cp = camkii_c->getCaMKIIPointParent();
+
+		//This is a consistency check for CaMKII type, cabb99 and jl135
+		if (cp->getType() != getBoundInt()) continue;
 
 		// Binding-site index of CaMKII cylinder
 		short it1 = 0;
@@ -634,6 +774,9 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
 	int oldN = _bindingSpecies->getN();
 	int newN = numBindingSites();
 
+//	//Aravind, jl135
+//	cout<<"Before updateBindingReaction "<<__LINE__<<" "<<newN<<" "<<oldN<<endl;
+
 	updateBindingReaction(oldN, newN);
 }
 
@@ -681,13 +824,38 @@ bool CaMKIIBundlingManager::isConsistent() {
 tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>> CaMKIIBundlingManager::chooseBindingSites() {
 //		checkLengthOfPossibleBinding();
 
+//	//_possibleBindings = _bindingSpecies->get(N) + 1 should be the correct output, Aravind, jl135
+//	cout<<"Comp "<<_compartment->coordinates()[0]<<" "<<_compartment->coordinates()[1]<<" "<<_compartment->coordinates()[2]
+//		<<" Species "<<_bindingSpecies->getN()<<" "<<_possibleBindings.size()<<endl;
+
 	assert((_possibleBindings.size() != 0)
 		   && "Major bug: CaMKIIing manager should not have zero binding \
                   sites when called to choose a binding site.");
+
 	int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
 	auto site = _possibleBindings.begin();
 	advance(site, randomIndex);
 	return *site;
+
+
+// checking copy numbers consistency, Aravind, jl135; _possibleBindings = _bindingSpecies->get(N) + 1
+	CaMKIIBundlingManager* dummymgr;
+	for(auto C:SubSystem::getstaticgrid()->getCompartments()) {
+		for(auto &mgr:C->getFilamentBindingManagers()) {
+			if(dummymgr = dynamic_cast<CaMKIIBundlingManager*>(mgr.get())) {
+		        auto val1 = mgr->_bindingSpecies->getN();
+		        auto val2 = mgr->numBindingSites();
+		        if(val1+1!=val2){
+		            cout<<"Serious copy numbers consistency error"<<endl;
+		        }
+//// Checking whether the number of binding species is the same as the number of possible binding sites
+//				cout<<"CaMKIIBundlingManager::chooseBindingSites()"<<"Comp "<<C->coordinates()[0]<<" "<<C->coordinates()[1]<<" "<<C->coordinates()[2]
+//									<<" Species "<<mgr->_bindingSpecies->getN()<<" "<<mgr->numBindingSites()
+//									<<"Type "<<mgr->getBoundInt()<<endl;
+			}
+		}
+	}
+
 }
 
 

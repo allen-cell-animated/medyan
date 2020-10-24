@@ -15,6 +15,7 @@
 #include "BranchingPoint.h"
 #include "Structure/CaMKII/CaMKIIingPoint.h"
 #include "Boundary.h"
+//#include "ReactionBase.h" //added by jl135
 
 #include "../BindingManager.h"
 #include "CaMKIIChemCallbacks.h"
@@ -144,8 +145,8 @@ struct CaMKIIingPointUnbindingCallback {
 
 	void operator() (ReactionBase *r) {
 #ifdef DEBUG
-		cout << "========== CaMKII Unbinding CallBack ID: " << _camkiiingPoint->getID(); //Carlos verbose prints
-		cout << " Coord:" << _camkiiingPoint->getCoordinationNumber() << endl; //Carlos verbose prints
+		cout << "========== CaMKII Unbinding CallBack ID: " << _camkiiingPoint->getID() <<" Coord:" << _camkiiingPoint->getCoordinationNumber(); //Carlos verbose prints, jl135
+
 #endif
 
 		// Removing the internal reaction of the CaMKII cylinder
@@ -172,7 +173,7 @@ struct CaMKIIingPointUnbundlingCallback {
 	void operator() (ReactionBase *r) {
 #ifdef DEBUG
 		cout << "========== CaMKII Unbundling CallBack "; //Carlos verbose prints
-		cout << "ID: " << _camkiiingPoint->getID() << " Coord:" << _camkiiingPoint->getCoordinationNumber() << endl; //Carlos verbose prints
+		cout << "ID: " << _camkiiingPoint->getID() << " Coord:" << _camkiiingPoint->getCoordinationNumber() <<" CaMKII Type: " << _bManager->getBoundInt() <<" Max CaMKII Coord Number: " <<_bManager->getMaxCoordinationNumber() << endl; //Carlos verbose prints, jl135, check this
 #endif
 
 		auto bond = _camkiiingPoint->removeRandomBond(_bManager);
@@ -306,7 +307,7 @@ struct CaMKIIBindingCallback {
 				camkii = _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos, cp);
 
 #ifdef DEBUG
-				cout << "========== CaMKII Binding CallBack - ID: " << camkii->getID() << endl; //Carlos verbose prints
+				cout << "========== CaMKII Binding CallBack - ID: " << camkii->getID() <<" CaMKII Type: " << camkiiType << endl; //Carlos verbose prints, jl135
 #endif
 
 				x = c->getCMonomer(0);
@@ -361,9 +362,13 @@ struct CaMKIIBundlingCallback {
 		CaMKIIingPoint* cp;
 		cp = dynamic_cast<CaMKIICylinder *>(c1)->getCaMKIIPointParent();
 
+		//cout << "========== CaMKII Bundling CallBack without Flag  - "; //Carlos verbose prints
+		//cout << "ID: " << cp->getID() << " Coord:" << cp->getCoordinationNumber() <<" CaMKII Type: " << camkiiType <<" Max CaMKII Coord Number: " <<_bManager->getMaxCoordinationNumber() << endl; //Carlos verbose prints, jl135, check this
+
+		//r->getRNode()->printSelf(); //jl135
 #ifdef DEBUG
 		cout << "========== CaMKII Bundling CallBack - "; //Carlos verbose prints
-		cout << "ID: " << cp->getID() << " Coord:" << cp->getCoordinationNumber() << endl; //Carlos verbose prints
+		cout << "ID: " << cp->getID() << " Coord:" << cp->getCoordinationNumber() <<" CaMKII Type: " << camkiiType <<" Max CaMKII Coord Number: " <<_bManager->getMaxCoordinationNumber() << endl; //Carlos verbose prints, jl135, check this
 #endif
 
 		// cp should be CaMKIIPoint

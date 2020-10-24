@@ -197,8 +197,8 @@ void CaMKIIChemManager::genFilBindingReactionsCaMKII(SubSystem *_subSystem, Chem
 					exit(EXIT_FAILURE);
 				}
 
-				//find the species single binding, push
-				string bename = SpeciesNamesDB::genBindingName("C" + camkiierName, name);
+				//find the species single binding, push "BindingTemplate" + the name
+				string bename = SpeciesNamesDB::genBindingName("BindingTemplate" + camkiierName, name);
 
 				reactantSpecies.push_back(C->findSpeciesByName(bename));
 			} else {
@@ -464,8 +464,8 @@ void CaMKIIChemManager::genSpeciesCaMKII(ChemistryData &_chemData, Compartment& 
 					}
 
 					// add a single binding species with name sb + bound
-					// added "C" to describe bundled CaMKII
-					protoCompartment.addSpeciesSingleBinding(SpeciesNamesDB::genBindingName("C" + sb, bound));
+					// added "BindingTemplate" to describe bundled CaMKII
+					protoCompartment.addSpeciesSingleBinding(SpeciesNamesDB::genBindingName("BindingTemplate" + sb, bound));
 				}
 			}
 			//look at camkii bundling reaction that is associated with this species

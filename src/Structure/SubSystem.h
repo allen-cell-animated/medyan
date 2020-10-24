@@ -159,13 +159,18 @@ public:
     
     //@{
     /// CompartmentGrid management
-    void setCompartmentGrid(CompartmentGrid* grid) {_compartmentGrid = grid;}
+    void setCompartmentGrid(CompartmentGrid* grid) {_compartmentGrid = grid; _staticgrid = _compartmentGrid;}
     CompartmentGrid* getCompartmentGrid() {return _compartmentGrid;}
     //@]
     
     /// Update the binding managers of the system
     void updateBindingManagers();
     
+    //Aravind jl135 added
+    static CompartmentGrid* getstaticgrid(){
+    	return _staticgrid;
+    }
+
 private:
     
     double _energy = 0; ///< Energy of this subsystem
@@ -177,6 +182,8 @@ private:
     Database<NeighborList*> _neighborLists; ///< All neighborlists in the system
         
     CompartmentGrid* _compartmentGrid; ///< The compartment grid
+
+    static CompartmentGrid* _staticgrid; //Aravind jl135 added
 };
 
 #endif

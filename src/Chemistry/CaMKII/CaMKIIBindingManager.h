@@ -135,6 +135,10 @@ private:
 	void addPossibleBindingsNormal(CCylinder* normal_cc, short bindingSite, CaMKIIingPoint *inputCaMKII=nullptr);
 	void addPossibleBindingsCaMKII(CCylinder* cc, short bindingSite);
 
+	//Print binding sites, Aravind
+	void printbindingsites();
+
+
 public:
 	CaMKIIBundlingManager(ReactionBase* reaction,
 						  Compartment* compartment,

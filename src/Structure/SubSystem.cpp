@@ -26,4 +26,6 @@ void SubSystem::updateBindingManagers() {
     }
 }
 
+//Aravind jl135 added
+CompartmentGrid* SubSystem::_staticgrid;
 
