@@ -29,7 +29,7 @@ These parameters define the initial configuration and length of filaments in the
 | `NUMFILAMENTS` | int | Number of random filaments to initialize. These filaments will be randomly distributed in the system volume. |
 | `FILAMENTLENGTH` | int | Number of cylinders per filament to initialize, defining the initial length of the filaments. |
 | `FILAMENTTYTPE` | int | Filament type to initialize. |
-| `PROJECTIONTYPE` | string | `[STRAIGHT | ZIGZAG | ARC | PREDEFINED]` Specifies how the beads are sampled between two ends of a filament. |
+| `PROJECTIONTYPE` | string | `{STRAIGHT, ZIGZAG, ARC, PREDEFINED}` Specifies how the beads are sampled between two ends of a filament. |
 
 Projection type meaning for a filament specified by a set of 3D Cartesian coordinates `[v0, v1, v2 ...]`, and the number of beads.
 - `STRAIGHT` - Creates a filament with minus end at `v0`, and extends number-of-bead full-size cylinders in `v0 -> v1` direction. `v2, v3 ...` are ignored.
