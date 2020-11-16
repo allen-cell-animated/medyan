@@ -289,7 +289,6 @@ inline SExpr lexConfigTokens(const list< ConfigFileToken >& tokens) {
     SExpr se;
     se.data = VS{};
 
-    auto tokenIter = tokens.cbegin();
     for(auto tokenIter = tokens.cbegin(); tokenIter != tokens.cend(); ) {
 
         if (tokenIter->type == ConfigFileToken::Type::string) {
@@ -381,6 +380,7 @@ struct KeyValueParser {
         for(const SExpr& eachList : get<SEL>(se.data)) {
             // eachList.data must be a list type, or an exception will be thrown
             // eachList contains the (key arg1 arg2 ...) data
+            // The key must be a string type, or an exception will be thrown
 
             const SES key = get<SES>(car(eachList).data);
             const SEL keyAndArgs = get<SEL>(eachList.data);

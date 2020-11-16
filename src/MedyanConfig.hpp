@@ -11,7 +11,7 @@ Features:
   - Reading config from command line guide
   - Generating config input files
   - GUI config display (future)
-  - GUI config interactive modification (very future)
+  - GUI config interactive modification (far future)
 
 Documentation:
 
