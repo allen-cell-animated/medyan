@@ -83,7 +83,7 @@ public:
     
     DissipationTracker* getDT();
 
-    
+    static ofstream _crosscheckdumpFilechem;
 };
 
 

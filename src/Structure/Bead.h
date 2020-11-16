@@ -91,6 +91,17 @@ struct BeadData {
         forcesAuxP.resize(size);
     }
 
+    void settodummy(std::size_t pos){
+        auto infinity = numeric_limits<floatingpoint>::infinity();
+        set_content(
+            pos,
+            {infinity,infinity,infinity},
+            {infinity,infinity,infinity},
+            {infinity,infinity,infinity},
+            {infinity,infinity,infinity},
+            {infinity,infinity,infinity});
+    }
+
 };
 
 /// Represents a single coordinate between [Cylinders](@ref Cylinder), and holds forces

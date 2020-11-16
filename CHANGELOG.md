@@ -1,3 +1,9 @@
+## Enhancements
+- Optimize branching force field calculations (df76443).
+
+## Bug fixes
+- Fix the coordinate calculation for binding sites using the `Cylinder::adjustedrelativeposition` function (dbf7527).
+
 # 4.1.2 (Released 2020-06-01)
 
 ## Enhancements

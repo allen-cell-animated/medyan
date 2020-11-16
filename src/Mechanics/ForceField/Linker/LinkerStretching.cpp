@@ -66,8 +66,8 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
 
         kstr[i] = l->getMLinker()->getStretchingConstant();
         eql[i] = l->getMLinker()->getEqLength();
-        pos1[i] = l->getFirstPosition();
-        pos2[i] = l->getSecondPosition();
+        pos1[i] = l->getFirstCylinder()->adjustedrelativeposition(l->getFirstPosition());
+        pos2[i] = l->getSecondCylinder()->adjustedrelativeposition(l->getSecondPosition());
         stretchforce[i] = 0.0;
         i++;
     }

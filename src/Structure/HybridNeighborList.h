@@ -81,6 +81,7 @@ public:
     virtual short setneighborsearchparameters(short ftype1 =0, short ftype2 =0,bool
                             uniquestatus = false, bool fullstatus = false, float rMax =0.0,
                                               float rMin = 0.0) = 0;
+    static ofstream _crosscheckdumpFileNL;
 };
 #endif
 #endif

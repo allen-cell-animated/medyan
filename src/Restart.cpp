@@ -358,6 +358,8 @@ void Restart::setupInitialNetwork() {
 
     for(auto fil : _rFDatavec) {
         vector<Cylinder*> cylvector;
+        //Go through cylinder stable indices that should be part of the filament and
+        // append the Cylinder pointer to a vector.
         for(auto cylsid:fil.cylsidvec){
             cylvector.push_back(_rCDatavec[cylsid].cylinderpointer);
         }

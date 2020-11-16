@@ -36,12 +36,11 @@ MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoin
 
         startMinimization();
         FFM.vectorizeAllForceFields();
+        result.energiesBefore = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
 
         FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
         Bead::getDbData().forcesAux = Bead::getDbData().forces;
         auto maxForce = maxF();
-
-        result.energiesBefore = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
 
         //compute first gradient
         floatingpoint curGrad = CGMethod::allFDotF();

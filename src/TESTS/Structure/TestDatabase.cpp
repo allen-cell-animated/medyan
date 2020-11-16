@@ -11,6 +11,7 @@ TEST_CASE("Database tests", "[Database]") {
             void push_back(int x) { d.push_back(x); }
             void pop_back() { d.pop_back(); }
             void move_from_back(std::size_t dbIndex) { d[dbIndex] = d.back(); }
+            void settodummy(std::size_t) {}
         };
         struct Dummy : Database< Dummy, false, DummyData > {
             Dummy(int x) : Database< Dummy, false, DummyData >(x) {}
@@ -59,6 +60,7 @@ TEST_CASE("Database tests", "[Database]") {
             void set_content(size_t pos, int x) { d[pos] = x; }
             void move_content(size_t from, size_t to) { d[to] = d[from]; }
             void resize(size_t size) { d.resize(size); }
+            void settodummy(std::size_t) {}
         };
         struct Dummy : Database< Dummy, true, DummyData > {
             Dummy(int x) : Database< Dummy, true, DummyData >(x) {}

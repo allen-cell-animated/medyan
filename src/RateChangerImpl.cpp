@@ -86,9 +86,6 @@ float BranchSlipF::getRateChangeFactor( floatingpoint force) {
 float MotorCatch::numBoundHeads(float onRate, float offRate,
                                 floatingpoint force, int numHeads) {
 
-/*	#ifdef MOTORBIASCHECK
-	return numHeads;
-	#endif*/
     _dutyRatio = onRate/(onRate+offRate);
 #ifdef PLOSFEEDBACK
     return min<floatingpoint >((floatingpoint)numHeads,
@@ -120,12 +117,6 @@ float MotorCatch::changeRate(float onRate, float offRate,
     floatingpoint newRate = k_0 * factor;
 
     return newRate;
-
-/*    #ifdef MOTORBIASCHECK
-    return k_0;
-	#else
-    return newRate;
-	#endif*/
 }
 
 float MotorStall::changeRate(float onRate, float offRate,
@@ -145,10 +136,4 @@ float MotorStall::changeRate(float onRate, float offRate,
 #endif
 
     return newRate;
-
-/*    #ifdef MOTORBIASCHECK
-    return max((floatingpoint(0.0)), k_0);
-    #else
-    return newRate;
-    #endif*/
 }

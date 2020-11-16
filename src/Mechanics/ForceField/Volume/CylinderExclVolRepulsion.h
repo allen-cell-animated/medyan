@@ -36,10 +36,10 @@ public:
 private:
 
 	floatingpoint energyN(floatingpoint *coord, int *beadSet,
-	                      floatingpoint *krep, int intID);
+	                      floatingpoint *krep, int intID, bool movebeads = false);
 
 	void forceN(floatingpoint *coord, floatingpoint *f, int *beadSet,
-	                      floatingpoint *krep, int intID);
+	                      floatingpoint *krep, int intID, bool movebeads = false);
 
 	doubleprecision getenergyintegrand(doubleprecision& a, doubleprecision& b,
 			doubleprecision& c, doubleprecision& d, doubleprecision& e, doubleprecision& F,

@@ -34,8 +34,8 @@ void Linker::updateCoordinate() {
     auto x3 = _c2->getFirstBead()->vcoordinate();
     auto x4 = _c2->getSecondBead()->vcoordinate();
     
-    auto m1 = midPointCoordinate(x1, x2, _position1);
-    auto m2 = midPointCoordinate(x3, x4, _position2);
+    auto m1 = midPointCoordinate(x1, x2, _c1->adjustedrelativeposition(_position1));
+    auto m2 = midPointCoordinate(x3, x4, _c2->adjustedrelativeposition(_position2));
     
     coordinate = midPointCoordinate(m1, m2, 0.5);
 }
@@ -75,7 +75,7 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
     auto x4 = _c2->getSecondBead()->vcoordinate();
           
     _mLinker = unique_ptr<MLinker>(
-        new MLinker(linkerType, position1, position2, x1, x2, x3, x4));
+        new MLinker(linkerType, c1->adjustedrelativeposition(position1), c2->adjustedrelativeposition(position2), x1, x2, x3, x4));
     _mLinker->setLinker(this);
 #endif
 }
@@ -139,8 +139,8 @@ if(SysParams::RUNSTATE) {
     auto x3 = _c2->getFirstBead()->vcoordinate();
     auto x4 = _c2->getSecondBead()->vcoordinate();
 
-    auto m1 = midPointCoordinate(x1, x2, _position1);
-    auto m2 = midPointCoordinate(x3, x4, _position2);
+    auto m1 = midPointCoordinate(x1, x2, _c1->adjustedrelativeposition(_position1));
+    auto m2 = midPointCoordinate(x3, x4, _c2->adjustedrelativeposition(_position2));
 
     _mLinker->setLength(twoPointDistance(m1, m2));
 }

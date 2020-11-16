@@ -109,9 +109,6 @@ private:
 
 
 public:
-    #ifdef MOTORBIASCHECK
-    size_t walkingsteps = 0;
-    #endif
     vector<floatingpoint> coordinate;
         ///< coordinate of midpoint, updated with updatePosition()
     
