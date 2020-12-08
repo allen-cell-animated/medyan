@@ -353,68 +353,19 @@ inline list< ConfigFileToken > buildConfigTokens(const SExpr& se) {
 template< typename Params >
 struct KeyValueParser {
 
-    enum class UnknownKeyAction {
-        ignore, warn, error
-    };
     using ParserFunc = std::function< void(Params&, const SExpr::ListType&) >;
     using TokenBuildFunc = std::function< std::list< ConfigFileToken >(const Params&) >;
+
+    using ParserFuncDict = std::map< std::string, ParserFunc >;
+    using TokenBuildList = std::vector< TokenBuildFunc >;
 
     // Two data structures are required for the parser to work.
     //   - A dictionary to match keywords to the appropriate function for
     //     parsing the arguments
     //   - A list which instructs how an input file should be generated from
     //     system params
-    std::map< std::string, ParserFunc > dict;
-    std::vector< TokenBuildFunc > tokenBuildList;
-
-    void parse(
-        Params&          params,
-        const SExpr&     se,
-        UnknownKeyAction unknownKeyAction = UnknownKeyAction::ignore
-    ) const {
-        using namespace std;
-        using SES = SExpr::StringType;
-        using SEL = SExpr::ListType;
-
-        // se must be a list type, or an exception will be thrown
-        for(const SExpr& eachList : get<SEL>(se.data)) {
-            // eachList.data must be a list type, or an exception will be thrown
-            // eachList contains the (key arg1 arg2 ...) data
-            // The key must be a string type, or an exception will be thrown
-
-            const SES key = get<SES>(car(eachList).data);
-            const SEL keyAndArgs = get<SEL>(eachList.data);
-
-            // Check against the parsing dictionary
-            if(auto it = dict.find(key); it == dict.end()) {
-                switch(unknownKeyAction) {
-                case UnknownKeyAction::ignore:
-                    break;
-                case UnknownKeyAction::warn:
-                    LOG(WARNING) << "In the input file, "
-                        << key << " cannot be recognized.";
-                    break;
-                case UnknownKeyAction::error:
-                    LOG(ERROR) << "In the input file, "
-                        << key << " cannot be recognized.";
-                    throw runtime_error("Unknown key in parser");
-                }
-            }
-            else {
-                // Execute the settings
-                (it->second)(params, keyAndArgs);
-            }
-        }
-    }
-
-    auto buildTokens(const Params& params) const {
-        std::list< ConfigFileToken > res;
-
-        for(const auto& eachTokenBuild : tokenBuildList) {
-            res.splice(res.end(), eachTokenBuild(params));
-        }
-        return res;
-    }
+    ParserFuncDict dict;
+    TokenBuildList tokenBuildList;
 
     // Handy functions
     //---------------------------------
@@ -538,6 +489,91 @@ struct KeyValueParser {
 
 };
 
+// What to do when the key is not in the parser function dictionary.
+enum class KeyValueParserUnknownKeyAction {
+    ignore, warn, error
+};
+
+// Parsing an s-expr as key-value pairs, using the parser func dictionary.
+template< typename Params >
+inline void parse(
+    Params&                                                params,
+    const SExpr&                                           se,
+    const typename KeyValueParser<Params>::ParserFuncDict& dict,
+    KeyValueParserUnknownKeyAction                         unknownKeyAction = KeyValueParserUnknownKeyAction::ignore
+) {
+    using namespace std;
+    using SES = SExpr::StringType;
+    using SEL = SExpr::ListType;
+
+    // se must be a list type, or an exception will be thrown
+    for(const SExpr& eachList : get<SEL>(se.data)) {
+        // eachList.data must be a list type, or an exception will be thrown
+        // eachList contains the (key arg1 arg2 ...) data
+        // The key must be a string type, or an exception will be thrown
+
+        const SES key = get<SES>(car(eachList).data);
+        const SEL keyAndArgs = get<SEL>(eachList.data);
+
+        // Check against the parsing dictionary
+        if(auto it = dict.find(key); it == dict.end()) {
+            switch(unknownKeyAction) {
+            case KeyValueParserUnknownKeyAction::ignore:
+                break;
+            case KeyValueParserUnknownKeyAction::warn:
+                LOG(WARNING) << "In the input file, "
+                    << key << " cannot be recognized.";
+                break;
+            case KeyValueParserUnknownKeyAction::error:
+                LOG(ERROR) << "In the input file, "
+                    << key << " cannot be recognized.";
+                throw runtime_error("Unknown key in parser");
+            }
+        }
+        else {
+            // Execute the settings
+            (it->second)(params, keyAndArgs);
+        }
+    }
+}
+
+// Parsing an s-expr as key-value pairs.
+template< typename Params >
+inline void parse(
+    Params&                                params,
+    const SExpr&                           se,
+    const typename KeyValueParser<Params>& parser,
+    KeyValueParserUnknownKeyAction         unknownKeyAction = KeyValueParserUnknownKeyAction::ignore
+) {
+    return parse(params, se, parser.dict, unknownKeyAction);
+}
+
+// Build the token list for key-value inputs.
+template< typename Params >
+inline auto buildTokens(
+    const Params&                                          params,
+    const typename KeyValueParser<Params>::TokenBuildList& tokenBuildList
+) {
+    std::list< ConfigFileToken > res;
+
+    for(const auto& eachTokenBuild : tokenBuildList) {
+        res.splice(res.end(), eachTokenBuild(params));
+    }
+    return res;
+}
+template< typename Params >
+inline auto buildTokens(
+    const Params&                          params,
+    const typename KeyValueParser<Params>& parser
+) {
+    return buildTokens(params, parser.tokenBuildList);
+}
+
+
+//-----------------------------------------------------------------------------
+// The actual parsers dealing with all medyan system parameters.
+//-----------------------------------------------------------------------------
+
 struct SystemParser {
     // Preferably, for one input file, only one parser is needed.
     // However, currently, some parsing rules require the results from parsed
@@ -570,31 +606,31 @@ struct SystemParser {
                 tokenizeConfigFile(
                     std::move(input)));
 
-        geoParser.parse(conf, se);
+        parse(conf, se, geoParser);
         geoPostProcessing(conf);
 
-        boundParser.parse(conf, se);
+        parse(conf, se, boundParser);
         boundPostProcessing(conf);
 
-        mechParser.parse(conf, se);
+        parse(conf, se, mechParser);
 
-        chemParser.parse(conf, se);
+        parse(conf, se, chemParser);
         chemPostProcessing(conf);
 
-        dyRateParser.parse(conf, se);
+        parse(conf, se, dyRateParser);
 
-        initParser.parse(conf, se);
+        parse(conf, se, initParser);
     }
 
     void outputInput(std::ostream& os, const SimulConfig& conf) const {
         std::list< ConfigFileToken > tokens;
-        tokens.splice(tokens.end(), headerParser.buildTokens(conf));
-        tokens.splice(tokens.end(), geoParser.buildTokens(conf));
-        tokens.splice(tokens.end(), boundParser.buildTokens(conf));
-        tokens.splice(tokens.end(), mechParser.buildTokens(conf));
-        tokens.splice(tokens.end(), chemParser.buildTokens(conf));
-        tokens.splice(tokens.end(), dyRateParser.buildTokens(conf));
-        tokens.splice(tokens.end(), initParser.buildTokens(conf));
+        tokens.splice(tokens.end(), buildTokens(conf, headerParser));
+        tokens.splice(tokens.end(), buildTokens(conf, geoParser));
+        tokens.splice(tokens.end(), buildTokens(conf, boundParser));
+        tokens.splice(tokens.end(), buildTokens(conf, mechParser));
+        tokens.splice(tokens.end(), buildTokens(conf, chemParser));
+        tokens.splice(tokens.end(), buildTokens(conf, dyRateParser));
+        tokens.splice(tokens.end(), buildTokens(conf, initParser));
 
         outputConfigTokens(os, tokens);
     }
@@ -636,11 +672,11 @@ struct ChemistryParser {
                 tokenizeConfigFile(
                     std::move(input)));
 
-        chemDataParser.parse(conf, se);
+        parse(conf, se, chemDataParser);
     }
 
     void outputInput(std::ostream& os, const SimulConfig& conf) const {
-        outputConfigTokens(os, chemDataParser.buildTokens(conf));
+        outputConfigTokens(os, buildTokens(conf, chemDataParser));
     }
 
     // Add parsing rules
