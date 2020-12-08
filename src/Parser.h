@@ -412,18 +412,12 @@ struct KeyValueParser {
     ) {
         using namespace std;
 
-        const auto insertResult = dict.insert({
+        return addArgsWithAliases(
             name,
+            move(aliases),
             [funcParse] (Params& params, const SExpr::ListType& keyAndArgs) {
                 funcParse(params, getStringVector(keyAndArgs));
-            }
-        });
-        // Insert for aliases
-        for(auto& alias : aliases) {
-            dict.insert({ move(alias), insertResult.first->second });
-        }
-
-        tokenBuildList.push_back(
+            },
             [funcBuild, name] (const Params& params) {
 
                 list< ConfigFileToken > res;
@@ -460,6 +454,31 @@ struct KeyValueParser {
                 return res;
             }
         );
+    }
+
+    // With alias
+    // Template parameters
+    //   - FuncParse: (Params&, const SExpr::ListType&) -> void, including key
+    //   - FuncBuild: (const Param&) -> list< ConfigFileToken >, including key
+    template<
+        typename FuncParse,
+        typename FuncBuild
+    >
+    void addArgsWithAliases(
+        std::string name,
+        std::vector< std::string > aliases,
+        FuncParse&& funcParse,
+        FuncBuild&& funcBuild
+    ) {
+        using namespace std;
+
+        const auto insertResult = dict.insert({ name, forward<FuncParse>(funcParse) });
+        // Insert for aliases
+        for(auto& alias : aliases) {
+            dict.insert({ move(alias), insertResult.first->second });
+        }
+
+        tokenBuildList.push_back(forward<FuncBuild>(funcBuild));
     }
 
     void addComment(std::string comment) {
