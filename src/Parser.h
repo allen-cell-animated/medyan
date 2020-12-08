@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <cctype> // isspace
+#include <charconv>
 #include <filesystem>
 #include <fstream>
 #include <functional>
@@ -370,11 +371,62 @@ struct KeyValueParser {
     // Handy functions
     //---------------------------------
 
+    // Parse or print a specific single-valued parameter.
+    //
+    // Template parameters
+    //   - LocateParam:
+    //     (Params&)       -> T&,       AND
+    //     (const Params&) -> const T&
+    template< typename LocateParam >
+    void addSingleArg(
+        std::string name,
+        LocateParam&& locate
+    ) {
+        using namespace std;
+
+        addStringArgs(
+            name,
+            [name, locate](Params& params, const vector<string>& lineVector) {
+                auto& param = locate(params);
+                using T = decay_t< decltype(param) >;
+
+                if (lineVector.size() != 2) {
+                    LOG(ERROR) << name << " must have exactly one value.";
+                    throw runtime_error("Invalid argument.");
+                }
+
+                auto& arg = lineVector[1];
+
+                if constexpr(is_integral_v< T > || is_floating_point_v< T >) {
+                    const auto [p, ec] = from_chars(arg.data(), arg.data() + arg.size(), param);
+                    if(ec != std::errc()) {
+                        LOG(ERROR) << name << " argument invalid: " << arg;
+                        throw runtime_error("Invalid argument.");
+                    }
+                }
+                else if constexpr(is_same_v< T, string >) {
+                    param = arg;
+                }
+            },
+            [name, locate](const Params& params) {
+                auto& param = locate(params);
+                using T = decay_t< decltype(param) >;
+
+                if constexpr(is_integral_v< T > || is_floating_point_v< T >) {
+                    return vector<string> { to_string(param) };
+                }
+                else if constexpr(is_same_v< T, string >) {
+                    return vector<string> { param };
+                }
+            }
+        )
+    }
+
     // Template parameters
     //   - FuncParse: void(Params&, const vector<string>&), including key
     //   - FuncBuild:
-    //     vector<string>(const Param&), excluding key, OR
-    //     vector<vector<string>>(const Param&), excluding key (for repeating items)
+    //     vector<string>(const Params&), excluding key, OR
+    //     vector<vector<string>>(const Params&), excluding key (for repeating items)
     template<
         typename FuncParse,
         typename FuncBuild
