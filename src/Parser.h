@@ -590,9 +590,9 @@ enum class KeyValueParserUnknownKeyAction {
     ignore, warn, error
 };
 
-// Parsing an s-expr as key-value pairs, using the parser func dictionary.
+// Parse an s-expr as a key-value pair, using the parser func dictionary.
 template< typename Params >
-inline void parse(
+inline void parseKeyValue(
     Params&                                                params,
     const SExpr&                                           se,
     const typename KeyValueParser<Params>::ParserFuncDict& dict,
@@ -602,18 +602,16 @@ inline void parse(
     using SES = SExpr::StringType;
     using SEL = SExpr::ListType;
 
-    // se must be a list type, or an exception will be thrown
-    for(const SExpr& eachList : get<SEL>(se.data)) {
-        // eachList.data must be a list type, or an exception will be thrown
-        // eachList contains the (key arg1 arg2 ...) data
-        // The key must be a string type, or an exception will be thrown
+    // se.data must be a list type, or an exception will be thrown
+    // se contains the (key arg1 arg2 ...) data
+    // The key must be a string type, or an exception will be thrown
 
-        const SES key = get<SES>(car(eachList).data);
-        const SEL keyAndArgs = get<SEL>(eachList.data);
+    const SES& key = get<SES>(car(se).data);
+    const SEL& keyAndArgs = get<SEL>(se.data);
 
-        // Check against the parsing dictionary
-        if(auto it = dict.find(key); it == dict.end()) {
-            switch(unknownKeyAction) {
+    // Check against the parsing dictionary
+    if(auto it = dict.find(key); it == dict.end()) {
+        switch(unknownKeyAction) {
             case KeyValueParserUnknownKeyAction::ignore:
                 break;
             case KeyValueParserUnknownKeyAction::warn:
@@ -624,24 +622,37 @@ inline void parse(
                 LOG(ERROR) << "In the input file, "
                     << key << " cannot be recognized.";
                 throw runtime_error("Unknown key in parser");
-            }
         }
-        else {
-            // Execute the settings
-            (it->second)(params, keyAndArgs);
-        }
+    }
+    else {
+        // Execute the settings
+        (it->second)(params, keyAndArgs);
+    }
+}
+
+// Parse a list of s-expr as key-value pairs, using the parser func dictionary.
+template< typename Params >
+inline void parseKeyValueList(
+    Params&                                                params,
+    const SExpr&                                           se,
+    const typename KeyValueParser<Params>::ParserFuncDict& dict,
+    KeyValueParserUnknownKeyAction                         unknownKeyAction = KeyValueParserUnknownKeyAction::ignore
+) {
+    // se.data must be a list type, or an exception will be thrown
+    for(const SExpr& eachList : get<SExpr::ListType>(se.data)) {
+        parseKeyValue(params, eachList, dict, unknownKeyAction);
     }
 }
 
 // Parsing an s-expr as key-value pairs.
 template< typename Params >
-inline void parse(
+inline void parseKeyValueList(
     Params&                                params,
     const SExpr&                           se,
     const typename KeyValueParser<Params>& parser,
     KeyValueParserUnknownKeyAction         unknownKeyAction = KeyValueParserUnknownKeyAction::ignore
 ) {
-    return parse(params, se, parser.dict, unknownKeyAction);
+    return parseKeyValueList(params, se, parser.dict, unknownKeyAction);
 }
 
 // Build the token list for key-value inputs.
@@ -702,20 +713,20 @@ struct SystemParser {
                 tokenizeConfigFile(
                     std::move(input)));
 
-        parse(conf, se, geoParser);
+        parseKeyValueList(conf, se, geoParser);
         geoPostProcessing(conf);
 
-        parse(conf, se, boundParser);
+        parseKeyValueList(conf, se, boundParser);
         boundPostProcessing(conf);
 
-        parse(conf, se, mechParser);
+        parseKeyValueList(conf, se, mechParser);
 
-        parse(conf, se, chemParser);
+        parseKeyValueList(conf, se, chemParser);
         chemPostProcessing(conf);
 
-        parse(conf, se, dyRateParser);
+        parseKeyValueList(conf, se, dyRateParser);
 
-        parse(conf, se, initParser);
+        parseKeyValueList(conf, se, initParser);
     }
 
     void outputInput(std::ostream& os, const SimulConfig& conf) const {
@@ -768,7 +779,7 @@ struct ChemistryParser {
                 tokenizeConfigFile(
                     std::move(input)));
 
-        parse(conf, se, chemDataParser);
+        parseKeyValueList(conf, se, chemDataParser);
     }
 
     void outputInput(std::ostream& os, const SimulConfig& conf) const {
