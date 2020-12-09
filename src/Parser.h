@@ -472,38 +472,30 @@ struct KeyValueParser {
             },
             [funcBuild, name] (const Params& params) {
 
-                list< ConfigFileToken > res;
-
-                if constexpr(
-                    is_same_v< invoke_result_t< FuncBuild, const Params& >, vector<string> >
-                ) {
-                    res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisLeft));
-                    res.push_back(ConfigFileToken::makeString(name));
+                if constexpr(is_same_v< invoke_result_t< FuncBuild, const Params& >, vector<string> >) {
 
                     vector<string> tempResult = funcBuild(params);
+
+                    list< ConfigFileToken > res;
                     for(auto& s : tempResult) {
                         res.push_back(ConfigFileToken::makeString(move(s)));
                     }
 
-                    res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisRight));
-                    res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak));
+                    return res;
 
                 } else {
                     vector<vector<string>> tempResult = funcBuild(params);
+
+                    vector<list< ConfigFileToken >> res;
                     for(auto& eachVS : tempResult) {
-                        res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisLeft));
-                        res.push_back(ConfigFileToken::makeString(name));
-
+                        res.emplace_back();
                         for(auto& s : eachVS) {
-                            res.push_back(ConfigFileToken::makeString(move(s)));
+                            res.back().push_back(ConfigFileToken::makeString(move(s)));
                         }
-
-                        res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisRight));
-                        res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak));
                     }
-                }
 
-                return res;
+                    return res;
+                }
             }
         );
     }
@@ -511,7 +503,7 @@ struct KeyValueParser {
     // With alias
     // Template parameters
     //   - FuncParse: (Params&, const SExpr::ListType&) -> void, including key
-    //   - FuncBuild: (const Param&) -> list< ConfigFileToken >, including key
+    //   - FuncBuild: (const Params&) -> list< ConfigFileToken >, excluding key
     template<
         typename FuncParse,
         typename FuncBuild
@@ -530,7 +522,40 @@ struct KeyValueParser {
             dict.insert({ move(alias), insertResult.first->second });
         }
 
-        tokenBuildList.push_back(forward<FuncBuild>(funcBuild));
+        tokenBuildList.push_back(
+            [funcBuild, name] (const Params& params) {
+
+                list< ConfigFileToken > res;
+
+                if constexpr(
+                    is_same_v< invoke_result_t< FuncBuild, const Params& >, list<ConfigFileToken> >
+                ) {
+                    // single entry
+                    res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisLeft));
+                    res.push_back(ConfigFileToken::makeString(name));
+
+                    res.splice(res.end(), funcBuild(params));
+
+                    res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisRight));
+                    res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak));
+
+                } else {
+                    // multiple entries
+                    vector<list<ConfigFileToken>> tempResult = funcBuild(params);
+                    for(auto& eachList : tempResult) {
+                        res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisLeft));
+                        res.push_back(ConfigFileToken::makeString(name));
+
+                        res.splice(res.end(), move(eachList));
+
+                        res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisRight));
+                        res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak));
+                    }
+                }
+
+                return res;
+            }
+        );
     }
 
     void addComment(std::string comment) {
