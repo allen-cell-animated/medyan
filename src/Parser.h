@@ -419,7 +419,7 @@ struct KeyValueParser {
                     return vector<string> { param };
                 }
             }
-        )
+        );
     }
 
     // Template parameters
