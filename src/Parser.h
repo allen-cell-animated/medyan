@@ -606,8 +606,9 @@ inline void parseKeyValue(
     // se contains the (key arg1 arg2 ...) data
     // The key must be a string type, or an exception will be thrown
 
-    const SES& key = get<SES>(car(se).data);
-    const SEL& keyAndArgs = get<SEL>(se.data);
+    // Here the assignments are by value because of possible temporary values on the right hand side.
+    const SES key = get<SES>(car(se).data);
+    SEL keyAndArgs = get<SEL>(se.data);
 
     // Check against the parsing dictionary
     if(auto it = dict.find(key); it == dict.end()) {
@@ -626,7 +627,7 @@ inline void parseKeyValue(
     }
     else {
         // Execute the settings
-        (it->second)(params, keyAndArgs);
+        (it->second)(params, move(keyAndArgs));
     }
 }
 
