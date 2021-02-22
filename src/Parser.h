@@ -40,19 +40,13 @@ namespace medyan {
 
 // Tokenizer and lexer for input files
 //
-// This extends the input config to s-expressions, which allows more
-// extensibility, but it does not include the lisp syntax
+// This extends the input config to s-expressions, which allows more extensibility, but it does not include the lisp syntax.
 //
-// The input file will be treated as a list of s-expressions. For backwards
-// compatibility and simplicity, several special specifications exist:
+// The input file will be treated as a quoted list of s-expressions. For backwards compatibility and simplicity, several special specifications exist:
 //   - All symbols are parsed as strings.
 //   - '#' and ';' both start a line comment.
-//   - If a top level (not within any parentheses) token is not a parenthesis,
-//     an implicit pair of parentheses will be added before the token and
-//     before the next closest top level line break or end of input.
-//   - Double quotation mark is parsed as string, but nested quotations,
-//     escapings are not allowed. Line comment marker in a quoted string stay
-//     has no effect.
+//   - If a top level (not within any parentheses) token is not a parenthesis, an implicit pair of parentheses will be added before the token and before the next closest top level line break or end of input.
+//   - Double quotation mark is parsed as string, but nested quotations, escapings are not allowed. Line comment marker in a quoted string has no effect.
 //   - cons that is not a list is currently not supported.
 //   - Evaluation is currently not supported.
 //   - Most syntactic sugar is currently not supported.
