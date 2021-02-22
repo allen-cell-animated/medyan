@@ -18,7 +18,6 @@
 #include "MathFunctions.h"
 using namespace mathfunc;
 #include "Visitor.h"
-#include "Parser.h"
 //REMOVE LATER
 #include "ChemNRMImpl.h"
 

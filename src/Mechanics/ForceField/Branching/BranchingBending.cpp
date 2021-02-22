@@ -42,7 +42,7 @@ void BranchingBending<BBendingInteractionType>::vectorize(const FFCoordinateStar
         beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
         beadSet[n * i + 3] = b->getSecondCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
 
-        kbend[i] = b->getMBranchingPoint()->getStretchingConstant();
+        kbend[i] = b->getMBranchingPoint()->getBendingConstant();
         eqt[i] = b->getMBranchingPoint()->getEqTheta();
         for(int j = 0; j < 3; j++)
             stretchforce[3*i + j] = 0.0;

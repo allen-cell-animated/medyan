@@ -14,11 +14,11 @@
 #ifndef MEDYAN_SysParams_h
 #define MEDYAN_SysParams_h
 
+#include <filesystem>
 #include <vector>
 #include <list>
 
 #include "common.h"
-#include "Parser.h"
 
 //Did not minimize structure
 #ifdef TRACKDIDNOTMINIMIZE
@@ -33,8 +33,89 @@ struct MinimizationParams{
     vector<vector<floatingpoint>> gradientvec;
 };
 #endif
+
+//-------------------------------------
+// Parameters read from the system input
+//-------------------------------------
+
 /// Struct to hold mechanical parameters for the system
 struct MechParams {
+
+    /// Struct to hold the ForceField types
+    struct MechanicsFFType {
+        
+        //@{
+        /// FilamentFF type
+        string FStretchingType = "";
+        string FBendingType    = "";
+        string FTwistingType   = "";
+        //@}
+        
+        //@{
+        /// LinkerFF type
+        string LStretchingType = "";
+        string LBendingType    = "";
+        string LTwistingType   = "";
+        //@}
+        
+        //@{
+        /// MotorFF type
+        string MStretchingType = "";
+        string MBendingType    = "";
+        string MTwistingType   = "";
+        //@}
+        
+        //@{
+        /// BranchingFF type
+        string BrStretchingType = "";
+        string BrBendingType    = "";
+        string BrDihedralType   = "";
+        string BrPositionType   = "";
+        //@}
+        
+        /// VolumeFF type
+        string VolumeFFType = "";
+        
+        /// BoundaryFF Type
+        string BoundaryFFType = "";
+        
+        /// Bubble Type
+        string BubbleFFType = "";
+        
+        /// MTOC Type
+        string MTOCFFType = "";
+        
+        /// AFM Type
+        string AFMFFType = "";
+
+
+        // MembraneFF type
+        string MemStretchingFFType     = "";
+        string memTensionFFType        = "";
+        string MemBendingFFType        = "";
+        string MemBeadVolumeFFType     = "";
+
+        // Volume conservation ff type
+        string volumeConservationFFType = "";
+    };
+
+    /// Struct to hold mechanics algorithm information
+    struct MechanicsAlgorithm {
+        string ConjugateGradient = "";
+        
+        /// Tolerance and cg parameters
+        floatingpoint gradientTolerance = 1.0;
+        floatingpoint maxDistance = 1.0;
+        floatingpoint lambdaMax = 1.0;
+        floatingpoint lambdarunningaverageprobability = 0.0;
+        string linesearchalgorithm = "BACKTRACKING";
+        
+        /// Not yet used
+        string MD = "";
+    };
+
+    MechanicsFFType       mechanicsFFType;
+    MechanicsAlgorithm    mechanicsAlgorithm;
 
     //@{
     /// Filament parameter
@@ -149,6 +230,44 @@ struct MechParams {
 
 /// Struct to hold chemistry parameters for the system
 struct ChemParams {
+
+    /// Struct to hold chemistry algorithm information
+    struct ChemistryAlgorithm {
+        
+        string algorithm = "";
+        
+        //@{
+        /// User can specify total run time of the simulation, as well as
+        /// frequency of snapshots, neighbor list updates and minimizations.
+        floatingpoint runTime = 0.0;
+        
+        floatingpoint snapshotTime = 0.0;
+        floatingpoint datadumpTime = 1000.0;
+        
+        floatingpoint minimizationTime = 0.0;
+        floatingpoint neighborListTime = 0.0;
+        //@}
+        
+        //@{
+        /// Can also specify a frequency in terms of number of chemical reaction steps
+        /// Useful for smaller systems and debugging
+        int runSteps = 0;
+        
+        int snapshotSteps = 0;
+        
+        int minimizationSteps = 0;
+        int neighborListSteps = 0;
+        //@}
+    };
+
+    /// Struct to hold chem setup information
+    struct ChemistrySetup {
+        
+        std::filesystem::path inputFile; // relative path only
+    };
+
+    ChemistryAlgorithm chemistryAlgorithm;
+    ChemistrySetup     chemistrySetup;
 
     //@{
     /// Number of general species
@@ -293,6 +412,16 @@ struct GeoParams {
 /// Struct to hold Boundary parameters for the system
 struct BoundParams {
 
+    /// Struct to hold the parameters of the Boundary
+    struct BoundaryType {
+        
+        string boundaryShape = "";
+        vector<string> boundaryMove = {};
+        //string scaleDiffusion = "";
+    };
+
+    BoundaryType  boundaryType;
+
     //@{
     /// Mechanical parameter
     floatingpoint BoundaryK = 0;
@@ -321,6 +450,27 @@ struct BoundParams {
 
 /// Struct to hold dynamic rate changing parameters
 struct DyRateParams {
+
+    ///Struct to hold dynamic rate changer type
+    struct DynamicRateType {
+        
+        ///Polymerization rate changing
+        vector<string> dFPolymerizationType = {};
+        
+        ///Linker rate changing
+        vector<string> dLUnbindingType = {};
+        
+        //@{
+        ///Motor rate changing
+        vector<string> dMUnbindingType = {};
+        vector<string> dMWalkingType = {};
+
+        //Qin----
+        vector<string> dBUnbindingType = {};
+        //@}
+    };
+
+    DynamicRateType dynamicRateType;
 
     /// Option for dynamic polymerization rate of filaments
     vector<floatingpoint> dFilPolymerizationCharLength = {};
@@ -357,7 +507,36 @@ struct DyRateParams {
 };
 
 struct SpecialParams {
-    
+
+    /// Struct to hold any special setup types
+    struct SpecialSetupType {
+        
+        ///MTOC configuration
+        bool mtoc = false;
+
+        //@{
+        ///MTOC Parameters
+        short mtocFilamentType = 0;
+        int mtocNumFilaments   = 0;
+        int mtocFilamentLength = 0;
+        short mtocBubbleType   = 0;
+        //@}
+        
+        ///AFM configuration
+        bool afm = false;
+        
+        //@{
+        ///MTOC Parameters
+        short afmFilamentType = 0;
+        int afmNumFilaments   = 0;
+        int afmFilamentLength = 0;
+        short afmBubbleType   = 0;
+        //@}
+        vector<float> mtocInputCoordXYZ = {};
+    };
+
+    SpecialSetupType specialSetupType;
+
     /// Parameters for initializing MTOC attached filaments
     float mtocTheta1 = 0.0;
     float mtocTheta2 = 1.0;
@@ -365,11 +544,214 @@ struct SpecialParams {
     float mtocPhi2 = 1.0;
 };
 
+/// Struct to hold Filament setup information
+struct FilamentSetup {
+    
+    std::filesystem::path inputFile;
+    
+    ///If want a random distribution, used if inputFile is left blank
+    int numFilaments = 0;
+    ///Filament length, in number of cylinders
+    int filamentLength = 1;
+    ///Filament type to create
+    short filamentType = 0;
+    ///Filament projection type.
+    string projectionType="STRAIGHT";
+
+    bool USECHEMCOPYNUM = false; // if set to 0, restart file copy numbers are used. If
+        // not, chemistry file copy numbers are used.
+
+    ///For resetting pin positions in restart phase
+    string pinRestartFile = "";
+};
+
+/// Struct to hold membrane setup information
+struct MembraneSetup {
+    std::filesystem::path inputFile;
+
+    std::vector< std::vector< std::string > > meshParam;
+
+    /// Membrane type to create
+    short membraneType = 0;
+};
+
+/// Struct to hold Bubble setup information
+struct BubbleSetup {
+    
+    std::filesystem::path inputFile;
+    
+    ///If want a random distribution, used if inputFile is left blank
+    int numBubbles = 0;
+    ///Bubble type to create
+    short bubbleType = 0;
+};
+
+
+//-------------------------------------
+// Parameters read from other input files
+//-------------------------------------
+
+/// Struct to hold Species and Reaction information
+/// @note - all filament-related reactions and species are 2D vectors corresponding
+///         to the filament type specified in the input file.
+struct ChemistryData {
+
+    /// Reaction happening between SpeciesBulk and SpeciesDiffusing ONLY
+    vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>> genReactions = {};
+
+    /// Reaction happening between SpeciesBulk ONLY
+    vector<tuple<vector<string>, vector<string>, floatingpoint>> bulkReactions = {};
+
+    /// Filament nucleation reaction
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint>>> nucleationReactions;
+
+    //@{
+    /// Filament reactions
+    /*!
+        *  All Filament reactions are held using a vector containing a tuple with the 
+        *  string of reactants, string of products, and the reaction rate.
+        */
+    /// Polymerization reactions
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> polymerizationReactions;
+    /// Depolymerization reactions
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> depolymerizationReactions;
+    /// Aging reactions
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> agingReactions;
+    /// Destruction reactions
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint>>> destructionReactions;
+
+    /// Branching reactions
+    /// This reaction also contains the off rate, and a string
+    /// specifying the nucleation zone and relevant distance parameter
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string, floatingpoint>>> branchingReactions;
+
+    /// Severing reactions
+    vector<vector<tuple<string, floatingpoint>>> severingReactions;
+    //@}
+
+    //@{
+    /// Cross Filament binding and unbinding reactions
+    /*!
+        *  All cross Filament reactions are held using a vector containing a tuple with 
+        *  the string of reactants, string of products, the reaction rate, and binding 
+        *  range.
+        */
+    /// Linker reactions
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint, string>>> linkerReactions;
+    /// MotorGhost reactions
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint, string>>> motorReactions;
+    //@}
+
+    /// MotorGhost walking reactions
+    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> motorWalkingReactions;
+
+    /// SpeciesBulk parsed, in the form of a tuple which contains the name and
+    /// initial copy number, release time, removal time, CONST/REG qualifier, TARGET TYPE
+    /// (TOTCONC/FREECONC) and Target CONCENTRATION (needed in move boundary)
+    vector<tuple<string, int, floatingpoint, floatingpoint, string, string, floatingpoint>> speciesBulk =
+            {};
+
+
+    /// SpeicesDiffusing parsed, in the form of a tuple which contains name,
+    /// initial copy number in reaction volume, the rate of diffusion, release time,
+    /// removal time, AVG/REG qualifier, and number of events to average if applicable.
+    vector<tuple<string, int, floatingpoint, floatingpoint, floatingpoint, string, int, string, floatingpoint>>
+            speciesDiffusing = {};
+
+    //@{
+    /// Filament species parsed
+    vector<vector<string>> speciesFilament;
+    vector<vector<string>> speciesPlusEnd;
+    vector<vector<string>> speciesMinusEnd;
+    
+    vector<vector<string>> speciesBound;
+    vector<vector<string>> speciesLinker;
+    vector<vector<string>> speciesMotor;
+    vector<vector<string>> speciesBrancher;
+    //@}
+    
+    //@{
+    /// Binding sites parsed
+    vector<string> B_BINDING_INDEX;
+    vector<string> L_BINDING_INDEX;
+    vector<string> M_BINDING_INDEX;
+    //@}
+    
+    ///Constructor initializes memory of vector members
+    ChemistryData()
+    
+    : nucleationReactions(MAX_FILAMENT_TYPES),
+      polymerizationReactions(MAX_FILAMENT_TYPES),
+      depolymerizationReactions(MAX_FILAMENT_TYPES),
+      agingReactions(MAX_FILAMENT_TYPES),
+      destructionReactions(MAX_FILAMENT_TYPES),
+    
+      branchingReactions(MAX_FILAMENT_TYPES),
+      severingReactions(MAX_FILAMENT_TYPES),
+      linkerReactions(MAX_FILAMENT_TYPES),
+      motorReactions(MAX_FILAMENT_TYPES),
+      motorWalkingReactions(MAX_FILAMENT_TYPES),
+    
+      speciesFilament(MAX_FILAMENT_TYPES),
+      speciesPlusEnd(MAX_FILAMENT_TYPES),
+      speciesMinusEnd(MAX_FILAMENT_TYPES),
+      speciesBound(MAX_FILAMENT_TYPES),
+      speciesLinker(MAX_FILAMENT_TYPES),
+      speciesMotor(MAX_FILAMENT_TYPES),
+      speciesBrancher(MAX_FILAMENT_TYPES),
+    
+      B_BINDING_INDEX(MAX_FILAMENT_TYPES),
+      L_BINDING_INDEX(MAX_FILAMENT_TYPES),
+      M_BINDING_INDEX(MAX_FILAMENT_TYPES) {}
+    
+};
+
+using BubbleData = vector<tuple<short, vector<floatingpoint>>>;
+using FilamentData = tuple<
+    vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>>,
+    vector<tuple<string, short, vector<vector<floatingpoint>>>>,
+    vector<tuple<string, short, vector<floatingpoint>>>,
+    vector<vector<floatingpoint>> >;
+
+namespace medyan {
+
+// Definition of simulation configuration
+struct SimulConfig {
+
+    // The MetaParams class, used to store the source of config file, etc
+    struct MetaParams {
+        std::filesystem::path systemInputFile;
+
+        // Directory of other input files
+        std::filesystem::path inputDirectory;
+    };
+
+    MetaParams     metaParams;
+
+    // Parameters from the system input
+    GeoParams      geoParams;
+    MechParams     mechParams;
+    ChemParams     chemParams;
+    BoundParams    boundParams;
+    DyRateParams   dyRateParams;
+    SpecialParams  specialParams;
+    BubbleSetup    bubbleSetup;
+    MembraneSetup  membraneSetup;
+    FilamentSetup  filamentSetup;
+
+    // Parameters from other inputs
+    ChemistryData  chemistryData;
+    BubbleData     bubbleData;
+    FilamentData   filamentData;
+
+};
+
+} // namespace medyan
+
 /// Static class that holds all simulation parameters,
 /// initialized by the SystemParser
 class SysParams {
 friend class Controller;
-friend class SystemParser;
 friend class ChemManager;
 friend class SubSystem;
 friend class Cylinder;
@@ -406,10 +788,9 @@ public:
     static int exvolcounter[3]; //positions 0, 1, and 2 correspond to parallel,
     // in-plane and regular cases.
     static long long exvolcounterz[3];
-    ///Const getter
+
+    inline static FilamentSetup filamentSetup;
     static bool RUNSTATE; //0 refers to restart phase and 1 refers to run phase.
-    static bool USECHEMCOPYNUM; // if set to 0, restart file copy numbers are used. If
-    // not, chemistry file copy numbers are used.
     static bool INITIALIZEDSTATUS; // true refers to sucessful initialization. false
     static bool DURINGCHEMISTRY; //true if MEDYAN is running chemistry, false otherwise.
     // corresponds to an on-going initialization state.
@@ -433,8 +814,8 @@ public:
     //@{
     //Check for consistency of parameters. Done at runtime by the Controller.
     static bool checkChemParameters(ChemistryData& chem);
-    static bool checkMechParameters(MechanicsFFType& mech);
-    static bool checkDyRateParameters(DynamicRateType& dy);
+    static bool checkMechParameters(MechParams::MechanicsFFType& mech);
+    static bool checkDyRateParameters(DyRateParams::DynamicRateType& dy);
     static bool checkGeoParameters();
     //@}
 

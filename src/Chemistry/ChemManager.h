@@ -17,7 +17,6 @@
 #include "common.h"
 
 #include "ReactionTemplate.h"
-#include "Parser.h"
 #include "DissipationTracker.h"
 
 //FORWARD DECLARATIONS

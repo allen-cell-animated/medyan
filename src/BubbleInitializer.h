@@ -14,9 +14,7 @@
 #ifndef MEDYAN_BubbleInitializer_h
 #define MEDYAN_BubbleInitializer_h
 
-#include "common.h"
-
-typedef vector<tuple<short, vector<floatingpoint>>> BubbleData;
+#include "SysParams.h"
 
 ///FORWARD DECLARATIONS
 class Boundary;
