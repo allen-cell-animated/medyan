@@ -34,6 +34,7 @@
 #include "common.h"
 #include "SysParams.h"
 #include "utility.h"
+#include "Util/Math/Vec.hpp"
 #include "Util/SExpr.hpp"
 
 namespace medyan {
@@ -822,10 +823,7 @@ struct FilamentParser {
 };
 
 /// Used to parse initial membrane vertex and neighbor information, initialized by the Controller.
-class MembraneParser : public Parser {
-    
-public:
-    MembraneParser(string inputFileName) : Parser(inputFileName) {}
+struct MembraneParser {
 
     struct MembraneInfo {
         using coordinate_type = mathfunc::Vec< 3, floatingpoint >;

@@ -758,6 +758,7 @@ friend class Cylinder;
 
 public:
     // Parameters for simulation procedure only
+    // TODO move it somewhere else and use it.
     struct SimulParams {
 
         // Output and tracking

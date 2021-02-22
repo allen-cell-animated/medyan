@@ -147,8 +147,6 @@ void Controller::initialize(string inputFile,
     //snapshot type output
     cout << endl;
 
-    p.readSimulParams();
-
     //trajectory-style data
     _outputs.push_back(make_unique<BasicSnapshot>(_outputDirectory + "snapshot.traj", &_subSystem));
     _outputs.push_back(make_unique<BirthTimes>(_outputDirectory + "birthtimes.traj", &_subSystem));
@@ -425,14 +423,21 @@ void Controller::setupInitialNetwork(SimulConfig& simulConfig) {
     /**************************************************************************
     Now starting to add the membrane into the network.
     **************************************************************************/
-    MembraneSetup MemSetup = p.readMembraneSetup();
+    const auto& MemSetup = simulConfig.membraneSetup;
     
     cout << "---" << endl;
     cout << "Initializing membranes...";
 
     std::vector< MembraneParser::MembraneInfo > membraneData;
     if(MemSetup.inputFile != "") {
-        membraneData = MembraneParser(_inputDirectory + MemSetup.inputFile).readMembranes();
+        // Read membrane input from external file.
+        auto memPath = _inputDirectory / MemSetup.inputFile;
+        std::ifstream ifs(memPath);
+        if (!ifs.is_open()) {
+            LOG(ERROR) << "Cannot open membrane file " << memPath;
+            throw std::runtime_error("Cannot open membrane file.");
+        }
+        membraneData = MembraneParser::readMembranes(ifs);
     }
 
     for(const auto& param : MemSetup.meshParam) {
