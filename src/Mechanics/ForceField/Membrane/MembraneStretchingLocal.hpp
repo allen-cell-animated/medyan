@@ -39,7 +39,7 @@ struct MembraneStretchingLocal : public ForceField {
 
             const auto& mesh = m->getMesh();
             // Only applies for material surface coordinate system
-            if(mesh.metaAttribute().vertexSystem == MembraneMeshVertexSystem::material) {
+            if(mesh.metaAttribute().vertexSystem == medyan::MembraneMeshVertexSystem::material) {
 
                 for(const auto& t : mesh.getTriangles()) {
                     const auto vis = medyan::vertexIndices(mesh, t);

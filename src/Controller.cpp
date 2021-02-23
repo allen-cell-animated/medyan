@@ -423,51 +423,56 @@ void Controller::setupInitialNetwork(SimulConfig& simulConfig) {
     /**************************************************************************
     Now starting to add the membrane into the network.
     **************************************************************************/
-    const auto& MemSetup = simulConfig.membraneSetup;
+    const auto& membraneSettings = simulConfig.membraneSettings;
     
     cout << "---" << endl;
     cout << "Initializing membranes...";
 
-    std::vector< MembraneParser::MembraneInfo > membraneData;
-    if(MemSetup.inputFile != "") {
-        // Read membrane input from external file.
-        auto memPath = _inputDirectory / MemSetup.inputFile;
-        std::ifstream ifs(memPath);
-        if (!ifs.is_open()) {
-            LOG(ERROR) << "Cannot open membrane file " << memPath;
-            throw std::runtime_error("Cannot open membrane file.");
-        }
-        membraneData = MembraneParser::readMembranes(ifs);
-    }
-
-    for(const auto& param : MemSetup.meshParam) {
-        const auto newMesh = mesh_gen::generateMeshViaParams< floatingpoint >(param);
-        membraneData.push_back({newMesh.vertexCoordinateList, newMesh.triangleList});
-    }
-    
-    // add membranes
-    for (auto& it: membraneData) {
-        
-        short type = 0; // Currently set as default(0).
-        
-        if(type >= SysParams::Chemistry().numMembranes) {
-            cout << "Membrane data specified contains an invalid membrane type. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-
-        Membrane* newMembrane = _subSystem.addTrackable<Membrane>(
+    int numMembranes = 0;
+    const auto addMembrane = [this, &numMembranes](const MembraneSetup& memSetup, const MembraneParser::MembraneInfo& memData) {
+        _subSystem.addTrackable<Membrane>(
             &_subSystem,
-            type,
-            it.vertexCoordinateList,
-            it.triangleVertexIndexList
+            memSetup.type,
+            memData.vertexCoordinateList,
+            memData.triangleVertexIndexList
         );
+        ++numMembranes;
+    };
+
+    for(auto& memSetup : membraneSettings.setupVec) {
+
+        for(auto& initParams : memSetup.meshParam) {
+            if(initParams.size() == 2 && initParams[0] == "file") {
+                // The input looks like this: init file path/to/file
+                // Read membrane mesh information from an external file.
+                auto memPath = _inputDirectory / std::filesystem::path(initParams[1]);
+                std::ifstream ifs(memPath);
+                if (!ifs.is_open()) {
+                    LOG(ERROR) << "Cannot open membrane file " << memPath;
+                    throw std::runtime_error("Cannot open membrane file.");
+                }
+
+                const auto memDataVec = MembraneParser::readMembranes(ifs);
+
+                for(auto& memData : memDataVec) {
+                    addMembrane(memSetup, memData);
+                }
+            }
+            else {
+                // Forward the input to the membrane mesh initializer
+                const auto newMesh = mesh_gen::generateMeshViaParams< floatingpoint >(initParams);
+
+                addMembrane(memSetup, {newMesh.vertexCoordinateList, newMesh.triangleList});
+            }
+        }
     }
-    LOG(INFO) << "Done. " << membraneData.size() << " membranes created." << endl;
+
+    LOG(INFO) << "Done. " << numMembranes << " membranes created." << endl;
 
     // Create a region inside the membrane
     LOG(INFO) << "Creating membrane regions...";
     _regionInMembrane = (
-        membraneData.empty() ?
+        numMembranes == 0 ?
         make_unique<MembraneRegion<Membrane>>(_subSystem.getBoundary()) :
         MembraneRegion<Membrane>::makeByChildren(MembraneHierarchy< Membrane >::root())
     );

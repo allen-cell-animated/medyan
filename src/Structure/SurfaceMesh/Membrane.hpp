@@ -111,7 +111,7 @@ public:
         // Other mechanical params are initialized automatically
 
         mesh_.metaAttribute().isMechParamsSet = true;
-    } // void initMechanicParams()
+    } // void initMechanicParams(...)
 
     void setChemistry(MembraneMeshChemistryInfo memChemInfo) {
         mesh_.metaAttribute().chemInfo = std::move(memChemInfo);
