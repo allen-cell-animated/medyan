@@ -24,7 +24,7 @@ struct VolumeConservationMembrane : public ForceField {
 
             const auto& mesh = m->getMesh();
 
-            const double kBulk = SysParams::Mechanics().bulkModulus;
+            const double kBulk = m->mMembrane.kVolume;
             const double eqVolume = m->mMembrane.eqVolume;
 
             double volume = 0.0;
@@ -57,7 +57,7 @@ struct VolumeConservationMembrane : public ForceField {
             const auto& mesh = m->getMesh();
             medyan::assertValidIndexCacheForFF(mesh);
 
-            const double kBulk = SysParams::Mechanics().bulkModulus;
+            const double kBulk = m->mMembrane.kVolume;
             const double eqVolume = m->mMembrane.eqVolume;
 
             double volume = 0.0;

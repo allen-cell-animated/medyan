@@ -315,33 +315,6 @@ bool SysParams::checkMechParameters(MechParams::MechanicsFFType& mech) {
         return false;
     }
     
-    // Membrane
-    if(mech.MemStretchingFFType == "HARMONIC" &&
-       MParams.memAreaK.size() != CParams.numMembranes) {
-        cout << "Must set a membrane elastic modulus for all membranes. Exiting." << endl;
-        return false;
-    }
-    if(mech.MemStretchingFFType == "HARMONIC" &&
-       MParams.memEqAreaFactor.size() != CParams.numMembranes) {
-        cout << "Must set a equilibrium area factor for all membranes. Exiting." << endl;
-        return false;
-    }
-    if(mech.MemStretchingFFType == "LINEAR" &&
-       MParams.MemTension.size() != CParams.numMembranes) {
-        cout << "Must set a membrane tension for all membranes. Exiting." << endl;
-        return false;
-    }
-    if(mech.MemBendingFFType != "" &&
-       MParams.MemBendingK.size() != CParams.numMembranes) {
-        cout << "Must set a membrane bending modulus for all membranes. Exiting." << endl;
-        return false;
-    }
-    if(mech.MemBendingFFType != "" &&
-       MParams.MemEqCurv.size() != CParams.numMembranes) {
-        cout << "Must set a membrane spontaneous curvature for all membranes. Exiting." << endl;
-        return false;
-    }
-    
     ///Cylinder and monomer lengths specified
     if(GParams.cylinderSize.size() != CParams.numFilaments) {
         

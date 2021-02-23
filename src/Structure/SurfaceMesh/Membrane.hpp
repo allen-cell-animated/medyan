@@ -51,14 +51,13 @@ public:
     // This constructor creates a membrane according to vertex and neighbor data
     Membrane(
         SubSystem* s,
-        short membraneType,
+        const medyan::MembraneSetup& memSetup,
         const std::vector< coordinate_type >& vertexCoordinateList,
         const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
     ) : Trackable(false, false, false, false),
         mesh_(typename MeshAttributeType::MetaAttribute{s, this}),
         _subSystem(s),
-        memType_(membraneType),
-        mMembrane(membraneType)
+        memType_(memSetup.type)
     {
         
         // Build the meshwork topology using vertex and triangle information
@@ -73,6 +72,11 @@ public:
 
         // Add to membrane hierarchy (must have updated geometry)
         HierarchyType::addMembrane(this);
+
+        // Some mechanical parameters already known
+        mMembrane.kArea   = memSetup.areaElasticity;
+        mMembrane.tension = memSetup.tension;
+        mMembrane.kVolume = memSetup.volumeElasticity;
     }
 
     ~Membrane() {
@@ -84,7 +88,7 @@ public:
     auto&       getMesh()       { return mesh_; }
 
     // Helper function to initialize MMembrane and other mechanic parameters
-    void initMechanicParams() {
+    void initMechanicParams(const medyan::MembraneSetup& memSetup) {
         // Initialize MTriangle
         // Also calculate the total area and volume to set the equilibrium area
         // and volume for MMembrane
@@ -96,19 +100,21 @@ public:
             area += theArea;
             volume += medyan::coneVolume(mesh_, ti);
 
-            if(memType_ >= 0 && memType_ < SysParams::Mechanics().memEqAreaFactor.size()) {
-                mesh_.attribute(ti).triangle->mTriangle.eqArea
-                    = theArea * SysParams::Mechanics().memEqAreaFactor[memType_];
-            }
+            auto& mTriangle = mesh_.attribute(ti).triangle->mTriangle;
+            mTriangle.kArea = memSetup.areaElasticity;
+            mTriangle.eqArea = theArea * memSetup.initEqAreaFactor;
         }
 
         // Initialize MMembrane
-        if (memType_ >= 0 && memType_ < SysParams::Mechanics().memEqAreaFactor.size()) {
-            mMembrane.eqArea = area * SysParams::Mechanics().memEqAreaFactor[memType_];
-        }
+        mMembrane.eqArea = area * memSetup.initEqAreaFactor;
         mMembrane.eqVolume = volume;
 
-        // Other mechanical params are initialized automatically
+        // Initialize MVertex
+        for(MeshType::VertexIndex vi {0}; vi < mesh_.numVertices(); ++vi) {
+            auto& mVertex = mesh_.attribute(vi).vertex->mVertex;
+            mVertex.kBending = memSetup.bendingElasticity;
+            mVertex.eqCurv = memSetup.eqMeanCurv;
+        }
 
         mesh_.metaAttribute().isMechParamsSet = true;
     } // void initMechanicParams(...)

@@ -104,6 +104,19 @@ void pinInitialFilamentWith(F&& inRegion) {
 
 } // namespace
 
+inline void remeshMembrane(const adaptive_mesh::MembraneMeshAdapter& adapter, Membrane& membrane) {
+    // Requires _meshAdapter to be already initialized
+    adapter.adapt(membrane.getMesh());
+
+    // Update necessary geometry for the system
+    membrane.updateGeometryValueForSystem();
+
+    for(auto& t : membrane.getMesh().getTriangles()) {
+        t.attr.triangle->updatePosition();
+    }
+}
+
+
 Controller::Controller() :
     _mController(&_subSystem),
     _cController(&_subSystem),
@@ -430,12 +443,19 @@ void Controller::setupInitialNetwork(SimulConfig& simulConfig) {
 
     int numMembranes = 0;
     const auto addMembrane = [this, &numMembranes](const MembraneSetup& memSetup, const MembraneParser::MembraneInfo& memData) {
-        _subSystem.addTrackable<Membrane>(
+        auto newMembrane = _subSystem.addTrackable<Membrane>(
             &_subSystem,
-            memSetup.type,
+            memSetup,
             memData.vertexCoordinateList,
             memData.triangleVertexIndexList
         );
+
+        // Optimize the mesh for membrane
+        remeshMembrane(*_meshAdapter, *newMembrane);
+
+        // Set up mechanics
+        newMembrane->initMechanicParams(memSetup);
+
         ++numMembranes;
     };
 
@@ -478,14 +498,6 @@ void Controller::setupInitialNetwork(SimulConfig& simulConfig) {
     );
     _subSystem.setRegionInMembrane(_regionInMembrane.get());
 
-    LOG(INFO) << "Optimizing membranes...";
-    membraneAdaptiveRemesh();
-    updatePositions();
-
-    LOG(INFO) << "Setting up membrane mechanics...";
-    for(auto m : Membrane::getMembranes()) {
-        m->initMechanicParams();
-    }
 
     LOG(INFO) << "Adding surface chemistry...";
     {

@@ -178,18 +178,6 @@ struct MechParams {
     short numBubbleTypes = 1;
     //@}
     
-    //@{
-    /// Membrane parameter
-    vector<double> memAreaK        = {};
-    vector<double> memEqAreaFactor = {};  // Only used in initialization
-    vector<double> MemTension      = {};
-    vector<double> MemBendingK     = {};
-    vector<double> MemEqCurv       = {};
-    //@}
-
-    // Water incompressibility
-    double bulkModulus = 0.0;
-
     
     //@{
     /// SPECIAL MECHANICAL PROTOCOLS
@@ -328,9 +316,6 @@ struct ChemParams {
     vector<vector<short>> bindingIndices = vector<vector<short>>(MAX_FILAMENT_TYPES);
     //@}
     
-    /// Number of different membrane types
-    short numMembranes = 1;
-
     
     //@{
     /// SPECIAL CHEMICAL PROTOCOLS

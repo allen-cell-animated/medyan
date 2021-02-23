@@ -11,7 +11,7 @@ struct MTriangle {
 
     // Local area elasticity, applicable only in material coordinates
     double kArea = 0.0;
-    double eqArea = 0.0;
+    double eqArea = 1.0;
 };
 
 
