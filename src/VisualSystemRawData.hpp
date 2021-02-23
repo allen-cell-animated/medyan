@@ -87,7 +87,7 @@ inline void updateRealtimeMeshData(
 
     const auto shouldUpdateBecauseDataChanged = [&](const ElementProfile& elementProfile) -> bool {
         return std::visit(
-            Overloaded {
+            Overload {
                 [&](const MembraneProfile& profile) {
                     return rawData.updated & raw_data_cat::beadPosition;
                 },

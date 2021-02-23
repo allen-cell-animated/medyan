@@ -16,7 +16,6 @@
 
 bool SysParams::RUNSTATE=true;
 bool SysParams::INITIALIZEDSTATUS=false;
-bool SysParams::USECHEMCOPYNUM=false;
 bool SysParams::DURINGCHEMISTRY=false;
 
 int SysParams::exvolcounter[3] = {0,0,0};
@@ -139,7 +138,7 @@ void SysParams::addChemParameters(ChemistryData& chem){
     
 }
 
-bool SysParams::checkMechParameters(MechanicsFFType& mech) {
+bool SysParams::checkMechParameters(MechParams::MechanicsFFType& mech) {
     
     //check ff and associated parameters for consistency
     
@@ -316,33 +315,6 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
         return false;
     }
     
-    // Membrane
-    if(mech.MemStretchingFFType == "HARMONIC" &&
-       MParams.memAreaK.size() != CParams.numMembranes) {
-        cout << "Must set a membrane elastic modulus for all membranes. Exiting." << endl;
-        return false;
-    }
-    if(mech.MemStretchingFFType == "HARMONIC" &&
-       MParams.memEqAreaFactor.size() != CParams.numMembranes) {
-        cout << "Must set a equilibrium area factor for all membranes. Exiting." << endl;
-        return false;
-    }
-    if(mech.MemStretchingFFType == "LINEAR" &&
-       MParams.MemTension.size() != CParams.numMembranes) {
-        cout << "Must set a membrane tension for all membranes. Exiting." << endl;
-        return false;
-    }
-    if(mech.MemBendingFFType != "" &&
-       MParams.MemBendingK.size() != CParams.numMembranes) {
-        cout << "Must set a membrane bending modulus for all membranes. Exiting." << endl;
-        return false;
-    }
-    if(mech.MemBendingFFType != "" &&
-       MParams.MemEqCurv.size() != CParams.numMembranes) {
-        cout << "Must set a membrane spontaneous curvature for all membranes. Exiting." << endl;
-        return false;
-    }
-    
     ///Cylinder and monomer lengths specified
     if(GParams.cylinderSize.size() != CParams.numFilaments) {
         
@@ -374,7 +346,7 @@ bool SysParams::checkGeoParameters() {
     return true;
 }
 
-bool SysParams::checkDyRateParameters(DynamicRateType& dy) {
+bool SysParams::checkDyRateParameters(DyRateParams::DynamicRateType& dy) {
     
     //check types match number of species
     if(dy.dFPolymerizationType.size() != CParams.numFilaments &&

@@ -10,7 +10,7 @@
 #include <variant>
 #include <vector>
 
-#include "utility.h" // Overloaded
+#include "utility.h" // Overload
 #include "Visual/Common.hpp"
 #include "Visual/MeshData.hpp"
 #include "Visual/Shader.hpp"
@@ -202,7 +202,7 @@ inline auto createMeshData(
     const ElementProfile& profile
 ) {
     return std::visit(
-        Overloaded {
+        Overload {
             [&](const MembraneProfile& membraneProfile) {
                 return createMembraneMeshData(
                     select(frameData.membranes, membraneProfile.selector),
@@ -252,7 +252,7 @@ inline auto createMeshDataAllFrames(
     for(int i = 0; i < numFrames; ++i) {
         const int sizeCur = meshData.data.size();
         const int sizeInc = std::visit(
-            Overloaded {
+            Overload {
                 [&](const MembraneProfile& prof) {
                     return appendMembraneMeshData(
                         meshData,

@@ -14,353 +14,782 @@
 #ifndef MEDYAN_Parser_h
 #define MEDYAN_Parser_h
 
-#include <vector>
+#include <algorithm>
+#include <cctype> // isspace
+#include <charconv>
+#include <filesystem>
 #include <fstream>
+#include <functional>
+#include <iterator>
+#include <list>
+#include <map>
+#include <set>
+#include <stdexcept>
 #include <string>
 #include <sstream>
-#include <iterator>
-#include <algorithm>
-#include <ios>
+#include <type_traits>
+#include <variant>
+#include <vector>
 
 #include "common.h"
+#include "SysParams.h"
 #include "utility.h"
 #include "Util/Math/Vec.hpp"
+#include "Util/SExpr.hpp"
 
-/// Struct to hold output types;
-struct OutputTypes {
-    
-    //@{
-    /// Possible output type
-    
-    /// A basic snapshot
-    bool basicSnapshot = false;
-    /// Birth times
-    bool birthTimes = false;
-    /// Forces
-    bool forces = false;
-    /// Tensions
-    bool tensions = false;
-    /// Chemistry
-    bool chemistry = false;
-    //@}
-};
+namespace medyan {
 
-/// Struct to hold mechanics algorithm information
-struct MechanicsAlgorithm {
-    string ConjugateGradient = "";
-    
-    /// Tolerance and cg parameters
-    floatingpoint gradientTolerance = 1.0;
-    floatingpoint maxDistance = 1.0;
-    floatingpoint lambdaMax = 1.0;
-    floatingpoint lambdarunningaverageprobability = 0.0;
-    string linesearchalgorithm = "BACKTRACKING";
-    
-    /// Not yet used
-    string MD = "";
-};
+// Tokenizer and lexer for input files
+//
+// This extends the input config to s-expressions, which allows more extensibility, but it does not include the lisp syntax.
+//
+// The input file will be treated as a quoted list of s-expressions. For backwards compatibility and simplicity, several special specifications exist:
+//   - All symbols are parsed as strings.
+//   - '#' and ';' both start a line comment.
+//   - If a top level (not within any parentheses) token is not a parenthesis, an implicit pair of parentheses will be added before the token and before the next closest top level line break or end of input.
+//   - Double quotation mark is parsed as string, but nested quotations, escapings are not allowed. Line comment marker in a quoted string has no effect.
+//   - cons that is not a list is currently not supported.
+//   - Evaluation is currently not supported.
+//   - Most syntactic sugar is currently not supported.
 
-/// Struct to hold chemistry algorithm information
-struct ChemistryAlgorithm {
-    
-    string algorithm = "";
-    
-    //@{
-    /// User can specify total run time of the simulation, as well as
-    /// frequency of snapshots, neighbor list updates and minimizations.
-    floatingpoint runTime = 0.0;
-    
-    floatingpoint snapshotTime = 0.0;
-    floatingpoint datadumpTime = 1000.0;
-    
-    floatingpoint minimizationTime = 0.0;
-    floatingpoint neighborListTime = 0.0;
-    //@}
-    
-    //@{
-    /// Can also specify a frequency in terms of number of chemical reaction steps
-    /// Useful for smaller systems and debugging
-    int runSteps = 0;
-    
-    int snapshotSteps = 0;
-    
-    int minimizationSteps = 0;
-    int neighborListSteps = 0;
-    //@}
-};
+struct ConfigFileToken {
+    enum class Type {
+        string,
+        comment,
+        parenthesisLeft,
+        parenthesisRight,
+        lineBreak,         // needed for implicit parenthesis
+        unknown
+    };
 
-/// Struct to hold Species and Reaction information
-/// @note - all filament-related reactions and species are 2D vectors corresponding
-///         to the filament type specified in the input file.
-struct ChemistryData {
+    Type        type = Type::string;
+    std::string content;
 
-    /// Reaction happening between SpeciesBulk and SpeciesDiffusing ONLY
-    vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>> genReactions = {};
+    static std::string defaultContent(Type type) {
+        switch(type) {
+        case Type::string:           return "";
+        case Type::comment:          return "";
+        case Type::parenthesisLeft:  return "(";
+        case Type::parenthesisRight: return ")";
+        case Type::lineBreak:        return "\n";
+        case Type::unknown:          return "";
+        default:                     return "";
+        }
+    }
 
-    /// Reaction happening between SpeciesBulk ONLY
-    vector<tuple<vector<string>, vector<string>, floatingpoint>> bulkReactions = {};
+    static auto makeDefault(Type type) {
+        return ConfigFileToken { type, defaultContent(type) };
+    }
 
-    /// Filament nucleation reaction
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint>>> nucleationReactions;
-
-    //@{
-    /// Filament reactions
-    /*!
-        *  All Filament reactions are held using a vector containing a tuple with the 
-        *  string of reactants, string of products, and the reaction rate.
-        */
-    /// Polymerization reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> polymerizationReactions;
-    /// Depolymerization reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> depolymerizationReactions;
-    /// Aging reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> agingReactions;
-    /// Destruction reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint>>> destructionReactions;
-
-    /// Branching reactions
-    /// This reaction also contains the off rate, and a string
-    /// specifying the nucleation zone and relevant distance parameter
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string, floatingpoint>>> branchingReactions;
-
-    /// Severing reactions
-    vector<vector<tuple<string, floatingpoint>>> severingReactions;
-    //@}
-
-    //@{
-    /// Cross Filament binding and unbinding reactions
-    /*!
-        *  All cross Filament reactions are held using a vector containing a tuple with 
-        *  the string of reactants, string of products, the reaction rate, and binding 
-        *  range.
-        */
-    /// Linker reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint, string>>> linkerReactions;
-    /// MotorGhost reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint, string>>> motorReactions;
-    //@}
-
-    /// MotorGhost walking reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> motorWalkingReactions;
-
-    /// SpeciesBulk parsed, in the form of a tuple which contains the name and
-    /// initial copy number, release time, removal time, CONST/REG qualifier, TARGET TYPE
-    /// (TOTCONC/FREECONC) and Target CONCENTRATION (needed in move boundary)
-    vector<tuple<string, int, floatingpoint, floatingpoint, string, string, floatingpoint>> speciesBulk =
-            {};
-
-
-    /// SpeicesDiffusing parsed, in the form of a tuple which contains name,
-    /// initial copy number in reaction volume, the rate of diffusion, release time,
-    /// removal time, AVG/REG qualifier, and number of events to average if applicable.
-    vector<tuple<string, int, floatingpoint, floatingpoint, floatingpoint, string, int, string, floatingpoint>>
-            speciesDiffusing = {};
-
-    //@{
-    /// Filament species parsed
-    vector<vector<string>> speciesFilament;
-    vector<vector<string>> speciesPlusEnd;
-    vector<vector<string>> speciesMinusEnd;
-    
-    vector<vector<string>> speciesBound;
-    vector<vector<string>> speciesLinker;
-    vector<vector<string>> speciesMotor;
-    vector<vector<string>> speciesBrancher;
-    //@}
-    
-    //@{
-    /// Binding sites parsed
-    vector<string> B_BINDING_INDEX;
-    vector<string> L_BINDING_INDEX;
-    vector<string> M_BINDING_INDEX;
-    //@}
-    
-    ///Constructor initializes memory of vector members
-    ChemistryData()
-    
-    : nucleationReactions(MAX_FILAMENT_TYPES),
-      polymerizationReactions(MAX_FILAMENT_TYPES),
-      depolymerizationReactions(MAX_FILAMENT_TYPES),
-      agingReactions(MAX_FILAMENT_TYPES),
-      destructionReactions(MAX_FILAMENT_TYPES),
-    
-      branchingReactions(MAX_FILAMENT_TYPES),
-      severingReactions(MAX_FILAMENT_TYPES),
-      linkerReactions(MAX_FILAMENT_TYPES),
-      motorReactions(MAX_FILAMENT_TYPES),
-      motorWalkingReactions(MAX_FILAMENT_TYPES),
-    
-      speciesFilament(MAX_FILAMENT_TYPES),
-      speciesPlusEnd(MAX_FILAMENT_TYPES),
-      speciesMinusEnd(MAX_FILAMENT_TYPES),
-      speciesBound(MAX_FILAMENT_TYPES),
-      speciesLinker(MAX_FILAMENT_TYPES),
-      speciesMotor(MAX_FILAMENT_TYPES),
-      speciesBrancher(MAX_FILAMENT_TYPES),
-    
-      B_BINDING_INDEX(MAX_FILAMENT_TYPES),
-      L_BINDING_INDEX(MAX_FILAMENT_TYPES),
-      M_BINDING_INDEX(MAX_FILAMENT_TYPES) {}
-    
-};
-
-/// Struct to hold the parameters of the Boundary
-struct BoundaryType {
-    
-    string boundaryShape = "";
-    vector<string> boundaryMove = {};
-    //string scaleDiffusion = "";
-};
-
-/// Struct to hold the ForceField types
-struct MechanicsFFType {
-    
-    //@{
-    /// FilamentFF type
-    string FStretchingType = "";
-    string FBendingType    = "";
-    string FTwistingType   = "";
-    //@}
-    
-    //@{
-    /// LinkerFF type
-    string LStretchingType = "";
-    string LBendingType    = "";
-    string LTwistingType   = "";
-    //@}
-    
-    //@{
-    /// MotorFF type
-    string MStretchingType = "";
-    string MBendingType    = "";
-    string MTwistingType   = "";
-    //@}
-    
-    //@{
-    /// BranchingFF type
-    string BrStretchingType = "";
-    string BrBendingType    = "";
-    string BrDihedralType   = "";
-    string BrPositionType   = "";
-    //@}
-    
-    /// VolumeFF type
-    string VolumeFFType = "";
-    
-    /// BoundaryFF Type
-    string BoundaryFFType = "";
-    
-    /// Bubble Type
-    string BubbleFFType = "";
-    
-    /// MTOC Type
-    string MTOCFFType = "";
-
-    /// MembraneFF type
-    string MemStretchingFFType     = "";
-    string memTensionFFType        = "";
-    string MemBendingFFType        = "";
-    string MemBeadVolumeFFType     = "";
-
-    /// Volume conservation ff type
-    string volumeConservationFFType = "";
-    
-    /// AFM Type
-    string AFMFFType = "";
-    
-};
-
-///Struct to hold dynamic rate changer type
-struct DynamicRateType {
-    
-    ///Polymerization rate changing
-    vector<string> dFPolymerizationType = {};
-    
-    ///Linker rate changing
-    vector<string> dLUnbindingType = {};
-    
-    //@{
-    ///Motor rate changing
-    vector<string> dMUnbindingType = {};
-    vector<string> dMWalkingType = {};
-
-    //Qin----
-    vector<string> dBUnbindingType = {};
-    //@}
+    static auto makeString(std::string s) {
+        return ConfigFileToken { Type::string, std::move(s) };
+    }
 };
 
 
-/// Struct to hold any special setup types
-struct SpecialSetupType {
-    
-    ///MTOC configuration
-    bool mtoc = false;
+inline std::vector< std::string > getStringVector(const SExpr::ListType& sel) {
+    // Precondition:
+    //   - Every element in sel is of string type
+    using namespace std;
 
-    //@{
-    ///MTOC Parameters
-    short mtocFilamentType = 0;
-    int mtocNumFilaments   = 0;
-    int mtocFilamentLength = 0;
-    short mtocBubbleType   = 0;
-    //@}
-    
-    ///AFM configuration
-    bool afm = false;
-    
-    //@{
-    ///MTOC Parameters
-    short afmFilamentType = 0;
-    int afmNumFilaments   = 0;
-    int afmFilamentLength = 0;
-    short afmBubbleType   = 0;
-    //@}
-    vector<float> mtocInputCoordXYZ = {};
+    vector< string > res;
+    res.reserve(sel.size());
+    for(const auto& eachSE : sel) {
+        res.push_back(get< SExpr::StringType >(eachSE.data));
+    }
+    return res;
+}
+
+
+inline bool isTokenSpecialChar(char x) {
+    return std::isspace(x) ||
+        x == '#' || x == ';' ||
+        x == '(' || x == ')' ||
+        x == '"';
+}
+
+// Tokenize and the input file.
+inline std::list< ConfigFileToken > tokenizeConfigFile(const std::string& str) {
+    const auto len = str.length();
+
+    std::list< ConfigFileToken > tokens;
+
+    for(int i = 0; i < len; ++i) {
+        const char a = str[i];
+        if(a == '\n') {
+            tokens.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak));
+        }
+        else if(std::isspace(a)) {
+            // Do nothing
+        }
+        else if(a == '#' || a == ';') {
+            int j = i + 1;
+            while(j < len && str[j] != '\n') ++j;
+
+            // Now j points to either the end of string, or the next line break
+            tokens.push_back({ConfigFileToken::Type::comment, str.substr(i, j-i)});
+            i = j - 1;
+        }
+        else if(a == '(') {
+            tokens.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisLeft));
+        }
+        else if(a == ')') {
+            tokens.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisRight));
+        }
+        else if(a == '"') {
+            int j = i + 1;
+            while(j < len && str[j] != '"') ++j;
+
+            // Now j points to either end of string, or the next double quotation
+            if(j < len) {
+                tokens.push_back(ConfigFileToken::makeString(str.substr(i+1, j-i-1)));
+                i = j;
+            } else {
+                LOG(ERROR) << "Quotation marks do not match";
+                throw std::runtime_error("Quotation marks do not match.");
+            }
+        }
+        else {
+            int j = i + 1;
+            while(j < len && !isTokenSpecialChar(str[j])) ++j;
+
+            // Now j points to either the end of string, or the next special char
+            tokens.push_back(ConfigFileToken::makeString(str.substr(i, j-i)));
+            i = j - 1;
+        }
+    }
+
+    return tokens;
+}
+
+inline void outputConfigTokens(std::ostream& os, const std::list< ConfigFileToken >& tokens) {
+    auto lastType = ConfigFileToken::Type::unknown;
+    for(const auto& tok : tokens) {
+        if(tok.type == ConfigFileToken::Type::string) {
+
+            auto content = tok.content;
+            // Strip double quotations
+            content.erase(
+                std::remove(content.begin(), content.end(), '"'),
+                content.end()
+            );
+
+            // Check special characters exist
+            const bool hasSpace = (
+                std::find_if(content.begin(), content.end(), isTokenSpecialChar)
+                    != content.end());
+
+            if(
+                lastType == ConfigFileToken::Type::string ||
+                lastType == ConfigFileToken::Type::parenthesisRight
+            ) {
+                os << ' ';
+            }
+
+            if(hasSpace || content.empty()) {
+                os << '"' << content << '"';
+            } else {
+                os << content;
+            }
+        }
+        else if(tok.type == ConfigFileToken::Type::comment) {
+            if(
+                lastType != ConfigFileToken::Type::lineBreak &&
+                lastType != ConfigFileToken::Type::unknown
+            ) {
+                os << ' ';
+            }
+            os << tok.content;
+        }
+        else if(tok.type == ConfigFileToken::Type::parenthesisLeft) {
+            if(
+                lastType == ConfigFileToken::Type::string ||
+                lastType == ConfigFileToken::Type::parenthesisRight
+            ) {
+                os << ' ';
+            }
+
+            os << tok.content;
+        }
+        else {
+            os << tok.content;
+        }
+
+        lastType = tok.type;
+    }
+}
+
+inline SExpr lexConfigTokensList(
+    const std::list< ConfigFileToken >&           tokens,
+    std::list< ConfigFileToken >::const_iterator& tokenIter,
+    const int                                     depth,
+    const bool                                    implicitParentheses
+) {
+    using namespace std;
+    using VS = vector< SExpr >;
+
+    SExpr se;
+    se.data = VS{};
+
+    while(tokenIter != tokens.cend()) {
+        if(tokenIter->type == ConfigFileToken::Type::string) {
+            // Add to the current list
+            get<VS>(se.data).push_back(
+                SExpr { tokenIter->content }
+            );
+            ++tokenIter;
+        }
+        else if(tokenIter->type == ConfigFileToken::Type::parenthesisLeft) {
+            get<VS>(se.data).push_back(
+                lexConfigTokensList(tokens, ++tokenIter, depth + 1, false)
+            );
+        }
+        else if(tokenIter->type == ConfigFileToken::Type::parenthesisRight) {
+            if(implicitParentheses) {
+                LOG(ERROR) << "Unexpected ')' in implicit parentheses.";
+                throw runtime_error("Unmatched parentheses");
+            } else {
+                // End current list
+                ++tokenIter;
+                return se;
+            }
+        }
+        else if(tokenIter->type == ConfigFileToken::Type::lineBreak) {
+            if(implicitParentheses) {
+                // End current list
+                ++tokenIter;
+                return se;
+            }
+            else {
+                ++tokenIter;
+            }
+        }
+        else {
+            ++tokenIter;
+        }
+    }
+
+    if(implicitParentheses) {
+        // Reaching the end
+        return se;
+    }
+    else {
+        LOG(ERROR) << "')' is expected, but not found.";
+        throw runtime_error("Unmatched parentheses");
+    }
+}
+inline SExpr lexConfigTokens(const list< ConfigFileToken >& tokens) {
+    using namespace std;
+    using VS = vector< SExpr >;
+
+    SExpr se;
+    se.data = VS{};
+
+    for(auto tokenIter = tokens.cbegin(); tokenIter != tokens.cend(); ) {
+
+        if (tokenIter->type == ConfigFileToken::Type::string) {
+            // Implicit parentheses assumed
+            get<VS>(se.data).push_back(
+                lexConfigTokensList(tokens, tokenIter, 1, true)
+            );
+        }
+        else if (tokenIter->type == ConfigFileToken::Type::parenthesisLeft) {
+            get<VS>(se.data).push_back(
+                lexConfigTokensList(tokens, ++tokenIter, 1, false)
+            );
+        }
+        else if (tokenIter->type == ConfigFileToken::Type::parenthesisRight) {
+            LOG(ERROR) << "Unexpected ')'.";
+            throw runtime_error("Unmatched parentheses");
+        }
+        else {
+            ++tokenIter;
+        }
+
+    }
+
+    return se;
+}
+
+// Build tokens from s-expression
+// No comment or line break will be created
+inline list< ConfigFileToken > buildConfigTokens(const SExpr& se) {
+    using namespace std;
+    using TokenList = list< ConfigFileToken >;
+
+    TokenList tokens;
+
+    struct TokenBuildVisitor {
+        TokenList& theList;
+        void operator()(const SExpr::StringType& str) const {
+            theList.push_back(ConfigFileToken::makeString( str ));
+        }
+        void operator()(const SExpr::ListType& seList) const {
+            theList.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisLeft));
+            for(const auto& eachSE : seList) {
+                visit(TokenBuildVisitor{theList}, eachSE.data);
+            }
+            theList.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisRight));
+        }
+    };
+
+    visit(TokenBuildVisitor{ tokens }, se.data);
+    return tokens;
+}
+
+
+// Key-value parser
+//
+// Treats an input s-expression as a list of key-value pairs and parse by
+// matching keywords
+//
+// Features:
+//   - Convert system input (s-expression) to params
+//   - Build formatted tokens (for output) from params
+template< typename Params >
+struct KeyValueParser {
+
+    using ParserFunc = std::function< void(Params&, const SExpr::ListType&) >;
+    using TokenBuildFunc = std::function< std::list< ConfigFileToken >(const Params&) >;
+
+    using ParserFuncDict = std::map< std::string, ParserFunc >;
+    using TokenBuildList = std::vector< TokenBuildFunc >;
+
+    // Two data structures are required for the parser to work.
+    //   - A dictionary to match keywords to the appropriate function for
+    //     parsing the arguments
+    //   - A list which instructs how an input file should be generated from
+    //     system params
+    ParserFuncDict dict;
+    TokenBuildList tokenBuildList;
+
+    // Handy functions
+    //---------------------------------
+
+    // Parse or print a specific single-valued parameter.
+    //
+    // Template parameters
+    //   - LocateParam:
+    //     (Params&)       -> T&,       AND
+    //     (const Params&) -> const T&
+    template< typename LocateParam >
+    void addSingleArg(
+        std::string name,
+        LocateParam&& locate
+    ) {
+        using namespace std;
+
+        addStringArgs(
+            name,
+            [name, locate](Params& params, const vector<string>& lineVector) {
+                auto& param = locate(params);
+                using T = decay_t< decltype(param) >;
+
+                if (lineVector.size() != 2) {
+                    LOG(ERROR) << name << " must have exactly one value.";
+                    throw runtime_error("Invalid argument.");
+                }
+
+                auto& arg = lineVector[1];
+
+                if constexpr(is_integral_v< T > || is_floating_point_v< T >) {
+                    const auto [p, ec] = from_chars(arg.data(), arg.data() + arg.size(), param);
+                    if(ec != std::errc()) {
+                        LOG(ERROR) << name << " argument invalid: " << arg;
+                        throw runtime_error("Invalid argument.");
+                    }
+                }
+                else if constexpr(is_same_v< T, string >) {
+                    param = arg;
+                }
+            },
+            [name, locate](const Params& params) {
+                auto& param = locate(params);
+                using T = decay_t< decltype(param) >;
+
+                if constexpr(is_integral_v< T > || is_floating_point_v< T >) {
+                    return vector<string> { to_string(param) };
+                }
+                else if constexpr(is_same_v< T, string >) {
+                    return vector<string> { param };
+                }
+            }
+        );
+    }
+
+    // Template parameters
+    //   - FuncParse: void(Params&, const vector<string>&), including key
+    //   - FuncBuild:
+    //     vector<string>(const Params&), excluding key, OR
+    //     vector<vector<string>>(const Params&), excluding key (for repeating items)
+    template<
+        typename FuncParse,
+        typename FuncBuild
+    >
+    void addStringArgs(
+        std::string name,
+        FuncParse&& funcParse,
+        FuncBuild&& funcBuild
+    ) {
+        using namespace std;
+
+        return addStringArgsWithAliases(
+            move(name),
+            {},
+            forward<FuncParse>(funcParse),
+            forward<FuncBuild>(funcBuild)
+        );
+    }
+
+    // With alias
+    // Template parameters
+    //   - FuncParse: void(Params&, const vector<string>&), including key
+    //   - FuncBuild:
+    //     vector<string>(const Param&), excluding key, OR
+    //     vector<vector<string>>(const Param&), excluding key (for repeating items)
+    template<
+        typename FuncParse,
+        typename FuncBuild
+    >
+    void addStringArgsWithAliases(
+        std::string name,
+        std::vector< std::string > aliases,
+        FuncParse&& funcParse,
+        FuncBuild&& funcBuild
+    ) {
+        using namespace std;
+
+        return addArgsWithAliases(
+            name,
+            move(aliases),
+            [funcParse] (Params& params, const SExpr::ListType& keyAndArgs) {
+                funcParse(params, getStringVector(keyAndArgs));
+            },
+            [funcBuild, name] (const Params& params) {
+
+                if constexpr(is_same_v< invoke_result_t< FuncBuild, const Params& >, vector<string> >) {
+
+                    vector<string> tempResult = funcBuild(params);
+
+                    list< ConfigFileToken > res;
+                    for(auto& s : tempResult) {
+                        res.push_back(ConfigFileToken::makeString(move(s)));
+                    }
+
+                    return res;
+
+                } else {
+                    vector<vector<string>> tempResult = funcBuild(params);
+
+                    vector<list< ConfigFileToken >> res;
+                    for(auto& eachVS : tempResult) {
+                        res.emplace_back();
+                        for(auto& s : eachVS) {
+                            res.back().push_back(ConfigFileToken::makeString(move(s)));
+                        }
+                    }
+
+                    return res;
+                }
+            }
+        );
+    }
+
+    // With alias
+    // Template parameters
+    //   - FuncParse: (Params&, const SExpr::ListType&) -> void, including key
+    //   - FuncBuild: (const Params&) -> list< ConfigFileToken >, excluding key
+    template<
+        typename FuncParse,
+        typename FuncBuild
+    >
+    void addArgsWithAliases(
+        std::string name,
+        std::vector< std::string > aliases,
+        FuncParse&& funcParse,
+        FuncBuild&& funcBuild
+    ) {
+        using namespace std;
+
+        const auto insertResult = dict.insert({ name, forward<FuncParse>(funcParse) });
+        // Insert for aliases
+        for(auto& alias : aliases) {
+            dict.insert({ move(alias), insertResult.first->second });
+        }
+
+        tokenBuildList.push_back(
+            [funcBuild, name] (const Params& params) {
+
+                list< ConfigFileToken > res;
+
+                if constexpr(
+                    is_same_v< invoke_result_t< FuncBuild, const Params& >, list<ConfigFileToken> >
+                ) {
+                    // single entry
+                    res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisLeft));
+                    res.push_back(ConfigFileToken::makeString(name));
+
+                    res.splice(res.end(), funcBuild(params));
+
+                    res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisRight));
+                    res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak));
+
+                } else {
+                    // multiple entries
+                    vector<list<ConfigFileToken>> tempResult = funcBuild(params);
+                    for(auto& eachList : tempResult) {
+                        res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisLeft));
+                        res.push_back(ConfigFileToken::makeString(name));
+
+                        res.splice(res.end(), move(eachList));
+
+                        res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::parenthesisRight));
+                        res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak));
+                    }
+                }
+
+                return res;
+            }
+        );
+    }
+
+    void addComment(std::string comment) {
+        // The comment must start with valid comment specifiers such as ';'
+        tokenBuildList.push_back(
+            [comment{ std::move(comment) }] (const Params&) {
+                std::list< ConfigFileToken > res {
+                    ConfigFileToken {
+                        ConfigFileToken::Type::comment,
+                        comment
+                    }
+                };
+                res.push_back(ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak));
+                return res;
+            }
+        );
+    }
+    void addEmptyLine() {
+        tokenBuildList.push_back(
+            [] (const Params&) {
+                return std::list< ConfigFileToken > {
+                    ConfigFileToken::makeDefault(ConfigFileToken::Type::lineBreak)
+                };
+            }
+        );
+    }
+
 };
 
-/// Struct to hold chem setup information
-struct ChemistrySetup {
-    
-    string inputFile = "";
+// What to do when the key is not in the parser function dictionary.
+enum class KeyValueParserUnknownKeyAction {
+    ignore, warn, error
 };
 
-/// Struct to hold Filament setup information
-struct FilamentSetup {
-    
-    string inputFile = "";
-    
-    ///If want a random distribution, used if inputFile is left blank
-    int numFilaments = 0;
-    ///Filament length, in number of cylinders
-    int filamentLength = 1;
-    ///Filament type to create
-    short filamentType = 0;
-    ///Filament projection type.
-    string projectionType="STRAIGHT";
-    
-    ///For resetting pin positions in restart phase
-    string pinRestartFile = "";
+// Parse an s-expr as a key-value pair, using the parser func dictionary.
+template< typename Params >
+inline void parseKeyValue(
+    Params&                                                params,
+    const SExpr&                                           se,
+    const typename KeyValueParser<Params>::ParserFuncDict& dict,
+    KeyValueParserUnknownKeyAction                         unknownKeyAction = KeyValueParserUnknownKeyAction::ignore
+) {
+    using namespace std;
+    using SES = SExpr::StringType;
+    using SEL = SExpr::ListType;
+
+    // se.data must be a list type, or an exception will be thrown
+    // se contains the (key arg1 arg2 ...) data
+    // The key must be a string type, or an exception will be thrown
+
+    // Here the assignments are by value because of possible temporary values on the right hand side.
+    const SES key = get<SES>(car(se).data);
+    SEL keyAndArgs = get<SEL>(se.data);
+
+    // Check against the parsing dictionary
+    if(auto it = dict.find(key); it == dict.end()) {
+        switch(unknownKeyAction) {
+            case KeyValueParserUnknownKeyAction::ignore:
+                break;
+            case KeyValueParserUnknownKeyAction::warn:
+                LOG(WARNING) << "In the input file, "
+                    << key << " cannot be recognized.";
+                break;
+            case KeyValueParserUnknownKeyAction::error:
+                LOG(ERROR) << "In the input file, "
+                    << key << " cannot be recognized.";
+                throw runtime_error("Unknown key in parser");
+        }
+    }
+    else {
+        // Execute the settings
+        (it->second)(params, move(keyAndArgs));
+    }
+}
+
+// Parse a list of s-expr as key-value pairs, using the parser func dictionary.
+template< typename Params >
+inline void parseKeyValueList(
+    Params&                                                params,
+    const SExpr&                                           se,
+    const typename KeyValueParser<Params>::ParserFuncDict& dict,
+    KeyValueParserUnknownKeyAction                         unknownKeyAction = KeyValueParserUnknownKeyAction::ignore
+) {
+    // se.data must be a list type, or an exception will be thrown
+    for(const SExpr& eachList : get<SExpr::ListType>(se.data)) {
+        parseKeyValue(params, eachList, dict, unknownKeyAction);
+    }
+}
+
+// Parsing an s-expr as key-value pairs.
+template< typename Params >
+inline void parseKeyValueList(
+    Params&                                params,
+    const SExpr&                           se,
+    const typename KeyValueParser<Params>& parser,
+    KeyValueParserUnknownKeyAction         unknownKeyAction = KeyValueParserUnknownKeyAction::ignore
+) {
+    return parseKeyValueList(params, se, parser.dict, unknownKeyAction);
+}
+
+// Build the token list for key-value inputs.
+template< typename Params >
+inline auto buildTokens(
+    const Params&                                          params,
+    const typename KeyValueParser<Params>::TokenBuildList& tokenBuildList
+) {
+    std::list< ConfigFileToken > res;
+
+    for(const auto& eachTokenBuild : tokenBuildList) {
+        res.splice(res.end(), eachTokenBuild(params));
+    }
+    return res;
+}
+template< typename Params >
+inline auto buildTokens(
+    const Params&                          params,
+    const typename KeyValueParser<Params>& parser
+) {
+    return buildTokens(params, parser.tokenBuildList);
+}
+
+
+//-----------------------------------------------------------------------------
+// The actual parsers dealing with all medyan system parameters.
+//-----------------------------------------------------------------------------
+
+struct SystemParser {
+    // Preferably, for one input file, only one parser is needed.
+    // However, currently, some parsing rules require the results from parsed
+    // params in the same file, and therefore multiple parsing passes are
+    // needed.
+    // So it is natural to write each set of parsing rules in a separate
+    // parser.
+    KeyValueParser< SimulConfig >
+        headerParser,
+        geoParser,
+        boundParser,
+        mechParser,
+        chemParser,
+        dyRateParser,
+        initParser;
+
+    SystemParser() {
+        initInputHeader();
+        initGeoParser();
+        initBoundParser();
+        initMechParser();
+        initChemParser();
+        initDyRateParser();
+        initInitParser();
+    }
+
+    void parseInput(SimulConfig& conf, std::string input) const {
+        const auto se =
+            lexConfigTokens(
+                tokenizeConfigFile(
+                    std::move(input)));
+
+        parseKeyValueList(conf, se, geoParser);
+        geoPostProcessing(conf);
+
+        parseKeyValueList(conf, se, boundParser);
+        boundPostProcessing(conf);
+
+        parseKeyValueList(conf, se, mechParser);
+
+        parseKeyValueList(conf, se, chemParser);
+        chemPostProcessing(conf);
+
+        parseKeyValueList(conf, se, dyRateParser);
+
+        parseKeyValueList(conf, se, initParser);
+    }
+
+    void outputInput(std::ostream& os, const SimulConfig& conf) const {
+        std::list< ConfigFileToken > tokens;
+        tokens.splice(tokens.end(), buildTokens(conf, headerParser));
+        tokens.splice(tokens.end(), buildTokens(conf, geoParser));
+        tokens.splice(tokens.end(), buildTokens(conf, boundParser));
+        tokens.splice(tokens.end(), buildTokens(conf, mechParser));
+        tokens.splice(tokens.end(), buildTokens(conf, chemParser));
+        tokens.splice(tokens.end(), buildTokens(conf, dyRateParser));
+        tokens.splice(tokens.end(), buildTokens(conf, initParser));
+
+        outputConfigTokens(os, tokens);
+    }
+
+    // Add parsing rules
+    void initInputHeader();
+    void initGeoParser();
+    void initBoundParser();
+    void initMechParser();
+    void initChemParser();
+    void initDyRateParser();
+    void initInitParser();
+
+    // Post processing and validation
+    void geoPostProcessing(SimulConfig&) const;
+    void boundPostProcessing(SimulConfig&) const;
+    void chemPostProcessing(SimulConfig&) const;
+
 };
 
-/// Struct to hold membrane setup information
-struct MembraneSetup {
-    string inputFile = "";
+struct ChemistryParser {
+    // Uses SimulConfig instead of ChemistryData, because the parsing uses
+    // information of other parameters
+    KeyValueParser< SimulConfig > chemDataParser;
 
-    std::vector< std::vector< std::string > > meshParam;
+    // State: this parser is not context-free
+    // Remember species names to keep track of duplicate names
+    std::set<std::string> allSpeciesNames;
 
-    /// Membrane type to create
-    short membraneType = 0;
+    ChemistryParser() {
+        initChemDataParser();
+    }
+
+    void parseInput(SimulConfig& conf, std::string input) {
+        resetStates();
+
+        const auto se =
+            lexConfigTokens(
+                tokenizeConfigFile(
+                    std::move(input)));
+
+        parseKeyValueList(conf, se, chemDataParser);
+    }
+
+    void outputInput(std::ostream& os, const SimulConfig& conf) const {
+        outputConfigTokens(os, buildTokens(conf, chemDataParser));
+    }
+
+    // Add parsing rules
+    void resetStates() {
+        allSpeciesNames.clear();
+    }
+    void initChemDataParser();
 };
 
-/// Struct to hold Bubble setup information
-struct BubbleSetup {
-    
-    string inputFile = "";
-    
-    ///If want a random distribution, used if inputFile is left blank
-    int numBubbles = 0;
-    ///Bubble type to create
-    short bubbleType = 0;
-};
+} // namespace medyan
 
 /// A general parser
 /*!
@@ -384,70 +813,17 @@ public:
     ~Parser() {_inputFile.close();}
 };
 
-/// To parse a system input file, initialized by the Controller.
-class SystemParser : public Parser{
-public:
-    SystemParser(string inputFileName) : Parser(inputFileName) {}
-    ~SystemParser() {}
-    
-    //@{
-    /// Parameter parser. Reads input directly into system parameters
-    /// @note - does not check for correctness and consistency here.
-    void readMechParams();
-    void readChemParams();
-    void readGeoParams();
-    void readBoundParams();
-    void readDyRateParams();
-    void readSpecialParams();
-    void readSimulParams();
-    //@}
-    
-    //@{
-    /// Algorithm parser
-    MechanicsAlgorithm readMechanicsAlgorithm();
-    ChemistryAlgorithm readChemistryAlgorithm();
-    //@}
-    
-    //@{
-    /// Type parser
-    MechanicsFFType readMechanicsFFType();
-    DynamicRateType readDynamicRateType();
-    BoundaryType readBoundaryType();
-    SpecialSetupType readSpecialSetupType();
-    //@}
-    
-    /// Read Filament information
-    FilamentSetup readFilamentSetup();
-    
-    /// Read Membrane information
-    MembraneSetup readMembraneSetup();
-
-    /// Read Bubble information
-    BubbleSetup readBubbleSetup();
-    
-    /// Chemistry information
-    ChemistrySetup readChemistrySetup();
-};
-
 /// Used to parse initial Filament information, initialized by the Controller.
-class FilamentParser : public Parser {
-    
-public:
-    FilamentParser(string inputFileName) : Parser(inputFileName) {}
-    ~FilamentParser() {}
-    
+struct FilamentParser {
+  
     /// Reads filament input file. Returns a vector of tuples containing
     /// filament type and positions (start and end points).
     /// @note - Does not check for coordinate correctness.
-     tuple< vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> , vector<tuple<string, short, vector<vector<floatingpoint>>>> ,
-            vector<tuple<string, short, vector<floatingpoint>>> , vector<vector<floatingpoint>> >  readFilaments();
+    static FilamentData readFilaments(std::istream&);
 };
 
 /// Used to parse initial membrane vertex and neighbor information, initialized by the Controller.
-class MembraneParser : public Parser {
-    
-public:
-    MembraneParser(string inputFileName) : Parser(inputFileName) {}
+struct MembraneParser {
 
     struct MembraneInfo {
         using coordinate_type = mathfunc::Vec< 3, floatingpoint >;
@@ -457,36 +833,17 @@ public:
 
     /// Reads membrane vertex input file.
     /// @note - Does not check for coordinate correctness.
-    vector<MembraneInfo> readMembranes();
+    static std::vector<MembraneInfo> readMembranes(std::istream&);
 };
 
 /// Used to parse initial Bubble information, initialized by the Controller.
-class BubbleParser : public Parser {
-    
-public:
-    BubbleParser(string inputFileName) : Parser(inputFileName) {}
-    ~BubbleParser() {}
-    
+struct BubbleParser {    
     /// Reads bubble input file. Returns a vector of tuples containing
     /// bubble type and position.
     /// @note - Does not check for coordinate correctness.
-    vector<tuple<short, vector<floatingpoint>>> readBubbles();
+    static BubbleData readBubbles(std::istream&);
 };
 
-
-/// Used to parse all chemical information, initialized by the Controller.
-class ChemistryParser: public Parser {
-    
-public:
-    ChemistryParser(string inputFileName) : Parser(inputFileName) {}
-    ~ChemistryParser() {}
-    
-    /// Reads chemical reactions and species from input file. Returns a
-    /// ChemistryData struct containing this data
-    /// @note - this does not check for consistency and correctness, the only
-    ///         sanity check here is that there are no duplicate species names.
-    ChemistryData readChemistryInput();
-};
 
 
 /// Used to parse pin positions if needed upon restart

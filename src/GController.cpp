@@ -13,7 +13,6 @@
 
 #include "GController.h"
 
-#include "Parser.h"
 #include "SubSystem.h"
 #include "CompartmentGrid.h"
 #include "BoundaryImpl.h"
@@ -297,9 +296,9 @@ CompartmentGrid* GController::initializeGrid() {
     return _compartmentGrid;
 }
 
-Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
+Boundary* GController::initializeBoundary(BoundParams::BoundaryType& BTypes) {
 
-    BoundaryType type;
+    BoundParams::BoundaryType type;
     vector<BoundaryMove> move;
     for(auto bm:BTypes.boundaryMove){
         if(bm == "NONE") move.push_back(BoundaryMove::None);

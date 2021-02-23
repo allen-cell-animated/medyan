@@ -60,6 +60,7 @@
 #include "VisualSystemRawData.hpp"
 
 using namespace mathfunc;
+using namespace medyan;
 
 namespace {
 
@@ -109,6 +110,19 @@ void pinInitialFilamentWith(F&& inRegion) {
 
 } // namespace
 
+inline void remeshMembrane(const adaptive_mesh::MembraneMeshAdapter& adapter, Membrane& membrane) {
+    // Requires _meshAdapter to be already initialized
+    adapter.adapt(membrane.getMesh());
+
+    // Update necessary geometry for the system
+    membrane.updateGeometryValueForSystem();
+
+    for(auto& t : membrane.getMesh().getTriangles()) {
+        t.attr.triangle->updatePosition();
+    }
+}
+
+
 Controller::Controller() :
     _mController(&_subSystem),
     _cController(&_subSystem),
@@ -139,12 +153,18 @@ void Controller::initialize(string inputFile,
 
     //Parse input, get parameters
     _inputFile = inputFile;
-    SystemParser p(inputFile);
+    auto simulConfig = SimulConfigHelper{}.getFromInput(inputFile, inputDirectory);
+    SysParams::GParams = simulConfig.geoParams;
+    if(!SysParams::checkGeoParameters()) exit(EXIT_FAILURE);
+    SysParams::BParams = simulConfig.boundParams;
+    SysParams::MParams = simulConfig.mechParams;
+    SysParams::CParams = simulConfig.chemParams;
+    SysParams::DRParams = simulConfig.dyRateParams;
+    SysParams::SParams = simulConfig.specialParams;
+    SysParams::filamentSetup = simulConfig.filamentSetup;
 
     //snapshot type output
     cout << endl;
-
-    p.readSimulParams();
 
     //trajectory-style data
     _outputs.push_back(make_unique<BasicSnapshot>(_outputDirectory + "snapshot.traj", &_subSystem));
@@ -161,10 +181,6 @@ void Controller::initialize(string inputFile,
     //_outputs.push_back(make_unique<PinForces>(_outputDirectory + "pinforce.traj", &_subSystem));
     //_outputs.push_back(make_unique<IndicesOutput>(_outputDirectory + "indices.traj", &_subSystem));
 
-    //Always read geometry, check consistency
-    p.readGeoParams();
-    if(!SysParams::checkGeoParameters()) exit(EXIT_FAILURE);
-
     //CALLING ALL CONTROLLERS TO INITIALIZE
     //Initialize geometry controller
     cout << "---" << endl;
@@ -176,25 +192,18 @@ void Controller::initialize(string inputFile,
     cout << "---" << endl;
     LOG(STEP) << "Initializing boundary...";
 
-    auto BTypes = p.readBoundaryType();
-    p.readBoundParams();
-
     //initialize
-    _gController.initializeBoundary(BTypes);
+    _gController.initializeBoundary(simulConfig.boundParams.boundaryType);
     LOG(INFO) << "Done.";
 
 #ifdef MECHANICS
-    //read algorithm and types
-    auto MTypes = p.readMechanicsFFType();
-    auto MAlgorithm = p.readMechanicsAlgorithm();
-
-    //read const parameters
-    p.readMechParams();
 
     //Initialize Mechanical controller
     cout << "---" << endl;
     LOG(STEP) << "Initializing mechanics...";
-    _mController.initialize(MTypes, MAlgorithm);
+    _mController.initialize(
+        simulConfig.mechParams.mechanicsFFType,
+        simulConfig.mechParams.mechanicsAlgorithm);
     LOG(INFO) << "Done.";
 
     // Force output
@@ -221,16 +230,12 @@ void Controller::initialize(string inputFile,
     //Calculate surface area and volume for reaction rate scaling
 
 
-    //read parameters
-    p.readChemParams();
-
     //Initialize chemical controller
     cout << "---" << endl;
     LOG(STEP) << "Initializing chemistry...";
     //read algorithm
-    auto CAlgorithm = p.readChemistryAlgorithm();
-    auto CSetup = p.readChemistrySetup();
-    _cAlgorithm=CAlgorithm;
+    auto& CAlgorithm = simulConfig.chemParams.chemistryAlgorithm;
+    auto& CSetup = simulConfig.chemParams.chemistrySetup;
     //run time for sim
     _runTime = CAlgorithm.runTime;
 
@@ -246,17 +251,8 @@ void Controller::initialize(string inputFile,
     _minimizationSteps = CAlgorithm.minimizationSteps;
     _neighborListSteps = CAlgorithm.neighborListSteps;
 
-    ChemistryData ChemData;
-
-    if(CSetup.inputFile != "") {
-        ChemistryParser cp(_inputDirectory + CSetup.inputFile);
-        ChemData = cp.readChemistryInput();
-        _chemData=ChemData;
-    }
-    else {
-        LOG(FATAL) << "Need to specify a chemical input file. Exiting.";
-        exit(EXIT_FAILURE);
-    }
+    auto& ChemData = simulConfig.chemistryData;
+    _chemData=ChemData;
 
 #ifdef CHEMISTRY
     SysParams::addChemParameters(ChemData);
@@ -353,14 +349,9 @@ void Controller::initialize(string inputFile,
 #ifdef DYNAMICRATES
     cout << "---" << endl;
     LOG(STEP) << "Initializing dynamic rates...";
-    //read dynamic rate parameters
-    p.readDyRateParams();
-
-    //read dynamic rate types
-    DynamicRateType DRTypes = p.readDynamicRateType();
 
     //init controller
-    _drController.initialize(DRTypes);
+    _drController.initialize(simulConfig.dyRateParams.dynamicRateType);
     LOG(INFO) << "Done.";
 
 #endif
@@ -370,11 +361,11 @@ void Controller::initialize(string inputFile,
     LOG(STEP) << "Checking cross-parameter consistency...";
     //Chemistry is checked in advance
 #ifdef MECHANICS
-    if(!SysParams::checkMechParameters(MTypes))
+    if(!SysParams::checkMechParameters(simulConfig.mechParams.mechanicsFFType))
         exit(EXIT_FAILURE);
 #endif
 #ifdef DYNAMICRATES
-    if(!SysParams::checkDyRateParameters(DRTypes))
+    if(!SysParams::checkDyRateParameters(simulConfig.dyRateParams.dynamicRateType))
         exit(EXIT_FAILURE);
 #endif
 
@@ -407,28 +398,23 @@ void Controller::initialize(string inputFile,
     LOG(INFO) << "Done.";
 
     //setup initial network configuration
-    setupInitialNetwork(p);
+    setupInitialNetwork(simulConfig);
 
     //setup special structures
-    p.readSpecialParams();
-    setupSpecialStructures(p);
+    setupSpecialStructures(simulConfig);
 
     SysParams::INITIALIZEDSTATUS = true;
 }
 
-void Controller::setupInitialNetwork(SystemParser& p) {
+void Controller::setupInitialNetwork(SimulConfig& simulConfig) {
 
     //Read bubble setup, parse bubble input file if needed
-    BubbleSetup BSetup = p.readBubbleSetup();
-    BubbleData bubbles;
+    auto& BSetup = simulConfig.bubbleSetup;
+    auto& bubbles = simulConfig.bubbleData;
 
     cout << "---" << endl;
     cout << "Initializing bubbles...";
 
-    if (BSetup.inputFile != "") {
-        BubbleParser bp(_inputDirectory + BSetup.inputFile);
-        bubbles = bp.readBubbles();
-    }
     //add other bubbles if specified
     BubbleInitializer *bInit = new RandomBubbleDist();
 
@@ -456,57 +442,68 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     /**************************************************************************
     Now starting to add the membrane into the network.
     **************************************************************************/
-    MembraneSetup MemSetup = p.readMembraneSetup();
+    const auto& membraneSettings = simulConfig.membraneSettings;
     
     cout << "---" << endl;
     cout << "Initializing membranes...";
 
-    std::vector< MembraneParser::MembraneInfo > membraneData;
-    if(MemSetup.inputFile != "") {
-        membraneData = MembraneParser(_inputDirectory + MemSetup.inputFile).readMembranes();
-    }
-
-    for(const auto& param : MemSetup.meshParam) {
-        const auto newMesh = mesh_gen::generateMeshViaParams< floatingpoint >(param);
-        membraneData.push_back({newMesh.vertexCoordinateList, newMesh.triangleList});
-    }
-    
-    // add membranes
-    for (auto& it: membraneData) {
-        
-        short type = 0; // Currently set as default(0).
-        
-        if(type >= SysParams::Chemistry().numMembranes) {
-            cout << "Membrane data specified contains an invalid membrane type. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-
-        Membrane* newMembrane = _subSystem.addTrackable<Membrane>(
+    int numMembranes = 0;
+    const auto addMembrane = [this, &numMembranes](const MembraneSetup& memSetup, const MembraneParser::MembraneInfo& memData) {
+        auto newMembrane = _subSystem.addTrackable<Membrane>(
             &_subSystem,
-            type,
-            it.vertexCoordinateList,
-            it.triangleVertexIndexList
+            memSetup,
+            memData.vertexCoordinateList,
+            memData.triangleVertexIndexList
         );
+
+        // Optimize the mesh for membrane
+        remeshMembrane(*_meshAdapter, *newMembrane);
+
+        // Set up mechanics
+        newMembrane->initMechanicParams(memSetup);
+
+        ++numMembranes;
+    };
+
+    for(auto& memSetup : membraneSettings.setupVec) {
+
+        for(auto& initParams : memSetup.meshParam) {
+            if(initParams.size() == 2 && initParams[0] == "file") {
+                // The input looks like this: init file path/to/file
+                // Read membrane mesh information from an external file.
+                auto memPath = _inputDirectory / std::filesystem::path(initParams[1]);
+                std::ifstream ifs(memPath);
+                if (!ifs.is_open()) {
+                    LOG(ERROR) << "Cannot open membrane file " << memPath;
+                    throw std::runtime_error("Cannot open membrane file.");
+                }
+
+                const auto memDataVec = MembraneParser::readMembranes(ifs);
+
+                for(auto& memData : memDataVec) {
+                    addMembrane(memSetup, memData);
+                }
+            }
+            else {
+                // Forward the input to the membrane mesh initializer
+                const auto newMesh = mesh_gen::generateMeshViaParams< floatingpoint >(initParams);
+
+                addMembrane(memSetup, {newMesh.vertexCoordinateList, newMesh.triangleList});
+            }
+        }
     }
-    LOG(INFO) << "Done. " << membraneData.size() << " membranes created." << endl;
+
+    LOG(INFO) << "Done. " << numMembranes << " membranes created." << endl;
 
     // Create a region inside the membrane
     LOG(INFO) << "Creating membrane regions...";
     _regionInMembrane = (
-        membraneData.empty() ?
+        numMembranes == 0 ?
         make_unique<MembraneRegion<Membrane>>(_subSystem.getBoundary()) :
         MembraneRegion<Membrane>::makeByChildren(MembraneHierarchy< Membrane >::root())
     );
     _subSystem.setRegionInMembrane(_regionInMembrane.get());
 
-    LOG(INFO) << "Optimizing membranes...";
-    membraneAdaptiveRemesh();
-    updatePositions();
-
-    LOG(INFO) << "Setting up membrane mechanics...";
-    for(auto m : Membrane::getMembranes()) {
-        m->initMechanicParams();
-    }
 
     LOG(INFO) << "Adding surface chemistry...";
     {
@@ -588,18 +585,15 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     /**************************************************************************
     Now starting to add the filaments into the network.
     **************************************************************************/
-    // Read filament setup, parse filament input file if needed
-    FilamentSetup FSetup = p.readFilamentSetup();
+    //Read filament setup, parse filament input file if needed
+    auto& FSetup = simulConfig.filamentSetup;
     
     cout << "---" << endl;
 //    HybridBindingSearchManager::setdOut();
     cout << "Initializing filaments...";
 
     if (SysParams::RUNSTATE == true) {
-        if (FSetup.inputFile != "") {
-            FilamentParser fp(_inputDirectory + FSetup.inputFile);
-            filaments = fp.readFilaments();
-        }
+        filaments = simulConfig.filamentData;
         fil = get<0>(filaments);
         //add other filaments if specified
         FilamentInitializer *fInit = new RandomFilamentDist();
@@ -666,7 +660,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         cout<<endl;
 	    cout<<"RESTART PHASE BEINGS."<<endl;
         //Create the restart pointer
-        const string inputfileName = _inputDirectory + FSetup.inputFile;
+        const string inputfileName = _inputDirectory + FSetup.inputFile.string();
         _restart = new Restart(&_subSystem, _chemData, inputfileName);
         //read set up.
         _restart->readNetworkSetup();
@@ -674,12 +668,12 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     }
 }
 
-void Controller::setupSpecialStructures(SystemParser& p) {
+void Controller::setupSpecialStructures(SimulConfig& simulConfig) {
 
     cout << "---" << endl;
     cout << "Setting up special structures...";
 
-    SpecialSetupType SType = p.readSpecialSetupType();
+    auto& SType = simulConfig.specialParams.specialSetupType;
 
     //set up a MTOC if desired
 
@@ -1435,8 +1429,8 @@ void Controller::run() {
 
 
 //Step 8. re-add pin positions
-        SystemParser p(_inputFile);
-        FilamentSetup filSetup = p.readFilamentSetup();
+        auto simulConfig = SimulConfigHelper{}.getFromInput(_inputFile, _inputDirectory);
+        auto& filSetup = simulConfig.filamentSetup;
 
         if(SysParams::Mechanics().pinBoundaryFilaments){
             PinRestartParser ppin(_inputDirectory + filSetup.pinRestartFile);

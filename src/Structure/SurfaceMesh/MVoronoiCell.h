@@ -1,12 +1,10 @@
 #ifndef MEDYAN_Structure_SurfaceMesh_MVertex_hpp
 #define MEDYAN_Structure_SurfaceMesh_MVertex_hpp
 
-struct MVoronoiCell {
+struct MVertex {
 
-    MVoronoiCell(short membraneType);
-
-    double kBending; // Local bending modulus
-    double eqCurv; // Local spontaneous curvature
+    double kBending = 0; // Local bending modulus
+    double eqCurv   = 1; // Local spontaneous curvature
 };
 
 

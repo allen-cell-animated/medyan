@@ -13,6 +13,7 @@
 enum class MedyanRunMode {
     simulation,
     analyze,
+    config,
     test
 };
 
@@ -76,6 +77,12 @@ inline auto medyanInitFromCommandLine(int argc, char** argv) {
         ));
         cmdAnalyze.addOption(makeOptionWithVar(0, "frame-interval", "int", "Interval of frames", false, medyan::globalMutable().analyzeFrameInterval));
         cmdAnalyze.addHelp();
+
+        // Add interactive configuration command
+        auto& cmdConfig = cmdMain.addCommand(
+            "config", "Interactive system configuration.",
+            [&] { res.runMode = MedyanRunMode::config; }
+        );
 
         // Add test command
         auto& cmdTest = cmdMain.addCommand(

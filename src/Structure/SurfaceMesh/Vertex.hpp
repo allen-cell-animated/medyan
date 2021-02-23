@@ -37,7 +37,7 @@ public:
 
     ///Main constructor
     Vertex(const CoordinateType& v, size_t topoIndex)
-        : coord(v), force{}, topoIndex_(topoIndex), mVertex(0)
+        : coord(v), force{}, topoIndex_(topoIndex)
     {}
 
 
@@ -54,8 +54,8 @@ public:
     CoordinateType coord;
     CoordinateType force;
 
-    MVoronoiCell mVertex; // vertex mechanical information
-    CVertex      cVertex; // vertex chemical information
+    MVertex mVertex; // vertex mechanical information
+    CVertex cVertex; // vertex chemical information
 
 };
 

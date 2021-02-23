@@ -33,7 +33,6 @@ public:
 
     virtual void vectorize(const FFCoordinateStartingIndex& si) override {
         using namespace std;
-        using AT = Membrane::MeshAttributeType;
         using MT = Membrane::MeshType;
 
         tempMembranes.clear();
@@ -44,7 +43,7 @@ public:
 
             const auto& mesh = m->getMesh();
             // Currently applies to general coordinate system
-            if(mesh.metaAttribute().vertexSystem == AT::VertexSystem::general) {
+            if(mesh.metaAttribute().vertexSystem == medyan::MembraneMeshVertexSystem::general) {
 
                 for(const auto& t : mesh.getTriangles()) {
                     const auto vis = medyan::vertexIndices(mesh, t);

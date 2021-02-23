@@ -13,7 +13,6 @@
 
 #include "DRController.h"
 
-#include "Parser.h"
 #include "RateChangerImpl.h"
 
 #include "Linker.h"
@@ -21,7 +20,7 @@
 #include "Cylinder.h"
 #include "BranchingPoint.h"
 
-void DRController::initialize(DynamicRateType& drTypes) {
+void DRController::initialize(DyRateParams::DynamicRateType& drTypes) {
     
     //filament polymerization changer
     int filamentIndex = 0;

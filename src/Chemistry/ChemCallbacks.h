@@ -1107,7 +1107,7 @@ struct FilamentCreationCallback {
                     }
                 }
 
-                if(inbubble) break;
+                if(inbubble) continue;
 
                 //check if within boundary && if within REPULSIONEXPIN region (set as 125nm)
                 if(_ps->getBoundary()->within(position) &&
@@ -1149,7 +1149,7 @@ struct FilamentCreationCallback {
                     }
                 }
 
-                if(inbubble) break;
+                if(inbubble) continue;
 
                 //check if within boundary and membrane[0]
                 if(
