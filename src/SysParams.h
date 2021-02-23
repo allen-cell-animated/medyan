@@ -19,6 +19,7 @@
 #include <list>
 
 #include "common.h"
+#include "Structure/SurfaceMesh/MembraneMeshVertexSystem.hpp"
 
 //Did not minimize structure
 #ifdef TRACKDIDNOTMINIMIZE
@@ -565,15 +566,44 @@ struct FilamentSetup {
     string pinRestartFile = "";
 };
 
+namespace medyan {
+
 /// Struct to hold membrane setup information
 struct MembraneSetup {
-    std::filesystem::path inputFile;
+    // meta info
+    //---------------------------------
+    int type = 0;
 
+    // mechanical parameters
+    //---------------------------------
+    // mesh mode
+    MembraneMeshVertexSystem vertexSystem = MembraneMeshVertexSystem::general;
+
+    // elasticity
+    double areaElasticity = 400;
+    double bendingElasticity = 100;
+    double eqMeanCurv = 0;
+
+    // tension
+    double tension = 0;
+
+    // enclosed volume conservation
+    double volumeElasticity = 0.8;
+
+
+    // initial mesh configuration
+    //---------------------------------
+    // initial membrane area factor compared to equilibrium area
+    double initEqAreaFactor = 1.0;
+
+    // initialize by shape or from file
     std::vector< std::vector< std::string > > meshParam;
-
-    /// Membrane type to create
-    short membraneType = 0;
 };
+struct MembraneSettings {
+    std::vector< MembraneSetup > setupVec;
+};
+
+} // namespace medyan
 
 /// Struct to hold Bubble setup information
 struct BubbleSetup {
@@ -736,7 +766,7 @@ struct SimulConfig {
     DyRateParams   dyRateParams;
     SpecialParams  specialParams;
     BubbleSetup    bubbleSetup;
-    MembraneSetup  membraneSetup;
+    MembraneSettings membraneSettings;
     FilamentSetup  filamentSetup;
 
     // Parameters from other inputs

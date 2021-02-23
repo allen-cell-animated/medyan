@@ -21,6 +21,7 @@
 
 #include "SysParams.h"
 #include "Util/Io/Log.hpp"
+#include "Util/Parser/MembraneParser.hpp"
 
 namespace medyan {
 
@@ -2662,37 +2663,25 @@ void SystemParser::initInitParser() {
     );
     initParser.addEmptyLine();
 
-    initParser.addComment("; Initial membrane setup");
-    // TODO membrane initial setup
-    // MembraneSetup memSetup;
-    
-    // string line;
-    // while(getline(_inputFile, line)) {
-        
-    //     if(line.find("#") != string::npos) { continue; }
-        
-    //     if(line.find("MEMBRANE_FILE") != string::npos) {
-            
-    //         vector<string> lineVector = split<string>(line);
-    //         if(lineVector.size() != 2) {
-    //             cout << "Error reading membrane input file. Exiting." << endl;
-    //             exit(EXIT_FAILURE);
-    //         }
-    //         else if (lineVector.size() == 2)
-    //             memSetup.inputFile = lineVector[1];
-    //     }
-    //     else if(line.find("MEMBRANE_INIT") != string::npos) {
-    //         std::vector< std::string > lineVector = split< std::string >(line);
-    //         if(lineVector.size() < 2) {
-    //             LOG(ERROR) << "Error reading membrane initialization parameters.";
-    //             throw std::runtime_error("Error reading membrane initialization");
-    //         } else {
-    //             lineVector.erase(lineVector.begin()); // remove first element
-    //             memSetup.meshParam.push_back(std::move(lineVector));
-    //         }
-    //     }
-    // }
-    // return memSetup;
+    initParser.addComment("; membrane setup");
+    initParser.addArgsWithAliases(
+        "membrane", {},
+        [] (SimulConfig& sc, const SExpr::ListType& sel) {
+            MembraneSetup ms;
+            for(auto& eachList : sel) {
+                parseKeyValue<MembraneSetup>(ms, eachList, membraneSetupParser().dict, KeyValueParserUnknownKeyAction::warn);
+            }
+            sc.membraneSettings.setupVec.push_back(move(ms));
+        },
+        [] (const SimulConfig& sc) {
+            vector<list<ConfigFileToken>> res;
+
+            for(auto& eachSetup : sc.membraneSettings.setupVec) {
+                res.push_back(buildTokens<MembraneSetup>(eachSetup, membraneSetupParser()));
+            }
+            return res;
+        }
+    );
 
     initParser.addComment("# Initial filament setup from external input");
     initParser.addStringArgsWithAliases(

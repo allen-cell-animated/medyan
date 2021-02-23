@@ -15,6 +15,7 @@
 #include "Structure/SurfaceMesh/Edge.hpp"
 #include "Structure/SurfaceMesh/GeometricMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/HalfEdge.hpp"
+#include "Structure/SurfaceMesh/MembraneMeshVertexSystem.hpp"
 #include "Structure/SurfaceMesh/SurfaceMesh.hpp"
 #include "Structure/SurfaceMesh/Triangle.hpp"
 #include "Structure/SurfaceMesh/Vertex.hpp"
@@ -113,23 +114,6 @@ This struct can connect the topological meshwork with the actual system objects.
 struct MembraneMeshAttribute {
 
     using MeshType = HalfEdgeMesh< MembraneMeshAttribute >;
-
-    // If vertices represent fixed coordinates in a material coordinate system,
-    // a vertex represents the location of a specific lipid molecule.
-    // The local area elasticity is usually a necessity in this case.
-    // An exception is the vertices on the border connected to a lipid
-    // reservoir, where the vertices stand for the boundary locations which are
-    // usually fixed in the ambient space.
-    //
-    // If vertices represent fixed coordinates in a normal coordinate system,
-    // a vertex is only a representative point on the surface, where the motion
-    // of the vertex must be in the local normal direction.
-    // Local area elasticity cannot be directly defined on mesh elements.
-    //
-    // If vertices represent fixed coordinates in a normal coordinate system,
-    // then the system is similar to the "normal" coordinate case, but without
-    // the requirement for vertices to move only in the normal directions.
-    enum class VertexSystem { material, normal, general };
 
     struct VertexAttribute {
         using CoordinateType      = Vertex::CoordinateType;
@@ -234,7 +218,7 @@ struct MembraneMeshAttribute {
         SubSystem *s;
         Membrane *m;
 
-        VertexSystem vertexSystem = VertexSystem::material;
+        medyan::MembraneMeshVertexSystem vertexSystem = medyan::MembraneMeshVertexSystem::material;
 
         // About mech and chem
         //-----------------------------
