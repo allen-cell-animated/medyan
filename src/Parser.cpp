@@ -2668,8 +2668,8 @@ void SystemParser::initInitParser() {
         "membrane", {},
         [] (SimulConfig& sc, const SExpr::ListType& sel) {
             MembraneSetup ms;
-            for(auto& eachList : sel) {
-                parseKeyValue<MembraneSetup>(ms, eachList, membraneSetupParser().dict, KeyValueParserUnknownKeyAction::warn);
+            for(int i = 1; i < sel.size(); ++i) {
+                parseKeyValue<MembraneSetup>(ms, sel[i], membraneSetupParser().dict, KeyValueParserUnknownKeyAction::warn);
             }
             sc.membraneSettings.setupVec.push_back(move(ms));
         },
