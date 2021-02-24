@@ -462,7 +462,7 @@ private:
     }
 
     template< typename Element > auto removeElement_(size_t index) {
-        using IT = HalfEdgeMeshConnection::IndexType< Element::ConnectionType >;
+        using IT = HalfEdgeMeshConnection::IndexType< typename Element::ConnectionType >;
         Attribute::removeElement(*this, IT {index});
         return getElements_<Element>().erase(
             index,
@@ -472,7 +472,7 @@ private:
         );
     }
     template< typename Element, size_t n > auto removeElements_(const std::array< size_t, n >& indices) {
-        using IT = HalfEdgeMeshConnection::IndexType< Element::ConnectionType >;
+        using IT = HalfEdgeMeshConnection::IndexType< typename Element::ConnectionType >;
         for(size_t i : indices) Attribute::removeElement(*this, IT {i});
         return getElements_<Element>().erase(
             indices,
@@ -483,7 +483,7 @@ private:
     }
 
     template< typename Element > void clearElement_() {
-        using IT = HalfEdgeMeshConnection::IndexType< Element::ConnectionType >;
+        using IT = HalfEdgeMeshConnection::IndexType< typename Element::ConnectionType >;
         auto& elements = getElements_< Element >();
         for(IT i {0}; i < elements.size(); ++i)
             Attribute::removeElement(*this, i);
