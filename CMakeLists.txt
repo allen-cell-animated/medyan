@@ -100,9 +100,6 @@ target_compile_definitions(medyan PRIVATE
     BOOST_MEM_POOL
     BOOL_POOL_NSIZE=65536
 
-    # Visualization
-    VISUAL
-
     # Debug
     #PLOSFEEDBACK
     CHECKFORCES_INF_NAN

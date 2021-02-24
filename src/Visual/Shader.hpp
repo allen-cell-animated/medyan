@@ -1,8 +1,6 @@
 #ifndef MEDYAN_Visual_Shader_Hpp
 #define MEDYAN_Visual_Shader_Hpp
 
-#ifdef VISUAL
-
 #include "Util/Io/Log.hpp"
 #include "Visual/Common.hpp"
 
@@ -92,7 +90,5 @@ private:
 };
 
 } // namespace medyan::visual
-
-#endif // VISUAL
 
 #endif

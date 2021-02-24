@@ -278,11 +278,14 @@ struct VisualDisplay {
     Shader shaderLine    { shader::VertexElementLine,  shader::FragElementLine  };
 
 
-    VisualDisplay() :
+    VisualDisplay(DisplayMode displayMode = DisplayMode::realtime) :
         guard(vc.window())
     {
         // Configure global opengl state
         glEnable(GL_DEPTH_TEST);
+
+        // Set initial display mode
+        vc.displaySettings.displayMode = displayMode;
 
         // Setup realtime display profiles
         vc.displayStates.realtimeDataStates.profileData = makeDefaultElementProfileData();

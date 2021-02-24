@@ -12,6 +12,7 @@
 
 enum class MedyanRunMode {
     simulation,
+    gui,
     analyze,
     config,
     test
@@ -29,6 +30,9 @@ struct MedyanCmdInitResult {
     std::string inputFile;
     std::string inputDirectory;
     std::string outputDirectory;
+
+    // GUI
+    bool guiEnabled = false;
 
     // Threadings
     int numThreads = -1;
@@ -58,8 +62,20 @@ inline auto medyanInitFromCommandLine(int argc, char** argv) {
                 VariableWrite<unsigned long long>{std::string("seed")}(res.rngSeed, arg);
             }
         ));
+        cmdMain.addOption(Option(0, "gui", "Enable GUI", false,
+            [&](const Command&) {
+                res.guiEnabled = true;
+            }
+        ));
         cmdMain.addOption(makeOptionWithVar('t', "", "int", "Thread count (0 for auto)", false, res.numThreads));
         cmdMain.addHelp();
+
+        // Add gui command
+        Command& cmdGui = cmdMain.addCommand(
+            "gui", "GUI mode",
+            [&] { res.runMode = MedyanRunMode::gui; }
+        );
+        cmdGui.addHelp();
 
         // Add analyze command
         Command& cmdAnalyze = cmdMain.addCommand(

@@ -147,11 +147,18 @@ int main(int argc, char **argv) {
                 c.run();
             });
 
-            if(medyan::visual::enabled) {
+            if(cmdRes.guiEnabled) {
                 visual::VisualDisplay visualDisplay;
                 visualDisplay.run();
             }
             simul.join();
+        }
+        break;
+
+    case MedyanRunMode::gui:
+        {
+            visual::VisualDisplay visualDisplay(visual::DisplayMode::trajectory);
+            visualDisplay.run();
         }
         break;
 
