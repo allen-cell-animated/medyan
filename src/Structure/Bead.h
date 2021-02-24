@@ -99,11 +99,6 @@ public:
     const auto& coordinate() const { return coord; }
     // Temporary compromise
     auto vcoordinate() const { return mathfunc::vec2Vector(coord); }
-    
-    /// Auxilliary coordinate getter
-    template< bool stretched > auto getCoordinate() const {
-        return stretched ? coordinateStr() : coordinate();
-    }
 
     /// Get Compartment
     Compartment* getCompartment() {return _compartment;}
