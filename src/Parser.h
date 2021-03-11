@@ -642,10 +642,10 @@ inline void parseKeyValueList(
 // Parsing an s-expr as key-value pairs.
 template< typename Params >
 inline void parseKeyValueList(
-    Params&                                params,
-    const SExpr&                           se,
-    const typename KeyValueParser<Params>& parser,
-    KeyValueParserUnknownKeyAction         unknownKeyAction = KeyValueParserUnknownKeyAction::ignore
+    Params&                        params,
+    const SExpr&                   se,
+    const KeyValueParser<Params>&  parser,
+    KeyValueParserUnknownKeyAction unknownKeyAction = KeyValueParserUnknownKeyAction::ignore
 ) {
     return parseKeyValueList(params, se, parser.dict, unknownKeyAction);
 }
@@ -665,8 +665,8 @@ inline auto buildTokens(
 }
 template< typename Params >
 inline auto buildTokens(
-    const Params&                          params,
-    const typename KeyValueParser<Params>& parser
+    const Params&                 params,
+    const KeyValueParser<Params>& parser
 ) {
     return buildTokens(params, parser.tokenBuildList);
 }
