@@ -165,6 +165,56 @@ namespace internal {
 
 } // namespace internal
 
+
+// VecSpan treats a contiguous segment of memory as a Vec.
+template< size_t dim, typename ValueType >
+struct VecMap {
+    using value_type = ValueType;                         // may be const
+    using float_type = std::remove_cv_t<value_type>;      // cannot be const
+
+    using size_type = std::size_t;
+
+    using iterator        = value_type*;
+    using reference       = value_type&;
+    using const_reference = const value_type&;
+
+    static constexpr size_t vec_size = dim;
+
+    // Actual data
+    value_type* ptr;
+
+    // Conversion operator to normal Vec
+    template< typename FloatOut >
+    explicit operator Vec< vec_size, FloatOut >() const {
+        Vec< vec_size, FloatOut > res;
+        for(size_t i = 0; i < vec_size; ++i) res[i] = (*this)[i];
+        return res;
+    }
+
+    // copy from Vec
+    template< typename Float >
+    VecMap& operator=(const Vec<dim, Float>& v) const {
+        for(size_type i = 0; i < dim; ++i) (*this)[i] = v[i];
+        return *this;
+    }
+
+    // copy from VecMap
+    template< typename FloatRaw >
+    VecMap& operator=(VecMap<dim, FloatRaw> v) const {
+        for(size_t i = 0; i < dim; ++i) (*this)[i] = v[i];
+        return *this;
+    }
+
+    constexpr auto size() const noexcept { return dim; }
+
+    // Iterators
+    constexpr iterator begin() const noexcept { return ptr; }
+    constexpr iterator end()   const noexcept { return ptr + dim; }
+
+    // idx must be within [0, dim)
+    reference operator[](size_t idx) const { return ptr[idx]; }
+};
+
 //-----------------------------------------------------------------------------
 // RefVec and ConstRefVec refer to the Vec-like data in an array. They contain
 // pointers to the container and relative positions in the array, but do not
@@ -356,11 +406,9 @@ template<
 // Factory functions
 //-----------------------------------------------------------------------------
 template< size_t dim, typename Float = double >
-constexpr auto makeRefVec     (const Float* source) { return ConstRefVec< dim, Float* >(source, 0); }
+constexpr auto makeRefVec     (      Float* source) { return VecMap< dim, Float > { source }; }
 template< size_t dim, typename Float = double >
-constexpr auto makeRefVec     (      Float* source) { return      RefVec< dim, Float* >(source, 0); }
-template< size_t dim, typename Float = double >
-constexpr auto makeConstRefVec(const Float* source) { return ConstRefVec< dim, Float* >(source, 0); }
+constexpr auto makeConstRefVec(const Float* source) { return VecMap< dim, const Float > { source }; }
 
 template< size_t dim, typename Float = double >
 inline auto makeVec(const Float* source) {
@@ -372,49 +420,76 @@ inline auto makeVec(const Float* source) {
 //-----------------------------------------------------------------------------
 // Traits
 //-----------------------------------------------------------------------------
+
+// Properties
+//-------------------------------------
+
 // Vec
 template< typename VecType > struct IsVec : std::false_type {};
 template< size_t dim, typename Float > struct IsVec< Vec< dim, Float > > : std::true_type {};
 
-// (non-const) RefVec
-template< typename VecType > struct IsNonConstRefVec : std::false_type {};
-template< size_t dim, typename Container > struct IsNonConstRefVec< RefVec< dim, Container > > : std::true_type {};
-
-// ConstRefVec
-template< typename VecType > struct IsConstRefVec : std::false_type {};
-template< size_t dim, typename Container > struct IsConstRefVec< ConstRefVec< dim, Container > > : std::true_type {};
-
-// any RefVec
-template< typename VecType > struct IsRefVec : std::integral_constant< bool,
-    IsNonConstRefVec< VecType >::value || IsConstRefVec< VecType >::value
+// Vec mutable lref
+template< typename VecType > struct IsVecMlref : std::integral_constant< bool,
+    std::is_lvalue_reference< VecType >::value                       // is lvalue reference
+    && !std::is_const< std::remove_reference_t<VecType> >::value     // not const
+    && IsVec< std::decay_t<VecType> >::value                         // is a Vec
 > {};
 
-// any Vec like (can decay)
+// VecMap of mutable
+template< typename VecType > struct IsVecMapMutable : std::false_type {};
+template< size_t dim, typename Float > struct IsVecMapMutable< VecMap< dim, Float > > : std::integral_constant< bool,
+    !std::is_const< typename VecMap< dim, Float >::value_type >::value
+> {};
+
+// VecMap of const
+template< typename VecType > struct IsVecMapConst : std::false_type {};
+template< size_t dim, typename Float > struct IsVecMapConst< VecMap< dim, Float > > : std::integral_constant< bool,
+    std::is_const< typename VecMap< dim, Float >::value_type >::value
+> {};
+
+// VecMap
+template< typename VecType > struct IsVecMap : std::integral_constant< bool,
+    IsVecMapMutable<VecType>::value || IsVecMapConst<VecType>::value
+> {};
+
+// any Vec-like object which can be passed to functions with modifiable data.
+template< typename VecType > struct IsVecLikeMut : std::integral_constant< bool,
+    IsVecMlref< VecType >::value
+    || IsVecMapMutable< std::decay_t<VecType> >::value
+> {};
+
+// any Vec-like object
 template< typename VecType > struct IsVecLike : std::integral_constant< bool,
-    IsVec< std::decay_t< VecType > >::value || IsRefVec< std::decay_t< VecType > >::value
+    IsVec< std::decay_t<VecType> >::value
+    || IsVecMap< std::decay_t<VecType> >::value
 > {};
 
-// any Vec non-const ref like (non-const RefVec can decay)
-template< typename VecType > struct IsVecNonConstRefLike : std::integral_constant< bool,
-    (
-        IsVec< VecType >::value &&
-        std::is_reference< VecType >::value &&
-        !std::is_const< std::remove_reference_t< VecType > >::value
-    ) ||
-    (
-        IsNonConstRefVec< std::decay_t< VecType > >::value
-    )
-> {};
+
+// Operations
+//-------------------------------------
+
+// Get float type from Vec-like object
+template< typename VecType >
+using VecLikeFloatType = typename std::decay_t<VecType>::float_type;
+
+// Get Vec type from Vec-like object
+template< typename VecType >
+using VecLikeVecType = Vec< std::decay_t<VecType>::vec_size, VecLikeFloatType<VecType> >;
+
+
+
 
 //-----------------------------------------------------------------------------
 // Formatting
 //-----------------------------------------------------------------------------
-// undefined behavior if size is 0
-template< typename VecType, size_t = VecType::vec_size > inline
+template< typename VecType, std::enable_if_t< IsVecLike<VecType>::value >* = nullptr > inline
 std::ostream& operator<<(std::ostream& os, const VecType& v) {
     os << '(';
-    for(size_t i = 0; i < VecType::vec_size - 1; ++i) os << v[i] << ", ";
-    os << v[VecType::vec_size - 1] << ')';
+    if(std::decay_t<VecType>::vec_size >= 1) {
+        for(std::size_t i = 0; i < std::decay_t<VecType>::vec_size - 1; ++i) os << v[i] << ", ";
+        os << v[std::decay_t<VecType>::vec_size - 1];
+    }
+    os << ')';
     return os;
 }
 
@@ -423,119 +498,143 @@ std::ostream& operator<<(std::ostream& os, const VecType& v) {
 //-----------------------------------------------------------------------------
 
 // Magnitude, distance and normalization
-template< typename VecType, size_t = VecType::vec_size >
-inline auto magnitude2(const VecType& v) {
-    typename VecType::float_type mag2 {};
-    for(size_t i = 0; i < VecType::vec_size; ++i) mag2 += v[i] * v[i];
+//-------------------------------------
+
+// Find square magnitude of a vector.
+template< typename VecType, std::enable_if_t< IsVecLike<VecType>::value >* = nullptr >
+inline auto magnitude2(VecType&& v) {
+    VecLikeFloatType<VecType> mag2 {};
+    for(size_t i = 0; i < std::decay_t<VecType>::vec_size; ++i) mag2 += v[i] * v[i];
     return mag2;
 }
-template< typename VecType, size_t = VecType::vec_size >
-inline auto magnitude(const VecType& v) {
+// Find magnitude of a vector.
+template< typename VecType, std::enable_if_t< IsVecLike<VecType>::value >* = nullptr >
+inline auto magnitude(VecType&& v) {
     return std::sqrt(magnitude2(v));
 }
-template< typename VecType, size_t = VecType::vec_size >
-inline void normalize(VecType& v) {
-    typename VecType::float_type norm = magnitude(v);
-    for(size_t i = 0; i < VecType::vec_size; ++i) v[i] /= norm;
+// Normalize the vector in place.
+template< typename VecType, std::enable_if_t< IsVecLikeMut<VecType>::value >* = nullptr >
+inline void normalize(VecType&& v) {
+    VecLikeFloatType<VecType> norm = magnitude(v);
+    for(size_t i = 0; i < std::decay_t<VecType>::vec_size; ++i) v[i] /= norm;
 }
-template< typename VecType, size_t = VecType::vec_size >
-inline auto normalizedVector(const VecType& v) {
-    Vec< VecType::vec_size, typename VecType::float_type > res = v;
+// Find the normalized vector.
+template< typename VecType, std::enable_if_t< IsVecLike<VecType>::value >* = nullptr >
+inline auto normalizedVector(VecType&& v) {
+    VecLikeVecType<VecType> res = v;
     normalize(res);
     return res;
 }
-template< typename VT1, typename VT2, std::enable_if_t<VT1::vec_size == VT2::vec_size>* = nullptr >
-inline auto distance2(const VT1& v1, const VT2& v2) {
-    std::common_type_t<typename VT1::float_type, typename VT2::float_type> res {};
-    for(size_t idx = 0; idx < VT1::vec_size; ++idx) {
+
+// Find the squared distance between two vectors.
+template< typename VT1, typename VT2, std::enable_if_t<std::decay_t<VT1>::vec_size == std::decay_t<VT2>::vec_size>* = nullptr >
+inline auto distance2(VT1&& v1, VT2&& v2) {
+    std::common_type_t<VecLikeFloatType<VT1>, VecLikeFloatType<VT2>> res {};
+    for(size_t idx = 0; idx < std::decay_t<VT1>::vec_size; ++idx) {
         res += (v2[idx] - v1[idx]) * (v2[idx] - v1[idx]);
     }
     return res;
 }
-template< typename VT1, typename VT2, std::enable_if_t<VT1::vec_size == VT2::vec_size>* = nullptr >
-inline auto distance(const VT1& v1, const VT2& v2) {
+template< typename VT1, typename VT2, std::enable_if_t<std::decay_t<VT1>::vec_size == std::decay_t<VT2>::vec_size>* = nullptr >
+inline auto distance(VT1&& v1, VT2&& v2) {
     return std::sqrt(distance2(v1, v2));
 }
 
-// plus, minus, multiply, divide
-template< typename VecType, size_t = VecType::vec_size >
-inline auto operator-(const VecType& v){
-    Vec< VecType::vec_size, typename VecType::float_type > res;
-    for(size_t idx = 0; idx < VecType::vec_size; ++idx){
+// Vector addition, subtraction, multiplication, division
+//-------------------------------------
+
+// vector negation
+template< typename VecType, std::enable_if_t< IsVecLike<VecType>::value >* = nullptr >
+inline auto operator-(VecType&& v){
+    VecLikeVecType<VecType> res;
+    for(size_t idx = 0; idx < std::decay_t<VecType>::vec_size; ++idx){
         res[idx] = -v[idx];
     }
     return res;
 }
-template< typename VT1, typename VT2, std::enable_if_t<VT1::vec_size == VT2::vec_size>* = nullptr >
-inline auto operator+(const VT1& v1, const VT2& v2) {
-    Vec< VT1::vec_size, std::common_type_t<typename VT1::float_type, typename VT2::float_type> > res;
-    for(size_t idx1 = 0; idx1 < VT1::vec_size; ++idx1) {
+// vector sum
+template< typename VT1, typename VT2, std::enable_if_t<std::decay_t<VT1>::vec_size == std::decay_t<VT2>::vec_size>* = nullptr >
+inline auto operator+(VT1&& v1, VT2&& v2) {
+    Vec< std::decay_t<VT1>::vec_size, std::common_type_t<VecLikeFloatType<VT1>, VecLikeFloatType<VT2>> > res;
+    for(size_t idx1 = 0; idx1 < std::decay_t<VT1>::vec_size; ++idx1) {
         res[idx1] = v1[idx1] + v2[idx1];
     }
     return res;
 }
-template< typename VT1, typename VT2, std::enable_if_t<VT1::vec_size == VT2::vec_size>* = nullptr >
-inline auto& operator+=(VT1& v1, const VT2& v2) {
-    for(size_t idx = 0; idx < VT1::vec_size; ++idx) {
+// vector increment
+template< typename VT1, typename VT2, std::enable_if_t<std::decay_t<VT1>::vec_size == std::decay_t<VT2>::vec_size && IsVecLikeMut<VT1>::value>* = nullptr >
+inline auto& operator+=(VT1&& v1, VT2&& v2) {
+    for(size_t idx = 0; idx < std::decay_t<VT1>::vec_size; ++idx) {
         v1[idx] += v2[idx];
     }
     return v1;
 }
-template< typename VT1, typename VT2, std::enable_if_t<VT1::vec_size == VT2::vec_size>* = nullptr >
-inline auto operator-(const VT1& v1, const VT2& v2) {
-    Vec< VT1::vec_size, std::common_type_t<typename VT1::float_type, typename VT2::float_type> > res;
-    for(size_t idx1 = 0; idx1 < VT1::vec_size; ++idx1) {
+// vector subtraction
+template< typename VT1, typename VT2, std::enable_if_t<std::decay_t<VT1>::vec_size == std::decay_t<VT2>::vec_size>* = nullptr >
+inline auto operator-(VT1&& v1, VT2&& v2) {
+    Vec< std::decay_t<VT1>::vec_size, std::common_type_t<VecLikeFloatType<VT1>, VecLikeFloatType<VT2>> > res;
+    for(size_t idx1 = 0; idx1 < std::decay_t<VT1>::vec_size; ++idx1) {
         res[idx1] = v1[idx1] - v2[idx1];
     }
     return res;
 }
-template< typename VT1, typename VT2, std::enable_if_t<VT1::vec_size == VT2::vec_size>* = nullptr >
-inline auto& operator-=(VT1& v1, const VT2& v2) {
-    for(size_t idx = 0; idx < VT1::vec_size; ++idx) {
+// vector decrement
+template< typename VT1, typename VT2, std::enable_if_t<std::decay_t<VT1>::vec_size == std::decay_t<VT2>::vec_size && IsVecLikeMut<VT1>::value>* = nullptr >
+inline auto& operator-=(VT1&& v1, VT2&& v2) {
+    for(size_t idx = 0; idx < std::decay_t<VT1>::vec_size; ++idx) {
         v1[idx] -= v2[idx];
     }
     return v1;
 }
-template< typename VecType, typename Float, size_t = VecType::vec_size >
-inline auto operator*(const VecType& v, Float k) {
-    Vec< VecType::vec_size, std::common_type_t<typename VecType::float_type, Float> > res;
-    for(size_t idx = 0; idx < VecType::vec_size; ++idx){
+// vector multiplication
+template< typename VecType, typename Float, std::enable_if_t< IsVecLike<VecType>::value >* = nullptr >
+inline auto operator*(VecType&& v, Float k) {
+    Vec< std::decay_t<VecType>::vec_size, std::common_type_t<VecLikeFloatType<VecType>, Float> > res;
+    for(size_t idx = 0; idx < std::decay_t<VecType>::vec_size; ++idx){
         res[idx] = v[idx] * k;
     }
     return res;
 }
-template< typename VecType, typename Float, size_t = VecType::vec_size >
-inline auto operator*(Float k, const VecType& v) {
+// vector multiplication
+template< typename VecType, typename Float, std::enable_if_t< IsVecLike<VecType>::value >* = nullptr >
+inline auto operator*(Float k, VecType&& v) {
     return v * k;
 }
-template< typename VecType, typename Float, size_t = VecType::vec_size >
-inline auto& operator*=(VecType& v, Float k) {
-    for(size_t i = 0; i < VecType::vec_size; ++i) v[i] *= k;
+// vector in-place multiplication
+template< typename VecType, typename Float, std::enable_if_t< IsVecLike<VecType>::value && IsVecLikeMut<VecType>::value >* = nullptr >
+inline auto& operator*=(VecType&& v, Float k) {
+    for(size_t i = 0; i < std::decay_t<VecType>::vec_size; ++i) v[i] *= k;
     return v;
 }
-template< typename VecType, typename Float, size_t = VecType::vec_size >
-inline auto operator/(const VecType& v, Float k) {
-    return v * (static_cast< std::common_type_t<typename VecType::float_type, Float> >(1.0) / k);
+// vector division
+template< typename VecType, typename Float, std::enable_if_t< IsVecLike<VecType>::value >* = nullptr >
+inline auto operator/(VecType&& v, Float k) {
+    return v * (static_cast< std::common_type_t<VecLikeFloatType<VecType>, Float> >(1.0) / k);
 }
-template< typename VecType, typename Float, size_t = VecType::vec_size >
-inline auto& operator/=(VecType& v, Float k) {
-    return v *= (static_cast< std::common_type_t<typename VecType::float_type, Float> >(1.0) / k);
+// vector in-place division
+template< typename VecType, typename Float, std::enable_if_t< IsVecLike<VecType>::value && IsVecLikeMut<VecType>::value >* = nullptr >
+inline auto& operator/=(VecType&& v, Float k) {
+    return v *= (static_cast< std::common_type_t<VecLikeFloatType<VecType>, Float> >(1.0) / k);
 }
 
 // dot product, cross product
-template< typename VT1, typename VT2, std::enable_if_t<VT1::vec_size == VT2::vec_size>* = nullptr >
-inline auto dot(const VT1& v1, const VT2& v2) {
-    std::common_type_t<typename VT1::float_type, typename VT2::float_type> res {};
-    for(size_t idx = 0; idx < VT1::vec_size; ++idx)
+//-------------------------------------
+
+// dot product
+template< typename VT1, typename VT2, std::enable_if_t<std::decay_t<VT1>::vec_size == std::decay_t<VT2>::vec_size>* = nullptr >
+inline auto dot(VT1&& v1, VT2&& v2) {
+    std::common_type_t<VecLikeFloatType<VT1>, VecLikeFloatType<VT2>> res {};
+    for(size_t idx = 0; idx < std::decay_t<VT1>::vec_size; ++idx)
         res += v1[idx] * v2[idx];
     return res;
 }
+// cross product
 template<
     typename VT1, typename VT2,
-    std::enable_if_t<VT1::vec_size == 3 && VT2::vec_size == 3>* = nullptr
-> inline
-auto cross(const VT1& v1, const VT2& v2) {
-    return Vec< 3, std::common_type_t<typename VT1::float_type, typename VT2::float_type> > {
+    std::enable_if_t<std::decay_t<VT1>::vec_size == 3 && std::decay_t<VT2>::vec_size == 3>* = nullptr
+>
+inline auto cross(VT1&& v1, VT2&& v2) {
+    return Vec< 3, std::common_type_t<VecLikeFloatType<VT1>, VecLikeFloatType<VT2>> > {
         v1[1]*v2[2] - v1[2]*v2[1],
         v1[2]*v2[0] - v1[0]*v2[2],
         v1[0]*v2[1] - v1[1]*v2[0]

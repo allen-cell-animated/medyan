@@ -5,14 +5,14 @@
 
 #include "Util/Math/Vec.hpp"
 
-using std::size_t;
+using namespace std;
 using namespace mathfunc;
 
 TEST_CASE("Vec and RefVec tests", "[Vec]") {
     Vec< 3, float > v3f_1 = {0.0f, 1.0f, 2.0f};
-    VecArray< 3, float > va3f = { {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f} };
-    auto v3f_2 = va3f[1];                        // 3 4 5
-    auto v3f_3 = makeRefVec< 3 >(va3f.data());   // 0 1 2
+    vector< float > vector3x2f = {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f};
+    auto v3f_2 = makeRefVec< 3 >(&vector3x2f[3]);  // 3 4 5
+    auto v3f_3 = makeRefVec< 3 >(&vector3x2f[0]);  // 0 1 2
 
     Vec< 4, double > v4d_1 = {-4.0, -3.0, -2.0, -1.0};
     VecArray< 4, double > va4d = { {-1.0, -2.0, -3.0, -4.0, -5.0, -6.0, -7.0, -8.0} };

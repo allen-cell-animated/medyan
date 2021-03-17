@@ -23,8 +23,8 @@ floatingpoint BubbleBubbleRepulsionExp::energy(
     floatingpoint kRep, floatingpoint screenLength) {
     
     floatingpoint dist = distance(
-        makeRefVec< 3, floatingpoint >(coord + i1),
-        makeRefVec< 3, floatingpoint >(coord + i2)
+        makeRefVec< 3 >(coord + i1),
+        makeRefVec< 3 >(coord + i2)
     );
     
     floatingpoint effd = dist - r1 - r2;
@@ -38,10 +38,10 @@ void BubbleBubbleRepulsionExp::forces(
     size_t i1, size_t i2, floatingpoint r1, floatingpoint r2,
     floatingpoint kRep, floatingpoint screenLength) {
 
-    const auto coord1 = makeRefVec< 3, floatingpoint >(coord + i1);
-    const auto coord2 = makeRefVec< 3, floatingpoint >(coord + i2);
-    auto force1 = makeRefVec< 3, floatingpoint >(force + i1);
-    auto force2 = makeRefVec< 3, floatingpoint >(force + i2);
+    const auto coord1 = makeRefVec< 3 >(coord + i1);
+    const auto coord2 = makeRefVec< 3 >(coord + i2);
+    auto force1 = makeRefVec< 3 >(force + i1);
+    auto force2 = makeRefVec< 3 >(force + i2);
 
     //get dist
     floatingpoint dist = distance(coord1, coord2);
