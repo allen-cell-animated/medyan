@@ -76,7 +76,33 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "Core/Globals.hpp"
 #include "MedyanArgs.hpp"
 #include "MedyanConfig.hpp"
+
+#ifdef NO_GUI
+// GUI functions will be excluded, allowing for fewer dependencies in compilation.
+
+// Print warning messages on GUI running attempts
+void guiRunDisabledWarning() {
+    LOG(WARNING) << "GUI is not built into this version. Possibly because NO_GUI was specified in compilation.";
+}
+
+void guiRunRealtime()   { guiRunDisabledWarning(); }
+void guiRunTrajectory() { guiRunDisabledWarning(); }
+
+#else // #ifdef NO_GUI
+// NO_GUI is not defined. GUI functions are enabled.
+
 #include "Visual/Window.hpp"
+
+void guiRunInitialMode(medyan::visual::DisplayMode displayMode) {
+    medyan::visual::VisualDisplay visualDisplay(displayMode);
+    visualDisplay.run();
+}
+
+void guiRunRealtime()   { guiRunInitialMode(medyan::visual::DisplayMode::realtime); }
+void guiRunTrajectory() { guiRunInitialMode(medyan::visual::DisplayMode::trajectory); }
+
+#endif // #ifdef NO_GUI
+
 
 using namespace medyan;
 
@@ -148,18 +174,14 @@ int main(int argc, char **argv) {
             });
 
             if(cmdRes.guiEnabled) {
-                visual::VisualDisplay visualDisplay;
-                visualDisplay.run();
+                guiRunRealtime();
             }
             simul.join();
         }
         break;
 
     case MedyanRunMode::gui:
-        {
-            visual::VisualDisplay visualDisplay(visual::DisplayMode::trajectory);
-            visualDisplay.run();
-        }
+        guiRunTrajectory();
         break;
 
     case MedyanRunMode::analyze:

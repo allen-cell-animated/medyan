@@ -26,6 +26,13 @@ else
     medyan_need_install_boost=true
 fi
 
+if [ "$MEDYAN_NO_GUI" = "true" ]; then
+    medyan_cmake_no_gui="-DMEDYAN_NO_GUI=true"
+    medyan_no_gui=true
+else
+    medyan_no_gui=false
+fi
+
 if [ -n "$MEDYAN_ADDITIONAL_LINK_DIRS" ]; then
     medyan_cmake_additional_link_dirs="-DMEDYAN_ADDITIONAL_LINK_DIRS=$MEDYAN_ADDITIONAL_LINK_DIRS"
 fi
@@ -74,10 +81,14 @@ vcpkg_setup() {
 # Setup dependencies
 vcpkg_install() {
     need_boost=$1
+    no_gui=$2
 
     (
         cd $vcpkg_dir && {
-            ./vcpkg install catch2 eigen3 spectra glfw3 glad glm imgui[opengl3-glad-binding] imgui[glfw-binding] nativefiledialog
+            ./vcpkg install catch2 eigen3 spectra
+            if [ "$no_gui" != true ]; then
+                ./vcpkg install glfw3 glad glm imgui[opengl3-glad-binding] imgui[glfw-binding] nativefiledialog
+            fi
             if [ "$need_boost" = true ]; then
                 ./vcpkg install boost
             fi
@@ -99,6 +110,7 @@ cmake_generate() {
         cd $medyan_build_dir &&
         cmake \
             $medyan_cmake_generator \
+            $medyan_cmake_no_gui \
             $medyan_cmake_boost_install_mode \
             $medyan_cmake_boost_include_dir \
             $medyan_cmake_boost_library_dir \
@@ -113,7 +125,7 @@ mkdir -p $build_dir
 
 # Use vcpkg to resolve dependencies
 vcpkg_setup true false
-vcpkg_install $medyan_need_install_boost
+vcpkg_install $medyan_need_install_boost $medyan_no_gui
 
 # Use CMake to generate build files
 cmake_generate $medyan_cmake_target

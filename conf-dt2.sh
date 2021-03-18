@@ -25,6 +25,7 @@ if [ "$(git version | cut -d"." -f2)" -lt 7 ]; then
 fi
 
 # Set up variables
+export MEDYAN_NO_GUI="true"
 export MEDYAN_BOOST_INSTALL_MODE="manual"
 export MEDYAN_BOOST_INCLUDE_DIR="$BOOST_INCLUDE"
 export MEDYAN_BOOST_LIBRARY_DIR="$BOOST_LIB"

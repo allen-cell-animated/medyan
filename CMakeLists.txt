@@ -105,6 +105,12 @@ target_compile_definitions(medyan PRIVATE
     CHECKFORCES_INF_NAN
 )
 
+if("${MEDYAN_NO_GUI}" STREQUAL "true")
+    target_compile_definitions(medyan PRIVATE
+        NO_GUI             # Disable GUI
+    )
+endif()
+
 if(MSVC)
     target_compile_definitions(medyan PRIVATE
         _USE_MATH_DEFINES  # Enable math macros like M_PI

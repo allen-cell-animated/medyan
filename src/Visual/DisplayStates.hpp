@@ -9,6 +9,7 @@
 
 #include "Visual/FrameData.hpp"
 #include "Visual/VisualElement.hpp"
+#include "VisualSystemRawData.hpp"
 
 // Unlike DisplaySettings, the DisplayStates structure contains states for
 // display thread that is generally automatically filled internally.
@@ -261,6 +262,49 @@ inline void updateMeshDataForAllTrajectories(
         }
     }
 }
+
+
+// Update all realtime mesh data from system raw data that is marked obsolete.
+//
+// Note:
+//   - This function should only be called on the visual thread.
+inline void updateRealtimeMeshData(
+    std::vector< ProfileWithMeshData >& profileData,
+    SystemRawData&                      rawData
+) {
+    std::lock_guard< std::mutex > rawGuard(rawData.me);
+
+    const auto shouldUpdateBecauseDataChanged = [&](const ElementProfile& elementProfile) -> bool {
+        return std::visit(
+            Overload {
+                [&](const MembraneProfile& profile) {
+                    return rawData.updated & raw_data_cat::beadPosition;
+                },
+                [&](const FilamentProfile& profile) {
+                    return rawData.updated & raw_data_cat::beadPosition;
+                },
+                [&](const LinkerProfile& profile) {
+                    return rawData.updated & raw_data_cat::beadPosition;
+                },
+                [&](const AuxLineProfile& profile) {
+                    return rawData.updated & raw_data_cat::compartment;
+                }
+            },
+            elementProfile
+        );
+    };
+
+    for(auto& eachProfileData : profileData) {
+        if(eachProfileData.shouldUpdateMeshData || shouldUpdateBecauseDataChanged(eachProfileData.profile)) {
+            eachProfileData.data = createMeshData(rawData.frameData, rawData.displayTypeMap, eachProfileData.profile);
+            eachProfileData.shouldUpdateMeshData = false;
+        }
+    }
+
+    // reset updated states
+    rawData.updated = 0;
+}
+
 
 } // namespace medyan::visual
 
