@@ -179,22 +179,26 @@ target_link_libraries(medyan PRIVATE Catch2::Catch2)
 find_package(Eigen3 CONFIG REQUIRED)
 target_link_libraries(medyan PRIVATE Eigen3::Eigen)
 
-# GLFW3
-find_package(glfw3 CONFIG REQUIRED)
-target_link_libraries(medyan PRIVATE glfw)
+# GUI related
+if(NOT "${MEDYAN_NO_GUI}" STREQUAL "true")
+    # GLFW3
+    find_package(glfw3 CONFIG REQUIRED)
+    target_link_libraries(medyan PRIVATE glfw)
 
-# GLAD
-find_package(glad CONFIG REQUIRED)
-target_link_libraries(medyan PRIVATE glad::glad)
+    # GLAD
+    find_package(glad CONFIG REQUIRED)
+    target_link_libraries(medyan PRIVATE glad::glad)
 
-# glm
-find_package(glm CONFIG REQUIRED)
-target_link_libraries(medyan PRIVATE glm)
+    # glm
+    find_package(glm CONFIG REQUIRED)
+    target_link_libraries(medyan PRIVATE glm)
 
-# imgui
-find_package(imgui CONFIG REQUIRED)
-target_link_libraries(medyan PRIVATE imgui::imgui)
+    # imgui
+    find_package(imgui CONFIG REQUIRED)
+    target_link_libraries(medyan PRIVATE imgui::imgui)
 
-# native file dialog
-find_package(unofficial-nativefiledialog CONFIG REQUIRED)
-target_link_libraries(medyan PRIVATE unofficial::nativefiledialog::nfd)
+    # native file dialog
+    find_package(unofficial-nativefiledialog CONFIG REQUIRED)
+    target_link_libraries(medyan PRIVATE unofficial::nativefiledialog::nfd)
+
+endif()
