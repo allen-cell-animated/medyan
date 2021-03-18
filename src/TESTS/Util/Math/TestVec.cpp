@@ -29,18 +29,43 @@ TEST_CASE("Vec and RefVec tests", "[Vec]") {
     REQUIRE(v4d_3[2] == Approx(-7.0));
 
     SECTION("Conversion and copy assignments") {
-        // Check copy assignment between Vec's and between RefVec's
+        // copy assignment between Vec's
         {
             Vec3f v3f { 3.0f, 4.0f, 5.0f };
             v3f = v3f_1;
             CHECK(v3f[1] == Approx(1.0f));
-
-            double vp4d[] { -1.0, -2.0, -3.0, -4.0 };
-            auto v4d = makeRefVec< 4 >(vp4d);
-            v4d = v4d_3;
-            CHECK(v4d[2] == Approx(-7.0));
         }
-        // Check assignment between different Vec's
+        // copy assignment between VecMap's
+        {
+            const double pool_1_restore[] { -1.0, -2.0, -3.0, -4.0 };
+            double pool_1[] { -1.0, -2.0, -3.0, -4.0 };
+            double pool_2[] { -5.0, -6.0, -7.0, -8.0 };
+            const auto vcm4d_1 = makeRefVec< 4 >(pool_1_restore);
+            const auto vm4d_1 = makeRefVec< 4 >(pool_1);
+            const auto vm4d_2 = makeRefVec< 4 >(pool_2);
+
+            // lvalue = lvalue
+            vm4d_1 = vm4d_2;
+            CHECK(pool_1[2] == Approx(-7.0));
+            vm4d_1 = vcm4d_1;                      // restore
+            REQUIRE(pool_1[2] == Approx(-3.0));    // check restore
+
+            // rvalue = lvalue
+            makeRefVec<4>(pool_1) = vm4d_2;
+            CHECK(pool_1[2] == Approx(-7.0));
+            vm4d_1 = vcm4d_1;                      // restore
+
+            // lvalue = rvalue
+            vm4d_1 = makeRefVec<4>(pool_2);
+            CHECK(pool_1[2] == Approx(-7.0));
+            vm4d_1 = vcm4d_1;                      // restore
+
+            // rvalue = rvalue
+            makeRefVec<4>(pool_1) = makeRefVec<4>(pool_2);
+            CHECK(pool_1[2] == Approx(-7.0));
+            vm4d_1 = vcm4d_1;                      // restore
+        }
+        // assignment between different Vec's
         {
             Vec3f v3f   { 0.0f, 1.0f, 2.0f };
             Vec3d v3d_1 {  6.0,  7.0,  8.0 };
@@ -52,12 +77,12 @@ TEST_CASE("Vec and RefVec tests", "[Vec]") {
             v3d_2 = v3f;
             CHECK(v3d_2[1] == Approx(7.0));
         }
-        // Check assignment between Vec and RefVec
+        // assignment between Vec and RefVec
         {
             Vec3f v3f { 0.0f, 1.0f, 2.0f };
             std::vector<double> vv3d { 6.0, 7.0, 8.0, -1.0, -2.0, -3.0 };
-            auto v3d_1 = RefVec< 3, std::vector<double> >(vv3d, 0); //  6  7  8
-            auto v3d_2 = makeRefVec< 3 >(vv3d.data() + 3);          // -1 -2 -3
+            auto v3d_1 = VecMap< 3, double >{ vv3d.data() };     //  6  7  8
+            auto v3d_2 = makeRefVec< 3 >(vv3d.data() + 3);       // -1 -2 -3
 
             v3f = v3d_1;
             CHECK(v3f[1] == Approx(7.0f));
@@ -65,12 +90,12 @@ TEST_CASE("Vec and RefVec tests", "[Vec]") {
             v3d_2 = v3f;
             CHECK(v3d_2[1] == Approx(7.0));
         }
-        // Check assignment between different RefVec's
+        // assignment between different RefVec's
         {
             std::vector<float> vv3f { 0.0f, 1.0f, 2.0f };
             std::vector<double> vv3d { 6.0, 7.0, 8.0, -1.0, -2.0, -3.0 };
             auto v3f = makeRefVec< 3 >(vv3f.data());                //  0  1  2
-            auto v3d_1 = RefVec< 3, std::vector<double> >(vv3d, 0); //  6  7  8
+            auto v3d_1 = VecMap< 3, double >{ vv3d.data() };        //  6  7  8
             auto v3d_2 = makeRefVec< 3 >(vv3d.data() + 3);          // -1 -2 -3
 
             v3f = v3d_1;
@@ -79,7 +104,7 @@ TEST_CASE("Vec and RefVec tests", "[Vec]") {
             v3d_2 = v3f;
             CHECK(v3d_2[1] == Approx(7.0));
         }
-        // Check construction of Vec using conversions
+        // construction of Vec using conversions
         {
             // This is to ensure no ambiguity of construction from the same type
             Vec3f v3f (v3f_1);
@@ -242,7 +267,7 @@ TEST_CASE("VecArray tests", "[VecArray]") {
         CHECK(v4d_3[3] == Approx(-0.6));
     }
 
-    SECTION("Conversion and assignment of RefVec") {
+    SECTION("Conversion and assignment of VecMap") {
         // Using conversion from RefVec to Vec
         Vec< 3, float > v3f_2_copy (v3f[2]);
         CHECK(v3f_2_copy[0] == 2.0f); // Check copy is successful
