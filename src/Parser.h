@@ -392,11 +392,21 @@ struct KeyValueParser {
                 auto& arg = lineVector[1];
 
                 if constexpr(is_integral_v< T > || is_floating_point_v< T >) {
+#ifdef __cpp_lib_to_chars
                     const auto [p, ec] = from_chars(arg.data(), arg.data() + arg.size(), param);
                     if(ec != std::errc()) {
                         LOG(ERROR) << name << " argument invalid: " << arg;
                         throw runtime_error("Invalid argument.");
                     }
+#else
+// GCC (as of version 8.4.0) does not support from_chars for floating point.
+                    if constexpr(is_floating_point_v<T>) {
+                        param = std::stod(arg);
+                    }
+                    else {
+                        param = std::stoi(arg);
+                    }
+#endif
                 }
                 else if constexpr(is_same_v< T, string >) {
                     param = arg;
