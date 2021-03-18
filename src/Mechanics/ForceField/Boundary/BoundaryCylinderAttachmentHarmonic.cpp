@@ -34,7 +34,7 @@ floatingpoint BoundaryCylinderAttachmentHarmonic::energy(
 
     for(int i = 0; i < nint; i += 1) {
 
-        const auto coord1 = makeRefVec< 3, floatingpoint >(coord + beadSet[n * i]);
+        const auto coord1 = makeRefVec< 3 >(coord + beadSet[n * i]);
 
         const auto distsq = distance2(coord1, pins[i]);
         U_i = 0.5 * kattr[i] * distsq;
@@ -100,8 +100,8 @@ void BoundaryCylinderAttachmentHarmonic::forces(
 
     for(int i = 0; i < nint; i += 1) {
 
-        const auto coord1 = makeRefVec< 3, floatingpoint >(coord + beadSet[n * i]);
-        auto       force1 = makeRefVec< 3, floatingpoint >(f     + beadSet[n * i]);
+        const auto coord1 = makeRefVec< 3 >(coord + beadSet[n * i]);
+        auto       force1 = makeRefVec< 3 >(f     + beadSet[n * i]);
 
         force1 += kattr[i] * (pins[i] - coord1);
     }

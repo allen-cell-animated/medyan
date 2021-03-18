@@ -51,17 +51,17 @@ floatingpoint BranchingDihedralQuadraticV2::energy(
     floatingpoint U = 0.0;
 
     for(size_t i = 0; i < nint; ++i) {
-        const auto coord1 = makeRefVec< 3, floatingpoint >(coord + beadSet[bpi * i    ]);
+        const auto coord1 = makeRefVec< 3 >(coord + beadSet[bpi * i    ]);
         auto p = pos[i];
         Vec<3,floatingpoint> coord2;
-        coord2 = makeRefVec< 3, floatingpoint >(coord + beadSet[bpi * i + 1]);
+        coord2 = makeRefVec< 3 >(coord + beadSet[bpi * i + 1]);
         if(areEqual(p, 1.0)) {
             p = (floatingpoint) 0.5;
             //cplus = cminus +p*(cplus_extended-cminus)
             coord2 = (1 / p) *(coord2 - (1 - p) * coord1);
         }
-        const auto coord3 = makeRefVec< 3, floatingpoint >(coord + beadSet[bpi * i + 2]);
-        const auto coord4 = makeRefVec< 3, floatingpoint >(coord + beadSet[bpi * i + 3]);
+        const auto coord3 = makeRefVec< 3 >(coord + beadSet[bpi * i + 2]);
+        const auto coord4 = makeRefVec< 3 >(coord + beadSet[bpi * i + 3]);
 
         // Brancher coordinate on the mother filament
         const auto mp = (1 - p) * coord1 + p * coord2;
@@ -124,15 +124,15 @@ void BranchingDihedralQuadraticV2::forces(
     );
 
     for(size_t i = 0; i < nint; ++i) {
-        const auto coord1 = makeRefVec< 3, floatingpoint >(coord + beadSet[bpi * i    ]);
-        const auto coord2 = makeRefVec< 3, floatingpoint >(coord + beadSet[bpi * i + 1]);
-        const auto coord3 = makeRefVec< 3, floatingpoint >(coord + beadSet[bpi * i + 2]);
-        const auto coord4 = makeRefVec< 3, floatingpoint >(coord + beadSet[bpi * i + 3]);
+        const auto coord1 = makeRefVec< 3 >(coord + beadSet[bpi * i    ]);
+        const auto coord2 = makeRefVec< 3 >(coord + beadSet[bpi * i + 1]);
+        const auto coord3 = makeRefVec< 3 >(coord + beadSet[bpi * i + 2]);
+        const auto coord4 = makeRefVec< 3 >(coord + beadSet[bpi * i + 3]);
 
-        auto f1 = makeRefVec< 3, floatingpoint >(f + beadSet[bpi * i    ]);
-        auto f2 = makeRefVec< 3, floatingpoint >(f + beadSet[bpi * i + 1]);
-        auto f3 = makeRefVec< 3, floatingpoint >(f + beadSet[bpi * i + 2]);
-        auto f4 = makeRefVec< 3, floatingpoint >(f + beadSet[bpi * i + 3]);
+        auto f1 = makeRefVec< 3 >(f + beadSet[bpi * i    ]);
+        auto f2 = makeRefVec< 3 >(f + beadSet[bpi * i + 1]);
+        auto f3 = makeRefVec< 3 >(f + beadSet[bpi * i + 2]);
+        auto f4 = makeRefVec< 3 >(f + beadSet[bpi * i + 3]);
 
         // Brancher coordinate on the mother filament
         const auto p = pos[i];
