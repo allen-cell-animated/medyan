@@ -2,6 +2,7 @@
 
 ## Refactoring
 - Refactor the data structure in the energy minimization, such that it allows for non-coordinate degrees of freedom (9a02e0f6d).
+- Improve reference semantics for `Vec`-like structures as function arguments (27b296ad4).
 
 ## Enhancements
 - Optimize branching force field calculations (df76443).
