@@ -117,6 +117,11 @@ else()
     set(THREADS_PREFER_PTHREAD_FLAG ON)
     find_package(Threads REQUIRED)
     target_link_libraries(medyan PRIVATE Threads::Threads)
+
+    # GCC <9 requires linking to stdc++fs
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        target_link_libraries(medyan PRIVATE stdc++fs)
+    endif()
 endif()
 
 if(MEDYAN_ADDITIONAL_LINK_DIRS)

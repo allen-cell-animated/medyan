@@ -393,11 +393,21 @@ struct KeyValueParser {
                 auto& arg = lineVector[1];
 
                 if constexpr(is_integral_v< T > || is_floating_point_v< T >) {
+#ifdef __cpp_lib_to_chars
                     const auto [p, ec] = from_chars(arg.data(), arg.data() + arg.size(), param);
                     if(ec != std::errc()) {
                         LOG(ERROR) << name << " argument invalid: " << arg;
                         throw runtime_error("Invalid argument.");
                     }
+#else
+// GCC (as of version 8.4.0) does not support from_chars for floating point.
+                    if constexpr(is_floating_point_v<T>) {
+                        param = std::stod(arg);
+                    }
+                    else {
+                        param = std::stoi(arg);
+                    }
+#endif
                 }
                 else if constexpr(is_same_v< T, string >) {
                     param = arg;
@@ -643,10 +653,10 @@ inline void parseKeyValueList(
 // Parsing an s-expr as key-value pairs.
 template< typename Params >
 inline void parseKeyValueList(
-    Params&                                params,
-    const SExpr&                           se,
-    const typename KeyValueParser<Params>& parser,
-    KeyValueParserUnknownKeyAction         unknownKeyAction = KeyValueParserUnknownKeyAction::ignore
+    Params&                        params,
+    const SExpr&                   se,
+    const KeyValueParser<Params>&  parser,
+    KeyValueParserUnknownKeyAction unknownKeyAction = KeyValueParserUnknownKeyAction::ignore
 ) {
     return parseKeyValueList(params, se, parser.dict, unknownKeyAction);
 }
@@ -666,8 +676,8 @@ inline auto buildTokens(
 }
 template< typename Params >
 inline auto buildTokens(
-    const Params&                          params,
-    const typename KeyValueParser<Params>& parser
+    const Params&                 params,
+    const KeyValueParser<Params>& parser
 ) {
     return buildTokens(params, parser.tokenBuildList);
 }
