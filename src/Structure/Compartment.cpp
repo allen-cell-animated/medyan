@@ -63,7 +63,7 @@ void Compartment::SIMDcoordinates_section(){
                         Cylinder::getDbDataConst().value[cindex].filamentFirstEntry;
 
                 //packed integer containing filament ID and filament position.
-                //Assumes you don't have 127 (2^7 -1) cylinders
+                //Assumes you don't have 127 (2^7 -1) binding sites
                 uint32_t cylfinfo = (_fID<< 7);
                 cylfinfo = cylfinfo | _fpos;
 
@@ -582,8 +582,8 @@ void Compartment::deallocateSIMDcoordinates(){
 		partitionedcoordz[i].clear();
 		cindex_bs_section[i].clear();
         finfo_bs_section[i].clear();
-		bscoords_section_linker[i].resize(0);
-		bscoords_section_motor[i].resize(0);
+		if(bscoords_section_linker.size() > 0) bscoords_section_linker[i].resize(0);
+		if(bscoords_section_motor.size() > 0) bscoords_section_motor[i].resize(0);
 	}
 
 }
@@ -1749,7 +1749,7 @@ void Compartment::getNonSlicedVolumeArea() {
 }
 
 //Calculates volume fraction
-void Compartment::getSlicedVolumeArea() {
+/*void Compartment::getSlicedVolumeArea() {
     // The calculation requires the
     //  - The position calculation of triangles
     //  - The area calculation of triangles
@@ -1929,6 +1929,251 @@ void Compartment::getSlicedVolumeArea() {
         cout << "x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
         cout << "Something goes wrong!" << endl;
     }
+}*/
+//Calculates volume fraction
+//Calculates volume fraction
+void Compartment::getSlicedVolumeArea() {
+    // The calculation requires the
+    //  - The position calculation of triangles
+    //  - The area calculation of triangles
+    //  - The unit normal vector of triangles
+    // ASSUMPTIONS:
+    //  - This compartment is a CUBE
+    //get compartment sizes in X,Y and the radius of cylinder
+    auto sizex = SysParams::Geometry().compartmentSizeX;
+    auto sizey = SysParams::Geometry().compartmentSizeY;
+    auto sizez = SysParams::Geometry().compartmentSizeZ;
+    auto r = SysParams::Boundaries().diameter / 2; //radius
+
+    //get geometry center of the compartment
+    auto x = _coords[0];
+    auto y = _coords[1];
+
+    auto leftx = x - sizex / 2;
+    auto rightx = x + sizex / 2;
+    auto lowy = y - sizey / 2;
+    auto upy = y + sizey / 2;
+
+    float pleft, pright, plow, pup, lleft, lright, llow, lup;
+    vector<float> edge; //left0,right1,low2,up3
+
+    // find intersections for 4 edges of a compartment
+    // if no intersection for an edge, write -1
+    pleft = r - sqrt(r * r - (leftx - r) * (leftx - r));
+
+    if(pleft > upy || pleft < lowy) {
+
+        pleft = r + sqrt(r * r - (leftx - r) * (leftx - r));
+
+        if(pleft > upy || pleft < lowy) edge.push_back(-1);
+        else edge.push_back(pleft);
+    }
+    else edge.push_back(pleft);
+
+
+    pright = r - sqrt(r * r - (rightx - r) * (rightx - r));
+
+    if(pright > upy || pright < lowy){
+
+        pright = r + sqrt(r * r - (rightx - r) * (rightx - r));
+
+        if(pright > upy || pright < lowy) edge.push_back(-1);
+        else edge.push_back(pright);
+    }
+    else edge.push_back(pright);
+
+
+    plow = r - sqrt(r * r - (lowy - r) * (lowy - r));
+
+    if(plow > rightx || plow < leftx){
+
+        plow = r + sqrt(r * r - (lowy - r) * (lowy - r));
+
+        if(plow > rightx || plow < leftx) edge.push_back(-1);
+        else edge.push_back(plow);
+    }
+    else edge.push_back(plow);
+
+    pup = r - sqrt(r * r - (upy - r) * (upy - r));
+
+    if(pup > rightx || pup < leftx){
+
+        pup = r + sqrt(r * r - (upy - r) * (upy - r));
+
+        if(pup > rightx || pup < leftx) edge.push_back(-1);
+        else edge.push_back(pup);
+    }
+    else edge.push_back(pup);
+
+    vector<int> internum;
+
+    for(int i=0; i < 4; i++){
+        //if intersections are opposite
+        if(edge[i] > -0.5) internum.push_back(i);
+    }
+
+    //3 intersections -> two of them are the same vertex, remove the extra one
+    if(internum.size() < 4 && internum.size() > 2){
+
+        if(internum[0] == 0 && internum[1] == 1) internum.erase(internum.end()-1);
+        else internum.erase(internum.begin());
+
+    }
+
+
+    float distsq = (x - r) * (x - r) + (y - r) * (y - r);
+    float totalVol = sizex * sizey;
+    float fraction_i;
+
+    //internum = 0 if no intersection
+    if(internum.size() < 1){
+        //outside network
+        if(distsq > r * r){
+            lleft = 0;
+            lright = 0;
+            llow = 0;
+            lup = 0;
+            _partialVolume = 0.0;
+        }
+            //inside network
+        else{
+            lleft = sizey;
+            lright = sizey;
+            llow = sizex;
+            lup = sizex;
+            _partialVolume = 1.0;
+        }
+    }
+        //internum = 4 if both intersection are vertices
+    else if (internum.size() > 3){
+        lleft = sizey;
+        lright = sizey;
+        llow = sizex;
+        lup = sizex;
+        _partialVolume = 0.5;
+    }
+    else {
+        //1. intersect left0 and lower2 planes
+        if(internum[0] == 0 && internum[1] == 2){
+            fraction_i = 0.5 * (edge[0] - lowy) * (edge[2] - leftx) / totalVol;
+
+            if(distsq < r * r) {
+                _partialVolume = 1 - fraction_i;
+                lleft = upy - edge[0];
+                lright = sizey;
+                llow = rightx - edge[2];
+                lup = sizex;
+            }
+            else{
+                _partialVolume = fraction_i;
+                lleft = edge[0] - lowy;
+                lright = sizey;
+                llow = edge[2] - leftx;
+                lup = sizex;
+            }
+        }
+            //2. intersect left0 and right1 planes
+        else if(internum[0] == 0 && internum[1] == 1){
+            fraction_i = 0.5 * (edge[0] - lowy + edge[1] - lowy) * sizex / totalVol;
+
+            if(y > r) {
+                _partialVolume = fraction_i;
+                lleft = edge[0] - lowy;
+                lright = edge[1] - lowy;
+                llow = sizex;
+                lup = sizex;
+            }
+            else{
+                _partialVolume = 1 - fraction_i;
+                lleft = upy - edge[0];
+                lright = upy - edge[1];
+                llow = sizex;
+                lup = sizex;
+            }
+        }
+            //3. intersect left0 and upper3 planes
+        else if(internum[0] == 0 && internum[1] == 3){
+            fraction_i = 0.5 * (upy - edge[0]) * (edge[3] - leftx) / totalVol;
+
+            if(distsq < r * r) {
+                _partialVolume = 1 - fraction_i;
+                lleft = edge[0] - lowy;
+                lright = sizey;
+                llow = sizex;
+                lup = rightx - edge[3];
+            }
+            else{
+                _partialVolume = fraction_i;
+                lleft = upy - edge[0];
+                lright = sizey;
+                llow = sizex;
+                lup = edge[3] - leftx;
+            }
+        }
+            //4. intersect lower2 and right1 planes
+        else if(internum[0] == 1 && internum[1] == 2){
+            fraction_i = 0.5 * (edge[1] - lowy) * (rightx - edge[2]) / totalVol;
+
+            if(distsq < r * r) {
+                _partialVolume = 1 - fraction_i;
+                lleft = sizey;
+                lright = upy - edge[1];
+                llow = edge[2] - leftx;
+                lup = sizex;
+            }
+            else{
+                _partialVolume = fraction_i;
+                lleft = sizey;
+                lright = edge[1] - lowy;
+                llow = rightx - edge[2];
+                lup = sizex;
+
+            }
+        }
+            //5. intersect right1 and up3 planes
+        else if(internum[0] == 1 && internum[1] == 3){
+            fraction_i = 0.5 * (upy - edge[1]) * (rightx - edge[3]) / totalVol;
+
+            if(distsq < r * r) {
+                _partialVolume = 1 - fraction_i;
+                lleft = sizey;
+                lright = edge[1] - lowy;
+                llow = sizex;
+                lup = edge[3] - leftx;
+            }
+            else{
+                _partialVolume = fraction_i;
+                lleft = sizey;
+                lright = upy - edge[1];
+                llow = sizex;
+                lup = rightx - edge[3];
+
+            }
+        }
+            //6. intersect lower2 and up3 planes (internum[0] == 2 && internum[1] == 3)
+        else {
+            fraction_i = 0.5 * (edge[2] - leftx + edge[3] - leftx) * sizey / totalVol;
+
+            if(x > r) {
+                _partialVolume = fraction_i;
+                lleft = sizey;
+                lright = sizey;
+                llow = edge[2] - leftx;
+                lup = edge[3] - leftx;
+            }
+            else{
+                _partialVolume = 1 - fraction_i;
+                lleft = sizey;
+                lright = sizey;
+                llow = rightx - edge[2];
+                lup = rightx - edge[3];
+            }
+        }
+    }
+
+
+    _partialArea = {{lleft * sizez, lright * sizez, llow * sizez, lup * sizez, _partialVolume * sizex * sizey, _partialVolume * sizex * sizey}};
+
 }
 
 

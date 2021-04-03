@@ -75,6 +75,10 @@ void CBranchingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
     
     //first, find the correct diffusing or bulk species
     RSpecies** rs = onRxn->rspecies();
+
+    diffusingactinspeciesname = rs[SPECIESA_DIFFUSING_INDEX_ONRXN]->getSpecies().getName();
+    _pBranchingPoint->setdiffusingactinspeciesname(diffusingactinspeciesname);
+
     Species* sfb = &(rs[SPECIESB_BINDING_INDEX]->getSpecies());
     
     //create the reaction species

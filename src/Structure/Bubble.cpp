@@ -15,8 +15,10 @@
 
 #include "SubSystem.h"
 #include "Bead.h"
+#include "Structure/Special/AFM.h"
 
 #include "SysParams.h"
+#include "CUDAcommon.h"
 
 Bubble::Bubble(SubSystem* ps, vector<floatingpoint> coordinates, short type)
 
@@ -35,13 +37,51 @@ Bubble::Bubble(SubSystem* ps, vector<floatingpoint> coordinates, short type)
       _MTOCBendingK = SysParams::Mechanics().MTOCBendingK[_type];
     }
           
+      if(SysParams::Mechanics().AFMBendingK.size() == 0){
+          _AFMBendingK = 0.0;
+      }
+      else{
+          _AFMBendingK = SysParams::Mechanics().AFMBendingK[_type];
+      }
+          
     //set up bead
     _bead = _ps->addTrackable<Bead>(coordinates, this, 0);
 }
 
 void Bubble::updatePosition() {
     
+
     coordinate = _bead->vcoordinate();
+}
+
+void Bubble::updatePositionManually() {
+    //if reaching the desire position
+    if(iter > SysParams::Chemistry().StepTotal) {
+        iter = 1;
+        currentStep++;
+    }
+    //All position updates will be finished in 1 second
+    //Step displacement is 1 /StepTotal
+    if(tau() > (currentStep * SysParams::Chemistry().StepTime + iter * 1 / SysParams::Chemistry().StepTotal)){
+        floatingpoint *bcoord, *coord, step;
+        
+        if(currentStep > SysParams::Chemistry().IterChange){
+            step = SysParams::Chemistry().AFMStep2;
+        }
+        else{
+            step = SysParams::Chemistry().AFMStep1;
+        }
+
+        _bead->coordinate()[2] += step;
+
+        coordinate[2] += step;
+
+        // Update boundary element coordinate
+        static_cast<AFM*>(getParent())->getPlaneBoundaryElement()->updateCoords(_bead->vcoordinate());
+
+        iter++;
+    }
+
 }
 
 void Bubble::printSelf() {

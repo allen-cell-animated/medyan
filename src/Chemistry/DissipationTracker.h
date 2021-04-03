@@ -93,15 +93,27 @@ private:
     
     // vector of HRMD element
     vector<tuple<string, floatingpoint>> HRMDVec2;
+    vector<vector<tuple<string, floatingpoint>>> HRMDMat;
     
     // vector of motor walking data
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> motorData;
+    //ID, birthtime, walktime, xcoord, ycoord, zcoord,
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+    floatingpoint>> motorWalkData;
+
+    // vector of motor unbinding data
+    //ID, birthtime, deathtime, xcoord, ycoord, zcoord,
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+            floatingpoint>> motorUnbindingData;
     
     // vector of linker unbinding data
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> linkerUnbindingData;
+    //ID, birthtime, deathtime, xcoord, ycoord, zcoord,
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+    floatingpoint>> linkerUnbindingData;
     
     // vector of linker binding data
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> linkerBindingData;
+    //ID, birthtime, xcoord, ycoord, zcoord,
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint>>
+    linkerBindingData;
     
 public:
     
@@ -156,7 +168,9 @@ public:
         
         // get the number of products
         int N = re->getN();
+        int sigma = N - M;
         
+        float volFrac = re->getVolumeFrac();
         
         // for a vector of stoichiometric coefficients, assumed to be 1 for all
         vector<int> reacNu(M,1);
@@ -190,6 +204,8 @@ public:
         if(reType==0) {
             // Regular Reaction
             delGZero =  re->getGNumber();
+            delGZero -= sigma*log(volFrac);
+            
             delG = delGGenChem(delGZero, reacN, reacNu, prodN, prodNu);
             
         } else if(reType==1){
@@ -202,6 +218,8 @@ public:
             // Polymerization Plus End
             
             delGZero = re->getGNumber();
+            delGZero += log(volFrac);
+            
             species_copy_t nMon = reacN[0];
             delG = delGPolyChem(delGZero,nMon,"P");
             
@@ -210,6 +228,8 @@ public:
             // Polymerization Minus End
             
             delGZero = re->getGNumber();
+            delGZero += log(volFrac);
+            
             species_copy_t nMon = reacN[0];
             delG = delGPolyChem(delGZero,nMon,"P");
             
@@ -218,6 +238,8 @@ public:
             // Depolymerization Plus End
             
             delGZero = re->getGNumber();
+            delGZero -= log(volFrac);
+            
             species_copy_t nMon = prodN[0];
             delG = delGPolyChem(delGZero,nMon,"D");
             
@@ -225,6 +247,8 @@ public:
             // Depolymerization Minus End
             
             delGZero = re->getGNumber();
+            delGZero -= log(volFrac);
+            
             species_copy_t nMon = prodN[0];
             delG = delGPolyChem(delGZero,nMon,"D");
             
@@ -232,6 +256,8 @@ public:
         } else if(reType==6){
             // Linker Binding
             delGZero=re->getGNumber();
+            delGZero += log(volFrac);
+            
             species_copy_t nMon = reacN[1];
             delG = delGPolyChem(delGZero,nMon,"P");
             
@@ -239,6 +265,7 @@ public:
             
         } else if(reType==7){
             // Motor Binding
+            // need to implement volFrac change here
             floatingpoint rn=re->getGNumber();
             
             floatingpoint nh1 = SysParams::Chemistry().motorNumHeadsMin[0];
@@ -246,11 +273,14 @@ public:
             floatingpoint nh = (nh1+nh2)/2.0;
             
             delG = delGMyoChem(nh,rn);
+            delG += log(volFrac);
             
             
         } else if(reType==8){
             // Linker Unbinding
             delGZero=re->getGNumber();
+            delGZero -= log(volFrac);
+            
             species_copy_t nMon = prodN[0];
             delG = delGPolyChem(delGZero,nMon,"D");
             
@@ -271,7 +301,8 @@ public:
             
             delG = delGMyoChem(nh,rn);
             delG = -delG;
-            
+            delG -= log(volFrac);
+            recordMotorUnbinding(m);
             
         } else if(reType==10){
             // Motor Walking Forward
@@ -296,6 +327,8 @@ public:
             numP.push_back(Filament::countSpecies(0,prodNames[0]));
             
             delGZero = (re->getGNumber());
+            delGZero -= sigma*log(volFrac);
+            
             delG = delGGenChem(delGZero, numR, reacNu, numP, prodNu);
             
         } else if(reType==13){
@@ -393,13 +426,20 @@ public:
     vector<tuple<string, floatingpoint>> getCumHRMDMechDiss(){
         return cumHRMDMechDiss;
     }
-    
+
+    //get HRMD mat
+    vector<vector<tuple<string, floatingpoint>>> getHRMDmat(){
+        return HRMDMat;
+    }
     //  used to determine if minization should proceed
     floatingpoint getCurrentStress(){
         return GMid-G1;
     };
+
+
+    //
     
-    // set the value of G1
+    // set the value of G1 - before chemistry
     void setG1(const EnergyReport& report){
         HRMDVec1.clear();
         
@@ -413,14 +453,13 @@ public:
       
     }
     
-    // set the value of G2
+    // set the value of G2 - after minimization
     void setG2(const EnergyReport& report){
         HRMDVec2.clear();
         for(auto i = 0; i < report.individual.size(); i++){
             HRMDVec2.push_back(make_tuple(report.individual[i].name, report.individual[i].energy));
         };
-        
-        
+        HRMDMat.push_back(HRMDVec2);
         G2 = report.total;
     }
     
@@ -430,8 +469,7 @@ public:
         for(auto i = 0; i < report.individual.size(); i++){
             HRMDVecMid.push_back(make_tuple(report.individual[i].name, report.individual[i].energy));
         };
-        
-        
+        HRMDMat.push_back(HRMDVecMid);
         GMid = report.total;
     }
     
@@ -523,34 +561,58 @@ public:
         return HRCDVec;
     }
     
-    // store the space time information of a motor walking event to motorData
+    // store the space time information of a motor walking event to motorWalkData
     void recordWalk(MotorGhost* m){
         vector<floatingpoint> mcoords = m->coordinate;
         mcoords.insert(mcoords.begin(), tau());
-        motorData.push_back(make_tuple(mcoords[0], mcoords[1], mcoords[2], mcoords[3]));
-        
+        //ID birthtime, walktime, coordx coordy coordz
+        motorWalkData.push_back(make_tuple(m->getId(), m->getBirthTime(), mcoords[0],
+                mcoords[1], mcoords[2], mcoords[3]));
+
     
     }
     
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> getMotorData(){
-        return motorData;
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+    floatingpoint>>
+    getMotorWalkingData(){
+        return motorWalkData;
     }
     
     void clearMotorData(){
-        motorData.clear();
+        motorWalkData.clear();
+    }
+
+    void clearMotorUnbindingData(){
+        motorUnbindingData.clear();
     }
     
     // store the space time information of a linker unbinding event to linkerUnbindingData
     void recordLinkerUnbinding(Linker* l){
         vector<floatingpoint> lcoords = l->coordinate;
         lcoords.insert(lcoords.begin(), tau());
-        linkerUnbindingData.push_back(make_tuple(lcoords[0], lcoords[1], lcoords[2], lcoords[3]));
-        
-  
+        linkerUnbindingData.push_back(make_tuple(l->getId(), l->getBirthTime(), lcoords[0],
+                lcoords[1], lcoords[2],lcoords[3]));
+    }
+
+    // store the space time information of a linker unbinding event to motorUnbindingData
+    void recordMotorUnbinding(MotorGhost* m){
+        vector<floatingpoint> mcoords = m->coordinate;
+        mcoords.insert(mcoords.begin(), tau());
+        //ID birthtime unbindtime coordx coordy coordz
+        motorUnbindingData.push_back(make_tuple(m->getId(), m->getBirthTime(), mcoords[0],
+                                                 mcoords[1], mcoords[2], mcoords[3]));
     }
     
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> getLinkerUnbindingData(){
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+    floatingpoint>>
+    getLinkerUnbindingData(){
         return linkerUnbindingData;
+    }
+
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+            floatingpoint>>
+    getMotorUnbindingData(){
+        return motorUnbindingData;
     }
     
     void clearLinkerUnbindingData(){
@@ -561,17 +623,23 @@ public:
     void recordLinkerBinding(Linker* l){
         vector<floatingpoint> lcoords = l->coordinate;
         lcoords.insert(lcoords.begin(), tau());
-        linkerBindingData.push_back(make_tuple(lcoords[0], lcoords[1], lcoords[2], lcoords[3]));
+        linkerBindingData.push_back(make_tuple(l->getId(), lcoords[0], lcoords[1],
+                lcoords[2], lcoords[3]));
         
 
     }
     
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> getLinkerBindingData(){
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint>>
+    getLinkerBindingData(){
         return linkerBindingData;
     }
     
     void clearLinkerBindingData(){
         linkerBindingData.clear();
+    }
+
+    void clearHRMDMats(){
+        HRMDMat.clear();
     }
 };
 

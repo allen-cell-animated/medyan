@@ -20,6 +20,19 @@
 #include "common.h"
 #include "Parser.h"
 
+//Did not minimize structure
+#ifdef TRACKDIDNOTMINIMIZE
+struct MinimizationParams{
+    vector<floatingpoint> maxF;
+    vector<floatingpoint> TotalE;
+    vector<vector<floatingpoint>> Energyvec;
+    vector<floatingpoint> Lambda;
+    vector<floatingpoint> beta;
+    vector<bool> safeModeORnot;
+    vector<floatingpoint> tempEnergyvec;
+    vector<vector<floatingpoint>> gradientvec;
+};
+#endif
 /// Struct to hold mechanical parameters for the system
 struct MechParams {
 
@@ -72,7 +85,7 @@ struct MechParams {
     vector<floatingpoint> BubbleRadius = {};
     vector<floatingpoint> BubbleScreenLength = {};
 	vector<floatingpoint> MTOCBendingK = {};
-
+    vector<floatingpoint> AFMBendingK = {};
 
 	floatingpoint BubbleCutoff = 0.0;
 
@@ -104,6 +117,10 @@ struct MechParams {
     // parameters controlling the calculation of the Hessian matrix
     bool hessTracking = false;
     float hessDelta = 0.0001;
+    bool denseEstimation = true;
+    int hessSkip = 20;
+
+    int sameFilBindSkip = 2;
 
 
 };
@@ -183,11 +200,27 @@ struct ChemParams {
     /// This passivates any unbinding reactions, resulting in permanently
     /// bound linkers for the rest of simulation.
     bool makeLinkersStatic = false;
+
     floatingpoint makeLinkersStaticTime = 0.0;
 
     bool dissTracking = false;
     bool eventTracking = false;
     int linkerbindingskip = 2;
+    
+    
+    /// Make (de)polymerization depends on stress
+    bool makeRateDepend = false;
+    double makeRateDependTime = 0.0;
+    double makeRateDependForce = 0.0;
+    
+    /// Make (de)polymerization depends on stress
+    bool makeAFM = false;
+    double AFMStep1 = 0.0;
+    double AFMStep2 = 0.0;
+    double IterChange = 0.0;
+    double StepTotal = 0.0;
+    double StepTime = 0.0;
+    float originalPolyPlusRate;
     
 
     //@}
@@ -202,7 +235,7 @@ struct GeoParams {
 
     //@{
     /// Geometry parameter
-    short nDim = 0;
+    short nDim = 3;
 
     int NX = 0;
     int NY = 0;
@@ -281,6 +314,10 @@ struct DyRateParams {
     /// Option for dynamic branching point unbinding rate
     vector<floatingpoint> dBranchUnbindingCharLength = {};
 
+    /// Option for addinh dynamics branching point unbinding rate based on a
+    // characteristic Force.
+    vector<floatingpoint> dBranchUnbindingCharForce = {};
+
     /// Option for manual (de)polymerization rate changer
     /// Start time
     double manualCharStartTime = 100000.0;
@@ -301,6 +338,15 @@ struct DyRateParams {
     
 };
 
+struct SpecialParams {
+    
+    /// Parameters for initializing MTOC attached filaments
+    float mtocTheta1 = 0.0;
+    float mtocTheta2 = 1.0;
+    float mtocPhi1 = 0.0;
+    float mtocPhi2 = 1.0;
+};
+
 /// Static class that holds all simulation parameters,
 /// initialized by the SystemParser
 class SysParams {
@@ -318,7 +364,12 @@ public:
     static GeoParams GParams;     ///< The geometry parameters
     static BoundParams BParams;   ///< The boundary parameters
     static DyRateParams DRParams; ///< The dynamic rate parameters
+    #ifdef TRACKDIDNOTMINIMIZE
+    static MinimizationParams MinParams;
+	#endif
 
+    static SpecialParams SParams; ///< Other parameters
+    
 public:
     //@{
 #ifdef NLSTENCILLIST
@@ -330,10 +381,12 @@ public:
     static long long exvolcounterz[3];
     ///Const getter
     static bool RUNSTATE; //0 refers to restart phase and 1 refers to run phase.
+    static bool USECHEMCOPYNUM; // if set to 0, restart file copy numbers are used. If
+    // not, chemistry file copy numbers are used.
     static bool INITIALIZEDSTATUS; // true refers to sucessful initialization. false
     static bool DURINGCHEMISTRY; //true if MEDYAN is running chemistry, false otherwise.
     // corresponds to an on-going initialization state.
-    static int numthreads;
+
     //aravind July11,2016
     static vector<float> MUBBareRate;
     static vector<float> LUBBareRate;
@@ -344,6 +397,7 @@ public:
     static const GeoParams& Geometry() {return GParams;}
     static const BoundParams& Boundaries() {return BParams;}
     static const DyRateParams& DynamicRates() {return DRParams;}
+    static const SpecialParams& SpecialInputs() {return SParams;}
     //@}
 
     //@{
@@ -353,6 +407,11 @@ public:
     static bool checkDyRateParameters(DynamicRateType& dy);
     static bool checkGeoParameters();
     //@}
+
+    static void addChemParameters(ChemistryData& chem);
+    #ifdef TRACKDIDNOTMINIMIZE
+    static MinimizationParams& Mininimization() { return MinParams;}
+	#endif
 
 };
 

@@ -7,6 +7,8 @@ Initializing various module variables.
 //#include "dist_moduleV2/dist_out.h"
 //#include "dist_moduleV2/dist_simd.h"
 //#include "dist_moduleV2/dist_simd_utils.h"
+
+#ifdef SIMDBINDINGSEARCH
 #include "dist_out.h"
 #include "dist_simd.h"
 #include "dist_simd_utils.h"
@@ -115,4 +117,4 @@ namespace dist {
 
 } // end-of-namespace dist
 
-
+#endif

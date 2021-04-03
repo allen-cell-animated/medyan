@@ -304,14 +304,6 @@ void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f,
         invL = 1 / dist;
         f0 = kstr[i] * ( dist - eql[i]) * invL;
 
-/*        if(isnan(invL)||isinf(invL)||isnan(f0)||isinf(f0)||isnan(kstr[i])||isinf(kstr[i])
-        ||isinf(eql[i])||isnan(eql[i])||isnan(v1[0])||isinf(v1[0])||isnan(v1[1])||isinf
-        (v1[1])||isnan(v1[2])||isinf(v1[2])||isnan(pos[i])||isinf(pos[i])){
-            cout<<"Branching Stretching force error"<<endl;
-
-            cout<<"f0 "<<f0<<" pos "<<pos[i]<<" invL "<<invL<<" v1 "<<v1[0]<<" "
-            <<v1[1]<<" "<<v1[2]<<" kstr "<<kstr[i]<<endl;
-        }*/
 
         f1[0] +=  -f0 * ( coord3[0] - v1[0] ) * (pos[i] - 1);
         f1[1] +=  -f0 * ( coord3[1] - v1[1] ) * (pos[i] - 1);
@@ -326,7 +318,10 @@ void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f,
         f3[0] +=  -f0 * ( coord3[0] - v1[0] );
         f3[1] +=  -f0 * ( coord3[1] - v1[1] );
         f3[2] +=  -f0 * ( coord3[2] - v1[2] );
-        stretchforce[i] = f0/invL;
+
+        stretchforce[3*i] = -f0 * ( coord3[0] - v1[0] );
+        stretchforce[3*i + 1] = -f0 * ( coord3[1] - v1[1] );
+        stretchforce[3*i + 2] = -f0 * ( coord3[2] - v1[2] );
 
         #ifdef CHECKFORCES_INF_NAN
         if(checkNaN_INF<floatingpoint>(f1, 0, 2)||checkNaN_INF<floatingpoint>(f2,0,2)||checkNaN_INF<floatingpoint>(f3,0,2)){

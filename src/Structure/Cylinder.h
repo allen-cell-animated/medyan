@@ -113,6 +113,7 @@ private:
     /// ID of filament
     int _filID;
 
+
 public:
     using DatabaseType = Database< Cylinder, true, CylinderInfoData >;
 
@@ -134,7 +135,8 @@ public:
     Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int position,
              bool extensionFront = false,
              bool extensionBack  = false,
-             bool initialization = false);
+             bool initialization = false,
+             floatingpoint eqLength = -1.0);
 
     virtual ~Cylinder() noexcept;
 
@@ -213,16 +215,24 @@ public:
 
     virtual void printSelf();
 
+                                       
+    void setFilID(int filID){
+       _filID = filID;
+    };
+
+    int getFilID(){
+       return _filID;
+    };
+
     /// Returns whether a cylinder is within a certain distance from another
     /// Uses the closest point between the two cylinders
     virtual bool within(Cylinder* other, floatingpoint dist);
-    void setFilID(int filID){
-        _filID = filID;
-    };
 
-    int getFilID() const {
-        return _filID;
-    }
+
+    //Function to initialize Cylinders properly during restart
+	void initializerestart(int nummonomers, int firstmonomer, int lastmonomer,
+						bool minusendstatus, bool plusendstatus, short minusendtype,
+						short plusendtype);
 
     static floatingpoint timecylinder1;
 	static floatingpoint timecylinder2;

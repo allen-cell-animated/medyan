@@ -14,8 +14,9 @@
 #include "BoundaryFF.h"
 
 #include "BoundaryCylinderRepulsion.h"
-#include "BoundaryCylinderRepulsionIn.h"
 #include "BoundaryCylinderRepulsionExp.h"
+
+#include "BoundaryCylinderRepulsionIn.h"
 #include "BoundaryCylinderRepulsionExpIn.h"
 
 #include "BoundaryBubbleRepulsion.h"
@@ -26,27 +27,29 @@
 
 #include "BoundaryElement.h"
 #include "Bead.h"
+#include "Bubble.h"
 #include "Composite.h"
 
 BoundaryFF::BoundaryFF (string type) {
-    
+
     if (type == "REPULSIONEXP") {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>());
 
         _boundaryInteractionVector.emplace_back(
-        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
+            new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
     }
     else if(type == "REPULSIONEXPIN") {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>());
-/*        _boundaryInteractionVector.emplace_back(
-        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());*/
+        _boundaryInteractionVector.emplace_back(
+        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
     }
     else {
         cout << "Boundary FF not recognized. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
+
     //if pinning to boundaries
     if(SysParams::Mechanics().pinBoundaryFilaments) {
         _boundaryInteractionVector.emplace_back(
@@ -107,7 +110,11 @@ floatingpoint BoundaryFF::computeEnergy(floatingpoint *coord, bool stretched) {
             return -1;
         }
         else U += U_i;
-        
+
+        #ifdef TRACKDIDNOTMINIMIZE
+        if(!stretched)
+            SysParams::Mininimization().tempEnergyvec.push_back(U_i);
+        #endif
         
     }
     
@@ -143,3 +150,12 @@ vector<NeighborList*> BoundaryFF::getNeighborLists() {
     
     return neighborLists;
 }
+
+vector<string> BoundaryFF::getinteractionnames(){
+    vector<string> temp;
+    for (auto &interaction : _boundaryInteractionVector) {
+        temp.push_back(interaction->getName());
+    }
+    return temp;
+}
+

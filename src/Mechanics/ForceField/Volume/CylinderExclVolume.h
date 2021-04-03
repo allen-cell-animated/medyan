@@ -37,6 +37,8 @@ private:
     CylinderCylinderNL* _neighborList = nullptr;  ///< Neighbor list of cylinders
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     HybridCylinderCylinderNL* _HneighborList;
+    vector<short> _HnlIDvec;
+#else
     short _HnlID;
 #endif
     ///Array describing the constants in calculation
@@ -62,6 +64,7 @@ public:
         //If Hybrid NeighborList is not preferred, neighborList is created using Original
         // framework.
 #if !defined(HYBRID_NLSTENCILLIST) || !defined(SIMDBINDINGSEARCH)
+        //Not a full list as it does not pass a full variable.
         _neighborList = new CylinderCylinderNL(SysParams::Mechanics().VolumeCutoff);
 #endif
 #ifdef CUDAACCL_NL
@@ -83,16 +86,25 @@ public:
 
     virtual const string getName() {return "Cylinder Excluded Volume";}
 
-#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 
     virtual void setHNeighborList(HybridCylinderCylinderNL* Hnl) {
         _HneighborList = Hnl;
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
+        short filtypes = SysParams::Geometry().cylinderNumMon.size();
+        for (int i = 0; i < filtypes; i++){
+            for (int j = i; j < filtypes; j++){
+                _HnlIDvec.push_back(Hnl->setneighborsearchparameters(i,j,true,false,SysParams::Mechanics()
+                                                                     .VolumeCutoff,0.0));
+            }
+            
+        }
+#else
         _HnlID = Hnl->setneighborsearchparameters(0,0,true,false,SysParams::Mechanics()
-                .VolumeCutoff,0.0);
+                                                                .VolumeCutoff,0.0);
+#endif
     };
 
     virtual HybridCylinderCylinderNL* getHNeighborList(){return _HneighborList;};
-#endif
 };
 
 #endif

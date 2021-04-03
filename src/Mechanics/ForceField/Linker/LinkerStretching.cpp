@@ -48,7 +48,7 @@ void LinkerStretching<LStretchingInteractionType>::assignforcemags() {
 template <class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::vectorize() {
     CUDAcommon::tmin.numinteractions[2] += Linker::getLinkers().size();
-    beadSet = new int[n * Linker::getLinkers().size()];
+    beadSet = new int[n * Linker::getLinkers().size()];//stableindex of the bead
     kstr = new floatingpoint[Linker::getLinkers().size()];
     eql = new floatingpoint[Linker::getLinkers().size()];
     pos1 = new floatingpoint[Linker::getLinkers().size()];
@@ -56,7 +56,7 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
     stretchforce = new floatingpoint[Linker::getLinkers().size()];
 
     int i = 0;
-
+    //Filling stage
     for (auto l: Linker::getLinkers()) {
         /* Haoran 03/18/2019 l->getIndex() = i; */
         beadSet[n * i] = l->getFirstCylinder()->getFirstBead()->getStableIndex();
@@ -210,7 +210,6 @@ floatingpoint LinkerStretching<LStretchingInteractionType>::computeEnergy(floati
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
 #endif
-
     U_ii = _FFType.energy(coord, beadSet, kstr, eql, pos1, pos2);
 
 #ifdef CUDATIMETRACK

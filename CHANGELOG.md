@@ -1,3 +1,71 @@
+# 4.1.2 (Released 2020-06-01)
+
+## Enhancements
+- New building procedure using `CMake` is supported and recommended (a1b28e254).
+- Added a force field that combines filament stretching and bending (772133585).
+- Added quadratic line search in gradient descent method (772133585).
+
+## Bug fixes
+- The copy number of chemical species are now assigned before dynamic rate initialization (7175987be).
+- Fixed branching dihedral force field cosine form (772133585).
+- Myosin duty ratio is now calculated at runtime (772133585).
+
+# 4.1.1 (Released 2020-01-30)
+
+## New features
+- The system input file no longer requires species number of types specification (b887ba2).
+- Rearranged examples and added new ones (48993f8).
+
+## Refactoring and optimizations
+- Refactored the logger (a2c69f9).
+- Integrated the tests (8de0a0f).
+- Increased readability of on-screen outputs.
+- `Makefile` default optimization changed from `-Os` to `-O2` (b8468c3).
+
+## Bug fixes
+- Fixed distribution generation in chemistry algorithm (5897eed).
+- Fixed bugs related to SIMD macros (13fe728).
+- Fixed volume exclusion not including short filaments (d0961d4).
+- Fixed Myosin motor duty ratio calculation. Now it is based on binding/unbinding rates. (6f57531)
+
+# 4.1.0 (Released 2019-10-29)
+
+## New features
+- Added a thread pool implementation, which may facilitate multi-threading computations (fd69e22).
+- Added new MTOC functions (e286a3d).
+- Added AFM pulling simulation (b581d1a).
+- Added mechanical Hessian analysis (b581d1a).
+- Added branching dihedral quadratic force field (37b6173).
+- Added a cell list data structure for elements contained in the compartments (586f8f5).
+- Used a double linked list data structure instead of `std::unordered_set` for `Reactable`s and `Movable`s (0f32b73).
+- The dissipation tracking can now have higher resolution, reflecting the mechanical energy change for every force field (5e7eed8).
+
+## Refactoring and optimizations
+- Refactored the `Database` class (bc0222c, 3c71316).
+- Removed stretched energy computations (ee6220f).
+- Various improvements on the restarting procedure (0f32b73).
+
+## Bug fixes
+- Fixed motor stretch force not reset before minimization.
+- Distance between the boundary and the filaments can be negative now.
+- Cylinder neighbor list for volume exclusion will generate multiple neighbor list if there is more than one filament type.
+- Filament creation by nucleation and branching is not allowed in partially activated compartment with volume fraction < 0.5. It potentially prevents the infinite while loop during filament creation.
+- Fixed `BoundaryCylinderRepulsionIn` force field.
+- Fixed `MTOCAttachment` potential.
+- Fixed mechanochemical feedback on motor initialization under `PLOSFEEDBACK` version (1fcd9cf).
+- Fixed cases where 2 ends a motor binds on the same binding site.
+- Fixed compartment transfer/share axis (befaf74).
+- Fixed the way of counting number of interactions for filament bending (75bc733).
+- Fixed the newly created filament not having mechanochemical feedback (9dc5d27).
+- Fixed the problem that the type `floatingpoint` cannot be aliased to `double` (87fad88).
+- Fixed `dist_avx.h` not compatible with AVX mode (ce314fa).
+- Fixed the issue with changing number of binding sites per cylinder in SIMD binding search (9a39874).
+- Fixed the boundary pinning force field (49e254b).
+- Fixed minor portability issues on different compilers (eb10ca1).
+- Fixed ending simulation message not displayed when simulation finishes (4a2f610).
+- `PLOSFEEDBACK` is now turned off by default (3ff0837).
+- Fixed the documents for MEDYAN 4.0 speed up comparison (3ff0837).
+
 # 4.0 (Released 2019-07-05)
 
 ## New features

@@ -15,7 +15,7 @@ r=runs(N);
 
 for i=1:N
 	i
-    r(i)=readsnapshot(['snapshot.traj'],r(i));
+    r(i)=readsnapshot([path,'/snapshot.traj'],r(i));
     time_vector10=[time_vector10;{r(i).time_vector}];
 end
 VMDstylesnap_polym(r,outputfile);

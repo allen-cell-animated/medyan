@@ -25,11 +25,14 @@
 #include "MTOCBending.h"
 #include "MTOCBendingCosine.h"
 
+#include "AFMAttachment.h"
+#include "AFMAttachmentHarmonic.h"
+
 #include "Bubble.h"
 #include "Bead.h"
 #include "Component.h"
 
-BubbleFF::BubbleFF (string type, string mtoc) {
+BubbleFF::BubbleFF (string type, string mtoc, string afm) {
     
     //general bubble interactions
     if (type == "REPULSIONEXP") {
@@ -48,10 +51,22 @@ BubbleFF::BubbleFF (string type, string mtoc) {
     if (mtoc == "ATTACHMENTHARMONIC") {
         _bubbleInteractionVector.emplace_back(
         new MTOCAttachment<MTOCAttachmentHarmonic>());
+
     }
     else if(mtoc == "") {}
     else {
         cout << "MTOC FF not recognized. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
+    
+    //specifically for MTOC
+    if (afm == "ATTACHMENTHARMONIC") {
+        _bubbleInteractionVector.emplace_back(
+        new AFMAttachment<AFMAttachmentHarmonic>());
+    }
+    else if(afm == "") {}
+    else {
+        cout << "AFM FF not recognized. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
 }
@@ -74,9 +89,9 @@ void BubbleFF::whoIsCulprit() {
     
     cout << "Culprit interaction = " << _culpritInteraction->getName() << endl;
     
-    cout << "Printing the culprit bubble..." << endl;
-    if(_culpritInteraction->_bubbleCulprit != nullptr)
-        _culpritInteraction->_bubbleCulprit->printSelf();
+//    cout << "Printing the culprit bubble..." << endl;
+//    if(_culpritInteraction->_bubbleCulprit != nullptr)
+//        _culpritInteraction->_bubbleCulprit->printSelf();
     
 //    cout << "Printing the other culprit structure..." << endl;
 //    if(_culpritInteraction->_otherCulprit != nullptr)
@@ -101,6 +116,11 @@ floatingpoint BubbleFF::computeEnergy(floatingpoint *coord, bool stretched) {
             return -1;
         }
         else U += U_i;
+
+        #ifdef TRACKDIDNOTMINIMIZE
+        if(!stretched)
+            SysParams::Mininimization().tempEnergyvec.push_back(U_i);
+        #endif
         
     }
     return U;
@@ -140,3 +160,12 @@ vector<NeighborList*> BubbleFF::getNeighborLists() {
     
     return neighborLists;
 }
+
+vector<string> BubbleFF::getinteractionnames(){
+    vector<string> temp;
+    for (auto &interaction : _bubbleInteractionVector) {
+        temp.push_back(interaction->getName());
+    }
+    return temp;
+}
+

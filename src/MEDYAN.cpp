@@ -65,11 +65,13 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
  
  */
 
-#include "common.h"
 
+#define CATCH_CONFIG_RUNNER
+#include "catch2/catch.hpp"
+
+#include "common.h"
 #include "Controller.h"
-#include "Util/Io/CmdParse.hpp"
-#include "Util/Io/Log.hpp"
+#include "MedyanArgs.hpp"
 
 int main(int argc, char **argv) {
 
@@ -82,44 +84,31 @@ int main(int argc, char **argv) {
     
     cout.precision(8);
 
-    string inputFile, inputDirectory, outputDirectory;
-	int threadcount = 0;
-    // Parsing command line args
-    {
-        using namespace cmdparse;
+    auto cmdRes = medyanInitFromCommandLine(argc, argv);
 
-        Command cmdMain("MEDYAN", "");
+    int returnCode = 0;
 
-        cmdMain.addOptionWithVar('s', "", "file", "System input file", true, inputFile);
-        cmdMain.addOptionWithVar('i', "", "path", "Input directory", true, inputDirectory);
-        cmdMain.addOptionWithVar('o', "", "path", "Output directory", true, outputDirectory);
-	    cmdMain.addOptionWithVar('t', "", "int", "Thread Count", false, threadcount);
-        cmdMain.addHelp();
+    switch(cmdRes.runMode) {
 
-        try {
-            cmdMain.parse(argc, argv);
-        } catch (const CommandLogicError& e) {
-            std::cerr << e.what() << std::endl;
-            // Internal error, no help message generated.
-            throw;
-        } catch (const ParsingError& e) {
-            std::cerr << e.what() << std::endl;
-            cmdMain.printUsage();
-            throw;
-        } catch (const ValidationError& e) {
-            std::cerr << e.what() << std::endl;
-            cmdMain.printUsage();
-            throw;
+    case MedyanRunMode::simulation:
+        {
+
+            //initialize and run system
+            Controller c;
+            c.initialize(
+                cmdRes.inputFile,
+                cmdRes.inputDirectory,
+                cmdRes.outputDirectory,
+                cmdRes.numThreads);
+            c.run();
         }
+        break;
+
+    case MedyanRunMode::test:
+        returnCode = Catch::Session().run(argc - (cmdRes.argpNext - 1), argv + (cmdRes.argpNext - 1));
+        break;
     }
 
-    // Initialize the logger
-    ::medyan::logger::Logger::defaultLoggerInitialization();
-
-    //initialize and run system
-    Controller c;
-    c.initialize(inputFile, inputDirectory, outputDirectory, threadcount);
-    c.run();
-
+    return returnCode;
 }
 

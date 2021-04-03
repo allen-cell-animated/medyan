@@ -71,16 +71,28 @@ float BranchSlip::getRateChangeFactor( floatingpoint force) {
     return exp( force * _x / kT);
 }
 
+float BranchSlipF::changeRate(float bareRate, floatingpoint force) {
+
+	floatingpoint newRate = bareRate * exp( force/_F0);
+
+	return newRate;
+}
+
+float BranchSlipF::getRateChangeFactor( floatingpoint force) {
+
+	return exp( force / _F0);
+}
+
 float MotorCatch::numBoundHeads(float onRate, float offRate,
                                 floatingpoint force, int numHeads) {
 
 /*	#ifdef MOTORBIASCHECK
 	return numHeads;
 	#endif*/
-
+    _dutyRatio = onRate/(onRate+offRate);
 #ifdef PLOSFEEDBACK
-    return min<floatingpoint >((floatingpoint)numHeads, numHeads * _dutyRatio + _gamma *
-    force);
+    return min<floatingpoint >((floatingpoint)numHeads,
+    		numHeads * _dutyRatio + _gamma * force);
 #else
     return min<floatingpoint>((floatingpoint)numHeads, numHeads * _dutyRatio + _beta * force / numHeads);
 #endif
@@ -120,6 +132,7 @@ float MotorStall::changeRate(float onRate, float offRate,
                              floatingpoint numHeads, floatingpoint force) {
 //    cout<<"onRate "<<onRate<<endl;
 //    return onRate*10;
+    _dutyRatio = onRate/(onRate+offRate);
     //determine k_0
     float k_0 = ((1 - _dutyRatio) / _dutyRatio) * onRate * _stepFrac;
 

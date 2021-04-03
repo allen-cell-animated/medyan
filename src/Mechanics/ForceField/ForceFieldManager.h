@@ -22,6 +22,16 @@
 #include "Bead.h"
 #include "Mechanics/ForceField/Types.hpp"
 
+#include <Eigen/Core>
+#include <Eigen/SparseCore>
+#include <Eigen/Dense>
+#include <Spectra/SymEigsSolver.h>
+#include <Spectra/MatOp/SparseSymMatProd.h>
+#include <Spectra/SymEigsShiftSolver.h>
+#include <Spectra/MatOp/SparseSymShiftSolve.h>
+
+typedef Eigen::Triplet<double> Triplet;
+
 // Forward declarations
 class Cylinder;
 
@@ -64,9 +74,15 @@ public:
     // compute the Hessian matrix if the feature is enabled
     void computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta);
     
-    void clearHessian(){
+    void clearHessian(int a){
+        if(a == 0){
         hessianVector.clear();
+        }else{
+        evaluesVector.clear();
+        IPRIVector.clear();
+        IPRIIVector.clear();
         tauVector.clear();
+        };
     }
     
     vector<floatingpoint> HRMDenergies;
@@ -75,7 +91,20 @@ public:
     
     vector<vector<vector<floatingpoint>>> hessianVector;
     
+    vector<Eigen::VectorXcd> evaluesVector;
+    vector<Eigen::VectorXcd> IPRIVector;
+    vector<Eigen::VectorXcd> IPRIIVector;
+    Eigen::VectorXcd evalues;
+    Eigen::MatrixXcd evectors;
     vector<floatingpoint> tauVector;
+
+    vector<string> getinteractionnames(){
+        vector<string> temp;
+        for (auto &ff : _forceFields)
+            for(auto names:ff->getinteractionnames())
+            	temp.push_back(names);
+        return temp;
+    }
 
 #ifdef CUDAACCL
         cudaStream_t  streamF = NULL;

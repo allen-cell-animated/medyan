@@ -30,98 +30,34 @@ void SystemParser::readChemParams() {
 
         if(line.find("#") != string::npos) { continue; }
 
-        if (line.find("NUMBULKSPECIES") != string::npos) {
+    //        if (line.find("NUMBULKSPECIES") != string::npos) {
+    //
+    //            vector<string> lineVector = split<string>(line);
+    //            if(lineVector.size() > 2) {
+    //                cout <<
+    //                     "There was an error parsing input file at Chemistry parameters. Exiting."
+    //                     << endl;
+    //                exit(EXIT_FAILURE);
+    //            }
+    //            else if (lineVector.size() == 2) {
+    //                CParams.numBulkSpecies = atof(lineVector[1].c_str());
+    //            }
+    //        }
+    //
+    //        if (line.find("NUMDIFFUSINGSPECIES") != string::npos) {
+    //
+    //            vector<string> lineVector = split<string>(line);
+    //            if(lineVector.size() > 2) {
+    //                cout <<
+    //                     "There was an error parsing input file at Chemistry parameters. Exiting."
+    //                     << endl;
+    //                exit(EXIT_FAILURE);
+    //            }
+    //            else if (lineVector.size() == 2) {
+    //                CParams.numDiffusingSpecies = atof(lineVector[1].c_str());
+    //            }
+    //        }
 
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry parameters. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CParams.numBulkSpecies = atof(lineVector[1].c_str());
-            }
-        }
-
-        if (line.find("NUMDIFFUSINGSPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry parameters. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CParams.numDiffusingSpecies = atof(lineVector[1].c_str());
-            }
-        }
-
-        if (line.find("NUMFILAMENTSPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numFilamentSpecies.push_back(atoi(lineVector[i].c_str()));
-            }
-        }
-
-        if (line.find("NUMPLUSENDSPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numPlusEndSpecies.push_back(atoi(lineVector[i].c_str()));
-            }
-        }
-        if (line.find("NUMMINUSENDSPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numMinusEndSpecies.push_back(atoi(lineVector[i].c_str()));
-            }
-        }
-        if (line.find("NUMBOUNDSPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numBoundSpecies.push_back(atoi(lineVector[i].c_str()));
-            }
-        }
-        if (line.find("NUMLINKERSPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numLinkerSpecies.push_back(atoi(lineVector[i].c_str()));
-            }
-        }
-        if (line.find("NUMMOTORSPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numMotorSpecies.push_back(atoi(lineVector[i].c_str()));
-            }
-        }
-        if (line.find("NUMBRANCHERSPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numBrancherSpecies.push_back(atoi(lineVector[i].c_str()));
-            }
-        }
         if (line.find("NUMFILAMENTTYPES") != string::npos) {
 
             vector<string> lineVector = split<string>(line);
@@ -178,7 +114,7 @@ void SystemParser::readChemParams() {
 
             vector<string> lineVector = split<string>(line);
             //the vector size can be 5 for PINLOWERBOUNDARYFILAMENTS
-            if(lineVector.size() > 5) {
+            if(lineVector.size() > 7) {
                 cout <<
                      "There was an error parsing input file at Chemistry parameters. Exiting."
                      << endl;
@@ -193,6 +129,28 @@ void SystemParser::readChemParams() {
                 if(lineVector[1] == "MAKEFILAMENTSSTATIC") {
                     CParams.makeFilamentsStatic = true;
                     CParams.makeFilamentsStaticTime = atof(lineVector[2].c_str());
+                }
+                
+            }
+            else if (lineVector.size() == 4) {
+                if(lineVector[1]  == "RATEDEPEND") {
+                    CParams.makeRateDepend = true;
+                    CParams.makeRateDependTime = atof(lineVector[2].c_str());
+                    CParams.makeRateDependForce = atof(lineVector[3].c_str());
+                }
+            }
+            else if (lineVector.size() == 7) {
+                if(lineVector[1]  == "AFM") {
+                    CParams.makeAFM = true;
+                    //displacement of each pull
+                    CParams.AFMStep1 = atof(lineVector[2].c_str());
+                    CParams.AFMStep2 = atof(lineVector[3].c_str());
+                    //change dispalcement from 1 to 2
+                    CParams.IterChange = atof(lineVector[4].c_str());
+                    //total step of each AFM pull
+                    CParams.StepTotal = atof(lineVector[5].c_str());
+                    //time between each pull
+                    CParams.StepTime = atof(lineVector[6].c_str());
                 }
             }
         }
@@ -359,6 +317,19 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             }
             else if (lineVector.size() == 2) {
                 CAlgorithm.snapshotTime = atof(lineVector[1].c_str());
+            }
+        }
+        if (line.find("DATADUMPTIME:") != string::npos) {
+
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CAlgorithm.datadumpTime = atof(lineVector[1].c_str());
             }
         }
         if (line.find("SNAPSHOTSTEPS:") != string::npos) {
@@ -697,6 +668,20 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
             }
         }
 
+        else if (line.find("AFMFFTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                "There was an error parsing input file at AFM FF type. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MType.AFMFFType = lineVector[1];
+            }
+        }
+
         else {}
     }
     return MType;
@@ -1006,8 +991,38 @@ void SystemParser::readMechParams() {
                 MParams.MTOCBendingK.push_back(atof((lineVector[i].c_str())));
             }
         }
+        else if (line.find("AFMBENDINGK") != string::npos){
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.AFMBendingK.push_back(atof((lineVector[i].c_str())));
+            }
+        }
         
         if (line.find("HESSIANTRACKING:") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 3) {
+                cout <<
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 3) {
+                MParams.hessTracking = true;
+                //MParams.hessDelta = atof(lineVector[1].c_str());
+                MParams.hessSkip = atof(lineVector[1].c_str());
+                int dense = atoi(lineVector[2].c_str());
+                if(dense == 0){
+                    MParams.denseEstimation = true;
+                }else{
+                    MParams.denseEstimation = false;
+                }
+                
+            }
+        }
+        
+        if (line.find("SAMEFILBINDINGSKIP:") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
@@ -1017,9 +1032,7 @@ void SystemParser::readMechParams() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MParams.hessTracking = true;
-                MParams.hessDelta = atof(lineVector[1].c_str());
-                cout<<"delta is "<<MParams.hessDelta<<endl;
+                MParams.sameFilBindSkip = atoi(lineVector[1].c_str());
                 
             }
         }
@@ -1124,6 +1137,12 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if (lineVector.size() == 2) {
                 MAlgorithm.lambdarunningaverageprobability = atof(lineVector[1].c_str());
+            }
+        }
+        else if (line.find("LINESEARCHALGORITHM")!= string::npos){
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() == 2) {
+                MAlgorithm.linesearchalgorithm = (lineVector[1].c_str());
             }
         }
     }
@@ -1391,6 +1410,16 @@ void SystemParser::readDyRateParams() {
             }
             else {}
         }
+        else if (line.find("DBUNBINDINGF") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRParams.dBranchUnbindingCharForce.push_back(
+                            atof((lineVector[i].c_str())));
+            }
+            else {}
+        }
         /// Manual Rate Changer
         // It takes 5 inputs as start_time, plusend_poly, plusend_depoly, minusend_poly, minusend_depoly
         // Currently it applies type 0 to all filament types
@@ -1598,6 +1627,7 @@ SpecialSetupType SystemParser::readSpecialSetupType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector[1] == "MTOC") SType.mtoc = true;
+            else if (lineVector[1] == "AFM") SType.afm = true;
         }
         else if (line.find("MTOCFILAMENTTYPE") != string::npos) {
 
@@ -1648,10 +1678,99 @@ SpecialSetupType SystemParser::readSpecialSetupType() {
                 SType.mtocBubbleType = atoi(lineVector[1].c_str());
             }
         }
+        
+        else if (line.find("AFMFILAMENTTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "A filament type to connect to an AFM must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                SType.afmFilamentType = atoi(lineVector[1].c_str());
+            }
+        }
+        else if (line.find("AFMNUMFILAMENTS") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "A number of filaments to connect to an AFM must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                SType.afmNumFilaments = atoi(lineVector[1].c_str());
+            }
+        }
+        else if (line.find("AFMFILAMENTLENGTH") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "A filament length for filaments connected to an AFM must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                SType.afmFilamentLength = atoi(lineVector[1].c_str());
+            }
+        }
+        
+        else if (line.find("AFMBUBBLETYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "A bubble type to connect to an MTOC must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                SType.afmBubbleType = atoi(lineVector[1].c_str());
+            }
+        }
+        else if (line.find("MTOCXYZCOORD") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 4) {
+                cout <<
+                "Coordinates of MTOC must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 4) {
+                SType.mtocInputCoordXYZ.push_back(stof(lineVector[1].c_str()));
+                SType.mtocInputCoordXYZ.push_back(stof(lineVector[2].c_str()));
+                SType.mtocInputCoordXYZ.push_back(stof(lineVector[3].c_str()));
+            }
+        }
     }
     return SType;
 }
 
+void SystemParser::readSpecialParams() {
+    
+    SpecialParams SParams;
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    string line;
+    
+    if (line.find("MTOCFILAMENTCOORD") != string::npos) {
+        vector<string> lineVector = split<string>(line);
+        if(lineVector.size() != 5) {
+            cout << "4 coordinates of MTOC filaments must be specified. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+        else if (lineVector.size() == 5) {
+            SParams.mtocTheta1 = stof(lineVector[1].c_str());
+            SParams.mtocTheta2 = stof(lineVector[2].c_str());
+            SParams.mtocPhi1 = stof(lineVector[3].c_str());
+            SParams.mtocPhi2 = stof(lineVector[4].c_str());
+        }
+    }
+
+    SysParams::SParams = SParams;
+    
+}
 
 void SystemParser::readGeoParams() {
 
@@ -1809,7 +1928,9 @@ FilamentSetup SystemParser::readFilamentSetup() {
         }
         else if(line.find("NUMFILAMENTS") != string::npos &&
                 line.find("NUMFILAMENTSPECIES") == string::npos &&
-                line.find("MTOCNUMFILAMENTS") == string::npos) {
+
+                line.find("MTOCNUMFILAMENTS") == string::npos &&
+                line.find("AFMNUMFILAMENTS") == string::npos) {
 
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
@@ -1821,7 +1942,10 @@ FilamentSetup SystemParser::readFilamentSetup() {
             else {}
         }
         else if(line.find("FILAMENTLENGTH") != string::npos &&
-                line.find("MTOCFILAMENTLENGTH") == string::npos) {
+
+                line.find("MTOCFILAMENTLENGTH") == string::npos &&
+                line.find("AFMFILAMENTLENGTH") == string::npos) {
+            
 
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
@@ -1834,6 +1958,7 @@ FilamentSetup SystemParser::readFilamentSetup() {
         }
         else if(line.find("FILAMENTTYPE") != string::npos &&
                 line.find("NUMFILAMENTTYPES") == string::npos &&
+                line.find("MTOCFILAMENTTYPE") == string::npos &&
                 line.find("MTOCFILAMENTTYPE") == string::npos) {
 
             vector<string> lineVector = split<string>(line);
@@ -1845,7 +1970,17 @@ FilamentSetup SystemParser::readFilamentSetup() {
                 FSetup.filamentType = atoi(lineVector[1].c_str());
             else {}
         }
-        else if (line.find("RESTARTPHASE") != string::npos){SysParams::RUNSTATE=false;}
+        else if (line.find("RESTARTPHASE") != string::npos){SysParams::RUNSTATE=false;
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "Error reading restart params. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2){
+                if(lineVector[1].find("USECHEMCOPYNUM"))
+                SysParams::USECHEMCOPYNUM = true;
+            }
+        }
         else if(line.find("PROJECTIONTYPE")!=string::npos){
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {

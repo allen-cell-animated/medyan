@@ -13,13 +13,19 @@
 #include "Bin.h"
 #include "Cylinder.h"
 
-void Bin::addCylinder(Cylinder* c) {_cylinders.insert(c);}
+void Bin::addCylinder(Cylinder* c) {
+    _cylinders.insert(c);
+    //Ideally, a call for updatecindices will have to be made here to update the cindices
+    // vector. But, instead, we choose to update it in the getter.
+}
 
 //bincylinderdatatype& Bin::getCylinders() {return _cylinders;}
 
 void Bin::removeCylinder(Cylinder* c) {
     auto it = _cylinders.find(c);
     if(it != _cylinders.end()) _cylinders.erase(it);
+    //Ideally, a call for updatecindices will have to be made here to update the cindices
+    // vector. But, instead, we choose to update it in the getter.
 }
 void Bin::updatecindices(){
     cindicesvector.clear();

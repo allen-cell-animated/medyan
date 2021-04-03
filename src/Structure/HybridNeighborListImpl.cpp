@@ -348,8 +348,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
     // neighboring bins are given a particular ID.nbinstencil stores the set of such
     // neighbors that is close to bin of interest. Bins close to the boundary will have
     // < 27 elements in the stencilID vector.
-    short ftype1 = c.type; //cylinder type and filament type is one and the
-    // same.
+    short ftype1 = c.type; //cylinder type and filament type is one and the same.
     float _largestrMax = sqrt(_largestrMaxsq);
     for (auto &bin : _neighboringBins) {
             bool isbinneeded = _binGrid->iswithincutoff(c.coord,
@@ -372,14 +371,15 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                     if (c.filamentId == ncylinder.filamentId) {
                         auto distsep = fabs(c.positionOnFilament - ncylinder.positionOnFilament);
                         //if not cross filament, check if not neighboring
-                        if (distsep <= 2) continue;
+                        if (distsep <= SysParams::Mechanics().sameFilBindSkip) continue;
                     }
 
                     //Loop through all the distance bounds and add to neighborlist
                     for (int idx = 0; idx < totaluniquefIDpairs; idx++) {
                         int countbounds = _rMaxsqvec[idx].size();
                         auto fpairs = _filamentIDvec[idx].data();
-                        //Check for cylinder filament types
+                        //Check for cylinder filament types. Filament types are stored in
+                        // ascending order.
                         if (ftype1 < ftype2) {
                             if (ftype1 != fpairs[0] || ftype2 != fpairs[1])continue;
                         }
@@ -398,6 +398,14 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                             Cylinder *Ncylinder = Cylinder::getStableElement(ncindex);
                             _list4mbinvec[HNLID][currcylinder].push_back(Ncylinder);
 
+                            //Full list was needed to remove possible bindings. To remove
+                            // by value, we had to look for keys that might have the
+                            // removing <cyl,bs>. In HybridBindingSearchManager
+                            // implementation, that has been circumvented by storing a
+                            // two way list. One has all the keys and the other has all
+                            // the values.
+
+                            // that this current bindingsite might be part of
                             //if runtime, add to other list as well if full
                             /* if (runtime && _fullstatusvec[idx][idx2]) {
                                 _list4mbinvec[HNLID][Ncylinder].push_back(currcylinder);
@@ -434,7 +442,8 @@ void HybridCylinderCylinderNL::removeNeighbor(Neighbor* n) {
         for (int idx2 = 0; idx2 < countbounds; idx2++) {
             auto HNLID = HNLIDvec[idx][idx2];
 /*            std::cout << "Removing neighbors of cylinder with cindex " <<
-                          cylinder->_dcIndex<<" and ID "<<cylinder->getID() << " from NL " << HNLID << endl;*/
+                          cylinder->getStableIndex()<<" and ID "<<cylinder->getId() <<
+                          " from NL " <<HNLID << endl;*/
             //Remove from NeighborList
             _list4mbinvec[HNLID].erase(cylinder);
             //Remove from bin
@@ -448,14 +457,18 @@ void HybridCylinderCylinderNL::removeNeighbor(Neighbor* n) {
                 auto cit = find(it->second.begin(), it->second.end(), cylinder);
                 {
                     if (cit != it->second.end()) {
+/*                        cout<<"Deleted "<<*(cit)<<" from list corresponding to cylinder "
+                        <<it->first<<" from position "<<cit-it->second.begin()<<endl;*/
                         it->second.erase(cit);
-//                        std::cout << it->first->getID() << " ";
                     }
                 }
             }
+
 //            std::cout<<endl;
         }
     }
+
+
 
 }
 
@@ -466,25 +479,15 @@ void HybridCylinderCylinderNL::reset() {
         _list4mbinvec[idx].clear();
 //        std::cout<<"Hybrid rmin rmax "<<_rMinsqvec[idx]<<" "<<_rMaxsqvec[idx]<<endl;
     }
-
-    /*chrono::high_resolution_clock::time_point mins, mine;
-    mins = chrono::high_resolution_clock::now();*/
     //check and reassign cylinders to different bins if needed.
     updateallcylinderstobin();
     _binGrid->updatecindices();
-    /*mine= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_B(mine - mins);
-    std::cout<<"update cindices "<<elapsed_B.count()<<endl;
-    mins = chrono::high_resolution_clock::now();*/
     for(auto cylinder: Cylinder::getCylinders()) {
         updateNeighborsbin(cylinder);
 //        for (int idx = 0; idx < totalhybridNL; idx++) {
 //            tot[idx] += _list4mbinvec[idx][cylinder].size();
 //        }
     }
-   /* mine= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_N(mine - mins);
-    std::cout<<"update neighbors "<<elapsed_N.count()<<endl;*/
 }
 
 #endif

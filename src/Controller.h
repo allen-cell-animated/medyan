@@ -56,15 +56,21 @@ private:
     string _outputDirectory;  ///< Output directory being used
     
     vector<Output*> _outputs; ///< Vector of specified outputs
+    vector<Output*> _outputdump; ///<Vector of outputs that correspond to a datadump
     
     floatingpoint _runTime;          ///< Total desired runtime for simulation
 
     floatingpoint _snapshotTime;     ///< Desired time for each snapshot
-    
+    floatingpoint _datadumpTime;     ///< Desired time for each datadump
+
     floatingpoint _minimizationTime;  ///< Frequency of mechanical minimization
     floatingpoint _neighborListTime;  ///< Frequency of neighbor list updates
+    floatingpoint _slowedminimizationcutoffTime = 10.0; //Time cut off for slowed
+    // minimization
+    // frequency
     
     DissipationTracker* _dt;   ///< dissipation tracking object
+    
     
     //@{
     /// Same parameter set as timestep, but in terms of chemical
@@ -108,6 +114,9 @@ private:
     /// Update the positions of all elements in the system
     void updatePositions();
     
+    void updateBubblePositions();
+
+    
 #ifdef DYNAMICRATES
     /// Update the reaction rates of all elements in the system
     void updateReactionRates();
@@ -127,6 +136,9 @@ private:
     void pinBoundaryFilaments();
     void pinLowerBoundaryFilaments();
     
+    double tp = SysParams::Chemistry().makeRateDependTime;
+    double threforce = SysParams::Chemistry().makeRateDependForce;
+    
 public:
     floatingpoint chemistrytime = 0.0;
     floatingpoint minimizationtime = 0.0;
@@ -140,6 +152,7 @@ public:
     floatingpoint specialtime = 0.0;
     floatingpoint updatepositioncylinder = 0.0;
     floatingpoint updatepositionmovable=0.0;
+    floatingpoint whileloop = 0.0;
 
     Controller();
     ~Controller() {};
@@ -147,7 +160,8 @@ public:
     ///Initialize the system, given an input and output directory
     void initialize(string inputFile,
                     string inputDirectory,
-                    string outputDirectory, int nthreads);
+                    string outputDirectory,
+                    int numThreads);
     ///Run the simulation
     void run();
 };

@@ -42,7 +42,9 @@
 #include "Mechanics/ForceField/Types.hpp"
 
 #include <initializer_list>
+#ifdef SIMDBINDINGSEARCH
 #include "dist_moduleV2/dist_common.h"
+#endif
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
@@ -264,9 +266,11 @@ public:
 	static floatingpoint timeneighbor;
 	static floatingpoint timedneighbor;
 	static floatingpoint timetrackable;
+
+    MinimizationResult prevMinResult;
+
 private:
 	chrono::high_resolution_clock::time_point minsN, mineN, minsT,mineT;
-    dist::Coords temptest;
     floatingpoint _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer
 //    unordered_set<Movable*> _movables; ///< All movables in the subsystem

@@ -32,19 +32,22 @@ void MController::initializeMinAlgorithms (MechanicsAlgorithm& MAlgorithm) {
         new ConjugateGradient<FletcherRieves>(MAlgorithm.gradientTolerance,
                                               MAlgorithm.maxDistance,
                                               MAlgorithm.lambdaMax,
-                                              MAlgorithm.lambdarunningaverageprobability));
+                                              MAlgorithm.lambdarunningaverageprobability,
+                                              MAlgorithm.linesearchalgorithm));
     else if (MAlgorithm.ConjugateGradient == "POLAKRIBIERE")
         _minimizerAlgorithms.push_back(
         new ConjugateGradient<PolakRibiere>(MAlgorithm.gradientTolerance,
                                             MAlgorithm.maxDistance,
                                             MAlgorithm.lambdaMax,
-                                            MAlgorithm.lambdarunningaverageprobability));
+                                            MAlgorithm.lambdarunningaverageprobability,
+                                            MAlgorithm.linesearchalgorithm));
     else if (MAlgorithm.ConjugateGradient == "STEEPESTDESCENT")
         _minimizerAlgorithms.push_back(
         new ConjugateGradient<SteepestDescent>(MAlgorithm.gradientTolerance,
                                                MAlgorithm.maxDistance,
                                                MAlgorithm.lambdaMax,
-                                               MAlgorithm.lambdarunningaverageprobability));
+                                               MAlgorithm.lambdarunningaverageprobability,
+                                               MAlgorithm.linesearchalgorithm));
 
     else {
         cout << "Conjugate gradient method not recognized. Exiting." << endl;
@@ -109,7 +112,8 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     }
 
     auto bubbleFF = new BubbleFF(forceFields.BubbleFFType,
-                                 forceFields.MTOCFFType);
+                                 forceFields.MTOCFFType,
+                                 forceFields.AFMFFType);
     _FFManager._forceFields.push_back(bubbleFF);
     for(auto nl : bubbleFF->getNeighborLists()) {
 

@@ -42,7 +42,13 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<floatingpoint>
                    const vector<floatingpoint>& direction, bool nucleation, bool branch)
 
     : Trackable(), _subSystem(s), _filType(filamentType) {
- 
+
+    if(getId() >= SysParams::Chemistry().maxStableIndex) {
+        LOG(ERROR) << "Filament ID assigned ("<< getId()<<
+                   ") equals/exceeds the maximum permissible value "
+                   "("<<SysParams::Chemistry().maxStableIndex<<"). Exiting."<<endl;
+        throw std::logic_error("Max value reached");
+    }
     //create beads
     Bead* b1 = _subSystem->addTrackable<Bead>(position, this, 0);
     
@@ -56,7 +62,7 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<floatingpoint>
         
     Bead* b2 = _subSystem->addTrackable<Bead>(pos2, this, 1);
     
-    //create cylinder
+    //create cylindera
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b1, b2, _filType, 0);
     
     c0->setPlusEnd(true);
@@ -65,6 +71,7 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<floatingpoint>
         
     // set cylinder's filID
     c0->setFilID(getId());
+
 
     //set plus end marker
     _plusEndPosition = 1;
@@ -115,6 +122,7 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<vector<floatin
     // set cylinder's filID
     c0->setFilID(getId());
 
+
     for (int i = 2; i<numBeads; i++)
         extendPlusEnd(tmpBeadsCoord[i]);
         
@@ -129,6 +137,8 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<vector<floatin
         _cylinderVector.front()->updateReactionRates();
     }
 }
+
+
 
 Filament::~Filament() {
     
@@ -168,7 +178,9 @@ void Filament::extendPlusEnd(vector<floatingpoint>& coordinates) {
     _cylinderVector.push_back(c0);
     
     // set cylinder's filID
+
     c0->setFilID(getId());
+
 
 }
 
@@ -193,9 +205,43 @@ void Filament::extendMinusEnd(vector<floatingpoint>& coordinates) {
                                                   lpf - 1, false, false, true);
     c0->setMinusEnd(true);
     _cylinderVector.push_front(c0);
+    
 
     // set cylinder's filID
     c0->setFilID(getId());
+
+}
+
+//Initialize for restart
+void Filament::initializerestart(vector<Cylinder*> cylinderVector,
+        vector<restartCylData>& _rCDatavec) {
+
+    if(SysParams::RUNSTATE){
+        LOG(ERROR) << "initializerestart Function from Filament class can only be called "
+                      "during restart phase. Exiting.";
+        throw std::logic_error("Illegal function call pattern");
+    }
+    if(_cylinderVector.size())
+        cout<<_cylinderVector.size()<<endl;
+    for(auto cyl:cylinderVector) {
+        auto rcdata = _rCDatavec[cyl->getStableIndex()];
+        cyl->initializerestart( rcdata.totalmonomers, rcdata.endmonomerpos[0],
+                                rcdata.endmonomerpos[1], rcdata.endstatusvec[0],
+                                rcdata.endstatusvec[1], rcdata.endtypevec[0],
+                                rcdata.endtypevec[1]);
+	    _cylinderVector.push_back(cyl);
+    }
+
+    //set plus end marker
+    _plusEndPosition = getPlusEndCylinder()->getSecondBead()->getPosition();
+
+	// update reaction rates
+	if(const auto& loadForceFunc = _subSystem->getCylinderLoadForceFunc()) {
+		loadForceFunc(_cylinderVector.back(), ForceFieldTypes::LoadForceEnd::Plus);
+		_cylinderVector.back()->updateReactionRates();
+		loadForceFunc(_cylinderVector.front(), ForceFieldTypes::LoadForceEnd::Minus);
+		_cylinderVector.front()->updateReactionRates();
+	}
 
 }
 
@@ -241,7 +287,9 @@ void Filament::extendPlusEnd(short plusEnd) {
     _cylinderVector.back()->setPlusEnd(true);
     
     // set cylinder's filID
+
     c0->setFilID(getId());
+
 
 #ifdef CHEMISTRY
     //get last cylinder, mark species
@@ -255,6 +303,10 @@ void Filament::extendPlusEnd(short plusEnd) {
 #endif
     
     _deltaPlusEnd++;
+
+/*    cout<<"Extend minus End Cylinder ID = "<<cBack->getId()<<endl;
+    cBack->printSelf();*/
+
     mine = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_time2(mine - mins);
 	FilextendPlusendtimer2 += elapsed_time2.count();
@@ -292,6 +344,7 @@ void Filament::extendMinusEnd(short minusEnd) {
     _cylinderVector.front()->setMinusEnd(true);
     
     // set cylinder's filID
+
     c0->setFilID(getId());
 
 #ifdef CHEMISTRY
@@ -309,12 +362,19 @@ void Filament::extendMinusEnd(short minusEnd) {
 #endif
     
     _deltaMinusEnd++;
+
+/*    cout<<"Extend plus End Cylinder ID = "<<cFront->getId()<<endl;
+    cFront->printSelf();*/
 }
 
 //Depolymerize front at runtime
 void Filament::retractPlusEnd() {
     
     Cylinder* retCylinder = _cylinderVector.back();
+
+/*    cout<<"Ret plus End Cylinder ID = "<<retCylinder->getId()<<endl;
+    retCylinder->printSelf();*/
+
     _cylinderVector.pop_back();
     
 #ifdef MECHANICS
@@ -339,11 +399,17 @@ void Filament::retractPlusEnd() {
 #endif
     
     _deltaPlusEnd--;
+
+
 }
 
 void Filament::retractMinusEnd() {
     
     Cylinder* retCylinder = _cylinderVector.front();
+
+/*    cout<<"Ret minus End Cylinder ID = "<<retCylinder->getId()<<endl;
+    retCylinder->printSelf();*/
+
     _cylinderVector.pop_front();
     
 #ifdef MECHANICS
@@ -409,6 +475,9 @@ void Filament::polymerizePlusEnd() {
 
     _polyPlusEnd++;
 
+/*    cout<<"Poly plus End Cylinder ID = "<<cBack->getId()<<endl;
+    cBack->printSelf();*/
+
 }
 
 void Filament::polymerizeMinusEnd() {
@@ -444,6 +513,9 @@ void Filament::polymerizeMinusEnd() {
 
     _polyMinusEnd++;
 
+/*    cout<<"Poly minus End Cylinder ID = "<<cFront->getId()<<endl;
+    cFront->printSelf();*/
+
 }
 
 void Filament::depolymerizePlusEnd() {
@@ -476,7 +548,10 @@ void Filament::depolymerizePlusEnd() {
     _cylinderVector.front()->updateReactionRates();
 #endif
     
-    _depolyPlusEnd++;;
+    _depolyPlusEnd++;
+
+/*    cout<<"DePoly plus End Cylinder ID = "<<cBack->getId()<<endl;
+    cBack->printSelf();*/
 
 }
 
@@ -511,6 +586,8 @@ void Filament::depolymerizeMinusEnd() {
 #endif
 
     _depolyMinusEnd++;
+/*    cout<<"DePoly minus End Cylinder ID = "<<cFront->getId()<<endl;
+    cFront->printSelf();*/
 }
 
 

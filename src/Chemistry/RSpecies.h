@@ -29,6 +29,7 @@
 #include "SysParams.h"
 
 ///Enumeration for RSpecies types
+#undef CONST // Fuck <windows.h>
 enum RSpeciesType {
     REG, AVG, CONST
 };
