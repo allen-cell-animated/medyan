@@ -240,18 +240,18 @@ void GController::generateConnections()
 
 }
 
-CompartmentGrid* GController::initializeGrid() {
+CompartmentGrid* GController::initializeGrid(const GeoParams& geoParams) {
 
     //Initial parameters of system
-    _nDim = SysParams::Geometry().nDim;
+    _nDim = geoParams.nDim;
 
-    _compartmentSize = {SysParams::Geometry().compartmentSizeX,
-                        SysParams::Geometry().compartmentSizeY,
-                        SysParams::Geometry().compartmentSizeZ};
+    _compartmentSize = {geoParams.compartmentSizeX,
+                        geoParams.compartmentSizeY,
+                        geoParams.compartmentSizeZ};
 
-    _grid = {SysParams::Geometry().NX,
-             SysParams::Geometry().NY,
-             SysParams::Geometry().NZ};
+    _grid = {geoParams.NX,
+             geoParams.NY,
+             geoParams.NZ};
 
     _size = {_compartmentSize[0] * _grid[0],
              _compartmentSize[1] * _grid[1],
