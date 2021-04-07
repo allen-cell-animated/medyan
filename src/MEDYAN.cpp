@@ -75,6 +75,7 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "Core/Globals.hpp"
 #include "MedyanArgs.hpp"
 #include "MedyanConfig.hpp"
+#include "Side/SideProcedures.hpp"
 
 using namespace medyan;
 
@@ -163,6 +164,10 @@ int main(int argc, char **argv) {
 
     case MedyanRunMode::test:
         returnCode = Catch::Session().run(argc - (cmdRes.argpNext - 1), argv + (cmdRes.argpNext - 1));
+        break;
+
+    case MedyanRunMode::side:
+        medyan::side::runSideProcedure(cmdRes.sideProcName);
         break;
     }
 
