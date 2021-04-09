@@ -364,7 +364,6 @@ void Controller::initialize(string inputFile,
 #endif
 
     // Initialize the membrane mesh adapter
-    // Currently the values are simply represented as magic numbers
     _meshAdapter = std::make_unique< adaptive_mesh::MembraneMeshAdapter >(
         typename adaptive_mesh::MembraneMeshAdapter::Parameter {
             // Topology

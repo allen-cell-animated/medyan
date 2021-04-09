@@ -731,27 +731,27 @@ public:
 
     struct Parameter {
         // Topology
-        size_t minDegree;
-        size_t maxDegree;
-        double edgeFlipMinDotNormal;
-        double edgeCollapseMinQualityImprovement;
-        double edgeCollapseMinDotNormal;
+        size_t minDegree                         = surface_mesh_min_degree;
+        size_t maxDegree                         = surface_mesh_max_degree;
+        double edgeFlipMinDotNormal              = edge_flip_min_dot_normal;
+        double edgeCollapseMinQualityImprovement = edge_collapse_min_quality_improvement;
+        double edgeCollapseMinDotNormal          = edge_collapse_min_dot_normal;
 
         // Relaxation
-        double relaxationEpsilon;
-        double relaxationDt;
-        size_t relaxationMaxIterRelocation;
-        size_t relaxationMaxIterTotal;
+        double relaxationEpsilon                 = vertex_relaxation_epsilon;
+        double relaxationDt                      = vertex_relaxation_dt;
+        size_t relaxationMaxIterRelocation       = vertex_relocation_max_iter_relocation;
+        size_t relaxationMaxIterTotal            = vertex_relocation_max_iter_tot;
 
         // Size diffusion
-        double curvatureResolution;
-        double maxSize;
-        size_t diffuseIter;
+        double curvatureResolution               = size_measure_curvature_resolution;
+        double maxSize                           = size_measure_max;
+        size_t diffuseIter                       = size_measure_diffuse_iter;
 
         // Main loop
-        size_t samplingAdjustmentMaxIter;
-        size_t mainLoopSoftMaxIter;
-        size_t mainLoopHardMaxIter;
+        size_t samplingAdjustmentMaxIter         = mesh_adaptation_topology_max_iter;
+        size_t mainLoopSoftMaxIter               = mesh_adaptation_soft_max_iter;
+        size_t mainLoopHardMaxIter               = mesh_adaptation_hard_max_iter;
     };
 
 private:

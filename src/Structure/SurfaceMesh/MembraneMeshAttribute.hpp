@@ -35,6 +35,9 @@ struct MembraneMeshChemistryInfo {
 
         // Diffusion coeffecient, with dimension L^2 T^-1
         double   diffusionCoeff = 0;
+
+        // The index of drift-causing free energy stored in each vertex. Sentinel value: -1.
+        int      speciesEnergyIndex = -1;
     };
     struct InternalReactionInfo {
         std::vector< unsigned > reactantSpeciesIndices;
@@ -42,6 +45,11 @@ struct MembraneMeshChemistryInfo {
 
         // Rate constant, with dimension L^(2*(numReactants - 1)) T^-1
         double rateConstant = 0;
+    };
+
+    // The free energy field on the membrane which a diffusing protein is subject to.
+    enum class SpeciesEnergyCat {
+        custom      // will always be zero unless manually assigning to it.
     };
 
     // diffusing species
@@ -52,6 +60,9 @@ struct MembraneMeshChemistryInfo {
 
     // Internal reactions involving species
     std::vector< InternalReactionInfo > internalReactions;
+
+    // After energy minimization and shape optimization, the energies of the following categories will be calculated and stored in each vertex.
+    std::vector<SpeciesEnergyCat> speciesEnergyCat;
 };
 
 // Returns whether the chemisty info is valid

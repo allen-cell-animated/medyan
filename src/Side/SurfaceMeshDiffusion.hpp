@@ -1,7 +1,10 @@
 #ifndef MEDYAN_Side_SurfaceMeshDiffusion_hpp
 #define MEDYAN_Side_SurfaceMeshDiffusion_hpp
 
+#include "Chemistry/ChemNRMImpl.h"
+#include "GController.h"
 #include "Structure/SubSystem.h"
+#include "Structure/SurfaceMesh/AdaptiveMesh.hpp"
 #include "Structure/SurfaceMesh/SurfaceMeshGeneratorPreset.hpp"
 #include "SysParams.h"
 
@@ -10,14 +13,33 @@ namespace medyan::side {
 inline void surfaceMeshDiffusion() {
     LOG(NOTE) << "Running side procedure: surface mesh diffusion test.";
 
-    LOG(STEP) << "Initializing.";
 
     // Background and other stuff
+    //---------------------------------
+    LOG(STEP) << "Initializing.";
     SubSystem subSystem;
 
+    GeoParams geoParams;
+    geoParams.compartmentSizeX = 500;
+    geoParams.compartmentSizeY = 500;
+    geoParams.compartmentSizeZ = 500;
+    geoParams.NX = 1;
+    geoParams.NY = 1;
+    geoParams.NZ = 1;
+
+    GController gController(&subSystem);
+    gController.initializeGrid(geoParams);
+
     // Initialize membrane with surface proteins
+    //---------------------------------
     MembraneSetup memSetup;
-    memSetup.meshParam.push_back({ });
+    memSetup.meshParam.push_back({
+        "PLANE",
+        "0", "0", "50",         // a point on the plane
+        "0", "0", "1",          // facing z direction
+        "10", "10", "0",        // box origin
+        "480", "480", "100"     // box size
+    });
 
     const auto meshData = mesh_gen::generateMeshViaParams< double >(memSetup.meshParam[0]);
     Membrane flatMembrane(
@@ -27,100 +49,70 @@ inline void surfaceMeshDiffusion() {
         meshData.triangleList
     );
 
-    // int numMembranes = 0;
-    // const auto addMembrane = [this, &numMembranes](const MembraneSetup& memSetup, const MembraneParser::MembraneInfo& memData) {
-    //     auto newMembrane = _subSystem.addTrackable<Membrane>(
-    //         &_subSystem,
-    //         memSetup,
-    //         memData.vertexCoordinateList,
-    //         memData.triangleVertexIndexList
-    //     );
+    adaptive_mesh::MembraneMeshAdapter meshAdapter(typename adaptive_mesh::MembraneMeshAdapter::Parameter {});
+    meshAdapter.adapt(flatMembrane.getMesh());
 
-    //     // Optimize the mesh for membrane
-    //     remeshMembrane(*_meshAdapter, *newMembrane);
+    flatMembrane.updateGeometryValueForSystem();
+    // The geometry of the membrane should be fixed beyond this point.
 
-    //     // Set up mechanics
-    //     newMembrane->initMechanicParams(memSetup);
-
-    //     ++numMembranes;
-    // };
-
-    // for(auto& memSetup : membraneSettings.setupVec) {
-
-    //     for(auto& initParams : memSetup.meshParam) {
-    //         if(initParams.size() == 2 && initParams[0] == "file") {
-    //             // The input looks like this: init file path/to/file
-    //             // Read membrane mesh information from an external file.
-    //             auto memPath = _inputDirectory / std::filesystem::path(initParams[1]);
-    //             std::ifstream ifs(memPath);
-    //             if (!ifs.is_open()) {
-    //                 LOG(ERROR) << "Cannot open membrane file " << memPath;
-    //                 throw std::runtime_error("Cannot open membrane file.");
-    //             }
-
-    //             const auto memDataVec = MembraneParser::readMembranes(ifs);
-
-    //             for(auto& memData : memDataVec) {
-    //                 addMembrane(memSetup, memData);
-    //             }
-    //         }
-    //         else {
-    //             // Forward the input to the membrane mesh initializer
-    //             const auto newMesh = mesh_gen::generateMeshViaParams< floatingpoint >(initParams);
-
-    //             addMembrane(memSetup, {newMesh.vertexCoordinateList, newMesh.triangleList});
-    //         }
-    //     }
-    // }
-
-    // LOG(INFO) << "Done. " << numMembranes << " membranes created." << endl;
-
-    // // Create a region inside the membrane
-    // LOG(INFO) << "Creating membrane regions...";
-    // _regionInMembrane = (
-    //     numMembranes == 0 ?
-    //     make_unique<MembraneRegion<Membrane>>(_subSystem.getBoundary()) :
-    //     MembraneRegion<Membrane>::makeByChildren(MembraneHierarchy< Membrane >::root())
-    // );
-    // _subSystem.setRegionInMembrane(_regionInMembrane.get());
+    LOG(INFO) << "Adding surface chemistry...";
+    {
+        MembraneMeshChemistryInfo memChemInfo {
+            // names
+            {"mem-diffu-test-a", "mem-diffu-test-b", "diffu-potential-test"},
+            // diffusion (the 2nd species uses 0th category (custom))
+            { { 0, 1.0 }, { 1, 0.5 }, { 2, 1.0, 0 } },
+            // internal reactions
+            {
+                { {}, {0}, 0.055 },
+                { {}, {1}, 0.062 },
+                { {0, 1, 1}, {1, 1, 1}, 1.0 }
+            },
+            // energy categories
+            { MembraneMeshChemistryInfo::SpeciesEnergyCat::custom },
+        };
+        flatMembrane.setChemistry(memChemInfo);
+    }
 
 
-    // LOG(INFO) << "Adding surface chemistry...";
-    // {
-    //     MembraneMeshChemistryInfo memChemInfo {
-    //         // names
-    //         {"mem-diffu-test-a", "mem-diffu-test-b"},
-    //         // diffusion
-    //         { { 0, 1.0 }, { 1, 0.5 } },
-    //         // internal reactions
-    //         {
-    //             { {}, {0}, 0.055 },
-    //             { {}, {1}, 0.062 },
-    //             { {0, 1, 1}, {1, 1, 1}, 1.0 }
-    //         }
-    //     };
-    //     for(auto m : Membrane::getMembranes()) {
-    //         m->setChemistry(memChemInfo);
-    //     }
-    // }
+    // Setup vertex energies
+    for (auto& v : flatMembrane.getMesh().getVertices()) {
+        auto& vertex = *v.attr.vertex;
+        vertex.cVertex.energies.resize(flatMembrane.getMesh().metaAttribute().chemInfo.speciesEnergyCat.size());
 
-    // LOG(INFO) << "Adjusting compartments by membranes...";
+        vertex.cVertex.energies[0] = -5 * std::sin(2 * M_PI / 1000 * vertex.coord[0]);
+    }
 
-    // // Deactivate all the compartments outside membrane, and mark boundaries as interesting
-    // for(auto c : _subSystem.getCompartmentGrid()->getCompartments()) {
-    //     if(!c->getTriangles().empty()) {
-    //         // Contains triangles, so this compartment is at the boundary.
-    //         c->boundaryInteresting = true;
+    // Update and fix reaction rates
+    setReactionRates(flatMembrane.getMesh());
 
-    //         // Update partial activate status
-    //         c->computeSlicedVolumeArea(Compartment::SliceMethod::membrane);
-    //         _cController.updateActivation(c, Compartment::ActivateReason::Membrane);
+    // Set initial species. 10000 copies of species 2 on vertex 0.
+    flatMembrane.getMesh().getVertices()[0].attr.vertex->cVertex.species.findSpeciesByIndex(2)->setN(10000);
 
-    //     } else if( ! _regionInMembrane->contains(vector2Vec<3, floatingpoint>(c->coordinates()))) {
-    //         // Compartment is outside the membrane
-    //         _cController.deactivate(c, true);
-    //     }
-    // }
+
+    // Initialize chem sim
+    //---------------------------------
+    ChemNRMImpl nrm;
+
+    // Activate all reactions
+    medyan::forEachReactionInMesh(
+        flatMembrane.getMesh(),
+        [&](ReactionDy& r) {
+            nrm.addReaction(&r);
+            r.activateReaction();
+        }
+    );
+
+
+
+    // Start simulation
+    //---------------------------------
+    LOG(STEP) << "Starting simulation.";
+
+    for (int i = 0; i < 10; ++i) {
+        nrm.run(100);
+        LOG(INFO) << "Current time: " << nrm.getTime();
+    }
 
 }
 
