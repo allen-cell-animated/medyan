@@ -1398,7 +1398,7 @@ void SystemParser::readDyRateParams() {
             vector<string> lineVector = split<string>(line);
 
             if (lineVector.size() >= 2) {
-                DRParams.manualCharStartTime = atof((lineVector[1].c_str()));
+                DRParams.manualCharStartTimeController = atof((lineVector[1].c_str()));
             }
             else {}
         }
@@ -1431,6 +1431,23 @@ void SystemParser::readDyRateParams() {
 
             if (lineVector.size() >= 2) {
                 DRParams.manualMinusDepolyRate = atof((lineVector[1].c_str()));
+            }
+            else {}
+        }
+        // Manual Rate Changer for Motor
+        else if (line.find("MANUALMOTORBINDINGRATIO") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                DRParams.manualMotorBindingRate = atof((lineVector[1].c_str()));
+            }
+            else {}
+        }
+        else if (line.find("MANUALMOTORUNBINDINGRATIO") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                DRParams.manualMotorUnbindingRate = atof((lineVector[1].c_str()));
             }
             else {}
         }

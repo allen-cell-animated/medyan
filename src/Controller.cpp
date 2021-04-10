@@ -828,7 +828,20 @@ void Controller::executeSpecialProtocols() {
 
         pinLowerBoundaryFilaments();
     }
+    //Manually update motor binding rate
+    if(tau() >= SysParams::DRParams.manualCharStartTimeController){
+        for(auto C : _subSystem.getCompartmentGrid()->getCompartments()) {
+            for(auto &rxn : C->getInternalReactionContainer().reactions()){
+                auto factor = SysParams::DRParams.manualMotorBindingRate;
+                rxn->setRateMulFactor(factor, ReactionBase::MotorBindingManualFactor);
+                rxn->updatePropensity();
+            }
+        }
+        //It only needs to be called once
+        SysParams::DRParams.manualCharStartTimeController = 1000000.0;
+    }
     
+    //setRateMulFactor
 }
 
 void Controller::updatePositions() {

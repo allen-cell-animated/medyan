@@ -307,6 +307,8 @@ struct DyRateParams {
     /// Option for manual (de)polymerization rate changer
     /// Start time
     double manualCharStartTime = 100000.0;
+    /// Start time used for Controller.cpp
+    double manualCharStartTimeController = 100000.0;
     /// Plusend Polymerization Rate Ratio
     float manualPlusPolyRate = 1.0;
     /// Plusend Depolymerization Rate Ratio
@@ -315,6 +317,10 @@ struct DyRateParams {
     float manualMinusPolyRate = 1.0;
     /// Minusend Depolymerization Rate Ratio
     float manualMinusDepolyRate = 1.0;
+    /// Motor Binding Rate and Walking Rate Ratio
+    float manualMotorBindingRate = 1.0;
+    /// Motor Unbinding Rate Ratio
+    float manualMotorUnbindingRate = 1.0;
 };
 
 struct SpecialParams {
