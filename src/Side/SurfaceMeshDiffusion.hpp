@@ -1,6 +1,8 @@
 #ifndef MEDYAN_Side_SurfaceMeshDiffusion_hpp
 #define MEDYAN_Side_SurfaceMeshDiffusion_hpp
 
+#include <fstream>
+
 #include "Chemistry/ChemNRMImpl.h"
 #include "GController.h"
 #include "Structure/SubSystem.h"
@@ -61,11 +63,11 @@ inline void surfaceMeshDiffusion() {
             // names
             {"mem-diffu-test-a", "mem-diffu-test-b", "diffu-potential-test"},
             // diffusion (the 2nd species uses 0th category (custom))
-            { { 0, 1.0 }, { 1, 0.5 }, { 2, 1.0, 0 } },
+            { { 0, 100.0 }, { 1, 0.5 }, { 2, 100.0, 0 } },
             // internal reactions
             {
-                { {}, {0}, 0.055 },
-                { {}, {1}, 0.062 },
+                // { {}, {0}, 0.055 },
+                // { {}, {1}, 0.062 },
                 { {0, 1, 1}, {1, 1, 1}, 1.0 }
             },
             // energy categories
@@ -86,7 +88,8 @@ inline void surfaceMeshDiffusion() {
     // Update and fix reaction rates
     setReactionRates(flatMembrane.getMesh());
 
-    // Set initial species. 10000 copies of species 2 on vertex 0.
+    // Set initial species. 10000 copies of species 0 and 2 on vertex 0.
+    flatMembrane.getMesh().getVertices()[0].attr.vertex->cVertex.species.findSpeciesByIndex(0)->setN(10000);
     flatMembrane.getMesh().getVertices()[0].attr.vertex->cVertex.species.findSpeciesByIndex(2)->setN(10000);
 
 
@@ -103,14 +106,38 @@ inline void surfaceMeshDiffusion() {
         }
     );
 
+    // Setup output
+    //---------------------------------
+    std::ofstream outChem("side-surface-mesh-diffusion.txt");
+
+    const auto printChemistry = [&]() {
+        outChem << "FRAME " << nrm.getTime() << '\n';
+        for(Membrane::MeshType::VertexIndex vi {0}; vi < flatMembrane.getMesh().numVertices(); ++vi) {
+            auto& vertex = *flatMembrane.getMesh().attribute(vi).vertex;
+            outChem << vi.index << ' '
+                << flatMembrane.getMesh().attribute(vi).gVertex.astar / 3 << ' '
+                << vertex.coord[0] << ' '
+                << vertex.coord[1] << ' '
+                << vertex.coord[2] << ' ';
+            for(auto& sp : vertex.cVertex.species.species()) {
+                outChem << sp->getN() << ' ';
+            }
+            outChem << '\n';
+        }
+
+        outChem << std::flush;
+    };
+
 
 
     // Start simulation
     //---------------------------------
     LOG(STEP) << "Starting simulation.";
 
-    for (int i = 0; i < 10; ++i) {
+    printChemistry();
+    for (int i = 0; i < 100; ++i) {
         nrm.run(100);
+        printChemistry();
         LOG(INFO) << "Current time: " << nrm.getTime();
     }
 
