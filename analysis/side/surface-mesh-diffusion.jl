@@ -21,6 +21,9 @@ begin
 	using StatsBase
 	
 	gr()
+	
+	src_dir = joinpath(@__DIR__, "../../build")
+	work_dir = @__DIR__
 end
 
 # ╔═╡ 1ef4e7be-b0ca-4d37-9b87-416495802473
@@ -63,7 +66,7 @@ end
 
 # ╔═╡ 1b83f02a-dc6a-4124-9b7f-eaaef5edb95d
 begin
-	frames = read_vertices(joinpath(@__DIR__, "../../build/side-surface-mesh-diffusion.txt"))
+	frames = read_vertices(joinpath(src_dir, "side-surface-mesh-diffusion.txt"))
     max_copy = 10000
     β = 1 / 4.1
 
@@ -87,30 +90,49 @@ Species index $(@bind species_index Slider(1:3; show_value=true))
 
 # ╔═╡ 2e4b60fd-e59c-42e0-b68e-9da50f73c09c
 
-begin
-	function make_plot()
-		frame_range = 10:length(frames)
-		conc_avg = zeros(length(frames[1].vertices))
-		
-		for frame_index ∈ frame_range
-			conc_avg += [v.species_count[species_index] / v.cell_area for v ∈ frames[frame_index].vertices]
-		end
-		conc_avg /= length(frame_range)
+function make_avg_plot()
+	frame_range = 10:length(frames)
+	conc_avg = zeros(length(frames[1].vertices))
 
-		# avg copy numbers
+	for frame_index ∈ frame_range
+		conc_avg += [v.species_count[species_index] / v.cell_area for v ∈ frames[frame_index].vertices]
+	end
+	conc_avg /= length(frame_range)
+
+	# avg copy numbers
+	conc_plot = scatter3d(
+		xs, ys, conc_avg;
+		label = "average frame $frame_range",
+		xlabel = "x (nm)",
+		ylabel = "y (nm)",
+		zlabel = "concentration (nm^-2)",
+	)
+
+	scatter3d!(conc_plot, xs, ys, expected_conc[species_index] ./ areas; label = "expected")
+	conc_plot
+end
+
+# ╔═╡ 5b4da84b-f765-4e49-9251-0c2426985ff0
+begin
+	avg_plot = make_avg_plot()
+	savefig(avg_plot, joinpath(work_dir, "surface-mesh-diffusion-avg.png"))
+	avg_plot
+end
+
+# ╔═╡ 61623a45-1616-44d0-b468-0658a13fb49c
+begin
+	anim = @animate for (fi, frame) ∈ enumerate(frames[1:20])
 		conc_plot = scatter3d(
-			xs, ys, conc_avg;
-			label = "average frame $frame_range",
+			xs, ys, [v.species_count[species_index] / v.cell_area for v ∈ frame.vertices];
+			label = "frame $fi",
 			xlabel = "x (nm)",
 			ylabel = "y (nm)",
 			zlabel = "concentration (nm^-2)",
 		)
 
 		scatter3d!(conc_plot, xs, ys, expected_conc[species_index] ./ areas; label = "expected")
-		conc_plot
 	end
-
-	p = make_plot()
+	gif(anim, joinpath(work_dir, "surface-mesh-diffusion-anim.gif"); fps=4)
 end
 
 # ╔═╡ Cell order:
@@ -121,3 +143,5 @@ end
 # ╠═1b83f02a-dc6a-4124-9b7f-eaaef5edb95d
 # ╠═f7e0efbd-2370-48af-bb4a-929d7fcb9d5d
 # ╠═2e4b60fd-e59c-42e0-b68e-9da50f73c09c
+# ╠═5b4da84b-f765-4e49-9251-0c2426985ff0
+# ╠═61623a45-1616-44d0-b468-0658a13fb49c
