@@ -129,10 +129,25 @@ inline void surfaceMeshDiffusion() {
     };
 
 
+    std::ofstream outTriangle("side-surface-mesh-diffusion-triangle.txt");
+
+    const auto printTriangle = [&]() {
+        auto triangleInfo = flatMembrane.getMesh().extract< Membrane::MeshType::VertexTriangleInitializer >().triangleVertexIndexList;
+        outTriangle << triangleInfo.size() << '\n';
+        for(auto& v : triangleInfo) {
+            outTriangle << v[0] << ' ' << v[1] << ' ' << v[2] << ' ';
+        }
+
+        outTriangle << std::flush;
+    };
+
+
 
     // Start simulation
     //---------------------------------
     LOG(STEP) << "Starting simulation.";
+
+    printTriangle();
 
     printChemistry();
     for (int i = 0; i < 100; ++i) {
