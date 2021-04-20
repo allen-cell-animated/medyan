@@ -210,6 +210,7 @@ struct ChemParams {
     double IterChange = 0.0;
     double StepTotal = 0.0;
     double StepTime = 0.0;
+    double ZCoordinate = 1250; // default Z location
     float originalPolyPlusRate;
 
 

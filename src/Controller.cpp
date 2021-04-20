@@ -511,7 +511,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
         floatingpoint bcoordx = GController::getSize()[0] / 2;
         floatingpoint bcoordy = GController::getSize()[1] / 2;
         //set up the height of the AFM bubble
-        floatingpoint bcoordz = 1250;
+        floatingpoint bcoordz = SysParams::Chemistry().ZCoordinate;
 
         vector<floatingpoint> bcoords = {bcoordx, bcoordy, bcoordz};
         Bubble* b = _subSystem.addTrackable<Bubble>(&_subSystem, bcoords, SType.afmBubbleType);

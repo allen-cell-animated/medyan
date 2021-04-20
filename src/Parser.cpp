@@ -139,7 +139,7 @@ void SystemParser::readChemParams() {
                     CParams.makeRateDependForce = atof(lineVector[3].c_str());
                 }
             }
-            else if (lineVector.size() == 7) {
+            else if (lineVector.size() == 7 || lineVector.size() == 8) {
                 if(lineVector[1]  == "AFM") {
                     CParams.makeAFM = true;
                     //displacement of each pull
@@ -151,6 +151,10 @@ void SystemParser::readChemParams() {
                     CParams.StepTotal = atof(lineVector[5].c_str());
                     //time between each pull
                     CParams.StepTime = atof(lineVector[6].c_str());
+                    if(lineVector.size() == 8){
+                        //Z coordinate
+                        CParams.ZCoordinate = atof(lineVector[7].c_str());
+                    }
                 }
             }
         }
