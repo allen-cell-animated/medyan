@@ -114,7 +114,7 @@ void SystemParser::readChemParams() {
 
             vector<string> lineVector = split<string>(line);
             //the vector size can be 5 for PINLOWERBOUNDARYFILAMENTS
-            if(lineVector.size() > 7) {
+            if(lineVector.size() > 8) {
                 cout <<
                      "There was an error parsing input file at Chemistry parameters. Exiting."
                      << endl;

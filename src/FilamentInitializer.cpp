@@ -249,7 +249,7 @@ FilamentData MTOCFilamentDist::createFilaments(Boundary* b, int numFilaments,
         else{
             point1.push_back(_coordMTOC[2] + _radius * sin(l) * cos(h));
         }
-        
+        cout << point1[0] << " " << point1[1] << " " << point1[2] << " " << endl;
         // get projection outward from the MTOC
         auto dir = normalizeVector(twoPointDirection(_coordMTOC, point1));
         auto point2 = nextPointProjection(point1,
@@ -274,8 +274,8 @@ FilamentData AFMFilamentDist::createFilaments(Boundary* b, int numFilaments,
     while (filamentCounter < numFilaments) {
         
 
-        floatingpoint l = Rand::randfloatingpoint(0,2 * M_PI);
-        floatingpoint h = Rand::randfloatingpoint(-M_PI/2, M_PI/2);
+        floatingpoint l = Rand::randfloatingpoint(-3 * M_PI/4, -M_PI/4);
+        floatingpoint h = Rand::randfloatingpoint(-M_PI/4, M_PI/4);
 
         
 

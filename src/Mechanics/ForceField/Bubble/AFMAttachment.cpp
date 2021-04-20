@@ -42,7 +42,7 @@ void AFMAttachment<AFMInteractionType>::vectorize() {
 
             radii_[ci] = afm->getBubble()->getRadius();
 
-            kstr_[ci] = f->getMinusEndCylinder()->getMCylinder()->getStretchingConst();
+            kstr_[ci] = f->getMinusEndCylinder()->getMCylinder()->getStretchingConst() / 10;
 
             ci++;
         }
