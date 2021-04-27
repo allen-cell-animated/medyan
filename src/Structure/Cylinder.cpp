@@ -380,6 +380,7 @@ bool Cylinder::within(Cylinder* other, floatingpoint dist) {
 //adjust the position variable according to the length of cylinder
 //Refer Docs/Design/PartialCylinderAlpha.pdf
 floatingpoint Cylinder::adjustedrelativeposition(floatingpoint _alpha, bool verbose){
+#ifdef ADJUSTRELPOS
     //Full Length Cylinder
     if(isFullLength())
         return _alpha;
@@ -426,6 +427,9 @@ floatingpoint Cylinder::adjustedrelativeposition(floatingpoint _alpha, bool verb
         return (floatingpoint)1.0;
     else
         return _alphacorr;
+#else
+    return _alpha;
+#endif
 }
 
 vector<floatingpoint> Cylinder::getextrapolatedcoord(){
