@@ -26,6 +26,9 @@
     - The cloned reaction is fixed to be non-proto-compartment (e0e6fac).
     - Fixed incorrect filament nucleation when bubbles exist (78a8f8c).
 
+## Known issues
+- After fixing position calculation for binding sites on partial cylinders, the contractility of the actomyosin network has decreased.
+
 # 4.1.2 (Released 2020-06-01)
 
 ## Enhancements
