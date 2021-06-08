@@ -1759,12 +1759,12 @@ void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
             //  - The position calculation of triangles
             //  - The area calculation of triangles
             //  - The unit normal vector of triangles
-            const size_t numTriangle = _triangles.size();
+            const size_t numTriangle = getTriangles().size();
             if(numTriangle) {
                 double sumArea = 0.0;
                 Vec< 3, floatingpoint > sumNormal {};
                 Vec< 3, floatingpoint > sumPos {};
-                for(Triangle* t: _triangles) {
+                for(Triangle* t: getTriangles()) {
                     const auto& mesh = t->getParent()->getMesh();
                     const Membrane::MeshType::TriangleIndex ti { t->getTopoIndex() };
                     const auto area = mesh.attribute(ti).gTriangle.area;

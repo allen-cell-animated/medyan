@@ -95,9 +95,6 @@ protected:
 
     unordered_set<Bead*> _beads; ///< Set of beads that are in this compartment
 
-    unordered_set<Triangle*> _triangles;
-    unordered_set<Edge*>     _edges;
-
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment (neighbors that
     unordered_map<Compartment*, size_t> _neighborIndex; ///< Spacial index of the neighbors of the same order as _neighbors
     ///< In 3D, the indices are in the order (x-, x+, y-, y+, z-, z+)
