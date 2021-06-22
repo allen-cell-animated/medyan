@@ -87,8 +87,8 @@ int main(int argc, char **argv) {
     cout << "         of Active Networks, Third Generation.         " << endl;
     cout << "         PAPOIAN LAB 2015, ALL RIGHTS RESERVED         " << endl;
     cout << "*******************************************************" << endl;
-    cout<< "Commit hash                            "<<GIT_COMMIT_HASH<<endl;
-    cout<< "Git branch                             "<<GIT_BRANCH<<endl;
+    cout<< "Commit hash                          "<<GIT_COMMIT_HASH<<endl;
+    cout<< "Git branch                           "<<GIT_BRANCH<<endl;
     cout << "MEDYAN version:                      v4.2.1(unreleased)"<<endl;
     cout << "Memory model:                        "<< static_cast<unsigned>(8 * sizeof
     (void*))<<" bit"<<endl;
