@@ -328,9 +328,11 @@ bool ChemNRMImpl::makeStep() {
     // Send signal
     r->emitSignal();
 #endif
+#ifdef OPTIMOUT
     mintes = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_emitsignal(mintes - minses);
     CUDAcommon::cdetails.emitsignal[rType]+= elapsed_emitsignal.count();
+#endif
 
     #ifdef CROSSCHECK_CYLINDER
     CController::_crosscheckdumpFilechem <<"----"<<endl;
