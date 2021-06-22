@@ -1338,8 +1338,8 @@ void Controller::run() {
             	factor = 10.0;
 #endif
             floatingpoint chemistryTime = _minimizationTime/factor;
-            cout<<"chemistryTime="<<chemistryTime<<" _minimizationTime="<<_minimizationTime
-            <<" factor="<<factor<<" tau()="<<tau()<<" oldTau="<<oldTau<<endl;
+//            cout<<"chemistryTime="<<chemistryTime<<" _minimizationTime="<<_minimizationTime
+//            <<" factor="<<factor<<" tau()="<<tau()<<" oldTau="<<oldTau<<endl;
             #ifdef CROSSCHECK_CYLINDER
             string crosscheckchemname = _outputDirectory + "crosscheckChem.traj";
             if(CController::_crosscheckdumpFilechem.is_open())
