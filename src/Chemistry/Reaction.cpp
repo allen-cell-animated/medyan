@@ -83,8 +83,10 @@ void Reaction<M,N>::passivateReactionImpl() {
 template <unsigned short M, unsigned short N>
 Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
 {
+#ifdef OPTIMOUT
     chrono::high_resolution_clock::time_point mins, mine;
     mins = chrono::high_resolution_clock::now();
+#endif
     vector<Species*> species;
 
     for(auto &rs : _rspecies){
@@ -114,9 +116,11 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
             else species.push_back(vit->get());
         }
     }
+#ifdef OPTIMOUT
     mine = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> rxnfindspecies(mine - mins);
     CUDAcommon::cdetails.clonefindspecies += rxnfindspecies.count();
+#endif
     //
     // Note: the new reaction is not an exact clone of the original because
     //   - The species can be different.
