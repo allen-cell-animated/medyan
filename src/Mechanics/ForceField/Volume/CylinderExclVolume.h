@@ -65,7 +65,7 @@ public:
     ///Array describing indexed set of interactions
     ///For volume, this is a 4-bead potential
     const static int n = 4;
-    static int numInteractions;
+    int numInteractions = 0;
 
     ///Constructor
     CylinderExclVolume() {

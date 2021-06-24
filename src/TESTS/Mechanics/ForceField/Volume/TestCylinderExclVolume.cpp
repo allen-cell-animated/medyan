@@ -5,7 +5,6 @@
 #include "catch2/catch.hpp"
 
 #include "Mechanics/ForceField/Volume/CylinderExclVolRepulsion.h"
-#include "Mechanics/ForceField/Volume/CylinderExclVolume.h"
 #include "TESTS/Mechanics/ForceField/TestFFCommon.hpp"
 
 using namespace test_ff_common;
@@ -84,27 +83,23 @@ TEST_CASE("Force field: Cylinder excl volume", "[ForceField]") {
         // Prepare functions
         //---------------------------------
         const auto calcEnergy = [&](const VF& c) {
-            CylinderExclVolume<CylinderExclVolRepulsion>::numInteractions = ti.k.size();
             auto tempC = c;
-            auto tempBeadSet = ti.beadSet;
-            auto tempK = ti.k;
             auto ret = CylinderExclVolRepulsion{}.energy(
                 tempC.data(),
-                tempBeadSet.data(),
-                tempK.data()
+                ti.beadSet.data(),
+                ti.k.data(),
+                ti.k.size()
             );
             return ret;
         };
         const auto calcForce = [&](const VF& c, VF& f) {
-            CylinderExclVolume<CylinderExclVolRepulsion>::numInteractions = ti.k.size();
             auto tempC = c;
-            auto tempBeadSet = ti.beadSet;
-            auto tempK = ti.k;
             CylinderExclVolRepulsion{}.forces(
                 tempC.data(),
                 f.data(),
-                tempBeadSet.data(),
-                tempK.data()
+                ti.beadSet.data(),
+                ti.k.data(),
+                ti.k.size()
             );
         };
 

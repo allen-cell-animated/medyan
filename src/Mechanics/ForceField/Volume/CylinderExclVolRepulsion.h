@@ -27,11 +27,9 @@ class CylinderExclVolRepulsion {
 public:
     
 
-    floatingpoint energy(floatingpoint *coord, int *beadSet, floatingpoint *krep);
+    floatingpoint energy(floatingpoint *coord, const int *beadSet, const floatingpoint *krep, int nint);
 
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint d);
-    
-    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep);
+    void forces(floatingpoint *coord, floatingpoint *f, const int *beadSet, const floatingpoint *krep, int nint);
     
     //returns vec of cyl cyl interaction energies if they are above  cylthresh
     vector<tuple<floatingpoint, int, vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>>>> getCylEnergies(){ return cylEnergies;};
@@ -45,14 +43,12 @@ public:
     vector<floatingpoint> uniqueTimes;
 
 private:
-    
-    
-    
-	floatingpoint energyN(floatingpoint *coord, int *beadSet,
-	                      floatingpoint *krep, int intID, bool movebeads = false);
 
-	void forceN(floatingpoint *coord, floatingpoint *f, int *beadSet,
-	                      floatingpoint *krep, int intID, bool movebeads = false);
+	floatingpoint energyN(floatingpoint *coord, const int *beadSet,
+	                      const floatingpoint *krep, int intID, bool movebeads = false);
+
+	void forceN(floatingpoint *coord, floatingpoint *f, const int *beadSet,
+	                      const floatingpoint *krep, int intID, bool movebeads = false);
 
 	doubleprecision getenergyintegrand(doubleprecision& a, doubleprecision& b,
 			doubleprecision& c, doubleprecision& d, doubleprecision& e, doubleprecision& F,

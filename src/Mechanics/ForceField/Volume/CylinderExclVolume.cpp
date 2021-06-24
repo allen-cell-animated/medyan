@@ -29,9 +29,6 @@
 using namespace mathfunc;
 
 template <class CVolumeInteractionType>
-int CylinderExclVolume<CVolumeInteractionType>::numInteractions;
-
-template <class CVolumeInteractionType>
 void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     //count interactions
     nint = 0;
@@ -258,7 +255,7 @@ floatingpoint CylinderExclVolume<CVolumeInteractionType>::computeEnergy(floating
     tbegin = chrono::high_resolution_clock::now();
 #endif
 
-    U_ii = _FFType.energy(coord, beadSet, krep);
+    U_ii = _FFType.energy(coord, beadSet, krep, numInteractions);
 
 #ifdef CUDATIMETRACK
     floatingpoint U_i[1];
@@ -304,7 +301,7 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(floatingpoint *co
     tbegin = chrono::high_resolution_clock::now();
 #endif
 #ifdef SERIAL
-    _FFType.forces(coord, f, beadSet, krep);
+    _FFType.forces(coord, f, beadSet, krep, numInteractions);
 #endif
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
