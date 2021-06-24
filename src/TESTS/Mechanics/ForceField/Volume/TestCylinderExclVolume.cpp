@@ -30,11 +30,11 @@ TEST_CASE("Force field: Cylinder excl volume", "[ForceField]") {
     // Multiple test sets
     std::vector< TestInput > testInputs;
 
-    // Input: general case
+    // Input: standard symmetric case
     testInputs.push_back({
-        "normal",
+        "standard-symmetric",
         // bead set
-        { 0, 3, 6, 9 },
+        { 0, 1, 2, 3 },
         // k
         { 100.0 },
         // coordinates
@@ -47,6 +47,25 @@ TEST_CASE("Force field: Cylinder excl volume", "[ForceField]") {
         },
     });
 
+    // Input: general cases
+    testInputs.push_back({
+        "general",
+        // bead set
+        { 0, 1, 2, 3,  0, 1, 4, 5 },
+        // k
+        { 100.0, 2e3 },
+        // coordinates
+        {
+            10, 0, 0,
+            -10, 0, 0,
+
+            0, 10, 5,
+            3, -10, 5,
+
+            3, 70, 30,
+            2, -20, 0,
+        },
+    });
 
     // Prepare test parameters
     //---------------------------------

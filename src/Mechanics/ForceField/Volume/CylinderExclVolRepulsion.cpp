@@ -914,136 +914,175 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
                 ""<<DD<<" "<<EE<<" "<<FF<<" "<<GG<<" "<<HH<<" "<<JJ<<" "<<ATG1<<" "<<ATG2<<" "
                          ""<<ATG3<<" "<<ATG4<<" "<<U<<" "<<krep[i]<<endl;
 #endif
-		U = 0.5 * krep[i]*invJJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
+        // We will use blockA, blockE, blockB and blockF to denote the terms in the parenthesis.
+        const double sumBlock = CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4;
+        const double enFactor = krep[i] * invJJ / 2;
 
-		A1 = AA*AA/(AA*AA + e*e);
-		A2 = AA*AA/(AA*AA + (a + e)*(a + e));
+        // Individual derivatives of the arctan functions, without applying the chain rule.
+        const double A1 = AA*AA/(AA*AA + (a + e)*(a + e));
+        const double A2 = AA*AA/(AA*AA + e*e);
+        const double E1 = EE*EE/(EE*EE + (a + e - d)*(a + e - d));
+        const double E2 = EE*EE/(EE*EE + (e - d)*(e - d));
+        const double B1 = BB*BB/(BB*BB + F*F);
+        const double B2 = BB*BB/(BB*BB + (F - b)*(F - b));
+        const double F1 = FF*FF/(FF*FF + (d + F)*(d + F));
+        const double F2 = FF*FF/(FF*FF + (d + F - b)*(d + F - b));
 
-		B1 = BB*BB/(BB*BB + (F - b)*(F - b));
-		B2 = BB*BB/(BB*BB + F*F);
-		E1 = EE*EE/(EE*EE + (a + e - d)*(a + e - d));
-		E2 = EE*EE/(EE*EE + (e - d)*(e - d));
+        // Using (AA, EE, ..., a, b, ...) as free parameters, compute partial derivatives for blocks.
+        //-----------------------------
+
+        // blockA(AA, CC, a, e)
+        const double blockA_C = ATG1/AA;
+        const double blockA_A = -(ATG1*CC)/(AA*AA) + (-A1 * (a+e) + A2 * e) * CC/(AA*AA*AA);
+        const double blockA_e = ((A1 - A2)*CC)/(AA*AA);
+        const double blockA_a = (A1*CC)/(AA*AA);
+
+        // blockE(EE, GG, a, e-d)
+        const double blockE_G = ATG2/EE;
+        const double blockE_E = -(ATG2*GG)/(EE*EE) + (-E1 * (a+e-d) + E2 * (e-d)) * GG/(EE*EE*EE);
+        const double blockE_e_minus_d = ((E1 - E2)*GG)/(EE*EE);
+        const double blockE_a = (E1*GG)/(EE*EE);
+
+        // blockB(BB, DD, b, f-b)
+        const double blockB_D = ATG3/BB;
+        const double blockB_B = -(ATG3*DD)/(BB*BB) + (-B1 * F + B2 * (F-b)) * DD/(BB*BB*BB);
+        const double blockB_f_minus_b = ((B1 - B2)*DD)/(BB*BB);
+        const double blockB_b = (B1*DD)/(BB*BB);
+
+        // blockF(HH, FF, b, d+f-b)
+        const double blockF_H = ATG4/FF;
+        const double blockF_F = -(ATG4*HH)/(FF*FF) + (-F1 * (d+F) + F2 * (d+F-b)) * HH/(FF*FF*FF);
+        const double blockF_d_plus_f_minus_b = ((F1 - F2)*HH)/(FF*FF);
+        const double blockF_b = (F1*HH)/(FF*FF);
+
+        // Table of derivative of intermediate variables with respect to basic vectors (v1, v2 and v3).
+        //--------------------------------------------------------------------------------
+        // Variable           v1 = c2 - c1        v2 = c4 - c3        v3 = c1 - c3
+        //--------------------------------------------------------------------------------
+        //        a           2 v1                0                   0
+        //        b           0                   2 v2                0
+        //        c           0                   0                   2 v3
+        //        d           v2                  v1                  0
+        //        e           v3                  0                   v1
+        //        f           0                   v3                  v2
+        //--------------------------------------------------------------------------------
+        //        A           (c v1 - e v3) / A   0                   (a v3 - e v1) / A
+        //--------------------------------------------------------------------------------
+        //        B           0                   (c v2 - f v3) / B   (-f v2 + b v3) / B
+        //--------------------------------------------------------------------------------
+        //        E           ((b+c-2f) v1 + (e-d) v2 - (e-d) v3) / E
+        //                                        ((e-d) v1 + a v2 - a v3) / E
+        //                                                            (-(e-d) v1 - a v2 + a v3) / E
+        //--------------------------------------------------------------------------------
+        //        F           (b v1 - (d+f) v2 + b v3) / F            (b v1 - (d+f) v2 + b v3) / F
+        //                                        (-(d+f) v1 + (a+c+2e) v2 - (d+f) v3) / F
+        //--------------------------------------------------------------------------------
+        //       CC           -2f v1 + e v2 + d v3                    d v1 - a v2
+        //                                        e v1 - a v3
+        //--------------------------------------------------------------------------------
+        //       DD           -f v2 + b v3        -f v1 + 2e v2 - d v3
+        //                                                            b v1 - d v2
+        //--------------------------------------------------------------------------------
+        //       GG           2(f-b) v1 + (2d-e) v2 - d v3            -d v1 + a v2
+        //                                        (2d-e) v1 - 2a v2 + a v3
+        //--------------------------------------------------------------------------------
+        //       HH           -2b v1 + (2d+f) v2 - b v3               -b v1 + d v2
+        //                                        (2d+f) v1 - 2(a+e) v2 + d v3
+        //--------------------------------------------------------------------------------
+
+        // block_xy means component along v_y, of derivative of sum of blocks on v_x.
+        const double block_11
+            = blockA_C * (-2*F) + blockA_A * (c/AA) + blockA_a * 2
+            + blockE_G * (2*(F-b)) + blockE_E * ((b+c-2*F)/EE) + blockE_a * 2
+            + blockF_H * (-2*b) + blockF_F * (b/FF);
+        const double block_12
+            = blockA_C * e
+            + blockE_G * (2*d-e) + blockE_E * ((e-d)/EE) + blockE_e_minus_d * (-1)
+            + blockB_D * (-F)
+            + blockF_H * (2*d+F) + blockF_F * (-(d+F)/FF) + blockF_d_plus_f_minus_b;
+        const double block_13
+            = blockA_C * d + blockA_A * (-e/AA) + blockA_e
+            + blockE_G * (-d) + blockE_E * (-(e-d)/EE) + blockE_e_minus_d
+            + blockB_D * b
+            + blockF_H * (-b) + blockF_F * (b/FF);
+
+        const double block_21
+            = blockA_C * e
+            + blockE_G * (2*d-e) + blockE_E * ((e-d)/EE) + blockE_e_minus_d * (-1)
+            + blockB_D * (-F)
+            + blockF_H * (2*d+F) + blockF_F * (-(d+F)/FF) + blockF_d_plus_f_minus_b;
+        const double block_22
+            = blockE_G * (-2*a) + blockE_E * (a/EE)
+            + blockB_D * (2*e) + blockB_B * (c/BB) + blockB_f_minus_b * (-2) + blockB_b * 2
+            + blockF_H * (-2*(a+e)) + blockF_F * ((a+c+2*e)/FF) + blockF_d_plus_f_minus_b * (-2) + blockF_b * 2;
+        const double block_23
+            = blockA_C * (-a)
+            + blockE_G * a + blockE_E * (-a/EE)
+            + blockB_D * (-d) + blockB_B * (-F/BB) + blockB_f_minus_b
+            + blockF_H * d + blockF_F * (-(d+F)/FF) + blockF_d_plus_f_minus_b;
+        const double block_31
+            = blockA_C * d + blockA_A * (-e/AA) + blockA_e
+            + blockE_G * (-d) + blockE_E * (-(e-d)/EE) + blockE_e_minus_d
+            + blockB_D * b
+            + blockF_H * (-b) + blockF_F * (b/FF);
+        const double block_32
+            = blockA_C * (-a)
+            + blockE_G * a + blockE_E * (-a/EE)
+            + blockB_D * (-d) + blockB_B * (-F/BB) + blockB_f_minus_b
+            + blockF_H * d + blockF_F * (-(d+F)/FF) + blockF_d_plus_f_minus_b;
+        const double block_33
+            = blockA_A * (a/AA)
+            + blockE_E * (a/EE)
+            + blockB_B * (b/BB)
+            + blockF_F * (b/FF);
 
 
-		F1 = FF*FF/(FF*FF + (d + F - b)*(d + F - b));
-		F2 = FF*FF/(FF*FF + (d + F)*(d + F));
+        // Derivative of JJ
+        //   d(JJ)/d(v1) = 2(-bc+f^2) v1 + 2(cd-ef) v2 + 2(eb-fd) v3
+        //   d(JJ)/d(v2) = 2(cd-ef) v1 + 2(-ac+e^2) v2 + 2(-ed+af) v3
+        //   d(JJ)/d(v3) = 2(eb-fd) v1 + 2(-ed+af) v2 + 2(d^2-ab) v3
+        const double JJ_11 = 2 * (-b*c+F*F);
+        const double JJ_12 = 2 * (c*d-e*F);
+        const double JJ_13 = 2 * (b*e-d*F);
+        const double JJ_21 = 2 * (c*d-e*F);
+        const double JJ_22 = 2 * (-a*c+e*e);
+        const double JJ_23 = 2 * (-d*e+a*F);
+        const double JJ_31 = 2 * (b*e-d*F);
+        const double JJ_32 = 2 * (-d*e+a*F);
+        const double JJ_33 = 2 * (d*d-a*b);
 
-		A11 = ATG1/AA;
-		A12 = -((ATG1*CC)/(AA*AA)) + (A1*CC*e)/(AA*AA*AA) -
-		      (A2*CC*(a + e))/(AA*AA*AA);
-		A13 = -((A1*CC)/(AA*AA)) + (A2*CC)/(AA*AA);
-		A14 = (A2*CC)/(AA*AA);
+        // Final derivatives: (i,j) -> gradient of energy on c_i, component along v_j
+        double deriv[4][3];
+        deriv[0][0] = enFactor * (-invJJ * sumBlock * (JJ_31 - JJ_11) + (block_31 - block_11));
+        deriv[0][1] = enFactor * (-invJJ * sumBlock * (JJ_32 - JJ_12) + (block_32 - block_12));
+        deriv[0][2] = enFactor * (-invJJ * sumBlock * (JJ_33 - JJ_13) + (block_33 - block_13));
+        deriv[1][0] = enFactor * (-invJJ * sumBlock * (JJ_11) + (block_11));
+        deriv[1][1] = enFactor * (-invJJ * sumBlock * (JJ_12) + (block_12));
+        deriv[1][2] = enFactor * (-invJJ * sumBlock * (JJ_13) + (block_13));
+        deriv[2][0] = enFactor * (-invJJ * sumBlock * (-JJ_31 - JJ_21) + (-block_31 - block_21));
+        deriv[2][1] = enFactor * (-invJJ * sumBlock * (-JJ_32 - JJ_22) + (-block_32 - block_22));
+        deriv[2][2] = enFactor * (-invJJ * sumBlock * (-JJ_33 - JJ_23) + (-block_33 - block_23));
+        deriv[3][0] = enFactor * (-invJJ * sumBlock * (JJ_21) + (block_21));
+        deriv[3][1] = enFactor * (-invJJ * sumBlock * (JJ_22) + (block_22));
+        deriv[3][2] = enFactor * (-invJJ * sumBlock * (JJ_23) + (block_23));
 
-		E11 = ATG2/EE;
-		E12 = (E2*(-a + d - e)*GG)/(EE*EE*EE) + (E1*(-d + e)*GG)/(EE*EE*EE) -
-		      (ATG2*GG)/(EE*EE);
-		E13 = -((E1*GG)/(EE*EE)) + (E2*GG)/(EE*EE);
-		E14 = (E2*GG)/(EE*EE);
+        double forces[4][3];
+        for(int bi = 0; bi < 4; ++bi) {
+            for(int dim = 0; dim < 3; ++dim) {
+                forces[bi][dim] = -(deriv[bi][0] * (c2[dim] - c1[dim]) + deriv[bi][1] * (c4[dim] - c3[dim]) + deriv[bi][2] * (c1[dim] - c3[dim]));
+            }
+        }
 
-		B11 = ATG3/BB;
-		B12 = -((ATG3*DD)/(BB*BB)) - (B2*DD*F)/(BB*BB*BB) +
-		      (B1*DD*(-b + F))/(BB*BB*BB);
-		B13 = -((B1*DD)/(BB*BB)) + (B2*DD)/(BB*BB);
-		B14 = (B1*DD)/(BB*BB);
-
-		F11 = ATG4/FF;
-		F12 = (F2*(-d - F)*HH)/(FF*FF*FF) + (F1*(-b + d + F)*HH)/(FF*FF*FF) -
-		      (ATG4*HH)/(FF*FF);
-		F13 = -((F1*HH)/(FF*FF)) + (F2*HH)/(FF*FF);
-		F14 = (F1*HH)/(FF*FF);
-
-		doubleprecision f1l[3], f2l[3], f3l[3], f4l[3];
-
-		term1 =  A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*
-		    (d - e))/EE + 2*U*d*F - 2*U*(b*e - d*F) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*F))/(2*EE) - A11*F + E11*F - 2*U*F*F + (F12*b)/(2*FF));
-		term2 = B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e +
-		    E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*F - F11*F - 2*U*a*F - 4*U*e*F + 2*U*(d*e - a*F) - (B12*F)/BB;
-		term3 = -A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*
-		    (d - e))/EE - 2*U*d*F + 2*U*(b*e - d*F) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF));
-
-		term4 =  A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA) +(E12*(b+c-2*F))/(2*EE)
-		    -A11*F+E11*F-2*U*F*F+(F12*b)/(2*FF);
-		term5 = -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))
-		    /EE - B11*F + F11*F + 4*U*e*F - (F12*(d + F))/FF;
-		term6 = A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*
-		    (d - e))/EE + 2*U*d*F - 2*U*(b*e - d*F) + (F12*b)/FF;
-
-		term7 = -A13 - F13 - B11*b + F11*b - A11*d - E11*d - 2*F11*d + 4*U*c*d - A11*e +
-		    E11*e + 2*U*b*e + (A12*e)/AA + B11*F - F11*F - 2*U*d*F - 4*U*e*F + 2*U*(b*e - d*F) - (F12*b)/FF + (F12*(d + F))/FF;
-		term8 = -B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE +
-		    2*U*a*F - 2*U*(d*e - a*F) + (B12*F)/BB + (F12*(d + F))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF));
-		term9 = -B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE +
-		    2*U*a*F - 2*U*(d*e - a*F) + (B12*F)/BB + (F12*(d + F))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF));
-
-		term10 = -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))
-		    /EE - B11*F + F11*F +4*U*e*F - (F12*(d + F))/FF;
-		term11 = B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/
-		    (2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF);
-		term12 = B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE -
-		    2*U*a*F + 2*U*(d*e - a*F) - (B12*F)/BB - (F12*(d + F))/FF;
-
-
-        f1l[0] =  - 0.5*invJJ*( (c2[0] - c1[0] ) *( term1 )
-		                      + (c4[0] - c3[0] ) *( term2 )
-		                      + (c1[0] - c3[0] )* ( term3 ));
-
-		f1l[1] =  - 0.5*invJJ*( (c2[1] - c1[1] ) *( term1 )
-							  + (c4[1] - c3[1] ) *( term2 )
-							  + (c1[1] - c3[1] )* ( term3 ));
-
-		f1l[2] =  - 0.5*invJJ*( (c2[2] - c1[2] ) *( term1 )
-							  + (c4[2] - c3[2] ) *( term2 )
-							  + (c1[2] - c3[2] )* ( term3 ));
-
-
-		f2l[0] =  - invJJ*( (c2[0] - c1[0] ) *( term4 )
-		              + 0.5*(c4[0] - c3[0] ) *( term5 )
-		              + 0.5*(c1[0] - c3[0] )* ( term6));
-
-		f2l[1] = - invJJ*( (c2[1] - c1[1] ) *( term4 )
-					 + 0.5*(c4[1] - c3[1] ) *( term5 )
-					 + 0.5*(c1[1] - c3[1] )* ( term6 ));
-
-		f2l[2] = - invJJ*( (c2[2] - c1[2]) *( term4 )
-					 + 0.5*(c4[2] - c3[2]) *( term5 )
-					 + 0.5*(c1[2] - c3[2])* ( term6 ));
-
-		f3l[0] =  - 0.5*invJJ*( (c2[0] - c1[0]) *( term7 )
-							  + (c4[0] - c3[0]) *( term8 )
-							  + (c1[0] - c3[0])* ( term9 ));
-
-		f3l[1] =  - 0.5*invJJ*( (c2[1] - c1[1]) *( term7 )
-							  + (c4[1] - c3[1]) *( term8 )
-							  + (c1[1] - c3[1])* ( term9 )) ;
-
-		f3l[2] =  - 0.5*invJJ*( (c2[2] - c1[2]) *( term7 )
-							  + (c4[2] - c3[2]) *( term8 )
-							  + (c1[2] - c3[2])* ( term9 ) );
-
-
-		f4l[0] =  - invJJ*( 0.5*(c2[0] - c1[0]) *( term10 )
-						      + (c4[0] - c3[0]) *( term11 )
-		                  + 0.5*(c1[0] - c3[0])* ( term12 ));
-
-		f4l[1] =  - invJJ*( 0.5*(c2[1] - c1[1]) *( term10 )
-						      + (c4[1] - c3[1]) *( term11 )
-						  + 0.5*(c1[1] - c3[1] )* (term12 ));
-
-		f4l[2] =  - invJJ*( 0.5*(c2[2] - c1[2]) *( term10 )
-							  + (c4[2] - c3[2]) *( term11 )
-						  + 0.5*(c1[2] - c3[2])* ( term12 )) ;
-
-
-		if(checkNaN_INF<doubleprecision>(f1l, 0, 2)||checkNaN_INF<doubleprecision>(f2l,0,2)
-		||checkNaN_INF<doubleprecision>(f3l, 0, 2)||checkNaN_INF<doubleprecision>(f4l,0, 2)){
+		if(checkNaN_INF<doubleprecision>(forces[0], 0, 2)||checkNaN_INF<doubleprecision>(forces[1],0,2)
+		||checkNaN_INF<doubleprecision>(forces[2], 0, 2)||checkNaN_INF<doubleprecision>(forces[3],0, 2)){
 			forceN(coord, f, beadSet, krep, i);
 		}
 		else{
 			for(int dim = 0; dim<3; dim++) {
-				f1[dim] += f1l[dim];
-				f2[dim] += f2l[dim];
-				f3[dim] += f3l[dim];
-				f4[dim] += f4l[dim];
+				f1[dim] += forces[0][dim];
+				f2[dim] += forces[1][dim];
+				f3[dim] += forces[2][dim];
+				f4[dim] += forces[3][dim];
 			}
 		}
 
