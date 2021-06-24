@@ -191,7 +191,6 @@ if(NOT "${MEDYAN_NO_GUI}" STREQUAL "true")
 
     # glm
     find_package(glm CONFIG REQUIRED)
-    target_link_libraries(medyan PRIVATE glm)
 
     # imgui
     find_package(imgui CONFIG REQUIRED)
