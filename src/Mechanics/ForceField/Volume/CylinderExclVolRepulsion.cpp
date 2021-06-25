@@ -327,7 +327,7 @@ void CylinderExclVolRepulsion::checkforculprit() {
 }
 
 #endif
-floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, const int *beadSet, const floatingpoint *krep, int nint) {
+floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, const int *beadSet, const floatingpoint *krep, const floatingpoint* eqLengths, int nint) {
 	floatingpoint *c1, *c2, *c3, *c2temp, *c4, *newc1, *newc2, d;
 
 	doubleprecision a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
@@ -351,6 +351,8 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, const int *
 	newc1 = new floatingpoint[3];
 //    std::cout<<"SERL ecvol nint "<<nint<<endl;
 	for (int i = 0; i < nint; i++) {
+
+		const auto kRepScaled = krep[i] * eqLengths[2 * i] * eqLengths[2 * i + 1];
 
 		c1 = &coord[3 * beadSet[n * i]];
 		c2 = &coord[3 * beadSet[n * i + 1]];
@@ -435,7 +437,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, const int *
 		ATG3 = atan((F)/BB) - atan((F - b)/BB);
 		ATG4 = atan((d + F)/FF) - atan((d + F - b)/FF);
 
-		U_i = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
+		U_i = 0.5 * kRepScaled / JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
 
 		//@@}
 		/* cout<<"Analytical energy "<<U_i<<endl;
@@ -445,7 +447,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, const int *
 		if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
 		   || U_i != U_i || U_i < -1.0) {
 			//evaluate numerically
-			U_i = energyN(coord, beadSet, krep, i);
+			U_i = energyN(coord, beadSet, krep, eqLengths, i);
 			if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
 			   || U_i != U_i || U_i < -1.0) {
 
@@ -616,7 +618,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, const int *
 }
 
 
-void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, const int *beadSet, const floatingpoint *krep, int nint) {
+void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, const int *beadSet, const floatingpoint *krep, const floatingpoint* eqLengths, int nint) {
 
 	floatingpoint *c1, *c2, *c3, *c4, d, U;
     floatingpoint newc2[3] {};
@@ -634,6 +636,8 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, co
 	int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
 
 	for (int i = 0; i < nint; i++) {
+
+		const auto kRepScaled = krep[i] * eqLengths[2 * i] * eqLengths[2 * i + 1];
 
 		c1 = &coord[3 * beadSet[n * i]];
 		c2 = &coord[3 * beadSet[n * i + 1]];
@@ -741,7 +745,7 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, co
 #endif
         // We will use blockA, blockE, blockB and blockF to denote the terms in the parenthesis.
         const double sumBlock = CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4;
-        const double enFactor = krep[i] * invJJ / 2;
+        const double enFactor = kRepScaled * invJJ / 2;
 
         // Individual derivatives of the arctan functions, without applying the chain rule.
         const double A1 = AA*AA/(AA*AA + (a + e)*(a + e));
@@ -900,7 +904,7 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, co
 
 		if(checkNaN_INF<doubleprecision>(forces[0], 0, 2)||checkNaN_INF<doubleprecision>(forces[1],0,2)
 		||checkNaN_INF<doubleprecision>(forces[2], 0, 2)||checkNaN_INF<doubleprecision>(forces[3],0, 2)){
-			forceN(coord, f, beadSet, krep, i);
+			forceN(coord, f, beadSet, krep, eqLengths, i);
 		}
 		else{
 			for(int dim = 0; dim<3; dim++) {
@@ -921,7 +925,7 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, co
 }
 
 floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord,
-                                                const int *beadSet, const floatingpoint *krep, int i,
+                                                const int *beadSet, const floatingpoint *krep, const floatingpoint* eqLengths, int i,
                                                 bool movebeads) {
 	floatingpoint *c1, *c2, *c3, *c4, *newc1, *newc2;
 
@@ -933,6 +937,8 @@ floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord,
 	newc1 = new floatingpoint[3];
 
 	int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
+
+	const auto kRepScaled = krep[i] * eqLengths[2 * i] * eqLengths[2 * i + 1];
 
 	c1 = &coord[3 * beadSet[n * i]];
 	c2 = &coord[3 * beadSet[n * i + 1]];
@@ -1018,7 +1024,7 @@ floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord,
 		}
 	}
 
-	U_i = krep[i] * (deltas * deltat/9.0) * (Termset1 + Termset2 + Termset3 + Termset4);
+	U_i = kRepScaled * (deltas * deltat/9.0) * (Termset1 + Termset2 + Termset3 + Termset4);
 
 	delete [] newc1;
 	delete [] newc2;
@@ -1027,7 +1033,7 @@ floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord,
 	   || U_i != U_i || U_i < -1.0) {
 		if(!movebeads){
 			movebeads = true;
-			energyN(coord, beadSet, krep, i, movebeads);
+			energyN(coord, beadSet, krep, eqLengths, i, movebeads);
 		}
 	}
 
@@ -1036,7 +1042,7 @@ floatingpoint CylinderExclVolRepulsion::energyN(floatingpoint *coord,
 }
 
 void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
-                                      const int *beadSet, const floatingpoint *krep, int i,
+                                      const int *beadSet, const floatingpoint *krep, const floatingpoint* eqLengths, int i,
                                       bool movebeads) {
 	floatingpoint *c1, *c2, *c3, *c4, *newc1, *newc2;
 	floatingpoint *f1, *f2, *f3, *f4;
@@ -1053,6 +1059,8 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 	integrandarray = new doubleprecision[6];
 
 	int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
+
+	const auto kRepScaled = krep[i] * eqLengths[2 * i] * eqLengths[2 * i + 1];
 
 	c1 = &coord[3 * beadSet[n * i]];
 	c2 = &coord[3 * beadSet[n * i + 1]];
@@ -1178,15 +1186,15 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 	doubleprecision f1l[3], f2l[3], f3l[3], f4l[3];
 
 	for(int dim=0; dim<3; dim++){
-		f1l[dim] =4.0*krep[i] * ( -integration[0]*vecC[dim] + integration[1]*(vecC[dim]- vecA[dim])
+		f1l[dim] =4.0* kRepScaled * ( -integration[0]*vecC[dim] + integration[1]*(vecC[dim]- vecA[dim])
 		                          + integration[2]*vecA[dim] + integration[4] * vecB[dim] - integration[3]
 		                                                                                    *vecB[dim]);
-		f2l[dim] = 4.0*krep[i] * ( -integration[1]*vecC[dim] - integration[2]*vecA[dim] +
+		f2l[dim] = 4.0* kRepScaled * ( -integration[1]*vecC[dim] - integration[2]*vecA[dim] +
 		                           integration[3]*vecB[dim]);
-		f3l[dim] =4.0*krep[i] * (  integration[0]*vecC[dim] + integration[1]*vecA[dim] -
+		f3l[dim] =4.0* kRepScaled * (  integration[0]*vecC[dim] + integration[1]*vecA[dim] -
 		                           integration[4]* (vecB[dim]+vecC[dim]) - integration[3]*vecA[dim] +
 		                           integration[5]*vecB[dim]);
-		f4l[dim] = 4.0*krep[i] * ( integration[4]*vecC[dim] + integration[3]*vecA[dim]
+		f4l[dim] = 4.0* kRepScaled * ( integration[4]*vecC[dim] + integration[3]*vecA[dim]
 		                           -integration[5]*vecB[dim]);
 	}
 
@@ -1204,7 +1212,7 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 	        ||checkNaN_INF<doubleprecision>(f3l, 0, 2) ||checkNaN_INF<doubleprecision>(f4l,0,2)){
 		if(!movebeads){
 			movebeads = true;
-			forceN(coord, f, beadSet, krep, i, movebeads);
+			forceN(coord, f, beadSet, krep, eqLengths, i, movebeads);
 		}
 		else {
 			cout << "Cylinder Exclusion Force becomes infinite. Printing data " << endl;

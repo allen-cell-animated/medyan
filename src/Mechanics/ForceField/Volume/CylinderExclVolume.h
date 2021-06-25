@@ -44,6 +44,8 @@ private:
     ///Array describing the constants in calculation
     int *beadSet;
     floatingpoint *krep;
+    std::vector<floatingpoint> vecEqLength;
+
     int nint = 0;
     
     virtual vector<tuple<floatingpoint, int, vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>>>> getCylEnergies() {

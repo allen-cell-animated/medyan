@@ -63,6 +63,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
 //    std::cout<<"NINT1 "<<nint<<endl;
     beadSet = new int[n * nint];
     krep = new floatingpoint[nint];
+    vecEqLength.resize(2 * nint);
 
 
     int nc = Cylinder::getCylinders().size();
@@ -85,6 +86,9 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
                 beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->getStableIndex();
                 beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->getStableIndex();
                 beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->getStableIndex();
+
+                vecEqLength[2 * Cumnc    ] = ci ->getMCylinder()->getEqLength();
+                vecEqLength[2 * Cumnc + 1] = cin->getMCylinder()->getEqLength();
                 
                 //Get KRepuls based on filament type
                 if(ci->getType() != cin->getType()){
@@ -255,7 +259,7 @@ floatingpoint CylinderExclVolume<CVolumeInteractionType>::computeEnergy(floating
     tbegin = chrono::high_resolution_clock::now();
 #endif
 
-    U_ii = _FFType.energy(coord, beadSet, krep, numInteractions);
+    U_ii = _FFType.energy(coord, beadSet, krep, vecEqLength.data(), numInteractions);
 
 #ifdef CUDATIMETRACK
     floatingpoint U_i[1];
@@ -301,7 +305,7 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(floatingpoint *co
     tbegin = chrono::high_resolution_clock::now();
 #endif
 #ifdef SERIAL
-    _FFType.forces(coord, f, beadSet, krep, numInteractions);
+    _FFType.forces(coord, f, beadSet, krep, vecEqLength.data(), numInteractions);
 #endif
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();

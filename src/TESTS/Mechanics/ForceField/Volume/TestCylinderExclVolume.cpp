@@ -9,6 +9,42 @@
 
 using namespace test_ff_common;
 
+TEST_CASE("Force field: Cylinder excl volume scaling", "[ForceField]") {
+    // The test case checks the scaling behavior of volume exclusion interaction
+
+    using namespace std;
+
+    const std::vector<floatingpoint> coord {
+        // Segments of cylinder 1
+        -60.0, 0.0, 0.0,
+        0.0,   0.0, 0.0,
+        60.0,  0.0, 0.0,
+
+        // Segments of cylinder 2
+        -40.0, -40.0, 10.0,
+        -28.0, -24.0, 10.0,
+        -10.0, 0.0,   10.0,
+        20.0,  40.0,  10.0,
+    };
+
+    // Configuration 0
+    const std::vector<int>           beadSet0  { 0, 2, 3, 6 };
+    const std::vector<floatingpoint> k0        { 1e-2 };
+    const std::vector<floatingpoint> eqLength0 { 100.0, 100.0 };
+
+    // Configuration 1: breaking down each cylinder into several segments
+    const std::vector<int>           beadSet1  { 0, 1, 3, 4,  0, 1, 4, 5,  0, 1, 5, 6,  1, 2, 3, 4,  1, 2, 4, 5,  1, 2, 5, 6, };
+    const std::vector<floatingpoint> k1        { 1e-2,        1e-2,        1e-2,        1e-2,        1e-2,        1e-2,       };
+    const std::vector<floatingpoint> eqLength1 { 50.0, 20.0,  50.0, 30.0,  50.0, 50.0,  50.0, 20.0,  50.0, 30.0,  50.0, 50.0, };
+
+    auto tempCoord = coord;
+    const auto energy0 = CylinderExclVolRepulsion{}.energy(tempCoord.data(), beadSet0.data(), k0.data(), eqLength0.data(), k0.size());
+    const auto energy1 = CylinderExclVolRepulsion{}.energy(tempCoord.data(), beadSet1.data(), k1.data(), eqLength1.data(), k1.size());
+
+    REQUIRE(energy0 == Approx(energy1));
+}
+
+
 TEST_CASE("Force field: Cylinder excl volume", "[ForceField]") {
     // The test case checks whether energy and force are consistent
 
@@ -22,6 +58,7 @@ TEST_CASE("Force field: Cylinder excl volume", "[ForceField]") {
         std::string      name;
         std::vector<int> beadSet;
         VF               k;
+        VF               eqLength;
         VF               coord;
     };
 
@@ -35,7 +72,9 @@ TEST_CASE("Force field: Cylinder excl volume", "[ForceField]") {
         // bead set
         { 0, 1, 2, 3 },
         // k
-        { 100.0 },
+        { 0.25 },
+        // equilibrium length
+        { 20.0, 20.0 },
         // coordinates
         {
             10, 0, 0,
@@ -53,6 +92,8 @@ TEST_CASE("Force field: Cylinder excl volume", "[ForceField]") {
         { 0, 1, 2, 3,  0, 1, 4, 5 },
         // k
         { 100.0, 2e3 },
+        // equilibrium length
+        { 20.0, 20.0,  20.0, 100.0 },
         // coordinates
         {
             10, 0, 0,
@@ -88,6 +129,7 @@ TEST_CASE("Force field: Cylinder excl volume", "[ForceField]") {
                 tempC.data(),
                 ti.beadSet.data(),
                 ti.k.data(),
+                ti.eqLength.data(),
                 ti.k.size()
             );
             return ret;
@@ -99,6 +141,7 @@ TEST_CASE("Force field: Cylinder excl volume", "[ForceField]") {
                 f.data(),
                 ti.beadSet.data(),
                 ti.k.data(),
+                ti.eqLength.data(),
                 ti.k.size()
             );
         };
