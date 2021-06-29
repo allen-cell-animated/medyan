@@ -616,7 +616,7 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
     // store the full matrix in list
     hessianVector.push_back(hessianMatrix);
 
-    if(false) {
+    if(SysParams::Mechanics().eigenTracking) {
         // create symmetrized sparse matrix object
         Eigen::SparseMatrix<double> hessMat(total_DOF, total_DOF), hessMatSym;
         hessMat.setFromTriplets(tripletList.begin(), tripletList.end());
