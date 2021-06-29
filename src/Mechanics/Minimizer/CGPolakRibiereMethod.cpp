@@ -835,7 +835,6 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
             beta = betaFR;
 #else
          beta = max<double>((double) 0.0, (newGrad - prevGrad) / curGrad);
-
 #endif
 #ifdef CROSSCHECK_CYLINDER
         CGMethod::_crosscheckdumpMechFile<<"Beta set"<<endl;
