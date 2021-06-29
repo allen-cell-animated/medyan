@@ -467,7 +467,6 @@ private:
         _copyNumbers.clear();
         
         _average = average;
-        cout<<"_average "<<average<<endl;
     }
     
 public:

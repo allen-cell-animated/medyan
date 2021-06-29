@@ -470,8 +470,6 @@ public:
 /// the neighboring one (i.e. they are the stochastic analogue of deterministic
 /// reaction-diffusion processes)
 class SpeciesDiffusing : public Species {
-protected:
-    bool _searchwhencloning = true;
 public:
     /// Default constructor
     SpeciesDiffusing()  : Species() {}
@@ -522,9 +520,6 @@ public:
 /// Used for species that can be in a Filament.
 ///These species can not move cross-compartment.
 class SpeciesFilament : public Species {
-protected:
-    bool _searchwhencloning = false;
-    
 public:
     /// Default constructor
     SpeciesFilament()  : Species() {}
