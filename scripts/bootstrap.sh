@@ -47,11 +47,14 @@ vcpkg_setup() {
     rebuild=$2
     if [ $required = true ]; then
         if [ ! -d "$vcpkg_dir" -o $rebuild = true ]; then
-            echo "Configuring vcpkg..."
+            echo "Downloading vcpkg..."
             (
                 cd $build_dir &&
-                git clone https://github.com/Microsoft/vcpkg.git &&
-                cd $vcpkg_dir &&
+                git clone https://github.com/Microsoft/vcpkg.git
+            )
+            echo "Configuring vcpkg..."
+            (
+                cd $vcpkg_dir
                 ./bootstrap-vcpkg.sh
             )
         else
@@ -60,6 +63,7 @@ vcpkg_setup() {
     else
         echo "Skipping vcpkg installation."
     fi
+
     return 0
 }
 

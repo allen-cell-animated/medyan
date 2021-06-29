@@ -96,7 +96,6 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     //Using _numBoundHeads vs _numHeads as the argument to the constructor here - Cal edit to produce realistic dissipation values
     _mMotorGhost = unique_ptr<MMotorGhost>(
             new MMotorGhost(motorType, _numBoundHeads, c1->adjustedrelativeposition(position1), c2->adjustedrelativeposition(position2), x1, x2, x3, x4));
-//            new MMotorGhost(motorType, _numBoundHeads, position1, position2, x1, x2, x3, x4));
     _mMotorGhost->setMotorGhost(this);
 #endif
 #endif
@@ -260,6 +259,7 @@ void MotorGhost::updateReactionRates() {
         //WALKING REACTIONS
         Species* s1 = _cMotorGhost->getFirstSpecies();
         Species* s2 = _cMotorGhost->getSecondSpecies();
+        
         for(auto r : s1->getRSpecies().reactantReactions()) {
             
             if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
