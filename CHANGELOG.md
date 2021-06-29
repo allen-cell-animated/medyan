@@ -1,8 +1,14 @@
+# 4.2.0 (Released TBD)
+
 ## Enhancements
 - Force components that reach >1e15 will trigger an alarm in addition to NaN and Inf values (39ce574).
 - Removed thread pool usage (c78fb5e).
 - Optimized filament and branching force field calculations (df76443, 4d523e7).
 - Added source groups corresponding to the file tree structure in `CMakeLists.txt` (8fc9ead).
+- `OPTIMOUT` macro offers more detailed timings of various parts of the code so the user has better understanding of the rate limiting steps in the simulation (873c814).
+- Optimized species searching when cloning reactions (52f4c47).
+- Optimized addition of dependent reactions (7b86dcd).
+- Eigenvalue computation can be optionally disabled with `EIGENTRACKING: OFF` while computing Hessian matrix (0c455b5).
 
 ## Bug fixes
 
@@ -14,7 +20,7 @@
 
 - Force fields
     - Fixed branching interactions when the offspring filament is attached to the plus end of parent filament (c87d3d9, 840de95).
-    - Fixed initial force computation for combined-filament-stretching-and-bending force field (99c9bd6).
+    - Fixed initial force computation for combined-filament-stretching-and-bending force field, which is no longer enabled by default (99c9bd6).
     - Fixed incorrect forces for branching position cosine (4d523e7).
     - Fixed wrong constant used in branching bending energy computation (a68e859).
 
@@ -22,12 +28,11 @@
     - After chemistry, when the diffusing species copy numbers are set, now use `up()` and `down()` functions instead of only `setN()` to trigger crosschecks and signals (4b8a5e5).
     - Replaced `std::bind2nd` with lambda function (805b221).
     - Fixed reaction rate scaling by volume in newly created compartments (f6c7783).
-    - Fixed the coordinate calculation for binding sites using the `Cylinder::adjustedrelativeposition` function (dbf7527, dbecef5).
+    - Fixed the coordinate calculation for binding sites using the `Cylinder::adjustedrelativeposition` function. However, to ensure backward compatibility, it is turned off by default (dbf7527, dbecef5).
     - The cloned reaction is fixed to be non-proto-compartment (e0e6fac).
     - Fixed incorrect filament nucleation when bubbles exist (78a8f8c).
+    - Fixed incorrect creation of `FilamentCreationCallback` (7b77123).
 
-## Known issues
-- After fixing position calculation for binding sites on partial cylinders, the contractility of the actomyosin network has decreased.
 
 # 4.1.2 (Released 2020-06-01)
 
