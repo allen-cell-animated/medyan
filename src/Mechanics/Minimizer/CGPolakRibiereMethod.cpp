@@ -822,6 +822,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
         //Polak-Ribiere update
         //Max(0,betaPR) allows us to reset the direction under non-ideal circumstances.
         //The direction is reset of steepest descent direction (-gk).
+#ifdef FLOAT_PRECISION
         double betaPR = max<double>((double) 0.0, (newGrad - prevGrad) / curGrad);
         double betaFR = max<double>((double) 0.0, newGrad / curGrad);
         //Efficient hybrid Conjugate gradient techniques, Eq 21
@@ -832,6 +833,10 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
             beta = betaPR;
         else
             beta = betaFR;
+#else
+         beta = max<double>((double) 0.0, (newGrad - prevGrad) / curGrad);
+
+#endif
 #ifdef CROSSCHECK_CYLINDER
         CGMethod::_crosscheckdumpMechFile<<"Beta set"<<endl;
 #endif
