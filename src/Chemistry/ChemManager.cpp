@@ -2809,7 +2809,7 @@ void ChemManager::genNucleationReactions() {
                 //now, add the callback
 #ifdef REACTION_SIGNALING
                 FilamentCreationCallback
-                        fcallback(plusEnd, filament, minusEnd, filType, _subSystem, creationCompartment);
+                        fcallback(plusEnd, minusEnd, filament, filType, _subSystem, creationCompartment);
                 ConnectionBlock rcb(rxn->connect(fcallback,false));
 #endif
             }
