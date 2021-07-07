@@ -33,54 +33,173 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
     : _compartment(c), _pCylinder(rhs._pCylinder), _size(rhs._size) {
         
     CCylinder* rhsPtr = const_cast<CCylinder*>(&rhs);
-        
+    #ifdef CROSSCHECK_CYLINDER
+    Cylinder::_crosscheckdumpFile <<"Clone begin rhs cylinder set "<<getId()<<endl;
+    Cylinder::_crosscheckdumpFile <<"Total monomers "<<rhs._monomers.size()<<getId()<<endl;
+    #endif
     //copy all monomers, bounds
     for(auto &m : rhs._monomers)
         _monomers.emplace_back(m->clone(c));
+
+    #ifdef CROSSCHECK_CYLINDER
+    Cylinder::_crosscheckdumpFile <<"Monomers cloned"<<endl;
+    #endif
     
     //copy all internal reactions
+    #ifdef CROSSCHECK_CYLINDER
+    Cylinder::_crosscheckdumpFile <<"Internal rxn count "<<rhs
+        ._internalReactions.size()<<endl;
+    #endif
+#ifdef OPTIMOUT
+    mins = chrono::high_resolution_clock::now();
+#endif
+    unsigned int count = 0;
     for(auto &r: rhs._internalReactions) {
+        #ifdef CROSSCHECK_CYLINDER
+        Cylinder::_crosscheckdumpFile <<"Internal ReactionType "<<r->getReactionType()
+        <<endl;
+        if(r->getCBound() != nullptr)
+            Cylinder::_crosscheckdumpFile <<"CBound exists"<<endl;
+        else
+            Cylinder::_crosscheckdumpFile <<"CBound DOESNOT exist"<<endl;
+        #endif
+#ifdef OPTIMOUT
+        minsi = chrono::high_resolution_clock::now();
+#endif
         ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
+#ifdef OPTIMOUT
+        minei = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> irxnclone(minei - minsi);
+        CUDAcommon::cdetails.internalrxnclone += irxnclone.count();
+#endif
         rxnClone->setVolumeFrac(c->getVolumeFrac());
+        #ifdef CROSSCHECK_CYLINDER
+        Cylinder::_crosscheckdumpFile <<"Internal Reaction cloned."<<endl;
+        #endif
         
         if(r->getCBound() != nullptr)
             r->getCBound()->setOffReaction(rxnClone);
-        
+
+        #ifdef CROSSCHECK_CYLINDER
+        if(r->getCBound() != nullptr)
+            Cylinder::_crosscheckdumpFile <<"OffReaction cloned + set."<<endl;
+        #endif
+#ifdef OPTIMOUT
+        minsi = chrono::high_resolution_clock::now();
+#endif
         addInternalReaction(rxnClone);
+#ifdef OPTIMOUT
+        minei = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> irxnadd(minei - minsi);
+        CUDAcommon::cdetails.internalrxnadd += irxnadd.count();
+#endif
+        #ifdef CROSSCHECK_CYLINDER
+        Cylinder::_crosscheckdumpFile <<"Internal ReactionAdded."<<endl;
+        #endif
+        count++;
     }
+#ifdef OPTIMOUT
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> internalrxn(mine - mins);
+    CUDAcommon::cdetails.ccylclonecounter[0]++;
+    CUDAcommon::cdetails.ccylclonetimer[0] += internalrxn.count();
+    CUDAcommon::cdetails.ccylclonerxncounter[0] += rhs._internalReactions.size();
+    mins = chrono::high_resolution_clock::now();
+#endif
     //copy all cross-cylinder reactions
+    #ifdef CROSSCHECK_CYLINDER
+    Cylinder::_crosscheckdumpFile <<"Cross cylinder rxn count "<<rhs
+    ._crossCylinderReactions.size()<<endl;
+    #endif
     for(auto it = rhs._crossCylinderReactions.begin();
              it != rhs._crossCylinderReactions.end(); it++) {
         for(auto &r : it->second) {
+            #ifdef CROSSCHECK_CYLINDER
+            Cylinder::_crosscheckdumpFile <<"CrossCylinder ReactionType "
+                                            ""<<r->getReactionType()
+                                          <<endl;
+            if(r->getCBound() != nullptr)
+                Cylinder::_crosscheckdumpFile <<"CBound exists"<<endl;
+            else
+                Cylinder::_crosscheckdumpFile <<"CBound DOESNOT exist"<<endl;
+            #endif
 
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
             rxnClone->setVolumeFrac(c->getVolumeFrac());
+            #ifdef CROSSCHECK_CYLINDER
+            Cylinder::_crosscheckdumpFile <<"CrossCylinder Reaction cloned."<<endl;
+            #endif
             
             if(r->getCBound() != nullptr) {
 	            r->getCBound()->setOffReaction(rxnClone);
             }
+            #ifdef CROSSCHECK_CYLINDER
+            if(r->getCBound() != nullptr)
+                Cylinder::_crosscheckdumpFile <<"OffReaction cloned + set."<<endl;
+            #endif
             
             addCrossCylinderReaction(it->first, rxnClone);
+            #ifdef CROSSCHECK_CYLINDER
+            Cylinder::_crosscheckdumpFile <<"CrossCylinder ReactionAdded."<<endl;
+            #endif
         }
     }
     //Copy reacting cylinders, Clone reactions where this cylinder is involved
+    #ifdef CROSSCHECK_CYLINDER
+    Cylinder::_crosscheckdumpFile <<"Reacting cylinder count "<<rhs
+        ._reactingCylinders.size()<<endl;
+    #endif
+#ifdef OPTIMOUT
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> crosscyl(mine - mins);
+    CUDAcommon::cdetails.ccylclonecounter[1]++;
+    CUDAcommon::cdetails.ccylclonetimer[1] += crosscyl.count();
+    CUDAcommon::cdetails.ccylclonerxncounter[1] += rhs._crossCylinderReactions.size();
+    mins = chrono::high_resolution_clock::now();
+#endif
     for(auto &ccyl : rhs._reactingCylinders) {
 
         //clone reactions
         for(auto &r: ccyl->getCrossCylinderReactions()[rhsPtr]) {
+            #ifdef CROSSCHECK_CYLINDER
+            Cylinder::_crosscheckdumpFile <<"Reacting Cylinder ReactionType "
+                                            ""<<r->getReactionType()
+                                          <<endl;
+            if(r->getCBound() != nullptr)
+                Cylinder::_crosscheckdumpFile <<"CBound exists"<<endl;
+            else
+                Cylinder::_crosscheckdumpFile <<"CBound DOESNOT exist"<<endl;
+            #endif
             
             //copy cbound if any
             ReactionBase* rxnClone = r->clone(c->getSpeciesContainer());
             rxnClone->setVolumeFrac(c->getVolumeFrac());
+            #ifdef CROSSCHECK_CYLINDER
+            Cylinder::_crosscheckdumpFile <<"ReactingCylinder Reaction cloned."<<endl;
+            #endif
 
             if(r->getCBound() != nullptr) {
                 r->getCBound()->setOffReaction(rxnClone);
             }
+            #ifdef CROSSCHECK_CYLINDER
+            if(r->getCBound() != nullptr)
+                Cylinder::_crosscheckdumpFile <<"OffReaction cloned + set."<<endl;
+            #endif
             
             ccyl->addCrossCylinderReaction(this, rxnClone);
+            #ifdef CROSSCHECK_CYLINDER
+            Cylinder::_crosscheckdumpFile <<"CrossCylinder ReactionAdded."<<endl;
+            #endif
         }
     }
+#ifdef OPTIMOUT
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> reactingcyl(mine - mins);
+    CUDAcommon::cdetails.ccylclonecounter[2]++;
+    CUDAcommon::cdetails.ccylclonetimer[2] += reactingcyl.count();
+    CUDAcommon::cdetails.ccylclonerxncounter[2] += rhs._reactingCylinders.size();
+#endif
 }
 
 void CCylinder::addInternalReaction(ReactionBase* r) {
@@ -200,25 +319,53 @@ void CCylinder::removeAllReactingCylinders() {
 }
 
 CCylinder::~CCylinder() {
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"CCylinder deleting "<<endl;
+    cout<<"Total monomers "<<_monomers.size()<<endl;
+    #endif
     
     //Remove all reactions owned by this ccylinder
     removeAllInternalReactions();
-    removeAllCrossCylinderReactions(); 
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"CCylinder removed all InternalReactions "<<endl;
+    #endif
+    removeAllCrossCylinderReactions();
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"CCylinder removed all CrossCylinderReactions "<<endl;
+    #endif
     
     //remove all reactions involving this ccylinder
     removeAllReactingCylinders();
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"CCylinder removed all ReactingCylinders "<<endl;
+    #endif
     
     //Remove all species
     for(auto &m: _monomers) {
-        
+        #ifdef CROSSCHECK_CYLINDER
+        cout<<"Total Filament Species #"<<(CMonomer::_numFSpecies[_pCylinder->getType()])<<endl;
+        #endif
         for(int i = 0; i < CMonomer::_numFSpecies[_pCylinder->getType()]; i++) {
             SpeciesFilament* s = m->speciesFilament(i);
+            #ifdef CROSSCHECK_CYLINDER
+            cout<<"Removing Species Filament "<<s->getFullName()<<endl;
+            #endif
             if(s != nullptr) _compartment->removeSpecies(s);
         }
+        #ifdef CROSSCHECK_CYLINDER
+        cout<<"CCylinder removed all FilamentSpecies "<<endl;
+        cout<<"Total Bound Species #"<<CMonomer::_numBSpecies[_pCylinder->getType()]<<endl;
+        #endif
         for(int i = 0; i < CMonomer::_numBSpecies[_pCylinder->getType()]; i++) {
             SpeciesBound* s = m->speciesBound(i);
+            #ifdef CROSSCHECK_CYLINDER
+            cout<<"Removing Species Bound "<<s->getFullName()<<endl;
+            #endif
             if(s != nullptr) _compartment->removeSpecies(s);
         }
+        #ifdef CROSSCHECK_CYLINDER
+        cout<<"CCylinder removed all BoundSpecies "<<endl;
+        #endif
     }
 }
 

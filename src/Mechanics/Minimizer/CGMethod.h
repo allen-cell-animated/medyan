@@ -21,6 +21,7 @@
 #include "common.h"
 #include "CUDAcommon.h"
 #include "Mechanics/Minimizer/MinimizationTypes.hpp"
+#include <fstream>
 
 //FORWARD DECLARATIONS
 class ForceFieldManager;
@@ -310,6 +311,8 @@ public:
                           floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
                           string _LINESEARCHALGORITHM,
                           bool steplimit) = 0;
+
+	static ofstream _crosscheckdumpMechFile;
 
 };
 
