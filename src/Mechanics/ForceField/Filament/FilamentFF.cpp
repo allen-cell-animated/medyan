@@ -20,6 +20,9 @@
 #include "FilamentBendingHarmonic.h"
 #include "FilamentBendingCosine.h"
 
+#include "FilamentStretchingandBending.h"
+#include "FilamentStretchingHarmonicandBendingCosine.h"
+
 #include "Filament.h"
 //TODO remove later
 #include "CGMethod.h"
@@ -27,25 +30,34 @@
 
 FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting) {
 
-    if (stretching == "HARMONIC")
-        _filamentInteractionVector.emplace_back(
-                new FilamentStretching<FilamentStretchingHarmonic>());
-    else if(stretching == "") {}
-    else {
-        cout << "Filament stretching FF not recognized. Exiting." << endl;
-        exit(EXIT_FAILURE);
-    }
 
-    if (bending == "HARMONIC")
+  /*  if(stretching == "HARMONIC" && bending == "COSINE")
         _filamentInteractionVector.emplace_back(
-                new FilamentBending<FilamentBendingHarmonic>());
-    else if(bending == "COSINE")
-        _filamentInteractionVector.emplace_back(
-                new FilamentBending<FilamentBendingCosine>());
-    else if(bending == "") {}
-    else {
-        cout << "Filament bending FF not recognized. Exiting." << endl;
-        exit(EXIT_FAILURE);
+                new FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>
+                        ());
+    else */
+    {
+
+        if (stretching == "HARMONIC")
+            _filamentInteractionVector.emplace_back(
+                    new FilamentStretching<FilamentStretchingHarmonic>());
+        else if (stretching == "") {}
+        else {
+            cout << "Filament stretching FF not recognized. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+
+        if (bending == "HARMONIC")
+            _filamentInteractionVector.emplace_back(
+                    new FilamentBending<FilamentBendingHarmonic>());
+        else if (bending == "COSINE")
+            _filamentInteractionVector.emplace_back(
+                    new FilamentBending<FilamentBendingCosine>());
+        else if (bending == "") {}
+        else {
+            cout << "Filament bending FF not recognized. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
     }
 }
 
@@ -88,6 +100,10 @@ floatingpoint FilamentFF::computeEnergy(floatingpoint *coord, bool stretched) {
             return -1;
         }
         else U += U_i;
+        #ifdef TRACKDIDNOTMINIMIZE
+        if(!stretched)
+            SysParams::Mininimization().tempEnergyvec.push_back(U_i);
+        #endif
         
 #ifdef DETAILEDOUTPUT
         std::cout<<getName()<<" "<<U_i<<endl;
@@ -143,4 +159,12 @@ void FilamentFF::computeForces(floatingpoint *coord, floatingpoint *f) {
     }
     //TODO remove later
 //    delete F_i;
+}
+
+vector<string> FilamentFF::getinteractionnames(){
+	vector<string> temp;
+	for (auto &interaction : _filamentInteractionVector) {
+		temp.push_back(interaction->getName());
+	}
+    return temp;
 }

@@ -52,6 +52,8 @@ public:
     virtual void computeLoadForces() {return;}
     
     virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
+
+    virtual vector<string> getinteractionnames();
 };
 
 #endif

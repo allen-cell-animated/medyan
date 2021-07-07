@@ -9,7 +9,12 @@
 #include "Structure/BranchingPoint.h"
 #include "Util/Io/Log.hpp"
 #include "Util/Math/Vec.hpp"
-
+//This version uses a the following vectors to determine dihedral angles.
+//b1 = c2 - mp;
+//b2 = c3 - mp;
+//b3 = c4 - c3;
+//n1 = b1 x b2;
+//n2 = b3 x b2;
 using namespace mathfunc;
 using V3 = Vec< 3, floatingpoint >;
 
@@ -28,17 +33,23 @@ floatingpoint BranchingDihedralQuadratic::energy(
         bpi == BranchingDihedral< BranchingDihedralQuadratic >::n,
         "Number of beads per interaction in branching dihedral quadratic does not match"
     );
-
+    floatingpoint *coord2temp = new floatingpoint[3];
     floatingpoint U = 0.0;
 
     for(size_t i = 0; i < nint; ++i) {
         const auto coord1 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i    ]);
-        const auto coord2 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 1]);
+        auto p = pos[i];
+        Vec<3,floatingpoint> coord2;
+        coord2 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 1]);
+        if(areEqual(p, 1.0)) {
+            p = (floatingpoint) 0.5;
+            //cplus = cminus +p*(cplus_extended-cminus)
+            coord2 = (1 / p) *(coord2 - (1 - p) * coord1);
+        }
         const auto coord3 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 2]);
         const auto coord4 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 3]);
 
         // Brancher coordinate on the mother filament
-        const auto p = pos[i];
         const auto mp = (1 - p) * coord1 + p * coord2;
 
         // Bonds
@@ -79,14 +90,16 @@ floatingpoint BranchingDihedralQuadratic::energy(
 
         U += U_i;
     } // End loop interactions
-
+//	cout<<"Quadratic   "<<U<<endl;
+    delete [] coord2temp;
     return U;
 
 } // floatingpoint energy(...)
 
 void BranchingDihedralQuadratic::forces(
     const floatingpoint *coord, floatingpoint *f, size_t nint,
-    const unsigned int *beadSet, const floatingpoint *kdih, const floatingpoint *pos
+    const unsigned int *beadSet, const floatingpoint *kdih, const floatingpoint *pos,
+    floatingpoint *stretchforce
 ) const {
 
     // Beads per interaction
@@ -98,7 +111,13 @@ void BranchingDihedralQuadratic::forces(
 
     for(size_t i = 0; i < nint; ++i) {
         const auto coord1 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i    ]);
-        const auto coord2 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 1]);
+        auto p = pos[i];
+        Vec<3,floatingpoint> coord2;
+        coord2 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 1]);
+        if(areEqual(p, 1.0)) {
+            p = (floatingpoint) 0.5;
+            coord2 = (1 / p) *(coord2 - (1 - p) * coord1);
+        }
         const auto coord3 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 2]);
         const auto coord4 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[bpi * i + 3]);
 
@@ -108,7 +127,6 @@ void BranchingDihedralQuadratic::forces(
         auto f4 = makeRefVec< 3, floatingpoint >(f + 3 * beadSet[bpi * i + 3]);
 
         // Brancher coordinate on the mother filament
-        const auto p = pos[i];
         const auto mp = (1 - p) * coord1 + p * coord2;
 
         // Bonds
@@ -221,7 +239,7 @@ void BranchingDihedralQuadratic::forces(
         const auto stInv = (floatingpoint)1.0 / st;
         const auto eFac  = -2 * kdih[i] * theta * stInv;
 
-        // derivatives on ct
+        // derivatives on ct - cosine theta; nu - numerator, de - denominator
         //---------------------------------------------------------------------
         // d(ct_nu) / db1
         //
@@ -315,6 +333,7 @@ void BranchingDihedralQuadratic::forces(
         const auto e133 = -eFac * ct * sin32inv2 * b3mag2inv;
 
         // translate to actual force dependence on b1, b2 and b3
+        // fij is factor for the jth component (b1, b2, b3) of force acting on bead i.
         const auto f11 = (1-p) * (e111 + e121);
         const auto f12 = (1-p) * (e112 + e122);
         const auto f13 = (1-p) * (e113 + e123);
@@ -331,11 +350,44 @@ void BranchingDihedralQuadratic::forces(
         const auto f42 = -e132;
         const auto f43 = -e133;
 
-        // compute forces
-        const auto force1 = f11 * b1 + f12 * b2 + f13 * b3;
-        const auto force2 = f21 * b1 + f22 * b2 + f23 * b3;
-        const auto force3 = f31 * b1 + f32 * b2 + f33 * b3;
-        const auto force4 = f41 * b1 + f42 * b2 + f43 * b3;
+        Vec<3,floatingpoint> force1, force2, force3, force4;
+        //U2(c1,c2prime,c3,c4)<=>Utilda(c1,c2,c3,c4)
+        if(areEqual(pos[i],(floatingpoint) 1.0)){
+            //In this scenario, the energy is defined as U2(c1, c2prime, c3, c4). We are
+            // trying to get U(c1, c2, c3, c4) from it.
+            //c1-parent minusend | c2 - parent plusend/bindingsite | c2prime-parent
+            // extendedplusend   | c3 - offspring minusend         | c4 - offspring plusend
+            //[dU(c1,c2,c3,c4)]             [dU2(c1,c2prime,c3,c4)]   dc2prime
+            //[---------------]        =    [---------------------] x --------
+            //[    dc2        ]c1,c3,c4     [      dc2prime       ]     dc2
+            //______________________________________________________________________________
+            //[dU(c1,c2,c3,c4)]          [   [dU2(c1,c2prime,c3,c4)]   dc2prime
+            //[---------------]        = [   [---------------------] x --------
+            //[    dc1        ]c2,c3,c4  [   [       c2prime       ]     dc1
+            //                           [
+            //                           [        [dU2(c1,c2prime,c3,c4)]
+            //                           [  +     [---------------------]
+            //                           [        [         dc1         ]
+            //We define c2 = c1 + s(c2prime - c1)
+            // dc2prime    s - 1  | dc2prime    1
+            // -------- = ------- | -------- = ---
+            //   dc1         s    |   dc2       s
+            force1 = f11 * b1 + f12 * b2 + f13 * b3;
+            const auto force2prime = f21 * b1 + f22 * b2 + f23 * b3;
+            force3 = f31 * b1 + f32 * b2 + f33 * b3;
+            force4 = f41 * b1 + f42 * b2 + f43 * b3;
+            const auto factor1 = (p-1)/p;
+            const auto factor2 = (1/p);
+            force1 += force2prime*factor1;
+            force2 = force2prime*factor2;
+        }
+        // Default case. compute forces U(c1, c2, c3, c4)<=>Utilda(c2,mp,c3,c4)
+        else {
+            force1 = f11 * b1 + f12 * b2 + f13 * b3;
+            force2 = f21 * b1 + f22 * b2 + f23 * b3;
+            force3 = f31 * b1 + f32 * b2 + f33 * b3;
+            force4 = f41 * b1 + f42 * b2 + f43 * b3;
+        }
 
         // apply forces
         f1 += force1;
@@ -343,6 +395,11 @@ void BranchingDihedralQuadratic::forces(
         f3 += force3;
         f4 += force4;
 
+        if(stretchforce) {
+            for(short j = 0; j < 3; j++)
+                stretchforce[3*i + j] = force3[j];
+        }
+
     } // End loop interactions
 
-} // void force(...)
+} // void forces(...)

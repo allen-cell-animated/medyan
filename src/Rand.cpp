@@ -21,4 +21,5 @@ int Rand::chemistrycounter = 0;
 mt19937 Rand::eng(rdtsc());
 #endif
 uniform_int_distribution<int> Rand::_int_distr;
+uniform_int_distribution<uint64_t> Rand::_uint64_t_distr;
 

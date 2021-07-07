@@ -19,6 +19,8 @@
 #include <utility> // forward
 #include <vector>
 
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 // DatabaseData stores the data that has the same indexing with the internal
 // Database structure.
@@ -39,6 +41,7 @@ struct DatabaseDataDefault {
     void move_from_back(std::size_t) {}
     void move_content(std::size_t from, std::size_t to) {}
     void resize(std::size_t) {}
+    void settodummy(std::size_t) {}
 };
 
 template< typename T >
@@ -65,7 +68,7 @@ public:
             // Move the data from the last element to the current position
             _elems[_index] = _elems.back();
             // Updata _index of the original last element
-            _elems[_index] -> _index = _index;
+            _elems[_index]->_index = _index;
         }
 
         // Pop the last element
@@ -125,7 +128,8 @@ template< typename T, bool stableIndexing, typename DatabaseData = DatabaseDataD
 
 // Specialization for unstable indexing
 template< typename T, typename DatabaseData >
-class Database< T, false, DatabaseData > : public DatabaseBase<T>, public DatabaseDataManager<DatabaseData> {
+class Database< T, false, DatabaseData > : public DatabaseBase<T>,
+                                           public DatabaseDataManager<DatabaseData> {
 
 public:
 
@@ -151,7 +155,8 @@ public:
 
 // Specialization for stable indexing
 template< typename T, typename DatabaseData >
-class Database< T, true, DatabaseData > : public DatabaseBase<T>, public DatabaseDataManager<DatabaseData> {
+class Database< T, true, DatabaseData > : public DatabaseBase<T>,
+                                          public DatabaseDataManager<DatabaseData> {
     static std::vector<T*> _stableElems;
     static std::vector<std::size_t> _deletedIndices;
 
@@ -215,6 +220,7 @@ public:
     }
     ~Database() {
         // Only mark as deleted
+        db_data_type::getDbData().settodummy(_stableIndex);
         _deletedIndices.push_back(_stableIndex);
     }
 

@@ -34,6 +34,10 @@
 #include "GController.h"
 #include "Rand.h"
 
+#ifdef CROSSCHECK_CYLINDER
+#include "CController.h"
+#endif
+
 using namespace mathfunc;
 
 Histogram* Filament::_turnoverTimes;
@@ -42,7 +46,13 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<floatingpoint>
                    const vector<floatingpoint>& direction, bool nucleation, bool branch)
 
     : Trackable(), _subSystem(s), _filType(filamentType) {
- 
+
+    if(getId() >= SysParams::Chemistry().maxStableIndex) {
+        LOG(ERROR) << "Filament ID assigned ("<< getId()<<
+                   ") equals/exceeds the maximum permissible value "
+                   "("<<SysParams::Chemistry().maxStableIndex<<"). Exiting."<<endl;
+        throw std::logic_error("Max value reached");
+    }
     //create beads
     Bead* b1 = _subSystem->addTrackable<Bead>(position, this, 0);
     
@@ -56,7 +66,7 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<floatingpoint>
         
     Bead* b2 = _subSystem->addTrackable<Bead>(pos2, this, 1);
     
-    //create cylinder
+    //create cylindera
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b1, b2, _filType, 0);
     
     c0->setPlusEnd(true);
@@ -132,6 +142,8 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<vector<floatin
     }
 }
 
+
+
 Filament::~Filament() {
     
     //remove cylinders, beads from system
@@ -141,7 +153,10 @@ Filament::~Filament() {
         
         if(c->isPlusEnd())
             _subSystem->removeTrackable<Bead>(c->getSecondBead());
-        
+
+        #ifdef CROSSCHECK_CYLINDER
+        cout<<"RemoveTrackable Cylinder "<<c->getId()<<" "<<c->getStableIndex() <<endl;
+        #endif
         _subSystem->removeTrackable<Cylinder>(c);
     }
 }
@@ -204,6 +219,39 @@ void Filament::extendMinusEnd(vector<floatingpoint>& coordinates) {
 
 }
 
+//Initialize for restart
+void Filament::initializerestart(vector<Cylinder*> cylinderVector,
+        vector<restartCylData>& _rCDatavec) {
+
+    if(SysParams::RUNSTATE){
+        LOG(ERROR) << "initializerestart Function from Filament class can only be called "
+                      "during restart phase. Exiting.";
+        throw std::logic_error("Illegal function call pattern");
+    }
+    if(_cylinderVector.size())
+        cout<<_cylinderVector.size()<<endl;
+    for(auto cyl:cylinderVector) {
+        auto rcdata = _rCDatavec[cyl->getStableIndex()];
+        cyl->initializerestart( rcdata.totalmonomers, rcdata.endmonomerpos[0],
+                                rcdata.endmonomerpos[1], rcdata.endstatusvec[0],
+                                rcdata.endstatusvec[1], rcdata.endtypevec[0],
+                                rcdata.endtypevec[1]);
+	    _cylinderVector.push_back(cyl);
+    }
+
+    //set plus end marker
+    _plusEndPosition = getPlusEndCylinder()->getSecondBead()->getPosition();
+
+	// update reaction rates
+	if(const auto& loadForceFunc = _subSystem->getCylinderLoadForceFunc()) {
+		loadForceFunc(_cylinderVector.back(), ForceFieldTypes::LoadForceEnd::Plus);
+		_cylinderVector.back()->updateReactionRates();
+		loadForceFunc(_cylinderVector.front(), ForceFieldTypes::LoadForceEnd::Minus);
+		_cylinderVector.front()->updateReactionRates();
+	}
+
+}
+
 //extend front at runtime
 void Filament::extendPlusEnd(short plusEnd) {
 
@@ -244,10 +292,18 @@ void Filament::extendPlusEnd(short plusEnd) {
     _cylinderVector.back()->setPlusEnd(false);
     _cylinderVector.push_back(c0);
     _cylinderVector.back()->setPlusEnd(true);
+
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"PlusEnd cylinder set"<<endl;
+    #endif
     
     // set cylinder's filID
 
     c0->setFilID(getId());
+
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Cyl FilID set"<<endl;
+    #endif
 
 
 #ifdef CHEMISTRY
@@ -255,16 +311,28 @@ void Filament::extendPlusEnd(short plusEnd) {
     CMonomer* m = _cylinderVector.back()->getCCylinder()->getCMonomer(0);
     m->speciesPlusEnd(plusEnd)->up();
 #endif
-    
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Species PlusEnd set"<<endl;
+    #endif
 #ifdef DYNAMICRATES
     //update reaction rates
     _cylinderVector.back()->updateReactionRates();
 #endif
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Reaction Rates updated"<<endl;
+    #endif
     
     _deltaPlusEnd++;
+
+/*    cout<<"Extend minus End Cylinder ID = "<<cBack->getId()<<endl;
+    cBack->printSelf();*/
+
     mine = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_time2(mine - mins);
 	FilextendPlusendtimer2 += elapsed_time2.count();
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"extendPlusend"<<endl;
+    #endif
 }
 
 //extend back at runtime
@@ -297,6 +365,10 @@ void Filament::extendMinusEnd(short minusEnd) {
     _cylinderVector.front()->setMinusEnd(false);
     _cylinderVector.push_front(c0);
     _cylinderVector.front()->setMinusEnd(true);
+
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"MinusEnd cylinder set"<<endl;
+    #endif
     
     // set cylinder's filID
 
@@ -308,6 +380,9 @@ void Filament::extendMinusEnd(short minusEnd) {
     CMonomer* m = newCCylinder->getCMonomer(newCCylinder->getSize() - 1);
     
     m->speciesMinusEnd(minusEnd)->up();
+#ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"MinusEnd species set"<<endl;
+#endif
 
 #endif
     
@@ -315,14 +390,26 @@ void Filament::extendMinusEnd(short minusEnd) {
     //update reaction rates
     _cylinderVector.front()->updateReactionRates();
 #endif
-    
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Reaction rates updated"<<endl;
+    #endif
     _deltaMinusEnd++;
+
+/*    cout<<"Extend plus End Cylinder ID = "<<cFront->getId()<<endl;
+    cFront->printSelf();*/
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"extendMinusend"<<endl;
+    #endif
 }
 
 //Depolymerize front at runtime
 void Filament::retractPlusEnd() {
     
     Cylinder* retCylinder = _cylinderVector.back();
+
+/*    cout<<"Ret plus End Cylinder ID = "<<retCylinder->getId()<<endl;
+    retCylinder->printSelf();*/
+
     _cylinderVector.pop_back();
     
 #ifdef MECHANICS
@@ -334,7 +421,10 @@ void Filament::retractPlusEnd() {
     
     _subSystem->removeTrackable<Bead>(retCylinder->getSecondBead());
     removeChild(retCylinder->getSecondBead());
-    
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"RemoveTrackable Cylinder "<<retCylinder->getId()<<" "
+                                                             ""<<retCylinder->getStableIndex()<<endl;
+    #endif
     _subSystem->removeTrackable<Cylinder>(retCylinder);
     removeChild(retCylinder);
     
@@ -347,11 +437,19 @@ void Filament::retractPlusEnd() {
 #endif
     
     _deltaPlusEnd--;
+
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"retractPlusend"<<endl;
+    #endif
 }
 
 void Filament::retractMinusEnd() {
     
     Cylinder* retCylinder = _cylinderVector.front();
+
+/*    cout<<"Ret minus End Cylinder ID = "<<retCylinder->getId()<<endl;
+    retCylinder->printSelf();*/
+
     _cylinderVector.pop_front();
     
 #ifdef MECHANICS
@@ -363,7 +461,9 @@ void Filament::retractMinusEnd() {
     
     _subSystem->removeTrackable<Bead>(retCylinder->getFirstBead());
     removeChild(retCylinder->getFirstBead());
-    
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"RemoveTrackable Cylinder "<<retCylinder->getId()<<" "<<retCylinder->getStableIndex() <<endl;
+    #endif
     _subSystem->removeTrackable<Cylinder>(retCylinder);
     removeChild(retCylinder);
     
@@ -383,6 +483,9 @@ void Filament::retractMinusEnd() {
         _plusEndPosition = getPlusEndCylinder()->getSecondBead()->getPosition();
         _turnoverTime = tau();
     }
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"retractMinusEnd"<<endl;
+    #endif
 }
 
 void Filament::polymerizePlusEnd() {
@@ -416,6 +519,12 @@ void Filament::polymerizePlusEnd() {
 #endif
 
     _polyPlusEnd++;
+
+/*    cout<<"Poly plus End Cylinder ID = "<<cBack->getId()<<endl;
+    cBack->printSelf();*/
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"polymerizePlusend"<<endl;
+    #endif
 
 }
 
@@ -452,6 +561,12 @@ void Filament::polymerizeMinusEnd() {
 
     _polyMinusEnd++;
 
+/*    cout<<"Poly minus End Cylinder ID = "<<cFront->getId()<<endl;
+    cFront->printSelf();*/
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"polymerizeMinusend"<<endl;
+    #endif
+
 }
 
 void Filament::depolymerizePlusEnd() {
@@ -484,7 +599,13 @@ void Filament::depolymerizePlusEnd() {
     _cylinderVector.front()->updateReactionRates();
 #endif
     
-    _depolyPlusEnd++;;
+    _depolyPlusEnd++;
+
+/*    cout<<"DePoly plus End Cylinder ID = "<<cBack->getId()<<endl;
+    cBack->printSelf();*/
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"depolymerizePlusend"<<endl;
+    #endif
 
 }
 
@@ -519,6 +640,11 @@ void Filament::depolymerizeMinusEnd() {
 #endif
 
     _depolyMinusEnd++;
+/*    cout<<"DePoly minus End Cylinder ID = "<<cFront->getId()<<endl;
+    cFront->printSelf();*/
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"depolymerizeMinusend"<<endl;
+    #endif
 }
 
 
@@ -852,7 +978,7 @@ void arcOutward(vector<floatingpoint>&v1,vector<floatingpoint>&v2, const vector<
     dist=300/dist;
     
     std::transform(tempv1.begin(),tempv1.end(),tempv1.begin(),
-                   std::bind2nd(std::multiplies<floatingpoint>(),dist));
+                   [&](auto x) { return x * dist; });
     std::transform(mid.begin(), mid.end(), tempv1.begin(),
                    std::back_inserter(v1), std::plus<floatingpoint>());
     
@@ -864,7 +990,7 @@ void arcOutward(vector<floatingpoint>&v1,vector<floatingpoint>&v2, const vector<
     dist=100/dist;
     
     std::transform(tempv2.begin(),tempv2.end(),tempv2.begin(),
-                   std::bind2nd(std::multiplies<floatingpoint>(),dist));
+                   [&](auto x) { return x * dist; });
     std::transform(mid3.begin(), mid3.end(), tempv2.begin(),
                    std::back_inserter(v2), std::plus<floatingpoint>());
 }

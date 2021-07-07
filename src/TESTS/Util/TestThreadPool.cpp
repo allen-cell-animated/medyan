@@ -1,3 +1,4 @@
+#ifdef THIS_THREADPOOL_IS_CURRENTLY_NOT_USED_IN_MEDYAN
 #include <chrono>
 
 #include "catch2/catch.hpp"
@@ -69,3 +70,4 @@ TEST_CASE("Thread Pool test", "[ThreadPool]") {
 
     }
 }
+#endif

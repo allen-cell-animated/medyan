@@ -24,6 +24,9 @@
 #include "Rand.h"
 #include "CController.h"
 
+#include <chrono>
+#include "CUDAcommon.h"
+
 #ifdef BOOST_MEM_POOL
 #ifdef BOOST_POOL_MEM_RNODENRM
 boost::pool<> allocator_rnodenrm(sizeof(RNodeNRM),BOOL_POOL_NSIZE);
@@ -52,10 +55,6 @@ void* RNodeNRM::operator new(size_t size) {
 }
 
 void RNodeNRM::operator delete(void* ptr) noexcept {
-#ifdef CHECKRXN
-    cout<<"deleting RNodeNRM "<<ptr<<" with Rxn "<<((RNodeNRM*)ptr)->getReaction()<<" Type "
-    <<((RNodeNRM*)ptr)->getReaction()->getReactionType()<<endl;
-#endif
     boost::fast_pool_allocator<RNodeNRM>::deallocate((RNodeNRM*)ptr);
 }
 #endif
@@ -70,10 +69,6 @@ RNodeNRM::RNodeNRM(ReactionBase *r, ChemNRMImpl &chem_nrm)
 }
 
 RNodeNRM::~RNodeNRM() noexcept {
-	#ifdef CHECKRXN
-	cout<<"deleting RNodeNRM 2 "<<this<<" with Rxn "<<this->getReaction()<<" Type "
-	<<this->getReaction()->getReactionType()<<endl;
-	#endif
     boost_heap *heap = _chem_nrm.getHeap();
     heap->erase(_handle);
     _react->setRnode(nullptr);
@@ -111,20 +106,23 @@ void RNodeNRM::generateNewRandTau() {
     reComputePropensity();//calculated new _a
 
 #ifdef TRACK_ZERO_COPY_N
-    newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
+    auto t1 = _chem_nrm.generateTau(_a);
+    auto t2 = _chem_nrm.getTime();
+    newTau = t1 + t2;
 #else
     if(_a<1.0e-10) // numeric_limits< floatingpoint >::min()
         newTau = numeric_limits<floatingpoint>::infinity();
     else
         newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #endif
+//    cout<<"Propensity of rxn "<<_a<<" tau "<<newTau<<endl;
     setTau(newTau);
-//    std::cout<<"generating R and Tau reaction"<<endl;
-//    printSelf();
+
+/*    cout<<"Rxnbase "<<_react<<" Global time "<<t2<<" "<<tau()<<" lag time "<<t1
+        <<" firing time "<<newTau<<" tau set to "<<(*_handle)._tau<<endl;*/
 }
 
 void RNodeNRM::activateReaction() {
-//    std::cout<<"activate Reaction"<<endl;
     generateNewRandTau();
     updateHeap();
 }
@@ -144,6 +142,19 @@ void ChemNRMImpl::initialize() {
     }
 }
 
+void ChemNRMImpl::initializerestart(floatingpoint restarttime){
+
+    if(SysParams::RUNSTATE){
+        LOG(ERROR) << "initializerestart Function from ChemSimpleGillespieImpl class can "
+                      "only be called "
+                      "during restart phase. Exiting.";
+        throw std::logic_error("Illegal function call pattern");
+    }
+
+    setTime(restarttime);
+}
+
+
 ChemNRMImpl::~ChemNRMImpl() {
     _map_rnodes.clear();
 }
@@ -157,7 +168,8 @@ floatingpoint ChemNRMImpl::generateTau(floatingpoint a){
 }
 
 bool ChemNRMImpl::makeStep() {
-
+    chrono::high_resolution_clock::time_point mins, mine, minsT, mineT, minses, mintes;
+    minsT = chrono::high_resolution_clock::now();
     //try to get a reaction
     if(_heap.empty()) {
         cout << "There are no reactions to fire, returning..." << endl;
@@ -166,6 +178,7 @@ bool ChemNRMImpl::makeStep() {
     RNodeNRM *rn = _heap.top()._rn;
     floatingpoint tau_top = rn->getTau();
     if(tau_top==numeric_limits<floatingpoint>::infinity()){
+
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
         return false;
     }
@@ -180,21 +193,10 @@ bool ChemNRMImpl::makeStep() {
         return false;
     }
 
-//    if(rn->getReaction()->getReactionType() == ReactionType::LINKERBINDING) {
-//
-//        cout << "Stopping to check linker rxn." << endl;
-//    }
-
     floatingpoint t_prev = _t;
 
     _t=tau_top;
     syncGlobalTime();
-    //std::cout<<"------------"<<endl;
-//    rn->printSelf();
-//    cout<<"b4_1 "<<Rand::chemistrycounter<<" "<<Rand::intcounter<<" "
-//																""<<Rand::floatcounter<<endl;
-    //std::cout<<"------------"<<endl;
-
     // if dissipation tracking is enabled and the reaction is supported, then compute the change in Gibbs free energy and store it
     if(SysParams::Chemistry().dissTracking){
     ReactionBase* react = rn->getReaction();
@@ -204,30 +206,46 @@ bool ChemNRMImpl::makeStep() {
         _dt->updateDelGChem(react);
         }
     }
+    #ifdef CROSSCHECK_CYLINDER
+    auto _react = rn->getReaction();
+    if(_react->getReactionType()!= ReactionType::DIFFUSION){
+        auto _a = rn->getPropensity();
+        Compartment* c = static_cast<Compartment*>(_react->getParent());
+        auto coord = c->coordinates();
+        CController::_crosscheckdumpFilechem << "RNodeNRM: ptr=" << this <<", tau=" <<
+                                             rn->getTau() <<
+                                             ", a=" << _a <<" in Compartment "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<
+                                             ", points to Reaction Type "<< _react->getReactionType()<<endl;
+//    CController::_crosscheckdumpFilechem << (*_react);
 
-    #ifdef CHECKRXN
-    cout<<"rxn"<<endl;
-    rn->printSelf();
-	#endif
+    }
+    else{
+        CController::_crosscheckdumpFilechem << "DIFFUSION "<<endl;
+    }
 
+    #endif
     rn->makeStep();
+
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Update dependencies"<<endl;
+    #endif
+
 	#ifdef DEBUGCONSTANTSEED
     cout<<"tau "<<_t<<endl;
-	#endif
+    #endif
+    mins = chrono::high_resolution_clock::now();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
 #endif
         //std::cout<<"Update R and Tau for fired reaction"<<endl;
         rn->generateNewRandTau();
         rn->updateHeap();
-//	    cout<<"b4_2 "<<Rand::chemistrycounter<<" "<<Rand::intcounter<<" "
-//	                                                                  ""<<Rand::floatcounter<<endl;
+
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     }
 #endif
     // Updating dependencies
     ReactionBase *r = rn->getReaction();
-
     if(r->updateDependencies()) {
 
         for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
@@ -282,29 +300,57 @@ bool ChemNRMImpl::makeStep() {
             rn_other->updateHeap();
         }
     }
+    mine = chrono::high_resolution_clock::now();
+
+#ifdef OPTIMOUT
+    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+    auto rType = r->getReactionType();
+    if(rType == 1){
+        auto reactant = r->getReactantCopyNumbers();
+        auto product = r->getProductCopyNumbers();
+        if(reactant[0] == 0){
+            CUDAcommon::cdetails.diffusion_passivate_count++;
+
+        }else if (product[0] == 1){
+            CUDAcommon::cdetails.diffusion_activate_count++;
+        }
+    }
+    CUDAcommon::cdetails.reactioncount[rType]++;
+    CUDAcommon::cdetails.dependencytime[rType]+= elapsed_time.count();
+    CUDAcommon::cdetails.dependentrxncount[rType] += r->dependents().size();
+#endif
+
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"emitSignal"<<endl;
+    #endif
+    minses = chrono::high_resolution_clock::now();
 #ifdef REACTION_SIGNALING
     // Send signal
     r->emitSignal();
 #endif
-//	cout<<"af "<<Rand::chemistrycounter<<" "<<Rand::intcounter<<" "
-//	                                                            ""<<Rand::floatcounter<<endl;
+#ifdef OPTIMOUT
+    mintes = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_emitsignal(mintes - minses);
+    CUDAcommon::cdetails.emitsignal[rType]+= elapsed_emitsignal.count();
+#endif
+
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"----"<<endl;
+    #endif
+    mineT = chrono::high_resolution_clock::now();
+#ifdef OPTIMOUT
+    chrono::duration<floatingpoint> elapsed_timetotal(mineT - minsT);
+    CUDAcommon::cdetails.totaltime[rType]+= elapsed_timetotal.count();
+#endif
     return true;
 }
 
 void ChemNRMImpl::addReaction(ReactionBase *r) {
-	#ifdef CHECKRXN
-	cout<<"Adding reaction "<<r<<" with RNodeNRM "<<r->getRNode()<<" Type "
-	    <<r->getReactionType()<<endl;
-	#endif
     _map_rnodes.emplace(r,make_unique<RNodeNRM>(r,*this));
     ++_n_reacts;
 }
 
 void ChemNRMImpl::removeReaction(ReactionBase *r) {
-	#ifdef CHECKRXN
-	cout<<"Removing reaction "<<r<<" with RNodeNRM "<<r->getRNode()<<" Type "
-	<<r->getReactionType()<<endl;
-	#endif
     _map_rnodes.erase(r);
     --_n_reacts;
 }
@@ -314,4 +360,18 @@ void ChemNRMImpl::printReactions() const {
         auto rn = x.second.get();
         rn->printSelf();
     }
+}
+
+bool ChemNRMImpl::crosschecktau() const {
+    bool status = true;
+    for (auto &x : _map_rnodes){
+        auto rn = x.second.get();
+        if(rn->getTau() < tau()) {
+            rn->printSelf();
+            status = false;
+            LOG(WARNING) << "Tau in reaction is smaller than current time "<<endl;
+            exit(EXIT_FAILURE);
+        }
+    }
+    return status;
 }

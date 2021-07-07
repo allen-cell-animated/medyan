@@ -56,6 +56,16 @@ friend struct UpdateMotorIDCallback;
 friend struct MotorBindingCallback;
 friend struct MotorUnbindingCallback;
 
+#ifdef COLLECTMOTORDATA
+struct MotorGhostData{
+    vector<int> ID;
+    vector<int> Nwalkingsteps;
+    vector<float> Lifetime;
+    vector<float> Energyvec;
+};
+
+static vector<MotorGhostData> _motorGhostdatavec;
+#endif
 private:
 
     chrono::high_resolution_clock::time_point mins, mine;
@@ -96,10 +106,9 @@ private:
     ///For dynamic rate walking
     static vector<MotorRateChanger*> _walkingChangers;
 
+
+
 public:
-    #ifdef MOTORBIASCHECK
-    size_t walkingsteps = 0;
-    #endif
     vector<floatingpoint> coordinate;
         ///< coordinate of midpoint, updated with updatePosition()
     
@@ -107,7 +116,16 @@ public:
     MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
                floatingpoint position1 = 0.5, floatingpoint position2 = 0.5,
                floatingpoint onRate = 0.0, floatingpoint offRate = 0.0);
-    
+
+    void initializerestart(floatingpoint eqLength, int numHeads, floatingpoint
+    numBoundHeads){
+    	if(numHeads > 0)
+    		_numHeads = numHeads;
+    	if(numBoundHeads > 0)
+    		_numBoundHeads = numBoundHeads;
+    	_mMotorGhost->initializerestart(_motorType, eqLength, _numBoundHeads);
+    };
+
     virtual ~MotorGhost() noexcept;
     
     ///Helper to get coordinate
@@ -153,7 +171,7 @@ public:
     float getBirthTime() {return _birthTime;}
     
     // get num heads
-    int getNumHeads(){return _numHeads;}
+    int getNumHeads()const {return _numHeads;}
     
     //@{
     /// SubSystem management, inherited from Trackable
@@ -199,6 +217,8 @@ public:
     
     /// Count the number of motor species with a given name in the system
     static species_copy_t countSpecies(const string& name);
+
+    floatingpoint getnumBoundHeads()const {return _numBoundHeads;}
 };
 
 #endif

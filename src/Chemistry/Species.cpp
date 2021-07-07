@@ -44,11 +44,13 @@ void Species::updateReactantPropensities() {
         r->updatePropensity();
     }
 }
-
+//Only used for bulk reactions
 void Species::activateReactantReactions() {
     
-    for(auto r : _rspecies->reactantReactions())
+    for(auto r : _rspecies->reactantReactions()) {
+
         r->activateReaction();
+    }
 }
 
 

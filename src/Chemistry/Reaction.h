@@ -19,6 +19,7 @@
 #include "ReactionBase.h"
 #include "ChemSim.h"
 
+
 /// Represents a concrete chemical reaction, such as A + B -> C, where M is the number
 /// of reactants and N is the number of products.
 
@@ -79,10 +80,6 @@ template <unsigned short M, unsigned short N>
         /// presumbaly be fixed in the future.
         virtual ~Reaction() noexcept
         {
-	        #ifdef CHECKRXN
-        	cout<<"Deleting reaction "<<this<<" with RNodeNRM "<<this->getRNode()<<" Type "
-        	<<this->getReactionType()<<endl;
-			#endif
             for(auto i=0U; i<M; ++i) _rspecies[i]->removeAsReactant(this);
             for(auto i=M; i<(M+N); ++i) _rspecies[i]->removeAsProduct(this);
         }
@@ -95,21 +92,17 @@ template <unsigned short M, unsigned short N>
         
         /// Return a list of reactions which rates would be affected if this
         /// reaction were to be executed.
-        virtual vector<ReactionBase*> getAffectedReactions() override
-        {
-	        #ifdef DEBUGCONSTANTSEED
+        virtual vector<ReactionBase*> getAffectedReactions() override{
+#ifdef DEBUGCONSTANTSEED
             unordered_set<ReactionBase*, HashbyId<ReactionBase*>,
-                    customEqualId<ReactionBase*>> rxns;
-			#else
-        	unordered_set<ReactionBase*> rxns;
-			#endif
-            
+    customEqualId<ReactionBase*>> rxns;
+#else
+            unordered_set<ReactionBase*> rxns;
+#endif
             for(int i = 0; i < M + N; i++) {
-              
                 auto s = _rspecies[i];
-                
                 for(auto it = s->beginReactantReactions();
-                         it != s->endReactantReactions(); it++) {
+                    it != s->endReactantReactions(); it++) {
                     ReactionBase* r = (*it);
                     rxns.insert(r);
                 }
@@ -117,29 +110,40 @@ template <unsigned short M, unsigned short N>
             rxns.erase(this);
             return vector<ReactionBase*>(rxns.begin(),rxns.end());
         }
+
+        virtual void addDependantReactions() override {
+                for(int i = 0; i < M + N; i++) {
+                    auto s = _rspecies[i];
+                    for(auto it = s->beginReactantReactions();
+                        it != s->endReactantReactions(); it++) {
+                        ReactionBase* r = (*it);
+                        if(r!=this && !r->isPassivated())
+                            _dependents.insert(r);
+                    }
+                }
+        }
         
         virtual void updatePropensityImpl() override;
         
     protected:
         /// An implementation method used by the constructor.
         template <typename InputContainer>
-        void initializeSpecies(const InputContainer &species)
-        {
+        void initializeSpecies(const InputContainer &species){
             assert(species.size()==(M+N)
-            && "Reaction<M,N> Ctor: The species number does not match the template M+N");
+                   && "Reaction<M,N> Ctor: The species number does not match the template M+N");
             transform(species.begin(),species.end(),_rspecies.begin(),
                       [](Species *s){return &s->getRSpecies();});
-            
+
             if(!_isProtoCompartment) {
 #ifdef TRACK_DEPENDENTS
                 //add dependents
-                for(auto &d : getAffectedReactions())
-                    if(!d->isPassivated()) _dependents.insert(d);
+                addDependantReactions();
+/*                for(auto &d : getAffectedReactions())
+                    if(!d->isPassivated()) _dependents.insert(d);*/
 #endif
                 for(auto i=0U; i<M; ++i) _rspecies[i]->addAsReactant(this);
                 for(auto i=M; i<(M+N); ++i) _rspecies[i]->addAsProduct(this);
             }
-
         }
         
         /// Implementation of getM()

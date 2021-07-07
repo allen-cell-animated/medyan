@@ -1,10 +1,14 @@
 # MEDYAN
 
+[![Build Status](https://github.com/medyan-dev/MEDYAN/workflows/build/badge.svg)](https://github.com/medyan-dev/MEDYAN/actions)
+[![docs](https://img.shields.io/badge/docs-stable-blue.svg)](http://medyan.org/docs/site/index.html)
+[![website](https://img.shields.io/website?down_message=medyan.org&up_message=medyan.org&url=http%3A%2F%2Fmedyan.org)](http://medyan.org)
+
 Welcome to Papoian Lab’s *Mechanochemical Dynamics of Active Networks* software package.
 
 Copyright 2015-2019, Papoian lab at the University of Maryland.
 
-For more general information about the code, visit the [code webpage](http://www.medyan.org) or the [Papoian lab page](http://papoian.chem.umd.edu/). 
+For more general information about the code, visit [medyan.org](http://medyan.org) or the [Papoian lab page](http://papoian.chem.umd.edu/). 
 
 This code is distributed under [the license](license.txt) found in this directory, `license.txt`.
 

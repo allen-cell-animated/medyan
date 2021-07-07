@@ -20,6 +20,7 @@
 
 #define SPECIESM_BINDING_INDEX 1
 #define SPECIESM_UNBINDING_INDEX 2
+#define SPECIESM_DIFFUSING_INDEX_OFFRXN 2
 
 //FORWARD DECLARATIONS
 class MotorGhost;
@@ -60,9 +61,6 @@ public:
 
         //set reaction
         setOffReaction(rhs._offRxn);
-        #ifdef CHECKRXN
-        cout<<"Clone new _offRxn "<<_offRxn<<" with Id "<<_offRxn->getId()<<endl;
-		#endif
         //set rates
         setOnRate(rhs._onRate);
         setOffRate(rhs._offRate);
@@ -105,6 +103,12 @@ public:
                        SubSystem* ps);
     
     void printReaction();
+
+    Species* getDiffusingSpecies(){
+        RSpecies** rs = _offRxn->rspecies();
+        Species* sfb = &(rs[SPECIESM_DIFFUSING_INDEX_OFFRXN]->getSpecies());
+        return sfb;
+    }
 };
 
 #endif

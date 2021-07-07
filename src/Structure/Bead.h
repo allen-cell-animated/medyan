@@ -42,6 +42,9 @@ struct BeadData {
     vec_array_type forces; // currently the search dir in cg method
     vec_array_type forcesAux; // real force
     vec_array_type forcesAuxP; // prev real force
+    vec_array_type coords_minE;
+    vec_array_type coords_bckup;//back up coord
+    vec_array_type forces_bckup;
 
     void push_back(
         const vec_type& coord,
@@ -86,6 +89,17 @@ struct BeadData {
         forces    .resize(size);
         forcesAux .resize(size);
         forcesAuxP.resize(size);
+    }
+
+    void settodummy(std::size_t pos){
+        auto infinity = numeric_limits<floatingpoint>::infinity();
+        set_content(
+            pos,
+            {infinity,infinity,infinity},
+            {infinity,infinity,infinity},
+            {infinity,infinity,infinity},
+            {infinity,infinity,infinity},
+            {infinity,infinity,infinity});
     }
 
 };
@@ -299,14 +313,6 @@ public:
             
         }
         cout << endl;
-    }
-
-    //To be used exclusively within restart protocol.
-    void overrideParentInfo(Composite* parent, int p){
-        //set position in the filament
-        _position  = p;
-        //Add this bead as the child
-        parent->addChild(unique_ptr<Component>(this));
     }
 
 private:

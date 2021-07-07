@@ -32,6 +32,7 @@ ReactionBase::ReactionBase (float rate, bool isProtoCompartment, floatingpoint v
 #ifdef REACTION_SIGNALING
     _signal=nullptr;
 #endif
+    //All reactions are generated passivated.
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     _passivated=true;
 #endif
@@ -79,13 +80,6 @@ void ReactionBase::printDependents()  {
 
 bool afterchemsiminit = false;
 void ReactionBase::activateReaction() {
-	#ifdef CHECKRXN
-	/*if(afterchemsiminit && false) {
-		cout << "activating " << getReactionType() <<" RNodeNRM ptr "<< _rnode<< endl;
-		_rnode->printSelf();
-//		cout << *this << endl;
-	}*/
-	#endif
 #ifdef TRACK_ZERO_COPY_N
 	if(areEqual(getProductOfReactants(), 0.0)) // One of the reactants is still at zero copy n,
 		// no need to activate yet...

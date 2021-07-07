@@ -281,8 +281,6 @@ inline auto vec2Vector(const VecType& a) {
                     (v2[2] - v1[2]) * (v2[2] - v1[2]));
     }
 
-
-
     inline floatingpoint twoPointDistance(const vector<floatingpoint> &v1, floatingpoint const *v2) {
 
         return sqrt((*(v2) - v1[0]) * (*(v2) - v1[0]) +
@@ -445,8 +443,9 @@ inline auto vec2Vector(const VecType& a) {
     /// ARRAY VERSION
     #ifdef CUDAACCL
     __host__ __device__
-    #endif
-    inline floatingpoint dotProduct(floatingpoint const *v1, floatingpoint const *v2) {
+	#endif
+	template <class dataType = floatingpoint>
+    inline dataType dotProduct(dataType const *v1, dataType const *v2) {
         return (*(v1)) * (*(v2)) + (*(v1 + 1)) * (*(v2 + 1)) + (*(v1 + 2)) * (*(v2 + 2));
 
 //        return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
@@ -454,8 +453,9 @@ inline auto vec2Vector(const VecType& a) {
 
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3)
-    inline floatingpoint scalarProduct(const vector<floatingpoint> &v1, const vector<floatingpoint> &v2,
-                                const vector<floatingpoint> &v3, const vector<floatingpoint> &v4) {
+    template<class dataType = floatingpoint>
+    inline dataType scalarProduct(const vector<dataType> &v1, const vector<dataType>
+            &v2, const vector<dataType> &v3, const vector<dataType> &v4) {
 
         return ((v2[0] - v1[0]) * (v4[0] - v3[0]) +
                 (v2[1] - v1[1]) * (v4[1] - v3[1]) +
@@ -468,8 +468,9 @@ inline auto vec2Vector(const VecType& a) {
 #ifdef CUDAACCL
     __host__ __device__
 #endif
-    inline floatingpoint scalarProduct(floatingpoint const *v1, floatingpoint const *v2,
-                                floatingpoint const *v3, floatingpoint const *v4) {
+    template<class dataType = floatingpoint>
+    inline dataType scalarProduct(dataType const *v1, dataType const *v2,
+                                  dataType const *v3, dataType const *v4) {
 //        return((*(v2)-*(v1))*(*(v4)-*(v3))
 //               +(*(v2+1)-*(v1+1))*(*(v4+1)-*(v3+1))
 //               +(*(v2+2)-*(v1+2))*(*(v4+2)-*(v3+2)));
@@ -693,20 +694,21 @@ inline auto vec2Vector(const VecType& a) {
     /// Vector product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3). Returns a 3d vector.
     /// ARRAY VERSION
-    inline void vectorProduct(floatingpoint *v,
-                              floatingpoint const *v1,
-                              floatingpoint const *v2,
-                              floatingpoint const *v3,
-                              floatingpoint const *v4) {
-        floatingpoint v211 = (v2[1] - v1[1]);
-        floatingpoint v430 = (v4[0] - v3[0]);
-        floatingpoint v212 = (v2[2] - v1[2]);
-        floatingpoint v432 = (v4[2] - v3[2]);
-        floatingpoint v431 = (v4[1] - v3[1]);
-        floatingpoint v210 = (v2[0] - v1[0]);
-        floatingpoint vx =  v211 * v432 - v212 * v431;
-        floatingpoint vy = v212 * v430 - v210 * v432;
-        floatingpoint vz = v210 * v431 - v211 * v430;
+    template <class dataType = floatingpoint>
+    inline void vectorProduct(dataType *v,
+                              dataType const *v1,
+                              dataType const *v2,
+                              dataType const *v3,
+                              dataType const *v4) {
+	    dataType v211 = (v2[1] - v1[1]);
+	    dataType v430 = (v4[0] - v3[0]);
+	    dataType v212 = (v2[2] - v1[2]);
+	    dataType v432 = (v4[2] - v3[2]);
+	    dataType v431 = (v4[1] - v3[1]);
+	    dataType v210 = (v2[0] - v1[0]);
+	    dataType vx =  v211 * v432 - v212 * v431;
+	    dataType vy = v212 * v430 - v210 * v432;
+	    dataType vz = v210 * v431 - v211 * v430;
 
         v[0] = vx;
         v[1] = vy;
@@ -960,9 +962,10 @@ inline auto vec2Vector(const VecType& a) {
 #ifdef CUDAACCL
     __host__ __device__
 #endif
-    inline void midPointCoordinate(floatingpoint *v, floatingpoint const *v1, floatingpoint const *v2, floatingpoint alpha) {
+    template <class dataType = floatingpoint>
+    inline void midPointCoordinate(dataType *v, dataType const *v1, dataType const *v2, dataType alpha) {
 
-        floatingpoint beta = 1 - alpha;
+        dataType beta = 1 - alpha;
         v[0] = (v1[0] * beta + alpha * v2[0]);
         v[1] = (v1[1] * beta + alpha * v2[1]);
         v[2] = (v1[2] * beta + alpha * v2[2]);
@@ -1338,7 +1341,7 @@ inline auto vec2Vector(const VecType& a) {
     /// @param m - the size of the branch projection
     /// @param theta - the angle of branching
     /// @return a vector describing the initial branching direction and point
-    tuple<vector<floatingpoint>, vector<floatingpoint>> branchProjection(const vector<floatingpoint> &n,
+    tuple<vector<floatingpoint>, vector<floatingpoint>> branchProjection(                                                                      const vector<floatingpoint> &n,
                                                            const vector<floatingpoint> &p,
                                                            floatingpoint l, floatingpoint m, floatingpoint theta);
 
@@ -1376,7 +1379,8 @@ inline auto vec2Vector(const VecType& a) {
     template <class dataType>
     inline bool checkNaN_INF(dataType *x, int startpoint, int endpoint){
         for(int i = startpoint; i <= endpoint; i++){
-            if(isnan(x[i])||isinf(x[i]))
+            if(fabs(x[i]) == numeric_limits<floatingpoint>::infinity()||isnan(fabs(x[i]))
+            ||isinf(fabs(x[i]))||fabs(x[i])>1e15)
                 return true;
         }
         return false;
@@ -1411,7 +1415,6 @@ inline auto vec2Vector(const VecType& a) {
                                        const vector<floatingpoint> &p3,
                                        const vector<floatingpoint> &p4,
                                        int i, floatingpoint d);
-
 
 
     float delGGenChem(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);

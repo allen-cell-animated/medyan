@@ -72,7 +72,12 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "common.h"
 #include "Controller.h"
 #include "MedyanArgs.hpp"
-#include "Util/ThreadPool.hpp"
+#ifndef GIT_COMMIT_HASH
+#define GIT_COMMIT_HASH "?"
+#endif
+#ifndef GIT_BRANCH
+#define GIT_BRANCH "?"
+#endif
 
 int main(int argc, char **argv) {
 
@@ -82,7 +87,44 @@ int main(int argc, char **argv) {
     cout << "         of Active Networks, Third Generation.         " << endl;
     cout << "         PAPOIAN LAB 2015, ALL RIGHTS RESERVED         " << endl;
     cout << "*******************************************************" << endl;
-    
+    cout<< "Commit hash                          "<<GIT_COMMIT_HASH<<endl;
+    cout<< "Git branch                           "<<GIT_BRANCH<<endl;
+    cout << "MEDYAN version:                      v4.2.1(unreleased)"<<endl;
+    cout << "Memory model:                        "<< static_cast<unsigned>(8 * sizeof
+    (void*))<<" bit"<<endl;
+    cout << "Coordinate/Force precision:          ";
+    #if FLOAT_PRECISION
+    cout << "single" << endl;
+    #else
+    cout << "double" << endl;
+    #endif
+
+    cout << "Pair-wise list algorithm:            ";
+    #if defined NLORIGINAL
+    cout << "original (legacy)"<<endl;
+    #elif defined NLSTENCILLIST
+    cout << "stencil list based"<<endl;
+    #elif defined HYBRID_NLSTENCILLIST
+    cout << "hybrid**"<<endl;
+    cout << "**single neighbor list for compatible distance ranges corresponding to the "
+            "same filament type pairs"<<endl;
+    #elif defined SIMDBINDINGSEARCH
+    cout << "SIMD**"<<endl;
+    cout << "SIMD instruction set:                ";
+    #if defined __AVX512F__
+    cout<<"AVX512 (MEDYAN will use AVX2 instructions"<<endl;
+    #elif defined __AVX2__
+    cout<<"AVX2"<<endl;
+    #elif defined __AVX__
+    cout<<"AVX"<<endl;
+    #else
+    cout<<"none"<<endl;
+    #endif
+    cout<<"**SIMD accelerated hybrid search - single neighbor list for compatible distance"
+          " ranges corresponding to the same filament type pairs"<<endl;
+    #endif
+    cout << "*******************************************************" << endl;
+
     cout.precision(8);
 
     auto cmdRes = medyanInitFromCommandLine(argc, argv);
@@ -93,12 +135,14 @@ int main(int argc, char **argv) {
 
     case MedyanRunMode::simulation:
         {
-            // Initialize the thread pool for use in MEDYAN
-            ThreadPool tp(cmdRes.numThreads);
 
             //initialize and run system
             Controller c;
-            c.initialize(cmdRes.inputFile, cmdRes.inputDirectory, cmdRes.outputDirectory, tp);
+            c.initialize(
+                cmdRes.inputFile,
+                cmdRes.inputDirectory,
+                cmdRes.outputDirectory,
+                cmdRes.numThreads);
             c.run();
         }
         break;
@@ -110,4 +154,3 @@ int main(int argc, char **argv) {
 
     return returnCode;
 }
-

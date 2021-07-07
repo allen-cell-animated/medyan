@@ -14,8 +14,9 @@
 #include "SysParams.h"
 bool SysParams::RUNSTATE=true;
 bool SysParams::INITIALIZEDSTATUS=false;
+bool SysParams::USECHEMCOPYNUM=false;
 bool SysParams::DURINGCHEMISTRY=false;
-int SysParams::numthreads=0;
+
 int SysParams::exvolcounter[3] = {0,0,0};
 long long SysParams::exvolcounterz[3] = {0,0,0};
 #ifdef NLSTENCILLIST
@@ -60,7 +61,8 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         
         if(chem.speciesBound[filType].size() == 0) {
             
-            cout << "At one plus end species is required for each filament type. Exiting."
+            cout << "At least one Bound species is required for each filament type. "
+                    "Exiting."
             <<endl;
             
             return false;
@@ -445,6 +447,9 @@ ChemParams   SysParams::CParams;
 GeoParams    SysParams::GParams;
 BoundParams  SysParams::BParams;
 DyRateParams SysParams::DRParams;
+#ifdef TRACKDIDNOTMINIMIZE
+MinimizationParams SysParams::MinParams;
+#endif
 SpecialParams SysParams::SParams;
 
 

@@ -20,7 +20,7 @@
 
 #include "Parser.h"
 #include "DissipationTracker.h"
-
+#include "ForceFieldManager.h"
 
 ///FORWARD DECLARATIONS
 class CompartmentGrid;
@@ -40,6 +40,7 @@ protected:
     SubSystem* _subSystem = nullptr;
 
 public:
+    string _outputFileName;
     /// Constructor, which opens the output file
     Output(string outputFileName, SubSystem* s) {
         _outputFile.open(outputFileName);
@@ -51,9 +52,10 @@ public:
         cout << "Opening file " << outputFileName << endl;
 
         _subSystem = s;
+        _outputFileName = outputFileName;
     }
     /// Destructor, which closes the output file
-    ~Output() {_outputFile.close();}
+    virtual ~Output() {_outputFile.close();}
 
     /// To be implemented in sub classes
     virtual void print(int snapshot) = 0;
@@ -280,14 +282,14 @@ public:
 
 // Print tm graph
 class TMGraph : public Output {
-    
+
 public:
     TMGraph(string outputFileName, SubSystem* s)
-    
+
     : Output(outputFileName, s) {}
-    
+
     ~TMGraph() {}
-    
+
     virtual void print(int snapshot);
 };
 
@@ -348,6 +350,19 @@ public:
     virtual void print(int snapshot);
 };
 
+class MotorUnbindingEvents : public Output {
+
+    ChemSim* _cs;
+
+public:
+    MotorUnbindingEvents(string outputFileName, SubSystem* s, ChemSim* cs)
+
+            : Output(outputFileName, s), _cs(cs) {}
+
+    ~MotorUnbindingEvents() {}
+
+    virtual void print(int snapshot);
+};
 
 class LinkerBindingEvents : public Output {
     
@@ -383,16 +398,16 @@ public:
 
 
 class HessianSpectra : public Output {
-    
+
     ForceFieldManager* _ffm;
-    
+
 public:
     HessianSpectra(string outputFileName, SubSystem* s, ForceFieldManager* ffm)
-    
+
     : Output(outputFileName, s), _ffm(ffm) {}
-    
+
     ~HessianSpectra() {}
-    
+
     virtual void print(int snapshot);
 };
 
@@ -427,9 +442,6 @@ public:
 
 
 
-
-
-
 class Datadump : public Output {
 
     ChemSim* _cs;
@@ -437,13 +449,11 @@ class Datadump : public Output {
 public:
     Datadump(string outputFileName, SubSystem* s, ChemistryData chemData)
 
-            : Output(outputFileName, s), _chemData(chemData),
-            _outputFileName(outputFileName){}
+            : Output(outputFileName, s), _chemData(chemData) {}
 
     ~Datadump() {}
 
 	ChemistryData _chemData; ///< chemistry data of this system
-	string _outputFileName;
 
 public:
     virtual void print(int snapshot);
@@ -473,4 +483,21 @@ public:
 
 
 
+//Temporary output for a test case of two filaments. deprecated.
+class TwoFilament : public Output {
+
+    ChemSim* _cs;
+
+public:
+    TwoFilament(string outputFileName, SubSystem* s, ChemistryData chemData)
+
+            : Output(outputFileName, s), _chemData(chemData){}
+
+    ~TwoFilament() {}
+
+    ChemistryData _chemData; ///< chemistry data of this system
+
+public:
+    virtual void print(int snapshot);
+};
 #endif

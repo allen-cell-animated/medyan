@@ -14,6 +14,8 @@
 #ifndef MEDYAN_Controller_h
 #define MEDYAN_Controller_h
 
+#include <memory> // unique_ptr
+
 #include "common.h"
 
 #include "Output.h"
@@ -29,7 +31,6 @@
 class SubSystem;
 class Cylinder;
 class FilamentBindingManager;
-class ThreadPool;
 
 /// Used to initialize, manage, and run an entire simulation.
 
@@ -55,16 +56,21 @@ private:
     
     string _inputDirectory;   ///< Input directory being used
     string _outputDirectory;  ///< Output directory being used
-    
-    vector<Output*> _outputs; ///< Vector of specified outputs
-    
+
+    vector<std::unique_ptr< Output >> _outputs; ///< Vector of specified outputs
+    vector<std::unique_ptr< Output >> _outputdump; ///<Vector of outputs that correspond to a datadump
     RockingSnapshot* _rSnapShot;
+
     floatingpoint _runTime;          ///< Total desired runtime for simulation
 
     floatingpoint _snapshotTime;     ///< Desired time for each snapshot
-    
+    floatingpoint _datadumpTime;     ///< Desired time for each datadump
+
     floatingpoint _minimizationTime;  ///< Frequency of mechanical minimization
     floatingpoint _neighborListTime;  ///< Frequency of neighbor list updates
+    floatingpoint _slowedminimizationcutoffTime = 10.0; //Time cut off for slowed
+    // minimization
+    // frequency
     
     DissipationTracker* _dt;   ///< dissipation tracking object
     
@@ -158,7 +164,7 @@ public:
     void initialize(string inputFile,
                     string inputDirectory,
                     string outputDirectory,
-                    ThreadPool& tp);
+                    int numThreads);
     ///Run the simulation
     void run();
 };

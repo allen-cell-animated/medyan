@@ -57,6 +57,11 @@ class Cylinder;
 
 class Compartment : public Composite {
 
+public:
+    enum class SliceMethod {
+        membrane, cylinderBoundary
+    };
+
 protected:
     ///CHEMICAL CONTAINERS
     SpeciesPtrContainerVector _species;  ///< Container with all species
@@ -103,8 +108,7 @@ protected:
     vector<floatingpoint> _coords;  ///< Coordinates of this compartment
     bool _activated = false; ///< The compartment is activated for diffusion
 
-    floatingpoint _partialVolume = 1.0; ///< The volume fraction inside the
-    // membrane/boundary
+    floatingpoint _volumeFrac = 1.0; ///< The volume fraction inside the membrane/boundary
     ///< Might be changed to a list or a map when more membranes are involved
     array<floatingpoint, 6> _partialArea {{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}}; ///< The area
     // inside the cell membrane
@@ -113,11 +117,6 @@ protected:
 
 public:
     short _ID;
-/*    vector<uint16_t> cindex_bs;
-    vector<uint32_t> cID_bs;*/
-#ifdef MOTORBIASCHECK
-    size_t nummotorwalks=0;
-#endif
     cell_list::CellListHeadUser< Cylinder, Compartment > cylinderCell; // Cell of cylinders
 
     /// Default constructor, only takes in number of dimensions
@@ -526,7 +525,6 @@ public:
         else
             return bscoords_section_motor[filamentType*27 + i];
     }
-
     /*Each compartment is partitioned into 27 sub-volumes. Binding sites are allocated
     to relevant sub-volumes. It is worth noting that the 27 volumes  can be overlapping.
     Binding distance determines if the volumes are overlapping or not.*/
@@ -719,6 +717,7 @@ public:
         for(auto &r : _internal_reactions.reactions()){
 
             auto rClone = r->clone(target->_species);
+            rClone->setVolumeFrac(target->getVolumeFrac());
             target->addInternalReaction(rClone);
         }
     }
@@ -816,22 +815,17 @@ public:
     virtual int getType() override {return 0;}
 
     // Helper function for getting the result of geometry from a approximately planar slice
-    void getSlicedVolumeArea();
+    void computeSlicedVolumeArea(SliceMethod);
     // Helper function that does not scale rates
-    void getNonSlicedVolumeArea();
+    void computeNonSlicedVolumeArea();
 
     // Properties (public variables and getters and setters for private variables)
     bool boundaryInteresting = false; // A marker indicating this compartment is near a certain boundary
 
-    //_partialVolume is the volume fraction
-    floatingpoint getPartialVolume()const { return _partialVolume; }
-    void setPartialVolume(floatingpoint partialVolume) { _partialVolume = partialVolume; }
-    floatingpoint getVolumeFrac()const {
-        return _partialVolume;
-    }
+    void resetVolumeFrac() { _volumeFrac = 1.0; }
+    floatingpoint getVolumeFrac() const { return _volumeFrac; }
     const array<floatingpoint, 6>& getPartialArea()const { return _partialArea; }
-    void setPartialArea(const array<floatingpoint, 6>& partialArea) { _partialArea =
-    partialArea; }
+    void setPartialArea(const array<floatingpoint, 6>& partialArea) { _partialArea = partialArea; }
 
 };
 #ifdef SIMDBINDINGSEARCH

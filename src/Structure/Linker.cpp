@@ -34,8 +34,8 @@ void Linker::updateCoordinate() {
     auto x3 = _c2->getFirstBead()->vcoordinate();
     auto x4 = _c2->getSecondBead()->vcoordinate();
     
-    auto m1 = midPointCoordinate(x1, x2, _position1);
-    auto m2 = midPointCoordinate(x3, x4, _position2);
+    auto m1 = midPointCoordinate(x1, x2, _c1->adjustedrelativeposition(_position1));
+    auto m2 = midPointCoordinate(x3, x4, _c2->adjustedrelativeposition(_position2));
     
     coordinate = midPointCoordinate(m1, m2, 0.5);
 }
@@ -63,7 +63,7 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
   
 #ifdef CHEMISTRY
     _cLinker = unique_ptr<CLinker>(
-    new CLinker(linkerType, _compartment, _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2));
+    new CLinker(linkerType, _compartment, c1->adjustedrelativeposition(position1), c2->adjustedrelativeposition(position2), pos1, pos2));
     _cLinker->setLinker(this);
         
 #endif
@@ -75,7 +75,7 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
     auto x4 = _c2->getSecondBead()->vcoordinate();
           
     _mLinker = unique_ptr<MLinker>(
-        new MLinker(linkerType, position1, position2, x1, x2, x3, x4));
+        new MLinker(linkerType, c1->adjustedrelativeposition(position1), c2->adjustedrelativeposition(position2), x1, x2, x3, x4));
     _mLinker->setLinker(this);
 #endif
 }
@@ -133,15 +133,17 @@ void Linker::updatePosition() {
     }
     
 #ifdef MECHANICS
+if(SysParams::RUNSTATE) {
     auto x1 = _c1->getFirstBead()->vcoordinate();
     auto x2 = _c1->getSecondBead()->vcoordinate();
     auto x3 = _c2->getFirstBead()->vcoordinate();
     auto x4 = _c2->getSecondBead()->vcoordinate();
-    
-    auto m1 = midPointCoordinate(x1, x2, _position1);
-    auto m2 = midPointCoordinate(x3, x4, _position2);
-    
+
+    auto m1 = midPointCoordinate(x1, x2, _c1->adjustedrelativeposition(_position1));
+    auto m2 = midPointCoordinate(x3, x4, _c2->adjustedrelativeposition(_position2));
+
     _mLinker->setLength(twoPointDistance(m1, m2));
+}
 #endif
 }
 
@@ -161,7 +163,7 @@ void Linker::updateReactionRates() {
     ReactionBase* offRxn = _cLinker->getOffReaction();
 
     //change the rate
-    float factor = _unbindingChangers[_linkerType]->getRateChangeFactor(force);
+
     if(SysParams::RUNSTATE==false)
         offRxn->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
     else
@@ -172,9 +174,11 @@ void Linker::updateReactionRates() {
             ""<<coordinate[1]<<" "
             ""<<coordinate[2]<<endl;
 #endif
-
-    offRxn->setRateMulFactor(factor, ReactionBase::MECHANOCHEMICALFACTOR);
-    offRxn->updatePropensity();
+    if(_unbindingChangers.size() > 0) {
+        float factor = _unbindingChangers[_linkerType]->getRateChangeFactor(force);
+        offRxn->setRateMulFactor(factor, ReactionBase::MECHANOCHEMICALFACTOR);
+        offRxn->updatePropensity();
+    }
 }
 
 

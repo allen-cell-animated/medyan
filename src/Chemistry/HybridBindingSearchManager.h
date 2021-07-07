@@ -12,7 +12,9 @@
 //------------------------------------------------------------------
 #ifndef MEDYAN_HybridBindingSearchManager_h
 #define MEDYAN_HybridBindingSearchManager_h
-
+#ifdef SIMDBINDINGSEARCH
+#include "dist_moduleV2/dist_driver.h"
+#endif
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 #include <unordered_map>
 #include <unordered_set>
@@ -28,9 +30,6 @@
 #include "SysParams.h"
 #include "Rand.h"
 #include "BindingManager.h"
-#ifdef SIMDBINDINGSEARCH
-#include "dist_moduleV2/dist_driver.h"
-#endif
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -45,6 +44,7 @@ class HybridBindingSearchManager {
     friend class ChemManager;
 
 private:
+    static const bool CROSSCHECK_BS_SWITCH = false;
     static const uint switchfactor  = 10;
 
     chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD,
@@ -137,6 +137,7 @@ volumes namely self(1), halves(6), quarters(12) and 1/8ths(8). The position in t
                                       11, 3, 13, 27, 27, 27, 27, 27, 15, 23, 17, 25};
 
 #ifdef SIMDBINDINGSEARCH
+
     template <uint D, bool SELF, bool LinkerorMotor>
     void calculatebspairsLMselfV3(dist::dOut<D, SELF>& bspairs, short idvec[2]);
 
@@ -202,12 +203,6 @@ volumes namely self(1), halves(6), quarters(12) and 1/8ths(8). The position in t
 #endif
    void countNpairsfound(short idvec[2]);
 
-   #ifdef MOTORBIASCHECK
-   size_t addcounts = 0;
-   size_t removecounts = 0;
-   size_t choosecounts = 0;
-   #endif
-
 public:
 
     //constructors
@@ -225,6 +220,12 @@ public:
 
     void addPossibleBindingsstencil(short idvec[2], CCylinder* cc, short bindingSite);
     void removePossibleBindingsstencil(short idvec[2], CCylinder* cc, short bindingSite);
+
+    void appendPossibleBindingsstencil(short idvec[2],
+                                  CCylinder* ccyl1,
+                                  CCylinder* ccyl2,
+                                  short site1,
+                                  short site2);
 
     ///update all possible binding reactions that could occur using stencil NL
     void updateAllPossibleBindingsstencilSIMDV3();
@@ -260,11 +261,7 @@ public:
         }
     }
 
-#ifdef MOTORBIASCHECK
-    size_t getbindingsize(short idvec[2]){
-                return Nbindingpairs[idvec[0]][idvec[1]];
-    }
-#endif
+    void printbindingsitesstencil(short idvec[2]);
 
     void resetpossibleBindings(){
 
@@ -278,11 +275,11 @@ public:
             }
         }
 
-        #ifdef MOTORBIASCHECK
-        addcounts = 0;
-        removecounts = 0;
-        choosecounts = 0;
-        #endif
+    }
+
+    int numBindingSitesstencil(short idvec[2]) {
+
+        return Nbindingpairs[idvec[0]][idvec[1]];
     }
 
     /*static void setdOut(){
@@ -322,11 +319,6 @@ public:
     static floatingpoint SIMDV3appendtime;
     static floatingpoint findtimeV3;
 
-    #ifdef MOTORBIASCHECK
-    size_t getaddcounts(){ return addcounts;}
-    size_t getremovecounts(){ return removecounts;}
-    size_t getchoosecounts(){return choosecounts;}
-    #endif
 };
 
 #ifdef SIMDBINDINGSEARCH

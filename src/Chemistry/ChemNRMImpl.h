@@ -245,8 +245,9 @@ class ChemNRMImpl : public ChemSimImpl {
 public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0 and the number
     /// of reactions to 0
-    ChemNRMImpl() :ChemSimImpl(),
-    _exp_distr(0.0), _n_reacts(0) { resetTime(); }
+    ChemNRMImpl() :
+        ChemSimImpl(),
+        _n_reacts(0) { resetTime(); }
     
     /// Copying is not allowed
     ChemNRMImpl(const ChemNRMImpl &rhs) = delete;
@@ -281,6 +282,9 @@ public:
     
     /// Remove Reaction *r from the network
     virtual void removeReaction(ReactionBase *r);
+
+    //sets global time to restart time when called.
+    virtual void initializerestart(floatingpoint restarttime);
     
     /// A pure function (without sideeffects), which returns a random time tau, drawn
     /// from the exponential distribution, with the propensity given by a.
@@ -316,14 +320,18 @@ public:
         for(int i = 0; i < steps; i++) {
             
             bool success = makeStep();
-            if(!success)
+            if(!success) {
                 return false;
+            }
         }
         return true;
     }
     
     /// Prints all RNodes in the reaction network
     virtual void printReactions() const;
+
+    /// Cross checks all reactions in the network for firing time.
+    virtual bool crosschecktau() const;
     
 private:
     /// This is a somewhat complex subroutine which implements the main part of the
@@ -340,6 +348,9 @@ private:
     /// Returns true if successful, and false if the heap is exchausted and there no
     /// more reactions to fire
     bool makeStep();
+
+    //sets glocal time to specified value. To be used only during restart.
+    void setTime(floatingpoint timepoint){ _t=timepoint; syncGlobalTime();}
 private:
     unordered_map<ReactionBase*, unique_ptr<RNodeNRM>> _map_rnodes; ///< The database of RNodeNRM objects,
                                                                     ///< representing the reaction network

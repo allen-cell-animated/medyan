@@ -1,0 +1,322 @@
+
+//------------------------------------------------------------------
+//  **MEDYAN** - Simulation Package for the Mechanochemical
+//               Dynamics of Active Networks, v4.0
+//
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
+//
+//                 ALL RIGHTS RESERVED
+//
+//  See the MEDYAN web page for more information:
+//  http://www.medyan.org
+//------------------------------------------------------------------
+#include "FilamentStretchingandBending.h"
+
+#include "FilamentStretchingHarmonicandBendingHarmonic.h"
+#include "FilamentStretchingHarmonicandBendingCosine.h"
+
+#include "Filament.h"
+#include "Cylinder.h"
+#include "Bead.h"
+#include "CGMethod.h"
+#include "SysParams.h"
+#include "SubSystem.h"
+#ifdef CUDAACCL
+#include "nvToolsExt.h"
+#endif
+#include "cross_check.h"
+using namespace mathfunc;
+
+template <class FBendingInteractionType>
+void FilamentStretchingandBending<FBendingInteractionType>::precomputevars(
+		floatingpoint *coord, floatingpoint *cyllengthset,
+		floatingpoint *cylbenddotproduct){
+
+    int cylcount = 0;
+    int hingecount = 0;
+    floatingpoint *coord1, *coord2, *coord3;
+    bool fetchcoordsstatus = true;
+    if(Bead::numElements() >= 1) {
+	    for (auto b = 0; b < Bead::numElements()-1; b++) {
+		    if (fetchcoordsstatus) {
+			    coord1 = &coord[n * beadSetall[b]];
+			    coord2 = &coord[n * beadSetall[b + 1]];
+		    } else {
+			    coord1 = coord2;
+			    coord2 = coord3;
+		    }
+		    if (beadpaircyllengthstatus[b]) {
+			    cyllengthset[cylcount] = twoPointDistance(coord1, coord2);
+			    cylcount++;
+		    }
+		    fetchcoordsstatus = true;
+		    if (beadtriplet_hingestatus[b]) {
+			    coord3 = &coord[n * beadSetall[b + 2]];
+			    cylbenddotproduct[hingecount] = scalarProduct(coord1, coord2, coord2,
+			                                                  coord3);
+			    hingecount++;
+			    //If there are connections between b+1, b+2, and b+3.
+			    if (beadtriplet_hingestatus[b + 1]) {
+				    fetchcoordsstatus = false;
+			    }
+		    }
+	    }
+    }
+    /*floatingpoint *coord1, *coord2, *coord3;
+    int cylcount = 0;
+    int dotproductcount = 0;
+    for (auto f: Filament::getFilaments()) {
+        auto cyl = *f->getCylinderVector().begin();
+        coord1 = &coord[3 * cyl->getFirstBead()->getStableIndex()];
+        coord2 = &coord[3 * cyl->getSecondBead()->getStableIndex()];
+	    cyllengthset[cylcount] = twoPointDistance(coord1,coord2);
+        cylcount++;
+
+        for (auto it = f->getCylinderVector().begin()+1;
+             it != f->getCylinderVector().end(); it++){
+        	coord3 = &coord[3 * (*it)->getSecondBead()->getStableIndex()];
+	        cyllengthset[cylcount] = twoPointDistance(coord2,coord3);
+	        cylcount++;
+	        cylbenddotproduct[dotproductcount] = scalarProduct(coord1,coord2,coord2,coord3);
+	        dotproductcount++;
+        	coord1 = coord2;
+        	coord2 = coord3;
+        }
+    }*/
+}
+
+template <class FBendingInteractionType>
+void FilamentStretchingandBending<FBendingInteractionType>::vectorize() {
+
+	// Count number of interactions that involve both a stretching and bending calculation
+	_numhybridInteractions = 0;
+	for(auto f : Filament::getFilaments())
+		if(f->getCylinderVector().size() > 1) _numhybridInteractions += f->getCylinderVector().size() - 1;
+
+	totalenergy = new floatingpoint[3*numthreads];
+	for(int i = 0; i < 3*numthreads; i++)
+	    totalenergy[i] = (floatingpoint)0.0;
+	// The first cylinder in each filament is not considered in the hybrid stretching
+	// bending paradigm. Need a function to calculate energies separately for those
+	// cylinders.
+	_strnumInteractions = Filament::getFilaments().size();
+    //These two numbers should match
+/*	cout<<"Str NumInt Method  1 "<<Cylinder::getCylinders().size()<<" Method 2 "
+		<<_strnumInteractions+_numhybridInteractions<<endl;*/
+	beadSetcylsansbending = new int[nstr * _strnumInteractions];
+	kstrsansbending = new floatingpoint[_strnumInteractions];
+	eqlsansbending = new floatingpoint[_strnumInteractions];
+
+	kstr = new floatingpoint[_numhybridInteractions];
+	eql = new floatingpoint[_numhybridInteractions];
+	beadSet = new int[n * _numhybridInteractions];
+	kbend = new floatingpoint[_numhybridInteractions];
+	eqt = new floatingpoint[_numhybridInteractions];
+
+	//Testing Cylset stores IDs
+	cylSet = new int[2*_numhybridInteractions];
+	cylSetcylsansbending = new int[_strnumInteractions];
+
+	//Datasets to help calculate precomputed vars.
+    auto Totalcyl = Cylinder::getCylinders().size();
+    auto Totalbeads = Bead::getBeads().size();
+    beadSetall = new int[Totalbeads];
+    beadpaircyllengthstatus = new bool[Totalbeads];
+    beadtriplet_hingestatus  = new bool[Totalbeads];
+	cyllengthset = new floatingpoint[Totalcyl];
+    cylbenddotproduct = new floatingpoint[_numhybridInteractions];
+    int beadcount = 0;
+    int hingecount = 0;
+
+	int i = 0;
+
+	int istr = 0;
+
+	int cylcount = 0;
+
+	for (auto f: Filament::getFilaments()) {
+
+		auto cyl = *f->getCylinderVector().begin();
+		beadSetcylsansbending[nstr * istr] = cyl->getFirstBead()->getStableIndex();
+		beadSetcylsansbending[nstr * istr + 1] = cyl->getSecondBead()->getStableIndex();
+		kstrsansbending[istr] = cyl->getMCylinder()->getStretchingConst();
+		eqlsansbending[istr] = cyl->getMCylinder()->getEqLength();
+		cylSetcylsansbending[istr] = cylcount;
+		beadSetall[beadcount] = beadSetcylsansbending[nstr * istr];
+//        cout<<beadcount<<endl;
+		beadcount++;
+        beadpaircyllengthstatus[beadcount-1] = 1;
+//        cout<<beadcount-1<<endl;
+		beadSetall[beadcount] = beadSetcylsansbending[nstr * istr + 1];
+		beadcount++;
+		cylcount++;
+		istr++;
+
+		if (f->getCylinderVector().size() > 1){
+
+			for (auto it = f->getCylinderVector().begin()+1;
+			     it != f->getCylinderVector().end(); it++){
+
+				auto it2 = it - 1;
+				beadSet[n * i] = (*it2)->getFirstBead()->getStableIndex();
+				beadSet[n * i + 1] = (*it)->getFirstBead()->getStableIndex();
+				beadSet[n * i + 2] = (*it)->getSecondBead()->getStableIndex();
+
+                cylSet[ncylperint * i] = cylcount - 1;
+                cylSet[ncylperint * i + 1] = cylcount;
+				cylcount++;
+
+				beadSetall[beadcount] = beadSet[n * i + 2];
+				beadpaircyllengthstatus[beadcount-1] = 1;
+//                cout<<beadcount-1<<endl;
+				beadcount++;
+
+                beadtriplet_hingestatus[hingecount] = 1;
+//                cout<<hingecount<<endl;
+                hingecount++;
+
+				kbend[i] = (*it)->getMCylinder()->getBendingConst();
+				eqt[i]  = (*it)->getMCylinder()->getEqTheta();
+
+				kstr[i] = (*it)->getMCylinder()->getStretchingConst();
+				eql[i]  = (*it)->getMCylinder()->getEqLength();
+
+				i++;
+			}
+		}
+		beadpaircyllengthstatus[beadcount-1] = 0;
+        beadtriplet_hingestatus[hingecount] = 0;
+        beadtriplet_hingestatus[hingecount+1] = 0;
+        hingecount = hingecount + 2;
+//        cout<<hingecount<<endl;
+	}
+	//Precomputing after vectorization is important to ensure accuracy.
+	precomputevars(Bead::getDbData().coords.data(), cyllengthset, cylbenddotproduct);
+
+	/*for(auto f:Filament::getFilaments()){
+	    cout<<f->getCylinderVector().size()<<" ";
+	}
+	cout<<endl;
+	for(int i = 0;i < Totalbeads-1; i++){
+	    cout<<beadpaircyllengthstatus[i]<<" ";
+	}
+	cout<<endl;
+    for(int i = 0;i < Totalbeads-1; i++){
+        cout<<beadtriplet_hingestatus[i]<<" ";
+    }
+    cout<<endl;
+	cout<<"Ncyl "<<cylcount<<" "<<Cylinder::getCylinders().size()<<" "
+                                                                ""<<2*_numhybridInteractions<<endl;
+	cout<<endl;*/
+}
+
+template<class FBendingInteractionType>
+void FilamentStretchingandBending<FBendingInteractionType>::deallocate() {
+
+	delete [] beadSet;
+	delete [] kbend;
+	delete [] eqt;
+
+	delete [] beadSetcylsansbending;
+	delete [] kstr;
+	delete [] eql;
+	delete [] kstrsansbending;
+	delete [] eqlsansbending;
+	delete [] totalenergy;
+
+	delete [] cylSetcylsansbending;
+	delete [] cylSet;
+	delete [] cyllengthset;
+	delete [] cylbenddotproduct;
+	delete [] beadSetall;
+	delete [] beadpaircyllengthstatus;
+	delete [] beadtriplet_hingestatus;
+}
+
+//Needs to have a return value.
+template <class FStretchingandBendingInteractionType>
+floatingpoint FilamentStretchingandBending<FStretchingandBendingInteractionType>::
+        computeEnergy(floatingpoint *coord){
+
+#ifdef SERIAL
+
+	const int startID = 0;
+	int threadID = 0;
+	precomputevars(coord, cyllengthset, cylbenddotproduct);
+    _FFType.energy(coord, _numhybridInteractions, cylSet, cyllengthset, cylbenddotproduct,
+            kstr, kbend, eql, eqt, totalenergy, startID, _numhybridInteractions, threadID);
+    _FFType.energy(coord, cylSetcylsansbending, cyllengthset, kstrsansbending,
+           eqlsansbending, totalenergy, startID, _strnumInteractions, threadID);
+
+	/*_FFType.energy(coord, _numhybridInteractions, beadSet, kstr, kbend, eql, eqt, totalenergy,
+	               startID, _numhybridInteractions, threadID);
+
+    _FFType.energy(coord, beadSetcylsansbending, kstrsansbending, eqlsansbending, totalenergy,
+            startID, _strnumInteractions, threadID);*/
+#endif
+	floatingpoint U = (floatingpoint) 0.0;
+	for(int t = 0 ; t < numthreads; t++){
+		for(int j = 0; j <3;j++) {
+			if(totalenergy[3*t+j] >= (floatingpoint) 0.0)
+				U +=  totalenergy[3*t+j];
+			else
+				return (floatingpoint) -1.0;
+		}
+	}
+
+	return U;
+
+}
+
+ template <class FStretchingandBendingInteractionType>
+void FilamentStretchingandBending<FStretchingandBendingInteractionType>::computeForces
+(floatingpoint *coord, floatingpoint *f) {
+#ifdef SERIAL
+	 precomputevars(coord, cyllengthset, cylbenddotproduct);
+     const int startID = 0;
+     int threadID = 0;
+    _FFType.forces(coord, f, _numhybridInteractions, beadSet, cylSet, cyllengthset, cylbenddotproduct,
+         kstr, kbend, eql, eqt);
+    _FFType.forces(coord, f,  beadSet, cylSetcylsansbending, cyllengthset, beadSetcylsansbending,
+         kstrsansbending, eqlsansbending, startID, _strnumInteractions, threadID);
+
+/*	_FFType.forces(coord, f, _numhybridInteractions, beadSet, kstr, kbend, eql, eqt);
+     const int startID = 0;
+     int threadID = 0;
+	_FFType.forces(coord, f, beadSetcylsansbending, kstrsansbending, eqlsansbending, startID,
+	        _strnumInteractions, threadID);*/
+#endif
+#ifdef DETAILEDOUTPUT
+	floatingpoint maxF = 0.0;
+    floatingpoint mag = 0.0;
+    for(int i = 0; i < CGMethod::N/3; i++) {
+        mag = 0.0;
+        for(int j = 0; j < 3; j++)
+            mag += f[3 * i + j]*f[3 * i + j];
+        mag = sqrt(mag);
+//        std::cout<<"SL "<<i<<" "<<mag*mag<<" "<<forceAux[3 * i]<<" "<<forceAux[3 * i + 1]<<" "<<forceAux[3 * i +
+//                2]<<endl;
+        if(mag > maxF) maxF = mag;
+    }
+    std::cout<<"max "<<getName()<<" "<<maxF<<endl;
+#endif
+
+}
+
+///Template specializations
+template floatingpoint FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::computeEnergy(floatingpoint *coord);
+template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
+template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::vectorize();
+template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::deallocate();
+template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingHarmonic>::precomputevars(
+		floatingpoint *coord, floatingpoint *cyllengthset,
+		floatingpoint *cylbenddotproduct);
+
+
+template floatingpoint FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::computeEnergy(floatingpoint *coord);
+template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
+template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::vectorize();
+template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::deallocate();
+template void FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>::precomputevars(
+		floatingpoint *coord, floatingpoint *cyllengthset,
+		floatingpoint *cylbenddotproduct);

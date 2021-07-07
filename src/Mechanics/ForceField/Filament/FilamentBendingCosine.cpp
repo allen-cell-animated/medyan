@@ -196,7 +196,7 @@ void FilamentBendingCosine::checkforculprit() {
 }
 #endif
 floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, size_t nint, int *beadSet,
-                                     floatingpoint *kbend, floatingpoint *eqt){
+                                     floatingpoint *kbend, floatingpoint *eqt) {
 
     int n = FilamentBending<FilamentBendingCosine>::n;
 
@@ -338,8 +338,12 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, size_
 
     int n = FilamentBending<FilamentBendingCosine>::n;
 
-    floatingpoint *coord1, *coord2, *coord3, L1, L2, l1l2, invL1, invL2, A,B,C, k;
+    floatingpoint *coord1, *coord2, *coord3, l1l2, invL1, invL2, A,B,C, k;
     floatingpoint *force1, *force2, *force3;
+//    floatingpoint L1, L2;
+    floatingpoint L1sq, L2sq,x;
+    floatingpoint r1x, r1y, r1z, r2x, r2y, r2z;
+    floatingpoint Fr1x, Fr1y, Fr1z, Fr2x, Fr2y, Fr2z;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -350,25 +354,37 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, size_
         force1 = &f[3 * beadSet[n * i]];
         force2 = &f[3 * beadSet[n * i + 1]];
         force3 = &f[3 * beadSet[n * i + 2]];
+		//Method 1
+//        L1 = sqrt(scalarProduct(coord1, coord2, coord1, coord2));//|x1|
+//        L2 = sqrt(scalarProduct(coord2, coord3, coord2, coord3));
+//
+//        l1l2 = scalarProduct(coord1, coord2, coord2, coord3);
+//
+//        invL1 = 1/L1;
+//        invL2 = 1/L2;
+//        A = invL1*invL2;//1/|x1||x2|
+//        B = l1l2*invL1*A*A*L2;//vec(x1).vec(x2)*(1/|x1|)*(1/|x1||x2|)^2*(|x2|)
+//        // = vec(x1).vec(x2)/|x1|^3.|x2|
+//        C = l1l2*invL2*A*A*L1;//vec(x1).vec(x2)*(1/|x2|)*(1/|x1||x2|)^2(|x1|)
+//		// = vec(x1).vec(x2)/|x2|^3.|x1|
 
-        L1 = sqrt(scalarProduct(coord1, coord2, coord1, coord2));
-        L2 = sqrt(scalarProduct(coord2, coord3, coord2, coord3));
+		//Method 2
+		L1sq = (scalarProduct(coord1, coord2, coord1, coord2));
+		L2sq = (scalarProduct(coord2, coord3, coord2, coord3));
 
-        l1l2 = scalarProduct(coord1, coord2, coord2, coord3);
+	    l1l2 = scalarProduct(coord1, coord2, coord2, coord3);
 
-        invL1 = 1/L1;
-        invL2 = 1/L2;
-        A = invL1*invL2;
-        B = l1l2*invL1*A*A*L2;
-        C = l1l2*invL2*A*A*L1;
+	    A = 1/sqrt(L1sq*L2sq);
+	    x = l1l2*A;
+	    B = x/L1sq;
+	    C = x/L2sq;
 
         if (areEqual(eqt[i], 0.0)) k = kbend[i];
 
         else{
-            if(abs(abs(l1l2*A) - 1.0)<0.001)
-                l1l2 = 0.999*l1l2;
+            if(abs(abs(x) - 1.0)<0.001)
+                x = 0.999*x;
 
-            floatingpoint x = l1l2 *A;
 	        if (x < -1.0) x = -1.0;
 	        else if (x > 1.0) x = 1.0;
 
@@ -381,37 +397,42 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, size_
 			k = kbend[i] * sin(dPhi)/sin(phi);*/
 	        k = kbend[i] * sinpminusq/sinp;
         }
-        //force on i-1, f = k*(-A*l2 + B*l1):
-        force1[0] +=  k * ((-coord3[0] + coord2[0])*A +
-                           (coord2[0] - coord1[0])*B );
-        force1[1] +=  k * ((-coord3[1] + coord2[1])*A +
-                           (coord2[1] - coord1[1])*B );
-        force1[2] +=  k * ((-coord3[2] + coord2[2])*A +
-                           (coord2[2] - coord1[2])*B );
 
+        r1x = coord2[0] - coord1[0];
+        r1y = coord2[1] - coord1[1];
+        r1z = coord2[2] - coord1[2];
+        r2x = coord3[0] - coord2[0];
+        r2y = coord3[1] - coord2[1];
+        r2z = coord3[2] - coord2[2];
+
+        //Force acting along vectors r1 and r2
+        Fr1x =  k * ( r2x*A - r1x*B );
+	    Fr1y =  k * ( r2y*A - r1y*B );
+	    Fr1z =  k * ( r2z*A - r1z*B );
+	    Fr2x =  k * ( r1x*A - r2x*C );
+	    Fr2y =  k * ( r1y*A - r2y*C );
+	    Fr2z =  k * ( r1z*A - r2z*C );
+
+        //force on i-1, f = k*(-A*l2 + B*l1):
+        force1[0] += -Fr1x;
+
+        force1[1] += -Fr1y;
+
+        force1[2] += -Fr1z;
 
         //force on i, f = k*(A*(l1-l2) - B*l1 + C*l2):
-        force2[0] +=  k *( (coord3[0] - 2*coord2[0] + coord1[0])*A -
-                           (coord2[0] - coord1[0])*B +
-                           (coord3[0] - coord2[0])*C );
+        force2[0] +=  Fr1x - Fr2x;
 
-        force2[1] +=  k *( (coord3[1] - 2*coord2[1] + coord1[1])*A -
-                           (coord2[1] - coord1[1])*B +
-                           (coord3[1] - coord2[1])*C );
+        force2[1] +=  Fr1y - Fr2y;
 
-        force2[2] +=  k *( (coord3[2] - 2*coord2[2] + coord1[2])*A -
-                           (coord2[2] - coord1[2])*B +
-                           (coord3[2] - coord2[2])*C );
+        force2[2] +=  Fr1z - Fr2z;
 
-        //force on i-1, f = k*(A*l - B*l2):
-        force3[0] +=  k *( (coord2[0] - coord1[0])*A -
-                           (coord3[0] - coord2[0])*C );
+        //force on i-1, f = k*(A*l1 - B*l2):
+        force3[0] +=  Fr2x;
 
-        force3[1] +=  k *( (coord2[1] - coord1[1])*A -
-                           (coord3[1] - coord2[1])*C );
+        force3[1] +=  Fr2y;
 
-        force3[2] +=  k *( (coord2[2] - coord1[2])*A -
-                           (coord3[2] - coord2[2])*C );
+        force3[2] +=  Fr2z;
 
 	    #ifdef CHECKFORCES_INF_NAN
 	    if(checkNaN_INF<floatingpoint>(force1, 0, 2)||checkNaN_INF<floatingpoint>(force2,0,2)

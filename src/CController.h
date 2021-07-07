@@ -63,8 +63,8 @@ public:
     ///@param chemAlgorithm - a string defining the chemical algorithm to be used
     ///@param chemInitializer - a string defining the chemical manager used
     void initialize(string& chemAlgorithm, ChemistryData& chem, DissipationTracker* dt);
-    //aravind June 29,2016.
-    void restart();
+
+    void initializerestart(floatingpoint restartime, floatingpoint _minimizationTime);
     
     ///Run chemistry for a given amount of time
     bool run(floatingpoint time);
@@ -74,6 +74,8 @@ public:
     
     ///Remove set of reactions at runtime, specified by input
     void removeReactions();
+
+    bool crosschecktau();
     
     vector<floatingpoint> getEnergy();
     
@@ -81,7 +83,7 @@ public:
     
     DissipationTracker* getDT();
 
-    
+    static ofstream _crosscheckdumpFilechem;
 };
 
 

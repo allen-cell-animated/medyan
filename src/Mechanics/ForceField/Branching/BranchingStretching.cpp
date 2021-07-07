@@ -32,7 +32,7 @@ void BranchingStretching<BStretchingInteractionType>::vectorize() {
     kstr = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
     eql = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
     pos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
-    stretchforce = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
+    stretchforce = new floatingpoint[3*BranchingPoint::getBranchingPoints().size()];
 
     int i = 0;
 
@@ -44,8 +44,9 @@ void BranchingStretching<BStretchingInteractionType>::vectorize() {
 
         kstr[i] = b->getMBranchingPoint()->getStretchingConstant();
         eql[i] = b->getMBranchingPoint()->getEqLength();
-        pos[i] = b->getPosition();
-        stretchforce[i] = 0.0;
+        pos[i] = b->getFirstCylinder()->adjustedrelativeposition(b->getPosition());
+        for(int j = 0; j < 3; j++)
+        	stretchforce[3*i + j] = 0.0;
         i++;
     }
     //CUDA
@@ -81,7 +82,9 @@ void BranchingStretching<BStretchingInteractionType>::deallocate() {
     int i = 0;
     for(auto b:BranchingPoint::getBranchingPoints()){
         //Using += to ensure that the stretching forces are additive.
-        b->getMBranchingPoint()->stretchForce += stretchforce[i];
+
+        for(int j = 0; j < 3; j++)
+            b->getMBranchingPoint()->branchForce[j] += stretchforce[3*b->getIndex() + j];
         i++;
     }
     delete [] stretchforce;

@@ -58,6 +58,8 @@ public:
     //setter to store HybridneighborList pointer
     void setHNeighborLists(HybridCylinderCylinderNL* Hnl);
 #endif
+
+    virtual vector<string> getinteractionnames();
 };
 
 #endif

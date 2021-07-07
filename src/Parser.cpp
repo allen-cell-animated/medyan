@@ -170,7 +170,6 @@ void SystemParser::readChemParams() {
                 const char * testStr2 = lineVector[1].c_str();
                 if(strcmp(testStr1, testStr2) == 0){
                     CParams.dissTracking = true;
-
                 }
 
             }
@@ -244,7 +243,7 @@ void SystemParser::readChemParams() {
 
     if(np2 == CParams.maxbindingsitespercylinder)
         np2 *= 2;
-
+    cout<<"np2 "<<np2<<" shift "<<CParams.shiftbybits<<endl;
 	CParams.shiftbybits = log2(np2);
     CParams.maxStableIndex = numeric_limits<uint32_t>::max()/CParams.shiftbybits -1;
 //	cout<<"shiftbybits "<<CParams.shiftbybits<<" maxbindingsitespercylinder "<<CParams
@@ -318,6 +317,19 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             }
             else if (lineVector.size() == 2) {
                 CAlgorithm.snapshotTime = atof(lineVector[1].c_str());
+            }
+        }
+        if (line.find("DATADUMPTIME:") != string::npos) {
+
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CAlgorithm.datadumpTime = atof(lineVector[1].c_str());
             }
         }
         if (line.find("SNAPSHOTSTEPS:") != string::npos) {
@@ -998,6 +1010,7 @@ void SystemParser::readMechParams() {
             }
             else if (lineVector.size() == 5) {
                 MParams.hessTracking = true;
+                MParams.eigenTracking = true;
                 //MParams.hessDelta = atof(lineVector[1].c_str());
                 MParams.hessSkip = atof(lineVector[1].c_str());
                 int dense = atoi(lineVector[2].c_str());
@@ -1019,6 +1032,25 @@ void SystemParser::readMechParams() {
                     MParams.hessMatrixPrintBool = false;
                 }
                 
+            }
+        }
+
+        if (line.find("EIGENTRACKING:") != string::npos) {
+
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                const char * testStr1 = "OFF";
+                const char * testStr2 = lineVector[1].c_str();
+                if(strcmp(testStr1, testStr2) == 0)
+                    MParams.eigenTracking = false;
+                else
+                    MParams.eigenTracking = true;
             }
         }
         
@@ -1137,6 +1169,12 @@ MechanicsAlgorithm SystemParser::readMechanicsAlgorithm() {
             vector<string> lineVector = split<string>(line);
             if (lineVector.size() == 2) {
                 MAlgorithm.lambdarunningaverageprobability = atof(lineVector[1].c_str());
+            }
+        }
+        else if (line.find("LINESEARCHALGORITHM")!= string::npos){
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() == 2) {
+                MAlgorithm.linesearchalgorithm = (lineVector[1].c_str());
             }
         }
     }
@@ -1400,6 +1438,16 @@ void SystemParser::readDyRateParams() {
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
                     DRParams.dBranchUnbindingCharLength.push_back(
+                            atof((lineVector[i].c_str())));
+            }
+            else {}
+        }
+        else if (line.find("DBUNBINDINGF") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRParams.dBranchUnbindingCharForce.push_back(
                             atof((lineVector[i].c_str())));
             }
             else {}
@@ -1936,7 +1984,17 @@ FilamentSetup SystemParser::readFilamentSetup() {
                 FSetup.filamentType = atoi(lineVector[1].c_str());
             else {}
         }
-        else if (line.find("RESTARTPHASE") != string::npos){SysParams::RUNSTATE=false;}
+        else if (line.find("RESTARTPHASE") != string::npos){SysParams::RUNSTATE=false;
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "Error reading restart params. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2){
+                if(lineVector[1].find("USECHEMCOPYNUM"))
+                SysParams::USECHEMCOPYNUM = true;
+            }
+        }
         else if(line.find("PROJECTIONTYPE")!=string::npos){
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {

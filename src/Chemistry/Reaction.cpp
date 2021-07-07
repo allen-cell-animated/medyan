@@ -21,9 +21,14 @@
 #include <boost/pool/pool_alloc.hpp>
 #endif
 
+#include "CUDAcommon.h"
+
 template<unsigned short M, unsigned short N>
     void Reaction<M,N>::updatePropensityImpl() {
 
+/*    bool case1 = _rnode!=nullptr;
+    bool case2 = !_passivated;
+    cout<<"updatePropensityImpl status "<<case1<<" "<<case2<<endl;*/
     //just update the rnode if not passivated
     if(_rnode!=nullptr && !_passivated) _rnode->activateReaction();
 }
@@ -54,7 +59,6 @@ template <unsigned short M, unsigned short N>
 
 template <unsigned short M, unsigned short N>
 void Reaction<M,N>::passivateReactionImpl() {
-//    std::cout<<"passivate Rxn "<<M<<" "<<N<<endl;
     if(isPassivated()) return;
 #ifdef TRACK_DEPENDENTS
     for(auto i=0U; i<M; ++i)
@@ -79,20 +83,53 @@ void Reaction<M,N>::passivateReactionImpl() {
 template <unsigned short M, unsigned short N>
 Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
 {
+#ifdef OPTIMOUT
+    chrono::high_resolution_clock::time_point mins, mine;
+    mins = chrono::high_resolution_clock::now();
+#endif
     vector<Species*> species;
+
     for(auto &rs : _rspecies){
         int molec = rs->getSpecies().getMolecule();
-        
-        //check if that species exists in the compartment
-        auto vit = find_if(spcv.species().cbegin(),spcv.species().cend(),
-           [molec](const unique_ptr<Species> &us){return us->getMolecule()==molec;});
-        
-        //if we didn't find it, use the old species
-        if(vit==spcv.species().cend()) species.push_back(&rs->getSpecies());
-        else species.push_back(vit->get());
+        auto speciesptr = &rs->getSpecies();
+        auto status = speciesptr->getsearchdirection();
+        //status->true, forward search will be used (Diffusing/Bulk)
+        //status->false, reverse search will be used (SpeciesBound,SingleBinding/PairBinding/Filament)
+        if(status) {
+            //check if that species exists in the compartment
+            auto vit = find_if(spcv.species().cbegin(), spcv.species().cend(),
+                               [molec](const unique_ptr<Species> &us) { return us->getMolecule() == molec; });
+
+            //if we didn't find it, use the old species
+            if (vit == spcv.species().cend()){
+                species.push_back(speciesptr);
+            }
+            else species.push_back(vit->get());
+        }
+        else{
+            //check if that species exists in the compartment
+            auto vit = find_if(spcv.species().crbegin(), spcv.species().crend(),
+                               [molec](const unique_ptr<Species> &us) { return us->getMolecule() == molec; });
+            if (vit == spcv.species().crend()){
+                species.push_back(speciesptr);
+            }
+            else species.push_back(vit->get());
+        }
     }
+#ifdef OPTIMOUT
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> rxnfindspecies(mine - mins);
+    CUDAcommon::cdetails.clonefindspecies += rxnfindspecies.count();
+#endif
+    //
+    // Note: the new reaction is not an exact clone of the original because
+    //   - The species can be different.
+    //   - The _isProtoCompartment field is directly set to false, regardless of the current reaction.
+    //
+    // Note: the clone has side effects on the current reaction:
+    //   - The _signal will be moved to the new reaction.
     //Create new reaction, copy ownership of signal
-    Reaction* newReaction = new Reaction<M,N>(species, _rate_bare);
+    Reaction* newReaction = new Reaction<M,N>(species, _rate_bare, false, _volumeFrac, _rateVolumeDepExp);
     newReaction->_rate = _rate;
     newReaction->_Id = _Id;
 #ifdef REACTION_SIGNALING

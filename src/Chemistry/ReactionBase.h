@@ -136,7 +136,7 @@ public:
     array<float, RATEMULFACTSIZE> _ratemulfactors;
 
     void setRateMulFactor(float factor, RateMulFactorType type){
-//    	cout<<"set Rate type "<<type<<" "<<factor<<endl;
+        //Call to this function should always be followed with call to updatePropensity
 
         if(factor == _ratemulfactors[type]) return;
 
@@ -250,10 +250,9 @@ public:
     void setCBound(CBound* cBound) {_cBound = cBound;}
     ///Get CBound
     CBound* getCBound() {return _cBound;}
+
     
-    /// Sets the ReactionBase rate to the parameter "rate"
-    [[deprecated]]void setRate(float rate) {_rate=rate;}
-    
+
     // Sets the scaled rate based on volume dependence.
     void recalcRateVolumeFactor() {
         // This can automatically set the "_rate" as scaled value of "rate"
@@ -276,7 +275,10 @@ public:
     
     /// Getter and setter for compartment volume fraction
     floatingpoint getVolumeFrac()const { return _volumeFrac; }
-    void setVolumeFrac(float volumeFrac) { _volumeFrac = volumeFrac; }
+    void setVolumeFrac(float volumeFrac) {
+        _volumeFrac = volumeFrac;
+        recalcRateVolumeFactor();
+    }
     
     /// Sets the RNode pointer associated with this ReactionBase to rhs. Usually is
     /// called only by the Gillespie-like algorithms.
@@ -497,6 +499,8 @@ public:
     /// dependencies. Importantly, the copy numbers of molecules do not influence the
     /// result of this function. \sa dependents()
     virtual vector<ReactionBase*> getAffectedReactions() = 0;
+
+    virtual void addDependantReactions() = 0;
     
     /// Request that the ReactionBase *r adds this ReactionBase to its list of
     /// dependents which it affects.

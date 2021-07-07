@@ -34,6 +34,7 @@ class Cylinder;
 class HybridCylinderCylinderNL : public HybridNeighborList {
 
 private:
+    static const bool CROSSCHECK_NL_SWITCH = false;
 
     vector<unordered_map<Cylinder*, vector<Cylinder*>>> _list4mbinvec;
 //    unordered_map<Cylinder*, vector<Cylinder*>> _list4mbin;
@@ -201,6 +202,7 @@ public:
     //constructor
     HybridCylinderCylinderNL() {}
 
+    //Creates bingrid and assigns cylinders to each bin.
     virtual void initializeHybridNeighborList(){
         initializeBinGrid();
         assignallcylinderstobin();

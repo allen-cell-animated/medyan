@@ -55,7 +55,6 @@ void CylinderVolumeFF::cleanup() {
 }
 
 
-
 floatingpoint CylinderVolumeFF::computeEnergy(floatingpoint *coord, bool stretched) {
 
     floatingpoint U= 0.0;
@@ -71,7 +70,11 @@ floatingpoint CylinderVolumeFF::computeEnergy(floatingpoint *coord, bool stretch
             return -1;
         }
         else U += U_i;
-        
+
+        #ifdef TRACKDIDNOTMINIMIZE
+        if(!stretched)
+            SysParams::Mininimization().tempEnergyvec.push_back(U_i);
+        #endif
     }
 
     return U;
@@ -103,3 +106,12 @@ vector<NeighborList*> CylinderVolumeFF::getNeighborLists() {
 
     return neighborLists;
 }
+
+vector<string> CylinderVolumeFF::getinteractionnames(){
+	vector<string> temp;
+	for (auto &interaction : _cylinderVolInteractionVector) {
+		temp.push_back(interaction->getName());
+	}
+    return temp;
+}
+

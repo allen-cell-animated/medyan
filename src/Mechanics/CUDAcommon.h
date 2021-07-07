@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <list>
+
 #include "FilamentStretchingHarmonic.h"
 #include "FilamentBendingHarmonic.h"
 #include "FilamentBendingCosine.h"
@@ -174,6 +175,23 @@ struct motorwalking{
 	int equibtoequib = 0;
 };
 
+struct chemdetails{
+    int reactioncount[17]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    double dependencytime[17]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    int dependentrxncount[17]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    double totaltime[17]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    double emitsignal[17]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    int diffusion_passivate_count = 0;
+    int diffusion_activate_count = 0;
+    int ccylclonerxncounter[3] = {0,0,0};
+    int ccylclonecounter[3]={0,0,0};
+    double ccylclonetimer[3]={0,0,0};
+    double internalrxnclone = 0.0;
+    double internalrxnadd = 0.0;
+    double clonefindspecies= 0.0;
+    double getaffectedrxns = 0.0;
+};
+
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)
 struct CUDAvars {
     floatingpoint * gpu_force = NULL;
@@ -272,6 +290,7 @@ public:
 	static PolyPlusEndTemplatetime ppendtime;
 	static timeminimization tmin;
 	static motorwalking mwalk;
+	static chemdetails cdetails;
 
 #ifdef CUDAACCL
     static CylCylNLvars cylcylnlvars;
@@ -334,5 +353,6 @@ public:
     }
 #endif
 };
+
 #endif
 //CUDA_VEC_CUDACOMMON_H

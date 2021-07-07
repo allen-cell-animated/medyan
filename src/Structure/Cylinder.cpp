@@ -46,31 +46,34 @@ void Cylinder::updateData() {
 void Cylinder::updateCoordinate() {
     coordinate = midPointCoordinate(_b1->vcoordinate(), _b2->vcoordinate(), 0.5);
     //update the coordiante in cylinder structure.
-
     Cylinder::getDbData().value[getStableIndex()].coord = 0.5 * (_b1->coordinate() + _b2->coordinate());
 }
 
-
 Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int position,
-                   bool extensionFront, bool extensionBack, bool initialization)
+                   bool extensionFront, bool extensionBack, bool initialization,
+                   floatingpoint eqLength)
 
-    : Trackable(true, true, true, false),
-      _b1(b1), _b2(b2), _type(type), _position(position),
-      DatabaseType(CylinderInfoData::CylinderInfo {}) {
+        : Trackable(true, true, true, false),
+          _b1(b1), _b2(b2), _type(type), _position(position),
+          DatabaseType(CylinderInfoData::CylinderInfo {}) {
 
     #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
-        if(getStableIndex() >= SysParams::Chemistry().maxStableIndex) {
-            LOG(ERROR) << "Total number of cylinders initialized("<< getStableIndex()<<
-            ") equals/exceeds the maximum ("<<SysParams::Chemistry().maxStableIndex<<")."
-                          "Check number of binding sites to continue to use "
-                          "HYBRID_NLSTENCILLIST or SIMDBINDINGSEARCH. If not, shift to "
-                          "other binding search algorithms. Exiting.";
-            throw std::logic_error("Max value reached");
-        }
-	#endif
+    if(getStableIndex() >= SysParams::Chemistry().maxStableIndex) {
+
+        LOG(ERROR) << "Total number of cylinders initialized("<< getStableIndex()<<
+                    ") equals/exceeds the maximum ("<<SysParams::Chemistry()
+                    .maxStableIndex<<")."
+                    "Check number of binding sites to continue to use "
+                    "HYBRID_NLSTENCILLIST or SIMDBINDINGSEARCH. If not, shift to "
+                    "other binding search algorithms. Exiting.";
+        throw std::logic_error("Max value reached");
+    }
+    #endif
 
     parent->addChild(unique_ptr<Component>(this));
-	//@{
+    //setID
+    _filID = static_cast<Filament*>(parent)->getId();
+    //@{
 
     //Set coordinate
     updateCoordinate();
@@ -87,98 +90,97 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     _cellElement.manager->addElement(this, _cellElement, compartment->cylinderCell);
 
     //@}
-#ifdef MECHANICS
-          //set eqLength according to cylinder size
-          
-    floatingpoint eqLength  = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
-    if(!SysParams::RUNSTATE) //RESTARTPHASE
-    {
-        int nummonomers = (int) round(eqLength/ SysParams::Geometry().monomerSize[type]);
-        floatingpoint tpd = eqLength;
-              
-        if(nummonomers ==0){
-            eqLength = SysParams::Geometry().monomerSize[type];
-        }
-        else{
-            eqLength = (nummonomers) * SysParams::Geometry().monomerSize[type];
-            floatingpoint mindis = abs(tpd - eqLength);
-
-            for(auto i=nummonomers-1;i<=min(nummonomers+1, SysParams::Geometry().cylinderNumMon[type]);i++){
-                if(mindis > abs(tpd - i * SysParams::Geometry().monomerSize[type]))
-                {
-                    eqLength = i * SysParams::Geometry().monomerSize[type];
-                    mindis = abs(tpd - eqLength);
-                }
-            }
-        }
-        
-    
-    }
-    _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
-    _mCylinder->setCylinder(this);
-#endif
-    
-#ifdef CHEMISTRY
+    #ifdef CHEMISTRY
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(compartment, this));
     _cCylinder->setCylinder(this);
-
-    //init using chem manager
-    _chemManager->initializeCCylinder(_cCylinder.get(), extensionFront,
-                                      extensionBack, initialization);
+    #endif
+    if(SysParams::RUNSTATE) {
+        eqLength = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
+        #ifdef CHEMISTRY
+        //init using chem manager
+        _chemManager->initializeCCylinder(_cCylinder.get(), extensionFront,
+                                          extensionBack, initialization);
+        #endif
+    }
+#ifdef MECHANICS
+    _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
+    _mCylinder->setCylinder(this);
 #endif
 
     // Update the stored data
     updateData();
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"Cylinder created "<<getId()<<" "<<getStableIndex()<<endl;
+    #endif
+}
 
+void Cylinder::initializerestart(int nummonomers, int firstmonomer, int lastmonomer, bool
+                                    minusendstatus, bool plusendstatus, short
+                                    minusendtype, short plusendtype){
+    if(SysParams::RUNSTATE){
+        LOG(ERROR) << "initializerestart Function from Cylinder class can only be called "
+                      "during restart phase. Exiting.";
+        throw std::logic_error("Illegal function call pattern");
+    }
+    _chemManager->initializeCCylinder(_cCylinder.get(), false,
+                                      false, true, nummonomers, firstmonomer,
+                                      lastmonomer, minusendstatus, plusendstatus,
+                                      minusendtype, plusendtype);
 }
 
 Cylinder::~Cylinder() noexcept {
-	#ifdef CROSSCHECK_IDX
-	cout<<"cindex "<<getStableIndex()<<" removed from ID "<<getId()<<" with bindices "
-	<<_b1->getStableIndex()<<" "<<_b2->getStableIndex()<<" and bID "<<_b1->getId()<<" "
-																		 ""<<_b2->getId()
-																		 <<endl;
-	#endif
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"Cylinder deleting "<<getId()<<" "<<getStableIndex()<<endl;
+    #endif
+
     //remove from compartment
     _cellElement.manager->removeElement(_cellElement);
-    
+    #ifdef CROSSCHECK_CYLINDER
+    cout<<"Cylinder deleted "<<getId()<<endl;
+    #endif
 }
 
 /// Get filament type
 int Cylinder::getType() {return _type;}
 
 void Cylinder::updatePosition() {
-	if(!setpositionupdatedstate) {
+    if(!setpositionupdatedstate) {
 
-		//check if were still in same compartment, set new position
-		updateCoordinate();
-		Compartment *c;
-		try { c = GController::getCompartment(coordinate); }
-		catch (exception &e) {
-			cout << e.what();
+        //check if Cylinder is still in same compartment, set new position
+        updateCoordinate();
+        #ifdef CROSSCHECK_CYLINDER
+        _crosscheckdumpFile <<"Coord updated "<<getId()<<endl;
+        #endif
+        Compartment *c;
+        try { c = GController::getCompartment(coordinate); }
+        catch (exception &e) {
+            cout << e.what();
 
-			printSelf();
+            printSelf();
 
-			exit(EXIT_FAILURE);
-		}
+            exit(EXIT_FAILURE);
+        }
 
         Compartment* curCompartment = getCompartment();
-		if (c != curCompartment) {
-			#ifdef CHECKRXN
-			cout<<"move Cmp Cylinder with ID "<<getId()<<" from Cmp "
-			    <<getCompartment()->getId()<<" to Cmp "<<c->getId()<<endl;
-			#endif
-			mins = chrono::high_resolution_clock::now();
+        if (c != curCompartment) {
+            #ifdef CROSSCHECK_CYLINDER
+            _crosscheckdumpFile <<"Attempt Move cmp "<<getId()<<endl;
+            #endif
 
-			//remove from old compartment, add to new
+            mins = chrono::high_resolution_clock::now();
+
+            //remove from old compartment, add to new
             _cellElement.manager->updateElement(_cellElement, c->cylinderCell);
+            #ifdef CROSSCHECK_CYLINDER
+            _crosscheckdumpFile <<"Complete Move cmp "<<getId()<<endl;
+            #endif
 
 #ifdef CHEMISTRY
 //			auto oldCCylinder = _cCylinder.get();
 
-			//Remove old ccylinder from binding managers
-			//Removed March 8, 2019 Aravind. Unnecessary as all UpdatePosition calls are
-			// immediately followed by UpdateNeighborLists call in Controller.cpp/.cu
+            //Remove old ccylinder from binding managers
+            //Removed March 8, 2019 Aravind. Unnecessary as all UpdatePosition calls are
+            // immediately followed by UpdateNeighborLists call in Controller.cpp/.cu
 /*        for(auto &manager : oldCompartment->getFilamentBindingManagers()) {
 #ifdef NLORIGINAL
             manager->removePossibleBindings(oldCCylinder);
@@ -188,9 +190,12 @@ void Cylinder::updatePosition() {
 #endif
         }*/
 
-			//clone and set new ccylinder
-			CCylinder *clone = _cCylinder->clone(c);
-			setCCylinder(clone);
+            //clone and set new ccylinder
+            CCylinder *clone = _cCylinder->clone(c);
+            setCCylinder(clone);
+#ifdef CROSSCHECK_CYLINDER
+            _crosscheckdumpFile <<"Clone CCyl "<<getId()<<endl;
+#endif
 
 //			auto newCCylinder = _cCylinder.get();
 
@@ -198,12 +203,16 @@ void Cylinder::updatePosition() {
             auto& data = getDbData().value[getStableIndex()];
             data.compartmentId = c->getId();
             data.chemCylinder = _cCylinder.get();
+#ifdef CROSSCHECK_CYLINDER
+            _crosscheckdumpFile <<"Update CylinderData "<<getId()<<endl;
+#endif
 
-			mine = chrono::high_resolution_clock::now();
-			chrono::duration<floatingpoint> compartment_update(mine - mins);
-			CUDAcommon::tmin.timecylinderupdate += compartment_update.count();
-			CUDAcommon::tmin.callscylinderupdate++;
-		}
+            mine = chrono::high_resolution_clock::now();
+            chrono::duration<floatingpoint> compartment_update(mine - mins);
+            CUDAcommon::tmin.timecylinderupdate += compartment_update.count();
+            CUDAcommon::tmin.callscylinderupdate++;
+
+        }
 #endif
 
 #ifdef MECHANICS
@@ -211,7 +220,10 @@ void Cylinder::updatePosition() {
     _mCylinder->setLength(twoPointDistance(_b1->vcoordinate(),
                                            _b2->vcoordinate()));
 #endif
-	}
+        #ifdef CROSSCHECK_CYLINDER
+        _crosscheckdumpFile <<"MCylinder updated "<<getId()<<endl;
+        #endif
+    }
 }
 
 /// @note -  The function uses the bead load force to calculate this changed rate.
@@ -317,6 +329,7 @@ void Cylinder::printSelf() {
 
     cout << "Cylinder: ptr = " << this << endl;
     cout << "Cylinder ID = " << getId() << endl;
+    cout << "Stable Index = "<< getStableIndex() << endl;
     cout << "Parent ptr = " << getParent() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
 
@@ -364,6 +377,61 @@ bool Cylinder::within(Cylinder* other, floatingpoint dist) {
     return false;
 }
 
+//adjust the position variable according to the length of cylinder
+//Refer Docs/Design/PartialCylinderAlpha.pdf
+floatingpoint Cylinder::adjustedrelativeposition(floatingpoint _alpha, bool verbose){
+#ifdef ADJUSTRELPOS
+    //Full Length Cylinder
+    if(isFullLength())
+        return _alpha;
+    floatingpoint _alphacorr = (floatingpoint)0.0;
+    auto x1 = _b1->vcoordinate();
+    auto x2 = _b2->vcoordinate();
+    floatingpoint L = twoPointDistance(x1, x2);
+    short filamentType = _type;
+    short minusendmonomer = 0;
+    floatingpoint fullcylinderSize = SysParams::Geometry().cylinderSize[filamentType];
+    //Partial Plus End cylinder
+    if(_plusEnd == true){
+        floatingpoint Lm = (floatingpoint)0.0;//Distance of minus end from 0th monomer.
+        // Both Minus and Plus End at the same time (Filament is one cylinder long)
+        if(_minusEnd == true){
+            int numMonomers = SysParams::Geometry().cylinderNumMon[filamentType];
+            auto monomersize = SysParams::Geometry().monomerSize[filamentType];
+            for(int midx = 0; midx<numMonomers; midx++){
+                short m = _cCylinder->getCMonomer(midx)->activeSpeciesMinusEnd();
+                short p = _cCylinder->getCMonomer(midx)->activeSpeciesPlusEnd();
+                if(m != -1) {
+                    minusendmonomer = midx;
+                    break;
+                }
+            }
+            Lm = minusendmonomer*monomersize;//Distance of minus end from 0th monomer.
+        }
+        _alphacorr = (fullcylinderSize*_alpha - Lm)/L;
+    }
+    //Parital Minus End Cylinder
+    else if(_minusEnd == true){
+        _alphacorr = 1-(1-_alpha)*fullcylinderSize/L;
+    }
+
+    if(verbose){
+        cout<<"cyl ID "<<getId()<<" minsendstatus "<<_minusEnd<<" <<plusendstatus "
+            <<_plusEnd<<" minusendmonomer "<<minusendmonomer<<" alpha "<<_alpha
+            <<" _alphacorr "<<_alphacorr<<endl;
+    }
+
+    if(_alphacorr < (floatingpoint)0.0)
+        return (floatingpoint)0.0;
+    else if(_alphacorr > (floatingpoint)1.0)
+        return (floatingpoint)1.0;
+    else
+        return _alphacorr;
+#else
+    return _alpha;
+#endif
+}
+
 vector<FilamentRateChanger*> Cylinder::_polyChanger;
 ChemManager* Cylinder::_chemManager = 0;
 
@@ -372,3 +440,4 @@ floatingpoint Cylinder::timecylinder1 = 0.0;
 floatingpoint Cylinder::timecylinder2= 0.0;
 floatingpoint Cylinder::timecylinderchem= 0.0;
 floatingpoint Cylinder::timecylindermech= 0.0;
+ofstream Cylinder::_crosscheckdumpFile;

@@ -42,6 +42,10 @@
 
 #include <Eigen/Core>
 
+#include "MotorGhostInteractions.h"
+#include "CCylinder.h"
+#include "ChemNRMImpl.h"
+
 using namespace mathfunc;
 
 void BasicSnapshot::print(int snapshot) {
@@ -90,12 +94,13 @@ void BasicSnapshot::print(int snapshot) {
         auto x =
             midPointCoordinate(linker->getFirstCylinder()->getFirstBead()->vcoordinate(),
                                linker->getFirstCylinder()->getSecondBead()->vcoordinate(),
-                               linker->getFirstPosition());
+                               linker->getFirstCylinder()->adjustedrelativeposition
+                                   (linker->getFirstPosition()));
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
 
         x = midPointCoordinate(linker->getSecondCylinder()->getFirstBead()->vcoordinate(),
                                linker->getSecondCylinder()->getSecondBead()->vcoordinate(),
-                               linker->getSecondPosition());
+                               linker->getSecondCylinder()->adjustedrelativeposition(linker->getSecondPosition()));
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
 
         _outputFile << endl;
@@ -111,12 +116,12 @@ void BasicSnapshot::print(int snapshot) {
         auto x =
             midPointCoordinate(motor->getFirstCylinder()->getFirstBead()->vcoordinate(),
                                motor->getFirstCylinder()->getSecondBead()->vcoordinate(),
-                               motor->getFirstPosition());
+                               motor->getFirstCylinder()->adjustedrelativeposition(motor->getFirstPosition()));
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
 
         x = midPointCoordinate(motor->getSecondCylinder()->getFirstBead()->vcoordinate(),
                                motor->getSecondCylinder()->getSecondBead()->vcoordinate(),
-                               motor->getSecondPosition());
+                               motor->getSecondCylinder()->adjustedrelativeposition(motor->getSecondPosition()));
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
 
         _outputFile << endl;
@@ -358,7 +363,6 @@ void Forces::print(int snapshot) {
     _outputFile <<endl;
 }
 
-
 void Tensions::print(int snapshot) {
 
     _outputFile.precision(10);
@@ -460,7 +464,6 @@ void Tensions::print(int snapshot) {
     _outputFile <<endl;
 }
 
-
 void WallTensions::print(int snapshot) {
 
     _outputFile.precision(10);
@@ -559,7 +562,6 @@ void WallTensions::print(int snapshot) {
     _outputFile <<endl;
 }
 
-
 void Types::print(int snapshot) {
 
     _outputFile.precision(10);
@@ -651,7 +653,6 @@ void Types::print(int snapshot) {
 
     _outputFile <<endl;
 }
-
 
 void Chemistry::print(int snapshot) {
 
@@ -745,7 +746,6 @@ void MotorWalkLengths::print(int snapshot) {
     MotorGhost::getWalkLengths()->clearValues();
 }
 
-
 void LinkerLifetimes::print(int snapshot) {
 
     _outputFile.precision(3);
@@ -760,7 +760,6 @@ void LinkerLifetimes::print(int snapshot) {
     Linker::getLifetimes()->clearValues();
 }
 
-
 void FilamentTurnoverTimes::print(int snapshot) {
 
     _outputFile.precision(3);
@@ -773,7 +772,7 @@ void FilamentTurnoverTimes::print(int snapshot) {
 }
 
 void Dissipation::print(int snapshot) {
-
+    _outputFile.precision(16);
     // print first line (snapshot number, time)
     _outputFile << snapshot << " " << tau() << endl;
     vector<floatingpoint> energies;
@@ -784,6 +783,7 @@ void Dissipation::print(int snapshot) {
 }
 
 void HRCD::print(int snapshot) {
+    _outputFile.precision(16);
     DissipationTracker* dt = _cs->getDT();
     vector<tuple<string, floatingpoint>> hrcdvec = dt->getHRCDVec();
     // print first line (snapshot number, time)
@@ -801,9 +801,8 @@ void HRCD::print(int snapshot) {
 
 }
 
-
-
 void HRMD::print(int snapshot) {
+    _outputFile.precision(16);
     DissipationTracker* dt = _cs->getDT();
        // print first line (snapshot number, time)
     
@@ -833,13 +832,24 @@ void HRMD::print(int snapshot) {
         }
         
     }
+    _outputFile<<endl;
+    #ifdef PRINTENERGYBEFOREANDAFTER
+    //Print mech energies before and after minimization
+    // write row of mech energy
+    auto HRMDMechEnergyMat = dt->getHRMDmat();
+    for(auto i = 0; i < HRMDMechEnergyMat.size(); i++){
+        for(auto j = 0; j < HRMDMechEnergyMat[i].size(); j++) {
+            _outputFile << get<1>(HRMDMechEnergyMat[i][j]) << "     ";
+        }
+        _outputFile<<endl;
+    }
+    _outputFile<<endl;
+    #endif
+    dt->clearHRMDMats();
     
     _outputFile<<endl<<endl;
     
 }
-
-
-
 
 void PlusEnd::print(int snapshot) {
 
@@ -873,156 +883,195 @@ void PlusEnd::print(int snapshot) {
 
         }
 
+        //print minus end
+        x = filament->getCylinderVector().front()->getFirstBead()->vcoordinate();
+        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" \n";
+
+
+        for (int i=0; i<filament->getCylinderVector().front()->getCCylinder()->getSize(); i++) {
+            int out=filament->getCylinderVector().front()->getCCylinder()->getCMonomer(i)->activeSpeciesMinusEnd();
+            if(out !=-1) {_outputFile << "MINUSEND: " << out << endl;}
+
+        }
+
     }
 
     _outputFile << endl;
 
 }
+
 void CMGraph::print(int snapshot) {
 
     // print first line (snapshot number, time)
 
     _outputFile << snapshot << " " << tau() << endl;
 
-    vector<vector<int>> filIDVec;
+    //key stores concatenated filID value.
+    //value stores count of linkers, motors and branchers connecting two filament IDs.
+    map<uint64_t, array<int, 3>> filpaircounter;
+    int shiftbybits;
 
+    //Get filament pairs involved in each linker
     for(auto &linker : Linker::getLinkers()) {
 
-        int fid1 = linker->getFirstCylinder()->getFilID();
-        int fid2 = linker->getSecondCylinder()->getFilID();
-        vector<int> pair;
-        pair.push_back(fid1);
-        pair.push_back(fid2);
+        uint32_t fid1 = linker->getFirstCylinder()->getFilID();
+        uint32_t fid2 = linker->getSecondCylinder()->getFilID();
 
-        sort(pair.begin(),pair.end());
-        filIDVec.push_back(pair);
+        shiftbybits = sizeof(fid1)*8;
+        uint64_t tempkey;
 
-
-
-    }
-
-    vector<vector<int>> uniqueFilIDVec;
-    vector<vector<int>> uniqueFilIDVecCounts;
-
-    for(auto i : filIDVec){
-
-        if(find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) != uniqueFilIDVec.end()) {
-
-            int ind = find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) - uniqueFilIDVec.begin();
-
-            uniqueFilIDVecCounts.at(ind).at(2) ++ ;
-
-
-        } else {
-
-            vector<int> pbVec;
-            pbVec.push_back(i[0]);
-            pbVec.push_back(i[1]);
-            pbVec.push_back(1);
-
-            uniqueFilIDVecCounts.push_back(pbVec);
-            uniqueFilIDVec.push_back(i);
-
+        if(fid1<fid2) {
+            tempkey = fid1;
+            tempkey = tempkey << shiftbybits;
+            tempkey = tempkey|fid2;
+        }
+        else {
+            tempkey = fid2;
+            tempkey = tempkey << shiftbybits;
+            tempkey = tempkey|fid1;
         }
 
+        filpaircounter[tempkey][0] = filpaircounter[tempkey][0]+1;
     }
 
-    for(auto i: uniqueFilIDVecCounts){
-        _outputFile<< i[0] <<" "<<  i[1] << " "  << i[2]<< " ";
+    //Get filament pairs involved in each motor
+    for(auto &motor : MotorGhost::getMotorGhosts()) {
+
+        uint32_t fid1 = motor->getFirstCylinder()->getFilID();
+        uint32_t fid2 = motor->getSecondCylinder()->getFilID();
+
+        shiftbybits = sizeof(fid1)*8;
+        uint64_t tempkey;
+
+        if(fid1<fid2) {
+            tempkey = fid1;
+            tempkey = tempkey << shiftbybits;
+            tempkey = tempkey|fid2;
+        }
+        else {
+            tempkey = fid2;
+            tempkey = tempkey << shiftbybits;
+            tempkey = tempkey|fid1;
+        }
+        filpaircounter[tempkey][1] = filpaircounter[tempkey][1]+1;
     }
 
+    //Get mother and daughter filament pairs involved in each brancher
+    for(auto &brancher : BranchingPoint::getBranchingPoints()) {
 
+        uint32_t fid1 = brancher->getFirstCylinder()->getFilID();
+        uint32_t fid2 = brancher->getSecondCylinder()->getFilID();
 
+        shiftbybits = sizeof(fid1)*8;
+        uint64_t tempkey;
+
+        if(fid1<fid2) {
+            tempkey = fid1;
+            tempkey = tempkey << shiftbybits;
+            tempkey = tempkey|fid2;
+        }
+        else {
+            tempkey = fid2;
+            tempkey = tempkey << shiftbybits;
+            tempkey = tempkey|fid1;
+        }
+        filpaircounter[tempkey][2] = filpaircounter[tempkey][2]+1;
+    }
+
+    uint64_t mask = (uint64_t(1) << 32) - 1;
+    for(auto const& i: filpaircounter){
+        uint64_t tempkey = i.first;
+        auto tempvalue = i.second;
+        uint64_t fID1 = tempkey >> shiftbybits;
+        uint64_t fID2 = mask & tempkey;
+        _outputFile<<fID1<<" "<<fID2<<" "<<
+        tempvalue[0] <<" "<< tempvalue[1] << " " << tempvalue[2]<< " ";
+    }
     _outputFile<<endl<<endl;
 
 }
 
 
 void TMGraph::print(int snapshot) {
-    
+
     //_outputFile.precision(10);
-    
+
     // print first line (snapshot number, time)
-    
+
     _outputFile << snapshot << " " << tau() << endl;
-    
+
     vector<tuple<vector<int>,floatingpoint>> filIDVec;
-    
+
     for(auto &linker : Linker::getLinkers()) {
-        
+
         int fid1 = linker->getFirstCylinder()->getFilID();
         int fid2 = linker->getSecondCylinder()->getFilID();
         vector<int> pair;
         pair.push_back(fid1);
         pair.push_back(fid2);
-        
+
         floatingpoint tension = abs(linker->getMLinker()->stretchForce);
-        
+
         sort(pair.begin(),pair.end());
         filIDVec.push_back(make_tuple(pair,tension));
-        
-        
-        
+
+
+
     }
-    
+
     for(auto &motor : MotorGhost::getMotorGhosts()) {
-        
+
         int fid1 = motor->getFirstCylinder()->getFilID();
         int fid2 = motor->getSecondCylinder()->getFilID();
         vector<int> pair;
         pair.push_back(fid1);
         pair.push_back(fid2);
-        
+
         floatingpoint tension = abs(motor->getMMotorGhost()->stretchForce);
-        
+
         sort(pair.begin(),pair.end());
         filIDVec.push_back(make_tuple(pair,tension));
-        
-        
-        
+
+
+
     }
-    
+
     vector<vector<int>> uniqueFilIDVec;
     vector<tuple<vector<int>,floatingpoint>> uniqueFilIDVecSum;
-    
+
     for(auto j : filIDVec){
-        
+
         vector<int> i = get<0>(j);
-        
+
         if(find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) != uniqueFilIDVec.end()) {
-            
+
             int ind = find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) - uniqueFilIDVec.begin();
-            
+
             get<1>(uniqueFilIDVecSum.at(ind)) +=  get<1>(j);
 
-            
+
         } else {
-            
+
             vector<int> pbVec;
             pbVec.push_back(i[0]);
             pbVec.push_back(i[1]);
             //pbVec.push_back(get<1>(j));
-            
+
             uniqueFilIDVecSum.push_back(make_tuple(pbVec,get<1>(j)));
             uniqueFilIDVec.push_back(i);
         }
-        
+
     }
-    
+
     for(auto i: uniqueFilIDVecSum){
         _outputFile<< get<0>(i)[0] <<" "<<  get<0>(i)[1] << " "  << get<1>(i) << " ";
     }
-    
-    
-    
+
+
+
     _outputFile<<endl<<endl;
-    
+
 }
-
-
-
-
-
 
 
 void ReactionOut::print(int snapshot) {
@@ -1076,7 +1125,6 @@ void ReactionOut::print(int snapshot) {
     _outputFile << endl;
 
 }
-
 
 void BRForces::print(int snapshot) {
 
@@ -1166,42 +1214,62 @@ void Concentrations::print(int snapshot) {
 
 void MotorWalkingEvents::print(int snapshot) {
     DissipationTracker* dt = _cs->getDT();
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> motorData = dt->getMotorData();
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+    floatingpoint>> motorData = dt->getMotorWalkingData();
     for(auto i = 0; i < motorData.size(); i++){
-        tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint> line = motorData[i];
-        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line) <<endl;
+
+        tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+        floatingpoint> line = motorData[i];
+        //ID coordx coordy coordz birthtime walktime
+        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line)
+                                   <<"     "<<get<4>(line) <<"     "<<get<5>(line) <<endl;
     }
     dt->clearMotorData();
-
-
 }
-
 
 void LinkerUnbindingEvents::print(int snapshot) {
     DissipationTracker* dt = _cs->getDT();
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> linkerUnbindingData = dt->getLinkerUnbindingData();
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+    floatingpoint>>
+    linkerUnbindingData = dt->getLinkerUnbindingData();
     for(auto i = 0; i < linkerUnbindingData.size(); i++){
-        tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint> line = linkerUnbindingData[i];
-        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line) <<endl;
+        //ID coordx coordy coordz birthtime unbindingtime
+        tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+        floatingpoint> line = linkerUnbindingData[i];
+        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line)
+                   <<"     "<<get<4>(line) <<"     "<<get<5>(line) <<endl;
     }
     dt->clearLinkerUnbindingData();
-
-
 }
 
+void MotorUnbindingEvents::print(int snapshot) {
+    DissipationTracker* dt = _cs->getDT();
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+            floatingpoint>>
+            motorUnbindingData = dt->getMotorUnbindingData();
+    for(auto i = 0; i < motorUnbindingData.size(); i++){
+        //ID coordx coordy coordz birthtime unbindingtime
+        tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint,
+                floatingpoint> line = motorUnbindingData[i];
+        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line)
+                   <<"     "<<get<4>(line) <<"     "<<get<5>(line) <<endl;
+    }
+    dt->clearMotorUnbindingData();
+}
 
 void LinkerBindingEvents::print(int snapshot) {
     DissipationTracker* dt = _cs->getDT();
-    vector<tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint>> linkerBindingData = dt->getLinkerBindingData();
+    vector<tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint>>
+    linkerBindingData = dt->getLinkerBindingData();
     for(auto i = 0; i < linkerBindingData.size(); i++){
-        tuple<floatingpoint, floatingpoint, floatingpoint, floatingpoint> line = linkerBindingData[i];
-        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line) <<endl;
+        //ID coordx coordy coordz birthtime
+        tuple<int, floatingpoint, floatingpoint, floatingpoint, floatingpoint> line =
+                linkerBindingData[i];
+        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line)
+                   <<"     "<<get<4>(line) <<endl;
     }
     dt->clearLinkerBindingData();
-
-
 }
-
 
 void Datadump::print(int snapshot) {
     _outputFile.close();
@@ -1217,26 +1285,29 @@ void Datadump::print(int snapshot) {
 	Cylinder::updateAllData();
     Cylinder::rearrange();
     _outputFile << snapshot << " " << tau() << endl;
+    _outputFile <<"NFIL NCYL NBEAD NLINK NMOTOR NBRANCH NBUBBLE"<<endl;
     _outputFile << Filament::numFilaments() << " " <<
+                             Cylinder::numCylinders()<<" "<<
+                             Bead::numBeads()<<" "<<
                              Linker::numLinkers() << " " <<
                              MotorGhost::numMotorGhosts() << " " <<
                              BranchingPoint::numBranchingPoints() << " " <<
                              Bubble::numBubbles() << endl;
     //Bead data
-    _outputFile <<"BEAD DATA: BEADIDX(STABLE) FID COORDX COORDY COORDZ FORCEAUXX "
+    _outputFile <<"BEAD DATA: BEADIDX(STABLE) FID FPOS COORDX COORDY COORDZ FORCEAUXX "
                   "FORCEAUXY FORCEAUXZ"<<endl;
     const auto& beadData = Bead::getDbDataConst();
 
     for(auto b:Bead::getBeads()){
         auto bidx = b->getStableIndex();
         Filament* f = static_cast<Filament*>(b->getParent());
-        _outputFile <<bidx<<" "<<f->getId()<<" "<<beadData.coords.data()
+        _outputFile <<bidx<<" "<<f->getId()<<" "<<b->getPosition()<<" "<<beadData.coords.data()
         [3*bidx]<<" " <<beadData.coords.data()[3*bidx + 1]<<" "
         <<beadData.coords.data()[3*bidx + 2]<<" "<<beadData.forcesAux.data()[3*bidx]<<" "<<
         beadData.forcesAux.data()[3*bidx + 1]<<" "<<beadData.forcesAux.data()[3*bidx + 2]<<endl;
 
     }
-
+    _outputFile <<endl;
     /*for(int bidx = 0; bidx<Bead::rawNumStableElements(); bidx++){
 
         _outputFile <<bidx<<" "<<beadData.coords.data()[3*bidx]<<" "<<beadData.coords.data()[3*bidx + 1]<<" "
@@ -1245,7 +1316,8 @@ void Datadump::print(int snapshot) {
     }
 	_outputFile <<endl;*/
     //Cylinder data
-    _outputFile <<"CYLINDER DATA: CYLIDX(STABLE) B1_IDX B2_IDX MINUSENDTYPE "
+    _outputFile <<"CYLINDER DATA: CYLIDX(STABLE) FID FTYPE FPOS B1_IDX B2_IDX "
+				  "MINUSENDSTATUS PLUSENDSTATUS MINUSENDTYPE "
                   "PLUSENDTYPE MINUSENDMONOMER PLUSENDMONOMER TOTALMONOMERS EQLEN"<<endl;
     const auto& cylinderInfoData = Cylinder::getDbData().value;
 
@@ -1259,6 +1331,8 @@ void Datadump::print(int snapshot) {
         short minusendtype = -1;
         short plusendtype = -1;
         short foundstatus = 0; //0 none found, 1 found one end, 2 found both ends
+        bool minusendstatus = true;
+        bool plusendstatus = true;
                 for(int midx = 0; midx<numMonomers; midx++){
                 if(foundstatus ==2)
                     break;
@@ -1276,18 +1350,27 @@ void Datadump::print(int snapshot) {
                     plusendmonomer = midx;
                 }
             }
-
+			if(minusendtype == -1){
+				minusendstatus = false;
+			}
+			if(plusendtype == -1){
+				plusendstatus = false;
+			}
         /*Cidx minus-end plus-end num-monomers*/
-        _outputFile <<cidx<<" "<<cyl->getFirstBead()->getStableIndex()<<" "
-        <<cyl->getSecondBead()->getStableIndex()<<" "<<minusendtype<<" "<<plusendtype<<" "
-        <<minusendmonomer<<" "<<plusendmonomer<<" "<<(plusendmonomer-minusendmonomer)+1<<" "
-        <<cyl->getMCylinder()->getEqLength()<<endl;
+        _outputFile <<cidx<<" "<<cylinderInfoData[cidx].filamentId<<" "
+                    <<filamentType<<" "<<cylinderInfoData[cidx].positionOnFilament<<" "
+                    <<cyl->getFirstBead()->getStableIndex()<<" "
+                    <<cyl->getSecondBead()->getStableIndex()<<" "
+                    <<minusendstatus<<" "<<plusendstatus<<" "<<minusendtype<<" "
+                    <<plusendtype<<" "<<minusendmonomer<<" "<<plusendmonomer<<" "
+                    <<(plusendmonomer-minusendmonomer)+1<<" "
+                    <<cyl->getMCylinder()->getEqLength()<<endl;
     }
 	_outputFile <<endl;
     //Filament Data
-	_outputFile <<"FILAMENT DATA: FILID CYLIDvec"<<endl;
+	_outputFile <<"FILAMENT DATA: FILID FTYPE CYLIDvec"<<endl;
 	for(auto fil : Filament::getFilaments()){
-		_outputFile <<fil->getId()<<" ";
+		_outputFile <<fil->getId()<<" "<<fil->getType()<<" ";
 		for(auto cyl :fil->getCylinderVector()){
 			_outputFile << cyl->getStableIndex()<<" ";
 		}
@@ -1295,39 +1378,62 @@ void Datadump::print(int snapshot) {
 	}
 	_outputFile <<endl;
 	//Linker Data
-	_outputFile <<"LINKER DATA: LINKERID CYL1_IDX CYL2_IDX POS1 POS2 EQLEN"<<endl;
+	_outputFile <<"LINKER DATA: LINKERID LINKERTYPE CYL1_IDX CYL2_IDX POS1 POS2 "
+               "EQLEN DIFFUSINGSPECIESNAME"<<endl;
 	for(auto l :Linker::getLinkers()){
 		Cylinder* cyl1 = l->getFirstCylinder();
 		Cylinder* cyl2 = l->getSecondCylinder();
-		float pos1 = l->getFirstPosition();
-		float pos2 = l->getSecondPosition();
-		_outputFile <<l->getId()<<" "<<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex
-		()<<" "<<pos1<<" "<<pos2<<" "<<l->getMLinker()->getEqLength()<<endl;
+		float pos1 = l->getFirstPosition()*SysParams::Geometry()
+		        .cylinderNumMon[cyl1->getType()];
+		float pos2 = l->getSecondPosition()*SysParams::Geometry()
+                .cylinderNumMon[cyl2->getType()];
+		_outputFile <<l->getId()<<" "<<l->getType()<<" "<<cyl1->getStableIndex()<<" "
+		                        <<cyl2->getStableIndex()<<" "<<pos1<<" "<<pos2<<" "
+		                        <<l->getMLinker()->getEqLength()<<" "<<l->getCLinker()
+		                        ->getDiffusingSpecies()->getName()<<endl;
 	}
 	_outputFile <<endl;
 	//MOTOR Data
-	_outputFile <<"MOTOR DATA: MOTORID CYL1_IDX CYL2_IDX POS1 POS2 EQLEN"<<endl;
+	_outputFile <<"MOTOR DATA: MOTORID MOTORTYPE CYL1_IDX CYL2_IDX POS1 POS2 EQLEN "
+               "DIFFUSINGSPECIESNAME NUMHEADS NUMBOUNDHEADS"<<endl;
+	int counter = 0;
+	auto individualenergiesvec = MotorGhostInteractions::individualenergies;
+	auto tpdistvec = MotorGhostInteractions::tpdistvec;
+	auto eqlvec = MotorGhostInteractions::eqlvec;
+	auto kstrvec = MotorGhostInteractions::kstrvec;
+
 	for(auto l :MotorGhost::getMotorGhosts()){
 		Cylinder* cyl1 = l->getFirstCylinder();
 		Cylinder* cyl2 = l->getSecondCylinder();
-		float pos1 = l->getFirstPosition();
-		float pos2 = l->getSecondPosition();
-		_outputFile <<l->getId()<<" "<<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex
-				()<<" "<<pos1<<" "<<pos2<<" "<<l->getMMotorGhost()->getEqLength()<<endl;
+        float pos1 = l->getFirstPosition()*SysParams::Geometry()
+                .cylinderNumMon[cyl1->getType()];
+        float pos2 = l->getSecondPosition()*SysParams::Geometry()
+                .cylinderNumMon[cyl2->getType()];
+		_outputFile <<l->getId()<<" "<<l->getType()<<" "<<cyl1->getStableIndex()<<" "
+		            <<cyl2->getStableIndex()<<" "<<pos1<<" "<<pos2<<" "
+		            <<l->getMMotorGhost()->getEqLength()<<" "<<l->getCMotorGhost()
+				->getDiffusingSpecies()->getName()<<" "<<l->getNumHeads()<<" "
+				<<l->getnumBoundHeads()<<endl;
+
+		counter++;
 	}
 	_outputFile <<endl;
 	//Brancher Data
-	_outputFile <<"BRANCHING DATA: BRANCHID CYL1_IDX CYL2_IDX POS1 EQLEN"<<endl;
+	_outputFile <<"BRANCHING DATA: BRANCHID BRANCHTYPE CYL1_IDX CYL2_IDX POS1 EQLEN "
+               "DIFFUSINGBRNACHSPECIESNAME DIFFUSINGACTINSPECIESNAME"<<endl;
 	for(auto l :BranchingPoint::getBranchingPoints()){
 		Cylinder* cyl1 = l->getFirstCylinder();
 		Cylinder* cyl2 = l->getSecondCylinder();
-		float pos1 = l->getPosition();
-		_outputFile <<l->getId()<<" "<<cyl1->getStableIndex()<<" "<<cyl2->getStableIndex
-				()<<" "<<pos1<<" "<<l->getMBranchingPoint()->getEqLength()<<endl;
+		float pos1 = l->getPosition()*SysParams::Geometry()
+                .cylinderNumMon[cyl1->getType()];
+		_outputFile <<l->getId()<<" "<<l->getType()<<" "<<cyl1->getStableIndex()<<" "
+		            <<cyl2->getStableIndex()<<" "<<pos1<<" "
+		            <<l->getMBranchingPoint()->getEqLength()<<" "<<l->getCBranchingPoint()
+				->getDiffusingBranchSpecies()->getName()<<" "<<l->getdiffusingactinspeciesname()<<endl;
 	}
 	_outputFile <<endl;
 	//Compartment Data
-	_outputFile <<"COMPARTMENT DATA: CMPID DIFFUSINGSPECIES"
+	_outputFile <<"COMPARTMENT DATA: CMPID DIFFUSINGSPECIES "
 			   "COPYNUM"<<endl;
 	for(auto cmp:_subSystem->getCompartmentGrid()->getCompartments()){
 		_outputFile <<cmp->getId()<<" ";
@@ -1351,8 +1457,101 @@ void Datadump::print(int snapshot) {
 		_outputFile <<name<<" "<<copyNum<<" ";
 	}
 	_outputFile <<endl;
-}
 
+	//TALLY
+	_outputFile<<"TALLY OF SPECIES: SPECIESNAME COPYNUM"<<endl;
+
+    // all diffusing and bulk species
+    for(auto sd : _chemData.speciesDiffusing) {
+
+        string name = get<0>(sd);
+        auto copyNum = _subSystem->getCompartmentGrid()->countDiffusingSpecies(name);
+
+        _outputFile << name << ":DIFFUSING " << copyNum << endl;
+    }
+
+    for(auto sb : _chemData.speciesBulk) {
+
+        string name = get<0>(sb);
+        auto copyNum = _subSystem->getCompartmentGrid()->countBulkSpecies(name);
+
+        _outputFile << name << ":BULK " << copyNum << endl;
+    }
+
+    for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
+
+        for(auto sf : _chemData.speciesFilament[filType]) {
+
+            auto copyNum = Filament::countSpecies(filType, sf);
+            _outputFile << sf << ":FILAMENT " << copyNum << endl;
+        }
+
+        for(auto sp : _chemData.speciesPlusEnd[filType]) {
+
+            auto copyNum = Filament::countSpecies(filType, sp);
+            _outputFile << sp << ":PLUSEND " << copyNum << endl;
+        }
+
+        for(auto sm : _chemData.speciesMinusEnd[filType]) {
+
+            auto copyNum = Filament::countSpecies(filType, sm);
+            _outputFile << sm << ":MINUSEND " << copyNum << endl;
+        }
+
+        for(auto sl : _chemData.speciesLinker[filType]) {
+
+            auto copyNum = Linker::countSpecies(sl);
+            _outputFile << sl << ":LINKER " << copyNum << endl;
+        }
+
+        for(auto sm : _chemData.speciesMotor[filType]) {
+
+            auto copyNum = MotorGhost::countSpecies(sm);
+            _outputFile << sm << ":MOTOR " << copyNum << endl;
+        }
+
+        for(auto sb : _chemData.speciesBrancher[filType]) {
+
+            auto copyNum = BranchingPoint::countSpecies(sb);
+            _outputFile << sb << ":BRANCHER " << copyNum << endl;
+        }
+    }
+
+    _outputFile <<endl;
+
+	_outputFile <<"ENERGYDATA "<< endl;
+	auto minresult = _subSystem->prevMinResult.energiesAfter;
+	for(auto eachenergy: minresult.individual){
+		_outputFile <<eachenergy.name<<" "<<eachenergy.energy*kT<<endl;
+	}
+
+	_outputFile <<endl;
+
+    _outputFile <<"MINUSENDPOLYMERIZATIONREACTIONS "<< endl;
+    for(auto fil:Filament::getFilaments()){
+        auto cyl = fil->getCylinderVector().front(); //get Minus Ends
+        for(auto &it:cyl->getCCylinder()->getInternalReactions()){
+            if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND &&
+            !(it->isPassivated()) && it->computePropensity() > 0){
+                _outputFile<<"Fil "<<cyl->getFilID()<<" Cyl "<<cyl->getStableIndex()
+                            <<" RATEMULFACTORS ";
+                for(auto fac:it->_ratemulfactors)
+                    _outputFile<<fac<<" ";
+                _outputFile<<endl;
+                auto coord = cyl->getCompartment()->coordinates();
+                std::cout.precision(10);
+                _outputFile << "RNodeNRM: ptr=" << this <<", tau=" <<
+                static_cast<RNodeNRM*>(it->getRnode())->getTau() <<
+                     //	cout << "tau=" << getTau() <<
+                     ", a=" << static_cast<RNodeNRM*>(it->getRnode())->getPropensity()
+                     <<" in Compartment "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<
+                     ", points to Reaction:\n";
+                //Print the reaction
+                it->printToStream(_outputFile);
+            }
+        }
+    }
+}
 
 void HessianMatrix::print(int snapshot){
     _outputFile.precision(10);
@@ -1394,17 +1593,17 @@ void HessianSpectra::print(int snapshot){
     vector<Eigen::VectorXcd > IPRIVector = _ffm-> IPRIVector;
     vector<Eigen::VectorXcd > IPRIIVector = _ffm-> IPRIIVector;
     vector<floatingpoint> tauVector = _ffm-> tauVector;
-    
+
     // Outputs the eigenvalues obtained from each Hessian matrix
     for(auto k = 0; k < evaluesVector.size(); k++){
-        
+
         _outputFile <<tauVector[k] << "     "<< evaluesVector[k].size()<< endl;
 
         for(auto i = 0; i< evaluesVector[k].size(); i++){
             _outputFile<<evaluesVector[k].real()[i]<< "     "<<IPRIVector[k].real()[i]<< "     "<<IPRIIVector[k].real()[i]<<endl;
         }
-        
-        
+
+
         _outputFile<<endl;
     };
     // This clears the vectors storing the matrices to reduce the amount of memory needed.
@@ -1675,8 +1874,4 @@ void RockingSnapshot::print(int snapshot) {
         _outputFile <<endl;
     };
 }
-
-
-
-
 

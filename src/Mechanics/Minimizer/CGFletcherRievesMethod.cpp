@@ -20,6 +20,7 @@
 MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                                   floatingpoint MAXDIST, floatingpoint LAMBDAMAX,
                                   floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
+                                  string _LINESEARCHALGORITHM,
                                   bool steplimit) {
 
     MinimizationResult result;
@@ -35,12 +36,11 @@ MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoin
 
         startMinimization();
         FFM.vectorizeAllForceFields();
+        result.energiesBefore = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
 
         FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
         Bead::getDbData().forcesAux = Bead::getDbData().forces;
         auto maxForce = maxF();
-
-        result.energiesBefore = FFM.computeEnergyHRMD(Bead::getDbData().coords.data());
 
         //compute first gradient
         floatingpoint curGrad = CGMethod::allFDotF();
@@ -55,9 +55,9 @@ MinimizationResult FletcherRieves::minimize(ForceFieldManager &FFM, floatingpoin
             bool *dummy = nullptr;
             //find lambda by line search, move beads
             lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, maxForce,
-            		LAMBDAMAX, dummy)
+            		LAMBDAMAX, dummy, dummy)
                                : backtrackingLineSearch(FFM, MAXDIST, maxForce, LAMBDAMAX,
-                                       LAMBDARUNNINGAVERAGEPROBABILITY, dummy);
+                                       LAMBDARUNNINGAVERAGEPROBABILITY, dummy, dummy);
             moveBeads(lambda);
 
             //compute new forces

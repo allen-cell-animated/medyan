@@ -30,11 +30,12 @@ class BranchingPosition : public BranchingInteractions {
 private:
     BStretchingInteractionType _FFType;
     
-    int *beadSet;
+    unsigned int *beadSet;
     
     ///Array describing the constants in calculation
     floatingpoint *kpos;
     floatingpoint *pos;
+    floatingpoint *stretchforce;
 #ifdef CUDAACCL
     int * gpu_beadSet;
     floatingpoint * gpu_kpos;

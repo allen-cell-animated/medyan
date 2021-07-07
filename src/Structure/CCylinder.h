@@ -44,8 +44,12 @@ class ChemManager;
 class CCylinder {
     
 friend class CController;
+friend class ChemManager;
     
 private:
+#ifdef OPTIMOUT
+    chrono::high_resolution_clock::time_point mins, mine, minsi, minei;
+#endif
     #ifdef DEBUGCONSTANTSEED
 	using internalreactiondatatype = unordered_set<ReactionBase*, HashbyId<ReactionBase*>,
 			customEqualId<ReactionBase*>>;
@@ -76,6 +80,10 @@ private:
     short _size = 0; ///< Maximum length
     
     static ChemSim* _chemSim;   ///< A pointer to the ChemSim, initialized by CController
+
+    bool initialized = false;//CCylinder is completely self-consistent only after
+    // initializeCCylinder function is called from ChemManager. This variable will help
+    // us track whether a CCylinder has been initialized properly.
     
 public:
     /// Default constructor, sets compartment and cylinder
@@ -168,6 +176,8 @@ public:
     short getType();
 
     int getId();
+
+    bool isinitialized(){return initialized;}
     
 };
 

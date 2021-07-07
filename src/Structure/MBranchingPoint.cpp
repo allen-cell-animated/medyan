@@ -14,6 +14,7 @@
 #include "MBranchingPoint.h"
 
 #include "SysParams.h"
+#include "Util/Io/Log.hpp"
 
 MBranchingPoint::MBranchingPoint(int branchType) {
     
@@ -34,3 +35,12 @@ MBranchingPoint::MBranchingPoint(int branchType) {
     if(!SysParams::Mechanics().BrPositionK.empty())
         _kPosition = SysParams::Mechanics().BrPositionK[branchType];
 }
+
+void MBranchingPoint::initializerestart(floatingpoint eqLength){
+    if(SysParams::RUNSTATE){
+        LOG(ERROR) << "initializerestart Function from MBranchingPoint class can only be "
+                      "called "
+                      "during restart phase. Exiting.";
+        throw std::logic_error("Illegal function call pattern");
+    }
+    _eqLength = eqLength;}
