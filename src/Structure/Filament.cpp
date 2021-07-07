@@ -34,6 +34,10 @@
 #include "GController.h"
 #include "Rand.h"
 
+#ifdef CROSSCHECK_CYLINDER
+#include "CController.h"
+#endif
+
 using namespace mathfunc;
 
 Histogram* Filament::_turnoverTimes;
@@ -288,10 +292,18 @@ void Filament::extendPlusEnd(short plusEnd) {
     _cylinderVector.back()->setPlusEnd(false);
     _cylinderVector.push_back(c0);
     _cylinderVector.back()->setPlusEnd(true);
+
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"PlusEnd cylinder set"<<endl;
+    #endif
     
     // set cylinder's filID
 
     c0->setFilID(getId());
+
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Cyl FilID set"<<endl;
+    #endif
 
 
 #ifdef CHEMISTRY
@@ -299,11 +311,16 @@ void Filament::extendPlusEnd(short plusEnd) {
     CMonomer* m = _cylinderVector.back()->getCCylinder()->getCMonomer(0);
     m->speciesPlusEnd(plusEnd)->up();
 #endif
-    
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Species PlusEnd set"<<endl;
+    #endif
 #ifdef DYNAMICRATES
     //update reaction rates
     _cylinderVector.back()->updateReactionRates();
 #endif
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Reaction Rates updated"<<endl;
+    #endif
     
     _deltaPlusEnd++;
 
@@ -313,6 +330,9 @@ void Filament::extendPlusEnd(short plusEnd) {
     mine = chrono::high_resolution_clock::now();
 	chrono::duration<floatingpoint> elapsed_time2(mine - mins);
 	FilextendPlusendtimer2 += elapsed_time2.count();
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"extendPlusend"<<endl;
+    #endif
 }
 
 //extend back at runtime
@@ -345,6 +365,10 @@ void Filament::extendMinusEnd(short minusEnd) {
     _cylinderVector.front()->setMinusEnd(false);
     _cylinderVector.push_front(c0);
     _cylinderVector.front()->setMinusEnd(true);
+
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"MinusEnd cylinder set"<<endl;
+    #endif
     
     // set cylinder's filID
 
@@ -356,6 +380,9 @@ void Filament::extendMinusEnd(short minusEnd) {
     CMonomer* m = newCCylinder->getCMonomer(newCCylinder->getSize() - 1);
     
     m->speciesMinusEnd(minusEnd)->up();
+#ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"MinusEnd species set"<<endl;
+#endif
 
 #endif
     
@@ -363,11 +390,16 @@ void Filament::extendMinusEnd(short minusEnd) {
     //update reaction rates
     _cylinderVector.front()->updateReactionRates();
 #endif
-    
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"Reaction rates updated"<<endl;
+    #endif
     _deltaMinusEnd++;
 
 /*    cout<<"Extend plus End Cylinder ID = "<<cFront->getId()<<endl;
     cFront->printSelf();*/
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"extendMinusend"<<endl;
+    #endif
 }
 
 //Depolymerize front at runtime
@@ -406,7 +438,9 @@ void Filament::retractPlusEnd() {
     
     _deltaPlusEnd--;
 
-
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"retractPlusend"<<endl;
+    #endif
 }
 
 void Filament::retractMinusEnd() {
@@ -449,6 +483,9 @@ void Filament::retractMinusEnd() {
         _plusEndPosition = getPlusEndCylinder()->getSecondBead()->getPosition();
         _turnoverTime = tau();
     }
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"retractMinusEnd"<<endl;
+    #endif
 }
 
 void Filament::polymerizePlusEnd() {
@@ -485,6 +522,9 @@ void Filament::polymerizePlusEnd() {
 
 /*    cout<<"Poly plus End Cylinder ID = "<<cBack->getId()<<endl;
     cBack->printSelf();*/
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"polymerizePlusend"<<endl;
+    #endif
 
 }
 
@@ -523,6 +563,9 @@ void Filament::polymerizeMinusEnd() {
 
 /*    cout<<"Poly minus End Cylinder ID = "<<cFront->getId()<<endl;
     cFront->printSelf();*/
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"polymerizeMinusend"<<endl;
+    #endif
 
 }
 
@@ -560,6 +603,9 @@ void Filament::depolymerizePlusEnd() {
 
 /*    cout<<"DePoly plus End Cylinder ID = "<<cBack->getId()<<endl;
     cBack->printSelf();*/
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"depolymerizePlusend"<<endl;
+    #endif
 
 }
 
@@ -596,6 +642,9 @@ void Filament::depolymerizeMinusEnd() {
     _depolyMinusEnd++;
 /*    cout<<"DePoly minus End Cylinder ID = "<<cFront->getId()<<endl;
     cFront->printSelf();*/
+    #ifdef CROSSCHECK_CYLINDER
+    CController::_crosscheckdumpFilechem <<"depolymerizeMinusend"<<endl;
+    #endif
 }
 
 

@@ -499,6 +499,8 @@ public:
     /// dependencies. Importantly, the copy numbers of molecules do not influence the
     /// result of this function. \sa dependents()
     virtual vector<ReactionBase*> getAffectedReactions() = 0;
+
+    virtual void addDependantReactions() = 0;
     
     /// Request that the ReactionBase *r adds this ReactionBase to its list of
     /// dependents which it affects.

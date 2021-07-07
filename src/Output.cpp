@@ -879,6 +879,17 @@ void PlusEnd::print(int snapshot) {
 
         }
 
+        //print minus end
+        x = filament->getCylinderVector().front()->getFirstBead()->vcoordinate();
+        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" \n";
+
+
+        for (int i=0; i<filament->getCylinderVector().front()->getCCylinder()->getSize(); i++) {
+            int out=filament->getCylinderVector().front()->getCCylinder()->getCMonomer(i)->activeSpeciesMinusEnd();
+            if(out !=-1) {_outputFile << "MINUSEND: " << out << endl;}
+
+        }
+
     }
 
     _outputFile << endl;

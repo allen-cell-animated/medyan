@@ -170,7 +170,6 @@ void SystemParser::readChemParams() {
                 const char * testStr2 = lineVector[1].c_str();
                 if(strcmp(testStr1, testStr2) == 0){
                     CParams.dissTracking = true;
-
                 }
 
             }
@@ -244,7 +243,7 @@ void SystemParser::readChemParams() {
 
     if(np2 == CParams.maxbindingsitespercylinder)
         np2 *= 2;
-
+    cout<<"np2 "<<np2<<" shift "<<CParams.shiftbybits<<endl;
 	CParams.shiftbybits = log2(np2);
     CParams.maxStableIndex = numeric_limits<uint32_t>::max()/CParams.shiftbybits -1;
 //	cout<<"shiftbybits "<<CParams.shiftbybits<<" maxbindingsitespercylinder "<<CParams
@@ -1010,6 +1009,7 @@ void SystemParser::readMechParams() {
             }
             else if (lineVector.size() == 3) {
                 MParams.hessTracking = true;
+                MParams.eigenTracking = true;
                 //MParams.hessDelta = atof(lineVector[1].c_str());
                 MParams.hessSkip = atof(lineVector[1].c_str());
                 int dense = atoi(lineVector[2].c_str());
@@ -1019,6 +1019,25 @@ void SystemParser::readMechParams() {
                     MParams.denseEstimation = false;
                 }
                 
+            }
+        }
+
+        if (line.find("EIGENTRACKING:") != string::npos) {
+
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                const char * testStr1 = "OFF";
+                const char * testStr2 = lineVector[1].c_str();
+                if(strcmp(testStr1, testStr2) == 0)
+                    MParams.eigenTracking = false;
+                else
+                    MParams.eigenTracking = true;
             }
         }
         
