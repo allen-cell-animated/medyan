@@ -31,11 +31,12 @@
 FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting) {
 
 
-    if(stretching == "HARMONIC" && bending == "COSINE")
+  /*  if(stretching == "HARMONIC" && bending == "COSINE")
         _filamentInteractionVector.emplace_back(
                 new FilamentStretchingandBending<FilamentStretchingHarmonicandBendingCosine>
                         ());
-    else {
+    else */
+    {
 
         if (stretching == "HARMONIC")
             _filamentInteractionVector.emplace_back(

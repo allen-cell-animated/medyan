@@ -491,6 +491,7 @@ void SystemParser::chemPostProcessing(SimulConfig& sc) const {
     if(np2 == sc.chemParams.maxbindingsitespercylinder)
         np2 *= 2;
 
+    cout<<"np2 "<<np2<<" shift "<<CParams.shiftbybits<<endl;
 	sc.chemParams.shiftbybits = log2(np2);
     sc.chemParams.maxStableIndex = numeric_limits<uint32_t>::max()/sc.chemParams.shiftbybits -1;
 
@@ -1612,6 +1613,31 @@ void SystemParser::initMechParser() {
             return res;
         }
     );
+    mechParser.addStringArgsWithAliases(
+        "EIGENTRACKING", { "EIGENTRACKING:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                const char * testStr1 = "OFF";
+                const char * testStr2 = lineVector[1].c_str();
+                if(strcmp(testStr1, testStr2) == 0)
+                    sc.mechParams.eigenTracking = false;
+                else
+                    sc.mechParams.eigenTracking = true;
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            res.push_back(sc.mechParams.eigenTracking ? "ON" : "OFF");
+            return res;
+        }
+    );
+
     mechParser.addEmptyLine();
 
     mechParser.addComment("# Same filament binding skip");

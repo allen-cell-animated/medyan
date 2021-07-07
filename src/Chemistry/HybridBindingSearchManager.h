@@ -44,7 +44,7 @@ class HybridBindingSearchManager {
     friend class ChemManager;
 
 private:
-
+    static const bool CROSSCHECK_BS_SWITCH = false;
     static const uint switchfactor  = 10;
 
     chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD,
