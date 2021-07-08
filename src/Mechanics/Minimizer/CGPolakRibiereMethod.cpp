@@ -1177,6 +1177,7 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
     tbeginII = chrono::high_resolution_clock::now();
 #endif
     FFM.computeLoadForces();
+    
 
     #ifdef OPTIMOUT
     std::cout<<"End Minimization************"<<endl;
@@ -1186,14 +1187,16 @@ MinimizationResult PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint 
 
     // compute the Hessian matrix at this point if the feature is enabled
     if(SysParams::Mechanics().hessTracking){
-        if(skipcounter%SysParams::Mechanics().hessSkip==0){
-            skipcounter = 1;
+        if(FFM.hessCounter % SysParams::Mechanics().hessSkip == 0 || tau() > SysParams::Chemistry().runTime){
+            
+            if(tau() > 0.0){
+                FFM.computeProjections(Bead::getDbData().coords);
+            };
             int total_DOF = Bead::getDbData().coords.size_raw();
-            FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF,
-                               SysParams::Mechanics().hessDelta);
+            FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, SysParams::Mechanics().hessDelta);
         }
-        else
-            skipcounter++;
+        
+        FFM.hessCounter += 1;
     }
 
 

@@ -29,6 +29,7 @@
 #include <Spectra/MatOp/SparseSymMatProd.h>
 #include <Spectra/SymEigsShiftSolver.h>
 #include <Spectra/MatOp/SparseSymShiftSolve.h>
+#include <unordered_map>
 
 typedef Eigen::Triplet<double> Triplet;
 
@@ -74,14 +75,24 @@ public:
     // compute the Hessian matrix if the feature is enabled
     void computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta);
     
+    void setCurrBeadMap();
+    
+    void setPrevBeadMap();
+    
+    // compute the displacement projections along the eigenvectors
+    void computeProjections(mathfunc::VecArray< 3, floatingpoint > currCoords);
+    
     void clearHessian(int a){
         if(a == 0){
-        hessianVector.clear();
+            hessianVector.clear();
+        }else if(a==1){
+            evaluesVector.clear();
+            IPRIVector.clear();
+            IPRIIVector.clear();
+            
         }else{
-        evaluesVector.clear();
-        IPRIVector.clear();
-        IPRIIVector.clear();
-        tauVector.clear();
+            projectionsVector.clear();
+            tauVector.clear();
         };
     }
     
@@ -97,6 +108,14 @@ public:
     Eigen::VectorXcd evalues;
     Eigen::MatrixXcd evectors;
     vector<floatingpoint> tauVector;
+    vector<Eigen::VectorXcd> projectionsVector;
+    
+    int hessCounter;
+    
+    std::unordered_map<Bead*, tuple<int, int>> prevBeadMap;
+    std::unordered_map<Bead*, tuple<int, int>> currBeadMap;
+    mathfunc::VecArray< 3, floatingpoint > prevCoords;
+
 
     vector<string> getinteractionnames(){
         vector<string> temp;

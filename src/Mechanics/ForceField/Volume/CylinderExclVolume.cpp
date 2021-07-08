@@ -37,6 +37,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     nint = 0;
 
     for(auto ci : Cylinder::getCylinders()) {
+
         //do not calculate exvol for a non full length cylinder
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         for (int ID = 0; ID < _HnlIDvec.size(); ID ++){
@@ -52,7 +53,9 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
 
         for(auto &cn : neighbors)
         {
+
             if(cn->getBranchingCylinder() == ci) continue;
+
             nint++;
         }
 #endif
@@ -70,6 +73,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     int Cumnc=0;
     for (i = 0; i < nc; i++) {
         auto ci = Cylinder::getCylinders()[i];
+
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         
         for (int ID = 0; ID < _HnlIDvec.size(); ID ++){
@@ -142,7 +146,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
 
 //    blocksnthreads.push_back(int(numInteractions/THREADSPERBLOCK + 1));
 //    if(blocksnthreads[0]==1) blocksnthreads.push_back( numInteractions);
-////    if(blocksnthreads[0]==1) blocksnthreads.push_back( 32*(int(numInteractions/32 +1)) );
+//   if(blocksnthreads[0]==1) blocksnthreads.push_back( 32*(int(numInteractions/32 +1)) );
 //    else blocksnthreads.push_back(THREADSPERBLOCK);
 
     //CUDA stream create

@@ -36,6 +36,10 @@
 #include "CController.h"
 #include "ChemSimImpl.h"
 
+#include "CylinderVolumeFF.h"
+#include "CylinderExclVolume.h"
+#include "CylinderVolumeInteractions.h"
+
 #include <Eigen/Core>
 
 #include "MotorGhostInteractions.h"
@@ -1555,7 +1559,9 @@ void HessianMatrix::print(int snapshot){
     vector<floatingpoint> tauVector = _ffm-> tauVector;
     // Outputs a sparse representation of the Hessian matrix, where only elements with appreciable size (>0.00001) are
     // output along with their indices.  Currently this outputs for each minimization, however to reduce the file size this could be changed.
-    for(auto k = 0; k < hVec.size(); k+= SysParams::Mechanics().hessSkip){
+    
+    if(counter % SysParams::Mechanics().hessSkip == 0){
+        int k = 0;
         vector<vector<floatingpoint > > hMat = hVec[k];
         int total_DOF = hMat.size();
         vector<tuple<int, int, floatingpoint>> elements;
@@ -1572,9 +1578,12 @@ void HessianMatrix::print(int snapshot){
             _outputFile<< get<0>(element) << "     "<< get<1>(element)<<"     "<< get<2>(element)<<endl;
         }
     _outputFile<<endl;
-    };
-    // This clears the vectors storing the matrices to reduce the amount of memory needed.  
+
     _ffm->clearHessian(0);
+    };
+    counter += 1;
+    // This clears the vectors storing the matrices to reduce the amount of memory needed.  
+    
 }
 
 
@@ -1599,5 +1608,270 @@ void HessianSpectra::print(int snapshot){
     };
     // This clears the vectors storing the matrices to reduce the amount of memory needed.
     _ffm->clearHessian(1);
+    
+    if(!SysParams::Mechanics().hessMatrixPrintBool){
+        _ffm->clearHessian(0);
+    };
+}
+
+void Projections::print(int snapshot){
+    _outputFile.precision(10);
+
+    vector<floatingpoint> tauVector = _ffm-> tauVector;
+    vector<Eigen::VectorXcd > projectionsVector = _ffm -> projectionsVector;
+    
+    // Outputs the eigenvalues obtained from each Hessian matrix
+    for(auto k = 0; k < projectionsVector.size(); k++){
+        
+        _outputFile <<tauVector[k] << "     "<< projectionsVector[k].size()<< endl;
+        
+        for(auto i = 0; i< projectionsVector[k].size(); i++){
+            _outputFile<<projectionsVector[k].real()[i]<< endl;
+        }
+        
+        
+        _outputFile<<endl;
+    };
+    
+    // This clears the vectors storing the matrices to reduce the amount of memory needed.
+    _ffm->clearHessian(2);
+    
+
+}
+
+
+void CylinderEnergies::print(int snapshot){
+    
+    CylinderVolumeFF* cvFF =  dynamic_cast<CylinderVolumeFF*>(_ffm->_forceFields.at(4));
+    
+    vector<tuple<floatingpoint, int, vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>>>> cylEnergies = cvFF->_cylinderVolInteractionVector.at(0)->getCylEnergies();
+
+    // need to change so it doesn't include every energy calculation, only before and after
+    for(auto i = 0; i < cylEnergies.size(); i ++){
+        
+        tuple<floatingpoint, int, vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>>> tempVec = cylEnergies[i];
+        
+        _outputFile<< get<0>(tempVec) << "     "<< get<1>(tempVec) <<endl;
+        
+        vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>> dataVec = get<2>(tempVec);
+        
+        for(auto j = 0; j < dataVec.size(); j++){
+            floatingpoint* cyl1 = get<0>(dataVec[j]);
+            floatingpoint* cyl2 = get<1>(dataVec[j]);
+            floatingpoint* cyl3 = get<2>(dataVec[j]);
+            floatingpoint* cyl4 = get<3>(dataVec[j]);
+            floatingpoint energy = get<4>(dataVec[j]);
+            floatingpoint meanx = (*cyl1 + *cyl2 + *cyl3 + *cyl4) / 4;
+            floatingpoint meany = (*(cyl1+1) + *(cyl2+1) + *(cyl3+1) + *(cyl4+1)) / 4;
+            floatingpoint meanz = (*(cyl1+2) + *(cyl2+2) + *(cyl3+2) + *(cyl4+2)) / 4;
+            _outputFile<<meanx<< "     "<<meany<< "     "<<meanz<< "     "<<energy<<endl;
+                                        
+            /*_outputFile<<*(cyl1)<< "     "<<*(cyl1 + 1)<< "     "<<*(cyl1 + 2)<< "     "
+            <<*(cyl2)<< "     "<<*(cyl2 + 1)<< "     "<<*(cyl2 + 2)<< "     "
+            <<*(cyl3)<< "     "<<*(cyl3 + 1)<< "     "<<*(cyl3 + 2)<< "     "
+            <<*(cyl4)<< "     "<<*(cyl4 + 1)<< "     "<<*(cyl4 + 2)<< "     "<< energy<<endl;*/
+            
+        }
+    
+    }
+    if(cylEnergies.size()>0){
+        _outputFile<<endl;}
+    
+    cvFF->_cylinderVolInteractionVector.at(0)->clearCylEnergies();
+
+        
+}
+
+void RockingSnapshot::savePositions(){
+    
+    for(auto &filament : Filament::getFilaments()) {
+        
+        //print coordinates
+        for (auto cylinder : filament->getCylinderVector()){
+        
+        savedPositions.push_back(cylinder->getFirstBead()->coordinate()[0]);
+        savedPositions.push_back(cylinder->getFirstBead()->coordinate()[1]);
+        savedPositions.push_back(cylinder->getFirstBead()->coordinate()[2]);
+            
+        }
+        
+        savedPositions.push_back(filament->getCylinderVector().back()->getSecondBead()->coordinate()[0]);
+        savedPositions.push_back(filament->getCylinderVector().back()->getSecondBead()->coordinate()[1]);
+        savedPositions.push_back(filament->getCylinderVector().back()->getSecondBead()->coordinate()[2]);
+        
+    }
+}
+
+void RockingSnapshot::resetPositions(){
+    
+    for(auto &filament : Filament::getFilaments()) {
+        
+        //print coordinates
+        for (auto cylinder : filament->getCylinderVector()){
+        
+            cylinder->getFirstBead()->coordinate()[0] = savedPositions.front();
+            
+            savedPositions.pop_front();
+            
+            cylinder->getFirstBead()->coordinate()[1] = savedPositions.front();
+            savedPositions.pop_front();
+            
+            cylinder->getFirstBead()->coordinate()[2] = savedPositions.front();
+            savedPositions.pop_front();
+        }
+        
+        filament->getCylinderVector().back()->getSecondBead()->coordinate()[0] = savedPositions.front();
+            savedPositions.pop_front();
+        filament->getCylinderVector().back()->getSecondBead()->coordinate()[1] = savedPositions.front();
+            savedPositions.pop_front();
+        filament->getCylinderVector().back()->getSecondBead()->coordinate()[2] = savedPositions.front();
+            savedPositions.pop_front();
+        
+    }
+    
+    
+}
+void RockingSnapshot::print(int snapshot) {
+    
+    _outputFile.precision(10);
+
+    int numT = 100;
+    float omega = 3.14159;
+    float delT = 2*3.14159 / numT;
+    float A = 15;
+    Eigen::VectorXd keeperEigenVector = _ffm->evectors.col(k).real();;
+    
+    for(auto t = 0; t < numT ; t++){
+        
+        
+        float alpha = A * sin(omega * t * delT);
+    
+        // print first line (snapshot number, time, number of filaments,
+        // linkers, motors, branchers, bubbles)
+        _outputFile << snapshot << " " << tau() << " " <<
+        Filament::numFilaments() << " " <<
+        Linker::numLinkers() << " " <<
+        MotorGhost::numMotorGhosts() << " " <<
+        BranchingPoint::numBranchingPoints() << " " <<
+        Bubble::numBubbles() << endl;
+        
+        
+        for(auto &filament : Filament::getFilaments()) {
+            
+            //print first line (Filament ID, type, length, left_delta, right_delta)
+            _outputFile << "FILAMENT " << filament->getId() << " " <<
+            filament->getType() << " " <<
+            filament->getCylinderVector().size() + 1 << " " <<
+            filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
+            
+            //print coordinates
+            for (auto cylinder : filament->getCylinderVector()){
+                
+                int idx = cylinder->getFirstBead()->getStableIndex();
+                floatingpoint delx1 = alpha*keeperEigenVector(3*idx);
+                floatingpoint delx2 = alpha*keeperEigenVector(3*idx+1);
+                floatingpoint delx3 = alpha*keeperEigenVector(3*idx+2);
+
+                
+                cylinder->getFirstBead()->coordinate()[0]+=delx1;
+                cylinder->getFirstBead()->coordinate()[1]+=delx2;
+                cylinder->getFirstBead()->coordinate()[2]+=delx3;
+                
+                auto x = cylinder->getFirstBead()->coordinate();
+                
+                _outputFile<<x[0] <<" "<<x[1]  <<" "<<x[2]  <<" ";
+
+                
+            }
+            //print last bead coord]
+            int idx = filament->getCylinderVector().back()->getSecondBead()->getStableIndex();
+            floatingpoint delx1 = alpha*keeperEigenVector(3*idx);
+            floatingpoint delx2 = alpha*keeperEigenVector(3*idx+1);
+            floatingpoint delx3 = alpha*keeperEigenVector(3*idx+2);
+            
+            
+            filament->getCylinderVector().back()->getSecondBead()->coordinate()[0]+=delx1;
+            filament->getCylinderVector().back()->getSecondBead()->coordinate()[1]+=delx2;
+            filament->getCylinderVector().back()->getSecondBead()->coordinate()[2]+=delx3;
+            
+            auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate();
+            
+            
+            //_outputFile<<x[0] + delx1 <<" "<<x[1] + delx2 <<" "<<x[2] + delx3 <<" ";
+            _outputFile<<x[0] <<" "<<x[1]  <<" "<<x[2]  <<" ";
+
+            
+            _outputFile << endl;
+        }
+        
+        
+        for(auto &linker : Linker::getLinkers()) {
+            
+            //print first line
+            _outputFile << "LINKER " << linker->getId()<< " " <<
+            linker->getType() << endl;
+            
+            //print coordinates
+            auto x =
+            midPointCoordinate(linker->getFirstCylinder()->getFirstBead()->vcoordinate(),
+                               linker->getFirstCylinder()->getSecondBead()->vcoordinate(),
+                               linker->getFirstPosition());
+            _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
+            
+            x = midPointCoordinate(linker->getSecondCylinder()->getFirstBead()->vcoordinate(),
+                                   linker->getSecondCylinder()->getSecondBead()->vcoordinate(),
+                                   linker->getSecondPosition());
+            _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
+            
+            _outputFile << endl;
+        }
+        
+        for(auto &motor : MotorGhost::getMotorGhosts()) {
+            
+            //print first line
+            //also contains a Bound(1) or unbound(0) qualifier
+            _outputFile << "MOTOR " << motor->getId() << " " << motor->getType() << " " << 1 << endl;
+            
+            //print coordinates
+            auto x =
+            midPointCoordinate(motor->getFirstCylinder()->getFirstBead()->vcoordinate(),
+                               motor->getFirstCylinder()->getSecondBead()->vcoordinate(),
+                               motor->getFirstPosition());
+            _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
+            
+            x = midPointCoordinate(motor->getSecondCylinder()->getFirstBead()->vcoordinate(),
+                                   motor->getSecondCylinder()->getSecondBead()->vcoordinate(),
+                                   motor->getSecondPosition());
+            _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
+            
+            _outputFile << endl;
+        }
+        
+    
+        
+        for(auto &branch : BranchingPoint::getBranchingPoints()) {
+            
+            //print first line
+            _outputFile << "BRANCHER " << branch->getId() << " " <<
+            branch->getType() << endl;
+            
+            //print coordinates
+            auto x = branch->coordinate;
+            _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
+        }
+        
+        for(auto &bubble : Bubble::getBubbles()) {
+            
+            //print first line
+            _outputFile << "BUBBLE " << bubble->getId() << " " <<
+            bubble->getType() << endl;
+            
+            //print coordinates
+            auto x = bubble->coordinate;
+            _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
+        }
+        
+        _outputFile <<endl;
+    };
 }
 

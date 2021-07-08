@@ -78,6 +78,8 @@ floatingpoint CylinderVolumeFF::computeEnergy(floatingpoint *coord, bool stretch
     }
 
     return U;
+    
+    
 }
 
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
