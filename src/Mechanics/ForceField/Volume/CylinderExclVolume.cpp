@@ -111,11 +111,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
         for (int ni = 0; ni < nn; ni++) {
 
             auto cin = neighbors[ni];
-<<<<<<< HEAD
-            //if(!cin->isFullLength()|| cin->getBranchingCylinder() == ci) continue;
-=======
             if(cin->getBranchingCylinder() == ci) continue;
->>>>>>> remotes/origin/master
             beadSet[n * (Cumnc)] = ci->getFirstBead()->getStableIndex();
             beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->getStableIndex();
             beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->getStableIndex();
