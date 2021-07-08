@@ -581,10 +581,10 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, const int *
 			}
 		}
 			//add energy to total energy and move on to the next interaction.
-		else
+		else {
             tempCylEnergies.push_back(make_tuple(c1,c2,c3,c4,U_i));
 			U += U_i;
-
+		}
 
 /*		if(U_i > 100) {
 			cout<<"bidx "<<beadSet[n*i]<<" "<<beadSet[n*i + 1]<<" "
