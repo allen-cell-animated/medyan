@@ -8,7 +8,9 @@
 - `OPTIMOUT` macro offers more detailed timings of various parts of the code so the user has better understanding of the rate limiting steps in the simulation (873c814).
 - Optimized species searching when cloning reactions (52f4c47).
 - Optimized addition of dependent reactions (7b86dcd).
-- Eigenvalue computation can be optionally disabled with `EIGENTRACKING: OFF` while computing Hessian matrix (0c455b5).
+- Hessian analysis
+    - Eigenvalue computation can be optionally disabled with `EIGENTRACKING: OFF` while computing Hessian matrix (0c455b5).
+    - Add output to visualize all eigenmodes in Hessian tracking (16155a6).
 
 ## Bug fixes
 
