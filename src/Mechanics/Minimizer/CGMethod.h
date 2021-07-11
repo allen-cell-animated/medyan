@@ -39,6 +39,13 @@ class CGMethod {
 
 public:
     ///< Data vectors for calculation
+    //-------------------------------------------------------------------------
+    // The vectorized data is separated into independent variable section and dependent variable section. The independent variables occupy indices { 0, 1, ..., numDof-1 }, while the dependent variables occupy the rest of the indices.
+    // Before each energy/force computation, the dependent coordinates should be updated from independent variables.
+    // After each force computation, the forces accumulated on dependent variables should be passed onto the independent variables using the chain rule.
+
+    // The number of independent variables (ie degree of freedom). It is not necessarily the size of the vectors, because dependent variables may be stored as well.
+    int                          numDof = 0;
     std::vector< floatingpoint > coord;  // All coordinates
     std::vector< floatingpoint > coordLineSearch; // Temporary coords used during line search
     std::vector< floatingpoint > coordMinE; // Temporary coords used to record position for minimumE

@@ -64,6 +64,10 @@ inline FFCoordinateStartingIndex serializeDof(
     // Add things for membrane 2d coordinates here
 
     //---------------------------------
+    // The independent variables have all been assigned.
+    si.ndof = curIdx;
+
+    //---------------------------------
     // Return the starting index information for vectorizing the force fields
     return si;
 }
