@@ -103,6 +103,34 @@ inline void deserializeDof(
 
 }
 
+
+// Helper function to find the starting index of bead coordinate in the minimizer.
+inline int findBeadCoordIndex(
+    Bead&                            b,
+    const FFCoordinateStartingIndex& si
+) {
+    // if(SysParams::Mechanics().globalFilamentModel == FilamentModel::bezier) {
+    //     const auto& fil = *static_cast< Filament* >(b.getParent());
+    //     return 
+    //         si.bezierFilPos[fil.getIndex()].start
+    //         + fil.getCoordIndexInKvecrWithBeadPosition(b.getPosition());
+    // }
+    // else if(SysParams::Mechanics().globalFilamentModel == FilamentModel::geodesic) {
+    //     const auto& fil = *static_cast< Filament* >(b.getParent());
+    //     const auto& gcInfo = si.gcFil[fil.getIndex()];
+    //     const int   relPos = fil.getRelativePositionFromMinusEnd(b.getPosition());
+    //     return relPos == 0
+    //         // bead is the minus end bead
+    //         ? gcInfo.rMinusStart
+    //         // bead is not the minus end
+    //         : gcInfo.rNotMinusStart + 3 * (relPos - 1);
+    // }
+    // else {
+    {
+        return b.getIndex() * 3 + si.bead;
+    }
+}
+
 } // namespace medyan
 
 #endif
