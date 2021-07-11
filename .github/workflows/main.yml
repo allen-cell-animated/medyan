@@ -15,13 +15,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: install boost
-      run: |
-        sudo apt install libboost-dev
-        sudo apt install libboost-all-dev
     - name: prepare dependencies
       run: |
-        export MEDYAN_BOOST_INSTALL_MODE="find"
         # Use avx2 (default avx512 causes trouble in UMEsimd)
         sed -i 's/-mtune=native -march=native/-mavx2/g' CMakeLists.txt
         # add --no-as-needed to correctly link pthread
@@ -62,19 +57,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: install boost
-      run: |
-        cd "$env:TEMP"
-        git clone --depth=1 --recurse-submodules -j10 --branch=boost-1.72.0 https://github.com/boostorg/boost.git
-        cd boost
-        .\bootstrap.bat
-        .\b2.exe
     - name: prepare dependencies
       run: |
-        # Configure medyan build.
-        $MEDYAN_BOOST_INSTALL_MODE = "manual"
-        $MEDYAN_BOOST_INCLUDE_DIR = "$env:TEMP\boost\boost"
-        $MEDYAN_BOOST_LIBRARY_DIR = "$env:TEMP\boost\stage\lib"
         .\conf.ps1
     - name: build with MSBuild
       working-directory: ${{ github.workspace }}
