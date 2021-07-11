@@ -565,7 +565,7 @@ void ForceFieldManager::assignallforcemags() {
 }
 
 
-void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta) {
+void ForceFieldManager::computeHessian(const std::vector<floatingpoint>& allCoord, int total_DOF, float delta) {
     // store the minimization time and initialize the matrix
     tauVector.push_back(tau());
 
@@ -581,17 +581,11 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
         cout<<"i "<<i<<" total_DOF "<<total_DOF<<endl;
 
         // create new vectors for the foorces and coordinates
-        vector<floatingpoint> forces_copy_p(total_DOF);
-        vector<floatingpoint> coord_copy_p(total_DOF);
+        vector<floatingpoint> forces_copy_p(allCoord.size());
+        vector<floatingpoint> coord_copy_p = allCoord;
 
-        vector<floatingpoint> forces_copy_m(total_DOF);
-        vector<floatingpoint> coord_copy_m(total_DOF);
-
-        // copy coordinates to new vector
-        for (auto l = 0; l < coord_copy_p.size(); l++) {
-            coord_copy_p[l] = coord[l];
-            coord_copy_m[l] = coord[l];
-        }
+        vector<floatingpoint> forces_copy_m(allCoord.size());
+        vector<floatingpoint> coord_copy_m = allCoord;
 
         // perturb the coordinate i
         coord_copy_p[i] += delta;

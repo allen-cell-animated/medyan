@@ -73,7 +73,7 @@ public:
     void computeForces(floatingpoint *coord, std::vector< floatingpoint >& force);
     
     // compute the Hessian matrix if the feature is enabled
-    void computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta);
+    void computeHessian(const std::vector<floatingpoint>& coord, int total_DOF, float delta);
     
     void setCurrBeadMap(const FFCoordinateStartingIndex& si);
     

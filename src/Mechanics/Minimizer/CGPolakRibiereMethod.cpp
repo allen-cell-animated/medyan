@@ -1193,8 +1193,7 @@ MinimizationResult PolakRibiere::minimize(
             if(tau() > 0.0){
                 FFM.computeProjections(si, coord);
             };
-            int total_DOF = Bead::getDbData().coords.size_raw();
-            FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, SysParams::Mechanics().hessDelta);
+            FFM.computeHessian(coord, numDof, SysParams::Mechanics().hessDelta);
         }
         
         FFM.hessCounter += 1;

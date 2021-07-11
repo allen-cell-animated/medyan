@@ -1764,11 +1764,11 @@ void RockingSnapshot::print(int snapshot) {
             
             //print coordinates
             for (auto cylinder : filament->getCylinderVector()){
-                
-                int idx = cylinder->getFirstBead()->getStableIndex();
-                floatingpoint delx1 = alpha*keeperEigenVector(3*idx);
-                floatingpoint delx2 = alpha*keeperEigenVector(3*idx+1);
-                floatingpoint delx3 = alpha*keeperEigenVector(3*idx+2);
+                // TODO: need to rewrite this part if bead coordinates are not all independent variables.
+                int idx = cylinder->getFirstBead()->getIndex() * 3;
+                floatingpoint delx1 = alpha*keeperEigenVector(idx);
+                floatingpoint delx2 = alpha*keeperEigenVector(idx+1);
+                floatingpoint delx3 = alpha*keeperEigenVector(idx+2);
 
                 
                 cylinder->getFirstBead()->coordinate()[0]+=delx1;
@@ -1782,10 +1782,11 @@ void RockingSnapshot::print(int snapshot) {
                 
             }
             //print last bead coord]
-            int idx = filament->getCylinderVector().back()->getSecondBead()->getStableIndex();
-            floatingpoint delx1 = alpha*keeperEigenVector(3*idx);
-            floatingpoint delx2 = alpha*keeperEigenVector(3*idx+1);
-            floatingpoint delx3 = alpha*keeperEigenVector(3*idx+2);
+            // TODO: need to rewrite this part if bead coordinates are not all independent variables.
+            int idx = filament->getCylinderVector().back()->getSecondBead()->getIndex() * 3;
+            floatingpoint delx1 = alpha*keeperEigenVector(idx);
+            floatingpoint delx2 = alpha*keeperEigenVector(idx+1);
+            floatingpoint delx3 = alpha*keeperEigenVector(idx+2);
             
             
             filament->getCylinderVector().back()->getSecondBead()->coordinate()[0]+=delx1;
