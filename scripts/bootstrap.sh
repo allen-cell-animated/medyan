@@ -14,18 +14,6 @@ vcpkg_dir="$build_dir/vcpkg"
 # Set variables
 medyan_vcpkg_cmake_toolchain="$medyan_root_dir/scripts/.build/vcpkg/scripts/buildsystems/vcpkg.cmake"
 
-if [ "$MEDYAN_BOOST_INSTALL_MODE" = "manual" ]; then
-    medyan_cmake_boost_install_mode="-DMEDYAN_BOOST_INSTALL_MODE=manual"
-    medyan_cmake_boost_include_dir="-DMEDYAN_BOOST_INCLUDE_DIR=$MEDYAN_BOOST_INCLUDE_DIR"
-    medyan_cmake_boost_library_dir="-DMEDYAN_BOOST_LIBRARY_DIR=$MEDYAN_BOOST_LIBRARY_DIR"
-    medyan_need_install_boost=false
-elif [ "$MEDYAN_BOOST_INSTALL_MODE" = "find" ]; then
-    medyan_cmake_boost_install_mode="-DMEDYAN_BOOST_INSTALL_MODE=find"
-    medyan_need_install_boost=false
-else
-    medyan_need_install_boost=true
-fi
-
 if [ -n "$MEDYAN_ADDITIONAL_LINK_DIRS" ]; then
     medyan_cmake_additional_link_dirs="-DMEDYAN_ADDITIONAL_LINK_DIRS=$MEDYAN_ADDITIONAL_LINK_DIRS"
 fi
@@ -50,7 +38,9 @@ vcpkg_setup() {
             echo "Downloading vcpkg..."
             (
                 cd $build_dir &&
-                git clone https://github.com/Microsoft/vcpkg.git
+                git clone https://github.com/Microsoft/vcpkg.git &&
+                cd $vcpkg_dir &&
+                git checkout 2021.05.12
             )
             echo "Configuring vcpkg..."
             (
@@ -69,14 +59,9 @@ vcpkg_setup() {
 
 # Setup dependencies
 vcpkg_install() {
-    need_boost=$1
-
     (
         cd $vcpkg_dir && {
-            ./vcpkg install catch2 eigen3 spectra
-            if [ "$need_boost" = true ]; then
-                ./vcpkg install boost
-            fi
+            ./vcpkg install catch2 eigen3 spectra boost-signals2 boost-pool boost-heap boost-ublas boost-range
         }
     )
 }
@@ -95,9 +80,6 @@ cmake_generate() {
         cd $medyan_build_dir &&
         cmake \
             $medyan_cmake_generator \
-            $medyan_cmake_boost_install_mode \
-            $medyan_cmake_boost_include_dir \
-            $medyan_cmake_boost_library_dir \
             $medyan_cmake_additional_link_dirs \
             $medyan_cmake_rpath \
             .. "-DCMAKE_TOOLCHAIN_FILE=$medyan_vcpkg_cmake_toolchain"
@@ -109,7 +91,7 @@ mkdir -p $build_dir
 
 # Use vcpkg to resolve dependencies
 vcpkg_setup true false
-vcpkg_install $medyan_need_install_boost
+vcpkg_install
 
 # Use CMake to generate build files
 cmake_generate $medyan_cmake_target

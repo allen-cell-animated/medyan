@@ -290,6 +290,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             }
             else if (lineVector.size() == 2) {
                 CAlgorithm.runTime = atof(lineVector[1].c_str());
+                SysParams::CParams.runTime = CAlgorithm.runTime;
             }
         }
         if (line.find("RUNSTEPS:") != string::npos) {
@@ -1001,22 +1002,34 @@ void SystemParser::readMechParams() {
         if (line.find("HESSIANTRACKING:") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 3) {
+            if(lineVector.size() != 5) {
                 cout <<
                 "There was an error parsing input file at Chemistry algorithm. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 3) {
+            else if (lineVector.size() == 5) {
                 MParams.hessTracking = true;
                 MParams.eigenTracking = true;
                 //MParams.hessDelta = atof(lineVector[1].c_str());
                 MParams.hessSkip = atof(lineVector[1].c_str());
                 int dense = atoi(lineVector[2].c_str());
-                if(dense == 0){
-                    MParams.denseEstimation = true;
+                if(dense == 1){
+                    MParams.denseEstimationBool = true;
                 }else{
-                    MParams.denseEstimation = false;
+                    MParams.denseEstimationBool = false;
+                }
+                int rocksnapbool = atoi(lineVector[3].c_str());
+                if(rocksnapbool == 1){
+                    MParams.rockSnapBool = true;
+                }else{
+                    MParams.rockSnapBool = false;
+                }
+                int hessmatprintbool = atoi(lineVector[4].c_str());
+                if(hessmatprintbool == 1){
+                    MParams.hessMatrixPrintBool = true;
+                }else{
+                    MParams.hessMatrixPrintBool = false;
                 }
                 
             }

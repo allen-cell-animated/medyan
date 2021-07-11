@@ -13,11 +13,11 @@
 
 #include <iostream>
 #include <chrono>
+#include <cmath>
 #include "Rand.h"
 #ifdef BOOST_MEM_POOL
     #include <boost/pool/pool.hpp>
     #include <boost/pool/pool_alloc.hpp>
-    #include <boost/math/special_functions/fpclassify.hpp>
 #endif
 
 #include "ChemNRMImpl.h"
@@ -276,7 +276,7 @@ bool ChemNRMImpl::makeStep() {
                 tau_new = (a_old/a_new)*(tau_old-_t)+_t;
             }
 #endif
-            if(boost::math::isnan(tau_new)){tau_new=numeric_limits<floatingpoint>::infinity();}
+            if(std::isnan(tau_new)){tau_new=numeric_limits<floatingpoint>::infinity();}
             ///DEBUG
             if(tau_new < _t) {
 
