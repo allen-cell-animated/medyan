@@ -453,10 +453,6 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         _restart->readNetworkSetup();
         _restart->setupInitialNetwork();
     }
-    
-    if(SysParams::MParams.hessTracking){
-        _mController.getForceFieldManager()->setPrevBeadMap();
-    };
 }
 
 void Controller::setupSpecialStructures(SystemParser& p) {

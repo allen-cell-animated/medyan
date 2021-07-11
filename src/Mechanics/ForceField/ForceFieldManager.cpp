@@ -14,13 +14,14 @@
 #include "ForceFieldManager.h"
 #include "ForceFieldManagerCUDA.h"
 
+#include <algorithm>
+#include <utility>
+
 #include "CGMethod.h"
 #include "cross_check.h"
-#include <algorithm>
-
 #include "Structure/Bead.h"
 #include "Structure/Cylinder.h"
-
+#include "Structure/DofSerializer.hpp"
 
 
 
@@ -708,26 +709,15 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
 }
 
 
-void ForceFieldManager::setCurrBeadMap(){
-    prevBeadMap = currBeadMap;
+void ForceFieldManager::setCurrBeadMap(const FFCoordinateStartingIndex& si) {
+    prevBeadMap = std::move(currBeadMap);
     currBeadMap.clear();
     for(auto b:Bead::getBeads()){
-        currBeadMap[b] = std::make_tuple(b->getStableIndex(), b->getId());
+        currBeadMap[b] = medyan::findBeadCoordIndex(*b, si);
     }
 }
 
-void ForceFieldManager::setPrevBeadMap(){
-    prevBeadMap.clear();
-    for(auto b:Bead::getBeads()){
-        prevBeadMap[b] = std::make_tuple(b->getStableIndex(), b->getId());
-    }
-    prevCoords = Bead::getDbData().coords;
-}
-
-void ForceFieldManager::computeProjections(mathfunc::VecArray< 3, floatingpoint > currCoords){
-    
-    floatingpoint* pCoord = prevCoords.data();
-    floatingpoint* cCoord = currCoords.data();
+void ForceFieldManager::computeProjections(const FFCoordinateStartingIndex& si, const std::vector<floatingpoint>& currCoords) {
     
     // set displacement vector to zeros
     Eigen::VectorXcd disp(evectors.rows());
@@ -736,35 +726,35 @@ void ForceFieldManager::computeProjections(mathfunc::VecArray< 3, floatingpoint 
     }
     
     // set the current beads
-    setCurrBeadMap();
+    setCurrBeadMap(si);
     
 
     // loop through the current map
-    for(const std::pair<Bead*, tuple<int,int>> c : currBeadMap){
+    for(const std::pair<Bead*, int>& c : currBeadMap){
         
         // find the key in the previous map
-        std::unordered_map<Bead*,tuple<int,int>>::const_iterator p = prevBeadMap.find(c.first);
+        auto p = prevBeadMap.find(c.first);
         
         // if it's in the old map get the displacements
         if(p != prevBeadMap.end()){
-            tuple<int,int> curr = c.second;
-            tuple<int,int> prev = p->second;
-            int currInd = get<0>(curr);
-            int prevInd = get<0>(prev);
-            floatingpoint cx = cCoord[3*currInd];
-            floatingpoint px = pCoord[3*prevInd];
-            floatingpoint cy = cCoord[3*currInd + 1];
-            floatingpoint py = pCoord[3*prevInd + 1];
-            floatingpoint cz = cCoord[3*currInd + 2];
-            floatingpoint pz = pCoord[3*prevInd + 2];
-            disp(3*prevInd) = cx - px;
-            disp(3*prevInd + 1) = cy - py;
-            disp(3*prevInd + 2) = cz - pz;
+            int currInd = c.second;
+            int prevInd = p->second;
+            floatingpoint cx = currCoords[currInd];
+            floatingpoint px = prevCoords[prevInd];
+            floatingpoint cy = currCoords[currInd + 1];
+            floatingpoint py = prevCoords[prevInd + 1];
+            floatingpoint cz = currCoords[currInd + 2];
+            floatingpoint pz = prevCoords[prevInd + 2];
+            disp(prevInd) = cx - px;
+            disp(prevInd + 1) = cy - py;
+            disp(prevInd + 2) = cz - pz;
         };
     };
     
     // normalize the displacement vector
-    disp = disp.normalized();
+    if(!disp.isZero(0)) {
+        disp = disp.normalized();
+    }
     
     // store the projections in a vector
     Eigen::VectorXcd proj(evectors.cols());

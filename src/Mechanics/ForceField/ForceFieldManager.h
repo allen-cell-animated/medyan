@@ -75,12 +75,11 @@ public:
     // compute the Hessian matrix if the feature is enabled
     void computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta);
     
-    void setCurrBeadMap();
+    void setCurrBeadMap(const FFCoordinateStartingIndex& si);
     
-    void setPrevBeadMap();
-    
-    // compute the displacement projections along the eigenvectors
-    void computeProjections(mathfunc::VecArray< 3, floatingpoint > currCoords);
+    // compute the displacement projections along the eigenvectors.
+    // Warning: this function only works if all bead coordinates are independent coordinates. Otherwise, out-of-bound access may result.
+    void computeProjections(const FFCoordinateStartingIndex&, const std::vector<floatingpoint>& currCoords);
     
     void clearHessian(int a){
         if(a == 0){
@@ -111,10 +110,12 @@ public:
     vector<Eigen::VectorXcd> projectionsVector;
     
     int hessCounter;
-    
-    std::unordered_map<Bead*, tuple<int, int>> prevBeadMap;
-    std::unordered_map<Bead*, tuple<int, int>> currBeadMap;
-    mathfunc::VecArray< 3, floatingpoint > prevCoords;
+
+    // Map bead pointer to coordinate index in the vectorized data.
+    std::unordered_map<Bead*, int> prevBeadMap;
+    std::unordered_map<Bead*, int> currBeadMap;
+    // Previous coordinates during last eigenvector projection.
+    std::vector< floatingpoint > prevCoords;
 
 
     vector<string> getinteractionnames(){

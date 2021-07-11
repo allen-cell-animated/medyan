@@ -70,7 +70,8 @@ MinimizationResult PolakRibiere::minimize(
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
-    FFM.vectorizeAllForceFields(initCGMethodData(*this, GRADTOL));
+    const auto si = initCGMethodData(*this, GRADTOL);
+    FFM.vectorizeAllForceFields(si);
 
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
@@ -1190,7 +1191,7 @@ MinimizationResult PolakRibiere::minimize(
         if(FFM.hessCounter % SysParams::Mechanics().hessSkip == 0 || tau() > SysParams::Chemistry().runTime){
             
             if(tau() > 0.0){
-                FFM.computeProjections(Bead::getDbData().coords);
+                FFM.computeProjections(si, coord);
             };
             int total_DOF = Bead::getDbData().coords.size_raw();
             FFM.computeHessian(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data(), total_DOF, SysParams::Mechanics().hessDelta);
