@@ -320,7 +320,6 @@ struct ChemParams {
     bool dissTracking = false;
     bool eventTracking = false;
     int linkerbindingskip = 2;
-    float runTime = 0.0;
     
     
     /// Make (de)polymerization depends on stress
