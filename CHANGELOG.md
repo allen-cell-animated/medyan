@@ -1,6 +1,7 @@
 # TBD (Released TBD)
 
 ## New features
+- Dropped support for pre C++17 compilers.
 - Added simulation configuration generator, and enhanced input file parser to allow structured input using S-Expressions (4d71a27).
 
 ## Refactoring
