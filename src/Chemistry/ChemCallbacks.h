@@ -1087,8 +1087,8 @@ struct FilamentCreationCallback {
                 for(auto bb : Bubble::getBubbles()) {
                     auto radius = bb->getRadius();
 
-                    if((twoPointDistancesquared(bb->getBead()->vcoordinate(), position) < (radius * radius)) ||
-                       (twoPointDistancesquared(bb->getBead()->vcoordinate(), npp) < (radius * radius))){
+                    if((twoPointDistancesquared(vec2Vector(bb->coord), position) < (radius * radius)) ||
+                       (twoPointDistancesquared(vec2Vector(bb->coord), npp) < (radius * radius))){
                         inbubble = true;
                         break;
                     }
@@ -1129,8 +1129,8 @@ struct FilamentCreationCallback {
                 for(auto bb : Bubble::getBubbles()) {
                     auto radius = bb->getRadius();
 
-                    if((twoPointDistancesquared(bb->getBead()->vcoordinate(), position) < (radius * radius)) ||
-                       (twoPointDistancesquared(bb->getBead()->vcoordinate(), npp) < (radius * radius))){
+                    if((twoPointDistancesquared(vec2Vector(bb->coord), position) < (radius * radius)) ||
+                       (twoPointDistancesquared(vec2Vector(bb->coord), npp) < (radius * radius))){
                         inbubble = true;
                         break;
                     }

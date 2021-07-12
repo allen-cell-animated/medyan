@@ -34,6 +34,8 @@ private:
     MTOCInteractionType _FFType;
 
     int *beadSet;
+    std::size_t beadStartIndex_ = 0;
+    std::size_t bubbleStartIndex_ = 0;
     ///Array describing the constants in calculation
     floatingpoint *kstr;
     floatingpoint *radiusvec;
@@ -48,7 +50,7 @@ public:
     const static int n = 2;
 	static int numInteractions;
     
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&) override;
     virtual void deallocate();
 
     virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) override;

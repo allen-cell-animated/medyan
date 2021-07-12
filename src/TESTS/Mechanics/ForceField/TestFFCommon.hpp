@@ -51,7 +51,7 @@ inline void vecDec(std::vector< Float >& v1, const std::vector< Float >& v2) {
 
 // Dot product
 template< size_t dim, typename Float, typename Container >
-inline Float vecDot(mathfunc::VecArray< dim, Float, Container >& v1, const mathfunc::VecArray< dim, Float, Container >& v2) {
+inline Float vecDot(const mathfunc::VecArray< dim, Float, Container >& v1, const mathfunc::VecArray< dim, Float, Container >& v2) {
     return mathfunc::dot(v1, v2);
 }
 template< typename Float >

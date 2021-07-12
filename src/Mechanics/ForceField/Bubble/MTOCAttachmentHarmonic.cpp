@@ -22,8 +22,10 @@
 
 using namespace mathfunc;
 
-floatingpoint MTOCAttachmentHarmonic::energy(floatingpoint *coord, int *beadSet,
-                                             floatingpoint *kstr, floatingpoint* radiusvec){
+floatingpoint MTOCAttachmentHarmonic::energy(
+	floatingpoint *coord, int *beadSet, std::size_t beadStartIndex, std::size_t bubbleStartIndex,
+	floatingpoint *kstr, floatingpoint* radiusvec
+) const {
 
 	floatingpoint *coord1, *coord2, dist;
 	floatingpoint U = 0.0;
@@ -33,9 +35,9 @@ floatingpoint MTOCAttachmentHarmonic::energy(floatingpoint *coord, int *beadSet,
     //number of interactions
 	int nint = MTOCAttachment<MTOCAttachmentHarmonic>::numInteractions;
 
-    for(uint i = 0;i < nint; i++) {
-        coord1 = &coord[3 * beadSet[n*i]]; //coordinate of MTOC
-        coord2 = &coord[3 * beadSet[n * i + 1]];
+    for(unsigned i = 0;i < nint; i++) {
+        coord1 = &coord[beadSet[n*i]]; //coordinate of MTOC
+        coord2 = &coord[beadSet[n * i + 1]];
         dist = twoPointDistance(coord1, coord2) - radiusvec[i];
         U_i = 0.5 * kstr[i] * dist * dist;
 
@@ -43,66 +45,25 @@ floatingpoint MTOCAttachmentHarmonic::energy(floatingpoint *coord, int *beadSet,
         if(fabs(U_i) == numeric_limits<double>::infinity()
         || U_i != U_i || U_i < -1.0) {
 	        for(auto mtoc : MTOC::getMTOCs()) {
-		        Bead* b1 = mtoc->getBubble()->getBead();
-	        	if(b1->getStableIndex() != beadSet[n*i]) continue;
-		        BubbleInteractions::_bubbleCulprit = mtoc->getBubble();
-		        for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
-			        Filament *f = mtoc->getFilaments()[fIndex];
-			        if(f->getMinusEndCylinder()->getFirstBead()->getStableIndex() == beadSet[n *
-			        i + 1]){
-				        BubbleInteractions::_otherCulprit = f;
-				        break;
-			        }
-		        }
+                Bubble* b1 = mtoc->getBubble();
+                if(b1->getIndex() * 3 + bubbleStartIndex != beadSet[n*i]) continue;
+                BubbleInteractions::_bubbleCulprit = mtoc->getBubble();
+                for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
+                    Filament *f = mtoc->getFilaments()[fIndex];
+                    if(
+                        f->getMinusEndCylinder()->getFirstBead()->getIndex() * 3 + beadStartIndex
+                        == beadSet[n * i + 1]
+                    ) {
+                        BubbleInteractions::_otherCulprit = f;
+                        break;
+                    }
+                }
 	        }
 	        return -1;
         } else
         	U += U_i;
     }
     return U;
-}
-
-floatingpoint MTOCAttachmentHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                                             floatingpoint *kstr, floatingpoint* radiusvec,
-                                             floatingpoint d){
-
-	floatingpoint *coord1, *coord2, *f1, *f2, dist;
-	floatingpoint U = 0.0;
-	floatingpoint U_i = 0.0;
-	//number of beads per interaction
-	int n = MTOCAttachment<MTOCAttachmentHarmonic>::n;
-	//number of interactions
-	int nint = MTOCAttachment<MTOCAttachmentHarmonic>::numInteractions;
-
-	for(uint i = 0;i < nint; i++) {
-		coord1 = &coord[3 * beadSet[n*i]]; //coordinate of MTOC
-		f1 = &f[3 * beadSet[n*i]];
-		coord2 = &coord[3 * beadSet[n * i + 1]];
-		f2 = &f[3 * beadSet[n*i +1]];
-		dist = twoPointDistanceStretched(coord1, f1,  coord2, f2, d) - radiusvec[i];
-		U_i = 0.5 * kstr[i] * dist * dist;
-
-		//set culprits and return
-		if(fabs(U_i) == numeric_limits<double>::infinity()
-		   || U_i != U_i || U_i < -1.0) {
-			for(auto mtoc : MTOC::getMTOCs()) {
-				Bead* b1 = mtoc->getBubble()->getBead();
-				if(b1->getStableIndex() != beadSet[n*i]) continue;
-				BubbleInteractions::_bubbleCulprit = mtoc->getBubble();
-				for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
-					Filament *f = mtoc->getFilaments()[fIndex];
-					if(f->getMinusEndCylinder()->getFirstBead()->getStableIndex() == beadSet[n * i + 1]){
-						BubbleInteractions::_otherCulprit = f;
-						break;
-					}
-				}
-			}
-			return -1;
-		} else
-			U += U_i;
-	}
-    return U;
-
 }
 
 void MTOCAttachmentHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
@@ -115,11 +76,11 @@ void MTOCAttachmentHarmonic::forces(floatingpoint *coord, floatingpoint *f, int 
 	floatingpoint *coord1, *coord2, dist, invL;
 	floatingpoint f0, *f1, *f2;
 
-	for(uint i = 0;i < nint; i++) {
-		coord1 = &coord[3 * beadSet[n*i]]; //coordinate of MTOC
-		f1 = &f[3 * beadSet[n*i]];
-		coord2 = &coord[3 * beadSet[n * i + 1]];
-		f2 = &f[3 * beadSet[n*i +1]];
+	for(unsigned i = 0;i < nint; i++) {
+		coord1 = &coord[beadSet[n*i]]; //coordinate of MTOC
+		f1 = &f[beadSet[n*i]];
+		coord2 = &coord[beadSet[n * i + 1]];
+		f2 = &f[beadSet[n*i +1]];
 		dist = twoPointDistance(coord1, coord2);
 		invL = 1 / dist;
 

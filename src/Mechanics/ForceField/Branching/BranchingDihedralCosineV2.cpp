@@ -59,8 +59,8 @@ floatingpoint BranchingDihedralCosineV2::energy(
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
         //If the branching point is at the plus end of the cylinder, we end up with
         // singularities in energy and force expressions. To avoid it, we will create a
         // virtual plus end and use that to define vectors.
@@ -73,8 +73,8 @@ floatingpoint BranchingDihedralCosineV2::energy(
             }
             coord2 = &coord2prime[0];
         }
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        coord4 = &coord[3 * beadSet[n * i + 3]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        coord4 = &coord[beadSet[n * i + 3]];
 
         midPointCoordinate(mp, coord1, coord2, pos[i]);
 
@@ -146,10 +146,10 @@ void BranchingDihedralCosineV2::forces(
     for(int i = 0; i < nint; i += 1) {
 
         for(int j = 0; j < 3; j++){
-            coord1[j] = coord[3 * beadSet[n * i]+ j];
-            coord2[j] = coord[3 * beadSet[n * i + 1]+ j];
-            coord3[j] = coord[3 * beadSet[n * i + 2]+ j];
-            coord4[j] = coord[3 * beadSet[n * i + 3]+ j];
+            coord1[j] = coord[beadSet[n * i]+ j];
+            coord2[j] = coord[beadSet[n * i + 1]+ j];
+            coord3[j] = coord[beadSet[n * i + 2]+ j];
+            coord4[j] = coord[beadSet[n * i + 3]+ j];
         }
 
         //If the branching point is at the plus end of the cylinder, we end up with
@@ -165,10 +165,10 @@ void BranchingDihedralCosineV2::forces(
 
         midPointCoordinate<double>(mp, coord1, coord2, position);
 
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
-        f4 = &f[3 * beadSet[n * i + 3]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
+        f4 = &f[beadSet[n * i + 3]];
 
         // b1 = c4 - c3;
         // b2 = c2 - mp;

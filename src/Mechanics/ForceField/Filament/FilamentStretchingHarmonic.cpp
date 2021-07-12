@@ -194,8 +194,8 @@ floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, int *bead
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
         dist = twoPointDistance(coord1, coord2) - eql[i];
 
         U_i = 0.5 * kstr[i] * dist * dist;
@@ -230,11 +230,11 @@ floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, floatingp
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
 
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
 
         dist = twoPointDistanceStretched(coord1, f1,  coord2, f2, d) - eql[i];
 //        std::cout<<"S "<<i<<" "<<dist<<" "<<0.5 * kstr[i] * dist * dist<<endl;
@@ -259,15 +259,15 @@ void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, 
     floatingpoint Fr1x, Fr1y, Fr1z;
 
     for(int i = 0; i < nint; i += 1) {
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
         dist = twoPointDistance(coord1, coord2);
         invL = 1 / dist;
 
         f0 = kstr[i] * ( dist - eql[i] ) * invL;
 
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
 
         r1x = coord2[0] - coord1[0];
         r1y = coord2[1] - coord1[1];

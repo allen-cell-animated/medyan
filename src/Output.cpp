@@ -164,7 +164,7 @@ void BasicSnapshot::print(int snapshot) {
                                     bubble->getType() << endl;
 
         //print coordinates
-        auto x = bubble->coordinate;
+        const auto& x = bubble->coord;
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
     }
 
@@ -259,7 +259,7 @@ void BirthTimes::print(int snapshot) {
                                     bubble->getType() << endl;
 
         //print birth times
-        _outputFile << bubble->getBead()->getBirthTime() << endl;
+        _outputFile << bubble->getBirthTime() << endl;
     }
 
     _outputFile <<endl;
@@ -1296,15 +1296,13 @@ void Datadump::print(int snapshot) {
     //Bead data
     _outputFile <<"BEAD DATA: BEADIDX(STABLE) FID FPOS COORDX COORDY COORDZ FORCEAUXX "
                   "FORCEAUXY FORCEAUXZ"<<endl;
-    const auto& beadData = Bead::getDbDataConst();
 
     for(auto b:Bead::getBeads()){
         auto bidx = b->getStableIndex();
         Filament* f = static_cast<Filament*>(b->getParent());
-        _outputFile <<bidx<<" "<<f->getId()<<" "<<b->getPosition()<<" "<<beadData.coords.data()
-        [3*bidx]<<" " <<beadData.coords.data()[3*bidx + 1]<<" "
-        <<beadData.coords.data()[3*bidx + 2]<<" "<<beadData.forcesAux.data()[3*bidx]<<" "<<
-        beadData.forcesAux.data()[3*bidx + 1]<<" "<<beadData.forcesAux.data()[3*bidx + 2]<<endl;
+        _outputFile <<bidx<<" "<<f->getId()<<" "<<b->getPosition()<<" "
+            << b->coord[0] << ' ' << b->coord[1] << ' ' << b->coord[2] << ' '
+            << b->force[0] << ' ' << b->force[1] << ' ' << b->force[2] << endl;
 
     }
     _outputFile <<endl;
@@ -1333,7 +1331,7 @@ void Datadump::print(int snapshot) {
         short foundstatus = 0; //0 none found, 1 found one end, 2 found both ends
         bool minusendstatus = true;
         bool plusendstatus = true;
-                for(int midx = 0; midx<numMonomers; midx++){
+        for(int midx = 0; midx<numMonomers; midx++){
                 if(foundstatus ==2)
                     break;
                 short m = ccyl->getCMonomer(midx)->activeSpeciesMinusEnd();
@@ -1766,11 +1764,11 @@ void RockingSnapshot::print(int snapshot) {
             
             //print coordinates
             for (auto cylinder : filament->getCylinderVector()){
-                
-                int idx = cylinder->getFirstBead()->getStableIndex();
-                floatingpoint delx1 = alpha*keeperEigenVector(3*idx);
-                floatingpoint delx2 = alpha*keeperEigenVector(3*idx+1);
-                floatingpoint delx3 = alpha*keeperEigenVector(3*idx+2);
+                // TODO: need to rewrite this part if bead coordinates are not all independent variables.
+                int idx = cylinder->getFirstBead()->getIndex() * 3;
+                floatingpoint delx1 = alpha*keeperEigenVector(idx);
+                floatingpoint delx2 = alpha*keeperEigenVector(idx+1);
+                floatingpoint delx3 = alpha*keeperEigenVector(idx+2);
 
                 
                 cylinder->getFirstBead()->coordinate()[0]+=delx1;
@@ -1784,10 +1782,11 @@ void RockingSnapshot::print(int snapshot) {
                 
             }
             //print last bead coord]
-            int idx = filament->getCylinderVector().back()->getSecondBead()->getStableIndex();
-            floatingpoint delx1 = alpha*keeperEigenVector(3*idx);
-            floatingpoint delx2 = alpha*keeperEigenVector(3*idx+1);
-            floatingpoint delx3 = alpha*keeperEigenVector(3*idx+2);
+            // TODO: need to rewrite this part if bead coordinates are not all independent variables.
+            int idx = filament->getCylinderVector().back()->getSecondBead()->getIndex() * 3;
+            floatingpoint delx1 = alpha*keeperEigenVector(idx);
+            floatingpoint delx2 = alpha*keeperEigenVector(idx+1);
+            floatingpoint delx3 = alpha*keeperEigenVector(idx+2);
             
             
             filament->getCylinderVector().back()->getSecondBead()->coordinate()[0]+=delx1;

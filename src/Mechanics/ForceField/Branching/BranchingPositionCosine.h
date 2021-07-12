@@ -26,7 +26,7 @@ public:
     floatingpoint energy(const floatingpoint *coord, unsigned int *beadSet,
                   floatingpoint *kpos, floatingpoint *pos) const;
     
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    [[deprecated]] floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                   floatingpoint *kpos, floatingpoint *pos, floatingpoint d);
     
     void forces(const floatingpoint *coord, floatingpoint *f, unsigned int *beadSet,

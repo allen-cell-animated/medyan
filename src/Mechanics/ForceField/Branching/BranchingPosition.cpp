@@ -26,7 +26,7 @@
 #include "Mechanics/CUDAcommon.h"
 
 template <class BPositionInteractionType>
-void BranchingPosition<BPositionInteractionType>::vectorize() {
+void BranchingPosition<BPositionInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
     CUDAcommon::tmin.numinteractions[7] += BranchingPoint::getBranchingPoints().size();
     beadSet = new unsigned int[n * BranchingPoint::getBranchingPoints().size()];
     kpos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
@@ -37,9 +37,9 @@ void BranchingPosition<BPositionInteractionType>::vectorize() {
 
     for (auto b: BranchingPoint::getBranchingPoints()) {
 
-        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getStableIndex();
-        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getStableIndex();
-        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getStableIndex();
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
 
         kpos[i] = b->getMBranchingPoint()->getPositionConstant();
         pos[i] = b->getFirstCylinder()->adjustedrelativeposition(b->getPosition());
@@ -171,5 +171,5 @@ void BranchingPosition<BPositionInteractionType>::computeForces(floatingpoint *c
 ///Template specializations
 template floatingpoint BranchingPosition<BranchingPositionCosine>::computeEnergy(floatingpoint *coord);
 template void BranchingPosition<BranchingPositionCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BranchingPosition<BranchingPositionCosine>::vectorize();
+template void BranchingPosition<BranchingPositionCosine>::vectorize(const FFCoordinateStartingIndex&);
 template void BranchingPosition<BranchingPositionCosine>::deallocate();

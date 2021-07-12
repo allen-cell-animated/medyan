@@ -24,7 +24,7 @@
 
 
 template <class MTOCInteractionType>
-void MTOCAttachment<MTOCInteractionType>::vectorize() {
+void MTOCAttachment<MTOCInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
 
 
 	//get total number of interactions
@@ -34,6 +34,8 @@ void MTOCAttachment<MTOCInteractionType>::vectorize() {
 	}
 	//create vectors
 	beadSet = new int[n * nint];
+    beadStartIndex_   = si.bead;
+    bubbleStartIndex_ = si.bubble;
 	kstr = new floatingpoint[nint];
 	radiusvec = new floatingpoint[nint];
 	//Get the interactions
@@ -50,10 +52,10 @@ void MTOCAttachment<MTOCInteractionType>::vectorize() {
         for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
             Filament *f = mtoc->getFilaments()[fIndex];
 			//get mtoc bead
-	        beadSet[n*interaction_counter] = mtoc->getBubble()->getBead()->getStableIndex();
+	        beadSet[n*interaction_counter] = mtoc->getBubble()->getIndex() * 3 + si.bubble;
             //get filament bead
             beadSet[n*interaction_counter + 1] = f->getMinusEndCylinder()->getFirstBead()
-            		->getStableIndex();
+            		->getIndex() * 3 + si.bead;
 			//The MTOC attachment constant is the same as stretching constant
             kstr[interaction_counter] = f->getMinusEndCylinder()->getMCylinder()->getStretchingConst();
             radiusvec[interaction_counter] = mtoc->getBubble()->getRadius();
@@ -79,7 +81,7 @@ floatingpoint MTOCAttachment<MTOCInteractionType>::computeEnergy(floatingpoint* 
     floatingpoint U = 0.0;
     floatingpoint U_i=0.0;
 
-    U_i = _FFType.energy(coord, beadSet, kstr, radiusvec);
+    U_i = _FFType.energy(coord, beadSet, beadStartIndex_, bubbleStartIndex_, kstr, radiusvec);
 
     return U_i;
 }
@@ -91,28 +93,6 @@ void MTOCAttachment<MTOCInteractionType>::computeForces(floatingpoint *coord, fl
 }
 
 
-//template <class MTOCInteractionType>
-//void MTOCAttachment<MTOCInteractionType>::computeForcesAux(double *coord, double *f) {
-//    cout << "MTOCAttachment<MTOCInteractionType>::computeForcesAux should not be called in vectorized version." << endl;
-//
-//    for(auto mtoc : MTOC::getMTOCs()) {
-//
-//        Bead* b1 = mtoc->getBubble()->getBead();
-//
-//        for(int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
-//
-//            Filament *f = mtoc->getFilaments()[fIndex];
-//
-//            Cylinder* c = f->getMinusEndCylinder();
-//
-//            Bead* b2 = c->getFirstBead();
-//            double kStretch = c->getMCylinder()->getStretchingConst();
-//            double radius = mtoc->getBubble()->getRadius();
-//
-//            _FFType.forcesAux(coord, f, beadSet, kstr);
-//        }
-//    }
-//}
 
 ///Template specializations
 template <class MTOCInteractionType>
@@ -120,6 +100,6 @@ int MTOCAttachment<MTOCInteractionType>::numInteractions;
 template floatingpoint MTOCAttachment<MTOCAttachmentHarmonic>::computeEnergy(floatingpoint *coord, bool stretched);
 template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 //template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux(double *coord, double *f);
-template void MTOCAttachment<MTOCAttachmentHarmonic>::vectorize();
+template void MTOCAttachment<MTOCAttachmentHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void MTOCAttachment<MTOCAttachmentHarmonic>::deallocate();
 

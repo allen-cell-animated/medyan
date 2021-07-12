@@ -206,9 +206,9 @@ floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, size_t nint, i
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
 
         L1 = sqrt(scalarProduct(coord1, coord2,
                                 coord1, coord2));
@@ -245,9 +245,9 @@ floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, size_t nint, i
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
             for(auto cyl:Cylinder::getCylinders()){
-            	auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-	            auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
-	            if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
+            	auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
+	            auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
+	            if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) { // FIXME this is unsafe
 	            	auto F = dynamic_cast<Filament*>(cyl->getParent());
 		            FilamentInteractions::_filamentCulprit = F;
 		            break;
@@ -274,13 +274,13 @@ floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint 
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
 
-        force1 = &f[3 * beadSet[n * i]];
-        force2 = &f[3 * beadSet[n * i + 1]];
-        force3 = &f[3 * beadSet[n * i + 2]];
+        force1 = &f[beadSet[n * i]];
+        force2 = &f[beadSet[n * i + 1]];
+        force3 = &f[beadSet[n * i + 2]];
 
 
         L1 = sqrt(scalarProductStretched(coord1, force1, coord2, force2,
@@ -316,9 +316,9 @@ floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint 
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 	        for(auto cyl:Cylinder::getCylinders()){
-		        auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-		        auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
-		        if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
+		        auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
+		        auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
+		        if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) { // FIXME this is unsafe
 			        auto F = dynamic_cast<Filament*>(cyl->getParent());
 			        FilamentInteractions::_filamentCulprit = F;
 			        break;
@@ -347,13 +347,13 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, size_
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
 
-        force1 = &f[3 * beadSet[n * i]];
-        force2 = &f[3 * beadSet[n * i + 1]];
-        force3 = &f[3 * beadSet[n * i + 2]];
+        force1 = &f[beadSet[n * i]];
+        force2 = &f[beadSet[n * i + 1]];
+        force3 = &f[beadSet[n * i + 2]];
 		//Method 1
 //        L1 = sqrt(scalarProduct(coord1, coord2, coord1, coord2));//|x1|
 //        L2 = sqrt(scalarProduct(coord2, coord3, coord2, coord3));
@@ -442,15 +442,15 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, size_
 		    short found = 0;
 		    Cylinder *cyl1, *cyl2;
 		    for(auto cyl:Cylinder::getCylinders()){
-			    auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-			    auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
-			    if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
+			    auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
+			    auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
+			    if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) { // FIXME this is unsafe
 				    cyl1 = cyl;
 				    found++;
 				    if(found>=2)
 					    break;
 			    }
-			    else if(dbIndex1 == beadSet[n * i + 1] && dbIndex2 == beadSet[n * i + 2]){
+			    else if(dbIndex1 == beadSet[n * i + 1] && dbIndex2 == beadSet[n * i + 2]){ // FIXME this is unsafe
 				    cyl2 = cyl;
 				    found++;
 				    if(found>=2)

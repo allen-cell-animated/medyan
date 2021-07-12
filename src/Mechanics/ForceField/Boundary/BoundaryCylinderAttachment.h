@@ -52,7 +52,7 @@ public:
     ///For filaments, this is a 1-point potential (only the active bead is updated)
     const static int n = 1;
     
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&) override;
     virtual void deallocate();
     
     virtual floatingpoint computeEnergy(floatingpoint *coord) override;

@@ -34,7 +34,7 @@
 using namespace mathfunc;
 
 template <class BRepulsionInteractionType>
-void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::vectorize() {
+void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
     
     //count interactions
     nint = 0;
@@ -81,13 +81,13 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::vectorize() {
              ->getIndex()<<" "<<neighbor->getSecondBead()->getIndex()<<endl;*/
             if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
             {
-                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->getStableIndex();
+                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->getIndex() * 3 + si.bead;
                 beadSet[cumnn+idx] = bindex;
                 krep[cumnn+idx] = be->getRepulsionConst();
                 slen[cumnn+idx] = be->getScreeningLength();
                 idx++;
             }
-            bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->getStableIndex();
+            bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->getIndex() * 3 + si.bead;
             beadSet[cumnn+idx] = bindex;
             krep[cumnn+idx] = be->getRepulsionConst();
             slen[cumnn+idx] = be->getScreeningLength();

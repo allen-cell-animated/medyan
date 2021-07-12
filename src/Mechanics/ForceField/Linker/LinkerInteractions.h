@@ -15,6 +15,7 @@
 #define MEDYAN_LinkerInteractions_h
 
 #include "common.h"
+#include "Mechanics/ForceField/Types.hpp"
 
 //FORWARD DECLARATIONS
 class Linker;
@@ -31,7 +32,7 @@ public:
     virtual ~LinkerInteractions() = default;
 
     ///Vectorize the bead interactions for minimization
-    virtual void vectorize() = 0;
+    virtual void vectorize(const FFCoordinateStartingIndex&) = 0;
     ///Deallocate the vectorized data
     virtual void deallocate() = 0;
     

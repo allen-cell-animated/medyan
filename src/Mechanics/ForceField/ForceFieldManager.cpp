@@ -14,13 +14,14 @@
 #include "ForceFieldManager.h"
 #include "ForceFieldManagerCUDA.h"
 
+#include <algorithm>
+#include <utility>
+
 #include "CGMethod.h"
 #include "cross_check.h"
-#include <algorithm>
-
 #include "Structure/Bead.h"
 #include "Structure/Cylinder.h"
-
+#include "Structure/DofSerializer.hpp"
 
 
 
@@ -29,7 +30,7 @@
 
 ForceField* ForceFieldManager::_culpritForceField = nullptr;
 
-void ForceFieldManager::vectorizeAllForceFields() {
+void ForceFieldManager::vectorizeAllForceFields(const FFCoordinateStartingIndex& si) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     CUDAcommon::cudatime.TvectorizeFF = 0.0;
@@ -43,7 +44,7 @@ void ForceFieldManager::vectorizeAllForceFields() {
 #endif
 
     for (auto &ff : _forceFields)
-        ff->vectorize();
+        ff->vectorize(si);
 
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
@@ -355,7 +356,7 @@ EnergyReport ForceFieldManager::computeEnergyHRMD(floatingpoint *coord) const {
 template floatingpoint ForceFieldManager::computeEnergy< false >(floatingpoint *, bool) const;
 template floatingpoint ForceFieldManager::computeEnergy< true >(floatingpoint *, bool) const;
 
-void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
+void ForceFieldManager::computeForces(floatingpoint *coord, vector< floatingpoint >& force) {
     //reset to zero
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -365,10 +366,9 @@ void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
     CUDAcommon::serltime.TveccomputeF.clear();
     tbegin = chrono::high_resolution_clock::now();
 #endif
-    //@{
-    for (int i = 0; i < Bead::getDbData().forces.size_raw(); i++)
-        f[i] = 0.0;
-    //@}
+
+    std::fill(force.begin(), force.end(), 0.0);
+
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
@@ -401,7 +401,7 @@ void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
     CUDAcommon::tmin.computeforcescalls++;
     for (auto &ff : _forceFields) {
         tbegin = chrono::high_resolution_clock::now();
-        ff->computeForces(coord, f);
+        ff->computeForces(coord, force.data());
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
         if(CUDAcommon::tmin.individualforces.size() == _forceFields.size())
@@ -442,7 +442,7 @@ void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
 //    delete F_i;
 }
 
-void ForceFieldManager::computeLoadForces() {
+void ForceFieldManager::computeLoadForces() const {
 
     //reset
     for (auto b: Bead::getBeads()) {
@@ -475,7 +475,7 @@ void ForceFieldManager::computeLoadForce(Cylinder* c, ForceField::LoadForceEnd e
     lfi = 0;
 }
 
-void ForceFieldManager::printculprit(floatingpoint* force){
+void ForceFieldManager::printculprit(){
 
     /*cout<<"Printing cylinder data overall"<<endl;
     if(true) {
@@ -565,7 +565,7 @@ void ForceFieldManager::assignallforcemags() {
 }
 
 
-void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, int total_DOF, float delta) {
+void ForceFieldManager::computeHessian(const std::vector<floatingpoint>& allCoord, int total_DOF, float delta) {
     // store the minimization time and initialize the matrix
     tauVector.push_back(tau());
 
@@ -581,25 +581,19 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
         cout<<"i "<<i<<" total_DOF "<<total_DOF<<endl;
 
         // create new vectors for the foorces and coordinates
-        vector<floatingpoint> forces_copy_p(total_DOF);
-        vector<floatingpoint> coord_copy_p(total_DOF);
+        vector<floatingpoint> forces_copy_p(allCoord.size());
+        vector<floatingpoint> coord_copy_p = allCoord;
 
-        vector<floatingpoint> forces_copy_m(total_DOF);
-        vector<floatingpoint> coord_copy_m(total_DOF);
-
-        // copy coordinates to new vector
-        for (auto l = 0; l < coord_copy_p.size(); l++) {
-            coord_copy_p[l] = coord[l];
-            coord_copy_m[l] = coord[l];
-        }
+        vector<floatingpoint> forces_copy_m(allCoord.size());
+        vector<floatingpoint> coord_copy_m = allCoord;
 
         // perturb the coordinate i
         coord_copy_p[i] += delta;
         coord_copy_m[i] -= delta;
 
         // calculate the new forces based on perturbation
-        computeForces(coord_copy_p.data(), forces_copy_p.data());
-        computeForces(coord_copy_m.data(), forces_copy_m.data());
+        computeForces(coord_copy_p.data(), forces_copy_p);
+        computeForces(coord_copy_m.data(), forces_copy_m);
 
         for (auto j = 0; j < total_DOF; j++) {
 
@@ -709,26 +703,15 @@ void ForceFieldManager::computeHessian(floatingpoint *coord, floatingpoint *f, i
 }
 
 
-void ForceFieldManager::setCurrBeadMap(){
-    prevBeadMap = currBeadMap;
+void ForceFieldManager::setCurrBeadMap(const FFCoordinateStartingIndex& si) {
+    prevBeadMap = std::move(currBeadMap);
     currBeadMap.clear();
     for(auto b:Bead::getBeads()){
-        currBeadMap[b] = std::make_tuple(b->getStableIndex(), b->getId());
+        currBeadMap[b] = medyan::findBeadCoordIndex(*b, si);
     }
 }
 
-void ForceFieldManager::setPrevBeadMap(){
-    prevBeadMap.clear();
-    for(auto b:Bead::getBeads()){
-        prevBeadMap[b] = std::make_tuple(b->getStableIndex(), b->getId());
-    }
-    prevCoords = Bead::getDbData().coords;
-}
-
-void ForceFieldManager::computeProjections(mathfunc::VecArray< 3, floatingpoint > currCoords){
-    
-    floatingpoint* pCoord = prevCoords.data();
-    floatingpoint* cCoord = currCoords.data();
+void ForceFieldManager::computeProjections(const FFCoordinateStartingIndex& si, const std::vector<floatingpoint>& currCoords) {
     
     // set displacement vector to zeros
     Eigen::VectorXcd disp(evectors.rows());
@@ -737,35 +720,35 @@ void ForceFieldManager::computeProjections(mathfunc::VecArray< 3, floatingpoint 
     }
     
     // set the current beads
-    setCurrBeadMap();
+    setCurrBeadMap(si);
     
 
     // loop through the current map
-    for(const std::pair<Bead*, tuple<int,int>> c : currBeadMap){
+    for(const std::pair<Bead*, int>& c : currBeadMap){
         
         // find the key in the previous map
-        std::unordered_map<Bead*,tuple<int,int>>::const_iterator p = prevBeadMap.find(c.first);
+        auto p = prevBeadMap.find(c.first);
         
         // if it's in the old map get the displacements
         if(p != prevBeadMap.end()){
-            tuple<int,int> curr = c.second;
-            tuple<int,int> prev = p->second;
-            int currInd = get<0>(curr);
-            int prevInd = get<0>(prev);
-            floatingpoint cx = cCoord[3*currInd];
-            floatingpoint px = pCoord[3*prevInd];
-            floatingpoint cy = cCoord[3*currInd + 1];
-            floatingpoint py = pCoord[3*prevInd + 1];
-            floatingpoint cz = cCoord[3*currInd + 2];
-            floatingpoint pz = pCoord[3*prevInd + 2];
-            disp(3*prevInd) = cx - px;
-            disp(3*prevInd + 1) = cy - py;
-            disp(3*prevInd + 2) = cz - pz;
+            int currInd = c.second;
+            int prevInd = p->second;
+            floatingpoint cx = currCoords[currInd];
+            floatingpoint px = prevCoords[prevInd];
+            floatingpoint cy = currCoords[currInd + 1];
+            floatingpoint py = prevCoords[prevInd + 1];
+            floatingpoint cz = currCoords[currInd + 2];
+            floatingpoint pz = prevCoords[prevInd + 2];
+            disp(prevInd) = cx - px;
+            disp(prevInd + 1) = cy - py;
+            disp(prevInd + 2) = cz - pz;
         };
     };
     
     // normalize the displacement vector
-    disp = disp.normalized();
+    if(!disp.isZero(0)) {
+        disp = disp.normalized();
+    }
     
     // store the projections in a vector
     Eigen::VectorXcd proj(evectors.cols());

@@ -33,77 +33,6 @@
 class Compartment;
 class Filament;
 
-struct BeadData {
-    using vec_type = mathfunc::Vec< 3, floatingpoint >;
-    using vec_array_type = mathfunc::VecArray< 3, floatingpoint >;
-
-    vec_array_type coords;
-    vec_array_type coordsStr; // stretched coordinate
-    vec_array_type forces; // currently the search dir in cg method
-    vec_array_type forcesAux; // real force
-    vec_array_type forcesAuxP; // prev real force
-    vec_array_type coords_minE;
-    vec_array_type coords_bckup;//back up coord
-    vec_array_type forces_bckup;
-
-    void push_back(
-        const vec_type& coord,
-        const vec_type& coordStr,
-        const vec_type& force,
-        const vec_type& forceAux,
-        const vec_type& forceAuxP
-    ) {
-        coords.push_back(coord);
-        coordsStr.push_back(coordStr);
-        forces.push_back(force);
-        forcesAux.push_back(forceAux);
-        forcesAuxP.push_back(forceAuxP);
-    }
-
-    void set_content(
-        std::size_t pos,
-        const vec_type& coord,
-        const vec_type& coordStr,
-        const vec_type& force,
-        const vec_type& forceAux,
-        const vec_type& forceAuxP
-    ) {
-        coords    [pos] = coord;
-        coordsStr [pos] = coordStr;
-        forces    [pos] = force;
-        forcesAux [pos] = forceAux;
-        forcesAuxP[pos] = forceAuxP;
-    }
-
-    void move_content(std::size_t from, std::size_t to) {
-        coords    [to] = coords    [from];
-        coordsStr [to] = coordsStr [from];
-        forces    [to] = forces    [from];
-        forcesAux [to] = forcesAux [from];
-        forcesAuxP[to] = forcesAuxP[from];
-    }
-
-    void resize(size_t size) {
-        coords    .resize(size);
-        coordsStr .resize(size);
-        forces    .resize(size);
-        forcesAux .resize(size);
-        forcesAuxP.resize(size);
-    }
-
-    void settodummy(std::size_t pos){
-        auto infinity = numeric_limits<floatingpoint>::infinity();
-        set_content(
-            pos,
-            {infinity,infinity,infinity},
-            {infinity,infinity,infinity},
-            {infinity,infinity,infinity},
-            {infinity,infinity,infinity},
-            {infinity,infinity,infinity});
-    }
-
-};
-
 /// Represents a single coordinate between [Cylinders](@ref Cylinder), and holds forces
 /// needed for mechanical equilibration.
 /*!
@@ -120,10 +49,13 @@ struct BeadData {
  */
 
 class Bead : public Component, public Trackable, public Movable,
-    public Database< Bead, true, BeadData > {
+    public Database< Bead, true > {
     
 public:
-    using DatabaseType = Database< Bead, true, BeadData >;
+    using DatabaseType = Database< Bead, true >;
+
+    mathfunc::Vec< 3, floatingpoint > coord;
+    mathfunc::Vec< 3, floatingpoint > force;
 
     ///@note - all vectors are in x,y,z coordinates.
     vector<floatingpoint> coordinateP; ///< Prev coordinates of bead in CG minimization
@@ -163,23 +95,10 @@ public:
     ///Default constructor
     Bead(Composite* parent, int position);
 
-    auto coordinate()    { return getDbData().coords    [getStableIndex()]; }
-    auto coordinateStr() { return getDbData().coordsStr [getStableIndex()]; }
-    auto force()         { return getDbData().forces    [getStableIndex()]; }
-    auto forceAux()      { return getDbData().forcesAux [getStableIndex()]; }
-    auto forceAuxP()     { return getDbData().forcesAuxP[getStableIndex()]; }
-
-    auto coordinate()    const { return getDbDataConst().coords    [getStableIndex()]; }
-    auto coordinateStr() const { return getDbDataConst().coordsStr [getStableIndex()]; }
-    auto force()         const { return getDbDataConst().forces    [getStableIndex()]; }
-    auto forceAux()      const { return getDbDataConst().forcesAux [getStableIndex()]; }
-    auto forceAuxP()     const { return getDbDataConst().forcesAuxP[getStableIndex()]; }
-
+    auto& coordinate() { return coord; }
+    const auto& coordinate() const { return coord; }
     // Temporary compromise
-    auto vcoordinate()    const { return mathfunc::vec2Vector(coordinate()   ); }
-    auto vforce()         const { return mathfunc::vec2Vector(force()        ); }
-    auto vforceAux()      const { return mathfunc::vec2Vector(forceAux()     ); }
-    auto vforceAuxP()     const { return mathfunc::vec2Vector(forceAuxP()    ); }
+    auto vcoordinate() const { return mathfunc::vec2Vector(coord); }
     
     /// Get Compartment
     Compartment* getCompartment() {return _compartment;}
@@ -254,23 +173,14 @@ public:
     //@{
     /// Auxiliary method for CG minimization
     inline double FDotF() {
-        return magnitude2(force());
+        return magnitude2(force);
     }
 //    inline double FDotF() {
 //        return force1[0]*force1[0] +
 //        force1[1]*force1[1] +
 //        force1[2]*force1[2];
 //    }
-    inline double FDotFA() {
-        return dot(force(), forceAux());
-    }
-    inline double FADotFA() {
-        return dot(forceAux(), forceAux());
-    }
     
-    inline double FADotFAP() {
-        return dot(forceAux(), forceAuxP());
-    }
     //Qin add brFDotbrF
     inline floatingpoint brFDotbrF() {
         return brforce[0]*brforce[0] +

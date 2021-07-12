@@ -20,7 +20,7 @@
 #include "Bead.h"
 
 template <class BRepulsionInteractionType>
-void BoundaryBubbleRepulsion<BRepulsionInteractionType>::vectorize() {
+void BoundaryBubbleRepulsion<BRepulsionInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
     //count interactions
     nint = 0;
     for (auto be: BoundaryElement::getBoundaryElements())
@@ -56,7 +56,7 @@ void BoundaryBubbleRepulsion<BRepulsionInteractionType>::vectorize() {
 
         for (ni = 0; ni < nn; ni++) {
 
-            bindex = _neighborList->getNeighbors(be)[ni]->getBead()->getStableIndex();
+            bindex = _neighborList->getNeighbors(be)[ni]->getIndex() * 3 + si.bubble;
             beadSet[cumnn+idx] = bindex;
             krep[cumnn+idx] = be->getRepulsionConst();
             slen[cumnn+idx] = be->getScreeningLength();
@@ -97,6 +97,6 @@ void BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeForces(floatingp
 ///Template specializations
 template floatingpoint BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeEnergy(floatingpoint *coord);
 template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::vectorize();
+template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::vectorize(const FFCoordinateStartingIndex&);
 template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::deallocate();
 

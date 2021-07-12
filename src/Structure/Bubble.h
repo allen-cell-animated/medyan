@@ -21,10 +21,10 @@
 #include "Movable.h"
 #include "DynamicNeighbor.h"
 #include "Composite.h"
+#include "Util/Math/Vec.hpp"
 
 //FORWARD DECLARATIONS
 class SubSystem;
-class Bead;
 
 /// Represents a dummy point potential that is involved in mechanical equilibration. This
 /// object has no chemical reactions or properties associated with it.
@@ -40,7 +40,8 @@ class Bubble : public Composite, public Trackable, public Movable, public Dynami
     public Database< Bubble, false > {
 
 private:
-    Bead* _bead;    ///< The bead representing the center of the bubble
+    double birthTime_ = 0.0;
+
     SubSystem* _ps; ///< The subsystem this bubble is in
     
     short _type;     ///< The type of bubble
@@ -61,8 +62,11 @@ private:
     bool _isMTOC = false;   ///< If representing a MTOC
     
     bool _isAFM = false;    ///< If representing a AFM
-    
+
 public:
+    mathfunc::Vec< 3, floatingpoint > coord;
+    mathfunc::Vec< 3, floatingpoint > force;
+
     vector<floatingpoint> coordinate; ///< Current coordinates of bubble,
                                ///< Updated with updatePosition()
     
@@ -78,8 +82,7 @@ public:
 	floatingpoint getMTOCBendingK() {return _MTOCBendingK;}
     floatingpoint getAFMBendingK() {return _AFMBendingK;}
 
-    
-    Bead* getBead() {return _bead;}
+    auto getBirthTime() const { return birthTime_; }
     
     virtual int getType() {return _type;}
     //@}
@@ -110,7 +113,7 @@ public:
     }
     
     ///Update bubble position
-    virtual void updatePosition();
+    virtual void updatePosition() override {}
     
     void updatePositionManually();
     double iter = 1;

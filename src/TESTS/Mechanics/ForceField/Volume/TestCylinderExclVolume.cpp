@@ -28,14 +28,14 @@ TEST_CASE("Force field: Cylinder excl volume scaling", "[ForceField]") {
     };
 
     // Configuration 0
-    const std::vector<int>           beadSet0  { 0, 2, 3, 6 };
+    const std::vector<int>           beadSet0  { 0, 6, 9, 18 };
     const std::vector<floatingpoint> k0        { 1e-2 };
     const std::vector<floatingpoint> eqLength0 { 100.0, 100.0 };
 
     // Configuration 1: breaking down each cylinder into several segments
-    const std::vector<int>           beadSet1  { 0, 1, 3, 4,  0, 1, 4, 5,  0, 1, 5, 6,  1, 2, 3, 4,  1, 2, 4, 5,  1, 2, 5, 6, };
-    const std::vector<floatingpoint> k1        { 1e-2,        1e-2,        1e-2,        1e-2,        1e-2,        1e-2,       };
-    const std::vector<floatingpoint> eqLength1 { 50.0, 20.0,  50.0, 30.0,  50.0, 50.0,  50.0, 20.0,  50.0, 30.0,  50.0, 50.0, };
+    const std::vector<int>           beadSet1  { 0, 3, 9, 12,  0, 3, 12, 15,  0, 3, 15, 18,  3, 6, 9, 12,  3, 6, 12, 15,  3, 6, 15, 18, };
+    const std::vector<floatingpoint> k1        { 1e-2,         1e-2,          1e-2,          1e-2,         1e-2,          1e-2,         };
+    const std::vector<floatingpoint> eqLength1 { 50.0, 20.0,   50.0, 30.0,    50.0, 50.0,    50.0, 20.0,   50.0, 30.0,    50.0, 50.0,   };
 
     auto tempCoord = coord;
     const auto energy0 = CylinderExclVolRepulsion{}.energy(tempCoord.data(), beadSet0.data(), k0.data(), eqLength0.data(), k0.size());
@@ -70,7 +70,7 @@ TEST_CASE("Force field: Cylinder excl volume", "[ForceField]") {
     testInputs.push_back({
         "standard-symmetric",
         // bead set
-        { 0, 1, 2, 3 },
+        { 0, 3, 6, 9 },
         // k
         { 0.25 },
         // equilibrium length
@@ -89,7 +89,7 @@ TEST_CASE("Force field: Cylinder excl volume", "[ForceField]") {
     testInputs.push_back({
         "general",
         // bead set
-        { 0, 1, 2, 3,  0, 1, 4, 5 },
+        { 0, 3, 6, 9,  0, 3, 12, 15 },
         // k
         { 100.0, 2e3 },
         // equilibrium length

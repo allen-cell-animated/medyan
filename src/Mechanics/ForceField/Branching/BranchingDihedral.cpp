@@ -28,7 +28,7 @@
 #include "Mechanics/CUDAcommon.h"
 
 template <class BDihedralInteractionType>
-void BranchingDihedral<BDihedralInteractionType>::vectorize() {
+void BranchingDihedral<BDihedralInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
 
     CUDAcommon::tmin.numinteractions[6] += BranchingPoint::getBranchingPoints().size();
     beadSet.resize(n * BranchingPoint::getBranchingPoints().size());
@@ -40,10 +40,10 @@ void BranchingDihedral<BDihedralInteractionType>::vectorize() {
 
     for (auto b: BranchingPoint::getBranchingPoints()) {
 
-        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getStableIndex();
-        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getStableIndex();
-        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getStableIndex();
-        beadSet[n * i + 3] = b->getSecondCylinder()->getSecondBead()->getStableIndex();
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 3] = b->getSecondCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
 
         kdih[i] = b->getMBranchingPoint()->getDihedralConstant();
         pos[i] = b->getFirstCylinder()->adjustedrelativeposition(b->getPosition());
@@ -181,7 +181,7 @@ void BranchingDihedral<BDihedralInteractionType>::computeForces(floatingpoint *c
 // Template instantiations
 template floatingpoint BranchingDihedral<BranchingDihedralCosine>::computeEnergy(floatingpoint *coord);
 template void BranchingDihedral<BranchingDihedralCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BranchingDihedral<BranchingDihedralCosine>::vectorize();
+template void BranchingDihedral<BranchingDihedralCosine>::vectorize(const FFCoordinateStartingIndex&);
 template void BranchingDihedral<BranchingDihedralCosine>::deallocate();
 template class BranchingDihedral< BranchingDihedralCosineV2 >;
 template class BranchingDihedral< BranchingDihedralQuadratic >;
