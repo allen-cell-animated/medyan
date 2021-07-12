@@ -60,10 +60,10 @@ void HybridCylinderCylinderNL::unassignbin(Cylinder* cyl, Bin* bin){
 
 void HybridCylinderCylinderNL::updatebin(Cylinder *cyl){
     Bin* _bin;
-#ifdef CROSSCHECK_CYLINDER
-    _crosscheckdumpFileNL<<"Cylinder bin updated "<<cyl->getId()
+    if(CROSSCHECK_NL_SWITCH)
+        _crosscheckdumpFileNL<<"Cylinder bin updated "<<cyl->getId()
                          <<" "<<cyl->getStableIndex()<<endl;
-#endif
+
     try {_bin = getBin(cyl->coordinate);}
     catch (exception& e) {
         cout << e.what();
@@ -321,6 +321,10 @@ Bin* HybridCylinderCylinderNL::getBin(const vector<size_t> &indices) {
 
 void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool runtime){
 
+    if(CROSSCHECK_NL_SWITCH && _crosscheckdumpFileNL.is_open())
+        _crosscheckdumpFileNL<<"Updating neighbors for  cylinder ID "<<currcylinder->getId()
+        <<endl;
+
     //clear existing neighbors of currcylinder from all neighborlists
     for(int idx = 0; idx < totaluniquefIDpairs; idx++) {
         int countbounds = _rMaxsqvec[idx].size();
@@ -354,6 +358,10 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
     // < 27 elements in the stencilID vector.
     short ftype1 = c.type; //cylinder type and filament type is one and the same.
     float _largestrMax = sqrt(_largestrMaxsq);
+
+    if(CROSSCHECK_NL_SWITCH && _crosscheckdumpFileNL.is_open())
+        _crosscheckdumpFileNL<<"#Neighboring bins "<<_neighboringBins.size()<<endl;
+
     for (auto &bin : _neighboringBins) {
             bool isbinneeded = _binGrid->iswithincutoff(c.coord,
                                                         parentbin->coordinates(),
@@ -362,7 +370,29 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
             nbincount++;
             if (isbinneeded) {
                 auto cindicesvec = bin->getcindices();
+
+                if(CROSSCHECK_NL_SWITCH && _crosscheckdumpFileNL.is_open())
+                    _crosscheckdumpFileNL<<"Cindices obtained in bin "<<bin->_ID<<" n "
+                    <<cindicesvec.size()<<endl;
                 int numneighbors = cindicesvec.size();
+
+                if(CROSSCHECK_NL_SWITCH && _crosscheckdumpFileNL.is_open() && SysParams::DURINGCHEMISTRY){
+                    _crosscheckdumpFileNL<<"Cindex in database ";
+                    for (int iter = 0; iter < numneighbors; iter++) {
+                        int ncindex = cindicesvec[iter];
+                        _crosscheckdumpFileNL<<ncindex<<" ";
+                    }
+                    _crosscheckdumpFileNL<<endl;
+                    _crosscheckdumpFileNL<<"Cindex in Cylinder pointer ";
+                    for (int iter = 0; iter < numneighbors; iter++) {
+                        int ncindex = cindicesvec[iter];
+                        const auto& ncylinder = Cylinder::getDbData().value[ncindex];
+                        _crosscheckdumpFileNL<<ncylinder
+                        .chemCylinder->getCylinder()->getStableIndex()<<" ";
+                    }
+                    _crosscheckdumpFileNL<<endl;
+                }
+
                 for (int iter = 0; iter < numneighbors; iter++) {
                     int ncindex = cindicesvec[iter];
                     const auto& ncylinder = Cylinder::getDbData().value[ncindex];
@@ -415,10 +445,19 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                                 _list4mbinvec[HNLID][Ncylinder].push_back(currcylinder);
                             }*/
                         }
-                    }
-                }
-            }
-    }
+                    }//go through all neighbor lists and add to relevant ones.
+
+                }//loop through neighboring cylinders
+            }//is bin needed
+
+        if(CROSSCHECK_NL_SWITCH && _crosscheckdumpFileNL.is_open())
+            _crosscheckdumpFileNL<<"Bin Id "<<bin->_ID<<" Done..."<<endl;
+
+    }//neighboring bins
+
+    if(CROSSCHECK_NL_SWITCH && _crosscheckdumpFileNL.is_open())
+        _crosscheckdumpFileNL<<"---"<<endl;
+
 }
 
 vector<Cylinder*> HybridCylinderCylinderNL::getNeighborsstencil(short HNLID, Cylinder*
@@ -487,13 +526,12 @@ void HybridCylinderCylinderNL::reset() {
     updateallcylinderstobin();
     _binGrid->updatecindices();
     for(auto cylinder: Cylinder::getCylinders()) {
-        #ifdef CROSSCHECK_CYLINDER
-        if(_crosscheckdumpFileNL.is_open())
+
+        if(CROSSCHECK_NL_SWITCH && _crosscheckdumpFileNL.is_open())
             _crosscheckdumpFileNL<<"Updating neighbors bin "<<cylinder->getId()
                                  <<" "<<cylinder->getStableIndex()<<endl;
-        #endif
         updateNeighborsbin(cylinder);
-        #ifdef CROSSCHECK_CYLINDER
+        if(CROSSCHECK_NL_SWITCH){
         if(_crosscheckdumpFileNL.is_open())
             _crosscheckdumpFileNL<<"Updated neighbors bin "<<cylinder->getId()
                                  <<" "<<cylinder->getStableIndex()<<endl;
@@ -503,8 +541,7 @@ void HybridCylinderCylinderNL::reset() {
                 _crosscheckdumpFileNL<<"|";
         }
         _crosscheckdumpFileNL<<endl;
-        #endif
-
+        }
     }
 }
 

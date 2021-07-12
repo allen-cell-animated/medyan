@@ -42,6 +42,7 @@ protected:
 	chrono::high_resolution_clock::time_point tbegin, tend;
 	floatingpoint prevlambda = 0;
 	floatingpoint prevbeta = 0;
+	unsigned int skipcounter = 0;
 
 	void calculateEvsalpha(ForceFieldManager &FFM, floatingpoint lambda, floatingpoint
 	LAMBDAMAX, floatingpoint FDotFA);

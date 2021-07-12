@@ -251,7 +251,6 @@ floatingpoint FilamentStretchingandBending<FStretchingandBendingInteractionType>
 
     _FFType.energy(coord, beadSetcylsansbending, kstrsansbending, eqlsansbending, totalenergy,
             startID, _strnumInteractions, threadID);*/
-
 #endif
 	floatingpoint U = (floatingpoint) 0.0;
 	for(int t = 0 ; t < numthreads; t++){

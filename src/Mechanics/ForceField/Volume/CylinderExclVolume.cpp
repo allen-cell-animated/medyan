@@ -29,14 +29,12 @@
 using namespace mathfunc;
 
 template <class CVolumeInteractionType>
-int CylinderExclVolume<CVolumeInteractionType>::numInteractions;
-
-template <class CVolumeInteractionType>
 void CylinderExclVolume<CVolumeInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
     //count interactions
     nint = 0;
 
     for(auto ci : Cylinder::getCylinders()) {
+
         //do not calculate exvol for a non full length cylinder
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         for (int ID = 0; ID < _HnlIDvec.size(); ID ++){
@@ -52,7 +50,9 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize(const FFCoordinateSta
 
         for(auto &cn : neighbors)
         {
+
             if(cn->getBranchingCylinder() == ci) continue;
+
             nint++;
         }
 #endif
@@ -63,6 +63,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize(const FFCoordinateSta
 //    std::cout<<"NINT1 "<<nint<<endl;
     beadSet = new int[n * nint];
     krep = new floatingpoint[nint];
+    vecEqLength.resize(2 * nint);
 
 
     int nc = Cylinder::getCylinders().size();
@@ -70,6 +71,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize(const FFCoordinateSta
     int Cumnc=0;
     for (i = 0; i < nc; i++) {
         auto ci = Cylinder::getCylinders()[i];
+
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         
         for (int ID = 0; ID < _HnlIDvec.size(); ID ++){
@@ -84,6 +86,9 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize(const FFCoordinateSta
                 beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->getIndex()* 3 + si.bead;
                 beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->getIndex()* 3 + si.bead;
                 beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->getIndex()* 3 + si.bead;
+
+                vecEqLength[2 * Cumnc    ] = ci ->getMCylinder()->getEqLength();
+                vecEqLength[2 * Cumnc + 1] = cin->getMCylinder()->getEqLength();
                 
                 //Get KRepuls based on filament type
                 if(ci->getType() != cin->getType()){
@@ -142,7 +147,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize(const FFCoordinateSta
 
 //    blocksnthreads.push_back(int(numInteractions/THREADSPERBLOCK + 1));
 //    if(blocksnthreads[0]==1) blocksnthreads.push_back( numInteractions);
-////    if(blocksnthreads[0]==1) blocksnthreads.push_back( 32*(int(numInteractions/32 +1)) );
+//   if(blocksnthreads[0]==1) blocksnthreads.push_back( 32*(int(numInteractions/32 +1)) );
 //    else blocksnthreads.push_back(THREADSPERBLOCK);
 
     //CUDA stream create
@@ -254,7 +259,7 @@ floatingpoint CylinderExclVolume<CVolumeInteractionType>::computeEnergy(floating
     tbegin = chrono::high_resolution_clock::now();
 #endif
 
-    U_ii = _FFType.energy(coord, beadSet, krep);
+    U_ii = _FFType.energy(coord, beadSet, krep, vecEqLength.data(), numInteractions);
 
 #ifdef CUDATIMETRACK
     floatingpoint U_i[1];
@@ -300,7 +305,7 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(floatingpoint *co
     tbegin = chrono::high_resolution_clock::now();
 #endif
 #ifdef SERIAL
-    _FFType.forces(coord, f, beadSet, krep);
+    _FFType.forces(coord, f, beadSet, krep, vecEqLength.data(), numInteractions);
 #endif
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
