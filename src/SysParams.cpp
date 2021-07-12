@@ -14,7 +14,6 @@
 #include "SysParams.h"
 bool SysParams::RUNSTATE=true;
 bool SysParams::INITIALIZEDSTATUS=false;
-bool SysParams::USECHEMCOPYNUM=false;
 bool SysParams::DURINGCHEMISTRY=false;
 
 int SysParams::exvolcounter[3] = {0,0,0};
@@ -61,7 +60,8 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         
         if(chem.speciesBound[filType].size() == 0) {
             
-            cout << "At one plus end species is required for each filament type. Exiting."
+            cout << "At least one Bound species is required for each filament type. "
+                    "Exiting."
             <<endl;
             
             return false;
@@ -137,7 +137,7 @@ void SysParams::addChemParameters(ChemistryData& chem){
     
 }
 
-bool SysParams::checkMechParameters(MechanicsFFType& mech) {
+bool SysParams::checkMechParameters(MechParams::MechanicsFFType& mech) {
     
     //check ff and associated parameters for consistency
     
@@ -338,7 +338,7 @@ bool SysParams::checkGeoParameters() {
     return true;
 }
 
-bool SysParams::checkDyRateParameters(DynamicRateType& dy) {
+bool SysParams::checkDyRateParameters(DyRateParams::DynamicRateType& dy) {
     
     //check types match number of species
     if(dy.dFPolymerizationType.size() != CParams.numFilaments &&

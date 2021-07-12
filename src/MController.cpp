@@ -25,7 +25,7 @@
 
 #include "ConjugateGradient.h"
 
-void MController::initializeMinAlgorithms (MechanicsAlgorithm& MAlgorithm) {
+void MController::initializeMinAlgorithms (MechParams::MechanicsAlgorithm& MAlgorithm) {
 
     if (MAlgorithm.ConjugateGradient == "FLETCHERRIEVES")
         _minimizerAlgorithms.push_back(
@@ -55,7 +55,7 @@ void MController::initializeMinAlgorithms (MechanicsAlgorithm& MAlgorithm) {
     }
 }
 
-void MController::initializeFF (MechanicsFFType& forceFields) {
+void MController::initializeFF (MechParams::MechanicsFFType& forceFields) {
 
     //init all forcefields
     _FFManager._forceFields.push_back(

@@ -270,6 +270,7 @@ public:
     MinimizationResult prevMinResult;
 
 private:
+    static const bool CROSSCHECK_SWITCH = false;
 	chrono::high_resolution_clock::time_point minsN, mineN, minsT,mineT;
     floatingpoint _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer

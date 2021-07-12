@@ -17,8 +17,7 @@
 #include <vector>
 
 #include "common.h"
-
-#include "Parser.h"
+#include "SysParams.h"
 
 /// An exception to be thrown when an index/coordinate is out of bounds of the grid
 class OutOfBoundsException : public exception {
@@ -82,11 +81,14 @@ public:
     
     /// Initialize and return the grid based on input parameters
     /// Used at system initialization.
-    CompartmentGrid* initializeGrid();
+    CompartmentGrid* initializeGrid(const GeoParams& geoParams);
+    CompartmentGrid* initializeGrid() {
+        return initializeGrid(SysParams::Geometry());
+    }
     
     /// Initialize and return a boundary based on input parameters
     /// Used at system initialization.
-    Boundary* initializeBoundary(BoundaryType& BType);
+    Boundary* initializeBoundary(BoundParams::BoundaryType& BType);
     
     /// Set compartments in compartment grid as active based on boundary.
     /// Used at system initialization.

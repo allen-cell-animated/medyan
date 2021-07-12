@@ -72,6 +72,15 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "common.h"
 #include "Controller.h"
 #include "MedyanArgs.hpp"
+#include "MedyanConfig.hpp"
+
+using namespace medyan;
+#ifndef GIT_COMMIT_HASH
+#define GIT_COMMIT_HASH "?"
+#endif
+#ifndef GIT_BRANCH
+#define GIT_BRANCH "?"
+#endif
 
 int main(int argc, char **argv) {
 
@@ -81,11 +90,11 @@ int main(int argc, char **argv) {
     cout << "         of Active Networks, Third Generation.         " << endl;
     cout << "         PAPOIAN LAB 2015, ALL RIGHTS RESERVED         " << endl;
     cout << "*******************************************************" << endl;
-    cout << "MEDYAN version:                      v4.2.1(unreleased)"<<endl;
-
+    cout<< "Commit hash                          "<<GIT_COMMIT_HASH<<endl;
+    cout<< "Git branch                           "<<GIT_BRANCH<<endl;
+    cout << "MEDYAN version:                      v4.2.0"<<endl;
     cout << "Memory model:                        "<< static_cast<unsigned>(8 * sizeof
     (void*))<<" bit"<<endl;
-
     cout << "Coordinate/Force precision:          ";
     #if FLOAT_PRECISION
     cout << "single" << endl;
@@ -139,6 +148,10 @@ int main(int argc, char **argv) {
                 cmdRes.numThreads);
             c.run();
         }
+        break;
+
+    case MedyanRunMode::config:
+        interactiveConfig();
         break;
 
     case MedyanRunMode::test:

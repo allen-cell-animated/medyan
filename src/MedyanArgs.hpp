@@ -11,6 +11,7 @@
 
 enum class MedyanRunMode {
     simulation,
+    config,
     test
 };
 
@@ -57,6 +58,12 @@ inline auto medyanInitFromCommandLine(int argc, char** argv) {
         ));
         cmdMain.addOption(makeOptionWithVar('t', "", "int", "Thread count (0 for auto)", false, res.numThreads));
         cmdMain.addHelp();
+
+        // Add interactive configuration command
+        auto& cmdConfig = cmdMain.addCommand(
+            "config", "Interactive system configuration.",
+            [&] { res.runMode = MedyanRunMode::config; }
+        );
 
         // Add test command
         auto& cmdTest = cmdMain.addCommand(

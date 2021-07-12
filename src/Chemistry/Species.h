@@ -177,6 +177,8 @@ protected: //Variables
                          ///< and destroying RSpecies
     Composite *_parent; ///< pointer to the "container" object holding this Species
                         ///< (could be a nullptr)
+     ///< when cloning a reaction, whether this Species
+                        ///< should be searched in speciesContainer object of the new Compartment
     
     /// Default Constructor; Should not be used by the end users - only internally
     /// By default, creates a RSpeciesReg.
@@ -395,6 +397,9 @@ public:
     /// Change copy number
     virtual inline void up() {_rspecies->up();}
     virtual inline void down() {_rspecies->down();}
+
+    /// Return whether this species should be searched or added as is when cloning reaction
+    virtual inline bool getsearchdirection() const {return false;}
     //@}
     
     /// Update the reaction propensities associated with this species.
@@ -415,7 +420,7 @@ public:
 
 /// Used for species without spatial information (i.e. well-mixed in the container)
 class SpeciesBulk : public Species {
-    
+
 public:
     /// Default constructor
     SpeciesBulk()  : Species() {}
@@ -456,6 +461,8 @@ public:
     
     /// Default destructor
     ~SpeciesBulk () noexcept {};
+
+    virtual inline bool getsearchdirection() const {return true;}
 };
 
 /// Used for species which can move spatially from one compartment to
@@ -504,13 +511,14 @@ public:
     
     /// Default destructor
     ~SpeciesDiffusing () noexcept {};
+
+    virtual inline bool getsearchdirection() const {return true;}
 };
 
 
 /// Used for species that can be in a Filament.
 ///These species can not move cross-compartment.
 class SpeciesFilament : public Species {
-    
 public:
     /// Default constructor
     SpeciesFilament()  : Species() {}
@@ -550,6 +558,8 @@ public:
     
     /// Default destructor
     ~SpeciesFilament () noexcept {};
+
+    virtual inline bool getsearchdirection() const {return false;}
 };
 
 /// Used for species that can be bound to a Filament.
@@ -606,13 +616,14 @@ public:
     
     ///remove cBound ptr
     void removeCBound() {_cBound = nullptr;}
+
+    virtual inline bool getsearchdirection() const {return false;}
 };
 
 /// Used for species that can be bound to a Filament.
 /// These species can not move cross-compartment.
 /// Contains a pointer to a CLinker object that this represents.
 class SpeciesLinker : public SpeciesBound {
-    
 public:
     /// Default constructor
     SpeciesLinker()  : SpeciesBound() {}
@@ -652,6 +663,8 @@ public:
     
     /// Default destructor
     ~SpeciesLinker () noexcept {};
+
+    virtual inline bool getsearchdirection() const {return true;}
 };
 
 
@@ -889,6 +902,8 @@ public:
     
     /// Default destructor
     ~SpeciesSingleBinding () noexcept {};
+
+    virtual inline bool getsearchdirection() const {return true;}
 };
 
 /// Used to represent a pair binding site in a compartment.
@@ -938,6 +953,8 @@ public:
     
     /// Default destructor
     ~SpeciesPairBinding () noexcept {};
+
+    virtual inline bool getsearchdirection() const {return true;}
 };
 
 /// Print self into an iostream

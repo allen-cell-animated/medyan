@@ -133,8 +133,9 @@ void ChemManager::initCMonomer(CMonomer* m, short filamentType, Compartment* c) 
 
     int fIndex = 0;
     for(auto &f : _chemData.speciesFilament[filamentType]) {
+        auto temp = SpeciesNamesDB::genUniqueFilName(f);
         SpeciesFilament* sf =
-        c->addSpeciesFilament(SpeciesNamesDB::genUniqueFilName(f));
+        c->addSpeciesFilament(temp);
         m->_speciesFilament[fIndex] = sf;
         fIndex++;
     }
@@ -2210,7 +2211,7 @@ void ChemManager::updateCopyNumbers() {
                 //If user requests to use different copy numbers mentioned in chem file
                 // during restart in place of those in restart file, do not do anything
                 // in restart phase.
-                if(SysParams::USECHEMCOPYNUM && SysParams::RUNSTATE == false){
+                if(SysParams::filamentSetup.USECHEMCOPYNUM && SysParams::RUNSTATE == false){
                     species->updateReactantPropensities();
                     copyNumber = 0;
                 }
@@ -2808,7 +2809,7 @@ void ChemManager::genNucleationReactions() {
                 //now, add the callback
 #ifdef REACTION_SIGNALING
                 FilamentCreationCallback
-                        fcallback(plusEnd, filament, minusEnd, filType, _subSystem, creationCompartment);
+                        fcallback(plusEnd, minusEnd, filament, filType, _subSystem, creationCompartment);
                 ConnectionBlock rcb(rxn->connect(fcallback,false));
 #endif
             }

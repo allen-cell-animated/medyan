@@ -24,7 +24,6 @@
 #include <random>
 #include <chrono>
 
-#include "Parser.h"
 #include "Output.h"
 #include "SubSystem.h"
 #include "Boundary.h"
@@ -89,7 +88,7 @@ private:
             	events++;
             }
             CopyNumbers[counter]=CopyNumbers[counter]-events;
-            if(CopyNumbers[counter]<0 && SysParams::USECHEMCOPYNUM == false)
+            if(CopyNumbers[counter]<0 && SysParams::filamentSetup.USECHEMCOPYNUM == false)
             {cout <<
                 "Restart file reaction numbers do not match with diffusing species number."
                 << endl;
@@ -200,7 +199,7 @@ public:
 
     void restartupdateCopyNumbers(){
         // If user requests to use restart file copy numbers after restart.
-        if(SysParams::RUNSTATE == false && SysParams::USECHEMCOPYNUM == false) {
+        if(SysParams::RUNSTATE == false && SysParams::filamentSetup.USECHEMCOPYNUM == false) {
             //Loop through restart data
             // Find corresponding compartment and add species to it.
             for (auto &Cmp:_subSystem->getCompartmentGrid()->getCompartments()) {

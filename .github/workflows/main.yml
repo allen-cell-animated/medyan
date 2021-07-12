@@ -15,43 +15,41 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Prepare dependencies
+    - name: prepare dependencies
       run: |
-        export BOOST_ROOT=$BOOST_ROOT_1_72_0
-        export MEDYAN_BOOST_INSTALL_MODE="find"
         # Use avx2 (default avx512 causes trouble in UMEsimd)
         sed -i 's/-mtune=native -march=native/-mavx2/g' CMakeLists.txt
         # add --no-as-needed to correctly link pthread
         sed -i -e '/    target_link_libraries(medyan PRIVATE Threads::Threads)/a\' -e '    target_link_options(medyan BEFORE PRIVATE "-Wl,--no-as-needed")' CMakeLists.txt
         ./conf.sh
-    - name: Build with make
+    - name: build with make
       run: |
         cd build
         make VERBOSE=1
-    - name: Run tests
+    - name: run tests
       run: |
         ./build/medyan test
 
-  build-macos:
+  # build-macos:
 
-    runs-on: macos-latest
+  #   runs-on: macos-latest
 
-    steps:
-    - uses: actions/checkout@v2
-    - name: Prepare dependencies
-      run: |
-        brew install pkg-config
-        # Use avx
-        # (avx2 is not available on github MacOS environment (Intel(R) Xeon(R) CPU E5-1650 v2 @ 3.50GHz as of the time of commit))
-        sed -i '' -e 's/-mtune=native -march=native/-mavx/g' CMakeLists.txt
-        ./conf.sh
-    - name: Build with make
-      run: |
-        cd build
-        make VERBOSE=1
-    - name: Run tests
-      run: |
-        ./build/medyan test
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: prepare dependencies
+  #     run: |
+  #       brew install pkg-config
+  #       # Use avx
+  #       # (avx2 is not available on github MacOS environment (Intel(R) Xeon(R) CPU E5-1650 v2 @ 3.50GHz as of the time of commit))
+  #       sed -i '' -e 's/-mtune=native -march=native/-mavx/g' CMakeLists.txt
+  #       ./conf.sh
+  #   - name: build with make
+  #     run: |
+  #       cd build
+  #       make VERBOSE=1
+  #   - name: run tests
+  #     run: |
+  #       ./build/medyan test
 
   build-windows:
 
@@ -59,13 +57,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Prepare dependencies
+    - name: prepare dependencies
       run: |
-        $MEDYAN_BOOST_INSTALL_MODE = "manual"
-        $MEDYAN_BOOST_INCLUDE_DIR = "$Env:BOOST_ROOT_1_72_0\include"
-        $MEDYAN_BOOST_LIBRARY_DIR = "$Env:BOOST_ROOT_1_72_0\lib"
         .\conf.ps1
-    - name: Build with MSBuild
+    - name: build with MSBuild
       working-directory: ${{ github.workspace }}
       run: |
         cd build
@@ -75,6 +70,6 @@ jobs:
         # refreshenv
         # Build solution
         & "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" .\MEDYAN.sln /property:Configuration=Release /property:Platform=x64
-    - name: Run tests
+    - name: run tests
       run: |
         .\build\Release\medyan.exe test

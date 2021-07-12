@@ -24,6 +24,7 @@
 #include "CController.h"
 #include "DRController.h"
 #include "DissipationTracker.h"
+#include "MedyanConfig.hpp"
 #include "Restart.h"
 #include "Structure/SubSystem.h"
 
@@ -59,6 +60,7 @@ private:
 
     vector<std::unique_ptr< Output >> _outputs; ///< Vector of specified outputs
     vector<std::unique_ptr< Output >> _outputdump; ///<Vector of outputs that correspond to a datadump
+    RockingSnapshot* _rSnapShot;
 
     floatingpoint _runTime;          ///< Total desired runtime for simulation
 
@@ -83,7 +85,6 @@ private:
     floatingpoint _minimizationSteps;
     floatingpoint _neighborListSteps;
     ChemistryData _chemData;
-    ChemistryAlgorithm _cAlgorithm;
     vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> fil;
     tuple< vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> , vector<tuple<string, short, vector<vector<floatingpoint>>>> , vector<tuple<string, short, vector<floatingpoint>>> , vector<vector<floatingpoint>> > filaments;
     vector<Compartment*> activatecompartments;
@@ -99,10 +100,10 @@ private:
     /// For now, only [Bubbles](@ref Bubble) and [Filaments](@ref Filament)
     /// can be initialized before the simulation begins. Any other elements
     /// should be initialized in this function.
-    void setupInitialNetwork(SystemParser& p);
+    void setupInitialNetwork(medyan::SimulConfig&);
     
     /// Setup any special structures needed
-    void setupSpecialStructures(SystemParser& p);
+    void setupSpecialStructures(medyan::SimulConfig&);
     
     ///RUNTIME HELPER FUNCTIONS
     

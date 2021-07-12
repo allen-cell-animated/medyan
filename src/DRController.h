@@ -14,10 +14,7 @@
 #ifndef MEDYAN_DRController_h
 #define MEDYAN_DRController_h
 
-#include "common.h"
-
-//FORWARD DECLARATIONS
-struct DynamicRateType;
+#include "SysParams.h"
 
 /// Used to initialize the dynamic rate components of a simulation.
 
@@ -31,7 +28,7 @@ class DRController {
     
 public:
     ///Intialize all elements with corresponding DynamicRateChanger objects.
-    void initialize(DynamicRateType& drTypes);
+    void initialize(DyRateParams::DynamicRateType& drTypes);
 };
 
 

@@ -53,6 +53,7 @@
 #include "Util/Profiler.hpp"
 
 using namespace mathfunc;
+using namespace medyan;
 
 Controller::Controller() :
     _mController(&_subSystem),
@@ -84,7 +85,15 @@ void Controller::initialize(string inputFile,
 
     //Parse input, get parameters
     _inputFile = inputFile;
-    SystemParser p(inputFile);
+    auto simulConfig = SimulConfigHelper{}.getFromInput(inputFile, inputDirectory);
+    SysParams::GParams = simulConfig.geoParams;
+    if(!SysParams::checkGeoParameters()) exit(EXIT_FAILURE);
+    SysParams::BParams = simulConfig.boundParams;
+    SysParams::MParams = simulConfig.mechParams;
+    SysParams::CParams = simulConfig.chemParams;
+    SysParams::DRParams = simulConfig.dyRateParams;
+    SysParams::SParams = simulConfig.specialParams;
+    SysParams::filamentSetup = simulConfig.filamentSetup;
 
     //snapshot type output
     cout << endl;
@@ -103,10 +112,6 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(make_unique<BRForces>(_outputDirectory + "repulsion.traj", &_subSystem));
     //_outputs.push_back(make_unique<PinForces>(_outputDirectory + "pinforce.traj", &_subSystem));
 
-    //Always read geometry, check consistency
-    p.readGeoParams();
-    if(!SysParams::checkGeoParameters()) exit(EXIT_FAILURE);
-
     //CALLING ALL CONTROLLERS TO INITIALIZE
     //Initialize geometry controller
     cout << "---" << endl;
@@ -118,25 +123,18 @@ void Controller::initialize(string inputFile,
     cout << "---" << endl;
     LOG(STEP) << "Initializing boundary...";
 
-    auto BTypes = p.readBoundaryType();
-    p.readBoundParams();
-
     //initialize
-    _gController.initializeBoundary(BTypes);
+    _gController.initializeBoundary(simulConfig.boundParams.boundaryType);
     LOG(INFO) << "Done.";
 
 #ifdef MECHANICS
-    //read algorithm and types
-    auto MTypes = p.readMechanicsFFType();
-    auto MAlgorithm = p.readMechanicsAlgorithm();
-
-    //read const parameters
-    p.readMechParams();
 
     //Initialize Mechanical controller
     cout << "---" << endl;
     LOG(STEP) << "Initializing mechanics...";
-    _mController.initialize(MTypes, MAlgorithm);
+    _mController.initialize(
+        simulConfig.mechParams.mechanicsFFType,
+        simulConfig.mechParams.mechanicsAlgorithm);
     LOG(INFO) << "Done.";
 
 #endif
@@ -158,16 +156,12 @@ void Controller::initialize(string inputFile,
     //Calculate surface area and volume for reaction rate scaling
 
 
-    //read parameters
-    p.readChemParams();
-
     //Initialize chemical controller
     cout << "---" << endl;
     LOG(STEP) << "Initializing chemistry...";
     //read algorithm
-    auto CAlgorithm = p.readChemistryAlgorithm();
-    auto CSetup = p.readChemistrySetup();
-    _cAlgorithm=CAlgorithm;
+    auto& CAlgorithm = simulConfig.chemParams.chemistryAlgorithm;
+    auto& CSetup = simulConfig.chemParams.chemistrySetup;
     //run time for sim
     _runTime = CAlgorithm.runTime;
 
@@ -183,17 +177,8 @@ void Controller::initialize(string inputFile,
     _minimizationSteps = CAlgorithm.minimizationSteps;
     _neighborListSteps = CAlgorithm.neighborListSteps;
 
-    ChemistryData ChemData;
-
-    if(CSetup.inputFile != "") {
-        ChemistryParser cp(_inputDirectory + CSetup.inputFile);
-        ChemData = cp.readChemistryInput();
-        _chemData=ChemData;
-    }
-    else {
-        LOG(FATAL) << "Need to specify a chemical input file. Exiting.";
-        exit(EXIT_FAILURE);
-    }
+    auto& ChemData = simulConfig.chemistryData;
+    _chemData=ChemData;
 
 #ifdef CHEMISTRY
     SysParams::addChemParameters(ChemData);
@@ -254,14 +239,18 @@ void Controller::initialize(string inputFile,
     }
 
     if(SysParams::MParams.hessTracking){
+        if(SysParams::MParams.hessMatrixPrintBool){
         //Set up HessianMatrix if hessiantracking is enabled
         string hessianmatrix = _outputDirectory + "hessianmatrix.traj";
         _outputs.push_back(make_unique<HessianMatrix>(hessianmatrix, &_subSystem, _ffm));
-
+        }
         //Set up HessianSpectra if hessiantracking is enabled
         string hessianspectra = _outputDirectory + "hessianspectra.traj";
         _outputs.push_back(make_unique<HessianSpectra>(hessianspectra, &_subSystem, _ffm));
 
+        //Set up Projections if hessiantracking is enabled
+        string projections = _outputDirectory + "projections.traj";
+        _outputs.push_back(make_unique<Projections>(projections, &_subSystem, _ffm));
     }
 
     //Set up CMGraph output
@@ -290,14 +279,9 @@ void Controller::initialize(string inputFile,
 #ifdef DYNAMICRATES
     cout << "---" << endl;
     LOG(STEP) << "Initializing dynamic rates...";
-    //read dynamic rate parameters
-    p.readDyRateParams();
-
-    //read dynamic rate types
-    DynamicRateType DRTypes = p.readDynamicRateType();
 
     //init controller
-    _drController.initialize(DRTypes);
+    _drController.initialize(simulConfig.dyRateParams.dynamicRateType);
     LOG(INFO) << "Done.";
 
 #endif
@@ -307,39 +291,34 @@ void Controller::initialize(string inputFile,
     LOG(STEP) << "Checking cross-parameter consistency...";
     //Chemistry is checked in advance
 #ifdef MECHANICS
-    if(!SysParams::checkMechParameters(MTypes))
+    if(!SysParams::checkMechParameters(simulConfig.mechParams.mechanicsFFType))
         exit(EXIT_FAILURE);
 #endif
 #ifdef DYNAMICRATES
-    if(!SysParams::checkDyRateParameters(DRTypes))
+    if(!SysParams::checkDyRateParameters(simulConfig.dyRateParams.dynamicRateType))
         exit(EXIT_FAILURE);
 #endif
 
     LOG(INFO) << "Done.";
 
     //setup initial network configuration
-    setupInitialNetwork(p);
+    setupInitialNetwork(simulConfig);
 
     //setup special structures
-    p.readSpecialParams();
-    setupSpecialStructures(p);
+    setupSpecialStructures(simulConfig);
 
     SysParams::INITIALIZEDSTATUS = true;
 }
 
-void Controller::setupInitialNetwork(SystemParser& p) {
+void Controller::setupInitialNetwork(SimulConfig& simulConfig) {
 
     //Read bubble setup, parse bubble input file if needed
-    BubbleSetup BSetup = p.readBubbleSetup();
-    BubbleData bubbles;
+    auto& BSetup = simulConfig.bubbleSetup;
+    auto& bubbles = simulConfig.bubbleData;
 
     cout << "---" << endl;
     cout << "Initializing bubbles...";
 
-    if (BSetup.inputFile != "") {
-        BubbleParser bp(_inputDirectory + BSetup.inputFile);
-        bubbles = bp.readBubbles();
-    }
     //add other bubbles if specified
     BubbleInitializer *bInit = new RandomBubbleDist();
 
@@ -365,7 +344,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     cout << "Done. " << bubbles.size() << " bubbles created." << endl;
 
     //Read filament setup, parse filament input file if needed
-    FilamentSetup FSetup = p.readFilamentSetup();
+    auto& FSetup = simulConfig.filamentSetup;
 //    FilamentData filaments;
 
     cout << "---" << endl;
@@ -373,10 +352,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     cout << "Initializing filaments...";
 
     if (SysParams::RUNSTATE == true) {
-        if (FSetup.inputFile != "") {
-            FilamentParser fp(_inputDirectory + FSetup.inputFile);
-            filaments = fp.readFilaments();
-        }
+        filaments = simulConfig.filamentData;
         fil = get<0>(filaments);
         //add other filaments if specified
         FilamentInitializer *fInit = new RandomFilamentDist();
@@ -443,7 +419,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         cout<<endl;
 	    cout<<"RESTART PHASE BEINGS."<<endl;
         //Create the restart pointer
-        const string inputfileName = _inputDirectory + FSetup.inputFile;
+        const string inputfileName = _inputDirectory + FSetup.inputFile.string();
         _restart = new Restart(&_subSystem, _chemData, inputfileName);
         //read set up.
         _restart->readNetworkSetup();
@@ -451,12 +427,12 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     }
 }
 
-void Controller::setupSpecialStructures(SystemParser& p) {
+void Controller::setupSpecialStructures(SimulConfig& simulConfig) {
 
     cout << "---" << endl;
     cout << "Setting up special structures...";
 
-    SpecialSetupType SType = p.readSpecialSetupType();
+    auto& SType = simulConfig.specialParams.specialSetupType;
 
     //set up a MTOC if desired
 
@@ -943,6 +919,8 @@ void Controller::updateReactionRates() {
 
 void Controller::updateNeighborLists() {
     #ifdef CROSSCHECK_CYLINDER
+    if(HybridNeighborList::_crosscheckdumpFileNL.is_open())
+        HybridNeighborList::_crosscheckdumpFileNL.close();
     string crosscheckNLname = _outputDirectory + "crosscheckNL.traj";
     HybridNeighborList::_crosscheckdumpFileNL.open(crosscheckNLname);
     #endif
@@ -964,10 +942,6 @@ void Controller::updateNeighborLists() {
     chrono::duration<floatingpoint> elapsed_runb(mine - mins);
     bmgrtime += elapsed_runb.count();
 #endif
-
-    #ifdef CROSSCHECK_CYLINDER
-    HybridNeighborList::_crosscheckdumpFileNL.close();
-    #endif
 }
 
 void Controller::resetCounters() {
@@ -1053,8 +1027,11 @@ void Controller::run() {
 #endif
     chrono::high_resolution_clock::time_point chk1, chk2, mins, mine;
     chk1 = chrono::high_resolution_clock::now();
+    chrono::high_resolution_clock::time_point minsR, mineR;
 //RESTART PHASE BEGINS
     if(SysParams::RUNSTATE==false){
+
+        minsR = chrono::high_resolution_clock::now();
 //Step 2A. Turn off diffusion, passivate filament reactions and add reactions to heap.
         _restart->settorestartphase();
 	    cout<<"Turned off Diffusion, and filament reactions."<<endl;
@@ -1139,8 +1116,8 @@ void Controller::run() {
 
 
 //Step 8. re-add pin positions
-        SystemParser p(_inputFile);
-        FilamentSetup filSetup = p.readFilamentSetup();
+        auto simulConfig = SimulConfigHelper{}.getFromInput(_inputFile, _inputDirectory);
+        auto& filSetup = simulConfig.filamentSetup;
 
         if(SysParams::Mechanics().pinBoundaryFilaments){
             PinRestartParser ppin(_inputDirectory + filSetup.pinRestartFile);
@@ -1229,23 +1206,9 @@ void Controller::run() {
 
         //Crosscheck tau to make sure heap is ordered accurately.
         _cController.crosschecktau();
-
-        cout <<"MINUSENDPOLYMERIZATIONREACTIONS "<< endl;
-        for(auto fil:Filament::getFilaments()){
-            auto cyl = fil->getCylinderVector().front(); //get Minus Ends
-            for(auto &it:cyl->getCCylinder()->getInternalReactions()){
-                if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND &&
-                   !(it->isPassivated()) && it->computePropensity() > 0){
-                    cout<<"Fil "<<cyl->getFilID()<<" Cyl "<<cyl->getStableIndex()
-                               <<" RATEMULFACTORS ";
-                    for(auto fac:it->_ratemulfactors)
-                        cout<<fac<<" ";
-                    cout<<endl;
-                    it->getRnode()->printSelf();
-                }
-            }
-        }
+        mineR = chrono::high_resolution_clock::now();
     }
+    chrono::duration<floatingpoint> elapsed_runRestart(mineR-minsR);
 #ifdef CHEMISTRY
     tauLastSnapshot = tau();
     tauDatadump = tau();
@@ -1351,6 +1314,8 @@ void Controller::run() {
             	factor = 10.0;
 #endif
             floatingpoint chemistryTime = _minimizationTime/factor;
+//            cout<<"chemistryTime="<<chemistryTime<<" _minimizationTime="<<_minimizationTime
+//            <<" factor="<<factor<<" tau()="<<tau()<<" oldTau="<<oldTau<<endl;
             #ifdef CROSSCHECK_CYLINDER
             string crosscheckchemname = _outputDirectory + "crosscheckChem.traj";
             if(CController::_crosscheckdumpFilechem.is_open())
@@ -1407,13 +1372,21 @@ void Controller::run() {
                     exit(EXIT_FAILURE);
                 }
                 Cylinder::_crosscheckdumpFile << "Opening file " << crosscheckname << endl;
+                Cylinder::_crosscheckdumpFile << "NCylinders " << Cylinder::getCylinders
+                ().size() << endl;
 #endif
                 mins = chrono::high_resolution_clock::now();
                 Bead::rearrange();
                 Cylinder::updateAllData();
 
+                string crosscheckmechname = _outputDirectory + "crosscheckmech.traj";
+                CGMethod::_crosscheckdumpMechFile.open(crosscheckmechname);
+
                 minimizationResult = _mController.run();
                 _subSystem.prevMinResult = minimizationResult;
+#ifdef CROSSCHECK_CYLINDER
+                CGMethod::_crosscheckdumpMechFile.close();
+#endif
                 mine= chrono::high_resolution_clock::now();
 
                 
@@ -1622,11 +1595,36 @@ void Controller::run() {
 
     //print last snapshots
     for(auto& o: _outputs) o->print(i);
+    
+    
+    
+    
+    
+    // rockingsnapshot with last snapshot
+    if(SysParams::MParams.rockSnapBool){
+    //Set up RockingSnapshot if hessiantracking is enabled
+        ForceFieldManager* _ffm =  _mController.getForceFieldManager();
+        Eigen::VectorXcd evalues = _ffm->evalues;
+        for(auto k = 0; k < evalues.size(); k++){
+
+            string rockingsnaphot = _outputDirectory + "rockingsnapshot_" + to_string(evalues.real()[k]) +".traj";
+            _rSnapShot = new RockingSnapshot(rockingsnaphot, &_subSystem, _ffm, k);
+            _rSnapShot->savePositions();
+            _rSnapShot->print(i);
+            _rSnapShot->resetPositions();
+            _rSnapShot->~RockingSnapshot();
+         
+        }
+           
+        
+    };
+    
 	resetCounters();
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_run(chk2-chk1);
     cout << "Time elapsed for run: dt=" << elapsed_run.count() << endl;
 	#ifdef OPTIMOUT
+    cout<<"Restart time for run=" << elapsed_runRestart.count()<<endl;
     cout<< "Chemistry time for run=" << chemistrytime <<endl;
     cout << "Minimization time for run=" << minimizationtime <<endl;
     cout<< "Neighbor-list+Bmgr-time for run="<<nltime<<endl;
@@ -1636,7 +1634,6 @@ void Controller::run() {
     cout<< "HYBD time for run="<<SubSystem::HYBDtime<<endl;
     cout<< "Bmgr time for run="<<bmgrtime<<endl;
     cout<<"update-position time for run="<<updateposition<<endl;
-
     cout<<"rxnrate time for run="<<rxnratetime<<endl;
     cout<<"Output time for run="<<outputtime<<endl;
     cout<<"Special time for run="<<specialtime<<endl;
@@ -1654,6 +1651,17 @@ void Controller::run() {
                 .callslinkerupdate<<endl;
         cout<<"move-compartment motor ="<<mtime.timemotorupdate<<" calls "<<mtime
                 .callsmotorupdate<<endl;
+        auto cdetails = CUDAcommon::cdetails;
+        cout<<"Clone internal reactions="<<cdetails.ccylclonetimer[0]<<", calls="<<
+                cdetails.ccylclonecounter[0]<<", rxncounter="<<cdetails.ccylclonerxncounter[0]<<endl;
+        cout<<"Clone rxn alone="<<cdetails.internalrxnclone<<endl;
+        cout<<"Add cloned reaction="<<cdetails.internalrxnadd<<endl;
+        cout<<"Find species to clone="<<cdetails.clonefindspecies<<endl;
+        cout<<"Get affected reactions="<<cdetails.getaffectedrxns<<endl;
+        cout<<"Clone crossCylinder reactions="<<cdetails.ccylclonetimer[1]<<", calls="<<
+            cdetails.ccylclonecounter[1]<<", rxncounter="<<cdetails.ccylclonerxncounter[1]<<endl;
+        cout<<"Clone reactingCylinder reactions="<<cdetails.ccylclonetimer[2]<<", calls="<<
+            cdetails.ccylclonecounter[2]<<", rxncounter="<<cdetails.ccylclonerxncounter[2]<<endl;
         cout<<"-----------"<<endl;
 
         cout << "Minimization time for run=" << minimizationtime <<endl;
@@ -1708,7 +1716,7 @@ void Controller::run() {
 	    cout<<"Cylinder-Cylinder Repulsion "<<mtime.numinteractions[8]<<endl;
 	    cout<<"Cylinder-Boundary Repulsion "<<mtime.numinteractions[9]<<endl;
     }
-    if(false) {
+    if(true) {
         cout << "Printing callback times" << endl;
         auto ctime = CUDAcommon::ctime;
         auto ccount = CUDAcommon::ccount;
@@ -1799,6 +1807,29 @@ void Controller::run() {
              << CUDAcommon::ppendtime
                      .rxntempate3 << " part4 (Callback) "
              << CUDAcommon::ppendtime.rxntempate4 << endl;
+        cout<<" Displaying chemistry times"<<endl;
+        cout<<"Counts fired for each ReactionType"<<endl;
+        for(auto i = 0; i<17;i++)
+            cout<<CUDAcommon::cdetails.reactioncount[i]<<" ";
+        cout<<endl;
+        cout<<"Time taken to fire each ReactionType"<<endl;
+        for(auto i = 0; i<17;i++)
+            cout<<CUDAcommon::cdetails.totaltime[i]<<" ";
+        cout<<endl;
+        cout<<"Time taken to emitSignal for each ReactionType"<<endl;
+        for(auto i = 0; i<17;i++)
+            cout<<CUDAcommon::cdetails.emitsignal[i]<<" ";
+        cout<<endl;
+        cout<<"Time taken for dependency updates for each ReactionType"<<endl;
+        for(auto i = 0; i<17;i++)
+            cout<<CUDAcommon::cdetails.dependencytime[i]<<" ";
+        cout<<endl;
+        cout<<"Total number of dependencies for reactions fired based on ReactionType"<<endl;
+        for(auto i = 0; i<17;i++)
+            cout<<CUDAcommon::cdetails.dependentrxncount[i]<<" ";
+        cout<<endl;
+        cout<<"Diffusion passivate vs activate calls"<<endl;
+        cout<<CUDAcommon::cdetails.diffusion_passivate_count<<" "<<CUDAcommon::cdetails.diffusion_activate_count<<endl;
     }
 	#endif
     cout << "Done with simulation!" << endl;
