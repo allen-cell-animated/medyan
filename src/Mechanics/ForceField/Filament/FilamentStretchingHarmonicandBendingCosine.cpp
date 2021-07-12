@@ -34,13 +34,13 @@ void FilamentStretchingHarmonicandBendingCosine::forces(floatingpoint *coord,
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
 
-        force1 = &f[3 * beadSet[n * i]];
-        force2 = &f[3 * beadSet[n * i + 1]];
-        force3 = &f[3 * beadSet[n * i + 2]];
+        force1 = &f[beadSet[n * i]];
+        force2 = &f[beadSet[n * i + 1]];
+        force3 = &f[beadSet[n * i + 2]];
 
         L1 = sqrt(scalarProduct(coord1, coord2, coord1, coord2));
         L2 = sqrt(scalarProduct(coord2, coord3, coord2, coord3));
@@ -123,15 +123,16 @@ void FilamentStretchingHarmonicandBendingCosine::forces(floatingpoint *coord,
             short found = 0;
             Cylinder *cyl1, *cyl2;
             for(auto cyl:Cylinder::getCylinders()){
-                auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-                auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
-                if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
+                auto dbIndex1 = cyl->getFirstBead()->getIndex();
+                auto dbIndex2 = cyl->getSecondBead()->getIndex();
+                // WARNING this is unsafe because bead starts from index 0 is assumed.
+                if(dbIndex1 * 3 == beadSet[n * i] && dbIndex2 * 3 == beadSet[n * i + 1]) {
                     cyl1 = cyl;
                     found++;
                     if(found>=2)
                         break;
                 }
-                else if(dbIndex1 == beadSet[n * i + 1] && dbIndex2 == beadSet[n * i + 2]){
+                else if(dbIndex1 * 3 == beadSet[n * i + 1] && dbIndex2 * 3 == beadSet[n * i + 2]){
                     cyl2 = cyl;
                     found++;
                     if(found>=2)
@@ -180,10 +181,10 @@ void FilamentStretchingHarmonicandBendingCosine::forces(floatingpoint *coord, fl
 
     for(int i = startID; i < endID; i += 1) {
 
-        coord1 = &coord[3 * beadSetsansbending[n * i]];
-        coord2 = &coord[3 * beadSetsansbending[n * i + 1]];
-        force1 = &f[3 * beadSetsansbending[n * i]];
-        force2 = &f[3 * beadSetsansbending[n * i + 1]];
+        coord1 = &coord[beadSetsansbending[n * i]];
+        coord2 = &coord[beadSetsansbending[n * i + 1]];
+        force1 = &f[beadSetsansbending[n * i]];
+        force2 = &f[beadSetsansbending[n * i + 1]];
         dist = twoPointDistance(coord1, coord2);
         invL = 1 / dist;
         f0 = kstrsansbending[i] * ( dist - eqlsansbending[i] ) * invL;
@@ -238,9 +239,9 @@ void FilamentStretchingHarmonicandBendingCosine::energy(floatingpoint *coord,
 
     for(int i = startID; i < endID; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
 
         L1 = sqrt(scalarProduct(coord1, coord2,
                                 coord1, coord2));
@@ -278,9 +279,10 @@ void FilamentStretchingHarmonicandBendingCosine::energy(floatingpoint *coord,
             || Usum != Usum || Usum < -1.0) {
 
             for(auto cyl:Cylinder::getCylinders()){
-                auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-                auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
-                if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
+                auto dbIndex1 = cyl->getFirstBead()->getIndex();
+                auto dbIndex2 = cyl->getSecondBead()->getIndex();
+                // WARNING this is unsafe because bead starting with index 0 is assumed.
+                if(dbIndex1 * 3 == beadSet[n * i] && dbIndex2 * 3 == beadSet[n * i + 1]) {
                     auto F = dynamic_cast<Filament*>(cyl->getParent());
                     FilamentInteractions::_filamentCulprit = F;
                     break;
@@ -316,8 +318,8 @@ void FilamentStretchingHarmonicandBendingCosine::energy(floatingpoint *coord, in
 
     for(int i = startID; i < endID; i += 1) {
 
-        coord1 = &coord[3 * beadSetsansbending[n * i]];
-        coord2 = &coord[3 * beadSetsansbending[n * i + 1]];
+        coord1 = &coord[beadSetsansbending[n * i]];
+        coord2 = &coord[beadSetsansbending[n * i + 1]];
         dist = twoPointDistance(coord1, coord2) - eqlsansbending[i];
 
         U_i = 0.5 * kstrsansbending[i] * dist * dist;
@@ -475,13 +477,13 @@ void FilamentStretchingHarmonicandBendingCosine::forces(floatingpoint *coord,
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
 
-        force1 = &f[3 * beadSet[n * i]];
-        force2 = &f[3 * beadSet[n * i + 1]];
-        force3 = &f[3 * beadSet[n * i + 2]];
+        force1 = &f[beadSet[n * i]];
+        force2 = &f[beadSet[n * i + 1]];
+        force3 = &f[beadSet[n * i + 2]];
 
         L1 = cyllengthset[cylSet[2 * i]];
         L2 = cyllengthset[cylSet[2 * i + 1]];
@@ -569,15 +571,16 @@ void FilamentStretchingHarmonicandBendingCosine::forces(floatingpoint *coord,
             short found = 0;
             Cylinder *cyl1, *cyl2;
             for(auto cyl:Cylinder::getCylinders()){
-                auto dbIndex1 = cyl->getFirstBead()->getStableIndex();
-                auto dbIndex2 = cyl->getSecondBead()->getStableIndex();
-                if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
+                auto dbIndex1 = cyl->getFirstBead()->getIndex();
+                auto dbIndex2 = cyl->getSecondBead()->getIndex();
+                // WARNING this is unsafe because bead starting with index 0 is assumed.
+                if(dbIndex1 * 3 == beadSet[n * i] && dbIndex2 * 3 == beadSet[n * i + 1]) {
                     cyl1 = cyl;
                     found++;
                     if(found>=2)
                         break;
                 }
-                else if(dbIndex1 == beadSet[n * i + 1] && dbIndex2 == beadSet[n * i + 2]){
+                else if(dbIndex1 * 3 == beadSet[n * i + 1] && dbIndex2 * 3 == beadSet[n * i + 2]){
                     cyl2 = cyl;
                     found++;
                     if(found>=2)
@@ -629,10 +632,10 @@ void FilamentStretchingHarmonicandBendingCosine::forces(floatingpoint *coord,
 
     for(int i = startID; i < endID; i += 1) {
 
-        coord1 = &coord[3 * beadSetsansbending[n * i]];
-        coord2 = &coord[3 * beadSetsansbending[n * i + 1]];
-        force1 = &f[3 * beadSetsansbending[n * i]];
-        force2 = &f[3 * beadSetsansbending[n * i + 1]];
+        coord1 = &coord[beadSetsansbending[n * i]];
+        coord2 = &coord[beadSetsansbending[n * i + 1]];
+        force1 = &f[beadSetsansbending[n * i]];
+        force2 = &f[beadSetsansbending[n * i + 1]];
 
         dist = cyllengthset[cylSetcylsansbending[i]];
         invL = 1 / dist;

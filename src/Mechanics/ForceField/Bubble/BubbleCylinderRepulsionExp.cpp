@@ -14,7 +14,6 @@
 #include "BubbleCylinderRepulsionExp.h"
 #include "BubbleCylinderRepulsion.h"
 
-#include "Bead.h"
 #include "Bubble.h"
 
 #include "MathFunctions.h"
@@ -33,14 +32,14 @@ floatingpoint BubbleCylinderRepulsionExp::energy(floatingpoint *coord, int *bead
     //loop through bubbles
     for (int ib = 0; ib < nb; ib++) {
 
-        coordb = &coord[3 * bubbleSet[ib]];
+        coordb = &coord[bubbleSet[ib]];
         auto be = bbList[ib];
         nc = nneighbors[ib];
         auto bradius = radius[ib];
 
         for (int ic = 0; ic < nc; ic++) {
 
-            coord1 = &coord[3 * beadSet[Cumnc + ic]];
+            coord1 = &coord[beadSet[Cumnc + ic]];
 	        floatingpoint dist = twoPointDistance(coordb, coord1);
 	        floatingpoint effd = dist - bradius;
 
@@ -78,16 +77,16 @@ floatingpoint BubbleCylinderRepulsionExp::energy(floatingpoint *coord, floatingp
     //loop through bubbles
     for (int ib = 0; ib < nb; ib++) {
 
-        coordb = &coord[3 * bubbleSet[ib]];
-        fb = &f[3 * bubbleSet[ib]];
+        coordb = &coord[bubbleSet[ib]];
+        fb = &f[bubbleSet[ib]];
         auto be = bbList[ib];
         nc = nneighbors[ib];
         auto bradius = radius[ib];
 
         for (int ic = 0; ic < nc; ic++) {
 
-            coord1 = &coord[3 * beadSet[Cumnc + ic]];
-            f1 = &f[3 * beadSet[Cumnc + ic]];
+            coord1 = &coord[beadSet[Cumnc + ic]];
+            f1 = &f[beadSet[Cumnc + ic]];
 //            double dist = twoPointDistanceStretched(b1->vcoordinate(), b1->force,
 //                                                    b2->vcoordinate(), b2->force, d);
             floatingpoint dist = twoPointDistanceStretched(coordb, fb, coord1, f1, d);
@@ -128,16 +127,16 @@ void BubbleCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f, 
     //loop through bubbles
     for (int ib = 0; ib < nb; ib++) {
 
-        coordb = &coord[3 * bubbleSet[ib]];
-        fb = &f[3 * bubbleSet[ib]];
+        coordb = &coord[bubbleSet[ib]];
+        fb = &f[bubbleSet[ib]];
         nc = nneighbors[ib];
         auto bradius = radius[ib];
 
 
         for (int ic = 0; ic < nc; ic++) {
 
-            coord1 = &coord[3 * beadSet[Cumnc + ic]];
-            f1 = &f[3 * beadSet[Cumnc + ic]];
+            coord1 = &coord[beadSet[Cumnc + ic]];
+            f1 = &f[beadSet[Cumnc + ic]];
 	        floatingpoint dist = twoPointDistance(coordb, coord1);
             invL = 1 / dist;
 	        floatingpoint effd = dist - bradius;
@@ -161,38 +160,3 @@ void BubbleCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f, 
 
 }
 
-//void BubbleCylinderRepulsionExp::forcesAux(Bead* b1, Bead* b2, double radius,
-//                                           double kRep, double screenLength) {
-//
-//    //get dist
-//    double dist = twoPointDistance(b1->coordinate, b2->coordinate);
-//
-//    double effd = dist - radius;
-//
-//    double R = -effd / screenLength;
-//    double f0 = kRep * exp(R) / screenLength;
-//
-//    //get norm
-//    auto norm = normalizeVector(twoPointDirection(b1->coordinate, b2->coordinate));
-//
-//    b1->force[0] += - f0 *norm[0];
-//    b1->force[1] += - f0 *norm[1];
-//    b1->force[2] += - f0 *norm[2];
-//
-//    b2->force[0] += f0 *norm[0];
-//    b2->force[1] += f0 *norm[1];
-//    b2->force[2] += f0 *norm[2];
-//
-//}
-
-floatingpoint BubbleCylinderRepulsionExp::loadForces(Bead* b1, Bead* b2, floatingpoint radius,
-                                              floatingpoint kRep, floatingpoint screenLength) const {
-    
-    //get dist
-    floatingpoint dist = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
-    
-    floatingpoint effd = dist - radius;
-    
-    floatingpoint R = -effd / screenLength;
-    return kRep * exp(R) / screenLength;
-}

@@ -239,14 +239,18 @@ void Controller::initialize(string inputFile,
     }
 
     if(SysParams::MParams.hessTracking){
+        if(SysParams::MParams.hessMatrixPrintBool){
         //Set up HessianMatrix if hessiantracking is enabled
         string hessianmatrix = _outputDirectory + "hessianmatrix.traj";
         _outputs.push_back(make_unique<HessianMatrix>(hessianmatrix, &_subSystem, _ffm));
-
+        }
         //Set up HessianSpectra if hessiantracking is enabled
         string hessianspectra = _outputDirectory + "hessianspectra.traj";
         _outputs.push_back(make_unique<HessianSpectra>(hessianspectra, &_subSystem, _ffm));
 
+        //Set up Projections if hessiantracking is enabled
+        string projections = _outputDirectory + "projections.traj";
+        _outputs.push_back(make_unique<Projections>(projections, &_subSystem, _ffm));
     }
 
     //Set up CMGraph output
@@ -1591,6 +1595,30 @@ void Controller::run() {
 
     //print last snapshots
     for(auto& o: _outputs) o->print(i);
+    
+    
+    
+    
+    
+    // rockingsnapshot with last snapshot
+    if(SysParams::MParams.rockSnapBool){
+    //Set up RockingSnapshot if hessiantracking is enabled
+        ForceFieldManager* _ffm =  _mController.getForceFieldManager();
+        Eigen::VectorXcd evalues = _ffm->evalues;
+        for(auto k = 0; k < evalues.size(); k++){
+
+            string rockingsnaphot = _outputDirectory + "rockingsnapshot_" + to_string(evalues.real()[k]) +".traj";
+            _rSnapShot = new RockingSnapshot(rockingsnaphot, &_subSystem, _ffm, k);
+            _rSnapShot->savePositions();
+            _rSnapShot->print(i);
+            _rSnapShot->resetPositions();
+            _rSnapShot->~RockingSnapshot();
+         
+        }
+           
+        
+    };
+    
 	resetCounters();
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_run(chk2-chk1);

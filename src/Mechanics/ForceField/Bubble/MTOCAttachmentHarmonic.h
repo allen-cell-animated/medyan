@@ -24,10 +24,14 @@ class MTOCAttachmentHarmonic {
     
 public:
 
-    floatingpoint energy(floatingpoint *coord, int *beadSet,
-                         floatingpoint *kstr, floatingpoint* radiusvec);
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                         floatingpoint *kstr, floatingpoint* radiusvec, floatingpoint d);
+    floatingpoint energy(
+        floatingpoint *coord,
+        int *beadSet,
+        std::size_t beadStartIndex,
+        std::size_t bubbleStartIndex,
+        floatingpoint *kstr,
+        floatingpoint* radiusvec
+    ) const;
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                 floatingpoint *kstr, floatingpoint* radiusvec);
 

@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
     cout << "*******************************************************" << endl;
     cout<< "Commit hash                          "<<GIT_COMMIT_HASH<<endl;
     cout<< "Git branch                           "<<GIT_BRANCH<<endl;
-    cout << "MEDYAN version:                      v4.2.1(unreleased)"<<endl;
+    cout << "MEDYAN version:                      v4.2.0"<<endl;
     cout << "Memory model:                        "<< static_cast<unsigned>(8 * sizeof
     (void*))<<" bit"<<endl;
     cout << "Coordinate/Force precision:          ";

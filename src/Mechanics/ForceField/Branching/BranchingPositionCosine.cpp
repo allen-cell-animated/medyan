@@ -203,8 +203,8 @@ floatingpoint BranchingPositionCosine::energy(const floatingpoint *coord,
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
         //If the branching point is at the plus end of the cylinder, we end up with
         // singularities in energy and force expressions. To avoid it, we will create a
         // virtual plus end and use that to define vectors.
@@ -217,7 +217,7 @@ floatingpoint BranchingPositionCosine::energy(const floatingpoint *coord,
             }
             coord2 = &coord2prime[0];
         }
-        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord3 = &coord[beadSet[n * i + 2]];
         midPointCoordinate(mp, coord1, coord2, position);
         X = sqrt(scalarProduct(mp, coord2, mp, coord2));
         D = sqrt(scalarProduct(mp, coord3, mp, coord3));
@@ -280,12 +280,12 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
 
         midPointCoordinateStretched(mp, coord1, f1, coord2, f2, pos[i], d);
         X = sqrt(scalarProductStretched(mp, vzero, coord2, f2, mp, vzero, coord2, f2, d));
@@ -353,8 +353,8 @@ void BranchingPositionCosine::forces(const floatingpoint *coord, floatingpoint *
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        coord2 = &coord[3 * beadSet[n * i + 1]];
+        coord1 = &coord[beadSet[n * i]];
+        coord2 = &coord[beadSet[n * i + 1]];
         //If the branching point is at the plus end of the cylinder, we end up with
         // singularities in energy and force expressions. To avoid it, we will create a
         // virtual plus end and use that to define vectors.
@@ -367,10 +367,10 @@ void BranchingPositionCosine::forces(const floatingpoint *coord, floatingpoint *
             }
             coord2 = &coord2prime[0];
         }
-        coord3 = &coord[3 * beadSet[n * i + 2]];
-        f1 = &f[3 * beadSet[n * i]];
-        f2 = &f[3 * beadSet[n * i + 1]];
-        f3 = &f[3 * beadSet[n * i + 2]];
+        coord3 = &coord[beadSet[n * i + 2]];
+        f1 = &f[beadSet[n * i]];
+        f2 = &f[beadSet[n * i + 1]];
+        f3 = &f[beadSet[n * i + 2]];
 
         midPointCoordinate(mp, coord1, coord2, position);
 /*        Method I

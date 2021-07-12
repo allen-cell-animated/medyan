@@ -1,4 +1,11 @@
-# 4.2.0 (Released TBD)
+# TBD (Released TBD)
+
+## Refactoring
+- Refactor the data structure in the energy minimization, such that it allows for non-coordinate degrees of freedom (9a02e0f6d).
+- Improve reference semantics for `Vec`-like structures as function arguments (27b296ad4).
+
+
+# 4.2.0 (Released 2021-07-11)
 
 ## Enhancements
 - Force components that reach >1e15 will trigger an alarm in addition to NaN and Inf values (39ce574).
@@ -8,7 +15,9 @@
 - `OPTIMOUT` macro offers more detailed timings of various parts of the code so the user has better understanding of the rate limiting steps in the simulation (873c814).
 - Optimized species searching when cloning reactions (52f4c47).
 - Optimized addition of dependent reactions (7b86dcd).
-- Eigenvalue computation can be optionally disabled with `EIGENTRACKING: OFF` while computing Hessian matrix (0c455b5).
+- Hessian analysis
+    - Eigenvalue computation can be optionally disabled with `EIGENTRACKING: OFF` while computing Hessian matrix (0c455b5).
+    - Add output to visualize all eigenmodes in Hessian tracking (16155a6).
 
 ## Bug fixes
 
@@ -23,6 +32,8 @@
     - Fixed initial force computation for combined-filament-stretching-and-bending force field, which is no longer enabled by default (99c9bd6).
     - Fixed incorrect forces for branching position cosine (4d523e7).
     - Fixed wrong constant used in branching bending energy computation (a68e859).
+    - Fixed incorrect volume exclusion force expressions (49dd9d1).
+    - Volume exclusion potential now considers cylinder equilibrium lengths (5d12d11).
 
 - Others
     - After chemistry, when the diffusing species copy numbers are set, now use `up()` and `down()` functions instead of only `setN()` to trigger crosschecks and signals (4b8a5e5).
@@ -32,6 +43,7 @@
     - The cloned reaction is fixed to be non-proto-compartment (e0e6fac).
     - Fixed incorrect filament nucleation when bubbles exist (78a8f8c).
     - Fixed incorrect creation of `FilamentCreationCallback` (7b77123).
+    - Fixed build and test workflows on GitHub Actions (bf63f6f).
 
 
 # 4.1.2 (Released 2020-06-01)

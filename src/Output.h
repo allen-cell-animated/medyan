@@ -383,6 +383,8 @@ class HessianMatrix : public Output {
     
     ForceFieldManager* _ffm;
     
+    int counter = 0;
+    
 public:
     HessianMatrix(string outputFileName, SubSystem* s, ForceFieldManager* ffm)
     
@@ -408,6 +410,36 @@ public:
     virtual void print(int snapshot);
 };
 
+class Projections : public Output {
+    
+    ForceFieldManager* _ffm;
+    
+public:
+    Projections(string outputFileName, SubSystem* s, ForceFieldManager* ffm)
+    
+    : Output(outputFileName, s), _ffm(ffm) {}
+    
+    ~Projections() {}
+    
+    virtual void print(int snapshot);
+};
+
+
+class CylinderEnergies : public Output {
+    
+    ForceFieldManager* _ffm;
+    
+public:
+    CylinderEnergies(string outputFileName, SubSystem* s, ForceFieldManager* ffm)
+    
+    : Output(outputFileName, s), _ffm(ffm) {}
+    
+    ~CylinderEnergies() {}
+    
+    virtual void print(int snapshot);
+};
+
+
 
 class Datadump : public Output {
 
@@ -425,6 +457,29 @@ public:
 public:
     virtual void print(int snapshot);
 };
+
+
+/// Print basic information about all Filament, Linker,
+/// MotorGhost, and BranchingPoint
+class RockingSnapshot : public Output {
+    
+    ForceFieldManager* _ffm;
+    
+    int k;
+    
+public:
+    RockingSnapshot(string outputFileName, SubSystem* s, ForceFieldManager *ffm, int k) : Output(outputFileName, s), _ffm(ffm), k(k){}
+    ~RockingSnapshot() {}
+    
+    deque<floatingpoint> savedPositions;
+    
+    virtual void print(int snapshot);
+    
+    void savePositions();
+    
+    void resetPositions();
+};
+
 
 
 //Temporary output for a test case of two filaments. deprecated.

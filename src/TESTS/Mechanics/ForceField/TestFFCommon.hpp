@@ -20,11 +20,21 @@ template< size_t dim, typename Float, typename Container >
 inline void fillNormalRand(mathfunc::VecArray< dim, Float, Container >& v, Float mean, Float stddev) {
     fillNormalRand(v.value.begin(), v.value.end(), mean, stddev);
 }
+template< typename Float >
+inline void fillNormalRand(std::vector< Float >& v, Float mean, Float stddev) {
+    fillNormalRand(v.begin(), v.end(), mean, stddev);
+}
 
 // Vector increment
 template< size_t dim, typename Float, typename Container >
 inline void vecInc(mathfunc::VecArray< dim, Float, Container >& v1, const mathfunc::VecArray< dim, Float, Container >& v2) {
     v1 += v2;
+}
+template< typename Float >
+inline void vecInc(std::vector< Float >& v1, const std::vector< Float >& v2) {
+    for(std::size_t i = 0; i < v1.size(); ++i) {
+        v1[i] += v2[i];
+    }
 }
 
 // Vector decrement
@@ -32,11 +42,25 @@ template< size_t dim, typename Float, typename Container >
 inline void vecDec(mathfunc::VecArray< dim, Float, Container >& v1, const mathfunc::VecArray< dim, Float, Container >& v2) {
     v1 -= v2;
 }
+template< typename Float >
+inline void vecDec(std::vector< Float >& v1, const std::vector< Float >& v2) {
+    for(std::size_t i = 0; i < v1.size(); ++i) {
+        v1[i] -= v2[i];
+    }
+}
 
 // Dot product
 template< size_t dim, typename Float, typename Container >
-inline Float vecDot(mathfunc::VecArray< dim, Float, Container >& v1, const mathfunc::VecArray< dim, Float, Container >& v2) {
+inline Float vecDot(const mathfunc::VecArray< dim, Float, Container >& v1, const mathfunc::VecArray< dim, Float, Container >& v2) {
     return mathfunc::dot(v1, v2);
+}
+template< typename Float >
+inline Float vecDot(const std::vector< Float >& v1, const std::vector< Float >& v2) {
+    Float res = 0;
+    for(std::size_t i = 0; i < v1.size(); ++i) {
+        res += v1[i] * v2[i];
+    }
+    return res;
 }
 
 // Compare equal

@@ -25,21 +25,30 @@ class Bead;
 class CylinderExclVolRepulsion {
     
 public:
-
-
-    floatingpoint energy(floatingpoint *coord, int *beadSet, floatingpoint *krep);
-
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint d);
     
-    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep);
+
+    floatingpoint energy(floatingpoint *coord, const int *beadSet, const floatingpoint *krep, const floatingpoint* eqLengths, int nint);
+
+    void forces(floatingpoint *coord, floatingpoint *f, const int *beadSet, const floatingpoint *krep, const floatingpoint* eqLengths, int nint);
+    
+    //returns vec of cyl cyl interaction energies if they are above  cylthresh
+    vector<tuple<floatingpoint, int, vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>>>> getCylEnergies(){ return cylEnergies;};
+    
+    void clearCylEnergies(){
+        cylEnergies.clear();
+    }
+    // c1 c2 c3 c4 energy
+    vector<tuple<floatingpoint, int, vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>>>> cylEnergies;
+    
+    vector<floatingpoint> uniqueTimes;
 
 private:
 
-	floatingpoint energyN(floatingpoint *coord, int *beadSet,
-	                      floatingpoint *krep, int intID, bool movebeads = false);
+	floatingpoint energyN(floatingpoint *coord, const int *beadSet,
+	                      const floatingpoint *krep, const floatingpoint* eqLengths, int intID, bool movebeads = false);
 
-	void forceN(floatingpoint *coord, floatingpoint *f, int *beadSet,
-	                      floatingpoint *krep, int intID, bool movebeads = false);
+	void forceN(floatingpoint *coord, floatingpoint *f, const int *beadSet,
+	                      const floatingpoint *krep, const floatingpoint* eqLengths, int intID, bool movebeads = false);
 
 	doubleprecision getenergyintegrand(doubleprecision& a, doubleprecision& b,
 			doubleprecision& c, doubleprecision& d, doubleprecision& e, doubleprecision& F,

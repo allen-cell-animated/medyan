@@ -46,7 +46,7 @@ void LinkerStretching<LStretchingInteractionType>::assignforcemags() {
 }
 
 template <class LStretchingInteractionType>
-void LinkerStretching<LStretchingInteractionType>::vectorize() {
+void LinkerStretching<LStretchingInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
     CUDAcommon::tmin.numinteractions[2] += Linker::getLinkers().size();
     beadSet = new int[n * Linker::getLinkers().size()];//stableindex of the bead
     kstr = new floatingpoint[Linker::getLinkers().size()];
@@ -59,10 +59,10 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
     //Filling stage
     for (auto l: Linker::getLinkers()) {
         /* Haoran 03/18/2019 l->getIndex() = i; */
-        beadSet[n * i] = l->getFirstCylinder()->getFirstBead()->getStableIndex();
-        beadSet[n * i + 1] = l->getFirstCylinder()->getSecondBead()->getStableIndex();
-        beadSet[n * i + 2] = l->getSecondCylinder()->getFirstBead()->getStableIndex();
-        beadSet[n * i + 3] = l->getSecondCylinder()->getSecondBead()->getStableIndex();
+        beadSet[n * i] = l->getFirstCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 1] = l->getFirstCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 2] = l->getSecondCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
+        beadSet[n * i + 3] = l->getSecondCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
 
         kstr[i] = l->getMLinker()->getStretchingConstant();
         eql[i] = l->getMLinker()->getEqLength();
@@ -281,7 +281,7 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(floatingpoint *
 ///Temlate specializations
 template floatingpoint LinkerStretching<LinkerStretchingHarmonic>::computeEnergy(floatingpoint *coord);
 template void LinkerStretching<LinkerStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void LinkerStretching<LinkerStretchingHarmonic>::vectorize();
+template void LinkerStretching<LinkerStretchingHarmonic>::vectorize(const FFCoordinateStartingIndex&);
 template void LinkerStretching<LinkerStretchingHarmonic>::deallocate();
 template void LinkerStretching<LinkerStretchingHarmonic>::assignforcemags();
 

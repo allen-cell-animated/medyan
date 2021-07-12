@@ -44,7 +44,17 @@ private:
     ///Array describing the constants in calculation
     int *beadSet;
     floatingpoint *krep;
+    std::vector<floatingpoint> vecEqLength;
+
     int nint = 0;
+    
+    virtual vector<tuple<floatingpoint, int, vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>>>> getCylEnergies() {
+        return _FFType.getCylEnergies();
+    };
+    
+    virtual void clearCylEnergies(){
+        _FFType.clearCylEnergies();
+    }
 #ifdef CUDAACCL
     int * gpu_beadSet = NULL;
     floatingpoint * gpu_krep = NULL;
@@ -57,7 +67,7 @@ public:
     ///Array describing indexed set of interactions
     ///For volume, this is a 4-bead potential
     const static int n = 4;
-    static int numInteractions;
+    int numInteractions = 0;
 
     ///Constructor
     CylinderExclVolume() {
@@ -72,7 +82,7 @@ public:
 #endif
     }
 
-    virtual void vectorize();
+    virtual void vectorize(const FFCoordinateStartingIndex&) override;
     virtual void deallocate();
     
     virtual floatingpoint computeEnergy(floatingpoint *coord) override;

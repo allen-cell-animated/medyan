@@ -15,6 +15,8 @@
 #define MEDYAN_CGMethod_h
 
 #include <cmath>
+#include <utility> // move
+#include <vector>
 
 #include "common.h"
 #include "CUDAcommon.h"
@@ -35,20 +37,26 @@ class Bead;
  */
 class CGMethod {
 
+public:
+    ///< Data vectors for calculation
+    //-------------------------------------------------------------------------
+    // The vectorized data is separated into independent variable section and dependent variable section. The independent variables occupy indices { 0, 1, ..., numDof-1 }, while the dependent variables occupy the rest of the indices.
+    // Before each energy/force computation, the dependent coordinates should be updated from independent variables.
+    // After each force computation, the forces accumulated on dependent variables should be passed onto the independent variables using the chain rule.
 
+    // The number of independent variables (ie degree of freedom). It is not necessarily the size of the vectors, because dependent variables may be stored as well.
+    int                          numDof = 0;
+    std::vector< floatingpoint > coord;  // All coordinates
+    std::vector< floatingpoint > coordLineSearch; // Temporary coords used during line search
+    std::vector< floatingpoint > coordMinE; // Temporary coords used to record position for minimumE
+
+    std::vector< floatingpoint > force; // Negative gradient
+    std::vector< floatingpoint > forcePrev; // Previous force
+    std::vector< floatingpoint > searchDir; // The current search direction in conjugate gradient method
+    std::vector< floatingpoint > forceTol; // The force tolerance (in each dimension); must be positive
 
 protected:
     chrono::high_resolution_clock::time_point tbegin, tend;
-
-    ///< Data vectors for calculation
-    [[deprecated]] floatingpoint *coord;  ///<bead coordinates (length 3*N)
-    [[deprecated]] floatingpoint *coordlineSearch; ///coords used during line search
-
-    [[deprecated]] floatingpoint *force=NULL; ///< bead forces (length 3*N)
-    [[deprecated]] floatingpoint *forceAux=NULL; ///< auxiliary force calculations (length 3*N)
-    [[deprecated]] floatingpoint *forceAuxPrev=NULL; ///<auxiliary force calculation previously (length
-    // 3*N)
-//    cylinder* cylindervec;
 
 //Gradients
 	floatingpoint FADotFA = 0.0;
@@ -155,14 +163,30 @@ protected:
     bool *h_stop, sconvergencecheck;
     /// For use in minimization
 
+    void calcCoordLineSearch(floatingpoint d);
 
-    double allFDotF();
-	double allFADotFA();
-	double allFADotFAP();
-	double allFDotFA();
-    
+    double searchDirDotSearchDir() const;
+    double forceDotForce() const;
+    double forceDotForcePrev() const;
+    double searchDirDotForce() const;
+
+    // Check whether the force is no larger than tolerance in every dimension
+    bool forceBelowTolerance() const {
+        for(std::size_t i = 0; i < force.size(); ++i) {
+            if(std::abs(force[i]) > forceTol[i]) return false;
+        }
+        return true;
+    }
+    // Check whether the force is no larger than a relatex tolerance in every dimension
+    bool forceBelowRelaxedTolerance(floatingpoint factor) const {
+        for(std::size_t i = 0; i < force.size(); ++i) {
+            if(std::abs(force[i]) > factor * forceTol[i]) return false;
+        }
+        return true;
+    }
+
     /// Get the max force in the system
-    floatingpoint maxF();
+    floatingpoint maxF() const;
     
     /// Get bead with the max force in the system
     Bead* maxBead();
@@ -173,14 +197,14 @@ protected:
     void endMinimization();
 
     /// Move beads in search direction by d
-    void moveBeads(floatingpoint d);
+    void moveAlongSearchDir(floatingpoint d);
 
     /// shift the gradient by d
-    void shiftGradient(double d);
+    void shiftSearchDir(double d);
 
     void setgradients(){
-        FADotFA = allFADotFA();
-	    FADotFAP = allFADotFAP();
+        FADotFA = forceDotForce();
+	    FADotFAP = forceDotForcePrev();
     }
     //@}
 
@@ -263,31 +287,25 @@ protected:
     		minimumE = TotalEnergy;
     		maxForcebackup = maxForce;
     		//take backup of coordinates.
-		    const std::size_t num = Bead::getDbData().coords.size_raw();
-		    Bead::getDbData().coords_minE.resize(num);
-		    for(size_t i = 0; i < num; ++i) {
-			    Bead::getDbData().coords_minE.value[i] = Bead::getDbData().coords.value[i];
-		    }
+            coordMinE = coord;
     	}
     }
 
     void copybackupcoordinates(){
 
-    	if(Bead::getDbData().coords_minE.size()) {
+    	if(coordMinE.size()) {
 		    cout<<"Copying coordinates with the lowest energy during minimization "<<endl;
 		    cout<<"Energy = "<<minimumE<<" pN.nm"<<endl;
 		    cout<<"MaxForce = "<<maxForcebackup<<" pN "<<endl;
-		    const std::size_t num = Bead::getDbData().coords.size_raw();
-		    for (size_t i = 0; i < num; ++i) {
-			    Bead::getDbData().coords.value[i] = Bead::getDbData().coords_minE.value[i];
-		    }
+            coord = std::move(coordMinE);
+            coordMinE.clear();
 	    }
     }
 
     //@}
 
     /// Print forces on all beads
-    void printForces();
+    [[deprecated]] void printForces();
     
 public:
     [[deprecated]] static long N; ///< Number of beads in the system, set before each minimization

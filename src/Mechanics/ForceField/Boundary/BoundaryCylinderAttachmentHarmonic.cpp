@@ -34,7 +34,7 @@ floatingpoint BoundaryCylinderAttachmentHarmonic::energy(
 
     for(int i = 0; i < nint; i += 1) {
 
-        const auto coord1 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[n * i]);
+        const auto coord1 = makeRefVec< 3 >(coord + beadSet[n * i]);
 
         const auto distsq = distance2(coord1, pins[i]);
         U_i = 0.5 * kattr[i] * distsq;
@@ -67,10 +67,10 @@ floatingpoint BoundaryCylinderAttachmentHarmonic::energy(floatingpoint *coord, f
 
     for(int i = 0; i < nint; i += 1) {
 
-        coord1 = &coord[3 * beadSet[n * i]];
-        force1 = &f[3 * beadSet[n * i]];
+        coord1 = &coord[beadSet[n * i]];
+        force1 = &f[beadSet[n * i]];
 
-        pin1 = &pins[3 * beadSet[n * i]];
+        pin1 = &pins[beadSet[n * i]];
 
         dist = twoPointDistanceStretched(coord1, force1, pin1, zero, d);
         U_i = 0.5 * kattr[i] * dist * dist;
@@ -100,8 +100,8 @@ void BoundaryCylinderAttachmentHarmonic::forces(
 
     for(int i = 0; i < nint; i += 1) {
 
-        const auto coord1 = makeRefVec< 3, floatingpoint >(coord + 3 * beadSet[n * i]);
-        auto       force1 = makeRefVec< 3, floatingpoint >(f     + 3 * beadSet[n * i]);
+        const auto coord1 = makeRefVec< 3 >(coord + beadSet[n * i]);
+        auto       force1 = makeRefVec< 3 >(f     + beadSet[n * i]);
 
         force1 += kattr[i] * (pins[i] - coord1);
     }

@@ -60,6 +60,7 @@ private:
 
     vector<std::unique_ptr< Output >> _outputs; ///< Vector of specified outputs
     vector<std::unique_ptr< Output >> _outputdump; ///<Vector of outputs that correspond to a datadump
+    RockingSnapshot* _rSnapShot;
 
     floatingpoint _runTime;          ///< Total desired runtime for simulation
 

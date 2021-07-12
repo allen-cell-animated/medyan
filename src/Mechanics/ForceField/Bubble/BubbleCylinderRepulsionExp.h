@@ -15,9 +15,9 @@
 #define MEDYAN_BubbleCylinderRepulsionExp_h
 
 #include <vector>
-#include <cmath>
 
 #include "common.h"
+#include "MathFunctions.h"
 
 //FORWARD DECLARATIONS
 class Bead;
@@ -29,16 +29,30 @@ public:
     floatingpoint energy(floatingpoint *coord, int *beadSet, int *bubbleSet,
                          floatingpoint *krep, floatingpoint *slen, floatingpoint *radius, int *nneighbors);
     
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet, int *bubbleSet,
+    [[deprecated]] floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet, int *bubbleSet,
                          floatingpoint *krep, floatingpoint *slen, floatingpoint *radius, int *nnneighbors, floatingpoint d);
     
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, int *bubbleSet,
                 floatingpoint *krep, floatingpoint *slen, floatingpoint *radius, int *nneighbors);
 //    void forcesAux(Bead*, Bead*, double, double, double);
 
-	floatingpoint loadForces(Bead* b1, Bead* b2, floatingpoint radius,
-	                                                     floatingpoint kRep,
-	                                                     floatingpoint screenLength) const;
+    template< typename VT1, typename VT2 >
+	floatingpoint loadForces(
+        const VT1&    coord1,
+        const VT2&    coord2,
+        floatingpoint radius,
+        floatingpoint kRep,
+        floatingpoint screenLength
+    ) const {
+
+        const auto dist = mathfunc::distance(coord1, coord2);
+
+        floatingpoint effd = dist - radius;
+
+        floatingpoint R = -effd / screenLength;
+        return kRep * exp(R) / screenLength;
+
+    }
 };
 
 #endif

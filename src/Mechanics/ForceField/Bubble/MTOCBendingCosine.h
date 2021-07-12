@@ -25,7 +25,7 @@ class MTOCBendingCosine {
 public:
     floatingpoint energy(floatingpoint *coord, int *beadSet,
                   floatingpoint *kbend, floatingpoint);
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    [[deprecated]] floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                   floatingpoint *kbend, floatingpoint, floatingpoint);
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                 floatingpoint *kbend, floatingpoint);

@@ -16,6 +16,7 @@
 
 #include "HybridNeighborListImpl.h"
 #include "common.h"
+#include "Mechanics/ForceField/Types.hpp"
 
 //FORWARD DECLARATIONS
 class NeighborList;
@@ -35,7 +36,7 @@ public:
     //@}
 
     ///Vectorize the bead interactions for minimization
-    virtual void vectorize() = 0;
+    virtual void vectorize(const FFCoordinateStartingIndex&) = 0;
     ///Deallocate the vectorized data
     virtual void deallocate() = 0;
 
@@ -50,6 +51,10 @@ public:
     /// Get the name of this interaction
     virtual const string getName() = 0;
 
+    virtual  vector<tuple<floatingpoint, int, vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>>>> getCylEnergies() = 0;
+    
+    virtual void clearCylEnergies() = 0;
+    
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     //setter to store HNeighborList pointer.
     virtual void setHNeighborList(HybridCylinderCylinderNL* Hnl) = 0;

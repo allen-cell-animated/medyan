@@ -480,9 +480,9 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 				auto ccn = cn->getCCylinder();
 				int k = 0;
 
-				for (auto it = SysParams::Chemistry().bindingSites[_nfilamentType].begin();
-				     it < SysParams::Chemistry().bindingSites[_nfilamentType].end();
-				     it=it+bindingsitestep) {
+				for (int itI = 0; itI < SysParams::Chemistry().bindingSites[_nfilamentType].size(); itI += bindingsitestep) {
+
+					auto it = SysParams::Chemistry().bindingSites[_nfilamentType].begin() + itI;
 
 					bool filstatecheckn = true;
 					if(cn->isMinusEnd()) {
@@ -782,7 +782,6 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
     floatingpoint maxveca[2];
     //vector of squared cylinder length
     floatingpoint* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
-    const auto& coords = Bead::getDbDataConst().coords;
     int Ncylincmp = _compartment->getCylinders().size();
     int* cindexvec = new int[Ncylincmp]; //stores cindex of cylinders in this compartment
     vector<vector<int>> ncindices; //cindices of cylinders in neighbor list.
@@ -826,8 +825,8 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
             int cindex = cindexvec[i];
             short complimentaryfID;
             const auto& c = cylinderInfoData[cindex];
-            const auto& x1 = coords[c.beadIndices[0]];
-            const auto& x2 = coords[c.beadIndices[1]];
+            const auto& x1 = Bead::getStableElement(c.beadIndices[0])->coord;
+            const auto& x2 = Bead::getStableElement(c.beadIndices[1])->coord;
             floatingpoint X1X2[3] = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
             int *cnindices = ncindices[i].data();
 
@@ -846,8 +845,8 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
                 if (c.filamentId == cn.filamentId) continue;
                 if(c.type != complimentaryfID) continue;
 
-                const auto& x3 = coords[cn.beadIndices[0]];
-                const auto& x4 = coords[cn.beadIndices[1]];
+                const auto& x3 = Bead::getStableElement(cn.beadIndices[0])->coord;
+                const auto& x4 = Bead::getStableElement(cn.beadIndices[1])->coord;
                 floatingpoint X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
                 floatingpoint X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
                 floatingpoint X1X3squared = sqmagnitude(X1X3);
