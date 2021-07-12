@@ -1,8 +1,11 @@
 # TBD (Released TBD)
 
+## New features
+- Added simulation configuration generator, and enhanced input file parser to allow structured input using S-Expressions (4d71a27).
+
 ## Refactoring
-- Refactor the data structure in the energy minimization, such that it allows for non-coordinate degrees of freedom (9a02e0f6d).
-- Improve reference semantics for `Vec`-like structures as function arguments (27b296ad4).
+- Refactored the data structure in the energy minimization, such that it allows for non-coordinate degrees of freedom (9a02e0f6d).
+- Improved reference semantics for `Vec`-like structures as function arguments (27b296ad4).
 
 
 # 4.2.0 (Released 2021-07-11)
