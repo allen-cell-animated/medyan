@@ -49,6 +49,7 @@ public:
     
     /// Copying not allowed
     ReactionPtrContainerVector(const ReactionPtrContainerVector &) = delete;
+    ReactionPtrContainerVector(ReactionPtrContainerVector &&)      = default;
     
     /// Assignment not allowed
     ReactionPtrContainerVector& operator=(ReactionPtrContainerVector &) = delete;

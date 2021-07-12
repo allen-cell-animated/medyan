@@ -73,9 +73,11 @@ public:
     
     /// Copying is not allowed
     SpeciesPtrContainerVector(const SpeciesPtrContainerVector &) = delete;
+    SpeciesPtrContainerVector(SpeciesPtrContainerVector &&)      = default;
     
     /// The equality operator is not allowed
     SpeciesPtrContainerVector& operator=(SpeciesPtrContainerVector &) = delete;
+    SpeciesPtrContainerVector& operator=(SpeciesPtrContainerVector &&) = default;
     
     /// Empty the container. All memories are freed.
     virtual void clear() override {_species.clear();}
