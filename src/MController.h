@@ -21,7 +21,6 @@
 #include "Minimizer.h"
 #include "ForceFieldManager.h"
 
-#include "Parser.h"
 #include "Structure/SubSystem.h"
 #include "Util/Io/Log.hpp"
 
@@ -47,10 +46,10 @@ private:
     SubSystem* _subSystem; ///< A pointer to the subsystem
 
     /// Initialize the force-fields used in the simualtion
-    void initializeFF (MechanicsFFType& forceFields);
+    void initializeFF (MechParams::MechanicsFFType& forceFields);
     
     /// Initialize the minimization algorithms used in the simulation
-    void initializeMinAlgorithms (MechanicsAlgorithm& Minimizers);
+    void initializeMinAlgorithms (MechParams::MechanicsAlgorithm& Minimizers);
 
 public:
     /// Constructor which sets a subsystem pointer
@@ -76,7 +75,7 @@ public:
     }
     
     /// Initialze the force fields and minimizers used
-    void initialize(MechanicsFFType forceFields, MechanicsAlgorithm Minimizers) {
+    void initialize(MechParams::MechanicsFFType forceFields, MechParams::MechanicsAlgorithm Minimizers) {
         initializeFF(forceFields);
         initializeMinAlgorithms(Minimizers);
     }

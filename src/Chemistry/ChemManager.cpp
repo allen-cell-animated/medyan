@@ -2211,7 +2211,7 @@ void ChemManager::updateCopyNumbers() {
                 //If user requests to use different copy numbers mentioned in chem file
                 // during restart in place of those in restart file, do not do anything
                 // in restart phase.
-                if(SysParams::USECHEMCOPYNUM && SysParams::RUNSTATE == false){
+                if(SysParams::filamentSetup.USECHEMCOPYNUM && SysParams::RUNSTATE == false){
                     species->updateReactantPropensities();
                     copyNumber = 0;
                 }

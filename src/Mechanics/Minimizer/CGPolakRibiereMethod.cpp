@@ -1188,7 +1188,7 @@ MinimizationResult PolakRibiere::minimize(
 
     // compute the Hessian matrix at this point if the feature is enabled
     if(SysParams::Mechanics().hessTracking){
-        if(FFM.hessCounter % SysParams::Mechanics().hessSkip == 0 || tau() > SysParams::Chemistry().runTime){
+        if(FFM.hessCounter % SysParams::Mechanics().hessSkip == 0 || tau() > SysParams::Chemistry().chemistryAlgorithm.runTime){
             
             if(tau() > 0.0){
                 FFM.computeProjections(si, coord);

@@ -27,7 +27,7 @@ file(GLOB_RECURSE src_list LIST_DIRECTORIES true CONFIGURE_DEPENDS "${src_dir}/*
 #######################################
 
 # C++ standard
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Compiler flags
@@ -36,7 +36,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(MSVC)
-    set(CMAKE_CXX_FLAGS "/arch:AVX2 /MP /EHsc")
+    set(CMAKE_CXX_FLAGS "/arch:AVX2 /MP /EHsc /bigobj")
 else()
     set(CMAKE_CXX_FLAGS "-Wall -ffast-math -fno-finite-math-only -mtune=native -march=native")
     set(CMAKE_CXX_FLAGS_DEBUG "-g")
@@ -117,6 +117,11 @@ else()
     set(THREADS_PREFER_PTHREAD_FLAG ON)
     find_package(Threads REQUIRED)
     target_link_libraries(medyan PRIVATE Threads::Threads)
+
+    # GCC <9 requires linking to stdc++fs
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        target_link_libraries(medyan PRIVATE stdc++fs)
+    endif()
 endif()
 
 if(MEDYAN_ADDITIONAL_LINK_DIRS)
