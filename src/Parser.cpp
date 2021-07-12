@@ -1630,63 +1630,6 @@ void SystemParser::initMechParser() {
             }
             return res;
         }
-        // TODO
-        // else if(line.find("MEM_STRETCHING_FF_TYPE") != string::npos) {
-        //     vector<string> lineVector = split<string>(line);
-        //     if(lineVector.size() > 2) {
-        //         cout << "There was an error parsing input file at membrane stretching FF type. Exiting."
-        //              << endl;
-        //         exit(EXIT_FAILURE);
-        //     }
-        //     else if(lineVector.size() == 2) {
-        //         MType.MemStretchingFFType = lineVector[1];
-        //     }
-        // }
-        // else if(line.find("MEM_TENSION_TYPE") != string::npos) {
-        //     vector<string> lineVector = split<string>(line);
-        //     if(lineVector.size() > 2) {
-        //         cout << "There was an error parsing input file at membrane stretching accumulation type. Exiting."
-        //              << endl;
-        //         exit(EXIT_FAILURE);
-        //     }
-        //     else if(lineVector.size() == 2) {
-        //         MType.memTensionFFType = lineVector[1];
-        //     }
-        // }
-        // else if(line.find("MEM_BENDING_FF_TYPE") != string::npos) {
-        //     vector<string> lineVector = split<string>(line);
-        //     if(lineVector.size() > 2) {
-        //         cout << "There was an error parsing input file at membrane bending FF type. Exiting."
-        //              << endl;
-        //         exit(EXIT_FAILURE);
-        //     }
-        //     else if(lineVector.size() == 2) {
-        //         MType.MemBendingFFType = lineVector[1];
-        //     }
-        // }
-        // else if(line.find("MEM_BEAD_VOLUME_FF_TYPE") != string::npos) {
-        //     vector<string> lineVector = split<string>(line);
-        //     if(lineVector.size() > 2) {
-        //         cout << "There was an error parsing input file at membrane cylinder volume FF type. Exiting."
-        //              << endl;
-        //         exit(EXIT_FAILURE);
-        //     }
-        //     else if(lineVector.size() == 2) {
-        //         MType.MemBeadVolumeFFType = lineVector[1];
-        //     }
-        // }
-        // else if(line.find("VOLUME_CONSERVATION_FF_TYPE") != string::npos) {
-        //     vector<string> lineVector = split<string>(line);
-        //     if(lineVector.size() > 2) {
-        //         cout << "There was an error parsing input file at membrane cylinder volume FF type. Exiting."
-        //             << endl;
-        //         exit(EXIT_FAILURE);
-        //     }
-        //     else if(lineVector.size() == 2) {
-        //         MType.volumeConservationFFType = lineVector[1];
-        //     }
-        // }
-        
     );
     mechParser.addStringArgsWithAliases(
         "EIGENTRACKING", { "EIGENTRACKING:" },
@@ -1869,41 +1812,6 @@ void SystemParser::initBoundParser() {
     boundParser.addComment("# Repulsion: Popov et al, 2016, PLoS Comp Biol");
     boundParser.addEmptyLine();
 
-    // TODO
-        // else if (line.find("MEM_BEAD_VOLUME_K") != string::npos) {
-            
-        //     vector<string> lineVector = split<string>(line);
-        //     if (lineVector.size() >= 2) {
-        //         for(int i = 1; i < lineVector.size(); i++)
-        //             MParams.memBeadVolumeK = stod(lineVector[i]);
-        //     }
-        // }
-        // else if (line.find("MEM_BEAD_VOLUME_CUTOFF") != string::npos) {
-            
-        //     if (line.find("MEM_BEAD_VOLUME_CUTOFF_MECH") != string::npos) {
-            
-        //         vector<string> lineVector = split<string>(line);
-        //         if(lineVector.size() != 2) {
-        //             LOG(ERROR) << "Error reading membrane-bead volume cutoff for mech.";
-        //             throw std::runtime_error("Error reading volume cutoff");
-        //         }
-        //         else {
-        //             MParams.MemBeadVolumeCutoffMech = std::stod(lineVector[1]);
-        //         }
-        //     }
-        //     else {
-        //         vector<string> lineVector = split<string>(line);
-        //         if(lineVector.size() != 2) {
-        //             LOG(ERROR) << "Error reading membrane-bead volume cutoff.";
-        //             throw std::runtime_error("Error reading volume cutoff");
-        //         }
-        //         else {
-        //             MParams.MemBeadVolumeCutoff = std::stod(lineVector[1]);
-        //         }
-        //     }
-
-        // }
-        
     boundParser.addStringArgsWithAliases(
         "BOUNDARYCUTOFF", { "BOUNDARYCUTOFF:" },
         [] (SimulConfig& sc, const vector<string>& lineVector) {
