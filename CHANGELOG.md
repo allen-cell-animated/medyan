@@ -1,4 +1,4 @@
-# TBD (Released TBD)
+# 4.3.0 (Released 2021-07-12)
 
 ## New features
 - Dropped support for pre C++17 compilers.
