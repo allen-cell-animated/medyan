@@ -36,7 +36,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(MSVC)
-    set(CMAKE_CXX_FLAGS "/arch:AVX2 /MP /EHsc")
+    set(CMAKE_CXX_FLAGS "/arch:AVX2 /MP /EHsc /bigobj")
 else()
     set(CMAKE_CXX_FLAGS "-Wall -ffast-math -fno-finite-math-only -mtune=native -march=native")
     set(CMAKE_CXX_FLAGS_DEBUG "-g")

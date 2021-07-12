@@ -491,7 +491,7 @@ void SystemParser::chemPostProcessing(SimulConfig& sc) const {
     if(np2 == sc.chemParams.maxbindingsitespercylinder)
         np2 *= 2;
 
-    cout<<"np2 "<<np2<<" shift "<<CParams.shiftbybits<<endl;
+    cout<<"np2 "<<np2<<" shift "<< sc.chemParams.shiftbybits<<endl;
 	sc.chemParams.shiftbybits = log2(np2);
     sc.chemParams.maxStableIndex = numeric_limits<uint32_t>::max()/sc.chemParams.shiftbybits -1;
 
