@@ -181,12 +181,13 @@ if(NOT "${MEDYAN_NO_GUI}" STREQUAL "true")
     find_package(glad CONFIG REQUIRED)
     target_link_libraries(medyan PRIVATE glad::glad)
 
-    # glm
-    find_package(glm CONFIG REQUIRED)
-
     # imgui
     find_package(imgui CONFIG REQUIRED)
     target_link_libraries(medyan PRIVATE imgui::imgui)
+
+    # stb
+    find_path(STB_INCLUDE_DIRS "stb.h")
+    target_include_directories(medyan PRIVATE ${STB_INCLUDE_DIRS})
 
     # native file dialog
     find_package(unofficial-nativefiledialog CONFIG REQUIRED)
