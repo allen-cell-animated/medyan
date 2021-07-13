@@ -1585,6 +1585,7 @@ void SystemParser::initMechParser() {
     mechParser.addSingleArg("membrane-stretching-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.memStretchingFFType; });
     mechParser.addSingleArg("membrane-tension-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.memTensionFFType; });
     mechParser.addSingleArg("membrane-bending-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.memBendingFFType; });
+    mechParser.addSingleArg("volume-conservation-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.volumeConservationFFType; });
     mechParser.addSingleArg("triangle-bead-volume-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.triangleBeadVolumeFFType; });
 
     mechParser.addSingleArg("triangle-bead-volume-k", [](auto&& sc) -> auto& { return sc.mechParams.triangleBeadVolume.k; });
