@@ -497,8 +497,8 @@ void CGMethod::printForces()
     cout << "End of Print Forces" << endl;
 }
 
-void CGMethod::startMinimization() {
-    //COPY BEAD DATA
+void CGMethod::startMinimization(floatingpoint gradTol) {
+
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();

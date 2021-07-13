@@ -29,7 +29,7 @@ private:
     static uniform_int_distribution<uint64_t> _uint64_t_distr;
 
 public:
-    static mt19937 eng;
+    static std::mt19937 eng;
     #ifdef DEBUGCONSTANTSEED
     static int intcounter;
     static int floatcounter;

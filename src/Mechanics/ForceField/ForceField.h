@@ -62,7 +62,10 @@ public:
     /// In the case of a calculation error, print the culprit of the FF error.
     /// Typically, will just print the Trackable element where the error came from.
     virtual void whoIsCulprit() = 0;
-    
+
+    // Force buffer accessor
+    const auto& getForceBuffer() const { return forceBuffer_; }
+
     /// Get all neighbor lists associated with a ForceField
     virtual vector<NeighborList*> getNeighborLists() = 0;
 
@@ -71,6 +74,9 @@ public:
 
     //get interaction names
     virtual vector<string> getinteractionnames() = 0;
+
+protected:
+    std::vector< floatingpoint > forceBuffer_;
 };
 
 #endif

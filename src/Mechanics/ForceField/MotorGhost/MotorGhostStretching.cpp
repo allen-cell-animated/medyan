@@ -296,7 +296,6 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(floatingpoi
 #endif
 }
 
-
 ///Temlate specializations
 template floatingpoint MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(floatingpoint *coord);
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);

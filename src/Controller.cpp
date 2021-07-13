@@ -13,6 +13,7 @@
 
 #include <random>
 #include <chrono>
+#include <unordered_set>
 
 #include "Controller.h"
 
@@ -33,6 +34,10 @@
 #include "BranchingPoint.h"
 #include "Bubble.h"
 #include "MTOC.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/MembraneHierarchy.hpp"
+#include "Structure/SurfaceMesh/MembraneRegion.hpp"
+#include "Structure/SurfaceMesh/SurfaceMeshGeneratorPreset.hpp"
 #include "AFM.h"
 #include "ChemManager.h"
 
@@ -41,9 +46,10 @@
 #include "MController.h"
 #include "Cylinder.h"
 #include <unordered_map>
-#include     <tuple>
+#include <tuple>
 #include <vector>
 #include <algorithm>
+#include "Rand.h"
 #include "ChemManager.h"
 
 #ifdef CUDAACCL
@@ -54,6 +60,62 @@
 
 using namespace mathfunc;
 using namespace medyan;
+
+namespace {
+
+void pinMembraneBorderVertices() {
+
+    LOG(ERROR) << "Membrane vertex pinning is deprecated and should not be used.";
+    return;
+
+    // Only pin once
+    static bool pinned = false;
+    if(pinned) return;
+
+    for(auto m : Membrane::getMembranes()) {
+        auto& mesh = m->getMesh();
+        for(const auto& border : mesh.getBorders()) {
+            mesh.forEachHalfEdgeInPolygon(border, [&](auto hei) {
+                const auto vi = mesh.target(hei);
+
+            });
+        }
+    }
+
+    pinned = true;
+} // pinMembraneBorderVertices()
+
+// F is a callable, which takes a coordinate and returns whether it is in the region
+template< typename F >
+void pinInitialFilamentWith(F&& inRegion) {
+    // Only pin once
+    static bool pinned = false;
+    if(pinned) return;
+
+    for(auto b : Bead::getBeads()) {
+        if(inRegion(b->coordinate())) {
+            b->pinnedPosition = b->vcoordinate();
+            b->addAsPinned();
+        }
+    }
+
+    pinned = true;
+}
+
+} // namespace
+
+inline void remeshMembrane(const adaptive_mesh::MembraneMeshAdapter& adapter, Membrane& membrane) {
+    // Requires _meshAdapter to be already initialized
+    adapter.adapt(membrane.getMesh());
+
+    // Update necessary geometry for the system
+    membrane.updateGeometryValueForSystem();
+
+    for(auto& t : membrane.getMesh().getTriangles()) {
+        t.attr.triangle->updatePosition();
+    }
+}
+
 
 Controller::Controller() :
     _mController(&_subSystem),
@@ -111,6 +173,7 @@ void Controller::initialize(string inputFile,
     //add br force out and local diffussing species concentration
     _outputs.push_back(make_unique<BRForces>(_outputDirectory + "repulsion.traj", &_subSystem));
     //_outputs.push_back(make_unique<PinForces>(_outputDirectory + "pinforce.traj", &_subSystem));
+    //_outputs.push_back(make_unique<IndicesOutput>(_outputDirectory + "indices.traj", &_subSystem));
 
     //CALLING ALL CONTROLLERS TO INITIALIZE
     //Initialize geometry controller
@@ -136,6 +199,11 @@ void Controller::initialize(string inputFile,
         simulConfig.mechParams.mechanicsFFType,
         simulConfig.mechParams.mechanicsAlgorithm);
     LOG(INFO) << "Done.";
+
+    // Force output
+    if(SysParams::simulParams().trackForces) {
+        _outputs.push_back(make_unique<ForcesOutput>(_outputDirectory + "forces-output.traj", &_subSystem, _mController.getForceFieldManager()));
+    }
 
 #endif
 
@@ -299,6 +367,31 @@ void Controller::initialize(string inputFile,
         exit(EXIT_FAILURE);
 #endif
 
+    // Initialize the membrane mesh adapter
+    _meshAdapter = std::make_unique< adaptive_mesh::MembraneMeshAdapter >(
+        typename adaptive_mesh::MembraneMeshAdapter::Parameter {
+            // Topology
+            adaptive_mesh::surface_mesh_min_degree,
+            adaptive_mesh::surface_mesh_max_degree,
+            adaptive_mesh::edge_flip_min_dot_normal,
+            adaptive_mesh::edge_collapse_min_quality_improvement,
+            adaptive_mesh::edge_collapse_min_dot_normal,
+            // Relocation
+            adaptive_mesh::vertex_relaxation_epsilon,
+            adaptive_mesh::vertex_relaxation_dt,
+            adaptive_mesh::vertex_relocation_max_iter_relocation,
+            adaptive_mesh::vertex_relocation_max_iter_tot,
+            // Size diffusion
+            adaptive_mesh::size_measure_curvature_resolution,
+            adaptive_mesh::size_measure_max,
+            adaptive_mesh::size_measure_diffuse_iter,
+            // Main loop
+            adaptive_mesh::mesh_adaptation_topology_max_iter,
+            adaptive_mesh::mesh_adaptation_soft_max_iter,
+            adaptive_mesh::mesh_adaptation_hard_max_iter
+        }
+    );
+    
     LOG(INFO) << "Done.";
 
     //setup initial network configuration
@@ -343,10 +436,146 @@ void Controller::setupInitialNetwork(SimulConfig& simulConfig) {
     }
     cout << "Done. " << bubbles.size() << " bubbles created." << endl;
 
+    /**************************************************************************
+    Now starting to add the membrane into the network.
+    **************************************************************************/
+    const auto& membraneSettings = simulConfig.membraneSettings;
+    
+    cout << "---" << endl;
+    cout << "Initializing membranes...";
+
+    int numMembranes = 0;
+    const auto addMembrane = [this, &numMembranes](const MembraneSetup& memSetup, const MembraneParser::MembraneInfo& memData) {
+        auto newMembrane = _subSystem.addTrackable<Membrane>(
+            &_subSystem,
+            memSetup,
+            memData.vertexCoordinateList,
+            memData.triangleVertexIndexList
+        );
+
+        // Optimize the mesh for membrane
+        remeshMembrane(*_meshAdapter, *newMembrane);
+
+        // Set up mechanics
+        newMembrane->initMechanicParams(memSetup);
+
+        ++numMembranes;
+    };
+
+    for(auto& memSetup : membraneSettings.setupVec) {
+
+        for(auto& initParams : memSetup.meshParam) {
+            if(initParams.size() == 2 && initParams[0] == "file") {
+                // The input looks like this: init file path/to/file
+                // Read membrane mesh information from an external file.
+                auto memPath = _inputDirectory / std::filesystem::path(initParams[1]);
+                std::ifstream ifs(memPath);
+                if (!ifs.is_open()) {
+                    LOG(ERROR) << "Cannot open membrane file " << memPath;
+                    throw std::runtime_error("Cannot open membrane file.");
+                }
+
+                const auto memDataVec = MembraneParser::readMembranes(ifs);
+
+                for(auto& memData : memDataVec) {
+                    addMembrane(memSetup, memData);
+                }
+            }
+            else {
+                // Forward the input to the membrane mesh initializer
+                const auto newMesh = mesh_gen::generateMeshViaParams< floatingpoint >(initParams);
+
+                addMembrane(memSetup, {newMesh.vertexCoordinateList, newMesh.triangleList});
+            }
+        }
+    }
+
+    LOG(INFO) << "Done. " << numMembranes << " membranes created." << endl;
+
+    // Create a region inside the membrane
+    LOG(INFO) << "Creating membrane regions...";
+    _regionInMembrane = (
+        numMembranes == 0 ?
+        make_unique<MembraneRegion<Membrane>>(_subSystem.getBoundary()) :
+        MembraneRegion<Membrane>::makeByChildren(MembraneHierarchy< Membrane >::root())
+    );
+    _subSystem.setRegionInMembrane(_regionInMembrane.get());
+
+
+    LOG(INFO) << "Adding surface chemistry...";
+    {
+        MembraneMeshChemistryInfo memChemInfo {
+            // names
+            {"mem-diffu-test-a", "mem-diffu-test-b"},
+            // diffusion
+            { { 0, 1.0 }, { 1, 0.5 } },
+            // internal reactions
+            {
+                { {}, {0}, 0.055 },
+                { {}, {1}, 0.062 },
+                { {0, 1, 1}, {1, 1, 1}, 1.0 }
+            }
+        };
+        for(auto m : Membrane::getMembranes()) {
+            m->setChemistry(memChemInfo);
+        }
+    }
+
+    LOG(INFO) << "Adjusting compartments by membranes...";
+
+    // Deactivate all the compartments outside membrane, and mark boundaries as interesting
+    for(auto c : _subSystem.getCompartmentGrid()->getCompartments()) {
+        if(!c->getTriangles().empty()) {
+            // Contains triangles, so this compartment is at the boundary.
+            c->boundaryInteresting = true;
+
+            // Update partial activate status
+            c->computeSlicedVolumeArea(Compartment::SliceMethod::membrane);
+            _cController.updateActivation(c, Compartment::ActivateReason::Membrane);
+
+        } else if( ! _regionInMembrane->contains(vector2Vec<3, floatingpoint>(c->coordinates()))) {
+            // Compartment is outside the membrane
+            _cController.deactivate(c, true);
+        }
+    }
+
+    // Transfer species from all the inactive compartments
+    {
+        vector<Compartment*> ac, ic;
+        for(auto c : _subSystem.getCompartmentGrid()->getCompartments()) {
+            if(c->isActivated()) ac.push_back(c);
+            else                 ic.push_back(c);
+        }
+        auto nac = ac.size();
+        for(auto c : ic) {
+            for(auto &sp : c->getSpeciesContainer().species()) {
+                int copyNumber = sp->getN();
+                unordered_set<Species*> sp_targets;
+                if(sp->getFullName().find("Bound") == string::npos) {
+                    while(copyNumber > 0) {
+                        sp->down();
+                        auto tc = ac[Rand::randInteger(0, nac-1)];
+                        auto sp_target = tc->findSpeciesByName(sp->getName());
+                        sp_targets.insert(sp_target);
+                        sp_target->up();
+                        --copyNumber;
+                    }
+                }
+                for(auto sp_target : sp_targets)
+                    sp_target->updateReactantPropensities();
+                sp->updateReactantPropensities();
+            }
+        }
+    }
+
+    LOG(INFO) << "Membrane initialization complete.";
+
+    /**************************************************************************
+    Now starting to add the filaments into the network.
+    **************************************************************************/
     //Read filament setup, parse filament input file if needed
     auto& FSetup = simulConfig.filamentSetup;
-//    FilamentData filaments;
-
+    
     cout << "---" << endl;
 //    HybridBindingSearchManager::setdOut();
     cout << "Initializing filaments...";
@@ -357,7 +586,7 @@ void Controller::setupInitialNetwork(SimulConfig& simulConfig) {
         //add other filaments if specified
         FilamentInitializer *fInit = new RandomFilamentDist();
 
-        auto filamentsGen = fInit->createFilaments(_subSystem.getBoundary(),
+        auto filamentsGen = fInit->createFilaments(*_regionInMembrane,
                                                     FSetup.numFilaments,
                                                     FSetup.filamentType,
                                                     FSetup.filamentLength);
@@ -778,6 +1007,54 @@ void Controller::moveBoundary(floatingpoint deltaTau) {
     _subSystem.getBoundary()->volume();
 }
 
+void Controller::updateActiveCompartments() {
+    // For this function to work, we must assume that each minimization step
+    // will push the membrane boundary no more than 1 compartment, so that
+    // changes will only happen at the neighborhood of the previous boundary.
+    auto& allMembranes = Membrane::getMembranes();
+
+    // Currently only the 0th membrane will be considered
+    if(allMembranes.size()) {
+        Membrane* theMembrane = allMembranes[0];
+        // For non empty compartments, we mark them as interesting and update their status
+        // For the "interesting" compartments last round but now empty, we fully activate or deactivate them
+        // For the rest we do nothing, assuming that the membranes will NOT move across a whole compartment
+        for(auto c: GController::getCompartmentGrid()->getCompartments()) {
+            const auto& ts = c->getTriangles();
+            if(!ts.empty()) {
+                // Update partial activate status
+                c->computeSlicedVolumeArea(Compartment::SliceMethod::membrane);
+                _cController.updateActivation(c, Compartment::ActivateReason::Membrane);
+
+                // No matter whether the compartment is interesting before, mark it as interesting
+                c->boundaryInteresting = true;
+            } else if(c->boundaryInteresting) { // Interesting last round but now empty
+                bool inMembrane = (
+                    (!theMembrane->isClosed()) ||
+                    (theMembrane->contains(vector2Vec<3, floatingpoint>(c->coordinates())))
+                );
+                if(inMembrane) {
+                    // Fully activate the compartment
+                    c->resetVolumeFrac();
+					const auto& fullArea = GController::getCompartmentArea();
+                    c->setPartialArea({{
+                        fullArea[0], fullArea[0],
+						fullArea[1], fullArea[1],
+						fullArea[2], fullArea[2]
+                    }});
+                    _cController.updateActivation(c, Compartment::ActivateReason::Membrane);
+                } else {
+                    // Deactivate the compartment
+                    _cController.deactivate(c);
+                }
+
+                // Mark the compartment as not interesting
+                c->boundaryInteresting = false;
+            }
+        }
+    } // Otherwise, no membrane exists. Do nothing
+}
+
 void Controller::executeSpecialProtocols() {
 
     //making filaments static
@@ -811,7 +1088,14 @@ void Controller::executeSpecialProtocols() {
 
         pinLowerBoundaryFilaments();
     }
-    
+
+    if(SysParams::Mechanics().pinMembraneBorderVertices) {
+        pinMembraneBorderVertices();
+    }
+
+    if(SysParams::Mechanics().pinInitialFilamentBelowZ) {
+        pinInitialFilamentWith([](auto&& c) { return c[2] < SysParams::Mechanics().pinInitialFilamentBelowZValue; });
+    }
 }
 
 void Controller::updatePositions() {
@@ -914,6 +1198,10 @@ void Controller::updateReactionRates() {
 	for(auto r : Reactable::getReactableList()){
 		r->updateReactionRates();
 		}
+
+    for(auto m : Membrane::getMembranes()) {
+        medyan::setReactionRates(m->getMesh());
+    }
 }
 #endif
 
@@ -1007,6 +1295,20 @@ void Controller::pinLowerBoundaryFilaments() {
                 b->addAsPinned();
             }
         }
+    }
+}
+
+void Controller::membraneAdaptiveRemesh() const {
+    // Requires _meshAdapter to be already initialized
+    for(auto m : Membrane::getMembranes()) {
+        _meshAdapter->adapt(m->getMesh());
+
+        // Update necessary geometry for the system
+        m->updateGeometryValueForSystem();
+    }
+
+    for(auto t : Triangle::getTriangles()) {
+        t->updatePosition();
     }
 }
 
@@ -1218,9 +1520,16 @@ void Controller::run() {
 #ifdef MECHANICS
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
+    membraneAdaptiveRemesh();
+    _subSystem.resetNeighborLists(); // TODO: resolve workaround
+    Bead::rearrange();
+    Cylinder::updateAllData();
     // update neighorLists before and after minimization. Need excluded volume
     // interactions.
 	_subSystem.resetNeighborLists();
+
+    // Initial special protocols need to be executed before energy minimization
+    executeSpecialProtocols();
     auto minimizationResult = _mController.run(false);
     _subSystem.prevMinResult = minimizationResult;
     mine= chrono::high_resolution_clock::now();
@@ -1376,6 +1685,10 @@ void Controller::run() {
                 ().size() << endl;
 #endif
                 mins = chrono::high_resolution_clock::now();
+                // Membrane remeshing
+                membraneAdaptiveRemesh();
+                _subSystem.resetNeighborLists(); // TODO: resolve workaround
+
                 Bead::rearrange();
                 Cylinder::updateAllData();
 
@@ -1398,7 +1711,11 @@ void Controller::run() {
 
                 //update position
                 mins = chrono::high_resolution_clock::now();
+
                 updatePositions();
+
+                // Update activation of the compartments
+                updateActiveCompartments();
 #ifdef CROSSCHECK_CYLINDER
                 Cylinder::_crosscheckdumpFile.close();
 #endif
@@ -1525,8 +1842,8 @@ void Controller::run() {
     //@}
 #endif
 #endif
-        }
 #endif
+        }
     }
     //if run steps were specified, use this
     if(_runSteps != 0) {
@@ -1550,10 +1867,18 @@ void Controller::run() {
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
             if(stepsLastMinimization >= _minimizationSteps) {
+                // Membrane remeshing
+                membraneAdaptiveRemesh();
+                _subSystem.resetNeighborLists(); // TODO: resolve workaround
+
                 Bead::rearrange();
                 Cylinder::updateAllData();
                 _mController.run();
+
                 updatePositions();
+                
+                // Update activation of the compartments
+                updateActiveCompartments();
 
 #ifdef DYNAMICRATES
                 updateReactionRates();
@@ -1589,8 +1914,8 @@ void Controller::run() {
 
             //special protocols
             executeSpecialProtocols();
-        }
 #endif
+        }
     }
 
     //print last snapshots

@@ -76,6 +76,7 @@ public:
     /// Returns the pointer to the parent node. The returned value could be a nullptr if
     /// a parent does not exist.
     Composite* getParent() {return _parent;}
+    const Composite* getParent()const { return _parent; }
     
     /// Sets the parent of this node to other.
     void setParent (Composite *other) {_parent=other;}
@@ -126,7 +127,7 @@ public:
     virtual size_t countReactions() const {return 0;};
     
     /// Prints information about this node. Useful for debugging.
-    virtual void printSelf() = 0;
+    virtual void printSelf() const = 0;
     
     /// Return the type of this element as an integer index
     virtual int getType() = 0;

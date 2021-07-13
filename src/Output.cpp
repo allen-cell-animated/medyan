@@ -16,19 +16,23 @@
 #include "Output.h"
 
 #include "SubSystem.h"
+#include "OutputStruct.hpp"
 #include "CompartmentGrid.h"
 
-#include "Filament.h"
-#include "Cylinder.h"
 #include "Bead.h"
-#include "Linker.h"
-#include "MotorGhost.h"
 #include "BranchingPoint.h"
 #include "Bubble.h"
+#include "Cylinder.h"
+#include "Filament.h"
+#include "Linker.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "MotorGhost.h"
+#include "Structure/SurfaceMesh/Vertex.hpp"
 
 #include "Boundary.h"
 #include "Compartment.h"
 #include "GController.h"
+#include "Compartment.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
@@ -51,82 +55,11 @@ using namespace mathfunc;
 void BasicSnapshot::print(int snapshot) {
 
     _outputFile.precision(10);
+    
+    OutputStructSnapshot snapshots(snapshot);
 
-    // print first line (snapshot number, time, number of filaments,
-    // linkers, motors, branchers, bubbles)
-    _outputFile << snapshot << " " << tau() << " " <<
-        Filament::numFilaments() << " " <<
-        Linker::numLinkers() << " " <<
-        MotorGhost::numMotorGhosts() << " " <<
-        BranchingPoint::numBranchingPoints() << " " <<
-        Bubble::numBubbles() << endl;
-
-    for(auto &filament : Filament::getFilaments()) {
-
-        //print first line (Filament ID, type, length, left_delta, right_delta)
-        _outputFile << "FILAMENT " << filament->getId() << " " <<
-        filament->getType() << " " <<
-        filament->getCylinderVector().size() + 1 << " " <<
-        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
-
-        //print coordinates
-        for (auto cylinder : filament->getCylinderVector()){
-
-            auto x = cylinder->getFirstBead()->vcoordinate();
-            _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" ";
-
-        }
-        //print last bead coord
-        auto x = filament->getCylinderVector().back()->getSecondBead()->vcoordinate();
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
-
-        _outputFile << endl;
-    }
-
-
-    for(auto &linker : Linker::getLinkers()) {
-
-        //print first line
-        _outputFile << "LINKER " << linker->getId()<< " " <<
-                               linker->getType() << endl;
-
-        //print coordinates
-        auto x =
-            midPointCoordinate(linker->getFirstCylinder()->getFirstBead()->vcoordinate(),
-                               linker->getFirstCylinder()->getSecondBead()->vcoordinate(),
-                               linker->getFirstCylinder()->adjustedrelativeposition
-                                   (linker->getFirstPosition()));
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
-
-        x = midPointCoordinate(linker->getSecondCylinder()->getFirstBead()->vcoordinate(),
-                               linker->getSecondCylinder()->getSecondBead()->vcoordinate(),
-                               linker->getSecondCylinder()->adjustedrelativeposition(linker->getSecondPosition()));
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
-
-        _outputFile << endl;
-    }
-
-    for(auto &motor : MotorGhost::getMotorGhosts()) {
-
-        //print first line
-        //also contains a Bound(1) or unbound(0) qualifier
-        _outputFile << "MOTOR " << motor->getId() << " " << motor->getType() << " " << 1 << endl;
-
-        //print coordinates
-        auto x =
-            midPointCoordinate(motor->getFirstCylinder()->getFirstBead()->vcoordinate(),
-                               motor->getFirstCylinder()->getSecondBead()->vcoordinate(),
-                               motor->getFirstCylinder()->adjustedrelativeposition(motor->getFirstPosition()));
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
-
-        x = midPointCoordinate(motor->getSecondCylinder()->getFirstBead()->vcoordinate(),
-                               motor->getSecondCylinder()->getSecondBead()->vcoordinate(),
-                               motor->getSecondCylinder()->adjustedrelativeposition(motor->getSecondPosition()));
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
-
-        _outputFile << endl;
-    }
-
+    snapshots.outputFromSystem(_outputFile);
+    
     //DEPRECATED AS OF 9/8/16
 //    //collect diffusing motors
 //    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
@@ -145,29 +78,6 @@ void BasicSnapshot::print(int snapshot) {
 //
 //        _outputFile << endl;
 //    }
-
-    for(auto &branch : BranchingPoint::getBranchingPoints()) {
-
-        //print first line
-        _outputFile << "BRANCHER " << branch->getId() << " " <<
-                                      branch->getType() << endl;
-
-        //print coordinates
-        auto x = branch->coordinate;
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
-    }
-
-    for(auto &bubble : Bubble::getBubbles()) {
-
-        //print first line
-        _outputFile << "BUBBLE " << bubble->getId() << " " <<
-                                    bubble->getType() << endl;
-
-        //print coordinates
-        const auto& x = bubble->coord;
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
-    }
-
     _outputFile <<endl;
 }
 
@@ -270,13 +180,14 @@ void Forces::print(int snapshot) {
     _outputFile.precision(10);
 
     // print first line (snapshot number, time, number of filaments,
-    // linkers, motors, branchers)
+    // linkers, motors, branchers, membranes)
     _outputFile << snapshot << " " << tau() << " " <<
         Filament::numFilaments() << " " <<
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
-        Bubble::numBubbles() << endl;
+        Bubble::numBubbles() << " " <<
+        Membrane::numMembranes() << endl;
 
     for(auto &filament : Filament::getFilaments()) {
 
@@ -358,6 +269,22 @@ void Forces::print(int snapshot) {
 
         //Nothing for bubbles
         _outputFile << 0.0 << endl;
+    }
+    
+    for(auto &membrane : Membrane::getMembranes()) {
+        
+        //print first line (Membrane ID, type)
+        _outputFile << "Membrane " << membrane->getId() << " " <<
+            membrane->getType() << endl;
+        
+        //print force
+        for(const auto& v : membrane->getMesh().getVertices()) {
+            
+            const double forceMag = mathfunc::magnitude(v.attr.vertex->force);
+            _outputFile << forceMag << " ";
+            
+        }        
+        _outputFile << endl;
     }
 
     _outputFile <<endl;
@@ -1270,6 +1197,63 @@ void LinkerBindingEvents::print(int snapshot) {
     }
     dt->clearLinkerBindingData();
 }
+
+void ForcesOutput::print(int snapshot) {
+    // snapshot serial
+    _outputFile << snapshot << ' ' << tau() << '\n';
+
+    LOG(ERROR) << "Force output is currently not usable.";
+    throw std::runtime_error("Forces output not available.");
+
+    // force field forces
+    for(auto ff : ffm_->_forceFields) {
+        const auto& fb = ff->getForceBuffer();
+        _outputFile
+            << ff->getName() << '\n'
+            << fb.size() << "  ";
+        for(const auto& x : fb) _outputFile << x << ' ';
+        _outputFile << '\n';
+    }
+
+    _outputFile << endl;
+}
+
+void IndicesOutput::print(int snapshot) {
+    // snapshot serial
+    _outputFile << snapshot << ' ' << tau() << '\n';
+
+    LOG(ERROR) << "Index output is currently not available.";
+    throw std::runtime_error("Index output not available.");
+
+    // Filaments
+    for(auto f : Filament::getFilaments()) {
+        _outputFile << "FILAMENT "
+            << f->getId() << ' '
+            << f->getType() << ' '
+            << f->getCylinderVector().size() + 1 << '\n';
+        for(auto c : f->getCylinderVector())
+            _outputFile << c->getFirstBead()->getStableIndex() << ' ';
+        _outputFile << f->getCylinderVector().back()->getSecondBead()->getStableIndex()
+            << '\n';
+    }
+
+    // Membranes
+    for(auto m : Membrane::getMembranes()) {
+        const auto& mesh = m->getMesh();
+        _outputFile << "MEMBRANE "
+            << m->getId() << ' '
+            << m->getType() << ' '
+            << mesh.numVertices() << ' '
+            << mesh.numTriangles() << '\n';
+        for(const auto& v : mesh.getVertices()) {
+            _outputFile << v.attr.vertex->getIndex() << ' ';
+        }
+        _outputFile << '\n';
+    }
+
+    _outputFile << std::endl;
+}
+
 
 void Datadump::print(int snapshot) {
     _outputFile.close();

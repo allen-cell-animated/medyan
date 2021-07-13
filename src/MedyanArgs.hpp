@@ -4,6 +4,7 @@
 #include <string>
 #include <thread>
 
+#include "Core/Globals.hpp"
 #include "Rand.h"
 #include "Util/Io/CmdParse.hpp"
 #include "Util/Io/Log.hpp"
@@ -11,8 +12,10 @@
 
 enum class MedyanRunMode {
     simulation,
+    analyze,
     config,
-    test
+    test,
+    side
 };
 
 struct MedyanCmdInitResult {
@@ -34,6 +37,9 @@ struct MedyanCmdInitResult {
     // RNG
     bool rngSeedFixed = false;
     unsigned long long rngSeed = 0;
+
+    // side procedure name
+    std::string sideProcName;
 
 };
 
@@ -59,6 +65,23 @@ inline auto medyanInitFromCommandLine(int argc, char** argv) {
         cmdMain.addOption(makeOptionWithVar('t', "", "int", "Thread count (0 for auto)", false, res.numThreads));
         cmdMain.addHelp();
 
+        // Add analyze command
+        Command& cmdAnalyze = cmdMain.addCommand(
+            "analyze", "Analyze simulation output",
+            [&] { res.runMode = MedyanRunMode::analyze; }
+        );
+        cmdAnalyze.addOption(Option(0, "bond-frame", "frame", "Frame of membrane topology information", false,
+            [&](const Command&, const std::string& arg) {
+                if(arg == "all") {
+                    medyan::globalMutable().analyzeMembraneBondAllFrames = true;
+                } else {
+                    VariableWrite< size_t >{"bond-frame"}(medyan::globalMutable().analyzeMembraneBondFrame, arg);
+                }
+            }
+        ));
+        cmdAnalyze.addOption(makeOptionWithVar(0, "frame-interval", "int", "Interval of frames", false, medyan::globalMutable().analyzeFrameInterval));
+        cmdAnalyze.addHelp();
+
         // Add interactive configuration command
         auto& cmdConfig = cmdMain.addCommand(
             "config", "Interactive system configuration.",
@@ -71,6 +94,18 @@ inline auto medyanInitFromCommandLine(int argc, char** argv) {
             [&] { res.runMode = MedyanRunMode::test; }
         );
         cmdTest.setTerminating(true);
+
+        {
+            auto& cmdSide = cmdMain.addCommand(
+                "side", "Run MEDYAN side procedures.",
+                [&] { res.runMode = MedyanRunMode::side; }
+            );
+            cmdSide.addPosArgForVar(
+                "name", "Name of side procedure.", true,
+                res.sideProcName
+            );
+            cmdSide.addHelp();
+        }
 
         // Add validation
         cmdMain.setValidation([&] {

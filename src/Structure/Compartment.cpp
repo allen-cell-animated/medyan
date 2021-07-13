@@ -12,10 +12,17 @@
 //-----------------------------------------------------------------
 
 #include "Compartment.h"
+
+#include "Util/Math/CuboidSlicing.hpp"
+#include "GController.h"
 #include "MathFunctions.h"
+using namespace mathfunc;
 #include "Visitor.h"
 //REMOVE LATER
 #include "ChemNRMImpl.h"
+
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/Triangle.hpp"
 #include "Filament.h"
 #include "Cylinder.h"
 #include <stdint.h>
@@ -1754,8 +1761,44 @@ void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
     switch(sliceMethod) {
     case SliceMethod::membrane:
         {
-            LOG(ERROR) << "Membrane slicing the compartment is not available in this version";
-            throw std::runtime_error("Membrane slicing is not available in this version.");
+            // The calculation requires the
+            //  - The position calculation of triangles
+            //  - The area calculation of triangles
+            //  - The unit normal vector of triangles
+            const size_t numTriangle = getTriangles().size();
+            if(numTriangle) {
+                double sumArea = 0.0;
+                Vec< 3, floatingpoint > sumNormal {};
+                Vec< 3, floatingpoint > sumPos {};
+                for(Triangle* t: getTriangles()) {
+                    const auto& mesh = t->getParent()->getMesh();
+                    const Membrane::MeshType::TriangleIndex ti { t->getTopoIndex() };
+                    const auto area = mesh.attribute(ti).gTriangle.area;
+                    const auto& unitNormal = mesh.attribute(ti).gTriangle.unitNormal;
+                    sumNormal += unitNormal * area;
+                    sumPos += t->coordinate * area;
+                    sumArea += area;
+                }
+                normalize(sumNormal);
+                sumPos /= sumArea;
+
+                auto res = PlaneCuboidSlicer() (
+                    sumPos, sumNormal,
+                    {
+                        _coords[0] - SysParams::Geometry().compartmentSizeX * (floatingpoint)0.5,
+                        _coords[1] - SysParams::Geometry().compartmentSizeY * (floatingpoint)0.5,
+                        _coords[2] - SysParams::Geometry().compartmentSizeZ * (floatingpoint)0.5
+                    },
+                    {{
+                        SysParams::Geometry().compartmentSizeX,
+                        SysParams::Geometry().compartmentSizeY,
+                        SysParams::Geometry().compartmentSizeZ
+                    }}
+                );
+
+                _volumeFrac = res.volumeIn / GController::getCompartmentVolume();
+                _partialArea = res.areaIn;
+            }
         }
         break;
 
@@ -2007,7 +2050,7 @@ void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
     }
 }
 
-vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
+vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C, bool outwardOnly) {
     // The compartment C and "this" must be neighbors of each other, and
     // "this" must be an active compartment.
 
@@ -2029,49 +2072,36 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
             // cout << "To neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] << ", z = " << C->_coords[2] <<endl;
             // cout << "scaleFactor = " << scaleFactor << endl;
 
-            float actualDiffRate = diff_rate * scaleFactor;
             float volumeFrac = getVolumeFrac();
             // cout << "VolumeFraction = " << volumeFrac << endl;
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
-            //Diffusion reaction from "this" compartment to C.
-            ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour}, actualDiffRate, false, volumeFrac);
+
+            ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour}, diff_rate, false, volumeFrac);
+            R->setRateMulFactor(scaleFactor, ReactionBase::diffusionShape);
             this->addDiffusionReaction(R);
             rxns.push_back(R);
-        }
-    }
 
-
-    return vector<ReactionBase*>(rxns.begin(), rxns.end());
-}
-
-vector<ReactionBase*> Compartment::generateAllDiffusionReactions() {
-
-    vector<ReactionBase*> rxns;
-
-    if(_activated) {
-        for (auto &C: _neighbours) {
-
-            auto newRxns = generateDiffusionReactions(C);
-            rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
-        }
-    }
-    return vector<ReactionBase*>(rxns.begin(), rxns.end());
-}
-
-vector<ReactionBase*> Compartment::generateAllpairsDiffusionReactions() {
-
-    vector<ReactionBase*> rxns;
-
-    if(_activated) {
-        for (auto &C: _neighbours) {
-            if(C->isActivated()){
-                //generates diffusion reactions both from and to the chosen compartment
-            auto newRxns = generateDiffusionReactions(C);
-                 rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
-            newRxns = C->generateDiffusionReactions(this);
-                 rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
-
+            if(!outwardOnly) {
+                // Generate inward diffusion reaction
+                ReactionBase* R = new DiffusionReaction({sp_neighbour, sp_this.get()}, diff_rate, false, C->getVolumeFrac());
+                R->setRateMulFactor(scaleFactor, ReactionBase::diffusionShape);
+                C->addDiffusionReaction(R);
+                rxns.push_back(R);
             }
+        }
+    }
+
+    return vector<ReactionBase*>(rxns.begin(), rxns.end());
+}
+
+vector<ReactionBase*> Compartment::generateAllDiffusionReactions(bool outwardOnly) {
+    
+    vector<ReactionBase*> rxns;
+
+    if(_activated) {
+        for (auto &C: _neighbours) {
+            auto newRxns = generateDiffusionReactions(C, outwardOnly);
+            rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
         }
     }
     return vector<ReactionBase*>(rxns.begin(), rxns.end());
@@ -2261,33 +2291,80 @@ void Compartment::shareSpecies(int i) {
     }
 }
 
-void Compartment::activate(ChemSim* chem) {
+void Compartment::activate(ChemSim* chem, ActivateReason reason) {
+    /**************************************************************************
+    The diffusion-reactions with the already activated neighbors would be added
+    for both directions.
+    **************************************************************************/
 
     assert(!_activated && "Compartment is already activated.");
 
     //set marker
     _activated = true;
     //add all diffusion reactions
-    auto rxns = generateAllpairsDiffusionReactions();
-    for(auto &r : rxns) chem->addReaction(r);
-    shareSpecies(SysParams::Boundaries().transfershareaxis);
+    auto rxns = generateAllDiffusionReactions(false);
 
-    for (auto &C: _neighbours){
-        if(C->isActivated()){
-            for(auto &r : C->_diffusion_reactions.reactions()) {
-                auto rs = r.get()->rspecies()[1];//product
-                if(rs->getSpecies().getParent() == this) {
-                    auto rs1 = r.get()->rspecies()[0];
-                    if(rs1->getN()>0 && r->isPassivated()){
-                        r->activateReaction();
+    for(auto &r : rxns) {
+        chem->addReaction(r);
+        r->activateReaction(); // Conditionally activate the new diffusion reactions
+    }
+
+    if(reason == ActivateReason::Whole)
+        shareSpecies(SysParams::Boundaries().transfershareaxis);
+
+}
+
+void Compartment::updateActivation(ChemSim* chem, ActivateReason reason) {
+    double volumeFrac = getVolumeFrac();
+
+    if(_activated) {
+        // Update the reaction rates for diffusions in both directions
+        for(auto& c: _neighbours) if(c->isActivated()) {
+            // For any activated neighbor
+
+            for(auto &sp_this : _species.species()) {
+                int molecule = sp_this->getMolecule();
+                float baseDiffRate = _diffusion_rates[molecule];
+                if(baseDiffRate<0)  continue;
+
+                Species *sp_neighbor = c->_species.findSpeciesByMolecule(molecule);
+
+                // Scale the diffusion rate according to the contacting areas
+                size_t idxFwd = _neighborIndex.at(c), idxBwd = c->_neighborIndex.at(this);
+                double scaleFactor =
+                    0.5 * (_partialArea[idxFwd] + c->_partialArea[idxBwd]) /
+                    GController::getCompartmentArea()[idxFwd / 2];
+
+                // Update outward reaction rate
+                for(auto& r: _diffusion_reactions.reactions())
+                    if(sp_this.get() == &r->rspecies()[0]->getSpecies() && sp_neighbor == &r->rspecies()[1]->getSpecies()) {
+                        r->setVolumeFrac(volumeFrac);
+                        r->recalcRateVolumeFactor();
+                        r->setRateMulFactor(scaleFactor, ReactionBase::diffusionShape);
                     }
-                }
+                // We also update inward reaction rate here to ensure that neighbors are always on the same page.
+                // Update inward reaction rate
+                for(auto& r: c->_diffusion_reactions.reactions())
+                    if(sp_this.get() == &r->rspecies()[1]->getSpecies() && sp_neighbor == &r->rspecies()[0]->getSpecies()) {
+                        r->setVolumeFrac(c->getVolumeFrac());
+                        r->recalcRateVolumeFactor();
+                        r->setRateMulFactor(scaleFactor, ReactionBase::diffusionShape);
+                    }
             }
+
         }
+    } else {
+        activate(chem, reason);
+    }
+
+    // Update the internal reaction rates
+    for(auto& r: _internal_reactions.reactions()) {
+        r->setVolumeFrac(volumeFrac);
+        r->recalcRateVolumeFactor();
     }
 }
 
-void Compartment::deactivate(ChemSim* chem) {
+void Compartment::deactivate(ChemSim* chem, bool init) {
 
     //assert no cylinders in this compartment
     assert((getCylinders().size() == 0)
@@ -2298,7 +2375,7 @@ void Compartment::deactivate(ChemSim* chem) {
     //set marker
     _activated = false;
 
-    transferSpecies(SysParams::Boundaries().transfershareaxis);
+    if(!init) transferSpecies(SysParams::Boundaries().transfershareaxis);
     removeAllDiffusionReactions(chem);
 }
 

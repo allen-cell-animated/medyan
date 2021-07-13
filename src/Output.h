@@ -410,6 +410,21 @@ public:
     virtual void print(int snapshot);
 };
 
+class ForcesOutput : public Output {
+public:
+    ForcesOutput(std::string outputFileName, SubSystem* s, const ForceFieldManager* ffm)
+        : Output(outputFileName, s), ffm_(ffm) {}
+
+    virtual void print(int snapshot) override;
+
+private:
+    const ForceFieldManager* ffm_;
+};
+
+struct IndicesOutput : public Output {
+    IndicesOutput(std::string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
+    virtual void print(int snapshot) override;
+};
 class Projections : public Output {
     
     ForceFieldManager* _ffm;

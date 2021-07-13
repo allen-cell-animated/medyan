@@ -20,10 +20,10 @@
 size_t ReactionBase::_Idcounter = 0;
 
 ReactionBase::ReactionBase (float rate, bool isProtoCompartment, floatingpoint volumeFrac, int rateVolumeDepExp)
-    : _rnode(nullptr), _parent(nullptr), _rate(rate),
-    _rate_bare(rate), _isProtoCompartment(isProtoCompartment),
-    _volumeFrac(volumeFrac), _rateVolumeDepExp(rateVolumeDepExp) {
-
+    : _rnode(nullptr), _parent(nullptr), _rate(rate), 
+      _rate_bare(rate), _isProtoCompartment(isProtoCompartment),
+      _volumeFrac(volumeFrac), _rateVolumeDepExp(rateVolumeDepExp) {
+    
 	for(uint i = 0; i < RateMulFactorType::RATEMULFACTSIZE; i++)
 		_ratemulfactors[i] = 1.0;
 

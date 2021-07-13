@@ -48,7 +48,7 @@ class Filament;
  *  [NeighborLists](@ref NeighborList).
  */
 
-class Bead : public Component, public Trackable, public Movable,
+class Bead : public Component, public Trackable, public Movable, public DynamicNeighbor,
     public Database< Bead, true > {
     
 public:
@@ -99,7 +99,7 @@ public:
     const auto& coordinate() const { return coord; }
     // Temporary compromise
     auto vcoordinate() const { return mathfunc::vec2Vector(coord); }
-    
+
     /// Get Compartment
     Compartment* getCompartment() {return _compartment;}
     
@@ -162,7 +162,7 @@ public:
     /// Update the position, inherited from Movable
     virtual void updatePosition();
     
-    virtual void printSelf();
+    virtual void printSelf()const;
     
     //GetType implementation just returns type of parent
     virtual int getType() {return getParent()->getType();}
@@ -225,6 +225,14 @@ public:
         cout << endl;
     }
 
+    //To be used exclusively within restart protocol.
+    void overrideParentInfo(Composite* parent, int p){
+        //set position in the filament
+        _position  = p;
+        //Add this bead as the child
+        parent->addChild(unique_ptr<Component>(this));
+    }
+
 private:
     Compartment* _compartment = nullptr; ///< Pointer to the compartment that this bead is in
     
@@ -235,6 +243,5 @@ private:
     static std::vector<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem
                                          ///< (attached to some element in SubSystem)
 };
-
 
 #endif

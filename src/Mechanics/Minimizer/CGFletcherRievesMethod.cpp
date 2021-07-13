@@ -37,7 +37,7 @@ MinimizationResult FletcherRieves::minimize(
             N = numeric_limits<int>::max();
         }
 
-    startMinimization();
+    startMinimization(GRADTOL);
     FFM.vectorizeAllForceFields(initCGMethodData(*this, GRADTOL));
     result.energiesBefore = FFM.computeEnergyHRMD(coord.data());
 

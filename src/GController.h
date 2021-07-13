@@ -74,7 +74,7 @@ private:
     
     ///Generate all neighbors lists for each compartment in the CompartmentGrid
     void generateConnections();
-    
+
 public:
     ///Constructor sets SubSystem
     GController(SubSystem* ps) : _subSystem(ps) {}
@@ -93,7 +93,7 @@ public:
     /// Set compartments in compartment grid as active based on boundary.
     /// Used at system initialization.
     void setActiveCompartments();
-    
+
     /// Get the SubSystem ptr
     const SubSystem* getSubSystem() const {return _subSystem;}
     
@@ -105,10 +105,12 @@ public:
     static Compartment* getCompartment(const int index);
     //@}
     
+    // Properties (getters and setters)
+    static CompartmentGrid* getCompartmentGrid() { return _compartmentGrid; }
     /// Get the center of the grid space
     static const vector<floatingpoint>& getCenter() {return _centerGrid;}
     static const vector<floatingpoint>& getSize() {return _size;}
-     static const vector<floatingpoint>& getCompartmentSize() {return _compartmentSize;}
+    static const vector<floatingpoint>& getCompartmentSize() {return _compartmentSize;}
     
     static floatingpoint getCompartmentVolume() { return _compartmentVolume; }
     static const vector<floatingpoint>& getCompartmentArea() { return _compartmentArea; }

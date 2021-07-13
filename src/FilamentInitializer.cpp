@@ -16,6 +16,8 @@
 #include "Boundary.h"
 #include "Bubble.h"
 #include "Bead.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/MembraneRegion.hpp"
 #include "SubSystem.h"
 
 #include "MathFunctions.h"
@@ -25,9 +27,10 @@
 
 using namespace mathfunc;
 
-FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
-                                                              int filamentType,
-                                                              int lenFilaments) {
+FilamentData RandomFilamentDist::createFilaments(const MembraneRegion<Membrane>& mr,
+                                                 int numFilaments,
+                                                 int filamentType,
+                                                 int lenFilaments) {
     
     vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> filaments;
     vector<tuple<string, short, vector<vector<floatingpoint>>>> dummy;
@@ -35,10 +38,12 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
     vector<vector<floatingpoint>> dummy3;
     //Create random distribution of filaments
     int filamentCounter = 0;
-
-    //if boundary shape is cylinder, create filament in the center of system and perpendicular to Z axis
-    if(b->getShape() == BoundaryShape::Cylinder) {
-
+    
+    Boundary *b = mr.getBoundary();
+    
+    //Qin, if boundary shape is cylinder, create filament in the center of system and vertical to Z axis
+    if(b && b->getShape() == BoundaryShape::Cylinder) {
+        
         while (filamentCounter < numFilaments) {
 
             //Create a random filament vector one cylinder long
@@ -106,13 +111,12 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
             }
 
             //check if within cutoff of boundary
-            bool outsideCutoff = false;
-            if(b->distance(firstPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0 ||
-               b->distance(secondPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0) {
-                outsideCutoff = true;
-            }
-
-            if(b->within(firstPoint) && b->within(secondPoint) && !inBubble && !outsideCutoff) {
+            bool outsideCutoff = mr.getBoundary() && (
+                mr.getBoundary()->distance(firstPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0 ||
+                mr.getBoundary()->distance(secondPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0
+            );
+            
+            if(mr.contains(vector2Vec<3, floatingpoint>(firstPoint)) && mr.contains(vector2Vec<3, floatingpoint>(secondPoint)) && !inBubble && !outsideCutoff) {
                 filaments.emplace_back(filamentType, firstPoint, secondPoint);
                 filamentCounter++;
             }
@@ -124,7 +128,9 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
 
 
 }
-FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilaments,
+
+FilamentData ConnectedFilamentDist::createFilaments(const MembraneRegion<Membrane>& mr,
+                                                    int numFilaments,
                                                     int filamentType,
                                                     int lenFilaments) {
 
@@ -195,9 +201,14 @@ FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilament
                       SysParams::Geometry().cylinderSize[filamentType] - 0.01, randDirection);
         
         //choose if within boundary
-        if(b->within(firstPoint) && b->within(secondPoint) &&
-           b->distance(firstPoint) > safeDist &&
-           b->distance(secondPoint) > safeDist) {
+        if(
+            mr.contains(vector2Vec<3, floatingpoint>(firstPoint)) && mr.contains(vector2Vec<3, floatingpoint>(secondPoint)) && (
+                !mr.getBoundary() || (
+                    mr.getBoundary()->distance(firstPoint) > safeDist &&
+                    mr.getBoundary()->distance(secondPoint) > safeDist
+                )
+            )
+        ) {
             filaments.emplace_back(filamentType, firstPoint, secondPoint);
             
             prevFirstPoint = firstPoint;
@@ -215,7 +226,8 @@ FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilament
     return make_tuple(filaments,dummy,dummy2, dummy3);
 }
 
-FilamentData MTOCFilamentDist::createFilaments(Boundary* b, int numFilaments,
+FilamentData MTOCFilamentDist::createFilaments(const MembraneRegion<Membrane>& mr,
+                                               int numFilaments,
                                                int filamentType,
                                                int lenFilaments) {
     
@@ -230,6 +242,7 @@ FilamentData MTOCFilamentDist::createFilaments(Boundary* b, int numFilaments,
     auto phi1 = SysParams::SpecialInputs().mtocPhi1;
     auto phi2 = SysParams::SpecialInputs().mtocPhi2;
 
+    Boundary *b = mr.getBoundary();
 
     while (filamentCounter < numFilaments) {
         
@@ -243,7 +256,7 @@ FilamentData MTOCFilamentDist::createFilaments(Boundary* b, int numFilaments,
         point1.push_back(_coordMTOC[1] + _radius * sin(h));
                 
         // add restrictions to MTOC filament position in Cylinder boundary condition
-        if(b->getShape() == BoundaryShape::Cylinder){
+        if(b && b->getShape() == BoundaryShape::Cylinder){
             point1.push_back(_coordMTOC[2]);
         }
         else{
@@ -262,7 +275,7 @@ FilamentData MTOCFilamentDist::createFilaments(Boundary* b, int numFilaments,
     
     return make_tuple(filaments,dummy,dummy2, dummy3);
 }
-FilamentData AFMFilamentDist::createFilaments(Boundary* b, int numFilaments,
+FilamentData AFMFilamentDist::createFilaments(const MembraneRegion<Membrane>& mr, int numFilaments,
                                                             int filamentType,
                                                             int lenFilaments) {
     
@@ -271,6 +284,9 @@ FilamentData AFMFilamentDist::createFilaments(Boundary* b, int numFilaments,
     vector<vector<floatingpoint>> dummy3;
     vector<tuple<string, short, vector<floatingpoint>>> dummy2;
     int filamentCounter = 0;
+
+    Boundary* b = mr.getBoundary();
+
     while (filamentCounter < numFilaments) {
         
 

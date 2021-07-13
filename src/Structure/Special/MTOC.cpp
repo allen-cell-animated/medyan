@@ -26,7 +26,7 @@ void MTOC::setBubble(Bubble* b) {
     addChild(unique_ptr<Component>(b));
 }
 
-void MTOC::printSelf() {
+void MTOC::printSelf()const {
     
     cout << endl;
     

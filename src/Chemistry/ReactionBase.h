@@ -130,7 +130,7 @@ public:
      * factors do not apply to all reactions.*/
 
     enum RateMulFactorType {
-        VOLUMEFACTOR, MECHANOCHEMICALFACTOR, MOTORWALKCONSTRAINTFACTOR,
+        VOLUMEFACTOR, diffusionShape, MECHANOCHEMICALFACTOR, MOTORWALKCONSTRAINTFACTOR,
         RESTARTPHASESWITCH, MANUALRATECHANGEFACTOR1, RATEMULFACTSIZE
     };
     array<float, RATEMULFACTSIZE> _ratemulfactors;
@@ -151,9 +151,8 @@ public:
         }
     }
     /// The main constructor:
-    /// @param rate - the rate constant for this ReactionBase
-    ReactionBase (float rate, bool isProtoCompartment, floatingpoint volumeFrac=
-    		(floatingpoint)1.0,	int rateVolumeDepExp=0);
+    /// @param rate - the rate constant (full volume) for this ReactionBase
+    ReactionBase (float rate, bool isProtoCompartment, floatingpoint volumeFrac=1.0, int rateVolumeDepExp=0);
     
     /// No copying (including all derived classes)
     ReactionBase (const ReactionBase &rb) = delete;
@@ -257,9 +256,6 @@ public:
     void recalcRateVolumeFactor() {
         // This can automatically set the "_rate" as scaled value of "rate"
 
-//        if(tau() < 2.0) {
-//            cout << "Reaction: " << getReactionType() << ". VolFrac = " << _volumeFrac << ", bare rate = " << rate << endl;
-//        }
         // Some possibilities of the exponent are implemented specifically to decrease the use of "pow"
         switch(_rateVolumeDepExp) {
             case 0:
@@ -272,7 +268,7 @@ public:
                 break;
         }
     }
-    
+
     /// Getter and setter for compartment volume fraction
     floatingpoint getVolumeFrac()const { return _volumeFrac; }
     void setVolumeFrac(float volumeFrac) {

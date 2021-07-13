@@ -19,9 +19,25 @@
 
 #include "CGMethod.h"
 #include "cross_check.h"
+#include "SubSystem.h"
 #include "Structure/Bead.h"
 #include "Structure/Cylinder.h"
 #include "Structure/DofSerializer.hpp"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/MembraneMeshGeometry.hpp"
+
+namespace {
+
+using CurvPol = medyan::SurfaceCurvaturePolicy;
+using CurvReq = ForceFieldTypes::GeometryCurvRequirement;
+
+constexpr CurvPol getCurvPol(CurvReq curvReq) noexcept {
+    if(curvReq == CurvReq::curv) return CurvPol::withSign;
+    else                         return CurvPol::squared;
+}
+
+} // namespace
+
 
 
 
@@ -42,6 +58,11 @@ void ForceFieldManager::vectorizeAllForceFields(const FFCoordinateStartingIndex&
     CUDAcommon::cudavars.offset_E=0.0;
     //@}
 #endif
+
+    // Cache membrane indices
+    for(auto m : Membrane::getMembranes()) {
+        medyan::cacheIndicesForFF(m->getMesh(), si);
+    }
 
     for (auto &ff : _forceFields)
         ff->vectorize(si);
@@ -107,6 +128,12 @@ void ForceFieldManager::cleanupAllForceFields() {
 
     for (auto &ff : _forceFields)
         ff->cleanup();
+
+    // Invalidate membrane cache indices
+    for(auto m : Membrane::getMembranes()) {
+        medyan::invalidateIndexCacheForFF(m->getMesh());
+    }
+
 #ifdef CUDAACCL
     if (!(CUDAcommon::getCUDAvars().conservestreams))
         CUDAcommon::handleerror(cudaStreamDestroy(streamF));
@@ -181,6 +208,12 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
                                        cudaMemcpyDeviceToHost));
 
 #endif
+
+    // Compute membrane geometry
+    for(auto m : Membrane::getMembranes()) {
+        m->updateGeometryValue< stretched >(coord, getCurvPol(this->geoCurvReq));
+    }
+
     short count = 0;
     CUDAcommon::tmin.computeenergycalls++;
     #ifdef TRACKDIDNOTMINIMIZE
@@ -193,28 +226,7 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
 //        cout<<ff->getName()<<" "<<tempEnergy<<"pN.nm"<<" ";
-        if(CUDAcommon::tmin.individualenergies.size() == _forceFields.size())
-            CUDAcommon::tmin.individualenergies[count] += elapsed_energy.count();
-        else
-            CUDAcommon::tmin.individualenergies.push_back(elapsed_energy.count());
 
-		    if(!stretched){
-			    if(CUDAcommon::tmin.individualenergieszero.size() == _forceFields.size())
-				    CUDAcommon::tmin.individualenergieszero[count] += elapsed_energy.count();
-			    else
-				    CUDAcommon::tmin.individualenergieszero.push_back(elapsed_energy.count());
-		    }
-		    else{
-			    if(CUDAcommon::tmin.individualenergiesnonzero.size() == _forceFields.size())
-				    CUDAcommon::tmin.individualenergiesnonzero[count] += elapsed_energy
-				    		.count();
-			    else
-				    CUDAcommon::tmin.individualenergiesnonzero.push_back(elapsed_energy
-				    .count());
-		    }
-
-        count++;
-//        cout<<ff->getName()<<" "<<tempEnergy<<endl;
 #ifdef ALLSYNC
         cudaDeviceSynchronize();
 #endif
@@ -395,6 +407,12 @@ void ForceFieldManager::computeForces(floatingpoint *coord, vector< floatingpoin
     CUDAcommon::cudatime.TcomputeF += elapsed_run2.count();
     tbegin = chrono::high_resolution_clock::now();
 #endif
+
+    // compute membrane geometry with derivatives
+    for(auto m : Membrane::getMembranes()) {
+        m->updateGeometryValueWithDerivative(coord, getCurvPol(this->geoCurvReq));
+    }
+
     //recompute
 //    floatingpoint *F_i = new floatingpoint[CGMethod::N];
     short count = 0;

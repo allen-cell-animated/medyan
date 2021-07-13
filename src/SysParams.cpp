@@ -12,6 +12,8 @@
 //------------------------------------------------------------------
 
 #include "SysParams.h"
+#include "Util/Io/Log.hpp"
+
 bool SysParams::RUNSTATE=true;
 bool SysParams::INITIALIZEDSTATUS=false;
 bool SysParams::DURINGCHEMISTRY=false;
@@ -278,6 +280,14 @@ bool SysParams::checkMechParameters(MechParams::MechanicsFFType& mech) {
         cout << "Must set a cylinder volume cutoff for mechanical equilibration. Exiting." << endl;
         return false;
     }
+    if(mech.MemBeadVolumeFFType != "" && MParams.MemBeadVolumeCutoff == 0.0) {
+        LOG(ERROR) << "The membrane-bead volume cutoff for load force is not set.";
+        return false;
+    }
+    if(mech.MemBeadVolumeFFType != "" && MParams.MemBeadVolumeCutoffMech == 0.0) {
+        LOG(ERROR) << "The membrane-bead volume cutoff for mechanical equilibration is not set.";
+        return false;
+    }
     
     //Boundary
     if(mech.BoundaryFFType != "" && areEqual(BParams.BoundaryK, 0.0)) {
@@ -305,7 +315,6 @@ bool SysParams::checkMechParameters(MechParams::MechanicsFFType& mech) {
         cout << "Must set a bubble cutoff for mechanical equilibration. Exiting." << endl;
         return false;
     }
-    
     
     ///Cylinder and monomer lengths specified
     if(GParams.cylinderSize.size() != CParams.numFilaments) {
@@ -450,5 +459,5 @@ DyRateParams SysParams::DRParams;
 MinimizationParams SysParams::MinParams;
 #endif
 SpecialParams SysParams::SParams;
-
+SysParams::SimulParams  SysParams::simulParams_;
 

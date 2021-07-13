@@ -22,7 +22,7 @@ OBJECTS                   = $(OBJECTS_CPP) $(OBJECTS_CU)
 DEPENDS := $(SOURCES_CPP:.cpp=.d)
 
 #CPP COMPILER CHOICE AND FLAGS
-CXX = g++ -std=c++14
+CXX = g++ -std=c++17
 NVCC = nvcc -std=c++11
 
 # Flags used by compiler and linker

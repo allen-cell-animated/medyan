@@ -40,6 +40,8 @@
 class BoundaryElement;
 class Bead;
 class Cylinder;
+class Triangle;
+class Edge;
 
 /// A container or holding Species and [Reactions](@ref Reactions).
 
@@ -60,6 +62,9 @@ class Compartment : public Composite {
 public:
     enum class SliceMethod {
         membrane, cylinderBoundary
+    };
+    enum class ActivateReason {
+        Whole, Membrane
     };
 
 protected:
@@ -118,6 +123,8 @@ protected:
 public:
     short _ID;
     cell_list::CellListHeadUser< Cylinder, Compartment > cylinderCell; // Cell of cylinders
+    cell_list::CellListHeadUser< Triangle, Compartment > triangleCell; // Cell of triangles
+    cell_list::CellListHeadUser< Edge,     Compartment > edgeCell;     // Cell of edges
 
     /// Default constructor, only takes in number of dimensions
     Compartment() : _species(), _internal_reactions(),
@@ -171,7 +178,16 @@ public:
     /// Activate a compartment. Has the following side effects:
     /// 1) Adds diffusion reactions between this compartment's diffusing
     ///    species and its neighboring active compartments
-    virtual void activate(ChemSim* chem);
+    /// Note: should not be called during initialization.
+    virtual void activate(ChemSim* chem, ActivateReason = ActivateReason::Whole);
+    /// Update the activation status of a compartment, having following effects:
+    /// 1) Updates diffusion reaction rates between this and neighbors if not
+    ///    activated. Otherwise activate the compartment additively.
+    /// Note:
+    ///   - BEFORE this function call, all volume and area information must be
+    ///     updated.
+    ///   - Rate changers should happen AFTER calling this function.
+    virtual void updateActivation(ChemSim* chem, ActivateReason = ActivateReason::Whole);
 
     /// Deactivate a compartment. Has the following sid effects:
     /// 0) Initially checks that all cylinders are removed
@@ -182,7 +198,7 @@ public:
     ///    If there are no neighboring active compartments, an error will result.
     /// 2) Removes all diffusion reactions involving diffusing species
     ///    in this compartment.
-    virtual void deactivate(ChemSim* chem);
+    virtual void deactivate(ChemSim* chem, bool init=false);
 
     ///Check if compartment is activated
     virtual bool isActivated() {return _activated;}
@@ -599,6 +615,12 @@ public:
     ///get the cylinders in this compartment
     auto getCylinders() const { return cylinderCell.manager->getElementPtrs(cylinderCell); }
 
+    /// get triangles in this compartment
+    auto getTriangles() const { return triangleCell.manager->getElementPtrs(triangleCell); }
+
+    /// get edges in this compartment
+    auto getEdges() const { return edgeCell.manager->getElementPtrs(edgeCell); }
+    
     /// Get the diffusion rate of a species
     /// @param - species_name, a string
     float getDiffusionRate(string species_name) {
@@ -738,18 +760,13 @@ public:
     }
 
     /// Generate diffusion reactions between this compartment and another
-    ///@return - a vector of reactionbases that was just added
-    vector<ReactionBase*> generateDiffusionReactions(Compartment* C);
+    ///@return - a vector of reactionbases that was just added 
+    vector<ReactionBase*> generateDiffusionReactions(Compartment* C, bool outwardOnly=true);
 
     /// Generate all diffusion reactions for this compartment and its neighbors
     ///@return - a vector of reactionbases that was just added
-    vector<ReactionBase*> generateAllDiffusionReactions();
-
-    /// Generates all diffusion reactions between this compartment and its neighbors
-    /// in addition to generating reverse reactions
-    ///@return - a vector of reactionbases that was just added
-    vector<ReactionBase*> generateAllpairsDiffusionReactions();
-
+    vector<ReactionBase*> generateAllDiffusionReactions(bool outwardOnly=true);
+    
     /// Remove diffusion reactions between this compartment and another
     ///@return - a vector of reactionbases that was just removed
     void removeDiffusionReactions(ChemSim* chem, Compartment* C);
@@ -785,9 +802,9 @@ public:
     const vector<Compartment*>& getNeighbours() const {return _neighbours;}
 
     /// Print the species in this compartment
-    void printSpecies() {_species.printSpecies();}
+    void printSpecies()const {_species.printSpecies();}
     /// Print the reactions in this compartment
-    void printReactions() {
+    void printReactions()const {
         _internal_reactions.printReactions();
         _diffusion_reactions.printReactions();
     }
@@ -803,7 +820,7 @@ public:
     }
 
     /// Print properties of this compartment
-    virtual void printSelf() override {
+    virtual void printSelf()const override {
         cout << this->getFullName() << "\n"
         << "Number of neighbors: " << numberOfNeighbours() << endl;
         printSpecies();

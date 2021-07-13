@@ -13,7 +13,7 @@
 
 #include "BoundaryElement.h"
 
-void BoundaryElement::printSelf() {
+void BoundaryElement::printSelf() const {
     
     cout << endl;
     

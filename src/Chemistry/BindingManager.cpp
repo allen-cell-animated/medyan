@@ -17,6 +17,7 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 
 #include "MotorGhost.h"
 
@@ -75,6 +76,20 @@ void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
             auto x2 = cc->getCylinder()->getSecondBead()->vcoordinate();
 
             auto coord = midPointCoordinate(x1, x2, mp);
+
+        //set nucleation zone
+        // For membrane acting as boundaries, only the 0th membrane will be considered.
+        if(_nucleationZone == NucleationZoneType::MEMBRANE) {
+            if(Membrane::getMembranes().size()) {
+                if(cc->getCompartment()->isActivated()) {
+                    if(cc->getCompartment()->getVolumeFrac() < 1.0) // Not fully activated
+                        if(!Membrane::getMembranes()[0]->contains(vector2Vec<3, floatingpoint>(coord)))
+                            inZone = false;
+                }
+                else inZone = false;
+            } // else no membrane exists, always "in zone".
+        }
+        else if(_subSystem->getBoundary()->distance(coord) < _nucleationDistance) {
 
             //set nucleation zone
             if (_subSystem->getBoundary()->distance(coord) < _nucleationDistance) {
@@ -189,8 +204,19 @@ void BranchingManager::updateAllPossibleBindings() {
                 auto coord = midPointCoordinate(x1, x2, mp);
 
                 //set nucleation zone
-                if(_subSystem->getBoundary()->distance(coord) < _nucleationDistance) {
-
+                // For membrane acting as boundaries, only the 0th membrane will be considered.
+                if(_nucleationZone == NucleationZoneType::MEMBRANE) {
+                    if(Membrane::getMembranes().size()) {
+                        if(cc->getCompartment()->isActivated()) {
+                            if(cc->getCompartment()->getVolumeFrac() < 1.0) // Not fully activated
+                                if(!Membrane::getMembranes()[0]->contains(vector2Vec<3, floatingpoint>(coord)))
+                                    inZone = false;
+                        }
+                        else inZone = false;
+                    } // else no membrane exists, always "in zone".
+                }
+                else if(_subSystem->getBoundary()->distance(coord) < _nucleationDistance) {
+                    
                     //if top boundary, check if we are above the center coordinate in z
                     if(_nucleationZone == NucleationZoneType::TOPBOUNDARY) {
 

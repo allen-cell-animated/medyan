@@ -14,7 +14,7 @@
 #ifndef MEDYAN_MController_h
 #define MEDYAN_MController_h
 
-#include <vector>
+#include <memory> // unique_ptr
 
 #include "common.h"
 
@@ -40,8 +40,7 @@ class MController {
 private:
     ForceFieldManager _FFManager;  ///< Container and methods for all force
                                    ///< fields in system
-    vector<Minimizer*> _minimizerAlgorithms; ///< Vector with algorithms
-                                             ///< for system minimization
+    std::unique_ptr<Minimizer> _minimizerAlgorithm; ///< Algorithm for system minimization
     
     SubSystem* _subSystem; ///< A pointer to the subsystem
 
@@ -49,7 +48,7 @@ private:
     void initializeFF (MechParams::MechanicsFFType& forceFields);
     
     /// Initialize the minimization algorithms used in the simulation
-    void initializeMinAlgorithms (MechParams::MechanicsAlgorithm& Minimizers);
+    void initializeMinAlgorithm (MechParams::MechanicsAlgorithm& minimizer);
 
 public:
     /// Constructor which sets a subsystem pointer
@@ -75,15 +74,15 @@ public:
     }
     
     /// Initialze the force fields and minimizers used
-    void initialize(MechParams::MechanicsFFType forceFields, MechParams::MechanicsAlgorithm Minimizers) {
+    void initialize(MechParams::MechanicsFFType forceFields, MechParams::MechanicsAlgorithm minimizer) {
         initializeFF(forceFields);
-        initializeMinAlgorithms(Minimizers);
+        initializeMinAlgorithm(minimizer);
     }
 
     /// Run a minimization on the system using the chosen algorithm
     auto run(bool steplimit = true) {
         // Minimize mechanical energy
-        const auto res = _minimizerAlgorithms[0]->equlibrate(_FFManager, steplimit);
+        const auto res = _minimizerAlgorithm->equlibrate(_FFManager, steplimit);
 
         // Update load forces, as needed by the chemical rate changer
         _FFManager.computeLoadForces();

@@ -192,7 +192,7 @@ protected:
     Bead* maxBead();
 
     /// Transfers data to lightweight arrays for min
-    void startMinimization();
+    void startMinimization(floatingpoint gradTol);
     /// Transfers updated coordinates and force to bead members
     void endMinimization();
 

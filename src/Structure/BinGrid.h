@@ -117,7 +117,7 @@ public:
 //    const Bin& getProtoBin() const {return _prototype_bin;}
 
     /// Print properties of this grid
-    virtual void printSelf() {
+    virtual void printSelf() const override {
         cout << getFullName() << endl;
         cout << "Number of Bin objects: " << numberOfChildren() << endl;
         cout << "Type: " << _bgType <<endl;

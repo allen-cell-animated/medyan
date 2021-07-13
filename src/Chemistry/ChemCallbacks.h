@@ -27,6 +27,8 @@
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
 #include "Boundary.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/MembraneRegion.hpp"
 
 #include "BindingManager.h"
 
@@ -38,6 +40,7 @@
 
 #include <chrono>
 #include "CUDAcommon.h"
+#include "Util/Io/Log.hpp"
 
 using namespace mathfunc;
 
@@ -595,13 +598,23 @@ struct BranchingCallback {
                 auto branchPosDir = branchProjection(n, p, l, s, theta);
                 auto bd = get<0>(branchPosDir);//branch direction
                 auto bp = get<1>(branchPosDir);//branch position
+                const auto b2 = vector2Vec< 3, floatingpoint >(bp) + s * vector2Vec< 3, floatingpoint >(bd);
 
                 //Check if the branch will be within boundary
                 auto projlength = SysParams::Geometry().cylinderSize[filType] / 10;
                 auto pos2 = nextPointProjection(bp, projlength, bd);
                 //check if within cutoff of boundary
-                if (_ps->getBoundary()->distance(bp) >= boundary_cutoff_distance &&
-                    _ps->getBoundary()->distance(pos2) >= boundary_cutoff_distance) {
+                auto regionInMembrane = _ps->getRegionInMembrane();
+                if(
+                    (regionInMembrane && (
+                        regionInMembrane->contains(vector2Vec< 3, floatingpoint >(bp)) &&
+                        regionInMembrane->contains(b2)
+                    )) ||
+                    (!regionInMembrane && (
+                        _ps->getBoundary()->distance(bp) >= boundary_cutoff_distance &&
+                        _ps->getBoundary()->distance(pos2) >= boundary_cutoff_distance
+                    ))
+                ) {
                     inboundary = true;
 
                         //create a new daughter filament
@@ -624,9 +637,9 @@ struct BranchingCallback {
             }
 
         }
-        else
-        {
-            CCylinder* c = nullptr; auto check = false;
+        else {
+            CCylinder* c = nullptr;
+            bool check = false;
             vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
 /*	        cout<<"Looking for cylinder with Idx "<<c1->getStableIndex()<<" and pos "
                                                                    ""<<pos<<endl;*/
@@ -1138,10 +1151,15 @@ struct FilamentCreationCallback {
 
                 if(inbubble) continue;
 
-                //check if within boundary
-                if(_ps->getBoundary()->within(position) &&
-                   _ps->getBoundary()->within(npp))
-                    break;
+                //check if within boundary and membrane[0]
+                if(
+                    _ps->getBoundary()->within(position) &&
+                    _ps->getBoundary()->within(npp) &&
+                    c->isActivated() &&
+                    (c->getVolumeFrac() >= 1.0 ||
+                        Membrane::getMembranes()[0]->contains(vector2Vec<3, floatingpoint>(position)) &&
+                        Membrane::getMembranes()[0]->contains(vector2Vec<3, floatingpoint>(npp)))
+                ) break;
             }
             
             //create filament, set up ends and filament species

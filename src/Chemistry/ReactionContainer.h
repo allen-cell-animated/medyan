@@ -125,7 +125,7 @@ public:
     const vector<unique_ptr<ReactionBase>>& reactions() const {return _reactions;}
     
     /// Print all reactions in this container
-    virtual void printReactions() {
+    virtual void printReactions()const {
         for(auto &r : _reactions)
             cout << (*r.get());
     }

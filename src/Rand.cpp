@@ -18,7 +18,7 @@ int Rand::intcounter = 0;
 int Rand::floatcounter = 0;
 int Rand::chemistrycounter = 0;
 #else
-mt19937 Rand::eng(rdtsc());
+std::mt19937 Rand::eng; // Defined with default seed. Must be seeded at initialization.
 #endif
 uniform_int_distribution<int> Rand::_int_distr;
 uniform_int_distribution<uint64_t> Rand::_uint64_t_distr;

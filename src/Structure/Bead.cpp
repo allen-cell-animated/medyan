@@ -13,6 +13,7 @@
 
 #include "Bead.h"
 
+#include "Core/Globals.hpp"
 #include "Compartment.h"
 #include "Composite.h"
 
@@ -26,18 +27,19 @@ std::vector<Bead*> Bead::_pinnedBeads;
 
 Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
 //add brforce, pinforce
-    : Trackable(true),
+    : Trackable(true, false, true, false),
       coord(vector2Vec<3>(v)),
       force{},
       coordinateP(v),
       brforce(3, 0), pinforce(3,0),
       _position(position), _birthTime(tau()) {
-
-	parent->addChild(unique_ptr<Component>(this));
-
+    
+    if(SysParams::RUNSTATE)
+        parent->addChild(unique_ptr<Component>(this));
+          
     loadForcesP = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
     loadForcesM = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
-    
+
     //Find compartment
     try {_compartment = GController::getCompartment(v);}
     catch (exception& e) {
@@ -56,7 +58,7 @@ Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
 
 Bead::Bead(Composite* parent, int position)
 //add brforce, pinforce
-    : Trackable(true),
+    : Trackable(true, false, true, false),
     coord{},
     force{},
     coordinateP(3, 0),
@@ -84,7 +86,7 @@ void Bead::updatePosition() {
     }
 }
 
-void Bead::printSelf() {
+void Bead::printSelf()const {
     
     cout << endl;
     

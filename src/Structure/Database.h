@@ -68,7 +68,7 @@ public:
             // Move the data from the last element to the current position
             _elems[_index] = _elems.back();
             // Updata _index of the original last element
-            _elems[_index]->_index = _index;
+            _elems[_index] -> DatabaseBase< T >::_index = _index;
         }
 
         // Pop the last element

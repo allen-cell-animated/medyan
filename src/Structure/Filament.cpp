@@ -1016,7 +1016,7 @@ vector<vector<floatingpoint>> Filament::predefinedFilamentProjection(const vecto
     return v;
 }
 //@
-void Filament::printSelf() {
+void Filament::printSelf()const {
     
     cout << endl;
     

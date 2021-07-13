@@ -22,6 +22,8 @@
 //FORWARD DECLARATIONS
 class ChemSim;
 class Cylinder;
+class Edge;
+class Triangle;
 
 /// A simple n-dimensional grid of Compartment objects.
 
@@ -49,6 +51,8 @@ private:
 public:
 
     cell_list::CellListManager< Cylinder, Compartment > cylinderCellList;
+    cell_list::CellListManager< Triangle, Compartment > triangleCellList;
+    cell_list::CellListManager< Edge,     Compartment > edgeCellList;
 
     /// Constructor, creates a number of Compartment instances
     CompartmentGrid(int numCompartments) {
@@ -60,6 +64,10 @@ public:
 
             cylinderCellList.addHead(c, c->cylinderCell);
             c->cylinderCell.manager = &cylinderCellList;
+            triangleCellList.addHead(c, c->triangleCell);
+            c->triangleCell.manager = &triangleCellList;
+            edgeCellList.addHead(c, c->edgeCell);
+            c->edgeCell.manager = &edgeCellList;
         }
     }
     
@@ -97,7 +105,7 @@ public:
     virtual void addChemSimReactions(ChemSim* chem);
     
     /// Print properties of this grid
-    virtual void printSelf() {
+    virtual void printSelf()const {
         cout << getFullName() << endl;
         cout << "Number of Compartment objects: " << numberOfChildren() << endl;
         for(auto &c : children())

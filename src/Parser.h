@@ -34,6 +34,7 @@
 #include "common.h"
 #include "SysParams.h"
 #include "utility.h"
+#include "Util/Math/Vec.hpp"
 #include "Util/SExpr.hpp"
 
 namespace medyan {
@@ -829,6 +830,20 @@ struct FilamentParser {
     /// filament type and positions (start and end points).
     /// @note - Does not check for coordinate correctness.
     static FilamentData readFilaments(std::istream&);
+};
+
+/// Used to parse initial membrane vertex and neighbor information, initialized by the Controller.
+struct MembraneParser {
+
+    struct MembraneInfo {
+        using coordinate_type = mathfunc::Vec< 3, floatingpoint >;
+        std::vector< coordinate_type > vertexCoordinateList;
+        std::vector< std::array< size_t, 3 > > triangleVertexIndexList;
+    };
+
+    /// Reads membrane vertex input file.
+    /// @note - Does not check for coordinate correctness.
+    static std::vector<MembraneInfo> readMembranes(std::istream&);
 };
 
 /// Used to parse initial Bubble information, initialized by the Controller.

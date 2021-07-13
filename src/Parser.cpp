@@ -11,12 +11,17 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
+#include <stdexcept> // runtime_error
+#include <utility> // move
+
 #include "Parser.h"
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
 
 #include "SysParams.h"
+#include "Util/Io/Log.hpp"
+#include "Util/Parser/MembraneParser.hpp"
 
 namespace medyan {
 
@@ -2605,6 +2610,26 @@ void SystemParser::initInitParser() {
     );
     initParser.addEmptyLine();
 
+    initParser.addComment("; membrane setup");
+    initParser.addArgsWithAliases(
+        "membrane", {},
+        [] (SimulConfig& sc, const SExpr::ListType& sel) {
+            MembraneSetup ms;
+            for(int i = 1; i < sel.size(); ++i) {
+                parseKeyValue<MembraneSetup>(ms, sel[i], membraneSetupParser().dict, KeyValueParserUnknownKeyAction::warn);
+            }
+            sc.membraneSettings.setupVec.push_back(move(ms));
+        },
+        [] (const SimulConfig& sc) {
+            vector<list<ConfigFileToken>> res;
+
+            for(auto& eachSetup : sc.membraneSettings.setupVec) {
+                res.push_back(buildTokens<MembraneSetup>(eachSetup, membraneSetupParser()));
+            }
+            return res;
+        }
+    );
+
     initParser.addComment("# Initial filament setup from external input");
     initParser.addStringArgsWithAliases(
         "FILAMENTFILE", { "FILAMENTFILE:" },
@@ -3024,6 +3049,78 @@ FilamentData FilamentParser::readFilaments(std::istream& is) {
     }
       tuple< vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> , vector<tuple<string, short, vector<vector<floatingpoint>>>> , vector<tuple<string, short, vector<floatingpoint>>> , vector<vector<floatingpoint>> > returnVector=make_tuple(filamentVector,boundVector,branchVector, staticVector);
     return returnVector;
+}
+
+vector<MembraneParser::MembraneInfo> MembraneParser::readMembranes(std::istream& is) {
+
+    is.clear();
+    is.seekg(0);
+
+    vector<MembraneInfo> res;
+    
+    bool wasEmpty = true;
+    int stage; // 0: init, number of vertices; 1: vertex coordinate; 2: triangle vertex index
+    size_t numVertices;
+    
+    string line;
+    while(getline(is, line)) {
+        
+        bool isEmpty = (line.empty() || line.find("#") != string::npos); // empty line or line with '#'
+
+        if(wasEmpty && !isEmpty) { // New membrane
+            res.emplace_back();
+            stage = 0;
+        }
+
+        wasEmpty = isEmpty;
+        if(isEmpty) continue;
+
+        auto& activeMem = res.back();
+
+        vector<string> lineVector = split<string>(line);
+        size_t lineVectorSize = lineVector.size();
+
+        switch(stage) {
+        case 0: // init, number of vertices
+            if(lineVectorSize != 1) cout << "First line of membrane should be number of vertices." << endl;
+            numVertices = atoi(lineVector[0].c_str());
+            activeMem.vertexCoordinateList.reserve(numVertices);
+            stage = 1;
+            break;
+        case 1: // vertex coordinate
+            {
+                if(lineVectorSize != 3) {
+                    cout << "Each vertex should have 3 coordinates" << endl;
+                }
+
+                activeMem.vertexCoordinateList.emplace_back();
+                auto& activeCoord = activeMem.vertexCoordinateList.back();
+
+                // Parse coordinate information
+                for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
+                    activeCoord[coordIdx] = atof(lineVector[coordIdx].c_str());
+                }
+            }
+
+            if(activeMem.vertexCoordinateList.size() == numVertices) stage = 2;
+            break;
+        case 2: // triangle vertex indices
+            {
+                if(lineVectorSize != 3) {
+                    cout << "Each triangle should have 3 indices" << endl;
+                }
+
+                activeMem.triangleVertexIndexList.emplace_back();
+                auto& activeTriangle = activeMem.triangleVertexIndexList.back();
+
+                for(size_t i = 0; i < 3; ++i)
+                    activeTriangle[i] = atoi(lineVector[i].c_str());
+            }
+            break;
+        }
+    }
+
+    return res;
 }
 
 vector<tuple<short, vector<floatingpoint>>> BubbleParser::readBubbles(std::istream& is) {

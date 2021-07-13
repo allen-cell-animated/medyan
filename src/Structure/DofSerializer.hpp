@@ -24,6 +24,7 @@
 #include "Mechanics/ForceField/Types.hpp"
 #include "Structure/Bead.h"
 #include "Structure/Bubble.h"
+#include "Structure/SurfaceMesh/Vertex.hpp"
 
 namespace medyan {
 
@@ -57,7 +58,11 @@ inline FFCoordinateStartingIndex serializeDof(
 
     // Vertex coord
     si.vertex = curIdx;
-    // Add things for vertices here
+    coord.reserve(coord.size() + 3 * Vertex::getVertices().size());
+    for(auto pv : Vertex::getVertices()) {
+        coord.insert(coord.end(), pv->coord.begin(), pv->coord.end());
+        curIdx += 3;
+    }
 
     // Membrane 2d coord
     si.mem2d = curIdx;
@@ -94,6 +99,13 @@ inline void deserializeDof(
     for(auto pb : Bubble::getBubbles()) {
         std::copy(coord.begin() + curIdx, coord.begin() + curIdx + 3, pb->coord.begin());
         std::copy(force.begin() + curIdx, force.begin() + curIdx + 3, pb->force.begin());
+        curIdx += 3;
+    }
+
+    // Vertex
+    for(auto pv : Vertex::getVertices()) {
+        std::copy(coord.begin() + curIdx, coord.begin() + curIdx + 3, pv->coord.begin());
+        std::copy(force.begin() + curIdx, force.begin() + curIdx + 3, pv->force.begin());
         curIdx += 3;
     }
 

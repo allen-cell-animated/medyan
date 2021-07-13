@@ -18,6 +18,8 @@
 #include "Cylinder.h"
 #include "Bubble.h"
 #include "BoundaryElement.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/Triangle.hpp"
 
 #include "GController.h"
 #include "MathFunctions.h"
@@ -26,6 +28,8 @@
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
+#include "Util/Math/TriangleArithmetics.hpp"
+
 using namespace mathfunc;
 #ifdef NLSTENCILLIST
 void CylinderCylinderNL::updateallcylinderstobin() {
@@ -1099,3 +1103,111 @@ vector<Cylinder*> BubbleCylinderNL::getNeighbors(Bubble* bb) {
 
     return _list[bb];
 }
+
+/// Triangle - Beads (filament)
+
+void TriangleFilBeadNL::addNeighbor(Neighbor* n) {
+    using MT = Membrane::MeshType;
+
+    if(Triangle* t = dynamic_cast<Triangle*>(n)) {
+        const auto& mesh = t->getParent()->getMesh();
+        const MT::TriangleIndex ti { t->getTopoIndex() };
+        const auto hei0 = mesh.halfEdge(ti);
+        const auto hei1 = mesh.next(hei0);
+        const auto hei2 = mesh.next(hei1);
+        const Vec< 3, floatingpoint > v0 (mesh.attribute(mesh.target(hei0)).getCoordinate());
+        const Vec< 3, floatingpoint > v1 (mesh.attribute(mesh.target(hei1)).getCoordinate());
+        const Vec< 3, floatingpoint > v2 (mesh.attribute(mesh.target(hei2)).getCoordinate());
+
+        for(auto b : Bead::getBeads()) {
+            const auto dist = trianglePointDistance(
+                v0, v1, v2,
+                b->coordinate()
+            );
+
+            if(dist < _rMax) {
+                listBT_[b].push_back(t);
+                listTB_[t].push_back(b);
+            }
+            if(dist < rMaxMech_) {
+                listBTMech_[b].push_back(t);
+                listTBMech_[t].push_back(b);
+            }
+        }
+    }
+    else if(Bead* b = dynamic_cast<Bead*>(n)) {
+
+        for(auto t : Triangle::getTriangles()) {
+            const auto& mesh = t->getParent()->getMesh();
+            const MT::TriangleIndex ti { t->getTopoIndex() };
+            const auto hei0 = mesh.halfEdge(ti);
+            const auto hei1 = mesh.next(hei0);
+            const auto hei2 = mesh.next(hei1);
+            const Vec< 3, floatingpoint > v0 (mesh.attribute(mesh.target(hei0)).getCoordinate());
+            const Vec< 3, floatingpoint > v1 (mesh.attribute(mesh.target(hei1)).getCoordinate());
+            const Vec< 3, floatingpoint > v2 (mesh.attribute(mesh.target(hei2)).getCoordinate());
+
+            const auto dist = trianglePointDistance(
+                v0, v1, v2,
+                b->coordinate()
+            );
+
+            if(dist < _rMax) {
+                listBT_[b].push_back(t);
+                listTB_[t].push_back(b);
+            }
+            if(dist < rMaxMech_) {
+                listBTMech_[b].push_back(t);
+                listTBMech_[t].push_back(b);
+            }
+        } // End loop triangles
+    }
+}
+
+void TriangleFilBeadNL::removeNeighbor(Neighbor* n) {
+    
+    if(Triangle* t = dynamic_cast<Triangle*>(n)) {
+        removeNeighbor_(t, listTB_, listBT_);
+        removeNeighbor_(t, listTBMech_, listBTMech_);
+    }
+    else if(Bead* b = dynamic_cast<Bead*>(n)) {
+        removeNeighbor_(b, listBT_, listTB_);
+        removeNeighbor_(b, listBTMech_, listTBMech_);
+    }
+}
+
+void TriangleFilBeadNL::reset() {
+    
+    listBT_.clear();
+    listTB_.clear();
+    listBTMech_.clear();
+    listTBMech_.clear();
+
+    for(auto t: Triangle::getTriangles()) {
+
+        auto& mesh = t->getParent()->getMesh();
+        const auto vis = medyan::vertexIndices(
+            mesh,
+            Membrane::MeshType::TriangleIndex { t->getTopoIndex() }
+        );
+
+        for(auto b : Bead::getBeads()) {
+            const auto dist = trianglePointDistance(
+                mesh.attribute(vis[0]).getCoordinate(),
+                mesh.attribute(vis[1]).getCoordinate(),
+                mesh.attribute(vis[2]).getCoordinate(),
+                b->coordinate()
+            );
+
+            if(dist < _rMax) {
+                listBT_[b].push_back(t);
+                listTB_[t].push_back(b);
+            }
+            if(dist < rMaxMech_) {
+                listBTMech_[b].push_back(t);
+                listTBMech_[t].push_back(b);
+            }
+        }
+    }
+}
+

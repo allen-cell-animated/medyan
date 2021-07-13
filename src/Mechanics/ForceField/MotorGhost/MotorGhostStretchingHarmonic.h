@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v4.0
@@ -58,10 +57,7 @@ public:
 #ifdef CROSSCHECK
     floatingpoint energy(Bead*, Bead*, Bead*, Bead*,
                   floatingpoint position1, floatingpoint position2,
-                  floatingpoint kStretch, floatingpoint eqLength);
-    floatingpoint energy(Bead*, Bead*, Bead*, Bead*,
-                  floatingpoint position1, floatingpoint position2,
-                  floatingpoint kStretch, floatingpoint eqLength, floatingpoint d);
+                  floatingpoint kStretch, floatingpoint eqLength, bool stretched);
     
     floatingpoint forces(Bead*, Bead*, Bead*, Bead*,
                   floatingpoint position1, floatingpoint position2,

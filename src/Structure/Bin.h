@@ -163,7 +163,7 @@ public:
     vector<Bin*> getuniquepermutationNeighbours() {return _uniquepermutationneighbours;}
 
     /// Print properties of this bin
-    virtual void printSelf() override {
+    virtual void printSelf() const override {
         cout << this->getFullName() << "\n"
              << "Number of neighbors: " << numberOfNeighbours() << endl;
     }

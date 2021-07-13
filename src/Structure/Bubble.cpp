@@ -77,7 +77,7 @@ void Bubble::updatePositionManually() {
 
 }
 
-void Bubble::printSelf() {
+void Bubble::printSelf()const {
     
     cout << endl;
     

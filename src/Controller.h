@@ -23,6 +23,9 @@
 #include "GController.h"
 #include "CController.h"
 #include "DRController.h"
+#include "Structure/SurfaceMesh/AdaptiveMesh.hpp"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/MembraneRegion.hpp"
 #include "DissipationTracker.h"
 #include "MedyanConfig.hpp"
 #include "Restart.h"
@@ -69,6 +72,10 @@ private:
 
     floatingpoint _minimizationTime;  ///< Frequency of mechanical minimization
     floatingpoint _neighborListTime;  ///< Frequency of neighbor list updates
+
+    std::unique_ptr<adaptive_mesh::MembraneMeshAdapter> _meshAdapter; ///< Used in adaptive remeshing algorithm
+    std::unique_ptr< MembraneRegion< Membrane > > _regionInMembrane; // The region that is inside the outermost membrane
+
     floatingpoint _slowedminimizationcutoffTime = 10.0; //Time cut off for slowed
     // minimization
     // frequency
@@ -109,6 +116,12 @@ private:
     
     /// Move the boundary based on the timestep
     void moveBoundary(floatingpoint deltaTau);
+
+    // Update compartments activity based on boundary, membrane, etc.
+    // Also update partial volumes and reaction rates
+    // Used after each mechanical minimization
+    void updateActiveCompartments();
+    
     ///Activate/deactivate compartments based on the longest filament (along Xaxis).
     void activatedeactivateComp();
     void ControlfrontEndCompobsolete();
@@ -138,6 +151,9 @@ private:
     ///Helper function to pin filaments near the boundary
     void pinBoundaryFilaments();
     void pinLowerBoundaryFilaments();
+
+    /// Helper function to remesh the membranes
+    void membraneAdaptiveRemesh() const;
     
     double tp = SysParams::Chemistry().makeRateDependTime;
     double threforce = SysParams::Chemistry().makeRateDependForce;

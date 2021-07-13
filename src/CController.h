@@ -18,6 +18,8 @@
 
 #include "Compartment.h"
 #include "ChemSimImpl.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/MembraneMeshChemistry.hpp"
 
 
 //FORWARD DECLARATIONS
@@ -55,9 +57,11 @@ public:
     CController(SubSystem* s) : _subSystem(s) {}
     
     ///Activate a compartment. Wrapper function for Compartment::activate().
-    void activate(Compartment* C) {C->activate(_chemSim);}
+    void activate(Compartment* C, Compartment::ActivateReason reason = Compartment::ActivateReason::Whole) { C->activate(_chemSim, reason); }
+    /// Update activation of a compartment. Wrapper function for Compartment::updateActivation()
+    void updateActivation(Compartment* C, Compartment::ActivateReason reason = Compartment::ActivateReason::Whole) { C->updateActivation(_chemSim, reason); }
     ///Deactivate a compartment. Wrapper function for Compartment::deactivate().
-    void deactivate(Compartment* C) {C->deactivate(_chemSim);}
+    void deactivate(Compartment* C, bool init=false) {C->deactivate(_chemSim, init);}
     
     /// Initialize the ChemSim algorithm as well as the ChemManager
     ///@param chemAlgorithm - a string defining the chemical algorithm to be used
@@ -65,7 +69,28 @@ public:
     void initialize(string& chemAlgorithm, ChemistryData& chem, DissipationTracker* dt);
 
     void initializerestart(floatingpoint restartime, floatingpoint _minimizationTime);
-    
+
+    // Things to be done before chemistry simulation
+    void beforeRun() const {
+        // Link all membrane mesh reactions and activate them
+        for(auto m : Membrane::getMembranes()) {
+            medyan::forEachReactionInMesh(m->getMesh(), [this](ReactionDy& r) {
+                _chemSim->addReaction(&r);
+                r.activateReaction();
+            });
+        }
+    }
+    // Things to be done after chemistry simulation
+    void afterRun() const {
+        // Unlink all membrane mesh reactions
+        for(auto m : Membrane::getMembranes()) {
+            medyan::forEachReactionInMesh(m->getMesh(), [this](ReactionDy& r) {
+                r.passivateReaction();
+                _chemSim->removeReaction(&r);
+            });
+        }
+    }
+
     ///Run chemistry for a given amount of time
     bool run(floatingpoint time);
     

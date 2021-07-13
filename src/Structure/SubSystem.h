@@ -57,8 +57,10 @@ class Cylinder;
 class Linker;
 class MotorGhost;
 class BranchingPoint;
+class Membrane;
 
 class CompartmentGrid;
+template< typename MemType > class MembraneRegion;
 
 /// Manages all [Movables](@ref Movable) and [Reactables](@ref Reactable). Also holds all
 /// [NeighborLists](@ref NeighborList) associated with chemical or mechanical interactions,
@@ -111,13 +113,9 @@ public:
             //Remove boundary and bubble neighbors
             for (auto nlist : __bneighborLists)
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
-#else
+#endif
             for (auto nlist : _neighborLists)
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
-#endif
-	        mineN = chrono::high_resolution_clock::now();
-	        chrono::duration<floatingpoint> elapsed_time(mineN - minsN);
-	        timedneighbor += elapsed_time.count();
 
         } else if (t->_neighbor) {
         	minsN = chrono::high_resolution_clock::now();
@@ -153,10 +151,9 @@ public:
             //Remove boundary neighbors
             for (auto nlist : __bneighborLists)
                 nlist->removeDynamicNeighbor((DynamicNeighbor *) t);
-#else
+#endif
             for (auto nlist : _neighborLists)
                 nlist->removeDynamicNeighbor((DynamicNeighbor *) t);
-#endif
 
         } else if (t->_neighbor) {
             for (auto nlist : _neighborLists)
@@ -195,6 +192,10 @@ public:
 
     /// Add a boundary to this subsystem
     void addBoundary(Boundary *boundary) { _boundary = boundary; }
+
+    // Region in membrane
+    MembraneRegion< Membrane >* getRegionInMembrane() const { return _regionInMembrane; }
+    void setRegionInMembrane(MembraneRegion< Membrane >* r) { _regionInMembrane = r; }
 
     /// Add a neighbor list to the subsystem
     void addNeighborList(NeighborList *nl) { _neighborLists.push_back(nl); }
@@ -274,6 +275,8 @@ private:
 	chrono::high_resolution_clock::time_point minsN, mineN, minsT,mineT;
     floatingpoint _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer
+    MembraneRegion< Membrane >* _regionInMembrane; // The region inside membrane. The value is set by the controller
+
 //    unordered_set<Movable*> _movables; ///< All movables in the subsystem
 //    unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
 

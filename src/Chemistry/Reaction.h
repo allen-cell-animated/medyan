@@ -282,10 +282,9 @@ private:
 public:
     /// The main constructor
     DiffusionReaction(initializer_list<Species*> species,
-                      float rate = 0.0, bool isProtoCompartment = false, floatingpoint
-                      volumeFrac = 1.0)
-            : Reaction(species, rate, isProtoCompartment,volumeFrac,-1) {
-
+                      float rate = 0.0, bool isProtoCompartment = false, floatingpoint volumeFrac = 1.0)
+        : Reaction(species, rate, isProtoCompartment, volumeFrac, -1) {
+    
         //set averaging
         if(dynamic_cast<RSpeciesAvg*>(_rspecies[0]))
             _averaging = true;

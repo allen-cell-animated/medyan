@@ -69,10 +69,15 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #define CATCH_CONFIG_RUNNER
 #include "catch2/catch.hpp"
 
+#include "Analysis/Io/ReadSnapshot.hpp"
 #include "common.h"
 #include "Controller.h"
+#include "Core/Globals.hpp"
 #include "MedyanArgs.hpp"
 #include "MedyanConfig.hpp"
+#include "Side/SideProcedures.hpp"
+
+using namespace medyan;
 
 using namespace medyan;
 #ifndef GIT_COMMIT_HASH
@@ -92,7 +97,7 @@ int main(int argc, char **argv) {
     cout << "*******************************************************" << endl;
     cout<< "Commit hash                          "<<GIT_COMMIT_HASH<<endl;
     cout<< "Git branch                           "<<GIT_BRANCH<<endl;
-    cout << "MEDYAN version:                      v4.2.0"<<endl;
+    cout << "MEDYAN version:                      v4.3.0"<<endl;
     cout << "Memory model:                        "<< static_cast<unsigned>(8 * sizeof
     (void*))<<" bit"<<endl;
     cout << "Coordinate/Force precision:          ";
@@ -150,12 +155,25 @@ int main(int argc, char **argv) {
         }
         break;
 
+    case MedyanRunMode::analyze:
+        {
+            string inputFilePath = cmdRes.inputDirectory + "/snapshot.traj";
+            string pdbFilePath = cmdRes.outputDirectory + "/snapshot.pdb";
+            analysis::SnapshotReader sr(inputFilePath, pdbFilePath, cmdRes.outputDirectory, "snapshot");
+            sr.readAndConvertToVmd();
+        }
+        break;
+
     case MedyanRunMode::config:
         interactiveConfig();
         break;
 
     case MedyanRunMode::test:
         returnCode = Catch::Session().run(argc - (cmdRes.argpNext - 1), argv + (cmdRes.argpNext - 1));
+        break;
+
+    case MedyanRunMode::side:
+        medyan::side::runSideProcedure(cmdRes.sideProcName);
         break;
     }
 

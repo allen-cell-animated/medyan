@@ -479,7 +479,7 @@ void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
 }
 
 
-void MotorGhost::printSelf() {
+void MotorGhost::printSelf()const {
     
     cout << endl;
     

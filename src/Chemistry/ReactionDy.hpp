@@ -94,6 +94,16 @@ public:
         rxns.erase(this);
         return vector<ReactionBase*>(rxns.begin(),rxns.end());
     }
+    // Add affected reactions to the dependency list.
+    virtual void addDependantReactions() override {
+        for(int i = 0; i < repRSpecies_.size(); i++) {
+            for(auto r : repRSpecies_[i].prs->reactantReactions()) {
+                if(r != this && !r->isPassivated()) {
+                    _dependents.insert(r);
+                }
+            }
+        }
+    }
 
     virtual void updatePropensityImpl() override {
         if(_rnode && !_passivated) _rnode->activateReaction();

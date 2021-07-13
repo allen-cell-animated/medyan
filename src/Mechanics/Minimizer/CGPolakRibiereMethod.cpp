@@ -64,7 +64,7 @@ MinimizationResult PolakRibiere::minimize(
 
     //@@@{ STEP 1: Start minimization
     tbegin = chrono::high_resolution_clock::now();
-    startMinimization();//TODO needs to be hostallocdefault and MemCpyAsync followed by CudaStreamSynchronize
+    startMinimization(GRADTOL);//TODO needs to be hostallocdefault and MemCpyAsync followed by CudaStreamSynchronize
 
 
 #ifdef ALLSYNC

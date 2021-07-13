@@ -80,7 +80,7 @@ public:
         return getElements().size();
     }
     
-    virtual void printSelf();
+    virtual void printSelf() const override;
     
     //GetType implementation just returns zero (no AFM types yet)
     virtual int getType() {return 0;}

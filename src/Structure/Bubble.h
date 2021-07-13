@@ -94,7 +94,7 @@ public:
     bool isAFM() {return _isAFM;}
 
     /// Print bubble information
-    virtual void printSelf();
+    virtual void printSelf()const;
     
     //@{
     /// SubSystem management, inherited from Trackable

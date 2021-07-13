@@ -19,6 +19,7 @@
 #include <list>
 
 #include "common.h"
+#include "Structure/SurfaceMesh/MembraneMeshVertexSystem.hpp"
 
 //Did not minimize structure
 #ifdef TRACKDIDNOTMINIMIZE
@@ -87,7 +88,16 @@ struct MechParams {
         
         /// AFM Type
         string AFMFFType = "";
-        
+
+
+        // MembraneFF type
+        string MemStretchingFFType     = "";
+        string memTensionFFType        = "";
+        string MemBendingFFType        = "";
+        string MemBeadVolumeFFType     = "";
+
+        // Volume conservation ff type
+        string volumeConservationFFType = "";
     };
 
     /// Struct to hold mechanics algorithm information
@@ -147,8 +157,11 @@ struct MechParams {
 
     //@{
     /// Volume parameter
-    vector<floatingpoint> VolumeK = {};
-    floatingpoint VolumeCutoff = 0.0;
+    vector<floatingpoint> VolumeK                 = {};
+    floatingpoint         VolumeCutoff            = 0.0;
+    double         memBeadVolumeK          = 0.0;
+    double         MemBeadVolumeCutoff     = 0.0;
+    double         MemBeadVolumeCutoffMech = 0.0;
     //@}
 
     //@{
@@ -164,8 +177,8 @@ struct MechParams {
     ///If using more than one bubble
     short numBubbleTypes = 1;
     //@}
-
-
+    
+    
     //@{
     /// SPECIAL MECHANICAL PROTOCOLS
 
@@ -177,6 +190,13 @@ struct MechParams {
     floatingpoint pinDistance = 250; ///< 250nm pinning distance for now
     floatingpoint pinK = 0.0;       ///< Tethered stiffness
     floatingpoint pinTime = 0.0;    ///< Time at which to pin the filaments
+
+    // pin membrane border vertices, using pinK
+    bool pinMembraneBorderVertices = false;
+
+    // pin initial filament beads, using pinK
+    bool pinInitialFilamentBelowZ = false;
+    floatingpoint pinInitialFilamentBelowZValue = 0.0;
     //@}
 
     //vectorization
@@ -299,8 +319,8 @@ struct ChemParams {
 
     vector<vector<short>> bindingIndices = vector<vector<short>>(MAX_FILAMENT_TYPES);
     //@}
-
-
+    
+    
     //@{
     /// SPECIAL CHEMICAL PROTOCOLS
 
@@ -535,6 +555,45 @@ struct FilamentSetup {
     string pinRestartFile = "";
 };
 
+namespace medyan {
+
+/// Struct to hold membrane setup information
+struct MembraneSetup {
+    // meta info
+    //---------------------------------
+    int type = 0;
+
+    // mechanical parameters
+    //---------------------------------
+    // mesh mode
+    MembraneMeshVertexSystem vertexSystem = MembraneMeshVertexSystem::general;
+
+    // elasticity
+    double areaElasticity = 400;
+    double bendingElasticity = 100;
+    double eqMeanCurv = 0;
+
+    // tension
+    double tension = 0;
+
+    // enclosed volume conservation
+    double volumeElasticity = 0.8;
+
+
+    // initial mesh configuration
+    //---------------------------------
+    // initial membrane area factor compared to equilibrium area
+    double initEqAreaFactor = 1.0;
+
+    // initialize by shape or from file
+    std::vector< std::vector< std::string > > meshParam;
+};
+struct MembraneSettings {
+    std::vector< MembraneSetup > setupVec;
+};
+
+} // namespace medyan
+
 /// Struct to hold Bubble setup information
 struct BubbleSetup {
     
@@ -696,6 +755,7 @@ struct SimulConfig {
     DyRateParams   dyRateParams;
     SpecialParams  specialParams;
     BubbleSetup    bubbleSetup;
+    MembraneSettings membraneSettings;
     FilamentSetup  filamentSetup;
 
     // Parameters from other inputs
@@ -715,6 +775,15 @@ friend class ChemManager;
 friend class SubSystem;
 friend class Cylinder;
 
+public:
+    // Parameters for simulation procedure only
+    // TODO move it somewhere else and use it.
+    struct SimulParams {
+
+        // Output and tracking
+        bool trackForces = false;
+    };
+
 #ifdef TESTING ///Public access if testing only
 public:
 #endif
@@ -728,6 +797,7 @@ public:
 	#endif
 
     static SpecialParams SParams; ///< Other parameters
+    static SimulParams simulParams_;
     
 public:
     //@{
@@ -756,6 +826,9 @@ public:
     static const BoundParams& Boundaries() {return BParams;}
     static const DyRateParams& DynamicRates() {return DRParams;}
     static const SpecialParams& SpecialInputs() {return SParams;}
+    static const auto& simulParams() { return simulParams_; }
+
+    static auto& simulParamsMut() { return simulParams_; }
     //@}
 
     //@{
