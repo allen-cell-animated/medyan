@@ -4,5 +4,5 @@ The documentation for [MEDYAN](http://www.medyan.org), an efficient and scalable
 
 ## Installation
 
-To use MEDYAN, one needs to build it from the source. The full procedure for installation is described [here](guide/installation.md).
+To use MEDYAN, one needs to build it from the source. The full procedure for installation is described [here](manual/installation.md).
 
