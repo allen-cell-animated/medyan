@@ -91,10 +91,10 @@ struct MechParams {
 
 
         // MembraneFF type
-        string MemStretchingFFType     = "";
+        string memStretchingFFType     = "";
         string memTensionFFType        = "";
-        string MemBendingFFType        = "";
-        string MemBeadVolumeFFType     = "";
+        string memBendingFFType        = "";
+        string triangleBeadVolumeFFType = "";
 
         // Volume conservation ff type
         string volumeConservationFFType = "";
@@ -113,6 +113,12 @@ struct MechParams {
         
         /// Not yet used
         string MD = "";
+    };
+
+    struct TriangleBeadVolume {
+        floatingpoint k          = 0;
+        floatingpoint cutoff     = 0;
+        floatingpoint cutoffMech = 0;
     };
 
     MechanicsFFType       mechanicsFFType;
@@ -159,9 +165,7 @@ struct MechParams {
     /// Volume parameter
     vector<floatingpoint> VolumeK                 = {};
     floatingpoint         VolumeCutoff            = 0.0;
-    double         memBeadVolumeK          = 0.0;
-    double         MemBeadVolumeCutoff     = 0.0;
-    double         MemBeadVolumeCutoffMech = 0.0;
+    TriangleBeadVolume    triangleBeadVolume;
     //@}
 
     //@{

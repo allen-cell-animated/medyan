@@ -1581,6 +1581,17 @@ void SystemParser::initMechParser() {
     );
     mechParser.addEmptyLine();
 
+    mechParser.addComment("### Membrane related force fields");
+    mechParser.addSingleArg("membrane-stretching-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.memStretchingFFType; });
+    mechParser.addSingleArg("membrane-tension-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.memTensionFFType; });
+    mechParser.addSingleArg("membrane-bending-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.memBendingFFType; });
+    mechParser.addSingleArg("triangle-bead-volume-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.triangleBeadVolumeFFType; });
+
+    mechParser.addSingleArg("triangle-bead-volume-k", [](auto&& sc) -> auto& { return sc.mechParams.triangleBeadVolume.k; });
+    mechParser.addSingleArg("triangle-bead-volume-cutoff", [](auto&& sc) -> auto& { return sc.mechParams.triangleBeadVolume.cutoff; });
+    mechParser.addSingleArg("triangle-bead-volume-cutoff-mech", [](auto&& sc) -> auto& { return sc.mechParams.triangleBeadVolume.cutoffMech; });
+    mechParser.addEmptyLine();
+
     mechParser.addComment("###### Protocols ######");
     mechParser.addEmptyLine();
 

@@ -85,9 +85,9 @@ void MController::initializeFF (MechParams::MechanicsFFType& forceFields) {
 
     {
         auto membraneFFRes = MembraneFFFactory{}(
-            forceFields.MemStretchingFFType,
+            forceFields.memStretchingFFType,
             forceFields.memTensionFFType,
-            forceFields.MemBendingFFType
+            forceFields.memBendingFFType
         );
         for(auto& ff : membraneFFRes.forceFields) _FFManager._forceFields.push_back(ff.release());
         _FFManager.geoCurvReq = membraneFFRes.curvReq;
@@ -121,7 +121,7 @@ void MController::initializeFF (MechParams::MechanicsFFType& forceFields) {
 
     {
         auto allTriBeadVolFF = TriangleBeadVolumeFFFactory{}(
-            forceFields.MemBeadVolumeFFType
+            forceFields.triangleBeadVolumeFFType
         );
         for(auto& ff : allTriBeadVolFF) {
             auto ffp = ff.release();

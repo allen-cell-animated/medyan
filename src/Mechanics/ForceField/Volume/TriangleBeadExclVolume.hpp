@@ -35,8 +35,8 @@ public:
     ///Constructor
     TriangleBeadExclVolume() :
         neighborList_(std::make_unique< TriangleFilBeadNL >(
-            SysParams::Mechanics().MemBeadVolumeCutoff,
-            SysParams::Mechanics().MemBeadVolumeCutoffMech
+            SysParams::Mechanics().triangleBeadVolume.cutoff,
+            SysParams::Mechanics().triangleBeadVolume.cutoffMech
         ))
     { }
 

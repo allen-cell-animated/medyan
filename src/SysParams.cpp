@@ -280,11 +280,11 @@ bool SysParams::checkMechParameters(MechParams::MechanicsFFType& mech) {
         cout << "Must set a cylinder volume cutoff for mechanical equilibration. Exiting." << endl;
         return false;
     }
-    if(mech.MemBeadVolumeFFType != "" && MParams.MemBeadVolumeCutoff == 0.0) {
+    if(mech.triangleBeadVolumeFFType != "" && MParams.triangleBeadVolume.cutoff == 0.0) {
         LOG(ERROR) << "The membrane-bead volume cutoff for load force is not set.";
         return false;
     }
-    if(mech.MemBeadVolumeFFType != "" && MParams.MemBeadVolumeCutoffMech == 0.0) {
+    if(mech.triangleBeadVolumeFFType != "" && MParams.triangleBeadVolume.cutoffMech == 0.0) {
         LOG(ERROR) << "The membrane-bead volume cutoff for mechanical equilibration is not set.";
         return false;
     }

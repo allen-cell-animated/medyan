@@ -11,9 +11,6 @@
 project.xcworkspace/
 xcuserdata/
 *.xcscheme
-# Project for VS16
-.vs/
-/projects/VS16/**/MEDYAN
 # VS Code
 .vscode/
 
@@ -25,9 +22,7 @@ docsdev/**/*.synctex.gz
 docsdev/**/*.toc
 ## C++
 build/
-*.[oad]
 src/MEDYAN
-src/medyan_test
 ## Python
 *.pyc
 

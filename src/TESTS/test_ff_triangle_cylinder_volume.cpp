@@ -62,9 +62,9 @@ namespace {
 			SysParams::GParams.monomerSize.resize(1, 1.0);
             SysParams::CParams.bindingSites.resize(1); // For CCylinder use
 
-            SysParams::MParams.memBeadVolumeK = 1725;
-            SysParams::MParams.MemBeadVolumeCutoffMech = 15;
-            SysParams::MParams.MemBeadVolumeCutoff = 15;
+            SysParams::MParams.triangleBeadVolume.k = 1725;
+            SysParams::MParams.triangleBeadVolume.cutoffMech = 15;
+            SysParams::MParams.triangleBeadVolume.cutoff = 15;
 
             double trans = radius + height; // To ensure that all coordinates of all the beads are greater than 0.
 
