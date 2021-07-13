@@ -72,7 +72,7 @@ vcpkg_install() {
         cd $vcpkg_dir && {
             ./vcpkg install catch2 eigen3 spectra boost-signals2 boost-pool boost-heap boost-ublas boost-range
             if [ "$no_gui" != true ]; then
-                ./vcpkg install glfw3 glad glm imgui[opengl3-glad-binding] imgui[glfw-binding] nativefiledialog
+                ./vcpkg install glfw3 glad glm imgui[opengl3-glad-binding] imgui[glfw-binding] nativefiledialog stb
             fi
         }
     )

@@ -60,7 +60,7 @@ Function Install-VcpkgPackages([bool]$no_gui) {
     Set-Location $vcpkg_dir
     .\vcpkg install catch2 eigen3 spectra boost-signals2 boost-pool boost-heap boost-ublas boost-range
     if(-Not $no_gui) {
-        .\vcpkg install glfw3 glad glm imgui[opengl3-glad-binding] imgui[glfw-binding] nativefiledialog
+        .\vcpkg install glfw3 glad glm imgui[opengl3-glad-binding] imgui[glfw-binding] nativefiledialog stb
     }
 }
 
