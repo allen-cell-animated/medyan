@@ -9,9 +9,18 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="VisualDebug|x64">
+      <Configuration>VisualDebug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="VisualRelease|x64">
+      <Configuration>VisualRelease</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\**\*.cpp" />
+    <ClCompile Condition="$(Configuration.Contains('Visual'))" Include="..\..\external\glad\src\glad.c" />
     <ClInclude Include="..\..\src\**\*.h;..\..\src\**\*.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -97,6 +106,25 @@
       <Optimization>Disabled</Optimization>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="$(Configuration.Contains('Visual'))">
+    <ClCompile>
+      <AdditionalIncludeDirectories>
+        %USERPROFILE%\Documents\Repos\glfw\include;
+        ..\..\external\glad\include;
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>
+        VISUAL;%(PreprocessorDefinitions)
+      </PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>
+        opengl32.lib;
+        %USERPROFILE%\Documents\Repos\glfw\src\Debug\glfw3.lib;
+        %(AdditionalDependencies)
+      </AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

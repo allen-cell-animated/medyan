@@ -105,6 +105,12 @@ target_compile_definitions(medyan PRIVATE
     CHECKFORCES_INF_NAN
 )
 
+if("${MEDYAN_NO_GUI}" STREQUAL "true")
+    target_compile_definitions(medyan PRIVATE
+        NO_GUI             # Disable GUI
+    )
+endif()
+
 if(MSVC)
     target_compile_definitions(medyan PRIVATE
         _USE_MATH_DEFINES  # Enable math macros like M_PI
@@ -165,3 +171,26 @@ target_link_libraries(medyan PRIVATE Catch2::Catch2)
 find_package(Eigen3 CONFIG REQUIRED)
 target_link_libraries(medyan PRIVATE Eigen3::Eigen)
 
+# GUI related
+if(NOT "${MEDYAN_NO_GUI}" STREQUAL "true")
+    # GLFW3
+    find_package(glfw3 CONFIG REQUIRED)
+    target_link_libraries(medyan PRIVATE glfw)
+
+    # GLAD
+    find_package(glad CONFIG REQUIRED)
+    target_link_libraries(medyan PRIVATE glad::glad)
+
+    # imgui
+    find_package(imgui CONFIG REQUIRED)
+    target_link_libraries(medyan PRIVATE imgui::imgui)
+
+    # stb
+    find_path(STB_INCLUDE_DIRS "stb.h")
+    target_include_directories(medyan PRIVATE ${STB_INCLUDE_DIRS})
+
+    # native file dialog
+    find_package(unofficial-nativefiledialog CONFIG REQUIRED)
+    target_link_libraries(medyan PRIVATE unofficial::nativefiledialog::nfd)
+
+endif()

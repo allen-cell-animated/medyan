@@ -12,6 +12,9 @@
 //------------------------------------------------------------------
 
 #include "ForceFieldManager.h"
+
+#include <numeric> // iota
+
 #include "ForceFieldManagerCUDA.h"
 
 #include <algorithm>
@@ -25,6 +28,7 @@
 #include "Structure/DofSerializer.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshGeometry.hpp"
+#include "VisualSystemRawData.hpp"
 
 namespace {
 
@@ -34,6 +38,22 @@ using CurvReq = ForceFieldTypes::GeometryCurvRequirement;
 constexpr CurvPol getCurvPol(CurvReq curvReq) noexcept {
     if(curvReq == CurvReq::curv) return CurvPol::withSign;
     else                         return CurvPol::squared;
+}
+
+void prepareForceSharedData() {
+    medyan::visual::copySystemData(medyan::visual::raw_data_cat::beadPosition | medyan::visual::raw_data_cat::beadConnection);
+}
+
+void updateForceSharedData() {
+    medyan::visual::copySystemData(medyan::visual::raw_data_cat::beadPosition);
+}
+
+template< bool stretched >
+void updateMembraneSharedData() {
+    // TODO stretched version
+    if(!stretched) {
+        medyan::visual::copySystemData(medyan::visual::raw_data_cat::beadPosition);
+    }
 }
 
 } // namespace
@@ -47,6 +67,7 @@ constexpr CurvPol getCurvPol(CurvReq curvReq) noexcept {
 ForceField* ForceFieldManager::_culpritForceField = nullptr;
 
 void ForceFieldManager::vectorizeAllForceFields(const FFCoordinateStartingIndex& si) {
+    prepareForceSharedData();
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     CUDAcommon::cudatime.TvectorizeFF = 0.0;
@@ -337,6 +358,7 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
 //        std::cout<<x<<" ";
 //    std::cout<<endl;
 #endif
+    updateMembraneSharedData<stretched>();
     if(!stretched) {
         #ifdef TRACKDIDNOTMINIMIZE
         SysParams::Mininimization().Energyvec.push_back(SysParams::Mininimization()
@@ -457,6 +479,8 @@ void ForceFieldManager::computeForces(floatingpoint *coord, vector< floatingpoin
 //        std::cout <<"Fmax "<< id<<" "<<fmax<<" "<<F_i[3 * id] << " " << F_i[3 * id + 1] << " " << F_i[3 * id + 2] <<
 //                                                                                                                 endl;
     }
+
+    updateForceSharedData();
 //    delete F_i;
 }
 

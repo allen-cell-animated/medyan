@@ -836,7 +836,7 @@ public:
                     const double eqLength = mesh.attribute(ei).aEdge.eqLength;
                     const double eqLength2 = eqLength * eqLength;
 
-                    if(length2 >= 2 * eqLength2) { // Too long
+                    if(length2 > 2 * eqLength2) { // Too long
                         sizeMeasureSatisfied = false;
                         if(_edgeSplitManager.trySplit(mesh, ei, _edgeFlipManager) == decltype(_edgeSplitManager)::State::success) {
                             // Edge splitting happened. Will check edge ei again next round
@@ -844,7 +844,7 @@ public:
                         }
                         else
                             ++ei;
-                    } else if(2 * length2 <= eqLength2) { // Too short
+                    } else if(2 * length2 < eqLength2) { // Too short
                         sizeMeasureSatisfied = false;
                         if(edgeCollapseManager_.tryCollapse(mesh, ei) == decltype(edgeCollapseManager_)::State::success) {
                             // Edge collapsing happened. The edge at ei will be different next round

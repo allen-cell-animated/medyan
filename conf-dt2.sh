@@ -25,6 +25,7 @@ if [ "$(git version | cut -d"." -f2)" -lt 7 ]; then
 fi
 
 # Set up variables
+export MEDYAN_NO_GUI="true"
 export MEDYAN_ADDITIONAL_LINK_DIRS="$GCC_ROOTDIR/lib64"
 export MEDYAN_RPATH="$GCC_ROOTDIR/lib64"
 

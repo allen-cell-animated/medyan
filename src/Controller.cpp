@@ -57,11 +57,17 @@
 #endif
 #include "Util/Io/Log.hpp"
 #include "Util/Profiler.hpp"
+#include "VisualSystemRawData.hpp"
 
 using namespace mathfunc;
 using namespace medyan;
 
 namespace {
+
+void displayCopySystem() {
+    medyan::visual::copySystemData(medyan::visual::raw_data_cat::beadPosition | medyan::visual::raw_data_cat::beadConnection | medyan::visual::raw_data_cat::compartment);
+}
+
 
 void pinMembraneBorderVertices() {
 
@@ -506,18 +512,27 @@ void Controller::setupInitialNetwork(SimulConfig& simulConfig) {
     {
         MembraneMeshChemistryInfo memChemInfo {
             // names
-            {"mem-diffu-test-a", "mem-diffu-test-b"},
+            {
+                "mem-diffu-test-a"
+                , "mem-diffu-test-b"
+            },
             // diffusion
-            { { 0, 1.0 }, { 1, 0.5 } },
+            {
+                { 0, 36000.0 }
+                , { 1, 18000.0 }
+            },
             // internal reactions
             {
-                { {}, {0}, 0.055 },
-                { {}, {1}, 0.062 },
-                { {0, 1, 1}, {1, 1, 1}, 1.0 }
+                { {}, {0}, 0.055 } // null -> A
+                , { {0}, {}, 0.55 } // A -> null
+                , { {1}, {}, 0.55 + 0 *0.62 } // B -> null
+                , { {0, 1, 1}, {1, 1, 1}, 1000 } // A + 2B -> 3B
             }
         };
         for(auto m : Membrane::getMembranes()) {
             m->setChemistry(memChemInfo);
+            m->getMesh().attribute(Membrane::MeshType::VertexIndex{0}).vertex
+                ->cVertex.species.findSpeciesByIndex(1)->setN(10000);
         }
     }
 
@@ -1527,10 +1542,12 @@ void Controller::run() {
     // update neighorLists before and after minimization. Need excluded volume
     // interactions.
 	_subSystem.resetNeighborLists();
+    displayCopySystem();
 
     // Initial special protocols need to be executed before energy minimization
     executeSpecialProtocols();
     auto minimizationResult = _mController.run(false);
+    displayCopySystem();
     _subSystem.prevMinResult = minimizationResult;
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runm2(mine - mins);
@@ -1692,6 +1709,7 @@ void Controller::run() {
                 Bead::rearrange();
                 Cylinder::updateAllData();
 
+                displayCopySystem();
                 string crosscheckmechname = _outputDirectory + "crosscheckmech.traj";
                 CGMethod::_crosscheckdumpMechFile.open(crosscheckmechname);
 
@@ -1874,6 +1892,8 @@ void Controller::run() {
                 Bead::rearrange();
                 Cylinder::updateAllData();
                 _mController.run();
+
+                displayCopySystem();
 
                 updatePositions();
                 

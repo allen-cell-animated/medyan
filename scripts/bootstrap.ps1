@@ -16,6 +16,13 @@ $vcpkg_dir = "$build_dir\vcpkg"
 # Set variables
 $medyan_vcpkg_cmake_toolchain = "$medyan_root_dir\scripts\.build\vcpkg\scripts\buildsystems\vcpkg.cmake"
 
+if($MEDYAN_NO_GUI -eq "true") {
+    $medyan_cmake_no_gui = "-DMEDYAN_NO_GUI=true"
+    $medyan_no_gui = $true
+} else {
+    $medyan_no_gui = $false
+}
+
 if($MEDYAN_ADDITIONAL_LINK_DIRS) {
     $medyan_cmake_additional_link_dirs = "-DMEDYAN_ADDITIONAL_LINK_DIRS=$MEDYAN_ADDITIONAL_LINK_DIRS"
 }
@@ -46,12 +53,15 @@ Function Install-Vcpkg([bool]$required, [bool]$rebuild) {
 }
 
 # Setup dependencies
-Function Install-VcpkgPackages() {
+Function Install-VcpkgPackages([bool]$no_gui) {
 
     $Env:VCPKG_DEFAULT_TRIPLET="x64-windows"
 
     Set-Location $vcpkg_dir
     .\vcpkg install catch2 eigen3 spectra boost-signals2 boost-pool boost-heap boost-ublas boost-range
+    if(-Not $no_gui) {
+        .\vcpkg install glfw3 glad glm imgui[opengl3-glad-binding] imgui[glfw-binding] nativefiledialog stb
+    }
 }
 
 # Generate using CMake
@@ -61,6 +71,7 @@ Function Use-Cmake() {
     mkdir -Force $medyan_build_dir
     Set-Location $medyan_build_dir
     cmake `
+        $medyan_cmake_no_gui `
         $medyan_cmake_additional_link_dirs `
         $medyan_cmake_rpath `
         .. "-DCMAKE_TOOLCHAIN_FILE=$medyan_vcpkg_cmake_toolchain"
@@ -71,7 +82,7 @@ mkdir -Force $build_dir
 
 # Use vcpkg to resolve dependencies
 Install-Vcpkg $true $false
-Install-VcpkgPackages
+Install-VcpkgPackages $medyan_no_gui
 
 # Use CMake to generate build files
 Use-Cmake

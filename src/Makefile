@@ -10,18 +10,36 @@
 # for your given system.
 ##################################################
 
+# Platform
+UNAME_S := $(shell uname -s)
+
+# External library locations
+ifeq ($(UNAME_S), Darwin)
+OPENGL_LIB       := -framework Cocoa -framework OpenGL -framework IOKit \
+                    -framework CoreFoundation -framework CoreVideo
+else
+OPENGL_LIB       := -lGL -lX11
+endif
+GLAD_INCLUDE     := -I../external/glad/include
+GLAD_SOURCE      := ../external/glad/src/glad.c
+GLFW_INCLUDE     := -I$(HOME)/Documents/repos/glfw/include
+GLFW_LIB         := -L$(HOME)/Documents/repos/glfw/src -lglfw3
+
 SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './dist_moduleV2/*')
 SOURCES_CPP              += ./dist_moduleV2/dist_avx_par.cpp  ./dist_moduleV2/dist_bench.cpp  ./dist_moduleV2/dist_example.cpp  ./dist_moduleV2/dist_mod_vars.cpp
+SOURCES_C                := $(GLAD_SOURCE)
 SOURCES_CU               := $(shell find . -name '*.cu'  ! -path './dist_moduleV2/*')
-SOURCES                   = $(SOURCES_CPP) $(SOURCES_CU)
+SOURCES                   = $(SOURCES_CPP) $(SOURCES_CU) $(SOURCES_C)
 
 OBJECTS_CPP              := $(SOURCES_CPP:.cpp=.o)
 OBJECTS_CU               := $(SOURCES_CU:.cu=.o)
-OBJECTS                   = $(OBJECTS_CPP) $(OBJECTS_CU)
+OBJECTS_C                := $(SOURCES_C:.c=.o)
+OBJECTS                   = $(OBJECTS_CPP) $(OBJECTS_CU) $(OBJECTS_C)
 
 DEPENDS := $(SOURCES_CPP:.cpp=.d)
 
 #CPP COMPILER CHOICE AND FLAGS
+CC  = g++ -xc
 CXX = g++ -std=c++17
 NVCC = nvcc -std=c++11
 
@@ -35,6 +53,7 @@ DEPFLAGS = -MMD -MP
 
 INCLUDES = \
 -I../external \
+$(GLAD_INCLUDE) $(GLFW_INCLUDE) \
 -I/usr/local/include -I/usr/include/boost \
 -I./ -IStructure -IStructure/Special      \
 -IChemistry                               \
@@ -59,10 +78,9 @@ CXXFLAGS_NVCC = -g -G -x=cu -arch=sm_35 -Xcompiler -lpthread -ldl -lrt \
 -lineinfo --compiler-options -O0 -Xptxas -v $(INCLUDES_NVCC)
 
 # Linking flags
-LDLIBS = -L/usr/local/lib/ -lboost_system \
--static-libstdc++ -pthread
+LDLIBS      = -L/usr/local/lib/ -lboost_system -pthread $(OPENGL_LIB) $(GLFW_LIB)
 LDLIBS_NVCC = $(LDLIBS) -L/usr/local/cuda/lib64 -L/usr/local/cuda/lib -Icudart -lpthread -lnvToolsExt
-LDFLAGS_CXX = $(FAST_CXX) 
+LDFLAGS_CXX = $(FAST_CXX)
 
 
 #################MAIN USER MACROS#################
@@ -123,8 +141,11 @@ CPPFLAGS += -DRSPECIES_SIGNALING
 #CUDA specific
 CPPFLAGS_NVCC = $(CPPFLAGS) -DCUDAACCL
 
-#Non-CUDA specific
-CPPFLAGS_CXX = $(CPPFLAGS)
+# Visualization
+CPPFLAGS += -DVISUAL
+
+# Non-CUDA specific
+CPPFLAGS_CXX      = $(CPPFLAGS)
 
 ################MAKEFILE OPTIONS###################
 #
@@ -149,6 +170,10 @@ endif
 %.o: %.cpp
 %.o: %.cpp %.d
 	$(CXX) $(DEPFLAGS) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -c -o $@ $<
+
+%.o: %.c
+%.o: %.c %.d
+	$(CC) $(DEPFLAGS) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -c -o $@ $<
 
 %.o: %.cu
 ifeq ($(USING_CUDA), true)

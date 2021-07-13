@@ -65,6 +65,7 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
  
  */
 
+#include <thread>
 
 #define CATCH_CONFIG_RUNNER
 #include "catch2/catch.hpp"
@@ -77,7 +78,32 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "MedyanConfig.hpp"
 #include "Side/SideProcedures.hpp"
 
-using namespace medyan;
+#ifdef NO_GUI
+// GUI functions will be excluded, allowing for fewer dependencies in compilation.
+
+// Print warning messages on GUI running attempts
+void guiRunDisabledWarning() {
+    LOG(WARNING) << "GUI is not built into this version. Possibly because NO_GUI was specified in compilation.";
+}
+
+void guiRunRealtime()   { guiRunDisabledWarning(); }
+void guiRunTrajectory() { guiRunDisabledWarning(); }
+
+#else // #ifdef NO_GUI
+// NO_GUI is not defined. GUI functions are enabled.
+
+#include "Visual/Window.hpp"
+
+void guiRunInitialMode(medyan::visual::DisplayMode displayMode) {
+    medyan::visual::VisualDisplay visualDisplay(displayMode);
+    visualDisplay.run();
+}
+
+void guiRunRealtime()   { guiRunInitialMode(medyan::visual::DisplayMode::realtime); }
+void guiRunTrajectory() { guiRunInitialMode(medyan::visual::DisplayMode::trajectory); }
+
+#endif // #ifdef NO_GUI
+
 
 using namespace medyan;
 #ifndef GIT_COMMIT_HASH
@@ -144,15 +170,25 @@ int main(int argc, char **argv) {
     case MedyanRunMode::simulation:
         {
 
-            //initialize and run system
-            Controller c;
-            c.initialize(
-                cmdRes.inputFile,
-                cmdRes.inputDirectory,
-                cmdRes.outputDirectory,
-                cmdRes.numThreads);
-            c.run();
+            std::thread simul([&]{
+                Controller c;
+                c.initialize(
+                    cmdRes.inputFile,
+                    cmdRes.inputDirectory,
+                    cmdRes.outputDirectory,
+                    cmdRes.numThreads);
+                c.run();
+            });
+
+            if(cmdRes.guiEnabled) {
+                guiRunRealtime();
+            }
+            simul.join();
         }
+        break;
+
+    case MedyanRunMode::gui:
+        guiRunTrajectory();
         break;
 
     case MedyanRunMode::analyze:
