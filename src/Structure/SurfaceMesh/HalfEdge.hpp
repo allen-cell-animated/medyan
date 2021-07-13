@@ -6,7 +6,14 @@
 namespace medyan {
 
 struct CHalfEdge {
-    using ReactionContainer = std::vector< std::unique_ptr< ReactionDy > >;
+    struct EachReaction {
+        std::unique_ptr< ReactionDy > reaction;
+
+        // Sentinel: -1. The index of energy that drives drifting
+        int energyIndex = -1;
+    };
+
+    using ReactionContainer = std::vector< EachReaction >;
 
     ReactionContainer diffusionReactions;
 };

@@ -15,7 +15,8 @@ enum class MedyanRunMode {
     gui,
     analyze,
     config,
-    test
+    test,
+    side
 };
 
 struct MedyanCmdInitResult {
@@ -40,6 +41,9 @@ struct MedyanCmdInitResult {
     // RNG
     bool rngSeedFixed = false;
     unsigned long long rngSeed = 0;
+
+    // side procedure name
+    std::string sideProcName;
 
 };
 
@@ -106,6 +110,18 @@ inline auto medyanInitFromCommandLine(int argc, char** argv) {
             [&] { res.runMode = MedyanRunMode::test; }
         );
         cmdTest.setTerminating(true);
+
+        {
+            auto& cmdSide = cmdMain.addCommand(
+                "side", "Run MEDYAN side procedures.",
+                [&] { res.runMode = MedyanRunMode::side; }
+            );
+            cmdSide.addPosArgForVar(
+                "name", "Name of side procedure.", true,
+                res.sideProcName
+            );
+            cmdSide.addHelp();
+        }
 
         // Add validation
         cmdMain.setValidation([&] {

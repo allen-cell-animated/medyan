@@ -208,11 +208,15 @@ struct MechParams {
     
     // parameters controlling the calculation of the Hessian matrix
     bool hessTracking = false;
+    bool eigenTracking = true;
+    bool rockSnapBool = false;
     float hessDelta = 0.0001;
-    bool denseEstimation = true;
+    bool denseEstimationBool = true;
+    bool hessMatrixPrintBool = false;
     int hessSkip = 20;
 
     int sameFilBindSkip = 2;
+    int cylThresh = 0.0;
 
 
 };

@@ -36,7 +36,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(MSVC)
-    set(CMAKE_CXX_FLAGS "/arch:AVX2 /MP /EHsc")
+    set(CMAKE_CXX_FLAGS "/arch:AVX2 /MP /EHsc /bigobj")
 else()
     set(CMAKE_CXX_FLAGS "-Wall -ffast-math -fno-finite-math-only -mtune=native -march=native")
     set(CMAKE_CXX_FLAGS_DEBUG "-g")
@@ -152,24 +152,16 @@ endif()
 #######################################
 
 # boost
-if("${MEDYAN_BOOST_INSTALL_MODE}" STREQUAL "")
-    # Default boost install using vcpkg
-
-elseif("${MEDYAN_BOOST_INSTALL_MODE}" STREQUAL "find")
-    # Automatically try to find boost
-    find_package(Boost 1.67.0 REQUIRED)
-    target_include_directories(medyan PUBLIC ${Boost_INCLUDE_DIRS})
-    target_link_libraries(medyan PRIVATE ${Boost_LIBRARIES})
-
-elseif("${MEDYAN_BOOST_INSTALL_MODE}" STREQUAL "manual")
-    # Manually specify boost location
-    set(BOOST_INCLUDEDIR "${MEDYAN_BOOST_INCLUDE_DIR}")
-    set(BOOST_LIBRARYDIR "${MEDYAN_BOOST_LIBRARY_DIR}")
-    find_package(Boost 1.67.0 REQUIRED)
-    target_include_directories(medyan PUBLIC ${Boost_INCLUDE_DIRS})
-    target_link_libraries(medyan PRIVATE ${Boost_LIBRARIES})
-
-endif()
+find_path(BOOST_SIGNALS2_INCLUDE_DIRS "boost/signals2.hpp")
+target_include_directories(medyan PRIVATE ${BOOST_SIGNALS2_INCLUDE_DIRS})
+find_path(BOOST_POOL_INCLUDE_DIRS "boost/pool/detail/for.m4")
+target_include_directories(medyan PRIVATE ${BOOST_POOL_INCLUDE_DIRS})
+find_path(BOOST_HEAP_INCLUDE_DIRS "boost/heap/binomial_heap.hpp")
+target_include_directories(medyan PRIVATE ${BOOST_HEAP_INCLUDE_DIRS})
+find_path(BOOST_UBLAS_INCLUDE_DIRS "boost/numeric/ublas/assignment.hpp")
+target_include_directories(medyan PRIVATE ${BOOST_UBLAS_INCLUDE_DIRS})
+find_path(BOOST_RANGE_INCLUDE_DIRS "boost/range.hpp")
+target_include_directories(medyan PRIVATE ${BOOST_RANGE_INCLUDE_DIRS})
 
 # catch2
 find_package(Catch2 CONFIG REQUIRED)

@@ -21,6 +21,9 @@ struct CVertex {
 
     SpeciesPtrContainerVector species;
     ReactionContainer         reactions;
+
+    // Stores some free energy information for species drifting.
+    std::vector<double>       energies;
 };
 
 

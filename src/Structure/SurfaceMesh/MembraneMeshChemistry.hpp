@@ -85,16 +85,19 @@ inline void setDiffusionForHalfEdge(
 
     ch.diffusionReactions.clear();
     for(const auto& di : info.diffusion) {
-        ch.diffusionReactions.push_back(make_unique< ReactionDy >(
-            indicesToSpecies(cvFrom, { di.speciesIndex }),
-            indicesToSpecies(cvTo,   { di.speciesIndex }),
-            di.diffusionCoeff,
-            // volume is not set here
-            1.0,
-            // rate = diffCoeff * area^-1 * shapeFactor
-            // where shapeFactor = 0.5 * (cot α + cot β)
-            -1
-        ));
+        ch.diffusionReactions.push_back({
+            make_unique< ReactionDy >(
+                indicesToSpecies(cvFrom, { di.speciesIndex }),
+                indicesToSpecies(cvTo,   { di.speciesIndex }),
+                di.diffusionCoeff,
+                // volume is not set here
+                1.0,
+                // rate = diffCoeff * area^-1 * shapeFactor
+                // where shapeFactor = 0.5 * (cot α + cot β)
+                -1
+            ),
+            di.speciesEnergyIndex,
+        });
     }
 }
 
@@ -103,30 +106,62 @@ inline void setDiffusionForHalfEdge(
 //   - Reactions must have been set in the half edge
 //   - 1-ring areas around the vertices are updated
 //   - cot θ are set in neighbor triangles
+//
+// The diffusion is from the source to the target of the halfedge.
 inline void setDiffusionRatesForHalfEdge(
     MembraneMeshAttribute::MeshType&               mesh,
     MembraneMeshAttribute::MeshType::HalfEdgeIndex hei
 ) {
     using MT = MembraneMeshAttribute::MeshType;
 
-    const auto hei_o = mesh.opposite(hei);
-    const auto vi    = mesh.target(hei_o);
+    const auto hei_o   = mesh.opposite(hei);
+    const auto hei_n   = mesh.next(hei);
+    const auto hei_on  = mesh.next(hei_o);
 
-    double sumCotTheta = 0.0;
-    if(mesh.isInTriangle(hei)) {
-        const auto hei_n = mesh.next(hei);
-        sumCotTheta += mesh.attribute(hei_n).gHalfEdge.cotTheta;
+    const auto viFrom  = mesh.target(hei_o);
+    const auto viTo    = mesh.target(hei);
+    const auto viNext  = mesh.target(hei_n);
+    const auto viPrev  = mesh.target(hei_on);
+
+    const bool heiSide = mesh.isInTriangle(hei);
+    const bool heiOSide = mesh.isInTriangle(hei_o);
+    // The cot(theta) values.
+    //   [ opposing hei, opposing hei_o, at v_from (hei side), at v_from (hei_o side) ]
+    double ctHei = 0, ctHeiO = 0, ctVFromHei = 0, ctVFromHeiO = 0;
+    if(heiSide) {
+        ctHei = mesh.attribute(hei_n).gHalfEdge.cotTheta;
+        ctVFromHei = mesh.attribute(mesh.prev(hei)).gHalfEdge.cotTheta;
     }
-    if(mesh.isInTriangle(hei_o)) {
-        const auto hei_on = mesh.next(hei_o);
-        sumCotTheta += mesh.attribute(hei_on).gHalfEdge.cotTheta;
+    if(heiOSide) {
+        ctHeiO = mesh.attribute(hei_on).gHalfEdge.cotTheta;
+        ctVFromHeiO = mesh.attribute(hei_o).gHalfEdge.cotTheta;
     }
+    const double sumCotTheta = ctHei + ctHeiO;
 
     for(auto& r : mesh.attribute(hei).halfEdge->cHalfEdge.diffusionReactions) {
+
+        // The energy component measures the gradient of free energy (in kT) at this point.
+        double energyComponent = 0.0;
+        if(r.energyIndex >= 0) {
+            const double energyFrom = mesh.attribute(viFrom).vertex->cVertex.energies[r.energyIndex];
+            const double energyTo   = mesh.attribute(viTo  ).vertex->cVertex.energies[r.energyIndex];
+
+            if(heiSide) {
+                const double energyNext = mesh.attribute(viNext).vertex->cVertex.energies[r.energyIndex];
+                energyComponent += (energyTo - energyFrom) * ctHei + (energyTo - energyNext) * ctVFromHei;
+            }
+            if(heiOSide) {
+                const double energyPrev = mesh.attribute(viPrev).vertex->cVertex.energies[r.energyIndex];
+                energyComponent += (energyTo - energyFrom) * ctHeiO + (energyTo - energyPrev) * ctVFromHeiO;
+            }
+
+            energyComponent /= 6;
+        }
+
         // Using "volume frac" as volume
-        r->setVolumeFrac(mesh.attribute(vi).gVertex.astar / 3);
-        r->setRateMulFactor(
-            std::max(0.5 * sumCotTheta, 0.0),
+        r.reaction->setVolumeFrac(mesh.attribute(viFrom).gVertex.astar / 3);
+        r.reaction->setRateMulFactor(
+            std::max(0.5 * sumCotTheta - energyComponent / kT, 0.0),
             ReactionBase::RateMulFactorType::diffusionShape
         );
     }
@@ -207,7 +242,7 @@ inline void forEachReactionInMesh(
     // Diffusion reactions
     for(MT::HalfEdgeIndex hei {0}; hei < mesh.numHalfEdges(); ++hei) {
         for(auto& pr : mesh.attribute(hei).halfEdge->cHalfEdge.diffusionReactions) {
-            f(*pr);
+            f(*pr.reaction);
         }
     }
 }

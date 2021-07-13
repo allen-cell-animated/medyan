@@ -14,8 +14,6 @@
 #include "ChemSimpleGillespieImpl.h"
 #include "Rand.h"
 
-#include "Rand.h"
-
 void ChemSimpleGillespieImpl::initialize() {
     resetTime();
 }

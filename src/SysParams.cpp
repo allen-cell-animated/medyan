@@ -62,7 +62,8 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         
         if(chem.speciesBound[filType].size() == 0) {
             
-            cout << "At one plus end species is required for each filament type. Exiting."
+            cout << "At least one Bound species is required for each filament type. "
+                    "Exiting."
             <<endl;
             
             return false;

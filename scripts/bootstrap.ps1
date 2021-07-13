@@ -16,18 +16,6 @@ $vcpkg_dir = "$build_dir\vcpkg"
 # Set variables
 $medyan_vcpkg_cmake_toolchain = "$medyan_root_dir\scripts\.build\vcpkg\scripts\buildsystems\vcpkg.cmake"
 
-if($MEDYAN_BOOST_INSTALL_MODE -eq "manual") {
-    $medyan_cmake_boost_install_mode = "-DMEDYAN_BOOST_INSTALL_MODE=manual"
-    $medyan_cmake_boost_include_dir  = "-DMEDYAN_BOOST_INCLUDE_DIR=$MEDYAN_BOOST_INCLUDE_DIR"
-    $medyan_cmake_boost_library_dir  = "-DMEDYAN_BOOST_LIBRARY_DIR=$MEDYAN_BOOST_LIBRARY_DIR"
-    $medyan_need_install_boost = $false
-} elseif ($MEDYAN_BOOST_INSTALL_MODE -eq "find") {
-    $medyan_cmake_boost_install_mode = "-DMEDYAN_BOOST_INSTALL_MODE=find"
-    $medyan_need_install_boost = $false
-} else {
-    $medyan_need_install_boost = $true
-}
-
 if($MEDYAN_NO_GUI -eq "true") {
     $medyan_cmake_no_gui = "-DMEDYAN_NO_GUI=true"
     $medyan_no_gui = $true
@@ -53,6 +41,7 @@ Function Install-Vcpkg([bool]$required, [bool]$rebuild) {
             Set-Location $build_dir
             git clone https://github.com/Microsoft/vcpkg.git
             Set-Location $vcpkg_dir
+            git checkout 2021.05.12
             .\bootstrap-vcpkg.bat
         } else {
             Write-Host "vcpkg is already installed."
@@ -64,17 +53,14 @@ Function Install-Vcpkg([bool]$required, [bool]$rebuild) {
 }
 
 # Setup dependencies
-Function Install-VcpkgPackages([bool]$need_boost, [bool]$no_gui) {
+Function Install-VcpkgPackages([bool]$no_gui) {
 
     $Env:VCPKG_DEFAULT_TRIPLET="x64-windows"
 
     Set-Location $vcpkg_dir
-    .\vcpkg install catch2 eigen3 spectra
+    .\vcpkg install catch2 eigen3 spectra boost-signals2 boost-pool boost-heap boost-ublas boost-range
     if(-Not $no_gui) {
         .\vcpkg install glfw3 glad glm imgui[opengl3-glad-binding] imgui[glfw-binding] nativefiledialog
-    }
-    if($need_boost) {
-        .\vcpkg install boost
     }
 }
 
@@ -86,9 +72,6 @@ Function Use-Cmake() {
     Set-Location $medyan_build_dir
     cmake `
         $medyan_cmake_no_gui `
-        $medyan_cmake_boost_install_mode `
-        $medyan_cmake_boost_include_dir `
-        $medyan_cmake_boost_library_dir `
         $medyan_cmake_additional_link_dirs `
         $medyan_cmake_rpath `
         .. "-DCMAKE_TOOLCHAIN_FILE=$medyan_vcpkg_cmake_toolchain"
@@ -99,7 +82,7 @@ mkdir -Force $build_dir
 
 # Use vcpkg to resolve dependencies
 Install-Vcpkg $true $false
-Install-VcpkgPackages $medyan_need_install_boost $medyan_no_gui
+Install-VcpkgPackages $medyan_no_gui
 
 # Use CMake to generate build files
 Use-Cmake

@@ -81,7 +81,10 @@ public:
     
     /// Initialize and return the grid based on input parameters
     /// Used at system initialization.
-    CompartmentGrid* initializeGrid();
+    CompartmentGrid* initializeGrid(const GeoParams& geoParams);
+    CompartmentGrid* initializeGrid() {
+        return initializeGrid(SysParams::Geometry());
+    }
     
     /// Initialize and return a boundary based on input parameters
     /// Used at system initialization.

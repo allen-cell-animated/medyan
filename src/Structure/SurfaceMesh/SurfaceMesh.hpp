@@ -1036,13 +1036,13 @@ public:
                 --mesh.element_(mesh.target(ohei_on)).degree;
 
                 // Remove elements
-                const auto rmv = mesh.removeElement_<Vertex>(ov1.index);
-                mesh.removeElements_<Edge, 3>({oei.index, oei2.index, oei4.index});
-                mesh.removeElements_<HalfEdge, 6>({
+                const auto rmv = mesh.template removeElement_<Vertex>(ov1.index);
+                mesh.template removeElements_<Edge, 3>({oei.index, oei2.index, oei4.index});
+                mesh.template removeElements_<HalfEdge, 6>({
                     ohei.index,   ohei_n.index,  ohei_p.index,
                     ohei_o.index, ohei_on.index, ohei_op.index
                 });
-                mesh.removeElements_<Triangle, 2>({ot0.index, ot1.index});
+                mesh.template removeElements_<Triangle, 2>({ot0.index, ot1.index});
 
                 // Record change info
                 res.viTo.index = rmv.track(ov0.index)[0];
@@ -1092,13 +1092,13 @@ public:
                 --mesh.element_(mesh.target(ohei_tn)).degree;
 
                 // Remove elements
-                const auto rmv = mesh.removeElement_<Vertex>(ov1.index);
-                mesh.removeElements_<Edge, 2>({oei.index, oei2.index});
-                mesh.removeElements_<HalfEdge, 4>({
+                const auto rmv = mesh.template removeElement_<Vertex>(ov1.index);
+                mesh.template removeElements_<Edge, 2>({oei.index, oei2.index});
+                mesh.template removeElements_<HalfEdge, 4>({
                     ohei_t.index, ohei_tn.index, ohei_tp.index,
                     ohei_b.index
                 });
-                mesh.removeElement_<Triangle>(ot0.index);
+                mesh.template removeElement_<Triangle>(ot0.index);
 
                 // Record change info
                 res.viTo.index = rmv.track(ov0.index)[0];

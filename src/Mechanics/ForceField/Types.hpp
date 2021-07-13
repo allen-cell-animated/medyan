@@ -31,6 +31,10 @@ struct FFCoordinateStartingIndex {
     std::size_t bubble = 0;
     std::size_t vertex = 0;
     std::size_t mem2d = 0;
+
+    // Total number of degrees of freedom. It is not necessarily the size of vectorized data, as the vectorized data may contain dependent variables.
+    int ndof = 0;
+
 };
 
 #endif

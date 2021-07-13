@@ -30,13 +30,14 @@ inline FFCoordinateStartingIndex initCGMethodData(
 ) {
     const auto si = medyan::serializeDof(cg.coord);
 
-    const auto ndof = cg.coord.size();
-    cg.coordLineSearch.assign(ndof, 0);
-    cg.force.assign(ndof, 0);
-    cg.forcePrev.assign(ndof, 0);
-    cg.searchDir.assign(ndof, 0);
+    cg.numDof = si.ndof;
+    cg.forcePrev.assign(cg.numDof, 0);
+    cg.searchDir.assign(cg.numDof, 0);
+    cg.forceTol.resize(cg.numDof, defaultGradTol); // Future: can set different default grad tol
 
-    cg.forceTol.resize(ndof, defaultGradTol); // Future: can set different default grad tol
+    const auto nvar = cg.coord.size();
+    cg.coordLineSearch.assign(nvar, 0);
+    cg.force.assign(nvar, 0);
 
     return si;
 }

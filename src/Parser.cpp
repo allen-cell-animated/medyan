@@ -496,6 +496,7 @@ void SystemParser::chemPostProcessing(SimulConfig& sc) const {
     if(np2 == sc.chemParams.maxbindingsitespercylinder)
         np2 *= 2;
 
+    cout<<"np2 "<<np2<<" shift "<< sc.chemParams.shiftbybits<<endl;
 	sc.chemParams.shiftbybits = log2(np2);
     sc.chemParams.maxStableIndex = numeric_limits<uint32_t>::max()/sc.chemParams.shiftbybits -1;
 
@@ -1587,23 +1588,34 @@ void SystemParser::initMechParser() {
     mechParser.addStringArgsWithAliases(
         "HESSIANTRACKING", { "HESSIANTRACKING:" },
         [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 3) {
+            if(lineVector.size() != 5) {
                 cout <<
                 "There was an error parsing input file at Hessian tracking. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 3) {
+            else if (lineVector.size() == 5) {
                 sc.mechParams.hessTracking = true;
                 //sc.mechParams.hessDelta = atof(lineVector[1].c_str());
                 sc.mechParams.hessSkip = atof(lineVector[1].c_str());
                 int dense = atoi(lineVector[2].c_str());
-                if(dense == 0){
-                    sc.mechParams.denseEstimation = true;
+                if(dense == 1){
+                    sc.mechParams.denseEstimationBool = true;
                 }else{
-                    sc.mechParams.denseEstimation = false;
+                    sc.mechParams.denseEstimationBool = false;
                 }
-                
+                int rocksnapbool = atoi(lineVector[3].c_str());
+                if(rocksnapbool == 1){
+                    sc.mechParams.rockSnapBool = true;
+                }else{
+                    sc.mechParams.rockSnapBool = false;
+                }
+                int hessmatprintbool = atoi(lineVector[4].c_str());
+                if(hessmatprintbool == 1){
+                    sc.mechParams.hessMatrixPrintBool = true;
+                }else{
+                    sc.mechParams.hessMatrixPrintBool = false;
+                }
             }
         },
         [] (const SimulConfig& sc) {
@@ -1611,69 +1623,39 @@ void SystemParser::initMechParser() {
             if(sc.mechParams.hessTracking) {
                 res.push_back({
                     to_string(sc.mechParams.hessSkip),
-                    to_string(sc.mechParams.denseEstimation ? 0 : 1)
+                    to_string(sc.mechParams.denseEstimationBool ? 0 : 1),
+                    to_string(sc.mechParams.rockSnapBool ? 0 : 1),
+                    to_string(sc.mechParams.hessMatrixPrintBool ? 0 : 1),
                 });
             }
             return res;
         }
-        // TODO
-        // else if(line.find("MEM_STRETCHING_FF_TYPE") != string::npos) {
-        //     vector<string> lineVector = split<string>(line);
-        //     if(lineVector.size() > 2) {
-        //         cout << "There was an error parsing input file at membrane stretching FF type. Exiting."
-        //              << endl;
-        //         exit(EXIT_FAILURE);
-        //     }
-        //     else if(lineVector.size() == 2) {
-        //         MType.MemStretchingFFType = lineVector[1];
-        //     }
-        // }
-        // else if(line.find("MEM_TENSION_TYPE") != string::npos) {
-        //     vector<string> lineVector = split<string>(line);
-        //     if(lineVector.size() > 2) {
-        //         cout << "There was an error parsing input file at membrane stretching accumulation type. Exiting."
-        //              << endl;
-        //         exit(EXIT_FAILURE);
-        //     }
-        //     else if(lineVector.size() == 2) {
-        //         MType.memTensionFFType = lineVector[1];
-        //     }
-        // }
-        // else if(line.find("MEM_BENDING_FF_TYPE") != string::npos) {
-        //     vector<string> lineVector = split<string>(line);
-        //     if(lineVector.size() > 2) {
-        //         cout << "There was an error parsing input file at membrane bending FF type. Exiting."
-        //              << endl;
-        //         exit(EXIT_FAILURE);
-        //     }
-        //     else if(lineVector.size() == 2) {
-        //         MType.MemBendingFFType = lineVector[1];
-        //     }
-        // }
-        // else if(line.find("MEM_BEAD_VOLUME_FF_TYPE") != string::npos) {
-        //     vector<string> lineVector = split<string>(line);
-        //     if(lineVector.size() > 2) {
-        //         cout << "There was an error parsing input file at membrane cylinder volume FF type. Exiting."
-        //              << endl;
-        //         exit(EXIT_FAILURE);
-        //     }
-        //     else if(lineVector.size() == 2) {
-        //         MType.MemBeadVolumeFFType = lineVector[1];
-        //     }
-        // }
-        // else if(line.find("VOLUME_CONSERVATION_FF_TYPE") != string::npos) {
-        //     vector<string> lineVector = split<string>(line);
-        //     if(lineVector.size() > 2) {
-        //         cout << "There was an error parsing input file at membrane cylinder volume FF type. Exiting."
-        //             << endl;
-        //         exit(EXIT_FAILURE);
-        //     }
-        //     else if(lineVector.size() == 2) {
-        //         MType.volumeConservationFFType = lineVector[1];
-        //     }
-        // }
-        
     );
+    mechParser.addStringArgsWithAliases(
+        "EIGENTRACKING", { "EIGENTRACKING:" },
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() != 2) {
+                cout <<
+                     "There was an error parsing input file at Chemistry algorithm. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                const char * testStr1 = "OFF";
+                const char * testStr2 = lineVector[1].c_str();
+                if(strcmp(testStr1, testStr2) == 0)
+                    sc.mechParams.eigenTracking = false;
+                else
+                    sc.mechParams.eigenTracking = true;
+            }
+        },
+        [] (const SimulConfig& sc) {
+            vector<string> res;
+            res.push_back(sc.mechParams.eigenTracking ? "ON" : "OFF");
+            return res;
+        }
+    );
+
     mechParser.addEmptyLine();
 
     mechParser.addComment("# Same filament binding skip");
@@ -1830,41 +1812,6 @@ void SystemParser::initBoundParser() {
     boundParser.addComment("# Repulsion: Popov et al, 2016, PLoS Comp Biol");
     boundParser.addEmptyLine();
 
-    // TODO
-        // else if (line.find("MEM_BEAD_VOLUME_K") != string::npos) {
-            
-        //     vector<string> lineVector = split<string>(line);
-        //     if (lineVector.size() >= 2) {
-        //         for(int i = 1; i < lineVector.size(); i++)
-        //             MParams.memBeadVolumeK = stod(lineVector[i]);
-        //     }
-        // }
-        // else if (line.find("MEM_BEAD_VOLUME_CUTOFF") != string::npos) {
-            
-        //     if (line.find("MEM_BEAD_VOLUME_CUTOFF_MECH") != string::npos) {
-            
-        //         vector<string> lineVector = split<string>(line);
-        //         if(lineVector.size() != 2) {
-        //             LOG(ERROR) << "Error reading membrane-bead volume cutoff for mech.";
-        //             throw std::runtime_error("Error reading volume cutoff");
-        //         }
-        //         else {
-        //             MParams.MemBeadVolumeCutoffMech = std::stod(lineVector[1]);
-        //         }
-        //     }
-        //     else {
-        //         vector<string> lineVector = split<string>(line);
-        //         if(lineVector.size() != 2) {
-        //             LOG(ERROR) << "Error reading membrane-bead volume cutoff.";
-        //             throw std::runtime_error("Error reading volume cutoff");
-        //         }
-        //         else {
-        //             MParams.MemBeadVolumeCutoff = std::stod(lineVector[1]);
-        //         }
-        //     }
-
-        // }
-        
     boundParser.addStringArgsWithAliases(
         "BOUNDARYCUTOFF", { "BOUNDARYCUTOFF:" },
         [] (SimulConfig& sc, const vector<string>& lineVector) {
