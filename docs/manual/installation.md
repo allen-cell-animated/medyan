@@ -4,20 +4,20 @@ To use MEDYAN, one needs to build it from the source code. The source code is av
 
 ## Requirements
 
-A C++14 compatible compiler such as the following is required:
+A C++17 compatible compiler such as the following is required:
 
-- gcc >= 5
-- clang >= 3.4
-- MSVC with Visual Studio 2017 15.0 and above
+- gcc >= 7
+- clang >= 5
+- MSVC with Visual Studio 2017 15.7 and above
 
-The following tools are required:
+The following tools are also required:
 
 - CMake >= 3.13
 - git >= 2.7.0
 
 `medyan` is also dependent on several external libraries, which will be automatically installed before building.
 
-## Building `medyan`
+## Building MEDYAN
 
 The preferred way of building medyan is to generate the build files using CMake. From the MEDYAN root directory, use either of the following scripts to generate build files.
 

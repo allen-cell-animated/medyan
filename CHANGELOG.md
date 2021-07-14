@@ -1,7 +1,8 @@
-# 5.0.0 (Released TBD)
+# 5.0.0 (Released 2021-07-13)
 
 ## New features
 - Added membrane simulation.
+- Added visualization and GUI.
 
 
 # 4.3.0 (Released 2021-07-12)
