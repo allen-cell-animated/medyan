@@ -48,10 +48,10 @@ private:
 
 public:
 
-    template< typename InputContainer >
+    template< typename SpeciesPtrContainer >
     ReactionDy(
-        const InputContainer& reactantSpecies,
-        const InputContainer& productSpecies,
+        const SpeciesPtrContainer& reactantSpecies,
+        const SpeciesPtrContainer& productSpecies,
         float rate,
         float volumeFrac = 1.0,
         int rateVolumeDepExp = 0
