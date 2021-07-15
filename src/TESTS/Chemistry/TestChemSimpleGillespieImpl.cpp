@@ -4,11 +4,43 @@
 
 #include "Chemistry/ChemSimpleGillespieImpl.h"
 
+#include "ReactionDy.hpp"
+
 TEST_CASE("ChemSimpleGillespieImpl tests", "[ChemSim]") {
 
-    auto a= Species("A", 0, 1000000, REG);
-    auto b= Species("B", 0, 1000000, REG);
-    auto c= Species("C", 0, 1000000, REG);
-    auto reaction= Reaction({&a,&b,&c}, 1.0);
-    REQUIRE(1==2);
+    Species a{"A", 0, 1000000, REG};
+    Species b{"B", 0, 1000000, REG};
+    Species c{"C", 0, 1000000, REG};
+    vector<Species*> reactants{ &a, &b };
+    vector<Species*> products{ &c };
+    ReactionDy reaction{reactants, products, 1.0};
+    ChemSimpleGillespieImpl sim{};//resets global time to 0
+    sim.addReaction(&reaction);
+    sim.initialize();
+    //sim.printReactions();
+    
+    SECTION("Test runSteps") {
+        REQUIRE(sim.computeTotalA()==0);
+        a.up();
+        REQUIRE(sim.computeTotalA()==0);
+        b.up();
+        REQUIRE(sim.computeTotalA()==1.0);
+        b.up();
+        REQUIRE(sim.computeTotalA()==2.0);
+        REQUIRE(sim.runSteps(1));
+        REQUIRE(a.getN()==0);
+        REQUIRE(b.getN()==1);
+        REQUIRE(c.getN()==1);
+        REQUIRE(sim.computeTotalA()==0);
+        REQUIRE(sim.getTime()>0);
+    }
+
+    SECTION("Test run") {
+        REQUIRE(sim.run(1.0));
+        REQUIRE(c.getN()==0);
+        REQUIRE(a.getN()==0);
+        REQUIRE(b.getN()==0);
+        REQUIRE(sim.getTime() == Approx(1.0));
+    }
+
 }

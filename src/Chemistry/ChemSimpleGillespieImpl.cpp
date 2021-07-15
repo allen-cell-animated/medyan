@@ -57,15 +57,19 @@ floatingpoint ChemSimpleGillespieImpl::computeTotalA(){
     return rates_sum;
 }
 
-bool ChemSimpleGillespieImpl::makeStep() {
+bool ChemSimpleGillespieImpl::makeStep(floatingpoint endTime) {
     
     floatingpoint a_total = computeTotalA();
-    
+
+    floatingpoint tau = generateTau(a_total);
+    // Check if a reaction happened before endTime
+    if (_t+tau>endTime){ 
+        setTime(endTime);
+        return true;
+    }
     // this means that the network has come to a halt
     if(a_total<1e-15)
         return false;
-
-    floatingpoint tau = generateTau(a_total);
     _t+=tau;
     syncGlobalTime();
     

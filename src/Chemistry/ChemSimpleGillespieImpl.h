@@ -96,7 +96,7 @@ public:
         floatingpoint endTime = _t + time;
         
         while(_t < endTime) {
-            bool success = makeStep();
+            bool success = makeStep(endTime);
             if(!success)
                 return false;
         }
@@ -127,7 +127,7 @@ public:
     
 private:
     /// This subroutine implements the vanilla version of the Gillespie algorithm
-    bool makeStep();
+    bool makeStep(floatingpoint endTime = std::numeric_limits<floatingpoint>::infinity());
 
     //sets glocal time to specified value. To be used only during restart.
     void setTime(floatingpoint timepoint){ _t=timepoint; syncGlobalTime();}
