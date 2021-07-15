@@ -41,6 +41,13 @@ TEST_CASE("ChemSimpleGillespieImpl tests", "[ChemSim]") {
         REQUIRE(a.getN()==0);
         REQUIRE(b.getN()==0);
         REQUIRE(sim.getTime() == Approx(1.0));
+        a.up();
+        b.up();
+        REQUIRE(sim.run(100.0));
+        REQUIRE(sim.getTime() == Approx(101.0));
+        REQUIRE(a.getN()==0);
+        REQUIRE(b.getN()==0);
+        REQUIRE(c.getN()==1);
     }
 
 }
