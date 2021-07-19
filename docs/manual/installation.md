@@ -26,6 +26,9 @@ The preferred way of building medyan is to generate the build files using CMake.
 
 Under the hood, the scripts use `vcpkg` to install and configure the required external libraries, and use `cmake` to generate the build files. The external library installation normally happens only for the first build. External variables can be used to control some of the behaviors of the script.
 
+Setting `MEDYAN_NO_GUI="true"` disables installing GUI libraries and building the GUI.
+Setting `MEDYAN_CMAKE_EXTRA_ARGS` passes those arguments to the`cmake` command; for example, setting `MEDYAN_CMAKE_EXTRA_ARGS="-DCMAKE_BUILD_TYPE=Debug"` will build for debug.
+
 On MacOS, one can also change the target build system of the CMake from `make` to Xcode project, by setting `MEDYAN_BUILD_TOOL` to be `"Xcode"`.
 
 **Example 1**: I am building medyan on Linux, and I do not have boost installed anywhere.
