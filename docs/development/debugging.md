@@ -14,6 +14,6 @@
 
 1. Open `.vscode/launch.json`.
 
-2. edit the `"args": ["test"],` line to include the command line arguments you want to debug with.
+2. edit the `"args": ["-s", "systeminput.txt", "-i", ".", "-o", "./sampleResults"],` line to include the command line arguments you want to debug with.
 
-2. edit the `"cwd": "${workspaceFolder}/build",` line to choose the directory to run MEDYAN from.
+2. edit the `"cwd": "${workspaceFolder}/examples/2filaments",` line to choose the directory to run MEDYAN from.
