@@ -12,8 +12,12 @@
 
 ### Set command line arguments
 
-1. Open `.vscode/launch.json`.
+1. Open Run and Debug side panel and click "create a launch.json file".
 
-2. edit the `"args": ["-s", "systeminput.txt", "-i", ".", "-o", "./sampleResults"],` line to include the command line arguments you want to debug with.
+1. Make `"program":` `"${workspaceFolder}/build/medyan"`.\
 
-2. edit the `"cwd": "${workspaceFolder}/examples/2filaments",` line to choose the directory to run MEDYAN from.
+2. Make `"cwd":` the directory to run MEDYAN from. For example, `"${workspaceFolder}/examples/2filaments"`
+
+2. Edit the `"args": [],` line to include the command line arguments you want to debug with. For example, `["-s", "systeminput.txt", "-i", ".", "-o", "./sampleResults"]`
+
+1. Save `launch.json`, and now you should be able to create breakpoints and debug in VS Code.
