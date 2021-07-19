@@ -12,7 +12,7 @@ For more general information about the code, visit [medyan.org](http://medyan.or
 
 This code is distributed under [the license](license.txt) found in this directory, `license.txt`.
 
-The main authors of the code are the following:
+The original authors of the code are the following:
 
 | Name                 |  Email                |
 |----------------------|-----------------------|
