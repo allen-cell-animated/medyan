@@ -2,7 +2,7 @@
 
 ## VS Code
 
-# Build MEDYAN for debug
+### Build MEDYAN for debug
 
 ```console
 > MEDYAN_CMAKE_EXTRA_ARGS="-DCMAKE_BUILD_TYPE=Debug" ./conf.sh
@@ -10,7 +10,7 @@
 > make
 ```
 
-# Set command line arguments
+### Set command line arguments
 
 1. Open `.vscode/launch.json`.
 
