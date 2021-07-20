@@ -74,6 +74,7 @@ Function Use-Cmake() {
         $medyan_cmake_no_gui `
         $medyan_cmake_additional_link_dirs `
         $medyan_cmake_rpath `
+        $MEDYAN_CMAKE_EXTRA_ARGS `
         .. "-DCMAKE_TOOLCHAIN_FILE=$medyan_vcpkg_cmake_toolchain"
 }
 
