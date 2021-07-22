@@ -177,7 +177,7 @@ CYLINDERSIZE:                  108.0
 # Minimization
 
 CONJUGATEGRADIENT:             POLAKRIBIERE
-GRADIENTTOLERANCE:             5.0
+GRADIENTTOLERANCE:             1.0
 MAXDISTANCE:                   1.0
 LAMBDAMAX:                     0.01
 
