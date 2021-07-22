@@ -207,7 +207,7 @@ public:
         floatingpoint endTime = _t + time;
         
         while(_t < endTime) {
-            bool success = makeStep();
+            bool success = makeStep(endTime);
             if(!success)
                 return false;
         }
@@ -247,14 +247,14 @@ public:
 private:
 
     /// This subroutine, along with with passivateReaction() and activateReaction()
-    /// implements a cached version of the Gillespie algorith.
-    /// Two random numbers get thrown, one for obtaining tau, the time to the next
-    /// reaction event, and a uniform number to select which
+    /// implements a cached version of the Gillespie algorithm.
+    /// First Tau the time to the next reaction event is sampled. 
+    /// If it is after endTime, then time is set to endTime and Returns true. 
+    /// Otherwise a uniform random number is generated to select which
     /// Reaction has occurred. Instead of computing the total propensity of the network
     /// from scratch, the cached value is being modified as Reaction events occur.
-    /// Returns true if successful, and false if the heap is exchausted and there no
-    /// more reactions to fire
-    bool makeStep();
+    /// Returns true if successful, false if endTime==inf and there are no reactions.
+    bool makeStep(floatingpoint endTime = std::numeric_limits<floatingpoint>::infinity());
 
     //sets glocal time to specified value. To be used only during restart.
     void setTime(floatingpoint timepoint){ _t=timepoint; syncGlobalTime();}

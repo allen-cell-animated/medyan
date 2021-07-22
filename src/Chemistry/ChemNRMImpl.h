@@ -306,7 +306,7 @@ public:
         floatingpoint endTime = _t + time;
         
         while(_t < endTime) {
-            bool success = makeStep();
+            bool success = makeStep(endTime);
             if(!success)
                 return false;
         }
@@ -337,17 +337,19 @@ private:
     /// This is a somewhat complex subroutine which implements the main part of the
     /// Gibson-Bruck NRM algoritm. See the implementation for details. After this method
     /// returns, roughly the following will have happened:
-    /// 1) The Reaction corresponding to the lowest tau RNodeNRM is
+    /// 1) If the lowest reaction time is after endTime,
+    /// the time is set to endTime and returns true. Otherwise,
+    /// 2) The Reaction corresponding to the lowest tau RNodeNRM is
     /// executed and the corresponding Species copy numbers are changed
-    /// 2) A new tau is computed from this Reaction and the corresponding PQNode element
+    /// 3) A new tau is computed from this Reaction and the corresponding PQNode element
     /// is updated in the heap
-    /// 3) The other affected Reaction objects are found, their taus are recomputed and
+    /// 4) The other affected Reaction objects are found, their taus are recomputed and
     /// corresponding PQNode elements are updated in the heap.
-    /// 4) For the Reaction and associated Species signals are emitted, if these objects
+    /// 5) For the Reaction and associated Species signals are emitted, if these objects
     /// broadcast signals upon change.
     /// Returns true if successful, and false if the heap is exchausted and there no
-    /// more reactions to fire
-    bool makeStep();
+    /// more reactions to fire and endTime==inf.
+    bool makeStep(floatingpoint endTime = std::numeric_limits<floatingpoint>::infinity());
 
     //sets glocal time to specified value. To be used only during restart.
     void setTime(floatingpoint timepoint){ _t=timepoint; syncGlobalTime();}

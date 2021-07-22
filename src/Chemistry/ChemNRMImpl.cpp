@@ -167,16 +167,26 @@ floatingpoint ChemNRMImpl::generateTau(floatingpoint a){
     return safeExpDist(_exp_distr, a, Rand::eng);
 }
 
-bool ChemNRMImpl::makeStep() {
+bool ChemNRMImpl::makeStep(floatingpoint endTime) {
     chrono::high_resolution_clock::time_point mins, mine, minsT, mineT, minses, mintes;
     minsT = chrono::high_resolution_clock::now();
     //try to get a reaction
     if(_heap.empty()) {
-        cout << "There are no reactions to fire, returning..." << endl;
-        return false;
+        if (endTime==std::numeric_limits<floatingpoint>::infinity()){
+            cout << "There are no reactions to fire, returning..." << endl;
+            return false;
+        } else {
+            setTime(endTime);
+            return true;
+        }
     }
     RNodeNRM *rn = _heap.top()._rn;
     floatingpoint tau_top = rn->getTau();
+    // Check if a reaction happened before endTime
+    if (tau_top>endTime){ 
+        setTime(endTime);
+        return true;
+    }
     if(tau_top==numeric_limits<floatingpoint>::infinity()){
 
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
@@ -195,8 +205,7 @@ bool ChemNRMImpl::makeStep() {
 
     floatingpoint t_prev = _t;
 
-    _t=tau_top;
-    syncGlobalTime();
+    setTime(tau_top);
     // if dissipation tracking is enabled and the reaction is supported, then compute the change in Gibbs free energy and store it
     if(SysParams::Chemistry().dissTracking){
     ReactionBase* react = rn->getReaction();

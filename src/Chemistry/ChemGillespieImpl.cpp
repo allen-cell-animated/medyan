@@ -108,11 +108,19 @@ floatingpoint ChemGillespieImpl::computeTotalA() {
     return rates_sum;
 }
 
-bool ChemGillespieImpl::makeStep() {
+bool ChemGillespieImpl::makeStep(floatingpoint endTime) {
     RNodeGillespie *rn_selected = nullptr;
     
     //Gillespie algorithm's first step; We assume that _a_total is up to date
     floatingpoint tau = generateTau(_a_total);
+    // Check if a reaction happened before endTime
+    if (_t+tau>endTime){ 
+        setTime(endTime);
+        return true;
+    }
+    // this means that the network has come to a halt
+    if(_a_total<1e-15)
+        return false;
     _t+=tau;
     syncGlobalTime();
     
