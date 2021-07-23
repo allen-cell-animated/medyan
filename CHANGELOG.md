@@ -1,3 +1,9 @@
+# Current
+
+## Refactoring
+- Duration for timed chemistry step is now exact (https://github.com/medyan-dev/medyan/pull/13, https://github.com/medyan-dev/medyan/pull/18, https://github.com/medyan-dev/medyan/pull/21 (in review)).
+
+
 # 5.0.0 (Released 2021-07-13)
 
 ## New features
