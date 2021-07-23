@@ -47,7 +47,7 @@ FBENDINGTHETA:               0.0 0.0
 VOLUMEFFTYPE:               REPULSION
 VOLUMECUTOFF:               54.0
 # ?
-VOLUMEK:                    1E5 1E7
+VOLUMEK:                    8.57 857
 # Volume force constant, S1	
 
 ### BOUNDARY ###

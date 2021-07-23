@@ -41,7 +41,7 @@ FBENDINGTHETA:               0.0
 VOLUMEFFTYPE:               REPULSION
 VOLUMECUTOFF:               54.0
 
-VOLUMEK:                    1E5
+VOLUMEK:                    137
 
 ### MOTORS ###
 

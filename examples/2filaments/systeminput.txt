@@ -86,7 +86,7 @@ FBENDINGTHETA:                0.0
 
 VOLUMEFFTYPE:                 REPULSION
 VOLUMECUTOFF:                 27.0
-VOLUMEK:                      1E5
+VOLUMEK:                      8.57
 
 # Dynamic rate model - Brownian Ratchet: 
 # Footer et al, PNAS, 2007
