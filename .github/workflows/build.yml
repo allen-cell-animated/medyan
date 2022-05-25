@@ -9,10 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: list files
-        run: ls
+      - name: setup MEDYAN build
+        run: ./conf.sh
+      - name: change to build dir
+        run: cd build
       - name: Build MEDYAN
         run: make
+      - name: change to root dir
+        run: cd ../
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u simularium --password-stdin
       - name: Get the release tag
