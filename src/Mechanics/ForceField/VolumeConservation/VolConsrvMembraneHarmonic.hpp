@@ -3,6 +3,7 @@
 
 #include "MathFunctions.h"
 
+namespace medyan {
 struct VolumeConservationMembraneHarmonic {
 
     double energy(double volume, double kBulk, double eqVolume) const {
@@ -12,7 +13,7 @@ struct VolumeConservationMembraneHarmonic {
     
     void forces(
         floatingpoint* force,
-        double volume, const mathfunc::Vec3& dVolume,
+        double volume, const medyan::Vec3& dVolume,
         double kBulk, double eqVolume
     ) const {
         // F_i = -grad_i U = -k / V_0 * (V - V_0) * grad_i V
@@ -25,5 +26,6 @@ struct VolumeConservationMembraneHarmonic {
     }
 };
 
+} // namespace medyan
 
 #endif

@@ -18,10 +18,11 @@
 #include "Cylinder.h"
 #include "Bubble.h"
 #include "BoundaryElement.h"
+#include "Structure/SurfaceMesh/FuncMembraneGeo.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/Triangle.hpp"
 
-#include "GController.h"
+#include "Controller/GController.h"
 #include "MathFunctions.h"
 #include "CUDAcommon.h"
 #include "NeighborListImplCUDA.h"
@@ -30,6 +31,7 @@
 #endif
 #include "Util/Math/TriangleArithmetics.hpp"
 
+namespace medyan {
 using namespace mathfunc;
 #ifdef NLSTENCILLIST
 void CylinderCylinderNL::updateallcylinderstobin() {
@@ -68,10 +70,9 @@ void CylinderCylinderNL::updatebin(Cylinder *cyl){
     }
 
     if(_bin != cyl->_binvec.at(_ID)) {
-#ifdef CHEMISTRY
         auto oldBin = cyl->_binvec.at(_ID);
         auto newBin = _bin;
-#endif
+
         //remove from old compartment, add to new
         oldBin->removeCylinder(cyl);
         cyl->_binvec.at(_ID) = newBin;
@@ -88,7 +89,7 @@ void CylinderCylinderNL::generateConnections() {
                 vector<size_t> indices{i,j,k};
                 Bin *target = getBin(indices);//defined in this file.
 
-                vector<floatingpoint> coordinates =
+                medyan::Vec<3, floatingpoint> coordinates =
                         {indices[0] * _binSize[0] + _binSize[0] / 2,
                          indices[1] * _binSize[1] + _binSize[1] / 2,
                          indices[2] * _binSize[2] + _binSize[2] / 2};
@@ -120,66 +121,28 @@ void CylinderCylinderNL::generateConnections() {
         }
     }
 
-
-        /*for(size_t i=0U; i<_grid[0]; ++i) {
-
-            for (size_t j = 0U; j < _grid[1]; ++j) {
-
-                for (size_t k = 0U; k < _grid[2]; ++k) {
-                    vector<size_t> indices{i, j, k};
-                    Bin *target = getBin(indices);
-                    std::cout << "Target " << target->coordinates()[0] << " " <<
-                              target->coordinates()[1] << " " <<
-                              target->coordinates()[2] << " " << endl;
-                    std::cout<<"Bin size "<<_binSize[0]<<endl;
-                    for (int ii: {-1, 0, 1}) {
-                        for (int jj: {-1, 0, 1}) {
-                            for (int kk: {-1, 0, 1}) {
-                                int iprime = i + ii;
-                                int jprime = j + jj;
-                                int kprime = k + kk;
-                                if (iprime < 0 or iprime == int(_grid[0]) or jprime < 0 or
-                                    jprime == int(_grid[1]) or kprime < 0 or
-                                    kprime == int(_grid[2]))
-                                    continue;
-                                vector<size_t> currentIndices{size_t(iprime), size_t
-                                        (jprime), size_t(kprime)};
-                                Bin *neighbor = getBin(currentIndices);
-                                std::cout << "Neighbor " << neighbor->coordinates()[0]
-                                          << " " <<
-                                          neighbor->coordinates()[1] << " " <<
-                                          neighbor->coordinates()[2] << " " << endl;
-                            }
-                        }
-                    }
-                }
-            }
-        }*/
 }
 
 void CylinderCylinderNL::initializeBinGrid() {
 
 //    //Initial parameters of system
-    auto _nDim = SysParams::Geometry().nDim;
     floatingpoint searchdist = 1.125 * (_rMax);
     _binSize = {searchdist, searchdist, searchdist};
-    if(_nDim >=1) {
+    {
         _size.push_back(int(SysParams::Geometry().NX * SysParams::Geometry()
                 .compartmentSizeX));
         if( (_size[0]) % int(_binSize[0]) ==0)
             _grid.push_back(_size[0]/_binSize[0]);
         else
             _grid.push_back(_size[0]/_binSize[0] + 1);
-    }
-    if (_nDim >= 2) {
+
         _size.push_back(int(SysParams::Geometry().NY * SysParams::Geometry()
                 .compartmentSizeY));
         if( (_size[1]) % int(_binSize[1]) ==0)
             _grid.push_back(_size[1]/_binSize[1]);
         else
             _grid.push_back(_size[1]/_binSize[1] + 1);
-    }
-    if (_nDim == 3) {
+
         _size.push_back(int(SysParams::Geometry().NZ * SysParams::Geometry()
                 .compartmentSizeZ));
         if( (_size[2]) % int(_binSize[2]) ==0)
@@ -189,11 +152,11 @@ void CylinderCylinderNL::initializeBinGrid() {
     }
 
     //Check that grid and compartmentSize match nDim
-    if((_nDim == 3 &&
+    if(
         _grid[0] != 0 && _grid[1] != 0 && _grid[2]!=0 &&
         _binSize[0] != 0 &&
         _binSize[1] != 0 &&
-        _binSize[2] != 0)){
+        _binSize[2] != 0){
     }
     else {
         cout << "Bin parameters for CylinderCylinderNeighborLists are invalid. Exiting." <<
@@ -359,7 +322,7 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
                         //if not cross filament, check if not neighboring
                         auto dist = fabs(cylinder->getPosition() -
                                          ncylinder->getPosition());
-                        if (dist <= SysParams::Mechanics().sameFilBindSkip) continue;
+                        if (dist <= ChemParams::minCylinderDistanceSameFilament) continue;
                     }
                     //Dont add if not within range
                     floatingpoint dist = twoPointDistance(cylinder->coordinate,
@@ -377,61 +340,7 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
                 }
             }
         }
-/*        std::cout<<"ncyls check "<<ncyls2<<" "<<checkstatus2<<" bin "<<bin->coordinates()
-        [0]<<" "<<bin->coordinates()[1]<<" "<<bin->coordinates()[2]<<" cyl "
-                ""<<cylinder->coordinate[0]<<" "<<cylinder->coordinate[1]<<" "
-                ""<<cylinder->coordinate[2]<<" bin "<<parentbin->coordinates()[0]<<" "
-                ""<<parentbin->coordinates()[1]<<" "
-                ""<<parentbin->coordinates()[2]<<endl;*/
     }
-    //
-    /*int ncyls = 0;
-    int tcyl = 0;
-    for(auto &bin : _neighboringBins){
-        nbincount++;
-        tcyl += bin->getCylinders().size();
-        for(auto &ncylinder : bin->getCylinders()) {
-            bool checkstatus = false;
-            if ((cylinder->getType() == NLcyltypes[0] &&
-                 ncylinder->getType() == NLcyltypes[1]) || (cylinder->getType() ==
-                 NLcyltypes[1] && ncylinder->getType() == NLcyltypes[0])) {
-                checkstatus = true;
-            }
-            if (checkstatus) {
-                //Don't add the same cylinder!
-                if (cylinder == ncylinder) continue;
-
-                //Dont add if ID is more than cylinder for half-list
-                if (!_full && cylinder->getId() <= ncylinder->getId()) continue;
-
-                //Don't add if belonging to same parent
-                if (cylinder->getParent() == ncylinder->getParent()) {
-
-                    //if not cross filament, check if not neighboring
-                    auto dist = fabs(cylinder->getPosition() -
-                                     ncylinder->getPosition());
-                    if (dist <= SysParams::Mechanics().sameFilBindSkip) continue;
-                }
-                //Dont add if not within range
-                floatingpoint dist = twoPointDistance(cylinder->coordinate,
-                                               ncylinder->coordinate);
-                if (dist > _rMax || dist < _rMin) continue;
-                //If we got through all of this, add it!
-                _list4mbin[cylinder].push_back(ncylinder);
-                ncyls++;
-
-                //if runtime, add to other list as well if full
-                if (runtime && _full) {
-                    _list4mbin[ncylinder].push_back(cylinder);
-                    ncyls++;
-                }
-            }
-        }
-
-    }*/
-//    std::cout<<"ncyls "<<ncyls2<<endl;
-//    std::cout<<"Total cyls "<<tcyl2<<endl;
-//    std::cout<<"-----"<<endl;
 }
 
 vector<Cylinder*> CylinderCylinderNL::getNeighborsstencil(Cylinder* cylinder) {
@@ -450,7 +359,7 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
     vector<Compartment*> compartments;
     auto searchDist = SysParams::Geometry().largestCompartmentSide;
 
-    GController::findCompartments(cylinder->coordinate,
+    GController::findCompartments(mathfunc::vector2Vec<3>(cylinder->coordinate),
                                   cylinder->getCompartment(),
                                   searchDist + _rMax, compartments);
 //    std::cout<<" neighboring cmps "<<compartments.size()<<endl;
@@ -471,7 +380,7 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
                 //if not cross filament, check if not neighboring
                 auto dist = fabs(cylinder->getPosition() -
                                  ncylinder->getPosition());
-                if(dist <= SysParams::Mechanics().sameFilBindSkip) continue;
+                if(dist <= ChemParams::minCylinderDistanceSameFilament) continue;
             }
             //Dont add if not within range
             floatingpoint distsq = twoPointDistancesquared(cylinder->coordinate,
@@ -556,7 +465,7 @@ void CylinderCylinderNL::reset() {
     for(auto cylinder: Cylinder::getCylinders()) {
         auto searchDist = SysParams::Geometry().largestCompartmentSide;
         vector<Compartment *> compartments;
-        GController::findCompartments(cylinder->coordinate,
+        GController::findCompartments(mathfunc::vector2Vec<3>(cylinder->coordinate),
                                       cylinder->getCompartment(),
                                       searchDist + _rMax, compartments);
         for (auto c:compartments) {
@@ -627,7 +536,7 @@ void CylinderCylinderNL::reset() {
         vector<Compartment*> compartments;
         auto searchDist = SysParams::Geometry().largestCompartmentSide;
 
-        GController::findCompartments(cylinder->coordinate,
+        GController::findCompartments(mathfunc::vector2Vec<3>(cylinder->coordinate),
                                       cylinder->getCompartment(),
                                       searchDist + _rMax, compartments);
         for (auto c:compartments) {
@@ -903,206 +812,8 @@ vector<Cylinder*> BoundaryCylinderNL::getNeighbors(BoundaryElement* be) {
     return _list[be];
 }
 
-//BOUNDARYELEMENT - BUBBLE
 
-void BoundaryBubbleNL::updateNeighbors(BoundaryElement* be) {
 
-    //clear existing
-    _list[be].clear();
-
-    //loop through beads, add as neighbor
-    for (auto &b : Bubble::getBubbles()) {
-
-        floatingpoint dist = be->distance(vec2Vector(b->coord));
-        //If within range, add it
-        if(dist < _rMax) _list[be].push_back(b);
-    }
-}
-
-void BoundaryBubbleNL::addNeighbor(Neighbor* n) {
-
-    //return if not a boundary element!
-    BoundaryElement* be;
-    if(!(be = dynamic_cast<BoundaryElement*>(n))) return;
-
-    //update neighbors
-    updateNeighbors(be);
-}
-
-void BoundaryBubbleNL::removeNeighbor(Neighbor* n) {
-
-    BoundaryElement* be;
-    if(!(be = dynamic_cast<BoundaryElement*>(n))) return;
-
-    _list.erase(be);
-}
-
-void BoundaryBubbleNL::addDynamicNeighbor(DynamicNeighbor* n) {
-
-    //return if not a filament bead!
-    Bubble* b;
-
-    if(!(b = dynamic_cast<Bubble*>(n))) return;
-
-    for(auto it = _list.begin(); it != _list.end(); it++) {
-
-        //if within range, add it
-        if(it->first->distance(vec2Vector(b->coord)) < _rMax)
-            it->second.push_back(b);
-    }
-}
-
-void BoundaryBubbleNL::removeDynamicNeighbor(DynamicNeighbor* n) {
-
-    //return if not a filament bead!
-    Bubble* b;
-
-    if(!(b = dynamic_cast<Bubble*>(n))) return;
-
-    for(auto it = _list.begin(); it != _list.end(); it++) {
-
-        auto bit = find(it->second.begin(), it->second.end(), b);
-        if(bit != it->second.end()) it->second.erase(bit);
-    }
-}
-
-void BoundaryBubbleNL::reset() {
-
-    _list.clear();
-
-    //loop through all neighbor keys
-    for(auto boundary: BoundaryElement::getBoundaryElements())
-
-        updateNeighbors(boundary);
-}
-
-vector<Bubble*> BoundaryBubbleNL::getNeighbors(BoundaryElement* be) {
-
-    return _list[be];
-}
-
-//BUBBLE - BUBBLE
-
-void BubbleBubbleNL::updateNeighbors(Bubble* bb) {
-
-    //clear existing
-    _list[bb].clear();
-
-    //loop through beads, add as neighbor
-    for (auto &bbo : Bubble::getBubbles()) {
-
-        floatingpoint distsq = distance2(bb->coord, bbo->coord);
-
-        if(bb->getId() <= bbo->getId()) continue;
-
-        //If within range, add it
-        if(distsq < (_rMax * _rMax)) _list[bb].push_back(bbo);
-    }
-}
-
-void BubbleBubbleNL::addNeighbor(Neighbor* n) {
-
-    //return if not a bubble!
-    Bubble* bb;
-    if(!(bb = dynamic_cast<Bubble*>(n))) return;
-
-    //update neighbors
-    updateNeighbors(bb);
-}
-
-void BubbleBubbleNL::removeNeighbor(Neighbor* n) {
-
-    Bubble* bb;
-    if(!(bb = dynamic_cast<Bubble*>(n))) return;
-
-    _list.erase(bb);
-
-    //remove from other lists
-    for(auto it = _list.begin(); it != _list.end(); it++) {
-
-        auto bit = find(it->second.begin(), it->second.end(), bb);
-        if(bit != it->second.end()) it->second.erase(bit);
-    }
-}
-
-void BubbleBubbleNL::reset() {
-
-    _list.clear();
-
-    //loop through all neighbor keys
-    for(auto bb: Bubble::getBubbles())
-        updateNeighbors(bb);
-}
-
-vector<Bubble*> BubbleBubbleNL::getNeighbors(Bubble* bb) {
-
-    return _list[bb];
-}
-
-///BUBBLE - CYLINDER
-
-void BubbleCylinderNL::updateNeighbors(Bubble* bb) {
-
-    //clear existing
-    _list[bb].clear();
-
-    //loop through beads, add as neighbor
-    for (auto &c : Cylinder::getCylinders()) {
-
-        floatingpoint distsq = twoPointDistancesquared(c->coordinate, vec2Vector(bb->coord));
-
-        //If within range, add it
-        if(distsq < (_rMax * _rMax)) _list[bb].push_back(c);
-    }
-}
-
-void BubbleCylinderNL::addNeighbor(Neighbor* n) {
-
-    Bubble* bb; Cylinder* c;
-    if((bb = dynamic_cast<Bubble*>(n))) {
-        updateNeighbors(bb);
-    }
-    else if((c = dynamic_cast<Cylinder*>(n))) {
-
-        for(auto it = _list.begin(); it != _list.end(); it++) {
-
-            //if within range, add it
-            if(twoPointDistancesquared(vec2Vector(it->first->coord), c->coordinate) < (_rMax * _rMax))
-                it->second.push_back(c);
-        }
-    }
-    else return;
-}
-
-void BubbleCylinderNL::removeNeighbor(Neighbor* n) {
-
-    Bubble* bb; Cylinder* c;
-    if((bb = dynamic_cast<Bubble*>(n))) {
-        _list.erase(bb);
-    }
-    else if((c = dynamic_cast<Cylinder*>(n))) {
-        for(auto it = _list.begin(); it != _list.end(); it++) {
-
-            auto cit = find(it->second.begin(), it->second.end(), c);
-            if(cit != it->second.end()) it->second.erase(cit);
-        }
-    }
-    else return;
-}
-
-void BubbleCylinderNL::reset() {
-
-    _list.clear();
-
-    //loop through all neighbor keys
-    for(auto bb: Bubble::getBubbles())
-        updateNeighbors(bb);
-}
-
-vector<Cylinder*> BubbleCylinderNL::getNeighbors(Bubble* bb) {
-
-    return _list[bb];
-}
 
 /// Triangle - Beads (filament)
 
@@ -1110,14 +821,14 @@ void TriangleFilBeadNL::addNeighbor(Neighbor* n) {
     using MT = Membrane::MeshType;
 
     if(Triangle* t = dynamic_cast<Triangle*>(n)) {
-        const auto& mesh = t->getParent()->getMesh();
+        const auto& mesh = t->getParent(*ps).getMesh();
         const MT::TriangleIndex ti { t->getTopoIndex() };
         const auto hei0 = mesh.halfEdge(ti);
         const auto hei1 = mesh.next(hei0);
         const auto hei2 = mesh.next(hei1);
-        const Vec< 3, floatingpoint > v0 (mesh.attribute(mesh.target(hei0)).getCoordinate());
-        const Vec< 3, floatingpoint > v1 (mesh.attribute(mesh.target(hei1)).getCoordinate());
-        const Vec< 3, floatingpoint > v2 (mesh.attribute(mesh.target(hei2)).getCoordinate());
+        const Vec< 3, floatingpoint > v0 (mesh.attribute(mesh.target(hei0)).getCoordinate(*ps));
+        const Vec< 3, floatingpoint > v1 (mesh.attribute(mesh.target(hei1)).getCoordinate(*ps));
+        const Vec< 3, floatingpoint > v2 (mesh.attribute(mesh.target(hei2)).getCoordinate(*ps));
 
         for(auto b : Bead::getBeads()) {
             const auto dist = trianglePointDistance(
@@ -1126,26 +837,26 @@ void TriangleFilBeadNL::addNeighbor(Neighbor* n) {
             );
 
             if(dist < _rMax) {
-                listBT_[b].push_back(t);
-                listTB_[t].push_back(b);
+                listBT_[b].push_back(t->sysIndex);
+                listTB_[t->sysIndex].push_back(b);
             }
             if(dist < rMaxMech_) {
-                listBTMech_[b].push_back(t);
-                listTBMech_[t].push_back(b);
+                listBTMech_[b].push_back(t->sysIndex);
+                listTBMech_[t->sysIndex].push_back(b);
             }
         }
     }
     else if(Bead* b = dynamic_cast<Bead*>(n)) {
 
-        for(auto t : Triangle::getTriangles()) {
-            const auto& mesh = t->getParent()->getMesh();
-            const MT::TriangleIndex ti { t->getTopoIndex() };
+        for(auto t : ps->triangles) {
+            const auto& mesh = t.getParent(*ps).getMesh();
+            const MT::TriangleIndex ti { t.getTopoIndex() };
             const auto hei0 = mesh.halfEdge(ti);
             const auto hei1 = mesh.next(hei0);
             const auto hei2 = mesh.next(hei1);
-            const Vec< 3, floatingpoint > v0 (mesh.attribute(mesh.target(hei0)).getCoordinate());
-            const Vec< 3, floatingpoint > v1 (mesh.attribute(mesh.target(hei1)).getCoordinate());
-            const Vec< 3, floatingpoint > v2 (mesh.attribute(mesh.target(hei2)).getCoordinate());
+            const Vec< 3, floatingpoint > v0 (mesh.attribute(mesh.target(hei0)).getCoordinate(*ps));
+            const Vec< 3, floatingpoint > v1 (mesh.attribute(mesh.target(hei1)).getCoordinate(*ps));
+            const Vec< 3, floatingpoint > v2 (mesh.attribute(mesh.target(hei2)).getCoordinate(*ps));
 
             const auto dist = trianglePointDistance(
                 v0, v1, v2,
@@ -1153,12 +864,12 @@ void TriangleFilBeadNL::addNeighbor(Neighbor* n) {
             );
 
             if(dist < _rMax) {
-                listBT_[b].push_back(t);
-                listTB_[t].push_back(b);
+                listBT_[b].push_back(t.sysIndex);
+                listTB_[t.sysIndex].push_back(b);
             }
             if(dist < rMaxMech_) {
-                listBTMech_[b].push_back(t);
-                listTBMech_[t].push_back(b);
+                listBTMech_[b].push_back(t.sysIndex);
+                listTBMech_[t.sysIndex].push_back(b);
             }
         } // End loop triangles
     }
@@ -1167,8 +878,8 @@ void TriangleFilBeadNL::addNeighbor(Neighbor* n) {
 void TriangleFilBeadNL::removeNeighbor(Neighbor* n) {
     
     if(Triangle* t = dynamic_cast<Triangle*>(n)) {
-        removeNeighbor_(t, listTB_, listBT_);
-        removeNeighbor_(t, listTBMech_, listBTMech_);
+        removeNeighbor_(t->sysIndex, listTB_, listBT_);
+        removeNeighbor_(t->sysIndex, listTBMech_, listBTMech_);
     }
     else if(Bead* b = dynamic_cast<Bead*>(n)) {
         removeNeighbor_(b, listBT_, listTB_);
@@ -1183,31 +894,32 @@ void TriangleFilBeadNL::reset() {
     listBTMech_.clear();
     listTBMech_.clear();
 
-    for(auto t: Triangle::getTriangles()) {
+    for(auto t : ps->triangles) {
 
-        auto& mesh = t->getParent()->getMesh();
+        auto& mesh = t.getParent(*ps).getMesh();
         const auto vis = medyan::vertexIndices(
             mesh,
-            Membrane::MeshType::TriangleIndex { t->getTopoIndex() }
+            Membrane::MeshType::TriangleIndex { t.getTopoIndex() }
         );
 
         for(auto b : Bead::getBeads()) {
             const auto dist = trianglePointDistance(
-                mesh.attribute(vis[0]).getCoordinate(),
-                mesh.attribute(vis[1]).getCoordinate(),
-                mesh.attribute(vis[2]).getCoordinate(),
+                mesh.attribute(vis[0]).getCoordinate(*ps),
+                mesh.attribute(vis[1]).getCoordinate(*ps),
+                mesh.attribute(vis[2]).getCoordinate(*ps),
                 b->coordinate()
             );
 
             if(dist < _rMax) {
-                listBT_[b].push_back(t);
-                listTB_[t].push_back(b);
+                listBT_[b].push_back(t.sysIndex);
+                listTB_[t.sysIndex].push_back(b);
             }
             if(dist < rMaxMech_) {
-                listBTMech_[b].push_back(t);
-                listTBMech_[t].push_back(b);
+                listBTMech_[b].push_back(t.sysIndex);
+                listTBMech_[t.sysIndex].push_back(b);
             }
         }
     }
 }
 
+} // namespace medyan

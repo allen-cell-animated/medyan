@@ -19,6 +19,7 @@
 
 #include "common.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Bead;
 
@@ -29,41 +30,13 @@ public:
     floatingpoint energy(floatingpoint *coord, int *beadSet,
                          floatingpoint *krep, floatingpoint *slen, int *nneighbors);
     
-    [[deprecated]] floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                         floatingpoint *krep, floatingpoint *slen, int *nnneighbors, floatingpoint d);
-    
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                 floatingpoint *krep, floatingpoint *slen, int *nneighbors);
     
     floatingpoint loadForces(floatingpoint r, floatingpoint krep , floatingpoint slen) const;
     
-#ifdef CUDAACCL
-    void optimalblocksnthreads(int nint, cudaStream_t stream);
-    
-    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
-                          int* nintvec, floatingpoint* beListplane, int *params);
-    
-    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
-                          int* nintvec, floatingpoint* beListplane, floatingpoint *z, int *params);
-    
-    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *slen,
-                int* nintvec, floatingpoint* beListplane, int *params);
-    void deallocate();
-    vector<int> blocksnthreadse;
-    vector<int> blocksnthreadsez;
-    vector<int> blocksnthreadsf;
-    vector<int> bntaddvec2;
-    static void checkforculprit();
-    floatingpoint *gU_i;
-    floatingpoint *gU_sum;
-    char *gFF, *ginteraction;
-    cudaStream_t stream = NULL;
-#endif
-private:
-#ifdef CUDAACCL
-    //    floatingpoint *F_i;
-    //    floatingpoint *forcecopy;
-#endif
 };
+
+} // namespace medyan
 
 #endif

@@ -1,14 +1,15 @@
 #include <cstddef> // size_t
 #include <vector>
 
-#include "catch2/catch.hpp"
+#include <catch2/catch.hpp>
 
 #include "Util/Math/Vec.hpp"
 
 using namespace std;
-using namespace mathfunc;
 
 TEST_CASE("Vec and RefVec tests", "[Vec]") {
+    using namespace medyan;
+
     Vec< 3, float > v3f_1 = {0.0f, 1.0f, 2.0f};
     vector< float > vector3x2f = {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f};
     auto v3f_2 = makeRefVec< 3 >(&vector3x2f[3]);  // 3 4 5
@@ -197,6 +198,7 @@ TEST_CASE("Vec and RefVec tests", "[Vec]") {
 }
 
 TEST_CASE("VecArray tests", "[VecArray]") {
+    using namespace medyan;
 
     VecArray< 3, float > v3f;
     VecArray< 4, double > v4d;

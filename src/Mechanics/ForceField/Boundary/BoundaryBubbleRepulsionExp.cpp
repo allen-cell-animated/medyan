@@ -17,6 +17,7 @@
 
 #include "Bead.h"
 
+namespace medyan {
 floatingpoint BoundaryBubbleRepulsionExp::energy(floatingpoint *coord, int *beadSet, floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
     int nb, nc;
 	floatingpoint *coord1, R, r, U_i;
@@ -40,66 +41,12 @@ floatingpoint BoundaryBubbleRepulsionExp::energy(floatingpoint *coord, int *bead
             R = -r / slen[Cumnc + ic];
             U_i = krep[Cumnc + ic] * exp(R);
 
-            if (fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-                || U_i != U_i || U_i < -1.0) {
-
-                //set culprit and return
-                BoundaryInteractions::_boundaryElementCulprit = be;
-                //TODO
-                //BoundaryInteractions::_otherCulprit;
-
-                return -1;
-            }
             U += U_i;
         }
         Cumnc += nc;
     }
     return U;
 
-}
-
-floatingpoint BoundaryBubbleRepulsionExp::energy(floatingpoint *coord, floatingpoint *f,
-		int *beadSet, floatingpoint *krep, floatingpoint *slen, int *nneighbors, floatingpoint d) {
-    int nb, nc;
-	floatingpoint *coord1, *force1, R, r, U_i;
-	floatingpoint U = 0.0;
-    int Cumnc=0;
-    auto beList = BoundaryElement::getBoundaryElements();
-    nb = beList.size();
-    
-    for (int ib = 0; ib < nb; ib++) {
-
-        auto be = beList[ib];
-        nc = nneighbors[ib];
-
-        for (int ic = 0; ic < nc; ic++) {
-
-            coord1 = &coord[beadSet[Cumnc + ic]];
-            force1 = &f[beadSet[Cumnc + ic]];
-
-            r = be->stretchedDistance(coord1, force1, d);
-
-            //Boundary-Bubble repulsion only considers the distance between
-            //boundary element and the bubble center.
-            R = -r / slen[Cumnc + ic];
-            U_i = krep[Cumnc + ic] * exp(R);
-
-            if (fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-                || U_i != U_i || U_i < -1.0) {
-
-                //set culprit and return
-                BoundaryInteractions::_boundaryElementCulprit = be;
-                //TODO
-                //BoundaryInteractions::_otherCulprit;
-
-                return -1;
-            }
-            U += U_i;
-        }
-        Cumnc += nc;
-    }
-    return U;
-    
 }
 
 void BoundaryBubbleRepulsionExp::forces(floatingpoint *coord, floatingpoint *f,
@@ -133,4 +80,4 @@ void BoundaryBubbleRepulsionExp::forces(floatingpoint *coord, floatingpoint *f,
     
 }
 
-
+} // namespace medyan

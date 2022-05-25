@@ -20,14 +20,11 @@
     #include <boost/pool/pool_alloc.hpp>
 #endif
 
+namespace medyan {
 RSpecies::~RSpecies() noexcept{
 
     assert((_as_reactants.empty() && _as_products.empty())
     && "Major bug: RSpecies should not contain Reactions when being destroyed.");
-#ifdef RSPECIES_SIGNALING
-    if(_signal!=nullptr)
-        delete _signal;
-#endif
 }
 
 ostream& operator<<(ostream& os, const RSpecies& s){
@@ -93,15 +90,8 @@ void RSpecies::passivateAssocProductReactions() {
     
     
 
-#ifdef RSPECIES_SIGNALING    
-void RSpecies::startSignaling () {
-    _signal = new RSpeciesCopyNChangedSignal;
+void RSpecies::clearSignaling () {
+    callbacks_.clear();
 }
-
-void RSpecies::stopSignaling () {
-    if (_signal!=nullptr)
-        delete _signal;
-    _signal = nullptr;
-}
-#endif // of RSPECIES_SIGNALING
     
+} // namespace medyan

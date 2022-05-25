@@ -27,9 +27,9 @@
 #include "Reactable.h"
 #include "RateChangerImpl.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Cylinder;
-class Controller;
 class DRController;
 class SubSystem;
 
@@ -47,7 +47,6 @@ class SubSystem;
 class MotorGhost : public Component, public Trackable, public Movable, public Reactable,
     public Database< MotorGhost, false > {
    
-friend class Controller;
 friend class DRController;
     
 friend class MotorBindingManager;
@@ -69,7 +68,7 @@ static vector<MotorGhostData> _motorGhostdatavec;
 private:
 
     chrono::high_resolution_clock::time_point mins, mine;
-    unique_ptr<MMotorGhost> _mMotorGhost; ///< Pointer to mech motor ghost
+    MMotorGhost mMotorGhost_; // Mechanical information of the motor.
     unique_ptr<CMotorGhost> _cMotorGhost; ///< Pointer to chem motor ghost
     
     Cylinder* _c1; ///< First cylinder the motor is bound to
@@ -113,9 +112,11 @@ public:
         ///< coordinate of midpoint, updated with updatePosition()
     
     ///Standard constructor
-    MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
-               floatingpoint position1 = 0.5, floatingpoint position2 = 0.5,
-               floatingpoint onRate = 0.0, floatingpoint offRate = 0.0);
+    MotorGhost(
+        Cylinder* c1, Cylinder* c2, short motorType,
+        int motorSpeciesIndex1, int motorSpeciesIndex2,
+        floatingpoint position1 = 0.5, floatingpoint position2 = 0.5,
+        floatingpoint onRate = 0.0, floatingpoint offRate = 0.0);
 
     void initializerestart(floatingpoint eqLength, int numHeads, floatingpoint
     numBoundHeads){
@@ -123,7 +124,7 @@ public:
     		_numHeads = numHeads;
     	if(numBoundHeads > 0)
     		_numBoundHeads = numBoundHeads;
-    	_mMotorGhost->initializerestart(_motorType, eqLength, _numBoundHeads);
+    	mMotorGhost_.initializerestart(_motorType, eqLength, _numBoundHeads);
     };
 
     virtual ~MotorGhost() noexcept;
@@ -133,8 +134,8 @@ public:
     
     //@{
     /// Get cylinder
-    Cylinder* getFirstCylinder() {return _c1;}
-    Cylinder* getSecondCylinder() {return _c2;}
+    Cylinder* getFirstCylinder() const {return _c1;}
+    Cylinder* getSecondCylinder() const {return _c2;}
     //@}
     
     //@{
@@ -151,20 +152,21 @@ public:
     CMotorGhost* getCMotorGhost() {return _cMotorGhost.get();}
     
     /// Get mech motor ghost
-    MMotorGhost* getMMotorGhost() {return _mMotorGhost.get();}
+    MMotorGhost* getMMotorGhost() {return &mMotorGhost_;}
     
     //@{
     ///Position management function
-    floatingpoint getFirstPosition() {return _position1;}
+    floatingpoint getFirstPosition() const {return _position1;}
     void setFirstPosition(floatingpoint position1) {_position1 = position1;}
     
-    floatingpoint getSecondPosition() {return _position2;}
+    floatingpoint getSecondPosition() const {return _position2;}
     void setSecondPosition(floatingpoint position2) {_position2 = position2;}
     //@}
     
     //@{
     ///Parameter management
     virtual int getType() {return _motorType;}
+    auto getType() const { return _motorType; }
     //@}
     
     /// Get the birth time
@@ -204,14 +206,16 @@ public:
     
     ///Move a motor head forward
     ///@note - Updates chemical binding and mechanical parameters accordingly
-    void moveMotorHead(Cylinder* c, floatingpoint oldPosition, floatingpoint newPosition,
-                       short boundType, SubSystem* ps);
+    void moveMotorHead(
+        Cylinder* c, floatingpoint oldPosition, floatingpoint newPosition,
+        int speciesMotorIndex, short boundType, SubSystem* ps);
     
     ///Move a motor head to a new cylinder
     ///@note - Updates chemical binding and mechanical parameters accordingly
-    void moveMotorHead(Cylinder* oldC, Cylinder* newC,
-                       floatingpoint oldPosition, floatingpoint newPosition,
-                       short boundType, SubSystem* ps);
+    void moveMotorHead(
+        Cylinder* oldC, Cylinder* newC,
+        floatingpoint oldPosition, floatingpoint newPosition,
+        int speciesMotorIndex, short boundType, SubSystem* ps);
     
     virtual void printSelf()const;
     
@@ -220,5 +224,7 @@ public:
 
     floatingpoint getnumBoundHeads()const {return _numBoundHeads;}
 };
+
+} // namespace medyan
 
 #endif

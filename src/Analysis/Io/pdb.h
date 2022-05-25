@@ -2,6 +2,7 @@
 #define MEDYAN_ANALYSIS_IO_PDB_H
 
 #include <iostream>
+#include <filesystem>
 #include <fstream>
 #include <string>
 
@@ -11,11 +12,11 @@ namespace analysis {
 // Checkout www.wwpdb.org/
 
 class PdbGenerator {
-    std::string _pdbFilepath;
+    std::filesystem::path _pdbFilepath;
     std::ofstream _ofs; ///< Handles the file output
 
 public:
-    PdbGenerator(const std::string& filepath): _pdbFilepath(filepath), _ofs(filepath) {}
+    PdbGenerator(const std::filesystem::path& filepath): _pdbFilepath(filepath), _ofs(filepath) {}
 
     void genModel(int serial);
     void genEndmdl();
@@ -30,14 +31,14 @@ public:
 // Psf contains the bond information
 // Uses implementation from www.ks.uiuc.edu/Research/vmd/plugins/doxygen/psfplugin_8c-source.html
 class PsfGenerator {
-    std::string _psfFilepath;
+    std::filesystem::path _psfFilepath;
     std::ofstream _ofs; ///< Handles the file output
 
     // State machine for genBond (0-4)
     int _bondOutputPos = 0;
 
 public:
-    PsfGenerator(const std::string& filepath): _psfFilepath(filepath), _ofs(filepath) {}
+    PsfGenerator(const std::filesystem::path& filepath): _psfFilepath(filepath), _ofs(filepath) {}
 
     void genHeader();
     void genNatom(int num);

@@ -23,6 +23,7 @@
 #define SPECIESB_DIFFUSING_INDEX_OFFRXN 2
 #define SPECIESA_DIFFUSING_INDEX_ONRXN 1
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class BranchingPoint;
 class SubSystem;
@@ -51,7 +52,7 @@ public:
     
     /// Copy constructor, standard
     CBranchingPoint(const CBranchingPoint& rhs, Compartment* c)
-        : CBound(rhs._filamentType, c, rhs._cc1, rhs._cc2, rhs._position1, rhs._position2),
+        : CBound(rhs.filType1_, rhs.filType2_, c, rhs._cc1, rhs._cc2, rhs._position1, rhs._position2),
           _pBranchingPoint(rhs._pBranchingPoint) {
         
           //set species
@@ -98,5 +99,7 @@ public:
         diffusingactinspeciesname = _diffusingactinspeciesname;
     }
 };
+
+} // namespace medyan
 
 #endif

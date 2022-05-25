@@ -14,20 +14,21 @@
 #include "Structure/Cylinder.h"
 
 #include "SubSystem.h"
-#include "CController.h"
+#include "Controller/CController.h"
 #include "ChemManager.h"
 #include "ChemRNode.h"
 
 #include "Filament.h"
 #include "Bead.h"
 
-#include "GController.h"
+#include "Controller/GController.h"
 #include "MathFunctions.h"
 
+namespace medyan {
 using namespace mathfunc;
 
 void Cylinder::updateData() {
-    auto& data = getDbData().value[getStableIndex()];
+    auto& data = getDbData()[getStableIndex()];
 
     data.filamentId = static_cast<Filament*>(getParent())->getId();
     data.positionOnFilament = _position;
@@ -38,15 +39,13 @@ void Cylinder::updateData() {
     data.type = getType();
     data.id = getId();
 
-#ifdef CHEMISTRY
     data.chemCylinder = getCCylinder();
-#endif
 }
 
 void Cylinder::updateCoordinate() {
     coordinate = midPointCoordinate(_b1->vcoordinate(), _b2->vcoordinate(), 0.5);
     //update the coordiante in cylinder structure.
-    Cylinder::getDbData().value[getStableIndex()].coord = 0.5 * (_b1->coordinate() + _b2->coordinate());
+    Cylinder::getDbData()[getStableIndex()].coord = 0.5 * (_b1->coordinate() + _b2->coordinate());
 }
 
 Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int position,
@@ -54,8 +53,8 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
                    floatingpoint eqLength)
 
         : Trackable(true, true, true, false),
-          _b1(b1), _b2(b2), _type(type), _position(position),
-          DatabaseType(CylinderInfoData::CylinderInfo {}) {
+          _b1(b1), _b2(b2), _type(type), _position(position)
+{
 
     #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     if(getStableIndex() >= SysParams::Chemistry().maxStableIndex) {
@@ -79,10 +78,10 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     updateCoordinate();
 
     Compartment* compartment;
-    try {compartment = GController::getCompartment(coordinate);}
+    try {compartment = &GController::getCompartment(coordinate);}
     catch (exception& e) {
         cout << e.what() << endl;
-        exit(EXIT_FAILURE);
+        throw;
     }
 
     //add to compartment
@@ -90,22 +89,20 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     _cellElement.manager->addElement(this, _cellElement, compartment->cylinderCell);
 
     //@}
-    #ifdef CHEMISTRY
+
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(compartment, this));
     _cCylinder->setCylinder(this);
-    #endif
+
     if(SysParams::RUNSTATE) {
         eqLength = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
-        #ifdef CHEMISTRY
+
         //init using chem manager
         _chemManager->initializeCCylinder(_cCylinder.get(), extensionFront,
                                           extensionBack, initialization);
-        #endif
     }
-#ifdef MECHANICS
+
     _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
     _mCylinder->setCylinder(this);
-#endif
 
     // Update the stored data
     updateData();
@@ -152,13 +149,13 @@ void Cylinder::updatePosition() {
         _crosscheckdumpFile <<"Coord updated "<<getId()<<endl;
         #endif
         Compartment *c;
-        try { c = GController::getCompartment(coordinate); }
+        try { c = &GController::getCompartment(coordinate); }
         catch (exception &e) {
             cout << e.what();
 
             printSelf();
 
-            exit(EXIT_FAILURE);
+            throw;
         }
 
         Compartment* curCompartment = getCompartment();
@@ -175,7 +172,6 @@ void Cylinder::updatePosition() {
             _crosscheckdumpFile <<"Complete Move cmp "<<getId()<<endl;
             #endif
 
-#ifdef CHEMISTRY
 //			auto oldCCylinder = _cCylinder.get();
 
             //Remove old ccylinder from binding managers
@@ -200,7 +196,7 @@ void Cylinder::updatePosition() {
 //			auto newCCylinder = _cCylinder.get();
 
             //change both CCylinder and Compartment ID in the vector
-            auto& data = getDbData().value[getStableIndex()];
+            auto& data = getDbData()[getStableIndex()];
             data.compartmentId = c->getId();
             data.chemCylinder = _cCylinder.get();
 #ifdef CROSSCHECK_CYLINDER
@@ -213,13 +209,10 @@ void Cylinder::updatePosition() {
             CUDAcommon::tmin.callscylinderupdate++;
 
         }
-#endif
 
-#ifdef MECHANICS
-    //update length
-    _mCylinder->setLength(twoPointDistance(_b1->vcoordinate(),
-                                           _b2->vcoordinate()));
-#endif
+        //update length
+        _mCylinder->setLength(twoPointDistance(_b1->vcoordinate(), _b2->vcoordinate()));
+
         #ifdef CROSSCHECK_CYLINDER
         _crosscheckdumpFile <<"MCylinder updated "<<getId()<<endl;
         #endif
@@ -257,7 +250,7 @@ void Cylinder::updateReactionRates() {
                     factor = _polyChanger[_type]->getRateChangeFactor(force);
                 }
 
-                r->setRateMulFactor(factor, ReactionBase::MECHANOCHEMICALFACTOR);
+                r->setRateMulFactor(factor, ReactionBase::mechanochemical);
                 r->updatePropensity();
 
             }
@@ -296,7 +289,7 @@ void Cylinder::updateReactionRates() {
                     factor = _polyChanger[_type]->getRateChangeFactor(force);
                 }
 
-                r->setRateMulFactor(factor, ReactionBase::MECHANOCHEMICALFACTOR);
+                r->setRateMulFactor(factor, ReactionBase::mechanochemical);
                 r->updatePropensity();
             }
 
@@ -316,11 +309,7 @@ void Cylinder::updateReactionRates() {
 
 bool Cylinder::isFullLength() {
 
-#ifdef MECHANICS
     return areEqual(_mCylinder->getEqLength(), SysParams::Geometry().cylinderSize[_type]);
-#else
-    return true;
-#endif
 }
 
 void Cylinder::printSelf()const {
@@ -348,10 +337,8 @@ void Cylinder::printSelf()const {
 
     cout << endl;
 
-#ifdef CHEMISTRY
     cout << "Chemical composition of cylinder:" << endl;
     _cCylinder->printCCylinder();
-#endif
 
     cout << endl;
 
@@ -433,7 +420,6 @@ floatingpoint Cylinder::adjustedrelativeposition(floatingpoint _alpha, bool verb
 }
 
 vector<FilamentRateChanger*> Cylinder::_polyChanger;
-ChemManager* Cylinder::_chemManager = 0;
 
 bool Cylinder::setpositionupdatedstate = false;
 floatingpoint Cylinder::timecylinder1 = 0.0;
@@ -441,3 +427,5 @@ floatingpoint Cylinder::timecylinder2= 0.0;
 floatingpoint Cylinder::timecylinderchem= 0.0;
 floatingpoint Cylinder::timecylindermech= 0.0;
 ofstream Cylinder::_crosscheckdumpFile;
+
+} // namespace medyan

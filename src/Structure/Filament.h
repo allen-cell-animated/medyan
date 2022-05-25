@@ -27,6 +27,8 @@
 #include "Composite.h"
 #include "RestartParams.h"
 
+namespace medyan {
+
 //FORWARD DECLARATIONS
 class SubSystem;
 class Cylinder;
@@ -43,12 +45,18 @@ class Bead;
  * easily accessed by the SubSystem.
  * 
  * A Filament can also be initialized as a number of different shapes.
+ * 
+ * 
+ * The positional index used in a filament
+ * 
+ *                      (-) |-----------|------------------|------------------|-----| (+)
+ * Cylinder position        |    -2     |        -1        |        0         |  1  |
+ * Bead position            -2          -1                 0                  1     2
+ * 
  */
 class Filament : public Composite, public Trackable,
     public Database< Filament, false > {
 
-friend class Controller;
-    
 private:
     /// Deque of cylinders
     /// @note - the "front" of this deck is the minus end of the filament.
@@ -96,7 +104,8 @@ public:
     /// with a number of beads numBeads. Filaments starts and ends in the point
     /// determined by position vector.
     Filament(SubSystem* s, short filamentType,
-             const vector<vector<floatingpoint>>& position, int numBeads,
+             const std::vector<Vec<3, FP>>& position, int numBeads,
+             const SimulConfig& conf,
              string projectionType = "STRAIGHT");
     
     /// This constructor is called when a filament is severed. It creates a filament
@@ -120,8 +129,8 @@ public:
     void extendMinusEnd(short minusEnd);
     
     ///Extend, used for initialization
-    void extendPlusEnd(vector<floatingpoint>& coordinates);
-    void extendMinusEnd(vector<floatingpoint>& coordinates);
+    void extendPlusEnd(const Vec<3, FP>& coordinates);
+    void extendMinusEnd(const Vec<3, FP>& coordinates);
     
     /// Retraction of front of a cylinder. Removes one cylinder and one bead from the
     /// front of filament.
@@ -151,17 +160,19 @@ public:
     /// Sever a filament at a given cylinder position. The back part of the filament
     /// will remain as this (original) filament, and the new filament, which is
     /// the front part of the originally severed filament, will be returned.
+    // Note: the actual sever point is the minus end of the given cylinder.
     Filament* sever(int cylinderPosition);
     
     /// Get vector of cylinders that this filament contains.
-    deque<Cylinder*>& getCylinderVector() {return _cylinderVector;}
+    auto& getCylinderVector()       { return _cylinderVector; }
+    auto& getCylinderVector() const { return _cylinderVector; }
     
     //@{
     /// Get / reset temporary counters
     void resetDeltaPlusEnd() {_deltaPlusEnd = 0;}
     void resetDeltaMinusEnd() {_deltaMinusEnd = 0;}
-    short getDeltaPlusEnd() {return _deltaPlusEnd;}
-    short getDeltaMinusEnd() {return _deltaMinusEnd;}
+    short getDeltaPlusEnd() const {return _deltaPlusEnd;}
+    short getDeltaMinusEnd() const {return _deltaMinusEnd;}
 
     short getPolyPlusEnd() {return _polyPlusEnd;}
     void resetPolyPlusEnd() { _polyPlusEnd = 0;}
@@ -199,6 +210,7 @@ public:
     
     /// Get type
     int getType() {return _filType;}
+    auto getType() const { return _filType; }
     
     //@{
     /// Get end cylinder
@@ -228,12 +240,9 @@ public:
     /// Projection function, returns a vector of coordinates for bead creation
     vector<floatingpoint> nextBeadProjection(Bead* b, floatingpoint d, vector<floatingpoint> director);
     
-    vector<vector<floatingpoint>> straightFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads);
-    vector<vector<floatingpoint>> zigZagFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads);
-    vector<vector<floatingpoint>> arcFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads);
-    //Aravind 18 Feb 2016.
-    vector<vector<floatingpoint>> predefinedFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads);
-    //@}
+    std::vector<Vec<3, FP>> straightFilamentProjection(const Vec<3, FP>& v1, const Vec<3, FP>& v2, int numBeads, FP cylLength);
+    std::vector<Vec<3, FP>> zigZagFilamentProjection(const Vec<3, FP>& v1, const Vec<3, FP>& v2, int numBeads, FP cylLength);
+    std::vector<Vec<3, FP>> arcFilamentProjection(const Vec<3, FP>& v1, const Vec<3, FP>& v2, int numBeads);
 
     //To initialize filaments with cylinders during restart.
 	void initializerestart(vector<Cylinder*> cylindervector, vector<restartCylData>&
@@ -255,5 +264,7 @@ public:
 	static floatingpoint FilextendMinusendtimer2;
 	static floatingpoint FilextendMinusendtimer3;
 };
+
+} // namespace medyan
 
 #endif

@@ -16,6 +16,7 @@
 
 #include "common.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Composite;
 class Visitor;
@@ -94,21 +95,6 @@ public:
     
     /// Returns true if this node is a Composite node
     virtual bool isComposite() const {return false;}
-    
-    /// Returns true if this node contains non-zero number of Species
-    virtual bool isSpeciesContainer() const {return false;}
-    
-    /// Returns true if this node contains non-zero number of reactions
-    /// (i.e. ReactionBase pointers)
-    virtual bool isReactionsContainer() const {return false;}
-    
-    /// Returns the number of Species being immediately managed by this node (i.e. not
-    /// counting Species belonging to children nodes, etc.
-    virtual size_t numberOfSpecies () const {return 0;}
-    
-    /// Returns the number of ReactionBase objets being immediately managed by this node
-    /// (i.e. not counting reactions belonging to children nodes, etc.
-    virtual size_t numberOfReactions() const {return 0;}
 
     /// Return a string indicating the full name of this node (presumably used mainly
     /// for debugging)
@@ -133,5 +119,6 @@ public:
     virtual int getType() = 0;
 };
 
+} // namespace medyan
 
 #endif

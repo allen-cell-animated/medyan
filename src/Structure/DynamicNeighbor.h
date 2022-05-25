@@ -17,6 +17,7 @@
 
 #include "Neighbor.h"
 
+namespace medyan {
 /// An abstract base class for any element that can be
 /// added or removed from a NeighborList dynamically at runtime.
 class DynamicNeighbor : public Neighbor {
@@ -32,5 +33,7 @@ public:
     /// be fixed in the future.
     virtual ~DynamicNeighbor() noexcept {}
 };
+
+} // namespace medyan
 
 #endif

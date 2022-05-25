@@ -18,6 +18,7 @@
 #include "MathFunctions.h"
 #include "Rand.h"
 
+namespace medyan {
 namespace mathfunc {
 
     tuple<vector<floatingpoint>, vector<floatingpoint>> branchProjection(const vector<floatingpoint>& n,
@@ -243,7 +244,7 @@ namespace mathfunc {
 //    }
     
     float delGGenChem(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu){
-        
+        using std::log;
         if(reacN.size() != reacNu.size()){
             cout << "Reactant copy number vector and stoichiometry vector mismatch" << endl;
             return 0;
@@ -284,7 +285,7 @@ namespace mathfunc {
     }
     
     float delGGenChemI(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu){
-        
+        using std::log;
         if(reacN.size() != reacNu.size()){
             cout << "Reactant copy number vector and stoichiometry vector mismatch" << endl;
             return 0;
@@ -325,7 +326,7 @@ namespace mathfunc {
     }
     
     float delGDifChem(species_copy_t reacN, species_copy_t prodN){
-        
+        using std::log;
         if(prodN==0){
             prodN=1;
         }
@@ -342,7 +343,8 @@ namespace mathfunc {
     
     float delGPolyChem(float delGzero, species_copy_t reacN, string whichWay){
         
-        
+        using std::log;
+
         float sumreacs=0;
         
         if(whichWay=="P"){
@@ -359,9 +361,11 @@ namespace mathfunc {
     
     float delGMyoChem(float nh, float rn){
         float delG;
-        delG = - log(pow(rn,nh)-1);
+        delG = - std::log(pow(rn,nh)-1);
         
         return delG;
     }
 
-}
+} // namespace mathfunc
+
+} // namespace medyan

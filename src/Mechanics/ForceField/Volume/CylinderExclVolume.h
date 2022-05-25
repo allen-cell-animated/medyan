@@ -16,7 +16,8 @@
 
 #include "common.h"
 
-#include "CylinderVolumeInteractions.h"
+#include "Mechanics/ForceField/ForceField.h"
+#include "Mechanics/ForceField/Volume/CylinderExclVolRepulsion.h"
 #include "NeighborListImpl.h"
 #include "HybridNeighborListImpl.h"
 
@@ -25,12 +26,13 @@
 #include "CUDAcommon.h"
 #endif
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Cylinder;
 
 /// Represents an excuded volume interaction between two [Cylinders](@ref Cylinder).
 template <class CVolumeInteractionType>
-class CylinderExclVolume : public CylinderVolumeInteractions {
+class CylinderExclVolume : public ForceField {
 
 private:
     CVolumeInteractionType _FFType;
@@ -42,19 +44,10 @@ private:
     short _HnlID;
 #endif
     ///Array describing the constants in calculation
-    int *beadSet;
-    floatingpoint *krep;
+    std::vector<int> beadSet;
+    std::vector<FP> krep;
     std::vector<floatingpoint> vecEqLength;
 
-    int nint = 0;
-    
-    virtual vector<tuple<floatingpoint, int, vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>>>> getCylEnergies() {
-        return _FFType.getCylEnergies();
-    };
-    
-    virtual void clearCylEnergies(){
-        _FFType.clearCylEnergies();
-    }
 #ifdef CUDAACCL
     int * gpu_beadSet = NULL;
     floatingpoint * gpu_krep = NULL;
@@ -70,34 +63,35 @@ public:
     int numInteractions = 0;
 
     ///Constructor
-    CylinderExclVolume() {
+    CylinderExclVolume(const SimulConfig& conf) {
         //If Hybrid NeighborList is not preferred, neighborList is created using Original
         // framework.
 #if !defined(HYBRID_NLSTENCILLIST) || !defined(SIMDBINDINGSEARCH)
         //Not a full list as it does not pass a full variable.
-        _neighborList = new CylinderCylinderNL(SysParams::Mechanics().VolumeCutoff);
+        _neighborList = new CylinderCylinderNL(conf.mechParams.VolumeCutoff);
 #endif
 #ifdef CUDAACCL_NL
         _neighborList->cudacpyforces = true;
 #endif
     }
 
-    virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void deallocate();
+    virtual std::string getName() override { return "CylinderExcludeVolume"; }
+
+    virtual void vectorize(const FFCoordinateStartingIndex&, const SimulConfig&) override;
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
+    virtual FP computeEnergy(FP *coord) override;
     //@{
     /// This repulsive force calculation also updates load forces
     /// on beads within the interaction range.
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+    virtual void computeForces(FP *coord, FP *f) override;
 
     /// Get the neighbor list for this interaction
-    virtual NeighborList* getNeighborList() {return _neighborList;}
+    virtual std::vector<NeighborList*> getNeighborLists() override {
+        return { _neighborList };
+    }
 
-    virtual const string getName() {return "Cylinder Excluded Volume";}
 
-
-    virtual void setHNeighborList(HybridCylinderCylinderNL* Hnl) {
+    void setHNeighborLists(HybridCylinderCylinderNL* Hnl) {
         _HneighborList = Hnl;
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         short filtypes = SysParams::Geometry().cylinderNumMon.size();
@@ -114,7 +108,15 @@ public:
 #endif
     };
 
-    virtual HybridCylinderCylinderNL* getHNeighborList(){return _HneighborList;};
+    vector<tuple<floatingpoint, int, vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>>>> getCylEnergies() {
+        return _FFType.getCylEnergies();
+    };
+    
+    void clearCylEnergies(){
+        _FFType.clearCylEnergies();
+    }
 };
+
+} // namespace medyan
 
 #endif

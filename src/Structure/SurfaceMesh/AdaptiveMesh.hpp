@@ -32,35 +32,15 @@ Until all criteria are met or maximum iterations reached
 #include <vector>
 
 #include "MathFunctions.h"
+#include "Structure/SubSystem.h"
+#include "Structure/SubSystemFunc.hpp"
 #include "Structure/SurfaceMesh/AdaptiveMeshGeometryManager.hpp"
 #include "Structure/SurfaceMesh/AdaptiveMeshVertexRelocation.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshModifier.hpp"
 #include "Structure/SurfaceMesh/MeshTriangleQuality.hpp"
 
-namespace adaptive_mesh {
-
-// Recommended adaptive mesh parameters
-//-------------------------------------
-// Topological operations
-constexpr size_t surface_mesh_min_degree = 4;
-constexpr size_t surface_mesh_max_degree = 9;
-constexpr double edge_flip_min_dot_normal = 0.9;
-constexpr double edge_collapse_min_quality_improvement = 0.6;
-constexpr double edge_collapse_min_dot_normal = 0.85;
-// Vertex relocation operations
-constexpr double vertex_relaxation_epsilon = 0.05; // (unitless speed/force). The tolerance (l / l_0 - 1)
-constexpr double vertex_relaxation_dt = 2.0; // (has unit of length) (around minSize / (iterRelocation * avgForce))
-constexpr size_t vertex_relocation_max_iter_relocation = 10;
-constexpr size_t vertex_relocation_max_iter_tot = 3; // (vertex relocation + edge flipping) as 1 iter
-// Size diffusion
-constexpr double size_measure_curvature_resolution = 0.30; // cos of which should be slightly bigger than flip minDotNormal
-constexpr double size_measure_max = 60; // Related to the resolution of the system
-constexpr size_t size_measure_diffuse_iter = 4;
-// Main loop
-constexpr size_t mesh_adaptation_topology_max_iter = 10; // Max times of scanning all the edges for sampling adjustment
-constexpr size_t mesh_adaptation_soft_max_iter = 8;
-constexpr size_t mesh_adaptation_hard_max_iter = 20;
+namespace medyan::adaptive_mesh {
 
 // Implementation
 //-------------------------------------
@@ -99,7 +79,7 @@ public:
     // Requires
     //   - vertex degrees
     //   - triangle unit normal
-    State tryFlip(Mesh& mesh, typename Mesh::EdgeIndex ei) const {
+    State tryFlip(SubSystem& sys, Mesh& mesh, typename Mesh::EdgeIndex ei) const {
         using namespace mathfunc;
 
         const auto hei = mesh.halfEdge(ei);
@@ -134,10 +114,10 @@ public:
         ) < minDotNormal_) return State::NonCoplanar;
 
         // Check if the target triangles are coplanar.
-        const CoordinateType c0 (mesh.attribute(vi0).getCoordinate());
-        const CoordinateType c1 (mesh.attribute(vi1).getCoordinate());
-        const CoordinateType c2 (mesh.attribute(vi2).getCoordinate());
-        const CoordinateType c3 (mesh.attribute(vi3).getCoordinate());
+        const CoordinateType c0 (mesh.attribute(vi0).getCoordinate(sys));
+        const CoordinateType c1 (mesh.attribute(vi1).getCoordinate(sys));
+        const CoordinateType c2 (mesh.attribute(vi2).getCoordinate(sys));
+        const CoordinateType c3 (mesh.attribute(vi3).getCoordinate(sys));
         const auto n013 = cross(c1 - c0, c3 - c0);
         const auto mag_n013 = magnitude(n013);
         const auto n231 = cross(c3 - c2, c1 - c2);
@@ -155,13 +135,13 @@ public:
         if( !TriangleQualityType::better(qAfter, qBefore) ) return State::BadQuality;
 
         // All checks complete. Do the flip.
-        medyan::flipEdge(mesh, ei);
+        medyan::flipEdge(sys, mesh, ei);
 
         // Set attributes
         for(auto ti : {ti0, ti1}) {
-            medyan::adaptiveComputeTriangleNormal(mesh, ti);
+            medyan::adaptiveComputeTriangleNormal(sys, mesh, ti);
             mesh.forEachHalfEdgeInTriangle(ti, [&](auto nhei) {
-                medyan::adaptiveComputeAngle(mesh, nhei);
+                medyan::adaptiveComputeAngle(sys, mesh, nhei);
             });
         }
 
@@ -181,13 +161,13 @@ enum class EdgeSplitVertexInsertionMethod {
 };
 template< EdgeSplitVertexInsertionMethod > struct EdgeSplitVertexInsertion;
 template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::MidPoint > {
-    std::size_t v0, v1;
+    Index v0, v1;
     template< typename Mesh >
-    auto coordinate(const Mesh& mesh) const {
+    auto coordinate(const SubSystem& sys, const Mesh& mesh) const {
         using CoordinateType = typename Mesh::AttributeType::CoordinateType;
 
-        const auto c0 = mesh.attribute(v0).getCoordinate();
-        const auto c1 = mesh.attribute(v1).getCoordinate();
+        const auto c0 = mesh.attribute(v0).getCoordinate(sys);
+        const auto c1 = mesh.attribute(v1).getCoordinate(sys);
         return static_cast<CoordinateType>((c0 + c1) * 0.5);
     }
 };
@@ -195,17 +175,17 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgC
     static constexpr double maxRadiusDistanceRatio = 1e6;
     static constexpr double maxRadiusDistanceRatio2 = maxRadiusDistanceRatio * maxRadiusDistanceRatio;
 
-    std::size_t v0, v1;
+    Index v0, v1;
 
     // Requires
     //   - Vertex unit normal
     template< typename Mesh >
-    auto coordinate(const Mesh& mesh) const {
+    auto coordinate(const SubSystem& sys, const Mesh& mesh) const {
         using namespace mathfunc;
         using CoordinateType = typename Mesh::AttributeType::CoordinateType;
 
-        const CoordinateType c0 (mesh.attribute(typename Mesh::VertexIndex {v0}).getCoordinate());
-        const CoordinateType c1 (mesh.attribute(typename Mesh::VertexIndex {v1}).getCoordinate());
+        const CoordinateType c0 (mesh.attribute(typename Mesh::VertexIndex {v0}).getCoordinate(sys));
+        const CoordinateType c1 (mesh.attribute(typename Mesh::VertexIndex {v1}).getCoordinate(sys));
         const auto& un0 = mesh.attribute(typename Mesh::VertexIndex {v0}).aVertex.unitNormal;
         const auto& un1 = mesh.attribute(typename Mesh::VertexIndex {v1}).aVertex.unitNormal;
 
@@ -277,7 +257,7 @@ public:
     // Returns whether a new vertex is inserted.
     // Requires
     //   - Vertex degree
-    State trySplit(Mesh& mesh, typename Mesh::EdgeIndex ei, const EdgeFlipManagerType& efm) const {
+    State trySplit(SubSystem& sys, Mesh& mesh, typename Mesh::EdgeIndex ei, const EdgeFlipManagerType& efm) const {
         using namespace mathfunc;
 
         const auto hei = mesh.halfEdge(ei);
@@ -308,10 +288,10 @@ public:
         ) return State::invalidTopo;
 
         // Check whether the current edge is the longest in the triangle
-        const CoordinateType c0 (mesh.attribute(vi0).getCoordinate());
-        const CoordinateType c1 (mesh.attribute(vi1).getCoordinate());
-        const CoordinateType c2 (mesh.attribute(vi2).getCoordinate());
-        const CoordinateType c3 (mesh.attribute(vi3).getCoordinate());
+        const CoordinateType c0 (mesh.attribute(vi0).getCoordinate(sys));
+        const CoordinateType c1 (mesh.attribute(vi1).getCoordinate(sys));
+        const CoordinateType c2 (mesh.attribute(vi2).getCoordinate(sys));
+        const CoordinateType c3 (mesh.attribute(vi3).getCoordinate(sys));
         const auto l2_e = distance2(c0, c2);
         const auto l2_01 = distance2(c0, c1);
         const auto l2_12 = distance2(c1, c2);
@@ -324,9 +304,9 @@ public:
 
         // All checks passed. Do the splitting.
         const auto eqLength = mesh.attribute(ei).aEdge.eqLength;
-        const auto change = medyan::insertVertexOnEdge(
-            mesh, ei,
-            EdgeSplitVertexInsertionType { vi0.index, vi2.index }.coordinate(mesh)
+        const auto change = medyan::insertVertexOnEdge<medyan::SubSystemFunc>(
+            sys, mesh, ei,
+            EdgeSplitVertexInsertionType { vi0.index, vi2.index }.coordinate(sys, mesh)
         );
 
         // Update local geometries for adaptive remeshing algorithm
@@ -334,9 +314,9 @@ public:
             const auto nti = mesh.triangle(nhei);
             const auto nei = mesh.edge(nhei);
 
-            medyan::adaptiveComputeTriangleNormal(mesh, nti);
+            medyan::adaptiveComputeTriangleNormal(sys, mesh, nti);
             mesh.forEachHalfEdgeInTriangle(nti, [&](auto nnhei) {
-                medyan::adaptiveComputeAngle(mesh, nnhei);
+                medyan::adaptiveComputeAngle(sys, mesh, nnhei);
             });
 
             // Set preferrable length of edges to be the same as before
@@ -351,10 +331,10 @@ public:
         });
 
         // Propose edge flipping on surrounding quad edges
-        efm.tryFlip(mesh, ei0);
-        efm.tryFlip(mesh, ei1);
-        efm.tryFlip(mesh, ei2);
-        efm.tryFlip(mesh, ei3);
+        efm.tryFlip(sys, mesh, ei0);
+        efm.tryFlip(sys, mesh, ei1);
+        efm.tryFlip(sys, mesh, ei2);
+        efm.tryFlip(sys, mesh, ei3);
 
         return State::success;
 
@@ -380,12 +360,12 @@ private:
     double minDotNormal_; // Coplanarness requirement after collapse
 
     struct PrequalifyResult_ {
-        bool   suitable = true; // If this is false, then other values might be undefined
-        double qualityImproved; // The improvement of the worst quality after collapsing
+        bool   suitable = true; // If this is false, then other values might be undefined.
+        double qualityImproved; // The improvement of the worst quality after collapsing.
     };
     // Prequalify the collapse, when the edge is not on the border
     // hei is the direction of collapsing (source gets removed, and target is preserved)
-    auto prequalify_(const Mesh& mesh, typename Mesh::HalfEdgeIndex hei) const {
+    auto prequalify_(const SubSystem& sys, const Mesh& mesh, typename Mesh::HalfEdgeIndex hei) const {
         using namespace mathfunc;
 
         PrequalifyResult_ res;
@@ -403,9 +383,14 @@ private:
             res.suitable = false;
             return res;
         }
+        if(mesh.attribute(vi1).vertex(sys).getAttachmentRefCount() > 0) {
+            // Removing a vertex with attachment is not allowed.
+            res.suitable = false;
+            return res;
+        }
 
-        const CoordinateType c0 (mesh.attribute(vi0).getCoordinate());
-        const CoordinateType c1 (mesh.attribute(vi1).getCoordinate());
+        const CoordinateType c0 (mesh.attribute(vi0).getCoordinate(sys));
+        const CoordinateType c1 (mesh.attribute(vi1).getCoordinate(sys));
 
         const auto ti0 = mesh.triangle(hei);
         const auto ti1 = mesh.triangle(hei_o);
@@ -425,8 +410,8 @@ private:
                 const auto chei_po = mesh.opposite(mesh.prev(chei));
                 const auto vn = mesh.target(mesh.next(chei));
                 const auto vp = mesh.target(mesh.prev(chei));
-                const CoordinateType cn (mesh.attribute(vn).getCoordinate());
-                const CoordinateType cp (mesh.attribute(vp).getCoordinate());
+                const CoordinateType cn (mesh.attribute(vn).getCoordinate(sys));
+                const CoordinateType cp (mesh.attribute(vp).getCoordinate(sys));
 
                 // Triangle quality before
                 qBefore = TriangleQualityType::worseOne(
@@ -505,7 +490,7 @@ public:
     // Returns whether the edge is collapsed
     // Requires
     //   - <None>
-    State tryCollapse(Mesh& mesh, typename Mesh::EdgeIndex ei) const {
+    State tryCollapse(SubSystem& sys, Mesh& mesh, typename Mesh::EdgeIndex ei) const {
         using namespace mathfunc;
 
         const auto hei = mesh.halfEdge(ei);
@@ -535,9 +520,9 @@ public:
         // Check triangle quality constraints
         // Calculate previous triangle qualities around a vertex
         // if v0 is removed
-        const auto pr0 = prequalify_(mesh, hei_o);
+        const auto pr0 = prequalify_(sys, mesh, hei_o);
         // if v2 is removed
-        const auto pr2 = prequalify_(mesh, hei);
+        const auto pr2 = prequalify_(sys, mesh, hei);
 
         // Choose the best result
         const auto worseThan = [](const PrequalifyResult_& pr0, const PrequalifyResult_& pr1) {
@@ -556,19 +541,19 @@ public:
         if(!prChosen.suitable) return State::notSuitable;
         if(prChosen.qualityImproved < minQualityImprovement_) return State::badQuality;
 
-        // Do the collapse
-        const auto change = medyan::collapseEdge(
-            mesh, ei,
-            mesh.attribute(mesh.target(heiChosen)).vertex->coord
+        // Do the collapse.
+        const auto change = collapseHalfEdge<SubSystemFunc>(
+            sys, mesh, heiChosen,
+            mesh.attribute(mesh.target(heiChosen)).vertex(sys).coord
         );
 
         // Set attributes
-        mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&mesh](auto nhei) {
+        mesh.forEachHalfEdgeTargetingVertex(change.viTo, [&](auto nhei) {
             if(mesh.isInTriangle(nhei)) {
                 const auto nti = mesh.triangle(nhei);
-                medyan::adaptiveComputeTriangleNormal(mesh, nti);
+                medyan::adaptiveComputeTriangleNormal(sys, mesh, nti);
                 mesh.forEachHalfEdgeInTriangle(nti, [&](auto nnhei) {
-                    medyan::adaptiveComputeAngle(mesh, nnhei);
+                    medyan::adaptiveComputeAngle(sys, mesh, nnhei);
                 });
             }
         });
@@ -587,25 +572,27 @@ public:
 };
 
 enum class SizeMeasureCriteria {
-    Curvature
+    curvature,
+    border,
 };
 template< SizeMeasureCriteria > struct VertexSizeMeasure;
-template<> struct VertexSizeMeasure< SizeMeasureCriteria::Curvature > {
+template<> struct VertexSizeMeasure< SizeMeasureCriteria::curvature > {
     double resolution; // size = res * min_radius_curvature
     double upperLimit; // maximum size
 
     // Requires
     //   - Vertex unit normal
-    template< typename Mesh > auto vertexSize(Mesh& mesh, typename Mesh::VertexIndex vi) const {
+    template< typename Mesh >
+    auto vertexSize(SubSystem& sys, Mesh& mesh, typename Mesh::VertexIndex vi) const {
         using CoordinateType = typename Mesh::AttributeType::CoordinateType;
 
         double minRadiusCurvature = std::numeric_limits<double>::infinity();
         const auto& un = mesh.attribute(vi).aVertex.unitNormal;
-        const CoordinateType ci (mesh.attribute(vi).getCoordinate());
+        const CoordinateType ci (mesh.attribute(vi).getCoordinate(sys));
         mesh.forEachHalfEdgeTargetingVertex(vi, [&](auto hei) {
-            const auto r = mesh.attribute(mesh.target(mesh.opposite(hei))).getCoordinate() - ci;
+            const auto r = mesh.attribute(mesh.target(mesh.opposite(hei))).getCoordinate(sys) - ci;
             minRadiusCurvature = std::min(
-                std::abs(0.5 * mathfunc::magnitude2(r) / mathfunc::dot(un, r)),
+                std::abs(0.5 * magnitude2(r) / dot(un, r)),
                 minRadiusCurvature
             );
         });
@@ -613,20 +600,41 @@ template<> struct VertexSizeMeasure< SizeMeasureCriteria::Curvature > {
         return std::min(resolution * minRadiusCurvature, upperLimit);
     }
 };
+template<> struct VertexSizeMeasure< SizeMeasureCriteria::border > {
+    template< typename Mesh >
+    double vertexSize(SubSystem& sys, Mesh& mesh, typename Mesh::VertexIndex vi) const {
+        double ret = inf;
+        if(mesh.isVertexOnBorder(vi)) {
+            const auto& ci = mesh.attribute(vi).vertex(sys).coord;
+            // Use the shortest border edge length.
+            mesh.forEachHalfEdgeTargetingVertex(vi, [&](auto hei) {
+                const auto hei_o = mesh.opposite(hei);
+                if(!mesh.isInTriangle(hei) || !mesh.isInTriangle(hei_o)) {
+                    const auto vn = mesh.target(hei_o);
+                    ret = std::min(
+                        ret,
+                        distance(ci, mesh.attribute(vn).vertex(sys).coord)
+                    );
+                }
+            });
+        }
+        return ret;
+    }
+};
 
 template< SizeMeasureCriteria... > struct VertexSizeMeasureCombined;
 template< SizeMeasureCriteria c, SizeMeasureCriteria... cs >
 struct VertexSizeMeasureCombined< c, cs... > {
     template< typename Mesh >
-    static auto vertexSize(Mesh& mesh, typename Mesh::VertexIndex vi, const VertexSizeMeasure<c>& vsm, const VertexSizeMeasure<cs>&... vsms) {
-        return std::min(vsm.vertexSize(mesh, vi), VertexSizeMeasureCombined<cs...>::vertexSize(mesh, vi, vsms...));
+    static auto vertexSize(SubSystem& sys, Mesh& mesh, typename Mesh::VertexIndex vi, const VertexSizeMeasure<c>& vsm, const VertexSizeMeasure<cs>&... vsms) {
+        return std::min(vsm.vertexSize(sys, mesh, vi), VertexSizeMeasureCombined<cs...>::vertexSize(sys, mesh, vi, vsms...));
     }
 };
 template< SizeMeasureCriteria c >
 struct VertexSizeMeasureCombined< c > {
     template< typename Mesh >
-    static auto vertexSize(Mesh& mesh, typename Mesh::VertexIndex vi, const VertexSizeMeasure<c>& vsm) {
-        return vsm.vertexSize(mesh, vi);
+    static auto vertexSize(SubSystem& sys, Mesh& mesh, typename Mesh::VertexIndex vi, const VertexSizeMeasure<c>& vsm) {
+        return vsm.vertexSize(sys, mesh, vi);
     }
 };
 
@@ -635,37 +643,38 @@ private:
 
     double _curvRes; // resolution used in radius curvature
     double _maxSize; // Hard upper bound of size
-    size_t _diffuseIter; // Diffusion iterations used in gradation control
+    Size   _diffuseIter; // Diffusion iterations used in gradation control
 
     template< SizeMeasureCriteria... cs >
-    auto _vertexSize(Mesh& mesh, typename Mesh::VertexIndex vi, const VertexSizeMeasure<cs>&... vsms) const {
-        return VertexSizeMeasureCombined<cs...>::vertexSize(mesh, vi, vsms...);
+    auto _vertexSize(SubSystem& sys, Mesh& mesh, typename Mesh::VertexIndex vi, const VertexSizeMeasure<cs>&... vsms) const {
+        return VertexSizeMeasureCombined<cs...>::vertexSize(sys, mesh, vi, vsms...);
     }
     template< SizeMeasureCriteria... cs >
-    void _updateVertexSize(Mesh& mesh, const VertexSizeMeasure<cs>&... vsms) const {
-        const size_t numVertices = mesh.getVertices().size();
-        for(size_t i = 0; i < numVertices; ++i) {
+    void _updateVertexSize(SubSystem& sys, Mesh& mesh, const VertexSizeMeasure<cs>&... vsms) const {
+        const Size numVertices = mesh.getVertices().size();
+        for(Index i = 0; i < numVertices; ++i) {
             typename Mesh::VertexIndex vi {i};
-            mesh.attribute(vi).aVertex.size = _vertexSize(mesh, vi, vsms...);
+            mesh.attribute(vi).aVertex.size = _vertexSize(sys, mesh, vi, vsms...);
         }
     }
 
     void _diffuseSize(Mesh& mesh) const {
-        const size_t numVertices = mesh.numVertices();
+        const Size numVertices = mesh.numVertices();
 
         // Initialize with max size
-        for(size_t i = 0; i < numVertices; ++i) {
+        for(Index i = 0; i < numVertices; ++i) {
             auto& av = mesh.attribute(typename Mesh::VertexIndex{i}).aVertex;
             av.size = std::min(av.size, _maxSize);
         }
 
         // Diffuse, with D * Delta t = 0.5, and uniformly weighted Laplace operator
         // l_new = l_old / 2 + (sum of neighbor l_old) / (2 * numNeighbors)
-        for(size_t iter = 0; iter < _diffuseIter; ++iter) {
-            for(size_t i = 0; i < numVertices; ++i) {
+        // Currently, diffusion can only reduce local size measure.
+        for(Index iter = 0; iter < _diffuseIter; ++iter) {
+            for(Index i = 0; i < numVertices; ++i) {
                 typename Mesh::VertexIndex vi {i};
                 auto& av = mesh.attribute(vi).aVertex;
-                const size_t deg = mesh.degree(vi);
+                const auto deg = mesh.degree(vi);
     
                 double sumSizeNeighbor = 0.0;
                 mesh.forEachHalfEdgeTargetingVertex(vi, [&](auto hei) {
@@ -677,7 +686,7 @@ private:
                     _maxSize
                 ); // capped by _maxSize
             }
-            for(size_t i = 0; i < numVertices; ++i) {
+            for(Index i = 0; i < numVertices; ++i) {
                 auto& av = mesh.attribute(typename Mesh::VertexIndex{i}).aVertex;
                 av.size = av.sizeAux;
             }
@@ -685,8 +694,8 @@ private:
     }
 
     void _updateEdgeEqLength(Mesh& mesh) const {
-        const size_t numEdges = mesh.numEdges();
-        for(size_t i = 0; i < numEdges; ++i) {
+        const Size numEdges = mesh.numEdges();
+        for(Index i = 0; i < numEdges; ++i) {
             typename Mesh::EdgeIndex ei{i};
             auto& l0 = mesh.attribute(ei).aEdge.eqLength;
             l0 = 0.0;
@@ -699,16 +708,17 @@ private:
 public:
 
     // Constructor
-    SizeMeasureManager(double curvRes, double maxSize, size_t diffuseIter) :
+    SizeMeasureManager(double curvRes, double maxSize, Size diffuseIter) :
         _curvRes(curvRes), _maxSize(maxSize), _diffuseIter(diffuseIter) {}
 
     // Requires
     //   - Unit normal on each vertex
-    void computeSizeMeasure(Mesh& mesh) const {
-        VertexSizeMeasure< SizeMeasureCriteria::Curvature > vsmCurv {_curvRes, _maxSize};
+    void computeSizeMeasure(SubSystem& sys, Mesh& mesh) const {
+        VertexSizeMeasure< SizeMeasureCriteria::curvature > vsmCurv {_curvRes, _maxSize};
+        VertexSizeMeasure< SizeMeasureCriteria::border > vsmBorder;
 
         // Compute size on each vertex
-        _updateVertexSize(mesh, vsmCurv);
+        _updateVertexSize(sys, mesh, vsmCurv, vsmBorder);
 
         // Diffuse size on vertices
         _diffuseSize(mesh);
@@ -729,31 +739,6 @@ public:
     static constexpr auto triangleQualityCriteria        = TriangleQualityCriteria::radiusRatio;
     static constexpr auto edgeSplitVertexInsertionMethod = EdgeSplitVertexInsertionMethod::AvgCurv;
 
-    struct Parameter {
-        // Topology
-        size_t minDegree                         = surface_mesh_min_degree;
-        size_t maxDegree                         = surface_mesh_max_degree;
-        double edgeFlipMinDotNormal              = edge_flip_min_dot_normal;
-        double edgeCollapseMinQualityImprovement = edge_collapse_min_quality_improvement;
-        double edgeCollapseMinDotNormal          = edge_collapse_min_dot_normal;
-
-        // Relaxation
-        double relaxationEpsilon                 = vertex_relaxation_epsilon;
-        double relaxationDt                      = vertex_relaxation_dt;
-        size_t relaxationMaxIterRelocation       = vertex_relocation_max_iter_relocation;
-        size_t relaxationMaxIterTotal            = vertex_relocation_max_iter_tot;
-
-        // Size diffusion
-        double curvatureResolution               = size_measure_curvature_resolution;
-        double maxSize                           = size_measure_max;
-        size_t diffuseIter                       = size_measure_diffuse_iter;
-
-        // Main loop
-        size_t samplingAdjustmentMaxIter         = mesh_adaptation_topology_max_iter;
-        size_t mainLoopSoftMaxIter               = mesh_adaptation_soft_max_iter;
-        size_t mainLoopHardMaxIter               = mesh_adaptation_hard_max_iter;
-    };
-
 private:
     SizeMeasureManager< MeshType > _sizeMeasureManager;
     DirectVertexRelocationManager< optimalVertexLocationMethod > _directVertexRelocationManager;
@@ -766,15 +751,15 @@ private:
     size_t _mainLoopSoftMaxIter; // Maximum iterations of the main loop if topology changes can be reduced to 0
     size_t _mainLoopHardMaxIter; // Maximum iterations of the main loop (hard cap)
 
-    void computeSizeMeasures_(MeshType& mesh) const {
-        GeometryManagerType::computeAllTriangleNormals(mesh);
-        GeometryManagerType::computeAllAngles(mesh);
+    void computeSizeMeasures_(SubSystem& sys, MeshType& mesh) const {
+        GeometryManagerType::computeAllTriangleNormals(sys, mesh);
+        GeometryManagerType::computeAllAngles(sys, mesh);
         GeometryManagerType::computeAllVertexNormals(mesh);
-        _sizeMeasureManager.computeSizeMeasure(mesh);
+        _sizeMeasureManager.computeSizeMeasure(sys, mesh);
     }
 public:
     // Constructor
-    MembraneMeshAdapter(Parameter param) :
+    MembraneMeshAdapter(const MeshAdapterSettings& param) :
         _sizeMeasureManager(param.curvatureResolution, param.maxSize, param.diffuseIter),
         _directVertexRelocationManager(
             param.relaxationMaxIterRelocation,
@@ -793,7 +778,7 @@ public:
         _mainLoopHardMaxIter(param.mainLoopHardMaxIter)
     {}
 
-    void adapt(MeshType& mesh) const {
+    void adapt(SubSystem& sys, MeshType& mesh) const {
         using namespace mathfunc;
 
         size_t mainLoopIter = 0;
@@ -810,9 +795,9 @@ public:
             if(!mesh.metaAttribute().isMechParamsSet) {
                 // Before setting the mech params, we remove some sharp
                 // features introduced by the mesh generation algorithm.
-                meshSmoothing(mesh, 0.01, 5);
+                meshSmoothing(sys, mesh, 0.01, 5);
             }
-            computeSizeMeasures_(mesh);
+            computeSizeMeasures_(sys, mesh);
 
             bool sizeMeasureSatisfied = true;
 
@@ -829,8 +814,8 @@ public:
                     const auto v0 = mesh.target(hei0);
                     const auto v1 = mesh.target(mesh.opposite(hei0));
 
-                    const CoordinateType c0 (mesh.attribute(v0).getCoordinate());
-                    const CoordinateType c1 (mesh.attribute(v1).getCoordinate());
+                    const CoordinateType c0 (mesh.attribute(v0).getCoordinate(sys));
+                    const CoordinateType c1 (mesh.attribute(v1).getCoordinate(sys));
                     const double length2 = distance2(c0, c1);
 
                     const double eqLength = mesh.attribute(ei).aEdge.eqLength;
@@ -838,7 +823,7 @@ public:
 
                     if(length2 > 2 * eqLength2) { // Too long
                         sizeMeasureSatisfied = false;
-                        if(_edgeSplitManager.trySplit(mesh, ei, _edgeFlipManager) == decltype(_edgeSplitManager)::State::success) {
+                        if(_edgeSplitManager.trySplit(sys, mesh, ei, _edgeFlipManager) == decltype(_edgeSplitManager)::State::success) {
                             // Edge splitting happened. Will check edge ei again next round
                             ++countTopoModified;
                         }
@@ -846,7 +831,7 @@ public:
                             ++ei;
                     } else if(2 * length2 < eqLength2) { // Too short
                         sizeMeasureSatisfied = false;
-                        if(edgeCollapseManager_.tryCollapse(mesh, ei) == decltype(edgeCollapseManager_)::State::success) {
+                        if(edgeCollapseManager_.tryCollapse(sys, mesh, ei) == decltype(edgeCollapseManager_)::State::success) {
                             // Edge collapsing happened. The edge at ei will be different next round
                             ++countTopoModified;
                         }
@@ -869,7 +854,7 @@ public:
                 || mainLoopIter >= _mainLoopHardMaxIter
             ) break;
 
-            _directVertexRelocationManager(mesh, _edgeFlipManager);
+            _directVertexRelocationManager(sys, mesh, _edgeFlipManager);
 
             ++mainLoopIter;
         } // End loop TopoModifying-Relaxation
@@ -878,6 +863,6 @@ public:
 
 };
 
-} // namespace adaptive_mesh
+} // namespace medyan::adaptive_mesh
 
 #endif

@@ -15,6 +15,7 @@
 //b3 = c4 - c3;
 //n1 = b1 x b2;
 //n2 = b3 x b2;
+namespace medyan {
 using namespace mathfunc;
 using V3 = Vec< 3, floatingpoint >;
 
@@ -79,14 +80,6 @@ floatingpoint BranchingDihedralQuadratic::energy(
         const auto theta = std::acos(ct);
 
         const auto U_i = kdih[i] * theta * theta;
-
-        if(!std::isfinite(U_i) || U_i < -1.0) {
-
-            //set culprit and return
-            BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
-
-            return std::numeric_limits<floatingpoint>::infinity();
-        }
 
         U += U_i;
     } // End loop interactions
@@ -403,3 +396,5 @@ void BranchingDihedralQuadratic::forces(
     } // End loop interactions
 
 } // void forces(...)
+
+} // namespace medyan

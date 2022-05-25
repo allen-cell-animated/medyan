@@ -18,25 +18,14 @@
 #include "Cylinder.h"
 #include "Bead.h"
 
-void MTOC::setBubble(Bubble* b) {
-    
-    _bubble = b;
-    _bubble->setAsMTOC();
-    
-    addChild(unique_ptr<Component>(b));
-}
+namespace medyan {
 
 void MTOC::printSelf()const {
     
     cout << endl;
-    
-    cout << "MTOC: ptr = " << this << endl;
-    cout << "MTOC ID = " << getId() << endl;
-    
-    cout << endl;
-    cout << "Bubble information..." << endl;
-    
-    _bubble->printSelf();
+    cout << "MTOC Bubble index " << bubbleSysIndex_.value << endl;
     
     cout << endl;
 }
+
+} // namespace medyan

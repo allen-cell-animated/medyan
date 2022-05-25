@@ -26,6 +26,7 @@
 #include "nvToolsExt.h"
 #endif
 
+namespace medyan {
 using namespace mathfunc;
 #ifdef CUDAACCL
 void LinkerStretchingHarmonic::deallocate(){
@@ -212,15 +213,6 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, int *beadSe
             dist = twoPointDistance(v1, v2) - eql[i];
             U_i = 0.5 * kstr[i] * dist * dist;
 
-            if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-               || U_i != U_i || U_i < -1.0) {
-
-                //set culprit and return
-                LinkerInteractions::_linkerCulprit = Linker::getLinkers()[i];
-
-                return -1;
-            }
-
             U += U_i;
         }
         delete [] v1;
@@ -229,56 +221,6 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, int *beadSe
         return U;
     }
 
-floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, floatingpoint * f,
-        int *beadSet, floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1,
-        floatingpoint *pos2, floatingpoint d){
-
-        int n = LinkerStretching<LinkerStretchingHarmonic>::n;
-        int nint = Linker::getLinkers().size();
-
-        floatingpoint *coord1, *coord2, *coord3, *coord4, dist;
-        floatingpoint  *f1, *f2, *f3, *f4;
-        floatingpoint *v1 = new floatingpoint[3];
-        floatingpoint *v2 = new floatingpoint[3];
-
-        floatingpoint U = 0.0;
-
-        for(int i = 0; i < nint; i += 1) {
-
-            coord1 = &coord[beadSet[n * i]];
-            coord2 = &coord[beadSet[n * i + 1]];
-            coord3 = &coord[beadSet[n * i + 2]];
-            coord4 = &coord[beadSet[n * i + 3]];
-
-            f1 = &f[beadSet[n * i]];
-            f2 = &f[beadSet[n * i + 1]];
-            f3 = &f[beadSet[n * i + 2]];
-            f4 = &f[beadSet[n * i + 3]];
-
-            midPointCoordinateStretched(v1, coord1, f1, coord2, f2, pos1[i], d);
-            midPointCoordinateStretched(v2, coord3, f3, coord4, f4, pos2[i], d);
-
-            dist = twoPointDistance(v1,  v2) - eql[i];
-
-            floatingpoint U_i= 0.5 * kstr[i] * dist * dist;
-
-            if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-               || U_i != U_i || U_i < -1.0) {
-
-                //set culprit and return
-                LinkerInteractions::_linkerCulprit = Linker::getLinkers()[i];
-
-                return -1;
-            }
-            U += U_i;
-
-        }
-        delete [] v1;
-        delete [] v2;
-
-        return U;
-
-    }
 
     void LinkerStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                           floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint
@@ -393,3 +335,4 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, floatingpoi
         delete [] v2;
     }
 
+} // namespace medyan

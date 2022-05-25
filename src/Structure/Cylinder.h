@@ -33,39 +33,27 @@
 #include "Util/Math/Vec.hpp"
 #include <fstream>
 
+namespace medyan {
+
 //FORWARD DECLARATIONS
 class Filament;
 class Compartment;
 class Bin;
 
-struct CylinderInfoData {
-    struct CylinderInfo {
-        int filamentId = -1;
-        int positionOnFilament = -1;
-        int filamentFirstEntry = 0;//This variable is updated in CylinderInfoData.
-        int compartmentId = -1;
-        std::size_t beadIndices[2];
-        mathfunc::Vec< 3, floatingpoint > coord;
-        short type = -1;
-        int id = -1;
-        CCylinder* chemCylinder;
-    };
-
-    std::vector< CylinderInfo > value;
-
-    void push_back(CylinderInfo c) { value.push_back(c); }
-    void set_content(std::size_t pos, CylinderInfo c) { value[pos] = c; }
-    void move_content(std::size_t from, std::size_t to) { value[to] = value[from]; }
-    void resize(std::size_t size) { value.resize(size); }
-    void settodummy(std::size_t pos){
-        CCylinder* dummyCCyl = nullptr;
-        auto infinity = numeric_limits<floatingpoint>::infinity();
-        auto maxsize_t = numeric_limits<size_t>::max();
-        CylinderInfo ctemp{-1000, -1000, -1000, -1000, {maxsize_t, maxsize_t},
-                           {infinity, infinity, infinity}, -1000, -1000, dummyCCyl};
-        set_content(pos, ctemp);
-    }
+struct CylinderInfo {
+    int filamentId = -1;
+    int positionOnFilament = -1;
+    int filamentFirstEntry = 0;//This variable is updated in CylinderInfoData.
+    int compartmentId = -1;
+    std::size_t beadIndices[2];
+    medyan::Vec< 3, floatingpoint > coord;
+    short type = -1;
+    int id = -1;
+    CCylinder* chemCylinder;
 };
+
+using CylinderInfoVec = std::vector< CylinderInfo >;
+
 
 /// A container to store a MCylinder and CCylinder.
 /*!
@@ -83,7 +71,7 @@ struct CylinderInfoData {
  */
 class Cylinder : public Component, public Trackable, public Movable,
                                    public Reactable, public DynamicNeighbor,
-                                   public Database< Cylinder, true, CylinderInfoData > {
+                                   public Database< Cylinder, true, CylinderInfoVec > {
 
 friend class CController;
 friend class DRController;
@@ -105,14 +93,14 @@ private:
 
 	int _position;          ///< Position on structure
 
-    cell_list::CellListElementUser< Cylinder, Compartment > _cellElement;
+    medyan::CellListElementUser< Cylinder*, Compartment* > _cellElement;
 
     Cylinder* _branchingCylinder = nullptr; ///< ptr to a branching cylinder
 
     ///For dynamic polymerization rate
     static vector<FilamentRateChanger*> _polyChanger;
 
-    static ChemManager* _chemManager; ///< A pointer to the ChemManager,
+    inline static medyan::ChemManager* _chemManager = nullptr; ///< A pointer to the ChemManager,
                                       ///< intiailized by CController
 
     ///Helper to get coordinate
@@ -124,12 +112,13 @@ private:
 
 
 public:
-    using DatabaseType = Database< Cylinder, true, CylinderInfoData >;
+    using DatabaseType = Database< Cylinder, true, CylinderInfoVec >;
 
+    // Coordinates of midpoint, updated with updatePosition().
     vector<floatingpoint> coordinate;
     vector<Bin*> _binvec; //vector of bins. binID corresponding to each binGrid.
-    ///< Coordinates of midpoint, updated with updatePosition()
-    vector<Bin*> _hbinvec;
+    // Pointer to the Bin used by the hybrid neighbor list.
+    Bin* hbin = nullptr;
 
     static bool setpositionupdatedstate; //Setter to check if position has been updated
 
@@ -149,11 +138,11 @@ public:
 
     virtual ~Cylinder() noexcept;
 
-    const auto& getCoordinate() const { return getDbData().value[getStableIndex()].coord; }
-    auto      & getCoordinate()       { return getDbData().value[getStableIndex()].coord; }
+    const auto& getCoordinate() const { return getDbData()[getStableIndex()].coord; }
+    auto      & getCoordinate()       { return getDbData()[getStableIndex()].coord; }
 
     /// Get mech cylinder
-    MCylinder* getMCylinder() {return _mCylinder.get();}
+    MCylinder* getMCylinder() const {return _mCylinder.get();}
 
     /// Get chem cylinder
     CCylinder* getCCylinder() {return _cCylinder.get();}
@@ -163,11 +152,12 @@ public:
 
     /// Get cylinder type
     virtual int getType();
+    int getType() const { return _type; }
 
     //@{
     /// Get beads
-    Bead* getFirstBead() {return _b1;}
-    Bead* getSecondBead() {return _b2;}
+    Bead* getFirstBead() const {return _b1;}
+    Bead* getSecondBead() const {return _b2;}
     //@}
 
     //@{
@@ -177,11 +167,11 @@ public:
     //@}
 
     /// Get compartment
-    Compartment* getCompartment() const { return _cellElement.manager->getHeadPtr(_cellElement); }
+    Compartment* getCompartment() const { return _cellElement.manager->getHead(_cellElement); }
 
     //@{
     /// Branching cylinder management
-    Cylinder* getBranchingCylinder() {return _branchingCylinder;}
+    Cylinder* getBranchingCylinder() const {return _branchingCylinder;}
     void setBranchingCylinder(Cylinder* c) {_branchingCylinder = c;}
     //@}
 
@@ -257,5 +247,7 @@ public:
 	static ofstream _crosscheckdumpFile;
     //@}
 };
+
+} // namespace medyan
 
 #endif

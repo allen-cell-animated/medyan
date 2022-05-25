@@ -18,24 +18,23 @@
 #ifdef CUDAACCL
 #include "CUDAcommon.h"
 #endif
-#include "BranchingInteractions.h"
+#include "Mechanics/ForceField/ForceField.h"
 
-//FORWARD DECLARATIONS
-class BranchingPoint;
+namespace medyan {
 
 /// Represents an interaction maintaining a BranchingPoint angle (~70 for Arp2/3)
 template <class BBendingInteractionType>
-class BranchingBending : public BranchingInteractions {
+class BranchingBending : public ForceField {
     
 private:
     BBendingInteractionType _FFType;
     
-    int *beadSet;
+    std::vector<int> beadSet;
     
     ///Array describing the constants in calculation
-    floatingpoint *kbend;
-    floatingpoint *eqt;
-    floatingpoint *stretchforce;
+    std::vector<FP> kbend;
+    std::vector<FP> eqt;
+    std::vector<FP> stretchforce;
 #ifdef CUDAACCL
     int * gpu_beadSet;
     floatingpoint * gpu_kbend;
@@ -50,13 +49,16 @@ public:
     ///this is a 4-bead potential
     const static int n = 4;
     
-    virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void deallocate();
+    virtual void vectorize(const FFCoordinateStartingIndex&, const SimulConfig&) override;
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+    virtual FP computeEnergy(FP *coord) override;
+    virtual void computeForces(FP *coord, FP *f) override;
     
-    virtual const string getName() {return "Branching Bending";}
+    virtual std::string getName() override { return "BranchingBending"; }
+
+    virtual void assignforcemags() override;
 };
+
+} // namespace medyan
 
 #endif

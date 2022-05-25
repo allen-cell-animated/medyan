@@ -20,95 +20,56 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
+#include "Structure/DofSerializer.hpp"
 
-template <class MTOCInteractionType>
-void MTOCBending<MTOCInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
-    //Watch out! Only one MTOC is allowed
-    for(auto mtoc : MTOC::getMTOCs()) {
-        beadSet = new int[n *  mtoc->getFilaments().size() + 1];
-        kbend = new floatingpoint[n *  mtoc->getFilaments().size() + 1];
-        
-        beadSet[0] = mtoc->getBubble()->getIndex() * 3 + si.bubble;
-        kbend[0] = 0.0;
-        
-        int i = 1;
-        
-        for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
-            Filament *f = mtoc->getFilaments()[fIndex];
-            
-            beadSet[n * i - 1] = f->getMinusEndCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
-            beadSet[n * i] = f->getMinusEndCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
-            
-            floatingpoint kk = mtoc->getBubble()->getMTOCBendingK();
-            kbend[n * i - 1] = kk;
-            kbend[n * i] = kk;
-            
-//            kbend[2 * n * i - 1] = f->getMinusEndCylinder()->getMCylinder()->getBendingConst();
-//            kbend[2 * n * i] = f->getMinusEndCylinder()->getMCylinder()->getBendingConst();
-            i++;
+namespace medyan {
+void MTOCBending::vectorize(const FFCoordinateStartingIndex& si) {
+
+    ps_ = si.ps;
+
+    interactions_.clear();
+    for(auto& mtoc : ps_->mtocs) {
+        auto& bb = mtoc.getBubble(*ps_);
+        for(auto pf : mtoc.getFilaments()) {
+            interactions_.push_back({
+                findBubbleCoordIndex(bb, si),
+                findBeadCoordIndex(*pf->getMinusEndCylinder()->getFirstBead(), si),
+                findBeadCoordIndex(*pf->getMinusEndCylinder()->getSecondBead(), si),
+                bb.getMTOCBendingK(),
+            });
         }
     }
 }
 
-template <class MTOCInteractionType>
-void MTOCBending<MTOCInteractionType>::deallocate() {
-    
-    delete [] beadSet;
-    delete [] kbend;
-}
+floatingpoint MTOCBending::computeEnergy(floatingpoint* coord) {
 
-
-template <class MTOCInteractionType>
-floatingpoint MTOCBending<MTOCInteractionType>::computeEnergy(floatingpoint* coord, bool stretched) {
-
-    floatingpoint U_i=0.0;
-    
-    //TO DO, for loop may be removed
-    
-    for(auto mtoc : MTOC::getMTOCs()) {
-        
-        floatingpoint radius = mtoc->getBubble()->getRadius();
-        
-        U_i = _FFType.energy(coord, beadSet, kbend, radius);
+    floatingpoint energy = 0;
+    for(auto& eachInteraction : interactions_) {
+        const auto u = _FFType.energy(
+            coord,
+            eachInteraction.bubbleCoordIndex,
+            eachInteraction.beadCoordIndex1,
+            eachInteraction.beadCoordIndex2,
+            eachInteraction.kbend
+        );
+        energy += u;
     }
     
-    return U_i;
-    
-    //            if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-    //               || U_i != U_i || U_i < -1.0) {
-    //
-    //                //set culprits and return
-    //                _otherCulprit = f;
-    //                _bubbleCulprit = mtoc->getBubble();
-    //
-    //                return -1;
-    //            }
-    //            else
-    //                U += U_i;
-    //        }
-    //    }
-    //    return U;
-    
+    return energy;
 }
 
-template <class MTOCInteractionType>
-void MTOCBending<MTOCInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
-    
-    for(auto mtoc : MTOC::getMTOCs()) {
-        floatingpoint radius = mtoc->getBubble()->getRadius();
-        _FFType.forces(coord, f, beadSet, kbend, radius);
-        //        }
+void MTOCBending::computeForces(floatingpoint *coord, floatingpoint *force) {
+    for(auto& eachInteraction : interactions_) {
+        _FFType.forces(
+            coord, force,
+            eachInteraction.bubbleCoordIndex,
+            eachInteraction.beadCoordIndex1,
+            eachInteraction.beadCoordIndex2,
+            eachInteraction.kbend
+        );
     }
     
 }
 
 
-
-///Template specializations
-template floatingpoint MTOCBending<MTOCBendingCosine>::computeEnergy(floatingpoint *coord, bool stretched);
-template void MTOCBending<MTOCBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
-//template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux(floatingpoint *coord, floatingpoint *f);
-template void MTOCBending<MTOCBendingCosine>::vectorize(const FFCoordinateStartingIndex&);
-template void MTOCBending<MTOCBendingCosine>::deallocate();
-
-
+} // namespace medyan

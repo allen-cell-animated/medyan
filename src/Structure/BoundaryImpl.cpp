@@ -18,9 +18,10 @@
 
 #include "Compartment.h"
 
-#include "GController.h"
+#include "Controller/GController.h"
 #include "SysParams.h"
 
+namespace medyan {
 BoundaryCubic::BoundaryCubic(SubSystem* s, vector<BoundaryMove> move)
 
     : Boundary(s, 3, BoundaryShape::Cube, move){
@@ -58,7 +59,7 @@ bool BoundaryCubic::within(Compartment* C) {
         auto be = bs->boundaryElements()[0].get();
         
         //go half a compartment dist in the direction of normal
-        auto coordinate = C->coordinates();
+        auto coordinate = mathfunc::vec2Vector(C->coordinates());
         
         //initial check of coord
         if(be->distance(coordinate) > 0) continue;
@@ -193,7 +194,7 @@ floatingpoint BoundaryCubic::getboundaryelementcoord(int bidx) {
             return be->_coords[2];
 
     }
-
+    return std::numeric_limits<floatingpoint>::quiet_NaN();
 };
 
 void BoundaryCubic::move(vector<floatingpoint> dist) {
@@ -380,7 +381,7 @@ bool BoundarySpherical::within(Compartment* C) {
         auto be = bs->boundaryElements()[0].get();
         
         //go half a compartment dist in the direction of normal
-        auto coordinate = C->coordinates();
+        auto coordinate = mathfunc::vec2Vector(C->coordinates());
         
         //initial check of coord
         if(be->distance(coordinate) > 0) continue;
@@ -477,7 +478,7 @@ BoundaryCapsule::BoundaryCapsule(SubSystem* s, floatingpoint diameter, vector<Bo
 bool BoundaryCapsule::within(Compartment* C) {
     
     //just calls regular within for now
-    return within(C->coordinates());
+    return within(mathfunc::vec2Vector(C->coordinates()));
 }
 
 
@@ -654,3 +655,4 @@ void BoundaryCylinder::volume(){
     Boundary::systemvolume = radius * radius * 3.14159 * sysZ;
 }
 
+} // namespace medyan

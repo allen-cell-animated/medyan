@@ -15,6 +15,7 @@
 
 #include "Visitor.h"
 
+namespace medyan {
 bool Composite::apply (Visitor &v) {
     bool res_self = v.visit(this); //pre-order
     if(!res_self)
@@ -51,3 +52,5 @@ bool Composite::apply (ReactionVisitor &v) {
     }
     return true;
 }
+
+} // namespace medyan

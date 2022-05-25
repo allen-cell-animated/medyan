@@ -10,7 +10,7 @@
 #include "Util/Environment.hpp"
 #include "Util/Math/Vec.hpp"
 
-namespace mesh_gen {
+namespace medyan::mesh_gen {
 
 namespace indexer {
 
@@ -76,12 +76,12 @@ constexpr auto getTetraQuadIntersectionIndex() {
 template< typename Float = double >
 class MarchingTetrahedraGenerator {
 public:
-    using coordinate_type = mathfunc::Vec< 3, Float >;
+    using coordinate_type = medyan::Vec< 3, Float >;
     using small_size_t = std::uint_fast8_t;
 
     // This struct can be replaced by std::optional since C++17
     struct TetraEdgeData {
-        std::size_t vertexIdxInMesh;
+        int  vertexIdxInMesh;
         bool hasIntersection = false;
     };
 
@@ -91,7 +91,7 @@ public:
     //     resulting surface mesh, not the tetrahedra system.
     struct Result {
         std::vector< coordinate_type > vertexCoordinateList;
-        std::vector< std::array< std::size_t, 3 > > triangleList; // Each triangle consists of vertex indices
+        std::vector< std::array< int, 3 > > triangleList; // Each triangle consists of vertex indices
     };
 
     MarchingTetrahedraGenerator(
@@ -120,7 +120,6 @@ public:
         // Helper function: computing intersections for a tetrahedron
         const auto calcTetra = [&](size_t nx, size_t ny, size_t nz, small_size_t tetIdx) {
             using namespace std;
-            using namespace mathfunc;
 
             // switch sign of 4 switches and decide which procedure to follow (0.0 count as positive)
             // all pos / neg: nothing
@@ -429,7 +428,7 @@ private:
 
     // Coordinates
     auto _vertexCoordinate(std::size_t nx, std::size_t ny, std::size_t nz) const {
-        return mathfunc::Vec< 3, Float > {
+        return medyan::Vec< 3, Float > {
             _boundingBoxOrigin[0] + _cuboidSize[0] * nx,
             _boundingBoxOrigin[1] + _cuboidSize[1] * ny,
             _boundingBoxOrigin[2] + _cuboidSize[2] * nz
@@ -445,6 +444,6 @@ private:
     }
 };
 
-} // namespace mesh_gen
+} // namespace medyan::mesh_gen
 
 #endif

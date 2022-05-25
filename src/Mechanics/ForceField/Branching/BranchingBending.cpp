@@ -24,14 +24,15 @@
 #include "cross_check.h"
 #include "Mechanics/CUDAcommon.h"
 
+namespace medyan {
 template <class BBendingInteractionType>
-void BranchingBending<BBendingInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
+void BranchingBending<BBendingInteractionType>::vectorize(const FFCoordinateStartingIndex& si, const SimulConfig& conf) {
 
     CUDAcommon::tmin.numinteractions[5] += BranchingPoint::getBranchingPoints().size();
-    beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
-    kbend = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
-    eqt = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
-    stretchforce = new floatingpoint[3*BranchingPoint::getBranchingPoints().size()];
+    beadSet.assign(n * BranchingPoint::getBranchingPoints().size(), 0);
+    kbend.assign(BranchingPoint::getBranchingPoints().size(), 0);
+    eqt.assign(BranchingPoint::getBranchingPoints().size(), 0);
+    stretchforce.assign(3*BranchingPoint::getBranchingPoints().size(), 0);
 
     int i = 0;
 
@@ -46,6 +47,10 @@ void BranchingBending<BBendingInteractionType>::vectorize(const FFCoordinateStar
         eqt[i] = b->getMBranchingPoint()->getEqTheta();
         for(int j = 0; j < 3; j++)
             stretchforce[3*i + j] = 0.0;
+
+        // Reset branch force as a side effect.
+        b->getMBranchingPoint()->branchForce = { 0.0, 0.0, 0.0 };
+
         i++;
     }
     //CUDA
@@ -75,7 +80,7 @@ void BranchingBending<BBendingInteractionType>::vectorize(const FFCoordinateStar
 }
 
 template<class BBendingInteractionType>
-void BranchingBending<BBendingInteractionType>::deallocate() {
+void BranchingBending<BBendingInteractionType>::assignforcemags() {
 
     for(auto b:BranchingPoint::getBranchingPoints()){
         //Using += to ensure that the stretching forces are additive.
@@ -83,25 +88,12 @@ void BranchingBending<BBendingInteractionType>::deallocate() {
         for(int j = 0; j < 3; j++)
             b->getMBranchingPoint()->branchForce[j] += stretchforce[3*b->getIndex() + j];
     }
-    delete [] stretchforce;
-    delete [] beadSet;
-    delete [] kbend;
-    delete [] eqt;
-#ifdef CUDAACCL
-    _FFType.deallocate();
-    CUDAcommon::handleerror(cudaFree(gpu_beadSet));
-    CUDAcommon::handleerror(cudaFree(gpu_kbend));
-    CUDAcommon::handleerror(cudaFree(gpu_eqt));
-    CUDAcommon::handleerror(cudaFree(gpu_params));
-#endif
 }
 
 
 
 template <class BBendingInteractionType>
-floatingpoint BranchingBending<BBendingInteractionType>::computeEnergy(floatingpoint *coord) {
-
-    floatingpoint U_ii=(floatingpoint)0.0;
+FP BranchingBending<BBendingInteractionType>::computeEnergy(FP *coord) {
 
 #ifdef CUDAACCL
     floatingpoint* gU_i;
@@ -112,11 +104,9 @@ floatingpoint BranchingBending<BBendingInteractionType>::computeEnergy(floatingp
     gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kbend, gpu_eqt, gpu_d,
                             gpu_params);
 #endif
-#ifdef SERIAL
 
-    U_ii = _FFType.energy(coord, beadSet, kbend, eqt);
+    FP U_ii = _FFType.energy(coord, beadSet.data(), kbend.data(), eqt.data());
 
-#endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
     CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
     floatingpoint cuda_energy[1];
@@ -132,7 +122,7 @@ floatingpoint BranchingBending<BBendingInteractionType>::computeEnergy(floatingp
 }
 
 template <class BBendingInteractionType>
-void BranchingBending<BBendingInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
+void BranchingBending<BBendingInteractionType>::computeForces(FP *coord, FP *f) {
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -149,15 +139,12 @@ void BranchingBending<BBendingInteractionType>::computeForces(floatingpoint *coo
 
     }
 #endif
-#ifdef SERIAL
 
-    _FFType.forces(coord, f, beadSet, kbend, eqt, stretchforce);
+    _FFType.forces(coord, f, beadSet.data(), kbend.data(), eqt.data(), stretchforce.data());
 
-#endif
 }
 
-///Template specializations
-template floatingpoint BranchingBending<BranchingBendingCosine>::computeEnergy(floatingpoint *coord);
-template void BranchingBending<BranchingBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BranchingBending<BranchingBendingCosine>::vectorize(const FFCoordinateStartingIndex&);
-template void BranchingBending<BranchingBendingCosine>::deallocate();
+// Explicit instantiation.
+template class BranchingBending<BranchingBendingCosine>;
+
+} // namespace medyan

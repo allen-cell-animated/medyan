@@ -9,7 +9,10 @@
 #include <unordered_map>
 #include <vector>
 
-#include "OutputStruct.hpp"
+#include <Eigen/Dense>
+
+#include "Output.h"
+#include "Util/Io/H5.hpp"
 #include "Util/Math/Vec.hpp"
 
 namespace medyan::visual {
@@ -23,9 +26,12 @@ struct MembraneFrame {
     // meta data
     int id = 0;
 
-    // triangular mesh data
+    // triangular mesh data.
     std::vector< std::array< int, 3 >> triangles;
-    std::vector< mathfunc::Vec3f > vertexCoords;
+
+    // Additional vertex float attributes.
+    // Must be of size numAttributes * numVertices.
+    Eigen::MatrixXf vertexAttributes;
 };
 
 struct FilamentFrame {
@@ -34,7 +40,7 @@ struct FilamentFrame {
     int type = 0;
 
     // line segment data
-    std::vector< mathfunc::Vec3f > coords;
+    std::vector< Vec3f > coords;
 };
 
 // Used for line-segment-like elements, such as static linkers and motors.
@@ -42,27 +48,29 @@ struct LinkerFrame {
     // meta data
     int id = 0;
     int type = 0;
+    int subtype = 0;
 
     // line data
-    std::array< mathfunc::Vec3f, 2 > coords;
+    std::array< Vec3f, 2 > coords;
 };
 
-// Used for point-like elements, such as bubbles and branching points (as of Oct 3 2020).
-struct PointFrame {
+// Used for bubble-like elements, such as AFMs and MTOCs.
+struct BubbleFrame {
     // meta data
     int id = 0;
     int type = 0;
 
     // point data
-    mathfunc::Vec3f coord {};
+    Vec3f coord {};
+    float radius = 0;
 };
 
 
 struct DisplayFrame {
     struct CompartmentInfo {
-        mathfunc::Vec< 3, int > number { 2, 2, 2 };
-        mathfunc::Vec3f         size { 500.0f, 500.0f, 500.0f };
-        mathfunc::Vec3f         offset {};
+        Vec< 3, int > number { 2, 2, 2 };
+        Vec3f         size { 500.0f, 500.0f, 500.0f };
+        Vec3f         offset {};
     };
 
     // meta data
@@ -73,6 +81,7 @@ struct DisplayFrame {
     std::vector< MembraneFrame > membranes;
     std::vector< FilamentFrame > filaments;
     std::vector< LinkerFrame >   linkers;
+    std::vector< BubbleFrame >   bubbles;
 
     // other auxiliary optional data
     std::optional< CompartmentInfo > compartmentInfo;
@@ -82,6 +91,9 @@ struct DisplayTypeMap {
     // linker type map
     std::vector< std::string > linkerTypeName;
     std::unordered_map< std::string, int > linkerTypeMap;
+
+    // Membrane attribute names.
+    std::vector< std::string > membraneVertexAttributeNames;
 };
 
 struct DisplayData {
@@ -90,11 +102,33 @@ struct DisplayData {
 
     // all frames
     std::vector< DisplayFrame > frames;
+
+    // Vectorized data.
+    //----------------------------------
+    // Energies.
+    std::vector< std::string > energyNames;
+    Eigen::MatrixXd energyValues; // [energy-id][frame]
 };
 
 
+enum class FrameDataOutputFileType {
+    unknown,
+    traj,
+    hdf5,
+};
 struct DisplayTrajectoryFileSettings {
     std::filesystem::path trajSnapshot = "./snapshot.traj";
+    std::filesystem::path lastTrajPath = std::filesystem::current_path();
+
+    FrameDataOutputFileType trajSnapshotFileType() const {
+        if (trajSnapshot.extension() == ".traj") {
+            return FrameDataOutputFileType::traj;
+        } else if (trajSnapshot.extension() == ".h5") {
+            return FrameDataOutputFileType::hdf5;
+        } else {
+            return FrameDataOutputFileType::unknown;
+        }
+    }
 };
 
 //-------------------------------------
@@ -122,48 +156,70 @@ inline int numFrames(const DisplayData& displayData) { return displayData.frames
 // Given an open file stream, read one frame of data for display.
 //
 // Inputs:
-//   - frameNumber: the index of the frame being read
-//   - is: the file stream, starting next line
-//   - iss: the string stream of the current line
-//   - displayTypeMap: the id-name maps of various types
+// - outMeta: the meta data for the entire output.
+// - outSnapshot: the parsed snapshot output read from file.
+// - displayTypeMap: the id-name maps of various types.
 inline DisplayFrame readOneFrameDataFromOutput(
-    int                 frameNumber,
-    std::istream&       is,
-    std::istringstream& iss,
-    DisplayTypeMap&     displayTypeMap
+    const OutputStructMeta&     outMeta,
+    const OutputStructSnapshot& outSnapshot,
+    DisplayTypeMap&             displayTypeMap
 ) {
     using namespace std;
 
     DisplayFrame res;
 
     // frame number
-    res.serial = frameNumber;
-
-    OutputStructSnapshot snapshot(frameNumber);
-    snapshot.getFromOutput(is, iss);
+    res.serial = outSnapshot.snapshot;
 
     // meta data
-    res.simulationTime = snapshot.simulationTime;
+    res.simulationTime = outSnapshot.simulationTime;
 
     // membrane
     {
-        const int numMembranes = snapshot.membraneStruct.size();
+        // Meta: set membrane attribute names if not set.
+        if(displayTypeMap.membraneVertexAttributeNames.empty()) {
+            auto& attrnames = displayTypeMap.membraneVertexAttributeNames;
+            const Size naf64 = outMeta.membraneMeta.vertexColumnNamesFloat64.size();
+            const Size nai64 = outMeta.membraneMeta.vertexColumnNamesInt64.size();
+            for(Index i = 0; i < naf64; ++i) {
+                attrnames.push_back(outMeta.membraneMeta.vertexColumnNamesFloat64[i]);
+            }
+            for(Index i = 0; i < nai64; ++i) {
+                attrnames.push_back(outMeta.membraneMeta.vertexColumnNamesInt64[i]);
+            }
+        }
+
+        const int numMembranes = outSnapshot.membraneStruct.size();
         res.membranes.reserve(numMembranes);
 
-        for(const auto& m : snapshot.membraneStruct) {
+        for(const auto& m : outSnapshot.membraneStruct) {
             MembraneFrame mf;
 
-            // get coordinate list
-            mf.vertexCoords.reserve(m.getNumVertices());
-            for(const auto& coord : m.getMembraneInfo().attributeInitializerInfo.vertexCoordinateList) {
-                mf.vertexCoords.push_back(mathfunc::Vec3f(coord));
+            // Get triangle list.
+            mf.triangles.reserve(m.getNumTriangles());
+            for(Index ti = 0; ti < m.getNumTriangles(); ++ti) {
+                mf.triangles.push_back({
+                    static_cast<int>(m.triangleDataInt64(0, ti)),
+                    static_cast<int>(m.triangleDataInt64(1, ti)),
+                    static_cast<int>(m.triangleDataInt64(2, ti)),
+                });
             }
 
-            // get triangle list
-            mf.triangles.reserve(m.getMembraneInfo().triangleVertexIndexList.size());
-            for(const auto& t : m.getMembraneInfo().triangleVertexIndexList) {
-                mf.triangles.push_back({ (int)t[0], (int)t[1], (int)t[2] });
+            // Get vertex attributes.
+            {
+                const Size naf64 = m.vertexDataFloat64.rows();
+                const Size nai64 = m.vertexDataInt64.rows();
+                mf.vertexAttributes.resize(naf64 + nai64, m.getNumVertices());
+                if(naf64 > 0) mf.vertexAttributes.block(0,     0, naf64, m.getNumVertices()) = m.vertexDataFloat64.cast<float>();
+                if(nai64 > 0) mf.vertexAttributes.block(naf64, 0, nai64, m.getNumVertices()) = m.vertexDataInt64.cast<float>();
+
+                // Validate.
+                if(naf64 + nai64 != displayTypeMap.membraneVertexAttributeNames.size()) {
+                    log::error("Membrane vertex attribute names do not match actual data.");
+                    throw std::runtime_error("Membrane vertex attribute names do not match actual data.");
+                }
             }
+
 
             res.membranes.push_back(move(mf));
         }
@@ -171,20 +227,27 @@ inline DisplayFrame readOneFrameDataFromOutput(
 
     // filament
     {
-        const int numFilaments = snapshot.filamentStruct.size();
+        const int numFilaments = outSnapshot.filamentStruct.size();
         res.filaments.reserve(numFilaments);
 
-        for(const auto& f : snapshot.filamentStruct) {
+        for(const auto& f : outSnapshot.filamentStruct) {
             FilamentFrame ff;
 
             // get id and type
             ff.id = f.getId();
-            // TODO get type
+            ff.type = f.getType();
 
             // get coordinates
-            ff.coords.reserve(f.getNumBeads());
-            for(const auto& coord : f.getCoords()) {
-                ff.coords.push_back(mathfunc::Vec3f(coord));
+            if(outMeta.filamentMeta.globalFilamentModel == FilamentModel::beadCylinder) {
+                const auto numBeads = f.rawCoords.cols();
+                ff.coords.reserve(numBeads);
+                for(int i = 0; i < numBeads; ++i) {
+                    ff.coords.push_back(Vec3f {
+                        static_cast<float>(f.rawCoords(0, i)),
+                        static_cast<float>(f.rawCoords(1, i)),
+                        static_cast<float>(f.rawCoords(2, i)),
+                    });
+                }
             }
 
             res.filaments.push_back(move(ff));
@@ -193,25 +256,61 @@ inline DisplayFrame readOneFrameDataFromOutput(
 
     // linkers
     {
-        const int numLinkers =
-            snapshot.linkerStruct.size() + snapshot.motorStruct.size();
+        const int numLinkers = outSnapshot.linkerStruct.size();
         res.linkers.reserve(numLinkers);
 
-        // To accommodate for linker/motor
-        const auto addLinkerFrame = [&](const auto& linkerStruct, const string& supertypeName) {
-            for(const auto& l : linkerStruct) {
-                LinkerFrame lf;
+        for(const auto& l : outSnapshot.linkerStruct) {
+            LinkerFrame lf;
 
-                lf.type = displayLinkerType(displayTypeMap, supertypeName);
-                for(int i = 0; i < l.getCoords().size(); ++i) {
-                    lf.coords[i] = l.getCoords()[i];
-                }
+            lf.type = displayLinkerType(displayTypeMap, l.type);
+            lf.subtype = l.subtype;
+            lf.coords[0][0] = l.rawCoords(0, 0);
+            lf.coords[0][1] = l.rawCoords(1, 0);
+            lf.coords[0][2] = l.rawCoords(2, 0);
+            lf.coords[1][0] = l.rawCoords(0, 1);
+            lf.coords[1][1] = l.rawCoords(1, 1);
+            lf.coords[1][2] = l.rawCoords(2, 1);
 
-                res.linkers.push_back(move(lf));
-            }
+            res.linkers.push_back(move(lf));
+        }
+    }
+
+    // Bubbles.
+    {
+        const int numBubbles = outSnapshot.bubbleStruct.size();
+        res.bubbles.reserve(numBubbles);
+
+        for(const auto& b : outSnapshot.bubbleStruct) {
+            BubbleFrame bf;
+
+            bf.id = b.id;
+            bf.type = b.type;
+
+            bf.coord[0] = b.coords[0];
+            bf.coord[1] = b.coords[1];
+            bf.coord[2] = b.coords[2];
+            bf.radius = b.radius;
+
+            res.bubbles.push_back(move(bf));
+        }
+    }
+
+    // Compartment grid.
+    if(outMeta.simulConfig.has_value()) {
+        auto& geoParams = outMeta.simulConfig->geoParams;
+
+        res.compartmentInfo.emplace();
+
+        res.compartmentInfo->number = {
+            geoParams.NX,
+            geoParams.NY,
+            geoParams.NZ,
         };
-        addLinkerFrame(snapshot.linkerStruct, "linker");
-        addLinkerFrame(snapshot.motorStruct,  "motor");
+        res.compartmentInfo->size = {
+            static_cast< float >(geoParams.compartmentSizeX),
+            static_cast< float >(geoParams.compartmentSizeY),
+            static_cast< float >(geoParams.compartmentSizeZ),
+        };
     }
 
     return res;
@@ -224,13 +323,17 @@ inline DisplayData readAllFrameDataFromOutput(
 
     DisplayData res;
 
-    {
+    const auto fileType = inputs.trajSnapshotFileType();
+    if(fileType == FrameDataOutputFileType::traj) {
         // Read snapshot
         ifstream is(inputs.trajSnapshot);
 
         int curFrame = 0;
 
-        LOG(STEP) << "Start reading " << inputs.trajSnapshot;
+        log::info("Start reading {}", inputs.trajSnapshot);
+
+        OutputStructMeta outMeta;
+        outMeta.membraneMeta.vertexColumnNamesFloat64 = { "coord.x", "coord.y", "coord.z" };
 
         string line;
         while(true) {
@@ -239,13 +342,53 @@ inline DisplayData readAllFrameDataFromOutput(
             if(line.empty()) continue;
 
             ++curFrame;
-            if (curFrame % 20 == 0) LOG(INFO) << "Frame " << curFrame;
+            if (curFrame % 20 == 0) log::info("Frame {}", curFrame);
 
             istringstream iss(line);
-            res.frames.push_back(readOneFrameDataFromOutput(curFrame, is, iss, res.displayTypeMap));
+            OutputStructSnapshot outSnapshot;
+            outSnapshot.snapshot = curFrame;
+            outSnapshot.getFromOutput(is, iss);
+            res.frames.push_back(readOneFrameDataFromOutput(outMeta, outSnapshot, res.displayTypeMap));
         }
-        LOG(STEP) << "Reading complete. " << numFrames(res) << " frames loaded.";
+        log::info("Reading complete. {} frames loaded.", numFrames(res));
 
+    }
+    else if(fileType == FrameDataOutputFileType::hdf5) {
+        // Read snapshot.
+        h5::File file(inputs.trajSnapshot.string(), h5::File::ReadOnly);
+        h5::Group groupHeader = file.getGroup("/header");
+        h5::Group groupSnapshots = file.getGroup("/snapshots");
+
+        // Read number of frames.
+        std::int64_t numFrames = 0;
+        h5::readDataSet(numFrames, groupHeader, "count");
+        log::info("Start reading {}, {} frames to be loaded.", inputs.trajSnapshot, numFrames);
+        // Read meta data.
+        OutputStructMeta meta;
+        read(meta, groupHeader);
+        {
+            // Energies.
+            res.energyNames = meta.energyNames;
+            res.energyValues.resize(numFrames, res.energyNames.size());
+        }
+
+        // Read all frames.
+        for(Index curFrame = 0; curFrame < numFrames; ++curFrame) {
+            if(curFrame % 20 == 0) log::info("Loading frame {}", curFrame);
+            OutputStructSnapshot outSnapshot;
+            read(outSnapshot, groupSnapshots, curFrame);
+            res.frames.push_back(readOneFrameDataFromOutput(meta, outSnapshot, res.displayTypeMap));
+
+            // Energies.
+            for(Index i = 0; i < res.energyNames.size(); ++i) {
+                res.energyValues(curFrame, i) = outSnapshot.energies[i];
+            }
+        }
+        log::info("Reading complete. {} frames loaded.", numFrames);
+    }
+    else {
+        log::error("Unknown file extension for {}", inputs.trajSnapshot);
+        throw runtime_error("Unknown file type.");
     }
 
 

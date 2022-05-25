@@ -20,6 +20,7 @@
 #include "SysParams.h"
 #include "MathFunctions.h"
 
+namespace medyan {
 using namespace mathfunc;
 
 Plane::Plane(SubSystem* s, vector<floatingpoint> coords, vector<floatingpoint> normal ) :
@@ -73,3 +74,5 @@ HalfSphereZ::HalfSphereZ(SubSystem* s, vector<floatingpoint> coords, floatingpoi
                                    SysParams::Boundaries().BScreenLength));
     
 }
+
+} // namespace medyan

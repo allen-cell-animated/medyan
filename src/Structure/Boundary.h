@@ -18,7 +18,10 @@
 
 #include "BoundarySurface.h"
 
+namespace medyan {
+
 //FORWARD DECLARATIONS
+class Compartment;
 class SubSystem;
 
 /// BoundaryShape is a shape enumeration.
@@ -89,9 +92,10 @@ public:
     // volume MAY not the same as volume specified in systeminputfile.
     virtual void volume() = 0;
 
-    static floatingpoint systemvolume;
+    inline static floatingpoint systemvolume = 0;
     
 };
 
+} // namespace medyan
 
 #endif

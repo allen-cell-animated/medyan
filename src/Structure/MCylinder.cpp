@@ -16,6 +16,7 @@
 #include "MathFunctions.h"
 #include "SysParams.h"
 
+namespace medyan {
 using namespace mathfunc;
 
 MCylinder::MCylinder(short filamentType, floatingpoint eqLength){
@@ -40,3 +41,5 @@ void MCylinder::setEqLength(short filamentType, floatingpoint l) {
     if(!SysParams::Mechanics().FBendingK.empty())
         _kBend = SysParams::Mechanics().FBendingK[filamentType] * fracCylinderSize;
 }
+
+} // namespace medyan

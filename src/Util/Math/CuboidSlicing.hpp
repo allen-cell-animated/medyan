@@ -5,6 +5,7 @@
 
 #include "MathFunctions.h"
 
+namespace medyan {
 // The result produced by plane intersecting a cube
 template< typename Float = double >
 struct PlaneCuboidSlicingResult {
@@ -54,8 +55,8 @@ struct PlaneCuboidSlicingResult {
 
 template< typename Float = double >
 inline auto planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 1]
-    const mathfunc::Vec< 3, Float >& point,  // A point on the plane
-    const mathfunc::Vec< 3, Float >& normal  // Unit normal of the plane pointing outwards
+    const medyan::Vec< 3, Float >& point,  // A point on the plane
+    const medyan::Vec< 3, Float >& normal  // Unit normal of the plane pointing outwards
 ) {
     PlaneCuboidSlicingResult< Float > res{}; // zero-initiate
 
@@ -71,8 +72,8 @@ inline auto planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 1]
         }
     }
 
-    Float signedDist = mathfunc::dot(flippedPoint, flippedNormal);
-    Float signedDistMax = mathfunc::dot(mathfunc::Vec< 3, Float >{ 1,1,1 }, flippedNormal);
+    Float signedDist = medyan::dot(flippedPoint, flippedNormal);
+    Float signedDistMax = medyan::dot(medyan::Vec< 3, Float >{ 1,1,1 }, flippedNormal);
 
     bool reverse = false;
 
@@ -256,9 +257,9 @@ inline auto planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 1]
 struct PlaneCubeSlicer {
     template< typename Float = double >
     auto operator() (
-        const mathfunc::Vec< 3, Float >& point,  // A point on the plane
-        const mathfunc::Vec< 3, Float >& normal, // Unit normal of the plane pointing outwards
-        const mathfunc::Vec< 3, Float >& r0,     // (x_min, y_min, z_min) of the cube
+        const medyan::Vec< 3, Float >& point,  // A point on the plane
+        const medyan::Vec< 3, Float >& normal, // Unit normal of the plane pointing outwards
+        const medyan::Vec< 3, Float >& r0,     // (x_min, y_min, z_min) of the cube
         Float                            a       // Side length of the cube
     ) {
         PlaneCuboidSlicingResult< Float > res;
@@ -274,18 +275,18 @@ struct PlaneCubeSlicer {
 struct PlaneCuboidSlicer {
     template< typename Float = double >
     auto operator() (
-        const mathfunc::Vec< 3, Float >& point,   // A point on the plane
-        const mathfunc::Vec< 3, Float >& normal,  // Unit normal of the plane pointing outwards
-        const mathfunc::Vec< 3, Float >& r0,      // (x_min, y_min, z_min) of the cuboid
+        const medyan::Vec< 3, Float >& point,   // A point on the plane
+        const medyan::Vec< 3, Float >& normal,  // Unit normal of the plane pointing outwards
+        const medyan::Vec< 3, Float >& r0,      // (x_min, y_min, z_min) of the cuboid
         const std::array<Float, 3>&      a        // Edge length of the cuboid
     ) {
         PlaneCuboidSlicingResult< Float > res;
-        const mathfunc::Vec< 3, Float > pointInUnitCube {
+        const medyan::Vec< 3, Float > pointInUnitCube {
             (point[0] - r0[0]) / a[0],
             (point[1] - r0[1]) / a[1],
             (point[2] - r0[2]) / a[2]
         };
-        const auto normalInUnitCube = mathfunc::normalizedVector(mathfunc::Vec< 3, Float > {
+        const auto normalInUnitCube = medyan::normalizedVector(medyan::Vec< 3, Float > {
             normal[0] * a[0],
             normal[1] * a[1],
             normal[2] * a[2]
@@ -295,5 +296,7 @@ struct PlaneCuboidSlicer {
         return res;
     }
 };
+
+} // namespace medyan
 
 #endif

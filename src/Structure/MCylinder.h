@@ -18,6 +18,7 @@
 
 #include "common.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Cylinder;
 
@@ -79,12 +80,14 @@ public:
     floatingpoint getTwistingConst() {return _kTwist;}
     
     void setExVolConst(floatingpoint k) {_kExVol = k;}
-    floatingpoint getExVolConst() {return _kExVol;}
+    floatingpoint getExVolConst() const {return _kExVol;}
     
     void setLength(floatingpoint l){_currentLength = l;}
     floatingpoint getLength() {return _currentLength;}
     //@}
     
 };
+
+} // namespace medyan
 
 #endif

@@ -14,9 +14,8 @@
 #include <algorithm>
 
 #include "Output.h"
-
+#include "Chemistry/ChemNRMImpl.h"
 #include "SubSystem.h"
-#include "OutputStruct.hpp"
 #include "CompartmentGrid.h"
 
 #include "Bead.h"
@@ -31,53 +30,33 @@
 
 #include "Boundary.h"
 #include "Compartment.h"
-#include "GController.h"
+#include "Controller/GController.h"
 #include "Compartment.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
 
-#include "CController.h"
-#include "ChemSimImpl.h"
+#include "Controller/CController.h"
 
-#include "CylinderVolumeFF.h"
 #include "CylinderExclVolume.h"
-#include "CylinderVolumeInteractions.h"
 
 #include <Eigen/Core>
 
-#include "MotorGhostInteractions.h"
 #include "CCylinder.h"
-#include "ChemNRMImpl.h"
 
+namespace medyan {
 using namespace mathfunc;
 
-void BasicSnapshot::print(int snapshot) {
+
+void BasicSnapshot::print(int snapshot, const SimulConfig& conf) {
 
     _outputFile.precision(10);
     
     OutputStructSnapshot snapshots(snapshot);
 
-    snapshots.outputFromSystem(_outputFile);
+    extract(snapshots, *_subSystem, conf, snapshot);
+    snapshots.outputFromStored(_outputFile);
     
-    //DEPRECATED AS OF 9/8/16
-//    //collect diffusing motors
-//    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
-//
-//        int ID   = get<0>(md);
-//        int type = get<1>(md);
-//
-//        auto firstPoint = get<2>(md);
-//        auto secondPoint = get<3>(md);
-//
-//        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
-//
-//        //print coordinates
-//        _outputFile<<firstPoint[0]<<" "<<firstPoint[1]<<" "<<firstPoint[2] << " ";
-//        _outputFile<<secondPoint[0]<<" "<<secondPoint[1]<<" "<<secondPoint[2];
-//
-//        _outputFile << endl;
-//    }
     _outputFile <<endl;
 }
 
@@ -92,7 +71,7 @@ void BirthTimes::print(int snapshot) {
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
-        Bubble::numBubbles() << endl;
+        _subSystem->bubbles.size() << endl;
 
     for(auto &filament : Filament::getFilaments()) {
 
@@ -135,24 +114,6 @@ void BirthTimes::print(int snapshot) {
                        motor->getBirthTime() << endl;
     }
 
-    //DEPRECATED AS OF 9/8/16
-//
-//    //collect diffusing motors
-//    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
-//
-//        int ID   = get<0>(md);
-//        int type = get<1>(md);
-//
-//        auto firstPoint = get<2>(md);
-//        auto secondPoint = get<3>(md);
-//
-//        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
-//
-//        //print coordinates
-//        //print birth times
-//        _outputFile << 0 << " " << 0 << endl;
-//    }
-
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
 
         //print first line
@@ -162,14 +123,14 @@ void BirthTimes::print(int snapshot) {
         //print birth times
         _outputFile << branch->getBirthTime() << endl;
     }
-    for(auto &bubble : Bubble::getBubbles()) {
+    for(auto &bubble : _subSystem->bubbles) {
 
         //print first line
-        _outputFile << "BUBBLE " << bubble->getId() << " " <<
-                                    bubble->getType() << endl;
+        _outputFile << "BUBBLE " << bubble.getId() << " " <<
+                                    bubble.getType() << endl;
 
         //print birth times
-        _outputFile << bubble->getBirthTime() << endl;
+        _outputFile << bubble.getBirthTime() << endl;
     }
 
     _outputFile <<endl;
@@ -186,8 +147,8 @@ void Forces::print(int snapshot) {
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
-        Bubble::numBubbles() << " " <<
-        Membrane::numMembranes() << endl;
+        _subSystem->bubbles.size() << " " <<
+        _subSystem->membranes.size() << endl;
 
     for(auto &filament : Filament::getFilaments()) {
 
@@ -235,23 +196,6 @@ void Forces::print(int snapshot) {
                        motor->getMMotorGhost()->stretchForce << endl;
     }
 
-    //DEPRECATED AS OF 9/8/16
-//    //collect diffusing motors
-//    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
-//
-//        int ID   = get<0>(md);
-//        int type = get<1>(md);
-//
-//        auto firstPoint = get<2>(md);
-//        auto secondPoint = get<3>(md);
-//
-//        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
-//
-//        //print coordinates
-//        //print birth times
-//        _outputFile << 0 << " " << 0 << endl;
-//    }
-
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
 
         //print first line
@@ -261,26 +205,26 @@ void Forces::print(int snapshot) {
         //Nothing for branchers
         _outputFile << 0.0 << endl;
     }
-    for(auto &bubble : Bubble::getBubbles()) {
+    for(auto &bubble : _subSystem->bubbles) {
 
         //print first line
-        _outputFile << "BUBBLE " << bubble->getId() << " " <<
-                                    bubble->getType() << endl;
+        _outputFile << "BUBBLE " << bubble.getId() << " " <<
+                                    bubble.getType() << endl;
 
         //Nothing for bubbles
         _outputFile << 0.0 << endl;
     }
     
-    for(auto &membrane : Membrane::getMembranes()) {
+    for(auto &membrane : _subSystem->membranes) {
         
-        //print first line (Membrane ID, type)
-        _outputFile << "Membrane " << membrane->getId() << " " <<
-            membrane->getType() << endl;
+        //print first line (Membrane, type)
+        _outputFile << "Membrane " <<
+            membrane.getSetup().type << endl;
         
         //print force
-        for(const auto& v : membrane->getMesh().getVertices()) {
+        for(const auto& v : membrane.getMesh().getVertices()) {
             
-            const double forceMag = mathfunc::magnitude(v.attr.vertex->force);
+            const double forceMag = medyan::magnitude(v.attr.vertex(*_subSystem).force);
             _outputFile << forceMag << " ";
             
         }        
@@ -301,7 +245,7 @@ void Tensions::print(int snapshot) {
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
-        Bubble::numBubbles() << endl;;
+        _subSystem->bubbles.size() << endl;;
 
     for(auto &filament : Filament::getFilaments()) {
 
@@ -352,23 +296,6 @@ void Tensions::print(int snapshot) {
         motor->getMMotorGhost()->stretchForce << endl;
     }
 
-    //DEPRECATED AS OF 9/8/16
-//    //collect diffusing motors
-//    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
-//
-//        int ID   = get<0>(md);
-//        int type = get<1>(md);
-//
-//        auto firstPoint = get<2>(md);
-//        auto secondPoint = get<3>(md);
-//
-//        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
-//
-//        //print coordinates
-//        //print birth times
-//        _outputFile << 0 << " " << 0 << endl;
-//    }
-
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
 
         //print first line
@@ -378,11 +305,11 @@ void Tensions::print(int snapshot) {
         //Nothing for branchers
         _outputFile << 0.0 << endl;
     }
-    for(auto &bubble : Bubble::getBubbles()) {
+    for(auto &bubble : _subSystem->bubbles) {
 
         //print first line
-        _outputFile << "BUBBLE " << bubble->getId() << " " <<
-                                    bubble->getType() << endl;
+        _outputFile << "BUBBLE " << bubble.getId() << " " <<
+                                    bubble.getType() << endl;
 
         //Nothing for bubbles
         _outputFile << 0.0 << endl;
@@ -402,7 +329,7 @@ void WallTensions::print(int snapshot) {
     Linker::numLinkers() << " " <<
     MotorGhost::numMotorGhosts() << " " <<
     BranchingPoint::numBranchingPoints() << " " <<
-    Bubble::numBubbles() << endl;;
+    _subSystem->bubbles.size() << endl;;
 
     for(auto &filament : Filament::getFilaments()) {
 
@@ -476,11 +403,11 @@ void WallTensions::print(int snapshot) {
         //Nothing for branchers
         _outputFile << 0.0 << endl;
     }
-    for(auto &bubble : Bubble::getBubbles()) {
+    for(auto &bubble : _subSystem->bubbles) {
 
         //print first line
-        _outputFile << "BUBBLE " << bubble->getId() << " " <<
-        bubble->getType() << endl;
+        _outputFile << "BUBBLE " << bubble.getId() << " " <<
+        bubble.getType() << endl;
 
         //Nothing for bubbles
         _outputFile << 0.0 << endl;
@@ -489,97 +416,6 @@ void WallTensions::print(int snapshot) {
     _outputFile <<endl;
 }
 
-void Types::print(int snapshot) {
-
-    _outputFile.precision(10);
-
-    // print first line (snapshot number, time, number of filaments,
-    // linkers, motors, branchers)
-    _outputFile << snapshot << " " << tau() << " " <<
-    Filament::numFilaments() << " " <<
-    Linker::numLinkers() << " " <<
-    MotorGhost::numMotorGhosts() << " " <<
-    BranchingPoint::numBranchingPoints() << " " <<
-    Bubble::numBubbles() << endl;
-
-    for(auto &filament : Filament::getFilaments()) {
-
-        //print first line (Filament ID, type, length, left_delta, right_delta)
-        _outputFile << "FILAMENT " << filament->getId() << " " <<
-        filament->getType() << " " <<
-        filament->getCylinderVector().size() + 1 << " " <<
-        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
-
-        //print
-        for (auto cylinder : filament->getCylinderVector()){
-
-            _outputFile<< cylinder->getType() << " ";
-
-        }
-        //print last
-        Cylinder* cylinder = filament->getCylinderVector().back();
-        _outputFile<< cylinder->getType();
-
-        _outputFile << endl;
-    }
-
-    for(auto &linker : Linker::getLinkers()) {
-
-        //print first line
-        _outputFile << "LINKER " << linker->getId()<< " " <<
-        linker->getType() << endl;
-
-        _outputFile << linker->getType() << " " <<
-        linker->getType() << endl;
-    }
-
-    for(auto &motor : MotorGhost::getMotorGhosts()) {
-
-        //print first line
-        //also contains a Bound(1) or unbound(0) qualifier
-        _outputFile << "MOTOR " << motor->getId() << " " << motor->getType() << " " << 1 << endl;
-        _outputFile << motor->getType() << " " <<
-        motor->getType() << endl;
-    }
-
-    //DEPRECATED AS OF 9/8/16
-//    //collect diffusing motors
-//    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
-//
-//        int ID   = get<0>(md);
-//        int type = get<1>(md);
-//
-//        auto firstPoint = get<2>(md);
-//        auto secondPoint = get<3>(md);
-//
-//        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
-//
-//        //print coordinates
-//        //print birth times
-//        _outputFile << type << " " << type << endl;
-//    }
-
-    for(auto &branch : BranchingPoint::getBranchingPoints()) {
-
-        //print first line
-        _outputFile << "BRANCHER " << branch->getId() << " " <<
-        branch->getType() << endl;
-
-        //Nothing for branchers
-        _outputFile << branch->getType() << endl;
-    }
-    for(auto &bubble : Bubble::getBubbles()) {
-
-        //print first line
-        _outputFile << "BUBBLE " << bubble->getId() << " " <<
-        bubble->getType() << endl;
-
-        //Nothing for bubbles
-        _outputFile << bubble->getType() << endl;
-    }
-
-    _outputFile <<endl;
-}
 
 void Chemistry::print(int snapshot) {
 
@@ -589,7 +425,7 @@ void Chemistry::print(int snapshot) {
     // all diffusing and bulk species
     for(auto sd : _chemData.speciesDiffusing) {
 
-        string name = get<0>(sd);
+        string name = sd.name;
         auto copyNum = _grid->countDiffusingSpecies(name);
 
         _outputFile << name << ":DIFFUSING " << copyNum << endl;
@@ -597,7 +433,7 @@ void Chemistry::print(int snapshot) {
 
     for(auto sb : _chemData.speciesBulk) {
 
-        string name = get<0>(sb);
+        string name = sb.name;
         auto copyNum = _grid->countBulkSpecies(name);
 
         _outputFile << name << ":BULK " << copyNum << endl;
@@ -700,11 +536,16 @@ void FilamentTurnoverTimes::print(int snapshot) {
 
 void Dissipation::print(int snapshot) {
     _outputFile.precision(16);
+    auto dt = _cs->getDT();
     // print first line (snapshot number, time)
     _outputFile << snapshot << " " << tau() << endl;
     vector<floatingpoint> energies;
-    energies = _cs->getEnergy();
-    _outputFile << energies[0] << "     " << energies[1] << "     "<< energies[2]<<"     "<<energies[3]<<"     "<<energies[4];
+    _outputFile
+        << dt->getCumDissEnergy()     << "     "
+        << dt->getCumDissChemEnergy() << "     "
+        << dt->getCumDissMechEnergy() << "     "
+        << dt->getCumGChemEn()        << "     "
+        << dt->getCumGMechEn();
 
     _outputFile <<endl;
 }
@@ -789,7 +630,7 @@ void PlusEnd::print(int snapshot) {
     Linker::numLinkers() << " " <<
     MotorGhost::numMotorGhosts() << " " <<
     BranchingPoint::numBranchingPoints() << " " <<
-    Bubble::numBubbles() <<endl;;
+    _subSystem->bubbles.size() <<endl;;
 
     for(auto &filament : Filament::getFilaments()) {
 
@@ -1012,7 +853,7 @@ void ReactionOut::print(int snapshot) {
     Linker::numLinkers() << " " <<
     MotorGhost::numMotorGhosts() << " " <<
     BranchingPoint::numBranchingPoints() << " " <<
-    Bubble::numBubbles() <<endl;;
+    _subSystem->bubbles.size() <<endl;;
 
     for(auto &filament : Filament::getFilaments()) {
 
@@ -1064,7 +905,7 @@ void BRForces::print(int snapshot) {
     Linker::numLinkers() << " " <<
     MotorGhost::numMotorGhosts() << " " <<
     BranchingPoint::numBranchingPoints() << " " <<
-    Bubble::numBubbles() << endl;
+    _subSystem->bubbles.size() << endl;
 
     for(auto &filament : Filament::getFilaments()) {
 
@@ -1119,7 +960,7 @@ void Concentrations::print(int snapshot) {
 
     _outputFile << snapshot << " " << tau() << endl;
 
-    for(auto c : _subSystem->getCompartmentGrid()->getCompartments()) {
+    for(auto& c : _subSystem->getCompartmentGrid()->getCompartments()) {
 
         if(c->isActivated()) {
 
@@ -1128,7 +969,7 @@ void Concentrations::print(int snapshot) {
 
             for(auto sd : _chemData.speciesDiffusing) {
 
-                string name = get<0>(sd);
+                string name = sd.name;
                 auto s = c->findSpeciesByName(name);
                 auto copyNum = s->getN();
 
@@ -1198,62 +1039,6 @@ void LinkerBindingEvents::print(int snapshot) {
     dt->clearLinkerBindingData();
 }
 
-void ForcesOutput::print(int snapshot) {
-    // snapshot serial
-    _outputFile << snapshot << ' ' << tau() << '\n';
-
-    LOG(ERROR) << "Force output is currently not usable.";
-    throw std::runtime_error("Forces output not available.");
-
-    // force field forces
-    for(auto ff : ffm_->_forceFields) {
-        const auto& fb = ff->getForceBuffer();
-        _outputFile
-            << ff->getName() << '\n'
-            << fb.size() << "  ";
-        for(const auto& x : fb) _outputFile << x << ' ';
-        _outputFile << '\n';
-    }
-
-    _outputFile << endl;
-}
-
-void IndicesOutput::print(int snapshot) {
-    // snapshot serial
-    _outputFile << snapshot << ' ' << tau() << '\n';
-
-    LOG(ERROR) << "Index output is currently not available.";
-    throw std::runtime_error("Index output not available.");
-
-    // Filaments
-    for(auto f : Filament::getFilaments()) {
-        _outputFile << "FILAMENT "
-            << f->getId() << ' '
-            << f->getType() << ' '
-            << f->getCylinderVector().size() + 1 << '\n';
-        for(auto c : f->getCylinderVector())
-            _outputFile << c->getFirstBead()->getStableIndex() << ' ';
-        _outputFile << f->getCylinderVector().back()->getSecondBead()->getStableIndex()
-            << '\n';
-    }
-
-    // Membranes
-    for(auto m : Membrane::getMembranes()) {
-        const auto& mesh = m->getMesh();
-        _outputFile << "MEMBRANE "
-            << m->getId() << ' '
-            << m->getType() << ' '
-            << mesh.numVertices() << ' '
-            << mesh.numTriangles() << '\n';
-        for(const auto& v : mesh.getVertices()) {
-            _outputFile << v.attr.vertex->getIndex() << ' ';
-        }
-        _outputFile << '\n';
-    }
-
-    _outputFile << std::endl;
-}
-
 
 void Datadump::print(int snapshot) {
     _outputFile.close();
@@ -1276,7 +1061,7 @@ void Datadump::print(int snapshot) {
                              Linker::numLinkers() << " " <<
                              MotorGhost::numMotorGhosts() << " " <<
                              BranchingPoint::numBranchingPoints() << " " <<
-                             Bubble::numBubbles() << endl;
+                             _subSystem->bubbles.size() << endl;
     //Bead data
     _outputFile <<"BEAD DATA: BEADIDX(STABLE) FID FPOS COORDX COORDY COORDZ FORCEAUXX "
                   "FORCEAUXY FORCEAUXZ"<<endl;
@@ -1301,7 +1086,7 @@ void Datadump::print(int snapshot) {
     _outputFile <<"CYLINDER DATA: CYLIDX(STABLE) FID FTYPE FPOS B1_IDX B2_IDX "
 				  "MINUSENDSTATUS PLUSENDSTATUS MINUSENDTYPE "
                   "PLUSENDTYPE MINUSENDMONOMER PLUSENDMONOMER TOTALMONOMERS EQLEN"<<endl;
-    const auto& cylinderInfoData = Cylinder::getDbData().value;
+    const auto& cylinderInfoData = Cylinder::getDbData();
 
     for(int cidx = 0; cidx < Cylinder::rawNumStableElements(); cidx++){
         Cylinder* cyl = cylinderInfoData[cidx].chemCylinder->getCylinder();
@@ -1379,10 +1164,6 @@ void Datadump::print(int snapshot) {
 	_outputFile <<"MOTOR DATA: MOTORID MOTORTYPE CYL1_IDX CYL2_IDX POS1 POS2 EQLEN "
                "DIFFUSINGSPECIESNAME NUMHEADS NUMBOUNDHEADS"<<endl;
 	int counter = 0;
-	auto individualenergiesvec = MotorGhostInteractions::individualenergies;
-	auto tpdistvec = MotorGhostInteractions::tpdistvec;
-	auto eqlvec = MotorGhostInteractions::eqlvec;
-	auto kstrvec = MotorGhostInteractions::kstrvec;
 
 	for(auto l :MotorGhost::getMotorGhosts()){
 		Cylinder* cyl1 = l->getFirstCylinder();
@@ -1417,10 +1198,10 @@ void Datadump::print(int snapshot) {
 	//Compartment Data
 	_outputFile <<"COMPARTMENT DATA: CMPID DIFFUSINGSPECIES "
 			   "COPYNUM"<<endl;
-	for(auto cmp:_subSystem->getCompartmentGrid()->getCompartments()){
+	for(auto& cmp:_subSystem->getCompartmentGrid()->getCompartments()){
 		_outputFile <<cmp->getId()<<" ";
 		for(auto sd : _chemData.speciesDiffusing) {
-			string name = get<0>(sd);
+			string name = sd.name;
 			auto s = cmp->findSpeciesByName(name);
 			auto copyNum = s->getN();
 			_outputFile <<name<<" "<<copyNum<<" ";
@@ -1431,10 +1212,9 @@ void Datadump::print(int snapshot) {
 	_outputFile <<endl;
 	//BulkSpecies
 	_outputFile <<"BULKSPECIES: BULKSPECIES COPYNUM"<<endl;
-	auto cmp = _subSystem->getCompartmentGrid()->getCompartments()[0];
 	for(auto sb : _chemData.speciesBulk) {
-		string name = get<0>(sb);
-		auto s = cmp->findSpeciesByName(name);
+		string name = sb.name;
+		auto s = _subSystem->getCompartmentGrid()->getSpeciesBulk().findSpeciesByName(name);
 		auto copyNum = s->getN();
 		_outputFile <<name<<" "<<copyNum<<" ";
 	}
@@ -1446,7 +1226,7 @@ void Datadump::print(int snapshot) {
     // all diffusing and bulk species
     for(auto sd : _chemData.speciesDiffusing) {
 
-        string name = get<0>(sd);
+        string name = sd.name;
         auto copyNum = _subSystem->getCompartmentGrid()->countDiffusingSpecies(name);
 
         _outputFile << name << ":DIFFUSING " << copyNum << endl;
@@ -1454,7 +1234,7 @@ void Datadump::print(int snapshot) {
 
     for(auto sb : _chemData.speciesBulk) {
 
-        string name = get<0>(sb);
+        string name = sb.name;
         auto copyNum = _subSystem->getCompartmentGrid()->countBulkSpecies(name);
 
         _outputFile << name << ":BULK " << copyNum << endl;
@@ -1504,7 +1284,7 @@ void Datadump::print(int snapshot) {
 	_outputFile <<"ENERGYDATA "<< endl;
 	auto minresult = _subSystem->prevMinResult.energiesAfter;
 	for(auto eachenergy: minresult.individual){
-		_outputFile <<eachenergy.name<<" "<<eachenergy.energy*kT<<endl;
+		_outputFile <<eachenergy.name<<" "<<eachenergy.energy <<endl;
 	}
 
 	_outputFile <<endl;
@@ -1624,9 +1404,9 @@ void Projections::print(int snapshot){
 
 void CylinderEnergies::print(int snapshot){
     
-    CylinderVolumeFF* cvFF =  dynamic_cast<CylinderVolumeFF*>(_ffm->_forceFields.at(4));
+    auto cvFF =  static_cast<CylinderExclVolume <CylinderExclVolRepulsion>*>(_ffm->getForceFields().at(4).get());
     
-    vector<tuple<floatingpoint, int, vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>>>> cylEnergies = cvFF->_cylinderVolInteractionVector.at(0)->getCylEnergies();
+    vector<tuple<floatingpoint, int, vector<tuple<floatingpoint*,floatingpoint*,floatingpoint*,floatingpoint*, floatingpoint>>>> cylEnergies = cvFF->getCylEnergies();
 
     // need to change so it doesn't include every energy calculation, only before and after
     for(auto i = 0; i < cylEnergies.size(); i ++){
@@ -1659,7 +1439,7 @@ void CylinderEnergies::print(int snapshot){
     if(cylEnergies.size()>0){
         _outputFile<<endl;}
     
-    cvFF->_cylinderVolInteractionVector.at(0)->clearCylEnergies();
+    cvFF->clearCylEnergies();
 
         
 }
@@ -1735,7 +1515,7 @@ void RockingSnapshot::print(int snapshot) {
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
-        Bubble::numBubbles() << endl;
+        _subSystem->bubbles.size() << endl;
         
         
         for(auto &filament : Filament::getFilaments()) {
@@ -1843,14 +1623,14 @@ void RockingSnapshot::print(int snapshot) {
             _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
         }
         
-        for(auto &bubble : Bubble::getBubbles()) {
+        for(auto &bubble : _subSystem->bubbles) {
             
             //print first line
-            _outputFile << "BUBBLE " << bubble->getId() << " " <<
-            bubble->getType() << endl;
+            _outputFile << "BUBBLE " << bubble.getId() << " " <<
+            bubble.getType() << endl;
             
             //print coordinates
-            auto x = bubble->coordinate;
+            auto& x = bubble.coord;
             _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
         }
         
@@ -1858,3 +1638,4 @@ void RockingSnapshot::print(int snapshot) {
     };
 }
 
+} // namespace medyan

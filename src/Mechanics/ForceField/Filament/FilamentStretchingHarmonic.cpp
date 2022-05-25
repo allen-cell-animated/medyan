@@ -27,6 +27,7 @@
 #include <cuda_runtime.h>
 #endif
 
+namespace medyan {
 using namespace mathfunc;
 #ifdef CUDAACCL
 void FilamentStretchingHarmonic::deallocate(){
@@ -199,50 +200,9 @@ floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, int *bead
         dist = twoPointDistance(coord1, coord2) - eql[i];
 
         U_i = 0.5 * kstr[i] * dist * dist;
-        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-
-            //set culprit and return
-
-            FilamentInteractions::_filamentCulprit = (Filament*)(Cylinder::getCylinders()[i]->getParent());
-
-            return -1;
-        }
 
         U += U_i;
     }
-    return U;
-}
-
-//E(coord, force, lambda)
-floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
-                                          floatingpoint *kstr, floatingpoint *eql, floatingpoint d){
-
-    int n = FilamentStretching<FilamentStretchingHarmonic>::n;
-    int nint = Cylinder::getCylinders().size();
-
-    floatingpoint *coord1, *coord2, dist;
-    floatingpoint *f1, *f2;
-    floatingpoint *v1 = new floatingpoint[3];
-    floatingpoint *v2 = new floatingpoint[3];
-
-    floatingpoint U = 0.0;
-
-    for(int i = 0; i < nint; i += 1) {
-
-        coord1 = &coord[beadSet[n * i]];
-        coord2 = &coord[beadSet[n * i + 1]];
-
-        f1 = &f[beadSet[n * i]];
-        f2 = &f[beadSet[n * i + 1]];
-
-        dist = twoPointDistanceStretched(coord1, f1,  coord2, f2, d) - eql[i];
-//        std::cout<<"S "<<i<<" "<<dist<<" "<<0.5 * kstr[i] * dist * dist<<endl;
-        U += 0.5 * kstr[i] * dist * dist;
-    }
-    delete [] v1;
-    delete [] v2;
-
     return U;
 }
 
@@ -313,3 +273,5 @@ void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, 
 		#endif
     }
 }
+
+} // namespace medyan

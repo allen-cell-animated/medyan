@@ -20,6 +20,7 @@
 #include "MathFunctions.h"
 #include "Cylinder.h"
 
+namespace medyan {
 using namespace mathfunc;
 
 //This version uses a the following vectors to determine dihedral angles.
@@ -91,15 +92,6 @@ floatingpoint BranchingDihedralCosineV2::energy(
         n1n2 = dotProduct(n1, n2);
 
         U_i = kdih[i] * ( 1 - n1n2 );
-
-        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-            || U_i != U_i || U_i < -1.0) {
-
-            //set culprit and return
-            BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
-
-            return -1;
-        }
 
         U += U_i;
     }
@@ -473,3 +465,5 @@ void BranchingDihedralCosineV2::forces(
     delete [] zero;
 
 }
+
+} // namespace medyan

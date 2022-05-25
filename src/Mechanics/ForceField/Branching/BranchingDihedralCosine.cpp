@@ -26,6 +26,7 @@
 #include "nvToolsExt.h"
 #endif
 
+namespace medyan {
 using namespace mathfunc;
 #ifdef CUDAACCL
 void BranchingDihedralCosine::deallocate(){
@@ -254,27 +255,6 @@ floatingpoint BranchingDihedralCosine::energy(
 
         U_i = kdih[i] * ( 1 - n1n2 );
 
-        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-
-            cout<<"Coord1 "<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
-            coord2 = &coord[3 * beadSet[n * i + 1]];
-            cout<<"Coord2 "<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
-            cout<<"Coord2prime "<<coord2prime[0]<<" "<<coord2prime[1]<<" "
-                                                                       ""<<coord2prime[2]<<endl;
-            cout<<"Coord3 "<<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
-            cout<<"Coord4 "<<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<endl;
-            cout<<"pos "<<pos[i]<<" position "<<position<<endl;
-            cout<<"mp "<<mp[0]<<" "<<mp[1]<<" "<<mp[2]<<endl;
-            cout<<"n1 "<<n1[0]<<" "<<n1[1]<<" "<<n1[2]<<endl;
-            cout<<"n2 "<<n2[0]<<" "<<n2[1]<<" "<<n2[2]<<endl;
-
-            //set culprit and return
-            BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
-
-            return -1;
-        }
-
         U += U_i;
     }
 //	cout<<"Cosine      "<<U<<endl;
@@ -287,63 +267,6 @@ floatingpoint BranchingDihedralCosine::energy(
 }
 
 
-floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoint *f, unsigned int *beadSet,
-                                       floatingpoint *kdih, floatingpoint *pos, floatingpoint d){
-
-    int n = BranchingDihedral<BranchingDihedralCosine>::n;
-    int nint = BranchingPoint::getBranchingPoints().size();
-
-
-    floatingpoint *coord1, *coord2, *coord3, *coord4, n1n2, U_i;
-    floatingpoint *f1, *f2, *f3, *f4;
-    floatingpoint *mp = new floatingpoint[3];
-    floatingpoint *n1 = new floatingpoint[3];
-    floatingpoint *n2 = new floatingpoint[3];
-    floatingpoint *zero = new floatingpoint[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
-
-
-    floatingpoint U = 0.0;
-
-    for(int i = 0; i < nint; i += 1) {
-
-        coord1 = &coord[beadSet[n * i]];
-        coord2 = &coord[beadSet[n * i + 1]];
-        coord3 = &coord[beadSet[n * i + 2]];
-        coord4 = &coord[beadSet[n * i + 3]];
-
-        f1 = &f[beadSet[n * i]];
-        f2 = &f[beadSet[n * i + 1]];
-        f3 = &f[beadSet[n * i + 2]];
-        f4 = &f[beadSet[n * i + 3]];
-
-        midPointCoordinateStretched(mp, coord1, f1, coord2, f2, pos[i], d);
-
-        vectorProductStretched(n1, mp, zero, coord2, f2, mp, zero, coord3, f3, d);
-        vectorProductStretched(n2, coord3, f3, coord4, f4, mp, zero, coord3, f3, d);
-
-        normalizeVector(n1);
-        normalizeVector(n2);
-        n1n2 = dotProduct(n1, n2);
-
-        U_i = kdih[i] * ( 1 - n1n2 );
-
-        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-
-            //set culprit and return
-            BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
-
-            return -1;
-        }
-
-        U += U_i;
-    }
-    delete [] mp;
-    delete [] n1;
-    delete [] n2;
-    delete [] zero;
-    return U;
-}
 
 void BranchingDihedralCosine::forces(
     const floatingpoint *coord, floatingpoint *f, size_t nint,
@@ -900,14 +823,6 @@ dataType BranchingDihedralCosine::energyininteractionperturbed(
     p = 1.0 - c;
     U_i = kdih[i] * p;
 
-    if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-            || U_i != U_i || U_i < -1.0) {
-
-        //set culprit and return
-        BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
-
-        return -1;
-    }
     delete [] coord1;
     delete [] coord2;
     delete [] coord3;
@@ -936,3 +851,5 @@ void BranchingDihedralCosine::testdihedral(){
 			stretchForce.data());
 	cout<<"---Test ends----"<<endl;
 }
+
+} // namespace medyan

@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-namespace cmdparse {
+namespace medyan::cmdparse {
 
 namespace {
 
@@ -334,4 +334,4 @@ void Command::printUsage(std::ostream& os)const {
     os << std::endl;
 }
 
-} // namespace cmdparse
+} // namespace medyan::cmdparse

@@ -28,7 +28,7 @@
 #include "common.h"
 
 #include "Reaction.h"
-#include "ChemSimImpl.h"
+#include "Chemistry/ChemSim.h"
 #include "ChemRNode.h"
 
 #ifdef BOOST_MEM_POOL
@@ -39,6 +39,8 @@
 #define BOOST_POOL_MEM_PQNODE
 #define BOOST_POOL_MEM_RNODENRM
 #define BOOST_POOL_MEM_HEAP_ELEMENT
+
+namespace medyan {
 
 //FORWARD DECLARATIONS
 class PQNode;
@@ -241,13 +243,11 @@ private:
  *  particular, this class contains the NRM heap and the exponential random number 
  *  generator. Reaction objects can be added and removed from the ChemNRMImpl instance.
  */
-class ChemNRMImpl : public ChemSimImpl {
+class ChemNRMImpl : public ChemSim {
 public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0 and the number
     /// of reactions to 0
-    ChemNRMImpl() :
-        ChemSimImpl(),
-        _n_reacts(0) { resetTime(); }
+    ChemNRMImpl() { resetTime(); }
     
     /// Copying is not allowed
     ChemNRMImpl(const ChemNRMImpl &rhs) = delete;
@@ -263,7 +263,7 @@ public:
     virtual ~ChemNRMImpl();
     
     /// Return the number of reactions in the network.
-    inline size_t getSize() const {return _n_reacts;}
+    inline auto getSize() const { return _map_rnodes.size(); }
     
     /// Return the current global time (as defined in the NRM algorithm)
     inline floatingpoint getTime() const {return _t;}
@@ -360,7 +360,8 @@ private:
                       ///< containing PQNode elements
     exponential_distribution<floatingpoint> _exp_distr; ///< Adaptor for the exponential distribution
     floatingpoint _t; ///< global time
-    size_t _n_reacts; ///< number of reactions in the network
 };
+
+} // namespace medyan
     
 #endif

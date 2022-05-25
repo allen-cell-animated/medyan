@@ -21,12 +21,13 @@
 #include <vector>
 #include "Cylinder.h"
 #ifdef SIMDBINDINGEARCH
-#include "dist_moduleV2/dist_driver.h"
-#include "dist_moduleV2/dist_coords.h"
-#include "dist_moduleV2/dist_common.h"
+#include "Util/DistModule/dist_driver.h"
+#include "Util/DistModule/dist_coords.h"
+#include "Util/DistModule/dist_common.h"
 #endif
 
 
+namespace medyan {
 
 using namespace mathfunc;
 void SubSystem::resetNeighborLists() {
@@ -40,8 +41,6 @@ void SubSystem::resetNeighborLists() {
                 filType = new int[Cylinder::getCylinders().size()];
                 cmpID = new unsigned int[Cylinder::getCylinders().size()];
                 fvecpos = new int[Cylinder::getCylinders().size()];
-        //        cylstate= new bool[Cylinder::getCylinders().size()];
-        //        cylvecpospercmp = new int[2 * _compartmentGrid->getCompartments().size()];
 
                 if(SysParams::Chemistry().numFilaments > 1) {
                     cout << "CUDA NL cannot handle more than one type of filaments." << endl;
@@ -64,24 +63,8 @@ void SubSystem::resetNeighborLists() {
                     coord[index + 2] = b->vcoordinate()[2];
                     i++;
                 }
-                i = 0; //int countcyl = 0;
-        //        for(auto C : _compartmentGrid->getCompartments()) {
-        //            int iter = 0;
-        //            for(auto nC : C->getNeighbours()) {
-        //                cmp_neighbors[nneighbors * cID + iter] = GController::getCompartmentID(nC->coordinates());
-        //                        iter++;
-        //            }
-        //            for(auto k = iter; k < nneighbors; k++ )
-        //                cmp_neighbors[nneighbors * cID + k] = -1;
+                i = 0;
 
-        //            cylvecpospercmp[2 * cID] = countcyl;
-        //            countcyl += C->getCylinders().size();
-        //            cylvecpospercmp[2 * cID + 1] = countcyl;
-
-        //            if(C->getCylinders().size()>maxnumCyl)
-        //                maxnumCyl = C->getCylinders().size();
-        //            cID++;
-        //            for(auto c:C->getCylinders()){
                  for(auto c:Cylinder::getCylinders()){
                             //flatten indices
                             int index = 3 * i;
@@ -112,12 +95,6 @@ void SubSystem::resetNeighborLists() {
                                 cmon_state_motor[numBindingSites * i + j ] = c->getCCylinder()->getCMonomer(*it2)
                                         ->speciesBound(SysParams::Chemistry().motorBoundIndex[fil->getType()])->getN();
                             j++;
-        //                    for(auto k = 0; k< SysParams::Chemistry().numBoundSpecies[0]; k ++) {
-        //                        cmon_state[SysParams::Chemistry().bindingSites[fil->getType()].size() * SysParams::Chemistry
-        //                                ().numBoundSpecies[0] * i + j] =
-        //                                c->getCCylinder()->getCMonomer(*it2)->speciesBound(k)->getN();
-        //                        j++;
-        //                    }
                         }
                         i++;
                     }
@@ -163,11 +140,6 @@ void SubSystem::resetNeighborLists() {
                     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cmon_state_motor, numBindingSites *
                                             Cylinder::getCylinders().size() * sizeof(int)), "cuda data transfer", " SubSystem.h");
 
-        //        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cylvecpospercmp,
-        //                                2 * _compartmentGrid->getCompartments().size()), "cuda data transfer", " SubSystem.h");
-        //        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cmp_neighbors, nneighbors *
-        //                                 _compartmentGrid->getCompartments().size() * sizeof(int)), "cuda data transfer",
-        //                                " SubSystem.h");
                 //@}
                 //CUDAMEMCPY
                 //@{
@@ -198,8 +170,6 @@ void SubSystem::resetNeighborLists() {
                     CUDAcommon::handleerror(cudaMemcpy(gpu_cmon_state_motor, cmon_state_motor, numBindingSites *
                                         Cylinder::getCylinders().size() *sizeof(int), cudaMemcpyHostToDevice));
 
-        //        CUDAcommon::handleerror(cudaMemcpy(gpu_cylvecpospercmp, cylvecpospercmp,
-        //                                           2 * _compartmentGrid->getCompartments().size(), cudaMemcpyHostToDevice));
                 CylCylNLvars cylcylnlvars;
                 cylcylnlvars.gpu_coord = gpu_coord;
                 cylcylnlvars.gpu_coord_com = gpu_coord_com;
@@ -216,35 +186,49 @@ void SubSystem::resetNeighborLists() {
         //        cylcylnlvars.gpu_cylvecpospercmp = gpu_cylvecpospercmp;
 
                 CUDAcommon::cylcylnlvars = cylcylnlvars;
-        //        CUDAcommon::handleerror(cudaMemcpy(gpu_cmp_neighbors, cmp_neighbors, nneighbors * _compartmentGrid
-        //                                           ->getCompartments().size() *sizeof(int),
-        //                                           cudaMemcpyHostToDevice));
-                //@}
 #endif
     chrono::high_resolution_clock::time_point mins, mine;
     mins = chrono::high_resolution_clock::now();
 
-#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
-    _HneighborList->reset();
-    mine= chrono::high_resolution_clock::now();
-#ifdef OPTIMOUT
-    chrono::duration<floatingpoint> elapsed_H(mine - mins);
-    std::cout<<"H NLSTEN reset time "<<elapsed_H.count()<<endl;
-    mins = chrono::high_resolution_clock::now();
-#endif
-    for (auto nlist : __bneighborLists)
-        nlist->reset();
-#ifdef OPTIMOUT
-    mine= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_B(mine - mins);
-    std::cout<<"H NLSTEN B reset time "<<elapsed_B.count()<<endl;
-#endif
-#endif
+    #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
+        _HneighborList->reset();
+        mine= chrono::high_resolution_clock::now();
+        #ifdef OPTIMOUT
+            chrono::duration<floatingpoint> elapsed_H(mine - mins);
+            std::cout<<"H NLSTEN reset time "<<elapsed_H.count()<<endl;
+            mins = chrono::high_resolution_clock::now();
+            mine= chrono::high_resolution_clock::now();
+            chrono::duration<floatingpoint> elapsed_B(mine - mins);
+            std::cout<<"H NLSTEN B reset time "<<elapsed_B.count()<<endl;
+        #endif
+    #endif
     for (auto nl: _neighborLists)
-            nl->reset();
+        nl->reset();
 
+    // Other neighbor lists or neighbor list primitives (such as cell lists, BVHs).
+    //----------------------------------
+
+    // Bubble neighbor lists.
+    if(opBoundaryBubbleNL.has_value()) {
+        opBoundaryBubbleNL->reset(*this);
+    }
+    if(opBubbleBubbleNL.has_value()) {
+        opBubbleBubbleNL->reset(*this);
+    }
+    if(opBubbleBeadNL.has_value()) {
+        opBubbleBeadNL->reset(*this);
+    }
+
+    // Meshless vertices.
+    {
+        meshlessSpinVertexCellList.clearElements();
+        // Add all vertices to cell lists.
+        for(auto& v : meshlessSpinVertices) {
+            v.meshlessSpinVertexCellListIndex = meshlessSpinVertexCellList.add(v.sysIndex.value, v.coord);
+        }
+    }
 }
-void SubSystem::updateBindingManagers() {
+void SubSystem::updateBindingManagers(medyan::SimulConfig& sc) {
 #ifdef OPTIMOUT
 	chrono::high_resolution_clock::time_point mins, mine, minsinit, mineinit,
 			startonetimecost, endonetimecost;
@@ -261,7 +245,7 @@ void SubSystem::updateBindingManagers() {
 	if(CUDAcommon::getCUDAvars().conservestreams)
 		numbindmgrs = 0;
 	//Calculate binding sites in CUDA
-	Compartment* C0 = _compartmentGrid->getCompartments()[0];
+	Compartment* C0 = _compartmentGrid->getCompartments()[0].get();
 	for(auto &manager : C0->getFilamentBindingManagers()) {
 
 		LinkerBindingManager *lManager;
@@ -309,12 +293,12 @@ void SubSystem::updateBindingManagers() {
 	//cudaFree
 	endresetCUDA();
 #endif
-	vectorizeCylinder();
+	vectorizeCylinder(sc);
 	if(CROSSCHECK_SWITCH)
 	    HybridNeighborList::_crosscheckdumpFileNL<<"vectorized Cylinder"<<endl;
 	//Version1
 	#ifdef NLORIGINAL
-	for (auto C : _compartmentGrid->getCompartments()){
+	for (auto& C : compartmentGrid->getCompartments()){
 		for(auto &manager : C->getFilamentBindingManagers()){
 			manager->updateAllPossibleBindings();
 		}
@@ -323,7 +307,7 @@ void SubSystem::updateBindingManagers() {
 	//Version2
 	#ifdef NLSTENCILLIST
 	#if !defined(HYBRID_NLSTENCILLIST) && !defined(SIMDBINDINGSEARCH)
-	for (auto C : _compartmentGrid->getCompartments()){
+	for (auto& C : compartmentGrid->getCompartments()){
 		for(auto &manager : C->getFilamentBindingManagers()){
 			manager->updateAllPossibleBindingsstencil();
 		}
@@ -332,14 +316,14 @@ void SubSystem::updateBindingManagers() {
 	#endif
 	//Version3
 	#ifdef HYBRID_NLSTENCILLIST
-	for (auto C : _compartmentGrid->getCompartments()) {
+	for (auto& C : compartmentGrid->getCompartments()) {
 		C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilHYBD();
 		for(auto &manager : C->getBranchingManagers()) {
 			manager->updateAllPossibleBindingsstencil();
 		}
 	}
 	//UpdateAllBindingReactions
-	for (auto C : _compartmentGrid->getCompartments()) {
+	for (auto& C : compartmentGrid->getCompartments()) {
 		C->getHybridBindingSearchManager()->updateAllBindingReactions();
 	}
 	#endif
@@ -350,7 +334,7 @@ void SubSystem::updateBindingManagers() {
 	startonetimecost = chrono::high_resolution_clock::now();
 #endif
 	if(!initialize) {
-			_compartmentGrid->getCompartments()[0]->getHybridBindingSearchManager()
+        compartmentGrid->getCompartments()[0]->getHybridBindingSearchManager()
 			->initializeSIMDvars();
 		initialize = true;
 	}
@@ -359,45 +343,48 @@ void SubSystem::updateBindingManagers() {
 #endif
 	//Generate binding site coordinates in each compartment and seggregate them into
 	// different spatial sub-sections.
-	for(auto C : _compartmentGrid->getCompartments()) {
+	for(auto& C : compartmentGrid->getCompartments()) {
 		C->SIMDcoordinates4linkersearch_section(1);
 		C->SIMDcoordinates4motorsearch_section(1);
 	}
-if(CROSSCHECK_SWITCH)
-	HybridNeighborList::_crosscheckdumpFileNL<<"Generated SIMD input files"<<endl;
-
+    if(CROSSCHECK_SWITCH) {
+        HybridNeighborList::_crosscheckdumpFileNL<<"Generated SIMD input files"<<endl;
+    }
 
 	//Empty the existing binding pair list
-	for (auto C : _compartmentGrid->getCompartments())
+	for (auto& C : compartmentGrid->getCompartments())
 		C->getHybridBindingSearchManager()->resetpossibleBindings();
-if(CROSSCHECK_SWITCH)
-	HybridNeighborList::_crosscheckdumpFileNL<<"Completed reset of binding pair maps"<<endl;
+    if(CROSSCHECK_SWITCH) {
+        HybridNeighborList::_crosscheckdumpFileNL<<"Completed reset of binding pair maps"<<endl;
+    }
 
 	minsSIMD = chrono::high_resolution_clock::now();
-	HybridBindingSearchManager::findtimeV3 = 0.0;
-	HybridBindingSearchManager::SIMDV3appendtime = 0.0;
+	medyan::HybridBindingSearchManager::findtimeV3 = 0.0;
+	medyan::HybridBindingSearchManager::SIMDV3appendtime = 0.0;
 	// Update binding sites in SIMD
-	for (auto C : _compartmentGrid->getCompartments()) {
+	for (auto& C : compartmentGrid->getCompartments()) {
 		C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV3();
-		if(CROSSCHECK_SWITCH)
-		    HybridNeighborList::_crosscheckdumpFileNL
+        if(CROSSCHECK_SWITCH) {
+            HybridNeighborList::_crosscheckdumpFileNL
 			<<"L/M Update binding pair map in Cmp "<<C->getId()<<endl;
-
+        }
 		for(auto &manager : C->getBranchingManagers()) {
 				manager->updateAllPossibleBindingsstencil();
-			if(CROSSCHECK_SWITCH)
-			    HybridNeighborList::_crosscheckdumpFileNL
+            if(CROSSCHECK_SWITCH) {
+                HybridNeighborList::_crosscheckdumpFileNL
 				<<"B Update binding pair map in Cmp "<<C->getId()<<endl;
+            }
 		}
 	}
 	//UpdateAllBindingReactions
-	for (auto C : _compartmentGrid->getCompartments()) {
+	for (auto& C : compartmentGrid->getCompartments()) {
 //        cout<<"Cmp ID "<<C->getID()<<endl;
 		C->getHybridBindingSearchManager()->updateAllBindingReactions();
-		if(CROSSCHECK_SWITCH)
-		    HybridNeighborList::_crosscheckdumpFileNL
+        if(CROSSCHECK_SWITCH) {
+            HybridNeighborList::_crosscheckdumpFileNL
 		    <<"Updated binding reaction rates in Cmp "<<C->getId()<<endl;
-	}
+        }
+    }
 
 #ifdef OPTIMOUT
 	mineSIMD = chrono::high_resolution_clock::now();
@@ -405,8 +392,8 @@ if(CROSSCHECK_SWITCH)
 	startonetimecost);
 	chrono::duration<floatingpoint> elapsed_runSIMDV3(mineSIMD - minsSIMD);
 	cout << "SIMDV3 time " << elapsed_runSIMDV3.count() << endl;
-	cout << "findV3 time " << HybridBindingSearchManager::findtimeV3 << endl;
-	cout << "Append time " << HybridBindingSearchManager::SIMDV3appendtime << endl;
+	cout << "findV3 time " << medyan::HybridBindingSearchManager::findtimeV3 << endl;
+	cout << "Append time " << medyan::HybridBindingSearchManager::SIMDV3appendtime << endl;
 #endif
 #endif
 #ifdef OPTIMOUT
@@ -418,19 +405,18 @@ if(CROSSCHECK_SWITCH)
 //free memory
 	SysParams::MParams.speciesboundvec.clear();
 	#ifdef SIMDBINDINGSEARCH
-	for(auto C : _compartmentGrid->getCompartments()) {
+	for(auto& C : compartmentGrid->getCompartments()) {
 		C->deallocateSIMDcoordinates();
 	}
 	#endif
 }
 
-void SubSystem::vectorizeCylinder() {
+void SubSystem::vectorizeCylinder(medyan::SimulConfig& sc) {
     //vectorize
     SysParams::MParams.speciesboundvec.clear();
 //    int cidx = 0;
-    vector<int> ncylvec(SysParams::CParams.numFilaments);// Number of cylinders
+    vector<int> ncylvec(sc.chemParams.numFilaments);// Number of cylinders
     // corresponding to each filament type.
-//    vector<int> bspeciesoffsetvec(SysParams::CParams.numFilaments);
     auto cylvec = Cylinder::getCylinders();
 //    int ncyl = cylvec.size();
     if(cylsqmagnitudevector != nullptr){
@@ -438,7 +424,7 @@ void SubSystem::vectorizeCylinder() {
     };
     cylsqmagnitudevector = new floatingpoint[Cylinder::rawNumStableElements()];
     unsigned long maxbindingsitespercyl = 0;
-    for(auto ftype = 0; ftype < SysParams::CParams.numFilaments; ftype++) {
+    for(auto ftype = 0; ftype < sc.chemParams.numFilaments; ftype++) {
         maxbindingsitespercyl = max<size_t>(maxbindingsitespercyl,SysParams::Chemistry()
                 .bindingSites[ftype].size());
     }
@@ -484,7 +470,7 @@ void SubSystem::vectorizeCylinder() {
     SysParams::MParams.speciesboundvec.push_back(branchspeciesbound);
     SysParams::MParams.speciesboundvec.push_back(linkerspeciesbound);
     SysParams::MParams.speciesboundvec.push_back(motorspeciesbound);
-    SysParams::CParams.maxbindingsitespercylinder = maxbindingsitespercyl;
+    sc.chemParams.maxbindingsitespercylinder = maxbindingsitespercyl;
     SysParams::MParams.cylsqmagnitudevector = cylsqmagnitudevector;
     SysParams::MParams.ncylvec = ncylvec;
 
@@ -493,9 +479,12 @@ void SubSystem::vectorizeCylinder() {
 		int filamentfirstentry = fil->getMinusEndCylinder()->getPosition();
 		for(auto cyl:fil->getCylinderVector()){
 			auto cindex = cyl->getStableIndex();
-			Cylinder::getDbData().value[cindex].filamentFirstEntry = filamentfirstentry;
+			Cylinder::getDbData()[cindex].filamentFirstEntry = filamentfirstentry;
 		}
 	}
+
+    // Section for backward compatibility only.
+    SysParams::CParams.maxbindingsitespercylinder = sc.chemParams.maxbindingsitespercylinder;
 }
 
 #ifdef CUDAACCL_NL
@@ -787,7 +776,7 @@ void SubSystem::terminatebindingsitesearchCUDA(){
         strvec.clear();
     }
     //clear all possible bindings.
-    for(auto c:_compartmentGrid->getCompartments()){
+    for(auto& c:_compartmentGrid->getCompartments()){
         for(auto &Mgr : c->getFilamentBindingManagers()) {
             Mgr->clearpossibleBindings();
         }
@@ -795,7 +784,7 @@ void SubSystem::terminatebindingsitesearchCUDA(){
 }
 
 void SubSystem::assigntorespectivebindingmanagersCUDA(){
-    Compartment* C0 = _compartmentGrid->getCompartments()[0];
+    Compartment* C0 = _compartmentGrid->getCompartments()[0].get();
     int count = 0;
     for(auto &manager : C0->getFilamentBindingManagers()) {
         LinkerBindingManager *lManager;
@@ -814,7 +803,7 @@ void SubSystem::assigntorespectivebindingmanagersCUDA(){
                 auto cylinder = Cylinder::getCylinders()[cIndex];
                 auto ncylinder = Cylinder::getCylinders()[cnIndex];
                 //get the compartment.
-                Compartment* cmp = GController::getCompartment(cID);
+                Compartment* cmp = &GController::getCompartment(cID);
                 //get corresponding binding manager
                 for(auto &cmanager : cmp->getFilamentBindingManagers()) {
                     if ((lManager = dynamic_cast<LinkerBindingManager *>(cmanager.get()))) {
@@ -840,7 +829,7 @@ void SubSystem::assigntorespectivebindingmanagersCUDA(){
                 auto cylinder = Cylinder::getCylinders()[cIndex];
                 auto ncylinder = Cylinder::getCylinders()[cnIndex];
                 //get the compartment
-                Compartment* cmp = GController::getCompartment(cID);
+                Compartment* cmp = &GController::getCompartment(cID);
                 //get corresponding binding manager
                 for(auto &cmanager : cmp->getFilamentBindingManagers()) {
                     if ((mManager = dynamic_cast<MotorBindingManager *>(cmanager.get()))) {
@@ -861,7 +850,7 @@ void SubSystem::assigntorespectivebindingmanagersCUDA(){
                 int cIndex = possibleBindings[3 * i +1];
                 short cbs = short(possibleBindings[3 * i + 2]);
                 auto cylinder = Cylinder::getCylinders()[cIndex];
-                Compartment* cmp = GController::getCompartment(cID);
+                Compartment* cmp = &GController::getCompartment(cID);
                 for(auto &cmanager : cmp->getFilamentBindingManagers()) {
                     if ((bManager = dynamic_cast<BranchingManager *>(cmanager.get()))) {
                         auto t1 = tuple<CCylinder*, short>(cylinder->getCCylinder(), cbs);
@@ -869,17 +858,6 @@ void SubSystem::assigntorespectivebindingmanagersCUDA(){
                     }
                 }
             }
-//            int n = 0;
-//            std::cout<<"-----serial----"<<endl;
-//            for(auto C : _compartmentGrid->getCompartments()) {
-//                for(auto &bbmanager : C->getFilamentBindingManagers()) {
-//                    if ((bManager = dynamic_cast<BranchingManager *>(bbmanager.get()))) {
-//                        bbmanager->updateAllPossibleBindings();
-//                        n += dynamic_cast<BranchingManager *>(bbmanager.get())->getpossibleBindings().size();
-//                    }
-//                }
-//            }
-//            std::cout<<n<<" "<<numpairs_vec[count][0]<<endl;
             if(numpairs[0] > 0)
                 count++;
             std::cout<<endl;
@@ -888,7 +866,6 @@ void SubSystem::assigntorespectivebindingmanagersCUDA(){
 }
 
 #endif
-CompartmentGrid* SubSystem::_staticgrid;
 bool SubSystem::initialize = false;
 floatingpoint SubSystem::SIMDtime  = 0.0;
 floatingpoint SubSystem::SIMDtimeV2  = 0.0;
@@ -896,3 +873,5 @@ floatingpoint SubSystem::HYBDtime  = 0.0;
 floatingpoint SubSystem::timeneighbor  = 0.0;
 floatingpoint SubSystem::timedneighbor  = 0.0;
 floatingpoint SubSystem::timetrackable  = 0.0;
+
+} // namespace medyan

@@ -1,11 +1,13 @@
 #ifndef MEDYAN_Structure_CellList_Hpp
 #define MEDYAN_Structure_CellList_Hpp
 
-#include <cstddef> // ptrdiff_t, size_t
+#include <cstddef> // ptrdiff_t
 #include <iterator> // tags
 #include <vector>
 
-namespace cell_list {
+#include "common.h"
+
+namespace medyan {
 
 // Forward declarations
 template< typename TElement, typename THead > class CellListManager;
@@ -19,8 +21,8 @@ struct CellListElementUser {
     using ManagerType = CellListManager< TElement, THead >;
 
     ManagerType* manager = nullptr;
-    std::size_t head;
-    std::size_t index;
+    Index head;
+    Index index;
 };
 
 // Storing information for user of heads,
@@ -32,16 +34,16 @@ struct CellListHeadUser {
     using ManagerType = CellListManager< TElement, THead >;
 
     ManagerType* manager = nullptr;
-    std::size_t index;
+    Index index;
 };
 
 
 // The necessary structure for element list
 template< typename T >
 struct CellListElement {
-    T* ptr;
-    std::size_t next;
-    std::size_t prev;
+    T val;
+    Index next;
+    Index prev;
     bool hasNext;
     bool hasPrev;
 };
@@ -49,10 +51,10 @@ struct CellListElement {
 // The necessary structure for head list
 template< typename T >
 struct CellListHead {
-    T* ptr;
-    std::size_t size = 0;
-    std::size_t first;
-    std::size_t last;
+    T val;
+    Size  size = 0;
+    Index first;
+    Index last;
 };
 
 // The class managing a cell list
@@ -74,7 +76,7 @@ public:
         class ConstIterator_ {
         public:
             using iterator_category = std::bidirectional_iterator_tag;
-            using value_type        = TElement*;
+            using value_type        = TElement;
             using difference_type   = std::ptrdiff_t;
             using pointer           = const value_type*;
             using reference         = const value_type&;
@@ -82,12 +84,12 @@ public:
         private:
             const ElementList* el_;
             const CellListHead<THead>* head_;
-            std::size_t ei_;
+            Index ei_;
             bool atEnd_;
 
         public:
             ConstIterator_() = default;
-            ConstIterator_(const ElementList* el, const CellListHead<THead>* head, std::size_t elementIndex, bool atEnd) :
+            ConstIterator_(const ElementList* el, const CellListHead<THead>* head, Index elementIndex, bool atEnd) :
                 el_(el), head_(head), ei_(elementIndex), atEnd_(atEnd || (head_->size == 0))
             { }
             ConstIterator_(const ConstIterator_&) = default;
@@ -95,8 +97,8 @@ public:
 
             // Dereferencing
             //---------------------------------------------
-            reference operator*() const { return (*el_)[ei_].ptr; }
-            pointer operator->() const { return &(*el_)[ei_].ptr; }
+            reference operator*() const { return (*el_)[ei_].val; }
+            pointer operator->() const { return &(*el_)[ei_].val; }
 
             // Modification
             //---------------------------------------------
@@ -130,7 +132,7 @@ public:
 
     public:
         using const_iterator = ConstIterator_;
-        using size_type = std::size_t;
+        using size_type = Size;
 
         CellView(const ElementList* el, const CellListHead<THead>* head) :
             el_(el), head_(head)
@@ -147,14 +149,23 @@ public:
         const CellListHead<THead>* head_;
     };
 
+
+private:
+    HeadList                   headList_;
+    ElementList                elementList_;
+    std::vector< Index >       elementDeletedIndices_;
+
+public:
     // Accessors
     //-------------------------------------------------------------------------
 
-    THead* getHeadPtr(std::size_t headIndex) const { return headList_[headIndex].ptr; }
-    THead* getHeadPtr(const ElementUser& eu) const { return getHeadPtr(eu.head); }
+    THead getHead(Index headIndex) const { return headList_[headIndex].val; }
+    THead getHead(const ElementUser& eu) const { return getHead(eu.head); }
+    auto  numHeads() const noexcept { return headList_.size(); }
 
-    CellView getElementPtrs(std::size_t headIndex) const { return CellView(&elementList_, &headList_[headIndex]); }
-    CellView getElementPtrs(const HeadUser& hu) const { return getElementPtrs(hu.index); }
+    CellView getElements(Index headIndex) const { return CellView(&elementList_, &headList_[headIndex]); }
+    CellView getElements(const HeadUser& hu) const { return getElements(hu.index); }
+    auto     numElements() const noexcept { return elementList_.size(); }
 
     // Element operations with fixed head users
     //-------------------------------------------------------------------------
@@ -167,72 +178,73 @@ public:
         }
     }
 
-    void addElement(
-        TElement* element,
-        ElementUser& eu, const HeadUser& hu
-    ) {
-        const auto head = hu.index;
-
+    // Returns the index of the element.
+    Index addElement(TElement element, Index headIndex) {
         // Add the new element
-        std::size_t newIndex;
+        Index newIndex;
         if(elementDeletedIndices_.empty()) {
             elementList_.push_back({element});
             newIndex = elementList_.size() - 1;
         } else {
             newIndex = elementDeletedIndices_.back();
-            elementList_[newIndex].ptr = element;
+            elementList_[newIndex].val = element;
             elementDeletedIndices_.pop_back();
         }
 
-        eu.head = head;
-        eu.index = newIndex;
-
         // Connect the new element
-        registerElement_(newIndex, head);
+        registerElement_(newIndex, headIndex);
 
-    } // void addElement(...)
+        return newIndex;
+    }
+    void addElement(TElement element, ElementUser& eu, const HeadUser& hu) {
+        eu.head = hu.index;
+        eu.index = addElement(element, eu.head);
+    }
 
+    void updateElement(Index elementIndex, Index oldHeadIndex, Index newHeadIndex) {
+        // Remove from current head.
+        unregisterElement_(elementIndex, oldHeadIndex);
+        // Add to the new head.
+        registerElement_(elementIndex, newHeadIndex);
+    }
     void updateElement(ElementUser& eu, const HeadUser& newHu) {
-        const auto newHead = newHu.index;
-        const auto index = eu.index;
-        const auto oldHead = eu.head;
+        updateElement(eu.index, eu.head, newHu.index);
+        eu.head = newHu.index;
+    }
 
-        // Remove from current head
-        unregsiterElement_(index, oldHead);
-
-        // Add to the new head
-        eu.head = newHead;
-        registerElement_(index, newHead);
-
-    } // void updateElement(...)
-
+    void removeElement(Index elementIndex, Index headIndex) {
+        unregisterElement_(elementIndex, headIndex);
+        elementDeletedIndices_.push_back(elementIndex);
+    }
     void removeElement(const ElementUser& eu) {
-        const auto index = eu.index;
-        const auto head = eu.head;
+        removeElement(eu.index, eu.head);
+    }
 
-        unregsiterElement_(index, head);
-
-        elementDeletedIndices_.push_back(index);
-    } // void removeElement(...)
-
-    // Head operations with fixed element users
+    // Head operations with fixed elements.
     //-------------------------------------------------------------------------
 
-    void addHead(THead* head, HeadUser& hu) {
+    Index addHead(THead head) {
         headList_.push_back({head});
-        hu.index = headList_.size() - 1;
+        return headList_.size() - 1;
+    }
+    void addHead(THead head, HeadUser& hu) {
+        hu.index = addHead(head);
+    }
+
+    // Clear all heads and elements.
+    //-------------------------------------------------------------------------
+    void clearAll() {
+        clearElements();
+        headList_.clear();
     }
 
 private:
-    HeadList                   headList_;
-    ElementList                elementList_;
-    std::vector< std::size_t > elementDeletedIndices_;
 
     // Helper function to register an element at an index to a head
     // Note:
     //   - This function causes the head size count to increase by 1.
     //   - This function does not manage allocating the element.
-    void registerElement_(const std::size_t index, const std::size_t head) {
+    void registerElement_(const Index index, const Index head) {
         if(headList_[head].size) {
             // Insert as last
             const auto last = headList_[head].last;
@@ -259,7 +271,7 @@ private:
     // Note:
     //   - This function causes the head size count to decrease by 1.
     //   - This function does not manage removing the element.
-    void unregsiterElement_(const std::size_t index, const std::size_t head) {
+    void unregisterElement_(const Index index, const Index head) {
         --headList_[head].size;
 
         // Reconnect linked list
@@ -284,6 +296,6 @@ private:
 
 
 
-} // namespace cell_list
+} // namespace medyan
 
 #endif

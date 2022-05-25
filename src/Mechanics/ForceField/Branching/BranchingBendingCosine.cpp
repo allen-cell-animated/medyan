@@ -26,6 +26,7 @@
 #include "nvToolsExt.h"
 #endif
 
+namespace medyan {
 using namespace mathfunc;
 #ifdef CUDAACCL
 void BranchingBendingCosine::deallocate(){
@@ -233,87 +234,6 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, int *beadSet,
 
         }
 
-        /*phi = safeacos(l1l2 / L1L2);
-        dPhi = phi-eqt[i];
-
-        U_i = kbend[i] * ( 1 - cos(dPhi) );*/
-
-        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-
-            //set culprit and return
-            BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
-
-            return -1;
-        }
-
-        U += U_i;
-    }
-
-    return U;
-}
-
-floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                                      floatingpoint *kbend, floatingpoint *eqt, floatingpoint d){
-
-    int n = BranchingBending<BranchingBendingCosine>::n;
-    int nint = BranchingPoint::getBranchingPoints().size();
-
-    floatingpoint *coord1, *coord2, *coord3, *coord4, U_i, L1, L2, L1L2, l1l2;
-	floatingpoint *force1, *force2, *force3, *force4;
-    floatingpoint U = 0.0;
-
-    for(int i = 0; i < nint; i += 1) {
-
-        coord1 = &coord[beadSet[n * i]];
-        coord2 = &coord[beadSet[n * i + 1]];
-        coord3 = &coord[beadSet[n * i + 2]];
-        coord4 = &coord[beadSet[n * i + 3]];
-
-        force1 = &f[beadSet[n * i]];
-        force2 = &f[beadSet[n * i + 1]];
-        force3 = &f[beadSet[n * i + 2]];
-        force4 = &f[beadSet[n * i + 3]];
-
-
-        L1 = sqrt(scalarProductStretched(coord1, force1, coord2, force2,
-                                         coord1, force1, coord2, force2, d));
-        L2 = sqrt(scalarProductStretched(coord3, force3, coord4, force4,
-                                         coord3, force3, coord4, force4, d));
-
-        L1L2 = L1*L2;
-        l1l2 = scalarProductStretched(coord1, force1, coord2, force2,
-                                      coord3, force3, coord4, force4, d);
-
-        floatingpoint x = l1l2/L1L2;
-
-        if (x < -1.0) x = -1.0;
-        else if (x > 1.0) x = 1.0;
-        //Option 1 ignore eqt as it is always 0.
-        if(areEqual(eqt[i],0.0))
-            U_i = kbend[i] * (1 - x);
-            //Option 2 Need to calculate Cos(A-B).
-        else{
-            floatingpoint cosA = x;
-            floatingpoint sinA = max<floatingpoint>(sqrt(1-cosA*cosA),(floatingpoint)0.0);
-            floatingpoint cosAminusB = cosA*cos(eqt[i]) + sinA*sin(eqt[i]);
-            U_i = kbend[i] *(1-cosAminusB);
-        }
-
-        /*phi = safeacos(l1l2 / L1L2);
-        dPhi = phi-eqt[i];
-
-        U_i = kbend[i] * ( 1 - cos(dPhi) );*/
-
-        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-
-            //set culprit and return
-            BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
-
-            return -1;
-        }
-
         U += U_i;
     }
 
@@ -489,3 +409,5 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
 
     }
 }
+
+} // namespace medyan

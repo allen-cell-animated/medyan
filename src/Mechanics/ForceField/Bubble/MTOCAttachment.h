@@ -17,52 +17,69 @@
 #include <vector>
 
 #include "common.h"
-
-#include "BubbleInteractions.h"
-
 #include "SysParams.h"
+#include "Mechanics/ForceField/Bubble/MTOCAttachmentHarmonic.h"
+#include "Mechanics/ForceField/ForceField.h"
+#include "Structure/SubSystem.h"
 
-//FORWARD DECLARATIONS
-class MTOC;
-class Bead;
+namespace medyan {
 
 /// Represents an attachment potential of a MTOC.
-template <class MTOCInteractionType>
-class MTOCAttachment : public BubbleInteractions {
-    
+class MTOCAttachment : public ForceField {
+public:
+    struct PairInteraction {
+        Index bubbleCoordIndex = 0;
+        Index beadCoordIndex = 0;
+        floatingpoint kstr = 0.0;
+        floatingpoint radius = 0.0;
+    };
+
+    MTOCAttachmentHarmonic impl;
 private:
-    MTOCInteractionType _FFType;
 
-    int *beadSet;
-    std::size_t beadStartIndex_ = 0;
-    std::size_t bubbleStartIndex_ = 0;
-    ///Array describing the constants in calculation
-    floatingpoint *kstr;
-    floatingpoint *radiusvec;
-	floatingpoint *pos1;
-	floatingpoint *pos2;
-
+    SubSystem* ps_ = nullptr;
+    std::vector<PairInteraction> pairInteractions_;
 
 public:
+    virtual std::string getName() override {return "MTOCAttachment";}
 
-    ///Array describing indexed set of interactions
-    ///For MTOC, this is a 2-bead potential
-    const static int n = 2;
-	static int numInteractions;
-    
     virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void deallocate();
 
-    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) override;
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f) override;
     //virtual void computeForcesAux(double *coord, double *f);
     
-    virtual void computeLoadForces() {return;}
-    
-    /// Get the neighbor list for this interaction
-    virtual NeighborList* getNeighborList() {return nullptr;}
-    
-    virtual const string getName() {return "MTOC Attachment";}
+    virtual void computeAuxParams(SubSystem& sys) override {
+        for(auto& mtoc : sys.mtocs) {
+            auto& bb = mtoc.getBubble(sys);
+            // Index 0:2 for bubble, 3:5 for bead.
+            floatingpoint coordset[6] {};
+            floatingpoint forceset[6] {};
+
+            coordset[0] = bb.coord[0];
+            coordset[1] = bb.coord[1];
+            coordset[2] = bb.coord[2];
+
+            for(auto pf : mtoc.getFilaments()) {
+                auto& bead = *pf->getMinusEndCylinder()->getFirstBead();
+                coordset[3] = bead.coord[0];
+                coordset[4] = bead.coord[1];
+                coordset[5] = bead.coord[2];
+
+                impl.forces(
+                    coordset, forceset,
+                    0, 3,
+                    mtoc.attachmentStretchingK, bb.getRadius()
+                );
+            }
+
+            mtoc.attachmentForce[0] = forceset[0];
+            mtoc.attachmentForce[1] = forceset[1];
+            mtoc.attachmentForce[2] = forceset[2];
+        }
+    }
 };
+
+} // namespace medyan
 
 #endif

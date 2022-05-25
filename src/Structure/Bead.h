@@ -29,6 +29,8 @@
 #include "SysParams.h"
 #include "Util/Math/Vec.hpp"
 
+namespace medyan {
+
 //FORWARD DECLARATIONS
 class Compartment;
 class Filament;
@@ -54,8 +56,8 @@ class Bead : public Component, public Trackable, public Movable, public DynamicN
 public:
     using DatabaseType = Database< Bead, true >;
 
-    mathfunc::Vec< 3, floatingpoint > coord;
-    mathfunc::Vec< 3, floatingpoint > force;
+    medyan::Vec< 3, floatingpoint > coord;
+    medyan::Vec< 3, floatingpoint > force;
 
     ///@note - all vectors are in x,y,z coordinates.
     vector<floatingpoint> coordinateP; ///< Prev coordinates of bead in CG minimization
@@ -81,6 +83,26 @@ public:
     
     short lfip = 0;
     short lfim = 0;  ///< Index which saves which load force to use
+
+    // The monomer serial at (slightly plus side of) this bead in a certain
+    // filament.
+    //
+    //                                 |
+    //                      -----+-----|-----+-----
+    //  minus end <----       M  |  M  | (M) |  M        ----> plus end
+    //                      -----+-----|-----+-----
+    //                                 |
+    //                                 ^ This bead is indicated by the line.
+    //
+    // The serial of monomer with parenthesis (M) will be indicated by this
+    // variable.
+    //
+    // If the bead is itself at the plus end, this index indicates the serial
+    // number of the next imaginary monomer.
+    //
+    // This monomer serial, as well as the zero offset information, are managed
+    // by the associated filament.
+    int monomerSerial = 0;
     
     /// The bead can be pinned to a certain position in the simulation volume.
     /// These parameters describe the pinning. Adding the Bead to the list of pinned
@@ -243,5 +265,7 @@ private:
     static std::vector<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem
                                          ///< (attached to some element in SubSystem)
 };
+
+} // namespace medyan
 
 #endif

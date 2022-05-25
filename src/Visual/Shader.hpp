@@ -29,6 +29,9 @@ public:
         init_(vertexShaderSrc, fragmentShaderSrc);
     }
 
+    void setBool(const char* name, bool val) const {
+        glUniform1i(glGetUniformLocation(id_, name), val);
+    }
     void setFloat(const char* name, float f) const {
         glUniform1f(glGetUniformLocation(id_, name), f);
     }
@@ -55,7 +58,7 @@ private:
         glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
         if (!success) {
             glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-            LOG(ERROR) << "Vertex shader compile failed: " << infoLog;
+            log::error("Vertex shader compile failed: {}", infoLog);
         }
 
         unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -64,7 +67,7 @@ private:
         glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
         if (!success) {
             glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-            LOG(ERROR) << "Fragment shader compile failed: " << infoLog;
+            log::error("Fragment shader compile failed: {}", infoLog);
         }
 
         id_ = glCreateProgram();
@@ -74,7 +77,7 @@ private:
         glGetProgramiv(id_, GL_LINK_STATUS, &success);
         if (!success) {
             glGetProgramInfoLog(id_, 512, NULL, infoLog);
-            LOG(ERROR) << "Shader program link failed: " << infoLog;
+            log::error("Shader program link failed: {}", infoLog);
         }
 
         glDetachShader(id_, vertexShader);

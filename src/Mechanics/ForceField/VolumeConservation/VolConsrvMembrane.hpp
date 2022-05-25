@@ -3,41 +3,46 @@
 
 #include "Mechanics/ForceField/ForceField.h"
 #include "Mechanics/ForceField/VolumeConservation/VolConsrvMembraneHarmonic.hpp"
+#include "Structure/SubSystem.h"
+#include "Structure/SurfaceMesh/FuncMembraneGeo.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
+namespace medyan {
 
 // The force field of elasticity of volume enclosed by the membrane
 struct VolumeConservationMembrane : public ForceField {
 
     VolumeConservationMembraneHarmonic impl;
+    SubSystem* ps = nullptr;
 
-    virtual void vectorize(const FFCoordinateStartingIndex& si) override {}
+    virtual void vectorize(const FFCoordinateStartingIndex& si) override {
+        ps = si.ps;
+    }
 
-    virtual string getName() override { return "Volume conservation"; }
+    virtual std::string getName() override { return "VolumeConservation"; }
 
-    virtual floatingpoint computeEnergy(floatingpoint* coord, bool stretched) override {
+    virtual FP computeEnergy(FP* coord) override {
         using namespace std;
 
         double en = 0;
 
-        for(auto m: Membrane::getMembranes()) if(m->isClosed()) {
+        for(auto& m: ps->membranes) {
 
-            const auto& mesh = m->getMesh();
+            const auto& mesh = m.getMesh();
 
-            const double kBulk = m->mMembrane.kVolume;
-            const double eqVolume = m->mMembrane.eqVolume;
+            const double kBulk = m.mMembrane.kVolume;
+            const double eqVolume = m.mMembrane.eqVolume;
 
-            double volume = 0.0;
+            double volume = m.mMembrane.volumeOffset;
             for(const auto& t : mesh.getTriangles())
-                volume += stretched ? t.attr.gTriangleS.coneVolume : t.attr.gTriangle.coneVolume;
+                volume += t.attr.gTriangle.coneVolume;
 
             const double enMem = impl.energy(volume, kBulk, eqVolume);
 
             if(!isfinite(enMem)) {
-                LOG(ERROR) << "In " << getName() << " energy calculation, "
-                    << "a membrane has energy " << enMem;
+                log::error("In {} energy calculation, a membrane has energy {}", getName(), enMem);
 
-                return numeric_limits<double>::infinity();
+                return inffp;
             }
             else {
                 en += enMem;
@@ -48,22 +53,22 @@ struct VolumeConservationMembrane : public ForceField {
         return en;
     }
 
-    virtual void computeForces(floatingpoint* coord, floatingpoint* force) override {
+    virtual void computeForces(FP* coord, FP* force) override {
         using namespace std;
         using MT = Membrane::MeshType;
 
-        for (auto m: Membrane::getMembranes()) if(m->isClosed()) {
+        for (auto& m: ps->membranes) {
 
-            const auto& mesh = m->getMesh();
+            const auto& mesh = m.getMesh();
             medyan::assertValidIndexCacheForFF(mesh);
 
-            const double kBulk = m->mMembrane.kVolume;
-            const double eqVolume = m->mMembrane.eqVolume;
+            const double kBulk = m.mMembrane.kVolume;
+            const double eqVolume = m.mMembrane.eqVolume;
 
-            double volume = 0.0;
+            double volume = m.mMembrane.volumeOffset;
             for(const auto& t : mesh.getTriangles()) volume += t.attr.gTriangle.coneVolume;
 
-            const size_t numVertices = mesh.getVertices().size();
+            const Size numVertices = mesh.getVertices().size();
             for(MT::VertexIndex vi {0}; vi < numVertices; ++vi) {
                 const auto& dVolume = mesh.attribute(vi).gVertex.dVolume;
 
@@ -73,12 +78,8 @@ struct VolumeConservationMembrane : public ForceField {
 
     }
 
-    // Useless overrides
-    virtual void cleanup() override {}
-    virtual void whoIsCulprit() override {}
-    virtual void computeLoadForces() override {}
-    virtual vector<NeighborList*> getNeighborLists() override { return {}; }
-    virtual std::vector<std::string> getinteractionnames() override { return { getName() }; }
 };
+
+} // namespace medyan
 
 #endif

@@ -8,19 +8,19 @@
 #include "Structure/CellList.hpp"
 
 TEST_CASE("Cell list tests", "[CellList]") {
-    using namespace cell_list;
+    using namespace medyan;
 
     // Types
     //-------------------------------------------------------------------------
     struct DummyElement;
     struct DummyCell;
-    using Manager = CellListManager< DummyElement, DummyCell >;
+    using Manager = CellListManager< DummyElement*, DummyCell* >;
 
     struct DummyElement {
-        CellListElementUser< DummyElement, DummyCell > ele;
+        CellListElementUser< DummyElement*, DummyCell* > ele;
     };
     struct DummyCell {
-        CellListHeadUser< DummyElement, DummyCell > cell;
+        CellListHeadUser< DummyElement*, DummyCell* > cell;
     };
 
     // Test objects
@@ -33,6 +33,7 @@ TEST_CASE("Cell list tests", "[CellList]") {
     SECTION("Cell list operation and view") {
         DummyCell dc[3];
         for(auto& c : dc) { m.addHead(&c, c.cell); registerDummyCell(c); }
+        REQUIRE(m.numHeads() == 3);
 
         DummyElement de[6];
         for(auto& e : de) registerDummyElement(e);
@@ -40,7 +41,7 @@ TEST_CASE("Cell list tests", "[CellList]") {
         const auto checkCellContent = [&](std::size_t dci, std::vector< std::size_t > content) {
             INFO("Checking cell " << dci << " content");
 
-            const auto view = m.getElementPtrs(dc[dci].cell);
+            const auto view = m.getElements(dc[dci].cell);
             std::vector< DummyElement* > deCell(view.begin(), view.end());
 
             REQUIRE(deCell.size() == content.size());
@@ -84,16 +85,16 @@ TEST_CASE("Cell list tests", "[CellList]") {
 
         // Check CellView
         {
-            REQUIRE(m.getElementPtrs(dc[0].cell).size() == 1);
-            REQUIRE(m.getElementPtrs(dc[2].cell).size() == 0);
-            REQUIRE(m.getElementPtrs(dc[1].cell).empty() == false);
-            REQUIRE(m.getElementPtrs(dc[2].cell).empty() == true);
+            REQUIRE(m.getElements(dc[0].cell).size() == 1);
+            REQUIRE(m.getElements(dc[2].cell).size() == 0);
+            REQUIRE(m.getElements(dc[1].cell).empty() == false);
+            REQUIRE(m.getElements(dc[2].cell).empty() == true);
         }
 
         // Check CellView iterators
         // Iterator dereference and comparison
         {
-            auto it1 = m.getElementPtrs(dc[1].cell).begin();
+            auto it1 = m.getElements(dc[1].cell).begin();
             auto it1_cp = it1;
             ++it1;
             ++it1_cp;
@@ -102,15 +103,24 @@ TEST_CASE("Cell list tests", "[CellList]") {
 
             // End iterator
             ++it1;
-            auto it1_end = m.getElementPtrs(dc[1].cell).end();
+            auto it1_end = m.getElements(dc[1].cell).end();
             REQUIRE(it1 == it1_end);
             --it1;
             --it1_end;
             REQUIRE(it1 == it1_end);
 
             // Empty cell
-            REQUIRE(m.getElementPtrs(dc[2].cell).begin() == m.getElementPtrs(dc[2].cell).end());
+            REQUIRE(m.getElements(dc[2].cell).begin() == m.getElements(dc[2].cell).end());
         }
+
+        // Check clearing.
+        m.clearElements();
+        CHECK(m.numElements() == 0);
+        CHECK(m.numHeads() == 3);
+
+        m.clearAll();
+        CHECK(m.numElements() == 0);
+        CHECK(m.numHeads() == 0);
     }
 
     SECTION("Random big number test") {
@@ -156,7 +166,7 @@ TEST_CASE("Cell list tests", "[CellList]") {
 
         const auto checkSizeConsistency = [&]() {
             std::size_t tot = 0;
-            for(const auto& c : cs) tot += m.getElementPtrs(c->cell).size();
+            for(const auto& c : cs) tot += m.getElements(c->cell).size();
             REQUIRE(tot == es.size());
         };
 

@@ -3,6 +3,7 @@
 #include "MathFunctions.h"
 #include "Util/Math/CuboidSlicing.hpp"
 
+using namespace medyan;
 using namespace mathfunc;
 
 namespace {

@@ -17,43 +17,90 @@
 #include <vector>
 
 #include "common.h"
+#include "Mechanics/ForceField/Branching/BranchingStretching.h"
+#include "Mechanics/ForceField/Branching/BranchingStretchingHarmonic.h"
+#include "Mechanics/ForceField/Branching/BranchingBending.h"
+#include "Mechanics/ForceField/Branching/BranchingBendingCosine.h"
+#include "Mechanics/ForceField/Branching/BranchingDihedral.h"
+#include "Mechanics/ForceField/Branching/BranchingDihedralCosine.h"
+#include "Mechanics/ForceField/Branching/BranchingDihedralCosineV2.h"
+#include "Mechanics/ForceField/Branching/BranchingDihedralQuadratic.hpp"
+#include "Mechanics/ForceField/Branching/BranchingDihedralQuadraticV2.h"
+#include "Mechanics/ForceField/Branching/BranchingPosition.h"
+#include "Mechanics/ForceField/Branching/BranchingPositionCosine.h"
 
-#include "ForceField.h"
+namespace medyan {
 
-//FORWARD DECLARATIONS
-class BranchingInteractions;
-class BranchingPoint;
+inline auto createBranchingForceFields(
+    std::string_view stretching,
+    std::string_view bending,
+    std::string_view dihedral,
+    std::string_view position
+) {
+    std::vector<std::unique_ptr<ForceField>> forceFields;
 
-/// Branching FF is an implementation of the ForceField class that
-/// calculates BranchingPoint interactions.
-class BranchingFF : public ForceField {
-    
-private:
-    vector<unique_ptr<BranchingInteractions>>
-    _branchingInteractionVector; ///< Vector of initialized branching interactions
-    
-protected:
-    BranchingInteractions* _culpritInteraction; ///< Culprit in case of error
-    
-public:
-    /// Constructor, intializes all interaction at the branching point
-    BranchingFF(string& stretching, string& bending,
-                string& dihedral, string& position);
-    
-    virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void cleanup();
-    
-    virtual string getName() {return "Branching";}
-    virtual void whoIsCulprit();
-    
-    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched = false) override;
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
-    
-    virtual void computeLoadForces() {return;}
-    
-    virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
+    if(stretching == "HARMONIC") {
+        forceFields.push_back(
+            std::make_unique<BranchingStretching<BranchingStretchingHarmonic>>()
+        );
+    }
+    else if(stretching == "") {}
+    else {
+        log::error("Branching stretching FF {} not recognized. Exiting.", stretching);
+        throw std::runtime_error("Branching stretching FF not recognized.");
+    }
 
-    virtual vector<string> getinteractionnames();
-};
+    if(bending == "COSINE") {
+        forceFields.push_back(
+            std::make_unique<BranchingBending<BranchingBendingCosine>>()
+        );
+    }
+    else if(bending == "") {}
+    else {
+        log::error("Branching bending FF {} not recognized. Exiting.", bending);
+        throw std::runtime_error("Branching bending FF not recognized.");
+    }
+
+    if(dihedral == "COSINE") {
+        forceFields.push_back(
+            std::make_unique<BranchingDihedral<BranchingDihedralCosine>>()
+        );
+    }
+    else if(dihedral == "COSINEV2") {
+        forceFields.push_back(
+            std::make_unique<BranchingDihedral<BranchingDihedralCosineV2>>()
+        );
+    }
+    else if(dihedral == "QUADRATIC") {
+        forceFields.push_back(
+            std::make_unique<BranchingDihedral< BranchingDihedralQuadratic>>()
+        );
+    }
+    else if(dihedral == "QUADRATICV2") {
+        forceFields.push_back(
+            std::make_unique<BranchingDihedral< BranchingDihedralQuadraticV2>>()
+        );
+    }
+    else if(dihedral == "") {}
+    else {
+        log::error("Branching dihedral FF {} not recognized.", dihedral);
+        throw std::runtime_error("Unrecognized branching dihedral force field");
+    }
+
+    if(position == "COSINE") {
+        forceFields.push_back(
+            std::make_unique<BranchingPosition<BranchingPositionCosine>>()
+        );
+    }
+    else if(position == "") {}
+    else {
+        log::error("Branching position FF {} not recognized. Exiting.", position);
+        throw std::runtime_error("Branching position FF not recognized.");
+    }
+
+    return forceFields;
+}
+
+} // namespace medyan
 
 #endif

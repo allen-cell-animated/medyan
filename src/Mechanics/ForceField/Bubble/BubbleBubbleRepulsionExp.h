@@ -19,20 +19,24 @@
 
 #include "common.h"
 
-//FORWARD DECLARATIONS
-class Bead;
+namespace medyan {
 
 /// A exponential repulsive potential used by the BubbleBubbleRepulsion template.
-class BubbleBubbleRepulsionExp {
+struct BubbleBubbleRepulsionExp {
     
-public:
     floatingpoint energy(
         const floatingpoint* coord,
-        std::size_t i1, std::size_t i2, floatingpoint, floatingpoint, floatingpoint, floatingpoint);
+        Index i1, Index i2,
+        floatingpoint, floatingpoint, floatingpoint, floatingpoint
+    ) const;
     
     void forces(
         const floatingpoint* coord, floatingpoint* force,
-        std::size_t i1, std::size_t i2, floatingpoint, floatingpoint, floatingpoint, floatingpoint);
+        Index i1, Index i2,
+        floatingpoint, floatingpoint, floatingpoint, floatingpoint
+    ) const;
 };
+
+} // namespace medyan
 
 #endif

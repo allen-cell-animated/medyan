@@ -17,7 +17,8 @@
 #include "common.h"
 
 #include "Reaction.h"
-    
+
+namespace medyan {
 /// An abstract interface for a container of pointers to reaction objects
 class ReactionPtrContainerIFace {
 public:
@@ -142,5 +143,6 @@ public:
     }
 };
 
+} // namespace medyan
 
 #endif

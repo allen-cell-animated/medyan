@@ -21,2986 +21,3048 @@
 
 #include "SysParams.h"
 #include "Util/Io/Log.hpp"
+#include "Util/Parser/BubbleParser.hpp"
 #include "Util/Parser/MembraneParser.hpp"
+#include "Util/Parser/OutputParser.hpp"
 
 namespace medyan {
 
-void SystemParser::initInputHeader() {
-    headerParser.addComment("##################################################");
-    headerParser.addComment("### Important notes:");
-    headerParser.addComment("### 1. Units in MEDYAN are nm, second, pN, and pN*nm");
-    headerParser.addComment("##################################################");
-    headerParser.addEmptyLine();
-}
-
-void SystemParser::initChemParser() {
+KeyValueParser<SimulConfig> buildSystemParser() {
     using namespace std;
 
-    chemParser.addComment("##################################################");
-    chemParser.addComment("### Chemistry parameters");
-    chemParser.addComment("##################################################");
-    chemParser.addEmptyLine();
+    KeyValueParser<SimulConfig> sysParser;
 
-    chemParser.addComment("###### Chemistry algorithm ######");
-    chemParser.addEmptyLine();
-
-    chemParser.addStringArgsWithAliases(
-        "CALGORITHM", { "CALGORITHM:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.chemistryAlgorithm.algorithm = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { sc.chemParams.chemistryAlgorithm.algorithm };
-        }
-    );
-    chemParser.addEmptyLine();
-
-    chemParser.addComment("# Use either time mode or step mode");
-    chemParser.addStringArgsWithAliases(
-        "RUNTIME", { "RUNTIME:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.chemistryAlgorithm.runTime = atof(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.runTime) };
-        }
-    );
-    chemParser.addStringArgsWithAliases(
-        "SNAPSHOTTIME", { "SNAPSHOTTIME:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.chemistryAlgorithm.snapshotTime = atof(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.snapshotTime) };
-        }
-    );
-    chemParser.addStringArgsWithAliases(
-        "MINIMIZATIONTIME", { "MINIMIZATIONTIME:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.chemistryAlgorithm.minimizationTime = atof(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.minimizationTime) };
-        }
-    );
-    chemParser.addStringArgsWithAliases(
-        "NEIGHBORLISTTIME", { "NEIGHBORLISTTIME:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.chemistryAlgorithm.neighborListTime = atof(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.neighborListTime) };
-        }
-    );
-    chemParser.addStringArgsWithAliases(
-        "DATADUMPTIME", { "DATADUMPTIME:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.chemistryAlgorithm.datadumpTime = atof(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.datadumpTime) };
-        }
-    );
-    chemParser.addEmptyLine();
-    chemParser.addStringArgsWithAliases(
-        "RUNSTEPS", { "RUNSTEPS:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.chemistryAlgorithm.runSteps = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.runSteps) };
-        }
-    );
-    chemParser.addStringArgsWithAliases(
-        "SNAPSHOTSTEPS", { "SNAPSHOTSTEPS:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.chemistryAlgorithm.snapshotSteps = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.snapshotSteps) };
-        }
-    );
-    chemParser.addStringArgsWithAliases(
-        "MINIMIZATIONSTEPS", { "MINIMIZATIONSTEPS:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.chemistryAlgorithm.minimizationSteps = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.minimizationSteps) };
-        }
-    );
-    chemParser.addStringArgsWithAliases(
-        "NEIGHBORLISTSTEPS", { "NEIGHBORLISTSTEPS:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.chemistryAlgorithm.neighborListSteps = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.chemParams.chemistryAlgorithm.neighborListSteps) };
-        }
-    );
-    chemParser.addEmptyLine();
-
-    chemParser.addComment("###### Chemistry setup ######");
-    chemParser.addEmptyLine();
-    chemParser.addStringArgsWithAliases(
-        "CHEMISTRYFILE", { "CHEMISTRYFILE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "Error reading chemistry input file. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-
-            else if (lineVector.size() == 2)
-                sc.chemParams.chemistrySetup.inputFile = lineVector[1];
-
-            else if(lineVector.size() < 2) {
-                cout << "Must specify a chemistry input file. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { sc.chemParams.chemistrySetup.inputFile.string() };
-        }
-    );
-    chemParser.addEmptyLine();
-
-    chemParser.addComment("###### Numbers and protocols ######");
-    chemParser.addEmptyLine();
-
-    chemParser.addComment("### Numbers");
-    chemParser.addStringArgsWithAliases(
-        "NUMFILAMENTTYPES", { "NUMFILAMENTTYPES:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry parameters. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.numFilaments = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.chemParams.numFilaments) };
-        }
-    );
-    chemParser.addStringArgsWithAliases(
-        "NUMBINDINGSITES", { "NUMBINDINGSITES:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.chemParams.numBindingSites.push_back(atoi(lineVector[i].c_str()));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(auto x : sc.chemParams.numBindingSites) {
-                res.push_back(to_string(x));
-            }
-            return res;
-        }
-    );
-    chemParser.addStringArgsWithAliases(
-        "NUMMOTORHEADSMIN", { "NUMMOTORHEADSMIN:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.chemParams.motorNumHeadsMin.push_back(atoi(lineVector[i].c_str()));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(auto x : sc.chemParams.motorNumHeadsMin) {
-                res.push_back(to_string(x));
-            }
-            return res;
-        }
-    );
-    chemParser.addStringArgsWithAliases(
-        "NUMMOTORHEADSMAX", { "NUMMOTORHEADSMAX:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.chemParams.motorNumHeadsMax.push_back(atoi(lineVector[i].c_str()));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(auto x : sc.chemParams.motorNumHeadsMax) {
-                res.push_back(to_string(x));
-            }
-            return res;
-        }
-    );
-    chemParser.addStringArgsWithAliases(
-        "MOTORSTEPSIZE", { "MOTORSTEPSIZE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.chemParams.motorStepSize.push_back(atof(lineVector[i].c_str()));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(auto x : sc.chemParams.motorStepSize) {
-                res.push_back(to_string(x));
-            }
-            return res;
-        }
-    );
-    chemParser.addStringArgsWithAliases(
-        "LINKERBINDINGSKIP", { "LINKERBINDINGSKIP:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                "There was an error parsing input file at Chemistry algorithm. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.linkerbindingskip = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.chemParams.linkerbindingskip) };
-        }
-    );
-    chemParser.addEmptyLine();
-
-    chemParser.addComment("### Special protocols");
-    chemParser.addStringArgsWithAliases(
-        "SPECIALPROTOCOL", { "SPECIALPROTOCOL:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            //the vector size can be 5 for PINLOWERBOUNDARYFILAMENTS
-            if(lineVector.size() > 7) {
-                cout <<
-                     "There was an error parsing input file at Chemistry parameters. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 3) {
-                if(lineVector[1] == "MAKELINKERSSTATIC") {
-                    sc.chemParams.makeLinkersStatic = true;
-                    sc.chemParams.makeLinkersStaticTime = atof(lineVector[2].c_str());
-                }
-                if(lineVector[1] == "MAKEFILAMENTSSTATIC") {
-                    sc.chemParams.makeFilamentsStatic = true;
-                    sc.chemParams.makeFilamentsStaticTime = atof(lineVector[2].c_str());
-                }
-                
-            }
-            else if (lineVector.size() == 4) {
-                if(lineVector[1]  == "RATEDEPEND") {
-                    sc.chemParams.makeRateDepend = true;
-                    sc.chemParams.makeRateDependTime = atof(lineVector[2].c_str());
-                    sc.chemParams.makeRateDependForce = atof(lineVector[3].c_str());
-                }
-            }
-            else if (lineVector.size() == 7) {
-                if(lineVector[1]  == "AFM") {
-                    sc.chemParams.makeAFM = true;
-                    //displacement of each pull
-                    sc.chemParams.AFMStep1 = atof(lineVector[2].c_str());
-                    sc.chemParams.AFMStep2 = atof(lineVector[3].c_str());
-                    //change dispalcement from 1 to 2
-                    sc.chemParams.IterChange = atof(lineVector[4].c_str());
-                    //total step of each AFM pull
-                    sc.chemParams.StepTotal = atof(lineVector[5].c_str());
-                    //time between each pull
-                    sc.chemParams.StepTime = atof(lineVector[6].c_str());
-                }
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<vector<string>> res;
-            if(sc.chemParams.makeLinkersStatic) {
-                res.push_back({ "MAKELINKERSSTATIC", to_string(sc.chemParams.makeLinkersStaticTime) });
-            }
-            if(sc.chemParams.makeFilamentsStatic) {
-                res.push_back({ "MAKEFILAMENTSSTATIC", to_string(sc.chemParams.makeFilamentsStaticTime) });
-            }
-            if(sc.chemParams.makeRateDepend) {
-                res.push_back({
-                    "RATEDEPEND",
-                    to_string(sc.chemParams.makeRateDependTime),
-                    to_string(sc.chemParams.makeRateDependForce)
-                });
-            }
-            if(sc.chemParams.makeAFM) {
-                res.push_back({
-                    "AFM",
-                    to_string(sc.chemParams.AFMStep1),
-                    to_string(sc.chemParams.AFMStep2),
-                    to_string(sc.chemParams.IterChange),
-                    to_string(sc.chemParams.StepTotal),
-                    to_string(sc.chemParams.StepTime)
-                });
-            }
-            return res;
-        }
-    );
-    chemParser.addEmptyLine();
-
-    chemParser.addComment("### Dissipation tracking");
-    chemParser.addStringArgsWithAliases(
-        "DISSIPATIONTRACKING", { "DISSIPATIONTRACKING:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                "There was an error parsing input file at Chemistry algorithm. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.dissTracking = (lineVector[1] == "ON");
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { sc.chemParams.dissTracking ? "ON" : "OFF" };
-        }
-    );
-    chemParser.addStringArgsWithAliases(
-        "EVENTTRACKING", { "EVENTTRACKING:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                "There was an error parsing input file at Chemistry algorithm. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.chemParams.eventTracking = (lineVector[1] == "ON");
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { sc.chemParams.eventTracking ? "ON" : "OFF" };
-        }
-    );
-    chemParser.addEmptyLine();
-
-}
-
-void SystemParser::chemPostProcessing(SimulConfig& sc) const {
-    sc.chemParams.bindingSites.clear();
-
-    //Figure out the binding sites
-    for(int i = 0; i < sc.chemParams.numBindingSites.size(); i++) {
-
-        sc.chemParams.maxbindingsitespercylinder = max(sc.chemParams.maxbindingsitespercylinder,
-                                                 sc.chemParams.numBindingSites[i]);
-
-        vector<short> tempBindingSites;
-
-        int deltaBinding = sc.geoParams.cylinderNumMon[i] /
-                           sc.chemParams.numBindingSites[i];
-
-        int firstBindingSite = deltaBinding / 2 + 1;
-        int bindingCount = firstBindingSite;
-
-        //add all other binding sites
-        while(bindingCount < sc.geoParams.cylinderNumMon[i]) {
-            tempBindingSites.push_back(bindingCount);
-            bindingCount += deltaBinding;
-        }
-
-
-        //push to sc.chemParams
-        sc.chemParams.bindingSites.push_back(tempBindingSites);
+    //--------------------------------------------------------------------------
+    // Headers.
+    //--------------------------------------------------------------------------
+    {
+        sysParser.addComment("==================================================");
+        sysParser.addComment(" Important notes:");
+        sysParser.addComment(" 1. Units in MEDYAN are nm, second, pN, and pN*nm");
+        sysParser.addComment("==================================================");
+        sysParser.addEmptyLine();
     }
 
-    //Find the maximum allowed Cindex and shift operator
-    auto np2 = mathfunc::nextPowerOf2(uint32_t(sc.chemParams
-            .maxbindingsitespercylinder));
+    //--------------------------------------------------------------------------
+    // System element definition.
+    //--------------------------------------------------------------------------
+    {
+        sysParser.addComment("==================================================");
+        sysParser.addComment(" System elements.");
+        sysParser.addComment("==================================================");
+        sysParser.addEmptyLine();
 
-    if(np2 == sc.chemParams.maxbindingsitespercylinder)
-        np2 *= 2;
-
-    cout<<"np2 "<<np2<<" shift "<< sc.chemParams.shiftbybits<<endl;
-	sc.chemParams.shiftbybits = log2(np2);
-    sc.chemParams.maxStableIndex = numeric_limits<uint32_t>::max()/sc.chemParams.shiftbybits -1;
-
-}
-
-void SystemParser::initMechParser() {
-    using namespace std;
-
-    mechParser.addComment("##################################################");
-    mechParser.addComment("### Mechanical parameters");
-    mechParser.addComment("##################################################");
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("###### Mechanical algorithm ######");
-    mechParser.addEmptyLine();
-
-    mechParser.addStringArgsWithAliases(
-        "CONJUGATEGRADIENT", { "CONJUGATEGRADIENT:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "A conjugate gradient method must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsAlgorithm.ConjugateGradient = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<vector<string>> res;
-            if(const auto& s = sc.mechParams.mechanicsAlgorithm.ConjugateGradient; !s.empty()) {
-                res.push_back({ s });
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "MD", {},
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout << "A Mechanics algorithm must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsAlgorithm.MD = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<vector<string>> res;
-            if(const auto& s = sc.mechParams.mechanicsAlgorithm.MD; !s.empty()) {
-                res.push_back({ s });
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "GRADIENTTOLERANCE", { "GRADIENTTOLERANCE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsAlgorithm.gradientTolerance = atof(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& x = sc.mechParams.mechanicsAlgorithm.gradientTolerance; x) {
-                res.push_back(to_string(x));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "MAXDISTANCE", { "MAXDISTANCE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsAlgorithm.maxDistance = atof(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& x = sc.mechParams.mechanicsAlgorithm.maxDistance; x) {
-                res.push_back(to_string(x));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "LAMBDAMAX", { "LAMBDAMAX:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsAlgorithm.lambdaMax = atof(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& x = sc.mechParams.mechanicsAlgorithm.lambdaMax; x) {
-                res.push_back(to_string(x));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "LAMBDARUNNINGAVERAGEPROBABILITY", { "LAMBDARUNNINGAVERAGEPROBABILITY:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsAlgorithm.lambdarunningaverageprobability = atof(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& x = sc.mechParams.mechanicsAlgorithm.lambdarunningaverageprobability; x) {
-                res.push_back(to_string(x));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "LINESEARCHALGORITHM", { "LINESEARCHALGORITHM:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsAlgorithm.linesearchalgorithm = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<vector<string>> res;
-            if(const auto& s = sc.mechParams.mechanicsAlgorithm.linesearchalgorithm; !s.empty()) {
-                res.push_back({ s });
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("###### Force fields ######");
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("### Actin filaments ");
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("# Stretching: Popov et al, 2016, PLoS Comp Biol");
-    mechParser.addStringArgsWithAliases(
-        "FSTRETCHINGFFTYPE", { "FSTRETCHINGFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Filament stretching FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.FStretchingType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.FStretchingType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "FSTRETCHINGK", { "FSTRETCHINGK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.FStretchingK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.FStretchingK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.FStretchingK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("# Bending: Ott et al, 1993, Phys Rev E");
-    mechParser.addStringArgsWithAliases(
-        "FBENDINGFFTYPE", { "FBENDINGFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Filament bending FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.FBendingType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.FBendingType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "FBENDINGK", { "FBENDINGK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.FBendingK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.FBendingK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.FBendingK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "FBENDINGTHETA", { "FBENDINGTHETA:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.FBendingTheta.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.FBendingTheta.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.FBendingTheta) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("# Twisting: Currently not implemented");
-    mechParser.addStringArgsWithAliases(
-        "FTWISTINGFFTYPE", { "FTWISTINGFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Filament twisting FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.FTwistingType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.FTwistingType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "FTWISTINGK", { "FTWISTINGK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.FTwistingK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.FTwistingK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.FTwistingK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "FTWISTINGPHI", { "FTWISTINGPHI:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.FTwistingPhi.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.FTwistingPhi.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.FTwistingPhi) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("### Linkers");
-    mechParser.addEmptyLine();
-    mechParser.addComment("# Stretching: Didonna et al, Phys Rev E, 2007");
-    mechParser.addStringArgsWithAliases(
-        "LSTRETCHINGFFTYPE", { "LSTRETCHINGFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Linker stretching FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.LStretchingType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.LStretchingType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "LSTRETCHINGK", { "LSTRETCHINGK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.LStretchingK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.LStretchingK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.LStretchingK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-    mechParser.addComment("# Bending/Twisting: not implemented");
-    mechParser.addStringArgsWithAliases(
-        "LBENDINGFFTYPE", { "LBENDINGFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Linker bending FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.LBendingType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.LBendingType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "LBENDINGK", { "LBENDINGK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.LBendingK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.LBendingK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.LBendingK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "LBENDINGTHETA", { "LBENDINGTHETA:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.LBendingTheta.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.LBendingTheta.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.LBendingTheta) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "LTWISTINGFFTYPE", { "LTWISTINGFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Linker twisting FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.LTwistingType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.LTwistingType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "LTWISTINGK", { "LTWISTINGK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.LTwistingK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.LTwistingK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.LTwistingK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "LTWISTINGPHI", { "LTWISTINGPHI:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.LTwistingPhi.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.LTwistingPhi.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.LTwistingPhi) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("### Myosin motors");
-    mechParser.addEmptyLine();
-    mechParser.addComment("# Stretching: Vilfan, Biophys J, 2010");
-    mechParser.addStringArgsWithAliases(
-        "MSTRETCHINGFFTYPE", { "MSTRETCHINGFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Motor stretching FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.MStretchingType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.MStretchingType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "MSTRETCHINGK", { "MSTRETCHINGK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.MStretchingK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.MStretchingK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.MStretchingK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-    mechParser.addComment("# Bending/Twisting: not implemented");
-    mechParser.addStringArgsWithAliases(
-        "MBENDINGFFTYPE", { "MBENDINGFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Motor bending FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.MBendingType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.MBendingType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "MBENDINGK", { "MBENDINGK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.MBendingK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.MBendingK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.MBendingK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "MBENDINGTHETA", { "MBENDINGTHETA:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.MBendingTheta.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.MBendingTheta.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.MBendingTheta) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "MTWISTINGFFTYPE", { "MTWISTINGFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Motor twisting FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.MTwistingType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.MTwistingType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "MTWISTINGK", { "MTWISTINGK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.MTwistingK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.MTwistingK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.MTwistingK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "MTWISTINGPHI", { "MTWISTINGPHI:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.MTwistingPhi.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.MTwistingPhi.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.MTwistingPhi) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("### Arp2/3 brancher");
-    mechParser.addComment("# 4 force fields: Popov et al, Plos Comp Biol, 2016");
-    mechParser.addComment("# No reliable literature values for this FF");
-    mechParser.addEmptyLine();
-    mechParser.addStringArgsWithAliases(
-        "BRSTRETCHINGFFTYPE", { "BRSTRETCHINGFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Brancher stretching FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.BrStretchingType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.BrStretchingType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "BRSTRETCHINGK", { "BRSTRETCHINGK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.BrStretchingK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.BrStretchingK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.BrStretchingK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "BRSTRETCHINGL", { "BRSTRETCHINGL:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.BrStretchingL.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.BrStretchingL.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.BrStretchingL) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-    mechParser.addStringArgsWithAliases(
-        "BRBENDINGFFTYPE", { "BRBENDINGFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Brancher bending FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.BrBendingType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.BrBendingType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "BRBENDINGK", { "BRBENDINGK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.BrBendingK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.BrBendingK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.BrBendingK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "BRBENDINGTHETA", { "BRBENDINGTHETA:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.BrBendingTheta.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.BrBendingTheta.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.BrBendingTheta) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-    mechParser.addStringArgsWithAliases(
-        "BRDIHEDRALFFTYPE", { "BRDIHEDRALFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Brancher dihedral FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.BrDihedralType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.BrDihedralType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "BRDIHEDRALK", { "BRDIHEDRALK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.BrDihedralK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.BrDihedralK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.BrDihedralK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-    mechParser.addStringArgsWithAliases(
-        "BRPOSITIONFFTYPE", { "BRPOSITIONFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Brancher position FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.BrPositionType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.BrPositionType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "BRPOSITIONK", { "BRPOSITIONK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.BrPositionK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.BrPositionK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.BrPositionK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("### Boundary");
-    mechParser.addComment("# Boundary repulsion force field. Parameters are set in the boundary section.");
-    mechParser.addStringArgsWithAliases(
-        "BOUNDARYFFTYPE", { "BOUNDARYFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Boundary FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.BoundaryFFType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.BoundaryFFType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("### Volume exclusion: Popov et al, 2016, PLoS Comp Biol");
-    mechParser.addEmptyLine();
-    mechParser.addStringArgsWithAliases(
-        "VOLUMEFFTYPE", { "VOLUMEFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Volume FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.VolumeFFType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.VolumeFFType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "VOLUMEK", { "VOLUMEK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.VolumeK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.VolumeK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.VolumeK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "VOLUMECUTOFF", { "VOLUMECUTOFF:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "Error reading Volume cutoff. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else {
-                sc.mechParams.VolumeCutoff = stod(lineVector[1]);
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<vector<string>> res;
-            if(sc.mechParams.VolumeCutoff) {
-                res.push_back({ to_string(sc.mechParams.VolumeCutoff) });
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("### Bubble interactions");
-    mechParser.addStringArgsWithAliases(
-        "BUBBLEFFTYPE", { "BUBBLEFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at Bubble FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.BubbleFFType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.BubbleFFType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "BUBBLEINTERACTIONK", { "BUBBLEINTERACTIONK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.BubbleK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.BubbleK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.BubbleK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "BUBBLESCREENLENGTH", { "BUBBLESCREENLENGTH:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.BubbleScreenLength.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.BubbleScreenLength.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.BubbleScreenLength) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "BUBBLECUTOFF", { "BUBBLECUTOFF:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "Error reading Bubble cutoff. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else {
-                sc.mechParams.BubbleCutoff = stod(lineVector[1]);
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<vector<string>> res;
-            if(sc.mechParams.BubbleCutoff) {
-                res.push_back({ to_string(sc.mechParams.BubbleCutoff) });
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "BUBBLERADIUS", { "BUBBLERADIUS:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.BubbleRadius.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.BubbleRadius.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.BubbleRadius) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "NUMBUBBLETYPES", { "NUMBUBBLETYPES:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "Error reading number of Bubble types. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else {
-                sc.mechParams.numBubbleTypes = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<vector<string>> res;
-            if(sc.mechParams.numBubbleTypes) {
-                res.push_back({ to_string(sc.mechParams.numBubbleTypes) });
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("### MTOC");
-    mechParser.addStringArgsWithAliases(
-        "MTOCFFTYPE", { "MTOCFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at MTOC FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.MTOCFFType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.MTOCFFType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "MTOCBENDINGK", { "MTOCBENDINGK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.MTOCBendingK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.MTOCBendingK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.MTOCBendingK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("### AFM bead");
-    mechParser.addStringArgsWithAliases(
-        "AFMFFTYPE", { "AFMFFTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout <<
-                     "There was an error parsing input file at AFM FF type. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.mechanicsFFType.AFMFFType = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(const auto& s = sc.mechParams.mechanicsFFType.AFMFFType; !s.empty()) {
-                res.push_back(s);
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "AFMBENDINGK", { "AFMBENDINGK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.mechParams.AFMBendingK.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.mechParams.AFMBendingK.push_back(atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& k : sc.mechParams.AFMBendingK) {
-                res.push_back(to_string(k));
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("### Membrane related force fields");
-    mechParser.addSingleArg("membrane-stretching-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.memStretchingFFType; });
-    mechParser.addSingleArg("membrane-tension-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.memTensionFFType; });
-    mechParser.addSingleArg("membrane-bending-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.memBendingFFType; });
-    mechParser.addSingleArg("volume-conservation-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.volumeConservationFFType; });
-    mechParser.addSingleArg("triangle-bead-volume-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.triangleBeadVolumeFFType; });
-
-    mechParser.addSingleArg("triangle-bead-volume-k", [](auto&& sc) -> auto& { return sc.mechParams.triangleBeadVolume.k; });
-    mechParser.addSingleArg("triangle-bead-volume-cutoff", [](auto&& sc) -> auto& { return sc.mechParams.triangleBeadVolume.cutoff; });
-    mechParser.addSingleArg("triangle-bead-volume-cutoff-mech", [](auto&& sc) -> auto& { return sc.mechParams.triangleBeadVolume.cutoffMech; });
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("###### Protocols ######");
-    mechParser.addEmptyLine();
-
-    mechParser.addComment("# Hessian tracking");
-    mechParser.addStringArgsWithAliases(
-        "HESSIANTRACKING", { "HESSIANTRACKING:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 5) {
-                cout <<
-                "There was an error parsing input file at Hessian tracking. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 5) {
-                sc.mechParams.hessTracking = true;
-                //sc.mechParams.hessDelta = atof(lineVector[1].c_str());
-                sc.mechParams.hessSkip = atof(lineVector[1].c_str());
-                int dense = atoi(lineVector[2].c_str());
-                if(dense == 1){
-                    sc.mechParams.denseEstimationBool = true;
-                }else{
-                    sc.mechParams.denseEstimationBool = false;
+        sysParser.addComment(" Membrane setup.");
+        sysParser.addArgs(
+            "membrane",
+            [] (SimulConfig& sc, const SExpr::ListType& sel) {
+                if(sel.size() < 2) {
+                    log::error("Membrane setup specification is incorrect.");
+                    log::info("Membrane setup usage: (membrane <setup-name> [<item1> ...]");
+                    throw runtime_error("Membrane setup specification is incorrect.");
                 }
-                int rocksnapbool = atoi(lineVector[3].c_str());
-                if(rocksnapbool == 1){
-                    sc.mechParams.rockSnapBool = true;
-                }else{
-                    sc.mechParams.rockSnapBool = false;
+                else {
+                    auto setupName = get<SExpr::StringType>(sel[1].data);
+                    auto& setupVec = sc.membraneSettings.setupVec;
+                    // Add this new setup if the name is not already in the list.
+                    if(find_if(setupVec.begin(), setupVec.end(), [&](const MembraneSetup& eachSetup) { return eachSetup.name == setupName; }) == setupVec.end()) {
+                        MembraneSetup ms;
+                        ms.name = setupName;
+                        for(int i = 2; i < sel.size(); ++i) {
+                            parseKeyValue<MembraneSetup>(ms, sel[i], membraneSetupParser().dict, KeyValueParserUnknownKeyAction::error);
+                        }
+                        sc.membraneSettings.setupVec.push_back(move(ms));
+                    }
+                    else {
+                        log::error("Membrane setup {} already exists.", setupName);
+                        throw runtime_error("Membrane setup already exists.");
+                    }
                 }
-                int hessmatprintbool = atoi(lineVector[4].c_str());
-                if(hessmatprintbool == 1){
-                    sc.mechParams.hessMatrixPrintBool = true;
-                }else{
-                    sc.mechParams.hessMatrixPrintBool = false;
+            },
+            [] (const SimulConfig& sc) {
+                vector<list<SExprToken>> res;
+
+                for(auto& eachSetup : sc.membraneSettings.setupVec) {
+                    list<SExprToken> tokenList;
+                    // Add setup name.
+                    tokenList.push_back(SExprToken::makeString(eachSetup.name));
+                    // All all setup items.
+                    tokenList.splice(tokenList.end(), buildTokens<MembraneSetup>(eachSetup, membraneSetupParser()));
+                    res.push_back(move(tokenList));
                 }
+                return res;
             }
-        },
-        [] (const SimulConfig& sc) {
-            vector<vector<string>> res;
-            if(sc.mechParams.hessTracking) {
-                res.push_back({
-                    to_string(sc.mechParams.hessSkip),
-                    to_string(sc.mechParams.denseEstimationBool ? 0 : 1),
-                    to_string(sc.mechParams.rockSnapBool ? 0 : 1),
-                    to_string(sc.mechParams.hessMatrixPrintBool ? 0 : 1),
-                });
-            }
-            return res;
-        }
-    );
-    mechParser.addStringArgsWithAliases(
-        "EIGENTRACKING", { "EIGENTRACKING:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "There was an error parsing input file at Chemistry algorithm. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                const char * testStr1 = "OFF";
-                const char * testStr2 = lineVector[1].c_str();
-                if(strcmp(testStr1, testStr2) == 0)
-                    sc.mechParams.eigenTracking = false;
-                else
-                    sc.mechParams.eigenTracking = true;
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            res.push_back(sc.mechParams.eigenTracking ? "ON" : "OFF");
-            return res;
-        }
-    );
+        );
+        sysParser.addEmptyLine();
+    }
 
-    mechParser.addEmptyLine();
+    //--------------------------------------------------------------------------
+    // System geometries.
+    //--------------------------------------------------------------------------
+    {
+        sysParser.addComment("==================================================");
+        sysParser.addComment(" Geometric parameters");
+        sysParser.addComment("==================================================");
+        sysParser.addEmptyLine();
 
-    mechParser.addComment("# Same filament binding skip");
-    mechParser.addStringArgsWithAliases(
-        "SAMEFILBINDINGSKIP", { "SAMEFILBINDINGSKIP:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                "There was an error parsing input file at same filament binding skip. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.mechParams.sameFilBindSkip = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.mechParams.sameFilBindSkip) };
-        }
-    );
-    mechParser.addEmptyLine();
+        sysParser.addComment(" Set network sizes and shape");
+        sysParser.addComment(" - Set the number of compartments in x, y and z directions");
+        sysParser.addComment(" - Network size = compartment size (500nm by default) * (NX, NY, NZ)");
 
-    mechParser.addComment("# Special protocols");
-    mechParser.addStringArgsWithAliases(
-        "SPECIALPROTOCOL", { "SPECIALPROTOCOL:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector[1] == "PINBOUNDARYFILAMENTS") {
-                if(lineVector.size() > 5) {
+        sysParser.addStringArgsWithAliases(
+            "NX", { "NX:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout << "There was an error parsing input file at grid dimensions. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if(lineVector.size() == 2)
+                    sc.geoParams.NX = stoi(lineVector[1]);
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector< string > res;
+                if(sc.geoParams.NX) res.push_back(toString(sc.geoParams.NX));
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "NY", { "NY:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout << "There was an error parsing input file at grid dimensions. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if(lineVector.size() == 2)
+                    sc.geoParams.NY = stoi(lineVector[1]);
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector< string > res;
+                if(sc.geoParams.NY) res.push_back(toString(sc.geoParams.NY));
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "NZ", { "NZ:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout << "There was an error parsing input file at grid dimensions. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if(lineVector.size() == 2)
+                    sc.geoParams.NZ = stoi(lineVector[1]);
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector< string > res;
+                if(sc.geoParams.NZ) res.push_back(toString(sc.geoParams.NZ));
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" The compartment size");
+        sysParser.addComment(" - Based on Kuramoto length, see Popov et al., PLoS Comp Biol, 2016 ");
+        sysParser.addComment(" - Some chemical reaction rates are scaled based on compartment size");
+
+        sysParser.addStringArgsWithAliases(
+            "COMPARTMENTSIZEX", { "COMPARTMENTSIZEX:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout << "There was an error parsing input file at compartment size. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if(lineVector.size() == 2)
+                    sc.geoParams.compartmentSizeX = stod(lineVector[1]);
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector< string > res;
+                if(sc.geoParams.compartmentSizeX) res.push_back(toString(sc.geoParams.compartmentSizeX));
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "COMPARTMENTSIZEY", { "COMPARTMENTSIZEY:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout << "There was an error parsing input file at compartment size. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if(lineVector.size() == 2)
+                    sc.geoParams.compartmentSizeY = stod(lineVector[1]);
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector< string > res;
+                if(sc.geoParams.compartmentSizeY) res.push_back(toString(sc.geoParams.compartmentSizeY));
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "COMPARTMENTSIZEZ", { "COMPARTMENTSIZEZ:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout << "There was an error parsing input file at compartment size. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if(lineVector.size() == 2)
+                    sc.geoParams.compartmentSizeZ = stod(lineVector[1]);
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector< string > res;
+                if(sc.geoParams.compartmentSizeZ) res.push_back(toString(sc.geoParams.compartmentSizeZ));
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "FILCREATIONBOUNDS", { "FILCREATIONBOUNDS:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size()!=7) {
+                    log::error("FILCREATIONBOUNDS should have 6 elements. Exiting.");
+                    throw std::runtime_error("Invalid arguments.");
+                }
+                else {
+                    auto& s = sc.geoParams.fracGridSpan;
+                    parse(s[0][0], lineVector[1]);
+                    parse(s[0][1], lineVector[2]);
+                    parse(s[0][2], lineVector[3]);
+                    parse(s[1][0], lineVector[4]);
+                    parse(s[1][1], lineVector[5]);
+                    parse(s[1][2], lineVector[6]);
+                }
+            },
+            [] (const SimulConfig& sc) {
+                auto& s = sc.geoParams.fracGridSpan;
+                return vector<string> {
+                    toString(s[0][0]),
+                    toString(s[0][1]),
+                    toString(s[0][2]),
+                    toString(s[1][0]),
+                    toString(s[1][1]),
+                    toString(s[1][2]),
+                };
+            }
+        );
+
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Cylinder setup");
+        sysParser.addComment(" - Changes not recommended");
+
+        sysParser.addStringArgsWithAliases(
+            "MONOMERSIZE", { "MONOMERSIZE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.geoParams.monomerSize.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.geoParams.monomerSize.push_back(atof((lineVector[i].c_str())));
+                }
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector< string > res;
+                for(const auto& s : sc.geoParams.monomerSize)
+                    res.push_back(toString(s));
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "CYLINDERSIZE", { "CYLINDERSIZE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.geoParams.cylinderSize.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.geoParams.cylinderSize.push_back(atof((lineVector[i].c_str())));
+                }
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector< string > res;
+                for(const auto& s : sc.geoParams.cylinderSize)
+                    res.push_back(toString(s));
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Surface curvature policy.");
+        sysParser.addComment(" - Choose in with-sign, squared or mem3dg");
+        sysParser.addSingleArg(
+            "surface-curvature-policy",
+            [](auto&& conf) -> auto& { return conf.geoParams.surfaceGeometrySettings.curvPol; }
+        );
+
+        sysParser.addComment(" Configure mesh adapter.");
+        sysParser.addArgs(
+            "mesh-adapter",
+            [](SimulConfig& conf, const SExpr::ListType& sel) {
+                auto& s = conf.geoParams.meshAdapterSettings;
+                for(int i = 1; i < sel.size(); ++i) {
+                    parseKeyValue<MeshAdapterSettings>(s, sel[i], meshAdapterParser().dict, KeyValueParserUnknownKeyAction::error);
+                }
+            },
+            [](const SimulConfig& conf) {
+                auto& s = conf.geoParams.meshAdapterSettings;
+                return buildTokens<MeshAdapterSettings>(s, meshAdapterParser());
+            }
+        );
+
+        sysParser.addEmptyLine();
+    }
+
+    //--------------------------------------------------------------------------
+    // Boundary parameters.
+    //--------------------------------------------------------------------------
+    {
+        sysParser.addComment("==================================================");
+        sysParser.addComment(" Boundary parameters");
+        sysParser.addComment("==================================================");
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Define network boundary geometry (CUBIC, SPHERICAL, CYLINDER)");
+
+        sysParser.addStringArgsWithAliases(
+            "BOUNDARYSHAPE", { "BOUNDARYSHAPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout << "A boundary shape needs to be specified. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    sc.boundParams.boundaryType.boundaryShape = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { sc.boundParams.boundaryType.boundaryShape };
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Define how network boundary moves");
+        sysParser.addComment(" - Usage: BOUNDARYMOVE LEFT/RIGHT/BOTTOM/TOP/FRONT/BACK");
+        sysParser.addComment(" - Changes are not recommended.");
+
+        sysParser.addStringArgsWithAliases(
+            "BOUNDARYMOVE", { "BOUNDARYMOVE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout << "A boundary move type needs to be specified. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    sc.boundParams.boundaryType.boundaryMove.push_back(lineVector[1]);
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<vector<string>> res;
+                for(const auto& s : sc.boundParams.boundaryType.boundaryMove) {
+                    res.push_back({s});
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Set diameter for SPHERICAL or CYLINDER type");
+        sysParser.addComment(" - CUBIC: No need to set, boundary is the same as network size");
+
+        sysParser.addStringArgsWithAliases(
+            "BOUNDARYDIAMETER", { "BOUNDARYDIAMETER:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() == 2) {
+                    sc.boundParams.diameter = atof((lineVector[1].c_str()));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return sc.boundParams.diameter ?
+                    vector<string> { toString(sc.boundParams.diameter) } :
+                    vector<string> {};
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Boundary interactions ");
+        sysParser.addComment(" - Repulsion: Popov et al, 2016, PLoS Comp Biol");
+
+        sysParser.addStringArgsWithAliases(
+            "BOUNDARYCUTOFF", { "BOUNDARYCUTOFF:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
                     cout <<
-                         "There was an error parsing input file at pinning boundary filaments. Exiting."
-                         << endl;
+                        "There was an error parsing input file at Boundary parameters. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    sc.boundParams.BoundaryCutoff = atof((lineVector[1].c_str()));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.boundParams.BoundaryCutoff) };
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "BOUNDARYINTERACTIONK", { "BOUNDARYINTERACTIONK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout <<
+                        "There was an error parsing input file at Boundary parameters. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    sc.boundParams.BoundaryK = atof((lineVector[1].c_str()));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.boundParams.BoundaryK) };
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "BOUNDARYSCREENLENGTH", { "BOUNDARYSCREENLENGTH:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout <<
+                        "There was an error parsing input file at Boundary parameters. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    sc.boundParams.BScreenLength = atof((lineVector[1].c_str()));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.boundParams.BScreenLength) };
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Set boundary move parameters");
+        sysParser.addComment(" - Changes are not recommended.");
+
+        sysParser.addStringArgsWithAliases(
+            "BMOVESPEED", { "BMOVESPEED:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() == 2) {
+                    sc.boundParams.moveSpeed = atof((lineVector[1].c_str()));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return sc.boundParams.moveSpeed ?
+                    vector<string> { toString(sc.boundParams.moveSpeed) } :
+                    vector<string> {};
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "BMOVESTARTTIME", { "BMOVESTARTTIME:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() == 2) {
+                    sc.boundParams.moveStartTime = atof((lineVector[1].c_str()));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return sc.boundParams.moveStartTime ?
+                    vector<string> { toString(sc.boundParams.moveStartTime) } :
+                    vector<string> {};
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "BMOVEENDTIME", { "BMOVEENDTIME:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() == 2) {
+                    sc.boundParams.moveEndTime = atof((lineVector[1].c_str()));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return sc.boundParams.moveEndTime ?
+                    vector<string> { toString(sc.boundParams.moveEndTime) } :
+                    vector<string> {};
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "TRANSFERSHAREAXIS", { "TRANSFERSHAREAXIS:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 3) {
+                    cout <<
+                        "There was an error parsing input file at Chemistry parameters. Exiting."
+                        << endl;
                     exit(EXIT_FAILURE);
                 }
 
                 else{
-                    sc.mechParams.pinBoundaryFilaments = true;
-                    sc.mechParams.pinK = atof(lineVector[2].c_str());
-                    sc.mechParams.pinDistance = atof(lineVector[3].c_str());
-                    sc.mechParams.pinTime = atof(lineVector[4].c_str());
+                    cout<<"TRANSFERSHARE AXIS "<<lineVector[2]<<endl;
+                    if(lineVector[2]=="X")
+                        sc.boundParams.transfershareaxis=0;
+                    else if(lineVector[2]=="Y")
+                        sc.boundParams.transfershareaxis=1;
+                    else if(lineVector[2]=="Z")
+                        sc.boundParams.transfershareaxis=2;
+                    else if(lineVector[2]=="RADIAL") {
+                        sc.boundParams.transfershareaxis = 3;
+                        cout<<"RADIAL transfer not implemented. Change paramters. Exiting"
+                                "."<<endl;
+                        exit(EXIT_FAILURE);
+                    }
+                    else{
+                        cout << "There was an error parsing input file at Chemistry parameters. Exiting."
+                            << endl;
+                        exit(EXIT_FAILURE);
+                    }
                 }
-
-            }
-            else if (lineVector.size() == 5) {
-
-                //Qin
-                if(lineVector[1] == "PINLOWERBOUNDARYFILAMENTS") {
-
-                    sc.mechParams.pinLowerBoundaryFilaments = true;
-                    sc.mechParams.pinK = atof(lineVector[2].c_str());
-                    sc.mechParams.pinTime = atof(lineVector[3].c_str());
-                    sc.mechParams.pinFraction = atof(lineVector[4].c_str());
+            },
+            [] (const SimulConfig& sc) {
+                vector<vector<string>> res;
+                switch(sc.boundParams.transfershareaxis) {
+                    // TODO: figure out the 1st element
+                case 0:
+                    res.push_back({ "???", "X" });
+                    break;
+                case 1:
+                    res.push_back({ "???", "Y" });
+                    break;
+                case 2:
+                    res.push_back({ "???", "Z" });
+                    break;
+                case 3:
+                    res.push_back({ "???", "RADIAL" });
+                    break;
                 }
+                return res;
             }
-        },
-        [] (const SimulConfig& sc) {
-            vector<vector<string>> res;
-            if(sc.mechParams.pinBoundaryFilaments) {
-                res.push_back({
-                    "PINBOUNDARYFILAMENTS",
-                    to_string(sc.mechParams.pinK),
-                    to_string(sc.mechParams.pinDistance),
-                    to_string(sc.mechParams.pinTime)
-                });
-            }
-            if(sc.mechParams.pinLowerBoundaryFilaments) {
-                res.push_back({
-                    "PINLOWERBOUNDARYFILAMENTS",
-                    to_string(sc.mechParams.pinK),
-                    to_string(sc.mechParams.pinTime),
-                    to_string(sc.mechParams.pinFraction)
-                });
-            }
-            return res;
-        }
-    );
-    mechParser.addEmptyLine();
+        );
+        sysParser.addEmptyLine();
 
-}
+    }
 
-void SystemParser::initBoundParser() {
-    using namespace std;
+    //--------------------------------------------------------------------------
+    // Mechanical parameters.
+    //--------------------------------------------------------------------------
+    {
+        sysParser.addComment("==================================================");
+        sysParser.addComment(" Mechanical parameters");
+        sysParser.addComment("==================================================");
+        sysParser.addEmptyLine();
 
-    boundParser.addComment("##################################################");
-    boundParser.addComment("### Boundary parameters");
-    boundParser.addComment("##################################################");
-    boundParser.addEmptyLine();
+        sysParser.addComment("====== Mechanical algorithm ======");
+        sysParser.addEmptyLine();
 
-    boundParser.addComment("# Define network boundary geometry (CUBIC, SPHERICAL, CYLINDER)");
-    boundParser.addEmptyLine();
-
-    boundParser.addStringArgsWithAliases(
-        "BOUNDARYSHAPE", { "BOUNDARYSHAPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout << "A boundary shape needs to be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else {
-                sc.boundParams.boundaryType.boundaryShape = lineVector[1];
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { sc.boundParams.boundaryType.boundaryShape };
-        }
-    );
-    boundParser.addEmptyLine();
-
-    boundParser.addComment("# Define how network boundary moves");
-    boundParser.addComment("# Usage: BOUNDARYMOVE LEFT/RIGHT/BOTTOM/TOP/FRONT/BACK");
-    boundParser.addComment("# Changes are not recommended.");
-    boundParser.addEmptyLine();
-
-    boundParser.addStringArgsWithAliases(
-        "BOUNDARYMOVE", { "BOUNDARYMOVE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout << "A boundary move type needs to be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else {
-                sc.boundParams.boundaryType.boundaryMove.push_back(lineVector[1]);
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<vector<string>> res;
-            for(const auto& s : sc.boundParams.boundaryType.boundaryMove) {
-                res.push_back({s});
-            }
-            return res;
-        }
-    );
-    boundParser.addEmptyLine();
-
-    boundParser.addComment("# Set diameter for SPHERICAL or CYLINDER type");
-    boundParser.addComment("# CUBIC: No need to set, boundary is the same as network size");
-    boundParser.addEmptyLine();
-
-    boundParser.addStringArgsWithAliases(
-        "BOUNDARYDIAMETER", { "BOUNDARYDIAMETER:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() == 2) {
-                sc.boundParams.diameter = atof((lineVector[1].c_str()));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return sc.boundParams.diameter ?
-                vector<string> { to_string(sc.boundParams.diameter) } :
-                vector<string> {};
-        }
-    );
-    boundParser.addEmptyLine();
-
-    boundParser.addComment("### Boundary interactions ");
-    boundParser.addComment("# Repulsion: Popov et al, 2016, PLoS Comp Biol");
-    boundParser.addEmptyLine();
-
-    boundParser.addStringArgsWithAliases(
-        "BOUNDARYCUTOFF", { "BOUNDARYCUTOFF:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "There was an error parsing input file at Boundary parameters. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else {
-                sc.boundParams.BoundaryCutoff = atof((lineVector[1].c_str()));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.boundParams.BoundaryCutoff) };
-        }
-    );
-    boundParser.addStringArgsWithAliases(
-        "BOUNDARYINTERACTIONK", { "BOUNDARYINTERACTIONK:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "There was an error parsing input file at Boundary parameters. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else {
-                sc.boundParams.BoundaryK = atof((lineVector[1].c_str()));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.boundParams.BoundaryK) };
-        }
-    );
-    boundParser.addStringArgsWithAliases(
-        "BOUNDARYSCREENLENGTH", { "BOUNDARYSCREENLENGTH:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "There was an error parsing input file at Boundary parameters. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else {
-                sc.boundParams.BScreenLength = atof((lineVector[1].c_str()));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.boundParams.BScreenLength) };
-        }
-    );
-    boundParser.addEmptyLine();
-
-    boundParser.addComment("# Set boundary move parameters");
-    boundParser.addComment("# Changes are not recommended.");
-    boundParser.addEmptyLine();
-
-    boundParser.addStringArgsWithAliases(
-        "BMOVESPEED", { "BMOVESPEED:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() == 2) {
-                sc.boundParams.moveSpeed = atof((lineVector[1].c_str()));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return sc.boundParams.moveSpeed ?
-                vector<string> { to_string(sc.boundParams.moveSpeed) } :
-                vector<string> {};
-        }
-    );
-    boundParser.addStringArgsWithAliases(
-        "BMOVESTARTTIME", { "BMOVESTARTTIME:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() == 2) {
-                sc.boundParams.moveStartTime = atof((lineVector[1].c_str()));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return sc.boundParams.moveStartTime ?
-                vector<string> { to_string(sc.boundParams.moveStartTime) } :
-                vector<string> {};
-        }
-    );
-    boundParser.addStringArgsWithAliases(
-        "BMOVEENDTIME", { "BMOVEENDTIME:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() == 2) {
-                sc.boundParams.moveEndTime = atof((lineVector[1].c_str()));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return sc.boundParams.moveEndTime ?
-                vector<string> { to_string(sc.boundParams.moveEndTime) } :
-                vector<string> {};
-        }
-    );
-    boundParser.addStringArgsWithAliases(
-        "TRANSFERSHAREAXIS", { "TRANSFERSHAREAXIS:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 3) {
-                cout <<
-                     "There was an error parsing input file at Chemistry parameters. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-
-            else{
-                cout<<"TRANSFERSHARE AXIS "<<lineVector[2]<<endl;
-                if(lineVector[2]=="X")
-                    sc.boundParams.transfershareaxis=0;
-                else if(lineVector[2]=="Y")
-                    sc.boundParams.transfershareaxis=1;
-                else if(lineVector[2]=="Z")
-                    sc.boundParams.transfershareaxis=2;
-                else if(lineVector[2]=="RADIAL") {
-                    sc.boundParams.transfershareaxis = 3;
-                    cout<<"RADIAL transfer not implemented. Change paramters. Exiting"
-                            "."<<endl;
+        sysParser.addStringArgsWithAliases(
+            "CONJUGATEGRADIENT", { "CONJUGATEGRADIENT:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout <<
+                        "A conjugate gradient method must be specified. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
-                else{
-                    cout << "There was an error parsing input file at Chemistry parameters. Exiting."
-                         << endl;
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsAlgorithm.ConjugateGradient = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<vector<string>> res;
+                if(const auto& s = sc.mechParams.mechanicsAlgorithm.ConjugateGradient; !s.empty()) {
+                    res.push_back({ s });
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "MD", {},
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout << "A Mechanics algorithm must be specified. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsAlgorithm.MD = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<vector<string>> res;
+                if(const auto& s = sc.mechParams.mechanicsAlgorithm.MD; !s.empty()) {
+                    res.push_back({ s });
+                }
+                return res;
             }
-        },
-        [] (const SimulConfig& sc) {
-            vector<vector<string>> res;
-            switch(sc.boundParams.transfershareaxis) {
-                // TODO: figure out the 1st element
-            case 0:
-                res.push_back({ "???", "X" });
-                break;
-            case 1:
-                res.push_back({ "???", "Y" });
-                break;
-            case 2:
-                res.push_back({ "???", "Z" });
-                break;
-            case 3:
-                res.push_back({ "???", "RADIAL" });
-                break;
+        );
+        sysParser.addStringArgsWithAliases(
+            "GRADIENTTOLERANCE", { "GRADIENTTOLERANCE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsAlgorithm.gradientTolerance = atof(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& x = sc.mechParams.mechanicsAlgorithm.gradientTolerance; x) {
+                    res.push_back(toString(x));
+                }
+                return res;
             }
-            return res;
-        }
-    );
-    boundParser.addEmptyLine();
-
-    boundParser.addComment("# Set filament creation bounds.");
-    boundParser.addComment("# Changes are not recommended.");
-    boundParser.addEmptyLine();
-
-    boundParser.addStringArgsWithAliases(
-        "FILCREATIONBOUNDS", { "FILCREATIONBOUNDS:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.boundParams.fraccompartmentspan.clear();
-            if(lineVector.size()!=7) {
-                cout << "FILCREATIONBOUNDS should have 6 elements. Exiting." << endl;
-                exit(EXIT_FAILURE);
+        );
+        sysParser.addSingleArg(
+            "energy-change-relative-tolerance",
+            [](auto&& conf) -> auto& { return conf.mechParams.mechanicsAlgorithm.energyChangeRelativeTolerance; }
+        );
+        sysParser.addStringArgsWithAliases(
+            "MAXDISTANCE", { "MAXDISTANCE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsAlgorithm.maxDistance = atof(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& x = sc.mechParams.mechanicsAlgorithm.maxDistance; x) {
+                    res.push_back(toString(x));
+                }
+                return res;
             }
-            else{
-                vector<floatingpoint> tempvec;
-                vector<vector<floatingpoint>> tempbounds;
-                for(int i = 1;i<4;i++)
-                    tempvec.push_back(atof((lineVector[i].c_str())));
-                tempbounds.push_back(tempvec);
-                tempvec.clear();
-                for(int i = 4;i<7;i++)
-                    tempvec.push_back(atof((lineVector[i].c_str())));
-                tempbounds.push_back(tempvec);
-                sc.boundParams.fraccompartmentspan = tempbounds;
+        );
+        sysParser.addStringArgsWithAliases(
+            "LAMBDAMAX", { "LAMBDAMAX:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsAlgorithm.lambdaMax = atof(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& x = sc.mechParams.mechanicsAlgorithm.lambdaMax; x) {
+                    res.push_back(toString(x));
+                }
+                return res;
             }
-        },
-        [] (const SimulConfig& sc) {
-            vector<vector<string>> res;
-            if(const auto& frac = sc.boundParams.fraccompartmentspan; !frac.empty()) {
-                res.push_back({
-                    to_string(frac[0][0]), to_string(frac[0][1]), to_string(frac[0][2]),
-                    to_string(frac[1][0]), to_string(frac[1][1]), to_string(frac[1][2])
-                });
+        );
+        sysParser.addStringArgsWithAliases(
+            "LAMBDARUNNINGAVERAGEPROBABILITY", { "LAMBDARUNNINGAVERAGEPROBABILITY:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsAlgorithm.lambdarunningaverageprobability = atof(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& x = sc.mechParams.mechanicsAlgorithm.lambdarunningaverageprobability; x) {
+                    res.push_back(toString(x));
+                }
+                return res;
             }
-            return res;
-        }
-    );
-    boundParser.addEmptyLine();
-}
+        );
+        sysParser.addStringArgsWithAliases(
+            "LINESEARCHALGORITHM", { "LINESEARCHALGORITHM:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsAlgorithm.linesearchalgorithm = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<vector<string>> res;
+                if(const auto& s = sc.mechParams.mechanicsAlgorithm.linesearchalgorithm; !s.empty()) {
+                    res.push_back({ s });
+                }
+                return res;
+            }
+        );
+        sysParser.addComment(" Whether to try to restore when line search error happens. Default to true.");
+        sysParser.addStringArgs(
+            "try-to-recover-in-line-search-error",
+            [] (SimulConfig& conf, const vector<string>& lineVector) {
+                if(lineVector.size() == 2) {
+                    if(lineVector[1] == "true") {
+                        conf.mechParams.mechanicsAlgorithm.tryToRecoverInLineSearchError = true;
+                    }
+                    else if(lineVector[1] == "false") {
+                        conf.mechParams.mechanicsAlgorithm.tryToRecoverInLineSearchError = false;
+                    }
+                    else {
+                        log::error("Must specify \"true\" or \"false\" for try-to-recover-in-line-search-error.");
+                        throw runtime_error("Invalid input variable.");
+                    }
+                }
+            },
+            [] (const SimulConfig& conf) {
+                return vector<string> { conf.mechParams.mechanicsAlgorithm.tryToRecoverInLineSearchError ? "true" : "false" };
+            }
+        );
+        sysParser.addSingleArg(
+            "adapt-mesh-during-minimization",
+            [](auto&& conf) -> auto& { return conf.mechParams.mechanicsAlgorithm.adaptMeshDuringMinimization; }
+        );
+        sysParser.addEmptyLine();
 
-void SystemParser::boundPostProcessing(SimulConfig& sc) const {
+        sysParser.addComment("====== Force fields ======");
+        sysParser.addEmptyLine();
 
-    if(const auto& bm = sc.boundParams.boundaryType.boundaryMove; !bm.empty()) {
-        vector<int> leftfrontbottom = {0,0,0};
-        vector<int> rightbacktop = {0,0,0};
+        sysParser.addComment(" Actin filaments ");
+        sysParser.addEmptyLine();
 
-        for(const auto& eachBM : bm) {
-            if(eachBM == "LEFT")
-                leftfrontbottom[0] = 1;
-            else if(eachBM == "BOTTOM")
-                leftfrontbottom[1] = 1;
-            else if(eachBM == "FRONT")
-                leftfrontbottom[2] = 1;
-            else if(eachBM == "RIGHT")
-                rightbacktop[0] = 1;
-            else if(eachBM == "TOP")
-                rightbacktop[1] = 1;
-            else if(eachBM == "BACK")
-                rightbacktop[2] = 1;
-        }
+        sysParser.addComment(" Stretching: Popov et al, 2016, PLoS Comp Biol");
+        sysParser.addStringArgsWithAliases(
+            "FSTRETCHINGFFTYPE", { "FSTRETCHINGFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Filament stretching FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.FStretchingType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.FStretchingType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "FSTRETCHINGK", { "FSTRETCHINGK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.FStretchingK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.FStretchingK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.FStretchingK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
 
-        for(int i = 0; i < 3; i++){
-            int addthemup = leftfrontbottom[i] + rightbacktop[i];
-            if(addthemup > 0)
-                sc.boundParams.transfershareaxis = i;
-            if(addthemup == 2)
-                sc.boundParams.planestomove = 2;
-            else if(leftfrontbottom[i] == 1)
-                sc.boundParams.planestomove = 1;
-            else if(rightbacktop[i] == 1)
-                sc.boundParams.planestomove = 0;
-        }
+        sysParser.addComment(" Bending: Ott et al, 1993, Phys Rev E");
+        sysParser.addStringArgsWithAliases(
+            "FBENDINGFFTYPE", { "FBENDINGFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Filament bending FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.FBendingType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.FBendingType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "FBENDINGK", { "FBENDINGK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.FBendingK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.FBendingK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.FBendingK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "FBENDINGTHETA", { "FBENDINGTHETA:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.FBendingTheta.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.FBendingTheta.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.FBendingTheta) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Twisting: Currently not implemented");
+        sysParser.addStringArgsWithAliases(
+            "FTWISTINGFFTYPE", { "FTWISTINGFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Filament twisting FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.FTwistingType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.FTwistingType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "FTWISTINGK", { "FTWISTINGK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.FTwistingK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.FTwistingK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.FTwistingK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "FTWISTINGPHI", { "FTWISTINGPHI:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.FTwistingPhi.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.FTwistingPhi.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.FTwistingPhi) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Linkers");
+        sysParser.addEmptyLine();
+        sysParser.addComment(" Stretching: Didonna et al, Phys Rev E, 2007");
+        sysParser.addStringArgsWithAliases(
+            "LSTRETCHINGFFTYPE", { "LSTRETCHINGFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Linker stretching FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.LStretchingType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.LStretchingType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "LSTRETCHINGK", { "LSTRETCHINGK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.LStretchingK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.LStretchingK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.LStretchingK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+        sysParser.addComment(" Bending/Twisting: not implemented");
+        sysParser.addStringArgsWithAliases(
+            "LBENDINGFFTYPE", { "LBENDINGFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Linker bending FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.LBendingType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.LBendingType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "LBENDINGK", { "LBENDINGK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.LBendingK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.LBendingK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.LBendingK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "LBENDINGTHETA", { "LBENDINGTHETA:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.LBendingTheta.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.LBendingTheta.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.LBendingTheta) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "LTWISTINGFFTYPE", { "LTWISTINGFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Linker twisting FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.LTwistingType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.LTwistingType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "LTWISTINGK", { "LTWISTINGK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.LTwistingK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.LTwistingK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.LTwistingK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "LTWISTINGPHI", { "LTWISTINGPHI:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.LTwistingPhi.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.LTwistingPhi.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.LTwistingPhi) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Myosin motors");
+        sysParser.addEmptyLine();
+        sysParser.addComment(" Stretching: Vilfan, Biophys J, 2010");
+        sysParser.addStringArgsWithAliases(
+            "MSTRETCHINGFFTYPE", { "MSTRETCHINGFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Motor stretching FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.MStretchingType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.MStretchingType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "MSTRETCHINGK", { "MSTRETCHINGK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.MStretchingK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.MStretchingK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.MStretchingK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+        sysParser.addComment(" Bending/Twisting: not implemented");
+        sysParser.addStringArgsWithAliases(
+            "MBENDINGFFTYPE", { "MBENDINGFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Motor bending FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.MBendingType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.MBendingType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "MBENDINGK", { "MBENDINGK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.MBendingK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.MBendingK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.MBendingK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "MBENDINGTHETA", { "MBENDINGTHETA:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.MBendingTheta.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.MBendingTheta.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.MBendingTheta) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "MTWISTINGFFTYPE", { "MTWISTINGFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Motor twisting FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.MTwistingType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.MTwistingType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "MTWISTINGK", { "MTWISTINGK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.MTwistingK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.MTwistingK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.MTwistingK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "MTWISTINGPHI", { "MTWISTINGPHI:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.MTwistingPhi.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.MTwistingPhi.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.MTwistingPhi) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Arp2/3 brancher");
+        sysParser.addComment(" - 4 force fields: Popov et al, Plos Comp Biol, 2016");
+        sysParser.addComment(" - No reliable literature values for this FF");
+        sysParser.addEmptyLine();
+        sysParser.addStringArgsWithAliases(
+            "BRSTRETCHINGFFTYPE", { "BRSTRETCHINGFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Brancher stretching FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.BrStretchingType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.BrStretchingType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "BRSTRETCHINGK", { "BRSTRETCHINGK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.BrStretchingK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.BrStretchingK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.BrStretchingK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "BRSTRETCHINGL", { "BRSTRETCHINGL:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.BrStretchingL.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.BrStretchingL.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.BrStretchingL) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+        sysParser.addStringArgsWithAliases(
+            "BRBENDINGFFTYPE", { "BRBENDINGFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Brancher bending FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.BrBendingType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.BrBendingType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "BRBENDINGK", { "BRBENDINGK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.BrBendingK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.BrBendingK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.BrBendingK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "BRBENDINGTHETA", { "BRBENDINGTHETA:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.BrBendingTheta.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.BrBendingTheta.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.BrBendingTheta) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+        sysParser.addStringArgsWithAliases(
+            "BRDIHEDRALFFTYPE", { "BRDIHEDRALFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Brancher dihedral FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.BrDihedralType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.BrDihedralType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "BRDIHEDRALK", { "BRDIHEDRALK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.BrDihedralK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.BrDihedralK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.BrDihedralK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+        sysParser.addStringArgsWithAliases(
+            "BRPOSITIONFFTYPE", { "BRPOSITIONFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Brancher position FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.BrPositionType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.BrPositionType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "BRPOSITIONK", { "BRPOSITIONK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.BrPositionK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.BrPositionK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.BrPositionK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Boundary");
+        sysParser.addComment(" Boundary repulsion force field. Parameters are set in the boundary section.");
+        sysParser.addStringArgsWithAliases(
+            "BOUNDARYFFTYPE", { "BOUNDARYFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Boundary FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.BoundaryFFType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.BoundaryFFType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Volume exclusion: Popov et al, 2016, PLoS Comp Biol");
+        sysParser.addStringArgsWithAliases(
+            "VOLUMEFFTYPE", { "VOLUMEFFTYPE:" },
+            [] (SimulConfig& conf, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    log::error("There was an error parsing input file at Volume FF type. Exiting.");
+                    throw runtime_error("Error parsing volume FF type.");
+                }
+                else if (lineVector.size() == 2) {
+                    parse(conf.mechParams.mechanicsFFType.cylinderVolumeExclusionFFType, lineVector[1]);
+                }
+            },
+            [] (const SimulConfig& conf) {
+                return vector<string> { toString(conf.mechParams.mechanicsFFType.cylinderVolumeExclusionFFType) };
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "VOLUMEK", { "VOLUMEK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.VolumeK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.VolumeK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.VolumeK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "VOLUMECUTOFF", { "VOLUMECUTOFF:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout <<
+                        "Error reading Volume cutoff. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    sc.mechParams.VolumeCutoff = stod(lineVector[1]);
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<vector<string>> res;
+                if(sc.mechParams.VolumeCutoff) {
+                    res.push_back({ toString(sc.mechParams.VolumeCutoff) });
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgs(
+            "volume-exclusion-monomer-interval",
+            [](SimulConfig& conf, const vector<string>& args) {
+                conf.mechParams.volumeExclusionMonomerInterval.clear();
+                for(int i = 1; i < args.size(); ++i) {
+                    conf.mechParams.volumeExclusionMonomerInterval.push_back(parse<Size>(args[i]));
+                }
+            },
+            [](const SimulConfig& conf) {
+                vector<string> res;
+                for(const auto& i : conf.mechParams.volumeExclusionMonomerInterval) {
+                    res.push_back(toString(i));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Bubble interactions");
+        sysParser.addStringArgsWithAliases(
+            "BUBBLEFFTYPE", { "BUBBLEFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Bubble FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.BubbleFFType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.BubbleFFType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "BUBBLEINTERACTIONK", { "BUBBLEINTERACTIONK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.BubbleK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.BubbleK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.BubbleK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "BUBBLESCREENLENGTH", { "BUBBLESCREENLENGTH:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.BubbleScreenLength.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.BubbleScreenLength.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.BubbleScreenLength) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "BUBBLECUTOFF", { "BUBBLECUTOFF:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout <<
+                        "Error reading Bubble cutoff. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    sc.mechParams.BubbleCutoff = stod(lineVector[1]);
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<vector<string>> res;
+                if(sc.mechParams.BubbleCutoff) {
+                    res.push_back({ toString(sc.mechParams.BubbleCutoff) });
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "BUBBLERADIUS", { "BUBBLERADIUS:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.BubbleRadius.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.BubbleRadius.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.BubbleRadius) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "NUMBUBBLETYPES", { "NUMBUBBLETYPES:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout <<
+                        "Error reading number of Bubble types. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    sc.mechParams.numBubbleTypes = atoi(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<vector<string>> res;
+                if(sc.mechParams.numBubbleTypes) {
+                    res.push_back({ toString(sc.mechParams.numBubbleTypes) });
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" MTOC");
+        sysParser.addStringArgsWithAliases(
+            "MTOCFFTYPE", { "MTOCFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at MTOC FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.MTOCFFType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.MTOCFFType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "MTOCBENDINGK", { "MTOCBENDINGK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.MTOCBendingK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.MTOCBendingK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.MTOCBendingK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" AFM bead");
+        sysParser.addStringArgsWithAliases(
+            "AFMFFTYPE", { "AFMFFTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at AFM FF type. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.mechParams.mechanicsFFType.AFMFFType = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(const auto& s = sc.mechParams.mechanicsFFType.AFMFFType; !s.empty()) {
+                    res.push_back(s);
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "AFMBENDINGK", { "AFMBENDINGK:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.mechParams.AFMBendingK.clear();
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.mechParams.AFMBendingK.push_back(atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& k : sc.mechParams.AFMBendingK) {
+                    res.push_back(toString(k));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Special bead constraint force field only used in GC filament model.");
+        sysParser.addStringArgs(
+            "bead-constraint-k",
+            [](SimulConfig& conf, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    LOG(ERROR) << "Error reading bead-constraint-k.";
+                    throw runtime_error("Error reading bead-constraint-k.");
+                }
+                conf.mechParams.beadConstraintK = stod(lineVector[1]);
+            },
+            [] (const SimulConfig& conf) {
+                return vector<string> { toString(conf.mechParams.beadConstraintK) };
+            }
+        );
+        sysParser.addStringArgs(
+            "bead-constraint-rmax",
+            [](SimulConfig& conf, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    LOG(ERROR) << "Error reading bead-constraint-rmax.";
+                    throw runtime_error("Error reading bead-constraint-rmax.");
+                }
+                conf.mechParams.beadConstraintRmax = stod(lineVector[1]);
+            },
+            [] (const SimulConfig& conf) {
+                return vector<string> { toString(conf.mechParams.beadConstraintRmax) };
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Membrane related force fields");
+        sysParser.addSingleArg("membrane-stretching-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.memStretchingFFType; });
+        sysParser.addSingleArg("membrane-tension-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.memTensionFFType; });
+        sysParser.addSingleArg("membrane-bending-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.memBendingFFType; });
+        sysParser.addSingleArg("volume-conservation-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.volumeConservationFFType; });
+        sysParser.addSingleArg("triangle-bead-volume-ff-type", [](auto&& sc) -> auto& { return sc.mechParams.mechanicsFFType.triangleBeadVolumeFFType; });
+
+        sysParser.addSingleArg("triangle-bead-volume-k", [](auto&& sc) -> auto& { return sc.mechParams.triangleBeadVolume.k; });
+        sysParser.addSingleArg("triangle-bead-volume-cutoff", [](auto&& sc) -> auto& { return sc.mechParams.triangleBeadVolume.cutoff; });
+        sysParser.addSingleArg("triangle-bead-volume-cutoff-mech", [](auto&& sc) -> auto& { return sc.mechParams.triangleBeadVolume.cutoffMech; });
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Membrane protein curvature mismatch");
+        sysParser.addComment(" - Usage: (curvature-mismatch <species-name> <k-bending> <eq-curvature>)");
+        sysParser.addStringArgs(
+            "curvature-mismatch",
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 4) {
+                    LOG(ERROR) << "Curvature mismatch must have 3 arguments.";
+                    throw runtime_error("Curvature mismatch must have 3 arguments.");
+                }
+                else {
+                    sc.mechParams.proteinCurvatureMismatchSetups.push_back({
+                        lineVector[1],
+                        parse<double>(lineVector[2]),
+                        parse<double>(lineVector[3]),
+                    });
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<vector<string>> res;
+                for(const auto& setup : sc.mechParams.proteinCurvatureMismatchSetups) {
+                    res.push_back({
+                        setup.speciesName,
+                        toString(setup.kBending),
+                        toString(setup.eqCurv),
+                    });
+                }
+                return res;
+            }
+        );
+        sysParser.addComment(" The following options can turn on/off curvature sensing/generation using curvature mismatch model. Typically, they should both be set to true.");
+        sysParser.addSingleArg("curvature-mismatch-enable-curvature-sensing",    [](auto&& conf) -> auto& { return conf.mechParams.curvatureMismatchEnableCurvatureSensing; });
+        sysParser.addSingleArg("curvature-mismatch-enable-curvature-generation", [](auto&& conf) -> auto& { return conf.mechParams.curvatureMismatchEnableCurvatureGeneration; });
+        sysParser.addEmptyLine();
+
+        sysParser.addComment("====== Protocols ======");
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Hessian tracking");
+        sysParser.addStringArgsWithAliases(
+            "HESSIANTRACKING", { "HESSIANTRACKING:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 5) {
+                    cout <<
+                    "There was an error parsing input file at Hessian tracking. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 5) {
+                    sc.mechParams.hessTracking = true;
+                    //sc.mechParams.hessDelta = atof(lineVector[1].c_str());
+                    sc.mechParams.hessSkip = atof(lineVector[1].c_str());
+                    int dense = atoi(lineVector[2].c_str());
+                    if(dense == 1){
+                        sc.mechParams.denseEstimationBool = true;
+                    }else{
+                        sc.mechParams.denseEstimationBool = false;
+                    }
+                    int rocksnapbool = atoi(lineVector[3].c_str());
+                    if(rocksnapbool == 1){
+                        sc.mechParams.rockSnapBool = true;
+                    }else{
+                        sc.mechParams.rockSnapBool = false;
+                    }
+                    int hessmatprintbool = atoi(lineVector[4].c_str());
+                    if(hessmatprintbool == 1){
+                        sc.mechParams.hessMatrixPrintBool = true;
+                    }else{
+                        sc.mechParams.hessMatrixPrintBool = false;
+                    }
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<vector<string>> res;
+                if(sc.mechParams.hessTracking) {
+                    res.push_back({
+                        toString(sc.mechParams.hessSkip),
+                        toString(sc.mechParams.denseEstimationBool ? 0 : 1),
+                        toString(sc.mechParams.rockSnapBool ? 0 : 1),
+                        toString(sc.mechParams.hessMatrixPrintBool ? 0 : 1),
+                    });
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "EIGENTRACKING", { "EIGENTRACKING:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout <<
+                        "There was an error parsing input file at Chemistry algorithm. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    const char * testStr1 = "OFF";
+                    const char * testStr2 = lineVector[1].c_str();
+                    if(strcmp(testStr1, testStr2) == 0)
+                        sc.mechParams.eigenTracking = false;
+                    else
+                        sc.mechParams.eigenTracking = true;
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                res.push_back(sc.mechParams.eigenTracking ? "ON" : "OFF");
+                return res;
+            }
+        );
+
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Special protocols");
+        sysParser.addStringArgsWithAliases(
+            "SPECIALPROTOCOL", { "SPECIALPROTOCOL:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() <= 1) {
+                    // Ignore empty protocol.
+                }
+                else if(lineVector[1] == "PINBOUNDARYFILAMENTS") {
+                    if(lineVector.size() != 5) {
+                        log::error("There was an error parsing input file at pinning boundary filaments. Exiting.");
+                        log::info("Usage: (SPECIALPROTOCOL PINBOUNDARYFILAMENTS <k> <distance> <time>)");
+                        throw runtime_error("Invalid boundary filament pinning.");
+                    }
+                    else{
+                        sc.mechParams.pinBoundaryFilaments = true;
+                        sc.mechParams.pinK = atof(lineVector[2].c_str());
+                        sc.mechParams.pinDistance = atof(lineVector[3].c_str());
+                        sc.mechParams.pinTime = atof(lineVector[4].c_str());
+                    }
+
+                }
+                else if (lineVector[1] == "PINLOWERBOUNDARYFILAMENTS") {
+
+                    if(lineVector.size() != 5) {
+                        log::error("There was an error parsing input file at pinning lower boundary filaments. Exiting.");
+                        log::info("Usage: (SPECIALPROTOCOL PINLOWERBOUNDARYFILAMENTS <k> <time> <fraction>)");
+                        throw runtime_error("Invalid lower boundary filament pinning.");
+                    }
+                    else {
+                        sc.mechParams.pinLowerBoundaryFilaments = true;
+                        sc.mechParams.pinK = atof(lineVector[2].c_str());
+                        sc.mechParams.pinTime = atof(lineVector[3].c_str());
+                        sc.mechParams.pinFraction = atof(lineVector[4].c_str());
+                    }
+                }
+                else if(lineVector[1] == "pin-initial-filament-below-z") {
+                    if(lineVector.size() != 4) {
+                        log::error("Invalid pin-initial-filament-below-z arguments.");
+                        log::info("Usage: (SPECIALPROTOCOL pin-initial-filament-below-z <k> <z>)");
+                        throw runtime_error("Invalid pin-initial-filament-below-z arguments.");
+                    }
+                    else {
+                        sc.mechParams.pinInitialFilamentBelowZ = true;
+                        sc.mechParams.pinK = parse<double>(lineVector[2]);
+                        sc.mechParams.pinInitialFilamentBelowZValue = parse<double>(lineVector[3]);
+                    }
+                }
+                else if(lineVector[1] == "MAKELINKERSSTATIC") {
+                    if (lineVector.size() != 3) {
+                        log::error("Invalid MAKELINKERSTATIC arguments.");
+                        log::info("Usage: (SPECIALPROTOCOL MAKELINKERSSTATIC <time>)");
+                        throw runtime_error("Invalid MAKELINKERSTATIC arguments.");
+                    } else {
+                        sc.chemParams.makeLinkersStatic = true;
+                        sc.chemParams.makeLinkersStaticTime = atof(lineVector[2].c_str());
+                    }
+                }
+                else if(lineVector[1] == "MAKEFILAMENTSSTATIC") {
+                    if (lineVector.size() != 3) {
+                        log::error("Invalid MAKEFILAMENTSSTATIC arguments.");
+                        log::info("Usage: (SPECIALPROTOCOL MAKEFILAMENTSSTATIC <time>)");
+                        throw runtime_error("Invalid MAKEFILAMENTSSTATIC arguments.");
+                    } else {
+                        sc.chemParams.makeFilamentsStatic = true;
+                        sc.chemParams.makeFilamentsStaticTime = atof(lineVector[2].c_str());
+                    }
+                    
+                }
+                else if(lineVector[1]  == "RATEDEPEND") {
+                    if (lineVector.size() != 4) {
+                        log::error("Invalid RATEDEPEND arguments.");
+                        log::info("Usage: (SPECIALPROTOCOL RATEDEPEND <time> <force>)");
+                        throw runtime_error("Invalid RATEDEPEND arguments.");
+                    } else {
+                        sc.chemParams.makeRateDepend = true;
+                        sc.chemParams.makeRateDependTime = atof(lineVector[2].c_str());
+                        sc.chemParams.makeRateDependForce = atof(lineVector[3].c_str());
+                    }
+                }
+                else if(lineVector[1]  == "AFM") {
+                    if (lineVector.size() != 7) {
+                        log::error("Invalid AFM arguments.");
+                        log::info("Usage: (SPECIALPROTOCOL AFM <step1> <step2> <iter-change> <step-total> <step-time>)");
+                        throw runtime_error("Invalid AFM arguments.");
+                    } else {
+                        sc.chemParams.makeAFM = true;
+                        //displacement of each pull
+                        sc.chemParams.AFMStep1 = atof(lineVector[2].c_str());
+                        sc.chemParams.AFMStep2 = atof(lineVector[3].c_str());
+                        //change dispalcement from 1 to 2
+                        sc.chemParams.IterChange = atof(lineVector[4].c_str());
+                        //total step of each AFM pull
+                        sc.chemParams.StepTotal = atof(lineVector[5].c_str());
+                        //time between each pull
+                        sc.chemParams.StepTime = atof(lineVector[6].c_str());
+                    }
+                }
+                else if(lineVector[1] == "scale-membrane-eq-area") {
+                    if(lineVector.size() == 4) {
+                        auto& change = sc.mechParams.membraneEqAreaChange.emplace();
+                        parse(change.rate,      lineVector[2]);
+                        parse(change.minEqArea, lineVector[3]);
+                    }
+                    else {
+                        log::error("Invalid scale-membrane-eq-area arguments.");
+                        log::info("Usage: (SPECIALPROTOCOL scale-membrane-eq-area <rate> <min-eq-area>)");
+                        throw runtime_error("Invalid scale-membrane-eq-area arguments.");
+                    }
+                }
+                else if(lineVector[1] == "scale-membrane-eq-volume") {
+                    if(lineVector.size() == 4) {
+                        auto& change = sc.mechParams.membraneEqVolumeChange.emplace();
+                        parse(change.rate,        lineVector[2]);
+                        parse(change.minEqVolume, lineVector[3]);
+                    }
+                    else {
+                        log::error("Invalid scale-membrane-eq-volume arguments.");
+                        log::info("Usage: (SPECIALPROTOCOL scale-membrane-eq-volume <rate> <min-eq-volume>)");
+                        throw runtime_error("Invalid scale-membrane-eq-volume arguments.");
+                    }
+                }
+                else {
+                    // Invalid special protocol.
+                    log::error("Invalid special protocol: {}", lineVector[1]);
+                    throw runtime_error("Invalid special protocol.");
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<vector<string>> res;
+                if(sc.mechParams.pinBoundaryFilaments) {
+                    res.push_back({
+                        "PINBOUNDARYFILAMENTS",
+                        toString(sc.mechParams.pinK),
+                        toString(sc.mechParams.pinDistance),
+                        toString(sc.mechParams.pinTime)
+                    });
+                }
+                if(sc.mechParams.pinLowerBoundaryFilaments) {
+                    res.push_back({
+                        "PINLOWERBOUNDARYFILAMENTS",
+                        toString(sc.mechParams.pinK),
+                        toString(sc.mechParams.pinTime),
+                        toString(sc.mechParams.pinFraction)
+                    });
+                }
+                if(sc.mechParams.pinInitialFilamentBelowZ) {
+                    res.push_back({
+                        "pin-initial-filament-below-z",
+                        toString(sc.mechParams.pinK),
+                        toString(sc.mechParams.pinInitialFilamentBelowZValue),
+                    });
+                }
+                if(sc.chemParams.makeLinkersStatic) {
+                    res.push_back({ "MAKELINKERSSTATIC", toString(sc.chemParams.makeLinkersStaticTime) });
+                }
+                if(sc.chemParams.makeFilamentsStatic) {
+                    res.push_back({ "MAKEFILAMENTSSTATIC", toString(sc.chemParams.makeFilamentsStaticTime) });
+                }
+                if(sc.chemParams.makeRateDepend) {
+                    res.push_back({
+                        "RATEDEPEND",
+                        toString(sc.chemParams.makeRateDependTime),
+                        toString(sc.chemParams.makeRateDependForce)
+                    });
+                }
+                if(sc.chemParams.makeAFM) {
+                    res.push_back({
+                        "AFM",
+                        toString(sc.chemParams.AFMStep1),
+                        toString(sc.chemParams.AFMStep2),
+                        toString(sc.chemParams.IterChange),
+                        toString(sc.chemParams.StepTotal),
+                        toString(sc.chemParams.StepTime)
+                    });
+                }
+                if(sc.mechParams.membraneEqAreaChange.has_value()) {
+                    auto& change = sc.mechParams.membraneEqAreaChange.value();
+                    res.push_back({
+                        "scale-membrane-eq-area",
+                        toString(change.rate),
+                        toString(change.minEqArea),
+                    });
+                }
+                if(sc.mechParams.membraneEqVolumeChange.has_value()) {
+                    auto& change = sc.mechParams.membraneEqVolumeChange.value();
+                    res.push_back({
+                        "scale-membrane-eq-volume",
+                        toString(change.rate),
+                        toString(change.minEqVolume),
+                    });
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
     }
 
-}
+    //--------------------------------------------------------------------------
+    // Chemistry parameters.
+    //--------------------------------------------------------------------------
+    {
+        sysParser.addComment("==================================================");
+        sysParser.addComment(" Chemistry parameters");
+        sysParser.addComment("==================================================");
+        sysParser.addEmptyLine();
 
-void SystemParser::initDyRateParser() {
-    using namespace std;
+        sysParser.addComment("====== Chemistry algorithm ======");
+        sysParser.addEmptyLine();
 
-    dyRateParser.addComment("##################################################");
-    dyRateParser.addComment("### Dynamic rate parameters");
-    dyRateParser.addComment("##################################################");
-    dyRateParser.addEmptyLine();
+        sysParser.addStringArgsWithAliases(
+            "CALGORITHM", { "CALGORITHM:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout <<
+                        "There was an error parsing input file at Chemistry algorithm. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.chemParams.chemistryAlgorithm.algorithm = lineVector[1];
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { sc.chemParams.chemistryAlgorithm.algorithm };
+            }
+        );
+        sysParser.addEmptyLine();
 
-    dyRateParser.addComment("# Brownian ratchet model");
-    dyRateParser.addComment("# Footer et al, PNAS, 2007");
-    dyRateParser.addEmptyLine();
-    dyRateParser.addStringArgsWithAliases(
-        "DFPOLYMERIZATIONTYPE", { "DFPOLYMERIZATIONTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.dyRateParams.dynamicRateType.dFPolymerizationType.push_back(lineVector[i]);
+        sysParser.addComment(" Use either time mode or step mode");
+        sysParser.addStringArgsWithAliases(
+            "RUNTIME", { "RUNTIME:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Chemistry algorithm. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.chemParams.chemistryAlgorithm.runTime = atof(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.chemParams.chemistryAlgorithm.runTime) };
             }
-        },
-        [] (const SimulConfig& sc) {
-            return sc.dyRateParams.dynamicRateType.dFPolymerizationType;
-        }
-    );
-    dyRateParser.addStringArgsWithAliases(
-        "DFPOLYMERIZATIONLEN", { "DFPOLYMERIZATIONLEN:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.dyRateParams.dFilPolymerizationCharLength.push_back(
-                            atof((lineVector[i].c_str())));
+        );
+        sysParser.addStringArgsWithAliases(
+            "SNAPSHOTTIME", { "SNAPSHOTTIME:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Chemistry algorithm. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.chemParams.chemistryAlgorithm.snapshotTime = atof(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.chemParams.chemistryAlgorithm.snapshotTime) };
             }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& x : sc.dyRateParams.dFilPolymerizationCharLength) {
-                res.push_back(to_string(x));
+        );
+        sysParser.addStringArgsWithAliases(
+            "MINIMIZATIONTIME", { "MINIMIZATIONTIME:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout <<
+                        "There was an error parsing input file at Chemistry algorithm. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.chemParams.chemistryAlgorithm.minimizationTime = atof(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.chemParams.chemistryAlgorithm.minimizationTime) };
             }
-            return res;
-        }
-    );
-    dyRateParser.addEmptyLine();
+        );
+        sysParser.addStringArgsWithAliases(
+            "NEIGHBORLISTTIME", { "NEIGHBORLISTTIME:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout <<
+                        "There was an error parsing input file at Chemistry algorithm. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.chemParams.chemistryAlgorithm.neighborListTime = atof(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.chemParams.chemistryAlgorithm.neighborListTime) };
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "INITIALSLOWDOWNTIME", { "INITIALSLOWDOWNTIME:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout <<
+                        "There was an error parsing input file at Chemistry algorithm. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.chemParams.chemistryAlgorithm.initialSlowDownTime = atof(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.chemParams.chemistryAlgorithm.initialSlowDownTime) };
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "DATADUMPTIME", { "DATADUMPTIME:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Chemistry algorithm. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.chemParams.chemistryAlgorithm.datadumpTime = atof(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.chemParams.chemistryAlgorithm.datadumpTime) };
+            }
+        );
+        sysParser.addEmptyLine();
+        sysParser.addStringArgsWithAliases(
+            "RUNSTEPS", { "RUNSTEPS:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Chemistry algorithm. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.chemParams.chemistryAlgorithm.runSteps = atoi(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.chemParams.chemistryAlgorithm.runSteps) };
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "SNAPSHOTSTEPS", { "SNAPSHOTSTEPS:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Chemistry algorithm. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.chemParams.chemistryAlgorithm.snapshotSteps = atoi(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.chemParams.chemistryAlgorithm.snapshotSteps) };
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "MINIMIZATIONSTEPS", { "MINIMIZATIONSTEPS:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout <<
+                        "There was an error parsing input file at Chemistry algorithm. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.chemParams.chemistryAlgorithm.minimizationSteps = atoi(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.chemParams.chemistryAlgorithm.minimizationSteps) };
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "NEIGHBORLISTSTEPS", { "NEIGHBORLISTSTEPS:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout <<
+                        "There was an error parsing input file at Chemistry algorithm. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.chemParams.chemistryAlgorithm.neighborListSteps = atoi(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.chemParams.chemistryAlgorithm.neighborListSteps) };
+            }
+        );
+        sysParser.addEmptyLine();
 
-    dyRateParser.addComment("# Motor catch-bond model");
-    dyRateParser.addComment("# Erdmann et al, JCP, 2013");
-    dyRateParser.addEmptyLine();
-    dyRateParser.addStringArgsWithAliases(
-        "DMUNBINDINGTYPE", { "DMUNBINDINGTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.dyRateParams.dynamicRateType.dMUnbindingType.push_back(lineVector[i]);
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return sc.dyRateParams.dynamicRateType.dMUnbindingType;
-        }
-    );
-    dyRateParser.addStringArgsWithAliases(
-        "DMUNBINDINGFORCE", { "DMUNBINDINGFORCE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.dyRateParams.dMotorUnbindingCharForce.push_back(
-                            atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& x : sc.dyRateParams.dMotorUnbindingCharForce) {
-                res.push_back(to_string(x));
-            }
-            return res;
-        }
-    );
-    dyRateParser.addEmptyLine();
+        sysParser.addComment("====== Chemistry setup ======");
+        sysParser.addEmptyLine();
+        sysParser.addStringArgsWithAliases(
+            "CHEMISTRYFILE", { "CHEMISTRYFILE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout << "Error reading chemistry input file. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
 
-    dyRateParser.addComment("# Motor walking");
-    dyRateParser.addComment("# Komianos & Papoian, PRX, 2018");
-    dyRateParser.addComment("# Tunable parameters based on different studies");
-    dyRateParser.addComment("# recommended values 24pN - 100 pN");
-    dyRateParser.addEmptyLine();
-    dyRateParser.addStringArgsWithAliases(
-        "DMWALKINGTYPE", { "DMWALKINGTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.dyRateParams.dynamicRateType.dMWalkingType.push_back(lineVector[i]);
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return sc.dyRateParams.dynamicRateType.dMWalkingType;
-        }
-    );
-    dyRateParser.addStringArgsWithAliases(
-        "DMWALKINGFORCE", { "DMWALKINGFORCE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.dyRateParams.dMotorWalkingCharForce.push_back(
-                            atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& x : sc.dyRateParams.dMotorWalkingCharForce) {
-                res.push_back(to_string(x));
-            }
-            return res;
-        }
-    );
-    dyRateParser.addEmptyLine();
+                else if (lineVector.size() == 2)
+                    sc.chemParams.chemistrySetup.inputFile = lineVector[1];
 
-    dyRateParser.addComment("# Linker slip-bond model");
-    dyRateParser.addComment("# Ferrer et al, PNAS, 2008");
-    dyRateParser.addEmptyLine();
-    dyRateParser.addStringArgsWithAliases(
-        "DLUNBINDINGTYPE", { "DLUNBINDINGTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.dyRateParams.dynamicRateType.dLUnbindingType.push_back(lineVector[i]);
+                else if(lineVector.size() < 2) {
+                    cout << "Must specify a chemistry input file. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { sc.chemParams.chemistrySetup.inputFile.string() };
             }
-        },
-        [] (const SimulConfig& sc) {
-            return sc.dyRateParams.dynamicRateType.dLUnbindingType;
-        }
-    );
-    dyRateParser.addStringArgsWithAliases(
-        "DLUNBINDINGLEN", { "DLUNBINDINGLEN:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.dyRateParams.dLinkerUnbindingCharLength.push_back(
-                            atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& x : sc.dyRateParams.dLinkerUnbindingCharLength) {
-                res.push_back(to_string(x));
-            }
-            return res;
-        }
-    );
-    dyRateParser.addStringArgsWithAliases(
-        "DLUNBINDINGAMP", { "DLUNBINDINGAMP:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.dyRateParams.dLinkerUnbindingAmplitude.push_back(
-                            atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& x : sc.dyRateParams.dLinkerUnbindingAmplitude) {
-                res.push_back(to_string(x));
-            }
-            return res;
-        }
-    );
-    dyRateParser.addEmptyLine();
+        );
+        sysParser.addEmptyLine();
 
-    dyRateParser.addComment("# Brancher slip-bond model");
-    dyRateParser.addComment("# Source unclear.");
-    dyRateParser.addEmptyLine();
-    dyRateParser.addStringArgsWithAliases(
-        "DBUNBINDINGTYPE", { "DBUNBINDINGTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.dyRateParams.dynamicRateType.dBUnbindingType.push_back(lineVector[i]);
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return sc.dyRateParams.dynamicRateType.dBUnbindingType;
-        }
-    );
-    dyRateParser.addStringArgsWithAliases(
-        "DBUNBINDINGLEN", { "DBUNBINDINGLEN:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.dyRateParams.dBranchUnbindingCharLength.push_back(
-                            atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& x : sc.dyRateParams.dBranchUnbindingCharLength) {
-                res.push_back(to_string(x));
-            }
-            return res;
-        }
-    );
-    dyRateParser.addStringArgsWithAliases(
-        "DBUNBINDINGF", { "DBUNBINDINGF:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.dyRateParams.dBranchUnbindingCharForce.push_back(
-                            atof((lineVector[i].c_str())));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            for(const auto& x : sc.dyRateParams.dBranchUnbindingCharForce) {
-                res.push_back(to_string(x));
-            }
-            return res;
-        }
-    );
-    dyRateParser.addEmptyLine();
+        sysParser.addComment("====== Numbers and protocols ======");
+        sysParser.addEmptyLine();
 
-    /// Manual Rate Changer
-    // It takes 5 inputs as start_time, plusend_poly, plusend_depoly, minusend_poly, minusend_depoly
-    // Currently it applies type 0 to all filament types
-    dyRateParser.addComment("### Manual rate changer.");
-    dyRateParser.addComment("# Do not change unless you know what you are doing.");
-    dyRateParser.addEmptyLine();
-    dyRateParser.addStringArgsWithAliases(
-        "MANUALSTARTTIME", { "MANUALSTARTTIME:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                sc.dyRateParams.manualCharStartTime = atof((lineVector[1].c_str()));
+        sysParser.addComment(" Numbers");
+        sysParser.addStringArgsWithAliases(
+            "NUMFILAMENTTYPES", { "NUMFILAMENTTYPES:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout <<
+                        "There was an error parsing input file at Chemistry parameters. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.chemParams.numFilaments = atoi(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.chemParams.numFilaments) };
             }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.dyRateParams.manualCharStartTime) };
-        }
-    );
-    dyRateParser.addStringArgsWithAliases(
-        "MANUALPLUSPOLYRATIO", { "MANUALPLUSPOLYRATIO:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                sc.dyRateParams.manualPlusPolyRate = atof((lineVector[1].c_str()));
+        );
+        sysParser.addStringArgsWithAliases(
+            "NUMBINDINGSITES", { "NUMBINDINGSITES:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.chemParams.numBindingSites.push_back(atoi(lineVector[i].c_str()));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(auto x : sc.chemParams.numBindingSites) {
+                    res.push_back(toString(x));
+                }
+                return res;
             }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.dyRateParams.manualPlusPolyRate) };
-        }
-    );
-    dyRateParser.addStringArgsWithAliases(
-        "MANUALPLUSDEPOLYRATIO", { "MANUALPLUSDEPOLYRATIO:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                sc.dyRateParams.manualPlusDepolyRate = atof((lineVector[1].c_str()));
+        );
+        sysParser.addStringArgsWithAliases(
+            "NUMMOTORHEADSMIN", { "NUMMOTORHEADSMIN:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.chemParams.motorNumHeadsMin.push_back(atoi(lineVector[i].c_str()));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(auto x : sc.chemParams.motorNumHeadsMin) {
+                    res.push_back(toString(x));
+                }
+                return res;
             }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.dyRateParams.manualPlusDepolyRate) };
-        }
-    );
-    dyRateParser.addStringArgsWithAliases(
-        "MANUALMINUSPOLYRATIO", { "MANUALMINUSPOLYRATIO:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                sc.dyRateParams.manualMinusPolyRate = atof((lineVector[1].c_str()));
+        );
+        sysParser.addStringArgsWithAliases(
+            "NUMMOTORHEADSMAX", { "NUMMOTORHEADSMAX:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.chemParams.motorNumHeadsMax.push_back(atoi(lineVector[i].c_str()));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(auto x : sc.chemParams.motorNumHeadsMax) {
+                    res.push_back(toString(x));
+                }
+                return res;
             }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.dyRateParams.manualMinusPolyRate) };
-        }
-    );
-    dyRateParser.addStringArgsWithAliases(
-        "MANUALMINUSDEPOLYRATIO", { "MANUALMINUSDEPOLYRATIO:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if (lineVector.size() >= 2) {
-                sc.dyRateParams.manualMinusDepolyRate = atof((lineVector[1].c_str()));
+        );
+        sysParser.addStringArgsWithAliases(
+            "MOTORSTEPSIZE", { "MOTORSTEPSIZE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.chemParams.motorStepSize.push_back(atof(lineVector[i].c_str()));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(auto x : sc.chemParams.motorStepSize) {
+                    res.push_back(toString(x));
+                }
+                return res;
             }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.dyRateParams.manualMinusDepolyRate) };
-        }
-    );
-    dyRateParser.addEmptyLine();
+        );
+        sysParser.addStringArgsWithAliases(
+            "LINKERBINDINGSKIP", { "LINKERBINDINGSKIP:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout <<
+                    "There was an error parsing input file at Chemistry algorithm. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.chemParams.linkerbindingskip = atoi(lineVector[1].c_str());
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.chemParams.linkerbindingskip) };
+            }
+        );
+        sysParser.addEmptyLine();
 
-}
+        sysParser.addComment(" Whether to allow all pairwise bindings on the same filament.");
+        sysParser.addComment(" - Even if bindings on the same filament is allowed, pairwise bindings will not happen on the same or neighboring cylinders.");
+        sysParser.addSingleArg(
+            "allow-same-filament-pair-binding",
+            [](auto&& conf) -> auto& { return conf.chemParams.allowPairBindingOnSameFilament; }
+        );
+        sysParser.addEmptyLine();
 
-void SystemParser::initGeoParser() {
-    using namespace std;
-
-    geoParser.addComment("##################################################");
-    geoParser.addComment("### Geometric parameters");
-    geoParser.addComment("##################################################");
-    geoParser.addEmptyLine();
-
-    geoParser.addComment("### Set network sizes and shape");
-    geoParser.addComment("# Set the number of compartments in x, y and z directions");
-    geoParser.addComment("# Network size = compartment size (500nm by default) * (NX, NY, NZ)");
-    geoParser.addEmptyLine();
-
-    geoParser.addStringArgsWithAliases(
-        "NX", { "NX:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "There was an error parsing input file at grid dimensions. Exiting." << endl;
-                exit(EXIT_FAILURE);
+        sysParser.addComment(" Dissipation tracking");
+        sysParser.addStringArgsWithAliases(
+            "DISSIPATIONTRACKING", { "DISSIPATIONTRACKING:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout <<
+                    "There was an error parsing input file at Chemistry algorithm. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.chemParams.dissTracking = (lineVector[1] == "ON");
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { sc.chemParams.dissTracking ? "ON" : "OFF" };
             }
-            else if(lineVector.size() == 2)
-                sc.geoParams.NX = stoi(lineVector[1]);
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector< string > res;
-            if(sc.geoParams.NX) res.push_back(to_string(sc.geoParams.NX));
-            return res;
-        }
-    );
-    geoParser.addStringArgsWithAliases(
-        "NY", { "NY:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "There was an error parsing input file at grid dimensions. Exiting." << endl;
-                exit(EXIT_FAILURE);
+        );
+        sysParser.addStringArgsWithAliases(
+            "EVENTTRACKING", { "EVENTTRACKING:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() != 2) {
+                    cout <<
+                    "There was an error parsing input file at Chemistry algorithm. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2) {
+                    sc.chemParams.eventTracking = (lineVector[1] == "ON");
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { sc.chemParams.eventTracking ? "ON" : "OFF" };
             }
-            else if(lineVector.size() == 2)
-                sc.geoParams.NY = stoi(lineVector[1]);
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector< string > res;
-            if(sc.geoParams.NY) res.push_back(to_string(sc.geoParams.NY));
-            return res;
-        }
-    );
-    geoParser.addStringArgsWithAliases(
-        "NZ", { "NZ:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "There was an error parsing input file at grid dimensions. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if(lineVector.size() == 2)
-                sc.geoParams.NZ = stoi(lineVector[1]);
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector< string > res;
-            if(sc.geoParams.NZ) res.push_back(to_string(sc.geoParams.NZ));
-            return res;
-        }
-    );
-    geoParser.addEmptyLine();
-
-    geoParser.addComment("### The compartment size");
-    geoParser.addComment("# Based on Kuramoto length, see Popov et al., PLoS Comp Biol, 2016 ");
-    geoParser.addComment("# Some chemical reaction rates are scaled based on compartment size");
-    geoParser.addEmptyLine();
-
-    geoParser.addStringArgsWithAliases(
-        "COMPARTMENTSIZEX", { "COMPARTMENTSIZEX:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "There was an error parsing input file at compartment size. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if(lineVector.size() == 2)
-                sc.geoParams.compartmentSizeX = stod(lineVector[1]);
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector< string > res;
-            if(sc.geoParams.compartmentSizeX) res.push_back(to_string(sc.geoParams.compartmentSizeX));
-            return res;
-        }
-    );
-    geoParser.addStringArgsWithAliases(
-        "COMPARTMENTSIZEY", { "COMPARTMENTSIZEY:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "There was an error parsing input file at compartment size. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if(lineVector.size() == 2)
-                sc.geoParams.compartmentSizeY = stod(lineVector[1]);
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector< string > res;
-            if(sc.geoParams.compartmentSizeY) res.push_back(to_string(sc.geoParams.compartmentSizeY));
-            return res;
-        }
-    );
-    geoParser.addStringArgsWithAliases(
-        "COMPARTMENTSIZEZ", { "COMPARTMENTSIZEZ:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "There was an error parsing input file at compartment size. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if(lineVector.size() == 2)
-                sc.geoParams.compartmentSizeZ = stod(lineVector[1]);
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector< string > res;
-            if(sc.geoParams.compartmentSizeZ) res.push_back(to_string(sc.geoParams.compartmentSizeZ));
-            return res;
-        }
-    );
-    geoParser.addEmptyLine();
-
-    geoParser.addComment("### Cylinder setup");
-    geoParser.addComment("### Changes not recommended");
-    geoParser.addEmptyLine();
-
-    geoParser.addStringArgsWithAliases(
-        "MONOMERSIZE", { "MONOMERSIZE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.geoParams.monomerSize.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.geoParams.monomerSize.push_back(atof((lineVector[i].c_str())));
-            }
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector< string > res;
-            for(const auto& s : sc.geoParams.monomerSize)
-                res.push_back(to_string(s));
-            return res;
-        }
-    );
-    geoParser.addStringArgsWithAliases(
-        "CYLINDERSIZE", { "CYLINDERSIZE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.geoParams.cylinderSize.clear();
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    sc.geoParams.cylinderSize.push_back(atof((lineVector[i].c_str())));
-            }
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector< string > res;
-            for(const auto& s : sc.geoParams.cylinderSize)
-                res.push_back(to_string(s));
-            return res;
-        }
-    );
-    geoParser.addEmptyLine();
-
-    geoParser.addComment("### Simulation dimension");
-    geoParser.addComment("### DO NOT CHANGE");
-    geoParser.addEmptyLine();
-
-    geoParser.addStringArgsWithAliases(
-        "NDIM", { "NDIM:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() !=  2) {
-                cout << "Number of dimensions needs to be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else {
-                sc.geoParams.nDim = short(atoi(lineVector[1].c_str()));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector< string > { to_string(sc.geoParams.nDim) };
-        }
-    );
-    geoParser.addEmptyLine();
-}
-
-void SystemParser::geoPostProcessing(SimulConfig& sc) const {
-    using namespace std;
-
-    if(sc.geoParams.cylinderSize.size() != sc.geoParams.monomerSize.size()) {
-
-        cout << "Must specify an equivalent number of cylinder and monomer sizes. Exiting."
-             << endl;
-        exit(EXIT_FAILURE);
+        );
+        sysParser.addEmptyLine();
     }
 
-    for(int i = 0; i < sc.geoParams.cylinderSize.size(); i++) {
+    //--------------------------------------------------------------------------
+    // Dynamic rate parameters.
+    //--------------------------------------------------------------------------
+    {
+        sysParser.addComment("==================================================");
+        sysParser.addComment(" Dynamic rate parameters");
+        sysParser.addComment("==================================================");
+        sysParser.addEmptyLine();
 
-#ifdef CHEMISTRY
-        if(sc.geoParams.cylinderSize[i] / sc.geoParams.monomerSize[i] < sc.geoParams.minCylinderNumMon) {
-            cout <<
-                 "With chemistry, cylinder size specified is too short. Exiting."
-                 << endl;
-            exit(EXIT_FAILURE);
-        }
-#endif
-        sc.geoParams.cylinderNumMon.push_back(int(sc.geoParams.cylinderSize[i] / sc.geoParams.monomerSize[i]));
+        sysParser.addComment(" Brownian ratchet model");
+        sysParser.addComment(" - Footer et al, PNAS, 2007");
+        sysParser.addStringArgsWithAliases(
+            "DFPOLYMERIZATIONTYPE", { "DFPOLYMERIZATIONTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.dyRateParams.dynamicRateType.dFPolymerizationType.push_back(lineVector[i]);
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return sc.dyRateParams.dynamicRateType.dFPolymerizationType;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "DFPOLYMERIZATIONLEN", { "DFPOLYMERIZATIONLEN:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.dyRateParams.dFilPolymerizationCharLength.push_back(
+                                atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& x : sc.dyRateParams.dFilPolymerizationCharLength) {
+                    res.push_back(toString(x));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
 
-        sc.geoParams.minCylinderSize.push_back(
-                sc.geoParams.minCylinderNumMon * sc.geoParams.monomerSize[i]);
+        sysParser.addComment(" Motor catch-bond model");
+        sysParser.addComment(" - Erdmann et al, JCP, 2013");
+        sysParser.addStringArgsWithAliases(
+            "DMUNBINDINGTYPE", { "DMUNBINDINGTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.dyRateParams.dynamicRateType.dMUnbindingType.push_back(lineVector[i]);
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return sc.dyRateParams.dynamicRateType.dMUnbindingType;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "DMUNBINDINGFORCE", { "DMUNBINDINGFORCE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.dyRateParams.dMotorUnbindingCharForce.push_back(
+                                atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& x : sc.dyRateParams.dMotorUnbindingCharForce) {
+                    res.push_back(toString(x));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
 
+        sysParser.addComment(" Motor walking");
+        sysParser.addComment(" - Komianos & Papoian, PRX, 2018");
+        sysParser.addComment(" - Tunable parameters based on different studies");
+        sysParser.addComment(" - recommended values 24pN - 100 pN");
+        sysParser.addStringArgsWithAliases(
+            "DMWALKINGTYPE", { "DMWALKINGTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.dyRateParams.dynamicRateType.dMWalkingType.push_back(lineVector[i]);
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return sc.dyRateParams.dynamicRateType.dMWalkingType;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "DMWALKINGFORCE", { "DMWALKINGFORCE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.dyRateParams.dMotorWalkingCharForce.push_back(
+                                atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& x : sc.dyRateParams.dMotorWalkingCharForce) {
+                    res.push_back(toString(x));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Linker slip-bond model");
+        sysParser.addComment(" - Ferrer et al, PNAS, 2008");
+        sysParser.addStringArgsWithAliases(
+            "DLUNBINDINGTYPE", { "DLUNBINDINGTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.dyRateParams.dynamicRateType.dLUnbindingType.push_back(lineVector[i]);
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return sc.dyRateParams.dynamicRateType.dLUnbindingType;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "DLUNBINDINGLEN", { "DLUNBINDINGLEN:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.dyRateParams.dLinkerUnbindingCharLength.push_back(
+                                atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& x : sc.dyRateParams.dLinkerUnbindingCharLength) {
+                    res.push_back(toString(x));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "DLUNBINDINGAMP", { "DLUNBINDINGAMP:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.dyRateParams.dLinkerUnbindingAmplitude.push_back(
+                                atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& x : sc.dyRateParams.dLinkerUnbindingAmplitude) {
+                    res.push_back(toString(x));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Brancher slip-bond model");
+        sysParser.addComment(" - Source unclear.");
+        sysParser.addStringArgsWithAliases(
+            "DBUNBINDINGTYPE", { "DBUNBINDINGTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.dyRateParams.dynamicRateType.dBUnbindingType.push_back(lineVector[i]);
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return sc.dyRateParams.dynamicRateType.dBUnbindingType;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "DBUNBINDINGLEN", { "DBUNBINDINGLEN:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.dyRateParams.dBranchUnbindingCharLength.push_back(
+                                atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& x : sc.dyRateParams.dBranchUnbindingCharLength) {
+                    res.push_back(toString(x));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "DBUNBINDINGF", { "DBUNBINDINGF:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    for(int i = 1; i < lineVector.size(); i++)
+                        sc.dyRateParams.dBranchUnbindingCharForce.push_back(
+                                atof((lineVector[i].c_str())));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                for(const auto& x : sc.dyRateParams.dBranchUnbindingCharForce) {
+                    res.push_back(toString(x));
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        /// Manual Rate Changer
+        // It takes 5 inputs as start_time, plusend_poly, plusend_depoly, minusend_poly, minusend_depoly
+        // Currently it applies type 0 to all filament types
+        sysParser.addComment(" Manual rate changer.");
+        sysParser.addComment(" - Do not change unless you know what you are doing.");
+        sysParser.addEmptyLine();
+        sysParser.addStringArgsWithAliases(
+            "MANUALSTARTTIME", { "MANUALSTARTTIME:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    sc.dyRateParams.manualCharStartTime = atof((lineVector[1].c_str()));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.dyRateParams.manualCharStartTime) };
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "MANUALPLUSPOLYRATIO", { "MANUALPLUSPOLYRATIO:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    sc.dyRateParams.manualPlusPolyRate = atof((lineVector[1].c_str()));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.dyRateParams.manualPlusPolyRate) };
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "MANUALPLUSDEPOLYRATIO", { "MANUALPLUSDEPOLYRATIO:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    sc.dyRateParams.manualPlusDepolyRate = atof((lineVector[1].c_str()));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.dyRateParams.manualPlusDepolyRate) };
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "MANUALMINUSPOLYRATIO", { "MANUALMINUSPOLYRATIO:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    sc.dyRateParams.manualMinusPolyRate = atof((lineVector[1].c_str()));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.dyRateParams.manualMinusPolyRate) };
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "MANUALMINUSDEPOLYRATIO", { "MANUALMINUSDEPOLYRATIO:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if (lineVector.size() >= 2) {
+                    sc.dyRateParams.manualMinusDepolyRate = atof((lineVector[1].c_str()));
+                }
+            },
+            [] (const SimulConfig& sc) {
+                return vector<string> { toString(sc.dyRateParams.manualMinusDepolyRate) };
+            }
+        );
+        sysParser.addEmptyLine();
     }
 
-    //find max compartment side
-    sc.geoParams.largestCompartmentSide = max({
-        sc.geoParams.compartmentSizeX,
-        sc.geoParams.compartmentSizeY,
-        sc.geoParams.compartmentSizeZ
-    });
-    //find max Cylinder size
-    sc.geoParams.largestCylinderSize = 0;
-    for(auto l : sc.geoParams.cylinderSize)
-        sc.geoParams.largestCylinderSize = max(sc.geoParams.largestCylinderSize, l);
+    //--------------------------------------------------------------------------
+    // System initializations.
+    //--------------------------------------------------------------------------
+    {
+        sysParser.addComment("==================================================");
+        sysParser.addComment(" Initial network setup");
+        sysParser.addComment("==================================================");
+        sysParser.addEmptyLine();
 
+        sysParser.addComment(" Initial bubble setup from external input");
+        sysParser.addStringArgsWithAliases(
+            "BUBBLEFILE", { "BUBBLEFILE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout << "Error reading bubble input file. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2)
+                    sc.bubbleSetup.inputFile = lineVector[1];
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(!sc.bubbleSetup.inputFile.empty()) {
+                    res.push_back( sc.bubbleSetup.inputFile.string() );
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Generate initial bubbles");
+        sysParser.addStringArgsWithAliases(
+            "NUMBUBBLES", { "NUMBUBBLES:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout << "Error reading number of bubbles. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2)
+                    sc.bubbleSetup.numBubbles = atoi(lineVector[1].c_str());
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(sc.bubbleSetup.numBubbles) {
+                    res.push_back( toString(sc.bubbleSetup.numBubbles) );
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "BUBBLETYPE", { "BUBBLETYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout << "Error reading bubble type. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2)
+                    sc.bubbleSetup.bubbleType = atoi(lineVector[1].c_str());
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(sc.bubbleSetup.bubbleType) {
+                    res.push_back( toString(sc.bubbleSetup.bubbleType) );
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" MTOC/AFM initialization.");
+        sysParser.addArgs(
+            "init-mtoc",
+            [](SimulConfig& conf, const SExpr::ListType& sel) {
+                MTOCInit bi;
+                for(int i = 1; i < sel.size(); ++i) {
+                    parseKeyValue<MTOCInit>(bi, sel[i], mtocInitParser().dict, KeyValueParserUnknownKeyAction::error);
+                }
+                conf.mtocSettings.initVec.push_back(move(bi));
+            },
+            [](const SimulConfig& conf) {
+                vector<list<SExprToken>> res;
+                for(auto& eachInit : conf.mtocSettings.initVec) {
+                    list<SExprToken> tokenList;
+                    // Add all setup items.
+                    tokenList.splice(tokenList.end(), buildTokens<MTOCInit>(eachInit, mtocInitParser()));
+                    res.push_back(move(tokenList));
+                }
+                return res;
+            }
+        );
+        sysParser.addArgs(
+            "init-afm",
+            [](SimulConfig& conf, const SExpr::ListType& sel) {
+                AFMInit bi;
+                for(int i = 1; i < sel.size(); ++i) {
+                    parseKeyValue<AFMInit>(bi, sel[i], afmInitParser().dict, KeyValueParserUnknownKeyAction::error);
+                }
+                conf.afmSettings.initVec.push_back(move(bi));
+            },
+            [](const SimulConfig& conf) {
+                vector<list<SExprToken>> res;
+                for(auto& eachInit : conf.afmSettings.initVec) {
+                    list<SExprToken> tokenList;
+                    // Add all setup items.
+                    tokenList.splice(tokenList.end(), buildTokens<AFMInit>(eachInit, afmInitParser()));
+                    res.push_back(move(tokenList));
+                }
+                return res;
+            }
+        );
+
+        sysParser.addComment(" Membrane initialization.");
+        sysParser.addArgs(
+            "init-membrane",
+            [](SimulConfig& conf, const SExpr::ListType& sel) {
+                if(sel.size() < 2) {
+                    log::error("Membrane initialization is incorrect.");
+                    log::info("Membrane initialization usage: (init-membrane <setup-name> [<item1> ...]");
+                    throw runtime_error("Membrane initialization is incorrect.");
+                }
+                else {
+                    MembraneInit mi;
+                    mi.name = get<SExpr::StringType>(sel[1].data);
+                    for(int i = 2; i < sel.size(); ++i) {
+                        parseKeyValue<MembraneInit>(mi, sel[i], membraneInitParser().dict, KeyValueParserUnknownKeyAction::error);
+                    }
+                    conf.membraneSettings.initVec.push_back(move(mi));
+                }
+            },
+            [](const SimulConfig& conf) {
+                vector<list<SExprToken>> res;
+                for(auto& eachInit : conf.membraneSettings.initVec) {
+                    list<SExprToken> tokenList;
+                    // Add setup name.
+                    tokenList.push_back(SExprToken::makeString(eachInit.name));
+                    // Add all setup items.
+                    tokenList.splice(tokenList.end(), buildTokens<MembraneInit>(eachInit, membraneInitParser()));
+                    res.push_back(move(tokenList));
+                }
+                return res;
+            }
+        );
+
+        sysParser.addComment(" Fixed vertex attachment initialization.");
+        sysParser.addComment(" - Each attachment is initialized using \"coord_xyz..., search_range, k_stretch\".");
+        sysParser.addStringArgs(
+            "init-fixed-vertex-attachment",
+            [](SimulConfig& conf, const vector<string>& lineVector) {
+                const int partsize = 5;
+                if(lineVector.size() % partsize == 1) {
+                    // Clear original.
+                    auto& att = conf.membraneSettings.fixedVertexAttachmentInits.attachments;
+                    att.clear();
+                    for(int i = 1; i < lineVector.size(); i += 5) {
+                        att.push_back({
+                            {
+                                parse<FP>(lineVector[i + 0]),
+                                parse<FP>(lineVector[i + 1]),
+                                parse<FP>(lineVector[i + 2]),
+                            },
+                            parse<FP>(lineVector[i + 3]),
+                            parse<FP>(lineVector[i + 4]),
+                        });
+                    }
+                }
+                else {
+                    log::error("Fixed vertex attachment initialization is incorrect.");
+                    throw runtime_error("Fixed vertex attachment initialization is incorrect.");
+                }
+            },
+            [](const SimulConfig& conf) {
+                vector<string> res;
+                for(auto& eachAtt : conf.membraneSettings.fixedVertexAttachmentInits.attachments) {
+                    res.push_back(toString(eachAtt.coord[0]));
+                    res.push_back(toString(eachAtt.coord[1]));
+                    res.push_back(toString(eachAtt.coord[2]));
+                    res.push_back(toString(eachAtt.range));
+                    res.push_back(toString(eachAtt.kStretch));
+                }
+                return res;
+            }
+        );
+
+        sysParser.addComment(" Initial filament setup from external input");
+        sysParser.addStringArgsWithAliases(
+            "FILAMENTFILE", { "FILAMENTFILE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout << "Error reading filament input file. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2)
+                    sc.filamentSetup.inputFile = lineVector[1];
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(!sc.filamentSetup.inputFile.empty()) {
+                    res.push_back( sc.filamentSetup.inputFile.string() );
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Generate initial filaments");
+        sysParser.addStringArgsWithAliases(
+            "NUMFILAMENTS", { "NUMFILAMENTS:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout << "Error reading number of filaments. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2)
+                    sc.filamentSetup.numFilaments = atoi(lineVector[1].c_str());
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(sc.filamentSetup.numFilaments) {
+                    res.push_back( toString(sc.filamentSetup.numFilaments) );
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "FILAMENTLENGTH", { "FILAMENTLENGTH:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout << "Error reading filament length. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2)
+                    sc.filamentSetup.filamentLength = atoi(lineVector[1].c_str());
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(sc.filamentSetup.filamentLength) {
+                    res.push_back( toString(sc.filamentSetup.filamentLength) );
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "FILAMENTTYPE", { "FILAMENTTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout << "Error reading filament type. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2)
+                    sc.filamentSetup.filamentType = atoi(lineVector[1].c_str());
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(sc.filamentSetup.filamentType) {
+                    res.push_back( toString(sc.filamentSetup.filamentType) );
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "PROJECTIONTYPE", { "PROJECTIONTYPE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout << "Error reading filament projection type. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2)
+                    sc.filamentSetup.projectionType = lineVector[1];
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(!sc.filamentSetup.projectionType.empty()) {
+                    res.push_back( sc.filamentSetup.projectionType );
+                }
+                return res;
+            }
+        );
+        sysParser.addComment(" In cylindrical boundary quasi 2D systems, allow angles between cylinder and cylindrical boundary to be within -20 and 20 degrees.");
+        sysParser.addStringArgs(
+            "restrict-cylinder-boundary-angle",
+            [] (SimulConfig& conf, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    log::error("Error specifying restrict-cylinder-boundary-angle.");
+                    log::info("Usage: (restrict-cylinder-boundary-angle <true/false>)");
+                    throw runtime_error("Error specifying restrict-cylinder-boundary-angle.");
+                }
+                else if (lineVector.size() == 2)
+                    conf.filamentSetup.restrictCylinderBoundaryAngle = lineVector[1] == "true";
+                else {}
+            },
+            [](const SimulConfig& conf) {
+                return vector<string> { conf.filamentSetup.restrictCylinderBoundaryAngle ? "true" : "false" };
+            }
+        );
+        sysParser.addComment(" In cylindrical boundary quasi 2D systems, make filaments only initialize in a ring region.");
+        sysParser.addStringArgs(
+            "form-rings",
+            [](SimulConfig& conf, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    log::error("Error specifying form-rings.");
+                    log::info("Usage: (form-rings <true/false>)");
+                    throw runtime_error("Error specifying form-rings.");
+                }
+                else if (lineVector.size() == 2)
+                    conf.filamentSetup.formRings = lineVector[1] == "true";
+                else {}
+            },
+            [](const SimulConfig& conf) {
+                return vector<string> { conf.filamentSetup.formRings ? "true" : "false" };
+            }
+        );
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Restart settings");
+        sysParser.addStringArgsWithAliases(
+            "RESTARTPHASE", { "RESTARTPHASE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                sc.metaParams.isRestart = true;
+                if(lineVector.size() > 2) {
+                    log::error("Error reading restart params. Exiting.");
+                    throw runtime_error("Error reading restart params.");
+                }
+                else if (lineVector.size() == 2){
+                    if(lineVector[1].find("USECHEMCOPYNUM"))
+                        sc.filamentSetup.USECHEMCOPYNUM = true;
+                }
+
+                // Also sets the system run state. Future: this should be moved to post processing.
+                SysParams::RUNSTATE = false;
+            },
+            [] (const SimulConfig& sc) {
+                vector<vector<string>> res;
+                if(sc.metaParams.isRestart) {
+                    vector<string> line;
+                    if(sc.filamentSetup.USECHEMCOPYNUM) {
+                        line.push_back("USECHEMCOPYNUM");
+                    }
+                    res.push_back(move(line));
+                }
+                return res;
+            }
+        );
+        sysParser.addStringArgsWithAliases(
+            "PINRESTARTFILE", { "PINRESTARTFILE:" },
+            [] (SimulConfig& sc, const vector<string>& lineVector) {
+                if(lineVector.size() > 2) {
+                    cout << "Error reading filament projection type. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else if (lineVector.size() == 2)
+                    sc.filamentSetup.pinRestartFile = lineVector[1];
+                else {}
+            },
+            [] (const SimulConfig& sc) {
+                vector<string> res;
+                if(!sc.filamentSetup.pinRestartFile.empty()) {
+                    res.push_back(sc.filamentSetup.pinRestartFile);
+                }
+                return res;
+            }
+        );
+        sysParser.addEmptyLine();
+    }
+
+    //--------------------------------------------------------------------------
+    // Various runtime configuration options.
+    //--------------------------------------------------------------------------
+    {
+        sysParser.addComment("==================================================");
+        sysParser.addComment(" Runtime configuration options.");
+        sysParser.addComment("==================================================");
+        sysParser.addEmptyLine();
+
+        sysParser.addComment(" Output settings.");
+        sysParser.addArgs(
+            "output",
+            [](SimulConfig& conf, const SExpr::ListType& sel) {
+                for(int i = 1; i < sel.size(); ++i) {
+                    parseKeyValue<OutputParams>(conf.outputParams, sel[i], outputParamsParser().dict, KeyValueParserUnknownKeyAction::error);
+                }
+            },
+            [](const SimulConfig& conf) {
+                return buildTokens<OutputParams>(conf.outputParams, outputParamsParser());
+            }
+        );
+        sysParser.addEmptyLine();
+    }
+
+    return sysParser;
 }
 
-void SystemParser::initInitParser() {
-    initParser.addComment("##################################################");
-    initParser.addComment("### Initial network setup");
-    initParser.addComment("##################################################");
-    initParser.addEmptyLine();
-
-    initParser.addComment("# Initial bubble setup from external input");
-    initParser.addStringArgsWithAliases(
-        "BUBBLEFILE", { "BUBBLEFILE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "Error reading bubble input file. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                sc.bubbleSetup.inputFile = lineVector[1];
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(!sc.bubbleSetup.inputFile.empty()) {
-                res.push_back( sc.bubbleSetup.inputFile.string() );
-            }
-            return res;
-        }
-    );
-    initParser.addEmptyLine();
-
-    initParser.addComment("# Generate initial bubbles");
-    initParser.addStringArgsWithAliases(
-        "NUMBUBBLES", { "NUMBUBBLES:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "Error reading number of bubbles. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                sc.bubbleSetup.numBubbles = atoi(lineVector[1].c_str());
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(sc.bubbleSetup.numBubbles) {
-                res.push_back( to_string(sc.bubbleSetup.numBubbles) );
-            }
-            return res;
-        }
-    );
-    initParser.addStringArgsWithAliases(
-        "BUBBLETYPE", { "BUBBLETYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "Error reading bubble type. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                sc.bubbleSetup.bubbleType = atoi(lineVector[1].c_str());
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(sc.bubbleSetup.bubbleType) {
-                res.push_back( to_string(sc.bubbleSetup.bubbleType) );
-            }
-            return res;
-        }
-    );
-    initParser.addEmptyLine();
-
-    initParser.addComment("; membrane setup");
-    initParser.addArgsWithAliases(
-        "membrane", {},
-        [] (SimulConfig& sc, const SExpr::ListType& sel) {
-            MembraneSetup ms;
-            for(int i = 1; i < sel.size(); ++i) {
-                parseKeyValue<MembraneSetup>(ms, sel[i], membraneSetupParser().dict, KeyValueParserUnknownKeyAction::warn);
-            }
-            sc.membraneSettings.setupVec.push_back(move(ms));
-        },
-        [] (const SimulConfig& sc) {
-            vector<list<ConfigFileToken>> res;
-
-            for(auto& eachSetup : sc.membraneSettings.setupVec) {
-                res.push_back(buildTokens<MembraneSetup>(eachSetup, membraneSetupParser()));
-            }
-            return res;
-        }
-    );
-
-    initParser.addComment("# Initial filament setup from external input");
-    initParser.addStringArgsWithAliases(
-        "FILAMENTFILE", { "FILAMENTFILE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "Error reading filament input file. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                sc.filamentSetup.inputFile = lineVector[1];
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(!sc.filamentSetup.inputFile.empty()) {
-                res.push_back( sc.filamentSetup.inputFile.string() );
-            }
-            return res;
-        }
-    );
-    initParser.addEmptyLine();
-
-    initParser.addComment("# Generate initial filaments");
-    initParser.addStringArgsWithAliases(
-        "NUMFILAMENTS", { "NUMFILAMENTS:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "Error reading number of filaments. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                sc.filamentSetup.numFilaments = atoi(lineVector[1].c_str());
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(sc.filamentSetup.numFilaments) {
-                res.push_back( to_string(sc.filamentSetup.numFilaments) );
-            }
-            return res;
-        }
-    );
-    initParser.addStringArgsWithAliases(
-        "FILAMENTLENGTH", { "FILAMENTLENGTH:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "Error reading filament length. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                sc.filamentSetup.filamentLength = atoi(lineVector[1].c_str());
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(sc.filamentSetup.filamentLength) {
-                res.push_back( to_string(sc.filamentSetup.filamentLength) );
-            }
-            return res;
-        }
-    );
-    initParser.addStringArgsWithAliases(
-        "FILAMENTTYPE", { "FILAMENTTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "Error reading filament type. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                sc.filamentSetup.filamentType = atoi(lineVector[1].c_str());
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(sc.filamentSetup.filamentType) {
-                res.push_back( to_string(sc.filamentSetup.filamentType) );
-            }
-            return res;
-        }
-    );
-    initParser.addStringArgsWithAliases(
-        "PROJECTIONTYPE", { "PROJECTIONTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "Error reading filament projection type. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                sc.filamentSetup.projectionType = lineVector[1];
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(!sc.filamentSetup.projectionType.empty()) {
-                res.push_back( sc.filamentSetup.projectionType );
-            }
-            return res;
-        }
-    );
-    initParser.addEmptyLine();
-
-    initParser.addComment("# Restart settings");
-    initParser.addStringArgsWithAliases(
-        "RESTARTPHASE", { "RESTARTPHASE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "Error reading restart params. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2){
-                if(lineVector[1].find("USECHEMCOPYNUM"))
-                sc.filamentSetup.USECHEMCOPYNUM = true;
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(sc.filamentSetup.USECHEMCOPYNUM) {
-                res.push_back("USECHEMCOPYNUM");
-            }
-            return res;
-        }
-    );
-    initParser.addStringArgsWithAliases(
-        "PINRESTARTFILE", { "PINRESTARTFILE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 2) {
-                cout << "Error reading filament projection type. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                sc.filamentSetup.pinRestartFile = lineVector[1];
-            else {}
-        },
-        [] (const SimulConfig& sc) {
-            vector<string> res;
-            if(!sc.filamentSetup.pinRestartFile.empty()) {
-                res.push_back(sc.filamentSetup.pinRestartFile);
-            }
-            return res;
-        }
-    );
-    initParser.addEmptyLine();
-
-    initParser.addComment("# Special setup types");
-    initParser.addStringArgsWithAliases(
-        "SPECIALSETUP", { "SPECIALSETUP:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() > 3) {
-                cout <<
-                     "There was an error parsing input file at special setup types. Exiting."
-                     << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector[1] == "MTOC") sc.specialParams.specialSetupType.mtoc = true;
-            else if (lineVector[1] == "AFM") sc.specialParams.specialSetupType.afm = true;
-        },
-        [] (const SimulConfig& sc) {
-            vector<vector<string>> res;
-            if(sc.specialParams.specialSetupType.mtoc) res.push_back({ "MTOC" });
-            if(sc.specialParams.specialSetupType.afm) res.push_back({ "AFM" });
-            return res;
-        }
-    );
-    initParser.addStringArgsWithAliases(
-        "MTOCFILAMENTTYPE", { "MTOCFILAMENTTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "A filament type to connect to an MTOC must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.specialParams.specialSetupType.mtocFilamentType = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.specialParams.specialSetupType.mtocFilamentType) };
-        }
-    );
-    initParser.addStringArgsWithAliases(
-        "MTOCNUMFILAMENTS", { "MTOCNUMFILAMENTS:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "A number of filaments to connect to an MTOC must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.specialParams.specialSetupType.mtocNumFilaments = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.specialParams.specialSetupType.mtocNumFilaments) };
-        }
-    );
-    initParser.addStringArgsWithAliases(
-        "MTOCFILAMENTLENGTH", { "MTOCFILAMENTLENGTH:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "A filament length for filaments connected to an MTOC must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.specialParams.specialSetupType.mtocFilamentLength = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.specialParams.specialSetupType.mtocFilamentLength) };
-        }
-    );
-    initParser.addStringArgsWithAliases(
-        "MTOCBUBBLETYPE", { "MTOCBUBBLETYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                     "A bubble type to connect to an MTOC must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.specialParams.specialSetupType.mtocBubbleType = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.specialParams.specialSetupType.mtocBubbleType) };
-        }
-    );
-    initParser.addStringArgsWithAliases(
-        "AFMFILAMENTTYPE", { "AFMFILAMENTTYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                    "A filament type to connect to an AFM must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.specialParams.specialSetupType.afmFilamentType = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.specialParams.specialSetupType.afmFilamentType) };
-        }
-    );
-    initParser.addStringArgsWithAliases(
-        "AFMNUMFILAMENTS", { "AFMNUMFILAMENTS:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                "A number of filaments to connect to an AFM must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.specialParams.specialSetupType.afmNumFilaments = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.specialParams.specialSetupType.afmNumFilaments) };
-        }
-    );
-    initParser.addStringArgsWithAliases(
-        "AFMFILAMENTLENGTH", { "AFMFILAMENTLENGTH:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                "A filament length for filaments connected to an AFM must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.specialParams.specialSetupType.afmFilamentLength = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.specialParams.specialSetupType.afmFilamentLength) };
-        }
-    );
-    initParser.addStringArgsWithAliases(
-        "AFMBUBBLETYPE", { "AFMBUBBLETYPE:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 2) {
-                cout <<
-                "A bubble type to connect to an MTOC must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                sc.specialParams.specialSetupType.afmBubbleType = atoi(lineVector[1].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> { to_string(sc.specialParams.specialSetupType.afmBubbleType) };
-        }
-    );
-    initParser.addStringArgsWithAliases(
-        "MTOCXYZCOORD", { "MTOCXYZCOORD:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            sc.specialParams.specialSetupType.mtocInputCoordXYZ.clear();
-            if(lineVector.size() != 4) {
-                cout <<
-                "Coordinates of MTOC must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 4) {
-                sc.specialParams.specialSetupType.mtocInputCoordXYZ.push_back(stof(lineVector[1].c_str()));
-                sc.specialParams.specialSetupType.mtocInputCoordXYZ.push_back(stof(lineVector[2].c_str()));
-                sc.specialParams.specialSetupType.mtocInputCoordXYZ.push_back(stof(lineVector[3].c_str()));
-            }
-        },
-        [] (const SimulConfig& sc) {
-            vector<vector<string>> res;
-            if(const auto& xyz = sc.specialParams.specialSetupType.mtocInputCoordXYZ; !xyz.empty()) {
-                res.push_back({
-                    to_string(xyz[0]),
-                    to_string(xyz[1]),
-                    to_string(xyz[2])
-                });
-            }
-            return res;
-        }
-    );
-    initParser.addEmptyLine();
-
-    initParser.addComment("# Special setup parameters");
-    initParser.addStringArgsWithAliases(
-        "MTOCFILAMENTCOORD", { "MTOCFILAMENTCOORD:" },
-        [] (SimulConfig& sc, const vector<string>& lineVector) {
-            if(lineVector.size() != 5) {
-                cout << "4 coordinates of MTOC filaments must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 5) {
-                sc.specialParams.mtocTheta1 = stof(lineVector[1].c_str());
-                sc.specialParams.mtocTheta2 = stof(lineVector[2].c_str());
-                sc.specialParams.mtocPhi1 = stof(lineVector[3].c_str());
-                sc.specialParams.mtocPhi2 = stof(lineVector[4].c_str());
-            }
-        },
-        [] (const SimulConfig& sc) {
-            return vector<string> {
-                to_string(sc.specialParams.mtocTheta1),
-                to_string(sc.specialParams.mtocTheta2),
-                to_string(sc.specialParams.mtocPhi1),
-                to_string(sc.specialParams.mtocPhi2)
-            };
-        }
-    );
-
-}
-
-} // namespace medyan
 
 FilamentData FilamentParser::readFilaments(std::istream& is) {
     is.clear();
     is.seekg(0);
-     vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> filamentVector;
-     vector<vector<vector<floatingpoint>>> linkerVector;
-     vector<vector<vector<floatingpoint>>> motorVector;
-     vector<vector<floatingpoint>> staticVector;
-     vector<tuple<string, short, vector<vector<floatingpoint>>>> boundVector;
-     vector<tuple<string, short, vector<floatingpoint>>> branchVector;
-     string line;
+
+    FilamentData fd;
+    std::string line;
     
     while(getline(is, line)) {
 
@@ -3008,59 +3070,27 @@ FilamentData FilamentParser::readFilaments(std::istream& is) {
 
         vector<string> lineVector = split<string>(line);
         if(lineVector.size() >= 8) {
-            vector<floatingpoint> coord1;
-            vector<floatingpoint> coord2;
-            vector<vector<floatingpoint>> coord3;
-            short type;
-            //aravind parse linkers, motors. June 30,2016.
             if(lineVector[0]=="FILAMENT"){
-            type = atoi((*(lineVector.begin() + 1)).c_str());
-            for(auto it = lineVector.begin() + 2; it != lineVector.begin() + 5; it++) {
-                coord1.push_back(atof(((*it).c_str())));
-            }
-            for(auto it = lineVector.begin() + 5; it != lineVector.end(); it++) {
-                coord2.push_back(atof(((*it).c_str())));
-                
-            }
-                filamentVector.emplace_back(type, coord1, coord2);}
-                /*Linker Motor*/
-            else
-            {
-                type = atoi((*(lineVector.begin() + 1)).c_str());
-                string boundType=lineVector[0];
-                for(auto it = lineVector.begin() + 2; it != lineVector.begin() + 5; it++) {
-                    coord1.push_back(atof(((*it).c_str())));
+                auto type = parse<int>(lineVector[1]);
+                std::vector<Vec<3, FP>> coords;
+                for(int i = 2; i < lineVector.size(); i += 3) {
+                    if(i + 3 > lineVector.size()) {
+                        log::error("In reading filament coordinates, the number of coordinates is not divisible by 3.");
+                        throw std::runtime_error("Error reading filament coordinates.");
+                    }
+                    coords.push_back({
+                        parse<FP>(lineVector[i]),
+                        parse<FP>(lineVector[i+1]),
+                        parse<FP>(lineVector[i+2]),
+                    });
                 }
-                for(auto it = lineVector.begin() + 5; it != lineVector.end(); it++) {
-                    coord2.push_back(atof(((*it).c_str())));
-                }
-                coord3.push_back(coord1);
-                coord3.push_back(coord2);
-                boundVector.emplace_back(boundType, type, coord3);
-            }
-        }
-            //aravind Feb 19, 2016. Parase Linkers, Motors.
-        else if(lineVector.size()==5) {
-            vector<floatingpoint> coord1;
-            vector<vector<floatingpoint>> coord3;
-            //USED ONLY TO RESTART PINNED TRAJECTORIES.
-            if(lineVector[0]=="STATIC"){
-                for(auto it = lineVector.begin() + 1; it != lineVector.begin() + 5; it++) {
-                    coord1.push_back(atof(((*it).c_str()))); //FORMAT FILAMENTTYPE COORDx COORDy COORDz.
-                }
-                staticVector.push_back({coord1});}
-            else{ // BRANCHER
-                short type = atoi((*(lineVector.begin() + 1)).c_str()); //FILAMENT TYPE THAT IT BINDS TO.
-                string boundType=lineVector[0];//BRANCHER BOUND NAME
-                for(auto it = lineVector.begin() + 2; it != lineVector.begin() + 5; it++) {
-                    coord1.push_back(atof(((*it).c_str())));
-                }
-                branchVector.emplace_back(boundType,type,coord1);
+
+                fd.filaments.push_back({ type, std::move(coords) });
             }
         }
     }
-      tuple< vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> , vector<tuple<string, short, vector<vector<floatingpoint>>>> , vector<tuple<string, short, vector<floatingpoint>>> , vector<vector<floatingpoint>> > returnVector=make_tuple(filamentVector,boundVector,branchVector, staticVector);
-    return returnVector;
+
+    return fd;
 }
 
 vector<MembraneParser::MembraneInfo> MembraneParser::readMembranes(std::istream& is) {
@@ -3135,12 +3165,12 @@ vector<MembraneParser::MembraneInfo> MembraneParser::readMembranes(std::istream&
     return res;
 }
 
-vector<tuple<short, vector<floatingpoint>>> BubbleParser::readBubbles(std::istream& is) {
+BubbleData BubbleParser::readBubbles(std::istream& is) {
     
     is.clear();
     is.seekg(0);
     
-    vector<tuple<short, vector<floatingpoint>>> returnVector;
+    BubbleData ret;
     string line;
 
     while(getline(is, line)) {
@@ -3149,55 +3179,70 @@ vector<tuple<short, vector<floatingpoint>>> BubbleParser::readBubbles(std::istre
 
         vector<string> lineVector = split<string>(line);
         if(lineVector.size() == 5) {
-            vector<floatingpoint> coord;
-            
-            short type = atoi((*(lineVector.begin() + 1)).c_str());
-
-            for(auto it = lineVector.begin() + 2; it != lineVector.end(); it++) {
-                coord.push_back(atof(((*it).c_str())));
-            }
-            returnVector.emplace_back(type, coord);
+            auto& newBubble = ret.bubbles.emplace_back();
+            parse(newBubble.type, lineVector[1]);
+            parse(newBubble.coord[0], lineVector[2]);
+            parse(newBubble.coord[1], lineVector[3]);
+            parse(newBubble.coord[2], lineVector[4]);
         }
     }
-    return returnVector;
+    return ret;
 }
 
-namespace medyan {
 
-void ChemistryParser::initChemDataParser() {
+KeyValueParser<SimulConfig> buildChemDataParser() {
     using namespace std;
 
-    chemDataParser.addComment("############################ SPECIES ###########################");
+    KeyValueParser<SimulConfig> chemDataParser;
+
+    chemDataParser.addComment("============================ SPECIES ============================");
     chemDataParser.addEmptyLine();
+
+    chemDataParser.addStringArgs(
+        "species-general",
+        [](SimulConfig& conf, const vector<string>& lineVector) {
+            if(lineVector.size() != 3) {
+                log::error("Error reading species-general. Exiting.");
+                log::info("Usage: (species-general <name> <rspecies-type>)");
+                throw std::runtime_error("Error reading species-general.");
+            }
+            conf.chemistryData.speciesGeneral.push_back({
+                lineVector[1],
+                lineVector[2],
+            });
+        },
+        [] (const SimulConfig& conf) {
+            vector<vector<string>> res;
+            for(auto& sinfo : conf.chemistryData.speciesGeneral) {
+                res.push_back({
+                    sinfo.name,
+                    sinfo.rspeciesType,
+                });
+            }
+            return res;
+        }
+    );
 
     chemDataParser.addStringArgsWithAliases(
         "SPECIESBULK", { "SPECIESBULK:" },
-        [this] (SimulConfig& sc, const vector<string>& lineVector) {
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  6 && lineVector.size() !=  8) {
-                cout << "Error reading a bulk species. Exiting." << endl;
-                exit(EXIT_FAILURE);
+                log::error("Error reading a bulk species. Exiting.");
+                throw std::runtime_error("Error reading a bulk species.");
             }
             else if (lineVector.size() == 6) {
 
                 if(lineVector[5] != "CONST" && lineVector[5] != "REG") {
 
-                    cout << "Option for bulk species not valid. Exiting." << endl;
-                    cout << lineVector[5] << endl;
-                    exit(EXIT_FAILURE);
+                    log::error("Rspecies type \"{}\" for bulk species not valid. Exiting.", lineVector[5]);
+                    throw std::runtime_error("Rspecies type for bulk species not valid.");
                 }
 
-                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
-                    cout << "Duplicate species names are not allowed. Exiting." << endl;
-                    exit(EXIT_FAILURE);
-                }
-                else {
-                    allSpeciesNames.insert(lineVector[1]);
-                }
-
-                sc.chemistryData.speciesBulk.push_back(tuple<string, int, floatingpoint, floatingpoint,
-                        string, string, floatingpoint>(lineVector[1], atoi(lineVector[2].c_str()),
+                sc.chemistryData.speciesBulk.push_back({
+                    lineVector[1], atoi(lineVector[2].c_str()),
                                 atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
-                                lineVector[5], "NONE", 0.0));
+                                lineVector[5], "NONE", 0.0
+                });
             }
             else if (lineVector.size() == 8) {
 
@@ -3207,18 +3252,11 @@ void ChemistryParser::initChemDataParser() {
                     exit(EXIT_FAILURE);
                 }
 
-                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
-                    cout << "Duplicate species names are not allowed. Exiting." << endl;
-                    exit(EXIT_FAILURE);
-                }
-                else {
-                    allSpeciesNames.insert(lineVector[1]);
-                }
-
-                sc.chemistryData.speciesBulk.push_back(tuple<string, int, floatingpoint, floatingpoint,
-                        string, string, floatingpoint>(lineVector[1], atoi(lineVector[2].c_str()),
+                sc.chemistryData.speciesBulk.push_back({
+                    lineVector[1], atoi(lineVector[2].c_str()),
                                 atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
-                                lineVector[5],lineVector[6], atof(lineVector[7].c_str())));
+                                lineVector[5],lineVector[6], atof(lineVector[7].c_str())
+                });
             }
             else {}
         },
@@ -3226,23 +3264,23 @@ void ChemistryParser::initChemDataParser() {
             vector<vector<string>> res;
             for(const auto& sb : sc.chemistryData.speciesBulk) {
                 // WTF is 5? Just use named members!
-                if(get<5>(sb) == "NONE") {
+                if(sb.copyNumberManipulationType == "NONE") {
                     res.push_back({
-                        get<0>(sb),
-                        to_string(get<1>(sb)),
-                        to_string(get<2>(sb)),
-                        to_string(get<3>(sb)),
-                        get<4>(sb)
+                        sb.name,
+                        toString(sb.initialCopyNumber),
+                        toString(sb.releaseTime),
+                        toString(sb.removalTime),
+                        sb.rspeciesType
                     });
                 } else {
                     res.push_back({
-                        get<0>(sb),
-                        to_string(get<1>(sb)),
-                        to_string(get<2>(sb)),
-                        to_string(get<3>(sb)),
-                        get<4>(sb),
-                        get<5>(sb),
-                        to_string(get<6>(sb))
+                        sb.name,
+                        toString(sb.initialCopyNumber),
+                        toString(sb.releaseTime),
+                        toString(sb.removalTime),
+                        sb.rspeciesType,
+                        sb.copyNumberManipulationType,
+                        toString(sb.holdMolarity)
                     });
                 }
             }
@@ -3253,7 +3291,7 @@ void ChemistryParser::initChemDataParser() {
 
     chemDataParser.addStringArgsWithAliases(
         "SPECIESDIFFUSING", { "SPECIESDIFFUSING:" },
-        [this] (SimulConfig& sc, const vector<string>& lineVector) {
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() >  9 || lineVector.size() < 7) {
                 cout << "Error reading a diffusing species. Exiting." << endl;
                 exit(EXIT_FAILURE);
@@ -3267,20 +3305,13 @@ void ChemistryParser::initChemDataParser() {
                     exit(EXIT_FAILURE);
                 }
 
-                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
-                    cout << "Duplicate species names are not allowed. Exiting." << endl;
-                    exit(EXIT_FAILURE);
-                }
-                else {
-                    allSpeciesNames.insert(lineVector[1]);
-                }
                 if(lineVector[6] == "AVG")
-                    sc.chemistryData.speciesDiffusing.push_back(tuple<string, int, floatingpoint, floatingpoint,
-                            floatingpoint, string, int, string, floatingpoint>
-                    (lineVector[1], atoi(lineVector[2].c_str()),
+                    sc.chemistryData.speciesDiffusing.push_back({
+                        lineVector[1], atoi(lineVector[2].c_str()),
                      atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
                      atof(lineVector[5].c_str()), lineVector[6], atoi(lineVector[7].c_str
-                             ()),"NONE", 0.0));
+                             ()),"NONE", 0.0
+                    });
             }
             else if (lineVector.size() == 7) {
 
@@ -3290,19 +3321,11 @@ void ChemistryParser::initChemDataParser() {
                     exit(EXIT_FAILURE);
                 }
 
-                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
-                    cout << "Duplicate species names are not allowed. Exiting." << endl;
-                    exit(EXIT_FAILURE);
-                }
-                else {
-                    allSpeciesNames.insert(lineVector[1]);
-                }
-                
-                sc.chemistryData.speciesDiffusing.push_back(tuple<string, int, floatingpoint, floatingpoint,
-                        floatingpoint, string, int, string, floatingpoint>
-                     (lineVector[1], atoi(lineVector[2].c_str()),
+                sc.chemistryData.speciesDiffusing.push_back({
+                    lineVector[1], atoi(lineVector[2].c_str()),
                      atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
-                     atof(lineVector[5].c_str()), lineVector[6], 0, "NONE", 0.0));
+                     atof(lineVector[5].c_str()), lineVector[6], 0, "NONE", 0.0
+                });
             }
             else if (lineVector.size() == 9) {
 
@@ -3312,59 +3335,81 @@ void ChemistryParser::initChemDataParser() {
                     exit(EXIT_FAILURE);
                 }
 
-                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
-                    cout << "Duplicate species names are not allowed. Exiting." << endl;
-                    exit(EXIT_FAILURE);
-                }
-                else {
-                    allSpeciesNames.insert(lineVector[1]);
-                }
-
-                sc.chemistryData.speciesDiffusing.push_back(tuple<string, int, floatingpoint, floatingpoint,
-                        floatingpoint, string, int, string, floatingpoint>
-                                                        (lineVector[1], atoi(lineVector[2].c_str()),
+                sc.chemistryData.speciesDiffusing.push_back({
+                    lineVector[1], atoi(lineVector[2].c_str()),
                                                          atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
                                                          atof(lineVector[5].c_str()),
                                                          lineVector[6], 0, lineVector[7],
-                                                         atof(lineVector[8].c_str())));
+                                                         atof(lineVector[8].c_str())
+                });
             }
             else {}
         },
         [] (const SimulConfig& sc) {
             vector<vector<string>> res;
             for(const auto& sd : sc.chemistryData.speciesDiffusing) {
-                // WTF is 5? WTF is 7?
-                if(get<5>(sd) == "AVG") {
+                if(sd.rspeciesType == "AVG") {
                     res.push_back({
-                        get<0>(sd),
-                        to_string(get<1>(sd)),
-                        to_string(get<2>(sd)),
-                        to_string(get<3>(sd)),
-                        to_string(get<4>(sd)),
-                        get<5>(sd),
-                        to_string(get<6>(sd))
+                        sd.name,
+                        toString(sd.initialCopyNumber),
+                        toString(sd.diffusionCoefficient),
+                        toString(sd.releaseTime),
+                        toString(sd.removalTime),
+                        sd.rspeciesType,
+                        toString(sd.numEvents)
                     });
-                } else if(get<7>(sd) == "NONE") {
+                } else if(sd.copyNumberManipulationType == "NONE") {
                     res.push_back({
-                        get<0>(sd),
-                        to_string(get<1>(sd)),
-                        to_string(get<2>(sd)),
-                        to_string(get<3>(sd)),
-                        to_string(get<4>(sd)),
-                        get<5>(sd)
+                        sd.name,
+                        toString(sd.initialCopyNumber),
+                        toString(sd.diffusionCoefficient),
+                        toString(sd.releaseTime),
+                        toString(sd.removalTime),
+                        sd.rspeciesType
                     });
                 } else {
                     res.push_back({
-                        get<0>(sd),
-                        to_string(get<1>(sd)),
-                        to_string(get<2>(sd)),
-                        to_string(get<3>(sd)),
-                        to_string(get<4>(sd)),
-                        get<5>(sd),
-                        get<7>(sd),
-                        to_string(get<8>(sd))
+                        sd.name,
+                        toString(sd.initialCopyNumber),
+                        toString(sd.diffusionCoefficient),
+                        toString(sd.releaseTime),
+                        toString(sd.removalTime),
+                        sd.rspeciesType,
+                        sd.copyNumberManipulationType,
+                        toString(sd.holdMolarity)
                     });
                 }
+            }
+            return res;
+        }
+    );
+    chemDataParser.addComment("Membrane surface diffusing species.");
+    chemDataParser.addComment("- Usage: (species-membrane-diffusing <name> <diffusion-coeff> <area>)");
+    chemDataParser.addComment("  - diffusion-coeff: diffusion coefficient of the species, in nm^2/s.");
+    chemDataParser.addComment("  - area: projected area of this protein on the membrane, in nm^2.");
+    chemDataParser.addStringArgs(
+        "species-membrane-diffusing",
+        [](SimulConfig& sc, const vector<string>& lineVector) {
+            if(lineVector.size() == 4) {
+                ChemistryData::SpeciesMembraneDiffusingInfo sinfo;
+                parse(sinfo.name, lineVector[1]);
+                parse(sinfo.diffusionCoefficient, lineVector[2]);
+                parse(sinfo.area, lineVector[3]);
+                sc.chemistryData.speciesMembraneDiffusing.push_back(move(sinfo));
+            }
+            else {
+                log::error("Usage: (species-membrane-diffusing <name> <diffusion-coeff> <area>)");
+                throw runtime_error("Invalid paramters for membrane-diffusing.");
+            }
+        },
+        [](const SimulConfig& sc) {
+            vector<vector<string>> res;
+            for(auto& sinfo : sc.chemistryData.speciesMembraneDiffusing) {
+                res.push_back({
+                    sinfo.name,
+                    toString(sinfo.diffusionCoefficient),
+                    toString(sinfo.area),
+                });
             }
             return res;
         }
@@ -3373,20 +3418,12 @@ void ChemistryParser::initChemDataParser() {
 
     chemDataParser.addStringArgsWithAliases(
         "SPECIESFILAMENT", { "SPECIESFILAMENT:" },
-        [this] (SimulConfig& sc, const vector<string>& lineVector) {
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a filament species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
-
-                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
-                    cout << "Duplicate species names are not allowed. Exiting." << endl;
-                    exit(EXIT_FAILURE);
-                }
-                else {
-                    allSpeciesNames.insert(lineVector[1]);
-                }
 
                 sc.chemistryData.speciesFilament[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
 
@@ -3398,7 +3435,7 @@ void ChemistryParser::initChemDataParser() {
             const auto& sf = sc.chemistryData.speciesFilament;
             for(int i = 0; i < sf.size(); ++i) {
                 for(const auto& eachS : sf[i]) {
-                    res.push_back({ eachS, to_string(i) });
+                    res.push_back({ eachS, toString(i) });
                 }
             }
             return res;
@@ -3408,20 +3445,12 @@ void ChemistryParser::initChemDataParser() {
 
     chemDataParser.addStringArgsWithAliases(
         "SPECIESBOUND", { "SPECIESBOUND:" },
-        [this] (SimulConfig& sc, const vector<string>& lineVector) {
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a filament bound species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
-
-                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
-                    cout << "Duplicate species names are not allowed. Exiting." << endl;
-                    exit(EXIT_FAILURE);
-                }
-                else {
-                    allSpeciesNames.insert(lineVector[1]);
-                }
 
                 sc.chemistryData.speciesBound[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
 
@@ -3433,7 +3462,7 @@ void ChemistryParser::initChemDataParser() {
             const auto& sb = sc.chemistryData.speciesBound;
             for(int i = 0; i < sb.size(); ++i) {
                 for(const auto& eachS : sb[i]) {
-                    res.push_back({ eachS, to_string(i) });
+                    res.push_back({ eachS, toString(i) });
                 }
             }
             return res;
@@ -3443,20 +3472,12 @@ void ChemistryParser::initChemDataParser() {
 
     chemDataParser.addStringArgsWithAliases(
         "SPECIESLINKER", { "SPECIESLINKER:" },
-        [this] (SimulConfig& sc, const vector<string>& lineVector) {
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a filament linker species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
-
-                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
-                    cout << "Duplicate species names are not allowed. Exiting." << endl;
-                    exit(EXIT_FAILURE);
-                }
-                else {
-                    allSpeciesNames.insert(lineVector[1]);
-                }
 
                 sc.chemistryData.speciesLinker[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
 
@@ -3468,7 +3489,7 @@ void ChemistryParser::initChemDataParser() {
             const auto& ss = sc.chemistryData.speciesLinker;
             for(int i = 0; i < ss.size(); ++i) {
                 for(const auto& eachS : ss[i]) {
-                    res.push_back({ eachS, to_string(i) });
+                    res.push_back({ eachS, toString(i) });
                 }
             }
             return res;
@@ -3476,20 +3497,12 @@ void ChemistryParser::initChemDataParser() {
     );
     chemDataParser.addStringArgsWithAliases(
         "SPECIESMOTOR", { "SPECIESMOTOR:" },
-        [this] (SimulConfig& sc, const vector<string>& lineVector) {
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a filament motor species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
-
-                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
-                    cout << "Duplicate species names are not allowed. Exiting." << endl;
-                    exit(EXIT_FAILURE);
-                }
-                else {
-                    allSpeciesNames.insert(lineVector[1]);
-                }
 
                 sc.chemistryData.speciesMotor[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
 
@@ -3501,7 +3514,7 @@ void ChemistryParser::initChemDataParser() {
             const auto& ss = sc.chemistryData.speciesMotor;
             for(int i = 0; i < ss.size(); ++i) {
                 for(const auto& eachS : ss[i]) {
-                    res.push_back({ eachS, to_string(i) });
+                    res.push_back({ eachS, toString(i) });
                 }
             }
             return res;
@@ -3509,20 +3522,12 @@ void ChemistryParser::initChemDataParser() {
     );
     chemDataParser.addStringArgsWithAliases(
         "SPECIESBRANCHER", { "SPECIESBRANCHER:" },
-        [this] (SimulConfig& sc, const vector<string>& lineVector) {
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a filament brancher species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
-
-                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
-                    cout << "Duplicate species names are not allowed. Exiting." << endl;
-                    exit(EXIT_FAILURE);
-                }
-                else {
-                    allSpeciesNames.insert(lineVector[1]);
-                }
 
                 sc.chemistryData.speciesBrancher[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
 
@@ -3534,7 +3539,7 @@ void ChemistryParser::initChemDataParser() {
             const auto& ss = sc.chemistryData.speciesBrancher;
             for(int i = 0; i < ss.size(); ++i) {
                 for(const auto& eachS : ss[i]) {
-                    res.push_back({ eachS, to_string(i) });
+                    res.push_back({ eachS, toString(i) });
                 }
             }
             return res;
@@ -3544,20 +3549,12 @@ void ChemistryParser::initChemDataParser() {
 
     chemDataParser.addStringArgsWithAliases(
         "SPECIESPLUSEND", { "SPECIESPLUSEND:" },
-        [this] (SimulConfig& sc, const vector<string>& lineVector) {
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a filament plus end species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
-
-                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
-                    cout << "Duplicate species names are not allowed. Exiting." << endl;
-                    exit(EXIT_FAILURE);
-                }
-                else {
-                    allSpeciesNames.insert(lineVector[1]);
-                }
 
                 sc.chemistryData.speciesPlusEnd[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
 
@@ -3569,7 +3566,7 @@ void ChemistryParser::initChemDataParser() {
             const auto& ss = sc.chemistryData.speciesPlusEnd;
             for(int i = 0; i < ss.size(); ++i) {
                 for(const auto& eachS : ss[i]) {
-                    res.push_back({ eachS, to_string(i) });
+                    res.push_back({ eachS, toString(i) });
                 }
             }
             return res;
@@ -3577,20 +3574,12 @@ void ChemistryParser::initChemDataParser() {
     );
     chemDataParser.addStringArgsWithAliases(
         "SPECIESMINUSEND", { "SPECIESMINUSEND:" },
-        [this] (SimulConfig& sc, const vector<string>& lineVector) {
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a filament minus end species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3) {
-
-                if(allSpeciesNames.find(lineVector[1]) != allSpeciesNames.end()) {
-                    cout << "Duplicate species names are not allowed. Exiting." << endl;
-                    exit(EXIT_FAILURE);
-                }
-                else {
-                    allSpeciesNames.insert(lineVector[1]);
-                }
 
                 sc.chemistryData.speciesMinusEnd[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
 
@@ -3602,7 +3591,7 @@ void ChemistryParser::initChemDataParser() {
             const auto& ss = sc.chemistryData.speciesMinusEnd;
             for(int i = 0; i < ss.size(); ++i) {
                 for(const auto& eachS : ss[i]) {
-                    res.push_back({ eachS, to_string(i) });
+                    res.push_back({ eachS, toString(i) });
                 }
             }
             return res;
@@ -3612,7 +3601,7 @@ void ChemistryParser::initChemDataParser() {
 
     chemDataParser.addStringArgsWithAliases(
         "BRANCHERBINDINGSITE", { "BRANCHERBINDINGSITE:" },
-        [this] (SimulConfig& sc, const vector<string>& lineVector) {
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a brancher binding site. Exiting." << endl;
                 exit(EXIT_FAILURE);
@@ -3626,7 +3615,7 @@ void ChemistryParser::initChemDataParser() {
             const auto& ss = sc.chemistryData.B_BINDING_INDEX;
             for(int i = 0; i < ss.size(); ++i) {
                 if (!ss[i].empty()) {
-                    res.push_back({ ss[i], to_string(i) });
+                    res.push_back({ ss[i], toString(i) });
                 }
             }
             return res;
@@ -3634,7 +3623,7 @@ void ChemistryParser::initChemDataParser() {
     );
     chemDataParser.addStringArgsWithAliases(
         "LINKERBINDINGSITE", { "LINKERBINDINGSITE:" },
-        [this] (SimulConfig& sc, const vector<string>& lineVector) {
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a linker binding site. Exiting." << endl;
                 exit(EXIT_FAILURE);
@@ -3648,7 +3637,7 @@ void ChemistryParser::initChemDataParser() {
             const auto& ss = sc.chemistryData.L_BINDING_INDEX;
             for(int i = 0; i < ss.size(); ++i) {
                 if (!ss[i].empty()) {
-                    res.push_back({ ss[i], to_string(i) });
+                    res.push_back({ ss[i], toString(i) });
                 }
             }
             return res;
@@ -3656,7 +3645,7 @@ void ChemistryParser::initChemDataParser() {
     );
     chemDataParser.addStringArgsWithAliases(
         "MOTORBINDINGSITE", { "MOTORBINDINGSITE:" },
-        [this] (SimulConfig& sc, const vector<string>& lineVector) {
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
             if(lineVector.size() !=  3) {
                 cout << "Error reading a motor binding site. Exiting." << endl;
                 exit(EXIT_FAILURE);
@@ -3670,7 +3659,7 @@ void ChemistryParser::initChemDataParser() {
             const auto& ss = sc.chemistryData.M_BINDING_INDEX;
             for(int i = 0; i < ss.size(); ++i) {
                 if (!ss[i].empty()) {
-                    res.push_back({ ss[i], to_string(i) });
+                    res.push_back({ ss[i], toString(i) });
                 }
             }
             return res;
@@ -3678,10 +3667,10 @@ void ChemistryParser::initChemDataParser() {
     );
     chemDataParser.addEmptyLine();
 
-    chemDataParser.addComment("########################### REACTIONS ##########################");
+    chemDataParser.addComment("============================ REACTIONS ============================");
     chemDataParser.addEmptyLine();
 
-    chemDataParser.addComment("# General reactions");
+    chemDataParser.addComment(" General reactions");
     chemDataParser.addStringArgsWithAliases(
         "GENREACTION", { "GENREACTION:" },
         [] (SimulConfig& sc, const vector<string>& lineVector) {
@@ -3738,7 +3727,7 @@ void ChemistryParser::initChemDataParser() {
             for(const auto& r : sc.chemistryData.genReactions) {
                 vector<string> line;
                 if(sc.chemParams.dissTracking) {
-                    line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+                    line.push_back(toString(get<3>(r)) + ":" + get<4>(r));
                 }
 
                 const auto& reactants = get<0>(r);
@@ -3753,7 +3742,7 @@ void ChemistryParser::initChemDataParser() {
                     else  { line.push_back(products[i]); }
                 }
 
-                line.push_back(to_string(get<2>(r)));
+                line.push_back(toString(get<2>(r)));
 
                 res.push_back(move(line));
             }
@@ -3762,7 +3751,85 @@ void ChemistryParser::initChemDataParser() {
     );
     chemDataParser.addEmptyLine();
 
-    chemDataParser.addComment("# Bulk reactions");
+    chemDataParser.addComment(" General reactions on membrane surfaces.");
+    chemDataParser.addStringArgs(
+        "reaction-surface",
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            ChemistryData::ReactionSurfaceInfo rinfo;
+
+            if(lineVector.size() < 3) {
+                log::error("Usage: (reaction-surface <rate> [s1 [s2 [...]]] -> [s3 [s4 [...]]])");
+                throw runtime_error("Invalid reaction on surface.");
+            }
+            const auto arrowIndex = find(lineVector.begin(), lineVector.end(), "->") - lineVector.begin();
+            if(arrowIndex == lineVector.size()) {
+                log::error("Cannot find \"->\" in reaction-surface.");
+                throw runtime_error("Invalid reaction on surface.");
+            }
+
+            parse(rinfo.rate, lineVector[1]);
+            for(int i = 2; i < arrowIndex; ++i) {
+                rinfo.reactants.push_back(lineVector[i]);
+            }
+            for(int i = arrowIndex + 1; i < lineVector.size(); ++i) {
+                rinfo.products.push_back(lineVector[i]);
+            }
+
+            sc.chemistryData.reactionsSurface.push_back(move(rinfo));                
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            for(auto& rinfo : sc.chemistryData.reactionsSurface) {
+                vector<string> line;
+
+                line.push_back(toString(rinfo.rate));
+                for(auto& s : rinfo.reactants) line.push_back(s);
+                line.push_back("->");
+                for(auto& s : rinfo.products)  line.push_back(s);
+
+                res.push_back(move(line));
+            }
+            return res;
+        }
+    );
+    chemDataParser.addEmptyLine();
+
+    chemDataParser.addComment(" Adsorption/desorption on membrane surface.");
+    chemDataParser.addStringArgs(
+        "reaction-adsorption-desorption",
+        [] (SimulConfig& sc, const vector<string>& lineVector) {
+            ChemistryData::ReactionAdsorptionDesorptionInfo rinfo;
+
+            if(lineVector.size() != 6 || lineVector[4] != "<->") {
+                log::error("Usage: (reaction-adsorption-desorption <on rate> <off rate> <3D diffusing> <-> <2D diffusing>)");
+                throw runtime_error("Invalid adsorption/desorption reaction.");
+            }
+            parse(rinfo.onRate, lineVector[1]);
+            parse(rinfo.offRate, lineVector[2]);
+            rinfo.speciesName3D = lineVector[3];
+            rinfo.speciesName2D = lineVector[5];
+
+            sc.chemistryData.reactionsAdsorptionDesorption.push_back(move(rinfo));
+        },
+        [] (const SimulConfig& sc) {
+            vector<vector<string>> res;
+            for(auto& rinfo : sc.chemistryData.reactionsAdsorptionDesorption) {
+                vector<string> line;
+
+                line.push_back(toString(rinfo.onRate));
+                line.push_back(toString(rinfo.offRate));
+                line.push_back(rinfo.speciesName3D);
+                line.push_back("<->");
+                line.push_back(rinfo.speciesName2D);
+
+                res.push_back(move(line));
+            }
+            return res;
+        }
+    );
+    chemDataParser.addEmptyLine();
+
+    chemDataParser.addComment(" Bulk reactions");
     chemDataParser.addStringArgsWithAliases(
         "BULKREACTION", { "BULKREACTION:" },
         [] (SimulConfig& sc, const vector<string>& lineVector) {
@@ -3807,7 +3874,7 @@ void ChemistryParser::initChemDataParser() {
                     else  { line.push_back(products[i]); }
                 }
 
-                line.push_back(to_string(get<2>(r)));
+                line.push_back(toString(get<2>(r)));
 
                 res.push_back(move(line));
             }
@@ -3816,7 +3883,7 @@ void ChemistryParser::initChemDataParser() {
     );
     chemDataParser.addEmptyLine();
 
-    chemDataParser.addComment("# Filament reactions");
+    chemDataParser.addComment(" Filament reactions");
     chemDataParser.addStringArgsWithAliases(
         "NUCLEATIONREACTION", { "NUCLEATIONREACTION:" },
         [] (SimulConfig& sc, const vector<string>& lineVector) {
@@ -3852,7 +3919,7 @@ void ChemistryParser::initChemDataParser() {
                 for(const auto& r : rxns[k]) {
                     vector<string> line;
 
-                    line.push_back(to_string(k));
+                    line.push_back(toString(k));
 
                     const auto& reactants = get<0>(r);
                     const auto& products = get<1>(r);
@@ -3866,7 +3933,7 @@ void ChemistryParser::initChemDataParser() {
                         else  { line.push_back(products[i]); }
                     }
 
-                    line.push_back(to_string(get<2>(r)));
+                    line.push_back(toString(get<2>(r)));
 
                     res.push_back(move(line));
                 }
@@ -3880,17 +3947,16 @@ void ChemistryParser::initChemDataParser() {
             vector<string> reactants;
             vector<string> products;
 
-            int filType = atoi(lineVector[2].c_str());
             // check parameters related to dissipation tracking if it is enabled
             float gnum = 0.0;
-            int dissOffSet = 0;
+            int dissOffset = 0;
             string HRCDID = "NA";
             if(sc.chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;
                 vector<string> dissTokens;
-                dissOffSet = 1;
+                dissOffset = 1;
 
                 while (std::getline(iss, token, ':')) {
                     if (!token.empty())
@@ -3906,53 +3972,47 @@ void ChemistryParser::initChemDataParser() {
                 }
             }
 
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
-            if(arrowIt != lineVector.end()) {
+            const int filType = parse<int>(lineVector[1 + dissOffset]);
 
-                for(auto it  = lineVector.begin() + 2 + dissOffSet; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
+            if(lineVector.size() == 10 + dissOffset) {
 
-                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-
-                sc.chemistryData.depolymerizationReactions[filType].push_back(
-                        tuple<vector<string>, vector<string>, floatingpoint,floatingpoint, string>
-                                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
-                
+                sc.chemistryData.depolymerizationReactions[filType].push_back({
+                    lineVector[2 + dissOffset],
+                    lineVector[4 + dissOffset],
+                    lineVector[6 + dissOffset],
+                    lineVector[8 + dissOffset],
+                    parse<floatingpoint>(lineVector[9 + dissOffset]),
+                    gnum,
+                    HRCDID,
+                });
             }
             else {
-                cout << "Error reading a depolymerization reaction. Exiting." << endl;
-                exit(EXIT_FAILURE);
+                log::error("Error reading a depolymerization reaction.");
+                throw std::runtime_error("Error reading depolymerization reaction.");
             }
         },
         [] (const SimulConfig& sc) {
             vector<vector<string>> res;
             const auto& rxns = sc.chemistryData.depolymerizationReactions;
-            for(int k = 0; k < rxns.size(); ++k) {
-                for(const auto& r : rxns[k]) {
+            for(int fi = 0; fi < rxns.size(); ++fi) {
+                for(const auto& r : rxns[fi]) {
                     vector<string> line;
 
                     if(sc.chemParams.dissTracking) {
-                        line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+                        line.push_back(toString(r.gnum) + ":" + r.hrcdid);
                     }
 
-                    line.push_back(to_string(k));
+                    line.push_back(toString(fi));
 
-                    const auto& reactants = get<0>(r);
-                    const auto& products = get<1>(r);
-                    for(int i = 0; i < reactants.size(); ++i) {
-                        if(i) { line.push_back("+"); line.push_back(reactants[i]); }
-                        else  { line.push_back(reactants[i]); }
-                    }
+                    line.push_back(r.speciesReactantFilament);
+                    line.push_back("+");
+                    line.push_back(r.speciesReactantPlusEndMinusEnd);
                     line.push_back("->");
-                    for(int i = 0; i < products.size(); ++i) {
-                        if(i) { line.push_back("+"); line.push_back(products[i]); }
-                        else  { line.push_back(products[i]); }
-                    }
+                    line.push_back(r.speciesProductDiffusingBulk);
+                    line.push_back("+");
+                    line.push_back(r.speciesProductPlusEndMinusEnd);
 
-                    line.push_back(to_string(get<2>(r)));
+                    line.push_back(toString(r.rate));
 
                     res.push_back(move(line));
                 }
@@ -3966,17 +4026,16 @@ void ChemistryParser::initChemDataParser() {
             vector<string> reactants;
             vector<string> products;
 
-            int filType = atoi(lineVector[2].c_str());
             // check parameters related to dissipation tracking if it is enabled
             float gnum = 0.0;
-            int dissOffSet = 0;
+            int dissOffset = 0;
             string HRCDID = "NA";
             if(sc.chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;
                 vector<string> dissTokens;
-                dissOffSet = 1;
+                dissOffset = 1;
 
                 while (std::getline(iss, token, ':')) {
                     if (!token.empty())
@@ -3992,53 +4051,47 @@ void ChemistryParser::initChemDataParser() {
                 }
             }
 
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
-            if(arrowIt != lineVector.end()) {
+            const int filType = parse<int>(lineVector[1 + dissOffset]);
 
-                for(auto it  = lineVector.begin() + 2 + dissOffSet; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
+            if(lineVector.size() == 10 + dissOffset) {
 
-                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-
-                sc.chemistryData.polymerizationReactions[filType].push_back(
-                        tuple<vector<string>, vector<string>, floatingpoint,floatingpoint, string>
-                                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
-                
+                sc.chemistryData.polymerizationReactions[filType].push_back({
+                    lineVector[2 + dissOffset],
+                    lineVector[4 + dissOffset],
+                    lineVector[6 + dissOffset],
+                    lineVector[8 + dissOffset],
+                    parse<floatingpoint>(lineVector[9 + dissOffset]),
+                    gnum,
+                    HRCDID,
+                });
             }
             else {
-                cout << "Error reading a polymerization reaction. Exiting." << endl;
-                exit(EXIT_FAILURE);
+                log::error("Error reading a polymerization reaction.");
+                throw std::runtime_error("Error reading polymerization reaction.");
             }
         },
         [] (const SimulConfig& sc) {
             vector<vector<string>> res;
             const auto& rxns = sc.chemistryData.polymerizationReactions;
-            for(int k = 0; k < rxns.size(); ++k) {
-                for(const auto& r : rxns[k]) {
+            for(int fi = 0; fi < rxns.size(); ++fi) {
+                for(const auto& r : rxns[fi]) {
                     vector<string> line;
 
                     if(sc.chemParams.dissTracking) {
-                        line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+                        line.push_back(toString(r.gnum) + ":" + r.hrcdid);
                     }
 
-                    line.push_back(to_string(k));
+                    line.push_back(toString(fi));
 
-                    const auto& reactants = get<0>(r);
-                    const auto& products = get<1>(r);
-                    for(int i = 0; i < reactants.size(); ++i) {
-                        if(i) { line.push_back("+"); line.push_back(reactants[i]); }
-                        else  { line.push_back(reactants[i]); }
-                    }
+                    line.push_back(r.speciesReactantDiffusingBulk);
+                    line.push_back("+");
+                    line.push_back(r.speciesReactantPlusEndMinusEnd);
                     line.push_back("->");
-                    for(int i = 0; i < products.size(); ++i) {
-                        if(i) { line.push_back("+"); line.push_back(products[i]); }
-                        else  { line.push_back(products[i]); }
-                    }
+                    line.push_back(r.speciesProductFilament);
+                    line.push_back("+");
+                    line.push_back(r.speciesProductPlusEndMinusEnd);
 
-                    line.push_back(to_string(get<2>(r)));
+                    line.push_back(toString(r.rate));
 
                     res.push_back(move(line));
                 }
@@ -4048,24 +4101,23 @@ void ChemistryParser::initChemDataParser() {
     );
     chemDataParser.addEmptyLine();
 
-    chemDataParser.addComment("# Linker/motor/branching reactions");
+    chemDataParser.addComment(" Linker/motor/branching reactions");
     chemDataParser.addStringArgsWithAliases(
         "LINKERREACTION", { "LINKERREACTION:" },
         [] (SimulConfig& sc, const vector<string>& lineVector) {
-            vector<string> reactants;
-            vector<string> products;
 
-            int filType = atoi(lineVector[2].c_str());
+            // lineVector[dissOffset + 1] was for filament type but it is no longer required. It is only kept for backward compatibility.
+
             // check parameters related to dissipation tracking if it is enabled
             floatingpoint gnum = 0.0;
-            int dissOffSet = 0;
+            int dissOffset = 0;
             string HRCDID = "NA";
             if(sc.chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;
                 vector<string> dissTokens;
-                dissOffSet = 1;
+                dissOffset = 1;
 
                 while (std::getline(iss, token, ':')) {
                     if (!token.empty())
@@ -4081,62 +4133,63 @@ void ChemistryParser::initChemDataParser() {
                 }
             }
 
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
-            if(arrowIt != lineVector.end()) {
+            const int expectedSize = dissOffset + 15;
+            if(expectedSize == lineVector.size()) {
 
-                for(auto it  = lineVector.begin() + 2 + dissOffSet; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
-
-                for(auto it = arrowIt + 1; it != lineVector.end() - 4; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-
-                sc.chemistryData.linkerReactions[filType].push_back(
-                        tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint,string>
-                                (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
-                                 atof(lineVector[lineVector.size() - 3].c_str()),
-                                 atof(lineVector[lineVector.size() - 2].c_str()),
-                                 atof(lineVector[lineVector.size() - 1].c_str()),gnum, HRCDID));
+                sc.chemistryData.linkerReactions.push_back({
+                    // Reactants.
+                    {
+                        lineVector[dissOffset + 2],
+                        lineVector[dissOffset + 4],
+                        lineVector[dissOffset + 6],
+                    },
+                    // Products.
+                    {
+                        lineVector[dissOffset + 8],
+                        lineVector[dissOffset + 10],
+                    },
+                    atof(lineVector[dissOffset + 11].c_str()),
+                    atof(lineVector[dissOffset + 12].c_str()),
+                    atof(lineVector[dissOffset + 13].c_str()),
+                    atof(lineVector[dissOffset + 14].c_str()),
+                    gnum, HRCDID
+                });
                 
             }
             else {
                 cout << "Error reading a linker reaction. Exiting." << endl;
-                exit(EXIT_FAILURE);
+                throw runtime_error("Error parsing a linker reaction.");
             }
         },
         [] (const SimulConfig& sc) {
             vector<vector<string>> res;
             const auto& rxns = sc.chemistryData.linkerReactions;
-            for(int k = 0; k < rxns.size(); ++k) {
-                for(const auto& r : rxns[k]) {
-                    vector<string> line;
+            for(auto& r : rxns) {
+                vector<string> line;
 
-                    if(sc.chemParams.dissTracking) {
-                        line.push_back(to_string(get<6>(r)) + ":" + get<7>(r));
-                    }
-
-                    line.push_back(to_string(k));
-
-                    const auto& reactants = get<0>(r);
-                    const auto& products = get<1>(r);
-                    for(int i = 0; i < reactants.size(); ++i) {
-                        if(i) { line.push_back("+"); line.push_back(reactants[i]); }
-                        else  { line.push_back(reactants[i]); }
-                    }
-                    line.push_back("<->");
-                    for(int i = 0; i < products.size(); ++i) {
-                        if(i) { line.push_back("+"); line.push_back(products[i]); }
-                        else  { line.push_back(products[i]); }
-                    }
-
-                    line.push_back(to_string(get<2>(r)));
-                    line.push_back(to_string(get<3>(r)));
-                    line.push_back(to_string(get<4>(r)));
-                    line.push_back(to_string(get<5>(r)));
-
-                    res.push_back(move(line));
+                if(sc.chemParams.dissTracking) {
+                    line.push_back(toString(r.gnum) + ":" + r.hrcdid);
                 }
+
+                // Dummy variable for filament type, for backward compatibility.
+                line.push_back("0");
+
+                line.push_back(r.reactantInfo.speciesBound1);
+                line.push_back("+");
+                line.push_back(r.reactantInfo.speciesBound2);
+                line.push_back("+");
+                line.push_back(r.reactantInfo.linkerDiffusing);
+                line.push_back("<->");
+                line.push_back(r.productInfo.linkerBound1);
+                line.push_back("+");
+                line.push_back(r.productInfo.linkerBound2);
+
+                line.push_back(toString(r.onRate));
+                line.push_back(toString(r.offRate));
+                line.push_back(toString(r.rMin));
+                line.push_back(toString(r.rMax));
+
+                res.push_back(move(line));
             }
             return res;
         }
@@ -4144,20 +4197,19 @@ void ChemistryParser::initChemDataParser() {
     chemDataParser.addStringArgsWithAliases(
         "MOTORREACTION", { "MOTORREACTION:" },
         [] (SimulConfig& sc, const vector<string>& lineVector) {
-            vector<string> reactants;
-            vector<string> products;
 
-            int filType = atoi(lineVector[2].c_str());
+            // lineVector[dissOffset + 1] was for filament type but it is no longer required. It is only kept for backward compatibility.
+
             // check parameters related to dissipation tracking if it is enabled
             floatingpoint gnum = 0.0;
-            int dissOffSet = 0;
+            int dissOffset = 0;
             string HRCDID = "NA";
             if(sc.chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;
                 vector<string> dissTokens;
-                dissOffSet = 1;
+                dissOffset = 1;
 
                 while (std::getline(iss, token, ':')) {
                     if (!token.empty())
@@ -4173,62 +4225,63 @@ void ChemistryParser::initChemDataParser() {
                 }
             }
 
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
-            if(arrowIt != lineVector.end()) {
+            const int expectedSize = dissOffset + 15;
+            if(expectedSize == lineVector.size()) {
 
-                for(auto it  = lineVector.begin() + 2 + dissOffSet; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
-
-                for(auto it = arrowIt + 1; it != lineVector.end() - 4; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-
-                sc.chemistryData.motorReactions[filType].push_back(
-                        tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint,string>
-                                (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
-                                 atof(lineVector[lineVector.size() - 3].c_str()),
-                                 atof(lineVector[lineVector.size() - 2].c_str()),
-                                 atof(lineVector[lineVector.size() - 1].c_str()),gnum, HRCDID));
+                sc.chemistryData.motorReactions.push_back({
+                    // Reactants.
+                    {
+                        lineVector[dissOffset + 2],
+                        lineVector[dissOffset + 4],
+                        lineVector[dissOffset + 6],
+                    },
+                    // Products.
+                    {
+                        lineVector[dissOffset + 8],
+                        lineVector[dissOffset + 10],
+                    },
+                    atof(lineVector[dissOffset + 11].c_str()),
+                    atof(lineVector[dissOffset + 12].c_str()),
+                    atof(lineVector[dissOffset + 13].c_str()),
+                    atof(lineVector[dissOffset + 14].c_str()),
+                    gnum, HRCDID
+                });
                 
             }
             else {
                 cout << "Error reading a motor reaction. Exiting." << endl;
-                exit(EXIT_FAILURE);
+                throw runtime_error("Error parsing a motor reaction.");
             }
         },
         [] (const SimulConfig& sc) {
             vector<vector<string>> res;
             const auto& rxns = sc.chemistryData.motorReactions;
-            for(int k = 0; k < rxns.size(); ++k) {
-                for(const auto& r : rxns[k]) {
-                    vector<string> line;
+            for(auto& r : rxns) {
+                vector<string> line;
 
-                    if(sc.chemParams.dissTracking) {
-                        line.push_back(to_string(get<6>(r)) + ":" + get<7>(r));
-                    }
-
-                    line.push_back(to_string(k));
-
-                    const auto& reactants = get<0>(r);
-                    const auto& products = get<1>(r);
-                    for(int i = 0; i < reactants.size(); ++i) {
-                        if(i) { line.push_back("+"); line.push_back(reactants[i]); }
-                        else  { line.push_back(reactants[i]); }
-                    }
-                    line.push_back("<->");
-                    for(int i = 0; i < products.size(); ++i) {
-                        if(i) { line.push_back("+"); line.push_back(products[i]); }
-                        else  { line.push_back(products[i]); }
-                    }
-
-                    line.push_back(to_string(get<2>(r)));
-                    line.push_back(to_string(get<3>(r)));
-                    line.push_back(to_string(get<4>(r)));
-                    line.push_back(to_string(get<5>(r)));
-
-                    res.push_back(move(line));
+                if(sc.chemParams.dissTracking) {
+                    line.push_back(toString(r.gnum) + ":" + r.hrcdid);
                 }
+
+                // Dummy variable for filament type, for backward compatibility.
+                line.push_back("0");
+
+                line.push_back(r.reactantInfo.speciesBound1);
+                line.push_back("+");
+                line.push_back(r.reactantInfo.speciesBound2);
+                line.push_back("+");
+                line.push_back(r.reactantInfo.linkerDiffusing);
+                line.push_back("<->");
+                line.push_back(r.productInfo.linkerBound1);
+                line.push_back("+");
+                line.push_back(r.productInfo.linkerBound2);
+
+                line.push_back(toString(r.onRate));
+                line.push_back(toString(r.offRate));
+                line.push_back(toString(r.rMin));
+                line.push_back(toString(r.rMax));
+
+                res.push_back(move(line));
             }
             return res;
         }
@@ -4239,17 +4292,16 @@ void ChemistryParser::initChemDataParser() {
             vector<string> reactants;
             vector<string> products;
 
-            int filType = atoi(lineVector[2].c_str());
             // check parameters related to dissipation tracking if it is enabled
             floatingpoint gnum = 0.0;
-            int dissOffSet = 0;
+            int dissOffset = 0;
             string HRCDID = "NA";
             if(sc.chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;
                 vector<string> dissTokens;
-                dissOffSet = 1;
+                dissOffset = 1;
 
                 while (std::getline(iss, token, ':')) {
                     if (!token.empty())
@@ -4264,54 +4316,47 @@ void ChemistryParser::initChemDataParser() {
                     HRCDID = "NA";
                 }
             }
+            const int filType = parse<int>(lineVector[1 + dissOffset]);
 
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
-            if(arrowIt != lineVector.end()) {
+            if(lineVector.size() == 10 + dissOffset) {
 
-                for(auto it  = lineVector.begin() + 2 + dissOffSet; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
-
-                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-
-                sc.chemistryData.motorWalkingReactions[filType].push_back(
-                        tuple<vector<string>, vector<string>, floatingpoint, floatingpoint,string>
-                                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
-                
+                sc.chemistryData.motorWalkingReactions[filType].push_back({
+                    lineVector[2 + dissOffset],
+                    lineVector[4 + dissOffset],
+                    lineVector[6 + dissOffset],
+                    lineVector[8 + dissOffset],
+                    parse<floatingpoint>(lineVector[9 + dissOffset]),
+                    gnum,
+                    HRCDID,
+                });
             }
             else {
-                cout << "Error reading a motor walking reaction. Exiting." << endl;
-                exit(EXIT_FAILURE);
+                LOG(ERROR) << "Error reading a motor walking reaction.";
+                throw std::runtime_error("Error reading motor walking reaction.");
             }
         },
         [] (const SimulConfig& sc) {
             vector<vector<string>> res;
             const auto& rxns = sc.chemistryData.motorWalkingReactions;
-            for(int k = 0; k < rxns.size(); ++k) {
-                for(const auto& r : rxns[k]) {
+            for(int fi = 0; fi < rxns.size(); ++fi) {
+                for(const auto& r : rxns[fi]) {
                     vector<string> line;
 
                     if(sc.chemParams.dissTracking) {
-                        line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+                        line.push_back(toString(r.gnum) + ":" + r.hrcdid);
                     }
 
-                    line.push_back(to_string(k));
+                    line.push_back(toString(fi));
 
-                    const auto& reactants = get<0>(r);
-                    const auto& products = get<1>(r);
-                    for(int i = 0; i < reactants.size(); ++i) {
-                        if(i) { line.push_back("+"); line.push_back(reactants[i]); }
-                        else  { line.push_back(reactants[i]); }
-                    }
+                    line.push_back(r.speciesReactantMotor);
+                    line.push_back("+");
+                    line.push_back(r.speciesReactantEmptySite);
                     line.push_back("->");
-                    for(int i = 0; i < products.size(); ++i) {
-                        if(i) { line.push_back("+"); line.push_back(products[i]); }
-                        else  { line.push_back(products[i]); }
-                    }
+                    line.push_back(r.speciesProductMotor);
+                    line.push_back("+");
+                    line.push_back(r.speciesProductEmptySite);
 
-                    line.push_back(to_string(get<2>(r)));
+                    line.push_back(toString(r.rate));
 
                     res.push_back(move(line));
                 }
@@ -4357,7 +4402,7 @@ void ChemistryParser::initChemDataParser() {
                 for(const auto& r : rxns[k]) {
                     vector<string> line;
 
-                    line.push_back(to_string(k));
+                    line.push_back(toString(k));
 
                     const auto& reactants = get<0>(r);
                     const auto& products = get<1>(r);
@@ -4371,10 +4416,10 @@ void ChemistryParser::initChemDataParser() {
                         else  { line.push_back(products[i]); }
                     }
 
-                    line.push_back(to_string(get<2>(r)));
-                    line.push_back(to_string(get<3>(r)));
+                    line.push_back(toString(get<2>(r)));
+                    line.push_back(toString(get<3>(r)));
                     line.push_back(          get<4>(r) );
-                    line.push_back(to_string(get<5>(r)));
+                    line.push_back(toString(get<5>(r)));
 
                     res.push_back(move(line));
                 }
@@ -4384,24 +4429,23 @@ void ChemistryParser::initChemDataParser() {
     );
     chemDataParser.addEmptyLine();
 
-    chemDataParser.addComment("# Filament aging/destruction/severing");
+    chemDataParser.addComment(" Filament aging/destruction/severing");
     chemDataParser.addStringArgsWithAliases(
         "AGINGREACTION", { "AGINGREACTION:" },
         [] (SimulConfig& sc, const vector<string>& lineVector) {
             vector<string> reactants;
             vector<string> products;
 
-            int filType = atoi(lineVector[2].c_str());
             // check parameters related to dissipation tracking if it is enabled 
             floatingpoint gnum = 0.0;
-            int dissOffSet = 0;
+            int dissOffset = 0;
             string HRCDID = "NA";
             if(sc.chemParams.dissTracking){
                 string dissString = lineVector[1].c_str();
                 istringstream iss(dissString);
                 string token;
                 vector<string> dissTokens;
-                dissOffSet = 1;
+                dissOffset = 1;
 
                 while (std::getline(iss, token, ':')) {
                     if (!token.empty())
@@ -4417,53 +4461,41 @@ void ChemistryParser::initChemDataParser() {
                 }
             }
 
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
-            if(arrowIt != lineVector.end()) {
+            const int filType = parse<int>(lineVector[1 + dissOffset]);
 
-                for(auto it  = lineVector.begin() + 2 + dissOffSet; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
+            if(lineVector.size() == 6 + dissOffset) {
 
-                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-
-                sc.chemistryData.agingReactions[filType].push_back(
-                        tuple<vector<string>, vector<string>, floatingpoint, floatingpoint,string>
-                                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
-                
+                sc.chemistryData.agingReactions[filType].push_back({
+                    lineVector[2 + dissOffset],
+                    lineVector[4 + dissOffset],
+                    parse<floatingpoint>(lineVector[5 + dissOffset]),
+                    gnum,
+                    HRCDID,
+                });
             }
             else {
-                cout << "Error reading an aging reaction. Exiting." << endl;
-                exit(EXIT_FAILURE);
+                log::error("Error reading an aging reaction.");
+                throw std::runtime_error("Error reading aging reaction.");
             }
         },
         [] (const SimulConfig& sc) {
             vector<vector<string>> res;
             const auto& rxns = sc.chemistryData.agingReactions;
-            for(int k = 0; k < rxns.size(); ++k) {
-                for(const auto& r : rxns[k]) {
+            for(int fi = 0; fi < rxns.size(); ++fi) {
+                for(const auto& r : rxns[fi]) {
                     vector<string> line;
 
                     if(sc.chemParams.dissTracking) {
-                        line.push_back(to_string(get<3>(r)) + ":" + get<4>(r));
+                        line.push_back(toString(r.gnum) + ":" + r.hrcdid);
                     }
 
-                    line.push_back(to_string(k));
+                    line.push_back(toString(fi));
 
-                    const auto& reactants = get<0>(r);
-                    const auto& products = get<1>(r);
-                    for(int i = 0; i < reactants.size(); ++i) {
-                        if(i) { line.push_back("+"); line.push_back(reactants[i]); }
-                        else  { line.push_back(reactants[i]); }
-                    }
+                    line.push_back(r.speciesReactant);
                     line.push_back("->");
-                    for(int i = 0; i < products.size(); ++i) {
-                        if(i) { line.push_back("+"); line.push_back(products[i]); }
-                        else  { line.push_back(products[i]); }
-                    }
+                    line.push_back(r.speciesProduct);
 
-                    line.push_back(to_string(get<2>(r)));
+                    line.push_back(toString(r.rate));
 
                     res.push_back(move(line));
                 }
@@ -4474,53 +4506,41 @@ void ChemistryParser::initChemDataParser() {
     chemDataParser.addStringArgsWithAliases(
         "DESTRUCTIONREACTION", { "DESTRUCTIONREACTION:" },
         [] (SimulConfig& sc, const vector<string>& lineVector) {
-            vector<string> reactants;
-            vector<string> products;
-
             int filType = atoi(lineVector[1].c_str());
 
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
-            if(arrowIt != lineVector.end()) {
+            if(lineVector.size() == 10) {
 
-                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
-
-                for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-
-                sc.chemistryData.destructionReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, floatingpoint>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
+                sc.chemistryData.destructionReactions[filType].push_back({
+                    lineVector[2],
+                    lineVector[4],
+                    lineVector[6],
+                    lineVector[8],
+                    parse<floatingpoint>(lineVector[9]),
+                });
             }
             else {
-                cout << "Error reading a destruction reaction. Exiting." << endl;
-                exit(EXIT_FAILURE);
+                log::error("Error reading a destruction reaction.");
+                throw std::runtime_error("Error reading destruction reaction.");
             }
         },
         [] (const SimulConfig& sc) {
             vector<vector<string>> res;
             const auto& rxns = sc.chemistryData.destructionReactions;
-            for(int k = 0; k < rxns.size(); ++k) {
-                for(const auto& r : rxns[k]) {
+            for(int fi = 0; fi < rxns.size(); ++fi) {
+                for(const auto& r : rxns[fi]) {
                     vector<string> line;
 
-                    line.push_back(to_string(k));
+                    line.push_back(toString(fi));
 
-                    const auto& reactants = get<0>(r);
-                    const auto& products = get<1>(r);
-                    for(int i = 0; i < reactants.size(); ++i) {
-                        if(i) { line.push_back("+"); line.push_back(reactants[i]); }
-                        else  { line.push_back(reactants[i]); }
-                    }
+                    line.push_back(r.speciesReactantPlusEnd);
+                    line.push_back("+");
+                    line.push_back(r.speciesReactantMinusEnd);
                     line.push_back("->");
-                    for(int i = 0; i < products.size(); ++i) {
-                        if(i) { line.push_back("+"); line.push_back(products[i]); }
-                        else  { line.push_back(products[i]); }
-                    }
+                    line.push_back(r.speciesProduct1);
+                    line.push_back("+");
+                    line.push_back(r.speciesProduct2);
 
-                    line.push_back(to_string(get<2>(r)));
+                    line.push_back(toString(r.rate));
 
                     res.push_back(move(line));
                 }
@@ -4553,10 +4573,10 @@ void ChemistryParser::initChemDataParser() {
                 for(const auto& r : rxns[k]) {
                     vector<string> line;
 
-                    line.push_back(to_string(k));
+                    line.push_back(toString(k));
                     line.push_back("AT");
                     line.push_back(get<0>(r));
-                    line.push_back(to_string(get<1>(r)));
+                    line.push_back(toString(get<1>(r)));
 
                     res.push_back(move(line));
                 }
@@ -4566,9 +4586,9 @@ void ChemistryParser::initChemDataParser() {
     );
     chemDataParser.addEmptyLine();
 
+    return chemDataParser;
 }
 
-} // namespace medyan
 
 
 void PinRestartParser::resetPins() {
@@ -4584,7 +4604,7 @@ void PinRestartParser::resetPins() {
         auto b2 = f->getPlusEndCylinder()->getSecondBead();
 
         int filID = f->getId();
-        string searchID = "FILAMENT " + std::to_string(filID) + ":";
+        string searchID = "FILAMENT " + toString(filID) + ":";
 
         string line;
 
@@ -4624,3 +4644,5 @@ void PinRestartParser::resetPins() {
         }
     }
 }
+
+} // namespace medyan

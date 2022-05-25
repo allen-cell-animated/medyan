@@ -14,48 +14,58 @@
 #ifndef MEDYAN_BubbleFF_h
 #define MEDYAN_BubbleFF_h
 
+#include <string_view>
 #include <vector>
 
 #include "common.h"
+#include "Mechanics/ForceField/Bubble/AFMAttachment.h"
+#include "Mechanics/ForceField/Bubble/BubbleBubbleRepulsion.h"
+#include "Mechanics/ForceField/Bubble/BubbleCylinderRepulsion.h"
+#include "Mechanics/ForceField/Bubble/FixedBubbleCoordinates.hpp"
+#include "Mechanics/ForceField/Bubble/MTOCAttachment.h"
+#include "Mechanics/ForceField/Bubble/MTOCBending.h"
 
-#include "ForceField.h"
+namespace medyan {
 
-//FORWARD DECLARATIONS
-class BubbleInteractions;
-class Bead;
-class Cylinder;
+inline auto createBubbleForceFields(std::string_view type, std::string_view mtoc, std::string_view afm) {
+    std::vector<std::unique_ptr<ForceField>> forceFields;
 
-/// An implementation of the ForceField class that calculates Bubble
-/// repulsion and attraction to [Beads](@ref Bead) in the system.
-class BubbleFF : public ForceField {
-    
-private:
-    vector<unique_ptr<BubbleInteractions>>
-    _bubbleInteractionVector; ///< Vector of initialized bubble interactions
-    
-    /// The culprit in the case of an error
-    BubbleInteractions* _culpritInteraction;
-public:
-    /// Initialize the forcefields
-    BubbleFF(string type, string mtoc, string afm);
-    
-    virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void cleanup();
+    // Fixed bead coordinates are always present.
+    forceFields.push_back(std::make_unique<FixedBubbleCoordinates>());
 
-    virtual string getName() {return "Bubble";}
-    virtual void whoIsCulprit();
-    
-    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched = false) override;
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
-//    virtual void computeForcesAux();
-    
-    /// BubbleFF can compute load forces on all Bead from Bubble elements
-    virtual void computeLoadForces();
-    virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
-    
-    virtual vector<NeighborList*> getNeighborLists();
+    if(type == "REPULSIONEXP") {
+        forceFields.push_back(std::make_unique<BubbleCylinderRepulsion>());
+        forceFields.push_back(std::make_unique<BubbleBubbleRepulsion>());
+    }
+    else if(type == "") {}
+    else {
+        log::error("Bubble FF not recognized. Exiting.");
+        throw std::runtime_error("Bubble FF not recognized.");
+    }
 
-    virtual vector<string> getinteractionnames();
-};
+    // MTOC specific.
+    if(mtoc == "ATTACHMENTHARMONIC") {
+        forceFields.push_back(std::make_unique<MTOCAttachment>());
+    }
+    else if(mtoc == "") {}
+    else {
+        log::error("MTOC FF not recognized. Exiting.");
+        throw std::runtime_error("MTOC FF not recognized.");
+    }
+
+    // AFM specific.
+    if(afm == "ATTACHMENTHARMONIC") {
+        forceFields.push_back(std::make_unique<AFMAttachment>());
+    }
+    else if(afm == "") {}
+    else {
+        log::error("AFM FF not recognized. Exiting.");
+        throw std::runtime_error("AFM FF not recognized.");
+    }
+
+    return forceFields;
+}
+
+} // namespace medyan
 
 #endif

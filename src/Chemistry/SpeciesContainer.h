@@ -14,57 +14,14 @@
 #ifndef MEDYAN_SpeciesContainer_h
 #define MEDYAN_SpeciesContainer_h
 
-#include "common.h"
+#include <stdexcept>
 
+#include "common.h"
 #include "Species.h"
 
-/// An abstract interface for a container of pointers to Species objects
-class SpeciesPtrContainerIFace {
-public:
-    /// Add species to the container. The memory of species is owned by the container
-    virtual Species* addSpecies(Species *species) = 0;
-
-    /// Add species to the container. The memory of species is owned by the container
-    virtual Species* addSpeciesUnique(unique_ptr<Species> &&species) = 0;
-
-    /// Remove all species matching "name" from the container. The memories are freed.
-    virtual size_t removeSpecies(const string &name) = 0;
-
-    /// Remove species from the container. The memory is freed.
-    virtual size_t removeSpecies(Species* species) = 0;
-    
-    /// Empty the container. All memories are freed.
-    virtual void clear() = 0;
-    
-    /// Return a pointer to Species which has a name matching the argument.
-    /// @note The first match is returned.
-    virtual Species* findSpeciesByName(const string &name) const = 0;
-    
-    /// Return a pointer to Species having specified index in the container 
-    virtual Species* findSpeciesByIndex (size_t index) const = 0;
-    
-    /// Return a pointer to Species matching the molecule field of Species
-    /// @note The first match is returned.
-    virtual Species* findSpeciesByMolecule (int molecule) const = 0;
-    
-    /// Return a pointer to Species which satisfies the equality operator with s
-    /// @note The first match is returned.
-    virtual Species* findSimilarSpecies (const Species &s) const = 0;
-    
-    /// Return true, if all contained Species are different from each other as
-    /// determined by Species.getMolecule() method.
-    virtual bool areAllSpeciesUnique () const = 0;
-    
-    /// Return the number of Species in the container
-    virtual size_t size() const = 0;
-    
-    /// Print all Species contained by the container
-    virtual void printSpecies() const = 0;
-};
-
-/// A concrete class implementing the SpeciesPtrContainerIFace, using
-/// vector<unique_ptr<Species>> as the container implementation
-class SpeciesPtrContainerVector : public  SpeciesPtrContainerIFace {
+namespace medyan {
+/// A concrete class using vector<unique_ptr<Species>> as the container implementation.
+class SpeciesPtrContainerVector {
 protected:
     vector<unique_ptr<Species>> _species;///< Species pointers container
 public:
@@ -76,14 +33,14 @@ public:
     SpeciesPtrContainerVector(SpeciesPtrContainerVector &&)      = default;
     
     /// The equality operator is not allowed
-    SpeciesPtrContainerVector& operator=(SpeciesPtrContainerVector &) = delete;
+    SpeciesPtrContainerVector& operator=(const SpeciesPtrContainerVector &) = delete;
     SpeciesPtrContainerVector& operator=(SpeciesPtrContainerVector &&) = default;
     
     /// Empty the container. All memories are freed.
-    virtual void clear() override {_species.clear();}
+    void clear() {_species.clear();}
     
     /// Add species to the container. The memory of species is owned by the container
-    virtual Species* addSpecies(Species *species) override {
+    Species* addSpecies(Species *species) {
         _species.emplace_back(unique_ptr<Species>(species));
         return _species.back().get();
     }
@@ -91,7 +48,7 @@ public:
     /// Add species to the container. The memory of species is owned by the container.
     /// @param species is a unique_ptr<Species> object, which needs to be a rvalue (e.g.
     /// move(...) was used to make it so.
-    virtual Species* addSpeciesUnique (unique_ptr<Species> &&species) override {
+    Species* addSpeciesUnique (unique_ptr<Species> &&species) {
         _species.emplace_back(move(species));
         return _species.back().get();
     }
@@ -106,7 +63,7 @@ public:
     }
     
     /// Remove all species matching "name" from the container. The memories are freed.
-    virtual size_t removeSpecies(const string &name) override {
+    size_t removeSpecies(const string &name) {
         size_t counter=0;
         while(true){
             auto child_iter = find_if(_species.begin(),_species.end(),
@@ -123,7 +80,7 @@ public:
     }
     
     /// Remove all species from the container. The memory is freed.
-    virtual size_t removeSpecies (Species* species) override {
+    size_t removeSpecies (Species* species) {
         size_t counter=0;
         while(true) {
             auto child_iter = find_if(_species.begin(),_species.end(),
@@ -142,7 +99,7 @@ public:
     /// Return a pointer to Species which has a name matching the argument. Otherwise,
     /// return a nullptr.
     /// @note The first match is returned.
-    virtual Species* findSpeciesByName(const string &name) const override {
+    Species* findSpeciesByName(const string &name) const {
         auto child_iter = find_if(_species.begin(),_species.end(),
           [&name](const unique_ptr<Species> &element) {
           return element->getName()==name ? true : false;});
@@ -157,7 +114,7 @@ public:
     /// Return a pointer to Species matching the molecule field of Species. Otherwise,
     /// return a nullptr.
     /// @note The first match is returned.
-    virtual Species* findSpeciesByMolecule (int molecule) const override {
+    Species* findSpeciesByMolecule (int molecule) const {
         auto child_iter = find_if(_species.begin(),_species.end(),
           [molecule](const unique_ptr<Species> &element)
           {return element->getMolecule()==molecule ? true : false;});
@@ -166,17 +123,29 @@ public:
         else
             return nullptr;
     }
+
+    // Find the first index of species of the matching molecule. If it is not found, an exception is raised.
+    int findSpeciesIndexByMolecule(int molecule) const {
+        for(int i = 0; i < _species.size(); ++i) {
+            if(_species[i]->getMolecule() == molecule) {
+                return i;
+            }
+        }
+
+        log::error("Species of molecule {} cannot be found in this container.", molecule);
+        throw std::runtime_error("Cannot find species of molecule.");
+    }
     
     /// Return a pointer to Species having specified index in the container.
     /// @note Array bounds are not checked, so index must be valid.
-    virtual Species* findSpeciesByIndex (size_t index) const  override {
+    Species* findSpeciesByIndex (size_t index) const {
         return _species[index].get();
     }
     
     /// Return a pointer to Species which satisfies the equality operator with s.
     /// Otherwise, return a nullptr.
     /// @note The first match is returned.
-    virtual Species* findSimilarSpecies (const Species &s) const  override {
+    Species* findSimilarSpecies (const Species &s) const {
         auto it = find_if(_species.begin(),_species.end(),
                                [&s](const unique_ptr<Species> &element)
                                {return s==(*element);});
@@ -195,7 +164,7 @@ public:
     
     /// Returns true, if all contained Species are different from each other as
     /// determined by Species.getMolecule() method.
-    virtual bool areAllSpeciesUnique () const override {
+    bool areAllSpeciesUnique () const {
         vector<int> molecs;
         transform(_species.cbegin(),_species.cend(), back_inserter(molecs),
             [](const unique_ptr<Species> &us) {return us->getMolecule();});
@@ -208,10 +177,10 @@ public:
     }
     
     /// Return the number of Species in the container
-    virtual size_t size() const override {return _species.size();}
+    size_t size() const {return _species.size();}
     
     /// Print all Species contained by the container
-    virtual void printSpecies() const override {
+    void printSpecies() const {
         for(auto &s : _species)
             cout << (*s.get()) << endl;
     }
@@ -403,5 +372,7 @@ public:
     const vector<SpeciesSpecific>& species() const {return _species;}
 
 };
+
+} // namespace medyan
 
 #endif

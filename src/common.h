@@ -15,9 +15,11 @@
 #define MEDYAN_common_h
 
 #include <array>
+#include <cstddef>
 #include <iostream>
 #include <vector>
-#include <boost/signals2/shared_connection_block.hpp>
+
+#include <fmt/core.h>
 
 #include "utility.h"
 #include "Util/Io/Log.hpp"
@@ -33,13 +35,32 @@
 
 #endif
 
+namespace medyan {
+
+using Index = std::ptrdiff_t;
+using Size  = std::ptrdiff_t;
+
+using fmt::format;
+
+
+// Constants.
+
+constexpr double snan = std::numeric_limits<double>::signaling_NaN();
+constexpr float  snanf = std::numeric_limits<float>::signaling_NaN();
+constexpr FP     snanfp = std::numeric_limits<FP>::signaling_NaN();
+
+constexpr double inf = std::numeric_limits<double>::infinity();
+constexpr float  inff = std::numeric_limits<float>::infinity();
+constexpr FP     inffp = std::numeric_limits<FP>::infinity();
+
+} // namespace medyan
 
 ///Species constants
 typedef unsigned int species_copy_t;
 const species_copy_t max_ulim = 1000000;
 
 ///Global time
-extern floatingpoint global_time;
+inline floatingpoint global_time = 0;
 
 inline floatingpoint tau() {return global_time;}
 inline void resetglobaltime() {global_time=0.0;}
@@ -52,9 +73,6 @@ const int bead_cache = 1000;//total number of beads that can be appended before
 
 ///To use STL containers, libraries, etc
 using namespace std;
-
-///Boost typedef
-typedef boost::signals2::shared_connection_block ConnectionBlock;
 
 ///Num filament types maximum
 #define MAX_FILAMENT_TYPES 10

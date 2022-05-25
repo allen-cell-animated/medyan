@@ -21,7 +21,9 @@
 
 #include "Reaction.h"
 #include "ChemRNode.h"
-#include "ChemSimImpl.h"
+#include "Chemistry/ChemSim.h"
+
+namespace medyan {
 
 //FORWARD DECLARATIONS
 class RNodeGillespie;
@@ -137,12 +139,11 @@ private:
  *  undefined. In the former case, Reaction objects with zero propensities
  *  stop being treated as dependents until their propensities become nonzero again.
  */
-class ChemGillespieImpl : public ChemSimImpl {
+class ChemGillespieImpl : public ChemSim {
 public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0
     ///and the number of reactions to 0
     ChemGillespieImpl() :
-        ChemSimImpl(),
         _uniform_distr(), _a_total(0),_n_reacts(0) { resetTime(); }
     
     /// Copying is not allowed
@@ -240,7 +241,7 @@ public:
 
     /// Cross checks all reactions in the network for firing time.
     virtual bool crosschecktau() const {
-        LOG(WARNING)<<"Cannot check for tau in reactions in ChemGillespieImpl.h"<<endl;
+        log::warn("Cannot check for tau in reactions in ChemGillespieImpl.h");
         return true;
     };
     
@@ -273,6 +274,6 @@ private:
     size_t _n_reacts; ///< number of reactions in the network
 };
 
-
+} // namespace medyan
 
 #endif

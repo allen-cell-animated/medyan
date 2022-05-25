@@ -3,41 +3,42 @@
 #include <algorithm> // max
 
 #include "MathFunctions.h"
-using namespace mathfunc;
-
 #include "Mechanics/ForceField/Volume/TriangleBeadExclVolRepulsion.hpp"
-
 #include "Structure/Bead.h"
 #include "Structure/Cylinder.h"
 #include "Structure/Filament.h"
+#include "Structure/SubSystem.h"
+#include "Structure/SurfaceMesh/FuncMembraneGeo.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/Triangle.hpp"
 #include "Structure/SurfaceMesh/Vertex.hpp"
 #include "Util/Math/RayTriangleIntersect.hpp"
 
-template< typename InteractionType >
-floatingpoint TriangleBeadExclVolume< InteractionType >::computeEnergy(floatingpoint* coord, bool stretched) {
+namespace medyan {
+using namespace mathfunc;
+
+FP TriangleBeadExclVolume::computeEnergy(FP* coord) {
     using MT = Membrane::MeshType;
 
     double en = 0;
 
-    for(auto t: Triangle::getTriangles()) {
+    for(auto t : ps->triangles) {
 
-        const auto& mesh = t->getParent()->getMesh();
+        const auto& mesh = t.getParent(*ps).getMesh();
         medyan::assertValidIndexCacheForFF(mesh);
 
-        const MT::TriangleIndex ti { t->getTopoIndex() };
+        const MT::TriangleIndex ti { t.getTopoIndex() };
         const auto& ta = mesh.attribute(ti);
-        const size_t vi0 = ta.cachedCoordIndex[0];
-        const size_t vi1 = ta.cachedCoordIndex[1];
-        const size_t vi2 = ta.cachedCoordIndex[2];
+        const auto vi0 = ta.cachedCoordIndex[0];
+        const auto vi1 = ta.cachedCoordIndex[1];
+        const auto vi2 = ta.cachedCoordIndex[2];
 
-        const auto area = stretched ? ta.gTriangleS.area : ta.gTriangle.area;
+        const auto area = ta.gTriangle.area;
         const double kExVol = SysParams::Mechanics().triangleBeadVolume.k;
         
-        if(neighborList_->hasNeighborMech(t)) for(auto b : neighborList_->getNeighborsMech(t)) {
+        if(neighborList_->hasNeighborMech(t.sysIndex)) for(auto b : neighborList_->getNeighborsMech(t.sysIndex)) {
 
-            const double enInter = _FFType.energy(
+            const double enInter = interaction.energy(
                 static_cast<Vec3d>(makeVec<3>(coord + vi0)),
                 static_cast<Vec3d>(makeVec<3>(coord + vi1)),
                 static_cast<Vec3d>(makeVec<3>(coord + vi2)),
@@ -46,11 +47,7 @@ floatingpoint TriangleBeadExclVolume< InteractionType >::computeEnergy(floatingp
             
             if(!std::isfinite(enInter) || enInter < 0.0) {
                 
-                //set culprits and exit
-                triangleCulprit_ = t;
-                beadCulprit_     = b;
-                
-                return -1;
+                return inffp;
             }
             else {
                 en += enInter;
@@ -61,16 +58,15 @@ floatingpoint TriangleBeadExclVolume< InteractionType >::computeEnergy(floatingp
     return en;
 }
 
-template< typename InteractionType >
-void TriangleBeadExclVolume< InteractionType >::computeForces(floatingpoint* coord, floatingpoint* force) {
+void TriangleBeadExclVolume::computeForces(FP* coord, FP* force) {
     using MT = Membrane::MeshType;
 
-    for(auto t: Triangle::getTriangles()) {
+    for(auto t : ps->triangles) {
 
-        const auto& mesh = t->getParent()->getMesh();
+        const auto& mesh = t.getParent(*ps).getMesh();
         medyan::assertValidIndexCacheForFF(mesh);
 
-        const MT::TriangleIndex ti { t->getTopoIndex() };
+        const MT::TriangleIndex ti { t.getTopoIndex() };
         const auto& ta = mesh.attribute(ti);
         const auto hei0 = ta.cachedHalfEdgeIndex[0];
         const auto hei1 = ta.cachedHalfEdgeIndex[1];
@@ -85,9 +81,9 @@ void TriangleBeadExclVolume< InteractionType >::computeForces(floatingpoint* coo
         const auto& dArea2 = mesh.attribute(hei2).gHalfEdge.dTriangleArea;
         const double kExVol = SysParams::Mechanics().triangleBeadVolume.k;
 
-        if(neighborList_->hasNeighborMech(t)) for(auto b : neighborList_->getNeighborsMech(t)) {
+        if(neighborList_->hasNeighborMech(t.sysIndex)) for(auto b : neighborList_->getNeighborsMech(t.sysIndex)) {
 
-            _FFType.forces(
+            interaction.forces(
                 force + vi0,
                 force + vi1,
                 force + vi2,
@@ -107,10 +103,10 @@ namespace {
 template< typename InteractionType, typename VecType >
 void exclVolLoadForce(
     const InteractionType& interaction, double area, double kExVol,
-    const Bead& bo, Bead& bd, typename TriangleBeadExclVolume< InteractionType >::LoadForceEnd end,
+    const Bead& bo, Bead& bd, TriangleBeadExclVolume::LoadForceEnd end,
     const VecType& v0, const VecType& v1, const VecType& v2
 ) {
-    using LoadForceEnd = typename TriangleBeadExclVolume< InteractionType >::LoadForceEnd;
+    using LoadForceEnd = TriangleBeadExclVolume::LoadForceEnd;
 
     auto& loadForces = (end == LoadForceEnd::Plus ? bd.loadForcesP : bd.loadForcesM);
     auto& lfi        = (end == LoadForceEnd::Plus ? bd.lfip        : bd.lfim       );
@@ -132,7 +128,7 @@ void exclVolLoadForce(
     if(intersectRes.intersect && intersectRes.t > 0) {
         const int maxCylSize = static_cast<int>(intersectRes.t / monSize);
         if(maxCylSize < cylSize) {
-            loadForces[maxCylSize] = std::numeric_limits< floatingpoint >::infinity();
+            loadForces[maxCylSize] = inffp;
             cylSize = maxCylSize;
         }
     }
@@ -153,32 +149,31 @@ void exclVolLoadForce(
 
 } // namespace (anonymous)
 
-template< typename InteractionType >
-void TriangleBeadExclVolume< InteractionType >::computeLoadForces() {
+void TriangleBeadExclVolume::computeLoadForces() {
     using MT = Membrane::MeshType;
 
-    for(auto t: Triangle::getTriangles()) {
+    for(auto t : ps->triangles) {
 
-        const auto& mesh = t->getParent()->getMesh();
-        const MT::TriangleIndex ti { t->getTopoIndex() };
+        const auto& mesh = t.getParent(*ps).getMesh();
+        const MT::TriangleIndex ti { t.getTopoIndex() };
         const auto hei0 = mesh.halfEdge(ti);
         const auto hei1 = mesh.next(hei0);
         const auto hei2 = mesh.next(hei1);
-        const Vec3 v0 (mesh.attribute(mesh.target(hei0)).getCoordinate());
-        const Vec3 v1 (mesh.attribute(mesh.target(hei1)).getCoordinate());
-        const Vec3 v2 (mesh.attribute(mesh.target(hei2)).getCoordinate());
+        const Vec3 v0 (mesh.attribute(mesh.target(hei0)).getCoordinate(*ps));
+        const Vec3 v1 (mesh.attribute(mesh.target(hei1)).getCoordinate(*ps));
+        const Vec3 v2 (mesh.attribute(mesh.target(hei2)).getCoordinate(*ps));
 
         const auto area = mesh.attribute(ti).gTriangle.area;
         double kExVol = SysParams::Mechanics().triangleBeadVolume.k;
         
-        if(neighborList_->hasNeighbor(t)) for(auto b : neighborList_->getNeighbors(t)) {
+        if(neighborList_->hasNeighbor(t.sysIndex)) for(auto b : neighborList_->getNeighbors(t.sysIndex)) {
 
             // potential acts on second cylinder bead if it is a plus  end
             // potential acts on first  cylinder bead if it is a minus end
             Cylinder& cPlus = *static_cast< Filament* >(b->getParent())->getPlusEndCylinder();
             if(b == cPlus.getSecondBead()) {
                 exclVolLoadForce(
-                    _FFType, area, kExVol,
+                    interaction, area, kExVol,
                     *cPlus.getFirstBead(), *b, LoadForceEnd::Plus,
                     v0, v1, v2
                 );
@@ -187,7 +182,7 @@ void TriangleBeadExclVolume< InteractionType >::computeLoadForces() {
             Cylinder& cMinus = *static_cast< Filament* >(b->getParent())->getMinusEndCylinder();
             if(b == cMinus.getFirstBead()) {
                 exclVolLoadForce(
-                    _FFType, area, kExVol,
+                    interaction, area, kExVol,
                     *cMinus.getSecondBead(), *b, LoadForceEnd::Minus,
                     v0, v1, v2
                 );
@@ -198,29 +193,29 @@ void TriangleBeadExclVolume< InteractionType >::computeLoadForces() {
 
 } // void ...::computeLoadForces() const
 
-template< typename InteractionType >
-void TriangleBeadExclVolume< InteractionType >::computeLoadForce(Cylinder* c, LoadForceEnd end) const {
+void TriangleBeadExclVolume::computeLoadForce(SubSystem& sys, Cylinder* c, LoadForceEnd end) const {
     using MT = Membrane::MeshType;
 
     Bead* tip   = (end == LoadForceEnd::Plus ? c->getSecondBead() : c->getFirstBead());
     Bead* other = (end == LoadForceEnd::Plus ? c->getFirstBead() : c->getSecondBead());
 
-    if(neighborList_->hasNeighbor(tip)) for(auto t : neighborList_->getNeighbors(tip)) {
+    if(neighborList_->hasNeighbor(tip)) for(auto tiSys : neighborList_->getNeighbors(tip)) {
 
-        const auto& mesh = t->getParent()->getMesh();
-        const MT::TriangleIndex ti { t->getTopoIndex() };
+        const auto& t = sys.triangles[tiSys];
+        const auto& mesh = t.getParent(sys).getMesh();
+        const MT::TriangleIndex ti { t.getTopoIndex() };
         const auto hei0 = mesh.halfEdge(ti);
         const auto hei1 = mesh.next(hei0);
         const auto hei2 = mesh.next(hei1);
-        const Vec3 v0 (mesh.attribute(mesh.target(hei0)).getCoordinate());
-        const Vec3 v1 (mesh.attribute(mesh.target(hei1)).getCoordinate());
-        const Vec3 v2 (mesh.attribute(mesh.target(hei2)).getCoordinate());
+        const Vec3 v0 (mesh.attribute(mesh.target(hei0)).getCoordinate(sys));
+        const Vec3 v1 (mesh.attribute(mesh.target(hei1)).getCoordinate(sys));
+        const Vec3 v2 (mesh.attribute(mesh.target(hei2)).getCoordinate(sys));
 
         const auto area = mesh.attribute(ti).gTriangle.area;
         double kExVol = SysParams::Mechanics().triangleBeadVolume.k;
 
         exclVolLoadForce(
-            _FFType, area, kExVol,
+            interaction, area, kExVol,
             *other, *tip, end,
             v0, v1, v2
         );
@@ -228,5 +223,4 @@ void TriangleBeadExclVolume< InteractionType >::computeLoadForce(Cylinder* c, Lo
 
 } // void ...::computeLoadForce(...) const
 
-// Template instantiation
-template class TriangleBeadExclVolume< TriangleBeadExclVolRepulsion >;
+} // namespace medyan

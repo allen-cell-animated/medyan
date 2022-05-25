@@ -16,8 +16,11 @@
 
 #include "common.h"
 
+namespace medyan {
+
 //FORWARD DECLARATIONS
 class SubSystem;
+class Controller;
 
 /// An abstract base class for a trackable object in the SubSystem.
 
@@ -51,7 +54,7 @@ protected:
         : _movable(movable), _reactable(reactable),
           _dneighbor(dneighbor), _neighbor(neighbor) { };
     
-    static SubSystem* _subSystem; ///< A subsystem pointer for every trackable
+    inline static SubSystem* _subSystem = nullptr; ///< A subsystem pointer for every trackable
     
     //@{
     /// Object type
@@ -78,5 +81,6 @@ public:
     virtual ~Trackable() noexcept {}
 };
 
+} // namespace medyan
 
 #endif

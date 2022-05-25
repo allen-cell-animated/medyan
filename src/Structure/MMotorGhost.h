@@ -15,14 +15,11 @@
 #ifndef MEDYAN_MMotorGhost_h
 #define MEDYAN_MMotorGhost_h
 
-#include <vector>
 #include "SysParams.h"
 #include "Util/Io/Log.hpp"
 #include "common.h"
 
-//FORWARD DECLARATIONS
-class MotorGhost;
-
+namespace medyan {
 /// Represents a cross-link between [Filaments](@ref Filament) that can move by way of
 /// chemical reactions.
 
@@ -40,45 +37,23 @@ class MMotorGhost {
     
 public:
     floatingpoint stretchForce = 0.0; ///< Stretching force of motor at current state
-    
-    /// Main constructor
-    /// @param position - position on cylinder 1 and 2, respectively
-    /// @param coord - coordinates of cylinder1's bead 1, bead 2, etc
-    MMotorGhost(int motorType, int numBoundHeads, floatingpoint position1, floatingpoint position2,
-                const vector<floatingpoint>& coord11, const vector<floatingpoint>& coord12,
-                const vector<floatingpoint>& coord21, const vector<floatingpoint>& coord22);
+
+    floatingpoint eqLength = 0;  ///< Equilibrium length
+    floatingpoint kStretch = 0;  ///< Stretching parameter
 
     void initializerestart(int motorType, floatingpoint eqLength,
                            floatingpoint numBoundHeads);
     
     //@{
     /// Getter for constants
-    floatingpoint getStretchingConstant(){return _kStretch;}
-    floatingpoint getEqLength(){return _eqLength;}
+    floatingpoint getStretchingConstant() const {return kStretch;}
+    floatingpoint getEqLength() const {return eqLength;}
     //@}
     
     /// Reset the spring constant of the motor based on number of bound heads
     void setStretchingConstant(int motorType, floatingpoint numBoundHeads);
-    
-    /// Set parent
-    void setMotorGhost(MotorGhost* motor) {_pMotorGhost = motor;}
-    /// Get parent
-    MotorGhost* getMotorGhost() {return _pMotorGhost;}
-    
-    //@{
-    /// Length management
-    void setLength(floatingpoint l){_currentLength = l;}
-    floatingpoint getLength() {return _currentLength;}
-    //@}
-    
-private:
-    floatingpoint _eqLength;  ///< Equilibrium length, set at construction
-    floatingpoint _kStretch;  ///< Stretching parameter
-    
-    MotorGhost* _pMotorGhost; ///< Pointer to parent
-    
-    floatingpoint _currentLength; ///< Current length of motor
 };
 
+} // namespace medyan
 
 #endif

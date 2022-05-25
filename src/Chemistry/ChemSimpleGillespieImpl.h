@@ -20,8 +20,10 @@
 #include "common.h"
 
 #include "Reaction.h"
-#include "ChemSimImpl.h"
+#include "Chemistry/ChemSim.h"
 #include "ChemRNode.h"
+
+namespace medyan {
 
 /// Implements the simplest version of the Gillespie algorithm, without caching, etc.
 
@@ -30,11 +32,10 @@
  *  of reactions. Reaction objects can be added and removed from the 
  *  ChemSimpleGillespieImpl instance.
  */
-class ChemSimpleGillespieImpl : public ChemSimImpl {
+class ChemSimpleGillespieImpl : public ChemSim {
 public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0
     ChemSimpleGillespieImpl() :
-        ChemSimImpl(),
         _uniform_distr() { resetTime(); }
     
     /// Copying is not allowed
@@ -121,7 +122,7 @@ public:
 
     /// Cross checks all reactions in the network for firing time.
     virtual bool crosschecktau() const {
-        LOG(WARNING)<<"Cannot check for tau in reactions in ChemGillespieImpl.h"<<endl;
+        log::warn("Cannot check for tau in reactions in ChemGillespieImpl.h");
         return true;
     };
     
@@ -139,5 +140,6 @@ private:
     floatingpoint _t; ///< global time
 };
 
+} // namespace medyan
 
 #endif

@@ -15,12 +15,20 @@
 #define MEDYAN_SysParams_h
 
 #include <filesystem>
+#include <optional>
+#include <string>
 #include <vector>
 #include <list>
 
 #include "common.h"
-#include "Structure/SurfaceMesh/MembraneMeshVertexSystem.hpp"
+#include "Mechanics/ForceField/Volume/Types.hpp"
+#include "Parameter/Bubble.hpp"
+#include "Parameter/Membrane.hpp"
+#include "Parameter/Output.hpp"
+#include "Structure/FilamentTypes.hpp"
+#include "Util/Math/Vec.hpp"
 
+namespace medyan {
 //Did not minimize structure
 #ifdef TRACKDIDNOTMINIMIZE
 struct MinimizationParams{
@@ -75,7 +83,7 @@ struct MechParams {
         //@}
         
         /// VolumeFF type
-        string VolumeFFType = "";
+        CylinderVolumeExclusionFFType cylinderVolumeExclusionFFType = CylinderVolumeExclusionFFType::none;
         
         /// BoundaryFF Type
         string BoundaryFFType = "";
@@ -106,13 +114,25 @@ struct MechParams {
         
         /// Tolerance and cg parameters
         floatingpoint gradientTolerance = 1.0;
+        floatingpoint energyChangeRelativeTolerance = 1e-9;
         floatingpoint maxDistance = 1.0;
         floatingpoint lambdaMax = 1.0;
         floatingpoint lambdarunningaverageprobability = 0.0;
         string linesearchalgorithm = "BACKTRACKING";
+        bool tryToRecoverInLineSearchError = true;
         
         /// Not yet used
         string MD = "";
+
+        // Other parameters for mechanics algorithm.
+        bool adaptMeshDuringMinimization = false;
+    };
+
+    // Struct to hold membrane curvature mismatch parameters.
+    struct ProteinCurvatureMismatchSetup {
+        std::string speciesName;
+        double      kBending = 0;
+        double      eqCurv = 0;
     };
 
     struct TriangleBeadVolume {
@@ -165,6 +185,8 @@ struct MechParams {
     /// Volume parameter
     vector<floatingpoint> VolumeK                 = {};
     floatingpoint         VolumeCutoff            = 0.0;
+    // If monomer volume exclusion is enabled, this value indicates the monomer sampling interval on the filament, indexed by filament type.
+    std::vector<Size>     volumeExclusionMonomerInterval;
     TriangleBeadVolume    triangleBeadVolume;
     //@}
 
@@ -181,6 +203,16 @@ struct MechParams {
     ///If using more than one bubble
     short numBubbleTypes = 1;
     //@}
+
+    // Parameters for special force field bead move constraint.
+    // Note: bead constraint restricts the range of bead movement of every minimization, using the 3D FENE potential.
+    floatingpoint beadConstraintK = 1;
+    floatingpoint beadConstraintRmax = 160;
+
+    // Surface protein curvature mismatch parameters.
+    bool curvatureMismatchEnableCurvatureSensing = true;
+    bool curvatureMismatchEnableCurvatureGeneration = true;
+    std::vector<ProteinCurvatureMismatchSetup> proteinCurvatureMismatchSetups;
     
     
     //@{
@@ -195,12 +227,26 @@ struct MechParams {
     floatingpoint pinK = 0.0;       ///< Tethered stiffness
     floatingpoint pinTime = 0.0;    ///< Time at which to pin the filaments
 
-    // pin membrane border vertices, using pinK
-    bool pinMembraneBorderVertices = false;
-
     // pin initial filament beads, using pinK
     bool pinInitialFilamentBelowZ = false;
     floatingpoint pinInitialFilamentBelowZValue = 0.0;
+
+    // Membrane equilibrium area expansion.
+    struct MembraneEqAreaChange {
+        // The equilibrium area of every membrane in the system is increased with this rate (in nm^2/s).
+        FP rate = 0;
+        // The minimum equilibrium area for every membrane in the system.
+        FP minEqArea = 0;
+    };
+    std::optional<MembraneEqAreaChange> membraneEqAreaChange;
+
+    struct MembraneEqVolumeChange {
+        // The equilibrium volume of every membrane in the system is increased with this rate (in nm^3/s).
+        FP rate = 0;
+        // The minimum equilibrium volume for every membrane in the system.
+        FP minEqVolume = 0;
+    };
+    std::optional<MembraneEqVolumeChange> membraneEqVolumeChange;
     //@}
 
     //vectorization
@@ -219,10 +265,9 @@ struct MechParams {
     bool hessMatrixPrintBool = false;
     int hessSkip = 20;
 
-    int sameFilBindSkip = 2;
-    int cylThresh = 0.0;
+    int cylThresh = 0;
 
-
+    medyan::FilamentModel globalFilamentModel = medyan::FilamentModel::beadCylinder;
 };
 
 /// Struct to hold chemistry parameters for the system
@@ -243,6 +288,7 @@ struct ChemParams {
         
         floatingpoint minimizationTime = 0.0;
         floatingpoint neighborListTime = 0.0;
+        floatingpoint initialSlowDownTime = 0.0;
         //@}
         
         //@{
@@ -263,6 +309,11 @@ struct ChemParams {
         std::filesystem::path inputFile; // relative path only
     };
 
+    // Constant parameters.
+    //---------------------------------
+    // On the same filament, the minimum cylinder position distance that allows pairwise binding.
+    static constexpr int minCylinderDistanceSameFilament = 2;
+
     ChemistryAlgorithm chemistryAlgorithm;
     ChemistrySetup     chemistrySetup;
 
@@ -270,18 +321,6 @@ struct ChemParams {
     /// Number of general species
     short numBulkSpecies = 0;
     short numDiffusingSpecies = 0;
-    //@}
-
-    //@{
-    /// Number of filament related species
-    /// Vector corresponds to number of species on each filament type
-    vector<short> numFilamentSpecies = {};
-    vector<short> numPlusEndSpecies  = {};
-    vector<short> numMinusEndSpecies = {};
-    vector<short> numBoundSpecies    = {};
-    vector<short> numLinkerSpecies   = {};
-    vector<short> numMotorSpecies    = {};
-    vector<short> numBrancherSpecies = {};
     //@}
 
     /// Number of different filament types
@@ -301,11 +340,10 @@ struct ChemParams {
 
     //@{
     ///Extra motor parameters
-    /// Vector corresponds to each filament type
+    /// Vector corresponds to each motor type
     vector<short> motorNumHeadsMin = {};
     vector<short> motorNumHeadsMax = {};
 
-    floatingpoint dutyRatio = 0.1;
 
     vector<floatingpoint> motorStepSize = {};
     //@}
@@ -313,6 +351,9 @@ struct ChemParams {
     /// Binding sites on filaments
     /// 2D Vector corresponds to each filament type
     vector<vector<short>> bindingSites = {};
+
+    // Whether binding on the same filament is allowed.
+    bool allowPairBindingOnSameFilament = true;
 
     //@{
     /// Positions of all bound molecules in species vectors
@@ -383,6 +424,9 @@ struct GeoParams {
     floatingpoint compartmentSizeY = 0;
     floatingpoint compartmentSizeZ = 0;
 
+    // When choosing coordinates randomly in the entire compartment grid, this parameter limits the available grid domain with a certain fraction in each dimension.
+    std::array<std::array<floatingpoint, 3>, 2> fracGridSpan = {{ { 0, 0, 0 }, { 1, 1, 1 } }};
+
     floatingpoint largestCompartmentSide = 0;
 
     floatingpoint largestCylinderSize = 0;
@@ -400,7 +444,9 @@ struct GeoParams {
     int minCylinderNumMon = 3;
     //@}
 
-
+    // Surface geometry settings.
+    SurfaceGeometrySettings surfaceGeometrySettings {};
+    MeshAdapterSettings     meshAdapterSettings {};
 };
 
 /// Struct to hold Boundary parameters for the system
@@ -437,8 +483,6 @@ struct BoundParams {
     int transfershareaxis=-1;       ///Axis along which activate/deactivate protocols should be executed.
     int planestomove = -1; //tracks if both (2), left/bottom/front (1), or
     // right/top/back(0) planes should be moved.
-    vector<vector<floatingpoint>> fraccompartmentspan = { { 0, 0, 0 },
-                                                   { 0.999, 0.999, 0.999 } };
 
 };
 
@@ -500,44 +544,6 @@ struct DyRateParams {
     float manualMinusDepolyRate = 1.0;
 };
 
-struct SpecialParams {
-
-    /// Struct to hold any special setup types
-    struct SpecialSetupType {
-        
-        ///MTOC configuration
-        bool mtoc = false;
-
-        //@{
-        ///MTOC Parameters
-        short mtocFilamentType = 0;
-        int mtocNumFilaments   = 0;
-        int mtocFilamentLength = 0;
-        short mtocBubbleType   = 0;
-        //@}
-        
-        ///AFM configuration
-        bool afm = false;
-        
-        //@{
-        ///MTOC Parameters
-        short afmFilamentType = 0;
-        int afmNumFilaments   = 0;
-        int afmFilamentLength = 0;
-        short afmBubbleType   = 0;
-        //@}
-        vector<float> mtocInputCoordXYZ = {};
-    };
-
-    SpecialSetupType specialSetupType;
-
-    /// Parameters for initializing MTOC attached filaments
-    float mtocTheta1 = 0.0;
-    float mtocTheta2 = 1.0;
-    float mtocPhi1 = 0.0;
-    float mtocPhi2 = 1.0;
-};
-
 /// Struct to hold Filament setup information
 struct FilamentSetup {
     
@@ -557,57 +563,14 @@ struct FilamentSetup {
 
     ///For resetting pin positions in restart phase
     string pinRestartFile = "";
+
+    // For cylindrical boundary MTOC simulation only.
+    bool restrictCylinderBoundaryAngle = false;
+    bool formRings = false;
 };
 
-namespace medyan {
-
-/// Struct to hold membrane setup information
-struct MembraneSetup {
-    // meta info
-    //---------------------------------
-    int type = 0;
-
-    // mechanical parameters
-    //---------------------------------
-    // mesh mode
-    MembraneMeshVertexSystem vertexSystem = MembraneMeshVertexSystem::general;
-
-    // elasticity
-    double areaElasticity = 400;
-    double bendingElasticity = 100;
-    double eqMeanCurv = 0;
-
-    // tension
-    double tension = 0;
-
-    // enclosed volume conservation
-    double volumeElasticity = 0.8;
 
 
-    // initial mesh configuration
-    //---------------------------------
-    // initial membrane area factor compared to equilibrium area
-    double initEqAreaFactor = 1.0;
-
-    // initialize by shape or from file
-    std::vector< std::vector< std::string > > meshParam;
-};
-struct MembraneSettings {
-    std::vector< MembraneSetup > setupVec;
-};
-
-} // namespace medyan
-
-/// Struct to hold Bubble setup information
-struct BubbleSetup {
-    
-    std::filesystem::path inputFile;
-    
-    ///If want a random distribution, used if inputFile is left blank
-    int numBubbles = 0;
-    ///Bubble type to create
-    short bubbleType = 0;
-};
 
 
 //-------------------------------------
@@ -619,11 +582,137 @@ struct BubbleSetup {
 ///         to the filament type specified in the input file.
 struct ChemistryData {
 
+    // Species information.
+    struct SpeciesGeneralInfo {
+        std::string   name;
+        std::string   rspeciesType;
+    };
+    struct SpeciesBulkInfo {
+        std::string   name;
+        int           initialCopyNumber = 0;
+        floatingpoint releaseTime = 0;
+        floatingpoint removalTime = 0;
+        std::string   rspeciesType;
+        // Move boundary specific.
+        std::string   copyNumberManipulationType = "NONE";
+        // Move boundary specific.
+        floatingpoint holdMolarity = 0;
+    };
+    struct SpeciesDiffusingInfo {
+        std::string   name;
+        int           initialCopyNumber = 0;
+        floatingpoint diffusionCoefficient = 0;
+        floatingpoint releaseTime = 0;
+        // If removal time is zero, it will not be removed.
+        floatingpoint removalTime = 0;
+        std::string   rspeciesType;
+        // For AVG type of rspecies only.
+        int           numEvents = 0;
+        // Move boundary specific.
+        std::string   copyNumberManipulationType = "NONE";
+        // Move boundary specific.
+        floatingpoint holdMolarity = 0;
+    };
+    struct SpeciesMembraneDiffusingInfo {
+        std::string name;
+        floatingpoint diffusionCoefficient = 0;
+        floatingpoint area = 0;
+    };
+
+    // Reaction information.
+    struct ReactionSurfaceInfo {
+        std::vector< std::string > reactants;
+        std::vector< std::string > products;
+        floatingpoint rate = 0;
+    };
+    struct ReactionAdsorptionDesorptionInfo {
+        std::string speciesName3D;
+        std::string speciesName2D;
+        // Actual propensity of compartment-based adsorption is
+        //   p = (on rate) * (density of 3D diffusing species) * (area of accessible lipid)
+        double      onRate = 0;
+        // Actual propensity of desorption is
+        //   p = (off rate) * (number of 2D diffusing species)
+        double      offRate = 0;
+    };
+    struct ReactionPolymerizationInfo {
+        std::string speciesReactantDiffusingBulk;
+        std::string speciesReactantPlusEndMinusEnd;
+        std::string speciesProductFilament;
+        std::string speciesProductPlusEndMinusEnd;
+        floatingpoint rate = 0;
+        // For dissipation tracking.
+        floatingpoint gnum = 0;
+        std::string hrcdid;
+    };
+    struct ReactionDepolymerizationInfo {
+        std::string speciesReactantFilament;
+        std::string speciesReactantPlusEndMinusEnd;
+        std::string speciesProductDiffusingBulk;
+        std::string speciesProductPlusEndMinusEnd;
+        floatingpoint rate = 0;
+        // For dissipation tracking.
+        floatingpoint gnum = 0;
+        std::string hrcdid;
+    };
+    struct ReactionAgingInfo {
+        std::string speciesReactant;
+        std::string speciesProduct;
+        floatingpoint rate = 0;
+        // For dissipation tracking.
+        floatingpoint gnum = 0;
+        std::string hrcdid;
+    };
+    struct ReactionDestructionInfo {
+        std::string speciesReactantPlusEnd;
+        std::string speciesReactantMinusEnd;
+        std::string speciesProduct1;
+        std::string speciesProduct2;
+        floatingpoint rate = 0;
+    };
+    struct ReactionLinkerBindingInfo {
+        struct ReactantInfo {
+            std::string speciesBound1;
+            std::string speciesBound2;
+            // linkerDiffusing can be a bulk or diffusing species name.
+            std::string linkerDiffusing;
+        };
+        struct ProductInfo {
+            std::string linkerBound1;
+            std::string linkerBound2;
+        };
+
+        ReactantInfo  reactantInfo;
+        ProductInfo   productInfo;
+        floatingpoint onRate = 0;
+        floatingpoint offRate = 0;
+        floatingpoint rMin = 0;
+        floatingpoint rMax = 0;
+        // For dissipation tracking.
+        floatingpoint gnum = 0;
+        std::string   hrcdid;
+    };
+    struct ReactionMotorWalkingInfo {
+        std::string   speciesReactantMotor;
+        std::string   speciesReactantEmptySite;
+        std::string   speciesProductMotor;
+        std::string   speciesProductEmptySite;
+        floatingpoint rate = 0;
+        // For dissipation tracking.
+        floatingpoint gnum = 0;
+        std::string   hrcdid;
+    };
+
     /// Reaction happening between SpeciesBulk and SpeciesDiffusing ONLY
     vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>> genReactions = {};
+    // Reactions on membrane surfaces.
+    std::vector< ReactionSurfaceInfo > reactionsSurface;
 
     /// Reaction happening between SpeciesBulk ONLY
     vector<tuple<vector<string>, vector<string>, floatingpoint>> bulkReactions = {};
+
+    // Surface adsorption / desorption.
+    std::vector< ReactionAdsorptionDesorptionInfo > reactionsAdsorptionDesorption;
 
     /// Filament nucleation reaction
     vector<vector<tuple<vector<string>, vector<string>, floatingpoint>>> nucleationReactions;
@@ -635,13 +724,13 @@ struct ChemistryData {
         *  string of reactants, string of products, and the reaction rate.
         */
     /// Polymerization reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> polymerizationReactions;
+    std::vector<std::vector<ReactionPolymerizationInfo>> polymerizationReactions;
     /// Depolymerization reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> depolymerizationReactions;
+    std::vector<std::vector<ReactionDepolymerizationInfo>> depolymerizationReactions;
     /// Aging reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> agingReactions;
+    std::vector<std::vector<ReactionAgingInfo>> agingReactions;
     /// Destruction reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint>>> destructionReactions;
+    std::vector<std::vector<ReactionDestructionInfo>> destructionReactions;
 
     /// Branching reactions
     /// This reaction also contains the off rate, and a string
@@ -660,26 +749,32 @@ struct ChemistryData {
         *  range.
         */
     /// Linker reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint, string>>> linkerReactions;
+    std::vector< ReactionLinkerBindingInfo > linkerReactions;
     /// MotorGhost reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, floatingpoint, floatingpoint, floatingpoint, string>>> motorReactions;
+    std::vector< ReactionLinkerBindingInfo > motorReactions;
     //@}
 
     /// MotorGhost walking reactions
-    vector<vector<tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string>>> motorWalkingReactions;
+    std::vector< std::vector< ReactionMotorWalkingInfo > > motorWalkingReactions;
+
+    //--------------------------------------------------------------------------
+    // Species information.
+    //--------------------------------------------------------------------------
+
+    std::vector< SpeciesGeneralInfo > speciesGeneral;
 
     /// SpeciesBulk parsed, in the form of a tuple which contains the name and
     /// initial copy number, release time, removal time, CONST/REG qualifier, TARGET TYPE
     /// (TOTCONC/FREECONC) and Target CONCENTRATION (needed in move boundary)
-    vector<tuple<string, int, floatingpoint, floatingpoint, string, string, floatingpoint>> speciesBulk =
-            {};
+    std::vector< SpeciesBulkInfo > speciesBulk;
 
 
     /// SpeicesDiffusing parsed, in the form of a tuple which contains name,
     /// initial copy number in reaction volume, the rate of diffusion, release time,
     /// removal time, AVG/REG qualifier, and number of events to average if applicable.
-    vector<tuple<string, int, floatingpoint, floatingpoint, floatingpoint, string, int, string, floatingpoint>>
-            speciesDiffusing = {};
+    std::vector< SpeciesDiffusingInfo > speciesDiffusing;
+    // 2D diffusing species on membrane surfaces.
+    std::vector< SpeciesMembraneDiffusingInfo > speciesMembraneDiffusing;
 
     //@{
     /// Filament species parsed
@@ -711,8 +806,6 @@ struct ChemistryData {
     
       branchingReactions(MAX_FILAMENT_TYPES),
       severingReactions(MAX_FILAMENT_TYPES),
-      linkerReactions(MAX_FILAMENT_TYPES),
-      motorReactions(MAX_FILAMENT_TYPES),
       motorWalkingReactions(MAX_FILAMENT_TYPES),
     
       speciesFilament(MAX_FILAMENT_TYPES),
@@ -726,27 +819,163 @@ struct ChemistryData {
       B_BINDING_INDEX(MAX_FILAMENT_TYPES),
       L_BINDING_INDEX(MAX_FILAMENT_TYPES),
       M_BINDING_INDEX(MAX_FILAMENT_TYPES) {}
-    
+
+
+    // Some auxiliary functions for convenient access.
+    //--------------------------------------------------------------------------
+    auto numLinkerSpecies() const noexcept { return linkerReactions.size(); }
+    auto numMotorSpecies()  const noexcept { return motorReactions.size(); }
+
+    // Find the species index for a given general species name.
+    std::optional<Index> findIndexSpeciesGeneral(std::string_view name) const noexcept {
+        for(Index i = 0; i < speciesGeneral.size(); ++i) {
+            if(speciesGeneral[i].name == name) {
+                return i;
+            }
+        }
+        return std::nullopt;
+    }
+    // Find the species index for a given bulk species name.
+    std::optional<Index> findIndexSpeciesBulk(std::string_view name) const noexcept {
+        for(Index i = 0; i < speciesBulk.size(); ++i) {
+            if(speciesBulk[i].name == name) {
+                return i;
+            }
+        }
+        return std::nullopt;
+    }
+    // Find the species index for a given diffusing species name.
+    std::optional<Index> findIndexSpeciesDiffusing(std::string_view name) const noexcept {
+        for (Index i = 0; i < speciesDiffusing.size(); ++i) {
+            if (speciesDiffusing[i].name == name) {
+                return i;
+            }
+        }
+        return std::nullopt;
+    }
+    // Find the species index for a given membrane diffusing species name.
+    std::optional<Index> findIndexSpeciesMembraneDiffusing(std::string_view name) const noexcept {
+        for (Index i = 0; i < speciesMembraneDiffusing.size(); ++i) {
+            if (speciesMembraneDiffusing[i].name == name) {
+                return i;
+            }
+        }
+        return std::nullopt;
+    }
 };
 
-using BubbleData = vector<tuple<short, vector<floatingpoint>>>;
-using FilamentData = tuple<
-    vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>>,
-    vector<tuple<string, short, vector<vector<floatingpoint>>>>,
-    vector<tuple<string, short, vector<floatingpoint>>>,
-    vector<vector<floatingpoint>> >;
 
-namespace medyan {
+// Postprocessed membrane mesh chemistry data.
+struct MembraneMeshChemistryInfo {
+    // Note:
+    //   - indices in this struct must correspond to the actual index as is in
+    //     the diffusing species names vector
 
-// Definition of simulation configuration
+    struct DiffusionInfo {
+        int      speciesIndex = 0;
+
+        // Diffusion coeffecient, with dimension L^2 T^-1
+        double   diffusionCoeff = 0;
+
+        // Projected surface area of the protein, with dimension L^2.
+        double   area = 0;
+    };
+    struct InternalReactionInfo {
+        std::vector< int > reactantSpeciesIndices;
+        std::vector< int > productSpeciesIndices;
+
+        // Rate constant, with dimension L^(2*(numReactants - 1)) T^-1
+        double rateConstant = 0;
+    };
+
+    // Factory that creates mesh chemistry information from ChemistryData.
+    static MembraneMeshChemistryInfo fromChemistryData(const ChemistryData& chem) {
+        using namespace std;
+
+        MembraneMeshChemistryInfo mmci;
+
+        // Diffusing species and diffusion reactions.
+        for(int i = 0; i < chem.speciesMembraneDiffusing.size(); ++i) {
+            auto& sinfo = chem.speciesMembraneDiffusing[i];
+            mmci.diffusingSpeciesNames.push_back(sinfo.name);
+            mmci.diffusion.push_back({
+                i,                          // Species index.
+                sinfo.diffusionCoefficient, // Diffusion coefficient.
+                sinfo.area,                 // Projected surface area.
+            });
+        }
+
+        // Internal reactions.
+        for(auto& rinfo : chem.reactionsSurface) {
+            InternalReactionInfo iri;
+
+            const auto findSpeciesIndex = [&](const std::string& sname) {
+                const int index = std::find(mmci.diffusingSpeciesNames.begin(), mmci.diffusingSpeciesNames.end(), sname) - mmci.diffusingSpeciesNames.begin();
+                if(index >= mmci.diffusingSpeciesNames.size()) {
+                    throw runtime_error("Invalid index.");
+                }
+                return index;
+            };
+
+            for(auto& sname : rinfo.reactants) {
+                iri.reactantSpeciesIndices.push_back(findSpeciesIndex(sname));
+            }
+            for(auto& sname : rinfo.products) {
+                iri.productSpeciesIndices.push_back(findSpeciesIndex(sname));
+            }
+            iri.rateConstant = rinfo.rate;
+
+            mmci.internalReactions.push_back(move(iri));
+        }
+
+        return mmci;
+    }
+
+    // diffusing species
+    std::vector< std::string > diffusingSpeciesNames;
+
+    // diffusion reactions
+    std::vector< DiffusionInfo > diffusion;
+
+    // Internal reactions involving species
+    std::vector< InternalReactionInfo > internalReactions;
+};
+
+
+struct BubbleData {
+    struct BubbleInfo {
+        int                   type = 0;
+        Vec<3, floatingpoint> coord {};
+    };
+
+    std::vector<BubbleInfo> bubbles;
+};
+
+
+// Filament initialization data.
+struct FilamentData {
+    struct Filament {
+        int type = 0;
+        // Coordinate information to determine initial filament shape.
+        std::vector<Vec<3, FP>> coords;
+    };
+
+    std::vector<Filament> filaments;
+};
+
+// Definition of simulation configuration.
+// Note: This data structure should be able to be bijectively mapped to the input file.
 struct SimulConfig {
 
     // The MetaParams class, used to store the source of config file, etc
     struct MetaParams {
         std::filesystem::path systemInputFile;
 
-        // Directory of other input files
+        // Directory of other input files.
         std::filesystem::path inputDirectory;
+
+        // Whether the system is a restart instead of a fresh start.
+        bool isRestart = false;
     };
 
     MetaParams     metaParams;
@@ -757,41 +986,100 @@ struct SimulConfig {
     ChemParams     chemParams;
     BoundParams    boundParams;
     DyRateParams   dyRateParams;
-    SpecialParams  specialParams;
     BubbleSetup    bubbleSetup;
+    MTOCSettings   mtocSettings;
+    AFMSettings    afmSettings;
     MembraneSettings membraneSettings;
     FilamentSetup  filamentSetup;
+    OutputParams   outputParams;
 
     // Parameters from other inputs
     ChemistryData  chemistryData;
     BubbleData     bubbleData;
     FilamentData   filamentData;
 
+    // Postprocessed parameters.
+    MembraneMeshChemistryInfo membraneMeshChemistryInfo;
 };
 
-} // namespace medyan
 
+//-------------------------------------
+// Parameters read from the command line.
+//-------------------------------------
+
+enum class MedyanRunMode {
+    // Normal simulation.
+    simulation,
+    // Run GUI only, without any simulation.
+    gui,
+    // (Deprecated) translate the trajectory file to pdb format.
+    analyze,
+    // Interactive configuration generation.
+    config,
+    // Run all tests.
+    test,
+    // Side simulations and routines.
+    side,
+};
+
+struct RunAnalyzeParams {
+    // Snapshot trajectory analysis specific.
+    std::size_t analyzeMembraneBondFrame = 0;
+    bool        analyzeMembraneBondAllFrames = false; // If it is set to true, it overrides the specific bond frame info.
+    int analyzeFrameInterval = 1; // must be >= 1
+};
+
+// All parameters coming from the command line.
+// These are not stored in SimulConfig because they do not belong to the input files.
+struct CommandLineConfig {
+    // Run mode
+    MedyanRunMode runMode = MedyanRunMode::simulation;
+
+    // File and directories
+    std::filesystem::path inputFile;
+    std::filesystem::path inputDirectory;
+    std::filesystem::path outputDirectory = std::filesystem::current_path();
+
+    // GUI
+    bool guiEnabled = false;
+
+    // Floating point environment.
+    bool trapInvalidFP = false;
+
+    // Threadings
+    int numThreads = -1;
+
+    // RNG
+    bool rngSeedFixed = false;
+    unsigned long long rngSeed = 0;
+
+    // side procedure name
+    std::string sideProcName;
+
+    // Run mode analyze specific.
+    RunAnalyzeParams runAnalyzeParams;
+};
+
+
+//--------------------------------------
+
+// After reading from the input file, some post-processing is needed to compute a few more parameters.
+void postprocess(SimulConfig&);
+
+
+
+// Forward declaration.
+class Controller;
 /// Static class that holds all simulation parameters,
 /// initialized by the SystemParser
 class SysParams {
 friend class Controller;
-friend class ChemManager;
 friend class SubSystem;
 friend class Cylinder;
 
 public:
-    // Parameters for simulation procedure only
-    // TODO move it somewhere else and use it.
-    struct SimulParams {
 
-        // Output and tracking
-        bool trackForces = false;
-    };
-
-#ifdef TESTING ///Public access if testing only
-public:
-#endif
-    static MechParams MParams;    ///< The mechanical parameters
+    inline static medyan::MechParams MParams;    ///< The mechanical parameters
     static ChemParams CParams;    ///< The chemistry parameters
     static GeoParams GParams;     ///< The geometry parameters
     static BoundParams BParams;   ///< The boundary parameters
@@ -799,11 +1087,7 @@ public:
     #ifdef TRACKDIDNOTMINIMIZE
     static MinimizationParams MinParams;
 	#endif
-
-    static SpecialParams SParams; ///< Other parameters
-    static SimulParams simulParams_;
     
-public:
     //@{
 #ifdef NLSTENCILLIST
     static short numcylcylNL;//Tracks total number of neighborlists in the system
@@ -820,34 +1104,21 @@ public:
     // corresponds to an on-going initialization state.
 
     //aravind July11,2016
-    static vector<float> MUBBareRate;
-    static vector<float> LUBBareRate;
     static vector<float> BUBBareRate;
     //@
-    static const MechParams& Mechanics() {return MParams;}
+    static const auto& Mechanics() {return MParams;}
     static const ChemParams& Chemistry() {return CParams;}
     static const GeoParams& Geometry() {return GParams;}
     static const BoundParams& Boundaries() {return BParams;}
     static const DyRateParams& DynamicRates() {return DRParams;}
-    static const SpecialParams& SpecialInputs() {return SParams;}
-    static const auto& simulParams() { return simulParams_; }
 
-    static auto& simulParamsMut() { return simulParams_; }
-    //@}
 
-    //@{
-    //Check for consistency of parameters. Done at runtime by the Controller.
-    static bool checkChemParameters(ChemistryData& chem);
-    static bool checkMechParameters(MechParams::MechanicsFFType& mech);
-    static bool checkDyRateParameters(DyRateParams::DynamicRateType& dy);
-    static bool checkGeoParameters();
-    //@}
-
-    static void addChemParameters(ChemistryData& chem);
     #ifdef TRACKDIDNOTMINIMIZE
     static MinimizationParams& Mininimization() { return MinParams;}
 	#endif
 
 };
+
+} // namespace medyan
 
 #endif

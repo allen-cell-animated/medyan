@@ -1,22 +1,24 @@
 #ifndef MEDYAN_Structure_SurfaceMesh_AdaptiveMeshGeometryManager_hpp
 #define MEDYAN_Structure_SurfaceMesh_AdaptiveMeshGeometryManager_hpp
 
-namespace adaptive_mesh {
+namespace medyan::adaptive_mesh {
 
 template< typename Mesh > struct GeometryManager {
-    static void computeAllTriangleNormals(Mesh& mesh) {
+    template< typename Context >
+    static void computeAllTriangleNormals(Context& sys, Mesh& mesh) {
         const size_t numTriangles = mesh.numTriangles();
 
         for(typename Mesh::TriangleIndex ti { 0 }; ti < numTriangles; ++ti) {
-            medyan::adaptiveComputeTriangleNormal(mesh, ti);
+            medyan::adaptiveComputeTriangleNormal(sys, mesh, ti);
         }
     }
 
-    static void computeAllAngles(Mesh& mesh) {
+    template< typename Context >
+    static void computeAllAngles(Context& sys, Mesh& mesh) {
         const size_t numHalfEdges = mesh.numHalfEdges();
 
         for(typename Mesh::HalfEdgeIndex hei { 0 }; hei < numHalfEdges; ++hei) {
-            medyan::adaptiveComputeAngle(mesh, hei);
+            medyan::adaptiveComputeAngle(sys, mesh, hei);
         }
     }
 
@@ -32,6 +34,6 @@ template< typename Mesh > struct GeometryManager {
     }
 }; // End GeometryManager
 
-} // namespace adaptive_mesh
+} // namespace medyan::adaptive_mesh
 
 #endif

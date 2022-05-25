@@ -22,6 +22,7 @@
 #include "MathFunctions.h"
 #include "Cylinder.h"
 
+namespace medyan {
 using namespace mathfunc;
 #ifdef CUDAACCL
 void BranchingPositionCosine::deallocate(){
@@ -242,22 +243,6 @@ floatingpoint BranchingPositionCosine::energy(const floatingpoint *coord,
         floatingpoint cospminusq = cosp * cos(posheta) + sinp * sin(posheta);
         U_i = kpos[i] * ( 1 - cospminusq );
 
-        /*theta = safeacos(xd / XD);
-        posheta = 0.5*M_PI;
-        dTheta = theta-posheta;
-
-        U_i = kpos[i] * ( 1 - cos(dTheta) );*/
-
-
-        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-
-            //set culprit and return
-            BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
-
-            return -1;
-        }
-
         U += U_i;
     }
     delete[] mp;
@@ -310,21 +295,6 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
         floatingpoint sinp = sqrt(max<floatingpoint>((1-cosp*cosp),(floatingpoint)0.0));
         floatingpoint cospminusq = cosp * cos(posheta) + sinp * sin(posheta);
         U_i = kpos[i] * ( 1 - cospminusq );
-
-        /*theta = safeacos(xd / XD);
-        posheta = 0.5*M_PI;
-        dTheta = theta-posheta;
-
-        U_i = kpos[i] * ( 1 - cos(dTheta) );*/
-
-        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-
-            //set culprit and return
-            BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
-
-            return -1;
-        }
 
         U += U_i;
     }
@@ -559,3 +529,5 @@ void BranchingPositionCosine::forces(const floatingpoint *coord, floatingpoint *
     delete[] mp;
     delete[] coord2prime;
 }
+
+} // namespace medyan

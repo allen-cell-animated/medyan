@@ -14,12 +14,14 @@
 #ifndef MEDYAN_Histogram_h
 #define MEDYAN_Histogram_h
 
+#include <cassert>
 #include <cmath>
 #include <fstream>
 #include <vector>
 
 #include "common.h"
 
+namespace medyan {
 /// A class to hold frequency of occurences in a general set of data.
 
 /*!
@@ -81,5 +83,6 @@ public:
     
 };
 
+} // namespace medyan
 
 #endif

@@ -17,46 +17,28 @@
 #include <vector>
 
 #include "common.h"
-
+#include "Mechanics/ForceField/Linker/LinkerStretching.h"
+#include "Mechanics/ForceField/Linker/LinkerStretchingHarmonic.h"
 #include "ForceField.h"
 
-//FORWARD DECLARATIONS
-class LinkerInteractions;
-class Linker;
+namespace medyan {
 
-/// An implementation of the ForceField class that calculates Linker
-/// stretching, bending, and twisting.
-class LinkerFF : public ForceField {
-    
-private:
-    vector<unique_ptr<LinkerInteractions>>
-    _linkerInteractionVector; ///< Vector of initialized linker interactions
-    
-protected:
-    /// The culprit in the case of an error
-    LinkerInteractions* _culpritInteraction;
-    
-public:
-    /// Constructor, intializes stretching, bending, and twisting forces
-    LinkerFF(string& stretching, string& bending, string& twisting );
-    
-    virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void cleanup();
+inline auto createLinkerForceFields(std::string_view stretching, std::string_view bending, std::string_view twisting) {
+    std::vector<std::unique_ptr<ForceField>> forceFields;
 
-    virtual string getName() {return "Linker";}
-    virtual void whoIsCulprit();
-    
-    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched = false) override;
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
-    
-    virtual void computeLoadForces() {return;}
-    
-    virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
-    //Assigns stretchforces for ratechangeimpl
-    virtual void assignforcemags();
+    if (stretching == "HARMONIC")
+        forceFields.push_back(
+            std::make_unique<LinkerStretching<LinkerStretchingHarmonic>>()
+        );
+    else if(stretching == "") {}
+    else {
+        log::error("Linker stretching FF {} not recognized. Exiting.", stretching);
+        throw std::runtime_error("Linker stretching FF not recognized.");
+    }
 
-    virtual vector<string> getinteractionnames();
-    
-};
+    return forceFields;
+}
+
+} // namespace medyan
 
 #endif

@@ -20,10 +20,11 @@
 #include "Bubble.h"
 #include "BoundaryElement.h"
 
-#include "GController.h"
+#include "Controller/GController.h"
 #include "MathFunctions.h"
 #include "CUDAcommon.h"
 
+namespace medyan {
 using namespace mathfunc;
 
 short HybridCylinderCylinderNL::totalhybridNL = 0;
@@ -51,14 +52,17 @@ void HybridCylinderCylinderNL::assignbin(Cylinder* cyl){
         exit(EXIT_FAILURE);
     }
     _bin->addCylinder(cyl);
-    cyl->_hbinvec.push_back(_bin);
+    cyl->hbin = _bin;
 }
 
 void HybridCylinderCylinderNL::unassignbin(Cylinder* cyl, Bin* bin){
+    cyl->hbin = nullptr;
     bin->removeCylinder(cyl);
 }
 
 void HybridCylinderCylinderNL::updatebin(Cylinder *cyl){
+    // Precondition: cyl->hbin is not nullptr. This is not checked in this function.
+
     Bin* _bin;
     if(CROSSCHECK_NL_SWITCH)
         _crosscheckdumpFileNL<<"Cylinder bin updated "<<cyl->getId()
@@ -70,14 +74,13 @@ void HybridCylinderCylinderNL::updatebin(Cylinder *cyl){
         cyl->printSelf();
         exit(EXIT_FAILURE);
     }
-    if(_bin != cyl->_hbinvec.at(_ID)) {
-#ifdef CHEMISTRY
-        auto oldBin = cyl->_hbinvec.at(_ID);
+    if(_bin != cyl->hbin) {
+        auto oldBin = cyl->hbin;
         auto newBin = _bin;
-#endif
+
         //remove from old compartment, add to new
         oldBin->removeCylinder(cyl);
-        cyl->_hbinvec.at(_ID) = newBin;
+        cyl->hbin = newBin;
         _bin->addCylinder(cyl);
     }
 }
@@ -174,12 +177,19 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
 
 //    //Initial parameters of system
     //Creates bins based on the largest rMax in the system.
-    auto _nDim = SysParams::Geometry().nDim;
     floatingpoint searchdist = 1.125 * (sqrt(_largestrMaxsq));
 //    std::cout<<"H searchdist "<<searchdist<<" rMax "<<sqrt(_largestrMaxsq)<<endl;
-    _binSize = {searchdist, searchdist, searchdist};
+    if(searchdist == 0) {
+        _binSize = {
+            SysParams::Geometry().NX * SysParams::Geometry().compartmentSizeX,
+            SysParams::Geometry().NY * SysParams::Geometry().compartmentSizeY,
+            SysParams::Geometry().NZ * SysParams::Geometry().compartmentSizeZ,
+        };
+    } else {
+        _binSize = {searchdist, searchdist, searchdist};
+    }
 
-    if(_nDim >=1) {
+    {
         _size.push_back(int(SysParams::Geometry().NX * SysParams::Geometry()
                 .compartmentSizeX));
         if( (_size[0]) % int(_binSize[0]) ==0)
@@ -188,7 +198,7 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
             _grid.push_back(_size[0]/_binSize[0] + 1);
     }
 
-    if (_nDim >= 2) {
+    {
         _size.push_back(int(SysParams::Geometry().NY * SysParams::Geometry()
                 .compartmentSizeY));
         if( (_size[1]) % int(_binSize[1]) ==0)
@@ -197,7 +207,7 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
             _grid.push_back(_size[1]/_binSize[1] + 1);
     }
 
-    if (_nDim == 3) {
+    {
         _size.push_back(int(SysParams::Geometry().NZ * SysParams::Geometry()
                 .compartmentSizeZ));
         if( (_size[2]) % int(_binSize[2]) ==0)
@@ -207,7 +217,7 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
     }
 
     //Check that grid and compartmentSize match nDim
-    if((_nDim == 3 && _grid[0] != 0 && _grid[1] != 0 && _grid[2]!=0 && _binSize[0] != 0 &&
+    if((_grid[0] != 0 && _grid[1] != 0 && _grid[2]!=0 && _binSize[0] != 0 &&
         _binSize[1] != 0 && _binSize[2] != 0)){
         //Do nothing
     }
@@ -223,7 +233,7 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
 //    cout<<"Grid size "<<_grid[0]<<" "<<_grid[1]<<" "<<_grid[2]<<endl;
 //    cout<<"Total number of bins "<<size<<endl;
     //Set the instance of this grid with given parameters
-    _binGrid = new BinGrid(size, _ID, _binSize);
+    _binGrid = new BinGrid(size, 0, _binSize);
     //Create connections based on dimensionality
     generateConnections();
 //    cout<<"connections generated"<<endl;
@@ -334,20 +344,20 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
         }
     }
     //get necessary variables
-    auto binvec = currcylinder->_hbinvec;//The different hybrid bins that this cylinder
+    auto binvec = currcylinder->hbin;//The different hybrid bins that this cylinder
     // belongs to.
     //Check if the cylinder has been assigned a bin. If not, assign.
-    if(binvec.size()<=_ID)
+    if(binvec == nullptr)
         assignbin(currcylinder);
-    binvec = currcylinder->_hbinvec;
+    binvec = currcylinder->hbin;
     //get parent bin corresponding to this hybrid neighbor list.
-    auto parentbin =  binvec.at(_ID);
+    auto parentbin =  binvec;
     //get neighboring bins
-    vector<Bin*> _neighboringBins = binvec.at(_ID)//Get the bin that belongs to the
+    vector<Bin*> _neighboringBins = binvec//Get the bin that belongs to the
                     // current binGrid of interest for this NL.
                                                     ->getNeighbours();
     auto cindex = currcylinder->getStableIndex();
-    const auto& c = Cylinder::getDbData().value[cindex];
+    const auto& c = Cylinder::getDbData()[cindex];
 
     //
     int nbincount = 0;
@@ -386,7 +396,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                     _crosscheckdumpFileNL<<"Cindex in Cylinder pointer ";
                     for (int iter = 0; iter < numneighbors; iter++) {
                         int ncindex = cindicesvec[iter];
-                        const auto& ncylinder = Cylinder::getDbData().value[ncindex];
+                        const auto& ncylinder = Cylinder::getDbData()[ncindex];
                         _crosscheckdumpFileNL<<ncylinder
                         .chemCylinder->getCylinder()->getStableIndex()<<" ";
                     }
@@ -395,7 +405,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
 
                 for (int iter = 0; iter < numneighbors; iter++) {
                     int ncindex = cindicesvec[iter];
-                    const auto& ncylinder = Cylinder::getDbData().value[ncindex];
+                    const auto& ncylinder = Cylinder::getDbData()[ncindex];
                     short ftype2 = ncylinder.type;
 //                    //Don't add the same cylinder
 //                    if (c.ID == ncylinder.ID) continue;
@@ -405,7 +415,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                     if (c.filamentId == ncylinder.filamentId) {
                         auto distsep = fabs(c.positionOnFilament - ncylinder.positionOnFilament);
                         //if not cross filament, check if not neighboring
-                        if (distsep <= SysParams::Mechanics().sameFilBindSkip) continue;
+                        if (distsep <= ChemParams::minCylinderDistanceSameFilament) continue;
                     }
 
                     //Loop through all the distance bounds and add to neighborlist
@@ -477,6 +487,8 @@ void HybridCylinderCylinderNL::addNeighbor(Neighbor* n) {
 }
 
 void HybridCylinderCylinderNL::removeNeighbor(Neighbor* n) {
+    // Precondition:
+    // - If n is a cylinder, its hbin must point to a valid bin.
 
     Cylinder* cylinder;
     if(!(cylinder = dynamic_cast<Cylinder*>(n))) return;
@@ -489,9 +501,6 @@ void HybridCylinderCylinderNL::removeNeighbor(Neighbor* n) {
                           " from NL " <<HNLID << endl;*/
             //Remove from NeighborList
             _list4mbinvec[HNLID].erase(cylinder);
-            //Remove from bin
-            Bin *bin = cylinder->_hbinvec.at(_ID);
-            unassignbin(cylinder, bin);
             //TODO if the list is a full list, searching through a subset of the neighborlist is enough to get all entries with n as value.
             //remove from other lists
 //            std::cout << "Removed from cylinders ";
@@ -511,8 +520,8 @@ void HybridCylinderCylinderNL::removeNeighbor(Neighbor* n) {
         }
     }
 
-
-
+    // Remove from bin.
+    unassignbin(cylinder, cylinder->hbin);
 }
 
 void HybridCylinderCylinderNL::reset() {
@@ -536,9 +545,10 @@ void HybridCylinderCylinderNL::reset() {
             _crosscheckdumpFileNL<<"Updated neighbors bin "<<cylinder->getId()
                                  <<" "<<cylinder->getStableIndex()<<endl;
         for (int idx = 0; idx < totalhybridNL; idx++) {
-            for(auto cn:_list4mbinvec[idx][cylinder])
+            for(auto cn:_list4mbinvec[idx][cylinder]) {
                 _crosscheckdumpFileNL<<cn->getId()<<" ";
-                _crosscheckdumpFileNL<<"|";
+            }
+            _crosscheckdumpFileNL<<"|";
         }
         _crosscheckdumpFileNL<<endl;
         }
@@ -546,5 +556,7 @@ void HybridCylinderCylinderNL::reset() {
 }
 
 ofstream HybridNeighborList::_crosscheckdumpFileNL;
+
+} // namespace medyan
 
 #endif

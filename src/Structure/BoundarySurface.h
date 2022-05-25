@@ -20,6 +20,7 @@
 
 #include "BoundaryElement.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class SubSystem;
 
@@ -52,5 +53,7 @@ public:
     }
     
 };
+
+} // namespace medyan
 
 #endif

@@ -14,7 +14,7 @@ inline void runSideProcedure(std::string procName) {
         surfaceMeshDiffusion();
     }
     else {
-        LOG(ERROR) << "Unrecognized side procedure " << procName;
+        log::error("Unrecognized side procedure {}", procName);
     }
 }
 

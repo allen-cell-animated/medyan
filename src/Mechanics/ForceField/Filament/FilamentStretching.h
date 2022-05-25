@@ -16,22 +16,23 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "common.h"
-#include "FilamentInteractions.h"
+#include "Mechanics/ForceField/ForceField.h"
 #ifdef CUDAACCL
 #include "CUDAcommon.h"
 #endif
 
+namespace medyan {
 /// Represents a Filament stretching interaction
 template <class FStretchingInteractionType>
-class FilamentStretching : public FilamentInteractions {
+class FilamentStretching : public ForceField {
     
 private:
     FStretchingInteractionType _FFType; 
     
-    int *beadSet;
+    std::vector<int> beadSet;
     ///Array describing the constants in calculation
-    floatingpoint *kstr;
-    floatingpoint *eql;
+    std::vector<FP> kstr;
+    std::vector<FP> eql;
 
 #ifdef CUDAACCL
     int * gpu_beadSet;
@@ -50,14 +51,15 @@ public:
     ///For filaments, this is a 2-bead potential
     const static int n = 2;
     
-    virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void deallocate();
+    virtual void vectorize(const FFCoordinateStartingIndex&, const SimulConfig&) override;
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+    virtual FP computeEnergy(FP *coord) override;
+    virtual void computeForces(FP *coord, FP *f) override;
     
-    virtual const string getName() {return "Filament Stretching";}
+    virtual std::string getName() override {return "FilamentStretching";}
 
-//    virtual void whoisCulprit();
 };
+
+} // namespace medyan
+
 #endif

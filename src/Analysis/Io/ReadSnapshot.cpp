@@ -8,12 +8,12 @@
 
 #include "utility.h"
 
-#include "OutputStruct.hpp"
 
 #include "Analysis/Io/pdb.h"
-#include "Core/Globals.hpp"
 #include "Util/Io/Log.hpp"
+#include "Structure/OutputStruct.hpp"
 #include "Structure/SubSystem.h"
+#include "SysParams.h"
 
 namespace medyan {
 namespace analysis {
@@ -46,11 +46,6 @@ namespace {
             if(newLinker > linker) linker = newLinker;
             curMaxBead += linker;
 
-            // Beads in motors
-            size_t newMotor = snapshot.motorStruct.size() * 2;
-            if(newMotor > motor) motor = newMotor;
-            curMaxBead += motor;
-
             // Beads in membranes
             size_t newMembrane = 0;
             for(auto& eachMembrane: snapshot.membraneStruct) {
@@ -69,7 +64,7 @@ namespace {
 
 }
 
-void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
+void SnapshotReader::readAndConvertToVmd(const size_t maxFrames, const RunAnalyzeParams& params) {
     using namespace std;
 
     vector<OutputStructSnapshot> snapshots;
@@ -80,7 +75,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
     PdbMaxBead maxBead;
 
     size_t curFrame = 0;
-    const auto frameInterval = global().analyzeFrameInterval;
+    const auto frameInterval = params.analyzeFrameInterval;
 
     LOG(STEP) << "Start reading " << _snapshotFilepath;
     if(frameInterval != 1) LOG(INFO) << "Frame interval is " << frameInterval;
@@ -114,8 +109,8 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
     // Write to pdb
     PdbGenerator pg(_pdbFilepath);
 
-    const size_t bondFrame = global().analyzeMembraneBondFrame;
-    const bool   allBonds  = global().analyzeMembraneBondAllFrames;
+    const size_t bondFrame = params.analyzeMembraneBondFrame;
+    const bool   allBonds  = params.analyzeMembraneBondAllFrames;
 
     size_t numSnapshots = snapshots.size();
     for(size_t idx = 0; idx < numSnapshots; ++idx) {
@@ -160,8 +155,10 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
 
             if(filamentPtr != snapshots[idx].filamentStruct.end() && filamentPtr->getId() == i) {
                 // Filament exists for this id.
-                auto& allCoords = filamentPtr->getCoords();
-                for(auto& eachCoord: allCoords) {
+                const auto numBeads = filamentPtr->getNumBeads();
+                auto& allCoords = filamentPtr->rawCoords;
+                for(int beadIndex = 0; beadIndex < numBeads; ++beadIndex) {
+                    auto eachCoord = allCoords.col(beadIndex);
                     ++atomSerial;
                     ++atomId;
                     ++atomCount;
@@ -181,7 +178,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                     ++resSeq;
                     pg.genAtom(
                         atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
-                        allCoords.back()[0], allCoords.back()[1], allCoords.back()[2]
+                        allCoords(0, numBeads - 1), allCoords(1, numBeads - 1), allCoords(2, numBeads - 1)
                     );
                     if(shouldMakePsf) {
                         psfGen->genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
@@ -210,11 +207,14 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         pg.genTer(++atomSerial, "ARG", chain, resSeq);
 
         // Linkers
-        chain = 'L';
         atomCount = 0;
         resSeq = 0;
         for(auto& eachLinker: snapshots[idx].linkerStruct) {
-            for(auto& eachCoord: eachLinker.getCoords()) {
+            chain = eachLinker.type == "motor" ? 'M' :
+                    eachLinker.type == "brancher" ? 'B' :
+                    'L';
+            for(int n = 0; n < 2; ++n) {
+                auto eachCoord = eachLinker.rawCoords.col(n);
                 ++atomSerial;
                 ++atomId;
                 ++atomCount;
@@ -246,80 +246,17 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         }
         pg.genTer(++atomSerial, "ARG", chain, resSeq);
 
-        // Motors
-        chain = 'M';
-        atomCount = 0;
-        resSeq = 0;
-        for(auto& eachMotor: snapshots[idx].motorStruct) {
-            for(auto& eachCoord: eachMotor.getCoords()) {
-                ++atomSerial;
-                ++atomId;
-                ++atomCount;
-                ++resSeq;
-                pg.genAtom(
-                    atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
-                    eachCoord[0], eachCoord[1], eachCoord[2]
-                );
-                if(shouldMakePsf) {
-                    psfGen->genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
-                }
-            }
-            ++resSeq; // Separate bonds
-        }
-        while(atomCount < maxBead.motor) {
-            for(size_t b = 0; b < 2; ++b) {
-                ++atomSerial;
-                ++atomId;
-                ++atomCount;
-                ++resSeq;
-                pg.genAtom(
-                    atomSerial, " CA ", ' ', "ARG", chain, resSeq
-                );
-                if(shouldMakePsf) {
-                    psfGen->genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
-                }
-            }
-            ++resSeq;
-        }
-        pg.genTer(++atomSerial, "ARG", chain, resSeq);
-
         // Membranes
         chain = 'E';
         atomCount = 0;
         resSeq = 0;
 
         for(auto& eachMembrane: snapshots[idx].membraneStruct) {
-            /*
-            bool buildMembrane = !eachMembrane.getMembrane();
-            Membrane* dataMembrane;
-
-            unique_ptr<Membrane> newMembrane;
-            if(buildMembrane) {
-                newMembrane = make_unique<Membrane>(&s, 0, eachMembrane.getMembraneInfo());
-                dataMembrane = newMembrane.get();
-            } else {
-                dataMembrane = eachMembrane.getMembrane();
-            }
-
-            // Output by edges
-            for(Edge* e: dataMembrane->getEdgeVector()) {
-                for(Vertex* v: e->getVertices()) {
-                    ++atomSerial;
-                    ++atomId;
-                    ++atomCount;
-                    pg.genAtom(
-                        atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
-                        v[0], v[1], v[2]
-                    );
-                }
-                ++atomSerial;
-            }
-
-            */
 
             size_t atomIdSoFar = atomId;
 
-            for(const auto& v: eachMembrane.getMembraneInfo().attributeInitializerInfo.vertexCoordinateList) {
+            for(Index vi = 0; vi < eachMembrane.numVertices; ++vi) {
+                auto v = eachMembrane.vertexDataFloat64.col(vi);
                 ++atomSerial;
                 ++atomId;
                 ++atomCount;
@@ -335,8 +272,8 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             ++resSeq;
 
             if(shouldMakePsf) {
-                const auto& tlist = eachMembrane.getMembraneInfo().triangleVertexIndexList;
-                for(const auto& t : tlist) {
+                for(Index ti = 0; ti < eachMembrane.numTriangles; ++ti) {
+                    auto t = eachMembrane.triangleDataInt64.col(ti);
                     for(size_t i = 0; i < 3; ++i) {
                         size_t i_next = (i+1) % 3;
                         if(t[i] < t[i_next]) {
@@ -347,20 +284,23 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                         }
                     }
                 }
-                const auto& blist = eachMembrane.getMembraneInfo().borderVertexIndexList;
-                if(blist.has_value()) {
-                    for(const auto& b : *blist) {
-                        for(size_t i = 0; i < b.size(); ++i) {
-                            size_t i_next = (i+1) % b.size();
-                            if(b[i] < b[i_next]) {
-                                bondList.emplace_back(
-                                    atomIdSoFar + b[i] + 1,
-                                    atomIdSoFar + b[i_next] + 1
-                                );
-                            }
+
+                Index curBorderCountIndex = 0;
+                for(Index bi = 0; bi < eachMembrane.numBorders; ++bi) {
+                    Size nv = eachMembrane.packedBorderVertices[curBorderCountIndex];
+                    for(int i = 0; i < nv; ++i) {
+                        auto i_next = (i+1) % nv;
+                        auto v1 = eachMembrane.packedBorderVertices[curBorderCountIndex + 1 + i];
+                        auto v2 = eachMembrane.packedBorderVertices[curBorderCountIndex + 1 + i_next];
+                        if(v1 < v2) {
+                            bondList.emplace_back(
+                                atomIdSoFar + v1 + 1,
+                                atomIdSoFar + v2 + 1
+                            );
                         }
                     }
-                } // end if blist has value
+                    curBorderCountIndex += 1 + nv;
+                }
             }
 
         }

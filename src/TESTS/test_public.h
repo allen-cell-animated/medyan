@@ -23,7 +23,7 @@
 
 #    include "CController.h"
 #    include "Composite.h"
-#    include "GController.h"
+#    include "Controller/GController.h"
 #    include "SubSystem.h"
 
 namespace test_public {

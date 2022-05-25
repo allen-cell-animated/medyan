@@ -16,61 +16,28 @@
 #include "ChemCallbacks.h"
 #include "CCylinder.h"
 
-CMotorGhost::CMotorGhost(short motorType, Compartment* c,
-                         CCylinder* cc1, CCylinder* cc2, int position1, int position2)
+namespace medyan {
+CMotorGhost::CMotorGhost(
+    int motorSpeciesIndex1,
+    int motorSpeciesIndex2,
+    Compartment* c,
+    CCylinder* cc1, CCylinder* cc2, int position1, int position2)
 
-    : CBound(cc1->getType(), c, cc1, cc2, position1, position2) {
+    : CBound(cc1->getType(), cc2->getType(), c, cc1, cc2, position1, position2)
+{
     
     //Find species on cylinder that should be marked
-    SpeciesBound* sm1 = _cc1->getCMonomer(_position1)->speciesMotor(motorType);
-    SpeciesBound* sm2 = _cc2->getCMonomer(_position2)->speciesMotor(motorType);
+    SpeciesBound* sm1 = _cc1->getCMonomer(_position1)->speciesMotor(motorSpeciesIndex1);
+    SpeciesBound* sm2 = _cc2->getCMonomer(_position2)->speciesMotor(motorSpeciesIndex2);
     SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(
-                        SysParams::Chemistry().motorBoundIndex[_filamentType]);
+                        SysParams::Chemistry().motorBoundIndex[filType1_]);
     SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(
-                        SysParams::Chemistry().motorBoundIndex[_filamentType]);
-//    //@{
-/*    SpeciesBound* BL1 = _cc1->getCMonomer(_position1)->speciesBound(
-            SysParams::Chemistry().linkerBoundIndex[_filamentType]);
-    SpeciesBound* BL2 = _cc2->getCMonomer(_position2)->speciesBound(
-            SysParams::Chemistry().linkerBoundIndex[_filamentType]);
-    SpeciesBound* BB1 = _cc1->getCMonomer(_position1)->speciesBound(
-            SysParams::Chemistry().brancherBoundIndex[_filamentType]);
-    SpeciesBound* BB2 = _cc2->getCMonomer(_position2)->speciesBound(
-            SysParams::Chemistry().brancherBoundIndex[_filamentType]);*/
+                        SysParams::Chemistry().motorBoundIndex[filType2_]);
 
-//    SpeciesBound* BM1 = _cc1->getCMonomer(_position1)->speciesBound(
-//            SysParams::Chemistry().motorBoundIndex[_filamentType]);
-//    SpeciesBound* BM2 = _cc2->getCMonomer(_position2)->speciesBound(
-//            SysParams::Chemistry().motorBoundIndex[_filamentType]);
-
-    /*SpeciesBound* sl1 = _cc1->getCMonomer(_position1)->speciesLinker(0);
-    SpeciesBound* sl2 = _cc2->getCMonomer(_position2)->speciesLinker(0);
-    SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesBrancher(0);
-    SpeciesBound* sb2 = _cc2->getCMonomer(_position2)->speciesBrancher(0);
-    std::cout<<"Motor "<<cc1->getCylinder()->getStableIndex()<<" "<<_position1<<" "
-    <<cc2->getCylinder()->getStableIndex()<<" "<<
-    <<_position2<<" MotorType "<<motorType<< endl;
-    cout<<"Motor ID "<<cc1->getCylinder()->getId()<<" "<<cc2->getCylinder()->getId()<<endl;*/
-//        std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "<<BM2->getN()<<endl;
-//        std::cout<<"Linker "<<sl1->getN()<<" "<<sl2->getN()<<" BOUND "<<BL1->getN()<<" "<<BL2->getN()<<endl;
-//        std::cout<<"Brancher "<<sb1->getN()<<" "<<sb2->getN()<<" BOUND "<<BB1->getN()<<" "<<BB2->getN()<<endl;
-//    for(auto c:Cylinder::getCylinders()){
-//        std::cout<<c->getId()<<" "<<c->getMCylinder()->getLength()<<" ";
-//    }
-//    std::cout<<endl;
-//    //@}
 #ifdef DETAILEDOUTPUT
     std::cout<<"Chosen sites Cyl1 "<<cc1->getCylinder()->getId()<<" bs1 "<<_position1<<" "
             "Cyl2 "<<cc2->getCylinder()->getId()<<" bs2 "<<_position2<<endl;
 #endif
-    /*std::cout<<"Motor binding "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "
-             <<cc2->getCylinder()->getID()<<" "<<_position2<<" MotorType "<<motorType<< endl;
-    cout<<"species statuses (bound) "<<se1->getN()<<" "<<se2->getN()<<" (motor) "<<sm1->getN()<<" "
-									""<<sm2->getN()<<endl;
-	auto c1coord = cc1->getCompartment()->coordinates();
-	auto c2coord = cc2->getCompartment()->coordinates();
-    cout<<"coordinate Cmp "<<c1coord[0]<<" "<<c1coord[1]<<" "<<c1coord[2]<<" "
-																		   ""<<c2coord[0]<<" "<<c2coord[1]<<" "<<c2coord[2]<<endl;*/
 
     //mark species
     assert(areEqual(sm1->getN(), 0.0) && areEqual(sm2->getN(), 0.0) &&
@@ -105,9 +72,9 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     os.push_back(&rs[SPECIESM_BINDING_INDEX]->getSpecies());
     
     Species* empty1 = _cc1->getCMonomer(_position1)->speciesBound(
-                      SysParams::Chemistry().motorBoundIndex[_filamentType]);
+                      SysParams::Chemistry().motorBoundIndex[filType1_]);
     Species* empty2 = _cc2->getCMonomer(_position2)->speciesBound(
-                      SysParams::Chemistry().motorBoundIndex[_filamentType]);
+                      SysParams::Chemistry().motorBoundIndex[filType2_]);
     
     os.push_back(empty1);
     os.push_back(empty2);
@@ -119,7 +86,7 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     // Dissipation
     if(SysParams::Chemistry().dissTracking){
     floatingpoint gnum = onRxn->getGNumber();
-    offRxn->setGNumber(-gnum);
+    offRxn->setGNumber(gnum);
     
     //set hrcdid of offreaction
     string hrcdid = onRxn->getHRCDID();
@@ -127,7 +94,7 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     }
     //Attach the callback to the off reaction, add it
     MotorUnbindingCallback mcallback(_pMotorGhost, ps);
-    ConnectionBlock rcb(offRxn->connect(mcallback,false));
+    offRxn->connect(mcallback);
     _cc1->addCrossCylinderReaction(_cc2, offRxn);
     setOffReaction(offRxn);
 }
@@ -135,12 +102,12 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
 void CMotorGhost::moveMotorHead(CCylinder* cc,
                                 short oldPosition,
                                 short newPosition,
-                                short motorType,
+                                short speciesMotorIndex,
                                 short boundType,
                                 SubSystem* ps) {
     
-    auto smOld = cc->getCMonomer(oldPosition)->speciesMotor(motorType);
-    auto smNew = cc->getCMonomer(newPosition)->speciesMotor(motorType);
+    auto smOld = cc->getCMonomer(oldPosition)->speciesMotor(speciesMotorIndex);
+    auto smNew = cc->getCMonomer(newPosition)->speciesMotor(speciesMotorIndex);
 
     auto seNew = cc->getCMonomer(newPosition)->speciesBound(boundType);
     
@@ -163,7 +130,7 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
         //change off reaction to include new species
         Species* smOther = _secondSpecies;
         Species* seOther = _cc2->getCMonomer(_position2)->speciesBound(
-                           SysParams::Chemistry().motorBoundIndex[_filamentType]);
+                           SysParams::Chemistry().motorBoundIndex[filType2_]);
         
         Species* sbd = &(_offRxn->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         
@@ -179,7 +146,7 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
         //change off reaction to include new species
         Species* smOther = _firstSpecies;
         Species* seOther = _cc1->getCMonomer(_position1)->speciesBound(
-                           SysParams::Chemistry().motorBoundIndex[_filamentType]);
+                           SysParams::Chemistry().motorBoundIndex[filType1_]);
         
         Species* sbd = &(_offRxn->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         
@@ -203,7 +170,7 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
     
     //attach signal
     MotorUnbindingCallback mcallback(_pMotorGhost, ps);
-    ConnectionBlock rcb(newOffRxn->connect(mcallback,false));
+    newOffRxn->connect(mcallback);
     //remove old reaction, add new one
     _cc1->removeCrossCylinderReaction(_cc2, _offRxn);
     _cc1->addCrossCylinderReaction(_cc2, newOffRxn);
@@ -217,13 +184,13 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
                                 CCylinder* newCC,
                                 short oldPosition,
                                 short newPosition,
-                                short motorType,
+                                short speciesMotorIndex,
                                 short boundType,
                                 SubSystem* ps) {
 
     
-    auto smOld = oldCC->getCMonomer(oldPosition)->speciesMotor(motorType);
-    auto smNew = newCC->getCMonomer(newPosition)->speciesMotor(motorType);
+    auto smOld = oldCC->getCMonomer(oldPosition)->speciesMotor(speciesMotorIndex);
+    auto smNew = newCC->getCMonomer(newPosition)->speciesMotor(speciesMotorIndex);
     
     auto seNew = newCC->getCMonomer(newPosition)->speciesBound(boundType);
     
@@ -246,7 +213,7 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
         //change off reaction to include new species
         Species* smOther = _secondSpecies;
         Species* seOther = _cc2->getCMonomer(_position2)->speciesBound(
-                           SysParams::Chemistry().motorBoundIndex[_filamentType]);
+                           SysParams::Chemistry().motorBoundIndex[filType2_]);
         
         Species* sbd = &(_offRxn->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         
@@ -268,7 +235,7 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
         //change off reaction to include new species
         Species* smOther = _firstSpecies;
         Species* seOther = _cc1->getCMonomer(_position1)->speciesBound(
-                           SysParams::Chemistry().motorBoundIndex[_filamentType]);
+                           SysParams::Chemistry().motorBoundIndex[filType1_]);
         
         Species* sbd = &(_offRxn->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         
@@ -298,7 +265,7 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
     //attach signal
     MotorUnbindingCallback mcallback(_pMotorGhost, ps);
     
-    ConnectionBlock rcb(newOffRxn->connect(mcallback,false));
+    newOffRxn->connect(mcallback);
     //add new
     _cc1->addCrossCylinderReaction(_cc2, newOffRxn);
     
@@ -311,3 +278,5 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
 void CMotorGhost::printReaction(){
     cout<<_offRxn->getHRCDID()<<endl;
 }
+
+} // namespace medyan

@@ -6,7 +6,7 @@ This file includes all one needs for interacting with MEDYAN user inputs.
 
 Features:
   - Simulation config storage (SysParams.h)
-  - Simulation config validation (SysParams.h)
+  - Simulation config validation (SysParamsValidate.hpp)
   - Reading config from input files (Parser.h)
   - Reading config from command line guide
   - Generating config input files
@@ -20,10 +20,6 @@ Documentation:
     medyan::SimulConfig
 
       All the simulation configuration is stored in an object of this type.
-
-    medyan::SimulConfigHelper
-
-      Manages the parsers and does configuration input/output.
 
 */
 
@@ -48,10 +44,10 @@ inline std::string readFileToString(std::filesystem::path file) {
 
     ifstream ifs(file);
     if(!ifs.is_open()) {
-        LOG(ERROR) << "There was an error reading file " << file;
+        log::error("Cannot open file {}", file);
         throw std::runtime_error("Cannot open input file.");
     }
-    LOG(INFO) << "Loading file " << file;
+    log::info("Loading file {}", file);
 
     stringstream ss;
     ss << ifs.rdbuf(); // Read the file
@@ -140,102 +136,143 @@ inline void readFilamentConfig(SimulConfig& sc, std::istream& is) {
     sc.filamentData = FilamentParser::readFilaments(is);
 }
 
-struct SimulConfigHelper {
+enum class InputGenOverwriteAction {
+    overwrite, // warn and overwrite
+    ignore,    // warn and ignore
+    confirm    // confirm with stdin input. should not be used in non-interactive mode
+};
 
-    enum class InputGenOverwriteAction {
-        overwrite, // warn and overwrite
-        ignore,    // warn and ignore
-        confirm    // confirm with stdin input. should not be used in non-interactive mode
+// Read simulation configuration from file
+inline SimulConfig getSimulConfigFromInput(
+    const std::filesystem::path& systemInputFile,
+    const std::filesystem::path& inputDirectory
+) {
+    using namespace std;
+    using namespace std::filesystem;
+
+    // Auxiliary struct handling file streams
+    struct ReadFile {
+        ifstream ifs;
+        ReadFile(const path& p) : ifs(p) {
+            if(!ifs.is_open()) {
+                log::error("There was an error parsing file {}", p);
+                throw std::runtime_error("Cannot open input file.");
+            }
+            log::info("Loading input file {}", p);
+        }
     };
 
-    // Parsers
-    SystemParser systemParser;
-    ChemistryParser chemistryParser;
+    SimulConfig conf;
+    conf.metaParams.systemInputFile = systemInputFile;
+    conf.metaParams.inputDirectory  = inputDirectory;
 
-    // Read simulation configuration from file
-    // Not const function because chemistry parsing is non-const
-    SimulConfig getFromInput(
-        std::filesystem::path systemInputFile,
-        std::filesystem::path inputDirectory
-    ) {
-        using namespace std;
-        using namespace std::filesystem;
+    // Read system input
+    parseKeyValueList(
+        conf,
+        lexTokenList(sExprTokenize(readFileToString(systemInputFile))),
+        systemParser(),
+        KeyValueParserUnknownKeyAction::warn
+    );
 
-        // Auxiliary struct handling file streams
-        struct ReadFile {
-            ifstream ifs;
-            ReadFile(const path& p) : ifs(p) {
-                if(!ifs.is_open()) {
-                    LOG(ERROR) << "There was an error parsing file " << p;
-                    throw std::runtime_error("Cannot open input file.");
-                }
-                LOG(INFO) << "Loading input file " << p;
-            }
-        };
-
-        SimulConfig conf;
-        conf.metaParams.systemInputFile = systemInputFile;
-        conf.metaParams.inputDirectory  = inputDirectory;
-
-        // Read system input
-        {
-            systemParser.parseInput(conf, readFileToString(systemInputFile));
-        }
-
-        // Read chemistry input
-        if(conf.chemParams.chemistrySetup.inputFile.empty()) {
-            LOG(ERROR) << "Need to specify a chemical input file. Exiting.";
-            throw std::runtime_error("No chemistry input file specified.");
-        }
-        else {
-            chemistryParser.parseInput(
-                conf,
-                readFileToString(inputDirectory / conf.chemParams.chemistrySetup.inputFile)
-            );
-        }
-
-        // Read bubble input
-        if(!conf.bubbleSetup.inputFile.empty()) {
-            ReadFile file(inputDirectory / conf.bubbleSetup.inputFile);
-            readBubbleConfig(conf, file.ifs);
-        }
-
-        // Read filament input
-        if(!conf.filamentSetup.inputFile.empty()) {
-            ReadFile file(inputDirectory / conf.filamentSetup.inputFile);
-            readFilamentConfig(conf, file.ifs);
-        }
-
-        return conf;
+    // Read chemistry input
+    if(conf.chemParams.chemistrySetup.inputFile.empty()) {
+        log::error("Need to specify a chemical input file. Exiting.");
+        throw std::runtime_error("No chemistry input file specified.");
+    }
+    else {
+        parseKeyValueList(
+            conf,
+            lexTokenList(sExprTokenize(readFileToString(inputDirectory / conf.chemParams.chemistrySetup.inputFile))),
+            chemDataParser(),
+            KeyValueParserUnknownKeyAction::warn
+        );
     }
 
-    // Output configuration to files
-    //
-    // altOstream is used when the file name is not specified.
-    void generateInput(
-        const SimulConfig&      conf,
-        std::ostream&           altOstream = std::cout,
-        InputGenOverwriteAction overwriteAction = InputGenOverwriteAction::overwrite
-    ) const {
-        using namespace std;
+    // Read bubble input
+    if(!conf.bubbleSetup.inputFile.empty()) {
+        ReadFile file(inputDirectory / conf.bubbleSetup.inputFile);
+        readBubbleConfig(conf, file.ifs);
+    }
 
-        // Generate system input
-        {
-            const auto& p = conf.metaParams.systemInputFile;
-            bool useAlt = false;
-            if(p.empty()) {
-                LOG(NOTE) << "The system input file is not specified in the config.";
+    // Read filament input
+    if(!conf.filamentSetup.inputFile.empty()) {
+        ReadFile file(inputDirectory / conf.filamentSetup.inputFile);
+        readFilamentConfig(conf, file.ifs);
+    }
+
+    // Do post-processing.
+    postprocess(conf);
+
+    return conf;
+}
+
+// Output configuration to files
+//
+// altOstream is used when the file name is not specified.
+inline void generateInput(
+    const SimulConfig&      conf,
+    std::ostream&           altOstream = std::cout,
+    InputGenOverwriteAction overwriteAction = InputGenOverwriteAction::overwrite
+) {
+    using namespace std;
+
+    // Generate system input
+    {
+        const auto& p = conf.metaParams.systemInputFile;
+        bool useAlt = false;
+        if(p.empty()) {
+            log::info("The system input file is not specified in the config.");
+            useAlt = true;
+        }
+        else if(filesystem::exists(p)) {
+            switch(overwriteAction) {
+
+            case InputGenOverwriteAction::overwrite:
+                log::warn("The file {} already exists and will be overwritten.", p.string());
+                break;
+
+            case InputGenOverwriteAction::ignore:
+                log::warn("The file {} already exists.", p.string());
                 useAlt = true;
+                break;
+
+            case InputGenOverwriteAction::confirm:
+                cout << "The file " << p.string() << " already exists. Overwrite (y/n)? ";
+                useAlt = !cinYesNo();
+                break;
             }
-            else if(filesystem::exists(p)) {
+        }
+
+        if(useAlt) {
+            log::info("Using alternative output target.");
+            outputTokenList(altOstream, buildTokens(conf, systemParser()));
+            log::info("----- End of system input -----");
+        } else {
+            ofstream ofs(p);
+            outputTokenList(ofs, buildTokens(conf, systemParser()));
+            log::info("System input file written to {}.", p.string());
+        }
+    }
+
+    // Generate chemistry input
+    {
+        const auto& name = conf.chemParams.chemistrySetup.inputFile;
+        const auto p = conf.metaParams.inputDirectory / name;
+        bool useAlt = false;
+        if(name.empty()) {
+            log::info("The chemistry input file is not specified in the config.");
+            useAlt = true;
+        }
+        else {
+            if(filesystem::exists(p)) {
                 switch(overwriteAction) {
 
                 case InputGenOverwriteAction::overwrite:
-                    LOG(WARNING) << "The file " << p.string() << " already exists and will be overwritten.";
+                    log::warn("The file {} already exists and will be overwritten.", p.string());
                     break;
 
                 case InputGenOverwriteAction::ignore:
-                    LOG(WARNING) << "The file " << p.string() << " already exists.";
+                    log::warn("The file {} already exists.", p.string());
                     useAlt = true;
                     break;
 
@@ -245,75 +282,33 @@ struct SimulConfigHelper {
                     break;
                 }
             }
-
-            if(useAlt) {
-                LOG(INFO) << "Using alternative output target.";
-                systemParser.outputInput(altOstream, conf);
-                LOG(INFO) << "----- End of system input -----";
-            } else {
-                ofstream ofs(p);
-                systemParser.outputInput(ofs, conf);
-                LOG(INFO) << "System input file written to " << p.string() << ".";
-            }
         }
 
-        // Generate chemistry input
-        {
-            const auto& name = conf.chemParams.chemistrySetup.inputFile;
-            const auto p = conf.metaParams.inputDirectory / name;
-            bool useAlt = false;
-            if(name.empty()) {
-                LOG(NOTE) << "The chemistry input file is not specified in the config.";
-                useAlt = true;
-            }
-            else {
-                if(filesystem::exists(p)) {
-                    switch(overwriteAction) {
-
-                    case InputGenOverwriteAction::overwrite:
-                        LOG(WARNING) << "The file " << p.string() << " already exists and will be overwritten.";
-                        break;
-
-                    case InputGenOverwriteAction::ignore:
-                        LOG(WARNING) << "The file " << p.string() << " already exists.";
-                        useAlt = true;
-                        break;
-
-                    case InputGenOverwriteAction::confirm:
-                        cout << "The file " << p.string() << " already exists. Overwrite (y/n)? ";
-                        useAlt = !cinYesNo();
-                        break;
-                    }
-                }
-            }
-
-            if(useAlt) {
-                LOG(INFO) << "Using alternative output target.";
-                chemistryParser.outputInput(altOstream, conf);
-                LOG(INFO) << "----- End of chemistry input -----";
-            } else {
-                ofstream ofs(p);
-                chemistryParser.outputInput(ofs, conf);
-                LOG(INFO) << "Chemistry input file written to " << p.string() << ".";
-            }
+        if(useAlt) {
+            log::info("Using alternative output target.");
+            outputTokenList(altOstream, buildTokens(conf, chemDataParser()));
+            log::info("----- End of chemistry input -----");
+        } else {
+            ofstream ofs(p);
+            outputTokenList(ofs, buildTokens(conf, chemDataParser()));
+            log::info("Chemistry input file written to {}.", p.string());
         }
-
-        // Generate bubble input
-        if(!conf.bubbleSetup.inputFile.empty()) {
-            LOG(WARNING) << "Additional bubble input is specified, but an input file is not generated.";
-            LOG(INFO) << "It will be supported in future versions.";
-        }
-
-        // Generate filament input
-        if(!conf.filamentSetup.inputFile.empty()) {
-            LOG(WARNING) << "Additional filament input is specified, but an input file is not generate.";
-            LOG(INFO) << "It will be supported in future versions.";
-        }
-
-
     }
 
-};
+    // Generate bubble input
+    if(!conf.bubbleSetup.inputFile.empty()) {
+        log::warn("Additional bubble input is specified, but an input file is not generated.");
+        log::info("It will be supported in future versions.");
+    }
+
+    // Generate filament input
+    if(!conf.filamentSetup.inputFile.empty()) {
+        log::warn("Additional filament input is specified, but an input file is not generate.");
+        log::info("It will be supported in future versions.");
+    }
+
+
+}
 
 
 // Starts an interactive session of the command line configuration generation
@@ -325,8 +320,6 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
 
     // States
     //-------------------------------------------------------------------------
-    SimulConfigHelper helper;
-
     bool shouldAddMyosin = true;
     bool shouldAddLinker = true;
     bool shouldAddBrancher = true;
@@ -337,7 +330,6 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
     //-------------------------------------------------------------------------
     SimulConfig conf;
 
-    conf.geoParams.nDim = 3;
     conf.geoParams.compartmentSizeX = 500.0;
     conf.geoParams.compartmentSizeY = 500.0;
     conf.geoParams.compartmentSizeZ = 500.0;
@@ -367,8 +359,6 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
     conf.mechParams.mechanicsAlgorithm.maxDistance = 1.0;
     conf.mechParams.mechanicsAlgorithm.lambdaMax = 0.01;
 
-    conf.mechParams.sameFilBindSkip = 100;
-
     conf.filamentSetup.projectionType = "STRAIGHT";
 
     conf.chemistryData.speciesFilament[0].push_back("AF");
@@ -383,15 +373,15 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
         conf.chemistryData.speciesBound[0].push_back("MEA");
         conf.chemistryData.M_BINDING_INDEX[0] = "MEA";
 
-        conf.chemistryData.motorReactions[0].push_back({
+        conf.chemistryData.motorReactions.push_back({
             { "MEA:BOUND:1", "MEA:BOUND:2", "MD:DIFFUSING" },
             { "MOA:MOTOR:1", "MOA:MOTOR:2" },
             0.2, 1.7, 175.0, 225.0,
             0.0, "NA"
         });
         conf.chemistryData.motorWalkingReactions[0].push_back({
-            { "MOA:MOTOR:N", "MEA:BOUND:N+1" },
-            { "MOA:MOTOR:N+1", "MEA:BOUND:N" },
+            "MOA:MOTOR:N", "MEA:BOUND:N+1",
+            "MOA:MOTOR:N+1", "MEA:BOUND:N",
             0.2,
             0.0, "NA"
         });
@@ -404,7 +394,7 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
         conf.chemistryData.speciesBound[0].push_back("LEA");
         conf.chemistryData.L_BINDING_INDEX[0] = "LEA";
 
-        conf.chemistryData.linkerReactions[0].push_back({
+        conf.chemistryData.linkerReactions.push_back({
             { "LEA:BOUND:1", "LEA:BOUND:2", "LD:DIFFUSING" },
             { "LA:LINKER:1", "LA:LINKER:2" },
             0.01, 0.3, 30.0, 40.0,
@@ -437,20 +427,20 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
     // The interactive session
     //-------------------------------------------------------------------------
 
-    LOG(INFO) << "-----------------------------------------------------";
-    LOG(INFO) << "You are now in the interactive configuration session.";
-    LOG(NOTE) << "Note that this only provides the very basic configuration of the system."
-        " For more detailed configuration, read the documents and manually edit the input files.";
+    log::info("-----------------------------------------------------");
+    log::info("You are now in the interactive configuration session.");
+    log::info("Note that this only provides the very basic configuration of the system."
+        " For more detailed configuration, read the documents and manually edit the input files.");
 
-    LOG(INFO) << "##################################################";
-    LOG(INFO) << "  Units in MEDYAN are nm, second, pN, and pN*nm";
-    LOG(INFO) << "##################################################";
+    log::info("##################################################");
+    log::info("  Units in MEDYAN are nm, second, pN, and pN*nm");
+    log::info("##################################################");
 
     //---------- basics ----------
     cout << endl;
-    LOG(STEP) << "Basic simulation parameters";
-    LOG(INFO) << "The geometry information";
-    LOG(INFO) << "Note: Network size = compartment size (500nm by default) .* (NX, NY, NZ)";
+    log::info("Basic simulation parameters");
+    log::info("The geometry information");
+    log::info("Note: Network size = compartment size (500nm by default) .* (NX, NY, NZ)");
     cout << "Num compartments in x direction (default 2): "; conf.geoParams.NX = cinIntDef(2);
     cout << "Num compartments in y direction (default 2): "; conf.geoParams.NY = cinIntDef(2);
     cout << "Num compartments in z direction (default 2): "; conf.geoParams.NZ = cinIntDef(2);
@@ -465,19 +455,19 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
     }
 
     cout << endl;
-    LOG(INFO) << "Run time specification";
+    log::info("Run time specification");
     cout << "Total running time in second (default 1000): "; conf.chemParams.chemistryAlgorithm.runTime = cinDoubleDef(1000.0);
     cout << "Snapshot output time interval in second (default 1.0): "; conf.chemParams.chemistryAlgorithm.snapshotTime = cinDoubleDef(1.0);
 
     cout << endl;
-    LOG(INFO) << "Initial filaments (applicable to type 0 filament only)";
+    log::info("Initial filaments (applicable to type 0 filament only)");
     cout << "Number of filaments (default 30): "; conf.filamentSetup.numFilaments = cinIntDef(30);
-    LOG(INFO) << "The cylinder length is " << conf.geoParams.cylinderSize[0] << " nm.";
+    log::info("The cylinder length is {} nm.", conf.geoParams.cylinderSize[0]);
     cout << "Number of cylinders of each filament (default 1): "; conf.filamentSetup.filamentLength = cinIntDef(1);
 
     //---------- chemistry ----------
     cout << endl;
-    LOG(STEP) << "Basic chemistry parameters";
+    log::info("Basic chemistry parameters");
     cout << "Initial diffusing actin copy number (default 5000): ";
     conf.chemistryData.speciesDiffusing.push_back({
         "A", cinIntDef(5000), 80.0, 0.0, 0.0, "REG",
@@ -486,30 +476,30 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
     cout << "Enable filament polymerization/depolymerization (y/n) (default y): ";
     if(cinYesNoDef(true)) {
         conf.chemistryData.polymerizationReactions[0].push_back({
-            { "A:DIFFUSING", "PA:PLUSEND" },
-            { "AF:FILAMENT", "PA:PLUSEND" },
+            "A:DIFFUSING", "PA:PLUSEND",
+            "AF:FILAMENT", "PA:PLUSEND",
             0.154, 0.0, "NA"
         });
         conf.chemistryData.polymerizationReactions[0].push_back({
-            { "A:DIFFUSING", "MA:MINUSEND" },
-            { "AF:FILAMENT", "MA:MINUSEND" },
+            "A:DIFFUSING", "MA:MINUSEND",
+            "AF:FILAMENT", "MA:MINUSEND",
             0.017, 0.0, "NA"
         });
         conf.chemistryData.depolymerizationReactions[0].push_back({
-            { "AF:FILAMENT", "PA:PLUSEND" },
-            { "A:DIFFUSING", "PA:PLUSEND" },
+            "AF:FILAMENT", "PA:PLUSEND",
+            "A:DIFFUSING", "PA:PLUSEND",
             1.4, 0.0, "NA"
         });
         conf.chemistryData.depolymerizationReactions[0].push_back({
-            { "AF:FILAMENT", "MA:MINUSEND" },
-            { "A:DIFFUSING", "MA:MINUSEND" },
+            "AF:FILAMENT", "MA:MINUSEND",
+            "A:DIFFUSING", "MA:MINUSEND",
             0.8, 0.0, "NA"
         });
     }
 
     cout << endl;
-    LOG(INFO) << "Myosin - Non-muscle mysoin IIA";
-    LOG(INFO) << "  Includes force fields, diffusing/bound species, and binding/unbinding/walking reactions.";
+    log::info("Myosin - Non-muscle mysoin IIA");
+    log::info("  Includes force fields, diffusing/bound species, and binding/unbinding/walking reactions.");
     cout << "Add myosin (y/n) (default y): "; shouldAddMyosin = cinYesNoDef(true);
     if(shouldAddMyosin) {
         cout << "Initial diffusing myosin copy number (default 50): ";
@@ -519,8 +509,8 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
         });
     }
 
-    LOG(INFO) << "Linker - alpha-actinin crosslinker";
-    LOG(INFO) << "  Includes force fields, diffusing/bound species, and binding/unbinding reactions.";
+    log::info("Linker - alpha-actinin crosslinker");
+    log::info("  Includes force fields, diffusing/bound species, and binding/unbinding reactions.");
     cout << "Add linker (y/n) (default y): "; shouldAddLinker = cinYesNoDef(true);
     if(shouldAddLinker) {
         cout << "Initial diffusing linker copy number (default 500): ";
@@ -530,8 +520,8 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
         });
     }
 
-    LOG(INFO) << "Bracher - Arp2/3 brancher";
-    LOG(INFO) << "  Includes force fields, diffusing/bound species, and binding/unbinding reactions.";
+    log::info("Bracher - Arp2/3 brancher");
+    log::info("  Includes force fields, diffusing/bound species, and binding/unbinding reactions.");
     cout << "Add brancher (y/n) (default y): "; shouldAddBrancher = cinYesNoDef(true);
     if(shouldAddBrancher) {
         cout << "Initial diffusing brancher copy number (default 20): ";
@@ -543,27 +533,27 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
 
     //---------- mechanics ----------
     cout << endl;
-    LOG(STEP) << "Mechanics parameters";
-    LOG(INFO) << "Energy minimization time interval:";
-    LOG(INFO) << "  Use a lower value if: 1. simulation fails or generates warnings";
-    LOG(INFO) << "                        2. has very fast chemical reactions";
-    LOG(INFO) << "  Recommend value: 0.001 - 0.05";
+    log::info("Mechanics parameters");
+    log::info("Energy minimization time interval:");
+    log::info("  Use a lower value if: 1. simulation fails or generates warnings");
+    log::info("                        2. has very fast chemical reactions");
+    log::info("  Recommend value: 0.001 - 0.05");
     cout << "Energy minimization interval in second (default 0.01): ";
     conf.chemParams.chemistryAlgorithm.neighborListTime =
         conf.chemParams.chemistryAlgorithm.minimizationTime = cinDoubleDef(0.01);
 
     cout << endl;
-    LOG(INFO) << "Actin force fields (stretching and bending are already enabled)";
+    log::info("Actin force fields (stretching and bending are already enabled)");
     cout << "Enable volume exclusion (y/n) (default y): ";
     if(cinYesNoDef(true)) {
-        conf.mechParams.mechanicsFFType.VolumeFFType = "REPULSION";
+        conf.mechParams.mechanicsFFType.cylinderVolumeExclusionFFType = CylinderVolumeExclusionFFType::integral;
         conf.mechParams.VolumeCutoff = 108.0;
         conf.mechParams.VolumeK = {1e5};
     }
 
     //---------- dynamic rates ----------
     cout << endl;
-    LOG(STEP) << "Dynamic rate parameters";
+    log::info("Dynamic rate parameters");
     cout << "Enable Brownian Ratchet (y/n) (default y): ";
     if(cinYesNoDef(true)) {
         conf.dyRateParams.dynamicRateType.dFPolymerizationType = { "BROWRATCHET" };
@@ -596,7 +586,7 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
     if(shouldAddBrancher) addBrancher();
 
     cout << endl;
-    LOG(STEP) << "Output files settings";
+    log::info("Output files settings");
     cout << "The directory for generated files: "; fileDirectory = cinStringDef("");
     while(fileDirectory.empty()) {
         fileDirectory = filesystem::current_path();
@@ -614,17 +604,43 @@ inline void interactiveConfig(std::ostream& altOstream = std::cout) {
     // File generation
     //-------------------------------------------------------------------------
     cout << endl;
-    LOG(STEP) << "Configuration complete! Generating files...";
-    helper.generateInput(
+    log::info("Configuration complete! Generating files...");
+    generateInput(
         conf,
         altOstream,
-        SimulConfigHelper::InputGenOverwriteAction::confirm
+        InputGenOverwriteAction::confirm
     );
 
     cout << endl;
-    LOG(INFO) << "Input file generation complete.";
-    LOG(INFO) << "Thanks for using MEDYAN interactive configuration!";
+    log::info("Input file generation complete.");
+    log::info("Thanks for using MEDYAN interactive configuration!");
 
+}
+
+// Given input files, generate the normalized input files in the output directory.
+inline void normalizeConfig(
+    const std::filesystem::path& systemInputFile,
+    const std::filesystem::path& inputDirectory,
+    const std::filesystem::path& outputDirectory
+) {
+    auto simulConfig = getSimulConfigFromInput(systemInputFile, inputDirectory);
+
+    auto sysFileName = systemInputFile.filename();
+    auto chemFileName = simulConfig.chemParams.chemistrySetup.inputFile.filename();
+
+    // Set new sys/chem file names.
+    auto newSysFileName = std::filesystem::path("normalized." + sysFileName.string());
+    auto newChemFileName = std::filesystem::path("normalized." + chemFileName.string());
+
+    // Update simulConfig.
+    simulConfig.metaParams.systemInputFile = outputDirectory / newSysFileName;
+    simulConfig.metaParams.inputDirectory = outputDirectory;
+    simulConfig.chemParams.chemistrySetup.inputFile = newChemFileName;
+
+    // Generate new files.
+    generateInput(simulConfig);
+
+    log::info("Normalized files generated in {}", outputDirectory);
 }
 
 } // namespace medyan

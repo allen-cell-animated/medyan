@@ -23,6 +23,7 @@
 
 #include "Component.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Visitor;
 class SpeciesVisitor;
@@ -73,18 +74,6 @@ public:
     /// Returns the full name of this node.
     virtual string getFullName() const override {return "Composite";}; 
     
-    /// Returns the unique ptr which is under this Composite ownership
-    virtual unique_ptr<Component>&& getChild(Component *c) {
-        
-        auto child_iter = find_if(_children.begin(),_children.end(),
-                                  [c](const unique_ptr<Component> &element)
-                                  {return element.get()== c ? true : false;});
-        if(child_iter==_children.end())
-            throw out_of_range("Composite::getChild(): The name child not found as a unique ptr.");
-        else
-            return move(*child_iter);
-    }
-    
     /// Adds a Component child to this Composite node
     /// @param child - is a unique_ptr<Component>, hence, this node takes the memory
     /// ownership of the corresponding child pointer.
@@ -108,29 +97,36 @@ public:
             throw out_of_range("Composite::removeChild(): The name child not found");
     }
     
-    /// Transfer *child from this node to another. This will transfer the unique_ptr
-    /// ownership to the new Composite parent.
-    virtual void transferChild(unique_ptr<Component> &&child, Composite* newParent) {
-        
-        newParent->_children.push_back(move(child));
-        
-        //remove hanging ptr from old parent, which has been set to null
-        auto child_iter = find_if(_children.begin(),_children.end(),
-                                  [](const unique_ptr<Component> &element)
-                                  {return element==nullptr ? true : false;});
-        if(child_iter!=_children.end())
-            _children.erase(child_iter);
-        else
-            throw out_of_range("Composite::removeChild(): The name child not found");
+    // Transfer the specified component to another parent.
+    //
+    // Note:
+    //   - If the component is not a child of this, an exception will be thrown.
+    //   - The parent of the child will be updated as well.
+    void transferChild(Component* pc, Composite& newParent) {
+        // First, check whether pc is indeed a child of this.
+        auto childIter = std::find_if(
+            _children.begin(), _children.end(),
+            [pc](const auto& element) { return element.get() == pc; }
+        );
+
+        if(childIter == _children.end()) {
+            throw std::out_of_range("Composite::transferChild(): child is not found.");
+        }
+        else {
+            // Move the child to new parent.
+            newParent._children.push_back(std::move(*childIter));
+
+            // Delete the original child record.
+            _children.erase(childIter);
+
+            // Update the parent of the child.
+            pc->setParent(&newParent);
+        }
     }
     
     /// Returns the number of immediate children of this node.
     /// @note Species and reactions and not included in this tally
     virtual size_t numberOfChildren() const override {return children().size();}
-
-    /// Returns the number of Species being immediately managed by this node (i.e. not
-    /// counting Species belonging to children nodes, etc.)
-    virtual size_t numberOfSpecies () const override {return 0;}
 
     /// Return the total number of nodes contained under this node's hieararchy
     /// @note This is a recursive call, and all nodes under this node are visited.
@@ -146,23 +142,15 @@ public:
     /// descendent nodes
     virtual size_t countSpecies() const override {
         size_t sum = 0;
-        if(this->isSpeciesContainer())
-            sum+=this->numberOfSpecies();
         for (auto &c : children())
             sum+=c->countSpecies();
         return sum;
     }
     
-    /// Returns the number of ReactionBase objets being immediately managed by this
-    /// node (i.e. not counting reactions belonging to children nodes, etc.
-    virtual size_t numberOfReactions() const override {return 0;}
-    
     /// Returns the number of ReactionBase objects being managed by this node and its
     /// descendent nodes
     virtual size_t countReactions() const override {
         size_t sum = 0;
-        if(this->isReactionsContainer())
-            sum+=this->numberOfReactions();
         for (auto &c : children())
             sum+=c->countReactions();
         return sum;
@@ -179,5 +167,7 @@ public:
     virtual const Component* children(size_t i)const { return _children[i].get(); }
     
 };
-       
+
+} // namespace medyan
+
 #endif

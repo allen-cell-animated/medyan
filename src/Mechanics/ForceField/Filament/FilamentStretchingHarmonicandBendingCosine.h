@@ -16,6 +16,7 @@
 
 #include "common.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Bead;
 
@@ -63,5 +64,7 @@ public:
                 floatingpoint *eqlsansbending,
                 const int startID, const int endID, int threadID);
 };
+
+} // namespace medyan
 
 #endif

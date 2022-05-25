@@ -16,15 +16,11 @@
 #include "Reaction.h"
 #include "Composite.h"
 
-#ifdef RSPECIES_SIGNALING
-boost::signals2::connection Species::connect(
-    function<void (RSpecies *, int)> const &RSpecies_callback, int priority)
+namespace medyan {
+void Species::connect(std::function<void (RSpecies *, int)> callback)
 {
-    if (!isSignaling())
-        startSignaling(); 
-    return _rspecies->_signal->connect(priority, RSpecies_callback);
+    _rspecies->callbacks_.push_back(std::move(callback));
 }
-#endif
 
 Composite* Species::getRoot()
 {
@@ -65,3 +61,5 @@ void Species::passivateReactantReactions() {
 unordered_map<string,int> SpeciesNamesDB::_map_string_int;
 vector<string> SpeciesNamesDB::_vec_int_string;
 unsigned long  SpeciesNamesDB::_num = 0;
+
+} // namespace medyan

@@ -17,9 +17,9 @@
 
 #include "CBound.h"
 #include "ChemManager.h"
+#include "Structure/Compartment.h"
 
-ChemSim* CCylinder::_chemSim = 0;
-
+namespace medyan {
 /// Default constructor, sets compartment and cylinder
 CCylinder::CCylinder(Compartment* C, Cylinder* c)
     : _compartment(C), _pCylinder(c) {
@@ -346,7 +346,7 @@ CCylinder::~CCylinder() {
         cout<<"Total Filament Species #"<<(CMonomer::_numFSpecies[_pCylinder->getType()])<<endl;
         #endif
         for(int i = 0; i < CMonomer::_numFSpecies[_pCylinder->getType()]; i++) {
-            SpeciesFilament* s = m->speciesFilament(i);
+            Species* s = m->speciesFilament(i);
             #ifdef CROSSCHECK_CYLINDER
             cout<<"Removing Species Filament "<<s->getFullName()<<endl;
             #endif
@@ -490,3 +490,4 @@ short CCylinder::getType() {
 
 int CCylinder::getId(){ return _pCylinder->getId();}
 
+} // namespace medyan

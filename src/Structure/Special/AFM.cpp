@@ -18,25 +18,14 @@
 #include "Cylinder.h"
 #include "Bead.h"
 
-void AFM::setBubble(Bubble* b) {
-    
-    _bubble = b;
-    _bubble->setAsAFM();
-    
-    addChild(unique_ptr<Component>(b));
-}
+namespace medyan {
 
 void AFM::printSelf() const {
     
     cout << endl;
-    
-    cout << "AFM: ptr = " << this << endl;
-    cout << "AFM ID = " << getId() << endl;
-    
-    cout << endl;
-    cout << "Bubble information..." << endl;
-    
-    _bubble->printSelf();
+    cout << "AFM Bubble index " << bubbleSysIndex_.value << endl;
     
     cout << endl;
 }
+
+} // namespace medyan

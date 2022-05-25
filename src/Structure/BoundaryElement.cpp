@@ -13,6 +13,7 @@
 
 #include "BoundaryElement.h"
 
+namespace medyan {
 void BoundaryElement::printSelf() const {
     
     cout << endl;
@@ -22,3 +23,5 @@ void BoundaryElement::printSelf() const {
     
     cout << endl;
 }
+
+} // namespace medyan

@@ -13,6 +13,8 @@
 #include "Bin.h"
 #include "Cylinder.h"
 
+namespace medyan {
+
 void Bin::addCylinder(Cylinder* c) {
     _cylinders.insert(c);
     //Ideally, a call for updatecindices will have to be made here to update the cindices
@@ -33,3 +35,5 @@ void Bin::updatecindices(){
     for(auto &c:_cylinders)
         cindicesvector.push_back(c->getStableIndex());
 }
+
+} // namespace medyan

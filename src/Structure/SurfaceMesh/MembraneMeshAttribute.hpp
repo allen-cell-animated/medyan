@@ -10,106 +10,23 @@
 #include <vector>
 
 #include "MathFunctions.h"
-#include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/AdaptiveMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/Edge.hpp"
 #include "Structure/SurfaceMesh/GeometricMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/HalfEdge.hpp"
-#include "Structure/SurfaceMesh/MembraneMeshVertexSystem.hpp"
 #include "Structure/SurfaceMesh/SurfaceMesh.hpp"
 #include "Structure/SurfaceMesh/Triangle.hpp"
 #include "Structure/SurfaceMesh/Vertex.hpp"
+#include "Structure/SurfaceMesh/Types.hpp"
+#include "SysParams.h"
 #include "Util/Io/Log.hpp"
+#include "Util/StableVector.hpp"
+
+namespace medyan {
 
 // Forward declarations
 class Membrane;
 
-// Membrane mesh chemistry data
-struct MembraneMeshChemistryInfo {
-    // Note:
-    //   - indices in this struct must correspond to the actual index as is in
-    //     the diffusing species names vector
-
-    struct DiffusionInfo {
-        unsigned speciesIndex = 0;
-
-        // Diffusion coeffecient, with dimension L^2 T^-1
-        double   diffusionCoeff = 0;
-
-        // The index of drift-causing free energy stored in each vertex. Sentinel value: -1.
-        int      speciesEnergyIndex = -1;
-    };
-    struct InternalReactionInfo {
-        std::vector< unsigned > reactantSpeciesIndices;
-        std::vector< unsigned > productSpeciesIndices;
-
-        // Rate constant, with dimension L^(2*(numReactants - 1)) T^-1
-        double rateConstant = 0;
-    };
-
-    // The free energy field on the membrane which a diffusing protein is subject to.
-    enum class SpeciesEnergyCat {
-        custom      // will always be zero unless manually assigning to it.
-    };
-
-    // diffusing species
-    std::vector< std::string > diffusingSpeciesNames;
-
-    // diffusion reactions
-    std::vector< DiffusionInfo > diffusion;
-
-    // Internal reactions involving species
-    std::vector< InternalReactionInfo > internalReactions;
-
-    // After energy minimization and shape optimization, the energies of the following categories will be calculated and stored in each vertex.
-    std::vector<SpeciesEnergyCat> speciesEnergyCat;
-};
-
-// Returns whether the chemisty info is valid
-inline bool validate(const MembraneMeshChemistryInfo& ci) {
-    bool valid = true;
-
-    const auto ns = ci.diffusingSpeciesNames.size();
-
-    // Check diffusion
-    for(const auto& di : ci.diffusion) {
-        if(di.speciesIndex >= ns) {
-            LOG(ERROR) << "Diffusion species index " << di.speciesIndex
-                << " is out of range.";
-            valid = false;
-        }
-        if(di.diffusionCoeff < 0) {
-            LOG(ERROR) << "Diffusion coefficient " << di.diffusionCoeff
-                << " is unacceptable.";
-            valid = false;
-        }
-    }
-
-    // Check internal reaction
-    for(const auto& iri : ci.internalReactions) {
-        for(auto i : iri.reactantSpeciesIndices) {
-            if(i >= ns) {
-                LOG(ERROR) << "Internal reaction reactant species index " << i
-                    << " is out of range.";
-                valid = false;
-            }
-        }
-        for(auto i : iri.productSpeciesIndices) {
-            if(i >= ns) {
-                LOG(ERROR) << "Internal reaction product species index " << i
-                    << " is out of range.";
-                valid = false;
-            }
-        }
-        if(iri.rateConstant < 0) {
-            LOG(ERROR) << "Internal reaction rate constant " << iri.rateConstant
-                << " is unacceptable.";
-            valid = false;
-        }
-    }
-
-    return valid;
-}
 
 
 /******************************************************************************
@@ -128,86 +45,87 @@ struct MembraneMeshAttribute {
 
     struct VertexAttribute {
         using CoordinateType      = Vertex::CoordinateType;
-        using CoordinateRefType   = Vertex::CoordinateType&;
-        using CoordinateCrefType  = const Vertex::CoordinateType&;
 
-        std::unique_ptr< Vertex > vertex;
+        medyan::StableVector<Vertex>::Index vertexSysIndex {};
 
         GVertex gVertex;
-        GVertex gVertexS; // stretched version (temporary)
         AdaptiveMeshAttribute::VertexAttribute aVertex;
 
-        size_t cachedDegree;
-        size_t cachedCoordIndex;
+        Size  cachedDegree;
+        Index cachedCoordIndex;
 
-        CoordinateRefType  getCoordinate()       { return vertex->coord; }
-        CoordinateCrefType getCoordinate() const { return vertex->coord; }
+        template< typename Context > CoordinateType&       getCoordinate(Context&       sys) const { return sys.vertices[vertexSysIndex].coord; }
+        template< typename Context > const CoordinateType& getCoordinate(const Context& sys) const { return sys.vertices[vertexSysIndex].coord; }
+        template< typename Context > Vertex&       vertex(Context&       sys) const { return sys.vertices[vertexSysIndex]; }
+        template< typename Context > const Vertex& vertex(const Context& sys) const { return sys.vertices[vertexSysIndex]; }
 
-        template< bool stretched > const GVertex& getGVertex() const { return stretched ? gVertexS : gVertex; }
-        template< bool stretched >       GVertex& getGVertex()       { return stretched ? gVertexS : gVertex; }
+        const GVertex& getGVertex() const { return gVertex; }
+        GVertex&       getGVertex()       { return gVertex; }
 
-        void setIndex(size_t index) {
-            vertex->setTopoIndex(index);
+        template< typename Context > void setIndex(Context& sys, Index index) {
+            vertex(sys).setTopoIndex(index);
         }
-
     };
     struct EdgeAttribute {
-        std::unique_ptr<Edge> edge;
+        StableVectorIndex<Edge> edgeSysIndex {};
 
         GEdge gEdge;
-        GEdge gEdgeS; // stretched version (temporary)
         AdaptiveMeshAttribute::EdgeAttribute aEdge;
 
         // The index of x coordinate of vertices in the vectorized dof array
         // [target of half edge, opposite target]
-        size_t                              cachedCoordIndex[2];
+        Index                               cachedCoordIndex[2];
         HalfEdgeMeshConnection::PolygonType cachedPolygonType[2];
         // [polygon of half edge, opposite polygon]
-        size_t                              cachedPolygonIndex[2];
+        Index                               cachedPolygonIndex[2];
 
-        template< bool stretched > const GEdge& getGEdge() const { return stretched ? gEdgeS : gEdge; }
-        template< bool stretched >       GEdge& getGEdge()       { return stretched ? gEdgeS : gEdge; }
+        template< typename Context > Edge&       edge(Context&       sys) const { return sys.edges[edgeSysIndex]; }
+        template< typename Context > const Edge& edge(const Context& sys) const { return sys.edges[edgeSysIndex]; }
 
-        void setIndex(size_t index) {
-            edge->setTopoIndex(index);
+        const GEdge& getGEdge() const { return gEdge; }
+        GEdge&       getGEdge()       { return gEdge; }
+
+        template< typename Context > void setIndex(Context& sys, Index index) {
+            edge(sys).setTopoIndex(index);
         }
     };
     struct HalfEdgeAttribute {
         std::unique_ptr< medyan::HalfEdge > halfEdge;
 
         GHalfEdge gHalfEdge;
-        GHalfEdge gHalfEdgeS; // stretched version (temporary)
         AdaptiveMeshAttribute::HalfEdgeAttribute aHalfEdge;
 
         // The index of x coordinate of vertices in the vectorized dof array
         // [source, target, next target]
-        size_t cachedCoordIndex[3];
+        Index cachedCoordIndex[3];
 
-        template< bool stretched > const GHalfEdge& getGHalfEdge() const { return stretched ? gHalfEdgeS : gHalfEdge; }
-        template< bool stretched >       GHalfEdge& getGHalfEdge()       { return stretched ? gHalfEdgeS : gHalfEdge; }
+        const GHalfEdge& getGHalfEdge() const { return gHalfEdge; }
+        GHalfEdge&       getGHalfEdge()       { return gHalfEdge; }
 
-        void setIndex(size_t index) {}
+        template< typename Context > void setIndex(Context& sys, Index index) {}
     };
     struct TriangleAttribute {
-        std::unique_ptr<Triangle> triangle;
+        StableVectorIndex<Triangle> triangleSysIndex;
 
         GTriangle gTriangle;
-        GTriangle gTriangleS; // stretched version (temporary);
         AdaptiveMeshAttribute::TriangleAttribute aTriangle;
 
         // The index of x coordinate of vertices in the vectorized dof array
         // [target of half edge, next target, prev target]
-        size_t                                cachedCoordIndex[3];
+        Index                                 cachedCoordIndex[3];
         // [half edge, next, prev]
         HalfEdgeMeshConnection::HalfEdgeIndex cachedHalfEdgeIndex[3];
         // [edge of half edge, next edge, prev edge]
         HalfEdgeMeshConnection::EdgeIndex     cachedEdgeIndex[3];
 
-        template< bool stretched > const GTriangle& getGTriangle() const { return stretched ? gTriangleS : gTriangle; }
-        template< bool stretched >       GTriangle& getGTriangle()       { return stretched ? gTriangleS : gTriangle; }
+        template< typename Context > Triangle&       triangle(Context&       sys) const { return sys.triangles[triangleSysIndex]; }
+        template< typename Context > const Triangle& triangle(const Context& sys) const { return sys.triangles[triangleSysIndex]; }
 
-        void setIndex(size_t index) {
-            triangle->setTopoIndex(index);
+        const GTriangle& getGTriangle() const { return gTriangle; }
+        GTriangle&       getGTriangle()       { return gTriangle; }
+
+        template< typename Context> void setIndex(Context& sys, Index index) {
+            triangle(sys).setTopoIndex(index);
         }
     };
     struct BorderAttribute {
@@ -223,13 +141,13 @@ struct MembraneMeshAttribute {
         // represents the free boundary of the membrane.
         bool reservoir = false;
 
-        void setIndex(size_t index) {}
+        template< typename Context > void setIndex(Context& sys, Index index) {}
     };
     struct MetaAttribute {
-        SubSystem *s;
-        Membrane *m;
+        StableVectorIndex<Membrane> membraneSysIndex {};
 
-        medyan::MembraneMeshVertexSystem vertexSystem = medyan::MembraneMeshVertexSystem::material;
+        MembraneMeshVertexSystem vertexSystem = MembraneMeshVertexSystem::material;
+        bool hasLipidReservoir = false;
 
         // About mech and chem
         //-----------------------------
@@ -244,20 +162,20 @@ struct MembraneMeshAttribute {
         //-----------------------------
         bool indexCacheForFFValid = false;
 
-        size_t vertexMaxDegree;
+        Size vertexMaxDegree;
 
         // A vertex has undetermined number of neighbors, so the cache structure needs to be determined at run-time.
         //
         // Notes:
         //   - The outer half edge targets the corresponding "neighbor vertex", and is the "prev" of the targeting half edge.
         //   - The polygon corresponds to the targeting half edge.
-        std::vector< size_t > cachedVertexTopo;
-        size_t cachedVertexTopoSize() const { return vertexMaxDegree * 5; }
-        size_t cachedVertexOffsetNeighborCoord(size_t idx) const { return cachedVertexTopoSize() * idx; }
-        size_t cachedVertexOffsetTargetingHE  (size_t idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree; }
-        size_t cachedVertexOffsetLeavingHE    (size_t idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree * 2; }
-        size_t cachedVertexOffsetOuterHE      (size_t idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree * 3; }
-        size_t cachedVertexOffsetPolygon      (size_t idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree * 4; }
+        std::vector< Index > cachedVertexTopo;
+        Index cachedVertexTopoSize() const { return vertexMaxDegree * 5; }
+        Index cachedVertexOffsetNeighborCoord(Index idx) const { return cachedVertexTopoSize() * idx; }
+        Index cachedVertexOffsetTargetingHE  (Index idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree; }
+        Index cachedVertexOffsetLeavingHE    (Index idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree * 2; }
+        Index cachedVertexOffsetOuterHE      (Index idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree * 3; }
+        Index cachedVertexOffsetPolygon      (Index idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree * 4; }
     };
 
     using CoordinateType = typename VertexAttribute::CoordinateType;
@@ -266,82 +184,94 @@ struct MembraneMeshAttribute {
         std::vector< CoordinateType > vertexCoordinateList;
     };
 
-    //-------------------------------------------------------------------------
-    // Basic mesh operations
-    //-------------------------------------------------------------------------
-
-    // Mesh element modification (not used in initialization/finalization)
-    static void newVertex(MeshType& mesh, HalfEdgeMeshConnection::VertexIndex v) {
-        mesh.attribute(v).vertex = std::make_unique< Vertex >(CoordinateType{}, v.index);
-    }
-    static void newEdge(MeshType& mesh, HalfEdgeMeshConnection::EdgeIndex e) {
-        mesh.attribute(e).edge.reset(
-            mesh.metaAttribute().s->addTrackable<Edge>(mesh.metaAttribute().m, e.index));
-    }
-    static void newHalfEdge(MeshType& mesh, HalfEdgeMeshConnection::HalfEdgeIndex he) {
-        mesh.attribute(he).halfEdge = std::make_unique< medyan::HalfEdge >();
-    }
-    static void newTriangle(MeshType& mesh, HalfEdgeMeshConnection::TriangleIndex t) {
-        mesh.attribute(t).triangle.reset(
-            mesh.metaAttribute().s->addTrackable<Triangle>(mesh.metaAttribute().m, t.index));
-    }
-    static void newBorder(MeshType& mesh, HalfEdgeMeshConnection::BorderIndex) {
-        // Do nothing
-    }
-
-    static void removeElement(MeshType& mesh, HalfEdgeMeshConnection::VertexIndex i) {
-        // Do nothing
-    }
-    static void removeElement(MeshType& mesh, HalfEdgeMeshConnection::EdgeIndex i) {
-        mesh.metaAttribute().s->template removeTrackable<Edge>(mesh.attribute(i).edge.get());
-    }
-    static void removeElement(MeshType& mesh, HalfEdgeMeshConnection::HalfEdgeIndex i) {
-        // Do nothing
-    }
-    static void removeElement(MeshType& mesh, HalfEdgeMeshConnection::TriangleIndex i) {
-        mesh.metaAttribute().s->template removeTrackable<Triangle>(mesh.attribute(i).triangle.get());
-    }
-    static void removeElement(MeshType& mesh, HalfEdgeMeshConnection::BorderIndex i) {
-        // Do nothing
-    }
-
-    // Mesh attribute initializing and extracting
-    // These operations do not follow the RAII idiom.
-    // Initialization should happen only once, as it allocates resources
-    static void init(MeshType& mesh, const AttributeInitializerInfo& info) {
-        const MetaAttribute& meta = mesh.metaAttribute();
-        for(size_t i = 0; i < mesh.getVertices().size(); ++i) {
-            mesh.attribute(HalfEdgeMeshConnection::VertexIndex{i}).vertex = std::make_unique<Vertex>(
-                info.vertexCoordinateList[i], i);
-        }
-        for(size_t i = 0; i < mesh.getHalfEdges().size(); ++i) {
-            mesh.attribute(HalfEdgeMeshConnection::HalfEdgeIndex{i}).halfEdge
-                = std::make_unique< medyan::HalfEdge >();
-        }
-        for(size_t i = 0; i < mesh.getEdges().size(); ++i) {
-            mesh.attribute(HalfEdgeMeshConnection::EdgeIndex{i}).edge.reset(
-                meta.s->template addTrackable<Edge>(meta.m, i));
-        }
-        for(size_t i = 0; i < mesh.getTriangles().size(); ++i) {
-            mesh.attribute(HalfEdgeMeshConnection::TriangleIndex{i}).triangle.reset(
-                meta.s->template addTrackable<Triangle>(meta.m, i));
-        }
-    }
     // Extraction can be done multiple times without allocating/deallocating
-    static auto extract(const MeshType& mesh) {
+    template< typename Context >
+    static auto extract(const Context& sys, const MeshType& mesh) {
         AttributeInitializerInfo info;
 
-        const size_t numVertices = mesh.getVertices().size();
+        const auto numVertices = mesh.getVertices().size();
 
         info.vertexCoordinateList.reserve(numVertices);
-        for(size_t i = 0; i < numVertices; ++i) {
+        for(Index i = 0; i < numVertices; ++i) {
             info.vertexCoordinateList.push_back(
-                static_cast<CoordinateType>(mesh.attribute(HalfEdgeMeshConnection::VertexIndex{i}).vertex->coord));
+                static_cast<CoordinateType>(sys.vertices[mesh.attribute(HalfEdgeMeshConnection::VertexIndex{i}).vertexSysIndex].coord));
         }
 
         return info;
     }
 
 };
+
+
+//-------------------------------------------------------------------------
+// Basic mesh operations
+//-------------------------------------------------------------------------
+
+template< typename Context, typename ContextFunc >
+struct ElementAttributeModifier {
+    Context* ps = nullptr;
+    ContextFunc sysFunc {};
+
+    ElementAttributeModifier(Context* ps) : ps(ps) {}
+
+    Context& context() const { return *ps; }
+
+    void newVertex(MembraneMeshAttribute::MeshType& mesh, HalfEdgeMeshConnection::VertexIndex i) {
+        mesh.attribute(i).vertexSysIndex = sysFunc.template emplaceTrackable<Vertex>(*ps, MembraneMeshAttribute::CoordinateType{}, mesh.metaAttribute().membraneSysIndex, i.index);
+    }
+    void newEdge(MembraneMeshAttribute::MeshType& mesh, HalfEdgeMeshConnection::EdgeIndex e) {
+        mesh.attribute(e).edgeSysIndex = sysFunc.template emplaceTrackable<Edge>(*ps, mesh.metaAttribute().membraneSysIndex, e.index);
+    }
+    void newHalfEdge(MembraneMeshAttribute::MeshType& mesh, HalfEdgeMeshConnection::HalfEdgeIndex he) {
+        mesh.attribute(he).halfEdge = std::make_unique< medyan::HalfEdge >();
+    }
+    void newTriangle(MembraneMeshAttribute::MeshType& mesh, HalfEdgeMeshConnection::TriangleIndex t) {
+        mesh.attribute(t).triangleSysIndex = sysFunc.template emplaceTrackable<Triangle>(*ps, mesh.metaAttribute().membraneSysIndex, t.index);
+    }
+    void newBorder(MembraneMeshAttribute::MeshType& mesh, HalfEdgeMeshConnection::BorderIndex) {
+        // Do nothing
+    }
+
+    void removeElement(MembraneMeshAttribute::MeshType& mesh, HalfEdgeMeshConnection::VertexIndex i) {
+        sysFunc.template removeTrackable<Vertex>(*ps, mesh.attribute(i).vertexSysIndex);
+    }
+    void removeElement(MembraneMeshAttribute::MeshType& mesh, HalfEdgeMeshConnection::EdgeIndex i) {
+        sysFunc.template removeTrackable<Edge>(*ps, mesh.attribute(i).edgeSysIndex);
+    }
+    void removeElement(MembraneMeshAttribute::MeshType& mesh, HalfEdgeMeshConnection::HalfEdgeIndex i) {
+        // Do nothing
+    }
+    void removeElement(MembraneMeshAttribute::MeshType& mesh, HalfEdgeMeshConnection::TriangleIndex i) {
+        sysFunc.template removeTrackable<Triangle>(*ps, mesh.attribute(i).triangleSysIndex);
+    }
+    void removeElement(MembraneMeshAttribute::MeshType& mesh, HalfEdgeMeshConnection::BorderIndex i) {
+        // Do nothing
+    }
+
+    // Mesh attribute initializing and extracting
+    // These operations do not follow the RAII idiom.
+    // Initialization should be executed only once, as it allocates resources
+    void init(MembraneMeshAttribute::MeshType& mesh, const MembraneMeshAttribute::AttributeInitializerInfo& info) {
+        const MembraneMeshAttribute::MetaAttribute& meta = mesh.metaAttribute();
+        for(Index i = 0; i < mesh.getVertices().size(); ++i) {
+            mesh.attribute(HalfEdgeMeshConnection::VertexIndex{i}).vertexSysIndex
+                = sysFunc.template emplaceTrackable<Vertex>(*ps, info.vertexCoordinateList[i], meta.membraneSysIndex, i);
+        }
+        for(Index i = 0; i < mesh.getHalfEdges().size(); ++i) {
+            mesh.attribute(HalfEdgeMeshConnection::HalfEdgeIndex{i}).halfEdge
+                = std::make_unique< medyan::HalfEdge >();
+        }
+        for(Index i = 0; i < mesh.getEdges().size(); ++i) {
+            mesh.attribute(HalfEdgeMeshConnection::EdgeIndex{i}).edgeSysIndex
+                = sysFunc.template emplaceTrackable<Edge>(*ps, meta.membraneSysIndex, i);
+        }
+        for(Index i = 0; i < mesh.getTriangles().size(); ++i) {
+            mesh.attribute(HalfEdgeMeshConnection::TriangleIndex{i}).triangleSysIndex
+                = sysFunc.template emplaceTrackable<Triangle>(*ps, meta.membraneSysIndex, i);
+        }
+    }
+};
+
+} // namespace medyan
 
 #endif

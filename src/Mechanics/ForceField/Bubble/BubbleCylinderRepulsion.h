@@ -18,57 +18,51 @@
 
 #include "common.h"
 
-#include "BubbleInteractions.h"
+#include "Mechanics/ForceField/Bubble/BubbleCylinderRepulsionExp.h"
+#include "Mechanics/ForceField/ForceField.h"
 #include "NeighborListImpl.h"
-
+#include "Structure/SubSystem.h"
 #include "SysParams.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Bead;
 
 /// Represents a repulsive interaction between a Bubble and Cylinder.
-template <class BRepulsionInteractionType>
-class BubbleCylinderRepulsion : public BubbleInteractions {
-    
-private:
-    BRepulsionInteractionType _FFType;
-    BubbleCylinderNL* _neighborList; ///<Neighbor list of Bubble-Cylinder
-
-    int *beadSet;
-    int *nneighbors;
-    int *bubbleSet;
-//    int *nintvec;
-
-    ///Array describing the constants in calculation
-    floatingpoint *krep;
-	floatingpoint *slen;
-	floatingpoint *radius;
-    int nint = 0;
+class BubbleCylinderRepulsion : public ForceField {
 public:
-    
-    ///Array describing indexed set of interactions
-    ///For bubble, this is a 1-bead potential + 1 fixed bubble bead
-    const static int n = 1;
+    struct PairInteraction {
+        Index bubbleCoordIndex = 0;
+        Index beadCoordIndex = 0;
+        floatingpoint krep = 0.0;
+        floatingpoint slen = 0.0;
+        floatingpoint radius = 0.0;
+    };
+private:
+    BubbleBeadRepulsionExp _FFType;
+
+    SubSystem* ps_ = nullptr;
+    std::vector<PairInteraction> pairInteractions_;
+public:
 
     /// Constructor
-    BubbleCylinderRepulsion() {
-        _neighborList = new BubbleCylinderNL(SysParams::Mechanics().BubbleCutoff);
-    }
+    BubbleCylinderRepulsion() = default;
     
     virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void deallocate();
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) override;
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
-    //virtual void computeForcesAux(double *coord, double *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f) override;
     
-    virtual void computeLoadForces();
-    virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
+    virtual void computeLoadForces() override;
+    virtual void computeLoadForce(SubSystem& sys, Cylinder* c, LoadForceEnd end) const override;
+    virtual void whoIsCulprit() override {}
     
     /// Get the neighbor list for this interaction
-    virtual NeighborList* getNeighborList() {return _neighborList;}
+    virtual std::vector<NeighborList*> getNeighborLists() override {return {};}
     
-    virtual const string getName() {return "Bubble-Cylinder Repulsion";}
+    virtual std::string getName() override {return "BubbleCylinderRepulsion";}
 };
+
+} // namespace medyan
 
 #endif

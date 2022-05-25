@@ -18,20 +18,26 @@
 
 #include "Bubble.h"
 #include "Bead.h"
+#include "Structure/DofSerializer.hpp"
+
+namespace medyan {
 
 template <class BRepulsionInteractionType>
-void BoundaryBubbleRepulsion<BRepulsionInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
+void BoundaryBubbleRepulsion<BRepulsionInteractionType>::vectorize(const FFCoordinateStartingIndex& si, const SimulConfig&) {
+    ps_ = si.ps;
+
     //count interactions
-    nint = 0;
+    int nint = 0;
     for (auto be: BoundaryElement::getBoundaryElements())
     {
-
-        nint += _neighborList->getNeighbors(be).size();
+        for(auto bbIndex : ps_->opBoundaryBubbleNL.value().getNeighbors(be)) {
+            ++nint;
+        }
     }
 
-    beadSet = new int[n * nint];
-    krep = new floatingpoint[nint];
-    slen = new floatingpoint[nint];
+    beadSet.assign(n * nint, 0);
+    krep.assign(nint, 0);
+    slen.assign(nint, 0);
     auto beList = BoundaryElement::getBoundaryElements();
 
     int nbe = BoundaryElement::getBoundaryElements().size();
@@ -39,64 +45,49 @@ void BoundaryBubbleRepulsion<BRepulsionInteractionType>::vectorize(const FFCoord
     int ni = 0;
     int bindex = 0;
 
-    nneighbors = new int[nbe];//stores number of interactions per boundary element.
-
-    int *nintvec;
-
-    nintvec = new int[nbe];//stores cumulative number of nneighbors.
+    nneighbors.assign(nbe, 0);//stores number of interactions per boundary element.
 
     int cumnn=0;
     for (i = 0; i < nbe; i++) {
 
         auto be = BoundaryElement::getBoundaryElements()[i];//beList[i];
-        auto nn = _neighborList->getNeighbors(be).size();
 
         nneighbors[i] = 0;
         auto idx = 0;
 
-        for (ni = 0; ni < nn; ni++) {
-
-            bindex = _neighborList->getNeighbors(be)[ni]->getIndex() * 3 + si.bubble;
+        for (auto bbIndex : ps_->opBoundaryBubbleNL.value().getNeighbors(be)) {
+            bindex = findBubbleCoordIndex(ps_->bubbles[bbIndex], si);
             beadSet[cumnn+idx] = bindex;
             krep[cumnn+idx] = be->getRepulsionConst();
             slen[cumnn+idx] = be->getScreeningLength();
             idx++;
 
-
         }
         nneighbors[i]=idx;
         cumnn+=idx;
-        nintvec[i] = cumnn;
     }
 
 
 }
 
-template <class BRepulsionInteractionType>
-void BoundaryBubbleRepulsion<BRepulsionInteractionType>::deallocate() {
-    delete [] beadSet;
-    delete [] krep;
-    delete [] slen;
-    delete [] nneighbors;
-}
 
 template <class BRepulsionInteractionType>
 floatingpoint BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(floatingpoint *coord) {
     
-    return _FFType.energy(coord, beadSet, krep, slen, nneighbors);
+    return _FFType.energy(coord, beadSet.data(), krep.data(), slen.data(), nneighbors.data());
     
 }
 
 template <class BRepulsionInteractionType>
 void BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
     
-    _FFType.forces(coord, f, beadSet, krep, slen, nneighbors);
+    _FFType.forces(coord, f, beadSet.data(), krep.data(), slen.data(), nneighbors.data());
 }
 
 
 ///Template specializations
 template floatingpoint BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeEnergy(floatingpoint *coord);
 template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::vectorize(const FFCoordinateStartingIndex&);
-template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::deallocate();
+template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::vectorize(const FFCoordinateStartingIndex&, const SimulConfig&);
 
+} // namespace medyan

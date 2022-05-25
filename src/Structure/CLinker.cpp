@@ -17,59 +17,24 @@
 #include "CCylinder.h"
 #include "Cylinder.h"
 
-CLinker::CLinker(short linkerType, Compartment* c,
-                 CCylinder* cc1, CCylinder* cc2, int position1, int position2)
+namespace medyan {
+CLinker::CLinker(
+    int linkerSpeciesIndex1,
+    int linkerSpeciesIndex2,
+    Compartment* c,
+    CCylinder* cc1, CCylinder* cc2, int position1, int position2)
 
-    : CBound(cc1->getType(), c, cc1, cc2, position1, position2) {
+    : CBound(cc1->getType(), cc2->getType(), c, cc1, cc2, position1, position2) {
         
     //Find species on cylinder that should be marked
-    SpeciesBound* sl1 = _cc1->getCMonomer(_position1)->speciesLinker(linkerType);
-    SpeciesBound* sl2 = _cc2->getCMonomer(_position2)->speciesLinker(linkerType);
+    SpeciesBound* sl1 = _cc1->getCMonomer(_position1)->speciesLinker(linkerSpeciesIndex1);
+    SpeciesBound* sl2 = _cc2->getCMonomer(_position2)->speciesLinker(linkerSpeciesIndex2);
 
     SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(
-                        SysParams::Chemistry().linkerBoundIndex[_filamentType]);
+                        SysParams::Chemistry().linkerBoundIndex[filType1_]);
     SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(
-                        SysParams::Chemistry().linkerBoundIndex[_filamentType]);
+                        SysParams::Chemistry().linkerBoundIndex[filType2_]);
 
-////    //@{
-    /*SpeciesBound* BL1 = _cc1->getCMonomer(_position1)->speciesBound(
-            SysParams::Chemistry().linkerBoundIndex[_filamentType]);
-    SpeciesBound* BL2 = _cc2->getCMonomer(_position2)->speciesBound(
-            SysParams::Chemistry().linkerBoundIndex[_filamentType]);
-    SpeciesBound* BB1 = _cc1->getCMonomer(_position1)->speciesBound(
-            SysParams::Chemistry().brancherBoundIndex[_filamentType]);
-    SpeciesBound* BB2 = _cc2->getCMonomer(_position2)->speciesBound(
-            SysParams::Chemistry().brancherBoundIndex[_filamentType]);
-    SpeciesBound* BM1 = _cc1->getCMonomer(_position1)->speciesBound(
-            SysParams::Chemistry().motorBoundIndex[_filamentType]);
-    SpeciesBound* BM2 = _cc2->getCMonomer(_position2)->speciesBound(
-            SysParams::Chemistry().motorBoundIndex[_filamentType]);
-    SpeciesBound* sm1 = _cc1->getCMonomer(_position1)->speciesMotor(0);
-    SpeciesBound* sm2 = _cc2->getCMonomer(_position2)->speciesMotor(0);
-    SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesBrancher(0);
-    SpeciesBound* sb2 = _cc2->getCMonomer(_position2)->speciesBrancher(0);
-    std::cout<<"Linker "<<cc1->getCylinder()->getStableIndex()<<" "<<_position1<<" "
-                                                                        ""<<cc2->getCylinder()->getStableIndex()<<" "<<
-            ""<<_position2<<" linkerType "<<linkerType<<endl;
-	cout<<"Linker cIndices "<<cc1->getCylinder()->getId()<<" "<<cc2->getCylinder()
-			->getId()<<endl;
-    std::cout<<"Species Bound "<<se1->getN()<<" "<<se2->getN()<<endl;
-    cout<<"isMinusEnd "<<_cc1->getCylinder()->isMinusEnd()<<" "<<_cc2->getCylinder()
-    ->isMinusEnd()<<endl;*/
-
-   /* std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "
-                                                                                 ""<<BM2->getN()<<endl;*/
-
-//    std::cout<<"Linker "<<sl1->getN()<<" "<<sl2->getN()<<" BOUND "<<BL1->getN()<<" "<<BL2->getN()<<endl;
-    /*std::cout<<"Brancher "<<sb1->getN()<<" "<<sb2->getN()<<" BOUND "<<BB1->getN()<<"
-    "<<BB2->getN()<<endl;*/
-//    std::cout<<sl1->getN()<<" "<<sl2->getN()<<" "<<se1->getN()<<" "<<se2->getN()<<endl;
-
-    /*for(auto c:Cylinder::getCylinders()){
-        std::cout<<c->getID()<<" "<<c->getMCylinder()->getLength()<<" ";
-    }
-    std::cout<<endl;*/
-//    //@}
 
 #ifdef DETAILEDOUTPUT
     std::cout<<"Chosen sites Cyl1 "<<cc1->getCylinder()->getId()<<" bs1 "<<_position1<<" "
@@ -109,9 +74,9 @@ void CLinker::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     os.push_back(&rs[SPECIESL_BINDING_INDEX]->getSpecies());
     
     Species* empty1 = _cc1->getCMonomer(_position1)->speciesBound(
-                      SysParams::Chemistry().linkerBoundIndex[_filamentType]);
+                      SysParams::Chemistry().linkerBoundIndex[filType1_]);
     Species* empty2 = _cc2->getCMonomer(_position2)->speciesBound(
-                      SysParams::Chemistry().linkerBoundIndex[_filamentType]);
+                      SysParams::Chemistry().linkerBoundIndex[filType2_]);
     
     os.push_back(empty1);
     os.push_back(empty2);
@@ -132,8 +97,10 @@ void CLinker::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
 
     //Attach the callback to the off reaction, add it
     LinkerUnbindingCallback lcallback(_pLinker, ps);
-    ConnectionBlock rcb(offRxn->connect(lcallback,false));
+    offRxn->connect(lcallback);
     
     _cc1->addCrossCylinderReaction(_cc2, offRxn);
     setOffReaction(offRxn);
 }
+
+} // namespace medyan

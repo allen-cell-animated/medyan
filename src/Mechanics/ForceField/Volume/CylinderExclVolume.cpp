@@ -20,22 +20,23 @@
 
 #include "MathFunctions.h"
 #include "cross_check.h"
-#include "CGMethod.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
+#include "Mechanics/CUDAcommon.h"
+#include "Structure/DofSerializer.hpp"
 
 
+namespace medyan {
 using namespace mathfunc;
 
 template <class CVolumeInteractionType>
-void CylinderExclVolume<CVolumeInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
+void CylinderExclVolume<CVolumeInteractionType>::vectorize(const FFCoordinateStartingIndex& si, const SimulConfig& conf) {
     //count interactions
-    nint = 0;
+    int nint = 0;
 
     for(auto ci : Cylinder::getCylinders()) {
 
-        //do not calculate exvol for a non full length cylinder
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
         for (int ID = 0; ID < _HnlIDvec.size(); ID ++){
             auto neighbors = _HneighborList->getNeighborsstencil(_HnlIDvec[ID], ci);
@@ -61,8 +62,8 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize(const FFCoordinateSta
     numInteractions = nint;
     CUDAcommon::tmin.numinteractions[8] += numInteractions;
 //    std::cout<<"NINT1 "<<nint<<endl;
-    beadSet = new int[n * nint];
-    krep = new floatingpoint[nint];
+    beadSet.assign(n * nint, 0);
+    krep.assign(nint, 0);
     vecEqLength.resize(2 * nint);
 
 
@@ -82,10 +83,10 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize(const FFCoordinateSta
                 
                 auto cin = neighbors[ni];
                 if(cin->getBranchingCylinder() == ci) continue;
-                beadSet[n * (Cumnc)] = ci->getFirstBead()->getIndex()* 3 + si.bead;
-                beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->getIndex()* 3 + si.bead;
-                beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->getIndex()* 3 + si.bead;
-                beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->getIndex()* 3 + si.bead;
+                beadSet[n * (Cumnc)] = findBeadCoordIndex(*ci->getFirstBead(), si);
+                beadSet[n * (Cumnc) + 1] = findBeadCoordIndex(*ci->getSecondBead(), si);
+                beadSet[n * (Cumnc) + 2] = findBeadCoordIndex(*cin->getFirstBead(), si);
+                beadSet[n * (Cumnc) + 3] = findBeadCoordIndex(*cin->getSecondBead(), si);
 
                 vecEqLength[2 * Cumnc    ] = ci ->getMCylinder()->getEqLength();
                 vecEqLength[2 * Cumnc + 1] = cin->getMCylinder()->getEqLength();
@@ -113,10 +114,13 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize(const FFCoordinateSta
 
             auto cin = neighbors[ni];
             if(cin->getBranchingCylinder() == ci) continue;
-            beadSet[n * (Cumnc)] = ci->getFirstBead()->getIndex() * 3 + si.bead;
-            beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->getIndex() * 3 + si.bead;
-            beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->getIndex() * 3 + si.bead;
-            beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->getIndex() * 3 + si.bead;
+            beadSet[n * (Cumnc)] = findBeadCoordIndex(*ci->getFirstBead(), si);
+            beadSet[n * (Cumnc) + 1] = findBeadCoordIndex(*ci->getSecondBead(), si);
+            beadSet[n * (Cumnc) + 2] = findBeadCoordIndex(*cin->getFirstBead(), si);
+            beadSet[n * (Cumnc) + 3] = findBeadCoordIndex(*cin->getSecondBead(), si);
+
+            vecEqLength[2 * Cumnc    ] = ci ->getMCylinder()->getEqLength();
+            vecEqLength[2 * Cumnc + 1] = cin->getMCylinder()->getEqLength();
 
             //Get KRepuls based on filament type
             if(ci->getType() != cin->getType()){
@@ -135,20 +139,6 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize(const FFCoordinateSta
     }
     //CUDA
 #ifdef CUDAACCL
-#ifdef CUDATIMETRACK
-    chrono::high_resolution_clock::time_point tbegin, tend;
-    tbegin = chrono::high_resolution_clock::now();
-#endif
-
-//    cudaEvent_t start, stop;
-//    CUDAcommon::handleerror(cudaEventCreate( &start));
-//    CUDAcommon::handleerror(cudaEventCreate( &stop));
-//    CUDAcommon::handleerror(cudaEventRecord( start, 0));
-
-//    blocksnthreads.push_back(int(numInteractions/THREADSPERBLOCK + 1));
-//    if(blocksnthreads[0]==1) blocksnthreads.push_back( numInteractions);
-//   if(blocksnthreads[0]==1) blocksnthreads.push_back( 32*(int(numInteractions/32 +1)) );
-//    else blocksnthreads.push_back(THREADSPERBLOCK);
 
     //CUDA stream create
     if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
@@ -184,54 +174,17 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize(const FFCoordinateSta
                                            cudaMemcpyHostToDevice, stream),
                                 "cuda data transfer", "CylinderExclVolume.cu");
     }
-#ifdef CUDATIMETRACK
-//    CUDAcommon::handleerror(cudaDeviceSynchronize(),"CylinderExclVolume.cu",
-//                            "vectorizeFF");
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-    CUDAcommon::cudatime.TvecvectorizeFF.push_back(elapsed_run.count());
-    CUDAcommon::cudatime.TvectorizeFF += elapsed_run.count();
-#endif
 #endif
     //
 }
 
 
-template <class CVolumeInteractionType>
-void CylinderExclVolume<CVolumeInteractionType>::deallocate() {
-
-    delete [] beadSet;
-    delete [] krep;
-#ifdef CUDAACCL
-    if(nint > 0) {
-        if(!(CUDAcommon::getCUDAvars().conservestreams))
-            CUDAcommon::handleerror(cudaStreamDestroy(stream),"cuda stream", "CylinderExclVolume.cu");
-        _FFType.deallocate();
-        CUDAcommon::handleerror(cudaFree(gpu_beadSet), "cudaFree", "CylinderExclVolume.cu");
-        CUDAcommon::handleerror(cudaFree(gpu_krep), "cudaFree", "CylinderExclVolume.cu");
-        CUDAcommon::handleerror(cudaFree(gpu_params), "cudaFree", "CylinderExclVolume.cu");
-        gpu_beadSet = NULL;
-        gpu_krep = NULL;
-        gpu_params = NULL;
-    }
-#endif
-}
-
 
 template <class CVolumeInteractionType>
-floatingpoint CylinderExclVolume<CVolumeInteractionType>::computeEnergy(floatingpoint *coord) {
+FP CylinderExclVolume<CVolumeInteractionType>::computeEnergy(FP *coord) {
 
-
-    floatingpoint U_ii=0.0f;
-
-#ifdef CUDATIMETRACK
-    chrono::high_resolution_clock::time_point tbegin, tend;
-#endif
 #ifdef CUDAACCL
 
-#ifdef CUDATIMETRACK
-    tbegin = chrono::high_resolution_clock::now();
-#endif
 
     //has to be changed to accomodate aux force
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -245,42 +198,15 @@ floatingpoint CylinderExclVolume<CVolumeInteractionType>::computeEnergy(floating
         gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_d, gpu_params);
 //    }
 
-#ifdef CUDATIMETRACK
-//    CUDAcommon::handleerror(cudaDeviceSynchronize(),"CylinderExclVolume.cu", "computeEnergy");
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-    CUDAcommon::cudatime.TveccomputeE.push_back(elapsed_run.count());
-    CUDAcommon::cudatime.TcomputeE += elapsed_run.count();
-    CUDAcommon::cudatime.TcomputeEiter += elapsed_run.count();
-#endif
-#endif
-#ifdef SERIAL
-#ifdef CUDATIMETRACK
-    tbegin = chrono::high_resolution_clock::now();
 #endif
 
-    U_ii = _FFType.energy(coord, beadSet, krep, vecEqLength.data(), numInteractions);
+    FP U_ii = _FFType.energy(coord, beadSet.data(), krep.data(), vecEqLength.data(), numInteractions);
 
-#ifdef CUDATIMETRACK
-    floatingpoint U_i[1];
-    floatingpoint *gU_i;
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
-    CUDAcommon::serltime.TveccomputeE.push_back(elapsed_runs.count());
-    CUDAcommon::serltime.TcomputeE += elapsed_runs.count();
-    CUDAcommon::serltime.TcomputeEiter += elapsed_runs.count();
-#endif
-
-#endif
     return U_ii;
 }
 
 template <class CVolumeInteractionType>
-void CylinderExclVolume<CVolumeInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
-#ifdef CUDATIMETRACK
-    chrono::high_resolution_clock::time_point tbegin, tend;
-    tbegin = chrono::high_resolution_clock::now();
-#endif
+void CylinderExclVolume<CVolumeInteractionType>::computeForces(FP *coord, FP *f) {
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -297,22 +223,7 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(floatingpoint *co
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_params);
     }
 #endif
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-    CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
-    CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
-    tbegin = chrono::high_resolution_clock::now();
-#endif
-#ifdef SERIAL
-    _FFType.forces(coord, f, beadSet, krep, vecEqLength.data(), numInteractions);
-#endif
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
-    CUDAcommon::serltime.TveccomputeF.push_back(elapsed_runs.count());
-    CUDAcommon::serltime.TcomputeF += elapsed_runs.count();
-#endif
+    _FFType.forces(coord, f, beadSet.data(), krep.data(), vecEqLength.data(), numInteractions);
 #ifdef DETAILEDOUTPUT
     floatingpoint maxF = 0.0;
     floatingpoint mag = 0.0;
@@ -325,12 +236,11 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(floatingpoint *co
 //                2]<<endl;
         if(mag > maxF) maxF = mag;
     }
-    std::cout<<"max "<<getName()<<" "<<maxF<<endl;
+    std::cout<<"max "<<maxF<<endl;
 #endif
 }
 
-///Template specializations
-template floatingpoint CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(floatingpoint *coord);
-template void CylinderExclVolume<CylinderExclVolRepulsion>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void CylinderExclVolume<CylinderExclVolRepulsion>::vectorize(const FFCoordinateStartingIndex&);
-template void CylinderExclVolume<CylinderExclVolRepulsion>::deallocate();
+// Explicit instantiation.
+template class CylinderExclVolume<CylinderExclVolRepulsion>;
+
+} // namespace medyan

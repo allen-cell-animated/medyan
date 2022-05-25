@@ -16,8 +16,8 @@
 #include "MathFunctions.h"
 #include "Bead.h"
 
-using namespace mathfunc;
 #ifdef CROSSCHECK
+using namespace mathfunc;
 floatingpoint FilamentBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3,
                                      floatingpoint kBend, floatingpoint eqTheta){
     

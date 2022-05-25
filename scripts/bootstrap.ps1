@@ -41,7 +41,7 @@ Function Install-Vcpkg([bool]$required, [bool]$rebuild) {
             Set-Location $build_dir
             git clone https://github.com/Microsoft/vcpkg.git
             Set-Location $vcpkg_dir
-            git checkout 2021.05.12
+            git checkout c9e786d81a890ef6b3932779925f11e696dc9541
             .\bootstrap-vcpkg.bat
         } else {
             Write-Host "vcpkg is already installed."
@@ -58,9 +58,9 @@ Function Install-VcpkgPackages([bool]$no_gui) {
     $Env:VCPKG_DEFAULT_TRIPLET="x64-windows"
 
     Set-Location $vcpkg_dir
-    .\vcpkg install catch2 eigen3 spectra boost-signals2 boost-pool boost-heap boost-ublas boost-range
+    .\vcpkg install catch2 eigen3 fmt highfive spdlog spectra xtensor boost-pool boost-heap boost-ublas boost-range --binarysource=clear
     if(-Not $no_gui) {
-        .\vcpkg install glfw3 glad glm imgui[opengl3-glad-binding] imgui[glfw-binding] nativefiledialog stb
+        .\vcpkg install glfw3 glad glm imgui[opengl3-binding,glfw-binding] implot nativefiledialog stb --binarysource=clear
     }
 }
 

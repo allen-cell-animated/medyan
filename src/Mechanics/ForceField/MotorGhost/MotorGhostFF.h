@@ -17,44 +17,28 @@
 #include <vector>
 
 #include "common.h"
-
+#include "Mechanics/ForceField/MotorGhost/MotorGhostStretching.h"
+#include "Mechanics/ForceField/MotorGhost/MotorGhostStretchingHarmonic.h"
 #include "ForceField.h"
 
-//FORWARD DECLARATIONS
-class MotorGhostInteractions;
-class MotorGhost;
+namespace medyan {
 
-/// An implementation of the ForceField class that calculates MotorGhost
-/// stretching, bending, and twisting.
-class MotorGhostFF : public ForceField {
-    
-private:
-    vector <unique_ptr<MotorGhostInteractions>>
-    _motorGhostInteractionVector; ///< Vector of initialized motor interactions
-    
-protected:
-    MotorGhostInteractions* _culpritInteraction; ///< Culprit in case of error
-    
-public:
-    /// Constructor, intializes stretching, bending, and twisting forces
-    MotorGhostFF(string& stretching, string& bending, string& twisting);
-    
-    virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void cleanup();
+inline auto createMotorForceFields(std::string_view stretching, std::string_view bending, std::string_view twisting) {
+    std::vector<std::unique_ptr<ForceField>> forceFields;
 
-    virtual string getName() {return "MotorGhost";}
-    virtual void whoIsCulprit();
-    
-    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched = false) override;
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
-    
-    virtual void computeLoadForces() {return;}
-    
-    virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
-    //Assigns stretchforces for ratechangeimpl
-    virtual void assignforcemags();
+    if (stretching == "HARMONIC")
+        forceFields.push_back(
+            std::make_unique<MotorGhostStretching<MotorGhostStretchingHarmonic>>()
+        );
+    else if(stretching == "") {}
+    else {
+        log::error("Motor stretching FF {} not recognized. Exiting.", stretching);
+        throw std::runtime_error("Motor stretching FF not recognized.");
+    }
 
-    virtual vector<string> getinteractionnames();
-};
+    return forceFields;
+}
+
+} // namespace medyan
 
 #endif

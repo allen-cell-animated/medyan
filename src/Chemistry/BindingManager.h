@@ -30,12 +30,14 @@
 #define B_RXN_INDEX 2
 #define ML_RXN_INDEX 0
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class SubSystem;
 class ReactionBase;
 class CCylinder;
 class Compartment;
 class Cylinder;
+
 
 ///Enumeration for nucleation zone type. Used by BranchingManager.
 enum NucleationZoneType {
@@ -69,8 +71,6 @@ protected:
 
     short _boundInt; ///< Integer index in CMonomer of bound chemical value.
                      ///< @note - THIS ALSO REPRESENTS THE SPECIES TYPE THAT IS MANAGED.
-
-    string _boundName; ///< String name of bound chemical value
 
     vector<short> _filamentIDvec; ///< The filament type to operate on
 
@@ -124,18 +124,12 @@ protected:
 public:
     FilamentBindingManager(ReactionBase* reaction,
                            Compartment* compartment,
-                           short boundInt, string boundName,
+                           short boundInt,
                            vector<short> filamentIDvec)
 
     : _bindingReaction(reaction), _compartment(compartment),
-      _boundInt(boundInt), _boundName(boundName),
+      _boundInt(boundInt),
       _filamentIDvec(filamentIDvec){
-
-#if !defined(REACTION_SIGNALING) || !defined(RSPECIES_SIGNALING)
-        cout << "Any filament binding reaction relies on reaction and species signaling. Please"
-        << " set these compilation macros and try again. Exiting." << endl;
-        exit(EXIT_FAILURE);
-#endif
 
     }
     virtual ~FilamentBindingManager() = default;
@@ -169,8 +163,6 @@ public:
 #endif
     ///Get the bound species integer index
     short getBoundInt() {return _boundInt;}
-    ///Get the bound species name
-    string getBoundName() {return _boundName;}
 
     ///Set the index of this manager, for access to NeighborList
     void setNLIndex(int index) {_nlIndex = index;}
@@ -181,7 +173,7 @@ public:
     virtual bool isConsistent() = 0;
 
     ///get the filament that the species binds to aravind June 30, 2016.
-    vector<short> getfilamentTypes() {return _filamentIDvec;}
+    auto& getfilamentTypes() const { return _filamentIDvec; }
 
     ///aravind, June 30,2016.
     vector<string> getrxnspecies(){return _bindingReaction->getreactantspecies();}
@@ -253,7 +245,7 @@ private:
 public:
     BranchingManager(ReactionBase* reaction,
                      Compartment* compartment,
-                     short boundInt, string boundName,
+                     short boundInt,
                      vector<short> _filamentIDvec,
                      NucleationZoneType zone = NucleationZoneType::ALL,
                      floatingpoint nucleationDistance = numeric_limits<floatingpoint>::infinity());
@@ -383,8 +375,8 @@ private:
 	float _rMaxsq = _rMax * _rMax; ///< Maximum reaction range squared
     vector<floatingpoint> bindingsites1;
 	vector<floatingpoint> bindingsites2;
-    static short HNLID;
-    static short _idvec[2];
+    short HNLID = 1000;
+    short _Hbsmidvec[2]= {1000,1000};
     int dBInt = 1;
     int dBI = SysParams::Chemistry().linkerbindingskip-1;
 
@@ -400,15 +392,19 @@ private:
     //static neighbor list
     static vector<CylinderCylinderNL*> _neighborLists;
 
-public:
-    LinkerBindingManager(ReactionBase* reaction,
-                         Compartment* compartment,
-                         short boundInt,
-                         string boundName,
-                         vector<short> _filamentIDvec,
-                         float rMax, float rMin);
+    // The linker species index on each filament type.
+    int linkerSpeciesIndices_[2] {-1, -1};
 
-    ~LinkerBindingManager() {}
+public:
+    LinkerBindingManager(
+        ReactionBase* reaction,
+        Compartment* compartment,
+        short linkerType,
+        vector<short> _filamentIDvec,
+        int linkerSpeciesIndex1,
+        int linkerSpeciesIndex2,
+        float rMax, float rMin);
+
 
     //@{
 #ifdef NLORIGINAL
@@ -459,6 +455,9 @@ public:
     float getRMax() {return _rMax;}
     //@}
 
+    // Get linker species indices on each filament type.
+    auto& getLinkerSpeciesIndices() const { return linkerSpeciesIndices_; }
+
     virtual bool isConsistent();
 
 #if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
@@ -488,8 +487,8 @@ public:
     }
     virtual void setHNLID(short id, short idvec[2]){
         HNLID = id;
-        _idvec[0] = idvec[0];
-        _idvec[1] = idvec[1];
+        _Hbsmidvec[0] = idvec[0];
+        _Hbsmidvec[1] = idvec[1];
     };
 
     virtual void printbindingsitesstencil();
@@ -512,7 +511,6 @@ public:
         return  _neighborLists[_nlIndex]->getNLsizeCUDA();
     }
 #endif
-private:
 
 };
 
@@ -537,8 +535,8 @@ private:
 	float _rMaxsq = _rMax * _rMax; ///< Maximum reaction range squared
     vector<floatingpoint> bindingsites1;
     vector<floatingpoint> bindingsites2;
-    static short HNLID;
-    static short _idvec[2];
+    short HNLID = 1000;//Tells which HneighborList to use
+    short _Hbsmidvec[2] = {1000, 1000};//Tells position in HybridBindingSearchManager
     //possible bindings at current state. updated according to neighbor list
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
     _possibleBindings;
@@ -554,16 +552,20 @@ private:
     //static neighbor list
     static vector<CylinderCylinderNL*> _neighborLists;
 
+    // The motor species index on each filament type.
+    int motorSpeciesIndices_[2] {-1, -1};
+
 public:
 
-    MotorBindingManager(ReactionBase* reaction,
-                        Compartment* compartment,
-                        short boundInt,
-                        string boundName,
-                        vector<short> _filamentIDvec,
-                        float rMax, float rMin);
+    MotorBindingManager(
+        ReactionBase* reaction,
+        Compartment* compartment,
+        short linkerType,
+        vector<short> _filamentIDvec,
+        int motorSpeciesIndex1,
+        int motorSpeciesIndex2,
+        float rMax, float rMin);
 
-    ~MotorBindingManager() {}
 
     //@{
 #ifdef NLORIGINAL
@@ -612,6 +614,9 @@ public:
     float getRMax() {return _rMax;}
     //@}
 
+    // Get motor species indices on each filament type.
+    auto& getMotorSpeciesIndices() const { return motorSpeciesIndices_; }
+
     virtual bool isConsistent();
 #if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     virtual void addPossibleBindingsstencil(CCylinder* cc);
@@ -640,8 +645,8 @@ public:
     }
     virtual void setHNLID(short id, short idvec[2]){
         HNLID = id;
-        _idvec[0] = idvec[0];
-        _idvec[1] = idvec[1];
+        _Hbsmidvec[0] = idvec[0];
+        _Hbsmidvec[1] = idvec[1];
     };
     virtual void printbindingsitesstencil();
 #endif
@@ -663,38 +668,8 @@ public:
         return  _neighborLists[_nlIndex]->getNLsizeCUDA();
     }
 #endif
-    //DEPRECATED AS OF 9/8/16
-//    /// Adds an unbound ID to the container
-//    void addUnboundID(int ID) {_unboundIDs.push_back(ID);}
-//
-//    /// Get a random ID from the container, and remove the ID
-//    int getUnboundID() {
-//
-//        assert(_unboundIDs.size() != 0 && "Major bug: No unbound IDs, but non-zero copy numbers.");
-//
-//        int ri = Rand::randInteger(0, _unboundIDs.size() - 1);
-//        int ID = _unboundIDs[ri];
-//
-//        //delete and return
-//        _unboundIDs.erase(_unboundIDs.begin() + ri);
-//
-//        return ID;
-//    }
-//
-//    // remove a specific ID from the list
-//    void removeUnboundID(int ID) {
-//
-//        for (auto IDit = _unboundIDs.begin(); IDit != _unboundIDs.end(); IDit++) {
-//
-//            if(*IDit == ID) {
-//                _unboundIDs.erase(IDit);
-//                return;
-//            }
-//        }
-//    }
-//
-//    ///Get all unbound ID's, but do not change container
-//    const vector<int>& getAllUnboundIDs() const { return _unboundIDs; }
-
 };
+
+} // namespace medyan
+
 #endif

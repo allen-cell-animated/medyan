@@ -25,6 +25,7 @@
 #include "SysParams.h"
 #include "DissipationTracker.h"
 
+namespace medyan {
 ///Enumeration for direction of reaction
 enum FilamentReactionDirection {
     FORWARD, BACKWARD, INPLACE
@@ -73,11 +74,6 @@ public:
         : _filamentType(filamentType),
           _reactants(reactants), _products(products), _rate(rate) , _gnum(gnum), _hrcdid(hrcdid), _dt(dt) {
 
-#if !defined(REACTION_SIGNALING) || !defined(RSPECIES_SIGNALING)
-        cout << "Any filament reaction relies on reaction and species signaling. Please"
-            << " set this compilation macros and try again. Exiting." << endl;
-        exit(EXIT_FAILURE);
-#endif
     }
     virtual ~FilamentReactionTemplate() = default;
 
@@ -237,5 +233,7 @@ public:
 inline int getInt(tuple<int, SpeciesType> x) {return get<0>(x);}
 inline SpeciesType getType(tuple<int, SpeciesType> x) {return get<1>(x);}
 //@}
+
+} // namespace medyan
 
 #endif

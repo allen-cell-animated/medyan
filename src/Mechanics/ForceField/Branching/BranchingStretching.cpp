@@ -11,7 +11,6 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include <CGMethod.h>
 #include "BranchingStretching.h"
 
 #include "BranchingStretchingHarmonic.h"
@@ -20,19 +19,21 @@
 #include "Cylinder.h"
 #include "Bead.h"
 #include "cross_check.h"
+#include "Mechanics/CUDAcommon.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
 
+namespace medyan {
 template <class BStretchingInteractionType>
-void BranchingStretching<BStretchingInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
+void BranchingStretching<BStretchingInteractionType>::vectorize(const FFCoordinateStartingIndex& si, const SimulConfig& conf) {
 
     CUDAcommon::tmin.numinteractions[4] += BranchingPoint::getBranchingPoints().size();
-    beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
-    kstr = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
-    eql = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
-    pos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
-    stretchforce = new floatingpoint[3*BranchingPoint::getBranchingPoints().size()];
+    beadSet.assign(n * BranchingPoint::getBranchingPoints().size(), 0);
+    kstr.assign(BranchingPoint::getBranchingPoints().size(), 0);
+    eql.assign(BranchingPoint::getBranchingPoints().size(), 0);
+    pos.assign(BranchingPoint::getBranchingPoints().size(), 0);
+    stretchforce.assign(3*BranchingPoint::getBranchingPoints().size(), 0);
 
     int i = 0;
 
@@ -47,6 +48,10 @@ void BranchingStretching<BStretchingInteractionType>::vectorize(const FFCoordina
         pos[i] = b->getFirstCylinder()->adjustedrelativeposition(b->getPosition());
         for(int j = 0; j < 3; j++)
         	stretchforce[3*i + j] = 0.0;
+
+        // Reset branch force as a side effect.
+        b->getMBranchingPoint()->branchForce = { 0.0, 0.0, 0.0 };
+
         i++;
     }
     //CUDA
@@ -78,7 +83,7 @@ void BranchingStretching<BStretchingInteractionType>::vectorize(const FFCoordina
 }
 
 template<class BStretchingInteractionType>
-void BranchingStretching<BStretchingInteractionType>::deallocate() {
+void BranchingStretching<BStretchingInteractionType>::assignforcemags() {
     int i = 0;
     for(auto b:BranchingPoint::getBranchingPoints()){
         //Using += to ensure that the stretching forces are additive.
@@ -87,27 +92,11 @@ void BranchingStretching<BStretchingInteractionType>::deallocate() {
             b->getMBranchingPoint()->branchForce[j] += stretchforce[3*b->getIndex() + j];
         i++;
     }
-    delete [] stretchforce;
-    delete [] beadSet;
-    delete [] kstr;
-    delete [] eql;
-    delete [] pos;
-#ifdef CUDAACCL
-    _FFType.deallocate();
-    CUDAcommon::handleerror(cudaFree(gpu_beadSet));
-    CUDAcommon::handleerror(cudaFree(gpu_kstr));
-    CUDAcommon::handleerror(cudaFree(gpu_eql));
-    CUDAcommon::handleerror(cudaFree(gpu_pos));
-    CUDAcommon::handleerror(cudaFree(gpu_params));
-#endif
 }
 
 
 template <class BStretchingInteractionType>
-floatingpoint BranchingStretching<BStretchingInteractionType>::computeEnergy(floatingpoint *coord) {
-
-
-    floatingpoint U_ii=(floatingpoint)0.0;
+FP BranchingStretching<BStretchingInteractionType>::computeEnergy(FP *coord) {
 
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
@@ -124,11 +113,9 @@ floatingpoint BranchingStretching<BStretchingInteractionType>::computeEnergy(flo
                             gpu_params);
 //    }
 #endif
-#ifdef SERIAL
 
-    U_ii = _FFType.energy(coord, beadSet, kstr, eql, pos);
+    FP U_ii = _FFType.energy(coord, beadSet.data(), kstr.data(), eql.data(), pos.data());
 
-#endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
     floatingpoint U_i[1];
     floatingpoint* gU_i;
@@ -147,7 +134,7 @@ floatingpoint BranchingStretching<BStretchingInteractionType>::computeEnergy(flo
 }
 
 template <class BStretchingInteractionType>
-void BranchingStretching<BStretchingInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
+void BranchingStretching<BStretchingInteractionType>::computeForces(FP *coord, FP *f) {
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -164,15 +151,12 @@ void BranchingStretching<BStretchingInteractionType>::computeForces(floatingpoin
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos, gpu_params);
     }
 #endif
-#ifdef SERIAL
 
-    _FFType.forces(coord, f, beadSet, kstr, eql, pos, stretchforce);
+    _FFType.forces(coord, f, beadSet.data(), kstr.data(), eql.data(), pos.data(), stretchforce.data());
 
-#endif
 }
-///Template specializations
-template floatingpoint
-BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(floatingpoint *coord);
-template void BranchingStretching<BranchingStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BranchingStretching<BranchingStretchingHarmonic>::vectorize(const FFCoordinateStartingIndex&);
-template void BranchingStretching<BranchingStretchingHarmonic>::deallocate();
+
+// Explicit instantiation.
+template class BranchingStretching<BranchingStretchingHarmonic>;
+
+} // namespace medyan

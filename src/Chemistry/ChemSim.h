@@ -14,15 +14,13 @@
 #ifndef MEDYAN_ChemSim_h
 #define MEDYAN_ChemSim_h
 
-#include <memory>
-
 #include "common.h"
-
     
+namespace medyan {
 //FORWARD DECLARATIONS
-class ChemSimImpl;
 class ReactionBase;
 class DissipationTracker;
+
 
 /// Used to manage running a network of chemical reactions.
 
@@ -34,48 +32,39 @@ class DissipationTracker;
  */
 class ChemSim {
 public:
-    /// SetInstance
-    /// @param ChemSimImpl *csi is a pointer the concrete implementation
-    /// of the stochastic simulation algorithm.
-    /// @note ChemSim simply stores the csi pointer but does not manage its memory.
-    /// Make sure that csi is always a valid pointer while ChemSim is used.
-    void setInstance(ChemSimImpl *csi);
+    DissipationTracker* dt = nullptr;
+
+    virtual ~ChemSim() = default;
     
     /// After all initial reactions have been added via addReaction(...) method,
     /// invoke initialize() prior to invoking run()
-    void initialize();
+    virtual void initialize() = 0;
 
     //necessary to call during restart to reset global time to necessary time.
-    void initializerestart(floatingpoint time);
+    virtual void initializerestart(floatingpoint time) = 0;
 
     /// Add Reaction *r to the chemical network which needs to be simulated
-    void addReaction(ReactionBase *r);
+    virtual void addReaction(ReactionBase *r) = 0;
     
     /// Remove Reaction *r from the simulated chemical network 
-    void removeReaction(ReactionBase *r);
+    virtual void removeReaction(ReactionBase *r) = 0;
     
     /// Run the chemical dynamics for a set amount of time
-    bool run(floatingpoint time);
+    virtual bool run(floatingpoint time) = 0;
     
     /// Run the chemical dynamics for a set amount of reaction steps
-    bool runSteps(int steps);
+    virtual bool runSteps(int steps) = 0;
     
     /// Mainly used for debugging: print chemical reactions in the network at
     /// this moment
-    void printReactions();
+    virtual void printReactions() const = 0;
 
     /// Cross checks all reactions in the network for firing time.
-    bool crosschecktau();
+    virtual bool crosschecktau() const = 0;
     
-    vector<floatingpoint> getEnergy();
-    
-    DissipationTracker* getDT();
-    
-    
-    
-    
-private:
-    ChemSimImpl* _pimpl; ///< Store a pointer to a specific implementation
-                         ///< of stochastic chemical kinetics; no ownership
+    DissipationTracker* getDT() const { return dt; }
 };
+
+} // namespace medyan
+
 #endif

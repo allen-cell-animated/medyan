@@ -3,7 +3,7 @@
 #include "Util/Math/TriangleArithmetics.hpp"
 
 TEST_CASE("Triangle point distance test", "[TrianglePointDistance]") {
-    using namespace mathfunc;
+    using namespace medyan;
 
     Vec3d ta0 { 0.0, 0.0, 0.0 };
     Vec3d tb0 { 2.0, 0.0, 0.0 };

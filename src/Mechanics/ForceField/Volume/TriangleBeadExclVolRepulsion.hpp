@@ -16,24 +16,27 @@
 
 #include "MathFunctions.h"
 
+namespace medyan {
+
 /// Represents a repulsive excluded volume potential used by the
 /// TriangleBeadExclVolume template.
 struct TriangleBeadExclVolRepulsion {
     
-    double energy(mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3 cb, double area, double kExVol) const;
+    double energy(Vec3, Vec3, Vec3, Vec3 cb, double area, double kExVol) const;
     
     void forces(
         floatingpoint* f0, floatingpoint* f1, floatingpoint* f2, floatingpoint* fb,
-        mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3 cb,
-        double area, const mathfunc::Vec3&, const mathfunc::Vec3&, const mathfunc::Vec3&,
+        Vec3, Vec3, Vec3, Vec3 cb,
+        double area, const Vec3&, const Vec3&, const Vec3&,
         double kExVol
     ) const;
 
-    mathfunc::Vec3 loadForces(
-        const mathfunc::Vec3& c0, const mathfunc::Vec3& c1, const mathfunc::Vec3& c2, const mathfunc::Vec< 3, floatingpoint >& coord,
+    Vec3 loadForces(
+        const Vec3& c0, const Vec3& c1, const Vec3& c2, const Vec< 3, floatingpoint >& coord,
         double area, double kExVol
     ) const;
 };
 
+} // namespace medyan
 
 #endif

@@ -14,8 +14,7 @@
 #ifndef MEDYAN_ChemRNode_h
 #define MEDYAN_ChemRNode_h
 
-#include "common.h"
-
+namespace medyan {
 /// This is an abstract base class for classes that need to be associated with the
 /// given Reaction object.
 class RNode{
@@ -43,5 +42,7 @@ public:
     ///Temporarily adding printSelf to this.
     virtual void printSelf() const = 0;
 };
+
+} // namespace medyan
 
 #endif

@@ -20,59 +20,19 @@
 #include <algorithm>
 #include <utility>
 
-#include "CGMethod.h"
 #include "cross_check.h"
-#include "SubSystem.h"
 #include "Structure/Bead.h"
 #include "Structure/Cylinder.h"
 #include "Structure/DofSerializer.hpp"
-#include "Structure/SurfaceMesh/Membrane.hpp"
-#include "Structure/SurfaceMesh/MembraneMeshGeometry.hpp"
-#include "VisualSystemRawData.hpp"
 
-namespace {
-
-using CurvPol = medyan::SurfaceCurvaturePolicy;
-using CurvReq = ForceFieldTypes::GeometryCurvRequirement;
-
-constexpr CurvPol getCurvPol(CurvReq curvReq) noexcept {
-    if(curvReq == CurvReq::curv) return CurvPol::withSign;
-    else                         return CurvPol::squared;
-}
-
-void prepareForceSharedData() {
-    medyan::visual::copySystemData(medyan::visual::raw_data_cat::beadPosition | medyan::visual::raw_data_cat::beadConnection);
-}
-
-void updateForceSharedData() {
-    medyan::visual::copySystemData(medyan::visual::raw_data_cat::beadPosition);
-}
-
-template< bool stretched >
-void updateMembraneSharedData() {
-    // TODO stretched version
-    if(!stretched) {
-        medyan::visual::copySystemData(medyan::visual::raw_data_cat::beadPosition);
-    }
-}
-
-} // namespace
+namespace medyan {
 
 
 
 
 
 
-
-ForceField* ForceFieldManager::_culpritForceField = nullptr;
-
-void ForceFieldManager::vectorizeAllForceFields(const FFCoordinateStartingIndex& si) {
-    prepareForceSharedData();
-#ifdef CUDATIMETRACK
-    chrono::high_resolution_clock::time_point tbegin, tend;
-    CUDAcommon::cudatime.TvectorizeFF = 0.0;
-    CUDAcommon::cudatime.TvecvectorizeFF.clear();
-#endif
+void ForceFieldManager::vectorizeAllForceFields(const FFCoordinateStartingIndex& si, const SimulConfig& conf) {
 #ifdef CUDAACCL
     // PT1 Generate single vector of energies from all FF and add them together.
     //@{
@@ -80,17 +40,15 @@ void ForceFieldManager::vectorizeAllForceFields(const FFCoordinateStartingIndex&
     //@}
 #endif
 
-    // Cache membrane indices
-    for(auto m : Membrane::getMembranes()) {
-        medyan::cacheIndicesForFF(m->getMesh(), si);
+    // Cache membrane indices.
+    for(auto& m : ps->membranes) {
+        medyan::cacheIndicesForFF(m.getMesh(), si);
     }
 
-    for (auto &ff : _forceFields)
-        ff->vectorize(si);
+    for (auto &ff : forceFields) {
+        ff->vectorize(si, conf);
+    }
 
-#ifdef CUDATIMETRACK
-    tbegin = chrono::high_resolution_clock::now();
-#endif
 #ifdef CUDAACCL
     //reset offset
     if (streamF == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
@@ -132,66 +90,11 @@ void ForceFieldManager::vectorizeAllForceFields(const FFCoordinateStartingIndex&
                                        cudaMemcpyHostToDevice, streamF));
     //@}
 #endif
-#ifdef CUDATIMETRACK
-//    CUDAcommon::handleerror(cudaDeviceSynchronize(),"CGPolakRibiereMethod.cu","CGPolakRibiereMethod.cu");
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-    CUDAcommon::cudatime.TvectorizeFF += elapsed_run.count();
-    std::cout<<"Time total vectorizeFF (s) "<<CUDAcommon::cudatime.TvectorizeFF<<endl;
-    std::cout<<"Time split vectorizeFF (s) ";
-    for(auto x:CUDAcommon::cudatime.TvecvectorizeFF)
-        std::cout<<x<<" ";
-    std::cout<<endl;
-#endif
 }
 
-void ForceFieldManager::cleanupAllForceFields() {
 
-    for (auto &ff : _forceFields)
-        ff->cleanup();
-
-    // Invalidate membrane cache indices
-    for(auto m : Membrane::getMembranes()) {
-        medyan::invalidateIndexCacheForFF(m->getMesh());
-    }
-
-#ifdef CUDAACCL
-    if (!(CUDAcommon::getCUDAvars().conservestreams))
-        CUDAcommon::handleerror(cudaStreamDestroy(streamF));
-    //cleanup energy vector
-    // single vector of energies from all FF and add them together.
-    //@{
-    CUDAcommon::handleerror(cudaFree(CUDAcommon::cudavars.gpu_energyvec));
-    CUDAcommon::handleerror(cudaFree(gpu_params));
-    //@}
-    if (CGMethod::N / 3 > 0) {
-        CUDAcommon::handleerror(cudaFree(gpu_nint));
-        //Memory alloted
-        //@{
-//        size_t allocmem = 0;
-//        allocmem += sizeof(floatingpoint);
-//        auto c = CUDAcommon::getCUDAvars();
-//        c.memincuda -= allocmem;
-//        CUDAcommon::cudavars = c;
-//        std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
-//        std::cout<<"Memory allocated 0 . Memory freed "<<allocmem/1024<<endl;
-        //@}
-        blocksnthreads.clear();
-    }
-#endif
-}
-
-template< bool stretched >
 floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbose) const {
     chrono::high_resolution_clock::time_point tbegin, tend;
-#ifdef CUDATIMETRACK
-//    CUDAcommon::cudatime.TcomputeE = 0.0;
-    CUDAcommon::cudatime.TveccomputeE.clear();
-    CUDAcommon::cudatime.Ecount++;
-//    CUDAcommon::serltime.TcomputeE = 0.0;
-    CUDAcommon::serltime.TveccomputeE.clear();
-    CUDAcommon::serltime.Ecount++;
-#endif
     floatingpoint energy = 0.0;
 #ifdef CUDAACCL
 #ifdef CUDA_INDIVIDUAL_ESUM
@@ -207,20 +110,9 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
     CUDAcommon::handleerror(cudaMemset(CUDAcommon::cudavars.gpu_energyvec, 0, bntaddvec2.at(0) * sizeof
             (floatingpoint)));
 #endif
-#ifdef CUDATIMETRACK
-    tbegin = chrono::high_resolution_clock::now();
-#endif
 /*    auto gU_tot = CUDAcommon::getCUDAvars().gpu_energy;
     setenergytozero << < 1, 1, 0, streamF >> > (gU_tot);*/
     CUDAcommon::handleerror(cudaStreamSynchronize(streamF));
-#ifdef CUDATIMETRACK
-//    CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceFieldManager.cu",
-//                            "computeEnergy");
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-    CUDAcommon::cudatime.TcomputeE += elapsed_run.count();
-    CUDAcommon::cudatime.TcomputeEiter += elapsed_run.count();
-#endif
 #endif
 #ifdef SERIAL_CUDACROSSCHECK
     CUDAcommon::handleerror(cudaDeviceSynchronize());
@@ -230,20 +122,21 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
 
 #endif
 
+    // Update dependent variables using functions defined in force fields.
+    computeDependentCoordinates(coord);
     // Compute membrane geometry
-    for(auto m : Membrane::getMembranes()) {
-        m->updateGeometryValue< stretched >(coord, getCurvPol(this->geoCurvReq));
+    for(auto& m : ps->membranes) {
+        updateGeometryValue(m.getMesh(), coord, surfaceGeometrySettings);
     }
 
     short count = 0;
     CUDAcommon::tmin.computeenergycalls++;
     #ifdef TRACKDIDNOTMINIMIZE
-    if(!stretched)
-        SysParams::Mininimization().tempEnergyvec.clear();
+    SysParams::Mininimization().tempEnergyvec.clear();
 	#endif
-    for (auto &ff : _forceFields) {
+    for (auto &ff : forceFields) {
         tbegin = chrono::high_resolution_clock::now();
-        auto tempEnergy = ff->computeEnergy(coord, stretched);
+        auto tempEnergy = ff->computeEnergy(coord);
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
 //        cout<<ff->getName()<<" "<<tempEnergy<<"pN.nm"<<" ";
@@ -256,23 +149,15 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
         //if energy is infinity, exit with infinity.
         if (tempEnergy <= -1) {
 
-            //if this is the current energy, exit ungracefully
-            if (!stretched) {
+            cout << "Energy = " << tempEnergy << endl;
 
-                cout << "Energy = " << tempEnergy << endl;
+            cout
+                    << "Energy of system became infinite. Try adjusting minimization parameters."
+                    << endl;
+            cout << "The culprit was ... " << ff->getName() << endl;
 
-                cout
-                        << "Energy of system became infinite. Try adjusting minimization parameters."
-                        << endl;
-                cout << "The culprit was ... " << ff->getName() << endl;
-
-                _culpritForceField = ff;
-                return numeric_limits<floatingpoint>::infinity();
-            }
-                //if this is a minimization try, just return infinity
-            else {
-                //cout<<"Returning infintie energy "<<ff->getName()<<endl;
-                return numeric_limits<floatingpoint>::infinity();}
+            ff->whoIsCulprit();
+            return numeric_limits<floatingpoint>::infinity();
         }
         else energy += tempEnergy;
 #ifdef SERIAL_CUDACROSSCHECK
@@ -289,11 +174,6 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
                 ""<<energy<<endl;
 #endif
     }
-//    cout<<endl;
-#ifdef CUDATIMETRACK
-    tbegin = chrono::high_resolution_clock::now();
-#endif
-    //Add energies
 #ifdef CUDAACCL
 //    std::cout<<"Total nint "<<bntaddvec2.at(0)<<" "<<CUDAcommon::cudavars.offset_E<<endl;
     //Synchronize streams
@@ -301,27 +181,6 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
             CUDAcommon::handleerror(cudaStreamSynchronize(*strm), "computeEnergy",
                                     "ForceFieldManager.cu");
         }
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run2(tend - tbegin);
-    CUDAcommon::cudatime.TveccomputeE.push_back(elapsed_run2.count());
-    CUDAcommon::cudatime.TcomputeE += elapsed_run2.count();
-    CUDAcommon::cudatime.TcomputeEiter += elapsed_run2.count();
-    tbegin = chrono::high_resolution_clock::now();
-#endif
-//    std::cout<<"CUDA energy total nint "<<CUDAcommon::cudavars.offset_E<<endl;
-    /*vector<floatingpoint> ones;
-    for(int i = 0;i<8192;i++)
-        ones.push_back(1.0);
-    CUDAcommon::handleerror(cudaMemcpyAsync(CUDAcommon::cudavars.gpu_energyvec, ones
-                                                        .data() ,
-                                                bntaddvec2.at(0) * sizeof
-                                                        (floatingpoint),
-                                                cudaMemcpyHostToDevice,streamF));*/
-/*    CUDAcommon::handleerror(cudaMemsetAsync(CUDAcommon::cudavars.gpu_energyvec, 1,
-                                            bntaddvec2.at(0) * sizeof
-            (floatingpoint),streamF));
-    cudaDeviceSynchronize();*/
     resetfloatingpointvariableCUDA<<<1,1,0, streamF>>>(gpu_Uvec);
     addvectorred3<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(floatingpoint)
                     , streamF>>>(CUDAcommon::cudavars.gpu_energyvec, gpu_params,
@@ -340,76 +199,50 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, bool verbos
     cudaDeviceSynchronize();
 #endif
 
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run3(tend - tbegin);
-    CUDAcommon::cudatime.TveccomputeE.push_back(elapsed_run3.count());
-    CUDAcommon::cudatime.TcomputeE += elapsed_run3.count();
-    CUDAcommon::cudatime.TcomputeEiter += elapsed_run3.count();
-//    std::cout<<"Time total computeEnergy (s) CUDA "<<CUDAcommon::cudatime
-//            .TcomputeE<<" SERL "<<CUDAcommon::serltime.TcomputeE<<" factor "
-//                     ""<<CUDAcommon::serltime.TcomputeE/CUDAcommon::cudatime.TcomputeE<<endl;
-//    std::cout<<"Time split computeEnergy (s) CUDA ";
-//    for(auto x:CUDAcommon::cudatime.TveccomputeE)
-//        std::cout<<x<<" ";
-//    std::cout<<endl;
-//    std::cout<<"Time split computeEnergy (s) SERL ";
-//    for(auto x:CUDAcommon::serltime.TveccomputeE)
-//        std::cout<<x<<" ";
-//    std::cout<<endl;
-#endif
-    updateMembraneSharedData<stretched>();
-    if(!stretched) {
-        #ifdef TRACKDIDNOTMINIMIZE
-        SysParams::Mininimization().Energyvec.push_back(SysParams::Mininimization()
-        .tempEnergyvec);
-        #endif
-    }
+    #ifdef TRACKDIDNOTMINIMIZE
+    SysParams::Mininimization().Energyvec.push_back(SysParams::Mininimization().tempEnergyvec);
+    #endif
     return energy;
     
 }
 
-EnergyReport ForceFieldManager::computeEnergyHRMD(floatingpoint *coord) const {
-    CUDAcommon::tmin.computeenerycallszero++;
+EnergyReport ForceFieldManager::computeIndividualEnergies(floatingpoint* coord) const {
+    // Compute membrane geometry
+    for(auto& m : ps->membranes) {
+        updateGeometryValue(m.getMesh(), coord, surfaceGeometrySettings);
+    }
+
     EnergyReport result;
     result.total = 0.0;
-    for (auto &ff : _forceFields) {
-        auto tempEnergy = ff->computeEnergy(coord);
 
-        // convert to units of kT
-        tempEnergy = tempEnergy / kT; // TODO: Energy unit conversion might happen outside
-        result.individual.push_back({ff->getName(), tempEnergy});
+    // Update dependent variables using functions defined in force fields.
+    computeDependentCoordinates(coord);
+
+    for (auto &ff : forceFields) {
+        auto tempEnergy = ff->computeEnergy(coord);
+        result.individual.push_back({ ff->getName(), tempEnergy });
         result.total += tempEnergy;
     }
+    return result;
+}
+
+EnergyReport ForceFieldManager::computeEnergyHRMD(floatingpoint *coord) const {
+    CUDAcommon::tmin.computeenerycallszero++;
+    EnergyReport result = computeIndividualEnergies(coord);
+    for(auto& eachResult : result.individual) {
+        eachResult.energy /= kT;
+    }
+    result.total /= kT;
     return result;
 }
 
 
 
 
-template floatingpoint ForceFieldManager::computeEnergy< false >(floatingpoint *, bool) const;
-template floatingpoint ForceFieldManager::computeEnergy< true >(floatingpoint *, bool) const;
+void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint* force, int numVar) {
+    // Reset forces to zero.
+    std::fill(force, force + numVar, 0.0);
 
-void ForceFieldManager::computeForces(floatingpoint *coord, vector< floatingpoint >& force) {
-    //reset to zero
-#ifdef CUDATIMETRACK
-    chrono::high_resolution_clock::time_point tbegin, tend;
-    CUDAcommon::cudatime.TcomputeF = 0.0;
-    CUDAcommon::cudatime.TveccomputeF.clear();
-    CUDAcommon::serltime.TcomputeF = 0.0;
-    CUDAcommon::serltime.TveccomputeF.clear();
-    tbegin = chrono::high_resolution_clock::now();
-#endif
-
-    std::fill(force.begin(), force.end(), 0.0);
-
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-    CUDAcommon::serltime.TveccomputeF.push_back(elapsed_run.count());
-    CUDAcommon::serltime.TcomputeF += elapsed_run.count();
-    tbegin = chrono::high_resolution_clock::now();
-#endif
 #ifdef CUDAACCL
     CUDAvars cvars = CUDAcommon::getCUDAvars();
     if (cross_checkclass::Aux)
@@ -422,66 +255,38 @@ void ForceFieldManager::computeForces(floatingpoint *coord, vector< floatingpoin
 
     CUDAcommon::handleerror(cudaGetLastError(), "resetForcesCUDA", "ForceFieldManager.cu");
 #endif
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run2(tend - tbegin);
-    CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run2.count());
-    CUDAcommon::cudatime.TcomputeF += elapsed_run2.count();
-    tbegin = chrono::high_resolution_clock::now();
-#endif
 
+    // Update dependent variables using functions defined in force fields.
+    computeDependentCoordinates(coord);
     // compute membrane geometry with derivatives
-    for(auto m : Membrane::getMembranes()) {
-        m->updateGeometryValueWithDerivative(coord, getCurvPol(this->geoCurvReq));
+    for(auto& m : ps->membranes) {
+        updateGeometryValueWithDerivative(m.getMesh(), coord, surfaceGeometrySettings);
     }
 
     //recompute
 //    floatingpoint *F_i = new floatingpoint[CGMethod::N];
     short count = 0;
     CUDAcommon::tmin.computeforcescalls++;
-    for (auto &ff : _forceFields) {
+    for (auto &ff : forceFields) {
         tbegin = chrono::high_resolution_clock::now();
-        ff->computeForces(coord, force.data());
+        ff->computeForces(coord, force);
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
-        if(CUDAcommon::tmin.individualforces.size() == _forceFields.size())
+        if(CUDAcommon::tmin.individualforces.size() == forceFields.size())
             CUDAcommon::tmin.individualforces[count]+= elapsed_energy.count();
         else
             CUDAcommon::tmin.individualforces.push_back(elapsed_energy.count());
         count++;
-/*        for(int i=0;i<CGMethod::N;i++){
-            if(isnan(f[i])||isinf(f[i])){
-                cout<<"Culprit ForceField "<<ff->getName()<<endl;
-            }
-        }*/
+
 #ifdef ALLSYNC
         cudaDeviceSynchronize();
 #endif
 
-//        if(cross_checkclass::Aux)
-//            CUDAcommon::handleerror(
-//                cudaMemcpy(F_i, CUDAcommon::getCUDAvars().gpu_forceAux, 3 * Bead::getBeads().size() * sizeof
-//                                   (floatingpoint),
-//                           cudaMemcpyDeviceToHost));
-//        else
-//            CUDAcommon::handleerror(
-//                    cudaMemcpy(F_i, CUDAcommon::getCUDAvars().gpu_force, 3 * Bead::getBeads().size() * sizeof
-//                                       (floatingpoint),
-//                               cudaMemcpyDeviceToHost));
-//        floatingpoint fmax = 0.0;
-//        int id=0;
-//        for (auto iter = 0; iter < Bead::getBeads().size(); iter++) {
-//            if(abs(F_i[3 *iter])> fmax) {fmax = abs(F_i[3*iter]);id = iter;}
-//            if(abs(F_i[3 *iter +1])> fmax) {fmax = abs(F_i[3*iter +1]);id = iter;}
-//            if(abs(F_i[3 *iter +2])> fmax) {fmax = abs(F_i[3*iter +2]);id = iter;}
-////            std::cout << F_i[3 * iter] << " " << F_i[3 * iter + 1] << " " << F_i[3 * iter + 2] << endl;
-//        }
-//        std::cout <<"Fmax "<< id<<" "<<fmax<<" "<<F_i[3 * id] << " " << F_i[3 * id + 1] << " " << F_i[3 * id + 2] <<
-//                                                                                                                 endl;
     }
 
-    updateForceSharedData();
-//    delete F_i;
+    // After force computation, propagate all forces accumulated on dependent variables onto the independent variables using the chain rule.
+    propagateDependentForces(coord, force);
+
 }
 
 void ForceFieldManager::computeLoadForces() const {
@@ -494,7 +299,7 @@ void ForceFieldManager::computeLoadForces() const {
 //        b->loadForcesM.clear();
     }
 
-    for (auto &f : _forceFields)
+    for (auto &f : forceFields)
         f->computeLoadForces();
 
     //reset lfi as well
@@ -511,73 +316,12 @@ void ForceFieldManager::computeLoadForce(Cylinder* c, ForceField::LoadForceEnd e
     // reset
     std::fill(loadForces.begin(), loadForces.end(), 0.0);
 
-    for(auto& f : _forceFields) f->computeLoadForce(c, end);
+    for(auto& f : forceFields) f->computeLoadForce(*ps, c, end);
 
     // reset lfi
     lfi = 0;
 }
 
-void ForceFieldManager::printculprit(){
-
-    /*cout<<"Printing cylinder data overall"<<endl;
-    if(true) {
-
-        cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
-        Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-        CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
-        floatingpoint *coord = CUDAcommon::serlvars.coord;
-        std::cout << "check revectorized cylinders" << endl;
-        std::cout << "3 Total Cylinders " << Cylinder::getCylinders().size() << " Beads "
-                  << Bead::getBeads().size() << "maxcindex " << Cylinder::getmaxcindex() <<
-                  endl;
-        for (auto cyl:Cylinder::getCylinders()) {
-            int i = cyl->_dcIndex;
-            int id1 = cylindervec[i].ID;
-            int id2 = Cylinderpointervec[i]->getID();
-            int id3 = ccylindervec[i]->getCylinder()->getID();
-            if (id1 != id2 || id2 != id3 || id3 != id1)
-                std::cout << id1 << " " << id2 << " " << id3 << endl;
-            auto b1 = cyl->getFirstBead();
-            auto b2 = cyl->getSecondBead();
-            long idx1 = b1->_dbIndex;
-            long idx2 = b2->_dbIndex;
-            cylinder c = cylindervec[i];
-            std::cout << "bindices for cyl with ID " << cyl->getID() << " cindex " << i <<
-                      " are " << idx1 << " " << idx2 << " " << c.bindices[0] << " "
-                      << c.bindices[1] <<" coords ";
-            std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
-                      << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
-                      << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] <<" forces ";
-            std::cout << force[3 * idx1] << " " << force[3 * idx1 + 1] << " "
-                      << force[3 * idx1 + 2] << " " << force[3 * idx2] << " "
-                      << force[3 * idx2 + 1] << " " << force[3 * idx2 + 2] << endl;
-            if (c.bindices[0] != idx1 || c.bindices[1] != idx2) {
-
-                std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1]
-                          << " " << b1->coordinate[2] << " " << " " << b2->coordinate[0]
-                          << " " << b2->coordinate[1] << " " << b2->coordinate[2]
-                          << " idx " << b1->_dbIndex << " " << b2->_dbIndex << "ID "
-                                                                               ""
-                          << b1->getID() << " " << b2->getID() << endl;
-
-                std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
-                          << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
-                          << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] << endl;
-                std::cout << force[3 * idx1] << " " << force[3 * idx1 + 1] << " "
-                          << force[3 * idx1 + 2] << " " << force[3 * idx2] << " "
-                          << force[3 * idx2 + 1] << " " << force[3 * idx2 + 2] << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-
-    cout<<"-------DONE------"<<endl;
-    }*/
-
-	//get the culprit in output
-	_culpritForceField->whoIsCulprit();
-
-	exit(EXIT_FAILURE);
-}
 
 #ifdef CUDAACCL
 
@@ -602,7 +346,7 @@ void ForceFieldManager::CUDAcopyForces(cudaStream_t stream, floatingpoint *fprev
 
 void ForceFieldManager::assignallforcemags() {
 
-    for (auto &ff : _forceFields)
+    for (auto &ff : forceFields)
         ff->assignforcemags();
 }
 
@@ -634,8 +378,8 @@ void ForceFieldManager::computeHessian(const std::vector<floatingpoint>& allCoor
         coord_copy_m[i] -= delta;
 
         // calculate the new forces based on perturbation
-        computeForces(coord_copy_p.data(), forces_copy_p);
-        computeForces(coord_copy_m.data(), forces_copy_m);
+        computeForces(coord_copy_p.data(), forces_copy_p.data(), forces_copy_p.size());
+        computeForces(coord_copy_m.data(), forces_copy_m.data(), forces_copy_p.size());
 
         for (auto j = 0; j < total_DOF; j++) {
 
@@ -676,7 +420,7 @@ void ForceFieldManager::computeHessian(const std::vector<floatingpoint>& allCoor
             Spectra::SparseSymShiftSolve<double> op(hessMatSym);
             //Spectra::SparseSymMatProd<double> op(hessMatSym);
             int numEigs = total_DOF - 1;
-            Spectra::SymEigsShiftSolver<double, Spectra::SMALLEST_ALGE, Spectra::SparseSymShiftSolve<double>> eigs(&op,
+            Spectra::SymEigsShiftSolver<Spectra::SparseSymShiftSolve<double>> eigs(op,
                                                                                                                    numEigs,
                                                                                                                    total_DOF,
                                                                                                                    10000);
@@ -697,7 +441,7 @@ void ForceFieldManager::computeHessian(const std::vector<floatingpoint>& allCoor
             }*/
 
             eigs.init();
-            int nconv = eigs.compute();
+            int nconv = eigs.compute(Spectra::SortRule::SmallestAlge);
             evalues = eigs.eigenvalues();
             //columns of evectors matrix are the normalized eigenvectors
             evectors = eigs.eigenvectors(numEigs);
@@ -819,3 +563,5 @@ void ForceFieldManager::computeProjections(const FFCoordinateStartingIndex& si, 
    
     
 }
+
+} // namespace medyan

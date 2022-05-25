@@ -23,6 +23,7 @@
 
 #include "MathFunctions.h"
 
+namespace medyan {
 using namespace mathfunc;
 // IF USING CUDA VERSION, MAKE SURE TO ADD RELEVANT DISTANCE, STRETCHED DISTANCE AND NORMAL FUNCTIONS IN MATHFUNCTIONS.H
 /// A plane implementation of a BoundaryElement.
@@ -585,4 +586,7 @@ public:
 
 
 };
+
+} // namespace medyan
+
 #endif

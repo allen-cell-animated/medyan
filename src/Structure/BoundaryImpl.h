@@ -16,12 +16,14 @@
 
 #include <stdexcept> // logic_error
 #include <vector>
+#include <limits>
 
 #include "common.h"
 
 #include "Boundary.h"
 #include "Util/Io/Log.hpp"
 
+namespace medyan {
 ///FORWARD DECLARATIONS
 class Compartment;
 
@@ -154,5 +156,6 @@ public:
     virtual void volume();
 };
 
+} // namespace medyan
 
 #endif

@@ -4,6 +4,28 @@ cmake_minimum_required(VERSION 3.13)
 # Configurations
 #######################################
 
+# Get git branch.
+execute_process(
+    COMMAND           git rev-parse --abbrev-ref HEAD
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE   GIT_BRANCH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+# Get the latest commit hash.
+execute_process(
+    COMMAND           git rev-parse HEAD
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE   GIT_COMMIT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+# Get latest annotated tag.
+execute_process(
+    COMMAND           git describe --abbrev=0 --tags
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE   GIT_LATEST_TAG
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
 # vcpkg triplet config
 if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
     set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING "")
@@ -38,7 +60,7 @@ endif()
 if(MSVC)
     set(CMAKE_CXX_FLAGS "/arch:AVX2 /MP /EHsc /bigobj")
 else()
-    set(CMAKE_CXX_FLAGS "-Wall -ffast-math -fno-finite-math-only -mtune=native -march=native")
+    set(CMAKE_CXX_FLAGS "-Wno-sign-compare -Wno-unused-variable -Wno-reorder -Wno-unused-but-set-variable -Wno-unused-local-typedefs -Wall -ffast-math -fno-finite-math-only -mtune=native -march=native")
     set(CMAKE_CXX_FLAGS_DEBUG "-g")
     set(CMAKE_CXX_FLAGS_RELEASE "-O2 -funroll-loops -flto")
 endif()
@@ -70,10 +92,10 @@ target_include_directories(medyan PUBLIC
 
 # Preprocessor macros
 target_compile_definitions(medyan PRIVATE
-    # Basic system
-    CHEMISTRY
-    MECHANICS
-    DYNAMICRATES
+    # Meta: git
+    GIT_COMMIT_HASH="${GIT_COMMIT_HASH}"
+    GIT_BRANCH="${GIT_BRANCH}"
+    GIT_LATEST_TAG="${GIT_LATEST_TAG}"
 
     # Chemistry algorithm
     TRACK_DEPENDENTS # Needed for Gillespie and NRM algorithm
@@ -81,20 +103,14 @@ target_compile_definitions(medyan PRIVATE
     # For passivating and activating reactions accordingly
     TRACK_ZERO_COPY_N
     TRACK_UPPER_COPY_N
-    # Reaction signaling. Needed for all Filament, Linker,
-    # Motor, and BranchingPoint reactions in system
-    REACTION_SIGNALING
-    RSPECIES_SIGNALING
 
     # Energy minimization algorithm
     MOVEBEADSLINESEARCH
-    SERIAL
 
     # Neighbors list calculations (choose 1 of 3)
     #NLORIGINAL
     #HYBRID_NLSTENCILLIST
     SIMDBINDINGSEARCH
-    NPROCS=1 # deprecated
 
     # Boost memory
     BOOST_MEM_POOL
@@ -152,16 +168,8 @@ endif()
 #######################################
 
 # boost
-find_path(BOOST_SIGNALS2_INCLUDE_DIRS "boost/signals2.hpp")
-target_include_directories(medyan PRIVATE ${BOOST_SIGNALS2_INCLUDE_DIRS})
-find_path(BOOST_POOL_INCLUDE_DIRS "boost/pool/detail/for.m4")
-target_include_directories(medyan PRIVATE ${BOOST_POOL_INCLUDE_DIRS})
-find_path(BOOST_HEAP_INCLUDE_DIRS "boost/heap/binomial_heap.hpp")
-target_include_directories(medyan PRIVATE ${BOOST_HEAP_INCLUDE_DIRS})
-find_path(BOOST_UBLAS_INCLUDE_DIRS "boost/numeric/ublas/assignment.hpp")
-target_include_directories(medyan PRIVATE ${BOOST_UBLAS_INCLUDE_DIRS})
-find_path(BOOST_RANGE_INCLUDE_DIRS "boost/range.hpp")
-target_include_directories(medyan PRIVATE ${BOOST_RANGE_INCLUDE_DIRS})
+find_package(Boost REQUIRED COMPONENTS)
+target_link_libraries(medyan PRIVATE Boost::boost)
 
 # catch2
 find_package(Catch2 CONFIG REQUIRED)
@@ -170,6 +178,26 @@ target_link_libraries(medyan PRIVATE Catch2::Catch2)
 # eigen3
 find_package(Eigen3 CONFIG REQUIRED)
 target_link_libraries(medyan PRIVATE Eigen3::Eigen)
+
+# fmt
+find_package(fmt CONFIG REQUIRED)
+target_link_libraries(medyan PRIVATE fmt::fmt)
+
+# highfive
+find_package(HighFive CONFIG REQUIRED)
+target_link_libraries(medyan PRIVATE libdeps HighFive HighFive_libdeps HighFive_HighFive)
+
+# spectra
+find_package(spectra CONFIG REQUIRED)
+target_link_libraries(medyan PRIVATE Spectra::Spectra)
+
+# spdlog
+find_package(spdlog CONFIG REQUIRED)
+target_link_libraries(medyan PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
+
+# xtensor
+find_package(xtensor CONFIG REQUIRED)
+target_link_libraries(medyan PRIVATE xtensor xtensor::optimize)
 
 # GUI related
 if(NOT "${MEDYAN_NO_GUI}" STREQUAL "true")
@@ -181,9 +209,17 @@ if(NOT "${MEDYAN_NO_GUI}" STREQUAL "true")
     find_package(glad CONFIG REQUIRED)
     target_link_libraries(medyan PRIVATE glad::glad)
 
+    # GLM
+    find_package(glm CONFIG REQUIRED)
+    target_link_libraries(medyan PRIVATE glm::glm)
+
     # imgui
     find_package(imgui CONFIG REQUIRED)
     target_link_libraries(medyan PRIVATE imgui::imgui)
+
+    # implot
+    find_package(implot CONFIG REQUIRED)
+    target_link_libraries(medyan PRIVATE implot::implot)
 
     # stb
     find_path(STB_INCLUDE_DIRS "stb.h")

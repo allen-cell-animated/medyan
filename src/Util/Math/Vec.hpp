@@ -11,7 +11,7 @@
 #include <type_traits> // common_type, conditional, enable_if, is_pointer, is_same, remove_reference
 #include "utility.h"
 
-namespace mathfunc {
+namespace medyan {
 
 //-----------------------------------------------------------------------------
 // Vec is a simple coordinate type that makes operations easier
@@ -48,6 +48,9 @@ template< size_t dim, typename Float = double > struct Vec {
     }
 
     constexpr size_type size() const noexcept { return dim; }
+
+    constexpr       value_type* data()       noexcept { return value.data(); }
+    constexpr const value_type* data() const noexcept { return value.data(); }
 
     constexpr iterator       begin()       noexcept { return value.begin(); }
     constexpr const_iterator begin() const noexcept { return value.begin(); }
@@ -109,6 +112,8 @@ struct VecMap {
     }
 
     constexpr auto size() const noexcept { return dim; }
+
+    constexpr value_type* data() const noexcept { return ptr; }
 
     // Iterators
     constexpr iterator begin() const noexcept { return ptr; }
@@ -528,6 +533,6 @@ inline auto& operator-=(VA1& v1, const VA2& v2) {
     return v1;
 }
 
-} // namespace mathfunc
+} // namespace medyan
 
 #endif

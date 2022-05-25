@@ -10,7 +10,9 @@
 #include "common.h" // floatingpoint
 #include "Component.h"
 #include "Composite.h"
+#include "Structure/SurfaceMesh/FuncMembraneGeo.hpp"
 #include "Util/Math/Vec.hpp"
+#include "Util/StableVector.hpp"
 
 /******************************************************************************
 The closed membranes are not allowed to intersect themselves or each other.
@@ -25,12 +27,16 @@ containing the membranes of the children; the membranes of the nodes of the
 same level does not contain each other.
 ******************************************************************************/
 
+namespace medyan {
 template< typename MemType >
 class MembraneHierarchy: public Composite {
 
+public:
+    using MembraneIndexType = typename medyan::StableVector<MemType>::Index;
 private:
 
-    MemType* _membrane = nullptr; ///< pointer to the membrane of this level
+    // -1 is used as sentinel value, indicating no membrane is attached.
+    MembraneIndexType mi_ {-1};
 
     // helper function for printSelf
     void printTree(std::string indent, bool last) const {
@@ -45,8 +51,8 @@ private:
         }
         
         std::cout << this;
-        if(_membrane)
-            std::cout << " (Mem Ptr: " << _membrane << " Id: " << _membrane->getId() << ")";
+        if(mi_.value != -1)
+            std::cout << " (Mem index: " << mi_.value << ")";
         else
             std::cout << " (No membrane attached)";
         
@@ -62,12 +68,12 @@ public:
     /**************************************************************************
     Ctors and Dtors
     **************************************************************************/
-    MembraneHierarchy(MemType* m): _membrane(m) {}
+    MembraneHierarchy(MembraneIndexType mi): mi_(mi) {}
 
     /**************************************************************************
     Getters and Setters
     **************************************************************************/
-    MemType* getMembrane()const { return _membrane; }
+    auto getMembraneIndex() const { return mi_; }
 
     /**************************************************************************
     Implements Component
@@ -85,52 +91,54 @@ public:
     /**************************************************************************
     Static root
     **************************************************************************/
-    static MembraneHierarchy& root() { static MembraneHierarchy root(nullptr); return root; }
+    static MembraneHierarchy& root() { static MembraneHierarchy root(MembraneIndexType{ -1 }); return root; }
 
     /**************************************************************************
     Operations on a tree structure
     **************************************************************************/
     // When new membrane is inserted.
     // This function requires that geometry of the membrane has been updated.
-    static void addMembrane(MemType* m, MembraneHierarchy& root) {
+    template< typename Context >
+    static void addMembrane(Context& sys, MembraneIndexType mi, MembraneHierarchy& root) {
         using MT = typename MemType::MeshType;
 
         auto& rootChildren = root.children();
+        auto& m = sys.membranes[mi];
 
         // Pick a point on the membrane and check the containing relationship with other membranes
-        const mathfunc::Vec< 3, floatingpoint > p (m->getMesh().attribute(typename MT::VertexIndex {0}).getCoordinate());
+        const medyan::Vec< 3, floatingpoint > p (m.getMesh().attribute(typename MT::VertexIndex {0}).getCoordinate(sys));
 
         // Recursively search
         for(auto& childPtr: rootChildren) {
             
             MembraneHierarchy* hiePtr = static_cast< MembraneHierarchy* >(childPtr.get());
 
-            if(hiePtr->_membrane == nullptr) {
+            if(hiePtr->mi_.value == -1) {
                 hiePtr->printSelf();
                 throw std::runtime_error("The child node does not point to a specific membrane.");
             }
 
-            if(hiePtr->_membrane->isClosed() && hiePtr->_membrane->contains(p)) { // Is inside one of the child nodes
-                return MembraneHierarchy::addMembrane(m, *hiePtr); // Search that child
+            if(sys.membranes[hiePtr->mi_].isClosed() && medyan::contains(sys, sys.membranes[hiePtr->mi_].getMesh(), p)) { // Is inside one of the child nodes
+                return MembraneHierarchy::addMembrane(sys, mi, *hiePtr); // Search that child
             }
         }
 
         // Now, the new membrane is outside of every child membrane.
 
         // First create a new node
-        auto newNode = std::make_unique< MembraneHierarchy >(m);
+        auto newNode = std::make_unique< MembraneHierarchy >(mi);
 
         // Then check whether any children is inside this membrane.
         // Open membranes cannot contain any children.
-        if(m->isClosed()) {
+        if(m.isClosed()) {
 
             for(auto& childPtr: rootChildren) {
 
                 MembraneHierarchy* hiePtr = static_cast<MembraneHierarchy*>(childPtr.get());
 
-                const mathfunc::Vec< 3, floatingpoint > hieP (hiePtr->_membrane->getMesh().attribute(typename MT::VertexIndex {0}).getCoordinate());
+                const medyan::Vec< 3, floatingpoint > hieP (sys.membranes[hiePtr->mi_].getMesh().attribute(typename MT::VertexIndex {0}).getCoordinate(sys));
 
-                if(m->contains(hieP)) { // The child membrane is inside new membrane
+                if(medyan::contains(sys, m.getMesh(), hieP)) { // The child membrane is inside new membrane
 
                     // Add child to the new node
                     newNode->addChild(std::move(childPtr));
@@ -149,11 +157,12 @@ public:
         root.addChild(std::move(newNode)); // Also manages the deletion of newNode
 
     } // void addMembrane(MemType* m, MembraneHierarchy& root)
-    static void addMembrane(MemType* m) { addMembrane(m, root()); }
+    template< typename Context >
+    static void addMembrane(Context& sys, MembraneIndexType mi) { addMembrane(sys, mi, root()); }
 
     // When a membrane is removed. Must be a closed membrane.
     // Returns whether something is deleted.
-    static bool removeMembrane(MemType* m, MembraneHierarchy& root) {
+    static bool removeMembrane(MembraneIndexType mi, MembraneHierarchy& root) {
         // Find the membrane to be removed by recursive search
         // Only 1 node will be deleted
 
@@ -163,11 +172,11 @@ public:
             
             MembraneHierarchy* hiePtr = static_cast<MembraneHierarchy*>(childPtr.get());
 
-            if(hiePtr->_membrane == m) { // Found the node to be removed
+            if(hiePtr->mi_ == mi) { // Found the node to be removed
                 nodeToBeDeleted = hiePtr;
             }
             else {
-                if(MembraneHierarchy::removeMembrane(m, *hiePtr)) return true;
+                if(MembraneHierarchy::removeMembrane(mi, *hiePtr)) return true;
                 // else the search continues
             }
         }
@@ -189,11 +198,11 @@ public:
             return false;
         }
     } // void removeMembrane(MemType* m, MembraneHierarchy& root)
-    static bool removeMembrane(MemType* m) { return removeMembrane(m, root()); }
+    static bool removeMembrane(MembraneIndexType mi) { return removeMembrane(mi, root()); }
 
 };
 
-
+} // namespace medyan
 
 
 

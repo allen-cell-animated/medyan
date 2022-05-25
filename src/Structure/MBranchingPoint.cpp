@@ -16,6 +16,7 @@
 #include "SysParams.h"
 #include "Util/Io/Log.hpp"
 
+namespace medyan {
 MBranchingPoint::MBranchingPoint(int branchType) {
     
     //set parameters
@@ -44,3 +45,5 @@ void MBranchingPoint::initializerestart(floatingpoint eqLength){
         throw std::logic_error("Illegal function call pattern");
     }
     _eqLength = eqLength;}
+
+} // namespace medyan

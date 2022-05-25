@@ -14,45 +14,50 @@
 #ifndef MEDYAN_FilamentFF_h
 #define MEDYAN_FilamentFF_h
 
+#include <memory>
+#include <stdexcept>
+#include <string>
 #include <vector>
 
 #include "common.h"
+#include "Mechanics/ForceField/Filament/FilamentBending.h"
+#include "Mechanics/ForceField/Filament/FilamentBendingCosine.h"
+#include "Mechanics/ForceField/Filament/FilamentBendingHarmonic.h"
+#include "Mechanics/ForceField/Filament/FilamentStretching.h"
+#include "Mechanics/ForceField/Filament/FilamentStretchingHarmonic.h"
+#include "Mechanics/ForceField/Filament/FilamentStretchingandBending.h"
+#include "Mechanics/ForceField/Filament/FilamentStretchingHarmonicandBendingCosine.h"
+#include "Mechanics/ForceField/Filament/FilamentStretchingHarmonicandBendingHarmonic.h"
 
-#include "ForceField.h"
+namespace medyan {
 
-//FORWARD DECLARATIONS
-class FilamentInteractions;
-class Filament;
+inline auto createFilamentForceFields(std::string_view stretching, std::string_view bending, std::string_view twisting) {
+    std::vector<std::unique_ptr<ForceField>> res;
 
-/// An implementation of the ForceField class that calculates Filament interactions.
-class FilamentFF : public ForceField {
- 
-private:
-    vector<unique_ptr<FilamentInteractions>>
-    _filamentInteractionVector; ///< Vector of initialized filament interactions
-    
-protected:
-    FilamentInteractions* _culpritInteraction; ///< Culprit in case of error
-    chrono::high_resolution_clock::time_point tbegin, tend;
-    
-public:
-    /// Constructor, intializes stretching, bending, and twisting forces
-    FilamentFF(string& stretching, string& bending, string& twisting);
-    
-    virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void cleanup();
+    if(stretching == "HARMONIC") {
+        res.push_back(std::make_unique<FilamentStretching<FilamentStretchingHarmonic>>());
+    }
+    else if(stretching == "") {}
+    else {
+        log::error("Filament stretching FF not recognized. Exiting.");
+        throw std::runtime_error("Filament stretching FF not recognized.");
+    }
 
-    virtual string getName() {return "Filament";}
-    virtual void whoIsCulprit();
-    
-    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched = false) override;
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
-    
-    virtual void computeLoadForces() {return;}
-    
-    virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
+    if(bending == "HARMONIC") {
+        res.push_back(std::make_unique<FilamentBending<FilamentBendingHarmonic>>());
+    }
+    else if(bending == "COSINE") {
+        res.push_back(std::make_unique<FilamentBending<FilamentBendingCosine>>());
+    }
+    else if(bending == "") {}
+    else {
+        log::error("Filament bending FF not recognized. Exiting.");
+        throw std::runtime_error("Filament bending FF not recognized.");
+    }
 
-    virtual vector<string> getinteractionnames();
-};
+    return res;
+}
+
+} // namespace medyan
 
 #endif

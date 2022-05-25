@@ -26,6 +26,7 @@
 /// @namespace mathfunc is used for the mathematics module for the entire codebase
 /// mathfunc includes functions to calculate distances, products, and midpoints
 
+namespace medyan {
 namespace mathfunc {
 
 /// Vector and array converter. Need to ensure the vector has size of _Size
@@ -33,7 +34,7 @@ namespace mathfunc {
 template< size_t dim, typename Float >
 inline auto vector2Vec(const vector<Float>& v) {
     // Assert v.size() == Size
-    Vec<dim, Float> res;
+    medyan::Vec<dim, Float> res;
     for(size_t idx = 0; idx < dim; ++idx){
         res[idx] = v[idx];
     }
@@ -44,10 +45,6 @@ inline auto vec2Vector(const VecType& a) {
     return vector<typename VecType::float_type>(a.begin(), a.end());
 }
 
-    struct temp{
-        int a;
-        int b;
-    };
 #if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 
 #else
@@ -1428,5 +1425,61 @@ inline auto vec2Vector(const VecType& a) {
 
     float delGMyoChem(float nh, float rn);
 
+
+
+    // Auxiliary type to dispatch distance squared for FENE function.
+    template< typename Float > struct FeneDistSq { Float value = 0; };
+    template< typename Float > FeneDistSq(Float) -> FeneDistSq< Float >;
+
+    // Energy of Finite Extensible Nonlinear Elastic (FENE) potential.
+    //
+    // FENE potential:
+    //     E = -(1/2) * k * rmax^2 * ln(1 - (r - r0)^2 / rmax^2).
+    template<
+        typename Float1,
+        typename Float2,
+        typename Float3,
+        std::enable_if_t<
+            std::is_floating_point_v<Float1>
+            && std::is_floating_point_v<Float2>
+            && std::is_floating_point_v<Float3>
+        >* = nullptr
+    >
+    inline auto fene(FeneDistSq<Float1> dist2, Float2 k, Float3 rmax) {
+        using ResType = std::common_type_t< Float1, Float2, Float3 >;
+        const auto rmax2 = rmax * rmax;
+        const auto inLog = std::max<ResType>(0, 1 - dist2.value / rmax2);
+        return -k * rmax2 * std::log(inLog) / 2;
+    }
+
+    // Part of derivative of Finite Extensible Nonlinear Elastic (FENE) potential, wrt dist (or, equivalently, r - r0).
+    // The full derivative is the result of this function, multiplied by dist.
+    template<
+        typename Float1,
+        typename Float2,
+        typename Float3,
+        std::enable_if_t<
+            std::is_floating_point_v<Float1>
+            && std::is_floating_point_v<Float2>
+            && std::is_floating_point_v<Float3>
+        >* = nullptr
+    >
+    inline auto dFeneCoeff(FeneDistSq<Float1> dist2, Float2 k, Float3 rmax) {
+        using ResType = std::common_type_t< Float1, Float2, Float3 >;
+        const auto rmax2 = rmax * rmax;
+        const auto inLog = std::max<ResType>(0, 1 - dist2.value / rmax2);
+        return k / inLog;
+    }
+
+} // namespace mathfunc
+
+
+// Ceiling integer division implementation of https://stackoverflow.com/a/22417111/7120360.
+template< typename Int1, typename Int2, std::enable_if_t<std::is_integral_v<Int1> && std::is_signed_v<Int1> && std::is_integral_v<Int2> && std::is_signed_v<Int2>>* = nullptr >
+constexpr auto ceildiv(Int1 a, Int2 b) {
+    return a / b + ((a % b != 0) ? !((a > 0) ^ (b > 0)) : 0);
 }
+
+} // namespace medyan
+
 #endif

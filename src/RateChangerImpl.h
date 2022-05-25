@@ -20,6 +20,7 @@
 
 #include "SysParams.h"
 
+namespace medyan {
 /// A brownian ratchet implementation of the FilamentRateChanger.
 /// Used for filament polymerization when under load force.
 
@@ -327,4 +328,7 @@ public:
     
     : MotorStall(motorType, filamentType, charForce, 0.33, 0.3){}
 };
+
+} // namespace medyan
+
 #endif

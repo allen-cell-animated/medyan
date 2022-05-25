@@ -2,16 +2,15 @@
 #define MEDYAN_Structure_SurfaceMesh_Triangle_Hpp
 
 #include "common.h"
-#include "Database.h"
-#include "Trackable.h"
-#include "Movable.h"
-//#include "Reactable.h"
-#include "DynamicNeighbor.h"
-#include "MathFunctions.h"
 #include "Structure/CellList.hpp"
+#include "Structure/DynamicNeighbor.h"
 #include "Structure/SurfaceMesh/MTriangle.hpp"
+#include "Util/Math/Vec.hpp"
+#include "Util/StableVector.hpp"
 
-// Forward declarations
+namespace medyan {
+
+// Forward declarations.
 class Compartment;
 class Membrane;
 
@@ -23,56 +22,38 @@ The triangle patches have geometric and mechanical properties.
 
 The Triangle class has pointers to the vertices and edges.
 ******************************************************************************/
-class Triangle:
-    public Trackable,
-    public Movable,
-    // public Reactable,
-    public DynamicNeighbor,
-    public Database< Triangle, false > {
+class Triangle : public DynamicNeighbor {
 
 private:
-    Membrane* _parent; // Pointer to the meshwork it belongs to.
-    size_t _topoIndex; // Index in the meshwork topology.
+    StableVectorIndex<Membrane> parentSysIndex_ {};
+    Index _topoIndex = 0; // Index in the meshwork topology.
 
-
-    void updateCoordinate(); // helper function to update coordinate of this triangle
-
-    cell_list::CellListElementUser< Triangle, Compartment > _cellElement;
 
 public:
+    medyan::CellListElementUser< medyan::StableVector<Triangle>::Index, Compartment* > cellElement;
+    medyan::StableVector<Triangle>::Index sysIndex {};
+
     // Stores triangle mechanical data
     MTriangle mTriangle;
 
-    mathfunc::Vec< 3, floatingpoint > coordinate; // Coordinate of the center point, updated with updateCoordiante()
+    Vec< 3, floatingpoint > coordinate; // Coordinate of the center point, updated with updateCoordiante()
 
-    Triangle(Membrane *parent, size_t topoIndex);
-    ~Triangle();
+    Triangle() = default;
+    Triangle(const Triangle&) = default;
 
-    Membrane* getParent()const { return _parent; }
-    void setTopoIndex(size_t index) { _topoIndex = index; }
-    size_t getTopoIndex() const { return _topoIndex; }
+    void setParentSysIndex(StableVectorIndex<Membrane> parentSysIndex) { parentSysIndex_ = parentSysIndex; }
+    StableVectorIndex<Membrane> getParentSysIndex() const { return parentSysIndex_; }
+    template< typename Context >
+    Membrane& getParent(Context& sys) const { return sys.membranes[parentSysIndex_]; }
 
-    /// Get all instances of this class from the SubSystem
-    static const vector<Triangle*>& getTriangles() {
-        return getElements();
-    }
+    void setTopoIndex(Index index) { _topoIndex = index; }
+    auto getTopoIndex() const { return _topoIndex; }
 
-    //@{
-    /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem()override { }
-    virtual void removeFromSubSystem()override { }
-    //@}
-
-    int getType()const;
-    void printSelf()const;
-
-    //@{
-    /// Implements Movable
-    virtual void updatePosition() override;
-    //@}
-    Compartment* getCompartment() const { return _cellElement.manager->getHeadPtr(_cellElement); }
+    Compartment* getCompartment() const { return cellElement.manager->getHead(cellElement); }
 
 
 };
+
+} // namespace medyan
 
 #endif

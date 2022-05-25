@@ -6,7 +6,7 @@
 #include "MathFunctions.h"
 #include "utility.h" // areEqual
 
-namespace ray_tracing {
+namespace medyan::ray_tracing {
 
 // Given point O and ray vector D, and a triangle defined by points
 // (A, B, C), test whether the ray intersects the triangle.
@@ -108,6 +108,6 @@ struct MollerTrumboreIntersect
     }
 };
 
-} // namespace ray_tracing
+} // namespace medyan::ray_tracing
 
 #endif

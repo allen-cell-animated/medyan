@@ -21,6 +21,7 @@
 #include "common.h"
 #include "Composite.h"
 
+namespace medyan {
 //#include "Cylinder.h"
 /*!
  * Bin is a spatial voxel subset of reaction volume. Bin is exclusively used to calculate
@@ -178,4 +179,7 @@ public:
         return cindicesvector;}
 
 };
+
+} // namespace medyan
+
 #endif

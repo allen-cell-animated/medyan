@@ -40,29 +40,26 @@ struct MembraneTriangleProtectFene {
 template< typename Impl, bool warn = false >
 class MemFilConnStretching : public ForceField {
 private:
-    using Mems_     = decltype(Membrane::getMembranes());
     using VecDArea_ = decltype(GHalfEdge::dTriangleArea);
 
     template< typename Float >
-    static auto biVec(Float* coordVec, std::array< std::size_t, 3 > bi) {
+    static auto biVec(Float* coordVec, std::array< int, 3 > bi) {
         using namespace mathfunc;
         using RVT = decltype(makeRefVec<3>(coordVec));
 
         return std::array< RVT, 3 > {
-            makeRefVec< 3 >(coordVec + 3 * bi[0]),
-            makeRefVec< 3 >(coordVec + 3 * bi[1]),
-            makeRefVec< 3 >(coordVec + 3 * bi[2])
+            makeRefVec< 3 >(coordVec + bi[0]),
+            makeRefVec< 3 >(coordVec + bi[1]),
+            makeRefVec< 3 >(coordVec + bi[2])
         };
     }
 
     // Temporary topological information
     //---------------------------------
-    Mems_ mems_ = Membrane::getMembranes();
 
     std::vector< std::array< std::size_t, 3 > >       beadIndices_;
     std::vector< std::array< const VecDArea_*, 3 > >  allDArea_;
     std::vector< const double* >                      allArea_;
-    std::vector< const double* >                      allAreaS_;
     std::vector< double >                             initArea_;
 
 public:
@@ -72,15 +69,14 @@ public:
     const double minRelArea  = 0.35;
     const double warnRelArea = 0.35;
 
-    virtual void vectorize() override {
+    virtual void vectorize(const FFCoordinateStartingIndex& si) override {
         beadIndices_.clear();
         allDArea_.clear();
         allArea_.clear();
-        allAreaS_.clear();
         initArea_.clear();
 
-        for(const auto m : mems_) {
-            const auto& mesh = m->getMesh();
+        for(const auto& m : si.ps->membranes) {
+            const auto& mesh = m.getMesh();
             for(const auto& t : mesh.getTriangles()) {
                 beadIndices_.emplace_back();
                 allDArea_.emplace_back();
@@ -89,19 +85,18 @@ public:
                     auto& daBack = allDArea_.back();
                     std::size_t bi = 0;
                     mesh.forEachHalfEdgeInPolygon(t, [&](std::size_t hei) {
-                        biBack[bi] = mesh.getVertexAttribute(mesh.target(hei)).vertex->getStableIndex();
+                        biBack[bi] = mesh.getVertexAttribute(mesh.target(hei)).cachedCoordIndex;
                         daBack[bi] = &mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
                         ++bi;
                     });
                 }
                 allArea_.push_back(&t.attr.gTriangle.area);
-                allAreaS_.push_back(&t.attr.gTriangleS.area);
                 initArea_.push_back(t.attr.gTriangle.area);
             }
         }
     }
 
-    virtual floatingpoint computeEnergy(floatingpoint* coord, bool stretched) override {
+    virtual floatingpoint computeEnergy(floatingpoint* coord) override {
         floatingpoint e = 0.0;
 
         for(auto pc : MemFilConn::getElements()) {
@@ -115,7 +110,7 @@ public:
                     << " area=" << *allArea_[ti] << " init_area=" << initArea_[ti];
             }
 
-            e += Impl::energy(*(stretched ? allAreaS_ : allArea_)[ti] / (initArea_[ti] * minRelArea), k);
+            e += Impl::energy(*(allArea_)[ti] / (initArea_[ti] * minRelArea), k);
         }
 
         return e;
@@ -135,13 +130,7 @@ public:
         }
     }
 
-    virtual string getName() override { return "Membrane Triangle Protect"; }
-
-    // Useless overrides
-    virtual void cleanup() override {}
-    virtual void computeLoadForces() override {}
-    virtual void whoIsCulprit() override {}
-    virtual std::vector<NeighborList*> getNeighborLists() override { return std::vector<NeighborList*>(); }
+    virtual std::string getName() override { return "MembraneTriangleProtect"; }
 };
 
 

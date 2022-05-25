@@ -3,6 +3,7 @@
 
 #include "MathFunctions.h"
 
+namespace medyan {
 /// A harmonic potential used by the MembraneStretching
 struct MembraneBendingHelfrich {
 
@@ -12,9 +13,9 @@ struct MembraneBendingHelfrich {
     }
 
     void forces(
-        floatingpoint* force,
-        double area, const mathfunc::Vec3& dArea,
-        double curv, const mathfunc::Vec3& dCurv,
+        FP* force,
+        double area, const medyan::Vec3& dArea,
+        double curv, const medyan::Vec3& dCurv,
         double kBending, double eqCurv
     ) const {
         // F_i = -grad_i U = -4k (H - c0) A (grad_i H) - 2k (H - c0)^2 (grad_i A)
@@ -27,6 +28,20 @@ struct MembraneBendingHelfrich {
         for(size_t i = 0; i < 3; ++i) force[i] += coeff1 * dCurv[i] + coeff2 * dArea[i];
     }
 
+    // Compute forces, but treating area as a constant.
+    void forcesConstArea(
+        FP* force,
+        double area,
+        double curv, const Vec3d& dCurv,
+        double kBending, double eqCurv,
+        double scaleFactor
+    ) const {
+        // F_i = -grad_i U = -4k (H - c0) A (grad_i H)
+
+        const auto dist = curv - eqCurv;
+        for(int i = 0; i < 3; ++i) force[i] += -4 * kBending * dist * area * dCurv[i] * scaleFactor;
+    }
+
 };
 
 struct MembraneBendingHelfrichQuadratic {
@@ -35,9 +50,9 @@ struct MembraneBendingHelfrichQuadratic {
     }
 
     void forces(
-        floatingpoint* force,
-        double area, const mathfunc::Vec3& dArea,
-        double curv2, const mathfunc::Vec3& dCurv2,
+        FP* force,
+        double area, const medyan::Vec3& dArea,
+        double curv2, const medyan::Vec3& dCurv2,
         double kBending
     ) const {
         // F_i = -grad_i U = -2k A (grad_i H^2) - 2k H^2 (grad_i A)
@@ -49,5 +64,7 @@ struct MembraneBendingHelfrichQuadratic {
     }
 
 };
+
+} // namespace medyan
 
 #endif

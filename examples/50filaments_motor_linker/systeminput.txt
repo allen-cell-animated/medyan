@@ -84,7 +84,7 @@ FBENDINGTHETA:                0.0
 
 # Volume exclusion: Popov et al, 2016, PLoS Comp Biol
 
-VOLUMEFFTYPE:                 REPULSION
+VOLUMEFFTYPE:                 integral
 VOLUMECUTOFF:                 27.0
 VOLUMEK:                      8.57
 
@@ -204,6 +204,5 @@ COMPARTMENTSIZEZ:              500.0
 
 ### 6. Others: DO NOT CHANGE
 
-NDIM:                          3
 PROJECTIONTYPE:                STRAIGHT
-SAMEFILBINDINGSKIP:            100
+allow-same-filament-pair-binding false

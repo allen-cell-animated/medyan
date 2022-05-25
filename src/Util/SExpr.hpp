@@ -19,6 +19,14 @@ struct SExpr {
         StringType,
         ListType
     > data;
+
+    // Use defaults in C++20.
+    bool operator==(const SExpr& other) const {
+        return data == other.data;
+    }
+    bool operator!=(const SExpr& other) const {
+        return !(*this == other);
+    }
 };
 
 
@@ -30,7 +38,7 @@ inline SExpr car(const SExpr& se) {
     return std::visit(
         Overload {
             [](const SExpr::StringType&) -> SExpr {
-                LOG(ERROR) << "Expected cons in car, but got a string.";
+                log::error("Expected cons in car, but got a string.");
                 throw std::runtime_error("Invalid argument in car");
             },
             [](const SExpr::ListType& l) -> SExpr {

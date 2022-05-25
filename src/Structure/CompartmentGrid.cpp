@@ -12,18 +12,19 @@
 //------------------------------------------------------------------
 
 #include "CompartmentGrid.h"
-#include "ChemSim.h"
+#include "Chemistry/ChemSim.h"
 
 #include "MathFunctions.h"
 #include "SysParams.h"
-#include "GController.h"
+#include "Controller/GController.h"
 
+namespace medyan {
 using namespace mathfunc;
 
-void CompartmentGrid::addChemSimReactions(ChemSim* chem) {
+void CompartmentGrid::addChemSimReactions(medyan::ChemSim* chem) {
     
-    for(auto C : getCompartments())
-        C->addChemSimReactions(chem);
+    for(auto& c : compartmentList)
+        c->addChemSimReactions(chem);
     
     for(auto &r : _bulkReactions.reactions())
         chem->addReaction(r.get());
@@ -34,9 +35,9 @@ species_copy_t CompartmentGrid::countDiffusingSpecies(const string& name) {
     
     species_copy_t copyNum = 0;
 
-    for(auto &c : children()) {
+    for(auto &c : compartmentList) {
         
-        auto s = ((Compartment*)(c.get()))->findSpeciesByName(name);
+        auto s = c->findSpeciesByName(name);
         assert(s != nullptr && "Counting a diffusing species that does not exist.");
         
         copyNum += s->getN();
@@ -53,54 +54,4 @@ species_copy_t CompartmentGrid::countBulkSpecies(const string& name) {
     return s->getN();
 }
 
-//DEPRECATED AS OF 9/8/16
-
-//vector<tuple<int, int, vector<floatingpoint>, vector<floatingpoint>>> CompartmentGrid::getDiffusingMotors() {
-//    
-//    vector<tuple<int, int, vector<floatingpoint>, vector<floatingpoint>>> output;
-//
-//    //for all motor types, get compartment binding managers
-//    //@note - this is for filament type 0 only. For multiple filament types, this would require a fix.
-//    for(int type = 0; type < SysParams::Chemistry().numMotorSpecies[0]; type++) {
-//        
-//        for(Compartment* c: getCompartments()) {
-//            
-//            MotorBindingManager* mm = c->getMotorBindingManager(type);
-//            
-//            for(int ID : mm->getAllUnboundIDs()) {
-//            
-//                bool found = false;
-//                
-//                while(!found) {
-//                
-//                    //pick random two points in compartment
-//                    floatingpoint dist = (mm->getRMax() + mm->getRMin()) / 2.0;
-//                
-//                    vector<floatingpoint> midpoint = GController::getRandomCoordinates(c);
-//                
-//                    floatingpoint directionX = Rand::randfloatingpoint(-1,1);
-//                    floatingpoint directionY = Rand::randfloatingpoint(-1,1);
-//                    floatingpoint directionZ = Rand::randfloatingpoint(-1,1);
-//                    vector<floatingpoint> direction = normalizeVector({directionX, directionY, directionZ});
-//                
-//                    vector<floatingpoint> firstPoint  = nextPointProjection(midpoint, dist / 2.0, direction);
-//                    vector<floatingpoint> secondPoint = nextPointProjection(midpoint, dist / 2.0,
-//                                                 vector<floatingpoint>{-direction[0], -direction[1], -direction[2]});
-//                    
-//                    try {
-//                        GController::getCompartment(firstPoint);
-//                        GController::getCompartment(secondPoint);
-//                        
-//                        //add to output and switch flag
-//                        output.emplace_back(ID, type, firstPoint, secondPoint);
-//                        found = true;
-//                    }
-//                    catch (exception& e) {/*just repeat loop*/}
-//                }
-//                
-//            }
-//        }
-//    }
-//    return output;
-//}
-
+} // namespace medyan

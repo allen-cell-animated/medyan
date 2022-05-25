@@ -10,7 +10,7 @@
 #include "Structure/SurfaceMesh/MeshTriangleQuality.hpp"
 #include "Util/Io/Log.hpp"
 
-namespace membrane_mesh_check {
+namespace medyan::membrane_mesh_check {
 
 using MeshType = Membrane::MeshType;
 
@@ -210,7 +210,7 @@ struct MembraneMeshDihedralCheck {
                 const size_t t1 = mesh.triangle(mesh.opposite(hei));
                 const auto& un0 = mesh.getTriangleAttribute(t0).gTriangle.unitNormal;
                 const auto& un1 = mesh.getTriangleAttribute(t1).gTriangle.unitNormal;
-                const auto cosDihedral = mathfunc::dot(un0, un1);
+                const auto cosDihedral = dot(un0, un1);
                 if(cosDihedral < cosDihedralError) {
                     res = false;
                     if(report)
@@ -379,6 +379,6 @@ struct MembraneMeshQualityReport {
 
 };
 
-} // namespace membrane_mesh_check
+} // namespace medyan::membrane_mesh_check
 
 #endif

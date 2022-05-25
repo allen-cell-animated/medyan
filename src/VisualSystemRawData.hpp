@@ -4,8 +4,12 @@
 #include <array>
 #include <cstdint>
 #include <mutex>
+#include <optional>
 #include <vector>
 
+#include "Mechanics/ForceField/ForceFieldManager.h"
+#include "Structure/OutputStruct.hpp"
+#include "Structure/SubSystem.h"
 #include "Util/Math/Vec.hpp"
 #include "Visual/FrameData.hpp"
 
@@ -35,7 +39,10 @@ struct SystemRawData {
 
     raw_data_cat::Type updated = raw_data_cat::none; // Should be reset by the consumer
 
-    // meta data
+    // Raw meta data.
+    std::optional<OutputStructMeta> outMeta;
+
+    // Processed meta data.
     DisplayTypeMap             displayTypeMap;
 
     // Data
@@ -48,10 +55,30 @@ struct SystemRawData {
 inline SystemRawData sdfv;
 
 
+// This function should be called after system initialization, but before copySystemData is ever called.
+void copySystemMetaData(
+    SystemRawData& data,
+    const SubSystem& sys,
+    const ForceFieldManager& ffm,
+    const SimulConfig& conf,
+    const CommandLineConfig& cmdConfig
+);
+// Copy system meta data to the global shared data.
+inline void copySystemMetaData(
+    const SubSystem& sys,
+    const ForceFieldManager& ffm,
+    const SimulConfig& conf,
+    const CommandLineConfig& cmdConfig
+) {
+    return copySystemMetaData(sdfv, sys, ffm, conf, cmdConfig);
+}
+
+
 // Function to copy the system data to raw data
 //
 // Note:
-//   - This function should only be called on the simulation thread
+//   - This function should only be called on the simulation thread.
+//   - This function will not perform any action is GUI is not turned on.
 //
 // Input:
 //   - data: the raw data object
@@ -61,17 +88,23 @@ inline SystemRawData sdfv;
 //
 // Returns whether the copy is actually successfully made.
 bool copySystemData(
-    SystemRawData& data,
+    SystemRawData&     data,
+    const SubSystem&   sys,
+    const SimulConfig& conf,
+    const CommandLineConfig& cmdConfig,
     raw_data_cat::Type updated,
-    bool ignoreDataInUse = true
+    bool               ignoreDataInUse = true
 );
 
-// copy system data to the global shared data
+// Copy system data to the global shared data.
 inline bool copySystemData(
-    raw_data_cat::Type updated,
-    bool ignoreDataInUse = true
+    const SubSystem&   sys,
+    const SimulConfig& conf,
+    const CommandLineConfig& cmdConfig,
+    raw_data_cat::Type updated = 0,
+    bool               ignoreDataInUse = true
 ) {
-    return copySystemData(sdfv, updated, ignoreDataInUse);
+    return copySystemData(sdfv, sys, conf, cmdConfig, updated, ignoreDataInUse);
 }
 
 

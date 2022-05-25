@@ -16,6 +16,7 @@
 
 #include "common.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Bead;
 
@@ -50,5 +51,7 @@ public:
     cudaStream_t stream = NULL;
 #endif
 };
+
+} // namespace medyan
 
 #endif

@@ -16,12 +16,6 @@
 
 #include <vector>
 
-#include "common.h"
-
-#include "ForceField.h"
-#include "Bead.h"
-#include "Mechanics/ForceField/Types.hpp"
-
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <Eigen/Dense>
@@ -31,10 +25,19 @@
 #include <Spectra/MatOp/SparseSymShiftSolve.h>
 #include <unordered_map>
 
+#include "common.h"
+#include "Mechanics/ForceField/ForceField.h"
+#include "Mechanics/ForceField/Types.hpp"
+#include "Structure/SubSystem.h"
+#include "Structure/SurfaceMesh/FuncMembraneGeo.hpp"
+
+
+namespace medyan {
 typedef Eigen::Triplet<double> Triplet;
 
 // Forward declarations
 class Cylinder;
+
 
 /// A class to store and iterate over all [ForceFields](@ref ForceField).
 /*!
@@ -44,38 +47,83 @@ class Cylinder;
  */
 class ForceFieldManager {
 
-friend class CGMethod;
-
 public:
-    vector<ForceField*> _forceFields; ///< All forcefields in the system
+    std::vector<std::unique_ptr<ForceField>> forceFields; ///< All forcefields in the system
+    SubSystem* ps = nullptr;
 
-    // Requirement for geometry computation
-    ForceFieldTypes::GeometryCurvRequirement geoCurvReq = ForceFieldTypes::GeometryCurvRequirement::curv;
+    // Requirement for geometry computation.
+    SurfaceGeometrySettings surfaceGeometrySettings {};
 
-    static ForceField* _culpritForceField;
+
+    ForceFieldManager(SubSystem* ps) : ps(ps) {}
+
+    // Accessors to force fields.
+    auto& getForceFields() const { return forceFields; }
 
     /// Vectorize all interactions involved in calculation
-    void vectorizeAllForceFields(const FFCoordinateStartingIndex&);
-    /// Deallocation of vectorized memory
-    void cleanupAllForceFields();
+    void vectorizeAllForceFields(const FFCoordinateStartingIndex&, const SimulConfig&);
+
+    // Auxiliary function to update dependent coordinates.
+    void computeDependentCoordinates(floatingpoint* coord) const {
+        for(auto& pff : forceFields) {
+            pff->computeDependentCoordinates(coord);
+        }
+    }
+    // Auxiliary function to propagate forces on dependent coordinates to independent coordinates.
+    void propagateDependentForces(const floatingpoint* coord, floatingpoint* force) const {
+        for(auto& pff : forceFields) {
+            pff->propagateDependentForces(coord, force);
+        }
+    }
+    // Auxiliary function to push forward an independent tangent vector to all coordinate space.
+    void pushForwardIndependentTangentVector(const floatingpoint* coord, floatingpoint* vec) const {
+        for(auto& pff : forceFields) {
+            pff->pushForwardIndependentTangentVector(coord, vec);
+        }
+    }
+    // (Temporary) auxiliary function before calling energy computation for force fields.
+    // When membrane geometry use dependent coordinates, this function can be removed.
+    void beforeComputeEnergy(floatingpoint* coord) const {
+        computeDependentCoordinates(coord);
+        for(auto& m : ps->membranes) {
+            updateGeometryValue(m.getMesh(), coord, surfaceGeometrySettings);
+        }
+    }
+    // (Temporary) auxiliary function before calling force computation for force fields.
+    // When membrane geometry use dependent coordinates, this function can be removed.
+    void beforeComputeForce(floatingpoint* coord) const {
+        computeDependentCoordinates(coord);
+        for(auto& m : ps->membranes) {
+            updateGeometryValueWithDerivative(m.getMesh(), coord, surfaceGeometrySettings);
+        }
+    }
 
     /// Compute the energy using all available force fields
     /// @return Returns infinity if there was a problem with a ForceField
     /// energy calculation, such that beads will not be moved to this
     /// problematic configuration.
-    /// @param stretched - whether intermediate variables are treated as temporary or not
-    template< bool stretched = false >
-    
     floatingpoint computeEnergy(floatingpoint *coord, bool verbose = false) const;
-    
-    
+
+    // Get all individual energy names. Must correspond to the result of computeIndividualEnergies function.
+    std::vector<std::string> getIndividualEnergyNames() const {
+        std::vector<std::string> names;
+        for(auto& pff : forceFields) {
+            names.push_back(pff->getName());
+        }
+        return names;
+    }
+    // Compute energies from each force field.
+    EnergyReport computeIndividualEnergies(floatingpoint* coord) const;
+    // Compute energies from each force field, but the energies have unit of kT.
     EnergyReport computeEnergyHRMD(floatingpoint *coord) const;
     
     
     /// Compute the forces of all force fields 
-    void computeForces(floatingpoint *coord, std::vector< floatingpoint >& force);
+    // numVar is the number of all variables, including independent and dependent variables.
+    void computeForces(floatingpoint *coord, floatingpoint* force, int numVar);
     
-    // compute the Hessian matrix if the feature is enabled
+    // Compute the Hessian matrix if the feature is enabled.
+    // Requires valid vectorization.
     void computeHessian(const std::vector<floatingpoint>& coord, int total_DOF, float delta);
     
     void setCurrBeadMap(const FFCoordinateStartingIndex& si);
@@ -100,8 +148,6 @@ public:
     
     vector<floatingpoint> HRMDenergies;
     
-    void printculprit();
-    
     vector<vector<vector<floatingpoint>>> hessianVector;
     
     vector<Eigen::VectorXcd> evaluesVector;
@@ -121,13 +167,6 @@ public:
     std::vector< floatingpoint > prevCoords;
 
 
-    vector<string> getinteractionnames(){
-        vector<string> temp;
-        for (auto &ff : _forceFields)
-            for(auto names:ff->getinteractionnames())
-            	temp.push_back(names);
-        return temp;
-    }
 
 #ifdef CUDAACCL
         cudaStream_t  streamF = NULL;
@@ -139,6 +178,16 @@ public:
     /// contained by Bead, but updates the loadForce vector which contains precalculated
     /// load values based on the bead's directionality of growth in a filament.
     void computeLoadForces() const;
+
+    // Compute all auxiliary force-related parameters for the system.
+    // For example, some forces on certain elements can be used for changing chemical rates.
+    void computeAuxParams(SubSystem& sys) const {
+        computeLoadForces();
+
+        for(auto& pff : forceFields) {
+            pff->computeAuxParams(sys);
+        }
+    }
 
     // Compute the load forces on the bead for a specific cylinder.
     void computeLoadForce(Cylinder* c, ForceField::LoadForceEnd end) const;
@@ -156,10 +205,16 @@ public:
     //@}
 
 #endif
+    // Compute all auxiliary force-related parameters for the system.
+    // Notes:
+    // - Requires valid vectorization.
+    // - Can only be called once per minimization step.
     void assignallforcemags();
 
 private:
     chrono::high_resolution_clock::time_point tbegin, tend;
 };
+
+} // namespace medyan
 
 #endif

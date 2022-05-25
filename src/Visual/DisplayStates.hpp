@@ -22,12 +22,20 @@ namespace medyan::visual {
 struct ObjectViewStates {
     struct Control {
         // mouse states
+        //-----------------------------
         bool mouseLeftAlreadyPressed = false;
+        // Whether the mouse drag starts in interactable scene. If mouse starts in GUI, this variable should be set to false, making the scene unaffected by mouse move.
+        bool mouseLeftDragStartInScene = false;
         double mouseLastX = 0;
         double mouseLastY = 0;
 
         // framebuffer control
         bool snapshotRenderingNextFrame = false;
+
+        // Keyboard states.
+        //-----------------------------
+        // The index corresponding to enum KeyCallbackFunction selected in GUI. -1 means not selected for setting.
+        int selectedKeyCallbackFunctionIndex = -1;
     };
 
     Control control;
@@ -65,6 +73,10 @@ struct DisplayTrajectoryDataStates {
 
         bool                          displayMasterSwitch = true;
 
+        // Energy display switches.
+        // Enable 0th energy display (typically "total") by default.
+        std::vector<char>             energyPlotSwitch { true };
+
         Trajectory(Trajectory&&) = default;
         Trajectory& operator=(Trajectory&&) = default;
     };
@@ -84,9 +96,11 @@ struct TrajectoryPlaybackStates {
         int frameRangeHi = 0;
     };
 
-    // Play back states
+    // Play back states.
+    //----------------------------------
     int currentFrame = 0;
     int previousFrame = 0;
+    // Reachable last frame of the trajectory.
     int maxFrame = 0;
     bool isPlaying = true;
     float lastGlfwTime = 0;
@@ -286,9 +300,12 @@ inline void updateRealtimeMeshData(
                 [&](const LinkerProfile& profile) {
                     return rawData.updated & raw_data_cat::beadPosition;
                 },
+                [&](const BubbleProfile& profile) {
+                    return rawData.updated & raw_data_cat::beadPosition;
+                },
                 [&](const AuxLineProfile& profile) {
                     return rawData.updated & raw_data_cat::compartment;
-                }
+                },
             },
             elementProfile
         );

@@ -19,25 +19,26 @@
 #include "CUDAcommon.h"
 #endif
 
-#include "BranchingInteractions.h"
+#include "Mechanics/ForceField/ForceField.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class BranchingPoint;
 
 /// Represents an interaction fixing a Cylinder anchored by a BranchingPoint on the parent.
 template <class BStretchingInteractionType>
-class BranchingStretching : public BranchingInteractions {
+class BranchingStretching : public ForceField {
     
 private:
     BStretchingInteractionType _FFType;
     
-    int *beadSet;
+    std::vector<int> beadSet;
     
     ///Array describing the constants in calculation
-    floatingpoint *kstr;
-    floatingpoint *eql;
-    floatingpoint *pos;
-    floatingpoint *stretchforce;
+    std::vector<FP> kstr;
+    std::vector<FP> eql;
+    std::vector<FP> pos;
+    std::vector<FP> stretchforce;
 
 #ifdef CUDAACCL
     int * gpu_beadSet;
@@ -55,13 +56,16 @@ public:
     ///this is a 3-bead potential
     const static int n = 3;
     
-    virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void deallocate();
+    virtual void vectorize(const FFCoordinateStartingIndex&, const SimulConfig&) override;
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+    virtual FP computeEnergy(FP *coord) override;
+    virtual void computeForces(FP *coord, FP *f) override;
+
+    virtual void assignforcemags() override;
     
-    virtual const string getName() {return "Branching Stretching";}
+    virtual std::string getName() override { return "BranchingStretching"; }
 };
+
+} // namespace medyan
 
 #endif

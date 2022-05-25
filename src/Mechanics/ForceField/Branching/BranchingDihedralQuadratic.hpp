@@ -3,6 +3,7 @@
 
 #include "common.h" // floatingpoint
 
+namespace medyan {
 struct BranchingDihedralQuadratic {
     floatingpoint energy(
         const floatingpoint *coord, size_t nint,
@@ -15,5 +16,7 @@ struct BranchingDihedralQuadratic {
         floatingpoint *stretchforce
     ) const;
 };
+
+} // namespace medyan
 
 #endif

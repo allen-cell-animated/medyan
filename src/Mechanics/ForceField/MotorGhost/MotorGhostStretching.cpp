@@ -19,47 +19,27 @@
 #include "Cylinder.h"
 #include "Bead.h"
 #include "cross_check.h"
-#include "CGMethod.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
+#include "Mechanics/CUDAcommon.h"
+
+namespace medyan {
 
 template <class MStretchingInteractionType>
-void MotorGhostStretching<MStretchingInteractionType>::assignforcemags() {
-    // for(auto m: MotorGhost::getMotorGhosts()){
-    //     //Using += to ensure that the stretching forces are additive.
-    //     m->getMMotorGhost()->stretchForce = stretchforce[m->getIndex()];
-    // }
-#ifdef CUDAACCL
-    floatingpoint stretchforce[MotorGhost::getMotorGhosts().size()];
-    CUDAcommon::handleerror(cudaMemcpy(stretchforce, gpu_Mstretchforce,
-                                       MotorGhost::getMotorGhosts().size() * sizeof(floatingpoint),
-                                       cudaMemcpyDeviceToHost));
-    int id = 0;
-    for(auto m:MotorGhost::getMotorGhosts())
-    {m->getMMotorGhost()->stretchForce = stretchforce[id];id++;}
-#endif
-}
-
-template <class MStretchingInteractionType>
-void MotorGhostStretching<MStretchingInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
+void MotorGhostStretching<MStretchingInteractionType>::vectorize(const FFCoordinateStartingIndex& si, const SimulConfig& conf) {
 
     CUDAcommon::tmin.numinteractions[3] += MotorGhost::getMotorGhosts().size();
-    beadSet = new int[n * MotorGhost::getMotorGhosts().size()];
-    kstr = new floatingpoint[MotorGhost::getMotorGhosts().size()];
-    eql = new floatingpoint[MotorGhost::getMotorGhosts().size()];
-    pos1 = new floatingpoint[MotorGhost::getMotorGhosts().size()];
-    pos2 = new floatingpoint[MotorGhost::getMotorGhosts().size()];
-    stretchforce = new floatingpoint[MotorGhost::getMotorGhosts().size()];
+    beadSet.assign(n * MotorGhost::getMotorGhosts().size(), 0);
+    kstr.assign(MotorGhost::getMotorGhosts().size(), 0);
+    eql.assign(MotorGhost::getMotorGhosts().size(), 0);
+    pos1.assign(MotorGhost::getMotorGhosts().size(), 0);
+    pos2.assign(MotorGhost::getMotorGhosts().size(), 0);
+    stretchforce.assign(MotorGhost::getMotorGhosts().size(), 0);
 
     int i = 0;
-    #ifdef ADDITIONALINFO
-    MotorGhostInteractions::kstrvec.clear();
-    MotorGhostInteractions::eqlvec.clear();
-    #endif
 
     for (auto m: MotorGhost::getMotorGhosts()) {
-        /* Haoran 03/18/2019 m->getIndex() = i; */
         beadSet[n * i] = m->getFirstCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
         beadSet[n * i + 1] = m->getFirstCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
         beadSet[n * i + 2] = m->getSecondCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
@@ -70,20 +50,15 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize(const FFCoordin
         pos1[i] = m->getFirstCylinder()->adjustedrelativeposition(m->getFirstPosition());
         pos2[i] = m->getSecondCylinder()->adjustedrelativeposition(m->getSecondPosition());
         stretchforce[i] = 0.0;
-        #ifdef ADDITIONALINFO
-        MotorGhostInteractions::kstrvec.push_back(kstr[i]);
-        MotorGhostInteractions::eqlvec.push_back(eql[i]);
-		#endif
+
+        // Reset motor stretch force as a side effect.
+        m->getMMotorGhost()->stretchForce = 0;
 
         i++;
     }
 
     //CUDA
 #ifdef CUDAACCL
-#ifdef CUDATIMETRACK
-    chrono::high_resolution_clock::time_point tbegin, tend;
-    tbegin = chrono::high_resolution_clock::now();
-#endif
     //CUDA stream create
     if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
         CUDAcommon::handleerror(cudaStreamCreate(&stream));
@@ -141,59 +116,23 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize(const FFCoordin
     CUDAcommon::handleerror(cudaMemcpyAsync(gpu_params, params.data(), 3 * sizeof(int),
                                        cudaMemcpyHostToDevice, stream));
 //    CUDAcommon::cudavars.motorparams = gpu_params;
-#ifdef CUDATIMETRACK
-//    CUDAcommon::handleerror(cudaDeviceSynchronize(),"MotorGhostStretching.cu",
-//                            "vectorizeFF");
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-    CUDAcommon::cudatime.TvecvectorizeFF.push_back(elapsed_run.count());
-    CUDAcommon::cudatime.TvectorizeFF += elapsed_run.count();
-#endif
 #endif
 
     //
 }
 
 template<class MStretchingInteractionType>
-void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
+void MotorGhostStretching<MStretchingInteractionType>::assignforcemags() {
     for(auto m: MotorGhost::getMotorGhosts()){
         //Using += to ensure that the stretching forces are additive.
         m->getMMotorGhost()->stretchForce += stretchforce[m->getIndex()];
-//        std::cout<<m->getMMotorGhost()->stretchForce<<endl;
-//        cout<<stretchforce[m->_dbIndex]<<" ";
     }
-    delete [] stretchforce;
-    delete [] beadSet;
-    delete [] kstr;
-    delete [] eql;
-    delete [] pos1;
-    delete [] pos2;
-#ifdef CUDAACCL
-    if(!(CUDAcommon::getCUDAvars().conservestreams))
-        CUDAcommon::handleerror(cudaStreamDestroy(stream));
-    _FFType.deallocate();
-    CUDAcommon::handleerror(cudaFree(gpu_beadSet));
-    CUDAcommon::handleerror(cudaFree(gpu_kstr));
-    CUDAcommon::handleerror(cudaFree(gpu_pos1));
-    CUDAcommon::handleerror(cudaFree(gpu_pos2));
-    CUDAcommon::handleerror(cudaFree(gpu_eql));
-    CUDAcommon::handleerror(cudaFree(gpu_params));
-    CUDAcommon::handleerror(cudaFree(gpu_Mstretchforce));
-#endif
 }
 
 
 template <class MStretchingInteractionType>
-floatingpoint MotorGhostStretching<MStretchingInteractionType>::computeEnergy(floatingpoint* coord){
-    floatingpoint U_ii=0.0;
-#ifdef CUDATIMETRACK
-    chrono::high_resolution_clock::time_point tbegin, tend;
-#endif
+FP MotorGhostStretching<MStretchingInteractionType>::computeEnergy(FP* coord){
 #ifdef CUDAACCL
-//    std::cout<<"Motor size "<<MotorGhost::getMotorGhosts().size()<<endl;
-#ifdef CUDATIMETRACK
-    tbegin = chrono::high_resolution_clock::now();
-#endif
 
     //has to be changed to accomodate aux force
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -211,43 +150,17 @@ floatingpoint MotorGhostStretching<MStretchingInteractionType>::computeEnergy(fl
 //    }
 
 
-#ifdef CUDATIMETRACK
-//    CUDAcommon::handleerror(cudaDeviceSynchronize(),"MotorGhostStretching.cu", "computeEnergy");
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-    CUDAcommon::cudatime.TveccomputeE.push_back(elapsed_run.count());
-    CUDAcommon::cudatime.TcomputeE += elapsed_run.count();
-    CUDAcommon::cudatime.TcomputeEiter += elapsed_run.count();
-#endif
 
 #endif
-#ifdef SERIAL
-#ifdef CUDATIMETRACK
-    tbegin = chrono::high_resolution_clock::now();
-#endif
 
-    U_ii = _FFType.energy(coord, beadSet, kstr, eql, pos1, pos2);
+    FP U_ii = _FFType.energy(coord, beadSet.data(), kstr.data(), eql.data(), pos1.data(), pos2.data());
 
-#ifdef CUDATIMETRACK
-    floatingpoint U_i[1], U_ii=0.0;
-    floatingpoint* gU_i;
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
-    CUDAcommon::serltime.TveccomputeE.push_back(elapsed_runs.count());
-    CUDAcommon::serltime.TcomputeE += elapsed_runs.count();
-    CUDAcommon::serltime.TcomputeEiter += elapsed_runs.count();
-#endif
-#endif
 
     return U_ii;
 }
 
 template <class MStretchingInteractionType>
-void MotorGhostStretching<MStretchingInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
-#ifdef CUDATIMETRACK
-    chrono::high_resolution_clock::time_point tbegin, tend;
-    tbegin = chrono::high_resolution_clock::now();
-#endif
+void MotorGhostStretching<MStretchingInteractionType>::computeForces(FP *coord, FP *f) {
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -264,22 +177,7 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(floatingpoi
                        gpu_pos2, gpu_params, gpu_Mstretchforce);
     }
 #endif
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-    CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
-    CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
-    tbegin = chrono::high_resolution_clock::now();
-#endif
-#ifdef SERIAL
-    _FFType.forces(coord, f, beadSet, kstr, eql, pos1, pos2, stretchforce);
-#endif
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
-    CUDAcommon::serltime.TveccomputeF.push_back(elapsed_runs.count());
-    CUDAcommon::serltime.TcomputeF += elapsed_runs.count();
-#endif
+    _FFType.forces(coord, f, beadSet.data(), kstr.data(), eql.data(), pos1.data(), pos2.data(), stretchforce.data());
 #ifdef DETAILEDOUTPUT
     floatingpoint maxF = 0.0;
     floatingpoint mag = 0.0;
@@ -296,11 +194,7 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(floatingpoi
 #endif
 }
 
-///Temlate specializations
-template floatingpoint MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(floatingpoint *coord);
-template void MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void MotorGhostStretching<MotorGhostStretchingHarmonic>::vectorize(const FFCoordinateStartingIndex&);
-template void MotorGhostStretching<MotorGhostStretchingHarmonic>::deallocate();
-template void MotorGhostStretching<MotorGhostStretchingHarmonic>::assignforcemags();
+// Explicit instantiation.
+template class MotorGhostStretching<MotorGhostStretchingHarmonic>;
 
-
+} // namespace medyan

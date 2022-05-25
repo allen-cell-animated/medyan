@@ -14,6 +14,7 @@
 #ifndef MEDYAN_RSpecies_h
 #define MEDYAN_RSpecies_h
 
+#include <functional>
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -21,16 +22,13 @@
 #include <cassert>
 #include <stdexcept>
 
-#include <boost/signals2/signal.hpp>
-#include <boost/signals2/connection.hpp>
-#include <boost/signals2/shared_connection_block.hpp>
-
 #include "common.h"
 #include "SysParams.h"
 
+namespace medyan {
 ///Enumeration for RSpecies types
 #undef CONST // Fuck <windows.h>
-enum RSpeciesType {
+enum class RSpeciesType {
     REG, AVG, CONST
 };
 
@@ -46,10 +44,6 @@ typedef vector<ReactionBase*>::const_iterator vr_const_iterator;
 /// vsp stands for vector of RSpecies
 typedef vector<RSpecies*>::iterator vrsp_iterator; 
 typedef vector<RSpecies*>::const_iterator vrsp_const_iterator; 
-
-/// This is a RSpecies signal object that can be used to signal when the
-/// copy number changes
-typedef boost::signals2::signal<void (RSpecies *, int)> RSpeciesCopyNChangedSignal;
 
 /// Represents the reactive aspect of chemical molecules. It tracks their copy
 /// number and can be used in [Reactions](@ref Reaction).
@@ -81,12 +75,11 @@ protected: //Variables
     species_copy_t _ulim; ///< Upper limit for the copy number, afterwards all
                           ///< reactions leading to further accum. are turned off
 #endif
-#ifdef RSPECIES_SIGNALING
-    RSpeciesCopyNChangedSignal *_signal = nullptr; ///< Can be used to broadcast a signal
-                                                   ///< associated with change of n of
-#endif                                             ///< this RSpecies (usually when a single step
-                                                   ///< of this Reaction occurs)
-    
+
+    // The callbacks associated with change of n of this RSpecies (usually when a single step of this Reaction occurs).
+    std::vector< std::function< void(RSpecies*, int) >> callbacks_;
+
+
     RSpeciesType _type; ///< The RSpecies type
     
 //CONSTRUCTORS
@@ -98,9 +91,6 @@ protected: //Variables
     : _species(parent), _n(n) {
 #ifdef TRACK_UPPER_COPY_N
         _ulim = ulim;
-#endif
-#ifdef RSPECIES_SIGNALING
-        _signal=nullptr;
 #endif
     }
     /// deleted copy constructor - each RSpecies is uniquely created by the parent
@@ -193,14 +183,9 @@ public:
     /// the products.
     void passivateAssocProductReactions();
            
-#ifdef RSPECIES_SIGNALING
-    /// Set the signaling behavior of this RSpecies
-    void startSignaling();
-    
-    /// Destroy the signal associated with this RSpecies; all associated slots will be
-    /// destroyed @note To start signaling again, startSignaling() needs to be called
-    void stopSignaling();
-#endif
+    /// Clear all callbacks associated with this RSpecies; all associated slots will be
+    /// destroyed
+    void clearSignaling();
     
 public:
     /// It is required that all [Reactions](@ref Reaction) associated with this
@@ -213,19 +198,14 @@ public:
     /// be fixed in the future.
     virtual ~RSpecies() noexcept;
     
-#ifdef RSPECIES_SIGNALING
     /// Broadcasts signal indicating that the copy number of this RSpecies has changed
     /// This method should usually called by the code which runs the chemical dynamics
     /// (i.e. Gillespie-like algorithm)
-    
-    inline void emitSignal(int delta) {
-        if(isSignaling())
-            (*_signal)(this, delta);
+    void emitSignal(int delta) {
+        for(auto& callback : callbacks_) {
+            callback(this, delta);
+        }
     }
-    
-    /// Return true if this RSpecies emits signals on copy number change
-    inline bool isSignaling() const {return _signal!=nullptr;}
-#endif
     
     /// return parent Species as a reference
     inline Species& getSpecies() {return _species;}
@@ -268,7 +248,7 @@ public:
     /// Return the effective copy number of this RSpecies
     virtual float getN() const = 0;
     /// Return the true copy number of this RSpecies
-    virtual inline species_copy_t getTrueN() const {return _n;}
+    inline species_copy_t getTrueN() const {return _n;}
     
 };
 
@@ -324,9 +304,7 @@ public:
             passivateAssocProductReactions();
 #endif
         
-#ifdef RSPECIES_SIGNALING
-        if(isSignaling()) emitSignal(+1);
-#endif
+        emitSignal(+1);
     }
     
     /// If the copy number changes from 1 to 0, calls a
@@ -352,9 +330,7 @@ public:
             activateAssocProductReactions();
 #endif
         
-#ifdef RSPECIES_SIGNALING
-        if(isSignaling()) emitSignal(-1);
-#endif
+        emitSignal(-1);
     }
     /// Return the true copy number
     virtual float getN() const {return (float)_n;}
@@ -401,14 +377,10 @@ public:
     /// In constant species, do nothing. Copy numbers do not change.
     /// Emits a signal with the zero change in copy number if attached.
     virtual void up() {
-#ifdef RSPECIES_SIGNALING
-        if(isSignaling()) emitSignal(0);
-#endif
+        emitSignal(0);
     }
     virtual void down() {
-#ifdef RSPECIES_SIGNALING
-        if(isSignaling()) emitSignal(0);
-#endif
+        emitSignal(0);
     }
     //@}
     /// Return the true copy number
@@ -554,9 +526,7 @@ public:
             passivateAssocProductReactions();
 #endif
         
-#ifdef RSPECIES_SIGNALING
-        if(isSignaling()) emitSignal(+1);
-#endif
+        emitSignal(+1);
     }
     
     /// Decrease the true copy number.
@@ -602,9 +572,7 @@ public:
             activateAssocProductReactions();
 #endif
         
-#ifdef RSPECIES_SIGNALING
-        if(isSignaling()) emitSignal(-1);
-#endif
+        emitSignal(-1);
     }
     
     /// Return the current average
@@ -620,20 +588,27 @@ class RSpeciesFactory {
     
 public:
     ///Create an RSpecies object
-    static RSpecies* createRSpecies(Species &parent, species_copy_t n=0,
-                                    species_copy_t ulim=max_ulim,
-                                    RSpeciesType t=RSpeciesType::REG) {
+    static std::unique_ptr< RSpecies > createRSpecies(
+        Species &      parent,
+        species_copy_t n = 0,
+        species_copy_t ulim = max_ulim,
+        RSpeciesType   t = RSpeciesType::REG
+    ) {
         //create the appropriate rspecies
         //average
-        if(t == RSpeciesType::AVG) return new RSpeciesAvg(parent, n, ulim);
+        if(t == RSpeciesType::AVG) return std::make_unique< RSpeciesAvg >(parent, n, ulim);
         //constant
-        else if(t == RSpeciesType::CONST) return new RSpeciesConst(parent, n, ulim);
+        else if(t == RSpeciesType::CONST) return std::make_unique< RSpeciesConst >(parent, n, ulim);
         //regular
-        else if(t == RSpeciesType::REG) return new RSpeciesReg(parent, n, ulim);
+        else if(t == RSpeciesType::REG) return std::make_unique< RSpeciesReg >(parent, n, ulim);
         
-        else return nullptr;
+        else {
+            LOG(ERROR) << "Species type is not recognized";
+            throw std::runtime_error("Species type is incorrect");
+        }
     }
 };
 
+} // namespace medyan
 
 #endif

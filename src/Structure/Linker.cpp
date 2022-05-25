@@ -19,11 +19,12 @@
 #include "Cylinder.h"
 #include "ChemRNode.h"
 
-#include "GController.h"
+#include "Controller/GController.h"
 #include "SysParams.h"
 #include "MathFunctions.h"
 #include "Mechanics/CUDAcommon.h"
 
+namespace medyan {
 using namespace mathfunc;
 
 
@@ -40,16 +41,41 @@ void Linker::updateCoordinate() {
     coordinate = midPointCoordinate(m1, m2, 0.5);
 }
 
-Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
-               floatingpoint position1, floatingpoint position2)
+Linker::Linker(
+    Cylinder* c1, Cylinder* c2,
+    short linkerType,
+    int linkerSpeciesIndex1,
+    int linkerSpeciesIndex2,
+    floatingpoint position1, floatingpoint position2)
 
     : Trackable(true, true), _c1(c1), _c2(c2),
       _position1(position1), _position2(position2),
-      _linkerType(linkerType), _birthTime(tau()) {
-        
+      _linkerType(linkerType), _birthTime(tau())
+{
+    using namespace std;
+
+    // Initialize linker mechanics.
+    //---------------------------------
+    // Set stretching constant.
+    if(!SysParams::Mechanics().LStretchingK.empty())
+        mLinker_.kStretch = SysParams::Mechanics().LStretchingK[linkerType];
+
+    // Set equilibrium length.
+    auto x1 = _c1->getFirstBead()->vcoordinate();
+    auto x2 = _c1->getSecondBead()->vcoordinate();
+    auto x3 = _c2->getFirstBead()->vcoordinate();
+    auto x4 = _c2->getSecondBead()->vcoordinate();
+
+    auto m1 = midPointCoordinate(x1, x2, c1->adjustedrelativeposition(position1));
+    auto m2 = midPointCoordinate(x3, x4, c2->adjustedrelativeposition(position2));
+    mLinker_.eqLength = twoPointDistance(m1, m2);
+
+
+    // Initialize coordinates and registration in compartments.
+    //---------------------------------
     updateCoordinate();
 
-    try {_compartment = GController::getCompartment(coordinate);}
+    try {_compartment = &GController::getCompartment(coordinate);}
     catch (exception& e) {
         cout << e.what();
         
@@ -57,27 +83,16 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
         
         exit(EXIT_FAILURE);
     }
-          
-    int pos1 = int(position1 * SysParams::Geometry().cylinderNumMon[c1->getType()]);
-    int pos2 = int(position2 * SysParams::Geometry().cylinderNumMon[c1->getType()]);
+
+    // Initialize linker chemistry.
+    //---------------------------------
+    const int pos1 = int(position1 * SysParams::Geometry().cylinderNumMon[c1->getType()]);
+    const int pos2 = int(position2 * SysParams::Geometry().cylinderNumMon[c2->getType()]);
   
-#ifdef CHEMISTRY
-    _cLinker = unique_ptr<CLinker>(
-    new CLinker(linkerType, _compartment, _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2));
+    _cLinker = make_unique<CLinker>(linkerSpeciesIndex1, linkerSpeciesIndex2, _compartment, _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2);
     _cLinker->setLinker(this);
         
-#endif
     
-#ifdef MECHANICS
-    auto x1 = _c1->getFirstBead()->vcoordinate();
-    auto x2 = _c1->getSecondBead()->vcoordinate();
-    auto x3 = _c2->getFirstBead()->vcoordinate();
-    auto x4 = _c2->getSecondBead()->vcoordinate();
-          
-    _mLinker = unique_ptr<MLinker>(
-        new MLinker(linkerType, c1->adjustedrelativeposition(position1), c2->adjustedrelativeposition(position2), x1, x2, x3, x4));
-    _mLinker->setLinker(this);
-#endif
 }
 
 ///@note - tracks lifetime data here
@@ -94,17 +109,15 @@ Linker::~Linker() noexcept {
 
 void Linker::updatePosition() {
     
-#ifdef CHEMISTRY
     //update ccylinders
     _cLinker->setFirstCCylinder(_c1->getCCylinder());
     _cLinker->setSecondCCylinder(_c2->getCCylinder());
     
-#endif
     updateCoordinate();
     
     Compartment* c;
     
-    try {c = GController::getCompartment(coordinate);}
+    try {c = &GController::getCompartment(coordinate);}
     catch (exception& e) {
         cout << e.what();
         
@@ -116,7 +129,7 @@ void Linker::updatePosition() {
     if(c != _compartment) {
 	    chrono::high_resolution_clock::time_point mins, mine;
         _compartment = c;
-#ifdef CHEMISTRY
+
         SpeciesBound* firstSpecies = _cLinker->getFirstSpecies();
         SpeciesBound* secondSpecies = _cLinker->getSecondSpecies();
         
@@ -125,26 +138,23 @@ void Linker::updatePosition() {
         
         _cLinker->setFirstSpecies(firstSpecies);
         _cLinker->setSecondSpecies(secondSpecies);
-#endif
+
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> compartment_update(mine - mins);
 	    CUDAcommon::tmin.timelinkerupdate += compartment_update.count();
 	    CUDAcommon::tmin.callslinkerupdate++;
     }
     
-#ifdef MECHANICS
-if(SysParams::RUNSTATE) {
-    auto x1 = _c1->getFirstBead()->vcoordinate();
-    auto x2 = _c1->getSecondBead()->vcoordinate();
-    auto x3 = _c2->getFirstBead()->vcoordinate();
-    auto x4 = _c2->getSecondBead()->vcoordinate();
+    if(SysParams::RUNSTATE) {
+        auto x1 = _c1->getFirstBead()->vcoordinate();
+        auto x2 = _c1->getSecondBead()->vcoordinate();
+        auto x3 = _c2->getFirstBead()->vcoordinate();
+        auto x4 = _c2->getSecondBead()->vcoordinate();
 
-    auto m1 = midPointCoordinate(x1, x2, _c1->adjustedrelativeposition(_position1));
-    auto m2 = midPointCoordinate(x3, x4, _c2->adjustedrelativeposition(_position2));
+        auto m1 = midPointCoordinate(x1, x2, _c1->adjustedrelativeposition(_position1));
+        auto m2 = midPointCoordinate(x3, x4, _c2->adjustedrelativeposition(_position2));
 
-    _mLinker->setLength(twoPointDistance(m1, m2));
-}
-#endif
+    }
 }
 
 /// @note - The function uses the linker's stretching force at
@@ -157,7 +167,7 @@ void Linker::updateReactionRates() {
     if(_unbindingChangers.empty()) return;
     
     //current force on linker
-    floatingpoint force = max<floatingpoint>((floatingpoint)0.0, _mLinker->stretchForce);
+    floatingpoint force = max<floatingpoint>((floatingpoint)0.0, mLinker_.stretchForce);
     
     //get the unbinding reaction
     ReactionBase* offRxn = _cLinker->getOffReaction();
@@ -176,7 +186,7 @@ void Linker::updateReactionRates() {
 #endif
     if(_unbindingChangers.size() > 0) {
         float factor = _unbindingChangers[_linkerType]->getRateChangeFactor(force);
-        offRxn->setRateMulFactor(factor, ReactionBase::MECHANOCHEMICALFACTOR);
+        offRxn->setRateMulFactor(factor, ReactionBase::mechanochemical);
         offRxn->updatePropensity();
     }
 }
@@ -197,7 +207,6 @@ void Linker::printSelf()const {
     
     cout << endl;
     
-#ifdef CHEMISTRY
     cout << "Associated species 1 = " << _cLinker->getFirstSpecies()->getName()
          << " , copy number = " << _cLinker->getFirstSpecies()->getN()
          << " , position on first cylinder (int) = " << _cLinker->getFirstPosition() << endl;
@@ -205,7 +214,6 @@ void Linker::printSelf()const {
     cout << "Associated species 2 = " << _cLinker->getSecondSpecies()->getName()
          << " , copy number = " << _cLinker->getSecondSpecies()->getN()
          << " , position on second cylinder (int) = " << _cLinker->getSecondPosition() << endl;
-#endif
     
     cout << endl;
     
@@ -234,3 +242,5 @@ species_copy_t Linker::countSpecies(const string& name) {
 vector<LinkerRateChanger*> Linker::_unbindingChangers;
 
 Histogram* Linker::_lifetimes;
+
+} // namespace medyan

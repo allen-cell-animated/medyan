@@ -1,7 +1,139 @@
-# Current
+# 5.4.0 (Released 2022-03-27)
+
+## Enhancements
+- Added fixed membrane vertex attachments, including initialization and force field. ([#129](https://github.com/medyan-dev/medyan/pull/129))
+
+## Bug fixes
+- Fixed the issue where the max force was not updated after recovery operation during conjugate gradient minimization. ([#128](https://github.com/medyan-dev/medyan/pull/128))
+- Fixed the memory leak issue during minimization. ([#130](https://github.com/medyan-dev/medyan/pull/130))
+- In visualization, fixed the issue where the line visualization was not disabled when the trajectory is disabled (99e6925).
+
+
+# 5.3.0 (Released 2022-03-14)
+
+## Enhancements
+- Membrane
+    - Surface protein binding will consume accessible area of a vertex, which affects future binding rates on this vertex. ([#120](https://github.com/medyan-dev/medyan/pull/120))
+    - Some integral properties (such as species copy number) on vertices are better redistributed during modification. ([#121](https://github.com/medyan-dev/medyan/pull/121))
+    - Re-enabled triangle protect FF, removing border forces. ([#121](https://github.com/medyan-dev/medyan/pull/121))
+    - Added another option for curvature computation which is used in Mem3DG. ([#121](https://github.com/medyan-dev/medyan/pull/121))
+    - Re-enabled membrane global stretching FF. ([#121](https://github.com/medyan-dev/medyan/pull/121))
+    - Added membrane equilibrium volume increase protocol. ([#121](https://github.com/medyan-dev/medyan/pull/121))
+    - Added configuration option to mesh adaptation. ([#121](https://github.com/medyan-dev/medyan/pull/121))
+    - Enabled optional remeshing during minimization. ([#121](https://github.com/medyan-dev/medyan/pull/121))
+    - Added adsorption along with surface diffusion in side routine. ([#121](https://github.com/medyan-dev/medyan/pull/121))
+    - Enable more robust border vertex pinning. ([#122](https://github.com/medyan-dev/medyan/pull/122))
+- Visualization
+    - Added shortcut (default to <kbd>space</kbd>) to toggle play/pause in GUI. ([#120](https://github.com/medyan-dev/medyan/pull/120))
+    - In GUI, allows changing the color range and color map of the attribute display. Also, the actual range of the selected membrane attribute will be displayed. ([#124](https://github.com/medyan-dev/medyan/pull/124))
+    - Added bubble visualization. ([#126](https://github.com/medyan-dev/medyan/pull/126))
+- Others
+    - Now the total copy numbers of some selected species are reported in the HDF5 output. ([#121](https://github.com/medyan-dev/medyan/pull/121))
+    - Added brief documents on the HDF5 trajectory file. ([#126](https://github.com/medyan-dev/medyan/pull/126))
+
+# Bug fixes
+- Update rates right after adsorption or surface diffusion reaction happens. ([#121](https://github.com/medyan-dev/medyan/pull/121))
+- Fixed curvature mismatch energy computation and smoothen copy number used in curvature generation using diffusion. ([#121](https://github.com/medyan-dev/medyan/pull/121))
+- Fixed rate constant for surface internal reactions. ([#121](https://github.com/medyan-dev/medyan/pull/121))
+- Fixed command line `-i` option autofill. ([#121](https://github.com/medyan-dev/medyan/pull/121))
+
+
+# 5.2.1 (Released 2022-02-10)
+
+## Bug fixes
+- Fixed energy curve display on GUI with multiple trajectories. ([#118](https://github.com/medyan-dev/medyan/pull/118))
+- Added Boolean data "header/finished" in the h5 trajectory to indicate simulation status. ([#118](https://github.com/medyan-dev/medyan/pull/118))
+- Improved NRM heap error report, and fixed heap corruption when infinite propensity is encountered. ([#118](https://github.com/medyan-dev/medyan/pull/118))
+- Fixed `CGMethod::maxF` function. Only first `numDof` items will be considered. ([#118](https://github.com/medyan-dev/medyan/pull/118))
+
+
+# 5.2.0 (Released 2022-02-07)
+
+## Enhancements
+- IO
+    - Added experimental HDF5 format output, including simulation configuration, element snapshots, energies and diffusing species copy numbers. ([#95](https://github.com/medyan-dev/medyan/pull/95), [#96](https://github.com/medyan-dev/medyan/pull/96), [#100](https://github.com/medyan-dev/medyan/pull/100), [#103](https://github.com/medyan-dev/medyan/pull/103), [#112](https://github.com/medyan-dev/medyan/pull/112), [#117](https://github.com/medyan-dev/medyan/pull/117))
+    - While invoking medyan with command line arguments, the input directory will be inferred as the directory of the system input file if `-i` option is not provided. ([#111](https://github.com/medyan-dev/medyan/pull/111))
+    - The `config` command can now normalize the input files if `-s` option gives a system input file. ([#111](https://github.com/medyan-dev/medyan/pull/111))
+    - s-expression printing now auto indents. ([#111](https://github.com/medyan-dev/medyan/pull/111))
+- Mechanics
+    - Added a consistency test for volume exclusion between the integral formula and the monomer-based formula. ([#96](https://github.com/medyan-dev/medyan/pull/96))
+    - Bubble force fields will not move bubbles that are fixed. ([#107](https://github.com/medyan-dev/medyan/pull/107), [#108](https://github.com/medyan-dev/medyan/pull/108))
+    - Add force-induced mechanochemical activation on MTOC and AFM structures. ([#109](https://github.com/medyan-dev/medyan/pull/109), [#110](https://github.com/medyan-dev/medyan/pull/110))
+    - Protein curvature mismatch energy at each vertex is now scaled by area fraction instead of molar fraction. ([#115](https://github.com/medyan-dev/medyan/pull/115))
+    - Protein curvature mismatch energy is computed on border vertices as well for curvature sensing only. It does not affect curvature generation. ([#115](https://github.com/medyan-dev/medyan/pull/115))
+    - Membrane vertex equilibrium area is the same as current area if the membrane is attached to a lipid reservoir. ([#115](https://github.com/medyan-dev/medyan/pull/115))
+    - Energy relative change convergence criterion is formally added, with `energy-change-relative-tolerance` key in the input file. ([#115](https://github.com/medyan-dev/medyan/pull/115))
+    - Added a special protocol to increase membrane equilibrium area with a constant rate. ([#117](https://github.com/medyan-dev/medyan/pull/117))
+    - Membrane remeshing is now placed after minimization ([#117](https://github.com/medyan-dev/medyan/pull/117)), because
+        - Membrane-filament shortest distance can be larger after minimization, reducing the chance that some beads go out of the membrane during remeshing.
+        - Artifacts on vertex species copy numbers introduced by remeshing can be smoothened by chemical reactions.
+- Chemistry
+    - Added support for membrane adsorption/desorption involving bulk species. ([#96](https://github.com/medyan-dev/medyan/pull/96))
+- GUI
+    - Automatic camera adjustment now takes care of z clipping planes as well. ([#96](https://github.com/medyan-dev/medyan/pull/96))
+    - Improved formula for camera rotation by mouse. ([#96](https://github.com/medyan-dev/medyan/pull/96))
+    - Added energy plots in the GUI. ([#112](https://github.com/medyan-dev/medyan/pull/112))
+    - Membranes can be colored with attributes (e.g. protein concentration) in display. ([#114](https://github.com/medyan-dev/medyan/pull/114), [#115](https://github.com/medyan-dev/medyan/pull/115))
+
+## Bug fixes
+- Fixed a bug in data dump involving bulk species. ([#96](https://github.com/medyan-dev/medyan/pull/96))
+- Fixed an assertion failure issue when the window has zero size. ([#96](https://github.com/medyan-dev/medyan/pull/96))
+- Framebuffer size is no longer assumed to be equal to the window size. ([#96](https://github.com/medyan-dev/medyan/pull/96))
+- Fixed incorrect free energy of the curvature mismatch model. ([#97](https://github.com/medyan-dev/medyan/pull/97))
+- Fixed incorrect number of lipids in curvature mismatch model. ([#100](https://github.com/medyan-dev/medyan/pull/100))
+- Fixed memory problem at the end of simulation, arising from membrane reactions incorrectly destructed. ([#100](https://github.com/medyan-dev/medyan/pull/100))
+- Fixed incorrect filament ring initialization angle constraint. ([#104](https://github.com/medyan-dev/medyan/pull/104))
+- Fixed membrane bending constant not correctly registered after remeshing. ([#111](https://github.com/medyan-dev/medyan/pull/111))
+- Fixed membrane geometry not computed before computing energies/forces during force field diagnosis. ([#115](https://github.com/medyan-dev/medyan/pull/115))
+- Max distance during minimization recovery applies to vertices as well. ([#115](https://github.com/medyan-dev/medyan/pull/115))
+- Fixed parser output for `SPECIALPROTOCOL pin-initial-filament-below-z`. ([#115](https://github.com/medyan-dev/medyan/pull/115))
+- Fixed accuracy issue for `toString` for arithmetic types. ([#115](https://github.com/medyan-dev/medyan/pull/115))
+- Fixed file dialog problem on Linux using Zenity. ([#115](https://github.com/medyan-dev/medyan/pull/115))
+- Membrane surface diffusion also respects the curvature mismatch energy. ([#116](https://github.com/medyan-dev/medyan/pull/116))
+
+
+# 5.1.0 (Released 2021-12-01)
+
+## Breaking changes
+- In chemistry input file, the diffusion coefficient, instead of the diffusion reaction rate (scaled by the size of a cubic compartment), is specified in `SPECIESDIFFUSING`. This enables the fix of incorrect diffusion rate scaling with non-cubic compartments. ([#75](https://github.com/medyan-dev/medyan/pull/75))
+- In output file `snapshot.traj`, the brancher is now represented as a linker, where the coordinates on both mother and daughter filaments are recorded. Previously, only coordinates on the mother filament was recorded. ([#79](https://github.com/medyan-dev/medyan/pull/79))
+
+## New features
+- Added membrane adsorption/desorption reactions. ([#62](https://github.com/medyan-dev/medyan/pull/62), [#73](https://github.com/medyan-dev/medyan/pull/73), [#88](https://github.com/medyan-dev/medyan/pull/88), [#94](https://github.com/medyan-dev/medyan/pull/94))
+- Added an alternative cylinder excluded volume force field. ([#92](https://github.com/medyan-dev/medyan/pull/92))
 
 ## Refactoring
-- Duration for timed chemistry step is now exact (https://github.com/medyan-dev/medyan/pull/13, https://github.com/medyan-dev/medyan/pull/18, https://github.com/medyan-dev/medyan/pull/21 (in review)).
+- Duration for timed chemistry step is now exact ([#13](https://github.com/medyan-dev/medyan/pull/13), [#18](https://github.com/medyan-dev/medyan/pull/18), [#21](https://github.com/medyan-dev/medyan/pull/21)).
+- Largely refactored codes in conjugate gradient method. Specifically, 3 search direction update methods are now grouped into one file. ([#23](https://github.com/medyan-dev/medyan/pull/23), [#27](https://github.com/medyan-dev/medyan/pull/27), [#28](https://github.com/medyan-dev/medyan/pull/28), [#58](https://github.com/medyan-dev/medyan/pull/58), [#59](https://github.com/medyan-dev/medyan/pull/59))
+- Reaction/species signals are now implemented using C++ standard library components instead of boost's signals2 library, which provides faster compile speed ([#38](https://github.com/medyan-dev/medyan/pull/38)).
+- Different Species are now differentiated using an enum type member `Species::type_` instead of multiple distinct types ([#42](https://github.com/medyan-dev/medyan/pull/42)).
+- Optimized function to obtain compartment list from `CompartmentGrid` instance ([#44](https://github.com/medyan-dev/medyan/pull/44)).
+- A more secure procedure is used for cylinder information packing (for SIMD line search algorithm). ([#46](https://github.com/medyan-dev/medyan/pull/46))
+- Simplified filament initialization and `FilamentData` structure. ([#60](https://github.com/medyan-dev/medyan/pull/60))
+- Compartment neighbor information are now index-based instead of pointer-based. ([#66](https://github.com/medyan-dev/medyan/pull/66), [#70](https://github.com/medyan-dev/medyan/pull/70))
+- Uses spdlog library for logging. ([#83](https://github.com/medyan-dev/medyan/pull/83))
+
+## Enhancements
+- In visualization, enhanced keyboard shortcut and prevented mouse acting simultaneously on GUI and the scene for MEDYAN objects ([#30](https://github.com/medyan-dev/medyan/pull/30)).
+- Added simple force field diagnosis upon line search errors, if `try_to_recover_in_line_search_error` is explicitly set to `false` in the input file. ([#34](https://github.com/medyan-dev/medyan/pull/34))
+- Added branching point visualization. ([#50](https://github.com/medyan-dev/medyan/pull/50), [#79](https://github.com/medyan-dev/medyan/pull/79))
+- Added depth cueing feature in visualization. ([#51](https://github.com/medyan-dev/medyan/pull/51))
+- Linker binding on different types of filaments is now supported. ([#78](https://github.com/medyan-dev/medyan/pull/78), [#79](https://github.com/medyan-dev/medyan/pull/79))
+- Added automatic camera adjustment in GUI. ([#81](https://github.com/medyan-dev/medyan/pull/81))
+- In GUI, using native file selector, the last opened directory will be remembered. ([#81](https://github.com/medyan-dev/medyan/pull/81))
+
+## Bug fixes
+- Fixed bugs related to severing ([#15](https://github.com/medyan-dev/medyan/pull/15)).
+- Fixed motor unbinding free energy tracking (0a97196).
+- Fixed a bug that breaks the restart protocol ([#32](https://github.com/medyan-dev/medyan/pull/32), [#37](https://github.com/medyan-dev/medyan/pull/37)).
+- Fixed compiling issue when `FLOAT_PRECISION` is a predefined macro (when `floatingpoint` is `float`) ([#35](https://github.com/medyan-dev/medyan/pull/35)).
+- Fixed an issue in parsing string variables during command line parsing ([#36](https://github.com/medyan-dev/medyan/pull/36)).
+- Fixed vcpkg creating cache outside repository. ([#48](https://github.com/medyan-dev/medyan/pull/48))
+- Fixed infinite loop issue in branching nucleation callback. ([#53](https://github.com/medyan-dev/medyan/pull/53), [#55](https://github.com/medyan-dev/medyan/pull/55))
+- Fixed use of freed memory in some chemistry callbacks. ([#57](https://github.com/medyan-dev/medyan/pull/57))
+- Fixed undefined behavior and memory problem in hybrid neighbor list when no linker is specified. ([#74](https://github.com/medyan-dev/medyan/pull/74))
+- Fixed missing special protocol inputs. ([#89](https://github.com/medyan-dev/medyan/pull/89))
+- Fixed filament type parsing issue when dissipation tracking is disabled. ([#93](https://github.com/medyan-dev/medyan/pull/93))
 
 
 # 5.0.0 (Released 2021-07-13)

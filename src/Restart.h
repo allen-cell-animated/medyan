@@ -15,21 +15,13 @@
 #define MEDYAN_Restart_h
 
 #include "common.h"
-#include<stdio.h>
-#include "Output.h"
-#include "MController.h"
-#include "GController.h"
-#include "CController.h"
-#include "DRController.h"
 #include <random>
 #include <chrono>
 
-#include "Output.h"
 #include "SubSystem.h"
 #include "Boundary.h"
 #include "CompartmentGrid.h"
 
-#include "FilamentInitializer.h"
 #include "BubbleInitializer.h"
 
 #include "Filament.h"
@@ -38,24 +30,24 @@
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
 #include "Bubble.h"
-#include "MTOC.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
-#include "MController.h"
 #include "Cylinder.h"
 #include "RestartParams.h"
 #include <unordered_set>
 #include <unordered_map>
-#include 	<tuple>
 #include <algorithm>
 #include "ChemRNode.h"
+
+namespace medyan {
 using namespace mathfunc;
 
-//FORWARD DECLARATIONS
+// Forward declarations.
 class SubSystem;
 class Cylinder;
 class FilamentBindingManager;
+
 
 class Restart {
 private:
@@ -82,9 +74,9 @@ private:
         int counter=0;
 //        cout<<"Trying to find "<<diffusingspeciesname<<" in Cmp "<<c->getCompartment()
 //        ->getId()<<endl;
-        for(auto sd : _chemData.speciesDiffusing) {
+        for(auto& sd : _chemData.speciesDiffusing) {
             int events=0;
-            if(diffusingspeciesname.compare(get<0>(sd))==0){
+            if(diffusingspeciesname.compare(sd.name)==0){
             	events++;
             }
             CopyNumbers[counter]=CopyNumbers[counter]-events;
@@ -102,12 +94,12 @@ private:
                      <<" from "<< (c->getCompartment()->findSpeciesByName(get<0>(sd)))
                      ->getRSpecies().getN()<<endl;
             }*/
-            events=events+(c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().getN();
+            events=events+(c->getCompartment()->findSpeciesByName(sd.name))->getRSpecies().getN();
 
-            (c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(events);
+            (c->getCompartment()->findSpeciesByName(sd.name))->getRSpecies().setN(events);
             c->getCompartment()->getDiffusionReactionContainer().updatePropensityComprtment();
             counter++;
-    }
+        }
     }
 public:
     Restart(SubSystem* s, ChemistryData _cd, const string inputFileName)
@@ -131,7 +123,7 @@ public:
 
     void settorestartphase(){
 //STEP #1: Get a copy of diffusion rate and set diffusion rate to 0, reset linker motor and branching managers.
-        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+        for(auto& C : _subSystem->getCompartmentGrid()->getCompartments()) {
             for(auto &it: C->getDiffusionReactionContainer().reactions())
             {temp_diffrate_vector.push_back(it->getRate());
                 it->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
@@ -145,31 +137,31 @@ public:
 #endif
             }}
 //STEP #1a: Get cylinders, passivate filament reactions.
-        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+        for(auto& C : _subSystem->getCompartmentGrid()->getCompartments()) {
             for(auto x : C->getCylinders()) {
                 x->getCCylinder()->passivatefilreactions();
                 x->getCCylinder()->passivatefilcrossreactions();
             }}
 //Step #1b. Passivate general reactions.
-	    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+	    for(auto& C : _subSystem->getCompartmentGrid()->getCompartments()) {
 		    for(auto& rxn : C->getInternalReactionContainer().reactions()) {
 		    	if(rxn->getReactionType() == ReactionType::REGULAR)
 		    		rxn->passivateReaction();
 		    }}
 //Step #1c. Get copynumber of diffusing species. This is used later for book keeping
 // purposes.
-        for(auto sd : _chemData.speciesDiffusing) {
-            string name = get<0>(sd);
-	        CopyNumbers.push_back(get<1>(sd));
+        for(auto& sd : _chemData.speciesDiffusing) {
+            string name = sd.name;
+	        CopyNumbers.push_back(sd.initialCopyNumber);
             //CopyNumbers.push_back(_subSystem->getCompartmentGrid()
             //->countDiffusingSpecies(name));
-            }
+        }
         //Set copy number of diffusing species in each compartment to 0.
-        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+        for(auto& C : _subSystem->getCompartmentGrid()->getCompartments()) {
             for(auto sd : _chemData.speciesDiffusing) {
-                (C->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(0);}
+                (C->findSpeciesByName(sd.name))->getRSpecies().setN(0);}
             for(auto sd : _chemData.speciesBulk) {
-                (C->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(0);}
+                (C->findSpeciesByName(sd.name))->getRSpecies().setN(0);}
         }
 /*//Step #3. Add filament coordinates to be held static during minimization **** NEEEDS TO BE EDITED***
         // coordinates to keep static
@@ -233,7 +225,7 @@ public:
                 }
             }
             int counter = 0;
-            for (auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+            for (auto& C : _subSystem->getCompartmentGrid()->getCompartments()) {
                 for (auto &it: C->getDiffusionReactionContainer().reactions()) {
                     it->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
                     it->updatePropensity();
@@ -241,15 +233,15 @@ public:
             }
             //Bulk Species
             for (auto &s : _chemData.speciesBulk) {
-                LOG(ERROR)<<"Bulk species protocols not implemented. Exiting."<<endl;
+                log::error("Bulk species protocols not implemented.");
             }
             //Set diffusing species copy numbers to 0.
             for(auto &s : _chemData.speciesDiffusing) {
-                auto name = get<0>(s);
-                auto copyNumber = get<1>(s);
-                auto releaseTime = get<3>(s);
+                auto name = s.name;
+                auto copyNumber = s.initialCopyNumber;
+                auto releaseTime = s.releaseTime;
                 if (tau() >= releaseTime)
-                    get<1>(s) = 0;
+                    s.releaseTime = 0;
             }
     /*            for(auto &s : _chemData.speciesDiffusing) {
 
@@ -281,4 +273,7 @@ public:
 
     bool crosscheck();
 };
+
+} // namespace medyan
+
 #endif

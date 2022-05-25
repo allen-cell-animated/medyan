@@ -17,7 +17,7 @@
 #include "utility.h"
 #include "Cylinder.h"
 
-
+namespace medyan {
 using namespace std;
 
 struct restartSystemData{
@@ -118,5 +118,7 @@ struct restartcopynumberrallyData{
     vector<string> speciesnamevec;
     vector<int> copynumvec;
 };
+
+} // namespace medyan
 
 #endif

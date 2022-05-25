@@ -29,6 +29,9 @@ struct MembraneProfile {
 
     // apply this setting
     MembraneDisplaySettings displaySettings;
+
+    // States.
+    MembraneDisplayStates displayStates;
 };
 inline auto select(
     const std::vector< MembraneFrame >& membranes,
@@ -42,6 +45,7 @@ inline auto select(
 }
 
 struct FilamentSelector {
+    std::optional< int > type;
 };
 struct FilamentProfile {
     // selects all filaments
@@ -57,7 +61,9 @@ inline auto select(
 ) {
     std::vector< const FilamentFrame* > res;
     for(auto& filament : filaments) {
-        res.push_back(&filament);
+        if(!selector.type.has_value() || *selector.type == filament.type) {
+            res.push_back(&filament);
+        }
     }
     return res;
 }
@@ -65,6 +71,7 @@ inline auto select(
 
 struct LinkerSelector {
     std::optional< std::string > name;
+    std::optional< int > subtype;
 };
 struct LinkerProfile {
     // selector
@@ -80,9 +87,33 @@ inline auto select(
 ) {
     std::vector< const LinkerFrame* > res;
     for(auto& linker : linkers) {
-        if(!selector.name.has_value() || *selector.name == typeMap.linkerTypeName.at(linker.type)) {
+        if(
+            (!selector.name.has_value() || *selector.name == typeMap.linkerTypeName.at(linker.type)) &&
+            (!selector.subtype.has_value() || *selector.subtype == linker.subtype)
+        ) {
             res.push_back(&linker);
         }
+    }
+    return res;
+}
+
+
+struct BubbleSelector {
+};
+struct BubbleProfile {
+    // Selector.
+    BubbleSelector selector;
+
+    // Settings.
+    SphereDisplaySettings displaySettings;
+};
+inline auto select(
+    const std::vector< BubbleFrame >& bubbles,
+    const BubbleSelector& selector
+) {
+    std::vector< const BubbleFrame* > res;
+    for(auto& bubble : bubbles) {
+        res.push_back(&bubble);
     }
     return res;
 }
@@ -96,6 +127,7 @@ using ElementProfile = std::variant<
     MembraneProfile,
     FilamentProfile,
     LinkerProfile,
+    BubbleProfile,
     AuxLineProfile
 >;
 
@@ -104,6 +136,7 @@ constexpr auto profileTypeDisplayName() {
     if constexpr(std::is_same_v< ProfileType, MembraneProfile >)      { return "membrane"; }
     else if constexpr(std::is_same_v< ProfileType, FilamentProfile >) { return "filament"; }
     else if constexpr(std::is_same_v< ProfileType, LinkerProfile >)   { return "linker"; }
+    else if constexpr(std::is_same_v< ProfileType, BubbleProfile >)   { return "bubble"; }
     else if constexpr(std::is_same_v< ProfileType, AuxLineProfile >)  { return "auxiliary"; }
     else { return ""; }
 }
@@ -145,7 +178,7 @@ struct ProfileWithMeshData {
     MeshData                                         data;
     std::optional< std::vector< MeshDataFrameInfo >> frameInfo;
 
-    // Whether to informs the visualization to update mesh state.
+    // Whether to inform the visualization to update mesh state.
     // If true, mesh data is outdated, and should be updated.
     //
     // It should be set to true by whoever changes the profile or source data.
@@ -180,9 +213,18 @@ inline auto makeDefaultElementProfileData() {
     {
         LinkerProfile lp;
         lp.selector.name = "motor";
-        lp.displaySettings.colorFixed = mathfunc::Vec3f { 0.1f, 0.1f, 0.99f };
+        lp.displaySettings.colorFixed = Vec3f { 0.1f, 0.1f, 0.99f };
         profiles.push_back(ProfileWithMeshData { std::move(lp) } );
     }
+    {
+        LinkerProfile lp;
+        lp.selector.name = "brancher";
+        lp.displaySettings.colorFixed = Vec3f { 0.95f, 0.8f, 0.1f };
+        lp.displaySettings.pathExtrudeRadius = 12.0f;
+        profiles.push_back(ProfileWithMeshData { std::move(lp) } );
+    }
+
+    profiles.push_back(ProfileWithMeshData { BubbleProfile {} });
 
     profiles.push_back(ProfileWithMeshData { AuxLineProfile {
         { AuxLineDisplaySettings::targetCompartmentBorder }
@@ -197,14 +239,15 @@ inline auto displayGeometryType(const ElementProfile& profile) {
 }
 
 inline auto createMeshData(
-    const DisplayFrame& frameData,
+    const DisplayFrame&   frameData,
     const DisplayTypeMap& typeMap,
-    const ElementProfile& profile
+    ElementProfile&       profile
 ) {
     return std::visit(
         Overload {
-            [&](const MembraneProfile& membraneProfile) {
+            [&](MembraneProfile& membraneProfile) {
                 return createMembraneMeshData(
+                    membraneProfile.displayStates,
                     select(frameData.membranes, membraneProfile.selector),
                     membraneProfile.displaySettings
                 );
@@ -221,12 +264,18 @@ inline auto createMeshData(
                     linkerProfile.displaySettings
                 );
             },
+            [&](const BubbleProfile& bubbleProfile) {
+                return createBubbleMeshData(
+                    select(frameData.bubbles, bubbleProfile.selector),
+                    bubbleProfile.displaySettings
+                );
+            },
             [&](const AuxLineProfile& auxLineProfile) {
                 return createAuxLineMeshData(
                     frameData,
                     auxLineProfile.displaySettings
                 );
-            }
+            },
         },
         profile
     );
@@ -237,7 +286,7 @@ inline auto createMeshData(
 //   - The new mesh data created, containing all the frames
 //   - The frame infomation
 inline auto createMeshDataAllFrames(
-    const ElementProfile& profile,
+    ElementProfile&       profile,
     const DisplayData&    displayData
 ) {
     MeshData meshData;
@@ -253,9 +302,10 @@ inline auto createMeshDataAllFrames(
         const int sizeCur = meshData.data.size();
         const int sizeInc = std::visit(
             Overload {
-                [&](const MembraneProfile& prof) {
+                [&](MembraneProfile& prof) {
                     return appendMembraneMeshData(
                         meshData,
+                        prof.displayStates,
                         select(displayData.frames[i].membranes, prof.selector),
                         prof.displaySettings
                     );
@@ -274,13 +324,20 @@ inline auto createMeshDataAllFrames(
                         prof.displaySettings
                     );
                 },
+                [&](const BubbleProfile& prof) {
+                    return appendBubbleMeshData(
+                        meshData,
+                        select(displayData.frames[i].bubbles, prof.selector),
+                        prof.displaySettings
+                    );
+                },
                 [&](const AuxLineProfile& prof) {
                     return appendAuxLineMeshData(
                         meshData,
                         displayData.frames[i],
                         prof.displaySettings
                     );
-                }
+                },
             },
             profile
         );
@@ -348,7 +405,13 @@ inline void draw(
     // glDrawElements(ve->state.eleMode, ve->state.vertexIndices.size(), GL_UNSIGNED_INT, (void*)0);
 
 }
-template< typename GeometryDisplaySettings >
+template<
+    typename GeometryDisplaySettings,
+    std::enable_if_t<
+        std::is_same_v< GeometryDisplaySettings, SurfaceDisplaySettings > ||
+        std::is_same_v< GeometryDisplaySettings, LineDisplaySettings >
+    >* = nullptr
+>
 inline void draw(
     MeshData&                          meshData,
     std::optional< MeshDataFrameInfo > frameInfo,
@@ -382,6 +445,9 @@ inline void draw(MeshData& meshData, std::optional< MeshDataFrameInfo > frameInf
     } else {
         draw(meshData, frameInfo, shader, settings.surface);
     }
+}
+inline void draw(MeshData& meshData, std::optional< MeshDataFrameInfo > frameInfo, const Shader& shader, const SphereDisplaySettings& settings) {
+    draw(meshData, frameInfo, shader, settings.surface);
 }
 inline void draw(MeshData& meshData, std::optional< MeshDataFrameInfo > frameInfo, const Shader& shader, const AuxLineDisplaySettings& settings) {
     draw(meshData, frameInfo, shader, settings.line);

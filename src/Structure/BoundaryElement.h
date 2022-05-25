@@ -23,10 +23,7 @@
 #include "Neighbor.h"
 #include "Component.h"
 
-#include "GController.h"
-
-//FORWARD DECLARATIONS
-class Bead;
+namespace medyan {
 
 /// Represents an element of a BoundarySurface.
 /*!
@@ -133,5 +130,7 @@ public:
 
 
 };
+
+} // namespace medyan
 
 #endif

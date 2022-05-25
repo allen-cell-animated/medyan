@@ -16,6 +16,7 @@
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 #include "common.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Neighbor;
 class DynamicNeighbor;
@@ -84,4 +85,7 @@ public:
     static ofstream _crosscheckdumpFileNL;
 };
 #endif
+
+} // namespace medyan
+
 #endif

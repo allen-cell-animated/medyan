@@ -15,28 +15,45 @@
 #define MEDYAN_MTOCAttachmentHarmonic_h
 
 #include "common.h"
+#include "Util/Math/Vec.hpp"
 
-//FORWARD DECLARATIONS
-class Bead;
+namespace medyan {
 
 /// A harmonic potential used by the MTOCAttachment template.
-class MTOCAttachmentHarmonic {
+struct MTOCAttachmentHarmonic {
     
-public:
-
     floatingpoint energy(
-        floatingpoint *coord,
-        int *beadSet,
-        std::size_t beadStartIndex,
-        std::size_t bubbleStartIndex,
-        floatingpoint *kstr,
-        floatingpoint* radiusvec
-    ) const;
-    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                floatingpoint *kstr, floatingpoint* radiusvec);
+        const floatingpoint *coord,
+        Index bubbleCoordIndex, Index beadCoordIndex,
+        floatingpoint kstr, floatingpoint radius
+    ) const {
+        auto coord1 = makeRefVec<3>(coord + bubbleCoordIndex);
+        auto coord2 = makeRefVec<3>(coord + beadCoordIndex);
+        auto diff = distance(coord1, coord2) - radius;
+        
+        auto energy = (kstr / 2) * diff * diff;
+        
+        return energy;
+    }
 
-    
-    //void forcesAux(Bead*, Bead*, double, double);
+    void forces(
+        const floatingpoint *coord, floatingpoint *force,
+        Index bubbleCoordIndex, Index beadCoordIndex,
+        floatingpoint kstr, floatingpoint radius
+    ) const {
+        auto coord1 = makeRefVec<3>(coord + bubbleCoordIndex);
+        auto coord2 = makeRefVec<3>(coord + beadCoordIndex);
+        auto force1 = makeRefVec<3>(force + bubbleCoordIndex);
+        auto force2 = makeRefVec<3>(force + beadCoordIndex);
+
+        auto dist = distance(coord1, coord2);
+        auto f0 = kstr * (dist - radius) / dist;
+
+        force1 += f0 * (coord2 - coord1);
+        force2 += f0 * (coord1 - coord2);
+    }
 };
+
+} // namespace medyan
 
 #endif

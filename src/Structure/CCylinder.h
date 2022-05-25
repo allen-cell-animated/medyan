@@ -14,14 +14,18 @@
 #ifndef MEDYAN_CCylinder_h
 #define MEDYAN_CCylinder_h
 
+#include <map>
+#include <unordered_set>
+
 #include "common.h"
 
 #include "CMonomer.h"
-#include "Compartment.h"
 
 #include "SysParams.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
+class Compartment;
 class Cylinder;
 class ChemSim;
 class ChemManager;
@@ -79,7 +83,7 @@ private:
     
     short _size = 0; ///< Maximum length
     
-    static ChemSim* _chemSim;   ///< A pointer to the ChemSim, initialized by CController
+    inline static medyan::ChemSim* _chemSim = nullptr;   ///< A pointer to the ChemSim, initialized by CController
 
     bool initialized = false;//CCylinder is completely self-consistent only after
     // initializeCCylinder function is called from ChemManager. This variable will help
@@ -181,5 +185,6 @@ public:
     
 };
 
+} // namespace medyan
 
 #endif

@@ -20,6 +20,7 @@
 
 #include "BoundarySurface.h"
 
+namespace medyan {
 /// A simple implementation of the BoundarySurface class.
 class Plane: public BoundarySurface {
     
@@ -92,5 +93,7 @@ public:
     CylinderXYZ(SubSystem* s, vector<floatingpoint> coords, floatingpoint radius, floatingpoint height);
     
 };
+
+} // namespace medyan
 
 #endif

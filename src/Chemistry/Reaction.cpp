@@ -23,6 +23,7 @@
 
 #include "CUDAcommon.h"
 
+namespace medyan {
 template<unsigned short M, unsigned short N>
     void Reaction<M,N>::updatePropensityImpl() {
 
@@ -92,9 +93,13 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
     for(auto &rs : _rspecies){
         int molec = rs->getSpecies().getMolecule();
         auto speciesptr = &rs->getSpecies();
-        auto status = speciesptr->getsearchdirection();
-        //status->true, forward search will be used (Diffusing/Bulk)
-        //status->false, reverse search will be used (SpeciesBound,SingleBinding/PairBinding/Filament)
+        auto status =
+            speciesptr->getType() == SpeciesType::BULK
+            || speciesptr->getType() == SpeciesType::DIFFUSING
+            || speciesptr->getType() == SpeciesType::singleBinding
+            || speciesptr->getType() == SpeciesType::pairBinding;
+        // status->true, forward search will be used (Diffusing / Bulk / Single binding / Pair binding).
+        // status->false, reverse search will be used (Filament / Plus end / Minus end / Bound / Linker / Motor).
         if(status) {
             //check if that species exists in the compartment
             auto vit = find_if(spcv.species().cbegin(), spcv.species().cend(),
@@ -127,15 +132,13 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
     //   - The _isProtoCompartment field is directly set to false, regardless of the current reaction.
     //
     // Note: the clone has side effects on the current reaction:
-    //   - The _signal will be moved to the new reaction.
-    //Create new reaction, copy ownership of signal
+    //   - The callbacks will be moved to the new reaction.
     Reaction* newReaction = new Reaction<M,N>(species, _rate_bare, false, _volumeFrac, _rateVolumeDepExp);
     newReaction->_rate = _rate;
     newReaction->_Id = _Id;
-#ifdef REACTION_SIGNALING
-    newReaction->_signal = std::move(_signal);
-    _signal = nullptr;
-#endif
+    newReaction->callbacks_ = std::move(callbacks_);
+    callbacks_.clear();
+
     //Copy reaction type
     newReaction->_reactionType = _reactionType;
     newReaction->_gnum = _gnum;
@@ -280,3 +283,4 @@ template void Reaction<4,2>::activateReactionUnconditionalImpl();
 template void Reaction<4,2>::passivateReactionImpl();
 template Reaction<4,2>* Reaction<4,2>::cloneImpl(const SpeciesPtrContainerVector &spcv);
 
+} // namespace medyan

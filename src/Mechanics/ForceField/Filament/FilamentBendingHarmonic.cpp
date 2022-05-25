@@ -25,6 +25,7 @@
 #include "nvToolsExt.h"
 #endif
 
+namespace medyan {
 using namespace mathfunc;
 #ifdef CUDAACCL
 void FilamentBendingHarmonic::deallocate(){
@@ -202,74 +203,12 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, size_t nint,
 
         U_i = kbend[i] * ( 1 - l1l2 / L1L2 );
 
-        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-
-            //set culprit and return
-            FilamentInteractions::_filamentCulprit = (Filament*)(Cylinder::getCylinders()[i]->getParent());
-
-            return -1;
-        }
-
         U += U_i;
     }
 
     return U;
 }
 
-floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, floatingpoint *f, size_t nint, int *beadSet,
-                                       floatingpoint *kbend, floatingpoint *eqt, floatingpoint d ){
-
-    int n = FilamentBending<FilamentBendingHarmonic>::n;
-
-    floatingpoint *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2;
-    floatingpoint *force1, *force2, *force3;
-
-    floatingpoint U = 0.0;
-
-    for(int i = 0; i < nint; i += 1) {
-
-        coord1 = &coord[beadSet[n * i]];
-        coord2 = &coord[beadSet[n * i + 1]];
-        coord3 = &coord[beadSet[n * i + 2]];
-
-        force1 = &f[beadSet[n * i]];
-        force2 = &f[beadSet[n * i + 1]];
-        force3 = &f[beadSet[n * i + 2]];
-
-
-        L1 = sqrt(scalarProductStretched(coord1, force1, coord2, force2,
-                                         coord1, force1, coord2, force2, d));
-        L2 = sqrt(scalarProductStretched(coord2, force2, coord3, force3,
-                                         coord2, force2, coord3, force3, d));
-
-        L1L2 = L1*L2;
-        l1l2 = scalarProductStretched(coord1, force1, coord2, force2,
-                                      coord2, force2, coord3, force3, d);
-
-
-        U_i = kbend[i] * ( 1 - l1l2 / L1L2);
-
-        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-
-            for(auto cyl:Cylinder::getCylinders()){
-                auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
-                auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
-                if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) { // FIXME this is unsafe
-                    auto F = dynamic_cast<Filament*>(cyl->getParent());
-                    FilamentInteractions::_filamentCulprit = F;
-                    break;
-                }
-            }
-            return -1;
-        }
-
-        U += U_i;
-    }
-
-    return U;
-}
 
 void FilamentBendingHarmonic::forces(floatingpoint *coord, floatingpoint *f, size_t nint, int *beadSet,
                                      floatingpoint *kbend, floatingpoint *eqt){
@@ -339,3 +278,5 @@ void FilamentBendingHarmonic::forces(floatingpoint *coord, floatingpoint *f, siz
 
     }
 }
+
+} // namespace medyan

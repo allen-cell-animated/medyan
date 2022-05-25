@@ -18,6 +18,7 @@
 #include "Species.h"
 #include "ReactionBase.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Compartment;
 class SubSystem;
@@ -37,7 +38,9 @@ class CCylinder;
 class CBound {
     
 protected:
-    short _filamentType; ///< The filament type that this CBound binds to
+    // The filament types this CBound binds to.
+    int filType1_ = 0;
+    int filType2_ = 0;
     
     SpeciesBound* _firstSpecies = nullptr; ///< Corresponding first species on Filament
     SpeciesBound* _secondSpecies = nullptr;///< Corresponding second species on Filament
@@ -60,10 +63,10 @@ protected:
     
 public:
     /// Constructor, just sets species
-    CBound(short filamentType, Compartment* c, CCylinder* cc1, CCylinder* cc2,
+    CBound(int filType1, int filType2, Compartment* c, CCylinder* cc1, CCylinder* cc2,
            short position1, short position2)
     
-        : _filamentType(filamentType), _compartment(c), _cc1(cc1), _cc2(cc2),
+        : filType1_(filType1), filType2_(filType2), _compartment(c), _cc1(cc1), _cc2(cc2),
           _position1(position1), _position2(position2) {}
     
     /// Virtual destructor
@@ -146,5 +149,7 @@ public:
     ReactionBase* getOffReaction() {return _offRxn;}
     //@}
 };
+
+} // namespace medyan
 
 #endif

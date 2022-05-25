@@ -11,25 +11,11 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "MMotorGhost.h"
+#include "Structure/MMotorGhost.h"
 
 #include "SysParams.h"
-#include "MathFunctions.h"
 
-using namespace mathfunc;
-
-MMotorGhost::MMotorGhost(int motorType, int numBoundHeads, floatingpoint position1, floatingpoint position2,
-                        const vector<floatingpoint>& coord11, const vector<floatingpoint>& coord12,
-                        const vector<floatingpoint>& coord21, const vector<floatingpoint>& coord22) {
-    
-    if(!SysParams::Mechanics().MStretchingK.empty())
-        _kStretch = SysParams::Mechanics().MStretchingK[motorType] * numBoundHeads;
-    
-    auto m1 = midPointCoordinate(coord11, coord12, position1);
-    auto m2 = midPointCoordinate(coord21, coord22, position2);
-    _eqLength = twoPointDistance(m1, m2);
-}
-
+namespace medyan {
 void MMotorGhost::initializerestart(int motorType, floatingpoint eqLength,
 		floatingpoint numBoundHeads){
 
@@ -42,13 +28,15 @@ void MMotorGhost::initializerestart(int motorType, floatingpoint eqLength,
 
     if(numBoundHeads > 0) {
         if(!SysParams::Mechanics().MStretchingK.empty())
-            _kStretch = SysParams::Mechanics().MStretchingK[motorType] * numBoundHeads;
+            kStretch = SysParams::Mechanics().MStretchingK[motorType] * numBoundHeads;
     }
-    _eqLength = eqLength;}
+    this->eqLength = eqLength;
+}
 
 void MMotorGhost::setStretchingConstant(int motorType, floatingpoint numBoundHeads) {
     
     if(!SysParams::Mechanics().MStretchingK.empty())
-        _kStretch = SysParams::Mechanics().MStretchingK[motorType] * numBoundHeads;
+        kStretch = SysParams::Mechanics().MStretchingK[motorType] * numBoundHeads;
 }
 
+} // namespace medyan

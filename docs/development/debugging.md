@@ -2,6 +2,8 @@
 
 ## VS Code
 
+Note: On MacOS the default VS Code C++ debugger is buggy so use the CodeLLDB extension instead.
+
 ### Build MEDYAN for debug
 
 ```console

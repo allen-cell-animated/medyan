@@ -15,6 +15,8 @@
 
 #include "MathFunctions.h"
 
+
+namespace medyan {
 using namespace mathfunc;
 
 /**
@@ -339,3 +341,5 @@ Vec3 TriangleBeadExclVolRepulsion::loadForces(
     return forceBead;
 
 }
+
+} // namespace medyan

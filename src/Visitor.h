@@ -14,10 +14,12 @@
 #ifndef MEDYAN_Visitor_h
 #define MEDYAN_Visitor_h
 
-#include "common.h"
+#include <functional>
 
+#include "common.h"
 #include "Component.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Species;
 class ReactionBase;
@@ -218,5 +220,7 @@ protected:
     /// Implementation of the pred(...) method
     virtual bool predImpl(ReactionBase *r) override {return _pred(r);}
 };
+
+} // namespace medyan
 
 #endif

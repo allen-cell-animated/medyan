@@ -8,60 +8,45 @@ An unordered edge contains 2 vertices.
 */
 
 #include "common.h"
-#include "Database.h"
-#include "Trackable.h"
-#include "DynamicNeighbor.h"
-#include "MathFunctions.h"
-#include "Movable.h"
 #include "Structure/CellList.hpp"
+#include "Util/Math/Vec.hpp"
+#include "Util/StableVector.hpp"
 
-// Forward declarations
+namespace medyan {
+
+// Forward declarations.
 class Compartment;
 class Membrane;
 
-class Edge:
-    public Movable,
-    public Trackable,
-    public Database< Edge, false > {
+class Edge {
 
 private:
 
-    Membrane* parent_;
-    size_t topoIndex_; // Index in the meshwork topology.
-
-    void updateCoordinate(); // helper function to update coordiante of this edge
-
-    cell_list::CellListElementUser< Edge, Compartment > _cellElement;
+    StableVectorIndex<Membrane> parentSysIndex_ {};
+    Index topoIndex_ = 0; // Index in the meshwork topology.
 
 public:
-    Edge(Membrane *parent, size_t topoIndex);
-    ~Edge();
+    medyan::CellListElementUser< StableVector<Edge>::Index, Compartment* > cellElement;
+    StableVectorIndex<Edge> sysIndex {};
 
-    Membrane* getParent()const { return parent_; }
-    void setTopoIndex(size_t index) { topoIndex_ = index; }
+    medyan::Vec< 3, floatingpoint > coordinate {}; // Coordinate of the mid point, updated with updateCoordiante()
 
-    mathfunc::Vec< 3, floatingpoint > coordinate; // Coordinate of the mid point, updated with updateCoordiante()
 
-    /// Get all instances of this class from the SubSystem
-    static const vector<Edge*>& getEdges() {
-        return getElements();
-    }
+    Edge() = default;
+    Edge(const Edge&) = default;
 
-    int getType()const;
-    void printSelf()const;
+    void setParentSysIndex(StableVectorIndex<Membrane> parentSysIndex) { parentSysIndex_ = parentSysIndex; }
+    StableVectorIndex<Membrane> getParentSysIndex() const { return parentSysIndex_; }
+    template< typename Context >
+    Membrane& getParent(Context& sys) const { return sys.membranes[parentSysIndex_]; }
 
-    //@{
-    /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem()override { }
-    virtual void removeFromSubSystem()override { }
-    //@}
+    void setTopoIndex(Index index) { topoIndex_ = index; }
+    auto getTopoIndex() const { return topoIndex_; }
 
-    //@{
-    /// Implements Movable
-    virtual void updatePosition() override;
-    //@}
-    Compartment* getCompartment() const { return _cellElement.manager->getHeadPtr(_cellElement); }
+    Compartment* getCompartment() const { return cellElement.manager->getHead(cellElement); }
 
 };
+
+} // namespace medyan
 
 #endif

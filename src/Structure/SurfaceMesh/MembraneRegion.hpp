@@ -19,6 +19,8 @@
  * 
 ******************************************************************************/
 
+namespace medyan {
+
 template< typename MemType >
 class MembraneRegion {
 public:
@@ -40,7 +42,7 @@ public:
         if(excludeChildren) {
             const auto n = hier->numberOfChildren();
             _hierIn.reserve(n);
-            for(size_t idx = 0; idx < n; ++idx) {
+            for(Index idx = 0; idx < n; ++idx) {
                 _hierIn.push_back( static_cast< HierarchyType* >(hier->children(idx)) );
             }
         }
@@ -53,14 +55,14 @@ public:
     {
         const auto n = parentOfExcluded->numberOfChildren();
         _hierIn.reserve(n);
-        for(size_t idx = 0; idx < n; ++idx) {
+        for(Index idx = 0; idx < n; ++idx) {
             _hierIn.push_back( static_cast< HierarchyType* >(parentOfExcluded->children(idx)) );
         }
     }
 
     /// Is point inside region
-    template< typename VecType, std::enable_if_t< VecType::vec_size == 3 >* = nullptr >
-    bool contains(const VecType& point) const {
+    template< typename VecType, typename Context, std::enable_if_t< VecType::vec_size == 3 >* = nullptr >
+    bool contains(Context& sys, const VecType& point) const {
         /**************************************************************************
         This function checks whether a certain point is in the region. If a point
         is in the region, it must satisfy all of the following.
@@ -76,7 +78,7 @@ public:
         if(!_hierOut.empty()) {
             bool hierOutGood = false;
             for(auto eachHier: _hierOut) {
-                if(eachHier->getMembrane()->contains(point)) {
+                if(medyan::contains(sys, sys.membranes[eachHier->getMembraneIndex()].getMesh(), point)) {
                     hierOutGood = true;
                     break;
                 }
@@ -85,7 +87,7 @@ public:
         }
 
         for(auto eachHier: _hierIn) {
-            if(eachHier->getMembrane()->contains(point)) return false;
+            if(medyan::contains(sys, sys.membranes[eachHier->getMembraneIndex()].getMesh(), point)) return false;
         }
 
         return true;
@@ -102,19 +104,20 @@ public:
     Factory functions
     **************************************************************************/
     /// Create region with hier's children as outer limit
-    static std::unique_ptr<MembraneRegion> makeByChildren(const HierarchyType& hier, bool excludeChildren=false) {
+    template< typename Context >
+    static std::unique_ptr<MembraneRegion> makeByChildren(Context& sys, const HierarchyType& hier, bool excludeChildren=false) {
         std::unique_ptr< MembraneRegion > mr(new MembraneRegion());
 
         for(const auto& it: hier.children()) {
             auto eachHier = static_cast< HierarchyType* >(it.get());
-            if(eachHier->getMembrane()->isClosed()) {
+            if(sys.membranes[eachHier->getMembraneIndex()].isClosed()) {
                 mr->_hierOut.push_back(eachHier);
 
                 if(excludeChildren) {
-                    size_t n = eachHier->numberOfChildren();
-                    for(size_t idx = 0; idx < n; ++idx) {
+                    Size n = eachHier->numberOfChildren();
+                    for(Index idx = 0; idx < n; ++idx) {
                         auto childHier = static_cast< HierarchyType* >(eachHier->children(idx));
-                        if(childHier->getMembrane()->isClosed())
+                        if(sys.membranes[childHier->getMembraneIndex()].isClosed())
                             mr->_hierIn.push_back( childHier );
                     }
                 }
@@ -124,5 +127,7 @@ public:
         return mr;
     }
 };
+
+} // namespace medyan
 
 #endif

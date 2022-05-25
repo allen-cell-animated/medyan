@@ -16,6 +16,7 @@
 
 #include "common.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Bead;
 
@@ -30,5 +31,7 @@ public:
 	            unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos,
 	            floatingpoint *stretchforce);
 };
+
+} // namespace medyan
 
 #endif

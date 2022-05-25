@@ -21,6 +21,7 @@
 #define SPECIESL_BINDING_INDEX 1
 #define SPECIESL_DIFFUSING_INDEX_OFFRXN 2
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Linker;
 class SubSystem;
@@ -42,15 +43,18 @@ public:
     ///Constructor
     ///@param pos1 - monomer index on first cylinder
     ///@param pos2 - monomer index on second cylinder
-    CLinker(short linkerType, Compartment* c,
-            CCylinder* cc1, CCylinder* cc2, int position1, int position2);
+    CLinker(
+        int linkerSpeciesIndex1,
+        int linkerSpeciesIndex2,
+        Compartment* c,
+        CCylinder* cc1, CCylinder* cc2, int position1, int position2);
     
     ///Destructor, removes off reaction from system
     ~CLinker();
     
     /// Copy constructor, standard
     CLinker(const CLinker& rhs, Compartment* c)
-        : CBound(rhs._filamentType, c, rhs._cc1, rhs._cc2, rhs._position1, rhs._position2),
+        : CBound(rhs.filType1_, rhs.filType2_, c, rhs._cc1, rhs._cc2, rhs._position1, rhs._position2),
           _pLinker(rhs._pLinker){
         
         //set species
@@ -90,5 +94,6 @@ public:
     
 };
 
+} // namespace medyan
 
 #endif

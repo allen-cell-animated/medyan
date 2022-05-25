@@ -14,21 +14,20 @@
 #ifndef MEDYAN_DissipationTracker_h
 #define MEDYAN_DissipationTracker_h
 
+#include <fstream>
+
 #include "common.h"
 
 #include "MathFunctions.h"
-#include "ChemSim.h"
 #include "ReactionBase.h"
-#include "CompartmentGrid.h"
 #include "Filament.h"
-#include "MController.h"
 #include "common.h"
 #include "SysParams.h"
-#include <fstream>
 #include "MotorGhost.h"
 #include "Linker.h"
 #include "Mechanics/ForceField/Types.hpp"
 
+namespace medyan {
 using namespace mathfunc;
 
 /* Dissipation Tracker is used to track the energetics of the system.  It has functions to compute the change in Gibbs free energy of a chemical reaction
@@ -41,9 +40,6 @@ using namespace mathfunc;
 class DissipationTracker{
     
 private:
-    
-    // pointer to the mechanical controller
-    MController* _mcon;
     
     // reaction counter - not used
     int count;
@@ -119,7 +115,12 @@ public:
     
     // Constructor, allow access to objects that information is needed from, set all energy
     // tracking variables to zero
-    DissipationTracker(MController* mcon = NULL):  _mcon(mcon) {
+    DissipationTracker(const medyan::SimulConfig& conf):
+        // get the stepFrac parameter for myosin walking, assume all fil and motor are type 0
+        d_step(conf.chemParams.motorStepSize.empty() ? 0 : conf.chemParams.motorStepSize[0]),
+        d_total(conf.geoParams.cylinderSize[0] / conf.chemParams.numBindingSites[0]),
+        _stepFrac(d_step / d_total)
+    {
         count = 0;
         cumDissEnergy=0;
         cumDissChemEnergy=0;
@@ -151,15 +152,15 @@ public:
     float v = (float)(nx*ny*nz);
     
     // get the stepFrac parameter for myosin walking, assume all fil and motor are type 0
-    floatingpoint d_step = SysParams::Chemistry().motorStepSize[0];
-    floatingpoint d_total = (floatingpoint)SysParams::Geometry().cylinderSize[0] /
-    SysParams::Chemistry().numBindingSites[0];
-    floatingpoint _stepFrac = d_step / d_total;
+    floatingpoint d_step = 0;
+    floatingpoint d_total = 0;
+    floatingpoint _stepFrac = 0;
     
     
     // Find the Gibbs free energy change for a reaction using its ReactionBase representation
     floatingpoint getDelGChem(ReactionBase* re){
-        
+        using std::log;
+
         // get the type of reaction
         ReactionType reType = re->getReactionType();
             
@@ -189,7 +190,7 @@ public:
         hrcdid = re->getHRCDID();
         
         // add the name of the diffusing species to the HRCDID of the diffusion reaction
-        if(reType==1){
+        if(reType == ReactionType::DIFFUSION){
             hrcdid = "DIF_";
             hrcdid += reacNames[0];
         }
@@ -201,20 +202,20 @@ public:
         float delG;
         delG=0;
         
-        if(reType==0) {
+        if(reType == ReactionType::REGULAR) {
             // Regular Reaction
             delGZero =  re->getGNumber();
             delGZero -= sigma*log(volFrac);
             
             delG = delGGenChem(delGZero, reacN, reacNu, prodN, prodNu);
             
-        } else if(reType==1){
+        } else if(reType == ReactionType::DIFFUSION){
             // Diffusion Reaction
             
             delG = delGDifChem(reacN[0],prodN[0]);
             
             
-        } else if(reType==2){
+        } else if(reType == ReactionType::POLYMERIZATIONPLUSEND){
             // Polymerization Plus End
             
             delGZero = re->getGNumber();
@@ -224,7 +225,7 @@ public:
             delG = delGPolyChem(delGZero,nMon,"P");
             
             
-        } else if(reType==3){
+        } else if(reType == ReactionType::POLYMERIZATIONMINUSEND){
             // Polymerization Minus End
             
             delGZero = re->getGNumber();
@@ -234,7 +235,7 @@ public:
             delG = delGPolyChem(delGZero,nMon,"P");
             
             
-        } else if(reType==4){
+        } else if(reType == ReactionType::DEPOLYMERIZATIONPLUSEND){
             // Depolymerization Plus End
             
             delGZero = re->getGNumber();
@@ -243,7 +244,7 @@ public:
             species_copy_t nMon = prodN[0];
             delG = delGPolyChem(delGZero,nMon,"D");
             
-        } else if(reType==5){
+        } else if(reType == ReactionType::DEPOLYMERIZATIONMINUSEND){
             // Depolymerization Minus End
             
             delGZero = re->getGNumber();
@@ -253,7 +254,7 @@ public:
             delG = delGPolyChem(delGZero,nMon,"D");
             
             
-        } else if(reType==6){
+        } else if(reType == ReactionType::LINKERBINDING){
             // Linker Binding
             delGZero=re->getGNumber();
             delGZero += log(volFrac);
@@ -263,7 +264,7 @@ public:
             
 
             
-        } else if(reType==7){
+        } else if(reType == ReactionType::MOTORBINDING){
             // Motor Binding
             // need to implement volFrac change here
             floatingpoint rn=re->getGNumber();
@@ -276,7 +277,7 @@ public:
             delG += log(volFrac);
             
             
-        } else if(reType==8){
+        } else if(reType == ReactionType::LINKERUNBINDING){
             // Linker Unbinding
             delGZero=re->getGNumber();
             delGZero -= log(volFrac);
@@ -290,7 +291,7 @@ public:
             recordLinkerUnbinding(l);
             
             
-        } else if(reType==9){
+        } else if(reType == ReactionType::MOTORUNBINDING){
             // Motor Unbinding
             floatingpoint rn=re->getGNumber();
             
@@ -304,20 +305,20 @@ public:
             delG -= log(volFrac);
             recordMotorUnbinding(m);
             
-        } else if(reType==10){
+        } else if(reType == ReactionType::MOTORWALKINGFORWARD){
             // Motor Walking Forward
             delG = re->getGNumber();
             delG = delG*(1/_stepFrac);
             
             
             
-        } else if(reType==11){
+        } else if(reType == ReactionType::MOTORWALKINGBACKWARD){
             // Motor Walking Backward
             delG = -(re->getGNumber());
             delG = 0;
             
             
-        } else if(reType==12){
+        } else if(reType == ReactionType::AGING){
             // Filament Aging
             
             vector<species_copy_t> numR;
@@ -331,19 +332,19 @@ public:
             
             delG = delGGenChem(delGZero, numR, reacNu, numP, prodNu);
             
-        } else if(reType==13){
+        } else if(reType == ReactionType::FILAMENTCREATION){
             // Filament Creation, not currently supported
             
-        } else if(reType==14){
+        } else if(reType == ReactionType::FILAMENTDESTRUCTION){
             // Filament Destruction, not currently supported
             
-        } else if(reType==15){
+        } else if(reType == ReactionType::BRANCHING){
             // Branching, not currently supported
             
-        } else if(reType==16){
+        } else if(reType == ReactionType::BRANCHUNBINDING){
             // Branch Unbinding, not currently supported
             
-        } else if(reType==17){
+        } else if(reType == ReactionType::SEVERING){
             // Severing, not currently supported
             
         }
@@ -369,7 +370,7 @@ public:
         updateHRCDVec(hrcdid,delG);
         
         if(hrcdid=="DNT"){
-            cout<<reType<<endl;
+            cout<< medyan::underlying(reType) <<endl;
         }
 
 
@@ -385,10 +386,6 @@ public:
         GChem += getDelGChem(re);
         updateCount();
         
-    }
-    
-    // return the mechanical energy of the system
-    [[deprecated]] void getMechEnergy(){
     }
     
     
@@ -444,12 +441,12 @@ public:
         HRMDVec1.clear();
         
         for(auto i = 0; i < report.individual.size(); i++){
-            HRMDVec1.push_back(make_tuple(report.individual[i].name, report.individual[i].energy));
+            HRMDVec1.push_back(make_tuple(report.individual[i].name, report.individual[i].energy / kT));
             cumHRMDMechDiss.push_back(make_tuple(report.individual[i].name, 0.0));
             cumHRMDMechEnergy.push_back(make_tuple(report.individual[i].name, 0.0));
         };
         
-        G1 = report.total;
+        G1 = report.total / kT;
       
     }
     
@@ -457,20 +454,20 @@ public:
     void setG2(const EnergyReport& report){
         HRMDVec2.clear();
         for(auto i = 0; i < report.individual.size(); i++){
-            HRMDVec2.push_back(make_tuple(report.individual[i].name, report.individual[i].energy));
+            HRMDVec2.push_back(make_tuple(report.individual[i].name, report.individual[i].energy / kT));
         };
         HRMDMat.push_back(HRMDVec2);
-        G2 = report.total;
+        G2 = report.total / kT;
     }
     
     // set the value of GMid
     void setGMid(const EnergyReport& report){
         HRMDVecMid.clear();
         for(auto i = 0; i < report.individual.size(); i++){
-            HRMDVecMid.push_back(make_tuple(report.individual[i].name, report.individual[i].energy));
+            HRMDVecMid.push_back(make_tuple(report.individual[i].name, report.individual[i].energy / kT));
         };
         HRMDMat.push_back(HRMDVecMid);
-        GMid = report.total;
+        GMid = report.total / kT;
     }
     
     // perform multiple functions to update cumulative energy counters and reset the mechanical energy variables
@@ -643,5 +640,6 @@ public:
     }
 };
 
+} // namespace medyan
 
 #endif

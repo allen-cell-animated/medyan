@@ -3,6 +3,8 @@
 
 #include "MathFunctions.h"
 
+namespace medyan {
+
 // A harmonic potential used by the MembraneStretching
 struct MembraneStretchingHarmonic {
 
@@ -16,14 +18,14 @@ struct MembraneStretchingHarmonic {
     }
     
     void forces(
-        floatingpoint* force, double area, const mathfunc::Vec3& dArea, double kElastic, double eqArea
+        FP* force, double area, const Vec3d& dArea, double kElastic, double eqArea
     ) const {
         // F_i = -grad_i U = -k / A_0 * (A - A_0) * grad_i A
         // A(rea) and grad_i A(rea) are obtained as function parameters
 
         const auto deltaF = (- kElastic * (area - eqArea) / eqArea) * dArea;
 
-        for(size_t i = 0; i < 3; ++i) force[i] += deltaF[i]; // v->force += deltaF;
+        for(int i = 0; i < 3; ++i) force[i] += deltaF[i]; // v->force += deltaF;
     }
 
 };
@@ -37,10 +39,12 @@ struct MembraneStretchingLinear {
         return tension * area;
     }
 
-    void forces(floatingpoint* force, const mathfunc::Vec3& dArea, double tension) const {
+    void forces(FP* force, const Vec3& dArea, double tension) const {
         const auto deltaF = - tension * dArea;
         for(size_t i = 0; i < 3; ++i) force[i] += deltaF[i];
     }
 };
+
+} // namespace medyan
 
 #endif

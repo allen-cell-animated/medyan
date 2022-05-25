@@ -17,13 +17,18 @@
 #include <fstream>
 
 #include "common.h"
+#include "MedyanMeta.hpp"
+#include "Parser.h"
+#include "Chemistry/DissipationTracker.h"
+#include "Mechanics/ForceField/ForceFieldManager.h"
+#include "Structure/Output/OMeta.hpp"
+#include "Structure/Output/OSnapshot.hpp"
 
-#include "DissipationTracker.h"
-#include "ForceFieldManager.h"
 
 ///FORWARD DECLARATIONS
 class CompartmentGrid;
-class SubSystem;
+
+namespace medyan {
 
 /// To print a specified output into a file
 /*!
@@ -58,6 +63,9 @@ public:
 
     /// To be implemented in sub classes
     virtual void print(int snapshot) = 0;
+    virtual void print(int snapshot, const SimulConfig& conf) {
+        print(snapshot);
+    }
 };
 
 /// Print basic information about all Filament, Linker,
@@ -68,7 +76,8 @@ public:
     BasicSnapshot(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~BasicSnapshot() {}
 
-    virtual void print(int snapshot);
+    virtual void print(int snapshot) override {}
+    virtual void print(int snapshot, const SimulConfig& conf) override;
 };
 
 /// Print birth times of beads for each Filament, Linker,
@@ -122,16 +131,6 @@ public:
     virtual void print(int snapshot);
 };
 
-
-/// Print type of each species
-class Types : public Output {
-
-public:
-    Types(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
-    ~Types() {}
-
-    virtual void print(int snapshot);
-};
 
 
 /// Print all chemical species in the system, including diffusing
@@ -203,8 +202,6 @@ public:
     Dissipation(string outputFileName, SubSystem* s, ChemSim* cs)
 
     : Output(outputFileName, s), _cs(cs) {}
-
-    ~Dissipation() {}
 
     virtual void print(int snapshot);
 };
@@ -410,21 +407,6 @@ public:
     virtual void print(int snapshot);
 };
 
-class ForcesOutput : public Output {
-public:
-    ForcesOutput(std::string outputFileName, SubSystem* s, const ForceFieldManager* ffm)
-        : Output(outputFileName, s), ffm_(ffm) {}
-
-    virtual void print(int snapshot) override;
-
-private:
-    const ForceFieldManager* ffm_;
-};
-
-struct IndicesOutput : public Output {
-    IndicesOutput(std::string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
-    virtual void print(int snapshot) override;
-};
 class Projections : public Output {
     
     ForceFieldManager* _ffm;
@@ -514,4 +496,81 @@ public:
 public:
     virtual void print(int snapshot);
 };
+
+
+
+
+
+//------------------------------------------------------------------------------
+// Output: header.
+//------------------------------------------------------------------------------
+
+// Create header for simulation output.
+inline void createSnapshotHeader(h5::Group& grpHeader, const SimulConfig& conf, const ForceFieldManager& ffm) {
+    using namespace std;
+    using namespace h5;
+
+    // Write to file.
+    //----------------------------------
+    // Meta data, including version numbers.
+    writeDataSet(grpHeader, "count", std::int64_t(0));
+
+    Attribute attrVersion = grpHeader.createAttribute<std::string>("version", DataSpace::From(string(GIT_LATEST_TAG)));
+    attrVersion.write(string(GIT_LATEST_TAG));
+
+    writeDataSet(grpHeader, "finished", false);
+
+    // Other meta data.
+    OutputStructMeta outMeta;
+    extract(outMeta, conf, ffm);
+    write(grpHeader, outMeta);
+}
+
+
+// Auxiliary structure for managing snapshot output in controller.
+struct SnapshotOutput {
+    std::filesystem::path filename;
+
+    void init(const std::filesystem::path& filename, const SimulConfig& conf, const ForceFieldManager& ffm) {
+        using namespace h5;
+        this->filename = filename;
+        File file(filename.string(), File::ReadWrite | File::Create | File::Truncate);
+        Group grpHeader = file.createGroup("header");
+
+        createSnapshotHeader(grpHeader, conf, ffm);
+    }
+
+    void append(const SubSystem& sys, const SimulConfig& conf) const {
+        using namespace h5;
+        File file(filename.string(), File::ReadWrite);
+
+        // Get header snapshot count.
+        Group grpHeader = file.getGroup("header");
+        std::int64_t count = 0;
+        readDataSet(count, grpHeader, "count");
+
+        // Extract data from system.
+        OutputStructSnapshot outSnapshot;
+        extract(outSnapshot, sys, conf, count);
+
+        // Write to file.
+        Group grpSnapshots = file.exist("snapshots")
+            ? file.getGroup("snapshots")
+            : file.createGroup("snapshots");
+        write(grpSnapshots, outSnapshot);
+
+        // Update header snapshot count.
+        ++count;
+        writeDataSet(grpHeader, "count", count);
+    }
+
+    void finish() const {
+        h5::File file(filename.string(), h5::File::ReadWrite);
+        h5::Group grpHeader = file.getGroup("header");
+        h5::writeDataSet(grpHeader, "finished", true);
+    }
+};
+
+} // namespace medyan
+
 #endif

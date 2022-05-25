@@ -19,27 +19,26 @@
 #include "CUDAcommon.h"
 #endif
 
-#include "LinkerInteractions.h"
+#include "Mechanics/ForceField/ForceField.h"
 #include "Linker.h"
 
-//FORWARD DECLARATIONS
-class Linker;
+namespace medyan {
 
 /// Represents a Linker stretching interaction
 template <class LStretchingInteractionType>
-class LinkerStretching : public LinkerInteractions {
+class LinkerStretching : public ForceField {
     
 private:
     LStretchingInteractionType _FFType;
 
-    int *beadSet;
+    std::vector<int> beadSet;
     
     ///Array describing the constants in calculation
-    floatingpoint *kstr;
-    floatingpoint *eql;
-    floatingpoint *pos1;
-    floatingpoint *pos2;
-    floatingpoint *stretchforce;
+    std::vector<FP> kstr;
+    std::vector<FP> eql;
+    std::vector<FP> pos1;
+    std::vector<FP> pos2;
+    std::vector<FP> stretchforce;
 
 #ifdef CUDAACCL
     int * gpu_beadSet;
@@ -61,19 +60,19 @@ public:
     const static int n = 4;
     
     ///< Constructor
-    LinkerStretching () {}
-    ~LinkerStretching () {}
+    LinkerStretching () = default;
 
-    virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void deallocate();
+    virtual void vectorize(const FFCoordinateStartingIndex&, const SimulConfig&) override;
     
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+    virtual FP computeEnergy(FP *coord) override;
+    virtual void computeForces(FP *coord, FP *f) override;
     
-    virtual const string getName() {return "Linker Stretching";}
+    virtual std::string getName() override { return "LinkerStretching"; }
 
-    virtual void assignforcemags();
+    virtual void assignforcemags() override;
 };
+
+} // namespace medyan
 
 #endif

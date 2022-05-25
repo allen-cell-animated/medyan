@@ -19,6 +19,7 @@
 
 #include "common.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Bead;
 class BoundaryElement;
@@ -30,12 +31,11 @@ public:
     floatingpoint energy(floatingpoint *coord, int *beadSet,
                   floatingpoint *krep, floatingpoint *slen, int *nneighbors);
     
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                  floatingpoint *krep, floatingpoint *slen, int *nnneighbors, floatingpoint d);
-    
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                 floatingpoint *krep, floatingpoint *slen, int *nneighbors);
 
 };
+
+} // namespace medyan
 
 #endif

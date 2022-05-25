@@ -84,7 +84,7 @@ FBENDINGTHETA:                0.0
 
 # Volume exclusion: Popov et al, 2016, PLoS Comp Biol
 
-VOLUMEFFTYPE:                 REPULSION
+VOLUMEFFTYPE:                 integral
 VOLUMECUTOFF:                 27.0
 VOLUMEK:                      8.57
 
@@ -103,12 +103,12 @@ MSTRETCHINGK:                 2.5
 
 # Number of heads: 
 
-NUMMOTORHEADSMIN:             15 
-NUMMOTORHEADSMAX:             30 
+NUMMOTORHEADSMIN:             ;15 
+NUMMOTORHEADSMAX:             ;30 
 
 # Step size: 
 
-MOTORSTEPSIZE:                6.0
+MOTORSTEPSIZE:                ;6.0
 
 # Dynamic rate - motor catch-bond:
 # Erdmann et al, JCP, 2013
@@ -204,6 +204,5 @@ COMPARTMENTSIZEZ:              500.0
 
 ### 6. Others: DO NOT CHANGE
 
-NDIM:                          3
 PROJECTIONTYPE:                STRAIGHT
-SAMEFILBINDINGSKIP:            100
+allow-same-filament-pair-binding false

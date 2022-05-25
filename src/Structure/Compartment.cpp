@@ -13,20 +13,65 @@
 
 #include "Compartment.h"
 
-#include "Util/Math/CuboidSlicing.hpp"
-#include "GController.h"
-#include "MathFunctions.h"
-using namespace mathfunc;
-#include "Visitor.h"
-//REMOVE LATER
-#include "ChemNRMImpl.h"
+#include <catch2/catch.hpp>
 
+#include "Controller/GController.h"
+#include "MathFunctions.h"
+#include "Visitor.h"
+
+#include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/Triangle.hpp"
+#include "Util/Math/CuboidSlicing.hpp"
 #include "Filament.h"
 #include "Cylinder.h"
 #include <stdint.h>
-#include "GController.h"
+
+namespace medyan {
+using namespace mathfunc;
+
+namespace {
+
+// Get packed integer containing filament ID and cylinder index (position from minus end, starting 0).
+//
+// The result is needed for SIMD neighbor list search to filter out filament binding on nearby cylinders on the same filament.
+//
+// Parameters
+//   - filId: Filament ID.
+//   - cylIndex: Cylinder's position from minus end of the filament, starting zero.
+//   - allowSameFilamentBinding: If set to false, all cylinder indices will be treated as zero.
+inline std::uint32_t packFilamentIdAndCylinderIndexForSimd(std::uint32_t filId, std::uint32_t cylIndex, bool allowSameFilamentBinding) {
+    // Precondition check.
+    //---------------------------------
+    constexpr int numBitsCylIndex = 7;                     // Lower bits
+    constexpr int numBitsFilId = 32 - numBitsCylIndex;     // Higher bits
+    constexpr std::uint32_t maxFilId = (1 << numBitsFilId) - 1;
+    constexpr std::uint32_t maxCylIndex = (1 << numBitsCylIndex) - 1 - ChemParams::minCylinderDistanceSameFilament;
+
+    if(allowSameFilamentBinding && cylIndex > maxCylIndex) {
+        throw std::runtime_error("Cylinder index is greater than maximum allowed.");
+    }
+    if(filId > maxFilId) {
+        throw std::runtime_error("Filament ID is greater than maximum allowed.");
+    }
+
+    // Actual computation.
+    //---------------------------------
+    return (filId << numBitsCylIndex) | (allowSameFilamentBinding ? cylIndex : 0);
+}
+
+TEST_CASE("Filament ID and cylinder index packing for SIMD", "[SimdUtility]") {
+    // The result depends on some internal implementation of the function. If the constants used by the function changes, the expected results should change as well.
+    CHECK(packFilamentIdAndCylinderIndexForSimd(0, 125, true) == 125);
+    CHECK_THROWS(packFilamentIdAndCylinderIndexForSimd(0, 126, true));
+    CHECK_THROWS(packFilamentIdAndCylinderIndexForSimd(1 << 26, 0, true));
+
+    CHECK(packFilamentIdAndCylinderIndexForSimd(1, 20, true) == 148);
+    CHECK(packFilamentIdAndCylinderIndexForSimd(1, 20, false) == 128);
+}
+
+} // namespace
+
 
 #ifdef SIMDBINDINGSEARCH
 
@@ -63,15 +108,13 @@ void Compartment::SIMDcoordinates_section(){
 
                 int cindex = cyl->getStableIndex();
 
-                _filamentType = Cylinder::getDbDataConst().value[cindex].type;
-                _fID = Cylinder::getDbDataConst().value[cindex].filamentId;
-                _fpos = Cylinder::getDbDataConst().value[cindex].positionOnFilament -
-                        Cylinder::getDbDataConst().value[cindex].filamentFirstEntry;
+                _filamentType = Cylinder::getDbDataConst()[cindex].type;
+                _fID = Cylinder::getDbDataConst()[cindex].filamentId;
+                _fpos = Cylinder::getDbDataConst()[cindex].positionOnFilament -
+                        Cylinder::getDbDataConst()[cindex].filamentFirstEntry;
 
-                //packed integer containing filament ID and filament position.
-                //Assumes you don't have 127 (2^7 -1) binding sites
-                uint32_t cylfinfo = (_fID<< 7);
-                cylfinfo = cylfinfo | _fpos;
+                // Packed integer containing filament ID and cylinder index.
+                const auto cylfinfo = packFilamentIdAndCylinderIndexForSimd(_fID, _fpos, SysParams::Chemistry().allowPairBindingOnSameFilament);
 
                 //Only consider cylinders that are filType
                 if (checkftype && _filamentType != filType) continue;
@@ -114,7 +157,7 @@ void Compartment::SIMDcoordinates_section(){
                      * species Filament*/
                     for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
                          it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-                         auto sf = Cylinder::getDbDataConst().value[cindex]
+                         auto sf = Cylinder::getDbDataConst()[cindex]
                                 .chemCylinder->getCMonomer(*it)->activeSpeciesFilament();
                          if(sf !=-1){
                              auto mp = (float) *it /
@@ -148,25 +191,25 @@ void Compartment::SIMDcoordinates_section(){
 
 void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
 
-	if(areEqual(HybridBindingSearchManager::largestlinkerdistance, 0.0)) return;
+	if(areEqual(medyan::HybridBindingSearchManager::largestlinkerdistance, 0.0)) return;
 
     //setting size to the number of maximum binding sites per cylinder * number of
     // cylinders in compartment.
     short bstatepos = 1;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     short maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
-    floatingpoint _rMax = HybridBindingSearchManager::largestlinkerdistance;
+    floatingpoint _rMax = medyan::HybridBindingSearchManager::largestlinkerdistance;
     floatingpoint searchdist = SysParams::Geometry().largestCylinderSize/2 + _rMax;
     bool rMaxvsCmpSize = (SysParams::Geometry().largestCylinderSize/2 + _rMax) <
                             SysParams::Geometry().largestCompartmentSide/2;
 
     floatingpoint coord_bounds[6] = {
-            _coords[0] - SysParams::Geometry().compartmentSizeX/2 + searchdist,
-            _coords[1] - SysParams::Geometry().compartmentSizeY/2 + searchdist,
-            _coords[2] - SysParams::Geometry().compartmentSizeZ/2 + searchdist,
-            _coords[0] + SysParams::Geometry().compartmentSizeX/2 - searchdist,
-            _coords[1] + SysParams::Geometry().compartmentSizeY/2 - searchdist,
-            _coords[2] + SysParams::Geometry().compartmentSizeZ/2 - searchdist};
+            centerCoord[0] - SysParams::Geometry().compartmentSizeX/2 + searchdist,
+            centerCoord[1] - SysParams::Geometry().compartmentSizeY/2 + searchdist,
+            centerCoord[2] - SysParams::Geometry().compartmentSizeZ/2 + searchdist,
+            centerCoord[0] + SysParams::Geometry().compartmentSizeX/2 - searchdist,
+            centerCoord[1] + SysParams::Geometry().compartmentSizeY/2 - searchdist,
+            centerCoord[2] + SysParams::Geometry().compartmentSizeZ/2 - searchdist};
 
     int N = getCylinders().size() * maxnbs;
     //Paritioned coordinates are created for each unique filamentType
@@ -195,17 +238,14 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
             for (auto cyl:getCylinders()) {
                 uint32_t cindex = cyl->getStableIndex();
 
-                _filamentType = Cylinder::getDbData().value[cindex].type;
-                _filamentType = Cylinder::getDbDataConst().value[cindex].type;
-                _fID = Cylinder::getDbDataConst().value[cindex].filamentId;
-                _fpos = Cylinder::getDbDataConst().value[cindex].positionOnFilament-
-                        Cylinder::getDbDataConst().value[cindex].filamentFirstEntry;
+                _filamentType = Cylinder::getDbData()[cindex].type;
+                _filamentType = Cylinder::getDbDataConst()[cindex].type;
+                _fID = Cylinder::getDbDataConst()[cindex].filamentId;
+                _fpos = Cylinder::getDbDataConst()[cindex].positionOnFilament-
+                        Cylinder::getDbDataConst()[cindex].filamentFirstEntry;
 
-
-                //packed integer containing filament ID and filament position.
-                //Assumes you don't have 127 (2^7 -1) cylinders in the same filament
-                uint32_t cylfinfo = (_fID<< 7);
-                cylfinfo = cylfinfo | _fpos;
+                // Packed integer containing filament ID and cylinder index.
+                const auto cylfinfo = packFilamentIdAndCylinderIndexForSimd(_fID, _fpos, SysParams::Chemistry().allowPairBindingOnSameFilament);
 
                 //Consider only cylinders of filamentType fType
                 if (checkftype && _filamentType != filType) continue;
@@ -266,7 +306,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
 
                         auto it = SysParams::Chemistry().bindingSites[_filamentType].begin() + itI;
 
-                        auto sf = Cylinder::getDbDataConst().value[cindex]
+                        auto sf = Cylinder::getDbDataConst()[cindex]
                                 .chemCylinder->getCMonomer(*it)->activeSpeciesFilament();
                         if(sf !=-1){
                             bool state = false;
@@ -322,7 +362,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
 
 void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
 
-	if(areEqual(HybridBindingSearchManager::largestmotordistance,0.0)) return;
+	if(areEqual(medyan::HybridBindingSearchManager::largestmotordistance,0.0)) return;
 
     for(short i =0; i < 27; i++) {
         partitionedcoordx[i].clear();
@@ -338,19 +378,19 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     short maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
 
-    floatingpoint _rMax = HybridBindingSearchManager::largestmotordistance;
+    floatingpoint _rMax = medyan::HybridBindingSearchManager::largestmotordistance;
     floatingpoint searchdist = SysParams::Geometry().largestCylinderSize/2 + _rMax;
     bool rMaxvsCmpSize = (searchdist) <
                          SysParams::Geometry().largestCompartmentSide/2;
 
 //    cout<<"rMaxvsCmpSize "<<rMaxvsCmpSize<<endl;
     floatingpoint coord_bounds[6] = {
-            _coords[0] - SysParams::Geometry().compartmentSizeX/2 + searchdist,
-            _coords[1] - SysParams::Geometry().compartmentSizeY/2 + searchdist,
-            _coords[2] - SysParams::Geometry().compartmentSizeZ/2 + searchdist,
-            _coords[0] + SysParams::Geometry().compartmentSizeX/2 - searchdist,
-            _coords[1] + SysParams::Geometry().compartmentSizeY/2 - searchdist,
-            _coords[2] + SysParams::Geometry().compartmentSizeZ/2 - searchdist};
+            centerCoord[0] - SysParams::Geometry().compartmentSizeX/2 + searchdist,
+            centerCoord[1] - SysParams::Geometry().compartmentSizeY/2 + searchdist,
+            centerCoord[2] - SysParams::Geometry().compartmentSizeZ/2 + searchdist,
+            centerCoord[0] + SysParams::Geometry().compartmentSizeX/2 - searchdist,
+            centerCoord[1] + SysParams::Geometry().compartmentSizeY/2 - searchdist,
+            centerCoord[2] + SysParams::Geometry().compartmentSizeZ/2 - searchdist};
 
     int N = getCylinders().size() * maxnbs;
 	bscoords_section_motor.resize(SysParams::Chemistry().numFilaments * 27);
@@ -378,15 +418,13 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
             for (auto cyl:getCylinders()) {
                 uint32_t cindex = cyl->getStableIndex();
 
-                _filamentType = Cylinder::getDbDataConst().value[cindex].type;
-                _fID = Cylinder::getDbDataConst().value[cindex].filamentId;
-                _fpos = Cylinder::getDbDataConst().value[cindex].positionOnFilament-
-                        Cylinder::getDbDataConst().value[cindex].filamentFirstEntry;
+                _filamentType = Cylinder::getDbDataConst()[cindex].type;
+                _fID = Cylinder::getDbDataConst()[cindex].filamentId;
+                _fpos = Cylinder::getDbDataConst()[cindex].positionOnFilament-
+                        Cylinder::getDbDataConst()[cindex].filamentFirstEntry;
 
-                //packed integer containing filament ID and filament position.
-                //Assumes you don't have 127 (2^7 -1) cylinders
-                uint32_t cylfinfo = (_fID<< 7);
-                cylfinfo = cylfinfo | _fpos;
+                // Packed integer containing filament ID and cylinder index.
+                const auto cylfinfo = packFilamentIdAndCylinderIndexForSimd(_fID, _fpos, SysParams::Chemistry().allowPairBindingOnSameFilament);
 
                 if (checkftype && _filamentType != filType) continue;
 
@@ -439,7 +477,7 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                      * species Filament*/
                     for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
                          it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-                        auto sf = Cylinder::getDbDataConst().value[cindex]
+                        auto sf = Cylinder::getDbDataConst()[cindex]
                                 .chemCylinder->getCMonomer(*it)->activeSpeciesFilament();
                         if(sf !=-1){
                             bool state = false;
@@ -469,45 +507,6 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                                 }
                             }
                         }
-                        /*else{
-                            cout<<twoPointDistance(x1,x2)<<endl;
-                            for(int mon =0;mon<40;mon++){
-                                auto sfx = Cylinder::getDbDataConst().value[cindex]
-                                        .chemCylinder->getCMonomer(mon)
-                                        ->activeSpeciesFilament();
-                                cout<<sfx<<" ";
-                            }
-                            cout<<endl;
-                            //PlusEnd
-                            cout<<"Plus End "<<endl;
-                            short numPlusEndSpecies = SysParams::Chemistry().numPlusEndSpecies[_filamentType];
-                            for(int mon =0;mon<40;mon++){
-                                for(int i = 0; i < numPlusEndSpecies; i++) {
-                                    SpeciesFilament *s = Cylinder::getDbDataConst().value[cindex]
-                                            .chemCylinder->getCMonomer(mon)
-                                            ->speciesPlusEnd(i);
-                                    cout<<s->getN()<<" ";
-                                }
-                                cout<<"|";
-                            }
-                            cout<<endl;
-                            //MinusEnd
-                            cout<<"Minus End "<<endl;
-                            short numMinusEndSpecies = SysParams::Chemistry()
-                                    .numMinusEndSpecies[_filamentType];
-                            for(int mon =0;mon<40;mon++){
-                                for(int i = 0; i < numMinusEndSpecies; i++) {
-                                    SpeciesFilament *s = Cylinder::getDbDataConst().value[cindex]
-                                            .chemCylinder->getCMonomer(mon)
-                                            ->speciesMinusEnd(i);
-                                    cout<<s->getN()<<" ";
-                                }
-                                cout<<"|";
-                            }
-                            cout<<endl;
-                            cout<<sf<<endl;
-                            cout<<"----------"<<endl;
-                        }*/
                         j++;
                     }
                 }
@@ -537,11 +536,9 @@ void Compartment::getpartition3Dindex(int (&indices)[3], vector<floatingpoint> c
     short i = 0;
 
     for(auto x:coord){
-        indices[i] =(x > _coords[i]);
+        indices[i] =(x > centerCoord[i]);
         i++;
     }
-/*    cout<<indices[0]<<" "<<indices[1]<<" "<<indices[2]<<" "<<coord[0]<<" "<<coord[1]<<" "
-        <<coord[2]<<" "<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<endl;*/
 }
 
 //if rMax+Cylsize/2+delta is less than CmpSize/2
@@ -1722,12 +1719,12 @@ coord, uint32_t index, uint32_t cylfinfo){
 
 Compartment& Compartment::operator=(const Compartment &other) {
 
-    _species.clear();
     _internal_reactions.clear();
     _diffusion_reactions.clear();
+    _species.clear();
     other.cloneSpecies(this);
     other.cloneReactions(this);
-    _diffusion_rates = other._diffusion_rates;
+    diffusionCoefficients_ = other.diffusionCoefficients_;
 
     return *this;
 }
@@ -1756,7 +1753,7 @@ void Compartment::computeNonSlicedVolumeArea() {
     _volumeFrac = 1.0;
 }
 
-void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
+void Compartment::computeSlicedVolumeArea(SubSystem& sys, SliceMethod sliceMethod) {
 
     switch(sliceMethod) {
     case SliceMethod::membrane:
@@ -1770,13 +1767,14 @@ void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
                 double sumArea = 0.0;
                 Vec< 3, floatingpoint > sumNormal {};
                 Vec< 3, floatingpoint > sumPos {};
-                for(Triangle* t: getTriangles()) {
-                    const auto& mesh = t->getParent()->getMesh();
-                    const Membrane::MeshType::TriangleIndex ti { t->getTopoIndex() };
+                for(auto tiSys : getTriangles()) {
+                    auto& t = sys.triangles[tiSys];
+                    const auto& mesh = t.getParent(sys).getMesh();
+                    const auto ti = medyan::Membrane::MeshType::triangleIndex( t.getTopoIndex() );
                     const auto area = mesh.attribute(ti).gTriangle.area;
                     const auto& unitNormal = mesh.attribute(ti).gTriangle.unitNormal;
                     sumNormal += unitNormal * area;
-                    sumPos += t->coordinate * area;
+                    sumPos += t.coordinate * area;
                     sumArea += area;
                 }
                 normalize(sumNormal);
@@ -1785,9 +1783,9 @@ void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
                 auto res = PlaneCuboidSlicer() (
                     sumPos, sumNormal,
                     {
-                        _coords[0] - SysParams::Geometry().compartmentSizeX * (floatingpoint)0.5,
-                        _coords[1] - SysParams::Geometry().compartmentSizeY * (floatingpoint)0.5,
-                        _coords[2] - SysParams::Geometry().compartmentSizeZ * (floatingpoint)0.5
+                        centerCoord[0] - SysParams::Geometry().compartmentSizeX * (floatingpoint)0.5,
+                        centerCoord[1] - SysParams::Geometry().compartmentSizeY * (floatingpoint)0.5,
+                        centerCoord[2] - SysParams::Geometry().compartmentSizeZ * (floatingpoint)0.5
                     },
                     {{
                         SysParams::Geometry().compartmentSizeX,
@@ -1796,7 +1794,7 @@ void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
                     }}
                 );
 
-                _volumeFrac = res.volumeIn / GController::getCompartmentVolume();
+                _volumeFrac = res.volumeIn / sys.getCompartmentGrid()->compartmentVolume;
                 _partialArea = res.areaIn;
             }
         }
@@ -1818,8 +1816,8 @@ void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
             auto r = SysParams::Boundaries().diameter / 2; //radius
 
             //get geometry center of the compartment
-            auto x = _coords[0];
-            auto y = _coords[1];
+            auto x = centerCoord[0];
+            auto y = centerCoord[1];
 
             auto leftx = x - sizex / 2;
             auto rightx = x + sizex / 2;
@@ -2050,334 +2048,9 @@ void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
     }
 }
 
-vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C, bool outwardOnly) {
-    // The compartment C and "this" must be neighbors of each other, and
-    // "this" must be an active compartment.
 
-    vector<ReactionBase*> rxns;
 
-    // cout << "This compartment: x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
 
-    for(auto &sp_this : _species.species()) {
-        int molecule = sp_this->getMolecule();
-        float diff_rate = _diffusion_rates[molecule];
-        if(diff_rate<0)  continue;
-
-        if(C->isActivated()) {
-            // Scale the diffusion rate according to the contacting areas
-            size_t idxFwd = _neighborIndex.at(C), idxBwd = C->_neighborIndex.at(this);
-            double scaleFactor = 0.5 * (_partialArea[idxFwd] + C->_partialArea[idxBwd]) / GController::getCompartmentArea()[idxFwd / 2];
-
-            //double scaleFactor = 1.0;
-            // cout << "To neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] << ", z = " << C->_coords[2] <<endl;
-            // cout << "scaleFactor = " << scaleFactor << endl;
-
-            float volumeFrac = getVolumeFrac();
-            // cout << "VolumeFraction = " << volumeFrac << endl;
-            Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
-
-            ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour}, diff_rate, false, volumeFrac);
-            R->setRateMulFactor(scaleFactor, ReactionBase::diffusionShape);
-            this->addDiffusionReaction(R);
-            rxns.push_back(R);
-
-            if(!outwardOnly) {
-                // Generate inward diffusion reaction
-                ReactionBase* R = new DiffusionReaction({sp_neighbour, sp_this.get()}, diff_rate, false, C->getVolumeFrac());
-                R->setRateMulFactor(scaleFactor, ReactionBase::diffusionShape);
-                C->addDiffusionReaction(R);
-                rxns.push_back(R);
-            }
-        }
-    }
-
-    return vector<ReactionBase*>(rxns.begin(), rxns.end());
-}
-
-vector<ReactionBase*> Compartment::generateAllDiffusionReactions(bool outwardOnly) {
-    
-    vector<ReactionBase*> rxns;
-
-    if(_activated) {
-        for (auto &C: _neighbours) {
-            auto newRxns = generateDiffusionReactions(C, outwardOnly);
-            rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
-        }
-    }
-    return vector<ReactionBase*>(rxns.begin(), rxns.end());
-}
-
-void Compartment::removeDiffusionReactions(ChemSim* chem, Compartment* C)
-{
-    //look for neighbor's diffusion reactions
-    vector<ReactionBase*> to_remove;
-
-    for(auto &r : C->_diffusion_reactions.reactions()) {
-
-        auto rs = r.get()->rspecies()[1];
-        if(rs->getSpecies().getParent() == this) {
-
-            r->passivateReaction();
-
-            chem->removeReaction(r.get());
-
-            to_remove.push_back(r.get());
-        }
-
-    }
-
-    //remove them
-    for(auto &r : to_remove)
-        C->_diffusion_reactions.removeReaction(r);
-
-}
-
-void Compartment::removeAllDiffusionReactions(ChemSim* chem) {
-
-    //remove all diffusion reactions that this has ownership of
-    for(auto &r : _diffusion_reactions.reactions()) {
-        r->passivateReaction();
-        chem->removeReaction(r.get());
-    }
-
-    _diffusion_reactions.clear();
-
-    //remove neighboring diffusing reactions with this compartment
-    for (auto &C: _neighbours)
-        removeDiffusionReactions(chem, C);
-}
-
-
-void Compartment::transferSpecies(int i) {
-    //i axis
-    //-1 all directions
-    //0 X
-    //1 Y
-    //2 Z
-    //3 all directions
-    //get active neighbors
-    vector<Compartment*> activeNeighbors;
-
-    for(auto &neighbor : _neighbours){
-        auto ncoord=neighbor->coordinates();
-
-        if(neighbor->isActivated()){
-            if(i < 0 || i == 3)
-                activeNeighbors.push_back(neighbor);
-            else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
-                activeNeighbors.push_back(neighbor);
-        }
-    }
-
-    assert(activeNeighbors.size() != 0
-           && "Cannot transfer species to another compartment... no neighbors are active");
-    if(i >= 0 && i<3 && activeNeighbors.size()>1){
-        cout<<"Error transferring species along an axis. More than 1 neighbor. Exiting. "<< endl;
-        exit(EXIT_FAILURE);
-    }
-
-    //go through species
-    Species* sp_neighbor;
-    vector<Species*> sp_neighbors;
-
-    for(auto &sp : _species.species()) {
-
-        int copyNumber = sp->getN();
-        auto nit = activeNeighbors.begin();
-
-        if(sp->getFullName().find("Bound") == string::npos){
-            while(copyNumber > 0) {
-                sp->down();
-
-                //choose a random active neighbor
-                auto neighbor = *nit;
-
-                sp_neighbor = neighbor->findSpeciesByName(sp->getName());
-
-                //add to list if not already
-                auto spit = find(sp_neighbors.begin(),
-                                 sp_neighbors.end(),
-                                 sp_neighbor);
-
-                if(spit == sp_neighbors.end())
-                    sp_neighbors.push_back(sp_neighbor);
-
-                //increase copy number
-
-                sp_neighbor->up();
-
-                //reset if we've looped through
-                if(++nit == activeNeighbors.end())
-                    nit = activeNeighbors.begin();
-                copyNumber--;
-
-            }
-        }
-
-        //activate all reactions changed
-        for(auto spn : sp_neighbors)
-            spn->updateReactantPropensities();
-        for(auto &sp : _species.species())
-            sp->updateReactantPropensities();
-    }
-}
-
-void Compartment::shareSpecies(int i) {
-    //i axis
-    //-1 all directions
-    //0 X
-    //1 Y
-    //2 Z
-    //3 all directions
-    //get active neighbors
-    vector<Compartment*> activeNeighbors;
-
-    for(auto &neighbor : _neighbours){
-        auto ncoord=neighbor->coordinates();
-        if(neighbor->isActivated()){
-            if(i < 0 || i == 3)
-                activeNeighbors.push_back(neighbor);
-            else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
-                activeNeighbors.push_back(neighbor);
-        }
-    }
-
-    assert(activeNeighbors.size() != 0
-           && "Cannot share species to another compartment... no neighbors are active");
-    if(i >= 0 && i<3 && activeNeighbors.size()>1){
-        cout<<"Error sharing species along an axis. More than 1 neighbor. Exiting."<< endl;
-        exit(EXIT_FAILURE);
-    }
-    //go through species
-    Species* sp_neighbor;
-    vector<Species*> sp_neighbors;
-
-    for(auto &sp : _species.species()) {
-        auto nit = activeNeighbors.begin();
-        auto neighbor = *nit;
-        sp_neighbor = neighbor->findSpeciesByName(sp->getName());
-        int copyNumber = sp_neighbor->getN();
-        int lowerlimit = (int) sp_neighbor->getN()/2;
-        if(sp->getFullName().find("Bound") == string::npos){
-            while(copyNumber > lowerlimit) {
-                sp_neighbor->down();
-
-                //add to list if not already
-                auto spit = find(sp_neighbors.begin(),
-                                 sp_neighbors.end(),
-                                 sp_neighbor);
-
-                if(spit == sp_neighbors.end())
-                    sp_neighbors.push_back(sp_neighbor);
-
-                //increase copy number
-                sp->up();
-                //reset if we've looped through
-                if(++nit == activeNeighbors.end())
-                    nit = activeNeighbors.begin();
-                neighbor = *nit;
-                sp_neighbor = neighbor->findSpeciesByName(sp->getName());
-                copyNumber--;
-
-            }
-        }
-
-        //activate all reactions changed
-        for(auto spn : sp_neighbors)
-            spn->updateReactantPropensities();
-        for(auto &sp : _species.species())
-            sp->updateReactantPropensities();
-
-    }
-}
-
-void Compartment::activate(ChemSim* chem, ActivateReason reason) {
-    /**************************************************************************
-    The diffusion-reactions with the already activated neighbors would be added
-    for both directions.
-    **************************************************************************/
-
-    assert(!_activated && "Compartment is already activated.");
-
-    //set marker
-    _activated = true;
-    //add all diffusion reactions
-    auto rxns = generateAllDiffusionReactions(false);
-
-    for(auto &r : rxns) {
-        chem->addReaction(r);
-        r->activateReaction(); // Conditionally activate the new diffusion reactions
-    }
-
-    if(reason == ActivateReason::Whole)
-        shareSpecies(SysParams::Boundaries().transfershareaxis);
-
-}
-
-void Compartment::updateActivation(ChemSim* chem, ActivateReason reason) {
-    double volumeFrac = getVolumeFrac();
-
-    if(_activated) {
-        // Update the reaction rates for diffusions in both directions
-        for(auto& c: _neighbours) if(c->isActivated()) {
-            // For any activated neighbor
-
-            for(auto &sp_this : _species.species()) {
-                int molecule = sp_this->getMolecule();
-                float baseDiffRate = _diffusion_rates[molecule];
-                if(baseDiffRate<0)  continue;
-
-                Species *sp_neighbor = c->_species.findSpeciesByMolecule(molecule);
-
-                // Scale the diffusion rate according to the contacting areas
-                size_t idxFwd = _neighborIndex.at(c), idxBwd = c->_neighborIndex.at(this);
-                double scaleFactor =
-                    0.5 * (_partialArea[idxFwd] + c->_partialArea[idxBwd]) /
-                    GController::getCompartmentArea()[idxFwd / 2];
-
-                // Update outward reaction rate
-                for(auto& r: _diffusion_reactions.reactions())
-                    if(sp_this.get() == &r->rspecies()[0]->getSpecies() && sp_neighbor == &r->rspecies()[1]->getSpecies()) {
-                        r->setVolumeFrac(volumeFrac);
-                        r->recalcRateVolumeFactor();
-                        r->setRateMulFactor(scaleFactor, ReactionBase::diffusionShape);
-                    }
-                // We also update inward reaction rate here to ensure that neighbors are always on the same page.
-                // Update inward reaction rate
-                for(auto& r: c->_diffusion_reactions.reactions())
-                    if(sp_this.get() == &r->rspecies()[1]->getSpecies() && sp_neighbor == &r->rspecies()[0]->getSpecies()) {
-                        r->setVolumeFrac(c->getVolumeFrac());
-                        r->recalcRateVolumeFactor();
-                        r->setRateMulFactor(scaleFactor, ReactionBase::diffusionShape);
-                    }
-            }
-
-        }
-    } else {
-        activate(chem, reason);
-    }
-
-    // Update the internal reaction rates
-    for(auto& r: _internal_reactions.reactions()) {
-        r->setVolumeFrac(volumeFrac);
-        r->recalcRateVolumeFactor();
-    }
-}
-
-void Compartment::deactivate(ChemSim* chem, bool init) {
-
-    //assert no cylinders in this compartment
-    assert((getCylinders().size() == 0)
-           && "Compartment cannot be deactivated when containing active cylinders.");
-
-    assert(_activated && "Compartment is already deactivated.");
-
-    //set marker
-    _activated = false;
-
-    if(!init) transferSpecies(SysParams::Boundaries().transfershareaxis);
-    removeAllDiffusionReactions(chem);
-}
 
 bool operator==(const Compartment& a, const Compartment& b) {
     if(a.numberOfSpecies()!=b.numberOfSpecies() ||
@@ -2408,3 +2081,5 @@ bool operator==(const Compartment& a, const Compartment& b) {
 
     return spec_bool && reac_bool;
 }
+
+} // namespace medyan

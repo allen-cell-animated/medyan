@@ -31,13 +31,14 @@
 
 #include "SysParams.h"
 #include "MathFunctions.h"
-#include "GController.h"
+#include "Controller/GController.h"
 #include "Rand.h"
 
 #ifdef CROSSCHECK_CYLINDER
-#include "CController.h"
+#include "Controller/CController.h"
 #endif
 
+namespace medyan {
 using namespace mathfunc;
 
 Histogram* Filament::_turnoverTimes;
@@ -55,16 +56,25 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<floatingpoint>
     }
     //create beads
     Bead* b1 = _subSystem->addTrackable<Bead>(position, this, 0);
+    b1->monomerSerial = 0;
     
     //choose length
     floatingpoint length = 0.0;
+    int numberOfMonomers = 0;
     
-    if(branch)          length = SysParams::Geometry().monomerSize[_filType];
-    else if(nucleation) length = SysParams::Geometry().minCylinderSize[_filType];
+    if(branch) {
+        length = SysParams::Geometry().monomerSize[_filType];
+        numberOfMonomers = 1;
+    }
+    else if(nucleation) {
+        length = SysParams::Geometry().minCylinderSize[_filType];
+        numberOfMonomers = SysParams::Geometry().minCylinderNumMon;
+    }
     
     auto pos2 = nextPointProjection(position, length, direction);
         
     Bead* b2 = _subSystem->addTrackable<Bead>(pos2, this, 1);
+    b2->monomerSerial = numberOfMonomers;
     
     //create cylindera
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b1, b2, _filType, 0);
@@ -89,33 +99,39 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<floatingpoint>
 }
 
 
-Filament::Filament(SubSystem* s, short filamentType, const vector<vector<floatingpoint> >& position,
-                   int numBeads, string projectionType)
+Filament::Filament(SubSystem* s, short filamentType, const std::vector<Vec<3, FP>>& position,
+                   int numBeads, const SimulConfig& conf, string projectionType)
 
     : Trackable(), _subSystem(s), _filType(filamentType) {
 
     
     //create a projection of beads
-    vector<vector<floatingpoint>> tmpBeadsCoord;
+    std::vector<Vec<3, FP>> tmpBeadsCoord;
+
+    const auto cylLength = conf.geoParams.cylinderSize[filamentType];
     
     //straight projection
     if(projectionType == "STRAIGHT")
-        tmpBeadsCoord = straightFilamentProjection(position, numBeads);
+        tmpBeadsCoord = straightFilamentProjection(position[0], position[1], numBeads, cylLength);
     //zigzag projection
     else if(projectionType == "ZIGZAG")
-        tmpBeadsCoord = zigZagFilamentProjection(position, numBeads);
+        tmpBeadsCoord = zigZagFilamentProjection(position[0], position[1], numBeads, cylLength);
     //arc projection
     else if(projectionType == "ARC")
-        tmpBeadsCoord = arcFilamentProjection(position, numBeads);
-        //predefined projection aravind sep 9, 15
-    else if(projectionType == "PREDEFINED")
-        tmpBeadsCoord = predefinedFilamentProjection(position, numBeads);
+        tmpBeadsCoord = arcFilamentProjection(position[0], position[1], numBeads);
+    // Predefined coordinates.
+    else if(projectionType == "PREDEFINED") {
+        tmpBeadsCoord = position;
+    }
    
     //create beads
-    auto direction = twoPointDirection(tmpBeadsCoord[0], tmpBeadsCoord[1]);
+    auto direction = normalizedVector(tmpBeadsCoord[1] - tmpBeadsCoord[0]);
         
-    Bead* b1 = _subSystem->addTrackable<Bead>(tmpBeadsCoord[0], this, 0);
-    Bead* b2 = _subSystem->addTrackable<Bead>(tmpBeadsCoord[1], this, 1);
+    Bead* b1 = _subSystem->addTrackable<Bead>(vec2Vector(tmpBeadsCoord[0]), this, 0);
+    b1->monomerSerial = 0;
+    Bead* b2 = _subSystem->addTrackable<Bead>(vec2Vector(tmpBeadsCoord[1]), this, 1);
+    b2->monomerSerial = conf.geoParams.cylinderNumMon[_filType];
+
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b1, b2, _filType, 0,
                                                       false, false, true);
         
@@ -127,8 +143,9 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<vector<floatin
     c0->setFilID(getId());
 
 
-    for (int i = 2; i<numBeads; i++)
+    for (int i = 2; i < numBeads; ++i) {
         extendPlusEnd(tmpBeadsCoord[i]);
+    }
         
     //set plus end marker
     _plusEndPosition = numBeads - 1;
@@ -163,7 +180,7 @@ Filament::~Filament() {
 
 
 //Extend front for initialization
-void Filament::extendPlusEnd(vector<floatingpoint>& coordinates) {
+void Filament::extendPlusEnd(const Vec<3, FP>& coordinates) {
     
     Cylinder* cBack = _cylinderVector.back();
     cBack->setPlusEnd(false);
@@ -173,12 +190,12 @@ void Filament::extendPlusEnd(vector<floatingpoint>& coordinates) {
     Bead* b2 = cBack->getSecondBead();
     
     //create a new bead
-//    auto direction = twoPointDirection(b2->vcoordinate(), coordinates);
-//    auto newBeadCoords = nextPointProjection(b2->vcoordinate(),
-//    twoPointDistance(b2->vcoordinate(), coordinates), direction);
-    auto newBeadCoords=coordinates;
+    auto newBeadCoords = vec2Vector(coordinates);
     //create
     Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() + 1);
+    // Currently, this function extends a full size cylinder
+    bNew->monomerSerial = b2->monomerSerial + SysParams::Geometry().cylinderNumMon[_filType];
+
     Cylinder* c0 = _subSystem->addTrackable<Cylinder> (this, b2, bNew, _filType,
                                                        lpf + 1, false, false, true);
     c0->setPlusEnd(true);
@@ -192,7 +209,7 @@ void Filament::extendPlusEnd(vector<floatingpoint>& coordinates) {
 }
 
 //Extend back for initialization
-void Filament::extendMinusEnd(vector<floatingpoint>& coordinates) {
+void Filament::extendMinusEnd(const Vec<3, FP>& coordinates) {
 
     Cylinder* cFront = _cylinderVector.front();
     cFront->setMinusEnd(false);
@@ -202,12 +219,15 @@ void Filament::extendMinusEnd(vector<floatingpoint>& coordinates) {
     Bead* b2 = cFront->getFirstBead();
     
     //create a new bead
-    auto direction = twoPointDirection(b2->vcoordinate(), coordinates);
+    auto direction = twoPointDirection(b2->vcoordinate(), vec2Vector(coordinates));
     auto newBeadCoords = nextPointProjection(b2->vcoordinate(),
     SysParams::Geometry().cylinderSize[_filType], direction);
     
     //create
     Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() - 1);
+    // Currently, this function extends a full size cylinder
+    bNew->monomerSerial = b2->monomerSerial - SysParams::Geometry().cylinderNumMon[_filType];
+
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, bNew, b2, _filType,
                                                   lpf - 1, false, false, true);
     c0->setMinusEnd(true);
@@ -277,13 +297,12 @@ void Filament::extendPlusEnd(short plusEnd) {
 
     //create a new bead in same place as b2
     Bead* bNew = _subSystem->addTrackable<Bead>(npp, this, b2->getPosition() + 1);
+    bNew->monomerSerial = b2->monomerSerial + 1;
     
-#ifdef MECHANICS
     //transfer the same load force to new bead
     //(approximation until next minimization)
     bNew->loadForcesP = b2->loadForcesP;
     bNew->lfip = b2->lfip + 1;
-#endif
     
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b2, bNew, _filType,
                                                       lpf + 1, true);
@@ -306,18 +325,17 @@ void Filament::extendPlusEnd(short plusEnd) {
     #endif
 
 
-#ifdef CHEMISTRY
     //get last cylinder, mark species
     CMonomer* m = _cylinderVector.back()->getCCylinder()->getCMonomer(0);
     m->speciesPlusEnd(plusEnd)->up();
-#endif
+
     #ifdef CROSSCHECK_CYLINDER
     CController::_crosscheckdumpFilechem <<"Species PlusEnd set"<<endl;
     #endif
-#ifdef DYNAMICRATES
+
     //update reaction rates
     _cylinderVector.back()->updateReactionRates();
-#endif
+
     #ifdef CROSSCHECK_CYLINDER
     CController::_crosscheckdumpFilechem <<"Reaction Rates updated"<<endl;
     #endif
@@ -352,13 +370,12 @@ void Filament::extendMinusEnd(short minusEnd) {
     
     //create a new bead in same place as b2
     Bead* bNew = _subSystem->addTrackable<Bead>(npp, this, b2->getPosition() - 1);
+    bNew->monomerSerial = b2->monomerSerial - 1;
 
-#ifdef MECHANICS
     //transfer the same load force to new bead
     //(approximation until next minimization)
     bNew->loadForcesM = b2->loadForcesM;
     bNew->lfim = b2->lfim + 1;
-#endif
     
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, bNew, b2, _filType,
                                                       lpf - 1, false, true);
@@ -374,7 +391,6 @@ void Filament::extendMinusEnd(short minusEnd) {
 
     c0->setFilID(getId());
 
-#ifdef CHEMISTRY
     //get first cylinder, mark species
     auto newCCylinder = getCylinderVector().front()->getCCylinder();
     CMonomer* m = newCCylinder->getCMonomer(newCCylinder->getSize() - 1);
@@ -384,12 +400,10 @@ void Filament::extendMinusEnd(short minusEnd) {
     CController::_crosscheckdumpFilechem <<"MinusEnd species set"<<endl;
 #endif
 
-#endif
     
-#ifdef DYNAMICRATES
     //update reaction rates
     _cylinderVector.front()->updateReactionRates();
-#endif
+
     #ifdef CROSSCHECK_CYLINDER
     CController::_crosscheckdumpFilechem <<"Reaction rates updated"<<endl;
     #endif
@@ -412,12 +426,10 @@ void Filament::retractPlusEnd() {
 
     _cylinderVector.pop_back();
     
-#ifdef MECHANICS
     //transfer load forces
     Bead* bd = _cylinderVector.back()->getSecondBead();
     bd->loadForcesP = retCylinder->getSecondBead()->loadForcesP;
     bd->lfip = retCylinder->getSecondBead()->lfip - 1;
-#endif
     
     _subSystem->removeTrackable<Bead>(retCylinder->getSecondBead());
     removeChild(retCylinder->getSecondBead());
@@ -431,10 +443,8 @@ void Filament::retractPlusEnd() {
     _cylinderVector.back()->setPlusEnd(true);
 
     
-#ifdef DYNAMICRATES
     //update rates of new front
     _cylinderVector.back()->updateReactionRates();
-#endif
     
     _deltaPlusEnd--;
 
@@ -452,12 +462,10 @@ void Filament::retractMinusEnd() {
 
     _cylinderVector.pop_front();
     
-#ifdef MECHANICS
     //transfer load forces
     Bead* bd = _cylinderVector.front()->getFirstBead();
     bd->loadForcesM = retCylinder->getFirstBead()->loadForcesM;
     bd->lfim = retCylinder->getFirstBead()->lfim - 1;
-#endif
     
     _subSystem->removeTrackable<Bead>(retCylinder->getFirstBead());
     removeChild(retCylinder->getFirstBead());
@@ -469,10 +477,8 @@ void Filament::retractMinusEnd() {
     
     _cylinderVector.front()->setMinusEnd(true);
     
-#ifdef DYNAMICRATES
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
-#endif
     
     _deltaMinusEnd--;
     
@@ -499,11 +505,11 @@ void Filament::polymerizePlusEnd() {
     
     b2->coordinate() = vector2Vec<3, floatingpoint>(nextPointProjection(b2->vcoordinate(),
     SysParams::Geometry().monomerSize[_filType], direction));
+    ++b2->monomerSerial;
 
     // Update cylinder data
     cBack->getCoordinate() = (floatingpoint)0.5 * (b1->coordinate() + b2->coordinate());
     
-#ifdef MECHANICS
     //increment load
     b2->lfip++;
     
@@ -511,12 +517,9 @@ void Filament::polymerizePlusEnd() {
     floatingpoint newEqLen = cBack->getMCylinder()->getEqLength() +
                       SysParams::Geometry().monomerSize[_filType];
     cBack->getMCylinder()->setEqLength(_filType, newEqLen);
-#endif
     
-#ifdef DYNAMICRATES
     //update rates of new back
     _cylinderVector.back()->updateReactionRates();
-#endif
 
     _polyPlusEnd++;
 
@@ -539,11 +542,11 @@ void Filament::polymerizeMinusEnd() {
     
     b1->coordinate() = vector2Vec<3, floatingpoint>(nextPointProjection(b1->vcoordinate(),
     SysParams::Geometry().monomerSize[_filType], direction));
+    --b1->monomerSerial;
 
     // Update cylinder data
     cFront->getCoordinate() = (floatingpoint)0.5 * (b1->coordinate() + b2->coordinate());
 
-#ifdef MECHANICS
     
     //increment load
     b1->lfim++;
@@ -552,12 +555,9 @@ void Filament::polymerizeMinusEnd() {
     floatingpoint newEqLen = cFront->getMCylinder()->getEqLength() +
                       SysParams::Geometry().monomerSize[_filType];
     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
-#endif
 
-#ifdef DYNAMICRATES
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
-#endif
 
     _polyMinusEnd++;
 
@@ -580,11 +580,11 @@ void Filament::depolymerizePlusEnd() {
     
     b2->coordinate() = vector2Vec<3, floatingpoint>(nextPointProjection(b2->vcoordinate(),
     SysParams::Geometry().monomerSize[_filType], direction));
+    --b2->monomerSerial;
 
     // Update cylinder data
     cBack->getCoordinate() = (floatingpoint)0.5 * (b1->coordinate() + b2->coordinate());
 
-#ifdef MECHANICS
     
     //increment load
     b2->lfip--;
@@ -593,11 +593,9 @@ void Filament::depolymerizePlusEnd() {
     floatingpoint newEqLen = cBack->getMCylinder()->getEqLength() -
                       SysParams::Geometry().monomerSize[_filType];
     cBack->getMCylinder()->setEqLength(_filType, newEqLen);
-#endif
-#ifdef DYNAMICRATES
+
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
-#endif
     
     _depolyPlusEnd++;
 
@@ -620,11 +618,11 @@ void Filament::depolymerizeMinusEnd() {
     
     b1->coordinate() = vector2Vec<3, floatingpoint>(nextPointProjection(b1->vcoordinate(),
     SysParams::Geometry().monomerSize[_filType], direction));
+    ++b1->monomerSerial;
 
     // Update cylinder data
     cFront->getCoordinate() = (floatingpoint)0.5 * (b1->coordinate() + b2->coordinate());
 
-#ifdef MECHANICS
     
     b1->lfim--;
     
@@ -632,12 +630,9 @@ void Filament::depolymerizeMinusEnd() {
     floatingpoint newEqLen = cFront->getMCylinder()->getEqLength() -
                       SysParams::Geometry().monomerSize[_filType];
     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
-#endif
 
-#ifdef DYNAMICRATES
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
-#endif
 
     _depolyMinusEnd++;
 /*    cout<<"DePoly minus End Cylinder ID = "<<cFront->getId()<<endl;
@@ -650,7 +645,6 @@ void Filament::depolymerizeMinusEnd() {
 
 void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
     
-#ifdef CHEMISTRY
     //chemically initialize species
     CCylinder* cc = _cylinderVector[0]->getCCylinder();
     int monomerPosition = SysParams::Geometry().cylinderNumMon[_filType] / 2 + 1;
@@ -670,7 +664,6 @@ void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
     
     //plus end
     m3->speciesPlusEnd(plusEnd)->up();
-#endif
 
     _nucleationReaction++;
 
@@ -679,72 +672,59 @@ void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
 
 Filament* Filament::sever(int cylinderPosition) {
     
-    int vectorPosition = 0;
-    
-    //loop through cylinder vector, find position
-    for(auto &c : _cylinderVector) {
-        
-        if(c->getPosition() == cylinderPosition) break;
-        else vectorPosition++;
-    }
+    const int vectorPosition = cylinderPosition - _cylinderVector.front()->getPosition();
     
     //if vector position is zero, we can't sever. return null
     if(vectorPosition == 0) return nullptr;
     
-#ifdef CHEMISTRY
     //if any of the cylinders are only one monomer long, we can't sever
     CCylinder* ccBack  = _cylinderVector[vectorPosition - 1]->getCCylinder();
     CMonomer* cm = ccBack->getCMonomer(ccBack->getSize() - 1);
     
     if(cm->activeSpeciesMinusEnd() != -1) return nullptr;
-#endif
+
+    // If the plus side segment has only the plus end monomer, do not sever.
+    {
+        CCylinder* pcc = _cylinderVector[vectorPosition]->getCCylinder();
+        CMonomer* pcm = pcc->getCMonomer(0);
+        if(pcm->activeSpeciesPlusEnd() != -1) return nullptr;
+    }
     
     //create a new filament
     Filament* newFilament = _subSystem->addTrackable<Filament>(_subSystem, _filType);
     
     //Split the cylinder vector at position, transfer cylinders to new filament
-    for(int i = vectorPosition; i > 0; i--) {
+    for(int i = 0; i < vectorPosition; ++i) {
         
         Cylinder* c = _cylinderVector.front();
         _cylinderVector.pop_front();
 
         newFilament->_cylinderVector.push_back(c);
         
-        //TRANSFER CHILD
-        unique_ptr<Component> &&tmp = this->getChild(c);
-        this->transferChild(std::move(tmp), (Composite*)newFilament);
-
-        //Add beads and cylinder to new parent
-        if(i == vectorPosition) {
-            unique_ptr<Component> &&tmp2 = this->getChild(c->getFirstBead());
-            this->transferChild(std::move(tmp2), (Composite*)newFilament);
-        }
-        unique_ptr<Component> &&tmp1 = this->getChild(c->getSecondBead());
-        this->transferChild(std::move(tmp1), (Composite*)newFilament);
+        // Transfer the cylinder and its minus end bead to new parent.
+        transferChild(c, *newFilament);
+        transferChild(c->getFirstBead(), *newFilament);
     }
-    //new front of new filament, back of old
+    // Get plus end cylinder of new filament, and minus end cylinder of current filament.
     auto c1 = newFilament->_cylinderVector.back();
     auto c2 = _cylinderVector.front();
     
     ///copy bead at severing point, attach to new filament
-    Bead* newB = _subSystem->addTrackable<Bead>(*(c2->getFirstBead()));
     Bead* oldB = c2->getFirstBead();
+    Bead* newB = _subSystem->addTrackable<Bead>(*oldB);
+    newB->monomerSerial = oldB->monomerSerial;
     
     //offset these beads by a little for safety
     auto msize = SysParams::Geometry().monomerSize[_filType];
+
+    medyan::Vec< 3, floatingpoint > offsetCoord {
+        (Rand::randInteger(0,1) ? -1 : +1) * Rand::randfloatingpoint(msize, 2 * msize),
+        (Rand::randInteger(0,1) ? -1 : +1) * Rand::randfloatingpoint(msize, 2 * msize),
+        (Rand::randInteger(0,1) ? -1 : +1) * Rand::randfloatingpoint(msize, 2 * msize),
+    };
     
-    vector<floatingpoint> offsetCoord =
-    {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randfloatingpoint(msize, 2 * msize),
-     (Rand::randInteger(0,1) ? -1 : +1) * Rand::randfloatingpoint(msize, 2 * msize),
-     (Rand::randInteger(0,1) ? -1 : +1) * Rand::randfloatingpoint(msize, 2 * msize)};
-    
-    oldB->coordinate()[0] += offsetCoord[0];
-    oldB->coordinate()[1] += offsetCoord[1];
-    oldB->coordinate()[2] += offsetCoord[2];
-    
-    newB->coordinate()[0] += -offsetCoord[0];
-    newB->coordinate()[1] += -offsetCoord[1];
-    newB->coordinate()[2] += -offsetCoord[2];
+    oldB->coord += offsetCoord;
+    newB->coord -= offsetCoord;
     
     //add bead
     c1->setSecondBead(newB);
@@ -754,7 +734,6 @@ Filament* Filament::sever(int cylinderPosition) {
     c1->setPlusEnd(true);
     c2->setMinusEnd(true);
     
-#ifdef CHEMISTRY
     //mark the plus and minus ends of the new and old filament
     CCylinder* cc1 = c1->getCCylinder();
     CCylinder* cc2 = c2->getCCylinder();
@@ -782,60 +761,36 @@ Filament* Filament::sever(int cylinderPosition) {
     //remove any cross-cylinder rxns between these two cylinders
     cc1->removeCrossCylinderReactions(cc2);
     cc2->removeCrossCylinderReactions(cc1);
-#endif
+
     _severingReaction++;
     _severingID.push_back(newFilament->getId());
     return newFilament;
 }
 
-vector<vector<floatingpoint>> Filament::straightFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads) {
+std::vector<Vec<3, FP>> Filament::straightFilamentProjection(const Vec<3, FP>& v1, const Vec<3, FP>& v2, int numBeads, FP cylLength) {
     
-    vector<vector<floatingpoint>> coordinate;
-    vector<floatingpoint> tmpVec (3, 0);
-    vector<floatingpoint> tau (3, 0);
-    floatingpoint invD = 1/twoPointDistance(v[1], v[0]);
-    tau[0] = invD * ( v[1][0] - v[0][0] );
-    tau[1] = invD * ( v[1][1] - v[0][1] );
-    tau[2] = invD * ( v[1][2] - v[0][2] );
+    std::vector<Vec<3, FP>> coordinate;
+    coordinate.reserve(numBeads);
+    const auto dir = (v2 - v1) / distance(v1, v2);
     
-    for (int i = 0; i<numBeads; i++) {
-        
-        tmpVec[0] = v[0][0] + SysParams::Geometry().cylinderSize[_filType] * i * tau[0];
-        tmpVec[1] = v[0][1] + SysParams::Geometry().cylinderSize[_filType] * i * tau[1];
-        tmpVec[2] = v[0][2] + SysParams::Geometry().cylinderSize[_filType] * i * tau[2];
-        
-        coordinate.push_back(tmpVec);
+    for (int i = 0; i < numBeads; ++i) {
+        coordinate.push_back(v1 + dir * (i * cylLength));
     }
     return coordinate;
 }
 
-vector<vector<floatingpoint>> Filament::zigZagFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads){
+std::vector<Vec<3, FP>> Filament::zigZagFilamentProjection(const Vec<3, FP>& v1, const Vec<3, FP>& v2, int numBeads, FP cylLength) {
     
-    vector<vector<floatingpoint>> coordinate;
-    vector<floatingpoint> tmpVec (3, 0);
-    vector<floatingpoint> tau (3, 0);
-    floatingpoint invD = 1/twoPointDistance(v[1], v[0]);
-    tau[0] = invD * ( v[1][0] - v[0][0] );
-    tau[1] = invD * ( v[1][1] - v[0][1] );
-    tau[2] = invD * ( v[1][2] - v[0][2] );
-    
-    vector<floatingpoint> perptau = {-tau[1], tau[0], tau[2]};
-    
-    
-    for (int i = 0; i<numBeads; i++) {
-        
-        if(i%2 == 0) {
-            tmpVec[0] = v[0][0] + SysParams::Geometry().cylinderSize[_filType] * i * tau[0];
-            tmpVec[1] = v[0][1] + SysParams::Geometry().cylinderSize[_filType] * i * tau[1];
-            tmpVec[2] = v[0][2] + SysParams::Geometry().cylinderSize[_filType] * i * tau[2];
-        }
-        else {
-            tmpVec[0] = v[0][0] + SysParams::Geometry().cylinderSize[_filType] * i * perptau[0];
-            tmpVec[1] = v[0][1] + SysParams::Geometry().cylinderSize[_filType] * i * perptau[1];
-            tmpVec[2] = v[0][2] + SysParams::Geometry().cylinderSize[_filType] * i * perptau[2];
-        }
-        
-        coordinate.push_back(tmpVec);
+    std::vector<Vec<3, FP>> coordinate;
+    coordinate.reserve(numBeads);
+    const auto dir = (v2 - v1) / distance(v1, v2);
+    const Vec<3, FP> altDir { -dir[1], dir[0], dir[2] };
+
+    for (int i = 0; i < numBeads; ++i) {
+        auto tmp = (i % 2 == 0)
+            ? (i * cylLength) * dir + v1
+            : (i * cylLength) * altDir + v1;
+        coordinate.push_back(tmp);
     }
     return coordinate;
 }
@@ -871,12 +826,12 @@ void matrix_mul(boost::numeric::ublas::matrix<floatingpoint>&X,
                 boost::numeric::ublas::matrix<floatingpoint>&Z,
                 vector<floatingpoint>&x,vector<floatingpoint>&y,
                 vector<floatingpoint>&z,int nbeads,
-                vector<vector<floatingpoint>> &coordinate) {
+                std::vector<Vec<3, FP>> &coordinate) {
     
     int t,i;
     floatingpoint dt,length,cyl_length,sum;
     vector<int> id;
-    vector<floatingpoint> dx,dy,dz,dx2,dy2,dz2,length2,dxdy2,dummyy(3);
+    vector<floatingpoint> dx,dy,dz,dx2,dy2,dz2,length2,dxdy2;
     using namespace boost::numeric::ublas;
     matrix<floatingpoint> B(4,4),B2(1,4),temp1(4,1),dummy(1,1),temp2(4,1),temp3(4,1);
     
@@ -942,14 +897,15 @@ void matrix_mul(boost::numeric::ublas::matrix<floatingpoint>&X,
     }
     
     for(i=0;i<id.size();i++) {
-        dummyy[0]=x[id[i]];
-        dummyy[1]=y[id[i]];
-        dummyy[2]=z[id[i]];
-        coordinate.push_back(dummyy);
+        coordinate.push_back({
+            x[id[i]],
+            y[id[i]],
+            z[id[i]],
+        });
     }
 }
 
-void arcOutward(vector<floatingpoint>&v1,vector<floatingpoint>&v2, const vector<vector<floatingpoint>>&v) {
+void arcOutward(vector<floatingpoint>&v1,vector<floatingpoint>&v2, const Vec<3, FP>& v1in, const Vec<3, FP>& v2in) {
     
     vector<floatingpoint> center,tempv1,tempv2,temp2,temp3(3),
                    temp4(3),mid,mid2(3),mid3(3),temp5;
@@ -957,21 +913,21 @@ void arcOutward(vector<floatingpoint>&v1,vector<floatingpoint>&v2, const vector<
     center = GController::getCenter();
     
     // point v[0]
-    temp3[0]=v[0][0];
-    temp3[1]=v[0][1];
-    temp3[2]=v[0][2];
+    temp3[0]=v1in[0];
+    temp3[1]=v1in[1];
+    temp3[2]=v1in[2];
     
     //point v[1]
-    temp4[0]=v[1][0];
-    temp4[1]=v[1][1];
-    temp4[2]=v[1][2];
+    temp4[0]=v2in[0];
+    temp4[1]=v2in[1];
+    temp4[2]=v2in[2];
     
     mid=midPointCoordinate(temp3, temp4, 0.5);
     mid2=midPointCoordinate(mid, temp4, 0.5);
     mid3=midPointCoordinate(mid, temp3, 0.5);
     
     //vector between v[1] and center stored in tempv1
-    std::transform(v[1].begin(), v[1].end(), center.begin(),
+    std::transform(v2in.begin(), v2in.end(), center.begin(),
                    std::back_inserter(tempv1), std::minus<floatingpoint>());
     
     floatingpoint dist=twoPointDistance(center, temp4);
@@ -983,7 +939,7 @@ void arcOutward(vector<floatingpoint>&v1,vector<floatingpoint>&v2, const vector<
                    std::back_inserter(v1), std::plus<floatingpoint>());
     
     //vector between v[0] and center stored in tempv2
-    std::transform(v[0].begin(), v[0].end(), center.begin(),
+    std::transform(v1in.begin(), v1in.end(), center.begin(),
                    std::back_inserter(tempv2), std::minus<floatingpoint>());
     
     dist=twoPointDistance(center, temp3);
@@ -995,27 +951,24 @@ void arcOutward(vector<floatingpoint>&v1,vector<floatingpoint>&v2, const vector<
                    std::back_inserter(v2), std::plus<floatingpoint>());
 }
 
-vector<vector<floatingpoint>> Filament::arcFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads) {
+std::vector<Vec<3, FP>> Filament::arcFilamentProjection(const Vec<3, FP>& v1, const Vec<3, FP>& v2, int numBeads) {
     
     using namespace boost::numeric::ublas;
 
     std::vector<floatingpoint> X3,x3(3),x4(3),X4,x,y,z;
     matrix<floatingpoint> C(3,3),B(4,4),X(4,1),Y(4,1),Z(4,1);
-    std::vector< std::vector<floatingpoint> > coordinates;
+    std::vector<Vec<3, FP>> coordinates;
 
-    arcOutward(X3,X4,v);
-    X(0,0)=v[0][0]; X(1,0)=X3[0]; X(2,0)=X4[0]; X(3,0)=v[1][0];
-    Y(0,0)=v[0][1]; Y(1,0)=X3[1]; Y(2,0)=X4[1]; Y(3,0)=v[1][1];
-    Z(0,0)=v[0][2]; Z(1,0)=X3[2]; Z(2,0)=X4[2]; Z(3,0)=v[1][2];
+    arcOutward(X3,X4, v1, v2);
+    X(0,0)=v1[0]; X(1,0)=X3[0]; X(2,0)=X4[0]; X(3,0)=v2[0];
+    Y(0,0)=v1[1]; Y(1,0)=X3[1]; Y(2,0)=X4[1]; Y(3,0)=v2[1];
+    Z(0,0)=v1[2]; Z(1,0)=X3[2]; Z(2,0)=X4[2]; Z(3,0)=v2[2];
     //
     matrix_mul(X,Y,Z,x,y,z,numBeads,coordinates);
     return coordinates;
 }
-// predefined projection
-vector<vector<floatingpoint>> Filament::predefinedFilamentProjection(const vector<vector<floatingpoint>>& v, int numBeads) {
-    return v;
-}
-//@
+
+
 void Filament::printSelf()const {
     
     cout << endl;
@@ -1036,7 +989,6 @@ void Filament::printSelf()const {
 
 bool Filament::isConsistent() {
     
-#ifdef CHEMISTRY
     //check consistency of each individual cylinder
     for(auto &c : _cylinderVector) {
         if(!c->getCCylinder()->isConsistent()) {
@@ -1069,7 +1021,6 @@ bool Filament::isConsistent() {
         return false;
     }
      
-#endif
     return true;
 }
 
@@ -1143,4 +1094,4 @@ floatingpoint Filament::FilextendMinusendtimer1 = 0.0;
 floatingpoint Filament::FilextendMinusendtimer2 = 0.0;
 floatingpoint Filament::FilextendMinusendtimer3 = 0.0;
 
-
+} // namespace medyan

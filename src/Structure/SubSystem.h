@@ -15,6 +15,7 @@
 #define MEDYAN_SubSystem_h
 
 #include <functional>
+#include <optional>
 #include <vector>
 #include <unordered_set>
 
@@ -25,42 +26,45 @@
 #include "Movable.h"
 #include "Reactable.h"
 
-#include "NeighborList.h"
-#include "DynamicNeighbor.h"
-
-#include "SysParams.h"
-
 #include "CUDAcommon.h"
-#include "CGMethod.h"
-#include "Filament.h"
-#include "Cylinder.h"
-#include "CompartmentGrid.h"
-#include "Bead.h"
-#include "GController.h"
 #include "HybridNeighborList.h"
 #include "HybridNeighborListImpl.h"
+#include "SysParams.h"
+#include "Chemistry/ChemSim.h"
+#include "Chemistry/DissipationTracker.h"
+#include "Controller/GController.h"
 #include "Mechanics/ForceField/Types.hpp"
+#include "Mechanics/ForceField/Membrane/MembraneBendingTypes.hpp"
+#include "Mechanics/Minimizer/MinimizationTypes.hpp"
+#include "Structure/Bead.h"
+#include "Structure/Boundary.h"
+#include "Structure/BranchingPoint.h"
+#include "Structure/Bubble.h"
+#include "Structure/CompartmentGrid.h"
+#include "Structure/Cylinder.h"
+#include "Structure/DynamicNeighbor.h"
+#include "Structure/Filament.h"
+#include "Structure/Linker.h"
+#include "Structure/MotorGhost.h"
+#include "Structure/NeighborListImpl.h"
+#include "Structure/Special/AFM.h"
+#include "Structure/Special/MTOC.h"
+#include "Structure/SurfaceMesh/Edge.hpp"
+#include "Structure/SurfaceMesh/FixedVertexAttachment.hpp"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/Triangle.hpp"
+#include "Structure/SurfaceMesh/Vertex.hpp"
+#include "Util/StableVector.hpp"
 
-#include <initializer_list>
 #ifdef SIMDBINDINGSEARCH
-#include "dist_moduleV2/dist_common.h"
+    #include "Util/DistModule/dist_common.h"
 #endif
-#ifdef CUDAACCL
-#include "nvToolsExt.h"
-#endif
-//#include "NeighborListImplCUDA.h"
 
-//FORWARD DECLARATIONS
-class Boundary;
-class Filament;
-class Cylinder;
-class Linker;
-class MotorGhost;
-class BranchingPoint;
-class Membrane;
-
-class CompartmentGrid;
+namespace medyan {
+    
+// Forward declarations.
 template< typename MemType > class MembraneRegion;
+
 
 /// Manages all [Movables](@ref Movable) and [Reactables](@ref Reactable). Also holds all
 /// [NeighborLists](@ref NeighborList) associated with chemical or mechanical interactions,
@@ -110,17 +114,26 @@ public:
 	        minsN = chrono::high_resolution_clock::now();
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
             _HneighborList->addDynamicNeighbor((DynamicNeighbor *) t);
-            //Remove boundary and bubble neighbors
-            for (auto nlist : __bneighborLists)
-                nlist->addDynamicNeighbor((DynamicNeighbor *) t);
 #endif
             for (auto nlist : _neighborLists)
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
 
+            // Temporary workaround for several neighbor lists. TODO: Remove this.
+            if(auto b = dynamic_cast<Bead*>(t); b) {
+                if(opBubbleBeadNL.has_value()) {
+                    opBubbleBeadNL->addDynamicNeighbor(*this, b);
+                }
+            }
         } else if (t->_neighbor) {
         	minsN = chrono::high_resolution_clock::now();
         	for (auto nlist : _neighborLists)
         		nlist->addNeighbor((Neighbor *) t);
+            // Temporary workaround for several neighbor lists. TODO: Remove this.
+            if(auto be = dynamic_cast<BoundaryElement*>(t); be) {
+                if(opBoundaryBubbleNL.has_value()) {
+                    opBoundaryBubbleNL->addNeighbor(*this, be);
+                }
+            }
         	mineN = chrono::high_resolution_clock::now();
         	chrono::duration<floatingpoint> elapsed_time(mineN - minsN);
         	timeneighbor += elapsed_time.count();
@@ -148,44 +161,31 @@ public:
         if (t->_dneighbor) {
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
             _HneighborList->removeDynamicNeighbor((DynamicNeighbor *) t);
-            //Remove boundary neighbors
-            for (auto nlist : __bneighborLists)
-                nlist->removeDynamicNeighbor((DynamicNeighbor *) t);
 #endif
             for (auto nlist : _neighborLists)
                 nlist->removeDynamicNeighbor((DynamicNeighbor *) t);
 
+            // Temporary workaround for several neighbor lists. TODO: Remove this.
+            if(auto b = dynamic_cast<Bead*>(t); b) {
+                if(opBubbleBeadNL.has_value()) {
+                    opBubbleBeadNL->removeDynamicNeighbor(*this, b);
+                }
+            }
         } else if (t->_neighbor) {
             for (auto nlist : _neighborLists)
                 nlist->removeNeighbor((Neighbor *) t);
+            // Temporary workaround for several neighbor lists. TODO: Remove this.
+            if(auto be = dynamic_cast<BoundaryElement*>(t); be) {
+                if(opBoundaryBubbleNL.has_value()) {
+                    opBoundaryBubbleNL->removeNeighbor(*this, be);
+                }
+            }
         }
     }
 
-    //@{
-    /// Setter functions for Movable
-//    void addMovable(Movable *mov) { _movables.insert(mov); }
 
-    /*void removeMovable(Movable *mov) {
-        auto it = _movables.find(mov);
-        if (it != _movables.end()) _movables.erase(it);
-    }*/
-
-    //@}
-    /// Get all Movable
-//    const unordered_set<Movable *> &getMovables() { return _movables; }
-
-    //@{
-    /// Setter function for Reactable
-    /*void addReactable(Reactable *r) { _reactables.insert(r); }
-
-    void removeReactable(Reactable *r) {
-        auto it = _reactables.find(r);
-        if (it != _reactables.end()) _reactables.erase(it);
-    }*/
-
-    //@}
-    /// Get all Reactable
-//    const unordered_set<Reactable *> &getReactables() { return _reactables; }
+    // Get current simulation time.
+    auto tau() const { return ::tau(); }
 
     /// Get the subsystem boundary
     Boundary *getBoundary() { return _boundary; }
@@ -194,57 +194,25 @@ public:
     void addBoundary(Boundary *boundary) { _boundary = boundary; }
 
     // Region in membrane
-    MembraneRegion< Membrane >* getRegionInMembrane() const { return _regionInMembrane; }
-    void setRegionInMembrane(MembraneRegion< Membrane >* r) { _regionInMembrane = r; }
+    medyan::MembraneRegion< medyan::Membrane >* getRegionInMembrane() const { return _regionInMembrane; }
+    void setRegionInMembrane(medyan::MembraneRegion< medyan::Membrane >* r) { _regionInMembrane = r; }
 
     /// Add a neighbor list to the subsystem
     void addNeighborList(NeighborList *nl) { _neighborLists.push_back(nl); }
 
-    void addBNeighborList(NeighborList *nl) { __bneighborLists.push_back(nl); }
-
     /// Reset all neighbor lists in subsystem
     void resetNeighborLists();
     //create vectors of cylinder information.
-    void vectorizeCylinder();
+    void vectorizeCylinder(medyan::SimulConfig&);
 
-#ifdef CUDAACCL_NL
-    void endresetCUDA(){
-        for(auto gpb:gpu_possibleBindings_vec)
-            CUDAcommon::handleerror(cudaFree(gpb),"cudaFree","SubSystem.cu");
-        for(auto pb:possibleBindings_vec)
-            CUDAcommon::handleerror(cudaFreeHost(pb), "cudaFree", "SubSystem.cu");
-        for(auto np:numpairs_vec)
-            CUDAcommon::handleerror(cudaFreeHost(np),"cudaFree","SubSystem.cu");
-        auto cylcylnvars = CUDAcommon::getCylCylNLvars();
-        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_coord),"cudaFree","SubSystem.h");
-        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_coord_com),"cudaFree","SubSystem.h");
-        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_beadSet),"cudaFree","SubSystem.h");
-        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_cylID),"cudaFree","SubSystem.h");
-        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_fvecpos),"cudaFree","SubSystem.h");
-        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_filID),"cudaFree","SubSystem.h");
-        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_filType),"cudaFree","SubSystem.h");
-        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_cmpID),"cudaFree","SubSystem.h");
-        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_cmon_state_linker),"cudaFree","SubSystem.h");
-        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_cmon_state_brancher),"cudaFree","SubSystem.h");
-        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_cmon_state_motor),"cudaFree","SubSystem.h");
-//        Compartment* C0 = _compartmentGrid->getCompartments()[0];
-
-    }
-#endif
-    //@{
-    ///Subsystem energy management
-    floatingpoint getSubSystemEnergy() {return _energy;}
-    void setSubSystemEnergy(floatingpoint energy) {_energy = energy;}
-    //@}
 
     //@{
     /// CompartmentGrid management
-    void setCompartmentGrid(CompartmentGrid* grid) {_compartmentGrid = grid; _staticgrid = _compartmentGrid;}
-    CompartmentGrid* getCompartmentGrid() {return _compartmentGrid;}
+    CompartmentGrid* getCompartmentGrid() const { return compartmentGrid.get(); }
     //@]
 
     /// Update the binding managers of the system
-    void updateBindingManagers();
+    void updateBindingManagers(medyan::SimulConfig&);
 
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     //getter for HneighborList
@@ -257,9 +225,7 @@ public:
     template< typename Func >
     void setCylinderLoadForceFunc(Func&& f) { _cylinderLoadForceFunc = std::forward<Func>(f); }
 
-    static CompartmentGrid* getstaticgrid(){
-        return _staticgrid;
-    }
+    const auto& getNeighborLists() const { return _neighborLists; }
 
     static floatingpoint SIMDtime;
     static floatingpoint SIMDtimeV2;
@@ -268,29 +234,88 @@ public:
 	static floatingpoint timedneighbor;
 	static floatingpoint timetrackable;
 
+
+    //----------------------------------
+    // The chemistry simulation engine.
+    //----------------------------------
+    std::unique_ptr<ChemSim> pChemSim;
+
+
+    //----------------------------------
+    // The global compartment grid.
+    //----------------------------------
+    std::unique_ptr<CompartmentGrid> compartmentGrid;
+
+
+    //----------------------------------
+    // All trackable elements in the system.
+    //----------------------------------
+    StableVector< Membrane > membranes;
+    StableVector< Vertex >   vertices;
+    StableVector< Edge >     edges;
+    StableVector< Triangle > triangles;
+    StableVector< MeshlessSpinVertex > meshlessSpinVertices;
+    StableVector< FixedVertexAttachment > fixedVertexAttachments;
+
+    StableVector< Bubble > bubbles;
+    StableVector< MTOC >   mtocs;
+    StableVector< AFM >    afms;
+
+
+    //----------------------------------
+    // Neighbor lists.
+    //----------------------------------
+    std::vector<NeighborList*> _neighborLists; ///< All neighborlists in the system
+    // Used only in Hybrid binding Manager cases
+    #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
+        HybridCylinderCylinderNL* _HneighborList;
+    #endif
+
+    // Neighbor list between meshless vertices.
+    NeighborListCellList3D meshlessSpinVertexCellList;
+
+    // Neighbor list involving bubbles.
+    std::optional<BoundaryBubbleNL> opBoundaryBubbleNL;
+    std::optional<BubbleBubbleNL> opBubbleBubbleNL;
+    std::optional<BubbleBeadNL> opBubbleBeadNL;
+
+    //----------------------------------
+    // Protein curvature mismatch parameters and cached states.
+    //----------------------------------
+
+    // Protein curvature mismatch parameters. Indexed curvature-mismatch setups.
+    // The data is initiailized by MController initiailization.
+    std::vector< ProteinCurvatureMismatchParams > proteinCurvatureMismatchParams;
+
+    // Actual curvature mismatch data stored in the system.
+    // The data is initialized by vectorization of membrane bending force field, and the actual data is populated by membrane bending energy computation.
+    AllVertexCurvatureMismatchParams allVertexCurvatureMismatchParams;
+
+    // Maps the index of a membrane diffusing species to the index of the curvature mismatch setup.
+    // If a protein does not have a curvature mismatch setup, the index is set to -1.
+    // The data is initialized by MController initialization.
+    std::vector<int> indexMapMembraneDiffusingSpeciesToCurvatureMismatchSetup;
+
+    // Maps the index of a desorption reaction to the index of the curvature mismatch setup.
+    // If the reactant of a desorption reaction does not have a curvature mismatch setup, the index is set to -1.
+    // The data is initialized by MController initialization.
+    std::vector<int> indexMapDesorptionReactionToCurvatureMismatchSetup;
+
+    //----------------------------------
+    // Simulation state reports.
+    //----------------------------------
+    std::unique_ptr<DissipationTracker> pdt;
     MinimizationResult prevMinResult;
+
 
 private:
     static const bool CROSSCHECK_SWITCH = false;
 	chrono::high_resolution_clock::time_point minsN, mineN, minsT,mineT;
-    floatingpoint _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer
-    MembraneRegion< Membrane >* _regionInMembrane; // The region inside membrane. The value is set by the controller
+    medyan::MembraneRegion< medyan::Membrane >* _regionInMembrane; // The region inside membrane. The value is set by the controller
 
-//    unordered_set<Movable*> _movables; ///< All movables in the subsystem
-//    unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
-
-    std::vector<NeighborList*> _neighborLists; ///< All neighborlists in the system
-    std::vector<NeighborList*> __bneighborLists; ///< Boundary neighborlists in the system.
-    // Used only in Hybrid binding Manager cases
-#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
-    HybridCylinderCylinderNL* _HneighborList;
-#endif
-
-    CompartmentGrid* _compartmentGrid; ///< The compartment grid
 
     //Cylinder vector
-    static CompartmentGrid* _staticgrid;
     floatingpoint* cylsqmagnitudevector = nullptr;
     static bool initialize;
 
@@ -298,51 +323,47 @@ private:
     std::function< void(Cylinder*, ForceFieldTypes::LoadForceEnd) > _cylinderLoadForceFunc;
 
     chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD;
-#ifdef CUDAACCL_NL
-    floatingpoint* gpu_coord;
-    floatingpoint* gpu_coord_com;
-    int * gpu_beadSet;
-    int *gpu_cylID;
-    int *gpu_filID;
-    int *gpu_cmpID;
-//    int *gpu_cylstate;
-    int *gpu_cmon_state_brancher;
-    int *gpu_cmon_state_linker;
-    int *gpu_cmon_state_motor;
-//    int *gpu_cylvecpospercmp;
-    int *gpu_fvecpos;
-    int *gpu_filType;
-    floatingpoint *coord;
-    floatingpoint *coord_com;
-    int *beadSet;
-    int *cylID;
-    int *filID;
-    int *filType;
-    int *gpu_bindingSites;
-    unsigned int *cmpID;
-//    bool *cylstate;
-    int *cmon_state_brancher;
-    int *cmon_state_linker;
-    int *cmon_state_motor;
-//    int *cylvecpospercmp;//each compartment gets a start and end integer representing the position of first and last
-    // cylinder in cmpID;
-    int *fvecpos; //position of cylinder in filament vector.
-//    int maxnumCyl = 0;
-    int *gpu_params = NULL;//used for possiblebindings update
-    vector<cudaStream_t > strvec;
-    int numbindmgrs = 0;
-    vector<int*> numpairs_vec;//Stores number of BindingSite pairs for each binding manager.
-    vector<int*> possibleBindings_vec;
-    vector<int*> gpu_possibleBindings_vec;
-    void initializebindingsitesearchCUDA();
-    void getallpossiblelinkerbindingsitesCUDA(LinkerBindingManager* lManager, int* cmon_state_linker);
-    void getallpossiblemotorbindingsitesCUDA(MotorBindingManager* mManager, int*
-    cmon_state_motor);
-    void getallpossiblebrancherbindingsitesCUDA(BranchingManager* bManager, int*
-    cmon_state_brancher);
-    void terminatebindingsitesearchCUDA();
-    void assigntorespectivebindingmanagersCUDA();
-#endif
+
+public:
+    // Some initialization procedures.
+    void initializeProteinCurvatureMismatch(const SimulConfig& conf) {
+        const auto np = conf.chemistryData.speciesMembraneDiffusing.size();
+        const auto nd = conf.chemistryData.reactionsAdsorptionDesorption.size();
+        const auto ncm = conf.mechParams.proteinCurvatureMismatchSetups.size();
+        // Reset indices.
+        proteinCurvatureMismatchParams.clear();
+        indexMapMembraneDiffusingSpeciesToCurvatureMismatchSetup.assign(np, -1);
+        indexMapDesorptionReactionToCurvatureMismatchSetup.assign(nd, -1);
+        // Set protein curvature mismatch parameters.
+        for(int si = 0; si < ncm; ++si) {
+            const auto& setup = conf.mechParams.proteinCurvatureMismatchSetups[si];
+            int cmSpeciesIndex = std::find_if(
+                conf.chemistryData.speciesMembraneDiffusing.begin(), conf.chemistryData.speciesMembraneDiffusing.end(),
+                [&](const auto& s) { return s.name == setup.speciesName; }
+            ) - conf.chemistryData.speciesMembraneDiffusing.begin();
+
+            proteinCurvatureMismatchParams.push_back({
+                cmSpeciesIndex,
+                setup.kBending,
+                setup.eqCurv,
+                conf.chemistryData.speciesMembraneDiffusing[cmSpeciesIndex].area,
+            });
+
+            indexMapMembraneDiffusingSpeciesToCurvatureMismatchSetup[cmSpeciesIndex] = si;
+        }
+        // Map desorption reaction index to CM index.
+        for(int ri = 0; ri < nd; ++ri) {
+            // Find species index. Must exist.
+            int speciesIndex = std::find_if(
+                conf.chemistryData.speciesMembraneDiffusing.begin(), conf.chemistryData.speciesMembraneDiffusing.end(),
+                [&](const auto& s) { return s.name == conf.chemistryData.reactionsAdsorptionDesorption[ri].speciesName2D; }
+            ) - conf.chemistryData.speciesMembraneDiffusing.begin();
+
+            indexMapDesorptionReactionToCurvatureMismatchSetup[ri] = indexMapMembraneDiffusingSpeciesToCurvatureMismatchSetup[speciesIndex];
+        }
+    }
 };
+
+} // namespace medyan
 
 #endif

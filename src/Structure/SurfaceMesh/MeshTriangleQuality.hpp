@@ -6,6 +6,7 @@
 
 #include "MathFunctions.h"
 
+namespace medyan {
 enum class TriangleQualityCriteria {
     radiusRatio     // Circumradius / (2 * Inradius), range [1, inf)
 };
@@ -48,5 +49,7 @@ template<> struct TriangleQuality< TriangleQualityCriteria::radiusRatio > {
         return std::abs(d0 * d1 * d2 / (8 * (p - d0) * (p - d1) * (p - d2)));
     }
 };
+
+} // namespace medyan
 
 #endif

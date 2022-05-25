@@ -35,7 +35,7 @@ inline void playbackNewFrame(
         }
         else {
             states.offscreenRender.reset();
-            LOG(STEP) << "Offscreen render complete.";
+            log::info("Offscreen render complete.");
         }
     }
     else if(states.isPlaying) {

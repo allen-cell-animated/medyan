@@ -7,12 +7,13 @@
 #include "Mechanics/ForceField/Branching/BranchingDihedralQuadratic.hpp"
 #include "TESTS/Mechanics/ForceField/TestFFCommon.hpp"
 
-using namespace test_ff_common;
+using namespace medyan::test_ff_common;
 
 TEST_CASE("Force field: Branching Dihedral Quadratic", "[ForceField]") {
     // The test case checks whether energy and force are consistent
 
     using namespace std;
+    using namespace medyan;
     using VF = vector< floatingpoint >;
 
     // Prepare data

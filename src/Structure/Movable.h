@@ -17,6 +17,7 @@
 #include "common.h"
 #include "Util/DoubleLinkedList.h"
 
+namespace medyan {
 /// An abstract base class for a movable element in the SubSystem.
 
 /*! The main function of the Movable class is to implement updatePosition(),
@@ -51,9 +52,11 @@ public:
     }
 private:
     //static dll list here
-    static linkedlist::DoubleLinkedList<Movable> movableList;
+    inline static linkedlist::DoubleLinkedList<Movable> movableList;
     //Node of this instance
     linkedlist::DLLNode<Movable> dllnode;
 };
+
+} // namespace medyan
 
 #endif

@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-if [ -z $medyan_root_dir ]; then
+if [ -z "$medyan_root_dir" ]; then
     echo "Error: variable medyan_root_dir needs to be specified"
     exit 1
 fi
@@ -44,14 +44,14 @@ vcpkg_setup() {
         if [ ! -d "$vcpkg_dir" -o $rebuild = true ]; then
             echo "Downloading vcpkg..."
             (
-                cd $build_dir &&
+                cd "$build_dir" &&
                 git clone https://github.com/Microsoft/vcpkg.git &&
-                cd $vcpkg_dir &&
-                git checkout 2021.05.12
+                cd "$vcpkg_dir" &&
+                git checkout c9e786d81a890ef6b3932779925f11e696dc9541
             )
             echo "Configuring vcpkg..."
             (
-                cd $vcpkg_dir
+                cd "$vcpkg_dir"
                 ./bootstrap-vcpkg.sh
             )
         else
@@ -69,10 +69,10 @@ vcpkg_install() {
     no_gui=$1
 
     (
-        cd $vcpkg_dir && {
-            ./vcpkg install catch2 eigen3 spectra boost-signals2 boost-pool boost-heap boost-ublas boost-range
+        cd "$vcpkg_dir" && {
+            ./vcpkg install catch2 eigen3 fmt highfive spdlog spectra xtensor boost-pool boost-heap boost-ublas boost-range --binarysource=clear
             if [ "$no_gui" != true ]; then
-                ./vcpkg install glfw3 glad glm imgui[opengl3-glad-binding] imgui[glfw-binding] nativefiledialog stb
+                ./vcpkg install glfw3 glad glm imgui[opengl3-binding,glfw-binding] implot nativefiledialog stb --binarysource=clear
             fi
         }
     )
@@ -88,8 +88,8 @@ cmake_generate() {
 
     echo "Creating build files..."
     (
-        mkdir -p $medyan_build_dir &&
-        cd $medyan_build_dir &&
+        mkdir -p "$medyan_build_dir" &&
+        cd "$medyan_build_dir" &&
         cmake \
             $medyan_cmake_generator \
             $medyan_cmake_no_gui \
@@ -101,7 +101,7 @@ cmake_generate() {
 }
 
 # Make directories
-mkdir -p $build_dir
+mkdir -p "$build_dir"
 
 # Use vcpkg to resolve dependencies
 vcpkg_setup true false

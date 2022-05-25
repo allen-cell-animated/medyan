@@ -13,7 +13,7 @@
 #ifndef MEDYAN_HybridBindingSearchManager_h
 #define MEDYAN_HybridBindingSearchManager_h
 #ifdef SIMDBINDINGSEARCH
-#include "dist_moduleV2/dist_driver.h"
+#include "Util/DistModule/dist_driver.h"
 #endif
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 #include <unordered_map>
@@ -31,6 +31,7 @@
 #include "Rand.h"
 #include "BindingManager.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class SubSystem;
 class ReactionBase;
@@ -38,6 +39,7 @@ class CCylinder;
 class Compartment;
 class Cylinder;
 class FilamentBindingManager;
+
 
 class HybridBindingSearchManager {
 
@@ -101,8 +103,8 @@ private:
     bool initialized = false;
 
     //listing 12 variables, to support upto 8 distance pairs calculations.
-    static dist::dOut<1U,true> bspairsself[NPROCS][8];
-    static dist::dOut<1U,false> bspairs[NPROCS][8];
+    inline static dist::dOut<1U,true> bspairsself[8];
+    inline static dist::dOut<1U,false> bspairs[8];
 
 
 	template<uint D, bool SELF>
@@ -156,50 +158,9 @@ volumes namely self(1), halves(6), quarters(12) and 1/8ths(8). The position in t
     void gatherCylindercIndexV3(dist::dOut<D,SELF>& bspairsoutS, int first, int
     last, short idvec[2], Compartment* nCmp = NULL);
 
-    //D = 2
-    /*static dist::dOut<2U,true> bspairs2self;
-    static dist::dOut<2U,false> bspairs2;*/
-
-/*    static dist::dOut<1U,false> bspairs2_D1;
-    static dist::dOut<1U,false> bspairs2_D2;
-    //D = 3
-    dist::dOut<3U,true> bspairs3self;
-    dist::dOut<3U,false> bspairs3;*/
-    //D = 4
-    /*dist::dOut<4U,true> bspairs4self;
-    dist::dOut<4U,false> bspairs4;
-
-    template <uint D, bool SELF>
-    void calculatebspairsself(dist::dOut<D, SELF>& bspairs);
-    template <uint D, bool SELF>
-    void calculatebspairsenclosed(dist::dOut<D, SELF>& bspairs);*/
 
     static short Totallinkermotor;
 
-    /*template <uint D, bool SELF>
-    dist::dOut<D,SELF> bspairs(){
-        if(D == 1){
-            if(SELF == true) return bspairs1self;
-            else return bspairs1;
-        }
-        else if(D == 2){
-            if(SELF == true) return bspairs2self;
-            else return bspairs2;
-        }
-        *//*else if(D == 3){
-            if(SELF == true) return bspairs3self;
-            else return bspairs3;
-        }
-        else if(D == 4){
-            if(SELF == true) return bspairs4self;
-            else return bspairs4;
-        }*//*
-        else{
-            cout<<"Number of distance pairs mentioned in chemistryinput.txt exceeds "
-                  "maximum pairs allowed. Exiting.."<<endl;
-            exit(EXIT_FAILURE);
-        }
-    }*/
 #endif
    void countNpairsfound(short idvec[2]);
 
@@ -239,6 +200,7 @@ public:
                                    float rMin = 0.0);
 
     void addtoHNeighborList();
+    void copyInfotoBindingManagers();
 
     vector<Cylinder*> getHNeighbors(Cylinder* c, short HNLID){
         return _HneighborList->getNeighborsstencil(HNLID, c);
@@ -328,4 +290,7 @@ template<>
 dist::dOut<1,false>& HybridBindingSearchManager::getdOut(short dOutID);
 #endif
 #endif
+
+} // namespace medyan
+
 #endif

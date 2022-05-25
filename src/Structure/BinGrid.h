@@ -20,6 +20,8 @@
 #include "Composite.h"
 #include "Bin.h"
 #include "MathFunctions.h"
+
+namespace medyan {
 /*!
 * BinGrid is a vector of numBins Bins where numBins is provided during instantiation.
 * Each Bin in BinGrid is indexed in NeighborListImpl.
@@ -229,10 +231,10 @@ public:
             vector<floatingpoint> vertexoffset = { binvertexoffset.at(vertexID)[0],
                                             binvertexoffset.at(vertexID)[1],
                                             binvertexoffset.at(vertexID)[2]};
-            mathfunc::Vec< 3, floatingpoint > vcoord {bincoord[0] + vertexoffset[0],
+            medyan::Vec< 3, floatingpoint > vcoord {bincoord[0] + vertexoffset[0],
                                                       bincoord[1] + vertexoffset[1],
                                                       bincoord[2] + vertexoffset[2]};
-            floatingpoint dist = mathfunc::distance(vcoord, cylcoord);
+            floatingpoint dist = medyan::distance(vcoord, cylcoord);
             if(dist <= cutoff) return true;
             else return false;
         }
@@ -263,4 +265,7 @@ public:
     }
 
 };
+
+} // namespace medyan
+
 #endif //MEDYAN_BINGRID_H

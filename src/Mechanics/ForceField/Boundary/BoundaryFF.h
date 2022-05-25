@@ -17,47 +17,58 @@
 #include <vector>
 
 #include "common.h"
+#include "Mechanics/ForceField/Boundary/BoundaryCylinderRepulsion.h"
+#include "Mechanics/ForceField/Boundary/BoundaryCylinderRepulsionExp.h"
+#include "Mechanics/ForceField/Boundary/BoundaryCylinderRepulsionIn.h"
+#include "Mechanics/ForceField/Boundary/BoundaryCylinderRepulsionExpIn.h"
+#include "Mechanics/ForceField/Boundary/BoundaryBubbleRepulsion.h"
+#include "Mechanics/ForceField/Boundary/BoundaryBubbleRepulsionExp.h"
+#include "Mechanics/ForceField/Boundary/BoundaryCylinderAttachment.h"
+#include "Mechanics/ForceField/Boundary/BoundaryCylinderAttachmentHarmonic.h"
+#include "Mechanics/ForceField/ForceField.h"
 
-#include "ForceField.h"
+namespace medyan {
 
-//FORWARD DECLARATIONS
-class BoundaryInteractions;
-class BoundaryElement;
-class Bead;
-class Cylinder;
+inline auto createBoundaryForceFields(std::string_view type, const SimulConfig& conf) {
+    std::vector<std::unique_ptr<ForceField>> forceFields;
 
-/// An implementation of the ForceField class that calculates BoundaryElement
-/// repulsion and attraction to [Beads](@ref Bead) in the system.
-class BoundaryFF : public ForceField {
-    
-private:
-    vector<unique_ptr<BoundaryInteractions>>
-    _boundaryInteractionVector; ///< Vector of initialized boundary element interactions
-    
-protected:
-    /// The culprit in the case of an error
-    BoundaryInteractions* _culpritInteraction;
-    
-public:
-    /// Initialize the forcefields (repulsion, attraction, etc)
-    BoundaryFF(string type);
-    
-    virtual void vectorize(const FFCoordinateStartingIndex&);
-    virtual void cleanup();
+    if (type == "REPULSIONEXP") {
+        forceFields.push_back(
+            std::make_unique<BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>>(conf)
+        );
+        forceFields.push_back(
+            std::make_unique<BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>>()
+        );
+    }
+    else if(type == "REPULSIONEXPIN") {
+        forceFields.push_back(
+            std::make_unique<BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>>(conf)
+        );
+        forceFields.push_back(
+            std::make_unique<BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>>()
+        );
+    }
+    else if(type == "") {
+        log::warn("No boundary FF is specified.");
+    }
+    else {
+        log::error("Boundary FF {} not recognized. Exiting.", type);
+        throw std::runtime_error("Boundary FF not recognized.");
+    }
 
-    virtual string getName() {return "Boundary";}
-    virtual void whoIsCulprit();
-    
-    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched = false) override;
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
-    
-    /// BoundaryFF can compute load forces from all boundaries.
-    virtual void computeLoadForces();
-    virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
-    
-    virtual vector<NeighborList*> getNeighborLists();
+    //if pinning to boundaries
+    if(conf.mechParams.pinBoundaryFilaments ||
+        conf.mechParams.pinInitialFilamentBelowZ ||
+        conf.mechParams.pinLowerBoundaryFilaments
+    ) {
+        forceFields.push_back(
+            std::make_unique<BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>>()
+        );
+    }
 
-    virtual vector<string> getinteractionnames();
-};
+    return forceFields;
+}
+
+} // namespace medyan
 
 #endif

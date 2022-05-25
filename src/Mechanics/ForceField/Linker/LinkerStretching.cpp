@@ -19,46 +19,26 @@
 #include "Linker.h"
 #include "Bead.h"
 #include "cross_check.h"
-#include "CGMethod.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
+#include "Mechanics/CUDAcommon.h"
+
+namespace medyan {
 
 template <class LStretchingInteractionType>
-void LinkerStretching<LStretchingInteractionType>::assignforcemags() {
-
-    // for(auto l:Linker::getLinkers()){
-    //     //Using += to ensure that the stretching forces are additive.
-    //     l->getMLinker()->stretchForce = stretchforce[l->getIndex()];
-
-    // }
-
-
-#ifdef CUDAACCL
-    floatingpoint stretchforce[Linker::getLinkers().size()];
-    CUDAcommon::handleerror(cudaMemcpy(stretchforce, gpu_Lstretchforce,
-                                       Linker::getLinkers().size() * sizeof(floatingpoint),
-                                       cudaMemcpyDeviceToHost));
-    int id = 0;
-    for(auto l:Linker::getLinkers())
-    {l->getMLinker()->stretchForce = stretchforce[id];id++;}
-#endif
-}
-
-template <class LStretchingInteractionType>
-void LinkerStretching<LStretchingInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
+void LinkerStretching<LStretchingInteractionType>::vectorize(const FFCoordinateStartingIndex& si, const SimulConfig& conf) {
     CUDAcommon::tmin.numinteractions[2] += Linker::getLinkers().size();
-    beadSet = new int[n * Linker::getLinkers().size()];//stableindex of the bead
-    kstr = new floatingpoint[Linker::getLinkers().size()];
-    eql = new floatingpoint[Linker::getLinkers().size()];
-    pos1 = new floatingpoint[Linker::getLinkers().size()];
-    pos2 = new floatingpoint[Linker::getLinkers().size()];
-    stretchforce = new floatingpoint[Linker::getLinkers().size()];
+    beadSet.assign(n * Linker::getLinkers().size(), 0);//stableindex of the bead
+    kstr.assign(Linker::getLinkers().size(), 0);
+    eql.assign(Linker::getLinkers().size(), 0);
+    pos1.assign(Linker::getLinkers().size(), 0);
+    pos2.assign(Linker::getLinkers().size(), 0);
+    stretchforce.assign(Linker::getLinkers().size(), 0);
 
     int i = 0;
     //Filling stage
     for (auto l: Linker::getLinkers()) {
-        /* Haoran 03/18/2019 l->getIndex() = i; */
         beadSet[n * i] = l->getFirstCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
         beadSet[n * i + 1] = l->getFirstCylinder()->getSecondBead()->getIndex() * 3 + si.bead;
         beadSet[n * i + 2] = l->getSecondCylinder()->getFirstBead()->getIndex() * 3 + si.bead;
@@ -69,15 +49,15 @@ void LinkerStretching<LStretchingInteractionType>::vectorize(const FFCoordinateS
         pos1[i] = l->getFirstCylinder()->adjustedrelativeposition(l->getFirstPosition());
         pos2[i] = l->getSecondCylinder()->adjustedrelativeposition(l->getSecondPosition());
         stretchforce[i] = 0.0;
+
+        // Reset linker stretch force as a side effect.
+        l->getMLinker()->stretchForce = 0;
+
         i++;
     }
 
     //CUDA
 #ifdef CUDAACCL
-#ifdef CUDATIMETRACK
-    chrono::high_resolution_clock::time_point tbegin, tend;
-    tbegin = chrono::high_resolution_clock::now();
-#endif
     //CUDA stream create
     if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
         CUDAcommon::handleerror(cudaStreamCreate(&stream));
@@ -131,57 +111,23 @@ void LinkerStretching<LStretchingInteractionType>::vectorize(const FFCoordinateS
     CUDAcommon::handleerror(cudaMemcpyAsync(gpu_params, params.data(), 3 * sizeof(int),
                                        cudaMemcpyHostToDevice, stream),
                             "cuda data transfer", "LinkerStretching.cu");
-#ifdef CUDATIMETRACK
-//    CUDAcommon::handleerror(cudaDeviceSynchronize(),"LinkerStretching.cu",
-//                            "vectorizeFF");
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-    CUDAcommon::cudatime.TvecvectorizeFF.push_back(elapsed_run.count());
-    CUDAcommon::cudatime.TvectorizeFF += elapsed_run.count();
-#endif
 #endif
 }
 
 template<class LStretchingInteractionType>
-void LinkerStretching<LStretchingInteractionType>::deallocate() {
+void LinkerStretching<LStretchingInteractionType>::assignforcemags() {
     for(auto l:Linker::getLinkers()){
         //Using += to ensure that the stretching forces are additive.
         l->getMLinker()->stretchForce += stretchforce[l->getIndex()];
     }
-    delete [] stretchforce;
-    delete [] beadSet;
-    delete [] kstr;
-    delete [] eql;
-    delete [] pos1;
-    delete [] pos2;
-#ifdef CUDAACCL
-        if(!(CUDAcommon::getCUDAvars().conservestreams))
-            CUDAcommon::handleerror(cudaStreamDestroy(stream));
-    _FFType.deallocate();
-    CUDAcommon::handleerror(cudaFree(gpu_beadSet),"cudaFree", "LinkerStretching.cu");
-    CUDAcommon::handleerror(cudaFree(gpu_kstr),"cudaFree", "LinkerStretching.cu");
-    CUDAcommon::handleerror(cudaFree(gpu_pos1),"cudaFree", "LinkerStretching.cu");
-    CUDAcommon::handleerror(cudaFree(gpu_pos2),"cudaFree", "LinkerStretching.cu");
-    CUDAcommon::handleerror(cudaFree(gpu_eql),"cudaFree", "LinkerStretching.cu");
-    CUDAcommon::handleerror(cudaFree(gpu_params),"cudaFree", "LinkerStretching.cu");
-    CUDAcommon::handleerror(cudaFree(gpu_Lstretchforce),"cudaFree", "LinkerStretching.cu");
-#endif
 }
 
 
 template <class LStretchingInteractionType>
-floatingpoint LinkerStretching<LStretchingInteractionType>::computeEnergy(floatingpoint* coord){
+FP LinkerStretching<LStretchingInteractionType>::computeEnergy(FP* coord){
 
-    floatingpoint U_ii;
-    U_ii = 0.0;
-#ifdef CUDATIMETRACK
-    chrono::high_resolution_clock::time_point tbegin, tend;
-#endif
 #ifdef CUDAACCL
 //    std::cout<<"Linker size "<<Linker::getLinkers().size()<<endl;
-#ifdef CUDATIMETRACK
-    tbegin = chrono::high_resolution_clock::now();
-#endif
 	floatingpoint* gU_i;
     //has to be changed to accomodate aux force
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -196,40 +142,15 @@ floatingpoint LinkerStretching<LStretchingInteractionType>::computeEnergy(floati
         gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1, gpu_pos2, gpu_d,
                             gpu_params);
 //    }
-#ifdef CUDATIMETRACK
-//    CUDAcommon::handleerror(cudaDeviceSynchronize(),"CylinderExclVolume.cu",
-//                            "computeEnergy");
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-    CUDAcommon::cudatime.TveccomputeE.push_back(elapsed_run.count());
-    CUDAcommon::cudatime.TcomputeE += elapsed_run.count();
-    CUDAcommon::cudatime.TcomputeEiter += elapsed_run.count();
 #endif
-#endif
-#ifdef SERIAL
-#ifdef CUDATIMETRACK
-    tbegin = chrono::high_resolution_clock::now();
-#endif
-    U_ii = _FFType.energy(coord, beadSet, kstr, eql, pos1, pos2);
+    FP U_ii = _FFType.energy(coord, beadSet.data(), kstr.data(), eql.data(), pos1.data(), pos2.data());
 
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
-    CUDAcommon::serltime.TveccomputeE.push_back(elapsed_runs.count());
-    CUDAcommon::serltime.TcomputeE += elapsed_runs.count();
-    CUDAcommon::serltime.TcomputeEiter += elapsed_runs.count();
-#endif
-#endif
 
     return U_ii;
 }
 
 template <class LStretchingInteractionType>
-void LinkerStretching<LStretchingInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
-#ifdef CUDATIMETRACK
-    chrono::high_resolution_clock::time_point tbegin, tend;
-    tbegin = chrono::high_resolution_clock::now();
-#endif
+void LinkerStretching<LStretchingInteractionType>::computeForces(FP *coord, FP *f) {
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -245,16 +166,7 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(floatingpoint *
                        gpu_pos2, gpu_params , gpu_Lstretchforce);
     }
 #endif
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-    CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
-    CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
-    tbegin = chrono::high_resolution_clock::now();
-#endif
-#ifdef SERIAL
-    _FFType.forces(coord, f, beadSet, kstr, eql, pos1, pos2, stretchforce);
-#endif
+    _FFType.forces(coord, f, beadSet.data(), kstr.data(), eql.data(), pos1.data(), pos2.data(), stretchforce.data());
 #ifdef DETAILEDOUTPUT
     floatingpoint maxF = 0.0;
     floatingpoint mag = 0.0;
@@ -269,19 +181,10 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(floatingpoint *
     }
     std::cout<<"max "<<getName()<<" "<<maxF<<endl;
 #endif
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
-    CUDAcommon::serltime.TveccomputeF.push_back(elapsed_runs.count());
-    CUDAcommon::serltime.TcomputeF += elapsed_runs.count();
-#endif
 }
 
 
-///Temlate specializations
-template floatingpoint LinkerStretching<LinkerStretchingHarmonic>::computeEnergy(floatingpoint *coord);
-template void LinkerStretching<LinkerStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void LinkerStretching<LinkerStretchingHarmonic>::vectorize(const FFCoordinateStartingIndex&);
-template void LinkerStretching<LinkerStretchingHarmonic>::deallocate();
-template void LinkerStretching<LinkerStretchingHarmonic>::assignforcemags();
+// Explicit instantiation.
+template class LinkerStretching<LinkerStretchingHarmonic>;
 
+} // namespace medyan

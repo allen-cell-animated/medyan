@@ -2,6 +2,7 @@
 #define MEDYAN_Util_Io_Log_Hpp
 
 #include <algorithm> // find_if
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -10,9 +11,44 @@
 #include <vector>
 #include <utility>
 
+#include <spdlog/fmt/ostr.h>    // For formatting types with operator<< defined.
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
+
 #include "Util/Environment.hpp"
 
 namespace medyan {
+namespace log {
+
+using spdlog::debug;
+using spdlog::info;
+using spdlog::warn;
+using spdlog::error;
+using spdlog::critical;
+
+inline void configureLoggers(const std::filesystem::path& outDir) {
+    // Console output.
+    auto sinkConsole = std::make_shared< spdlog::sinks::stdout_color_sink_mt >();
+    sinkConsole->set_level(spdlog::level::info);
+    sinkConsole->set_pattern("[%^%l%$] %v");
+
+    // File output.
+    const auto logFile = outDir / "medyan.log";
+    auto sinkFile = std::make_shared< spdlog::sinks::basic_file_sink_mt >(logFile.string(), true);
+    sinkFile->set_level(spdlog::level::trace);
+
+    // Create logger.
+    auto logger = std::make_shared< spdlog::logger >("medyan", spdlog::sinks_init_list{sinkConsole, sinkFile});
+    logger->set_level(spdlog::level::trace);
+    logger->flush_on(spdlog::level::trace);
+
+    // Set as default logger.
+    spdlog::set_default_logger(logger);
+}
+
+} // namespace log
+
 namespace logger {
 
 /**
@@ -52,13 +88,14 @@ enum class LogLevel: int {
 constexpr const char* literal(LogLevel lv) {
     switch(lv) {
 
-    case LogLevel::Debug:   return "Debug";
-    case LogLevel::Info:    return "Info";
-    case LogLevel::Step:    return "Step";
-    case LogLevel::Note:    return "Note";
-    case LogLevel::Warning: return "Warning";
-    case LogLevel::Error:   return "Error";
-    case LogLevel::Fatal:   return "Fatal";
+        case LogLevel::Debug:   return "Debug";
+        case LogLevel::Info:    return "Info";
+        case LogLevel::Step:    return "Step";
+        case LogLevel::Note:    return "Note";
+        case LogLevel::Warning: return "Warning";
+        case LogLevel::Error:   return "Error";
+        case LogLevel::Fatal:   return "Fatal";
+        default:                return "Unknown";
     }
 }
 
@@ -78,13 +115,13 @@ public:
     void turnOff(LogLevel lv) { _flag &= ~_convert(lv); }
     void turnOnAtLeast(LogLevel lv) {
         switch(lv) {
-        case LogLevel::Debug:   turnOn(LogLevel::Debug);
-        case LogLevel::Info:    turnOn(LogLevel::Info);
-        case LogLevel::Step:    turnOn(LogLevel::Step);
-        case LogLevel::Note:    turnOn(LogLevel::Note);
-        case LogLevel::Warning: turnOn(LogLevel::Warning);
-        case LogLevel::Error:   turnOn(LogLevel::Error);
-        case LogLevel::Fatal:   turnOn(LogLevel::Fatal);
+            case LogLevel::Debug:   turnOn(LogLevel::Debug);   [[fallthrough]];
+            case LogLevel::Info:    turnOn(LogLevel::Info);    [[fallthrough]];
+            case LogLevel::Step:    turnOn(LogLevel::Step);    [[fallthrough]];
+            case LogLevel::Note:    turnOn(LogLevel::Note);    [[fallthrough]];
+            case LogLevel::Warning: turnOn(LogLevel::Warning); [[fallthrough]];
+            case LogLevel::Error:   turnOn(LogLevel::Error);   [[fallthrough]];
+            case LogLevel::Fatal:   turnOn(LogLevel::Fatal);
         }
     }
 };
@@ -158,14 +195,10 @@ public:
     void defaultInitialization() {
 
         auto& scrn = attachOstream(&std::cout, false);
-#ifdef NDEBUG
-        scrn.disp.turnOnAtLeast(LogLevel::Info);
-#else
         scrn.disp.turnOnAtLeast(LogLevel::Debug);
-#endif
         if(!(ioEnv().stdoutRedirected && settings.supressColorIfRedirected)) scrn.dispColor.turnOnAtLeast(LogLevel::Debug);
         scrn.dispTime.turnOnAtLeast(LogLevel::Note);
-        scrn.dispFile.turnOnAtLeast(LogLevel::Warning);
+        scrn.dispFile.turnOnAtLeast(LogLevel::Error);
         scrn.dispLine.turnOnAtLeast(LogLevel::Error);
         scrn.dispFunc.turnOnAtLeast(LogLevel::Error);
         scrn.dispLevel.turnOnAtLeast(LogLevel::Debug);
@@ -201,7 +234,10 @@ class LogWriter {
 public:
     /// Constructor accepts environmental information.
     LogWriter(const char* curFile, int curLine, const char* curFunc, LogLevel lv, const Logger& logger)
-        : _logger(logger), _lv(lv), _curFile(curFile), _curLine(curLine), _curFunc(curFunc) {}
+        : _logger(logger), _lv(lv), _curFile(curFile), _curLine(curLine), _curFunc(curFunc)
+    {
+        oss_.precision(17);
+    }
 
     /// Destructor dispatches the log.
     ~LogWriter() { logDispatch(); }
@@ -216,11 +252,11 @@ public:
     /// Overloads operator<< for normal type and user defined class type
     template<typename MsgType>
     LogWriter& operator<<(MsgType&& msg) {
-        _oss << std::forward<MsgType>(msg);
+        oss_ << std::forward<MsgType>(msg);
         return *this;
     }
     LogWriter& operator<<(std::ostream& (*manip)(std::ostream&)) {
-        _oss << manip;
+        oss_ << manip;
         return *this;
     }
 
@@ -229,7 +265,7 @@ private:
     const Logger& _logger;
 
     /// The content of the log
-    std::ostringstream _oss;
+    std::ostringstream oss_;
     /// Level of current log
     const LogLevel _lv;
     /// Other information of the log

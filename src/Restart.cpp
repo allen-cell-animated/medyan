@@ -13,6 +13,8 @@
 
 #include "Restart.h"
 
+namespace medyan {
+
 void Restart::readNetworkSetup() {
     //Flush the filestream pointer
     _inputFile.clear();
@@ -584,3 +586,5 @@ bool Restart::crosscheck(){
     //Cylinder data
     return true;
 }
+
+} // namespace medyan

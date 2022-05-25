@@ -18,11 +18,11 @@
 
 #include "common.h"
 
-#include "BoundaryInteractions.h"
-
+#include "Mechanics/ForceField/ForceField.h"
 #include "SysParams.h"
 #include "Util/Math/Vec.hpp"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class BoundaryElement;
 class Bead;
@@ -35,36 +35,33 @@ class Bead;
 ///         this potential with a Boundary makes more sense.
 
 template <class BAttachmentInteractionType>
-class BoundaryCylinderAttachment : public BoundaryInteractions {
+class BoundaryCylinderAttachment : public ForceField {
     
 private:
     BAttachmentInteractionType _FFType;
     
-    int *beadSet;
+    std::vector<int> beadSet;
     
     ///Array describing the constants in calculation
-    floatingpoint *kattr;
-    std::vector< mathfunc::Vec< 3, floatingpoint > > pins; ///< coordinates of pins for each bead
-    
+    std::vector<FP> kattr;
+    std::vector< Vec< 3, FP > > pins; ///< coordinates of pins for each bead
+
 public:
     
     ///Array describing indexed set of interactions
     ///For filaments, this is a 1-point potential (only the active bead is updated)
     const static int n = 1;
     
-    virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void deallocate();
+    virtual void vectorize(const FFCoordinateStartingIndex&, const SimulConfig&) override;
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
+    virtual FP computeEnergy(FP *coord) override;
     //@{
     /// Tepulsive force calculation
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
-    virtual void computeLoadForces() {};
-    //@}
+    virtual void computeForces(FP *coord, FP *f) override;
     
-    /// Get the neighbor list for this interaction
-    virtual NeighborList* getNeighborList() {return nullptr;}
-    
-    virtual const string getName() {return "Boundary-Cylinder Attachment";}
+    virtual std::string getName() override { return "BoundaryCylinderAttachment"; }
 };
+
+} // namespace medyan
+
 #endif

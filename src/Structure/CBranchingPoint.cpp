@@ -18,40 +18,17 @@
 #include "CCylinder.h"
 #include "CMonomer.h"
 
+namespace medyan {
 CBranchingPoint::CBranchingPoint(short branchType, Compartment* c,
                                  CCylinder* cc1, CCylinder* cc2, int position)
 
-    : CBound(cc1->getType(), c, cc1, cc2, position, 0), _branchType(branchType) {
+    : CBound(cc1->getType(), cc2->getType(), c, cc1, cc2, position, 0), _branchType(branchType) {
 
     //Find species on cylinder that should be marked
     SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesBrancher(branchType);
     SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(
-                        SysParams::Chemistry().brancherBoundIndex[_filamentType]);
+                        SysParams::Chemistry().brancherBoundIndex[filType1_]);
 
-//    //@{
-//    SpeciesBound* BL1 = _cc1->getCMonomer(_position1)->speciesBound(
-//            SysParams::Chemistry().linkerBoundIndex[_filamentType]);
-//    SpeciesBound* BL2 = _cc2->getCMonomer(_position2)->speciesBound(
-//            SysParams::Chemistry().linkerBoundIndex[_filamentType]);
-//    SpeciesBound* BB1 = _cc1->getCMonomer(_position1)->speciesBound(
-//            SysParams::Chemistry().brancherBoundIndex[_filamentType]);
-//    SpeciesBound* BB2 = _cc2->getCMonomer(_position2)->speciesBound(
-//            SysParams::Chemistry().brancherBoundIndex[_filamentType]);
-//    SpeciesBound* BM1 = _cc1->getCMonomer(_position1)->speciesBound(
-//            SysParams::Chemistry().motorBoundIndex[_filamentType]);
-//    SpeciesBound* BM2 = _cc2->getCMonomer(_position2)->speciesBound(
-//            SysParams::Chemistry().motorBoundIndex[_filamentType]);
-//    SpeciesBound* sm1 = _cc1->getCMonomer(_position1)->speciesMotor(0);
-//    SpeciesBound* sm2 = _cc2->getCMonomer(_position2)->speciesMotor(0);
-//    SpeciesBound* sl1 = _cc1->getCMonomer(_position1)->speciesLinker(0);
-//    SpeciesBound* sl2 = _cc2->getCMonomer(_position2)->speciesLinker(0);
-//
-//    std::cout<<"BranchingPoint "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "<<cc2->getCylinder()->getID()<<" "<<
-//             ""<<_position2<<" branchType "<<branchType<<endl;
-//    std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "<<BM2->getN()<<endl;
-//    std::cout<<"Linker "<<sl1->getN()<<" "<<sl2->getN()<<" BOUND "<<BL1->getN()<<" "<<BL2->getN()<<endl;
-//    std::cout<<"Brancher "<<sb1->getN()<<" BOUND "<<BB1->getN()<<" "<<BB2->getN()<<endl;
-//    //@}
 
 
     //mark species
@@ -84,7 +61,7 @@ void CBranchingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
     //create the reaction species
     CMonomer* m = _cc1->getCMonomer(_position1);
     vector<Species*> os = {m->speciesBrancher(_branchType),
-                           m->speciesBound(SysParams::Chemistry().brancherBoundIndex[_filamentType]), sfb};
+                           m->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType1_]), sfb};
     
     //create reaction, add to cylinder
     ReactionBase* offRxn =
@@ -94,9 +71,11 @@ void CBranchingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
     
     //add the unbinding reaction and callback
     BranchingPointUnbindingCallback bcallback(_pBranchingPoint, ps);
-    ConnectionBlock rcb(offRxn->connect(bcallback,false));
+    offRxn->connect(bcallback);
     
     setOffReaction(offRxn);
     _cc1->addInternalReaction(offRxn);
     
 }
+
+} // namespace medyan

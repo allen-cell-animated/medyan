@@ -7,13 +7,13 @@
 #include "Mechanics/ForceField/Branching/BranchingPositionCosine.h"
 #include "TESTS/Mechanics/ForceField/TestFFCommon.hpp"
 
-using namespace test_ff_common;
+using namespace medyan::test_ff_common;
 
 TEST_CASE("Force field: Branching Position Cosine", "[ForceField]") {
     // The test case checks whether energy and force are consistent
 
     using namespace std;
-    using namespace mathfunc;
+    using namespace medyan;
     using V3 = Vec< 3, floatingpoint >;
     using VA3 = VecArray< 3, floatingpoint >;
 

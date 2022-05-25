@@ -16,6 +16,7 @@
 
 #include "common.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Bead;
 
@@ -26,9 +27,6 @@ public:
 
     floatingpoint energy(floatingpoint *coord, std::size_t nint, int *beadSet,
                   floatingpoint *kbend, floatingpoint *eqt);
-    
-    [[deprecated]] floatingpoint energy(floatingpoint *coord, floatingpoint * f, std::size_t nint, int *beadSet,
-                  floatingpoint *kbend, floatingpoint *eqt, floatingpoint d);
     
     void forces(floatingpoint *coord, floatingpoint *f, std::size_t nint, int *beadSet,
                 floatingpoint *kbend, floatingpoint *eqt);
@@ -60,5 +58,7 @@ public:
 
 #endif
 };
+
+} // namespace medyan
 
 #endif

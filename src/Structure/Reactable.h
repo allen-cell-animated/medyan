@@ -17,6 +17,7 @@
 #include "common.h"
 #include "Util/DoubleLinkedList.h"
 
+namespace medyan {
 /// An abstract base class for a reactable element in the SubSystem.
 
 /*! The main function of the Reactable class is to implement updateReactionRates(),
@@ -53,9 +54,11 @@ public:
 
 private:
 	//static dll list here
-	static linkedlist::DoubleLinkedList<Reactable> reactableList;
+	inline static linkedlist::DoubleLinkedList<Reactable> reactableList;
 	//Node of this instance
 	linkedlist::DLLNode<Reactable> dllnode;
 };
+
+} // namespace medyan
 
 #endif

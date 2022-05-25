@@ -1,4 +1,4 @@
-# Installation
+# Building MEDYAN
 
 To use MEDYAN, one needs to build it from the source code. The source code is available for download at <http://medyan.org/download.html>. One can also clone the git repository for the latest version.
 
@@ -17,7 +17,7 @@ The following tools are also required:
 
 `medyan` is also dependent on several external libraries, which will be automatically installed before building.
 
-## Building MEDYAN
+## Steps
 
 The preferred way of building medyan is to generate the build files using CMake. From the MEDYAN root directory, use either of the following scripts to generate build files.
 
@@ -55,4 +55,4 @@ And an Xcode project file would be in the `build` directory.
 > .\conf.ps1
 ```
 
-And a Visual Studio solution file would be in the `build` directory.
+And a Visual Studio solution file named `medyan.sln` would be in the `build` directory.

@@ -24,6 +24,7 @@
 
 #include "CUDAcommon.h"
 
+namespace medyan {
 using namespace mathfunc;
 
 void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
@@ -86,10 +87,8 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
 
         //callback
-#ifdef REACTION_SIGNALING
         FilamentPolymerizationPlusEndCallback polyCallback(cc->getCylinder());
-        ConnectionBlock rcb(rxn->connect(polyCallback,false));
-#endif
+        rxn->connect(polyCallback);
 
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::POLYMERIZATIONPLUSEND);
@@ -164,11 +163,10 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
 
     mins = chrono::high_resolution_clock::now();
     //callbacks
-#ifdef REACTION_SIGNALING
     short plusEndProduct = getInt(_products[1]);
     FilamentExtensionPlusEndCallback extCallback(cc->getCylinder(), plusEndProduct);
-    ConnectionBlock rcb(rxn->connect(extCallback,false));
-#endif
+    rxn->connect(extCallback);
+
     mine = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_time4(mine - mins);
     CUDAcommon::ppendtime.rxntempate4 += elapsed_time4.count();
@@ -239,10 +237,9 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
         else
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
 
-#ifdef REACTION_SIGNALING
         FilamentPolymerizationMinusEndCallback polyCallback(cc->getCylinder());
-        ConnectionBlock rcb(rxn->connect(polyCallback,false));
-#endif
+        rxn->connect(polyCallback);
+
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::POLYMERIZATIONMINUSEND);
         // Dissipation
@@ -297,11 +294,9 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     else
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
 
-#ifdef REACTION_SIGNALING
     auto minusEndType = get<0>(_products[1]);
     FilamentExtensionMinusEndCallback extCallback(cc->getCylinder(), minusEndType);
-    ConnectionBlock rcb(rxn->connect(extCallback,false));
-#endif
+    rxn->connect(extCallback);
 
     cc->addInternalReaction(rxn);
     rxn->setReactionType(ReactionType::POLYMERIZATIONMINUSEND);
@@ -366,10 +361,8 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
         else
             rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
 
-#ifdef REACTION_SIGNALING
         FilamentDepolymerizationPlusEndCallback depolyCallback(cc->getCylinder());
-        ConnectionBlock rcb(rxn->connect(depolyCallback,false));
-#endif
+        rxn->connect(depolyCallback);
 
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::DEPOLYMERIZATIONPLUSEND);
@@ -435,10 +428,8 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
         else
             rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
 
-#ifdef REACTION_SIGNALING
         FilamentDepolymerizationMinusEndCallback depolyCallback(cc->getCylinder());
-        ConnectionBlock rcb(rxn->connect(depolyCallback,false));
-#endif
+        rxn->connect(depolyCallback);
 
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::DEPOLYMERIZATIONMINUSEND);
@@ -498,10 +489,8 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     else
         rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
 
-#ifdef REACTION_SIGNALING
     FilamentRetractionPlusEndCallback retCallback(cc1->getCylinder());
-    ConnectionBlock rcb(rxn->connect(retCallback,false));
-#endif
+    rxn->connect(retCallback);
 
     cc2->addCrossCylinderReaction(cc1, rxn);
     rxn->setReactionType(ReactionType::DEPOLYMERIZATIONPLUSEND);
@@ -559,10 +548,8 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     else
         rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
 
-#ifdef REACTION_SIGNALING
     FilamentRetractionMinusEndCallback retCallback(cc1->getCylinder());
-    ConnectionBlock rcb(rxn->connect(retCallback,false));
-#endif
+    rxn->connect(retCallback);
 
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::DEPOLYMERIZATIONMINUSEND);
@@ -589,10 +576,10 @@ void MotorWalkPTemplate::addReaction(CCylinder* cc) {
 
         //loop through reactants, products. find all species
         auto r = _reactants[0];
-        int motorType = getInt(r);
+        int speciesMotorIndex = getInt(r);
 
         //FIRST REACTANT MUST BE MOTOR
-        reactantSpecies.push_back(m1->speciesMotor(motorType));
+        reactantSpecies.push_back(m1->speciesMotor(speciesMotorIndex));
 
         //SECOND REACTANT MUST BE BOUND
         r = _reactants[1];
@@ -615,12 +602,8 @@ void MotorWalkPTemplate::addReaction(CCylinder* cc) {
         new Reaction<MWALKINGREACTANTS, MWALKINGPRODUCTS>(species, _rate);
 
         //callbacks
-#ifdef REACTION_SIGNALING
-        MotorWalkingCallback
-        motorMoveCallback(cc->getCylinder(), site1, site2,
-                          motorType, boundType, _ps, _dt);
-        ConnectionBlock rcb(rxn->connect(motorMoveCallback, false));
-#endif
+        MotorWalkingCallback motorMoveCallback(cc->getCylinder(), site1, site2, speciesMotorIndex, boundType, _ps, _dt);
+        rxn->connect(motorMoveCallback);
 
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
@@ -641,10 +624,10 @@ void MotorWalkPTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
     //loop through reactants, products. find all species
     auto r = _reactants[0];
-    int motorType = getInt(r);
+    int speciesMotorIndex = getInt(r);
 
     //FIRST REACTANT MUST BE MOTOR
-    reactantSpecies.push_back(m1->speciesMotor(motorType));
+    reactantSpecies.push_back(m1->speciesMotor(speciesMotorIndex));
 
     //SECOND REACTANT MUST BE BOUND
     r = _reactants[1];
@@ -667,14 +650,11 @@ void MotorWalkPTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     new Reaction<MWALKINGREACTANTS, MWALKINGPRODUCTS>(species, _rate);
 
     //callbacks
-#ifdef REACTION_SIGNALING
-    MotorMovingCylinderCallback
-    motorChangeCallback(cc1->getCylinder(), cc2->getCylinder(),
+    MotorMovingCylinderCallback motorChangeCallback(cc1->getCylinder(), cc2->getCylinder(),
                         SysParams::Chemistry().bindingSites[_filamentType].back(),
                         SysParams::Chemistry().bindingSites[_filamentType].front(),
-                        motorType, boundType, _ps);
-    ConnectionBlock rcb(rxn->connect(motorChangeCallback, false));
-#endif
+                        speciesMotorIndex, boundType, _ps);
+    rxn->connect(motorChangeCallback);
 
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
@@ -702,10 +682,10 @@ void MotorWalkMTemplate::addReaction(CCylinder* cc) {
 
         //loop through reactants, products. find all species
         auto r = _reactants[0];
-        int motorType = getInt(r);
+        int speciesMotorIndex = getInt(r);
 
         //FIRST REACTANT MUST BE MOTOR
-        reactantSpecies.push_back(m1->speciesMotor(motorType));
+        reactantSpecies.push_back(m1->speciesMotor(speciesMotorIndex));
 
         //SECOND REACTANT MUST BE BOUND
         r = _reactants[1];
@@ -728,12 +708,8 @@ void MotorWalkMTemplate::addReaction(CCylinder* cc) {
         new Reaction<MWALKINGREACTANTS, MWALKINGPRODUCTS>(species, _rate);
 
         //callbacks
-#ifdef REACTION_SIGNALING
-        MotorWalkingCallback
-        motorMoveCallback(cc->getCylinder(), site1, site2,
-                          motorType, boundType, _ps, _dt);
-        ConnectionBlock rcb(rxn->connect(motorMoveCallback, false));
-#endif
+        MotorWalkingCallback motorMoveCallback(cc->getCylinder(), site1, site2, speciesMotorIndex, boundType, _ps, _dt);
+        rxn->connect(motorMoveCallback);
 
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::MOTORWALKINGBACKWARD);
@@ -754,10 +730,10 @@ void MotorWalkMTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
 
     //loop through reactants, products. find all species
     auto r = _reactants[0];
-    int motorType = getInt(r);
+    int speciesMotorIndex = getInt(r);
 
     //FIRST REACTANT MUST BE MOTOR
-    reactantSpecies.push_back(m1->speciesMotor(motorType));
+    reactantSpecies.push_back(m1->speciesMotor(speciesMotorIndex));
 
     //SECOND REACTANT MUST BE BOUND
     r = _reactants[1];
@@ -780,14 +756,11 @@ void MotorWalkMTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     new Reaction<MWALKINGREACTANTS, MWALKINGPRODUCTS>(species, _rate);
 
     //callbacks
-#ifdef REACTION_SIGNALING
-    MotorMovingCylinderCallback
-    motorChangeCallback(cc2->getCylinder(), cc1->getCylinder(),
+    MotorMovingCylinderCallback motorChangeCallback(cc2->getCylinder(), cc1->getCylinder(),
                         SysParams::Chemistry().bindingSites[_filamentType].front(),
                         SysParams::Chemistry().bindingSites[_filamentType].back(),
-                        motorType, boundType, _ps);
-    ConnectionBlock rcb(rxn->connect(motorChangeCallback, false));
-#endif
+                        speciesMotorIndex, boundType, _ps);
+    rxn->connect(motorChangeCallback);
 
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::MOTORWALKINGBACKWARD);
@@ -893,10 +866,8 @@ void DestructionTemplate::addReaction(CCylinder* cc) {
         ReactionBase* rxn =
         new Reaction<DESTRUCTIONREACTANTS,DESTRUCTIONPRODUCTS>(species, _rate);
 
-#ifdef REACTION_SIGNALING
         FilamentDestructionCallback dcallback(cc->getCylinder(), _ps);
-        ConnectionBlock rcb(rxn->connect(dcallback,false));
-#endif
+        rxn->connect(dcallback);
 
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::FILAMENTDESTRUCTION);
@@ -943,10 +914,8 @@ void DestructionTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     ReactionBase* rxn =
     new Reaction<DESTRUCTIONREACTANTS,DESTRUCTIONPRODUCTS>(species, _rate);
 
-#ifdef REACTION_SIGNALING
     FilamentDestructionCallback dcallback(cc1->getCylinder(), _ps);
-    ConnectionBlock rcb(rxn->connect(dcallback,false));
-#endif
+    rxn->connect(dcallback);
 
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::FILAMENTDESTRUCTION);
@@ -981,13 +950,14 @@ void SeveringTemplate::addReaction(CCylinder* cc) {
         else
             rxn = new Reaction<SEVERINGREACTANTS + 1,SEVERINGPRODUCTS>(species, _rate);
 
-#ifdef REACTION_SIGNALING
         FilamentSeveringCallback scallback(cc->getCylinder());
-        ConnectionBlock rcb(rxn->connect(scallback,false));
-#endif
+        rxn->connect(scallback);
+
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::SEVERING);
     }
 }
 
 SubSystem* FilamentReactionTemplate::_ps = 0;
+
+} // namespace medyan

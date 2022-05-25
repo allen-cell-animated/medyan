@@ -16,6 +16,7 @@
 
 #include "common.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Bead;
 
@@ -27,9 +28,6 @@ public:
         const floatingpoint *coord, size_t nint,
         unsigned int *beadSet, floatingpoint *kdih, floatingpoint *pos
     ) const;
-
-    [[deprecated]] floatingpoint energy(floatingpoint *coord, floatingpoint *f, unsigned int *beadSet,
-                  floatingpoint *kdih, floatingpoint *pos, floatingpoint d);
 
     void forces(
         const floatingpoint *coord, floatingpoint *f, size_t nint,
@@ -81,5 +79,7 @@ public:
   double FmagerrorLvsN[4] = {0.0, 0.0, 0.0, 0.0};
   double FdirerrorLvsN[4] = {0.0, 0.0, 0.0, 0.0};*/
 };
+
+} // namespace medyan
 
 #endif

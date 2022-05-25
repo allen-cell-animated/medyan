@@ -3,6 +3,7 @@
 
 #include "Structure/Database.h"
 
+namespace medyan {
 // Forward declarations
 class Cylinder;
 class Membrane;
@@ -26,5 +27,7 @@ struct MemFilConn : Database< MemFilConn, false > {
     double springConstant = 0.0;
 
 };
+
+} // namespace medyan
 
 #endif

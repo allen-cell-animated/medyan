@@ -21,11 +21,13 @@
 #endif
 
 #include "ChemNRMImpl.h"
+#include "Chemistry/DissipationTracker.h"
 #include "Rand.h"
-#include "CController.h"
+#include "Controller/CController.h"
 
-#include <chrono>
 #include "CUDAcommon.h"
+
+namespace medyan {
 
 #ifdef BOOST_MEM_POOL
 #ifdef BOOST_POOL_MEM_RNODENRM
@@ -75,12 +77,9 @@ RNodeNRM::~RNodeNRM() noexcept {
 }
 
 void RNodeNRM::printSelf() const {
-	Compartment* c = static_cast<Compartment*>(_react->getParent());
-	auto coord = c->coordinates();
 	std::cout.precision(10);
     cout << "RNodeNRM: ptr=" << this <<", tau=" << getTau() <<
-//	cout << "tau=" << getTau() <<
-        ", a=" << _a <<" in Compartment "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<
+        ", a=" << _a <<
         ", points to Reaction:\n";
     cout << (*_react);
 }
@@ -118,8 +117,6 @@ void RNodeNRM::generateNewRandTau() {
 //    cout<<"Propensity of rxn "<<_a<<" tau "<<newTau<<endl;
     setTau(newTau);
 
-/*    cout<<"Rxnbase "<<_react<<" Global time "<<t2<<" "<<tau()<<" lag time "<<t1
-        <<" firing time "<<newTau<<" tau set to "<<(*_handle)._tau<<endl;*/
 }
 
 void RNodeNRM::activateReaction() {
@@ -145,9 +142,7 @@ void ChemNRMImpl::initialize() {
 void ChemNRMImpl::initializerestart(floatingpoint restarttime){
 
     if(SysParams::RUNSTATE){
-        LOG(ERROR) << "initializerestart Function from ChemSimpleGillespieImpl class can "
-                      "only be called "
-                      "during restart phase. Exiting.";
+        log::error("initializerestart Function from ChemSimpleGillespieImpl class can only be called during restart phase. Exiting.");
         throw std::logic_error("Illegal function call pattern");
     }
 
@@ -164,7 +159,7 @@ floatingpoint ChemNRMImpl::generateTau(floatingpoint a){
 	#ifdef DEBUGCONSTANTSEED
 	Rand::chemistrycounter++;
 	#endif
-    return safeExpDist(_exp_distr, a, Rand::eng);
+    return medyan::rand::safeExpDist(_exp_distr, a, Rand::eng);
 }
 
 bool ChemNRMImpl::makeStep(floatingpoint endTime) {
@@ -181,7 +176,7 @@ bool ChemNRMImpl::makeStep(floatingpoint endTime) {
         }
     }
     RNodeNRM *rn = _heap.top()._rn;
-    floatingpoint tau_top = rn->getTau();
+    const floatingpoint tau_top = rn->getTau();
     // Check if a reaction happened before endTime
     if (tau_top>endTime){ 
         setTime(endTime);
@@ -189,16 +184,16 @@ bool ChemNRMImpl::makeStep(floatingpoint endTime) {
     }
     if(tau_top==numeric_limits<floatingpoint>::infinity()){
 
-        cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
+        log::info("The heap has been exhausted - no more reactions to fire, returning...");
         return false;
     }
     ///DEBUG
     //assert heap ordering
     if(tau_top < _t) {
-        cout << "ERROR: The heap is not correctly sorted, returning..." << endl;
-        cout << "Tau top = " << tau_top << endl;
-        cout << "Tau current = " << _t << endl;
-        cout << "Reaction type = " << rn->getReaction()->getReactionType() << endl;
+        log::error("ERROR: The heap is not correctly sorted, returning...");
+        log::info("Tau top = {}", tau_top);
+        log::info("Tau current = {}", _t);
+        log::info("Reaction type = {}", text(rn->getReaction()->getReactionType()));
         rn->printSelf();
         return false;
     }
@@ -208,11 +203,11 @@ bool ChemNRMImpl::makeStep(floatingpoint endTime) {
     setTime(tau_top);
     // if dissipation tracking is enabled and the reaction is supported, then compute the change in Gibbs free energy and store it
     if(SysParams::Chemistry().dissTracking){
-    ReactionBase* react = rn->getReaction();
-    string HRCDID = react->getHRCDID();
-    string testString = "DNT";
-    if((HRCDID != testString) || (react->getReactionType() == 1)){
-        _dt->updateDelGChem(react);
+        ReactionBase* react = rn->getReaction();
+        string HRCDID = react->getHRCDID();
+        string testString = "DNT";
+        if((HRCDID != testString) || (react->getReactionType() == ReactionType::DIFFUSION)){
+            dt->updateDelGChem(react);
         }
     }
     #ifdef CROSSCHECK_CYLINDER
@@ -257,9 +252,9 @@ bool ChemNRMImpl::makeStep(floatingpoint endTime) {
     ReactionBase *r = rn->getReaction();
     if(r->updateDependencies()) {
 
-        for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
+        for(auto& prdep : r->dependents()) {
 
-            RNodeNRM *rn_other = (RNodeNRM*)((*rit)->getRnode());
+            RNodeNRM *rn_other = (RNodeNRM*)(prdep->getRnode());
             floatingpoint a_old = rn_other->getPropensity();
 
             //recompute propensity
@@ -270,31 +265,43 @@ bool ChemNRMImpl::makeStep(floatingpoint endTime) {
 
             floatingpoint a_new = rn_other->getPropensity();
 
-            // recompute tau
-            if(a_new == 0.0) {
-                tau_new = numeric_limits<floatingpoint>::infinity();
-            }
-            else if (a_old == 0.0) {
-                rn_other->generateNewRandTau();
-                tau_new = rn_other->getTau();
+            // Recompute tau.
+            // Unlikely exceptional cases for better branch prediction.
+            if(a_new == 0.0 || a_new == numeric_limits<floatingpoint>::infinity() || a_old == 0.0 || a_old == numeric_limits<floatingpoint>::infinity()) [[unlikely]] {
+                if(a_new == 0.0) {
+                    tau_new = numeric_limits<floatingpoint>::infinity();
+                }
+                else if(a_new == numeric_limits<floatingpoint>::infinity()) {
+                    // propensity can occasionally be infinite, indicating instant reaction.
+                    tau_new = _t;
+                }
+                else {
+                    rn_other->generateNewRandTau();
+                    tau_new = rn_other->getTau();
+                }
             }
             else {
                 tau_new = (a_old/a_new)*(tau_old-_t) + _t;
             }
-            if(std::isnan(tau_new)){tau_new=numeric_limits<floatingpoint>::infinity();}
-            ///DEBUG
+
+            // Debug.
+            if(std::isnan(tau_new)) {
+                log::error("tau_new is nan");
+                log::info("a_old={}, a_new={}, tau_old={}, _t={}", a_old, a_new, tau_old, _t);
+                throw std::runtime_error("tau_new is nan");
+            }
             if(tau_new < _t) {
 
-                cout << "WARNING: Generated tau may be incorrect. " << endl;
+                log::warn("WARNING: Generated tau may be incorrect.");
 
-                cout << "Tau new = " << tau_new << endl;
-                cout << "Tau old = " << tau_old << endl;
-                cout << "Current global t = " << _t << endl;
-                cout << "Previous global t = " << t_prev << endl;
-                cout << "a_old = " << a_old << endl;
-                cout << "a_new = " << a_new << endl;
+                log::info("Tau new = {}", tau_new);
+                log::info("Tau old = {}", tau_old);
+                log::info("Current global t = {}", _t);
+                log::info("Previous global t = {}", t_prev);
+                log::info("a_old = {}", a_old);
+                log::info("a_new = {}", a_new);
 
-                cout << "Reaction type = " << rn->getReaction()->getReactionType() << endl;
+                log::info("Reaction type = {}", text(rn->getReaction()->getReactionType()));
 
 
                 rn->printSelf();
@@ -329,10 +336,9 @@ bool ChemNRMImpl::makeStep(floatingpoint endTime) {
     CController::_crosscheckdumpFilechem <<"emitSignal"<<endl;
     #endif
     minses = chrono::high_resolution_clock::now();
-#ifdef REACTION_SIGNALING
-    // Send signal
+    // Send signal.
     r->emitSignal();
-#endif
+
 #ifdef OPTIMOUT
     mintes = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_emitsignal(mintes - minses);
@@ -352,12 +358,10 @@ bool ChemNRMImpl::makeStep(floatingpoint endTime) {
 
 void ChemNRMImpl::addReaction(ReactionBase *r) {
     _map_rnodes.emplace(r,make_unique<RNodeNRM>(r,*this));
-    ++_n_reacts;
 }
 
 void ChemNRMImpl::removeReaction(ReactionBase *r) {
     _map_rnodes.erase(r);
-    --_n_reacts;
 }
 
 void ChemNRMImpl::printReactions() const {
@@ -374,9 +378,11 @@ bool ChemNRMImpl::crosschecktau() const {
         if(rn->getTau() < tau()) {
             rn->printSelf();
             status = false;
-            LOG(WARNING) << "Tau in reaction is smaller than current time "<<endl;
-            exit(EXIT_FAILURE);
+            log::error("Tau in reaction is smaller than current time.");
+            throw std::runtime_error("Tau in reaction is smaller than current time.");
         }
     }
     return status;
 }
+
+} // namespace medyan

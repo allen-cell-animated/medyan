@@ -22,6 +22,7 @@
 #define SPECIESM_UNBINDING_INDEX 2
 #define SPECIESM_DIFFUSING_INDEX_OFFRXN 2
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class MotorGhost;
 class SubSystem;
@@ -43,8 +44,10 @@ public:
     ///Constructor
     ///@param pos1 - monomer index on first cylinder
     ///@param pos2 - monomer index on second cylinder
-    CMotorGhost(short motorType, Compartment* c,
-                CCylinder* cc1, CCylinder* cc2, int position1, int position2);
+    CMotorGhost(
+        int motorSpeciesIndex1, int motorSpeciesIndex2,
+        Compartment* c,
+        CCylinder* cc1, CCylinder* cc2, int position1, int position2);
     
     ///Destructor, removes off reaction from system
     ~CMotorGhost();
@@ -52,7 +55,7 @@ public:
     /// Copy constructor, standard
     CMotorGhost(const CMotorGhost& rhs, Compartment* c)
     
-        : CBound(rhs._filamentType, c, rhs._cc1, rhs._cc2, rhs._position1, rhs._position2),
+        : CBound(rhs.filType1_, rhs.filType2_, c, rhs._cc1, rhs._cc2, rhs._position1, rhs._position2),
           _pMotorGhost(rhs._pMotorGhost) {
         
         //set species
@@ -89,7 +92,7 @@ public:
     void moveMotorHead(CCylinder* cc,
                        short oldPosition,
                        short newPosition,
-                       short motorType,
+                       short speciesMotorIndex,
                        short boundType,
                        SubSystem* ps);
     
@@ -98,7 +101,7 @@ public:
                        CCylinder* newCC,
                        short oldPosition,
                        short newPosition,
-                       short motorType,
+                       short speciesMotorIndex,
                        short boundType,
                        SubSystem* ps);
     
@@ -110,5 +113,7 @@ public:
         return sfb;
     }
 };
+
+} // namespace medyan
 
 #endif

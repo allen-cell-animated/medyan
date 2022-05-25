@@ -6,7 +6,10 @@
 #if defined(__APPLE__) && defined(__MACH__)
     #define PLATFORM_MACOS
 #endif
-#if defined(__unix__) || defined(PLATFORM_MACOS)
+#if defined(__linux__)
+    #define PLATFORM_LINUX
+#endif
+#if defined(__unix__) || defined(PLATFORM_LINUX) || defined(PLATFORM_MACOS)
     #define PLATFORM_UNIX_LIKE
 #endif
 #if defined(_WIN32)
@@ -37,5 +40,24 @@ inline const IoEnv& ioEnv() {
     static IoEnv ie;
     return ie;
 }
+
+
+namespace medyan {
+
+// Floating point environments
+//-----------------------------------------------------------------------------
+void trapInvalidFP(bool trap = true);
+
+
+// GUI built
+//-----------------------------------------------------------------------------
+#ifdef NO_GUI
+    constexpr bool builtGui = false;
+#else
+    constexpr bool builtGui = true;
+#endif
+
+
+} // namespace medyan
 
 #endif

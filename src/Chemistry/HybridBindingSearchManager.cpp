@@ -19,22 +19,14 @@
 #include "HybridNeighborListImpl.h"
 #include "MotorGhost.h"
 #include "MathFunctions.h"
-#include "GController.h"
+#include "Controller/GController.h"
 #include "SysParams.h"
 #include "CUDAcommon.h"
 #include "Rand.h"
-/*#include <boost/range/counting_range.hpp>
-#include <thrust/execution_policy.h>
-#include <thrust/system/omp/execution_policy.h>
-#include <thrust/sort.h>
-#include <thrust/iterator/iterator_traits.h>
-#include <thrust/binary_search.h>
-#include <cstdlib>
-#include <thrust/scan.h>*/
 
-#include "CController.h"
+#include "Controller/CController.h"
 
-
+namespace medyan {
 
 vector<short> HybridBindingSearchManager::HNLIDvec;
 using namespace mathfunc;
@@ -149,7 +141,7 @@ void HybridBindingSearchManager::initializeSIMDvars(){
 template<>
 dist::dOut<1,true>& HybridBindingSearchManager::getdOut(short dOutID){
 	if(dOutID < 8)
-		return bspairsself[NPROCS - 1][dOutID];
+		return bspairsself[dOutID];
 	else{
 		cout<<"Illegal ID is requested from getdOut function. Code accomodates "
 				  "upto 6 (linker + motor types) Exiting."<<endl;
@@ -160,7 +152,7 @@ dist::dOut<1,true>& HybridBindingSearchManager::getdOut(short dOutID){
 template<>
 dist::dOut<1,false>& HybridBindingSearchManager::getdOut(short dOutID){
 	if(dOutID < 8)
-		return bspairs[NPROCS - 1][dOutID];
+		return bspairs[dOutID];
 	else{
 		cout<<"Illegal ID is requested from getdOut function. Code accomodates "
 		      "upto 6 (linker + motor types) Exiting."<<endl;
@@ -350,7 +342,7 @@ template <uint D, bool SELF, bool LinkerorMotor>
 void HybridBindingSearchManager::gatherCylindercIndexV3(dist::dOut<D,SELF>&
 bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
 
-	const auto& cylinderInfoData = Cylinder::getDbData().value;
+	const auto& cylinderInfoData = Cylinder::getDbData();
 	unsigned int count64 = 0;//counter to bits in random integer
 	bitset<64> randInt = 0;
 	short idx = idvec[0];
@@ -572,14 +564,14 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
     //Key
     t = t|pos;
 
-    if(CROSSCHECK_BS_SWITCH)
+    if(CROSSCHECK_BS_SWITCH) {
         CController::_crosscheckdumpFilechem <<"Removing by key"<<endl;
+    }
+    _possibleBindingsstencilvecuint[idx][idx2].erase(t);
 
-	_possibleBindingsstencilvecuint[idx][idx2].erase(t);
-
-    if(CROSSCHECK_BS_SWITCH)
+    if(CROSSCHECK_BS_SWITCH) {
         CController::_crosscheckdumpFilechem <<"Removing by value"<<endl;
-
+    }
     //remove all tuples which have this as value
     //Iterate through the reverse map
     auto keys = _reversepossibleBindingsstencilvecuint[idx][idx2][t];//keys that contain
@@ -599,9 +591,9 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
     //remove from the reverse map.
 	_reversepossibleBindingsstencilvecuint[idx][idx2][t].clear();
 
-    if(CROSSCHECK_BS_SWITCH)
+    if(CROSSCHECK_BS_SWITCH) {
         CController::_crosscheckdumpFilechem <<"Update rxn"<<endl;
-
+    }
     countNpairsfound(idvec);
     fManagervec[idx][idx2]->updateBindingReaction(Nbindingpairs[idx][idx2]);
 
@@ -634,9 +626,9 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
             }
             //remove from the reverse map.
             m->_reversepossibleBindingsstencilvecuint[idx][idx2][t].clear();
-	        if(CROSSCHECK_BS_SWITCH)
-	            CController::_crosscheckdumpFilechem <<"Update rxn"<<endl;
-
+            if(CROSSCHECK_BS_SWITCH) {
+                CController::_crosscheckdumpFilechem <<"Update rxn"<<endl;
+            }
             m->countNpairsfound(idvec);
             m->fManagervec[idx][idx2]->updateBindingReaction(m->Nbindingpairs[idx][idx2]);
 
@@ -685,7 +677,7 @@ void HybridBindingSearchManager::checkoccupancySIMD(short idvec[2]){
     auto speciesboundvec = SysParams::Mechanics().speciesboundvec;
 
     vector<int> CIDvec(Cylinder::rawNumStableElements());
-    const auto& cylinderInfoData = Cylinder::getDbData().value;
+    const auto& cylinderInfoData = Cylinder::getDbData();
     short bstatepos = bstateposvec[idx][idx2];
 
     for(auto cyl: Cylinder::getCylinders())
@@ -790,7 +782,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
 
-    const auto& cylinderInfoData = Cylinder::getDbData().value;
+    const auto& cylinderInfoData = Cylinder::getDbData();
 
     int idx; int idx2;
 	//Go through all filament types in our simulation
@@ -1040,14 +1032,26 @@ void HybridBindingSearchManager::addtoHNeighborList(){
         float maxrMaxsq = *max_element(temprMaxsq.begin(), temprMaxsq.end());
         float minrMinsq = *min_element(temprMinsq.begin(), temprMinsq.end());
 	    HNLIDvec[idx] = _HneighborList->setneighborsearchparameters(ftypepair[0], ftypepair[1],
-	                                                       false, true, localmaxcylsize + sqrt(maxrMaxsq),
+		                                                   /*uniquestatus*/false,
+		                                                     /*fullstatus*/ true,
+		                                              localmaxcylsize + sqrt(maxrMaxsq),
 	                                                       max( sqrt(minrMinsq) - localmaxcylsize,float(0.0)));
 
-        for(short idx2 = 0; idx2<temprMaxsq.size();idx2++) {
+        /*for(short idx2 = 0; idx2<temprMaxsq.size();idx2++) {
             short idvec[2] = {idx, idx2};
             fManagervec[idx][idx2]->setHNLID(HNLIDvec[idx], idvec);
-        }
+        }*/
     }
+}
+
+void HybridBindingSearchManager::copyInfotoBindingManagers() {
+	for (short idx = 0; idx < totaluniquefIDpairs; idx++) {
+		vector<float> temprMaxsq = _rMaxsqvec[idx];
+		for (short idx2 = 0; idx2 < temprMaxsq.size(); idx2++) {
+			short idvec[2] = {idx, idx2};
+			fManagervec[idx][idx2]->setHNLID(HNLIDvec[idx], idvec);
+		}
+	}
 }
 
 vector<tuple<CCylinder*, short>>
@@ -1061,7 +1065,7 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
     auto fpairs = _filamentIDvec[idx].data();
     int pbsSize = Nbindingpairs[idx][idx2];
 
-    const auto& cylinderInfoData = Cylinder::getDbData().value;
+    const auto& cylinderInfoData = Cylinder::getDbData();
 
     assert((pbsSize!= 0)
            && "Major bug: Linker/Motor binding manager should not have zero binding \
@@ -1161,8 +1165,6 @@ dist::dOut<1U,true> HybridBindingSearchManager::bspairsmotorself;
 dist::dOut<1U,false> HybridBindingSearchManager::bspairsmotor2;
 dist::dOut<1U,false> HybridBindingSearchManager::bspairslinker2;
 
-dist::dOut<1U,true> HybridBindingSearchManager::bspairsself[NPROCS][8];
-dist::dOut<1U,false> HybridBindingSearchManager::bspairs[NPROCS][8];
 floatingpoint HybridBindingSearchManager::largestlinkerdistance = 0.0;
 floatingpoint HybridBindingSearchManager::largestmotordistance = 0.0;
 //D = 2
@@ -1187,3 +1189,5 @@ floatingpoint HybridBindingSearchManager::HYBDappendtime = 0.0;
 floatingpoint HybridBindingSearchManager::SIMDV3appendtime = 0.0;
 floatingpoint HybridBindingSearchManager::findtimeV3 = 0.0;
 #endif
+
+} // namespace medyan

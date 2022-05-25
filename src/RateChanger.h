@@ -16,6 +16,7 @@
 
 #include "common.h"
 
+namespace medyan {
 /// Used to change Filament reaction rates based on forces in the network
 /*!
  *  The FilamentRateChanger class is an abstract class which allows
@@ -99,5 +100,7 @@ public:
     virtual float changeRate(float onRate, float offRate,
                              floatingpoint numBoundHeads, floatingpoint force) = 0;
 };
+
+} // namespace medyan
 
 #endif

@@ -17,9 +17,8 @@
 #include "common.h"
 
 #include "ReactionBase.h"
-#include "ChemSim.h"
 
-
+namespace medyan {
 /// Represents a concrete chemical reaction, such as A + B -> C, where M is the number
 /// of reactants and N is the number of products.
 
@@ -32,17 +31,17 @@
  *  working with reactions.
  */
 template <unsigned short M, unsigned short N>
-    class Reaction : public ReactionBase {
-    protected:
+class Reaction : public ReactionBase {
+protected:
         array<RSpecies*, M+N> _rspecies; ///< An array of RSpecies objects
                                          ///< (reactants followed by products)
-    public:
+public:
         /// The main constructor:
         /// @param species - are reactants and products put together into a single list
         /// (starting from reactants)
         /// @param rate - the rate constant for this ReactionBase
         Reaction(initializer_list<Species*> species,
-                float rate = 0.0, bool isProtoCompartment = false, float volumeFrac = 1.0,
+                FP rate = 0.0, bool isProtoCompartment = false, FP volumeFrac = 1.0,
                 int rateVolumeDepExp = 0)
                 : ReactionBase(rate, isProtoCompartment, volumeFrac, rateVolumeDepExp) {
             initializeSpecies(species);
@@ -54,7 +53,7 @@ template <unsigned short M, unsigned short N>
         /// @param rate - the rate constant for this ReactionBase
         template <typename InputContainer>
         Reaction(const InputContainer &species,
-                 float rate = 0.0, bool isProtoCompartment = false, float volumeFrac = 1.0,
+                 FP rate = 0.0, bool isProtoCompartment = false, FP volumeFrac = 1.0,
                  int rateVolumeDepExp = 0)
                 : ReactionBase(rate, isProtoCompartment, volumeFrac, rateVolumeDepExp) {
             initializeSpecies(species);
@@ -89,43 +88,23 @@ template <unsigned short M, unsigned short N>
         /// getN(), this pointer can be used to iterate over RSpecies associated with
         /// this reaction.
         inline virtual RSpecies** rspecies() override {return &_rspecies[0];}
-        
-        /// Return a list of reactions which rates would be affected if this
-        /// reaction were to be executed.
-        virtual vector<ReactionBase*> getAffectedReactions() override{
-#ifdef DEBUGCONSTANTSEED
-            unordered_set<ReactionBase*, HashbyId<ReactionBase*>,
-    customEqualId<ReactionBase*>> rxns;
-#else
-            unordered_set<ReactionBase*> rxns;
-#endif
-            for(int i = 0; i < M + N; i++) {
-                auto s = _rspecies[i];
-                for(auto it = s->beginReactantReactions();
-                    it != s->endReactantReactions(); it++) {
-                    ReactionBase* r = (*it);
-                    rxns.insert(r);
-                }
-            }
-            rxns.erase(this);
-            return vector<ReactionBase*>(rxns.begin(),rxns.end());
-        }
 
-        virtual void addDependantReactions() override {
-                for(int i = 0; i < M + N; i++) {
-                    auto s = _rspecies[i];
-                    for(auto it = s->beginReactantReactions();
-                        it != s->endReactantReactions(); it++) {
-                        ReactionBase* r = (*it);
-                        if(r!=this && !r->isPassivated())
-                            _dependents.insert(r);
-                    }
-                }
+    virtual void setDependentReactions() override {
+        _dependents.clear();
+        for(int i = 0; i < M + N; i++) {
+            auto s = _rspecies[i];
+            for(auto it = s->beginReactantReactions();
+                it != s->endReactantReactions(); it++) {
+                ReactionBase* r = (*it);
+                if(r!=this && !r->isPassivated())
+                    _dependents.insert(r);
+            }
         }
-        
-        virtual void updatePropensityImpl() override;
-        
-    protected:
+    }
+
+    virtual void updatePropensityImpl() override;
+
+protected:
         /// An implementation method used by the constructor.
         template <typename InputContainer>
         void initializeSpecies(const InputContainer &species){
@@ -137,9 +116,7 @@ template <unsigned short M, unsigned short N>
             if(!_isProtoCompartment) {
 #ifdef TRACK_DEPENDENTS
                 //add dependents
-                addDependantReactions();
-/*                for(auto &d : getAffectedReactions())
-                    if(!d->isPassivated()) _dependents.insert(d);*/
+                setDependentReactions();
 #endif
                 for(auto i=0U; i<M; ++i) _rspecies[i]->addAsReactant(this);
                 for(auto i=M; i<(M+N); ++i) _rspecies[i]->addAsProduct(this);
@@ -282,7 +259,7 @@ private:
 public:
     /// The main constructor
     DiffusionReaction(initializer_list<Species*> species,
-                      float rate = 0.0, bool isProtoCompartment = false, floatingpoint volumeFrac = 1.0)
+                      FP rate = 0.0, bool isProtoCompartment = false, FP volumeFrac = 1.0)
         : Reaction(species, rate, isProtoCompartment, volumeFrac, -1) {
     
         //set averaging
@@ -324,6 +301,8 @@ public:
 
     virtual void updatePropensityImpl() override;
 };
+
+} // namespace medyan
 
 #endif
 

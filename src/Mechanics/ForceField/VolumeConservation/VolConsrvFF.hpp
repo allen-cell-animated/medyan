@@ -6,6 +6,8 @@
 
 #include "Mechanics/ForceField/VolumeConservation/VolConsrvMembrane.hpp"
 
+namespace medyan {
+
 struct VolumeConservationFFFactory {
 
     auto operator()(
@@ -21,12 +23,14 @@ struct VolumeConservationFFFactory {
         }
         else if(type == "") {}
         else {
-            LOG(ERROR) << "Volume conservation FF type " << type << " is not recognized.";
+            log::error("Volume conservation FF type {} is not recognized.", type);
             throw std::runtime_error("Membrane volume conservation FF type not recognized");
         }
 
         return res;
     }
 };
+
+} // namespace medyan
 
 #endif

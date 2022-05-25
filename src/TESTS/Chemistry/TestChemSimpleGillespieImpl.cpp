@@ -3,17 +3,18 @@
 #include "catch2/catch.hpp"
 
 #include "Chemistry/ChemSimpleGillespieImpl.h"
+#include "Chemistry/ReactionDy.hpp"
 
-#include "ReactionDy.hpp"
+namespace medyan {
 
 TEST_CASE("ChemSimpleGillespieImpl tests", "[ChemSim]") {
 
-    Species a{"A", 0, 1000000, REG};
-    Species b{"B", 0, 1000000, REG};
-    Species c{"C", 0, 1000000, REG};
+    Species a{"A", 0, 1000000, SpeciesType::unspecified, RSpeciesType::REG};
+    Species b{"B", 0, 1000000, SpeciesType::unspecified, RSpeciesType::REG};
+    Species c{"C", 0, 1000000, SpeciesType::unspecified, RSpeciesType::REG};
     vector<Species*> reactants{ &a, &b };
     vector<Species*> products{ &c };
-    ReactionDy reaction{reactants, products, 1.0};
+    ReactionDy reaction{reactants, products, ReactionType::REGULAR, 1.0};
     ChemSimpleGillespieImpl sim{};//resets global time to 0
     sim.addReaction(&reaction);
     sim.initialize();
@@ -51,3 +52,5 @@ TEST_CASE("ChemSimpleGillespieImpl tests", "[ChemSim]") {
     }
 
 }
+
+} // namespace medyan

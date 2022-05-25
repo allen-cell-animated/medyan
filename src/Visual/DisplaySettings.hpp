@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "Util/Io/Log.hpp"
+#include "Visual/KeyMapping.hpp"
 
 namespace medyan::visual {
 
@@ -43,6 +44,7 @@ struct GuiSettings {
     // windows switches
     bool helpWindow = false;
     bool profileWindow = true;
+    bool inspectWindow = false;
 };
 
 //-------------------------------------
@@ -53,47 +55,104 @@ struct ObjectViewSettings {
 
     struct Canvas {
         std::array< float, 4 > bgColor { 0.0f, 0.0f, 0.0f, 0.0f };
+        bool  depthCueing = false;
+        float depthCueingDepthMin = 0;
+        float depthCueingDepthMax = 1;
 
+        // The framebuffer size, not necessarily the window size.
         int width = 1200;
         int height = 800;
     };
 
-    // The Camera struct stores the states and parameters of a camera, used in view
-    // transformation.
-    struct Camera {
-        glm::mat4 view() const {
-            return glm::lookAt(position, target, up);
-        }
+    struct Lighting {
+        struct DirLight {
+            glm::vec3 direction { 0.0f, 0.0f, 1.0f };
+            glm::vec3 ambient { 0.3f, 0.3f, 0.3f };
+            glm::vec3 diffuse { 0.3f, 0.3f, 0.3f };
+            glm::vec3 specular { 0.1f, 0.1f, 0.1f };
+        };
+        struct PointLight {
+            glm::vec3 position {};
+            glm::vec3 ambient { 0.0f, 0.0f, 0.0f };
+            glm::vec3 diffuse { 0.4f, 0.4f, 0.4f };
+            glm::vec3 specular { 0.8f, 0.8f, 0.8f };
+            float constant = 1.0f;
+            float linear = 1.4e-4f;
+            float quadratic = 7.2e-8f;
+        };
 
-        // Positions
-        glm::vec3 position = glm::vec3(0.0f, 0.0f, 2000.0f);
-        glm::vec3 target   = glm::vec3(0.0f, 0.0f, 0.0f);
-        glm::vec3 right    = glm::vec3(1.0f, 0.0f, 0.0f);
-        glm::vec3 up       = glm::vec3(0.0f, 1.0f, 0.0f);
+        // Currently, the number of lights is fixed (check the shader source).
+        static constexpr int numDirLights = 2;
+        static constexpr int numPointLights = 4;
+
+        std::array< DirLight,   numDirLights >   dirLights {{
+            DirLight { {  1.0f,  1.0f,  1.0f }, },
+            DirLight { { -1.0f, -1.0f, -1.0f }, },
+        }};
+        std::array< PointLight, numPointLights > pointLights {{
+            PointLight { { -500.0f, -500.0f, -500.0f }, },
+            PointLight { { -500.0f, 3500.0f, 3500.0f }, },
+            PointLight { { 3500.0f, -500.0f, 3500.0f }, },
+            PointLight { { 3500.0f, 3500.0f, -500.0f }, },
+        }};
     };
 
-    struct Projection {
-        enum class Type { orthographic, perspective, last_ };
+    // The Camera struct stores
+    // - The view transformation, containing the camera position and orientation, and
+    // - The projection transformation, containing the field of view, aspect ratio, and near and far clipping planes.
+    struct Camera {
+        struct View {
+            glm::mat4 view() const {
+                auto trans1 = glm::translate(glm::mat4(1.0f), -target);
+                auto rot = glm::mat4_cast(viewQuat);
+                auto trans2 = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -distance));
+                return trans2 * rot * trans1;
+            }
+            glm::vec3 position() const {
+                return backward() * distance + target;
+            }
+            glm::vec3 right() const {
+                return glm::conjugate(viewQuat) * glm::vec3(1, 0, 0);
+            }
+            glm::vec3 up() const {
+                return glm::conjugate(viewQuat) * glm::vec3(0, 1, 0);
+            }
+            glm::vec3 backward() const {
+                return glm::conjugate(viewQuat) * glm::vec3(0, 0, 1);
+            }
 
-        Type  type       = Type::perspective;
-        float fov        = glm::radians(45.0f); // perspective
-        float scale      = 1.0f;                // orthographic
-        float zNear      = 10.0f;
-        float zFar       = 5000.0f;
+            // Positions
+            glm::quat viewQuat = glm::quat(1.0f, 0.0f, 0.0f, 0.0f); // Should always be normalized.
+            float     distance = 2000.f;
+            glm::vec3 target   = glm::vec3(0.0f, 0.0f, 0.0f);
+        };
 
-        // Helper functions
+        struct Projection {
+            enum class Type { orthographic, perspective, last_ };
 
-        auto projOrtho(float width, float height) const {
-            return glm::ortho(-width * 0.5f * scale, width * 0.5f * scale, -height * 0.5f * scale, height * 0.5f * scale, zNear, zFar);
-        }
-        auto projPerspective(float width, float height) const {
-            return glm::perspective(fov, width / height, zNear, zFar);
-        }
-        auto proj(float width, float height) const {
-            return type == Type::orthographic ?
-                projOrtho      (width, height):
-                projPerspective(width, height);
-        }
+            Type  type       = Type::perspective;
+            float fov        = glm::radians(45.0f); // perspective, vertical field of view
+            float scale      = 1.0f;                // orthographic
+            float zNear      = 10.0f;
+            float zFar       = 5000.0f;
+
+            // Helper functions
+
+            auto projOrtho(float width, float height) const {
+                return glm::ortho(-width * 0.5f * scale, width * 0.5f * scale, -height * 0.5f * scale, height * 0.5f * scale, zNear, zFar);
+            }
+            auto projPerspective(float width, float height) const {
+                return glm::perspective(fov, height == 0 ? 1.0f : width / height, zNear, zFar);
+            }
+            auto proj(float width, float height) const {
+                return type == Type::orthographic ?
+                    projOrtho      (width, height):
+                    projPerspective(width, height);
+            }
+        };
+
+        View view;
+        Projection projection;
     };
 
     struct Control {
@@ -109,12 +168,22 @@ struct ObjectViewSettings {
             last_
         };
 
+        // Key mapping
+        //-----------------------------
+        KeyMapping keyMapping;
+
         // camera
         //-----------------------------
-        float cameraKeyPositionPerFrame = 200.0f;
+        float cameraKeyPositionPerFrame = 500.0f;
 
         CameraMouseMode cameraMouseMode = CameraMouseMode::rotate;
-        float cameraRotatePositionPerCursorPixel = 2.0f;   // camera move distance per pixel (rotate)
+        // When rotating camera, the camera-target distance divided by the following value gives the radius of the rotation sphere.
+        // When the mouse moves a little, it should appear that the center of front surface of the rotation sphere is dragged by the mouse.
+        // Let k be the following divisor, then the angle per pixel (app) can be computed as:
+        // - perspective:   app = (k - 1) * vertical_fov / height_in_pixel
+        // - orthographic:  app = scale * (k / camera_target_distance)
+        // k should be in range (1, +infinity), where 1 indicates smallest rotation speed (zero if perspective) and +infinity indicates infinite rotation speed.
+        float cameraRotateSphereDistanceDivisor = 2.5f;
         float cameraPanPositionPerCursorPixel = 2.0f;      // camera move distance per pixel (pan)
 
         // snapshot saving section
@@ -160,7 +229,7 @@ struct ObjectViewSettings {
             }
             else {
                 if(index < 0 || index > 999999) {
-                    LOG(ERROR) << "Snapshot index " << index << " out of range.";
+                    log::error("Snapshot index {} out of range.", index);
                     throw std::runtime_error("Snapshot index out of range");
                 }
                 // 11 chars after base name: "-012345.png"
@@ -174,20 +243,19 @@ struct ObjectViewSettings {
     // Canvas
     Canvas canvas;
 
+    Lighting lighting;
+
     // View
     Camera camera;
-
-    // Projection
-    Projection projection;
 
     // Control
     Control control;
 };
 
-constexpr auto text(ObjectViewSettings::Projection::Type proj) {
+constexpr auto text(ObjectViewSettings::Camera::Projection::Type proj) {
     switch(proj) {
-        case ObjectViewSettings::Projection::Type::orthographic: return "orthographic";
-        case ObjectViewSettings::Projection::Type::perspective:  return "perspective";
+        case ObjectViewSettings::Camera::Projection::Type::orthographic: return "orthographic";
+        case ObjectViewSettings::Camera::Projection::Type::perspective:  return "perspective";
         default:                                                 return "";
     }
 }

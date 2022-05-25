@@ -17,8 +17,8 @@
 
 #include "MathFunctions.h"
 
-using namespace mathfunc;
 #ifdef CROSSCHECK
+using namespace mathfunc;
 floatingpoint FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
                                           floatingpoint kStretch, floatingpoint eqLength){
     

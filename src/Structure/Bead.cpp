@@ -13,14 +13,14 @@
 
 #include "Bead.h"
 
-#include "Core/Globals.hpp"
 #include "Compartment.h"
 #include "Composite.h"
 
 #include "SysParams.h"
-#include "GController.h"
+#include "Controller/GController.h"
 #include "MathFunctions.h"
 
+namespace medyan {
 using namespace mathfunc;
 
 std::vector<Bead*> Bead::_pinnedBeads;
@@ -33,15 +33,14 @@ Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
       coordinateP(v),
       brforce(3, 0), pinforce(3,0),
       _position(position), _birthTime(tau()) {
-    
-    if(SysParams::RUNSTATE)
-        parent->addChild(unique_ptr<Component>(this));
+
+    parent->addChild(unique_ptr<Component>(this));
           
     loadForcesP = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
     loadForcesM = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
 
     //Find compartment
-    try {_compartment = GController::getCompartment(v);}
+    try {_compartment = &GController::getCompartment(v);}
     catch (exception& e) {
         
         cout << e.what() << endl;
@@ -51,7 +50,7 @@ Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
         //also print parent info
         getParent()->printSelf();
         
-        exit(EXIT_FAILURE);
+        throw;
     }
 
 }
@@ -81,8 +80,7 @@ void Bead::updatePosition() {
         //also print parent info
         getParent()->printSelf();
         
-        //exit
-        exit(EXIT_FAILURE);
+        throw;
     }
 }
 
@@ -124,3 +122,4 @@ floatingpoint Bead::getLoadForcesM() {
     else return loadForcesM[lfim];
 }
 
+} // namespace medyan

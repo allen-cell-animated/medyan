@@ -19,26 +19,25 @@
 #include "CUDAcommon.h"
 #endif
 
-#include "MotorGhostInteractions.h"
+#include "Mechanics/ForceField/ForceField.h"
 
-//FORWARD DECLARATIONS
-class MotorGhost;
+namespace medyan {
 
 /// Represents a MotorGhost stretching interaction.
 template <class MStretchingInteractionType>
-class MotorGhostStretching : public MotorGhostInteractions {
+class MotorGhostStretching : public ForceField {
     
 private:
     MStretchingInteractionType _FFType;
 
-    int *beadSet;
+    std::vector<int> beadSet;
     
     ///Array describing the constants in calculation
-    floatingpoint *kstr;
-    floatingpoint *eql;
-    floatingpoint *pos1;
-    floatingpoint *pos2;
-    floatingpoint *stretchforce;
+    std::vector<FP> kstr;
+    std::vector<FP> eql;
+    std::vector<FP> pos1;
+    std::vector<FP> pos2;
+    std::vector<FP> stretchforce;
 
 #ifdef CUDAACCL
     int * gpu_beadSet;
@@ -58,21 +57,21 @@ public:
     const static int n = 4;
     
     ///< Constructor
-    MotorGhostStretching () {}
-    ~MotorGhostStretching () {}
+    MotorGhostStretching () = default;
     
-    virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void deallocate();
+    virtual void vectorize(const FFCoordinateStartingIndex&, const SimulConfig&) override;
     
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+    virtual FP computeEnergy(FP *coord) override;
+    virtual void computeForces(FP *coord, FP *f) override;
 
 
-    virtual const string getName() {return "MotorGhost Stretching";}
+    virtual std::string getName() override { return "MotorStretching"; }
 
-    virtual void assignforcemags();
+    virtual void assignforcemags() override;
 
 };
+
+} // namespace medyan
 
 #endif

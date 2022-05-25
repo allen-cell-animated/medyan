@@ -16,6 +16,7 @@
 
 #include "common.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Neighbor;
 class DynamicNeighbor;
@@ -67,4 +68,7 @@ public:
     virtual void reset() = 0;
 
 };
+
+} // namespace medyan
+
 #endif

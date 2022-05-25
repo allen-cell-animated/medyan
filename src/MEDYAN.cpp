@@ -34,34 +34,7 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
  
  \section install_sec Installation
  
- \subsection step1 Step 1: Prerequisites
- 
- The following libraries need to be installed first:
- See Installation guide (docs/InstallGuide.pdf) for more details.
- 
- - Boost 1.49
- - GSL ...
- 
- \subsection step2 Step 2: Installation of MEDYAN itself
- 
- Untar the MEDYAN source code into some directory, enter
- into the "MEDYAN" folder and execute "make" from the command line.
- 
- See Installation guide (docs/InstallGuide.pdf) for more information
- on setting command line compilation macros, compiler compatibility, etc.
- 
- \subsection step3 Step 3: Running MEDYAN
- 
- See the Usage guide (docs/UsageGuide.pdf) for more information. The MEDYAN
- executable must be run with the following command line arguments:
- 
- -s : System input file to be used. Must be an absolute path
- -i : Input directory to be used, where all files specified in the
-      system input file must be located. Must be an absolute path.
- -o : Output directory to be used (must be created beforehand),
-      where all output files will be placed. Must be an absolute path.
- 
- Run -h for help.
+    See docs/manual/installation.md for details.
  
  */
 
@@ -70,148 +43,85 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #define CATCH_CONFIG_RUNNER
 #include "catch2/catch.hpp"
 
-#include "Analysis/Io/ReadSnapshot.hpp"
 #include "common.h"
-#include "Controller.h"
-#include "Core/Globals.hpp"
 #include "MedyanArgs.hpp"
 #include "MedyanConfig.hpp"
+#include "MedyanMeta.hpp"
+#include "Analysis/Io/ReadSnapshot.hpp"
+#include "Controller/Controller.h"
 #include "Side/SideProcedures.hpp"
+#include "Visualization.hpp"
 
-#ifdef NO_GUI
-// GUI functions will be excluded, allowing for fewer dependencies in compilation.
-
-// Print warning messages on GUI running attempts
-void guiRunDisabledWarning() {
-    LOG(WARNING) << "GUI is not built into this version. Possibly because NO_GUI was specified in compilation.";
-}
-
-void guiRunRealtime()   { guiRunDisabledWarning(); }
-void guiRunTrajectory() { guiRunDisabledWarning(); }
-
-#else // #ifdef NO_GUI
-// NO_GUI is not defined. GUI functions are enabled.
-
-#include "Visual/Window.hpp"
-
-void guiRunInitialMode(medyan::visual::DisplayMode displayMode) {
-    medyan::visual::VisualDisplay visualDisplay(displayMode);
-    visualDisplay.run();
-}
-
-void guiRunRealtime()   { guiRunInitialMode(medyan::visual::DisplayMode::realtime); }
-void guiRunTrajectory() { guiRunInitialMode(medyan::visual::DisplayMode::trajectory); }
-
-#endif // #ifdef NO_GUI
-
-
-using namespace medyan;
-#ifndef GIT_COMMIT_HASH
-#define GIT_COMMIT_HASH "?"
-#endif
-#ifndef GIT_BRANCH
-#define GIT_BRANCH "?"
-#endif
 
 int main(int argc, char **argv) {
+    using namespace medyan;
 
-    cout << endl;
-    cout << "*********************** MEDYAN ************************" << endl;
-    cout << "   Simulation package for the Mechanochemical Dynamics " << endl;
-    cout << "         of Active Networks, Third Generation.         " << endl;
-    cout << "         PAPOIAN LAB 2015, ALL RIGHTS RESERVED         " << endl;
-    cout << "*******************************************************" << endl;
-    cout<< "Commit hash                          "<<GIT_COMMIT_HASH<<endl;
-    cout<< "Git branch                           "<<GIT_BRANCH<<endl;
-    cout << "MEDYAN version:                      v5.0.0"<<endl;
-    cout << "Memory model:                        "<< static_cast<unsigned>(8 * sizeof
-    (void*))<<" bit"<<endl;
-    cout << "Coordinate/Force precision:          ";
-    #if FLOAT_PRECISION
-    cout << "single" << endl;
-    #else
-    cout << "double" << endl;
-    #endif
-
-    cout << "Pair-wise list algorithm:            ";
-    #if defined NLORIGINAL
-    cout << "original (legacy)"<<endl;
-    #elif defined NLSTENCILLIST
-    cout << "stencil list based"<<endl;
-    #elif defined HYBRID_NLSTENCILLIST
-    cout << "hybrid**"<<endl;
-    cout << "**single neighbor list for compatible distance ranges corresponding to the "
-            "same filament type pairs"<<endl;
-    #elif defined SIMDBINDINGSEARCH
-    cout << "SIMD**"<<endl;
-    cout << "SIMD instruction set:                ";
-    #if defined __AVX512F__
-    cout<<"AVX512 (MEDYAN will use AVX2 instructions"<<endl;
-    #elif defined __AVX2__
-    cout<<"AVX2"<<endl;
-    #elif defined __AVX__
-    cout<<"AVX"<<endl;
-    #else
-    cout<<"none"<<endl;
-    #endif
-    cout<<"**SIMD accelerated hybrid search - single neighbor list for compatible distance"
-          " ranges corresponding to the same filament type pairs"<<endl;
-    #endif
-    cout << "*******************************************************" << endl;
-
-    cout.precision(8);
+    std::cout.precision(8);
+    printHeader();
 
     auto cmdRes = medyanInitFromCommandLine(argc, argv);
+    auto& cmdConfig = cmdRes.cmdConfig;
+
+    log::debug("MEDYAN program started.");
 
     int returnCode = 0;
 
-    switch(cmdRes.runMode) {
+    switch(cmdConfig.runMode) {
 
-    case MedyanRunMode::simulation:
-        {
+        case MedyanRunMode::simulation:
+            {
 
-            std::thread simul([&]{
-                Controller c;
-                c.initialize(
-                    cmdRes.inputFile,
-                    cmdRes.inputDirectory,
-                    cmdRes.outputDirectory,
-                    cmdRes.numThreads);
-                c.run();
-            });
+                const auto runController = [&]{
+                    Controller c;
+                    auto conf = c.initialize(cmdConfig);
+                    c.run(cmdConfig, conf);
+                };
 
-            if(cmdRes.guiEnabled) {
-                guiRunRealtime();
+                if(cmdConfig.guiEnabled) {
+                    // Run controller on another thread.
+                    std::thread simul(runController);
+
+                    guiRunRealtime();
+                    simul.join();
+                }
+                else {
+                    // Run controller in this main thread.
+                    runController();
+                }
             }
-            simul.join();
-        }
-        break;
+            break;
 
-    case MedyanRunMode::gui:
-        guiRunTrajectory();
-        break;
+        case MedyanRunMode::gui:
+            guiRunTrajectory();
+            break;
 
-    case MedyanRunMode::analyze:
-        {
-            string inputFilePath = cmdRes.inputDirectory + "/snapshot.traj";
-            string pdbFilePath = cmdRes.outputDirectory + "/snapshot.pdb";
-            analysis::SnapshotReader sr(inputFilePath, pdbFilePath, cmdRes.outputDirectory, "snapshot");
-            sr.readAndConvertToVmd();
-        }
-        break;
+        case MedyanRunMode::analyze:
+            {
+                auto inputFilePath = cmdConfig.inputDirectory / "snapshot.traj";
+                auto pdbFilePath = cmdConfig.outputDirectory / "snapshot.pdb";
+                analysis::SnapshotReader sr(inputFilePath, pdbFilePath, cmdConfig.outputDirectory, "snapshot");
+                sr.readAndConvertToVmd(0, cmdConfig.runAnalyzeParams);
+            }
+            break;
 
-    case MedyanRunMode::config:
-        interactiveConfig();
-        break;
+        case MedyanRunMode::config:
+            if(cmdConfig.inputFile.empty()) {
+                interactiveConfig();
+            } else {
+                normalizeConfig(cmdConfig.inputFile, cmdConfig.inputDirectory, cmdConfig.outputDirectory);
+            }
+            break;
 
-    case MedyanRunMode::test:
-        returnCode = Catch::Session().run(argc - (cmdRes.argpNext - 1), argv + (cmdRes.argpNext - 1));
-        break;
+        case MedyanRunMode::test:
+            returnCode = Catch::Session().run(argc - (cmdRes.argpNext - 1), argv + (cmdRes.argpNext - 1));
+            break;
 
-    case MedyanRunMode::side:
-        medyan::side::runSideProcedure(cmdRes.sideProcName);
-        break;
+        case MedyanRunMode::side:
+            medyan::side::runSideProcedure(cmdConfig.sideProcName);
+            break;
     }
+
+    log::debug("MEDYAN program finished.");
 
     return returnCode;
 }

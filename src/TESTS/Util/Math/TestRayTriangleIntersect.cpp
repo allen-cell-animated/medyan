@@ -2,7 +2,7 @@
 
 #include "Util/Math/RayTriangleIntersect.hpp"
 
-using namespace mathfunc;
+using namespace medyan;
 
 TEST_CASE("Ray triangle intersection test", "[Ray Triangle Intersect]") {
     using namespace ray_tracing;

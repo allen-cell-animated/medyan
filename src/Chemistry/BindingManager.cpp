@@ -27,24 +27,26 @@
 
 #include "ChemCallbacks.h"
 #include "MathFunctions.h"
-#include "GController.h"
+#include "Controller/GController.h"
 #include "SysParams.h"
 #include "CUDAcommon.h"
 #include <algorithm>
 #include "SubSystem.h"
 
 
+
+namespace medyan {
 using namespace mathfunc;
 
 //BRANCHER
 
 BranchingManager::BranchingManager(ReactionBase* reaction,
                                    Compartment* compartment,
-                                   short boundInt, string boundName,
+                                   short boundInt,
                                    vector<short> filamentIDvec,
                                    NucleationZoneType zone, floatingpoint nucleationDistance)
 
-: FilamentBindingManager(reaction, compartment, boundInt, boundName, filamentIDvec),
+: FilamentBindingManager(reaction, compartment, boundInt, filamentIDvec),
 _nucleationZone(zone), _nucleationDistance(nucleationDistance) {
 
     //find the single binding species
@@ -80,10 +82,10 @@ void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
         //set nucleation zone
         // For membrane acting as boundaries, only the 0th membrane will be considered.
         if(_nucleationZone == NucleationZoneType::MEMBRANE) {
-            if(Membrane::getMembranes().size()) {
+            if(_subSystem->membranes.size()) {
                 if(cc->getCompartment()->isActivated()) {
                     if(cc->getCompartment()->getVolumeFrac() < 1.0) // Not fully activated
-                        if(!Membrane::getMembranes()[0]->contains(vector2Vec<3, floatingpoint>(coord)))
+                        if(!medyan::contains(*_subSystem, _subSystem->membranes.begin()->getMesh(), vector2Vec<3, floatingpoint>(coord)))
                             inZone = false;
                 }
                 else inZone = false;
@@ -206,10 +208,10 @@ void BranchingManager::updateAllPossibleBindings() {
                 //set nucleation zone
                 // For membrane acting as boundaries, only the 0th membrane will be considered.
                 if(_nucleationZone == NucleationZoneType::MEMBRANE) {
-                    if(Membrane::getMembranes().size()) {
+                    if(_subSystem->membranes.size()) {
                         if(cc->getCompartment()->isActivated()) {
                             if(cc->getCompartment()->getVolumeFrac() < 1.0) // Not fully activated
-                                if(!Membrane::getMembranes()[0]->contains(vector2Vec<3, floatingpoint>(coord)))
+                                if(!medyan::contains(*_subSystem, _subSystem->membranes.begin()->getMesh(), vector2Vec<3, floatingpoint>(coord)))
                                     inZone = false;
                         }
                         else inZone = false;
@@ -625,14 +627,19 @@ int* BranchingManager::getnumpairsCUDA(){
 #endif
 
 //LINKER
-LinkerBindingManager::LinkerBindingManager(ReactionBase* reaction,
-                                           Compartment* compartment,
-                                           short boundInt, string boundName,
-                                           vector<short> filamentIDvec,
-                                           float rMax, float rMin)
+LinkerBindingManager::LinkerBindingManager(
+    ReactionBase* reaction,
+    Compartment* compartment,
+    short linkerType,
+    vector<short> filamentIDvec,
+    int linkerSpeciesIndex1,
+    int linkerSpeciesIndex2,
+    float rMax, float rMin)
 
-: FilamentBindingManager(reaction, compartment, boundInt, boundName, filamentIDvec),
-_rMin(rMin), _rMax(rMax) {
+: FilamentBindingManager(reaction, compartment, linkerType, filamentIDvec),
+    _rMin(rMin), _rMax(rMax),
+    linkerSpeciesIndices_ { linkerSpeciesIndex1, linkerSpeciesIndex2 }
+{
     _rMinsq =_rMin * _rMin;
     _rMaxsq = _rMax * _rMax;
 
@@ -1140,7 +1147,7 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc) {
 void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSite) {
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     auto HManager = _compartment->getHybridBindingSearchManager();
-    HManager->addPossibleBindingsstencil(_idvec,cc,bindingSite);
+    HManager->addPossibleBindingsstencil(_Hbsmidvec,cc,bindingSite);
 #else
 	if (SysParams::INITIALIZEDSTATUS ) {
 		short complimentaryfID;
@@ -1260,7 +1267,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     floatingpoint* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
 
-    const auto& cylinderInfoData = Cylinder::getDbData().value;
+    const auto& cylinderInfoData = Cylinder::getDbData();
 
     int Ncylincmp =  _compartment->getCylinders().size();
     int* cindexvec = new int[Ncylincmp]; //stores cindex of cylinders in this compartment
@@ -1432,7 +1439,7 @@ void LinkerBindingManager::appendpossibleBindingsstencil(short boundInt, CCylind
 
 	#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 	auto HManager = _compartment->getHybridBindingSearchManager();
-	HManager->appendPossibleBindingsstencil(_idvec, ccyl1, ccyl2, site1, site2);
+	HManager->appendPossibleBindingsstencil(_Hbsmidvec, ccyl1, ccyl2, site1, site2);
 	#else
 	auto t1 = make_tuple(ccyl1, site1);
 	auto t2 = make_tuple(ccyl2, site2);
@@ -1453,7 +1460,10 @@ void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc) {
 void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bindingSite) {
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     auto HManager = _compartment->getHybridBindingSearchManager();
-    HManager->removePossibleBindingsstencil(_idvec, cc, bindingSite);
+    HManager->removePossibleBindingsstencil(_Hbsmidvec, cc, bindingSite);
+/*    for(auto C:SubSystem::getstaticgrid()->getCompartments()){
+        C->getHybridBindingSearchManager()->checkoccupancySIMD(_Hbsmidvec);
+    }*/
 
 #else
 
@@ -1577,7 +1587,7 @@ void LinkerBindingManager::crosscheck(){
 vector<tuple<CCylinder*, short>> LinkerBindingManager::chooseBindingSitesstencil() {
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     auto HManager = _compartment->getHybridBindingSearchManager();
-    return HManager->chooseBindingSitesstencil(_idvec);
+    return HManager->chooseBindingSitesstencil(_Hbsmidvec);
 #else
     assert((_possibleBindingsstencil.size() != 0)
            && "Major bug: Linker binding manager should not have zero binding \
@@ -1598,7 +1608,7 @@ void LinkerBindingManager::clearpossibleBindingsstencil() {
         updateBindingReaction(oldN,0);
     #else
     auto HManager = _compartment->getHybridBindingSearchManager();
-    HManager->clearPossibleBindingsstencil(_idvec);
+    HManager->clearPossibleBindingsstencil(_Hbsmidvec);
     #endif
 }
 int LinkerBindingManager::numBindingSitesstencil() {
@@ -1606,7 +1616,7 @@ int LinkerBindingManager::numBindingSitesstencil() {
     return _possibleBindingsstencil.size();
 #else
     auto HManager = _compartment->getHybridBindingSearchManager();
-    return HManager->numBindingSitesstencil(_idvec);
+    return HManager->numBindingSitesstencil(_Hbsmidvec);
 #endif
 
 }
@@ -1625,7 +1635,7 @@ void LinkerBindingManager::printbindingsitesstencil() {
 	}
 #else
 	auto HManager = _compartment->getHybridBindingSearchManager();
-	HManager->printbindingsitesstencil(_idvec);
+	HManager->printbindingsitesstencil(_Hbsmidvec);
 #endif
 }
 #endif
@@ -1655,14 +1665,19 @@ void LinkerBindingManager::freecudavars() {
 #endif
 
 //MOTOR
-MotorBindingManager::MotorBindingManager(ReactionBase* reaction,
-                                         Compartment* compartment,
-                                         short boundInt, string boundName,
-                                         vector<short> filamentIDvec,
-                                         float rMax, float rMin)
+MotorBindingManager::MotorBindingManager(
+    ReactionBase* reaction,
+    Compartment* compartment,
+    short linkerType,
+    vector<short> filamentIDvec,
+    int motorSpeciesIndex1,
+    int motorSpeciesIndex2,
+    float rMax, float rMin)
 
-: FilamentBindingManager(reaction, compartment, boundInt, boundName, filamentIDvec),
-_rMin(rMin), _rMax(rMax) {
+: FilamentBindingManager(reaction, compartment, linkerType, filamentIDvec),
+    _rMin(rMin), _rMax(rMax),
+    motorSpeciesIndices_ { motorSpeciesIndex1, motorSpeciesIndex2 }
+{
 
     _rMinsq =_rMin * _rMin;
     _rMaxsq = _rMax * _rMax;
@@ -1685,8 +1700,8 @@ _rMin(rMin), _rMax(rMax) {
     //attach an rspecies callback to this species
     Species* sd = &(rs[ML_RXN_INDEX + 1]->getSpecies());
 
-    UpdateMotorIDCallback mcallback(boundInt);
-    ConnectionBlock rcb(sd->connect(mcallback,false));
+    UpdateMotorIDCallback mcallback(linkerType);
+    sd->connect(mcallback);
     _rMaxsq = rMax*rMax;
     _rMinsq = rMin*rMin;
 
@@ -2161,8 +2176,8 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 //    cout<<"Adding "<<cc->getCylinder()->getID()<<" "<<bindingSite<<endl;
     auto HManager = _compartment->getHybridBindingSearchManager();
-    HManager->addPossibleBindingsstencil(_idvec,cc,bindingSite);
-//    HManager->checkoccupancySIMD(_idvec);
+    HManager->addPossibleBindingsstencil(_Hbsmidvec,cc,bindingSite);
+    //    HManager->checkoccupancySIMD(_Hbsmidvec);
 #else
     if (SysParams::INITIALIZEDSTATUS ) {
         short complimentaryfID;
@@ -2280,7 +2295,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     floatingpoint* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
 
-    const auto& cylinderInfoData = Cylinder::getDbData().value;
+    const auto& cylinderInfoData = Cylinder::getDbData();
 
     int counter1 = 0;
     int totalneighbors = 0;
@@ -2456,7 +2471,7 @@ void MotorBindingManager::appendpossibleBindingsstencil(short boundInt, CCylinde
 
 	#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 	auto HManager = _compartment->getHybridBindingSearchManager();
-	HManager->appendPossibleBindingsstencil(_idvec, ccyl1, ccyl2, site1, site2);
+	HManager->appendPossibleBindingsstencil(_Hbsmidvec, ccyl1, ccyl2, site1, site2);
 	#else
 	auto t1 = make_tuple(ccyl1, site1);
 	auto t2 = make_tuple(ccyl2, site2);
@@ -2478,9 +2493,9 @@ void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bin
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
 //    cout<<"Removing "<<cc->getCylinder()->getID()<<" "<<bindingSite<<endl;
     auto HManager = _compartment->getHybridBindingSearchManager();
-        HManager->removePossibleBindingsstencil(_idvec, cc, bindingSite);
+    HManager->removePossibleBindingsstencil(_Hbsmidvec, cc, bindingSite);
 /*    for(auto C:SubSystem::getstaticgrid()->getCompartments()){
-        C->getHybridBindingSearchManager()->checkoccupancySIMD(_idvec);
+        C->getHybridBindingSearchManager()->checkoccupancySIMD(_Hbsmidvec);
     }*/
 #else
 
@@ -2601,7 +2616,7 @@ void MotorBindingManager::crosscheck(){
 vector<tuple<CCylinder*, short>> MotorBindingManager::chooseBindingSitesstencil() {
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
     auto HManager = _compartment->getHybridBindingSearchManager();
-    return HManager->chooseBindingSitesstencil(_idvec);
+    return HManager->chooseBindingSitesstencil(_Hbsmidvec);
 #else
     assert((_possibleBindingsstencil.size() != 0)
            && "Major bug: Linker binding manager should not have zero binding \
@@ -2623,7 +2638,7 @@ void MotorBindingManager::clearpossibleBindingsstencil() {
         updateBindingReaction(oldN,0);
     #else
     auto HManager = _compartment->getHybridBindingSearchManager();
-    HManager->clearPossibleBindingsstencil(_idvec);
+    HManager->clearPossibleBindingsstencil(_Hbsmidvec);
 
     #endif
 }
@@ -2632,7 +2647,7 @@ int MotorBindingManager::numBindingSitesstencil() {
     return _possibleBindingsstencil.size();
 #else
     auto HManager = _compartment->getHybridBindingSearchManager();
-    return HManager->numBindingSitesstencil(_idvec);
+    return HManager->numBindingSitesstencil(_Hbsmidvec);
 #endif
 
 }
@@ -2651,7 +2666,7 @@ void MotorBindingManager::printbindingsitesstencil() {
 	}
 	#else
 	auto HManager = _compartment->getHybridBindingSearchManager();
-	HManager->printbindingsitesstencil(_idvec);
+	HManager->printbindingsitesstencil(_Hbsmidvec);
 	#endif
 }
 #endif
@@ -2686,8 +2701,5 @@ SubSystem* FilamentBindingManager::_subSystem = 0;
 
 vector<CylinderCylinderNL*> LinkerBindingManager::_neighborLists;
 vector<CylinderCylinderNL*> MotorBindingManager::_neighborLists;
-short LinkerBindingManager::HNLID;
-short MotorBindingManager::HNLID;
-short LinkerBindingManager::_idvec[2];
-short MotorBindingManager::_idvec[2];
 
+} // namespace medyan

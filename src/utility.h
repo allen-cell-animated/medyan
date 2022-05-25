@@ -36,12 +36,22 @@
 using namespace std;
 
 ///floatingpoint typedef
-#if FLOAT_PRECISION
+#ifdef FLOAT_PRECISION
 typedef float floatingpoint;
 #else
 typedef double floatingpoint;
 #endif
 typedef double doubleprecision;
+
+namespace medyan {
+
+#ifdef FLOAT_PRECISION
+    using FP = float;
+#else
+    using FP = double;
+#endif
+
+} // namespace medyan
 
 namespace detail {
 
@@ -190,7 +200,9 @@ namespace std{
 
 namespace medyan {
 
-// Provide simple interface for overloading functions
+// Provide simple interface for overloading functions.
+// Usage:
+//     Overload { func1, func2, ... };
 template< typename... Ts >
 struct Overload : Ts... { using Ts::operator()...; };
 
@@ -198,7 +210,7 @@ template< typename... Ts >
 Overload(Ts...) -> Overload< Ts... >;
 
 
-// Get underlying value of an enum
+// Get underlying value of an enum.
 template<
     typename Enum,
     std::enable_if_t< std::is_enum_v< Enum > >* = nullptr  // type requirements
@@ -207,6 +219,15 @@ constexpr auto underlying(Enum value) {
     return static_cast< std::underlying_type_t< Enum > >(value);
 }
 
+
+// Execute the function on scope exit.
+template< typename Func >
+struct ScopeGuard {
+    Func func;
+    ~ScopeGuard() { func(); }
+};
+template< typename Func >
+ScopeGuard(Func) -> ScopeGuard< Func >;
 
 } // namespace medyan
 

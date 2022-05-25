@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <array>
+#include <functional>
 #include <iostream> // cout, endl
 #include <stdexcept> // runtime_error
 #include <vector>
@@ -15,7 +16,7 @@
 #include "Util/Io/Log.hpp"
 #include "Visual/Common.hpp"
 #include "Visual/Control.hpp"
-#include "Visual/Gui.hpp"
+#include "Visual/Gui/Gui.hpp"
 #include "Visual/Playback.hpp"
 #include "Visual/Shader.hpp"
 #include "Visual/ShaderSrc.hpp"
@@ -30,7 +31,7 @@ namespace medyan::visual {
 
 
 inline void glfwError(int id, const char* description) {
-    LOG(ERROR) << description;
+    log::error(description);
     throw std::runtime_error("Error in GLFW environment");
 }
 
@@ -76,7 +77,7 @@ public:
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, offscreenColorRbo);
 
             if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-                LOG(ERROR) << "Framebuffer is not complete.";
+                log::error("Framebuffer is not complete.");
             }
         }
 
@@ -97,9 +98,15 @@ public:
     DisplayStates   displayStates;
 
 
-    VisualContext() {
+    VisualContext(
+        GLFWframebuffersizefun framebufferSizeCallback,
+        GLFWcursorposfun       cursorPosCallback,
+        GLFWmousebuttonfun     mouseButtonCallback,
+        GLFWscrollfun          scrollCallback,
+        GLFWkeyfun             keyCallback
+    ) {
         // GLFW initializing
-        LOG(DEBUG) << "Initializing GLFW";
+        log::debug("Initializing GLFW");
         glfwSetErrorCallback(&glfwError);
         glfwInit();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -112,104 +119,32 @@ public:
         // Window initializing
         window_ = glfwCreateWindow(displaySettings.mainView.canvas.width, displaySettings.mainView.canvas.height, "MEDYAN", NULL, NULL);
         if(window_ == NULL) {
-            LOG(ERROR) << "Failed to create GLFW window";
+            log::error("Failed to create GLFW window");
             glfwTerminate();
             return;
         }
         glfwMakeContextCurrent(window_);
 
         // GLAD initializing
-        LOG(DEBUG) << "initializing GLAD";
+        log::debug("initializing GLAD");
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-            LOG(ERROR) << "Failed to initialize GLAD";
+            log::error("Failed to initialize GLAD");
             return;
         }
 
+        // Obtain the actual framebuffer size.
+        glfwGetFramebufferSize(window_, &displaySettings.mainView.canvas.width, &displaySettings.mainView.canvas.height);
         glViewport(0, 0, displaySettings.mainView.canvas.width, displaySettings.mainView.canvas.height);
-        glfwSetWindowUserPointer(window_, this);
+
+        // Initialize key mapping
+        //-----------------------------
+        displaySettings.mainView.control.keyMapping = KeyMapping::createDefault();
 
         // Set window callbacks
-        const auto framebufferSizeCallback = [](GLFWwindow* window, int width, int height) {
-            auto& vc = *static_cast< VisualContext* >(glfwGetWindowUserPointer(window));
-            auto& canvas = vc.displaySettings.mainView.canvas;
-            canvas.width = width;
-            canvas.height = height;
-            glViewport(0, 0, width, height);
-        };
-        const auto cursorPositionCallback = [](GLFWwindow* window, double xpos, double ypos) {
-            auto& vc = *static_cast< VisualContext* >(glfwGetWindowUserPointer(window));
-            auto& controlStates = vc.displayStates.mainView.control;
-            auto& camera = vc.displaySettings.mainView.camera;
-            const auto& control = vc.displaySettings.mainView.control;
-
-            const int mouseState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-            if(mouseState == GLFW_PRESS) {
-                if(controlStates.mouseLeftAlreadyPressed) {
-                    mouseDragCamera(
-                        vc.displaySettings.mainView.camera,
-                        vc.displayStates.mainView.control.mouseLastX,
-                        vc.displayStates.mainView.control.mouseLastY,
-                        xpos,
-                        ypos,
-                        vc.displaySettings.mainView.control
-                    );
-
-                } else {
-                    controlStates.mouseLeftAlreadyPressed = true;
-                }
-                controlStates.mouseLastX = xpos;
-                controlStates.mouseLastY = ypos;
-            } else {
-                controlStates.mouseLeftAlreadyPressed = false;
-            }
-        };
-        const auto scrollCallback = [](GLFWwindow* window, double xoffset, double yoffset) {
-            auto& vc = *static_cast< VisualContext* >(glfwGetWindowUserPointer(window));
-            auto& proj = vc.displaySettings.mainView.projection;
-            auto& fov = proj.fov;
-            auto& scale = proj.scale;
-
-            fov -= 0.02 * yoffset;
-            fov = std::clamp(fov, 0.01f, 3.13f);
-
-            scale -= 0.05 * yoffset;
-            scale = std::clamp(scale, 0.05f, 20.0f);
-        };
-        const auto keyCallback = [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-            auto& vc = *static_cast< VisualContext* >(glfwGetWindowUserPointer(window));
-
-            // Press F to (pay respect) take snapshot.
-            if(key == GLFW_KEY_F && action == GLFW_PRESS) {
-                vc.displayStates.mainView.control.snapshotRenderingNextFrame = true;
-            }
-
-            // Press P to generate snapshots for all frames.
-            if(key == GLFW_KEY_P && action == GLFW_PRESS) {
-                if(
-                    auto& offscreenRender = vc.displayStates.playback.offscreenRender;
-                    vc.displaySettings.displayMode == DisplayMode::trajectory &&
-                    !offscreenRender.has_value()
-                ) {
-                    offscreenRender.emplace(
-                        TrajectoryPlaybackStates::OffscreenRender {
-                            0,
-                            vc.displayStates.playback.maxFrame
-                        }
-                    );
-                    // Reset the playhead to be the previous frame of the minimum of the range of frames,
-                    // even if the frame does not exist.
-                    vc.displayStates.playback.currentFrame = offscreenRender->frameRangeLo - 1;
-                }
-            }
-
-            // Press G to toggle GUI.
-            if(key == GLFW_KEY_G && action == GLFW_PRESS) {
-                vc.displaySettings.gui.enabled = !vc.displaySettings.gui.enabled;
-            }
-        };
-
+        //-----------------------------
         glfwSetFramebufferSizeCallback(window_, framebufferSizeCallback);
-        glfwSetCursorPosCallback(window_, cursorPositionCallback);
+        glfwSetCursorPosCallback(window_, cursorPosCallback);
+        glfwSetMouseButtonCallback(window_, mouseButtonCallback);
         glfwSetScrollCallback(window_, scrollCallback);
         glfwSetKeyCallback(window_, keyCallback);
 
@@ -236,24 +171,20 @@ public:
         }
 
         if(glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS) {
-            const auto change = cameraMove * glm::normalize(camera.target - camera.position);
-            camera.position += change;
-            camera.target += change;
+            const auto change = -cameraMove * camera.view.backward();
+            camera.view.target += change;
         }
         if(glfwGetKey(window_, GLFW_KEY_S) == GLFW_PRESS) {
-            const auto change = cameraMove * glm::normalize(camera.target - camera.position);
-            camera.position -= change;
-            camera.target -= change;
+            const auto change = cameraMove * camera.view.backward();
+            camera.view.target += change;
         }
         if(glfwGetKey(window_, GLFW_KEY_A) == GLFW_PRESS) {
-            const auto change = glm::normalize(glm::cross(glm::normalize(camera.target - camera.position), camera.up)) * cameraMove;
-            camera.position -= change;
-            camera.target -= change;
+            const auto change = -cameraMove * camera.view.right();
+            camera.view.target += change;
         }
         if(glfwGetKey(window_, GLFW_KEY_D) == GLFW_PRESS) {
-            const auto change = glm::normalize(glm::cross(glm::normalize(camera.target - camera.position), camera.up)) * cameraMove;
-            camera.position += change;
-            camera.target += change;
+            const auto change = cameraMove * camera.view.right();
+            camera.view.target += change;
         }
     }
 
@@ -267,6 +198,155 @@ private:
 
 // The RAII object for all the rendering process
 struct VisualDisplay {
+    // Callbacks bound to key press.
+    //---------------------------------
+    static void keyCallbackTakeSnapshot(DisplaySettings*, DisplayStates* pstates) {
+        pstates->mainView.control.snapshotRenderingNextFrame = true;
+    }
+    static void keyCallbackTakeSnapshotsAll(DisplaySettings* psettings, DisplayStates* pstates) {
+        if(
+            auto& offscreenRender = pstates->playback.offscreenRender;
+            psettings->displayMode == DisplayMode::trajectory &&
+            !offscreenRender.has_value()
+        ) {
+            offscreenRender.emplace(
+                TrajectoryPlaybackStates::OffscreenRender {
+                    0,
+                    pstates->playback.maxFrame
+                }
+            );
+            // Reset the playhead to be the previous frame of the minimum of the range of frames,
+            // even if the frame does not exist.
+            pstates->playback.currentFrame = offscreenRender->frameRangeLo - 1;
+        }
+    }
+    static void keyCallbackToggleGui(DisplaySettings* psettings, DisplayStates*) {
+        psettings->gui.enabled = !psettings->gui.enabled;
+    }
+    static void keyCallbackTogglePlayPause(DisplaySettings*, DisplayStates* pstates) {
+        pstates->playback.isPlaying = !pstates->playback.isPlaying;
+    }
+    static void keyCallbackControlMouseSetRotate(DisplaySettings* psettings, DisplayStates*) {
+        psettings->mainView.control.cameraMouseMode = ObjectViewSettings::Control::CameraMouseMode::rotate;
+    }
+    static void keyCallbackControlMouseSetPan(DisplaySettings* psettings, DisplayStates*) {
+        psettings->mainView.control.cameraMouseMode = ObjectViewSettings::Control::CameraMouseMode::pan;
+    }
+
+    // Static key callback function list
+    inline static const std::array< std::function<void(DisplaySettings*, DisplayStates*)>, underlying(KeyCallbackFunction::last_) > keyCallbackList {
+        keyCallbackTakeSnapshot,
+        keyCallbackTakeSnapshotsAll,
+        keyCallbackToggleGui,
+        keyCallbackTogglePlayPause,
+        keyCallbackControlMouseSetRotate,
+        keyCallbackControlMouseSetPan,
+    };
+
+
+    // GLFW window callbacks.
+    //---------------------------------
+    static void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
+        auto& vd = *static_cast< VisualDisplay* >(glfwGetWindowUserPointer(window));
+        auto& canvas = vd.vc.displaySettings.mainView.canvas;
+        canvas.width = width;
+        canvas.height = height;
+        glViewport(0, 0, width, height);
+    }
+    static void cursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
+        auto& vd = *static_cast< VisualDisplay* >(glfwGetWindowUserPointer(window));
+        auto& controlStates = vd.vc.displayStates.mainView.control;
+        auto& camera = vd.vc.displaySettings.mainView.camera;
+        const auto& control = vd.vc.displaySettings.mainView.control;
+        auto& io = ImGui::GetIO();
+
+        const int mouseState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+        if(mouseState == GLFW_PRESS) {
+            if(controlStates.mouseLeftAlreadyPressed) {
+                // Already in the dragging process.
+                if(controlStates.mouseLeftDragStartInScene) {
+                    mouseDragCameraView(
+                        vd.vc.displaySettings.mainView.camera.view,
+                        vd.vc.displayStates.mainView.control.mouseLastX,
+                        vd.vc.displayStates.mainView.control.mouseLastY,
+                        xpos,
+                        ypos,
+                        vd.vc.displaySettings.mainView.control,
+                        vd.vc.displaySettings.mainView.camera.projection,
+                        vd.vc.displaySettings.mainView.canvas
+                    );
+                }
+
+            } else {
+                // Starts mouse dragging.
+                controlStates.mouseLeftAlreadyPressed = true;
+                controlStates.mouseLeftDragStartInScene = !io.WantCaptureMouse; // True if mouse is not in any GUI window.
+            }
+            controlStates.mouseLastX = xpos;
+            controlStates.mouseLastY = ypos;
+        } else {
+            controlStates.mouseLeftAlreadyPressed = false;
+        }
+    }
+    static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+        auto& vd = *static_cast< VisualDisplay* >(glfwGetWindowUserPointer(window));
+
+        if (action == GLFW_PRESS) {
+            // Any button click should clear key mapping selection.
+            vd.vc.displayStates.mainView.control.selectedKeyCallbackFunctionIndex = -1;
+        }
+    }
+    static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+        auto& vd = *static_cast< VisualDisplay* >(glfwGetWindowUserPointer(window));
+        auto& proj = vd.vc.displaySettings.mainView.camera.projection;
+        auto& fov = proj.fov;
+        auto& scale = proj.scale;
+
+        auto& io = ImGui::GetIO();
+        if(!io.WantCaptureMouse) {
+            fov -= 0.02 * yoffset;
+            fov = std::clamp(fov, 0.01f, 3.00f);
+
+            scale -= 0.05 * yoffset;
+            scale = std::clamp(scale, 0.05f, 20.0f);
+        }
+    }
+    static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+        auto& vd = *static_cast< VisualDisplay* >(glfwGetWindowUserPointer(window));
+
+        KeyComb keyComb {
+            key,
+            bool(mods & GLFW_MOD_CONTROL),
+            bool(mods & GLFW_MOD_ALT),
+            bool(mods & GLFW_MOD_SHIFT),
+        };
+        auto& keyMapping = vd.vc.displaySettings.mainView.control.keyMapping;
+        auto& selectedKeyFuncIndex = vd.vc.displayStates.mainView.control.selectedKeyCallbackFunctionIndex;
+
+        if(action == GLFW_PRESS) {
+
+            // Only perform the actual function outside key mapping mode.
+            if(selectedKeyFuncIndex == -1) {
+                const auto& keyCallbackMap = keyMapping.keyCallbackMap;
+                auto it = keyCallbackMap.find(keyComb);
+                if(it != keyCallbackMap.end()) {
+                    // Invoke key callback
+                    keyCallbackList[underlying(it->second)](&vd.vc.displaySettings, &vd.vc.displayStates);
+                }
+            }
+        }
+
+        if(action == GLFW_RELEASE) {
+            // If in key mapping mode, update key mapping and clear selection.
+            if(selectedKeyFuncIndex != -1) {
+                keyMapping.update(keyComb, static_cast<KeyCallbackFunction>(selectedKeyFuncIndex));
+                selectedKeyFuncIndex = -1;
+            }
+        }
+
+    }
+
+
     // The overall opengl context. Must be at top
     VisualContext vc;
 
@@ -279,10 +359,14 @@ struct VisualDisplay {
 
 
     VisualDisplay(DisplayMode displayMode = DisplayMode::realtime) :
+        vc(framebufferSizeCallback, cursorPosCallback, mouseButtonCallback, scrollCallback, keyCallback),
         guard(vc.window())
     {
         // Configure global opengl state
         glEnable(GL_DEPTH_TEST);
+
+        // Configure GLFW window user.
+        glfwSetWindowUserPointer(vc.window(), this);
 
         // Set initial display mode
         vc.displaySettings.displayMode = displayMode;
@@ -329,7 +413,7 @@ struct VisualDisplay {
             if(offscreen) {
                 std::tie(width, height) = mainViewSettings.control.snapshotSize(width, height);
                 if(
-                    mainViewSettings.projection.type == ObjectViewSettings::Projection::Type::orthographic &&
+                    mainViewSettings.camera.projection.type == ObjectViewSettings::Camera::Projection::Type::orthographic &&
                     mainViewSettings.control.snapshotResolution == ObjectViewSettings::Control::SnapshotResolution::scaleWithScreen &&
                     mainViewSettings.control.snapshotUndoScaleOrtho
                 ) {
@@ -358,8 +442,8 @@ struct VisualDisplay {
             // transform
             const auto model          = glm::mat4(1.0f);
             const auto modelInvTrans3 = glm::transpose(glm::inverse(model));
-            const auto view           = mainViewSettings.camera.view();
-            const auto projection     = mainViewSettings.projection.proj(projectionWidth, projectionHeight);
+            const auto view           = mainViewSettings.camera.view.view();
+            const auto projection     = mainViewSettings.camera.projection.proj(projectionWidth, projectionHeight);
 
             // Start to render surface
             glUseProgram(shaderSurface.id());
@@ -369,51 +453,43 @@ struct VisualDisplay {
             shaderSurface.setMat3("modelInvTrans3", modelInvTrans3);
             shaderSurface.setMat4("view",           view);
 
-            shaderSurface.setVec3("CameraPos",   mainViewSettings.camera.position);
+            shaderSurface.setBool("depthCueing",    mainViewSettings.canvas.depthCueing);
+            shaderSurface.setFloat("depthCueingMin", mainViewSettings.canvas.depthCueingDepthMin);
+            shaderSurface.setFloat("depthCueingMax", mainViewSettings.canvas.depthCueingDepthMax);
+            shaderSurface.setVec3("CameraPos",      mainViewSettings.camera.view.position());
 
-            shaderSurface.setVec3("dirLights[0].direction", glm::vec3 {1.0f, 1.0f, 1.0f});
-            shaderSurface.setVec3("dirLights[0].ambient",   glm::vec3 {0.1f, 0.1f, 0.1f});
-            shaderSurface.setVec3("dirLights[0].diffuse",   glm::vec3 {0.3f, 0.3f, 0.3f});
-            shaderSurface.setVec3("dirLights[0].specular",  glm::vec3 {0.5f, 0.5f, 0.5f});
-            shaderSurface.setVec3("dirLights[1].direction", glm::vec3 {-1.0f, -1.0f, -1.0f});
-            shaderSurface.setVec3("dirLights[1].ambient",   glm::vec3 {0.1f, 0.1f, 0.1f});
-            shaderSurface.setVec3("dirLights[1].diffuse",   glm::vec3 {0.3f, 0.3f, 0.3f});
-            shaderSurface.setVec3("dirLights[1].specular",  glm::vec3 {0.5f, 0.5f, 0.5f});
+            // Set lights.
+            for(int li = 0; li < ObjectViewSettings::Lighting::numDirLights; ++li) {
+                constexpr int sz = 32;
+                char name[sz];
+                std::snprintf(name, sz, "dirLights[%d].direction", li);
+                shaderSurface.setVec3(name, mainViewSettings.lighting.dirLights[li].direction);
+                std::snprintf(name, sz, "dirLights[%d].ambient", li);
+                shaderSurface.setVec3(name, mainViewSettings.lighting.dirLights[li].ambient);
+                std::snprintf(name, sz, "dirLights[%d].diffuse", li);
+                shaderSurface.setVec3(name, mainViewSettings.lighting.dirLights[li].diffuse);
+                std::snprintf(name, sz, "dirLights[%d].specular", li);
+                shaderSurface.setVec3(name, mainViewSettings.lighting.dirLights[li].specular);
+            }
+            for(int li = 0; li < ObjectViewSettings::Lighting::numPointLights; ++li) {
+                constexpr int sz = 32;
+                char name[sz];
+                std::snprintf(name, sz, "pointLights[%d].position", li);
+                shaderSurface.setVec3(name, mainViewSettings.lighting.pointLights[li].position);
+                std::snprintf(name, sz, "pointLights[%d].ambient", li);
+                shaderSurface.setVec3(name, mainViewSettings.lighting.pointLights[li].ambient);
+                std::snprintf(name, sz, "pointLights[%d].diffuse", li);
+                shaderSurface.setVec3(name, mainViewSettings.lighting.pointLights[li].diffuse);
+                std::snprintf(name, sz, "pointLights[%d].specular", li);
+                shaderSurface.setVec3(name, mainViewSettings.lighting.pointLights[li].specular);
+                std::snprintf(name, sz, "pointLights[%d].constant", li);
+                shaderSurface.setFloat(name, mainViewSettings.lighting.pointLights[li].constant);
+                std::snprintf(name, sz, "pointLights[%d].linear", li);
+                shaderSurface.setFloat(name, mainViewSettings.lighting.pointLights[li].linear);
+                std::snprintf(name, sz, "pointLights[%d].quadratic", li);
+                shaderSurface.setFloat(name, mainViewSettings.lighting.pointLights[li].quadratic);
+            }
 
-            const glm::vec3 pointLightPositions[4] {
-                { -500.0f, -500.0f, -500.0f },
-                { -500.0f, 3500.0f, 3500.0f },
-                { 3500.0f, -500.0f, 3500.0f },
-                { 3500.0f, 3500.0f, -500.0f }
-            };
-            shaderSurface.setVec3("pointLights[0].position", pointLightPositions[0]);
-            shaderSurface.setVec3("pointLights[0].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
-            shaderSurface.setVec3("pointLights[0].diffuse",  glm::vec3 { 0.6f, 0.6f, 0.6f });
-            shaderSurface.setVec3("pointLights[0].specular", glm::vec3 { 1.0f, 1.0f, 1.0f });
-            shaderSurface.setFloat("pointLights[0].constant",  1.0f);
-            shaderSurface.setFloat("pointLights[0].linear",    1.4e-4f);
-            shaderSurface.setFloat("pointLights[0].quadratic", 7.2e-8f);
-            shaderSurface.setVec3("pointLights[1].position", pointLightPositions[1]);
-            shaderSurface.setVec3("pointLights[1].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
-            shaderSurface.setVec3("pointLights[1].diffuse",  glm::vec3 { 0.6f, 0.6f, 0.6f });
-            shaderSurface.setVec3("pointLights[1].specular", glm::vec3 { 1.0f, 1.0f, 1.0f });
-            shaderSurface.setFloat("pointLights[1].constant",  1.0f);
-            shaderSurface.setFloat("pointLights[1].linear",    1.4e-4f);
-            shaderSurface.setFloat("pointLights[1].quadratic", 7.2e-8f);
-            shaderSurface.setVec3("pointLights[2].position", pointLightPositions[2]);
-            shaderSurface.setVec3("pointLights[2].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
-            shaderSurface.setVec3("pointLights[2].diffuse",  glm::vec3 { 0.1f, 0.1f, 0.1f });
-            shaderSurface.setVec3("pointLights[2].specular", glm::vec3 { 0.2f, 0.2f, 0.2f });
-            shaderSurface.setFloat("pointLights[2].constant",  1.0f);
-            shaderSurface.setFloat("pointLights[2].linear",    1.4e-4f);
-            shaderSurface.setFloat("pointLights[2].quadratic", 7.2e-8f);
-            shaderSurface.setVec3("pointLights[3].position", pointLightPositions[3]);
-            shaderSurface.setVec3("pointLights[3].ambient",  glm::vec3 { 0.05f, 0.05f, 0.05f });
-            shaderSurface.setVec3("pointLights[3].diffuse",  glm::vec3 { 0.1f, 0.1f, 0.1f });
-            shaderSurface.setVec3("pointLights[3].specular", glm::vec3 { 0.2f, 0.2f, 0.2f });
-            shaderSurface.setFloat("pointLights[3].constant",  1.0f);
-            shaderSurface.setFloat("pointLights[3].linear",    1.4e-4f);
-            shaderSurface.setFloat("pointLights[3].quadratic", 7.2e-8f);
 
             const auto drawSurfaceProfileData = [&](auto& eachProfileData) {
                 if(displayGeometryType(eachProfileData.profile) == DisplayGeometryType::surface) {
@@ -450,6 +526,10 @@ struct VisualDisplay {
             shaderLine.setMat3("modelInvTrans3", modelInvTrans3);
             shaderLine.setMat4("view",           view);
 
+            shaderLine.setBool("depthCueing",    mainViewSettings.canvas.depthCueing);
+            shaderLine.setFloat("depthCueingMin", mainViewSettings.canvas.depthCueingDepthMin);
+            shaderLine.setFloat("depthCueingMax", mainViewSettings.canvas.depthCueingDepthMax);
+
             const auto drawLineProfileData = [&](auto& eachProfileData) {
                 if(displayGeometryType(eachProfileData.profile) == DisplayGeometryType::line) {
 
@@ -463,8 +543,10 @@ struct VisualDisplay {
             };
             if(vc.displaySettings.displayMode == DisplayMode::trajectory) {
                 for(auto& traj : vc.displayStates.trajectoryDataStates.trajectories) {
-                    for(auto& profileData : traj.profileData) {
-                        drawLineProfileData(profileData);
+                    if(traj.displayMasterSwitch) {
+                        for(auto& profileData : traj.profileData) {
+                            drawLineProfileData(profileData);
+                        }
                     }
                 }
             }

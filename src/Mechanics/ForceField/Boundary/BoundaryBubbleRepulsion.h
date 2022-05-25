@@ -18,62 +18,48 @@
 
 #include "common.h"
 
-#include "BoundaryInteractions.h"
+#include "Mechanics/ForceField/ForceField.h"
 #include "NeighborListImpl.h"
-
+#include "Structure/SubSystem.h"
 #include "SysParams.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class BoundaryElement;
 class Bead;
 
 /// Represents a repulsive interaction between a BoundaryElement and Bubble.
 template <class BRepulsionInteractionType>
-class BoundaryBubbleRepulsion : public BoundaryInteractions {
+class BoundaryBubbleRepulsion : public ForceField {
     
 private:
     BRepulsionInteractionType _FFType;
-    BoundaryBubbleNL* _neighborList; ///<Neighbor list of Bubble's bead - BoundaryElement
 
-    int *beadSet;
+    SubSystem* ps_ = nullptr;
+    std::vector<int> beadSet;
 
     ///Array describing the constants in calculation
-    floatingpoint *krep;
-	floatingpoint *slen;
-	floatingpoint *U_i;
-    int nint = 0;
+    std::vector<FP> krep;
+	std::vector<FP> slen;
     ///Array describing the number of neighbors for each boundary element (num boundary elements long)
-    int *nneighbors;
+    std::vector<int> nneighbors;
 public:
     
     const static int n = 1;
 
     /// Constructor
-    BoundaryBubbleRepulsion() {
-        _neighborList = new BoundaryBubbleNL(SysParams::Boundaries().BoundaryCutoff);
-    }
+    BoundaryBubbleRepulsion() = default;
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
+    virtual FP computeEnergy(FP *coord) override;
    
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
-    //virtual void computeForcesAux();
+    virtual void computeForces(FP *coord, FP *f) override;
     
-    virtual void computeLoadForces()  {return;}
-    
-    /// Get the neighbor list for this interaction
-    virtual NeighborList* getNeighborList() {return _neighborList;}
-    
-    virtual const string getName() {return "Boundary-Bubble Repulsion";}
+    virtual std::string getName() override { return "BoundaryBubbleRepulsion"; }
 
-    //TODO needs implmenetation @{
-    virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void deallocate();
+    virtual void vectorize(const FFCoordinateStartingIndex& si, const SimulConfig&) override;
 
-    //virtual double computeEnergy(double *coord, double *f, double d)override { return 0.0; }
-    //@{
-    /// This repulsive force calculation also updates load forces
-    /// on beads within the interaction range.
-    //virtual void computeForces(double *coord, double *f){};
-    //@}
 };
+
+} // namespace medyan
+
 #endif

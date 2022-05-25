@@ -16,6 +16,7 @@
 
 #include "common.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Bead;
 
@@ -26,9 +27,6 @@ public:
     floatingpoint energy(floatingpoint *coord, int *beadSet,
                   floatingpoint *kstr, floatingpoint *eql);
 
-    [[deprecated]] floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
-                  floatingpoint *kstr, floatingpoint *eql, floatingpoint d);
-    
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                 floatingpoint *kstr, floatingpoint *eql);
 #ifdef CUDAACCL
@@ -58,5 +56,7 @@ public:
     void forcesAux(Bead*, Bead*, floatingpoint, floatingpoint);
 #endif
 };
+
+} // namespace medyan
 
 #endif

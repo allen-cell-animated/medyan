@@ -20,11 +20,13 @@
 
 #include "common.h"
 #include "Mechanics/ForceField/ForceField.h"
-#include "Mechanics/ForceField/Volume/TriangleBeadExclVolRepulsion.hpp"
 #include "Mechanics/ForceField/Volume/TriangleBeadExclVolume.hpp"
+
+namespace medyan {
 
 struct TriangleBeadVolumeFFFactory {
     auto operator()(
+        SubSystem&         sys,
         const std::string& type
     ) const {
         using namespace std;
@@ -33,7 +35,7 @@ struct TriangleBeadVolumeFFFactory {
 
         if (type == "REPULSION")
             res.emplace_back(
-                new TriangleBeadExclVolume <TriangleBeadExclVolRepulsion>());
+                new TriangleBeadExclVolume(sys));
         else if(type == "") {}
         else {
             LOG(ERROR) << "Volume FF " << type << " is not recognized.";
@@ -44,5 +46,7 @@ struct TriangleBeadVolumeFFFactory {
     }
 
 };
+
+} // namespace medyan
 
 #endif

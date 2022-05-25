@@ -15,12 +15,14 @@
 
 #include "MathFunctions.h"
 
+namespace medyan {
 using namespace mathfunc;
 
 floatingpoint BubbleBubbleRepulsionExp::energy(
     const floatingpoint* coord,
-    size_t i1, size_t i2, floatingpoint r1, floatingpoint r2,
-    floatingpoint kRep, floatingpoint screenLength) {
+    Index i1, Index i2, floatingpoint r1, floatingpoint r2,
+    floatingpoint kRep, floatingpoint screenLength
+) const {
     
     floatingpoint dist = distance(
         makeRefVec< 3 >(coord + i1),
@@ -35,8 +37,10 @@ floatingpoint BubbleBubbleRepulsionExp::energy(
 
 void BubbleBubbleRepulsionExp::forces(
     const floatingpoint* coord, floatingpoint* force,
-    size_t i1, size_t i2, floatingpoint r1, floatingpoint r2,
-    floatingpoint kRep, floatingpoint screenLength) {
+    Index i1, Index i2,
+    floatingpoint r1, floatingpoint r2,
+    floatingpoint kRep, floatingpoint screenLength
+) const {
 
     const auto coord1 = makeRefVec< 3 >(coord + i1);
     const auto coord2 = makeRefVec< 3 >(coord + i2);
@@ -57,3 +61,5 @@ void BubbleBubbleRepulsionExp::forces(
     force1 -= f0 * norm;
     force2 += f0 * norm;
 }
+
+} // namespace medyan

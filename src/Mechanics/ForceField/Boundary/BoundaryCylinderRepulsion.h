@@ -17,14 +17,12 @@
 #include <vector>
 
 #include "common.h"
-#ifdef CUDAACCL
-#include "CUDAcommon.h"
-#endif
-#include "BoundaryInteractions.h"
+#include "Mechanics/ForceField/ForceField.h"
 #include "NeighborListImpl.h"
 
 #include "SysParams.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class BoundaryElement;
 class Bead;
@@ -32,34 +30,19 @@ class Cylinder;
 
 /// Represents a repulsive interaction between a BoundaryElement and Cylinder.
 template <class BRepulsionInteractionType>
-class BoundaryCylinderRepulsion : public BoundaryInteractions {
+class BoundaryCylinderRepulsion : public ForceField {
     
 private:
     BRepulsionInteractionType _FFType;
-    BoundaryCylinderNL* _neighborList; ///<Neighbor list of BoundaryElement - Cylinder
+    std::unique_ptr<BoundaryCylinderNL> _neighborList; ///<Neighbor list of BoundaryElement - Cylinder
     
-    int *beadSet;
+    std::vector<int> beadSet;
     
     ///Array describing the constants in calculation
-    floatingpoint *krep;
-    floatingpoint *slen;
-    floatingpoint *U_i;
-    int nint = 0;
+    std::vector<FP> krep;
+    std::vector<FP> slen;
     ///Array describing the number of neighbors for each boundary element (num boundary elements long)
-    int *nneighbors;
-#ifdef CUDAACCL
-    floatingpoint *gU;
-    int *gpu_beadSet;
-    floatingpoint *gpu_krep;
-    floatingpoint *gpu_slen;
-    floatingpoint *gpu_U_i;
-    int *gpu_params;
-    floatingpoint *gpu_beListplane;
-    int *gpu_nintperbe;
-//    CUDAvars cvars;
-    floatingpoint *F_i;
-    cudaStream_t stream = NULL;
-#endif
+    std::vector<int> nneighbors;
     
 public:
     
@@ -68,26 +51,30 @@ public:
     const static int n = 1;
     
     /// Constructor
-    BoundaryCylinderRepulsion() {
-        _neighborList = new BoundaryCylinderNL(SysParams::Boundaries().BoundaryCutoff);
+    BoundaryCylinderRepulsion(const SimulConfig& conf) {
+        _neighborList = std::make_unique<BoundaryCylinderNL>(conf.boundParams.BoundaryCutoff);
     }
     
-    virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void deallocate();
+    virtual void vectorize(const FFCoordinateStartingIndex&, const SimulConfig&) override;
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
+    virtual FP computeEnergy(FP *coord) override;
     //@{
     /// This repulsive force calculation also updates load forces
     /// on beads within the interaction range.
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+    virtual void computeForces(FP *coord, FP *f) override;
     
     virtual void computeLoadForces();
-    virtual void computeLoadForce(Cylinder* c, LoadForceEnd end) const override;
+    virtual void computeLoadForce(SubSystem& sys, Cylinder* c, LoadForceEnd end) const override;
     //@}
     
     /// Get the neighbor list for this interaction
-    virtual NeighborList* getNeighborList() {return _neighborList;}
+    virtual std::vector<NeighborList*> getNeighborLists() override {
+        return { _neighborList.get() };
+    }
     
-    virtual const string getName() {return "Boundary-Cylinder Repulsion";}
+    virtual std::string getName() override { return "BoundaryCylinderRepulsion"; }
 };
+
+} // namespace medyan
+
 #endif

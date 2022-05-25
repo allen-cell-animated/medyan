@@ -27,14 +27,15 @@
 #endif
 #include "Mechanics/CUDAcommon.h"
 
+namespace medyan {
 template <class BDihedralInteractionType>
-void BranchingDihedral<BDihedralInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
+void BranchingDihedral<BDihedralInteractionType>::vectorize(const FFCoordinateStartingIndex& si, const SimulConfig& conf) {
 
     CUDAcommon::tmin.numinteractions[6] += BranchingPoint::getBranchingPoints().size();
     beadSet.resize(n * BranchingPoint::getBranchingPoints().size());
-    kdih = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
-    pos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
-    stretchforce = new floatingpoint[3*BranchingPoint::getBranchingPoints().size()];
+    kdih.assign(BranchingPoint::getBranchingPoints().size(), 0);
+    pos.assign(BranchingPoint::getBranchingPoints().size(), 0);
+    stretchforce.assign(3*BranchingPoint::getBranchingPoints().size(), 0);
 
     int i = 0;
 
@@ -49,6 +50,10 @@ void BranchingDihedral<BDihedralInteractionType>::vectorize(const FFCoordinateSt
         pos[i] = b->getFirstCylinder()->adjustedrelativeposition(b->getPosition());
         for(int j = 0; j < 3; j++)
             stretchforce[3*i + j] = 0.0;
+
+        // Reset branch force as a side effect.
+        b->getMBranchingPoint()->branchForce = { 0.0, 0.0, 0.0 };
+
         i++;
     }
     //CUDA
@@ -81,32 +86,18 @@ void BranchingDihedral<BDihedralInteractionType>::vectorize(const FFCoordinateSt
 }
 
 template<class BDihedralInteractionType>
-void BranchingDihedral<BDihedralInteractionType>::deallocate() {
+void BranchingDihedral<BDihedralInteractionType>::assignforcemags() {
     for(auto b:BranchingPoint::getBranchingPoints()){
         //Using += to ensure that the stretching forces are additive.
 
         for(int j = 0; j < 3; j++)
             b->getMBranchingPoint()->branchForce[j] += stretchforce[3*b->getIndex() + j];
     }
-    delete [] stretchforce;
-    delete [] kdih;
-    delete [] pos;
-#ifdef CUDAACCL
-    _FFType.deallocate();
-    CUDAcommon::handleerror(cudaFree(gpu_beadSet));
-    CUDAcommon::handleerror(cudaFree(gpu_kdih));
-    CUDAcommon::handleerror(cudaFree(gpu_pos));
-    CUDAcommon::handleerror(cudaFree(gpu_params));
-#endif
 }
 
 
 template <class BDihedralInteractionType>
-floatingpoint BranchingDihedral<BDihedralInteractionType>::computeEnergy(floatingpoint *coord) {
-
-//    _FFType.testdihedral();
-
-    floatingpoint U_ii=(floatingpoint)0.0;
+FP BranchingDihedral<BDihedralInteractionType>::computeEnergy(FP *coord) {
 
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
@@ -125,11 +116,9 @@ floatingpoint BranchingDihedral<BDihedralInteractionType>::computeEnergy(floatin
 //    }
 
 #endif
-#ifdef SERIAL
 
-    U_ii = _FFType.energy(coord, BranchingPoint::getBranchingPoints().size(), beadSet.data(), kdih, pos);
+    FP U_ii = _FFType.energy(coord, BranchingPoint::getBranchingPoints().size(), beadSet.data(), kdih.data(), pos.data());
 
-#endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
     floatingpoint U_i[1];
     floatingpoint* gU_i;
@@ -149,8 +138,7 @@ floatingpoint BranchingDihedral<BDihedralInteractionType>::computeEnergy(floatin
 }
 
 template <class BDihedralInteractionType>
-void BranchingDihedral<BDihedralInteractionType>::computeForces(floatingpoint *coord,
-        floatingpoint *f) {
+void BranchingDihedral<BDihedralInteractionType>::computeForces(FP *coord, FP *f) {
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -171,18 +159,15 @@ void BranchingDihedral<BDihedralInteractionType>::computeForces(floatingpoint *c
 
     }
 #endif
-#ifdef SERIAL
     _FFType.forces(coord, f, BranchingPoint::getBranchingPoints().size(), beadSet.data(),
-            kdih, pos, stretchforce);
+            kdih.data(), pos.data(), stretchforce.data());
 
-#endif
 }
 
-// Template instantiations
-template floatingpoint BranchingDihedral<BranchingDihedralCosine>::computeEnergy(floatingpoint *coord);
-template void BranchingDihedral<BranchingDihedralCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
-template void BranchingDihedral<BranchingDihedralCosine>::vectorize(const FFCoordinateStartingIndex&);
-template void BranchingDihedral<BranchingDihedralCosine>::deallocate();
+// Template instantiations.
+template class BranchingDihedral< BranchingDihedralCosine >;
 template class BranchingDihedral< BranchingDihedralCosineV2 >;
 template class BranchingDihedral< BranchingDihedralQuadratic >;
 template class BranchingDihedral< BranchingDihedralQuadraticV2 >;
+
+} // namespace medyan

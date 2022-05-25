@@ -9,17 +9,20 @@
 #include <numeric>
 #include <tuple>
 
+#include <Eigen/Geometry>
+
+#include "Util/Math/ColorMap.hpp"
 #include "Visual/Common.hpp"
 #include "Visual/FrameData.hpp"
-#include "Visual/Render/PathExtrude.hpp"
-#include "Visual/Render/Sphere.hpp"
+#include "Visual/Geometry/PathExtrude.hpp"
+#include "Visual/Geometry/Sphere.hpp"
 #include "Visual/Shader.hpp"
 
 namespace medyan::visual {
 
-//-------------------------------------
+//--------------------------------------
 // Data structures
-//-------------------------------------
+//--------------------------------------
 
 struct MeshDataDescriptor {
     int strideSize = 9;
@@ -154,9 +157,9 @@ struct MeshData {
 
 
 
-//-------------------------------------
+//--------------------------------------
 // Settings (for display)
-//-------------------------------------
+//--------------------------------------
 
 enum class DisplayGeometryType { surface, line };
 
@@ -166,7 +169,7 @@ struct SurfaceDisplaySettings {
     bool            enabled = true;
     PolygonMode     polygonMode = PolygonMode::fill;
 
-    mathfunc::Vec3f colorSpecular { 0.5, 0.5, 0.5 };
+    Vec3f           colorSpecular { 0.5, 0.5, 0.5 };
     float           colorShininess = 32.0f;
 
     GlVertexBufferManager vertexBufferManager;
@@ -191,19 +194,27 @@ struct LineDisplaySettings {
 };
 
 
-//-------------------------------------
-// Settings (for making mesh data)
-//-------------------------------------
+//--------------------------------------
+// Settings for making mesh data.
+// States updated during making mesh data.
+//--------------------------------------
 
 struct MembraneDisplaySettings {
     enum class ElementMode { triangle, edge, last_ };
+    enum class ColorMode { fixed, attribute, last_ };
 
     ElementMode elementMode = ElementMode::triangle;
 
     float edgeExtrudeRadius = 5.0f; // used only when element mode is "edge".
     int   edgeExtrudeSides  = 8;
 
-    mathfunc::Vec3f colorFixed { 0.4f, 0.6f, 0.95f };
+    ColorMode                        colorMode = ColorMode::fixed;
+    Vec3f                            colorFixed { 0.4f, 0.6f, 0.95f };
+    Index                            attributeIndex = -1;
+    bool                             autoAttributeRange = true;
+    float                            manualAttribMin = -1;
+    float                            manualAttribMax = 1;
+    colormap::DynamicColorMap<float> colorMap = colormap::bwrf;
 
     SurfaceDisplaySettings surface;
 };
@@ -214,12 +225,30 @@ constexpr auto text(MembraneDisplaySettings::ElementMode value) {
         default:                                             return "";
     }
 }
+constexpr auto text(MembraneDisplaySettings::ColorMode value) {
+    switch(value) {
+        case MembraneDisplaySettings::ColorMode::fixed:     return "fixed";
+        case MembraneDisplaySettings::ColorMode::attribute: return "attribute";
+        default:                                            return "";
+    }
+}
+
+struct MembraneDisplayStates {
+    struct AttribRange {
+        float min = inff;
+        float max = -inff;
+    };
+    // Range of attribute values.
+    // If all frames are generated in batch, it is indexed by frame index.
+    // Otherwise, it contains one entry for the current frame.
+    std::vector<AttribRange> attribRanges;
+};
 
 
 struct FilamentDisplaySettings {
     enum class PathMode { line, extrude, bead, last_ };
 
-    mathfunc::Vec3f colorFixed { 0.95f, 0.1f, 0.15f };
+    Vec3f colorFixed { 0.95f, 0.1f, 0.15f };
 
     PathMode pathMode = PathMode::extrude;
 
@@ -250,7 +279,7 @@ constexpr auto text(FilamentDisplaySettings::PathMode value) {
 struct LinkerDisplaySettings {
     enum class PathMode { line, extrude, last_ };
 
-    mathfunc::Vec3f colorFixed { 0.1f, 0.9f, 0.0f };
+    Vec3f colorFixed { 0.1f, 0.9f, 0.0f };
 
     PathMode pathMode = PathMode::extrude;
 
@@ -272,6 +301,19 @@ constexpr auto text(LinkerDisplaySettings::PathMode value) {
     }
 }
 
+struct SphereDisplaySettings {
+    Vec3f colorFixed { 0.95f, 0.8f, 0.1f };
+
+    // Sphere display parameters.
+    bool  useManualRadius = false;
+    float manualRadius = 12.0f;
+    int   sphereLongitudeSegs = 13;
+    int   sphereLatitudeSegs = 7;
+
+    // display settings
+    SurfaceDisplaySettings surface;
+};
+
 struct AuxLineDisplaySettings {
     using Flag = std::uint_fast8_t;
     inline static constexpr Flag targetCompartmentBorder = 1 << 0;
@@ -279,51 +321,98 @@ struct AuxLineDisplaySettings {
 
     Flag flag = 0;
 
-    mathfunc::Vec3f colorFixed { 1.0f, 1.0f, 1.0f };
+    Vec3f colorFixed { 1.0f, 1.0f, 1.0f };
 
     LineDisplaySettings line;
 };
 
 
 
-//-------------------------------------
+//--------------------------------------
 // Functions (mesh data creation)
-//-------------------------------------
+//--------------------------------------
 
 // Note that the following functions may be categorized as the following:
 //   - The actual function appending data of each element to the mesh data.
 //   - The function appending data of all selected elements of a frame to existing mesh data.
 //   - The function creating a new mesh data solely for the data of all selected elements of a frame.
 
+// For membrane mesh data creation, find the maximum and minimum values of the attribute.
+// Returns { attribMin, attribMax }.
+inline auto findMinMaxMembraneAttribute(
+    const std::vector<const MembraneFrame*>& pMembranes,
+    const MembraneDisplaySettings&           membraneSettings
+) {
+    float attribMin = inff;
+    float attribMax = -inff;
+
+    const bool useAttrib = membraneSettings.colorMode == MembraneDisplaySettings::ColorMode::attribute && membraneSettings.attributeIndex >= 0;
+    if(useAttrib) {
+        for(auto pm : pMembranes) {
+            const auto numVertices = pm->vertexAttributes.cols();
+            for(Index vi = 0; vi < numVertices; ++vi) {
+                const auto attrib = pm->vertexAttributes(membraneSettings.attributeIndex, vi);
+                attribMin = std::min(attribMin, attrib);
+                attribMax = std::max(attribMax, attrib);
+            }
+        }
+    }
+
+    return std::tuple { attribMin, attribMax };
+}
+
 // Returns how many numbers added
 inline auto appendMembraneMeshData(
     MeshData&                      meshData,
+    float                          actualAttribMin,
+    float                          actualAttribMax,
     const MembraneFrame&           membrane,
     const MembraneDisplaySettings& membraneSettings
 ) {
     using namespace std;
 
-    const int sizePrev = meshData.data.size();
+    const Size sizePrev = meshData.data.size();
+
+    // Preprosessing.
+    const bool useAttrib = membraneSettings.colorMode == MembraneDisplaySettings::ColorMode::attribute && membraneSettings.attributeIndex >= 0;
+    // Find range of the attribute.
+    float attribMin = membraneSettings.autoAttributeRange ? actualAttribMin : membraneSettings.manualAttribMin;
+    float attribMax = membraneSettings.autoAttributeRange ? actualAttribMax : membraneSettings.manualAttribMax;
+
+    const auto attrib01 = [&](float attrib) -> float {
+        if(attribMin < attribMax) {
+            return (attrib - attribMin) / (attribMax - attribMin);
+        }
+        return 0.5f;
+    };
+    const auto getColor = [&](float attrib) {
+        return useAttrib
+            ? colormap::color(membraneSettings.colorMap, attrib01(attrib))
+            : membraneSettings.colorFixed;
+    };
 
     switch(membraneSettings.elementMode) {
         case MembraneDisplaySettings::ElementMode::triangle:
 
             for(const auto& t : membrane.triangles) {
-                const auto& c0 = membrane.vertexCoords[t[0]];
-                const auto& c1 = membrane.vertexCoords[t[1]];
-                const auto& c2 = membrane.vertexCoords[t[2]];
-                const auto un = normalizedVector(cross(c1 - c0, c2 - c0));
+                Eigen::Map<const Eigen::Vector3f> c[] {
+                    Eigen::Vector3f::Map(&membrane.vertexAttributes(0, t[0])),
+                    Eigen::Vector3f::Map(&membrane.vertexAttributes(0, t[1])),
+                    Eigen::Vector3f::Map(&membrane.vertexAttributes(0, t[2])),
+                };
+                const Eigen::Vector3f un = (c[1] - c[0]).cross(c[2] - c[0]).normalized();
 
-                for(size_t i = 0; i < 3; ++i) {
-                    meshData.data.push_back(membrane.vertexCoords[t[i]][0]);
-                    meshData.data.push_back(membrane.vertexCoords[t[i]][1]);
-                    meshData.data.push_back(membrane.vertexCoords[t[i]][2]);
+                for(int i = 0; i < 3; ++i) {
+                    const auto color = getColor(useAttrib ? membrane.vertexAttributes(membraneSettings.attributeIndex, t[i]) : 0);
+                    meshData.data.push_back(c[i][0]);
+                    meshData.data.push_back(c[i][1]);
+                    meshData.data.push_back(c[i][2]);
                     meshData.data.push_back(un[0]);
                     meshData.data.push_back(un[1]);
                     meshData.data.push_back(un[2]);
-                    meshData.data.push_back(membraneSettings.colorFixed[0]);
-                    meshData.data.push_back(membraneSettings.colorFixed[1]);
-                    meshData.data.push_back(membraneSettings.colorFixed[2]);
+                    meshData.data.push_back(color[0]);
+                    meshData.data.push_back(color[1]);
+                    meshData.data.push_back(color[2]);
                 }
             }
             break;
@@ -337,36 +426,37 @@ inline auto appendMembraneMeshData(
                 for(int edgeIdx = 0; edgeIdx < 3; ++edgeIdx) {
                     array< int, 2 > indices { memTriangle[edgeIdx], memTriangle[(edgeIdx + 1) % 3] };
 
-                    const auto [genVertices, genVertexNormals, genTriInd]
-                        = PathExtrude<float> {
+                    const auto [genVertices, genVertexNormals, genAttribs, genTriInd]
+                        = pathExtrudeGenerateWithAttrib<float>(
+                            membrane.vertexAttributes,
+                            // Function that gets certain attribute.
+                            [&](const auto& attributes, Index index) -> float {
+                                return useAttrib
+                                    ? attributes(membraneSettings.attributeIndex, index)
+                                    : 0;
+                            },
+                            indices,
                             membraneSettings.edgeExtrudeRadius,
                             membraneSettings.edgeExtrudeSides
-                        }.generate(membrane.vertexCoords, indices);
+                        );
 
                     const int numDisplayTriangles = genTriInd.size();
                     for(int t = 0; t < numDisplayTriangles; ++t) {
                         const auto& triInds = genTriInd[t];
-                        const mathfunc::Vec3f coord[] {
-                            genVertices[triInds[0]],
-                            genVertices[triInds[1]],
-                            genVertices[triInds[2]]
-                        };
-                        const mathfunc::Vec3f un[] {
-                            genVertexNormals[triInds[0]],
-                            genVertexNormals[triInds[1]],
-                            genVertexNormals[triInds[2]]
-                        };
 
                         for(int i = 0; i < 3; ++i) {
-                            meshData.data.push_back(coord[i][0]);
-                            meshData.data.push_back(coord[i][1]);
-                            meshData.data.push_back(coord[i][2]);
-                            meshData.data.push_back(un[i][0]);
-                            meshData.data.push_back(un[i][1]);
-                            meshData.data.push_back(un[i][2]);
-                            meshData.data.push_back(membraneSettings.colorFixed[0]);
-                            meshData.data.push_back(membraneSettings.colorFixed[1]);
-                            meshData.data.push_back(membraneSettings.colorFixed[2]);
+                            const auto coord = genVertices[triInds[i]];
+                            const auto un    = genVertexNormals[triInds[i]];
+                            const auto color = getColor(genAttribs[triInds[i]]);
+                            meshData.data.push_back(coord[0]);
+                            meshData.data.push_back(coord[1]);
+                            meshData.data.push_back(coord[2]);
+                            meshData.data.push_back(un[0]);
+                            meshData.data.push_back(un[1]);
+                            meshData.data.push_back(un[2]);
+                            meshData.data.push_back(color[0]);
+                            meshData.data.push_back(color[1]);
+                            meshData.data.push_back(color[2]);
                         }
                     }
                 }
@@ -375,7 +465,7 @@ inline auto appendMembraneMeshData(
 
     }
 
-    const int sizeCur = meshData.data.size();
+    const Size sizeCur = meshData.data.size();
     return sizeCur - sizePrev;
 }
 
@@ -383,12 +473,17 @@ inline auto appendMembraneMeshData(
 //   - This function does not set descriptor.
 inline auto appendMembraneMeshData(
     MeshData&                         meshData,
+    MembraneDisplayStates&            membraneStates,
     std::vector<const MembraneFrame*> pMembranes,
     const MembraneDisplaySettings&    membraneSettings
 ) {
-    int numAdded = 0;
+    // Find range of the attribute.
+    const auto [attribMin, attribMax] = findMinMaxMembraneAttribute(pMembranes, membraneSettings);
+    membraneStates.attribRanges.push_back({ attribMin, attribMax });
+
+    Size numAdded = 0;
     for(auto pm : pMembranes) {
-        numAdded += appendMembraneMeshData(meshData, *pm, membraneSettings);
+        numAdded += appendMembraneMeshData(meshData, attribMin, attribMax, *pm, membraneSettings);
     }
 
     return numAdded;
@@ -398,17 +493,23 @@ inline auto appendMembraneMeshData(
 //
 // The selected membranes should be replaced with a range object with C++20.
 inline auto createMembraneMeshData(
+    MembraneDisplayStates&            membraneStates,
     std::vector<const MembraneFrame*> pMembranes,
     const MembraneDisplaySettings&    membraneSettings
 ) {
     MeshData res;
     res.descriptor = meshDataDescriptorSurface;
 
+    // Find range of the attribute.
+    const auto [attribMin, attribMax] = findMinMaxMembraneAttribute(pMembranes, membraneSettings);
+    membraneStates.attribRanges.resize(1);
+    membraneStates.attribRanges[0] = { attribMin, attribMax };
+
     int numTriangles = 0;
     for(auto pm : pMembranes) numTriangles += pm->triangles.size();
     res.data.reserve(3 * numTriangles * res.descriptor.strideSize);
     for(auto pm : pMembranes) {
-        appendMembraneMeshData(res, *pm, membraneSettings);
+        appendMembraneMeshData(res, attribMin, attribMax, *pm, membraneSettings);
     }
 
     return res;
@@ -456,20 +557,22 @@ inline auto appendFilamentMeshData(
                 vector< int > trivialIndices(numBeads);
                 iota(begin(trivialIndices), end(trivialIndices), 0);
                 const auto [genVertices, genVertexNormals, genTriInd]
-                    = PathExtrude<float> {
+                    = pathExtrudeGenerate<float>(
+                        filament.coords,
+                        trivialIndices,
                         filamentSettings.pathExtrudeRadius,
                         filamentSettings.pathExtrudeSides
-                    }.generate(filament.coords, trivialIndices);
+                    );
 
                 const int numTriangles = genTriInd.size();
                 for(int t = 0; t < numTriangles; ++t) {
                     const auto& triInds = genTriInd[t];
-                    const mathfunc::Vec3f coord[] {
+                    const Vec3f coord[] {
                         genVertices[triInds[0]],
                         genVertices[triInds[1]],
                         genVertices[triInds[2]]
                     };
-                    const mathfunc::Vec3f un[] {
+                    const Vec3f un[] {
                         genVertexNormals[triInds[0]],
                         genVertexNormals[triInds[1]],
                         genVertexNormals[triInds[2]]
@@ -538,7 +641,7 @@ inline auto appendFilamentMeshData(
             break;
     } // end switch
 
-    const int sizeCur = meshData.data.size();
+    const Size sizeCur = meshData.data.size();
     return sizeCur - sizePrev;
 }
 
@@ -549,7 +652,7 @@ inline auto appendFilamentMeshData(
     std::vector<const FilamentFrame*> pFilaments,
     const FilamentDisplaySettings&    filamentSettings
 ) {
-    int numAdded = 0;
+    Size numAdded = 0;
     for(auto pf : pFilaments) {
         numAdded += appendFilamentMeshData(meshData, *pf, filamentSettings);
     }
@@ -559,7 +662,7 @@ inline auto appendFilamentMeshData(
 
 // Generate filament mesh with selected filaments
 //
-// The selected membranes should be replaced with a range object with C++20.
+// The selected objects should be replaced with a range object with C++20.
 inline auto createFilamentMeshData(
     std::vector<const FilamentFrame*> pFilaments,
     const FilamentDisplaySettings&    filamentSettings
@@ -588,10 +691,10 @@ inline auto createFilamentMeshData(
             {
                 int numTriangles = 0;
                 for(auto pf : pFilaments) {
-                    numTriangles += PathExtrude<float>{
-                        filamentSettings.pathExtrudeRadius,
+                    numTriangles += pathExtrudeEstimateNumTriangles(
+                        pf->coords.size(),
                         filamentSettings.pathExtrudeSides
-                    }.estimateNumTriangles(pf->coords.size());
+                    );
                 }
                 res.data.reserve(3 * numTriangles * res.descriptor.strideSize);
             }
@@ -660,20 +763,22 @@ inline auto appendLinkerMeshData(
             {
                 vector< int > trivialIndices { 0, 1 };
                 const auto [genVertices, genVertexNormals, genTriInd]
-                    = PathExtrude<float> {
+                    = pathExtrudeGenerate<float>(
+                        linker.coords,
+                        trivialIndices,
                         linkerSettings.pathExtrudeRadius,
                         linkerSettings.pathExtrudeSides
-                    }.generate(linker.coords, trivialIndices);
+                    );
 
                 const int numTriangles = genTriInd.size();
                 for(int t = 0; t < numTriangles; ++t) {
                     const auto& triInds = genTriInd[t];
-                    const mathfunc::Vec3f coord[] {
+                    const Vec3f coord[] {
                         genVertices[triInds[0]],
                         genVertices[triInds[1]],
                         genVertices[triInds[2]]
                     };
-                    const mathfunc::Vec3f un[] {
+                    const Vec3f un[] {
                         genVertexNormals[triInds[0]],
                         genVertexNormals[triInds[1]],
                         genVertexNormals[triInds[2]]
@@ -696,7 +801,7 @@ inline auto appendLinkerMeshData(
 
     } // end switch
 
-    const int sizeCur = meshData.data.size();
+    const Size sizeCur = meshData.data.size();
     return sizeCur - sizePrev;
 }
 
@@ -708,7 +813,7 @@ inline auto appendLinkerMeshData(
     std::vector<const LinkerFrame*> pLinkers,
     const LinkerDisplaySettings&    linkerSettings
 ) {
-    int numAdded = 0;
+    Size numAdded = 0;
     for(auto pl : pLinkers) {
         numAdded += appendLinkerMeshData(meshData, *pl, linkerSettings);
     }
@@ -719,7 +824,7 @@ inline auto appendLinkerMeshData(
 
 // Create linkers given the range of linkers
 //
-// The selected membranes should be replaced with a range object with C++20.
+// The selected objects should be replaced with a range object with C++20.
 inline auto createLinkerMeshData(
     std::vector<const LinkerFrame*> pLinkers,
     const LinkerDisplaySettings&    linkerSettings
@@ -741,10 +846,9 @@ inline auto createLinkerMeshData(
         case PM::extrude:
             res.descriptor = meshDataDescriptorSurface;
             {
-                const int numTriangles = pLinkers.size() * PathExtrude<float>{
-                    linkerSettings.pathExtrudeRadius,
-                    linkerSettings.pathExtrudeSides
-                }.estimateNumTriangles(2);
+                const int numTriangles =
+                    pLinkers.size() *
+                    pathExtrudeEstimateNumTriangles(2, linkerSettings.pathExtrudeSides);
                 res.data.reserve(3 * numTriangles * res.descriptor.strideSize);
             }
             break;
@@ -752,6 +856,107 @@ inline auto createLinkerMeshData(
 
     for(auto pl : pLinkers) {
         appendLinkerMeshData(res, *pl, linkerSettings);
+    }
+
+    return res;
+}
+
+
+// Make mesh data for a single bubble and append it to the mesh data.
+//
+// Returns how many numbers added.
+inline auto appendBubbleMeshData(
+    MeshData&                      meshData,
+    const BubbleFrame&             bubble,
+    const SphereDisplaySettings&   sphereSettings
+) {
+    using PM = FilamentDisplaySettings::PathMode;
+    using namespace std;
+
+    const Size sizePrev = meshData.data.size();
+
+    {
+        const auto sphereGen = SphereUv<float> {
+            sphereSettings.useManualRadius ? sphereSettings.manualRadius : bubble.radius,
+            sphereSettings.sphereLongitudeSegs,
+            sphereSettings.sphereLatitudeSegs
+        };
+        const auto sphereCache = sphereGen.makeCache();
+
+        const auto [genVertices, _] = sphereGen.generate(
+            {
+                static_cast<float>(bubble.coord[0]),
+                static_cast<float>(bubble.coord[1]),
+                static_cast<float>(bubble.coord[2])
+            },
+            sphereCache
+        );
+
+        const int numTriangles = sphereCache.triInd.size();
+        for(int t = 0; t < numTriangles; ++t) {
+            const typename decltype(genVertices)::value_type coord[] {
+                genVertices[sphereCache.triInd[t][0]],
+                genVertices[sphereCache.triInd[t][1]],
+                genVertices[sphereCache.triInd[t][2]]
+            };
+            const auto un = normalizedVector(cross(coord[1] - coord[0], coord[2] - coord[0]));
+
+            for(int i = 0; i < 3; ++i) {
+                meshData.data.push_back(coord[i][0]);
+                meshData.data.push_back(coord[i][1]);
+                meshData.data.push_back(coord[i][2]);
+                meshData.data.push_back(un[0]);
+                meshData.data.push_back(un[1]);
+                meshData.data.push_back(un[2]);
+                meshData.data.push_back(sphereSettings.colorFixed[0]);
+                meshData.data.push_back(sphereSettings.colorFixed[1]);
+                meshData.data.push_back(sphereSettings.colorFixed[2]);
+            }
+        }
+
+    }
+
+    const Size sizeCur = meshData.data.size();
+    return sizeCur - sizePrev;
+}
+
+// Note:
+//   - This function does not set descriptor.
+inline auto appendBubbleMeshData(
+    MeshData&                       meshData,
+    std::vector<const BubbleFrame*> pBubbles,
+    const SphereDisplaySettings&    sphereSettings
+) {
+    Size numAdded = 0;
+    for(auto p : pBubbles) {
+        numAdded += appendBubbleMeshData(meshData, *p, sphereSettings);
+    }
+
+    return numAdded;
+}
+
+// Generate bubble mesh with selected bubbles.
+//
+// The selected objects should be replaced with a range object with C++20.
+inline auto createBubbleMeshData(
+    std::vector<const BubbleFrame*> pBubbles,
+    const SphereDisplaySettings&    sphereSettings
+) {
+    using PM = FilamentDisplaySettings::PathMode;
+
+    MeshData res;
+    res.descriptor = meshDataDescriptorSurface;
+
+    const int numTrianglesPerPoint = SphereUv<float> {
+        1.0f, // Dummy radius.
+        sphereSettings.sphereLongitudeSegs,
+        sphereSettings.sphereLatitudeSegs
+    }.estimateNumTriangles();
+
+    res.data.reserve(3 * numTrianglesPerPoint * pBubbles.size() * res.descriptor.strideSize);
+
+    for(auto p : pBubbles) {
+        appendBubbleMeshData(res, *p, sphereSettings);
     }
 
     return res;
@@ -822,7 +1027,7 @@ inline auto appendAuxLineMeshData(
         }
     }
 
-    const int sizeCur = meshData.data.size();
+    const Size sizeCur = meshData.data.size();
     return sizeCur - sizePrev;
 }
 // Auxiliary lines do not need a selector.
@@ -844,7 +1049,7 @@ inline auto createAuxLineMeshData(
 //-------------------------------------
 
 
-inline auto convertToGlm(const mathfunc::Vec3f& vec) {
+inline auto convertToGlm(const Vec3f& vec) {
     return glm::vec3( vec[0], vec[1], vec[2] );
 }
 
@@ -878,11 +1083,57 @@ inline auto displayGeometryType(const LinkerDisplaySettings& settings) {
         DisplayGeometryType::line :
         DisplayGeometryType::surface;
 }
+inline auto displayGeometryType(const SphereDisplaySettings& settings) {
+    return DisplayGeometryType::surface;
+}
 inline auto displayGeometryType(const AuxLineDisplaySettings&) {
     return DisplayGeometryType::line;
 }
 
 
+//-------------------------------------
+// Functions (mesh data auxiliary information)
+//-------------------------------------
+
+// Adjust the previous bounding box to include the new mesh data.
+//
+// bounds may contain an array of 6 values: { xmin, xmax, ymin, ymax, zmin, zmax }.
+// bounds may also be empty, indicating that the bounding box is not yet initialized.
+// If the data is empty or does not contain 3D coordinates, bounds will not be modified.
+inline void extend3DExtents(std::optional<std::array<float, 6>>& bounds, const MeshData& meshData) {
+    if(meshData.data.empty() || meshData.descriptor.positionSize != 3) {
+        return;
+    }
+
+    if(!bounds.has_value()) {
+        bounds = std::array {
+            std::numeric_limits<float>::infinity(),
+            -std::numeric_limits<float>::infinity(),
+            std::numeric_limits<float>::infinity(),
+            -std::numeric_limits<float>::infinity(),
+            std::numeric_limits<float>::infinity(),
+            -std::numeric_limits<float>::infinity()
+        };
+    }
+    float& xmin = (*bounds)[0];
+    float& xmax = (*bounds)[1];
+    float& ymin = (*bounds)[2];
+    float& ymax = (*bounds)[3];
+    float& zmin = (*bounds)[4];
+    float& zmax = (*bounds)[5];
+
+    for(Index i = 0; i < meshData.data.size(); i += meshData.descriptor.strideSize) {
+        const float x = meshData.data[i + meshData.descriptor.positionStart];
+        const float y = meshData.data[i + meshData.descriptor.positionStart + 1];
+        const float z = meshData.data[i + meshData.descriptor.positionStart + 2];
+        xmin = std::min(xmin, x);
+        xmax = std::max(xmax, x);
+        ymin = std::min(ymin, y);
+        ymax = std::max(ymax, y);
+        zmin = std::min(zmin, z);
+        zmax = std::max(zmax, z);
+    }
+}
 
 
 } // namespace medyan::visual

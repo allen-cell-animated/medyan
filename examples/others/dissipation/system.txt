@@ -1,8 +1,6 @@
 ##################################################
 ##################### GEOMETRY ###################
 
-NDIM:                        3
-
 NX:                          2
 NY:                          2
 NZ:                          2 
@@ -37,7 +35,7 @@ FBENDINGFFTYPE:              COSINE
 FBENDINGK:                   2690
 FBENDINGTHETA:               0.0
 
-VOLUMEFFTYPE:               REPULSION
+VOLUMEFFTYPE:               integral
 VOLUMECUTOFF:               54.0
 
 VOLUMEK:                    137
@@ -74,21 +72,10 @@ SNAPSHOTTIME:                0.1
 MINIMIZATIONTIME: 	     0.05 
 NEIGHBORLISTTIME:	     0.05
 
-NUMDIFFUSINGSPECIES: 	     5
-NUMBULKSPECIES:		     0
-
 DISSIPATIONTRACKING:         ON
 EVENTTRACKING:               ON
 
 NUMFILAMENTTYPES:	     1
-
-NUMFILAMENTSPECIES:          3
-NUMPLUSENDSPECIES:           3
-NUMMINUSENDSPECIES:          3
-
-NUMBOUNDSPECIES:             2
-NUMLINKERSPECIES:            1
-NUMMOTORSPECIES:             1
 
 NUMBINDINGSITES:             4
 

@@ -17,6 +17,7 @@
 #include <iterator> // tags
 #include "Util/Io/Log.hpp"
 
+namespace medyan {
 namespace linkedlist{
 	// Forward declarations
 	template< typename TElement> class DoubleLinkedList;
@@ -195,5 +196,6 @@ namespace linkedlist{
 	};
 };
 
+} // namespace medyan
 
 #endif //MEDYAN_DoubleLinkedList_h

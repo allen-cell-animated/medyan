@@ -20,6 +20,7 @@
 #include "MathFunctions.h"
 
 
+namespace medyan {
 using namespace mathfunc;
 
 void FilamentStretchingHarmonicandBendingHarmonic::energy(floatingpoint *coord,
@@ -59,40 +60,6 @@ void FilamentStretchingHarmonicandBendingHarmonic::energy(floatingpoint *coord,
 
         U_ibend = kbend[i] * (1 - x);
 
-        //Check if stretching energy is infinite
-        if(fabs(U_istr) == numeric_limits<floatingpoint>::infinity()
-            || U_istr != U_istr || U_istr < -1.0) {
-
-            //set culprit and return
-
-            FilamentInteractions::_filamentCulprit = (Filament*)(Cylinder::getCylinders()[i]->getParent());
-
-            totalenergy[3*threadID] = -1.0;
-            totalenergy[3*threadID + 1] = -1.0;
-            totalenergy[3*threadID + 2] = -1.0;
-            return;
-        }
-
-        //Check if bending energy is infinite
-        if(fabs(U_ibend) == numeric_limits<floatingpoint>::infinity()
-            || U_ibend != U_ibend || U_ibend < -1.0) {
-            for(auto cyl:Cylinder::getCylinders()){
-                auto dbIndex1 = cyl->getFirstBead()->getIndex();
-                auto dbIndex2 = cyl->getSecondBead()->getIndex();
-                // WARNING this is unsafe because bead starting with index 0 is assumed.
-                if(dbIndex1 * 3 == beadSet[n * i] && dbIndex2 * 3 == beadSet[n * i + 1]) {
-                    auto F = dynamic_cast<Filament*>(cyl->getParent());
-                    FilamentInteractions::_filamentCulprit = F;
-                    break;
-                }
-            }
-
-            totalenergy[3*threadID] = -1.0;
-            totalenergy[3*threadID + 1] = -1.0;
-            totalenergy[3*threadID + 2] = -1.0;
-            return;
-        }
-
         Ubend += U_ibend;
         Ustr += U_istr;
     }
@@ -119,19 +86,6 @@ void FilamentStretchingHarmonicandBendingHarmonic::energy(floatingpoint *coord, 
         dist = twoPointDistance(coord1, coord2) - eqlsansbending[i];
 
         U_i = 0.5 * kstrsansbending[i] * dist * dist;
-
-        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-            || U_i != U_i || U_i < -1.0) {
-
-            //set culprit and return
-
-            FilamentInteractions::_filamentCulprit = (Filament*)(Cylinder::getCylinders()[i]->getParent());
-
-            totalenergy[3*threadID] = -1.0;
-            totalenergy[3*threadID + 1] = -1.0;
-            totalenergy[3*threadID + 2] = -1.0;
-            return;
-        }
 
         U += U_i;
     }
@@ -274,3 +228,5 @@ void FilamentStretchingHarmonicandBendingHarmonic::forces(floatingpoint *coord, 
 
     }
 }
+
+} // namespace medyan

@@ -5,7 +5,7 @@
 
 #include "Util/Math/Vec.hpp"
 
-namespace mathfunc {
+namespace medyan {
 
 //-----------------------------------------------------------------------------
 // Calculate the min distance between a point and any point on a triangle
@@ -82,6 +82,6 @@ template<
     return d;
 }
 
-} // namespace mathfunc
+} // namespace medyan
 
 #endif

@@ -39,7 +39,6 @@
 #include "MathFunctions.h"
 #include "SysParams.h"
 #include <limits>
-#include <CGMethod.h>
 
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
@@ -48,6 +47,7 @@
 #endif
 typedef std::numeric_limits< floatingpoint > dbl;
 
+namespace medyan {
 using namespace mathfunc;
 #ifdef CUDAACCL
 //struct unaryfn: std::unary_function<size_t, unsigned long> {
@@ -361,12 +361,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, const int *
 		c4 = &coord[beadSet[n * i + 3]];
 
 		floatingpoint trialvec[4]={0.01, 0.1, 1.0, 2.7};
-		uint trial = 0;
-//
-//        for(uint trial = 0; trial < 5; trial++) {
-		//trial = 0 signifies usual calculaton. trial = 1 & 2 signify calculation
-		// after moving a bead. Trial 2 will decide if the calculation has to end
-		// with error.
+		int trial = 0;
 
 		//Calculate energy
 		//@{
@@ -451,25 +446,6 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, const int *
 			if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
 			   || U_i != U_i || U_i < -1.0) {
 
-				short found = 0;
-				for (auto cyl:Cylinder::getCylinders()) {
-					auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
-					auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
-					if (dbIndex1 == beadSet[n * i] &&
-					    dbIndex2 == beadSet[n * i + 1]) { // FIXME this is unsafe
-						CylinderVolumeInteractions::_cylinderCulprit1 = cyl;
-						found++;
-						if (found >= 2)
-							break;
-					} else if (dbIndex1 == beadSet[n * i + 2] &&
-					           dbIndex2 == beadSet[n * i +
-					                               3]) { // FIXME this is unsafe
-						CylinderVolumeInteractions::_cylinderCulprit2 = cyl;
-						found++;
-						if (found >= 2)
-							break;
-					}
-				}
 				cout << "Printing relevant coordinates " << endl;
 				cout << "c1 " << c1[0] << " " << c1[1] << " " << c1[2] << endl;
 				cout << "c2 " << c2[0] << " " << c2[1] << " " << c2[2] << endl;
@@ -526,25 +502,6 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, const int *
 				}
 					//If all trials are done, set Culprit and return
 				else {
-					short found = 0;
-					for (auto cyl:Cylinder::getCylinders()) {
-						auto dbIndex1 = cyl->getFirstBead()->getIndex() * 3;
-						auto dbIndex2 = cyl->getSecondBead()->getIndex() * 3;
-						if (dbIndex1 == beadSet[n * i] &&
-						    dbIndex2 == beadSet[n * i + 1]) { // FIXME this is not safe
-							CylinderVolumeInteractions::_cylinderCulprit1 = cyl;
-							found++;
-							if (found >= 2)
-								break;
-						} else if (dbIndex1 == beadSet[n * i + 2] &&
-						           dbIndex2 == beadSet[n * i +
-						                               3]) { // FIXME this is not safe
-							CylinderVolumeInteractions::_cylinderCulprit2 = cyl;
-							found++;
-							if (found >= 2)
-								break;
-						}
-					}
 					cout << "Printing relevant coordinates " << endl;
 					cout << "c1 " << c1[0] << " " << c1[1] << " " << c1[2] << endl;
 					cout << "c2 " << c2[0] << " " << c2[1] << " " << c2[2] << endl;
@@ -631,7 +588,7 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, co
 	doubleprecision sqmag_D, sqmag_E;
 	doubleprecision g,h,I;
     double cp[3] {};
-    double vec_A[3] {}, vec_B[3] {}, vec_C[3] {};
+    floatingpoint vec_A[3] {}, vec_B[3] {}, vec_C[3] {};
 
 	int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
 
@@ -1295,3 +1252,5 @@ void CylinderExclVolRepulsion::forceN(floatingpoint *coord, floatingpoint *f,
 		}
 	}
 }
+
+} // namespace medyan

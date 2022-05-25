@@ -14,13 +14,9 @@
 #ifndef MEDYAN_MLinker_h
 #define MEDYAN_MLinker_h
 
-#include <vector>
-
 #include "common.h"
 
-//FORWARD DECLARATIONS
-class Linker;
-
+namespace medyan {
 /// Represents the mechanical component of a Linker.
 
 /*! The class describes interaction between 4 [Beads](@ref Bead) connected by a Linker,
@@ -30,45 +26,22 @@ class Linker;
  *  on a Filament) determined by two numbers (floatingpoint from 0 to 1) position1 and 
  *  position2 held in the parent Linker.
  */
-class MLinker {
+struct MLinker {
     
-public:
     floatingpoint stretchForce = 0.0; ///< Stretching force of linker at current state
     
-    /// Main constructor
-    /// @param position - position on cylinder 1 and 2, respectively
-    /// @param coord - coordinates of cylinder1's bead 1, bead 2, etc
-    MLinker(int linkerType, floatingpoint position1, floatingpoint position2,
-            const vector<floatingpoint>& coord11, const vector<floatingpoint>& coord12,
-            const vector<floatingpoint>& coord21, const vector<floatingpoint>& coord22);
+    floatingpoint eqLength = 0;  ///< Equilibrium length
+    floatingpoint kStretch = 0;  ///< Stretching constant
     
     //@{
     /// Getter for constants
-    floatingpoint getStretchingConstant(){return _kStretch;}
-    floatingpoint getEqLength(){return _eqLength;}
+    floatingpoint getStretchingConstant() const {return kStretch;}
+    floatingpoint getEqLength() const {return eqLength;}
     //@}
-    
-    /// Set parent
-    void setLinker(Linker* linker) {_pLinker = linker;}
-    /// Get parent 
-    Linker* getLinker() {return _pLinker;}
-    
-    //@{
-    /// Length management
-    void setLength(floatingpoint l){_currentLength = l;}
-    floatingpoint getLength() {return _currentLength;}
 
     void initializerestart(floatingpoint eqLength);
-    //@}
-    
-private:
-    floatingpoint _eqLength;  ///< Equilibrium length, set at construction
-    floatingpoint _kStretch;  ///< Stretching constant
-    
-    Linker* _pLinker; ///< Pointer to parent linker
-    
-    floatingpoint _currentLength; ///< Current length of the linker
-    
 };
+
+} // namespace medyan
 
 #endif 

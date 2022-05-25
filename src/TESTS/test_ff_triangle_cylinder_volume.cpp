@@ -24,7 +24,7 @@
 using namespace mathfunc;
 #    include "Rand.h"
 
-#    include "GController.h"
+#    include "Controller/GController.h"
 #    include "SubSystem.h"
 #    include "Component.h"
 

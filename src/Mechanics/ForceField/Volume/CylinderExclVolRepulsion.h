@@ -16,7 +16,7 @@
 
 #include "common.h"
 
-
+namespace medyan {
 //FORWARD DECLARATIONS
 class Bead;
 
@@ -98,4 +98,7 @@ private:
     void forcesAux(Bead*, Bead*, Bead*, Bead*, floatingpoint Krepuls);
 #endif
 };
+
+} // namespace medyan
+
 #endif

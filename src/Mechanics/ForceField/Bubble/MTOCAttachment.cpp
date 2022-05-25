@@ -20,86 +20,52 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
+#include "Structure/DofSerializer.hpp"
 
+namespace medyan {
 
+void MTOCAttachment::vectorize(const FFCoordinateStartingIndex& si) {
 
-template <class MTOCInteractionType>
-void MTOCAttachment<MTOCInteractionType>::vectorize(const FFCoordinateStartingIndex& si) {
+    ps_ = si.ps;
 
-
-	//get total number of interactions
-	uint nint = 0;
-	for(auto mtoc : MTOC::getMTOCs()) {
-		nint += mtoc->getFilaments().size();
-	}
-	//create vectors
-	beadSet = new int[n * nint];
-    beadStartIndex_   = si.bead;
-    bubbleStartIndex_ = si.bubble;
-	kstr = new floatingpoint[nint];
-	radiusvec = new floatingpoint[nint];
-	//Get the interactions
-	uint interaction_counter = 0;
-
-    if(MTOC::getMTOCs().size() > 1) {
-        cout << "Should not have more than 1 MTOC" << endl;
-        exit(EXIT_FAILURE);
-    }
-    
-
-    for(auto mtoc : MTOC::getMTOCs()) {
-
-        for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
-            Filament *f = mtoc->getFilaments()[fIndex];
-			//get mtoc bead
-	        beadSet[n*interaction_counter] = mtoc->getBubble()->getIndex() * 3 + si.bubble;
-            //get filament bead
-            beadSet[n*interaction_counter + 1] = f->getMinusEndCylinder()->getFirstBead()
-            		->getIndex() * 3 + si.bead;
-			//The MTOC attachment constant is the same as stretching constant
-            kstr[interaction_counter] = f->getMinusEndCylinder()->getMCylinder()->getStretchingConst();
-            radiusvec[interaction_counter] = mtoc->getBubble()->getRadius();
-            
-	        interaction_counter++;
+    pairInteractions_.clear();
+    for(auto& mtoc : ps_->mtocs) {
+        auto& bb = mtoc.getBubble(*ps_);
+        for(auto pf : mtoc.getFilaments()) {
+            pairInteractions_.push_back({
+                findBubbleCoordIndex(bb, si),
+                findBeadCoordIndex(*pf->getMinusEndCylinder()->getFirstBead(), si),
+                mtoc.attachmentStretchingK,
+                bb.getRadius(),
+            });
         }
     }
-    numInteractions = interaction_counter;
-}
-
-template <class MTOCInteractionType>
-void MTOCAttachment<MTOCInteractionType>::deallocate() {
-
-    delete [] beadSet;
-    delete [] kstr;
-    delete [] radiusvec;
 }
 
 
-template <class MTOCInteractionType>
-floatingpoint MTOCAttachment<MTOCInteractionType>::computeEnergy(floatingpoint* coord, bool stretched) {
+floatingpoint MTOCAttachment::computeEnergy(floatingpoint* coord) {
 
-    floatingpoint U = 0.0;
-    floatingpoint U_i=0.0;
-
-    U_i = _FFType.energy(coord, beadSet, beadStartIndex_, bubbleStartIndex_, kstr, radiusvec);
-
-    return U_i;
+    floatingpoint energy = 0;
+    for(auto& pair : pairInteractions_) {
+        const auto u = impl.energy(
+            coord,
+            pair.bubbleCoordIndex, pair.beadCoordIndex,
+            pair.kstr, pair.radius
+        );
+        energy += u;
+    }
+    return energy;
 }
 
-template <class MTOCInteractionType>
-void MTOCAttachment<MTOCInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
-        _FFType.forces(coord, f, beadSet, kstr, radiusvec);
-
+void MTOCAttachment::computeForces(floatingpoint *coord, floatingpoint *force) {
+    for(auto& pair : pairInteractions_) {
+        impl.forces(
+            coord, force,
+            pair.bubbleCoordIndex, pair.beadCoordIndex,
+            pair.kstr, pair.radius
+        );
+    }
 }
 
 
-
-///Template specializations
-template <class MTOCInteractionType>
-int MTOCAttachment<MTOCInteractionType>::numInteractions;
-template floatingpoint MTOCAttachment<MTOCAttachmentHarmonic>::computeEnergy(floatingpoint *coord, bool stretched);
-template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
-//template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux(double *coord, double *f);
-template void MTOCAttachment<MTOCAttachmentHarmonic>::vectorize(const FFCoordinateStartingIndex&);
-template void MTOCAttachment<MTOCAttachmentHarmonic>::deallocate();
-
+} // namespace medyan

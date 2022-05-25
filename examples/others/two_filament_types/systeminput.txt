@@ -1,8 +1,6 @@
 ##################################################
 ##################### GEOMETRY ###################
 
-NDIM:                        3
-
 NX:                          2
 NY:                          2
 NZ:                          10
@@ -44,7 +42,7 @@ E4
 FBENDINGTHETA:               0.0 0.0
 # ?? reference theta
 
-VOLUMEFFTYPE:               REPULSION
+VOLUMEFFTYPE:               integral
 VOLUMECUTOFF:               54.0
 # ?
 VOLUMEK:                    8.57 857
@@ -63,12 +61,12 @@ BOUNDARYSCREENLENGTH:       2.7
 
 MSTRETCHINGFFTYPE:           HARMONIC
 # eq9
-MSTRETCHINGK:                2.5
+MSTRETCHINGK                 2.5  3.0  3.5
 
 ### LINKERS ###
 
 LSTRETCHINGFFTYPE:			 HARMONIC
-LSTRETCHINGK:				 8.0
+LSTRETCHINGK 				 8.0  12.0
 # eq6
 
 ### BRANCHING ###
@@ -99,7 +97,7 @@ CHEMISTRYFILE:               m1-1.txt
 CALGORITHM:                  NRM
 # NRM or GILLESPIE
 NUMTOTALSTEPS:		     	 
-RUNTIME:                     2000.0
+RUNTIME:                     150.0
 
 SNAPSHOTTIME:                1.0
 
@@ -107,30 +105,17 @@ MINIMIZATIONTIME: 			 0.02
 NEIGHBORLISTTIME:			 0.02
 # S2, C), S1 d)
 
-NUMDIFFUSINGSPECIES: 	     4
-# actin, formin, myosin, linker
-NUMBULKSPECIES:		     	 0
-
 NUMFILAMENTTYPES:	     2
 
-NUMFILAMENTSPECIES:          1 1
-NUMPLUSENDSPECIES:           2 1
-NUMMINUSENDSPECIES:          1 1
-
-NUMBOUNDSPECIES:             2 1
-# MEA, LEA 
-NUMLINKERSPECIES:            1 0
-NUMMOTORSPECIES:             1 0
-#NUMBRANCHERSPECIES:          1
 
 
 NUMBINDINGSITES:             4 1
 # BEA
 
 ####### MOTOR ######################
-NUMMOTORHEADSMIN:	         15 
-NUMMOTORHEADSMAX:	       	 30 
-MOTORSTEPSIZE:			 6.0
+NUMMOTORHEADSMIN             15   15   15
+NUMMOTORHEADSMAX             30   30   30
+MOTORSTEPSIZE                6.0  6.0  6.0
 
 
 ##################################################
@@ -140,17 +125,17 @@ DFPOLYMERIZATIONTYPE: 	   BROWRATCHET BROWRATCHET
 DFPOLYMERIZATIONLEN:	   2.7 		2.7
 # ?? S3, C) 
 
-DMUNBINDINGTYPE:	     LOWDUTYCATCH 
-# Myosin unbinding dynamic rate form: LOWDUTYCATCH, LOWDUTYSLIP
-DMUNBINDINGFORCE:	     12.62
+; Myosin unbinding dynamic rate form: LOWDUTYCATCH, LOWDUTYSLIP.
+DMUNBINDINGTYPE          LOWDUTYCATCH LOWDUTYCATCH LOWDUTYCATCH
+DMUNBINDINGFORCE         12.62        12.62        12.62
 # S1
 
-DMWALKINGTYPE:		     LOWDUTYSTALL
-DMWALKINGFORCE:	    	 15.0
+DMWALKINGTYPE            LOWDUTYSTALL LOWDUTYSTALL LOWDUTYSTALL
+DMWALKINGFORCE           15.0         15.0         15.0
 
-DLUNBINDINGTYPE:		 SLIP
-DLUNBINDINGLEN:			 0.24
-# crosslinker
+; Linker unbinding dynamic rate.
+DLUNBINDINGTYPE          SLIP         SLIP
+DLUNBINDINGLEN           0.24         0.24
 
 
 ##################################################

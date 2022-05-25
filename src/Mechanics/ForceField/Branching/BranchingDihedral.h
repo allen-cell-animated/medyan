@@ -20,14 +20,15 @@
 #ifdef CUDAACCL
 #include "CUDAcommon.h"
 #endif
-#include "BranchingInteractions.h"
+#include "Mechanics/ForceField/ForceField.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class BranchingPoint;
 
 /// Represents an interaction keeping BranchingPoint in dihedral plane
 template <class BDihedralInteractionType>
-class BranchingDihedral : public BranchingInteractions {
+class BranchingDihedral : public ForceField {
     
 private:
     BDihedralInteractionType _FFType;
@@ -35,9 +36,9 @@ private:
     std::vector< unsigned > beadSet;
     
     ///Array describing the constants in calculation
-    floatingpoint *kdih;
-    floatingpoint *pos;
-    floatingpoint *stretchforce;
+    std::vector<FP> kdih;
+    std::vector<FP> pos;
+    std::vector<FP> stretchforce;
 #ifdef CUDAACCL
     int * gpu_beadSet;
     floatingpoint * gpu_kdih;
@@ -52,13 +53,16 @@ public:
     ///this is a 4-bead potential
     const static int n = 4;
     
-    virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void deallocate();
+    virtual void vectorize(const FFCoordinateStartingIndex&, const SimulConfig&) override;
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+    virtual FP computeEnergy(FP *coord) override;
+    virtual void computeForces(FP *coord, FP *f) override;
+
+    virtual void assignforcemags() override;
     
-    virtual const string getName() {return "Branching Dihedral";}
+    virtual std::string getName() override { return "BranchingDihedral"; }
 };
+
+} // namespace medyan
 
 #endif

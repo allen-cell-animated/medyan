@@ -26,6 +26,7 @@
 #include "nvToolsExt.h"
 #endif
 
+namespace medyan {
 using namespace mathfunc;
 #ifdef CUDAACCL
 void MotorGhostStretchingHarmonic::deallocate(){
@@ -233,11 +234,6 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f
 floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, int *beadSet,
                                             floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2) {
 
-	#ifdef ADDITIONALINFO
-	MotorGhostInteractions::individualenergies.clear();
-	MotorGhostInteractions::tpdistvec.clear();
-
-	#endif
 
     int n = MotorGhostStretching<MotorGhostStretchingHarmonic>::n;
     int nint = MotorGhost::getMotorGhosts().size();
@@ -264,18 +260,6 @@ floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, int *be
         dist = tpd - eql[i];
         U_i = 0.5 * kstr[i] * dist * dist;
 
-        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-
-            //set culprit and return
-            MotorGhostInteractions::_motorCulprit = MotorGhost::getMotorGhosts()[i];
-
-            return -1;
-        }
-#ifdef ADDITIONALINFO
-	    MotorGhostInteractions::individualenergies.push_back(U_i);
-	    MotorGhostInteractions::tpdistvec.push_back(tpd);
-#endif
         U += U_i;
 //        std::cout<<U_i<<endl;
     }
@@ -286,63 +270,6 @@ floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, int *be
     return U;
 }
 
-floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, floatingpoint * f,
-        int *beadSet, floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1,
-        floatingpoint *pos2, floatingpoint d){
-
-    int n = MotorGhostStretching<MotorGhostStretchingHarmonic>::n;
-    int nint = MotorGhost::getMotorGhosts().size();
-
-    floatingpoint *coord1, *coord2, *coord3, *coord4, dist, U_i;
-    floatingpoint *f1, *f2, *f3, *f4;
-
-    floatingpoint *v1 = new floatingpoint[3];
-    floatingpoint *v2 = new floatingpoint[3];
-
-    floatingpoint U = 0.0;
-
-    for(int i = 0; i < nint; i += 1) {
-
-        coord1 = &coord[beadSet[n * i]];
-        coord2 = &coord[beadSet[n * i + 1]];
-        coord3 = &coord[beadSet[n * i + 2]];
-        coord4 = &coord[beadSet[n * i + 3]];
-
-        f1 = &f[beadSet[n * i]];
-        f2 = &f[beadSet[n * i + 1]];
-        f3 = &f[beadSet[n * i + 2]];
-        f4 = &f[beadSet[n * i + 3]];
-
-        midPointCoordinateStretched(v1, coord1, f1, coord2, f2, pos1[i], d);
-        midPointCoordinateStretched(v2, coord3, f3, coord4, f4, pos2[i], d);
-
-        dist = twoPointDistance(v1,  v2) - eql[i];
-        U_i = 0.5 * kstr[i] * dist * dist;
-
-//        std::cout<<v1[0]<<" "<<v1[1]<<" "<<v1[2]<<" "<<v2[0]<<" "<<v2[1]<<" "<<v2[2]<<" "<<coord1[0]<<" "
-//                ""<<coord1[1]<<" "<<coord1[2]<<" "<<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<" "<<f1[0]<<" "
-//                ""<<f1[1]<<" "<<f1[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<coord2[0]<<" "<<coord2[1]<<" "
-//                ""<<coord2[2]<<" "<<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "
-//                ""<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<" "<<pos1[i]<<" "<<pos2[i]<<" "<<d<<" "<<U_i<<endl;
-        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-
-            //set culprit and return
-            MotorGhostInteractions::_motorCulprit = MotorGhost::getMotorGhosts()[i];
-
-            return -1;
-        }
-
-        U += U_i;
-    }
-
-//    std::cout<<"MS Total energy serial "<< U <<endl;
-    delete [] v1;
-    delete [] v2;
-
-    return U;
-
-}
 
 void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                           floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2
@@ -460,3 +387,5 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f
     delete [] v2;
 
 }
+
+} // namespace medyan

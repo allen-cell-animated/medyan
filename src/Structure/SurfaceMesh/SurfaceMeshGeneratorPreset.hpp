@@ -10,11 +10,11 @@
 #include "Structure/SurfaceMesh/SurfaceMeshGenerator.hpp"
 #include "Util/Io/Log.hpp"
 
-namespace mesh_gen {
+namespace medyan::mesh_gen {
 
 template< typename Float = double >
 inline typename MarchingTetrahedraGenerator<Float>::Result
-generateEllipsoid(const mathfunc::Vec< 3, Float >& center, const mathfunc::Vec< 3, Float >& semiAxes) {
+generateEllipsoid(const Vec< 3, Float >& center, const Vec< 3, Float >& semiAxes) {
     using namespace mathfunc;
 
     constexpr Float  maxCubeSize               = 60.0;
@@ -47,8 +47,8 @@ generateEllipsoid(const mathfunc::Vec< 3, Float >& center, const mathfunc::Vec< 
 
 template< typename Float = double >
 inline auto generatePlane(
-    const mathfunc::Vec< 3, Float >& pointOnPlane, const mathfunc::Vec< 3, Float >& normal,
-    const mathfunc::Vec< 3, Float >& boundingBoxOrigin, const mathfunc::Vec< 3, Float >& boundingBoxSize
+    const Vec< 3, Float >& pointOnPlane, const Vec< 3, Float >& normal,
+    const Vec< 3, Float >& boundingBoxOrigin, const Vec< 3, Float >& boundingBoxSize
 ) {
     using namespace mathfunc;
 
@@ -80,8 +80,8 @@ generateMeshViaParams(const std::vector< std::string >& param) {
 
     if(param[0] == "ELLIPSOID") {
         if(param.size() < 7) {
-            LOG(ERROR) << "Mesh ellipsoid initializer has 6 parameters";
-            LOG(INFO) << "Mesh ellipsoid initializer: ELLIPSOID center_x center_y center_z a b c";
+            log::error("Mesh ellipsoid initializer has 6 parameters");
+            log::info("Mesh ellipsoid initializer: ELLIPSOID center_x center_y center_z a b c");
             throw std::runtime_error("Insufficient parameters in mesh ellipsoid initializer");
         }
 
@@ -95,8 +95,8 @@ generateMeshViaParams(const std::vector< std::string >& param) {
 
     if(param[0] == "PLANE") {
         if(param.size() < 13) {
-            LOG(ERROR) << "Mesh plane initializer has 12 parameters";
-            LOG(INFO) << "Mesh plane initializer: PLANE center_xyz... normal_xyz... box_origin_xyz... box_size_abc...";
+            log::error("Mesh plane initializer has 12 parameters");
+            log::info("Mesh plane initializer: PLANE center_xyz... normal_xyz... box_origin_xyz... box_size_abc...");
             throw std::runtime_error("Insufficient parameters in mesh plane initializer");
         }
 
@@ -113,10 +113,10 @@ generateMeshViaParams(const std::vector< std::string >& param) {
         );
     }
 
-    LOG(ERROR) << "Unrecognized mesh initializer";
+    log::error("Unrecognized mesh initializer");
     throw std::runtime_error("Unrecognized mesh initializer");
 }
 
-} // namespace mesh_gen
+} // namespace medyan::mesh_gen
 
 #endif

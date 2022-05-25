@@ -25,6 +25,7 @@
 #include "BinGrid.h"
 #include "SysParams.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Cylinder;
 
@@ -44,7 +45,6 @@ private:
     void updateNeighbors(Cylinder* cylinder, bool runtime = false);
     static short totalhybridNL;
 public:
-    short _ID = 0; //ID helps link binGridType to NeighborList.
     //In the implementation of Hybrid NeighborList, each compartment has a single HybridNeighborList pointer.
     // So, _ID is always 0.
 
@@ -223,4 +223,7 @@ public:
 
 };
 #endif
+
+} // namespace medyan
+
 #endif

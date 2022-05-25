@@ -15,26 +15,45 @@
 #define MEDYAN_AFMAttachmentHarmonic_h
 
 #include "common.h"
+#include "Util/Math/Vec.hpp"
 
-//FORWARD DECLARATIONS
-class Bead;
+namespace medyan {
 
 /// A harmonic potential used by the AFMAttachment template.
-class AFMAttachmentHarmonic {
-    
-public:
+struct AFMAttachmentHarmonic {
     floatingpoint energy(
-        floatingpoint *coord,
-        int numInteractions, int *beadSet, floatingpoint *kstr, const floatingpoint* radii
-    ) const;
+        const floatingpoint *coord,
+        Index bubbleCoordIndex, Index beadCoordIndex,
+        floatingpoint kstr, floatingpoint radius
+    ) const {
+        auto coord1 = makeRefVec<3>(coord + bubbleCoordIndex);
+        auto coord2 = makeRefVec<3>(coord + beadCoordIndex);
+        auto diff = distance(coord1, coord2) - radius;
+        
+        auto energy = (kstr / 2) * diff * diff;
+        
+        return energy;
+    }
 
     void forces(
-        floatingpoint *coord, floatingpoint* f,
-        int numInteractions, int *beadSet, floatingpoint *kstr, const floatingpoint* radii
-    ) const;
+        const floatingpoint *coord, floatingpoint *force,
+        Index bubbleCoordIndex, Index beadCoordIndex,
+        floatingpoint kstr, floatingpoint radius
+    ) const {
+        auto coord1 = makeRefVec<3>(coord + bubbleCoordIndex);
+        auto coord2 = makeRefVec<3>(coord + beadCoordIndex);
+        auto force1 = makeRefVec<3>(force + bubbleCoordIndex);
+        auto force2 = makeRefVec<3>(force + beadCoordIndex);
 
-    //void forcesAux(Bead*, Bead*, floatingpoint, floatingpoint);
+        auto dist = distance(coord1, coord2);
+        auto f0 = kstr * (dist - radius) / dist;
+
+        force1 += f0 * (coord2 - coord1);
+        force2 += f0 * (coord1 - coord2);
+    }
 };
+
+} // namespace medyan
 
 #endif
 

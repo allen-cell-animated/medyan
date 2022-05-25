@@ -14,95 +14,109 @@
 #ifndef MEDYAN_Database_h
 #define MEDYAN_Database_h
 
-#include <algorithm> // max
-#include <cstddef> // size_t
+#include <algorithm> // max, swap
+#include <cstddef> // nullptr_t, size_t
+#include <tuple> // apply
 #include <utility> // forward
 #include <vector>
 
-#include <iostream>
+
+namespace medyan {
 
 //-----------------------------------------------------------------------------
 // DatabaseData stores the data that has the same indexing with the internal
 // Database structure.
-// With stable indexing the following functions must be implemented:
-//   void push_back(data...)
-//   void set_content(size_t pos, data...)
-//   void move_content(size_t from, size_t to)
-//   void resize(size_t size)
-// With dynamic indexing the following functions must be implemented:
-//   void push_back(data...)
-//   void pop_back()
-//   void move_from_back(size_t pos)
+// DatabaseData must be a vector-like type that satisfies the following criteria.
+//   - has type value_type.
+//   - value_type is default constructable.
+//   - value_type is copy/move assignable.
+//   - has function push_back(value_type or ref).
+//   - has function operator[](size_t pos) -> value_type&.
+//   - has function back() -> value_type&.
+//   - has function pop_back().
+//   - has function resize(size_t size).
+// Note: with C++20 these constraints should be written as a concept.
 //-----------------------------------------------------------------------------
 struct DatabaseDataDefault {
-    void push_back() {}
+    struct value_type {};
+
+    value_type dummy;
+
+    void push_back(value_type) {}
+    value_type&       operator[](std::size_t)       { return dummy; }
+    const value_type& operator[](std::size_t) const { return dummy; }
+    value_type&       back()       { return dummy; }
+    const value_type& back() const { return dummy; }
     void pop_back() {}
-    void set_content(std::size_t) {}
-    void move_from_back(std::size_t) {}
-    void move_content(std::size_t from, std::size_t to) {}
     void resize(std::size_t) {}
-    void settodummy(std::size_t) {}
 };
 
 template< typename T >
 class DatabaseBase {
     
 private:
-    static std::vector<T*> _elems;  // Pointer to the elements in the collection
-    static std::size_t _nextId;     // Next unique id
+    inline static std::vector<T*> elems_;  // Pointer to the elements in the collection
+    inline static std::size_t nextId_ = 0; // Next unique id
 
-    std::size_t _id;
-    std::size_t _index;
+    std::size_t id_;
+    std::size_t index_;
 
 public:
-    static const auto& getElements() { return _elems; }
-    static auto numElements() { return _elems.size(); }
+    static const auto& getElements() { return elems_; }
+    static auto numElements() { return elems_.size(); }
 
     // Add element on construction
-    DatabaseBase() : _id(_nextId++), _index(_elems.size()) {
-        _elems.push_back(static_cast<T*>(this));
+    DatabaseBase() : id_(nextId_++), index_(elems_.size()) {
+        elems_.push_back(static_cast<T*>(this));
     }
+
+    // Copy construction creates a new identity
+    DatabaseBase(const DatabaseBase&) : DatabaseBase() {}
+    // Move construction will use the identity of moved-from object, and a new identity is created for the moved-from object.
+    DatabaseBase(DatabaseBase&& rhs ) : DatabaseBase() {
+        std::swap(id_, rhs.id_);
+        std::swap(index_, rhs.index_);
+        std::swap(elems_[index_], elems_[rhs.index_]);
+    }
+
     // Remove element on destruction
     ~DatabaseBase() {
-        if(_index + 1 != _elems.size()) {
+        if(index_ + 1 != elems_.size()) {
             // Move the data from the last element to the current position
-            _elems[_index] = _elems.back();
+            elems_[index_] = elems_.back();
             // Updata _index of the original last element
-            _elems[_index] -> DatabaseBase< T >::_index = _index;
+            elems_[index_] -> DatabaseBase< T >::index_ = index_;
         }
 
         // Pop the last element
-        _elems.pop_back();
+        elems_.pop_back();
     }
 
-    std::size_t getId() const { return _id; }
-    std::size_t getIndex() const { return _index; }
+    // Disallow assignments
+    DatabaseBase& operator=(const DatabaseBase&) = delete;
+    DatabaseBase& operator=(DatabaseBase&&     ) = delete;
+
+    std::size_t getId() const { return id_; }
+    std::size_t getIndex() const { return index_; }
 
     // This function overrides the current id of the element.
     // One should not use it unless in cases like re-initializing the system.
     void overrideId(std::size_t id) {
-        _id = id;
-        _nextId = std::max(_id + 1, _nextId);
+        id_ = id;
+        nextId_ = std::max(id_ + 1, nextId_);
     }
 
 };
-// Static variable definition (can be inlined starting C++17)
-template< typename T >
-std::vector<T*> DatabaseBase< T >::_elems;
-template< typename T >
-std::size_t DatabaseBase< T >::_nextId = 0;
 
 template< typename DatabaseData > class DatabaseDataManager {
 
 private:
-    static DatabaseData _dbData;
+    inline static DatabaseData dbData_;
 
 public:
-    static auto&       getDbData()      { return _dbData; }
-    static const auto& getDbDataConst() { return _dbData; }
+    static auto&       getDbData()      { return dbData_; }
+    static const auto& getDbDataConst() { return dbData_; }
 };
-// Static variable definition
-template< typename DatabaseData > DatabaseData DatabaseDataManager< DatabaseData >::_dbData;
 
 
 /// A collection class to hold instances of a given class
@@ -133,23 +147,36 @@ class Database< T, false, DatabaseData > : public DatabaseBase<T>,
 
 public:
 
-    using db_base_type = DatabaseBase<T>;
-    using db_data_type = DatabaseDataManager<DatabaseData>;
+    using DbBaseType = DatabaseBase<T>;
+    using DbDataType = DatabaseDataManager<DatabaseData>;
 
-    // Add element on construction
-    template< typename... Args >
-    Database(Args&&... args) {
-        db_data_type::getDbData().push_back(std::forward<Args>(args)...);
+    // Default constructor creates default value
+    Database() {
+        DbDataType::getDbData().push_back(typename DatabaseData::value_type {});
     }
+    // Add element on construction
+    Database(typename DatabaseData::value_type val) {
+        DbDataType::getDbData().push_back(std::move(val));
+    }
+
+    // Copy constructor also copies the data.
+    Database(const Database& rhs) : DbBaseType(rhs) {
+        DbDataType::getDbData().push_back(DbDataType::getDbData()[rhs.getIndex()]);
+    }
+    // Move constructor creates default data for the moved-from object.
+    Database(Database&& rhs) : DbBaseType(std::move(rhs)) {
+        DbDataType::getDbData().push_back(typename DatabaseData::value_type {});
+    }
+
     // Remove element on destruction (by swapping)
     ~Database() {
-        if(this->getIndex() + 1 != db_base_type::getElements().size()) {
+        if(this->getIndex() + 1 != DbBaseType::getElements().size()) {
             // Move the data from the last element to the current position
-            db_data_type::getDbData().move_from_back(this->getIndex());
+            DbDataType::getDbData()[this->getIndex()] = std::move(DbDataType::getDbData().back());
         }
 
         // Pop the last element
-        db_data_type::getDbData().pop_back();
+        DbDataType::getDbData().pop_back();
     }
 };
 
@@ -157,80 +184,123 @@ public:
 template< typename T, typename DatabaseData >
 class Database< T, true, DatabaseData > : public DatabaseBase<T>,
                                           public DatabaseDataManager<DatabaseData> {
-    static std::vector<T*> _stableElems;
-    static std::vector<std::size_t> _deletedIndices;
+    inline static std::vector<T*> stableElems_;
+    inline static std::vector<std::size_t> deletedIndices_;
 
-    std::size_t _stableIndex;
+    std::size_t stableIndex_ = 0;
+
+    // Auxiliary function to initialize new data
+    template< typename CaseBack, typename CaseHole >
+    void initialize_(CaseBack&& caseBack, CaseHole&& caseHole) {
+        if(deletedIndices_.empty()) {
+            // Append at the back
+            stableIndex_ = stableElems_.size();
+            stableElems_.push_back(static_cast<T*>(this));
+            caseBack();
+        } else {
+            // Fill in the last hole
+            stableIndex_ = deletedIndices_.back();
+            stableElems_[stableIndex_] = static_cast<T*>(this);
+            caseHole();
+            deletedIndices_.pop_back();
+        }
+    }
 
 public:
-    using db_base_type = DatabaseBase<T>;
-    using db_data_type = DatabaseDataManager<DatabaseData>;
+    using DbBaseType = DatabaseBase<T>;
+    using DbDataType = DatabaseDataManager<DatabaseData>;
 
-    static const auto& getStableElement(std::size_t pos) { return _stableElems[pos]; }
+    static const auto& getStableElement(std::size_t pos) { return stableElems_[pos]; }
     // Get raw number of stable elements (including deleted)
-    static auto rawNumStableElements() { return _stableElems.size(); }
+    static auto rawNumStableElements() { return stableElems_.size(); }
+    // Getting information for debug purposes
+    static const auto& getDeletedIndices() { return deletedIndices_; }
 
+    // Calling this function may change the stable indices.
     static void rearrange() {
         using std::size_t;
 
-        const size_t numDeleted = _deletedIndices.size();
-        const size_t currentSize = _stableElems.size();
+        const size_t numDeleted = deletedIndices_.size();
+        const size_t currentSize = stableElems_.size();
         const size_t finalSize = currentSize - numDeleted;
 
         std::vector<char> isDeleted(numDeleted);
         // Mark to-be-deleted items with indices bigger than finalSize as deleted
         for(size_t i = 0; i < numDeleted; ++i)
-            if(_deletedIndices[i] >= finalSize)
-                isDeleted[_deletedIndices[i] - finalSize] = true;
+            if(deletedIndices_[i] >= finalSize)
+                isDeleted[deletedIndices_[i] - finalSize] = true;
 
         // Move the not-to-be-deleted items with bigger indices to the to-be-deleted items with small indices
         for(size_t indAfterFinal = 0, i = 0; indAfterFinal < numDeleted; ++indAfterFinal) {
             if(!isDeleted[indAfterFinal]) {
-                while(i < numDeleted && _deletedIndices[i] >= finalSize) ++i; // Find (including current i) the next i with small index
+                while(i < numDeleted && deletedIndices_[i] >= finalSize) ++i; // Find (including current i) the next i with small index
                 if(i < numDeleted) {
                     // Found. This should always be satisfied.
-                    _stableElems[_deletedIndices[i]] = _stableElems[finalSize + indAfterFinal];
-                    db_data_type::getDbData().move_content(finalSize + indAfterFinal, _deletedIndices[i]);
-                    _stableElems[_deletedIndices[i]]->_stableIndex = _deletedIndices[i];
+                    stableElems_[deletedIndices_[i]] = stableElems_[finalSize + indAfterFinal];
+                    DbDataType::getDbData()[deletedIndices_[i]] = std::move(DbDataType::getDbData()[finalSize + indAfterFinal]);
+                    stableElems_[deletedIndices_[i]]->stableIndex_ = deletedIndices_[i];
                 }
                 ++i;
             }
         }
 
         // Remove garbage
-        _stableElems.resize(finalSize);
-        db_data_type::getDbData().resize(finalSize);
-        _deletedIndices.clear();
+        stableElems_.resize(finalSize);
+        DbDataType::getDbData().resize(finalSize);
+        deletedIndices_.clear();
     }
 
-    template< typename... Args >
-    Database(Args&&... args) {
-        if(_deletedIndices.empty()) {
-            // Append at the back
-            _stableIndex = _stableElems.size();
-            _stableElems.push_back(static_cast<T*>(this));
-            db_data_type::getDbData().push_back(std::forward<Args>(args)...);
-        } else {
-            // Fill in the last hole
-            _stableIndex = _deletedIndices.back();
-            _stableElems[_stableIndex] = static_cast<T*>(this);
-            db_data_type::getDbData().set_content(_stableIndex, std::forward<Args>(args)...);
-            _deletedIndices.pop_back();
-        }
+    // Default constructor creates default value.
+    Database() {
+        initialize_(
+            // pushing back empty
+            [] { DbDataType::getDbData().push_back(typename DatabaseData::value_type {}); },
+            // filling hole with default value
+            [this] { DbDataType::getDbData()[stableIndex_] = typename DatabaseData::value_type {}; }
+        );
     }
+    // Constructor adds the value.
+    Database(typename DatabaseData::value_type val) {
+        initialize_(
+            // pushing back
+            [&] { DbDataType::getDbData().push_back(std::move(val)); },
+            // filling the hole
+            [&, this] { DbDataType::getDbData()[stableIndex_] = std::move(val); }
+        );
+    }
+
+    // Copy constructor also copies the data.
+    Database(const Database& rhs) : DbBaseType(rhs) {
+        initialize_(
+            // pushing back
+            [&] { DbDataType::getDbData().push_back(DbDataType::getDbData()[rhs.stableIndex_]); },
+            // filling the hole
+            [&, this] { DbDataType::getDbData()[stableIndex_] = DbDataType::getDbData()[rhs.stableIndex_]; }
+        );
+    }
+    // Move constructor creates default data for the moved-from object.
+    // The moved-to (this) object will use all indices in the moved-from (rhs) object. Moved-from object will have default data.
+    Database(Database&& rhs) : DbBaseType(std::move(rhs)) {
+        // Create empty data slot, but will be used by rhs later because of index swap.
+        initialize_(
+            // pushing back
+            [] { DbDataType::getDbData().push_back(typename DatabaseData::value_type {}); },
+            // filling hole
+            [this] { DbDataType::getDbData()[stableIndex_] = typename DatabaseData::value_type {}; }
+        );
+        std::swap(stableIndex_, rhs.stableIndex_);
+        std::swap(stableElems_[stableIndex_], stableElems_[rhs.stableIndex_]);
+    }
+
     ~Database() {
         // Only mark as deleted
-        db_data_type::getDbData().settodummy(_stableIndex);
-        _deletedIndices.push_back(_stableIndex);
+        deletedIndices_.push_back(stableIndex_);
     }
 
-    std::size_t getStableIndex() const { return _stableIndex; }
-
-    // Getting information for debug purposes
-    static const std::vector<std::size_t>& getDeletedIndices() { return _deletedIndices; }
+    std::size_t getStableIndex() const { return stableIndex_; }
 
 };
-template< typename T, typename DatabaseData > std::vector<T*> Database< T, true, DatabaseData >::_stableElems;
-template< typename T, typename DatabaseData > std::vector<std::size_t> Database< T, true, DatabaseData >::_deletedIndices;
+
+} // namespace medyan
 
 #endif

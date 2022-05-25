@@ -14,6 +14,8 @@
 #include "ChemSimpleGillespieImpl.h"
 #include "Rand.h"
 
+namespace medyan {
+
 void ChemSimpleGillespieImpl::initialize() {
     resetTime();
 }
@@ -39,7 +41,7 @@ floatingpoint ChemSimpleGillespieImpl::generateTau(floatingpoint a){
     #ifdef DEBUGCONSTANTSEED
     Rand::chemistrycounter++;
     #endif
-    return safeExpDist(_exp_distr, a, Rand::eng);
+    return medyan::rand::safeExpDist(_exp_distr, a, Rand::eng);
 }
 
 floatingpoint ChemSimpleGillespieImpl::generateUniform(){
@@ -94,10 +96,8 @@ bool ChemSimpleGillespieImpl::makeStep(floatingpoint endTime) {
     }
     r_selected->makeStep();
 
-    // Send signal
-#ifdef REACTION_SIGNALING
+    // Send signal.
     r_selected->emitSignal();
-#endif
     
     return true;
 }
@@ -118,3 +118,5 @@ void ChemSimpleGillespieImpl::printReactions() const {
     for (auto &r : _reactions)
         cout << (*r);
 }
+
+} // namespace medyan

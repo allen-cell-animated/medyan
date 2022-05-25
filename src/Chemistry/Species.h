@@ -27,14 +27,36 @@
 
 #include "RSpecies.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Composite;
 class CBound;
 
 ///Enumeration for Species types
-enum SpeciesType {
-    BULK, DIFFUSING, FILAMENT, BOUND, LINKER, MOTOR, BRANCHER, PLUSEND, MINUSEND
+enum class SpeciesType {
+    unspecified,
+    general, BULK, DIFFUSING, FILAMENT, BOUND, LINKER, MOTOR, BRANCHER, PLUSEND, MINUSEND,
+    singleBinding, pairBinding
 };
+
+constexpr const char* speciesSuffix(SpeciesType type) {
+    switch(type) {
+        case SpeciesType::general:     return "{General}";
+        case SpeciesType::BULK:        return "{Bulk}";
+        case SpeciesType::DIFFUSING:   return "{Diffusing}";
+        case SpeciesType::FILAMENT:    return "{Filament}";
+        case SpeciesType::BOUND:       return "{Bound}";
+        case SpeciesType::LINKER:      return "{Linker}";
+        case SpeciesType::MOTOR:       return "{Motor}";
+        case SpeciesType::BRANCHER:    return "{Brancher}";
+        case SpeciesType::PLUSEND:     return "{PlusEnd}";
+        case SpeciesType::MINUSEND:    return "{MinusEnd}";
+        case SpeciesType::singleBinding: return "{SingleBinding}";
+        case SpeciesType::pairBinding: return "{PairBinding}";
+        default:                       return "{None}";
+    }
+}
+
 
 /// Used to associate unique integers with character based names of Species.
 /*! Often Species of the same type, let's say "Arp2/3" can be found in different forms, 
@@ -138,6 +160,15 @@ public:
         
         return name;
     }
+    // Generate binding name, but for pair binding.
+    static std::string genBindingName(std::string_view binding1, std::string_view bs1, std::string_view binding2, std::string_view bs2) {
+        std::string res;
+        res += binding1; res += '-';
+        res += bs1;      res += "☣";
+        res += binding2; res += '-';
+        res += bs2;
+        return res;
+    }
     
     /// Clear the contents of the database
     static void clear() {
@@ -171,21 +202,24 @@ public:
 class Species {
     
 protected: //Variables
-    int _molecule; ///< unique id identifying the molecule (e.g. the integer id
+    int _molecule; ///< unique id identifying the type of the molecule (e.g. the integer id
                    ///< corresponding to "Arp2/3")
-    RSpecies* _rspecies; ///< pointer to RSpecies; Species is responsible for creating
+    std::unique_ptr<RSpecies> _rspecies; ///< pointer to RSpecies; Species is responsible for creating
                          ///< and destroying RSpecies
     Composite *_parent; ///< pointer to the "container" object holding this Species
                         ///< (could be a nullptr)
      ///< when cloning a reaction, whether this Species
                         ///< should be searched in speciesContainer object of the new Compartment
     
+
+    SpeciesType type_ = SpeciesType::unspecified;
+
     /// Default Constructor; Should not be used by the end users - only internally
     /// By default, creates a RSpeciesReg.
     Species()  : _parent(nullptr) {
         
         _molecule=SpeciesNamesDB::stringToInt("");
-        _rspecies = new RSpeciesReg(*this);
+        _rspecies = std::make_unique< RSpeciesReg >(*this);
     }
 
 public:
@@ -193,11 +227,12 @@ public:
     /// For example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
     /// @param ulim - upper limit for this species' copy number
+    /// @param sType - the type of the Species
     /// @param type - the type of RSpecies to be created
     /// @param numEvents - the number of events if using averaging
-    Species (const string &name, species_copy_t n, species_copy_t ulim, RSpeciesType type)
+    Species (const string &name, species_copy_t n, species_copy_t ulim, SpeciesType sType, RSpeciesType type)
     
-        : _molecule(SpeciesNamesDB::stringToInt(name)), _parent(nullptr) {
+        : _molecule(SpeciesNamesDB::stringToInt(name)), _parent(nullptr), type_(sType) {
         
         //create the appropriate rspecies
         _rspecies = RSpeciesFactory::createRSpecies(*this, n, ulim, type);
@@ -209,7 +244,7 @@ public:
     /// interactions of the original source Species. The species copy numbered is copied
     /// to the target. The A Species parent attriute is not copied, but set to nullptr.
     Species (const Species &rhs)
-        : _molecule(rhs._molecule), _parent(nullptr) {
+        : _molecule(rhs._molecule), _parent(nullptr), type_(rhs.type_) {
         
         //get type of rhs rspecies
         RSpeciesType t = rhs._rspecies->_type;
@@ -220,16 +255,14 @@ public:
         _rspecies = RSpeciesFactory::createRSpecies(*this, rhs.getN(), max_ulim, t);
 #endif
 
-#ifdef RSPECIES_SIGNALING
         //transfer signal
-        _rspecies->_signal = std::move(rhs._rspecies->_signal);
-        rhs._rspecies->_signal = nullptr;
-#endif
+        _rspecies->callbacks_ = std::move(rhs._rspecies->callbacks_);
+        rhs._rspecies->callbacks_.clear();
             
         //set numevents if averaging
         if(t == RSpeciesType::AVG)
-            ((RSpeciesAvg*)_rspecies)->_numEvents =
-            ((RSpeciesAvg*)rhs._rspecies)->_numEvents;
+            ((RSpeciesAvg*)_rspecies.get())->_numEvents =
+            ((RSpeciesAvg*)rhs._rspecies.get())->_numEvents;
     }
     
     /// Move constructor - makes it possible to easily add Species to STL containers,
@@ -243,12 +276,10 @@ public:
     /// copying. Moving transfers the RSpecies pointer from source to target,
     /// stealing resources from the source, leaving it for destruction. The Species
     /// parent attriute is moved it.
-    Species (Species &&rhs) noexcept
-        : _molecule(rhs._molecule), _rspecies(rhs._rspecies), _parent(rhs._parent) {
-            
-        rhs._rspecies = nullptr;
-    }
-    
+    // Jan 21 2020 (Haoran): The _rspecies should not be moved because the
+    // Species reference in it cannot be changed, which would be erronous.
+    Species (Species &&rhs) = delete;
+
     /// Assignment operator
     /// An assignment A = B copies the name of B to A. It destroys the Reaction
     /// interactions of A, and resents them to a blank value (i.e. A won't be involved
@@ -257,6 +288,7 @@ public:
     /// nullptr.
     Species& operator=(const Species& rhs)  {
         _molecule = rhs._molecule;
+        type_     = rhs.type_;
         
         //get type of rhs rspecies
         RSpeciesType t = rhs._rspecies->_type;
@@ -267,16 +299,14 @@ public:
         _rspecies = RSpeciesFactory::createRSpecies(*this, rhs.getN(), max_ulim, t);
 #endif
 
-#ifdef RSPECIES_SIGNALING
         //transfer signal
-        _rspecies->_signal = std::move(rhs._rspecies->_signal);
-        rhs._rspecies->_signal = nullptr;
-#endif
+        _rspecies->callbacks_ = std::move(rhs._rspecies->callbacks_);
+        rhs._rspecies->callbacks_.clear();
         
         //set numevents if averaging
         if(t == RSpeciesType::AVG)
-            ((RSpeciesAvg*)_rspecies)->_numEvents =
-            ((RSpeciesAvg*)rhs._rspecies)->_numEvents;
+            ((RSpeciesAvg*)_rspecies.get())->_numEvents =
+            ((RSpeciesAvg*)rhs._rspecies.get())->_numEvents;
         
         _parent = nullptr;
         return *this;
@@ -284,15 +314,10 @@ public:
     
     /// Move assignment is needed for the same reasons as move constructor.
     /// @see Species (Species &&rhs)
-    Species& operator=(Species&& rhs)  {
-        _molecule = rhs._molecule;
-        _rspecies = rhs._rspecies;
+    // Jan 21 2020 (Haoran): Move assignment should be disallowed because the
+    // reference of Species in the _rspecies would be wrong.
+    Species& operator=(Species&& rhs) = delete;
 
-        rhs._rspecies = nullptr;
-        _parent=rhs._parent;
-        return *this;
-    }
-    
     virtual Species* clone() {
         return new Species(*this);
     }
@@ -304,13 +329,15 @@ public:
     bool hasParent() const {return _parent!=nullptr? true : false;}
     
     Composite* getRoot();
-    
+
+    auto getType() const { return type_; }
+
     /// Return a reference to RSpecies. Notice that value copying won't be allowed 
     /// because RSpecies is not copyable.
     RSpecies& getRSpecies () {return *_rspecies;}
     
     /// Return a reference ptr to RSpecies.
-    RSpecies* getRSpeciesPtr () {return _rspecies;}
+    RSpecies* getRSpeciesPtr () {return _rspecies.get();}
     
     /// Return a constant reference to RSpecies. 
     const RSpecies& getRSpecies () const {return *_rspecies;}
@@ -334,29 +361,15 @@ public:
     /// Return the molecule index associated with this Species' (as int)
     int getMolecule() const {return _molecule;}
     
-#ifdef RSPECIES_SIGNALING
-    /// Return true if this Species emits signals on copy number change
-    bool isSignaling () const {return _rspecies->isSignaling();}
-    
-    /// Set the signaling behavior of this Species
-    /// Gillespie-like simulation algorithm)
-    void startSignaling () {_rspecies->startSignaling();}
-    
-    /// Destroy the signal associated with this Species
-    /// @note To start signaling again, makeSignaling(...) needs to be called
-    void stopSignaling () {_rspecies->stopSignaling();}
+
+    // Clear all callbacks associated with this Species.
+    void clearSignaling () {_rspecies->clearSignaling();}
     
     /// Connect the callback, rspecies_callback to a signal corresponding to
     /// RSpecies *s.
-    /// @param function<void (RSpecies *, int)> const &RSpecies_callback - a function
+    /// @param function<void (RSpecies *, int)> callback - a function
     /// object to be called (a slot)
-    /// @param int priority - lower priority slots will be called first. Default is 5.
-    /// Do not use priorities 1 and 2 unless absolutely essential.
-    /// @return a connection object which can be used to later disconnect this
-    /// particular slot or temporarily block it
-    boost::signals2::connection connect(
-    std::function<void (RSpecies *, int)> const &RSpecies_callback, int priority=5);
-#endif
+    void connect(std::function<void (RSpecies *, int)> callback);
     
     /// Returns true if two Species objects are equal.
     /// This function would accept derived class of Species, such as SpeciesBulk
@@ -382,25 +395,16 @@ public:
     /// potentially throwing, which in turn disables move operations by the STL
     /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
     /// be fixed in the future.
-    virtual ~Species () noexcept
-    {
-        if(_rspecies!=nullptr)
-            delete _rspecies;
-    };
-            
+    virtual ~Species () = default;
+
     /// Return the full name of this Species in a string format (e.g. "Arp2/3{Bulk}"
-    virtual string getFullName() const {return getName() + "{None}";}
-    
-    virtual size_t countSpecies() const {return 1;}
-    
+    std::string getFullName() const { return getName() + speciesSuffix(type_); }
+
     //@{
     /// Change copy number
-    virtual inline void up() {_rspecies->up();}
-    virtual inline void down() {_rspecies->down();}
+    void up() {_rspecies->up();}
+    void down() {_rspecies->down();}
 
-    /// Return whether this species should be searched or added as is when cloning reaction
-    virtual inline bool getsearchdirection() const {return false;}
-    //@}
     
     /// Update the reaction propensities associated with this species.
     /// This will not activate the reactions if currently passivated,
@@ -418,150 +422,6 @@ public:
     void passivateReactantReactions();
 };
 
-/// Used for species without spatial information (i.e. well-mixed in the container)
-class SpeciesBulk : public Species {
-
-public:
-    /// Default constructor
-    SpeciesBulk()  : Species() {}
-    
-    /// The main constructor
-    SpeciesBulk (const string &name, species_copy_t n=0,
-                 species_copy_t ulim=max_ulim,
-                 RSpeciesType type = RSpeciesType::REG)
-    
-        :  Species(name, n, ulim, type) {}
-
-    /// Copy constructor
-    SpeciesBulk (const SpeciesBulk &rhs)  : Species(rhs) {}
-    
-    /// Move constructor
-    SpeciesBulk (SpeciesBulk &&rhs) noexcept : Species(move(rhs)) {
-    }
-    
-    /// Regular Assignment
-    SpeciesBulk& operator=(const SpeciesBulk& rhs)  {
-        Species::operator=(rhs);
-        return *this;
-    }
-    
-    /// Move assignment
-    SpeciesBulk& operator=(SpeciesBulk&& rhs) 
-    {
-        Species::operator=(move(rhs));
-        return *this;
-    }
-    
-    virtual SpeciesBulk* clone() {
-        return new SpeciesBulk(*this);
-    }
-    
-    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Bulk}"
-    virtual string getFullName() const {return getName() + "{Bulk}";}
-    
-    /// Default destructor
-    ~SpeciesBulk () noexcept {};
-
-    virtual inline bool getsearchdirection() const {return true;}
-};
-
-/// Used for species which can move spatially from one compartment to
-/// the neighboring one (i.e. they are the stochastic analogue of deterministic
-/// reaction-diffusion processes)
-class SpeciesDiffusing : public Species {
-public:
-    /// Default constructor
-    SpeciesDiffusing()  : Species() {}
-    
-    /// The main constructor 
-    /// @param name - Example, "G-Actin" or "Arp2/3"
-    /// @param n - copy number
-    SpeciesDiffusing (const string &name, species_copy_t n=0,
-                      species_copy_t ulim=max_ulim,
-                      RSpeciesType type = RSpeciesType::REG)
-    
-        :  Species(name, n, ulim, type) {};
-    
-    /// Copy constructor
-    SpeciesDiffusing (const SpeciesDiffusing &rhs)  : Species(rhs) {}
-    
-    /// Move constructor
-    SpeciesDiffusing (SpeciesDiffusing &&rhs) noexcept : Species(move(rhs)) {
-    }
-    
-    /// Regular Assignment
-    SpeciesDiffusing& operator=(const SpeciesDiffusing& rhs)  {
-        Species::operator=(rhs);
-        return *this;
-    }
-    
-    /// Move assignment
-    SpeciesDiffusing& operator=(SpeciesDiffusing&& rhs) 
-    {
-        Species::operator=(move(rhs));
-        return *this;
-    }
-    
-    virtual SpeciesDiffusing* clone() {
-        return new SpeciesDiffusing(*this);
-    }
-    
-    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Diffusing}"
-    virtual string getFullName() const {return getName() + "{Diffusing}";}
-    
-    /// Default destructor
-    ~SpeciesDiffusing () noexcept {};
-
-    virtual inline bool getsearchdirection() const {return true;}
-};
-
-
-/// Used for species that can be in a Filament.
-///These species can not move cross-compartment.
-class SpeciesFilament : public Species {
-public:
-    /// Default constructor
-    SpeciesFilament()  : Species() {}
-    
-    /// The main constructor
-    /// @param name - Example, "G-Actin" or "Arp2/3"
-    /// @param n - copy number
-    SpeciesFilament (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-        :  Species(name, n, ulim, RSpeciesType::REG) {};
-    
-    /// Copy constructor
-    SpeciesFilament (const SpeciesFilament &rhs)  : Species(rhs) {}
-    
-    /// Move constructor
-    SpeciesFilament (SpeciesFilament &&rhs) noexcept : Species(move(rhs)) {
-    }
-    
-    /// Regular Assignment
-    SpeciesFilament& operator=(const SpeciesFilament& rhs)  {
-        Species::operator=(rhs);
-        return *this;
-    }
-    
-    /// Move assignment
-    SpeciesFilament& operator=(SpeciesFilament&& rhs)
-    {
-        Species::operator=(move(rhs));
-        return *this;
-    }
-    
-    virtual SpeciesFilament* clone() {
-        return new SpeciesFilament(*this);
-    }
-    
-    /// Return the full name of this Species in a string format (e.g. "Actin{Filament}"
-    virtual string getFullName() const {return getName() + "{Filament}";}
-    
-    /// Default destructor
-    ~SpeciesFilament () noexcept {};
-
-    virtual inline bool getsearchdirection() const {return false;}
-};
-
 /// Used for species that can be bound to a Filament.
 /// These species can not move cross-compartment.
 /// Contains a pointer to a CBound object that this represents.
@@ -577,16 +437,16 @@ public:
     /// The main constructor
     /// @param name - Example, "G-Actin" or "Arp2/3"
     /// @param n - copy number
-    SpeciesBound (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-        :  Species(name, n, ulim, RSpeciesType::REG) {};
+    /// @param sType - The concrete type of the species
+    SpeciesBound (const string &name, species_copy_t n=0, species_copy_t ulim=1, SpeciesType sType=SpeciesType::BOUND)
+        :  Species(name, n, ulim, sType, RSpeciesType::REG) {};
     
     /// Copy constructor
     SpeciesBound (const SpeciesBound &rhs)  : Species(rhs){}
     
     /// Move constructor
-    SpeciesBound (SpeciesBound &&rhs) noexcept : Species(move(rhs)){
-    }
-    
+    SpeciesBound (SpeciesBound &&rhs) = delete;
+
     /// Regular Assignment
     SpeciesBound& operator=(const SpeciesBound& rhs)  {
         Species::operator=(rhs);
@@ -594,18 +454,11 @@ public:
     }
     
     /// Move assignment
-    SpeciesBound& operator=(SpeciesBound&& rhs)
-    {
-        Species::operator=(move(rhs));
-        return *this;
-    }
-    
+    SpeciesBound& operator=(SpeciesBound&& rhs) = delete;
+
     virtual SpeciesBound* clone() {
         return new SpeciesBound(*this);
     }
-    
-    /// Return the full name of this Species in a string format (e.g. "Cofilin{Bound}"
-    virtual string getFullName() const {return getName() + "{Bound}";}
     
     /// Default destructor
     ~SpeciesBound () noexcept {};
@@ -617,347 +470,12 @@ public:
     ///remove cBound ptr
     void removeCBound() {_cBound = nullptr;}
 
-    virtual inline bool getsearchdirection() const {return false;}
 };
 
-/// Used for species that can be bound to a Filament.
-/// These species can not move cross-compartment.
-/// Contains a pointer to a CLinker object that this represents.
-class SpeciesLinker : public SpeciesBound {
-public:
-    /// Default constructor
-    SpeciesLinker()  : SpeciesBound() {}
-    
-    /// The main constructor
-    /// @param name - Example, "G-Actin" or "Arp2/3"
-    /// @param n - copy number
-    SpeciesLinker (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-        :  SpeciesBound(name, n, ulim) {};
-    
-    /// Copy constructor
-    SpeciesLinker (const SpeciesLinker &rhs)  : SpeciesBound(rhs) {}
-    
-    /// Move constructor
-    SpeciesLinker (SpeciesLinker &&rhs) noexcept : SpeciesBound(move(rhs)){
-    }
-    
-    /// Regular Assignment
-    SpeciesLinker& operator=(const SpeciesLinker& rhs)  {
-        SpeciesBound::operator=(rhs);
-        return *this;
-    }
-    
-    /// Move assignment
-    SpeciesLinker& operator=(SpeciesLinker&& rhs)
-    {
-        SpeciesBound::operator=(move(rhs));
-        return *this;
-    }
-    
-    virtual SpeciesLinker* clone() {
-        return new SpeciesLinker(*this);
-    }
-    
-    /// Return the full name of this Species in a string format (e.g. "Actinin{Linker}"
-    virtual string getFullName() const {return getName() + "{Linker}";}
-    
-    /// Default destructor
-    ~SpeciesLinker () noexcept {};
-
-    virtual inline bool getsearchdirection() const {return true;}
-};
-
-
-/// Used for species that can be bound to a Filament.
-/// These species can not move cross-compartment.
-/// Contains a pointer to a CMotorGhost object that this represents.
-class SpeciesMotor : public SpeciesBound {
-    
-public:
-    /// Default constructor
-    SpeciesMotor()  : SpeciesBound() {}
-    
-    /// The main constructor
-    /// @param name - Example, "G-Actin" or "Arp2/3"
-    /// @param n - copy number
-    SpeciesMotor (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-        :  SpeciesBound(name, n, ulim) {};
-    
-    /// Copy constructor
-    SpeciesMotor (const SpeciesMotor &rhs)  : SpeciesBound(rhs) {}
-    
-    /// Move constructor
-    SpeciesMotor (SpeciesMotor &&rhs) noexcept : SpeciesBound(move(rhs)){
-    }
-    
-    /// Regular Assignment
-    SpeciesMotor& operator=(const SpeciesMotor& rhs)  {
-        SpeciesBound::operator=(rhs);
-        return *this;
-    }
-    
-    /// Move assignment
-    SpeciesMotor& operator=(SpeciesMotor&& rhs)
-    {
-        SpeciesBound::operator=(move(rhs));
-        return *this;
-    }
-    
-    virtual SpeciesMotor* clone() {
-        return new SpeciesMotor(*this);
-    }
-    
-    
-    /// Return the full name of this Species in a string format (e.g. "Myosin{Motor}"
-    virtual string getFullName() const {return getName() + "{Motor}";}
-    
-    /// Default destructor
-    ~SpeciesMotor () noexcept {};
-    
-    CBound* getCBoundd() {return _cBound;}
-    
-};
-
-/// Used for species that can be bound to a Filament.
-/// These species can not move cross-compartment.
-/// Contains a pointer to a CLinker object that this represents.
-class SpeciesBrancher : public SpeciesBound {
-    
-public:
-    /// Default constructor
-    SpeciesBrancher() : SpeciesBound() {}
-    
-    /// The main constructor
-    /// @param name - Example, "G-Actin" or "Arp2/3"
-    /// @param n - copy number
-    SpeciesBrancher (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-    :  SpeciesBound(name, n, ulim) {};
-    
-    /// Copy constructor
-    SpeciesBrancher(const SpeciesBrancher &rhs)  : SpeciesBound(rhs) {}
-    
-    /// Move constructor
-    SpeciesBrancher (SpeciesBrancher &&rhs) noexcept : SpeciesBound(move(rhs)){
-    }
-    
-    /// Regular Assignment
-    SpeciesBrancher& operator=(const SpeciesBrancher& rhs)  {
-        SpeciesBound::operator=(rhs);
-        return *this;
-    }
-    
-    /// Move assignment
-    SpeciesBrancher& operator=(SpeciesBrancher&& rhs)
-    {
-        SpeciesBound::operator=(move(rhs));
-        return *this;
-    }
-    
-    virtual SpeciesBrancher* clone() {
-        return new SpeciesBrancher(*this);
-    }
-    
-    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Brancher}"
-    virtual string getFullName() const {return getName() + "{Brancher}";}
-    
-    /// Default destructor
-    ~SpeciesBrancher () noexcept {};
-};
-
-
-/// Used for a plus end species on a Filament.
-/// This allows for various polymerization/depolymerization rates on filaments
-/// These species can not move cross-compartment.
-class SpeciesPlusEnd : public SpeciesFilament {
-public:
-    /// Default constructor
-    SpeciesPlusEnd()  : SpeciesFilament() {}
-    
-    /// The main constructor
-    /// @param name - Example, "G-Actin" or "Arp2/3"
-    /// @param n - copy number
-    SpeciesPlusEnd (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-    :  SpeciesFilament(name, n, ulim) {};
-    
-    /// Copy constructor
-    SpeciesPlusEnd (const SpeciesPlusEnd &rhs)  : SpeciesFilament(rhs) {}
-    
-    /// Move constructor
-    SpeciesPlusEnd (SpeciesPlusEnd &&rhs) noexcept : SpeciesFilament(move(rhs)) {
-    }
-    
-    /// Regular Assignment
-    SpeciesPlusEnd& operator=(const SpeciesPlusEnd& rhs)  {
-        Species::operator=(rhs);
-        return *this;
-    }
-    
-    /// Move assignment
-    SpeciesPlusEnd& operator=(SpeciesPlusEnd&& rhs)
-    {
-        Species::operator=(move(rhs));
-        return *this;
-    }
-    
-    virtual SpeciesPlusEnd* clone() {
-        return new SpeciesPlusEnd(*this);
-    }
-    
-    /// Return the full name of this Species in a string format (e.g. "Actin{PlusEnd}"
-    virtual string getFullName() const {return getName() + "{PlusEnd}";}
-    
-    /// Default destructor
-    ~SpeciesPlusEnd () noexcept {};
-};
-
-/// Used for a minus end species on a Filament.
-/// This allows for various polymerization/depolymerization rates on filaments
-/// These species can not move cross-compartment.
-class SpeciesMinusEnd : public SpeciesFilament {
-public:
-    /// Default constructor
-    SpeciesMinusEnd()  : SpeciesFilament() {}
-    
-    /// The main constructor
-    /// @param name - Example, "G-Actin" or "Arp2/3"
-    /// @param n - copy number
-    SpeciesMinusEnd (const string &name, species_copy_t n=0, species_copy_t ulim=1)
-    :  SpeciesFilament(name, n, ulim) {};
-    
-    /// Copy constructor
-    SpeciesMinusEnd (const SpeciesMinusEnd &rhs)  : SpeciesFilament(rhs) {}
-    
-    /// Move constructor
-    SpeciesMinusEnd (SpeciesMinusEnd &&rhs) noexcept : SpeciesFilament(move(rhs)) {
-    }
-    
-    /// Regular Assignment
-    SpeciesMinusEnd& operator=(const SpeciesMinusEnd& rhs)  {
-        Species::operator=(rhs);
-        return *this;
-    }
-    
-    /// Move assignment
-    SpeciesMinusEnd& operator=(SpeciesMinusEnd&& rhs)
-    {
-        Species::operator=(move(rhs));
-        return *this;
-    }
-    
-    virtual SpeciesMinusEnd* clone() {
-        return new SpeciesMinusEnd(*this);
-    }
-    
-    /// Return the full name of this Species in a string format (e.g. "Actin{MinusEnd}"
-    virtual string getFullName() const {return getName() + "{MinusEnd}";}
-    
-    /// Default destructor
-    ~SpeciesMinusEnd () noexcept {};
-};
-
-/// Used to represent a single binding site in a compartment.
-/*!
- *  The SpeciesSingleBinding is used to track singular binding sites on filaments for an
- *  entire compartment, to optimize binding reactions. For each compartment and binding reaction,
- *  a SpeciesSingleBinding is created and included in the binding reaction for that compartment.
- *  This species' copy number is increased/decreased based upon the change in binding sites of
- *  filaments in the local compartment.
- */
-class SpeciesSingleBinding : public Species {
-public:
-    /// Default constructor
-    SpeciesSingleBinding()  : Species() {}
-    
-    /// The main constructor
-    /// @param name - Example, "G-Actin" or "Arp2/3"
-    /// @param n - copy number
-    SpeciesSingleBinding (const string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)
-    :  Species(name, n, ulim, RSpeciesType::REG) {};
-    
-    /// Copy constructor
-    SpeciesSingleBinding (const SpeciesSingleBinding &rhs)  : Species(rhs) {}
-    
-    /// Move constructor
-    SpeciesSingleBinding(SpeciesSingleBinding &&rhs) noexcept : Species(move(rhs)) {}
-    
-    /// Regular Assignment
-    SpeciesSingleBinding& operator=(const SpeciesSingleBinding& rhs)  {
-        Species::operator=(rhs);
-        return *this;
-    }
-    
-    /// Move assignment
-    SpeciesSingleBinding& operator=(SpeciesSingleBinding&& rhs)
-    {
-        Species::operator=(move(rhs));
-        return *this;
-    }
-    
-    virtual SpeciesSingleBinding* clone() {
-        return new SpeciesSingleBinding(*this);
-    }
-    
-    /// Return the full name of this Species in a string format (e.g. "BrancherEmpty{SingleBinding}"
-    virtual string getFullName() const {return getName() + "{SingleBinding}";}
-    
-    /// Default destructor
-    ~SpeciesSingleBinding () noexcept {};
-
-    virtual inline bool getsearchdirection() const {return true;}
-};
-
-/// Used to represent a pair binding site in a compartment.
-/*!
- *  The SpeciesPairBinding is used to track pair binding sites on filaments that are within a 
- *  specified range for an entire compartment, to optimize binding reactions. For each compartment 
- *  and pairwise binding reaction, a SpeciesPairBinding is created and included in the binding reaction 
- *  for that compartment. This species' copy number is increased/decreased based upon the change in 
- *  binding sites of filaments in the local compartment.
- */
-class SpeciesPairBinding : public Species {
-public:
-    /// Default constructor
-    SpeciesPairBinding()  : Species() {}
-    
-    /// The main constructor
-    /// @param name - Example, "G-Actin" or "Arp2/3"
-    /// @param n - copy number
-    SpeciesPairBinding (const string &name, species_copy_t n=0, species_copy_t ulim=max_ulim)
-    :  Species(name, n, ulim, RSpeciesType::REG) {};
-    
-    /// Copy constructor
-    SpeciesPairBinding (const SpeciesPairBinding &rhs)  : Species(rhs) {}
-    
-    /// Move constructor
-    SpeciesPairBinding(SpeciesPairBinding &&rhs) noexcept : Species(move(rhs)) {}
-    
-    /// Regular Assignment
-    SpeciesPairBinding& operator=(const SpeciesPairBinding& rhs)  {
-        Species::operator=(rhs);
-        return *this;
-    }
-    
-    /// Move assignment
-    SpeciesPairBinding& operator=(SpeciesPairBinding&& rhs)
-    {
-        Species::operator=(move(rhs));
-        return *this;
-    }
-    
-    virtual SpeciesPairBinding* clone() {
-        return new SpeciesPairBinding(*this);
-    }
-    
-    /// Return the full name of this Species in a string format (e.g. "LinkerEmpty{PairBinding}"
-    virtual string getFullName() const {return getName() + "{PairBinding}";}
-    
-    /// Default destructor
-    ~SpeciesPairBinding () noexcept {};
-
-    virtual inline bool getsearchdirection() const {return true;}
-};
 
 /// Print self into an iostream
 ostream& operator<<(ostream& os, const Species& s);
+
+} // namespace medyan
 
 #endif

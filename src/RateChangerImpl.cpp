@@ -18,6 +18,7 @@
 
 #include "SysParams.h"
 
+namespace medyan {
 float BrownianRatchet::changeRate(float bareRate, floatingpoint force) {
 
     force = min<floatingpoint>(force, (floatingpoint)100.0); //ceiling
@@ -106,7 +107,7 @@ float MotorCatch::changeRate(float onRate, float offRate,
 
     floatingpoint factor = exp(-force / (numBoundHeads(onRate, offRate, force, numHeads) * _F0));
 #else
-    floatingpoint k_0 = onRate * (numHeads) / (exp(log((onRate + offRate) / offRate) * numHeads)
+    floatingpoint k_0 = onRate * (numHeads) / (exp(std::log((onRate + offRate) / offRate) * numHeads)
                                         - (floatingpoint)1.0);
 
     floatingpoint factor = max<floatingpoint>((floatingpoint)0.1, exp(-force / (numBoundHeads(onRate,
@@ -137,3 +138,5 @@ float MotorStall::changeRate(float onRate, float offRate,
 
     return newRate;
 }
+
+} // namespace medyan

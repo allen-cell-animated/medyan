@@ -17,49 +17,46 @@
 #include <vector>
 
 #include "common.h"
-
-#include "BubbleInteractions.h"
-
 #include "SysParams.h"
+#include "Mechanics/ForceField/Bubble/MTOCBendingCosine.h"
+#include "Mechanics/ForceField/ForceField.h"
+#include "Structure/SubSystem.h"
 
-//FORWARD DECLARATIONS
-class MTOC;
-class Bead;
+namespace medyan {
 
 /// Represents an attachment potential of a MTOC.
-template <class MTOCInteractionType>
-class MTOCBending : public BubbleInteractions {
-    
+class MTOCBending : public ForceField {
+public:
+    struct Interaction {
+        Index bubbleCoordIndex = 0;
+        Index beadCoordIndex1 = 0;
+        Index beadCoordIndex2 = 0;
+        floatingpoint kbend = 0;
+    };
+
 private:
-    MTOCInteractionType _FFType;
-    
-    int *beadSet;
-    ///Array describing the constants in calculation
-    floatingpoint *kbend;
-    floatingpoint *pos1;
-    floatingpoint *pos2;
-    
+    MTOCBendingCosine _FFType;
+
+    SubSystem* ps_ = nullptr;
+    std::vector<Interaction> interactions_;
     
 public:
-    
-    ///Array describing indexed set of interactions
-    ///For MTOC, this is a 2-bead potential + fixed MTOC bead
-    const static int n = 2;
-    
+        
     virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void deallocate();
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) override;
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
-    //virtual void computeForcesAux(floatingpoint *coord, floatingpoint *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f) override;
     
-    virtual void computeLoadForces() {return;}
+    virtual void computeLoadForces() override {}
+    virtual void whoIsCulprit() override {}
     
     /// Get the neighbor list for this interaction
-    virtual NeighborList* getNeighborList() {return nullptr;}
+    virtual std::vector<NeighborList*> getNeighborLists() override {return {};}
     
-    virtual const string getName() {return "MTOC Attachment";}
+    virtual std::string getName() override {return "MTOCAttachment";}
 };
+
+} // namespace medyan
 
 #endif
 

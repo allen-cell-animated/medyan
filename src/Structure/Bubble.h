@@ -11,20 +11,22 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_Bubble_h
-#define MEDYAN_Bubble_h
+#ifndef MEDYAN_Structure_Bubble_h
+#define MEDYAN_Structure_Bubble_h
+
+#include <optional>
 
 #include "common.h"
-
-#include "Database.h"
-#include "Trackable.h"
-#include "Movable.h"
-#include "DynamicNeighbor.h"
-#include "Composite.h"
+#include "MathFunctions.h"
+#include "SysParams.h"
 #include "Util/Math/Vec.hpp"
+#include "Util/StableVector.hpp"
 
-//FORWARD DECLARATIONS
-class SubSystem;
+namespace medyan {
+
+// Forward declarations.
+struct MTOC;
+struct AFM;
 
 /// Represents a dummy point potential that is involved in mechanical equilibration. This
 /// object has no chemical reactions or properties associated with it.
@@ -36,15 +38,15 @@ class SubSystem;
  *   the physical size of the bubble.
  */
 
-class Bubble : public Composite, public Trackable, public Movable, public DynamicNeighbor,
-    public Database< Bubble, false > {
+class Bubble {
+
+public:
+    using CoordinateType = Vec<3, floatingpoint>;
 
 private:
     double birthTime_ = 0.0;
 
-    SubSystem* _ps; ///< The subsystem this bubble is in
-    
-    short _type;     ///< The type of bubble
+    int type_;     ///< The type of bubble
     
 
     floatingpoint _radius;       ///< The radius of this bubble
@@ -54,71 +56,102 @@ private:
     floatingpoint _AFMBendingK; ///< use for AFM-filament bending force field
     
     
-    int _ID;        ///< Identifier
     
 
-
-    
-    bool _isMTOC = false;   ///< If representing a MTOC
-    
-    bool _isAFM = false;    ///< If representing a AFM
+    // If the bubble is used in MTOC or AFM, store the corresponding indices.
+    std::optional<StableVectorIndex<MTOC>> mtocSysIndex_;
+    std::optional<StableVectorIndex<AFM>> afmSysIndex_;
 
 public:
-    mathfunc::Vec< 3, floatingpoint > coord;
-    mathfunc::Vec< 3, floatingpoint > force;
+    CoordinateType coord {};
+    CoordinateType force {};
 
-    vector<floatingpoint> coordinate; ///< Current coordinates of bubble,
-                               ///< Updated with updatePosition()
-    
-    /// Main constructor, sets up bead and other properties
-    Bubble(SubSystem* ps, vector<floatingpoint> coordinates, short type);
+    // If the bubble is fixed, the coordinates will not be free coordinates in energy minimization.
+    bool           fixed = false;
+
+    // Stable index. This will not change during its lifetime.
+    // Can be used anywhere.
+    // Should never be updated.
+    StableVector<Bubble>::Index sysIndex {};
+    // Looping index. This value may change for each bubble, but will be contiguous for all movable bubbles.
+    // Used as the sequence in mechanical vectorization.
+    // Updated during DOF serialization.
+    Index          loopIndex = 0;
+
+    /// Default constructor, which only sets birth time.
+    Bubble() : birthTime_(tau()) {}
+
+    Bubble(const Bubble&) = default;
+
+    // Mechanical property setters.
+    void setMechanicalProperties(const MechParams& mechParams) {
+        _kRepuls = mechParams.BubbleK[type_];
+        _radius = mechParams.BubbleRadius[type_];
+        _screenLength = mechParams.BubbleScreenLength[type_];
+        _MTOCBendingK = mechParams.MTOCBendingK.empty() ? 0 : mechParams.MTOCBendingK[type_];
+        _AFMBendingK = mechParams.AFMBendingK.empty() ? 0 : mechParams.AFMBendingK[type_];
+    }
 
     //@{
     /// Getters
 
-    floatingpoint getRadius() {return _radius;}
-    floatingpoint getRepulsionConst() {return _kRepuls;}
-    floatingpoint getScreeningLength() {return _screenLength;}
-	floatingpoint getMTOCBendingK() {return _MTOCBendingK;}
-    floatingpoint getAFMBendingK() {return _AFMBendingK;}
+    floatingpoint getRadius()          const {return _radius;}
+    floatingpoint getRepulsionConst()  const {return _kRepuls;}
+    floatingpoint getScreeningLength() const {return _screenLength;}
+	floatingpoint getMTOCBendingK()    const {return _MTOCBendingK;}
+    floatingpoint getAFMBendingK()     const {return _AFMBendingK;}
 
+    auto getId() const { return sysIndex.value; }
     auto getBirthTime() const { return birthTime_; }
-    
-    virtual int getType() {return _type;}
+
+    void setType(int type) { type_ = type; }
+    int getType() const { return type_; }
     //@}
-    
-    void setAsMTOC() {_isMTOC = true;}
-    bool isMTOC() {return _isMTOC;}
-    
-    void setAsAFM() {_isAFM = true;}
-    bool isAFM() {return _isAFM;}
+
+    void setMTOCIndex(StableVectorIndex<MTOC> mtocSysIndex) { mtocSysIndex_ = mtocSysIndex; }
+    bool isMTOC() const { return mtocSysIndex_.has_value(); }
+    auto getMTOCIndex() const { return mtocSysIndex_.value(); }
+
+    void setAFMIndex(StableVectorIndex<AFM> afmSysIndex) { afmSysIndex_ = afmSysIndex; }
+    bool isAFM() const { return afmSysIndex_.has_value(); }
+    auto getAFMIndex() const { return afmSysIndex_.value(); }
 
     /// Print bubble information
-    virtual void printSelf()const;
-    
-    //@{
-    /// SubSystem management, inherited from Trackable
-    // Does nothing
-    virtual void addToSubSystem() { }
-    virtual void removeFromSubSystem() {}
-    //@}
-    
-    /// Get all instances of this class from the SubSystem
-    static const vector<Bubble*>& getBubbles() {
-        return getElements();
+    void printSelf()const;
+
+    // This function can only be called if isAFM() is true.
+    template< typename Context >
+    void updatePositionManually(Context& sys) {
+        //if reaching the desire position
+        if(iter > SysParams::Chemistry().StepTotal) {
+            iter = 1;
+            currentStep++;
+        }
+        //All position updates will be finished in 1 second
+        //Step displacement is 1 /StepTotal
+        if(tau() > (currentStep * SysParams::Chemistry().StepTime + iter * 1 / SysParams::Chemistry().StepTotal)){
+            floatingpoint step;
+            
+            if(currentStep > SysParams::Chemistry().IterChange){
+                step = SysParams::Chemistry().AFMStep2;
+            }
+            else{
+                step = SysParams::Chemistry().AFMStep1;
+            }
+
+            coord[2] += step;
+
+            // Update boundary element coordinate.
+            sys.afms[getAFMIndex()].getPlaneBoundaryElement()->updateCoords(mathfunc::vec2Vector(coord));
+
+            iter++;
+        }
     }
-    /// Get the number of cylinders in this system
-    static int numBubbles() {
-        return getElements().size();
-    }
-    
-    ///Update bubble position
-    virtual void updatePosition() override {}
-    
-    void updatePositionManually();
     double iter = 1;
     int currentStep = 1;
 
 };
+
+} // namespace medyan
 
 #endif

@@ -27,9 +27,9 @@
 #include "Reactable.h"
 #include "RateChangerImpl.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Cylinder;
-class Controller;
 class DRController;
 
 /// A container to store a MLinker and CLinker.
@@ -46,11 +46,10 @@ class DRController;
 class Linker : public Component, public Trackable, public Movable, public Reactable,
     public Database< Linker, false > {
 
-friend class Controller;
 friend class DRController;
     
 private:
-    unique_ptr<MLinker> _mLinker; ///< Pointer to mech linker
+    MLinker mLinker_; // Mechanical information of the linker.
     unique_ptr<CLinker> _cLinker; ///< Pointer to chem linker
     
     Cylinder* _c1; ///< First cylinder the linker is bound to
@@ -81,15 +80,18 @@ public:
     vector<floatingpoint> coordinate;
     ///< coordinate of midpoint, updated with updatePosition()
     
-    Linker(Cylinder* c1, Cylinder* c2, short linkerType,
-           floatingpoint position1 = 0.5, floatingpoint position2 = 0.5);
+    Linker(
+        Cylinder* c1, Cylinder* c2,
+        short linkerType,
+        int linkerSpeciesIndex1, int linkerSpeciesIndex2,
+        floatingpoint position1 = 0.5, floatingpoint position2 = 0.5);
     
     virtual ~Linker() noexcept;
     
     //@{
     ///Get attached cylinder
-    Cylinder* getFirstCylinder() {return _c1;}
-    Cylinder* getSecondCylinder() {return _c2;}
+    Cylinder* getFirstCylinder() const {return _c1;}
+    Cylinder* getSecondCylinder() const {return _c2;}
     //@}
     
     /// Set chem linker
@@ -98,20 +100,21 @@ public:
     CLinker* getCLinker() {return _cLinker.get();}
     
     /// Get mech linker
-    MLinker* getMLinker() {return _mLinker.get();}
+    MLinker* getMLinker() {return &mLinker_;}
     
     //@{
     /// Position management
-    floatingpoint getFirstPosition() {return _position1;}
+    floatingpoint getFirstPosition() const {return _position1;}
     void setFirstPosition(floatingpoint position1) {_position1 = position1;}
     
-    floatingpoint getSecondPosition() {return _position2;}
+    floatingpoint getSecondPosition() const {return _position2;}
     void setSecondPosition(floatingpoint position2) {_position2 = position2;}
     //@}
     
     //@{
     /// Get linker parameter
     virtual int getType() {return _linkerType;}
+    auto getType() const { return _linkerType; }
     //@}
     
     /// Get the birth time
@@ -148,10 +151,12 @@ public:
     /// Count the number of linker species with a given name in the system
     static species_copy_t countSpecies(const string& name);
 
-    void initializerestart(floatingpoint eqLength){ _mLinker->initializerestart
-                (eqLength);};
+    void initializerestart(floatingpoint eqLength) {
+        mLinker_.initializerestart(eqLength);
+    }
     
 };
 
+} // namespace medyan
 
 #endif 

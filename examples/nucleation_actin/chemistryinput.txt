@@ -1,12 +1,12 @@
 ############################ SPECIES ###########################
-# SPECIESDIFFUSING:name copynumber diffrate releasetime qualifier(REG or AVG) 
+# SPECIESDIFFUSING <NAME> <COPYNUMBER> <DIFFCOEFF> <RELEASETIME> <REMOVALTIME> REG 
 # monomer
-SPECIESDIFFUSING: A 5000 80.0 0.0 0.0 REG
+SPECIESDIFFUSING: A 5000 20e6    0.0 0.0 REG
 
-# formin, assume the same diffusion rate as actin
-SPECIESDIFFUSING: FO 20 80.0 1.0 0.0 REG
+# formin, assume the same diffusion coefficient as actin
+SPECIESDIFFUSING: FO 20  20e6    1.0 0.0 REG
 # FOA is a intermediate species for nucleation
-SPECIESDIFFUSING: FOA 0 0.1 0.0 0.0 REG
+SPECIESDIFFUSING: FOA 0  0.025e6 0.0 0.0 REG
 
 
 SPECIESFILAMENT: AF 0

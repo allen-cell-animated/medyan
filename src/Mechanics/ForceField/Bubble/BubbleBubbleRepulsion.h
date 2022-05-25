@@ -18,43 +18,52 @@
 
 #include "common.h"
 
-#include "BubbleInteractions.h"
+#include "Mechanics/ForceField/Bubble/BubbleBubbleRepulsionExp.h"
+#include "Mechanics/ForceField/ForceField.h"
 #include "NeighborListImpl.h"
-
+#include "Structure/SubSystem.h"
 #include "SysParams.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Bead;
 
 /// Represents a repulsive interaction between two [Bubbles](@ref Bubble).
-template <class BRepulsionInteractionType>
-class BubbleBubbleRepulsion : public BubbleInteractions {
-    
+class BubbleBubbleRepulsion : public ForceField {
+public:
+    struct PairInteraction {
+        Index coordIndex1 = 0;
+        Index coordIndex2 = 0;
+        floatingpoint krep = 0.0;
+        floatingpoint slen = 0.0;
+        floatingpoint radius1 = 0.0;
+        floatingpoint radius2 = 0.0;
+    };
 private:
-    BRepulsionInteractionType _FFType;
-    BubbleBubbleNL* _neighborList; ///<Neighbor list of Bubble-Bubble
+    BubbleBubbleRepulsionExp _FFType;
 
-    std::size_t bubbleStartIdx_; // The starting index of bead in the vectorization
+    SubSystem* ps_ = nullptr;
+    std::vector<PairInteraction> pairInteractions_;
 
 public:
     
     /// Constructor
-    BubbleBubbleRepulsion() {
-        _neighborList = new BubbleBubbleNL(SysParams::Mechanics().BubbleCutoff);
-    }
+    BubbleBubbleRepulsion() = default;
     
     virtual void vectorize(const FFCoordinateStartingIndex&) override;
-    virtual void deallocate();
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord, bool stretched) override;
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
-    //virtual void computeForcesAux(double *coord, double *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord) override;
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f) override;
     
-    virtual void computeLoadForces() {return;}
+    virtual void computeLoadForces() override {}
+    virtual void whoIsCulprit() override {}
     
     /// Get the neighbor list for this interaction
-    virtual NeighborList* getNeighborList() {return _neighborList;}
+    virtual std::vector<NeighborList*> getNeighborLists() override {return {};}
     
-    virtual const string getName() {return "Bubble-Bubble Repulsion";}
+    virtual std::string getName() override {return "BubbleBubbleRepulsion";}
 };
+
+} // namespace medyan
+
 #endif

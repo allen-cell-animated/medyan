@@ -35,7 +35,7 @@ out vec4 FragColor;
 
 in vec3 ModelPos;
 in vec3 Normal;
-in vec3 Color; // Currently not used
+in vec3 Color;
 
 struct Material {
     vec3 diffuse;    // not used
@@ -66,11 +66,15 @@ struct PointLight {
 #define NUM_DIR_LIGHTS 2
 #define NUM_POINT_LIGHTS 4
 
-uniform vec3 CameraPos;
-uniform DirLight dirLights[NUM_DIR_LIGHTS];
+uniform bool       depthCueing = false;
+uniform float      depthCueingMin = 0.0;
+uniform float      depthCueingMax = 1.0;
+uniform vec3       CameraPos;
+uniform DirLight   dirLights[NUM_DIR_LIGHTS];
 uniform PointLight pointLights[NUM_POINT_LIGHTS];
-uniform Material material;
+uniform Material   material;
 
+float getFogFactor(float z, float zMin, float zMax);
 vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir);
 vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
@@ -83,7 +87,19 @@ void main() {
     for(int i = 0; i < NUM_POINT_LIGHTS; ++i)
         result += calcPointLight(pointLights[i], Normal, ModelPos, viewDir);
 
-    FragColor = vec4(result, 1.0);
+    vec4 res4 = vec4(result, 1.0);
+    if(depthCueing) {
+        res4 *= getFogFactor(gl_FragCoord.z, depthCueingMin, depthCueingMax);
+    }
+
+    FragColor = res4;
+}
+
+float getFogFactor(float z, float zMin, float zMax) {
+    if(z >= zMax) return 0;
+    if(z <= zMin) return 1;
+
+    return (zMax - z) / (zMax - zMin);
 }
 
 vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir) {
@@ -144,8 +160,26 @@ out vec4 FragColor;
 
 in vec3 Color;
 
+uniform bool       depthCueing = false;
+uniform float      depthCueingMin = 0.0;
+uniform float      depthCueingMax = 1.0;
+
+float getFogFactor(float z, float zMin, float zMax);
+
 void main() {
-    FragColor = vec4(Color, 1.0f);
+    vec4 res4 = vec4(Color, 1.0);
+    if(depthCueing) {
+        res4 *= getFogFactor(gl_FragCoord.z, depthCueingMin, depthCueingMax);
+    }
+
+    FragColor = res4;
+}
+
+float getFogFactor(float z, float zMin, float zMax) {
+    if(z >= zMax) return 0;
+    if(z <= zMin) return 1;
+
+    return (zMax - z) / (zMax - zMin);
 }
 )";
 

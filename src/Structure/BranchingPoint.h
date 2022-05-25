@@ -26,6 +26,7 @@
 #include "Reactable.h"
 #include "RateChangerImpl.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Compartment;
 class Cylinder;
@@ -41,7 +42,6 @@ class Cylinder;
 class BranchingPoint : public Component, public Trackable, public Movable, public Reactable,
     public Database< BranchingPoint, false > {
     
-    friend class Controller;
     friend class DRController;
     
 private:
@@ -77,8 +77,8 @@ public:
     
     //@{
     ///Get attached cylinder
-    Cylinder* getFirstCylinder() {return _c1;}
-    Cylinder* getSecondCylinder() {return _c2;}
+    Cylinder* getFirstCylinder() const {return _c1;}
+    Cylinder* getSecondCylinder() const {return _c2;}
     //@}
     
     /// Set chem branch point
@@ -100,6 +100,7 @@ public:
     //@{
     /// Get branch parameter
     virtual int getType() {return _branchType;}
+    auto getType() const { return _branchType; }
     //@}
     
     /// Get compartment
@@ -147,5 +148,7 @@ public:
         return diffusingactinspeciesname; }
 
 };
+
+} // namespace medyan
 
 #endif

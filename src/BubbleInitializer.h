@@ -14,10 +14,12 @@
 #ifndef MEDYAN_BubbleInitializer_h
 #define MEDYAN_BubbleInitializer_h
 
+#include "MathFunctions.h"
 #include "SysParams.h"
+#include "Structure/SubSystem.h"
 
-///FORWARD DECLARATIONS
-class Boundary;
+namespace medyan {
+
 
 /// An interface to initialize an initial configuration of [Bubbles](@ref Bubble)
 /// in the SubSystem.
@@ -26,29 +28,30 @@ class Boundary;
  *  filling a SubSystem with [Bubbles](@ref Bubble). The bubbles could be
  *  completely random or distributed in other ways.
  */
-class BubbleInitializer {
-    
-public:
-    /// Destructor
-    /// @note noexcept is important here. Otherwise, gcc flags the constructor as
-    /// potentially throwing, which in turn disables move operations by the STL
-    /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
-    /// be fixed in the future.
-    virtual ~BubbleInitializer() noexcept {}
-    
-    /// Returns a vector of tuples representing the Bubble type and beginning and end
-    /// coordinates, similar to the structure of manual parsing.
-    virtual BubbleData createBubbles(Boundary* b, int numBubbles,
-                                                  int bubbleType) = 0;
-};
+inline BubbleData createBubblesRandomDist(
+    SubSystem&        sys,
+    int               numBubbles,
+    int               bubbleType,
+    const MechParams& mechParams
+) {
+    BubbleData ret;
 
-/// An implementation of BubbleInitialzer that creates a completely random
-/// Bubble distribution.
-class RandomBubbleDist : public BubbleInitializer {
-    
-public:
-    BubbleData createBubbles(Boundary* b, int numBubbles,
-                                          int bubbleType);
-};
+    auto& b = *sys.getBoundary();
+
+    int bubbleCounter = 0;
+    while(bubbleCounter < numBubbles) {
+        auto coord = sys.getCompartmentGrid()->getRandomCoordinates();
+        if(
+            b.within(mathfunc::vec2Vector(coord)) &&
+            b.distance(mathfunc::vec2Vector(coord)) > mechParams.BubbleRadius[bubbleType]
+        ) {
+            ret.bubbles.push_back({ bubbleType, coord });
+            ++bubbleCounter;
+        }
+    }
+    return ret;
+}
+
+} // namespace medyan
 
 #endif

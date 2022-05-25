@@ -16,6 +16,7 @@
 
 #include "common.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Bead;
 
@@ -25,9 +26,6 @@ class LinkerStretchingHarmonic {
 public:
     floatingpoint energy(floatingpoint *coord, int *beadSet,
                   floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2);
-    
-    [[deprecated]] floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
-                  floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2, floatingpoint d);
     
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                 floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2, floatingpoint
@@ -68,5 +66,7 @@ public:
                      floatingpoint kStretch, floatingpoint eqLength);
 #endif
 };
+
+} // namespace medyan
 
 #endif

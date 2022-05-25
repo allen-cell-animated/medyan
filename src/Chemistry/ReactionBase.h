@@ -14,26 +14,19 @@
 #ifndef MEDYAN_ReactionBase_h
 #define MEDYAN_ReactionBase_h
 
-#include <iostream>
-
-#include <iostream>
-#include <array>
 #include <algorithm>
-#include <utility>
+#include <array>
+#include <cmath>
+#include <functional>
+#include <iostream>
 #include <set>
 #include <unordered_set>
-#include <cmath>
-#include <initializer_list>
-
-#include <boost/signals2/signal.hpp>
-#include <boost/signals2/connection.hpp>
-#include <boost/signals2/shared_connection_block.hpp>
+#include <utility>
 
 #include "common.h"
+#include "Chemistry/Species.h"
 
-#include "Species.h"
-
-
+namespace medyan {
 //FORWARD DECLARATIONS
 class CBound;
 class RNode;
@@ -42,18 +35,48 @@ class ReactionBase;
 class SpeciesPtrContainerVector;
 
 ///Enumeration for type of reaction
-enum ReactionType {
-    REGULAR, DIFFUSION, POLYMERIZATIONPLUSEND, POLYMERIZATIONMINUSEND,
+enum class ReactionType {
+    unspecified,
+    REGULAR, DIFFUSION,
+    emission, absorption,
+    POLYMERIZATIONPLUSEND, POLYMERIZATIONMINUSEND,
     DEPOLYMERIZATIONPLUSEND, DEPOLYMERIZATIONMINUSEND,
     LINKERBINDING, MOTORBINDING, LINKERUNBINDING, MOTORUNBINDING,
     MOTORWALKINGFORWARD, MOTORWALKINGBACKWARD,
     AGING, FILAMENTCREATION, FILAMENTDESTRUCTION,
-    BRANCHING, BRANCHUNBINDING, SEVERING
+    BRANCHING, BRANCHUNBINDING, SEVERING,
+    membraneDiffusion,
+    membraneAdsorption, membraneDesorption,
 };
 
-/// This is a ReactionBase signal object that may be called by a ReactionBase
-/// simulation algorithm
-typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
+constexpr const char* text(ReactionType t) {
+    switch(t) {
+        case ReactionType::REGULAR:                  return "regular";
+        case ReactionType::DIFFUSION:                return "diffusion";
+        case ReactionType::emission:                 return "emission";
+        case ReactionType::absorption:               return "absorption";
+        case ReactionType::POLYMERIZATIONPLUSEND:    return "polymerizationPlusEnd";
+        case ReactionType::POLYMERIZATIONMINUSEND:   return "polymerizationMinusEnd";
+        case ReactionType::DEPOLYMERIZATIONPLUSEND:  return "depolymerizationPlusEnd";
+        case ReactionType::DEPOLYMERIZATIONMINUSEND: return "depolymerizationMinusEnd";
+        case ReactionType::LINKERBINDING:            return "linkerBinding";
+        case ReactionType::MOTORBINDING:             return "motorBinding";
+        case ReactionType::LINKERUNBINDING:          return "linkerUnbinding";
+        case ReactionType::MOTORUNBINDING:           return "motorUnbinding";
+        case ReactionType::MOTORWALKINGFORWARD:      return "motorWalkingForward";
+        case ReactionType::MOTORWALKINGBACKWARD:     return "motorWalkingBackward";
+        case ReactionType::AGING:                    return "aging";
+        case ReactionType::FILAMENTCREATION:         return "filamentCreation";
+        case ReactionType::FILAMENTDESTRUCTION:      return "filamentDestruction";
+        case ReactionType::BRANCHING:                return "branching";
+        case ReactionType::BRANCHUNBINDING:          return "branchUnbinding";
+        case ReactionType::SEVERING:                 return "severing";
+        case ReactionType::membraneDiffusion:        return "membraneDiffusion";
+        case ReactionType::membraneAdsorption:       return "membraneAdsorption";
+        case ReactionType::membraneDesorption:       return "membraneDesorption";
+        default:                                     return "unspecified";
+    }
+}
 
 
 /// Represents an abstract interface for simple chemical reactions of the form
@@ -72,6 +95,10 @@ typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
  *  ReactionBase event happens, in which case the corresponding callbacks are called.
  */
 class ReactionBase {
+public:
+    // The type of callback invoked when this reaction is fired.
+    using CallbackType = std::function< void(ReactionBase*) >;
+
 protected:
 	#ifdef DEBUGCONSTANTSEED
 	using dependentdatatype = unordered_set<ReactionBase*, HashbyId<ReactionBase*>,
@@ -88,21 +115,19 @@ protected:
     Composite *_parent; ///< A pointer to a Composite object to which
                         ///< this Reaction belongs
     
-    float _rate;      ///< the rate for this ReactionBase
-    float _rate_bare; ///< the bare rate for this ReactionBase (original rate)
+    FP _rate;      ///< the rate for this ReactionBase
+    FP _rate_bare; ///< the bare rate for this ReactionBase (original rate)
 
     static size_t  _Idcounter;
 
 
     
-#ifdef REACTION_SIGNALING
-    unique_ptr<ReactionEventSignal> _signal;///< Can be used to broadcast a signal
-                                            ///< associated with this ReactionBase
-#endif
+    std::vector<CallbackType> callbacks_;
+
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     bool _passivated; ///< Indicates whether the ReactionBase is currently passivated
 #endif
-    ReactionType _reactionType; ///< Reaction type enumeration
+    ReactionType _reactionType = ReactionType::unspecified; ///< Reaction type enumeration
     
     bool _isProtoCompartment = false;///< Reaction is in proto compartment
     ///< (Do not copy as a dependent, not in ChemSim)
@@ -118,29 +143,31 @@ protected:
     
     float _linkRateBackward = 0.0;
 
-    floatingpoint _volumeFrac; ///< Used in compartments to store volume fraction of the compartment
+    FP _volumeFrac; ///< Used in compartments to store volume fraction of the compartment
     int _rateVolumeDepExp; ///< Exponent of rate dependency on volume
     ///< Dependence on bulk properties are NOT considered currently
 
     size_t _Id = 0;
-private:
 
 public:
-    /*Multiplicative factors used to update rate of a reaction. Please note that these
-     * factors do not apply to all reactions.*/
-
+    // Multiplicative factors used to update rate of a reaction.
     enum RateMulFactorType {
-        VOLUMEFACTOR, diffusionShape, MECHANOCHEMICALFACTOR, MOTORWALKCONSTRAINTFACTOR,
-        RESTARTPHASESWITCH, MANUALRATECHANGEFACTOR1, RATEMULFACTSIZE
+        // The volume factor is automatically adjusted by the volumeFrac parameter, and should not be set manually.
+        VOLUMEFACTOR,
+        // Factors that can be set manually.
+        diffusionShape, mechanochemical, MOTORWALKCONSTRAINTFACTOR,
+        RESTARTPHASESWITCH, MANUALRATECHANGEFACTOR1,
+        // This must be the last item, indicating the total number of items of this enum.
+        RATEMULFACTSIZE
     };
-    array<float, RATEMULFACTSIZE> _ratemulfactors;
+    std::array<FP, RATEMULFACTSIZE> _ratemulfactors;
 
-    void setRateMulFactor(float factor, RateMulFactorType type){
+    void setRateMulFactor(FP factor, RateMulFactorType type){
         //Call to this function should always be followed with call to updatePropensity
 
         if(factor == _ratemulfactors[type]) return;
 
-        if(_ratemulfactors[type] == 0.0){
+        if(_ratemulfactors[type] == 0.0 || std::isinf(_ratemulfactors[type])) {
             _rate = _rate_bare;
             _ratemulfactors[type] = factor;
             for(unsigned i = 0; i < RateMulFactorType::RATEMULFACTSIZE; i++)
@@ -150,9 +177,13 @@ public:
             _ratemulfactors[type] = factor;
         }
     }
+    auto getRateMulFactor(RateMulFactorType type) const {
+        return _ratemulfactors[underlying(type)];
+    }
+
     /// The main constructor:
     /// @param rate - the rate constant (full volume) for this ReactionBase
-    ReactionBase (float rate, bool isProtoCompartment, floatingpoint volumeFrac=1.0, int rateVolumeDepExp=0);
+    ReactionBase (FP rate, bool isProtoCompartment, FP volumeFrac=1.0, int rateVolumeDepExp=0);
     
     /// No copying (including all derived classes)
     ReactionBase (const ReactionBase &rb) = delete;
@@ -269,9 +300,11 @@ public:
         }
     }
 
+    auto getRateVolumeDepExp() const { return _rateVolumeDepExp; }
+
     /// Getter and setter for compartment volume fraction
-    floatingpoint getVolumeFrac()const { return _volumeFrac; }
-    void setVolumeFrac(float volumeFrac) {
+    auto getVolumeFrac()const { return _volumeFrac; }
+    void setVolumeFrac(FP volumeFrac) {
         _volumeFrac = volumeFrac;
         recalcRateVolumeFactor();
     }
@@ -283,24 +316,17 @@ public:
     RNode* getRNode() {return _rnode;}
     
     /// Returns the rate associated with this ReactionBase.
-    float getRate() const {return _rate;}
+    auto getRate() const {return _rate;}
     
     /// Returns the bare rate associated with this ReactionBase
-    float getBareRate() const {return _rate_bare;}
+    auto getBareRate() const {return _rate_bare;}
     
     ///aravind June 24, 2016
-    void setBareRate(float a) {
-        if(_rate_bare == a) return;
-        else if(_rate_bare == 0.0){
-            _rate_bare = a;
-            _rate = _rate_bare;
-            for(unsigned i = 0; i < RateMulFactorType::RATEMULFACTSIZE; i++)
-                _rate *= _ratemulfactors[i];
-        }
-        else{
-            _rate = _rate*a/_rate_bare;
-            _rate_bare = a;
-        }
+    void setBareRate(FP a) {
+        _rate_bare = a;
+        _rate = _rate_bare;
+        for(unsigned i = 0; i < RateMulFactorType::RATEMULFACTSIZE; i++)
+            _rate *= _ratemulfactors[i];
     }
     /// Returns a pointer to the RNode associated with this ReactionBase.
     RNode* getRnode() const {return _rnode;}
@@ -374,44 +400,30 @@ public:
     /// derived classes.
     virtual bool containsSpeciesImpl(Species *s) const = 0;
     
-#ifdef REACTION_SIGNALING
-    /// Return true if this RSpecies emits signals on copy number change
-    bool isSignaling () const {return _signal!=nullptr;}
-    
-    /// Set the signaling behavior of this ReactionBase
-    void startSignaling ();
-    
-    /// Destroy the signal associated with this ReactionBase; all associated slots
-    /// will be destroyed @note To start signaling again, startSignaling() needs to be
-    /// called
-    void stopSignaling ();
+    // Clear all callbacks attached to this reaction.
+    void clearSignaling ();
     
     /// Connect the callback, react_callback to a signal corresponding to
     /// ReactionBase *r.
-    /// @param function<void (ReactionBase *)> const &react_callback - a function
+    /// @param CallbackType callback - a function
     /// object to be called (a slot)
-    /// @param int priority - lower priority slots will be called first. Default is 5.
-    /// Do not use priorities 1 and 2 unless absolutely essential.
-    /// @return a connection object which can be used to later disconnect this
-    /// particular slot or temporarily block it
-    boost::signals2::connection
-        connect(function<void (ReactionBase *)> const &react_callback, int priority=5);
+    void connect(CallbackType callback);
     
     /// Broadcasts signal indicating that the ReactionBase event has taken place
     /// This method is only called by the code which runs the chemical dynamics (i.e.
     /// Gillespie-like algorithm)
     void emitSignal() {
-        if(isSignaling())
-            (*_signal)(this);
+        for(auto& callback : callbacks_) {
+            callback(this);
+        }
     }
-#endif
     
     /// Return a const reference to the set of dependent ReactionBases
     /// @note One can obtain two different lists of affected ReactionBases:
     /// 1) via getAffectedReactionBases(), where the copy numbers do influence the
     /// dependencies, and 2) via dependents(), where dependencies stop being counted
     /// if the copy numbers of reactant species drop to 0.
-    const dependentdatatype& dependents() {return _dependents;}
+    const dependentdatatype& dependents() const {return _dependents;}
     
     /// Returns true if two ReactionBase objects are equal.
     /// Two ReactionBase objects are equal if each of their reactants and products
@@ -488,15 +500,12 @@ public:
     /// Print the ReactionBases that are affacted by this ReactionBase being fired
     void printDependents() ;
     
-    /// Return the list of ReactionBase objects that are affected when this
+    /// Reset the list of ReactionBase objects that are affected when this
     /// ReactionBase is fired
-    /// @return a vector of pointers to the affected ReactionBase objects
     /// @note This method is "expensive" because it computes from scratch the
     /// dependencies. Importantly, the copy numbers of molecules do not influence the
     /// result of this function. \sa dependents()
-    virtual vector<ReactionBase*> getAffectedReactions() = 0;
-
-    virtual void addDependantReactions() = 0;
+    virtual void setDependentReactions() = 0;
     
     /// Request that the ReactionBase *r adds this ReactionBase to its list of
     /// dependents which it affects.
@@ -522,5 +531,7 @@ public:
 
     size_t getId() const { return _Id;}
 };
+
+} // namespace medyan
 
 #endif

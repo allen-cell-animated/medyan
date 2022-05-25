@@ -15,23 +15,20 @@
 
 #include "Composite.h"
 
-#include "ChemNRMImpl.h"
-
+namespace medyan {
 size_t ReactionBase::_Idcounter = 0;
 
-ReactionBase::ReactionBase (float rate, bool isProtoCompartment, floatingpoint volumeFrac, int rateVolumeDepExp)
+ReactionBase::ReactionBase (FP rate, bool isProtoCompartment, FP volumeFrac, int rateVolumeDepExp)
     : _rnode(nullptr), _parent(nullptr), _rate(rate), 
       _rate_bare(rate), _isProtoCompartment(isProtoCompartment),
       _volumeFrac(volumeFrac), _rateVolumeDepExp(rateVolumeDepExp) {
     
-	for(uint i = 0; i < RateMulFactorType::RATEMULFACTSIZE; i++)
+	for(int i = 0; i < RateMulFactorType::RATEMULFACTSIZE; i++)
 		_ratemulfactors[i] = 1.0;
 
     // Scale the rate
 	recalcRateVolumeFactor();
-#ifdef REACTION_SIGNALING
-    _signal=nullptr;
-#endif
+
     //All reactions are generated passivated.
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     _passivated=true;
@@ -50,22 +47,13 @@ void ReactionBase::registerNewDependent(ReactionBase *r){ _dependents.insert(r);
 
 void ReactionBase::unregisterDependent(ReactionBase *r){ _dependents.erase(r);}
 
-#ifdef REACTION_SIGNALING
-void ReactionBase::startSignaling () {
-    _signal = unique_ptr<ReactionEventSignal>(new ReactionEventSignal);
+void ReactionBase::clearSignaling () {
+    callbacks_.clear();
 }
 
-void ReactionBase::stopSignaling () {
-    _signal = nullptr;
+void ReactionBase::connect(CallbackType callback) {
+    callbacks_.push_back(std::move(callback));
 }
-
-boost::signals2::connection ReactionBase::connect(
-    function<void (ReactionBase *)> const &react_callback, int priority) {
-    if (!isSignaling())
-        startSignaling();
-    return _signal->connect(priority, react_callback);
-}
-#endif
 
 void ReactionBase::printDependents()  {
     cout << "ReactionBase: ptr=" << this << "\n"
@@ -93,3 +81,4 @@ void ReactionBase::activateReaction() {
 	activateReactionUnconditional();
 }
 
+} // namespace medyan

@@ -20,6 +20,7 @@
 #include "common.h"
 #include "Util/Math/Vec.hpp"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Bead;
 
@@ -29,15 +30,15 @@ class BoundaryCylinderAttachmentHarmonic {
 public:
     floatingpoint energy(
         floatingpoint *coord, int *beadSet,
-        floatingpoint *kattr, const std::vector< mathfunc::Vec< 3, floatingpoint > >& pins
+        floatingpoint *kattr, const std::vector< medyan::Vec< 3, floatingpoint > >& pins
     ) const;
-    [[deprecated]] floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                  floatingpoint *kattr, floatingpoint *pins, floatingpoint d);
     
     void forces(
         floatingpoint *coord, floatingpoint *f, int *beadSet,
-        floatingpoint *kattr, const std::vector< mathfunc::Vec< 3, floatingpoint > >& pins
+        floatingpoint *kattr, const std::vector< medyan::Vec< 3, floatingpoint > >& pins
     ) const;
 };
+
+} // namespace medyan
 
 #endif

@@ -19,22 +19,44 @@
 #include "common.h"
 #include "MathFunctions.h"
 
-//FORWARD DECLARATIONS
-class Bead;
+namespace medyan {
 
 /// A exponential repulsive potential used by the BubbleCylinderRepulsion template.
-class BubbleCylinderRepulsionExp {
-    
-public:
-    floatingpoint energy(floatingpoint *coord, int *beadSet, int *bubbleSet,
-                         floatingpoint *krep, floatingpoint *slen, floatingpoint *radius, int *nneighbors);
-    
-    [[deprecated]] floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet, int *bubbleSet,
-                         floatingpoint *krep, floatingpoint *slen, floatingpoint *radius, int *nnneighbors, floatingpoint d);
-    
-    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, int *bubbleSet,
-                floatingpoint *krep, floatingpoint *slen, floatingpoint *radius, int *nneighbors);
-//    void forcesAux(Bead*, Bead*, double, double, double);
+struct BubbleBeadRepulsionExp {
+    floatingpoint energy(
+        const floatingpoint* coord,
+        Index bubbleCoordIndex, Index beadCoordIndex,
+        floatingpoint krep, floatingpoint slen, floatingpoint radius
+    ) const {
+        auto bubbleCoord = makeRefVec<3>(coord + bubbleCoordIndex);
+        auto beadCoord = makeRefVec<3>(coord + beadCoordIndex);
+
+        auto dist = distance(bubbleCoord, beadCoord);
+        auto effd = dist - radius;
+
+        auto exponent = -effd / slen;
+        return krep * std::exp(exponent);
+    }
+
+    void forces(
+        const floatingpoint* coord, floatingpoint* force,
+        Index bubbleCoordIndex, Index beadCoordIndex,
+        floatingpoint krep, floatingpoint slen, floatingpoint radius
+    ) const {
+        auto bubbleCoord = makeRefVec<3>(coord + bubbleCoordIndex);
+        auto beadCoord = makeRefVec<3>(coord + beadCoordIndex);
+        auto bubbleForce = makeRefVec<3>(force + bubbleCoordIndex);
+        auto beadForce = makeRefVec<3>(force + beadCoordIndex);
+
+        auto dist = distance(bubbleCoord, beadCoord);
+        auto effd = dist - radius;
+
+        auto exponent = -effd / slen;
+        auto forceFactor = krep * std::exp(exponent) / (dist * slen);
+
+        bubbleForce += forceFactor * (bubbleCoord - beadCoord);
+        beadForce += forceFactor * (beadCoord - bubbleCoord);
+    }
 
     template< typename VT1, typename VT2 >
 	floatingpoint loadForces(
@@ -45,7 +67,7 @@ public:
         floatingpoint screenLength
     ) const {
 
-        const auto dist = mathfunc::distance(coord1, coord2);
+        const auto dist = medyan::distance(coord1, coord2);
 
         floatingpoint effd = dist - radius;
 
@@ -54,5 +76,7 @@ public:
 
     }
 };
+
+} // namespace medyan
 
 #endif

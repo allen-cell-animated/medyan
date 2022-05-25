@@ -16,6 +16,7 @@
 
 #include "common.h"
 
+namespace medyan {
 /// An abstract base class for any element that can be
 /// added or removed from a NeighborList statically at system initialization.
 class Neighbor {
@@ -31,5 +32,7 @@ public:
     /// be fixed in the future.
     virtual ~Neighbor() noexcept {}
 };
+
+} // namespace medyan
 
 #endif

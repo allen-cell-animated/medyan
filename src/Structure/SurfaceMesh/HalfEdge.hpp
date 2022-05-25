@@ -9,8 +9,8 @@ struct CHalfEdge {
     struct EachReaction {
         std::unique_ptr< ReactionDy > reaction;
 
-        // Sentinel: -1. The index of energy that drives drifting
-        int energyIndex = -1;
+        // Sentinel: -1. The index of diffusing species in the membrane.
+        int membraneDiffusingSpeciesIndex = -1;
     };
 
     using ReactionContainer = std::vector< EachReaction >;

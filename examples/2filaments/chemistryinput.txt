@@ -3,8 +3,9 @@
 ### 1. This sample file includes](1) linker (un)binding, 
 ###    (2) motor (un)binding and motor walking, 
 ### 2. Based on alpha-actinin, non-muscle myosin II 
-### 3. The unit for reaction rates or diffusion rates is 1/s
-### 4. The unit for concentration is the number of molecule (copy number)
+### 3. The unit for reaction rates is 1/s
+### 4. The unit for diffusion coefficient is nm^2/s
+### 5. The unit for concentration is the number of molecule (copy number)
 ##########################################################################
 
 ##################################################
@@ -13,11 +14,11 @@
 
 ### 1. Diffusing species 
 # 1uM molecules = 602 copy number per um^3 
-# SPECIESDIFFUSING:<name> <copy#> <diffusion rate> <release time> <removal time> REG 
+# SPECIESDIFFUSING <NAME> <COPYNUMBER> <DIFFCOEFF> <RELEASETIME> <REMOVALTIME> REG 
 
-SPECIESDIFFUSING: A 0 80.0 0.0 0.0 REG
-SPECIESDIFFUSING: MD 1 0.8 0.0 0.0 REG
-SPECIESDIFFUSING: LD 50 8.0 0.0 0.0 REG
+SPECIESDIFFUSING: A  0  20e6  0.0 0.0 REG
+SPECIESDIFFUSING: MD 1  0.2e6 0.0 0.0 REG
+SPECIESDIFFUSING: LD 50 2.0e6 0.0 0.0 REG
 
 ### 2. Filament species
 

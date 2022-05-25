@@ -13,8 +13,10 @@
 #include "Chemistry/ReactionBase.h"
 #include "Util/Io/Log.hpp"
 
-class ReactionDy : public ReactionBase {
+namespace medyan {
 
+class ReactionDy : public ReactionBase {
+public:
     // Repetitive rspecies
     struct RepRSpecies {
         RSpecies*      prs    = nullptr;
@@ -52,10 +54,12 @@ public:
     ReactionDy(
         const SpeciesPtrContainer& reactantSpecies,
         const SpeciesPtrContainer& productSpecies,
-        float rate,
-        float volumeFrac = 1.0,
-        int rateVolumeDepExp = 0
+        ReactionType               reactionType,
+        FP                         rate,
+        FP                         volumeFrac = 1.0,
+        int                        rateVolumeDepExp = 0
     ) : ReactionBase(rate, false, volumeFrac, rateVolumeDepExp) {
+        _reactionType = reactionType;
         initializeSpecies(reactantSpecies, productSpecies);
     }
         
@@ -80,22 +84,12 @@ public:
     ReactionDy& operator=(const ReactionDy &) = delete;
 
 
-    /// Return a list of reactions which rates would be affected if this
-    /// reaction were to be executed.
-    virtual vector<ReactionBase*> getAffectedReactions() override {
-        unordered_set<ReactionBase*> rxns;
+    auto& getRepRSpecies() { return repRSpecies_; }
+    auto& getRepRSpecies() const { return repRSpecies_; }
 
-        for(int i = 0; i < repRSpecies_.size(); i++) {
-
-            for(auto r : repRSpecies_[i].prs->reactantReactions()) {
-                rxns.insert(r);
-            }
-        }
-        rxns.erase(this);
-        return vector<ReactionBase*>(rxns.begin(),rxns.end());
-    }
     // Add affected reactions to the dependency list.
-    virtual void addDependantReactions() override {
+    virtual void setDependentReactions() override {
+        _dependents.clear();
         for(int i = 0; i < repRSpecies_.size(); i++) {
             for(auto r : repRSpecies_[i].prs->reactantReactions()) {
                 if(r != this && !r->isPassivated()) {
@@ -158,9 +152,8 @@ public:
         }
         numProducts_ = repRSpecies_.size() - numReactants_;
         
-        //add dependents
-        for(auto d : getAffectedReactions())
-            if(!d->isPassivated()) _dependents.insert(d);
+        // Add dependents.
+        setDependentReactions();
 
         // Register this in all RSpecies
         registerInRSpecies_();
@@ -316,12 +309,12 @@ public:
     /// getN(), this pointer can be used to iterate over RSpecies associated with
     /// this reaction.
     virtual RSpecies** rspecies() override {
-        LOG(ERROR) << "RSpecies is not stored in a contiguous array in ReactionDy.";
+        log::error("RSpecies is not stored in a contiguous array in ReactionDy.");
         throw std::runtime_error("Invalid rspecies() function in ReactionDy");
     }
 
     virtual bool is_equal(const ReactionBase& other) const override {
-        LOG(ERROR) << "Virtual equality comparison of ReactionDy should not be used";
+        log::error("Virtual equality comparison of ReactionDy should not be used");
         throw std::runtime_error("Invalid comparsion of ReactionDy");
     }
 
@@ -335,10 +328,12 @@ public:
 
     /// Implementation of  clone()
     virtual ReactionDy* cloneImpl(const SpeciesPtrContainerVector &spcv) override {
-        LOG(ERROR) << "Virtual clone function in ReactionDy is not allowed.";
+        log::error("Virtual clone function in ReactionDy is not allowed.");
         throw std::runtime_error("Invalid clone in ReactionDy");
     }
 
 };
+
+} // namespace medyan
 
 #endif

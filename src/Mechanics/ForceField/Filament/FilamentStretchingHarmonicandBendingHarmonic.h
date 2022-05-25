@@ -16,6 +16,7 @@
 
 #include "common.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Bead;
 
@@ -66,5 +67,7 @@ public:
 	            const int startID, const int endID, int threadID){LOG(ERROR)<<"FF not implemented. "
 	                                                                          "Exiting"<<endl;};
 };
+
+} // namespace medyan
 
 #endif

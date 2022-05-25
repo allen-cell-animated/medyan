@@ -14,6 +14,8 @@
 #include "ChemGillespieImpl.h"
 #include "Rand.h"
 
+namespace medyan {
+
 RNodeGillespie::RNodeGillespie(ReactionBase *r, ChemGillespieImpl &chem_Gillespie)
     :_chem_Gillespie (chem_Gillespie), _react(r) {
     _react->setRnode(this);
@@ -85,7 +87,7 @@ floatingpoint ChemGillespieImpl::generateTau(floatingpoint a) {
     #ifdef DEBUGCONSTANTSEED
     Rand::chemistrycounter++;
     #endif
-    return safeExpDist(_exp_distr, a, Rand::eng);
+    return medyan::rand::safeExpDist(_exp_distr, a, Rand::eng);
 
 }
 
@@ -166,10 +168,9 @@ bool ChemGillespieImpl::makeStep(floatingpoint endTime) {
         }
     }
     
-    // Send signal
-#ifdef REACTION_SIGNALING
+    // Send signal.
     r->emitSignal();
-#endif
+
     syncGlobalTime();
     return true;
 }
@@ -220,3 +221,4 @@ void ChemGillespieImpl::passivateReaction(ReactionBase *r) {
     _a_total = _a_total - a_penult + a_new;
 }
 
+} // namespace medyan

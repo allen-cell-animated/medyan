@@ -3,12 +3,13 @@
 
 #include "MathFunctions.h"
 
+namespace medyan {
 // Additional attributes needed for meshwork
 struct AdaptiveMeshAttribute {
     struct VertexAttribute {
         double size;
         double sizeAux; // Used in diffusing
-        mathfunc::Vec3 unitNormal;
+        medyan::Vec3 unitNormal;
     };
     struct HalfEdgeAttribute {
     };
@@ -18,5 +19,7 @@ struct AdaptiveMeshAttribute {
     struct TriangleAttribute {
     };
 };
+
+} // namespace medyan
 
 #endif

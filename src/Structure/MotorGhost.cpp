@@ -20,12 +20,13 @@
 #include "Bead.h"
 #include "ChemRNode.h"
 
-#include "GController.h"
+#include "Controller/GController.h"
 #include "SysParams.h"
 #include "MathFunctions.h"
 #include "Mechanics/CUDAcommon.h"
 #include "Rand.h"
 
+namespace medyan {
 using namespace mathfunc;
 
 void MotorGhost::updateCoordinate() {
@@ -42,32 +43,22 @@ void MotorGhost::updateCoordinate() {
 }
 
 
-MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
-                       floatingpoint position1, floatingpoint position2,
-                       floatingpoint onRate, floatingpoint offRate)
+MotorGhost::MotorGhost(
+    Cylinder* c1, Cylinder* c2, short motorType,
+    int motorSpeciesIndex1, int motorSpeciesIndex2,
+    floatingpoint position1, floatingpoint position2,
+    floatingpoint onRate, floatingpoint offRate)
 
     : Trackable(true, true),
       _c1(c1), _c2(c2),
       _position1(position1), _position2(position2),
       _motorType(motorType), _birthTime(tau()),
       _onRate(onRate), _offRate(offRate) {
-          
-    //find compartment
-    updateCoordinate();
-    
-    try {_compartment = GController::getCompartment(coordinate);}
-    catch (exception& e) {
-        cout << e.what();
-        
-        printSelf();
-        
-        exit(EXIT_FAILURE);
-    }
-    short filType = c1->getType();
-          
-    int pos1 = int(position1 * SysParams::Geometry().cylinderNumMon[filType]);
-    int pos2 = int(position2 * SysParams::Geometry().cylinderNumMon[filType]);
-          
+
+    using namespace std;
+
+    // Initialize motor heads.
+    //---------------------------------
     //set number of heads by picking random int between maxheads and minheads
     _numHeads = Rand::randInteger(SysParams::Chemistry().motorNumHeadsMin[_motorType],
                                   SysParams::Chemistry().motorNumHeadsMax[_motorType]);
@@ -76,29 +67,52 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
         _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, 0, _numHeads);
     else
         _numBoundHeads = _numHeads;
-    
-#ifdef CHEMISTRY
-    _cMotorGhost = unique_ptr<CMotorGhost>(
-    new CMotorGhost(motorType, _compartment, _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2));
-    _cMotorGhost->setMotorGhost(this);
+
+
+    // Initialize motor mechanics.
+    //---------------------------------
+    // Set stretching constant.
+#ifdef PLOSFEEDBACK
+    mMotorGhost_.setStretchingConstant(motorType, _numHeads);
+#else
+    mMotorGhost_.setStretchingConstant(motorType, _numBoundHeads);
 #endif
 
-#ifdef MECHANICS
+    // Set equilibrium length.
     auto x1 = _c1->getFirstBead()->vcoordinate();
     auto x2 = _c1->getSecondBead()->vcoordinate();
     auto x3 = _c2->getFirstBead()->vcoordinate();
     auto x4 = _c2->getSecondBead()->vcoordinate();
-#ifdef PLOSFEEDBACK
-    _mMotorGhost = unique_ptr<MMotorGhost>(
-    new MMotorGhost(motorType, _numHeads, c1->adjustedrelativeposition(position1), c2->adjustedrelativeposition(position2), x1, x2, x3, x4));
-    _mMotorGhost->setMotorGhost(this);
-#else
-    //Using _numBoundHeads vs _numHeads as the argument to the constructor here - Cal edit to produce realistic dissipation values
-    _mMotorGhost = unique_ptr<MMotorGhost>(
-            new MMotorGhost(motorType, _numBoundHeads, c1->adjustedrelativeposition(position1), c2->adjustedrelativeposition(position2), x1, x2, x3, x4));
-    _mMotorGhost->setMotorGhost(this);
-#endif
-#endif
+
+    auto m1 = midPointCoordinate(x1, x2, c1->adjustedrelativeposition(position1));
+    auto m2 = midPointCoordinate(x3, x4, c2->adjustedrelativeposition(position2));
+    mMotorGhost_.eqLength = twoPointDistance(m1, m2);
+
+
+    // Initialize coordinates and registration in compartments.
+    //---------------------------------
+    updateCoordinate();
+    
+    try {_compartment = &GController::getCompartment(coordinate);}
+    catch (exception& e) {
+        cout << e.what();
+        
+        printSelf();
+        
+        exit(EXIT_FAILURE);
+    }
+
+    // Initialize linker chemistry.
+    //---------------------------------
+    const auto filType1 = c1->getType();
+    const auto filType2 = c2->getType();
+          
+    const int pos1 = int(position1 * SysParams::Geometry().cylinderNumMon[filType1]);
+    const int pos2 = int(position2 * SysParams::Geometry().cylinderNumMon[filType2]);
+          
+    _cMotorGhost = make_unique<CMotorGhost>(motorSpeciesIndex1, motorSpeciesIndex2, _compartment, _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2);
+    _cMotorGhost->setMotorGhost(this);
+
     
 }
 
@@ -119,17 +133,15 @@ MotorGhost::~MotorGhost() noexcept {
 }
 
 void MotorGhost::updatePosition() {
-#ifdef CHEMISTRY
     //update ccylinders
     _cMotorGhost->setFirstCCylinder(_c1->getCCylinder());
     _cMotorGhost->setSecondCCylinder(_c2->getCCylinder());
     
-#endif
     //check if in same compartment
     updateCoordinate();
     Compartment* c;
     
-    try {c = GController::getCompartment(coordinate);}
+    try {c = &GController::getCompartment(coordinate);}
     catch (exception& e) {
         cout << e.what();
         
@@ -143,7 +155,7 @@ void MotorGhost::updatePosition() {
         mins = chrono::high_resolution_clock::now();
         
         _compartment = c;
-#ifdef CHEMISTRY
+
         SpeciesBound* firstSpecies = _cMotorGhost->getFirstSpecies();
         SpeciesBound* secondSpecies = _cMotorGhost->getSecondSpecies();
         CMotorGhost* clone = _cMotorGhost->clone(c);
@@ -151,43 +163,39 @@ void MotorGhost::updatePosition() {
         
         _cMotorGhost->setFirstSpecies(firstSpecies);
         _cMotorGhost->setSecondSpecies(secondSpecies);
-#endif
+
         mine = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> compartment_update(mine - mins);
         CUDAcommon::tmin.timemotorupdate += compartment_update.count();
         CUDAcommon::tmin.callsmotorupdate++;
     }
     
-#ifdef MECHANICS
-if(SysParams::RUNSTATE) {
-	auto x1 = _c1->getFirstBead()->vcoordinate();
-	auto x2 = _c1->getSecondBead()->vcoordinate();
-	auto x3 = _c2->getFirstBead()->vcoordinate();
-	auto x4 = _c2->getSecondBead()->vcoordinate();
+    if(SysParams::RUNSTATE) {
+        auto x1 = _c1->getFirstBead()->vcoordinate();
+        auto x2 = _c1->getSecondBead()->vcoordinate();
+        auto x3 = _c2->getFirstBead()->vcoordinate();
+        auto x4 = _c2->getSecondBead()->vcoordinate();
 
-	auto m1 = midPointCoordinate(x1, x2, _c1->adjustedrelativeposition(_position1));
-	auto m2 = midPointCoordinate(x3, x4, _c2->adjustedrelativeposition(_position2));
+        auto m1 = midPointCoordinate(x1, x2, _c1->adjustedrelativeposition(_position1));
+        auto m2 = midPointCoordinate(x3, x4, _c2->adjustedrelativeposition(_position2));
 
-	_mMotorGhost->setLength(twoPointDistance(m1, m2));
+        //update the spring constant, based on numboundheads
+        //current force
+        floatingpoint force = max((floatingpoint) 0.0, mMotorGhost_.stretchForce);
 
-	//update the spring constant, based on numboundheads
-	//current force
-	floatingpoint force = max((floatingpoint) 0.0, _mMotorGhost->stretchForce);
+        //update number of bound heads
+        if (!_unbindingChangers.empty())
+            _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate,
+                                                                        force, _numHeads);
+        else
+            _numBoundHeads = _numHeads;
 
-	//update number of bound heads
-	if (!_unbindingChangers.empty())
-		_numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate,
-		                                                               force, _numHeads);
-	else
-		_numBoundHeads = _numHeads;
-
-#ifdef PLOSFEEDBACK
-	_mMotorGhost->setStretchingConstant(_motorType, _numHeads);
-#else
-	_mMotorGhost->setStretchingConstant(_motorType, _numBoundHeads);
-#endif
-}
-#endif
+        #ifdef PLOSFEEDBACK
+            mMotorGhost_.setStretchingConstant(_motorType, _numHeads);
+        #else
+            mMotorGhost_.setStretchingConstant(_motorType, _numBoundHeads);
+        #endif
+    }
 }
 
 /// @note - This function updates forward walking rates using the
@@ -200,7 +208,7 @@ void MotorGhost::updateReactionRates() {
 
     //current force
     floatingpoint force = max<floatingpoint>((floatingpoint)0.0,
-            _mMotorGhost->stretchForce);
+            mMotorGhost_.stretchForce);
     
     //update number of bound heads
     if(!_unbindingChangers.empty())
@@ -215,7 +223,7 @@ void MotorGhost::updateReactionRates() {
         auto x3 = _c2->getFirstBead()->vcoordinate();
         auto x4 = _c2->getSecondBead()->vcoordinate();
 
-	    const auto& cylinderInfoData = Cylinder::getDbData().value;
+	    const auto& cylinderInfoData = Cylinder::getDbData();
 
 	    auto c1struct = cylinderInfoData[_c1->getStableIndex()];
 	    auto c2struct = cylinderInfoData[_c2->getStableIndex()];
@@ -234,7 +242,7 @@ void MotorGhost::updateReactionRates() {
 	    if((c1struct.filamentId == c2struct.filamentId)) {
 	    	auto c1posonFil = c1struct.positionOnFilament;
 		    auto c2posonFil = c2struct.positionOnFilament;
-            consider_passivation = abs(c1posonFil - c2posonFil) <= SysParams::Mechanics().sameFilBindSkip + 1;
+            consider_passivation = abs(c1posonFil - c2posonFil) <= ChemParams::minCylinderDistanceSameFilament + 1;
 		    //A distance of 3 or lesser between two cylinders on the same filament is not
 		    // acceptable.
 		    isc1leftofc2 = c1posonFil < c2posonFil;
@@ -297,11 +305,11 @@ void MotorGhost::updateReactionRates() {
 
             }/*MOTORWALKINGFORWARD*/
             else if(r->getReactionType() == ReactionType::MOTORWALKINGBACKWARD) {
-                if (SysParams::RUNSTATE == false)
+                if (SysParams::RUNSTATE == false) {
                     r->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
-                else
+                }else {
                     r->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
-
+                }
 	            if(consider_passivation && !isc1leftofc2) {
 
 		            auto c1firstbindingsite = float(*(SysParams::Chemistry()
@@ -334,11 +342,11 @@ void MotorGhost::updateReactionRates() {
         for(auto r : s2->getRSpecies().reactantReactions()) {
             
             if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
-                if (SysParams::RUNSTATE == false)
+                if (SysParams::RUNSTATE == false) {
                     r->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
-                else
+                }else {
                     r->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
-
+                }
 	            if(consider_passivation && !isc1leftofc2) {
 
 		            float c2lastbindingsite = float(*(SysParams::Chemistry()
@@ -366,19 +374,18 @@ void MotorGhost::updateReactionRates() {
 
             }/*MOTORWALKINGFORWARD*/
             else if(r->getReactionType() == ReactionType::MOTORWALKINGBACKWARD) {
-                if (SysParams::RUNSTATE == false)
+                if (SysParams::RUNSTATE == false) {
                     r->setRateMulFactor(0.0f, ReactionBase::RESTARTPHASESWITCH);
-                else
+                }else {
                     r->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
-
+                }
 	            if(consider_passivation && isc1leftofc2) {
 		            auto c2firstbindingsite = float(*(SysParams::Chemistry()
 				            .bindingSites[fType2].begin()))/float(SysParams::Geometry()
 				                                      .cylinderNumMon[fType2]);
 		            if(areEqual(c2firstbindingsite,_position2))
 			            r->setRateMulFactor(0.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
-	            }
-	            else{
+	            }else {
 		            r->setRateMulFactor(1.0f, ReactionBase::MOTORWALKCONSTRAINTFACTOR);
 	            	if(r->isPassivated()) {r->activateReaction();}
 		            float newRate =
@@ -424,7 +431,8 @@ void MotorGhost::updateReactionRates() {
 
 void MotorGhost::moveMotorHead(Cylinder* c,
                                floatingpoint oldPosition, floatingpoint newPosition,
-                               short boundType, SubSystem* ps) {
+    int speciesMotorIndex, short boundType, SubSystem* ps
+) {
 
     //shift the position of one side of the motor
     floatingpoint shift =  newPosition - oldPosition;
@@ -441,20 +449,19 @@ void MotorGhost::moveMotorHead(Cylinder* c,
     //record walk length
     _walkLength += shift * SysParams::Geometry().cylinderSize[filType];
     
-#ifdef CHEMISTRY
     short oldpos = int (oldPosition * SysParams::Geometry().cylinderNumMon[filType]);
     short newpos = int (newPosition * SysParams::Geometry().cylinderNumMon[filType]);
     
     _cMotorGhost->moveMotorHead(c->getCCylinder(), oldpos, newpos,
-                                _motorType, boundType, ps);
+                                speciesMotorIndex, boundType, ps);
 
-#endif
     
 }
 
 void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
                                floatingpoint oldPosition, floatingpoint newPosition,
-                               short boundType, SubSystem* ps) {
+    int speciesMotorIndex, short boundType, SubSystem* ps
+) {
     //shift the head
     if(oldC == _c1) {
         _position1 = newPosition;
@@ -464,18 +471,16 @@ void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
         _position2 = newPosition;
         _c2 = newC;
     }
-    short filType = _c1->getType();
+    const auto filType = newC->getType();
     
     //record walk length
     _walkLength += (1-oldPosition + newPosition) * SysParams::Geometry().cylinderSize[filType];
     
-#ifdef CHEMISTRY
     short oldpos = int (oldPosition * SysParams::Geometry().cylinderNumMon[filType]);
     short newpos = int (newPosition * SysParams::Geometry().cylinderNumMon[filType]);
     
     _cMotorGhost->moveMotorHead(oldC->getCCylinder(), newC->getCCylinder(),
-                                oldpos, newpos, _motorType, boundType, ps);
-#endif
+                                oldpos, newpos, speciesMotorIndex, boundType, ps);
 }
 
 
@@ -495,7 +500,6 @@ void MotorGhost::printSelf()const {
     
     cout << endl;
     
-#ifdef CHEMISTRY
     cout << "Associated species 1 = " << _cMotorGhost->getFirstSpecies()->getName()
     << " , copy number = " << _cMotorGhost->getFirstSpecies()->getN()
     << " , position on first cylinder (int) = " << _cMotorGhost->getFirstPosition() << endl;
@@ -503,7 +507,6 @@ void MotorGhost::printSelf()const {
     cout << "Associated species 2 = " << _cMotorGhost->getSecondSpecies()->getName()
     << " , copy number = " << _cMotorGhost->getSecondSpecies()->getN()
     << " , position on second cylinder (int) = " << _cMotorGhost->getSecondPosition() << endl;
-#endif
     
     cout << endl;
     
@@ -535,3 +538,4 @@ vector<MotorRateChanger*> MotorGhost::_walkingChangers;
 Histogram* MotorGhost::_lifetimes;
 Histogram* MotorGhost::_walkLengths;
 
+} // namespace medyan

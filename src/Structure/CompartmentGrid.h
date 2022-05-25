@@ -14,16 +14,24 @@
 #ifndef MEDYAN_CompartmentGrid_h
 #define MEDYAN_CompartmentGrid_h
 
+#include <cmath>
+
 #include "common.h"
-
-#include "Compartment.h"
+#include "Rand.h"
+#include "SysParams.h"
 #include "Structure/CellList.hpp"
+#include "Structure/Compartment.h"
+#include "Util/StableVector.hpp"
 
-//FORWARD DECLARATIONS
-class ChemSim;
+namespace medyan {
+
+// Forward declarations.
 class Cylinder;
+class ChemSim;
 class Edge;
 class Triangle;
+class Vertex;
+
 
 /// A simple n-dimensional grid of Compartment objects.
 
@@ -40,7 +48,7 @@ class Triangle;
  *  The _prototype_compartment is used such that all reactions and species can be added 
  *  to the prototype, and this configuration can be copied to all compartments in the grid.
  */
-class CompartmentGrid : public Composite {
+class CompartmentGrid {
 private:
     Compartment _prototype_compartment; ///< Prototype compartment, to be configured
                                         ///< before initialization
@@ -49,18 +57,63 @@ private:
     ReactionPtrContainerVector _bulkReactions; ///< Bulk reactions in this grid
     
 public:
+    // Geometric parameters.
+    //-------------------------------------------------------------------------
 
-    cell_list::CellListManager< Cylinder, Compartment > cylinderCellList;
-    cell_list::CellListManager< Triangle, Compartment > triangleCellList;
-    cell_list::CellListManager< Edge,     Compartment > edgeCellList;
+    // Number of compartments in each dimension.
+    std::array< Size, 3 >          shape {};
+    // Side lengths of a compartment. Indexed by axis (x, y, z).
+    std::array< floatingpoint, 3 > compartmentLengths {};
+    // Areas of a compartment. Indexed by planes (yz, zx, xy).
+    std::array< floatingpoint, 3 > compartmentAreas {};
+    floatingpoint                  compartmentVolume = 0;
+    // Side lengths of the entire grid. Indexed by axis (x, y, z).
+    std::array< floatingpoint, 3 > gridLengths {};
+    floatingpoint                  gridVolume = 0;
+    // Fraction of span when choosing random coordinates in the entire grid.
+    std::array<std::array<floatingpoint, 3>, 2> fracGridSpan {{{0, 0, 0}, {1, 1, 1}}};
+
+    // All compartments (except for the proto compartment) managed by this class.
+    std::vector<std::unique_ptr<Compartment>> compartmentList;
+
+    medyan::CellListManager< Cylinder*, Compartment* > cylinderCellList;
+    medyan::CellListManager< medyan::StableVector<medyan::Triangle>::Index, Compartment* > triangleCellList;
+    medyan::CellListManager< medyan::StableVector<medyan::Edge>::Index,     Compartment* > edgeCellList;
+    medyan::CellListManager< medyan::StableVector<medyan::Vertex>::Index,   Compartment* > vertexCellList;
 
     /// Constructor, creates a number of Compartment instances
-    CompartmentGrid(int numCompartments) {
-        //add children
-        for(size_t i=0; i<numCompartments; ++i) {
-            auto c = new Compartment();
+    CompartmentGrid(const GeoParams& geoParams) {
+        // Set geometry.
+        shape = {
+            geoParams.NX,
+            geoParams.NY,
+            geoParams.NZ,
+        };
+        compartmentLengths = {
+            geoParams.compartmentSizeX,
+            geoParams.compartmentSizeY,
+            geoParams.compartmentSizeZ,
+        };
+        gridLengths = {
+            geoParams.NX * geoParams.compartmentSizeX,
+            geoParams.NY * geoParams.compartmentSizeY,
+            geoParams.NZ * geoParams.compartmentSizeZ,
+        };
+        compartmentAreas = {
+            compartmentLengths[1] * compartmentLengths[2],
+            compartmentLengths[2] * compartmentLengths[0],
+            compartmentLengths[0] * compartmentLengths[1],
+        };
+        compartmentVolume = compartmentLengths[0] * compartmentLengths[1] * compartmentLengths[2];
+        gridVolume = gridLengths[0] * gridLengths[1] * gridLengths[2];
+        fracGridSpan = geoParams.fracGridSpan;
+
+        const auto numCompartments = shape[0] * shape[1] * shape[2];
+        // Add children.
+        for(Index i = 0; i < numCompartments; ++i) {
+            compartmentList.push_back(std::make_unique<Compartment>());
+            auto c = compartmentList.back().get();
             c->_ID = i;
-            addChild(unique_ptr<Component>(c));
 
             cylinderCellList.addHead(c, c->cylinderCell);
             c->cylinderCell.manager = &cylinderCellList;
@@ -68,33 +121,76 @@ public:
             c->triangleCell.manager = &triangleCellList;
             edgeCellList.addHead(c, c->edgeCell);
             c->edgeCell.manager = &edgeCellList;
+            vertexCellList.addHead(c, c->vertexCell);
+            c->vertexCell.manager = &vertexCellList;
+        }
+    }
+
+    ~CompartmentGrid() {
+        for(auto& C : compartmentList) {
+            C->clearReactions();
         }
     }
     
     /// Get compartments that this grid holds
-    vector<Compartment*> getCompartments() {
-        
-        vector<Compartment*> compartments;
-        
-        for (auto &c : children())
-            compartments.push_back((Compartment*)c.get());
-        
-        return compartments;
+    const auto& getCompartments() const {
+        return compartmentList;
     }
     
-    /// Get a compartment at certain index
-    Compartment* getCompartment(int index) {
+    // Get a compartment at certain index, index3 or coordinate.
+    Compartment& getCompartment(Index index) const {
         
-        return (Compartment*)(children()[index].get());
+        return *compartmentList[index];
     }
-    
+    Compartment& getCompartment(const std::array<Index, 3>& index3) const {
+        return getCompartment(getCompartmentIndex(index3));
+    }
+    Compartment& getCompartment(Index ix, Index iy, Index iz) const {
+        return getCompartment(getCompartmentIndex(ix, iy, iz));
+    }
+    // Find the compartment with a certain coordinate.
+    Compartment& getCompartment(const Vec<3, floatingpoint>& coord) const {
+        return getCompartment(getCompartmentIndex(coord));
+    }
+
+    // Find the compartment 1D index with 3D index.
+    // Note:
+    // - The smaller index is the fastest changing one (fortran ordering).
+    // - The index is not checked for out of bounds.
+    Index getCompartmentIndex(Index ix, Index iy, Index iz) const {
+        return ix + shape[0] * (iy + shape[1] * iz);
+    }
+    Index getCompartmentIndex(const std::array<Index, 3>& index3) const {
+        return getCompartmentIndex(index3[0], index3[1], index3[2]);
+    }
+
+    // Find the compartment 3D index at a certain coordinate.
+    std::array<Index, 3> getCompartmentIndex3(const Vec<3, floatingpoint>& coord) const {
+        const auto i = static_cast<Index>(std::floor(coord[0] / compartmentLengths[0]));
+        const auto j = static_cast<Index>(std::floor(coord[1] / compartmentLengths[1]));
+        const auto k = static_cast<Index>(std::floor(coord[2] / compartmentLengths[2]));
+        if(
+            i < 0 || i >= shape[0] ||
+            j < 0 || j >= shape[1] ||
+            k < 0 || k >= shape[2]
+        ) {
+            throw std::runtime_error("Coordinate out of range of the grid.");
+        }
+        return {i, j, k};
+    }
+
+    // Find the compartment flat index at a certain coordinate.
+    Index getCompartmentIndex(const Vec<3, floatingpoint>& coord) const {
+        return getCompartmentIndex(getCompartmentIndex3(coord));
+    }
+
     /// Set all compartments as active. Used at initialization
-    void setAllAsActive() {
-        for (auto C : getCompartments()) C->setAsActive();
+    void setAllAsActive() const {
+        for (auto& c : getCompartments()) c->setAsActive();
     }
     
     /// Get name of this compartment grid
-    virtual string getFullName() const {return string("CompartmentGrid");};
+    std::string getFullName() const {return string("CompartmentGrid");};
     
     /// Get the protocompartment from this grid, in order to configure and then initialize
     Compartment& getProtoCompartment() {return _prototype_compartment;}
@@ -102,32 +198,35 @@ public:
     
     /// Add reactions to all compartments in the grid
     /// @param - chem, a ChemSim object that controls the reaction algorithm
-    virtual void addChemSimReactions(ChemSim* chem);
-    
+    void addChemSimReactions(medyan::ChemSim* chem);
+
     /// Print properties of this grid
-    virtual void printSelf()const {
+    void printSelf() const {
         cout << getFullName() << endl;
-        cout << "Number of Compartment objects: " << numberOfChildren() << endl;
-        for(auto &c : children())
+        cout << "Number of Compartment objects: " << compartmentList.size() << endl;
+        for(auto &c : compartmentList)
             c->printSelf();
     }
-    
+
+    const auto& getSpeciesBulk() const {
+        return _bulkSpecies;
+    }
     /// Add a bulk species to this grid
     template<typename ...Args>
-    SpeciesBulk* addSpeciesBulk (Args&& ...args) {
-        _bulkSpecies.addSpecies<SpeciesBulk>(forward<Args>(args)...);
-        return (SpeciesBulk*)(_bulkSpecies.findSpeciesByIndex(_bulkSpecies.size() - 1));
+    Species* addSpeciesBulk (Args&& ...args) {
+        _bulkSpecies.addSpecies<Species>(forward<Args>(args)...);
+        return _bulkSpecies.findSpeciesByIndex(_bulkSpecies.size() - 1);
     }
     
     /// Remove bulk species
     void removeSpeciesBulk(const string& name) {_bulkSpecies.removeSpecies(name);}
     
     /// Bulk species finder functions
-    SpeciesBulk* findSpeciesBulkByName(const string& name) {
-        return (SpeciesBulk*)(_bulkSpecies.findSpeciesByName(name));
+    Species* findSpeciesBulkByName(const string& name) const {
+        return _bulkSpecies.findSpeciesByName(name);
     }
-    SpeciesBulk* findSpeciesBulkByMolecule(int molecule) {
-        return (SpeciesBulk*)(_bulkSpecies.findSpeciesByMolecule(molecule));
+    Species* findSpeciesBulkByMolecule(int molecule) const {
+        return _bulkSpecies.findSpeciesByMolecule(molecule);
     }
     
     /// Add a bulk reaction to this compartment grid
@@ -135,7 +234,6 @@ public:
     ReactionBase* addBulkReaction (Args&& ...args)
     {
         ReactionBase *r = _bulkReactions.addReaction<M,N>(forward<Args>(args)...);
-        r->setParent(this);
         return r;
     }
     
@@ -144,40 +242,58 @@ public:
     template<template <unsigned short M, unsigned short N> class RXN, unsigned short M, unsigned short N>
     ReactionBase* addBulk(initializer_list<Species*> species, float rate) {
         ReactionBase *r = _bulkReactions.add<RXN,M,N>(species,rate);
-        r->setParent(this);
         return r;
     }
     
     /// Add a unique bulk reaction pointer to this compartment
     ReactionBase* addBulkReactionUnique (unique_ptr<ReactionBase> &&reaction) {
         ReactionBase *r = _bulkReactions.addReactionUnique(move(reaction));
-        r->setParent(this);
         return r;
     }
     
     /// Remove all bulk reactions that have a given species
     /// @param s - species whose reactions should be removed
-    virtual void removeBulkReactions (Species* s) {_bulkReactions.removeReactions(s);}
+    void removeBulkReactions (Species* s) {_bulkReactions.removeReactions(s);}
 
     /// Remove a bulk reaction
-    virtual void removeBulkReaction(ReactionBase *r) {_bulkReactions.removeReaction(r);}
+    void removeBulkReaction(ReactionBase *r) {_bulkReactions.removeReaction(r);}
     
     
     /// Count the number of diffusing species with a given name
     species_copy_t countDiffusingSpecies(const string& name);
     /// Count the number of bulk species with a given name
     species_copy_t  countBulkSpecies(const string& name);
-    
-    ///GetType implementation just returns zero (no CompartmentGrid types yet)
-    virtual int getType() {return 0;}
-    
-    
-    ///This function gets all diffusing motor species and creates a virtual position within
-    ///the simulation volume (dependent on the compartment). This is used for analyzing motor
-    ///gradients when species can either be bound or unbound.
-    ///@return - a tuple of the motor ID, the type, and two coordinates defining its end positions
-    vector<tuple<int, int, vector<floatingpoint>, vector<floatingpoint>>> getDiffusingMotors();
-    
+
+    //----------------------------------
+    // Auxiliary generators.
+    //----------------------------------
+
+    // Get random coordinates in a given compartment.
+    auto getRandomCoordinatesIn(const Compartment& c) const {
+        auto& cc = c.coordinates();
+        return Vec<3, floatingpoint> {
+            cc[0] + compartmentLengths[0] * Rand::randfloatingpoint(-1,1) / 2,
+            cc[1] + compartmentLengths[1] * Rand::randfloatingpoint(-1,1) / 2,
+            cc[2] + compartmentLengths[2] * Rand::randfloatingpoint(-1,1) / 2,
+        };
+    }
+    auto getRandomCenterCoordinatesIn(const Compartment& c) const {
+        return getRandomCoordinatesIn(c);
+    }
+
+    // Get random coordinates in this grid.
+    auto getRandomCoordinates() const {
+        return Vec<3, floatingpoint> {
+            Rand::randfloatingpoint(fracGridSpan[0][0], fracGridSpan[1][0]) * gridLengths[0],
+            Rand::randfloatingpoint(fracGridSpan[0][1], fracGridSpan[1][1]) * gridLengths[1],
+            Rand::randfloatingpoint(fracGridSpan[0][2], fracGridSpan[1][2]) * gridLengths[2],
+        };
+    }
+    auto getRandomCenterCoordinates() const {
+        return getRandomCoordinates();
+    }
 };
+
+} // namespace medyan
 
 #endif

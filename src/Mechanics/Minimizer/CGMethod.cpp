@@ -11,7 +11,7 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "CGMethod.h"
+#include "Mechanics/Minimizer/CGMethod.hpp"
 
 #include <algorithm> // max
 
@@ -19,7 +19,6 @@
 
 #include "CGMethodCUDA.h"
 #include "MathFunctions.h"
-#include "Structure/Bead.h"
 #ifdef CUDAACCL
 #ifdef __CUDACC__
 #define CUDA_HOSTDEV __host__ __device__
@@ -36,16 +35,13 @@
 #include <vector>
 #include <cmath>
 #include <ctime>
-#include "Bead.h"
-#include <ctime>
 #include <cstdlib>
 #include "cross_check.h"
-//
-long CGMethod::N = 0;
 
-void CGMethod::calcCoordLineSearch(floatingpoint d) {
-    const auto num = coord.size();
-    for(size_t i = 0; i < num; ++i)
+namespace medyan {
+
+void CGMethod::calcCoordLineSearch(const std::vector<floatingpoint>& coord, floatingpoint d) {
+    for(size_t i = 0; i < numDof; ++i)
         coordLineSearch[i] = coord[i] + d * searchDir[i];
 }
 
@@ -252,31 +248,6 @@ void CGMethod::CUDAgetPolakvars(cudaStream_t streamcalc, floatingpoint* gpu_GRAD
 //    state[1] = false;
     if(cminstate[0] == true) {
 
-//        maxFCUDA << < 1, 1, 0, streamcalc >> > (CUDAcommon::getCUDAvars().gpu_forceAux, gpu_nint, gpu_fmax);
-//        maxFCUDAred<<<1,3, 3*sizeof(floatingpoint), streamcalc>>>(CUDAcommon::getCUDAvars().gpu_forceAux, gpu_nint, gpu_fmax);
-//        cudaStreamSynchronize(streamcalc);
-
-        //@{ V2
-//        allFADotFCUDA<<<blocksnthreads[0], blocksnthreads[1],0,streamcalc>>>(CUDAcommon::getCUDAvars().gpu_forceAux,
-//                CUDAcommon::getCUDAvars().gpu_forceAux ,gpu_maxF, gpu_nint);
-//        CUDAcommon::handleerror(cudaGetLastError(), "allFADotFACUDA", "CGMethod.cu");
-//        maxFCUDAredv2<<<1,512,512*sizeof(floatingpoint), streamcalc>>>(gpu_maxF, gpu_nint,
-//                gpu_fmax);
-        //@}
-        //Test
-//        CUDAcommon::handleerror(cudaDeviceSynchronize());
-//        floatingpoint maxFv1[1];
-//        cudaMemcpy(maxFv1, gpu_fmax,  sizeof(floatingpoint), cudaMemcpyDeviceToHost);
-//        std::cout<<"v1 maxF "<<maxFv1[0]<<endl;
-//        floatingpoint *gpu_fmax2;
-//        CUDAcommon::handleerror(cudaMalloc((void **)&gpu_fmax2, sizeof(floatingpoint)));
-/*#ifdef CUDATIMETRACK
-        cudaStream_t  streamcalc2;
-        cudaStreamCreate(&streamcalc2);
-        streamcalc = streamcalc2;
-        chrono::high_resolution_clock::time_point tbegin, tend;
-        tbegin = chrono::high_resolution_clock::now();
-#endif*/
         //@{ V3
         //TODO combine with FADOTFA calculation by making it write it to gpu_maxF before
         // adding.
@@ -289,48 +260,7 @@ void CGMethod::CUDAgetPolakvars(cudaStream_t streamcalc, floatingpoint* gpu_GRAD
         CUDAcommon::handleerror(cudaGetLastError(), "maxFCUDA", "CGMethod.cu");
         getminimizestateCUDA << < 1, 1, 0, streamcalc >> > (gpu_fmax, gpu_GRADTOL, gminstatein, gminstateout);
         CUDAcommon::handleerror(cudaGetLastError(), "getminimizestateCUDA", "CGMethod.cu");
-        //@}
-/*#ifdef CUDATIMETRACK
-        cudaStreamSynchronize(streamcalc);
-        tend = chrono::high_resolution_clock::now();
-        chrono::duration<floatingpoint> elapsed_runs1(tend - tbegin);
-        std::cout<<"CUDA maxF "<<elapsed_runs1.count()<<endl;
-#endif
-#ifdef CUDATIMETRACK
-        tbegin = chrono::high_resolution_clock::now();
-#endif
-        maxF();
-        auto x = maxF()>maxF();
-#ifdef CUDATIMETRACK
-        cudaStreamSynchronize(streamcalc);
-        tend = chrono::high_resolution_clock::now();
-        chrono::duration<floatingpoint> elapsed_runs2(tend - tbegin);
-        std::cout<<"SERL maxF "<<elapsed_runs2.count()<<endl;
-#endif*/
 
-
-//        CUDAcommon::handleerror(cudaDeviceSynchronize());
-//        cudaMemcpy(maxFv1, gpu_fmax2,  sizeof(floatingpoint), cudaMemcpyDeviceToHost);
-//        std::cout<<"v2 maxF "<<maxFv1[0]<<endl;
-//        cudaFree(gpu_fmax2);
-        //Test ends
-
-//                cout<<"MaxF algorithm is not accurate. Redo algorithm. Exiting"<<endl;
-//                exit(EXIT_FAILURE);
-
-//        cudaStreamSynchronize(streamcalc);
-//        CUDAcommon::handleerror(cudaDeviceSynchronize());
-//        std::cout<<"======"<<endl;
-/*        CUDAcommon::handleerror(cudaGetLastError(), "maxFCUDA", "CGMethod.cu");
-        getminimizestateCUDA << < 1, 1, 0, streamcalc >> > (gpu_fmax, gpu_GRADTOL, gminstatein, gminstateout);
-        CUDAcommon::handleerror(cudaGetLastError(), "getminimizestateCUDA", "CGMethod.cu");*/
-//        CUDAcommon::handleerror(cudaStreamSynchronize(streamcalc));
-    }
-//    if(calc_safestate){
-//        CUDAallFDotFA(streamcalc);
-//        getsafestateCUDA<<<1,1,0,streamcalc>>>(gpu_FDotFA, gpu_FDotF, gpu_FADotFA, gsafestateout);
-//        CUDAcommon::handleerror(cudaGetLastError(), "getsafestateCUDA", "CGMethod.cu");
-//    }
     CUDAcommon::handleerror(cudaGetLastError(),"CUDAgetPolakvars", "CGMethod.cu");
 }
 
@@ -402,7 +332,7 @@ double CGMethod::forceDotForce() const {
 
 double CGMethod::forceDotForcePrev() const {
     double res = 0.0;
-    for(std::size_t i = 0; i < force.size(); ++i) {
+    for(std::size_t i = 0; i < numDof; ++i) {
         res += force[i] * forcePrev[i];
     }
     return res;
@@ -410,111 +340,34 @@ double CGMethod::forceDotForcePrev() const {
 
 double CGMethod::searchDirDotForce() const {
     double res = 0.0;
-    for(std::size_t i = 0; i < force.size(); ++i) {
+    for(std::size_t i = 0; i < numDof; ++i) {
         res += searchDir[i] * force[i];
     }
     return res;
 }
 
-floatingpoint CGMethod::maxF() const {
-    floatingpoint magMax = 0.0;
-    for(auto x : force) {
-        magMax = std::max(magMax, std::abs(x));
-    }
 
-	if(!std::isfinite(magMax)) {
-		LOG(ERROR)<<"maxF is infinity. Check parameters. Exiting."<<endl;
-		throw std::logic_error("maxF error");
-	}
-
-	return magMax;
-}
-
-Bead* CGMethod::maxBead() {
-
-    floatingpoint maxF = 0.0;
-    floatingpoint currentF;
-    std::size_t index = 0;
-#ifdef SERIAL
-    const auto numBeads = Bead::numBeads();
-    for (size_t i = 0; i < numBeads; ++i) {
-        currentF = mathfunc::magnitude(Bead::getBeads()[i]->force);
-        if(currentF > maxF) {
-            index = i;
-            maxF = currentF;
-        }
-    }
-#endif
-#ifdef CUDAACCL
-    floatingpoint F_i[N];
-    floatingpoint gmaxF = 0.0;
-    CUDAcommon::handleerror(cudaDeviceSynchronize());
-    CUDAcommon::handleerror(cudaMemcpy(F_i, CUDAcommon::getCUDAvars().gpu_forceAux, N *
-                                                                                 sizeof(floatingpoint), cudaMemcpyDeviceToHost));
-    floatingpoint gcurrentF;
-//    long gindex = 0;
-
-    for (int i = 0; i < N; i++) {
-
-        gcurrentF = F_i[i] * F_i[i];
-        if(gcurrentF > gmaxF) {
-            index = (i - i%3)/3;
-            gmaxF = gcurrentF;
-//            std::cout<<gcurrentF<<" "<<forceAux[i] * forceAux[i]<<endl;
-        }
-    }
-//    if(gindex!=index)
-//        std::cout<<N<<endl;
-//        std::cout<<"CPU and GPU codes do not point to same bead with maxF."<<endl;
-#endif
-
-    return Bead::getBeads()[index];
-}
-
-void CGMethod::moveAlongSearchDir(floatingpoint d)
+void CGMethod::moveAlongSearchDir(std::vector<floatingpoint>& coord, floatingpoint d)
 {
-    for(std::size_t i = 0; i < coord.size(); ++i)
+    for(std::size_t i = 0; i < numDof; ++i)
         coord[i] += d * searchDir[i];
 }
 
 void CGMethod::shiftSearchDir(double d)
 {
-    for(std::size_t i = 0; i < coord.size(); ++i)
+    for(std::size_t i = 0; i < numDof; ++i)
         searchDir[i] = force[i] + d * searchDir[i];
 }
 
-void CGMethod::printForces()
-{
-    // This function is DEPRECATED
+void CGMethod::startMinimization() {
 
-    cout << "Print Forces" << endl;
-    for(auto b: Bead::getBeads()) {
+    // Reset backup coordinates with minimum Energy
+    coordMinE.clear();
+    minimumE = std::numeric_limits<floatingpoint>::infinity();
 
-        for (int i = 0; i<3; i++)
-            cout << b->coordinate()[i] << "  "<<
-                 b->force[i] <<endl;
-    }
-    cout << "End of Print Forces" << endl;
-}
-
-void CGMethod::startMinimization(floatingpoint gradTol) {
-
-#ifdef CUDATIMETRACK
-    chrono::high_resolution_clock::time_point tbegin, tend;
-    tbegin = chrono::high_resolution_clock::now();
-#endif
 	long Ncyl = Cylinder::getCylinders().size();
 
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_runst(tend - tbegin);
-    CUDAcommon::cudatime.Tstartmin = elapsed_runst.count();
-    std::cout<<"Start conv to vec time taken (s) "<<elapsed_runst.count()<<endl;
-#endif
 #ifdef CUDAACCL
-#ifdef CUDATIMETRACK
-    tbegin = chrono::high_resolution_clock::now();
-#endif
     //Start stream
     if(stream_startmin == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
         CUDAcommon::handleerror(cudaStreamCreate(&stream_startmin));
@@ -664,103 +517,11 @@ void CGMethod::startMinimization(floatingpoint gradTol) {
     CUDAcommon::handleerror(cudaStreamSynchronize(stream_startmin),"CGMethod.cu",
                             "startMinimization");
 
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-    CUDAcommon::cudatime.Tstartmin = elapsed_run.count();
-    std::cout<<"start min time taken (s) "<<elapsed_run.count()<<endl;
-#endif
-
-#ifdef CUDATIMETRACK
-    CUDAcommon::cudatime.Tlambdap.clear();
-    CUDAcommon::cudatime.Tlambdapcount.clear();
-    CUDAcommon::cudatime.Tlambdap.push_back(0);
-    CUDAcommon::cudatime.Tlambdap.push_back(0);
-    CUDAcommon::cudatime.Tlambdap.push_back(0);
-    CUDAcommon::cudatime.Tlambdapcount.push_back(0);
-    CUDAcommon::cudatime.Tlambdapcount.push_back(0);
-    CUDAcommon::cudatime.Tlambdapcount.push_back(0);
-    //
-    CUDAcommon::serltime.Tlambdap.clear();
-    CUDAcommon::serltime.Tlambdapcount.clear();
-    CUDAcommon::serltime.Tlambdap.push_back(0);
-    CUDAcommon::serltime.Tlambdap.push_back(0);
-    CUDAcommon::serltime.Tlambdap.push_back(0);
-    CUDAcommon::serltime.Tlambdapcount.push_back(0);
-    CUDAcommon::serltime.Tlambdapcount.push_back(0);
-    CUDAcommon::serltime.Tlambdapcount.push_back(0);
-#endif
-    //@}
-    //addvectorred2@{
-
-//    int blocks, threads;
-//    if(M > THREADSPERBLOCK){
-//        if(M > maxthreads) {
-//            blocks = 8;
-//            threads = THREADSPERBLOCK;
-//        }
-//        else if(M > THREADSPERBLOCK){
-//            blocks = M /(4 * THREADSPERBLOCK) +1;
-//            threads = THREADSPERBLOCK;
-//        }
-//    }
-//    else
-//    { blocks = 1; threads = M/4;}
-//    std::cout<<blocks<<" "<<threads<<" "<<M<<" "<<N/3<<" "<<maxthreads<<" "<<THREADSPERBLOCK<<endl;
-//    bntaddvector.clear();
-//    bntaddvector.push_back(blocks);
-//    bntaddvector.push_back(threads);
-//    CUDAcommon::handleerror(cudaMalloc((void **) &gSum, sizeof(floatingpoint)));
-//    CUDAcommon::handleerror(cudaMalloc((void **) &gSum2, sizeof(floatingpoint)));
-    //@}
-//    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_g, N/3 * sizeof(floatingpoint)));
-
-    //Memory alloted
-    //@{
-//    size_t allocmem = 0;
-//    allocmem += (4*N + 9 + M)*sizeof(floatingpoint) + 6 * sizeof(bool) + 6 * sizeof(int) + 200 * sizeof(char);
-//    auto c = CUDAcommon::getCUDAvars();
-//    c.memincuda += allocmem;
-//    CUDAcommon::cudavars = c;
-//    std::cout<<"Total allocated memory KB"<<c.memincuda/1024<<endl;
-//    std::cout<<"Memory allocated "<< allocmem/1024<<"Memory freed 0"<<endl;
-    //@}
-
-
-//    cvars.gpu_globalMem = prop.totalGlobalMem;
-//    cvars.gpu_sharedMem = prop.sharedMemPerBlock;
-//    floatingpoint a;
-//    std::cout<<cvars.gpu_globalMem<<" "<<cvars.gpu_sharedMem<<" "<<sizeof(a)<<endl;
-//
-//    floatingpoint ccoord[N];
-//    cudaMemcpy(ccoord, gpu_coord, N*sizeof(floatingpoint), cudaMemcpyDeviceToHost);
-//    for(auto i=0;i<N;i++)
-//        std::cout<<ccoord[i]<<" "<<coord[i]<<endl;
-
-//    vector<floatingpoint> c2;c2.push_back(273.14);c2.push_back(273.14);
-//    floatingpoint c2[2];
-//    c2[0]=10.234;c2[1]=20.234;
-//    floatingpoint *gpu_coord2;
-//    cudaMalloc((void **) &gpu_coord2, 2*sizeof(floatingpoint));
-//    cudaMemcpy(gpu_coord2, c2, 2*sizeof(floatingpoint), cudaMemcpyHostToDevice);
-//
-//    floatingpoint cc[2];
-//    cudaMemcpy(cc, gpu_coord2, 2*sizeof(floatingpoint), cudaMemcpyDeviceToHost);
-//    std::cout<<cc[0]<<" "<<cc[1]<<endl;
-//    cudaFree(gpu_coord2);
-//    cudaFree(gpu_coord);
 #endif
 }
 
 void CGMethod::endMinimization() {
-    // Reset backup coordinates with minimum Energy
-    coordMinE.clear();
-    minimumE = 1e10;
 
-#ifdef CUDATIMETRACK
-    chrono::high_resolution_clock::time_point tbegin, tend;
-    tbegin = chrono::high_resolution_clock::now();
-#endif
 #ifdef CUDAACCL
 
     CUDAcommon::handleerror(cudaMemcpy(coord, CUDAcommon::getCUDAvars().gpu_coord, N *
@@ -772,53 +533,11 @@ void CGMethod::endMinimization() {
 
 #endif
 
-//    deallocate();
-
-
-//    CUDAcommon::getCUDAvars().gpu_coord = NULL;
-//    CUDAcommon::getCUDAvars().gpu_force = NULL;
-//    CUDAcommon::getCUDAvars().gpu_forceAux = NULL;
-//    CUDAcommon::getCUDAvars().gpu_lambda = NULL;
-
-    //Memory alloted
-    //@{
-//    size_t allocmem = 0;
-//    allocmem += (4*N + 9 +  bntaddvector.at(0))*sizeof(floatingpoint) + 6 * sizeof(bool) + 6 * sizeof(int) + 200 * sizeof(char);
-//    auto c = CUDAcommon::getCUDAvars();
-//    c.memincuda -= allocmem;
-//    CUDAcommon::cudavars = c;
-//    std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
-//    std::cout<<"Memory allocated 0 . Memory freed "<<allocmem/1024<<endl;
-    //@}
-
-//    size_t free, total;
-//    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
-//    fprintf(stdout,"\t### After Min Available VRAM : %g Mo/ %g Mo(total)\n\n",
-//            free/1e6, total/1e6);
-//
-//    cudaFree(0);
-//
-//    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
-//    fprintf(stdout,"\t### Available VRAM : %g Mo/ %g Mo(total)\n\n",
-//            free/1e6, total/1e6);
-
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-    CUDAcommon::cudatime.Tstartmin = elapsed_run.count();
-    std::cout<<"end min time taken (s) "<<elapsed_run.count()<<endl;
-#endif
-
 }
 
 #ifdef CUDAACCL
 floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, floatingpoint MAXDIST,
                                         floatingpoint LAMBDAMAX, bool *gpu_safestate) {
-#ifdef CUDATIMETRACK
-    chrono::high_resolution_clock::time_point tbegin, tend;
-    CUDAcommon::cudatime.Tlambdapcount.at(0)++;
-    tbegin = chrono::high_resolution_clock::now();
-#endif
     //@{ Lambda phase 1
     floatingpoint lambda;
     h_stop[0] = false;
@@ -863,11 +582,6 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
     //initialize lambda search
     CUDAinitializeLambda(*sp1, g_s1, g_s2, gpu_safestate, gpu_state);
     //@} Lambda phase 1
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-    CUDAcommon::cudatime.Tlambdap.at(0) += elapsed_run.count();
-#endif
     //Calculate current energy.
     floatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
     //wait for energies to be calculated
@@ -885,9 +599,6 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
     std::cout<<endl;
 #endif
 
-#ifdef CUDATIMETRACK
-    tbegin = chrono::high_resolution_clock::now();
-#endif
     //@{ Lambda phase 1b
     cudaStreamSynchronize(*sp1);
     setcurrentenergy<<<1,1,0,*sp1>>>(CUDAcommon::getCUDAvars().gpu_energy, g_currentenergy, CUDAcommon::getCUDAvars()
@@ -904,17 +615,8 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
     cconvergencecheck = h_stop;
     int iter = 0;
     //@} Lambda phase 1b
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run1b(tend - tbegin);
-    CUDAcommon::cudatime.Tlambdap.at(0) += elapsed_run1b.count();
-#endif
 
     while(!(cconvergencecheck[0])) {
-#ifdef CUDATIMETRACK
-        CUDAcommon::cudatime.Tlambdapcount.at(1)++;
-        tbegin = chrono::high_resolution_clock::now();
-#endif
         //@{ Lambda phase 2
         iter++;
         CUDAcommon::handleerror(cudaStreamWaitEvent(*sp2, *ep1, 0));
@@ -938,11 +640,6 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
 //        cvars.event = ep1;
         CUDAcommon::cudavars = cvars;
         //@} Lambda phase 2
-#ifdef CUDATIMETRACK
-        tend= chrono::high_resolution_clock::now();
-        chrono::duration<floatingpoint> elapsed_run2(tend - tbegin);
-        CUDAcommon::cudatime.Tlambdap.at(1) += elapsed_run2.count();
-#endif
 
 #ifdef SERIAL_CUDACROSSCHECK
         floatingpoint cuda_lambda[1];
@@ -973,9 +670,6 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
                 ""<<energyLambda<<endl;
         std::cout<<endl;
 #endif
-#ifdef CUDATIMETRACK
-        tbegin = chrono::high_resolution_clock::now();
-#endif
         //@{ Lambda phase 2
         if(!(cconvergencecheck[0])){
             CUDAcommon::handleerror(cudaStreamSynchronize(stream_bt));
@@ -988,35 +682,15 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
             }
         }
         //@Lambda phase 2
-#ifdef CUDATIMETRACK
-        tend= chrono::high_resolution_clock::now();
-        chrono::duration<floatingpoint> elapsed_run2b(tend - tbegin);
-        CUDAcommon::cudatime.Tlambdap.at(1) += elapsed_run2b.count();
-#endif
     }
     if(!(CUDAcommon::getCUDAvars().conservestreams))
         CUDAcommon::handleerror(cudaFree(gpu_params), "CudaFree", "CGMethod.cu");
-#ifdef CUDATIMETRACK
-    CUDAcommon::cudatime.Tlambdapcount.at(2)++;
-    tbegin = chrono::high_resolution_clock::now();
-#endif
-    //@{ Lambda phase 3
-    //commented on 18 Sep 2018.
-//    correctlambdaCUDA<<<1,1,0, stream_bt>>>(CUDAcommon::getCUDAvars().gpu_lambda, gpu_state, gpu_params);
-
-/*    correctlambdaCUDA<<<1,1,0, *sp1>>>(CUDAcommon::getCUDAvars().gpu_lambda, gpu_state,
-            gpu_params);*/
 
     CUDAcommon::handleerror(cudaStreamSynchronize(stream_bt));
     CUDAcommon::handleerror(cudaStreamSynchronize(s1));
     CUDAcommon::handleerror(cudaStreamSynchronize(s2));
     CUDAcommon::handleerror(cudaStreamSynchronize(s3));
     //@} Lambda phase 3
-#ifdef CUDATIMETRACK
-    tend= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_run3(tend - tbegin);
-    CUDAcommon::cudatime.Tlambdap.at(2) += elapsed_run3.count();
-#endif
     if(!(CUDAcommon::getCUDAvars().conservestreams))  {
         CUDAcommon::handleerror(cudaStreamDestroy(s1));
         CUDAcommon::handleerror(cudaStreamDestroy(s2));
@@ -1033,807 +707,9 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
 }
 #endif // CUDAACCL
 
-floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
-                                               floatingpoint maxForce, floatingpoint LAMBDAMAX,
-                                                floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
-                                                 bool *gpu_safestate, bool *M_ETolstate) {
 
-    //@{ Lambda phase 1
-    floatingpoint lambda;
-    sconvergencecheck = true;
-#ifdef SERIAL //SERIAL
-    sconvergencecheck = false;
-    cconvergencecheck = new bool[1];
-    cconvergencecheck[0] = true;
-#endif
-#ifdef SERIAL
-    //return zero if no forces
-    if(maxForce == 0.0) {
-        lambda = 0.0;
-#ifdef DETAILEDOUTPUT_LAMBDA
-        std::cout<<"initial_lambda_serial "<<lambda<<endl;
-#endif
-        return lambda;
-    }
 
-    //calculate first lambda
-	floatingpoint ravg = sum/(maxprevlambdacount);
-    if(runningaveragestatus)
-	    lambda = min<floatingpoint>(min<floatingpoint >(LAMBDAMAX, MAXDIST / maxForce), ravg);
-    else
-	    lambda = min(LAMBDAMAX, MAXDIST / maxForce);
-
-    //@} Lambda phase 1
-#ifdef DETAILEDOUTPUT_LAMBDA
-    std::cout<<"SL lambdamax "<<LAMBDAMAX<<" serial_lambda "<<lambda<<" fmax "<<maxForce<<" state "<<sconvergencecheck<<endl;
-#endif
-#endif
-	tbegin = chrono::high_resolution_clock::now();
-    floatingpoint currentEnergy = FFM.computeEnergy(coord.data());
-	CUDAcommon::tmin.computeenerycallszero++;
-	tend = chrono::high_resolution_clock::now();
-	chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
-	CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
-	CUDAcommon::tmin.computeenergyzero+= elapsed_energy.count();
-
-	#ifdef TRACKDIDNOTMINIMIZE
-	SysParams::Mininimization().TotalE.push_back(currentEnergy);
-	#endif
-
-    if(ForceFieldManager::_culpritForceField != nullptr){
-        endMinimization();
-        FFM.printculprit();
-    }
-#ifdef DETAILEDOUTPUT_ENERGY
-    CUDAcommon::handleerror(cudaDeviceSynchronize());
-    floatingpoint cuda_energy[1];
-    CUDAcommon::handleerror(cudaMemcpy(cuda_energy, CUDAcommon::cudavars.gpu_energy,  sizeof(floatingpoint),
-                                       cudaMemcpyDeviceToHost));
-    std::cout<<"Total Energy CE pN.nm CUDA "<<cuda_energy[0]<<" SERL "<<currentEnergy<<endl;
-    std::cout<<endl;
-#endif
-	floatingpoint energyChange = (floatingpoint)0.0;
-	floatingpoint energyLambda = (floatingpoint)0.0;
-    int iter = 0;
-    while(!(cconvergencecheck[0])||!(sconvergencecheck)) {
-//    	cout<<"starting with lambda "<<lambda<<endl;
-        iter++;
-        //TODO let each forcefield calculate energy IFF conv state = false. That will help
-        // them avoid unnecessary iterations.
-        //let each forcefield also add energies to two different energy variables.
-
-        tbegin = chrono::high_resolution_clock::now();
-	    calcCoordLineSearch(lambda);
-        energyLambda = FFM.computeEnergy<true>(coordLineSearch.data());
-	    CUDAcommon::tmin.computeenerycallsnonzero++;
-	    tend = chrono::high_resolution_clock::now();
-	    chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
-	    CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
-	    CUDAcommon::tmin.computeenergynonzero+= elapsed_energy.count();
-
-#ifdef DETAILEDOUTPUT_ENERGY
-        CUDAcommon::handleerror(cudaDeviceSynchronize());
-        floatingpoint cuda_energy[1];
-        CUDAcommon::handleerror(cudaMemcpy(cuda_energy, CUDAcommon::cudavars.gpu_energy,  sizeof(floatingpoint),
-                                           cudaMemcpyDeviceToHost));
-        std::cout<<"Total Energy EL pN.nm CUDA "<<cuda_energy[0]<<" SERL "
-                ""<<energyLambda<<endl;
-        std::cout<<endl;
-#endif
-
-#ifdef SERIAL
-        //@{ Lambda phase 2
-        if(!(sconvergencecheck)){
-            floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * searchDirDotForce();
-            if(lambda<0 || idealEnergyChange>0) {
-            	sconvergencecheck = true;
-            	lambda=0.0;
-            }
-            energyChange = energyLambda - currentEnergy;
-#ifdef DETAILEDOUTPUT_LAMBDA
-            std::cout<<"BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA"
-                    " "<<searchDirDotForce()<<endl;
-            std::cout<<"SL energyChange "<<energyChange<<" idealEnergyChange "
-                    ""<<idealEnergyChange<<endl;
-#endif
-            //return if ok
-            //Armijo conditon
-            if(energyChange <= idealEnergyChange) {
-                sconvergencecheck = true;}
-            else {
-	            //reduce lambda
-	            lambda *= LAMBDAREDUCE;
-            }
-
-            if(lambda <= 0.0 || lambda <= LAMBDATOL) {
-                sconvergencecheck = true;
-                lambda = 0.0;
-            }
-#ifdef DETAILEDOUTPUT_LAMBDA
-            std::cout<<"SL2 BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA "
-                                                                                <<searchDirDotForce()<<endl;
-            std::cout<<"SL2 energyChange "<<energyChange<<" idealEnergyChange "
-                    ""<<idealEnergyChange
-                     <<" lambda "<<lambda<<" state "<<sconvergencecheck<<endl;
-#endif
-/*            cout<<" lambda "<<lambda<<endl;
-            std::cout<<"SL2 BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" allFDotFA "
-                     <<allFDotFA()<<endl;
-            std::cout<<"SL2 energyChange "<<energyChange<<" idealEnergyChange "
-                                                          ""<<idealEnergyChange
-                     <<" energylambda "<<energyLambda<<" state "<<sconvergencecheck<<endl;*/
-        }
-        //@{ Lambda phase 2
-
-#endif
-    }
-//    std::cout<<"lambda determined in "<<iter<< " iterations. lambda="<<lambda<<endl;
-//synchronize streams
-#ifdef SERIAL
-        delete [] cconvergencecheck;
-#endif
-	    //running average
-        //@{
-	    sum = sum - previouslambdavec[headpos] + lambda;
-        previouslambdavec[headpos] = lambda;
-
-        if(headpos==maxprevlambdacount-1) {
-	        headpos = 0;
-	        floatingpoint temp = Rand::randfloatingpoint(0,1);
-	        if( temp > 1-LAMBDARUNNINGAVERAGEPROBABILITY) {
-		        runningaveragestatus = true;
-//		        cout<<"running lambda turned on "<<endl;
-	        }
-	        else {
-		        runningaveragestatus = false;
-
-//		        cout<<"running lambda turned off "<<endl;
-	        }
-        }
-        else
-        	headpos++;
-
-	    //@}
-	//Set ETolstate to true if the energy change at a nonzero lambda is < ETOTALTOL
-	if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0) {
-		M_ETolstate[0] = true;
-/*		cout<<"Setting value to true "<<lambda<<" energyLambda "<<energyLambda
-		<<" currentEnergy "<<currentEnergy<<" energyChange "<<energyChange<<" "<<2*abs
-		(energyChange)/ (energyLambda+currentEnergy)<<" "<<ETOTALTOL<<endl;*/
-	}
-	if(lambda > 0)
-		TotalEnergy = energyLambda;
-	else
-		TotalEnergy = currentEnergy;
-        return lambda;
-
-}
-
-floatingpoint CGMethod::safeBacktrackingLineSearch(
-    ForceFieldManager& FFM, floatingpoint MAXDIST, floatingpoint maxForce,
-    floatingpoint LAMBDAMAX, bool *gpu_safestate, bool *M_ETolstate) {
-
-    //reset safe mode
-    _safeMode = false;
-    sconvergencecheck = true;
-
-    if(maxForce == 0.0) { return 0.0; }
-
-    //calculate first lambda
-    floatingpoint lambda = std::min(LAMBDAMAX, MAXDIST / maxForce);
-
-//    std::cout<<"safe 0"<<endl;
-#ifdef SERIAL //SERIAL
-    sconvergencecheck = false;
-    cconvergencecheck = new bool[1];
-    cconvergencecheck[0] = true;
-#endif
-//prepare for ping pong optimization
-	tbegin = chrono::high_resolution_clock::now();
-    floatingpoint currentEnergy = FFM.computeEnergy(coord.data());
-	CUDAcommon::tmin.computeenerycallszero++;
-	tend = chrono::high_resolution_clock::now();
-	chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
-	CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
-	CUDAcommon::tmin.computeenergyzero+= elapsed_energy.count();
-
-	#ifdef TRACKDIDNOTMINIMIZE
-	SysParams::Mininimization().TotalE.push_back(currentEnergy);
-	#endif
-
-    if(ForceFieldManager::_culpritForceField != nullptr){
-        endMinimization();
-	    FFM.printculprit();
-    }
-#ifdef DETAILEDOUTPUT_ENERGY
-    CUDAcommon::handleerror(cudaDeviceSynchronize());
-    floatingpoint cuda_energy[1];
-    CUDAcommon::handleerror(cudaMemcpy(cuda_energy, CUDAcommon::cudavars.gpu_energy,  sizeof(floatingpoint),
-                                       cudaMemcpyDeviceToHost));
-    std::cout<<"Total Energy CE pN.nm CUDA "<<cuda_energy[0]<<" SERL "<<currentEnergy<<endl;
-    std::cout<<endl;
-#endif
-	floatingpoint energyChange = (floatingpoint)0.0;
-	floatingpoint energyLambda = (floatingpoint)0.0;
-	int iter =0;
-    //safe backtracking loop
-    while(!(cconvergencecheck[0])||!(sconvergencecheck)) {
-        //new energy when moved by lambda
-        iter++;
-
-	    tbegin = chrono::high_resolution_clock::now();
-	    calcCoordLineSearch(lambda);
-        energyLambda = FFM.computeEnergy<true>(coordLineSearch.data());
-	    CUDAcommon::tmin.computeenerycallsnonzero++;
-	    tend = chrono::high_resolution_clock::now();
-	    chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
-	    CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
-	    CUDAcommon::tmin.computeenergynonzero+= elapsed_energy.count();
-#ifdef DETAILEDOUTPUT_ENERGY
-        CUDAcommon::handleerror(cudaDeviceSynchronize());
-        floatingpoint cuda_energy[1];
-        CUDAcommon::handleerror(cudaMemcpy(cuda_energy, CUDAcommon::cudavars.gpu_energy,  sizeof(floatingpoint),
-                                           cudaMemcpyDeviceToHost));
-        std::cout<<"Total Energy EL pN.nm CUDA "<<cuda_energy[0]<<" SERL "
-                ""<<energyLambda<<endl;
-        std::cout<<endl;
-#endif
-
-#ifdef SERIAL
-        if(!(sconvergencecheck)){
-            energyChange = energyLambda - currentEnergy;
-
-            //return if ok
-            if(energyChange <= 0.0) sconvergencecheck = true;
-            else
-                //reduce lambda
-                lambda *= LAMBDAREDUCE;
-
-            //just shake if we cant find an energy min,
-            //so we dont get stuck
-            if(lambda <= 0.0 || lambda <= LAMBDATOL) {
-                lambda = MAXDIST / maxForce;
-                sconvergencecheck = true;
-            }
-        }
-
-#endif
-    }
-//    std::cout<<"Safe lambda determined in "<<iter<< " iterations. lambda="<<lambda<<endl;
-
-#ifdef SERIAL
-        delete [] cconvergencecheck;
-#endif
-	//Set ETolstate to true if the energy change at a nonzero lambda is < ETOTALTOL
-        if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0) {
-	        M_ETolstate[0] = true;
-/*	        cout<<"Setting value to true "<<lambda<<" energyLambda "<<energyLambda
-	            <<" currentEnergy "<<currentEnergy<<" energyChange "<<energyChange<<" "<<2*abs
-			        (energyChange)/ (energyLambda+currentEnergy)<<" "<<ETOTALTOL<<endl;*/
-        }
-	if(lambda > 0)
-		TotalEnergy = energyLambda;
-	else
-		TotalEnergy = currentEnergy;
-        return lambda;
-
-}
-
-floatingpoint CGMethod::safeBacktrackingLineSearchV2(ForceFieldManager& FFM, floatingpoint MAXDIST,
-                                              floatingpoint maxForce, floatingpoint LAMBDAMAX,
-                                              bool *gpu_safestate, bool *M_ETolstate) {
-
-	//reset safe mode
-	_safeMode = false;
-	//@{ Lambda phase 1
-	floatingpoint lambda;
-	sconvergencecheck = true;
-#ifdef SERIAL //SERIAL
-	sconvergencecheck = false;
-#endif
-#ifdef SERIAL
-	//return zero if no forces
-	if(maxForce == 0.0) {
-		lambda = 0.0;
-#ifdef DETAILEDOUTPUT_LAMBDA
-		std::cout<<"initial_lambda_serial "<<lambda<<endl;
-#endif
-		return lambda;
-	}
-	lambda = min(LAMBDAMAX, MAXDIST / maxForce);
-
-	//@} Lambda phase 1
-#ifdef DETAILEDOUTPUT_LAMBDA
-	std::cout<<"SL lambdamax "<<LAMBDAMAX<<" serial_lambda "<<lambda<<" fmax "<<maxForce<<" state "<<sconvergencecheck<<endl;
-#endif
-#endif
-	tbegin = chrono::high_resolution_clock::now();
-	floatingpoint currentEnergy = FFM.computeEnergy(coord.data());
-	CUDAcommon::tmin.computeenerycallszero++;
-	tend = chrono::high_resolution_clock::now();
-	chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
-	CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
-	CUDAcommon::tmin.computeenergyzero+= elapsed_energy.count();
-
-	#ifdef TRACKDIDNOTMINIMIZE
-	SysParams::Mininimization().TotalE.push_back(currentEnergy);
-	#endif
-
-	if(ForceFieldManager::_culpritForceField != nullptr){
-		endMinimization();
-		FFM.printculprit();
-	}
-#ifdef DETAILEDOUTPUT_ENERGY
-	CUDAcommon::handleerror(cudaDeviceSynchronize());
-    floatingpoint cuda_energy[1];
-    CUDAcommon::handleerror(cudaMemcpy(cuda_energy, CUDAcommon::cudavars.gpu_energy,  sizeof(floatingpoint),
-                                       cudaMemcpyDeviceToHost));
-    std::cout<<"Total Energy CE pN.nm CUDA "<<cuda_energy[0]<<" SERL "<<currentEnergy<<endl;
-    std::cout<<endl;
-#endif
-	floatingpoint energyChange = (floatingpoint)0.0;
-	floatingpoint energyLambda = (floatingpoint)0.0;
-	floatingpoint prevEnergy = (floatingpoint) 0.0;
-	floatingpoint prevLambda = (floatingpoint) 0.0;
-
-	floatingpoint firstLambda = (floatingpoint) 0.0;
-	floatingpoint firstEnergy = (floatingpoint) 0.0;
-	int iter = 0;
-	while(!(sconvergencecheck)) {
-		iter++;
-		tbegin = chrono::high_resolution_clock::now();
-		moveAlongSearchDir(lambda);
-		energyLambda = FFM.computeEnergy<true>(coordLineSearch.data());
-		CUDAcommon::tmin.computeenerycallsnonzero++;
-		tend = chrono::high_resolution_clock::now();
-		chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
-		CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
-		CUDAcommon::tmin.computeenergynonzero+= elapsed_energy.count();
-
-		if(iter==1) {
-			firstEnergy = energyLambda;
-			firstLambda = lambda;
-		}
-
-#ifdef DETAILEDOUTPUT_ENERGY
-		CUDAcommon::handleerror(cudaDeviceSynchronize());
-        floatingpoint cuda_energy[1];
-        CUDAcommon::handleerror(cudaMemcpy(cuda_energy, CUDAcommon::cudavars.gpu_energy,  sizeof(floatingpoint),
-                                           cudaMemcpyDeviceToHost));
-        std::cout<<"Total Energy EL pN.nm CUDA "<<cuda_energy[0]<<" SERL "
-                ""<<energyLambda<<endl;
-        std::cout<<endl;
-#endif
-
-#ifdef SERIAL
-		//@{ Lambda phase 2
-		if(!(sconvergencecheck)){
-			floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * searchDirDotForce();
-			if(idealEnergyChange>0){
-				cout<<"Ideal Energy Change > 0. Exiting."<<endl;
-				exit(EXIT_FAILURE);
-			}
-			energyChange = energyLambda - currentEnergy;
-#ifdef DETAILEDOUTPUT_LAMBDA
-			std::cout<<"BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA"
-                    " "<<searchDirDotForce()<<endl;
-            std::cout<<"SL energyChange "<<energyChange<<" idealEnergyChange "
-                    ""<<idealEnergyChange<<endl;
-#endif
-			//return if ok
-			//Armijo conditon
-			if(energyChange <= idealEnergyChange) {
-				sconvergencecheck = true;}
-			else {
-				prevLambda = lambda;
-				prevEnergy = energyLambda;
-				//reduce lambda
-				lambda *= LAMBDAREDUCE;
-			}
-
-			if(lambda <= 0.0 || lambda <= LAMBDATOL) {
-				sconvergencecheck = true;
-			}
-#ifdef DETAILEDOUTPUT_LAMBDA
-			std::cout<<"SL2 BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA "
-                                                                                <<searchDirDotForce()<<endl;
-            std::cout<<"SL2 energyChange "<<energyChange<<" idealEnergyChange "
-                    ""<<idealEnergyChange
-                     <<" lambda "<<lambda<<" state "<<sconvergencecheck<<endl;
-#endif
-		}
-#endif
-	}
-
-	//Safemode checks
-	if(lambda <= 0.0 || lambda <= LAMBDATOL){
-		if(prevEnergy < currentEnergy)
-			lambda =  prevLambda;
-		else if(firstEnergy > 0 && firstEnergy < currentEnergy)
-			lambda = firstLambda;
-		else
-			lambda = MAXDIST / maxForce;
-
-	}
-	return lambda;
-}
-
-floatingpoint CGMethod::quadraticLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
-                                               floatingpoint maxForce, floatingpoint LAMBDAMAX,
-                                               floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
-                                               bool *gpu_safestate, bool *M_ETolstate) {
-
-	//@{ Lambda phase 1
-	floatingpoint lambda;
-	sconvergencecheck = false;
-	cconvergencecheck = new bool[1];
-	cconvergencecheck[0] = true;
-	//return zero if no forces
-	if(maxForce == 0.0) {
-		lambda = 0.0;
-		return lambda;
-	}
-
-	//calculate initial guess for lambda
-	floatingpoint lambdacap = min(LAMBDAMAX, MAXDIST / maxForce);
-	lambda = lambdacap;
-
-	//@} Lambda phase 1
-	tbegin = chrono::high_resolution_clock::now();
-	floatingpoint currentEnergy = FFM.computeEnergy(coord.data());
-	floatingpoint Energyi_1 = currentEnergy;
-	CUDAcommon::tmin.computeenerycallszero++;
-	tend = chrono::high_resolution_clock::now();
-	chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
-	CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
-	CUDAcommon::tmin.computeenergyzero+= elapsed_energy.count();
-
-	#ifdef TRACKDIDNOTMINIMIZE
-	SysParams::Mininimization().TotalE.push_back(currentEnergy);
-	#endif
-
-	if(ForceFieldManager::_culpritForceField != nullptr){
-		endMinimization();
-		FFM.printculprit();
-	}
-
-	double FDotFA = searchDirDotForce();
-	double FDotFAprev = FDotFA;
-	double FDotFAnext;
-	double Del_FDotFA;
-	FDotFAprev = FDotFA;
-	floatingpoint lambdaprev = 0.0;
-	int iter = 0;
-	floatingpoint energyChange = (floatingpoint)0.0;
-	floatingpoint energyLambda = (floatingpoint)0.0;
-
-	while(!(cconvergencecheck[0])||!(sconvergencecheck)) {
-//		cout<<"starting with lambda "<<lambda<<endl;
-		iter++;
-	// @{ Lambda phase 2
-		if(!(sconvergencecheck)){
-			moveAlongSearchDir(lambda);
-			energyLambda = FFM.computeEnergy<true>(coordLineSearch.data());
-            CUDAcommon::tmin.computeenerycallsnonzero++;
-	//Step1: Calculate Forces & Dot products
-			FFM.computeForces(coordLineSearch.data(), force);
-			FDotFAnext = searchDirDotForce();
-			Del_FDotFA = FDotFAnext - FDotFAprev;
-			floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * FDotFA;
-	//Step3: Calculate Lambdaquad
-			floatingpoint relerr = fabs(1.0-(0.5*(lambda-lambdaprev)*(FDotFAnext+FDotFAprev)
-					+energyLambda) /Energyi_1);
-
-			floatingpoint lambdaquad = lambda - FDotFAprev*(lambda-lambdaprev)/Del_FDotFA;
-
-	//Step 4. Test if the energy given by alphaquad is within the acceptable range
-	//prescribed by Armijo condition on alpha
-			if(relerr <= QUADTOL && lambdaquad > 0 && lambdaquad < lambdacap &&
-			lambdaquad > LAMBDATOL) {
-				tbegin = chrono::high_resolution_clock::now();
-				moveAlongSearchDir(lambdaquad);
-				floatingpoint energyLambdaquad = FFM.computeEnergy<true>(coordLineSearch.data());
-				CUDAcommon::tmin.computeenerycallsnonzero++;
-				tend = chrono::high_resolution_clock::now();
-				chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
-				CUDAcommon::tmin.computeenergy += elapsed_energy.count();
-				CUDAcommon::tmin.computeenergynonzero += elapsed_energy.count();
-
-				energyChange = energyLambdaquad - currentEnergy;
-//				cout << "Ideal " << idealEnergyChange << " quad energy " << energyChange <<endl;
-				//if it satisfies, set lambda to lambdaquad and return.
-				if (energyChange <= idealEnergyChange) {
-					sconvergencecheck = true;
-					lambda = lambdaquad;
-					moveAlongSearchDir(lambda);
-					FFM.computeForces(coordLineSearch.data(), force);
-				}
-				else
-					Energyi_1 = energyLambdaquad;
-			}
-			else{
-				//check if normal backtracking works
-				energyChange = energyLambda - currentEnergy;
-//				cout << "Ideal " << idealEnergyChange << " bt energy " << energyChange << endl;
-				//if it satisfies, set lambda to lambdaquad and return.
-				if (energyChange <= idealEnergyChange) {
-					sconvergencecheck = true;
-				}
-				else
-					Energyi_1 = energyLambda;
-			}
-
-			//if not try again
-			if(!sconvergencecheck) {
-				FDotFAprev = FDotFAnext;
-				lambdaprev = lambda;
-				//reduce lambda
-				lambda *= LAMBDAREDUCE;
-
-			}
-			//If backtracked all the way, exit
-			if(lambda <= 0.0 || lambda <= LAMBDATOL) {
-				sconvergencecheck = true;
-				lambda = 0.0;
-				moveAlongSearchDir(lambda);
-				FFM.computeForces(coordLineSearch.data(), force);
-			}
-		}
-		//@{ Lambda phase 2
-	}
-//synchronize streams
-#ifdef SERIAL
-	delete [] cconvergencecheck;
-#endif
-	//Set ETolstate to true if the energy change at a nonzero lambda is < ETOTALTOL
-	if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0) {
-		M_ETolstate[0] = true;
-/*		cout << "Setting value to true " << lambda << " energyLambda " << energyLambda
-		     << " currentEnergy " << currentEnergy << " energyChange " << energyChange
-		     << " " << 2 * abs
-				(energyChange) / (energyLambda + currentEnergy) << " " << ETOTALTOL << endl;*/
-	}
-	if(lambda > 0)
-		TotalEnergy = energyLambda;
-	else
-		TotalEnergy = currentEnergy;
-	return lambda;
-
-}
-
-floatingpoint CGMethod::quadraticLineSearchV2(ForceFieldManager& FFM, floatingpoint MAXDIST,
-                                            floatingpoint maxForce, floatingpoint LAMBDAMAX,
-                                            floatingpoint LAMBDARUNNINGAVERAGEPROBABILITY,
-                                            bool *gpu_safestate, bool *M_ETolstate) {
-
-	#ifdef SERIAL
-	//@{ Lambda phase 1
-	floatingpoint lambda;
-	sconvergencecheck = false;
-	//return zero if no forces
-	if(maxForce == 0.0) {
-		lambda = 0.0;
-		return lambda;
-	}
-
-	//calculate first lambda
-	lambda = min(LAMBDAMAX, MAXDIST / maxForce);
-
-	//@} Lambda phase 1
-	tbegin = chrono::high_resolution_clock::now();
-	floatingpoint currentEnergy = FFM.computeEnergy(coord.data());
-	CUDAcommon::tmin.computeenerycallszero++;
-	tend = chrono::high_resolution_clock::now();
-	chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
-	CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
-	CUDAcommon::tmin.computeenergyzero+= elapsed_energy.count();
-
-	#ifdef TRACKDIDNOTMINIMIZE
-	SysParams::Mininimization().TotalE.push_back(currentEnergy);
-	#endif
-
-	if(ForceFieldManager::_culpritForceField != nullptr){
-		endMinimization();
-		FFM.printculprit();
-	}
-	floatingpoint energyChange = (floatingpoint)0.0;
-	floatingpoint energyLambda = (floatingpoint)0.0;
-	floatingpoint prevEnergy = (floatingpoint) 0.0;
-	floatingpoint prevLambda = (floatingpoint) 0.0;
-	vector<floatingpoint> lambdavec;
-	vector<floatingpoint> energyvec;
-
-	int iter = 0;
-	while(!(sconvergencecheck)) {
-
-		iter++;
-
-		tbegin = chrono::high_resolution_clock::now();
-		moveAlongSearchDir(lambda);
-		energyLambda = FFM.computeEnergy<true>(coordLineSearch.data());
-		CUDAcommon::tmin.computeenerycallsnonzero++;
-		tend = chrono::high_resolution_clock::now();
-		chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
-		CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
-		CUDAcommon::tmin.computeenergynonzero+= elapsed_energy.count();
-
-		//@{ Lambda phase 2
-		if(!(sconvergencecheck)){
-			floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * searchDirDotForce();
-
-			if(idealEnergyChange>0) {
-				cout<<"Ideal Energy Change is positive. Exiting."<<endl;
-				exit(EXIT_FAILURE);
-			}
-
-			energyChange = energyLambda - currentEnergy;
-
-			//return if ok
-			//Armijo conditon
-			if(energyChange <= idealEnergyChange)
-				sconvergencecheck = true;
-			else {
-				prevLambda = lambda;
-				prevEnergy = energyLambda;
-				//reduce lambda
-				lambda *= LAMBDAREDUCE;
-			}
-
-			if(lambda <= 0.0 || lambda <= LAMBDATOL) {
-				sconvergencecheck = true;
-				lambda = 0.0;
-				lambdavec.push_back(lambda);
-				energyvec.push_back(currentEnergy);
-			}
-			else if(sconvergencecheck){
-				lambdavec.push_back(lambda);
-				energyvec.push_back(energyLambda);
-			}
-			else{
-				lambdavec.push_back(prevLambda);
-				energyvec.push_back(prevEnergy);
-			}
-		}
-	}
-
-	// Try quadratic optimization
-
-	if(lambda > 0.0 && iter > 1 && energyLambda < currentEnergy){
-		bool quadstatus = false;
-		int i = 0;
-		for(i=lambdavec.size()-1; i >=1; i--){
-			if(energyLambda < energyvec[i]){
-				quadstatus = true;
-			}
-		}
-		if(quadstatus) {
-			vector<floatingpoint> quadlambdavec;
-			vector<floatingpoint> quadenergyvec;
-			quadlambdavec.push_back(floatingpoint(0.0));
-			quadlambdavec.push_back(lambda);
-			quadlambdavec.push_back(lambdavec[i]);
-			quadenergyvec.push_back(currentEnergy);
-			quadenergyvec.push_back(energyLambda);
-			quadenergyvec.push_back(energyvec[i]);
-			floatingpoint lambdaquad = quadraticoptimization(FFM,
-			                                                 quadlambdavec, quadenergyvec);
-//			cout <<"Quad "<< lambda << " " << lambdaquad << endl;
-			if(lambdaquad <= 0.0 || lambdaquad <= LAMBDATOL)
-				lambda = 0.0;
-			else
-				lambda = lambdaquad;
-		}
-	}
-
-
-	//Set ETolstate to true if the energy change at a nonzero lambda is < ETOTALTOL
-	if(2*abs(energyChange)/(energyLambda+currentEnergy)<ETOTALTOL && lambda > 0) {
-		M_ETolstate[0] = true;
-	}
-	if(lambda > 0)
-		TotalEnergy = energyLambda;
-	else
-		TotalEnergy = currentEnergy;
-	return lambda;
-	#endif
-}
-
-floatingpoint CGMethod::quadraticoptimization(ForceFieldManager& FFM, const vector<floatingpoint>&
-                            lambdavec, const vector<floatingpoint>& energyvec){
-
-	floatingpoint x0, x1, x2, y0, y1, y2;
-	x0 = lambdavec[0];
-	x1 = lambdavec[1];
-	x2 = lambdavec[2];
-	y0 = energyvec[0];
-	y1 = energyvec[1];
-	y2 = energyvec[2];
-	double btlambda = lambdavec[1];
-	double lambdaquad = lambdavec[1];
-	double energyQuad = 0.0;
-	//Mq(l) = a*l*l + b*l +c;
-	//Refer quadratic optimization doc.
-	int iter = 0;
-//	cout<<"btlambda "<<btlambda<<endl;
-	while(true) {
-/*		cout<<"Trial t"<<iter<<"Lambda = ["<<x0<<" "<<x1<<" "<<x2<<"];t"<<iter<<"Energies = ["<<
-		y0<<" "<<y1<<" "<<y2<<"];"<<endl;*/
-		iter++;
-		double d = (x0-x1)*(x0-x2)*(x1-x2);
-		double a = y0 * (x1 - x2) - y1 * (x0 - x2) + y2 * (x0 - x1);
-		double b = -(y0 * (x1 + x2) * (x1 - x2) - y1 * (x0 + x2) * (x0 - x2) +
-		             y2 * (x0 + x1) * (x0 - x1));
-/*		double c = y0 * x1 * x2 * (x1 - x2) - y1 * x0 * x2 * (x0 - x2) +
-		           y2 * x0 * x1 * (x0 - x1);
-
-		cout<<"Mq"<<iter-1<<" = "<<a/d<<"*x.*x + "<<b/d<<"*x + "<<c/d<<";"<<endl;
-		cout<<"-b/2a = "<<-b/(2*a)<<";"<<endl;*/
-
-		lambdaquad = -b/(2*a);
-//		cout<<"["<<abs(lambdaquad-x1)/x1<<" "<<LAMBDAQUADTOL<<"];"<<endl;
-
-
-		//Check if lambda has converged
-		if (abs(lambdaquad-x1)/x1 < LAMBDAQUADTOL) {
-			return lambdaquad;
-		}
-		else if(a/d < 0){
-			cout<<"WARNING! Quadratic model does not have a minima. Returning "
-		 "BACKTRACKING Lambda "<<endl;
-			return btlambda;
-		}
-		//else compute Energy at lambdaquad
-		else {
-			moveAlongSearchDir(lambdaquad);
-			energyQuad = FFM.computeEnergy<true>(coordLineSearch.data());
-            CUDAcommon::tmin.computeenerycallsnonzero++;
-//			cout<<"["<<abs(energyQuad-y1)/y1<<" "<<LAMBDAQUADTOL<<"];"<<endl;
-			if(abs(energyQuad-y1)/y1 < LAMBDAQUADTOL){
-				return lambdaquad;
-			}
-
-			//Determine points to use in next iteration.
-			//determine if lambdaquad is to the left or right of x1
-			if(lambdaquad<x1){
-				if(energyQuad<y0 && energyQuad<y1){
-					x1 = lambdaquad;
-					y1 = energyQuad;
-				}
-				else{
-//					if(energyQuad<y0 && energyQuad>y1){
-					x0 = lambdaquad;
-					y0 = energyQuad;
-				}
-/*				else{
-					cout<<"WARNING! Unreasonable lambdaquad during quadratic optimization"
-		                    ". Returning BACKTRACKING lambda"<<endl;
-					return btlambda;
-				}*/
-			}
-			else if(x1 < lambdaquad){
-				if(energyQuad<y1 && energyQuad<y2){
-					x1 = lambdaquad;
-					y1 = energyQuad;
-				}
-				else {
-//					if(energyQuad>y1 && energyQuad<y2){
-					x2 = lambdaquad;
-					y2 = energyQuad;
-				}
-/*				else{
-					cout<<"WARNING! Unreasonable lambdaquad during quadratic optimization"
-					      ". Returning BACKTRACKING lambda"<<endl;
-					return btlambda;
-				}*/
-			}
-			else{
-				cout<<"WARNING! Lambda out of range. Returning quadlambda from "
-		                "previous iteration"<<endl;
-					return x1;
-				}
-		}
-	}
-
-}
 
 ofstream CGMethod::_crosscheckdumpMechFile;
+
+} // namespace medyan

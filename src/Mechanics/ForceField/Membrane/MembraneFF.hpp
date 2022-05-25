@@ -7,101 +7,114 @@
 #include <vector>
 
 #include "Mechanics/ForceField/ForceField.h"
+#include "Mechanics/ForceField/Membrane/FixedVertexAttachmentStretching.hpp"
+#include "Mechanics/ForceField/Membrane/FixedVertexCoordinates.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneBending.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
+#include "Mechanics/ForceField/Membrane/MembraneMeshless.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneStretchingLocal.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneStretchingImpl.hpp"
+#include "Mechanics/ForceField/Membrane/MembraneStretchingGlobal.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneTension.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneTriangleProtect.hpp"
 #include "Mechanics/ForceField/Types.hpp"
 #include "Util/Io/Log.hpp"
 
-struct MembraneFFFactory {
+namespace medyan {
 
-    using CurvRequirement = ForceFieldTypes::GeometryCurvRequirement;
+inline auto createMembraneForceFields(
+    std::string_view               stretchingType,
+    std::string_view               tensionType,
+    std::string_view               bendingType,
+    const SurfaceGeometrySettings& gs
+) {
+    using namespace std;
 
-    struct Result {
-        std::vector< std::unique_ptr< ForceField > > forceFields;
-        CurvRequirement curvReq = CurvRequirement::curv;
-    };
+    std::vector< std::unique_ptr< ForceField > > forceFields;
 
-    auto operator()(
-        const std::string& stretchingType,
-        const std::string& tensionType,
-        const std::string& bendingType
-    ) const {
-        using namespace std;
+    // Fixed vertex coordinates are always present.
+    forceFields.push_back(std::make_unique<FixedVertexCoordinates>());
 
-        Result res;
+    // Whether triangle protection is enabled.
+    bool enableTriangleProtect = false;
 
-        if (stretchingType == "LOCAL_HARMONIC") {
-            // In material coordinates, it is mandatory, and is applicable to
-            //   non-reservior-touching membrane.
-            // In normal coordinates, it cannot be modeled without more degrees of freedom.
-            res.forceFields.push_back(
-                std::make_unique< MembraneStretchingLocal >()
-            );
-        }
-        else if(stretchingType == "GLOBAL_HARMONIC") {
-            // Assumption: surface tension is uniform on the membrane
-            // Only applicable to non-reservior-touching membrane in normal coordinates.
-            LOG(WARNING) << "Currently the force field is not implemented";
-            // res.forceFields.push_back(
-            //     std::make_unique< MembraneStretchingGlobal >()
-            // );
-        }
-        else if(stretchingType == "") {}
-        else {
-            LOG(ERROR) << "Membrane stretching FF type " << stretchingType << " is not recognized.";
-            throw std::runtime_error("Membrane stretching FF type not recognized");
-        }
+    if (stretchingType == "LOCAL_HARMONIC") {
+        // In material coordinates, it is mandatory, and is applicable to
+        //   non-reservior-touching membrane.
+        // In normal coordinates, it cannot be modeled without more degrees of freedom.
+        forceFields.push_back(
+            std::make_unique< MembraneStretchingLocal >()
+        );
+    }
+    else if(stretchingType == "GLOBAL_HARMONIC") {
+        // Assumption: surface tension is uniform on the membrane
+        // Only applicable to non-reservior-touching membrane in general coordinates.
+        forceFields.push_back(
+            std::make_unique< MembraneStretchingGlobal >()
+        );
 
-        if(tensionType == "CONSTANT") {
-            // In material coordinates, it is applicable to reservior-touching
-            // border triangles.
-            //
-            // In normal or general corodinates, it is applicable to the whole
-            // reservior-touching membrane, assuming that surface tension is
-            // constant globally.
-
-            res.forceFields.push_back(
-                std::make_unique< MembraneTension >()
-            );
-
-            // Enable the protective force field
-            // res.forceFields.emplace_back(
-            //     new MembraneTriangleProtect< MembraneTriangleProtectFene, true >()
-            // );
-
-        }
-        else if(tensionType == "") {}
-        else {
-            LOG(ERROR) << "Membrane tension FF type " << tensionType << " is not recognized.";
-            throw std::runtime_error("Membrane tension FF type not recognized");
-        }
-        
-        if (bendingType == "HELFRICH") {
-            res.forceFields.emplace_back(
-                new MembraneBending<MembraneBendingHelfrich>()
-            );
-            res.curvReq = CurvRequirement::curv;
-        }
-        else if(bendingType == "HELFRICH_QUADRATIC") {
-            res.forceFields.emplace_back(
-                new MembraneBending<MembraneBendingHelfrichQuadratic>()
-            );
-            res.curvReq = CurvRequirement::curv2;
-        }
-        else if(bendingType == "") {}
-        else {
-            cout << "Membrane bending FF type " << bendingType << " is not recognized." << endl;
-            throw std::runtime_error("Membrane bending FF type not recognized");
-        }
-
-
-        return res;
+        enableTriangleProtect = true;
+    }
+    else if(stretchingType == "") {}
+    else {
+        log::error("Membrane stretching FF type {} is not recognized.", stretchingType);
+        throw std::runtime_error("Membrane stretching FF type not recognized");
     }
 
-};
+    if(tensionType == "CONSTANT") {
+        // In material coordinates, it is applicable to reservior-touching
+        // border triangles.
+        //
+        // In normal or general corodinates, it is applicable to the whole
+        // reservior-touching membrane, assuming that surface tension is
+        // constant globally.
+
+        forceFields.push_back(
+            std::make_unique< MembraneTension >()
+        );
+
+        enableTriangleProtect = true;
+    }
+    else if(tensionType == "") {}
+    else {
+        log::error("Membrane tension FF type {} is not recognized.", tensionType);
+        throw std::runtime_error("Membrane tension FF type not recognized");
+    }
+    
+    if (bendingType == "HELFRICH") {
+        if(gs.curvPol == SurfaceCurvaturePolicy::withSign || gs.curvPol == SurfaceCurvaturePolicy::mem3dg) {
+            forceFields.emplace_back(
+                new MembraneBending<MembraneBendingHelfrich>()
+            );
+        }
+        else {
+            forceFields.emplace_back(
+                new MembraneBending<MembraneBendingHelfrichQuadratic>()
+            );
+        }
+    }
+    else if(bendingType == "") {}
+    else {
+        log::error("Membrane bending FF type {} is not recognized.", bendingType);
+        throw std::runtime_error("Membrane bending FF type not recognized");
+    }
+
+    // Enable the protective force field
+    if(enableTriangleProtect) {
+        forceFields.emplace_back(
+            new MembraneTriangleProtect< MembraneTriangleProtectFene, true >()
+        );
+    }
+
+    // Add vertex attachment stretching force field.
+    forceFields.emplace_back(
+        new FixedVertexAttachmentStretching()
+    );
+
+
+    return forceFields;
+}
+
+} // namespace medyan
 
 #endif

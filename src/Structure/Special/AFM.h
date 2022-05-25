@@ -15,14 +15,13 @@
 #define MEDYAN_AFM_h
 
 #include "common.h"
-
-#include "Database.h"
-#include "Trackable.h"
-#include "Composite.h"
+#include "Chemistry/EmissionAbsorption.hpp"
 #include "Structure/BoundaryElementImpl.h"
+#include "Structure/Bubble.h"
+#include "Util/StableVector.hpp"
 
+namespace medyan {
 //FORWARD DECLARATIONS
-class Bubble;
 class Filament;
 
 ///A class to represent the structure of a AFM attachemnt system
@@ -35,23 +34,50 @@ class Filament;
  *  and is only mechanically relevant for now, but may be extended to have chemical
  *  properties in the future.
  */
-class AFM : public Composite, public Trackable, public Database< AFM, false > {
-    
+class AFM {
+public:
+    using CoordinateType = Bubble::CoordinateType;
+    using DyRateType = EmissionAbsorptionContainer::DyRateType;
+
 private:
-    Bubble* _bubble; ///< A bubble that physically represents the AFM bubble
+    StableVectorIndex<Bubble> bubbleSysIndex_ { -1 }; // A bubble that physically represents the AFM.
     vector<Filament*> _filaments; ///< An ordered vector of filaments in the AFM bubble
     PlaneBoundaryElement* _pbe;
     
 public:
+
+    StableVectorIndex<AFM> sysIndex {};
+
+    // Current compartment index. Updated by position update.
+    Index compartmentIndex = 0;
+
+    // Mechanical constants.
+    floatingpoint attachmentStretchingK = 0;
+
+    // The pulling force from all filament attachments.
+    CoordinateType attachmentForce {};
+
+    //----------------------------------
+    // Chemsitry data.
+    //----------------------------------
+    std::vector< EmissionAbsorptionContainer > vecEmiAbs;
+
+    // Dynamic rate parameters. Only works when dyRateType is set to "force".
+    floatingpoint emiForce1 = 0; // Minimum force required to activate emission.
+    floatingpoint emiForce2 = 0; // Minimum force that maximizes emission rate.
+
     ///Constructor
-    AFM() : Trackable() {}
+    AFM() = default;
     
     //@{
     ///Setters
-    void setBubble(Bubble* b);
+    template< typename Context >
+    void setBubbleSysIndex(Context& sys, StableVectorIndex<Bubble> index) {
+        bubbleSysIndex_ = index;
+        sys.bubbles[index].setAFMIndex(sysIndex);
+    }
     void setPlaneBoundaryElement(PlaneBoundaryElement* pbe) {
         _pbe = pbe;
-        addChild(unique_ptr<Component>(pbe));
     }
     
     void addFilament(Filament* f) {_filaments.push_back(f);}
@@ -59,33 +85,76 @@ public:
     
     //@{
     ///Getters
-    Bubble* getBubble() {return _bubble;}
+    template< typename Context >
+    Bubble& getBubble(Context& sys) const { return sys.bubbles[bubbleSysIndex_]; }
     auto getPlaneBoundaryElement() const { return _pbe; }
     const vector<Filament*>& getFilaments() {return _filaments;}
     //@}
-    
-    //@{
-    /// SubSystem management, inherited from Trackable
-    // Does nothing
-    virtual void addToSubSystem() { }
-    virtual void removeFromSubSystem() { }
-    //@}
-    
-    /// Get all instances of this class from the SubSystem
-    static const vector<AFM*>& getAFMs() {
-        return getElements();
+
+    // Setup chemistry.
+    template< typename Context >
+    void setChemistry(Context& sys, const std::vector<ReactionEmissionAbsorptionSetupInit>& vecEmiAbsInit, const ChemistryData& chemData) {
+        auto& grid = *sys.getCompartmentGrid();
+        compartmentIndex = grid.getCompartmentIndex(sys.bubbles[bubbleSysIndex_].coord);
+        vecEmiAbs = setEmiAbs(sys, compartmentIndex, vecEmiAbsInit, chemData);
     }
-    /// Get the number of AFMs in this system
-    static int numAFMs() {
-        return getElements().size();
+    template< typename Context >
+    void clearChemistry(Context& sys) {
+        vecEmiAbs.clear();
     }
-    
-    virtual void printSelf() const override;
+
+    // Update position.
+    template< typename Context >
+    void updatePosition(Context& sys) {
+        using namespace std;
+
+        if(bubbleSysIndex_.value < 0) {
+            return;
+        }
+
+        auto& grid = *sys.getCompartmentGrid();
+        auto newci = grid.getCompartmentIndex(sys.bubbles[bubbleSysIndex_].coord);
+        if(newci != compartmentIndex) {
+            // Update the diffusing species in emi-abs reactions.
+            for(auto& ea : vecEmiAbs) {
+                updateCompartmentEmiAbs(sys, ea, newci);
+            }
+
+            // Record new compartment index.
+            compartmentIndex = newci;
+        }
+    }
+
+    // Update reaction rates.
+    void updateReactionRates() {
+        for(auto& ea : vecEmiAbs) {
+            if(ea.dyRateType == DyRateType::force) {
+                ea.prEmi->setRateMulFactor(getEmiRateFactorByForce(), ReactionBase::mechanochemical);
+                ea.prEmi->updatePropensity();
+            }
+        }
+    }
+
+    // Auxiliary function that computes the force scaling rate based on the force.
+    floatingpoint getEmiRateFactorByForce() const {
+        auto force = magnitude(attachmentForce);
+        if(force < emiForce1) {
+            return 0;
+        }
+        if(force < emiForce2) {
+            return (force - emiForce1) / (emiForce2 - emiForce1);
+        }
+        return 1;
+    }
+
+    void printSelf() const;
     
     //GetType implementation just returns zero (no AFM types yet)
-    virtual int getType() {return 0;}
+    int getType() {return 0;}
     
 };
+
+} // namespace medyan
 
 #endif
 

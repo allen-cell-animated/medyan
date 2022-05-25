@@ -25,8 +25,9 @@
 #include "MathFunctions.h"
 #include "Structure/Bead.h"
 #ifdef SIMDBINDINGSEARCH
-#include "dist_moduleV2/dist_driver.h"
+#include "Util/DistModule/dist_driver.h"
 
+namespace medyan {
 template <uint D>
 dist::dOut<D> SIMDoutvar(const uint dim, uint N1, std::initializer_list<float> params) {
 
@@ -54,17 +55,6 @@ struct bin{
     int binstencilID[27] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
                           -1,-1,-1,-1,-1,-1};
 };
-    struct [[deprecated]] cylinder{
-        int filamentID = -1;
-        int filamentposition = -1;
-        int bindices[2];
-        int cmpID = -1;
-        long cindex = -1;
-        floatingpoint coord[3];
-        short type = -1;
-        int ID = -1;
-        int availbscount = -1;
-    };
 
 struct Callbacktime {
 	floatingpoint tUpdateBrancherBindingCallback=0.0;
@@ -192,7 +182,7 @@ struct chemdetails{
     double getaffectedrxns = 0.0;
 };
 
-#if defined(CUDAACCL) || defined(CUDATIMETRACK)
+#if defined(CUDAACCL)
 struct CUDAvars {
     floatingpoint * gpu_force = NULL;
     floatingpoint * gpu_forceAux = NULL;
@@ -353,6 +343,8 @@ public:
     }
 #endif
 };
+
+} // namespace medyan
 
 #endif
 //CUDA_VEC_CUDACOMMON_H

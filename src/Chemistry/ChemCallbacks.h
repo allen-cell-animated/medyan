@@ -32,7 +32,7 @@
 
 #include "BindingManager.h"
 
-#include "GController.h"
+#include "Controller/GController.h"
 #include "MathFunctions.h"
 #include "SysParams.h"
 #include "Rand.h"
@@ -42,9 +42,9 @@
 #include "CUDAcommon.h"
 #include "Util/Io/Log.hpp"
 
-using namespace mathfunc;
 
-#ifdef RSPECIES_SIGNALING
+namespace medyan {
+using namespace mathfunc;
 
 /// @note - A NOTE TO ALL DEVELOPERS:
 ///
@@ -230,39 +230,6 @@ struct UpdateMotorIDCallback{
     //callback
     void operator() (RSpecies *r, int delta) {
 	    mins = chrono::high_resolution_clock::now();
-    //DEPRECATED AS OF 9/8/16
-//        //find compartment and binding manager
-//        Compartment *c = static_cast<Compartment*>(r->getSpecies().getParent());
-//        MotorBindingManager* mManager = c->getMotorBindingManager(_motorType);
-//        
-//        if(delta == +1) {
-//            //pull from motorDB of transferred ID's
-//            //note that if there is no transfer ID, we are experiencing an unbinding event. The specific
-//            //motor will give its ID to the corresponding binding manager.
-//            int ID = MotorGhost::_motorGhosts.getTransferID();
-//            
-//            if(ID != -1) {
-//                mManager->addUnboundID(ID);
-//                
-//                //we can only check this assertion of it is a diffusion event
-//                assert(r->getN() == mManager->getAllUnboundIDs().size() &&
-//                       "Major bug: number of unbound ID's and copy number does not match");
-//            }
-//            //else - create an ID. This is an addition at runtime
-//            else{
-//                mManager->addUnboundID(MotorGhost::_motorGhosts.getId());
-//            }
-//        }
-//        
-//        else{ /* -1 */
-//            //add to the motorDB of transferred ID's
-//            
-//            int ID = mManager->getUnboundID();
-//            MotorGhost::_motorGhosts.setTransferID(ID);
-//            
-//            assert(r->getN() == mManager->getAllUnboundIDs().size() &&
-//                   "Major bug: number of unbound ID's and copy number does not match");
-//        }
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tUpdateMotorIDCallback += elapsed_time.count();
@@ -271,9 +238,7 @@ struct UpdateMotorIDCallback{
 };
 
 
-#endif
 
-#ifdef REACTION_SIGNALING
 
 /// Callback to extend the plus end of a Filament after a polymerization
 /// Reaction occurs in the system.
@@ -334,17 +299,17 @@ struct FilamentRetractionPlusEndCallback {
     
     Cylinder* _cylinder;
 
-    chrono::high_resolution_clock::time_point mins, mine;
-
     //Constructor, sets members
     FilamentRetractionPlusEndCallback(Cylinder* cylinder)
-    : _cylinder(cylinder) {};
-    //Callback
-    void operator() (ReactionBase *r){
-	    mins = chrono::high_resolution_clock::now();
+    : _cylinder(cylinder) {}
+    // Callback
+    void operator() (ReactionBase *r) const {
+	    const auto mins = chrono::high_resolution_clock::now();
         Filament* f =(Filament*)( _cylinder->getParent());
         f->retractPlusEnd();
-	    mine = chrono::high_resolution_clock::now();
+
+        // Warning: beyond this point (after retraction), this callback object is deleted with the corresponding reaction. Any further access to member variables results in UB.
+	    const auto mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tFilamentRetractionPlusEndCallback += elapsed_time.count();
 	    CUDAcommon::ccount.cFilamentRetractionPlusEndCallback++;
@@ -357,17 +322,17 @@ struct FilamentRetractionMinusEndCallback {
     
     Cylinder* _cylinder;
 
-    chrono::high_resolution_clock::time_point mins, mine;
-
     //Constructor, sets members
     FilamentRetractionMinusEndCallback(Cylinder* cylinder)
-    : _cylinder(cylinder) {};
-    //Callback
-    void operator() (ReactionBase *r){
-	    mins = chrono::high_resolution_clock::now();
+    : _cylinder(cylinder) {}
+    // Callback
+    void operator() (ReactionBase *r) const {
+	    const auto mins = chrono::high_resolution_clock::now();
         Filament* f = (Filament*)(_cylinder->getParent());
         f->retractMinusEnd();
-	    mine = chrono::high_resolution_clock::now();
+
+        // Warning: beyond this point (after retraction), this callback object is deleted with the corresponding reaction. Any further access to member variables results in UB.
+	    const auto mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tFilamentRetractionMinusEndCallback += elapsed_time.count();
 	    CUDAcommon::ccount.cFilamentRetractionMinusEndCallback++;
@@ -473,23 +438,18 @@ struct BranchingPointUnbindingCallback {
     SubSystem* _ps;
     BranchingPoint* _branchingPoint;
 
-    chrono::high_resolution_clock::time_point mins, mine;
-
     BranchingPointUnbindingCallback(BranchingPoint* b, SubSystem* ps)
     : _ps(ps), _branchingPoint(b) {}
     
-    void operator() (ReactionBase *r) {
-	    mins = chrono::high_resolution_clock::now();
+    void operator() (ReactionBase *r) const {
+	    const auto mins = chrono::high_resolution_clock::now();
 
-//        //@{
-//        std::cout<<"Brancher unbinding "<<_branchingPoint->getFirstCylinder()->getId()<<" "
-//                ""<<_branchingPoint->getPosition()
-//                 <<" "<<_branchingPoint->getSecondCylinder()->getId()<<endl;
-//        //@}
         //remove the branching point
         _ps->removeTrackable<BranchingPoint>(_branchingPoint);
         delete _branchingPoint;
-	    mine = chrono::high_resolution_clock::now();
+
+        // Warning: beyond this point (after removing branching point), this callback object is deleted with the corresponding reaction. Any further access to member variables results in UB.
+	    const auto mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tBranchingPointUnbindingCallback += elapsed_time.count();
 	    CUDAcommon::ccount.cBranchingPointUnbindingCallback++;
@@ -551,7 +511,6 @@ struct BranchingCallback {
             vector<floatingpoint> n = twoPointDirection(x1, x2);
             
             //get branch projection
-#ifdef MECHANICS
             //use mechanical parameters
             floatingpoint l, t;
             if(SysParams::Mechanics().BrStretchingL.size() != 0) {
@@ -565,13 +524,6 @@ struct BranchingCallback {
                 l = 10.0;
                 t = 1.22;
             }
-#else
-            cout << "Branching initialization cannot occur unless mechanics is enabled. Using"
-            << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
-            << endl;
-            floatingpoint l = 10.0;
-            floatingpoint t = 1.22;
-#endif
             floatingpoint s = SysParams::Geometry().monomerSize[filType];
 
             //n direction vector of mother filament
@@ -607,8 +559,8 @@ struct BranchingCallback {
                 auto regionInMembrane = _ps->getRegionInMembrane();
                 if(
                     (regionInMembrane && (
-                        regionInMembrane->contains(vector2Vec< 3, floatingpoint >(bp)) &&
-                        regionInMembrane->contains(b2)
+                        regionInMembrane->contains(*_ps, vector2Vec< 3, floatingpoint >(bp)) &&
+                        regionInMembrane->contains(*_ps, b2)
                     )) ||
                     (!regionInMembrane && (
                         _ps->getBoundary()->distance(bp) >= boundary_cutoff_distance &&
@@ -616,10 +568,19 @@ struct BranchingCallback {
                     ))
                 ) {
                     inboundary = true;
+                }
 
-                        //create a new daughter filament
-                    Filament *f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true,
-                                                                true);
+                ++tries;
+                if(tries >= triesWarning && inboundary == false) {
+                    LOG(WARNING) << "Cannot find a branching point in region. Trial " << tries << ": "
+                                 << "dir (" << bd[0] << ' ' << bd[1] << ' ' << bd[2] << ") "
+                                 << "pos (" << bp[0] << ' ' << bp[1] << ' ' << bp[2] << ')';
+                    inboundary = true;
+                }
+
+                if(inboundary) {
+                    //create a new daughter filament
+                    Filament *f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
 
                     //mark first cylinder
                     Cylinder *c = f->getCylinderVector().front();
@@ -628,12 +589,6 @@ struct BranchingCallback {
                     //create new branch
                     b = _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
                 }
-
-                ++tries;
-                if(tries >= triesWarning && inboundary == false)
-                    LOG(WARNING) << "Cannot find a branching point in region. Trial " << tries << ": "
-                                    << "dir (" << bd[0] << ' ' << bd[1] << ' ' << bd[2] << ") "
-                                    << "pos (" << bp[0] << ' ' << bp[1] << ' ' << bp[2] << ')';
             }
 
         }
@@ -673,10 +628,9 @@ struct BranchingCallback {
         cBrancher->setRates(_onRate, frate);
         cBrancher->createOffReaction(r, _ps);
         cBrancher->getOffReaction()->setBareRate(SysParams::BUBBareRate[branchType]);
-#ifdef DYNAMICRATES
 
         b -> updateReactionRates();
-#endif
+
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tBranchingCallback += elapsed_time.count();
@@ -690,24 +644,18 @@ struct LinkerUnbindingCallback {
     SubSystem* _ps;
     Linker* _linker;
 
-    chrono::high_resolution_clock::time_point mins, mine;
-
     LinkerUnbindingCallback(Linker* l, SubSystem* ps) : _ps(ps), _linker(l) {}
     
-    void operator() (ReactionBase *r) {
+    void operator() (ReactionBase *r) const {
 #ifdef OPTIMOUT
 	    CUDAcommon::tmin.linkerunbindingcalls++;
 #endif
-	    mins = chrono::high_resolution_clock::now();
+	    const auto mins = chrono::high_resolution_clock::now();
 
-//        //@{
-//        std::cout<<"Linker unbinding "<<_linker->getFirstCylinder()->getId()<<" "<<_linker->getFirstPosition()
-//                 <<" "<<_linker->getSecondCylinder()->getId()<<" "<<_linker->getSecondPosition()<<endl;
-//        //@}
         //remove the linker
         _ps->removeTrackable<Linker>(_linker);
         delete _linker;
-	    mine = chrono::high_resolution_clock::now();
+	    const auto mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tLinkerUnbindingCallback += elapsed_time.count();
 	    CUDAcommon::ccount.cLinkerUnbindingCallback++;
@@ -741,6 +689,7 @@ struct LinkerBindingCallback {
 
         //get a random binding
         short linkerType = _lManager->getBoundInt();
+        auto& linkerSpeciesIndices = _lManager->getLinkerSpeciesIndices();
         float f;
         
         //choose a random binding site from manager
@@ -755,15 +704,17 @@ struct LinkerBindingCallback {
         Cylinder* c1 = get<0>(site[0])->getCylinder();
         Cylinder* c2 = get<0>(site[1])->getCylinder();
         
-        short filType = c1->getType();
+        const auto filType1 = c1->getType();
+        const auto filType2 = c2->getType();
         
         // Create a linker
-        int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
+        const int cylinderNumMon1 = SysParams::Geometry().cylinderNumMon[filType1];
+        const int cylinderNumMon2 = SysParams::Geometry().cylinderNumMon[filType2];
         
-        floatingpoint pos1 = floatingpoint(get<1>(site[0])) / cylinderSize;
-        floatingpoint pos2 = floatingpoint(get<1>(site[1])) / cylinderSize;
+        const auto pos1 = floatingpoint(get<1>(site[0])) / cylinderNumMon1;
+        const auto pos2 = floatingpoint(get<1>(site[1])) / cylinderNumMon2;
         
-        Linker* l = _ps->addTrackable<Linker>(c1, c2, linkerType, pos1, pos2);
+        Linker* l = _ps->addTrackable<Linker>(c1, c2, linkerType, linkerSpeciesIndices[0], linkerSpeciesIndices[1], pos1, pos2);
         
         //create off reaction
         auto cLinker = l->getCLinker();
@@ -777,13 +728,8 @@ struct LinkerBindingCallback {
             _dt->recordLinkerBinding(l);
         }
 
-#ifdef DYNAMICRATES
-        //reset the associated reactions
-        //aravind june 24, 2016
-        cLinker->getOffReaction()->setBareRate(SysParams::LUBBareRate[linkerType]);
-        //@
         l->updateReactionRates();
-#endif
+
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tLinkerBindingCallback += elapsed_time.count();
@@ -797,40 +743,20 @@ struct MotorUnbindingCallback {
     SubSystem* _ps;
     MotorGhost* _motor;
 
-    chrono::high_resolution_clock::time_point mins, mine;
-
     MotorUnbindingCallback(MotorGhost* m, SubSystem* ps) :
     
     _ps(ps), _motor(m) {}
     
-    void operator() (ReactionBase *r) {
+    void operator() (ReactionBase *r) const {
 #ifdef OPTIMOUT
     	CUDAcommon::tmin.motorunbindingcalls++;
 #endif
-	    mins = chrono::high_resolution_clock::now();
-
-        //find the motor binding manager associated with this species
-//        Species* sd = &(r->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
-        
-//        Compartment* c = static_cast<Compartment*>(sd->getParent());
-//        auto mManager = c->getMotorBindingManager(_motor->getType());
-        
-        //DEPRECATED AS OF 9/8/16
-//        
-//        mManager->removeUnboundID(MotorGhost::_motorGhosts.deleteID());
-//        
-//        //re-add unbound ID to motor binding manager
-//        mManager->addUnboundID(_motor->getId());
-
-//        //@{
-//        std::cout<<"Motor unbinding "<<_motor->getFirstCylinder()->getId()<<" "<<_motor->getFirstPosition()
-//                  <<" "<<_motor->getSecondCylinder()->getId()<<" "<<_motor->getSecondPosition()<<endl;
-//        //@}
+	    const auto mins = chrono::high_resolution_clock::now();
 
         //remove the motor
         _ps->removeTrackable<MotorGhost>(_motor);
         delete _motor;
-	    mine = chrono::high_resolution_clock::now();
+	    const auto mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tMotorUnbindingCallback += elapsed_time.count();
 	    CUDAcommon::ccount.cMotorUnbindingCallback++;
@@ -863,6 +789,7 @@ struct MotorBindingCallback {
 
         //get a random binding
         short motorType = _mManager->getBoundInt();
+        auto& motorSpeciesIndices = _mManager->getMotorSpeciesIndices();
         float f;
         //choose a random binding site from manager
         vector<tuple<CCylinder*, short>> site;
@@ -876,16 +803,18 @@ struct MotorBindingCallback {
         Cylinder* c1 = get<0>(site[0])->getCylinder();
         Cylinder* c2 = get<0>(site[1])->getCylinder();
         
-        short filType = c1->getType();
+        const auto filType1 = c1->getType();
+        const auto filType2 = c2->getType();
         
         // Create a motor
-        int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
+        const int cylinderNumMon1 = SysParams::Geometry().cylinderNumMon[filType1];
+        const int cylinderNumMon2 = SysParams::Geometry().cylinderNumMon[filType2];
         
-        floatingpoint pos1 = floatingpoint(get<1>(site[0])) / cylinderSize;
-        floatingpoint pos2 = floatingpoint(get<1>(site[1])) / cylinderSize;
+        const auto pos1 = floatingpoint(get<1>(site[0])) / cylinderNumMon1;
+        const auto pos2 = floatingpoint(get<1>(site[1])) / cylinderNumMon2;
 
         
-        MotorGhost* m = _ps->addTrackable<MotorGhost>(c1, c2, motorType, pos1, pos2, _onRate, _offRate);
+        MotorGhost* m = _ps->addTrackable<MotorGhost>(c1, c2, motorType, motorSpeciesIndices[0], motorSpeciesIndices[1], pos1, pos2, _onRate, _offRate);
         
         //attach an ID to the motor based on the transfer ID
         //DEPRECATED AS OF 9/22/16
@@ -904,14 +833,9 @@ struct MotorBindingCallback {
         cMotorGhost->setRates(_onRate, f);
         cMotorGhost->createOffReaction(r, _ps);
         
-#ifdef DYNAMICRATES
         //reset the associated walking reactions
         m->updateReactionRates();
-        //aravind June 24,2016.
-        cMotorGhost->getOffReaction()->setBareRate(SysParams::MUBBareRate[motorType]);
-        //@
 
-#endif
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tMotorBindingCallback += elapsed_time.count();
@@ -928,7 +852,7 @@ struct MotorWalkingCallback {
     short _oldPosition;  ///< Old position of motor head
     short _newPosition;  ///< New position of motor head
     
-    short _motorType;    ///< Type of motor
+    int speciesMotorIndex; // Index of the motor species in the corresponding filament.
     short _boundType;    ///< Type of bound this motor took place of
     
     SubSystem* _ps;      ///< Ptr to subsystem
@@ -938,10 +862,10 @@ struct MotorWalkingCallback {
 
     MotorWalkingCallback(Cylinder* c,
                          short oldPosition, short newPosition,
-                         short motorType, short boundType, SubSystem* ps, DissipationTracker* dt)
+                         short speciesMotorIndex, short boundType, SubSystem* ps, DissipationTracker* dt)
     
     :_c(c), _oldPosition(oldPosition), _newPosition(newPosition),
-    _motorType(motorType), _boundType(boundType), _ps(ps), _dt(dt) {}
+    speciesMotorIndex(speciesMotorIndex), _boundType(boundType), _ps(ps), _dt(dt) {}
     
     void operator() (ReactionBase* r) {
 #ifdef OPTIMOUT
@@ -952,7 +876,7 @@ struct MotorWalkingCallback {
         //get species
         CCylinder* cc = _c->getCCylinder();
         CMonomer* monomer = cc->getCMonomer(_oldPosition);
-        SpeciesBound* sm1 = monomer->speciesMotor(_motorType);
+        SpeciesBound* sm1 = monomer->speciesMotor(speciesMotorIndex);
         
         short filType = _c->getType();
         
@@ -963,13 +887,11 @@ struct MotorWalkingCallback {
 
         floatingpoint oldpos = floatingpoint(_oldPosition) / cylinderSize;
         floatingpoint newpos = floatingpoint(_newPosition) / cylinderSize;
-	    m->moveMotorHead(_c, oldpos, newpos, _boundType, _ps);
+	    m->moveMotorHead(_c, oldpos, newpos, speciesMotorIndex, _boundType, _ps);
         
-#ifdef DYNAMICRATES
         //reset the associated reactions
         m->updateReactionRates();
 
-#endif
         
         if(SysParams::Chemistry().eventTracking){
             _dt->recordWalk(m);
@@ -992,7 +914,7 @@ struct MotorMovingCylinderCallback {
     short _oldPosition;     ///< Old position of motor head
     short _newPosition;     ///< New position of motor head
     
-    short _motorType;       ///< Type of motor
+    int speciesMotorIndex;  // Index of the motor species in the corresponding filament.
     short _boundType;       ///< Type of bound this motor is taking place of
     
     SubSystem* _ps;         ///< Ptr to subsystem
@@ -1001,10 +923,10 @@ struct MotorMovingCylinderCallback {
 
     MotorMovingCylinderCallback(Cylinder* oldC, Cylinder* newC,
                                 short oldPosition, short newPosition,
-                                short motorType, short boundType, SubSystem* ps)
+                                short speciesMotorIndex, short boundType, SubSystem* ps)
     
     :_oldC(oldC), _newC(newC), _oldPosition(oldPosition), _newPosition(newPosition),
-    _motorType(motorType), _boundType(boundType), _ps(ps) {}
+    speciesMotorIndex(speciesMotorIndex), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
 #ifdef OPTIMOUT
@@ -1016,7 +938,7 @@ struct MotorMovingCylinderCallback {
         //get species
         CCylinder* oldCC = _oldC->getCCylinder();
         CMonomer* monomer = oldCC->getCMonomer(_oldPosition);
-        SpeciesBound* sm1 = monomer->speciesMotor(_motorType);
+        SpeciesBound* sm1 = monomer->speciesMotor(speciesMotorIndex);
         short filType = _oldC->getType();
 
         //get motor
@@ -1031,12 +953,11 @@ struct MotorMovingCylinderCallback {
         floatingpoint oldpos = floatingpoint(_oldPosition) / cylinderSize;
         floatingpoint newpos = floatingpoint(_newPosition) / cylinderSize;
         
-        m->moveMotorHead(_oldC, _newC, oldpos, newpos, _boundType, _ps);
+        m->moveMotorHead(_oldC, _newC, oldpos, newpos, speciesMotorIndex, _boundType, _ps);
         
-#ifdef DYNAMICRATES
         //reset the associated reactions
         m->updateReactionRates();
-#endif
+
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tMotorMovingCylinderCallback += elapsed_time.count();
@@ -1075,7 +996,7 @@ struct FilamentCreationCallback {
         
         //no compartment was set, pick a random one
         if(_compartment == nullptr)
-            c = GController::getRandomCompartment();
+            c = &GController::getRandomCompartment();
         else
             c = _compartment;
         
@@ -1085,7 +1006,7 @@ struct FilamentCreationCallback {
 
         if(_ps->getBoundary()->getShape() == BoundaryShape::Cylinder) {
             while(true) {
-                position = GController::getRandomCenterCoordinates(c);
+                position = mathfunc::vec2Vector(_ps->getCompartmentGrid()->getRandomCenterCoordinatesIn(*c));
                 
                 //getting random numbers between -1 and 1
                 
@@ -1097,11 +1018,11 @@ struct FilamentCreationCallback {
                 
                 bool inbubble = false;
                 //check if within bubble
-                for(auto bb : Bubble::getBubbles()) {
-                    auto radius = bb->getRadius();
+                for(auto& bb : _ps->bubbles) {
+                    auto radius = bb.getRadius();
 
-                    if((twoPointDistancesquared(vec2Vector(bb->coord), position) < (radius * radius)) ||
-                       (twoPointDistancesquared(vec2Vector(bb->coord), npp) < (radius * radius))){
+                    if((twoPointDistancesquared(vec2Vector(bb.coord), position) < (radius * radius)) ||
+                       (twoPointDistancesquared(vec2Vector(bb.coord), npp) < (radius * radius))){
                         inbubble = true;
                         break;
                     }
@@ -1127,7 +1048,7 @@ struct FilamentCreationCallback {
         }
         else {
             while(true) {
-                position = GController::getRandomCoordinates(c);
+                position = mathfunc::vec2Vector(_ps->getCompartmentGrid()->getRandomCoordinatesIn(*c));
                 
                 //getting random numbers between -1 and 1
                 
@@ -1139,11 +1060,11 @@ struct FilamentCreationCallback {
                 
                 bool inbubble = false;
                 //check if within bubble
-                for(auto bb : Bubble::getBubbles()) {
-                    auto radius = bb->getRadius();
+                for(auto& bb : _ps->bubbles) {
+                    auto radius = bb.getRadius();
 
-                    if((twoPointDistancesquared(vec2Vector(bb->coord), position) < (radius * radius)) ||
-                       (twoPointDistancesquared(vec2Vector(bb->coord), npp) < (radius * radius))){
+                    if((twoPointDistancesquared(vec2Vector(bb.coord), position) < (radius * radius)) ||
+                       (twoPointDistancesquared(vec2Vector(bb.coord), npp) < (radius * radius))){
                         inbubble = true;
                         break;
                     }
@@ -1157,8 +1078,8 @@ struct FilamentCreationCallback {
                     _ps->getBoundary()->within(npp) &&
                     c->isActivated() &&
                     (c->getVolumeFrac() >= 1.0 ||
-                        Membrane::getMembranes()[0]->contains(vector2Vec<3, floatingpoint>(position)) &&
-                        Membrane::getMembranes()[0]->contains(vector2Vec<3, floatingpoint>(npp)))
+                        (medyan::contains(*_ps, _ps->membranes.begin()->getMesh(), vector2Vec<3, floatingpoint>(position)) &&
+                        medyan::contains(*_ps, _ps->membranes.begin()->getMesh(), vector2Vec<3, floatingpoint>(npp))))
                 ) break;
             }
             
@@ -1215,24 +1136,24 @@ struct FilamentDestructionCallback {
     
     SubSystem* _ps; ///< SubSystem ptr
 
-    chrono::high_resolution_clock::time_point mins, mine;
-
     FilamentDestructionCallback(Cylinder* c, SubSystem* ps) : _c(c), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
-	    mins = chrono::high_resolution_clock::now();
+        const auto mins = chrono::high_resolution_clock::now();
 
         Filament* f = (Filament*)(_c->getParent());
         
         _ps->removeTrackable<Filament>(f);
         delete f;
-	    mine = chrono::high_resolution_clock::now();
+
+        // Warning: beyond this point (after destruction), this callback object is deleted with the corresponding reaction. Any further access to member variables results in UB.
+        const auto mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tFilamentDestructionCallback += elapsed_time.count();
 	    CUDAcommon::ccount.cFilamentDestructionCallback++;
     }
 };
 
-#endif
+} // namespace medyan
 
 #endif

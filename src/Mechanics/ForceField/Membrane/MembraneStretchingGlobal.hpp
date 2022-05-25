@@ -1,200 +1,92 @@
-// WARNING: THIS FILE IS NOT USABLE FOR NOW
-#error "File not ready for use."
-
 #ifndef MEDYAN_Mechanics_ForceField_Membrane_MembraneStretchingGlobal_hpp
 #define MEDYAN_Mechanics_ForceField_Membrane_MembraneStretchingGlobal_hpp
 
-#include <array>
-#include <limits>
-#include <type_traits>
-#include <vector>
-
 #include "Mechanics/ForceField/ForceField.h"
 #include "Mechanics/ForceField/Membrane/MembraneStretchingImpl.hpp"
+#include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
-enum class MembraneStretchingType {
-    localHarmonic,
-    globalHarmonic
-};
+namespace medyan {
 
-template< MembraneStretchingType type >
 struct MembraneStretchingGlobal : public ForceField {
 
-    const Membrane* membraneCulprit = nullptr;
-
-    // (temp) holds the first index of coordinates of each vertex of triangles
-    std::vector< std::array< std::size_t, 3 >> vertexSet;
-
-    // (temp) holds the elasticity values
+    SubSystem* ps = nullptr;
 
     virtual void vectorize(const FFCoordinateStartingIndex& si) override {
-        using namespace std;
-        using AT = Membrane::MeshAttributeType;
-
-        vertexSet.clear();
-        vertexSet.reserve(Triangle::numElements()); // Might be more than needed
-
-        for(auto m : Membrane::getMembranes()) {
-            // In area elasticity for each triangle, the triangles with any
-            // vertex touching an open border will not be included.
-            // In area elasticity for the whole membrane, the membrane
-            // touching an open border will not be included.
-
-            if constexpr(type == MembraneStretchingType::localHarmonic) {
-                const auto& mesh = m->getMesh();
-                for(const auto& t : mesh.getTriangles()) {
-                    // TODO: check if the triangle fits local/global criteria
-                    const auto vis = medyan::vertexIndices(mesh, t);
-                    vertexSet.push_back({
-                        mesh.attribute(vis[0]).vertex->getIndex() * 3 + si.vertex,
-                        mesh.attribute(vis[1]).vertex->getIndex() * 3 + si.vertex,
-                        mesh.attribute(vis[2]).vertex->getIndex() * 3 + si.vertex
-                    });
-                }
-            }
-            else {
-                // TODO
-            }
-        }
+        ps = si.ps;
     }
 
-    virtual floatingpoint computeEnergy(floatingpoint* coord, bool stretched) override {
-        using namespace std;
-        using AT = Membrane::MeshAttributeType;
-
+    virtual FP computeEnergy(FP* coord) override {
         double en = 0;
 
-        for(auto m: Membrane::getMembranes()) {
+        for(auto& m: ps->membranes) {
+            const auto& mesh = m.getMesh();
 
-            double enMem = 0.0;
-
-            if constexpr(type == MembraneStretchingType::localHarmonic) {
-                for(const auto& vs : vertexSet) {
-                for(const auto& t : m->getMesh().getTriangles()) {
-                    const auto& area = stretched ? t.attr.gTriangleS.area : t.attr.gTriangle.area;
-                    enMem += MembraneStretchingHarmonic{}.energy(
-                        area,
-                        t.attr.triangle->mTriangle.kArea,
-                        t.attr.triangle->mTriangle.eqArea
-                    )
+            if(mesh.metaAttribute().vertexSystem == MembraneMeshVertexSystem::general
+                && !mesh.metaAttribute().hasLipidReservoir
+            ) {
+                double totarea = 0;
+                for(auto& v : mesh.getVertices()) {
+                    totarea += v.attr.gVertex.astar;
                 }
-            }
-            else {
-                double area = 0.0;
+                totarea /= 3;
 
-                for(const auto& t : m->getMesh().getTriangles())
-                    area += stretched ? t.attr.gTriangleS.area : t.attr.gTriangle.area;
-
-                enMem = MembraneStretchingHarmonic{}.energy(
-                    area,
-                    m->getMMembrane()->getKElastic(),
-                    m->getMMembrane()->getEqArea()
+                double enMem = MembraneStretchingHarmonic{}.energy(
+                    totarea,
+                    m.mMembrane.kArea,
+                    m.mMembrane.eqArea
                 );
-            }
 
-            if(!isfinite(enMem)) { // (U_i != U_i) => (U_i == NaN)
-                
-                //set culprit and return
-                membraneCulprit = m;
-                
-                return numeric_limits<double>::infinity();
-            }
-            else
+                if(!std::isfinite(enMem)) {
+                    return inffp;
+                }
+
                 en += enMem;
-
+            }
         }
 
         return en;
     }
 
-    virtual void computeForces(floatingpoint* coord, floatingpoint* force) override {
-        using namespace std;
+    virtual void computeForces(FP* coord, FP* force) override {
 
-        // Configure force buffer
-        constexpr bool useForceBuffer = false;
-        const std::size_t dof = 0; // TODO get dof
+        for (auto& m: ps->membranes) {
 
-        if (useForceBuffer) {
-            forceBuffer_.assign(dof, 0.0);
-        }
-        floatingpoint* const f = useForceBuffer ? forceBuffer_.data() : force;
+            const auto& mesh = m.getMesh();
+            assertValidIndexCacheForFF(mesh);
 
-        for (auto m: Membrane::getMembranes()) {
+            if(mesh.metaAttribute().vertexSystem == MembraneMeshVertexSystem::general
+                && !mesh.metaAttribute().hasLipidReservoir
+            ) {
 
-            Membrane::MeshAttributeType::cacheIndices(m->getMesh());
+                const auto eqarea = m.mMembrane.eqArea;
+                const auto karea = m.mMembrane.kArea;
 
-            const auto& mesh = m->getMesh();
-
-            if constexpr(type == MembraneStretchingType::localHarmonic) {
-                const size_t numTriangles = mesh.getTriangles().size();
-                for(size_t ti = 0; ti < numTriangles; ++ti) {
-                    const auto& ta = mesh.getTriangleAttribute(ti);
-
-                    for(size_t i = 0; i < 3; ++i) {
-                        const size_t hei = ta.cachedHalfEdgeIndex[i];
-                        const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
-
-                        MembraneStretchingHarmonic{}.forces(
-                            f + ta.cachedCoordIndex[i],
-                            ta.gTriangle.area, dArea,
-                            ta.triangle->mTriangle.kArea, ta.triangle->mTriangle.eqArea
-                        );
-                    }
+                double totarea = 0;
+                for(auto& v : mesh.getVertices()) {
+                    totarea += v.attr.gVertex.astar;
                 }
+                totarea /= 3;
 
+                for(auto& v : mesh.getVertices()) {
+                    const auto& va = v.attr;
+
+                    MembraneStretchingHarmonic{}.forces(
+                        force + va.cachedCoordIndex,
+                        totarea,
+                        va.gVertex.dAstar, // Do not divide by 3 here!
+                        karea,
+                        eqarea
+                    );
+                }
             }
-            else {
-
-                const auto kElastic = m->getMMembrane()->getKElastic();
-                const auto eqArea = m->getMMembrane()->getEqArea();
-
-                double area = 0.0;
-                for(const auto& t : mesh.getTriangles()) area += t.attr.gTriangle.area;
-
-                const size_t numTriangles = mesh.getTriangles().size();
-                for(size_t ti = 0; ti < numTriangles; ++ti) {
-                    const auto& ta = mesh.getTriangleAttribute(ti);
-
-                    for(size_t i = 0; i < 3; ++i) {
-                        const size_t hei = ta.cachedHalfEdgeIndex[i];
-                        const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
-
-                        MembraneStretchingHarmonic{}.forces(
-                            f + ta.cachedCoordIndex[i],
-                            area, dArea, kElastic, eqArea
-                        );
-                    }
-                }
-            } // end if (type == ...)
-
         } // end for (m : membranes)
-
-        if(useForceBuffer) {
-            std::transform(
-                force, force + dof, forceBuffer_.begin(),
-                force,
-                std::plus<>{}
-            );
-        }
-
     }
 
-    virtual string getName() override { return "Membrane Stretching"; }
+    virtual std::string getName() override { return "MembraneStretchingGlobal"; }
 
-    virtual void whoIsCulprit() override {
-        if(membraneCulprit) {
-            LOG(INFO) << "Printing culprit membrane...";
-            membraneCulprit->printSelf();
-        } else {
-            LOG(ERROR) << "Membrane culprit is not set.";
-        }
-    }
-
-    // Useless overrides
-    virtual void cleanup() override {}
-    virtual void computeLoadForces() override {}
-    virtual std::vector<NeighborList*> getNeighborLists() override { return {}; }
 };
+
+} // namespace medyan
 
 #endif

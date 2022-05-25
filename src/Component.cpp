@@ -16,6 +16,7 @@
 #include "Composite.h"
 #include "Visitor.h"
 
+namespace medyan {
 Composite* Component::getRoot() {
     if(isRoot())
         return (Composite*)(this);
@@ -27,3 +28,4 @@ bool Component::apply (Visitor &v) {
     return v.visit(this);
 }
 
+} // namespace medyan

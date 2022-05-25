@@ -18,10 +18,12 @@
 #include "Filament.h"
 #include <stdio.h>
 #include <limits>
+
+namespace medyan {
 typedef std::numeric_limits< floatingpoint > dbl;
 class cross_checkclass{
     public:
-    static bool Aux;
+    inline static bool Aux = false;
 };
 
 namespace cross_check{
@@ -78,4 +80,7 @@ inline bool crosscheckforces(floatingpoint* force){
         return state;
     }
 }
+
+} // namespace medyan
+
 #endif /* cross_check_h */

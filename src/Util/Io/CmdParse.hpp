@@ -11,7 +11,9 @@
 #include <utility> // forward, move
 #include <vector>
 
-namespace cmdparse {
+#include "Util/Parser/StringParser.hpp"
+
+namespace medyan::cmdparse {
 
 // Forward decl
 class Command;
@@ -302,11 +304,13 @@ struct VariableWrite {
     VariableWrite() = default;
     VariableWrite(const std::string& argName): argName(argName) {}
 
-    void operator()(T& var, const std::string& s)const {
-        std::istringstream iss(s);
-        iss >> var;
-        if(iss.fail())
+    void operator()(T& var, const std::string& s) const {
+        try {
+            medyan::parse(var, s);
+        }
+        catch(const std::exception&) {
             throw ParsingError("Cannot understand argument value " + s + (argName.length() ? " for " + argName : std::string{}));
+        }
     }
 };
 
@@ -317,16 +321,18 @@ struct VectorAppend {
     VectorAppend() = default;
     VectorAppend(const std::string& argName): argName(argName) {}
 
-    void operator()(std::vector<T>& var, const std::string& s)const {
+    void operator()(std::vector<T>& var, const std::string& s) const {
         T tmp;
-        std::istringstream iss(s);
-        iss >> tmp;
-        if(iss.fail())
+        try {
+            medyan::parse(tmp, s);
+        }
+        catch(const std::exception&) {
             throw ParsingError("Cannot append the argument value " + s + (argName.length() ? " for " + argName : std::string{}));
-        var.emplace_back(std::move(tmp));
+        }
+        var.push_back(std::move(tmp));
     }
 };
 
-} // namespace cmdparse
+} // namespace medyan::cmdparse
 
 #endif // include guard

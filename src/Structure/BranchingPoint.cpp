@@ -20,11 +20,12 @@
 #include "ChemRNode.h"
 #include "CompartmentGrid.h"
 
-#include "GController.h"
+#include "Controller/GController.h"
 #include "SysParams.h"
 #include "MathFunctions.h"
 #include "Rand.h"
 
+namespace medyan {
 using namespace mathfunc;
 
 void BranchingPoint::updateCoordinate() {
@@ -43,7 +44,7 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
     //Find compartment
     updateCoordinate();
         
-    try {_compartment = GController::getCompartment(coordinate);}
+    try {_compartment = &GController::getCompartment(coordinate);}
     catch (exception& e) {
         cout << e.what();
         
@@ -53,16 +54,14 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
     }
         
     int pos = int(position * SysParams::Geometry().cylinderNumMon[c1->getType()]);
-#ifdef CHEMISTRY
+
     _cBranchingPoint = unique_ptr<CBranchingPoint>(
     new CBranchingPoint(branchType, _compartment, c1->getCCylinder(), c2->getCCylinder(), pos));
     _cBranchingPoint->setBranchingPoint(this);
-#endif
-    
-#ifdef MECHANICS
+
+
     _mBranchingPoint = unique_ptr<MBranchingPoint>(new MBranchingPoint(branchType));
     _mBranchingPoint->setBranchingPoint(this);
-#endif
         
     //set the branching cylinder
     _c1->setBranchingCylinder(_c2);
@@ -70,7 +69,6 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
 
 BranchingPoint::~BranchingPoint() noexcept {
     
-#ifdef MECHANICS
     //offset the branching cylinder's bead by a little for safety
     auto msize = SysParams::Geometry().monomerSize[_c1->getType()];
     
@@ -84,10 +82,8 @@ BranchingPoint::~BranchingPoint() noexcept {
     b->coordinate()[0] += offsetCoord[0];
     b->coordinate()[1] += offsetCoord[1];
     b->coordinate()[2] += offsetCoord[2];
-#endif
     
     
-#ifdef CHEMISTRY
     //mark the correct species on the minus end of the branched
     //filament. If this is a filament species, change it to its
     //corresponding minus end. If a plus end, release a diffusing
@@ -153,25 +149,23 @@ BranchingPoint::~BranchingPoint() noexcept {
         freeMonomer->up();
         freeMonomer->updateReactantPropensities();
     }
-#endif
+
     //reset branching cylinder
     _c1->setBranchingCylinder(nullptr);
 }
 
 void BranchingPoint::updatePosition() {
     
-#ifdef CHEMISTRY
     //update ccylinders
     _cBranchingPoint->setFirstCCylinder(_c1->getCCylinder());
     _cBranchingPoint->setSecondCCylinder(_c2->getCCylinder());
     
-#endif
     //Find compartment
     updateCoordinate();
     
     Compartment* c;
     
-    try {c = GController::getCompartment(coordinate);}
+    try {c = &GController::getCompartment(coordinate);}
     catch (exception& e) {
         cout << e.what();
         
@@ -182,14 +176,13 @@ void BranchingPoint::updatePosition() {
     
     if(c != _compartment) {
         _compartment = c;
-#ifdef CHEMISTRY
+
         SpeciesBound* firstSpecies = _cBranchingPoint->getFirstSpecies();
         
         CBranchingPoint* clone = _cBranchingPoint->clone(c);
         setCBranchingPoint(clone);
         
         _cBranchingPoint->setFirstSpecies(firstSpecies);
-#endif
     }
 }
 
@@ -200,10 +193,7 @@ void BranchingPoint::updateReactionRates() {
                 
         //current force on branching point, use the total force
 
-        floatingpoint fbranch =
-                sqrt(_mBranchingPoint->branchForce[0]*_mBranchingPoint->branchForce[0]
-                + _mBranchingPoint->branchForce[1]*_mBranchingPoint->branchForce[1]
-                + _mBranchingPoint->branchForce[2]*_mBranchingPoint->branchForce[2]);
+        floatingpoint fbranch = magnitude(_mBranchingPoint->branchForce);
 
         floatingpoint force = max<floatingpoint>((floatingpoint)0.0, fbranch);
                 
@@ -218,7 +208,7 @@ void BranchingPoint::updateReactionRates() {
             offRxn->setRateMulFactor(1.0f, ReactionBase::RESTARTPHASESWITCH);
         if(_unbindingChangers.size() > 0) {
             float factor = _unbindingChangers[_branchType]->getRateChangeFactor(force);
-            offRxn->setRateMulFactor(factor, ReactionBase::MECHANOCHEMICALFACTOR);
+            offRxn->setRateMulFactor(factor, ReactionBase::mechanochemical);
             offRxn->updatePropensity();
         }
 }
@@ -236,11 +226,9 @@ void BranchingPoint::printSelf()const {
     
     cout << endl;
     
-#ifdef CHEMISTRY
     cout << "Associated species = " << _cBranchingPoint->getFirstSpecies()->getName()
          << " , copy number = " << _cBranchingPoint->getFirstSpecies()->getN()
          << " , position on mother cylinder (int) = " << _cBranchingPoint->getFirstPosition() << endl;
-#endif
     
     cout << endl;
     
@@ -267,3 +255,5 @@ species_copy_t BranchingPoint::countSpecies(const string& name) {
 }
             
 vector<BranchRateChanger*> BranchingPoint::_unbindingChangers;
+
+} // namespace medyan

@@ -27,9 +27,9 @@ std::string timeLiteralGeneration() {
 
     std::time_t timeToSec = s.count();
     tm timeinfoToSec;
-#ifdef _MSC_VER
+#ifdef COMPILER_MSVC
     localtime_s(&timeinfoToSec, &timeToSec);
-#elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
+#elif defined(COMPILER_GCC) || defined(COMPILER_CLANG)
     localtime_r(&timeToSec, &timeinfoToSec);
 #else
     // Not thread safe
@@ -50,16 +50,11 @@ std::string timeLiteralGeneration() {
     return ss.str();
 }
 
-// Remove by c++14
-struct LogLevelHash {
-    std::size_t operator()(LogLevel lv)const { return static_cast<std::size_t>(lv); }
-};
-
 } // namespace
 
 
-// Level color codes. Notice that we no longer need to supply hash since c++14.
-const std::unordered_map<LogLevel, const char*, LogLevelHash> logLevelColorAnsi {
+// Level color codes.
+const std::unordered_map<LogLevel, const char*> logLevelColorAnsi {
     {LogLevel::Debug,   "\033[37m"}, // White
     {LogLevel::Info,    "\033[97m"}, // Bright white
     {LogLevel::Step,    "\033[96m"}, // Bright cyan
@@ -102,7 +97,7 @@ void LogWriter::logDispatch() {
             }
 
             // Attach log content
-            finalOss << _oss.str();
+            finalOss << oss_.str();
 
             // Suffix generation
             if(eachOs.dispFile.isOnWith(_lv)) {

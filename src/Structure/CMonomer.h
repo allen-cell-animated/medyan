@@ -17,7 +17,6 @@
 #include "common.h"
 
 #include "Species.h"
-#include "Compartment.h"
 
 /// Represents a container for all Species that could be contained in a
 /// particular filament element at a given position.
@@ -26,16 +25,28 @@
  *  filament position. The species are held in an standard vector.
  */
 
+namespace medyan {
+
+// Forward declarations.
+class Compartment;
+
+
 class CMonomer {
     
 friend class ChemManager;
 friend class CCylinder;
 
+public:
+    struct SpeciesSubarrayIndex {
+        medyan::Index start = 0;
+        medyan::Index size = 0;
+    };
+
 private:
     //@{
     /// Species array
-    SpeciesFilament** _speciesFilament;
-    SpeciesBound**    _speciesBound;
+    std::vector< Species* >         _speciesFilament;
+    std::vector< SpeciesBound* >    _speciesBound;
     //@}
     
     ///Filament type that this monomer is in
@@ -46,9 +57,9 @@ private:
     /// These index vectors are used to access the correct species in the actual
     /// species arrays. Each index in the species index vector corresponds to an
     /// offset for that species in the species array.
-    /// @note - this is a 2D vector for different filament types.
-    static vector<vector<short>> _speciesFilamentIndex;
-    static vector<vector<short>> _speciesBoundIndex;
+    // To access the index, use xxxIndex[filament-type][species-xxx-type].
+    inline static std::vector<std::vector<SpeciesSubarrayIndex>> speciesFilamentIndex_;
+    inline static std::vector<std::vector<SpeciesSubarrayIndex>> speciesBoundIndex_;
     //@}
     
     ///Number of species for each filament type
@@ -57,13 +68,12 @@ private:
     
 public:
     /// Constructor does nothing but memset arrays
-    CMonomer(short filamentType);
+    CMonomer(short filamentType) :
+        _filamentType(filamentType),
+        _speciesFilament(_numFSpecies[filamentType]),
+        _speciesBound(_numBSpecies[filamentType])
+    {}
     
-    /// Default destructor
-    /// @note noexcept is important here. Otherwise, gcc flags the constructor as
-    /// potentially throwing, which in turn disables move operations by the STL containers.
-    /// This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly be fixed in the future.
-    virtual ~CMonomer () noexcept;
     
     /// Copy constructor
     /// This constructor will create a new CMonomer, identical to the copied, in a new
@@ -86,9 +96,9 @@ public:
     /// @note no check on this index. The index value of a species is stored in the
     /// chemical initializer when all reactions are initialized from the chemical input
     /// file.
-    SpeciesFilament* speciesFilament (int index);
-    SpeciesFilament* speciesPlusEnd  (int index);
-    SpeciesFilament* speciesMinusEnd (int index);
+    Species* speciesFilament (int index);
+    Species* speciesPlusEnd  (int index);
+    Species* speciesMinusEnd (int index);
     
     SpeciesBound* speciesBound    (int index);
     SpeciesBound* speciesLinker   (int index);
@@ -104,14 +114,21 @@ public:
     short activeSpeciesPlusEnd();
     short activeSpeciesMinusEnd();
     
-    short activeSpeciesLinker();
-    short activeSpeciesMotor();
     short activeSpeciesBrancher();
     //@
     
     /// Check the consistency of the CMonomer for debugging.
     bool isConsistent();
-    
+
+    // Set species index vectors. Should only be called at the beginning of simulation.
+    static void setSpeciesFilamentIndex(std::vector<std::vector<SpeciesSubarrayIndex>> speciesFilamentIndex) {
+        speciesFilamentIndex_ = std::move(speciesFilamentIndex);
+    }
+    static void setSpeciesBoundIndex(std::vector<std::vector<SpeciesSubarrayIndex>> speciesBoundIndex) {
+        speciesBoundIndex_ = std::move(speciesBoundIndex);
+    }
 };
+
+} // namespace medyan
 
 #endif

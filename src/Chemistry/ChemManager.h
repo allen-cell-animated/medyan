@@ -19,14 +19,15 @@
 #include "ReactionTemplate.h"
 #include "DissipationTracker.h"
 
+namespace medyan {
 //FORWARD DECLARATIONS
 class Compartment;
 class CompartmentGrid;
 class ChemSim;
-
 class Cylinder;
 class CCylinder;
 class CMonomer;
+
 
 /// For initailizing chemical reactions based on a specific system
 /*!
@@ -42,20 +43,20 @@ private:
     chrono::high_resolution_clock::time_point mins, mine;
     //@{
     /// Helper functions. Names are pretty self-explanatory.
-    void setupBindingSites();
+    static void setupBindingSites(ChemParams& chemParams, const medyan::SimulConfig& sc);
     
-    void configCMonomer();
-    void initCMonomer(CMonomer* m, short filamentType, Compartment* c);
+    static void configCMonomer(const medyan::SimulConfig& sc);
+    static void initCMonomer(CMonomer* m, short filamentType, Compartment* c, const ChemistryData& chemData);
     
-    void genSpecies(Compartment& protoCompartment);
+    static void genSpecies(CompartmentGrid& grid, Compartment& protoCompartment, const medyan::SimulConfig& sc);
     
-    void genGeneralReactions(Compartment& protoCompartment);
-    void genBulkReactions();
+    static void genGeneralReactions(CompartmentGrid& grid, Compartment& protoCompartment, const ChemParams& chemParams, const ChemistryData& chemData);
+    static void genBulkReactions(CompartmentGrid& grid, const ChemistryData& chemData);
     
-    void genNucleationReactions();
-    void genFilBindingReactions();
+    static void genNucleationReactions(SubSystem& sys, CompartmentGrid& grid, const medyan::SimulConfig& sc);
+    static void genFilBindingReactions(SubSystem& sys, const medyan::SimulConfig& sc, DissipationTracker* pdt);
     
-    void genFilReactionTemplates();
+    void genFilReactionTemplates(ChemParams& chemParams, const ChemistryData& chemData, DissipationTracker* pdt);
     //@}
     
 public:
@@ -64,13 +65,31 @@ public:
 	static floatingpoint tchemmanager3;
 	static floatingpoint tchemmanager4;
 
-    ///Constructor sets subsystem pointer, and loads chem data
-    ChemManager(SubSystem* subSystem, ChemistryData chem)
-        : _subSystem(subSystem), _chemData(chem) {}
-    
+    // An auxiliary function that finds certain species in an array indexed by filament type.
+    //
+    // Parameters:
+    // - species: outer index is filament type.
+    // - name:    the name of the species to search for.
+    // - catName: the category name for species, used in error message.
+    //
+    // Returns tuple containing indices to find the species.
+    static auto locateSpecies(const vector<vector<string>>& species, const string& name, const string& catName) {
+        for(int ft = 0; ft < species.size(); ++ft) {
+            auto& speciesVec = species[ft];
+            for(int i = 0; i < speciesVec.size(); ++i) {
+                if(speciesVec[i] == name) {
+                    return tuple{ ft, i };
+                }
+            }
+        }
+
+        LOG(ERROR) << "Cannot find species " << name << " in category " << catName;
+        throw runtime_error("Invalid species name.");
+    }
+
     /// Initialize the system, based on the given simulation
     /// Adds all necessary reactions to the ChemSim object
-    virtual void initializeSystem(ChemSim* chem);
+    void initializeSystem(medyan::ChemSim* chemSim, SubSystem& sys, medyan::SimulConfig& sc);
     
     ///Initializer for chem cylinders, based on the given simulation
 //    virtual void initializeCCylinder(CCylinder* cc,
@@ -78,7 +97,7 @@ public:
 //                                     bool extensionBack,
 //                                     bool initialization);
 
-	virtual void initializeCCylinder(CCylinder* cc,
+	void initializeCCylinder(CCylinder* cc,
 	                                      bool extensionFront,
 	                                      bool extensionBack,
 	                                      bool initialization,
@@ -95,21 +114,19 @@ public:
     ///         tau has passed the release time of the molecule. This
     ///         function is called at every set of chemical steps to check
     ///         if molecules should be released at the current time.
-    virtual void updateCopyNumbers();
+    void updateCopyNumbers(SubSystem& sys, ChemistryData& chemData, const medyan::SimulConfig& sc);
 
-    virtual void restartreleaseandremovaltime(floatingpoint _minimizationTime);
+    void restartreleaseandremovaltime(floatingpoint _minimizationTime, ChemistryData& chemData);
     
 private:
-    //DATA MEMBERS
-    SubSystem* _subSystem;   ///< A pointer to subsytem for creation of callbacks, etc.
-    ChemistryData _chemData; ///<The chemistry data for the system
-    DissipationTracker* _dt;
-    
+    ChemistryData chemDataBackup_;
+
     /// A list of reactions to add to every new CCylinder
     /// @note - is a 2D vector corresponding to different filament types
     vector<vector<unique_ptr<FilamentReactionTemplate>>> _filRxnTemplates =
     vector<vector<unique_ptr<FilamentReactionTemplate>>>(MAX_FILAMENT_TYPES);
 };
 
+} // namespace medyan
 
 #endif

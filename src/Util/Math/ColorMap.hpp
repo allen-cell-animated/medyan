@@ -11,10 +11,10 @@
 
 // A colormap is a function, which transforms a real number in a range to an
 // RGB value
-namespace colormap {
+namespace medyan::colormap {
 
 template< typename Float >
-using ColorRgb = mathfunc::Vec< 3, Float >;
+using ColorRgb = medyan::Vec< 3, Float >;
 
 enum Extend {
     clamp,
@@ -65,21 +65,23 @@ inline Float bounce01(Float v) {
 template< typename Float >
 inline Float extend01(Float v, Extend ex) {
     switch(ex) {
-    case Extend::clamp:
-        return clamp01(v);
-    case Extend::cycle:
-        return cycle01(v);
-    case Extend::bounce:
-        return bounce01(v);
+        case Extend::clamp:
+            return clamp01(v);
+        case Extend::cycle:
+            return cycle01(v);
+        case Extend::bounce:
+            return bounce01(v);
+        default:
+            throw std::runtime_error("Unknown extend mode");
     }
 }
 
 // Color interpolation
 // Precondition: v must be in range [0, 1].
-template< typename FloatVal, int colorDim, typename FloatColor, int listSize >
+template< typename FloatVal, std::size_t colorDim, typename FloatColor, int listSize >
 constexpr
-mathfunc::Vec< colorDim, FloatColor >
-interpolate(FloatVal v, std::array< mathfunc::Vec< colorDim, FloatColor >, listSize > interpList) {
+medyan::Vec< colorDim, FloatColor >
+interpolate(FloatVal v, std::array< medyan::Vec< colorDim, FloatColor >, listSize > interpList) {
     static_assert(listSize > 1, "Must have at least 2 elements for interpolation");
     const FloatVal interval = static_cast< FloatVal >(1.0) / (listSize - 1);
     const FloatVal normalizedPos = v / interval;
@@ -89,9 +91,9 @@ interpolate(FloatVal v, std::array< mathfunc::Vec< colorDim, FloatColor >, listS
     return interpList[intervalIndex    ] * static_cast< FloatColor >(intervalIndex + 1 - normalizedPos)
         +  interpList[intervalIndex + 1] * static_cast< FloatColor >(normalizedPos - intervalIndex);
 }
-template< typename FloatVal, int colorDim, typename FloatColor >
-mathfunc::Vec< colorDim, FloatColor >
-interpolate(FloatVal v, const std::vector< mathfunc::Vec< colorDim, FloatColor > >& interpList) {
+template< typename FloatVal, std::size_t colorDim, typename FloatColor >
+medyan::Vec< colorDim, FloatColor >
+interpolate(FloatVal v, const std::vector< medyan::Vec< colorDim, FloatColor > >& interpList) {
     const int listSize = interpList.size();
     if(listSize <= 1) {
         throw std::runtime_error("Must have at least 2 elements for interpolation");
@@ -112,8 +114,13 @@ interpolate(FloatVal v, const std::vector< mathfunc::Vec< colorDim, FloatColor >
 //-----------------------------------------------------------------------------
 
 template< typename FloatColor >
-struct Jet {
-    static constexpr std::array< ColorRgb< FloatColor >, 9 > interpList = {{
+struct DynamicColorMap {
+    std::vector< ColorRgb< FloatColor > > interpList;
+};
+
+template< typename FloatColor >
+inline auto getJet() {
+    return DynamicColorMap<FloatColor> {{
         { 0.0, 0.0, 0.5 },
         { 0.0, 0.0, 1.0 },
         { 0.0, 0.5, 1.0 },
@@ -122,29 +129,29 @@ struct Jet {
         { 1.0, 1.0, 0.0 },
         { 1.0, 0.5, 0.0 },
         { 1.0, 0.0, 0.0 },
-        { 0.5, 0.0, 0.0 }
+        { 0.5, 0.0, 0.0 },
     }};
-};
-using JetD = Jet< double >;
-using JetF = Jet< float >;
+}
+inline const auto jetd = getJet<double>();
+inline const auto jetf = getJet<float>();
 
 template< typename FloatColor >
-struct Bwr {
-    static constexpr std::array< ColorRgb< FloatColor >, 3 > interpList = {{
+inline auto getBwr() {
+    return DynamicColorMap<FloatColor> {{
         { 0.0, 0.0, 1.0 },
         { 1.0, 1.0, 1.0 },
         { 1.0, 0.0, 0.0 }
     }};
-};
-using BwrD = Bwr< double >;
-using BwrF = Bwr< float >;
+}
+inline const auto bwrd = getBwr<double>();
+inline const auto bwrf = getBwr<float>();
 
 // Get the color
-template< typename Map, typename FloatVal >
-constexpr auto color(Map, FloatVal v, Extend ex = Extend::clamp) {
-    return interpolate(extend01(v, ex), Map::interpList);
+template< typename FloatMap, typename FloatVal >
+constexpr auto color(const DynamicColorMap<FloatMap>& map, FloatVal v, Extend ex = Extend::clamp) {
+    return interpolate(extend01(v, ex), map.interpList);
 }
 
-} // namespace colormap
+} // namespace medyan::colormap
 
 #endif

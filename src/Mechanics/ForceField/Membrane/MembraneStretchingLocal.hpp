@@ -8,14 +8,18 @@
 
 #include "Mechanics/ForceField/ForceField.h"
 #include "Mechanics/ForceField/Membrane/MembraneStretchingImpl.hpp"
+#include "Structure/SubSystem.h"
+#include "Structure/SurfaceMesh/FuncMembraneGeo.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
+
+namespace medyan {
 
 struct MembraneStretchingLocal : public ForceField {
 
     MembraneStretchingHarmonic impl;
 
     // (temp) holds the first index of coordinates of each vertex of triangles
-    std::vector< std::array< std::size_t, 3 >> vertexSet;
+    std::vector< std::array< Index, 3 >> vertexSet;
 
     // (temp) holds the mech params of triangles
     std::vector< double > kArea;
@@ -26,18 +30,18 @@ struct MembraneStretchingLocal : public ForceField {
         using MT = Membrane::MeshType;
 
         vertexSet.clear();
-        vertexSet.reserve(Triangle::numElements()); // Might be more than needed
+        vertexSet.reserve(si.ps->triangles.size()); // Might be more than needed
         kArea.clear();
-        kArea.reserve(Triangle::numElements());
+        kArea.reserve(si.ps->triangles.size());
         eqArea.clear();
-        eqArea.reserve(Triangle::numElements());
+        eqArea.reserve(si.ps->triangles.size());
 
-        for(auto m : Membrane::getMembranes()) {
+        for(auto& m : si.ps->membranes) {
             // In area elasticity for each triangle, the triangles with any
             // vertex touching an reservoir connecting border will not be
             // included.
 
-            const auto& mesh = m->getMesh();
+            const auto& mesh = m.getMesh();
             // Only applies for material surface coordinate system
             if(mesh.metaAttribute().vertexSystem == medyan::MembraneMeshVertexSystem::material) {
 
@@ -64,24 +68,24 @@ struct MembraneStretchingLocal : public ForceField {
                         !onReservoirBorder(vis[2])
                     ) {
                         vertexSet.push_back({
-                            mesh.attribute(vis[0]).vertex->getIndex() * 3 + si.vertex,
-                            mesh.attribute(vis[1]).vertex->getIndex() * 3 + si.vertex,
-                            mesh.attribute(vis[2]).vertex->getIndex() * 3 + si.vertex
+                            mesh.attribute(vis[0]).cachedCoordIndex,
+                            mesh.attribute(vis[1]).cachedCoordIndex,
+                            mesh.attribute(vis[2]).cachedCoordIndex,
                         });
-                        kArea.push_back(t.attr.triangle->mTriangle.kArea);
-                        eqArea.push_back(t.attr.triangle->mTriangle.eqArea);
+                        kArea.push_back(t.attr.triangle(*si.ps).mTriangle.kArea);
+                        eqArea.push_back(t.attr.triangle(*si.ps).mTriangle.eqArea);
                     }
                 }
             }
         }
     }
 
-    virtual floatingpoint computeEnergy(floatingpoint* coord, bool stretched) override {
+    virtual FP computeEnergy(FP* coord) override {
         using namespace std;
 
         double en = 0;
 
-        for(size_t i = 0; i < vertexSet.size(); ++i) {
+        for(Index i = 0; i < vertexSet.size(); ++i) {
             const auto& vs = vertexSet[i];
             const auto enTriangle = impl.energy(
                 medyan::area(
@@ -94,10 +98,9 @@ struct MembraneStretchingLocal : public ForceField {
             );
 
             if(!isfinite(enTriangle)) {
-                LOG(ERROR) << "In " << getName() << " energy calculation, triangle with index "
-                    << i << " has energy " << enTriangle;
+                log::error("In {} energy calculation, triangle with index {} has energy {}.", getName(), i, enTriangle);
 
-                return numeric_limits<double>::infinity();
+                return inffp;
             }
             else {
                 en += enTriangle;
@@ -108,10 +111,10 @@ struct MembraneStretchingLocal : public ForceField {
         return en;
     }
 
-    virtual void computeForces(floatingpoint* coord, floatingpoint* force) override {
+    virtual void computeForces(FP* coord, FP* force) override {
         using namespace std;
 
-        for(size_t i = 0; i < vertexSet.size(); ++i) {
+        for(Index i = 0; i < vertexSet.size(); ++i) {
             const auto& vs = vertexSet[i];
             const auto rv0 = makeRefVec<3>(coord + vs[0]);
             const auto rv1 = makeRefVec<3>(coord + vs[1]);
@@ -126,15 +129,10 @@ struct MembraneStretchingLocal : public ForceField {
 
     }
 
-    virtual string getName() override { return "Membrane Stretching local"; }
+    virtual std::string getName() override { return "MembraneStretchingLocal"; }
 
-
-    // Useless overrides
-    virtual void cleanup() override {}
-    virtual void computeLoadForces() override {}
-    virtual void whoIsCulprit() override {}
-    virtual std::vector<NeighborList*> getNeighborLists() override { return {}; }
-    virtual vector<string> getinteractionnames() override { return { getName() }; }
 };
+
+} // namespace medyan
 
 #endif

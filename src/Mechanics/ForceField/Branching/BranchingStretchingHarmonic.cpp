@@ -27,6 +27,7 @@
 #include "nvToolsExt.h"
 #endif
 
+namespace medyan {
 using namespace mathfunc;
 #ifdef CUDAACCL
 void BranchingStretchingHarmonic::deallocate(){
@@ -213,66 +214,12 @@ floatingpoint BranchingStretchingHarmonic::energy(floatingpoint *coord, int *bea
 
         U_i = 0.5 * kstr[i] * dist * dist;
 
-
-        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-
-            //set culprit and return
-            BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
-
-            return -1;
-        }
-
         U += U_i;
     }
     delete [] v1;
     return U;
 }
 
-floatingpoint BranchingStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
-                                           floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, floatingpoint d){
-
-    int n = BranchingStretching<BranchingStretchingHarmonic>::n;
-    int nint = BranchingPoint::getBranchingPoints().size();
-
-    floatingpoint *coord1, *coord2, *coord3, dist, U_i;
-	floatingpoint *f1, *f2, *f3;
-    floatingpoint *v1 = new floatingpoint[3];
-    floatingpoint *vzero = new floatingpoint[3]; vzero[0] = 0; vzero[1] = 0; vzero[2] = 0;
-
-    floatingpoint U = 0.0;
-
-    for(int i = 0; i < nint; i += 1) {
-
-        coord1 = &coord[beadSet[n * i]];
-        coord2 = &coord[beadSet[n * i + 1]];
-        coord3 = &coord[beadSet[n * i + 2]];
-
-        f1 = &f[beadSet[n * i]];
-        f2 = &f[beadSet[n * i + 1]];
-        f3 = &f[beadSet[n * i + 2]];
-
-        midPointCoordinateStretched(v1, coord1, f1, coord2, f2, pos[i], d);
-        dist = twoPointDistanceStretched(v1, vzero, coord3, f3, d) - eql[i];
-
-        U_i = 0.5 * kstr[i] * dist * dist;
-
-
-        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-
-            //set culprit and return
-            BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
-
-            return -1;
-        }
-
-        U += U_i;
-    }
-    delete [] v1;
-    delete [] vzero;
-    return U;
-}
 
 void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                          floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos,
@@ -369,3 +316,5 @@ void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f,
     }
     delete [] v1;
 }
+
+} // namespace medyan
