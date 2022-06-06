@@ -9,18 +9,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up GCC
+      - name: Setup GCC
         uses: egor-tensin/setup-gcc@v1
         with:
           version: latest
           platform: x64
-      - name: setup MEDYAN build
-        run: ./conf.sh
-      - name: change to build dir
+      - name: Setup MEDYAN build
+        run: ./conf.sh MEDYAN_NO_GUI="true"
+      - name: Change to build dir
         run: cd build
       - name: Build MEDYAN
         run: make
-      - name: change to root dir
+      - name: Change to root dir
         run: cd ../
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u simularium --password-stdin
