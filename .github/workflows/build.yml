@@ -18,14 +18,8 @@ jobs:
         run: sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev
       - name: Setup MEDYAN build
         run: ./conf.sh 
-      - name: Change to build dir
-        run: cd build
-      - name: List files
-        run: ls
       - name: Build MEDYAN
-        run: make
-      - name: Change to root dir
-        run: cd ../
+        run: cd build && make
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u simularium --password-stdin
       - name: Get the release tag
