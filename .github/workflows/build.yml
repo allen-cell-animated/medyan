@@ -20,6 +20,8 @@ jobs:
         run: ./conf.sh 
       - name: Change to build dir
         run: cd build
+      - name: List files
+        run: ls
       - name: Build MEDYAN
         run: make
       - name: Change to root dir
