@@ -14,8 +14,10 @@ jobs:
         with:
           version: latest
           platform: x64
+      - name: Install build dependencies
+        run: apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev
       - name: Setup MEDYAN build
-        run: ./conf.sh
+        run: ./conf.sh 
       - name: Change to build dir
         run: cd build
       - name: Build MEDYAN
