@@ -14,8 +14,8 @@ jobs:
         with:
           version: latest
           platform: x64
-      - name: list files
-        run: ls
+      - name: Setup MEDYAN build
+        run: ./conf.sh
       - name: Change to build dir
         run: cd build
       - name: Build MEDYAN
