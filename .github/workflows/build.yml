@@ -14,8 +14,6 @@ jobs:
         with:
           version: latest
           platform: x64
-      - name: Setup MEDYAN build
-        run: ./conf.sh MEDYAN_NO_GUI="true"
       - name: Change to build dir
         run: cd build
       - name: Build MEDYAN

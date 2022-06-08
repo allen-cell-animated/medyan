@@ -7,9 +7,11 @@ RUN mkdir input output
 COPY build/medyan .
 
 # Install necessary libraries
-RUN apt-get -y update
-RUN apt-get -y upgrade
-RUN apt-get -y install --no-install-recommends libx11-dev
+RUN apt-get update && apt-get install -y \
+    libxinerama-dev \
+    libxcursor-dev \
+    xorg-dev \
+    libglu1-mesa-dev
 
 # Run MEDYAN
 ENTRYPOINT ["./medyan", "-i", "/home/input", "-o", "/home/output", "-s", "/home/input/systeminput.txt"]
